@@ -6,18 +6,18 @@
 }
 
 :root {
-    --bg: #0a0a0f;
-    --bg-alt: #0f0f17;
-    --surface: #16161f;
-    --border: #1e1e2a;
-    --text: #e4e4ec;
-    --text-muted: #8888a0;
-    --accent: #6c8aff;
-    --accent-dim: rgba(108, 138, 255, 0.12);
-    --accent-glow: rgba(108, 138, 255, 0.25);
+    --bg: #0a0f0a;
+    --bg-alt: #0e140f;
+    --surface: #151e17;
+    --border: #1e2a20;
+    --text: #e2e8e3;
+    --text-muted: #889888;
+    --accent: #7a9e7e;
+    --accent-dim: rgba(122, 158, 126, 0.12);
+    --accent-glow: rgba(122, 158, 126, 0.2);
     --font-sans: 'Inter', -apple-system, sans-serif;
     --font-serif: 'Lora', Georgia, serif;
-    --max-w: 960px;
+    --max-w: 1140px;
     --nav-h: 64px;
 }
 
@@ -35,11 +35,15 @@ body {
 }
 
 a {
-    color: var(--accent);
+    color: var(--text);
     text-decoration: none;
-    transition: color 0.2s;
+    transition: color 0.2s, border-color 0.2s;
+    border-bottom: 1px solid transparent;
 }
-a:hover { color: #93adff; }
+a:hover {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+}
 
 ::selection {
     background: var(--accent);
@@ -189,7 +193,7 @@ a:hover { color: #93adff; }
     color: var(--bg);
 }
 .btn-primary:hover {
-    background: #8ba3ff;
+    background: #92b896;
     color: var(--bg);
     box-shadow: 0 4px 20px var(--accent-glow);
 }
@@ -290,6 +294,83 @@ a:hover { color: #93adff; }
     font-size: 0.82rem;
     color: var(--text-muted);
     margin-top: 2px;
+}
+
+/* ===== TSM Feature ===== */
+.tsm-feature {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 36px;
+    margin-bottom: 32px;
+    transition: border-color 0.3s;
+}
+.tsm-feature:hover {
+    border-color: rgba(122, 158, 126, 0.3);
+}
+.tsm-header {
+    margin-bottom: 20px;
+}
+.tsm-header h3 {
+    font-family: var(--font-serif);
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+.tsm-role {
+    font-size: 0.85rem;
+    color: var(--accent);
+    font-weight: 500;
+}
+.tsm-body p {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    line-height: 1.75;
+    margin-bottom: 16px;
+}
+.tsm-body p:last-child {
+    margin-bottom: 0;
+}
+
+/* ===== Experience Duo ===== */
+.experience-duo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+.exp-col {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px;
+    transition: border-color 0.3s;
+}
+.exp-col:hover {
+    border-color: rgba(122, 158, 126, 0.3);
+}
+.exp-col-header {
+    margin-bottom: 4px;
+}
+.exp-col-header h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+.exp-col-date {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+.exp-col-org {
+    font-size: 0.88rem;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+.exp-col-desc {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.7;
 }
 
 /* ===== Timeline ===== */
@@ -410,6 +491,80 @@ a:hover { color: #93adff; }
     line-height: 1.6;
 }
 
+/* ===== Research Columns ===== */
+.research-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 28px;
+    align-items: start;
+}
+.research-col {
+    min-width: 0;
+}
+
+/* ===== Research Subsections ===== */
+.research-subsection {
+    margin-top: 64px;
+    padding-top: 48px;
+    border-top: 1px solid var(--border);
+}
+.research-sub-title {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 32px;
+    letter-spacing: -0.01em;
+}
+.pres-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+}
+
+/* ===== Working Projects ===== */
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+.project-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+.project-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 4px 24px var(--accent-dim);
+}
+.project-card h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+.project-desc {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 14px;
+}
+.project-methods {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.project-methods span {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--accent);
+    background: var(--accent-dim);
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.03em;
+}
+
 /* ===== Publications ===== */
 .pub-category {
     margin-bottom: 48px;
@@ -438,7 +593,7 @@ a:hover { color: #93adff; }
     transition: border-color 0.3s;
 }
 .pub-item:hover {
-    border-color: rgba(108, 138, 255, 0.3);
+    border-color: rgba(122, 158, 126, 0.3);
 }
 
 .pub-badge {
@@ -646,11 +801,23 @@ a:hover { color: #93adff; }
         pointer-events: all;
     }
 
+    .experience-duo {
+        grid-template-columns: 1fr;
+    }
     .about-grid {
         grid-template-columns: 1fr;
         gap: 32px;
     }
     .grants-grid {
+        grid-template-columns: 1fr;
+    }
+    .research-columns {
+        grid-template-columns: 1fr;
+    }
+    .pres-columns {
+        grid-template-columns: 1fr;
+    }
+    .projects-grid {
         grid-template-columns: 1fr;
     }
     .hero-name {

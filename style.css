@@ -293,6 +293,8 @@ a:hover {
 .cycling-pano-section {
     padding: 32px 24px;
     background: var(--bg);
+    display: flex;
+    justify-content: center;
 }
 
 /* Cycling panoramic strip */

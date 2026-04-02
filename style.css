@@ -289,6 +289,12 @@ a:hover {
     line-height: 1.75;
 }
 
+/* Cycling panoramic section */
+.cycling-pano-section {
+    padding: 32px 24px;
+    background: var(--bg);
+}
+
 /* Cycling panoramic strip */
 .cycling-pano {
     max-width: 560px;

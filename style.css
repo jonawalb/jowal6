@@ -265,15 +265,15 @@ a:hover {
 /* ===== Portrait & Photo ===== */
 .about-portrait-row {
     display: flex;
-    gap: 40px;
+    gap: 32px;
     align-items: flex-start;
     margin-bottom: 0;
 }
 .portrait-wrapper {
     flex-shrink: 0;
-    width: 180px;
-    height: 180px;
-    border-radius: 12px;
+    width: 120px;
+    height: 120px;
+    border-radius: 10px;
     overflow: hidden;
     border: 1px solid var(--border);
 }
@@ -289,18 +289,28 @@ a:hover {
     line-height: 1.75;
 }
 
-.photo-divider {
-    width: 100%;
-    height: 280px;
-    overflow: hidden;
-    position: relative;
+/* TSM inline photo */
+.tsm-feature-inner {
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
 }
-.divider-img {
+.tsm-text {
+    flex: 1;
+    min-width: 0;
+}
+.tsm-photo {
+    flex-shrink: 0;
+    width: 200px;
+    height: 150px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.tsm-photo img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 60%;
-    filter: brightness(0.6) saturate(0.8);
+    filter: brightness(0.85) saturate(0.9);
 }
 
 /* ===== About ===== */
@@ -843,11 +853,15 @@ a:hover {
         text-align: center;
     }
     .portrait-wrapper {
-        width: 140px;
-        height: 140px;
+        width: 100px;
+        height: 100px;
     }
-    .photo-divider {
-        height: 180px;
+    .tsm-feature-inner {
+        flex-direction: column;
+    }
+    .tsm-photo {
+        width: 100%;
+        height: 140px;
     }
     .experience-duo {
         grid-template-columns: 1fr;

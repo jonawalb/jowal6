@@ -262,16 +262,52 @@ a:hover {
     border-radius: 2px;
 }
 
+/* ===== Portrait & Photo ===== */
+.about-portrait-row {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    margin-bottom: 0;
+}
+.portrait-wrapper {
+    flex-shrink: 0;
+    width: 180px;
+    height: 180px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+.portrait-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.about-intro p {
+    color: var(--text-muted);
+    font-size: 1.02rem;
+    margin-bottom: 16px;
+    line-height: 1.75;
+}
+
+.photo-divider {
+    width: 100%;
+    height: 280px;
+    overflow: hidden;
+    position: relative;
+}
+.divider-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 60%;
+    filter: brightness(0.6) saturate(0.8);
+}
+
 /* ===== About ===== */
 .about-grid {
     display: grid;
-    grid-template-columns: 1.2fr 1fr;
+    grid-template-columns: 1fr;
     gap: 48px;
-}
-.about-text p {
-    color: var(--text-muted);
-    margin-bottom: 16px;
-    font-size: 1.02rem;
 }
 .about-education h3 {
     font-size: 0.8rem;
@@ -801,6 +837,18 @@ a:hover {
         pointer-events: all;
     }
 
+    .about-portrait-row {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .portrait-wrapper {
+        width: 140px;
+        height: 140px;
+    }
+    .photo-divider {
+        height: 180px;
+    }
     .experience-duo {
         grid-template-columns: 1fr;
     }

@@ -294,7 +294,7 @@ a:hover {
     max-width: 560px;
     border-radius: 10px;
     overflow: hidden;
-    margin: 24px 0;
+    margin: 24px auto;
 }
 .cycling-pano img {
     width: 100%;

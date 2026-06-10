@@ -1137,7 +1137,9 @@ a:hover {
 }
 .teaching-image img {
     width: 100%;
-    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    object-position: center;
     display: block;
     border-radius: 10px;
     border: 1px solid var(--border);

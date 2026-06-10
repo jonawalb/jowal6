@@ -1150,3 +1150,10 @@ a:hover {
         gap: 32px;
     }
 }
+
+/* ===== Active nav-link indicator (multi-page site) ===== */
+.nav-links a.active {
+    color: var(--accent);
+    border-bottom: 1.5px solid var(--accent);
+    padding-bottom: 2px;
+}

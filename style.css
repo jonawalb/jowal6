@@ -1127,3 +1127,24 @@ a:hover {
     text-shadow: 0 1px 8px rgba(250,248,244,0.80);
 }
 .hero-scroll .scroll-line { background: rgba(26,23,20,0.45); }
+
+/* ===== Teaching: two-column split (list | photo) ===== */
+.teaching-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+}
+.teaching-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+}
+@media (max-width: 768px) {
+    .teaching-split {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+}

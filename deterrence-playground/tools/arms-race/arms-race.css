@@ -1,0 +1,96 @@
+/* Arms Race Dynamics. Built on shared/css/tsm.css tokens only. */
+.card { padding: 12px 14px; }
+.nbanner { margin: 0; font-size: 12.5px; color: var(--muted); display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.nbanner .notional { flex: none; }
+.modebar { display: flex; flex-wrap: wrap; gap: 8px 16px; justify-content: space-between; align-items: center; }
+.head-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+.modepane { display: flex; flex-direction: column; gap: 16px; }
+.modepane[hidden], #two-panel[hidden], #three-panel[hidden] { display: none; }
+
+/* Segmented buttons */
+.seg { display: flex; flex-wrap: wrap; gap: 4px; }
+.seg button { font-size: 13px; font-weight: 600; padding: 7px 12px; border: 1px solid var(--rule); background: transparent; border-radius: 3px; cursor: pointer; color: var(--ink); }
+.seg button small { font-weight: 400; color: var(--muted); }
+.seg button:hover { border-color: var(--muted); }
+.seg button[aria-pressed="true"] { border-color: var(--blue); background: var(--blue-soft); }
+
+/* Headline */
+.headcard { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 24px; align-items: end; }
+.big { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+.big b { font-family: var(--display); font-size: 36px; line-height: 1; color: var(--ink); margin-right: 6px; }
+.headcard .readout { min-width: 260px; }
+.readout dd { text-align: right; }
+
+/* Charts */
+.chartcard { display: flex; flex-direction: column; gap: 6px; }
+.chart-h { display: flex; flex-wrap: wrap; gap: 6px 16px; justify-content: space-between; align-items: center; }
+.chart { width: 100%; height: auto; display: block; }
+.chart.phase { cursor: crosshair; max-width: 720px; margin: 0 auto; }
+.legend { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 11.5px; color: var(--muted); }
+.legend li { display: inline-flex; align-items: center; gap: 5px; }
+.legend .ln { display: inline-block; width: 18px; height: 0; border-top: 2px solid var(--ink); }
+.legend .lna { border-top-color: var(--c1); } .legend .lnb { border-top: 2px dashed var(--c2); }
+.legend .lsep { border-top: 2px dashed var(--muted); }
+.legend .lreal { border-top: 3px solid var(--ink); } .legend .lfit { border-top: 2px dashed var(--accent); }
+.legend .lx { border-top: 3px solid var(--c1); } .legend .ly { border-top: 3px solid var(--c2); }
+.legend .lus { border-top: 3px solid var(--us); } .legend .lru { border-top: 3px solid var(--c2); } .legend .lcn { border-top: 3px solid var(--prc); }
+.legend .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; }
+.legend .deqs { background: var(--good); } .legend .dequ { border: 2px solid var(--bad); background: var(--panel); }
+body:not(.ov) .ov-only { display: none; }
+.chart .plotbg { fill: var(--panel); }
+.chart .grid { stroke: var(--rule); stroke-width: 1; }
+.chart .ax-t { font: var(--axis-font); fill: var(--axis-ink); }
+.chart .ax-l { font: 500 11.5px var(--body); fill: var(--muted); }
+.chart .vf { stroke: var(--faint); stroke-width: 1.1; opacity: .7; }
+.chart .vf-h { fill: var(--faint); opacity: .7; }
+.chart .nc { stroke-width: 2; fill: none; }
+.chart .nc-a { stroke: var(--c1); } .chart .nc-b { stroke: var(--c2); stroke-dasharray: 7 4; }
+.chart .sep { stroke: var(--muted); stroke-width: 2; stroke-dasharray: 3 4; fill: none; }
+.chart .traj { fill: none; stroke: var(--ink); stroke-width: 1.6; opacity: .55; stroke-linejoin: round; transition: stroke-dashoffset 1.3s ease-out; }
+.chart .traj.last { stroke: var(--accent); stroke-width: 2.6; opacity: 1; }
+.chart .traj-s { fill: var(--ink); opacity: .6; } .chart .traj-s.last { fill: var(--accent); opacity: 1; }
+.chart .eq { stroke-width: 3; }
+.chart .eq-s { fill: var(--good); stroke: var(--panel); }
+.chart .eq-u { fill: var(--panel); stroke: var(--bad); }
+.chart .real { fill: none; stroke: var(--ink); stroke-width: 2.6; stroke-linejoin: round; }
+.chart .real-d { fill: var(--ink); }
+.chart .real-t { font: 500 11px var(--mono); fill: var(--ink); paint-order: stroke; stroke: var(--panel); stroke-width: 3px; }
+.chart .real-w { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+.chart .fitp { fill: none; stroke: var(--accent); stroke-width: 2.2; stroke-dasharray: 6 4; }
+.chart .ts { fill: none; stroke-width: 2.6; stroke-linejoin: round; }
+.chart .eqline { stroke-width: 1.5; stroke-dasharray: 5 4; opacity: .8; }
+
+/* Panel */
+.sliders { display: flex; flex-direction: column; gap: 10px; margin-bottom: 8px; }
+.choices small { color: var(--muted); font-size: 11.5px; }
+.choices b { font-weight: 600; }
+.pnote { border-left: 3px solid var(--warn); padding-left: 8px; }
+#datasec.off .sliders, #datasec.off .fitwrap { opacity: .5; }
+.fitwrap table { font-size: 11.5px; }
+.fitwrap th, .fitwrap td { padding: 5px 6px; }
+th.r, td.r { text-align: right; }
+.ok { color: var(--good); font-weight: 600; } .no { color: var(--bad); font-weight: 600; }
+tr.tot th, tr.tot td { font-weight: 600; }
+
+/* Below */
+.below h2.mt { margin-top: 22px; }
+.eqn { font-family: var(--mono); font-size: 14px; background: var(--chip); padding: 8px 12px; border-radius: 3px; display: inline-block; }
+.lit p { font-size: 13.5px; }
+
+/* Walkthrough card */
+.tour { background: var(--panel); border: 1px solid var(--rule); border-top: 3px solid var(--accent); border-radius: 4px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
+.tour[hidden] { display: none; }
+.tour-h { display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.tour .x { background: none; border: 0; font-size: 20px; line-height: 1; cursor: pointer; color: var(--muted); padding: 0 4px; }
+.tour h3 { margin: 0; font-family: var(--display); font-size: 20px; line-height: 1.15; }
+.tour p { margin: 0; font-size: 13.5px; max-width: 80ch; }
+.tour-nav { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
+
+@media (max-width: 640px) {
+  .big b { font-size: 28px; }
+  .choices { grid-template-columns: minmax(0, 1fr); }
+  .headcard .readout { min-width: 0; width: 100%; }
+}
+.tablewrap tbody th { text-transform: none; letter-spacing: 0; font-family: var(--body); font-size: 12px; font-weight: 600; color: var(--ink); }
+.fitwrap thead th { font-size: 10.5px; letter-spacing: .03em; }
+#timecard[hidden] { display: none; }

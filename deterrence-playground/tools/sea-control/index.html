@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sea Control Game | Interactive Deterrence</title>
+<meta name="description" content="A two-move game between a dominant navy and a weaker challenger: split a budget between a Mahanian battle fleet and Corbettian distributed forces, and watch the challenger choose battle, a fleet in being or sea denial.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="sea-control.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<main class="layout">
+  <div class="stage" id="stage">
+    <p class="nbanner"><span class="notional">Notional model</span> The game is this tool's own illustration of the argument in Walberg's working paper, which states its theory in words. Every number is an input you set, not an estimate of any navy.</p>
+
+    <div class="card headcard">
+      <div class="head-top">
+        <div>
+          <p class="eyebrow">Sea traffic the dominant navy keeps open</p>
+          <p class="big"><b id="open" class="num">–</b> <span id="open-note"></span></p>
+        </div>
+        <div class="head-btns">
+          <button type="button" class="btn solid" id="tour-btn">Walkthrough</button>
+          <button type="button" class="btn" id="copy">Copy link</button>
+          <button type="button" class="btn" id="reset">Reset</button>
+        </div>
+      </div>
+      <div class="tablewrap"><table>
+        <thead><tr><th scope="col">Challenger's option</th><th scope="col" class="r">Traffic open</th><th scope="col" class="r">Challenger's payoff</th></tr></thead>
+        <tbody id="opts"></tbody>
+      </table></div>
+      <p class="fine" id="quote"></p>
+    </div>
+
+    <div class="card chartcard" id="maincard">
+      <div class="chart-h">
+        <p class="eyebrow">Click or drag to set the dominant navy's force mix</p>
+        <ul class="legend">
+          <li><i class="ln lb"></i>C seeks battle</li><li><i class="ln lf"></i>C keeps a fleet in being</li><li><i class="ln ld"></i>C wages sea denial</li>
+          <li><i class="ln lstar"></i>Best mix</li><li><i class="ln llock"></i>Locked-in mix</li>
+        </ul>
+      </div>
+      <svg id="main" class="chart" role="img" tabindex="0" aria-label="Chart of the share of sea traffic the dominant navy keeps open against the share of its budget in the battle fleet. Thin lines show each challenger option; the thick line follows the option the challenger picks. Use the left and right arrow keys to change the force mix."></svg>
+      <p class="fine" id="chart-note"></p>
+    </div>
+  </div>
+
+  <aside class="panel" aria-label="Model controls">
+    <div class="sec"><div class="status" id="status"><b></b><span></span></div></div>
+    <div class="sec">
+      <p class="eyebrow">1 · Start from a setting <span class="notional">notional</span></p>
+      <div class="choices" id="presets"></div>
+      <p class="fine pnote" id="preset-note" hidden></p>
+    </div>
+    <div class="sec">
+      <p class="eyebrow">2 · The dominant navy's force mix</p>
+      <div id="sl-mix" class="sliders"></div>
+    </div>
+    <div class="sec">
+      <p class="eyebrow">3 · The strategic setting <span class="notional">notional</span></p>
+      <div id="sl-env" class="sliders"></div>
+      <label class="tg"><input type="checkbox" id="ins"><span class="sw"></span><span class="t">Insurance-mediated denial<small>Most traffic stops once the loss rate reaches the insurers' threshold (Walberg's concept)</small></span></label>
+      <div id="sl-ins" class="sliders"></div>
+    </div>
+    <div class="sec">
+      <p class="eyebrow">4 · Doctrinal lock-in <span class="notional">notional</span></p>
+      <div id="sl-lock" class="sliders"></div>
+    </div>
+    <div class="sec">
+      <p class="eyebrow">Readout</p>
+      <dl class="readout" id="summary"></dl>
+    </div>
+  </aside>
+</main>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>A dominant navy, D, splits its budget between a concentrated battle fleet and distributed forces: escorts, mine countermeasures, sensors and small combatants. A weaker challenger, C, sees that choice and answers in one of three ways. It can seek the decisive battle that Mahan's readers expected. It can keep its fleet in being and refuse battle, as Corbett described. Or it can fight for the sea lanes with cheap means of denial such as mines, submarines and missiles.</p>
+    <p>The chart puts D's battle-fleet share on the horizontal axis and the share of sea traffic D keeps open on the vertical axis. Each thin line is one of C's options. The shaded bands and the thick line show the option C picks, the one that pays C best. The green line marks D's best mix. With lock-in switched on, the orange line marks the mix a navy picks when it plans for the battle it prefers or values capital ships for their own sake.</p>
+    <p>The pattern to look for: once the challenger can refuse battle, extra battle fleet stops buying control of the sea. Past the point where C switches to denial, each extra share of budget in the battle fleet closes more traffic than it opens.</p>
+
+    <h2 class="mt">How the model works</h2>
+    <p><b>The paper.</b> Walberg's working paper argues that dominant navies lock in force structures built for decisive battle through three reinforcing pathways: selective readings of canonical theorists, promotion paths tied to prestige platforms, and a grand-strategic preference for deterrence by punishment. Its hypothesis H3 holds that where cheap precision strike favours the offense, distributed sea denial outperforms concentrated sea control. The paper has no formal model. This game is the tool's own rendering of that argument.</p>
+    <p><b>Moves.</b> D has resources R against C's 1 and puts a share m into the battle fleet, B = mR, and the rest into distributed forces, E = (1 − m)R. C then chooses.</p>
+    <p><b>Battle.</b> C wins command with probability q = 1 / (1 + B²), a contest in which strength counts squared. D keeps 1 − q of traffic open. C loses its fleet, which it values at L, with probability 1 − q.</p>
+    <p><b>Fleet in being.</b> C keeps its fleet and refuses action. D needs w units of battle fleet per unit of C's fleet to contain it. Short of that, C's sorties close up to a share φ of traffic: open = 1 − φ·max(0, 1 − B/w).</p>
+    <p><b>Sea denial.</b> C's loss rate on D's traffic is r = k / (k + E), where k measures how much denial C buys per unit of budget relative to what D's distributed forces cost to counter it. Open = 1 − r. With insurance-mediated denial on, only a residual share ρ keeps sailing once r reaches the threshold τ.</p>
+    <p><b>Choices.</b> C maximises 1 − open, less its expected fleet loss in battle. D's best mix m* maximises traffic open given C's reply. The locked-in mix gives weight θ to the case in which C accepts battle (the paper's doctrinal inheritance) and adds a premium β per unit of battle-fleet share (its prestige-platform bias). The tool reads open traffic at that mix under C's actual reply.</p>
+    <p><b>What is <span class="notional">notional</span>:</b> every functional form and every parameter, including the presets. The squared contest, the containment ratio, the denial formula and the insurance threshold are the tool's choices. <b>What is sourced:</b> the paper's argument and hypotheses, and the quotations from Mahan, Corbett, Scheer and the Navy's Falklands report. <b>What is left out:</b> time, attrition over a campaign, scouting and the kill chain the paper stresses, alliances, and the mixed strategies a real challenger would use, such as keeping a fleet in being while waging denial.</p>
+
+    <h2 class="mt">Two historical illustrations</h2>
+    <div id="cases" class="cases"></div>
+  </div>
+  <div class="col">
+    <h2>Mahan and Corbett in their own words</h2>
+    <div id="lit" class="lit"></div>
+    <h2 class="mt">Sources</h2>
+    <ul class="src" id="srclist"></ul>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Sea Control Game', sub: 'Split a navy\'s budget between a battle fleet and distributed forces, and see whether the challenger fights, waits or denies.', category: 'Game theory' });
+  document.title = 'Sea Control Game | Interactive Deterrence';
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

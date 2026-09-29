@@ -159,6 +159,10 @@ export const ALL_TOOLS = [
     blurb: 'Scrub from 1939 to 2017 to watch states explore, pursue, acquire and give up nuclear weapons, as three published datasets code it, with every disagreement between them shown.' },
   { slug: 'treaty-tracker', cat: 'nuclear', sites: ['deterrence'], title: 'Treaty Tracker', status: 'live',
     blurb: 'Twenty nuclear and arms-control treaties, 197 states, 1963 to 2026: scrub the years to see who signed, joined, suspended or walked away, with every date traced to a depositary record or official statement.' },
+  { slug: 'sea-control', cat: 'gametheory', also: ['models'], sites: ['deterrence'], title: 'Sea Control Game', status: 'live',
+    blurb: "Split a navy's budget between a Mahanian battle fleet and Corbettian distributed forces, and see whether the challenger fights, waits or denies." },
+  { slug: 'arms-race', cat: 'gametheory', also: ['nuclear'], sites: ['deterrence'], title: 'Arms Race Dynamics', status: 'live',
+    blurb: "Richardson's arms-race equations as a phase plane you can click: set reaction, fatigue and grievance, and see which races settle, which run away, and what happens with a third rival." },
 ];
 
 export const onSite = (x, site = SITE) => !x.sites || x.sites.includes(site);

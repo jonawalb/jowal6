@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+  <rect width="640" height="400" fill="#f2f2ee"/>
+  <rect x="24" y="24" width="592" height="352" rx="6" fill="#fbfbf8" stroke="#d9d9d0"/>
+  <!-- probability domain -->
+  <rect x="56" y="70" width="200" height="200" fill="#b3261e" fill-opacity=".1" stroke="#d3d6cd"/>
+  <rect x="56" y="140" width="124" height="130" fill="#033303" fill-opacity=".35" stroke="#033303" stroke-width="2"/>
+  <line x1="180" y1="70" x2="180" y2="270" stroke="#1b4fd4" stroke-width="4"/>
+  <line x1="56" y1="140" x2="256" y2="140" stroke="#e8753a" stroke-width="4" stroke-dasharray="12 6"/>
+  <!-- cost lines -->
+  <g fill="none" stroke-width="2">
+    <path d="M300 300 C 310 200, 320 120, 330 60" stroke="#1b4fd4" stroke-opacity=".5"/>
+    <path d="M340 300 C 360 200, 380 120, 400 60" stroke="#1b4fd4" stroke-opacity=".5"/>
+    <path d="M390 300 C 420 200, 450 130, 490 60" stroke="#1b4fd4" stroke-opacity=".5"/>
+    <path d="M300 270 C 400 262, 500 256, 596 250" stroke="#e8753a" stroke-opacity=".6" stroke-dasharray="8 5"/>
+    <path d="M300 220 C 400 208, 500 200, 596 194" stroke="#e8753a" stroke-opacity=".6" stroke-dasharray="8 5"/>
+    <path d="M300 170 C 400 152, 500 142, 596 136" stroke="#e8753a" stroke-opacity=".6" stroke-dasharray="8 5"/>
+  </g>
+  <path d="M576 90 L520 100 L440 118 L360 140" fill="none" stroke="#1b4fd4" stroke-width="6" stroke-linecap="round"/>
+  <path d="M576 90 L566 150 L540 210 L500 262" fill="none" stroke="#e8753a" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="360" cy="140" r="11" fill="#1b4fd4" stroke="#fbfbf8" stroke-width="3"/>
+  <circle cx="500" cy="262" r="11" fill="#e8753a" stroke="#fbfbf8" stroke-width="3"/>
+  <text x="56" y="344" font-family="Georgia, serif" font-size="30" font-weight="700" fill="#033303">Who gains by going first?</text>
+</svg>

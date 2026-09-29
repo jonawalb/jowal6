@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Crisis Stability Calculator | Interactive Deterrence</title>
+<meta name="description" content="An interactive version of Kent and Thaler's first-strike stability index (RAND, 1989): set two notional force postures and see each side's cost of striking first, the stability index, and what moves it.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="crisis-stability.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<main class="layout">
+  <div class="stage" id="stage">
+    <p class="nbanner"><span class="notional">Notional postures</span> The method follows Kent and Thaler (RAND, 1989). Side A and Side B are generic. Launcher counts, alert rates, damage expectancy and damage curves are inputs you set, not estimates of any country's forces.</p>
+
+    <div class="card headcard">
+      <div class="head-l">
+        <svg id="prob" class="prob" role="img" aria-label="Probability domain: the shaded box, where both sides see an advantage in waiting, has an area equal to the stability index."></svg>
+        <ul class="legend"><li><i class="sw sa"></i>A's ratio</li><li><i class="sw sb"></i>B's ratio</li></ul>
+      </div>
+      <div class="head-r">
+        <div class="head-top">
+          <div>
+            <p class="eyebrow">First-strike stability index</p>
+            <p class="idx"><b id="idx" class="num">–</b> <span id="idx-note" class="num"></span></p>
+          </div>
+          <div class="head-btns">
+            <button type="button" class="btn solid" id="tour-btn">Walkthrough</button>
+            <button type="button" class="btn" id="copy">Copy link</button>
+            <button type="button" class="btn" id="reset">Reset</button>
+          </div>
+        </div>
+        <div class="tablewrap costwrap"><table>
+          <thead><tr><th scope="col">Exchange</th><th scope="col" class="ca">Cost to A</th><th scope="col" class="cb">Cost to B</th></tr></thead>
+          <tbody id="costs"></tbody>
+        </table></div>
+        <p class="fine">Cost 0 is no damage to yourself and the enemy's war aims denied; 1.0 is total loss on both sides; 1.3 is total loss with the enemy untouched (Kent and Thaler, pp. 13–14). The index multiplies each side's ratio of first-strike cost to second-strike cost.</p>
+      </div>
+    </div>
+
+    <div class="card chartcard" id="domaincard">
+      <div class="chart-h">
+        <p class="eyebrow">Weapons domain: draw-down curves on lines of constant cost</p>
+        <ul class="legend"><li><i class="ln la"></i>A's cost</li><li><i class="ln lb"></i>B's cost</li><li><i class="ln dda"></i>A strikes first</li><li><i class="ln ddb"></i>B strikes first</li></ul>
+      </div>
+      <svg id="domain" class="chart" role="img" aria-label="Weapons domain chart. Horizontal axis: Side B weapons available to strike A's value. Vertical axis: Side A weapons available to strike B's value. Contour lines show each side's constant cost; two curves show each side's first-strike options and where it stops."></svg>
+      <p class="hover" id="hover" aria-live="polite"></p>
+    </div>
+
+    <div class="card chartcard" id="sweepcard">
+      <div class="chart-h">
+        <p class="eyebrow">What moves the index</p>
+        <div class="seg" id="sweep-choices" role="group" aria-label="Input to sweep"></div>
+      </div>
+      <ul class="legend"><li><i class="ln sboth"></i>Both sides changed</li><li><i class="ln sa2"></i>Only A changed</li><li><i class="ln sb2"></i>Only B changed</li><li><i class="ln scur"></i>Current setting</li></ul>
+      <svg id="sweep" class="chart" role="img" aria-label="Line chart of the stability index as one input is swept across its range."></svg>
+      <p class="fine" id="sweep-note"></p>
+    </div>
+  </div>
+
+  <aside class="panel" aria-label="Force posture controls">
+    <div class="sec">
+      <div class="status" id="status"><b></b><span></span></div>
+    </div>
+    <div class="sec">
+      <p class="eyebrow">1 · Start from a posture <span class="notional">notional</span></p>
+      <div class="choices" id="presets"></div>
+      <p class="fine pnote" id="preset-note" hidden></p>
+    </div>
+    <div class="sec">
+      <p class="eyebrow">2 · Edit a side</p>
+      <div class="seg tabs" id="side-tabs" role="group" aria-label="Side to edit">
+        <button type="button" data-s="A" class="ta">Side A</button><button type="button" data-s="B" class="tb">Side B</button>
+      </div>
+      <div id="side-sliders" class="sliders"></div>
+    </div>
+    <div class="sec">
+      <p class="eyebrow">3 · Exchange assumptions</p>
+      <label class="tg"><input type="checkbox" id="prl"><span class="sw"></span><span class="t">Striker expects launch under attack<small>90% of fixed-launcher warheads fly before the strike lands (Kent and Thaler, p. 35)</small></span></label>
+      <p class="rule-h">Warheads a striker may aim at one launcher</p>
+      <div class="seg" id="wpt" role="group" aria-label="Warheads per target">
+        <button type="button" data-v="1">One</button><button type="button" data-v="2">Up to two</button>
+      </div>
+    </div>
+    <div class="sec">
+      <p class="eyebrow">Side A · Side B</p>
+      <dl class="readout" id="summary"></dl>
+    </div>
+  </aside>
+</main>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>In a deep crisis, each leader asks whether going first would leave the country better off than waiting and being hit. Glenn Kent and David Thaler turned that question into a number. For each side they compute the cost of striking first and the cost of being struck first. The ratio of the two is the break-even chance of an enemy attack: a leader who thinks the other side is more likely than that to strike sees an advantage in going first. Multiply the two sides' ratios and you get the index. At 1.0 neither side gains anything by striking first. Near 0, at least one side can disarm the other and escape with little damage.</p>
+    <p>Set each side's forces in the panel. The square at the top is the report's probability domain: the shaded box is where both leaders prefer to wait, and its area is the index. The large chart is the report's weapons domain. Lines of constant cost come from the report's cost formula; the two curves are each side's counterforce options, from most to least efficient, and the dots mark where each striker stops. The sweep chart moves one input across its range, for one side or both, and redraws the index.</p>
+    <p>The index is the same for both sides by construction. Kent and Thaler draw the lesson that first-strike stability is a shared goal, so each side does better to make its own forces survivable than to make the other's vulnerable (pp. 47–48).</p>
+
+    <h2 class="mt">How the model works</h2>
+    <p><b>Cost.</b> Each side's cost is its damage raised to 0.75, plus 0.3 times the share of the enemy's value it failed to destroy, also raised to 0.75: C = D<sub>own</sub><sup>0.75</sup> + 0.3 (1 − D<sub>enemy</sub><sup>0.75</sup>). This is the function in the report's Appendix C (p. 61), which reproduces the corner costs of 0, 0.3, 1.0 and 1.3 (pp. 13–14) and the curved lines of constant cost of Fig. 5.</p>
+    <p><b>Damage.</b> The report links weapons to damage with hand-drawn curves that rise steeply and then flatten (Fig. 7, pp. 18–19); in them, 2,000 weapons destroy about 80 percent of one side's value and about 55 percent of the other's. The tool uses D = 1 − e<sup>−w/k</sup>, with k set so that the number of enemy weapons you choose destroys 80 percent of a side's value. The exponential form is the tool's own choice.</p>
+    <p><b>Draw-down curves.</b> The striker attacks the victim's targetable launchers: fixed launchers and survivable launchers that are off alert. Each warhead aimed at a launcher destroys it with the striker's damage expectancy; a second warhead on the same launcher is a separate, less efficient option. Options are taken in order of warheads destroyed per warhead spent, as in the report's Fig. 15 (pp. 34–35). The striker commits all its fixed forces and 90 percent of its survivable forces (p. 34). With launch under attack, 90 percent of fixed-launcher warheads escape (p. 35, n. 4).</p>
+    <p><b>Where the striker stops.</b> It ends its counterforce attack where its own cost is lowest and, among such points, where the enemy's cost is highest (p. 22). That point gives two of the four costs; the enemy's first strike gives the other two.</p>
+    <p><b>Index.</b> Each leader is indifferent between striking and waiting when the chance of an enemy first strike equals C<sub>first</sub> ÷ C<sub>second</sub> (p. 26). The index is (C<sub>1</sub><sup>A</sup> ÷ C<sub>2</sub><sup>A</sup>) × (C<sub>1</sub><sup>B</sup> ÷ C<sub>2</sub><sup>B</sup>), the area of box A in the probability domain (p. 29). The report's worked example: costs of 0.97 and 1.05 for one side and 0.90 and 1.00 for the other give 0.83; costs of 0.50, 1.18, 0.45 and 1.15 give 0.16 (pp. 24, 29). The report states that C<sub>1</sub> is at most C<sub>2</sub>; when a notional posture makes striking first cost more than waiting, the tool caps that ratio at 1.</p>
+    <p><b>What is <span class="notional">notional</span>:</b> every force posture, including the presets; alert rates; damage expectancy; the damage-curve setting for each side; the third-country reserve. None describes a real country. <b>What comes from the report:</b> the cost function and its parameters, the stopping rule, the index, the 90 percent availability and launch-under-attack figures, and the structure of the exchange. The tool does not reproduce the report's numerical results, which rest on detailed 1988 force data and hand-drawn curves.</p>
+    <p><b>What the model leaves out:</b> missile defenses, warning time, command and control, bomber penetration, reliability, the timing of generation during a crisis, and everything the report calls nonquantifiable, such as the emotions and misinformation of a real crisis (pp. 24–25). The index ranks postures; it is not a probability of war.</p>
+  </div>
+  <div class="col">
+    <h2>The wider literature</h2>
+    <div id="lit"></div>
+    <h2 class="mt">Sources</h2>
+    <ul class="src" id="srclist"></ul>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Crisis Stability Calculator', sub: 'Kent and Thaler\'s first-strike stability index: set two notional force postures and see who gains by striking first.', category: 'Nuclear weapons & arms control' });
+  document.title = 'Crisis Stability Calculator | Interactive Deterrence';
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

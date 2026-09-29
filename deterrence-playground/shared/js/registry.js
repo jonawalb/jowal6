@@ -129,6 +129,10 @@ export const ALL_TOOLS = [
     blurb: "China's trade punishment of Australia and South Korea in real trade and tourism data: what was hit, what found other buyers, and what Beijing failed to change." },
   { slug: 'war-markets', cat: 'coercion', sites: ['deterrence'], title: 'War Markets', status: 'live',
     blurb: 'What prediction markets priced for strikes on Iran, ceasefires and a Russia–NATO clash in 2026, set against how each contract resolved.' },
+  { slug: 'crisis-stability', cat: 'nuclear', sites: ['deterrence'], title: 'Crisis Stability Calculator', status: 'live',
+    blurb: "Set two notional force postures and see Kent and Thaler's first-strike stability index: who gains by striking first, and how MIRVed silos, alert rates and launch under attack move it." },
+  { slug: 'verification-game', cat: 'nuclear', sites: ['deterrence'], title: 'Trust but Verify', status: 'live',
+    blurb: 'An arms-control inspection game from the published literature: how inspection quotas, detection, false-alarm costs and penalties set the odds of cheating and of getting caught, beside New START, IAEA and CTBT verification.' },
 ];
 
 export const onSite = (x, site = SITE) => !x.sites || x.sites.includes(site);

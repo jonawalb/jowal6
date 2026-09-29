@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hormuz Mine Clearance | Interactive Deterrence</title>
+<meta name="description" content="A notional model of how long mine countermeasure forces take to clear shipping routes through the Strait of Hormuz, with sourced defaults, the 1991 and 2026 clearances for comparison and a sourced 2026 timeline.">
+<meta property="og:title" content="Hormuz Mine Clearance | Interactive Deterrence">
+<meta property="og:description" content="Set the mines, the clutter, the forces and the threat, and watch how long it takes before a route is clear enough to sail, and how clear that is.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="hormuz-mcm.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+<main class="layout">
+  <div class="stage">
+    <div class="card hm-card">
+      <div class="hm-head">
+        <h2>Clearing the routes, day by day</h2>
+        <div class="hm-actions">
+          <button type="button" class="btn solid" id="hm-tour">Walkthrough</button>
+          <button type="button" class="btn" id="hm-copy">Copy link</button>
+          <button type="button" class="btn" id="hm-reset">Reset</button>
+        </div>
+      </div>
+      <p class="fine">A notional model <span class="notional">notional</span>. Defaults marked "source" come from open sources; everything else is a round number you can change in the panel.</p>
+      <div class="hm-stripbox"><svg id="hm-strip" role="img" aria-label="Schematic of the shipping routes with search passes, mines and contacts on the selected day"></svg></div>
+      <div class="hm-legend" aria-hidden="true">
+        <span><i class="k-live"></i>Mine not yet found</span><span><i class="k-found"></i>Found, awaiting divers</span><span><i class="k-done">×</i>Neutralized</span><span><i class="k-c"></i>Clutter</span><span><i class="k-pass"></i>Searched (darker = more passes)</span>
+      </div>
+      <div class="hm-scrub">
+        <button type="button" class="btn" id="hm-play" aria-pressed="false">Play</button>
+        <output id="hm-dayout" class="num" for="hm-day"></output>
+        <input type="range" id="hm-day" min="0" step="1" aria-label="Day of the clearance">
+      </div>
+      <p class="fine" id="hm-daynote" aria-live="polite"></p>
+    </div>
+    <div class="card hm-card">
+      <p class="eyebrow">Chance one ship meets a live mine on one transit</p>
+      <div class="hm-chartbox"><svg id="hm-chart" role="img" aria-label="Risk to a transiting ship over the days of the clearance"></svg></div>
+      <p class="fine">Click or drag the chart to move the day. The dashed line is the 2026 Hormuz clearance for comparison; the model is not fitted to it.</p>
+    </div>
+    <div class="card hm-card">
+      <p class="eyebrow">Hormuz 2026: the sourced timeline</p>
+      <ol class="hm-tl" id="hm-timeline"></ol>
+    </div>
+  </div>
+  <aside class="panel" id="panel" aria-label="Results and inputs"></aside>
+</main>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>Mine clearance has two jobs. Search forces run sonar along each route, and every mine-like object they find has to be identified and, if it is a mine, destroyed, most often by divers or explosive ordnance disposal teams. The model runs both jobs day by day. A route is declared clear when it has been searched enough times to reach the confidence you pick and every contact has been dealt with.</p>
+    <p>"Clear" is a probability. Each search pass misses some mines, so the model always expects a few to remain. The chart turns that into the chance that one ship meets a live mine on one transit. Connell and Walberg write that mines work "not only by sinking ships but also by deterring underwriters from insuring passage," and in his September 2026 draft Walberg adds: "Insurers and ship captains cannot be ordered to believe that a seabed is clean."</p>
+    <p>The strip is a schematic. Mine and clutter positions are drawn at random spots to show counts; the tool does not map where mines were laid.</p>
+
+    <h2 class="mt">What history says</h2>
+    <ul class="src" id="hm-bench"></ul>
+    <p>The 1991 mine strikes show why clearance comes first. On 18 February 1991 the amphibious ship Tripoli, flagship of the minesweeping force, struck a moored contact mine, and less than three hours later the cruiser Princeton set off a bottom-influence mine (<a href="https://www.history.navy.mil/about-us/leadership/director/directors-corner/h-grams/h-gram-059.html" target="_blank" rel="noopener">NHHC, H-Gram 059</a>). In 1987 the reflagged tanker Bridgeton hit a mine on the first Earnest Will convoy, and in April 1988 the frigate Samuel B. Roberts struck another (<a href="https://web.archive.org/web/2026/https://www.usni.org/magazines/proceedings/2026/april/crisis-mine-countermeasures" target="_blank" rel="noopener">Eyer, Proceedings</a>).</p>
+
+    <h2 class="mt">Method</h2>
+    <ul class="src">
+      <li>Area = route length × number of routes × route width. Passes needed = the smallest number for which a mine survives every pass with probability at or below 1 − confidence, with each pass finding a given mine 85 percent of the time <span class="notional">notional</span>.</li>
+      <li>Daily search = Σ (assets × area coverage rate × seabed factor × working hours). The seabed factors are the ratios of the Thales example rates (0.93, 0.8 and 0.4 square nautical miles per hour). Only the uncrewed-boat rate comes from that source; ship and helicopter rates are notional multiples of it.</li>
+      <li>Contacts = clutter density × area, plus the mines found. They appear as the first pass covers the route. Teams work through them at a notional rate; the threat level sets working hours and a weekly loss rate for every asset.</li>
+      <li>Re-mining adds mines inside the routes during clearance and about one square nautical mile of re-search per mine per pass <span class="notional">notional</span>.</li>
+      <li>Risk per transit = 1 − (1 − 0.5 × 60 m ÷ route width)<sup>mines per route</sup>: a mine fires half the time when it lies within a 60-meter path <span class="notional">notional</span>.</li>
+      <li>Not modeled: mine types and sweep-resistant mines, currents and water depth, weather, clearance of anchorages and port approaches, mine hunting outside the routes.</li>
+      <li>Left out on purpose: counts of contacts investigated and mines found in 2026, and an IMO mine count, which could not be matched to a source that loaded; and a mining start date earlier than the one the timeline sources support.</li>
+    </ul>
+    <h3>Force rates</h3>
+    <ul class="src" id="hm-forces-note"></ul>
+  </div>
+  <div class="col">
+    <h2>Sources for the model</h2>
+    <ul class="src" id="hm-srcs"></ul>
+    <h2 class="mt">Timeline sources</h2>
+    <p class="fine">Links in the timeline card; all returned HTTP 200 on <span id="hm-checked"></span> (<code>scripts/build_timeline.py</code>). Most events are shared with the Red Sea &amp; Hormuz Pulse tool.</p>
+  </div>
+</section>
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Hormuz Mine Clearance', sub: 'A notional model of how long mine countermeasure forces take to clear shipping routes through the Strait of Hormuz, with sourced defaults and a sourced 2026 timeline.', category: 'Middle East' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

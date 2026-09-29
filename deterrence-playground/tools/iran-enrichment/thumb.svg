@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+  <rect width="640" height="400" fill="#f2f2ee"/>
+  <rect x="24" y="24" width="592" height="352" rx="6" fill="#fbfbf8" stroke="#d3d6cd"/>
+  <g stroke="#d3d6cd" stroke-width="1">
+    <line x1="60" y1="310" x2="600" y2="310"/><line x1="60" y1="240" x2="600" y2="240"/>
+    <line x1="60" y1="170" x2="600" y2="170"/><line x1="60" y1="100" x2="600" y2="100"/>
+  </g>
+  <path d="M60,310 L180,309 L230,300 L290,240 L340,255 L390,225 L430,215 L470,185 L510,150 L520,120 L520,310 Z" fill="#1b4fd4" opacity=".9"/>
+  <path d="M290,310 L340,290 L390,270 L430,275 L470,258 L510,250 L520,262 L520,310 Z" fill="#2c6d8a"/>
+  <path d="M390,225 L430,210 L470,176 L510,138 L520,108 L520,120 L510,150 L470,185 L430,215 Z" fill="#a88000"/>
+  <path d="M430,210 L470,172 L510,130 L520,96 L520,108 L510,138 L470,176 Z" fill="#b3261e"/>
+  <line x1="60" y1="302" x2="600" y2="302" stroke="#e8753a" stroke-width="3"/>
+  <rect x="520" y="60" width="72" height="250" fill="#e7e9e1" stroke="#6f7a73" stroke-dasharray="6 5"/>
+  <text x="556" y="200" font-family="Georgia, serif" font-size="72" font-weight="700" fill="#6f7a73" text-anchor="middle">?</text>
+  <circle cx="520" cy="96" r="7" fill="#14201a"/>
+  <text x="64" y="72" font-family="Georgia, serif" font-size="30" font-weight="700" fill="#14201a">440.9 kg at 60%</text>
+  <text x="64" y="104" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#033303">then no verified figure</text>
+</svg>

@@ -163,6 +163,10 @@ export const ALL_TOOLS = [
     blurb: "Split a navy's budget between a Mahanian battle fleet and Corbettian distributed forces, and see whether the challenger fights, waits or denies." },
   { slug: 'arms-race', cat: 'gametheory', also: ['nuclear'], sites: ['deterrence'], title: 'Arms Race Dynamics', status: 'live',
     blurb: "Richardson's arms-race equations as a phase plane you can click: set reaction, fatigue and grievance, and see which races settle, which run away, and what happens with a third rival." },
+  { slug: 'qre-explorer', cat: 'gametheory', sites: ['deterrence'], title: 'Quantal Response Explorer', status: 'live',
+    blurb: 'See how logit quantal response equilibrium departs from Nash in crisis and deterrence games as precision runs from 0 to infinity, and why estimating these games needs care.' },
+  { slug: 'correction-lab', cat: 'infowar', sites: ['deterrence'], title: 'Correction Lab', status: 'live',
+    blurb: "Design a correction to a false story and see how much belief persists: meta-analytic effect sizes on timing, source, repetition and explanation, combined with Walberg's Sticky Affect condition in a notional model." },
 ];
 
 export const onSite = (x, site = SITE) => !x.sites || x.sites.includes(site);

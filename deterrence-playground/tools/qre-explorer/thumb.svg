@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+<rect width="640" height="400" fill="#f2f2ee"/>
+<rect x="16" y="16" width="608" height="368" rx="8" fill="#fbfbf8" stroke="#d3d6cd"/>
+<g stroke="#d3d6cd" stroke-width="1.5">
+<line x1="70" y1="90" x2="560" y2="90"/><line x1="70" y1="190" x2="560" y2="190"/><line x1="70" y1="290" x2="560" y2="290"/>
+</g>
+<rect x="570" y="80" width="40" height="220" fill="#e9e4d4" stroke="#d3d6cd"/>
+<path d="M70 190 C 200 190, 260 186, 300 176 S 380 130, 430 100 S 520 86, 560 84" fill="none" stroke="#e8753a" stroke-width="7" stroke-linecap="round"/>
+<path d="M70 190 C 200 190, 260 194, 300 204 S 380 250, 430 280 S 520 294, 560 296" fill="none" stroke="#1b4fd4" stroke-width="7" stroke-linecap="round"/>
+<path d="M560 150 C 470 150, 420 160, 400 190 C 420 220, 470 230, 560 232" fill="none" stroke="#56625b" stroke-width="3" stroke-dasharray="8 6"/>
+<path d="M560 110 C 470 110, 420 120, 400 190 C 420 262, 470 272, 560 274" fill="none" stroke="#56625b" stroke-width="3" stroke-dasharray="8 6" opacity=".6"/>
+<circle cx="590" cy="84" r="9" fill="#fbfbf8" stroke="#e8753a" stroke-width="4"/>
+<circle cx="590" cy="296" r="9" fill="#fbfbf8" stroke="#1b4fd4" stroke-width="4"/>
+<line x1="330" y1="70" x2="330" y2="310" stroke="#b3261e" stroke-width="3"/>
+<text x="70" y="352" font-family="Georgia, serif" font-size="30" font-weight="700" fill="#14201a">λ → ∞</text>
+<text x="440" y="352" font-family="Georgia, serif" font-size="26" font-weight="700" fill="#033303">QRE vs Nash</text>
+</svg>

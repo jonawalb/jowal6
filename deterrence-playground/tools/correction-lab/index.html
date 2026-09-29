@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Correction Lab | Interactive Deterrence</title>
+<meta name="description" content="Design a correction to a false story and see how much belief persists, as timing, source, repetition, alternative explanations and emotion change. Effect sizes come from meta-analyses; the combined prediction is a notional model built on Walberg's Sticky Affect retraction condition.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="correction-lab.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<div class="toolbar-top" id="stage-top">
+  <p class="lede">A false story has spread and a correction is coming. Choose when it arrives, who delivers it, whether it explains what really happened, and how frightened the audience is. See how many people still believe the story afterward.</p>
+  <div class="actions">
+    <button type="button" class="btn solid" id="start-tour">Start the walkthrough</button>
+    <button type="button" class="btn" id="copy-link">Copy link to this setup</button>
+    <button type="button" class="btn" id="reset">Reset</button>
+  </div>
+</div>
+
+<main class="layout">
+  <div class="stage">
+    <div class="card fig">
+      <div class="fig-h"><p class="eyebrow">After the correction</p><span class="notional">notional model</span></div>
+      <div class="hero">
+        <div class="big-wrap"><p class="big" id="big" aria-live="polite"></p><p class="fine" id="big-sub"></p></div>
+        <svg id="people" class="people" role="img" aria-label="200 people. Filled dots still believe the false story after the correction; open dots revised their belief."></svg>
+      </div>
+      <div class="legend"><span class="lg"><i class="d hold"></i>Still believes the myth</span><span class="lg"><i class="d rev"></i>Revised after the correction</span></div>
+      <p class="why" id="read-why"></p>
+    </div>
+    <div class="grid2">
+      <div class="card fig">
+        <div class="fig-h"><p class="eyebrow">The retraction condition</p><span class="fine">Walberg, Sticky Affect</span></div>
+        <p class="cond">Revise only if <b>α(E)·evidence</b> &gt; (1 − α(E))·U<sub>I</sub> + C</p>
+        <svg id="thresh" class="chart" role="img" aria-label="Histogram of each person's revision bar, with the correction's weighted evidence marked. People whose bar is below the line revise."></svg>
+        <div class="legend"><span class="lg"><i class="sq rev"></i>Bar below the line: revises</span><span class="lg"><i class="sq hold"></i>Bar above: keeps the belief</span></div>
+      </div>
+      <div class="card fig">
+        <div class="fig-h"><p class="eyebrow">What each choice did</p><span class="notional">notional</span></div>
+        <p class="fine">From the average correction to this one, adding one lever at a time. Red raises persistence, green lowers it.</p>
+        <div class="wf" id="wf"></div>
+      </div>
+    </div>
+    <div class="card fig">
+      <div class="fig-h"><p class="eyebrow">Emotion: where the theory goes past the evidence</p><p class="fine">Click or drag to set E.</p></div>
+      <svg id="sweep" class="chart" role="img" aria-label="Predicted persistence as emotional activation rises, with Sticky Affect weighting on (solid) and off (dashed)"></svg>
+      <div class="legend"><span class="lg"><i class="ln on"></i>Sticky Affect on: α(E) = 1/(1 + E)</span><span class="lg"><i class="ln off"></i>Off: emotion ignored</span></div>
+      <p class="fine" id="sweep-note"></p>
+    </div>
+    <div class="card fig">
+      <div class="fig-h"><p class="eyebrow">What the meta-analysis found</p><span class="fine">Walter &amp; Tukachinsky 2020 · 32 studies, N = 6,527</span></div>
+      <p class="fine">Continued influence of misinformation after correction, r with 95% CI. Values below zero mean the myth still shapes beliefs. Your current choices are highlighted; rows marked context are not levers in the tool.</p>
+      <svg id="forest" class="chart" role="img" aria-label="Forest plot of subgroup estimates from Walter and Tukachinsky's meta-analysis"></svg>
+    </div>
+  </div>
+  <aside class="panel" id="panel" aria-label="Correction design and audience"></aside>
+</main>
+<div id="tour-root"></div>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>Each dot is one of 200 people who took in a false story. After the correction, a person either revises or keeps the belief. The big number is the share who keep it.</p>
+    <ul class="howto">
+      <li><b>The retraction condition</b> chart shows why. Every person has a bar, the value of keeping the belief: the identity weight (1 − α) times what the claim means to them, U<sub>I</sub>, plus the cost of abandoning it, C. The correction has one strength, α(E) times its evidence. People whose bar falls below that line revise.</li>
+      <li><b>Timing, repetition</b> change the cost C. <b>Source, an alternative explanation and restating the myth</b> change the evidence. <b>Emotion</b> changes α. <b>Identity</b> shifts every U<sub>I</sub>.</li>
+      <li><b>The waterfall</b> starts from the average correction (31%) and adds your choices one at a time, in a fixed order.</li>
+      <li><b>The forest plot</b> is data, not model: the subgroup estimates from Walter and Tukachinsky (2020), exactly as reported.</li>
+      <li>The address bar stores every setting, so a design can be shared.</li>
+    </ul>
+
+    <h2 class="mt">What the evidence says</h2>
+    <ul class="evid">
+      <li><b>Corrections help but rarely erase.</b> Walter and Tukachinsky: “Aggregation of results from 32 studies (N= 6,527) revealed that, on average, correction does not entirely eliminate the effect of misinformation (r = -.05, p = .045).” Chan, Jones, Hall Jamieson and Albarracín (k = 52, N = 6,878) report “large effects for presenting misinformation (ds = 2.41–3.08), debunking (ds = 1.14–1.33), and the persistence of misinformation in the face of debunking (ds = 0.75–1.06).”</li>
+      <li><b>Timing.</b> “The continued effect of misinformation was stronger when the correction was presented after a filler task (r = -.13, CI [-.28, -.02], p = .045) compared to misinformation that was corrected immediately (r =.01, CI [-.05, .06], p = .87).” The studies coded delay only as immediate or after a filler task. On longer spans, Ecker et al. (2022): “The beneficial effects of debunking can last several weeks, although the effects can wear off quicker.”</li>
+      <li><b>Source.</b> “the continued influence effect was weaker when the same source delivered both the correction and the misinformation (r = .01, CI [-.06, .08], p = .74) and stronger effects were observed when different sources were responsible for misinformation and its correction (r = -.10, CI [-.18, -.01], p = .02).” No meta-analysis in this set codes in-group against out-group sources. Ecker et al.: “people tend to trust sources that are perceived to share their values and worldviews,” and “corrections are more impactful when they come from a socially-connected source (for example, a connection on social media) rather than a stranger.”</li>
+      <li><b>Repetition.</b> “repetition of misinformation is a significant predictor of the continued influence effect (b = -.30, SE = .12, p = .001), with each additional repetition of misinformation enhancing its continued influence on beliefs by an average of .30 points.” Restating the myth inside the correction was not significant (r = -.10 against -.02, p = .18). Ecker et al.: “misinformation familiarity contributes to the CIE but does not typically produce backfire effects.”</li>
+      <li><b>Alternative explanation.</b> Corrections coded as coherent, which “had to mention a reason for the distribution of the misinformation or provide an alternative explanation, rather than merely retract the misinformation,” left r = -.03 against -.12 for bare retractions. Walter and Murphy (2018): “appeals to coherence (r = .55) outperform fact-checking (r = .25), and appeals to credibility (r = .14).” Ecker et al.: “the most important element of a debunking correction is to provide a factual account that ideally includes an alternative explanation for why something happened.” One complication: Chan et al. found that “a detailed debunking message also correlated positively with the misinformation-persistence effect.”</li>
+      <li><b>Emotion.</b> The meta-analyses do not show that emotional misinformation is harder to correct. Walter and Tukachinsky found “no significant difference in the continued influence effect (Q(1) = 0.04, p = .85) between negatively valanced misinformation … and neutral or positive misinformation.” Chan and Albarracín (2023) found “corrections were more effective for negative (versus neutral) misinformation (b(60) = 0.27, P = .017, 95% CI 0.05 to 0.50).” Ecker et al. describe studies that “found no impact of misinformation emotiveness on the magnitude of the CIE,” while noting that misinformation conveying fear or anger “might be particularly likely to evoke a CIE.”</li>
+      <li><b>Worldview.</b> “counter-attitudinal corrections led to stronger continued influence effects (r = -.20, CI [-.32, -.07], p = .002), compared with pro-attitudinal corrections.” Walter, Cohen, Holbert and Morag (2020) find fact-checking’s effect (d = 0.29) “substantially attenuated by participants’ preexisting beliefs, ideology, and knowledge.”</li>
+    </ul>
+  </div>
+  <div class="col" id="method">
+    <h2>Method · the Sticky Affect condition</h2>
+    <p>Jonathan Walberg’s Sticky Affect model (working paper) holds that people trade accuracy against identity. “Belief updating requires: α(E) · Evidence Strength &gt; (1 − α(E)) · Identity Utility + C,” where α is the weight on accuracy, E is emotional activation with dα/dE &lt; 0, and C = g(N, S) is the cost of abandoning the belief, rising in narrative coherence N and social reinforcement S. “When this inequality fails, belief persistence emerges.” The model also states that “Corrective information reduces belief persistence only when it provides a coherent replacement narrative,” which is why the alternative-explanation lever acts on evidence. The same condition drives corrections in this site’s Misinformation Cascade tool.</p>
+    <h2 class="mt">Method · combining the evidence</h2>
+    <p>Everything that turns these effect sizes into one number is <span class="notional">notional</span>, this tool’s own construction. No study estimates it.</p>
+    <ul class="howto">
+      <li>Each lever’s shift is Δz = atanh(r<sub>level</sub>) − atanh(−.05), the Fisher-z distance between Walter and Tukachinsky’s subgroup estimate and their overall estimate. Repetition adds −.30 per extra hearing, treating their slope as a z shift.</li>
+      <li>Evidence = e<sub>0</sub>·exp(κ·ΣΔz) over source, alternative explanation and restating. Cost C = C<sub>0</sub>·exp(−κ·ΣΔz) over timing and repetition. κ = 2.5 by default.</li>
+      <li>α(E) = 1/(1 + E), the same form as the Misinformation Cascade tool. The paper fixes only that α falls as E rises.</li>
+      <li>The 200 people differ only in identity value, U<sub>I</sub>, spread evenly on a logistic scale around the mean you set.</li>
+      <li>e<sub>0</sub> is solved so that the average correction (all Δz = 0, E = 1, identity 1) leaves 31% believing: Chan et al.’s random-effects persistence d = 0.97 divided by their misinformation effect d = 3.08.</li>
+      <li>The moderators are treated as independent and additive. Meta-analytic subgroups are not: they overlap and are confounded, so this adds effects the literature reports one at a time.</li>
+      <li>Calibrated constants: <span class="num" id="calib"></span>.</li>
+    </ul>
+    <h2 class="mt">What is missing</h2>
+    <ul class="howto">
+      <li>No meta-analysis here measures delay in hours, days or weeks. “After a delay” means a filler task in a lab.</li>
+      <li>No meta-analysis here codes in-group against out-group correctors. The same-source contrast is the closest available.</li>
+      <li>No pooled estimate shows that emotion makes corrections fail. The emotion effect in this tool comes from the Sticky Affect theory alone.</li>
+      <li>Repeated corrections could not be tested: Walter and Tukachinsky note “the lack of variance in our sample.”</li>
+    </ul>
+
+    <h2 class="mt">Sources</h2>
+    <ul class="src">
+      <li>Nathan Walter and Riva Tukachinsky, “A Meta-Analytic Examination of the Continued Influence of Misinformation in the Face of Correction: How Powerful Is It, Why Does It Happen, and How to Stop It?” <i>Communication Research</i> 47, no. 2 (2020): 155–177. <a href="https://doi.org/10.1177/0093650219854600" target="_blank" rel="noopener">doi:10.1177/0093650219854600</a> · <a href="https://digitalcommons.chapman.edu/comm_articles/61" target="_blank" rel="noopener">accepted manuscript (Chapman)</a>. Quotations from the manuscript.</li>
+      <li>Man-pui Sally Chan, Christopher R. Jones, Kathleen Hall Jamieson and Dolores Albarracín, “Debunking: A Meta-Analysis of the Psychological Efficacy of Messages Countering Misinformation,” <i>Psychological Science</i> 28, no. 11 (2017): 1531–1546. <a href="https://doi.org/10.1177/0956797617714579" target="_blank" rel="noopener">doi:10.1177/0956797617714579</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5673564/" target="_blank" rel="noopener">PMC full text</a>.</li>
+      <li>Nathan Walter and Sheila T. Murphy, “How to Unring the Bell: A Meta-Analytic Approach to Correction of Misinformation,” <i>Communication Monographs</i> 85, no. 3 (2018): 423–441. <a href="https://doi.org/10.1080/03637751.2018.1467564" target="_blank" rel="noopener">doi:10.1080/03637751.2018.1467564</a>. Abstract only.</li>
+      <li>Ullrich K. H. Ecker, Stephan Lewandowsky, John Cook, Philipp Schmid, Lisa K. Fazio, Nadia Brashier, Panayiota Kendeou, Emily K. Vraga and Michelle A. Amazeen, “The Psychological Drivers of Misinformation Belief and Its Resistance to Correction,” <i>Nature Reviews Psychology</i> 1, no. 1 (2022): 13–29. <a href="https://doi.org/10.1038/s44159-021-00006-y" target="_blank" rel="noopener">doi:10.1038/s44159-021-00006-y</a> · <a href="https://research-information.bris.ac.uk/en/publications/889ddb0f-0d44-44f4-a54f-57c260ae4917" target="_blank" rel="noopener">accepted manuscript (Bristol)</a>. A review, not a meta-analysis.</li>
+      <li>Man-pui Sally Chan and Dolores Albarracín, “A Meta-Analysis of Correction Effects in Science-Relevant Misinformation,” <i>Nature Human Behaviour</i> 7, no. 9 (2023): 1514–1525. <a href="https://doi.org/10.1038/s41562-023-01623-8" target="_blank" rel="noopener">doi:10.1038/s41562-023-01623-8</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12397989/" target="_blank" rel="noopener">PMC author manuscript</a>.</li>
+      <li>Nathan Walter, Jonathan Cohen, R. Lance Holbert and Yasmin Morag, “Fact-Checking: A Meta-Analysis of What Works and for Whom,” <i>Political Communication</i> 37, no. 3 (2020): 350–375. <a href="https://doi.org/10.1080/10584609.2019.1668894" target="_blank" rel="noopener">doi:10.1080/10584609.2019.1668894</a>. Abstract only.</li>
+      <li>Jonathan Walberg, “Affective Intelligence and the Stickiness of Disinformation,” working paper, draft of March 19, 2026, and its formal model note “Sticky Affect” (March 2026). Retraction condition, α(E), Proposition 3.</li>
+    </ul>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Correction Lab', sub: 'Design a correction to a false story and see how much belief persists. Meta-analytic effect sizes, combined in a notional model.', category: 'Disinformation & cognitive warfare' });
+  document.title = 'Correction Lab | Interactive Deterrence';
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

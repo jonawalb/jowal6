@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kharg Island | Interactive Deterrence</title>
+<meta name="description" content="A turn-based, notional wargame of a U.S. operation against Kharg Island, Iran's main oil export terminal: pick an objective and forces, set Iran's posture, play 12-hour turns with every die roll shown, then run 1,000 games.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="kharg-island.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+<div class="kh-actions">
+  <p class="kh-flag"><b>Notional model, not a prediction.</b> Most numbers are assumptions you can change; sourced values are marked.</p>
+  <div><button type="button" class="btn solid" id="start-tour">Start the walkthrough</button>
+  <button type="button" class="btn" id="copy-link">Copy link</button></div>
+</div>
+<nav class="kh-tabs" role="tablist" aria-label="Game sections">
+  <button type="button" role="tab" data-tab="setup" aria-selected="false">1 · Setup</button>
+  <button type="button" role="tab" data-tab="play" aria-selected="true">2 · Play</button>
+  <button type="button" role="tab" data-tab="mc" aria-selected="false">3 · 1,000 games</button>
+</nav>
+<main class="layout" data-tab="play">
+  <div class="stage">
+    <div class="mapbox" id="box">
+      <svg id="map" role="img" aria-label="Map of Kharg Island, Kharku and the nearby Iranian coast, with an island inset showing two notional approach sides and the published airstrip location, a notional zone for Iran's coastal forces and a notional sea area for the U.S. force."></svg>
+      <div class="tooltip" id="tip" hidden></div>
+    </div>
+    <div class="status status-mini" id="status-mini" aria-hidden="true"></div>
+    <div class="card playbar">
+      <div class="pb-btns">
+        <button type="button" class="btn" id="prev" aria-label="Previous turn">Back</button>
+        <button type="button" class="btn solid" id="next">Next turn</button>
+        <button type="button" class="btn" id="playall">Play all turns</button>
+      </div>
+      <label class="scrub"><span class="sr">Turn</span><input type="range" id="scrub" min="0" max="8" step="1"></label>
+      <p class="pb-t num" id="turn-t"></p>
+    </div>
+    <div class="turncols">
+      <div class="card res">
+        <p class="eyebrow">This turn: every roll</p>
+        <div id="log"></div>
+      </div>
+      <div class="card res side">
+        <p class="eyebrow">State after the turn</p>
+        <dl class="readout" id="readout"></dl>
+        <div id="crt-wrap">
+          <p class="eyebrow mt">Combat results table <span class="notional">notional</span></p>
+          <p class="fine" id="crt-note"></p>
+          <div id="crt"></div>
+        </div>
+      </div>
+    </div>
+    <div class="turncols tracks">
+      <div class="card res"><p class="eyebrow">Escalation and politics</p><div id="esc"></div></div>
+      <div class="card res"><p class="eyebrow">Oil and exports</p><div id="oil"></div></div>
+    </div>
+    <div class="card res" id="mc-card">
+      <p class="eyebrow">Monte Carlo: <span id="mc-h"></span></p>
+      <div id="mc" class="mc"></div>
+    </div>
+  </div>
+  <aside class="panel" id="panel" aria-label="Setup"></aside>
+  <div class="kh-go"><button type="button" class="btn solid" data-go="play">Play this setup</button>
+    <button type="button" class="btn" data-go="mc">See 1,000 games</button></div>
+</main>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p><b>Set up.</b> Pick the U.S. objective: seize the island and hold it as leverage over Iran's oil exports, raid it and withdraw, or blockade it from offshore without landing. Spend the budget on forces, then set Iran's posture with a preset or force by force.</p>
+    <p><b>Play.</b> Each turn is 12 hours. Carrier aircraft strike Iran's coastal launchers, drone teams and boats. Iran fires missile salvos and drone waves at the ships, and destroyers try to stop them; fast-attack-craft swarms close in, and helicopters try to break them up. Landing groups cross mined approaches, air lifts face the island's air defense, and the two ground forces fight on the combat results table. Iran ferries reinforcements from the mainland and strikes troops on the island with drones. Each turn Iran also rolls to widen the war. The log lists every chance and every die.</p>
+    <p><b>Monte Carlo.</b> The Monte Carlo card replays your setup 1,000 times with the same seeded dice and reports how often the objective is met, the escalation that came with it, and the notional oil price. <b>Key drivers</b> changes one lever at a time, replays the same 1,000 games, and shows how much each lever moves both the objective and the chance of a major escalation.</p>
+    <p>Outcomes. <b>Seize:</b> the U.S. holds Kharg when it has secured the whole island and still holds it at the end; the landing is defeated when the force is destroyed or pinned and outnumbered more than two to one; anything else is contested. <b>Raid:</b> the force must take the airstrip area and pull out; a bad withdrawal counts as costly. <b>Blockade:</b> success means Kharg loaded less than a quarter of its normal volume on average, failure more than 60%. A <b>major escalation</b> is a strike on Gulf energy infrastructure, or an escalation index of 50 or more.</p>
+
+    <h2 class="mt">Method and notional values</h2>
+    <p>This is a teaching model in the style of a board wargame. It uses no real unit positions, beach surveys or order of battle, and it does not draw or name any part of the oil terminal. Iran's forces sit in a notional zone and the U.S. force in a notional sea area on purpose. The island inset shows two broad approach halves and the airstrip at its published airport coordinates, and nothing else on the island.</p>
+    <p>Only a few numbers come from open sources: Iran's pre-war crude exports of about 1.6 million b/d and Kharg's share of about 94% (Kpler; CRS and most outlets say about 90%), the Brent spot baseline of $71 on the last trading day before the 2026 war (EIA), and about 2,200 Marines in a MEU (U.S. Marine Corps). The menu items, Iran's force types and the rough 1979 garrison figure rest on open descriptions (DIA, CSIS, FRUS, The War Zone, USNI News). Every probability, cost, rate, force count, oil-price sensitivity, escalation weight and the combat results table is <span class="notional">notional</span>. The table below lists them all; edit any of them in the panel and the whole page updates.</p>
+    <p>Kharg is not hypothetical terrain. In 2026 the United States struck military targets on the island, blockaded Iran's ports and publicly weighed seizing it (see the timeline). This game is not a model of those events or of any plan. It borrows their general shape, and the history is there so readers can compare the model's assumptions with what happened.</p>
+    <p>The dice use a seeded generator, so the same link replays the same game and the same 1,000 Monte Carlo games. Strength points are notional: one point is about 1,000 troops. Distances and the island's size are measured on OpenStreetMap coastlines, simplified to about 150 m so no harbor structures show.</p>
+    <p>Left out: Iran's air force and submarines, cyber and space, U.S. bombers and land-based missiles, civilians and oil workers on the island (about 8,000 residents in the 2016 census), weather and sea state, the time needed to assemble the U.S. force, legal authorities, and any negotiation during the fight. Use the model to reason about how the pieces trade off, not to estimate any real operation.</p>
+    <div class="tablewrap"><table id="param-table"></table></div>
+  </div>
+  <div class="col">
+    <h2>What history shows</h2>
+    <ol class="history" id="history"></ol>
+    <h2 class="mt">Sources</h2>
+    <ul class="src" id="sources"></ul>
+  </div>
+</section>
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Kharg Island', sub: 'A turn-based, notional wargame of a U.S. operation against Iran\'s main oil export island.', category: 'Force & wargame models' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

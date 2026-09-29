@@ -167,6 +167,8 @@ export const ALL_TOOLS = [
     blurb: 'See how logit quantal response equilibrium departs from Nash in crisis and deterrence games as precision runs from 0 to infinity, and why estimating these games needs care.' },
   { slug: 'correction-lab', cat: 'infowar', sites: ['deterrence'], title: 'Correction Lab', status: 'live',
     blurb: "Design a correction to a false story and see how much belief persists: meta-analytic effect sizes on timing, source, repetition and explanation, combined with Walberg's Sticky Affect condition in a notional model." },
+  { slug: 'kharg-island', cat: 'models', also: ['mideast'], sites: ['deterrence'], title: 'Kharg Island', status: 'live',
+    blurb: "A notional, dice-driven wargame of a U.S. move on Kharg Island, Iran's oil export hub: seize, raid or blockade it, watch every roll, then see how 1,000 games trade success against escalation and oil prices." },
 ];
 
 export const onSite = (x, site = SITE) => !x.sites || x.sites.includes(site);

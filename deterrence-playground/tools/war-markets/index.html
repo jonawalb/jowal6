@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>War Markets | Interactive Deterrence</title>
+<meta name="description" content="What Polymarket traders priced for strikes on Iran, ceasefires, a blockade and a Russia–NATO clash in 2026, set against how each contract resolved.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="war-markets.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<div class="actions">
+  <p class="fine" id="asof"></p>
+  <div class="btns">
+    <button type="button" class="btn solid" id="start-tour">Walk me through it</button>
+    <button type="button" class="btn" id="copy-link">Copy link</button>
+  </div>
+</div>
+
+<main class="layout">
+  <div class="stage" id="stage">
+    <div class="card chartcard" id="chartcard">
+      <div class="card-h">
+        <div><p class="eyebrow">Price of a $1 “Yes” share, daily</p>
+          <p class="q-title" id="case-title"></p></div>
+      </div>
+      <div class="chartwrap" id="chartwrap">
+        <svg id="chart" class="chart" tabindex="0" role="img" aria-label="Line chart of daily contract prices. Hover, or focus and use the arrow keys, for daily values. Click a line to focus that contract."></svg>
+        <div class="tooltip" id="tip" hidden></div>
+      </div>
+      <div class="legend" aria-hidden="true">
+        <span><i class="lg-line"></i>Daily price</span><span><i class="lg-dl"></i>Deadline</span>
+        <span><i class="lg-settle"></i>Settled Yes or No</span>
+        <span><i class="lg-ev"></i>Dated event</span><span><i class="lg-ev hollow"></i>Event, source not opened by the build</span>
+      </div>
+    </div>
+    <div class="card" id="scorecard">
+      <div class="card-h"><div><p class="eyebrow">Priced vs happened</p>
+        <p class="fine">Each dot is a resolved contract, placed at its price a week before the outcome was decided (the day it settled at Yes, or the deadline for a No). Click a dot to open it.</p></div></div>
+      <div id="scorewrap"><svg id="score" class="scoresvg" role="group" aria-label="Resolved contracts by price a week before settlement and outcome"></svg></div>
+      <p class="fine score-text" id="score-text" aria-live="polite"></p>
+    </div>
+  </div>
+  <aside class="panel" id="panel" aria-label="Questions, contracts and details"></aside>
+</main>
+
+<section class="below">
+  <div class="col">
+    <h2>Betting on war</h2>
+    <p>Jonathan Walberg’s Betting on War project starts from a gap in the theory of crisis bargaining. States show resolve with costly signals, and the literature since Fearon (1997) has two kinds: tying hands, where a leader stakes her reputation in public, and sinking costs, where a state pays up front by mobilizing. Both assume the receiver knows who sent the signal.</p>
+    <p>Prediction markets add a third channel. A trader can buy a large position in “Will the US strike Iran by June 30?” and move its price. The position costs real money, the price is public, and news outlets and officials quote it. The buyer stays anonymous. An observer who sees the price jump has to ask where it came from: someone who knows what the sender will do trading on it, or the sender trading to be believed. Walberg’s theory paper, “Anonymous Costly Signals: A Third Mechanism in Crisis Bargaining,” models this as a signaling game in which the receiver’s problem shifts from reading a signal to judging its source. Everything turns on one parameter, λ, the share of anonymous price movements that come from informed trading rather than from the sender’s own bet or ordinary noise.</p>
+    <p>The companion methods paper, “Estimating the Deception Parameter,” asks whether λ can be measured. No single price move can be attributed, but the share of informed moves is a mixing weight, and contract resolutions make it estimable: in contracts that resolved without war the unresolved side does not bet, so movements there separate informed trading from noise.</p>
+    <div class="tablewrap est">
+      <table>
+        <caption>Working-paper estimates of λ by theater (primary sample)</caption>
+        <thead><tr><th>Theater</th><th class="num">λ̂</th><th>95% interval</th><th>Reading</th></tr></thead>
+        <tbody>
+          <tr><td>Iran/Israel</td><td class="num">0.244</td><td class="num">[0.147, 0.367]</td><td>At the upper edge of what a market with no informed traders produces (5% of such simulations reach it). Weak evidence of informed flow.</td></tr>
+          <tr><td>Russia/Ukraine</td><td class="num">0.053</td><td class="num">[0.012, 0.139]</td><td>Inside the no-information benchmark: no signal.</td></tr>
+          <tr><td>Taiwan</td><td class="num">0.530</td><td class="num">[0.102, 1.000]</td><td>The data fail a premise of the method; the estimate carries no information.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="fine">Source: Jonathan Walberg, “Estimating the Deception Parameter: A Finite-Mixture Approach to Source Attribution in Thin Prediction Markets,” qualifying paper draft, University of Virginia, 29 September 2026, Table 2 (profile-likelihood intervals). These are working-paper estimates, not peer reviewed, and may change. In the author’s words, for a receiver in Taipei or Washington “the evidence does not yet justify reading a sharp overnight move in an invasion contract as leaked knowledge of Beijing’s intentions; for the Middle East contracts, it gives modest grounds to weight such moves as more than noise.”</p>
+    <p>This page does not estimate λ. It shows the raw material: what the archived contracts priced, day by day, and how each one resolved.</p>
+    <h2 class="mt">How to read it</h2>
+    <ul class="howto">
+      <li><b>Lines</b> are daily “Yes” prices in cents. Contracts on one question with different deadlines form a ladder; the dashed line in each contract’s color is its deadline.</li>
+      <li><b>Filled dots at 100¢ or 0¢</b> mark the day prices settled at the outcome and stayed there.</li>
+      <li><b>Dots along the top</b> are dated events from Walberg’s event lists. Hover the chart to read them.</li>
+      <li><b>The panel</b> shows the focused contract’s outcome, its price a week before, its Brier score and its resolution rule.</li>
+      <li><b>Gaps</b> are days with no archived trade. The collector started on 5 August 2026 and only the last trades of earlier contracts survive, so some lines are short.</li>
+    </ul>
+    <p class="fine">This page is for research and teaching. It is not trading advice and makes no prediction about any open contract.</p>
+  </div>
+  <div class="col">
+    <h2>Method</h2>
+    <ul class="src">
+      <li>Prices and trades come from Walberg’s conflict-market-data collector, which archives Polymarket’s geopolitical contracts hourly because Polymarket stops serving price history once a contract resolves. Daily price: the last hourly bar of the UTC day where the archive has hourly bars; otherwise the size-weighted median of that day’s fills, with a “No” fill at price q counted as a “Yes” price of 1 − q. Days with no trades stay empty.</li>
+      <li>Outcome of a closed contract: the final-price rule used in the working paper. If the last 20 archived trades average 95¢ or more for Yes, it resolved Yes; 5¢ or less, No. This is not Polymarket’s official resolution notice, which the build machine could not reach.</li>
+      <li>“Settled” day: the first day from which every later daily price stays at 95¢ or more (Yes) or 5¢ or less (No). “A week before” is the last price on or before seven days before the outcome was decided: the settled day for a Yes, the deadline for a No. If the archive starts later, the first archived price is used and marked with an asterisk.</li>
+      <li>Brier score: the mean of (price − outcome)², with price as a share of $1 and outcome 1 or 0. Always quoting 50¢ scores 0.25.</li>
+      <li>Deadlines are read from each contract’s question. Market IDs are Polymarket’s. Resolution rules are quoted from archived copies of each contract’s page on polymarket.com, linked in the panel.</li>
+      <li>Events are the tier-1 dated events from Walberg’s Betting on War replication files for the Iran/Israel and Russia/Ukraine theaters, each with the one source URL the list records. A hollow dot means the build could not open that source (it blocks automated requests); the event is shown as the list records it.</li>
+      <li>Scripts: <code>scripts/fetch_rules.py</code> retrieves the rules; <code>scripts/build.py</code> reads the collector database and writes <code>data/markets.js</code>. No value on this page is notional.</li>
+    </ul>
+    <h2 class="mt">Sources</h2>
+    <ul class="src">
+      <li>Market data: Polymarket, via <a href="https://github.com/jonawalb/conflict-market-data" target="_blank" rel="noopener">github.com/jonawalb/conflict-market-data</a> (hourly bars and trade tape, rebuilt from the repository’s increments on 29 September 2026).</li>
+      <li>Resolution rules: archived Polymarket pages on the <a href="https://web.archive.org/" target="_blank" rel="noopener">Internet Archive Wayback Machine</a>, one link per contract in the panel.</li>
+      <li>Events: Walberg, Betting on War replication data (<code>events_iran_israel_v5.csv</code>, <code>events_russia_ukraine_v5.csv</code>), with the source listed for each event in the chart tooltip data.</li>
+      <li>Jonathan Walberg, “Anonymous Costly Signals: A Third Mechanism in Crisis Bargaining,” working paper.</li>
+      <li>Jonathan Walberg, “Estimating the Deception Parameter: A Finite-Mixture Approach to Source Attribution in Thin Prediction Markets,” qualifying paper draft, University of Virginia, September 2026.</li>
+      <li>James D. Fearon, “Signaling Foreign Policy Interests: Tying Hands versus Sinking Costs,” <i>Journal of Conflict Resolution</i> 41, no. 1 (1997): 68–90.</li>
+    </ul>
+    <h2 class="mt">Events shown</h2>
+    <ul class="src" id="ev-src"></ul>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'War Markets', sub: 'What prediction markets priced for strikes, ceasefires and wider war in 2026, and what happened.', category: 'Economic coercion & war markets' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

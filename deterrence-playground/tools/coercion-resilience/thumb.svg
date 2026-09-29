@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+  <rect width="640" height="400" fill="#f2f2ee"/>
+  <rect x="24" y="24" width="592" height="352" rx="6" fill="#fbfbf8" stroke="#d3d6cd"/>
+  <rect x="236" y="60" width="210" height="240" fill="#7f8a83" opacity=".14"/>
+  <g stroke="#d3d6cd" stroke-width="1.5"><line x1="60" y1="120" x2="590" y2="120"/><line x1="60" y1="210" x2="590" y2="210"/><line x1="60" y1="300" x2="590" y2="300"/></g>
+  <path d="M60 300 L60 170 L100 150 L140 175 L180 140 L220 160 L250 150 L290 130 L330 110 L370 120 L410 105 L450 150 L490 160 L530 145 L590 150 L590 300 Z" fill="#1b4fd4" opacity=".3"/>
+  <path d="M60 150 L100 150 L140 175 L180 140 L220 160 L250 150 L290 130 L330 110 L370 120 L410 105 L450 150 L490 160 L530 145 L590 150" fill="none" stroke="#1b4fd4" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M60 300 L60 210 L100 215 L140 230 L180 205 L220 220 L240 225 L250 296 L446 296 L450 250 L490 235 L530 245 L590 240 L590 300 Z" fill="#b3261e" opacity=".85"/>
+  <g><circle cx="240" cy="48" r="7" fill="#b3261e"/><circle cx="446" cy="48" r="7" fill="#0c8474"/></g>
+  <text x="60" y="352" font-family="Georgia, serif" font-size="30" font-weight="700" fill="#14201a">Coercion without concession</text>
+</svg>

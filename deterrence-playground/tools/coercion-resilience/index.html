@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Coercion Without Concession | Interactive Deterrence</title>
+<meta name="description" content="China's trade measures against Australia (2020–24) and South Korea (2017) in real trade and tourism data: what was hit, what found other buyers, and what changed.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="coercion-resilience.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<div class="actions">
+  <div class="views choices" id="views" role="group" aria-label="Case">
+    <button type="button" data-v="au" aria-pressed="true">Australia, 2020–2024<small>Barley, wine, coal and more</small></button>
+    <button type="button" data-v="kr" aria-pressed="false">South Korea, 2016–2017<small>THAAD and the tour ban</small></button>
+  </div>
+  <div class="btns">
+    <button type="button" class="btn solid" id="start-tour">Walk me through it</button>
+    <button type="button" class="btn" id="copy-link">Copy link</button>
+  </div>
+</div>
+
+<main class="layout">
+  <div class="stage" id="stage">
+    <div class="card chartcard" id="au-card">
+      <div class="card-h">
+        <div><p class="eyebrow" id="au-title">Australia’s exports by month</p>
+          <p class="fine">Red: to China. Blue: to every other market. Shading: restrictions in force. Dots: dated events (hover). Click a year to compare it with 2018–19.</p></div>
+      </div>
+      <div class="chartwrap" id="au-wrap">
+        <svg id="au-chart" class="chart" tabindex="0" role="img" aria-label="Stacked area chart of monthly exports to China and to other markets. Hover, or focus and use the arrow keys, for monthly values; Enter selects that year."></svg>
+        <div class="tooltip" id="au-tip" hidden></div>
+      </div>
+      <div class="legend" aria-hidden="true">
+        <span><i class="lg-china"></i>To China</span><span><i class="lg-rest"></i>Rest of world</span><span><i class="lg-force"></i>Restrictions in force</span><span><i class="lg-yr"></i>Selected year</span>
+        <span><i class="dot" style="background:var(--bad)"></i>Measure</span><span><i class="dot" style="background:var(--good)"></i>Removal</span><span><i class="dot" style="background:var(--blue)"></i>Response</span><span><i class="dot" style="background:var(--muted)"></i>Trigger</span>
+      </div>
+      <div id="dest-card" class="dest">
+        <p class="eyebrow sm" id="dest-title">Top destinations</p>
+        <div id="dest-wrap"><svg id="dest" class="destsvg" role="img" aria-label="Bar chart of the largest export destinations in the baseline year and the selected year"></svg></div>
+      </div>
+    </div>
+
+    <div class="card chartcard" id="kr-card" hidden>
+      <div class="card-h">
+        <div><p class="eyebrow">Foreign visitor arrivals to South Korea by month</p>
+          <p class="fine">Shading: China’s group-tour ban, 15 March to the 31 October 2017 normalization agreement. Dots: dated events. Click a month for details.</p></div>
+      </div>
+      <div class="chartwrap" id="kr-wrap">
+        <svg id="kr-chart" class="chart" tabindex="0" role="img" aria-label="Line chart of monthly arrivals from China, Japan and all other countries, 2015 to 2019. Hover, or focus and use the arrow keys, for values; Enter selects a month."></svg>
+        <div class="tooltip" id="kr-tip" hidden></div>
+      </div>
+      <div class="legend" aria-hidden="true">
+        <span><i class="lg-k china"></i>China</span><span><i class="lg-k japan"></i>Japan</span><span><i class="lg-k others"></i>All other countries</span><span><i class="lg-force"></i>Tour ban</span>
+      </div>
+    </div>
+
+  </div>
+  <aside class="panel" id="panel" aria-label="Product, year and readouts"></aside>
+</main>
+
+<section class="tlsec">
+    <div class="card tl">
+    <div class="card-h">
+      <p class="eyebrow" id="tl-title">Measures and removals</p>
+      <label class="lg-tg"><input type="checkbox" id="tl-all"> Show every product</label>
+    </div>
+    <ol class="tl-list" id="tl-list"></ol>
+  </div>
+</section>
+
+<p class="fine asof" id="asof"></p>
+
+<section class="below">
+  <div class="col">
+    <h2>The argument</h2>
+    <p>Jonathan Walberg’s two case studies in the <i>Journal of Geoeconomics</i> look at the same question from two cases: what does Chinese economic coercion achieve against a U.S. ally that refuses to back down?</p>
+    <p>In <a href="https://doi.org/10.65963/jgeoecon.2026.08435" target="_blank" rel="noopener">“Coercion Without Concession: How Australia Weathered China’s Trade Measures”</a>, the answer for Australia is real damage and no concession. After Canberra called for an independent inquiry into the origins of COVID-19 in April 2020, Beijing combined formal trade remedies (anti-dumping and countervailing duties on barley and wine) with informal measures that were harder to challenge: abattoir suspensions, customs delays, pest bans and instructions to state-owned buyers. The paper describes the targeting logic as picking products where Australia depended on China more than China depended on Australia, and sparing iron ore. Canberra did not retaliate. It went to the WTO, helped exporters find other markets, and made no policy concession. The paper concludes that Beijing’s tools “can inflict significant costs, but their ability to compel durable policy change is far from guaranteed” against a cohesive, adaptable and well-connected target.</p>
+    <p>In <a href="https://doi.org/10.65963/jgeoecon.2026.29063" target="_blank" rel="noopener">“Beyond the Radar: Economic Coercion, Narrative Warfare, and the China–South Korea THAAD Dispute”</a>, the instruments were almost entirely informal: a group-tour ban that was never announced, regulatory closures of Lotte stores, and boycotts amplified by state media, while officials described the pressure as consumer choice. South Korea absorbed large losses in tourism and retail, offered the symbolic “Three No’s,” and kept the THAAD battery. The paper calls the result tactical success and strategic blowback: South Korean opinion of China fell sharply and stayed low.</p>
+    <p>The data here let you test the first half of that claim product by product. Some Australian exports found other buyers quickly (barley, coal, cotton). Others did not (wine, lobster, timber) until China lifted its measures. The chart does not show the policy outcome, which is the paper’s main point: in neither case did Beijing get the change it wanted.</p>
+    <h2 class="mt">How to read it</h2>
+    <ul class="howto">
+      <li><b>The main chart</b> stacks monthly exports to China (red) under exports to everyone else (blue), so the top edge is the product’s total exports. The grey band is the period the restriction was in force.</li>
+      <li><b>The readout</b> compares the average of 2018 and 2019, the two full years before the measures, with the year you pick. Two years smooth out a single weak or strong harvest. “Replaced” is the rise in sales to other markets divided by the fall in sales to China.</li>
+      <li><b>The bars</b> under the chart show the largest buyers in each year: outline for the 2018–19 average, solid for the chosen year.</li>
+      <li><b>Switch units</b> when prices moved a lot. A value that doubles while tonnage stays flat is a price story.</li>
+      <li><b>South Korea</b> has no single trade line to follow, so the view uses KTO’s monthly visitor arrivals, the clearest measured effect of the tour ban.</li>
+    </ul>
+  </div>
+  <div class="col">
+    <h2>Method</h2>
+    <ul class="src">
+      <li>Trade: Australia’s reported exports (reporter 36, flow X) from the UN Comtrade public API, monthly for World and China and annual for every partner, 2017 to 2025 annual and January 2018 to July 2026 monthly. HS codes: barley 1003, wine 2204, coal 2701, beef 0201 + 0202, rock lobster 030611 + 030631, timber 4403 (wood in the rough), cotton 5201, iron ore 2601. Values are Comtrade primary values in US dollars; weights are reported net weight. Nothing is interpolated: a month Comtrade does not report stays blank.</li>
+      <li>“Rest of world” is World minus China. Timber weights are missing for most months, so the tonnes view for timber is mostly gaps.</li>
+      <li>Tourism: monthly arrivals by nationality from the Korea Tourism Organization’s Korea Tourism Data Lab (query TS_01_16_005_New), January 2015 to December 2019. Arrivals are KTO’s totals for each nationality. The yearly totals it gives (8.07 million from China in 2016, 4.17 million in 2017) match the figures in the paper.</li>
+      <li>Restriction periods: start and end months come from the timeline sources. Timber and cotton have no removal date in the sources used; the band runs to the end of the data and the chart shows when trade resumed.</li>
+      <li>Figures quoted under “From the paper” are the paper’s own, with the sources it cites. Where the paper and the trade data differ (for example coal tonnes to China), the difference comes from different sources and years, and both are shown as they are.</li>
+      <li>Scripts: <code>scripts/fetch_comtrade.py</code> and <code>scripts/fetch_kto.py</code> download and cache every raw response with its URL and retrieval date; <code>scripts/build.py</code> writes <code>data/</code>.</li>
+      <li>No value on this page is notional.</li>
+    </ul>
+    <h2 class="mt">Sources</h2>
+    <ul class="src">
+      <li>Jonathan Walberg, “Coercion Without Concession: How Australia Weathered China’s Trade Measures,” <i>Journal of Geoeconomics</i>, <a href="https://doi.org/10.65963/jgeoecon.2026.08435" target="_blank" rel="noopener">doi.org/10.65963/jgeoecon.2026.08435</a>.</li>
+      <li>Jonathan Walberg, “Beyond the Radar: Economic Coercion, Narrative Warfare, and the China–South Korea THAAD Dispute,” <i>Journal of Geoeconomics</i>, <a href="https://doi.org/10.65963/jgeoecon.2026.29063" target="_blank" rel="noopener">doi.org/10.65963/jgeoecon.2026.29063</a>.</li>
+      <li>United Nations, <a href="https://comtradeplus.un.org/" target="_blank" rel="noopener">UN Comtrade database</a>, public API at comtradeapi.un.org.</li>
+      <li>Korea Tourism Organization, <a href="https://datalab.visitkorea.or.kr/" target="_blank" rel="noopener">Korea Tourism Data Lab</a>, foreign visitor arrivals.</li>
+      <li>Timeline: <a href="https://www.abc.net.au/news/2020-12-17/australian-trade-tension-sanctions-china-growing-commodities/12984218" target="_blank" rel="noopener">ABC News (Dec 2020)</a>, <a href="https://www.giwa.org.au/china-barley-antidumping-and-counterveilling-tariffs/" target="_blank" rel="noopener">GIWA</a>, <a href="https://www.wineaustralia.com/china-anti-dumping-and-countervailing-duties" target="_blank" rel="noopener">Wine Australia</a>, <a href="https://www.theguardian.com/australia-news/2020/dec/14/china-formalises-cut-to-australias-coal-imports-state-media-reports" target="_blank" rel="noopener">The Guardian</a>, <a href="https://www.abc.net.au/news/2023-04-11/agreement-reached-with-china-for-resolution-of-barley-dispute/102208192" target="_blank" rel="noopener">ABC News (Apr 2023)</a>, <a href="https://www.abc.net.au/news/rural/2023-08-04/barley-tariffs-scrapped-by-china/102689748" target="_blank" rel="noopener">ABC News (Aug 2023)</a>, <a href="http://np.china-embassy.gov.cn/eng/fyrth/201607/t20160708_1594372.htm" target="_blank" rel="noopener">PRC Foreign Ministry (Jul 2016)</a>, <a href="https://www.voanews.com/a/chinese-media-call-for-boycott-of-south-korean-goods/3746701.html" target="_blank" rel="noopener">VOA</a>, <a href="https://english.hani.co.kr/arti/english_edition/e_international/785471.html" target="_blank" rel="noopener">Hankyoreh</a>, <a href="https://www.bbc.com/news/business-39324536" target="_blank" rel="noopener">BBC News</a>, <a href="https://edition.cnn.com/2017/10/31/asia/china-south-korea-thaad/index.html" target="_blank" rel="noopener">CNN</a>. Entries the build machine could not open (Reuters, S&amp;P Global, WSJ and others behind paywalls or bot blocks) are taken from the papers and labelled as such in the timeline.</li>
+    </ul>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Coercion Without Concession', sub: 'What China’s trade measures did to Australian exports and South Korean tourism, and what they did not change.', category: 'Economic coercion & war markets' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

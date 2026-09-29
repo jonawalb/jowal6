@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Every Nuclear Test | Interactive Deterrence</title>
+<meta name="description" content="All 2,056 nuclear explosive tests since 1945 by state, year, environment, yield class and test site, reconciled against the ACA, DOE and SIPRI counts, with the test-ban milestones.">
+<meta property="og:title" content="Every Nuclear Test | Interactive Deterrence">
+<meta property="og:description" content="Scrub through 2,056 nuclear tests since Trinity, from the atmosphere to underground, site by site, against the treaties that pushed them below ground and then stopped them.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="nuclear-tests.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+<main class="layout">
+  <div class="stage">
+    <div class="card nt-card" id="top-card">
+      <div class="nt-head">
+        <h2>Nuclear tests per year, 1945–2026</h2>
+        <div class="nt-actions">
+          <button type="button" class="btn solid" id="start-tour">Start the walkthrough</button>
+          <button type="button" class="btn" id="reset">Reset</button>
+          <button type="button" class="btn" id="copy-link">Copy link</button>
+        </div>
+      </div>
+      <p class="fine">Each bar counts the tests in one year. Drag across the chart to move the year; the map below follows. Click a milestone marker for the treaty or statement and its source.</p>
+      <div class="nt-chart" id="chart"></div>
+      <div class="nt-scrub">
+        <button type="button" class="btn" id="play" aria-pressed="false">Play</button>
+        <output id="year-out" class="num" for="year">1962</output>
+        <input type="range" id="year" step="1" aria-label="Year">
+      </div>
+      <div class="nt-legend" id="legend" aria-hidden="true"></div>
+    </div>
+  </div>
+  <aside class="panel" id="panel" aria-label="Year readout and filters"></aside>
+</main>
+
+<div class="nt-more">
+  <section class="card nt-card" id="map-card" aria-labelledby="map-h">
+    <div class="nt-sub"><h2 id="map-h">Test sites through <span id="map-year" class="num">1962</span></h2>
+      <p class="fine">Circle area = tests at the site so far. Dashed ring = tested in the selected year.</p></div>
+    <div class="mapbox nt-map" id="map"></div>
+    <div class="nt-offsite-list" id="offsite"></div>
+    <div class="nt-site-card" id="site-card" aria-live="polite"></div>
+  </section>
+  <section class="card nt-card nt-steward" id="steward" aria-labelledby="steward-h">
+    <h2 id="steward-h">Without explosive tests</h2>
+    <p>The United States has not conducted a nuclear explosive test since September 1992. Its weapons laboratories and test site now certify the stockpile through the Stockpile Stewardship Program, which Congress required in the 1994 National Defense Authorization Act "in the absence of nuclear testing".</p>
+    <blockquote>"As a result of the voluntary moratorium on nuclear explosive testing the United States has observed since 1992, NNSA now ensures the reliability of the nation’s nuclear weapons through the Stockpile Stewardship Program. Comprising a wide range of scientific activities, from modeling and simulation to subcritical nuclear experiments, this program allows us to assess and certify the stockpile with extraordinary confidence."<cite>NNSA, <a href="https://www.energy.gov/nnsa/maintaining-stockpile" target="_blank" rel="noopener">Maintaining the Stockpile</a></cite></blockquote>
+    <blockquote>"In subcritical experiments, chemical high explosives generate high pressures that are applied to nuclear weapon materials, such as plutonium. The configuration and quantities of explosives and nuclear materials are such that no nuclear explosion will occur."<cite>Nevada National Security Site, <a href="https://nnss.gov/mission/stockpile-stewardship-program/" target="_blank" rel="noopener">Stockpile Stewardship</a></cite></blockquote>
+    <p class="fine">Subcritical experiments take place more than 900 feet underground at the Nevada site's Principal Underground Laboratory for Subcritical Experimentation (PULSE), formerly the U1a Complex (<a href="https://nnss.gov/about-the-nnss/nnss-history/" target="_blank" rel="noopener">NNSS history</a>). They are not nuclear explosions and are not counted here. The November 2025 statement by the Energy Secretary quoted in the 2025 milestone described planned tests in the same terms.</p>
+  </section>
+  <section class="card nt-card nt-recon" id="recon-card" aria-labelledby="recon-h">
+    <div class="nt-sub"><h2 id="recon-h">Whose count? Reconciling the totals</h2></div>
+    <div id="recon"></div>
+  </section>
+</div>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>Each bar is one year. Stack it by <b>state</b> to see who was testing, or by <b>environment</b> to see where: in the atmosphere, underground, under water, or at high altitude and in space. The environment switches and the yield classes in the panel filter every view at once, including the map and the counts.</p>
+    <p>The map places each test at its named test site, not at the coordinates of individual shots. Circle area grows with the number of tests at the site through the selected year. Tests at sea without a single site, and the Soviet peaceful nuclear explosions spread across dozens of locations, are listed under the map instead of plotted.</p>
+    <p>Yield classes use the upper bound of each published range, the same bins the U.S. used when it announced underground tests as "less than 20 kilotons" or "20 to 150 kilotons". Many yields were never published, especially for Soviet and Chinese tests; those sit in "Not published".</p>
+    <h3>Method</h3>
+    <ul class="src" id="method">
+      <li>Each row is one test as defined in the Threshold Test Ban Treaty: a salvo of explosions within a 2 km circle and 0.1 second counts once. The list is Bergkvist and Ferm, <i>Nuclear Explosions 1945–1998</i> (FOA/SIPRI, July 2000), in the machine-readable copy published by TidyTuesday (2019-08-20). It has 2,051 rows.</li>
+      <li>Changes to that list, all made in <code>scripts/build_data.py</code>: the Hiroshima and Nagasaki bombings are removed (2,049 rows remain); one Soviet 1972 underground test at Semipalatinsk, which the report's summary table counts but its itemized list lacks, is added with no date or yield; and North Korea's six tests (2006–2017) are added from the U.S. Geological Survey event catalog. Result: 2,056 tests, matching the ACA tally by state and by atmospheric versus underground.</li>
+      <li>Environment: underground includes shafts, tunnels, galleries, a mine and shallow cratering shots, as SIPRI counts them. Underwater is SIPRI type UW (8 tests). High altitude and space covers SIPRI type SPACE plus the rocket-borne shots over Johnston Island and the South Atlantic (Hardtack Teak and Orange, Argus, Fishbowl); other rocket shots count as atmospheric. Everything else is atmospheric, including surface and barge shots.</li>
+      <li>Yield class uses the upper bound of the published range. SIPRI gives the yield of each explosion in a salvo, not the salvo total, unless its footnotes say otherwise. North Korean yields are not officially published; the tool shows the USGS body-wave magnitude instead and files them under "Not published".</li>
+      <li>Site positions are the median of SIPRI's own approximate coordinates for each named site, rounded to 0.1°. Individual shot locations are not shown. Soviet peaceful nuclear explosions away from the named test sites, and tests at sea without a fixed site, are listed but not mapped.</li>
+      <li>Not counted: the 1979 South Atlantic ("Vela") event, the 2020 event in China alleged by the United States in 2026, and subcritical experiments, none of which is a confirmed nuclear explosion.</li>
+      <li>Land outlines: Natural Earth 1:110m (public domain), <code>scripts/build_geo.py</code>. All pages were opened on 2026-09-29.</li>
+    </ul>
+  </div>
+  <div class="col">
+    <h2>Sources</h2>
+    <ul class="src" id="sources">
+      <li>Nils-Olov Bergkvist and Ragnhild Ferm, <a href="https://github.com/data-is-plural/nuclear-explosions/raw/master/documents/sipri-report-original.pdf" target="_blank" rel="noopener">Nuclear Explosions 1945–1998</a>, FOA-R--00-01572-180--SE, Defence Research Establishment and SIPRI, July 2000 (scan hosted by data-is-plural); machine-readable list via <a href="https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-08-20" target="_blank" rel="noopener">TidyTuesday</a>.</li>
+      <li>U.S. Geological Survey event pages for North Korea's tests: <a href="https://earthquake.usgs.gov/earthquakes/eventpage/usp000eurb" target="_blank" rel="noopener">2006</a>, <a href="https://earthquake.usgs.gov/earthquakes/eventpage/usp000gxgc" target="_blank" rel="noopener">2009</a>, <a href="https://earthquake.usgs.gov/earthquakes/eventpage/usc000f5t0" target="_blank" rel="noopener">2013</a>, <a href="https://earthquake.usgs.gov/earthquakes/eventpage/us10004bnm" target="_blank" rel="noopener">Jan. 2016</a>, <a href="https://earthquake.usgs.gov/earthquakes/eventpage/us10006n8a" target="_blank" rel="noopener">Sept. 2016</a>, <a href="https://earthquake.usgs.gov/earthquakes/eventpage/us2000aert" target="_blank" rel="noopener">2017</a>.</li>
+      <li>Arms Control Association, <a href="https://www.armscontrol.org/factsheets/nucleartesttally" target="_blank" rel="noopener">The Nuclear Testing Tally</a> (last reviewed October 2025) and <a href="https://www.armscontrol.org/factsheets/nuclear-testing-and-comprehensive-test-ban-treaty-ctbt-timeline" target="_blank" rel="noopener">nuclear testing and CTBT timeline</a>.</li>
+      <li>U.S. Department of Energy, NNSA Nevada Field Office, <a href="https://www.osti.gov/servlets/purl/1351809" target="_blank" rel="noopener">United States Nuclear Tests, July 1945 through September 1992</a>, DOE/NV-209 Rev. 16, September 2015.</li>
+      <li>CTBTO, <a href="https://web.archive.org/web/20220810223536/https://www.ctbto.org/nuclear-testing/history-of-nuclear-testing/world-overview/" target="_blank" rel="noopener">World Overview</a> (archived August 2022; the live site refused automated and browser requests); Johnston's Archive, <a href="https://www.johnstonsarchive.net/nuclear/nuctestsum.html" target="_blank" rel="noopener">nuclear test summary</a>; Our World in Data, <a href="https://ourworldindata.org/grapher/number-of-nuclear-weapons-tests" target="_blank" rel="noopener">Number of nuclear weapons tests</a>.</li>
+      <li>Milestone sources are linked on each milestone card: State Department treaty records and the Office of the Historian, 106 Stat. 1315, the UN Treaty Collection, UN documents A/51/262, S/1998/489 and Security Council resolutions, the Kremlin, USGS, NORSAR and BBC News.</li>
+      <li>Stockpile stewardship: NNSA, <a href="https://www.energy.gov/nnsa/maintaining-stockpile" target="_blank" rel="noopener">Maintaining the Stockpile</a>; Nevada National Security Site, <a href="https://nnss.gov/mission/stockpile-stewardship-program/" target="_blank" rel="noopener">Stockpile Stewardship</a> and <a href="https://nnss.gov/about-the-nnss/nnss-history/" target="_blank" rel="noopener">history</a>.</li>
+      <li>Natural Earth, <a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">1:110m land</a>.</li>
+    </ul>
+  </div>
+</section>
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Every Nuclear Test', sub: 'All 2,056 nuclear explosive tests since 1945, by state, year, environment, yield and test site.', category: 'Nuclear weapons & arms control' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

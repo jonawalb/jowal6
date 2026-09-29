@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+  <rect width="640" height="400" fill="#f2f2ee"/>
+  <rect x="24" y="24" width="592" height="352" rx="8" fill="#fbfbf8" stroke="#d3d6cd"/>
+  <g font-family="Georgia, serif" font-weight="700" font-size="22" fill="#14201a">
+    <text x="48" y="70">NFU</text><text x="168" y="70">NSA</text><text x="288" y="70">Use</text>
+  </g>
+  <g stroke="#d3d6cd" stroke-width="1.5">
+    <rect x="44" y="90" width="108" height="48" rx="4" fill="#e7f0ea"/><rect x="164" y="90" width="108" height="48" rx="4" fill="#fbfbf8"/><rect x="284" y="90" width="108" height="48" rx="4" fill="#fbfbf8"/>
+    <rect x="44" y="148" width="108" height="48" rx="4" fill="#fbeeee"/><rect x="164" y="148" width="108" height="48" rx="4" fill="#fbfbf8"/><rect x="284" y="148" width="108" height="48" rx="4" fill="#fbfbf8"/>
+    <rect x="44" y="206" width="108" height="48" rx="4" fill="#e7f0ea"/><rect x="164" y="206" width="108" height="48" rx="4" fill="#fbfbf8"/><rect x="284" y="206" width="108" height="48" rx="4" fill="#ecece6"/>
+    <rect x="44" y="264" width="108" height="48" rx="4" fill="#ecece6"/><rect x="164" y="264" width="108" height="48" rx="4" fill="#ecece6"/><rect x="284" y="264" width="108" height="48" rx="4" fill="#ecece6"/>
+  </g>
+  <g stroke="#56625b" stroke-width="3" stroke-linecap="round">
+    <line x1="176" y1="108" x2="258" y2="108"/><line x1="176" y1="122" x2="236" y2="122"/><line x1="296" y1="108" x2="378" y2="108"/><line x1="296" y1="122" x2="350" y2="122"/>
+    <line x1="176" y1="166" x2="258" y2="166"/><line x1="176" y1="180" x2="230" y2="180"/><line x1="296" y1="166" x2="378" y2="166"/><line x1="296" y1="180" x2="340" y2="180"/>
+    <line x1="176" y1="224" x2="258" y2="224"/><line x1="176" y1="238" x2="240" y2="238"/>
+  </g>
+  <rect x="424" y="90" width="172" height="222" rx="6" fill="#fbfbf8" stroke="#033303" stroke-width="2"/>
+  <text x="444" y="160" font-family="Georgia, serif" font-weight="700" font-size="84" fill="#e8753a">“</text>
+  <g stroke="#14201a" stroke-width="4" stroke-linecap="round"><line x1="444" y1="182" x2="576" y2="182"/><line x1="444" y1="204" x2="566" y2="204"/><line x1="444" y1="226" x2="576" y2="226"/><line x1="444" y1="248" x2="520" y2="248"/></g>
+  <line x1="44" y1="346" x2="596" y2="346" stroke="#d3d6cd" stroke-width="2"/>
+  <g fill="#1b4fd4"><circle cx="60" cy="346" r="7"/><circle cx="210" cy="346" r="7"/><circle cx="340" cy="346" r="7"/><circle cx="470" cy="346" r="7"/><circle cx="560" cy="346" r="7"/></g>
+</svg>

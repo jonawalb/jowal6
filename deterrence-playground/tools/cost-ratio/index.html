@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cost Ratio Bargaining | Interactive Deterrence</title>
+<meta name="description" content="An interactive version of Jonathan Walberg's cost-ratio extension of Fearon's bargaining model: hold the total cost of war fixed, change who pays it, and watch the settlement move.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" crossorigin="anonymous">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="cost-ratio.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<div class="toolbar-top">
+  <p class="lede">Cheap drones and missiles change who pays for a war more than how much the war costs. Hold the total cost fixed, shift it between a strong and a weak actor, and watch where the peaceful settlement lands.</p>
+  <div class="actions">
+    <button type="button" class="btn solid" id="start-tour">Start the walkthrough</button>
+    <button type="button" class="btn" id="copy-link">Copy link to this setup</button>
+  </div>
+</div>
+
+<main class="layout">
+  <div class="stage" id="stage"></div>
+  <aside class="panel" id="panel" aria-label="Equilibrium, propositions, readout and parameters"></aside>
+</main>
+<div id="tour-root"></div>
+
+<section class="cases-wrap" id="cases" aria-label="The paper's cases"></section>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>The tool implements the formal model in Jonathan Walberg’s working paper <i>Cheap Precision and the Bargaining Range: A Cost-Ratio Extension of Fearon with Scope Conditions for Weak-Actor Leverage</i>. A strong actor S and a weak actor W dispute a good worth 1. S proposes a split; W accepts or goes to war. The paper’s addition is the cost-exchange ratio κ, S’s cost of war divided by W’s, with the total cost of war held fixed.</p>
+    <ul class="howto">
+      <li><b>Where the deal lands</b> lays the bargaining range on the line from 0 to 1. Its left half is W’s war cost and its right half is S’s, split at p. The diamond is the offer S makes and W accepts.</li>
+      <li><b>Proposition 3</b> plots W’s share against κ on a log scale. Left of 1, S’s costs are lower; right of 1, W’s are.</li>
+      <li><b>Proposition 4</b> compares one dyad fought as a denial war and as a survival war.</li>
+      <li><b>The κ index</b> is the paper’s plan for measuring κ in real conflicts (Section 5).</li>
+      <li>The <b>side panel</b> states the outcome, explains your last change, and substitutes the current numbers into each proposition.</li>
+      <li>The address bar stores every parameter, so a link reproduces the exact setup.</li>
+    </ul>
+    <h2 class="mt">Questions to try</h2>
+    <ol class="howto">
+      <li>Move κ from 0.5 to 2. How much wider does the bargaining range get, and why?</li>
+      <li>Raise C with κ below 1, then with κ above 1. Who absorbs most of the extra cost in each case?</li>
+      <li>Why can W never get more than p, however high κ goes?</li>
+    </ol>
+  </div>
+  <div class="col">
+    <h2>Sources</h2>
+    <ul class="src">
+      <li>Jonathan Walberg, “Cost Ratio and Bargaining,” working paper (draft titled “Cheap Precision and the Bargaining Range: A Cost-Ratio Extension of Fearon with Scope Conditions for Weak-Actor Leverage,” April 2026; file dated 26 April 2026), Department of Politics, University of Virginia. Unpublished draft. The model, notation, propositions, measurement plan and case codings on this page all come from it.</li>
+      <li>James D. Fearon, “Rationalist Explanations for War,” <i>International Organization</i> 49, no. 3 (1995): 379–414. <a href="https://doi.org/10.1017/S0020818300033324" target="_blank" rel="noopener">doi:10.1017/S0020818300033324</a></li>
+      <li>Ivan Arreguín-Toft, “How the Weak Win Wars: A Theory of Asymmetric Conflict,” <i>International Security</i> 26, no. 1 (2001): 93–128. <a href="https://doi.org/10.1162/016228801753212868" target="_blank" rel="noopener">doi:10.1162/016228801753212868</a></li>
+      <li>Patricia L. Sullivan, “War Aims and War Outcomes: Why Powerful States Lose Limited Wars,” <i>Journal of Conflict Resolution</i> 51, no. 3 (2007): 496–524. <a href="https://doi.org/10.1177/0022002707300187" target="_blank" rel="noopener">doi:10.1177/0022002707300187</a></li>
+      <li>Date anchors for each case are linked on its card.</li>
+    </ul>
+    <p class="fine mt">The paper is a working draft and may change. Its empirical section describes a planned data set and regression; no estimates exist yet, so this tool shows the design, not results.</p>
+  </div>
+</section>
+
+<section class="below method" id="method">
+  <div class="col">
+    <h2>Method · The game</h2>
+    <p><b>Moves.</b> S proposes \(x\in[0,1]\), W’s share of the good. W accepts, for payoffs \((x,\,1-x)\), or fights, for \((p-c_W,\;1-p-c_S)\), where \(p\) is the probability W wins. Information is complete; the solution concept is subgame perfection.</p>
+    <p><b>Cost technology.</b> Total war cost \(C=c_W+c_S\) is fixed, and the cost-exchange ratio is \(\kappa=c_S/c_W\). Then</p>
+    $$c_W=\frac{C}{1+\kappa},\qquad c_S=\frac{\kappa C}{1+\kappa}.$$
+    <p>\(p\) says who would win a war; \(\kappa\) says who pays for it. At \(\kappa=1\) the costs are equal.</p>
+  </div>
+  <div class="col">
+    <h2>Method · Propositions</h2>
+    <p><b>1. Bargaining range.</b> \(\mathcal B(\kappa)=\big[p-\tfrac{C}{1+\kappa},\;p+\tfrac{\kappa C}{1+\kappa}\big]\), of width \(C\) for every \(\kappa\).</p>
+    <p><b>2. Equilibrium.</b> S offers \(x^*(\kappa)=p-\tfrac{C}{1+\kappa}\) and W accepts. S keeps \(1-x^*\).</p>
+    <p><b>3. Comparative static.</b> \(\partial x^*/\partial\kappa=C/(1+\kappa)^2&gt;0\). W gets more than the benchmark \(p-C/2\) when \(\kappa&gt;1\) and less when \(\kappa&lt;1\); its share approaches \(p\) as \(\kappa\) grows.</p>
+    <p><b>4. Scope condition.</b> Let \(\tau\in\{D,V\}\) be denial or survival and suppose \(\kappa_D&gt;1&gt;\kappa_V\). For fixed \(p\) and \(C\),</p>
+    $$x^*_D-x^*_V=\frac{C(\kappa_D-\kappa_V)}{(1+\kappa_D)(1+\kappa_V)}&gt;0.$$
+    <p>The paper traces the sign of \(\kappa\) to target geometry. In a denial war W strikes S’s spread-out, mobile, expensive forces; in a survival war S strikes W’s few, fixed leadership and command nodes.</p>
+  </div>
+  <div class="col">
+    <h2>Method · Measurement and scope</h2>
+    <p><b>The κ index.</b> Section 5 scores three parts on \([0,1]\): offensive cost asymmetry, defensive cost burden, and target exposure (coded so that higher means less exposed), and averages them with equal weights. An index above 0.5 marks the high-κ regime. The paper claims only that the index orders cases on κ correctly.</p>
+    <p><b>Planned test.</b> An ordered probit of a 0–3 bargaining outcome on the κ index, τ and their interaction, with controls for relative capability, external support and conflict type, on 30 to 50 conflict phases since 1965. The paper predicts positive coefficients on κ, τ and the interaction. The data set is not yet built.</p>
+    <p><b>What the tool does and leaves out.</b> Sliders keep \(C\le\min(p,1-p)\) and \(0.1\le\kappa\le10\), so both ends of the range stay inside \([0,1]\): the interior case the propositions describe. The paper’s section on uncertainty about κ is a sketch with the derivation left to an appendix, so it is not built here. Every parameter value is <span class="notional">notional</span>, and case cards place each case at a notional κ on the side of 1 the paper codes.</p>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Cost Ratio Bargaining', sub: 'Hold the total cost of war fixed, change who pays it, and watch the peaceful settlement move: a cost-ratio extension of Fearon’s bargaining model.', category: 'Game theory' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

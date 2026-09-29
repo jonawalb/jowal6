@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+  <rect width="640" height="400" fill="#f2f2ee"/>
+  <!-- equilibrium map: accommodation, separating, status trap -->
+  <rect x="40" y="36" width="560" height="240" fill="#fbfbf8" stroke="#d3d6cd"/>
+  <polygon points="40,36 40,276 110,276 170,36" fill="#1b4fd4" fill-opacity=".32"/>
+  <polygon points="110,276 170,36 600,36 600,110 330,276" fill="#0c8474" fill-opacity=".32"/>
+  <polygon points="330,276 600,110 600,276" fill="#e8753a" fill-opacity=".45"/>
+  <path d="M110 276 L170 36" stroke="#14201a" stroke-width="3" stroke-dasharray="10 8" fill="none"/>
+  <path d="M330 276 Q480 190 600 110" stroke="#14201a" stroke-width="3" stroke-dasharray="10 8" fill="none"/>
+  <circle cx="470" cy="226" r="13" fill="#fbfbf8" stroke="#14201a" stroke-width="5"/>
+  <!-- information curve: zero, up, zero -->
+  <path d="M40 318 H160 V292 H400 V318 H600" fill="none" stroke="#0c8474" stroke-width="7" stroke-linejoin="round"/>
+  <text x="40" y="376" font-family="Georgia, serif" font-weight="700" font-size="32" fill="#033303">Humiliation to Motivation</text>
+</svg>

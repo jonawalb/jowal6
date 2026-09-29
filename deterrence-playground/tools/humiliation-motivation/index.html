@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Humiliation to Motivation | Interactive Deterrence</title>
+<meta name="description" content="An interactive version of Jonathan Walberg's signaling model of humiliation and revisionism: past a severity threshold, weak states challenge too, and a challenge stops telling the dominant power anything.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" crossorigin="anonymous">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="humiliation-motivation.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<div class="toolbar-top">
+  <p class="lede">A public humiliation makes backing down costly at home. Mild humiliation is absorbed, moderate humiliation leaves only capable states challenging, and severe humiliation pushes weak states to challenge too. Move severity and legitimacy and watch what a challenge still tells the dominant power.</p>
+  <div class="actions">
+    <button type="button" class="btn solid" id="start-tour">Start the walkthrough</button>
+    <button type="button" class="btn" id="copy-link">Copy link to this setup</button>
+  </div>
+</div>
+
+<main class="layout">
+  <div class="stage" id="stage"></div>
+  <aside class="panel" id="panel" aria-label="Equilibrium, propositions, readout and parameters"></aside>
+</main>
+<div id="tour-root"></div>
+
+<section class="cases-wrap" id="cases" aria-label="The paper's cases"></section>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>The tool implements the formal model in Jonathan Walberg’s working paper <i>Humiliation, Status, and Revisionist Motivation: A Formal Theory</i>. A humiliated state H knows whether it is capable or weak; the dominant power D does not. H accommodates or challenges, and D concedes or resists a challenge. Humiliation enters through H’s domestic politics: the more severe the humiliation, and the less legitimate the order that imposed it, the more it costs a leader to back down.</p>
+    <ul class="howto">
+      <li>The <b>game tree</b> shows every payoff at the current values. Heavy lines are the equilibrium path for each type.</li>
+      <li>The <b>map</b> colors each pair of severity and legitimacy by its equilibrium. The dashed lines are the paper’s thresholds s̲ and s̄.</li>
+      <li>The <b>information curve</b> plots Proposition 5: how much a challenge tells D, in bits, as severity rises.</li>
+      <li>The <b>side panel</b> names the equilibrium, explains your last change, and substitutes the current numbers into each proposition.</li>
+      <li>The address bar stores every parameter, so a link reproduces the exact setup.</li>
+    </ul>
+    <h2 class="mt">Questions to try</h2>
+    <ol class="howto">
+      <li>Raise audience sensitivity α<sub>0</sub>. Which way do the thresholds move on the map, and why does that matter for the paper’s reading of Russia?</li>
+      <li>Raise the weak type’s chance of prevailing. Why does a stronger weak type make the trap easier to spring?</li>
+      <li>Raise D’s cost of resisting until the map turns amber. What happens to the status trap when D would rather give way?</li>
+    </ol>
+  </div>
+  <div class="col">
+    <h2>Sources</h2>
+    <ul class="src">
+      <li>Jonathan Walberg, “Humiliation to Motivation,” working paper (draft titled “Humiliation, Status, and Revisionist Motivation: A Formal Theory,” April 2026; file dated 6 April 2026), University of Virginia. Unpublished draft. The model, notation, propositions and case readings on this page all come from it.</li>
+      <li>James D. Fearon, “Domestic Political Audiences and the Escalation of International Disputes,” <i>American Political Science Review</i> 88, no. 3 (1994): 577–592. <a href="https://doi.org/10.2307/2944796" target="_blank" rel="noopener">doi:10.2307/2944796</a></li>
+      <li>Joslyn Barnhart, <i>The Consequences of Humiliation: Anger and Status in World Politics</i> (Cornell University Press, 2020). <a href="https://doi.org/10.7591/cornell/9781501748042.001.0001" target="_blank" rel="noopener">doi:10.7591/cornell/9781501748042.001.0001</a></li>
+      <li>In-Koo Cho and David M. Kreps, “Signaling Games and Stable Equilibria,” <i>Quarterly Journal of Economics</i> 102, no. 2 (1987): 179–221. <a href="https://doi.org/10.2307/1885060" target="_blank" rel="noopener">doi:10.2307/1885060</a></li>
+      <li>Sources for each historical case are linked on its card.</li>
+    </ul>
+    <p class="fine mt">The paper is a working draft and may change. Its cases are illustrations, not tests, and the paper does not estimate any parameter.</p>
+  </div>
+</section>
+
+<section class="below method" id="method">
+  <div class="col">
+    <h2>Method · The game</h2>
+    <p><b>Types and moves.</b> Nature draws H’s type \(\theta\in\{\theta_H,\theta_L\}\) with \(\Pr(\theta_H)=\pi\). A humiliation of severity \(s\in[0,1]\) is public. H chooses accommodate \(A\) or challenge \(C\); after \(C\), D chooses concede \(K\) or resist \(R\).</p>
+    <p><b>H’s payoffs.</b> Accommodating costs \(\alpha(s,\lambda)=\alpha_0\,s\,(1-\lambda)\), where \(\lambda\) is the perceived legitimacy of the status order. A conceded challenge pays \(v\). A resisted challenge pays \(p_i v-(1-p_i)\ell-k\), with \(p_H&gt;p_L\).</p>
+    <p><b>D’s payoffs.</b> \(0\) after \(A\); \(-d\) after conceding; \((1-\bar p)w-\bar p d-k_D\) after resisting, with \(\bar p(\mu)=\mu p_H+(1-\mu)p_L\). D concedes iff</p>
+    $$\bar p(\mu)&gt;p^*\equiv1-\frac{k_D}{w+d}.$$
+  </div>
+  <div class="col">
+    <h2>Method · Propositions</h2>
+    <p><b>1. Separating.</b> The capable type challenges and the weak type accommodates iff \(p_Lv-(1-p_L)\ell-k+\alpha&lt;0&lt;p_Hv-(1-p_H)\ell-k+\alpha\) and \(p_H\le p^*\).</p>
+    <p><b>2. Status trap.</b> With \(\bar p(\pi)\le p^*\), for \(s&gt;\bar s\) both types challenge and D resists, where</p>
+    $$\bar s=\frac{k+(1-p_L)\ell-p_Lv}{\alpha_0(1-\lambda)}.$$
+    <p><b>3. Accommodation.</b> For \(s&lt;\underline s=\dfrac{k+(1-p_H)\ell-p_Hv}{\alpha_0(1-\lambda)}\), with beliefs that make D resist an unexpected challenge, both types accommodate.</p>
+    <p><b>Lemma 1 and Proposition 4.</b> \(\bar s\) rises with \(k\), \(\ell\) and \(\lambda\) and falls with \(v\) and \(p_L\); as \(\lambda\to1\), \(\bar s\to\infty\).</p>
+    <p><b>5. Information.</b> The information in a challenge is \(0\) below \(\underline s\), the prior entropy \(H(\pi)\) between \(\underline s\) and \(\bar s\), and \(0\) above \(\bar s\).</p>
+  </div>
+  <div class="col">
+    <h2>Method · What the tool adds and leaves out</h2>
+    <p>To color the whole map, the tool checks all four pure strategies for H at each point. On the path of play D updates by Bayes’ rule; after a challenge nobody makes, D may hold any belief, so it may resist if \(p_L\le p^*\) and concede if \(p_H&gt;p^*\). Where several equilibria exist, the map shows the first of separating, status trap, pooling with concession, accommodation; the panel lists all of them.</p>
+    <p>Where \(p_H&gt;p^*\ge\bar p(\pi)\) and \(s\) lies between \(\underline s\) and \(\bar s\), no pure-strategy equilibrium exists. The paper does not characterize that case and the tool does not compute mixed strategies, so the map marks it gray. The tool does not apply refinements beyond this.</p>
+    <p>Sliders keep \(p_L&lt;p_H\) and keep the weak type’s resisted-challenge payoff below zero, the case the paper analyzes (a weak state “likely to lose”). Legitimacy stops at 0.95 because \(\bar s\) grows without bound as \(\lambda\to1\). Every value is <span class="notional">notional</span>; case cards place each case at a notional point matching the paper’s verbal reading.</p>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Humiliation to Motivation', sub: 'When does a humiliated state challenge the order that humiliated it? A signaling game where severity and legitimacy decide whether weak states challenge too.', category: 'Deterrence & signaling' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

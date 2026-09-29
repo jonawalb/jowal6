@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Russia's Nuclear Signals | Interactive Deterrence</title>
+<meta name="description" content="A sourced timeline of Russian nuclear threats, doctrine changes, drills, deployments and treaty moves since February 2022, set against Western responses and the course of the war.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="russia-nuclear-signals.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<main class="layout">
+  <div class="stage" id="stage">
+    <p class="caveat"><b>Escalation levels are the tool author's coding.</b> Each Russian item is scored by what it changed, on a scheme set out below the timeline. The dates, words and facts come from the linked sources; the scores are a judgment you can check and disagree with.</p>
+
+    <div class="card controls">
+      <div class="row">
+        <div class="seg" id="range" role="group" aria-label="Time range"></div>
+        <div class="acts">
+          <button type="button" class="btn" id="tour-btn">Walkthrough</button>
+          <button type="button" class="btn" id="copy">Copy link</button>
+          <button type="button" class="btn" id="reset">Reset</button>
+        </div>
+      </div>
+      <div class="gchips" id="types" role="group" aria-label="Russian signal types shown"></div>
+      <div class="lvrow">
+        <span class="lab">Minimum level</span>
+        <div class="seg small" id="levels" role="group" aria-label="Minimum escalation level"></div>
+        <span class="fine" id="lv-note"></span>
+      </div>
+      <div class="row">
+        <div class="tgs">
+          <label class="tg"><input type="checkbox" id="west" checked><span class="sw"></span><span class="t">Western and NATO responses</span></label>
+          <label class="tg"><input type="checkbox" id="battle" checked><span class="sw"></span><span class="t">Battlefield moments</span></label>
+        </div>
+        <label class="tsm-vh" for="q" style="position:absolute;left:-9999px">Search items</label>
+        <input id="q" class="search" type="search" placeholder="Search: Belarus, Medvedev, Oreshnik" autocomplete="off">
+      </div>
+    </div>
+
+    <div class="card chartcard">
+      <div class="chart-h">
+        <p class="eyebrow">Signals by escalation level</p>
+        <p class="fine" id="count"></p>
+      </div>
+      <ul class="keyrow">
+        <li><svg viewBox="0 0 12 12" aria-hidden="true"><circle class="k-c" cx="6" cy="6" r="5"/></svg>Russian signal, colored by type</li>
+        <li><svg viewBox="0 0 12 12" aria-hidden="true"><rect class="k-s" x="1.5" y="1.5" width="9" height="9"/></svg>Western or NATO response</li>
+        <li><svg viewBox="0 0 12 12" aria-hidden="true"><path class="k-d" d="M6 0.5L11.5 6L6 11.5L0.5 6Z"/></svg>Battlefield moment</li>
+      </ul>
+      <div class="chartbox">
+        <svg id="tl" class="chart" role="group" aria-label="Timeline of Russian nuclear signals by escalation level, with Western responses and battlefield moments. Each mark is a button."></svg>
+        <div class="tooltip" id="tip" hidden></div>
+      </div>
+      <div class="chart-f">
+        <p class="fine">Click or tab to a mark to read it. Arrow keys step through items once one is selected.</p>
+        <div id="tl-export"></div>
+      </div>
+    </div>
+
+    <div class="card chartcard">
+      <p class="eyebrow">Every item in view, in order</p>
+      <ol class="list" id="list"></ol>
+    </div>
+  </div>
+
+  <aside class="panel" aria-label="Details">
+    <div class="sec detail" id="detail" aria-live="polite"></div>
+    <div class="sec">
+      <p class="eyebrow">Russian signals in view, by level</p>
+      <ul class="lvdist" id="lvdist"></ul>
+    </div>
+  </aside>
+</main>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>Since the full-scale invasion of Ukraine in February 2022, Russian leaders have used nuclear weapons as a backdrop to the war: in speeches, in a revised doctrine, in drills, in moving warheads to Belarus, in leaving or suspending arms-control treaties, and in firing a new nuclear-capable missile at a Ukrainian city with a conventional warhead. This tool puts those signals on one timeline.</p>
+    <p>Each circle is a Russian signal. Its height is the escalation level in the coding scheme, and its color is the kind of signal. Squares along the bottom are Western and NATO responses. Diamonds along the top are moments in the war itself, so you can see what was happening on the ground when a signal came. Pick a year, switch types on and off, raise the minimum level, or search. Click any mark for the details and the sources.</p>
+
+    <h2 class="mt">Coding scheme</h2>
+    <p>The scheme is the tool author's. It asks one question of each Russian item: what did it change? A signal can change nothing but the words in the air, attach a condition to a threat, change the written rules, change the forces themselves, or put a nuclear-capable weapon to use. That gives five ordered levels, plus a level 0 for offers of restraint, such as keeping New START limits after the treaty lapsed. Western responses and battlefield moments are placed on the timeline but not scored.</p>
+    <div class="tablewrap"><table class="codetbl"><thead><tr><th>Level</th><th>Meaning</th></tr></thead><tbody id="lvtable"></tbody></table></div>
+    <div class="tablewrap mt-s"><table class="codetbl"><thead><tr><th>Type</th><th>Covers</th></tr></thead><tbody id="tytable"></tbody></table></div>
+    <ul class="src mt-s" id="codenotes"></ul>
+    <p class="mt-s">The scheme follows the threshold logic in Walberg (working paper), "Exercise Escalation Ladders", which scores coercive signals by dimension and tracks which thresholds have been crossed, approached or avoided, rather than placing every act on a single rung. Here the dimension is what the signal changed, and the thresholds are the moves from words to rules, from rules to forces, and from forces to use.</p>
+
+    <h2 class="mt">Method and limits</h2>
+    <p><b>Selection.</b> The list covers the main, widely reported signals, not every remark. Medvedev alone has posted nuclear threats many times; the tool includes a few that drew official or wide press attention. Absence from the list does not mean nothing happened.</p>
+    <p><b>Sources.</b> Every item links to at least one source that was opened and checked when the list was built, preferring official texts (Kremlin, Russian and U.S. governments, NATO, the UN) and then established reporting. Where an official site blocks automated access, the link goes to the Internet Archive copy.</p>
+    <p><b>Dates</b> are the day of the statement or event as reported. Items known only to the month sit mid-month and show the month alone.</p>
+    <p><b>What this tool does not do.</b> It does not estimate the chance of nuclear use, and it does not say whether any signal worked. It holds no information on the location of nuclear weapons beyond what governments announced.</p>
+  </div>
+  <div class="col">
+    <h2>Sources</h2>
+    <p class="fine">Every source cited in the timeline, grouped by publisher.</p>
+    <ul class="src" id="srclist"></ul>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: "Russia's Nuclear Signals", sub: 'Russian nuclear threats, doctrine, drills, deployments and treaty moves since February 2022, against the course of the war.', category: 'Russia & Ukraine' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

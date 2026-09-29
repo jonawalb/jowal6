@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Misinformation Cascade | Interactive Deterrence</title>
+<meta name="description" content="Watch a small, accurate report become an alarming claim as it spreads through a network, and test when a correction can stop it. Built on Jonathan Walberg's Moral Panic cascade game and Sticky Affect model.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="misinfo-cascade.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<div class="toolbar-top">
+  <p class="lede">An accurate report of 16 aircraft becomes “the island is surrounded” one retelling at a time. Set how easily people share, how frightened they are, and when a correction arrives.</p>
+  <div class="actions">
+    <button type="button" class="btn solid" id="start-tour">Start the walkthrough</button>
+    <button type="button" class="btn" id="copy-link">Copy link to this setup</button>
+    <button type="button" class="btn" id="reset">Reset</button>
+  </div>
+</div>
+
+<main class="layout">
+  <div class="stage">
+    <div class="card fig">
+      <p class="headline" id="headline" aria-live="polite"></p>
+      <div class="netbox" id="netbox">
+        <svg id="net" role="img" aria-label="Network of 160 people. Colored dots are sharing a version of the claim; hollow dots have retracted; rings mark who the correction reached."></svg>
+        <div class="tooltip" id="tip" hidden></div>
+      </div>
+      <div class="play">
+        <button type="button" class="btn" id="step-b" aria-label="Back one round">‹</button>
+        <button type="button" class="btn solid" id="play">Play</button>
+        <button type="button" class="btn" id="step-f" aria-label="Forward one round">›</button>
+        <label class="vh" for="scrub">Round</label>
+        <input type="range" id="scrub" min="0" step="1">
+        <span class="fine" id="round-l"></span>
+      </div>
+      <div class="legend" id="legend"></div>
+      <p class="fine" id="now"></p>
+    </div>
+    <div class="grid2">
+      <div class="card fig">
+        <div class="fig-h"><p class="eyebrow">Share of people sharing, by round</p><p class="fine">Click or drag to move through the rounds.</p></div>
+        <svg id="chart" class="chart" role="img" aria-label="Line chart of the share of people sharing the claim in each round, with and without the correction"></svg>
+        <div class="legend" id="chart-leg"></div>
+      </div>
+      <div class="card fig">
+        <div class="fig-h"><p class="eyebrow">What people are passing on this round</p><span class="notional">illustrative wording</span></div>
+        <ul class="versions" id="versions"></ul>
+      </div>
+    </div>
+    <div class="card fig" id="c9"></div>
+  </div>
+  <aside class="panel" id="panel" aria-label="Parameters and results"></aside>
+</main>
+<div id="tour-root"></div>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>Each dot is a person, and each line a contact who can see what they post. In round 0 a few people see an accurate report. In every round, a person who is not yet sharing looks at their contacts. If the share of contacts they see sharing is larger than their private <b>conviction</b> Δ, the cost to them of repeating something they doubt, they start sharing too. They pass on the most alarming version they saw, and sometimes step it up a level.</p>
+    <p>Fear changes both steps. A frightened person puts more weight on each contact who is sharing, and is more likely to embellish. A correction goes out once, to a random share of people. Sharers it reaches weigh it against what the claim means to them and how many of their contacts still share it. People it reaches before they share become harder to recruit.</p>
+    <ul class="howto">
+      <li>The <b>headline</b> above the network shows the most common version in the current round. The bars show the full mix.</li>
+      <li>With a correction on, the dashed line shows the same run, on the same random draws, with no correction. The gap is what the correction bought.</li>
+      <li>Hover a dot to see that person’s conviction and how many contacts are sharing.</li>
+      <li>The <b>Cascade Game</b> card is the nine-player example from the Moral Panic paper, reproduced exactly. It shows the same lock-in with no randomness at all.</li>
+      <li>The link in your address bar stores every setting and the random seed, so a run can be shared exactly.</li>
+    </ul>
+    <h2 class="mt">What the evidence says</h2>
+    <p>The model is a teaching device. These findings are what it should be read against.</p>
+    <ul class="evid">
+      <li><b>False news travels further and faster.</b> Vosoughi, Roy and Aral studied “~126,000 stories tweeted by ~3 million people more than 4.5 million times” on Twitter from 2006 to 2017. “Falsehood diffused significantly farther, faster, deeper, and more broadly than the truth in all categories of information.” In their research brief: “it took the truth approximately six times as long as falsehood to reach 1,500 people,” and “falsehoods were fully 70% more likely to be retweeted than the truth.” They also found that “false stories inspired fear, disgust, and surprise in replies.”</li>
+      <li><b>Thresholds decide collective outcomes.</b> Granovetter defines a threshold as “the number or proportion of others who must make one decision before a given actor does so,” and warns that “Groups with similar average preferences may generate very different results.” Rumor diffusion is one of his suggested applications. Moving the conviction spread slider shows this directly.</li>
+      <li><b>Corrections help but do not erase.</b> A meta-analysis of 32 studies (N = 6,527) by Walter and Tukachinsky found that “correction does not entirely eliminate the effect of misinformation.” Corrections worked better when “delivered by the source of the misinformation itself” and were “less effective if … there was a time lag between the delivery of the misinformation and the correction.”</li>
+      <li><b>Misinformation persists after debunking.</b> Chan, Jones, Hall Jamieson and Albarracín (k = 52, N = 6,878) report effect sizes of d = 1.14–1.33 for debunking and d = 0.75–1.06 for “the persistence of misinformation in the face of debunking.” “Persistence was stronger and the debunking effect was weaker when audiences generated reasons in support of the initial misinformation.”</li>
+    </ul>
+  </div>
+  <div class="col">
+    <h2>Sources</h2>
+    <p class="fine">Models</p>
+    <ul class="src">
+      <li>Jonathan Walberg, “A Coordination Theory of Moral Panic,” working paper, June 2026. Mass Game, nine-player Cascade Game, θ̂ − θ as the disinformation lever, in-group vs. out-group correction.</li>
+      <li>Jonathan Walberg, “Affective Intelligence and the Stickiness of Disinformation,” working paper, draft of March 19, 2026, and its formal model note “Sticky Affect” (March 2026). Retraction condition and the α(E) weight.</li>
+      <li>Jonathan Walberg, “Emotional Priors and Narrative Warfare: A Bayesian Game of Cognitive Manipulation,” working paper, June 11, 2026. Proposition 5, the weighting cascade.</li>
+      <li>Related writing by the author: “From 16 Aircraft to Surrounded: Fear, Virality, and the Misinformation Cascade in ADIZ Discourse” and “From Operation Mincemeat to Social Media Deceit.” The claim ladder here borrows the first title’s arc; its wording is written for this tool.</li>
+    </ul>
+    <p class="fine mt">Literature</p>
+    <ul class="src">
+      <li>Soroush Vosoughi, Deb Roy and Sinan Aral, “The spread of true and false news online,” <i>Science</i> 359, no. 6380 (2018): 1146–1151. <a href="https://doi.org/10.1126/science.aap9559" target="_blank" rel="noopener">doi:10.1126/science.aap9559</a> · <a href="https://pubmed.ncbi.nlm.nih.gov/29590045/" target="_blank" rel="noopener">PubMed abstract</a> · <a href="https://ide.mit.edu/wp-content/uploads/2018/12/2017-IDE-Research-Brief-False-News.pdf" target="_blank" rel="noopener">MIT IDE research brief (PDF)</a></li>
+      <li>Mark Granovetter, “Threshold Models of Collective Behavior,” <i>American Journal of Sociology</i> 83, no. 6 (1978): 1420–1443. <a href="https://doi.org/10.1086/226707" target="_blank" rel="noopener">doi:10.1086/226707</a></li>
+      <li>Nathan Walter and Riva Tukachinsky, “A Meta-Analytic Examination of the Continued Influence of Misinformation in the Face of Correction,” <i>Communication Research</i> 47, no. 2 (2020): 155–177. <a href="https://doi.org/10.1177/0093650219854600" target="_blank" rel="noopener">doi:10.1177/0093650219854600</a></li>
+      <li>Man-pui Sally Chan, Christopher R. Jones, Kathleen Hall Jamieson and Dolores Albarracín, “Debunking: A Meta-Analysis of the Psychological Efficacy of Messages Countering Misinformation,” <i>Psychological Science</i> 28, no. 11 (2017): 1531–1546. <a href="https://doi.org/10.1177/0956797617714579" target="_blank" rel="noopener">doi:10.1177/0956797617714579</a> · <a href="https://pubmed.ncbi.nlm.nih.gov/28895452/" target="_blank" rel="noopener">PubMed abstract</a></li>
+    </ul>
+  </div>
+</section>
+
+<section class="below method" id="method">
+  <div class="col">
+    <h2>Method · the sharing rule</h2>
+    <p>The <b>Mass Game</b> (Walberg) pits an individual against the masses. θ is the share of the group endorsing the claim and does two jobs at once: it is the benefit of joining the wave and the ostracism cost of holding out. Δ is private conviction. If the masses share, the individual gets θ − Δ from sharing and −θ + Δ from holding out, so the best response is to share if and only if Δ &lt; θ. In a population with convictions drawn from F, the share evolves as θ<sub>t+1</sub> = F(θ<sub>t</sub>), and full conformity is absorbing.</p>
+    <p>On a network each person sees only their own contacts. Person i shares when Δ<sub>i</sub> &lt; θ̂<sub>i</sub>, with θ̂<sub>i</sub> = min(1, λ·m<sub>i</sub>/k<sub>i</sub> + a), where m<sub>i</sub> of their k<sub>i</sub> contacts are sharing. The paper treats θ̂ − θ, the gap between perceived and true endorsement, as the lever a disinformer pulls; a is that lever. The fear gain λ comes from Walberg’s Narrative Warfare paper, where fear raises the weight a person puts on evidence and, on a network, “catching a neighbor’s emotion raises one’s own gain on all subsequent private signals.” Scaling the observed share by λ is this tool’s simplification of that proposition, not the paper’s own network model. Sharing is absorbing: people do not quietly stop, they only retract.</p>
+    <p>Convictions are LogNormal with median Δ and shape σ (the paper’s numerical section uses shape 0.5), drawn once per seed so that moving a slider shifts every person together. A person who starts sharing passes on the most alarming version among their sharing contacts and steps it up one level with probability min(0.95, ε·λ).</p>
+    <h2 class="mt">Method · the correction</h2>
+    <p>The correction follows Walberg’s <b>Sticky Affect</b> model. Belief is revised only if α(E)·evidence &gt; (1 − α(E))·U<sub>I</sub> + C, where α(E) is the weight on accuracy, which falls as emotional activation E rises, U<sub>I</sub> is the identity value of the claim, and C = g(N, S) is the cost of abandoning it, rising in narrative coherence N and social reinforcement S. Here E = (λ − 1) + v/4 for a sharer holding version v, α(E) = 1/(1 + E), S is the share of the person’s contacts still sharing, and N grows with the rounds they have held the claim, saturating at 10. An in-group voice carries three times the evidence weight of an out-group fact-check, following the roughly 3:1 ratio in the Moral Panic paper’s falsification sweep. People reached before they share add α(E)·evidence to their conviction.</p>
+  </div>
+  <div class="col">
+    <h2>What is notional</h2>
+    <p>Everything numeric in this tool is a teaching value, not an estimate. The outputs are properties of the model under these values, not findings about any real audience, platform or event.</p>
+    <ul class="howto">
+      <li>Network: 160 people, each linked to their 3 nearest neighbours (about 3.6 contacts each after merging duplicates), 6% of links rewired at random.</li>
+      <li>Default median conviction 0.30, fear gain 1.4, amplified visibility 0.05, exaggeration 0.18 per retelling, four first witnesses.</li>
+      <li>Correction: evidence 0.6 (out-group) or 1.8 (in-group), U<sub>I</sub> = 0.25, C = 0.5·S + 0.5·N. The functional form α(E) = 1/(1 + E) satisfies the paper’s assumption that α falls in E; the paper does not fix a form.</li>
+      <li>The five-step claim ladder is illustrative wording written for this tool. It does not quote any real post or outlet.</li>
+      <li>The 3:1 in-group weight is itself a model output in the Moral Panic paper, not an empirical estimate.</li>
+    </ul>
+    <h2 class="mt">Method · the Cascade Game</h2>
+    <p>Nine players with intensity pairs (x<sub>k</sub>, y<sub>k</sub>) from (2, 10) to (10, 2) choose Left or Right. Each earns y<sub>k</sub> per same-side partner on the Left and x<sub>k</sub> on the Right. From the paper’s starting split (players 1–5 Left), player 6 moves first because 7 × 3 = 21 &lt; 5 × 5 = 25. Under “All who gain switch,” the card reproduces the paper’s four-round payoff table exactly. The paper defines a one-at-a-time rule; “Largest gain first” applies it and reaches the same unanimous end state in five rounds, with players 8 and 9 moving separately.</p>
+    <p class="fine">Randomness comes from a seeded mulberry32 generator. The run with and without the correction share the same draws, so they are identical until the correction round.</p>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Misinformation Cascade', sub: 'A small true event becomes an exaggerated claim as it spreads. Set thresholds, fear and the timing and reach of corrections.', category: 'Disinformation & cognitive warfare' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

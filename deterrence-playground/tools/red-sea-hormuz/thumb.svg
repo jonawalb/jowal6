@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+  <rect width="640" height="400" fill="#f2f2ee"/>
+  <rect x="24" y="24" width="592" height="352" rx="6" fill="#fbfbf8" stroke="#d3d6cd"/>
+  <!-- three transit strips -->
+  <g fill="none" stroke-width="3" stroke-linejoin="round">
+    <path d="M44 92 L110 88 L170 91 L214 86 L236 128 L270 132 L330 126 L400 130 L470 127 L540 131 L596 128" stroke="#1b4fd4"/>
+    <path d="M44 196 L110 192 L170 195 L214 190 L240 222 L300 226 L360 222 L430 224 L500 221 L596 223" stroke="#1b4fd4"/>
+    <path d="M44 290 L130 287 L220 292 L300 289 L380 293 L440 290 L472 352 L520 350 L560 346 L596 351" stroke="#e8753a"/>
+  </g>
+  <g stroke="#b3261e" stroke-width="2" stroke-dasharray="4 4">
+    <line x1="214" y1="60" x2="214" y2="150"/><line x1="214" y1="166" x2="214" y2="248"/><line x1="440" y1="262" x2="440" y2="360"/>
+  </g>
+  <g fill="#b3261e"><circle cx="214" cy="60" r="7"/><circle cx="440" cy="262" r="7"/></g>
+  <g font-family="Georgia, serif" font-weight="700" font-size="22" fill="#14201a">
+    <text x="44" y="68">Bab el-Mandeb</text>
+    <text x="44" y="172">Suez</text>
+    <text x="44" y="268">Hormuz</text>
+  </g>
+</svg>

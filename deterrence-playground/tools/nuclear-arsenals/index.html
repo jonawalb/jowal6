@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nuclear Arsenals | Interactive Deterrence</title>
+<meta name="description" content="Estimated nuclear warhead stockpiles for every nuclear-armed state from 1945 to 2026, from the FAS series, with arms-control milestones and country pages.">
+<meta property="og:title" content="Nuclear Arsenals | Interactive Deterrence">
+<meta property="og:description" content="Scrub eighty years of nuclear warhead estimates, country by country, against the treaties that tried to limit them.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="nuclear-arsenals.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+<main class="layout">
+  <div class="stage">
+    <div class="card na-chartcard">
+      <div class="na-charthead">
+        <h2>Estimated warhead stockpiles, 1945–2026</h2>
+        <div class="na-actions">
+          <button type="button" class="btn solid" id="start-tour">Start the walkthrough</button>
+          <button type="button" class="btn" id="copy-link">Copy link</button>
+        </div>
+      </div>
+      <p class="fine">Warheads assigned to military forces, by country. Drag across the chart to move the year; click a milestone marker for the treaty and its source.</p>
+      <div class="na-chart" id="chart"></div>
+      <div class="na-scrub">
+        <button type="button" class="btn" id="play" aria-pressed="false">Play</button>
+        <output id="year-out" class="num" for="year">1986</output>
+        <input type="range" id="year" step="1" aria-label="Year">
+      </div>
+      <div class="na-legend" id="legend" aria-hidden="true"></div>
+    </div>
+
+  </div>
+  <aside class="panel" id="panel" aria-label="Year readout and chart controls"></aside>
+</main>
+<div class="na-more">
+    <section class="card na-chartcard" id="compare-sec" aria-labelledby="compare-h">
+      <div class="na-sub">
+        <h2 id="compare-h">Then versus now</h2>
+        <label class="fine">Compare 2026 with <select id="then" aria-label="Year to compare with 2026"></select></label>
+      </div>
+      <div class="na-cards" id="compare"></div>
+    </section>
+
+    <section class="card na-chartcard" id="country-sec" aria-labelledby="country-h">
+      <div class="na-sub"><h2 id="country-h">Country pages</h2></div>
+      <div class="choices na-cpick" id="cpick" role="group" aria-label="Choose a country"></div>
+      <div class="na-country" id="country"></div>
+    </section>
+</div>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>Each colored band is one country's estimated stockpile: the warheads assigned to its military forces, deployed or in storage. The bands stack, so the top edge of the colored area is the sum of the countries you have switched on. The dashed line is the global total inventory published with the same series, which also counts retired warheads that are intact and waiting to be dismantled. The gap between the stack and the dashed line is mostly those retired warheads.</p>
+    <p>Switch to <b>Lines</b> to compare countries directly, and turn on <b>Log scale</b> to read the arsenals of the smaller nuclear powers next to the U.S. and Russian ones. Every number is an estimate. Most governments publish nothing about their stockpiles, and the estimates for Israel, India, Pakistan and North Korea are the least certain.</p>
+    <p>The milestone markers are not a claim that a treaty caused the change in the curve. SALT I limited missiles while both stockpiles kept growing, and FAS says the overwhelming portion of the post-Cold War reduction happened in the 1990s.</p>
+    <h3>Method</h3>
+    <ul class="src">
+      <li>Annual stockpiles, 1945–2026, for the nine nuclear-armed states and South Africa come from Our World in Data's "Number of nuclear warheads" indicator, which processes the FAS "Estimated Global Nuclear Warhead Inventories" (Kristensen, Korda, Norris, Johns and Knight-Boyle). OWID dataset version 2026-05-13, FAS published 2026-03-30, retrieved 2026-09-29. Values are used as published, with no smoothing or interpolation.</li>
+      <li>The split into deployed strategic, deployed nonstrategic, reserve and retired warheads exists only for the latest year (2026). No year-by-year status series is published, so the timeline shows stockpiles only.</li>
+      <li>The global line is OWID's "World" series, which includes retired warheads. Before the late 1980s it sits slightly above or below the sum of national stockpiles in some years, because the historical global and national estimates were compiled separately. This tool does not derive a retired-warhead series from that difference.</li>
+      <li>FAS notes that its 2026 table figures may not add up, because of rounding and uncertainty. One example: the table lists India with 178 reserve warheads and a military stockpile of 190. The FAS page headlines about 12,187 warheads worldwide, while one of its footnotes gives 12,321; this tool uses 12,187, which matches the OWID series.</li>
+      <li>Milestone dates come from the treaty records and official statements listed below. The New START status was checked on 2026-09-29.</li>
+      <li>No delivery systems, bases or targeting information appear in this tool.</li>
+    </ul>
+  </div>
+  <div class="col">
+    <h2>Sources</h2>
+    <ul class="src">
+      <li>Federation of American Scientists, Hans M. Kristensen, Matt Korda, Eliana Johns, Mackenzie Knight-Boyle et al., <a href="https://fas.org/initiative/status-world-nuclear-forces/" target="_blank" rel="noopener">Status of World Nuclear Forces</a> (2026 table and footnotes), opened 2026-09-29.</li>
+      <li>Our World in Data, <a href="https://ourworldindata.org/grapher/nuclear-warhead-stockpiles" target="_blank" rel="noopener">Estimated nuclear warhead stockpiles</a> and <a href="https://ourworldindata.org/grapher/nuclear-warhead-inventories" target="_blank" rel="noopener">Estimated nuclear warhead inventories</a> (CSV downloads, CC BY 4.0), based on FAS; retrieved 2026-09-29. Regenerate with <code>scripts/build_data.py</code>.</li>
+      <li>NPT: <a href="https://2009-2017.state.gov/t/isn/trty/16281.htm" target="_blank" rel="noopener">U.S. State Department treaty record</a>; <a href="https://www.un.org/disarmament/wmd/nuclear/npt/" target="_blank" rel="noopener">UNODA</a>.</li>
+      <li>SALT I: <a href="https://history.state.gov/milestones/1969-1976/salt" target="_blank" rel="noopener">Office of the Historian</a>.</li>
+      <li>INF: <a href="https://2009-2017.state.gov/t/avc/trty/102360.htm" target="_blank" rel="noopener">State Department treaty record</a>; <a href="https://web.archive.org/web/20241205153022/https://2017-2021.state.gov/u-s-withdrawal-from-the-inf-treaty-on-august-2-2019/" target="_blank" rel="noopener">U.S. withdrawal statement, Aug. 2, 2019</a> (archived).</li>
+      <li>START I: <a href="https://2009-2017.state.gov/t/avc/trty/146007.htm" target="_blank" rel="noopener">State Department treaty text</a>; <a href="https://obamawhitehouse.archives.gov/the-press-office/joint-statement-president-united-states-america-and-president-russian-federation-ex" target="_blank" rel="noopener">joint statement on expiry, Dec. 4, 2009</a>; <a href="https://www.armscontrol.org/factsheets/start-i-glance" target="_blank" rel="noopener">Arms Control Association fact sheet</a>.</li>
+      <li>CTBT: <a href="https://2009-2017.state.gov/t/avc/trty/16411.htm" target="_blank" rel="noopener">State Department treaty record</a>; CTBTO <a href="https://web.archive.org/web/2026/https://www.ctbto.org/our-mission/the-treaty" target="_blank" rel="noopener">treaty page</a> and <a href="https://web.archive.org/web/20260926024444/https://www.ctbto.org/our-mission/states-signatories" target="_blank" rel="noopener">status table</a> (archived; ctbto.org blocks automated requests); <a href="http://en.kremlin.ru/acts/news/72635" target="_blank" rel="noopener">Kremlin, law revoking Russia's ratification, Nov. 2, 2023</a>.</li>
+      <li>New START: <a href="https://www.state.gov/new-start-treaty" target="_blank" rel="noopener">State Department</a>; <a href="https://2021-2025.state.gov/on-the-extension-of-the-new-start-treaty-with-the-russian-federation/" target="_blank" rel="noopener">2021 extension</a>; Kremlin statements of <a href="http://en.kremlin.ru/events/president/news/70565" target="_blank" rel="noopener">Feb. 21, 2023</a>, <a href="http://en.kremlin.ru/events/president/news/78051" target="_blank" rel="noopener">Sept. 22, 2025</a> and <a href="http://en.kremlin.ru/events/president/news/79101" target="_blank" rel="noopener">Feb. 4, 2026</a>; Arms Control Association <a href="https://www.armscontrol.org/factsheets/new-start-glance" target="_blank" rel="noopener">fact sheet</a> and <a href="https://www.armscontrol.org/pressroom/2026-02/statement-end-new-start-requires-more-coherent-approach-trump-administration" target="_blank" rel="noopener">statement of Feb. 4, 2026</a>. The State Department page says the extension kept the treaty in force "through February 4, 2026"; the 2021 extension statement and the Kremlin give February 5.</li>
+    </ul>
+  </div>
+</section>
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Nuclear Arsenals', sub: 'Estimated nuclear warheads for every nuclear-armed state, 1945 to 2026, against the treaties that tried to limit them.', category: 'Nuclear weapons & arms control' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

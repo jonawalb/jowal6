@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+  <rect width="640" height="400" fill="#f2f2ee"/>
+  <rect x="24" y="24" width="592" height="352" rx="6" fill="#fbfbf8" stroke="#d9d9d0"/>
+  <g stroke="#e3e3da" stroke-width="1">
+    <line x1="60" y1="100" x2="590" y2="100"/><line x1="60" y1="170" x2="590" y2="170"/><line x1="60" y1="240" x2="590" y2="240"/>
+  </g>
+  <!-- missile layer (flat) and drone layer (growing) -->
+  <g fill="#1b4fd4">
+    <rect x="64" y="292" width="22" height="8"/><rect x="92" y="290" width="22" height="10"/><rect x="120" y="291" width="22" height="9"/>
+    <rect x="148" y="289" width="22" height="11"/><rect x="176" y="290" width="22" height="10"/><rect x="204" y="288" width="22" height="12"/>
+    <rect x="232" y="290" width="22" height="10"/><rect x="260" y="289" width="22" height="11"/><rect x="288" y="288" width="22" height="12"/>
+    <rect x="316" y="290" width="22" height="10"/><rect x="344" y="288" width="22" height="12"/><rect x="372" y="289" width="22" height="11"/>
+    <rect x="400" y="288" width="22" height="12"/><rect x="428" y="289" width="22" height="11"/><rect x="456" y="287" width="22" height="13"/>
+    <rect x="484" y="288" width="22" height="12"/><rect x="512" y="288" width="22" height="12"/><rect x="540" y="287" width="22" height="13"/>
+  </g>
+  <g fill="#b3261e">
+    <rect x="344" y="283" width="22" height="5"/><rect x="400" y="282" width="22" height="6"/><rect x="456" y="281" width="22" height="6"/>
+    <rect x="512" y="281" width="22" height="7"/><rect x="540" y="280" width="22" height="7"/>
+  </g>
+  <g fill="#e8753a">
+    <rect x="64" y="286" width="22" height="6"/><rect x="92" y="282" width="22" height="8"/><rect x="120" y="284" width="22" height="7"/>
+    <rect x="148" y="278" width="22" height="11"/><rect x="176" y="276" width="22" height="14"/><rect x="204" y="272" width="22" height="16"/>
+    <rect x="232" y="262" width="22" height="28"/><rect x="260" y="250" width="22" height="39"/><rect x="288" y="228" width="22" height="60"/>
+    <rect x="316" y="214" width="22" height="76"/><rect x="344" y="180" width="22" height="103"/><rect x="372" y="170" width="22" height="119"/>
+    <rect x="400" y="140" width="22" height="142"/><rect x="428" y="150" width="22" height="139"/><rect x="456" y="112" width="22" height="169"/>
+    <rect x="484" y="120" width="22" height="168"/><rect x="512" y="96" width="22" height="185"/><rect x="540" y="104" width="22" height="176"/>
+  </g>
+  <line x1="60" y1="300" x2="590" y2="300" stroke="#14201a" stroke-width="2"/>
+  <text x="64" y="80" font-family="Georgia, serif" font-size="30" font-weight="700" fill="#14201a">Drones and missiles</text>
+  <text x="64" y="350" font-family="Georgia, serif" font-size="26" font-weight="700" fill="#033303">Ukraine's air war</text>
+</svg>

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Iran–Israel Salvos | Interactive Deterrence</title>
+<meta name="description" content="The three direct Iranian missile and drone attacks on Israel, April 2024, October 2024 and June 2025: what was launched, what was intercepted, who defended and with what, with every figure sourced.">
+<meta property="og:title" content="Iran–Israel Salvos | Interactive Deterrence">
+<meta property="og:description" content="Salvo size, interception and defenders for Iran's three direct attacks on Israel, with every figure sourced and disagreements shown.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="iran-israel-salvos.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<main class="layout">
+  <div class="stage" id="stage">
+    <div class="card">
+      <div class="ii-top">
+        <div>
+          <p class="eyebrow" id="ii-ep-e"></p>
+          <p class="ii-ep-h" id="ii-ep-h"></p>
+        </div>
+        <div class="ii-btns">
+          <button type="button" class="btn solid" id="ii-tour">Walkthrough</button>
+          <button type="button" class="btn" id="ii-copy">Copy link</button>
+        </div>
+      </div>
+      <p class="ii-ep-s" id="ii-ep-s"></p>
+      <div class="ii-eps" id="ii-eps" role="group" aria-label="Episode"></div>
+    </div>
+
+    <div class="card chartcard" id="ii-compcard">
+      <div class="chart-h">
+        <p class="eyebrow">What Iran launched</p>
+        <ul class="legend"><li><span class="sw t-bm"></span>Ballistic missiles</li><li><span class="sw t-cm"></span>Cruise missiles</li><li><span class="sw t-uav"></span>Drones</li><li><span class="sw" style="border-top:2px solid var(--ink);height:0;width:16px"></span>Range across sources</li></ul>
+      </div>
+      <div class="ii-comp" id="ii-comp"></div>
+      <p class="fine" id="ii-comp-note"></p>
+    </div>
+
+    <div class="card chartcard" id="ii-funcard">
+      <div class="chart-h"><p class="eyebrow" id="ii-fun-h">From launch to impact</p></div>
+      <div class="ii-funnel" id="ii-funnel"></div>
+      <div class="ii-dis" id="ii-dis"></div>
+    </div>
+
+    <div class="mapbox" id="ii-mapbox">
+      <svg id="ii-map" role="img" aria-label="Country-level map of the Middle East showing the launching country, Israel and regional defenders for the chosen episode"></svg>
+      <p class="ii-maplegend"><span><i class="k-src"></i>Launched from</span><span><i class="k-tgt"></i>Target</span><span><i class="k-def"></i>Regional state reported intercepting</span><span>Arcs are schematic, country to country.</span></p>
+      <div class="ii-ext" id="ii-ext"></div>
+    </div>
+
+    <div class="card chartcard" id="ii-mxcard">
+      <div class="chart-h"><p class="eyebrow">Who defended, with what</p></div>
+      <div class="tablewrap"><table class="ii-mx" id="ii-mx"></table></div>
+      <p class="fine">A mark means at least one cited source reports the system or country in action in that episode. Numbers are reported interceptor counts where a source gives one. Blank means no source found, not that it was absent.</p>
+    </div>
+
+    <div class="card chartcard" id="ii-cmpcard">
+      <div class="chart-h"><p class="eyebrow">Three episodes side by side</p></div>
+      <div class="tablewrap"><table class="ii-cmp" id="ii-cmp"></table></div>
+      <p class="fine" id="ii-prov"></p>
+    </div>
+  </div>
+
+  <aside class="panel" id="panel" aria-label="Episode summary and cost comparison"></aside>
+</main>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>Pick an episode at the top. The bars show what Iran launched, by type, for all three attacks at once, so you can compare sizes; the black whisker shows the spread when sources give different totals. The funnel follows one episode from launch to impact, and the orange box lists where sources disagree. The map and the table show which countries helped defend Israel and which interceptors were reported in use.</p>
+    <p>The panel on the right sets the cost of the defense against the cost of the attack. Unit costs come from cited estimates and are shown as low-to-high ranges. How many interceptors of each kind were fired is mostly not public, so the mix is a <span class="notional">notional</span> input you set; where a source gives a count, it is the default.</p>
+    <h2 class="mt">Why the numbers differ</h2>
+    <p>Most launch counts come from the Israel Defense Forces, sometimes echoed by U.S. officials. Iran rarely gives numbers. Interception rates depend on what is counted: missiles that failed at launch or fell short, drones downed far from Israel by U.S., British, French or Jordanian aircraft, and warheads that landed in open ground may or may not be included. Independent tallies from satellite imagery or impact counts tend to report more hits than official statements do.</p>
+    <h2 class="mt">What this tool leaves out</h2>
+    <p>Israel's own strikes on Iran (October 2024 and June 2025), the U.S. strikes of 22 June 2025, Hezbollah and Houthi fire, and every attack by Iran's partners are outside its scope except where they were part of the same salvo. It gives country and city level only, as reported, and no impact locations.</p>
+  </div>
+  <div class="col">
+    <h2>Method and sources</h2>
+    <ul class="src" id="ii-method"></ul>
+    <h2 class="mt">Sources</h2>
+    <ol class="src" id="ii-srcs"></ol>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Iran–Israel Salvos', sub: 'Iran\'s three direct attacks on Israel: what was launched, what was stopped, who defended and what it cost, with every figure sourced.', category: 'Middle East' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

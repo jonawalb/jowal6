@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Red Sea &amp; Hormuz Pulse | Interactive Deterrence</title>
+<meta name="description" content="Daily ship transits through Bab el-Mandeb, the Suez Canal and the Strait of Hormuz from IMF PortWatch, set against a sourced timeline of Houthi attacks, strikes, ceasefires and the 2026 Hormuz mining.">
+<meta property="og:title" content="Red Sea &amp; Hormuz Pulse | Interactive Deterrence">
+<meta property="og:description" content="How many ships still pass Bab el-Mandeb, Suez and Hormuz? Daily IMF PortWatch counts against a sourced event timeline, 2019 to 2026.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="red-sea-hormuz.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<main class="layout">
+  <div class="stage" id="stage">
+    <div class="card">
+      <div class="rs-top">
+        <div>
+          <p class="eyebrow">Ship transits on</p>
+          <p class="rs-date"><b id="rs-day"></b> <span id="rs-day-s"></span></p>
+        </div>
+        <div class="rs-btns">
+          <button type="button" class="btn solid" id="rs-tour">Walkthrough</button>
+          <button type="button" class="btn" id="rs-copy">Copy link</button>
+          <button type="button" class="btn" id="rs-reset">Reset</button>
+        </div>
+      </div>
+      <input type="range" id="rs-slider" min="0" max="1" value="0" aria-label="Date">
+      <p class="rs-hint">Drag the slider or a chart to move the date. Click a colored dot to open an event.</p>
+    </div>
+
+    <div class="mapbox" id="rs-mapbox">
+      <svg id="rs-map" role="img" aria-label="Map of the Red Sea, Gulf of Aden and Persian Gulf with circles at Bab el-Mandeb, the Suez Canal and the Strait of Hormuz sized by ships per day"></svg>
+      <p class="rs-legend"><span><i class="k-now"></i>ships per day on the date</span><span><i class="k-base"></i>average in the "before" period</span></p>
+      <div class="rs-cape" id="rs-cape"></div>
+      <div class="rs-evcard" id="rs-evcard" hidden></div>
+    </div>
+
+    <div class="card rs-chartcard" id="rs-chartcard">
+      <div class="chart-h">
+        <p class="eyebrow">Daily transits by chokepoint</p>
+        <ul class="legend">
+          <li><span class="sw sw-b"></span>Before</li><li><span class="sw sw-a"></span>After</li>
+          <li><span class="dot" style="background:var(--bad)"></span>Attacks</li><li><span class="dot" style="background:var(--blue)"></span>Coalition</li>
+          <li><span class="dot" style="background:var(--c6)"></span>Strikes</li><li><span class="dot" style="background:var(--good)"></span>Pauses</li><li><span class="dot" style="background:var(--c2)"></span>Hormuz and Iran</li><li><span class="dot" style="background:var(--faint)"></span>Shipping, UN, IMO</li>
+        </ul>
+      </div>
+      <div class="rs-charts" id="rs-charts"></div>
+      <p class="fine" id="rs-asof"></p>
+    </div>
+  </div>
+
+  <aside class="panel" id="panel" aria-label="Comparison, options, events and oil flows"></aside>
+</main>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>Each chart counts the ships that crossed one chokepoint each day. The blue line is a 7-day average by default; switch to daily counts or a 30-day average in the panel. The gray band is the "before" period and the orange band the "after" period. The dashed lines inside the bands are each period's average, and the panel table gives the change. Pick a preset or type your own dates.</p>
+    <p>The map shows the same date. Each solid circle is sized by ships per day at that chokepoint, and the dashed ring shows the "before" average, so a small circle inside a large ring means traffic has fallen. Circles turn amber below 85 percent of the "before" level and red below 60 percent. The box in the corner tracks the Cape of Good Hope, where diverted ships go.</p>
+    <p>Colored dots along the top of each chart are events from the timeline. Click one, or pick it from the list, to read what happened and open its source. Filter the categories in the panel.</p>
+
+    <h2 class="mt">What the counts can and cannot tell you</h2>
+    <p>PortWatch estimates transits from AIS, the radio transponders that large ships carry. Ships can switch AIS off, and in a war zone many do, so a count near zero means few ships are broadcasting, not proof that none moved. Counts cover commercial ship types (container, dry bulk, general cargo, roll-on/roll-off and tanker); warships are not included. A fall in transits shows how shippers and insurers judged the risk. It does not measure damage.</p>
+
+    <h2 class="mt">Mines and the 2026 closure</h2>
+    <div class="walb" id="rs-walberg"></div>
+  </div>
+  <div class="col">
+    <h2>Method and sources</h2>
+    <ul class="src" id="rs-method"></ul>
+    <h2 class="mt">Event sources</h2>
+    <ul class="src" id="rs-srcs"></ul>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Red Sea & Hormuz Pulse', sub: 'Daily ship transits through Bab el-Mandeb, Suez and Hormuz against a sourced timeline of attacks, strikes, pauses and mines.', category: 'Middle East' });
+</script>
+<script type="module" src="js/app.js"></script>
+<script type="module" src="js/notes.js"></script>
+</body>
+</html>

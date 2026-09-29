@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kahn's Escalation Ladder | Interactive Deterrence</title>
+<meta name="description" content="Herman Kahn's 44-rung escalation ladder with nuclear crises from Cuba 1962 to Russia 2022 stepped rung by rung, compared, and critiqued.">
+<meta property="og:title" content="Kahn's Escalation Ladder | Interactive Deterrence">
+<meta property="og:description" content="Step through real nuclear crises on Herman Kahn's 44-rung ladder, compare them, and read why the ladder misleads.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="escalation-ladder-kahn.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+<section class="kl-pick" id="pick" aria-labelledby="pick-h" hidden>
+  <p class="eyebrow">Step 1</p>
+  <h2 id="pick-h">Pick a crisis to climb the ladder</h2>
+  <p class="kl-pick-lede">Each crisis is placed, step by step, on Herman Kahn's 44-rung escalation ladder. Choose one to start; you can switch crises or compare two at any time.</p>
+  <div class="kl-pick-grid" id="pick-grid"></div>
+</section>
+<main class="layout">
+  <div class="stage">
+    <div class="card">
+      <div class="kl-top">
+        <h2>On Escalation (1965): the 44 rungs</h2>
+        <div class="kl-actions">
+          <button type="button" class="btn" id="change-crisis">Change crisis</button>
+          <button type="button" class="btn solid" id="start-tour">Start the walkthrough</button>
+          <button type="button" class="btn" id="copy-link">Copy link</button>
+        </div>
+      </div>
+      <p class="fine" style="padding:4px 14px 0" id="summary"></p>
+      <div class="kl-ladder" id="ladder"></div>
+    </div>
+  </div>
+  <aside class="panel" id="panel" aria-label="Crisis, steps and comparison"></aside>
+</main>
+
+<div class="layout" style="grid-template-columns:minmax(0,1fr)">
+  <section class="card kl-card" aria-labelledby="path-h">
+    <h2 id="path-h">The path, step by step</h2>
+    <p class="fine">Each dot is one step of the crisis; height is the rung this tool codes it at. Dashed red lines are Kahn's thresholds. A ladder predicts a steady climb; real crises jump, stall and come back down.</p>
+    <div class="kl-path"><svg id="path" role="img" aria-label="Rung reached at each step of the selected crisis"></svg></div>
+    <div class="kl-legend" id="path-legend"></div>
+  </section>
+  <section class="card kl-card" aria-labelledby="crit-h">
+    <h2 id="crit-h">Why the ladder misleads</h2>
+    <p class="fine">Davis and Stan (RAND, 1984) note that Kahn "did not require that his ladders be uniquely correct"; he wanted a structure for more rigorous thinking. These critiques say what the metaphor hides.</p>
+    <div class="kl-crit" id="critiques"></div>
+  </section>
+</div>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>Kahn arranged 44 kinds of action in a nuclear confrontation from mild to catastrophic, grouped them in seven bands, and marked six thresholds where he thought the character of a crisis changes, from "Don't Rock the Boat" at the bottom to "City Targeting" near the top. RAND's <i>Dangerous Thresholds</i> notes that more than half of the 44 rungs involve at least some use of nuclear weapons. The names on this page are Kahn's, quoted exactly.</p>
+    <p>Pick a crisis on the right and step through it. Each step is a dated event with its source. The blue number on a rung shows which step reached it; the highlighted rung is the current step. Choose a second crisis under <b>Compare with</b> to overlay its path in orange. Click any rung to see which crises reached it.</p>
+    <p>No crisis here crossed the No Nuclear Use Threshold. Most of them spent their dangerous hours on rungs 5 through 11: shows of force, confrontations, and alerts. Several also moved down, which a ladder drawn as a climb does not show well.</p>
+    <h3>Method and coding</h3>
+    <ul class="src">
+      <li>Rung, group and threshold names are transcribed from Kahn's figure (On Escalation, 1965, p. 39) as reproduced in RAND R-3235 (1984), Fig. 2. <span id="kahn-src"></span></li>
+      <li>Every event is dated and linked to a source that was opened and checked on 2026-09-29. Placing an event on a rung is marked <span class="pill" style="color:var(--warn)">coding by the author of this tool</span> unless a source makes the placement itself.</li>
+      <li>Kahn wrote the ladder for a U.S.-Soviet confrontation. Applying it to India and Pakistan, North Korea, or Russia in Ukraine stretches it; the coding picks the closest rung name, and the step notes say why.</li>
+      <li>Where one side's move and the other's response happened days apart, they are separate steps. Rungs reflect the most escalatory action in each step, not the whole crisis.</li>
+    </ul>
+    <h3>Crises and highest rung coded</h3>
+    <div class="tablewrap"><table class="kl-table">
+      <thead><tr><th>Years</th><th>Crisis</th><th>Rung</th><th>Kahn's name for it</th></tr></thead>
+      <tbody id="crisis-table"></tbody>
+    </table></div>
+  </div>
+  <div class="col">
+    <h2>Sources</h2>
+    <ul class="src" id="sources"></ul>
+  </div>
+</section>
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: "Kahn's Escalation Ladder", sub: 'Herman Kahn’s 44 rungs from 1965, with real nuclear crises stepped rung by rung, compared, and critiqued.', category: 'Nuclear weapons & arms control' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

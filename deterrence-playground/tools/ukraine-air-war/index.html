@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ukraine's Air War | Interactive Deterrence</title>
+<meta name="description" content="Russian missile and drone launches against Ukraine and the share Ukraine reported shooting down, day by day since September 2022, from Ukrainian Air Force reports.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="ukraine-air-war.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<main class="layout">
+  <div class="stage" id="stage">
+    <p class="caveat"><b>Claims are Ukrainian Air Force reports.</b> Launch and shoot-down numbers come from the Air Force's own posts, compiled by an independent researcher. Nobody outside the Air Force can check them, and Russia publishes no comparable figures.</p>
+
+    <div class="card controls">
+      <div class="row">
+        <div class="seg" id="range" role="group" aria-label="Time range"></div>
+        <div class="acts">
+          <button type="button" class="btn" id="tour-btn">Walkthrough</button>
+          <button type="button" class="btn" id="copy">Copy link</button>
+          <button type="button" class="btn" id="reset">Reset</button>
+        </div>
+      </div>
+      <div class="gchips" id="groups" role="group" aria-label="Weapon types shown"></div>
+    </div>
+
+    <div class="card chartcard">
+      <div class="chart-h">
+        <p class="eyebrow" id="tl-h">Launched per week</p>
+        <div class="seg small" id="metric" role="group" aria-label="What the bars count"></div>
+        <div class="seg small" id="res" role="group" aria-label="Bar width"></div>
+      </div>
+      <div class="chartbox">
+        <svg id="tl" class="chart" role="img" aria-label="Stacked bars of Russian missiles and drones by weapon type over time. Click a bar for details."></svg>
+        <div class="tooltip" id="tip" hidden></div>
+      </div>
+      <div class="chart-f">
+        <p class="fine">Shaded from 10 Aug 2026: the Air Force stopped publishing counts for some missile types (dataset note). Those rows are left out, not counted as zero.</p>
+        <div id="tl-export"></div>
+      </div>
+    </div>
+
+    <div class="card chartcard">
+      <div class="chart-h">
+        <p class="eyebrow">Share reported stopped, by month</p>
+        <label class="tg compact"><input type="checkbox" id="lost" checked><span class="sw"></span><span class="t">Count "lost" drones as stopped<small>Drones the Air Force said were lost to jamming, decoy use or crashes, reported separately from July 2024</small></span></label>
+      </div>
+      <ul class="legend" id="rate-legend"></ul>
+      <div class="chartbox"><svg id="rate" class="chart" role="img" aria-label="Monthly share of launched weapons that the Air Force reported stopped, for Shahed-type drones, cruise missiles and ballistic missiles."></svg></div>
+      <p class="fine" id="rate-empty" hidden>Switch on Shahed-type drones, cruise or ballistic missiles to see their rates.</p>
+      <p class="fine">Months with fewer than 5 launches of a type are left blank. Dot size shows how many were launched.</p>
+    </div>
+
+    <div class="twocol">
+      <div class="card chartcard">
+        <p class="eyebrow">Largest attacks in view</p>
+        <p class="fine">One Air Force report per row, weapon types in view. Click to find it in the timeline.</p>
+        <ol class="salvos" id="salvos"></ol>
+      </div>
+      <div class="card chartcard" id="clock-card">
+        <p class="eyebrow">When attacks begin</p>
+        <p class="fine">Weapons launched, by weekday and start hour given in the report</p>
+        <div id="clock"></div>
+        <p class="fine" id="clock-note"></p>
+      </div>
+    </div>
+  </div>
+
+  <aside class="panel" aria-label="Summary and details">
+    <div class="sec">
+      <div class="status" data-s="warn"><b id="st-b"></b><span id="st-s"></span></div>
+      <dl class="readout" id="summary"></dl>
+      <p class="fine" id="asof"></p>
+    </div>
+    <div class="sec detail" id="detail" aria-live="polite"></div>
+    <div class="sec">
+      <p class="eyebrow">Weapon groups</p>
+      <p class="fine">The Air Force names weapons in its posts. The tool sorts them into seven groups. Hover a chip above for what each group holds.</p>
+    </div>
+  </aside>
+</main>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>Since October 2022 Russia has struck Ukraine with long-range drones and missiles. In the data, attacks began on 190 days in 2023 and on 357 days in 2025. After each attack the Ukrainian Air Force posts how many weapons it tracked, of what type, and how many it shot down. This tool charts those posts.</p>
+    <p>The top chart stacks launches by weapon type. Pick a period with the buttons, switch weapon types on and off with the chips, and change what the bars count: everything launched, what the Air Force said it stopped, or the rest. Click a bar to list every weapon reported that day, week or month, with links to the original posts.</p>
+    <p>The second chart shows the share of each weapon type the Air Force reported stopped, month by month. The list ranks the largest single attacks. The grid shows when attacks begin, by weekday and hour.</p>
+
+    <h2 class="mt">Method</h2>
+    <p><b>Data.</b> Petro Ivaniuk's "Massive Missile Attacks on Ukraine" dataset, compiled by hand from posts by the Air Force Command and the General Staff of the Armed Forces of Ukraine on Facebook and Telegram. Each row is one weapon type in one report, with the number launched and destroyed. The tool keys every row to the date the attack began, so an overnight attack counts on the evening it started.</p>
+    <p><b>Stopped.</b> "Destroyed" is the Air Force's shot-down or suppressed count. From July 2024 the Air Force also reported drones "lost" (the dataset's <code>not_reach_goal</code>): the dataset lists radar loss, decoys, electronic warfare, defects and fuel exhaustion as reasons. The switch adds these to the stopped share. From August 2025 the dataset records almost no lost drones, so the share before and after that date is not measured the same way.</p>
+    <p><b>Gaps.</b> Rows the dataset marks as withheld (from 10 August 2026, when the Air Force stopped publishing some missile counts) are left out, not counted as zero. When a report gave only the number destroyed, the dataset copies it into "launched" as a minimum, so some launch counts are floors. Rows labelled "Unknown UAV" usually carry the same number launched and destroyed for this reason; the tool keeps them in "Other drones", which it leaves out of the rate chart. Start hours exist for about four in ten rows (most of the drone volume) and are the start of the reporting window the post gives, often 18:00.</p>
+    <p><b>Groups.</b> The seven weapon groups are the tool author's, built from the model names and the dataset's weapon table. Reports that give one number for ballistic and cruise missiles together sit in "Mixed". Reports that pair S-300/S-400 with Iskander-M count as ballistic.</p>
+    <p><b>What this tool does not show.</b> Where weapons struck, where Ukraine's air defenses are, and what any attack destroyed on the ground. It also omits glide bombs, artillery and short-range drones on the front line, which these reports do not cover.</p>
+  </div>
+  <div class="col">
+    <h2>Sources</h2>
+    <ul class="src">
+      <li>Petro Ivaniuk, <a href="https://www.kaggle.com/datasets/piterfm/massive-missile-attacks-on-ukraine" target="_blank" rel="noopener">"Massive Missile Attacks on Ukraine"</a>, Kaggle, version 212, updated 26 September 2026, retrieved 29 September 2026. License <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a>. The tool's counts are derived from this dataset and shared under the same license.</li>
+      <li>Ukrainian Air Force Command, <a href="https://www.facebook.com/kpszsu" target="_blank" rel="noopener">official Facebook page</a>, the original reports. Each selected period in the tool links to its posts.</li>
+      <li>The same author's <a href="https://github.com/PetroIvaniuk/2022-Ukraine-Russia-War-Dataset" target="_blank" rel="noopener">2022 Ukraine Russia War Dataset</a> on GitHub (MIT license) covers equipment and personnel losses, not strikes; it is not used here.</li>
+    </ul>
+    <p class="fine mt-s">Build script: <code>tools/ukraine-air-war/scripts/build_data.py</code> downloads the dataset with <code>--fetch</code> and regenerates <code>data/attacks.js</code>, recording the version and retrieval date.</p>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: "Ukraine's Air War", sub: 'Russian missile and drone launches against Ukraine, and how many the Ukrainian Air Force reported stopping.', category: 'Russia & Ukraine' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

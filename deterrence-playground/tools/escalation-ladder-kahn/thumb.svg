@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+  <rect width="640" height="400" fill="#f2f2ee"/>
+  <rect x="24" y="24" width="592" height="352" rx="8" fill="#fbfbf8" stroke="#d3d6cd"/>
+  <g stroke="#14201a" stroke-width="6" stroke-linecap="round">
+    <line x1="150" y1="44" x2="150" y2="356"/><line x1="290" y1="44" x2="290" y2="356"/>
+  </g>
+  <g stroke="#56625b" stroke-width="4">
+    <line x1="150" y1="336" x2="290" y2="336"/><line x1="150" y1="306" x2="290" y2="306"/><line x1="150" y1="276" x2="290" y2="276"/>
+    <line x1="150" y1="246" x2="290" y2="246"/><line x1="150" y1="216" x2="290" y2="216"/><line x1="150" y1="186" x2="290" y2="186"/>
+    <line x1="150" y1="156" x2="290" y2="156"/><line x1="150" y1="126" x2="290" y2="126"/><line x1="150" y1="96" x2="290" y2="96"/><line x1="150" y1="66" x2="290" y2="66"/>
+  </g>
+  <g stroke="#b3261e" stroke-width="3" stroke-dasharray="10 7">
+    <line x1="110" y1="261" x2="330" y2="261"/><line x1="110" y1="171" x2="330" y2="171"/>
+  </g>
+  <path d="M360 336 L420 306 L470 276 L520 216 L560 246 L590 306" fill="none" stroke="#1b4fd4" stroke-width="5" stroke-linejoin="round"/>
+  <g fill="#1b4fd4" stroke="#fbfbf8" stroke-width="3">
+    <circle cx="360" cy="336" r="10"/><circle cx="420" cy="306" r="10"/><circle cx="470" cy="276" r="10"/><circle cx="520" cy="216" r="12"/><circle cx="560" cy="246" r="10"/><circle cx="590" cy="306" r="10"/>
+  </g>
+  <rect x="190" y="200" width="60" height="32" rx="16" fill="#1b4fd4"/>
+  <text x="220" y="223" text-anchor="middle" font-family="Menlo, monospace" font-weight="700" font-size="20" fill="#fbfbf8">44</text>
+  <text x="380" y="110" font-family="Georgia, serif" font-weight="700" font-size="30" fill="#14201a">Kahn</text>
+</svg>

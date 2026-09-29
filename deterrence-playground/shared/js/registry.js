@@ -155,6 +155,10 @@ export const ALL_TOOLS = [
     blurb: 'Hold the total cost of war fixed, shift who pays it, and watch the peaceful settlement move toward the side whose cost of fighting fell.' },
   { slug: 'humiliation-motivation', cat: 'deterrence', also: ['gametheory'], sites: ['deterrence'], title: 'Humiliation to Motivation', status: 'live',
     blurb: 'Past a severity threshold even weak states challenge the order that humiliated them, and a challenge stops telling the dominant power anything.' },
+  { slug: 'proliferation-paths', cat: 'nuclear', sites: ['deterrence'], title: 'Proliferation Paths', status: 'live',
+    blurb: 'Scrub from 1939 to 2017 to watch states explore, pursue, acquire and give up nuclear weapons, as three published datasets code it, with every disagreement between them shown.' },
+  { slug: 'treaty-tracker', cat: 'nuclear', sites: ['deterrence'], title: 'Treaty Tracker', status: 'live',
+    blurb: 'Twenty nuclear and arms-control treaties, 197 states, 1963 to 2026: scrub the years to see who signed, joined, suspended or walked away, with every date traced to a depositary record or official statement.' },
 ];
 
 export const onSite = (x, site = SITE) => !x.sites || x.sites.includes(site);

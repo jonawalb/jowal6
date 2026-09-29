@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+  <rect width="640" height="400" fill="#f2f2ee"/>
+  <rect x="24" y="24" width="592" height="352" rx="8" fill="#fbfbf8" stroke="#d3d6cd"/>
+  <g font-family="Georgia, serif" font-weight="700" font-size="20" fill="#14201a">
+    <text x="150" y="72">NPT</text><text x="232" y="72">CTBT</text><text x="324" y="72">CFE</text><text x="400" y="72">INF</text><text x="470" y="72">START</text>
+  </g>
+  <g fill="#d3d6cd">
+    <rect x="60" y="96" width="70" height="22" rx="3"/><rect x="60" y="136" width="70" height="22" rx="3"/><rect x="60" y="176" width="70" height="22" rx="3"/><rect x="60" y="216" width="70" height="22" rx="3"/><rect x="60" y="256" width="70" height="22" rx="3"/><rect x="60" y="296" width="70" height="22" rx="3"/>
+  </g>
+  <g>
+    <rect x="152" y="94" width="40" height="26" rx="3" fill="#2c7a4b"/><rect x="238" y="94" width="40" height="26" rx="3" fill="#a1487a"/><rect x="322" y="94" width="40" height="26" rx="3" fill="#b3261e"/><rect x="398" y="94" width="40" height="26" rx="3" fill="#9aa19b"/><rect x="480" y="94" width="40" height="26" rx="3" fill="#9aa19b"/>
+    <rect x="152" y="134" width="40" height="26" rx="3" fill="#2c7a4b"/><rect x="238" y="134" width="40" height="26" rx="3" fill="#a9bdf0"/><rect x="322" y="134" width="40" height="26" rx="3" fill="#e8753a"/><rect x="398" y="134" width="40" height="26" rx="3" fill="#9aa19b"/><rect x="480" y="134" width="40" height="26" rx="3" fill="#9aa19b"/>
+    <rect x="152" y="174" width="40" height="26" rx="3" fill="#2c7a4b"/><rect x="238" y="174" width="40" height="26" rx="3" fill="#2c7a4b"/><rect x="322" y="174" width="40" height="26" rx="3" fill="#e8753a"/><rect x="398" y="174" width="40" height="26" rx="3" fill="none" stroke="#d3d6cd"/><rect x="480" y="174" width="40" height="26" rx="3" fill="none" stroke="#d3d6cd"/>
+    <rect x="152" y="214" width="40" height="26" rx="3" fill="none" stroke="#d3d6cd"/><rect x="238" y="214" width="40" height="26" rx="3" fill="#a9bdf0"/><rect x="322" y="214" width="40" height="26" rx="3" fill="none" stroke="#d3d6cd"/><rect x="398" y="214" width="40" height="26" rx="3" fill="none" stroke="#d3d6cd"/><rect x="480" y="214" width="40" height="26" rx="3" fill="none" stroke="#d3d6cd"/>
+    <rect x="152" y="254" width="40" height="26" rx="3" fill="#b3261e"/><rect x="238" y="254" width="40" height="26" rx="3" fill="none" stroke="#d3d6cd"/><rect x="322" y="254" width="40" height="26" rx="3" fill="none" stroke="#d3d6cd"/><rect x="398" y="254" width="40" height="26" rx="3" fill="none" stroke="#d3d6cd"/><rect x="480" y="254" width="40" height="26" rx="3" fill="none" stroke="#d3d6cd"/>
+    <rect x="152" y="294" width="40" height="26" rx="3" fill="#2c7a4b"/><rect x="238" y="294" width="40" height="26" rx="3" fill="#2c7a4b"/><rect x="322" y="294" width="40" height="26" rx="3" fill="#e8753a"/><rect x="398" y="294" width="40" height="26" rx="3" fill="none" stroke="#d3d6cd"/><rect x="480" y="294" width="40" height="26" rx="3" fill="none" stroke="#d3d6cd"/>
+  </g>
+  <line x1="60" y1="346" x2="580" y2="346" stroke="#d3d6cd" stroke-width="4" stroke-linecap="round"/>
+  <line x1="60" y1="346" x2="520" y2="346" stroke="#033303" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="520" cy="346" r="10" fill="#033303"/>
+  <text x="566" y="334" font-family="Georgia, serif" font-weight="700" font-size="22" fill="#e8753a" text-anchor="middle">2026</text>
+</svg>

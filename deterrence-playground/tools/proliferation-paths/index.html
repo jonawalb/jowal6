@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Proliferation Paths | Interactive Deterrence</title>
+<meta name="description" content="Every state that explored, pursued or acquired nuclear weapons, and those that turned back, as coded by three published datasets: Singh and Way (with Way's 2012 update), Jo and Gartzke (2007) and Bleek (2017).">
+<meta property="og:title" content="Proliferation Paths | Interactive Deterrence">
+<meta property="og:description" content="Scrub from 1939 to 2017 and watch states explore, pursue, acquire and give up nuclear weapons, with three datasets side by side and every disagreement shown.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="proliferation-paths.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+<main class="layout">
+  <div class="stage">
+    <div class="card pp-card" id="map-card">
+      <div class="pp-head">
+        <h2>Proliferation stage in <span id="map-year" class="num">1975</span></h2>
+        <div class="pp-actions">
+          <button type="button" class="btn solid" id="start-tour">Start the walkthrough</button>
+          <button type="button" class="btn" id="reset">Reset</button>
+          <button type="button" class="btn" id="copy-link">Copy link</button>
+        </div>
+      </div>
+      <p class="fine">Coded by <b id="map-ds">Bleek 2017</b>. Click a country or its dot for the state card. Borders are today's; the Soviet Union is drawn as Russia and Yugoslavia as its successor states.</p>
+      <div class="pp-map mapbox" id="map"></div>
+      <div class="pp-legend" aria-hidden="true">
+        <span><i class="pp-sw" data-st="explore"></i>Exploring</span>
+        <span><i class="pp-sw" data-st="pursue"></i>Pursuing</span>
+        <span><i class="pp-sw" data-st="acquire"></i>Acquired</span>
+        <span><i class="pp-sw" data-st="none"></i>Coded at another time</span>
+        <span><i class="pp-sw dis"></i>Datasets disagree (compare mode)</span>
+        <span><i class="pp-sw inh"></i>Held Soviet weapons, not coded</span>
+      </div>
+      <div class="pp-scrub">
+        <button type="button" class="btn" id="play" aria-pressed="false">Play</button>
+        <output id="year-out" class="num" for="year">1975</output>
+        <input type="range" id="year" class="slider" step="1" aria-label="Year">
+      </div>
+    </div>
+  </div>
+  <aside class="panel" aria-label="Year readout, dataset, filters and state card">
+    <div class="sec">
+      <p class="eyebrow">Dataset</p>
+      <div class="choices pp-ds" id="f-ds" role="group" aria-label="Dataset"></div>
+      <div id="readout" aria-live="polite"></div>
+    </div>
+    <div class="sec">
+      <p class="eyebrow">Show states</p>
+      <div class="choices pp-filter" id="f-filter" role="group" aria-label="Filter states"></div>
+    </div>
+    <div class="sec" id="card" aria-live="polite"></div>
+  </aside>
+</main>
+
+<div class="pp-lower">
+  <section class="card pp-card" id="tl-card" aria-labelledby="tl-h">
+    <div class="pp-sub"><h2 id="tl-h">Paths, 1939–2017</h2>
+      <label class="fine">Sort by <select id="sort"></select></label></div>
+    <p class="fine">Bars show the stage coded each year; triangles mark a step down (filled: back to no activity; open: to a lower stage). Hatching marks years a dataset does not cover. Drag across to set the year; click a name for its card.</p>
+    <div class="pp-tl" id="timeline"></div>
+  </section>
+  <section class="card pp-card" id="rec-card" aria-labelledby="rec-h">
+    <div class="pp-sub"><h2 id="rec-h">Where the datasets disagree</h2>
+      <label class="tg"><input type="checkbox" id="gaps"><span class="sw"></span><span class="t">Only states with a gap of 3+ years</span></label></div>
+    <p class="fine"><abbr>B</abbr> Bleek 2017 · <abbr>W</abbr> Singh &amp; Way, Way's 2012 update · <abbr>J</abbr> Jo &amp; Gartzke 2007 (codes pursuit and acquisition only). Each column gives the first year coded at that stage or higher, so a state that skips a stage shows its later start there. "No activity" is the first year back at no activity, put on one convention; "open" means still coded in the dataset's last year. Shaded cells differ by three years or more.</p>
+    <div class="tablewrap pp-recwrap" id="rec"></div>
+  </section>
+</div>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>Each dataset sorts nuclear behavior into stages. <b>Exploring</b> means leaders authorized study of a weapons option. <b>Pursuing</b> means concrete steps toward a weapon, such as a cabinet-level decision, weaponization work or dedicated technology. <b>Acquired</b> means the state tested or assembled a nuclear device. A state can skip stages, go back down, or stop altogether, which this tool calls <b>reversal</b>.</p>
+    <p>The three datasets use nearly the same categories but different evidence and different start years, so their dates differ, sometimes by a decade. Pick one dataset to read its story, or "Compare all three" to see the lanes side by side. The map then shades each state by the highest stage any dataset codes and hatches the ones where they disagree.</p>
+    <p>Only what the datasets code is shown. A blank means none of them codes that state in that year, not that nothing happened.</p>
+    <h3>Method</h3>
+    <ul class="src">
+      <li>Codings are parsed by <code>scripts/build_data.py</code> from the saved source files: Way's "Nuclear Proliferation Dates" (revised 12 June 2012), Table 1 of Bleek (2017, p. 8) and Table 1 of the Jo and Gartzke codebook (September 2006, p. 13). The only hand-transcribed material is the state-card notes and the original Singh and Way codings reported in Bleek's footnotes, each tied to a page, note or document.</li>
+      <li><b>Start years.</b> Singh and Way begin in 1945, so they never code U.S., British or Soviet wartime activity, Germany or Japan. Bleek and Jo and Gartzke begin in 1939. The timeline hatches years a dataset does not cover.</li>
+      <li><b>End years.</b> Way's file was last revised in 2012, Bleek published in June 2017, and Jo and Gartzke's codebook covers 1939 to 2002 (their replication file stops at 1992). An open-ended coding is drawn to the dataset's last year and labelled "open"; the slider stops at 2017 because no dataset goes further.</li>
+      <li><b>Two conventions for the last year.</b> Bleek's second year is the year the state dropped back ("returned to no activity in 1991"); Way and Jo and Gartzke give the last active year. The tool draws Bleek's spans one year shorter so both mean the same thing.</li>
+      <li><b>Explore is Bleek's and Way's category only.</b> Jo and Gartzke code a program (treated here as pursuit) and possession (acquisition). Bleek's table lists exploration as a running span beneath pursuit; Way's stages do not overlap. The tool shows the highest stage coded in each year, which makes the two layouts comparable.</li>
+      <li><b>Checks.</b> Jo and Gartzke's codebook table matches their replication data for every state-year to 1992 except South Africa's possession in 1991 (in the table, not in the data). Way's 2011 and 2012 files differ in three places, listed below. Bleek's narrative dates Romanian exploration from 1965 while his Table 1 gives 1978; the tool draws the table and says so on Romania's card.</li>
+      <li><b>Singh and Way (2004) original.</b> The article's own table is paywalled and was not obtained. Where Bleek's footnotes report the original codings, the state card shows them.</li>
+      <li><b>Mehta's reversal data.</b> Rupal Mehta's work on nuclear reversal (<i>Delaying Doomsday: The Politics of Nuclear Reversal</i>, Oxford University Press, 2020) was requested for this tool, but no public data file from it could be found on her website or on Harvard Dataverse, and no work titled "Rolling Back the Bomb" turned up in OpenAlex. Reversals here are derived from the three datasets instead: a reversal is any year a dataset codes a state at a lower stage than the year before.</li>
+      <li><b>Map.</b> Natural Earth 1:110m country outlines on today's borders. Ukraine, Belarus and Kazakhstan are shown because Soviet weapons remained on their territory after 1991; none of the three datasets codes them.</li>
+    </ul>
+    <h3>Differences between versions</h3>
+    <div id="diffs"></div>
+  </div>
+  <div class="col">
+    <h2>Sources</h2>
+    <ul class="src">
+      <li><b>Bleek 2017.</b> Philipp C. Bleek, <a href="https://www.belfercenter.org/publication/when-did-and-didnt-states-proliferate" target="_blank" rel="noopener">“When Did (and Didn’t) States Proliferate? Chronicling the Spread of Nuclear Weapons”</a>, Discussion Paper, Project on Managing the Atom, Belfer Center, Harvard Kennedy School, and James Martin Center for Nonproliferation Studies, June 2017 (<a href="https://www.belfercenter.org/sites/default/files/pantheon_files/files/publication/When%20Did%20%28and%20Didn%27t%29%20States%20Proliferate%3F_1.pdf" target="_blank" rel="noopener">PDF</a>). Table 1, p. 8, and case notes, pp. 9–47.</li>
+      <li><b>Singh &amp; Way, Way's 2012 update.</b> Christopher Way, “Nuclear Proliferation Dates,” Cornell University, revised 12 June 2012 (<a href="http://web.archive.org/web/20151224085333/http://falcon.arts.cornell.edu:80/crw12/documents/Nuclear%20Proliferation%20Dates.pdf" target="_blank" rel="noopener">archived PDF</a>; the Cornell address no longer resolves). Earlier version revised 18 February 2011 (<a href="http://web.archive.org/web/20120615005339/http://falcon.arts.cornell.edu/crw12/documents/Nuclear%20Proliferation%20Dates.pdf" target="_blank" rel="noopener">archived PDF</a>).</li>
+      <li><b>Singh &amp; Way 2004.</b> Sonali Singh and Christopher R. Way, “The Correlates of Nuclear Proliferation: A Quantitative Test,” <i>Journal of Conflict Resolution</i> 48, no. 6 (2004): 859–885, <a href="https://doi.org/10.1177/0022002704269655" target="_blank" rel="noopener">doi:10.1177/0022002704269655</a> (paywalled; metadata checked through Crossref).</li>
+      <li><b>Jo &amp; Gartzke 2007.</b> Dong-Joon Jo and Erik Gartzke, “Determinants of Nuclear Weapons Proliferation,” <i>Journal of Conflict Resolution</i> 51, no. 1 (2007): 167–194, <a href="https://doi.org/10.1177/0022002706296158" target="_blank" rel="noopener">doi:10.1177/0022002706296158</a>. <a href="https://pages.ucsd.edu/~egartzke/data/jo_gartzke_0207_codebk_0906.pdf" target="_blank" rel="noopener">Codebook and data notes</a> (September 2006) and <a href="https://pages.ucsd.edu/~egartzke/data/jo_gartzke_0207_replicate_0906.dta" target="_blank" rel="noopener">replication data</a>, from <a href="https://pages.ucsd.edu/~egartzke/htmlpages/data.html" target="_blank" rel="noopener">Erik Gartzke's data page</a>.</li>
+      <li><b>Card notes, primary documents.</b> White House, <a href="https://georgewbush-whitehouse.archives.gov/news/releases/2003/12/20031219-9.html" target="_blank" rel="noopener">President Bush's statement on Libya</a>, 19 December 2003. IAEA Board of Governors, <a href="https://www.iaea.org/sites/default/files/gov2011-41.pdf" target="_blank" rel="noopener">resolution GOV/2011/41 on Syria</a>, 9 June 2011. <a href="https://treaties.un.org/doc/Publication/UNTS/Volume%203007/Part/volume-3007-I-52241.pdf" target="_blank" rel="noopener">Memorandum on security assurances in connection with Ukraine’s accession to the NPT</a>, Budapest, 5 December 1994, UN Treaty Series vol. 3007, No. 52241.</li>
+      <li><b>Map.</b> <a href="https://github.com/nvkelso/natural-earth-vector" target="_blank" rel="noopener">Natural Earth</a> 1:110m Admin 0 Countries, public domain.</li>
+      <li>All links and files were opened on 29 September 2026. Data: <code>data/codings.js</code>, <code>data/notes.js</code>, <code>data/world.js</code>, built by <code>scripts/build_data.py</code> from <code>scripts/raw/</code> and <code>scripts/notes.json</code>.</li>
+    </ul>
+  </div>
+</section>
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Proliferation Paths', sub: 'Who explored, pursued, acquired and gave up nuclear weapons, from three published datasets.', category: 'Nuclear weapons & arms control' });
+  document.title = 'Proliferation Paths | Interactive Deterrence';
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

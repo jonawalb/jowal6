@@ -48,8 +48,10 @@
     try { v = localStorage.getItem(name) || sessionStorage.getItem(name); } catch (e) { /* storage blocked */ }
     return v ? tryRaw(b64d(v), tier) : Promise.reject();
   }
-  /** Second-tier key: wait for it on a locked tool page; elsewhere use it only if already stored. */
-  function key2Now() { return LOCKED_PAGE ? key2Ready : (T2 ? storedKey(KEYNAME2, 2) : Promise.reject()); }
+  /** Second-tier key: asked for on every visit to a locked tool page and never stored, so nothing else can use it. */
+  function key2Now() { return LOCKED_PAGE ? key2Ready : Promise.reject(); }
+  // Drop any second-tier key saved by an earlier version of this gate.
+  if (KEYNAME2) { try { localStorage.removeItem(KEYNAME2); sessionStorage.removeItem(KEYNAME2); } catch (e) { /* storage blocked */ } }
 
   function startsWithMagic(buf, magic) {
     if (buf.length < magic.length) return false;
@@ -116,9 +118,7 @@
     resolveKey(key);
     if (!LOCKED_PAGE) { reveal(); return; }
     var g = document.getElementById('tsm-gate'); if (g) g.remove();
-    storedKey(KEYNAME2, 2).then(unlock2, function () {
-      if (document.body) showGate(2); else document.addEventListener('DOMContentLoaded', function () { showGate(2); });
-    });
+    if (document.body) showGate(2); else document.addEventListener('DOMContentLoaded', function () { showGate(2); });
   }
 
   function showGate(tier) {
@@ -133,7 +133,7 @@
       (tier === 2 ? '<p><b>' + (T2.name || 'This section') + '</b> needs a second password. Enter it to continue.</p>'
         : '<p>This site is for invited readers. Enter the access password to continue.</p>') +
       '<form><input type="password" id="g-pw" autocomplete="current-password" aria-label="Access password" placeholder="Access password" required>' +
-      '<label class="g-rem"><input type="checkbox" id="g-rem" checked> Remember on this device</label>' +
+      (tier === 2 ? '' : '<label class="g-rem"><input type="checkbox" id="g-rem" checked> Remember on this device</label>') +
       '<button type="submit" id="g-go">Unlock</button><div class="g-err" id="g-err" aria-live="polite"></div></form></div>';
     document.body.appendChild(g);
     var pw = g.querySelector('#g-pw'), go = g.querySelector('#g-go'), err = g.querySelector('#g-err');
@@ -143,7 +143,7 @@
       go.disabled = true; go.textContent = 'Checking\u2026'; err.textContent = '';
       derive(pw.value, tier).then(function (raw) {
         return tryRaw(raw, tier).then(function (k) {
-          try { (g.querySelector('#g-rem').checked ? localStorage : sessionStorage).setItem(tier === 2 ? KEYNAME2 : KEYNAME, b64e(raw)); } catch (e2) { /* storage blocked */ }
+          if (tier === 1) { try { (g.querySelector('#g-rem').checked ? localStorage : sessionStorage).setItem(KEYNAME, b64e(raw)); } catch (e2) { /* storage blocked */ } }
           (tier === 2 ? unlock2 : unlock)(k);
         });
       }).catch(function () {

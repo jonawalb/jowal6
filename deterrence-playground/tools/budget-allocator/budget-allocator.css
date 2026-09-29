@@ -110,3 +110,21 @@
   .cmp tbody td[data-l]::before { content: attr(data-l); display: block; font: 11px var(--body); color: var(--muted); }
 }
 .tsm-export { margin-top: 6px; }
+
+/* Country selector and per-country additions */
+.choices.countries { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.cited { font: 500 10px var(--mono); color: var(--muted); border: 1px solid var(--rule); border-radius: 8px; padding: 0 5px; white-space: nowrap; }
+.strip.land .st-band-t { stroke: var(--land); }
+.st-land-bg { fill: var(--land); }
+.st-edge { fill: var(--chip); stroke: var(--rule); stroke-width: 1; }
+.params { margin-top: 4px; border-top: 1px solid var(--rule); padding-top: 8px; }
+.params summary { cursor: pointer; font-size: 13px; font-weight: 600; }
+.params[open] summary { margin-bottom: 8px; }
+.params > div { display: flex; flex-direction: column; gap: 8px; }
+.ptab { font-size: 11.5px; width: 100%; }
+.ptab th, .ptab td { padding: 3px 4px; }
+.ptab td:first-child { min-width: 110px; }
+.ptab input { width: 64px; font: 12px var(--mono); padding: 2px 4px; border: 1px solid var(--rule); border-radius: 3px; background: var(--panel); color: var(--ink); }
+.ptab input.edited { border-color: var(--accent); }
+.menu { font-size: 12.5px; }
+.menu td:nth-child(3) { white-space: nowrap; }

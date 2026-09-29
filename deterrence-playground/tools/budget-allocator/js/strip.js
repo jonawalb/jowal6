@@ -1,27 +1,39 @@
-// Stylized crossing: PLA wave moving from the embarkation coast (left) to Taiwan (right) through Taiwan's layers.
+// Stylized approach: the attacking force moves from its start line (left) to the defended coast or line (right)
+// through the defender's layers. For Taiwan: a PLA wave crossing from the embarkation coast to Taiwan.
 import { el } from '../../../shared/js/mapkit.js';
-import { CROSSING } from '../data/categories.js';
+import { ctx } from './ctx.js';
 
 const W = 1000, H = 250, X0 = 120, X1 = 900, N = 36;
-const kmToX = km => X1 - (km / CROSSING.km) * (X1 - X0);   // km measured from Taiwan's coast
+const CROSSING = { get km() { return ctx.geo.km; } };
+const kmToX = km => X1 - (km / CROSSING.km) * (X1 - X0);   // km measured from the defended coast or line
+const STEPS = [5, 10, 20, 25, 50, 100, 200, 250, 500];
+const tickStep = km => STEPS.find(s => s >= km / 4) || 1000;
 const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 
 export function createStrip(svg, onClock) {
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-  svg.innerHTML = '';
-  el('rect', { x: 0, y: 0, width: W, height: H, class: 'st-sea' }, svg);
-  const bands = el('g', {}, svg);
-  el('path', { d: `M0 0H${X0 - 18}C${X0 - 8} 60 ${X0 - 26} 140 ${X0 - 12} ${H}H0Z`, class: 'st-land' }, svg);
-  el('path', { d: `M${W} 0H${X1 + 20}C${X1 + 8} 70 ${X1 + 26} 150 ${X1 + 14} ${H}H${W}Z`, class: 'st-land' }, svg);
-  el('text', { x: 14, y: 22, class: 'st-lbl' }, svg, 'Embarkation');
-  el('text', { x: W - 14, y: 22, class: 'st-lbl', 'text-anchor': 'end' }, svg, 'Taiwan');
-  const scale = el('g', { class: 'st-scale' }, svg);
-  [0, 50, 100, 150].forEach(k => { const x = kmToX(k); el('line', { x1: x, x2: x, y1: H - 16, y2: H - 10 }, scale); el('text', { x, y: H - 1, 'text-anchor': 'middle' }, scale, k ? `${k} km` : 'coast'); });
-  const shooters = el('g', {}, svg);
-  const fleet = el('g', {}, svg);
-  let ships = [], raf = null, res = null;
+  let bands, shooters, fleet, ships = [], raf = null, res = null, key = '';
+
+  // Background, labels and distance scale depend on the country and the approach length.
+  function frame() {
+    const P = ctx.P, land = P.strip.land;
+    key = P.k + ':' + CROSSING.km;
+    svg.innerHTML = '';
+    svg.classList.toggle('land', !!land);
+    el('rect', { x: 0, y: 0, width: W, height: H, class: land ? 'st-land-bg' : 'st-sea' }, svg);
+    bands = el('g', {}, svg);
+    el('path', { d: `M0 0H${X0 - 18}C${X0 - 8} 60 ${X0 - 26} 140 ${X0 - 12} ${H}H0Z`, class: land ? 'st-edge' : 'st-land' }, svg);
+    el('path', { d: `M${W} 0H${X1 + 20}C${X1 + 8} 70 ${X1 + 26} 150 ${X1 + 14} ${H}H${W}Z`, class: land ? 'st-edge' : 'st-land' }, svg);
+    el('text', { x: 14, y: 22, class: 'st-lbl' }, svg, P.strip.left);
+    el('text', { x: W - 14, y: 22, class: 'st-lbl', 'text-anchor': 'end' }, svg, P.strip.right);
+    const scale = el('g', { class: 'st-scale' }, svg), step = tickStep(CROSSING.km);
+    for (let k = 0; k <= CROSSING.km; k += step) { const x = kmToX(k); el('line', { x1: x, x2: x, y1: H - 16, y2: H - 10 }, scale); el('text', { x, y: H - 1, 'text-anchor': 'middle' }, scale, k ? `${k} km` : P.strip.zero); }
+    shooters = el('g', {}, svg);
+    fleet = el('g', {}, svg);
+    svg.setAttribute('aria-label', P.strip.aria);
+  }
 
   function drawBands(r) {
     bands.innerHTML = '';
@@ -80,13 +92,13 @@ export function createStrip(svg, onClock) {
       const px = stopped ? s.hitAt : x;
       if (stopped) hit++;
       if (px < X0 - 20) return;
-      el('path', { d: `M${px - 9} ${s.y - 3}h14l4 3l-4 3h-14z`, class: 'st-ship' + (stopped ? ' hit' : '') }, fleet);
+      el('path', { d: ctx.P.strip.vehicle ? `M${px - 9} ${s.y - 4}h16v8h-16z` : `M${px - 9} ${s.y - 3}h14l4 3l-4 3h-14z`, class: 'st-ship' + (stopped ? ' hit' : '') }, fleet);
       if (stopped) el('path', { d: `M${px - 5} ${s.y - 6}l8 12M${px + 3} ${s.y - 6}l-8 12`, class: 'st-x', stroke: `var(${s.by.col})` }, fleet);
     });
     onClock && onClock(t, hit, N);
   }
 
-  function set(r) { res = r; stop(); drawBands(r); drawShooters(r); ships = plan(r); place(1); }
+  function set(r) { res = r; stop(); if (key !== ctx.P.k + ':' + CROSSING.km) frame(); drawBands(r); drawShooters(r); ships = plan(r); place(1); }
 
   function play() {
     stop();

@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Defense Budget Allocator | Interactive Deterrence</title>
-<meta name="description" content="Spend Taiwan's supplementary or special defense budget across capability categories and test the mix against a simple, notional model of a PLA crossing.">
+<meta name="description" content="Spend Taiwan's, Japan's, the Philippines' or Poland's defense budget across capability categories and test the mix against a simple, notional model of an attack on each.">
 <link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,7 +19,7 @@
   <div class="stage" id="stage">
     <section class="card pad">
       <div class="card-h">
-        <p class="eyebrow">Notional crossing <span class="notional">notional</span></p>
+        <p class="eyebrow" id="strip-eyebrow">Notional crossing <span class="notional">notional</span></p>
         <div class="card-actions"><span class="num fine" id="clock"></span><button type="button" class="btn solid" id="play">Play the crossing</button></div>
       </div>
       <div class="stripwrap"><svg id="strip" class="strip" role="img" aria-label="Stylized Taiwan Strait crossing. A PLA amphibious wave sails from the embarkation coast on the left toward Taiwan on the right, through bands showing how far each of Taiwan's weapon layers reaches and how strong it is. Ships marked with an X are engaged."></svg></div>
@@ -32,17 +32,21 @@
       <div class="dragbar" id="dragbar" aria-hidden="true"></div>
       <div class="reference" id="reference"></div>
       <div class="sliders" id="sliders"></div>
-      <p class="fine">Moving one slider rescales the unlocked categories so the total stays fixed. Lock a category to hold its amount. Unit counts use notional unit costs and only give a sense of scale.</p>
+      <p class="fine" id="alloc-note">Moving one slider rescales the unlocked categories so the total stays fixed. Lock a category to hold its amount. Unit counts use notional unit costs and only give a sense of scale.</p>
     </section>
 
     <section class="card pad">
       <p class="eyebrow" id="cmp-title">Compare</p>
       <div class="tablewrap" id="compare"></div>
-      <p class="fine">Best value in each column is highlighted. All plans use the same budget and PLA scenario.</p>
+      <p class="fine" id="cmp-note">Best value in each column is highlighted. All plans use the same budget and PLA scenario.</p>
     </section>
   </div>
 
   <aside class="panel" aria-label="Budget, results and scenario">
+    <div class="sec">
+      <p class="eyebrow">Country</p>
+      <div class="choices countries" id="countries" role="group" aria-label="Country"></div>
+    </div>
     <div class="sec">
       <p class="eyebrow">1 · Pick the money</p>
       <div class="choices one" id="budgets"></div>
@@ -61,11 +65,15 @@
       <ul class="layers" id="layers"></ul>
     </div>
     <div class="sec">
-      <p class="eyebrow">3 · Set the PLA scenario</p>
-      <div class="slider"><div class="sl-h"><label for="supp">PLA suppression strikes</label><output id="supp-out"></output></div>
-        <input type="range" id="supp" min="0" max="90" step="5"><small>Share of Taiwan's unprotected forces the opening missile and air strikes would destroy.</small></div>
-      <div class="slider"><div class="sl-h"><label for="warn">Warning before the assault</label><output id="warn-out"></output></div>
-        <input type="range" id="warn" min="1" max="14" step="1"><small>Days Taiwan has to lay mines before the fleet sails.</small></div>
+      <p class="eyebrow" id="scen-title">3 · Set the PLA scenario</p>
+      <div class="slider"><div class="sl-h"><label for="supp" id="supp-l">PLA suppression strikes</label><output id="supp-out"></output></div>
+        <input type="range" id="supp" min="0" max="90" step="5"><small id="supp-h">Share of Taiwan's unprotected forces the opening missile and air strikes would destroy.</small></div>
+      <div class="slider"><div class="sl-h"><label for="warn" id="warn-l">Warning before the assault</label><output id="warn-out"></output></div>
+        <input type="range" id="warn" min="1" max="14" step="1"><small id="warn-h">Days Taiwan has to lay mines before the fleet sails.</small></div>
+      <details class="params" id="params">
+        <summary>Edit the notional parameters</summary>
+        <div id="params-body"></div>
+      </details>
     </div>
     <div class="sec row-btns">
       <button type="button" class="btn solid" id="start-tour">Start the walkthrough</button>
@@ -76,6 +84,8 @@
 
 <section class="below">
   <div class="col">
+   <div id="cx-left" hidden></div>
+   <div id="tw-left">
     <h2>How to read it</h2>
     <p>Pick a budget, then divide it across eight kinds of capability. The model sends a notional PLA amphibious wave across the Strait and reports four things: the share of the crossing force that comes under effective attack, how many hours of the crossing are spent inside at least one working layer of Taiwan's fires, the share of Taiwan's shooters that survive the PLA's opening strikes, and a resilience score for how well the force keeps working after it is hit.</p>
     <p>The comparison table runs the same budget and the same PLA scenario through three or four mixes. The <b>porcupine</b> mix buys many small, mobile, cheap systems. The <b>legacy platforms</b> mix buys fighters, submarines and large ships. For the NT$145.7bn line, the <b>cabinet mix</b> maps the cabinet's actual September 3, 2026 request onto the model's categories.</p>
@@ -91,8 +101,11 @@
       <li><b>Resilience</b> is <code>100 × (0.3·E<sub>C4ISR</sub> + 0.25·E<sub>ammo</sub> + 0.2·E<sub>air</sub> + 0.25·mobile survival)</code>.</li>
     </ol>
     <p>What the model leaves out matters: U.S. and allied forces, the PLA's own mine clearance and air defense, weather, deception, training, maintenance, delivery schedules, deterrence in peacetime and the gray-zone missions that large ships and fighters perform every day. A platform that does poorly here can still be the right buy for those jobs.</p>
+   </div>
   </div>
   <div class="col">
+   <div id="cx-right" hidden></div>
+   <div id="tw-right">
     <h2>The real budgets</h2>
     <div class="tablewrap"><table id="real">
       <thead><tr><th>Line in the NT$145.7bn request</th><th>NT$bn</th><th>Model category</th></tr></thead>
@@ -120,12 +133,13 @@
       <li>Taiwan FactCheck Center, <a href="https://tfc-taiwan.org.tw/fact-check-reports/taiwan-1point25-trillion-defense-budget-us-arms-sales/" target="_blank" rel="noopener">NT$1.25 trillion special defense budget</a>, December 3, 2025. The eight-year 2026–2033 plan and its categories.</li>
       <li>Model structure adapted from the PLA crossing mode of TSM's <a href="../strait-layers/">Strait Layers</a>. Unit costs, baselines, reaches, weights and all coefficients are notional.</li>
     </ul>
+   </div>
   </div>
 </section>
 <footer id="tsm-foot"></footer>
 <script type="module">
   import { mountChrome } from '../../shared/js/chrome.js';
-  mountChrome({ title: 'Defense Budget Allocator', sub: 'Spend Taiwan\'s special or supplementary defense budget and test the mix against a simple, notional crossing model.', category: 'Force & wargame models' });
+  mountChrome({ title: 'Defense Budget Allocator', sub: 'Spend Taiwan\'s special or supplementary defense budget, or Japan\'s, the Philippines\' or Poland\'s, and test the mix against a simple, notional model.', category: 'Force & wargame models' });
 </script>
 <script type="module" src="js/app.js"></script>
 </body>

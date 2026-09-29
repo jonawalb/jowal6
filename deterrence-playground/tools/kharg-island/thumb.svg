@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+  <rect width="640" height="400" fill="#d6e1e1"/>
+  <path d="M470 0 L640 0 L640 400 L560 400 C545 330 520 300 528 250 C536 200 505 150 500 100 C496 60 480 30 470 0 Z" fill="#e9e4d4" stroke="#97a197" stroke-width="2"/>
+  <path d="M262 160 C276 150 292 158 300 150 C312 146 318 166 310 184 C302 202 306 222 294 236 C282 248 262 240 258 222 C254 204 248 176 262 160 Z" fill="#e9e4d4" stroke="#97a197" stroke-width="2"/>
+  <path d="M312 92 C318 86 326 90 322 102 C318 116 312 128 306 126 C302 122 306 104 312 92 Z" fill="#e9e4d4" stroke="#97a197" stroke-width="2"/>
+  <g fill="#b3261e" opacity=".75">
+    <circle cx="228" cy="150" r="5"/><circle cx="222" cy="200" r="5"/><circle cx="232" cy="250" r="5"/><circle cx="286" cy="276" r="5"/>
+    <circle cx="340" cy="250" r="5"/><circle cx="348" cy="196" r="5"/><circle cx="336" cy="146" r="5"/><circle cx="284" cy="124" r="5"/>
+  </g>
+  <path d="M500 196 L330 200" stroke="#b3261e" stroke-width="4" stroke-dasharray="10 8"/>
+  <path d="M120 300 L250 212" stroke="#1b4fd4" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="262" cy="206" r="18" fill="#1b4fd4"/>
+  <g fill="#1b4fd4">
+    <path d="M70 300 l6 -8 h24 l6 8 l-6 6 h-24 z"/><path d="M110 322 l6 -8 h24 l6 8 l-6 6 h-24 z"/><path d="M60 340 l6 -8 h24 l6 8 l-6 6 h-24 z"/>
+  </g>
+  <rect x="400" y="286" width="210" height="90" rx="8" fill="#fbfbf8" stroke="#b3261e" stroke-width="2" stroke-dasharray="8 5"/>
+  <path d="M430 306 L444 330 H416 Z" fill="#b3261e"/><path d="M470 306 L484 330 H456 Z" fill="#b3261e"/>
+  <path d="M510 306 L522 318 L510 330 L498 318 Z" fill="#b3261e"/>
+  <path d="M552 318 L560 318" stroke="#97a197" stroke-width="3"/><path d="M542 308 L562 328 M562 308 L542 328" stroke="#14201a" stroke-width="3"/>
+  <g font-family="Georgia, serif" font-weight="700" fill="#14201a">
+    <text x="24" y="52" font-size="34">Kharg Island</text>
+  </g>
+  <g font-family="Helvetica, Arial, sans-serif" fill="#14201a">
+    <text x="416" y="362" font-size="18">d6 · 1,000 runs</text>
+  </g>
+</svg>

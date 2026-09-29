@@ -125,6 +125,10 @@ export const ALL_TOOLS = [
     blurb: 'Daily ship counts through Bab el-Mandeb, Suez and Hormuz from IMF PortWatch, against a sourced timeline of Houthi attacks, strikes, pauses and the 2026 Hormuz mining.' },
   { slug: 'iran-israel-salvos', cat: 'mideast', sites: ['deterrence'], title: 'Iran–Israel Salvos', status: 'live',
     blurb: "Iran's three direct attacks on Israel side by side: what was launched, what was stopped, who defended with what, and what it cost, with every figure sourced and every disagreement shown." },
+  { slug: 'coercion-resilience', cat: 'coercion', sites: ['deterrence'], title: 'Coercion Without Concession', status: 'live',
+    blurb: "China's trade punishment of Australia and South Korea in real trade and tourism data: what was hit, what found other buyers, and what Beijing failed to change." },
+  { slug: 'war-markets', cat: 'coercion', sites: ['deterrence'], title: 'War Markets', status: 'live',
+    blurb: 'What prediction markets priced for strikes on Iran, ceasefires and a Russia–NATO clash in 2026, set against how each contract resolved.' },
 ];
 
 export const onSite = (x, site = SITE) => !x.sites || x.sites.includes(site);

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+  <rect width="640" height="400" fill="#f2f2ee"/>
+  <rect x="24" y="24" width="592" height="352" rx="6" fill="#fbfbf8" stroke="#d3d6cd"/>
+  <g stroke="#d3d6cd" stroke-width="1.5"><line x1="60" y1="80" x2="590" y2="80"/><line x1="60" y1="170" x2="590" y2="170"/><line x1="60" y1="260" x2="590" y2="260"/></g>
+  <g stroke-width="2" stroke-dasharray="6 5"><line x1="200" y1="70" x2="200" y2="270" stroke="#1b4fd4"/><line x1="340" y1="70" x2="340" y2="270" stroke="#e8753a"/><line x1="500" y1="70" x2="500" y2="270" stroke="#0c8474"/></g>
+  <path d="M60 220 L100 210 L140 235 L180 250 L200 260" fill="none" stroke="#1b4fd4" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M60 190 L110 150 L160 175 L210 200 L260 215 L300 240 L340 260" fill="none" stroke="#e8753a" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M60 150 L120 120 L180 140 L240 130 L300 165 L360 150 L410 140 L440 80" fill="none" stroke="#0c8474" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+  <circle cx="200" cy="260" r="9" fill="#1b4fd4"/><circle cx="340" cy="260" r="9" fill="#e8753a"/><circle cx="440" cy="80" r="9" fill="#0c8474"/>
+  <g fill="#b0306e"><circle cx="150" cy="48" r="6"/><circle cx="300" cy="48" r="6"/><circle cx="440" cy="48" r="6"/></g>
+  <text x="60" y="340" font-family="Georgia, serif" font-size="32" font-weight="700" fill="#14201a">Priced vs happened</text>
+</svg>

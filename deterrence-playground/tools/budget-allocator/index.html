@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Defense Budget Allocator | Interactive Deterrence</title>
-<meta name="description" content="Spend Taiwan's, Japan's, the Philippines' or Poland's defense budget across capability categories and test the mix against a simple, notional model of an attack on each.">
+<meta name="description" content="Spend a defense budget across capability categories and test the mix against a simple, notional model of an attack.">
 <link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -139,7 +139,10 @@
 <footer id="tsm-foot"></footer>
 <script type="module">
   import { mountChrome } from '../../shared/js/chrome.js';
-  mountChrome({ title: 'Defense Budget Allocator', sub: 'Spend Taiwan\'s special or supplementary defense budget, or Japan\'s, the Philippines\' or Poland\'s, and test the mix against a simple, notional model.', category: 'Force & wargame models' });
+  import { SITE } from '../../shared/js/site.js';
+  mountChrome({ title: 'Defense Budget Allocator', category: 'Force & wargame models', sub: SITE === 'tsm'
+    ? 'Spend Taiwan\'s special or supplementary defense budget and test the mix against a simple, notional crossing model.'
+    : 'Spend Taiwan\'s special or supplementary defense budget, or Japan\'s, the Philippines\' or Poland\'s, and test the mix against a simple, notional model.' });
 </script>
 <script type="module" src="js/app.js"></script>
 </body>

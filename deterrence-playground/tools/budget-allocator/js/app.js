@@ -1,6 +1,9 @@
 // Defense Budget Allocator: state, URL hash and rendering.
 // Taiwan is the default country; its page text is the static HTML. Other countries swap in their own profile.
-import { COUNTRIES } from '../data/countries.js';
+import { COUNTRIES as ALL_COUNTRIES } from '../data/countries.js';
+import { SITE } from '../../../shared/js/site.js';
+// Interactive Deterrence shows Taiwan only; Interactive Deterrence shows every country.
+const COUNTRIES = SITE === 'tsm' ? ALL_COUNTRIES.slice(0, 1) : ALL_COUNTRIES;
 import { ctx, setProfile } from './ctx.js';
 import { evaluate, verdict, explain } from './model.js';
 import { setShare, normalize, barHtml, mountDragBar, mountSliders, money } from './alloc.js';
@@ -89,6 +92,7 @@ function mountCountry() {
 }
 function applyPreset(k) { S.shares = mixOf(k); S.preset = k; S.locks = {}; render(); }
 
+$('countries').hidden = COUNTRIES.length < 2;
 $('countries').innerHTML = COUNTRIES.map(c => `<button type="button" data-c="${c.k}"><b>${c.name}</b><br><span class="muted">${c.sub}</span></button>`).join('');
 $('countries').querySelectorAll('button').forEach(btn => btn.onclick = () => {
   if (btn.dataset.c === S.c) return;

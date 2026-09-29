@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quantal Response Explorer | Interactive Deterrence</title>
+<meta name="description" content="Compare logit quantal response equilibrium with Nash play in crisis and deterrence games as precision λ runs from 0 to infinity, and see why estimating these games takes care.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="qre-explorer.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<div class="toolbar-top" id="stage-top">
+  <p class="lede">Nash equilibrium assumes players never slip. Quantal response equilibrium lets them err, with fewer errors when more is at stake. Turn the precision λ from pure noise to perfect play and watch crisis outcomes change.</p>
+  <div class="actions">
+    <button type="button" class="btn solid" id="start-tour">Start the walkthrough</button>
+    <button type="button" class="btn" id="copy-link">Copy link to this setup</button>
+    <button type="button" class="btn" id="reset">Reset</button>
+  </div>
+</div>
+
+<main class="layout">
+  <div class="stage">
+    <div class="card fig">
+      <div class="fig-h"><p class="eyebrow" id="game-name"></p><p class="fine"><span class="lam-now" id="lam-now"></span> <span id="cap-note"></span></p></div>
+      <svg id="tree" class="tree" role="img" aria-label="Game tree. Each branch is labeled with its quantal response probability; boxes at the ends show payoffs and outcome probabilities."></svg>
+      <div id="matrix" class="mxbox" hidden></div>
+      <p class="fine" id="uniq"></p>
+    </div>
+    <div class="card fig">
+      <div class="fig-h"><p class="eyebrow" id="path-h"></p><p class="fine">Click or drag on the chart to set λ.</p></div>
+      <svg id="path" class="chart" role="img" aria-label="Chart of equilibrium probabilities as λ runs from 0.01 to 100, with the Nash limit at the right"></svg>
+      <div class="legend" id="path-leg"></div>
+    </div>
+    <div class="card fig" id="est-card">
+      <div class="fig-h"><p class="eyebrow">Why estimating these games needs care</p><span class="notional">simulated data</span></div>
+      <p class="why">To estimate a game, a researcher solves for its equilibrium at every trial value of the parameters and asks how likely the data are. When a game has several equilibria, the solver has to pick one, and the likelihood can jump. Here the standoff game (its current payoffs) generates simulated crises at a known λ*, and five methods try to recover it.</p>
+      <div class="est-grid">
+        <div class="est-ctl" id="est-ctl"></div>
+        <div class="est-out">
+          <svg id="ll" class="chart" role="img" aria-label="Log-likelihood of the simulated data over λ for each estimation method, with each method's estimate marked"></svg>
+          <div class="legend" id="ll-leg"></div>
+          <div class="tablewrap" id="est-tab"></div>
+          <p class="fine" id="est-note" aria-live="polite"></p>
+        </div>
+      </div>
+      <ul class="howto" id="est-methods"></ul>
+    </div>
+  </div>
+  <aside class="panel" id="panel" aria-label="Game, precision and payoffs"></aside>
+</main>
+<div id="tour-root"></div>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>In a quantal response equilibrium each player chooses better actions more often, but not always. Under the logit form a player picks action <i>j</i> with probability proportional to e<sup>λ·U(j)</sup>, where U(j) is the expected payoff of <i>j</i> given how everyone else actually plays, errors included. Each player knows the others err and plans for it. The precision λ sets how sharply choices follow payoffs.</p>
+    <ul class="howto">
+      <li><b>λ = 0</b>: choices ignore payoffs and every action is equally likely. McKelvey and Palfrey (1995): “when λ = 0, there is a unique equilibrium at the centroid of the simplex.”</li>
+      <li><b>λ → ∞</b>: play approaches Nash equilibrium. In a game of perfect information, Signorino (1999) notes, “λ = ∞ also corresponds to the subgame perfect equilibrium.” The ∞ column on the path chart shows that limit.</li>
+      <li><b>In between</b>, QRE is its own prediction, not a blurred Nash equilibrium. In the Signorino game war becomes more likely as λ rises from 0 to about 2, then falls away.</li>
+      <li><b>The tree</b> shows each choice probability at the current λ. Thicker branches are more likely. The boxes give payoffs (player 1, player 2), the outcome’s probability and a bar.</li>
+      <li><b>The standoff</b> has simultaneous moves, so the logit equations can have several solutions at one λ. The path chart draws every one. The bold curve is the principal branch, which starts at the centroid.</li>
+      <li>The address bar stores the game, λ, every payoff and the simulation settings, so a view can be shared exactly.</li>
+    </ul>
+
+    <h2 class="mt">The games</h2>
+    <p><b>Signorino crisis game.</b> From Signorino (1999, Figure 2). State 1 fights or not. State 2 then fights or not. If State 1 held back and State 2 fought, State 1 chooses again. Outcomes are the status quo, capitulation by either side, and war. Utilities follow his equations 13–17: the status quo is worth D<sub>12</sub> (1 if both states are democracies); a state that capitulates loses its assets A<sub>i</sub>; the winner of a capitulation gains the other’s assets; war is worth P<sub>i</sub>A<sub>j</sub> + (1 − P<sub>i</sub>)(−A<sub>i</sub> − M<sub>i</sub>), with P<sub>i</sub> = M<sub>i</sub>/(M<sub>i</sub> + M<sub>j</sub>). The choice probabilities solve his equations 4–7.</p>
+    <p><b>Deterrence game with audience costs.</b> The move order of the crisis-bargaining game that Lewis and Schultz (2003) estimate and Crisman-Cox and Gibilisco (2021) study: A challenges or accepts the status quo; B resists or concedes; a resisted A fights or backs down. The payoff for backing down, ā, carries the audience cost. Here both sides know all payoffs, so there is no signaling. In their version each side has private payoff shocks, and that is where multiple equilibria come from.</p>
+    <p><b>Crisis standoff (Chicken).</b> Both sides choose at once to escalate or back down. Escalating against a side that backs down wins v; backing down against escalation loses v; mutual escalation costs each side its clash cost. When both clash costs exceed v the game has two pure Nash equilibria and one mixed.</p>
+
+    <h2 class="mt">Why estimation needs care</h2>
+    <p>Signorino (1999) turned the logit QRE into a statistical model of crisis behavior and warned that “the above is not just another formulation of nested logit”: the choice probabilities “are the equilibria of the decision makers’ best responses to each other.” He also shows that λ cannot be separated from the scale of the payoffs: “Both λ and the β parameters cannot be estimated individually,” so he fixes λ = 1. The “Same data, different scale” box in the panel demonstrates this.</p>
+    <p>Crisman-Cox and Gibilisco (2021) show what goes wrong when a game has several equilibria. Traditional maximum likelihood “maximize[s] a likelihood function which computes an equilibrium for every observation at every guess of the parameters,” and “an equilibrium is computed as if it is unique.” Multiple equilibria “create discontinuities in the likelihood function.” In their Monte Carlo study, “the tMLE routine performs the worst in both multiple and unique settings, regardless of the number of observations,” while “the NPL and PL methods consistently perform the best.” They adapt the pseudo-likelihood, nested pseudo-likelihood (Aguirregabiria and Mira 2007) and constrained MLE (Su and Judd 2012) estimators from industrial organization. For extensive-form QRE of the Signorino kind they add a reassurance: “Because these games always have a unique equilibrium, the problems we discuss do not arise in these contexts.”</p>
+    <p>The card above reproduces the mechanism in the simplest setting that has it: a 2×2 game with a single unknown, λ. It is a teaching stand-in, not their signaling game. With one parameter, the constrained problem can be solved by brute force: find every equilibrium at every λ and keep the best, which is the objective CMLE maximizes.</p>
+  </div>
+  <div class="col">
+    <h2>Method</h2>
+    <p><b>Trees.</b> The logit agent QRE of a perfect-information game is found by backward induction: the last mover’s logit choice depends only on payoffs, the mover before responds to that noisy behavior, and so on to the root. It is unique at every λ.</p>
+    <p><b>The standoff.</b> A 2×2 QRE solves p = σ(λ·Δ₁(q)) and q = σ(λ·Δ₂(p)), where σ is the logistic function and Δ is a player’s payoff advantage of escalating. Substituting one into the other leaves a single equation in logit p. The tool finds every root on a fine grid with bisection, and traces the whole correspondence for λ from 0.01 to 100 by marching squares on the zero set. The principal branch is the component that reaches the λ = 0.01 edge. McKelvey and Palfrey (1995, Theorem 3) prove that for almost all games “the graph of π* contains a unique branch which starts at the centroid, for λ = 0, and converges to a unique Nash equilibrium, as λ goes to infinity,” and call that limit the <i>limiting logit equilibrium</i>. When the two clash costs are equal the game is symmetric, a non-generic case where the branch reaches a fork; the tool then follows one side arbitrarily.</p>
+    <p><b>Estimation card.</b> For a seed, the tool draws N pairs of uniform numbers once. A crisis’s choices are escalate if the draw falls below the equilibrium probability at λ*, so moving λ* or N changes the data smoothly. “Another equilibrium” uses the solution at λ* farthest from the principal branch. Traditional MLE uses the root nearest the solver’s starting guess. PL uses observed frequencies as beliefs. NPL updates beliefs with one best-response step per round and re-estimates, up to 60 rounds. λ is searched on a log grid from 0.1 to 40 and refined by golden-section search.</p>
+
+    <h2 class="mt">Walberg’s use of QRE</h2>
+    <p>Jonathan Walberg’s working paper <i>Skin in the Game</i> (model note, July 13, 2026) builds its core estimated model as a logit QRE of a challenger–defender game over graded pressure, taken to a weekly panel in Asia. The note gives two reasons for QRE: “every outcome occurs with positive probability, which the likelihood requires; and λ soaks up decision noise.” It lists λ among the estimated parameters, identified by “sharpness of responses to large shocks.” Walberg’s reading notes on Crisman-Cox and Gibilisco flag the trade-off: a QRE of this kind sidesteps multiple equilibria, but it gives up the belief updating that a signaling model has. The notes plan checks across starting values and solvers at the estimates.</p>
+
+    <h2 class="mt">What is notional</h2>
+    <ul class="howto">
+      <li>Every payoff value: M, A and D in the Signorino game; W̄, ā and C<sub>B</sub> (with S = 0, V = 1) in the deterrence game; clash costs and v in the standoff. The forms are from the papers; the numbers are teaching inputs.</li>
+      <li>The simulated crises, N, λ* and the seed. No real crisis data are used.</li>
+      <li>The solver-start rule for traditional MLE is a simple stand-in for “whichever equilibrium an equation solver finds.”</li>
+    </ul>
+
+    <h2 class="mt">Sources</h2>
+    <ul class="src">
+      <li>Richard D. McKelvey and Thomas R. Palfrey, “Quantal Response Equilibria for Normal Form Games,” <i>Games and Economic Behavior</i> 10, no. 1 (1995): 6–38. <a href="https://doi.org/10.1006/game.1995.1023" target="_blank" rel="noopener">doi:10.1006/game.1995.1023</a> · <a href="http://www.dklevine.com/archive/refs4510.pdf" target="_blank" rel="noopener">scanned PDF</a>. Logit equilibrium, λ = 0 centroid, Theorem 3 (principal branch).</li>
+      <li>Richard D. McKelvey and Thomas R. Palfrey, “Quantal Response Equilibria for Extensive Form Games,” <i>Experimental Economics</i> 1, no. 1 (1998): 9–41. <a href="https://doi.org/10.1023/A:1009905800005" target="_blank" rel="noopener">doi:10.1023/A:1009905800005</a>. The agent QRE that Signorino applies.</li>
+      <li>Curtis S. Signorino, “Strategic Interaction and the Statistical Analysis of International Conflict,” <i>American Political Science Review</i> 93, no. 2 (1999): 279–297. <a href="https://doi.org/10.2307/2585396" target="_blank" rel="noopener">doi:10.2307/2585396</a> · <a href="http://www.rochester.edu/college/psc/signorino/research/Signorino_1999_APSR.pdf" target="_blank" rel="noopener">author PDF</a>. Crisis game (Figure 2), equations 4–17, identification of λ.</li>
+      <li>Casey Crisman-Cox and Michael Gibilisco, “Estimating Signaling Games in International Relations: Problems and Solutions,” <i>Political Science Research and Methods</i> 9, no. 3 (2021): 565–582. <a href="https://doi.org/10.1017/psrm.2019.58" target="_blank" rel="noopener">doi:10.1017/psrm.2019.58</a> · <a href="https://authors.library.caltech.edu/records/ccqtx-9s467" target="_blank" rel="noopener">authors’ manuscript (Caltech)</a>. Quotations are from the manuscript. R package <a href="https://cran.r-project.org/package=sigInt" target="_blank" rel="noopener">sigInt</a>.</li>
+      <li>Jeffrey B. Lewis and Kenneth A. Schultz, “Revealing Preferences: Empirical Estimation of a Crisis Bargaining Game with Incomplete Information,” <i>Political Analysis</i> 11, no. 4 (2003): 345–367. <a href="https://doi.org/10.1093/pan/mpg021" target="_blank" rel="noopener">doi:10.1093/pan/mpg021</a>. Move order of the deterrence game, as described by Crisman-Cox and Gibilisco.</li>
+      <li>Victor Aguirregabiria and Pedro Mira, “Sequential Estimation of Dynamic Discrete Games,” <i>Econometrica</i> 75, no. 1 (2007): 1–53. <a href="https://doi.org/10.1111/j.1468-0262.2007.00731.x" target="_blank" rel="noopener">doi:10.1111/j.1468-0262.2007.00731.x</a>. NPL.</li>
+      <li>Che-Lin Su and Kenneth L. Judd, “Constrained Optimization Approaches to Estimation of Structural Models,” <i>Econometrica</i> 80, no. 5 (2012): 2213–2230. <a href="https://doi.org/10.3982/ECTA7925" target="_blank" rel="noopener">doi:10.3982/ECTA7925</a>. CMLE.</li>
+      <li>Jonathan Walberg, <i>Skin in the Game</i>, working paper, model note of July 13, 2026, and his reading notes on Crisman-Cox and Gibilisco (2021).</li>
+    </ul>
+    <p class="fine mt">Bibliographic details checked against Crossref. The two <i>Econometrica</i> papers are cited through Crisman-Cox and Gibilisco, who attribute NPL and CMLE to them.</p>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Quantal Response Explorer', sub: 'Logit quantal response equilibrium against Nash in crisis and deterrence games, as precision runs from zero to infinity.', category: 'Game theory' });
+  document.title = 'Quantal Response Explorer | Interactive Deterrence';
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

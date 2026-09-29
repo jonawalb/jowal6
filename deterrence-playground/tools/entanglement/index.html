@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nuclear Entanglement | Interactive Deterrence</title>
+<meta name="description" content="Plan a conventional campaign against assets that serve both conventional and nuclear forces, and watch a transparent, notional model of escalation risk respond, following James Acton's mechanisms of escalation through entanglement.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="entanglement.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<div class="toolbar-top">
+  <p class="lede">Many of the satellites, radars, command links, missiles and bases a state would strike in a conventional war also serve its adversary’s nuclear forces. Choose what to hit and when, and watch the pressure to use nuclear weapons build. Notional model, not a prediction.</p>
+  <div class="actions">
+    <button type="button" class="btn solid" id="start-tour">Start the walkthrough</button>
+    <button type="button" class="btn" id="copy-link">Copy link to this setup</button>
+  </div>
+</div>
+
+<main class="layout">
+  <div class="stage" id="stage" aria-live="off"></div>
+  <aside class="panel" id="panel" aria-label="Escalation readout, mitigation levers and model parameters"></aside>
+</main>
+<div id="tour-root"></div>
+
+<section class="cases-wrap" id="world" aria-label="Real-world examples of entanglement"></section>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>You command a conventional campaign against a nuclear-armed adversary, the target. Your aim is conventional: sink ships, suppress missiles, blind sensors. The trouble is that the target’s assets are <b>entangled</b>. The same early-warning satellites, command links, launchers, bases and surveillance networks serve its conventional and its nuclear forces. James Acton calls this entanglement and argues it could turn a conventional war nuclear even if neither side intends it.</p>
+    <ul class="howto">
+      <li>The <b>planner</b> has five generic asset categories and four campaign phases. Click cells to strike. Each category shows its nuclear role, the share of it that serves nuclear forces.</li>
+      <li>The <b>risk chart</b> stacks each escalation channel’s hazard per phase and draws the cumulative chance of nuclear use against the same war without entangled strikes.</li>
+      <li>The <b>channel cards</b> show why the risk rises: use-or-lose pressure, misinterpreted warning, the damage-limitation window, and warhead and target ambiguity, all amplified by the fog of war.</li>
+      <li>The <b>levers</b> in the side panel apply mitigation measures from the literature, each with its source, and show what they buy and what they cost in conventional effect.</li>
+      <li>The address bar stores the plan, levers and every parameter, so a link reproduces the setup.</li>
+    </ul>
+    <h2 class="mt">Questions to try</h2>
+    <ol class="howto">
+      <li>Strike only early warning. The target’s nuclear forces are untouched. Why does the risk still rise?</li>
+      <li>Delay strikes on command links to phase 3. How much does timing matter compared with the choice of target?</li>
+      <li>Turn on strike exclusions, then look at the conventional effect. Which categories are hardest to spare?</li>
+      <li>Lower the target’s confidence in its second strike. Which channel responds, and why that one?</li>
+    </ol>
+  </div>
+  <div class="col">
+    <h2>Sources</h2>
+    <ul class="src" id="en-refs"></ul>
+    <p class="fine mt">Sources for each real-world example are listed on its card. This page describes asset categories in general terms only. It names no real locations or units and contains no targeting detail.</p>
+  </div>
+</section>
+
+<section class="below method" id="method">
+  <div class="col">
+    <h2>Method · The campaign</h2>
+    <p>Each category <i>c</i> has a nuclear role <i>n<sub>c</sub></i> (share serving nuclear forces), damage per phase struck <i>d<sub>c</sub></i> and a conventional value <i>v<sub>c</sub></i>. Damage accumulates: after a phase with a strike, <i>D<sub>c</sub></i> ← 1 − (1 − <i>D<sub>c</sub></i>)(1 − <i>d<sub>c</sub></i>); after a phase without one, a share of it is repaired. Damage to the nuclear-serving share is <i>n<sub>c</sub>D<sub>c</sub></i>.</p>
+    <p>Each channel <i>k</i> sums weighted nuclear damage across categories, <i>X<sub>k</sub></i> = Σ<sub>c</sub> <i>w<sub>kc</sub> n<sub>c</sub> D<sub>c</sub></i>. The weights encode which categories feed which mechanism: early warning and command links drive misinterpreted warning; launchers and co-located bases drive use-or-lose pressure and ambiguity; surveillance drives the damage-limitation window.</p>
+    <p><b>Fog.</b> Degraded warning, command and surveillance add up to a fog level <i>F</i> between 0 and 1. The target fills the gap with worst-case assumptions: every perception-driven channel is multiplied by 1 + φ<i>F</i>.</p>
+  </div>
+  <div class="col">
+    <h2>Method · From pressure to probability</h2>
+    <p>Per-phase hazards: use-or-lose <i>h</i> = κ<sub>ci</sub><i>X</i><sub>ci</sub>(1 + φ<i>F</i>)(1.5 − <i>s</i>), where <i>s</i> is the target’s confidence in its second strike; misinterpreted warning <i>h</i> = κ<sub>mw</sub><i>X</i><sub>mw</sub>(1 + φ<i>F</i>); ambiguity <i>h</i> = κ<sub>wa</sub><i>X</i><sub>wa</sub>(0.25 + <i>a</i>)(1 + φ<i>F</i>), where <i>a</i> is the share of your weapons that are dual-capable; the damage-limitation window <i>h</i> = κ<sub>dl</sub><i>X</i><sub>dl</sub>, only if the target has that doctrine.</p>
+    <p>The chance of nuclear use in a phase is 1 − exp(−(<i>h</i><sub>0</sub> + Σ<i>h</i>)), and the campaign total compounds the four phases. Levers scale named terms: separation halves every <i>n<sub>c</sub></i>; exclusions cut nuclear damage by 70% and remove that share’s conventional value; restraint halves misinterpreted warning and cuts ambiguity by a third; communication cuts both by up to 45%, less as fog rises; resilient NC3 halves fog.</p>
+  </div>
+  <div class="col">
+    <h2>Method · What is notional</h2>
+    <p><b>Every number is <span class="notional">notional</span></b>: nuclear roles, damage rates, channel weights, baseline hazard, lever strengths and the resulting probabilities. They were set so that the model’s ordering matches the arguments in the sources, not fitted to data. No data set exists from which such numbers could be estimated. The model shows which way risk moves and why, not how likely nuclear war is.</p>
+    <p><b>What it leaves out.</b> Cyber operations, which Acton treats separately; the attacker’s own entangled assets and the target’s strikes on them; bargaining and war termination; the target’s conventional options short of nuclear use; and learning over the campaign. Acton’s damage-limitation window concerns a state that holds its opponent’s nuclear forces at risk; here it applies to the target only when you switch that doctrine on.</p>
+    <p>All the real-world examples below the model come from public, sourced reporting and official documents.</p>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  import { REFS } from './data/refs.js';
+  mountChrome({ title: 'Nuclear Entanglement', sub: 'How a conventional campaign against dual-use assets can push a nuclear-armed adversary toward nuclear use, in a transparent, notional model.', category: 'Nuclear weapons & arms control' });
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  document.getElementById('en-refs').innerHTML = Object.values(REFS).map(r => `<li>${esc(r.t)}. <a href="${esc(r.u)}" target="_blank" rel="noopener">${esc(r.u.includes('doi.org/') ? 'doi:' + r.u.split('doi.org/')[1] : new URL(r.u).hostname.replace(/^www\./, ''))}</a></li>`).join('');
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

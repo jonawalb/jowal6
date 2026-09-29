@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Is It a Nuke? | Interactive Deterrence</title>
+<meta name="description" content="A notional Bayesian decision model for a state that detects an incoming dual-capable missile: update on context, launch site and trajectory, then choose to wait, retaliate conventionally or launch on warning, and see how priors and entanglement drive false alarms and escalation.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="warhead-ambiguity.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<div class="toolbar-top">
+  <p class="lede">Your warning systems report an incoming missile that could carry either a nuclear or a conventional warhead. Set the context, read the evidence, and decide: wait, hit back conventionally, or launch on warning. Notional model, not a prediction.</p>
+  <div class="actions">
+    <button type="button" class="btn solid" id="start-tour">Start the walkthrough</button>
+    <button type="button" class="btn" id="copy-link">Copy link to this setup</button>
+  </div>
+</div>
+
+<main class="layout">
+  <div class="stage" id="stage" aria-live="off"></div>
+  <aside class="panel" id="panel" aria-label="Decision readout, evidence and parameters"></aside>
+</main>
+<div id="tour-root"></div>
+
+<section class="cases-wrap" id="cases" aria-label="Historical cases"></section>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>Many missiles can carry either kind of warhead. James Acton calls the resulting uncertainty <b>warhead ambiguity</b>, and adds two relatives: <b>destination ambiguity</b>, when a maneuvering weapon’s target is unclear, and <b>target ambiguity</b>, when a strike on conventional forces looks like a strike on nuclear ones because the two are entangled. This tool puts you in the seat of the state that detects the launch.</p>
+    <ul class="howto">
+      <li>The <b>belief chain</b> starts from your priors and adds one piece of evidence per row: a second sensor, the launch site and the trajectory. Colors split your belief between no attack, a conventional strike and a nuclear one.</li>
+      <li>The <b>cost chart</b> weighs each response against that belief, and the strip below it shows the thresholds where the best response changes.</li>
+      <li>The <b>campaign map</b> runs the same reasoning over every launch a campaign could produce and asks how often a conventional strike is met with nuclear weapons. You read evidence through the entanglement you <i>assume</i>; the map varies the entanglement that is <i>real</i>.</li>
+      <li>The address bar stores every setting, so a link reproduces the setup.</li>
+    </ul>
+    <h2 class="mt">Questions to try</h2>
+    <ol class="howto">
+      <li>In peacetime with one sensor, how high must the prior on a real attack go before waiting stops being best?</li>
+      <li>Set the assumed entanglement well below the actual level. Which trajectory produces the most wrongful launches, and why?</li>
+      <li>Switch off launch before impact. What is left of the danger, according to the model and to Acton?</li>
+    </ol>
+  </div>
+  <div class="col">
+    <h2>Sources</h2>
+    <ul class="src">
+      <li>James M. Acton, “Is It a Nuke? Pre-Launch Ambiguity and Inadvertent Escalation,” Carnegie Endowment for International Peace, 9 April 2020. <a href="https://carnegieendowment.org/research/2020/04/is-it-a-nuke-pre-launch-ambiguity-and-inadvertent-escalation" target="_blank" rel="noopener">carnegieendowment.org</a></li>
+      <li>James M. Acton, <i>Silver Bullet? Asking the Right Questions About Conventional Prompt Global Strike</i> (Carnegie Endowment for International Peace, 2013), on warhead, destination and target ambiguity. <a href="https://carnegieendowment.org/files/cpgs.pdf" target="_blank" rel="noopener">carnegieendowment.org (PDF)</a></li>
+      <li>James M. Acton, “Escalation through Entanglement: How the Vulnerability of Command-and-Control Systems Raises the Risks of an Inadvertent Nuclear War,” <i>International Security</i> 43, no. 1 (2018): 56–99. <a href="https://doi.org/10.1162/isec_a_00320" target="_blank" rel="noopener">doi:10.1162/isec_a_00320</a></li>
+      <li>James M. Acton, “Why Is Nuclear Entanglement So Dangerous?” Carnegie Endowment, 23 January 2019. <a href="https://carnegieendowment.org/posts/2019/01/why-is-nuclear-entanglement-so-dangerous" target="_blank" rel="noopener">carnegieendowment.org</a></li>
+      <li>U.S. Department of Defense, <i>Military and Security Developments Involving the People’s Republic of China 2024</i>, on commingled missile forces: a launch “may not be clear … until it detonates.” <a href="https://web.archive.org/web/20260924081034/https://media.defense.gov/2024/dec/18/2003615520/-1/-1/0/military-and-security-developments-involving-the-peoples-republic-of-china-2024.pdf" target="_blank" rel="noopener">archived PDF</a></li>
+      <li>Caitlin Talmadge, “Would China Go Nuclear?” <i>International Security</i> 41, no. 4 (2017): 50–92. <a href="https://doi.org/10.1162/ISEC_a_00274" target="_blank" rel="noopener">doi:10.1162/ISEC_a_00274</a></li>
+      <li>Sources for each historical case are listed on its card.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="below method" id="method">
+  <div class="col">
+    <h2>Method · Updating</h2>
+    <p>Three hypotheses: no attack (F), a conventional launch (C), a nuclear launch (N). Priors: Pr(real) and Pr(nuclear | real), so the prior is F = 1 − Pr(real), C = Pr(real)(1 − Pr(nuclear | real)), N = Pr(real) Pr(nuclear | real).</p>
+    <p>A second, independent sensor divides the weight on F by its likelihood ratio. Launch site and trajectory are treated as independent given the true state, and each multiplies the weights by Pr(evidence | state). The posterior is the normalized product. The multipliers shown are the nuclear-to-conventional likelihood ratios.</p>
+    <p><b>Entanglement.</b> With entanglement <i>e</i>, a share of conventional launches comes from mixed sites (0.8<i>e</i> + 0.05) and heads for dual-use targets (0.05 + 0.45<i>e</i>) or for co-located forces that also serve your nuclear mission (0.02 + 0.25<i>e</i>); nuclear launches also shift to mixed sites. As <i>e</i> rises, site and target say less about the warhead. The observer computes likelihoods at its <i>assumed</i> <i>e</i>; outcomes are generated at the <i>actual</i> <i>e</i>.</p>
+  </div>
+  <div class="col">
+    <h2>Method · Deciding</h2>
+    <p>Each response has a cost in each state (editable in the panel). The expected cost of a response is the belief-weighted sum; the model picks the lowest. In the nuclear state, waiting and conventional retaliation add a deterrent loss scaled by one minus survivability: forces that would be destroyed before they could respond. Launch on warning avoids that loss but is catastrophic if the attack was conventional or not an attack at all.</p>
+    <p><b>Campaign map.</b> For each cell the model enumerates every site and trajectory, weights them by how often a conventional launch produces them at the actual entanglement, and sums the probability that the chosen response is launch on warning. The campaign figure is 1 − (1 − <i>r</i>)<sup>K</sup> for K conventional launches, assuming independence.</p>
+  </div>
+  <div class="col">
+    <h2>Method · What is notional</h2>
+    <p><b>Every number is <span class="notional">notional</span></b>: priors, likelihoods, costs, the sensor weight and the campaign size. They were chosen so the model behaves as the sources describe, not estimated from data, and no public data exist to estimate them. The model is a teaching device about how beliefs and entanglement interact. It does not describe any real warning system or decision procedure.</p>
+    <p><b>What it leaves out.</b> Time pressure and staged decisions; Acton’s central concern, pre-launch ambiguity, which can last for days (the two pre-launch cases show it); signaling and statements that could clarify a launch; and the adversary’s reaction to your response. Acton notes that post-launch ambiguity could spark a nuclear response only for states able to launch before weapons detonate, which the posture switch represents.</p>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Is It a Nuke?', sub: 'A decision model for a state that detects an incoming dual-capable missile: priors, evidence, entanglement and the cost of guessing wrong.', category: 'Nuclear weapons & arms control' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

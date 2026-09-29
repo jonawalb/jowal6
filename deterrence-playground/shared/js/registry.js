@@ -133,6 +133,10 @@ export const ALL_TOOLS = [
     blurb: "Set two notional force postures and see Kent and Thaler's first-strike stability index: who gains by striking first, and how MIRVed silos, alert rates and launch under attack move it." },
   { slug: 'verification-game', cat: 'nuclear', sites: ['deterrence'], title: 'Trust but Verify', status: 'live',
     blurb: 'An arms-control inspection game from the published literature: how inspection quotas, detection, false-alarm costs and penalties set the odds of cheating and of getting caught, beside New START, IAEA and CTBT verification.' },
+  { slug: 'entanglement', cat: 'nuclear', sites: ['deterrence'], title: 'Nuclear Entanglement', status: 'live',
+    blurb: 'Plan a conventional campaign against satellites, command links, launchers and bases that also serve nuclear forces, and watch use-or-lose pressure, misread warning and the fog of war push a notional escalation risk up, then test the fixes the literature proposes.' },
+  { slug: 'warhead-ambiguity', cat: 'nuclear', sites: ['deterrence'], title: 'Is It a Nuke?', status: 'live',
+    blurb: 'Your sensors report an incoming missile that could carry either warhead: update on context, launch site and trajectory, then wait, hit back conventionally or launch on warning, and see how priors and entanglement produce false alarms.' },
 ];
 
 export const onSite = (x, site = SITE) => !x.sites || x.sites.includes(site);

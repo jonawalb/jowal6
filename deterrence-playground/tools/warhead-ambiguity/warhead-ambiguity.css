@@ -1,0 +1,97 @@
+/* Is It a Nuke? Built on shared/css/tsm.css tokens only. */
+.toolbar-top { max-width: 1400px; margin: 16px auto 0; display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; }
+.toolbar-top .lede { margin: 0; max-width: 78ch; font-size: 14px; color: var(--muted); }
+.actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+.fig { padding: 12px 14px 12px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.fig-h { display: flex; flex-wrap: wrap; gap: 4px 14px; justify-content: space-between; align-items: baseline; }
+.fig-h .fine { margin: 0; }
+.fig svg { display: block; width: 100%; height: auto; user-select: none; -webkit-user-select: none; }
+.btn.sm { padding: 3px 9px; font-size: 12px; }
+.plan-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.axis line { stroke: var(--muted); stroke-width: 1; }
+.axis text { font: var(--axis-font); fill: var(--axis-ink); }
+.axis .ax-t, .ax-t { font: 12px var(--body); fill: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--muted); }
+.lg { display: inline-flex; align-items: center; gap: 6px; }
+.lg i { width: 12px; height: 12px; border-radius: 2px; opacity: .85; display: inline-block; }
+
+/* Cases */
+.cases-wrap { max-width: 1400px; margin: 30px auto 0; }
+.cases-wrap h2 { margin: 0 0 6px; }
+.cases-h { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
+.cases-h p { margin: 0; max-width: 80ch; font-size: 13.5px; }
+.seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--rule); border-radius: 3px; overflow: hidden; }
+.seg button { border: 0; background: transparent; padding: 4px 10px; font-size: 12px; cursor: pointer; color: var(--ink); }
+.seg button + button { border-left: 1px solid var(--rule); }
+.seg button[aria-pressed="true"] { background: var(--blue-soft); font-weight: 600; }
+.cgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 10px; }
+.ccard { background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.ccard[hidden] { display: none; }
+.ccard h3 { margin: 0; font-size: 18px; }
+.ccard .meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 12px; color: var(--muted); }
+.ccard p { margin: 0; font-size: 13px; line-height: 1.45; }
+.ccard .reading b { font-weight: 600; }
+.ccard .src { font-size: 12px; margin: 0; padding-left: 1.1em; }
+.ccard .src a { word-break: break-word; }
+.ccard .btn { align-self: flex-start; font-size: 12px; padding: 4px 10px; }
+.dtag { font: 500 11px var(--mono); text-transform: uppercase; letter-spacing: .04em; padding: 1px 6px; border-radius: 3px; border: 1px solid currentColor; color: var(--c2); }
+.dtag[data-k="pre"] { color: var(--c6); }
+
+/* Below */
+.below .col { min-width: 0; }
+.below .src a { word-break: break-word; }
+.mt { margin-top: 18px; }
+.howto { font-size: 13.5px; padding-left: 1.2em; display: flex; flex-direction: column; gap: 6px; margin: 0 0 8px; max-width: 68ch; }
+.method { grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--rule); padding-top: 22px; }
+@media (max-width: 1200px) { .method { grid-template-columns: minmax(0, 1fr); } }
+.method p { font-size: 13.5px; }
+
+/* Walkthrough card */
+.tour { position: fixed; right: 20px; bottom: 20px; width: min(380px, calc(100vw - 32px)); max-height: 70vh; overflow: auto; background: var(--panel); border: 1px solid var(--rule); border-top: 3px solid var(--accent); border-radius: 4px; padding: 12px 14px 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, .22); z-index: 20; }
+.tour-h { display: flex; justify-content: space-between; align-items: center; font: 11px var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.tour .x { border: 0; background: transparent; font-size: 20px; cursor: pointer; color: var(--muted); line-height: 1; }
+.tour h3 { margin: 6px 0 4px; font-size: 19px; }
+.tour p { margin: 0 0 10px; font-size: 13px; }
+.tour-nav { display: flex; justify-content: space-between; }
+@media (max-width: 600px) { .tour { right: 8px; bottom: 8px; max-height: 50vh; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+
+/* Belief chain and decision */
+.chain .rn, .dec .rn { font: 600 13px var(--body); fill: var(--ink); }
+.dec .rn.off { fill: var(--faint); }
+.chain .rs, .dec .rs { font: 11.5px var(--body); fill: var(--muted); }
+.chain .seg { stroke: var(--panel); stroke-width: 1.5; opacity: .88; }
+.chain .segl { font: 500 11px var(--mono); fill: var(--ink); paint-order: stroke; stroke: var(--panel); stroke-width: 3px; }
+.cbar { opacity: .55; }
+.cbar.best { opacity: 1; stroke: var(--ink); stroke-width: 1.5; }
+.cbar.off { opacity: .15; }
+.strip { opacity: .75; }
+.pbm { fill: var(--ink); }
+.pbl { stroke: var(--ink); stroke-width: 2; }
+
+/* Campaign map */
+.region { cursor: crosshair; touch-action: none; }
+.eo { stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 6 4; }
+.bl { font: 11px var(--mono); fill: var(--ink); paint-order: stroke; stroke: var(--panel); stroke-width: 3px; }
+.mark { fill: var(--panel); stroke: var(--ink); stroke-width: 2.5; }
+.rates { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+.tile { border: 1px solid var(--rule); border-radius: 4px; padding: 8px 10px; background: var(--bg); display: flex; flex-direction: column; gap: 2px; }
+.tile b { font: 700 22px var(--display); }
+.tile span { font-size: 12px; color: var(--muted); line-height: 1.35; }
+.tile.bad { border-color: var(--bad); background: var(--red-soft); }
+.tile.bad b { color: var(--bad); }
+
+/* Panel */
+.panel .btn { align-self: flex-start; }
+.status b { font-size: 26px; }
+.panel .choices { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+.panel .choices button span { display: block; font-size: 11px; color: var(--muted); }
+.adv summary { cursor: pointer; list-style: revert; }
+.adv[open] summary { margin-bottom: 4px; }
+.costs th, .costs td { padding: 4px 6px; font-size: 11.5px; }
+.costs th { text-transform: none; letter-spacing: 0; }
+.costs input { width: 58px; font: 12px var(--mono); padding: 2px 4px; border: 1px solid var(--rule); border-radius: 3px; background: var(--bg); color: var(--ink); }
+.tk { font: 10.5px var(--mono); fill: var(--muted); }
+.cuml { font: 600 12px var(--body); fill: var(--ink); paint-order: stroke; stroke: var(--panel); stroke-width: 3px; }

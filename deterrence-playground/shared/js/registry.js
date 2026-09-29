@@ -145,6 +145,12 @@ export const ALL_TOOLS = [
     blurb: "No-first-use pledges, assurances, red lines and alert postures for all nine nuclear-armed states, quoted from their own documents and dated, with 'not declared' where a state has said nothing." },
   { slug: 'game-theory-gallery', cat: 'gametheory', also: ['deterrence'], sites: ['deterrence'], title: 'Game Theory Gallery', status: 'live',
     blurb: "Move the costs, beliefs and balance of power in eight classic game-theory models of war and cooperation, from Fearon's bargaining range to Schelling's brinkmanship, and watch the equilibrium change, with every result cited to the page." },
+  { slug: 'ukraine-support', cat: 'ukraine', sites: ['deterrence'], title: 'Who Supports Ukraine', status: 'live',
+    blurb: 'Who pledged aid to Ukraine and who delivered it: military, financial and humanitarian support by donor since 2022, in euros or as a share of GDP, from the Kiel Institute.' },
+  { slug: 'prebunking-game', cat: 'infowar', sites: ['deterrence'], title: 'Prebunking Game', status: 'live',
+    blurb: 'Learn six manipulation techniques on invented posts, then see whether you tell manipulative posts from plain ones better, next to what the published Bad News studies found.' },
+  { slug: 'sanctions-explorer', cat: 'coercion', sites: ['deterrence'], title: 'Sanctions Explorer', status: 'live',
+    blurb: 'Sixty years of sanctions threats and impositions from the TIES dataset: filter by sender, target, objective and type, see how often the target gave in, and set that beside what the Global Sanctions Data Base authors report.' },
 ];
 
 export const onSite = (x, site = SITE) => !x.sites || x.sites.includes(site);

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sanctions Explorer | Interactive Deterrence</title>
+<meta name="description" content="1,412 economic sanctions threats and impositions from 1945 to 2005 in the TIES dataset: filter by sender, target, objective and type, and see how often the target gave in.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="sanctions-explorer.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<main class="layout">
+  <div class="stage" id="stage">
+    <p class="caveat"><b>Outcomes are the dataset's coding.</b> TIES coders judged from news archives how each case ended. Whether the sanctions caused the outcome is a separate question the dataset does not answer. Coverage ends in 2005.</p>
+
+    <div class="card controls">
+      <div class="row">
+        <div class="seg" id="f-st" role="group" aria-label="Threatened or imposed"></div>
+        <div class="acts">
+          <button type="button" class="btn" id="tour-btn">Walkthrough</button>
+          <button type="button" class="btn" id="copy">Copy link</button>
+          <button type="button" class="btn" id="reset">Reset</button>
+        </div>
+      </div>
+      <div class="filters">
+        <label class="fl"><span>Sender</span><select id="f-snd"></select></label>
+        <label class="fl"><span>Target</span><select id="f-tgt"></select></label>
+        <label class="fl"><span>Objective</span><select id="f-iss"></select></label>
+        <label class="fl"><span>Sanction type</span><select id="f-ty"></select></label>
+        <div class="fl yrs"><span>Began</span><div><select id="f-y0" aria-label="From year"></select><span aria-hidden="true">to</span><select id="f-y1" aria-label="To year"></select></div></div>
+      </div>
+    </div>
+
+    <div class="card chartcard">
+      <div class="chart-h"><p class="eyebrow">Cases by year they began</p><ul class="legend" id="legend"></ul></div>
+      <div class="chartbox">
+        <svg id="tl" class="chart" role="img" aria-label="Stacked bars of sanctions cases by start year, coloured by final outcome. Click a year to list its cases."></svg>
+        <div class="tooltip" id="tip" hidden></div>
+      </div>
+      <p class="fine">Click a year to list its cases below.</p>
+    </div>
+
+    <div class="card chartcard">
+      <p class="eyebrow">Outcomes by objective</p>
+      <p class="fine" id="iss-help"></p>
+      <ul class="obs" id="issues"></ul>
+    </div>
+
+    <div class="card chartcard">
+      <div class="chart-h"><p class="eyebrow" id="list-h">Cases</p><span class="fine" id="list-n"></span><button type="button" class="btn small" id="clear-yr" hidden>All years</button></div>
+      <ol class="cases" id="cases"></ol>
+      <button type="button" class="btn" id="more" hidden>Show more</button>
+    </div>
+  </div>
+
+  <aside class="panel" aria-label="Summary and case details">
+    <div class="sec">
+      <div class="status" id="status" data-s="warn"><b id="st-b"></b><span id="st-s"></span></div>
+      <p class="eyebrow">Count as success</p>
+      <div class="seg" id="f-def" role="group" aria-label="Definition of success"></div>
+      <dl class="readout" id="summary"></dl>
+      <p class="fine" id="asof"></p>
+    </div>
+    <div class="sec detail" id="detail" aria-live="polite"></div>
+    <div class="sec">
+      <p class="eyebrow">Two TIES codings of one outcome</p>
+      <p class="fine">TIES codes each ending (who gave way) and separately scores how each side fared, 0 to 10. <span id="dis-note"></span></p>
+      <label class="tg"><input type="checkbox" id="f-dis"><span class="sw"></span><span class="t">Only cases where they disagree<small>Outcome says the target gave ground but the target scored higher, or the reverse</small></span></label>
+    </div>
+    <div class="sec" id="compare"></div>
+  </aside>
+</main>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>Each record is one sanctions case: one or more senders threaten or impose economic measures on one target to change its policy. The case begins with the first threat, or with the sanctions if no threat came first. Filter by sender, target, objective, type of measure and years, or pick threat-only or imposed cases. Every chart and number updates.</p>
+    <p>The timeline counts cases by the year they began, coloured by how they ended. The objective rows show the same outcome mix for each TIES objective, with the success rate on the right. The side panel gives the success rate for everything in view. Pick a case for its card.</p>
+    <p>Choose what counts as success. "Full compliance only" counts cases where the target met all the sender's demands. "Any concession" adds partial compliance and negotiated settlements, where the target changed some behaviour in return for something from the sender.</p>
+
+    <h2 class="mt">Method</h2>
+    <p><b>Data.</b> TIES version 4.0, case level: 1,412 cases that began from 1945 to 2005. The TIES team coded them mainly from Lexis-Nexis, Facts on File and Keesing's Record of Contemporary Events. The five corrections the team published as a Stata file were checked against the downloaded spreadsheet; all five were already applied.</p>
+    <p><b>Success.</b> TIES's "final outcome" has ten codes. The tool groups them: full compliance (codes 2 and 7), partial compliance (1 and 6), negotiated settlement (5 and 10), and sender backed down or stalemate (3, 4, 8, 9). Rates use only cases with an outcome coded. 388 cases have none, and 363 of those have no end date in the data, so many were probably still running when coding stopped. The grouping and the two success definitions are the tool's; the codes are the dataset's.</p>
+    <p><b>Objectives and types.</b> Objectives are TIES's 15 issue categories, up to three per case, which the TIES team adapted from Hufbauer, Schott and Elliott. TIES numbers threatened and imposed measures differently; the tool maps both onto one list, and the type filter matches a measure either threatened or imposed. Senders and targets are Correlates of War country codes. Code 1000 is the EEC/EU acting as a bloc. Code 365 covers the Soviet Union before 1992 and Russia after. The sender filter matches any of up to five senders, or an institution through which sanctions were pursued.</p>
+    <p><b>Two codings.</b> TIES also scores how each side fared (0 to 10). Its manual says reliability tests found these scores "somewhat questionable", but reliable if the side with the higher score is taken to have prevailed. The tool flags cases where that reading contradicts the outcome code: the target gave ground but scored higher, or made no concession while the sender scored higher.</p>
+    <p><b>The GSDB, and what is missing.</b> The Global Sanctions Data Base codes nine objectives (policy change, destabilize regime, territorial conflict, prevent war, end war, terrorism, human rights, democracy, other) and five success scores per objective (total success, partial success, negotiated settlement, failure, ongoing). It covers imposed sanctions only, from 1950. Its authors send the data by e-mail on request and ask users not to pass it on, so this tool holds no GSDB cases and cannot show case by case where the GSDB and TIES disagree. The comparison panel quotes the GSDB authors' own published success figures. They cover different years, count objectives rather than cases, and treat ongoing sanctions differently, so a gap between the numbers is not a measured disagreement.</p>
+    <p><b>Matching objectives.</b> A rough alignment, the tool's own: TIES "destabilize regime" matches the GSDB's objective of the same name; "solve territorial dispute" matches territorial conflict; "contain military behavior" is closest to prevent war or end war; "improve human rights" matches human rights; "end support of non-state actors" overlaps terrorism. TIES has no democracy category, and the GSDB files trade disputes, TIES's largest group, under policy change or other.</p>
+  </div>
+  <div class="col">
+    <h2>Sources</h2>
+    <ul class="src">
+      <li>T. Clifton Morgan, Navin Bapat and Yoshiharu Kobayashi, <a href="https://sanctions.web.unc.edu/" target="_blank" rel="noopener">Threat and Imposition of Economic Sanctions (TIES) data</a>, <a href="https://sanctions.web.unc.edu/wp-content/uploads/sites/18834/2021/04/TIESv4-1.xls" target="_blank" rel="noopener">version 4.0 spreadsheet</a>, retrieved 29 September 2026, with the <a href="http://bapat.web.unc.edu/files/2018/09/TIESCorrection.txt" target="_blank" rel="noopener">published corrections</a>. No license is stated; the project asks users to cite Morgan, Bapat and Kobayashi, "Threat and Imposition of Economic Sanctions 1945–2005: Updating the TIES Dataset", <i>Conflict Management and Peace Science</i> 31(5), 2014: 541–558, <a href="https://doi.org/10.1177/0738894213520379" target="_blank" rel="noopener">doi:10.1177/0738894213520379</a>.</li>
+      <li>Morgan, Bapat and Kobayashi, <a href="https://sanctions.web.unc.edu/wp-content/uploads/sites/18834/2021/04/tiesusersmanualv4.pdf" target="_blank" rel="noopener">TIES Data 4.0 Users' Manual</a>, June 2013. Category names and definitions.</li>
+      <li>Correlates of War, <a href="https://correlatesofwar.org/wp-content/uploads/COW-country-codes.csv" target="_blank" rel="noopener">state system country codes</a> and <a href="https://correlatesofwar.org/data-sets/igos/" target="_blank" rel="noopener">Intergovernmental Organizations v3</a>, for country and institution names.</li>
+      <li>Global Sanctions Data Base, <a href="https://www.globalsanctionsdatabase.com/data" target="_blank" rel="noopener">data page</a> (Release 5, 1,794 cases, 1949–2025; data by request; terms read 29 September 2026).</li>
+      <li>Felbermayr, Kirilakha, Syropoulos, Yalcin and Yotov, "The Global Sanctions Data Base", <i>European Economic Review</i> 129, 2020, <a href="https://doi.org/10.1016/j.euroecorev.2020.103561" target="_blank" rel="noopener">doi</a>; quoted from the working paper, <a href="https://EconPapers.repec.org/RePEc:ris:drxlwp:2020_002" target="_blank" rel="noopener">Drexel WP 2020-02</a>, section 2.3.</li>
+      <li>Kirilakha, Felbermayr, Syropoulos, Yalcin and Yotov, "The Global Sanctions Data Base: An Update that Includes the Years of the Trump Presidency", 2021, <a href="https://doi.org/10.4337/9781839102721.00010" target="_blank" rel="noopener">doi</a>; quoted from <a href="https://ideas.repec.org/p/ris/drxlwp/2021_010.html" target="_blank" rel="noopener">Drexel WP 2021-10</a>.</li>
+      <li>Yalcin, Felbermayr, Kariem, Kirilakha, Kwon, Syropoulos and Yotov, "The Global Sanctions Data Base – Release 4", <i>The World Economy</i>, 2025, <a href="https://doi.org/10.1111/twec.13732" target="_blank" rel="noopener">doi</a>; objective and success categories quoted from the <a href="https://www.econstor.eu/bitstream/10419/301174/1/1894532740.pdf" target="_blank" rel="noopener">WIFO working paper</a>, section 2.1.</li>
+    </ul>
+    <p class="fine mt-s">Build script: <code>tools/sanctions-explorer/scripts/build_data.py</code> downloads TIES and the Correlates of War name lists with <code>--fetch</code>, applies the corrections and regenerates <code>data/ties.js</code>, recording the version and retrieval date. GSDB figures and quotes are in <code>data/gsdb.js</code>.</p>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Sanctions Explorer', sub: 'Sixty years of sanctions threats and impositions, and how often the target gave in, as two datasets code it.', category: 'Economic coercion & war markets' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

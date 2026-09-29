@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Who Supports Ukraine | Interactive Deterrence</title>
+<meta name="description" content="Military, financial and humanitarian aid to Ukraine by donor government since January 2022, allocations against commitments, from the Kiel Institute's Ukraine Support Tracker.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="ukraine-support.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<main class="layout">
+  <div class="stage" id="stage">
+    <p class="caveat"><b>All figures are the Kiel Institute's.</b> Commitments are announced future aid. Allocations are aid delivered or set aside for a specific purpose. Government-to-government aid only, in current euros.</p>
+
+    <div class="card controls">
+      <div class="row">
+        <div class="seg" id="measure" role="group" aria-label="Which measure"></div>
+        <div class="seg" id="scale" role="group" aria-label="Units"></div>
+        <div class="acts">
+          <button type="button" class="btn" id="tour-btn">Walkthrough</button>
+          <button type="button" class="btn" id="copy">Copy link</button>
+          <button type="button" class="btn" id="reset">Reset</button>
+        </div>
+      </div>
+      <div class="row">
+        <span class="lab">Period</span><div class="seg small" id="period" role="group" aria-label="Period"></div>
+      </div>
+      <div class="row">
+        <span class="lab">Aid</span><div class="gchips" id="types" role="group" aria-label="Aid types shown"></div>
+      </div>
+      <div class="row">
+        <span class="lab">Donors</span><div class="gchips" id="groups" role="group" aria-label="Donor groups shown"></div>
+      </div>
+      <div id="euc-wrap" hidden>
+        <label class="tg compact"><input type="checkbox" id="euc"><span class="sw"></span><span class="t">Add each EU member's share of EU-level commitments<small>Kiel's imputation, by each country's share of the EU budget and EIB capital. Commitments only.</small></span></label>
+        <p class="fine" id="euc-note"></p>
+      </div>
+    </div>
+
+    <div class="card chartcard" id="rank-card">
+      <div class="chart-h">
+        <p class="eyebrow" id="rk-h">Allocated and committed</p>
+        <ul class="legend" id="rk-legend">
+          <li><i class="sw" style="background:var(--c2)"></i>Military</li>
+          <li><i class="sw" style="background:var(--c3)"></i>Humanitarian</li>
+          <li><i class="sw" style="background:var(--c1)"></i>Financial</li>
+          <li><i class="sw cmk"></i>Committed</li>
+        </ul>
+      </div>
+      <ol class="rank" id="rank" aria-label="Donor ranking. Select a donor for details."></ol>
+      <div class="chart-f">
+        <button type="button" class="btn small" id="more">Show all</button>
+        <p class="fine" id="rk-note"></p>
+        <div id="rk-export"></div>
+      </div>
+    </div>
+
+    <div class="card chartcard">
+      <div class="chart-h">
+        <p class="eyebrow" id="tl-h">Per month</p>
+        <div class="seg small" id="tlmode" role="group" aria-label="Timeline view"></div>
+      </div>
+      <ul class="legend" id="tl-legend"></ul>
+      <div class="chartbox">
+        <svg id="tl" class="chart" role="img" aria-label="Aid to Ukraine by month. Hover for amounts, click a month for the donors behind it."></svg>
+        <div class="tooltip" id="tip" hidden></div>
+      </div>
+      <div class="chart-f">
+        <p class="fine" id="undated"></p>
+        <div id="tl-export"></div>
+      </div>
+    </div>
+  </div>
+
+  <aside class="panel" aria-label="Summary and details">
+    <div class="sec">
+      <div class="status" data-s="good"><b id="st-b"></b><span id="st-s"></span></div>
+      <dl class="readout" id="summary"></dl>
+      <div id="split"></div>
+      <button type="button" class="btn small" id="clear-donor" hidden>Back to all donors</button>
+    </div>
+    <div class="sec" id="month" aria-live="polite"></div>
+    <div class="sec">
+      <p class="eyebrow">Reading the gap</p>
+      <p class="fine">A commitment can take years to turn into allocations, and some never do. A donor can also allocate more than it announced as a commitment, for example when it sends equipment without a prior pledge.</p>
+      <p class="fine" id="asof"></p>
+    </div>
+  </aside>
+</main>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>The ranking lists donor governments by the aid the Kiel Institute has recorded for them. In the default view the filled bar shows allocations, split into military, humanitarian and financial aid, and the thin outline shows commitments. Switch to allocations or commitments alone, change the units to percent of 2021 GDP, pick a year, or switch aid types and donor groups on and off. Click a donor to follow it in the timeline and the side panel.</p>
+    <p>The timeline shows the same aid month by month, or as a running total. In the running total, the shaded band between the two lines is aid committed but not yet allocated. Click a month to list the donors behind it.</p>
+
+    <h2 class="mt">Method</h2>
+    <p><b>Data.</b> The Kiel Institute for the World Economy's Ukraine Support Tracker, release 30, covering 24 January 2022 to 30 June 2026. The tracker lists government-to-government aid to Ukraine from 41 countries and EU institutions, compiled from official sources, and prices in-kind military items where governments do not give a value. It leaves out private donations, aid through international organisations such as the Red Cross, refugee costs in donor countries, and the cost of replacing donated weapons.</p>
+    <p><b>Commitments and allocations.</b> These are Kiel's terms. In the dataset documentation, commitments are "declarations of future support by donor governments to Ukraine", verified through official communiqués, framework agreements, security agreements or pledges. Allocations are "aid activities which have been then designated for a more specific purpose and have already been delivered or are specified for delivery", such as technical agreements, procurement contracts or project plans; they can be a subset of earlier commitments. Kiel reports allocations as its primary measure.</p>
+    <p><b>How the numbers here are built.</b> The build script sums the item-level rows of Kiel's main data sheet: allocations from the sub-activity values of rows marked "Allocation", commitments from the activity totals. It checks each donor's totals against Kiel's own Country Summary sheet and stops if they differ by more than €50 million. <span id="checks"></span> Months are Kiel's month codes. Rows Kiel dates only as a range stay in the totals but not in the timeline.</p>
+    <p><b>Units.</b> Current euros, as in Kiel's Country Summary sheet, not Kiel's constant-2021-euro headline series, so amounts here can differ from figures in Kiel's press releases. Percent of GDP divides by 2021 GDP (World Bank, via the Kiel workbook), as Kiel does. EU institutions (the Commission and Council, and the European Investment Bank) are listed as their own donors and have no GDP. The optional EU-share toggle adds Kiel's imputed share of EU-level commitments to each member state.</p>
+    <p><b>What this tool does not show.</b> Deliveries, which Kiel tracks only in part; aid to Ukraine from non-government sources; and any source other than Kiel.</p>
+  </div>
+  <div class="col">
+    <h2>Sources</h2>
+    <ul class="src">
+      <li>Kiel Institute for the World Economy, <a href="https://www.ifw-kiel.de/topics/war-against-ukraine/ukraine-support-tracker/" target="_blank" rel="noopener">Ukraine Support Tracker</a>, update of 13 August 2026 (release 30, data to 30 June 2026).</li>
+      <li>Dataset: <a href="https://www.ifw-kiel.de/publications/ukraine-support-tracker-data-6453/" target="_blank" rel="noopener">Ukraine Support Tracker Data</a>, file <code>Ukraine_Support_Tracker_Release_30v2.xlsx</code>, retrieved 29 September 2026. No license is stated on the download page or in the workbook; Kiel asks users to cite: <span id="cite"></span></li>
+      <li>C. Trebesch, P. Bomprezzi and I. Kharitonov, <a href="https://www.ifw-kiel.de/fileadmin/Dateiverwaltung/Subject_Dossiers_Topics/Ukraine/Ukraine_Support_Tracker/Dataset_Documentation.pdf" target="_blank" rel="noopener">Dataset Documentation for the Ukraine Support Tracker: Definitions, Sources, Methods</a>, version 1.1, 2024. Source of the definitions quoted above.</li>
+    </ul>
+    <p class="fine mt-s">Build script: <code>tools/ukraine-support/scripts/build_data.py --fetch</code> downloads the current release and regenerates <code>data/aid.js</code>, recording the file, retrieval date and checksum.</p>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Who Supports Ukraine', sub: 'Military, financial and humanitarian aid to Ukraine by donor government since January 2022, from the Kiel Institute.', category: 'Russia & Ukraine' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

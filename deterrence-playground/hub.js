@@ -8,7 +8,8 @@ import { SITE } from './shared/js/site.js';
 const $ = id => document.getElementById(id);
 const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const live = TOOLS.filter(t => t.status === 'live').length;
-$('hub-count').textContent = `${live} live · ${TOOLS.length - live} coming soon`;
+const soon = TOOLS.length - live;
+$('hub-count').textContent = `${live} live · ${soon ? soon + ' coming soon' : 'More to come'}`;
 
 // Last change per tool, from the repository's commit log (commit date and subject). Update when a tool changes.
 const UPDATED = {

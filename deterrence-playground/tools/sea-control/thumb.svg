@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+  <rect width="640" height="400" fill="#f2f2ee"/>
+  <rect x="40" y="40" width="560" height="300" fill="#fbfbf8" stroke="#d3d6cd"/>
+  <rect x="40" y="40" width="150" height="300" fill="#1b4fd4" opacity=".08"/>
+  <rect x="190" y="40" width="410" height="300" fill="#e8753a" opacity=".1"/>
+  <path d="M40 340 C 90 336, 140 300, 190 262" fill="none" stroke="#1b4fd4" stroke-width="9" stroke-linecap="round"/>
+  <path d="M190 146 C 300 160, 420 190, 520 250 S 590 320, 600 338" fill="none" stroke="#e8753a" stroke-width="9" stroke-linecap="round"/>
+  <path d="M40 130 C 150 140, 300 160, 600 250" fill="none" stroke="#e8753a" stroke-width="3" stroke-dasharray="8 7" opacity=".6"/>
+  <line x1="190" y1="40" x2="190" y2="340" stroke="#033303" stroke-width="4" stroke-dasharray="12 8"/>
+  <circle cx="190" cy="146" r="13" fill="#033303" stroke="#fbfbf8" stroke-width="4"/>
+  <line x1="440" y1="40" x2="440" y2="340" stroke="#b3261e" stroke-width="4" stroke-dasharray="12 8"/>
+  <circle cx="440" cy="203" r="13" fill="#b3261e" stroke="#fbfbf8" stroke-width="4"/>
+  <text x="60" y="80" font-family="Georgia, serif" font-size="30" font-weight="700" fill="#1b4fd4">Battle</text>
+  <text x="470" y="80" font-family="Georgia, serif" font-size="30" font-weight="700" fill="#e8753a">Denial</text>
+  <text x="320" y="378" font-family="Georgia, serif" font-size="24" font-weight="700" fill="#14201a" text-anchor="middle">Mahan or Corbett?</text>
+</svg>

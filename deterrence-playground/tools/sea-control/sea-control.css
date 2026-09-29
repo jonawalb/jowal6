@@ -1,0 +1,89 @@
+/* Sea Control Game. Built on shared/css/tsm.css tokens only. */
+.stage, .panel, .below { --ob: var(--c1); --of: var(--c3); --od: var(--c2); }
+.card { padding: 12px 14px; }
+.nbanner { margin: 0; font-size: 12.5px; color: var(--muted); display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.nbanner .notional { flex: none; }
+
+/* Headline card */
+.headcard { display: flex; flex-direction: column; gap: 10px; }
+.head-top { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; align-items: end; }
+.head-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+.big { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+.big b { font-family: var(--display); font-size: 40px; line-height: 1; color: var(--ink); margin-right: 6px; }
+.headcard table { font-size: 13px; }
+.headcard th.r, .headcard td.r { text-align: right; }
+.headcard td.num { font-size: 14px; }
+.headcard tr.on th, .headcard tr.on td { font-weight: 600; }
+.headcard tr.on-battle { background: color-mix(in srgb, var(--ob) 10%, transparent); }
+.headcard tr.on-fleet { background: color-mix(in srgb, var(--of) 12%, transparent); }
+.headcard tr.on-denial { background: color-mix(in srgb, var(--od) 11%, transparent); }
+.headcard .pill { font-weight: 500; margin-left: 4px; }
+.dotk { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 7px; vertical-align: -1px; }
+.k-battle { background: var(--ob); } .k-fleet { background: var(--of); } .k-denial { background: var(--od); }
+#quote { font-style: italic; border-left: 3px solid var(--rule); padding-left: 10px; margin: 0; }
+#quote .who { font-style: normal; font-family: var(--mono); font-size: 11px; white-space: nowrap; }
+
+/* Chart */
+.chartcard { display: flex; flex-direction: column; gap: 6px; }
+.chart-h { display: flex; flex-wrap: wrap; gap: 6px 16px; justify-content: space-between; align-items: center; }
+.chart { width: 100%; height: auto; display: block; touch-action: pan-y; cursor: ew-resize; }
+.chart:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.legend { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 11.5px; color: var(--muted); }
+.legend li { display: inline-flex; align-items: center; gap: 5px; }
+.legend .ln { display: inline-block; width: 18px; height: 0; border-top: 3px solid var(--ink); }
+.legend .lb { border-top-color: var(--ob); } .legend .lf { border-top-color: var(--of); } .legend .ld { border-top-color: var(--od); }
+.legend .lstar { border-top: 2px dashed var(--good); } .legend .llock { border-top: 2px dashed var(--accent); }
+.chart .plotbg { fill: var(--panel); }
+.chart .band-battle { fill: color-mix(in srgb, var(--ob) 7%, transparent); }
+.chart .band-fleet { fill: color-mix(in srgb, var(--of) 9%, transparent); }
+.chart .band-denial { fill: color-mix(in srgb, var(--od) 8%, transparent); }
+.chart .band-t { font: 600 11.5px var(--body); }
+.chart .band-t-battle { fill: var(--ob); } .chart .band-t-fleet { fill: var(--of); } .chart .band-t-denial { fill: var(--od); }
+.chart .grid { stroke: var(--rule); stroke-width: 1; }
+.chart .ax-t { font: var(--axis-font); fill: var(--axis-ink); }
+.chart .ax-l { font: 500 11.5px var(--body); fill: var(--muted); }
+.chart .opt { fill: none; stroke-width: 1.3; stroke-dasharray: 4 3; opacity: .75; }
+.chart .opt-battle { stroke: var(--ob); } .chart .opt-fleet { stroke: var(--of); } .chart .opt-denial { stroke: var(--od); }
+.chart .env { fill: none; stroke-width: 4; stroke-linejoin: round; stroke-linecap: round; }
+.chart .env-battle { stroke: var(--ob); } .chart .env-fleet { stroke: var(--of); } .chart .env-denial { stroke: var(--od); }
+.chart .vl { stroke-width: 2; stroke-dasharray: 6 4; }
+.chart .vl-star { stroke: var(--good); } .chart .vl-lock { stroke: var(--accent); }
+.chart .vl-t { font: 600 11.5px var(--body); paint-order: stroke; stroke: var(--panel); stroke-width: 4px; }
+.chart .vl-star-t { fill: var(--good); } .chart .vl-lock-t { fill: var(--accent); }
+.chart .dot-star { fill: var(--good); stroke: var(--panel); stroke-width: 2; }
+.chart .dot-lock { fill: var(--accent); stroke: var(--panel); stroke-width: 2; }
+.chart .cur { stroke: var(--ink); stroke-width: 1.5; }
+.chart .cur-h { fill: var(--ink); stroke: var(--panel); stroke-width: 3; }
+.chart .cur-t { font: 600 12.5px var(--body); fill: var(--ink); paint-order: stroke; stroke: var(--panel); stroke-width: 4px; }
+
+/* Panel */
+.sliders { display: flex; flex-direction: column; gap: 10px; }
+.sliders.off { opacity: .45; }
+.choices small { color: var(--muted); font-size: 11.5px; }
+.choices b { font-weight: 600; }
+.pnote { border-left: 3px solid var(--warn); padding-left: 8px; }
+.readout dd { text-align: right; }
+
+/* Below */
+.below h2.mt { margin-top: 22px; }
+.lit p { font-size: 13.5px; }
+.cases { display: flex; flex-direction: column; gap: 14px; }
+.case { border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 4px; padding: 10px 14px; background: var(--panel); }
+.case h3 { font-family: var(--display); font-size: 18px; margin: 0 0 6px; }
+.case p { font-size: 13.5px; }
+
+/* Walkthrough card */
+.tour { background: var(--panel); border: 1px solid var(--rule); border-top: 3px solid var(--accent); border-radius: 4px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
+.tour[hidden] { display: none; }
+.tour-h { display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.tour .x { background: none; border: 0; font-size: 20px; line-height: 1; cursor: pointer; color: var(--muted); padding: 0 4px; }
+.tour h3 { margin: 0; font-family: var(--display); font-size: 20px; line-height: 1.15; }
+.tour p { margin: 0; font-size: 13.5px; max-width: 80ch; }
+.tour-nav { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
+
+@media (max-width: 640px) {
+  .big b { font-size: 32px; }
+  .choices { grid-template-columns: minmax(0, 1fr); }
+  .headcard table { font-size: 12px; }
+  .headcard th, .headcard td { padding: 6px 7px; }
+}

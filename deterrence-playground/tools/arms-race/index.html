@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Arms Race Dynamics | Interactive Deterrence</title>
+<meta name="description" content="Lewis Fry Richardson's arms-race equations as a phase plane you can click: set each side's reaction, fatigue and grievance, start races anywhere, compare stable and runaway races, try a three-party extension, and set the model beside real U.S. and Soviet/Russian warhead stockpiles.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="arms-race.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<main class="layout">
+  <div class="stage" id="stage">
+    <p class="nbanner"><span class="notional">Notional coefficients</span> Richardson's equations with coefficients you set. The real-data overlay plots published warhead estimates; fitting the equations to them is an illustration, not an estimate.</p>
+    <div class="modebar">
+      <div class="seg tabs" id="mode" role="group" aria-label="Model">
+        <button type="button" data-m="two">Two sides</button><button type="button" data-m="three">Three sides <small>(extension)</small></button>
+      </div>
+      <div class="head-btns">
+        <button type="button" class="btn solid" id="tour-btn">Walkthrough</button>
+        <button type="button" class="btn" id="copy">Copy link</button>
+        <button type="button" class="btn" id="reset">Reset</button>
+      </div>
+    </div>
+
+    <div id="two-stage" class="modepane">
+      <div class="card headcard">
+        <div>
+          <p class="eyebrow">Stability test: fatigue ab against reaction kl</p>
+          <p class="big"><b id="ab" class="num">–</b> <span id="ab-note"></span></p>
+        </div>
+        <dl class="readout" id="eqread"></dl>
+      </div>
+      <div class="card chartcard" id="phasecard">
+        <div class="chart-h">
+          <p class="eyebrow">Phase plane: click anywhere to start a race there</p>
+          <ul class="legend">
+            <li><i class="ln lna"></i>A stops changing (dx/dt = 0)</li><li><i class="ln lnb"></i>B stops changing (dy/dt = 0)</li>
+            <li><i class="dot deqs"></i>Stable equilibrium</li><li><i class="dot dequ"></i>Unstable</li><li><i class="ln lsep"></i>Dividing line</li>
+            <li class="ov-only"><i class="ln lreal"></i>Real stockpiles</li><li class="ov-only"><i class="ln lfit"></i>Fitted path</li>
+          </ul>
+        </div>
+        <svg id="phase" class="chart phase" role="img" aria-label="Phase plane. Horizontal axis: side A's arms. Vertical axis: side B's arms. Arrows show the direction each pair of arms levels moves. Click to start a trajectory."></svg>
+        <p class="fine" id="phase-note" aria-live="polite"></p>
+      </div>
+      <div class="card chartcard" id="timecard">
+        <div class="chart-h">
+          <p class="eyebrow">The latest race over time</p>
+          <ul class="legend"><li><i class="ln lx"></i>A (x)</li><li><i class="ln ly"></i>B (y)</li></ul>
+        </div>
+        <svg id="time" class="chart" role="img" aria-label="Line chart of both sides' arms over time for the most recent trajectory."></svg>
+      </div>
+    </div>
+
+    <div id="three-stage" class="modepane" hidden>
+      <div class="card">
+        <div class="status" id="three-status"><b></b><span></span></div>
+      </div>
+      <div class="card chartcard" id="threecard">
+        <div class="chart-h">
+          <p class="eyebrow">United States, Russia and China: arms over 40 years <span class="notional">notional coefficients</span></p>
+          <ul class="legend"><li><i class="ln lus"></i>United States</li><li><i class="ln lru"></i>Russia</li><li><i class="ln lcn"></i>China</li></ul>
+        </div>
+        <svg id="time3" class="chart" role="img" aria-label="Line chart of three countries' warheads over 40 years under the coefficients set in the panel."></svg>
+        <p class="fine">Start: each country's latest stockpile in the FAS series (<span id="start3"></span>). Dashed lines mark the equilibrium when it is stable. Units are thousands of warheads.</p>
+      </div>
+      <div class="card">
+        <p class="eyebrow">Pair by pair, and all together</p>
+        <div class="tablewrap"><table>
+          <thead><tr><th scope="col">Pair</th><th scope="col" class="r">Fatigue product</th><th scope="col" class="r">Reaction product</th><th scope="col">On its own</th></tr></thead>
+          <tbody id="pairs3"></tbody>
+        </table></div>
+        <p class="fine">Ron Smith notes that with three countries "the equations for each pair of nations may be stable, but the triplet is unstable" (Smith 2019). The table shows why: each side's arms respond to two rivals, and the system's growth rate depends on all six reactions at once.</p>
+      </div>
+    </div>
+  </div>
+
+  <aside class="panel" aria-label="Model controls">
+    <div id="two-panel">
+      <div class="sec"><div class="status" id="status"><b></b><span></span></div></div>
+      <div class="sec">
+        <p class="eyebrow">1 · Start from a race <span class="notional">notional</span></p>
+        <div class="choices" id="presets"></div>
+        <p class="fine pnote" id="preset-note" hidden></p>
+      </div>
+      <div class="sec">
+        <p class="eyebrow">2 · Coefficients (per year)</p>
+        <div class="sliders" id="sl2"></div>
+        <button type="button" class="btn" id="clear">Clear races</button>
+      </div>
+      <div class="sec" id="datasec">
+        <p class="eyebrow">3 · Real data overlay</p>
+        <label class="tg"><input type="checkbox" id="overlay"><span class="sw"></span><span class="t">U.S. and Soviet/Russian stockpiles, 1945–2026<small>FAS estimates via Our World in Data, in thousands of warheads</small></span></label>
+        <div class="sliders" id="fitsl"></div>
+        <div class="tablewrap fitwrap"><table>
+          <thead><tr><th scope="col">Fitted</th><th scope="col" class="r">Reaction</th><th scope="col" class="r">Fatigue</th><th scope="col" class="r">Grievance</th><th scope="col" class="r">R²</th></tr></thead>
+          <tbody id="fit"></tbody>
+        </table></div>
+        <p class="fine" id="fit-note"></p>
+        <button type="button" class="btn" id="apply-fit">Use fitted coefficients</button>
+      </div>
+    </div>
+    <div id="three-panel" hidden>
+      <div class="sec">
+        <p class="eyebrow">1 · Start from a setting <span class="notional">notional</span></p>
+        <div class="choices" id="presets3"></div>
+        <p class="fine pnote" id="preset3-note" hidden></p>
+      </div>
+      <div class="sec"><p class="eyebrow">2 · Fatigue and expense (a)</p><div class="sliders" id="sl3-a"></div></div>
+      <div class="sec"><p class="eyebrow">3 · Reaction to each rival (k)</p><div class="sliders" id="sl3-k"></div></div>
+      <div class="sec"><p class="eyebrow">4 · Grievance (g, thousand warheads a year)</p><div class="sliders" id="sl3-g"></div></div>
+    </div>
+  </aside>
+</main>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>Lewis Fry Richardson, a Quaker physicist and meteorologist, wrote an arms race as two equations. Each side's arms grow in response to the other side's arms, shrink under the cost of what it already holds, and carry a constant push that Richardson called grievance:</p>
+    <p class="eqn">dx/dt = k·y − a·x + g<br>dy/dt = l·x − b·y + h</p>
+    <p>Here k and l are the defence (reaction) coefficients, a and b measure fatigue and expense, and g and h are the grievances. Negative grievances pull arms down; the tool calls them goodwill. The phase plane plots A's arms across and B's arms up. The arrows show where each pair of levels is heading. The two straight lines mark where one side stops changing, and the race comes to rest where they cross.</p>
+    <p>Everything turns on one comparison. If fatigue outweighs reaction, ab &gt; kl, every race settles at the same balance, wherever it starts. If reaction outweighs fatigue, ab &lt; kl, the balance is unstable: races run away, or, with enough goodwill, collapse toward disarmament, depending on where they start. Click the plane to start races and watch.</p>
+
+    <h2 class="mt">Method</h2>
+    <p><b>Two sides.</b> The equations, the names of the coefficients and the stability discussion follow Ron Smith's 2019 review of the model, which writes α and β for a and b. The equilibrium is x* = (bg + kh)/(ab − kl), y* = (ah + lg)/(ab − kl). It is stable when both eigenvalues of the matrix [[−a, k], [l, −b]] are negative, which for non-negative coefficients means ab &gt; kl. Paths are integrated with a fourth-order Runge–Kutta step of 0.1 years. In a saddle the dashed line through the equilibrium separates paths that run away from paths that disarm.</p>
+    <p><b>Three sides, an extension.</b> Each country's arms respond to both rivals: dx<sub>i</sub>/dt = Σ<sub>j</sub> k<sub>ij</sub>x<sub>j</sub> − a<sub>i</sub>x<sub>i</sub> + g<sub>i</sub>. The trio is stable when all three eigenvalues of the 3 × 3 system matrix have negative real parts. The generalization is standard linear algebra; the U.S.–Russia–China setting and every coefficient are this tool's. We did not find a published three-party Richardson model of these three countries that we could open and check, so none is cited. Smith (2019) notes the general result the tool illustrates: pairs can be stable while the triplet is not.</p>
+    <p><b>Real data.</b> The overlay plots the FAS stockpile estimates for the United States (x) and the USSR, then Russia (y), in thousands of warheads, from Our World in Data. The fit regresses each side's change from one year to the next on the rival's stockpile, its own stockpile and a constant, over the years you choose, and draws the path those fitted coefficients produce from the first year of the window. <b>This fit is illustrative.</b> Richardson modelled defence spending, not warhead counts; stockpiles also moved with arms control treaties, retirements and technology that the equations do not contain; and annual differences only approximate the continuous equations. Fitted coefficients with the wrong sign, such as a negative reaction, are shown as they come out.</p>
+    <p><b>What is <span class="notional">notional</span>:</b> every coefficient in the presets and the three-party model. <b>What is real:</b> the warhead series and the starting stockpiles in the three-party chart.</p>
+  </div>
+  <div class="col">
+    <h2>Arms races and the security dilemma</h2>
+    <div id="dilemma" class="lit"></div>
+    <h2 class="mt">Sources</h2>
+    <ul class="src" id="srclist"></ul>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Arms Race Dynamics', sub: 'Richardson\'s arms-race equations as a phase plane: set reaction, fatigue and grievance, start races anywhere, and see which ones settle and which run away.', category: 'Game theory' });
+  document.title = 'Arms Race Dynamics | Interactive Deterrence';
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

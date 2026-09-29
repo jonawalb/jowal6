@@ -113,7 +113,7 @@ export const ALL_TOOLS = [
     blurb: "Step through nuclear crises from Cuba 1962 to Russia 2022 and India–Pakistan 2025 on Herman Kahn's 44-rung ladder, compare them, and read why the ladder misleads." },
   { slug: 'deterrence-lab-general', cat: 'deterrence', sites: ['deterrence'], title: 'Deterrence Lab', status: 'live',
     blurb: 'Move the costs and beliefs in three classic deterrence models (audience costs, costly signals and salami tactics) and test them against sourced crises from Fashoda in 1898 to Crimea in 2014.' },
-  { slug: 'misinfo-cascade', cat: 'infowar', sites: ['deterrence'], title: 'Misinformation Cascade', status: 'live',
+  { slug: 'misinfo-cascade', cat: 'infowar', sites: ['deterrence'], locked: true, title: 'Misinformation Cascade', status: 'live',
     blurb: "Watch a report of 16 aircraft become 'the island is surrounded' as it spreads, and test when a correction can still stop it." },
   { slug: 'bayesian-attack', cat: 'infowar', sites: ['deterrence'], title: 'Attacking the Update', status: 'live',
     blurb: "An adversary doesn't fake the evidence; it changes how much you weigh it. Watch true signals produce a false conclusion, and see which defenses still work." },

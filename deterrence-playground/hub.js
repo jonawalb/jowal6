@@ -59,16 +59,35 @@ let cat = location.hash.slice(1);
 if (!CATEGORIES.some(c => c.id === cat)) cat = 'all';
 const catName = Object.fromEntries(CATEGORIES.map(c => [c.id, c.name]));
 const counts = Object.fromEntries(CATEGORIES.map(c => [c.id, TOOLS.filter(t => t.cat === c.id).length]));
-$('cats').innerHTML = [{ id: 'all', name: 'Everything' }, ...CATEGORIES].map(c =>
+// Interactive Deterrence lists every tool under "Everything"; other sites open on an overview of section tiles.
+const TILES = SITE !== 'tsm';
+document.body.classList.add('site-' + SITE);
+$('cats').innerHTML = [{ id: 'all', name: TILES ? 'All sections' : 'Everything' }, ...CATEGORIES].map(c =>
   `<button type="button" data-cat="${c.id}"><b>${c.name}</b><span>${c.id === 'all' ? TOOLS.length : counts[c.id]}</span></button>`).join('');
 const catBtns = [...$('cats').querySelectorAll('button')];
-catBtns.forEach(b => b.onclick = () => {
-  cat = b.dataset.cat; history.replaceState(null, '', cat === 'all' ? './' : '#' + cat); render();
+function pickCat(c) { cat = c; history.replaceState(null, '', cat === 'all' ? './' : '#' + cat); render(); }
+catBtns.forEach(b => b.onclick = () => pickCat(b.dataset.cat));
+$('sections').addEventListener('click', e => {
+  const b = e.target.closest('[data-open-cat]');
+  if (!b) return;
+  e.preventDefault(); pickCat(b.dataset.openCat); $('cats').scrollIntoView({ block: 'start', behavior: 'smooth' });
 });
 $('q').addEventListener('input', render);
 
-// Categories whose tools need a second password on this site.
+// Categories (and single tools) whose tools need a second password on this site.
 const locked = new Set(CATEGORIES.filter(c => c.locked).map(c => c.id));
+const isLocked = t => locked.has(t.cat) || !!t.locked;
+const LOCK = ' <span class="lock-badge" title="Opening this tool asks for a password">🔒 Password Protected</span>';
+
+/** Overview tile for one section: name, blurb, tool count and the first few tool names. */
+function tile(c) {
+  const ts = TOOLS.filter(t => t.cat === c.id && t.status === 'live');
+  return `<button type="button" class="sec-tile${c.locked ? ' locked' : ''}" data-open-cat="${c.id}">
+    <span class="sec-tile-n">${ts.length} tool${ts.length === 1 ? '' : 's'}</span>
+    <b>${esc(c.name)}${c.locked ? LOCK : ''}</b><span class="sec-tile-b">${esc(c.blurb)}</span>
+    <span class="sec-tile-l">${ts.slice(0, 4).map(t => esc(t.title)).join(' · ')}${ts.length > 4 ? ' · …' : ''}</span>
+    <span class="go">Open section →</span></button>`;
+}
 
 function card(t) {
   const href = `tools/${t.slug}/`;
@@ -76,7 +95,7 @@ function card(t) {
   const [d, note] = UPDATED[t.slug] || [FIRST_RELEASE, 'First release'];
   const upd = soon ? '' : `<span class="upd">Updated ${shortDate(d)} · ${esc(note)}</span>`;
   const inner = `<div class="thumb"><img data-thumb="${href}" alt="" width="640" height="400"></div>
-    <div class="card-body"><p class="card-cat">${esc(catName[t.cat] || '')}${locked.has(t.cat) ? ' <span class="lock-badge" title="Opening this tool asks for a password">🔒 Password Protected</span>' : ''}</p><h3>${esc(t.title)}</h3><p>${esc(t.blurb)}</p>
+    <div class="card-body"><p class="card-cat">${esc(catName[t.cat] || '')}${isLocked(t) ? LOCK : ''}</p><h3>${esc(t.title)}</h3><p>${esc(t.blurb)}</p>
     ${upd}<span class="go">${soon ? 'Coming soon' : 'Open →'}</span></div>`;
   return soon ? `<div class="tool soon" aria-disabled="true">${inner}</div>` : `<a class="tool" href="${href}">${inner}</a>`;
 }
@@ -89,16 +108,30 @@ function render() {
   const match = t => terms.every(w => hay(t).includes(w));
   const cats = CATEGORIES.filter(c => cat === 'all' || c.id === cat);
   const liveNow = TOOLS.filter(t => t.status === 'live' && (cat === 'all' || t.cat === cat) && match(t));
+  if (TILES && !q) {
+    // Overview: one tile per section (TSM last). A section: its tools, with a way back.
+    if (cat === 'all') {
+      $('sections').innerHTML = `<section class="cat-sec"><div class="cat-h"><h2>Pick a section</h2>
+        <p>${TOOLS.length} tools in ${CATEGORIES.length} sections.</p></div><div class="sec-tiles">${CATEGORIES.map(tile).join('')}</div></section>`;
+    } else {
+      const c = CATEGORIES.find(x => x.id === cat), list = TOOLS.filter(t => t.cat === cat);
+      $('sections').innerHTML = `<section class="cat-sec" id="sec-${c.id}"><button type="button" class="btn sec-back" data-open-cat="all">← All sections</button>
+        <div class="cat-h"><h2>${c.name}${c.locked ? LOCK : ''}</h2><p>${c.blurb}</p></div>
+        <div class="tools">${list.map(card).join('')}</div></section>`;
+    }
+    $('q-status').textContent = '';
+    return;
+  }
   const featured = liveNow.length ? `<section class="cat-sec live-now"><div class="cat-h"><h2>${q ? 'Matches' : 'Live now'}</h2>
       <p>${liveNow.length} ready to use.${q ? '' : ' More are added as they finish.'}</p></div>
       <div class="tools featured">${liveNow.map(card).join('')}</div></section>` : '';
   const html = featured + cats.map(c => {
     const list = TOOLS.filter(t => t.cat === c.id && match(t) && !(liveNow.includes(t)));
     if (!list.length) return '';
-    return `<section class="cat-sec" id="sec-${c.id}"><div class="cat-h"><h2>${c.name}${c.locked ? ' <span class="lock-badge">🔒 Password Protected</span>' : ''}</h2><p>${c.blurb}</p></div>
+    return `<section class="cat-sec" id="sec-${c.id}"><div class="cat-h"><h2>${c.name}${c.locked ? LOCK : ''}</h2><p>${c.blurb}</p></div>
       <div class="tools">${list.map(card).join('')}</div></section>`;
   }).join('');
-  $('sections').innerHTML = html || `<p class="empty">No tools match “${esc(q)}”. Try a category name, such as “trackers” or “classroom”.</p>`;
+  $('sections').innerHTML = html || `<p class="empty">No tools match “${esc(q)}”. Try a section name, such as “nuclear” or “Middle East”.</p>`;
   $('q-status').textContent = q ? `${liveNow.length} tool${liveNow.length === 1 ? '' : 's'} match` : '';
 }
 render();

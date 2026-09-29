@@ -1,5 +1,5 @@
 // Landing page: this week's dashboard, category selector, search, tool cards, keyboard navigation and help.
-import { CATEGORIES, TOOLS } from './shared/js/registry.js';
+import { CATEGORIES, TOOLS, inCat } from './shared/js/registry.js';
 import { createProjection, drawBasemap, el } from './shared/js/mapkit.js';
 import { LAND_INDOPAC } from './shared/data/land-indopac.js';
 import { mountWeek } from './shared/js/week/week.js';
@@ -58,7 +58,7 @@ el('text', { x: tx + 9, y: ty + 4, class: 'hero-lbl' }, root, 'Taiwan');
 let cat = location.hash.slice(1);
 if (!CATEGORIES.some(c => c.id === cat)) cat = 'all';
 const catName = Object.fromEntries(CATEGORIES.map(c => [c.id, c.name]));
-const counts = Object.fromEntries(CATEGORIES.map(c => [c.id, TOOLS.filter(t => t.cat === c.id).length]));
+const counts = Object.fromEntries(CATEGORIES.map(c => [c.id, TOOLS.filter(t => inCat(t, c.id)).length]));
 // Interactive Deterrence lists every tool under "Everything"; other sites open on an overview of section tiles.
 const TILES = SITE !== 'tsm';
 document.body.classList.add('site-' + SITE);
@@ -81,7 +81,7 @@ const LOCK = ' <span class="lock-badge" title="Opening this tool asks for a pass
 
 /** Overview tile for one section: name, blurb, tool count and the first few tool names. */
 function tile(c) {
-  const ts = TOOLS.filter(t => t.cat === c.id && t.status === 'live');
+  const ts = TOOLS.filter(t => inCat(t, c.id) && t.status === 'live');
   return `<button type="button" class="sec-tile${c.locked ? ' locked' : ''}" data-open-cat="${c.id}">
     <span class="sec-tile-n">${ts.length} tool${ts.length === 1 ? '' : 's'}</span>
     <b>${esc(c.name)}${c.locked ? LOCK : ''}</b><span class="sec-tile-b">${esc(c.blurb)}</span>
@@ -107,14 +107,14 @@ function render() {
   const hay = t => `${t.title} ${t.blurb} ${t.slug.replace(/-/g, ' ')} ${catName[t.cat] || ''}`.toLowerCase();
   const match = t => terms.every(w => hay(t).includes(w));
   const cats = CATEGORIES.filter(c => cat === 'all' || c.id === cat);
-  const liveNow = TOOLS.filter(t => t.status === 'live' && (cat === 'all' || t.cat === cat) && match(t));
+  const liveNow = TOOLS.filter(t => t.status === 'live' && (cat === 'all' || inCat(t, cat)) && match(t));
   if (TILES && !q) {
     // Overview: one tile per section (TSM last). A section: its tools, with a way back.
     if (cat === 'all') {
       $('sections').innerHTML = `<section class="cat-sec"><div class="cat-h"><h2>Pick a section</h2>
         <p>${TOOLS.length} tools in ${CATEGORIES.length} sections.</p></div><div class="sec-tiles">${CATEGORIES.map(tile).join('')}</div></section>`;
     } else {
-      const c = CATEGORIES.find(x => x.id === cat), list = TOOLS.filter(t => t.cat === cat);
+      const c = CATEGORIES.find(x => x.id === cat), list = TOOLS.filter(t => inCat(t, cat));
       $('sections').innerHTML = `<section class="cat-sec" id="sec-${c.id}"><button type="button" class="btn sec-back" data-open-cat="all">← All sections</button>
         <div class="cat-h"><h2>${c.name}${c.locked ? LOCK : ''}</h2><p>${c.blurb}</p></div>
         <div class="tools">${list.map(card).join('')}</div></section>`;
@@ -126,7 +126,7 @@ function render() {
       <p>${liveNow.length} ready to use.${q ? '' : ' More are added as they finish.'}</p></div>
       <div class="tools featured">${liveNow.map(card).join('')}</div></section>` : '';
   const html = featured + cats.map(c => {
-    const list = TOOLS.filter(t => t.cat === c.id && match(t) && !(liveNow.includes(t)));
+    const list = TOOLS.filter(t => inCat(t, c.id) && match(t) && !(liveNow.includes(t)));
     if (!list.length) return '';
     return `<section class="cat-sec" id="sec-${c.id}"><div class="cat-h"><h2>${c.name}${c.locked ? LOCK : ''}</h2><p>${c.blurb}</p></div>
       <div class="tools">${list.map(card).join('')}</div></section>`;

@@ -14,6 +14,8 @@ export const ALL_CATEGORIES = [
   { id: 'public', name: 'Public explainers', blurb: 'Short, shareable pieces for a general audience.' },
   { id: 'deterrence', name: 'Deterrence & signaling', sites: ['deterrence'],
     blurb: 'Threats, promises and signals as formal models and history, from conventional to extended nuclear deterrence.' },
+  { id: 'gametheory', name: 'Game theory', sites: ['deterrence'],
+    blurb: 'Every tool built on a game-theory model: bargaining, signaling, brinkmanship, deterrence, inspection and cascades.' },
   { id: 'nuclear', name: 'Nuclear weapons & arms control', sites: ['deterrence'],
     blurb: 'Arsenals, treaties and escalation, country by country and crisis by crisis.' },
   { id: 'ukraine', name: 'Russia & Ukraine', sites: ['deterrence'],
@@ -103,19 +105,19 @@ export const ALL_TOOLS = [
     blurb: 'One real day of gray-zone pressure around Taiwan, built from the data. Pick any day of 2026.' },
   { slug: 'how-close', sites: ['tsm'], cat: 'public', title: 'How Close Is China?', status: 'live',
     blurb: 'Type a city and see how far it is from Taiwan and from China, with the Taiwan Strait for scale.' },
-  { slug: 'conceal-reveal', cat: 'deterrence', sites: ['deterrence'], title: 'Conceal or Reveal?', status: 'live',
+  { slug: 'conceal-reveal', also: ['gametheory'], cat: 'deterrence', sites: ['deterrence'], title: 'Conceal or Reveal?', status: 'live',
     blurb: "Why do states with similar weapons make opposite choices about showing them? Move the costs and beliefs in Walberg's signaling model and watch coercive states reveal while operational states conceal." },
-  { slug: 'extended-deterrence', cat: 'deterrence', sites: ['deterrence'], title: 'Extended Deterrence', status: 'live',
+  { slug: 'extended-deterrence', also: ['gametheory'], cat: 'deterrence', sites: ['deterrence'], title: 'Extended Deterrence', status: 'live',
     blurb: 'Would a patron trade Boston for Bonn? Stack treaties, pledges, a tripwire force and nuclear sharing, see what each does to credibility and entrapment, then check the real U.S. commitments.' },
   { slug: 'nuclear-arsenals', cat: 'nuclear', sites: ['deterrence'], title: 'Nuclear Arsenals', status: 'live',
     blurb: "Scrub eighty years of FAS nuclear warhead estimates for every nuclear-armed state, against the treaties from the NPT to New START's lapse in February 2026." },
   { slug: 'escalation-ladder-kahn', cat: 'nuclear', sites: ['deterrence'], title: "Kahn's Escalation Ladder", status: 'live',
     blurb: "Step through nuclear crises from Cuba 1962 to Russia 2022 and India–Pakistan 2025 on Herman Kahn's 44-rung ladder, compare them, and read why the ladder misleads." },
-  { slug: 'deterrence-lab-general', cat: 'deterrence', sites: ['deterrence'], title: 'Deterrence Lab', status: 'live',
+  { slug: 'deterrence-lab-general', also: ['gametheory'], cat: 'deterrence', sites: ['deterrence'], title: 'Deterrence Lab', status: 'live',
     blurb: 'Move the costs and beliefs in three classic deterrence models (audience costs, costly signals and salami tactics) and test them against sourced crises from Fashoda in 1898 to Crimea in 2014.' },
-  { slug: 'misinfo-cascade', cat: 'infowar', sites: ['deterrence'], locked: true, title: 'Misinformation Cascade', status: 'live',
+  { slug: 'misinfo-cascade', also: ['gametheory'], cat: 'infowar', sites: ['deterrence'], locked: true, title: 'Misinformation Cascade', status: 'live',
     blurb: "Watch a report of 16 aircraft become 'the island is surrounded' as it spreads, and test when a correction can still stop it." },
-  { slug: 'bayesian-attack', cat: 'infowar', sites: ['deterrence'], title: 'Attacking the Update', status: 'live',
+  { slug: 'bayesian-attack', also: ['gametheory'], cat: 'infowar', sites: ['deterrence'], title: 'Attacking the Update', status: 'live',
     blurb: "An adversary doesn't fake the evidence; it changes how much you weigh it. Watch true signals produce a false conclusion, and see which defenses still work." },
   { slug: 'ukraine-air-war', cat: 'ukraine', sites: ['deterrence'], title: "Ukraine's Air War", status: 'live',
     blurb: 'Russian missile and drone launches against Ukraine since 2022, by weapon type, with the share the Ukrainian Air Force reported shooting down.' },
@@ -131,7 +133,7 @@ export const ALL_TOOLS = [
     blurb: 'What prediction markets priced for strikes on Iran, ceasefires and a Russia–NATO clash in 2026, set against how each contract resolved.' },
   { slug: 'crisis-stability', cat: 'nuclear', sites: ['deterrence'], title: 'Crisis Stability Calculator', status: 'live',
     blurb: "Set two notional force postures and see Kent and Thaler's first-strike stability index: who gains by striking first, and how MIRVed silos, alert rates and launch under attack move it." },
-  { slug: 'verification-game', cat: 'nuclear', sites: ['deterrence'], title: 'Trust but Verify', status: 'live',
+  { slug: 'verification-game', also: ['gametheory'], cat: 'nuclear', sites: ['deterrence'], title: 'Trust but Verify', status: 'live',
     blurb: 'An arms-control inspection game from the published literature: how inspection quotas, detection, false-alarm costs and penalties set the odds of cheating and of getting caught, beside New START, IAEA and CTBT verification.' },
   { slug: 'entanglement', cat: 'nuclear', sites: ['deterrence'], title: 'Nuclear Entanglement', status: 'live',
     blurb: 'Plan a conventional campaign against satellites, command links, launchers and bases that also serve nuclear forces, and watch use-or-lose pressure, misread warning and the fog of war push a notional escalation risk up, then test the fixes the literature proposes.' },
@@ -142,9 +144,11 @@ export const ALL_TOOLS = [
 export const onSite = (x, site = SITE) => !x.sites || x.sites.includes(site);
 /** A tool's category on a given site (siteCat overrides cat per site). */
 export const catOn = (t, site = SITE) => (t.siteCat && t.siteCat[site]) || t.cat;
-const ORDER = { deterrence: ['deterrence', 'nuclear', 'ukraine', 'mideast', 'infowar', 'rhetoric', 'coercion', 'models', 'tsm'] };
-export const TOOLS = ALL_TOOLS.filter(t => onSite(t)).map(t => ({ ...t, cat: catOn(t) }));
+const ORDER = { deterrence: ['deterrence', 'gametheory', 'nuclear', 'ukraine', 'mideast', 'infowar', 'rhetoric', 'coercion', 'models', 'tsm'] };
+// `also` lists extra categories a tool appears in; `cats` is its primary category plus those.
+export const TOOLS = ALL_TOOLS.filter(t => onSite(t)).map(t => ({ ...t, cat: catOn(t), cats: [catOn(t), ...(t.also || [])] }));
+export const inCat = (t, id) => t.cats.includes(id);
 const rank = c => (ORDER[SITE] ? ORDER[SITE].indexOf(c.id) : -1);
 // Only categories with a tool on this site; the deterrence site uses its own order.
-export const CATEGORIES = ALL_CATEGORIES.filter(c => onSite(c) && TOOLS.some(t => t.cat === c.id))
+export const CATEGORIES = ALL_CATEGORIES.filter(c => onSite(c) && TOOLS.some(t => inCat(t, c.id)))
   .sort((a, b) => (ORDER[SITE] ? rank(a) - rank(b) : 0));

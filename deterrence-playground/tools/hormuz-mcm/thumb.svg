@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+  <rect width="640" height="400" fill="#f2f2ee"/>
+  <rect x="24" y="24" width="592" height="352" rx="6" fill="#d6e1e1" stroke="#d3d6cd"/>
+  <rect x="48" y="120" width="544" height="56" fill="#fbfbf8" stroke="#6f7a73"/>
+  <rect x="48" y="200" width="544" height="56" fill="#fbfbf8" stroke="#6f7a73"/>
+  <rect x="48" y="120" width="330" height="56" fill="#1b4fd4" opacity=".2"/>
+  <rect x="48" y="200" width="330" height="56" fill="#1b4fd4" opacity=".2"/>
+  <line x1="378" y1="112" x2="378" y2="264" stroke="#1b4fd4" stroke-width="4"/>
+  <g stroke="#56625b" stroke-width="4" stroke-linecap="round">
+    <path d="M100,138l12,12M112,138l-12,12"/><path d="M210,222l12,12M222,222l-12,12"/><path d="M300,150l12,12M312,150l-12,12"/>
+  </g>
+  <g fill="none" stroke="#e8753a" stroke-width="4"><circle cx="160" cy="232" r="9"/><circle cx="340" cy="228" r="9"/></g>
+  <g fill="#b3261e"><circle cx="440" cy="142" r="9"/><circle cx="520" cy="160" r="9"/><circle cx="470" cy="236" r="9"/><circle cx="560" cy="214" r="9"/></g>
+  <text x="48" y="84" font-family="Georgia, serif" font-size="32" font-weight="700" fill="#14201a">Day 54: routes clear?</text>
+  <text x="48" y="320" font-family="Helvetica, Arial, sans-serif" font-size="22" fill="#033303">search, identify, neutralize</text>
+</svg>

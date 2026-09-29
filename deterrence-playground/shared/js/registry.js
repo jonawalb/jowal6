@@ -169,6 +169,10 @@ export const ALL_TOOLS = [
     blurb: "Design a correction to a false story and see how much belief persists: meta-analytic effect sizes on timing, source, repetition and explanation, combined with Walberg's Sticky Affect condition in a notional model." },
   { slug: 'kharg-island', cat: 'models', also: ['mideast'], sites: ['deterrence'], title: 'Kharg Island', status: 'live',
     blurb: "A notional, dice-driven wargame of a U.S. move on Kharg Island, Iran's oil export hub: seize, raid or blockade it, watch every roll, then see how 1,000 games trade success against escalation and oil prices." },
+  { slug: 'iran-enrichment', cat: 'nuclear', also: ['mideast'], sites: ['deterrence'], title: "Iran's Enrichment Clock", status: 'live',
+    blurb: "Iran's enriched uranium from every IAEA quarterly report since 2016, against the JCPOA limit and quoted breakout estimates, to the June 2025 strikes after which there is no verified figure." },
+  { slug: 'hormuz-mcm', cat: 'mideast', also: ['models'], sites: ['deterrence'], title: 'Hormuz Mine Clearance', status: 'live',
+    blurb: 'Set the mines, clutter, forces and threat, and see how long it takes to clear shipping routes through Hormuz and how much risk remains when they are declared clear.' },
 ];
 
 export const onSite = (x, site = SITE) => !x.sites || x.sites.includes(site);

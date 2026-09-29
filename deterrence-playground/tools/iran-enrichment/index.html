@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Iran's Enrichment Clock | Interactive Deterrence</title>
+<meta name="description" content="Iran's enriched uranium stockpile by enrichment level from every IAEA quarterly report since 2016, the JCPOA limit, quoted breakout estimates and the IAEA's loss of verification after the 2025 strikes.">
+<meta property="og:title" content="Iran's Enrichment Clock | Interactive Deterrence">
+<meta property="og:description" content="From 109.5 kg in 2018 to 440.9 kg of 60 percent uranium in June 2025, then no verified figure at all. Every number quoted from an IAEA report.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="iran-enrichment.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+<main class="layout">
+  <div class="stage">
+    <div class="card ie-card" id="ie-chartcard">
+      <div class="ie-head">
+        <h2>Iran's enriched uranium, IAEA report by report</h2>
+        <div class="ie-actions">
+          <button type="button" class="btn solid" id="ie-tour">Walkthrough</button>
+          <button type="button" class="btn" id="ie-copy">Copy link</button>
+          <button type="button" class="btn" id="ie-reset">Reset</button>
+        </div>
+      </div>
+      <div class="ie-ctl">
+        <div class="choices ie-view" id="ie-view" role="group" aria-label="Enrichment levels to show"></div>
+        <label class="tg"><input type="checkbox" id="ie-lim" checked><span class="sw"></span><span class="t">JCPOA limit<small>202.8 kg of uranium</small></span></label>
+        <label class="tg"><input type="checkbox" id="ie-evs" checked><span class="sw"></span><span class="t">Events<small>Diamonds above the chart</small></span></label>
+      </div>
+      <div class="ie-chart" id="ie-chart"></div>
+      <div class="ie-legend" aria-hidden="true">
+        <span><span class="ie-sw" style="background:var(--c7)"></span>Up to 2%</span>
+        <span><span class="ie-sw" style="background:var(--c1)"></span>Up to 5%</span>
+        <span><span class="ie-sw" style="background:var(--c5)"></span>Up to 20%</span>
+        <span><span class="ie-sw" style="background:var(--bad)"></span>Up to 60%</span>
+        <span><span class="ie-dash"></span>Total, all chemical forms</span>
+        <span><span class="ie-sw ie-sw-unk"></span>Not verified</span>
+        <span>kg of uranium</span>
+      </div>
+      <div class="ie-scrub">
+        <button type="button" class="btn" id="ie-play" aria-pressed="false">Play</button>
+        <output id="ie-out" class="num" for="ie-range"></output>
+        <input type="range" id="ie-range" min="0" step="1" aria-label="IAEA report">
+      </div>
+      <p class="fine">Drag across the chart or the slider to pick a report. Each dot is one IAEA quarterly figure; the areas join them with straight lines, and nothing is known between reports.</p>
+    </div>
+  </div>
+  <aside class="panel" id="panel" aria-label="Selected report, verification clock, breakout estimates and events"></aside>
+</main>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>The colored areas are Iran's stockpile of enriched uranium as each IAEA report to the Board of Governors gave it, stacked by enrichment level and measured in kilograms of uranium. Up to 5 percent is fuel for power reactors; 20 percent is research-reactor fuel and counts as highly enriched uranium; 60 percent is a short technical step from the roughly 90 percent used in weapons. The dashed line is the total in every chemical form, including oxide, fuel and scrap.</p>
+    <p>Before 2021 the IAEA split the whole stockpile by level. From 2021 it split only the UF6 gas, so the gap between the areas and the dashed line is uranium in other forms. Pick <b>20% and 60%</b> or <b>60% only</b> to see the highly enriched stock, which is small next to the total.</p>
+    <p>The panel labels each report. Until February 2021 the IAEA verified the figures. After Iran stopped extra monitoring that month, the IAEA estimated the stockpile, partly from Iran's own declarations. Since the attacks began on 13 June 2025 it has had no access to the affected sites, and its 2026 reports say it "cannot provide any information on the current size, composition or whereabouts" of the stockpile. The shaded band covers that period.</p>
+
+    <h2 class="mt">Where things stand, 29 September 2026</h2>
+    <p>The IAEA's last estimate, as of 13 June 2025, is 9,874.9 kg of enriched uranium, including 440.9 kg enriched up to 60 percent (GOV/2025/50). Its September 2026 report (GOV/2026/50) says it has no information about, or access to, any of Iran's four declared enrichment facilities, and cannot report the stockpile's size, composition or whereabouts. Director General Grossi told the Board on 7 September that it is "more than a year since the Agency lost continuity of knowledge" of the LEU and HEU. On 9 September the Board reported Iran to the UN Security Council. In late September Iran's president said Tehran could give up its 60 percent uranium under the NPT; no agreement had been announced.</p>
+
+    <h2 class="mt">Method</h2>
+    <ul class="src">
+      <li>Figures come only from the Director General's reports on Iran to the IAEA Board of Governors (the GOV/ series), which the IAEA publishes once the Board derestricts them. <code>scripts/build_stockpile.py</code> downloads each PDF, extracts its text, checks that the exact phrase stating each figure appears in it, and writes <code>data/stockpile.js</code> with the report number, link and a hash of the file. Retrieved <span id="ie-retrieved"></span>. Where iaea.org refused the scripted download, the script used the Wayback Machine's copy of the same PDF and says so.</li>
+      <li>All figures are kilograms of uranium (U mass), as the IAEA reports them. The JCPOA limit of 300 kg of UF6 enriched up to 3.67 percent equals 202.8 kg of uranium, the conversion the IAEA gives.</li>
+      <li>2016–2017 reports state only that the limit was not exceeded. The 2018 and early 2019 reports give only the stock enriched up to 3.67 percent, counted under the JCPOA's rules. From mid-2019 they add material enriched up to 4.5 percent; this tool shows both in the "up to 5%" band, except the part the 2020 reports say was enriched only up to 2%, which goes in the "up to 2%" band. From 2021 the reports give UF6 by level: up to 2, 5, 20 and 60 percent.</li>
+      <li>Arithmetic on sourced figures, labelled where shown: sums of levels, changes between reports, the multiple of the JCPOA limit, days since the last estimate, and the 60 percent stock divided by the 40 kg yardstick from the Institute for Science and International Security. The tool does not estimate breakout; the breakout lines are quotations.</li>
+      <li>Not included: centrifuge counts, facility layouts or any location detail beyond sites the IAEA names publicly. Figures reported only in leaked or unpublished documents are not used; every stockpile number here is in a published IAEA report.</li>
+    </ul>
+  </div>
+  <div class="col">
+    <h2>IAEA reports used</h2>
+    <ul class="src" id="ie-reports"></ul>
+    <h2 class="mt">Event sources</h2>
+    <ul class="src" id="ie-evsrc"></ul>
+    <h2 class="mt">Breakout and yardstick sources</h2>
+    <ul class="src" id="ie-bosrc"></ul>
+  </div>
+</section>
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: "Iran's Enrichment Clock", sub: 'Iran\'s enriched uranium from every IAEA quarterly report since 2016, the JCPOA limit, quoted breakout estimates and the loss of verification after the 2025 strikes.', category: 'Nuclear weapons & arms control' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

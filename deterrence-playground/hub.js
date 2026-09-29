@@ -76,7 +76,7 @@ function card(t) {
   const [d, note] = UPDATED[t.slug] || [FIRST_RELEASE, 'First release'];
   const upd = soon ? '' : `<span class="upd">Updated ${shortDate(d)} · ${esc(note)}</span>`;
   const inner = `<div class="thumb"><img data-thumb="${href}" alt="" width="640" height="400"></div>
-    <div class="card-body"><p class="card-cat">${esc(catName[t.cat] || '')}${locked.has(t.cat) ? ' <span class="lock-badge" title="Opening this tool asks for a second password">🔒 Second password</span>' : ''}</p><h3>${esc(t.title)}</h3><p>${esc(t.blurb)}</p>
+    <div class="card-body"><p class="card-cat">${esc(catName[t.cat] || '')}${locked.has(t.cat) ? ' <span class="lock-badge" title="Opening this tool asks for a password">🔒 Password Protected</span>' : ''}</p><h3>${esc(t.title)}</h3><p>${esc(t.blurb)}</p>
     ${upd}<span class="go">${soon ? 'Coming soon' : 'Open →'}</span></div>`;
   return soon ? `<div class="tool soon" aria-disabled="true">${inner}</div>` : `<a class="tool" href="${href}">${inner}</a>`;
 }
@@ -95,7 +95,7 @@ function render() {
   const html = featured + cats.map(c => {
     const list = TOOLS.filter(t => t.cat === c.id && match(t) && !(liveNow.includes(t)));
     if (!list.length) return '';
-    return `<section class="cat-sec" id="sec-${c.id}"><div class="cat-h"><h2>${c.name}${c.locked ? ' <span class="lock-badge">🔒 Second password</span>' : ''}</h2><p>${c.blurb}</p></div>
+    return `<section class="cat-sec" id="sec-${c.id}"><div class="cat-h"><h2>${c.name}${c.locked ? ' <span class="lock-badge">🔒 Password Protected</span>' : ''}</h2><p>${c.blurb}</p></div>
       <div class="tools">${list.map(card).join('')}</div></section>`;
   }).join('');
   $('sections').innerHTML = html || `<p class="empty">No tools match “${esc(q)}”. Try a category name, such as “trackers” or “classroom”.</p>`;

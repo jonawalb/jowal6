@@ -27,7 +27,7 @@ export const ALL_CATEGORIES = [
   { id: 'coercion', name: 'Economic coercion & war markets', sites: ['deterrence'],
     blurb: 'Trade pressure, resilience, and what betting markets say about war.' },
   { id: 'tsm', name: 'TSM', sites: ['deterrence'], locked: true,
-    blurb: 'Taiwan Strait trackers, exercise replays and wargames from the Taiwan Security Monitor. These need a second password.' },
+    blurb: 'Taiwan Strait trackers, exercise replays and wargames from the Taiwan Security Monitor. Password protected.' },
 ];
 
 export const ALL_TOOLS = [

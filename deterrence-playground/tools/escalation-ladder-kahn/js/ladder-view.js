@@ -43,7 +43,7 @@ export function markLadder(root, a, b, focusRung) {
   if (a) {
     a.crisis.steps.forEach((s, i) => { if (i <= a.step) put(s.rung, 'hit-a', i + 1, `${a.crisis.short} step ${i + 1}: ${s.date}`); });
     const cur = a.crisis.steps[a.step];
-    root.querySelector(`.kl-rung[data-n="${cur.rung}"]`)?.classList.add('cur');
+    if (cur) root.querySelector(`.kl-rung[data-n="${cur.rung}"]`)?.classList.add('cur');
   }
   if (b) b.crisis.steps.forEach((s, i) => put(s.rung, 'hit-b', i + 1, `${b.crisis.short} step ${i + 1}: ${s.date}`));
   // Groups above the No Nuclear Use threshold stay folded unless something in them is marked or focused.
@@ -72,6 +72,7 @@ export function pathChart(svg, a, b) {
   for (let i = 0; i < maxSteps; i++) parts.push(`<text class="pc-ax" x="${x(i)}" y="${H - 8}" text-anchor="middle">${i + 1}</text>`);
   const series = (c, cls, upto) => {
     const pts = c.steps.map((s, i) => [x(i), y(s.rung)]);
+    if (!pts.length) return;
     parts.push(`<path class="pc-line ${cls}" d="M${pts.map(p => p.join(',')).join('L')}"/>`);
     pts.forEach((p, i) => parts.push(`<circle class="pc-dot ${cls}${i === upto ? ' now' : ''}" cx="${p[0]}" cy="${p[1]}" r="${i === upto ? 6 : 4}"><title>${esc(c.short)} step ${i + 1}, rung ${c.steps[i].rung}: ${esc(c.steps[i].date)}</title></circle>`));
   };

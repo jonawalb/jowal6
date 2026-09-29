@@ -116,3 +116,75 @@ body.kl-picking .layout, body.kl-picking .below { display: none; }
 .kl-crises button { font-size: 14px; font-weight: 700; border-width: 2px; min-height: 48px; }
 .kl-crises button[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: #f2f2ee; }
 .kl-crises button[aria-pressed="true"] small { color: #d8dcd4; }
+
+/* Retry from the allied side */
+.cf-entry { width: 100%; margin-top: 10px; min-height: 48px; font-size: 15px; font-weight: 700; border: 2px solid var(--brand-ink); color: var(--brand-ink); background: var(--chip); }
+.cf-entry:hover:not(:disabled) { background: var(--brand); color: #f2f2ee; }
+.cf-prompt { margin-top: 8px; border: 2px solid var(--accent); border-radius: 6px; padding: 12px 14px; background: color-mix(in srgb, var(--accent) 8%, var(--panel)); }
+.cf-prompt.off { border-color: var(--rule); background: transparent; }
+.cf-prompt p { margin: 0 0 8px; font-size: 13.5px; }
+.cf-ph { font: 700 18px/1.2 var(--display); color: var(--ink); }
+.cf-go { min-height: 48px; font-size: 15px; font-weight: 700; padding: 10px 16px; width: 100%; }
+.cf { display: flex; flex-direction: column; gap: 12px; }
+.cf[hidden] { display: none; }
+.cf-player { margin: 2px 0 0; font: 600 17px/1.3 var(--display); }
+.cf-why summary { cursor: pointer; font-size: 13px; color: var(--muted); }
+.cf-why p { font-size: 13px; margin: 6px 0 0; }
+.cf-dist { border: 1px solid var(--rule); border-radius: 6px; padding: 10px 12px; background: var(--panel); }
+.cf-dh { margin: 0 0 8px; font: 600 14px var(--body); display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; }
+.cf-warnlab { font: 600 11px var(--mono); color: var(--warn); border: 1px dashed var(--warn); border-radius: 3px; padding: 1px 5px; letter-spacing: .02em; }
+.cf-link { border: 0; background: none; padding: 0; font: inherit; font-size: 12.5px; color: var(--blue); text-decoration: underline; cursor: pointer; margin-left: auto; }
+.cf-barrow { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 8px; align-items: center; margin: 4px 0; }
+.cf-barlab { font: 600 12px var(--mono); color: var(--muted); }
+.cf-bar { position: relative; display: flex; height: 26px; border-radius: 4px; overflow: hidden; border: 1px solid var(--rule); background: var(--chip); }
+.cf-bar > span { display: block; height: 100%; transition: width .35s ease; }
+.o-s { background: var(--c3); } .o-f { background: var(--c5); } .o-w { background: var(--c2); } .o-n { background: var(--bad); }
+.cf-ref { position: absolute; top: 0; bottom: 0; border-left: 2px solid var(--ink); border-right: 2px solid var(--ink);
+  background: repeating-linear-gradient(45deg, transparent 0 4px, color-mix(in srgb, var(--ink) 45%, transparent) 4px 6px); }
+.cf-ref-key { display: inline-block; width: 18px; height: 11px; margin-right: 6px; vertical-align: -1px; border: 1.5px solid var(--ink);
+  background: repeating-linear-gradient(45deg, transparent 0 3px, color-mix(in srgb, var(--ink) 45%, transparent) 3px 5px); }
+.cf-kref { margin: 6px 0 0; }
+.cf-leg { list-style: none; margin: 6px 0 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: 3px 10px; font-size: 12.5px; }
+.cf-leg i, .cf-cmp i { display: inline-block; width: 11px; height: 11px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+.cf-leg b { font-family: var(--mono); }
+.cf-tree { margin: 0; padding: 0 0 0 18px; font-size: 13px; display: flex; flex-direction: column; gap: 6px; border-left: 3px solid var(--rule); list-style: decimal; }
+.cf-tree li { padding-left: 4px; }
+.cf-tree li.x b { color: var(--accent); }
+.cf-tree .d { font: 600 11.5px var(--mono); color: var(--muted); }
+.cf-dec, .cf-rev, .cf-end { display: flex; flex-direction: column; gap: 8px; }
+.cf-dec .d, .cf-rev .d { font: 600 12px var(--mono); color: var(--muted); margin: 0; }
+.cf-dec h3, .cf-end h3 { margin: 0; font-size: 19px; line-height: 1.2; }
+.cf-dec p, .cf-rev p { margin: 0; font-size: 13.5px; }
+.cf-ask { font: 700 15px var(--body); }
+.cf-opts { display: flex; flex-direction: column; gap: 8px; }
+.cf-opt { text-align: left; font: 700 15px/1.3 var(--body); color: var(--ink); background: var(--panel); border: 2px solid var(--brand-ink); border-radius: 6px; padding: 12px 14px; min-height: 52px; cursor: pointer; }
+.cf-opt:hover, .cf-opt:focus-visible { background: var(--brand); color: #f2f2ee; }
+.cf-off { border-left: 3px solid var(--accent); padding-left: 8px; }
+.cf-oh { font: 700 14px var(--display); margin-top: 4px !important; }
+.cf-olist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.cf-olist li { border: 1px solid var(--rule); border-radius: 5px; padding: 8px 10px; font-size: 13px; }
+.cf-olist li.h { border-left: 4px solid var(--good); }
+.cf-olist li.me { box-shadow: inset 0 0 0 2px var(--blue); }
+.cf-olist li p { margin: 4px 0; font-size: 12.5px; }
+.cf-cmp { width: 100%; border-collapse: collapse; font-size: 12px; }
+.cf-cmp th, .cf-cmp td { padding: 4px; border-bottom: 1px solid var(--rule); text-align: left; }
+.cf-cmp thead th { font-weight: 600; vertical-align: bottom; }
+.cf-foot { display: flex; flex-wrap: wrap; gap: 8px; }
+.cf-foot .btn { font-size: 13px; }
+#model-card[hidden] { display: none; }
+#model-card summary { cursor: pointer; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; list-style: none; }
+#model-card summary::-webkit-details-marker { display: none; }
+#model-card summary h2 { display: inline; margin: 0; }
+#model-card summary::before { content: '+'; font: 700 20px var(--mono); color: var(--brand-ink); }
+#model-card details[open] summary::before { content: '−'; }
+.cf-ptab input, .cf-pgrid input { width: 76px; font: 13px var(--mono); padding: 4px 6px; border: 1px solid var(--rule); border-radius: 3px; background: var(--panel); color: var(--ink); }
+.cf-ptab td, .cf-ptab th { padding: 3px 8px 3px 0; font-size: 13px; text-align: left; }
+.cf-pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px 16px; margin: 8px 0; }
+.cf-pgrid label { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 13px; }
+@media (max-width: 520px) {
+  .cf-barrow { grid-template-columns: 1fr; gap: 2px; }
+  .cf-leg { grid-template-columns: 1fr; }
+  .cf-cmp { font-size: 11px; }
+}
+@media (prefers-reduced-motion: reduce) { .cf-bar > span { transition: none; } }
+.panel > .sec[hidden], .cf-entry[hidden] { display: none; }

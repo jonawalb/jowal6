@@ -48,6 +48,12 @@
     <div class="kl-path"><svg id="path" role="img" aria-label="Rung reached at each step of the selected crisis"></svg></div>
     <div class="kl-legend" id="path-legend"></div>
   </section>
+  <section class="card kl-card" id="model-card" aria-labelledby="model-h" hidden>
+    <details>
+      <summary><h2 id="model-h">Edit the model</h2> <span class="cf-warnlab">Notional model, not a prediction</span></summary>
+      <div id="model-edit"></div>
+    </details>
+  </section>
   <section class="card kl-card" aria-labelledby="crit-h">
     <h2 id="crit-h">Why the ladder misleads</h2>
     <p class="fine">Davis and Stan (RAND, 1984) note that Kahn "did not require that his ladders be uniquely correct"; he wanted a structure for more rigorous thinking. These critiques say what the metaphor hides.</p>
@@ -60,6 +66,7 @@
     <h2>How to read it</h2>
     <p>Kahn arranged 44 kinds of action in a nuclear confrontation from mild to catastrophic, grouped them in seven bands, and marked six thresholds where he thought the character of a crisis changes, from "Don't Rock the Boat" at the bottom to "City Targeting" near the top. RAND's <i>Dangerous Thresholds</i> notes that more than half of the 44 rungs involve at least some use of nuclear weapons. The names on this page are Kahn's, quoted exactly.</p>
     <p>Pick a crisis on the right and step through it. Each step is a dated event with its source. The blue number on a rung shows which step reached it; the highlighted rung is the current step. Choose a second crisis under <b>Compare with</b> to overlay its path in orange. Click any rung to see which crises reached it.</p>
+    <p>At the end of a crisis you can <b>retry it from the allied side</b>: make the U.S. or allied decisions yourself, among options that were really on the table, and watch a notional model shift the odds of settlement, standoff, war and nuclear use. See the method notes below.</p>
     <p>No crisis here crossed the No Nuclear Use Threshold. Most of them spent their dangerous hours on rungs 5 through 11: shows of force, confrontations, and alerts. Several also moved down, which a ladder drawn as a climb does not show well.</p>
     <h3>Method and coding</h3>
     <ul class="src">
@@ -67,6 +74,23 @@
       <li>Every event is dated and linked to a source that was opened and checked on 2026-09-29. Placing an event on a rung is marked <span class="pill" style="color:var(--warn)">coding by the author of this tool</span> unless a source makes the placement itself.</li>
       <li>Kahn wrote the ladder for a U.S.-Soviet confrontation. Applying it to India and Pakistan, North Korea, or Russia in Ukraine stretches it; the coding picks the closest rung name, and the step notes say why.</li>
       <li>Where one side's move and the other's response happened days apart, they are separate steps. Rungs reflect the most escalatory action in each step, not the whole crisis.</li>
+    </ul>
+    <h3 id="method-retry">Method: Retry from the allied side</h3>
+    <p>At the last step of a crisis, or from the button under the crisis list, you can replay it as the U.S. or allied side. At each decision point you choose among two to four options. One is what actually happened, marked after you choose. The others were considered or publicly debated at the time, and each cites a source that was opened and checked on 2026-09-29. No option was made up to fill a slot.</p>
+    <div class="tablewrap"><table class="kl-table">
+      <thead><tr><th>Crisis</th><th>You play</th><th>Decisions</th></tr></thead>
+      <tbody id="cf-table"></tbody>
+    </table></div>
+    <ul class="src">
+      <li><b>Who you play.</b> Where the United States or an ally was a party, you play that side. Kargil and Balakot had no U.S. or allied party; you play India, the U.S. partner and the democracy defending its side, because the sources document India's options (RAND on crossing the LOC, Mukherjee on India's menu after Pulwama) and record none that Washington weighed. In the 1969 Sino-Soviet crisis you play the United States, the third party Moscow probed.</li>
+      <li><b>Rungs.</b> The historical option moves the crisis to the rung of the next historical step. A rung for an option that did not happen is <span class="pill" style="color:var(--warn)">coding by the author of this tool</span>, with the reason shown after you choose.</li>
+      <li><b>Leaving the record.</b> Once you pick an option that did not happen, the tool stops offering later decisions; they assumed a history that no longer holds. It holds the crisis at your rung for the rounds history had left, then stops. It does not invent what came next.</li>
+      <li><b>Outcomes.</b> Four ways the crisis could end: negotiated settlement, frozen standoff (it ends or fades without agreement), limited conventional war (fighting that widens beyond the crisis, defined per crisis under "Why this side?"), and nuclear use. They follow Kahn's two main thresholds: the move from confrontation into large conventional war, and the No Nuclear Use Threshold.</li>
+      <li><b>The model</b> <span class="notional">notional</span>. It starts from a distribution over the four outcomes. Each round of the crisis, a historical step or a choice, sits on a rung. The rung's Kahn group sets a chance of sliding one outcome up (settlement → standoff → war) and one down; a war slides into nuclear use at a set share of the slide-up. Climbing several rungs in one move adds risk per rung; stepping down adds relief per rung. An option that is itself a deal pulls some standoff toward settlement; one that leaves the dispute in place pulls some settlement toward standoff. The arithmetic is exact, with no random draws, so the same choices always give the same numbers.</li>
+      <li><b>Grounding.</b> The structure, not the numbers, follows the literature this tool already cites. Hazards change at Kahn's group boundaries because Kahn put his thresholds there. The slide-up grows faster than the slide-down higher on the ladder because Dangerous Thresholds (RAND, 2008) holds that escalation is usually easier than de-escalation. Large single jumps cost extra because Hersman's "wormhole" escalation stresses sudden skips. No source gives any of the numbers. Every one is a placeholder, and you can change it under "Edit the model."</li>
+      <li><b>Kennedy's estimate.</b> On the Cuba run, a hatched band marks Kennedy's own estimate that the chance of escalation to war was "between 1 in 3 and even," as reported by Graham Allison (Foreign Affairs, 2012). The page uses Allison's wording; it did not open an earlier source for the estimate. The band is a reference point. The model was not fitted to it, and at the default numbers it runs lower.</li>
+      <li><b>What the model cannot see.</b> It knows only rungs. It cannot price Soviet troops arriving in Egypt in 1973, or the Soviet reading of Able Archer that made 1983 dangerous. The ladder has the same blind spot, which the critiques above describe.</li>
+      <li><b>Left out.</b> <span id="cf-excluded"></span></li>
     </ul>
     <h3>Crises and highest rung coded</h3>
     <div class="tablewrap"><table class="kl-table">

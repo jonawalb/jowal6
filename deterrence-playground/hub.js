@@ -1,0 +1,175 @@
+// Landing page: this week's dashboard, category selector, search, tool cards, keyboard navigation and help.
+import { CATEGORIES, TOOLS } from './shared/js/registry.js';
+import { createProjection, drawBasemap, el } from './shared/js/mapkit.js';
+import { LAND_INDOPAC } from './shared/data/land-indopac.js';
+import { mountWeek } from './shared/js/week/week.js';
+import { SITE } from './shared/js/site.js';
+
+const $ = id => document.getElementById(id);
+const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const live = TOOLS.filter(t => t.status === 'live').length;
+$('hub-count').textContent = `${live} live · ${TOOLS.length - live} coming soon`;
+
+// Last change per tool, from the repository's commit log (commit date and subject). Update when a tool changes.
+const UPDATED = {
+  'strait-layers': ['2026-09-28', 'Header links back to the hub'],
+  'energy-blockade': ['2026-09-28', 'First release'],
+  'mine-warfare': ['2026-09-28', 'First release'],
+  'budget-allocator': ['2026-09-28', 'Audited fixes'],
+  'arms-backlog': ['2026-09-28', 'Audited fixes'],
+  'undersea-cables': ['2026-09-28', 'Audited fixes'],
+  'history-time-machine': ['2026-09-28', 'Audited fixes'],
+  'ccg-grayzone': ['2026-09-28', 'Map now covers 2024 to 2026'],
+  'dark-fleet': ['2026-09-28', 'AIS refreshed from the collector'],
+  'rhetoric-heatmap': ['2026-09-28', 'July to September 2026 statements added'],
+  'beijing-decoder': ['2026-09-28', 'First release'],
+  'narrative-diffusion': ['2026-09-28', 'First release'],
+  'day-in-the-strait': ['2026-09-28', 'MND-verified daily counts'],
+  'strait-snapshot': ['2026-09-28', 'MND-verified daily counts'],
+  'transit-response': ['2026-09-28', 'MND-verified counts and transits'],
+  'joint-sword': ['2026-09-28', 'MND-verified daily counts'],
+  'markets-vs-analysts': ['2026-09-28', 'MND-verified daily counts'],
+  'escalation-ladder': ['2026-09-28', 'MND-verified daily counts'],
+  'scs-features': ['2026-09-28', 'MND-verified daily counts'],
+};
+const FIRST_RELEASE = '2026-09-28'; // the commit that added the remaining tools
+const shortDate = d => new Date(d + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+
+// Hero map: the Indo-Pacific with Taiwan picked out and a few range rings for texture.
+const proj = createProjection({ lon0: 95, lon1: 150, lat0: -5, lat1: 42, width: 700 });
+const svg = $('hero-map');
+const { root } = drawBasemap(svg, proj, LAND_INDOPAC, { gratStep: 10 });
+const tw = [121, 23.7];
+[600, 1500, 3000].forEach((km, i) => {
+  const pts = [];
+  for (let b = 0; b <= 360; b += 3) {
+    const d = km / 6371, t = b * Math.PI / 180, p1 = tw[1] * Math.PI / 180, l1 = tw[0] * Math.PI / 180;
+    const p2 = Math.asin(Math.sin(p1) * Math.cos(d) + Math.cos(p1) * Math.sin(d) * Math.cos(t));
+    const l2 = l1 + Math.atan2(Math.sin(t) * Math.sin(d) * Math.cos(p1), Math.cos(d) - Math.sin(p1) * Math.sin(p2));
+    pts.push([l2 * 180 / Math.PI, p2 * 180 / Math.PI]);
+  }
+  el('path', { d: proj.line(pts, true), class: 'hero-ring', style: `animation-delay:${i * 0.6}s` }, root);
+});
+const [tx, ty] = proj.project(tw);
+el('circle', { cx: tx, cy: ty, r: 5, class: 'hero-tw' }, root);
+el('text', { x: tx + 9, y: ty + 4, class: 'hero-lbl' }, root, 'Taiwan');
+
+// Category selector
+let cat = location.hash.slice(1);
+if (!CATEGORIES.some(c => c.id === cat)) cat = 'all';
+const catName = Object.fromEntries(CATEGORIES.map(c => [c.id, c.name]));
+const counts = Object.fromEntries(CATEGORIES.map(c => [c.id, TOOLS.filter(t => t.cat === c.id).length]));
+$('cats').innerHTML = [{ id: 'all', name: 'Everything' }, ...CATEGORIES].map(c =>
+  `<button type="button" data-cat="${c.id}"><b>${c.name}</b><span>${c.id === 'all' ? TOOLS.length : counts[c.id]}</span></button>`).join('');
+const catBtns = [...$('cats').querySelectorAll('button')];
+catBtns.forEach(b => b.onclick = () => {
+  cat = b.dataset.cat; history.replaceState(null, '', cat === 'all' ? './' : '#' + cat); render();
+});
+$('q').addEventListener('input', render);
+
+// Categories whose tools need a second password on this site.
+const locked = new Set(CATEGORIES.filter(c => c.locked).map(c => c.id));
+
+function card(t) {
+  const href = `tools/${t.slug}/`;
+  const soon = t.status !== 'live';
+  const [d, note] = UPDATED[t.slug] || [FIRST_RELEASE, 'First release'];
+  const upd = soon ? '' : `<span class="upd">Updated ${shortDate(d)} · ${esc(note)}</span>`;
+  const inner = `<div class="thumb"><img data-thumb="${href}" alt="" width="640" height="400"></div>
+    <div class="card-body"><p class="card-cat">${esc(catName[t.cat] || '')}${locked.has(t.cat) ? ' <span class="lock-badge" title="Opening this tool asks for a second password">🔒 Second password</span>' : ''}</p><h3>${esc(t.title)}</h3><p>${esc(t.blurb)}</p>
+    ${upd}<span class="go">${soon ? 'Coming soon' : 'Open →'}</span></div>`;
+  return soon ? `<div class="tool soon" aria-disabled="true">${inner}</div>` : `<a class="tool" href="${href}">${inner}</a>`;
+}
+
+function render() {
+  catBtns.forEach(b => b.setAttribute('aria-pressed', b.dataset.cat === cat));
+  const q = $('q').value.trim().toLowerCase();
+  const terms = q.split(/\s+/).filter(Boolean);
+  const hay = t => `${t.title} ${t.blurb} ${t.slug.replace(/-/g, ' ')} ${catName[t.cat] || ''}`.toLowerCase();
+  const match = t => terms.every(w => hay(t).includes(w));
+  const cats = CATEGORIES.filter(c => cat === 'all' || c.id === cat);
+  const liveNow = TOOLS.filter(t => t.status === 'live' && (cat === 'all' || t.cat === cat) && match(t));
+  const featured = liveNow.length ? `<section class="cat-sec live-now"><div class="cat-h"><h2>${q ? 'Matches' : 'Live now'}</h2>
+      <p>${liveNow.length} ready to use.${q ? '' : ' More are added as they finish.'}</p></div>
+      <div class="tools featured">${liveNow.map(card).join('')}</div></section>` : '';
+  const html = featured + cats.map(c => {
+    const list = TOOLS.filter(t => t.cat === c.id && match(t) && !(liveNow.includes(t)));
+    if (!list.length) return '';
+    return `<section class="cat-sec" id="sec-${c.id}"><div class="cat-h"><h2>${c.name}${c.locked ? ' <span class="lock-badge">🔒 Second password</span>' : ''}</h2><p>${c.blurb}</p></div>
+      <div class="tools">${list.map(card).join('')}</div></section>`;
+  }).join('');
+  $('sections').innerHTML = html || `<p class="empty">No tools match “${esc(q)}”. Try a category name, such as “trackers” or “classroom”.</p>`;
+  $('q-status').textContent = q ? `${liveNow.length} tool${liveNow.length === 1 ? '' : 's'} match` : '';
+}
+render();
+
+// Keyboard: "/" search, "?" help, arrows move between cards (by position) and along the category bar.
+const cards = () => [...$('sections').querySelectorAll('a.tool')];
+function moveCard(from, key) {
+  const all = cards();
+  const a = from.getBoundingClientRect(), ax = a.left + a.width / 2, ay = a.top + a.height / 2;
+  const vert = key === 'ArrowDown' || key === 'ArrowUp';
+  let best = null, bestD = Infinity;
+  for (const c of all) {
+    if (c === from) continue;
+    const r = c.getBoundingClientRect(), dx = r.left + r.width / 2 - ax, dy = r.top + r.height / 2 - ay;
+    const ok = key === 'ArrowRight' ? dx > 4 && Math.abs(dy) < a.height / 2
+      : key === 'ArrowLeft' ? dx < -4 && Math.abs(dy) < a.height / 2
+        : key === 'ArrowDown' ? dy > 4 : dy < -4;
+    if (!ok) continue;
+    const d = vert ? Math.abs(dy) * 3 + Math.abs(dx) : Math.abs(dx);
+    if (d < bestD) { bestD = d; best = c; }
+  }
+  if (!best && key === 'ArrowRight') best = all[all.indexOf(from) + 1];
+  if (!best && key === 'ArrowLeft') best = all[all.indexOf(from) - 1];
+  return best || null;
+}
+const ARROWS = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
+document.addEventListener('keydown', e => {
+  if (e.metaKey || e.ctrlKey || e.altKey || $('help').open) return;
+  const t = e.target, typing = t.matches('input, textarea, select, [contenteditable]');
+  if (!typing && e.key === '/') { e.preventDefault(); $('q').focus(); $('q').select(); return; }
+  if (!typing && e.key === '?') { e.preventDefault(); openHelp(); return; }
+  if (t === $('q')) {
+    if (e.key === 'Escape' && $('q').value) { $('q').value = ''; render(); }
+    else if (e.key === 'ArrowDown' || e.key === 'Enter') { const c = cards()[0]; if (c) { e.preventDefault(); c.focus(); } }
+    return;
+  }
+  if (!ARROWS.includes(e.key)) return;
+  const i = catBtns.indexOf(t);
+  if (i >= 0 && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+    e.preventDefault(); catBtns[(i + (e.key === 'ArrowRight' ? 1 : -1) + catBtns.length) % catBtns.length].focus(); return;
+  }
+  if (t.matches('a.tool')) {
+    const n = moveCard(t, e.key);
+    if (n) { e.preventDefault(); n.focus({ preventScroll: true }); n.scrollIntoView({ block: 'nearest' }); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); $('q').focus(); }
+  }
+});
+
+// Help dialog
+function openHelp() { $('help').showModal(); }
+$('help-btn').onclick = openHelp;
+$('help').addEventListener('click', e => { if (e.target === $('help') || e.target.closest('[data-close]')) $('help').close(); });
+
+// This week's dashboard (Taiwan Strait data, TSM site only): small shared data first, heavy tool data after first paint.
+if (SITE === 'tsm') mountWeek($('week')); else $('week').remove();
+
+// Thumbnails are screenshots of real data, so the build encrypts them. Load through fetch
+// (which the access gate decrypts), then fall back to the drawn thumb.svg.
+const thumbCache = new Map();
+function loadThumbs() {
+  document.querySelectorAll('img[data-thumb]:not([src])').forEach(img => {
+    const base = img.dataset.thumb;
+    if (!thumbCache.has(base)) {
+      thumbCache.set(base, fetch(base + 'thumb.png').then(r => {
+        if (!r.ok) throw new Error(r.status);
+        return r.blob();
+      }).then(b => (b.type && !b.type.startsWith('image') ? new Blob([b], { type: 'image/png' }) : b))
+        .then(b => URL.createObjectURL(b)).catch(() => base + 'thumb.svg'));
+    }
+    thumbCache.get(base).then(src => { img.src = src; img.onerror = () => img.remove(); });
+  });
+}
+new MutationObserver(loadThumbs).observe(document.body, { childList: true, subtree: true });
+loadThumbs();

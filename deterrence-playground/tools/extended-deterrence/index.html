@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Extended Deterrence | Interactive Deterrence</title>
+<meta name="description" content="Why would a patron fight for an ally? Stack treaties, public pledges, a tripwire force and nuclear sharing in a transparent model, and compare them with the real U.S. commitments.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" crossorigin="anonymous">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="extended-deterrence.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<div class="toolbar-top">
+  <p class="lede">A promise to defend an ally is only as good as the challenger’s belief that it will be kept. Stack commitment devices and watch credibility, deterrence and the patron’s costs move. Every model number is notional; the commitments listed below the model are real and sourced.</p>
+  <div class="actions">
+    <button type="button" class="btn solid" id="start-tour">Start the walkthrough</button>
+    <button type="button" class="btn" id="copy-link">Copy link to this setup</button>
+  </div>
+</div>
+
+<main class="layout">
+  <div class="stage" id="stage" aria-live="off"></div>
+  <aside class="panel" id="panel" aria-label="Commitment devices, stakes and readout"></aside>
+</main>
+<div id="tour-root"></div>
+
+<section class="world-wrap" id="world" aria-label="Real U.S. extended-deterrence commitments"></section>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>Three players: a <b>patron</b> that has promised protection, an <b>ally</b>, and a <b>challenger</b> deciding whether to attack the ally. The patron knows how much the ally is worth to it; the challenger does not. Deterrence works when the challenger believes the patron would fight. That belief is <b>credibility</b>.</p>
+    <p>The problem is sharpest when the patron would pay dearly for the war, as when the challenger can strike the patron’s own cities. Would Washington trade Boston for Bonn? Commitment devices change the answer in two ways. Some <b>tie hands</b>: breaking them is costly, so the patron is likelier to fight. Some <b>sink costs</b>: they are paid in peacetime, and can show the challenger how much the patron cares. A forward force also works as a <b>tripwire</b>: an attack engages the patron whether it wants a war or not.</p>
+    <ul class="howto">
+      <li>Toggle devices in the side panel. The first chart shows what each adds to credibility.</li>
+      <li>The second chart shows credibility (solid) and the chance the challenger is deterred (dashed) as the patron’s cost of war rises. Drag it to set that cost.</li>
+      <li>The third chart plots all 16 packages by peacetime cost and deterrence. Bigger circles carry more <b>entrapment</b> risk: the chance the patron ends up in a war it would not have chosen.</li>
+      <li>The address bar stores the whole setup, including any device parameters you change.</li>
+    </ul>
+    <h2 class="mt">Questions to try</h2>
+    <ol class="howto">
+      <li>At w = 1.2, which single device restores the most deterrence, and what does it cost in entrapment?</li>
+      <li>Turn on screening with and without the tripwire force. Why does sinking costs help only when the costs are large?</li>
+      <li>Set the nuclear-sharing automaticity to zero, as the empirical work of Fuhrmann and Sechser suggests. What is left of its effect?</li>
+    </ol>
+  </div>
+  <div class="col">
+    <h2>Sources</h2>
+    <ul class="src">
+      <li>Thomas C. Schelling, <i>Arms and Influence</i> (Yale University Press, 1966), ch. 2, “The Art of Commitment.” <a href="https://yalebooks.yale.edu/book/9780300246742/arms-and-influence/" target="_blank" rel="noopener">Yale University Press</a></li>
+      <li>Paul K. Huth, “Extended Deterrence and the Outbreak of War,” <i>American Political Science Review</i> 82, no. 2 (1988): 423–443. <a href="https://doi.org/10.2307/1957394" target="_blank" rel="noopener">doi:10.2307/1957394</a></li>
+      <li>Paul K. Huth, <i>Extended Deterrence and the Prevention of War</i> (Yale University Press, 1988). <a href="https://doi.org/10.2307/j.ctt211qwdk" target="_blank" rel="noopener">doi:10.2307/j.ctt211qwdk</a></li>
+      <li>Paul Huth and Bruce Russett, “What Makes Deterrence Work? Cases from 1900 to 1980,” <i>World Politics</i> 36, no. 4 (1984): 496–526. <a href="https://doi.org/10.2307/2010184" target="_blank" rel="noopener">doi:10.2307/2010184</a></li>
+      <li>James D. Fearon, “Signaling Foreign Policy Interests: Tying Hands versus Sinking Costs,” <i>Journal of Conflict Resolution</i> 41, no. 1 (1997): 68–90. <a href="https://doi.org/10.1177/0022002797041001004" target="_blank" rel="noopener">doi:10.1177/0022002797041001004</a></li>
+      <li>Glenn H. Snyder, “The Security Dilemma in Alliance Politics,” <i>World Politics</i> 36, no. 4 (1984): 461–495. <a href="https://doi.org/10.2307/2010183" target="_blank" rel="noopener">doi:10.2307/2010183</a></li>
+      <li>Matthew Fuhrmann and Todd S. Sechser, “Signaling Alliance Commitments: Hand-Tying and Sunk Costs in Extended Nuclear Deterrence,” <i>American Journal of Political Science</i> 58, no. 4 (2014): 919–935. <a href="https://doi.org/10.1111/ajps.12082" target="_blank" rel="noopener">doi:10.1111/ajps.12082</a></li>
+      <li>Treaty texts, declarations and nuclear-sharing sources are listed with each entry in the panel above.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="below method" id="method">
+  <div class="col">
+    <h2>Method · The model</h2>
+    <p>The patron’s value of defending the ally is \(v\), private. The challenger believes \(v\sim U[L,1]\), with \(L=0\) unless screening is on. Fighting costs the patron \(w\). A package of devices sums to a cost of backing out \(A=\sum a_j\), a peacetime cost \(S=\sum s_j\), a denial term \(D=\sum d_j\), and a chance of automatic defense \(T=1-\prod(1-t_j)\).</p>
+    <p><b>Patron.</b> If the ally is attacked, the patron is drawn in automatically with probability \(T\); otherwise it fights iff \(v-w+A\ge0\). Credibility is</p>
+    $$\kappa=1-(1-T)\,\Pr(v&lt;w-A).$$
+    <p><b>Challenger.</b> Its gain from an unopposed attack is \(x\sim U[0,1]\); if the patron fights it loses \(K=k_C+D\). It attacks iff \((1-\kappa)\,x&gt;\kappa K\), so</p>
+    $$\Pr(\text{deterred})=\min\Big\{1,\ \frac{\kappa K}{1-\kappa}\Big\}.$$
+  </div>
+  <div class="col">
+    <h2>Method · Readouts</h2>
+    <p>\(\Pr(\text{war})=\Pr(\text{attack})\,\kappa\) and \(\Pr(\text{abandoned})=\Pr(\text{attack})(1-\kappa)\). Entrapment, given an attack, is the chance the patron fights although \(v&lt;w\): \(\Pr(v&lt;w)-(1-T)\Pr(v&lt;w-A)\). The expected audience cost is \(\Pr(\text{attack})(1-T)\Pr(v&lt;w-A)\,A\), paid only when a tied-hands patron backs out anyway.</p>
+    <p><b>Screening.</b> With screening on, the challenger infers from a peacetime cost \(S\) that \(v\ge S\) (Fearon’s sinking-costs logic: a patron that valued the ally less would not pay). This is an assumption about the challenger’s inference, not a derived equilibrium.</p>
+    <p><b>Waterfall order.</b> Devices are added in the order listed, so each bar is the marginal gain given the ones above it. Because automaticity multiplies, a different order can split the total differently.</p>
+  </div>
+  <div class="col">
+    <h2>Method · What is notional, and the evidence</h2>
+    <p>Every parameter value is <span class="notional">notional</span>: the device costs \(a,s,t,d\), \(w\), \(k_C\) and the uniform beliefs. They are set to show the mechanisms, not to describe any real alliance. Change them under “Device parameters.”</p>
+    <p>The mechanisms come from the literature. Schelling treats forces stationed on allied territory as a commitment that makes involvement close to automatic (the \(t\) of the tripwire). Fearon separates tying hands (\(a\)) from sinking costs (\(s\)). Huth (1988) finds that a defender able to deny the attacker a quick and decisive victory deters better, which the denial term \(d\) stands for. Huth and Russett (1984) find that success is not systematically associated with a formal alliance or with nuclear weapons, but is associated with close economic and political ties and a favorable local balance. Fuhrmann and Sechser (2014) find that formal alliances with nuclear states deter, but that stationing nuclear weapons on a protégé’s territory does not bolster the effect. The model’s nuclear-sharing automaticity is therefore small by default; set it to zero to match their finding.</p>
+    <p>Snyder (1984) frames the patron’s dilemma as abandonment against entrapment; the frontier chart shows that trade.</p>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Extended Deterrence', sub: 'The credibility problem of protecting an ally: stack commitment devices in a transparent model, then check them against the real U.S. commitments.', category: 'Deterrence & signaling' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

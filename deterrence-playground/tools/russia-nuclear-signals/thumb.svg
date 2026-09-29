@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+  <rect width="640" height="400" fill="#f2f2ee"/>
+  <rect x="24" y="24" width="592" height="352" rx="6" fill="#fbfbf8" stroke="#d9d9d0"/>
+  <!-- battlefield lane -->
+  <rect x="60" y="100" width="530" height="26" fill="#e9e4d4"/>
+  <g fill="#97a197">
+    <path d="M90 104l9 9-9 9-9-9z"/><path d="M180 104l9 9-9 9-9-9z"/><path d="M250 104l9 9-9 9-9-9z"/>
+    <path d="M390 104l9 9-9 9-9-9z"/><path d="M470 104l9 9-9 9-9-9z"/>
+  </g>
+  <!-- level bands -->
+  <g fill="#b3261e">
+    <rect x="60" y="136" width="530" height="30" opacity=".22"/><rect x="60" y="166" width="530" height="30" opacity=".17"/>
+    <rect x="60" y="196" width="530" height="30" opacity=".12"/><rect x="60" y="226" width="530" height="30" opacity=".08"/>
+    <rect x="60" y="256" width="530" height="30" opacity=".05"/>
+  </g>
+  <!-- signals -->
+  <circle cx="88" cy="181" r="9" fill="#e8753a"/>
+  <circle cx="110" cy="241" r="8" fill="#1b4fd4"/><circle cx="170" cy="241" r="8" fill="#1b4fd4"/>
+  <circle cx="200" cy="271" r="8" fill="#1b4fd4"/><circle cx="240" cy="211" r="8" fill="#b0306e"/>
+  <circle cx="262" cy="181" r="9" fill="#e8753a"/><circle cx="318" cy="211" r="8" fill="#b0306e"/>
+  <circle cx="376" cy="211" r="8" fill="#0c8474"/><circle cx="420" cy="211" r="8" fill="#b0306e"/>
+  <circle cx="432" cy="151" r="10" fill="#b3261e"/><circle cx="500" cy="241" r="8" fill="#1b4fd4"/>
+  <circle cx="540" cy="211" r="8" fill="#b0306e"/>
+  <!-- western responses -->
+  <rect x="60" y="296" width="530" height="26" fill="#e9e4d4"/>
+  <g fill="#1b4fd4"><rect x="150" y="302" width="14" height="14"/><rect x="268" y="302" width="14" height="14"/><rect x="440" y="302" width="14" height="14"/></g>
+  <text x="60" y="80" font-family="Georgia, serif" font-size="30" font-weight="700" fill="#14201a">Russia's nuclear signals</text>
+  <text x="60" y="356" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#b3261e">Words, rules, forces, use</text>
+</svg>

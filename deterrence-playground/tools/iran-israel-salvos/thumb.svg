@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+  <rect width="640" height="400" fill="#f2f2ee"/>
+  <rect x="24" y="24" width="592" height="352" rx="6" fill="#fbfbf8" stroke="#d3d6cd"/>
+  <g font-family="Georgia, serif" font-weight="700" font-size="22" fill="#14201a">
+    <text x="48" y="78">Apr 2024</text><text x="48" y="168">Oct 2024</text><text x="48" y="258">Jun 2025</text>
+  </g>
+  <g>
+    <rect x="178" y="58" width="130" height="28" fill="#e8753a"/><rect x="308" y="58" width="32" height="28" fill="#a88000"/><rect x="340" y="58" width="184" height="28" fill="#2c6d8a"/>
+    <rect x="178" y="148" width="194" height="28" fill="#e8753a"/>
+    <rect x="178" y="238" width="400" height="28" fill="#e8753a"/><rect x="578" y="238" width="18" height="28" fill="#2c6d8a"/>
+  </g>
+  <g fill="#0c8474">
+    <path d="M178 312 H596 L560 340 H214 Z" opacity=".9"/>
+  </g>
+  <path d="M370 340 H404 L400 356 H374 Z" fill="#b3261e"/>
+  <text x="48" y="340" font-family="Georgia, serif" font-weight="700" font-size="22" fill="#14201a">Intercepts</text>
+</svg>

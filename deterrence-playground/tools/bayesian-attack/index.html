@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Attacking the Update | Interactive Deterrence</title>
+<meta name="description" content="An interactive version of Jonathan Walberg's λ-attack model: an adversary changes how much weight a citizen puts on evidence instead of faking the evidence. Compare belief paths, find where the attack beats fabrication, and test defenses.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" crossorigin="anonymous">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="bayesian-attack.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<div class="toolbar-top">
+  <p class="lede">Most models of information warfare let the adversary fake the evidence. In Walberg’s model the adversary leaves the evidence alone and changes how much weight you put on it.</p>
+  <div class="actions">
+    <button type="button" class="btn solid" id="start-tour">Start the walkthrough</button>
+    <button type="button" class="btn" id="copy-link">Copy link to this setup</button>
+    <button type="button" class="btn" id="reset">Reset</button>
+  </div>
+</div>
+
+<main class="layout">
+  <div class="stage">
+    <div class="card fig" id="card-a">
+      <div class="fig-h"><p class="eyebrow">A · Two citizens, the same evidence</p><p class="fine">Belief after each signal. Higher means more threat.</p></div>
+      <svg id="traj" class="plot" role="img" aria-label="Belief trajectories of an undisturbed citizen and an attacked citizen receiving the same signals, with the true state marked"></svg>
+      <div class="legend" id="traj-leg"></div>
+    </div>
+    <div class="card fig" id="card-b">
+      <div class="fig-h"><p class="eyebrow">B · When the weighting attack beats fabrication</p><span class="fine">Proposition 2. Click or drag to move the point.</span></div>
+      <div class="row segrow">
+        <div class="seg" id="seg-T" role="group" aria-label="Horizon"></div>
+        <div class="seg" id="seg-E" role="group" aria-label="Decay of induced emotion"></div>
+      </div>
+      <svg id="region" class="plot drag" role="img" aria-label="Region map: cost ratio on the horizontal axis (log scale), stake on the vertical axis. Orange cells are where the weighting attack pays more than fabrication."></svg>
+      <div class="legend"><span class="lg"><i style="background:var(--c2)"></i>Weighting attack pays more</span><span class="lg"><i style="background:var(--c1)"></i>Fabrication pays more</span></div>
+      <div id="dom-read"></div>
+    </div>
+    <div class="card fig" id="card-c">
+      <div class="fig-h"><p class="eyebrow">C · What a defender can do</p><span class="fine">Proposition 4</span></div>
+      <div class="tabs" id="def-tabs" role="tablist" aria-label="Defense">
+        <button type="button" role="tab" data-d="d">Disclose or reassure</button>
+        <button type="button" role="tab" data-d="r">Fear vs. anger</button>
+        <button type="button" role="tab" data-d="i">Two kinds of inoculation</button>
+      </div>
+      <div id="def-d" role="tabpanel">
+        <div class="defgrid"><svg id="defmap" class="plot drag" role="img" aria-label="Map of captured weight on evidence against budget. Teal cells: reassurance leaves less distortion. Blue cells: disclosure does."></svg><div id="def-ctl-d" class="ctl"></div></div>
+        <div class="legend"><span class="lg"><i style="background:var(--c3)"></i>Reassurance leaves less distortion</span><span class="lg"><i style="background:var(--c1)"></i>Disclosure leaves less</span><span class="fine">Darker = bigger gap</span></div>
+        <div id="def-d-read"></div>
+      </div>
+      <div id="def-r" role="tabpanel" hidden>
+        <div class="defgrid"><svg id="recov" class="plot" role="img" aria-label="Belief of a fear-captured and an anger-captured citizen during a campaign and then 80 truthful signals"></svg><div id="def-ctl-r" class="ctl"></div></div>
+        <div class="legend"><span class="lg"><i class="k fear"></i>Fear (λ on threatening news)</span><span class="lg"><i class="k anger"></i>Anger (κ on confidence)</span></div>
+        <div id="def-r-read"></div>
+      </div>
+      <div id="def-i" role="tabpanel" hidden><div id="def-i-read"></div></div>
+    </div>
+  </div>
+  <aside class="panel" id="panel" aria-label="Attack settings and results"></aside>
+</main>
+<div id="tour-root"></div>
+
+<section class="below" id="bayes-refresher">
+  <div class="col">
+    <h2>Bayes’ rule in two minutes</h2>
+    <p>Bayes’ rule says how much a piece of evidence should change your mind. Start with how likely you thought something was, then ask how much more likely the evidence is if it is true than if it is false.</p>
+    $$P(\text{threat}\mid\text{report})=\frac{P(\text{report}\mid\text{threat})\,P(\text{threat})}{P(\text{report}\mid\text{threat})\,P(\text{threat})+P(\text{report}\mid\text{no threat})\,P(\text{no threat})}$$
+    <p><b>An example with round numbers.</b> You think there is a 20% chance a real threat is building. A source reports one. When a threat is real, the source reports it 80% of the time; when there is none, it raises a false alarm 20% of the time. Then the report should move you to \(\dfrac{0.8\times0.2}{0.8\times0.2+0.2\times0.8}=50\%\): a real update, but far from certainty.</p>
+    <p><b>The same idea with a number line.</b> When beliefs and evidence are bell curves, Bayes’ rule becomes a weighted average. Your new belief moves from the old one toward the signal by a share \(K\) that depends on how precise the signal is compared with how confident you already were:</p>
+    $$\mu_1=\mu_0+K\,(s-\mu_0),\qquad K=\frac{\rho_s}{\rho_0+\rho_s}.$$
+    <p>\(\rho\) is precision, one over the variance. A precise signal or a shaky prior means a large \(K\) and a big move. Each signal also adds its precision to your confidence, \(\rho_1=\rho_0+\rho_s\).</p>
+    <p><b>Where the attack comes in.</b> Walberg’s citizen treats the signal as if its precision were \(\lambda\rho_s\). Nothing about the signal changes. Only the weight does:</p>
+    $$K(\lambda)=\frac{\lambda\rho_s}{\rho_0+\lambda\rho_s}.$$
+    <p>Fear sets \(\lambda&gt;1\) and the citizen over-revises toward alarming news. Misplaced trust or distrust sets \(\lambda&lt;1\) and good news stops registering. The panel’s “first update” box shows these numbers for the current draw.</p>
+  </div>
+  <div class="col">
+    <h2>How to read it</h2>
+    <ul class="howto">
+      <li><b>Card A</b> gives two identical citizens the same signals. One updates by Bayes’ rule; the other is under attack. Pick an attack in the panel: each button loads a scenario, which you can then change.</li>
+      <li>Shaded bands are ±1 standard deviation of each citizen’s belief. A narrow band is a confident citizen.</li>
+      <li>The status box reports the citizen’s <b>action</b>: the probability, given their belief, that the threat exceeds c. The paper uses this tail probability as the behavior the sender wants to move.</li>
+      <li><b>Card B</b> is the sender’s choice. Each cell compares the best weighting attack with fabrication at a cost ratio ρ and stake τ, using the paper’s cost model and its fixed grid of horizons and decay rates.</li>
+      <li><b>Card C</b> reruns the paper’s three defense experiments.</li>
+      <li>Every setting is stored in the link.</li>
+    </ul>
+    <h2 class="mt">What is notional</h2>
+    <p>Everything numeric here is a modeling choice of the paper or a teaching default of this tool. No value is estimated from data, and no output is an empirical finding about any real campaign or population.</p>
+    <ul class="howto">
+      <li>The scenario presets in Card A (priors, true state, attack strength, 20 signals, c = 0) are teaching defaults chosen for this tool.</li>
+      <li>Cards B and C use the paper’s own constants: no real threat (θ = 0), unit precisions, a λ grid from 1 to 4, fabrication bias 0.6, emotional energy priced at 0.15 per unit, capture by ten slanted signals, reassurance closing 30% of the gap per budget unit, and inoculation efficacies 0.85 and 0.65. They are listed in <code>data/params.js</code>.</li>
+      <li>The browser reruns the experiments with its own seeded draws, so its numbers differ slightly from the paper’s. The paper’s figures are quoted next to them.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="below method" id="method">
+  <div class="col">
+    <h2>Method · the model</h2>
+    <p>A latent state \(\theta\), the true level of external threat, has prior \(\theta\sim N(\mu_0,1/\rho_0)\). Each period the citizen sees \(s_t=\theta+\varepsilon_t\) with \(\varepsilon_t\sim N(0,1/\rho_s)\). The emotional citizen updates as if the signal precision were \(\lambda_e\rho_s\):</p>
+    $$\rho^{\text{post}}=\rho_0+\lambda_e\rho_s,\qquad \mu^{\text{post}}=\frac{\rho_0\mu_0+\lambda_e\rho_s\,s}{\rho_0+\lambda_e\rho_s}=\mu_0+K(\lambda_e)\,\delta,$$
+    <p>with \(\delta=s-\mu_0\). The informal rule “posterior = prior + \(\lambda\cdot\delta\)” is the small-gain linearization of this form; all results use the exact form. Fear raises \(\lambda\) on threatening news (the paper’s signal-contingent gain, applied when \(\delta\ge0\)). Anger is a different operator: it multiplies posterior precision by \(\kappa\ge1\), \(\rho^{\text{post}}_{\text{anger}}=(\rho_0+\rho_s)\kappa\), following the appraisal asymmetry between fear and anger in Lerner and Keltner (2001). Induced affect decays, \(\lambda_t=1+(\lambda_0-1)(1-\rho_e)^t\); a fabricated signal persists.</p>
+    <p>A foreign sender chooses between a weighting attack and fabrication. A government chooses to reassure (push a captured gain back toward 1), disclose (add truthful signals) or stay silent. The citizen acts on \(P(\theta&gt;c)\).</p>
+    <h2 class="mt">Method · the propositions</h2>
+    <p><b>P1, identification.</b> \(\lambda\) sets the rate of revision and the prior sets its level, so one posterior cannot separate them but a sequence of signals or a panel can. The paper reports ridge curvature \(9.4\times10^{-6}\) at one signal and 1.87 at five, and panel recovery of \(\lambda\) within 3.2%. This tool does not rerun P1.</p>
+    <p><b>P2, dominance (Card B).</b> The weighting attack pays \(\tau\,|a_\lambda-a_0|-0.15\times\text{energy}\), where energy is \(\lambda-1\) with no decay plus top-ups when affect decays; fabrication pays \(\tau\,|a_b-a_0|-1/\rho\). The paper finds a monotone, simply connected region that shrinks from 0.581 to 0.467 of the grid under decay, 19.6%, where it had predicted at least 50%.</p>
+    <p><b>P3, no stealth.</b> A citizen fed only true signals ends with a biased posterior, but the bias is in the mean belief, so it is measurable. The paper’s pre-registered stealth claim failed: the rank correlation between the sender’s payoff and the mean-belief error is 0.978. Card B reports the action and mean-belief shifts together for this reason.</p>
+    <p><b>P4, defense (Card C).</b> Disclosure is nearly useless against a heavily captured citizen (\(\lambda_g&lt;0.3\): 95% of the distortion remains); reassurance dominates there. Fear-capture recovers 62.2% under 80 truthful signals; anger-capture recovers 0%. Hardening the gain protects only its own channel (ratio 0.00); affect-awareness transfers (0.79).</p>
+    <p><b>P5, cascades.</b> On a network where people catch each other’s emotion, the weighting channel roughly halves the share of panicking neighbours needed to set off a cascade: 0.393 to 0.210 on Erdős–Rényi networks and 0.395 to 0.222 on Watts–Strogatz networks. The transition is smooth, and it needs a grain of real threat in the news. The <a href="../misinfo-cascade/">Misinformation Cascade</a> tool builds on this.</p>
+  </div>
+  <div class="col">
+    <h2>Sources</h2>
+    <p class="fine">Model</p>
+    <ul class="src">
+      <li>Jonathan Walberg, “Emotional Priors and Narrative Warfare: A Bayesian Game of Cognitive Manipulation,” working paper, June 11, 2026. The model, Propositions 1–5, the replication code (<code>engine.py</code>, <code>fh2_dominance.py</code>, <code>fh3_counterstrategy.py</code>) and the reported numbers.</li>
+      <li>Jonathan Walberg, “Emotional Priors: How Affect Modulates Bayesian Belief Updating,” working paper, June 12, 2026. The same model framed for political psychology.</li>
+    </ul>
+    <p class="fine mt">Literature the model builds on</p>
+    <ul class="src">
+      <li>Emir Kamenica and Matthew Gentzkow, “Bayesian Persuasion,” <i>American Economic Review</i> 101, no. 6 (2011): 2590–2615. <a href="https://doi.org/10.1257/aer.101.6.2590" target="_blank" rel="noopener">doi:10.1257/aer.101.6.2590</a></li>
+      <li>Andrew T. Little, “Propaganda and Credulity,” <i>Games and Economic Behavior</i> 102 (2017): 224–232. <a href="https://doi.org/10.1016/j.geb.2016.12.006" target="_blank" rel="noopener">doi:10.1016/j.geb.2016.12.006</a></li>
+      <li>Jennifer S. Lerner and Dacher Keltner, “Fear, Anger, and Risk,” <i>Journal of Personality and Social Psychology</i> 81, no. 1 (2001): 146–159. <a href="https://doi.org/10.1037/0022-3514.81.1.146" target="_blank" rel="noopener">doi:10.1037/0022-3514.81.1.146</a></li>
+      <li>Karl Friston, “The free-energy principle: a unified brain theory?” <i>Nature Reviews Neuroscience</i> 11 (2010): 127–138. <a href="https://doi.org/10.1038/nrn2787" target="_blank" rel="noopener">doi:10.1038/nrn2787</a></li>
+      <li>Stephan Lewandowsky, Ullrich K. H. Ecker and John Cook, “Beyond Misinformation: Understanding and Coping with the ‘Post-Truth’ Era,” <i>Journal of Applied Research in Memory and Cognition</i> 6 (2017): 353–369. <a href="https://doi.org/10.1016/j.jarmac.2017.07.008" target="_blank" rel="noopener">doi:10.1016/j.jarmac.2017.07.008</a></li>
+      <li>Jon Roozenbeek and Sander van der Linden, “Fake news game confers psychological resistance against online misinformation,” <i>Palgrave Communications</i> 5 (2019). <a href="https://doi.org/10.1057/s41599-019-0279-9" target="_blank" rel="noopener">doi:10.1057/s41599-019-0279-9</a></li>
+    </ul>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Attacking the Update', sub: 'An adversary manipulates the weight you put on evidence, not the evidence. Compare belief paths, find where the attack beats fabrication, and test defenses.', category: 'Disinformation & cognitive warfare' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

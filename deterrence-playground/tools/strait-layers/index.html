@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Strait Layers | Interactive Deterrence</title>
+<meta name="description" content="Interactive explainer of PLA anti-access/area-denial layers around Taiwan, the kill chain behind them, and Taiwan Security Monitor activity data.">
+<meta property="og:title" content="Strait Layers | Interactive Deterrence">
+<meta property="og:description" content="Move a U.S. surface group or a PLA amphibious force through the Taiwan Strait and watch the kill chain close or break.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/map.css">
+</head>
+<body data-mode="approach">
+<header class="site">
+  <a class="brand" href="../../" title="All TSM interactives">
+    <img src="../../shared/assets/site-logo.svg" alt="Interactive Deterrence" width="56" height="56">
+    <div>
+      <p class="org">Interactive Deterrence</p>
+      <h1>Strait Layers</h1>
+    </div>
+  </a>
+  <p class="lede">How China's anti-access/area-denial (A2/AD) layers work around Taiwan, why the kill chain behind them matters more than the range rings, and what the PLA is actually doing day to day.</p>
+  <div class="head-actions">
+    <button type="button" class="solid" id="start-tour">Start the briefing</button>
+    <button type="button" class="ghost" id="copy-link">Copy link</button>
+  </div>
+</header>
+
+<nav class="tabs" role="tablist" aria-label="Scenario">
+  <button type="button" role="tab" data-mode="approach"><b>Blue approach</b><span>PLA kill chain vs. a U.S. group</span></button>
+  <button type="button" role="tab" data-mode="crossing"><b>PLA crossing</b><span>Taiwan's denial vs. a landing force</span></button>
+  <button type="button" role="tab" data-mode="salvo"><b>Salvo math</b><span>Missiles vs. interceptors</span></button>
+  <button type="button" role="tab" data-mode="activity"><b>TSM activity</b><span>Daily PLA and CCG record</span></button>
+</nav>
+
+<main class="grid">
+  <div class="mapcol">
+    <div class="mapbox" id="mapbox">
+      <svg id="map" role="img" aria-label="Map of the Taiwan Strait region with range rings, geography layers and movable units">
+        <defs>
+          <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" style="fill:var(--blue)"/></marker>
+          <marker id="arrow-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" style="fill:var(--red)"/></marker>
+          <marker id="arrow-ally" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" style="fill:var(--ally)"/></marker>
+        </defs>
+      </svg>
+      <div class="toolbar" role="toolbar" aria-label="Map tools">
+        <button type="button" id="zoom-in" aria-label="Zoom in">+</button>
+        <button type="button" id="zoom-out" aria-label="Zoom out">−</button>
+        <button type="button" id="zoom-region">Region</button>
+        <button type="button" id="zoom-strait">Strait</button>
+        <button type="button" id="measure" aria-pressed="false">Measure</button>
+      </div>
+      <p class="maphint"><span class="h-units">Click or drag to move the group · </span><span class="h-measure">Click two points to measure · </span>Pinch or ⌘-scroll to zoom</p>
+    </div>
+    <div class="under under-profile">
+      <p class="eyebrow" id="profile-title">Route profile</p>
+      <svg id="profile" class="profile" role="img" aria-label="Which layers cover each part of the route. Click or drag to move along it."></svg>
+    </div>
+    <div class="under under-timeline">
+      <p class="eyebrow">PLA aircraft around Taiwan, daily · TSM PLA Activity Center</p>
+      <svg id="timeline" class="timeline" role="img" aria-label="Daily PLA aircraft with joint readiness patrols, CCG incidents and allied transits. Drag to select a window."></svg>
+      <p class="tl-tip" id="tl-tip">Hover the timeline for daily detail. Click a day to keep it here with links, or drag to select a window.</p>
+    </div>
+  </div>
+  <aside class="panel" id="panel" aria-label="Controls and readout"></aside>
+</main>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read the map</h2>
+    <p>Anti-access/area denial is layered. The outer layers, long-range ballistic missiles like the DF-26 and DF-21D, are meant to keep U.S. forces far from Taiwan. The inner layers, coastal cruise missiles and long-range surface-to-air missiles, are meant to make the Strait itself too dangerous to operate in. The further out a layer reaches, the more it depends on someone else to tell it where to aim.</p>
+    <p>That is why a range ring overstates the threat. A missile that can fly 1,500 km only threatens a ship at 1,500 km if the PLA can find the ship, fix its position, keep the track current and push a firing decision through command channels in time. U.S. doctrine calls this sequence F2T2EA.</p>
+    <div class="steps">
+      <div><b>Find</b><span>Something detects a ship out there.</span></div>
+      <div><b>Fix</b><span>Its position is known well enough to aim at.</span></div>
+      <div><b>Track</b><span>The position stays current as the ship moves.</span></div>
+      <div><b>Target</b><span>A shooter is assigned and cleared to fire.</span></div>
+      <div><b>Engage</b><span>A weapon in range launches.</span></div>
+      <div><b>Assess</b><span>Someone checks whether it worked.</span></div>
+    </div>
+    <p>The same logic runs the other way. A PLA amphibious force crossing the Strait sails into Taiwan's own coastal missiles, drones and mines, and the PLA's first task is to blind and suppress them. The <b>PLA crossing</b> tab shows that contest; <b>Salvo math</b> shows what happens once missiles are in the air; <b>TSM activity</b> grounds all of it in the daily record.</p>
+  </div>
+  <div class="col">
+    <h2>Bases under the umbrella</h2>
+    <p>Distance from the Fujian coast, and which modeled PLA strike layers reach each site.</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Location</th><th>From Fujian coast</th><th>Within reach of</th></tr></thead>
+      <tbody id="basetable"></tbody>
+    </table></div>
+    <h2 class="mt">Sources and method</h2>
+    <ul class="src">
+      <li>Weapon ranges: CSIS Missile Defense Project, <a href="https://missilethreat.csis.org/country/china/" target="_blank" rel="noopener">Missile Threat: China</a>. DF-26 4,000 km; DF-21D about 1,450–1,550 km per U.S. reports; DF-15 variants 600–900 km; YJ-18 220–540 km.</li>
+      <li>Coastal cruise missile, SAM, Taiwanese weapon and all sensor ranges are notional round numbers (marked *), chosen to show how the layers relate rather than to describe specific units. Ring centers are representative launch areas, not identified sites.</li>
+      <li>Activity data: Taiwan Security Monitor PLA Activity Center, China Coast Guard Incident Tracker and Taiwan Strait Transit Tracker, compiled from Taiwan Ministry of National Defense and Coast Guard Administration releases. Taiwan ADIZ boundary: TSM GIS layer.</li>
+      <li>Scenario framing: Cancian, Cancian and Heginbotham, <a href="https://www.csis.org/analysis/first-battle-next-war-wargaming-chinese-invasion-taiwan" target="_blank" rel="noopener">The First Battle of the Next War</a>, CSIS, January 2023. Sensor types: U.S. Department of Defense, <i>Military and Security Developments Involving the People's Republic of China</i>.</li>
+      <li>The models are deliberately simple. Every sensor is on or off; weather, deception, reloads, timing and damage are left out. Use them to reason about structure, not to predict outcomes.</li>
+    </ul>
+  </div>
+</section>
+
+<footer class="site">
+  <img src="../../shared/assets/site-logo.svg" alt="" width="36" height="36">
+  <p><b>Interactive Deterrence</b> · Built by Jonathan Walberg. <a href="https://jwalberg.com/" target="_blank" rel="noopener">jwalberg.com</a></p>
+</footer>
+
+<script type="module">
+  import { mountNav } from '../../shared/js/chrome.js';
+  mountNav();
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

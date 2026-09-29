@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Interactive Deterrence | Jonathan Walberg</title>
+<meta name="description" content="Interactive maps, models and explainers on deterrence, nuclear weapons, war and information warfare, by Jonathan Walberg.">
+<meta property="og:title" content="Interactive Deterrence | Jonathan Walberg">
+<meta property="og:description" content="Interactive maps, models and explainers on deterrence, nuclear weapons, war and information warfare.">
+<script>
+  // Old Strait Layers deep links (#m=...) lived at the site root.
+  if (/^#m=/.test(location.hash)) location.replace('tools/strait-layers/' + location.hash);
+</script>
+<link rel="icon" type="image/svg+xml" href="shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="shared/css/tsm.css">
+<link rel="stylesheet" href="hub.css">
+</head>
+<body>
+<header class="tsm-head">
+  <a class="tsm-brand" href="./">
+    <img src="shared/assets/site-logo.svg" alt="Interactive Deterrence" width="52" height="52">
+    <div><p class="tsm-org">Jonathan Walberg</p><p class="hub-word">Interactive Deterrence</p></div>
+  </a>
+  <div class="hub-meta"><p class="hub-count" id="hub-count"></p>
+    <button type="button" class="help-btn" id="help-btn" aria-haspopup="dialog" title="Help: password, data policy and shortcuts"><span aria-hidden="true">?</span> Help</button></div>
+</header>
+
+<section class="hero wrap">
+  <div class="hero-text">
+    <h1>Where would you like to go?</h1>
+    <p>Maps, models and explainers on deterrence, nuclear weapons, war and information warfare, built on open data and published research. Pick an area to start, or search for a tool.</p>
+    <label class="search" for="q"><span class="sr">Search tools</span>
+      <input id="q" type="search" placeholder="Search tools or areas: blockade, CCG, classroom…" autocomplete="off" aria-describedby="q-hint"></label>
+    <p class="q-hint" id="q-hint"><kbd>/</kbd> to search · arrow keys move between cards · <kbd>?</kbd> for help <span id="q-status" role="status"></span></p>
+  </div>
+  <svg class="hero-map" id="hero-map" role="img" aria-label="Map of the Indo-Pacific with Taiwan highlighted"></svg>
+</section>
+
+<section class="week wrap" id="week" aria-labelledby="week-h"></section>
+
+<nav class="cats wrap" id="cats" aria-label="Choose an area"></nav>
+<main class="wrap" id="sections"></main>
+
+<footer class="tsm-foot">
+  <img src="shared/assets/site-logo.svg" alt="" width="34" height="34">
+  <p><b>Interactive Deterrence</b> · Built by Jonathan Walberg. <a href="https://jwalberg.com/" target="_blank" rel="noopener">jwalberg.com</a></p>
+</footer>
+<dialog class="help" id="help" aria-labelledby="help-h">
+  <div class="help-in">
+    <h2 id="help-h">About this site</h2>
+    <h3>Why a password?</h3>
+    <p>Interactive Deterrence is a working research site. Its data files are encrypted, and your browser decrypts them after you enter the access password. The password never leaves your browser. For access, contact Jonathan Walberg through <a href="https://jwalberg.com/" target="_blank" rel="noopener">jwalberg.com</a>.</p>
+    <h3>Data policy</h3>
+    <p>Taiwan Strait counts and events come from the Taiwan Security Monitor's trackers and the official sources they cite, such as Taiwan's Ministry of National Defense and Coast Guard Administration. Every tool lists its sources. Where a model needs a value nobody publishes, the tool marks it <span class="notional">notional</span>. Nothing is invented, and nothing is targeting-grade.</p>
+    <h3>Keyboard</h3>
+    <ul><li><kbd>/</kbd> jumps to search; <kbd>Esc</kbd> clears it, <kbd>↓</kbd> or <kbd>Enter</kbd> moves to the first result.</li>
+      <li>Arrow keys move between tool cards and along the area bar. <kbd>Enter</kbd> opens a tool.</li>
+      <li><kbd>?</kbd> opens this panel.</li></ul>
+    <p><button type="button" class="btn solid" data-close>Close</button></p>
+  </div>
+</dialog>
+<script type="module" src="hub.js"></script>
+</body>
+</html>

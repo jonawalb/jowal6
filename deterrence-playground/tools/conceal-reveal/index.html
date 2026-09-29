@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Conceal or Reveal? | Interactive Deterrence</title>
+<meta name="description" content="An interactive version of Jonathan Walberg's signaling model of military technology disclosure: a state's capability and intent are private, and coercive types reveal while operational types conceal.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" crossorigin="anonymous">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="conceal-reveal.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<div class="toolbar-top">
+  <p class="lede">A state with a new weapon knows how good it is and what it is for. Its rival sees only whether the state shows it or hides it. Move the parameters and watch which states reveal, which conceal, and what the rival learns.</p>
+  <div class="actions">
+    <button type="button" class="btn solid" id="start-tour">Start the walkthrough</button>
+    <button type="button" class="btn" id="copy-link">Copy link to this setup</button>
+  </div>
+</div>
+
+<main class="layout">
+  <div class="stage" id="stage" aria-live="off"></div>
+  <aside class="panel" id="panel" aria-label="Parameters and equilibrium readout"></aside>
+</main>
+<div id="tour-root"></div>
+
+<section class="cases-wrap" id="cases" aria-label="Historical cases"></section>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>The tool implements the formal model in Jonathan Walberg’s <i>Secret Weapons</i> working paper. A Sender holds a military capability. Nature gives it a two-part type: capability, high or low, and intent, coercive or operational. A coercive state holds the weapon to make a rival change course, which only works if the rival knows. An operational state holds it to fight with, which works best if the rival does not. The Sender chooses to <b>reveal</b> or <b>conceal</b>. The Receiver sees only that choice, updates its beliefs by Bayes’ rule, and concedes or fights.</p>
+    <ul class="howto">
+      <li>The <b>type grid</b> shows what each of the four types does, how the Receiver answers, and what the type would get if it switched.</li>
+      <li>The <b>region map</b> colors each pair of parameter values by the equilibrium it produces. Dashed lines are the four conditions of Proposition 1. Switch the axes with the buttons above the map.</li>
+      <li>The <b>belief view</b> shows the Receiver’s prior over the four types, its beliefs after each signal, and the cutoff at which it fights.</li>
+      <li>The <b>checklist</b> in the side panel substitutes the current numbers into each condition.</li>
+      <li>The address bar stores every parameter, so a link reproduces the exact setup.</li>
+    </ul>
+    <h2 class="mt">Questions to try</h2>
+    <ol class="howto">
+      <li>Hold everything else fixed and lower V. Which type is the first to break the separation, and why that one?</li>
+      <li>Switch the map to Priors. Why does the intent-separating region sit above the diagonal, where coercive types are more likely to be strong?</li>
+      <li>Raise σ. Why does a larger surprise advantage make the Receiver less willing to fight a state that conceals?</li>
+    </ol>
+  </div>
+  <div class="col">
+    <h2>Sources</h2>
+    <ul class="src">
+      <li>Jonathan Walberg, “Secret Weapons: The Conceal-Reveal Dilemma of Military Technology,” working paper (dissertation prospectus draft, 29 September 2026), University of Virginia. The formal model and notation follow the working-paper draft “Secret Weapons: A Signaling Model of Military Technology Disclosure” (April 2026). Unpublished draft.</li>
+      <li>Brendan Rittenhouse Green and Austin Long, “Conceal or Reveal? Managing Clandestine Military Capabilities in Peacetime Competition,” <i>International Security</i> 44, no. 3 (Winter 2019/20): 48–83. <a href="https://doi.org/10.1162/isec_a_00367" target="_blank" rel="noopener">doi:10.1162/isec_a_00367</a></li>
+      <li>James D. Fearon, “Rationalist Explanations for War,” <i>International Organization</i> 49, no. 3 (1995): 379–414. <a href="https://doi.org/10.1017/S0020818300033324" target="_blank" rel="noopener">doi:10.1017/S0020818300033324</a></li>
+      <li>Branislav L. Slantchev, “Feigning Weakness,” <i>International Organization</i> 64, no. 3 (2010): 357–388. <a href="https://doi.org/10.1017/S002081831000010X" target="_blank" rel="noopener">doi:10.1017/S002081831000010X</a></li>
+      <li>In-Koo Cho and David M. Kreps, “Signaling Games and Stable Equilibria,” <i>Quarterly Journal of Economics</i> 102, no. 2 (1987): 179–221. <a href="https://doi.org/10.2307/1885060" target="_blank" rel="noopener">doi:10.2307/1885060</a></li>
+      <li>Thomas C. Schelling, <i>Arms and Influence</i> (Yale University Press, 1966). <a href="https://yalebooks.yale.edu/book/9780300246742/arms-and-influence/" target="_blank" rel="noopener">Yale University Press</a></li>
+      <li>Sources for each historical case are listed on its card.</li>
+    </ul>
+    <p class="fine mt">The model is a working draft and may change. Later drafts explore how easily a capability is countered once known, and the timing of disclosure; this tool implements the capability-and-intent version.</p>
+  </div>
+</section>
+
+<section class="below method" id="method">
+  <div class="col">
+    <h2>Method · The game</h2>
+    <p><b>Types.</b> The Sender’s type is \(\theta=(q,i)\) with capability \(q\in\{H,L\}\) and intent \(i\in\{C,O\}\) (coercive or operational), drawn from a common prior \(p_\theta&gt;0\). The tool writes the prior as \(\Pr(C)\), \(h_C=\Pr(H\mid C)\) and \(h_O=\Pr(H\mid O)\), which covers every such prior.</p>
+    <p><b>Moves.</b> The Sender sends \(s\in\{R,K\}\) (Reveal or Conceal). The Receiver observes \(s\), forms \(\mu(\theta\mid s)\), and chooses Concede \((C_0)\) or Fight \((F)\).</p>
+    <p><b>Payoffs.</b> With stake \(b\), war cost \(c\) for each side, win probability \(\pi_q\), surprise advantage \(\sigma\) under concealment, operational bonus \(V\) and revelation cost \(r\):</p>
+    $$\begin{aligned}u_S(C_0\mid s)&amp;=b-r\,\mathbf 1\{s=R\},\qquad u_R(C_0)=0,\\ u_S(F\mid\theta,s)&amp;=(\pi_q+\sigma\mathbf 1\{s=K\})\,b-c+V\,\mathbf 1\{i=O\}-r\,\mathbf 1\{s=R\},\\ u_R(F\mid q,s)&amp;=(1-\pi_q-\sigma\mathbf 1\{s=K\})\,b-c.\end{aligned}$$
+    <p><b>Receiver.</b> With \(\bar\pi_s=\sum_\theta\mu(\theta\mid s)\,\pi_{q(\theta)}\), the Receiver concedes iff \(c&gt;(1-\bar\pi_s-\sigma\mathbf 1\{s=K\})\,b\).</p>
+  </div>
+  <div class="col">
+    <h2>Method · Proposition 1</h2>
+    <p>Coercive types reveal and operational types conceal. On the path of play,</p>
+    $$\bar\pi_R=\frac{p_{HC}\pi_H+p_{LC}\pi_L}{p_{HC}+p_{LC}},\qquad \bar\pi_K=\frac{p_{HO}\pi_H+p_{LO}\pi_L}{p_{HO}+p_{LO}}.$$
+    <p>The profile is a perfect Bayesian equilibrium iff</p>
+    $$\begin{aligned}&amp;\text{(R-C)}\quad c&gt;(1-\bar\pi_R)\,b\\ &amp;\text{(R-F)}\quad c&lt;(1-\bar\pi_K-\sigma)\,b\\ &amp;\text{(IC-C)}\quad b-r\ge(\pi_H+\sigma)\,b-c\\ &amp;\text{(IC-O)}\quad(\pi_L+\sigma)\,b-c+V\ge b-r\end{aligned}$$
+    <p>The high-capability coercive type and the low-capability operational type are the binding cases. (R-C) and (R-F) hold together only when \(\bar\pi_R&gt;\bar\pi_K+\sigma\): the states that reveal must be stronger on average than those that conceal by more than the surprise edge.</p>
+    <p><b>The operational bonus.</b> Switching from Conceal to Reveal costs an operational type \(\sigma b+V\) in war payoff and a coercive type only \(\sigma b\). \(V\) enters (IC-O) alone, so it is the one parameter that moves the operational types’ incentive without touching anything else.</p>
+  </div>
+  <div class="col">
+    <h2>Method · What the tool adds</h2>
+    <p>The paper characterizes the intent-separating equilibrium and leaves the others for future work. To color the whole map, the tool checks all 16 pure Sender strategies at each point. On the path of play it applies Bayes’ rule; the Receiver fights when fighting pays at least zero. A signal nobody sends may be met with any response some belief would justify: Fight if fighting pays against the weakest Sender, Concede if conceding pays against the strongest. The tool does not apply the Intuitive Criterion or compute mixed strategies; where no pure equilibrium exists, the map says so.</p>
+    <p>Where several equilibria exist, the map shows the most informative, in this order: intent-separating, capability-separating, everyone conceals, everyone reveals, other patterns. The panel lists all of them and lets you pick which one the grid and belief view show. Pooling on concealment often coexists with the intent-separating equilibrium, supported by a Receiver that treats an unexpected reveal as a sign of weakness.</p>
+    <p><b>Notional values.</b> Every parameter value is <span class="notional">notional</span>. The model is ordinal: it says which way disclosure moves with intent, costs and beliefs, not what any real state’s numbers are. Case readings place episodes in the grid by the paper’s coding or, for cases the paper does not code, by this tool’s reading of the public record.</p>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Conceal or Reveal?', sub: 'Why states with similar weapons make opposite disclosure choices: a signaling game where capability and intent are both private.', category: 'Deterrence & signaling' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

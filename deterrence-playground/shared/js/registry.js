@@ -151,6 +151,10 @@ export const ALL_TOOLS = [
     blurb: 'Learn six manipulation techniques on invented posts, then see whether you tell manipulative posts from plain ones better, next to what the published Bad News studies found.' },
   { slug: 'sanctions-explorer', cat: 'coercion', sites: ['deterrence'], title: 'Sanctions Explorer', status: 'live',
     blurb: 'Sixty years of sanctions threats and impositions from the TIES dataset: filter by sender, target, objective and type, see how often the target gave in, and set that beside what the Global Sanctions Data Base authors report.' },
+  { slug: 'cost-ratio', cat: 'gametheory', sites: ['deterrence'], title: 'Cost Ratio Bargaining', status: 'live',
+    blurb: 'Hold the total cost of war fixed, shift who pays it, and watch the peaceful settlement move toward the side whose cost of fighting fell.' },
+  { slug: 'humiliation-motivation', cat: 'deterrence', also: ['gametheory'], sites: ['deterrence'], title: 'Humiliation to Motivation', status: 'live',
+    blurb: 'Past a severity threshold even weak states challenge the order that humiliated them, and a challenge stops telling the dominant power anything.' },
 ];
 
 export const onSite = (x, site = SITE) => !x.sites || x.sites.includes(site);

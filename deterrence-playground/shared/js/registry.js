@@ -73,7 +73,7 @@ export const ALL_TOOLS = [
     blurb: 'Thirty years of Taiwan Strait wind, wave, fog and typhoon records, tested against sea-state limits you set: which weeks allowed an amphibious crossing, and how the claimed April and October windows hold up.' },
   { slug: 'energy-blockade', sites: ['tsm'], cat: 'models', title: 'Energy Blockade Clock', status: 'live',
     blurb: 'Set a quarantine or blockade and watch Taiwan\'s LNG, coal and oil stocks run down, and who loses power first.' },
-  { slug: 'budget-allocator', cat: 'models', title: 'Defense Budget Allocator', status: 'live',
+  { slug: 'budget-allocator', siteBlurb: { tsm: 'Spend Taiwan\'s NT$145.7bn supplementary defense line, or bigger, and test the mix against a notional crossing model.' }, cat: 'models', title: 'Defense Budget Allocator', status: 'live',
     blurb: "Spend Taiwan's NT$145.7bn supplementary defense line, or Japan's, the Philippines' or Poland's real defense budgets, and test the mix against a notional model of an attack on each." },
   { slug: 'mine-warfare', sites: ['tsm'], cat: 'models', title: 'Mine Warfare Simulator', status: 'live',
     blurb: 'Lay a minefield off a generic beach, choose how the PLA clears it, and see what mines do to a landing\'s timing and cost.' },
@@ -180,7 +180,8 @@ export const onSite = (x, site = SITE) => !x.sites || x.sites.includes(site);
 export const catOn = (t, site = SITE) => (t.siteCat && t.siteCat[site]) || t.cat;
 const ORDER = { deterrence: ['deterrence', 'gametheory', 'nuclear', 'ukraine', 'mideast', 'infowar', 'rhetoric', 'coercion', 'models', 'tsm'] };
 // `also` lists extra categories a tool appears in; `cats` is its primary category plus those.
-export const TOOLS = ALL_TOOLS.filter(t => onSite(t)).map(t => ({ ...t, cat: catOn(t), cats: [catOn(t), ...(t.also || [])] }));
+export const TOOLS = ALL_TOOLS.filter(t => onSite(t)).map(t => ({ ...t, cat: catOn(t), cats: [catOn(t), ...(t.also || [])],
+  blurb: (t.siteBlurb && t.siteBlurb[SITE]) || t.blurb }));
 export const inCat = (t, id) => t.cats.includes(id);
 const rank = c => (ORDER[SITE] ? ORDER[SITE].indexOf(c.id) : -1);
 // Only categories with a tool on this site; the deterrence site uses its own order.

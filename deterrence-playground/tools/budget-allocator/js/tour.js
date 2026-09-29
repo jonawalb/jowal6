@@ -1,4 +1,5 @@
 // Guided walkthrough: a fixed sequence of allocator states with short explanations.
+// STEPS is Taiwan's walkthrough; other countries carry their own `tour` array in their profile.
 export const STEPS = [
   { title: 'Start with the real money',
     body: 'On September 3, 2026 the cabinet asked for NT$145.7bn in defense spending as part of a supplementary budget. Mapped onto this model, about a third goes to drones and uncrewed boats, and almost half sits in classified programs and personnel lines the model cannot score.',
@@ -20,8 +21,8 @@ export const STEPS = [
     set: { b: 's1250', preset: 'porcupine', supp: 0.6, warn: 5 } },
 ];
 
-export function createTour(root, apply) {
-  let i = -1;
+export function createTour(root, apply, getSteps = () => STEPS) {
+  let i = -1, steps = getSteps();
   const card = document.createElement('div');
   card.className = 'tour';
   card.hidden = true;
@@ -29,20 +30,20 @@ export function createTour(root, apply) {
   card.setAttribute('aria-label', 'Guided walkthrough');
   root.appendChild(card);
   const show = () => {
-    const s = STEPS[i];
+    const s = steps[i];
     apply(s.set);
-    card.innerHTML = `<div class="tour-h"><span>Walkthrough ${i + 1} / ${STEPS.length}</span><button type="button" class="x" aria-label="Close walkthrough">×</button></div>
+    card.innerHTML = `<div class="tour-h"><span>Walkthrough ${i + 1} / ${steps.length}</span><button type="button" class="x" aria-label="Close walkthrough">×</button></div>
       <h3>${s.title}</h3><p>${s.body}</p>
       <div class="tour-nav"><button type="button" class="btn" ${i === 0 ? 'disabled' : ''} data-d="-1">Back</button>
-      <button type="button" class="btn solid" data-d="1">${i === STEPS.length - 1 ? 'Finish' : 'Next'}</button></div>`;
+      <button type="button" class="btn solid" data-d="1">${i === steps.length - 1 ? 'Finish' : 'Next'}</button></div>`;
     card.querySelector('.x').onclick = stop;
     card.querySelectorAll('[data-d]').forEach(b => b.onclick = () => {
       const n = i + Number(b.dataset.d);
-      if (n >= STEPS.length) stop(); else { i = n; show(); }
+      if (n >= steps.length) stop(); else { i = n; show(); }
     });
     card.querySelector('.solid').focus();
   };
-  const start = () => { i = 0; card.hidden = false; show(); };
+  const start = () => { steps = getSteps(); i = 0; card.hidden = false; show(); };
   const stop = () => { card.hidden = true; i = -1; };
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !card.hidden) stop(); });
   return { start, stop };

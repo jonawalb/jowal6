@@ -1,16 +1,18 @@
 // Allocation controls: a draggable stacked bar and one slider per category, locked to the total.
-import { CATS } from '../data/categories.js';
+import { ctx } from './ctx.js';
 
 export const fmtBn = v => v >= 1000 ? Math.round(v).toLocaleString('en-US') : v >= 10 ? v.toFixed(1) : v.toFixed(2);
+/** Money in the active country's currency, e.g. "NT$145.7bn". */
+export const money = bn => ctx.P.money(bn);
 
 /** Change one share and rebalance the unlocked others so the total stays at 1. Returns a new object. */
 export function setShare(shares, locks, id, v) {
   const s = { ...shares };
-  const lockedSum = CATS.filter(c => c.id !== id && locks[c.id]).reduce((a, c) => a + s[c.id], 0);
+  const lockedSum = ctx.cats.filter(c => c.id !== id && locks[c.id]).reduce((a, c) => a + s[c.id], 0);
   v = Math.max(0, Math.min(1 - lockedSum, v));
   let delta = v - s[id];
   s[id] = v;
-  const pool = CATS.filter(c => c.id !== id && !locks[c.id]);
+  const pool = ctx.cats.filter(c => c.id !== id && !locks[c.id]);
   if (!pool.length) { s[id] -= delta; return s; }
   if (delta > 0) {
     // take from the others in proportion to what they hold
@@ -31,13 +33,13 @@ export function setShare(shares, locks, id, v) {
 }
 
 export function normalize(s) {
-  const t = CATS.reduce((a, c) => a + Math.max(0, s[c.id] || 0), 0) || 1;
-  return Object.fromEntries(CATS.map(c => [c.id, Math.max(0, s[c.id] || 0) / t]));
+  const t = ctx.cats.reduce((a, c) => a + Math.max(0, s[c.id] || 0), 0) || 1;
+  return Object.fromEntries(ctx.cats.map(c => [c.id, Math.max(0, s[c.id] || 0) / t]));
 }
 
 /** Render a static stacked bar (used for references and comparison rows). */
 export function barHtml(shares, { labels = false } = {}) {
-  return `<div class="sbar">${CATS.filter(c => shares[c.id] > 0.0005).map(c =>
+  return `<div class="sbar">${ctx.cats.filter(c => shares[c.id] > 0.0005).map(c =>
     `<span style="flex:${shares[c.id]};background:var(${c.col})" title="${c.t}: ${Math.round(shares[c.id] * 100)}%">${labels && shares[c.id] > 0.07 ? Math.round(shares[c.id] * 100) + '%' : ''}</span>`).join('')}</div>`;
 }
 
@@ -45,16 +47,16 @@ export function barHtml(shares, { labels = false } = {}) {
 export function mountDragBar(el, get, onChange) {
   const draw = () => {
     const s = get().shares;
-    el.innerHTML = CATS.map(c => { const w = s[c.id]; return `<span class="seg" style="flex:${w};background:var(${c.col})" data-id="${c.id}">${w > 0.06 ? Math.round(w * 100) + '%' : ''}</span>`; }).join('')
-      + CATS.slice(0, -1).map((c, i) => { const x = CATS.slice(0, i + 1).reduce((a, d) => a + s[d.id], 0); return `<i class="grip" style="left:${x * 100}%" data-i="${i}"></i>`; }).join('');
+    el.innerHTML = ctx.cats.map(c => { const w = s[c.id]; return `<span class="seg" style="flex:${w};background:var(${c.col})" data-id="${c.id}">${w > 0.06 ? Math.round(w * 100) + '%' : ''}</span>`; }).join('')
+      + ctx.cats.slice(0, -1).map((c, i) => { const x = ctx.cats.slice(0, i + 1).reduce((a, d) => a + s[d.id], 0); return `<i class="grip" style="left:${x * 100}%" data-i="${i}"></i>`; }).join('');
   };
   let drag = null;
-  const edges = s => { const e = [0]; CATS.forEach(c => e.push(e[e.length - 1] + s[c.id])); return e; };
+  const edges = s => { const e = [0]; ctx.cats.forEach(c => e.push(e[e.length - 1] + s[c.id])); return e; };
   el.addEventListener('pointerdown', ev => {
     const r = el.getBoundingClientRect(), x = (ev.clientX - r.left) / r.width;
     const e = edges(get().shares);
     let best = -1, bd = 0.03;
-    for (let i = 1; i < CATS.length; i++) {
+    for (let i = 1; i < ctx.cats.length; i++) {
       const d = Math.abs(e[i] - x);
       // among coincident boundaries prefer the one whose left segment we are dragging into
       if (d < bd || (d === bd && best >= 0)) { bd = d; best = i; }
@@ -68,7 +70,7 @@ export function mountDragBar(el, get, onChange) {
     if (!drag) return;
     const x = Math.max(0, Math.min(1, (ev.clientX - drag.r.left) / drag.r.width));
     const s = { ...get().shares }, e = edges(s), i = drag.i;
-    const a = CATS[i - 1].id, b = CATS[i].id;
+    const a = ctx.cats[i - 1].id, b = ctx.cats[i].id;
     const lo = e[i - 1], hi = e[i + 1];
     const nx = Math.max(lo, Math.min(hi, x));
     s[a] = nx - lo; s[b] = hi - nx;
@@ -82,7 +84,9 @@ export function mountDragBar(el, get, onChange) {
 
 /** Slider rows. */
 export function mountSliders(el, get, onShare, onLock) {
-  el.innerHTML = CATS.map(c => `
+  const build = () => {
+  el.dataset.k = ctx.P.k;
+  el.innerHTML = ctx.cats.map(c => `
     <div class="arow" data-id="${c.id}">
       <div class="arow-h">
         <span class="sw8" style="background:var(${c.col})"></span>
@@ -92,18 +96,20 @@ export function mountSliders(el, get, onShare, onLock) {
       <input type="range" id="al-${c.id}" min="0" max="1000" step="1">
       <div class="arow-f"><output id="ao-${c.id}" class="num"></output><small id="au-${c.id}"></small></div>
     </div>`).join('');
-  CATS.forEach(c => {
+  ctx.cats.forEach(c => {
     const i = el.querySelector('#al-' + c.id);
     i.addEventListener('input', () => onShare(c.id, +i.value / 1000));
   });
   el.querySelectorAll('.lock').forEach(b => b.addEventListener('click', () => onLock(b.dataset.id)));
+  };
   const draw = () => {
+    if (el.dataset.k !== ctx.P.k) build();
     const { shares, total, locks } = get();
-    CATS.forEach(c => {
+    ctx.cats.forEach(c => {
       const bn = shares[c.id] * total;
       el.querySelector('#al-' + c.id).value = Math.round(shares[c.id] * 1000);
-      el.querySelector('#ao-' + c.id).textContent = `NT$${fmtBn(bn)}bn · ${Math.round(shares[c.id] * 100)}%`;
-      el.querySelector('#au-' + c.id).innerHTML = c.cost ? `≈ ${Math.floor(bn / c.cost).toLocaleString('en-US')} × ${c.unit} <span class="notional">notional</span>` : 'no effect in the model';
+      el.querySelector('#ao-' + c.id).textContent = `${money(bn)} · ${Math.round(shares[c.id] * 100)}%`;
+      el.querySelector('#au-' + c.id).innerHTML = c.cost ? `≈ ${c.src && bn / c.cost < 1 ? (bn / c.cost).toFixed(2) : Math.floor(bn / c.cost).toLocaleString('en-US')} × ${c.unit} ${c.src ? `<span class="cited" title="Unit cost from a cited source; see the menu table below">${c.est ? 'cited, est.' : 'cited'}</span>` : '<span class="notional">notional</span>'}` : 'no effect in the model';
       const lb = el.querySelector(`.lock[data-id="${c.id}"]`);
       lb.setAttribute('aria-pressed', !!locks[c.id]);
       lb.textContent = locks[c.id] ? 'locked' : 'lock';

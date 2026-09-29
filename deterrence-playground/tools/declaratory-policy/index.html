@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Who Promises What | Interactive Deterrence</title>
+<meta name="description" content="The declared nuclear policies of the nine nuclear-armed states, quoted from primary documents: no-first-use, negative security assurances, sole purpose, conditions for use and alert posture.">
+<meta property="og:title" content="Who Promises What | Interactive Deterrence">
+<meta property="og:description" content="Nine nuclear-armed states, five kinds of promise, every cell quoted from a primary document with its date, and 'not declared' where a state has said nothing.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="declaratory-policy.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+<main class="layout">
+  <div class="stage">
+    <div class="card dp-card" id="matrix-card">
+      <div class="dp-head">
+        <h2>Declared policy, state by state</h2>
+        <div class="dp-actions">
+          <button type="button" class="btn solid" id="start-tour">Start the walkthrough</button>
+          <button type="button" class="btn" id="reset">Reset</button>
+          <button type="button" class="btn" id="copy-link">Copy link</button>
+        </div>
+      </div>
+      <p class="fine">Every cell quotes an official document. Click a cell for the full text, its source and earlier wording. Hatched cells are "Not declared": no official statement on that element was found, and none is inferred.</p>
+      <div class="dp-matrixwrap" id="matrix"></div>
+    </div>
+  </div>
+  <aside class="panel" aria-label="Year, filters and selected statement">
+    <div class="sec">
+      <p class="eyebrow">Policy on record as of</p>
+      <div class="dp-yearrow"><p class="dp-year num" id="asof-out">2026</p><span class="dp-kpi num" id="k-decl"></span></div>
+      <input type="range" id="asof" step="1" aria-label="Year the matrix shows">
+      <p class="fine" id="k-note"></p>
+    </div>
+    <div class="sec" aria-live="polite" id="detail"></div>
+    <div class="sec">
+      <p class="eyebrow">States</p>
+      <div class="dp-quick"><button type="button" class="btn" data-quick="all">All nine</button><button type="button" class="btn" data-quick="npt">NPT nuclear-weapon states</button><button type="button" class="btn" data-quick="non">Outside the NPT</button></div>
+      <div class="choices" id="f-states" role="group" aria-label="States shown"></div>
+    </div>
+    <div class="sec">
+      <p class="eyebrow">Policy elements</p>
+      <div id="f-els"></div>
+    </div>
+    <div class="sec">
+      <label class="eyebrow" for="q">Search the quotes</label>
+      <input type="search" id="q" class="dp-search" placeholder="e.g. vital interests, retaliation" autocomplete="off">
+      <label class="tg"><input type="checkbox" id="full"><span class="sw"></span><span class="t">Full quotes in the matrix<small>Otherwise cells show the first line; the panel always has the full text.</small></span></label>
+    </div>
+  </aside>
+</main>
+
+<div class="dp-lower">
+  <section class="card dp-card" id="timeline-card" aria-labelledby="tl-h">
+    <div class="dp-sub"><h2 id="tl-h">Timeline of changes</h2><p class="fine">Drag across to set the year. Click a marker for the document.</p></div>
+    <div class="dp-tl" id="timeline"></div>
+    <div id="ev-card"></div>
+  </section>
+  <section class="card dp-card" id="compare-card" aria-labelledby="cmp-h">
+    <div class="dp-sub"><h2 id="cmp-h">Compare two states, as of <span id="cmp-year" class="num">2026</span></h2>
+      <div class="dp-cmp-pick">
+        <label class="fine" for="cmp-a">First</label><select id="cmp-a"></select>
+        <button type="button" class="btn" id="swap" aria-label="Swap the two states">Swap</button>
+        <label class="fine" for="cmp-b">Second</label><select id="cmp-b"></select>
+      </div>
+    </div>
+    <div id="compare"></div>
+  </section>
+</div>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>Declaratory policy is what a government says, in an official document, about when it would or would not use nuclear weapons. It is not the same as war plans, which no state publishes, and a promise can be withdrawn. The matrix records the words and their dates, and leaves judgment about credibility to the reader.</p>
+    <p>The five columns are: <b>no first use</b> (a pledge never to be the first to use nuclear weapons, or an explicit refusal to make one); <b>negative security assurances</b> (promises not to use nuclear weapons against states without them); <b>role</b> (sole purpose, fundamental role or similar statements of what the weapons are for); <b>conditions for use</b>; and <b>alert posture</b> (official statements about readiness). The short label on each cell is a finding aid; the quote is the evidence.</p>
+    <p>Move the year slider or drag the timeline to see what was on record at an earlier date. A cell reads "Not declared" when no official statement on that element was found up to that year.</p>
+    <h3>Method</h3>
+    <ul class="src" id="method">
+      <li>Every quote was copied from the official text and checked word for word against a saved copy of the source on 2026-09-29, after normalizing spaces, curly quotes and dashes. "…" marks a skip or the join between two passages of one document. Official English translations are used for Russia, China, France and North Korea; North Korean texts are KCNA's English versions from the kcna.co.jp mirror.</li>
+      <li>A cell shows the latest formal document on each element dated on or before the chosen year. Later statements that comment on a doctrine without replacing it, such as India's Defence Minister in 2019, appear in the cell's history in the panel. Superseded documents stay in the history too.</li>
+      <li>"Not declared" means no official statement on that element was found in the documents listed in the panel note. "None quoted before" means this tool quotes nothing earlier, although earlier documents may exist; the timeline lists some that are not quoted. Nothing is inferred from silence.</li>
+      <li>The short labels are this tool's finding aids. Where a label could be read as a pledge, the quote decides: Israel's "not the first to introduce" formula, for example, is not a no-first-use pledge, and Pakistan's 2016 statement backs a treaty on assurances without giving one.</li>
+      <li>Some official sites refuse automated requests (media.defense.gov, mid.ru, mea.gov.in text, ispr.gov.pk); archived copies are linked where they were used. Pakistan's military press releases, where National Command Authority statements appear, could not be reached, so Pakistan's row may be incomplete. Israel's government sites were not searched; the Israel entries come from U.S. records in <i>Foreign Relations of the United States</i>.</li>
+      <li>Data: <code>data/policies.js</code>, built by <code>scripts/build_data.py</code> from the verified records in <code>scripts/verified/</code>.</li>
+    </ul>
+  </div>
+  <div class="col">
+    <h2>Sources</h2>
+    <ul class="src" id="sources">
+      <li><b>United States.</b> <a href="https://media.defense.gov/2018/Feb/02/2001872886/-1/-1/1/2018-NUCLEAR-POSTURE-REVIEW-FINAL-REPORT.PDF" target="_blank" rel="noopener">2018 Nuclear Posture Review</a> (2018-02-02), <a href="http://web.archive.org/web/20250306123228/https://media.defense.gov/2018/Feb/02/2001872886/-1/-1/1/2018-nuclear-posture-review-final-report.pdf" target="_blank" rel="noopener">archived copy</a>; <a href="https://media.defense.gov/2022/Oct/27/2003103845/-1/-1/1/2022-NATIONAL-DEFENSE-STRATEGY-NPR-MDR.PDF" target="_blank" rel="noopener">2022 Nuclear Posture Review (in 2022 National Defense Strategy, incl. NPR and MDR)</a> (2022-10-27), <a href="https://web.archive.org/web/2026/https://media.defense.gov/2022/Oct/27/2003103845/-1/-1/1/2022-NATIONAL-DEFENSE-STRATEGY-NPR-MDR.PDF" target="_blank" rel="noopener">archived copy</a>.</li>
+      <li><b>Russia.</b> <a href="https://www.mid.ru/en/foreign_policy/international_safety/1434131/" target="_blank" rel="noopener">Basic Principles of State Policy of the Russian Federation on Nuclear Deterrence (Executive Order No. 355)</a> (2020-06-02), <a href="https://web.archive.org/web/20231126221306/https://www.mid.ru/en/foreign_policy/international_safety/1434131/" target="_blank" rel="noopener">archived copy</a>; <a href="https://mid.ru/en/foreign_policy/international_safety/1434131/" target="_blank" rel="noopener">Fundamentals of State Policy of the Russian Federation on Nuclear Deterrence (Executive Order No. 991)</a> (2024-11-19).</li>
+      <li><b>United Kingdom.</b> <a href="https://www.gov.uk/government/publications/global-britain-in-a-competitive-age-the-integrated-review-of-security-defence-development-and-foreign-policy/global-britain-in-a-competitive-age-the-integrated-review-of-security-defence-development-and-foreign-policy" target="_blank" rel="noopener">Global Britain in a Competitive Age: the Integrated Review of Security, Defence, Development and Foreign Policy</a> (2021-03-16); <a href="https://www.gov.uk/government/publications/integrated-review-refresh-2023-responding-to-a-more-contested-and-volatile-world/integrated-review-refresh-2023-responding-to-a-more-contested-and-volatile-world" target="_blank" rel="noopener">Integrated Review Refresh 2023: Responding to a more contested and volatile world</a> (2023-03-13); <a href="https://assets.publishing.service.gov.uk/media/683d89f181deb72cce2680a5/The_Strategic_Defence_Review_2025_-_Making_Britain_Safer_-_secure_at_home__strong_abroad.pdf" target="_blank" rel="noopener">The Strategic Defence Review 2025: Making Britain Safer (Box 10: UK nuclear policy)</a> (2025-06-02).</li>
+      <li><b>France.</b> <a href="https://www.elysee.fr/en/emmanuel-macron/2020/02/07/speech-of-the-president-of-the-republic-on-the-defense-and-deterrence-strategy" target="_blank" rel="noopener">Speech of the President of the Republic on the Defense and Deterrence Strategy (Ecole de Guerre)</a> (2020-02-07); <a href="https://www.elysee.fr/en/emmanuel-macron/2026/03/02/visit-to-the-ile-longue-operational-base" target="_blank" rel="noopener">Visit to the Ile Longue Operational Base: speech on nuclear deterrence (&quot;forward deterrence&quot;)</a> (2026-03-02).</li>
+      <li><b>China.</b> <a href="http://english.www.gov.cn/archive/whitepaper/201907/24/content_WS5d3941ddc6d08408f502283d.html" target="_blank" rel="noopener">China&#x27;s National Defense in the New Era (white paper)</a> (2019-07-24); <a href="https://www.fmprc.gov.cn/eng/zy/wjzc/202511/t20251127_11761656.html" target="_blank" rel="noopener">China&#x27;s Arms Control, Disarmament, and Nonproliferation in the New Era (white paper)</a> (2025-11-27).</li>
+      <li><b>India.</b> <a href="https://mea.gov.in/in-focus-article.htm?18916/Draft+Report+of+National+Security+Advisory+Board+on+Indian+Nuclear+Doctrine" target="_blank" rel="noopener">Draft Report of National Security Advisory Board on Indian Nuclear Doctrine</a> (1999-08-17), <a href="https://web.archive.org/web/20200107144129/https://mea.gov.in/in-focus-article.htm?18916/Draft+Report+of+National+Security+Advisory+Board+on+Indian+Nuclear+Doctrine" target="_blank" rel="noopener">archived copy</a>; <a href="https://www.mea.gov.in/press-releases.htm?dtl/20131/The+Cabinet+Committee+on+Security+Reviews+perationalization+of+Indias+Nuclear+Doctrine" target="_blank" rel="noopener">CCS press release &#x27;The Cabinet Committee on Security Reviews perationalization of India&#x27;s Nuclear Doctrine&#x27;</a> (2003-01-04), <a href="https://web.archive.org/web/20200110033429/https://www.mea.gov.in/press-releases.htm?dtl/20131/The+Cabinet+Committee+on+Security+Reviews+perationalization+of+Indias+Nuclear+Doctrine" target="_blank" rel="noopener">archived copy</a>; <a href="https://pib.gov.in/PressReleasePage.aspx?PRID=1582158" target="_blank" rel="noopener">PIB release &#x27;Raksha Mantri Shri Rajnath Singh pays homage to former Prime Minister Atal Bihari Vajpayee in Pokhran on his first death anniversary&#x27; (Release ID 1582158)</a> (2019-08-16).</li>
+      <li><b>Pakistan.</b> <a href="https://mofa.gov.pk/press-releases/response-to-david-ignatius-article-in-washington-post-06-october-2015" target="_blank" rel="noopener">MOFA press release: Response to David Ignatius article in Washington Post</a> (2015-10-07); <a href="https://mofa.gov.pk/press-releases/statement-by-special-assistant-to-the-prime-minister-on-foreign-affairs-mr-tariq-fatemi-at-the-conference-on-disarmament-plenary-meeting-geneva-17-may-2016" target="_blank" rel="noopener">Statement by Special Assistant to the PM on Foreign Affairs Tariq Fatemi at the Conference on Disarmament plenary, Geneva</a> (2016-05-17); <a href="https://mofa.gov.pk/press-releases/foreign-ministers-remarks-strategic-stability-in-south-asia-emerging-challenges-10th-april-2019" target="_blank" rel="noopener">MOFA: Foreign Minister&#x27;s remarks &#x27;Strategic Stability in South Asia: Emerging Challenges&#x27; (CISS)</a> (2019-04-10); <a href="https://mofa.gov.pk/press-releases/in-response-to-a-question-on-the-statement-made-by-the-indian-defence-minister-the-spokesperson-stated-the-following" target="_blank" rel="noopener">MOFA press release: Spokesperson response to a question on the statement made by the Indian Defence Minister</a> (2019-08-16).</li>
+      <li><b>Israel.</b> <a href="https://history.state.gov/historicaldocuments/frus1964-68v18/d185" target="_blank" rel="noopener">FRUS 1964-1968, Vol. XVIII, Document 185: Telegram 1152 from Embassy in Israel to Department of State transmitting text of signed U.S.-Israel Memorandum of Understanding</a> (1965-03-11); <a href="https://history.state.gov/historicaldocuments/frus1964-68v20/d309" target="_blank" rel="noopener">FRUS 1964-1968, Vol. XX, Document 309: Memorandum of Conversation (Rabin-Warnke), Washington</a> (1968-11-08).</li>
+      <li><b>North Korea.</b> <a href="http://www.kcna.co.jp/item/2013/201304/news01/20130401-25ee.html" target="_blank" rel="noopener">SPA ordinance/law on consolidating the position of nuclear weapons state for self-defence (KCNA: &#x27;Law on Consolidating Position of Nuclear Weapons State Adopted&#x27;)</a> (2013-04-01); <a href="http://www.kcna.co.jp/item/2016/201605/news08/20160508-14ee.html" target="_blank" rel="noopener">Decision of the Seventh Congress of the WPK &#x27;On the review of the work of the Central Committee of the WPK&#x27; (KCNA)</a> (2016-05-08); <a href="http://www.kcna.co.jp/item/2022/202209/news09/20220909-02ee.html" target="_blank" rel="noopener">Law of the SPA &#x27;On the State Policy on the Nuclear Forces&#x27; (KCNA English: &#x27;Law on DPRK&#x27;s Policy on Nuclear Forces Promulgated&#x27;)</a> (2022-09-08); <a href="http://www.kcna.co.jp/item/2023/202309/news28/20230928-01ee.html" target="_blank" rel="noopener">KCNA: &#x27;Respected Comrade Kim Jong Un Makes Speech at 9th Session of 14th SPA&#x27;</a> (2023-09-27).</li>
+      <li><b>Timeline only.</b> <a href="https://mofa.gov.pk/press-releases/twenty-years-of-resolve-restraint-and-responsibility" target="_blank" rel="noopener">Pakistan nuclear tests</a> (1998-05-28); <a href="http://kremlin.ru/acts/bank/30593" target="_blank" rel="noopener">Military Doctrine of the Russian Federation (Decree No. 146)</a> (2010-02-05); <a href="http://web.archive.org/web/20250308232010/https://dod.defense.gov/Portals/1/features/defenseReviews/NPR/2010_Nuclear_Posture_Review_Report.pdf" target="_blank" rel="noopener">2010 Nuclear Posture Review</a> (2010-04-06); <a href="http://kremlin.ru/acts/bank/39211" target="_blank" rel="noopener">New edition of the Military Doctrine approved; 2010 doctrine repealed (Decree No. 815)</a> (2014-12-25); <a href="https://web.archive.org/web/20231126221306/https://www.mid.ru/en/foreign_policy/international_safety/1434131/" target="_blank" rel="noopener">Basic Principles of State Policy on Nuclear Deterrence (Executive Order No. 355)</a> (2020-06-02); <a href="https://bidenwhitehouse.archives.gov/briefing-room/statements-releases/2022/01/03/p5-statement-on-preventing-nuclear-war-and-avoiding-arms-races/" target="_blank" rel="noopener">P5 Joint Statement on Preventing Nuclear War and Avoiding Arms Races</a> (2022-01-03); <a href="https://www.elysee.fr/emmanuel-macron/2025/07/10/declaration-de-la-republique-francaise-et-du-royaume-uni-de-grande-bretagne-et-dirlande-du-nord-sur-la-politique-et-la-cooperation-nucleaire" target="_blank" rel="noopener">France-UK declaration on nuclear policy and cooperation (Northwood)</a> (2025-07-10); <a href="https://media.defense.gov/2026/Jan/23/2003864773/-1/-1/0/2026-NATIONALDEFENSE-STRATEGY.PDF" target="_blank" rel="noopener">2026 National Defense Strategy</a> (2026-01-23).</li>
+    </ul>
+  </div>
+</section>
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Who Promises What', sub: 'The declared nuclear policies of the nine nuclear-armed states, in their own words.', category: 'Nuclear weapons & arms control' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

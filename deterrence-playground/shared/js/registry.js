@@ -139,6 +139,10 @@ export const ALL_TOOLS = [
     blurb: 'Plan a conventional campaign against satellites, command links, launchers and bases that also serve nuclear forces, and watch use-or-lose pressure, misread warning and the fog of war push a notional escalation risk up, then test the fixes the literature proposes.' },
   { slug: 'warhead-ambiguity', cat: 'nuclear', sites: ['deterrence'], title: 'Is It a Nuke?', status: 'live',
     blurb: 'Your sensors report an incoming missile that could carry either warhead: update on context, launch site and trajectory, then wait, hit back conventionally or launch on warning, and see how priors and entanglement produce false alarms.' },
+  { slug: 'nuclear-tests', cat: 'nuclear', sites: ['deterrence'], title: 'Every Nuclear Test', status: 'live',
+    blurb: 'Scrub through all 2,056 nuclear tests since Trinity by state, environment, yield and test site, reconciled against the ACA, SIPRI and DOE counts and the treaties that drove testing underground and then stopped it.' },
+  { slug: 'declaratory-policy', cat: 'nuclear', sites: ['deterrence'], title: 'Who Promises What', status: 'live',
+    blurb: "No-first-use pledges, assurances, red lines and alert postures for all nine nuclear-armed states, quoted from their own documents and dated, with 'not declared' where a state has said nothing." },
 ];
 
 export const onSite = (x, site = SITE) => !x.sites || x.sites.includes(site);

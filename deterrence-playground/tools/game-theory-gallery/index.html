@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Game Theory Gallery | Interactive Deterrence</title>
+<meta name="description" content="Eight classic game-theory models of war, crisis and cooperation, from Fearon's bargaining range to Schelling's brinkmanship, built as interactives you can move. Change a cost, a belief or a balance of power and watch the equilibrium respond, with every result tied to the page of the original article.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" crossorigin="anonymous">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="game-theory-gallery.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<div class="toolbar-top">
+  <p class="lede">Pick a model. Each one is built from the original article, with its notation and results cited to the page.</p>
+  <div class="actions">
+    <button type="button" class="btn solid" id="start-tour">Start the walkthrough</button>
+    <button type="button" class="btn" id="copy-link">Copy link to this setup</button>
+  </div>
+</div>
+<nav class="picker" id="picker" aria-label="Choose a model"></nav>
+
+<main class="layout">
+  <div class="stage" id="stage"></div>
+  <aside class="panel" id="panel" aria-label="Equilibrium, parameters and readout"></aside>
+</main>
+<div id="tour-root"></div>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>Each card opens one model. The top of the page describes the setup in plain language, the figures show the game and its equilibrium, and the panel on the right reports the equilibrium, explains what your last change did, and holds the sliders. Some models have several parts, shown as tabs under the title.</p>
+    <ul class="howto">
+      <li><b>Equilibrium</b> is what rational players do given the rules and payoffs you set. Green means the model predicts a peaceful or cooperative outcome, amber a risk of conflict, red a breakdown.</li>
+      <li><b>What changed and why</b> names the value you moved, the outcomes that shifted, and the mechanism in the article that explains the shift.</li>
+      <li>Plots marked “click or drag” let you move the point directly.</li>
+      <li><b>Try this</b> prompts load a setup that shows one of the paper’s main results. <b>Historical illustrations</b> are the authors’ own examples, cited to the page; the models are not fitted to them.</li>
+      <li>All payoffs, costs and probabilities are abstract. Numbers that stand in for an ordinal ranking or a shape the author left unspecified are marked <span class="notional">notional</span>.</li>
+      <li>The address bar stores the model and every parameter, so a link reproduces the exact setup.</li>
+    </ul>
+    <h2 class="mt">Related tool</h2>
+    <p>Fearon’s 1997 comparison of tying hands and sinking costs is already built as module B of the <a href="../deterrence-lab-general/#m=B">Deterrence Lab</a>, so it is not repeated here. The Deterrence Lab’s audience-cost module is a two-type, one-round simplification; the audience-cost model in this gallery is Fearon’s 1994 war of attrition itself.</p>
+    <h2 class="mt">What we simplified, and what we left out</h2>
+    <ul class="howto">
+      <li><b>Fearon 1995.</b> Risk-neutral states only; the article also allows risk aversion. For Claim 2 we draw B’s cost from a uniform distribution, one case of the general distribution Fearon allows. In the preventive-war part, A’s later demand is capped at 1 when the formula would exceed it.</li>
+      <li><b>Powell 2006.</b> In the strategic-territory part only the jump in p matters; the straight lines drawn on either side of it are notional. The guns-versus-butter mechanism (pp. 192-194) is described in the article but not built here.</li>
+      <li><b>Brinkmanship.</b> We could not open Powell’s 1990 book or his 2015 article, in which states choose the level of risk directly, so neither is implemented. The model here is Powell 1987, where each escalation adds a fixed increment of risk. Payoffs are rescaled so that prevailing = 1 and disaster = 0 for each state, which leaves every equilibrium unchanged. When both states can make the same number of bids, the tool resolves the tie by backward induction (I makes the last bid and prevails); Proposition 1 states only the strict cases.</li>
+      <li><b>Fearon 1994.</b> Linear audience costs and uniform priors on each state’s value for war; the article’s propositions hold for general distributions. The article reports each side’s odds of backing down; the stacked bar of who backs down first is our calculation from the equilibrium distributions.</li>
+      <li><b>Jervis 1978.</b> The article ranks outcomes but gives no numbers, so the payoffs are notional. The expected-value comparison formalizes his statement on p. 179; the “wait and see” switch formalizes p. 172; the repeated-game threshold is the textbook grim-trigger result, not Jervis’s. The four worlds are shown as he describes them, without numbers.</li>
+      <li><b>Kydd 2000.</b> Only the separating (reassurance) equilibrium is computed. Kydd’s four pooling equilibria are characterized in a formal supplement we did not obtain, so the tool says when the separating equilibrium fails rather than naming which pooling equilibrium takes over. We did not use his 2005 book.</li>
+      <li><b>Slantchev 2003.</b> The tool computes the separating equilibrium of Proposition 2 and checks the appendix’s conditions for it, including the one Slantchev checks numerically. When they fail, it does not compute the semi-separating or pooling equilibria the paper mentions but does not characterize.</li>
+    </ul>
+    <h2 class="mt">Sources</h2>
+    <p class="fine">Every source below except Fearon 1997, which the Deterrence Lab covers, was opened and read for this tool; results are cited to the printed page. No outside data are used.</p>
+    <ol class="src" id="sources"></ol>
+  </div>
+  <div class="col method">
+    <h2>Method</h2>
+    <p><b>Fearon 1995.</b> Issue \(x\in[0,1]\). War gives A \(p-c_A\) and B \(1-p-c_B\), so both prefer any \(x\in(p-c_A,\,p+c_B)\) (p. 387). With a first-strike advantage the de facto range is \((p_f-c_A,\,p_s+c_B)\), empty iff \(p_f-p_s>c_A+c_B\) (p. 403). With \(c_B\sim U[0,\bar c]\), A’s demand solves \(\tfrac{h(x-p)}{1-H(x-p)}=\tfrac{1}{x-p+c_A}\) (Claim 2, p. 411), giving \(x^*=p+(\bar c-c_A)/2\) clipped to \([p,1]\) and a risk of war \(H(x^*-p)\). Preventive war occurs iff \(\delta p_2-p_1>c_B(1-\delta)^2\) (p. 406).</p>
+    <p><b>Powell 2006.</b> With flow value \(B=1/(1-\delta)\) and lock-in payoffs \(M_j(t)\), bargaining breaks down if</p>
+    $$\delta M_1(t+1)-M_1(t)\;>\;B-[M_1(t)+M_2(t)]\qquad\text{(p. 182)}.$$
+    <p>For a shift from \(p\) to \(p+\Delta\) with destruction \(d\) this is \((1-d)[\delta(p+\Delta)-p]>d\) (p. 183); for first-strike advantage \(f\), \([(1+\delta)f-(1-\delta)p](1-d)>d\), with the de facto range empty iff \(2f(1-d)>d\) (pp. 184-185); for territory, equation (3) on p. 187; for factions, \(d[r(1-\lambda)+(1-r)\lambda]\lt p(1-d)(r'-r)(1-2\lambda)\) (p. 190).</p>
+    <p><b>Brinkmanship (Powell 1987).</b> Chicken critical risk \(r=(w-c)/[(w-c)+(s-d)]\); resolve \(R=(w-s)/(w-d)\) (pp. 721, 725). Bids alternate at risks \(f,2f,3f,\dots\) and the first state whose bid would exceed its resolve loses (Proposition 1). With one-sided uncertainty (Proposition 2, p. 728):</p>
+    $$b^*=\frac{[1-(1-2f)(1-3f)](1-R_I)}{(1-2f)[(1-3f)R_I+3f]},\quad e_I(1)=\frac{R_{II}-f}{(1-f)[(1-2f)R_{II}+2f]},\quad e_{II}(1)=\frac{b^*(1-p)}{p(1-b^*)}.$$
+    <p><b>Fearon 1994.</b> With \(a_i(t)=a_it\) and \(w_i\sim U[-W_i,0]\), \(u_i(t)=F_j(-a_jt)v-[1-F_j(-a_jt)]a_it\) and \(t^*=\min_i t_i^*\) where \(u_i(t_i^*)=0\) (p. 584). Labeling so that \(t^*=t_2^*\): \(Q_1(t)=\tfrac{a_2t}{v+a_2t}\), \(Q_2(t)=\tfrac{k_1+a_1t}{v+a_1t}\), \(k_1=u_1(t^*)\).</p>
+    <p><b>Jervis 1978.</b> Cooperate iff \(qCC+(1-q)CD\ge qDC+(1-q)DD\), i.e. \(q\ge q^*=\tfrac{DD-CD}{(CC-DC)+(DD-CD)}\).</p>
+    <p><b>Kydd 2000.</b> Trust-game threshold \(p^*=S/(R+S)\) (p. 332). A gesture \(\alpha^*\) separates iff (p. 354)</p>
+    $$\frac{T_{1M}}{T_{1M}-p_2R_{1M}+(1-p_2)S_{1M}}\;<\;\alpha^*\;<\;\frac{R_{1N}}{(1-p_2)(R_{1N}+S_{1N})}.$$
+    <p><b>Slantchev 2003.</b> Offers solve \(1-x_k=(1-\delta)b_2+\delta[p\,y_{k+1}+(1-p)y_{k-1}]\) and \(1-y_k=(1-\delta)b_1+\delta[p\,x_{k+1}+(1-p)x_{k-1}]\) (p. 630); beliefs update by Bayes’ rule on battle outcomes (eq. 4); the separating equilibrium’s offers and conditions are equations (2)-(7) on pp. 630-631.</p>
+    <p><b>Rubinstein 1982.</b> Player 1’s share \(M=\tfrac{1-\delta_2}{1-\delta_1\delta_2}\) (p. 108); with fixed costs, 1 gets \(c_2\) if \(c_1>c_2\) and everything if \(c_1<c_2\) (p. 107).</p>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Game Theory Gallery', sub: 'Famous game-theory models of war, crisis and cooperation. Pick one, move its variables, and watch the equilibrium change.', category: 'Deterrence & signaling' });
+  document.title = 'Game Theory Gallery | Interactive Deterrence';
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

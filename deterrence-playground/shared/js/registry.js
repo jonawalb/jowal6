@@ -143,6 +143,8 @@ export const ALL_TOOLS = [
     blurb: 'Scrub through all 2,056 nuclear tests since Trinity by state, environment, yield and test site, reconciled against the ACA, SIPRI and DOE counts and the treaties that drove testing underground and then stopped it.' },
   { slug: 'declaratory-policy', cat: 'nuclear', sites: ['deterrence'], title: 'Who Promises What', status: 'live',
     blurb: "No-first-use pledges, assurances, red lines and alert postures for all nine nuclear-armed states, quoted from their own documents and dated, with 'not declared' where a state has said nothing." },
+  { slug: 'game-theory-gallery', cat: 'gametheory', also: ['deterrence'], sites: ['deterrence'], title: 'Game Theory Gallery', status: 'live',
+    blurb: "Move the costs, beliefs and balance of power in eight classic game-theory models of war and cooperation, from Fearon's bargaining range to Schelling's brinkmanship, and watch the equilibrium change, with every result cited to the page." },
 ];
 
 export const onSite = (x, site = SITE) => !x.sites || x.sites.includes(site);

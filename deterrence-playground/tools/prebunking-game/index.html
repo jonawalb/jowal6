@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Prebunking Game | Interactive Deterrence</title>
+<meta name="description" content="A five-minute game that teaches six manipulation techniques with invented posts, then checks whether you spot them better, next to what published studies of the Bad News game found.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="prebunking-game.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<main class="layout">
+  <div class="stage" id="stage">
+    <p class="caveat"><b>Every post in this game is invented.</b> The accounts, towns and events do not exist. The game follows the design of the published <i>Bad News</i> studies but is a separate, short game that has not been tested or validated.</p>
+    <div id="screen"></div>
+  </div>
+
+  <aside class="panel" aria-label="Game status">
+    <div class="sec">
+      <div class="status" data-s="warn"><b id="st-b"></b><span id="st-s"></span></div>
+      <ol class="stages" id="stages" aria-label="Stages">
+        <li data-k="pre"><button type="button" data-k="pre">1 Pre-test</button></li>
+        <li data-k="learn"><button type="button" data-k="learn">2 Training</button></li>
+        <li data-k="post"><button type="button" data-k="post">3 Post-test</button></li>
+        <li data-k="done"><button type="button" data-k="done">4 Results</button></li>
+      </ol>
+      <div class="acts">
+        <button type="button" class="btn" id="tour-btn">Walkthrough</button>
+        <button type="button" class="btn" id="copy">Copy link</button>
+        <button type="button" class="btn" id="restart">Restart</button>
+      </div>
+    </div>
+    <div class="sec">
+      <p class="eyebrow">Your fictional page: The Veloria Signal</p>
+      <div class="meter"><div class="meter-h"><span>Followers</span><b class="num" id="m-f"></b></div><span class="mb"><i id="m-fbar" class="f"></i></span></div>
+      <div class="meter"><div class="meter-h"><span>Credibility</span><b class="num" id="m-c"></b></div><span class="mb"><i id="m-cbar" class="c"></i></span></div>
+      <p class="fine">Game mechanics only <span class="notional">notional</span>. Manipulative picks grow the page, honest ones bore its audience, blatant ones cost credibility. The meters say nothing about you.</p>
+    </div>
+    <div class="sec">
+      <p class="eyebrow">Badges</p>
+      <ul class="badges" id="badges"></ul>
+      <p class="fine">A badge is earned by picking the manipulator's post in training.</p>
+    </div>
+  </aside>
+</main>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>Prebunking tries to protect people before they meet misinformation, by showing them a weakened example of a technique and explaining how it works. The Cambridge Social Decision-Making Lab built a game on this idea, <i>Bad News</i>, in which players act as a fake-news producer and learn six techniques. This page is a short game in the same spirit.</p>
+    <p>First you rate nine invented posts on how much you would trust them. Then you run an invented page and, for each technique, pick the post a manipulator would write. The feedback highlights the tells and quotes the technique's definition from the research. Then you rate nine different posts, and the results compare the two rounds.</p>
+    <p>The results report two things. Trust in manipulative posts should fall after training. Trust in plain posts should not. <b>Discernment</b> is the gap between the two, and it is the number to watch: rating everything lower is not the same as telling posts apart.</p>
+
+    <h2 class="mt">Method</h2>
+    <p><b>Techniques.</b> The six techniques and their definitions come from Roozenbeek and van der Linden (2019), pages 3 and 4: impersonation, emotion, polarization, conspiracy, discrediting and trolling. The paper's abstract calls discrediting "deflecting blame", and its results call the discrediting item "deflection".</p>
+    <p><b>Posts.</b> Every post, account, town and event was written for this game. None comes from the published studies and none refers to a real person or organization. The posts copy the format of the studies, which asked players to rate the reliability of invented posts on a 7-point scale before and after play and included items with no technique as controls. Each test here has six manipulative posts, one per technique, and three plain posts. You get one set before training and the other after, in random order.</p>
+    <p><b>Scoring.</b> Your ratings are averaged separately for manipulative and plain posts. Discernment is the plain average minus the manipulative average. A rating of 1 to 3 counts as flagging a post. The verdict line uses simple rules written for this tool: a drop of at least 0.5 points in trust counts as a change.</p>
+    <p><b>Training meters.</b> Followers and credibility mimic the meters in <i>Bad News</i> but use made-up values. They are marked <span class="notional">notional</span>.</p>
+    <p><b>What this game is not.</b> It is not <i>Bad News</i> and has not been validated. Its items have not been tested for difficulty, so the two sets may differ, and nine ratings per test is too few for a reliable score. Your score says nothing about how the published effects apply to you. Nothing you enter leaves your browser.</p>
+  </div>
+  <div class="col">
+    <h2>What the research found</h2>
+    <p>These are published results for the original game, quoted exactly. They appear again, with more rows, on the results screen.</p>
+    <ul class="effects slim">
+      <li><q>the average inoculation effect was relatively high, M<sub>pre</sub> = 2.61, M<sub>post</sub> = 2.06, M<sub>diff</sub> = −0.55, [95% CI −0.53, −0.57], t(13787) = −61.21, p &lt; 0.001, d = 0.52, Hedges g = 0.43</q><cite>Roozenbeek &amp; van der Linden 2019, p. 7. Self-selected sample, no control group.</cite></li>
+      <li><q>compared to the control condition, the shift in post-pre difference scores was significantly more negative in the inoculation condition ( M = –0.09 vs M = –0.45, M diff = –0.36, 95% CI [–0.19, –0.52], d = –0.60</q><cite>Basol, Roozenbeek &amp; van der Linden 2020, Results. Randomized, N = 196.</cite></li>
+      <li><q>Across the studies, when comparable true and fake news items were used, Bad News and Go Viral! did not improve discrimination, but rather elicited more “false” responses to all news items (more conservative responding).</q><cite>Modirrousta-Galian &amp; Higham 2023, abstract (accepted manuscript). A reanalysis of five studies.</cite></li>
+    </ul>
+    <h2 class="mt">Sources</h2>
+    <ul class="src">
+      <li>Jon Roozenbeek and Sander van der Linden, <a href="https://www.nature.com/articles/s41599-019-0279-9" target="_blank" rel="noopener">"Fake news game confers psychological resistance against online misinformation"</a>, <i>Palgrave Communications</i> 5, 65 (2019), doi:10.1057/s41599-019-0279-9. Open access, CC BY 4.0. Quoted from the corrected version (correction published 29 August 2019).</li>
+      <li>Melisa Basol, Jon Roozenbeek and Sander van der Linden, <a href="https://journalofcognition.org/articles/10.5334/joc.91" target="_blank" rel="noopener">"Good News about Bad News: Gamified Inoculation Boosts Confidence and Cognitive Immunity Against Fake News"</a>, <i>Journal of Cognition</i> 3(1), 2 (2020), doi:10.5334/joc.91. CC BY 4.0.</li>
+      <li>Ariana Modirrousta-Galian and Philip A. Higham, "Gamified Inoculation Interventions Do Not Improve Discrimination Between True and Fake News: Reanalyzing Existing Research With Receiver Operating Characteristic Analysis", <i>Journal of Experimental Psychology: General</i> (2023), doi:10.1037/xge0001395. Quoted from the <a href="https://osf.io/4bgkd" target="_blank" rel="noopener">accepted manuscript on PsyArXiv</a>, which may differ in wording from the published version.</li>
+      <li><a href="https://www.getbadnews.com/" target="_blank" rel="noopener">Bad News</a>, the original game, and the <a href="https://www.sdmlab.psychol.cam.ac.uk/" target="_blank" rel="noopener">Cambridge Social Decision-Making Lab</a>. Neither is affiliated with this tool.</li>
+    </ul>
+    <p class="fine mt-s">Content files: <code>tools/prebunking-game/data/techniques.js</code> (techniques, training posts), <code>data/quiz.js</code> (test posts), <code>data/research.js</code> (quotes with page references).</p>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Prebunking Game', sub: 'Learn six manipulation techniques with invented posts, then test whether you spot them better.', category: 'Disinformation & cognitive warfare' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

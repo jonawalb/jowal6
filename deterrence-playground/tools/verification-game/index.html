@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Trust but Verify | Interactive Deterrence</title>
+<meta name="description" content="An arms-control inspection game from the published literature: set the inspection quota, detection, false-alarm costs and the penalty, and see how often a party cheats and how often it is caught, beside the real verification regimes.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="verification-game.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<main class="layout">
+  <div class="stage" id="stage">
+    <p class="nbanner"><span class="notional">Notional payoffs</span> The games come from the inspection-game literature. Every payoff and probability you set is a notional teaching value; none is an estimate for a real treaty. Real verification regimes are summarized, with sources, below the model.</p>
+
+    <div class="card headcard">
+      <div class="head-top">
+        <div class="seg modes" id="mode" role="group" aria-label="Game">
+          <button type="button" data-m="quota">Quota game<small>How many inspections, and when</small></button>
+          <button type="button" data-m="alarm">Alarm game<small>Where to set the alarm threshold</small></button>
+        </div>
+        <div class="head-btns">
+          <button type="button" class="btn solid" id="tour-btn">Walkthrough</button>
+          <button type="button" class="btn" id="copy">Copy link</button>
+          <button type="button" class="btn" id="reset">Reset</button>
+        </div>
+      </div>
+      <div class="kpis" aria-live="polite">
+        <div class="kpi kv"><b id="k1" class="num">–</b><span id="k1l"></span></div>
+        <div class="kpi kd"><b id="k2" class="num">–</b><span id="k2l"></span></div>
+        <div class="kpi"><b id="k3" class="num">–</b><span id="k3l"></span></div>
+      </div>
+    </div>
+
+    <div class="card chartcard" id="c1card">
+      <div class="chart-h">
+        <p class="eyebrow q-only">What the quota buys</p>
+        <p class="eyebrow a-only">Detection against false alarms</p>
+        <ul class="legend q-only"><li><i class="ln l-v"></i>Violation occurs</li><li><i class="ln l-d"></i>Caught, if it occurs</li><li><i class="ln l-c"></i>Violation caught</li><li><i class="ln lcur"></i>Current quota</li></ul>
+        <ul class="legend a-only"><li><i class="ln roc"></i>Best test for this detection strength</li><li><i class="ln chance"></i>Guessing</li></ul>
+      </div>
+      <svg id="chart1" class="chart" role="img" aria-label="Main chart for the selected game."></svg>
+    </div>
+
+    <div class="card chartcard q-only" id="c2qcard">
+      <div class="chart-h">
+        <p class="eyebrow">Period by period, in equilibrium</p>
+        <ul class="legend"><li><i class="sw bi"></i>Chance of an inspection</li><li><i class="sw bv"></i>Chance the violation starts</li></ul>
+      </div>
+      <svg id="chart2q" class="chart" role="img" aria-label="Bars per period: chance of an inspection and chance the violation starts that period."></svg>
+    </div>
+
+    <div class="card chartcard a-only" id="c2card">
+      <div class="chart-h">
+        <p class="eyebrow">What moves the equilibrium</p>
+        <div class="seg" id="sweep-choices" role="group" aria-label="Input to sweep"></div>
+      </div>
+      <div class="twin">
+        <div><ul class="legend"><li><i class="ln l-v"></i>Violation chance q*</li></ul>
+          <svg id="chart2" class="chart" role="img" aria-label="Violation chance as the chosen input changes."></svg></div>
+        <div><ul class="legend"><li><i class="ln l-d"></i>Detection 1 − β</li><li><i class="ln l-f"></i>False alarm α</li></ul>
+          <svg id="chart3" class="chart" role="img" aria-label="Detection and false-alarm chances as the chosen input changes."></svg></div>
+      </div>
+    </div>
+  </div>
+
+  <aside class="panel" aria-label="Game parameters">
+    <div class="sec"><div class="status" id="status"><b></b><span></span></div></div>
+    <div class="sec"><p class="eyebrow">Stakes, both games</p><div id="shared-sl" class="sls"></div></div>
+    <div class="sec q-only"><p class="eyebrow">Quota game</p><div id="quota-sl" class="sls"></div></div>
+    <div class="sec a-only"><p class="eyebrow">Alarm game</p><div id="alarm-sl" class="sls"></div></div>
+    <div class="sec"><p class="fine">Payoffs are normalized as in the chapter: complying with no alarm is 0 for both sides; an undetected violation is −1 for the inspector and +1 for the inspectee.</p></div>
+  </aside>
+</main>
+
+<section class="regwrap" id="regimes-sec" aria-labelledby="reg-h">
+  <h2 id="reg-h">Real verification regimes</h2>
+  <p class="fine">Figures as stated by each source; checked on the dates noted in the sources list.</p>
+  <div class="regs" id="regimes"></div>
+</section>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>An inspection game has two players. The inspectee has signed a treaty and can comply or cheat. The inspector has limited means to check. If the inspectee always complied, the inspector would stop inspecting; if the inspector never inspected, the inspectee would cheat. So in equilibrium both sides mix, and the model tells you how often.</p>
+    <p>The <b>quota game</b> spreads a fixed number of inspections over the periods of a treaty. The first chart shows, for every possible quota, the chance a violation happens and the chance it is caught. The bars show the equilibrium period by period. The <b>alarm game</b> looks at one inspection whose measurement is noisy. The curve shows every trade-off between catching a violation and raising a false alarm that the best test can reach; the dot is where equilibrium puts the inspector. The sweep charts move one stake at a time.</p>
+    <p>The alarm game carries the literature's most useful surprise. Each player's equilibrium strategy is pinned down by the <em>other</em> player's payoffs. A harsher penalty works mainly on the inspector: the inspectee is deterred at a lower detection chance, so the inspector can accept fewer false alarms, and detection falls with them. Cheating falls only through that shift in the threshold. The inspector's own costs, e and a, set the cheating rate directly, and better instruments cut false alarms and cheating together.</p>
+
+    <h2 class="mt">How the models work</h2>
+    <p><b>Quota game.</b> This is the recursive game of Dresher (1962) in the non-zero-sum form of Avenhaus, von Stengel and Zamir, Section 4.1, Figure 4.2. There are n periods and m inspections; the inspectee violates at most once. Payoffs to (inspector, inspectee): complying throughout (0, 0); undetected violation (−1, 1); caught violation (−a, −b), with 0 &lt; a &lt; 1. The tool solves the game backward period by period, each period a two-by-two game with a mixed equilibrium, and then follows equilibrium play forward to get the chance of a violation and of detection. With certain detection its values match Theorem 4.1 exactly: V(n, m) = C(n−1, m) ÷ Σ<sub>i≤m</sub> C(n, i) b<sup>m−i</sup> for the inspectee and I(n, m) = −C(n−1, m) ÷ Σ<sub>i≤m</sub> C(n, i) (−a)<sup>m−i</sup> for the inspector. <b>Tool extension:</b> an inspection catches a violation only with the chance you set; a miss scores as an undetected violation.</p>
+    <p><b>Alarm game.</b> Section 3.1, Figure 3.1. A legal inspectee can still set off a false alarm, with payoffs (−e, −h), 0 &lt; e &lt; 1, 0 &lt; h &lt; b. Theorem 3.1: the equilibrium false-alarm chance α* solves −h α* = −b + (1 + b) β(α*), and the violation chance is q* = e ÷ (e − (1 − a) β′(α*)), where β is the chance of missing a violation. The tool takes β from the normal test of Section 3.2, equation (3.14): detection 1 − β = Φ(d − q<sub>1−α</sub>), with d the violation's size in units of measurement noise.</p>
+    <p><b>What is <span class="notional">notional</span>:</b> every payoff (a, b, e, h), the number of periods, the quota, the detection chance per inspection and the detection strength. The published games fix the structure and the payoff normalization, not the numbers. <b>What the models leave out:</b> repeated violations, inspections the inspector can announce in advance (the leadership games of Section 5), several inspectees, and national technical means that work alongside on-site inspection.</p>
+    <p><b>Related work.</b> Maschler (1966) showed that an inspector who announces and commits to a strategy can do better in the non-zero-sum game. Kilgour applied inspection games to a chemical weapons treaty (1990) and to choosing which sites to inspect under an arms control agreement (1992). Neither extension is modeled here.</p>
+  </div>
+  <div class="col">
+    <h2>Sources</h2>
+    <ul class="src" id="srclist"></ul>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Trust but Verify', sub: 'An arms-control inspection game: how quotas, detection, false alarms and penalties set the odds of cheating and of getting caught.', category: 'Nuclear weapons & arms control' });
+  document.title = 'Trust but Verify | Interactive Deterrence';
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

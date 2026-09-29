@@ -4,7 +4,7 @@
 // In local development (serving the source tree) this file is not loaded and data is plaintext.
 (function () {
   'use strict';
-  var CFG = {"id": "3d314fe2f5", "salt": "Y4WWLNuKMQNV9IJIKHdnMA==", "iter": 600000, "check": "tjkjLw74yJV6+mditJ1VR8hDkJT5Hm3Ucw4HZSJ8PZRGXg==", "t2": {"id": "24323fd3b3", "salt": "1h8efphNDcDulPgKOV6WkA==", "check": "4ufCwV4H5vsTzWw8SsppYG8CYEFPkH2wYaZh4xmBJCzThQ==", "slugs": ["crossing-windows", "joint-sword", "penghu-gambit", "strait-layers", "transit-response", "wargame-explorer", "warning-board"], "name": "TSM"}};
+  var CFG = {"id": "3d314fe2f5", "salt": "Y4WWLNuKMQNV9IJIKHdnMA==", "iter": 600000, "check": "tjkjLw74yJV6+mditJ1VR8hDkJT5Hm3Ucw4HZSJ8PZRGXg==", "remember": false, "t2": {"id": "24323fd3b3", "salt": "1h8efphNDcDulPgKOV6WkA==", "check": "4ufCwV4H5vsTzWw8SsppYG8CYEFPkH2wYaZh4xmBJCzThQ==", "slugs": ["crossing-windows", "joint-sword", "penghu-gambit", "strait-layers", "transit-response", "wargame-explorer", "warning-board"], "name": "TSM"}};
   var KEYNAME = 'tsm-vault-key-' + (CFG ? CFG.id : 'dev');
   var MAGIC = 'TSMVAULT2:';
   // Optional second tier: tools listed in CFG.t2.slugs have their data sealed with a second password.
@@ -50,6 +50,9 @@
   }
   /** Second-tier key: asked for on every visit to a locked tool page and never stored, so nothing else can use it. */
   function key2Now() { return LOCKED_PAGE ? key2Ready : Promise.reject(); }
+  // Sites built with remember:false keep the site key only for this tab (sessionStorage), never on the device.
+  var REMEMBER = !CFG || CFG.remember !== false;
+  if (!REMEMBER) { try { localStorage.removeItem(KEYNAME); } catch (e) { /* storage blocked */ } }
   // Drop any second-tier key saved by an earlier version of this gate.
   if (KEYNAME2) { try { localStorage.removeItem(KEYNAME2); sessionStorage.removeItem(KEYNAME2); } catch (e) { /* storage blocked */ } }
 
@@ -133,7 +136,7 @@
       (tier === 2 ? '<p><b>' + (T2.name || 'This section') + '</b> needs a second password. Enter it to continue.</p>'
         : '<p>This site is for invited readers. Enter the access password to continue.</p>') +
       '<form><input type="password" id="g-pw" autocomplete="current-password" aria-label="Access password" placeholder="Access password" required>' +
-      (tier === 2 ? '' : '<label class="g-rem"><input type="checkbox" id="g-rem" checked> Remember on this device</label>') +
+      (tier === 2 || !REMEMBER ? '' : '<label class="g-rem"><input type="checkbox" id="g-rem" checked> Remember on this device</label>') +
       '<button type="submit" id="g-go">Unlock</button><div class="g-err" id="g-err" aria-live="polite"></div></form></div>';
     document.body.appendChild(g);
     var pw = g.querySelector('#g-pw'), go = g.querySelector('#g-go'), err = g.querySelector('#g-err');
@@ -143,7 +146,7 @@
       go.disabled = true; go.textContent = 'Checking\u2026'; err.textContent = '';
       derive(pw.value, tier).then(function (raw) {
         return tryRaw(raw, tier).then(function (k) {
-          if (tier === 1) { try { (g.querySelector('#g-rem').checked ? localStorage : sessionStorage).setItem(KEYNAME, b64e(raw)); } catch (e2) { /* storage blocked */ } }
+          if (tier === 1) { try { (REMEMBER && g.querySelector('#g-rem').checked ? localStorage : sessionStorage).setItem(KEYNAME, b64e(raw)); } catch (e2) { /* storage blocked */ } }
           (tier === 2 ? unlock2 : unlock)(k);
         });
       }).catch(function () {

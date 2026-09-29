@@ -188,3 +188,31 @@ body.kl-picking .layout, body.kl-picking .below { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .cf-bar > span { transition: none; } }
 .panel > .sec[hidden], .cf-entry[hidden] { display: none; }
+
+/* Model-generated branch: visually distinct from sourced history (dashed, purple series color, explicit label) */
+.cf-gen { display: inline-block; font: 600 10.5px var(--mono); color: var(--c6); border: 1.5px dashed var(--c6); border-radius: 3px; padding: 0 5px; margin-left: 4px; white-space: nowrap; letter-spacing: .02em; }
+.cf-brwrap { display: flex; flex-direction: column; gap: 10px; }
+.cf-log { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.cf-log li { border: 1.5px dashed var(--c6); border-radius: 6px; padding: 8px 10px; background: color-mix(in srgb, var(--c6) 5%, var(--panel)); }
+.cf-log li.now { border-style: solid; }
+.cf-log li p { margin: 0 0 4px; font-size: 13px; }
+.cf-log li .d { font: 600 11.5px var(--mono); color: var(--muted); }
+.cf-roll { font: 600 12px var(--mono); padding: 0 4px; border-radius: 3px; background: var(--chip); border: 1px solid var(--rule); }
+.cf-roll.hit { border-color: var(--c6); }
+.cf-fin { font-size: 14px !important; border-top: 1px solid var(--rule); padding-top: 4px; }
+.cf-branch h3 { color: var(--c6); }
+.cf-opt.gen { border: 2px dashed var(--c6); }
+.cf-opt.gen:hover, .cf-opt.gen:focus-visible { background: var(--c6); color: var(--panel); border-style: solid; }
+.cf-opt small { display: block; font: 600 11px var(--mono); color: var(--c6); letter-spacing: .03em; text-transform: uppercase; margin-bottom: 2px; }
+.cf-opt.gen:hover small, .cf-opt.gen:focus-visible small { color: var(--panel); }
+.cf-srcs { margin: 0; padding-left: 16px; font-size: 12px; color: var(--muted); }
+.cf-tree li.g b { color: var(--c6); }
+.cf-seed { margin: 0; }
+.cf-mc { border: 2px solid var(--rule); border-radius: 6px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+.cf-mc h3 { margin: 0; font-size: 18px; }
+.cf-mc p { margin: 0; }
+.cf-pols { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+.cf-pols button { font-weight: 600; min-height: 44px; }
+.cf-nuke { font-size: 14px; }
+.cf-drv td:first-child { min-width: 110px; }
+.cf-eh { font: 700 16px var(--display); margin: 14px 0 4px; }

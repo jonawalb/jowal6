@@ -7,11 +7,12 @@ import { buildLadder, markLadder, pathChart } from './ladder-view.js';
 import { createTour } from './tour.js';
 import { CF, EXCLUDED } from '../data/counterfactuals.js';
 import { createPlay, asCrisis } from './play.js';
-import { mountEditor } from './model.js';
+import { mountEditor, DEFAULTS } from './model.js';
 
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const byId = id => CRISES.find(c => c.id === id);
-const state = { c: CRISES[0].id, s: 0, vs: '', rung: 0, m: '', p: [] };
+const SEED = 163;   // default dice seed for model branches
+const state = { c: CRISES[0].id, s: 0, vs: '', rung: 0, m: '', p: [], b: [], seed: SEED };
 const peak = c => Math.max(...c.steps.map(s => s.rung));
 
 // ---- hash: #c=cuba&s=3&vs=kargil, or #c=cuba&m=play&p=0.2 (retry mode, option index per decision)
@@ -30,6 +31,10 @@ function readHash() {
   const h = new URLSearchParams(location.hash.slice(1));
   state.m = h.get('m') === 'play' && CF[h.get('c')] ? 'play' : '';
   state.p = state.m ? parseChoices(h.get('c'), h.get('p')) : [];
+  const departed = state.p.length && !CF[h.get('c')].decisions[state.p.length - 1].options[state.p[state.p.length - 1]].historical;
+  state.b = departed ? [...String(h.get('b') || '')].filter(x => 'dhem'.includes(x)).slice(0, 19) : [];
+  const sd = Number(h.get('seed'));
+  state.seed = Number.isInteger(sd) && sd >= 1 && sd <= 999999 ? sd : SEED;
   if (byId(h.get('c'))) state.c = h.get('c');
   const n = Number(h.get('s'));
   state.s = Number.isInteger(n) && n >= 1 ? Math.min(n, byId(state.c).steps.length) - 1 : byId(state.c).steps.length - 1;
@@ -38,7 +43,11 @@ function readHash() {
 function writeHash() {
   if (picking) return;  // no crisis chosen yet: keep the URL clean so a reload shows the picker again
   const h = new URLSearchParams({ c: state.c });
-  if (state.m) { h.set('m', 'play'); if (state.p.length) h.set('p', state.p.join('.')); }
+  if (state.m) {
+    h.set('m', 'play'); if (state.p.length) h.set('p', state.p.join('.'));
+    if (state.b.length) h.set('b', state.b.join(''));
+    h.set('seed', state.seed);
+  }
   else { h.set('s', state.s + 1); if (state.vs) h.set('vs', state.vs); }
   history.replaceState(null, '', '#' + h.toString());
 }
@@ -123,7 +132,8 @@ function renderRungNote() {
 }
 
 function renderPlay() {
-  const c = byId(state.c), { me, hist } = play.render(c, state.p);
+  const c = byId(state.c), { me, hist } = play.render(c, state.p, state.b, state.seed);
+  if (me.br) state.b = me.br.rounds.slice(1).map(r => r.mv);   // drop moves past the branch's end
   const a = { crisis: asCrisis(me.rounds, 'Your run', 'Your run'), step: me.rounds.length - 1 };
   const b = { crisis: asCrisis(hist.rounds, 'History', 'What happened'), step: -1 };
   markLadder(document.getElementById('ladder'), me.rounds.length ? a : null, b, state.rung);
@@ -157,17 +167,19 @@ function set(p) { Object.assign(state, p); render(); }
 panel.querySelector('#crises').addEventListener('click', e => {
   const b = e.target.closest('[data-c]'); if (!b) return;
   play.reset();
-  if (state.m && CF[b.dataset.c]) set({ c: b.dataset.c, p: [], vs: '' });
-  else set({ c: b.dataset.c, s: 0, m: '', p: [], vs: state.vs === b.dataset.c ? '' : state.vs });
+  if (state.m && CF[b.dataset.c]) set({ c: b.dataset.c, p: [], b: [], vs: '' });
+  else set({ c: b.dataset.c, s: 0, m: '', p: [], b: [], vs: state.vs === b.dataset.c ? '' : state.vs });
 });
-const startPlay = () => { play.reset(); set({ m: 'play', p: [], vs: '', rung: 0 }); document.getElementById('panel').scrollIntoView({ block: 'start' }); };
+const startPlay = () => { play.reset(); set({ m: 'play', p: [], b: [], vs: '', rung: 0 }); document.getElementById('panel').scrollIntoView({ block: 'start' }); };
 document.getElementById('retry').onclick = startPlay;
 panel.addEventListener('click', e => { if (e.target.closest('[data-retry]')) startPlay(); });
 const play = createPlay({
   root: document.getElementById('play'), srcLinks,
   onChoose: i => { if (i !== null) state.p = [...state.p, i]; render(); document.getElementById('play').scrollIntoView({ block: 'nearest' }); },
-  onRestart: () => set({ p: [] }),
-  onLeave: () => set({ m: '', p: [], s: byId(state.c).steps.length - 1 }),
+  onMove: mv => { if (mv) state.b = [...state.b, mv]; render(); if (mv) document.querySelector('.cf-log li.now')?.scrollIntoView({ block: 'nearest' }); },
+  onReseed: () => set({ seed: 1 + Math.floor(Math.random() * 999998) }),
+  onRestart: () => set({ p: [], b: [] }),
+  onLeave: () => set({ m: '', p: [], b: [], s: byId(state.c).steps.length - 1 }),
 });
 mountEditor(document.getElementById('model-edit'), () => render());
 panel.addEventListener('click', e => {
@@ -195,13 +207,23 @@ document.getElementById('cf-table').innerHTML = CRISES.map(c => {
   return `<tr><td>${esc(c.name)}</td><td>${esc(cf.player)}</td><td>${cf.decisions.map(d => `${esc(d.date)}: ${d.options.length} options`).join('<br>')}</td></tr>`;
 }).join('');
 document.getElementById('cf-excluded').innerHTML = Object.entries(EXCLUDED).map(([id, t]) => `<b>${esc(byId(id).name)}.</b> ${esc(t)}`).join(' ');
+{
+  const B = DEFAULTS.br, bands = ['Rungs 1–3', 'Rungs 4–9', 'Rungs 10–20'], mv = ['de-escalate', 'hold', 'escalate one step', 'major escalation'];
+  const f = x => Math.round(x * 100) + '%', sg = x => (x > 0 ? '+' : x < 0 ? '−' : '') + Math.abs(x);
+  document.getElementById('cf-resp-table').innerHTML = `<thead><tr><th>Band, your move</th><th>Backs down</th><th>Holds</th><th>Matches</th><th>Escalates</th></tr></thead><tbody>${
+    B.resp.map((g, gi) => g.map((r, mi) => `<tr><td>${bands[gi]}, ${mv[mi]}</td>${r.map(x => `<td class="num">${f(x)}</td>`).join('')}</tr>`).join('')).join('')}</tbody>`;
+  document.getElementById('cf-br-params').textContent = `Rungs moved by your de-escalate / hold / escalate / major move: ${B.shift.map(sg).join(' / ')}. By the opponent's back down / hold / match / escalate: ${B.rshift.map(sg).join(' / ')}. Settlement chance per round when either side softens: ${B.settle.map(f).join(' / ')} by band, plus ${f(B.settleBoth)} when both soften; otherwise ${f(B.settleBase)}. War lock-in chance per round at rung 12 or higher: ${f(B.war)}. Rounds: ${B.rounds}.`;
+}
 document.getElementById('kahn-src').innerHTML = `<a href="${KAHN_SRC.url}" target="_blank" rel="noopener">${esc(KAHN_SRC.cite)}</a>`;
 const cfSrc = Object.values(CF).flatMap(x => x.decisions.flatMap(d => d.options.flatMap(o => o.src)));
 const used = new Set([...CRISES.flatMap(c => c.steps.flatMap(s => s.src)), ...CRITIQUES.flatMap(k => k.src), ...cfSrc]);
 document.getElementById('sources').innerHTML = [...used].map(id => SOURCES[id]).sort((a, b) => a.cite.localeCompare(b.cite))
   .map(s => `<li>${esc(s.cite)}${s.url ? ` <a href="${s.url}" target="_blank" rel="noopener">Link</a>` : ''}</li>`).join('');
 
-const tour = createTour(p => { play.reset(); set({ rung: 0, m: '', p: [], ...p }); });
+const tour = createTour(({ mc, ...p }) => {
+  play.reset(); set({ rung: 0, m: '', p: [], b: [], seed: SEED, ...p });
+  if (mc) { document.querySelector('[data-mc]')?.click(); document.querySelector('.cf-mc')?.scrollIntoView({ block: 'start' }); }
+});
 document.getElementById('start-tour').onclick = () => tour.start();
 document.getElementById('copy-link').onclick = async e => {
   try { await navigator.clipboard.writeText(location.href); e.target.textContent = 'Link copied'; }

@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: The Hunt</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .land { fill: #16291f; stroke: var(--paper); stroke-opacity: .55; stroke-width: 1.3; stroke-linejoin: round; }
+  .grat line { stroke: var(--blue); stroke-opacity: .12; stroke-width: 1; stroke-dasharray: 2 6; }
+  .grat text { font: 400 12px var(--mono); fill: var(--blue); fill-opacity: .45; letter-spacing: .06em; }
+  .place { font: 400 15px var(--mono); fill: var(--muted); letter-spacing: .22em; text-transform: uppercase; }
+  .sea { font: italic 400 34px var(--display); fill: var(--blue); fill-opacity: .42; letter-spacing: .04em; }
+  .gap { font: 400 12px var(--mono); fill: var(--muted); letter-spacing: .14em; text-transform: uppercase; }
+  .tag { font: 400 13px var(--mono); letter-spacing: .14em; text-transform: uppercase; paint-order: stroke; stroke: #0b1712; stroke-width: 5px; stroke-linejoin: round; }
+  .gap { paint-order: stroke; stroke: #0b1712; stroke-width: 5px; stroke-linejoin: round; }
+  .buoy { fill: var(--ink); stroke: var(--amber); stroke-width: 2.5; }
+  .cov { fill: var(--amber); fill-opacity: .07; stroke: var(--amber); stroke-opacity: .55; stroke-width: 1.2; stroke-dasharray: 3 4; }
+  .panel-t { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .2em; text-transform: uppercase; }
+  .act { font: 400 15px var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of The Hunt: a probability cloud of possible submarine positions tightens as sonobuoys and a search box come up empty, a sprinting submarine gives a bearing, and its true track is revealed."><title>The Hunt</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard, clamp } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+const TAU = Math.PI * 2;
+
+// ---- Chart projection (notional sea chart; coastlines simplified from Natural Earth 1:10m, public domain)
+const KX = Math.cos(63.6 * Math.PI / 180) * 120;
+const P = (lon, lat) => [800 + (lon + 10.7) * KX, 500 - (lat - 63.6) * 120];
+const rng = (s => () => ((s = Math.imul(s ^ (s >>> 15), 1 | s) + 0x6D2B79F5 | 0, ((s ^ (s >>> 14)) >>> 0) / 4294967296)))(20240917);
+const gauss = () => Math.sqrt(-2 * Math.log(rng() + 1e-9)) * Math.cos(TAU * rng());
+
+// ---- Defs: cloud glow, sea texture
+const defs = svg.querySelector('defs');
+defs.insertAdjacentHTML('beforeend', `
+  <filter id="cloud" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="9" result="b"/><feColorMatrix in="b" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 2.2 0" result="h"/><feMerge><feMergeNode in="h"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <filter id="soft"><feGaussianBlur stdDeviation="3"/></filter>
+  <radialGradient id="ping"><stop offset=".7" stop-color="#e0533d" stop-opacity="0"/><stop offset="1" stop-color="#e0533d" stop-opacity=".9"/></radialGradient>
+  <filter id="swell" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".0025 .009" numOctaves="3" seed="7"/><feColorMatrix values="0 0 0 0 .5  0 0 0 0 .71  0 0 0 0 .85  0 0 0 .9 -.38"/></filter>`);
+
+const world = el('g', {}, svg);
+const cam = el('g', {}, world);
+// Sea swell: a static turbulence field, slowly drifted.
+const swell = el('rect', { x: -100, y: -100, width: 1800, height: 1200, filter: 'url(#swell)', opacity: .22 }, cam);
+
+// Graticule
+const grat = el('g', { class: 'grat' }, cam);
+for (let lon = -25; lon <= 0; lon += 5) { const [x] = P(lon, 63); el('line', { x1: x, y1: 0, x2: x, y2: 1000 }, grat); el('text', { x: x + 6, y: 1000 - 84 }, grat).textContent = `${Math.abs(lon)}°${lon < 0 ? 'W' : ''}`; }
+for (let lat = 60; lat <= 67; lat++) { const [, y] = P(0, lat); el('line', { x1: 0, y1: y, x2: 1600, y2: y }, grat); el('text', { x: 1600 - 70, y: y - 6 }, grat).textContent = `${lat}°N`; }
+
+// Land
+const land = el('path', { class: 'land', d: 'M570 180L574 185L573 190L561 199L567 200L567 206L578 208L587 204L592 216L589 225L576 241L582 236L579 244L581 245L606 238L603 245L609 251L605 253L594 272L607 254L614 256L611 252L622 259L631 258L631 263L634 264L635 269L641 265L645 270L641 287L633 288L638 293L624 298L641 295L647 301L642 306L622 308L644 308L643 313L637 316L642 315L643 316L641 318L644 320L650 311L650 324L645 328L646 331L643 334L634 333L633 328L622 322L624 325L611 328L628 330L640 341L621 340L632 344L636 350L626 352L633 356L623 356L621 358L625 363L621 366L608 368L601 357L596 356L600 357L599 361L603 363L609 374L598 373L602 379L593 381L598 386L605 379L599 388L595 403L584 406L594 402L586 400L573 413L577 418L574 420L565 416L559 420L560 416L557 416L555 412L556 417L553 416L551 408L545 404L549 406L551 412L549 412L549 419L534 424L528 430L533 429L531 431L518 435L516 436L518 437L508 447L501 450L492 463L490 464L493 461L485 468L475 468L477 470L475 476L470 468L468 475L468 468L468 476L466 477L467 464L466 462L466 468L462 470L464 476L453 474L434 482L435 477L432 480L432 482L425 487L431 482L426 478L426 482L420 482L421 483L412 491L421 491L418 497L414 496L412 497L418 499L412 509L400 515L398 513L404 508L394 506L396 516L401 516L371 524L342 519L319 509L318 506L294 507L285 499L288 499L286 498L286 496L284 498L282 496L284 496L278 487L277 488L281 495L274 487L274 483L277 480L287 484L280 477L282 472L274 481L273 486L263 479L271 480L266 478L267 468L265 468L267 471L264 475L259 476L260 478L240 465L240 460L248 458L238 458L234 462L239 466L232 466L231 470L215 472L208 467L194 472L179 468L160 475L158 465L160 458L163 458L158 455L160 442L165 445L169 455L195 446L199 443L195 438L202 437L195 433L208 436L207 431L212 431L213 429L210 430L213 426L207 426L207 423L201 424L210 411L218 407L227 408L228 406L217 404L199 416L192 414L205 405L195 403L198 392L209 387L207 385L213 379L219 383L224 384L217 380L220 378L214 378L223 374L213 376L215 372L205 385L197 389L195 384L193 395L188 397L185 392L183 394L184 383L179 385L179 378L173 372L178 375L179 369L187 363L176 371L175 370L180 362L174 360L175 353L162 360L161 356L156 356L159 358L158 359L131 352L119 357L113 355L114 354L110 357L108 363L99 365L93 361L87 345L98 340L110 344L116 338L123 338L123 336L130 341L132 338L131 332L135 330L139 330L135 338L138 342L138 337L143 330L147 334L155 329L150 328L159 323L160 326L157 329L160 328L166 334L164 330L168 326L206 328L208 325L205 324L209 319L211 309L207 307L195 318L167 312L173 311L168 310L174 300L213 278L198 279L201 276L198 271L194 274L191 269L190 275L184 280L176 273L188 267L191 260L184 268L179 269L181 265L180 265L172 271L168 256L168 265L166 268L163 264L162 269L159 263L161 257L157 256L158 272L150 267L154 260L152 258L149 264L146 259L145 266L140 267L134 263L134 270L131 274L122 270L96 283L91 282L91 275L62 271L70 264L71 258L74 255L96 269L101 268L96 267L86 254L101 259L86 247L83 237L85 235L110 247L113 251L114 258L129 251L119 250L115 245L131 243L130 241L134 238L127 241L105 239L97 227L98 223L101 221L112 227L133 231L113 223L100 211L101 205L104 203L121 209L124 213L121 208L108 198L118 197L123 200L118 195L112 195L119 188L136 194L138 203L142 199L145 208L141 216L148 206L149 211L152 209L147 218L150 218L153 211L153 223L156 206L161 205L166 215L162 232L168 215L173 219L173 223L175 221L172 232L178 223L175 212L171 209L177 200L171 203L151 193L145 184L157 181L168 185L167 182L177 179L167 178L172 175L171 173L159 176L161 169L165 167L153 174L154 168L153 169L147 176L134 169L141 169L142 165L137 160L138 159L151 160L146 156L160 162L166 156L174 161L172 156L174 156L178 165L186 172L185 180L198 179L201 183L198 186L210 190L212 202L216 204L215 209L217 207L216 202L221 200L223 203L221 206L222 209L233 211L233 213L218 217L229 216L230 217L227 220L234 220L235 224L233 227L236 229L233 235L225 240L233 243L227 249L220 249L214 240L209 240L215 245L214 249L217 254L229 257L225 264L233 260L233 269L225 278L234 274L239 279L240 295L246 312L247 310L244 300L246 293L245 279L247 278L252 290L255 291L251 271L255 260L268 249L271 251L270 267L271 261L273 268L278 273L281 266L275 263L282 260L283 269L284 260L287 253L289 252L287 249L290 243L280 209L281 202L294 196L299 196L310 223L319 227L324 242L327 244L330 241L333 245L336 232L333 221L330 217L335 211L334 204L345 200L349 202L350 199L354 204L352 199L353 192L360 189L362 190L361 194L365 187L369 189L368 195L374 192L377 196L375 201L381 202L383 209L382 215L392 218L399 228L401 244L406 249L407 255L407 249L405 244L407 232L405 224L399 220L399 216L395 210L393 200L395 190L415 194L417 198L426 205L435 223L433 215L437 213L431 213L440 213L442 217L445 200L456 185L464 188L468 199L477 194L479 195L475 196L477 198L480 195L485 200L481 192L489 188L484 192L490 190L494 195L491 189L495 178L490 168L490 161L487 154L488 151L490 154L494 150L495 154L495 152L498 150L501 154L508 148L516 148L523 153L521 155L521 161L533 164L534 171L529 177L534 180L533 184L542 185L550 194L553 188L553 181L565 179L575 166L594 166ZM1007 755L999 737L1003 734L1002 737L1005 737L1002 741L1013 744L1008 746L1013 749L1015 754L1009 756L1014 757L1016 763L1015 765ZM1018 713L1015 722L1011 713L1004 711L1002 703L1015 708ZM980 676L986 672L995 681L994 686L987 690L986 684L986 688L977 684L982 683L975 679L974 674ZM985 669L987 654L994 657L998 670L1006 675L1003 680L1007 680L1009 684L1006 686L1013 688L1013 699L1005 693L997 679L991 677L991 673L986 672ZM993 654L1003 653L1001 657L1002 663L1002 658L1007 657L1007 659L1011 661L1009 664L1018 668L1012 670L1021 676L1015 674L1019 679L1016 680L1016 685L1014 683L1011 670L1007 669L1012 674L1011 680L1000 669ZM1014 651L1016 648L1020 660L1017 658ZM1313 919L1311 917L1310 911L1315 912ZM1311 887L1314 886L1313 889L1308 890L1314 893L1310 897L1313 899L1310 902L1307 899L1308 903L1306 903L1308 904L1307 908L1309 905L1307 911L1309 909L1311 914L1306 919L1309 925L1306 927L1307 934L1304 932L1303 950L1297 943L1300 938L1299 935L1300 935L1304 918L1303 910L1301 910L1303 903L1300 908L1298 903L1296 901L1299 907L1296 907L1293 913L1289 909L1293 906L1291 903L1290 907L1284 906L1281 898L1292 894L1293 899L1295 893L1298 898L1299 890L1304 889L1296 885L1297 881L1294 880L1294 873L1292 877L1292 874L1285 874L1289 865L1293 871L1297 871L1292 867L1296 862L1295 859L1301 861L1301 855L1300 874L1302 873L1298 884L1305 879L1302 875L1306 872L1309 880L1306 883L1309 885L1316 878ZM1331 860L1324 863L1321 857ZM1314 852L1317 858L1314 858L1317 863L1315 866L1316 872L1311 872L1309 868L1308 854L1312 858L1312 845L1318 844L1318 856ZM1320 850L1321 836L1324 831L1325 833L1324 837L1327 830L1330 833L1327 841L1328 843L1326 846L1327 850ZM1020 666L1020 650L1022 648L1025 657L1030 661L1024 662L1028 665L1028 670L1022 665L1024 671ZM1034 662L1032 662L1030 658L1036 656ZM1024 652L1021 645L1023 645L1027 654L1030 655L1028 657Z', pathLength: 1 }, cam);
+land.style.strokeDasharray = '1 1';
+
+// Names
+const names = el('g', {}, cam);
+const name = (x, y, s, c, a = 'middle') => { const t = el('text', { x, y, class: c, 'text-anchor': a }, names); t.textContent = s; return t; };
+name(372, 346, 'Iceland', 'place'); name(1046, 712, 'Faroes', 'place', 'start'); name(1340, 912, 'Shetland', 'place', 'start');
+name(1350, 470, 'Norwegian Sea', 'sea'); name(330, 846, 'North Atlantic', 'sea');
+// The gap: Iceland's south-east coast, the Faroes, Shetland.
+const gapLine = el('path', { d: `M${P(-13.6, 64.9)}L${P(-7.2, 62.2)}M${P(-6.3, 61.95)}L${P(-1.3, 60.5)}`, fill: 'none', stroke: 'var(--red)', 'stroke-opacity': .5, 'stroke-width': 1.4, 'stroke-dasharray': '2 7' }, cam);
+name(652, 604, 'Iceland–Faroes gap', 'gap'); name(1146, 770, 'Faroes–Shetland gap', 'gap', 'start');
+
+// Datum: the old contact report
+const D = P(-8.0, 65.1), DR = 70;
+const datum = el('g', { opacity: 0 }, cam);
+const datumRing = el('circle', { cx: D[0], cy: D[1], r: DR, fill: 'none', stroke: 'var(--red)', 'stroke-width': 1.6, 'stroke-dasharray': '8 6' }, datum);
+el('circle', { cx: D[0], cy: D[1], r: 3.5, fill: 'var(--red)' }, datum);
+const dLab = el('text', { x: D[0] - DR - 12, y: D[1] - 40, class: 'tag', fill: 'var(--red)', 'text-anchor': 'end' }, datum); dLab.textContent = 'Reported here';
+const dLab2 = el('text', { x: D[0] - DR - 12, y: D[1] - 18, class: 'tag', fill: 'var(--muted)', 'text-anchor': 'end' }, datum); dLab2.textContent = 'hours ago';
+
+// ---- True track (hidden until the payoff). Sprint legs are loud, drift legs quiet.
+const W = [P(-8.3, 65.3), P(-9.0, 64.95), P(-8.3, 64.5), P(-9.9, 64.1), P(-10.7, 63.72)];
+const WT = [3.3, 5.0, 6.9, 8.6, 12.8];       // times the sub passes each waypoint
+const subAt = t => {
+  if (t <= WT[0]) return W[0];
+  for (let i = 0; i < 4; i++) if (t <= WT[i + 1]) { const u = (t - WT[i]) / (WT[i + 1] - WT[i]); return [lerp(W[i][0], W[i + 1][0], u), lerp(W[i][1], W[i + 1][1], u)]; }
+  const u = (t - 12.8) / 4, a = W[3], b = W[4]; return [b[0] + (b[0] - a[0]) * u * .25, b[1] + (b[1] - a[1]) * u * .25];
+};
+
+// ---- Probability cloud: particles, each one a place the sub could be.
+const N = 480, EX = [P(-11.6, 62.95), P(-5.6, 60.75)];
+const parts = [];
+const cloudG = el('g', { filter: 'url(#cloud)' }, cam);
+for (let i = 0; i < N; i++) {
+  const a = rng() * TAU, r = Math.sqrt(rng()) * DR * .95, s = [D[0] + Math.cos(a) * r, D[1] + Math.sin(a) * r];
+  const q = rng(), route = q < .55 ? 0 : q < .9 ? 1 : 2;
+  let dir;
+  if (route < 2) { const e = EX[route], dx = e[0] - s[0], dy = e[1] - s[1], L = Math.hypot(dx, dy), th = Math.atan2(dy, dx) + gauss() * .2; dir = [Math.cos(th), Math.sin(th)]; }
+  else { const th = rng() * TAU; dir = [Math.cos(th) * .35, Math.sin(th) * .35]; }
+  const dist = 90 + rng() * 230;
+  const n = el('circle', { r: 1.6 + rng() * 1.4, fill: rng() < .15 ? '#ffd2b8' : '#ff6f55' }, cloudG);
+  parts.push({ s, dir, dist, n, born: 3.3 + (i / N) * 1.1, dead: Infinity, jit: [gauss() * 9, gauss() * 9], ph: rng() * TAU });
+}
+
+// ---- Player actions (amber)
+const act = el('g', {}, cam);
+const buoys = [];
+const addBuoy = (x, y, t0, cr) => {
+  const g = el('g', { opacity: 0 }, act);
+  const cov = el('circle', { cx: x, cy: y, r: cr, class: 'cov' }, g);
+  const rip = el('circle', { cx: x, cy: y, r: 10, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 2 }, g);
+  const b = el('circle', { cx: x, cy: y, r: 6, class: 'buoy' }, g);
+  buoys.push({ x, y, t0, cr, g, cov, rip, b });
+};
+// Sonobuoy line across the eastern lane.
+const L0 = [948, 520], L1 = [1092, 474];
+for (let i = 0; i < 6; i++) addBuoy(lerp(L0[0], L1[0], i / 5), lerp(L0[1], L1[1], i / 5), 5.7 + i * .11, 30);
+// Sonobuoy circle west of the datum.
+const CC = [720, 440], CR = 60;
+for (let i = 0; i < 5; i++) { const a = -Math.PI / 2 + i * TAU / 5; addBuoy(CC[0] + Math.cos(a) * CR, CC[1] + Math.sin(a) * CR, 7.85 + i * .09, 24); }
+const hearer = buoys[6 + 2]; // the circle's south-east buoy hears the sprint
+
+// Aircraft search box with a ladder track
+const BX = [782, 522, 150, 118];
+const box = el('g', { opacity: 0 }, act);
+const boxR = el('rect', { x: BX[0], y: BX[1], width: BX[2], height: BX[3], fill: 'var(--amber)', 'fill-opacity': .05, stroke: 'var(--amber)', 'stroke-width': 1.8, 'stroke-dasharray': '10 6' }, box);
+let lad = `M${BX[0] + 12} ${BX[1] + 12}`;
+for (let k = 0; k < 6; k++) { const y = BX[1] + 12 + k * (BX[3] - 24) / 5; lad += `L${k % 2 ? BX[0] + 12 : BX[0] + BX[2] - 12} ${y}` + (k < 5 ? `L${k % 2 ? BX[0] + 12 : BX[0] + BX[2] - 12} ${BX[1] + 12 + (k + 1) * (BX[3] - 24) / 5}` : ''); }
+const ladder = el('path', { d: lad, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 1.6, 'stroke-opacity': .8, pathLength: 1 }, box);
+const plane = el('path', { d: 'M0 -9 L3 -2 L11 2 L11 4 L3 2 L2 7 L5 9 L5 10 L0 9 L-5 10 L-5 9 L-2 7 L-3 2 L-11 4 L-11 2 L-3 -2Z', fill: 'var(--amber)' }, box);
+el('text', { x: BX[0], y: BX[1] + BX[3] + 26, class: 'tag', fill: 'var(--amber)' }, box).textContent = 'Aircraft box';
+const circLab = el('text', { x: CC[0] - CR - 16, y: CC[1] + CR + 30, class: 'tag', fill: 'var(--amber)', opacity: 0 }, act); circLab.textContent = 'Buoy circle';
+const lineLab = el('text', { x: L1[0] + 22, y: L1[1] + 6, class: 'tag', fill: 'var(--amber)', opacity: 0 }, act); lineLab.textContent = 'Buoy line';
+
+// Sprint ping and bearing
+const pingG = el('g', {}, cam);
+const pings = [0, .28, .56].map(() => el('circle', { r: 1, fill: 'none', stroke: 'var(--red)', 'stroke-width': 2.5, opacity: 0 }, pingG));
+const flash = el('circle', { r: 7, fill: '#ffb7a4', opacity: 0, filter: 'url(#kit-glow)' }, pingG);
+const bearing = el('line', { stroke: 'var(--amber)', 'stroke-width': 2.2, 'stroke-dasharray': '14 7', opacity: 0, filter: 'url(#kit-glow)' }, pingG);
+const bLab = el('text', { class: 'tag', fill: 'var(--amber)', opacity: 0 }, pingG); bLab.textContent = 'Bearing';
+const loudLab = el('text', { class: 'tag', fill: 'var(--red)', opacity: 0, 'text-anchor': 'end' }, pingG); loudLab.textContent = 'Sprinting · loud';
+
+// Payoff: true track, sub, attack mark
+const trackG = el('g', { opacity: 0 }, cam);
+const legs = [];
+for (let i = 0; i < 4; i++) {
+  const sprint = i % 2 === 0;
+  const a = { d: `M${W[i]}L${W[i + 1]}`, fill: 'none', stroke: 'var(--red)', 'stroke-width': sprint ? 4.6 : 3, 'stroke-linecap': 'round', filter: 'url(#kit-glow)' };
+  if (sprint) a.pathLength = 1; else a['stroke-dasharray'] = '5 9';
+  legs.push(el('path', a, trackG));
+}
+const subG = el('g', { opacity: 0 }, cam);
+const subHalo = el('circle', { r: 22, fill: 'var(--red)', opacity: .25, filter: 'url(#soft)' }, subG);
+const subM = el('path', { d: 'M-15 0 C-11 -6 9 -6 15 0 C9 6 -11 6 -15 0Z M-3 -5 L-1 -10 L4 -10 L5 -4Z', fill: 'var(--red)', filter: 'url(#kit-glow)' }, subG);
+const tLab = el('text', { class: 'tag', fill: 'var(--red)', 'text-anchor': 'end', opacity: 0 }, cam); tLab.textContent = 'True track';
+const legend = el('g', { opacity: 0 }, world);
+el('line', { x1: 1190, y1: 360, x2: 1232, y2: 360, stroke: 'var(--red)', 'stroke-width': 3.6, 'stroke-linecap': 'round' }, legend);
+el('text', { x: 1246, y: 365, class: 'tag', fill: 'var(--paper)' }, legend).textContent = 'Sprint · loud';
+el('line', { x1: 1190, y1: 390, x2: 1232, y2: 390, stroke: 'var(--red)', 'stroke-width': 2.2, 'stroke-dasharray': '3 9', 'stroke-linecap': 'round' }, legend);
+el('text', { x: 1246, y: 395, class: 'tag', fill: 'var(--paper)' }, legend).textContent = 'Drift · quiet';
+const burst = [0, .22].map(() => el('circle', { r: 1, fill: 'none', stroke: '#ffd2b8', 'stroke-width': 3, opacity: 0, filter: 'url(#kit-glow)' }, cam));
+const aim = el('g', { opacity: 0 }, cam);
+el('circle', { r: 34, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 2.2 }, aim);
+for (const [a, b, c, d] of [[0, -48, 0, -24], [0, 24, 0, 48], [-48, 0, -24, 0], [24, 0, 48, 0]]) el('line', { x1: a, y1: b, x2: c, y2: d, stroke: 'var(--amber)', 'stroke-width': 2.2 }, aim);
+const aimLab = el('text', { x: 50, y: -38, class: 'tag', fill: 'var(--amber)' }, aim); aimLab.textContent = 'Attack';
+
+// ---- Effort panel (top right, outside the world transform)
+const panel = el('g', { opacity: 0 }, world);
+el('text', { x: 1190, y: 96, class: 'panel-t' }, panel).textContent = 'Effort';
+el('rect', { x: 1190, y: 110, width: 280, height: 8, rx: 4, fill: 'var(--line)' }, panel);
+const effort = el('rect', { x: 1190, y: 110, width: 280, height: 8, rx: 4, fill: 'var(--amber)' }, panel);
+const ACTS = [['Buoy line', '2'], ['Buoy circle', '2'], ['Aircraft box', '3'], ['Helicopter dip', '3'], ['Move ship', 'free'], ['Ship sprint', '1'], ['Attack', '3']];
+const actT = ACTS.map(([s, c], i) => { const g = el('g', { fill: 'var(--muted)' }, panel); el('text', { x: 1210, y: 152 + i * 26, class: 'act' }, g).textContent = s; el('text', { x: 1470, y: 152 + i * 26, class: 'act', 'text-anchor': 'end', 'fill-opacity': .7 }, g).textContent = c; return g; });
+const actDot = el('circle', { cx: 1196, cy: 147, r: 4, fill: 'var(--amber)' }, panel);
+
+// Hook
+const hook = el('text', { x: 800, y: 520, 'text-anchor': 'middle', class: 't-hook', style: 'font-size:78px' }, svg);
+hook.innerHTML = 'Every empty search is a <tspan class="hot">clue.</tspan>';
+
+const cap = captions(svg, [
+  [3.4, 5.6, 'An old report. Each dot is a place the sub could be.'],
+  [5.7, 8.4, 'Drop buoys. Fly a box. Empty water is a clue too.'],
+  [8.5, 10.7, 'It sprints loud. A buoy hears it and takes a bearing.'],
+  [10.8, 13.0, 'The cloud collapses. Its true track, revealed.'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'The Hunt', line: 'Find the sub before it slips into the Atlantic.' });
+
+// Where the search areas kill particles (an empty search removes the places it covered).
+const killTime = p => {
+  let tk = Infinity;
+  for (let i = 0; i < 6; i++) { const b = buoys[i]; if (Math.hypot(p.x - b.x, p.y - b.y) < b.cr + 6) tk = Math.min(tk, b.t0 + .45); }
+  if (p.x > BX[0] - 4 && p.x < BX[0] + BX[2] + 4 && p.y > BX[1] - 4 && p.y < BX[1] + BX[3] + 4) tk = Math.min(tk, 6.95 + (p.y - BX[1]) / BX[3] * .9);
+  for (let i = 6; i < 11; i++) { const b = buoys[i]; if (Math.hypot(p.x - b.x, p.y - b.y) < b.cr + 6) tk = Math.min(tk, b.t0 + .45); }
+  return tk;
+};
+// Resolve each particle's resting place once, then its fate.
+const S3 = subAt(8.6), H = [hearer.x, hearer.y];
+const bd = [S3[0] - H[0], S3[1] - H[1]], bl = Math.hypot(...bd), bu = [bd[0] / bl, bd[1] / bl];
+for (const p of parts) {
+  p.x = p.s[0] + p.dir[0] * p.dist; p.y = p.s[1] + p.dir[1] * p.dist;
+  p.dead = killTime(p);
+  const rx = p.x - H[0], ry = p.y - H[1], along = rx * bu[0] + ry * bu[1], perp = Math.abs(rx * bu[1] - ry * bu[0]);
+  p.keep = along > 0 && perp < 30;             // consistent with the bearing
+  if (p.dead === Infinity && !p.keep) p.dead = 9.2 + perp / 400;
+}
+
+const P2 = (x, y) => `${x.toFixed(1)} ${y.toFixed(1)}`;
+run({ duration: 16, poster: 9.7, frame: t => {
+  // Camera: slow push toward the hunt, a small jolt at the ping.
+  const push = ease.inOut(seg(t, 2.6, 11.5)), fx = lerp(800, 900, push), fy = lerp(500, 420, push), k = lerp(1, 1.16, push);
+  const jolt = Math.exp(-(t - 8.6) * 7) * (t > 8.6 ? 3 : 0) * Math.sin(t * 90);
+  cam.setAttribute('transform', `translate(${800 + jolt} ${500}) scale(${k}) translate(${-fx} ${-fy})`);
+  world.setAttribute('opacity', seg(t, 0, .6) * (1 - ease.inOut(seg(t, 13.1, 14.2))));
+  swell.setAttribute('transform', `translate(${-t * 4} ${-t * 1.5})`);
+
+  // Intro: coast draws on, hook
+  land.style.strokeDashoffset = 1 - ease.inOut(seg(t, .1, 2.4));
+  land.style.fillOpacity = ease.out(seg(t, 1.2, 2.8));
+  grat.setAttribute('opacity', ease.out(seg(t, .2, 1.4)));
+  names.setAttribute('opacity', ease.out(seg(t, 1.8, 3.0)));
+  gapLine.setAttribute('opacity', ease.out(seg(t, 2.4, 3.2)));
+  const hu = ease.out(seg(t, .3, 1.1)) * (1 - ease.in(seg(t, 2.7, 3.3)));
+  hook.setAttribute('opacity', hu); hook.setAttribute('transform', `translate(0 ${(1 - ease.out(seg(t, .3, 1.3))) * 24 - seg(t, 2.7, 3.3) * 30})`);
+
+  // Datum
+  const du = ease.out(seg(t, 2.8, 3.6));
+  datum.setAttribute('opacity', du * (1 - .5 * seg(t, 9.5, 10.5)));
+  datumRing.setAttribute('r', DR * lerp(1.6, 1, ease.back(seg(t, 2.8, 3.6))));
+
+  // Cloud
+  const spread = ease.out(seg(t, 3.4, 6.4)), coll = ease.inOut(seg(t, 9.7, 10.9));
+  const S = subAt(t);
+  for (const p of parts) {
+    let a = seg(t, p.born, p.born + .5) * .85;
+    if (t > p.dead) a *= 1 - seg(t, p.dead, p.dead + .45);
+    if (a <= 0.001) { p.n.setAttribute('opacity', 0); continue; }
+    const w = Math.sin(t * 1.3 + p.ph) * 3;
+    let x = lerp(p.s[0], p.x, spread) + w, y = lerp(p.s[1], p.y, spread) + Math.cos(t * 1.1 + p.ph) * 3;
+    if (coll > 0) { x = lerp(x, S[0] + p.jit[0], coll); y = lerp(y, S[1] + p.jit[1], coll); a = lerp(a, 1, coll); }
+    // particles just caught by a search flash amber before they go out
+    const hit = t > p.dead && t < p.dead + .45 && p.dead < 9;
+    p.n.setAttribute('fill', hit ? '#f0a93b' : (p.n._c ||= p.n.getAttribute('fill')));
+    p.n.setAttribute('cx', x.toFixed(1)); p.n.setAttribute('cy', y.toFixed(1)); p.n.setAttribute('opacity', a.toFixed(2));
+  }
+  cloudG.setAttribute('opacity', 1 - ease.in(seg(t, 11.4, 12.4)) * .75);
+
+  // Buoys
+  for (const b of buoys) {
+    const u = seg(t, b.t0, b.t0 + .5);
+    b.g.setAttribute('opacity', ease.out(u) * (1 - .45 * seg(t, 10.8, 11.6)));
+    b.b.setAttribute('r', 6 * ease.back(u));
+    const ru = seg(t, b.t0 + .05, b.t0 + .9);
+    b.rip.setAttribute('r', 6 + ru * b.cr * 1.6); b.rip.setAttribute('opacity', (1 - ru) * (ru > 0));
+    b.cov.setAttribute('r', b.cr * ease.out(seg(t, b.t0 + .1, b.t0 + .6)));
+  }
+  circLab.setAttribute('opacity', ease.out(seg(t, 8.1, 8.5)) * (1 - seg(t, 10.8, 11.4)));
+  lineLab.setAttribute('opacity', ease.out(seg(t, 6.2, 6.7)) * (1 - seg(t, 10.8, 11.4)));
+  const hb = seg(t, 8.62, 8.8) * (1 - seg(t, 9.6, 10.2));
+  hearer.b.setAttribute('fill', hb > 0 ? `rgba(240,169,59,${hb})` : 'var(--ink)');
+
+  // Search box
+  const bu2 = seg(t, 6.7, 7.1);
+  box.setAttribute('opacity', ease.out(bu2) * (1 - .6 * seg(t, 10.8, 11.6)));
+  const lu = ease.inOut(seg(t, 6.9, 7.9));
+  ladder.style.strokeDasharray = `${lu} 1`;
+  const lp = ladder.getTotalLength ? ladder.getPointAtLength(lu * ladder.getTotalLength()) : { x: 0, y: 0 };
+  const lp2 = ladder.getPointAtLength(Math.min(1, lu + .01) * ladder.getTotalLength());
+  const ang = Math.atan2(lp2.y - lp.y, lp2.x - lp.x) * 180 / Math.PI + 90;
+  plane.setAttribute('transform', `translate(${lp.x} ${lp.y}) rotate(${lu >= 1 ? 90 : ang})`);
+  plane.setAttribute('opacity', seg(t, 6.8, 7.0) * (1 - seg(t, 7.9, 8.2)));
+
+  // Sprint ping, bearing
+  pings.forEach((c, i) => {
+    const u = seg(t, 8.6 + i * .28, 9.9 + i * .28);
+    c.setAttribute('cx', S3[0]); c.setAttribute('cy', S3[1]);
+    c.setAttribute('r', 8 + ease.out(u) * 150); c.setAttribute('opacity', u > 0 && u < 1 ? (1 - u) * .9 : 0);
+  });
+  flash.setAttribute('cx', S3[0]); flash.setAttribute('cy', S3[1]);
+  flash.setAttribute('opacity', seg(t, 8.55, 8.65) * (1 - seg(t, 8.8, 9.4)));
+  const bu3 = ease.out(seg(t, 8.8, 9.3));
+  const bE = [H[0] + bu[0] * 330 * bu3, H[1] + bu[1] * 330 * bu3];
+  bearing.setAttribute('x1', H[0]); bearing.setAttribute('y1', H[1]); bearing.setAttribute('x2', bE[0]); bearing.setAttribute('y2', bE[1]);
+  bearing.setAttribute('opacity', (bu3 > 0) * (1 - seg(t, 11, 11.8)));
+  bLab.setAttribute('x', H[0] + bu[0] * 320 - 14); bLab.setAttribute('y', H[1] + bu[1] * 320 - 4);
+  bLab.setAttribute('text-anchor', 'end');
+  bLab.setAttribute('opacity', ease.out(seg(t, 9.1, 9.5)) * (1 - seg(t, 10.8, 11.4)));
+  loudLab.setAttribute('x', S3[0] + 30); loudLab.setAttribute('y', S3[1] - 26); loudLab.setAttribute('text-anchor', 'start');
+  loudLab.setAttribute('opacity', seg(t, 8.65, 8.9) * (1 - seg(t, 9.8, 10.3)));
+
+  // Payoff: the true track draws on, the sub, the attack mark
+  const tr = seg(t, 10.9, 12.3);
+  trackG.setAttribute('opacity', tr > 0 ? 1 : 0);
+  const tEnd = lerp(WT[0], Math.min(t, 12.8), ease.inOut(tr));
+  legs.forEach((g, i) => {
+    const u = clamp((tEnd - WT[i]) / (WT[i + 1] - WT[i]));
+    if (i % 2 === 0) g.style.strokeDasharray = `${u} 1`;
+    else { g.setAttribute('opacity', u > 0 ? 1 : 0); g.setAttribute('d', `M${W[i]}L${P2(lerp(W[i][0], W[i + 1][0], u), lerp(W[i][1], W[i + 1][1], u))}`); }
+  });
+  const su = ease.back(seg(t, 11.0, 11.6));
+  subG.setAttribute('opacity', seg(t, 11.0, 11.3));
+  const ang2 = Math.atan2(W[4][1] - W[3][1], W[4][0] - W[3][0]) * 180 / Math.PI;
+  subG.setAttribute('transform', `translate(${S[0]} ${S[1]}) rotate(${ang2}) scale(${su * 1.35})`);
+  subHalo.setAttribute('r', 22 + Math.sin(t * 5) * 4);
+  tLab.setAttribute('x', W[1][0] - 18); tLab.setAttribute('y', W[1][1] + 6);
+  tLab.setAttribute('opacity', ease.out(seg(t, 11.3, 11.8)));
+  legend.setAttribute('opacity', ease.out(seg(t, 11.4, 11.9)) * (1 - seg(t, 12.8, 13.2)));
+  burst.forEach((c, i) => { const u = seg(t, 10.75 + i * .22, 11.7 + i * .22); c.setAttribute('cx', S[0]); c.setAttribute('cy', S[1]); c.setAttribute('r', 10 + ease.out(u) * 120); c.setAttribute('opacity', u > 0 && u < 1 ? (1 - u) : 0); });
+  const au = seg(t, 12.0, 12.6);
+  aim.setAttribute('opacity', ease.out(au));
+  aim.setAttribute('transform', `translate(${S[0]} ${S[1]}) scale(${lerp(2.2, 1, ease.out(au))}) rotate(${(1 - ease.out(au)) * 45})`);
+
+  // Effort panel: effort spent as actions go out
+  panel.setAttribute('opacity', ease.out(seg(t, 5.2, 5.8)) * (1 - seg(t, 12.8, 13.2)));
+  const spent = .2 * ease.out(seg(t, 5.7, 6.4)) + .3 * ease.out(seg(t, 6.7, 7.3)) + .2 * ease.out(seg(t, 7.85, 8.3)) + .3 * ease.out(seg(t, 12.0, 12.4));
+  effort.setAttribute('width', 280 * (1 - spent));
+  const cur = t < 6.7 ? 0 : t < 7.85 ? 2 : t < 12 ? 1 : 6;
+  actT.forEach((x, i) => x.setAttribute('fill', i === cur ? 'var(--amber)' : 'var(--muted)'));
+  actDot.setAttribute('cy', 147 + cur * 26);
+
+  cap(t);
+  end(t, 13.0, 16);
+} });
+</script>
+</body></html>

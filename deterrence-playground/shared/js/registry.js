@@ -30,8 +30,6 @@ export const ALL_CATEGORIES = [
     blurb: 'How false stories spread and stick, and what governments say, phrase by phrase.',
     subs: [{ id: 'disinfo', name: 'Disinformation & cognitive warfare', blurb: 'How false stories spread and stick, and how belief updating can be attacked.' },
       { id: 'rhetoric', name: 'State rhetoric', blurb: 'What governments say, week by week: China, Russia and others, phrase by phrase.' }] },
-  { id: 'coercion', name: 'Economic coercion & war markets', sites: ['deterrence'],
-    blurb: 'Trade pressure, resilience, and what betting markets say about war.' },
   // Taiwan tools behind the second password. Hidden as a top-level section; shown as Regions › Indo-Pacific.
   { id: 'tsm', name: 'Indo-Pacific', sites: ['deterrence'], locked: true, hidden: true,
     blurb: 'Taiwan Strait trackers, exercise replays and wargames.' },
@@ -137,7 +135,7 @@ export const ALL_TOOLS = [
     blurb: 'Daily ship counts through Bab el-Mandeb, Suez and Hormuz from IMF PortWatch, against a sourced timeline of Houthi attacks, strikes, pauses and the 2026 Hormuz mining.' },
   { slug: 'iran-israel-salvos', sub: { regions: 'mideast' }, dev: true, cat: 'regions', sites: ['deterrence'], title: 'Iran–Israel Salvos', status: 'live',
     blurb: "Iran's three direct attacks on Israel side by side: what was launched, what was stopped, who defended with what, and what it cost, with every figure sourced and every disagreement shown." },
-  { slug: 'coercion-resilience', cat: 'coercion', sites: ['deterrence'], title: 'Coercion Without Concession', status: 'live',
+  { slug: 'coercion-resilience', dev: true, cat: 'coercion', sites: ['deterrence'], title: 'Coercion Without Concession', status: 'live',
     blurb: "China's trade punishment of Australia and South Korea in real trade and tourism data: what was hit, what found other buyers, and what Beijing failed to change." },
   { slug: 'war-markets', dev: true, cat: 'coercion', sites: ['deterrence'], title: 'War Markets', status: 'live',
     blurb: 'What prediction markets priced for strikes on Iran, ceasefires and a Russia–NATO clash in 2026, set against how each contract resolved.' },
@@ -159,7 +157,7 @@ export const ALL_TOOLS = [
     blurb: 'Who pledged aid to Ukraine and who delivered it: military, financial and humanitarian support by donor since 2022, in euros or as a share of GDP, from the Kiel Institute.' },
   { slug: 'prebunking-game', sub: { narratives: 'disinfo' }, dev: true, cat: 'narratives', sites: ['deterrence'], title: 'Borrowed Feelings', status: 'live',
     blurb: 'Judge invented reports while a soundtrack, a crowd or your own body pulls at you. See the weight you gave each report, then practice naming a feeling and tracing its source before you weigh the evidence.' },
-  { slug: 'sanctions-explorer', cat: 'coercion', sites: ['deterrence'], title: 'Sanctions Explorer', status: 'live',
+  { slug: 'sanctions-explorer', dev: true, cat: 'coercion', sites: ['deterrence'], title: 'Sanctions Explorer', status: 'live',
     blurb: 'Sixty years of sanctions threats and impositions from the TIES dataset: filter by sender, target, objective and type, see how often the target gave in, and set that beside what the Global Sanctions Data Base authors report.' },
   { slug: 'cost-ratio', dev: true, cat: 'gametheory', sites: ['deterrence'], title: 'Cost Ratio Bargaining', status: 'live',
     blurb: 'Hold the total cost of war fixed, shift who pays it, and watch the peaceful settlement move toward the side whose cost of fighting fell.' },
@@ -191,14 +189,14 @@ export const ALL_TOOLS = [
     blurb: 'An argument-based matrix wargame of a fictional Narva crisis: argue an action with three reasons, face counter-arguments, and roll 2d6 over six turns.' },
   { slug: 'sub-hunt', sub: { models: 'wargames' }, cat: 'models', sites: ['deterrence'], title: 'The Hunt', status: 'live',
     blurb: 'Hunt a hidden submarine in a notional Greenland–Iceland–UK gap with sonobuoys, patrol aircraft and a towed array, on a Bayesian probability map that updates every hour, then see its true track.' },
-  { slug: 'berlin-airlift', sub: { models: 'wargames' }, cat: 'models', also: ['coercion'], sites: ['deterrence'], title: 'Airlift: Berlin 1948–49', status: 'live',
+  { slug: 'berlin-airlift', sub: { models: 'wargames' }, cat: 'models', sites: ['deterrence'], title: 'Airlift: Berlin 1948–49', status: 'live',
     blurb: 'Run the Berlin Airlift day by day: juggle C-54s, crews, inspections, runways, fog and the coal-food mix to keep 2 million Berliners supplied, then see your tonnage against the 1948–49 record.' },
 ];
 
 export const onSite = (x, site = SITE) => !x.sites || x.sites.includes(site);
 /** A tool's category on a given site (siteCat overrides cat per site). */
 export const catOn = (t, site = SITE) => (t.dev && site === 'deterrence' ? 'dev' : (t.siteCat && t.siteCat[site]) || t.cat);
-const ORDER = { deterrence: ['gametheory', 'nuclear', 'regions', 'narratives', 'coercion', 'models', 'tsm', 'dev'] };
+const ORDER = { deterrence: ['gametheory', 'nuclear', 'regions', 'narratives', 'models', 'tsm', 'dev'] };
 // `also` lists extra categories a tool appears in; `cats` is its primary category plus those.
 export const TOOLS = ALL_TOOLS.filter(t => onSite(t)).map(t => ({ ...t, cat: catOn(t), cats: catOn(t) === 'dev' ? ['dev'] : [catOn(t), ...(t.also || [])],
   blurb: (t.siteBlurb && t.siteBlurb[SITE]) || t.blurb }));

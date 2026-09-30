@@ -24,26 +24,28 @@ export const ALL_CATEGORIES = [
   { id: 'regions', name: 'Regions', sites: ['deterrence'],
     blurb: 'Wars and flashpoints by region: Russia and Ukraine, and the Middle East.',
     subs: [{ id: 'ukraine', name: 'Russia & Ukraine', blurb: 'The war in data: strikes, air defense, nuclear signaling and support.' },
-      { id: 'mideast', name: 'Middle East', blurb: 'Chokepoints, shipping and missile exchanges from the Red Sea to Hormuz.' }] },
+      { id: 'mideast', name: 'Middle East', blurb: 'Chokepoints, shipping and missile exchanges from the Red Sea to Hormuz.' },
+      { id: 'indopacific', name: 'Indo-Pacific', locked: true, blurb: 'Taiwan Strait trackers, exercise replays and wargames.' }] },
   { id: 'narratives', name: 'Disinfo and Narratives', sites: ['deterrence'],
     blurb: 'How false stories spread and stick, and what governments say, phrase by phrase.',
     subs: [{ id: 'disinfo', name: 'Disinformation & cognitive warfare', blurb: 'How false stories spread and stick, and how belief updating can be attacked.' },
       { id: 'rhetoric', name: 'State rhetoric', blurb: 'What governments say, week by week: China, Russia and others, phrase by phrase.' }] },
   { id: 'coercion', name: 'Economic coercion & war markets', sites: ['deterrence'],
     blurb: 'Trade pressure, resilience, and what betting markets say about war.' },
-  { id: 'tsm', name: 'TSM', sites: ['deterrence'], locked: true,
-    blurb: 'Taiwan Strait trackers, exercise replays and wargames from the Taiwan Security Monitor.' },
+  // Taiwan tools behind the second password. Hidden as a top-level section; shown as Regions › Indo-Pacific.
+  { id: 'tsm', name: 'Indo-Pacific', sites: ['deterrence'], locked: true, hidden: true,
+    blurb: 'Taiwan Strait trackers, exercise replays and wargames.' },
   // Tools marked `dev: true` show only here (never in their other categories) and need their own password.
   { id: 'dev', name: 'Coming Soon', sites: ['deterrence'], locked: true,
     blurb: 'Tools still being built and checked.' },
 ];
 
 export const ALL_TOOLS = [
-  { slug: 'strait-layers', siteCat: { deterrence: 'tsm' }, cat: 'models', title: 'Strait Layers', status: 'live',
+  { slug: 'strait-layers', siteCat: { deterrence: 'tsm' }, also: ['regions'], sub: { regions: 'indopacific' }, cat: 'models', title: 'Strait Layers', status: 'live',
     blurb: 'PLA A2/AD rings, the kill chain behind them, a PLA crossing, and salvo math.' },
   { slug: 'ccg-grayzone', sites: ['tsm'], cat: 'trackers', title: 'CCG Gray-Zone Map', status: 'live',
     blurb: 'Every China Coast Guard incident the Taiwan Security Monitor has recorded since June 2024, on a map with a year selector and time slider.' },
-  { slug: 'transit-response', siteCat: { deterrence: 'tsm' }, cat: 'trackers', title: 'Transit Response Explorer', status: 'live',
+  { slug: 'transit-response', siteCat: { deterrence: 'tsm' }, also: ['regions'], sub: { regions: 'indopacific' }, cat: 'trackers', title: 'Transit Response Explorer', status: 'live',
     blurb: 'Pick an allied Strait transit and see how the PLA answered in the days around it.' },
   { slug: 'strait-snapshot', sites: ['tsm'], cat: 'trackers', title: 'Strait Snapshot Live', status: 'live',
     blurb: 'The six monthly Strait Snapshot figures as live charts for any month of 2026.' },
@@ -57,13 +59,13 @@ export const ALL_TOOLS = [
     blurb: "PRC balloons reported by Taiwan's MND: where MND placed them, when they came, and how they cluster in winter." },
   { slug: 'kinmen-closeup', sites: ['tsm'], cat: 'trackers', title: 'Kinmen Close-Up', status: 'live',
     blurb: "China Coast Guard incursions at Kinmen, 2024\u201326, mapped inside Taiwan's officially published boundary, with the hulls that keep coming back." },
-  { slug: 'joint-sword', siteCat: { deterrence: 'tsm' }, cat: 'crisis', title: 'Anatomy of an Exercise', status: 'live',
+  { slug: 'joint-sword', siteCat: { deterrence: 'tsm' }, also: ['regions'], sub: { regions: 'indopacific' }, cat: 'crisis', title: 'Anatomy of an Exercise', status: 'live',
     blurb: 'Major PLA exercises around Taiwan, replayed day by day with published zones, daily counts and statements.' },
   { slug: 'escalation-ladder', sites: ['tsm'], cat: 'crisis', title: 'Escalation Ladder', status: 'live',
     blurb: 'A hypothetical Kinmen quarantine crisis: choose Taipei, Washington and Tokyo moves and watch the rungs light up.' },
   { slug: 'coercion-options', sites: ['tsm'], cat: 'crisis', title: 'Quarantine, Blockade, Invasion', status: 'live',
     blurb: 'Five coercive options side by side, from gray zone to invasion: legal status, warning, costs and triggers.' },
-  { slug: 'warning-board', siteCat: { deterrence: 'tsm' }, cat: 'crisis', title: 'Indicators & Warning Board', status: 'live',
+  { slug: 'warning-board', siteCat: { deterrence: 'tsm' }, also: ['regions'], sub: { regions: 'indopacific' }, cat: 'crisis', title: 'Indicators & Warning Board', status: 'live',
     blurb: 'Exercises light up the board too. Set 33 sourced indicators and see what separates a drill from preparation for war.' },
   { slug: 'island-chains', sites: ['tsm'], cat: 'geo', title: 'Island Chains & Access', status: 'live',
     blurb: 'First and second island chains, U.S. and allied basing, and what can reach what.' },
@@ -75,7 +77,7 @@ export const ALL_TOOLS = [
     blurb: 'Where Taiwan\'s submarine cables land, and which islands go dark when you cut them.' },
   { slug: 'japan-view', sites: ['tsm'], cat: 'geo', title: "Japan's View: PLA Near Japan", status: 'live',
     blurb: "Every PLA Navy crossing of Japan's straits that Tokyo reported in 2025\u201326, by strait, direction and hull number, set against Taiwan's daily counts." },
-  { slug: 'crossing-windows', siteCat: { deterrence: 'tsm' }, cat: 'geo', title: 'Crossing Windows', status: 'live',
+  { slug: 'crossing-windows', siteCat: { deterrence: 'tsm' }, also: ['regions'], sub: { regions: 'indopacific' }, cat: 'geo', title: 'Crossing Windows', status: 'live',
     blurb: 'Thirty years of Taiwan Strait wind, wave, fog and typhoon records, tested against sea-state limits you set: which weeks allowed an amphibious crossing, and how the claimed April and October windows hold up.' },
   { slug: 'energy-blockade', sites: ['tsm'], cat: 'models', title: 'Energy Blockade Clock', status: 'live',
     blurb: 'Set a quarantine or blockade and watch Taiwan\'s LNG, coal and oil stocks run down, and who loses power first.' },
@@ -85,11 +87,11 @@ export const ALL_TOOLS = [
     blurb: 'Lay a minefield off a generic beach, choose how the PLA clears it, and see what mines do to a landing\'s timing and cost.' },
   { slug: 'kill-chain-builder', sub: { models: 'budget' }, cat: 'models', title: 'Kill Chain Builder', status: 'live',
     blurb: 'Wire sensors, command nodes and shooters into a kill chain, race the clock against a moving target, then strike nodes to find where it breaks.' },
-  { slug: 'penghu-gambit', siteCat: { deterrence: 'tsm' }, cat: 'models', title: 'Penghu Gambit', status: 'live',
+  { slug: 'penghu-gambit', siteCat: { deterrence: 'tsm' }, also: ['regions'], sub: { regions: 'indopacific' }, cat: 'models', title: 'Penghu Gambit', status: 'live',
     blurb: "Set Taiwan's defenses and the PLA's plan, play out a notional seizure of Penghu in 12-hour turns with every die roll shown, then run 1,000 games to see what drives the outcome." },
   { slug: 'interceptor-burndown', sub: { models: 'budget' }, cat: 'models', title: 'Interceptor Burn-down', status: 'live',
     blurb: "Set a daily PRC missile and drone salvo against open-source estimates of Taiwan's Patriot and Tien Kung stocks and see the day each runs dry, how many threats get through, and which assumption matters most." },
-  { slug: 'wargame-explorer', siteCat: { deterrence: 'tsm' }, cat: 'models', title: 'Wargame Results Explorer', status: 'live',
+  { slug: 'wargame-explorer', siteCat: { deterrence: 'tsm' }, also: ['regions'], sub: { regions: 'indopacific' }, cat: 'models', title: 'Wargame Results Explorer', status: 'live',
     blurb: 'Eight published Taiwan wargames side by side: what each assumed, how it came out, and which assumptions (above all Japan basing and U.S. entry) drive the result, with a page citation for every figure.' },
   { slug: 'rhetoric-heatmap', sub: { narratives: 'rhetoric' }, siteCat: { deterrence: 'narratives' }, cat: 'narrative', title: 'PRC Rhetoric Heatmap', status: 'live',
     blurb: 'Foreign Ministry, Defense Ministry and Taiwan Affairs Office language, week by week.' },
@@ -203,5 +205,5 @@ export const TOOLS = ALL_TOOLS.filter(t => onSite(t)).map(t => ({ ...t, cat: cat
 export const inCat = (t, id) => t.cats.includes(id);
 const rank = c => (ORDER[SITE] ? ORDER[SITE].indexOf(c.id) : -1);
 // Only categories with a tool on this site; the deterrence site uses its own order.
-export const CATEGORIES = ALL_CATEGORIES.filter(c => onSite(c) && TOOLS.some(t => inCat(t, c.id)))
+export const CATEGORIES = ALL_CATEGORIES.filter(c => onSite(c) && !c.hidden && TOOLS.some(t => inCat(t, c.id)))
   .sort((a, b) => (ORDER[SITE] ? rank(a) - rank(b) : 0));

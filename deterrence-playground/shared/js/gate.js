@@ -4,7 +4,7 @@
 // In local development (serving the source tree) this file is not loaded and data is plaintext.
 (function () {
   'use strict';
-  var CFG = {"id": "3d314fe2f5", "salt": "Y4WWLNuKMQNV9IJIKHdnMA==", "iter": 600000, "check": "tjkjLw74yJV6+mditJ1VR8hDkJT5Hm3Ucw4HZSJ8PZRGXg==", "remember": false, "t2": {"id": "24323fd3b3", "salt": "1h8efphNDcDulPgKOV6WkA==", "check": "4ufCwV4H5vsTzWw8SsppYG8CYEFPkH2wYaZh4xmBJCzThQ==", "slugs": ["crossing-windows", "joint-sword", "penghu-gambit", "strait-layers", "transit-response", "wargame-explorer", "warning-board"], "name": "TSM"}, "t3": {"id": "1561121461", "salt": "MVNotf4TEPtaytW5XYSB0A==", "check": "9pi+x9N+EpXYMdBBG8XYpFM4Aoxc+i2ZQWbUvA2rxnLp3w==", "slugs": ["dissertation-games"], "name": "Jon Dissertation Games"}, "t4": {"id": "9de41c846d", "salt": "oqIHHudpJmpc+aW0a7OJag==", "check": "7kATO5IQxdNDiRoSs6Fw3ra6oVcd73LR7qgc2bz5FHguHg==", "slugs": ["arms-race", "bayesian-attack", "conceal-reveal", "cost-ratio", "extended-deterrence", "humiliation-motivation", "iran-israel-salvos", "misinfo-cascade", "prebunking-game", "qre-explorer", "sea-control", "verification-game", "war-markets"], "name": "Coming Soon"}};
+  var CFG = {"id": "3d314fe2f5", "salt": "Y4WWLNuKMQNV9IJIKHdnMA==", "iter": 600000, "check": "tjkjLw74yJV6+mditJ1VR8hDkJT5Hm3Ucw4HZSJ8PZRGXg==", "remember": false, "t2": {"id": "24323fd3b3", "salt": "1h8efphNDcDulPgKOV6WkA==", "check": "4ufCwV4H5vsTzWw8SsppYG8CYEFPkH2wYaZh4xmBJCzThQ==", "slugs": ["crossing-windows", "joint-sword", "penghu-gambit", "strait-layers", "transit-response", "wargame-explorer", "warning-board"], "name": "Indo-Pacific"}, "t3": {"id": "1561121461", "salt": "MVNotf4TEPtaytW5XYSB0A==", "check": "9pi+x9N+EpXYMdBBG8XYpFM4Aoxc+i2ZQWbUvA2rxnLp3w==", "slugs": ["dissertation-games"], "name": "Jon Dissertation Games"}, "t4": {"id": "9de41c846d", "salt": "oqIHHudpJmpc+aW0a7OJag==", "check": "7kATO5IQxdNDiRoSs6Fw3ra6oVcd73LR7qgc2bz5FHguHg==", "slugs": ["arms-race", "bayesian-attack", "conceal-reveal", "cost-ratio", "extended-deterrence", "humiliation-motivation", "iran-israel-salvos", "misinfo-cascade", "prebunking-game", "qre-explorer", "sea-control", "verification-game", "war-markets"], "name": "Coming Soon"}};
   var KEYNAME = 'tsm-vault-key-' + (CFG ? CFG.id : 'dev');
   var MAGIC = 'TSMVAULT2:';
   // Optional extra tiers: tools listed in CFG.t2.slugs (or CFG.t3.slugs) have their data sealed with a
@@ -142,7 +142,7 @@
     g.setAttribute('aria-labelledby', 'g-title');
     g.innerHTML = '<div class="g-card"><div class="g-brand"><img src="' + ROOT + 'shared/assets/site-logo.svg" alt="">' +
       '<div><p class="g-org">Jonathan Walberg</p><h1 id="g-title">Interactive Deterrence</h1></div></div>' +
-      (tier > 1 ? '<p><b>' + (TIERS[tier].name || 'This section') + '</b> needs ' + (tier === 2 ? 'a second' : 'its own') + ' password. Enter it to continue.</p>'
+      (tier > 1 ? '<p><b>' + (TIERS[tier].name || 'This section') + '</b> is password protected. Enter the password to continue.</p>'
         : '<p>This site is for invited readers. Enter the access password to continue.</p>') +
       '<form><input type="password" id="g-pw" autocomplete="current-password" aria-label="Access password" placeholder="Access password" required>' +
       (tier > 1 || !REMEMBER ? '' : '<label class="g-rem"><input type="checkbox" id="g-rem" checked> Remember on this device</label>') +

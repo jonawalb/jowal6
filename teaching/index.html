@@ -13,6 +13,22 @@
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="stylesheet" href="/style.css">
+    <style>
+        .evals { margin-top: 3rem; padding-top: 2.25rem; border-top: 1px solid var(--border); }
+        .evals-title { font-family: var(--font-serif); font-size: 1.6rem; color: var(--green-900); margin: 0 0 .4rem; }
+        .evals-intro { color: var(--text-muted); font-size: .95rem; margin: 0 0 1.5rem; max-width: 62ch; }
+        .eval-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-bottom: 1.75rem; }
+        .eval-stat { background: var(--surface, #fff); border: 1px solid var(--border); border-left: 4px solid var(--green-600); border-radius: 8px; padding: 18px 20px; display: grid; gap: 4px; }
+        .eval-num { font-family: var(--font-serif); font-size: 2.4rem; line-height: 1; color: var(--green-800); font-weight: 600; }
+        .eval-num small { font-size: 1rem; color: var(--text-muted); font-weight: 400; margin-left: 2px; }
+        .eval-label { font-weight: 600; color: var(--green-900); font-size: .95rem; }
+        .eval-meta { color: var(--text-muted); font-size: .85rem; }
+        .eval-quotes { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+        .eval-quote { margin: 0; background: var(--surface, #fff); border: 1px solid var(--border); border-radius: 8px; padding: 20px 22px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px; }
+        .eval-quote blockquote { margin: 0; font-family: var(--font-serif); font-style: italic; font-size: 1.02rem; line-height: 1.6; color: var(--text, #1f2a24); }
+        .eval-quote figcaption { font-size: .8rem; color: var(--text-muted); letter-spacing: .02em; }
+        @media (max-width: 700px) { .eval-stats { grid-template-columns: 1fr; } }
+    </style>
 </head>
 <body>
 
@@ -70,6 +86,49 @@
             </div>
             <div class="teaching-image">
                 <img src="/img/cycling.jpg" alt="">
+            </div>
+        </div>
+
+        <div class="evals">
+            <h3 class="evals-title">Student feedback</h3>
+            <p class="evals-intro">From University of Virginia Student Experience of Teaching surveys for my discussion sections. Ratings are on a 1&ndash;5 scale; comments are quoted as written.</p>
+            <div class="eval-stats">
+                <div class="eval-stat">
+                    <span class="eval-num">4.94<small>/5</small></span>
+                    <span class="eval-label">&ldquo;Overall, the instructor was an effective teacher&rdquo;</span>
+                    <span class="eval-meta">International Politics in the Nuclear Age, Spring 2026 &middot; 16 responses &middot; department average 4.47</span>
+                </div>
+                <div class="eval-stat">
+                    <span class="eval-num">4.82<small>/5</small></span>
+                    <span class="eval-label">&ldquo;Overall, the instructor was an effective teacher&rdquo;</span>
+                    <span class="eval-meta">Military Force in International Relations, Fall 2025 &middot; 17 responses &middot; department average 4.45</span>
+                </div>
+            </div>
+            <div class="eval-quotes">
+                <figure class="eval-quote">
+                    <blockquote>&ldquo;I thoroughly enjoyed this section and how effectively Jonathan went over course concepts. He made complex concepts easily understandable and had a very laid back teaching style that made in-class discussion more inviting while still getting down to the core concepts.&rdquo;</blockquote>
+                    <figcaption>Military Force in International Relations, Fall 2025</figcaption>
+                </figure>
+                <figure class="eval-quote">
+                    <blockquote>&ldquo;Jonathan made the content very easy to understand and he always challenged us to think more deeply about theory, something that was critical in writing the essays and doing the exams.&rdquo;</blockquote>
+                    <figcaption>International Politics in the Nuclear Age, Spring 2026</figcaption>
+                </figure>
+                <figure class="eval-quote">
+                    <blockquote>&ldquo;His passion was evident, and I felt his direct nature ensured that students were both challenged and entertained. Everyone always wanted to come to discussion.&rdquo;</blockquote>
+                    <figcaption>Military Force in International Relations, Fall 2025</figcaption>
+                </figure>
+                <figure class="eval-quote">
+                    <blockquote>&ldquo;My TA was extremely knowledgeable and well prepared, and his explanations helped clarify difficult concepts and strengthen my understanding of the material.&rdquo;</blockquote>
+                    <figcaption>Military Force in International Relations, Fall 2025</figcaption>
+                </figure>
+                <figure class="eval-quote">
+                    <blockquote>&ldquo;Jonathan consistently created an open and respectful environment by encouraging students to share different perspectives and interpretations of the material.&rdquo;</blockquote>
+                    <figcaption>Military Force in International Relations, Fall 2025</figcaption>
+                </figure>
+                <figure class="eval-quote">
+                    <blockquote>&ldquo;I felt engaged and challenged in ways that Lecture did not provide, and I really enjoyed going each week.&rdquo;</blockquote>
+                    <figcaption>Military Force in International Relations, Fall 2025</figcaption>
+                </figure>
             </div>
         </div>
     </div>

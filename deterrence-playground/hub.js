@@ -4,6 +4,7 @@ import { createProjection, drawBasemap, el } from './shared/js/mapkit.js';
 import { LAND_INDOPAC } from './shared/data/land-indopac.js';
 import { mountWeek } from './shared/js/week/week.js';
 import { SITE } from './shared/js/site.js';
+import { TAGLINES } from './shared/js/taglines.js';
 
 const $ = id => document.getElementById(id);
 const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -134,6 +135,7 @@ function render() {
   const match = t => terms.every(w => hay(t).includes(w));
   const cats = CATEGORIES.filter(c => cat === 'all' || c.id === cat);
   const liveNow = TOOLS.filter(t => t.status === 'live' && (cat === 'all' ? t.cat !== 'dev' : inCat(t, cat)) && match(t));
+  document.body.classList.toggle('home-overview', TILES && !q && cat === 'all');
   if (TILES && !q) {
     // Overview: one tile per section (TSM last). A section: its tools, with a way back.
     if (cat === 'all') {
@@ -171,6 +173,51 @@ function render() {
   $('sections').innerHTML = html || `<p class="empty">No tools match “${esc(q)}”. Try a section name, such as “nuclear” or “Middle East”.</p>`;
   $('q-status').textContent = q ? `${liveNow.length} tool${liveNow.length === 1 ? '' : 's'} match` : '';
 }
+// Landing extras on section-tile sites: a Game Theory Gallery card beside the headline, and a rotating
+// "Try one" spotlight of open tools beside the section tiles. Both show only on the overview.
+if (TILES) {
+  const hero = document.querySelector('.hero');
+  const gtg = TOOLS.find(t => t.slug === 'game-theory-gallery' && t.status === 'live');
+  if (hero && gtg) hero.insertAdjacentHTML('beforeend', `<a class="promo" href="tools/game-theory-gallery/">
+    <svg class="promo-sketch" viewBox="0 0 172 100" aria-hidden="true">
+      <path d="M20 47 L70 22 M20 53 L70 80 M82 19 L118 8 M82 23 L118 38"/>
+      <circle cx="14" cy="50" r="6"/><circle cx="76" cy="21" r="6"/><circle cx="76" cy="81" r="5" class="term"/>
+      <text x="124" y="12">(2, 1)</text><text x="124" y="42">(0, 0)</text><text x="86" y="85">(1, 2)</text>
+      <text x="22" y="26" class="lbl">Fight</text><text x="22" y="84" class="lbl">Yield</text></svg>
+    <span class="promo-t"><b>Check out the Game Theory Gallery</b>
+      <span>Play with interactive models and tables of the field's most influential theories.</span>
+      <span class="go">Open the gallery →</span></span></a>`);
+  const main = $('sections');
+  const grid = document.createElement('div');
+  grid.className = 'home-grid wrap';
+  main.classList.remove('wrap');
+  main.before(grid); grid.append(main);
+  const pool = TOOLS.filter(t => t.status === 'live' && t.cat !== 'dev' && !isLocked(t) && TAGLINES[t.slug] && t.slug !== 'game-theory-gallery');
+  if (pool.length) {
+    const aside = document.createElement('aside');
+    aside.className = 'spot'; aside.setAttribute('aria-label', 'Try one');
+    aside.innerHTML = `<div class="spot-h"><p class="spot-k">Try one</p><div class="spot-nav">
+      <button type="button" class="spot-b" data-d="-1" aria-label="Previous tool">‹</button><span class="spot-n" aria-hidden="true"></span>
+      <button type="button" class="spot-b" data-d="1" aria-label="Next tool">›</button></div></div><div class="spot-card"></div>`;
+    grid.append(aside);
+    let i = Math.floor(Math.random() * pool.length), timer = null, hold = false;
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const show = () => {
+      const t = pool[i];
+      aside.querySelector('.spot-card').innerHTML = `<a class="spot-link" href="tools/${t.slug}/"><h3>${esc(t.title)}</h3>
+        <div class="spot-img"><img data-thumb="tools/${t.slug}/" alt="Screenshot of ${esc(t.title)}" width="640" height="400"></div>
+        <p>${esc(TAGLINES[t.slug])}</p><span class="go">Open →</span></a>`;
+      aside.querySelector('.spot-n').textContent = `${i + 1} / ${pool.length}`;
+    };
+    const step = d => { i = (i + d + pool.length) % pool.length; show(); };
+    const tick = () => { clearInterval(timer); if (!reduced) timer = setInterval(() => { if (!hold && !document.hidden) step(1); }, 7000); };
+    aside.addEventListener('click', e => { const b = e.target.closest('.spot-b'); if (b) { step(+b.dataset.d); tick(); } });
+    aside.addEventListener('pointerenter', () => { hold = true; }); aside.addEventListener('pointerleave', () => { hold = false; });
+    aside.addEventListener('focusin', () => { hold = true; }); aside.addEventListener('focusout', () => { hold = false; });
+    show(); tick();
+  }
+}
+
 render();
 
 // Keyboard: "/" search, "?" help, arrows move between cards (by position) and along the category bar.

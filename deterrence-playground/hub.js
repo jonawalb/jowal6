@@ -33,7 +33,6 @@ const UPDATED = {
   'escalation-ladder': ['2026-09-28', 'MND-verified daily counts'],
   'scs-features': ['2026-09-28', 'MND-verified daily counts'],
 };
-const FIRST_RELEASE = '2026-09-28'; // the commit that added the remaining tools
 const shortDate = d => new Date(d + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
 
 // Hero map: the Indo-Pacific with Taiwan picked out and a few range rings for texture.
@@ -93,8 +92,9 @@ function tile(c) {
 function card(t) {
   const href = `tools/${t.slug}/`;
   const soon = t.status !== 'live';
-  const [d, note] = UPDATED[t.slug] || [FIRST_RELEASE, 'First release'];
-  const upd = soon ? '' : `<span class="upd">Updated ${shortDate(d)} · ${esc(note)}</span>`;
+  // Only real update notes are shown; tools with no update since release show nothing.
+  const [d, note] = UPDATED[t.slug] || [];
+  const upd = soon || !d || note === 'First release' ? '' : `<span class="upd">Updated ${shortDate(d)} · ${esc(note)}</span>`;
   const inner = `<div class="thumb"><img data-thumb="${href}" alt="" width="640" height="400"></div>
     <div class="card-body"><p class="card-cat">${esc(catName[t.cat] || '')}${isLocked(t) ? LOCK : ''}</p><h3>${esc(t.title)}</h3><p>${esc(t.blurb)}</p>
     ${upd}<span class="go">${soon ? 'Coming soon' : 'Open →'}</span></div>`;

@@ -1,91 +1,123 @@
-// Panel: the hour bar, the plain-language hour summaries, Advanced settings and the page's static sections.
+// Panel: the turn bar (effort meter, stocks, attack odds), the plain-language turn summaries, the map's
+// odds on each behaviour, Practice settings and the page's static sections.
 import { escapeHtml } from '../../../shared/js/mapkit.js';
-import { GAME, BEHAVIOURS, ROUTES, PARAM_ROWS, SENSORS } from '../data/params.js';
+import { GAME, BEHAVIOURS, ROUTES, PARAM_ROWS, SENSORS, ACTIONS } from '../data/params.js';
 import { SOURCES, HISTORY } from '../data/sources.js';
 import { mathHtml, drawLRC } from './math.js';
+import { effortLeft, spent, thisTurn, lastSnap, TYPE, hourOf } from './game.js';
+import { BEHS } from './sub.js';
 
 const $ = id => document.getElementById(id);
 export const pct = x => `${Math.round(x * 100)}%`;
 const DIRS = ['north', 'north-east', 'east', 'south-east', 'south', 'south-west', 'west', 'north-west'];
-const dirOf = brg => DIRS[Math.round(brg / 45) % 8];
-
-/** "a", "a and b", "a, b and c". */
+export const dirOf = brg => DIRS[Math.round(brg / 45) % 8];
 const list = xs => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}`);
-const who = a => (a.type === 'buoy' ? `sonobuoys ${a.name}` : a.type === 'mpa' ? `aircraft ${a.name}` : 'the ship');
-const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+const ERR = { circle: SENSORS.circle.loc * 2, line: SENSORS.line.loc * 2, air: SENSORS.air.loc * 2, helo: SENSORS.helo.loc * 2, net: SENSORS.net.loc * 2 };
+const WHO = { circle: 'Buoy circle', line: 'Buoy line', air: 'Aircraft', helo: 'Helicopter dip' };
 
-function contactTag(g, c) {
-  if (!g.over) return `<b>C${c.n}</b>`;
-  return `<b>C${c.n}</b> <span class="pill ${c.real ? 'sh-real' : 'sh-false'}">${c.real ? 'real' : 'false'}</span>`;
+function tag(g, c) {
+  const t = `<b>C${c.n}</b>`;
+  if (!g.over) return t;
+  return `${t} <span class="pill ${c.real ? 'sh-real' : 'sh-false'}">${c.real ? 'real' : 'false'}</span>`;
 }
 
-/** One hour's events in words. Returns HTML (all text is generated here, nothing user-supplied). */
-export function hourText(g, ev) {
-  const heard = ev.results.filter(r => r.contacts.length), quiet = ev.results.filter(r => !r.contacts.length);
+function contactText(g, c) {
+  if (c.type === 'ship') return `the ship's towed array heard a bearing, ${Math.round(c.brg)}° ±${SENSORS.ship.brg * 2}° (${tag(g, c)})`;
+  if (c.type === 'net') return `the listening network heard a sprint, within ±${ERR.net} nm (${tag(g, c)})`;
+  return `${WHO[c.type]} ${c.by} heard something, within ±${ERR[c.type]} nm (${tag(g, c)})`;
+}
+
+/** One turn's events in words. Returns HTML (all text is generated here, nothing user-supplied). */
+export function turnText(g, ev) {
   const out = [];
-  heard.forEach((r, k) => {
-    const tags = r.contacts.map(c => contactTag(g, c)).join(', ');
-    out.push(`${k ? '' : 'Contact! '}${cap(who(r.asset))} picked up ${r.contacts.length > 1 ? `${r.contacts.length} sounds` : 'a sound'} (${tags}).`);
+  ev.attacks.forEach(a => {
+    out.push(a.hit ? `<b>Hit!</b> Your attack landed ${a.d.toFixed(1)} nm from the sub.`
+      : `Your attack missed; the map now rules out that ring. A sub within ${GAME.alertR} nm heard it and will sprint away for 2 hours, which makes it loud.`);
   });
-  const nc = ev.contacts.length;
-  if (nc) out.push(`${nc > 1 ? 'Each' : 'It'} could be the sub, or noise.`);
-  if (quiet.length) out.push(`${cap(list(quiet.map(r => who(r.asset))))} heard nothing.`);
-  const s = ev.shift, moved = s && s.nm >= 1.5 ? `, and the odds moved ${dirOf(s.brg)}` : '';
-  if (nc) out.push(`The odds pulled toward the contact${nc > 1 ? 's' : ''}.`);
-  else if (ev.cover) out.push(`Hearing nothing cut the odds in the water you searched from ${pct(ev.cover[0])} to ${pct(ev.cover[1])}; the rest of the map gained that${moved}.`);
-  else if (moved) out.push(`The odds moved ${dirOf(s.brg)}, away from the ship.`);
-  out.push(`Best attack odds ${pct(ev.before)} → <b>${pct(ev.after)}</b>.`);
-  return `<b>Hour ${ev.h}.</b> ${out.join(' ')}`;
+  const cs = ev.contacts;
+  if (cs.length) {
+    const s = cs.map(c => contactText(g, c));
+    out.push(`${s.length > 1 ? 'Contacts: ' : 'Contact: '}${s.join('; ')}.`);
+    if (cs.some(c => c.type !== 'net')) out.push('Any of these except the network could be noise.');
+  }
+  const quiet = Object.entries(ev.heard).filter(([k, n]) => !n && k !== 'Ship').map(([k]) => k);
+  if (quiet.length) out.push(`${list(quiet)} heard nothing, so the odds there dropped.`);
+  else if (!cs.length && ev.h1 > ev.h0 && !ev.attacks.some(a => a.hit)) out.push('Nothing heard anywhere.');
+  if (!ev.attacks.some(a => a.hit)) out.push(`Best attack odds ${pct(ev.before)} → <b>${pct(ev.after)}</b>.`);
+  const when = ev.attacks.some(a => a.hit) ? `Hour ${ev.h0}` : `Hours ${ev.h0}–${ev.h1}`;
+  return `<b>${when}.</b> ${out.join(' ')}`;
+}
+
+function pips(g) {
+  const used = g.over ? 0 : spent(g), have = g.over ? 0 : g.effort;
+  let s = '';
+  for (let i = 0; i < GAME.bank; i++) s += `<i class="${i < have - used ? 'on' : i < have ? 'used' : ''}"></i>`;
+  return s;
 }
 
 export function renderStatus(g) {
-  const snap = g.snaps[g.snaps.length - 1];
-  $('hour').textContent = g.t;
-  $('hours-left').textContent = g.over ? 'Hunt over' : `${GAME.hours - g.t} hour${GAME.hours - g.t === 1 ? '' : 's'} left`;
+  const snap = lastSnap(g);
+  $('turn').textContent = Math.min(g.turn + 1, GAME.turns);
+  $('hours').textContent = g.over ? `Hunt over at hour ${g.over.h}` : `hours ${hourOf(g)}–${hourOf(g) + GAME.turnHours}`;
+  $('pips').innerHTML = pips(g);
+  $('effort').textContent = g.over ? '0' : `${effortLeft(g)}`;
+  $('effort-of').textContent = g.over ? '' : ` of ${g.effort}`;
+  const qBuoy = thisTurn(g).filter(e => ACTIONS[TYPE[e.k]].stock === 'buoys').length;
+  $('buoys').textContent = `${g.buoys}`;
+  $('torps').textContent = `${g.torps - thisTurn(g).filter(e => e.k === 'x').length}`;
+  $('buoys').title = qBuoy ? `${qBuoy} queued this turn` : '';
   $('odds').textContent = pct(snap.best.v);
   $('odds-bar').style.width = `${Math.round(snap.best.v * 100)}%`;
-  $('left-buoy').textContent = `${g.left.buoy} of ${SENSORS.buoy.count} left`;
-  $('left-mpa').textContent = `${g.left.mpa} of ${SENSORS.mpa.count} left`;
   const st = $('status');
   if (!g.over) {
     st.dataset.s = 'warn';
     $('st-t').textContent = 'Find the submarine';
-    $('st-s').textContent = `Attack where you think it is before it slips out into the Atlantic or the ${GAME.hours} hours run out.`;
+    $('st-s').textContent = `Hit it with an attack before it slips out into the Atlantic or the ${GAME.turns * GAME.turnHours} hours run out.`;
   } else {
     const k = g.over.kind;
     st.dataset.s = k === 'found' ? 'good' : 'bad';
-    $('st-t').textContent = { found: 'Submarine found', missed: 'Attack missed', escaped: 'The sub slipped through', timeout: 'Time ran out' }[k];
-    $('st-s').textContent = 'The true track is now on the map. Use the slider under the map to replay the hunt.';
+    $('st-t').textContent = { found: 'Submarine found', escaped: 'The sub slipped through', timeout: 'Time ran out' }[k];
+    $('st-s').textContent = 'The review under the map replays its true track against your searches.';
   }
+  renderBeh(snap.beh, g);
 }
 
-/** The hour-by-hour log, newest first. hour limits it during the replay. */
-export function renderLog(g, hour = g.t) {
-  const items = g.events.filter(e => e.h <= hour).map(e => `<li>${hourText(g, e)}</li>`).reverse();
+/** Bars for the map's odds on each behaviour; after the hunt, the true one is marked. */
+function renderBeh(o, g) {
+  $('beh-odds').innerHTML = BEHS.map(k => {
+    const truth = g.over && g.sub.beh === k ? ' <span class="pill sh-real">this one</span>' : '';
+    return `<div class="sh-bo"><span>${BEHAVIOURS[k].short}${truth}</span><b class="num">${pct(o[k])}</b><span class="sh-bo-bar"><i style="width:${Math.round(o[k] * 100)}%"></i></span></div>`;
+  }).join('');
+}
+
+/** The turn-by-turn log, newest first. hour limits it during the replay. */
+export function renderLog(g, hour = Infinity) {
+  const items = g.events.filter(e => Math.min(e.h1, g.over?.h ?? e.h1) <= hour).map(e => `<li>${turnText(g, e)}</li>`).reverse();
   $('log').innerHTML = items.length ? items.join('')
-    : '<li class="muted">Nothing yet. After each hour, what your sensors heard appears here, newest first.</li>';
+    : '<li class="muted">Nothing yet. After each turn, what your sensors heard appears here, newest first.</li>';
+}
+
+/** The queued actions for this turn, as removable chips (Undo takes the last one). */
+export function renderQueue(g) {
+  const q = g.over ? [] : thisTurn(g);
+  $('queue').innerHTML = q.length ? q.map(e => `<li>${ACTIONS[TYPE[e.k]].name} <span class="num">${ACTIONS[TYPE[e.k]].cost}</span></li>`).join('')
+    : '<li class="muted">Nothing queued yet: pick an action, then click the map.</li>';
 }
 
 export function renderSetup(g, onBeh) {
   const box = $('beh');
-  box.innerHTML = Object.entries(BEHAVIOURS).map(([k, b]) =>
-    `<button type="button" data-beh="${k}" aria-pressed="${k === g.beh}"><b>${b.label}</b><small>${b.help}</small></button>`).join('');
+  const opts = [['any', 'Any (normal)', 'One of the four, picked by the seed. The map starts unsure which.'],
+    ...BEHS.map(k => [k, BEHAVIOURS[k].label, BEHAVIOURS[k].help])];
+  box.innerHTML = opts.map(([k, l, h]) =>
+    `<button type="button" data-beh="${k}" aria-pressed="${k === g.beh}"><b>${l}</b><small>${h}</small></button>`).join('');
   box.querySelectorAll('button').forEach(b => { b.onclick = () => onBeh(b.dataset.beh); });
-  $('sp').value = Math.round(g.share * 100);
-  $('sp-o').textContent = `${Math.round(g.share * 100)}%`;
   $('seed').value = g.seed;
 }
-
-export const HINTS = {
-  buoy: `Click the map to drop ${SENSORS.buoy.n} sonobuoys in a ${SENSORS.buoy.fieldR} nm circle. They listen for the next ${SENSORS.buoy.life} hours.`,
-  mpa: `Click the map to send the aircraft. It searches a ${SENSORS.mpa.half * 2} nm square for the next ${SENSORS.mpa.onStation} hours.`,
-  pros: `Click where you think the sub is. You will see your map's odds for the ${GAME.prosR} nm attack ring before you commit.`,
-  used: 'You have searched this hour. Press End hour to see what your sensors hear (or Undo to move it).',
-};
 
 export function renderBelow() {
   $('param-table').innerHTML = '<tr><th>Value</th><th>Setting (all notional)</th></tr>' +
     PARAM_ROWS.map(([k, v]) => `<tr><td>${k}</td><td>${escapeHtml(v)}</td></tr>`).join('');
+  $('beh-list').innerHTML = BEHS.map(k => `<li><b>${BEHAVIOURS[k].label}.</b> ${escapeHtml(BEHAVIOURS[k].help)}</li>`).join('');
   const byId = Object.fromEntries(SOURCES.map((s, i) => [s.id, i + 1]));
   $('history').innerHTML = HISTORY.map(h => {
     const refs = [h.src, h.src2].filter(Boolean).map(id => `<a href="#src-${id}">[${byId[id]}]</a>`).join(' ');

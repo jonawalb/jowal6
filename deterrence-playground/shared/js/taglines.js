@@ -27,7 +27,7 @@ export const TAGLINES = {
   'fog-of-command': 'Your orders run late, your reports lie, and the truth only appears in the review.',
   'orbital-denial': 'Every satellite you destroy leaves debris in an orbit both sides share.',
   'strait-landing': 'Land troops on Taiwan through real historical weather, and race to build up ashore before the counterattack arrives.',
-  'sub-hunt': 'Every empty search is a clue. Find the sub before it slips into the Atlantic.',
+  'sub-hunt': "Spend your effort, learn the sub's habits, and pounce before it slips into the Atlantic.",
   'berlin-airlift': 'Keep West Berlin fed and warm by air, day by day, and see how your tonnage stacks up against 1948–49.',
   'markets-vs-analysts': 'What traders paid for a Chinese invasion, blockade or clash over Taiwan, set against the PLA activity record.',
   'war-markets': 'See what prediction markets priced for strikes on Iran, ceasefires and a Russia–NATO clash, and how each bet turned out.',

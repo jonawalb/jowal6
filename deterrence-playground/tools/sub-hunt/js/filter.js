@@ -2,7 +2,7 @@
 // each particle is one possible submarine that follows the same movement rules as the real one. Every hour
 // the particles move (prediction), then each is reweighted by how likely this hour's search results would
 // be if the sub were there (Bayes' rule). Searching an area and finding nothing drains weight from it.
-import { spawn, stepSub } from './sub.js';
+import { spawn, stepSub, alert, BEHS } from './sub.js';
 import { likelihood, pDetect } from './sensors.js';
 import { dist, isLand, step, BOX } from './geo.js';
 
@@ -16,8 +16,29 @@ export function createFilter(rng, n, beh, datum, r) {
   return { rng, parts, w, n };
 }
 
-export function predict(f, threats, share) {
-  for (const s of f.parts) stepSub(s, f.rng, threats, share);
+export function predict(f, threats) {
+  for (const s of f.parts) stepSub(s, f.rng, threats);
+}
+
+/**
+ * A missed attack at q with radius r: the sub was not inside the ring (Bayes: those particles get zero
+ * weight), and any sub within alertR heard it and bolts.
+ */
+export function missed(f, q, r, alertR) {
+  let tot = 0;
+  f.parts.forEach((s, i) => {
+    if (!s.out && dist(q, [s.lon, s.lat]) <= r) f.w[i] = 0;
+    else alert(s, q, alertR);
+    tot += f.w[i];
+  });
+  normalize(f, tot);
+}
+
+/** The map's odds on each behaviour: { sprinter, zigzag, shy, loiter }. */
+export function behOdds(f) {
+  const o = Object.fromEntries(BEHS.map(k => [k, 0]));
+  f.parts.forEach((s, i) => { o[s.beh] += f.w[i]; });
+  return o;
 }
 
 /**
@@ -56,10 +77,10 @@ export function maybeResample(f) {
   for (let k = 0; k < f.n; k++) {
     const u = u0 + k / f.n;
     while (u > c && i < f.n - 1) { i += 1; c += f.w[i]; }
-    const s = { ...f.parts[i], home: f.parts[i].home ? f.parts[i].home.slice() : null };
+    const s = { ...f.parts[i] };
     if (!s.out) {
       const q = step([s.lon, s.lat], f.rng.u() * 360, Math.abs(f.rng.normal()) * 1.5);
-      if (!isLand(q[0], q[1])) { s.lon = q[0]; s.lat = q[1]; }
+      if (!isLand(q[0], q[1])) { s.plon += q[0] - s.lon; s.plat += q[1] - s.lat; s.lon = q[0]; s.lat = q[1]; }
     }
     out.push(s);
   }

@@ -1,0 +1,19 @@
+/* Jon Dissertation Games. Built on shared/css/tsm.css tokens only. */
+.dg { max-width: 1400px; margin: 16px auto 32px; padding: 0 16px; display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 18px; align-items: start; }
+@media (max-width: 820px) { .dg { grid-template-columns: minmax(0, 1fr); } }
+.dg-list { display: flex; flex-direction: column; gap: 8px; }
+.dg-list button { text-align: left; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel); color: var(--ink); padding: 10px 12px; cursor: pointer; font: inherit; }
+.dg-list button[aria-current="true"] { border-color: var(--accent); box-shadow: inset 3px 0 0 var(--accent); }
+.dg-list b { display: block; font: 600 15px var(--display); }
+.dg-list span { display: block; font-size: 12px; color: var(--muted); }
+.dg-view { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 16px 18px 20px; min-width: 0; }
+.dg-view h2 { margin: 0 0 4px; font: 700 24px var(--display); }
+.dg-meta { margin: 0 0 12px; font-size: 12.5px; color: var(--muted); }
+.dg-view p { max-width: 80ch; }
+.dg-fig { margin: 14px 0; background: #fff; border: 1px solid var(--rule); border-radius: 4px; padding: 8px; }
+.dg-fig img { display: block; width: 100%; height: auto; }
+.dg-actions { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0 14px; }
+.dg-vars { border-collapse: collapse; width: 100%; font-size: 14px; }
+.dg-vars th, .dg-vars td { text-align: left; vertical-align: top; padding: 6px 10px 6px 0; border-top: 1px solid var(--rule); }
+.dg-vars th { font: 500 14px var(--mono); white-space: nowrap; width: 9em; }
+.dg-note { color: var(--muted); font-size: 13px; }

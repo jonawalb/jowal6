@@ -4,16 +4,22 @@
 // In local development (serving the source tree) this file is not loaded and data is plaintext.
 (function () {
   'use strict';
-  var CFG = {"id": "3d314fe2f5", "salt": "Y4WWLNuKMQNV9IJIKHdnMA==", "iter": 600000, "check": "tjkjLw74yJV6+mditJ1VR8hDkJT5Hm3Ucw4HZSJ8PZRGXg==", "remember": false, "t2": {"id": "24323fd3b3", "salt": "1h8efphNDcDulPgKOV6WkA==", "check": "4ufCwV4H5vsTzWw8SsppYG8CYEFPkH2wYaZh4xmBJCzThQ==", "slugs": ["crossing-windows", "joint-sword", "misinfo-cascade", "penghu-gambit", "strait-layers", "transit-response", "wargame-explorer", "warning-board"], "name": "TSM"}};
+  var CFG = {"id": "3d314fe2f5", "salt": "Y4WWLNuKMQNV9IJIKHdnMA==", "iter": 600000, "check": "tjkjLw74yJV6+mditJ1VR8hDkJT5Hm3Ucw4HZSJ8PZRGXg==", "remember": false, "t2": {"id": "24323fd3b3", "salt": "1h8efphNDcDulPgKOV6WkA==", "check": "4ufCwV4H5vsTzWw8SsppYG8CYEFPkH2wYaZh4xmBJCzThQ==", "slugs": ["crossing-windows", "joint-sword", "misinfo-cascade", "penghu-gambit", "strait-layers", "transit-response", "wargame-explorer", "warning-board"], "name": "TSM"}, "t3": {"id": "1561121461", "salt": "MVNotf4TEPtaytW5XYSB0A==", "check": "9pi+x9N+EpXYMdBBG8XYpFM4Aoxc+i2ZQWbUvA2rxnLp3w==", "slugs": ["dissertation-games"], "name": "Jon Dissertation Games"}};
   var KEYNAME = 'tsm-vault-key-' + (CFG ? CFG.id : 'dev');
   var MAGIC = 'TSMVAULT2:';
-  // Optional second tier: tools listed in CFG.t2.slugs have their data sealed with a second password.
-  var T2 = CFG && CFG.t2;
+  // Optional extra tiers: tools listed in CFG.t2.slugs (or CFG.t3.slugs) have their data sealed with a
+  // second (or third) password. A page belongs to at most one extra tier.
+  var TIERS = { 2: CFG && CFG.t2, 3: CFG && CFG.t3 };
+  var T2 = TIERS[2];
   var KEYNAME2 = T2 ? 'tsm-vault-key-' + T2.id : '';
+  var KEYNAME3 = TIERS[3] ? 'tsm-vault-key-' + TIERS[3].id : '';
   var MAGIC2 = 'TSMVAULT3:';
+  var MAGIC3 = 'TSMVAULT4:';
   var ROOT = new URL('../../', document.currentScript.src).href;
   var slugMatch = location.pathname.match(/\/tools\/([^/]+)\//);
-  var LOCKED_PAGE = !!(T2 && slugMatch && T2.slugs.indexOf(slugMatch[1]) >= 0);
+  var inTier = function (t) { return !!(TIERS[t] && slugMatch && TIERS[t].slugs.indexOf(slugMatch[1]) >= 0); };
+  var PAGE_TIER = inTier(3) ? 3 : inTier(2) ? 2 : 0;
+  var LOCKED_PAGE = PAGE_TIER > 0;
   var resolveKey, resolveKey2;
   var keyReady = new Promise(function (r) { resolveKey = r; });
   var key2Ready = new Promise(function (r) { resolveKey2 = r; });
@@ -33,14 +39,14 @@
     });
   }
   function derive(pw, tier) {
-    var salt = tier === 2 ? T2.salt : CFG.salt;
+    var salt = tier > 1 ? TIERS[tier].salt : CFG.salt;
     return crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveBits']).then(function (base) {
       return crypto.subtle.deriveBits({ name: 'PBKDF2', salt: b64d(salt), iterations: CFG.iter, hash: 'SHA-256' }, base, 256);
     }).then(function (bits) { return new Uint8Array(bits); });
   }
   /** Resolves to a CryptoKey if raw key bytes decrypt the check token, else rejects. */
   function tryRaw(raw, tier) {
-    var check = tier === 2 ? T2.check : CFG.check;
+    var check = tier > 1 ? TIERS[tier].check : CFG.check;
     return importRaw(raw).then(function (k) { return decrypt(k, b64d(check)).then(function () { return k; }); });
   }
   function storedKey(name, tier) {
@@ -48,13 +54,13 @@
     try { v = localStorage.getItem(name) || sessionStorage.getItem(name); } catch (e) { /* storage blocked */ }
     return v ? tryRaw(b64d(v), tier) : Promise.reject();
   }
-  /** Second-tier key: asked for on every visit to a locked tool page and never stored, so nothing else can use it. */
-  function key2Now() { return LOCKED_PAGE ? key2Ready : Promise.reject(); }
+  /** Extra-tier key: asked for on every visit to a locked tool page and never stored, so nothing else can use it. */
+  function key2Now(tier) { return tier === PAGE_TIER ? key2Ready : Promise.reject(); }
   // Sites built with remember:false keep the site key only for this tab (sessionStorage), never on the device.
   var REMEMBER = !CFG || CFG.remember !== false;
   if (!REMEMBER) { try { localStorage.removeItem(KEYNAME); } catch (e) { /* storage blocked */ } }
   // Drop any second-tier key saved by an earlier version of this gate.
-  if (KEYNAME2) { try { localStorage.removeItem(KEYNAME2); sessionStorage.removeItem(KEYNAME2); } catch (e) { /* storage blocked */ } }
+  [KEYNAME2, KEYNAME3].forEach(function (n) { if (n) { try { localStorage.removeItem(n); sessionStorage.removeItem(n); } catch (e) { /* storage blocked */ } } });
 
   function startsWithMagic(buf, magic) {
     if (buf.length < magic.length) return false;
@@ -66,7 +72,7 @@
     ready: keyReady,
     /** Decrypt an encrypted ES module (data/*.js) and import it. baseUrl resolves its relative imports. */
     module: function (baseUrl, b64, gz, tier) {
-      return (tier === 2 ? key2Now() : keyReady).then(function (k) { return open(k, b64d(b64), gz); }).then(function (bytes) {
+      return (tier > 1 ? key2Now(tier) : keyReady).then(function (k) { return open(k, b64d(b64), gz); }).then(function (bytes) {
         var src = new TextDecoder().decode(bytes).replace(/(\bfrom\s*|\bimport\s*\(\s*|\bimport\s+)(['"])(\.{1,2}\/[^'"]+)\2/g,
           function (m, pre, q, spec) { return pre + q + new URL(spec, baseUrl).href + q; });
         var url = URL.createObjectURL(new Blob([src], { type: 'text/javascript' }));
@@ -74,7 +80,7 @@
       });
     },
     lock: function () {
-      try { [KEYNAME, KEYNAME2].forEach(function (n) { if (n) { localStorage.removeItem(n); sessionStorage.removeItem(n); } }); } catch (e) { /* storage blocked */ }
+      try { [KEYNAME, KEYNAME2, KEYNAME3].forEach(function (n) { if (n) { localStorage.removeItem(n); sessionStorage.removeItem(n); } }); } catch (e) { /* storage blocked */ }
       location.reload();
     },
   };
@@ -85,9 +91,10 @@
     return nativeFetch(input, init).then(function (r) {
       if (!r.ok || !/\/data\/|\/thumb\.png$/.test(r.url || '')) return r;
       return r.clone().arrayBuffer().then(function (ab) {
-        var buf = new Uint8Array(ab), tier = startsWithMagic(buf, MAGIC) ? 1 : startsWithMagic(buf, MAGIC2) ? 2 : 0;
+        var buf = new Uint8Array(ab);
+        var tier = startsWithMagic(buf, MAGIC) ? 1 : startsWithMagic(buf, MAGIC2) ? 2 : startsWithMagic(buf, MAGIC3) ? 3 : 0;
         if (!tier) return r;
-        return (tier === 2 ? key2Now() : keyReady).then(function (k) { return open(k, b64d(new TextDecoder().decode(buf.subarray(MAGIC.length))), true); })
+        return (tier > 1 ? key2Now(tier) : keyReady).then(function (k) { return open(k, b64d(new TextDecoder().decode(buf.subarray(MAGIC.length))), true); })
           .then(function (plain) { return new Response(plain, { status: 200, headers: r.headers }); },
             function () { return new Response(null, { status: 403, statusText: 'Locked' }); });
       });
@@ -121,11 +128,11 @@
     resolveKey(key);
     if (!LOCKED_PAGE) { reveal(); return; }
     var g = document.getElementById('tsm-gate'); if (g) g.remove();
-    if (document.body) showGate(2); else document.addEventListener('DOMContentLoaded', function () { showGate(2); });
+    if (document.body) showGate(PAGE_TIER); else document.addEventListener('DOMContentLoaded', function () { showGate(PAGE_TIER); });
   }
 
   function showGate(tier) {
-    tier = tier === 2 ? 2 : 1;
+    tier = tier > 1 && TIERS[tier] ? tier : 1;
     var g = document.createElement('div');
     g.id = 'tsm-gate';
     g.setAttribute('role', 'dialog');
@@ -133,10 +140,10 @@
     g.setAttribute('aria-labelledby', 'g-title');
     g.innerHTML = '<div class="g-card"><div class="g-brand"><img src="' + ROOT + 'shared/assets/site-logo.svg" alt="">' +
       '<div><p class="g-org">Jonathan Walberg</p><h1 id="g-title">Interactive Deterrence</h1></div></div>' +
-      (tier === 2 ? '<p><b>' + (T2.name || 'This section') + '</b> needs a second password. Enter it to continue.</p>'
+      (tier > 1 ? '<p><b>' + (TIERS[tier].name || 'This section') + '</b> needs ' + (tier === 2 ? 'a second' : 'its own') + ' password. Enter it to continue.</p>'
         : '<p>This site is for invited readers. Enter the access password to continue.</p>') +
       '<form><input type="password" id="g-pw" autocomplete="current-password" aria-label="Access password" placeholder="Access password" required>' +
-      (tier === 2 || !REMEMBER ? '' : '<label class="g-rem"><input type="checkbox" id="g-rem" checked> Remember on this device</label>') +
+      (tier > 1 || !REMEMBER ? '' : '<label class="g-rem"><input type="checkbox" id="g-rem" checked> Remember on this device</label>') +
       '<button type="submit" id="g-go">Unlock</button><div class="g-err" id="g-err" aria-live="polite"></div></form></div>';
     document.body.appendChild(g);
     var pw = g.querySelector('#g-pw'), go = g.querySelector('#g-go'), err = g.querySelector('#g-err');
@@ -147,7 +154,7 @@
       derive(pw.value, tier).then(function (raw) {
         return tryRaw(raw, tier).then(function (k) {
           if (tier === 1) { try { (REMEMBER && g.querySelector('#g-rem').checked ? localStorage : sessionStorage).setItem(KEYNAME, b64e(raw)); } catch (e2) { /* storage blocked */ } }
-          (tier === 2 ? unlock2 : unlock)(k);
+          (tier > 1 ? unlock2 : unlock)(k);
         });
       }).catch(function () {
         go.disabled = false; go.textContent = 'Unlock';

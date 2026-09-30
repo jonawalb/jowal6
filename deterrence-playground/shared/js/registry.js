@@ -107,6 +107,8 @@ export const ALL_TOOLS = [
     blurb: 'Type a city and see how far it is from Taiwan and from China, with the Taiwan Strait for scale.' },
   { slug: 'conceal-reveal', also: ['gametheory'], cat: 'deterrence', sites: ['deterrence'], title: 'Conceal or Reveal?', status: 'live',
     blurb: "Why do states with similar weapons make opposite choices about showing them? Move the costs and beliefs in Walberg's signaling model and watch coercive states reveal while operational states conceal." },
+  { slug: 'dissertation-games', also: ['gametheory'], cat: 'deterrence', sites: ['deterrence'], vault: 'dissertation', title: 'Jon Dissertation Games', status: 'live',
+    blurb: "Working game trees from Jonathan Walberg's dissertation. Needs its own password." },
   { slug: 'extended-deterrence', also: ['gametheory'], cat: 'deterrence', sites: ['deterrence'], title: 'Extended Deterrence', status: 'live',
     blurb: 'Would a patron trade Boston for Bonn? Stack treaties, pledges, a tripwire force and nuclear sharing, see what each does to credibility and entrapment, then check the real U.S. commitments.' },
   { slug: 'nuclear-arsenals', cat: 'nuclear', sites: ['deterrence'], title: 'Nuclear Arsenals', status: 'live',

@@ -5,6 +5,7 @@ import { drawDays, drawCompare } from './chart.js';
 import { exListHtml, dayReadHtml, metricHtml, timelineHtml, factsHtml, zoneSrcHtml, sourcesHtml, dayLab } from './panel.js';
 import { createTour } from './tour.js';
 import { addExportBar } from '../../../shared/js/export.js';
+import * as fx from './fx.js';
 
 const $ = id => document.getElementById(id);
 const COLS = ['--c1', '--c2', '--c3', '--c4', '--c5', '--c6', '--c7', '--c8'];
@@ -33,6 +34,7 @@ function renderPicker() {
   $('view').querySelectorAll('[data-v]').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === S.view));
   $('picker-label').textContent = S.view === 'replay' ? 'Pick an exercise' : 'Pick exercises to overlay (two or more)';
   $('exlist').innerHTML = exListHtml(S.x, S.view === 'compare', S.picks);
+  fx.stagger($('exlist'), 'button');
   $('exlist').querySelectorAll('button').forEach(b => b.onclick = () => {
     const id = b.dataset.x;
     if (S.view === 'replay') { stop(); S.x = id; S.k = 0; const x = byId(id); if (coverage(x, S.m).none) S.m = 'air'; }
@@ -48,10 +50,11 @@ function renderReplay() {
   if (!win.some(d => d.v[S.m] != null)) S.m = 'air';
   const day = win.find(d => d.k === S.k), tl = timelineOf(x.id);
   $('map-title').textContent = `${x.short} · ${dayLab(S.k, day.d)}`;
-  drawZones(map, x.id, day.d);
+  fx.chart($('map'), `${x.id}|${day.d}`, () => drawZones(map, x.id, day.d));
   $('zone-src').innerHTML = zoneSrcHtml(x);
   $('chart-title').textContent = `${METRICS[S.m].name} per day, ${x.short}`;
-  drawDays($('days'), win, { m: S.m, cur: S.k, onScrub: k => { stop(); S.k = k; render(); } });
+  fx.changed($('chart-title'));
+  fx.chart($('days'), `${x.id}|${S.m}`, () => drawDays($('days'), win, { m: S.m, cur: S.k, onScrub: k => { stop(); S.k = k; render(); } }));
   { // narrow screens scroll the chart sideways: keep the current day in view
     const cw = $('days').parentElement;
     if (cw.scrollWidth > cw.clientWidth + 1) {
@@ -63,9 +66,11 @@ function renderReplay() {
   $('day-out').textContent = dayLab(S.k, day.d);
   $('day-eyebrow').textContent = dayLab(S.k, day.d).split(' · ')[0];
   $('dayread').innerHTML = dayReadHtml(x, day, S.m, tl);
+  fx.count($('dayread'), '.big b');
   $('metric').innerHTML = metricHtml(x, S.m, win);
   $('metric').querySelectorAll('button').forEach(b => b.onclick = () => { S.m = b.dataset.m; render(); });
   $('timeline').innerHTML = timelineHtml(tl, day.d);
+  fx.stagger($('timeline'), 'li');
   $('timeline').querySelectorAll('[data-date]').forEach(b => b.onclick = () => {
     const w = win.find(d => d.d === b.dataset.date);
     if (w) { stop(); S.k = w.k; render(); }
@@ -82,7 +87,7 @@ function renderCompare() {
   });
   const kMax = Math.max(PRE, ...series.map(s => s.pts[s.pts.length - 1].k));
   $('norm').querySelectorAll('[data-n]').forEach(b => b.setAttribute('aria-pressed', b.dataset.n === (S.norm ? '1' : '0')));
-  drawCompare($('compare'), series, { norm: S.norm, cur: S.ck, kMin: -PRE, kMax, onHover: k => { S.ck = k; renderCompare(); } });
+  fx.chart($('compare'), `${S.picks.join(',')}|${S.norm}`, () => drawCompare($('compare'), series, { norm: S.norm, cur: S.ck, kMin: -PRE, kMax, onHover: k => { S.ck = k; renderCompare(); } }));
   const fmtv = v => (v == null ? '—' : S.norm ? v.toFixed(1) + '×' : String(v));
   $('ctip').innerHTML = S.ck == null ? series.map(s => `<span class="lg"><i class="swatch" style="background:var(${s.col})"></i>${s.x.short}</span>`).join('') + ' <span class="muted">Hover the chart to compare days.</span>'
     : `<b>${S.ck === 0 ? 'Day 0' : 'Day ' + (S.ck > 0 ? '+' : '−') + Math.abs(S.ck)}</b>: ` + series.map(s => `<span style="color:var(${s.col})">${s.x.short}</span> ${fmtv(s.pts.find(p => p.k === S.ck)?.v)}`).join(' · ');
@@ -93,6 +98,7 @@ function renderCompare() {
       <td class="num">${fmtv(peak)}${pk ? ` (day ${pk.k >= 0 ? '+' : '−'}${Math.abs(pk.k)})` : ''}</td><td class="num">${s.pm ? s.pm.toFixed(1) : '—'}</td>
       <td>${c.partial ? `${c.have} of ${c.total} days` : 'full'}</td></tr>`;
   }).join('') || '<tr><td colspan="5">Pick exercises above.</td></tr>';
+  fx.count($('ctable'), 'td.num');
   $('cread').innerHTML = xs.length < 2 ? '<p class="fine warn">Pick at least two exercises with TSM data.</p>' : '';
 }
 

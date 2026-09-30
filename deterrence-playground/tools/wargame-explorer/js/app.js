@@ -7,6 +7,30 @@ import { renderMatrix, renderDrivers, renderContrasts } from './matrix.js';
 import { renderCards, renderFindings } from './cards.js';
 import { createTour } from './tour.js';
 import { esc, gameById, OUT_ORDER } from './util.js';
+import * as fx from './fx.js';
+import { widths } from './fxbars.js';
+import { reduced } from '../../../shared/js/motion.js';
+
+// First view: each row's outcome bar grows in from the left as it scrolls into view (no trace left in the DOM).
+function growTallies(root) {
+  if (!fx.ON || reduced() || !('IntersectionObserver' in window)) return;
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    io.unobserve(e.target);
+    e.target.animate([{ transform: 'scaleX(0)', transformOrigin: '0 50%' }, { transform: 'scaleX(1)', transformOrigin: '0 50%' }],
+      { duration: 560, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'backwards' });
+  }), { threshold: 0.1 });
+  root.querySelectorAll('.tbar').forEach(b => io.observe(b));
+}
+// When a filter changes which rows or studies are shown, fade the new set in instead of jumping.
+const shown = new WeakMap();
+function settle(el, key) {
+  const prev = shown.get(el);
+  shown.set(el, key);
+  if (prev == null || prev === key || !fx.ON || reduced()) return;
+  el.animate([{ opacity: 0.35 }, { opacity: 1 }], { duration: 260, easing: 'ease-out' });
+}
+let firstRender = true;
 
 const $ = id => document.getElementById(id);
 let st = fromHash();
@@ -70,11 +94,23 @@ function render() {
   const games = GAMES.filter(g => ids.has(g.id));
   syncers.forEach(f => f());
   renderMatrix($('matrix'), rows, st, handlers);
+  settle($('matrix'), rows.map(r => r.id).join() + '|' + st.group);
+  fx.stagger($('matrix'), 'tr.row');
+  if (firstRender) growTallies($('matrix'));
   renderDrivers($('drivers'), rows, st);
+  widths($('drivers'), '.dbar i', e => `${st.group}|${e.closest('.drow')?.querySelector('.dl b')?.textContent}|${e.className}`);
   renderContrasts($('contrasts'), st);
+  settle($('contrasts'), st.group);
   renderCards($('cards'), games, st, handlers);
+  settle($('cards'), games.map(g => g.id).join());
+  fx.stagger($('cards'), '.gcard');
   renderFindings($('agree'), $('disagree'), games);
+  fx.stagger($('agree'), 'li');
+  fx.stagger($('disagree'), 'li');
   renderReadout(rows, games);
+  fx.count($('readout'), 'dd');
+  fx.count($('otally'), 'b.num');
+  firstRender = false;
   $('dname').textContent = st.group !== 'none' ? DIMS[st.group].label : 'an assumption';
 }
 

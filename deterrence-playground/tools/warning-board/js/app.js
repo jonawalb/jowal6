@@ -8,6 +8,33 @@ import { assess, TIMING } from './model.js';
 import { analystText } from './narrative.js';
 import { drawGauges, drawBand, drawBoard, detailHtml, drawExercises } from './board.js';
 import { createTour } from './tour.js';
+import * as fx from './fx.js';
+import { widths } from './fxbars.js';
+import { flash, reduced } from '../../../shared/js/motion.js';
+
+// Gauge arcs are rebuilt on every render; sweep each from its previous score (0 on first render) to the new one.
+// Same arc as board.js drawGauges; the sweep always ends on the exact path the board drew.
+const gaugeArc = f => { const t = Math.PI * (1 - f); return `M12 62A48 48 0 0 1 ${(60 + 48 * Math.cos(t)).toFixed(2)} ${(62 - 48 * Math.sin(t)).toFixed(2)}`; };
+let gaugePrev = null;
+function sweepGauges(a) {
+  const prev = gaugePrev;
+  gaugePrev = a.domains.map(d => d.score);
+  if (!fx.ON || reduced()) return;
+  [...$('gauges').querySelectorAll('.gauge')].forEach((g, i) => {
+    const path = g.querySelector('.g-fg'), to = a.domains[i]?.score, from = prev ? prev[i] : 0;
+    if (!path || to == null || from === to) return;
+    const final = path.getAttribute('d'), f0 = Math.min(0.999, from), f1 = Math.min(0.999, to), t0 = performance.now();
+    let last = gaugeArc(f0); path.setAttribute('d', last);
+    const step = t => {
+      if (!path.isConnected || path.getAttribute('d') !== last) return;
+      const u = Math.min(1, (t - t0) / 520), e = 1 - Math.pow(1 - u, 3);
+      last = u < 1 ? gaugeArc(f0 + (f1 - f0) * e) : final;
+      path.setAttribute('d', last);
+      if (u < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  });
+}
 
 const $ = id => document.getElementById(id);
 const S = { states: {}, timing: 'days', preset: 'exercise', selected: null, hx: false };
@@ -46,16 +73,24 @@ function render() {
   const a = assess(S.states, S.timing);
   S.preset = matchPreset();
   drawGauges($('gauges'), a);
+  sweepGauges(a);
+  fx.count($('gauges'), '.g-val');
   drawBand($('band'), a);
+  fx.count($('band'), '.ov-h .num');
+  widths($('band'), '.ov-bar i');
   drawBoard($('board'), S.states, S.selected, S.hx);
+  fx.stagger($('board'), '.ind');
   $('status').dataset.s = a.band.s;
   $('status').innerHTML = `<b>${esc(a.band.name)}</b><span>${a.lit} of ${INDICATORS.length} indicators lit (${a.observed} observed) · signals built over ${TIMING[S.timing].name.toLowerCase()}</span>`;
   $('msum').innerHTML = `<span class="ms-dot" data-s="${a.band.s}"></span><b>${esc(a.band.name)}</b><span>${a.lit} lit · hard-to-fake ${Math.round(a.Dt * 100)}</span><a href="#status">Read the assessment</a>`;
+  fx.changed($('status'));
   $('analyst').innerHTML = analystText(a, S.states, S.timing);
+  fx.changed($('analyst'));
   $('readout').innerHTML = `
     <dt>Overall signal</dt><dd>${Math.round(a.S * 100)} / 100</dd>
     <dt>Hard-to-fake signal</dt><dd>${Math.round(a.Dt * 100)} / 100</dd>
     <dt>Domains above line</dt><dd>${a.breadth} of 5</dd>`;
+  fx.changed($('readout'));
   document.querySelectorAll('#presets button').forEach(b => b.setAttribute('aria-pressed', b.dataset.p === S.preset));
   document.querySelectorAll('#timing button').forEach(b => b.setAttribute('aria-pressed', b.dataset.t === S.timing));
   $('preset-note').textContent = PRESETS[S.preset]?.note || (S.preset === 'custom' ? 'Your own combination. Share it with the link below.' : 'Nothing set.');
@@ -68,6 +103,7 @@ function setState(id, v) {
   if (v) S.states[id] = v; else delete S.states[id];
   S.selected = id;
   render();
+  flash(document.querySelector(`.ind[data-id="${id}"]`));
   document.querySelector(`[data-set="${id}"][data-v="${v}"]`)?.focus();
 }
 
@@ -126,7 +162,7 @@ $('start-tour').addEventListener('click', () => tour.start());
 // ------------------------------------------------------------ static sections
 $('srclist').innerHTML = Object.entries(SOURCES).map(([, s]) =>
   `<li>${esc(s.cite)} ${s.url ? `<a href="${s.url}" target="_blank" rel="noopener">Link</a>` : '<i>(not online)</i>'}</li>`).join('');
-drawExercises($('exercises'), EXERCISES);
+fx.chart($('exercises'), 'ex', () => drawExercises($('exercises'), EXERCISES));
 $('ex-links').innerHTML = EXERCISES.map(e => { const x = exerciseFor(e.start); return x ? linkHtml(exerciseLink(x.id, e.start), e.name) : ''; }).join('');
 addExportBar($('exercises-box'), { target: () => $('exercises'), title: 'Announced or reported length of major PLA exercises around Taiwan, 2022–2025', note: "Dates: TSM exercise-event list (Exercises as Theater), sources linked in the tool" });
 $('ind-count').textContent = INDICATORS.length;

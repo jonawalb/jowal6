@@ -21,7 +21,7 @@ export const STEPS = [
     body: 'With screening off again, add nuclear sharing. Sharing weapons and planning ties hands further and adds a small, notional chance that escalation escapes the patron’s control. Treat that number with care: Fuhrmann and Sechser (2014) find that stationing nuclear weapons on an ally’s soil adds no measurable deterrence beyond a formal alliance.',
     set: { dev: { treaty: 1, statements: 1, tripwire: 1, sharing: 1 } } },
   { title: 'Abandonment or entrapment',
-    body: 'The lower chart plots every package. Moving up the frontier buys deterrence with money and with entrapment risk (bigger circles). Snyder (1984) called this the alliance security dilemma: the patron trades fear of abandoning an ally for fear of being dragged into its war. Click any circle to load that package.',
+    body: 'The lower chart plots every package. Moving up the frontier buys deterrence with money and with entrapment risk (bigger circles). Snyder (1984) called this the alliance security dilemma: a choice between supporting an ally and holding back, caught between fear of abandonment and fear of entrapment in the ally’s war. Click any circle to load that package.',
     set: { dev: { ...none, treaty: 1 } } },
 ];
 

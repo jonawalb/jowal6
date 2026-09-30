@@ -5,7 +5,7 @@ import { BAND_NAMES, POLICIES, RUNS } from './branch.js';
 import { OUTCOMES, pct } from './model.js';
 
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-export const BR_TAG = '<span class="cf-gen">Model-generated branch: not history</span>';
+export const BR_TAG = '<span class="cf-gen">Model-generated branch: notional, not history</span>';
 const OUT = Object.fromEntries(OUTCOMES.map(o => [o.k, o]));
 const roll = (u, p) => `<span class="cf-roll${u < p ? ' hit' : ''}" title="${u < p ? 'under the chance' : 'over the chance'}">${u.toFixed(2)}</span>`;
 const pc = x => Math.round(x * 100) + '%';
@@ -39,7 +39,7 @@ export function movesHTML(id, br, srcLinks, maxRounds) {
   return `<div class="cf-dec cf-branch">
     <p class="d">Round ${t} of up to ${maxRounds} ${BR_TAG}</p>
     <h3>Your move</h3>
-    <p class="fine">The options below are a generic set of four moves worded for the period. The model, not the record, decides what ${esc(B.opp)} does next.</p>
+    <p class="fine">The options below are a generic, illustrative set of four moves worded for the period. The model, not the record, decides what ${esc(B.opp)} does next.</p>
     <div class="cf-opts">${MOVES.map(m => `<button type="button" class="cf-opt gen" data-move="${m}"><small>${MOVE_NAMES[m]}</small>${esc(B.opts[m].label)}</button>`).join('')}</div>
     ${src ? `<ul class="cf-srcs">${src}</ul>` : ''}
   </div>`;

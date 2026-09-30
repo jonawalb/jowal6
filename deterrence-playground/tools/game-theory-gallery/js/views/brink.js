@@ -58,7 +58,7 @@ export default {
   },
 
   why(P, e) {
-    if (P.v === 'chicken') return `Chicken has two pure equilibria, one for each side prevailing, and they do not move when payoffs change (p. 720-721). That is Powell’s complaint: resolve plays no role. In the mixed equilibrium, I stands firm with probability ${pct(e.firmI)}, which equals II’s critical risk (w − c)/[(w − c) + (s − d)] = ${f2(e.rII)}, and II with ${pct(e.firmII)} (n. 4, p. 734).`;
+    if (P.v === 'chicken') return `Chicken has two pure equilibria, one for each side prevailing, and they do not move when payoffs change (pp. 720-721). That is Powell’s complaint: resolve plays no role. In the mixed equilibrium, I stands firm with probability ${pct(e.firmI)}, which equals II’s critical risk (w − c)/[(w − c) + (s − d)] = ${f2(e.rII)}, and II with ${pct(e.firmII)} (n. 4, p. 734).`;
     if (P.v === 'ladder') {
       const lose = e.winner === 'I' ? 'II' : 'I', k = e.steps[e.steps.length - 1];
       return `Each escalation hands the next move to the other side with a higher autonomous risk of disaster. A state will not bid past its resolve. The first bid anyone refuses is ${lose}’s at ${f2(k.risk)} (> R<sub>${lose}</sub>). Foreseeing this, ${lose} gives way at once (Proposition 1, p. 726): with complete information there is no crisis and no risk is run.`;

@@ -1,5 +1,5 @@
 // Brinkmanship: Schelling's "threat that leaves something to chance," formalized by
-// Powell (1987), "Crisis Bargaining, Escalation, and MAD," APSR 81(3): 717-736.
+// Powell (1987), "Crisis Bargaining, Escalation, and MAD," APSR 81(3): 717-735.
 // Pure functions, no DOM. Payoffs are normalized per state so that prevailing w = 1 and disaster d = 0
 // (a positive affine change that leaves every equilibrium unchanged).
 //   Chicken (p. 720, Fig. 1): w > c > s > d. Critical risks (p. 721): Jervis r = (w-c)/[(w-c)+(s-d)],

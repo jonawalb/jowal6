@@ -69,7 +69,7 @@ export default {
 
   effect(k, P, e, pP, pe) {
     if (!k) return '';
-    if (P.v === 'worlds') return k === 'od' ? 'The offense-defense balance sets how much one side’s gain in security costs the other (pp. 187-188).' : 'Distinguishability lets a status-quo state show its intentions through the weapons it buys (p. 199-201, 211).';
+    if (P.v === 'worlds') return k === 'od' ? 'The offense-defense balance sets how much one side’s gain in security costs the other (pp. 187-188).' : 'Distinguishability lets a status-quo state show its intentions through the weapons it buys (pp. 199-201, 211).';
     const up = P[k] > pP[k];
     const typeChange = pe && pe.type !== e.type ? ` The game changed from ${GAME_NAMES[pe.type]} to ${GAME_NAMES[e.type]}.` : '';
     const T = {

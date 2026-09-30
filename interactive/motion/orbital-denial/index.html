@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Orbital Denial</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .od-orbit { fill: none; stroke: var(--muted); stroke-opacity: .32; stroke-width: 1.2; }
+  .od-lab { font: 400 12px var(--mono); fill: var(--muted); letter-spacing: .12em; text-transform: uppercase; }
+  .od-grp { font: 600 13px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+  .od-speck { fill: var(--muted); }
+  .od-hatch { fill: none; stroke: var(--amber); stroke-dasharray: 2 7; }
+  .od-call { font: 400 14px var(--mono); fill: var(--amber); letter-spacing: .08em; text-transform: uppercase; }
+  .od-warn { font: 400 14px var(--mono); fill: var(--red); letter-spacing: .08em; text-transform: uppercase; }
+  .od-chip { fill: #0a1510; fill-opacity: .85; stroke: var(--line); }
+  .od-chipt { font: 400 14px var(--mono); fill: var(--muted); letter-spacing: .04em; }
+  .od-years { font: 600 120px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; letter-spacing: -.03em; }
+  .od-small { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+  .od-fact { font: 400 19px var(--mono); fill: var(--paper); }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of Orbital Denial: two powers' satellites share orbits over the Earth; jamming and dazzling wear off, but a missile kill blooms into a debris cloud that spreads along the shared orbit and lasts for decades."><title>Orbital Denial</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard, clamp } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Real game values, from tools/orbital-denial/data/params.js and js/actions.js --------------------
+// Shells: Low LEO 450 km, High LEO 850 km, MEO, GEO. Each side flies one constellation per mission:
+// ISR 6 (need 6) in low LEO, comms 24 (need 16) in high LEO, nav 24 (need 18) in MEO, warning/NC3 4 (need 3) in GEO.
+// Months 1-3 are crisis, 4-10 war. A direct-ascent missile (ASAT) can hit ISR or comms and makes a debris cloud.
+const MISSIONS = {
+  isr: { short: 'ISR', shell: 'low', n0: 6, need: 6 },
+  com: { short: 'Comms', shell: 'high', n0: 24, need: 16 },
+  nav: { short: 'Nav', shell: 'meo', n0: 24, need: 18 },
+  ew: { short: 'Warning/NC3', shell: 'geo', n0: 4, need: 3 },
+};
+// Schematic geometry (the game's orbit view is also "schematic, not to scale").
+const E = [800, 1560], RE = 820;
+const SH = {
+  low: { rx: 960, ry: 890, tilt: -2, w: 0.8, name: 'Low LEO · 450 km' },
+  high: { rx: 1120, ry: 1010, tilt: 1.5, w: 0.55, name: 'High LEO · 850 km' },
+  meo: { rx: 1400, ry: 1220, tilt: -1, w: 0.25, name: 'MEO' },
+  geo: { rx: 1750, ry: 1420, tilt: 0.6, w: 0, name: 'GEO' },
+};
+// Arc spans (degrees, 90 = overhead) for each side's constellation at t = 0.
+const SPAN = { isr: { B: [106, 132], R: [52, 80] }, com: { B: [104, 140], R: [55, 91] }, nav: { B: [100, 126], R: [60, 86] }, ew: { B: [100, 112], R: [68, 80] } };
+const D2R = Math.PI / 180;
+function P(sh, th, k = 1) {
+  const s = SH[sh], x = s.rx * k * Math.cos(th * D2R), y = -s.ry * k * Math.sin(th * D2R), c = Math.cos(s.tilt * D2R), n = Math.sin(s.tilt * D2R);
+  return [E[0] + x * c - y * n, E[1] + x * n + y * c];
+}
+const drift = (sh, t) => -SH[sh].w * t;
+
+// ---- Scene -----------------------------------------------------------------------------------------
+const cam = el('g', {}, svg);
+const scene = el('g', {}, cam);
+const defs = el('defs', {}, svg);
+defs.innerHTML = `
+  <radialGradient id="od-earth" cx="50%" cy="20%" r="75%"><stop offset="0" stop-color="#143428"/><stop offset=".55" stop-color="#0c1f18"/><stop offset="1" stop-color="#060d0a"/></radialGradient>
+  <clipPath id="od-clip"><circle cx="${E[0]}" cy="${E[1]}" r="${RE}"/></clipPath>
+  <filter id="od-soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="10"/></filter>`;
+
+// Orbits and the faint pre-war fragment speckle in each shell.
+const orbitG = el('g', {}, scene);
+const orbitPath = {};
+const dimmable = [], labs = [];
+for (const sh of Object.keys(SH)) {
+  let d = ''; for (let a = 0; a <= 360; a += 2) { const [x, y] = P(sh, a); d += (a ? 'L' : 'M') + x.toFixed(1) + ',' + y.toFixed(1); }
+  orbitPath[sh] = el('path', { d: d + 'Z', class: 'od-orbit' }, orbitG);
+  const g = el('g', { class: 'od-speck', 'fill-opacity': 0.35 }, orbitG);
+  let r = 7 + sh.length; const rnd = () => ((r = (r * 16807) % 2147483647) / 2147483647);
+  for (let i = 0; i < 70; i++) { const [x, y] = P(sh, 20 + rnd() * 140, 1 + (rnd() - 0.5) * 0.014); el('circle', { cx: x.toFixed(1), cy: y.toFixed(1), r: 0.9 }, g); }
+  const lab = el('text', { class: 'od-lab', 'text-anchor': 'middle' }, orbitG);
+  if (sh !== 'high') dimmable.push(orbitPath[sh], g); if (sh !== 'high') labs.push(lab);
+  const [lx, ly] = P(sh, 91, 1); lab.setAttribute('x', lx); lab.setAttribute('y', ly + 24); lab.textContent = SH[sh].name;
+}
+// A hot glow along the high shell once the cloud spreads.
+const shellGlow = el('path', { d: orbitPath.high.getAttribute('d'), fill: 'none', stroke: 'var(--red)', 'stroke-width': 14, opacity: 0, filter: 'url(#od-soft)' }, orbitG);
+
+// Earth: the limb, a hint of latitude lines, the atmosphere glow.
+const earth = el('g', {}, scene);
+el('circle', { cx: E[0], cy: E[1], r: RE + 16, fill: 'none', stroke: 'var(--blue)', 'stroke-width': 26, opacity: 0.07, filter: 'url(#od-soft)' }, earth);
+el('circle', { cx: E[0], cy: E[1], r: RE, fill: 'url(#od-earth)' }, earth);
+const lat = el('g', { 'clip-path': 'url(#od-clip)', fill: 'none', stroke: 'var(--blue)', 'stroke-opacity': 0.08 }, earth);
+for (let i = 1; i <= 5; i++) el('ellipse', { cx: E[0], cy: E[1] - RE + i * 70, rx: RE * 1.2, ry: 70 + i * 22 }, lat);
+for (let i = -3; i <= 3; i++) el('ellipse', { cx: E[0] + i * 160, cy: E[1], rx: 90 + Math.abs(i) * 30, ry: RE }, lat);
+el('circle', { cx: E[0], cy: E[1], r: RE + 2, fill: 'none', stroke: 'var(--blue)', 'stroke-width': 2.5, opacity: 0.55, filter: 'url(#kit-glow)' }, earth);
+const limb = x => [x, E[1] - Math.sqrt(RE * RE - (x - E[0]) ** 2)];
+const GS = { jam: limb(540), laser: limb(700), launch: limb(620), red: limb(1040) };
+for (const [k, [x, y]] of Object.entries(GS)) el('path', { d: `M${x},${y - 9} l7,11 h-14 Z`, fill: k === 'red' ? 'var(--red)' : 'var(--blue)', opacity: 0.9 }, earth);
+
+// Satellites.
+const satG = el('g', {}, scene);
+const sats = [];
+const groupLab = {};
+for (const [m, M] of Object.entries(MISSIONS)) for (const side of ['B', 'R']) {
+  const [a0, a1] = SPAN[m][side], n = M.n0, col = side === 'B' ? 'var(--blue)' : 'var(--red)';
+  for (let i = 0; i < n; i++) {
+    const g = el('g', {}, satG), th = n === 1 ? (a0 + a1) / 2 : a0 + (a1 - a0) * (i / (n - 1));
+    const big = n <= 6 ? 1.35 : 1;
+    el('line', { x1: -9 * big, y1: 0, x2: 9 * big, y2: 0, stroke: col, 'stroke-width': 1.6, opacity: 0.75 }, g);
+    const body = el('rect', { x: -3.5 * big, y: -3.5 * big, width: 7 * big, height: 7 * big, fill: col }, g);
+    sats.push({ m, side, sh: M.shell, th, g, body, i });
+  }
+  const t = el('text', { class: 'od-grp', 'text-anchor': 'middle', fill: col, opacity: 0.9 }, satG);
+  groupLab[m + side] = t;
+}
+const satOf = (m, side, i) => sats.find(s => s.m === m && s.side === side && s.i === i);
+const satPos = (s, t) => P(s.sh, s.th + drift(s.sh, t));
+
+// Reversible effects: amber hatch over the struck arc, fading when the effect wears off.
+const fx = el('g', {}, scene);
+function arcD(sh, a0, a1, k = 1) { let d = ''; for (let i = 0; i <= 30; i++) { const [x, y] = P(sh, a0 + (a1 - a0) * i / 30, k); d += (i ? 'L' : 'M') + x.toFixed(1) + ',' + y.toFixed(1); } return d; }
+const hatch = {
+  nav: el('path', { class: 'od-hatch', 'stroke-width': 12, opacity: 0 }, fx),
+  isr: el('path', { class: 'od-hatch', 'stroke-width': 12, opacity: 0 }, fx),
+  com: el('path', { class: 'od-hatch', 'stroke-width': 12, opacity: 0 }, fx),
+};
+const hatchOf = { nav: ['meo', 'nav'], isr: ['low', 'isr'], com: ['high', 'com'] };
+// Jam: wavefronts travelling from a ground station to Red's navigation satellites.
+const jamWaves = [0, 1, 2, 3, 4].map(() => el('path', { fill: 'none', stroke: 'var(--amber)', 'stroke-width': 3, 'stroke-linecap': 'round', opacity: 0, filter: 'url(#kit-glow)' }, fx));
+// Dazzle: a laser from the ground to one of Red's reconnaissance satellites.
+const laser = el('line', { stroke: 'var(--amber)', 'stroke-width': 2.4, opacity: 0, filter: 'url(#kit-glow)' }, fx);
+const flare = el('circle', { r: 0, fill: '#fff3dc', opacity: 0, filter: 'url(#kit-glow)' }, fx);
+// Cyber: a pulse through Red's ground network.
+const cyberRings = [0, 1, 2].map(() => el('circle', { cx: GS.red[0], cy: GS.red[1], r: 0, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 2.5, opacity: 0 }, fx));
+const cyberLink = el('path', { fill: 'none', stroke: 'var(--amber)', 'stroke-width': 1.5, 'stroke-dasharray': '4 6', opacity: 0 }, fx);
+{ let d = ''; for (let i = 0; i <= 40; i++) { const x = lerp(GS.jam[0], GS.red[0], i / 40), [, y] = limb(x); d += (i ? 'L' : 'M') + x.toFixed(1) + ',' + (y - 16).toFixed(1); } cyberLink.setAttribute('d', d); }
+
+// Missile (ASAT): launch, streak, kill.
+const TK = 8.1, TL = 7.25, target = satOf('com', 'R', 23);
+const killPt = satPos(target, TK);
+const mis = { a: GS.launch, b: [GS.launch[0] + 10, killPt[1] - 60], c: killPt };
+const misSmoke = el('path', { fill: 'none', stroke: 'var(--amber)', 'stroke-width': 1.6, opacity: 0 }, fx);
+const misPath = el('path', { fill: 'none', stroke: 'var(--amber)', 'stroke-width': 4, 'stroke-linecap': 'round', filter: 'url(#kit-glow)', opacity: 0 }, fx);
+const misHead = el('circle', { r: 4.5, fill: '#fff3dc', opacity: 0 }, fx);
+const ret = el('g', { fill: 'none', stroke: 'var(--amber)', 'stroke-width': 2.4, opacity: 0 }, fx);
+el('path', { d: 'M-20,-12 v-8 h8 M12,-20 h8 v8 M20,12 v8 h-8 M-12,20 h-8 v-8' }, ret);
+const bloom = el('circle', { r: 0, fill: 'none', stroke: 'var(--amber)', opacity: 0, filter: 'url(#kit-glow)' }, fx);
+const bloom2 = el('circle', { r: 0, fill: 'none', stroke: 'var(--red)', opacity: 0 }, fx);
+const sparks = el('g', { stroke: '#fff3dc', 'stroke-width': 2.2, 'stroke-linecap': 'round', opacity: 0, filter: 'url(#kit-glow)' }, fx);
+for (let k = 0; k < 14; k++) sparks.appendChild(el('line', { x1: 0, y1: 0, x2: 1, y2: 0, transform: `rotate(${k * 360 / 14 + (k % 3) * 7})` }));
+const core = el('circle', { r: 0, fill: '#fff3dc', opacity: 0, filter: 'url(#kit-glow)' }, fx);
+const lost = el('path', { d: 'M-6,-6 l12,12 m0,-12 l-12,12', stroke: 'var(--red)', 'stroke-width': 2.4, opacity: 0 }, fx);
+
+// Debris: fragments spreading along the high shell in both directions; a quarter scatter toward low LEO.
+const debG = el('g', {}, scene);
+let seed = 1408; const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+const gauss = () => { let u = 0; for (let i = 0; i < 4; i++) u += rnd(); return (u - 2) / 0.58; };
+const deb = Array.from({ length: 420 }, (_, i) => {
+  const low = i % 4 === 0 && rnd() < 0.6;
+  return { v: gauss() * 8 + (rnd() - 0.5) * 4, r: gauss() * 0.012, burst: (rnd() - 0.5) * 0.06, low, lk: 0.4 + rnd() * 0.6,
+    c: el('circle', { r: rnd() < 0.25 ? 2.4 : 1.6, fill: rnd() < 0.2 ? 'var(--paper)' : 'var(--red)', opacity: 0 }, debG) };
+});
+const killTh = target.th + drift('high', TK); // the kill point's angle in the high shell at TK
+
+// Threat rings on satellites sharing the shell once the cloud reaches them.
+const warnG = el('g', {}, scene);
+const shared = sats.filter(s => s.m === 'com' && s !== target).map(s => ({ s, ring: el('circle', { r: 0, fill: 'none', stroke: 'var(--red)', 'stroke-width': 1.5, opacity: 0 }, warnG) }));
+
+// Callouts.
+const callG = el('g', {}, scene);
+function callout(text, cls = 'od-call', anchor = 'start') { const g = el('g', { opacity: 0 }, callG); const t = el('text', { class: cls, 'text-anchor': anchor }, g); t.textContent = text; return { g, t }; }
+const cJam = callout('Jam · Red nav', 'od-call', 'end'), cDaz = callout('Dazzle · Red ISR'), cCyb = callout('Cyber · Red ground network', 'od-call', 'middle');
+const cMis = callout('Missile (ASAT) · Red comms', 'od-call', 'end');
+const cYou = callout('Your comms · same orbit', 'od-warn', 'middle'), cRed = callout('Red’s comms', 'od-warn', 'middle');
+
+// ---- Overlay HUD (does not zoom) ---------------------------------------------------------------------
+const overlay = el('g', {}, svg);
+const month = el('text', { x: 72, y: 78, class: 't-kicker' }, overlay);
+const leg = el('g', {}, overlay);
+el('rect', { x: 72, y: 100, width: 9, height: 9, fill: 'var(--blue)' }, leg); el('text', { x: 90, y: 109, class: 'od-small' }, leg).textContent = 'Yours';
+el('rect', { x: 170, y: 100, width: 9, height: 9, fill: 'var(--red)' }, leg); el('text', { x: 188, y: 109, class: 'od-small' }, leg).textContent = 'Red’s';
+const chips = {};
+const CH = [['jam', 'Jam', 0], ['dazzle', 'Dazzle', 0], ['cyber', 'Cyber', 0], ['asat', 'Missile (ASAT)', 1], ['coorb', 'Co-orbital', 1]];
+el('text', { x: 1528, y: 60, 'text-anchor': 'end', class: 'od-small' }, overlay).textContent = 'Reversible';
+el('text', { x: 1528, y: 132, 'text-anchor': 'end', class: 'od-small' }, overlay).textContent = 'Destructive';
+{
+  const widths = { jam: 58, dazzle: 90, cyber: 80, asat: 170, coorb: 132 };
+  let x = [1528, 1528];
+  for (const [k, label, row] of CH.slice().reverse()) {
+    const w = widths[k]; x[row] -= w; const g = el('g', {}, overlay);
+    const r = el('rect', { x: x[row], y: 70 + row * 72, width: w, height: 32, rx: 16, class: 'od-chip' }, g);
+    const t = el('text', { x: x[row] + w / 2, y: 91 + row * 72, 'text-anchor': 'middle', class: 'od-chipt' }, g); t.textContent = label;
+    chips[k] = { r, t }; x[row] -= 8;
+  }
+}
+const note = el('text', { x: 1528, y: 972, 'text-anchor': 'end', class: 'od-small', opacity: 0.7 }, overlay); note.textContent = 'Schematic, not to scale';
+
+// ---- Hook and payoff ------------------------------------------------------------------------------
+const hook = el('g', {}, svg);
+const h1 = el('text', { x: 800, y: 400, 'text-anchor': 'middle', class: 't-hook' }, hook); h1.textContent = 'Jam it for a month,';
+const h2 = el('text', { x: 800, y: 476, 'text-anchor': 'middle', class: 't-hook' }, hook); h2.textContent = 'or ';
+el('tspan', { class: 'hot' }, h2).textContent = 'destroy it';
+const h3 = el('text', { x: 800, y: 552, 'text-anchor': 'middle', class: 't-hook' }, hook); el('tspan', { class: 'hot' }, h3).textContent = 'for good?';
+const hookLines = [h1, h2, h3];
+
+const pay = el('g', { opacity: 0 }, svg);
+el('text', { x: 800, y: 150, 'text-anchor': 'middle', class: 't-label' }, pay).textContent = 'Years after the war';
+const years = el('text', { x: 800, y: 272, 'text-anchor': 'middle', class: 'od-years' }, pay);
+const ticks = [25, 50].map((y, i) => { const t = el('text', { x: 745 + i * 110, y: 318, 'text-anchor': 'middle', class: 'od-small' }, pay); t.textContent = y + ' yr'; return t; });
+const fact = el('g', { opacity: 0 }, svg);
+el('text', { x: 800, y: 812, 'text-anchor': 'middle', class: 'od-small', fill: 'var(--amber)', style: 'fill:var(--amber)' }, fact).textContent = 'Fengyun-1C, destroyed 2007, about 850 km';
+el('text', { x: 800, y: 850, 'text-anchor': 'middle', class: 'od-fact' }, fact).textContent = '2,837 of its 3,532 cataloged fragments';
+el('text', { x: 800, y: 880, 'text-anchor': 'middle', class: 'od-fact' }, fact).textContent = 'were still in orbit in 2022.';
+
+const cap = captions(svg, [
+  [3.3, 6.8, 'Jam, dazzle or hack: the effect wears off'],
+  [7.0, 11.3, 'A missile kill leaves debris in an orbit both sides share'],
+  [11.6, 15.0, 'At 850 km, that debris stays up for decades'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Orbital Denial', line: 'Every satellite you destroy leaves debris both sides share.' });
+
+// ---- Frame ---------------------------------------------------------------------------------------
+const pulse = (t, a, d) => { const u = seg(t, a, a + d); return u > 0 && u < 1 ? Math.sin(u * Math.PI) : 0; };
+function frame(t) {
+  const vis = lerp(0.32 * ease.out(seg(t, 0, 1)), 1, ease.inOut(seg(t, 2.7, 3.6)));
+  const gone = 1 - seg(t, 14.9, 15.7);
+  scene.setAttribute('opacity', (vis * gone).toFixed(3));
+  overlay.setAttribute('opacity', (ease.out(seg(t, 2.9, 3.6)) * (1 - seg(t, 11.4, 12.0)) * gone).toFixed(3));
+  const z = lerp(lerp(1, 1.1, ease.inOut(seg(t, 2.8, 9.2))), 0.97, ease.inOut(seg(t, 11.0, 13.2)));
+  const cx = lerp(800, 860, ease.inOut(seg(t, 5.5, 9.0)) * (1 - ease.inOut(seg(t, 11.0, 13.2))));
+  cam.setAttribute('transform', `translate(${cx.toFixed(1)},600) scale(${z.toFixed(4)}) translate(-${cx.toFixed(1)},-600)`);
+
+  hookLines.forEach((l, i) => {
+    const u = ease.out(seg(t, 0.25 + i * 0.28, 0.95 + i * 0.28)), o = 1 - seg(t, 2.6 + i * 0.08, 3.2 + i * 0.08);
+    l.setAttribute('opacity', (u * o).toFixed(3));
+    l.setAttribute('transform', `translate(0,${((1 - u) * 22 - seg(t, 2.6, 3.3) * 18).toFixed(1)})`);
+  });
+
+  // Month clock: crisis months 1-3, war from month 4.
+  month.textContent = t < 5.8 ? 'Month 2 of 10 · Crisis' : t < 6.9 ? 'Month 3 of 10 · Crisis' : t < 10.4 ? 'Month 4 of 10 · War' : 'Month 5 of 10 · War';
+  month.style.fill = t >= 6.9 && t < 7.6 ? 'var(--red)' : '';
+
+  // Satellites drift along their orbits.
+  const yrs = 50 * ease.inOut(seg(t, 11.9, 14.2));
+  for (const s of sats) {
+    const th = s.th + drift(s.sh, t), [x, y] = P(s.sh, th);
+    const [x2, y2] = P(s.sh, th - 1), ang = Math.atan2(y2 - y, x2 - x) * 180 / Math.PI;
+    s.g.setAttribute('transform', `translate(${x.toFixed(1)},${y.toFixed(1)}) rotate(${ang.toFixed(1)})`);
+    s.g.setAttribute('opacity', s === target ? (t < TK ? 1 : 0) : 1);
+  }
+  for (const [k, lab] of Object.entries(groupLab)) {
+    const m = k.slice(0, -1), side = k.slice(-1), M = MISSIONS[m], [a0, a1] = SPAN[m][side];
+    const [x, y] = P(M.shell, (a0 + a1) / 2 + drift(M.shell, t), 0.94);
+    const alive = M.n0 - (m === 'com' && side === 'R' && t >= TK ? 1 : 0);
+    lab.setAttribute('x', x.toFixed(1)); lab.setAttribute('y', (y + 4).toFixed(1));
+    lab.textContent = `${M.short} ${alive}/${M.need}`;
+  }
+
+  // Jam (month 2): wavefronts, then Red nav hatched until the month ends.
+  const navC = P('meo', 73 + drift('meo', t));
+  jamWaves.forEach((w, i) => {
+    const u = seg(t, 3.5 + i * 0.18, 4.4 + i * 0.18);
+    if (u <= 0 || u >= 1) { w.setAttribute('opacity', 0); return; }
+    const x = lerp(GS.jam[0], navC[0], u), y = lerp(GS.jam[1], navC[1], u), dx = navC[0] - GS.jam[0], dy = navC[1] - GS.jam[1];
+    const L = Math.hypot(dx, dy), nx = -dy / L, ny = dx / L, s = 20 + 50 * u;
+    w.setAttribute('d', `M${(x + nx * s).toFixed(1)},${(y + ny * s).toFixed(1)} Q${(x + dx / L * 10).toFixed(1)},${(y + dy / L * 10).toFixed(1)} ${(x - nx * s).toFixed(1)},${(y - ny * s).toFixed(1)}`);
+    w.setAttribute('opacity', (Math.sin(u * Math.PI)).toFixed(3));
+  });
+  const on = (a, b, c, d) => ease.out(seg(t, a, b)) * (1 - seg(t, c, d));
+  const hv = { nav: on(4.3, 4.7, 5.8, 6.4), isr: on(4.95, 5.3, 5.8, 6.4), com: on(6.0, 6.4, 10.2, 11.0) };
+  for (const [m, [sh, key]] of Object.entries(hatchOf)) {
+    const [a0, a1] = SPAN[key].R, d = drift(sh, t);
+    hatch[m].setAttribute('d', arcD(sh, a0 + d - 2, a1 + d + 2));
+    hatch[m].setAttribute('opacity', (hv[m] * 0.6).toFixed(3));
+  }
+  // Dazzle (month 2).
+  const dz = satOf('isr', 'R', 5), dp = satPos(dz, t), lz = on(4.7, 4.85, 5.35, 5.6);
+  laser.setAttribute('x1', GS.laser[0]); laser.setAttribute('y1', GS.laser[1]); laser.setAttribute('x2', dp[0].toFixed(1)); laser.setAttribute('y2', dp[1].toFixed(1));
+  laser.setAttribute('opacity', (lz * (0.75 + 0.25 * Math.sin(t * 60))).toFixed(3));
+  flare.setAttribute('cx', dp[0].toFixed(1)); flare.setAttribute('cy', dp[1].toFixed(1));
+  flare.setAttribute('r', (lz * (9 + 3 * Math.sin(t * 40))).toFixed(1)); flare.setAttribute('opacity', lz.toFixed(3));
+  // Cyber (month 3): a pulse along the ground link into Red's network.
+  cyberLink.setAttribute('opacity', (on(5.6, 5.9, 6.5, 7.0) * 0.8).toFixed(3));
+  cyberLink.setAttribute('stroke-dashoffset', (-t * 60).toFixed(1));
+  cyberRings.forEach((r, i) => { const u = seg(t, 5.9 + i * 0.2, 6.9 + i * 0.2); r.setAttribute('r', (ease.out(u) * 70).toFixed(1)); r.setAttribute('opacity', (u > 0 && u < 1 ? 1 - u : 0).toFixed(3)); });
+
+  // Callouts.
+  const place = (c, x, y, o) => { c.t.setAttribute('x', x.toFixed(1)); c.t.setAttribute('y', y.toFixed(1)); c.g.setAttribute('opacity', o.toFixed(3)); };
+  place(cJam, navC[0] - 40, navC[1] + 46, on(3.9, 4.3, 5.4, 5.8));
+  place(cDaz, dp[0] + 26, dp[1] - 24, on(4.8, 5.1, 5.6, 5.9));
+  place(cCyb, GS.red[0] - 70, GS.red[1] + 56, on(5.9, 6.2, 6.9, 7.2));
+
+  // Missile: target lock, climb, kill.
+  const tp = satPos(target, Math.min(t, TK)), lk = ease.out(seg(t, 6.9, 7.25));
+  ret.setAttribute('opacity', (t < 6.9 || t >= TK ? 0 : lk).toFixed(3));
+  ret.setAttribute('transform', `translate(${tp[0].toFixed(1)},${tp[1].toFixed(1)}) scale(${(1.8 - 0.8 * lk).toFixed(3)})`);
+  const mv = seg(t, TL, TK), bz = v => { const q = 1 - v; return [q * q * mis.a[0] + 2 * q * v * mis.b[0] + v * v * mis.c[0], q * q * mis.a[1] + 2 * q * v * mis.b[1] + v * v * mis.c[1]]; };
+  const ev = ease.in(mv) * 0.6 + mv * 0.4;
+  if (t >= TL && t < TK) {
+    const pts = []; for (let k = 0; k <= 12; k++) pts.push(bz(Math.max(0, ev - 0.25 + 0.25 * k / 12)));
+    misPath.setAttribute('d', 'M' + pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join('L')); misPath.setAttribute('opacity', 1);
+    misHead.setAttribute('cx', pts[12][0].toFixed(1)); misHead.setAttribute('cy', pts[12][1].toFixed(1)); misHead.setAttribute('opacity', 1);
+  } else { misPath.setAttribute('opacity', 0); misHead.setAttribute('opacity', 0); }
+  if (t >= TL) {
+    const pts = []; for (let k = 0; k <= 24; k++) pts.push(bz(ev * k / 24));
+    misSmoke.setAttribute('d', 'M' + pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join('L'));
+    misSmoke.setAttribute('opacity', (0.4 * (1 - seg(t, TK, TK + 1.6))).toFixed(3));
+  } else misSmoke.setAttribute('opacity', 0);
+  place(cMis, tp[0] - 34, tp[1] - 34, on(7.0, 7.3, 8.0, 8.3));
+  const kp = satPos(target, t); // the cloud's centre keeps moving with the orbit
+  const b1 = seg(t, TK, TK + 1.2), b2 = seg(t, TK + 0.1, TK + 1.8), c1 = seg(t, TK, TK + 0.45);
+  for (const [n, u, R, w] of [[bloom, b1, 130, 9], [bloom2, b2, 230, 3]]) {
+    n.setAttribute('cx', kp[0].toFixed(1)); n.setAttribute('cy', kp[1].toFixed(1));
+    n.setAttribute('r', (ease.out(u) * R).toFixed(1)); n.setAttribute('stroke-width', (1 + (1 - u) * w).toFixed(2));
+    n.setAttribute('opacity', (u > 0 && u < 1 ? (1 - u) : 0).toFixed(3));
+  }
+  core.setAttribute('cx', kp[0].toFixed(1)); core.setAttribute('cy', kp[1].toFixed(1));
+  core.setAttribute('r', (Math.sin(c1 * Math.PI) * 16).toFixed(1));
+  const sk = seg(t, TK, TK + 0.8), se = ease.out(sk);
+  sparks.setAttribute('opacity', (sk > 0 && sk < 1 ? 1 - sk : 0).toFixed(3));
+  sparks.setAttribute('transform', `translate(${kp[0].toFixed(1)},${kp[1].toFixed(1)})`);
+  for (const [i, ln] of [...sparks.children].entries()) { const R = 60 + (i % 4) * 22; ln.setAttribute('x1', (se * R * 0.5).toFixed(1)); ln.setAttribute('x2', (se * R).toFixed(1)); } core.setAttribute('opacity', (c1 > 0 && c1 < 1 ? 1 : 0));
+  lost.setAttribute('transform', `translate(${kp[0].toFixed(1)},${kp[1].toFixed(1)})`);
+  lost.setAttribute('opacity', (seg(t, TK + 0.6, TK + 1.0) * (1 - seg(t, 11.2, 11.8)) * 0.9).toFixed(3));
+
+  // Debris: spreads along the shell, both directions; the low-shell share decays within years, the
+  // high-shell cloud only slowly (decay times 0.83 and 70 years in the game's model).
+  const tau = Math.max(0, t - TK);
+  const fadeHigh = Math.exp(-yrs / 70), fadeLow = Math.exp(-yrs / 0.83);
+  for (const p of deb) {
+    if (t < TK) { p.c.setAttribute('opacity', 0); continue; }
+    const spread = p.v * tau * (1 + 0.3 * tau), th = killTh + drift('high', tau) + spread;
+    const k = 1 + p.r * ease.out(clamp(tau * 1.2)) + p.burst * Math.exp(-tau * 3) * ease.out(clamp(tau * 8));
+    let [x, y] = P('high', th, k);
+    if (p.low) { const [lx, ly] = P('low', th + drift('low', tau), 1 + p.r * 0.6); const m = ease.inOut(clamp((tau - 0.3) * 0.5 * p.lk)); x = lerp(x, lx, m); y = lerp(y, ly, m); }
+    p.c.setAttribute('cx', x.toFixed(1)); p.c.setAttribute('cy', y.toFixed(1));
+    const hot = 1 - seg(tau, 0, 0.6);
+    p.c.style.fill = hot > 0.3 ? '#fff3dc' : '';
+    p.c.setAttribute('opacity', ((0.7 + 0.3 * hot) * ease.out(clamp(tau * 6)) * (p.low ? fadeLow : fadeHigh)).toFixed(3));
+  }
+  shellGlow.setAttribute('opacity', (0.3 * ease.inOut(seg(t, 9.0, 12.0)) * fadeHigh).toFixed(3));
+  orbitPath.high.style.stroke = t > 9 ? 'var(--red)' : '';
+  orbitPath.high.style.strokeOpacity = t > 9 ? (0.25 + 0.35 * seg(t, 9, 11) * fadeHigh).toFixed(3) : '';
+
+  // Both sides' comms satellites in the same shell come under threat as the front arrives.
+  for (const w of shared) {
+    const th = w.s.th + drift('high', t), dAng = Math.abs(th - (killTh + drift('high', tau)));
+    const arrive = TK + clamp(dAng / 20, 0, 3) * 0.9, u = seg(t, arrive, arrive + 0.5);
+    const [x, y] = P('high', th);
+    w.ring.setAttribute('cx', x.toFixed(1)); w.ring.setAttribute('cy', y.toFixed(1));
+    w.ring.setAttribute('r', (u * (11 + 3 * Math.sin(t * 7 + th))).toFixed(1));
+    w.ring.setAttribute('opacity', (u * (0.7 + 0.3 * Math.sin(t * 7 + th)) * (1 - seg(t, 11.4, 12.0))).toFixed(3));
+  }
+  const bc = P('high', 122 + drift('high', t), 1.07), rc = P('high', 70 + drift('high', t), 1.07);
+  place(cYou, bc[0], bc[1] - 8, on(9.3, 9.7, 11.2, 11.6));
+  place(cRed, rc[0], rc[1] - 8, on(9.6, 10.0, 11.2, 11.6));
+
+  // Action chips.
+  const act = t < 4.6 ? 'jam' : t < 5.7 ? 'dazzle' : t < 6.9 ? 'cyber' : t < 8.4 ? 'asat' : null;
+  for (const [k, c] of Object.entries(chips)) {
+    const a = act === k && t > 3.3;
+    c.r.style.fill = a ? 'var(--amber)' : ''; c.r.style.fillOpacity = a ? 1 : '';
+    c.t.style.fill = a ? 'var(--ink)' : '';
+  }
+
+  // Payoff: everything but the shared shell and its debris steps back.
+  const back = lerp(1, 0.3, ease.inOut(seg(t, 11.4, 12.2)));
+  satG.setAttribute('opacity', back.toFixed(3)); earth.setAttribute('opacity', lerp(1, 0.75, 1 - back).toFixed(3));
+  for (const n of dimmable) n.setAttribute('opacity', back.toFixed(3));
+  for (const n of labs) n.setAttribute('opacity', (1 - ease.inOut(seg(t, 11.4, 12.0))).toFixed(3));
+  // Payoff: decades counter.
+  pay.setAttribute('opacity', (ease.out(seg(t, 11.6, 12.2)) * (1 - seg(t, 14.7, 15.2))).toFixed(3));
+  years.textContent = Math.round(yrs);
+  ticks.forEach((tk, i) => { tk.style.fill = yrs >= [25, 50][i] - 0.5 ? 'var(--amber)' : ''; });
+  fact.setAttribute('opacity', (ease.out(seg(t, 12.6, 13.2)) * (1 - seg(t, 14.7, 15.2))).toFixed(3));
+  fact.setAttribute('transform', `translate(0,${((1 - ease.out(seg(t, 12.6, 13.2))) * 14).toFixed(1)})`);
+
+  cap(t); end(t, 15, 18);
+}
+run({ duration: 18, poster: 8.3, frame });
+</script>
+</body></html>

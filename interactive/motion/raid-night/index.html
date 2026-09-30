@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Raid Night</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .rn-land { fill: #0d1c15; }
+  .rn-coast { fill: none; stroke: var(--muted); stroke-opacity: .55; stroke-width: 1.6; }
+  .rn-city { fill: var(--paper); }
+  .rn-cityname { font: 400 14px var(--mono); fill: var(--paper); letter-spacing: .08em; text-transform: uppercase; }
+  .rn-site { fill: none; stroke: var(--muted); stroke-width: 1.4; }
+  .rn-range { fill: none; stroke: var(--amber); stroke-width: 1.2; stroke-dasharray: 3 9; }
+  .rn-trail { fill: none; stroke: var(--red); stroke-linecap: round; }
+  .rn-threat { fill: var(--red); }
+  .rn-ring { fill: none; stroke: var(--red); stroke-width: 1.6; stroke-dasharray: 5 5; }
+  .rn-shot { fill: none; stroke: var(--amber); stroke-linecap: round; }
+  .rn-head { fill: #fff3dc; }
+  .rn-burst { fill: none; stroke: var(--amber); }
+  .rn-core { fill: #fff3dc; }
+  .rn-ret { fill: none; stroke: var(--amber); stroke-width: 2.4; }
+  .rn-hud { fill: #0a1510; fill-opacity: .82; stroke: var(--line); }
+  .rn-bar { fill: var(--line); }
+  .rn-fill { fill: var(--paper); }
+  .rn-small { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+  .rn-big { font: 600 54px var(--mono); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+  .rn-vs { font: italic 400 44px var(--display); fill: var(--muted); }
+  .rn-dmg { font: 600 14px var(--mono); fill: var(--red); letter-spacing: .08em; text-transform: uppercase; }
+  .rn-call { font: 400 14px var(--mono); fill: var(--amber); letter-spacing: .08em; text-transform: uppercase; }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of Raid Night: drones and missiles fly in from the sea toward four cities while amber interceptors rise to meet them, and the magazine counters tick down."><title>Raid Night</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard, clamp } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Real game values, copied from tools/raid-night/data/params.js and data/costs.js ----------------
+// Field 1000 x 720 game units, coast at y 548; cities A–D; sites per weapon; dusk magazines 170 / 46 / 22.
+const CITIES = [{ k: 'A', x: 140, y: 632 }, { k: 'B', x: 380, y: 612 }, { k: 'C', x: 620, y: 612 }, { k: 'D', x: 860, y: 632 }];
+const SITES = {
+  gun: [{ x: 140, y: 606 }, { x: 380, y: 586 }, { x: 620, y: 586 }, { x: 860, y: 606 }],
+  sri: [{ x: 262, y: 598 }, { x: 740, y: 598 }],
+  lri: [{ x: 430, y: 690 }, { x: 570, y: 690 }],
+};
+const MAG = { gun: 170, sri: 46, lri: 22 };
+const RANGE = { gun: 105, sri: 270, lri: 600 };
+const NAME = { gun: 'Guns / EW', sri: 'Short-range', lri: 'Long-range' };
+// Unit costs in $ millions (low, high). Guns/EW and cruise missiles are not priced in the game.
+const COST = { gun: [0, 0], sri: [0.04, 0.1], lri: [1.5, 3.5] };
+const THREAT_COST = { drone: [0.02, 0.05], cruise: [0, 0], ballistic: [0.25, 5] };
+const DMG = { drone: 1, cruise: 3, ballistic: 6 };
+// Formatting exactly as tools/raid-night/js/fmt.js.
+const money = m => (m === 0 ? '$0' : m < 1 ? '$' + Math.round(m * 1000).toLocaleString('en-US') + 'k' : '$' + (m < 10 ? m.toFixed(1) : Math.round(m).toLocaleString('en-US')) + 'm');
+const range = (lo, hi) => (lo === hi ? money(lo) : `${money(lo)}–${money(hi)}`);
+
+// Game field -> stage (1.1x, centred).
+const K = 1.1, OX = 250, OY = 96;
+const S = (x, y) => [OX + x * K, OY + y * K];
+const city = k => { const c = CITIES.find(c => c.k === k); return S(c.x, c.y); };
+const site = (w, i) => S(SITES[w][i].x, SITES[w][i].y);
+
+// ---- Scene --------------------------------------------------------------------------------------
+const cam = el('g', {}, svg);
+const scene = el('g', {}, cam);
+const field = el('g', {}, scene);
+
+// Land below a gently irregular coastline at game y 548.
+{
+  const cy = S(0, 548)[1];
+  let d = `M-40,${cy}`;
+  for (let x = -40; x <= 1640; x += 40) d += ` L${x},${(cy + Math.sin(x * 0.013) * 7 + Math.sin(x * 0.041) * 3).toFixed(1)}`;
+  el('path', { d: d + ' L1640,1040 L-40,1040 Z', class: 'rn-land' }, field);
+  el('path', { d, class: 'rn-coast' }, field);
+}
+// Range rings for the weapon in hand (dashed, as the game draws them).
+const rings = {};
+for (const w of ['sri', 'lri']) {
+  rings[w] = el('g', { opacity: 0 }, field);
+  SITES[w].forEach((_, i) => { const [x, y] = site(w, i); el('circle', { cx: x, cy: y, r: RANGE[w] * K, class: 'rn-range' }, rings[w]); });
+}
+// Sites: guns (small ticks), short-range (squares), long-range (triangles).
+for (const [w, list] of Object.entries(SITES)) list.forEach((_, i) => {
+  const [x, y] = site(w, i);
+  if (w === 'gun') el('path', { d: `M${x - 5},${y} h10 M${x},${y - 5} v10`, class: 'rn-site' }, field);
+  else if (w === 'sri') el('rect', { x: x - 6, y: y - 6, width: 12, height: 12, class: 'rn-site' }, field);
+  else el('path', { d: `M${x},${y - 9} L${x + 8},${y + 6} L${x - 8},${y + 6} Z`, class: 'rn-site' }, field);
+});
+const cityDmg = {};
+for (const c of CITIES) {
+  const [x, y] = city(c.k);
+  el('rect', { x: x - 7, y: y - 7, width: 14, height: 14, class: 'rn-city' }, field);
+  el('text', { x, y: y + 30, 'text-anchor': 'middle', class: 'rn-cityname' }, field).textContent = `City ${c.k}`;
+  cityDmg[c.k] = el('text', { x, y: y + 50, 'text-anchor': 'middle', class: 'rn-dmg', opacity: 0 }, field);
+}
+
+// ---- Tracks: [type, x0 (stage), city, t0, dur, end (kill time or null = reaches city), bend] -------
+const T = [
+  ['drone', 560, 'B', -6.0, 14, 4.3, -30], ['drone', 1000, 'C', -5.5, 14, 5.0, 40], ['drone', 700, 'B', -4.0, 14, 6.2, 30],
+  ['drone', 1300, 'D', -3.4, 14, 6.9, -20], ['drone', 300, 'A', -2.6, 14, null, 40], ['drone', 1100, 'D', -3.0, 14, 9.4, 30],
+  ['drone', 880, 'C', -1.5, 14, 10.3, -40], ['drone', 470, 'A', -1.0, 14, 11.6, -30], ['drone', 610, 'B', 0.5, 14, null, 40],
+  ['drone', 1040, 'C', 1.0, 14, null, -30], ['drone', 1260, 'D', 1.8, 14, null, 30], ['drone', 350, 'A', 2.4, 14, null, -20],
+  ['drone', 820, 'C', 3.4, 14, null, 25], ['drone', 540, 'B', 4.2, 14, null, -25],
+  ['cruise', 420, 'B', 2.5, 7, 7.3, 90], ['cruise', 1350, 'D', 4.0, 7, 9.1, -90],
+  ['ballistic', 760, 'B', 6.0, 3.4, 8.0, -60], ['ballistic', 850, 'C', 6.05, 3.4, 8.35, 60],
+];
+const tracks = T.map(([type, x0, ck, t0, dur, end, bend], i) => {
+  const [cx, cy] = city(ck), y0 = type === 'ballistic' ? -80 : -20;
+  const tr = { type, ck, t0, dur, end: end ?? t0 + dur, killed: end != null, p0: [x0, y0], p2: [cx, cy], ph: i * 1.7,
+    p1: [(x0 + cx) / 2 + bend, (y0 + cy) / 2 - (type === 'ballistic' ? 160 : 20)] };
+  const g = el('g', {}, field);
+  tr.trail = el('path', { class: 'rn-trail', 'stroke-width': type === 'ballistic' ? 3 : 1.6 }, g);
+  if (type === 'ballistic') tr.ring = el('circle', { cx, cy, r: 26, class: 'rn-ring', opacity: 0 }, g);
+  tr.icon = el('path', { class: 'rn-threat', d: type === 'drone' ? 'M0,8 L-8,-6.4 L8,-6.4 Z' : type === 'cruise' ? 'M0,-9 L9,0 L0,9 L-9,0 Z' : 'M0,-7 a7,7 0 1,0 0.01,0 Z' }, g);
+  if (type === 'ballistic') tr.icon.setAttribute('filter', 'url(#kit-glow)');
+  return tr;
+});
+function pos(tr, u) {
+  const q = 1 - u, [a, b, c] = [tr.p0, tr.p1, tr.p2];
+  let x = q * q * a[0] + 2 * q * u * b[0] + u * u * c[0];
+  const y = q * q * a[1] + 2 * q * u * b[1] + u * u * c[1];
+  if (tr.type === 'drone') x += Math.sin(u * 19 + tr.ph) * 12 * K * (1 - u * 0.6);
+  return [x, y];
+}
+const uAt = (tr, t) => (t - tr.t0) / tr.dur;
+
+// ---- Shots: [weapon, site index, track index, fire time, hit time] --------------------------------
+const SH = [
+  ['sri', 0, 0, 3.8, 4.3], ['sri', 1, 1, 4.5, 5.0], ['sri', 0, 2, 5.7, 6.2], ['sri', 1, 3, 6.4, 6.9], ['sri', 0, 14, 6.85, 7.3],
+  ['lri', 0, 16, 7.0, 8.0], ['lri', 1, 17, 7.35, 8.35], ['sri', 1, 15, 8.75, 9.1], ['gun', 3, 5, 9.2, 9.4],
+  ['lri', 1, 6, 9.6, 10.3], ['gun', 0, 7, 11.4, 11.6],
+];
+const shotLayer = el('g', {}, field), fxLayer = el('g', {}, field);
+const shots = SH.map(([w, si, ti, tf, th]) => {
+  const tr = tracks[ti], [sx, sy] = site(w, si), [px, py] = pos(tr, uAt(tr, th));
+  const loft = w === 'lri' ? 170 : w === 'sri' ? 70 : 0;
+  const s = { w, tr, tf, th, a: [sx, sy], c: [px, py], b: [lerp(sx, px, 0.5) + (px > sx ? -40 : 40) * (loft ? 1 : 0), Math.min(sy, py) - loft] };
+  s.smoke = el('path', { class: 'rn-shot', 'stroke-width': w === 'lri' ? 2 : 1.2, opacity: 0 }, shotLayer);
+  s.path = el('path', { class: 'rn-shot', 'stroke-width': w === 'lri' ? 4 : w === 'sri' ? 2.6 : 1.6, filter: w === 'gun' ? null : 'url(#kit-glow)' }, shotLayer);
+  if (w === 'gun') { s.path.removeAttribute('filter'); s.path.setAttribute('stroke-dasharray', '7 7'); }
+  s.head = el('circle', { r: w === 'lri' ? 4.5 : 3, class: 'rn-head' }, shotLayer);
+  s.ret = el('g', { class: 'rn-ret', opacity: 0 }, fxLayer);
+  const r = 17;
+  el('path', { d: `M${-r},${-r + 7} v-7 h7 M${r - 7},${-r} h7 v7 M${r},${r - 7} v7 h-7 M${-r + 7},${r} h-7 v-7` }, s.ret);
+  s.burst = el('circle', { cx: px, cy: py, r: 0, class: 'rn-burst', opacity: 0, filter: 'url(#kit-glow)' }, fxLayer);
+  s.sparks = el('g', { opacity: 0, stroke: 'var(--amber)', 'stroke-linecap': 'round', 'stroke-width': w === 'lri' ? 2.4 : 1.6 }, fxLayer);
+  if (w !== 'gun') for (let k = 0; k < 9; k++) { const a = k * 40 + 13 * (k % 3); s.sparks.appendChild(el('line', { x1: 0, y1: 0, x2: 1, y2: 0, transform: `rotate(${a})` })); }
+  s.core = el('circle', { cx: px, cy: py, r: 0, class: 'rn-core', opacity: 0, filter: 'url(#kit-glow)' }, fxLayer);
+  return s;
+});
+const bez = (s, v) => { const q = 1 - v; return [q * q * s.a[0] + 2 * q * v * s.b[0] + v * v * s.c[0], q * q * s.a[1] + 2 * q * v * s.b[1] + v * v * s.c[1]]; };
+const ptsPath = pts => 'M' + pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' L');
+
+// Callout for the expensive shot at a cheap drone.
+const call = el('g', { opacity: 0 }, fxLayer);
+{
+  const [px, py] = shots[9].c;
+  el('path', { d: `M${px - 18},${py - 14} L${px - 70},${py - 66} h-36`, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 1.2 }, call);
+  el('text', { x: px - 114, y: py - 72, 'text-anchor': 'end', class: 'rn-call' }, call).textContent = 'Long-range';
+  el('text', { x: px - 114, y: py - 52, 'text-anchor': 'end', class: 'rn-call' }, call).textContent = 'at a drone';
+}
+
+// ---- HUD: wave label and the three magazines (top), cost exchange (bottom right) -------------------
+const overlay = el('g', {}, svg);
+const hud = el('g', {}, overlay);
+el('text', { x: 72, y: 78, class: 't-kicker' }, hud).textContent = 'Wave 2 of 3';
+const mags = {};
+['gun', 'sri', 'lri'].forEach((w, i) => {
+  const x = 527 + i * 185, g = el('g', {}, hud);
+  el('rect', { x, y: 42, width: 175, height: 66, rx: 4, class: 'rn-hud' }, g);
+  const lab = el('text', { x: x + 12, y: 65, class: 't-label', style: 'font-size:13px' }, g); lab.textContent = NAME[w];
+  const num = el('text', { x: x + 163, y: 97, 'text-anchor': 'end', class: 't-num' }, g);
+  el('rect', { x: x + 12, y: 84, width: 76, height: 5, class: 'rn-bar' }, g);
+  const fill = el('rect', { x: x + 12, y: 84, width: 76, height: 5, class: 'rn-fill' }, g);
+  mags[w] = { g, lab, num, fill, box: g.firstChild };
+});
+const cost = el('g', {}, overlay);
+el('rect', { x: 1140, y: 846, width: 400, height: 104, rx: 4, class: 'rn-hud' }, cost);
+el('text', { x: 1156, y: 870, class: 'rn-small' }, cost).textContent = 'Cost exchange, running';
+el('text', { x: 1156, y: 902, class: 'rn-small' }, cost).textContent = 'Defense spent';
+el('text', { x: 1156, y: 932, class: 'rn-small' }, cost).textContent = 'Threats destroyed';
+const spentT = el('text', { x: 1526, y: 903, 'text-anchor': 'end', class: 't-num', style: 'font-size:19px;fill:var(--amber)' }, cost);
+const valueT = el('text', { x: 1526, y: 933, 'text-anchor': 'end', class: 't-num', style: 'font-size:19px' }, cost);
+
+// ---- Hook and payoff type --------------------------------------------------------------------------
+const hook = el('g', {}, svg);
+const hookLines = ['Four cities.', 'Three waves.', null].map((s, i) => {
+  const t = el('text', { x: 800, y: 420 + i * 76, 'text-anchor': 'middle', class: 't-hook' }, hook);
+  if (s) t.textContent = s; else { const h = el('tspan', { class: 'hot' }, t); h.textContent = '22 long-range shots.'; }
+  return t;
+});
+const pay = el('g', { opacity: 0 }, svg);
+const payL = el('g', {}, pay), payR = el('g', {}, pay);
+el('text', { x: 800, y: 282, 'text-anchor': 'middle', class: 't-label' }, payL).textContent = 'One long-range interceptor';
+el('text', { x: 800, y: 350, 'text-anchor': 'middle', class: 'rn-big', fill: 'var(--amber)' }, payL).textContent = range(...COST.lri);
+el('text', { x: 800, y: 386, 'text-anchor': 'middle', class: 'rn-small' }, payL).textContent = 'priced like Arrow';
+const vs = el('text', { x: 800, y: 458, 'text-anchor': 'middle', class: 'rn-vs' }, pay); vs.textContent = 'vs';
+el('text', { x: 800, y: 530, 'text-anchor': 'middle', class: 't-label' }, payR).textContent = 'One drone';
+el('text', { x: 800, y: 598, 'text-anchor': 'middle', class: 'rn-big', fill: 'var(--red)' }, payR).textContent = range(...THREAT_COST.drone);
+el('text', { x: 800, y: 634, 'text-anchor': 'middle', class: 'rn-small' }, payR).textContent = 'priced like the Shahed';
+const payRule = el('rect', { x: 800, y: 684, width: 0, height: 2, fill: 'var(--amber)' }, pay);
+const payNote = el('text', { x: 800, y: 720, 'text-anchor': 'middle', class: 'rn-small' }, pay);
+payNote.textContent = 'Unit-cost ranges from public estimates';
+
+const cap = captions(svg, [
+  [3.4, 6.4, 'Drones, cruise and ballistic missiles, wave after wave'],
+  [6.6, 9.3, 'Pick a weapon, pick a track, fire'],
+  [9.5, 12.1, 'Every shot comes out of a magazine that runs dry'],
+  [12.4, 15.0, 'Spend them on drones, and ballistic missiles leak'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Raid Night', line: 'Defend four cities. See what each night costs.' });
+
+// ---- Frame ---------------------------------------------------------------------------------------
+function frame(t) {
+  // Scene visibility: dim under the hook, full in the mechanic, dim for the payoff, gone under the end card.
+  const vis = lerp(0.3 * ease.out(seg(t, 0, 1)), 1, ease.inOut(seg(t, 2.7, 3.6)));
+  const dim = lerp(1, 0.16, ease.inOut(seg(t, 11.9, 12.7)));
+  scene.setAttribute('opacity', (vis * dim * (1 - seg(t, 14.9, 15.7))).toFixed(3));
+  overlay.setAttribute('opacity', (lerp(1, 0.25, ease.inOut(seg(t, 11.9, 12.7))) * (1 - seg(t, 14.9, 15.7))).toFixed(3));
+  const z = lerp(1, 1.075, ease.inOut(seg(t, 2.6, 12.6)));
+  cam.setAttribute('transform', `translate(800,560) scale(${z.toFixed(4)}) translate(-800,-560)`);
+
+  // Hook: lines rise in with a stagger, then lift away.
+  hookLines.forEach((l, i) => {
+    const u = ease.out(seg(t, 0.25 + i * 0.28, 0.95 + i * 0.28)), o = 1 - seg(t, 2.6 + i * 0.08, 3.2 + i * 0.08);
+    l.setAttribute('opacity', (u * o).toFixed(3));
+    l.setAttribute('transform', `translate(0,${((1 - u) * 22 - seg(t, 2.6, 3.3) * 18).toFixed(1)})`);
+  });
+
+  // Tracks.
+  for (const tr of tracks) {
+    const u = uAt(tr, t), alive = t >= tr.t0 && t < tr.end;
+    const fade = tr.killed ? 1 - seg(t, tr.end, tr.end + 0.6) : 1 - seg(t, tr.end, tr.end + 0.2);
+    if (u < 0 || fade <= 0) { tr.icon.setAttribute('opacity', 0); tr.trail.setAttribute('opacity', 0); if (tr.ring) tr.ring.setAttribute('opacity', 0); continue; }
+    const uu = Math.min(u, uAt(tr, tr.end)), L = tr.type === 'ballistic' ? 0.5 : tr.type === 'cruise' ? 0.22 : 0.1;
+    const pts = []; for (let k = 0; k <= 10; k++) pts.push(pos(tr, Math.max(0, uu - L + (L * k) / 10)));
+    tr.trail.setAttribute('d', ptsPath(pts));
+    tr.trail.setAttribute('opacity', (0.5 * fade).toFixed(3));
+    const [x, y] = pts[10], [x0, y0] = pts[8];
+    const ang = Math.atan2(y - y0, x - x0) * 180 / Math.PI - 90;
+    tr.icon.setAttribute('transform', `translate(${x.toFixed(1)},${y.toFixed(1)}) rotate(${tr.type === 'drone' ? ang.toFixed(1) : 0})`);
+    tr.icon.setAttribute('opacity', alive ? 1 : 0);
+    if (tr.ring) tr.ring.setAttribute('opacity', (alive ? 0.55 + 0.45 * Math.sin(t * 12) : fade * 0.4).toFixed(3));
+  }
+  // A drone leaks at City A: 1 damage point.
+  const leak = tracks[4], lt = leak.t0 + leak.dur;
+  cityDmg.A.textContent = `damage ${DMG.drone}`;
+  cityDmg.A.setAttribute('opacity', seg(t, lt, lt + 0.3).toFixed(2));
+
+  // Shots, reticles, bursts.
+  let weapon = null;
+  for (const s of shots) {
+    if (t >= s.tf - 0.5) weapon = s.w;
+    const v = seg(t, s.tf, s.th), flying = t >= s.tf && t < s.th;
+    const lockU = ease.out(seg(t, s.tf - 0.45, s.tf - 0.1));
+    const [rx, ry] = pos(s.tr, Math.min(uAt(s.tr, t), uAt(s.tr, s.th)));
+    s.ret.setAttribute('opacity', (t < s.tf - 0.45 || t >= s.th ? 0 : lockU).toFixed(2));
+    s.ret.setAttribute('transform', `translate(${rx.toFixed(1)},${ry.toFixed(1)}) scale(${(1.8 - 0.8 * lockU).toFixed(3)})`);
+    if (flying) {
+      const L = s.w === 'gun' ? 0.5 : 0.28, pts = [];
+      for (let k = 0; k <= 12; k++) pts.push(bez(s, Math.max(0, v - L + (L * k) / 12)));
+      s.path.setAttribute('d', ptsPath(pts)); s.path.setAttribute('opacity', 1);
+      s.head.setAttribute('cx', pts[12][0].toFixed(1)); s.head.setAttribute('cy', pts[12][1].toFixed(1)); s.head.setAttribute('opacity', 1);
+    } else { s.path.setAttribute('opacity', 0); s.head.setAttribute('opacity', 0); }
+    if (s.w !== 'gun' && t >= s.tf) {
+      const pts = []; for (let k = 0; k <= 24; k++) pts.push(bez(s, (v * k) / 24));
+      s.smoke.setAttribute('d', ptsPath(pts));
+      s.smoke.setAttribute('opacity', (0.32 * (1 - seg(t, s.th, s.th + 1.3))).toFixed(3));
+    } else s.smoke.setAttribute('opacity', 0);
+    const b = seg(t, s.th, s.th + (s.w === 'lri' ? 0.9 : 0.6)), big = s.w === 'lri' ? 62 : s.w === 'sri' ? 34 : 16;
+    s.burst.setAttribute('r', (ease.out(b) * big).toFixed(1));
+    s.burst.setAttribute('stroke-width', (1 + (1 - b) * (s.w === 'lri' ? 7 : 4)).toFixed(2));
+    s.burst.setAttribute('opacity', (b > 0 && b < 1 ? 1 - b : 0).toFixed(3));
+    if (s.w !== 'gun') {
+      const k = seg(t, s.th, s.th + 0.7), e = ease.out(k), R = big * 1.25;
+      s.sparks.setAttribute('opacity', (k > 0 && k < 1 ? 1 - k : 0).toFixed(3));
+      s.sparks.setAttribute('transform', `translate(${s.c[0].toFixed(1)},${s.c[1].toFixed(1)})`);
+      for (const ln of s.sparks.children) { ln.setAttribute('x1', (e * R * 0.55).toFixed(1)); ln.setAttribute('x2', (e * R).toFixed(1)); }
+    }
+    const c = seg(t, s.th, s.th + 0.35);
+    s.core.setAttribute('r', (ease.out(c) * big * 0.3).toFixed(1));
+    s.core.setAttribute('opacity', (c > 0 && c < 1 ? (1 - c) * 0.9 : 0).toFixed(3));
+  }
+  call.setAttribute('opacity', (ease.out(seg(t, 9.7, 10.1)) * (1 - seg(t, 11.6, 12.0))).toFixed(3));
+  rings.sri.setAttribute('opacity', (weapon === 'sri' && t > 3.3 ? 0.35 : 0) * (1 - seg(t, 11.8, 12.2)));
+  rings.lri.setAttribute('opacity', (weapon === 'lri' ? 0.3 : 0) * (1 - seg(t, 11.8, 12.2)));
+
+  // Magazines and the running cost exchange (spent counts at the trigger, value at the kill, as in the game).
+  const spent = [0, 0], value = [0, 0];
+  for (const w of ['gun', 'sri', 'lri']) {
+    const fired = shots.filter(s => s.w === w && t >= s.tf);
+    const left = MAG[w] - fired.length, m = mags[w];
+    m.num.textContent = left;
+    m.fill.setAttribute('width', (76 * left / MAG[w]).toFixed(1));
+    const last = fired.length ? fired[fired.length - 1].tf : -9, pulse = 1 - seg(t, last, last + 0.6);
+    const on = weapon === w && t > 3.3;
+    m.lab.style.fill = on ? 'var(--amber)' : '';
+    m.num.style.fill = pulse > 0 ? 'var(--amber)' : '';
+    m.box.style.stroke = on ? 'var(--amber)' : '';
+    m.g.setAttribute('transform', `translate(0,${(-pulse * 4).toFixed(1)})`);
+    for (const s of fired) { spent[0] += COST[w][0]; spent[1] += COST[w][1]; }
+  }
+  for (const tr of tracks) if (tr.killed && t >= tr.end) { value[0] += THREAT_COST[tr.type][0]; value[1] += THREAT_COST[tr.type][1]; }
+  spentT.textContent = range(spent[0], spent[1]);
+  valueT.textContent = range(value[0], value[1]);
+  cost.setAttribute('opacity', ease.out(seg(t, 3.4, 4.0)).toFixed(3));
+  hud.setAttribute('opacity', ease.out(seg(t, 2.9, 3.6)).toFixed(3));
+
+  // Payoff: the price of one long-range interceptor against one drone.
+  const p = ease.out(seg(t, 12.2, 12.9)), pOut = 1 - seg(t, 14.7, 15.2);
+  pay.setAttribute('opacity', (p * pOut).toFixed(3));
+  payL.setAttribute('transform', `translate(${((1 - p) * -50).toFixed(1)},0)`);
+  const q = ease.out(seg(t, 12.5, 13.2));
+  payR.setAttribute('transform', `translate(${((1 - q) * 50).toFixed(1)},0)`);
+  payR.setAttribute('opacity', q.toFixed(3));
+  const v = ease.back(seg(t, 12.35, 12.85));
+  vs.setAttribute('opacity', seg(t, 12.35, 12.6).toFixed(3));
+  vs.setAttribute('transform', `translate(800,444) scale(${(0.6 + 0.4 * v).toFixed(3)}) translate(-800,-444)`);
+  const rw = 360 * ease.inOut(seg(t, 13.0, 13.7));
+  payRule.setAttribute('x', (800 - rw / 2).toFixed(1)); payRule.setAttribute('width', rw.toFixed(1));
+  payNote.setAttribute('opacity', ease.out(seg(t, 13.4, 13.9)).toFixed(3));
+
+  cap(t); end(t, 15, 18);
+}
+run({ duration: 18, poster: 8.1, frame });
+</script>
+</body></html>

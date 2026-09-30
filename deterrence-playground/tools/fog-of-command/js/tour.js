@@ -1,7 +1,7 @@
 // Guided walkthrough: four steps pointing at parts of the page. It explains; it does not play for you.
 const STEPS = [
   { sel: '#box', title: 'The valley',
-    body: 'Red enters from the north and wants Tarn Crossing at the bottom. Blue holds the main line and keeps a reserve behind it. You see enemy units only in your own sectors and the ones next door; your recon also reports movement further out. Diamonds are enemy units you have seen; "?" is movement.' },
+    body: 'Red enters from the north and wants Tarn Crossing. Your side is always at the bottom of the screen: when you attack, the board is turned around. Blue holds the main line and keeps a reserve behind it. You see enemy units only in your own sectors and the ones next door; your recon also reports movement further out. Diamonds are enemy units you have seen; "?" is movement.' },
   { sel: '#units', title: 'Give orders',
     body: 'Pick a unit (or press its number), then click the sector it should go to. Orders start now or next hour, as the bar says. "Give ground" makes a unit fall back one sector when a stronger enemy attacks it: good bait, if something strong waits behind.' },
   { sel: '#units .fc-arty', title: 'Artillery and recon',

@@ -17,7 +17,8 @@ const reduce = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 const narrowQ = matchMedia('(max-width: 640px)');
 
 let g = null, me = 'blue', sel = null, view = 'belief', aarHour = null;
-let map = createMap($('map'), onSector, onSectorKey, narrowQ.matches);
+let map = createMap($('map'), onSector, onSectorKey, narrowQ.matches, false);
+const remap = () => { map = createMap($('map'), onSector, onSectorKey, narrowQ.matches, !!g && me === 'red'); };
 
 const say = html => { $('say').innerHTML = html; };
 const mineUnits = () => g.units.filter(u => u.side === me);
@@ -27,6 +28,7 @@ function start(side, seed, log = [], n = 0) {
   me = side;
   const players = me === 'blue' ? { blue: null, red: redAI() } : { red: null, blue: blueAI() };
   g = replay({ seed, players }, log, n);
+  if (map.flip !== (me === 'red')) remap();
   sel = null; view = 'belief'; aarHour = null;
   $('start').hidden = true;
   $('bar').hidden = false;
@@ -48,6 +50,7 @@ function start(side, seed, log = [], n = 0) {
 function showStart() {
   aar.hide();
   g = null; sel = null;
+  if (map.flip) remap();
   $('start').hidden = false;
   $('bar').hidden = true;
   $('viewbar').hidden = true;
@@ -187,6 +190,7 @@ function onSectorKey(e, id) {
   const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
   if (!d) return;
   e.preventDefault();
+  if (map.flip) { d[0] = -d[0]; d[1] = -d[1]; }   // the board is turned: screen directions are reversed
   let to = null;
   if (id === 'x') to = d[1] < 0 ? 's1' : null;
   else if (n.row === 3 && d[1] > 0) to = 'x';
@@ -272,7 +276,7 @@ document.addEventListener('keydown', e => {
 const tour = createTour($('tour'));
 $('start-tour').onclick = () => { if (!g) start('blue', newSeed()); tour.start(); };
 narrowQ.addEventListener('change', () => {
-  map = createMap($('map'), onSector, onSectorKey, narrowQ.matches);
+  remap();
   if (!g) render(map, { me: 'blue', units: [], pic: { tracks: [], marks: [] }, mode: 'belief' });
   else if (g.over && aarHour !== null) reviewAt(aarHour); else draw();
 });

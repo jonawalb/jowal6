@@ -1,6 +1,8 @@
 /* Fog of Command. Built on shared/css/tsm.css tokens only (light and dark come from there).
    Your side's colour is --mine, the enemy's --foe: Blue/Red when defending, swapped when attacking. */
-body { --mine: var(--blue); --foe: var(--red); }
+body { --mine: var(--blue); --foe: var(--red); --bound: color-mix(in srgb, #c77a2e 62%, var(--muted)); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) body { --bound: color-mix(in srgb, #e29a52 65%, var(--muted)); } }
+:root[data-theme="dark"] body { --bound: color-mix(in srgb, #e29a52 65%, var(--muted)); }
 body[data-side="red"] { --mine: var(--red); --foe: var(--blue); }
 .fc-actions { max-width: 1400px; margin: 12px auto 0; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; }
 .fc-actions > div { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -72,7 +74,11 @@ body[data-side="red"] { --mine: var(--red); --foe: var(--blue); }
 .fc-road-case.slow { opacity: .3; }
 .fc-road.slow { stroke-dasharray: 5 5; }
 .fc-sec { cursor: pointer; outline: none; }
-.fc-sec rect { fill: transparent; stroke: var(--rule); stroke-width: 1.2; transition: fill .12s; }
+.fc-sec rect { fill: transparent; stroke: transparent; stroke-width: 1.2; transition: fill .12s; }
+.fc-bound { fill: none; stroke: var(--bound); stroke-width: 1.5; stroke-dasharray: 6 4; pointer-events: none; }
+.fc-bound.row { stroke-width: 2; opacity: 1; }
+.fc-bound.col { opacity: .8; }
+.fc-bound.edge { stroke-width: 1.5; opacity: .8; }
 .fc-sec:hover rect { fill: color-mix(in srgb, var(--mine) 6%, transparent); }
 .fc-sec.sel-can:hover rect { fill: color-mix(in srgb, var(--mine) 12%, transparent); stroke: var(--mine); }
 .fc-sec:focus { outline: none; }
@@ -126,6 +132,7 @@ body[data-side="red"] { --mine: var(--red); --foe: var(--blue); }
 .lg-route { height: 0 !important; width: 22px !important; border-top: 2.4px dashed var(--mine); }
 .lg-target { border: 2px solid var(--c3); border-radius: 50%; }
 .lg-fight { border: 2px solid var(--accent); border-radius: 50%; }
+.lg-bound { height: 0 !important; width: 22px !important; border-top: 2px dashed var(--bound); }
 
 /* Panel: status and reports */
 .fc-feedsec { gap: 6px; }

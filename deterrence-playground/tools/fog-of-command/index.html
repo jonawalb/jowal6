@@ -27,7 +27,7 @@
       <h2 id="start-t">Choose your side</h2>
       <div class="fc-sides">
         <button type="button" class="fc-side blue" data-side="blue"><b>Defend</b><span>Blue brigade: hold Tarn Crossing until 22:00.</span><small>9 units, including artillery and 2 recon troops. Red is stronger and has a decoy.</small></button>
-        <button type="button" class="fc-side red" data-side="red"><b>Attack</b><span>Red force: take Tarn Crossing by 22:00.</span><small>13 units, including artillery, 2 recon troops and a decoy. Blue's reserve can be fooled.</small></button>
+        <button type="button" class="fc-side red" data-side="red"><b>Attack</b><span>Red force: take Tarn Crossing by 22:00.</span><small>13 units, including artillery, 2 recon troops and a decoy. Blue's reserve can be fooled. The board turns so you attack up the screen.</small></button>
       </div>
       <p class="fc-rules"><b>Each hour:</b> pick a unit and click where it should go; fire your artillery at one sector; press <b>End hour</b>. You see the enemy only next to your own units.</p>
       <p class="fine">Keys: <b>1–9</b> pick a unit, <b>A</b> artillery, <b>G</b> give ground or hold, <b>Tab</b> to a sector and <b>Enter</b> to send, arrow keys between sectors, <b>N</b> ends the hour, <b>U</b> undoes.</p>
@@ -52,7 +52,7 @@
           <button type="button" class="btn" data-view="truth" aria-pressed="false">What was true</button>
         </div>
       </div>
-      <svg id="map" role="group" aria-label="Map of the fictional Varn valley: sixteen sectors in four rows and four columns, and Tarn Crossing below them. Tab to a sector and press Enter to send the selected unit or fire there; arrow keys move between sectors."></svg>
+      <svg id="map" role="group" aria-label="Map of the fictional Varn valley: sixteen sectors in four rows and four columns, and Tarn Crossing behind them. When you attack, the board is turned so your side is at the bottom. Tab to a sector and press Enter to send the selected unit or fire there; arrow keys move between sectors."></svg>
     </div>
     <div class="fc-legend" aria-hidden="true">
       <span><i class="lg-mine"></i>Your unit (bar = strength)</span>
@@ -61,6 +61,7 @@
       <span><i class="lg-route"></i>Order (dashed: starts next hour)</span>
       <span><i class="lg-target"></i>Your fire</span>
       <span><i class="lg-fight"></i>Fighting</span>
+      <span><i class="lg-bound"></i>Sector boundary: a planning line, not a physical feature</span>
     </div>
 
     <section class="card fc-aar" id="aar" hidden aria-labelledby="aar-t">

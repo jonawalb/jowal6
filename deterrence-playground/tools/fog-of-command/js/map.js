@@ -286,7 +286,7 @@ function diamond(parent, [x, y], tr, mode, k, room) {
   n.setAttribute('text-anchor', 'middle');
   const what = TYPES[tr.type]?.word || 'unit';
   el('title', {}, g, truth ? `${what}, true strength ${Math.round(tr.str)}`
-    : tr.type === 'decoy' ? 'Exposed decoy group' : `${what}${tr.exact ? `, strength ${Math.round(tr.str)}${tr.hp !== undefined ? ` (${Math.round(100 * tr.hp)}%)` : ''}` : `, full strength ${tr.str} if not yet hit`}${tr.age > 0 ? `, seen ${tr.age} h ago` : ''}. Click to act on this sector.`);
+    : tr.type === 'decoy' ? 'Exposed decoy group' : `${what}${tr.heard ? ' (heard by recon two sectors away, not seen)' : ''}${tr.exact ? `, strength ${Math.round(tr.str)}${tr.hp !== undefined ? ` (${Math.round(100 * tr.hp)}%)` : ''}` : `, full strength ${tr.str} if not yet hit`}${tr.age > 0 ? `, seen ${tr.age} h ago` : ''}. Click to act on this sector.`);
 }
 
 function movement(parent, [x, y], age, k) {

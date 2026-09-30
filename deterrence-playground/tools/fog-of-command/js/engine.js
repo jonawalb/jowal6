@@ -69,7 +69,7 @@ export function delaySince(g, side, t = g.t) {
  * Send an order at the current hour. For a Red unit still off the map, a north sector sets where it
  * enters (at once, no delay). A newer order to the same unit replaces one still in transit.
  */
-export function issue(g, id, to, logIt = true) {
+export function issue(g, id, to, logIt = true, extra = 0) {
   const u = unit(g, id);
   if (!u || u.broken || u.node === 'gone' || g.over || u.type === 'arty') return null;
   if (u.node === 'off') {
@@ -81,7 +81,7 @@ export function issue(g, id, to, logIt = true) {
   if (!NODE[to]) return null;
   for (const o of g.orders) if (o.unit === id && !o.done && !o.cancelled) o.cancelled = true;
   const d = orderDelay(g, u.side);
-  const o = { i: g.orders.length, t: g.t, side: u.side, unit: id, dest: to, d, due: g.t + d, done: false, cancelled: false };
+  const o = { i: g.orders.length, t: g.t, side: u.side, unit: id, dest: to, d: d + extra, due: g.t + d + extra, done: false, cancelled: false };
   g.orders.push(o);
   if (logIt) g.log.push({ t: g.t, kind: 'o', unit: id, v: to });
   return o;
@@ -139,7 +139,7 @@ function applyPolicy(g, side) {
   if (target) setFire(g, side, target, false);
   const act = p(g, side, 'orders') || {};
   for (const [id, s] of act.stances || []) setStance(g, id, s, false);
-  for (const [id, n] of act.orders || []) issue(g, id, n, false);
+  for (const [id, n, extra] of act.orders || []) issue(g, id, n, false, extra || 0);   // extra: a scripted commander's own added delay (AI.blue.recommitDelay)
 }
 
 /** One artillery mission (ARTILLERY): damage, a report that is right 90% of the time, danger close, spotting. */

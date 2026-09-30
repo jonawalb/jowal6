@@ -20,7 +20,7 @@ export function variants(g, me) {
     { key: 'seer', label: `Your orders, against a ${SIDE[foe]} commander who sees everything`, note: 'the difference is what hiding, feints and bait were worth to you',
       run: dice => replay({ seed: g.seed, dice, players: withMe(opp('truth')) }, log) },
     { key: 'doc', label: me === 'blue' ? 'The doctrinal defender in your place' : 'Scripted feint and mass in your place',
-      note: me === 'blue' ? 'commits its reserve when one road clearly leads, after checking it with spotted fire' : 'feint with the decoy on a center road, main effort on an outer road',
+      note: me === 'blue' ? 'commits its reserve when one road clearly leads, after checking it with spotted fire' : 'main effort on an outer road, feint with the decoy on a road away from it',
       run: dice => play({ seed: g.seed, dice, players: script('fog') }) },
     { key: 'docT', label: 'The same script with perfect information', note: 'it reads the true picture; orders are still delayed',
       run: dice => play({ seed: g.seed, dice, players: script('truth') }) },

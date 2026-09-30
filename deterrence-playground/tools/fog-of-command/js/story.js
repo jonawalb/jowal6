@@ -36,9 +36,14 @@ export function moments(g, me) {
       out.push({ t: e.t, tone: x && x.lr > x.lb ? 'good' : '', text: `Red followed a unit that gave ground into <b>${NAME[e.node]}</b>${x ? `; in the fighting there ${lossWords(x, 'blue')}` : ''}.` });
     }
     if (e.side === 'blue' && (e.what === 'reserve' || e.what === 'recommit') && me === 'red') {
-      const decoy = firstSeen(g, 'blue', 'r8');
+      const d = firstSight(g, 'blue', 'r8');
+      const decoy = d && d.obsT <= e.t ? `; your decoy had been ${d.heard ? 'heard' : 'in view'} since ${hhmm(d.obsT)}` : '';
       const fooled = e.believed - e.truth;
-      out.push({ t: e.t, tone: fooled >= 8 ? 'good' : '', text: `Blue ${e.what === 'recommit' ? 'switched' : 'sent'} its reserve to the <b>${COLS[e.col]}</b> road, believing ${e.believed} of your strength was there. You had ${e.truth}${decoy !== null && decoy <= e.t ? `; your decoy had been in view since ${hhmm(decoy)}` : ''}.` });
+      // After your feint: your real strength was mostly on another road.
+      const tc = e.truthCol, big = tc ? tc.indexOf(Math.max(...tc)) : -1;
+      if (big >= 0 && big !== e.col && tc[big] - e.truth >= 8) {
+        out.push({ t: e.t, tone: 'good', text: `Blue ${e.what === 'recommit' ? 'switched' : 'sent'} its reserve to the <b>${COLS[e.col]}</b> road after your feint, believing ${e.believed} of your strength was there. You had ${e.truth} there and ${tc[big]} on the <b>${COLS[big]}</b> road${decoy}.` });
+      } else out.push({ t: e.t, tone: fooled >= 8 ? 'good' : '', text: `Blue ${e.what === 'recommit' ? 'switched' : 'sent'} its reserve to the <b>${COLS[e.col]}</b> road, believing ${e.believed} of your strength was there. You had ${e.truth}${decoy}.` });
     }
     if (e.side === 'blue' && e.what === 'guard' && me === 'red') out.push({ t: e.t, tone: '', text: `Blue pulled its reserve back to Tarn Crossing after seeing you at ${NAME[e.node]}.` });
     if (e.side === 'blue' && e.what === 'counter' && me === 'red') {
@@ -71,9 +76,8 @@ export function moments(g, me) {
   return out.sort((a, b) => a.t - b.t).slice(0, 16);
 }
 
-function firstSeen(g, side, id) {
-  const s = g.seen[side].find(x => x.elem === id);
-  return s ? s.obsT : null;
+function firstSight(g, side, id) {
+  return g.seen[side].find(x => x.elem === id) || null;
 }
 function firstExposed(g, side, id) {
   const s = g.seen[side].find(x => x.elem === id && x.type === 'decoy');

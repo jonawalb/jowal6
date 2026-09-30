@@ -50,7 +50,7 @@ const STEPS = {
     { title: 'End the hour', target: () => q('#end'),
       do: 'Press <b>End hour</b> (or N).', done: s => s.g.t >= 1 },
     { title: 'Play on', target: () => q('#feed'), tab: 'reports',
-      body: () => 'Show Blue a threat on one road with the feint and the decoy, mass on another, and attack where the defender looks thin or is already fighting: a defender hit from a second direction fights at no advantage.' },
+      body: () => 'To feint: enter the Decoy on a road away from your main effort, two sectors from Blue\'s recon, and send 1 Mech down that road first; hold the main effort an hour, then mass it on another road. Attack where the defender looks thin or is already fighting: a defender hit from a second direction fights at no advantage.' },
   ],
 };
 

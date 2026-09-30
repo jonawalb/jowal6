@@ -42,13 +42,16 @@ export function pickTarget(g, side, pic, { blind = false, reach = 2, confirm = 1
 
 /**
  * Red's plan from the scenario seed. kind 'random': any roads; 'smart': main effort on an outer road,
- * feint on a center road (where Blue's recon start); 'mixed' (the game's commander): either, half and half.
+ * feint on one of the two roads away from it; 'mixed' (the game's commander): 'smart' with probability
+ * AI.red.smartShare, otherwise 'random'.
  */
 export function makePlan(seed, kind = 'random') {
   const r = makeRng(seed, STREAM.plan);
-  if (kind === 'mixed') kind = r.u() < 0.5 ? 'smart' : 'random';
+  if (kind === 'mixed') kind = r.u() < AI.red.smartShare ? 'smart' : 'random';
   if (kind === 'smart') {
-    const main = r.u() < 0.5 ? 0 : 3, feint = r.u() < 0.5 ? 1 : 2;
+    // The feint goes down one of the two roads away from the main effort (for a West main effort, the
+    // Center-east or East road), so a reserve sent to it is far from where the blow falls.
+    const main = r.u() < 0.5 ? 0 : 3, feint = (main === 0 ? [2, 3] : [1, 0])[r.u() < 0.5 ? 0 : 1];
     const probe = [0, 1, 2, 3].filter(c => c !== main && c !== feint)[r.u() < 0.5 ? 0 : 1];
     return { main, feint, probe };
   }
@@ -115,7 +118,7 @@ export function redAI({ mode = 'fog', variant = 'feint', plan = 'mixed', arty = 
     const main = { role: 'main', ids: [...MAINE], startAt: R.assembleUntil };
     spotter.follow = main.ids;
     return [spotter, { role: 'probe', ids: [...PROBE], col: P.probe }, { role: 'feint', ids: [...FEINT], col: P.feint },
-      { role: 'decoy', ids: [...DECOY], col: P.feint }, main, { role: 'main', ids: [...SECOND], startAt: 0 }];
+      { role: 'decoy', ids: [...DECOY], col: P.feint, hold: true }, main, { role: 'main', ids: [...SECOND], startAt: 0 }];
   }
 
   /** Second echelon: "reinforce success" by Red's own picture, which is where it can be baited. */
@@ -151,21 +154,22 @@ export function redAI({ mode = 'fog', variant = 'feint', plan = 'mixed', arty = 
   function decoy(g, grp, out) {
     const [u] = alive(g, grp.ids);
     if (!u || u.node === 'off' || busy(g, u)) return;
+    if (grp.hold) return;   // the feint's decoy stays in the north approach: heard by Blue's recon, not watched
     const f = FORWARD[grp.col];
     if (u.node === NORTH[grp.col] && !contact(g, 'red', f) && !eff(g, 'blue', f).length) out.orders.push([u.id, f]);
   }
 
   // The feint seeks contact but avoids decisive engagement (FM 3-90 para. 5-160): it shows itself in
-  // the forward zone next to Blue's line with the decoy, hits anything weak, and pulls back after
-  // losing a quarter of its strength.
+  // the forward zone next to Blue's line, with the decoy a sector behind it, hits anything weak, and
+  // pulls back after losing a quarter of its strength.
   function feint(g, grp, pic, out, st) {
     const [u] = alive(g, grp.ids);
     if (!u || u.node === 'off' || busy(g, u)) return;
-    if (g.t >= R.feintUntil && !contact(g, 'red', u.node)) {
-      // Job done: join the main effort so it attacks with them.
-      const main = groups.find(x => x.role === 'main');
-      if (main && alive(g, main.ids).length) { main.ids.push(...grp.ids); grp.role = 'done'; return; }
-    }
+    // While Red can see Blue's reserve (its tank battalion or weapons company) on the feint's road, the
+    // feint stays to hold it there, until AI.red.feintHold. Otherwise, from feintUntil, it attacks on its
+    // own like the main effort (walking across to join the main group would hold the main effort up).
+    const holding = g.t < R.feintHold && pic.tracks.some(tr => colOf(tr.node) === grp.col && (tr.type === 'armor' || tr.type === 'weapons'));
+    if (g.t >= R.feintUntil && !holding && !contact(g, 'red', u.node)) { grp.role = 'main'; grp.startAt = 0; return; }
     const f = FORWARD[grp.col], m = MAIN[grp.col];
     if (contact(g, 'red', u.node)) {
       if (u.str < R.feintBreak * u.str0) { out.orders.push([u.id, NORTH[grp.col]]); st.feintDone = true; }
@@ -250,8 +254,8 @@ export function blueAI({ mode = 'fog', commit = true, counter = true, react = fa
       const pic = picture(g, side, mode);
       // Confirm before committing: fire on the biggest unconfirmed contact a recon troop can watch.
       if (arty === 'spot' && !g.rules.blind[side] && st.commits <= B.recommits) {
-        const top = pic.near.indexOf(Math.max(...pic.near));
-        const n = pic.near[top] >= B.commitMin && top !== st.col ? confirmTarget(g, side, pic, top) : null;
+        const top = pic.col.indexOf(Math.max(...pic.col));
+        const n = pic.col[top] >= B.commitMin && top !== st.col && pic.near[top] > 0 ? confirmTarget(g, side, pic, top) : null;
         if (n) return n;
       }
       return pickTarget(g, side, pic, { blind: arty === 'blind' });
@@ -269,18 +273,21 @@ export function blueAI({ mode = 'fog', commit = true, counter = true, react = fa
     const res = alive(g, RESERVE);
     const resFree = res.length && !res.some(u => contact(g, 'blue', u.node));
     if (resFree && (commit || react)) {
-      const col = pic.near;
+      // The whole road, north approach included (a decoy heard there counts), and only once the enemy on
+      // that road has reached the forward zone (pic.near > 0).
+      const col = pic.col;
       let c = null;
       if (react) { const hit = pic.tracks.find(tr => colOf(tr.node) !== null); if (hit && st.commits === 0) c = colOf(hit.node); }
       else if (st.commits <= B.recommits) {
         const top = col.indexOf(Math.max(...col));
         const second = Math.max(...col.filter((_, i) => i !== top));
         const lead = st.col === null ? second : col[st.col];
-        if (top !== st.col && col[top] >= B.commitMin && col[top] - lead >= B.commitMargin) c = top;
+        if (top !== st.col && col[top] >= B.commitMin && col[top] - lead >= B.commitMargin && pic.near[top] > 0) c = top;
       }
       if (c !== null) {
         st.commits += 1; st.col = c;
-        for (const u of res) out.orders.push([u.id, MAIN[c]]);
+        // Commitment inertia: redirecting a reserve already committed takes AI.blue.recommitDelay extra hours.
+        for (const u of res) out.orders.push([u.id, MAIN[c], st.commits > 1 ? B.recommitDelay : 0]);
         // Thin a quiet column next door: its line battalion joins the threatened one.
         if (shift && !react && st.commits === 1) {
           const quiet = [c - 1, c + 1].filter(k => k >= 0 && k < 4 && col[k] === 0).sort((a, b) => col[a] - col[b])[0];
@@ -289,7 +296,7 @@ export function blueAI({ mode = 'fog', commit = true, counter = true, react = fa
           if (mu && !mu.broken && mu.node === MAIN[quiet] && !contact(g, 'blue', mu.node)) { out.orders.push([mover, MAIN[c]]); st.shifted = mover; }
         }
         const tru = truthFor(g, 'blue');
-        decide(g, 'blue', st.commits > 1 ? 'recommit' : 'reserve', { col: c, believed: Math.round(col[c]), truth: Math.round(tru.col[c]), units: RESERVE });
+        decide(g, 'blue', st.commits > 1 ? 'recommit' : 'reserve', { col: c, believed: Math.round(col[c]), truth: Math.round(tru.col[c]), truthCol: tru.col.map(Math.round), units: RESERVE });
       } else if (commit && st.col !== null && !st.guarded) {
         // Red on the main line where the reserve is not: fall back to guard the crossing.
         const breach = [...MAIN, ...REAR].find(m => m !== MAIN[st.col] && !eff(g, 'blue', m).length && pic.tracks.some(tr => tr.node === m && tr.est > 0));

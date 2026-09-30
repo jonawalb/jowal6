@@ -7,8 +7,10 @@ import { SITE } from './shared/js/site.js';
 
 const $ = id => document.getElementById(id);
 const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const live = TOOLS.filter(t => t.status === 'live').length;
-const soon = TOOLS.length - live;
+// Tools in the Coming Soon section (registry `dev: true`) are left out of every site-wide count.
+const COUNTED = TOOLS.filter(t => t.cat !== 'dev');
+const live = COUNTED.filter(t => t.status === 'live').length;
+const soon = COUNTED.length - live;
 $('hub-count').textContent = `${live} live · ${soon ? soon + ' coming soon' : 'More to come'}`;
 
 // Last change per tool, from the repository's commit log (commit date and subject). Update when a tool changes.
@@ -63,7 +65,7 @@ const counts = Object.fromEntries(CATEGORIES.map(c => [c.id, TOOLS.filter(t => i
 const TILES = SITE !== 'tsm';
 document.body.classList.add('site-' + SITE);
 $('cats').innerHTML = [{ id: 'all', name: TILES ? 'All sections' : 'Everything' }, ...CATEGORIES].map(c =>
-  `<button type="button" data-cat="${c.id}"><b>${c.name}</b><span>${c.id === 'all' ? TOOLS.length : counts[c.id]}</span></button>`).join('');
+  `<button type="button" data-cat="${c.id}"><b>${c.name}</b><span>${c.id === 'all' ? COUNTED.length : counts[c.id]}</span></button>`).join('');
 const catBtns = [...$('cats').querySelectorAll('button')];
 function pickCat(c) { cat = c; history.replaceState(null, '', cat === 'all' ? './' : '#' + cat); render(); }
 catBtns.forEach(b => b.onclick = () => pickCat(b.dataset.cat));
@@ -108,12 +110,12 @@ function render() {
   const hay = t => `${t.title} ${t.blurb} ${t.slug.replace(/-/g, ' ')} ${catName[t.cat] || ''}`.toLowerCase();
   const match = t => terms.every(w => hay(t).includes(w));
   const cats = CATEGORIES.filter(c => cat === 'all' || c.id === cat);
-  const liveNow = TOOLS.filter(t => t.status === 'live' && (cat === 'all' || inCat(t, cat)) && match(t));
+  const liveNow = TOOLS.filter(t => t.status === 'live' && (cat === 'all' ? t.cat !== 'dev' : inCat(t, cat)) && match(t));
   if (TILES && !q) {
     // Overview: one tile per section (TSM last). A section: its tools, with a way back.
     if (cat === 'all') {
       $('sections').innerHTML = `<section class="cat-sec"><div class="cat-h"><h2>Pick a section</h2>
-        <p>${TOOLS.length} tools in ${CATEGORIES.length} sections.</p></div><div class="sec-tiles">${CATEGORIES.map(tile).join('')}</div></section>`;
+        <p>${COUNTED.length} tools in ${CATEGORIES.filter(c => c.id !== 'dev').length} sections.</p></div><div class="sec-tiles">${CATEGORIES.map(tile).join('')}</div></section>`;
     } else {
       const c = CATEGORIES.find(x => x.id === cat), list = TOOLS.filter(t => inCat(t, cat));
       $('sections').innerHTML = `<section class="cat-sec" id="sec-${c.id}"><button type="button" class="btn sec-back" data-open-cat="all">← All sections</button>

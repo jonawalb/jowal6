@@ -154,3 +154,52 @@ svg.sl-small .t-sea { font-size: 18px; }
   #panel { order: 4; } .sl-race { order: 5; } .sl-logcard { order: 6; }
   .layout { gap: 10px; }
 }
+
+/* ---- Motion (.sl-fx is set by js/fx.js) ---- */
+@keyframes sl-rowin { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes sl-pop { 0% { r: 0; } 70% { r: 5; } 100% { r: 3; } }
+@keyframes sl-fade { from { opacity: 0; } }
+@keyframes sl-flip { 0% { transform: scaleY(0); } 100% { transform: scaleY(1); } }
+.sl-fx .sl-fx-new li, .sl-fx .sl-fx-row { animation: sl-rowin .32s ease-out both; animation-delay: calc(var(--i, 0) * 38ms); }
+.sl-fx .sl-fx-pop { animation: sl-pop .5s ease-out; }
+.sl-fx .sl-fx-fade { animation: sl-fade .6s ease-out; }
+.sl-fx .sl-fx-flip { transform-box: fill-box; transform-origin: 50% 50%; animation: sl-flip .45s cubic-bezier(.2, .8, .2, 1); }
+.sl-fx .sl-fx-grow { transition: width .6s cubic-bezier(.2, .8, .2, 1); }
+.sl-fx .sl-status { transform-box: fill-box; }
+.sl-fx-ship { fill: var(--prc); }
+.sl-fx-ferry { fill: var(--panel); stroke: var(--prc); stroke-width: 1.6; }
+@media (prefers-reduced-motion: reduce) {
+  .sl-fx .sl-fx-new li, .sl-fx .sl-fx-row, .sl-fx .sl-fx-pop, .sl-fx .sl-fx-fade, .sl-fx .sl-fx-flip { animation: none; }
+  .sl-fx .sl-fx-grow { transition: none; }
+}
+
+/* ---- Trailer look (the night plotting table; only when the player picks it) ---- */
+:root[data-skin="trailer"] { --c5: #c9a86a; }
+:root[data-skin="trailer"] .tsm-sea { fill: color-mix(in srgb, var(--sea) 72%, transparent); }
+:root[data-skin="trailer"] .tsm-grat line { stroke: rgba(63, 97, 80, .35); }
+:root[data-skin="trailer"] .sl-big { font-family: var(--display); font-style: italic; font-weight: 500; letter-spacing: .34em; }
+:root[data-skin="trailer"] .sl-zname { font-family: var(--display); font-style: italic; font-weight: 500; }
+:root[data-skin="trailer"] .sl-zarea, :root[data-skin="trailer"] .sl-zsea, :root[data-skin="trailer"] .sl-barT { font-family: var(--mono); font-size: 10.5px; }
+:root[data-skin="trailer"] .sl-zone[data-role="main"] .sl-zone-line, :root[data-skin="trailer"] .sl-lane[data-role="main"] { filter: drop-shadow(0 0 6px rgba(255, 90, 78, .6)); }
+:root[data-skin="trailer"] .sl-ship, :root[data-skin="trailer"] .sl-barA { filter: drop-shadow(0 0 3px rgba(255, 90, 78, .7)); }
+:root[data-skin="trailer"] .sl-barD, :root[data-skin="trailer"] .sl-port { filter: drop-shadow(0 0 3px rgba(44, 194, 172, .7)); }
+:root[data-skin="trailer"] .sl-fxg { filter: drop-shadow(0 0 4px rgba(240, 169, 59, .55)); }
+:root[data-skin="trailer"] .sl-lineA { filter: drop-shadow(0 0 5px rgba(255, 90, 78, .65)); }
+:root[data-skin="trailer"] .sl-lineD { filter: drop-shadow(0 0 5px rgba(44, 194, 172, .6)); }
+:root[data-skin="trailer"] .sl-afloat { fill: rgba(232, 96, 74, .12); }
+:root[data-skin="trailer"] .sl-grid { stroke: rgba(63, 97, 80, .45); stroke-dasharray: 2 4; }
+:root[data-skin="trailer"] .sl-future { fill: #08120d; opacity: .55; }
+:root[data-skin="trailer"] .sl-seacell { rx: 2px; }
+:root[data-skin="trailer"] .sl-seacell[data-b="0"] { fill: var(--blue); opacity: .32; }
+:root[data-skin="trailer"] .sl-seacell[data-b="1"] { fill: var(--warn); opacity: .42; }
+:root[data-skin="trailer"] .sl-seacell[data-b="2"] { fill: var(--bad); opacity: .6; filter: drop-shadow(0 0 4px rgba(232, 96, 74, .7)); }
+:root[data-skin="trailer"] .sl-turn summary { font-style: italic; font-weight: 500; }
+:root[data-skin="trailer"] .sl-turn li { background: color-mix(in srgb, var(--bg) 70%, transparent); }
+:root[data-skin="trailer"] .sl-prompt { background: color-mix(in srgb, var(--accent) 8%, var(--panel)); }
+:root[data-skin="trailer"] .sl-howto h2, :root[data-skin="trailer"] .sl-tour h3, :root[data-skin="trailer"] .below h3 { font-family: var(--display); font-style: italic; font-weight: 500; }
+:root[data-skin="trailer"] .sl-tour { box-shadow: 0 18px 40px -20px #000; }
+:root[data-skin="trailer"] .sl-mcbar { box-shadow: 0 0 18px -8px rgba(240, 169, 59, .5); }
+:root[data-skin="trailer"] .sl-res select { background: var(--chip); }
+:root[data-skin="trailer"] .sl-aarcard tbody th { font-family: var(--body); letter-spacing: 0; }
+:root[data-skin="trailer"] .sl-turn .ph { font-size: 9.5px; letter-spacing: 0; }
+:root[data-skin="trailer"] svg.sl-small .sl-zarea, :root[data-skin="trailer"] svg.sl-small .sl-zsea, :root[data-skin="trailer"] svg.sl-small .sl-barT { font-size: 15px; }

@@ -136,7 +136,7 @@ export function step(G, pla, roc) {
     const hits = poisson(seed, `salvo-t${t}-${z}`, mean);
     if (missiles || us) {
       const lost = applyHits(G, z, hits, `hit-t${t}-${z}`);
-      rows.push({ ph: 'Missiles', ev: `${Math.round(M)} missiles at the ${ZONES[z].area} shipping; escorts stop up to ${Math.round(P.b3 * E)}${us ? ` · U.S. and allied strikes` : ''}`, res: hits ? `${hits} hit${hits > 1 ? 's' : ''}: ${lost.a} amphibious, ${lost.f} ferry groups lost` : 'no hits', tone: hits ? 'roc' : 'pla', salvo: { M: r1(M), E: r1(E), mean: r1(mean), hits } });
+      rows.push({ ph: 'Missiles', ev: Math.round(M) ? `${Math.round(M)} Taiwanese missiles at the ${ZONES[z].area} shipping; escorts stop up to ${Math.round(P.b3 * E)}${us ? ` · plus U.S. and allied strikes` : ''}` : `U.S. and allied strikes on the ${ZONES[z].area} shipping (Taiwan fired no missiles here)`, res: hits ? `${hits} hit${hits > 1 ? 's' : ''}; ${lost.a} amphibious and ${lost.f} ferry group${lost.a + lost.f === 1 ? '' : 's'} sunk (a group takes several hits; damage carries over)` : 'no hits', tone: hits ? 'roc' : 'pla', salvo: { M: r1(M), E: r1(E), mean: r1(mean), hits } });
     }
   }
   if (!nFire && nAfloat && ready.length) rows.push({ ph: 'Missiles', ev: `${ready.length} batteries hold fire and stay hidden`, res: 'no salvo', tone: '' });

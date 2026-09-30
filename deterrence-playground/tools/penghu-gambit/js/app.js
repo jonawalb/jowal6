@@ -9,6 +9,7 @@ import { turnLogHtml, crtHtml, readoutHtml, mcHtml, outcomeText } from './views.
 import { writeHash, readHash } from './hash.js';
 import { createTour } from './tour.js';
 import { addExportBar } from '../../../shared/js/export.js';
+import * as fx from './fx.js';
 
 const $ = id => document.getElementById(id);
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
@@ -143,6 +144,7 @@ function startState() {
 }
 
 function setView(v) {
+  const was = view, before = [...$('readout').querySelectorAll('dd')].map(d => d.textContent);
   view = Math.max(0, Math.min(game.turns.length, v));
   const st = view ? game.turns[view - 1].state : startState();
   const T = view ? game.turns[view - 1] : null;
@@ -156,6 +158,8 @@ function setView(v) {
   $('crt').innerHTML = crtHtml(T && T.crt);
   $('crt-note').textContent = T && T.crt ? `This turn: ratio ${T.crt.ratio === Infinity ? 'unopposed' : T.crt.ratio.toFixed(2)} (column ${['< 1:2', '1:2', '1:1', '1.5:1', '2:1', '3:1+'][T.crt.col]}), die ${T.crt.roll}.` : 'No ground combat this turn.';
   writeHash(cfg, P, seed, view);
+  fx.turn({ svg: $('map'), log: $('log'), crt: $('crt'), readout: $('readout'), prevReadout: before, prev: view > 1 ? game.turns[view - 2].state : startState(),
+    st, cfg, view, game, forward: view === was + 1 && view > 0 });
 }
 
 function scheduleMc() {
@@ -165,6 +169,7 @@ function scheduleMc() {
     const mc = monteCarlo(cfg, P, seed);
     const drv = drivers(cfg, P, seed, mc);
     $('mc').innerHTML = mcHtml(mc, drv, cfg);
+    fx.mc($('mc'));
     $('mc').classList.remove('busy');
     $('mc-h').textContent = `${RUNS.toLocaleString('en-US')} games, dice seed ${seed}`;
     status(mc);
@@ -175,9 +180,10 @@ function status(mc) {
   const p = mc.pla / mc.n, r = mc.roc / mc.n, s = mc.stale / mc.n;
   const span = cfg.pla.plan === 'blockade' ? `${cfg.turns * BLOCKADE_DAYS} days` : `${cfg.turns * TURN_HOURS / 24} days`;
   const top = [['pla', p], ['roc', r], ['stale', s]].sort((a, b) => b[1] - a[1])[0][0];
-  const S = $('status');
+  const S = $('status'), was = S.textContent;
   S.dataset.s = p >= 0.5 ? 'bad' : p >= 0.2 || top === 'stale' ? 'warn' : 'good';
   S.innerHTML = `<b>PLA holds Magong in ${Math.round(p * 100)}% of games</b><span>Within ${span}. Defense holds ${Math.round(r * 100)}%, stalemate ${Math.round(s * 100)}%. Most likely outcome: ${outcomeText(top)}.</span>`;
+  fx.status(S, was);
   $('status-mini').dataset.s = S.dataset.s; $('status-mini').innerHTML = S.innerHTML;
   $('status-note').innerHTML = `Notional model, not a prediction. ${RUNS.toLocaleString('en-US')} seeded games; the turn log shows one of them.`;
 }
@@ -200,6 +206,7 @@ $('param-table').innerHTML = `<thead><tr><th>Parameter</th><th>Default</th><th>B
 reduced.addEventListener?.('change', stop);
 
 changed(view);
+fx.wire([$('next'), $('playall')]);
 addExportBar(document.querySelector('.playbar'), {
   target: () => $('map'),
   title: () => `Penghu Gambit: ${$('turn-t').textContent}`,

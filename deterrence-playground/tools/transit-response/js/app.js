@@ -6,6 +6,7 @@ import { shipsHtml, eventListHtml, singleReadout, flagsHtml, offHtml, aggReadout
 import { createTour } from './tour.js';
 import { dateLinksHtml, dayLink, exerciseFor, exerciseLink, linkHtml } from '../../../shared/js/links.js';
 import { addExportBar } from '../../../shared/js/export.js';
+import * as fx from './fx.js';
 
 const $ = id => document.getElementById(id);
 const S = { view: 'single', ev: EVENTS[EVENTS.length - 1].id, m: 'air', unit: 'count', to: 3, dropx: false, clean: false, showev: true };
@@ -70,7 +71,7 @@ function renderSingle() {
   const ex = exerciseFor(e.date);
   const evLinks = [linkHtml(dayLink(e.date), 'See the transit day'), ex ? linkHtml(exerciseLink(ex.id, e.date), `Replay ${ex.short}`) : ''].filter(Boolean).join('');
   $('ships').innerHTML = shipsHtml(e) + (evLinks ? `<p class="xlinks">${evLinks}</p>` : '');
-  drawMap($('map'), e);
+  fx.chart($('map'), e.id, () => drawMap($('map'), e));
   $('chart-title').textContent = `${METRICS[S.m].name} around ${nice(e.date)}`;
   $('chart-legend').innerHTML = '<span><i class="sw bar"></i>Daily count</span><span><i class="sw base"></i>30-day baseline ± 1 sd</span><span><i class="sw up"></i>Above</span><span><i class="sw down"></i>Below</span><span><b class="jm">J</b> Joint readiness patrol</span><span><i class="tri"></i>Other transit</span>';
   if (a.why) {
@@ -83,8 +84,9 @@ function renderSingle() {
     return;
   }
   $('chart').style.display = ''; $('chart-msg').hidden = true;
-  drawSingle($('chart'), a, { unit: S.unit, to: S.to, focus: focusK, onHover });
+  fx.chart($('chart'), `s|${S.ev}|${S.m}|${S.unit}|${S.to}|${S.dropx}`, () => drawSingle($('chart'), a, { unit: S.unit, to: S.to, focus: focusK, onHover }));
   $('readout').innerHTML = singleReadout(a, S.unit, S.to);
+  fx.count($('readout'), '.num, dd');
   $('flags').innerHTML = flagsHtml(a);
   showTip(focusK);
 }
@@ -99,9 +101,10 @@ function renderAgg() {
     $('chart').style.display = 'none'; $('chart-msg').hidden = false;
     $('chart-msg').innerHTML = '<b>No analyzable events</b> for this metric and filter.';
   } else {
-    drawAggregate($('chart'), agg, { showEvents: S.showev, onHover, onPick: id => { S.view = 'single'; S.ev = id; focusK = null; render(); scrollToSelected(); } });
+    fx.chart($('chart'), `a|${S.m}|${S.unit}|${S.to}|${S.clean}|${S.dropx}|${S.showev}`, () => drawAggregate($('chart'), agg, { showEvents: S.showev, onHover, onPick: id => { S.view = 'single'; S.ev = id; focusK = null; render(); scrollToSelected(); } }));
   }
   $('readout').innerHTML = aggReadout(agg);
+  fx.count($('readout'), '.num, dd');
   showTip(focusK);
 }
 
@@ -123,8 +126,10 @@ function showTip(k) {
 
 function render() {
   renderControls();
-  drawStrip($('strip'), { selected: S.view === 'single' ? S.ev : null, isOff, metric: S.m, onPick: id => { S.view = 'single'; S.ev = id; focusK = null; render(); scrollToSelected(); } });
+  fx.chart($('strip'), S.m, () => drawStrip($('strip'), { selected: S.view === 'single' ? S.ev : null, isOff, metric: S.m, onPick: id => { S.view = 'single'; S.ev = id; focusK = null; render(); scrollToSelected(); } }));
   if (S.view === 'single') renderSingle(); else renderAgg();
+  fx.stagger($('evlist'), 'li');
+  fx.stagger($('ships'), 'li');
   writeHash();
 }
 

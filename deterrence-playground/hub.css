@@ -27,6 +27,10 @@
 .cat-h { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; margin-bottom: 12px; }
 .cat-h h2 { margin: 0; font-size: 26px; }
 .cat-h p { margin: 0; color: var(--muted); }
+.sub-sec + .sub-sec { margin-top: 26px; }
+.sub-h { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; margin-bottom: 10px; padding-top: 10px; border-top: 1px solid var(--rule); }
+.sub-h h3 { margin: 0; font-size: 19px; }
+.sub-h p { margin: 0; color: var(--muted); font-size: 14px; }
 .tools { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
 .tool { display: flex; flex-direction: column; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; text-decoration: none; color: inherit; transition: transform .15s, border-color .15s, box-shadow .15s; }
 a.tool:hover { transform: translateY(-2px); border-color: var(--brand-ink); box-shadow: 0 8px 22px rgba(3, 51, 3, .12); }

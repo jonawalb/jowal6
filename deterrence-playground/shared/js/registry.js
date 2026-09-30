@@ -22,7 +22,7 @@ export const ALL_CATEGORIES = [
     subs: [{ id: 'facts', name: 'Fact Sheets', blurb: 'Sourced data you can browse: arsenals, tests, doctrine, treaties and proliferation.' },
       { id: 'playground', name: 'Models / Nuclear Playground', blurb: 'Models to play with: warhead ambiguity, entanglement, crisis stability and escalation.' }] },
   { id: 'regions', name: 'Regions', sites: ['deterrence'],
-    blurb: 'Wars and flashpoints by region: Russia and Ukraine, and the Middle East.',
+    blurb: 'Wars and flashpoints by region: Russia and Ukraine, the Middle East and the Indo-Pacific.',
     subs: [{ id: 'ukraine', name: 'Russia & Ukraine', blurb: 'The war in data: strikes, air defense, nuclear signaling and support.' },
       { id: 'mideast', name: 'Middle East', blurb: 'Chokepoints, shipping and missile exchanges from the Red Sea to Hormuz.' },
       { id: 'indopacific', name: 'Indo-Pacific', locked: true, blurb: 'Taiwan Strait trackers, exercise replays and wargames.' }] },

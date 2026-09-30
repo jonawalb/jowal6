@@ -90,7 +90,7 @@ export function renderPanel(g) {
   fm.querySelector('.m-v').textContent = fat.toFixed(0);
   $('maint').innerHTML = [
     ['Inspections due', `<span class="${g.due > 3 ? 'bad' : g.due > 1.5 ? 'warn' : ''}">${g.due.toFixed(1)}</span>`],
-    ['Depot capacity', depot ? `${depot} a month` : 'none until 7 Aug'],
+    ['Depot capacity', depot ? `${depot} a month${d < '1948-11-01' ? ' <span class="notional">notional</span>' : ''}` : 'none until 7 Aug'],
     ['Crew hours flown', `${fmt(c.H)} a month`],
   ].map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('');
   // Construction

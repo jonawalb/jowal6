@@ -22,7 +22,7 @@ export const STEPS = [
     body: 'At the end of any crisis you can replay it from the U.S. or allied side. Here you are Kennedy\'s ExComm, October 16 to 22: quarantine, air strike and invasion, or stern warnings. Every option was really on the table; the sources appear after you choose.',
     set: { c: 'cuba', m: 'play', p: [] } },
   { title: 'Leave the record, keep playing',
-    body: 'This run follows the quarantine, then attacks Cuba on October 27. From there the crisis is a model-generated branch, marked as not history: Moscow\'s response each round is a seeded roll on a notional table, shown with its chance, and you choose again. The branch ends in settlement, standoff, war or nuclear use.',
+    body: 'This run follows the quarantine, then attacks Cuba on October 27. From there the crisis is a model-generated branch, marked as notional, not history: Moscow\'s response each round is a seeded roll on a notional table, shown with its chance, and you choose again. The branch ends in settlement, standoff, war or nuclear use.',
     set: { c: 'cuba', m: 'play', p: [0, 1], b: ['h'] } },
   { title: 'Run 1,000 futures',
     body: 'Under the log, "Run 1,000 futures" replays the branch with fresh dice under a policy you pick, and shows the outcome shares, the chance of nuclear use and a key-drivers table. Every number is notional and can be changed under "Edit the model." The hatched band is Kennedy\'s own estimate of the chance of war.',

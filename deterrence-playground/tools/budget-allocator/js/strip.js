@@ -68,11 +68,14 @@ export function createStrip(svg, onClock) {
     const R = rng(11);
     const hitters = r.layers.filter(l => l.p > 0);
     const psum = hitters.reduce((a, l) => a + l.p, 0);
+    // Hit exactly the modelled share of the fleet (rounded), so the ship count matches "force engaged".
+    const order = Array.from({ length: N }, (_, i) => [R(), i]).sort((x, y) => x[0] - y[0]).map(x => x[1]);
+    const hitSet = new Set(psum > 0 ? order.slice(0, Math.round(r.engaged * N)) : []);
     return Array.from({ length: N }, (_, i) => {
       const row = i % 6, col = Math.floor(i / 6);
       const s = { y: 44 + row * 27 + (col % 2) * 8, off: col * 15, hitAt: null, by: null };
       s.start = X0 - 60 - s.off; s.end = X1 - 12 - col * 5;
-      if (R() < r.engaged && psum > 0) {
+      if (hitSet.has(i)) {
         let u = R() * psum, pick = hitters[0];
         for (const l of hitters) { if ((u -= l.p) <= 0) { pick = l; break; } }
         const reach = Math.min(pick.reach, CROSSING.km);

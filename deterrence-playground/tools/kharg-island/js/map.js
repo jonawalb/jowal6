@@ -87,7 +87,10 @@ export function createMap(svg, tip, { onSector }) {
     const [r0, r1] = ZONES.reinforce.map(P);
     const reinf = st && st.lastReinf;
     el('path', { d: `M${r0[0]} ${r0[1]}L${r1[0]} ${r1[1]}`, class: `kh-reinf${reinf === true ? ' on' : reinf === false ? ' off' : ''}`, 'marker-end': 'url(#kh-head)' }, layer);
-    el('text', { x: (r0[0] + r1[0]) / 2, y: (r0[1] + r1[1]) / 2 - 8, class: 'kh-note mid' }, layer, 'Iranian resupply route (notional)');
+    // Two short lines so the label still fits when phones crop the map at about 50.64°E.
+    const rl = el('text', { x: (r0[0] + r1[0]) / 2, y: (r0[1] + r1[1]) / 2 - 24, class: 'kh-note mid' }, layer);
+    el('tspan', { x: (r0[0] + r1[0]) / 2, dy: 0 }, rl, 'Iranian resupply');
+    el('tspan', { x: (r0[0] + r1[0]) / 2, dy: 16 }, rl, 'route (notional)');
     drawUsZone(cfg, st);
     drawIranZone(cfg, st);
     drawInset(cfg, st, info);

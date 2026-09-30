@@ -19,7 +19,7 @@ const STEPS = [
     body: 'The cumulative view shows commitments rising in jumps. The largest single month is April 2026, when Kiel records the EU\'s €90 billion Ukraine Support Loan as a commitment. The shaded band is what had been committed but not yet allocated.',
     set: { tl: 'cum', month: '2026-04' } },
   { title: 'Relative to the size of the economy',
-    body: 'Measured against 2021 GDP, small neighbours lead. Denmark has allocated 3.46 percent of its 2021 GDP, Estonia 3.07 percent and Lithuania 2.86 percent. The United States comes to 0.59 percent. EU institutions have no GDP and drop out of this view.',
+    body: 'Measured against 2021 GDP, small neighbours lead. Denmark has allocated 3.46 percent of its 2021 GDP, Estonia 3.06 percent and Lithuania 2.86 percent. The United States comes to 0.59 percent. EU institutions have no GDP and drop out of this view.',
     set: { scale: 'gdp', measure: 'a', groups: ['eu', 'eur', 'oth'] } },
   { title: 'Military aid alone',
     body: 'Switch off humanitarian and financial aid to rank military allocations. The United States (€65 billion) leads, then Germany (€25 billion) and the United Kingdom (€16 billion). Germany has committed €42 billion in military aid, well above what it has allocated so far.',

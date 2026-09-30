@@ -63,7 +63,7 @@ export function createChart(svg, tip, onHover) {
     for (let i = 0; i <= 4; i++) {
       const p = pmax * i / 4, y = Y(p);
       el('line', { x1: M.l, x2: W - M.r, y1: y, y2: y, class: 'grid' }, g);
-      el('text', { x: M.l - 6, y: y + 4, 'text-anchor': 'end' }, g, (p % 1 ? p.toFixed(1) : p) + '%');
+      el('text', { x: M.l - 6, y: y + 4, 'text-anchor': 'end' }, g, (p % 1 ? p.toFixed(1) : p) + '¢');
       if (S.show.air) el('text', { x: W - M.r + 6, y: y + 4, class: 'ax-air' }, g, Math.round(amax * i / 4));
     }
     el('text', { x: M.l - 6, y: M.t - 14, 'text-anchor': 'end', class: 'ax-t' }, g, 'Price');
@@ -146,7 +146,7 @@ export function createChart(svg, tip, onHover) {
       const c = colorOf(S.markets.indexOf(m.id));
       if (p != null) el('circle', { cx: X(d), cy: Y(p), r: 3.5, class: 'dot', fill: c }, dots);
       const r = m.byDay.get(d);
-      rows.push(`<div class="tt-row"><i style="background:${c}"></i>${escapeHtml(m.label)}<b class="num">${p != null ? p.toFixed(1) + '%' : d < m.first ? 'not yet traded' : d > m.last ? 'closed' : 'no trade'}</b>${r && r.n ? `<small>${r.n} fills</small>` : ''}</div>`);
+      rows.push(`<div class="tt-row"><i style="background:${c}"></i>${escapeHtml(m.label)}<b class="num">${p != null ? p.toFixed(1) + '¢' : d < m.first ? 'not yet traded' : d > m.last ? 'closed' : 'no trade'}</b>${r && r.n ? `<small>${r.n} fills</small>` : ''}</div>`);
     });
     const air = AIR.get(d), a7 = AIR7.get(d);
     if (S.show.air && a7 != null) el('circle', { cx: X(d), cy: YA(a7), r: 3, class: 'dot air' }, dots);

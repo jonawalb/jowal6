@@ -12,7 +12,7 @@ export const STEPS = [
     body: 'Close rivals and weak denial weapons. The challenger has a real chance in battle, so it fights until the battle fleet is large, and the best mix puts most of the budget there. This is the world Mahan described: command comes from "that overbearing power on the sea which drives the enemy\'s flag from it" (p. 138).',
     set: P('mahan', { m: 0.5 }), scroll: 'maincard' },
   { title: 'The challenger refuses battle',
-    body: 'Make the dominant navy stronger and let the challenger value its fleet. It stops offering battle and keeps its fleet in being, "refusing what Nelson called a regular battle" (Corbett, pp. 224–225). The best mix holds just enough battle fleet to contain it. Push further and the challenger turns to denial against a thinner escort force.',
+    body: 'Make the dominant navy stronger and let the challenger value its fleet. It stops offering battle and keeps its fleet in being, "refusing what Nelson called a regular battle" (Corbett, pp. 224–225). The best mix adds battle fleet to limit the sorties of the fleet in being, up to the point where the challenger would switch. Push further and the challenger turns to denial against a thinner escort force.',
     set: P('corbett', { m: 0.65 }), scroll: 'maincard' },
   { title: 'Cheap denial',
     body: 'Give the challenger cheap mines, submarines and missiles. It switches to denial as soon as the battle fleet is big enough to make fighting a bad bet. From there on, every share of budget moved into the battle fleet closes traffic, because it comes out of the escorts and sensors that counter denial. The best mix is now mostly distributed forces, as the paper\'s hypothesis H3 predicts.',

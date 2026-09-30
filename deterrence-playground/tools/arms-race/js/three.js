@@ -46,7 +46,7 @@ export function renderThree(S) {
   const ev = eigen3(matrix3(S)), stable = ev.every(e => e.re < 0), eq = equilibrium3(S), pr = pairs3(S);
   const pts = path3(S, START3, 40);
   drawTime($('time3'), ACTORS3.map((a, i) => ({ c: a.c, pts: pts.map(p => [p[0], p[i + 1]]) })),
-    { T: 40, xlab: 'Years from 2026', ymax: Math.max(6, ...pts.flatMap(p => p.slice(1))) > 30 ? 30 : undefined,
+    { T: 40, xlab: 'Years from 2026', ylab: 'Warheads (thousands)', ymax: Math.max(6, ...pts.flatMap(p => p.slice(1))) > 30 ? 30 : undefined,
       eqs: stable && eq ? eq.map((v, i) => ({ v, c: ACTORS3[i].c })) : [] });
 
   const lead = ev[0], fmtE = e => f2(e.re) + (e.im ? ` ± ${f2(Math.abs(e.im))}i` : '');

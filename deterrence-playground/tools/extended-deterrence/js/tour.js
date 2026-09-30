@@ -6,7 +6,7 @@ export const STEPS = [
     body: 'A patron has promised to defend an ally. The challenger does not know how much the ally is worth to the patron. With no commitment devices the patron fights only if the ally is worth more than the war would cost, and the challenger thinks that is unlikely. Most challengers attack.',
     set: { dev: { ...none } } },
   { title: 'Boston for Bonn',
-    body: 'Once the challenger can strike the patron’s own cities, the war costs more than the ally could ever be worth. Drag the Boston-for-Bonn chart or raise w past 1: credibility from interests alone falls to zero. This was NATO’s problem once Moscow could reach the United States.',
+    body: 'Once the challenger can strike the patron’s own cities, the war costs more than the ally could ever be worth. Drag the Boston-for-Bonn chart or raise w past 1: credibility from interests alone falls to zero. This is the credibility problem a patron faces once the challenger can strike its homeland.',
     set: { dev: { ...none }, w: 1.2 } },
   { title: 'Tie your hands',
     body: 'A treaty and repeated public pledges make walking away costly. Now the patron fights whenever its value of the ally clears a lower bar. These devices cost almost nothing in peacetime. Fearon (1997) calls this tying hands.',

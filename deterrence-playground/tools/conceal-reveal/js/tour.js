@@ -19,7 +19,7 @@ export const STEPS = [
     body: 'Raise σ, the surprise advantage. Past the R-F line the concealers plus surprise look strong enough that the Receiver concedes to them too, and the reason to reveal disappears.',
     set: { sig: 0.28 }, ax: 'sc' },
   { title: 'Secrecy hides the serious and the weak together',
-    body: 'Look at the belief after Conceal. It mixes strong states planning to fight with weak ones. The Receiver cannot tell them apart, which is why secrecy draws probing and tests rather than concession. The case cards below place real episodes in this grid.',
+    body: 'Look at the belief after Conceal. It mixes strong states planning to fight with weak ones. The Receiver cannot tell them apart, so it answers concealment by fighting rather than conceding. The case cards below place real episodes in this grid.',
     set: { hO: 0.35 }, hi: ['HO', 'LO'] },
 ];
 

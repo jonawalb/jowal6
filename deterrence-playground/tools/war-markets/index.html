@@ -38,7 +38,7 @@
       <div class="legend" aria-hidden="true">
         <span><i class="lg-line"></i>Daily price</span><span><i class="lg-dl"></i>Deadline</span>
         <span><i class="lg-settle"></i>Settled Yes or No</span>
-        <span><i class="lg-ev"></i>Dated event</span><span><i class="lg-ev hollow"></i>Event, source not opened by the build</span>
+        <span><i class="lg-ev"></i>Dated event</span>
       </div>
     </div>
     <div class="card" id="scorecard">
@@ -88,7 +88,7 @@
       <li>“Settled” day: the first day from which every later daily price stays at 95¢ or more (Yes) or 5¢ or less (No). “A week before” is the last price on or before seven days before the outcome was decided: the settled day for a Yes, the deadline for a No. If the archive starts later, the first archived price is used and marked with an asterisk.</li>
       <li>Brier score: the mean of (price − outcome)², with price as a share of $1 and outcome 1 or 0. Always quoting 50¢ scores 0.25.</li>
       <li>Deadlines are read from each contract’s question. Market IDs are Polymarket’s. Resolution rules are quoted from archived copies of each contract’s page on polymarket.com, linked in the panel.</li>
-      <li>Events are the tier-1 dated events from Walberg’s Betting on War replication files (2026 only; a September 2026 fact-check corrected six descriptions to what their sources say and dropped one whose source did not support it) for the Iran/Israel and Russia/Ukraine theaters, each with the one source URL the list records. A hollow dot means the build could not open that source (it blocks automated requests); the event is shown as the list records it.</li>
+      <li>Events are the tier-1 dated events from Walberg’s Betting on War replication files (2026 only) for the Iran/Israel and Russia/Ukraine theaters, each with the one source URL the list records. Two fact-checks in September 2026 opened every source and rewrote the descriptions that went beyond what their sources say, moved one event to the date its source gives (19 February, not 20 February) and dropped one event whose source did not support it.</li>
       <li>Scripts: <code>scripts/fetch_rules.py</code> retrieves the rules; <code>scripts/build.py</code> reads the collector database and writes <code>data/markets.js</code>. No value on this page is notional.</li>
     </ul>
     <h2 class="mt">Sources</h2>

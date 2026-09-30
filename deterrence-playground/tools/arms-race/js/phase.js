@@ -100,13 +100,19 @@ export function drawTime(svg, series, opts = {}) {
   const X = t => P.l + t / T * (W - P.l - P.r), Y = v => H - P.b - Math.max(-0.02 * top, Math.min(top * 1.02, v)) / top * (H - P.t - P.b);
   const g = el('g', {}, svg);
   el('rect', { x: P.l, y: P.t, width: W - P.l - P.r, height: H - P.t - P.b, class: 'plotbg' }, g);
-  for (let i = 0; i <= 4; i++) {
-    const v = top * i / 4, t = T * i / 4;
+  // Y gridlines at round values (1, 2, 2.5 or 5 times a power of ten), so each label names its line exactly.
+  const raw = top / 4, mag = 10 ** Math.floor(Math.log10(raw)), step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => s >= raw);
+  const dec = step >= 1 ? 0 : Math.max(0, -Math.floor(Math.log10(step)) + (step / mag === 2.5 ? 1 : 0));
+  for (let v = 0; v <= top + 1e-9; v += step) {
     el('line', { x1: P.l, x2: W - P.r, y1: Y(v), y2: Y(v), class: 'grid' }, g);
-    el('text', { x: P.l - 6, y: Y(v) + 4, class: 'ax-t', 'text-anchor': 'end' }, g, v >= 10 ? Math.round(v) : v.toFixed(1));
+    el('text', { x: P.l - 6, y: Y(v) + 4, class: 'ax-t', 'text-anchor': 'end' }, g, v.toFixed(dec));
+  }
+  for (let i = 0; i <= 4; i++) {
+    const t = T * i / 4;
     el('text', { x: X(t), y: H - P.b + 15, class: 'ax-t', 'text-anchor': 'middle' }, g, String(Math.round(t)));
   }
   el('text', { x: (P.l + W - P.r) / 2, y: H - 4, class: 'ax-l', 'text-anchor': 'middle' }, g, opts.xlab || 'Years from the start');
+  if (opts.ylab) { const yl = P.t + (H - P.t - P.b) / 2; el('text', { x: 11, y: yl, class: 'ax-l', 'text-anchor': 'middle', transform: `rotate(-90 11 ${yl})` }, g, opts.ylab); }
   (opts.eqs || []).forEach(e => { if (e.v > 0 && e.v < top) el('line', { x1: P.l, x2: W - P.r, y1: Y(e.v), y2: Y(e.v), class: 'eqline', style: `stroke:${e.c}` }, g); });
   series.forEach(s => {
     const cut = s.pts.findIndex(p => p[1] > top * 1.02);

@@ -89,7 +89,7 @@ export function mountModel(stage, panel, model, P, N, onChange) {
       <div class="card tries"><p class="eyebrow">Try this</p><ol>${N.tries.map((t, i) =>
         `<li><button type="button" class="linkbtn" data-t="${i}">${t.t}</button>${t.q ? `<span class="q">${t.q}</span>` : ''}</li>`).join('')}</ol></div>
       ${N.illus && N.illus.length ? `<div class="card illus"><p class="eyebrow">Historical illustrations the author uses</p>
-        <p class="fine">Each is the author’s own example, cited to the page. They illustrate the mechanism; the tool does not fit the model to them.</p>
+        <p class="fine">Each is the author’s own example, cited to the page or chapter. They illustrate the mechanism; the tool does not fit the model to them.</p>
         <ul>${N.illus.map(x => `<li><b>${x.t}.</b> ${x.text} <span class="pg">${x.src}</span></li>`).join('')}</ul></div>` : ''}`;
     extra.querySelectorAll('[data-t]').forEach(b => b.addEventListener('click', () => {
       const t = N.tries[+b.dataset.t];

@@ -10,7 +10,7 @@ export const STEPS = () => [
     body: 'Each row is a recurring formula from the official record, grouped by category. Each column is one week. Darker means the phrase took up more of that week\'s official text. Labels above the grid mark key events.',
     set: { cc: 'ru', rangeKey: 'war', metric: 'rate', cat: 'all', sel: null } },
   { title: 'February 2022: a new vocabulary',
-    body: 'In his 24 February 2022 address Putin announced a "special military operation" and said Russia would "seek to demilitarise and denazify Ukraine". After that he rarely uses the word himself. The panel shows the sentences, with a link to each Kremlin transcript.',
+    body: 'In his 24 February 2022 address Putin announced a "special military operation" and said Russia would "seek to demilitarise and denazify Ukraine". After that "special military operation" becomes routine in his speech, while he rarely says "denazify" again (13 transcripts in all, through September 2026). The panel shows the sentences, with a link to each Kremlin transcript.',
     set: { cc: 'ru', rangeKey: 'all', metric: 'rate', cat: 'all', sel: at('ru', 'denazi', '2022-02-24') } },
   { title: 'Nuclear language comes in bursts',
     body: 'Nuclear terms cluster around set pieces: the February 2023 address that suspended Russia\'s participation in New START, the September 2024 meeting on updating nuclear deterrence policy, and the November 2024 statement on the Oreshnik strike. The category menu shows only those rows.',

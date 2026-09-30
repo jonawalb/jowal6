@@ -42,10 +42,11 @@ export function renderTimeline(svg, r, S, label) {
   el('line', { x1: L, x2: W - R, y1: y(b.basket), y2: y(b.basket), class: 'basket' }, svg);
   el('text', { x: L + 2, y: y(b.basket) - 5, class: 'tl-lbl' }, svg, `seeker basket ${b.basket} km`);
   el('path', { d: `M${x(tDet)} ${y(sig0)}L${x(b.total)} ${y(eFix)}`, class: 'errline' }, svg);
-  el('text', { x: (x(tDet) + x(b.total)) / 2, y: y((sig0 + eFix) / 2) + 18, class: 'tl-lbl', 'text-anchor': 'start' }, svg, `fix from ${label(b.sensor)}, aging`);
+  el('text', { x: x(tDet) > L + 200 ? x(tDet) - 6 : x(tDet) + 6, y: y(sig0) - (x(tDet) > L + 200 ? 6 : 24), class: 'tl-lbl', 'text-anchor': x(tDet) > L + 200 ? 'end' : 'start' }, svg, `fix from ${label(b.sensor)}, aging`);
   if (b.src.kind !== 'fix') {
     const tt = TYPES[S.nodes.find(n => n.id === b.src.id).type];
     el('path', { d: `M${x(Math.max(0, b.total - b.src.age))} ${y(tt.sigma)}L${x(b.total)} ${y(b.err)}`, class: 'trkline' }, svg);
+    el('text', { x: x(Math.max(0, b.total - b.src.age)) - 6, y: y(tt.sigma) - 6, class: 'tl-lbl', 'text-anchor': 'end' }, svg, `${label(b.src.id)} ${b.src.kind === 'mid' ? 'updates' : 'track'}`);
   }
   if (Number.isFinite(b.dwell)) {
     el('line', { x1: x(b.dwell), x2: x(b.dwell), y1: 20, y2: y0, class: 'dwell' }, svg);

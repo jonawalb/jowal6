@@ -41,14 +41,14 @@ export function showDebrief(g) {
   const minFood = Math.min(...rec.map(r => r.food)), minCoal = Math.min(...rec.map(r => r.coal));
   const lessons = [];
   const grounded = rec.filter(r => r.grounded > 0.5).length;
-  if (grounded) lessons.push(`Overdue 200-hour inspections grounded C-54s on ${grounded} days. The real airlift hit the same wall in the winter, when the new Burtonwood depot managed only 18 inspections in November and 49 in December and the flying bases had to make up the rest (Miller, p. 76).`);
+  if (grounded) lessons.push(`Overdue 200-hour inspections grounded C-54s on ${grounded} days. The real airlift hit the same wall in the winter, when the new Burtonwood depot managed only 18 inspections in November and 49 in December and the flying bases had to make up the rest (Miller, p. 77).`);
   const stack = rec.filter(r => r.stack && r.day > 48).length;
   if (stack) lessons.push(`You stacked aircraft over Berlin in bad weather on ${stack} days after Black Friday. Tunner's one-attempt rule let the airlift land 30 aircraft in the 90 minutes a stack of 9 took (Miller, p. 65).`);
   const thfFull = rec.filter(r => r.limitS === 'slots').length;
   if (thfFull > 40) lessons.push(`Tempelhof ran out of landing slots on ${thfFull} days. The Allies answered with the shorter northern route from Fassberg and Celle, new runways, and Tegel, built in three months.`);
   const surge = rec.filter(r => r.hours >= 150).length;
   if (surge > 30) lessons.push(`Crews flew surge hours on ${surge} days. The model raises accident risk and, past a point, cuts the hours crews can actually fly.`);
-  if (minCoal < 10) lessons.push(`Coal fell to ${minCoal.toFixed(0)} days of reserve. Coal was about two-thirds of everything flown (Miller, p. 86), and in late December 1948 Berlin was down to about 20 days (p. 96).`);
+  if (minCoal < 10) lessons.push(`Coal fell to ${minCoal.toFixed(0)} days of reserve. Coal made up about 65 percent of all cargo flown (Miller, p. 86), and on 24 December 1948 Berlin had about 20 days of coal in reserve (p. 97).`);
   if (minFood < 10) lessons.push(`Food fell to ${minFood.toFixed(0)} days of reserve. Planners flew flour and dehydrated potatoes rather than bread and fresh potatoes to save weight (Miller, p. 28).`);
   if (!lessons.length) lessons.push('No single bottleneck dominated your airlift. Try a harsher weather seed, or cut the construction lift and see when Tegel opens.');
   card.innerHTML = `<p class="eyebrow">Debrief</p><h3>${head[0]}</h3><p>${head[1]}</p>

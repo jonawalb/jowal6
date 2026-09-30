@@ -5,7 +5,7 @@ const STEPS = [
     body: 'Circles are Russian nuclear signals, placed higher the more they changed. Squares along the bottom are Western and NATO responses. Diamonds along the top are moments in the war. Click any mark to read it and its sources.',
     set: { range: 'all' } },
   { title: 'February 2022: an alert order in the first week',
-    body: 'Three days into the invasion, Putin ordered the deterrence forces onto a "special regime of combat duty". It is coded 4 because it declared a change in the forces’ readiness. The White House said it fit a pattern of Putin "manufacturing threats".',
+    body: 'Three days into the invasion, Putin ordered the deterrence forces onto a "special regime of combat duty" (the Kremlin’s English text says "high combat alert"). It is coded 4 because it declared a change in the forces’ readiness. The White House said it fit a pattern of Putin "manufacturing threats".',
     set: { range: 'y22', sel: '2022-02-putin-orders-deterrence-forc' } },
   { title: 'September 2022: threats follow battlefield losses',
     body: 'After Ukraine’s Kharkiv breakthrough, Putin announced mobilization and said "this is not a bluff". Medvedev and the annexation speech followed within days. Loud as they were, these are coded 1 or 2: words, some with conditions, and no change to forces.',

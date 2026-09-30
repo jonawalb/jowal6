@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Kill Chain Builder</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .kc-lane { fill: #0d1c15; fill-opacity: .7; stroke: var(--line); stroke-width: 1.2; }
+  .kc-lane-t { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .12em; text-transform: uppercase; }
+  .kc-edge { fill: none; stroke: #3d5a4b; stroke-width: 2; }
+  .kc-body { fill: #10211a; stroke: #2a4a3b; stroke-width: 1.4; }
+  .kc-nm { font: 600 16px var(--mono); fill: var(--paper); letter-spacing: .01em; }
+  .kc-st { font: 400 11.5px var(--mono); fill: var(--muted); }
+  .kc-st.ok { fill: var(--green); }
+  .kc-st.no { fill: #a4796f; }
+  .kc-port { fill: #0b1712; stroke: var(--muted); stroke-width: 1.6; }
+  .kc-spof { fill: none; stroke: var(--amber); stroke-width: 2; stroke-dasharray: 6 5; }
+  .kc-spof-t { font: 600 11px var(--mono); fill: var(--amber); letter-spacing: .04em; }
+  .kc-x { stroke: var(--amber); stroke-width: 4; stroke-linecap: round; fill: none; }
+  .kc-panel { fill: #0a1510; fill-opacity: .85; stroke: var(--line); }
+  .kc-step { font: 400 17px var(--mono); fill: var(--paper); letter-spacing: .04em; }
+  .kc-stat { font: italic 500 27px var(--display); }
+  .kc-small { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .04em; }
+  .kc-tl-h { font: 400 14px var(--mono); fill: var(--muted); letter-spacing: .03em; }
+  .kc-seg-t { font: 600 13px var(--mono); fill: #0b1712; }
+  .kc-tick { font: 400 12px var(--mono); fill: var(--muted); }
+  .kc-read { font: 600 16px var(--mono); font-variant-numeric: tabular-nums; }
+  .kc-big { font: 600 64px var(--mono); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+  .kc-arrow { font: 400 48px var(--display); fill: var(--muted); }
+  .kc-notional { font: 400 12px var(--mono); fill: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of the Kill Chain Builder: satellites, an over-the-horizon radar and a theater headquarters are wired to anti-ship ballistic missiles and the chain closes on a carrier group; the radar is knocked out, the aim point drifts 66 km and the chain breaks at Track."><title>Kill Chain Builder</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard, clamp } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Real tool values: tools/kill-chain-builder -------------------------------------------------
+// Preset 'pla' (data/presets.js): node positions, links and scenario (carrier group, 1,200 km, 30 kt).
+// Node labels, subtitles and step names as js/board.js and js/model.js draw them.
+// Results from js/model.js evaluate() / singlePoints(), run unchanged under Node on this preset:
+//   intact:     best path Satellite > Theater HQ > ASBM (DF-21D); segments 45 + 30 + 20 + 10 + 11.2 = 116.2 min;
+//               aim-point error at impact 38.8 km (OTH radar track, data age 25.7 min) vs 40 km basket;
+//               all six steps close; 1 independent path; single points of failure Satellite, OTH radar, Theater HQ.
+//   OTH struck: error 66.5 km (Satellite fix, data age 71.2 min); chain breaks at Track.
+// Every value except the two ASBM reaches (CSIS, DoD) is notional in the tool.
+const NW = 176, NH = 58;
+const NODES = [
+  { x: 30, y: 110, cat: 'sensor', nm: 'Satellite', st: 'sees it · 1,000 km', ok: true },
+  { x: 30, y: 270, cat: 'sensor', nm: 'OTH radar', st: 'sees it · 1,200 km', ok: true },
+  { x: 30, y: 430, cat: 'sensor', nm: 'AEW aircraft', st: 'too far · 569<900 km', ok: false },
+  { x: 482, y: 190, cat: 'c2', nm: 'Theater HQ', st: 'decides in 20 min' },
+  { x: 300, y: 380, cat: 'c2', nm: 'Datalink', st: 'relays in 0.2 min' },
+  { x: 770, y: 150, cat: 'shooter', nm: 'ASBM (DF-21D)', st: 'in range · 1,200/1,500', ok: true },
+  { x: 770, y: 310, cat: 'shooter', nm: 'ASBM (DF-26)', st: 'in range · 1,200/4,000', ok: true },
+];
+const LINKS = [[0, 3], [1, 3], [2, 4], [4, 3], [3, 5], [3, 6]];
+const DRAWN = 4;                      // the link the cursor draws: Theater HQ -> ASBM (DF-21D)
+const BEST = [[0, 3], [3, 5]];
+const SPOF = [0, 1, 3];
+const STEPS = ['Find', 'Fix', 'Track', 'Target', 'Engage', 'Assess'];
+const SEGS = [['Wait for Satellite look', 45, '#3d5a4b'], ['Satellite report', 30, 'var(--blue)'], ['Theater HQ decides', 20, '#c9b98f'],
+  ['ASBM launches', 10, '#b69ad8'], ['Weapon flight', 11.23, 'var(--red)']];
+const TOTAL = 116.23, BASKET = 40, V = 30 * 1.852 / 60;            // km per minute at 30 knots
+const FIX = { t0: 45, e0: 0.5, e1: 0.5 + V * (TOTAL - 45) };        // 66.5 km
+const TRK = { t0: TOTAL - 25.73, e0: 15, e1: 38.83 };               // OTH radar track, 38.8 km
+const CATCOL = { sensor: 'var(--blue)', c2: '#c9b98f', shooter: 'var(--red)' };
+const f1 = x => (Math.round(x * 10) / 10).toLocaleString('en-US');
+
+// ---- Board (tool coordinates 960 x 540, scaled onto the stage) ----------------------------------
+const BX = 222, BY = 118, K = 0.885;
+const B = (x, y) => [BX + x * K, BY + y * K];
+const cam = el('g', {}, svg);
+const scene = el('g', {}, cam);
+const board = el('g', { transform: `translate(${BX},${BY}) scale(${K})` }, scene);
+const lanes = [['Sensors', 0, 290], ['Command and links', 290, 670], ['Shooters', 670, 960]].map(([n, x0, x1]) => {
+  const g = el('g', {}, board);
+  el('rect', { x: x0 + 6, y: 6, width: x1 - x0 - 12, height: 528, rx: 6, class: 'kc-lane' }, g);
+  el('text', { x: x0 + 18, y: 522, class: 'kc-lane-t' }, g).textContent = n;
+  return g;
+});
+const outA = n => [n.x + NW, n.y + NH / 2], inA = n => [n.x, n.y + NH / 2];
+const curve = (a, b) => { const dx = Math.max(40, Math.abs(b[0] - a[0]) / 2); return `M${a[0]} ${a[1]}C${a[0] + dx} ${a[1]} ${b[0] - dx} ${b[1]} ${b[0]} ${b[1]}`; };
+const edgeG = el('g', {}, board);
+const edges = LINKS.map(([a, b]) => {
+  const d = curve(outA(NODES[a]), inA(NODES[b]));
+  const base = el('path', { d, class: 'kc-edge', pathLength: 1, 'stroke-dasharray': '1 1' }, edgeG);
+  const hot = el('path', { d, fill: 'none', stroke: 'var(--red)', 'stroke-width': 4.2, pathLength: 1, 'stroke-dasharray': '1 1', filter: 'url(#kit-glow)', opacity: 0 }, edgeG);
+  return { a, b, base, hot };
+});
+const trkFlow = el('path', { d: edges[1].base.getAttribute('d'), fill: 'none', stroke: 'var(--blue)', 'stroke-width': 2.4, 'stroke-dasharray': '3 11', 'stroke-linecap': 'round', opacity: 0 }, edgeG);
+const pulse = el('circle', { r: 7, fill: '#ffd9cf', filter: 'url(#kit-glow)', opacity: 0 }, board);
+const nodeG = el('g', {}, board);
+const nodes = NODES.map((n, i) => {
+  const g = el('g', {}, nodeG);
+  const body = el('rect', { width: NW, height: NH, rx: 5, class: 'kc-body' }, g);
+  el('rect', { width: 5, height: NH, fill: CATCOL[n.cat] }, g);
+  el('text', { x: 14, y: 24, class: 'kc-nm' }, g).textContent = n.nm;
+  const st = el('text', { x: 14, y: 44, class: 'kc-st' + (n.ok === true ? ' ok' : n.ok === false ? ' no' : '') }, g); st.textContent = n.st;
+  if (n.cat !== 'shooter') el('circle', { cx: NW, cy: NH / 2, r: 7, class: 'kc-port' }, g);
+  if (n.cat !== 'sensor') el('circle', { cx: 0, cy: NH / 2, r: 4, fill: 'var(--muted)' }, g);
+  const spof = el('g', { opacity: 0 }, g);
+  if (SPOF.includes(i)) {
+    el('rect', { x: -5, y: -5, width: NW + 10, height: NH + 10, rx: 8, class: 'kc-spof' }, spof);
+    el('text', { x: NW - 6, y: -11, 'text-anchor': 'end', class: 'kc-spof-t' }, spof).textContent = 'single point of failure';
+  }
+  return { n, g, body, spof };
+});
+const xMark = el('path', { d: `M10 10L${NW - 10} ${NH - 10}M${NW - 10} 10L10 ${NH - 10}`, class: 'kc-x', filter: 'url(#kit-glow)', opacity: 0, pathLength: 1, 'stroke-dasharray': '1 1' }, nodes[1].g);
+// Strike burst on the radar.
+const [ox, oy] = [NODES[1].x + NW / 2, NODES[1].y + NH / 2];
+const burst = el('circle', { cx: ox, cy: oy, r: 0, fill: 'none', stroke: 'var(--amber)', filter: 'url(#kit-glow)', opacity: 0 }, board);
+const burst2 = el('circle', { cx: ox, cy: oy, r: 0, fill: '#fff3dc', filter: 'url(#kit-glow)', opacity: 0 }, board);
+const tempLink = el('path', { fill: 'none', stroke: 'var(--amber)', 'stroke-width': 2.6, 'stroke-dasharray': '6 5', opacity: 0 }, board);
+const tag = el('text', { x: 960, y: 566, 'text-anchor': 'end', class: 'kc-notional' }, board);
+tag.textContent = 'PLA long-range ASBM chain · carrier group, 1,200 km, 30 kt · notional';
+
+// ---- Panel: the six steps and the chain status ---------------------------------------------------
+const PX = 1098, PY = 118, PW = 280;
+const panel = el('g', {}, scene);
+el('rect', { x: PX, y: PY, width: PW, height: 478, rx: 6, class: 'kc-panel' }, panel);
+el('text', { x: PX + 20, y: PY + 36, class: 't-label', style: 'font-size:13px' }, panel).textContent = 'Chain status';
+const steps = STEPS.map((s, i) => {
+  const y = PY + 78 + i * 50, g = el('g', {}, panel);
+  el('rect', { x: PX + 20, y: y + 12, width: PW - 40, height: 6, rx: 3, fill: 'var(--line)' }, g);
+  const bar = el('rect', { x: PX + 20, y: y + 12, width: 0, height: 6, rx: 3, fill: 'var(--red)' }, g);
+  const tx = el('text', { x: PX + 20, y: y + 2, class: 'kc-step' }, g); tx.textContent = s;
+  const strike = el('line', { x1: PX + 18, x2: PX + 18, y1: y - 4, y2: y - 4, stroke: 'var(--muted)', 'stroke-width': 1.6 }, g);
+  return { bar, tx, strike, w: s.length * 10.6 + 4 };
+});
+const stat1 = el('text', { x: PX + 20, y: PY + 400, class: 'kc-stat' }, panel);
+const stat2 = el('text', { x: PX + 20, y: PY + 430, class: 'kc-small' }, panel);
+const stat3 = el('text', { x: PX + 20, y: PY + 452, class: 'kc-small' }, panel);
+
+// ---- Timeline and position error (as js/timeline.js draws them) --------------------------------
+const TX = 222, TW = 1156, TY = 640;
+const tMax = TOTAL * 1.06, tx = t => TX + TW * t / tMax;
+const tl = el('g', {}, scene);
+el('text', { x: TX, y: TY, class: 'kc-tl-h' }, tl).textContent = `Time from the target's appearance to impact: ${f1(TOTAL)} min`;
+let acc = 0;
+const segEls = SEGS.map(([lab, m, col]) => {
+  const x0 = tx(acc), w = tx(acc + m) - x0; acc += m;
+  const g = el('g', {}, tl);
+  const r = el('rect', { x: x0, y: TY + 12, width: 0, height: 30, fill: col }, g);
+  const full = `${lab} ${f1(m)}′`, short = `${f1(m)}′`;
+  const txt = el('text', { x: x0 + 7, y: TY + 32, class: 'kc-seg-t' }, g);
+  txt.textContent = full.length * 9.6 + 12 < w ? full : short;
+  return { r, w, txt };
+});
+const Y0 = 842, Y1 = 722, eMax = FIX.e1 * 1.12, ey = e => Y0 - (Y0 - Y1) * e / eMax;
+const errG = el('g', {}, tl);
+el('text', { x: TX, y: TY + 72, class: 'kc-tl-h' }, errG).textContent = 'Position error of the aim point (km)';
+const readout = el('text', { x: TX + TW, y: TY + 72, 'text-anchor': 'end', class: 'kc-read' }, errG);
+el('line', { x1: TX, x2: TX + TW, y1: Y0, y2: Y0, stroke: 'var(--line)', 'stroke-width': 1.5 }, errG);
+for (let t = 0; t <= tMax; t += 15) {
+  el('line', { x1: tx(t), x2: tx(t), y1: Y0, y2: Y0 + 5, stroke: 'var(--muted)' }, errG);
+  el('text', { x: tx(t), y: Y0 + 20, 'text-anchor': t ? 'middle' : 'start', class: 'kc-tick' }, errG).textContent = `${t}′`;
+}
+el('line', { x1: TX, x2: TX + TW, y1: ey(BASKET), y2: ey(BASKET), stroke: 'var(--green)', 'stroke-dasharray': '7 5', 'stroke-width': 1.6 }, errG);
+el('text', { x: TX + 2, y: ey(BASKET) - 7, class: 'kc-small', style: 'fill:var(--green)' }, errG).textContent = `seeker basket ${BASKET} km`;
+const fixLine = el('path', { d: `M${tx(FIX.t0)} ${ey(FIX.e0)}L${tx(TOTAL)} ${ey(FIX.e1)}`, stroke: 'var(--muted)', 'stroke-width': 2.2, pathLength: 1, 'stroke-dasharray': '1 1' }, errG);
+const fixLab = el('text', { x: tx(FIX.t0) - 8, y: ey(FIX.e0) - 6, 'text-anchor': 'end', class: 'kc-small' }, errG); fixLab.textContent = 'fix from Satellite, aging';
+const trkLine = el('path', { d: `M${tx(TRK.t0)} ${ey(TRK.e0)}L${tx(TOTAL)} ${ey(TRK.e1)}`, stroke: 'var(--blue)', 'stroke-width': 2.8, pathLength: 1, 'stroke-dasharray': '1 1' }, errG);
+const trkLab = el('text', { x: tx(TRK.t0) - 8, y: ey(TRK.e0) - 6, 'text-anchor': 'end', class: 'kc-small', style: 'fill:var(--blue)' }, errG); trkLab.textContent = 'OTH radar track';
+const dotHalo = el('circle', { cx: tx(TOTAL), r: 0, fill: 'none', stroke: 'var(--red)', 'stroke-width': 2, opacity: 0 }, errG);
+const dot = el('circle', { cx: tx(TOTAL), r: 8, filter: 'url(#kit-glow)', opacity: 0 }, errG);
+
+// ---- Cursor (the player's hand) ------------------------------------------------------------------
+const cur = el('g', { opacity: 0 }, scene);
+const ring = el('circle', { r: 22, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 3, filter: 'url(#kit-glow)' }, cur);
+el('path', { d: 'M0 0l0 30l8 -7l6 13l6 -3l-6 -12l11 0z', fill: 'var(--paper)', stroke: '#0b1712', 'stroke-width': 2 }, cur);
+const strikeTag = el('g', { opacity: 0 }, cur);
+el('rect', { x: 24, y: 30, width: 92, height: 30, rx: 15, fill: 'var(--amber)' }, strikeTag);
+el('text', { x: 70, y: 50, 'text-anchor': 'middle', class: 't-cta', style: 'font-size:14px' }, strikeTag).textContent = 'Strike';
+
+// ---- Hook and payoff -----------------------------------------------------------------------------
+const hook = el('g', {}, svg);
+const hookA = el('text', { x: 800, y: 440, 'text-anchor': 'middle', class: 't-hook' }, hook);
+const words = ['Find.', 'Fix.', 'Track.', 'Target.', 'Engage.'].map(w => { const s = el('tspan', {}, hookA); s.textContent = w + ' '; return s; });
+const hookB = el('text', { x: 800, y: 530, 'text-anchor': 'middle', class: 't-hook' }, hook);
+hookB.innerHTML = '<tspan class="hot">Break one link</tspan> and the shot misses.';
+
+const pay = el('g', { opacity: 0 }, svg);
+const payA = el('text', { x: 800, y: 330, 'text-anchor': 'middle', class: 't-hook' }, pay);
+payA.textContent = 'One radar down.';
+const payB = el('text', { x: 800, y: 405, 'text-anchor': 'middle', class: 't-hook' }, pay);
+payB.innerHTML = 'The carrier is <tspan class="hot">66 km</tspan> from the aim point.';
+const payNums = el('g', {}, pay);
+el('text', { x: 560, y: 520, 'text-anchor': 'middle', class: 't-label' }, payNums).textContent = 'With the radar track';
+el('text', { x: 560, y: 595, 'text-anchor': 'middle', class: 'kc-big', style: 'fill:var(--red)' }, payNums).textContent = '38.8 km';
+el('text', { x: 560, y: 630, 'text-anchor': 'middle', class: 'kc-small' }, payNums).textContent = 'inside the basket · chain closes';
+el('text', { x: 800, y: 585, 'text-anchor': 'middle', class: 'kc-arrow' }, payNums).textContent = '→';
+el('text', { x: 1040, y: 520, 'text-anchor': 'middle', class: 't-label' }, payNums).textContent = 'Satellite fix alone';
+const payR = el('text', { x: 1040, y: 595, 'text-anchor': 'middle', class: 'kc-big', style: 'fill:var(--amber)' }, payNums); payR.textContent = '66.5 km';
+el('text', { x: 1040, y: 630, 'text-anchor': 'middle', class: 'kc-small' }, payNums).textContent = 'outside the basket · breaks at Track';
+const payRule = el('rect', { x: 800, y: 680, width: 0, height: 2, fill: 'var(--amber)' }, pay);
+const payNote = el('text', { x: 800, y: 716, 'text-anchor': 'middle', class: 'kc-small' }, pay);
+payNote.textContent = 'Aim-point error at impact vs a 40 km seeker basket · notional values';
+
+const cap = captions(svg, [
+  [3.4, 6.0, 'Wire sensors and command posts to the shooters'],
+  [6.2, 8.5, 'The radar keeps the aim point inside the seeker basket'],
+  [8.7, 10.1, 'Three nodes the whole chain depends on'],
+  [10.3, 12.0, 'Strike the radar. The chain breaks at Track'],
+  [12.3, 14.4, 'Every value notional except the two missile reaches'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Kill Chain Builder', line: 'Wire a kill chain. Then find the link that breaks it.' });
+
+// ---- Frame ---------------------------------------------------------------------------------------
+const D = 17.5, T_STRIKE = 10.25;
+const hq = NODES[3], d21 = NODES[5], oth = NODES[1];
+const portHQ = outA(hq), inD21 = inA(d21);
+const pathLen = edges.map(e => e.hot.getTotalLength());
+function frame(t) {
+  // Hook
+  words.forEach((w, i) => w.setAttribute('opacity', ease.out(seg(t, 0.2 + i * 0.22, 0.6 + i * 0.22)).toFixed(3)));
+  const hA = 1 - seg(t, 2.7, 3.2);
+  hookA.setAttribute('opacity', hA.toFixed(3));
+  hookA.setAttribute('transform', `translate(0,${(-seg(t, 2.7, 3.3) * 18).toFixed(1)})`);
+  const hb = ease.out(seg(t, 1.4, 2.0));
+  hookB.setAttribute('opacity', (hb * (1 - seg(t, 2.8, 3.3))).toFixed(3));
+  hookB.setAttribute('transform', `translate(0,${((1 - hb) * 22 - seg(t, 2.8, 3.4) * 18).toFixed(1)})`);
+
+  // Scene visibility and camera
+  const vis = ease.out(seg(t, 2.9, 3.6)), dim = lerp(1, 0.14, ease.inOut(seg(t, 11.9, 12.6)));
+  scene.setAttribute('opacity', (vis * dim * (1 - seg(t, 14.4, 15.0))).toFixed(3));
+  const z = 1 + 0.045 * ease.inOut(seg(t, 3, 12.5));
+  const fx = lerp(800, 640, ease.inOut(seg(t, 9.2, 11.4))), fy = lerp(480, 440, ease.inOut(seg(t, 9.2, 11.4)));
+  cam.setAttribute('transform', `translate(${fx},${fy}) scale(${z.toFixed(4)}) translate(${-fx},${-fy})`);
+
+  // Board build: lanes, nodes, then links
+  lanes.forEach((g, i) => g.setAttribute('opacity', ease.out(seg(t, 3.0 + i * 0.1, 3.5 + i * 0.1)).toFixed(3)));
+  nodes.forEach((nd, i) => {
+    const order = [0, 1, 2, 4, 3, 5, 6].indexOf(i), u = ease.back(seg(t, 3.3 + order * 0.12, 3.85 + order * 0.12));
+    nd.g.setAttribute('opacity', clamp(u * 1.4).toFixed(3));
+    nd.g.setAttribute('transform', `translate(${nd.n.x},${nd.n.y + (1 - u) * 16})`);
+  });
+  const dead = t >= T_STRIKE;
+  edges.forEach((e, i) => {
+    const u = i === DRAWN ? (t >= 6.0 ? 1 : 0) : i === 5 ? ease.inOut(seg(t, 6.0, 6.4)) : ease.inOut(seg(t, 4.1 + i * 0.13, 4.7 + i * 0.13));
+    e.base.setAttribute('stroke-dashoffset', (1 - u).toFixed(3));
+    if (e.a === 1 && dead) { e.base.setAttribute('stroke-dasharray', '0.012 0.012'); e.base.setAttribute('opacity', 0.5); }
+    else { e.base.setAttribute('stroke-dasharray', '1 1'); e.base.setAttribute('opacity', 1); }
+    const onBest = BEST.some(([a, b]) => a === e.a && b === e.b);
+    const hu = onBest ? ease.inOut(seg(t, 6.05 + (e.a === 3 ? 0.35 : 0), 6.45 + (e.a === 3 ? 0.35 : 0))) : 0;
+    e.hot.setAttribute('stroke-dashoffset', (1 - hu).toFixed(3));
+    e.hot.setAttribute('opacity', (hu > 0 ? lerp(1, 0.18, ease.inOut(seg(t, T_STRIKE + 0.5, T_STRIKE + 1.4))) : 0).toFixed(3));
+  });
+  // Radar track flowing into the headquarters while it lives.
+  trkFlow.setAttribute('stroke-dashoffset', (-t * 38).toFixed(1));
+  trkFlow.setAttribute('opacity', (0.85 * seg(t, 6.3, 6.8) * (1 - seg(t, T_STRIKE, T_STRIKE + 0.2))).toFixed(3));
+  // Pulse along the best path (two passes).
+  const pu = ((t - 6.9) / 1.4);
+  if (t > 6.9 && t < 6.9 + 2.8 && t < T_STRIKE) {
+    const k = pu % 1, e = k < 0.5 ? edges[0] : edges[4], L = k < 0.5 ? pathLen[0] : pathLen[4], v = (k % 0.5) * 2;
+    const p = e.hot.getPointAtLength(ease.inOut(v) * L);
+    pulse.setAttribute('cx', p.x.toFixed(1)); pulse.setAttribute('cy', p.y.toFixed(1)); pulse.setAttribute('opacity', 1);
+  } else pulse.setAttribute('opacity', 0);
+
+  // Cursor: draw the HQ -> DF-21D link, later strike the radar.
+  const [hx, hy] = portHQ, [dx, dy] = inD21;
+  let cx, cy, co = 0;
+  if (t < 7.2) {
+    const ap = ease.inOut(seg(t, 4.7, 5.3)), dr = ease.inOut(seg(t, 5.45, 6.0));
+    cx = lerp(hx + 140, hx, ap); cy = lerp(hy + 190, hy, ap);
+    if (t > 5.3) { cx = lerp(hx, dx, dr); cy = lerp(hy, dy, dr); }
+    co = seg(t, 4.7, 4.95) * (1 - seg(t, 6.4, 6.9));
+    if (t > 6.0) { cx += ease.out(seg(t, 6.0, 6.9)) * 60; cy += ease.out(seg(t, 6.0, 6.9)) * 90; }
+    const press = seg(t, 5.3, 5.45) * (1 - seg(t, 5.95, 6.1));
+    ring.setAttribute('r', lerp(26, 15, press).toFixed(1)); ring.setAttribute('opacity', press.toFixed(3));
+    strikeTag.setAttribute('opacity', 0);
+    const drawing = t > 5.4 && t < 6.02;
+    tempLink.setAttribute('opacity', drawing ? 1 : 0);
+    if (drawing) tempLink.setAttribute('d', curve([hx, hy], [cx, cy]));
+  } else {
+    const ap = ease.inOut(seg(t, 9.2, 10.0));
+    const [tx0, ty0] = [oth.x + NW * 0.55, oth.y + NH * 0.55];
+    cx = lerp(tx0 - 240, tx0, ap); cy = lerp(ty0 + 70, ty0, ap);
+    co = seg(t, 9.2, 9.45) * (1 - seg(t, 11.2, 11.6));
+    if (t > 10.6) { cx -= ease.out(seg(t, 10.6, 11.6)) * 90; cy += ease.out(seg(t, 10.6, 11.6)) * 60; }
+    const press = seg(t, 10.0, T_STRIKE) * (1 - seg(t, T_STRIKE + 0.15, T_STRIKE + 0.35));
+    ring.setAttribute('r', lerp(26, 15, press).toFixed(1)); ring.setAttribute('opacity', press.toFixed(3));
+    strikeTag.setAttribute('opacity', (ease.out(seg(t, 9.5, 9.8)) * (1 - seg(t, T_STRIKE + 0.2, T_STRIKE + 0.5))).toFixed(3));
+    tempLink.setAttribute('opacity', 0);
+  }
+  cur.setAttribute('opacity', co.toFixed(3));
+  cur.setAttribute('transform', `translate(${(BX + cx * K).toFixed(1)},${(BY + cy * K).toFixed(1)})`);
+
+  // Single points of failure, then the strike.
+  nodes.forEach((nd, i) => {
+    if (!SPOF.includes(i)) return;
+    const u = ease.out(seg(t, 8.6 + SPOF.indexOf(i) * 0.18, 9.0 + SPOF.indexOf(i) * 0.18)) * (1 - seg(t, T_STRIKE + 0.4, T_STRIKE + 1.0));
+    nd.spof.setAttribute('opacity', (u * (0.75 + 0.25 * Math.sin(t * 9))).toFixed(3));
+  });
+  const onBestNode = [0, 3, 5];
+  nodes.forEach((nd, i) => {
+    const lit = onBestNode.includes(i) ? seg(t, 6.1, 6.6) * (1 - seg(t, T_STRIKE + 0.5, T_STRIKE + 1.4)) : 0;
+    nd.body.style.stroke = lit > 0.3 ? 'var(--red)' : '';
+    if (i === 1) nd.body.style.opacity = dead ? 0.45 : 1;
+  });
+  xMark.setAttribute('opacity', dead ? 1 : 0);
+  xMark.setAttribute('stroke-dashoffset', (1 - ease.out(seg(t, T_STRIKE, T_STRIKE + 0.3))).toFixed(3));
+  const b = seg(t, T_STRIKE, T_STRIKE + 0.8), b2 = seg(t, T_STRIKE, T_STRIKE + 0.4);
+  burst.setAttribute('r', (ease.out(b) * 120).toFixed(1)); burst.setAttribute('stroke-width', (1 + (1 - b) * 8).toFixed(2));
+  burst.setAttribute('opacity', (b > 0 && b < 1 ? 1 - b : 0).toFixed(3));
+  burst2.setAttribute('r', (ease.out(b2) * 34).toFixed(1)); burst2.setAttribute('opacity', (b2 > 0 && b2 < 1 ? (1 - b2) * 0.9 : 0).toFixed(3));
+
+  // Panel: steps fill, then break from Track on.
+  panel.setAttribute('opacity', ease.out(seg(t, 3.4, 4.0)).toFixed(3));
+  steps.forEach((s, i) => {
+    const on = ease.out(seg(t, 6.2 + i * 0.16, 6.55 + i * 0.16));
+    const off = i >= 2 ? ease.inOut(seg(t, T_STRIKE + 0.35 + (i - 2) * 0.16, T_STRIKE + 0.65 + (i - 2) * 0.16)) : 0;
+    s.bar.setAttribute('width', ((PW - 40) * on * (1 - off)).toFixed(1));
+    s.tx.style.fill = off > 0.5 ? '#4c6a5a' : on > 0.5 ? 'var(--red)' : '';
+    s.strike.setAttribute('x2', (PX + 18 + s.w * off).toFixed(1));
+    s.strike.setAttribute('y1', PY + 78 + i * 50 - 5); s.strike.setAttribute('y2', PY + 78 + i * 50 - 5);
+  });
+  const broke = t >= T_STRIKE + 0.6, closed = t >= 7.1;
+  stat1.textContent = broke ? 'Chain breaks at Track' : closed ? 'Chain closes' : 'No path to a shooter';
+  stat1.style.fill = broke ? 'var(--amber)' : closed ? 'var(--red)' : 'var(--muted)';
+  stat2.textContent = broke ? 'No path closes every step' : closed ? '1 independent path' : '';
+  stat3.textContent = broke ? 'Closing paths 2 → 0' : closed ? 'Hits ~116 min after it appears' : '';
+  const sp = seg(t, closed && !broke ? 7.1 : T_STRIKE + 0.6, (closed && !broke ? 7.1 : T_STRIKE + 0.6) + 0.35);
+  stat1.setAttribute('opacity', (t < 7.1 ? 0.8 : ease.out(sp)).toFixed(3));
+  stat1.setAttribute('filter', (t > 7.1 && t < 7.8) || (t > T_STRIKE + 0.6 && t < T_STRIKE + 1.4) ? 'url(#kit-glow)' : '');
+
+  // Timeline: segments grow in order, then the two error lines and the impact point.
+  tl.setAttribute('opacity', ease.out(seg(t, 6.2, 6.7)).toFixed(3));
+  let a0 = 6.4;
+  segEls.forEach((s, i) => {
+    const u = ease.out(seg(t, a0 + i * 0.22, a0 + i * 0.22 + 0.4));
+    s.r.setAttribute('width', Math.max(0, s.w * u - 2).toFixed(1));
+    s.txt.setAttribute('opacity', seg(t, a0 + i * 0.22 + 0.25, a0 + i * 0.22 + 0.45).toFixed(3));
+  });
+  fixLine.setAttribute('stroke-dashoffset', (1 - ease.inOut(seg(t, 7.3, 8.0))).toFixed(3));
+  fixLab.setAttribute('opacity', seg(t, 7.3, 7.7).toFixed(3));
+  const trkOut = seg(t, T_STRIKE + 0.1, T_STRIKE + 0.5);
+  trkLine.setAttribute('stroke-dashoffset', (1 - ease.inOut(seg(t, 7.6, 8.2))).toFixed(3));
+  trkLine.setAttribute('opacity', (1 - trkOut * 0.85).toFixed(3));
+  trkLab.setAttribute('opacity', (seg(t, 7.6, 8.0) * (1 - trkOut * 0.85)).toFixed(3));
+  const mv = ease.inOut(seg(t, T_STRIKE + 0.3, T_STRIKE + 1.1)), err = lerp(TRK.e1, FIX.e1, mv);
+  dot.setAttribute('cy', ey(err).toFixed(1));
+  dot.setAttribute('opacity', ease.out(seg(t, 8.1, 8.35)).toFixed(3));
+  dot.setAttribute('fill', mv > 0.5 ? 'var(--amber)' : 'var(--red)');
+  const h = seg(t, 8.15, 8.9), h2 = seg(t, T_STRIKE + 1.1, T_STRIKE + 1.8);
+  const hh = h > 0 && h < 1 ? h : h2 > 0 && h2 < 1 ? h2 : 0;
+  dotHalo.setAttribute('cy', ey(err).toFixed(1)); dotHalo.setAttribute('r', (8 + ease.out(hh) * 34).toFixed(1));
+  dotHalo.setAttribute('stroke', mv > 0.5 ? 'var(--amber)' : 'var(--red)');
+  dotHalo.setAttribute('opacity', (hh > 0 ? 1 - hh : 0).toFixed(3));
+  const after = t >= T_STRIKE + 0.3;
+  readout.textContent = t < 8.1 ? '' : `At impact: ${f1(after ? FIX.e1 : TRK.e1)} km from ${after ? 'Satellite fix' : 'OTH radar track'} vs ${BASKET} km basket`;
+  readout.style.fill = after ? 'var(--amber)' : 'var(--red)';
+  readout.setAttribute('opacity', (after ? ease.out(seg(t, T_STRIKE + 0.3, T_STRIKE + 0.7)) : seg(t, 8.1, 8.4)).toFixed(3));
+
+  // Payoff
+  const p = ease.out(seg(t, 12.1, 12.8)), pOut = 1 - seg(t, 14.2, 14.7);
+  pay.setAttribute('opacity', (p * pOut).toFixed(3));
+  payA.setAttribute('transform', `translate(0,${((1 - p) * 20).toFixed(1)})`);
+  const q = ease.out(seg(t, 12.4, 13.0));
+  payB.setAttribute('opacity', q.toFixed(3)); payB.setAttribute('transform', `translate(0,${((1 - q) * 20).toFixed(1)})`);
+  const r = ease.out(seg(t, 12.8, 13.4));
+  payNums.setAttribute('opacity', r.toFixed(3)); payNums.setAttribute('transform', `translate(0,${((1 - r) * 24).toFixed(1)})`);
+  payR.setAttribute('filter', t > 13.0 && t < 13.9 ? 'url(#kit-glow)' : '');
+  const rw = 520 * ease.inOut(seg(t, 13.2, 13.8));
+  payRule.setAttribute('x', (800 - rw / 2).toFixed(1)); payRule.setAttribute('width', rw.toFixed(1));
+  payNote.setAttribute('opacity', ease.out(seg(t, 13.5, 13.9)).toFixed(3));
+
+  cap(t); end(t, 14.5, D);
+}
+run({ duration: D, poster: 9.6, frame });
+</script>
+</body></html>

@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Hormuz Mine Clearance</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .hm-band { fill: #0c1f2a; stroke: #1d3b4a; stroke-width: 1; }
+  .hm-pass { fill: var(--blue); }
+  .hm-clut { fill: var(--muted); }
+  .hm-live { fill: var(--red); stroke: #0b1712; stroke-width: 1.5; }
+  .hm-found { fill: none; stroke: var(--amber); stroke-width: 2.6; }
+  .hm-done { fill: none; stroke: var(--muted); stroke-width: 2.2; stroke-linecap: round; }
+  .hm-end { font: 400 14px var(--mono); fill: var(--muted); letter-spacing: .08em; }
+  .hm-rl { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .12em; text-transform: uppercase; }
+  .hm-tick { font: 400 13px var(--mono); fill: var(--muted); }
+  .hm-grid { stroke: var(--line); stroke-width: 1; }
+  .hm-risk { fill: none; stroke: var(--red); stroke-width: 3.2; stroke-linejoin: round; }
+  .hm-area { fill: var(--red); opacity: .10; }
+  .hm-bench { stroke: var(--paper); stroke-width: 1.6; stroke-dasharray: 6 6; opacity: .7; }
+  .hm-fin { stroke: var(--amber); stroke-width: 2; }
+  .hm-lab { font: 400 14px var(--mono); fill: var(--muted); letter-spacing: .06em; }
+  .hm-chip { font: 400 16px var(--mono); fill: var(--paper); letter-spacing: .04em; }
+  .hm-play { font: 600 16px var(--mono); letter-spacing: .14em; text-transform: uppercase; }
+  .hm-day { font: 600 64px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+  .hm-stat { font: 600 34px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .hm-status { font: italic 500 34px var(--display); fill: var(--amber); }
+  .hm-big { font: 600 150px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; letter-spacing: -.04em; }
+  .hm-sub { font: italic 400 34px var(--display); fill: var(--paper); }
+  .hm-small { font: 400 15px var(--mono); fill: var(--muted); letter-spacing: .06em; }
+  .hm-src { font: 400 15px var(--mono); fill: var(--muted); letter-spacing: .08em; }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of Hormuz Mine Clearance: sonar passes sweep two shipping routes, found mines are marked and cleared by divers, and the chance a ship meets a live mine falls from 15% to 0.4% over 54 days in the notional model."><title>Hormuz Mine Clearance</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- The tool's model, run on its default settings ---------------------------------------------------
+// Parameters copied from tools/hormuz-mcm/data/params.js (defaults: 2 routes x 100 nm x 2,000 yd, 40 mines,
+// 50% in the routes, 2 contacts per sq nm, medium seabed, permissive, 90% confidence, 2 USVs, 1 ship, 4 teams).
+// run(), transitRisk() and rand() copied unchanged from tools/hormuz-mcm/js/model.js.
+// Output: area 197.5 sq nm, 2 passes, 20 mines in the routes, 415 contacts, clear on day 54, risk 15% -> 0.4%.
+const S = { lengthNm: 100, routes: 2, widthYd: 2000, mines: 40, share: 50, contactsPerNm2: 2, remineWeek: 0, conf: 90, usv: 2, ship: 1, helo: 0, eod: 4 };
+const FORCES = [{ k: 'usv', acr: 0.93 }, { k: 'ship', acr: 0.5 }, { k: 'helo', acr: 1.5 }, { k: 'eod', idPerDay: 2 }];
+const MODEL = { pdPass: 0.85, setupDays: 3, dangerWidthM: 60, actuate: 0.5, maxDays: 365 };
+const T_PERM = { hours: 12, lossWeek: 0 }, ENV_RATIO = 0.8 / 0.93;
+const YD_M = 0.9144, NM_M = 1852;
+const passesFor = conf => Math.max(1, Math.ceil(Math.log(1 - conf / 100) / Math.log(1 - MODEL.pdPass)));
+function transitRisk(minesLeft) {
+  const w = S.widthYd * YD_M, perRoute = minesLeft / S.routes;
+  const p = Math.min(1, MODEL.dangerWidthM / w) * MODEL.actuate;
+  return 1 - Math.pow(1 - p, perRoute);
+}
+function model() {
+  const area = S.lengthNm * S.routes * (S.widthYd * YD_M / NM_M), minesIn = S.mines * S.share / 100, P = passesFor(S.conf), pd = MODEL.pdPass;
+  const search = FORCES.filter(f => f.acr), eod = FORCES.find(f => f.k === 'eod'), survive = d => Math.pow(1 - T_PERM.lossWeek, d / 7);
+  let effort = 0, need = P * area, processed = 0, finish = null; const days = [];
+  const contactsBase = S.contactsPerNm2 * area;
+  for (let d = 0; d <= MODEL.maxDays; d++) {
+    const working = d >= MODEL.setupDays;
+    const rate = working ? search.reduce((s, f) => s + S[f.k] * survive(d) * f.acr * ENV_RATIO * T_PERM.hours, 0) : 0;
+    effort = Math.min(need, effort + rate);
+    const frac = need > 0 ? effort / need : 1;
+    const found = minesIn * (1 - Math.pow(1 - pd, frac * P));
+    const available = contactsBase * Math.min(1, frac * P) + found;
+    const idRate = working ? S.eod * survive(d) * eod.idPerDay * T_PERM.hours / 12 : 0;
+    processed = Math.min(available, processed + idRate);
+    const left = minesIn - (available > 0 ? found * processed / available : 0);
+    days.push({ d, frac, found, available, processed, left, risk: transitRisk(Math.max(0, left)) });
+    if (finish == null && frac >= 0.999 && processed >= available - 1e-6) finish = d;
+    if (finish != null && d >= finish + 14) break;
+  }
+  return { area, minesIn, P, pd, finish, days, riskStart: transitRisk(minesIn) };
+}
+function rand(k) {
+  let x = (k + 0x9e3779b9) | 0;
+  x = Math.imul(x ^ (x >>> 16), 0x85ebca6b); x = Math.imul(x ^ (x >>> 13), 0xc2b2ae35); x ^= x >>> 16;
+  return (x >>> 0) / 4294967296;
+}
+const R = model();
+const FIN = R.finish;                                     // 54
+const BENCH = Math.round((Date.parse('2026-08-27') - Date.parse('2026-04-11')) / 864e5); // 138, as the tool computes it
+const pct = v => v >= 0.1 ? `${Math.round(v * 100)}%` : v >= 0.001 ? `${(v * 100).toFixed(1)}%` : v > 0 ? '<0.1%' : '0%'; // js/panel.js
+const fmt1 = v => (Math.round(v * 10) / 10).toLocaleString('en-US');
+const dayAt = d => R.days[Math.max(0, Math.min(R.days.length - 1, Math.floor(d)))];
+const fracAt = d => { const a = dayAt(d), b = dayAt(d + 1), u = d - Math.floor(d); return lerp(a.frac, b.frac, u); };
+const riskAt = d => { const a = dayAt(d), b = dayAt(d + 1), u = d - Math.floor(d); return lerp(a.risk, b.risk, u); };
+
+// ---- Layout -------------------------------------------------------------------------------------------
+const L = 250, W = 1100, X = u => L + u * W;
+const BAND_H = 92, GAP = 40, TOP = 196;
+const bandY = r => TOP + r * (BAND_H + GAP);
+
+const cam = el('g', {}, svg);
+const scene = el('g', {}, cam);
+
+// Header: model tag and the forces, with a Play button the cursor presses.
+const head = el('g', {}, scene);
+el('text', { x: L, y: 104, class: 't-kicker' }, head).textContent = 'Notional model · defaults';
+el('text', { x: L, y: 134, class: 'hm-src' }, head).textContent = '2 routes · 100 nm · 2,000 yd wide';
+const chips = [['USVs', S.usv], ['Ships', S.ship], ['Teams', S.eod]].map(([n, v], i) => {
+  const x = 902 + i * 118, g = el('g', {}, head);
+  el('rect', { x, y: 92, width: 106, height: 40, rx: 20, fill: 'none', stroke: 'var(--line)', 'stroke-width': 2 }, g);
+  el('text', { x: x + 53, y: 118, 'text-anchor': 'middle', class: 'hm-chip' }, g).textContent = `${n} ${v}`;
+  return g;
+});
+const playG = el('g', {}, head);
+const playR = el('rect', { x: 1260, y: 90, width: 90, height: 44, rx: 22, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 2 }, playG);
+const playT = el('text', { x: 1305, y: 118, 'text-anchor': 'middle', class: 'hm-play', fill: 'var(--amber)' }, playG);
+playT.textContent = 'Play';
+
+// Strip: two routes with search passes, clutter and mines (positions illustrative, as in the tool).
+const strip = el('g', {}, scene);
+const clip = el('clipPath', { id: 'hm-clip' }, svg);
+const clipR = el('rect', { x: L - 20, y: 150, width: 0, height: 330 }, clip);
+strip.setAttribute('clip-path', 'url(#hm-clip)');
+el('text', { x: L, y: 178, class: 'hm-end' }, strip).textContent = '← Gulf of Oman (schematic)';
+el('text', { x: L + W, y: 178, class: 'hm-end', 'text-anchor': 'end' }, strip).textContent = 'Persian Gulf →';
+const passRects = [], fronts = [];
+for (let r = 0; r < S.routes; r++) {
+  const y0 = bandY(r);
+  el('rect', { x: L, y: y0, width: W, height: BAND_H, class: 'hm-band' }, strip);
+  const p = []; for (let k = 0; k < R.P; k++) p.push(el('rect', { x: L, y: y0, width: 0, height: BAND_H, class: 'hm-pass', opacity: .16 }, strip));
+  passRects.push(p);
+  fronts.push(el('rect', { y: y0 - 8, width: 4, height: BAND_H + 16, fill: '#bfe0f2', filter: 'url(#kit-glow)' }, strip));
+  el('text', { x: L + 4, y: y0 + BAND_H + 20, class: 'hm-rl' }, strip).textContent = `Route ${r + 1}`;
+}
+for (let nm = 20; nm <= S.lengthNm; nm += 20) {
+  const u = nm / S.lengthNm;
+  el('text', { x: X(u), y: bandY(1) + BAND_H + 20, class: 'hm-tick', 'text-anchor': u > 0.97 ? 'end' : 'middle' }, strip).textContent = nm === 100 ? '100 nm' : nm;
+}
+const where = (k, off) => ({ r: k % S.routes, u: rand(k * 13 + off), v: 0.1 + 0.8 * rand(k * 29 + off + 7) });
+const nC = Math.min(400, Math.round(S.contactsPerNm2 * R.area));   // 395, as the tool draws
+const clutter = [];
+for (let k = 0; k < nC; k++) {
+  const p = where(k, 11);
+  clutter.push({ p, n: el('circle', { cx: X(p.u), cy: bandY(p.r) + p.v * BAND_H, r: 2.2, class: 'hm-clut' }, strip) });
+}
+const nLaid = Math.round(R.minesIn);
+const mines = [];
+for (let k = 0; k < nLaid; k++) {
+  const p = where(k, 3), cx = X(p.u), cy = bandY(p.r) + p.v * BAND_H;
+  const g = el('g', { transform: `translate(${cx},${cy})` }, strip);
+  const live = el('circle', { r: 6.5, class: 'hm-live' }, g);
+  const found = el('circle', { r: 10, class: 'hm-found', filter: 'url(#kit-glow)' }, g);
+  const done = el('path', { d: 'M-6,-6L6,6M-6,6L6,-6', class: 'hm-done' }, g);
+  mines.push({ k, p, g, live, found, done });
+}
+// A tanker that sails once the routes are declared clear.
+const ship = el('g', { opacity: 0 }, strip);
+el('path', { d: 'M-30,-9h46l14,9l-14,9h-46z', fill: 'var(--paper)' }, ship);
+el('rect', { x: -26, y: -5, width: 10, height: 10, fill: '#0b1712' }, ship);
+
+// Readout row.
+const read = el('g', {}, scene);
+el('text', { x: L, y: 520, class: 't-label' }, read).textContent = 'Day';
+const dayT = el('text', { x: L - 3, y: 578, class: 'hm-day' }, read);
+const stats = [['Searched', 480], ['Contacts cleared', 700], ['Risk per transit', 1120]].map(([lab, x]) => {
+  const lb = el('text', { x, y: 520, class: 't-label' }, read); lb.textContent = lab;
+  const v = el('text', { x, y: 566, class: 'hm-stat' }, read); v.lab = lb; return v;
+});
+const status = el('text', { x: 700, y: 562, class: 'hm-status', opacity: 0, filter: 'url(#kit-glow)' }, read);
+status.textContent = `Routes clear in ${FIN} days`;
+
+// Risk chart: chance one ship meets a live mine on one transit, with the 2026 benchmark.
+const chart = el('g', {}, scene);
+const CT = 640, CH = 180, LAST = Math.max(R.days.length - 1, BENCH + 20, 60);   // 158, as the tool sets it
+const YMAX = [0.01, 0.02, 0.05, 0.1, 0.2, 0.25, 0.4, 0.5, 0.8, 1].find(v => v >= R.riskStart * 1.05) || 1;
+const cx = d => L + d / LAST * W, cy = v => CT + CH - Math.min(v, YMAX) / YMAX * CH;
+el('text', { x: L, y: CT - 26, class: 't-label' }, chart).textContent = 'Chance one ship meets a live mine on one transit';
+for (let k = 0; k <= 4; k++) {
+  const v = YMAX * k / 4;
+  el('line', { x1: L, x2: L + W, y1: cy(v), y2: cy(v), class: 'hm-grid' }, chart);
+  el('text', { x: L - 12, y: cy(v) + 5, class: 'hm-tick', 'text-anchor': 'end' }, chart).textContent = `${Math.round(v * 1000) / 10}%`;
+}
+for (let d = 0; d <= LAST; d += 30) el('text', { x: cx(d), y: CT + CH + 28, class: 'hm-tick', 'text-anchor': 'middle' }, chart).textContent = d === 0 ? 'day 0' : d;
+const benchG = el('g', {}, chart);
+el('line', { x1: cx(BENCH), x2: cx(BENCH), y1: CT - 6, y2: CT + CH, class: 'hm-bench' }, benchG);
+el('text', { x: cx(BENCH) - 10, y: CT + 16, class: 'hm-lab', 'text-anchor': 'end', style: 'fill:var(--paper)' }, benchG).textContent = `Hormuz 2026: ${BENCH} days`;
+el('text', { x: cx(BENCH) - 10, y: CT + 36, class: 'hm-lab', 'text-anchor': 'end' }, benchG).textContent = 'real clearance, for comparison';
+const finG = el('g', {}, chart);
+el('line', { x1: cx(FIN), x2: cx(FIN), y1: CT - 6, y2: CT + CH, class: 'hm-fin' }, finG);
+el('text', { x: cx(FIN) + 10, y: CT + 16, class: 'hm-lab', style: 'fill:var(--amber)' }, finG).textContent = `Model: ${FIN} days`;
+const area = el('path', { class: 'hm-area' }, chart);
+const curve = el('path', { class: 'hm-risk' }, chart);
+const cursor = el('line', { y1: CT - 6, y2: CT + CH, stroke: 'var(--muted)', 'stroke-dasharray': '2 3' }, chart);
+const dot = el('circle', { r: 7, fill: 'var(--red)', stroke: '#0b1712', 'stroke-width': 2, filter: 'url(#kit-glow)' }, chart);
+
+// Cursor (the player's hand).
+const hand = el('g', { opacity: 0 }, svg);
+const handRing = el('circle', { r: 22, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 3, filter: 'url(#kit-glow)' }, hand);
+el('path', { d: 'M0 0l0 30l8 -7l6 13l6 -3l-6 -12l11 0z', fill: 'var(--paper)', stroke: '#0b1712', 'stroke-width': 2 }, hand);
+
+// ---- Hook and payoff ----------------------------------------------------------------------------------
+const hook = el('g', {}, svg);
+const h1 = el('text', { x: 800, y: 440, 'text-anchor': 'middle', class: 't-hook', style: 'font-size:72px' }, hook);
+h1.textContent = 'A few dozen mines in the strait.';
+const h2 = el('text', { x: 800, y: 540, 'text-anchor': 'middle', class: 't-hook', style: 'font-size:72px' }, hook);
+h2.innerHTML = 'How long to <tspan class="hot">reopen Hormuz?</tspan>';
+const h3 = el('text', { x: 800, y: 620, 'text-anchor': 'middle', class: 'hm-src' }, hook);
+h3.textContent = 'CNN, 10 March 2026: “a few dozen” mines laid';
+
+const pay = el('g', { opacity: 0 }, svg);
+el('rect', { width: 1600, height: 1000, fill: '#070f0b', opacity: .78 }, pay);
+const pay1 = el('text', { x: 800, y: 292, 'text-anchor': 'middle', class: 't-hook' }, pay);
+pay1.innerHTML = 'Declared clear. <tspan class="hot">Not zero.</tspan>';
+const payNum = el('text', { x: 800, y: 488, 'text-anchor': 'middle', class: 'hm-big', filter: 'url(#kit-glow)' }, pay);
+payNum.textContent = pct(dayAt(FIN).risk);
+const payL = el('text', { x: 800, y: 548, 'text-anchor': 'middle', class: 'hm-sub' }, pay);
+payL.textContent = 'chance one ship meets a live mine on one transit';
+const payS = el('text', { x: 800, y: 604, 'text-anchor': 'middle', class: 'hm-small' }, pay);
+payS.textContent = `down from ${pct(R.riskStart)} · about ${fmt1(dayAt(FIN).left)} mines expected still in the routes`;
+const payRule = el('rect', { x: 800, y: 644, width: 0, height: 2, fill: 'var(--amber)' }, pay);
+const payQ = el('text', { x: 800, y: 692, 'text-anchor': 'middle', class: 'hm-sub', style: 'font-size:30px;fill:var(--muted)' }, pay);
+payQ.textContent = 'That leftover risk is what insurers have to price.';
+const payN = el('text', { x: 800, y: 740, 'text-anchor': 'middle', class: 'hm-small' }, pay);
+payN.textContent = 'Notional model, default settings, 90% confidence';
+
+const cap = captions(svg, [
+  [3.5, 6.3, 'Two routes, 100 nm long, to search and clear'],
+  [6.5, 9.2, 'Sonar passes find mines; divers clear every contact'],
+  [9.4, 11.8, `Model: ${FIN} days. The real 2026 clearance: ${BENCH}`],
+  [12.1, 14.4, '“Clear” is a probability, not a promise'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Hormuz Mine Clearance', line: 'Lay the mines. Send the minehunters. See what risk is left.' });
+
+// ---- Timeline -----------------------------------------------------------------------------------------
+const D = 17.5;
+const P0 = 4.9, P1 = 10.3;                  // the clearance plays from day 0 to day 54 over these seconds
+function frame(t) {
+  // Search phase (day 0-19) plays slowly so the sonar passes read; the diver phase (19-54) runs faster.
+  const SD = R.days.find(x => x.frac >= 0.999).d, u1 = seg(t, P0, 8.4);
+  const day = t < 8.4 ? SD * (0.3 * u1 * u1 + 0.7 * u1) : lerp(SD, FIN, ease.out(seg(t, 8.4, P1)));
+  const cur = dayAt(day);
+
+  // Scene visibility and camera.
+  const vis = lerp(0.18 * ease.out(seg(t, 0, 1)), 1, ease.inOut(seg(t, 2.8, 3.6)));
+  const dim = lerp(1, 0.14, ease.inOut(seg(t, 11.9, 12.6)));
+  const out = 1 - seg(t, 14.6, 15.2);
+  scene.setAttribute('opacity', (vis * dim * out).toFixed(3));
+  const z = 1 + 0.05 * ease.inOut(seg(t, 3, 12.5));
+  cam.setAttribute('transform', `translate(800,470) scale(${z.toFixed(4)}) translate(-800,-470)`);
+
+  // Hook.
+  [h1, h2, h3].forEach((n, i) => {
+    const u = ease.out(seg(t, 0.2 + i * 0.35, 0.9 + i * 0.35)), o = 1 - seg(t, 2.7 + i * 0.06, 3.2 + i * 0.06);
+    n.setAttribute('opacity', (u * o).toFixed(3));
+    n.setAttribute('transform', `translate(0,${((1 - u) * 22 - seg(t, 2.7, 3.3) * 18).toFixed(1)})`);
+  });
+
+  // Strip wipe-in, then mines and clutter fade up.
+  clipR.setAttribute('width', (1160 * ease.inOut(seg(t, 3.0, 3.9))).toFixed(1));
+  const pop = ease.out(seg(t, 3.6, 4.4));
+  const passes = fracAt(day) * R.P, full = Math.floor(passes + 1e-9), part = passes - full;
+  for (let r = 0; r < S.routes; r++) {
+    passRects[r].forEach((rc, k) => rc.setAttribute('width', (W * Math.max(0, Math.min(1, passes - k))).toFixed(1)));
+    const moving = full < R.P && part > 0;
+    fronts[r].setAttribute('x', (X(part) - 2).toFixed(1));
+    fronts[r].setAttribute('opacity', moving ? 1 : 0);
+  }
+  const passesAt = u => full + (u < part ? 1 : 0);
+  clutter.forEach(({ p, n }, i) => n.setAttribute('opacity', (pop * (passesAt(p.u) > 0 ? 0.16 : 0.5)).toFixed(3)));
+  const clearedShare = cur.available > 0 ? cur.processed / cur.available : 0;
+  mines.forEach((m, i) => {
+    const j = passesAt(m.p.u);
+    let found = false;
+    for (let q = 0; q < j; q++) if (rand(m.k * 7 + q * 101) < R.pd) { found = true; break; }
+    const done = found && rand(m.k * 53) < clearedShare;
+    const appear = ease.back(seg(t, 3.7 + (i % 10) * 0.05, 4.2 + (i % 10) * 0.05));
+    m.g.setAttribute('opacity', seg(t, 3.7 + (i % 10) * 0.05, 3.9 + (i % 10) * 0.05).toFixed(3));
+    m.live.setAttribute('opacity', found ? 0 : 1);
+    m.live.setAttribute('transform', `scale(${(appear * (1 + 0.12 * Math.sin(t * 5 + i))).toFixed(3)})`);
+    m.found.setAttribute('opacity', found && !done ? 1 : 0);
+    m.done.setAttribute('opacity', done ? 1 : 0);
+  });
+
+  // Tanker sails once the routes are declared clear.
+  const sv = seg(t, P1 + 0.3, 12.4);
+  ship.setAttribute('opacity', (seg(t, P1 + 0.3, P1 + 0.6) * (1 - seg(t, 12.1, 12.4))).toFixed(3));
+  ship.setAttribute('transform', `translate(${X(lerp(-0.02, 0.62, ease.inOut(sv))).toFixed(1)},${bandY(0) + BAND_H * 0.5})`);
+
+  // Header, Play press.
+  head.setAttribute('opacity', ease.out(seg(t, 3.2, 3.8)).toFixed(3));
+  chips.forEach((c, i) => c.setAttribute('transform', `translate(0,${((1 - ease.out(seg(t, 3.3 + i * 0.1, 3.9 + i * 0.1))) * 14).toFixed(1)})`));
+  const pressed = t > 4.75 && t < P1;
+  playR.setAttribute('fill', pressed ? 'var(--amber)' : 'none');
+  playT.setAttribute('fill', pressed ? '#0b1712' : 'var(--amber)');
+  playT.textContent = pressed ? 'Pause' : 'Play';
+  playR.setAttribute('filter', pressed ? 'url(#kit-glow)' : '');
+
+  // Hand: glide to Play, press, drift away.
+  const ap = ease.inOut(seg(t, 3.9, 4.65)), lv = ease.inOut(seg(t, 5.3, 6.0));
+  const hx = lerp(1180, 1300, ap) + lv * 120, hy = lerp(300, 116, ap) + lv * 90;
+  hand.setAttribute('transform', `translate(${hx.toFixed(1)},${hy.toFixed(1)})`);
+  hand.setAttribute('opacity', (seg(t, 3.9, 4.2) * (1 - lv)).toFixed(3));
+  const press = seg(t, 4.55, 4.75) * (1 - seg(t, 4.95, 5.3));
+  handRing.setAttribute('r', lerp(28, 16, press).toFixed(1)); handRing.setAttribute('opacity', press.toFixed(3));
+
+  // Readouts.
+  const ru = ease.out(seg(t, 3.9, 4.5));
+  read.setAttribute('opacity', ru.toFixed(3));
+  read.setAttribute('transform', `translate(0,${((1 - ru) * 16).toFixed(1)})`);
+  dayT.textContent = Math.floor(day + 1e-6);
+  stats[0].textContent = `${Math.round(cur.frac * 100)}%`;
+  stats[1].textContent = `${Math.round(cur.processed)} / ${Math.round(cur.available)}`;
+  stats[2].textContent = pct(cur.risk);
+  stats[2].style.fill = 'var(--red)';
+  const fin = seg(t, P1, P1 + 0.4);
+  status.setAttribute('opacity', fin.toFixed(3));
+  stats[1].setAttribute('opacity', (1 - fin).toFixed(3)); stats[1].lab.setAttribute('opacity', (1 - fin).toFixed(3));
+  const dayGlow = fin > 0 && fin < 1;
+  dayT.style.fill = t >= P1 ? 'var(--amber)' : 'var(--paper)';
+  dayT.setAttribute('filter', dayGlow ? 'url(#kit-glow)' : '');
+
+  // Chart.
+  const cu = ease.out(seg(t, 4.1, 4.8));
+  chart.setAttribute('opacity', cu.toFixed(3));
+  const pts = [];
+  for (let d = 0; d <= day; d += 0.5) pts.push([cx(d), cy(riskAt(d))]);
+  pts.push([cx(day), cy(riskAt(day))]);
+  const tailU = ease.inOut(seg(t, P1 + 0.2, P1 + 1.4)), dEnd = lerp(FIN, LAST, tailU);
+  if (tailU > 0) pts.push([cx(dEnd), cy(dayAt(FIN).risk)]);
+  const dStr = 'M' + pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join('L');
+  curve.setAttribute('d', dStr);
+  area.setAttribute('d', `${dStr}L${pts.at(-1)[0].toFixed(1)},${CT + CH}L${cx(0)},${CT + CH}Z`);
+  const dd = tailU > 0 ? FIN : day;
+  cursor.setAttribute('x1', cx(dd)); cursor.setAttribute('x2', cx(dd));
+  dot.setAttribute('cx', cx(dd).toFixed(1)); dot.setAttribute('cy', cy(riskAt(dd)).toFixed(1));
+  benchG.setAttribute('opacity', ease.out(seg(t, 9.6, 10.3)).toFixed(3));
+  benchG.setAttribute('transform', `translate(${((1 - ease.out(seg(t, 9.6, 10.4))) * 30).toFixed(1)},0)`);
+  finG.setAttribute('opacity', ease.out(seg(t, P1, P1 + 0.5)).toFixed(3));
+
+  // Payoff.
+  const p = ease.out(seg(t, 12.1, 12.8)) * (1 - seg(t, 14.7, 15.2));
+  pay.setAttribute('opacity', p.toFixed(3));
+  const pn = ease.back(seg(t, 12.4, 13.1));
+  payNum.setAttribute('transform', `translate(800,440) scale(${(0.7 + 0.3 * pn).toFixed(3)}) translate(-800,-440)`);
+  payNum.setAttribute('opacity', seg(t, 12.4, 12.7).toFixed(3));
+  [payL, payS].forEach((n, i) => n.setAttribute('opacity', ease.out(seg(t, 12.8 + i * 0.25, 13.3 + i * 0.25)).toFixed(3)));
+  const rw = 420 * ease.inOut(seg(t, 13.2, 13.8));
+  payRule.setAttribute('x', (800 - rw / 2).toFixed(1)); payRule.setAttribute('width', rw.toFixed(1));
+  payQ.setAttribute('opacity', ease.out(seg(t, 13.5, 14.0)).toFixed(3));
+  payN.setAttribute('opacity', ease.out(seg(t, 13.7, 14.2)).toFixed(3));
+
+  cap(t); end(t, 15.0, D);
+}
+run({ duration: D, poster: 7.5, frame });
+</script>
+</body></html>

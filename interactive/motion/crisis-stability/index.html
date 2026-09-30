@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Crisis Stability Calculator</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .c-idx { font: 600 128px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; letter-spacing: -.04em; }
+  .c-ax { font: 400 14px var(--mono); fill: var(--muted); font-variant-numeric: tabular-nums; }
+  .c-axl { font: 400 14px var(--mono); fill: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+  .c-in { font: italic 400 34px var(--display); fill: var(--ink); }
+  .c-out { font: italic 400 24px var(--display); fill: var(--red); }
+  .c-sl { font: 400 16px var(--mono); fill: var(--paper); letter-spacing: .02em; }
+  .c-slv { font: 600 30px var(--mono); fill: var(--amber); font-variant-numeric: tabular-nums; }
+  .c-small { font: 400 15px var(--mono); fill: var(--muted); letter-spacing: .03em; }
+  .c-smallv { font: 600 18px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .c-tag { font: 600 11px var(--mono); letter-spacing: .12em; text-transform: uppercase; fill: var(--amber); }
+  .c-leg { font: 400 13px var(--mono); fill: var(--muted); }
+  .c-sub { font: italic 400 30px var(--display); fill: var(--muted); }
+  .c-big { font: 600 96px var(--mono); font-variant-numeric: tabular-nums; }
+  .c-line { font: 400 40px var(--display); fill: var(--paper); }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of the Crisis Stability Calculator: as both notional sides load more warheads onto each fixed launcher, the shaded box where both leaders prefer to wait shrinks and the first-strike stability index falls from 1.00 to 0.17."><title>Crisis Stability Calculator</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Real data (tools/crisis-stability) --------------------------------------------------------------------
+// Preset 'Both MIRVed silos' (data/presets.js): each side 110 fixed launchers x 10 warheads + 25 survivable x 16,
+// alert 40%, the rest at the tool's defaults. All notional, as the tool says.
+// SWEEP = the tool's own "What moves the index" sweep 'Warheads per fixed launcher' (js/sweeps.js runSweep,
+// same fixed-launcher warheads, 1,100 per side), computed with js/model.js evaluate():
+const XS = [1, 2, 3, 4, 5, 6, 8, 10, 12];
+const BOTH = [1.000, 0.596, 0.267, 0.216, 0.197, 0.186, 0.176, 0.171, 0.168];   // both sides changed
+const ONE = [0.455, 0.319, 0.214, 0.192, 0.183, 0.179, 0.174, 0.171, 0.170];    // only A (or only B) changed
+// EXACT: the same sweep evaluated at every whole number of warheads per launcher, 1 to 10 (the slider's steps),
+// by the same code. The sides are symmetric, so each side's ratio is the square root of the index (rA = rB).
+const EXACT = [1, 0.5962, 0.2673, 0.216, 0.1965, 0.1865, 0.1804, 0.1763, 0.1734, 0.1712];
+const FIXED_WH = 1100;
+
+// ---- Helpers -------------------------------------------------------------------------------------------------
+const T = (p, x, y, cls, s, a = {}) => { const n = el('text', { x, y, class: cls, ...a }, p); if (s != null) n.textContent = s; return n; };
+const op = (n, v) => n.setAttribute('opacity', Math.max(0, Math.min(1, v)).toFixed(3));
+const at = (arr, p) => { const i = Math.min(arr.length - 2, Math.floor(p)); return lerp(arr[i], arr[i + 1], p - i); };
+
+const cam = el('g', {}, svg);
+const scene = el('g', {}, cam);
+
+// ---- Probability domain (Kent & Thaler Fig. 12): the shaded box is where both leaders prefer to wait ----------
+const SX = 300, SY = 220, SS = 480;
+const pd = el('g', {}, scene);
+T(pd, SX, SY - 34, 't-label', 'Probability domain');
+el('rect', { x: SX, y: SY, width: SS, height: SS, fill: 'rgba(224,83,61,.10)', stroke: '#35584a', 'stroke-width': 1.5 }, pd);
+const box = el('rect', { x: SX, fill: 'rgba(106,171,130,.55)', stroke: 'var(--green)', 'stroke-width': 2 }, pd);
+const vLine = el('line', { y1: SY, y2: SY + SS, stroke: 'var(--blue)', 'stroke-width': 2 }, pd);
+const hLine = el('line', { x1: SX, x2: SX + SS, stroke: 'var(--blue)', 'stroke-width': 2, 'stroke-dasharray': '7 4' }, pd);
+const inT = T(pd, 0, 0, 'c-in', 'Both wait', { 'text-anchor': 'middle' });
+const outT = el('g', {}, pd);
+T(outT, SX + SS - 20, SY + 44, 'c-out', 'At least one leader', { 'text-anchor': 'end' });
+T(outT, SX + SS - 20, SY + 74, 'c-out', 'would rather strike first', { 'text-anchor': 'end' });
+const axA = T(pd, 0, SY + SS + 28, 'c-ax', '', { 'text-anchor': 'middle', style: 'fill:var(--blue)' });
+const axB = T(pd, SX - 10, 0, 'c-ax', '', { 'text-anchor': 'end', style: 'fill:var(--blue)' });
+T(pd, SX + SS / 2, SY + SS + 58, 'c-axl', 'A’s ratio', { 'text-anchor': 'middle' });
+T(pd, SX - 58, SY + SS / 2, 'c-axl', 'B’s ratio', { 'text-anchor': 'middle', transform: `rotate(-90 ${SX - 58} ${SY + SS / 2})` });
+
+// ---- Right column: index, slider, sweep -----------------------------------------------------------------------
+const RX = 880;
+const right = el('g', {}, scene);
+const tag = el('g', {}, right);
+el('rect', { x: RX, y: SY - 52, width: 266, height: 24, rx: 4, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 1.2 }, tag);
+T(tag, RX + 133, SY - 35, 'c-tag', 'Both MIRVed silos · notional', { 'text-anchor': 'middle' });
+T(right, RX, SY + 14, 't-label', 'First-strike stability index');
+const idxT = T(right, RX - 6, SY + 128, 'c-idx', '1.00');
+
+// Slider: warheads per fixed launcher, both sides.
+const SLY = 440, SLW = 380;
+T(right, RX, SLY - 34, 'c-sl', 'Warheads per fixed launcher · both sides');
+el('rect', { x: RX, y: SLY - 3, width: SLW, height: 6, rx: 3, fill: '#23402f' }, right);
+const slFill = el('rect', { x: RX, y: SLY - 3, height: 6, rx: 3, fill: 'var(--amber)' }, right);
+const knob = el('circle', { cy: SLY, r: 12, fill: 'var(--amber)', stroke: 'var(--ink)', 'stroke-width': 3, filter: 'url(#kit-glow)' }, right);
+const slV = T(right, RX + SLW + 30, SLY + 11, 'c-slv', '1');
+// Silo glyph with its warheads.
+const silo = el('g', {}, right);
+const GX = RX + SLW + 100, GY = SLY + 30;
+el('path', { d: `M${GX} ${GY} v-96 a22 14 0 0 1 44 0 v96`, fill: 'none', stroke: 'var(--muted)', 'stroke-width': 2 }, silo);
+const whs = Array.from({ length: 10 }, (_, i) => el('circle', { cx: GX + 13 + (i % 2) * 18, cy: GY - 12 - Math.floor(i / 2) * 17, r: 6, fill: 'var(--amber)' }, silo));
+const launchers = T(right, RX, SLY + 50, 'c-small', '');
+
+// Sweep chart.
+const CX = RX, CY = 560, CW = 440, CH = 170;
+const sw = el('g', {}, right);
+T(sw, CX, CY - 16, 't-label', 'What moves the index');
+[0, .5, 1].forEach(v => {
+  el('line', { x1: CX, x2: CX + CW, y1: CY + CH - v * CH, y2: CY + CH - v * CH, stroke: '#23402f' }, sw);
+  T(sw, CX - 10, CY + CH - v * CH + 5, 'c-ax', v.toFixed(1), { 'text-anchor': 'end' });
+});
+const PXi = i => CX + i / (XS.length - 1) * CW, PYv = v => CY + CH - v * CH;
+XS.forEach((x, i) => T(sw, PXi(i), CY + CH + 24, 'c-ax', String(x), { 'text-anchor': 'middle' }));
+const dOne = ONE.map((v, i) => `${i ? 'L' : 'M'}${PXi(i).toFixed(1)} ${PYv(v).toFixed(1)}`).join('');
+const dBoth = BOTH.map((v, i) => `${i ? 'L' : 'M'}${PXi(i).toFixed(1)} ${PYv(v).toFixed(1)}`).join('');
+const lOne = el('path', { d: dOne, fill: 'none', stroke: 'var(--muted)', 'stroke-width': 2, 'stroke-dasharray': '6 4' }, sw);
+const lBothGhost = el('path', { d: dBoth, fill: 'none', stroke: 'var(--paper)', 'stroke-width': 1.5, opacity: .18 }, sw);
+const lBoth = el('path', { fill: 'none', stroke: 'var(--amber)', 'stroke-width': 3.5, filter: 'url(#kit-glow)' }, sw);
+const mk = el('circle', { r: 8, fill: 'var(--amber)', stroke: 'var(--ink)', 'stroke-width': 3 }, sw);
+const legY = CY + CH + 52;
+el('line', { x1: CX, x2: CX + 26, y1: legY - 5, y2: legY - 5, stroke: 'var(--amber)', 'stroke-width': 3 }, sw);
+T(sw, CX + 36, legY, 'c-leg', 'Both sides changed');
+el('line', { x1: CX + 220, x2: CX + 246, y1: legY - 5, y2: legY - 5, stroke: 'var(--muted)', 'stroke-width': 2, 'stroke-dasharray': '6 4' }, sw);
+T(sw, CX + 256, legY, 'c-leg', 'Only one side');
+
+// ---- Hook -------------------------------------------------------------------------------------------------------
+const hook = el('g', {}, svg);
+const h1 = T(hook, 800, 470, 't-hook', null, { 'text-anchor': 'middle', style: 'font-size:72px' });
+el('tspan', {}, h1).textContent = 'Who gains by ';
+const hot = el('tspan', { class: 'hot' }, h1); hot.textContent = 'striking first';
+el('tspan', {}, h1).textContent = '?';
+const h2 = T(hook, 800, 548, 'c-sub', 'Kent and Thaler (RAND, 1989) made it one number.', { 'text-anchor': 'middle' });
+
+// ---- Payoff ---------------------------------------------------------------------------------------------------------
+const pay = el('g', {}, svg);
+T(pay, 800, 330, 't-label', 'Same 1,100 silo warheads a side, fewer launchers', { 'text-anchor': 'middle' });
+const pA = T(pay, 590, 470, 'c-big', '1.00', { 'text-anchor': 'middle', style: 'fill:var(--green)' });
+const pArr = T(pay, 800, 458, 'c-big', '→', { 'text-anchor': 'middle', style: 'fill:var(--muted);font-size:64px' });
+const pB = T(pay, 1010, 470, 'c-big', '0.17', { 'text-anchor': 'middle', style: 'fill:var(--red)' });
+T(pay, 590, 514, 'c-small', '1 warhead per launcher', { 'text-anchor': 'middle' });
+T(pay, 1010, 514, 'c-small', '10 warheads per launcher', { 'text-anchor': 'middle' });
+const rule = el('rect', { x: 800, y: 566, width: 0, height: 2, fill: 'var(--amber)' }, pay);
+const lesson = T(pay, 800, 640, 'c-line', null, { 'text-anchor': 'middle' });
+el('tspan', {}, lesson).textContent = 'Make your own forces ';
+const lh = el('tspan', { style: 'fill:var(--amber);font-style:italic' }, lesson); lh.textContent = 'survivable';
+el('tspan', {}, lesson).textContent = ',';
+const lesson2 = T(pay, 800, 690, 'c-line', 'not the other side’s vulnerable.', { 'text-anchor': 'middle' });
+const cite = T(pay, 800, 740, 'c-small', 'Kent and Thaler’s lesson, pp. 47–48', { 'text-anchor': 'middle' });
+
+const cap = captions(svg, [
+  [3.4, 6.2, 'The green box is where both leaders prefer to wait'],
+  [6.3, 9.8, 'Load more warheads on each silo, and it shrinks'],
+  [10.2, 13.4, 'At 1.0, neither side gains by striking first'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Crisis Stability Calculator', line: 'Set two force postures. See who gains by striking first.' });
+
+// ---- Frame -------------------------------------------------------------------------------------------------------------
+const TS0 = 4.6, TS1 = 9.4;
+function frame(t) {
+  // Hook.
+  op(h1, ease.out(seg(t, .2, .8)) * (1 - seg(t, 2.6, 3.1)));
+  h1.setAttribute('transform', `translate(800,450) scale(${lerp(.93, 1, ease.back(seg(t, .2, 1))).toFixed(3)}) translate(-800,-450)`);
+  op(h2, ease.out(seg(t, .9, 1.5)) * (1 - seg(t, 2.6, 3.1)));
+  h2.setAttribute('transform', `translate(0,${((1 - ease.out(seg(t, .9, 1.6))) * 16).toFixed(1)})`);
+  hot.setAttribute('filter', t > .9 && t < 2.7 ? 'url(#kit-glow)' : '');
+
+  // Scene in, dim under the payoff, out before the end card.
+  const vis = lerp(.12 * seg(t, 0, 1), 1, ease.inOut(seg(t, 2.7, 3.5)));
+  const dim = lerp(1, .035, ease.inOut(seg(t, 10.0, 10.7)));
+  op(scene, vis * dim * (1 - seg(t, 13.3, 13.9)));
+  const z = lerp(1, 1.05, ease.inOut(seg(t, 2.8, 10.4)));
+  cam.setAttribute('transform', `translate(800,480) scale(${z.toFixed(4)}) translate(-800,-480)`);
+  op(right, ease.out(seg(t, 3.2, 3.9)));
+  right.setAttribute('transform', `translate(${((1 - ease.out(seg(t, 3.2, 4))) * 30).toFixed(1)},0)`);
+
+  // Sweep position: 1 warhead per launcher to 10, along the tool's "both sides" line.
+  // The slider moves in whole steps, as the tool's does: a quick eased move, then a short hold on each value.
+  const su = 9 * seg(t, TS0, TS1), si = Math.min(8, Math.floor(su)), wh = su >= 9 ? 10 : 1 + si + ease.inOut(Math.min(1, (su - si) / .55)), n = Math.round(wh);
+  const idx = at(EXACT, wh - 1), r = Math.sqrt(idx);
+  const k = XS.findIndex(x => x >= wh - 1e-9), p = k <= 0 ? 0 : k - 1 + (wh - XS[k - 1]) / (XS[k] - XS[k - 1]);   // chart x
+  const grow = ease.out(seg(t, 3.0, 3.8));
+  const bw = SS * r * grow;
+  box.setAttribute('y', (SY + SS - bw).toFixed(1));
+  box.setAttribute('width', bw.toFixed(1)); box.setAttribute('height', bw.toFixed(1));
+  vLine.setAttribute('x1', (SX + bw).toFixed(1)); vLine.setAttribute('x2', (SX + bw).toFixed(1));
+  hLine.setAttribute('y1', (SY + SS - bw).toFixed(1)); hLine.setAttribute('y2', (SY + SS - bw).toFixed(1));
+  op(vLine, grow); op(hLine, grow);
+  inT.setAttribute('x', (SX + bw / 2).toFixed(1)); inT.setAttribute('y', (SY + SS - bw / 2 + 12).toFixed(1));
+  inT.setAttribute('font-size', Math.max(18, 34 * Math.min(1, r / .6)).toFixed(1));
+  op(inT, grow);
+  op(outT, ease.out(seg(t, 7.0, 7.6)));
+  axA.setAttribute('x', (SX + bw).toFixed(1)); axA.textContent = r.toFixed(2);
+  axB.setAttribute('y', (SY + SS - bw + 5).toFixed(1)); axB.textContent = r.toFixed(2);
+  op(axA, grow); op(axB, grow);
+  box.setAttribute('filter', t > TS1 - .2 && t < TS1 + .9 ? 'url(#kit-glow)' : '');
+
+  idxT.textContent = EXACT[n - 1].toFixed(2);
+  idxT.style.fill = idx < .3 ? 'var(--red)' : idx < .7 ? 'var(--amber)' : 'var(--paper)';
+  idxT.setAttribute('filter', t > TS1 - .1 && t < TS1 + .8 ? 'url(#kit-glow)' : '');
+
+  const u = (wh - 1) / 11;                                  // slider runs 1 to 12, as in the tool
+  slFill.setAttribute('width', (SLW * u).toFixed(1));
+  knob.setAttribute('cx', (RX + SLW * u).toFixed(1));
+  const moving = t > TS0 && t < TS1;
+  knob.setAttribute('r', moving ? 14 : 12);
+  slV.textContent = String(n);
+  whs.forEach((c, i) => { op(c, i < n ? 1 : .08); c.setAttribute('r', i === n - 1 && moving ? 7.5 : 6); });
+  launchers.textContent = `1,100 warheads on ${Math.round(FIXED_WH / n).toLocaleString('en-US')} launchers a side`;
+
+  // Sweep line draws behind the marker.
+  const upto = Math.floor(p);
+  let d = '';
+  for (let i = 0; i <= upto; i++) d += `${i ? 'L' : 'M'}${PXi(i).toFixed(1)} ${PYv(BOTH[i]).toFixed(1)}`;
+  d += `L${lerp(CX, CX + CW, p / (XS.length - 1)).toFixed(1)} ${PYv(idx).toFixed(1)}`;
+  lBoth.setAttribute('d', d);
+  mk.setAttribute('cx', lerp(CX, CX + CW, p / (XS.length - 1)).toFixed(1)); mk.setAttribute('cy', PYv(idx).toFixed(1));
+  op(sw, ease.out(seg(t, 3.6, 4.3)));
+
+  // Payoff.
+  const pv = ease.out(seg(t, 10.3, 10.9)) * (1 - seg(t, 13.2, 13.7));
+  op(pay, pv);
+  pA.setAttribute('transform', `translate(${((1 - ease.out(seg(t, 10.3, 11))) * -40).toFixed(1)},0)`);
+  const pb = ease.back(seg(t, 10.6, 11.3));
+  op(pB, seg(t, 10.6, 10.9));
+  pB.setAttribute('transform', `translate(1010,440) scale(${lerp(.7, 1, pb).toFixed(3)}) translate(-1010,-440)`);
+  pB.setAttribute('filter', t > 10.8 && t < 12 ? 'url(#kit-glow)' : '');
+  op(pArr, ease.out(seg(t, 10.5, 10.9)));
+  const rw = 520 * ease.inOut(seg(t, 11.1, 11.7));
+  rule.setAttribute('x', (800 - rw / 2).toFixed(1)); rule.setAttribute('width', rw.toFixed(1));
+  op(lesson, ease.out(seg(t, 11.5, 12))); op(lesson2, ease.out(seg(t, 11.75, 12.25))); op(cite, ease.out(seg(t, 12.1, 12.5)));
+  lesson.setAttribute('transform', `translate(0,${((1 - ease.out(seg(t, 11.5, 12.1))) * 14).toFixed(1)})`);
+  lesson2.setAttribute('transform', `translate(0,${((1 - ease.out(seg(t, 11.75, 12.35))) * 14).toFixed(1)})`);
+
+  cap(t); end(t, 13.5, 16.5);
+}
+run({ duration: 16.5, poster: 8.2, frame });
+</script>
+</body></html>

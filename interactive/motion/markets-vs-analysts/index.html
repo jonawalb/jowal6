@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Markets vs. Analysts</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .mv-axis { font: 400 14px var(--mono); fill: var(--muted); font-variant-numeric: tabular-nums; }
+  .mv-axt { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+  .mv-grid { stroke: var(--line); stroke-width: 1; }
+  .mv-base { stroke: var(--muted); stroke-opacity: .5; stroke-width: 1.2; }
+  .mv-line { fill: none; stroke-width: 2.4; stroke-linejoin: round; stroke-linecap: round; }
+  .mv-air { fill: none; stroke: #b9c4bd; stroke-opacity: .7; stroke-width: 1.8; }
+  .mv-airA { fill: #b9c4bd; fill-opacity: .07; }
+  .mv-ex { fill: var(--paper); fill-opacity: .1; }
+  .mv-jcrp { stroke: var(--muted); stroke-width: 1.4; }
+  .mv-vol { fill: var(--red); fill-opacity: .55; }
+  .mv-leg { font: 400 15px var(--mono); fill: var(--paper); letter-spacing: .02em; }
+  .mv-tag { font: 600 22px var(--mono); font-variant-numeric: tabular-nums; }
+  .mv-tip { fill: #0a1510; fill-opacity: .94; stroke: var(--line); }
+  .mv-tipd { font: italic 500 26px var(--display); fill: var(--paper); }
+  .mv-tipr { font: 400 15px var(--mono); fill: var(--paper); }
+  .mv-tipv { font: 600 16px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .mv-tipm { font: 400 14px var(--mono); fill: var(--muted); }
+  .mv-exl { font: 400 13px var(--mono); fill: var(--paper); letter-spacing: .08em; text-transform: uppercase; }
+  .mv-big { font: 600 150px var(--mono); fill: var(--amber); font-variant-numeric: tabular-nums; letter-spacing: -.04em; }
+  .mv-sub { font: 400 17px var(--mono); fill: var(--muted); letter-spacing: .06em; }
+  .mv-hl { font: italic 500 64px var(--display); fill: var(--paper); }
+  .mv-cnt { font: 600 60px var(--mono); font-variant-numeric: tabular-nums; }
+  .mv-small { font: 400 15px var(--mono); fill: var(--muted); letter-spacing: .04em; }
+  .mv-tg { font: 600 15px var(--mono); letter-spacing: .12em; text-transform: uppercase; }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of Markets vs. Analysts: Polymarket prices for a Chinese invasion, blockade or clash over Taiwan draw across fourteen months beside the PLA aircraft record; a cursor stops on Justice Mission-2025, when 130 aircraft flew and the invasion price stayed at 13 cents; a lead-lag test then finds no clear pattern."><title>Markets vs. Analysts</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard, clamp } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Real data, extracted from tools/markets-vs-analysts with the tool's own code --------------------
+// PRICE: data/markets.js daily "Yes" price in cents, [day offset from W0, cents], for the tool's
+//   "Open contracts" preset (567621, 1633611, 677407, 2382819). VOL: dollar volume of 567621.
+// AIR / AIR7: PLA aircraft per day and the trailing 7-day mean (js/series.js, from shared/data/tsm.js).
+// XC: js/xcorr.js crossCorr() for 567621, window 2025-07-25 to 2026-09-29, 7-day mean, max lag ±21,
+//   day-over-day changes (tool default) and levels. Noise band = 1.96/√n.
+const W0 = '2025-07-22', NDAYS = 435;
+const PRICE = {"567621":[[3,22],[4,21],[5,22],[6,22],[7,22],[8,23],[9,23],[10,23],[11,22],[12,23],[13,21],[14,22],[15,23],[16,23],[17,22],[18,22],[19,22],[20,23],[21,21],[22,24],[23,21],[24,21],[25,20],[27,20],[28,21],[29,21],[30,20],[31,21],[32,20],[33,21],[34,22],[35,19.92],[36,21],[37,20],[38,21],[39,20],[40,19.48],[41,19],[42,19],[43,19],[44,17],[45,8.54],[46,16],[47,16],[48,16],[49,16],[50,15.12],[51,16],[52,17],[53,16],[54,16],[55,17],[56,17],[57,17],[58,17],[59,18],[60,17],[61,17],[62,17],[63,17],[64,14.75],[65,15],[66,13],[67,12],[68,13],[69,15],[70,15],[71,15],[72,14],[73,13],[74,14],[75,14],[76,13],[77,14],[78,14],[79,14],[80,14],[81,15],[82,15],[83,16],[84,15],[85,15],[86,15],[87,16],[88,17.76],[89,17],[90,17],[91,16.23],[92,17.01],[93,17],[94,17],[95,18],[96,16],[97,16],[98,16],[99,17],[100,16],[101,16],[102,16],[103,17],[104,16],[105,17],[106,17],[107,17],[108,15],[109,15],[110,17],[111,16],[112,16],[113,16],[114,16],[115,16],[116,17],[117,16],[118,15.37],[119,14.68],[120,13.23],[121,14],[122,14],[123,14],[124,13],[125,14],[126,14],[127,13],[128,14],[129,14],[130,14],[131,14],[132,14],[133,14],[134,15],[135,13.66],[136,14],[137,14],[138,13],[139,14],[140,13],[141,13],[142,13],[143,13],[144,13],[145,13],[146,13],[147,13],[148,12],[149,12],[150,12],[151,12],[152,13],[153,12],[154,11.73],[155,12],[156,12],[157,13],[158,12],[159,12],[160,13],[161,12],[162,12],[163,10],[164,9],[165,10],[166,12.34],[167,13],[168,15],[169,14],[170,13],[171,13],[172,13],[173,14],[174,13],[175,13],[176,12.31],[177,14],[178,12],[179,12],[180,13],[181,13],[182,12],[183,11.07],[184,12],[185,12],[186,12],[187,13],[188,13],[189,14],[190,12],[191,13],[192,13],[193,12],[194,13.12],[195,12],[196,12],[197,12],[198,11],[199,11],[200,11],[201,12],[202,11],[203,11],[204,10],[205,11],[206,10],[207,11],[208,11],[209,11],[210,11],[211,11],[212,11],[213,10.4],[214,10.79],[215,10.88],[216,10.5],[217,10.4],[218,10.2],[219,10.1],[220,9.74],[221,10.95],[222,12],[223,10.14],[224,11],[225,11],[226,11.04],[227,10.69],[228,10.8],[229,10.27],[230,10.8],[231,10.3],[232,9.5],[233,9.7],[234,10.75],[235,10.2],[236,10.41],[237,11.2],[238,11.26],[239,10.28],[240,9.9],[241,10.7],[242,10.6],[243,10.8],[244,10.9],[245,10.7],[246,10.53],[247,10.7],[248,10.06],[249,10.1],[250,9.9],[251,10.1],[252,10.2],[253,9.59],[254,8.8],[255,8.38],[256,8.2],[257,8.89],[258,8.8],[259,8.9],[260,8.9],[261,8.81],[262,8.9],[263,8.62],[264,8.5],[265,8.7],[266,8.7],[267,8.6],[268,8.5],[269,8.4],[270,8],[271,7.4],[272,7.5],[273,7.5],[274,7.2],[275,7.5],[276,7.7],[277,7.5],[278,7.4],[279,7.4],[280,7.4],[281,6.6],[282,6.37],[283,5.9],[284,5.8],[285,5.8],[286,5.97],[287,6],[288,5.9],[289,5.78],[290,6.23],[291,6.3],[292,6],[293,6.77],[294,7],[295,6.6],[296,6.84],[297,6.9],[298,6.4],[299,7.2],[300,6.79],[301,6.7],[302,6.6],[303,6.6],[304,6.6],[305,6.89],[306,6.8],[307,6.8],[308,6.8],[309,6.5],[310,6.5],[311,6.5],[312,6.6],[313,6.6],[314,6.6],[315,6.4],[316,6.4],[317,6.3],[318,6.23],[319,6.5],[320,6.5],[321,6.57],[322,6.84],[323,6.9],[324,6.2],[325,6.2],[326,6.5],[327,6.3],[328,6.2],[329,6.7],[330,6.7],[331,6.31],[332,6.2],[333,6.3],[334,6.3],[335,6.3],[336,6.3],[337,6],[338,5.7],[339,5.6],[340,5.49],[341,5.61],[342,5.6],[343,5.3],[344,5],[345,3.6],[346,3.6],[347,3.6],[348,3.65],[349,3.75],[350,3.85],[351,4.15],[352,4.05],[353,3.95],[354,3.65],[355,3.85],[356,3.85],[357,3.65],[358,3.75],[359,3.75],[360,3.95],[361,3.95],[362,4.15],[363,4.35],[364,4.25],[365,3.85],[366,3.85],[367,3.85],[368,3.85],[369,3.45],[370,3.75],[371,3.75],[372,3.85],[373,3.85],[374,3.95],[375,4.05],[376,4.05],[377,3.95],[378,3.95],[379,3.85],[380,3.65],[381,3.75],[382,3.75],[383,3.85],[384,3.75],[385,3.65],[386,3.75],[387,3.75],[388,3.75],[389,3.85],[390,3.85],[391,3.85],[392,3.85],[393,3.85],[394,3.85],[395,3.85],[396,3.75],[397,3.75],[398,3.75],[399,3.85],[400,4.05],[401,3.95],[402,3.85],[403,3.75],[404,3.75],[405,3.85],[406,3.75],[407,3.75],[408,3.65],[409,3.65],[410,3.75],[411,3.95],[412,3.75],[413,3.95],[414,3.85],[415,4.05],[416,3.85],[417,3.85],[418,4.2],[419,4.05],[420,3.85],[421,3.95],[422,4.05],[423,3.95],[424,4.1],[425,4.25],[426,3.95],[427,3.95],[428,3.95],[429,3.75],[430,3.65],[431,3.65],[432,3.45],[433,3.45],[434,3.45]],"677407":[[331,9],[332,8],[333,6.41],[334,7],[335,8],[336,8],[337,8],[338,8],[339,8.88],[340,7],[341,7],[342,8.69],[343,7],[344,7],[345,6],[346,6],[347,5.76],[348,5.5],[349,6.15],[350,4.65],[351,4.8],[352,4.55],[353,6.55],[354,5.6],[355,5.15],[356,5.7],[357,5.9],[358,5.75],[359,5.45],[360,4.95],[361,5.25],[362,6],[363,7.15],[364,6.9],[365,6.7],[366,6.85],[367,6.85],[368,6.85],[369,6.95],[370,6.4],[371,6.55],[372,7.1],[373,7.55],[374,7.55],[375,8],[376,7.75],[377,7.8],[378,7.65],[379,7.25],[380,7.05],[381,6.7],[382,6.45],[383,6.55],[384,6.35],[385,6.95],[386,6.8],[387,7.05],[388,6.85],[389,6.85],[390,7.1],[391,7.15],[392,7.6],[393,8.7],[394,7.65],[395,7.55],[396,7.8],[397,7.4],[398,7.85],[399,7.5],[400,7.4],[401,7.3],[402,6.85],[403,6.85],[404,6.8],[405,6.5],[406,6.5],[407,7.1],[408,6.85],[409,6.5],[410,6.8],[411,7.55],[412,7.45],[413,7.1],[414,7.8],[415,6.7],[416,7.15],[417,6.9],[418,6.9],[419,6.6],[420,6.45],[421,6.35],[422,6.5],[423,6.05],[424,5.85],[425,6.1],[426,5.35],[427,5.9],[428,5.6],[429,5.65],[430,5.7],[431,5.6],[432,5.75],[433,5.8],[434,5.65]],"1633611":[[239,27],[240,26],[241,24],[242,24],[243,24],[244,22],[245,21],[246,21],[247,21],[248,21],[249,20],[250,21],[251,20],[252,20],[253,20],[254,20],[255,21],[256,20],[257,20],[258,20],[259,20],[260,20],[261,20],[262,19],[263,19],[264,18],[265,19],[266,19],[267,19],[268,18],[269,17.5],[270,17],[271,16],[272,16],[273,16],[274,16],[275,17],[276,16.27],[277,18],[278,18],[279,18],[280,18],[281,17],[282,17],[283,17],[284,16],[285,17],[286,16],[287,15.22],[288,15],[289,14.01],[290,15],[291,17],[292,16.7],[293,17],[294,17.15],[295,18.05],[296,18],[297,17],[298,16.46],[299,17],[300,17.53],[301,16],[302,17],[303,16],[304,17],[305,17.08],[306,16],[307,16],[308,15],[309,15],[310,15],[311,15],[312,15],[313,15],[314,15],[315,15],[316,14.03],[317,15],[318,14],[319,15.35],[320,15],[321,16],[322,16],[323,15],[324,16],[325,15],[326,16],[327,16],[328,15],[329,15.06],[330,14],[331,15],[332,15],[333,15],[334,15],[335,15],[336,14.45],[337,15.94],[338,15],[339,15.06],[340,14],[341,16],[342,15],[343,15.98],[344,13],[345,12],[346,12],[347,13],[348,12.5],[349,11.5],[350,11.5],[351,11.5],[352,11.5],[353,11.5],[354,11.5],[355,11.5],[356,11.5],[357,11.5],[358,11.5],[359,10.5],[360,11],[361,9.5],[362,9.5],[363,11.5],[364,11.5],[365,11.5],[366,12.5],[367,11.5],[368,11.5],[369,11.5],[370,12.5],[371,13.5],[372,12],[373,13.5],[374,14.5],[375,13.5],[376,13.5],[377,13.5],[378,13.5],[379,12.5],[380,12.5],[381,12.5],[382,11.5],[383,11.5],[384,11.5],[385,12.5],[386,11.5],[387,12.5],[388,12.5],[389,12.5],[390,12.5],[391,12.5],[392,12.5],[393,12.5],[394,13.5],[395,12.5],[396,11.5],[397,11.5],[398,11.5],[399,11.5],[400,11.5],[401,11.5],[402,11.5],[403,11.5],[404,11.5],[405,11.5],[406,11.5],[407,11.5],[408,11.5],[409,11.5],[410,11.5],[411,11.5],[412,11.5],[413,10.5],[414,10.5],[415,11.5],[416,11.5],[417,11.5],[418,11.5],[419,11.5],[420,11.5],[421,11.5],[422,11.5],[423,11.5],[424,11.5],[425,11.5],[426,11.5],[427,11.5],[428,11.5],[429,11.5],[430,11.5],[431,11.5],[432,12.5],[433,12.5],[434,12.5]],"2382819":[[311,16],[312,9],[313,8],[314,7],[315,5.95],[316,6],[317,6],[318,6],[319,7],[320,7],[321,7.44],[323,7],[325,4.93],[326,7],[327,7],[328,7],[329,8],[330,8],[331,5],[332,7.93],[333,7],[334,5],[335,6],[336,6],[337,7],[338,6],[339,7],[340,7],[341,6],[342,6],[343,6],[344,7],[345,6.42],[346,6],[347,5.66],[348,5.4],[349,5.65],[350,5.55],[351,5.45],[352,5.4],[353,5.4],[354,5.4],[355,5.6],[356,5.4],[357,5.35],[358,5.55],[359,6.55],[360,7.2],[361,7.1],[362,6.2],[363,7.55],[364,7.25],[365,7.55],[366,7.9],[367,7.5],[368,7.25],[369,8.3],[370,8],[371,7.95],[372,7.95],[373,7.85],[374,7.75],[375,7.75],[376,7.75],[377,7.75],[378,7.75],[379,6],[380,5.6],[381,5.6],[382,5.6],[383,5.6],[384,5.6],[385,5.65],[386,5.6],[387,5.1],[388,5.1],[389,5.45],[390,5.35],[391,5.4],[392,4.7],[393,6],[394,6.3],[395,7.55],[396,6.55],[397,6.1],[398,5.9],[399,5.85],[400,5.95],[401,7.75],[402,7.9],[403,6.8],[404,6.45],[405,6.45],[406,6.35],[407,6.25],[408,4.15],[409,5.05],[410,5.2],[411,5.85],[412,5.3],[413,5.3],[414,4.45],[415,4.85],[416,3.75],[417,3.45],[418,3.65],[419,3.95],[420,4],[421,4.1],[422,3.95],[423,3.65],[424,4.15],[425,3.85],[426,3.5],[427,3.5],[428,3.7],[429,3.65],[430,3.4],[431,3.8],[432,3.55],[433,3.3],[434,3.25]]};
+const AIR = [4,48,26,17,4,4,3,11,37,20,11,5,5,12,16,15,57,54,8,12,14,14,8,7,21,6,6,10,21,22,22,22,4,9,6,23,41,19,15,5,8,10,9,6,17,28,21,27,3,13,14,22,31,27,26,24,31,7,13,5,2,3,15,1,1,11,19,6,8,33,12,11,6,10,9,10,3,26,9,8,7,16,13,12,16,23,18,27,2,3,2,2,3,11,9,8,4,10,25,5,5,5,6,6,2,2,12,38,18,10,6,8,0,0,21,20,30,8,13,9,16,29,18,8,8,11,20,17,4,26,27,9,9,10,8,14,29,2,4,8,7,27,33,9,2,3,13,23,40,7,6,7,4,6,5,6,2,13,3,2,130,77,3,0,4,0,3,8,11,9,23,3,4,0,10,20,9,34,26,9,2,2,4,2,11,26,4,5,2,4,5,26,3,1,0,2,13,12,8,6,0,0,4,9,17,42,1,11,3,0,0,0,14,8,2,0,0,0,30,8,0,0,0,0,0,0,0,2,0,0,0,0,5,3,3,26,2,2,36,12,6,2,0,0,3,16,4,6,13,19,1,1,11,25,2,2,0,3,1,2,6,7,17,2,0,9,5,3,5,5,2,5,24,6,15,2,8,28,7,22,10,2,4,29,1,2,1,0,22,12,8,12,7,9,2,3,0,0,5,7,13,24,7,6,16,4,9,29,10,9,10,16,1,0,7,18,32,7,22,4,2,1,0,11,14,6,1,0,0,0,0,4,5,2,23,6,11,14,2,1,0,0,2,13,5,30,8,0,5,4,9,28,2,0,0,0,3,6,5,9,0,10,2,4,12,21,8,29,4,3,1,8,12,27,5,5,1,6,21,14,10,14,4,1,2,6,18,9,4,11,1,5,20,7,0,3,0,2,0,0,0,0,0,3,4,2,1,0,0,2,21,2,8,6,18,11,7,5,4,8,15,19,28,20,5,4,4,10,10,2,5,2,3,3,null];
+const AIR7 = [14.6,13.1,15.3,15.1,15.4,15.9,15.1,16.1,14.6,13.7,12.9,13,13.1,14.4,15.1,12,17.3,23.4,23.9,24.9,25.1,24.9,23.9,16.7,12,11.7,10.9,10.3,11.3,13.3,15.4,15.6,15.3,15.7,15.1,15.4,18.1,17.7,16.7,16.9,16.7,17.3,15.3,10.3,10,11.9,14.1,16.9,15.9,16.4,17.6,18.3,18.7,19.6,19.4,22.4,25,24,22.7,19,15.4,12.1,10.9,6.6,5.7,5.4,7.4,8,8.7,11.3,12.9,14.3,13.6,12.3,12.7,13,8.7,10.7,10.4,10.7,10.3,11.3,11.7,13,11.6,13.6,15,17.9,15.9,14.4,13,11,8.1,7.1,4.6,5.4,5.6,6.7,10,10.3,9.4,8.9,8.6,8.9,7.7,4.4,5.4,10.1,12,12.6,12.6,13.4,13.1,11.4,9,9.3,12.1,12.4,13.1,14.4,16.7,17.9,17.6,14.4,14.4,14.1,15.7,15.9,12.3,13.4,16.1,16.3,16,14.6,13.3,14.7,15.1,11.6,10.9,10.7,10.3,13,15.7,12.9,12.9,12.7,13.4,15.7,17.6,13.9,13.4,14.1,14.3,13.3,10.7,5.9,5.1,6.1,5.6,5.3,23,33.3,32.9,32.6,31.3,30.9,31,13.6,4.1,5,8.3,8.1,8.7,8.3,8.6,9.9,9.9,11.4,14.7,15.4,15.7,14.6,12.3,11.3,8,8,7.3,7.7,7.7,7.7,8.1,10.3,7,6.6,5.9,5.9,7.1,8.1,5.6,6,5.9,5.9,6.1,5.6,6.3,11.1,10.4,12,12.4,11.9,10.6,8.1,4.1,5.1,3.9,3.4,3.4,3.4,7.7,6.9,5.7,5.4,5.4,5.4,5.4,1.1,0,0.3,0.3,0.3,0.3,0.3,1,1.4,1.6,5.3,5.6,5.9,11,12,12.4,12.3,8.6,8.3,8.4,5.6,4.4,4.4,6,8.7,8.9,8.6,7.9,10.9,10.3,8.7,6,6.3,6.3,5,2.3,3,5.1,5.4,5,6.1,6.6,6.1,5.9,4.1,4.1,4.9,7,7.1,8.9,8.4,8.9,12.6,12.9,12.6,13.1,11.3,11.6,14.6,10.7,10,7,5.6,8.4,9.6,6.6,8.1,8.9,10,10.3,7.6,5.9,4.7,3.7,3.7,4.3,7.4,8,8.9,11.1,11,11.3,13.6,11.6,11.9,12.4,12.4,12,10.7,7.6,8.7,12,11.6,12.4,12.9,13.1,12.3,9.7,6.7,7.7,5.4,5,4.7,4.6,4.6,3,1.6,1.4,1.6,4.9,5.7,7.3,9.3,9,8.4,8.1,4.9,4.3,4.6,3.3,7.3,8.3,8.3,9,9.3,8.7,12,8,6.9,6.9,6.1,6,5.6,2.3,3.3,3.3,4.7,5,5.1,6,8.3,8.1,12.3,11.4,11.6,11.1,10.6,9.3,12,8.6,8.7,8.4,9.1,11,11.3,8.9,10.1,10,10,9.4,7.3,7.9,7.7,6.3,7.3,7.3,7.7,9.7,8.1,6.9,6.7,5.1,5.3,4.6,1.7,0.7,0.7,0.3,0.7,1,1.3,1.4,1.4,1.4,1.7,4.3,4,4.9,5.6,8.1,9.7,10.4,8.1,8.4,8.4,9.7,9.9,12.3,14.1,14.1,14.1,13.6,12.9,11.6,7.9,5.7,5.3,5.1,5,null];
+const VOL = [[3,1095],[4,156],[5,196],[6,400],[7,36],[8,1],[9,16],[10,32],[11,4040],[12,2750],[13,130],[14,4],[15,8],[16,23],[17,119],[18,1414],[19,333],[20,2241],[21,58],[22,2],[23,4753],[24,678],[25,822],[27,911],[28,1899],[29,3241],[30,45],[31,136],[32,414],[33,1358],[34,21],[35,1190],[36,760],[37,1397],[38,10],[39,1021],[40,918],[41,2194],[42,3145],[43,1516],[44,1127],[45,7435],[46,2866],[47,1106],[48,4480],[49,1137],[50,3060],[51,1290],[52,110],[53,195],[54,1694],[55,538],[56,484],[57,150],[58,1203],[59,240],[60,893],[61,182],[62,1518],[63,34],[64,2091],[65,939],[66,889],[67,630],[68,227],[69,731],[70,513],[71,207],[72,105],[73,4721],[74,1474],[75,7709],[76,1713],[77,115],[78,971],[79,42],[80,3322],[81,3815],[82,2025],[83,1096],[84,1227],[85,304],[86,819],[87,2665],[88,3588],[89,327],[90,4954],[91,791],[92,3185],[93,1344],[94,5279],[95,97],[96,11357],[97,213],[98,887],[99,2169],[100,3025],[101,20978],[102,5220],[103,6472],[104,6858],[105,12387],[106,87481],[107,5808],[108,2049],[109,10442],[110,18909],[111,24425],[112,3797],[113,11948],[114,20306],[115,5087],[116,1807],[117,52055],[118,20634],[119,40145],[120,53133],[121,5009],[122,4342],[123,2577],[124,957],[125,3034],[126,1953],[127,12243],[128,3742],[129,19520],[130,29012],[131,3950],[132,20292],[133,712],[134,2871],[135,14010],[136,3642],[137,6406],[138,8397],[139,22059],[140,11336],[141,33164],[142,915],[143,18952],[144,306],[145,6175],[146,2486],[147,99551],[148,1514],[149,956],[150,432],[151,1801],[152,10442],[153,922],[154,5937],[155,15340],[156,12263],[157,291],[158,10575],[159,877],[160,12512],[161,39873],[162,1785],[163,85955],[164,31195],[165,52894],[166,36643],[167,124886],[168,109917],[169,188074],[170,38483],[171,38945],[172,33718],[173,57329],[174,65179],[175,37720],[176,88077],[177,18164],[178,62293],[179,72802],[180,16025],[181,16138],[182,18334],[183,29838],[184,7117],[185,25015],[186,29099],[187,11246],[188,59449],[189,13739],[190,48487],[191,16145],[192,8162],[193,12486],[194,37367],[195,27359],[196,42841],[197,13537],[198,16433],[199,54022],[200,14894],[201,69530],[202,13509],[203,6713],[204,11579],[205,4966],[206,5128],[207,23594],[208,16326],[209,10465],[210,26139],[211,7007],[212,36738],[213,7710],[214,36994],[215,33871],[216,10033],[217,72165],[218,41044],[219,36433],[220,61834],[221,138263],[222,78715],[223,47151],[224,12341],[225,5600],[226,11458],[227,42741],[228,13046],[229,72834],[230,27278],[231,40339],[232,18967],[233,11559],[234,11354],[235,14667],[236,16661],[237,38685],[238,32124],[239,123472],[240,34458],[241,57334],[242,70546],[243,52218],[244,54665],[245,48192],[246,107502],[247,30000],[248,68515],[249,97278],[250,33523],[251,41580],[252,55612],[253,181438],[254,25125],[255,388760],[256,69512],[257,278522],[258,104533],[259,100575],[260,64922],[261,107326],[262,138542],[263,185123],[264,59077],[265,83704],[266,78471],[267,91192],[268,47796],[269,136853],[270,60926],[271,169585],[272,59957],[273,128595],[274,60079],[275,95567],[276,58162],[277,42443],[278,75999],[279,20154],[280,1041771],[281,276315],[282,36796],[283,27212],[284,16255],[285,22902],[286,61563],[287,22196],[288,29415],[289,130047],[290,173472],[291,52305],[292,49714],[293,154744],[294,17178],[295,18663],[296,72772],[297,23114],[298,47996],[299,320539],[300,145363],[301,21999],[302,38007],[303,66693],[304,21468],[305,45253],[306,16522],[307,30995],[308,31781],[309,83257],[310,10567],[311,26791],[312,73290],[313,29559],[314,82063],[315,35625],[316,31681],[317,33347],[318,44075],[319,941781],[320,82508],[321,78473],[322,56117],[323,32344],[324,28575],[325,51700],[326,83208],[327,33252],[328,25651],[329,53771],[330,180934],[331,181880],[332,122785],[333,131854],[334,68816],[335,24881],[336,85815],[337,43247],[338,42293],[339,47981],[340,60008],[341,73926],[342,32435],[343,66565],[344,331104],[345,41321],[346,39461],[347,23353],[348,67339],[349,49662],[350,25824],[351,73414],[352,10339],[353,6949],[354,22520],[355,46279],[356,14104],[357,26366],[358,135924],[359,33210],[360,17456],[361,13732],[362,39705],[363,64073],[364,35256],[365,43586],[366,12499],[367,18727],[368,11499],[369,6199],[370,86647],[371,12069],[372,20080],[373,23870],[374,27448],[375,40677],[376,23422],[377,6281],[378,5894],[379,51436],[380,3594],[381,11274],[382,69996],[383,20040],[384,1595],[385,7974],[386,9231],[387,68752],[388,5646],[389,16699],[390,6210],[391,7890],[392,10191],[393,61259],[394,6334],[395,25121],[396,49883],[397,36408],[398,19240],[399,156042],[400,14474],[401,11796],[402,7083],[403,16378],[404,4465],[405,7185],[406,16006],[407,27941],[408,15534],[409,15897],[410,78244],[411,267580],[412,25287],[413,91430],[414,15437],[415,27302],[416,14598],[417,11209],[418,17794],[419,20479],[420,137700],[421,51236],[422,256281],[423,63595],[424,44551],[425,33272],[426,80901],[427,25190],[428,27435],[429,47854],[430,28575],[431,20535],[432,31997],[433,17583],[434,17276]];
+const XC = { changes: [-0.041,0.043,0.074,0.013,-0.006,0.038,-0.047,0.081,-0.001,-0.062,-0.043,0.021,0.022,0.016,-0.086,-0.004,0.024,0.059,0.006,-0.071,-0.055,-0.021,-0.023,0.074,0.007,-0.03,0.03,0.066,0.048,0.039,-0.094,-0.035,0.004,-0.003,-0.026,0.023,0.007,0.019,0.012,-0.046,-0.003,0.016,0.034], bandC: 0.0947, levels: [0.461,0.472,0.483,0.489,0.492,0.493,0.493,0.497,0.493,0.485,0.483,0.483,0.483,0.48,0.475,0.478,0.481,0.483,0.482,0.482,0.485,0.49,0.495,0.5,0.499,0.497,0.499,0.501,0.501,0.498,0.493,0.497,0.505,0.506,0.51,0.514,0.515,0.516,0.514,0.512,0.513,0.517,0.517], bandL: 0.0945, n: 428 };
+const MK = [
+  { id: '567621', label: 'Invasion by end of 2026', col: 'var(--red)', w: 3.4 },
+  { id: '1633611', label: 'Invasion by end of 2027', col: '#f08a6f', w: 2.2, dash: '7 6' },
+  { id: '677407', label: 'Clash before 2027', col: 'var(--blue)', w: 2.2 },
+  { id: '2382819', label: 'Blockade in 2026', col: '#b69ad8', w: 2.2 },
+];
+const DAY = 864e5, D0 = Date.parse(W0 + 'T00:00:00Z');
+const nice = k => new Date(D0 + k * DAY).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+const A = 3, B = NDAYS - 1;                       // window: Jul 25, 2025 – Sep 29, 2026 (the preset)
+const JM = { a: 0, b: 0 };
+{ const off = s => Math.round((Date.parse(s + 'T00:00:00Z') - D0) / DAY); JM.a = off('2025-12-29'); JM.b = off('2025-12-30'); }
+const JCRP = ['2025-07-30','2025-08-07','2025-08-27','2025-09-07','2025-09-13','2025-09-29','2025-10-07','2025-10-17','2025-11-06','2025-11-15','2025-11-20','2025-12-05','2025-12-11','2025-12-17','2026-01-08','2026-01-15','2026-01-23','2026-01-29','2026-02-12','2026-02-19','2026-02-25','2026-03-17','2026-03-28','2026-04-01','2026-04-25','2026-05-01','2026-05-06','2026-05-19','2026-05-25','2026-06-03','2026-07-02','2026-07-08','2026-07-24','2026-07-30','2026-08-04','2026-08-15','2026-08-18','2026-09-05','2026-09-09','2026-09-17']
+  .map(s => Math.round((Date.parse(s + 'T00:00:00Z') - D0) / DAY));
+const byDay = {}; for (const m of MK) byDay[m.id] = new Map(PRICE[m.id]);
+const vmax = Math.max(...VOL.map(v => v[1]));
+
+// ---- Geometry --------------------------------------------------------------------------------------
+const L = 250, R = 1350, PT = 300, PB = 650, VT = 694, VB = 746;
+const PMAX = 30, AMAX = 40;                       // niceMax() of the window maxima (27¢, 33.3 aircraft)
+const X = k => L + (k - A) / (B - A) * (R - L);
+const Y = c => PB - c / PMAX * (PB - PT);
+const YA = a => PB - a / AMAX * (PB - PT);
+
+const cam = el('g', {}, svg);
+const scene = el('g', {}, cam);
+const chart = el('g', {}, scene);
+const clip = el('clipPath', { id: 'mvclip' }, svg);
+const clipR = el('rect', { x: L - 4, y: PT - 40, width: 0, height: 520 }, clip);
+
+// Grid and axes
+const axes = el('g', {}, chart);
+for (let i = 0; i <= 4; i++) {
+  const y = Y(PMAX * i / 4);
+  el('line', { x1: L, x2: R, y1: y, y2: y, class: i ? 'mv-grid' : 'mv-base' }, axes);
+  el('text', { x: L - 12, y: y + 5, 'text-anchor': 'end', class: 'mv-axis' }, axes).textContent = (PMAX * i / 4) + '¢';
+  el('text', { x: R + 12, y: y + 5, class: 'mv-axis', style: 'fill:#b9c4bd' }, axes).textContent = AMAX * i / 4;
+}
+el('text', { x: L - 12, y: PT - 22, 'text-anchor': 'end', class: 'mv-axt' }, axes).textContent = 'Price';
+el('text', { x: R + 40, y: PT - 22, 'text-anchor': 'end', class: 'mv-axt', style: 'fill:#b9c4bd' }, axes).textContent = 'Aircraft';
+for (const [s, t] of [['2025-08-01', 'Aug'], ['2025-11-01', 'Nov'], ['2026-01-01', '2026'], ['2026-04-01', 'Apr'], ['2026-07-01', 'Jul']]) {
+  const k = Math.round((Date.parse(s + 'T00:00:00Z') - D0) / DAY), x = X(k);
+  el('line', { x1: x, x2: x, y1: PB, y2: PB + 6, class: 'mv-base' }, axes);
+  el('text', { x, y: VB + 32, 'text-anchor': 'middle', class: 'mv-axis' }, axes).textContent = t;
+}
+
+// Drawn layers (wiped in left to right)
+const drawn = el('g', { 'clip-path': 'url(#mvclip)' }, chart);
+const exG = el('g', { opacity: 0 }, drawn);
+el('rect', { x: X(JM.a) - 3, y: PT, width: X(JM.b + 1) - X(JM.a) + 3, height: PB - PT, class: 'mv-ex' }, exG);
+el('text', { x: X(JM.a) - 10, y: PT + 20, 'text-anchor': 'end', class: 'mv-exl' }, exG).textContent = 'Justice Mission-2025';
+const airG = el('g', { opacity: 0 }, drawn);
+{
+  let d = '', open = false, area = '';
+  let seg0 = null, last = null;
+  for (let k = A; k <= B; k++) {
+    const v = AIR7[k];
+    if (v != null) { d += (open ? 'L' : 'M') + X(k).toFixed(1) + ' ' + YA(v).toFixed(1); if (!open) seg0 = k; last = k; open = true; }
+    else open = false;
+  }
+  // soft area under the (continuous) mean
+  area = d + `L${X(last).toFixed(1)} ${PB}L${X(A).toFixed(1)} ${PB}Z`;
+  el('path', { d: area, class: 'mv-airA' }, airG);
+  el('path', { d, class: 'mv-air' }, airG);
+  let j = ''; JCRP.filter(k => k >= A).forEach(k => { j += `M${X(k).toFixed(1)} ${PB}v-9`; });
+  el('path', { d: j, class: 'mv-jcrp' }, airG);
+}
+const lines = MK.map(m => {
+  let d = '', prev = null;
+  for (const [k, c] of PRICE[m.id]) { if (k < A) continue; d += (prev != null && k - prev <= 3 ? 'L' : 'M') + X(k).toFixed(1) + ' ' + Y(c).toFixed(1); prev = k; }
+  const p = el('path', { d, class: 'mv-line', stroke: m.col, 'stroke-width': m.w }, drawn);
+  if (m.dash) p.setAttribute('stroke-dasharray', m.dash);
+  if (m.id === '567621') p.setAttribute('filter', 'url(#kit-glow)');
+  return p;
+});
+// Volume strip, focus market (square-root scaled, as the tool draws it)
+const volG = el('g', {}, drawn);
+{
+  const bw = Math.max(1, (R - L) / (B - A) - 0.5); let d = '';
+  for (const [k, v] of VOL) { if (k < A || !v) continue; const h = Math.max(1, Math.sqrt(v / vmax) * (VB - VT)); d += `M${X(k).toFixed(1)} ${VB}v${-h.toFixed(1)}h${bw.toFixed(1)}v${h.toFixed(1)}z`; }
+  el('path', { d, class: 'mv-vol' }, volG);
+}
+const volLab = el('text', { x: L, y: VT - 8, class: 'mv-axt' }, chart); volLab.textContent = 'Daily dollar volume · Invasion by end of 2026';
+const volPk = el('text', { x: R, y: VT - 8, 'text-anchor': 'end', class: 'mv-axt' }, chart); volPk.textContent = `peak $${vmax.toLocaleString('en-US')}`;
+
+// End-of-line price tags (last trade, Sept. 29, 2026)
+const tags = MK.map((m, i) => {
+  const last = PRICE[m.id][PRICE[m.id].length - 1], g = el('g', { opacity: 0 }, chart);
+  if (i > 1) return g;
+  const y = Y(last[1]) + (i ? 6 : 12);
+  el('path', { d: `M${X(last[0]) + 6} ${Y(last[1])}H${R + 48}`, stroke: m.col, 'stroke-opacity': .5, 'stroke-dasharray': '2 4' }, g);
+  el('text', { x: R + 56, y, class: 'mv-tag', fill: m.col, style: `fill:${m.col};font-size:${i ? 16 : 24}px` }, g)
+    .textContent = (last[1] < 10 ? last[1].toFixed(1) : last[1].toFixed(1)) + '¢';
+  return g;
+});
+
+// Legend
+const leg = el('g', {}, chart);
+let lx = L;
+MK.forEach(m => {
+  const g = el('g', {}, leg);
+  el('line', { x1: lx, x2: lx + 26, y1: 208, y2: 208, stroke: m.col, 'stroke-width': 3, 'stroke-dasharray': m.dash || '' }, g);
+  const t = el('text', { x: lx + 36, y: 213, class: 'mv-leg' }, g); t.textContent = m.label;
+  lx += 36 + m.label.length * 9.6 + 34;
+});
+{
+  const g = el('g', {}, leg);
+  el('line', { x1: L, x2: L + 26, y1: 242, y2: 242, stroke: '#b9c4bd', 'stroke-width': 2 }, g);
+  el('text', { x: L + 36, y: 247, class: 'mv-leg', style: 'fill:var(--muted)' }, g).textContent = 'PLA aircraft, 7-day mean (right axis)';
+  el('rect', { x: 780, y: 234, width: 18, height: 16, class: 'mv-ex', style: 'fill-opacity:.25' }, g);
+  el('text', { x: 808, y: 247, class: 'mv-leg', style: 'fill:var(--muted)' }, g).textContent = 'Major exercise';
+  el('path', { d: 'M990 250v-14', class: 'mv-jcrp' }, g);
+  el('text', { x: 1004, y: 247, class: 'mv-leg', style: 'fill:var(--muted)' }, g).textContent = 'Joint combat readiness patrol';
+}
+const head = el('text', { x: L, y: 156, class: 't-kicker' }, chart); head.textContent = 'Price of a $1 “Yes” share, daily · Polymarket';
+
+// Crosshair and tooltip (the player's hover)
+const hov = el('g', { opacity: 0 }, scene);
+const cross = el('line', { y1: PT - 6, y2: VB, stroke: 'var(--amber)', 'stroke-width': 2, filter: 'url(#kit-glow)' }, hov);
+const dotP = el('circle', { r: 7, fill: 'var(--red)', stroke: '#fff3dc', 'stroke-width': 2.5 }, hov);
+const dotA = el('circle', { r: 6, fill: '#b9c4bd', stroke: '#0b1712', 'stroke-width': 2 }, hov);
+const ring = el('circle', { r: 20, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 2.5 }, hov);
+const tip = el('g', {}, hov);
+el('rect', { x: 0, y: 0, width: 470, height: 236, rx: 6, class: 'mv-tip' }, tip);
+const tipD = el('text', { x: 20, y: 40, class: 'mv-tipd' }, tip);
+const tipRows = MK.map((m, i) => {
+  const y = 76 + i * 26;
+  el('rect', { x: 20, y: y - 11, width: 10, height: 10, fill: m.col }, tip);
+  el('text', { x: 40, y, class: 'mv-tipr', style: i ? 'fill:var(--muted)' : '' }, tip).textContent = m.label;
+  return el('text', { x: 450, y, 'text-anchor': 'end', class: i ? 'mv-tipm' : 'mv-tipv' }, tip);
+});
+el('line', { x1: 20, x2: 450, y1: 180 - 2, y2: 180 - 2, class: 'mv-grid' }, tip);
+const tipA = el('text', { x: 20, y: 200, class: 'mv-tipr' }, tip);
+const tipX = el('text', { x: 20, y: 224, class: 'mv-tipr', style: 'fill:var(--amber)' }, tip);
+
+// ---- Hook ------------------------------------------------------------------------------------------
+const hook = el('g', {}, svg);
+const h1 = el('text', { x: 800, y: 330, 'text-anchor': 'middle', class: 't-hook' }, hook); h1.textContent = 'A $1 bet on a Chinese invasion';
+const h2 = el('text', { x: 800, y: 402, 'text-anchor': 'middle', class: 't-hook' }, hook); h2.textContent = 'of Taiwan by the end of 2026 cost';
+const hBig = el('text', { x: 800, y: 590, 'text-anchor': 'middle', class: 'mv-big', filter: 'url(#kit-glow)' }, hook); hBig.textContent = '3.5¢';
+const hSub = el('text', { x: 800, y: 650, 'text-anchor': 'middle', class: 'mv-sub' }, hook); hSub.textContent = 'Last Polymarket trade, Sept. 29, 2026';
+
+// ---- Payoff: the lead/lag test ------------------------------------------------------------------------
+const pay = el('g', { opacity: 0 }, svg);
+el('rect', { width: 1600, height: 1000, fill: '#070f0b', opacity: .86 }, pay);
+el('text', { x: 800, y: 150, 'text-anchor': 'middle', class: 't-kicker' }, pay).textContent = 'Lead or lag? · PLA aircraft vs. invasion price';
+const XL = 360, XR = 1240, XY0 = 530, XH = 190;
+let YMAX = 0.8;                                       // the tool's auto scale: 0.8 for levels, 0.2 for changes
+const XS = r => XY0 - r / YMAX * XH;
+const bandR = el('rect', { x: XL - 10, width: XR - XL + 20, fill: 'var(--paper)', 'fill-opacity': .09 }, pay);
+el('line', { x1: XL - 10, x2: XR + 10, y1: XY0, y2: XY0, class: 'mv-base' }, pay);
+const yl = [1, 0.5, -0.5, -1].map(f => ({ f, t: el('text', { x: XL - 22, y: XY0 - f * XH + 5, 'text-anchor': 'end', class: 'mv-axis' }, pay), l: el('line', { x1: XL - 10, x2: XR + 10, y1: XY0 - f * XH, y2: XY0 - f * XH, class: 'mv-grid', 'stroke-dasharray': '2 6' }, pay) }));
+el('text', { x: XL - 22, y: XY0 + 5, 'text-anchor': 'end', class: 'mv-axis' }, pay).textContent = '0';
+const NB = XC.changes.length, bwid = (XR - XL) / NB;
+const bars = XC.changes.map((_, i) => el('rect', { x: XL + i * bwid + 3, width: bwid - 6, rx: 1.5 }, pay));
+el('text', { x: XL, y: 758, class: 'mv-small' }, pay).textContent = '← market moves first';
+el('text', { x: XR, y: 758, 'text-anchor': 'end', class: 'mv-small' }, pay).textContent = 'aircraft move first →';
+el('text', { x: 800, y: 758, 'text-anchor': 'middle', class: 'mv-small' }, pay).textContent = `lag, ±21 days · ${XC.n} matched days`;
+// toggle, as in the tool: "Use day-over-day changes"
+const tg = el('g', {}, pay);
+const tgBox = el('rect', { x: 1060, y: 222, width: 58, height: 30, rx: 15, fill: 'var(--line)' }, tg);
+const tgKnob = el('circle', { cy: 237, r: 11, fill: 'var(--paper)' }, tg);
+const tgT = el('text', { x: 1046, y: 243, 'text-anchor': 'end', class: 'mv-tg' }, tg);
+const cnt = el('text', { x: XL, y: 250, class: 'mv-cnt' }, pay);
+const cntT = el('text', { x: XL, y: 282, class: 'mv-small' }, pay);
+const verdict = el('text', { x: 800, y: 860, 'text-anchor': 'middle', class: 'mv-hl' }, pay);
+verdict.innerHTML = '<tspan>No clear </tspan><tspan style="fill:var(--amber)">lead or lag</tspan><tspan>.</tspan>';
+const outL = XC.levels.filter(r => Math.abs(r) > XC.bandL).length, outC = XC.changes.filter(r => Math.abs(r) > XC.bandC).length;
+
+const cap = captions(svg, [
+  [3.5, 6.6, 'Open contracts on invasion, clash and blockade'],
+  [6.8, 10.3, 'Set against the PLA record: 130 aircraft, one day'],
+  [10.6, 12.7, 'Price levels drift together, so everything looks linked'],
+  [12.8, 14.7, 'Test daily changes instead: no clear pattern'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Markets vs. Analysts', line: 'What traders paid for war over Taiwan, against the PLA record.' });
+
+// ---- Frame -----------------------------------------------------------------------------------------
+const HK0 = Math.round((Date.parse('2025-11-10T00:00:00Z') - D0) / DAY);
+function frame(t) {
+  // Hook
+  const hi = k => ease.out(seg(t, 0.2 + k * 0.3, 0.9 + k * 0.3));
+  const ho = 1 - seg(t, 2.8, 3.4);
+  [h1, h2].forEach((n, k) => { n.setAttribute('opacity', hi(k) * ho); n.setAttribute('transform', `translate(0,${(1 - hi(k)) * 22 - seg(t, 2.8, 3.4) * 20})`); });
+  const bu = ease.back(seg(t, 0.95, 1.6));
+  hBig.setAttribute('opacity', seg(t, 0.95, 1.25) * ho);
+  hBig.setAttribute('transform', `translate(800,540) scale(${(0.7 + 0.3 * bu) * (1 - 0.15 * seg(t, 2.8, 3.4))}) translate(-800,-540)`);
+  hSub.setAttribute('opacity', ease.out(seg(t, 1.6, 2.1)) * ho);
+
+  // Scene visibility
+  const vis = lerp(0.14 * seg(t, 0, 1), 1, ease.inOut(seg(t, 2.9, 3.7)));
+  const dim = lerp(1, 0.18, ease.inOut(seg(t, 10.3, 11.0)));
+  scene.setAttribute('opacity', (vis * dim * (1 - seg(t, 14.8, 15.4))).toFixed(3));
+
+  // Wipe the record in, then overlays
+  clipR.setAttribute('width', ((R - L + 70) * ease.inOut(seg(t, 3.4, 6.0))).toFixed(1));
+  airG.setAttribute('opacity', ease.out(seg(t, 5.2, 6.4)).toFixed(3));
+  exG.setAttribute('opacity', ease.out(seg(t, 6.2, 6.8)).toFixed(3));
+  tags.forEach((g, i) => g.setAttribute('opacity', ease.out(seg(t, 5.8 + i * 0.12, 6.3 + i * 0.12)).toFixed(3)));
+  leg.setAttribute('opacity', ease.out(seg(t, 3.3, 4.0)).toFixed(3));
+  head.setAttribute('opacity', ease.out(seg(t, 3.2, 3.8)).toFixed(3));
+  [volLab, volPk].forEach(n => n.setAttribute('opacity', ease.out(seg(t, 4.6, 5.2)).toFixed(3)));
+
+  // Hover: glide from Nov 10, 2025 to Dec 29, 2025 (Justice Mission day 1), hold
+  const hv = ease.inOut(seg(t, 7.0, 8.7));
+  const k = Math.round(lerp(HK0, JM.a, hv));
+  const x = X(k);
+  hov.setAttribute('opacity', (ease.out(seg(t, 6.8, 7.2)) * (1 - seg(t, 10.2, 10.6))).toFixed(3));
+  cross.setAttribute('x1', x); cross.setAttribute('x2', x);
+  const p = byDay['567621'].get(k);
+  dotP.setAttribute('opacity', p != null ? 1 : 0); if (p != null) { dotP.setAttribute('cx', x); dotP.setAttribute('cy', Y(p)); }
+  const a7 = AIR7[k]; dotA.setAttribute('opacity', a7 != null ? 1 : 0); if (a7 != null) { dotA.setAttribute('cx', x); dotA.setAttribute('cy', YA(a7)); }
+  const land = seg(t, 8.7, 9.3);
+  ring.setAttribute('cx', x); ring.setAttribute('cy', p != null ? Y(p) : PB);
+  ring.setAttribute('r', lerp(34, 18, ease.out(land))); ring.setAttribute('opacity', land > 0 ? 1 - land * 0.4 : 0);
+  tipD.textContent = nice(k);
+  MK.forEach((m, i) => { const c = byDay[m.id].get(k); tipRows[i].textContent = c != null ? c.toFixed(1) + '¢' : 'not yet traded'; });
+  tipA.textContent = `PLA aircraft: ${AIR[k] ?? 'no report'}${a7 != null ? ` · 7-day mean ${a7.toFixed(1)}` : ''}`;
+  tipX.textContent = k >= JM.a && k <= JM.b ? 'Justice Mission-2025' : '';
+  tipA.style.fill = k === JM.a ? 'var(--amber)' : '';
+  tipA.style.fontWeight = k === JM.a ? '600' : '';
+  tip.setAttribute('transform', `translate(${(x + 26).toFixed(1)},${PT - 20})`);
+
+  // Camera: slow push, leaning toward the December cursor
+  const push = ease.inOut(seg(t, 3.2, 10.4));
+  const lean = ease.inOut(seg(t, 7.0, 9.6));
+  cam.setAttribute('transform', `translate(${(-lean * 40).toFixed(1)},${(-push * 8).toFixed(1)}) translate(800,470) scale(${(1 + push * 0.04 + lean * 0.03).toFixed(4)}) translate(-800,-470)`);
+
+  // Payoff: levels first (everything "significant"), then the toggle flips to day-over-day changes
+  const pu = ease.out(seg(t, 10.4, 11.0)) * (1 - seg(t, 14.8, 15.3));
+  pay.setAttribute('opacity', pu.toFixed(3));
+  const grow = ease.out(seg(t, 10.6, 11.4)), flip = ease.inOut(seg(t, 12.6, 13.3));
+  const band = lerp(XC.bandL, XC.bandC, flip);
+  YMAX = lerp(0.8, 0.2, flip);
+  yl.forEach(({ f, t: tx }) => { const v = f * YMAX; tx.textContent = (v > 0 ? '+' : '−') + Math.abs(v).toFixed(1); });
+  bandR.setAttribute('y', XS(band)); bandR.setAttribute('height', XS(-band) - XS(band));
+  bars.forEach((b, i) => {
+    const g = ease.out(clamp((grow * 1.6) - i / NB * 0.6));
+    const r = lerp(XC.levels[i], XC.changes[i], ease.inOut(clamp(flip * 1.4 - (i / NB) * 0.4))) * g;
+    b.setAttribute('y', Math.min(XS(r), XY0)); b.setAttribute('height', Math.max(1, Math.abs(XS(r) - XY0)));
+    const out = Math.abs(r) > band + 1e-6 && g > 0.9;
+    b.setAttribute('fill', out ? 'var(--red)' : 'var(--muted)');
+    b.setAttribute('fill-opacity', out ? 0.9 : 0.7);
+  });
+  const on = flip > 0.5;
+  tgBox.setAttribute('fill', on ? 'var(--amber)' : 'var(--line)');
+  tgKnob.setAttribute('cx', lerp(1075, 1103, flip));
+  tgT.textContent = on ? 'Day-over-day changes' : 'Price levels';
+  tgT.style.fill = on ? 'var(--amber)' : 'var(--paper)';
+  tg.setAttribute('filter', seg(t, 12.5, 12.7) * (1 - seg(t, 13.3, 13.8)) > 0.2 ? 'url(#kit-glow)' : '');
+  cnt.textContent = `${on ? outC : outL} of ${NB}`;
+  cnt.style.fill = on ? 'var(--paper)' : 'var(--red)';
+  cntT.textContent = 'lags outside the noise band (±' + (on ? XC.bandC : XC.bandL).toFixed(2) + ')';
+  const vv = ease.out(seg(t, 13.2, 13.8));
+  verdict.setAttribute('opacity', vv); verdict.setAttribute('transform', `translate(0,${(1 - vv) * 18})`);
+
+  cap(t); end(t, 14.9, 17.5);
+}
+run({ duration: 17.5, poster: 9.4, frame });
+</script>
+</body></html>

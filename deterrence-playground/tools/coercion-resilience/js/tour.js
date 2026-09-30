@@ -16,7 +16,7 @@ export const STEPS = [
     body: 'Beijing left iron ore alone. The paper argues China could not easily replace it, and its earnings cushioned the whole Australian economy while targeted sectors took losses.',
     set: { view: 'au', product: 'ironore', year: '2021', unit: 'usd' } },
   { title: 'South Korea, 2017',
-    body: 'Here the instrument was informal: after Lotte gave up land for the THAAD battery, Beijing’s tourism administration told agencies to stop selling South Korea tours from 15 March 2017. Monthly arrivals from China fell by about two-thirds from April 2017, against the same months of 2016, while arrivals from Japan held steady.',
+    body: 'Here the instrument was informal: after Lotte gave up land for the THAAD battery, Beijing’s tourism administration told agencies to stop selling South Korea tours from 15 March 2017. Monthly arrivals from China fell by about two-thirds from April to July 2017, against the same months of 2016, and were still down by 38% to 61% from August to December, while arrivals from Japan mostly held steady.',
     set: { view: 'kr', month: '201704' } },
   { title: 'Pain without reversal',
     body: 'Chinese arrivals fell from about 8.07 million in 2016 to 4.17 million in 2017. Seoul offered the symbolic “Three No’s,” and the battery stayed. Walberg calls it a tactical win for Beijing that damaged its standing in South Korea.',

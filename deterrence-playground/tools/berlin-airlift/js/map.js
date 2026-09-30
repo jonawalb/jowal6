@@ -59,7 +59,7 @@ export function drawMap(svg, view) {
     el('circle', { cx: f.x, cy: f.y, r: 7, class: 'mp-base' }, svg);
     const ty = f.y + (f.ly < 0 ? f.ly : 20);
     el('text', { x: f.x, y: ty, class: 'mp-ft', 'text-anchor': 'middle' }, svg, f.name);
-    if (!view.open[f.k]) { el('text', { x: f.x, y: ty + 13, class: 'mp-closed', 'text-anchor': 'middle' }, svg, view.openNote[f.k]); continue; }
+    if (!view.open[f.k]) { el('text', { x: f.x, y: f.ly < 0 ? f.y + 22 : ty + 13, class: 'mp-closed', 'text-anchor': 'middle' }, svg, view.openNote[f.k]); continue; }
     const bw = 64, bx = f.x - bw / 2, by = f.ly < 0 ? f.y + 11 : ty + 5;
     el('rect', { x: bx, y: by, width: bw, height: 6, rx: 3, class: 'mp-slot' }, svg);
     const u = slots > 0 ? Math.min(1, land / slots) : 0;

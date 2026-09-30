@@ -141,7 +141,7 @@ function renderTwo() {
   animate = false;
   const lastP = view.paths[view.paths.length - 1];
   $('timecard').hidden = !lastP;
-  if (lastP) drawTime($('time'), [{ c: 'var(--c1)', pts: lastP.map(p => [p[0], p[1]]) }, { c: 'var(--c2)', pts: lastP.map(p => [p[0], p[2]]) }], { T: 60 });
+  if (lastP) drawTime($('time'), [{ c: 'var(--c1)', pts: lastP.map(p => [p[0], p[1]]) }, { c: 'var(--c2)', pts: lastP.map(p => [p[0], p[2]]) }], { T: 60, ylab: S.overlay ? 'Warheads (thousands)' : 'Arms (notional units)' });
   else $('time').replaceChildren();
   const fates = view.paths.map(p => fate(p, eq));
   const cnt = k => fates.filter(f => f === k).length;

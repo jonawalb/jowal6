@@ -24,7 +24,7 @@ export function createMap(svg, card, { onPick }) {
   for (let lat = 10; lat <= 30; lat += 10) { const [, y] = project([0, lat]); el('line', { x1: 0, y1: y, x2: W, y2: y }, grat); el('text', { x: 4, y: y - 3 }, grat, `${lat}°N`); }
   COUNTRIES.forEach(c => el('path', { d: proj.path(c.rings), class: 'tsm-land rs-land', 'fill-rule': 'evenodd' }, root));
   SEAS.forEach(([t, lon, lat, rot]) => { const [x, y] = project([lon, lat]); el('text', { x, y, class: 't-sea', 'text-anchor': 'middle', transform: `rotate(${rot} ${x} ${y})` }, root, t); });
-  LABELS.forEach(([t, lon, lat]) => { const [x, y] = project([lon, lat]); el('text', { x, y, class: 'rs-country', 'text-anchor': 'middle' }, root, t); });
+  LABELS.forEach(([t, lon, lat]) => { const [x, y] = project([lon, lat]); el('text', { x, y, class: t === 'Israel' || t === 'Jordan' ? 'rs-country rs-near-suez' : 'rs-country', 'text-anchor': 'middle' }, root, t); });
   const lanes = el('g', { class: 'rs-lanes' }, root);
   LANES.forEach(l => el('path', { d: proj.line(l), class: 'rs-lane' }, lanes));
   { const [x, y] = project([57.2, 12.3]); el('text', { x, y, class: 'rs-lane-t' }, root, 'to Asia'); }

@@ -10,7 +10,7 @@ export const STEPS = [
     body: 'In January and February 2026 traders priced a US or Israeli strike on Iran by each deadline. The January contracts expired worthless. The February 28 contract jumped to Yes on the day of the strikes. Dots at the top are dated events from Walberg’s event list.',
     set: { case: 'strike', focus: '1198479' } },
   { title: 'Settled by the fine print',
-    body: 'Ceasefire contracts turned on definitions. “Effective ceasefire” required a two-week pause, so these settled Yes weeks after the deadline date. Open the resolution rule in the panel to see what counted.',
+    body: 'Ceasefire contracts turned on definitions. “Effective ceasefire” required 14 straight days without a qualifying US strike on Iran, so the July 31 contract settled Yes only on 11 August, after its deadline date. Open the resolution rule in the panel to see what counted.',
     set: { case: 'ceasefire', focus: '2937525' } },
   { title: 'What did not happen',
     body: 'Some contracts priced events that never came, such as an Iranian invasion of Kuwait. Prices a week out were already low, and these contracts expired worthless.',

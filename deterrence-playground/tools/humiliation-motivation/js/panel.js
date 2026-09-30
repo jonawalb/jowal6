@@ -101,7 +101,7 @@ function checks(node, P) {
 const MECH = {
   s: up => `${up ? 'Higher' : 'Lower'} severity ${up ? 'raises' : 'lowers'} the domestic cost of accommodating, α = α<sub>0</sub>s(1 − λ). The thresholds s̲ and s̄ stay put; the state moves across them.`,
   lam: up => `Legitimacy ${up ? 'lowers' : 'raises'} the cost of accommodating and ${up ? 'raises' : 'lowers'} both thresholds (Lemma 1, item 5, and Proposition 4). ${up ? 'A citizenry that sees the order as fair tolerates backing down.' : 'An order seen as a diktat makes backing down costly.'}`,
-  a0: up => `Audience sensitivity scales the cost of accommodating. ${up ? 'Raising' : 'Lowering'} it ${up ? 'lowers' : 'raises'} both thresholds, the channel the paper uses for Russia after 2000.`,
+  a0: up => `Audience sensitivity scales the cost of accommodating. ${up ? 'Raising' : 'Lowering'} it ${up ? 'lowers' : 'raises'} both thresholds, the channel the paper uses for Russia under Putin.`,
   k: () => 'The cost of challenging lowers both types’ challenge payoffs, so s̄ and s̲ rise (Lemma 1, item 1).',
   l: () => 'The cost of losing lowers both types’ challenge payoffs, more for the weak type, so s̄ rises (Lemma 1, item 2).',
   v: () => 'The value of restored status raises both types’ challenge payoffs, so s̄ falls (Lemma 1, item 3).',

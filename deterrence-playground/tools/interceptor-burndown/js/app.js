@@ -94,7 +94,7 @@ function renderSummary() {
     `<dt>PRC SRBMs used up</dt><dd>${S.cap ? (po.b ? 'day ' + po.b : 'not within ' + S.horizon + ' days') : 'no limit set'}</dd>
      <dt>PRC GLCMs used up</dt><dd>${S.cap ? (po.c ? 'day ' + po.c : 'not within ' + S.horizon + ' days') : 'no limit set'}</dd>
      <dt>Leakers, days 1-30</dt><dd>${r0(leakersBy(sim, 30))}</dd>
-     <dt>Interceptors fired</dt><dd>${r0(sim.cum.fired)} of ${r0(sim.startTotal)} usable</dd>`;
+     <dt>Interceptors fired</dt><dd>${r0(sim.cum.fired)} of ${r0(sim.startTotal)} usable${S.prod > 0 || S.us > 0 ? ' at the start, plus resupply' : ''}</dd>`;
 }
 
 function renderTornado() {
@@ -140,7 +140,7 @@ function stop() { if (!playing) return; playing = false; cancelAnimationFrame(ra
 
 // ---- Tables below --------------------------------------------------------------------------
 function tables() {
-  const tag = { order: 'order figure', estimate: 'analyst estimate', planned: 'planned, unfunded' };
+  const tag = { order: 'order figure', estimate: 'analyst estimate', planned: 'planned' };
   $('invtable').innerHTML = SYSTEMS.map(s => `<tr><td>${s.long}</td><td class="num">${INV_PRESETS[0].v[s.k]}</td><td>${s.basis} <span class="pill">${tag[s.tag]}</span></td><td>${s.src === 'onn4' ? 'ONN Part 4' : s.src === 'onn2' ? 'ONN Part 2; CRS' : s.src === 'defpost' ? 'Defense Post / Liberty Times' : s.src === 'dsca' ? 'DSCA; TSM backlog' : 'Taipei Times'}</td></tr>`).join('');
   $('srclist').innerHTML = SOURCE_ORDER.map(k => `<li>${SOURCES[k]}</li>`).join('');
 }

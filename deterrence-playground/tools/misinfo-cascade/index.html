@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Misinformation Cascade | Interactive Deterrence</title>
-<meta name="description" content="Watch a small, accurate report become an alarming claim as it spreads through a network, and test when a correction can stop it. Built on Jonathan Walberg's Moral Panic cascade game and Sticky Affect model.">
+<meta name="description" content="Watch a small, accurate report become an alarming claim as it spreads through a network, and test when a correction can stop it. Built on the Moral Panic cascade game by Jonathan Walberg and a co-author, and on Walberg's Sticky Affect model.">
 <link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -85,7 +85,7 @@
     <h2>Sources</h2>
     <p class="fine">Models</p>
     <ul class="src">
-      <li>Jonathan Walberg, “A Coordination Theory of Moral Panic,” working paper, June 2026. Mass Game, nine-player Cascade Game, θ̂ − θ as the disinformation lever, in-group vs. out-group correction.</li>
+      <li>Jonathan Walberg and a co-author, “A Coordination Theory of Moral Panic,” working paper, June 2026. Mass Game, nine-player Cascade Game, θ̂ − θ as the disinformation lever, in-group vs. out-group correction.</li>
       <li>Jonathan Walberg, “Affective Intelligence and the Stickiness of Disinformation,” working paper, draft of March 19, 2026, and its formal model note “Sticky Affect” (March 2026). Retraction condition and the α(E) weight.</li>
       <li>Jonathan Walberg, “Emotional Priors and Narrative Warfare: A Bayesian Game of Cognitive Manipulation,” working paper, June 2026. Proposition 5, the weighting cascade.</li>
       <li>Related writing by the author: “From 16 Aircraft to Surrounded: Fear, Virality, and the Misinformation Cascade in ADIZ Discourse” and “From Operation Mincemeat to Social Media Deceit.” The claim ladder here borrows the first title’s arc; its wording is written for this tool.</li>
@@ -104,7 +104,7 @@
 <section class="below method" id="method">
   <div class="col">
     <h2>Method · the sharing rule</h2>
-    <p>The <b>Mass Game</b> (Walberg) pits an individual against the masses. θ is the share of the group endorsing the claim and does two jobs at once: it is the benefit of joining the wave and the ostracism cost of holding out. Δ is private conviction. If the masses share, the individual gets θ − Δ from sharing and −θ + Δ from holding out, so the best response is to share if and only if Δ &lt; θ. In a population with convictions drawn from F, the share evolves as θ<sub>t+1</sub> = F(θ<sub>t</sub>), and full conformity is absorbing.</p>
+    <p>The <b>Mass Game</b> (Walberg and co-author) pits an individual against the masses. θ is the share of the group endorsing the claim and does two jobs at once: it is the benefit of joining the wave and the ostracism cost of holding out. Δ is private conviction. If the masses share, the individual gets θ − Δ from sharing and −θ + Δ from holding out, so the best response is to share if and only if Δ &lt; θ. In a population with convictions drawn from F, the share evolves as θ<sub>t+1</sub> = F(θ<sub>t</sub>), and full conformity is absorbing.</p>
     <p>On a network each person sees only their own contacts. Person i shares when Δ<sub>i</sub> &lt; θ̂<sub>i</sub>, with θ̂<sub>i</sub> = min(1, λ·m<sub>i</sub>/k<sub>i</sub> + a), where m<sub>i</sub> of their k<sub>i</sub> contacts are sharing. The paper treats θ̂ − θ, the gap between perceived and true endorsement, as the lever a disinformer pulls; a is that lever. The fear gain λ comes from Walberg’s Narrative Warfare paper, where fear raises the weight a person puts on evidence and, on a network, “catching a neighbor’s emotion raises one’s own gain on all subsequent private signals.” Scaling the observed share by λ is this tool’s simplification of that proposition, not the paper’s own network model. Sharing is absorbing: people do not quietly stop, they only retract.</p>
     <p>Convictions are LogNormal with median Δ and shape σ (the paper’s numerical section uses shape 0.5), drawn once per seed so that moving a slider shifts every person together. A person who starts sharing passes on the most alarming version among their sharing contacts and steps it up one level with probability min(0.95, ε·λ).</p>
     <h2 class="mt">Method · the correction</h2>

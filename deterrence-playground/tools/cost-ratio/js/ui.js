@@ -26,7 +26,7 @@ export function slider(parent, spec, value, onInput) {
   input.addEventListener('input', () => { show(+input.value); onInput(+input.value); });
   return {
     input,
-    set(v) { input.value = v; show(+input.value); },
+    set(v) { input.value = v; show(+v); },
     setMax(m) { input.max = m; },
     text(t) { out.textContent = t; },
     setMin(m) { input.min = m; },

@@ -20,7 +20,7 @@ export const STEPS = [
     body: 'Now Taiwan has mined the east coast and the PLA lands in the west instead. No mines, and the airfield is off the route. The PLA\'s chances rise sharply. Mines only matter where the landing comes.',
     set: set({}, { sector: 'W' }) },
   { title: 'More lift changes the math',
-    body: 'Give the PLA six landing groups per wave and two strike turns, and it takes Magong in about half the games. The key drivers are now lift and the offload rate, echoing CSIS\'s finding that dwindling lift limits an invasion. An extra strike turn lowers the PLA\'s odds here because it uses up a turn of a fixed four-day window.',
+    body: 'Give the PLA six landing groups per wave and two strike turns, and it takes Magong in more than half the games. The biggest driver is now the offload rate, with strike turns and lift close behind, echoing CSIS\'s finding that dwindling lift limits an invasion. An extra strike turn lowers the PLA\'s odds here because it uses up a turn of a fixed four-day window.',
     set: set({}, { sector: 'W', lift: 6, strikes: 2 }) },
   { title: 'Or starve it',
     body: 'A blockade skips the landing. Turns become five days, and the garrison lives on its stocks plus whatever slips through. Buy more stocks and watch the outcome move. Every number is notional; the shape of the trade is the point.',

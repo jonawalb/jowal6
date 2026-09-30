@@ -123,7 +123,7 @@ export function createMap(svg, tip, { onSector }) {
       if (p.k === 'airbase') {
         const cls = st ? `pg-af ${st.airfield}` : 'pg-af roc';
         el('rect', { x: x - 11, y: y - 4, width: 22, height: 8, rx: 2, class: cls, transform: `rotate(-70 ${x} ${y})` }, g);
-        el('text', { x: x + 14, y: y + 22, class: 'pg-plabel' }, g, 'Magong Air Base');
+        el('text', { x: x + 6, y: y - 18, class: 'pg-plabel', 'text-anchor': 'middle' }, g, 'Magong Air Base');
       } else {
         const taken = st && info.outcome === 'pla' && info.turn >= info.wonAt;
         el('circle', { cx: x, cy: y, r: 7, class: `pg-town${taken ? ' taken' : ''}` }, g);

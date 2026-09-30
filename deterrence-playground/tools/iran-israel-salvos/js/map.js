@@ -19,7 +19,8 @@ export function createMap(svg, ext) {
   const names = {};
   Object.entries(LABEL).forEach(([n, p]) => {
     const [x, y] = project(p);
-    names[n] = el('text', { x, y, class: 'ii-cname', 'text-anchor': 'middle' }, root, SHORT[n] || n);
+    // Israel's label ends at its point so it does not run into Jordan's at narrow widths.
+    names[n] = el('text', { x: n === 'Israel' ? x - 4 : x, y, class: 'ii-cname', 'text-anchor': n === 'Israel' ? 'end' : 'middle' }, root, SHORT[n] || n);
   });
   const arcs = el('g', {}, root);
 

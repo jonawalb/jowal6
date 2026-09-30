@@ -26,5 +26,5 @@
     <circle cx="220" cy="135" r="14" stroke="#b0306e"/><circle cx="220" cy="305" r="14" stroke="#b0306e"/>
   </g>
   <text x="30" y="378" font-family="Georgia, serif" font-weight="700" font-size="30" fill="#033303">Deterrence Lab</text>
-  <text x="610" y="320" font-family="Georgia, serif" font-size="20" fill="#14201a" text-anchor="end">1898 → 2014</text>
+  <text x="610" y="320" font-family="Georgia, serif" font-size="20" fill="#14201a" text-anchor="end">1898 → 2017</text>
 </svg>

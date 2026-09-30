@@ -2,6 +2,9 @@
 import { el, fmtUSD } from './util.js';
 import { destinations, BASE_YEAR } from './series.js';
 
+// Comtrade partner names that are too long for a narrow label column.
+const SHORT = { 'China, Hong Kong SAR': 'Hong Kong', 'China, Macao SAR': 'Macao', 'Rep. of Korea': 'South Korea', 'United Arab Emirates': 'UAE', 'United Kingdom': 'United Kingdom', 'Other Asia, nes': 'Other Asia' };
+
 export function drawDest(svg, wrap, p, year) {
   const d = destinations(p, year, 7);
   const W = Math.max(300, wrap.clientWidth), rowH = 26, top = 22;
@@ -19,7 +22,8 @@ export function drawDest(svg, wrap, p, year) {
   d.rows.forEach((r, k) => {
     const y0 = top + k * rowH;
     const g = el('g', { class: r.code === '156' ? 'dest-row china' : 'dest-row' }, svg);
-    el('text', { x: labW - 8, y: y0 + 15, 'text-anchor': 'end', class: 'dest-lab' }, g, r.name.length > 22 ? r.name.slice(0, 21) + '…' : r.name);
+    const nm = SHORT[r.name] || r.name, room = Math.floor((labW - 8) / 7); // ~7 px per character at label size
+    el('text', { x: labW - 8, y: y0 + 15, 'text-anchor': 'end', class: 'dest-lab' }, g, nm.length > room ? nm.slice(0, room - 1) + '…' : nm);
     el('rect', { x: labW, y: y0 + 4, width: Math.max(0, x(r.now) - labW), height: 14, rx: 2, class: 'dest-bar' }, g);
     el('rect', { x: labW, y: y0 + 2, width: Math.max(0, x(r.base) - labW), height: 18, rx: 2, class: 'dest-base' }, g);
     el('text', { x: Math.max(x(r.now), x(r.base)) + 5, y: y0 + 15, class: 'dest-val' }, g, fmtUSD(r.now));

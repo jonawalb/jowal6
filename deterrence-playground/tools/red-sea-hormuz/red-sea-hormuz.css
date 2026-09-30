@@ -146,3 +146,6 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
   .rs-dot, .rs-ghost { transition: none; }
   .rs-mark[data-ev="1"] .rs-pulse { animation: none; opacity: .9; }
 }
+
+/* Narrow screens: the Suez Canal label sits on top of these two country names. */
+@media (max-width: 560px) { .rs-near-suez { display: none; } }

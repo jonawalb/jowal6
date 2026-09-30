@@ -11,7 +11,7 @@ export const STEPS = [
     body: 'Put most of it into fighters, submarines and big ships. Each platform is capable, but they are few, expensive and easy to find at their bases, so in this model the PLA\'s first strikes remove much of that investment before the fleet sails.',
     set: { b: 's145', preset: 'legacy' } },
   { title: 'Suppression is the hinge',
-    body: 'Turn PLA suppression down and the legacy mix engages far more of the fleet, and the gap with the porcupine narrows. Much of the case for the porcupine rests on the assumption that Taiwan absorbs a heavy first strike. Move the suppression slider to see how much the answer depends on it.',
+    body: 'Turn PLA suppression down and the legacy mix engages about a third of the fleet instead of under a quarter, and keeps it under fire as long as the porcupine does, though the porcupine still engages more. Much of the case for the porcupine rests on the assumption that Taiwan absorbs a heavy first strike. Move the suppression slider to see how much the answer depends on it.',
     set: { b: 's145', preset: 'legacy', supp: 0.1 } },
   { title: 'Mines need warning',
     body: 'Mines are cheap and do not need a live track to work, but only if they are in the water before the fleet arrives. With one day of warning most of the minefield is never laid.',

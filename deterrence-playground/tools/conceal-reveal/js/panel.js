@@ -91,7 +91,7 @@ function checks(node, P, pp) {
 }
 
 function why(P, pp, eq) {
-  if (pp.ok) return `Coercive types reveal and the Receiver concedes; operational types conceal and the Receiver fights. The operational bonus V = ${f2(P.V)} is what keeps the low-capability operational type from copying the coercive types: switching would cost it σb + V = ${f2(P.sig * P.b + P.V)}, against σb = ${f2(P.sig * P.b)} for a coercive type.`;
+  if (pp.ok) return `Coercive types reveal and the Receiver concedes; operational types conceal and the Receiver fights. The operational bonus V = ${f2(P.V)} is what keeps the low-capability operational type from copying the coercive types: concealing gives it a war worth (π<sub>L</sub> + σ)b − c + V = ${f2((P.piL + P.sig) * P.b - P.c + P.V)}, against b − r = ${f2(P.b - P.r)} from revealing and taking the concession. Without V the same war would be worth ${f2((P.piL + P.sig) * P.b - P.c)}.`;
   const fails = [];
   if (!pp.RC.ok) fails.push(`after a reveal the Receiver still expects to do well enough in war to fight (π̄<sub>R</sub> = ${f2(pp.pb.R)} is too low)`);
   if (!pp.RF.ok) fails.push(`after concealment the Receiver would rather concede, because the concealers plus surprise look too strong (π̄<sub>K</sub> + σ = ${f2(pp.pb.K + P.sig)})`);

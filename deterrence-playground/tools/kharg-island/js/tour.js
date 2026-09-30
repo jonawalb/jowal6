@@ -26,7 +26,7 @@ export const STEPS = [
     body: 'A raid takes the airstrip area, holds it for a turn and pulls out. It exposes fewer troops for less time, so it succeeds more often and escalates less, but it leaves Iran\'s exports flowing once the force has gone.',
     set: set({ obj: 'raid' }) },
   { title: 'Or blockade from offshore',
-    body: 'A blockade lands no one. Destroyers on station turn tankers back, and Iran answers with missiles, drones and mines at the ships. Exports fall furthest here. Watch the oil panel: the price effect is a notional sensitivity, while the export baseline comes from sources.',
+    body: 'A blockade lands no one. Destroyers on station turn tankers back, and Iran answers with missiles, drones and mines at the ships. Exports fall, though in these notional settings a landing that shuts the terminal cuts them more. Watch the oil panel: the price effect is a notional sensitivity, while the export baseline comes from sources.',
     set: set({ obj: 'blockade', ddg: 5, meu: 0, abn: 0, sof: false, cvw: 1, mcm: 2, helo: 2 }) },
 ];
 

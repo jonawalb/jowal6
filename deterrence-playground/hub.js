@@ -109,9 +109,11 @@ function card(t) {
 }
 
 /** A section's subsections (registry `subs`) with their tools; tools without a subsection go in "More". */
+// A tool's subsection in a section can be one id or a list (e.g. a tool that covers two regions).
+const inSub = (t, c, id) => [].concat(t.sub?.[c.id] ?? []).includes(id);
 function subGroups(c, list) {
-  return [...c.subs.map(s => [s, list.filter(t => t.sub && t.sub[c.id] === s.id)]),
-    [{ id: 'more', name: 'More', blurb: 'Other tools in this section.' }, list.filter(t => !(t.sub && c.subs.some(s => s.id === t.sub[c.id])))]]
+  return [...c.subs.map(s => [s, list.filter(t => inSub(t, c, s.id))]),
+    [{ id: 'more', name: 'More', blurb: 'Other tools in this section.' }, list.filter(t => !c.subs.some(s => inSub(t, c, s.id)))]]
     .filter(([, ts]) => ts.length);
 }
 /** Tile for one subsection, opened like a section tile. */

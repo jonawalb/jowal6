@@ -5,6 +5,7 @@ import { buildPanel } from './panel.js';
 import { renderWorld } from './world.js';
 import { createTour } from './tour.js';
 import { legend } from './ui.js';
+import { afterRender } from './fx.js';
 
 const freshCats = () => CATS.map(c => ({ n: c.n }));
 const clonePlan = p => Object.fromEntries(CATS.map(c => [c.id, [...p[c.id]]]));
@@ -72,6 +73,7 @@ function render() {
   drawTimeline(stage.querySelector('#en-time'), R, B);
   drawChannels(stage.querySelector('#en-ch'), R, S.P);
   panel.render(R, B);
+  afterRender(S, R);
 }
 let raf = 0;
 function changed() {

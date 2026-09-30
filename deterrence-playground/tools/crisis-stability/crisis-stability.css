@@ -113,3 +113,31 @@
 .chart .curtick-a { fill: var(--sa); } .chart .curtick-b { fill: var(--sb); }
 .chart .curtick-t { font: 600 11px var(--body); paint-order: stroke; stroke: var(--panel); stroke-width: 3px; }
 .pnote { border-left: 3px solid var(--warn); padding-left: 8px; }
+
+/* ---- Trailer graphics (Interactive Deterrence games only) ---- */
+:root[data-skin="trailer"] {
+  --c1: #7fb6d9; --c2: #ff8a3d; --c3: #2cc2ac; --c4: #d77ab0; --c5: #efc12f; --c6: #a68ef0; --c7: #63b3d6; --c8: #c8b48a;
+}
+/* Side A is blue, side B the threat red; amber stays for the player's current setting. */
+:root[data-skin="trailer"] .stage, :root[data-skin="trailer"] .panel { --sa: #7fb6d9; --sb: #e8604a; }
+:root[data-skin="trailer"] .idx b { font-family: var(--mono); font-weight: 400; color: var(--accent); text-shadow: 0 0 22px rgba(240, 169, 59, .35); }
+:root[data-skin="trailer"] .chart .plotbg { fill: rgba(8, 18, 13, .55); }
+:root[data-skin="trailer"] .chart .grid { stroke: #1c3326; }
+:root[data-skin="trailer"] .chart .dd-a { filter: drop-shadow(0 0 5px rgba(127, 182, 217, .55)); }
+:root[data-skin="trailer"] .chart .dd-b { filter: drop-shadow(0 0 5px rgba(232, 96, 74, .55)); }
+:root[data-skin="trailer"] .chart .cur { filter: drop-shadow(0 0 4px rgba(240, 169, 59, .7)); }
+:root[data-skin="trailer"] .pd-a { fill: rgba(111, 191, 139, .28); }
+:root[data-skin="trailer"] .pd-all { fill: rgba(232, 96, 74, .1); }
+:root[data-skin="trailer"] .tour h3, :root[data-skin="trailer"] .status b { font-family: var(--display); font-style: italic; font-weight: 500; }
+:root[data-skin="trailer"] .costwrap th, :root[data-skin="trailer"] .readout dd { letter-spacing: .02em; }
+:root[data-skin="trailer"] .tabs .ta[aria-pressed="true"], :root[data-skin="trailer"] .tabs .tb[aria-pressed="true"] { box-shadow: 0 0 16px -6px var(--sa); }
+:root[data-skin="trailer"] .choices button[aria-pressed="true"] { box-shadow: var(--glow); }
+
+/* ---- Motion (both looks) ---- */
+@keyframes fx-flash { from { background: color-mix(in srgb, var(--accent) 22%, transparent); } }
+.fx-flash { animation: fx-flash .9s ease-out; }
+.idx b, #costs td.num { font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: reduce) { .fx-flash { animation: none; } }
+/* Keep the status card's band colour in the trailer look (the shared trailer sheet paints every status amber). */
+:root[data-skin="trailer"] .status[data-s="good"] { border-color: var(--good); background: color-mix(in srgb, var(--good) 8%, var(--panel)); }
+:root[data-skin="trailer"] .status[data-s="bad"] { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 10%, var(--panel)); box-shadow: 0 0 24px -10px var(--bad); }

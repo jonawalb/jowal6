@@ -42,7 +42,7 @@
 /* Panels float on the table. */
 :root[data-skin="trailer"] .card, :root[data-skin="trailer"] .panel, :root[data-skin="trailer"] .mapbox {
   background: color-mix(in srgb, var(--panel) 88%, transparent); border-color: var(--rule);
-  box-shadow: 0 18px 40px -26px #000, inset 0 1px 0 rgba(255, 255, 255, .03); backdrop-filter: blur(2px);
+  box-shadow: 0 18px 40px -26px #000, inset 0 1px 0 rgba(255, 255, 255, .03);
 }
 :root[data-skin="trailer"] .tsm-head { border-bottom: 1px solid var(--rule); }
 
@@ -55,13 +55,13 @@
 }
 :root[data-skin="trailer"] .btn.solid:hover { background: #f6bb5c; }
 :root[data-skin="trailer"] input[type="range"] { accent-color: var(--accent); }
-:root[data-skin="trailer"] .status { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, var(--panel)); }
+:root[data-skin="trailer"] .status { background: var(--panel); }
 :root[data-skin="trailer"] a { color: var(--accent); }
 :root[data-skin="trailer"] ::selection { background: rgba(240, 169, 59, .35); }
 
 /* Style switch and first-visit chooser (both skins). */
 .skin-switch { display: inline-flex; align-items: center; gap: 6px; font: 500 12px var(--body); color: var(--muted); }
-.skin-switch .seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 999px; overflow: hidden; }
+.skin-switch .skin-seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 999px; overflow: hidden; }
 .skin-switch button { font: inherit; padding: 4px 10px; border: 0; background: transparent; color: var(--ink); cursor: pointer; }
 .skin-switch button[aria-pressed="true"] { background: var(--accent); color: #111; font-weight: 600; }
 .skin-switch button:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }

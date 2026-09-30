@@ -4,6 +4,7 @@ import { WEAPONS, WEAPON_ORDER, THREATS, THREAT_ORDER, CITIES, BATTERIES } from 
 import { summary, tti } from './sim.js';
 import { ORDERS, orderInfo } from './targeting.js';
 import { range, ratio, exchangeState } from './fmt.js';
+import { setText, magTick } from './fx.js';
 
 const $ = id => document.getElementById(id);
 const BAT_KEYS = {
@@ -28,8 +29,8 @@ export function buildControls({ onWeapon, onLock }) {
 
 export function updateHud(S, bats, mode, lock) {
   const m = summary(S);
-  $('x-spent').textContent = range(m.spent.lo, m.spent.hi);
-  $('x-value').textContent = range(m.value.lo, m.value.hi);
+  setText($('x-spent'), range(m.spent.lo, m.spent.hi));
+  setText($('x-value'), range(m.value.lo, m.value.hi));
   const st = $('x-status');
   if (!m.spent.hi && !m.value.hi) {
     $('x-ratio').textContent = 'No priced shots yet';
@@ -46,10 +47,22 @@ export function updateHud(S, bats, mode, lock) {
   $('leaks').innerHTML = THREAT_ORDER.map(k => `<dt>${THREATS[k].short}</dt><dd>${m.kills[k]} down · ${m.leaks[k]} leaked</dd>`).join('')
     + `<dt>Damage</dt><dd>${m.dmgTotal} pts${m.dmgTotal ? ' (' + CITIES.filter(c => m.dmg[c.k]).map(c => `${c.k} ${m.dmg[c.k]}`).join(', ') + ')' : ''}</dd>`;
 
-  $('mags').innerHTML = WEAPON_ORDER.map(w => {
-    const W = WEAPONS[w], left = S.ammo[w], f = left / W.mag;
-    return `<div class="mag" data-w="${w}"><span class="mag-n">${W.short}</span><span class="mag-bar" role="img" aria-label="${left} of ${W.mag} left"><i style="width:${(f * 100).toFixed(1)}%"></i></span><span class="num">${left}/${W.mag}</span></div>`;
-  }).join('');
+  // Built once, then updated in place so the bars can slide and the counts can flash as they tick down.
+  const mags = $('mags');
+  if (mags.children.length !== WEAPON_ORDER.length) {
+    mags.innerHTML = WEAPON_ORDER.map(w => `<div class="mag" data-w="${w}"><span class="mag-n">${WEAPONS[w].short}</span><span class="mag-bar" role="img"><i></i></span><span class="num"></span></div>`).join('');
+  }
+  WEAPON_ORDER.forEach((w, i) => {
+    const W = WEAPONS[w], left = S.ammo[w], f = left / W.mag, row = mags.children[i];
+    const before = row.dataset.left == null ? null : +row.dataset.left;
+    if (before === left) return;
+    row.dataset.left = left;
+    row.querySelector('.mag-bar').setAttribute('aria-label', `${left} of ${W.mag} left`);
+    row.querySelector('i').style.width = `${(f * 100).toFixed(1)}%`;
+    row.querySelector('.num').textContent = `${left}/${W.mag}`;
+    // Only count-downs during play animate; a reset or a resupply (count going up) just jumps.
+    if (before != null && left < before) magTick(row, before, left);
+  });
 
   document.querySelectorAll('#lockorder [data-o]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.o === lock)));
   document.querySelectorAll('.order-now').forEach(el => { el.textContent = orderInfo(lock).name; });

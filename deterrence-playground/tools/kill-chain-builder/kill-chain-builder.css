@@ -130,3 +130,40 @@
 .under .tsm-export { padding: 0; }
 .narrow-only { display: none; }
 @media (max-width: 700px) { .narrow-only { display: inline; font-weight: 600; } }
+
+/* ---- Motion: Interactive Deterrence only (the .kc-m class is set by js/fx.js there and on localhost) ---- */
+.kc-m .boardscroll { position: relative; }
+.kc-m .kc-fx { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.kc-m .kc-trace { fill: none; stroke: var(--accent); stroke-width: 3.4; stroke-linecap: round; }
+.kc-m .kc-trace-glow { fill: none; stroke: var(--accent); stroke-width: 10; stroke-linecap: round; opacity: .22; }
+.kc-m .kc-head { fill: var(--accent); stroke: var(--panel); stroke-width: 1.5; }
+.kc-m .kc-sweep { stroke: var(--accent); stroke-width: 2; }
+.kc-m .kc-sweep-band { fill: var(--accent); opacity: .16; }
+.kc-m .chain .bar { transition: background-color .35s ease; }
+.kc-m .chain li:nth-child(2) .bar { transition-delay: 60ms; } .kc-m .chain li:nth-child(3) .bar { transition-delay: 120ms; }
+.kc-m .chain li:nth-child(4) .bar { transition-delay: 180ms; } .kc-m .chain li:nth-child(5) .bar { transition-delay: 240ms; }
+.kc-m .chain li:nth-child(6) .bar { transition-delay: 300ms; }
+@media (prefers-reduced-motion: reduce) { .kc-m .chain .bar { transition: none; } }
+
+/* ---- Trailer look (the night plotting table; only when a player picks it on Interactive Deterrence) ----
+   Sensors blue (friendly sensors), command violet, shooters amber (the player's fire); the timeline keeps
+   one hue per step: blue report, violet decision, teal relay, sand launch, amber flight. */
+:root[data-skin="trailer"] { --c2: #f0a93b; --c3: #5fc4b0; --c5: #e6d6a8; --c6: #b39ddb; --c7: #7fb6d9; }
+:root[data-skin="trailer"] .lane { fill: #0c1a13; opacity: .8; stroke: var(--rule); stroke-dasharray: 2 6; }
+:root[data-skin="trailer"] .lane-t { font: 400 11px var(--mono); letter-spacing: .18em; fill: var(--muted); }
+:root[data-skin="trailer"] .node .body { fill: color-mix(in srgb, var(--panel) 92%, #000); stroke: var(--rule); }
+:root[data-skin="trailer"] .node.onbest .body { filter: drop-shadow(0 0 6px rgba(232, 96, 74, .45)); }
+:root[data-skin="trailer"] .node.sel .body { stroke: var(--accent); filter: drop-shadow(0 0 8px rgba(240, 169, 59, .45)); }
+:root[data-skin="trailer"] .node.sel.onbest .body { stroke: var(--accent); }
+:root[data-skin="trailer"] .node .nm { font-family: var(--display); font-style: italic; font-weight: 500; font-size: 16px; }
+:root[data-skin="trailer"] .node .st, :root[data-skin="trailer"] .node .spof-t { font-size: 10.5px; }
+:root[data-skin="trailer"] .edge.best { filter: drop-shadow(0 0 4px rgba(232, 96, 74, .6)); }
+:root[data-skin="trailer"] .pal { background: var(--chip); color: var(--ink); }
+:root[data-skin="trailer"] .ghost-node { background: var(--panel); color: var(--ink); box-shadow: 0 10px 30px -10px #000, var(--glow); }
+:root[data-skin="trailer"] .chain .nm { font-style: italic; font-weight: 500; }
+:root[data-skin="trailer"] .chain li[data-s="ok"] .bar { box-shadow: 0 0 10px -2px var(--bad); }
+:root[data-skin="trailer"] .menu-row select { background: var(--chip); }
+:root[data-skin="trailer"] .tl-lbl, :root[data-skin="trailer"] .tick { font-size: 10.5px; }
+:root[data-skin="trailer"] .impact.in { filter: drop-shadow(0 0 5px rgba(111, 191, 139, .8)); }
+:root[data-skin="trailer"] .impact.out { filter: drop-shadow(0 0 5px rgba(232, 96, 74, .8)); }
+:root[data-skin="trailer"] .tour { background: color-mix(in srgb, var(--panel) 94%, transparent); box-shadow: 0 22px 50px -24px #000; }

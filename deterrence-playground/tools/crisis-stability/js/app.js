@@ -6,6 +6,7 @@ import { SWEEPS, runSweep } from './sweeps.js';
 import { drawDomain, drawProb, drawSweep } from './charts.js';
 import { mountControls, syncControls, FIELDS } from './controls.js';
 import { createTour } from './tour.js';
+import { afterUpdate, afterSweep } from './fx.js';
 import { addExportBar } from '../../../shared/js/export.js';
 
 const $ = id => document.getElementById(id);
@@ -100,13 +101,14 @@ function update() {
   renderSweep();
   renderSummary();
   writeHash();
+  afterUpdate(S, R);
 }
 
 // ---- Boot ----------------------------------------------------------------------------------------
 readHash();
 mountControls(S, update);
 $('sweep-choices').innerHTML = SWEEPS.map(s => `<button type="button" class="btn" data-k="${s.k}">${s.short}</button>`).join('');
-$('sweep-choices').querySelectorAll('button').forEach(b => b.onclick = () => { S.sweep = b.dataset.k; renderSweep(); writeHash(); });
+$('sweep-choices').querySelectorAll('button').forEach(b => b.onclick = () => { S.sweep = b.dataset.k; renderSweep(); writeHash(); afterSweep(); });
 $('srclist').innerHTML = SOURCE_ORDER.map(k => `<li>${SOURCES[k]}</li>`).join('');
 $('lit').innerHTML = LIT;
 const tour = createTour($('stage'), set => { Object.assign(S, DEFAULT(), set); update(); });

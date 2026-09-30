@@ -12,10 +12,11 @@ import { clock, esc } from './fmt.js';
 import { ORDER_KEYS, orderInfo, ordered, autoLock, cycleId } from './targeting.js';
 import { emptyOrder, canAdd, applyResupply, proportionalOrder, orderCost } from './resupply.js';
 import { readyHTML, breakHTML, pausedHTML, overHTML } from './overlays.js';
+import { initFx, fired, gameEvent, cardIn, aarIn, waveIn } from './fx.js';
 
 const $ = id => document.getElementById(id);
 const canvas = $('field'), overlay = $('overlay');
-const R = createRenderer(canvas);
+const R = createRenderer(canvas, { onEvent: gameEvent });
 
 // ---- state ----
 const q = new URLSearchParams(location.hash.slice(1));
@@ -71,7 +72,11 @@ const mixLine = w => {
   const r = RAIDS[w], c = S.waves[w].counts;
   return `Raid mix modelled on ${esc(r.name)}: ${c.drone} drones, ${c.cruise} cruise, ${c.ballistic} ballistic.`;
 };
-function setOverlay(html, tall = false) { overlay.innerHTML = html; overlay.hidden = !html; overlay.classList.toggle('tall', tall); }
+function setOverlay(html, tall = false) {
+  const was = overlay.hidden || !overlay.innerHTML;
+  overlay.innerHTML = html; overlay.hidden = !html; overlay.classList.toggle('tall', tall);
+  if (html && was) cardIn(overlay.querySelector('.ov-card'));
+}
 function showReady() { setOverlay(readyHTML(seed, mode, mixLine(0), modeFromLink), true); }
 function showBreak(keepFocus) {
   const f = keepFocus && document.activeElement?.closest?.('#overlay [data-act]');
@@ -110,6 +115,7 @@ function goNext() {
   setOverlay('');
   const bought = WEAPON_ORDER.filter(w => got[w]).map(w => `${got[w]} ${WEAPONS[w].lc}`).join(', ');
   announce(`${bought ? `Loaded ${bought}. ` : ''}Wave ${S.wave + 1} begins. ${RAIDS[S.wave].short} mix.`);
+  waveIn();
   canvas.focus({ preventScroll: true });
 }
 function setPaused(p) {
@@ -130,6 +136,8 @@ function finish() {
   renderAAR(you, seed, { mode, batFired, lock });
   $('aar').hidden = false;
   setOverlay(overHTML(you, mode));
+  cardIn(overlay.querySelector('.ov-card'), { count: true });
+  aarIn();
   announce(`Night over. ${you.leakTotal} leakers. After-action review below.`);
   syncPause();
   $('aar').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
@@ -146,10 +154,10 @@ const REASON = {
 };
 let toastT = 0;
 function toast(msg) { $('toast').textContent = msg; toastT = performance.now(); }
-function assign(k, id, w = bats[k].weapon) {
+function assign(k, id, w = bats[k].weapon, viaButton = false) {
   const r = fire(S, w, id, k === 'N' ? null : sitesOf(k, w));
   if (!r.ok) toast((k === 'N' ? '' : `${batName(k)}: `) + REASON[r.reason](w));
-  else { toast(''); if (k !== 'N') batFired[k]++; }
+  else { toast(''); if (k !== 'N') batFired[k]++; fired(k, w, viaButton); }
   return r;
 }
 function announce(msg) { $('game-live').textContent = msg; }
@@ -166,11 +174,11 @@ function cycle(k, d) {
   b.sel = cycleId(ordered(S, lock), b.sel, d, b.weapon, sitesOf(k, b.weapon), citiesOf(k));
   describeSel();
 }
-function fireBat(k) {
+function fireBat(k, viaButton = false) {
   if (!started) return start();
   if (S.phase === 'break') return goNext();
   if (!alive(bats[k].sel)) cycle(k, 0);
-  if (bats[k].sel != null && !paused) assign(k, bats[k].sel);
+  if (bats[k].sel != null && !paused) assign(k, bats[k].sel, undefined, viaButton);
 }
 function setWeapon(k, w) { bats[k].weapon = w; hud(); }
 function cycleWeapon(k, d) {
@@ -205,7 +213,7 @@ canvas.addEventListener('pointerleave', () => { hover = null; });
 buildControls({ onWeapon: (k, w) => setWeapon(k, w), onLock: k => setLock(k) });
 $('sel-prev').onclick = () => cycle('N', -1);
 $('sel-next').onclick = () => cycle('N', 1);
-$('fire-sel').onclick = () => fireBat('N');
+$('fire-sel').onclick = () => fireBat('N', true);
 $('pause').onclick = () => setPaused(!paused);
 
 // Hard-mode key map, matched on KeyboardEvent.key (letters case-insensitive). Backspace is the Mac delete key.
@@ -248,6 +256,7 @@ $('seed').addEventListener('change', () => {
 $('new-seed').onclick = () => reset(randomSeed());
 $('restart').onclick = () => reset(seed);
 $('reduced').checked = reduced;
+initFx({ isReduced: () => reduced });
 $('reduced').addEventListener('change', () => { reduced = $('reduced').checked; writeHash(); });
 async function copy(text, btn) {
   const old = btn.textContent;

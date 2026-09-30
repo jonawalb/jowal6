@@ -29,7 +29,7 @@ function apply(v, announce = true) {
 function switchEl() {
   const w = document.createElement('div');
   w.className = 'skin-switch';
-  w.innerHTML = `<span id="skin-l">Graphics</span><span class="seg" role="group" aria-labelledby="skin-l">
+  w.innerHTML = `<span id="skin-l">Graphics</span><span class="skin-seg" role="group" aria-labelledby="skin-l">
     <button type="button" data-skin="original" aria-pressed="false">Original</button>
     <button type="button" data-skin="trailer" aria-pressed="false">Trailer</button></span>`;
   w.addEventListener('click', e => { const b = e.target.closest('button'); if (b) { write(b.dataset.skin); apply(b.dataset.skin); } });

@@ -9,6 +9,7 @@ import { readHash, writeHash } from './hash.js';
 import { showAAR } from './aar.js';
 import { renderBelow } from './below.js';
 import { createTour } from './tour.js';
+import { fxLayer, monthFx, countTo, countFrags, logFx, aarFx } from './fx.js';
 
 const $ = id => document.getElementById(id);
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
@@ -18,6 +19,7 @@ let P, g, pending = [], sel = null;
 
 const orbit = createOrbit($('orbit'), { onPick: m => choose(m) });
 $('bg-note').textContent = BG_NOTE;
+const fx = fxLayer($('orbit'));
 
 // ---- Game lifecycle ---------------------------------------------------------------------------------
 function start(plan = []) {
@@ -42,8 +44,15 @@ function play(orders, anim = true) {
 
 $('end').onclick = () => {
   if (g.over) return;
+  const was = shown(), alive0 = { ...g.sides.B.alive }, deb0 = { ...g.debris };
   play(pending); pending = []; sel = null;
   render();
+  const hm = g.hist[g.hist.length - 1];
+  monthFx(fx, hm, alive0, { card: document.querySelector('.od-orbitcard'), endBtn: $('end') });
+  if (!g.over) countFrags($('orbit'), deb0, g.debris, n => Math.round(n).toLocaleString('en-US'));
+  countBar(was);
+  logFx($('log').firstElementChild);
+  if (g.over) aarFx($('aar'));
   if (g.over) $('aar').scrollIntoView({ behavior: reduced.matches ? 'auto' : 'smooth', block: 'start' });
 };
 $('undo').onclick = () => {
@@ -132,6 +141,18 @@ function renderBar() {
   const cp = 1 - Math.exp(-g.cumH), e = $('k-esc');
   e.textContent = pct(cp, cp < 0.1 ? 1 : 0); e.className = 'num ' + (cp >= 0.25 ? 'bad' : cp >= 0.1 ? 'warn' : '');
   $('k-esc-s').textContent = last ? `this month ${pct(last.pTurn, 1)}` : 'so far this game';
+}
+/** The numbers the bar shows, for counting from last month's values to this month's. */
+function shown() {
+  const last = g.hist[g.hist.length - 1];
+  return { sb: last ? Math.round(last.S.B * 100) : 100, sr: last ? Math.round(last.S.R * 100) : 100, adv: g.adv, esc: 1 - Math.exp(-g.cumH) };
+}
+function countBar(was) {
+  const now = shown(), ed = now.esc < 0.1 ? 1 : 0;
+  countTo($('k-sb'), was.sb, now.sb, v => `${Math.round(v)}`);
+  countTo($('k-sr'), was.sr, now.sr, v => `${Math.round(v)}`);
+  countTo($('k-adv'), +was.adv.toFixed(2), +now.adv.toFixed(2), v => `${v >= 0 ? '+' : ''}${v.toFixed(2)}`);
+  countTo($('k-esc'), was.esc, now.esc, v => pct(v, ed));
 }
 function render() {
   renderBar();

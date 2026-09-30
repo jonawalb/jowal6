@@ -8,6 +8,7 @@ import { createTour } from './tour.js';
 import { CF, EXCLUDED } from '../data/counterfactuals.js';
 import { createPlay, asCrisis } from './play.js';
 import { mountEditor, DEFAULTS } from './model.js';
+import { afterRender } from './fx.js';
 
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const byId = id => CRISES.find(c => c.id === id);
@@ -142,7 +143,8 @@ function renderPlay() {
   document.getElementById('summary').innerHTML = `<b>${esc(c.name)}: retry from the allied side.</b> You play ${esc(CF[c.id].player)}. Blue marks your path; orange marks what happened.`;
 }
 
-function render() {
+function render() { render0(); afterRender(state); }
+function render0() {
   const inPlay = !!state.m && !!CF[state.c];
   if (!inPlay) state.m = '';
   panel.querySelectorAll('[data-c]').forEach(x => x.setAttribute('aria-pressed', x.dataset.c === state.c));

@@ -216,3 +216,59 @@ body.kl-picking .layout, body.kl-picking .below { display: none; }
 .cf-nuke { font-size: 14px; }
 .cf-drv td:first-child { min-width: 110px; }
 .cf-eh { font: 700 16px var(--display); margin: 14px 0 4px; }
+
+/* ---- Trailer graphics (Interactive Deterrence games only; data-skin is never set on Interactive Deterrence) ---- */
+:root[data-skin="trailer"] {
+  --c1: #7fb6d9; --c2: #ff8a3d; --c3: #2cc2ac; --c4: #d77ab0; --c5: #efc12f; --c6: #a68ef0; --c7: #63b3d6; --c8: #c8b48a;
+}
+:root[data-skin="trailer"] .kl-crises button[aria-pressed="true"],
+:root[data-skin="trailer"] .cf-entry:hover:not(:disabled),
+:root[data-skin="trailer"] .cf-opt:not(.gen):hover, :root[data-skin="trailer"] .cf-opt:not(.gen):focus-visible { color: #111; }
+:root[data-skin="trailer"] .kl-crises button[aria-pressed="true"] small { color: #3a2a0c; }
+:root[data-skin="trailer"] .kl-cap { font-family: var(--mono); letter-spacing: .2em; border-color: var(--rule); }
+:root[data-skin="trailer"] .kl-gname { font-family: var(--display); font-style: italic; font-weight: 500; font-size: 15px; }
+:root[data-skin="trailer"] .kl-thr span { background: #0f1f18; letter-spacing: .08em; text-transform: uppercase; font-size: 10.5px; }
+:root[data-skin="trailer"] .kl-rung.cur button { box-shadow: inset 3px 0 0 var(--blue), 0 0 22px -8px var(--blue); }
+:root[data-skin="trailer"] .kl-rung.cur .kl-name { text-shadow: 0 0 12px rgba(127, 182, 217, .45); }
+:root[data-skin="trailer"] .kl-mark.ma { box-shadow: 0 0 10px -2px var(--blue); }
+:root[data-skin="trailer"] .kl-pick-card { background: color-mix(in srgb, var(--panel) 88%, transparent); }
+:root[data-skin="trailer"] .kl-pick-card b, :root[data-skin="trailer"] .cf-ph, :root[data-skin="trailer"] .cf-player,
+:root[data-skin="trailer"] .kl-crises-h, :root[data-skin="trailer"] .kl-step h3, :root[data-skin="trailer"] .cf-dec h3,
+:root[data-skin="trailer"] .cf-end h3, :root[data-skin="trailer"] .kl-crit h3, :root[data-skin="trailer"] .kl-tour h3 { font-family: var(--display); font-style: italic; font-weight: 500; }
+:root[data-skin="trailer"] .kl-tour { box-shadow: 0 20px 50px -20px #000, var(--glow); }
+:root[data-skin="trailer"] .pc-dot.a.now { filter: drop-shadow(0 0 6px var(--blue)); }
+:root[data-skin="trailer"] .pc-line.a { filter: drop-shadow(0 0 4px rgba(127, 182, 217, .5)); }
+:root[data-skin="trailer"] .cf-roll { color: var(--accent); }
+
+/* ---- Motion (both looks; off under reduced motion) ---- */
+@keyframes kl-lit { 0% { background: color-mix(in srgb, var(--blue) 45%, transparent); } }
+@keyframes kl-arrive {
+  0% { background: color-mix(in srgb, var(--blue) 60%, transparent); box-shadow: inset 3px 0 0 var(--blue), 0 0 0 0 color-mix(in srgb, var(--blue) 70%, transparent); }
+  55% { box-shadow: inset 3px 0 0 var(--blue), 0 0 0 7px transparent; }
+}
+@keyframes kl-thr { 0% { color: var(--ink); background: var(--bad); } 100% { } }
+@keyframes kl-thrl { 0% { border-top-color: var(--accent); } 100% { } }
+@keyframes fx-rise { from { opacity: 0; transform: translateY(8px); } }
+@keyframes fx-glow { 0% { text-shadow: 0 0 18px var(--accent); color: var(--accent); } }
+.kl-rung.kl-lit button { animation: kl-lit .7s ease-out var(--fx-d, 0ms); }
+.kl-rung.kl-arrive button { animation: kl-arrive .9s ease-out var(--fx-d, 0ms); }
+.kl-thr.kl-thr-hit { animation: kl-thrl 1s ease-out var(--fx-d, 0ms); }
+.kl-thr.kl-thr-hit span { animation: kl-thr 1s ease-out var(--fx-d, 0ms); }
+.fx-rise { animation: fx-rise .45s cubic-bezier(.2, .8, .2, 1) var(--fx-d, 0ms) backwards; }
+.fx-glow { animation: fx-glow 1.1s ease-out; }
+.fx-tumbling { font-variant-numeric: tabular-nums; }
+:root[data-skin="trailer"] .kl-rung.kl-lit button { animation-name: kl-lit-t; }
+:root[data-skin="trailer"] .kl-rung.kl-arrive button { animation-name: kl-arrive-t; }
+@keyframes kl-lit-t { 0% { background: color-mix(in srgb, var(--blue) 55%, transparent); box-shadow: 0 0 24px -4px var(--blue); } }
+@keyframes kl-arrive-t {
+  0% { background: color-mix(in srgb, var(--blue) 70%, transparent); box-shadow: inset 3px 0 0 var(--blue), 0 0 0 0 rgba(127, 182, 217, .8), 0 0 30px 0 var(--blue); }
+  55% { box-shadow: inset 3px 0 0 var(--blue), 0 0 0 9px transparent, 0 0 24px -8px var(--blue); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kl-rung.kl-lit button, .kl-rung.kl-arrive button, .kl-thr.kl-thr-hit, .kl-thr.kl-thr-hit span, .fx-rise, .fx-glow { animation: none !important; }
+}
+/* Martian Mono runs wider than Plex Mono: let long mono tags wrap in the trailer look. */
+:root[data-skin="trailer"] .cf-gen, :root[data-skin="trailer"] .pill { white-space: normal; letter-spacing: 0; }
+:root[data-skin="trailer"] .cf-gen { font-size: 9.5px; }
+:root[data-skin="trailer"] .cf-cmp th, :root[data-skin="trailer"] .cf-cmp td.num { font-family: var(--body); letter-spacing: 0; text-transform: none; }
+:root[data-skin="trailer"] .cf-cmp td.num { font-family: var(--mono); font-size: 11px; }

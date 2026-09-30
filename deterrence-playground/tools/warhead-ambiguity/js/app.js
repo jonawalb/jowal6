@@ -5,6 +5,7 @@ import { buildPanel } from './panel.js';
 import { renderCases } from './cases.js';
 import { createTour } from './tour.js';
 import { legend } from './ui.js';
+import { afterRender } from './fx.js';
 
 const cloneCosts = () => JSON.parse(JSON.stringify(COSTS));
 const S = { P: { ...DEFAULTS }, costs: cloneCosts() };
@@ -70,6 +71,7 @@ function render() {
   mapF = drawMap(mapSvg, S.P, S.costs);
   drawRates(stage.querySelector('#wa-rates'), S.P, S.costs);
   panel.render(mu, dec);
+  afterRender(S.P, mu, dec);
 }
 let raf = 0;
 function changed() {

@@ -1,7 +1,7 @@
 // Text for the play screen and the page: clock, status, the hour-by-hour report feed, the parameter
 // table, balance tables, quotes and sources.
 import { NODES } from '../data/map.js';
-import { GAME, TYPES, COMBAT, ORDER_DELAY, ARTILLERY, VISION, FORCES, DISENGAGE } from '../data/params.js';
+import { GAME, TYPES, COMBAT, ORDER_DELAY, ORDER_DELAY_MAXRUN, ARTILLERY, VISION, FORCES, DISENGAGE, AI } from '../data/params.js';
 import { SOURCES } from '../data/sources.js';
 import { BALANCE } from '../data/balance.js';
 import { beliefAt } from './vision.js';
@@ -16,16 +16,59 @@ const n1 = x => (Math.round(x * 10) / 10).toFixed(1);
 const list = a => (a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`);
 const word = t => TYPES[t]?.word || 'unit';
 
+/** When Red's units arrive, as a phrase: "Recon A at 06:00, the first echelon at 07:00 and the second echelon at 09:00". */
+export function waveText() {
+  const by = {};
+  for (const d of FORCES.red) if (d.type !== 'arty') (by[d.arrive] ||= []).push(d);
+  const ts = Object.keys(by).map(Number).sort((a, b) => a - b);
+  const names = ['the first echelon', 'the second echelon', 'the third echelon'];
+  let k = 0;
+  return list(ts.map(t => {
+    const only = by[t].every(d => d.type === 'recon');
+    const what = only ? (by[t].length === 1 ? 'a recon troop' : 'recon') : names[k++];
+    return `${what} at ${hhmm(t)}`;
+  }));
+}
+export const endTime = () => hhmm(GAME.hours);
+export const secondPick = () => AI.red.secondDecide;
+
+/** Had side `me` already exposed the decoy before this fire mission? */
+function decoyKnown(g, me, f) {
+  return g.seen[me].some(s => s.type === 'decoy' && (s.obsT < f.t || (s.obsT === f.t && !s.byFire)))
+    || g.fires.some(x => x.side === me && x.t < f.t && x.reveal.some(r => r.type === 'decoy'));
+}
+
+/** What a spotter saw under a fire mission: listed when short, summarised when not. */
+function sawText(g, me, f) {
+  const real = f.reveal.filter(r => r.type !== 'decoy'), dec = f.reveal.some(r => r.type === 'decoy');
+  const parts = [];
+  if (real.length > 2) parts.push(`${real.length} units hit, average ${Math.round(100 * real.reduce((s, r) => s + r.hp, 0) / real.length)}% left`);
+  else parts.push(...real.map(r => `${word(r.type)} at <b>${Math.round(100 * r.hp)}%</b>`));
+  if (dec) parts.push(decoyKnown(g, me, f) ? 'the decoy group' : '<b>a decoy group</b> (now exposed)');
+  return parts.length ? list(parts) : 'nothing there';
+}
+
 /** One line for a fire mission, as the firing side hears it. */
 export function fireText(g, f) {
   const rep = f.reported < 0.25 ? 'no effect seen' : `about ${n1(f.reported)} points of damage`;
   let s = `Your artillery fired on <b>${NAME[f.node]}</b>: ${rep}.`;
-  if (f.spotter) {
-    const seen = f.reveal.map(r => (r.type === 'decoy' ? '<b>a decoy group</b> (now exposed)' : `${word(r.type)} at <b>${Math.round(100 * r.hp)}%</b>`));
-    s += ` ${DEF[f.spotter].name} watched it land: ${seen.length ? list(seen) : 'nothing there'}.`;
-  } else s += ' <span class="muted">No recon next to it, so no one saw what was hit. Damage reports are right 9 times in 10.</span>';
+  if (f.spotter) s += ` ${DEF[f.spotter].name} watched it land: ${sawText(g, f.side, f)}.`;
+  else s += ' <span class="muted">No recon next to it, so no one saw what was hit. Damage reports are right 9 times in 10.</span>';
   for (const x of f.friendly) s += ` <b class="fc-bad">Danger close: ${DEF[x.unit].name} was hit by your own fire (lost ${n1(x.loss)}).</b>`;
   return s;
+}
+
+/** Two short lines for the tag drawn next to the target on the map. */
+export function fireTag(g, f) {
+  const first = f.reported < 0.25 ? 'No effect seen' : `About ${n1(f.reported)} pts damage`;
+  const bits = [];
+  if (f.spotter) {
+    const real = f.reveal.filter(r => r.type !== 'decoy');
+    bits.push(real.length ? `${real.length} hit, avg ${Math.round(100 * real.reduce((s, r) => s + r.hp, 0) / real.length)}% left` : 'nothing there');
+    if (f.reveal.some(r => r.type === 'decoy')) bits.push(decoyKnown(g, f.side, f) ? 'decoy' : 'decoy exposed');
+  } else bits.push('not watched');
+  if (f.friendly.length) bits.push('danger close!');
+  return { node: f.node, lines: [first, bits.join(' · ')] };
 }
 
 /** Feed entries for hour h, from side `me`'s point of view. `now`: only the start-of-hour items. */
@@ -34,7 +77,8 @@ function hourItems(g, me, h, now) {
   const mine = id => DEF[id]?.side === me || g.units.find(u => u.id === id)?.side === me;
   for (const f of g.fires.filter(x => x.t === h && x.side === foe)) {
     const hit = f.hits.filter(x => mine(x.unit) && x.loss > 0.05);
-    if (hit.length) out.push(['bad', `${SIDE[foe]} artillery hit <b>${NAME[f.node]}</b>: ${list(hit.map(x => `${DEF[x.unit].short} lost ${n1(x.loss)}`))}.`]);
+    if (hit.length > 2) out.push(['bad', `${SIDE[foe]} artillery hit <b>${NAME[f.node]}</b>: ${hit.length} of your units hit, ${n1(hit.reduce((a, x) => a + x.loss, 0))} points lost in all.`]);
+    else if (hit.length) out.push(['bad', `${SIDE[foe]} artillery hit <b>${NAME[f.node]}</b>: ${list(hit.map(x => `${DEF[x.unit].short} lost ${n1(x.loss)}`))}.`]);
   }
   for (const f of g.fires.filter(x => x.t === h && x.side === me)) out.push(['', fireText(g, f)]);
   const arr = g.events.filter(e => e.t === h && e.kind === 'arrive' && mine(e.unit));
@@ -45,6 +89,7 @@ function hourItems(g, me, h, now) {
   for (const e of g.events.filter(x => x.t === h)) {
     if (e.kind === 'give' && mine(e.unit)) out.push(['', `${DEF[e.unit].short} gave ground from ${NAME[e.from]} to ${NAME[e.to]} (lost ${n1(e.loss)}).`]);
     if (e.kind === 'give' && !mine(e.unit) && g.fights.some(f => f.t === h && f.node === e.to)) out.push(['good', `The enemy gave ground from ${NAME[e.from]}.`]);
+    if (e.kind === 'halt' && mine(e.unit)) out.push(['warn', `<b>${DEF[e.unit].short} halted at ${NAME[e.node]}</b> (contact); its order to ${NAME[e.dest]} is cancelled. Give it a new order.`]);
     if (e.kind === 'leave' && mine(e.unit)) out.push(['', `${DEF[e.unit].short} broke contact at ${NAME[e.node]} (lost ${n1(e.loss)}).`]);
   }
   for (const f of g.fights.filter(x => x.t === h)) {
@@ -69,21 +114,26 @@ function hourItems(g, me, h, now) {
   return out;
 }
 
-/** The report feed: this hour so far, then the last few hours, newest first. */
-export function feedHTML(g, me, hours = 4) {
+/** The report feed: this hour so far and the last hour open, older hours folded (open ones stay open). */
+export function feedHTML(g, me, open = new Set(), hours = GAME.hours) {
   const blocks = [];
   if (!g.over) {
     const now = hourItems(g, me, g.t, true);
-    if (now.length) blocks.push(block(`Now, ${hhmm(g.t)}`, now));
+    if (now.length) blocks.push(block(`Now, ${hhmm(g.t)}`, now, null));
   }
   for (let h = g.t - 1; h >= Math.max(0, g.t - hours); h--) {
     const items = hourItems(g, me, h, false);
-    const extra = g.over || h < g.t - 1 ? [] : [];
-    blocks.push(block(`${hhmm(h)} to ${hhmm(h + 1)}`, items.length ? items.concat(extra) : [['muted', 'Nothing new.']]));
+    const fold = h < g.t - 1 ? h : null;
+    blocks.push(block(`${hhmm(h)} to ${hhmm(h + 1)}`, items.length ? items : [['muted', 'Nothing new.']], fold, open.has(h)));
   }
   return blocks.join('') || '<li class="muted">No reports yet. Pick a unit, click where it should go, then press End hour.</li>';
 }
-const block = (head, items) => `<li class="fc-fh"><span class="num">${head}</span><ul>${items.map(([c, t]) => `<li class="${c}">${t}</li>`).join('')}</ul></li>`;
+const block = (head, items, fold, isOpen) => {
+  const body = `<ul>${items.map(([c, t]) => `<li class="${c}">${t}</li>`).join('')}</ul>`;
+  if (fold === null) return `<li class="fc-fh"><span class="num">${head}</span>${body}</li>`;
+  const bad = items.filter(([c]) => c === 'bad').length;
+  return `<li class="fc-fh fc-old"><details data-h="${fold}"${isOpen ? ' open' : ''}><summary><span class="num">${head}</span> <small>${items.length} report${items.length > 1 ? 's' : ''}${bad ? `, ${bad} bad` : ''}</small></summary>${body}</details></li>`;
+};
 
 /** Status box text for side `me`. */
 export function status(g, me, pic) {
@@ -92,7 +142,7 @@ export function status(g, me, pic) {
   const seen = Math.round(pic.tracks.reduce((s, t) => s + t.est, 0));
   if (!g.over) {
     return { s: 'warn', t: me === 'blue' ? 'Hold Tarn Crossing' : 'Take Tarn Crossing',
-      sub: `${GAME.hours - g.t} hours left. Your strength ${Math.round(now)} of ${tot}. Enemy strength you can see: ${seen}${pic.marks.length ? ', plus movement' : ''}.` };
+      sub: `${GAME.hours - g.t} hour${GAME.hours - g.t === 1 ? '' : 's'} left. Your strength ${Math.round(now)} of ${tot}. Enemy strength you can see: ${seen}${pic.marks.length ? ', plus movement' : ''}.` };
   }
   const won = g.over.winner === me;
   const t = g.over.winner === 'blue' ? (me === 'blue' ? 'You held Tarn Crossing' : 'Blue held Tarn Crossing') : (me === 'red' ? `You took Tarn Crossing at ${hhmm(g.over.h)}` : `Tarn Crossing fell at ${hhmm(g.over.h)}`);
@@ -103,7 +153,8 @@ export function renderBelow($) {
   const N = '<span class="notional">notional</span>';
   const rows = [
     ['Blue force', `${FORCES.blue.length} units: 4 mech battalions (10 each), a tank battalion (12), a weapons company (6), 2 recon troops (4 each) and an artillery battalion. 66 points.`, N],
-    ['Red force', `${FORCES.red.length} units: 2 recon troops, 3 mech battalions, 5 tank battalions, a weapons company, a decoy group and an artillery battalion. 104 real points. Recon at 06:00, the first echelon at 07:00, the second at 11:00.`, N],
+    ['Red force', `${FORCES.red.length} units: 2 recon troops, 3 mech battalions, 5 tank battalions, a weapons company, a decoy group and an artillery battalion. 104 real points. Arrivals: ${waveText()}.`, N],
+    ['Length', `${GAME.hours} one-hour turns, ${hhmm(0)} to ${endTime()}`, N],
     ['Defender multiplier k', `Prepared ${COMBAT.k.prepared}, hasty ${COMBAT.k.hasty}, meeting ${COMBAT.k.meeting}, flank ${COMBAT.k.flank}; √k matches FM 5-0 Table B-1 (3:1, 2.5:1, 1:1, 1:1)`, 'calibrated'],
     ['Prepared after', `${GAME.prepHours} hours in place`, N],
     ['Flank attack', 'A defender already fighting attackers from one sector and then hit from a second sector fights at k = 1 (Table B-1: flank counterattack 1:1)', 'rule notional, value sourced'],
@@ -114,7 +165,7 @@ export function renderBelow($) {
     ['Breaking contact', `A unit leaving a sector the enemy holds takes ${DISENGAGE * 100}% of one hour of the enemy's fire (k = 1)`, N],
     ['Artillery', `One mission an hour; each enemy unit in the sector loses ${ARTILLERY.frac * 100}% (σ ${ARTILLERY.sigma}); report right ${ARTILLERY.reportRight * 100}% of the time; recon in the sector hit ${ARTILLERY.friendlyHit * 100}% of the time for ${ARTILLERY.friendlyFrac * 100}%; recon next door shows the sector exactly`, 'rules from the brief; values notional'],
     ['Seeing', `Your sector: exact. Next door: ${VISION.next * 100}% chance per unit, type and full strength, decoys look like tanks. Recon: movement up to ${VISION.farHops} sectors away, ${VISION.farDelay} hour late. Sightings kept ${VISION.memory} hours`, N],
-    ['Order delay', `${ORDER_DELAY.map(([h, p]) => `${h} h: ${p * 100}%`).join(', ')}; one roll per side per hour, shown before you give orders`, N],
+    ['Order delay', `${ORDER_DELAY.map(([h, p]) => `${h} h: ${p * 100}%`).join(', ')}; one roll per side per hour, shown before you give orders${ORDER_DELAY_MAXRUN ? `; never more than ${ORDER_DELAY_MAXRUN} late hours in a row` : ''}`, N],
     ['Movement', '1 hour per sector on a road; 2 across a ridge and on the long roads from the outer columns to the crossing', N],
   ];
   $('param-table').innerHTML = '<thead><tr><th>Value</th><th>Setting</th><th>Basis</th></tr></thead><tbody>'

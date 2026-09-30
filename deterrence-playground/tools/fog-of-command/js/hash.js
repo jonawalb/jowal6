@@ -3,7 +3,7 @@
 // l = your actions: hour-kind-unit-value, kind o order / e entry (value = sector index), s stance (g or h),
 // f fire (sector index). Loading the link replays the game exactly, so a finished game reopens on its review.
 import { NODES } from '../data/map.js';
-import { FORCES } from '../data/params.js';
+import { FORCES, GAME } from '../data/params.js';
 
 const IDS = new Set([...FORCES.blue, ...FORCES.red].map(d => d.id));
 
@@ -33,7 +33,7 @@ export function readHash() {
   return {
     me: p === 'a' ? 'red' : p === 'd' ? 'blue' : null,
     seed: Number.isFinite(s) && s >= 1 && s <= 999999 ? s : null,
-    n: Math.max(0, Math.min(16, Math.round(Number(q.get('n')) || 0))),
+    n: Math.max(0, Math.min(GAME.hours, Math.round(Number(q.get('n')) || 0))),
     log,
   };
 }

@@ -172,7 +172,7 @@ export function redAI({ mode = 'fog', variant = 'feint', plan = 'mixed', arty = 
       return;
     }
     if (u.node === NORTH[grp.col] && !st.feintDone) { out.orders.push([u.id, f]); return; }
-    if (u.node === f && !st.feintDone && g.t >= 3 && pic.node[m] > 0 && u.str >= R.attackRatio * pic.node[m]) out.orders.push([u.id, m]);
+    if (u.node === f && !st.feintDone && g.t >= R.assembleUntil && pic.node[m] > 0 && u.str >= R.attackRatio * pic.node[m]) out.orders.push([u.id, m]);
   }
 
   /** Main effort and second echelon: advance on the crossing where Red's odds look good. */

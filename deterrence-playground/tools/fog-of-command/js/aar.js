@@ -5,7 +5,7 @@ import { el } from '../../../shared/js/mapkit.js';
 import { COLS, NORTH, FORWARD, MAIN, REAR } from '../data/map.js';
 import { beliefAt } from './vision.js';
 import { runAll, REPLAYS } from './compare.js';
-import { hhmm, DEF, foeOf, status } from './panel.js';
+import { hhmm, DEF, foeOf, status, SIDE } from './panel.js';
 import { moments, planLine } from './story.js';
 import { countUp, reveal, reduced } from '../../../shared/js/motion.js';
 
@@ -25,30 +25,44 @@ function chart(g, me, hour, draw = false) {
   const T = g.snaps.length - 1;
   const Wd = Math.max(300, Math.round(svg.getBoundingClientRect().width) || 640);
   const narrow = Wd < 560;
-  const per = narrow ? 2 : 4, rows = 4 / per, ph = 110;
-  const Hh = rows * (ph + 46) + 6;
+  const per = narrow ? 2 : 4, rows = 4 / per, ph = 110, top = 34;
+  const Hh = top + rows * (ph + 50) + 16;
   svg.setAttribute('viewBox', `0 0 ${Wd} ${Hh}`);
   const bel = g.snaps.map((_, h) => beliefAt(g, me, h).col);
   const tru = g.snaps.map((_, h) => trueCols(g, me, h));
   const ymax = Math.max(30, ...bel.flat(), ...tru.flat());
-  const cw = (Wd - 40) / per;
+  const cw = (Wd - 52) / per;
   const main = me === 'blue' && g.plan ? g.plan.main : null;
+  const foe = SIDE[foeOf(me)];
+  // Legend: which line is which, named by side whichever side you played.
+  const lg = el('g', { class: 'fc-lgd' }, svg);
+  el('line', { x1: 8, x2: 34, y1: 12, y2: 12, class: 'fc-l true' }, lg);
+  el('text', { x: 40, y: 16, class: 'fc-lgt' }, lg, `True ${foe} strength`);
+  const x2 = narrow ? 8 : 200, y2 = narrow ? 28 : 12;
+  el('line', { x1: x2, x2: x2 + 26, y1: y2, y2, class: 'fc-l bel' }, lg);
+  el('text', { x: x2 + 32, y: y2 + 4, class: 'fc-lgt' }, lg, `${foe} strength you had seen (you played ${SIDE[me]})`);
+  const y0top = top + (narrow ? 14 : 0);
+  const ticks = [...new Set([0, Math.round(T / 2), T])];
   for (let c = 0; c < 4; c++) {
-    const x0 = 34 + (c % per) * cw, pw = cw - 18, y1 = 24 + Math.floor(c / per) * (ph + 46), y0 = y1 + ph;
+    const x0 = 46 + (c % per) * cw, pw = cw - 18, y1 = y0top + 24 + Math.floor(c / per) * (ph + 50), y0 = y1 + ph;
     const sx = h => x0 + h / Math.max(1, T) * pw, sy = v => y0 - v / ymax * (y0 - y1);
     const ax = el('g', { class: 'tsm-axis' }, svg);
-    for (const v of [0, Math.round(ymax / 2)]) {
+    for (const v of [0, Math.round(ymax / 2), Math.round(ymax)]) {
       el('line', { x1: x0, x2: x0 + pw, y1: sy(v), y2: sy(v), class: 'fc-grid' }, ax);
       if (c % per === 0) el('text', { x: x0 - 5, y: sy(v) + 4, 'text-anchor': 'end' }, ax, `${v}`);
     }
-    for (const h of [0, 8, 16].filter(x => x <= T)) el('text', { x: sx(h), y: y0 + 14, 'text-anchor': h === 0 ? 'start' : h === T ? 'end' : 'middle' }, ax, hhmm(h));
-    el('text', { x: x0, y: y1 - 7, class: `fc-ctitle${c === main ? ' main' : ''}` }, svg, `${COLS[c]}${c === main ? ' (main effort)' : ''}`);
+    if (c % per === 0) {
+      el('text', { x: 0, y: 0, class: 'fc-axt', 'text-anchor': 'middle', transform: `translate(11 ${(y1 + y0) / 2}) rotate(-90)` }, svg, 'points');
+    }
+    for (const h of ticks) el('text', { x: sx(h), y: y0 + 14, 'text-anchor': h === 0 ? 'start' : h === T ? 'end' : 'middle' }, ax, hhmm(h));
+    el('text', { x: x0, y: y1 - 7, class: `fc-ctitle${c === main ? ' main' : ''}` }, svg, `${COLS[c]} road${c === main ? ' (main effort)' : ''}`);
     const line = arr => arr.map((v, h) => `${h ? 'L' : 'M'}${sx(h).toFixed(1)} ${sy(v[c]).toFixed(1)}`).join('');
     const lt = el('path', { d: line(tru), class: 'fc-l true' }, svg);
     const lb = el('path', { d: line(bel), class: 'fc-l bel' }, svg);
     if (draw) { strokeIn(lt, c * 80); strokeIn(lb, 200 + c * 80); }
     el('line', { x1: sx(hour), x2: sx(hour), y1, y2: y0, class: 'fc-now' }, svg);
   }
+  svg.setAttribute('aria-label', `Four small charts, one per road: true ${foe} strength (solid) and the ${foe} strength you had seen (dashed), in combat points, hour by hour from ${hhmm(0)} to ${hhmm(T)}`);
 }
 
 /** A line drawing itself in (first view of the review only). The dashed line keeps its dashes. */
@@ -106,7 +120,7 @@ function fogView(rows, me) {
   }
   const by = Object.fromEntries(rows.map(r => [r.key, r]));
   const d = Math.round((by.you.p - by.seer.p) * 100);
-  $('fog-sum').innerHTML = `<b>What hiding, feints and bait were worth to you:</b> ${d >= 0 ? '+' : '−'}${Math.abs(d)} points `
+  $('fog-sum').innerHTML = `<b>What hiding, feints and bait were worth to you:</b> ${d >= 0 ? '+' : '−'}${Math.abs(d)} percentage point${Math.abs(d) === 1 ? '' : 's'} `
     + `(your orders won ${pct(by.you.p)} of replays against the commander you played, ${pct(by.seer.p)} against one who sees everything). `
     + `The scripted ${me === 'blue' ? 'defender' : 'attacker'} won ${pct(by.doc.p)} here, ${pct(by.docT.p)} with perfect information. Your own game was one roll of these dice.`;
 }
@@ -145,7 +159,7 @@ export function createAAR({ onHour, onAgain, onNew }) {
       ctrl?.abort();
       ctrl = new AbortController();
       $('aar-fog').innerHTML = '<p class="fine num" id="fog-prog">Running replays…</p>';
-      $('fog-sum').textContent = '';
+      $('fog-sum').innerHTML = '<span class="muted">The replays are running; the comparison appears here.</span>';
       runAll(g, me, (done, total) => { const p = $('fog-prog'); if (p) p.textContent = `Running replays… ${done.toLocaleString('en-US')} of ${total.toLocaleString('en-US')}`; }, ctrl.signal)
         .then(rows => { if (rows) fogView(rows, me); });
     },

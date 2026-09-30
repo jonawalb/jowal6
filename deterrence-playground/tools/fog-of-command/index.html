@@ -26,43 +26,61 @@
     <section class="card fc-start" id="start" hidden aria-labelledby="start-t">
       <h2 id="start-t">Choose your side</h2>
       <div class="fc-sides">
-        <button type="button" class="fc-side blue" data-side="blue"><b>Defend</b><span>Blue brigade: hold Tarn Crossing until 22:00.</span><small>9 units, including artillery and 2 recon troops. Red is stronger and has a decoy.</small></button>
-        <button type="button" class="fc-side red" data-side="red"><b>Attack</b><span>Red force: take Tarn Crossing by 22:00.</span><small>13 units, including artillery, 2 recon troops and a decoy. Blue's reserve can be fooled. The board turns so you attack up the screen.</small></button>
+        <button type="button" class="fc-side blue" data-side="blue"><b>Defend</b><span>Blue brigade: hold Tarn Crossing until <span data-fill="end">18:00</span>.</span><small>9 units, including artillery and 2 recon troops. Red is stronger and has a decoy.</small></button>
+        <button type="button" class="fc-side red" data-side="red"><b>Attack</b><span>Red force: take Tarn Crossing by <span data-fill="end">18:00</span>.</span><small>13 units, including artillery, 2 recon troops and a decoy. Blue's reserve can be fooled. The board turns so you attack up the screen.</small></button>
       </div>
-      <p class="fc-rules"><b>Each hour:</b> pick a unit and click where it should go; fire your artillery (the fixed battery in the map's bottom-right corner) at one sector; press <b>End hour</b>. You see the enemy only next to your own units.</p>
-      <p class="fine">Keys: <b>1–9</b> pick a unit, <b>A</b> artillery, <b>G</b> give ground or hold, <b>Tab</b> to a sector and <b>Enter</b> to send, arrow keys between sectors, <b>N</b> ends the hour, <b>U</b> undoes.</p>
+      <p class="fc-rules"><b>Each hour:</b> pick a unit and click where it should go; fire your artillery (the fixed battery in the map's bottom-right corner) at one sector; press <b>End hour</b>. <span data-fill="turns">12 one-hour turns</span>. You see the enemy only next to your own units.</p>
+      <p class="fc-rules">New here? <button type="button" class="btn" data-tour="blue">Walk me through defending</button> <button type="button" class="btn" data-tour="red">Walk me through attacking</button></p>
+      <p class="fine">Keys: <b>number keys</b> (shown on each unit) pick a unit, <b>A</b> artillery, <b>G</b> give ground or hold, <b>Tab</b> to a sector and <b>Enter</b> to send, arrow keys between sectors, <b>N</b> ends the hour, <b>U</b> undoes, <b>Esc</b> clears the selection.</p>
     </section>
 
-    <div class="card fc-bar" id="bar" hidden>
-      <div class="fc-bar-top">
-        <p class="fc-clock"><b class="num" id="clock">06:00</b> <span class="muted" id="hourof"></span></p>
-        <p class="fc-mission" id="mission"></p>
-        <p class="fc-delay" id="delay"></p>
-        <div class="fc-go"><button type="button" class="btn" id="undo">Undo</button><button type="button" class="btn solid fc-end" id="end">End hour</button></div>
-      </div>
-      <div class="fc-units" id="units" role="group" aria-label="Your units"></div>
-      <div class="fc-sel" id="sel"></div>
-      <p class="fc-say" id="say" aria-live="polite"></p>
-    </div>
-
-    <div class="mapbox fc-mapbox" id="box">
-      <div class="fc-viewbar" id="viewbar" hidden>
-        <div class="fc-views" role="group" aria-label="What the map shows">
-          <button type="button" class="btn" data-view="belief" aria-pressed="true">What you saw</button>
-          <button type="button" class="btn" data-view="truth" aria-pressed="false">What was true</button>
+    <div class="fc-play" id="play">
+      <div class="card fc-obar" id="bar" hidden>
+        <div class="fc-bar-top">
+          <p class="fc-clock"><b class="num" id="clock">06:00</b> <span class="muted" id="hourof"></span></p>
+          <p class="fc-mission" id="mission"></p>
+          <p class="fc-delay" id="delay"></p>
+          <div class="fc-go"><button type="button" class="btn" id="undo">Undo</button><button type="button" class="btn solid fc-end" id="end">End hour</button></div>
+        </div>
+        <p class="fc-late" id="late" hidden></p>
+        <div class="fc-tabs" role="tablist" aria-label="Show">
+          <button type="button" role="tab" data-tab="map" aria-selected="true">Map</button>
+          <button type="button" role="tab" data-tab="units" aria-selected="false">Units</button>
+          <button type="button" role="tab" data-tab="reports" aria-selected="false">Reports</button>
         </div>
       </div>
-      <svg id="map" role="group" aria-label="Map of the fictional Varn valley: sixteen sectors in four rows and four columns, and Tarn Crossing behind them. When you attack, the board is turned so your side is at the bottom. Your artillery sits fixed in the bottom-right corner. Tab to a sector and press Enter to send the selected unit or fire there; arrow keys move between sectors."></svg>
-    </div>
-    <div class="fc-legend" aria-hidden="true">
-      <span><i class="lg-mine"></i>Your unit (bar = strength)</span>
-      <span><i class="lg-foe"></i>Enemy seen (~ full strength if not hit; % = seen exactly)</span>
-      <span><i class="lg-move"></i>Movement</span>
-      <span><i class="lg-route"></i>Order (dashed: starts next hour)</span>
-      <span><i class="lg-bat"></i>Your artillery (fixed, bottom right; click it to fire)</span>
-      <span><i class="lg-target"></i>Your fire</span>
-      <span><i class="lg-fight"></i>Fighting</span>
-      <span><i class="lg-bound"></i>Sector boundary: a planning line, not a physical feature</span>
+      <div class="fc-board">
+        <div class="fc-ucol" id="ucol" hidden>
+          <p class="eyebrow fc-uh">Your units</p>
+          <div class="fc-units" id="units" role="group" aria-label="Your units"></div>
+          <div class="fc-sel" id="sel"></div>
+          <p class="fine fc-keys" id="keys"></p>
+        </div>
+        <div class="fc-mcol">
+          <p class="fc-say" id="say" aria-live="polite"></p>
+          <div class="fc-viewbar" id="viewbar" hidden>
+            <div class="fc-views" role="group" aria-label="What the map shows">
+              <button type="button" class="btn" data-view="belief" aria-pressed="true">What you saw</button>
+              <button type="button" class="btn" data-view="truth" aria-pressed="false">What was true</button>
+            </div>
+          </div>
+          <div class="mapbox fc-mapbox" id="box">
+            <svg id="map" role="group" aria-label="Map of the fictional Varn valley: sixteen sectors in four rows and four columns, and Tarn Crossing behind them. When you attack, the board is turned so your side is at the bottom, and units not yet on the map wait in a staging tray below your entry edge. Your artillery sits fixed in the bottom-right corner. Tab to a sector and press Enter to send the selected unit or fire there; arrow keys move between sectors."></svg>
+          </div>
+          <div class="fc-legend" aria-hidden="true">
+            <span><i class="lg-mine"></i>Your unit (bar = strength)</span>
+            <span><i class="lg-foe"></i>Enemy seen (~ full strength if not hit; % = seen exactly)</span>
+            <span><i class="lg-move"></i>Movement</span>
+            <span><i class="lg-route"></i>Order (dashed: starts next hour)</span>
+            <span><svg class="lg-clk" viewBox="-8 -8 16 16"><circle r="6.5"/><path d="M0 -3.8V0L2.8 1.8"/></svg>Order starts next hour</span>
+            <span><i class="lg-idle">!</i>Order cancelled: needs a new one</span>
+            <span><i class="lg-bat"></i>Your artillery (fixed; click it to fire)</span>
+            <span><i class="lg-target"></i>Your fire</span>
+            <span><i class="lg-fight"></i>Fighting</span>
+            <span><i class="lg-bound"></i>Sector boundary (a planning line); roads join sector centres</span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <section class="card fc-aar" id="aar" hidden aria-labelledby="aar-t">
@@ -72,11 +90,11 @@
       <div class="fc-replay">
         <button type="button" class="btn" id="aar-play">Replay</button>
         <label class="slider"><span class="sl-h"><span>Hour shown on the map</span><output id="aar-h" class="num">06:00</output></span>
-          <input type="range" id="aar-range" min="0" max="16" step="1" value="0"></label>
+          <input type="range" id="aar-range" min="0" max="12" step="1" value="0"></label>
       </div>
       <p class="eyebrow">Enemy strength on each road: what you saw and what was true</p>
       <svg id="aar-chart" class="fc-chart" viewBox="0 0 640 300" role="img" aria-label="Four small charts, one per road, each showing the enemy strength you had seen and the true enemy strength, hour by hour"></svg>
-      <p class="fine">Dashed: the enemy strength you had seen by that hour (a decoy seen from next door counts as a tank; movement counts 6). Solid: the truth.</p>
+      <p class="fine" id="aar-chart-note">Strength is in combat points (a mech battalion is 10). A decoy seen from next door counts as a tank (12); movement counts 6.</p>
       <div class="fc-aar-cols">
         <div><p class="eyebrow">Artillery</p><dl class="readout" id="aar-arty"></dl></div>
         <div><p class="eyebrow">Replays of this scenario (500 each, fresh dice)</p><div id="aar-fog" class="fc-fog"></div></div>
@@ -89,34 +107,34 @@
     </section>
   </div>
 
-  <aside class="panel" aria-label="Status and reports">
+  <aside class="panel fc-side-panel" id="side" aria-label="Status and reports">
     <div class="sec"><div class="status" id="status" data-s="warn"><b id="st-t">Fog of Command</b><span id="st-s">Choose a side to start.</span></div></div>
-    <div class="sec fc-feedsec"><p class="eyebrow">Reports</p><ol class="fc-feed" id="feed"></ol></div>
+    <div class="sec fc-feedsec"><p class="eyebrow">Reports <small class="muted">(older hours folded)</small></p><ol class="fc-feed" id="feed"></ol></div>
   </aside>
 </main>
 
 <section class="below">
   <div class="col">
     <h2>How to play</h2>
-    <p><b>The goal.</b> Defending as Blue, hold Tarn Crossing until 22:00. Attacking as Red, take it: Red wins the moment it holds the crossing with no Blue unit there.</p>
-    <p><b>Each hour.</b> Pick a unit and click where it should go. The bar says whether this hour's orders start now or next hour. Fire your artillery at one sector (press A, or click your battery in the bottom-right corner of the map, then click the sector). The battery is fixed: it cannot move and cannot be attacked. Press End hour: units move, fights happen where both sides meet, and new reports come in.</p>
+    <p><b>The goal.</b> Defending as Blue, hold Tarn Crossing until <span data-fill="end">18:00</span>. Attacking as Red, take it: Red wins the moment it holds the crossing with no Blue unit there. The game is <span data-fill="turns">12 one-hour turns</span>; Red's units arrive in waves: <span data-fill="waves"></span>.</p>
+    <p><b>Each hour.</b> Pick a unit (click it in the list or on the map, or press its key) and click the sector where it should go; clicking an enemy marker sends it to that sector. Click the same sector again to step through a stack. The bar says whether this hour's orders start now or next hour; a clock on a unit means its order waits an hour. Attacking, your units that have not arrived wait in the staging tray below your entry edge: pick one and click a sector on the entry edge to choose where it comes in. Fire your artillery at one sector (press A, or click your battery in the bottom-right corner of the map, then click the sector). The battery is fixed: it cannot move and cannot be attacked. Press End hour: units move, fights happen where both sides meet, and new reports come in.</p>
     <p><b>What you see.</b> Enemy units in a sector you hold are seen exactly. In a sector next to one of your units you see their type, not their losses, and you miss one time in ten; a decoy looks like a tank battalion. Your recon troops also report movement two sectors out, an hour late. Fire watched by a recon troop next to the target shows exactly what is there and how hurt it is.</p>
     <p><b>Winning fights.</b> A unit that has sat in a sector for two hours defends as if it were three times its size. Attack where the defender is thin, or hit a defender that is already fighting from a second direction: then its defense counts for nothing. A unit set to <i>give ground</i> falls back one sector when a stronger enemy attacks it, and an enemy that follows it can run into a prepared position.</p>
-    <p><b>The other commander</b> acts only on what it can see. The Red commander sends its second echelon down the road that looks weakest and follows units that give ground. The Blue commander commits its reserve to the road that looks strongest, checks contacts with spotted fire first, and counterattacks enemy units that look weak.</p>
+    <p><b>The other commander</b> acts only on what it can see. The Red commander sends its second echelon down the road that looks weakest (it chooses at <span data-fill="pick">08:00</span>) and follows units that give ground. The Blue commander commits its reserve to the road that looks strongest, checks contacts with spotted fire first, and counterattacks enemy units that look weak.</p>
 
     <details class="fc-more" id="model">
       <summary>How the model works</summary>
       <p><b>Fog and friction.</b> Clausewitz wrote that a "great part of the information obtained in War is contradictory, a still greater part is false," and that "everything is very simple in War, but the simplest thing is difficult." Here the fog is what each side can see, and the friction is the order delay and travel time. Boyd's observe–orient–decide–act loop is the hour you play.</p>
-      <p><b>Combat.</b> Units in the same sector fight hour by hour under a stochastic version of Lanchester's square law: each side's losses are proportional to the other side's fighting power. The defender's posture multiplies its fighting value by <i>k</i>. The square law breaks even when the attacker's numbers exceed the defender's by √<i>k</i>, so <i>k</i> = 9 for a prepared defense and 6.25 for a hasty one reproduce the U.S. Army's historical minimum planning ratios of 3:1 and 2.5:1 (FM 5-0, Table B-1). In 10,000 one-on-one trials of the model, a prepared defender facing three times its strength holds 53.8% of the time, against FM 5-0's "over a 50 percent probability." A unit breaks at 50% losses, the same threshold for both sides, as in Mearsheimer's reconstruction of the 3:1 rule. Each unit also has a hidden quality factor.</p>
+      <p><b>Combat.</b> Units in the same sector fight hour by hour under a stochastic version of Lanchester's square law: each side's losses are proportional to the other side's fighting power. The defender's posture multiplies its fighting value by <i>k</i>. The square law breaks even when the attacker's numbers exceed the defender's by √<i>k</i>, so <i>k</i> = 9 for a prepared defense and 6.25 for a hasty one reproduce the U.S. Army's historical minimum planning ratios of 3:1 and 2.5:1 (FM 5-0, Table B-1). In 10,000 one-on-one trials of the model, a prepared defender facing three times its strength holds 56.6% of the time, against FM 5-0's "over a 50 percent probability." A unit breaks at 50% losses, the same threshold for both sides, as in Mearsheimer's reconstruction of the 3:1 rule. Each unit also has a hidden quality factor.</p>
       <p><b>Flanks.</b> Table B-1 puts a counterattack into a flank at 1:1, so a defender that is already fighting attackers from one sector and is then hit from a second sector fights at <i>k</i> = 1. FM 3-90 pairs a fixing force with an enveloping force this way. The "second sector" test is <span class="notional">notional</span>: the map has no facing.</p>
       <p><b>Giving ground.</b> A unit set to give ground falls back one sector, toward its own side, when a stronger enemy attacks it, losing half an hour of the enemy's fire as it breaks contact (<span class="notional">notional</span>). It imitates the delay in FM 3-90, which "trades space for time." Any unit that leaves a sector the enemy is in pays the same.</p>
-      <p><b>Artillery.</b> Each side fires one mission an hour at any sector. Every enemy unit there loses 5% of its strength (<span class="notional">notional</span>; area fire hits a crowded sector harder). The damage report is right 9 times in 10; otherwise it shows no effect, an exaggerated figure, or damage in an empty sector. A friendly recon troop in the target sector is hit half the time; one next to it watches the fall of shot and shows the sector exactly.</p>
+      <p><b>Artillery.</b> Each side fires one mission an hour at any sector. Every enemy unit there loses <span data-fill="arty">8%</span> of its strength (<span class="notional">notional</span>; area fire hits a crowded sector harder). The damage report is right 9 times in 10; otherwise it shows no effect, an exaggerated figure, or damage in an empty sector. A friendly recon troop in the target sector is hit half the time; one next to it watches the fall of shot and shows the sector exactly.</p>
       <p><b>The critics.</b> The 3:1 rule is a planning rule of thumb, and it is contested. Mearsheimer defends it for breakthrough battles only, in reply to Joshua Epstein, who offered historical evidence against it; Epstein answered in the same issue, and Dupuy disputed Mearsheimer's corrections to his combat data. Fits of Lanchester equations to the daily records of Kursk and the Ardennes found that none of the basic laws fit well (Lucas and Turkes; Lucas and Dinges). Treat the combat here as a teaching model with a sourced anchor, not a prediction.</p>
       <p><b>The replays.</b> The review reruns your orders on the same scenario with fresh dice, once against the commander you played and once against one who sees everything. The difference is what your hiding, feints and bait were worth: the logic of the value of information (Howard 1966).</p>
       <p><b>Left out.</b> Air power, engineers and obstacles, supply, night and weather, civilians, terrain effects beyond road times, and morale beyond the break threshold.</p>
       <div class="tablewrap"><table id="param-table"></table></div>
       <h3>Balance check</h3>
-      <p class="fine">Scripted strategies stand in for players. The doctrinal defender and the feint-and-mass attacker are meant to be what a decent human does; both win a little over half the time. Naive play loses. The rows comparing an opponent who sees everything show what deception is worth; the artillery rows show what recon spotting is worth.</p>
+      <p class="fine">Scripted strategies stand in for players. The doctrinal defender and the feint-and-mass attacker are meant to be what a decent human does; both win a little over half the time. Naive play loses. The numbers below are for the <span data-fill="turns">12 one-hour turns</span>. The rows comparing an opponent who sees everything show what deception is worth; the artillery rows show what recon spotting is worth.</p>
       <div id="balance"></div>
     </details>
   </div>

@@ -1,7 +1,7 @@
 // Fog of Command: the game engine. Pure functions over a plain state object, no DOM, so the same code
 // runs the game, the replays in the after-action review and the Monte Carlo balance script.
 // Either side can be the player (actions logged in g.log) or a scripted commander (a policy function).
-import { GAME, ORDER_DELAY, TYPES, COMBAT, FORCES, DISENGAGE, ARTILLERY } from '../data/params.js';
+import { GAME, ORDER_DELAY, ORDER_DELAY_MAXRUN, TYPES, COMBAT, FORCES, DISENGAGE, ARTILLERY } from '../data/params.js';
 import { NORTH, OBJ, NODE } from '../data/map.js';
 import { makeRng, STREAM } from './rng.js';
 import { fight, breaks, sum, power } from './combat.js';
@@ -45,8 +45,24 @@ export const dest = u => (u.route.length ? u.route[u.route.length - 1] : u.seg ?
 /** Delay for every order a side sends at hour t: one roll per side per hour, fixed by seed and dice. */
 export function orderDelay(g, side, t = g.t) {
   if (g.noDelay) return 0;
-  const r = makeRng(g.seed, 1000 + (side === 'blue' ? 0 : 50) + t, g.dice);
-  return ORDER_DELAY[r.pick(ORDER_DELAY.map(d => d[1]))][0];
+  const memo = (g._delay ||= { blue: [], red: [] })[side];
+  for (let h = memo.length; h <= t; h++) {
+    const r = makeRng(g.seed, 1000 + (side === 'blue' ? 0 : 50) + h, g.dice);
+    let d = ORDER_DELAY[r.pick(ORDER_DELAY.map(x => x[1]))][0];
+    // Cap on delayed hours in a row (ORDER_DELAY_MAXRUN): after that many, orders start at once.
+    const run = g.delayMaxRun ?? ORDER_DELAY_MAXRUN;   // g.delayMaxRun: override for the sensitivity check
+    if (d > 0 && run > 0 && h >= run && memo.slice(h - run, h).every(x => x > 0)) d = 0;
+    memo.push(d);
+  }
+  return memo[t];
+}
+
+/** First hour of the current run of delayed hours for a side (null if orders this hour start at once). */
+export function delaySince(g, side, t = g.t) {
+  if (!orderDelay(g, side, t)) return null;
+  let h = t;
+  while (h > 0 && orderDelay(g, side, h - 1)) h--;
+  return h;
 }
 
 /**
@@ -193,8 +209,12 @@ function move(g) {
     if (u.seg.left > 0) continue;
     u.from = u.seg.from; u.node = u.seg.to; u.seg = null; u.since = g.t + 1;
   }
-  // A unit that arrives where the enemy is stops there and fights.
-  for (const u of g.units) if (onGrid(u) && u.route.length && eff(g, other(u.side), u.node).length) u.route = [];
+  // A unit that arrives where the enemy is stops there and fights; the rest of its order is cancelled.
+  for (const u of g.units) {
+    if (!onGrid(u) || !u.route.length || !eff(g, other(u.side), u.node).length) continue;
+    g.events.push({ t: g.t, kind: 'halt', unit: u.id, side: u.side, node: u.node, dest: u.route[u.route.length - 1] });
+    u.route = [];
+  }
 }
 
 const homeDist = (side, n) => (side === 'blue' ? hops(n, OBJ) : Math.min(...NORTH.map(m => hops(n, m))));

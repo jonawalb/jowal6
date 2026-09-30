@@ -2,6 +2,7 @@
 // what was true), bait taken, flank attacks, decoys exposed, and units broken. Plain sentences.
 import { COLS } from '../data/map.js';
 import { NAME, DEF, hhmm, foeOf } from './panel.js';
+import { AI } from '../data/params.js';
 
 const shortList = ids => ids.map(id => DEF[id].short).join(', ');
 
@@ -9,7 +10,7 @@ const shortList = ids => ids.map(id => DEF[id].short).join(', ');
 export function planLine(g, me) {
   if (me === 'blue' && g.plan) {
     const p = g.plan;
-    return `Red's plan: main effort down the ${COLS[p.main]} road, a feint with the decoy on the ${COLS[p.feint]} road, recon on the ${COLS[p.probe]} road; the second echelon chose its road at 10:00.`;
+    return `Red's plan: main effort down the ${COLS[p.main]} road, a feint with the decoy on the ${COLS[p.feint]} road, recon on the ${COLS[p.probe]} road; the second echelon chose its road at ${hhmm(AI.red.secondDecide)}.`;
   }
   const res = g.events.filter(e => e.kind === 'decision' && e.side === 'blue' && (e.what === 'reserve' || e.what === 'recommit'));
   return res.length ? `Blue's reserve (Tank Bn and Weapons Coy) went to the ${res.map(e => `${COLS[e.col]} road at ${hhmm(e.t)}`).join(', then the ')}.` : 'Blue never committed its reserve (Tank Bn and Weapons Coy).';
@@ -63,9 +64,11 @@ export function moments(g, me) {
   // Breaks.
   const br = side => g.events.filter(e => e.kind === 'break' && e.side === side);
   const mb = br(me), fb = br(foe);
-  if (mb.length) out.push({ t: mb[0].t, tone: 'bad', text: `${mb.length} of your units broke: ${mb.map(e => `${DEF[e.unit].short} at ${NAME[e.node] || 'the front'} (${hhmm(e.t)})`).join(', ')}.` });
-  if (fb.length) out.push({ t: fb[0].t, tone: 'good', text: `${fb.length} enemy unit${fb.length > 1 ? 's' : ''} broke, the first at ${hhmm(fb[0].t)}.` });
-  return out.sort((a, b) => a.t - b.t).slice(0, 12);
+  // One line per hour in which units broke, listed under that hour.
+  const byHour = es => [...new Set(es.map(e => e.t))].map(t => [t, es.filter(e => e.t === t)]);
+  for (const [t, es] of byHour(mb)) out.push({ t, tone: 'bad', text: `${es.length > 1 ? `${es.length} of your units broke` : 'Your unit broke'}: ${es.map(e => `${DEF[e.unit].short} at ${NAME[e.node] || 'the front'}`).join(', ')}.` });
+  for (const [t, es] of byHour(fb)) out.push({ t, tone: 'good', text: `${es.length > 1 ? `${es.length} enemy units broke` : 'An enemy unit broke'}${es.every(e => NAME[e.node]) ? ` at ${[...new Set(es.map(e => NAME[e.node]))].join(' and ')}` : ''}.` });
+  return out.sort((a, b) => a.t - b.t).slice(0, 16);
 }
 
 function firstSeen(g, side, id) {

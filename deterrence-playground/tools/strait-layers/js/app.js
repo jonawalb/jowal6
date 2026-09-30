@@ -12,6 +12,8 @@ import { PRESETS, AS_OF, summarize, renderStats, drawTimeline, drawOverlay, hove
 import { readHash, writeHash } from './hash.js';
 import { addExportBar } from '../../../shared/js/export.js';
 import { TSM } from '../../../shared/data/tsm.js';
+import * as fx from './fx.js';
+import { widths } from './fxbars.js';
 
 const $ = id => document.getElementById(id);
 const BOXES = { region: null, strait: [117.3, 21.6, 122.8, 26.8] };
@@ -44,6 +46,7 @@ const map = createMap($('map'), {
   onUnitDrag: (key, p) => { S[key].free = p; stopPlay(); render(); },
 });
 const tour = createTour($('mapbox'), applyPatch);
+fx.chart($('map'), 'map', null); // first view: the map's layers draw in
 
 const unitFor = m => (m === 'crossing' ? 'red' : m === 'activity' ? null : 'blue');
 const routesFor = u => (u === 'red' ? RED_ROUTES : BLUE_ROUTES);
@@ -57,6 +60,7 @@ function mountPanel() {
   document.querySelectorAll('.tabs [data-mode]').forEach(b => b.setAttribute('aria-selected', b.dataset.mode === S.mode));
   document.body.dataset.mode = S.mode;
   mountLayers();
+  fx.stagger(p, '.sec');
   const u = unitFor(S.mode);
   if (u && $('routes')) {
     $('routes').querySelectorAll('button').forEach(b => b.onclick = () => { S[u].route = +b.dataset.route; S[u].free = null; S[u].t = 0; resetProfile(); render(); });
@@ -109,6 +113,7 @@ function stopPlay() { S.playing = false; cancelAnimationFrame(raf); const b = $(
 function statusBox(st) {
   const b = $('status'); if (!b) return;
   b.dataset.s = st.s; b.innerHTML = `<b>${st.b}</b><span>${st.t}</span>`;
+  fx.changed(b);
 }
 function chainBox(states) {
   const c = $('chain'); if (!c) return;
@@ -146,8 +151,9 @@ function renderBlue() {
   map.setLines(r.cleared.map(l => ({ from: l.c, to: p, col: l.col })));
   statusBox(st);
   const route = BLUE_ROUTES[S.blue.route];
-  drawProfile($('profile'), { key: `blue|${S.blue.route}|${JSON.stringify(S.cm)}`, pts: route.pts, rows: profileRows(S.cm),
-    t: S.blue.free ? null : S.blue.t, onScrub: t => { S.blue.free = null; S.blue.t = t; stopPlay(); render(); } });
+  const pk = `blue|${S.blue.route}|${JSON.stringify(S.cm)}`;
+  fx.chart($('profile'), pk, () => drawProfile($('profile'), { key: pk, pts: route.pts, rows: profileRows(S.cm),
+    t: S.blue.free ? null : S.blue.t, onScrub: t => { S.blue.free = null; S.blue.t = t; stopPlay(); render(); } }));
   $('profile-title').textContent = `Route profile · ${route.n}${S.blue.free ? ' (group placed off-route)' : ''}`;
   return { p, r };
 }
@@ -167,6 +173,9 @@ function renderSalvoMode() {
   const { r } = renderBlue();
   const res = runSalvo(S.salvo, r.cleared.map(l => l.id));
   $('salvo').innerHTML = renderSalvo(res, S.salvo);
+  fx.count($('salvo'), '.salvo-sum b');
+  widths($('salvo'), '.mag span');
+  fx.stagger($('salvo'), '.wave');
 }
 
 function renderCrossing() {
@@ -182,12 +191,14 @@ function renderCrossing() {
   syncScrub('red');
   $('why').innerHTML = whyRed(r);
   $('exposure').innerHTML = renderExposure(route, S.rc, S.knots);
+  fx.count($('exposure'), 'dd');
   const notes = [`${fmt(r.beachKm)} km to the landing area.`];
   if (r.mines) notes.push('Inside the minefield off the landing area.');
   if (S.rc.supp > 0) notes.push(`PLA suppression leaves ${Math.round(r.surv * 100)}% of Taiwan's coastal launchers.`);
   $('notes').innerHTML = notes.map(n => `<li>${n}</li>`).join('');
-  drawProfile($('profile'), { key: `red|${S.red.route}|${JSON.stringify(S.rc)}`, pts: route.pts, rows: profileRowsRed(route, S.rc),
-    t: S.red.free ? null : S.red.t, onScrub: t => { S.red.free = null; S.red.t = t; stopPlay(); render(); } });
+  const pk = `red|${S.red.route}|${JSON.stringify(S.rc)}`;
+  fx.chart($('profile'), pk, () => drawProfile($('profile'), { key: pk, pts: route.pts, rows: profileRowsRed(route, S.rc),
+    t: S.red.free ? null : S.red.t, onScrub: t => { S.red.free = null; S.red.t = t; stopPlay(); render(); } }));
   $('profile-title').textContent = `Crossing profile · ${route.n}`;
 }
 
@@ -198,15 +209,17 @@ function renderActivity() {
   const s = summarize(from, to);
   map.setUnit('blue', null, { visible: false }); map.setUnit('red', null, { visible: false });
   map.setRoute(null); map.setLines([]);
-  drawOverlay(map.g.overlay, s, map.geo.adiz);
+  fx.chart(map.g.overlay, `${from}|${to}`, () => drawOverlay(map.g.overlay, s, map.geo.adiz));
+  fx.count(map.g.overlay, '.t-ccg-n');
   map.g.overlay.querySelectorAll('.ccg-bubble, .t-ccg, .t-ccg-n').forEach(e => { e.style.display = S.show.geo.ccg ? '' : 'none'; });
   map.g.overlay.querySelectorAll('.transit-line, .t-transit').forEach(e => { e.style.display = S.show.geo.transitline ? '' : 'none'; });
   $('stats').innerHTML = renderStats(s);
+  fx.count($('stats'), '.tile b, .delta');
   document.querySelectorAll('#presets button').forEach(b => b.setAttribute('aria-pressed', JSON.stringify(PRESETS.find(p => p.k === b.dataset.preset).r()) === JSON.stringify(S.range)));
   if (!timeline) {
-    timeline = drawTimeline($('timeline'), from, to,
+    timeline = fx.chart($('timeline'), 'tl', () => drawTimeline($('timeline'), from, to,
       (a, b, live, day) => { if (!live) heldDay = day; S.range = [a, b]; renderActivity(); if (!live) writeHash(S); },
-      (row, ccg, tr) => { $('tl-tip').innerHTML = row ? hoverText(row, ccg, tr) : heldDay ? dayText(heldDay) : TL0; });
+      (row, ccg, tr) => { $('tl-tip').innerHTML = row ? hoverText(row, ccg, tr) : heldDay ? dayText(heldDay) : TL0; }));
   }
   timeline.setWindow(from, to);
 }
@@ -262,6 +275,7 @@ $('basetable').innerHTML = BASES.map(b => {
   const reach = PLA.filter(l => ['srbm', 'df21', 'df26', 'ascm'].includes(l.id) && distKm(l.c, b.c) <= l.r);
   return `<tr><td>${b.n}</td><td class="num">${fmt(distKm(FUJIAN, b.c))} km</td><td>${reach.length ? reach.map(l => `<span class="pill" style="color:var(${l.col})">${l.name}</span>`).join('') : '<span class="muted">none modeled</span>'}</td></tr>`;
 }).join('');
+fx.stagger($('basetable'), 'tr');
 
 // Export: the map in any mode; the activity timeline with its daily rows
 const MODE_NAME = { approach: 'Blue approach', crossing: 'PLA crossing', salvo: 'Salvo math', activity: 'TSM activity' };

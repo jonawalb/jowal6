@@ -6,6 +6,8 @@ import { createLocator } from './map.js';
 import { PORTS } from './astro.js';
 import { createTour } from './tour.js';
 import { PROVENANCE } from '../data/provenance.js';
+import * as fx from './fx.js';
+import { widths } from './fxbars.js';
 
 const $ = id => document.getElementById(id);
 const pct = v => Math.round(v * 100) + '%';
@@ -101,15 +103,24 @@ function render() {
   const ev = evaluate(s), open = windows(ev.go, s.n), agg = aggregate(open), tc = stormExposure(s.r);
   const best = bestSpan(agg.week, 4);
   $('hm-note').textContent = `${POINTS[s.p].label} · waves ≤ ${s.h.toFixed(2)} m · wind ≤ ${s.w} kt · ${s.n}-day window`;
-  drawHeatmap($('heatmap'), $('tip-hm'), agg, s, { onPick: pickWeek, stormYears: tc.grid });
-  drawWeekChart($('weekchart'), $('tip-wk'), agg, tc.share, s, { onPick: pickWeek });
-  const rank = drawMonthChart($('monthchart'), agg);
+  const lim = `${s.p}|${s.h}|${s.w}|${s.n}|${s.r}|${s.fog}|${s.st}`;
+  fx.chart($('heatmap'), 'hm', () => drawHeatmap($('heatmap'), $('tip-hm'), agg, s, { onPick: pickWeek, stormYears: tc.grid }));
+  fx.chart($('weekchart'), lim, () => drawWeekChart($('weekchart'), $('tip-wk'), agg, tc.share, s, { onPick: pickWeek }));
+  const rank = fx.chart($('monthchart'), lim, () => drawMonthChart($('monthchart'), agg));
+  fx.count($('monthchart'), '.mval');
   $('claim-text').innerHTML = claimText(agg, rank, best);
-  renderDrill($('drill'), s, ev);
-  locator.update(s);
+  fx.chart($('dr-wind'), `${s.p}|${s.wk}|${s.w}`, () => fx.chart($('dr-wave'), `${s.p}|${s.wk}|${s.h}`,
+    () => fx.chart($('dr-tide'), `${s.wk}|${s.yr}|${s.port}`, () => renderDrill($('drill'), s, ev))));
+  widths($('dr-tests'), '.tb b');
+  fx.count($('dr-tests'), 'em.num');
+  fx.count($('dr-storms'), 'b.num');
+  fx.count($('dr-fog'), 'b.num');
+  fx.stagger($('dr-rows'), 'tr');
+  fx.chart($('locator'), String(s.r), () => locator.update(s));
   const wkv = agg.week[s.wk], stt = $('status');
   stt.dataset.s = wkv >= 0.5 ? 'good' : wkv >= 0.2 ? 'warn' : 'bad';
   $('st-b').textContent = `${pct(wkv)} of days open a window`;
+  fx.count($('status'), '#st-b');
   $('st-s').textContent = `Week of ${weekLabel(s.wk)} (${monthOf(s.wk)}), ${YEARS[0]} to ${YEARS[YEARS.length - 1]}. April ${pct(agg.month[3])}, October ${pct(agg.month[9])}; best 4 weeks from ${weekLabel(best.start).split(' to ')[0]}.`;
   writeHash();
 }

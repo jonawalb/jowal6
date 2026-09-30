@@ -6,7 +6,7 @@ export const SOURCE_NAMES = { MFA: 'Foreign Ministry', MND: 'Defense Ministry', 
 export const TR_LABEL = ['TSM translation', 'Official English', 'Machine translation (Google)', 'Chinese only (no official English)',
   'Machine translation (Claude)'];
 export const FIRST_WEEK = '2022-06-27';
-export const LAST_DAY = '2026-09-28';
+export const LAST_DAY = '2026-09-30';
 export const RANGES = {
   all: { label: 'Jul 2022 – Sep 2026', from: '2022-06-27', to: LAST_DAY },
   y25: { label: '2025 – Sep 2026', from: '2024-12-30', to: LAST_DAY },
@@ -49,24 +49,28 @@ export function phraseMatcher(phrase) {
 // row THEMES.length is the phrase row (only when a phrase is active). Theme rules read the
 // English answer, so the weekly total (the share denominator) counts only statements with
 // English text; a Chinese phrase search counts statements with Chinese text instead.
+// held[w] counts every statement TSM holds that week from the selected sources, with or
+// without English, so a week of Chinese-only items is not drawn as "none held".
 export function aggregate(recs, { sources, matcher }) {
   const on = new Set(sources);
   const nRows = THEMES.length + 1;
   const cells = Array.from({ length: nRows }, () => Array.from({ length: N_WEEKS }, () => []));
   const total = new Array(N_WEEKS).fill(0);
+  const held = new Array(N_WEEKS).fill(0);
   const bySource = Object.fromEntries(SOURCES.map(s => [s, new Array(N_WEEKS).fill(0)]));
   let nMatch = 0;
   for (const r of recs) {
     if (r.w < 0 || r.w >= N_WEEKS) continue;
     bySource[r.s][r.w]++;
     if (!on.has(r.s)) continue;
+    held[r.w]++;
     if (!(matcher?.zh ? r.zh : r.a)) continue;
     total[r.w]++;
     if (matcher && !matcher.test(r)) continue;
     if (matcher) { cells[THEMES.length][r.w].push(r.i); nMatch++; }
     for (let k = 0; k < THEMES.length; k++) if (r.th & (1 << k)) cells[k][r.w].push(r.i);
   }
-  return { cells, total, bySource, nMatch };
+  return { cells, total, held, bySource, nMatch };
 }
 
 export function valueOf(agg, row, w, metric) {

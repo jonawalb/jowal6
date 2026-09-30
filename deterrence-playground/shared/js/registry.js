@@ -177,6 +177,8 @@ export const ALL_TOOLS = [
     blurb: "What the Kremlin and Iran's Foreign Ministry keep saying, week by week since 2021: recurring formulas from 'special military operation' to 'Zionist regime' as a heatmap, with every quote one click from its source." },
   { slug: 'raid-night', cat: 'models', also: ['ukraine', 'mideast'], sites: ['deterrence'], title: 'Raid Night', status: 'live',
     blurb: 'Defend four notional cities through three real-time waves of drones and missiles modelled on real raids, and watch the cost exchange as your interceptors run out.' },
+  { slug: 'matrix-game', cat: 'models', also: ['ukraine'], sites: ['deterrence'], title: 'Baltic Matrix Game', status: 'live',
+    blurb: 'An argument-based matrix wargame of a fictional Narva crisis: argue an action with three reasons, face counter-arguments, and roll 2d6 over six turns.' },
 ];
 
 export const onSite = (x, site = SITE) => !x.sites || x.sites.includes(site);

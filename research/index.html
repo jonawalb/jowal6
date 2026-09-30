@@ -13,6 +13,16 @@
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="stylesheet" href="/style.css">
+    <style>
+        .research-subnav { position: sticky; top: var(--nav-h); z-index: 50; display: flex; gap: 4px 22px; flex-wrap: wrap;
+            margin: -24px 0 36px; padding: 10px 0; background: var(--bg-alt); border-bottom: 1px solid var(--border);
+            font-size: .82rem; letter-spacing: .04em; text-transform: uppercase; }
+        .research-subnav a { color: var(--text-muted); text-decoration: none; padding: 2px 0; border-bottom: 2px solid transparent; }
+        .research-subnav a:hover, .research-subnav a:focus-visible { color: var(--green-800); }
+        .research-subnav a[aria-current="true"] { color: var(--green-800); border-bottom-color: var(--green-600); }
+        #commentary, #academic, #tsm, #working-projects, #presentations { scroll-margin-top: calc(var(--nav-h) + 64px); }
+        @media (max-width: 700px) { .research-subnav { flex-wrap: nowrap; overflow-x: auto; gap: 18px; font-size: .75rem; margin-top: -16px; } .research-subnav a { white-space: nowrap; } }
+    </style>
 </head>
 <body>
 
@@ -37,11 +47,18 @@
 <section class="section section-alt" id="research">
     <div class="container">
         <h2 class="section-title">Research</h2>
+        <nav class="research-subnav" aria-label="Sections of this page">
+            <a href="#commentary">Commentary</a>
+            <a href="#academic">Academic</a>
+            <a href="#tsm">Taiwan Security Monitor</a>
+            <a href="#working-projects">Working Projects</a>
+            <a href="#presentations">Presentations</a>
+        </nav>
         <div class="research-columns">
 
             <!-- Column 1: Commentary -->
             <div class="research-col">
-                <h3 class="pub-category-title">Commentary</h3>
+                <h3 class="pub-category-title" id="commentary">Commentary</h3>
                 <div class="pub-list">
                     <div class="pub-item">
                         <span class="pub-badge">2026</span>
@@ -118,7 +135,7 @@
 
             <!-- Column 2: Academic / Peer-Reviewed -->
             <div class="research-col">
-                <h3 class="pub-category-title">Academic / Peer-Reviewed</h3>
+                <h3 class="pub-category-title" id="academic">Academic / Peer-Reviewed</h3>
                 <div class="pub-list">
                     <div class="pub-item">
                         <span class="pub-badge">2026</span>
@@ -140,7 +157,7 @@
 
             <!-- Column 3: Taiwan Security Monitor -->
             <div class="research-col">
-                <h3 class="pub-category-title">Taiwan Security Monitor</h3>
+                <h3 class="pub-category-title" id="tsm">Taiwan Security Monitor</h3>
                 <div class="pub-list">
                     <div class="pub-item">
                         <span class="pub-badge">2026</span>
@@ -167,9 +184,65 @@
 
         </div>
 
+        <!-- Working Projects subsection -->
+        <div class="research-subsection">
+            <h3 class="research-sub-title" id="working-projects">Working Projects</h3>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <h4>Secret Weapons</h4>
+                    <p class="project-desc">Strategic signaling decisions in military technology. Models when states choose to conceal or reveal weapons capabilities and the downstream effects on deterrence and adversary behavior.</p>
+                    <div class="project-methods">
+                        <span>Formal modeling</span><span>Historical cases</span><span>Signaling theory</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <h4>Betting on War</h4>
+                    <p class="project-desc">A multi-paper project that looks at the effect that geopolitical betting markets have on costly signaling and crisis bargaining, along with negotiations and information manipulation.</p>
+                    <div class="project-methods">
+                        <span>Data analysis</span><span>Formal modeling</span><span>Game theory</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <h4>Affective Intelligence & Disinformation</h4>
+                    <p class="project-desc">Why disinformation "sticks." Investigates the role of emotional processing and affective intelligence in making false narratives resistant to correction.</p>
+                    <div class="project-methods">
+                        <span>Experimental design</span><span>Survey data</span><span>Psychology</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <h4>The Psychology of Disinformation as a Bayesian Process</h4>
+                    <p class="project-desc">Combining cutting-edge neuropsychology research with statistics, formal modeling, computing, and policy work to analyze how the brain reacts to information and how reasoning is part of the Bayesian process when it comes to making decisions under information.</p>
+                    <div class="project-methods">
+                        <span>Psychology</span><span>fMRI</span><span>Formal modeling</span><span>Neuroscience</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <h4>AI Early Warning System</h4>
+                    <p class="project-desc">Machine learning model serving as an early-warning detection system for military exercises and naval movements in the Indo-Pacific, built on satellite imagery and OSINT data.</p>
+                    <div class="project-methods">
+                        <span>Machine learning</span><span>Satellite imagery</span><span>Geospatial data</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <h4>Cognitive Warfare & Disinformation in the Indo-Pacific</h4>
+                    <p class="project-desc">Multiple projects examining how China employs cognitive warfare strategies, algorithmic amplification, and disinformation to shape perceptions and influence decision-making across the Indo-Pacific region.</p>
+                    <div class="project-methods">
+                        <span>Content analysis</span><span>Network analysis</span><span>Case studies</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <h4>Economic Coercion & Resilience</h4>
+                    <p class="project-desc">Comparative analysis of how targeted states respond to economic coercion, examining the THAAD dispute and Australia's experience with Chinese trade measures.</p>
+                    <div class="project-methods">
+                        <span>Comparative case study</span><span>Trade data</span><span>Process tracing</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Presentations subsection -->
         <div class="research-subsection">
-            <h3 class="research-sub-title">Presentations</h3>
+            <h3 class="research-sub-title" id="presentations">Presentations</h3>
             <div class="pres-columns">
                 <div class="pres-category">
                     <h4 class="pres-heading">Conference Presentations</h4>
@@ -239,63 +312,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Working Projects subsection -->
-        <div class="research-subsection">
-            <h3 class="research-sub-title">Working Projects</h3>
-            <div class="projects-grid">
-                <div class="project-card">
-                    <h4>Secret Weapons</h4>
-                    <p class="project-desc">Strategic signaling decisions in military technology. Models when states choose to conceal or reveal weapons capabilities and the downstream effects on deterrence and adversary behavior.</p>
-                    <div class="project-methods">
-                        <span>Formal modeling</span><span>Historical cases</span><span>Signaling theory</span>
-                    </div>
-                </div>
-                <div class="project-card">
-                    <h4>Betting on War</h4>
-                    <p class="project-desc">A multi-paper project that looks at the effect that geopolitical betting markets have on costly signaling and crisis bargaining, along with negotiations and information manipulation.</p>
-                    <div class="project-methods">
-                        <span>Data analysis</span><span>Formal modeling</span><span>Game theory</span>
-                    </div>
-                </div>
-                <div class="project-card">
-                    <h4>Affective Intelligence & Disinformation</h4>
-                    <p class="project-desc">Why disinformation "sticks." Investigates the role of emotional processing and affective intelligence in making false narratives resistant to correction.</p>
-                    <div class="project-methods">
-                        <span>Experimental design</span><span>Survey data</span><span>Psychology</span>
-                    </div>
-                </div>
-                <div class="project-card">
-                    <h4>The Psychology of Disinformation as a Bayesian Process</h4>
-                    <p class="project-desc">Combining cutting-edge neuropsychology research with statistics, formal modeling, computing, and policy work to analyze how the brain reacts to information and how reasoning is part of the Bayesian process when it comes to making decisions under information.</p>
-                    <div class="project-methods">
-                        <span>Psychology</span><span>fMRI</span><span>Formal modeling</span><span>Neuroscience</span>
-                    </div>
-                </div>
-                <div class="project-card">
-                    <h4>AI Early Warning System</h4>
-                    <p class="project-desc">Machine learning model serving as an early-warning detection system for military exercises and naval movements in the Indo-Pacific, built on satellite imagery and OSINT data.</p>
-                    <div class="project-methods">
-                        <span>Machine learning</span><span>Satellite imagery</span><span>Geospatial data</span>
-                    </div>
-                </div>
-                <div class="project-card">
-                    <h4>Cognitive Warfare & Disinformation in the Indo-Pacific</h4>
-                    <p class="project-desc">Multiple projects examining how China employs cognitive warfare strategies, algorithmic amplification, and disinformation to shape perceptions and influence decision-making across the Indo-Pacific region.</p>
-                    <div class="project-methods">
-                        <span>Content analysis</span><span>Network analysis</span><span>Case studies</span>
-                    </div>
-                </div>
-                <div class="project-card">
-                    <h4>Economic Coercion & Resilience</h4>
-                    <p class="project-desc">Comparative analysis of how targeted states respond to economic coercion, examining the THAAD dispute and Australia's experience with Chinese trade measures.</p>
-                    <div class="project-methods">
-                        <span>Comparative case study</span><span>Trade data</span><span>Process tracing</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
 </section>
 
@@ -313,6 +329,21 @@
     </div>
 </footer>
 
+<script>
+// Underline the section of this page currently in view.
+(() => {
+    const links = [...document.querySelectorAll('.research-subnav a')];
+    const targets = links.map(a => document.querySelector(a.getAttribute('href')));
+    const mark = () => {
+        const y = innerHeight * 0.35; let cur = 0;
+        // The latest heading above the line wins; headings on the same row (the three columns) count as one, first first.
+        let best = -Infinity;
+        targets.forEach((t, i) => { const top = t ? t.getBoundingClientRect().top : Infinity; if (top < y && top > best + 8) { best = top; cur = i; } });
+        links.forEach((a, i) => a.setAttribute('aria-current', String(i === cur)));
+    };
+    addEventListener('scroll', mark, { passive: true }); mark();
+})();
+</script>
 <script src="/script.js"></script>
 </body>
 </html>

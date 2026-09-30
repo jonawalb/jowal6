@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Game Theory Gallery</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .g-eq { font: italic 400 38px var(--display); fill: var(--paper); }
+  .g-mk { font: italic 400 26px var(--display); fill: var(--paper); text-anchor: middle; }
+  .g-tick { font: 400 15px var(--mono); fill: var(--muted); text-anchor: middle; font-variant-numeric: tabular-nums; }
+  .g-val { font: 600 20px var(--mono); fill: var(--amber); font-variant-numeric: tabular-nums; }
+  .g-pay { font: 600 38px var(--mono); fill: var(--paper); text-anchor: middle; font-variant-numeric: tabular-nums; }
+  .g-hd { font: 400 16px var(--mono); fill: var(--muted); letter-spacing: .08em; text-transform: uppercase; text-anchor: middle; }
+  .g-name { font: italic 500 60px var(--display); fill: var(--paper); text-anchor: middle; }
+  .g-q { font: 400 32px var(--display); fill: var(--paper); }
+  .g-step { font: 400 22px var(--display); fill: var(--paper); }
+  .g-model { font: italic 400 27px var(--display); fill: var(--paper); }
+  .g-who { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of the Game Theory Gallery: Fearon's bargaining range widens, shrinks and closes, a Stag Hunt payoff table turns into a Prisoner's Dilemma, and a model opens with the choice to learn about it first or go straight in"><title>Game Theory Gallery</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Helpers -------------------------------------------------------------------------------------------
+const scene = el('g', {}, svg);
+const T = (x, y, cls, s, a = {}, p = scene) => { const n = el('text', { x, y, class: cls, ...a }, p); if (s != null) n.textContent = s; return n; };
+const op = (n, v) => n.setAttribute('opacity', Math.max(0, Math.min(1, v)).toFixed(3));
+const tr = (n, x, y, s = 1) => n.setAttribute('transform', `translate(${x.toFixed(1)},${y.toFixed(1)}) scale(${s.toFixed(4)})`);
+const fade = (t, a, b, d = .4) => Math.min(ease.out(seg(t, a, a + d)), 1 - seg(t, b - d, b));
+const f2 = v => (Math.round(v * 100) / 100).toFixed(2);
+/** Rich text: parts are strings or [text, 'sub'|'hot'|'it']. */
+function rich(parent, x, y, cls, parts, a = {}) {
+  const n = T(x, y, cls, null, a, parent);
+  for (const p of parts) {
+    const [s, k] = typeof p === 'string' ? [p, ''] : p;
+    const ts = el('tspan', {}, n); ts.textContent = s;
+    if (k === 'sub') { ts.setAttribute('baseline-shift', 'sub'); ts.setAttribute('font-size', '68%'); }
+    if (k === 'hot') ts.setAttribute('class', 'hot');
+    if (k === 'm' || k === 'msub') { ts.setAttribute('style', 'text-transform:none;font-family:var(--display);font-style:italic;letter-spacing:0;font-size:' + (k === 'm' ? '22px' : '15px')); if (k === 'msub') ts.setAttribute('baseline-shift', 'sub'); }
+  }
+  return n;
+}
+
+// ---- Fearon 1995 (tools/game-theory-gallery/js/models/fearon95.js) --------------------------------------
+// solveRange: lo = p − c_A; hi = 1 − r_B + c_B, where r_B = 1 − p unless the states disagree (then r_B = r).
+// The settings follow the model's own "Start here" walk-through (data/primers-a.js, steps 1–4):
+// costs 0.1 (band 0.40–0.60), 0.2 (0.30–0.70), 0.02 (0.48–0.52), then p = 0.6, r = 0.7: the band closes.
+function fearonAt(t) {
+  let ca = .1, cb = .1, p = .5, r = .5, opt = 0;
+  const up = ease.inOut(seg(t, 4.0, 4.7)), dn = ease.inOut(seg(t, 5.1, 5.8)), op2 = ease.inOut(seg(t, 6.3, 7.1));
+  ca = cb = lerp(lerp(lerp(.1, .2, up), .02, dn), .1, op2);
+  if (t >= 6.2) { opt = 1; p = lerp(.5, .6, op2); r = lerp(.5, .7, op2); }
+  const rB = opt ? r : 1 - p, lo = p - ca, hi = 1 - rB + cb;
+  return { ca, cb, p, r, opt, lo, hi, empty: hi < lo - 1e-9 };
+}
+
+const fear = el('g', {}, scene);
+const X0 = 300, XW = 1000, SY = 470, SH = 46;
+const sx = v => X0 + v * XW;
+T(800, 232, 't-label', 'Fearon 1995 · the bargaining range', { 'text-anchor': 'middle' }, fear);
+const eq1 = rich(fear, 800, 300, 'g-eq', ['Deals both prefer to war:  (', 'p − c', ['A', 'sub'], ',  p + c', ['B', 'sub'], ')'], { 'text-anchor': 'middle' });
+const eq2 = rich(fear, 800, 300, 'g-eq', ['Deals each side thinks beat war:  (', 'p − c', ['A', 'sub'], ',  1 − r + c', ['B', 'sub'], ')'], { 'text-anchor': 'middle' });
+el('rect', { x: X0, y: SY, width: XW, height: SH, rx: 4, fill: 'var(--ink-2)', stroke: 'var(--line)', 'stroke-width': 1.5 }, fear);
+const band = el('rect', { y: SY, height: SH, rx: 3, fill: 'var(--green)', filter: 'url(#kit-glow)' }, fear);
+const gap = el('rect', { y: SY + 15, height: 16, rx: 3, fill: 'var(--red)', filter: 'url(#kit-glow)' }, fear);
+const bandLab = T(800, SY - 62, 't-label', '', { 'text-anchor': 'middle' }, fear);
+bandLab.style.fill = 'var(--green)';
+[0, .25, .5, .75, 1].forEach(v => {
+  el('line', { x1: sx(v), x2: sx(v), y1: SY + SH + 6, y2: SY + SH + 14, stroke: 'var(--muted)' }, fear);
+  T(sx(v), SY + SH + 36, 'g-tick', v.toFixed(2), {}, fear);
+});
+T(X0, SY + SH + 70, 't-label', 'B’s ideal (x = 0)', {}, fear);
+T(X0 + XW, SY + SH + 70, 't-label', 'A’s ideal (x = 1)', { 'text-anchor': 'end' }, fear);
+const mkLo = el('g', {}, fear), mkHi = el('g', {}, fear), mkP = el('g', {}, fear);
+el('line', { x1: 0, x2: 0, y1: -8, y2: SH + 8, stroke: 'var(--paper)', 'stroke-width': 2 }, mkLo);
+el('line', { x1: 0, x2: 0, y1: -8, y2: SH + 8, stroke: 'var(--paper)', 'stroke-width': 2 }, mkHi);
+rich(mkLo, 0, -18, 'g-mk', ['p − c', ['A', 'sub']]);
+const hiLab = rich(mkHi, 0, -18, 'g-mk', ['p + c', ['B', 'sub']]);
+const hiLab2 = rich(mkHi, 0, -18, 'g-mk', ['1 − r + c', ['B', 'sub']]);
+el('path', { d: 'M0,0 L-9,14 L9,14 Z', fill: 'var(--amber)' }, mkP);
+T(16, 16, 'g-mk', 'p', { style: 'text-anchor:start;font-size:24px;fill:var(--amber)' }, mkP);
+const noDeal = T(800, SY - 62, 't-label', 'Mutual optimism closes the range', { 'text-anchor': 'middle' }, fear);
+noDeal.style.fill = 'var(--red)';
+// The player's sliders (amber): c_A, c_B and, for the optimism step, B's estimate r.
+const SL = [
+  { lab: ['A’s cost of war  ', ['c', 'm'], ['A', 'msub']], lo: 0, hi: .5, x: 300 },
+  { lab: ['B’s cost of war  ', ['c', 'm'], ['B', 'msub']], lo: 0, hi: .5, x: 660 },
+  { lab: ['B’s own estimate  ', ['r', 'm']], lo: 0, hi: 1, x: 1020 },
+].map(S => {
+  const g = el('g', { transform: `translate(${S.x},700)` }, fear);
+  rich(g, 0, 0, 't-label', S.lab);
+  el('rect', { x: 0, y: 22, width: 280, height: 6, rx: 3, fill: 'var(--line)' }, g);
+  const fill = el('rect', { x: 0, y: 22, height: 6, rx: 3, fill: 'var(--amber)' }, g);
+  const knob = el('circle', { cy: 25, r: 11, fill: 'var(--amber)', filter: 'url(#kit-glow)' }, g);
+  const val = T(280, 0, 'g-val', '', { 'text-anchor': 'end' }, g);
+  return { ...S, g, fill, knob, val };
+});
+const setSlider = (S, v, moving) => {
+  const w = 280 * (v - S.lo) / (S.hi - S.lo);
+  S.fill.setAttribute('width', w.toFixed(1)); S.knob.setAttribute('cx', w.toFixed(1));
+  S.knob.setAttribute('r', moving ? 13 : 10); S.val.textContent = f2(v);
+};
+
+// ---- Jervis 1978 (tools/game-theory-gallery/js/models/jervis78.js) --------------------------------------
+// Stag Hunt preset: CC 4, DC 3, DD 2, CD 1. Moving DC past CC reorders the payoffs to DC > CC > DD > CD,
+// which the model classifies as a Prisoner's Dilemma. Cells read (row, column), as on the page.
+const GAME_NAMES = { stag: 'Stag Hunt', pd: 'Prisoner’s Dilemma', chicken: 'Chicken', deadlock: 'Deadlock', harmony: 'Harmony', other: 'Other ordering' };
+function classify({ cc, dc, dd, cd }) {
+  if (cc > dc && dc > dd && dd > cd) return 'stag';
+  if (dc > cc && cc > dd && dd > cd) return 'pd';
+  if (dc > cc && cc > cd && cd > dd) return 'chicken';
+  if (dc > dd && dd > cc) return 'deadlock';
+  if (cc >= dc && cd >= dd) return 'harmony';
+  return 'other';
+}
+function pureNE({ cc, dc, dd, cd }) {
+  const u = (a, b) => [[cc, cd], [dc, dd]][a][b], out = [];
+  for (let a = 0; a < 2; a++) for (let b = 0; b < 2; b++) if (u(a, b) >= u(1 - a, b) - 1e-9 && u(b, a) >= u(1 - b, a) - 1e-9) out.push(a * 2 + b);
+  return out;
+}
+const RANK = { stag: 'CC > DC > DD > CD', pd: 'DC > CC > DD > CD' };
+const dcAt = t => Math.round(lerp(3, 4.6, ease.inOut(seg(t, 8.7, 9.7))) * 10) / 10; // slider step 0.1
+let tFlip = 0; for (let t = 8.7; t < 9.7; t += .002) if (dcAt(t) > 4) { tFlip = t; break; }
+
+const jer = el('g', {}, scene);
+T(800, 232, 't-label', 'Jervis 1978 · the security dilemma', { 'text-anchor': 'middle' }, jer);
+const MX = 560, MY = 310, CWd = 300, CHt = 124;
+T(MX + CWd / 2, MY - 20, 'g-hd', 'Other cooperates', {}, jer);
+T(MX + CWd * 1.5, MY - 20, 'g-hd', 'Other defects', {}, jer);
+T(MX - 24, MY + CHt / 2 + 6, 'g-hd', 'You cooperate', { style: 'text-anchor:end' }, jer);
+T(MX - 24, MY + CHt * 1.5 + 6, 'g-hd', 'You defect', { style: 'text-anchor:end' }, jer);
+const cellG = [0, 1, 2, 3].map(k => {
+  const a = k >> 1, b = k & 1, g = el('g', { transform: `translate(${MX + b * CWd},${MY + a * CHt})` }, jer);
+  el('rect', { x: 0, y: 0, width: CWd, height: CHt, fill: 'var(--ink-2)', stroke: 'var(--line)', 'stroke-width': 1.5 }, g);
+  const ne = el('rect', { x: 6, y: 6, width: CWd - 12, height: CHt - 12, rx: 6, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 3.5, filter: 'url(#kit-glow)' }, g);
+  const txt = T(CWd / 2, CHt / 2 + 14, 'g-pay', '', {}, g);
+  return { g, ne, txt };
+});
+const nameG = el('g', {}, jer);
+const gName = T(0, 0, 'g-name', '', {}, nameG);
+const gRank = T(800, 716, 't-label', '', { 'text-anchor': 'middle' }, jer);
+const neNote = T(800, MY + 2 * CHt + 30, 'g-who', 'Outlined cells are equilibria', { 'text-anchor': 'middle' }, jer);
+const dcS = el('g', { transform: 'translate(560,778)' }, jer);
+T(0, 0, 't-label', 'You defect, the other cooperates (DC)', {}, dcS);
+el('rect', { x: 0, y: 22, width: 600, height: 6, rx: 3, fill: 'var(--line)' }, dcS);
+const dcFill = el('rect', { x: 0, y: 22, height: 6, rx: 3, fill: 'var(--amber)' }, dcS);
+const ccTick = el('g', { transform: `translate(${600 * 4 / 5},0)` }, dcS);
+el('line', { x1: 0, x2: 0, y1: 14, y2: 36, stroke: 'var(--paper)', 'stroke-width': 2 }, ccTick);
+T(0, 58, 'g-who', 'CC = 4', { 'text-anchor': 'middle' }, ccTick);
+const dcKnob = el('circle', { cy: 25, r: 11, fill: 'var(--amber)', filter: 'url(#kit-glow)' }, dcS);
+const dcVal = T(600, 0, 'g-val', '', { 'text-anchor': 'end' }, dcS);
+
+// ---- Opening a model: the choice dialog and the first "Learn about this model" page ------------------------
+// Wording from js/choice.js and js/learn.js; the question is verbatim from data/primers-a.js (fearon95).
+// Fearon's learn run has 6 pages (question, three pages of other explanations, words you need, the answer).
+const pr = el('g', {}, scene);
+pr.setAttribute('transform', 'translate(30,0)');
+const QL = ['War is costly, so there is always some deal', 'that both sides would rather accept than fight.', 'Why, then, do rational states still go to war?'];
+// The picker card underneath, then a dim layer.
+const pick = el('g', {}, pr);
+el('rect', { x: 210, y: 250, width: 420, height: 230, rx: 16, fill: 'var(--ink-2)', stroke: 'var(--amber)', 'stroke-width': 2 }, pick);
+T(240, 330, 'g-model', 'The bargaining range', {}, pick);
+T(240, 360, 'g-who', 'Fearon 1995', {}, pick);
+T(240, 410, 'g-who', 'Why rational states fight', {}, pick);
+const dim = el('rect', { x: -330, y: -300, width: 2300, height: 1600, fill: '#070f0b' }, pr);
+// The dialog.
+const dlg = el('g', {}, pr);
+el('rect', { x: 230, y: 230, width: 720, height: 520, rx: 18, fill: '#12261d', stroke: 'var(--line)', 'stroke-width': 1.5 }, dlg);
+T(270, 284, 'g-who', 'You picked', {}, dlg);
+T(270, 336, 'g-model', 'The bargaining range', { style: 'font-size:40px;font-style:italic' }, dlg);
+T(270, 368, 'g-who', 'Fearon 1995', {}, dlg);
+QL.forEach((q, i) => T(270, 430 + i * 38, 'g-q', q, { style: 'font-size:28px' }, dlg));
+const bLearn = el('g', { transform: 'translate(270,572)' }, dlg);
+const bLearnBg = el('rect', { width: 380, height: 58, rx: 29, fill: 'var(--amber)' }, bLearn);
+const bLearnTx = T(190, 36, 'g-who', 'Learn about this model first', { 'text-anchor': 'middle', style: 'fill:var(--ink);font-weight:600' }, bLearn);
+const bModel = el('g', { transform: 'translate(270,648)' }, dlg);
+el('rect', { width: 380, height: 58, rx: 29, fill: 'none', stroke: 'var(--muted)', 'stroke-width': 1.5 }, bModel);
+T(190, 36, 'g-who', 'Take me straight to the model', { 'text-anchor': 'middle', style: 'fill:var(--paper)' }, bModel);
+const ring = el('rect', { x: -8, y: -8, width: 396, height: 74, rx: 37, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 3, filter: 'url(#kit-glow)' }, bLearn);
+// The first learn page.
+const lp = el('g', {}, pr);
+el('rect', { x: 210, y: 200, width: 780, height: 590, rx: 18, fill: '#12261d', stroke: 'var(--line)', 'stroke-width': 1.5 }, lp);
+T(250, 250, 'g-who', 'Learn about this model', {}, lp).style.fill = 'var(--amber)';
+T(250, 280, 'g-who', 'The bargaining range · Fearon 1995', {}, lp);
+T(250, 372, 'g-name', 'The question', { style: 'text-anchor:start;font-size:64px' }, lp);
+QL.forEach((q, i) => T(250, 440 + i * 40, 'g-q', q, { style: 'font-size:29px' }, lp));
+el('line', { x1: 250, x2: 950, y1: 680, y2: 680, stroke: 'var(--line)' }, lp);
+const back = el('g', { transform: 'translate(250,700)', opacity: .4 }, lp);
+el('rect', { width: 120, height: 50, rx: 25, fill: 'none', stroke: 'var(--muted)', 'stroke-width': 1.5 }, back);
+T(60, 31, 'g-who', '← Back', { 'text-anchor': 'middle' }, back);
+[0, 1, 2, 3, 4, 5, 6].forEach(j => el('circle', { cx: 540 + j * 20 - 10, cy: 718, r: 5, fill: j === 0 ? 'var(--amber)' : 'var(--line)' }, lp));
+T(600, 752, 'g-who', '1 of 7', { 'text-anchor': 'middle', style: 'fill:var(--paper)' }, lp);
+const nxt = el('g', { transform: 'translate(820,700)' }, lp);
+el('rect', { width: 130, height: 50, rx: 25, fill: 'var(--amber)' }, nxt);
+T(65, 31, 'g-who', 'Next →', { 'text-anchor': 'middle', style: 'fill:var(--ink);font-weight:600' }, nxt);
+const list = el('g', {}, pr);
+T(1070, 244, 't-label', 'In the gallery', {}, list);
+const MODELS = [['The bargaining range', 'Fearon 1995'], ['Commitment problems', 'Powell 2006'], ['Brinkmanship', 'Schelling · Powell 1987'],
+  ['Audience costs', 'Fearon 1994'], ['The security dilemma', 'Jervis 1978'], ['Reassurance', 'Kydd 2000'],
+  ['Bargaining while fighting', 'Slantchev 2003'], ['Alternating offers', 'Rubinstein 1982']];
+const modelEls = MODELS.map(([m, w], i) => {
+  const g = el('g', {}, list);
+  T(1070, 300 + i * 66, 'g-model', m, {}, g);
+  T(1070, 324 + i * 66, 'g-who', w, {}, g);
+  return g;
+});
+
+// ---- Hook ------------------------------------------------------------------------------------------------
+const hook = el('g', {}, scene);
+T(800, 430, 't-hook', 'If a deal always beats war,', { 'text-anchor': 'middle' }, hook);
+const h2 = T(800, 548, 't-hook', null, { 'text-anchor': 'middle', style: 'font-size:104px' }, hook);
+const hot = el('tspan', { class: 'hot' }, h2); hot.textContent = 'why fight?';
+
+// ---- Captions and end card -------------------------------------------------------------------------------
+const cap = captions(svg, [
+  [3.2, 5.0, 'War costs both sides, so a band of deals beats fighting.'],
+  [5.0, 6.2, 'Make war almost free: the band shrinks, never vanishes.'],
+  [6.2, 7.75, 'Let both sides expect to win, and the deals are gone.'],
+  [7.9, 10.8, 'Raise the temptation: Stag Hunt becomes Prisoner’s Dilemma.'],
+  [10.9, 13.6, 'New to game theory? Learn the model first, or dive in.'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Game Theory Gallery', line: 'Play with interactive models and tables of the field’s most influential theories.' });
+
+// ---- Timeline --------------------------------------------------------------------------------------------
+function frame(t) {
+  const cam = 1 + .04 * ease.inOut(seg(t, 0, 13.7));
+  scene.setAttribute('transform', `translate(800,500) scale(${cam.toFixed(4)}) translate(-800,-500)`);
+
+  // Hook, with the strip already faint underneath.
+  op(hook, fade(t, .15, 3.1, .5));
+  tr(hook, 0, -20 * ease.in(seg(t, 2.55, 3.1)));
+  op(h2, ease.out(seg(t, .8, 1.4)));
+  h2.setAttribute('transform', `translate(800,548) scale(${lerp(.92, 1, ease.back(seg(t, .8, 1.5))).toFixed(3)}) translate(-800,-548)`);
+  hot.setAttribute('filter', t > 1.3 && t < 3 ? 'url(#kit-glow)' : '');
+
+  // Fearon.
+  const F = fearonAt(t);
+  op(fear, (.18 * seg(t, .3, 1.2) + .82 * ease.out(seg(t, 2.9, 3.5))) * (1 - ease.in(seg(t, 7.55, 8.0))));
+  tr(fear, 0, -40 * ease.in(seg(t, 7.55, 8.0)));
+  const grow = ease.out(seg(t, 3.0, 3.8));
+  const a = Math.max(0, F.lo), b = Math.min(1, F.hi);
+  const mid = (a + b) / 2, half = (b - a) / 2 * grow;
+  band.setAttribute('x', sx(mid - half).toFixed(1));
+  band.setAttribute('width', Math.max(0, sx(mid + half) - sx(mid - half)).toFixed(1));
+  op(band, F.empty ? 0 : 1);
+  const g0 = Math.min(F.lo, F.hi), g1 = Math.max(F.lo, F.hi);
+  gap.setAttribute('x', sx(g0).toFixed(1)); gap.setAttribute('width', Math.max(2, sx(g1) - sx(g0)).toFixed(1));
+  op(gap, F.empty ? 1 : 0);
+  bandLab.textContent = F.opt ? 'Deals each side thinks beat war' : 'Deals both states prefer to war';
+  op(bandLab, F.empty ? 0 : ease.out(seg(t, 3.4, 3.8)));
+  op(noDeal, F.empty ? 1 : 0);
+  const loX = sx(F.lo), hiX = sx(F.hi);
+  // Keep the two marker labels apart when the band is narrow.
+  const push = Math.max(0, 150 - Math.abs(hiX - loX)) / 2, sgn = hiX >= loX ? 1 : -1;
+  tr(mkLo, loX, SY); tr(mkHi, hiX, SY);
+  mkLo.querySelector('text').setAttribute('x', (-push * sgn).toFixed(1));
+  hiLab.setAttribute('x', (push * sgn).toFixed(1)); hiLab2.setAttribute('x', (push * sgn).toFixed(1));
+  op(hiLab, F.opt ? 0 : 1); op(hiLab2, F.opt ? 1 : 0);
+  op(mkLo, grow); op(mkHi, grow);
+  mkP.setAttribute('transform', `translate(${sx(F.p).toFixed(1)},${SY + SH + 4})`); op(mkP, grow);
+  const eqx = ease.inOut(seg(t, 6.2, 6.6));
+  op(eq1, 1 - eqx); op(eq2, eqx);
+  const sl = ease.out(seg(t, 3.3, 3.8));
+  const mv = (t > 4 && t < 4.7) || (t > 5.1 && t < 5.8) || (t > 6.3 && t < 7.1);
+  setSlider(SL[0], F.ca, mv); setSlider(SL[1], F.cb, mv); setSlider(SL[2], F.opt ? F.r : 1 - F.p, t > 6.3 && t < 7.1);
+  op(SL[0].g, sl); op(SL[1].g, sl); op(SL[2].g, ease.out(seg(t, 6.2, 6.6)));
+
+  // Jervis.
+  const jv = ease.out(seg(t, 7.8, 8.4)) * (1 - ease.in(seg(t, 10.6, 11.0)));
+  op(jer, jv);
+  tr(jer, 800 * (1 - lerp(.94, 1, ease.out(seg(t, 7.8, 8.5)))), 500 * (1 - lerp(.94, 1, ease.out(seg(t, 7.8, 8.5)))) + 40 * ease.in(seg(t, 10.6, 11.0)), lerp(.94, 1, ease.out(seg(t, 7.8, 8.5))));
+  const G = { cc: 4, dc: dcAt(t), dd: 2, cd: 1 };
+  const type = classify(G), ne = pureNE(G);
+  const pays = [[G.cc, G.cc], [G.cd, G.dc], [G.dc, G.cd], [G.dd, G.dd]];
+  const sliding = t > 8.7 && t < 9.7;
+  cellG.forEach((c, k) => {
+    const fmt = v => Number.isInteger(v) ? String(v) : v.toFixed(1);
+    c.txt.textContent = `(${fmt(pays[k][0])}, ${fmt(pays[k][1])})`;
+    c.txt.style.fill = (k === 1 || k === 2) && sliding ? 'var(--amber)' : '';
+    const on = ne.includes(k) ? 1 : 0;
+        op(c.ne, on * ease.out(seg(t, 8.2, 8.5)));
+    op(c.g, ease.out(seg(t, 7.9 + k * .08, 8.3 + k * .08)));
+  });
+  const fl = Math.abs(t - tFlip) < .16 ? Math.abs(t - tFlip) / .16 : 1;
+  gName.textContent = GAME_NAMES[type];
+  nameG.setAttribute('transform', `translate(800,672) scale(1,${Math.max(.02, fl).toFixed(3)})`);
+  gName.style.fill = type === 'pd' ? 'var(--red)' : 'var(--paper)';
+  gName.setAttribute('filter', type === 'pd' && t < tFlip + .8 ? 'url(#kit-glow)' : '');
+  gRank.textContent = RANK[type] ? `Jervis’s ranking: ${RANK[type]}` : '';
+  op(gRank, fl);
+  op(neNote, ease.out(seg(t, 8.3, 8.7)));
+  const w = 600 * G.dc / 5;
+  dcFill.setAttribute('width', w.toFixed(1)); dcKnob.setAttribute('cx', w.toFixed(1)); dcKnob.setAttribute('r', sliding ? 13 : 10);
+  dcVal.textContent = G.dc.toFixed(1);
+
+  // Primer and the gallery.
+  const pv = ease.out(seg(t, 10.9, 11.4)) * (1 - ease.in(seg(t, 13.4, 13.8)));
+  op(pr, pv);
+  op(pick, ease.out(seg(t, 10.9, 11.2)));
+  op(dim, .72 * ease.out(seg(t, 11.15, 11.45)));
+  const dp = seg(t, 11.2, 11.65);
+  op(dlg, ease.out(dp) * (1 - ease.in(seg(t, 12.45, 12.8))));
+  dlg.setAttribute('transform', `translate(590,490) scale(${lerp(.9, 1, ease.back(dp)).toFixed(3)}) translate(-590,-490)`);
+  // Highlight lands on "Learn about this model first", then a click pulse.
+  const hl = ease.out(seg(t, 11.75, 12.05)), press = Math.sin(Math.PI * seg(t, 12.15, 12.35));
+  op(ring, hl);
+  ring.setAttribute('transform', `translate(190,29) scale(${(lerp(1.25, 1, hl) - .05 * press).toFixed(3)}) translate(-190,-29)`);
+  bLearnBg.setAttribute('filter', t > 12.1 && t < 12.6 ? 'url(#kit-glow)' : '');
+  // The learn page slides in.
+  const lu = ease.out(seg(t, 12.35, 12.9));
+  op(lp, lu); tr(lp, 120 * (1 - lu), 0);
+  modelEls.forEach((g, i) => { op(g, ease.out(seg(t, 11.3 + i * .12, 11.7 + i * .12))); tr(g, 24 * (1 - ease.out(seg(t, 11.3 + i * .12, 11.8 + i * .12))), 0); });
+
+  cap(t);
+  end(t, 13.7, 17);
+}
+run({ duration: 17, poster: 4.6, frame });
+</script>
+</body></html>

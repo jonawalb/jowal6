@@ -3,6 +3,7 @@
 import { STATES, ENVS, YIELDS, TESTS } from '../data/tests.js';
 import { MILESTONES } from '../data/milestones.js';
 import { STATE_COLOR, ENV_COLOR, yearOf, fmt, esc } from './common.js';
+import { num, rise } from './fx.js';
 
 export function panelHTML() {
   return `
@@ -56,8 +57,8 @@ export function renderPanel(root, state, rows) {
   const y = state.year;
   const now = rows.filter(t => yearOf(t) === y), cum = rows.filter(t => yearOf(t) <= y);
   root.querySelector('#p-year').textContent = y;
-  root.querySelector('#p-now').textContent = fmt(now.length);
-  root.querySelector('#p-cum').textContent = fmt(cum.length);
+  num(root.querySelector('#p-now'), now.length, { fmt, ms: 320 });
+  num(root.querySelector('#p-cum'), cum.length, { fmt, ms: 320 });
   const allCum = TESTS.filter(t => yearOf(t) <= y).length;
   root.querySelector('#p-note').textContent = rows.length === TESTS.length
     ? `${fmt(allCum)} of the ${fmt(TESTS.length)} tests in the record had happened by the end of ${y}.`
@@ -78,7 +79,12 @@ export function renderPanel(root, state, rows) {
   list.querySelectorAll('[data-st]').forEach(i => i.onchange = () => root.dispatchEvent(new CustomEvent('st', { detail: [Number(i.dataset.st), i.checked] })));
 
   const ms = MILESTONES.find(m => m.id === state.ms) || nearestMilestone(y);
-  root.querySelector('#p-ms').innerHTML = ms ? `<p class="eyebrow">${state.ms ? 'Milestone' : 'Nearest milestone'}</p>${milestoneCard(ms)}` : '';
+  const box = root.querySelector('#p-ms'), msKey = ms ? ms.id + (state.ms ? '*' : '') : '';
+  if (box.dataset.k === msKey) return;
+  const first = box.dataset.k == null;
+  box.dataset.k = msKey;
+  box.innerHTML = ms ? `<p class="eyebrow">${state.ms ? 'Milestone' : 'Nearest milestone'}</p>${milestoneCard(ms)}` : '';
+  if (!first) rise(box.querySelector('.nt-ms-card'), { ms: 300, dy: 6 });
 }
 
 export function nearestMilestone(y) {

@@ -6,6 +6,11 @@ import { cellHTML, treatyHTML } from './panel.js';
 import { createTimeline, eventCard, KINDS } from './timeline.js';
 import { fillSelects, renderCompare } from './compare.js';
 import { createTour } from './tour.js';
+import { num, rise, pulse, flash, reveal, wipeIn, fadeUp, drawPath, flipPrep, onFirstView } from './fx.js';
+
+// Motion bookkeeping (presentation only): what changed since the last render.
+const mv = { year: null, sel: null, tsel: null, ev: null, cmp: null, rows: null, kinds: null, tl: false };
+const texts = (root, sel) => [...root.querySelectorAll(sel)].map(e => e.textContent);
 
 const ALL_G = GROUPS.map(g => g.id), ALL_K = KINDS.map(k => k.id);
 const DEF = { year: Y1, groups: ALL_G, preset: 'all', q: '', sort: 'name', sel: 'ctbt.RUS', tsel: 'ctbt', cmp: ['USA', 'RUS'], ev: null, kinds: ALL_K };
@@ -74,19 +79,39 @@ const timeline = createTimeline($('timeline'), {
 function render() {
   $('year-out').textContent = when(state.year);
   range.value = state.year;
+  const yearMoved = mv.year !== null && mv.year !== state.year;
+  const rowsKey = [[...state.groups].join(), state.preset, state.q, state.sort, state.sort !== 'name' ? state.year : ''].join('|');
+  const slide = mv.rows !== null && mv.rows !== rowsKey ? flipPrep($('matrix'), 'tbody tr', r => r.dataset.iso) : () => {};
+  const prevCounts = new Map([...$('treaty').querySelectorAll('.tt-counts li')].map(l => [l.querySelector('[data-s]').dataset.s, l.querySelector('b').textContent]));
+  const prevCmp = texts($('compare'), 'tbody td');
   matrix.draw(state);
+  slide();
   $('m-note').textContent = state.sort !== 'name' ? `Rows sorted by ${T[state.sort].short} status. Click the column again to sort by name.` : 'Click a column heading to sort states by that treaty.';
   $('detail').innerHTML = cellHTML(state.sel, state.year);
+  if (mv.sel !== null && mv.sel !== state.sel) rise($('detail'), { ms: 300, dy: 6 });
   $('treaty').innerHTML = treatyHTML(state.tsel, state.year);
+  if (mv.tsel !== null && mv.tsel !== state.tsel) { rise($('treaty'), { ms: 300, dy: 6 }); drawPath($('treaty').querySelector('.tt-spark path'), 650); }
+  else $('treaty').querySelectorAll('.tt-counts li').forEach(l => {
+    const p = prevCounts.get(l.querySelector('[data-s]').dataset.s), b = l.querySelector('b');
+    if (p != null) b.dataset.fx = p;
+    num(b, Number(b.textContent), { ms: 300, flashIt: true });
+  });
   document.querySelectorAll('#f-groups [data-g]').forEach(i => { i.checked = state.groups.has(i.dataset.g); });
   document.querySelectorAll('[data-preset]').forEach(b => b.setAttribute('aria-pressed', state.preset === b.dataset.preset));
   document.querySelectorAll('[data-k]').forEach(b => b.setAttribute('aria-pressed', state.kinds.has(b.dataset.k)));
   if ($('q').value !== state.q) $('q').value = state.q;
   timeline.draw(state);
+  const kindsKey = [...state.kinds].join();
+  if (mv.tl && mv.kinds !== kindsKey) fadeUp($('timeline').querySelector('svg'));
   $('ev-card').innerHTML = eventCard(state.ev);
+  if (state.ev && mv.ev !== state.ev) rise($('ev-card'), { ms: 300, dy: 6 });
   $('cmp-a').value = state.cmp[0]; $('cmp-b').value = state.cmp[1];
   $('cmp-year').textContent = when(state.year);
   renderCompare($('compare'), state);
+  const cmpKey = state.cmp.join() + '|' + [...state.groups].join();
+  if (mv.cmp !== null && mv.cmp !== cmpKey) $('compare').querySelectorAll('tbody tr').forEach((r, i) => rise(r, { ms: 300, delay: Math.min(i, 12) * 30 }));
+  else if (yearMoved) $('compare').querySelectorAll('tbody td').forEach((td, i) => { if (prevCmp[i] != null && prevCmp[i] !== td.textContent) flash(td); });
+  Object.assign(mv, { year: state.year, sel: state.sel, tsel: state.tsel, ev: state.ev, cmp: cmpKey, rows: rowsKey, kinds: kindsKey });
   writeHash();
 }
 function set(p) { Object.assign(state, p); render(); }
@@ -118,6 +143,7 @@ $('copy-link').addEventListener('click', async e => {
 let playing = 0;
 function stopPlay() { clearInterval(playing); playing = 0; $('play').textContent = 'Play'; $('play').setAttribute('aria-pressed', 'false'); }
 $('play').addEventListener('click', () => {
+  pulse($('play'));
   if (playing) return stopPlay();
   if (state.year >= Y1) set({ year: Y0 });
   $('play').textContent = 'Pause'; $('play').setAttribute('aria-pressed', 'true');
@@ -137,4 +163,9 @@ new ResizeObserver(() => { const w = $('timeline').clientWidth; if (Math.abs(w -
 addEventListener('hashchange', () => { readHash(); render(); });
 readHash();
 render();
+{ // rise only the rows inside the scroll box's first view; the rest are shown as they are
+  const box = $('matrix').getBoundingClientRect().bottom;
+  reveal([...$('matrix').querySelectorAll('tbody tr')].filter(r => r.getBoundingClientRect().bottom <= box));
+}
+onFirstView($('timeline'), () => { mv.tl = true; wipeIn($('timeline').querySelector('svg'), 700); });
 $('k-total').textContent = `${TREATIES.length} treaties`;

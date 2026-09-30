@@ -4,6 +4,10 @@ import { ROWS, LEVELS, prevNum, fmtKg, niceDate, daysBetween, esc, LIMIT_KG_U } 
 import { EVENTS, CATS } from '../data/events.js';
 import { BREAKOUT, YARDSTICK, TIMELINESS, LAST_ESTIMATE, AS_OF } from '../data/breakout.js';
 import { CAT_COLOR } from './chart.js';
+import { num, rise, flash, reveal } from './fx.js';
+
+// Motion bookkeeping (presentation only).
+const mv = { report: null, total: null, status: null, ev: null, bo: null };
 
 const a = (u, txt) => `<a href="${u}" target="_blank" rel="noopener">${txt}</a>`;
 const BASIS = {
@@ -95,12 +99,26 @@ function clockHTML() {
 export function renderPanel(host, state) {
   const r = ROWS.find(x => x.id === state.report);
   host.querySelector('#ie-rep').innerHTML = repHTML(r);
-  host.querySelector('#ie-clock').innerHTML = clockHTML();
+  const moved = mv.report !== null && mv.report !== r.id;
+  const tot = host.querySelector('#ie-rep tr.tot td');
+  if (tot && r.total != null) { if (moved && mv.total != null) tot.dataset.fx = mv.total; num(tot, r.total, { fmt: fmtKg, ms: 380, flashIt: moved && mv.total != null }); }
+  const sb = host.querySelector('#ie-rep .status b');
+  if (moved && sb && sb.textContent !== mv.status) flash(sb.parentElement);
+  // The clock does not depend on the selection: build it once, counting its figures up on first show.
+  const clock = host.querySelector('#ie-clock');
+  if (!clock.dataset.built) {
+    clock.innerHTML = clockHTML();
+    clock.dataset.built = '1';
+    const [days, mult] = clock.querySelectorAll('.ie-big b');
+    num(days, Number(days.textContent), { intro: true, ms: 700, fmt: v => String(Math.round(v)) });
+    num(mult, parseInt(mult.textContent, 10), { intro: true, ms: 700, fmt: v => Math.round(v) + '×' });
+  }
   // Breakout: highlight the latest estimate published on or before the selected report's date.
   const cur = [...BREAKOUT].reverse().find(b => b.date <= r.date);
   host.querySelector('#ie-bo').innerHTML = BREAKOUT.map(b => `
     <li class="${b === cur ? 'on' : ''}"><span class="d">${niceDate(b.date)} · ${esc(b.who)}</span><b>${esc(b.short)}</b>
       <q>${esc(b.quote)}</q> ${a(b.src.url, esc(b.src.name))}</li>`).join('');
+  if (mv.bo !== null && mv.bo !== cur) flash(host.querySelector('#ie-bo li.on'));
   const e = EVENTS.find(x => x.id === state.ev);
   host.querySelector('#ie-evcard').innerHTML = e ? `
     <div class="ie-evc" style="border-left-color:${CAT_COLOR[e.cat]}">
@@ -111,5 +129,8 @@ export function renderPanel(host, state) {
     </div>` : '<p class="fine">Click a diamond above the chart, or pick an event below.</p>';
   host.querySelector('#ie-evlist').innerHTML = EVENTS.map(x => `
     <li><button type="button" data-ev="${x.id}" aria-pressed="${x.id === state.ev}"><i style="background:${CAT_COLOR[x.cat]}"></i><span class="d">${x.approx || niceDate(x.date)}</span> ${esc(x.title)}</button></li>`).join('');
+  if (mv.ev !== null && mv.ev !== state.ev) rise(host.querySelector('#ie-evcard > *'), { ms: 300, dy: 6 });
+  if (mv.report === null) reveal(host.querySelectorAll('#ie-evlist li'), { stagger: 40 });
+  Object.assign(mv, { report: r.id, total: r.total ?? null, status: sb?.textContent ?? null, ev: state.ev, bo: cur ?? false });
 }
 export { LIMIT_KG_U };

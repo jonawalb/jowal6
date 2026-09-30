@@ -5,6 +5,7 @@ import { createChart } from './chart.js';
 import { panelHTML, renderPanel, wirePanel, renderCompare, renderCountry } from './panel.js';
 import { createTour } from './tour.js';
 import { COLOR, esc } from './common.js';
+import { pulse } from './fx.js';
 
 const ALL = COUNTRIES.map(c => c.iso);
 const state = { year: 1986, view: 'stack', log: false, world: true, ms: true, msId: null, on: new Set(ALL), page: 'USA', then: 1986 };
@@ -94,6 +95,7 @@ let timer = 0;
 const reduce = matchMedia('(prefers-reduced-motion: reduce)');
 function stopPlay() { clearInterval(timer); timer = 0; playBtn.textContent = 'Play'; playBtn.setAttribute('aria-pressed', 'false'); }
 playBtn.addEventListener('click', () => {
+  pulse(playBtn);
   if (timer) return stopPlay();
   if (state.year >= Y1) set({ year: Y0 });
   playBtn.textContent = 'Pause'; playBtn.setAttribute('aria-pressed', 'true');

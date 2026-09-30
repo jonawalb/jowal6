@@ -8,6 +8,7 @@ import { renderRecon } from './recon.js';
 import { createTour } from './tour.js';
 import { Y0, Y1, ALL_STATES, STATE_COLOR, ENV_COLOR, SHORT, filtered, reduceMotion } from './common.js';
 import { ENVS } from '../data/tests.js';
+import { pulse, rise, reveal } from './fx.js';
 
 const DEF = { year: 1962, by: 'state', env: [0, 1, 2, 3], st: ALL_STATES, yc: [0, 1, 2, 3, 4], ms: null, site: 'semipalatinsk' };
 const state = { ...DEF, env: new Set(DEF.env), st: new Set(DEF.st), yc: new Set(DEF.yc) };
@@ -73,7 +74,10 @@ function render() {
   chart.draw(state);
   renderPanel(panel, state, rows);
   map.draw(state, rows);
-  document.getElementById('site-card').innerHTML = siteCard(state.site, rows, state.year);
+  const card = document.getElementById('site-card'), prevSite = card.dataset.site;
+  card.innerHTML = siteCard(state.site, rows, state.year);
+  card.dataset.site = state.site;
+  if (prevSite && prevSite !== state.site) rise(card, { ms: 300, dy: 6 });
   document.getElementById('map-year').textContent = state.year;
   range.value = state.year;
   document.getElementById('year-out').textContent = state.year;
@@ -89,6 +93,7 @@ const playBtn = document.getElementById('play');
 let timer = 0;
 function stopPlay() { clearInterval(timer); timer = 0; playBtn.textContent = 'Play'; playBtn.setAttribute('aria-pressed', 'false'); }
 playBtn.addEventListener('click', () => {
+  pulse(playBtn);
   if (timer) return stopPlay();
   if (state.year >= Y1) set({ year: Y0 });
   playBtn.textContent = 'Pause'; playBtn.setAttribute('aria-pressed', 'true');
@@ -111,6 +116,7 @@ document.getElementById('copy-link').addEventListener('click', async e => {
 });
 
 renderRecon(document.getElementById('recon'), TESTS);
+reveal(document.querySelectorAll('#recon tbody tr'));
 let rw = 0;
 new ResizeObserver(() => { const w = document.getElementById('chart').clientWidth; if (Math.abs(w - rw) > 4) { rw = w; chart.draw(state); } })
   .observe(document.getElementById('chart'));

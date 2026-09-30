@@ -5,6 +5,7 @@ import { createChart } from './chart.js';
 import { panelHTML, wirePanel, renderPanel } from './panel.js';
 import { createTour } from './tour.js';
 import { renderNotes } from './notes.js';
+import { pulse } from './fx.js';
 
 const DEFAULT = { report: 'GOV/2025/50', view: 'all', limit: true, events: true, ev: 'strikes-2025' };
 const state = { ...DEFAULT };
@@ -76,6 +77,7 @@ const reduce = matchMedia('(prefers-reduced-motion: reduce)');
 let ptimer = 0;
 function stopPlay() { clearInterval(ptimer); ptimer = 0; play.textContent = 'Play'; play.setAttribute('aria-pressed', 'false'); }
 play.addEventListener('click', () => {
+  pulse(play);
   if (ptimer) return stopPlay();
   if (state.report === ROWS[ROWS.length - 1].id) set({ report: ROWS[0].id });
   play.textContent = 'Pause'; play.setAttribute('aria-pressed', 'true');

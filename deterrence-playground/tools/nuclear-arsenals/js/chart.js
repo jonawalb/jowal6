@@ -3,6 +3,7 @@
 import { COUNTRIES, WORLD, Y0, Y1 } from '../data/stockpiles.js';
 import { MILESTONES } from '../data/milestones.js';
 import { COLOR, fmt } from './common.js';
+import { chartMotion } from './fx.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 const mk = (tag, attrs = {}, parent) => {
@@ -28,6 +29,7 @@ export function createChart(host, { onYear, onMilestone }) {
   tip.className = 'tooltip'; tip.hidden = true;
   host.appendChild(tip);
   let st = null, geo = null, dragging = false;
+  const motion = chartMotion();
 
   const yearAt = ev => {
     const r = svg.getBoundingClientRect();
@@ -163,6 +165,8 @@ export function createChart(host, { onYear, onMilestone }) {
         g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onMilestone(ms.id); } });
       });
     }
+
+    motion(plot, [state.view, state.log, [...state.on].join(), state.world].join('|'));
 
     // Year cursor
     const cx = x(state.year);

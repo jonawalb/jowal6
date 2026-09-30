@@ -5,6 +5,7 @@ import { STATUS } from '../data/status.js';
 import { NOTES, FAS_URL } from '../data/notes.js';
 import { MILESTONES } from '../data/milestones.js';
 import { COLOR, fmt, pct, esc } from './common.js';
+import { num, rise, grow, drawPath, wipeIn, flipPrep, tweenPrep, reveal, onFirstView } from './fx.js';
 
 const PEAK_YEAR = WORLD.indexOf(Math.max(...WORLD)) + Y0;
 const val = (c, y) => c.v[y - Y0];
@@ -47,8 +48,8 @@ export function panelHTML() {
 export function renderPanel(root, state, act) {
   const y = state.year;
   root.querySelector('#p-year').textContent = y;
-  root.querySelector('#p-sum').textContent = fmt(sumOn(state.on, y));
-  root.querySelector('#p-world').textContent = fmt(WORLD[y - Y0]);
+  num(root.querySelector('#p-sum'), sumOn(state.on, y), { fmt, ms: 320 });
+  num(root.querySelector('#p-world'), WORLD[y - Y0], { fmt, ms: 320 });
   const w = WORLD[y - Y0], pk = WORLD[PEAK_YEAR - Y0];
   root.querySelector('#p-peak').textContent = y === PEAK_YEAR
     ? `${PEAK_YEAR} is the peak of the global series: ${fmt(pk)} warheads.`
@@ -56,6 +57,8 @@ export function renderPanel(root, state, act) {
 
   const maxV = Math.max(1, ...COUNTRIES.map(c => val(c, y)));
   const list = root.querySelector('#p-clist');
+  const key = e => e.querySelector('[data-iso]')?.dataset.iso;
+  const slide = flipPrep(list, 'li', key), bars = tweenPrep(list, '.bar i', e => key(e.closest('li')), 'width');
   list.innerHTML = [...COUNTRIES].sort((a, b) => val(b, y) - val(a, y) || a.name.localeCompare(b.name)).map(c => {
     const v = val(c, y), on = state.on.has(c.iso);
     return `<li class="${on ? '' : 'off'}">
@@ -64,6 +67,8 @@ export function renderPanel(root, state, act) {
       <button type="button" class="btn v" data-page="${c.iso}" style="padding:1px 6px;font-weight:500" aria-label="Open ${esc(c.name)} country page">${fmt(v)}</button>
       <span class="bar"><i style="width:${v / maxV * 100}%;background:${COLOR[c.iso]}"></i></span></li>`;
   }).join('');
+  slide();
+  bars();
   list.querySelectorAll('input').forEach(i => i.onchange = () => act.toggle(i.dataset.iso, i.checked));
   list.querySelectorAll('[data-page]').forEach(b => b.onclick = () => act.page(b.dataset.page, true));
   root.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', b.dataset.view === state.view));
@@ -74,7 +79,12 @@ export function renderPanel(root, state, act) {
 
   const ms = MILESTONES.find(m => m.id === state.msId) || nearestMilestone(y);
   const box = root.querySelector('#p-ms');
+  const msKey = ms ? ms.id + (state.msId ? '*' : '') : '';
+  if (box.dataset.k === msKey) return;
+  const first = box.dataset.k == null;
+  box.dataset.k = msKey;
   box.innerHTML = ms ? `<p class="eyebrow">${state.msId ? 'Milestone' : 'Nearest milestone'}</p>${milestoneCard(ms)}` : '';
+  if (!first) rise(box.querySelector('.na-ms-card'), { ms: 300, dy: 6 });
 }
 
 export function nearestMilestone(y) {
@@ -107,9 +117,28 @@ export function renderCompare(root, then) {
   const nuc = y => COUNTRIES.filter(c => val(c, y) > 0).length;
   groups.push({ name: 'States holding warheads', sw: 'var(--brand-ink)', a: nuc(then), b: nuc(now), plain: true });
   root.innerHTML = groups.map(g => `<div class="na-card"><h3><span class="sw-dot" style="background:${g.sw}"></span>${esc(g.name)}</h3>
-    <div class="row"><span>${then}</span><b>${fmt(g.a)}</b></div>
-    <div class="row"><span>${now}</span><b>${fmt(g.b)}</b></div>
+    <div class="row"><span>${then}</span><b data-v="${g.a}">${fmt(g.a)}</b></div>
+    <div class="row"><span>${now}</span><b data-v="${g.b}">${fmt(g.b)}</b></div>
     <p class="chg">${g.plain ? (g.b - g.a >= 0 ? '+' : '') + (g.b - g.a) : `${pct(g.b, g.a)} (${g.b - g.a >= 0 ? '+' : ''}${fmt(g.b - g.a)})`}</p></div>`).join('');
+  compareMotion(root);
+}
+
+// Motion for the then-vs-now cards: rise and count up on first view; afterwards count from the old "then"
+// figures and flash the ones that changed.
+let cmpPrev = null, cmpSeen = false;
+function compareMotion(root) {
+  const bs = [...root.querySelectorAll('b[data-v]')];
+  if (!cmpSeen) {
+    if (cmpPrev === null) reveal(root.querySelectorAll('.na-card'));
+    if (cmpPrev === null) onFirstView(root, () => {
+      cmpSeen = true;
+      root.querySelectorAll('b[data-v]').forEach(b => { delete b.dataset.fx; num(b, +b.dataset.v, { fmt, intro: true, ms: 650 }); });
+    });
+    cmpPrev = bs.map(b => +b.dataset.v);
+    return;
+  }
+  bs.forEach((b, i) => { if (cmpPrev[i] != null) b.dataset.fx = cmpPrev[i]; num(b, +b.dataset.v, { fmt, flashIt: true }); });
+  cmpPrev = bs.map(b => +b.dataset.v);
 }
 
 function spark(c) {
@@ -154,4 +183,19 @@ export function renderCountry(root, iso) {
       </dl></div>
     <div>${status}<p style="margin-top:10px">${esc(n.text)}</p>
       <a class="xlink" href="${FAS_URL}" target="_blank" rel="noopener">FAS, Status of World Nuclear Forces 2026</a></div>`;
+  countryMotion(root, c.iso);
+}
+
+// Country page: the sparkline strokes in and the status bar grows, on first view and on each new country.
+let ctySeen = false, ctyLast = null;
+function countryMotion(root, iso) {
+  const play = () => {
+    drawPath(root.querySelector('.sp-line'), 650);
+    wipeIn(root.querySelector('.sp-area'), 650);
+    grow(root.querySelectorAll('.na-statbar i'), { stagger: 60 });
+    root.querySelectorAll('.na-statleg .n').forEach(n => { if (n.children.length) return; const v = Number(n.textContent.replace(/[^0-9]/g, '')); if (n.textContent.trim() && Number.isFinite(v)) { delete n.dataset.fx; num(n, v, { fmt, intro: true, ms: 550 }); } });
+  };
+  if (ctyLast === null) onFirstView(root, () => { ctySeen = true; play(); });
+  else if (ctySeen && iso !== ctyLast) play();
+  ctyLast = iso;
 }

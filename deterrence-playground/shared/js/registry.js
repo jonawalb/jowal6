@@ -94,6 +94,8 @@ export const ALL_TOOLS = [
     blurb: "Set Taiwan's defenses and the PLA's plan, play out a notional seizure of Penghu in 12-hour turns with every die roll shown, then run 1,000 games to see what drives the outcome." },
   { slug: 'interceptor-burndown', sub: { models: 'budget' }, cat: 'models', title: 'Interceptor Burn-down', status: 'live',
     blurb: "Set a daily PRC missile and drone salvo against open-source estimates of Taiwan's Patriot and Tien Kung stocks and see the day each runs dry, how many threats get through, and which assumption matters most." },
+  { slug: 'strait-landing', siteCat: { deterrence: 'tsm' }, also: ['regions'], sub: { regions: 'indopacific' }, cat: 'models', title: 'Strait Landing', status: 'live',
+    blurb: "Plan a PLA landing on Taiwan's west coast: send amphibious ships and civilian ferries through real historical sea states, suppress missiles and mines, and race the counterattack to D+3." },
   { slug: 'wargame-explorer', siteCat: { deterrence: 'tsm' }, also: ['regions'], sub: { regions: 'indopacific' }, cat: 'models', title: 'Wargame Results Explorer', status: 'live',
     blurb: 'Eight published Taiwan wargames side by side: what each assumed, how it came out, and which assumptions (above all Japan basing and U.S. entry) drive the result, with a page citation for every figure.' },
   { slug: 'rhetoric-heatmap', sub: { narratives: 'rhetoric' }, siteCat: { deterrence: 'narratives' }, cat: 'narrative', title: 'PRC Rhetoric Heatmap', status: 'live',

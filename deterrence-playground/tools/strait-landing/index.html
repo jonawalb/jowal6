@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Strait Landing | Interactive Deterrence</title>
+<meta name="description" content="An operational wargame of a PLA landing on Taiwan's west coast: send amphibious ships and civilian ferries through real historical sea states, suppress missiles and mines, and race Taiwan's counterattack from D-day to D+3.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@500;600;700;800&family=DM+Mono:wght@400;500&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="strait-landing.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+<div class="sl-actions">
+  <p class="sl-flag"><b>Notional model, not a prediction.</b> Sea states are real ERA5 records; forces are aggregated and notional; sourced values are marked.</p>
+  <div><button type="button" class="btn" id="show-howto">How to play</button>
+  <button type="button" class="btn" id="start-tour">Walkthrough</button>
+  <button type="button" class="btn" id="copy-link">Copy link</button></div>
+</div>
+<main class="layout">
+  <div class="stage">
+    <section class="card sl-howto" id="howto" aria-labelledby="howto-t">
+      <div class="sl-howto-h"><h2 id="howto-t">How to play</h2><button type="button" class="btn solid" id="hide-howto">Got it</button></div>
+      <p id="howto-p">You plan the PLA's landing on Taiwan's west coast. <b>Plan:</b> pick a month, a main landing zone and when to go. <b>Play:</b> eight 12-hour turns from D-day to D+3. Each turn, choose how many amphibious ships and civilian ferries sail, what your strikes hit, and whether to storm a port, then press <b>Resolve turn</b> (or N). <b>Win</b> by holding a lodgment of at least 15,000 troops at 1.5 to 1 over the defenders, with a port or twice that many troops, when D+3 ends. You can switch sides and command Taiwan's defense instead.</p>
+    </section>
+    <div class="status sl-status" id="status" aria-live="polite"><b id="status-t"></b><span id="status-s"></span></div>
+    <div class="mapbox" id="box">
+      <svg id="map" role="img" aria-label="Map of the Taiwan Strait with three generalized landing zones on Taiwan's west coast, schematic crossing lanes from the Fujian coast, and the commercial ports of Taipei, Taichung and Kaohsiung."></svg>
+      <div class="tooltip" id="tip" hidden></div>
+    </div>
+    <div class="sl-legend" aria-hidden="true">
+      <span><i class="lg-ship"></i>Amphibious group afloat</span><span><i class="lg-ferry"></i>Ferry group afloat</span>
+      <span><i class="lg-a"></i>PLA ashore</span><span><i class="lg-d"></i>Taiwan at the beaches</span>
+      <span><i class="lg-port"></i>Port (teal Taiwan, red PLA, grey wrecked)</span>
+    </div>
+    <div class="card sl-race" id="race-card">
+      <div class="sl-race-h"><p class="eyebrow">The build-up race</p>
+        <div class="sl-seg" role="group" aria-label="Chart zone"><button type="button" class="btn" data-chart="main" aria-pressed="true">Main zone</button><button type="button" class="btn" data-chart="all" aria-pressed="false">All zones</button></div></div>
+      <svg id="race" class="sl-chart" role="img" aria-label="Build-up race chart"></svg>
+      <p class="fine" id="race-note"></p>
+    </div>
+    <div class="card sl-logcard">
+      <p class="eyebrow"><span id="turn-t"></span> · every number shown</p>
+      <div id="log" aria-live="polite"></div>
+    </div>
+  </div>
+  <aside class="panel" id="panel" aria-label="Plan and orders"></aside>
+</main>
+
+<section class="sl-aar" id="aar" hidden aria-labelledby="aar-h">
+  <h2 id="aar-h" tabindex="-1">After-action review</h2>
+  <div class="status" id="aar-status"><b id="aar-title"></b><span id="aar-sub"></span></div>
+  <p class="sl-lede" id="aar-lede"></p>
+  <div class="card sl-aarcard"><p class="eyebrow">Your plan against other plans: same week, same dice</p><div class="tablewrap"><table id="aar-table"></table></div></div>
+  <div class="card sl-aarcard"><p class="eyebrow">1,000 weeks</p><div id="mc-out"></div></div>
+  <div class="card sl-aarcard" id="aar-studies"></div>
+  <div class="sl-aar-actions"><button type="button" class="btn solid" id="aar-again">Play this week again</button><button type="button" class="btn" id="aar-new">New week</button></div>
+</section>
+
+<section class="below">
+  <div class="col" id="method-col"></div>
+  <div class="col" id="sources-col"></div>
+</section>
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Strait Landing', sub: 'An operational wargame of a PLA landing on Taiwan: lift, weather, missiles and the race against the counterattack.', category: 'Force & wargame models' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

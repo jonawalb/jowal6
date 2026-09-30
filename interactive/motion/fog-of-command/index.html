@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Fog of Command</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .cell { fill: none; stroke: var(--paper); stroke-opacity: .16; stroke-width: 1.2; }
+  .contour { fill: none; stroke: var(--green); stroke-opacity: .16; stroke-width: 1.2; }
+  .road { fill: none; stroke: var(--paper); stroke-opacity: .13; stroke-width: 3; stroke-dasharray: 1 7; stroke-linecap: round; }
+  .river { fill: none; stroke: var(--blue); stroke-opacity: .5; stroke-width: 7; stroke-linecap: round; }
+  .tag { font: 400 13px var(--mono); letter-spacing: .14em; text-transform: uppercase; paint-order: stroke; stroke: #0b1712; stroke-width: 5px; stroke-linejoin: round; }
+  .ulab { font: 400 11px var(--mono); letter-spacing: .12em; fill: var(--muted); text-transform: uppercase; }
+  .unit rect { fill: #11231b; stroke: var(--paper); stroke-width: 2.2; }
+  .unit .sym { fill: none; stroke: var(--paper); stroke-width: 1.8; }
+  .foe path { fill: rgba(224, 83, 61, .2); stroke: var(--red); stroke-width: 2.4; }
+  .panel-t { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .2em; text-transform: uppercase; }
+  .row { font: 400 15px var(--mono); fill: var(--paper); letter-spacing: .08em; text-transform: uppercase; }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of Fog of Command: a fog-covered valley grid where a feint draws enemy units one way, an artillery strike is watched by a scout, and the fog lifts to show the enemy's true layout and strength."><title>Fog of Command</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard, clamp } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Fog texture: seeded value noise baked once to an image (cheap to drift every frame).
+function fogTex(seed, w = 240, h = 150) {
+  let s = seed; const r = () => ((s = Math.imul(s ^ (s >>> 15), 1 | s) + 0x6D2B79F5 | 0, ((s ^ (s >>> 14)) >>> 0) / 4294967296));
+  const G = 64, lat = Float32Array.from({ length: G * G }, r);
+  const sm = u => u * u * (3 - 2 * u);
+  const vn = (x, y) => {
+    const xi = Math.floor(x), yi = Math.floor(y), xf = sm(x - xi), yf = sm(y - yi), L = (a, b) => lat[((b % G + G) % G) * G + ((a % G + G) % G)];
+    return lerp(lerp(L(xi, yi), L(xi + 1, yi), xf), lerp(L(xi, yi + 1), L(xi + 1, yi + 1), xf), yf);
+  };
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const g = c.getContext('2d'), im = g.createImageData(w, h);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    let v = 0, a = .5, f = 1 / 34;
+    for (let o = 0; o < 4; o++) { v += a * vn(x * f * 1.6, y * f); a *= .5; f *= 2.1; }
+    const al = clamp((v - .36) / .4), i = (y * w + x) * 4;
+    im.data[i] = 160; im.data[i + 1] = 182; im.data[i + 2] = 170; im.data[i + 3] = 255 * al * al;
+  }
+  g.putImageData(im, 0, 0);
+  return c.toDataURL();
+}
+
+// ---- Geometry: the fictional Varn valley, 4 x 4 sectors, Tarn Crossing behind the rear row.
+const CW = 170, RH = 140, GX = 460, GY = 100;
+const cx = c => GX + CW * c + CW / 2, cy = r => GY + RH * r + RH / 2;
+const XING = [800, 790];
+
+const defs = svg.querySelector('defs');
+defs.insertAdjacentHTML('beforeend', `
+  <filter id="glowU" filterUnits="userSpaceOnUse" x="-300" y="-300" width="2200" height="1600"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <filter id="mblur" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="16"/></filter>
+  <mask id="vis" maskUnits="userSpaceOnUse" x="-300" y="-300" width="2200" height="1600"><rect x="-300" y="-300" width="2200" height="1600" fill="#fff"/><g id="holes" filter="url(#mblur)"></g></mask>
+  <radialGradient id="lift"><stop offset=".55" stop-color="#000"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+  <radialGradient id="boom"><stop offset="0" stop-color="#fff4d6"/><stop offset=".35" stop-color="#f0a93b" stop-opacity=".9"/><stop offset="1" stop-color="#f0a93b" stop-opacity="0"/></radialGradient>
+  <marker id="ah" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4.4" markerHeight="4.4" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#f0a93b"/></marker>`);
+
+const world = el('g', {}, svg);
+const cam = el('g', {}, world);
+
+// Valley floor: contours, roads, the river and the crossing.
+const floor = el('g', {}, cam);
+for (let k = 0; k < 7; k++) {
+  const y = 130 + k * 82, a = 18 + (k % 3) * 8;
+  el('path', { class: 'contour', d: `M380 ${y} C ${520} ${y - a}, ${640} ${y + a}, ${800} ${y - a * .4} S ${1080} ${y + a}, ${1230} ${y - a * .6}` }, floor);
+}
+for (let c = 0; c < 4; c++) el('path', { class: 'road', d: `M${cx(c)} ${GY - 40} L${cx(c)} ${GY + 4 * RH} Q${cx(c)} ${XING[1] - 60} ${XING[0] + (c - 1.5) * 18} ${XING[1] - 14}` }, floor);
+el('path', { class: 'river', d: `M300 ${XING[1] + 8} C 520 ${XING[1] - 40}, 640 ${XING[1] + 40}, 800 ${XING[1] + 4} S 1100 ${XING[1] - 34}, 1300 ${XING[1] + 12}` }, floor);
+const cells = el('g', {}, floor);
+for (let r = 0; r < 4; r++) for (let c = 0; c < 4; c++) el('rect', { class: 'cell', x: GX + c * CW, y: GY + r * RH, width: CW, height: RH }, cells);
+const xg = el('g', { transform: `translate(${XING[0]} ${XING[1]})` }, floor);
+el('circle', { r: 17, fill: '#11231b', stroke: 'var(--paper)', 'stroke-width': 2 }, xg);
+el('path', { d: 'M0 -9 L2.6 -3 L9 -2.8 L4 1.4 L5.6 8 L0 4.4 L-5.6 8 L-4 1.4 L-9 -2.8 L-2.6 -3Z', fill: 'var(--paper)' }, xg);
+el('text', { x: 30, y: 6, class: 'tag', fill: 'var(--paper)' }, xg).textContent = 'Tarn Crossing';
+const vLab = el('text', { x: GX, y: GY - 18, class: 'tag', fill: 'var(--muted)' }, floor); vLab.textContent = 'Varn valley · north';
+
+// ---- Enemy (red), drawn under the fog: only seen where your units can see.
+const foes = [];
+const foe = (path, str0, str1 = str0) => {
+  const g = el('g', { class: 'foe' }, cam);
+  el('path', { d: 'M0 -21 L21 0 L0 21 L-21 0Z' }, g);
+  el('path', { d: 'M-9 -9 L9 9 M9 -9 L-9 9', style: 'fill:none;stroke-width:1.8' }, g);
+  const q = el('text', { x: 28, y: -10, class: 'tag', fill: 'var(--red)' }, g); q.textContent = '?';
+  const bars = el('g', { opacity: 0 }, g);
+  el('rect', { x: -24, y: 30, width: 48, height: 6, rx: 2, fill: 'rgba(224,83,61,.18)' }, bars);
+  const bar = el('rect', { x: -24, y: 30, width: 48, height: 6, rx: 2, fill: 'var(--red)' }, bars);
+  const f = { path, str0, str1, g, q, bars, bar };
+  foes.push(f); return f;
+};
+const E1 = foe([[6.2, [cx(1), cy(0) - 4]], [7.4, [cx(0) + 26, cy(1) - 38]]], .8);
+const E2 = foe([[6.5, [cx(2), cy(0)]], [7.7, [cx(1) + 18, cy(0) + 4]]], .65);
+const E3 = foe([[0, [cx(0) - 8, cy(0) - 6]]], .9);
+const E4 = foe([[0, [cx(3) + 4, cy(0) - 6]]], .85, .28);
+const foeAt = (f, t) => {
+  const P = f.path; if (P.length === 1 || t <= P[0][0]) return P[0][1];
+  const [t0, a] = P[0], [t1, b] = P[1], u = ease.inOut(seg(t, t0, t1));
+  return [lerp(a[0], b[0], u), lerp(a[1], b[1], u) - Math.sin(u * Math.PI) * 16];
+};
+
+// ---- Fog: dark body plus two drifting layers of wisps, cut by the vision mask.
+const fog = el('g', { mask: 'url(#vis)' }, cam);
+el('rect', { x: -300, y: -300, width: 2200, height: 1600, fill: '#0a1510' }, fog);
+const wispA = el('image', { href: fogTex(11), x: -260, y: -180, width: 2100, height: 1320, preserveAspectRatio: 'none', opacity: .4 }, fog);
+const wispB = el('image', { href: fogTex(29), x: -200, y: -200, width: 2100, height: 1320, preserveAspectRatio: 'none', opacity: .26 }, fog);
+cam.appendChild(vLab);
+const holes = svg.querySelector('#holes');
+const hole = (x, y, w, h) => el('rect', { x, y, width: w, height: h, rx: 18, fill: '#000', opacity: 0 }, holes);
+const sec = {};
+for (let r = 0; r < 4; r++) for (let c = 0; c < 4; c++) sec['nfms'[r] + c] = hole(GX + c * CW - 6, GY + r * RH - 6, CW + 12, RH + 12);
+const xHole = hole(560, 700, 480, 160);
+const liftHole = el('circle', { cx: 800, cy: 380, r: 0, fill: 'url(#lift)' }, holes);
+// When each sector is in sight: [on, off].
+const SIGHT = {
+  m0: [2.3, 6.6], m1: [2.45, 99], m2: [2.6, 99], m3: [2.75, 99], s1: [2.9, 99], s2: [3.0, 99], s3: [3.1, 99],
+  f1: [3.2, 99], f2: [3.3, 8.1], n1: [3.55, 99], n2: [3.7, 8.1],
+  f0: [6.1, 99], f3: [7.7, 99], n3: [8.62, 99],
+};
+
+// ---- Your units (paper), always on top of the fog.
+const units = [];
+const unit = (kind, label, path) => {
+  const g = el('g', { class: 'unit', opacity: 0 }, cam);
+  el('rect', { x: -27, y: -17, width: 54, height: 34, rx: 2 }, g);
+  const sy = el('g', { class: 'sym' }, g);
+  if (kind === 'recon') el('path', { d: 'M-27 17 L27 -17' }, sy);
+  if (kind === 'mech') { el('path', { d: 'M-27 -17 L27 17 M27 -17 L-27 17' }, sy); el('ellipse', { rx: 13, ry: 7 }, sy); }
+  if (kind === 'armor') el('ellipse', { rx: 17, ry: 9 }, sy);
+  if (kind === 'weapons') el('path', { d: 'M-12 8 L0 -8 L12 8' }, sy);
+  if (kind === 'arty') el('circle', { r: 5, style: 'fill:var(--paper)' }, sy);
+  el('text', { y: 32, 'text-anchor': 'middle', class: 'ulab' }, g).textContent = label;
+  const u = { g, path }; units.push(u); return u;
+};
+const S = (c, r, dx = 0, dy = 0) => [cx(c) + dx, cy(r) + dy];
+const R1 = unit('recon', 'Recon', [[0, S(1, 1)]]);
+const R2 = unit('recon', 'Recon', [[7.1, S(2, 1)], [7.8, S(3, 1, -40)]]);
+const M1 = unit('mech', 'Mech', [[5.5, S(0, 2)], [6.3, S(0, 1, 0, 14)]]);
+const M2 = unit('mech', 'Mech', [[0, S(1, 2)]]);
+const M3 = unit('mech', 'Mech', [[0, S(2, 2)]]);
+const M4 = unit('mech', 'Mech', [[9.2, S(3, 2)], [10.1, S(3, 1, 40, 8)]]);
+const AR = unit('armor', 'Armor', [[9.4, S(3, 3)], [10.3, S(3, 2, 40)]]);
+const WP = unit('weapons', 'Weapons', [[0, S(1, 3)]]);
+const AT = unit('arty', 'Artillery', [[0, S(2, 3)]]);
+const unitAt = (u, t) => { const P = u.path; if (P.length === 1 || t <= P[0][0]) return P[0][1]; const [t0, a] = P[0], [t1, b] = P[1], k = ease.inOut(seg(t, t0, t1)); return [lerp(a[0], b[0], k), lerp(a[1], b[1], k)]; };
+
+// ---- Player actions (amber): feint, artillery with a scout watching, main blow.
+const act = el('g', {}, cam);
+const arrow = (d, w, dash) => el('path', { d, fill: 'none', stroke: 'var(--amber)', 'stroke-width': w, 'stroke-linecap': 'round', 'marker-end': 'url(#ah)', pathLength: 1, ...(dash ? {} : { filter: 'url(#glowU)' }) }, act);
+const feints = [
+  arrow(`M${cx(0)} ${cy(2) - 30} C ${cx(0) - 10} ${cy(1)}, ${cx(0) - 30} ${cy(0) + 60}, ${cx(0) - 6} ${cy(0) + 26}`, 5, 1),
+  arrow(`M${cx(1) - 20} ${cy(2) - 30} C ${cx(1) - 50} ${cy(1) + 10}, ${cx(0) + 70} ${cy(0) + 70}, ${cx(0) + 44} ${cy(0) + 30}`, 5, 1),
+];
+const feintLab = el('text', { x: cx(0) - 78, y: cy(1) + 4, class: 'tag', fill: 'var(--amber)', 'text-anchor': 'end' }, act); feintLab.textContent = 'Feint';
+const blow = arrow(`M${cx(3)} ${cy(3) + 6} Q${cx(3) - 14} ${cy(1) + 60} ${cx(3)} ${cy(0) + 62}`, 11, 0);
+const blowLab = el('text', { x: cx(3) + 44, y: cy(2) - 60, class: 'tag', fill: 'var(--amber)' }, act); blowLab.textContent = 'Main blow';
+const ARC = `M${cx(2)} ${cy(3) - 18} Q ${cx(3) + 150} ${cy(1) + 40} ${cx(3) + 4} ${cy(0) - 6}`;
+const shellPath = el('path', { d: ARC, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 2, 'stroke-dasharray': '4 8', opacity: 0 }, act);
+const shell = el('circle', { r: 7, fill: '#fff1cf', filter: 'url(#kit-glow)', opacity: 0 }, act);
+const boom = el('circle', { cx: cx(3) + 4, cy: cy(0) - 6, r: 0, fill: 'url(#boom)', opacity: 0 }, act);
+const rings = [0, .16, .32].map(() => el('circle', { cx: cx(3) + 4, cy: cy(0) - 6, r: 0, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 2.4, opacity: 0 }, act));
+const hit = el('rect', { x: GX + 3 * CW, y: GY, width: CW, height: RH, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 3, opacity: 0 }, act);
+const spot = el('line', { stroke: 'var(--paper)', 'stroke-width': 1.8, 'stroke-dasharray': '2 6', opacity: 0 }, act);
+const weak = el('text', { x: cx(3) + 36, y: cy(0) + 44, class: 'tag', fill: 'var(--red)', opacity: 0 }, act); weak.textContent = 'Weakened';
+const spotLab = el('text', { x: cx(3) - 94, y: cy(0) + 60, class: 'tag', fill: 'var(--paper)', 'text-anchor': 'middle', opacity: 0 }, act); spotLab.textContent = 'Scout watching';
+
+// Payoff labels
+const west = el('g', { opacity: 0 }, cam);
+el('path', { d: `M${GX - 16} ${GY + 4} L${GX - 16} ${GY + RH + 104} M${GX - 16} ${GY + 4} L${GX - 2} ${GY + 4} M${GX - 16} ${GY + RH + 104} L${GX - 2} ${GY + RH + 104}`, fill: 'none', stroke: 'var(--red)', 'stroke-width': 2 }, west);
+el('text', { x: GX - 32, y: GY + 110, class: 'tag', fill: 'var(--red)', 'text-anchor': 'end' }, west).textContent = 'Drawn west';
+el('text', { x: GX - 32, y: GY + 132, class: 'tag', fill: 'var(--red)', 'text-anchor': 'end' }, west).textContent = 'by the feint';
+const truth = el('text', { x: 800, y: GY - 48, 'text-anchor': 'middle', class: 't-kicker', opacity: 0 }, cam); truth.textContent = 'The real enemy';
+
+// ---- Panels (outside the camera)
+const left = el('g', { opacity: 0 }, world);
+el('text', { x: 72, y: 150, class: 'panel-t' }, left).textContent = 'Your command';
+[['Recon', 2], ['Mechanized', 4], ['Armored', 1], ['Weapons', 1], ['Artillery', 1]].forEach(([n, k], i) => {
+  el('text', { x: 72, y: 192 + i * 32, class: 'row' }, left).textContent = n;
+  el('text', { x: 300, y: 192 + i * 32, class: 'row', fill: 'var(--muted)', 'text-anchor': 'end' }, left).textContent = '×' + k;
+});
+const right = el('g', { opacity: 0 }, world);
+el('text', { x: 1268, y: 150, class: 'panel-t' }, right).textContent = 'Artillery';
+el('text', { x: 1268, y: 184, class: 'row' }, right).textContent = 'One sector a turn';
+el('text', { x: 1268, y: 236, class: 'panel-t' }, right).textContent = 'Damage reports';
+el('text', { x: 1268, y: 270, class: 'row' }, right).textContent = 'Right 90% of the time';
+const obs = el('g', { opacity: 0 }, right);
+el('rect', { x: 1256, y: 296, width: 290, height: 72, rx: 6, fill: 'rgba(240,169,59,.1)', stroke: 'var(--amber)', 'stroke-width': 1.4 }, obs);
+el('text', { x: 1272, y: 324, class: 'panel-t', fill: 'var(--amber)', style: 'fill:var(--amber)' }, obs).textContent = 'Scout next door';
+el('text', { x: 1272, y: 354, class: 'row' }, obs).textContent = 'Position + strength';
+
+const hook = el('text', { x: 800, y: 470, 'text-anchor': 'middle', class: 't-hook', style: 'font-size:76px' }, svg);
+hook.innerHTML = 'You only see what your <tspan class="hot">scouts</tspan> see.';
+
+const cap = captions(svg, [
+  [3.3, 5.4, 'The enemy shows only where your units can see.'],
+  [5.5, 7.9, 'It acts only on what it sees. So show it a feint.'],
+  [8.0, 10.4, 'Your guns hit one sector. A scout watches them land.'],
+  [10.5, 13.0, 'Lift the fog: the real enemy, at its real strength.'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Fog of Command', line: 'Feint and bait an enemy that sees no more than you do.' });
+
+run({ duration: 16, poster: 9.0, frame: t => {
+  // Camera: slow push, a jolt at the impact, then ease back for the reveal.
+  const push = ease.inOut(seg(t, 2.4, 9.6)) - .45 * ease.inOut(seg(t, 10.3, 11.6));
+  const k = 1 + .12 * push, fy = 420 - 30 * push;
+  const fx = 800 - 100 * ease.inOut(seg(t, 5.0, 6.2)) + 230 * ease.inOut(seg(t, 7.5, 8.5)) - 130 * ease.inOut(seg(t, 10.3, 11.6));
+  const j = t > 8.6 ? Math.exp(-(t - 8.6) * 8) * 5 * Math.sin(t * 95) : 0;
+  cam.setAttribute('transform', `translate(${800 + j} ${430 + j * .6}) scale(${k}) translate(${-fx} ${-fy})`);
+  world.setAttribute('opacity', seg(t, 0, .6) * (1 - ease.inOut(seg(t, 13.1, 14.2))));
+
+  // Fog drift and sight
+  wispA.setAttribute('transform', `translate(${-t * 11} ${-t * 2.5})`);
+  wispB.setAttribute('transform', `translate(${t * 8} ${t * 1.6})`);
+  for (const [id, [on, off]] of Object.entries(SIGHT)) sec[id].setAttribute('opacity', ease.out(seg(t, on, on + .6)) * (1 - ease.inOut(seg(t, off, off + .8))));
+  xHole.setAttribute('opacity', ease.out(seg(t, 2.2, 3.2)));
+  const lu = ease.inOut(seg(t, 10.4, 11.9));
+  liftHole.setAttribute('r', lu * 1150);
+  fog.setAttribute('opacity', 1 - .85 * ease.in(seg(t, 11.0, 12.2)));
+
+  // Hook
+  const hu = ease.out(seg(t, .3, 1.1)) * (1 - ease.in(seg(t, 2.5, 3.1)));
+  hook.setAttribute('opacity', hu); hook.setAttribute('transform', `translate(0 ${(1 - ease.out(seg(t, .3, 1.3))) * 24 - seg(t, 2.5, 3.1) * 30})`);
+
+  // Units
+  units.forEach((u, i) => {
+    const [x, y] = unitAt(u, t), a = ease.back(seg(t, 2.3 + i * .09, 2.8 + i * .09));
+    u.g.setAttribute('opacity', seg(t, 2.3 + i * .09, 2.6 + i * .09));
+    u.g.setAttribute('transform', `translate(${x} ${y}) scale(${a})`);
+  });
+
+  // Enemy
+  foes.forEach((f, i) => {
+    const [x, y] = foeAt(f, t);
+    const rev = seg(t, 10.9 + i * .14, 11.4 + i * .14), pop = 1 + .25 * Math.sin(rev * Math.PI);
+    f.g.setAttribute('transform', `translate(${x} ${y}) scale(${pop})`);
+    f.g.setAttribute('filter', rev > 0 ? 'url(#kit-glow)' : 'none');
+    const spotted = f === E4 && t > 8.75;
+    const known = Math.max(rev, spotted ? seg(t, 8.75, 9.1) : 0);
+    f.bars.setAttribute('opacity', known);
+    f.q.setAttribute('opacity', 1 - known);
+    const s = f === E4 ? lerp(f.str0, f.str1, ease.out(seg(t, 8.9, 9.8))) : f.str0;
+    f.bar.setAttribute('width', 48 * s * (f === E4 && t < 10.9 ? 1 : ease.out(rev)));
+  });
+
+  // Feint
+  feints.forEach((p, i) => {
+    const u = ease.inOut(seg(t, 5.5 + i * .2, 6.3 + i * .2));
+    p.style.strokeDasharray = u >= 1 ? '.03 .025' : `${u} 1`;
+    p.style.strokeDashoffset = u >= 1 ? -(t * .08) : 0;
+    p.setAttribute('opacity', (u > 0) * (1 - .55 * seg(t, 8.2, 8.8)));
+  });
+  feintLab.setAttribute('opacity', ease.out(seg(t, 5.9, 6.3)) * (1 - .55 * seg(t, 8.2, 8.8)) * (1 - seg(t, 10.8, 11.2)));
+  vLab.setAttribute('opacity', ease.out(seg(t, 2.3, 3)));
+
+  // Artillery: the round flies, lands, and the scout next door sees what it did
+  const su = seg(t, 8.0, 8.6);
+  shellPath.setAttribute('opacity', seg(t, 7.9, 8.1) * (1 - seg(t, 9.2, 9.8)) * .8);
+  const L = shellPath.getTotalLength(), pt = shellPath.getPointAtLength(ease.in(su) * L);
+  shell.setAttribute('cx', pt.x); shell.setAttribute('cy', pt.y);
+  shell.setAttribute('opacity', su > 0 && su < 1 ? 1 : 0);
+  const bu = seg(t, 8.6, 9.3);
+  boom.setAttribute('r', 20 + ease.out(bu) * 80); boom.setAttribute('opacity', bu > 0 ? 1 - bu : 0);
+  rings.forEach((c, i) => { const u = seg(t, 8.6 + i * .16, 9.5 + i * .16); c.setAttribute('r', 10 + ease.out(u) * 120); c.setAttribute('opacity', u > 0 && u < 1 ? 1 - u : 0); });
+  hit.setAttribute('opacity', seg(t, 8.6, 8.7) * (1 - .6 * seg(t, 9.0, 10.0)) * (1 - seg(t, 10.8, 11.3)));
+  const r2 = unitAt(R2, t);
+  spot.setAttribute('x1', r2[0]); spot.setAttribute('y1', r2[1] - 20); spot.setAttribute('x2', cx(3) + 4); spot.setAttribute('y2', cy(0) + 18);
+  const so = seg(t, 8.55, 8.8) * (1 - seg(t, 10.6, 11.1));
+  spot.setAttribute('opacity', so); spotLab.setAttribute('opacity', so);
+
+  weak.setAttribute('opacity', ease.out(seg(t, 9.4, 9.8)) * (1 - seg(t, 12.6, 13)));
+  // Main blow
+  const mb = ease.inOut(seg(t, 9.3, 10.2));
+  blow.style.strokeDasharray = `${mb} 1`;
+  blow.setAttribute('opacity', mb > 0 ? 1 : 0);
+  blowLab.setAttribute('opacity', ease.out(seg(t, 9.8, 10.2)));
+
+  // Payoff
+  west.setAttribute('opacity', ease.out(seg(t, 11.5, 12.0)));
+  truth.setAttribute('opacity', ease.out(seg(t, 11.2, 11.7)));
+
+  // Panels
+  left.setAttribute('opacity', ease.out(seg(t, 3.0, 3.6)) * (1 - seg(t, 7.2, 7.7)));
+  right.setAttribute('opacity', ease.out(seg(t, 7.6, 8.1)) * (1 - seg(t, 12.8, 13.2)));
+  obs.setAttribute('opacity', ease.out(seg(t, 8.8, 9.2)));
+
+  cap(t);
+  end(t, 13.0, 16);
+} });
+</script>
+</body></html>

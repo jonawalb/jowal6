@@ -173,6 +173,8 @@ export const ALL_TOOLS = [
     blurb: "Iran's enriched uranium from every IAEA quarterly report since 2016, against the JCPOA limit and quoted breakout estimates, to the June 2025 strikes after which there is no verified figure." },
   { slug: 'hormuz-mcm', cat: 'mideast', also: ['models'], sites: ['deterrence'], title: 'Hormuz Mine Clearance', status: 'live',
     blurb: 'Set the mines, clutter, forces and threat, and see how long it takes to clear shipping routes through Hormuz and how much risk remains when they are declared clear.' },
+  { slug: 'rhetoric-global', cat: 'rhetoric', also: ['ukraine', 'mideast'], sites: ['deterrence'], title: 'Rhetoric Heatmap: Russia and Beyond', status: 'live',
+    blurb: "What the Kremlin and Iran's Foreign Ministry keep saying, week by week since 2021: recurring formulas from 'special military operation' to 'Zionist regime' as a heatmap, with every quote one click from its source." },
 ];
 
 export const onSite = (x, site = SITE) => !x.sites || x.sites.includes(site);

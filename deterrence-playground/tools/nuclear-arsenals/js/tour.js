@@ -10,7 +10,7 @@ export const STEPS = [
     body: () => `The United States had ${v('USA', 1945)} warheads at the end of 1945 in this series; the first Soviet warhead appears in 1949. By 1960 the two held ${fmt(v('USA', 1960) + v('RUS', 1960))} between them. Drag across the chart or use the slider to move through time.`,
     set: { year: 1960, view: 'stack', log: false, on: ALL, msId: null, page: 'USA' } },
   { title: 'The U.S. peak came first',
-    body: () => `The U.S. stockpile peaked in 1967 at ${fmt(v('USA', 1967))}. SALT I (1972) limited missiles, not warheads, and the Soviet stockpile kept climbing for another two decades.`,
+    body: () => `The U.S. stockpile peaked in 1967 at ${fmt(v('USA', 1967))}. SALT I (1972) limited missiles, not warheads, and the Soviet stockpile kept climbing until its 1986 peak.`,
     set: { year: 1967, view: 'lines', log: false, on: ['USA', 'RUS'], msId: 'salt1', page: 'USA' } },
   { title: 'The global peak: 1986',
     body: () => `The global total reached ${fmt(Math.max(...WORLD))} in 1986, when the Soviet stockpile alone was ${fmt(v('RUS', 1986))}. The INF Treaty was signed a year later.`,

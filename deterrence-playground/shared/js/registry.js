@@ -140,7 +140,7 @@ export const ALL_TOOLS = [
     blurb: "Iran's three direct attacks on Israel side by side: what was launched, what was stopped, who defended with what, and what it cost, with every figure sourced and every disagreement shown." },
   { slug: 'coercion-resilience', dev: true, cat: 'coercion', sites: ['deterrence'], title: 'Coercion Without Concession', status: 'live',
     blurb: "China's trade punishment of Australia and South Korea in real trade and tourism data: what was hit, what found other buyers, and what Beijing failed to change." },
-  { slug: 'war-markets', dev: true, cat: 'coercion', sites: ['deterrence'], title: 'War Markets', status: 'live',
+  { slug: 'war-markets', cat: 'gametheory', sites: ['deterrence'], title: 'War Markets', status: 'live',
     blurb: 'What prediction markets priced for strikes on Iran, ceasefires and a Russia–NATO clash in 2026, set against how each contract resolved.' },
   { slug: 'crisis-stability', sub: { nuclear: 'playground' }, cat: 'nuclear', sites: ['deterrence'], title: 'Crisis Stability Calculator', status: 'live',
     blurb: "Set two notional force postures and see Kent and Thaler's first-strike stability index: who gains by striking first, and how MIRVed silos, alert rates and launch under attack move it." },

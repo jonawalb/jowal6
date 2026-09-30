@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Markets vs. Analysts | Interactive Deterrence</title>
+<meta name="description" content="Polymarket prices on a Chinese invasion, blockade or military clash with Taiwan, set against Taiwan Security Monitor's daily record of PLA activity.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@500;600;700;800&family=DM+Mono:wght@400;500&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="markets-vs-analysts.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<div class="actions">
+  <p class="fine" id="asof"></p>
+  <div class="btns">
+    <button type="button" class="btn solid" id="start-tour">Walk me through it</button>
+    <button type="button" class="btn" id="copy-link">Copy link</button>
+  </div>
+</div>
+
+<main class="layout">
+  <div class="stage">
+    <div class="card chartcard" id="stagebox">
+      <div class="card-h">
+        <div>
+          <p class="eyebrow">Price of a $1 “Yes” share, daily</p>
+          <p class="fine" id="win-label"></p>
+        </div>
+        <div class="zoom" role="group" aria-label="Date range">
+          <button type="button" class="btn" data-zoom="90">90 days</button>
+          <button type="button" class="btn" data-zoom="365">1 year</button>
+          <button type="button" class="btn" data-zoom="all">All</button>
+        </div>
+      </div>
+      <div class="chartwrap">
+        <svg id="chart" class="chart" tabindex="0" role="img" aria-label="Line chart of market prices with PLA aircraft activity. Hover, or focus and use the arrow keys, for daily values."></svg>
+        <div class="tooltip" id="tip" hidden></div>
+      </div>
+      <p class="xlinks day-links" id="day-links" aria-live="polite"></p>
+      <div class="legend" role="group" aria-label="Overlays from PLA activity data">
+        <label class="lg-tg"><input type="checkbox" id="ov-air"><i class="lg-air"></i>PLA aircraft, 7-day mean (right axis)</label>
+        <label class="lg-tg"><input type="checkbox" id="ov-ex"><i class="lg-ex"></i>Major exercise</label>
+        <label class="lg-tg"><input type="checkbox" id="ov-jcrp"><i class="lg-jcrp"></i>Joint combat readiness patrol</label>
+        <span><i class="lg-dl"></i>Contract deadline</span>
+      </div>
+      <p class="eyebrow sm">Full record · drag to set the window</p>
+      <svg id="brush" class="brush" role="group" aria-label="Overview of the full record with a draggable date window"></svg>
+    </div>
+
+    <div class="card xccard">
+      <div class="card-h">
+        <div>
+          <p class="eyebrow">Lead or lag? <span id="xc-title" class="xc-name"></span></p>
+          <p class="fine">Correlation between PLA aircraft and this market’s price, shifted by up to the lag shown. Computed in your browser for the window above.</p>
+        </div>
+      </div>
+      <div class="xc-grid">
+        <div>
+          <svg id="xc" class="xc" role="img" aria-label="Cross-correlation bars by lag"></svg>
+          <div id="xc-text"></div>
+        </div>
+        <div class="xc-ctl">
+          <p class="eyebrow sm">Aircraft series</p>
+          <div class="choices" id="xc-src">
+            <button type="button" data-src="7" aria-pressed="true">7-day mean</button>
+            <button type="button" data-src="1" aria-pressed="false">Daily count</button>
+          </div>
+          <label class="tg"><input type="checkbox" id="xc-diff" checked><span class="sw"></span><span class="t">Use day-over-day changes<small>Recommended. Turn off to see why levels mislead.</small></span></label>
+          <div class="slider"><div class="sl-h"><label for="xc-lag">Maximum lag</label><output id="xc-lag-out"></output></div>
+            <input type="range" id="xc-lag" min="7" max="45" step="1" value="21"></div>
+          <p class="caveat"><b>Read with care.</b> These are thin, noisy markets. A correlation says two lines moved together in this window. It does not show that PLA activity moved the market, or the reverse.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="panel" id="panel" aria-label="Markets, overlays and details"></aside>
+</main>
+
+<section class="below">
+  <div class="col">
+    <h2>What a market price is</h2>
+    <p>Each contract here is a Polymarket share that pays $1 if a stated event happens by a deadline and nothing if it does not. The price is what the last buyer and seller agreed to swap it for. A price of 4¢ is often read as “a 4% chance,” and that is a reasonable first reading, but it is a price. It comes from whoever chose to put money in, it reflects the cost of tying up cash until the deadline, and on quiet days it can rest on a handful of small trades.</p>
+    <p>It is not a forecast from analysts. No intelligence service, think tank or survey of experts sets these numbers. That is the point of the comparison: traders on one side, and on the other the record analysts watch, TSM’s daily count of PLA aircraft and the major exercises around Taiwan.</p>
+    <h2 class="mt">How to read the chart</h2>
+    <ul class="howto">
+      <li><b>Lines</b> are daily “Yes” prices in cents. Several contracts on the same event with different deadlines form a ladder; later deadlines cost more, and each line falls toward zero as its deadline passes quietly.</li>
+      <li><b>The grey line</b> is PLA aircraft reported around Taiwan, as a 7-day mean, on the right axis. <b>Shaded bands</b> are major exercises and <b>ticks</b> are joint combat readiness patrols.</li>
+      <li><b>The volume strip</b> shows dollars traded each day in the focus market. When it is nearly empty, a single trade sets the price.</li>
+      <li><b>The lead/lag chart</b> shifts the aircraft series against the price and reports the correlation at each lag. The shaded band is the rough range for pure noise.</li>
+    </ul>
+    <h2 class="mt">What is missing</h2>
+    <p>There is no matching daily series of expert forecasts, so the “analysts” side of this page is the activity record analysts use, not their probability judgments. The market archive is incomplete for some older contracts: for the 2024 and 2025 invasion contracts, only the last weeks of trading survive, because Polymarket stops serving price history once a contract resolves. Those gaps are shown as gaps. Kalshi contracts are not included.</p>
+  </div>
+  <div class="col">
+    <h2>Method</h2>
+    <ul class="src">
+      <li>Daily price: the last hourly price bar of the day (UTC) where the archive has bars, which is from July 2026 on; otherwise the size-weighted median of that day’s fills, counting a “No” fill at price p as a “Yes” price of 1 − p. Days with no trades are left blank, never filled in.</li>
+      <li>Daily volume: the sum of shares times price across the day’s fills.</li>
+      <li>Aircraft 7-day mean: the average of the reported days in the trailing seven, shown only when at least four days were reported.</li>
+      <li>Lead/lag: Pearson correlation of aircraft at day t with price at day t + k, for every k in the chosen range, over matched days in the window. The noise band is ±1.96/√n. It ignores autocorrelation and the number of lags scanned, so it is generous to finding a pattern.</li>
+      <li>Left out: “Will China invade Taiwan before GTA VI?”, which paid 50-50 if neither event happened, so its price is not a probability of invasion.</li>
+    </ul>
+    <h2 class="mt">Sources</h2>
+    <ul class="src">
+      <li>Market prices and trades: Polymarket, as archived by Jonathan Walberg’s Betting on War collector (hourly bars and every fill for tracked Taiwan contracts, plus trade tapes recovered for resolved ones). Resolution rules quoted from archived copies of each <a href="https://web.archive.org/web/20260927160700/https://polymarket.com/event/will-china-invade-taiwan-before-2027" target="_blank" rel="noopener">Polymarket event page</a>; each market’s card links its own copy.</li>
+      <li>PLA aircraft and joint combat readiness patrols: Taiwan Security Monitor PLA Activity Center, compiled from Taiwan Ministry of National Defense daily releases.</li>
+      <li>Exercises: the Exercises as Theater event list (Taiwan Security Monitor data). Sources for the events in range: <a href="https://chinapower.csis.org/tracking-chinas-april-2023-military-exercises-around-taiwan/" target="_blank" rel="noopener">CSIS ChinaPower on April 2023</a>, <a href="https://chinapower.csis.org/china-respond-inauguration-taiwan-william-lai-joint-sword-2024a-military-exercise/" target="_blank" rel="noopener">on Joint Sword-2024A</a>, <a href="http://eng.mod.gov.cn/xb/News_213114/TopStories/16345116.html" target="_blank" rel="noopener">PRC MND on Joint Sword-2024B</a>, <a href="https://globaltaiwan.org/2025/01/the-prc-sends-a-message-to-the-international-community/" target="_blank" rel="noopener">GTI on December 2024</a>, <a href="https://www.rfa.org/english/southchinasea/2025/02/26/china-navy-taiwan-live-fire-exercise-kaohsiung/" target="_blank" rel="noopener">RFA on February 2025</a>, <a href="https://globaltaiwan.org/2025/04/the-plas-strait-thunder-exercise/" target="_blank" rel="noopener">GTI on Strait Thunder-2025A</a>, <a href="https://globaltaiwan.org/2026/01/pla-justice-mission-2025/" target="_blank" rel="noopener">GTI on Justice Mission-2025</a>, <a href="https://maritime-executive.com/article/china-s-pla-navy-conducts-largest-ever-carrier-drill-in-the-pacific" target="_blank" rel="noopener">Maritime Executive on September 2023</a> and <a href="http://eng.chinamil.com.cn/CHINA_209163/TopStories_209189/16246270.html" target="_blank" rel="noopener">China Military Online on August 2023</a>.</li>
+      <li>Related research: Jonathan Walberg, “Estimating the Deception Parameter: A Finite-Mixture Approach to Source Attribution in Thin Prediction Markets,” working paper, University of Virginia, 2026. It estimates what share of price movements in conflict prediction markets, including these Taiwan contracts, comes from informed trading rather than from ordinary noise or a state’s own strategic bet. It is unpublished, and its estimates are not reproduced here.</li>
+      <li>Nothing on this page is a notional value. Every number is computed from the archived trades and TSM records above.</li>
+    </ul>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Markets vs. Analysts', sub: 'What traders pay for a Chinese invasion, blockade or clash with Taiwan, set against the PLA activity record.', category: 'Narrative & rhetoric' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

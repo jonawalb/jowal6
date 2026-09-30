@@ -102,7 +102,7 @@ export const ALL_TOOLS = [
     blurb: 'Paste a PRC statement and see what each formula has signalled before.' },
   { slug: 'narrative-diffusion', sites: ['tsm'], cat: 'narrative', title: 'Narrative Diffusion', status: 'live',
     blurb: 'Follow one PRC talking point from the podium through state media, with the data gaps shown.' },
-  { slug: 'markets-vs-analysts', sites: ['tsm'], cat: 'narrative', title: 'Markets vs. Analysts', status: 'live',
+  { slug: 'markets-vs-analysts', sites: ['deterrence'], cat: 'gametheory', title: 'Markets vs. Analysts', status: 'live',
     blurb: 'What traders pay for a Chinese invasion, blockade or clash, against the PLA activity record.' },
   { slug: 'deterrence-lab', sites: ['tsm'], cat: 'classroom', title: 'Deterrence Lab', status: 'live',
     blurb: 'Audience costs, costly signals and salami tactics as formal models: move the costs and beliefs and watch the equilibrium shift.' },

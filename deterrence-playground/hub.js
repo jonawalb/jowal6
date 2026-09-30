@@ -57,8 +57,9 @@ el('circle', { cx: tx, cy: ty, r: 5, class: 'hero-tw' }, root);
 el('text', { x: tx + 9, y: ty + 4, class: 'hero-lbl' }, root, 'Taiwan');
 
 // Category selector
-let cat = location.hash.slice(1);
-if (!CATEGORIES.some(c => c.id === cat)) cat = 'all';
+// State: a section (`cat`) and, for sections with subsections, an open subsection (`sub`). Hash: #cat or #cat/sub.
+let [cat, sub = ''] = location.hash.slice(1).split('/');
+if (!CATEGORIES.some(c => c.id === cat)) { cat = 'all'; sub = ''; }
 const catName = Object.fromEntries(CATEGORIES.map(c => [c.id, c.name]));
 const counts = Object.fromEntries(CATEGORIES.map(c => [c.id, TOOLS.filter(t => inCat(t, c.id)).length]));
 // Interactive Deterrence lists every tool under "Everything"; other sites open on an overview of section tiles.
@@ -67,7 +68,11 @@ document.body.classList.add('site-' + SITE);
 $('cats').innerHTML = [{ id: 'all', name: TILES ? 'All sections' : 'Everything' }, ...CATEGORIES].map(c =>
   `<button type="button" data-cat="${c.id}"><b>${c.name}</b><span>${c.id === 'all' ? COUNTED.length : counts[c.id]}</span></button>`).join('');
 const catBtns = [...$('cats').querySelectorAll('button')];
-function pickCat(c) { cat = c; history.replaceState(null, '', cat === 'all' ? './' : '#' + cat); render(); }
+function pickCat(c) {
+  [cat, sub = ''] = c.split('/');
+  history.replaceState(null, '', cat === 'all' ? './' : '#' + cat + (sub ? '/' + sub : ''));
+  render();
+}
 catBtns.forEach(b => b.onclick = () => pickCat(b.dataset.cat));
 $('sections').addEventListener('click', e => {
   const b = e.target.closest('[data-open-cat]');
@@ -103,12 +108,19 @@ function card(t) {
   return soon ? `<div class="tool soon" aria-disabled="true">${inner}</div>` : `<a class="tool" href="${href}">${inner}</a>`;
 }
 
-/** A section split into its subsections (registry `subs`); tools without a subsection go last. */
-function subsections(c, list) {
-  const groups = [...c.subs.map(s => [s, list.filter(t => t.sub && t.sub[c.id] === s.id)]),
-    [{ name: 'More', blurb: '' }, list.filter(t => !(t.sub && c.subs.some(s => s.id === t.sub[c.id])))]];
-  return groups.filter(([, ts]) => ts.length).map(([s, ts]) => `<div class="sub-sec"><div class="sub-h"><h3>${esc(s.name)}</h3>
-    ${s.blurb ? `<p>${esc(s.blurb)}</p>` : ''}</div><div class="tools">${ts.map(card).join('')}</div></div>`).join('');
+/** A section's subsections (registry `subs`) with their tools; tools without a subsection go in "More". */
+function subGroups(c, list) {
+  return [...c.subs.map(s => [s, list.filter(t => t.sub && t.sub[c.id] === s.id)]),
+    [{ id: 'more', name: 'More', blurb: 'Other tools in this section.' }, list.filter(t => !(t.sub && c.subs.some(s => s.id === t.sub[c.id])))]]
+    .filter(([, ts]) => ts.length);
+}
+/** Tile for one subsection, opened like a section tile. */
+function subTile(c, s, ts) {
+  return `<button type="button" class="sec-tile" data-open-cat="${c.id}/${s.id}">
+    <span class="sec-tile-n">${ts.length} tool${ts.length === 1 ? '' : 's'}</span>
+    <b>${esc(s.name)}</b><span class="sec-tile-b">${esc(s.blurb)}</span>
+    <span class="sec-tile-l">${ts.slice(0, 4).map(t => esc(t.title)).join(' · ')}${ts.length > 4 ? ' · …' : ''}</span>
+    <span class="go">Open →</span></button>`;
 }
 
 function render() {
@@ -126,9 +138,20 @@ function render() {
         <p>${COUNTED.length} tools in ${CATEGORIES.filter(c => c.id !== 'dev').length} sections.</p></div><div class="sec-tiles">${CATEGORIES.map(tile).join('')}</div></section>`;
     } else {
       const c = CATEGORIES.find(x => x.id === cat), list = TOOLS.filter(t => inCat(t, cat));
-      $('sections').innerHTML = `<section class="cat-sec" id="sec-${c.id}"><button type="button" class="btn sec-back" data-open-cat="all">← All sections</button>
-        <div class="cat-h"><h2>${c.name}${c.locked ? LOCK : ''}</h2><p>${c.blurb}</p></div>
-        ${c.subs ? subsections(c, list) : `<div class="tools">${list.map(card).join('')}</div>`}</section>`;
+      const groups = c.subs ? subGroups(c, list) : [];
+      const open = groups.find(([s]) => s.id === sub);
+      if (open) {
+        // Inside a subsection: its tools, with a way back to the section.
+        const [s, ts] = open;
+        $('sections').innerHTML = `<section class="cat-sec" id="sec-${c.id}-${s.id}"><button type="button" class="btn sec-back" data-open-cat="${c.id}">← ${esc(c.name)}</button>
+          <div class="cat-h"><h2>${esc(s.name)}</h2><p>${esc(s.blurb)}</p></div>
+          <div class="tools">${ts.map(card).join('')}</div></section>`;
+      } else {
+        $('sections').innerHTML = `<section class="cat-sec" id="sec-${c.id}"><button type="button" class="btn sec-back" data-open-cat="all">← All sections</button>
+          <div class="cat-h"><h2>${c.name}${c.locked ? LOCK : ''}</h2><p>${c.blurb}</p></div>
+          ${groups.length ? `<div class="sec-tiles">${groups.map(([s, ts]) => subTile(c, s, ts)).join('')}</div>`
+            : `<div class="tools">${list.map(card).join('')}</div>`}</section>`;
+      }
     }
     $('q-status').textContent = '';
     return;

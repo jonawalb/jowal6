@@ -1,4 +1,5 @@
-// Game Theory Gallery: model picker, per-model state, URL hash, walkthrough and sources.
+// Game Theory Gallery: model picker, open-model choice, learn pages, per-model state, URL hash, walkthrough
+// and sources. Two views share the page: the model (default) and the learn pages (#learn=<model>&p=<page>).
 import fearon95 from './views/fearon95.js';
 import powell06 from './views/powell06.js';
 import brink from './views/brink.js';
@@ -12,7 +13,9 @@ import { NOTES_B } from '../data/notes-b.js';
 import { CARDS, SOURCES } from '../data/catalog.js';
 import { PRIMERS } from '../data/primers.js';
 import { mountModel } from './shell.js';
-import { renderPrimer } from './primer.js';
+import { LEARN_TERMS } from '../data/learn-terms.js';
+import { createLearn } from './learn.js';
+import { createChoice, rememberedChoice } from './choice.js';
 import { createTour } from './tour.js';
 import { cardIcon } from './icons.js';
 import { esc } from './ui.js';
@@ -24,49 +27,93 @@ const NOTES = { ...NOTES_A, ...NOTES_B };
 const S = { m: 'fearon95', P: Object.fromEntries(Object.entries(MODELS).map(([k, m]) => [k, { ...m.defaults }])) };
 
 const stage = document.getElementById('stage'), panel = document.getElementById('panel');
-const picker = document.getElementById('picker'), primerHost = document.getElementById('primer');
-let current = null;
+const picker = document.getElementById('picker'), learnHost = document.getElementById('learn');
+let current = null, mounted = null;
 const reduceMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // ---- Picker -----------------------------------------------------------------------------------
 picker.innerHTML = CARDS.map(c => c.href
   ? `<a class="mcard ext" href="${c.href}">${cardIcon(c.icon)}<span class="mc-t"><b>${esc(c.title)}</b><span class="mc-who">${esc(c.who)}</span><span class="mc-bl">${esc(c.blurb)}</span></span></a>`
   : `<button type="button" class="mcard" data-m="${c.id}" aria-pressed="false">${cardIcon(c.icon)}<span class="mc-t"><b>${esc(c.title)}</b><span class="mc-who">${esc(c.who)}</span><span class="mc-bl">${esc(c.blurb)}</span></span></button>`).join('');
-picker.querySelectorAll('[data-m]').forEach(b => b.addEventListener('click', () => {
-  if (S.m !== b.dataset.m) { S.m = b.dataset.m; mount(); }
-  (primerHost.hidden ? stage : primerHost).scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'start' });
-}));
+picker.querySelectorAll('[data-m]').forEach(b => b.addEventListener('click', () => openModel(b.dataset.m)));
+
+const cardOf = m => CARDS.find(c => c.id === m);
+const scrollOpts = () => ({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'start' });
 
 function mount() {
   picker.querySelectorAll('[data-m]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.m === S.m)));
   document.body.dataset.model = S.m;
+  if (mounted === S.m) return;
+  mounted = S.m;
   current = mountModel(stage, panel, MODELS[S.m], S.P[S.m], NOTES[S.m], writeHash);
-  renderPrimer(primerHost, PRIMERS[S.m], NOTES[S.m].kicker, showStep);
-  writeHash();
+  // Small link near the title that opens the learn pages at page 1.
+  if (PRIMERS[S.m]) {
+    stage.querySelector('.mhead .cite').insertAdjacentHTML('afterend',
+      '<p class="mlearn"><button type="button" class="linkbtn">Learn about this model</button></p>');
+    stage.querySelector('.mlearn button').addEventListener('click', () => showLearn(S.m, 0, true));
+  }
 }
 
-// "Show me" in the primer: load the step through the same path as a "Try this" prompt, then bring the figures
-// into view and move keyboard focus there. On wide screens the model header and panel sit side by side, so scroll
-// to the top of the layout; on narrow screens the figures come first.
-function showStep(step, i, n) {
-  current.apply({ ...MODELS[S.m].defaults, ...step.set }, 'try', `Step ${i + 1} of ${n}: ${step.t}`);
-  const figs = stage.querySelector('.figs');
-  const target = innerWidth <= 1020 && figs ? figs : document.querySelector('.layout');
-  target.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'start' });
-  if (figs) { figs.setAttribute('tabindex', '-1'); figs.focus({ preventScroll: true }); }
+// ---- Views: model or learn pages ---------------------------------------------------------------
+function showModel({ push = false, focus = false, scroll = false } = {}) {
+  const wasLearning = !learnHost.hidden;
+  document.body.classList.remove('learning');
+  learnHost.hidden = true; learnHost.innerHTML = '';
+  mount();
+  writeHash(push || wasLearning);
+  if (wasLearning) window.scrollTo(0, 0);
+  if (scroll) stage.scrollIntoView(scrollOpts());
+  if (focus) {
+    const h = stage.querySelector('.mhead h2');
+    h.setAttribute('tabindex', '-1'); h.focus({ preventScroll: true });
+  }
+}
+
+function showLearn(m, i, push = false) {
+  if (!PRIMERS[m]) return showModel();
+  S.m = m; mount();
+  const entering = learnHost.hidden;
+  document.body.classList.add('learning');
+  learnHost.hidden = false;
+  i = learn.show(m, i);
+  if (entering) window.scrollTo(0, 0);
+  if (push) history.pushState(null, '', learnHash(m, i)); else history.replaceState(null, '', learnHash(m, i));
+}
+
+const learnHash = (m, i) => `#learn=${m}&p=${i + 1}`;
+const learn = createLearn(learnHost, {
+  data: m => ({ PR: PRIMERS[m], keep: LEARN_TERMS[m] || [], card: cardOf(m) }),
+  onPage: (m, i) => { if (!learnHost.hidden) history.replaceState(null, '', learnHash(m, i)); },
+  onModel: () => showModel({ push: true, focus: true }),
+});
+
+const choice = createChoice(document.getElementById('choose'), pick => {
+  if (pick === 'learn') showLearn(S.m, 0, true);
+  else showModel({ scroll: true, focus: true });
+});
+
+/** A model card was clicked (or a link named a model but no setup): ask, unless the viewer said not to. */
+function openModel(m) {
+  S.m = m;
+  showModel();
+  const pref = rememberedChoice();
+  if (pref === 'learn') return showLearn(m, 0, true);
+  if (pref === 'model' || !PRIMERS[m]) return showModel({ scroll: true, focus: true });
+  choice.open(cardOf(m), PRIMERS[m].question);
 }
 
 // ---- Hash -------------------------------------------------------------------------------------
-function writeHash() {
+function writeHash(push = false) {
+  if (!learnHost.hidden) return;
   const P = S.P[S.m], q = new URLSearchParams({ m: S.m });
   for (const k of Object.keys(MODELS[S.m].defaults)) q.set(k, String(P[k]));
-  history.replaceState(null, '', '#' + q.toString());
+  history[push === true ? 'pushState' : 'replaceState'](null, '', '#' + q.toString());
 }
 
 function readHash() {
   const q = new URLSearchParams(location.hash.slice(1));
   const m = q.get('m');
-  if (!MODELS[m]) return;
+  if (!MODELS[m]) return false;
   S.m = m;
   const model = MODELS[m], D = model.defaults, P = S.P[m], enums = model.enums || {};
   // Pass 1: view, other enumerated strings and on/off switches.
@@ -91,7 +138,19 @@ function readHash() {
     else if (s.opts && s.opts.some(o => o.v === v)) P[k] = v;
   }
   if (model.fix) Object.keys(D).forEach(k => model.fix(P, k));
+  return [...q.keys()].some(k => k !== 'm');
 }
+
+/** Show whatever the address names: learn pages, a model with its setup, or a bare model (ask first). */
+function route() {
+  choice.dismiss();
+  const q = new URLSearchParams(location.hash.slice(1)), L = q.get('learn');
+  if (L && PRIMERS[L]) return showLearn(L, Math.max(1, parseInt(q.get('p'), 10) || 1) - 1);
+  const hasSetup = readHash();
+  if (q.has('m') && MODELS[q.get('m')] && !hasSetup) return openModel(S.m);
+  showModel();
+}
+addEventListener('popstate', route);
 
 // ---- Sources ----------------------------------------------------------------------------------
 document.getElementById('sources').innerHTML = SOURCES.map(s =>
@@ -99,18 +158,17 @@ document.getElementById('sources').innerHTML = SOURCES.map(s =>
 
 // ---- Walkthrough and buttons ------------------------------------------------------------------
 const tour = createTour(document.getElementById('tour-root'), step => {
-  if (S.m !== step.m) { S.m = step.m; mount(); }
+  S.m = step.m; showModel();
   current.apply({ ...MODELS[step.m].defaults, ...step.set }, 'try', step.title);
 });
 document.getElementById('start-tour').addEventListener('click', () => tour.start());
 document.querySelectorAll('[data-goto]').forEach(a => a.addEventListener('click', ev => {
   ev.preventDefault();
-  S.m = a.dataset.goto; mount();
+  S.m = a.dataset.goto; showModel();
   picker.scrollIntoView({ behavior: 'auto', block: 'start' });
 }));
 
-readHash();
-mount();
+route();
 
 // Method-section math renders once KaTeX has loaded (its scripts are deferred).
 function renderMath() {

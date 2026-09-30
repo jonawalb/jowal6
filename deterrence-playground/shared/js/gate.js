@@ -32,10 +32,11 @@
   function decrypt(key, bytes) {
     return crypto.subtle.decrypt({ name: 'AES-GCM', iv: bytes.slice(0, 12) }, key, bytes.slice(12)).then(function (b) { return new Uint8Array(b); });
   }
-  /** Decrypt, then gunzip when the payload was compressed at build time. */
+  /** Decrypt, then gunzip when the payload was compressed at build time (thumbnails are sealed uncompressed,
+   *  so check the gzip magic bytes rather than trusting the flag). */
   function open(key, bytes, gz) {
     return decrypt(key, bytes).then(function (plain) {
-      if (!gz) return plain;
+      if (!gz || plain[0] !== 0x1f || plain[1] !== 0x8b) return plain;
       var stream = new Blob([plain]).stream().pipeThrough(new DecompressionStream('gzip'));
       return new Response(stream).arrayBuffer().then(function (ab) { return new Uint8Array(ab); });
     });

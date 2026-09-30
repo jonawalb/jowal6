@@ -1,0 +1,32 @@
+// One-sentence taglines for the rotating "Try one" spotlight on the Interactive Deterrence landing page.
+// Only open tools (no extra password, not Coming Soon) are shown; a tool without a tagline is skipped.
+// Keep each line to what the tool actually does.
+export const TAGLINES = {
+  'escalation-ladder-kahn': 'Walk through real nuclear crises rung by rung, then replay them from the allied side and see how each decision shifts the odds of how it ends.',
+  'warhead-ambiguity': 'An incoming missile might be nuclear: read the clues, update your beliefs, and decide whether to wait or strike back.',
+  'crisis-stability': 'Set two nuclear force postures and find out who gains by striking first.',
+  'entanglement': 'Strike the satellites and command links that serve both conventional and nuclear forces, and watch use-or-lose pressure build.',
+  'nuclear-arsenals': 'Scrub eighty years of warhead counts for every nuclear-armed state and watch the treaties bend the curves.',
+  'nuclear-tests': 'All 2,056 nuclear tests since Trinity, by country, yield and site, on one timeline.',
+  'declaratory-policy': 'What each nuclear-armed state actually promises about using its weapons, quoted from its own documents.',
+  'proliferation-paths': 'Watch states explore, pursue, acquire and give up nuclear weapons from 1939 on, and see where the datasets disagree.',
+  'treaty-tracker': 'Scrub six decades of arms control to see who signed, joined, suspended or walked away.',
+  'iran-enrichment': "Iran's enriched uranium from every IAEA report since 2016, against the deal's limits and quoted breakout estimates.",
+  'deterrence-lab-general': 'Move the costs and beliefs in three classic deterrence models and test what they predict against real crises.',
+  'ukraine-air-war': 'Every Russian missile and drone wave since 2022, and how much of each Ukraine reported shooting down.',
+  'russia-nuclear-signals': 'Every major Russian nuclear signal since 2022, and what, if anything, each one changed.',
+  'ukraine-support': 'Who pledged aid to Ukraine and who actually delivered it, donor by donor.',
+  'red-sea-hormuz': 'Watch daily ship traffic through the Red Sea and Hormuz rise and fall with every attack, strike and pause.',
+  'kharg-island': "Seize, raid or blockade Iran's oil export hub in a dice-driven wargame, then see how 1,000 replays turn out.",
+  'hormuz-mcm': 'Lay the mines, send the minehunters, and see how long it takes to reopen Hormuz and how much risk is left.',
+  'rhetoric-global': "The phrases the Kremlin and Iran's Foreign Ministry keep repeating, week by week since 2021.",
+  'rhetoric-heatmap': "Watch Beijing's language heat up and cool down, week by week, across three ministries.",
+  'correction-lab': 'Design a correction to a false story and see how much of the belief survives it.',
+  'raid-night': 'Defend four cities through waves of drones and missiles, and see what each night costs you in interceptors.',
+  'matrix-game': 'Argue your moves in a fictional Baltic crisis, face the counter-arguments, and let the dice decide.',
+  'sub-hunt': 'Hunt a hidden submarine with sonobuoys and patrol aircraft as a probability map updates every hour.',
+  'berlin-airlift': 'Keep two million Berliners fed and warm by air, day by day, and see how your tonnage stacks up against 1948–49.',
+  'budget-allocator': "Split a real defense budget, Taiwan's, Japan's, the Philippines' or Poland's, and see how the mix holds up.",
+  'kill-chain-builder': 'Wire sensors, command nodes and shooters into a kill chain, race a moving target, then find the link that breaks it.',
+  'interceptor-burndown': "Fire a daily missile-and-drone salvo at Taiwan's estimated interceptor stocks and watch the day each one runs dry.",
+};

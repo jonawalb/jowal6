@@ -3,6 +3,7 @@
 import { ROWS, NUM, LEVELS, VIEWS, LIMIT_KG_U, t, fmtKg, niceDate, esc } from './series.js';
 import { EVENTS, CATS } from '../data/events.js';
 import { LAST_ESTIMATE, AS_OF } from '../data/breakout.js';
+import { chartMotion, ping } from './fx.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 const mk = (tag, attrs = {}, parent) => {
@@ -28,7 +29,8 @@ export function createChart(host, { onReport, onEvent }) {
   const tip = document.createElement('div');
   tip.className = 'tooltip'; tip.hidden = true;
   host.appendChild(tip);
-  let geo = null, st = null, dragging = false;
+  let geo = null, st = null, dragging = false, lastReport = null;
+  const motion = chartMotion();
 
   const nearest = ev => {
     const r = svg.getBoundingClientRect();
@@ -139,11 +141,14 @@ export function createChart(host, { onReport, onEvent }) {
       const lt = mk('text', { class: 'ie-limit-t', x: jcpoa0 + 2, y: y(LIMIT_KG_U) - 5 }, plot);
       lt.textContent = 'JCPOA limit, 202.8 kg';
     }
+    motion(plot, [state.view, state.limit].join('|'));
     // Report dots
     const dots = mk('g', { class: 'ie-dots' }, svg);
+    let onDot = null;
     for (const r of NUM) {
       const v = showTotal ? r.total : stackTop(r);
       mk('circle', { cx: x(t(r.asof)), cy: y(v), r: r.id === state.report ? 5 : 2.6, class: r.basis + (r.id === state.report ? ' on' : '') }, dots);
+      if (r.id === state.report) onDot = [x(t(r.asof)), y(v)];
     }
     // Events along the top
     if (state.events) {
@@ -167,6 +172,9 @@ export function createChart(host, { onReport, onEvent }) {
       const cx = x(t(sel.asof));
       mk('line', { class: 'ie-cursor', x1: cx, x2: cx, y1: m.t, y2: m.t + ph }, svg);
     }
+    // Motion: a ping on the selected report's dot when the report changes.
+    if (onDot && lastReport !== null && lastReport !== state.report) ping(svg, onDot[0], onDot[1], { color: 'var(--ink)', r: 18, ms: 600, width: 1.5 });
+    lastReport = state.report;
   }
   return { draw };
 }

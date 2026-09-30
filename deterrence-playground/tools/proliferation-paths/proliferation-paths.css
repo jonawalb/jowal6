@@ -124,3 +124,10 @@
   .pp-recwrap { max-height: none; }
 }
 @media (prefers-reduced-motion: reduce) { .pp-dot circle { transition: none; } }
+
+/* Motion: stage colours ease between years instead of jumping; filtered-out dots fade. */
+@media (prefers-reduced-motion: no-preference) {
+  .pp-land { transition: fill .35s ease; }
+  .pp-dot circle { transition: r .15s, fill .35s ease; }
+  .pp-dot { transition: opacity .3s ease; }
+}

@@ -2,6 +2,7 @@
 import { STATES, ENVS } from '../data/tests.js';
 import { MILESTONES } from '../data/milestones.js';
 import { Y0, Y1, STATE_COLOR, ENV_COLOR, SHORT, byYear, filtered } from './common.js';
+import { chartMotion } from './fx.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 const mk = (tag, attrs = {}, parent) => {
@@ -18,6 +19,7 @@ export function createChart(host, { onYear, onMilestone }) {
   tip.className = 'tooltip'; tip.hidden = true;
   host.appendChild(tip);
   let st = null, geo = null, dragging = false, mat = null;
+  const motion = chartMotion(700, 'y');
 
   const yearAt = ev => {
     const r = svg.getBoundingClientRect();
@@ -95,6 +97,7 @@ export function createChart(host, { onYear, onMilestone }) {
         base += v;
       }
     });
+    motion(plot, [state.by, [...state.env].sort(), [...state.st].sort(), [...state.yc].sort()].join('|'));
     // Dim the years after the cursor slightly so the "through year" reading is visible.
     const cx = x(state.year);
     mk('rect', { class: 'after', x: cx + bw / 2, y: m.t, width: Math.max(0, m.l + pw - cx - bw / 2), height: ph }, plot);

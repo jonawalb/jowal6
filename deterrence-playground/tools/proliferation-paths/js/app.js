@@ -4,6 +4,7 @@ import { createMap } from './map.js';
 import { createTimeline } from './timeline.js';
 import { cardHTML, reconcileHTML, diffsHTML } from './card.js';
 import { createTour } from './tour.js';
+import { num, rise, pulse, reveal, wipeIn, fadeUp, onFirstView } from './fx.js';
 import { T0, T1, DATASETS, DS_LABEL, STAGES, STAGE_LABEL, ALL_IDS, stageAt, everHighest, everReversed, firstActivity, covers, disagree, reduceMotion, esc } from './common.js';
 
 const FILTERS = {
@@ -78,7 +79,13 @@ function render() {
   state.visible = new Set(ALL_IDS.filter(pred));
   $('year-out').textContent = state.year;
   range.value = state.year;
+  const prevN = new Map([...$('readout').querySelectorAll('dd.num')].map(d => [d.previousElementSibling.textContent, d.textContent]));
   $('readout').innerHTML = readout();
+  $('readout').querySelectorAll('dd.num').forEach(d => {
+    const p = prevN.get(d.previousElementSibling.textContent);
+    if (p != null) d.dataset.fx = p;
+    num(d, Number(d.textContent), { ms: 300, flashIt: true });
+  });
   document.querySelectorAll('[data-ds]').forEach(b => b.setAttribute('aria-pressed', b.dataset.ds === state.ds));
   document.querySelectorAll('[data-f]').forEach(b => b.setAttribute('aria-pressed', b.dataset.f === state.f));
   $('sort').value = state.sort;
@@ -87,10 +94,17 @@ function render() {
   $('map-year').textContent = state.year;
   map.draw(state);
   timeline.draw(state, order());
+  const tlKey = [state.ds, state.f, state.sort].join('|');
+  if (mv.tl && mv.tlKey !== tlKey) fadeUp($('timeline').querySelector('svg'));
   $('card').innerHTML = cardHTML(state.sel);
+  if (mv.sel !== null && mv.sel !== state.sel) rise($('card'), { ms: 300, dy: 6 });
   $('rec').innerHTML = reconcileHTML(state.gaps);
+  if (mv.gaps !== null && mv.gaps !== state.gaps) $('rec').querySelectorAll('tbody tr').forEach((r, i) => rise(r, { ms: 300, delay: Math.min(i, 12) * 25 }));
+  Object.assign(mv, { sel: state.sel, gaps: state.gaps, tlKey });
   writeHash();
 }
+// Motion bookkeeping (presentation only).
+const mv = { sel: null, gaps: null, tlKey: null, tl: false };
 function set(p) { Object.assign(state, p); render(); }
 
 $('f-ds').addEventListener('click', e => { const b = e.target.closest('[data-ds]'); if (b) set({ ds: b.dataset.ds }); });
@@ -108,6 +122,7 @@ let timer = 0;
 const play = $('play');
 function stopPlay() { clearInterval(timer); timer = 0; play.setAttribute('aria-pressed', 'false'); play.textContent = 'Play'; }
 play.addEventListener('click', () => {
+  pulse(play);
   if (timer) return stopPlay();
   if (state.year >= T1) set({ year: T0 });
   play.setAttribute('aria-pressed', 'true'); play.textContent = 'Pause';
@@ -135,3 +150,8 @@ new ResizeObserver(() => { const w = $('timeline').clientWidth; if (Math.abs(w -
 addEventListener('hashchange', () => { readHash(); render(); });
 readHash();
 render();
+{ // rise only the rows inside the scroll box's first view; the rest are shown as they are
+  const box = $('rec').getBoundingClientRect().bottom;
+  reveal([...$('rec').querySelectorAll('tbody tr')].filter(r => r.getBoundingClientRect().bottom <= box));
+}
+onFirstView($('timeline'), () => { mv.tl = true; wipeIn($('timeline').querySelector('svg'), 700); });

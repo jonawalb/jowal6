@@ -114,3 +114,8 @@ details summary { cursor: pointer; font-size: 13px; font-weight: 500; }
   .tt-tour { right: 8px; left: 8px; bottom: 8px; width: auto; }
   .tt-cmp td { white-space: normal; }
 }
+
+/* Motion: matrix cells ease to their new status colour when the year moves. */
+@media (prefers-reduced-motion: no-preference) {
+  .tt-c { transition: background-color .35s ease, border-color .35s ease; }
+}

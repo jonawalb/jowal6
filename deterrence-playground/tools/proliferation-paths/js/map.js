@@ -3,7 +3,8 @@
 import { WORLD } from '../data/world.js';
 import { STATES } from '../data/codings.js';
 import { createProjection } from '../../../shared/js/mapkit.js';
-import { esc, stageAt, disagree, STAGE_LABEL, DS_LABEL, covers } from './common.js';
+import { esc, stageAt, disagree, STAGE_LABEL, DS_LABEL, covers, STAGE_COLOR } from './common.js';
+import { grow, onFirstView, ping } from './fx.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 const mk = (tag, attrs = {}, parent) => {
@@ -70,7 +71,9 @@ export function createMap(host, { onSelect }) {
     g.addEventListener('keydown', k => { if (k.key === 'Enter' || k.key === ' ') { k.preventDefault(); pick(); } });
     for (const p of paths[s.id] || []) p.addEventListener('click', pick);
   }
-  let cur = null;
+  let cur = null, seen = false, last = null;
+  // Motion: dots pop in on first view; a dot whose stage changes when the year moves sends a ping.
+  onFirstView(host, () => { seen = true; grow(dots.querySelectorAll('circle'), { axis: 'xy', ms: 420, stagger: 14 }); });
   const show = (id, ev) => {
     const s = coded.get(id);
     const st = stageAt(cur.ds, id, cur.year);
@@ -90,6 +93,8 @@ export function createMap(host, { onSelect }) {
   }
 
   function draw(state) {
+    const stepped = seen && last && last.year !== state.year && last.ds === state.ds;
+    last = { year: state.year, ds: state.ds };
     cur = state;
     host.dataset.out = state.ds !== 'any' && !covers(state.ds, state.year) ? '1' : '';
     for (const s of STATES) {
@@ -99,6 +104,10 @@ export function createMap(host, { onSelect }) {
       for (const p of paths[s.id] || []) { p.dataset.st = vis ? st : 'none'; p.classList.toggle('dis', vis && dis); }
       const d = dotEl[s.id];
       if (!d) continue;
+      if (stepped && vis && d.dataset.st !== st) {
+        const [, tx, ty] = d.getAttribute('transform').match(/translate\(([-\d.]+) ([-\d.]+)\)/) || [];
+        if (tx != null) ping(svg, +tx, +ty, { color: STAGE_COLOR[st] || 'var(--muted)', r: 26, ms: 700, width: 1.8 });
+      }
       d.dataset.st = st;
       d.classList.toggle('dim', !vis);
       d.classList.toggle('sel', state.sel === s.id);

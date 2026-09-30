@@ -4,6 +4,7 @@ import { createProjection, drawBasemap, el } from '../../../shared/js/mapkit.js'
 import { SITES, STATES, ENVS } from '../data/tests.js';
 import { LAND } from '../data/land.js';
 import { STATE_COLOR, yearOf, fmt, esc } from './common.js';
+import { grow, onFirstView, ping } from './fx.js';
 
 const proj = createProjection({ lon0: -180, lon1: 180, lat0: -52, lat1: 80, width: 1000 });
 
@@ -31,8 +32,14 @@ export function createMap(host, listHost, { onSite }) {
   tip.className = 'tooltip'; tip.hidden = true;
   host.appendChild(tip);
 
+  // Motion: sites pop in on first view; when the year steps, each site with a test that year sends a ping.
+  let lastYear = null, seen = false;
+  onFirstView(host, () => { seen = true; grow(layer.querySelectorAll('.dot'), { axis: 'xy', ms: 480, stagger: 18 }); });
+
   function draw(state, rows) {
     const stats = siteStats(rows, state.year);
+    const stepped = seen && lastYear !== null && state.year !== lastYear;
+    lastYear = state.year;
     layer.replaceChildren();
     const order = SITES.map((s, k) => k).filter(k => SITES[k].pos && stats[k].n).sort((a, b) => stats[b].n - stats[a].n);
     for (const k of order) {
@@ -44,6 +51,7 @@ export function createMap(host, listHost, { onSite }) {
       if (o.now) el('circle', { cx: px, cy: py, r: r + 5, class: 'ring' }, g);
       const c = el('circle', { cx: px, cy: py, r, class: 'dot' }, g);
       c.style.fill = STATE_COLOR[main];
+      if (stepped && o.now) ping(svg, px, py, { color: STATE_COLOR[main], r: r + 16, ms: 700, width: 1.5 });
       if (o.n >= 40 || state.site === s.id) {
         const left = px > proj.W - 160;
         el('text', { x: left ? px - r - 3 : px + r + 3, y: py + 4, class: 'lab', 'text-anchor': left ? 'end' : 'start' }, g, s.name.split(' (')[0].split(',')[0]);

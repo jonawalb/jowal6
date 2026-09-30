@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Defense Budget Allocator</title>
+<link rel="stylesheet" href="../_kit/kit.css">
+<style>
+  .seg-t { font: 600 17px var(--mono); fill: #0b1712; font-variant-numeric: tabular-nums; }
+  .row-t { font: 400 17px var(--mono); fill: var(--paper); letter-spacing: .02em; }
+  .row-v { font: 600 17px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .band-t { font: 400 13px var(--mono); fill: var(--paper); opacity: .8; letter-spacing: .04em; }
+  .big { font: 600 96px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; letter-spacing: -.03em; }
+  .mid { font: 600 44px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .small { font: 400 15px var(--mono); fill: var(--muted); letter-spacing: .04em; }
+  .verdict { font: italic 500 38px var(--display); }
+  .chip-t { font: 400 20px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .cmp-h { font: 400 14px var(--mono); fill: var(--muted); letter-spacing: .14em; text-transform: uppercase; }
+  .cmp-n { font: italic 500 40px var(--display); fill: var(--paper); }
+  .cmp-v { font: 600 56px var(--mono); font-variant-numeric: tabular-nums; }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of the Defense Budget Allocator: Taiwan's NT$145.7 billion defense line is moved from big platforms to missiles, drones and mines, and a notional PLA crossing comes under heavier attack."><title>Defense Budget Allocator</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard } from '../_kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Real data (tools/budget-allocator) --------------------------------------------------------
+// Budget: data/budget.js, 's145' = NT$145.7bn, FY2026 supplementary defense line, cabinet proposal Sept. 3, 2026.
+// Other countries' default budgets: data/japan.js (fy26 ¥8,809bn), philippines.js (afp26 ₱40.0bn), poland.js (fwsz PLN 79.5bn).
+// Categories, notional model parameters and preset mixes: data/categories.js (copied unchanged).
+// Model: js/model.js evaluate(), copied unchanged; scenario = Taiwan defaults (60% suppression, 5-day warning).
+const TOTAL = 145.7, SC = { supp: 0.6, warn: 5 }, GEO = { km: 160, kmh: 12 * 1.852 };
+const CATS = [
+  { id: 'ascm', t: 'Coastal anti-ship missiles', s: 'Anti-ship missiles', k: 70, base: 0.30, reach: 150, w: 0.6, cls: 'mobile', col: '#4fb39c' },
+  { id: 'drones', t: 'Drones and USVs', s: 'Drones and USVs', k: 45, base: 0.10, reach: 60, w: 0.5, cls: 'mobile', col: '#7fb6d9' },
+  { id: 'mines', t: 'Sea mines', s: 'Sea mines', k: 18, base: 0.15, reach: 15, w: 0.45, cls: 'mines', col: '#a8c87c' },
+  { id: 'strike', t: 'HIMARS and long-range strike', s: 'Long-range strike', k: 90, base: 0.15, reach: 200, w: 0.3, cls: 'mobile', col: '#b69ad8' },
+  { id: 'airdef', t: 'Air and missile defense', s: 'Air defense', k: 140, base: 0.30, reach: 0, w: 0, cls: 'fixed', col: '#6d8fcc' },
+  { id: 'c4isr', t: 'C4ISR and resilience', s: 'C4ISR', k: 35, base: 0.25, reach: 0, w: 0, cls: 'mobile', col: '#9cb3a6' },
+  { id: 'ammo', t: 'Ammunition stocks', s: 'Ammunition', k: 60, base: 0.25, reach: 0, w: 0, cls: 'fixed', col: '#d2c4a0' },
+  { id: 'platforms', t: 'Big-ticket platforms', s: 'Big-ticket platforms', k: 450, base: 0.30, reach: 200, w: 0.45, cls: 'platform', col: '#8d8373' },
+];
+const LEGACY = { ascm: 0.05, drones: 0.03, mines: 0.02, strike: 0.05, airdef: 0.15, c4isr: 0.04, ammo: 0.06, platforms: 0.6 };
+const PORCUPINE = { ascm: 0.22, drones: 0.24, mines: 0.1, strike: 0.1, airdef: 0.1, c4isr: 0.1, ammo: 0.11, platforms: 0.03 };
+const clamp = (v, lo = 0, hi = 1) => Math.max(lo, Math.min(hi, v));
+function evaluate(shares) {
+  const E = {}; CATS.forEach(c => { E[c.id] = 1 - (1 - c.base) * Math.exp(-(shares[c.id] * TOTAL) / c.k); });
+  const supp = SC.supp;
+  const surv = { mobile: clamp(1 - supp * (1 - 0.55 * E.c4isr) * (1 - 0.35 * E.airdef)), fixed: clamp(1 - supp * (1 - 0.6 * E.airdef)), platform: clamp(1 - 1.1 * supp * (1 - 0.35 * E.airdef)) };
+  const laid = 1 - Math.exp(-SC.warn / 3.5), track = 0.55 + 0.45 * E.c4isr * (1 - 0.4 * supp), sustain = 0.6 + 0.4 * E.ammo;
+  const layers = CATS.filter(c => c.w > 0).map(c => {
+    let st;
+    if (c.id === 'mines') st = E.mines * laid;
+    else if (c.id === 'drones') st = E.drones * surv.mobile * (0.5 + 0.5 * track) * sustain;
+    else st = E[c.id] * surv[c.cls] * track * sustain;
+    return { ...c, st, p: c.w * st };
+  });
+  const engaged = 1 - layers.reduce((a, l) => a * (1 - l.p), 1);
+  let covered = 0;
+  for (let d = 0.5; d < GEO.km; d += 1) if (layers.filter(l => l.reach >= d).reduce((a, l) => a + l.st, 0) >= 0.3) covered += 1;
+  return { layers, engaged, covered, fireHours: covered / GEO.kmh, hours: GEO.km / GEO.kmh };
+}
+const verdict = e => e >= 0.45 ? ['Costly crossing', 'var(--green)'] : e >= 0.28 ? ['Contested crossing', 'var(--amber)'] : ['Crossing largely unopposed', 'var(--red)'];
+const mix = u => Object.fromEntries(CATS.map(c => [c.id, lerp(LEGACY[c.id], PORCUPINE[c.id], u)]));
+const RL = evaluate(LEGACY), RP = evaluate(PORCUPINE);
+const nt = bn => `NT$${bn.toFixed(1)}bn`;
+
+// ---- Scene --------------------------------------------------------------------------------------
+const blurF = el('filter', { id: 'camblur', x: '-5%', y: '-5%', width: '110%', height: '110%' }, svg);
+const blurG = el('feGaussianBlur', { stdDeviation: 0 }, blurF);
+const cam = el('g', {}, svg);
+const L = 250, R = 1350, BW = R - L;          // central column
+
+// Hook
+const hook = el('g', {}, cam);
+const chips = [['Taiwan', 'NT$145.7bn'], ['Japan', '¥8.81tn'], ['Philippines', '₱40.0bn'], ['Poland', 'PLN 79.5bn']].map(([n, v], i) => {
+  const W = [262, 210, 272, 238][i], x = L + [0, 278, 504, 792][i] + 35, g = el('g', {}, hook);
+  const r = el('rect', { x, y: 300, width: W, height: 60, rx: 30, fill: 'none', stroke: 'var(--line)', 'stroke-width': 2 }, g);
+  el('text', { x: x + W / 2, y: 337, 'text-anchor': 'middle', class: 'chip-t', style: 'font-size:18px' }, g).textContent = `${n} · ${v}`;
+  return { g, r };
+});
+const hookNum = el('text', { x: L, y: 540, class: 't-hook', style: 'font-size:112px' }, cam);
+hookNum.innerHTML = '<tspan class="hot">NT$145.7 billion.</tspan>';
+const hookQ = el('text', { x: L, y: 640, class: 't-hook', style: 'font-size:72px' }, hook);
+hookQ.textContent = 'Where should it go?';
+const allocLbl = el('text', { x: L, y: 130, class: 't-label' }, cam); allocLbl.textContent = 'Your allocation · Taiwan · Sept. 3, 2026 proposal';
+
+// Stacked allocation bar
+const barG = el('g', {}, cam);
+const segs = CATS.map(c => {
+  const g = el('g', {}, barG);
+  const r = el('rect', { y: 200, height: 70, fill: c.col }, g);
+  const t = el('text', { y: 245, class: 'seg-t', 'text-anchor': 'middle' }, g);
+  return { r, t, g };
+});
+const grip = el('rect', { y: 186, width: 8, height: 98, rx: 4, fill: 'var(--amber)', filter: 'url(#kit-glow)' }, barG);
+
+// Slider rows (the four categories that move most)
+const ROWS = ['platforms', 'ascm', 'drones', 'mines'];
+const rowsG = el('g', {}, cam);
+const rows = ROWS.map((id, i) => {
+  const c = CATS.find(d => d.id === id), y = 356 + i * 78, g = el('g', {}, rowsG);
+  el('rect', { x: L, y: y - 30, width: 12, height: 12, fill: c.col }, g);
+  el('text', { x: L + 22, y: y - 19, class: 'row-t' }, g).textContent = c.s;
+  const v = el('text', { x: 630, y: y + 30, class: 'row-v', 'text-anchor': 'end', style: 'fill:var(--muted);font-weight:400;font-size:15px' }, g);
+  el('rect', { x: L, y: y - 2, width: 380, height: 6, rx: 3, fill: 'var(--line)' }, g);
+  const f = el('rect', { x: L, y: y - 2, height: 6, rx: 3, fill: c.col }, g);
+  const th = el('circle', { cy: y + 1, r: 11, fill: 'var(--paper)', stroke: '#0b1712', 'stroke-width': 3 }, g);
+  return { id, g, v, f, th };
+});
+const SMAX = 0.65, sx = s => L + 380 * s / SMAX;
+
+// Crossing strip
+const SX = 680, SY = 320, SW = 670, SH = 330, X0 = SX + 58, X1 = SX + SW - 56;
+const kmToX = km => X1 - km / GEO.km * (X1 - X0);
+const strip = el('g', {}, cam);
+const clip = el('clipPath', { id: 'stripclip' }, svg);
+const clipR = el('rect', { x: SX, y: SY, width: 0, height: SH }, clip);
+strip.setAttribute('clip-path', 'url(#stripclip)');
+el('rect', { x: SX, y: SY, width: SW, height: SH, fill: '#0c1f2a', opacity: .85 }, strip);
+const bandsG = el('g', {}, strip);
+const act = ['strike', 'platforms', 'ascm', 'drones', 'mines'];   // sorted by reach, as the tool draws them
+const bands = act.map((id, i) => {
+  const c = CATS.find(d => d.id === id), rowH = 208 / act.length, y = SY + 42 + i * rowH;
+  const x = Math.max(SX, kmToX(Math.min(c.reach, GEO.km + 40)));
+  const r = el('rect', { x, y, width: X1 + 14 - x, height: rowH - 4, fill: c.col }, bandsG);
+  const narrow = X1 - x < 160;
+  const t = el('text', { x: narrow ? x - 8 : Math.max(x, X0) + 8, y: y + rowH / 2 + 4, class: 'band-t', 'text-anchor': narrow ? 'end' : 'start' }, bandsG); t.textContent = c.s;
+  return { id, r, t };
+});
+el('path', { d: `M${SX} ${SY}H${X0 - 18}C${X0 - 6} ${SY + 90} ${X0 - 30} ${SY + 200} ${X0 - 12} ${SY + SH}H${SX}Z`, fill: '#1c3226' }, strip);
+el('path', { d: `M${SX + SW} ${SY}H${X1 + 22}C${X1 + 8} ${SY + 100} ${X1 + 30} ${SY + 210} ${X1 + 14} ${SY + SH}H${SX + SW}Z`, fill: '#1c3226' }, strip);
+el('text', { x: SX + 12, y: SY + 26, class: 'small' }, strip).textContent = 'Embarkation';
+el('text', { x: SX + SW - 12, y: SY + 26, class: 'small', 'text-anchor': 'end' }, strip).textContent = 'Taiwan';
+for (let k = 0; k <= 160; k += 50) {
+  const x = kmToX(k); el('line', { x1: x, x2: x, y1: SY + SH - 44, y2: SY + SH - 36, stroke: 'var(--muted)' }, strip);
+  el('text', { x, y: SY + SH - 18, class: 'small', 'text-anchor': 'middle', style: 'font-size:12px' }, strip).textContent = k ? `${k} km` : 'coast';
+}
+const fire = el('rect', { y: SY + SH - 56, height: 5, rx: 2.5, fill: 'var(--amber)', filter: 'url(#kit-glow)' }, strip);
+const fireT = el('text', { y: SY + SH - 64, class: 'small', fill: 'var(--amber)', style: 'fill:var(--amber);font-size:12px', 'text-anchor': 'end' }, strip);
+fireT.textContent = 'under fire';
+const fleetG = el('g', {}, strip);
+const tag = el('text', { x: SX + SW, y: SY + SH + 26, class: 'small', 'text-anchor': 'end', style: 'font-size:13px' }, strip);
+tag.textContent = 'notional model · PLA crossing, 60% suppression, 5-day warning';
+
+// Ships: the tool's strip.js plan (seed 11, 36 ships, exactly round(engaged × 36) hit).
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const N = 36, sxs = (X1 - X0) / 780;   // the tool's strip is 780 units wide between coasts
+function plan(r) {
+  const Rn = rng(11), hitters = r.layers.filter(l => l.p > 0), psum = hitters.reduce((a, l) => a + l.p, 0);
+  const order = Array.from({ length: N }, (_, i) => [Rn(), i]).sort((a, b) => a[0] - b[0]).map(x => x[1]);
+  const hitSet = new Set(order.slice(0, Math.round(r.engaged * N)));
+  return Array.from({ length: N }, (_, i) => {
+    const row = i % 6, col = Math.floor(i / 6);
+    const s = { y: SY + 58 + row * 36 + (col % 2) * 10, start: X0 - 40 - col * 36, end: X1 - 14 - col * 16, hitAt: null, by: null };
+    if (hitSet.has(i)) {
+      let u = Rn() * psum, pick = hitters[0];
+      for (const l of hitters) { if ((u -= l.p) <= 0) { pick = l; break; } }
+      s.hitAt = Math.min(s.end - 2, kmToX(Rn() * Math.min(pick.reach, GEO.km) * 0.95)); s.by = pick;
+    }
+    return s;
+  });
+}
+const PL = plan(RL), PP = plan(RP);
+const shipEls = Array.from({ length: N }, () => {
+  const g = el('g', {}, fleetG);
+  const b = el('path', { d: 'M-11 -4.5h16l5 4.5l-5 4.5h-16z', fill: 'var(--red)' }, g);
+  const x = el('path', { d: 'M-8 -10l14 20M6 -10l-14 20', 'stroke-width': 4, 'stroke-linecap': 'round', fill: 'none', filter: 'url(#kit-glow)' }, g);
+  return { g, b, x };
+});
+function placeShips(P, u, alpha) {
+  let hits = 0;
+  P.forEach((s, i) => {
+    const e = shipEls[i], v = u * 1.15, span = s.end - s.start;
+    const xv = s.start + (v < .15 ? ease.in(v / .15) * .09 : .09 + (v - .15) / .85 * .91) * span;
+    const stopped = s.hitAt != null && xv >= s.hitAt, px = stopped ? s.hitAt : Math.min(xv, s.end), x = xv;
+    if (stopped) hits++;
+    const vis = px < X0 - 30 ? 0 : 1;
+    e.g.setAttribute('transform', `translate(${px},${s.y})`);
+    e.g.setAttribute('opacity', vis * alpha);
+    e.b.setAttribute('fill', stopped ? '#5a3a33' : 'var(--red)');
+    if (stopped) {
+      const k = ease.back(clamp((x - s.hitAt) / (0.07 * span)));
+      e.x.setAttribute('stroke', s.by.col); e.x.setAttribute('opacity', 1);
+      e.x.setAttribute('transform', `scale(${k})`);
+    } else e.x.setAttribute('opacity', 0);
+  });
+  return hits;
+}
+
+// Readout tiles
+const tiles = el('g', {}, cam);
+const tl1 = el('text', { x: L, y: 718, class: 't-label' }, tiles); tl1.textContent = 'Force engaged';
+const engN = el('text', { x: L - 4, y: 810, class: 'big' }, tiles);
+const tl2 = el('text', { x: 560, y: 718, class: 't-label' }, tiles); tl2.textContent = 'Hours under fire';
+const hrsN = el('text', { x: 560, y: 790, class: 'mid' }, tiles);
+const hrsS = el('text', { x: 560, y: 822, class: 'small' }, tiles); hrsS.textContent = `of a ${RL.hours.toFixed(1)} h crossing`;
+const hitN = el('text', { x: 1350, y: 718, class: 't-label', 'text-anchor': 'end' }, tiles);
+const verd = el('text', { x: 1350, y: 790, class: 'verdict', 'text-anchor': 'end' }, tiles);
+
+// Cursor (the player's hand)
+const cur = el('g', { opacity: 0 }, cam);
+const ring = el('circle', { r: 22, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 3, filter: 'url(#kit-glow)' }, cur);
+el('path', { d: 'M0 0l0 30l8 -7l6 13l6 -3l-6 -12l11 0z', fill: 'var(--paper)', stroke: '#0b1712', 'stroke-width': 2 }, cur);
+
+// Payoff comparison
+const cmp = el('g', { opacity: 0 }, svg);
+el('rect', { x: 0, y: 0, width: 1600, height: 1000, fill: '#070f0b', opacity: .8 }, cmp);
+const cmpTitle = el('text', { x: 800, y: 290, class: 't-hook', 'text-anchor': 'middle' }, cmp);
+cmpTitle.innerHTML = 'Same NT$145.7bn. <tspan class="hot">Nearly double</tspan>';
+const cmpTitle2 = el('text', { x: 800, y: 360, class: 't-hook', 'text-anchor': 'middle' }, cmp);
+cmpTitle2.textContent = 'the crossing force under attack.';
+const cmpRows = [['Legacy platforms', RL, 'var(--muted)'], ['Porcupine', RP, 'var(--amber)']].map(([n, r, col], i) => {
+  const g = el('g', {}, cmp), y = 500 + i * 150;
+  el('line', { x1: 330, x2: 1270, y1: y - 62, y2: y - 62, stroke: 'var(--line)', 'stroke-width': 2 }, g);
+  el('text', { x: 330, y, class: 'cmp-n' }, g).textContent = n;
+  el('text', { x: 330, y: y + 38, class: 'small' }, g).textContent = verdict(r.engaged)[0];
+  const e = el('text', { x: 1000, y: y + 8, class: 'cmp-v', 'text-anchor': 'end', fill: col, style: `fill:${col}` }, g); e.textContent = Math.round(r.engaged * 100) + '%';
+  el('text', { x: 1270, y: y + 8, class: 'cmp-v', 'text-anchor': 'end', style: 'fill:var(--paper);font-size:44px' }, g).textContent = r.fireHours.toFixed(1) + ' h';
+  return g;
+});
+el('text', { x: 1000, y: 400, class: 'cmp-h', 'text-anchor': 'end' }, cmp).textContent = 'Force engaged';
+el('text', { x: 1270, y: 400, class: 'cmp-h', 'text-anchor': 'end' }, cmp).textContent = 'Under fire';
+el('text', { x: 800, y: 810, class: 'small', 'text-anchor': 'middle' }, cmp).textContent = 'The tool’s notional teaching model · 60% PLA suppression · 5-day warning';
+
+const cap = captions(svg, [
+  [0.3, 3.2, 'Taiwan’s NT$145.7bn defense line, proposed Sept. 3, 2026'],
+  [3.5, 6.5, 'Spend 60% on fighters, subs and big ships…'],
+  [6.6, 10.8, '…or move it to missiles, drones and mines'],
+  [11.0, 13.2, 'Same money, a very different crossing'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Defense Budget Allocator', line: 'Split a real defense budget. See how the mix holds up.' });
+
+// ---- Timeline -----------------------------------------------------------------------------------
+const D = 16.5;
+function frame(t) {
+  // Hook: country chips, then the number
+  chips.forEach((c, i) => {
+    const u = ease.out(seg(t, 0.15 + i * 0.12, 0.75 + i * 0.12));
+    const out = ease.inOut(seg(t, 2.7, 3.2));
+    const pick = i === 0 ? seg(t, 1.2, 1.6) : 0;
+    c.g.setAttribute('opacity', u * (1 - out) * (i === 0 ? 1 : lerp(1, 0.4, seg(t, 1.2, 1.6))));
+    c.g.setAttribute('transform', `translate(0,${(1 - u) * 24 - out * 30})`);
+    c.r.setAttribute('stroke', i === 0 && pick > 0 ? 'var(--amber)' : 'var(--line)');
+    c.r.setAttribute('fill', i === 0 ? `rgba(240,169,59,${0.14 * pick})` : 'none');
+  });
+  const hn = ease.out(seg(t, 1.0, 1.7)), mv = ease.inOut(seg(t, 2.8, 3.6));
+  hookNum.setAttribute('opacity', hn * (1 - seg(t, 14.8, 15.4)));
+  const sc = lerp(1, 0.42, mv);
+  hookNum.setAttribute('transform', `translate(${L},${lerp(540 + (1 - hn) * 30, 178, mv)}) scale(${sc}) translate(${-L},-540)`);
+  hookQ.setAttribute('opacity', ease.out(seg(t, 1.5, 2.1)) * (1 - seg(t, 2.7, 3.1)));
+  hookQ.setAttribute('transform', `translate(0,${(1 - ease.out(seg(t, 1.5, 2.1))) * 20})`);
+  allocLbl.setAttribute('opacity', seg(t, 3.3, 3.8) * (1 - seg(t, 14.8, 15.4)));
+
+  // Mix: legacy until 6.9, porcupine after 8.6
+  const du = ease.inOut(seg(t, 6.9, 8.6));
+  const m = mix(du), r = evaluate(m);
+  const build = seg(t, 3.3, 4.4), sceneOut = 1 - seg(t, 14.8, 15.4);
+  // bar
+  let x = L;
+  CATS.forEach((c, i) => {
+    const gu = ease.out(seg(build, i * 0.07, i * 0.07 + 0.45));
+    const w = BW * m[c.id] * gu, s = segs[i];
+    s.r.setAttribute('x', x); s.r.setAttribute('width', Math.max(0, w - 2));
+    s.t.setAttribute('x', x + w / 2); s.t.textContent = m[c.id] > 0.055 ? Math.round(m[c.id] * 100) + '%' : '';
+    s.t.setAttribute('opacity', gu);
+    const gain = c.id !== 'platforms' && c.id !== 'airdef' ? seg(t, 6.9, 7.4) * (1 - seg(t, 8.6, 9.4)) : 0;
+    s.r.setAttribute('filter', gain > 0.2 && ['ascm', 'drones', 'mines'].includes(c.id) ? 'url(#kit-glow)' : '');
+    x += w;
+  });
+  barG.setAttribute('opacity', sceneOut);
+  // grip sits on the boundary left of "platforms"
+  const gx = L + BW * (1 - m.platforms);
+  grip.setAttribute('x', gx - 4); grip.setAttribute('opacity', seg(t, 6.3, 6.6) * (1 - seg(t, 8.8, 9.2)));
+
+  // slider rows
+  rows.forEach((rw, i) => {
+    const u = ease.out(seg(t, 3.6 + i * 0.1, 4.2 + i * 0.1));
+    rw.g.setAttribute('opacity', u * sceneOut);
+    rw.g.setAttribute('transform', `translate(${(1 - u) * -30},0)`);
+    const s = m[rw.id];
+    rw.f.setAttribute('width', Math.max(0, sx(s) - L));
+    rw.th.setAttribute('cx', sx(s));
+    rw.th.setAttribute('stroke', i === 0 && t > 6.5 && t < 8.8 ? 'var(--amber)' : '#0b1712');
+    rw.v.textContent = `${nt(s * TOTAL)} · ${Math.round(s * 100)}%`;
+  });
+
+  // strip reveal (wipe), bands track layer strength live
+  clipR.setAttribute('width', SW * ease.inOut(seg(t, 3.7, 4.6)));
+  strip.setAttribute('opacity', sceneOut);
+  bands.forEach(b => {
+    const l = r.layers.find(q => q.id === b.id);
+    b.r.setAttribute('fill-opacity', (0.06 + 0.8 * l.st).toFixed(3));
+    b.t.setAttribute('opacity', l.st >= 0.1 ? 0.85 : 0.4);
+  });
+  const fw = r.covered / GEO.km * (X1 - X0);
+  fire.setAttribute('x', X1 - fw); fire.setAttribute('width', fw * seg(t, 4.4, 5));
+  fireT.setAttribute('x', X1); fireT.setAttribute('opacity', seg(t, 4.6, 5));
+
+  // ships: crossing 1 (legacy), crossing 2 (porcupine)
+  let hits = 0, shown = 0;
+  if (t < 7.2) {
+    const a = seg(t, 4.3, 4.6) * (1 - seg(t, 6.7, 7.1));
+    hits = placeShips(PL, seg(t, 4.4, 6.1), a); shown = a;
+  } else {
+    const a = seg(t, 8.5, 8.8) * sceneOut;
+    hits = placeShips(PP, seg(t, 8.6, 10.3), a); shown = a;
+  }
+  hitN.textContent = `Ships hit ${hits} / ${N}`;
+  hitN.setAttribute('opacity', shown);
+
+  // tiles
+  const tu = ease.out(seg(t, 4.2, 4.8));
+  tiles.setAttribute('opacity', tu * sceneOut);
+  tiles.setAttribute('transform', `translate(0,${(1 - tu) * 20})`);
+  engN.textContent = Math.round(r.engaged * 100) + '%';
+  const flash = seg(t, 8.5, 8.7) * (1 - seg(t, 9.2, 10));
+  engN.setAttribute('filter', flash > 0.05 || (t > 10.4 && t < 11) ? 'url(#kit-glow)' : '');
+  engN.style.fill = du > 0.02 ? 'var(--amber)' : 'var(--paper)';
+  hrsN.textContent = r.fireHours.toFixed(1) + ' h';
+  const [vt, vc] = verdict(r.engaged);
+  verd.textContent = vt; verd.style.fill = vc;
+
+  // cursor: approach the platforms thumb, drag it left, leave
+  const th0 = { x: sx(LEGACY.platforms), y: 357 }, th1 = { x: sx(PORCUPINE.platforms), y: 351 };
+  const ap = ease.inOut(seg(t, 5.9, 6.7)), lv = ease.inOut(seg(t, 8.8, 9.5));
+  let cx = lerp(th0.x + 260, th0.x, ap), cy = lerp(th0.y + 200, th0.y, ap);
+  if (t > 6.7) { cx = sx(m.platforms); cy = th0.y; }
+  cx += lv * 120; cy += lv * 160;
+  cur.setAttribute('opacity', seg(t, 5.9, 6.2) * (1 - lv));
+  cur.setAttribute('transform', `translate(${cx},${cy})`);
+  const press = seg(t, 6.6, 6.8) * (1 - seg(t, 8.6, 8.8));
+  ring.setAttribute('r', lerp(26, 16, press)); ring.setAttribute('opacity', press);
+
+  // camera: slow push during the mechanic, parallax on the strip
+  const push = ease.inOut(seg(t, 3.2, 11)) * 0.035;
+  cam.setAttribute('transform', `translate(800,500) scale(${1 + push + ease.inOut(seg(t, 10.8, 12.5)) * 0.04}) translate(-800,-${500 - push * 200})`);
+  strip.setAttribute('transform', `translate(${-push * 300},0)`);
+
+  // payoff
+  const pu = ease.out(seg(t, 11.0, 11.7)) * (1 - seg(t, 13.2, 13.6));
+  cmp.setAttribute('opacity', pu);
+  const bl = Math.max(pu, seg(t, 13.2, 13.6));
+  blurG.setAttribute('stdDeviation', (bl * 6).toFixed(2));
+  cam.setAttribute('filter', bl > 0.01 ? 'url(#camblur)' : '');
+  cmpRows.forEach((g, i) => {
+    const u = ease.out(seg(t, 11.2 + i * 0.25, 11.9 + i * 0.25));
+    g.setAttribute('opacity', u); g.setAttribute('transform', `translate(${(1 - u) * 40},0)`);
+  });
+
+  cap(t); end(t, 13.3, D);
+}
+run({ duration: D, poster: 10.4, frame });
+</script>
+</body></html>

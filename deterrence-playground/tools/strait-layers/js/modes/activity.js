@@ -87,7 +87,7 @@ export function drawTimeline(svg, from, to, onBrush, onHover) {
   const Y = v => base - v / max * (base - top);
   svg.setAttribute('viewBox', `0 0 ${Wd} ${Hd}`);
   svg.innerHTML = '';
-  [0, 20, 40, 60].filter(v => v <= max).forEach(v => {
+  [0, 50, 100, 150].filter(v => v <= max).forEach(v => {
     el('line', { x1: x0, x2: Wd - 8, y1: Y(v), y2: Y(v), class: 'tl-grid' }, svg);
     el('text', { x: x0 - 5, y: Y(v) + 3, class: 'tl-axis', 'text-anchor': 'end' }, svg, v);
   });

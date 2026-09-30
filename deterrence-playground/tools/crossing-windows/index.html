@@ -165,7 +165,7 @@
     <h2>How to read it</h2>
     <p>Each day from 1996 through 2025 is tested at one open-water point in the Strait. A day is a <b>go day</b> when the largest waves and the strongest wind that day both stay under your limits, no fog is reported at the chosen shore station, and no tropical storm is inside the typhoon radius. A crossing and the landings behind it take more than a day, so a <b>window</b> opens on a day only when it and the next few days all pass.</p>
     <p>The top grid shows every year. Pale columns mean bad weeks almost every year; a lone dark cell is one lucky year. The bar chart averages the thirty years. The selected week shows which test does the damage, how wide the spread of wind and waves is, which storms came close, and the moon, darkness and tide for that week in a year you pick.</p>
-    <p>The two months analysts cite, April and October, are shaded. Move the sliders and watch how their rank changes. October in particular depends on how much wave height you allow: the northeast monsoon usually arrives in the Strait during that month.</p>
+    <p>The two months analysts cite, April and October, are shaded. Move the sliders and watch how their rank changes. October in particular depends on how much wave height you allow: in this record, wind and waves at the center point rise sharply from September to October.</p>
     <h2 class="mt">Method</h2>
     <ul class="src">
       <li><b>Wind:</b> daily maximum 10 m wind from the ERA5 reanalysis (ECMWF), through the Open-Meteo Historical Weather API, at 25.0N 120.5E, 24.0N 119.5E and 23.0N 118.5E. Days run midnight to midnight, Taiwan time.</li>
@@ -174,7 +174,7 @@
       <li><b>Typhoons:</b> IBTrACS v04r01, Western Pacific. A day fails when any 3- or 6-hourly position with winds of 34 kt or more (U.S., Japan Meteorological Agency or WMO estimate) lies within the radius of 24.0N 119.5E.</li>
       <li><b>Tides:</b> Taiwan's Central Weather Administration publishes tide predictions, but its open-data API needs a registered key, so this tool does not use it. Instead, 18 tidal constituents were fitted by least squares to hourly modelled sea level (Open-Meteo Marine API, January 2023 to September 2026) just off four ports. The fit misses by about 10 to 20 cm (root-mean-square; tested on 2026 data held out of the fit). No nodal corrections. Use it for spring and neap timing and rough range, not navigation.</li>
       <li><b>Moon and sun:</b> computed in your browser with the low-precision formulas of the original SunCalc library (after Meeus). Nautical dusk is when the sun is 12 degrees below the horizon.</li>
-      <li><b>Not modelled:</b> surf on any beach, currents, rain, low cloud, visibility at sea, or anything military. Points are open water on the Strait's median line. The tool names no landing sites; tides are given only for public ports.</li>
+      <li><b>Not modelled:</b> surf on any beach, currents, rain, low cloud, visibility at sea, or anything military. Points are open water in mid-Strait, between the two coasts. The tool names no landing sites; tides are given only for public ports.</li>
     </ul>
     <p class="fine mt" id="prov"></p>
   </div>
@@ -187,7 +187,7 @@
         <tr><td>Sea state 2 preset</td><td class="num">0.5 m</td><td>The U.S. Navy LCAC is rated at 40-plus knots loaded in sea state 2 (<a href="https://www.globalsecurity.org/military/systems/ship/lcac-specs.htm" target="_blank" rel="noopener">GlobalSecurity LCAC specifications</a>).</td></tr>
         <tr><td>Wind</td><td class="num">21 kt</td><td>Top of Beaufort force 5, "fresh breeze", <a href="https://www.weather.gov/mfl/beaufort" target="_blank" rel="noopener">NWS Beaufort scale</a>. Chosen to sit with sea state 3; <span class="notional">notional</span> as a limit.</td></tr>
         <tr><td>Days in a row</td><td class="num">3</td><td><span class="notional">notional</span>. A stand-in for crossing, landing and a first resupply.</td></tr>
-        <tr><td>Typhoon radius</td><td class="num">500 km</td><td><span class="notional">notional</span>. The 34 kt tropical-storm cut-off is the standard used in <a href="https://www.ncei.noaa.gov/products/international-best-track-archive" target="_blank" rel="noopener">IBTrACS</a>.</td></tr>
+        <tr><td>Typhoon radius</td><td class="num">500 km</td><td><span class="notional">notional</span>. The 34 kt cut-off is the lower bound of a tropical storm in the <a href="https://forecast.weather.gov/glossary.php?word=tropical%20storm" target="_blank" rel="noopener">NWS glossary</a>; winds are taken from <a href="https://www.ncei.noaa.gov/products/international-best-track-archive" target="_blank" rel="noopener">IBTrACS</a>.</td></tr>
         <tr><td>Fog</td><td>on</td><td>Any fog report that day at the chosen station. The U.S. National Weather Service issues a dense fog advisory when fog cuts visibility to a quarter mile or less (<a href="https://forecast.weather.gov/glossary.php?word=fog" target="_blank" rel="noopener">NWS glossary</a>); station flags do not give a duration.</td></tr>
       </tbody>
     </table></div>

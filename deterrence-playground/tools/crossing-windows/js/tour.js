@@ -7,7 +7,7 @@ export const STEPS = [
     body: 'Ian Easton\'s The Chinese Invasion Threat is cited for rating April and October the best months to cross. The brackets and shaded bands mark them. In this record, late spring into summer scores higher than either.',
     set: { wk: 14 }, scroll: 'weekchart' },
   { title: 'Why October falls short',
-    body: 'Open a mid-October week. The northeast monsoon usually sets in during October, and most days fail the wave test. Wind fails too. Fog and typhoons play a small part.',
+    body: 'Open a mid-October week. At the center point the median daily maximum wind rises from 17 kt in September to 26 kt in October and median wave height nearly doubles, so most days fail the wave test. Wind fails too. Fog and typhoons play a small part.',
     set: { wk: 40 }, scroll: 'drill' },
   { title: 'Summer: calm seas, typhoon risk',
     body: 'June to August has the calmest wind and waves of the year. But in early August, in roughly a third of years a tropical storm passed within 500 km of the Strait center that week. The red line on the week chart tracks that exposure.',

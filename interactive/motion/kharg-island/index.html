@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Kharg Island</title>
+<link rel="stylesheet" href="../_kit/kit.css">
+<style>
+  .k-pill { font: 600 17px var(--mono); letter-spacing: .12em; text-transform: uppercase; fill: var(--muted); }
+  .k-pill.on { fill: var(--ink); }
+  .k-chip { font: 400 17px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .k-row { font: 400 15px var(--mono); fill: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+  .k-res { font: 600 16px var(--mono); fill: var(--paper); letter-spacing: .04em; }
+  .k-crt { font: 400 15px var(--mono); fill: var(--muted); text-anchor: middle; }
+  .k-big { font: 600 64px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; text-anchor: middle; }
+  .k-sub { font: italic 400 30px var(--display); fill: var(--paper); }
+  .k-fine { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of Kharg Island: pick seize, raid or blockade, watch the dice settle a turn, then see 1,000 replays sort into outcomes"><title>Kharg Island</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard } from '../_kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Data from the tool (tools/kharg-island) -----------------------------------------------------------
+// Island: OpenStreetMap outline in data/land.js (ring 1), projected at 6,000 px per degree around its centroid.
+const ISLAND = '-8,194 -40,147 -53,80 -67,74 -80,-1 -97,-11 -92,-79 -98,-95 -112,-92 -103,-100 -118,-98 -109,-114 -128,-106 -110,-118 -154,-166 -146,-187 -95,-204 -4,-157 6,-175 41,-148 70,-160 81,-160 84,-155 70,-158 63,-150 83,-139 85,-152 127,-118 115,-78 92,-53 86,-35 103,-39 86,-31 74,18 84,55 99,55 95,34 103,52 102,59 81,65 81,85 90,121 101,112 94,124 112,115 97,142 115,140 116,155 98,151 63,194 24,204 -8,194';
+const AIR = [59, -113]; // Kharg airport, published coordinates (data/geo.js)
+// One game: the page's default setup (Seize and hold, full denial, seed 1987), turn 2, from js/model.js.
+const ROLLS = [
+  { ph: 'Missile salvos', p: '5.1%', r: [0.52, 0.53], res: 'all defeated', tone: 'us' },
+  { ph: 'Special ops air lift', p: '12%', r: [0.28], res: '+0.75 pts ashore', tone: 'us' },
+  { ph: 'Mines: 3 landing groups', p: '6.8%', r: [0.05, 0.11, 0.23], res: '1 stopped', tone: 'ir' },
+];
+const CRT = [['AR','AR','AL','AL','EX','EX'],['AR','AL','AL','EX','EX','DL'],['AR','AL','EX','EX','DL','DL'],
+  ['AL','AL','EX','DL','DL','DR'],['AL','EX','DL','DL','DR','DR'],['EX','EX','DL','DR','DR','DR']]; // data/params.js
+const COLS = ['<1:2', '1:2', '1:1', '1.5:1', '2:1', '3:1+'];
+const HIT = { col: 3, roll: 2 }; // ratio 1.68, die 2: Exchange
+// 1,000 replays of that setup (js/montecarlo.js, seed 1987): w = U.S. holds Kharg, m = still contested,
+// f = landing defeated; capitals mark a major escalation. Totals 135 / 446 / 419, major escalation 447.
+const RUNS = 'mWmmfwfmMfMmwmFWmfWwmWfMfMmmwmMMFWFfmfmMWMMFMwmffmffMWfMFmmwfMMMmFMffMFMWFMFwfMwmfMmmwWFFMffFwwwfFFwMmwwMMFMFfFfFffffffmffMwfmfmwwmmmFFmWmfFmfMMfffFFffMmfMffwffFMffFFffMmFmfMFmmFMwMFwfmmmmfMFfmfFFFMFMMfFWmfmwmmFmFmmFFMmwfFmfFMWMffmFffmmfMfffmmmMWFwffMfMMWMwfmFmFmwMfmFwMfMwMFfFffMMFFWWffmMMmfFfFmFFMFFFfwfMMfmmFfmfFFFfMfwFffmmMFfFMmMMFwMfFfMfwFMMfwmFWwmfMmFMmmfFfMFMfmFmwfFMfmmMwFfmFmFfmfmmfMFmfFmffmMFFMwfFmFfmwFfmfFwWMmWFwffwfwmfmfmWFFMffmMFffmFmmWMMfMWfMMFfFfWMwFmMMmFfwMMfMMfFmmmMFmfwFMfMfMMmMffWMMmfmmfMmwMFMmMFwMFFfffmMFFfFfMmFMffWmMfmmfwfmwfFfFmMFmffMFMMmFMFfmmwmmWWmFMfmmMmmMfmfmfFmFWmfmmWffmffMMFFfMmmFfMfmwFwMWfWMMfMfmfMWmWmmMFFmMfFFmmFMmMMmMMfMwMMfWMfmffMMwWMmWfMWwfFmWfmwMMmMmffmmMfmmmMmmfFFmfmmWfFMmmWmmfmFwmFmMmFMMmMffMFMFfMFwmwmMmFWmMWFwfmffmmmFMfmmfFmmmfmWFMfFfFmmfMMWFmWWFMFFFmFmfFfmfWmMmMfffMmmmWFWMFfMmmwwWmfFffMfFFmMmMmMmFmmMfwfFfmMFMwmfffFFMmFMfFmfMMFfFFMffFwmfFmmWFfmfFmMfMFMwFWMwFwMMfMWMmFfmMfmWmMfwmwMMmmFmMMmMwWFmmwFmFfMmmFfmWmFmFMMFmMmfmfFWmfWfmfmFMwffwmFffFWmWmmmFMFmMMwmFf';
+
+// ---- Helpers -------------------------------------------------------------------------------------------
+const T = (x, y, cls, s, a = {}, p = scene) => { const n = el('text', { x, y, class: cls, ...a }, p); n.textContent = s; return n; };
+const op = (n, v) => n.setAttribute('opacity', Math.max(0, Math.min(1, v)).toFixed(3));
+const tr = (n, x, y, s = 1, r = 0) => n.setAttribute('transform', `translate(${x.toFixed(1)},${y.toFixed(1)}) rotate(${r.toFixed(1)}) scale(${s.toFixed(4)})`);
+const fade = (t, a, b, d = .4) => Math.min(ease.out(seg(t, a, a + d)), 1 - seg(t, b - d, b));
+const hash = n => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+
+const scene = el('g', {}, svg);
+
+// ---- Island --------------------------------------------------------------------------------------------
+const isl = el('g', {}, scene);
+[[90, .05], [48, .07], [18, .09]].forEach(([w, o]) => el('polygon', { points: ISLAND, fill: 'none', stroke: 'var(--blue)', 'stroke-width': w, 'stroke-linejoin': 'round', opacity: o }, isl));
+const coast = el('polygon', { points: ISLAND, fill: '#16302a', stroke: 'var(--paper)', 'stroke-width': 2.2, 'stroke-linejoin': 'round' }, isl);
+const coastLen = 1900;
+coast.setAttribute('stroke-dasharray', coastLen);
+const airG = el('g', { transform: `translate(${AIR[0]},${AIR[1]})` }, isl);
+const airRing = el('circle', { r: 16, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 2 }, airG);
+el('circle', { r: 6, fill: 'var(--amber)', filter: 'url(#kit-glow)' }, airG);
+const airLab = T(40, 5, 't-label', 'Airstrip', {}, airG);
+const islLab = el('g', {}, isl);
+T(170, 180, 't-label', 'Kharg Island', {}, islLab).style.fill = 'var(--paper)';
+T(170, 204, 't-label', '7.5 × 5.3 km', {}, islLab);
+el('line', { x1: 160, y1: 172, x2: 105, y2: 140, stroke: 'var(--muted)', 'stroke-width': 1 }, islLab);
+
+// Notional approach from open water on the seaward (west) side, and the U.S. ships standing off.
+const appr = el('path', { d: 'M-300,90 C-240,70 -190,40 -110,10', fill: 'none', stroke: 'var(--amber)', 'stroke-width': 3, 'stroke-linecap': 'round' }, isl);
+const apprHead = el('path', { d: 'M0,-9 L16,0 L0,9 Z', fill: 'var(--amber)' }, isl);
+const ships = el('g', {}, isl);
+[[-330, 70], [-372, 118], [-306, 150]].forEach(([x, y]) => el('path', { d: `M${x - 20},${y} L${x + 16},${y} L${x + 24},${y - 6} L${x - 16},${y - 6} Z`, fill: 'var(--amber)' }, ships));
+const apprLab = T(-440, 205, 't-label', 'U.S. force at sea · notional', {}, isl);
+
+// Threats from the mainland, off to the east.
+const threat = el('g', {}, scene);
+const arcs = [0, 1, 2].map(i => el('path', { fill: 'none', stroke: 'var(--red)', 'stroke-width': 2.5, 'stroke-dasharray': '10 8', 'stroke-linecap': 'round' }, threat));
+const bursts = [0, 1, 2].map(() => el('circle', { fill: 'none', stroke: 'var(--amber)', 'stroke-width': 3 }, threat));
+const coastTag = el('g', {}, scene);
+T(0, 0, 't-label', 'Iranian coast ≈ 30 km →', { 'text-anchor': 'end' }, coastTag).style.fill = 'var(--red)';
+
+// ---- Hook ----------------------------------------------------------------------------------------------
+const hook = el('g', {}, scene);
+T(800, 440, 't-hook', 'Most of Iran’s oil ships from one island.', { 'text-anchor': 'middle' }, hook);
+const h2 = T(800, 540, 't-hook', 'Could you ', { 'text-anchor': 'middle', style: 'font-size:80px' }, hook);
+const hot = el('tspan', { class: 'hot' }, h2); hot.textContent = 'take it?';
+
+// ---- Objective chooser (labels from data/params.js OBJECTIVES) -----------------------------------------
+const pills = el('g', {}, scene);
+const OBJ = [['Seize and hold', 0], ['Raid and withdraw', 1], ['Blockade, no landing', 2]];
+const PW = 330, PX = 800 - PW * 1.5 - 20;
+const pillBg = el('rect', { y: -30, width: PW, height: 56, rx: 28, fill: 'var(--amber)', filter: 'url(#kit-glow)' }, pills);
+const pillEls = OBJ.map(([s], i) => {
+  el('rect', { x: PX + i * (PW + 20), y: -30, width: PW, height: 56, rx: 28, fill: 'none', stroke: 'var(--line)', 'stroke-width': 1.5 }, pills);
+  return T(PX + i * (PW + 20) + PW / 2, 6, 'k-pill', s, { 'text-anchor': 'middle' }, pills);
+});
+
+// ---- Dice panel: one turn, every roll --------------------------------------------------------------------
+const panel = el('g', {}, scene);
+const PX0 = 800;
+T(PX0, 250, 't-label', 'Turn 2 · hours 12–24 · landing', {}, panel).style.fill = 'var(--amber)';
+const CH0 = PX0 + 300;
+const rowEls = ROLLS.map((R, i) => {
+  const y = 300 + i * 60, g = el('g', {}, panel);
+  T(PX0, y, 'k-row', R.ph, {}, g);
+  T(PX0, y + 24, 'k-fine', 'chance ' + R.p, {}, g);
+  const chips = R.r.map((v, j) => {
+    const cg = el('g', { transform: `translate(${CH0 + j * 74},${y - 6})` }, g);
+    const bgc = el('rect', { x: -32, y: -20, width: 64, height: 36, rx: 6, fill: 'var(--ink-2)', stroke: 'var(--line)' }, cg);
+    const tx = T(0, 5, 'k-chip', v.toFixed(2), { 'text-anchor': 'middle' }, cg);
+    return { cg, bgc, tx, v, hit: parseFloat(R.p) / 100 > v };
+  });
+  const res = T(PX0 + 150, y + 24, 'k-res', '→ ' + R.res, { style: 'font-size:14px' }, g);
+  res.style.fill = R.tone === 'us' ? 'var(--green)' : 'var(--red)';
+  return { g, chips, res };
+});
+// Combat results table and a tumbling die.
+const crt = el('g', {}, panel);
+const CX = PX0 + 90, CY = 530, CW = 74, CH = 34;
+T(PX0, CY - 22, 't-label', 'Ground combat · results table', {}, crt);
+T(PX0, CY + 14 + 6 * CH + 26, 'k-fine', 'Notional · U.S. 2.78 × 1.25 vs Iran 1.38 × 1.5 = 1.68 : 1', {}, crt);
+const colBand = el('rect', { x: CX + HIT.col * CW, y: CY - 4, width: CW, height: 6 * CH + 36, rx: 6, fill: 'var(--amber)', opacity: 0 }, crt);
+const rowBand = el('rect', { x: CX, y: CY + 14 + (HIT.roll - 1) * CH, width: 6 * CW, height: CH, rx: 6, fill: 'var(--amber)', opacity: 0 }, crt);
+COLS.forEach((c, j) => T(CX + j * CW + CW / 2, CY + 6, 'k-crt', c, {}, crt));
+const cells = [];
+CRT.forEach((row, i) => {
+  T(CX - 16, CY + 14 + i * CH + 23, 'k-crt', String(i + 1), { 'text-anchor': 'end' }, crt);
+  row.forEach((c, j) => { cells.push(T(CX + j * CW + CW / 2, CY + 14 + i * CH + 23, 'k-crt', c, {}, crt)); });
+});
+const hitCell = cells[(HIT.roll - 1) * 6 + HIT.col];
+const exLab = T(CX + 6 * CW + 30, CY + 14 + (HIT.roll - 1) * CH + 23, 'k-res', '← Exchange', {}, crt);
+exLab.style.fill = 'var(--amber)';
+const die = el('g', {}, panel);
+el('rect', { x: -34, y: -34, width: 68, height: 68, rx: 12, fill: 'var(--paper)' }, die);
+const PIPS = { 1: [[0, 0]], 2: [[-15, -15], [15, 15]], 3: [[-15, -15], [0, 0], [15, 15]], 4: [[-15, -15], [15, -15], [-15, 15], [15, 15]],
+  5: [[-15, -15], [15, -15], [0, 0], [-15, 15], [15, 15]], 6: [[-15, -16], [15, -16], [-15, 0], [15, 0], [-15, 16], [15, 16]] };
+const pips = [0, 1, 2, 3, 4, 5].map(() => el('circle', { r: 6, fill: 'var(--ink)' }, die));
+const face = n => pips.forEach((p, i) => { const q = PIPS[n][i]; if (q) { p.setAttribute('cx', q[0]); p.setAttribute('cy', q[1]); op(p, 1); } else op(p, 0); });
+
+// ---- 1,000 replays ---------------------------------------------------------------------------------------
+const mc = el('g', {}, scene);
+const BINS = [
+  { k: 'w', t: 'U.S. holds Kharg', c: 'var(--green)', n: 135 },
+  { k: 'm', t: 'Island still contested', c: '#cbbf9f', n: 446 },
+  { k: 'f', t: 'U.S. landing defeated', c: 'var(--red)', n: 419 },
+];
+const BX = [600, 870, 1140], BASE = 700, PITCH = 11, NC = 18;
+const counts = { w: 0, m: 0, f: 0 };
+const dotLayer = el('g', {}, mc);
+const dots = [...RUNS].map((ch, i) => {
+  const k = ch.toLowerCase(), b = BINS.findIndex(x => x.k === k), n = counts[k]++;
+  const x = BX[b] + (n % NC) * PITCH + PITCH / 2, y = BASE - Math.floor(n / NC) * PITCH - PITCH / 2;
+  const d = el('circle', { r: 4.2, fill: BINS[b].c }, dotLayer);
+  return { d, x, y, a: 8.35 + (i / 1000) * 2.0 + hash(i) * .12, sx: hash(i + 7) * 60 - 30, sy: hash(i + 13) * 60 - 30 };
+});
+const binLabs = BINS.map((B, i) => {
+  const g = el('g', {}, mc), cx = BX[i] + NC * PITCH / 2;
+  el('line', { x1: BX[i], x2: BX[i] + NC * PITCH, y1: BASE + 8, y2: BASE + 8, stroke: 'var(--line)', 'stroke-width': 2 }, g);
+  const lab = T(cx, BASE + 38, 't-label', B.t, { 'text-anchor': 'middle' }, g);
+  const pct = T(cx, BASE - 300, 'k-big', '0%', {}, g);
+  pct.style.fill = B.c;
+  return { g, pct, lab };
+});
+const counter = el('g', {}, mc);
+T(0, 0, 't-label', 'Games played', {}, counter);
+const cnt = T(0, 50, 'k-big', '0', { style: 'font-size:50px;text-anchor:start' }, counter);
+const esc = el('g', {}, mc);
+T(600, 820, 't-label', 'Major escalation', {}, esc).style.fill = 'var(--red)';
+el('rect', { x: 800, y: 806, width: 400, height: 16, rx: 8, fill: 'var(--ink-2)' }, esc);
+const escBar = el('rect', { x: 800, y: 806, width: 0, height: 16, rx: 8, fill: 'var(--red)', filter: 'url(#kit-glow)' }, esc);
+const escPct = T(1220, 822, 'k-res', '0% of games', {}, esc);
+const fine = T(800, 868, 'k-fine', 'Default setup: 1 Marine unit vs full denial, 4 days · notional model, not a prediction', { 'text-anchor': 'middle' }, mc);
+
+// ---- Captions and end card -------------------------------------------------------------------------------
+const cap = captions(svg, [
+  [3.1, 5.1, 'Pick the objective: seize, raid or blockade.'],
+  [5.2, 8.2, 'Every 12-hour turn is settled by dice you can see.'],
+  [8.3, 11.1, 'Then replay the same plan 1,000 times.'],
+  [11.2, 13.7, 'One Marine unit vs full denial: Kharg held in 14% of games.'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Kharg Island', line: 'Seize, raid or blockade, then see how 1,000 replays turn out.' });
+
+// ---- Timeline --------------------------------------------------------------------------------------------
+function frame(t) {
+  // Subtle camera push across the whole piece.
+  const cam = 1 + .045 * ease.inOut(seg(t, 0, 13.8));
+  scene.setAttribute('transform', `translate(800,500) scale(${cam.toFixed(4)}) translate(-800,-500)`);
+
+  // Island: draws in under the hook, centred for the chooser, slides left for the dice, shrinks for the replays.
+  const drawU = ease.inOut(seg(t, .2, 2.6));
+  coast.setAttribute('stroke-dashoffset', (coastLen * (1 - drawU)).toFixed(0));
+  coast.setAttribute('fill-opacity', (.15 + .85 * seg(t, 2.2, 3.2)).toFixed(2));
+  const ix = lerp(lerp(800, 515, ease.inOut(seg(t, 5.0, 5.9))), 330, ease.inOut(seg(t, 8.0, 8.8)));
+  const iy = lerp(530, 560, ease.inOut(seg(t, 8.0, 8.8)));
+  const is = lerp(lerp(1.05, 1.0, ease.inOut(seg(t, 5.0, 5.9))), .62, ease.inOut(seg(t, 8.0, 8.8)));
+  tr(isl, ix, iy, is);
+  op(isl, (.28 + .72 * seg(t, 2.4, 3.2)) * (1 - seg(t, 13.4, 13.9)));
+  const detail = fade(t, 3.0, 8.3);
+  op(islLab, detail); op(airG, seg(t, 3.2, 3.7) * (1 - .6 * seg(t, 8, 8.5)));
+  op(airLab, detail);
+  airRing.setAttribute('r', (16 + 14 * ((t * .9) % 1)).toFixed(1)); op(airRing, 1 - ((t * .9) % 1));
+  // Approach arrow grows once "Seize" is picked.
+  const ap = ease.out(seg(t, 4.5, 5.4));
+  appr.setAttribute('stroke-dasharray', `${(230 * ap).toFixed(0)} 1000`);
+  const hx = lerp(-300, -110, ap), hy = lerp(90, 10, ap) - 10 * Math.sin(ap * Math.PI);
+  apprHead.setAttribute('transform', `translate(${hx},${hy}) rotate(${-12})`);
+  op(appr, fade(t, 4.5, 8.3)); op(apprHead, ap > .02 ? fade(t, 4.5, 8.3) : 0);
+  op(ships, fade(t, 3.3, 8.3)); op(apprLab, fade(t, 3.6, 8.3));
+
+  // Threat arcs from the mainland during the dice beat (salvos defeated short of the ships).
+  const thr = fade(t, 5.4, 8.1);
+  op(threat, thr); op(coastTag, fade(t, 3.4, 8.2));
+  tr(coastTag, 1390, lerp(700, 850, ease.inOut(seg(t, 5.0, 5.9))));
+  arcs.forEach((a, i) => {
+    const u = ease.inOut(seg(t, 5.7 + i * .22, 6.9 + i * .22));
+    const x0 = 1120, y0 = 842 + i * 5, x1 = ix + (-300 - i * 30) * is + 40, y1 = iy + (95 + i * 25) * is;
+    a.setAttribute('d', `M${x0},${y0} Q${(x0 + x1) / 2},${880 + i * 10} ${x1},${y1}`);
+    a.setAttribute('stroke-dasharray', `${(1400 * u).toFixed(0)} 3000`);
+    op(a, 1 - seg(t, 7.0 + i * .22, 7.5 + i * .22));
+    const f = seg(t, 6.85 + i * .22, 7.35 + i * .22);
+    bursts[i].setAttribute('cx', x1); bursts[i].setAttribute('cy', y1);
+    bursts[i].setAttribute('r', (4 + 26 * ease.out(f)).toFixed(1)); op(bursts[i], f > 0 && f < 1 ? 1 - f : 0);
+  });
+  // Hook.
+  op(hook, fade(t, .15, 3.05, .5));
+  tr(hook, 0, -18 * ease.in(seg(t, 2.5, 3.05)));
+  op(h2, ease.out(seg(t, .7, 1.3)));
+  hot.setAttribute('filter', t > 1.2 && t < 3 ? 'url(#kit-glow)' : '');
+
+  // Objective chooser: the highlight hops Blockade → Raid → Seize and clicks.
+  const pv = fade(t, 3.0, 8.2);
+  op(pills, pv);
+  tr(pills, 0, lerp(130, 150, ease.out(seg(t, 3.0, 3.6))));
+  const hop = t < 3.7 ? 2 : t < 4.1 ? lerp(2, 1, ease.inOut(seg(t, 3.7, 3.95))) : lerp(1, 0, ease.inOut(seg(t, 4.1, 4.35)));
+  pillBg.setAttribute('x', (PX + hop * (PW + 20)).toFixed(1));
+  const click = 1 + .06 * Math.sin(Math.PI * seg(t, 4.35, 4.6));
+  pillBg.setAttribute('transform', `translate(${PX + hop * (PW + 20) + PW / 2},0) scale(${click}) translate(${-(PX + hop * (PW + 20) + PW / 2)},0)`);
+  op(pillBg, .35 + .65 * seg(t, 4.3, 4.4));
+  pillBg.setAttribute('filter', t > 4.35 ? 'url(#kit-glow)' : '');
+  pillEls.forEach((p, i) => p.classList.toggle('on', Math.abs(hop - i) < .5));
+
+  // Dice panel.
+  const pn = fade(t, 5.2, 8.2);
+  op(panel, pn); tr(panel, 30 * (1 - ease.out(seg(t, 5.2, 5.8))), 0);
+  rowEls.forEach((R, i) => {
+    const a = 5.45 + i * .45;
+    op(R.g, ease.out(seg(t, a, a + .35)));
+    R.chips.forEach((c, j) => {
+      const settle = a + .55 + j * .12;
+      if (t < settle) { c.tx.textContent = hash(Math.floor(t * 22) + i * 31 + j * 7).toFixed(2); c.bgc.setAttribute('stroke', 'var(--line)'); c.bgc.setAttribute('fill', 'var(--ink-2)'); c.tx.style.fill = 'var(--muted)'; }
+      else {
+        c.tx.textContent = c.v.toFixed(2); c.tx.style.fill = c.hit ? 'var(--ink)' : 'var(--paper)';
+        c.bgc.setAttribute('fill', c.hit ? 'var(--red)' : 'var(--ink-2)');
+        c.bgc.setAttribute('stroke', c.hit ? 'var(--red)' : 'var(--muted)');
+      }
+      const pop = 1 + .12 * Math.sin(Math.PI * seg(t, settle, settle + .2));
+      c.cg.setAttribute('transform', `translate(${CH0 + j * 74},${300 + i * 60 - 6}) scale(${pop.toFixed(3)})`);
+    });
+    op(R.res, ease.out(seg(t, a + .9, a + 1.2)));
+  });
+  op(crt, ease.out(seg(t, 6.4, 6.8)));
+  // Die tumbles in, lands on 2; column and row light up; "Exchange" glows.
+  const dA = 6.6, dB = 7.3;
+  const du = seg(t, dA, dB);
+  op(die, ease.out(seg(t, dA, dA + .15)));
+  const dx = lerp(1420, CX - 70, ease.out(du)), dy = lerp(470, CY + 14 + (HIT.roll - 1) * CH + 17, ease.out(du)) - 60 * Math.sin(Math.PI * du) * (1 - du);
+  tr(die, dx, dy, t < dB ? .9 : lerp(.95, .72, ease.out(seg(t, dB, dB + .3))), 540 * (1 - ease.out(du)));
+  face(t < dB ? 1 + Math.floor(hash(Math.floor(t * 18)) * 6) : HIT.roll);
+  op(colBand, .16 * ease.out(seg(t, 7.2, 7.4)));
+  op(rowBand, .16 * ease.out(seg(t, 7.35, 7.55)));
+  const lit = t > 7.45;
+  hitCell.style.fill = lit ? 'var(--amber)' : '';
+  hitCell.style.fontWeight = lit ? 600 : '';
+  hitCell.setAttribute('filter', lit ? 'url(#kit-glow)' : '');
+  op(exLab, ease.out(seg(t, 7.5, 7.8)));
+
+  // Replays: dots burst from the island and sort into three outcome bins.
+  op(mc, fade(t, 8.1, 13.9));
+  const src = [ix, iy];
+  let played = 0;
+  for (const D of dots) {
+    const u = seg(t, D.a, D.a + .55);
+    if (t >= D.a) played++;
+    if (u <= 0) { op(D.d, 0); continue; }
+    const e = ease.inOut(u);
+    const mx = (src[0] + D.x) / 2 + D.sx, my = Math.min(src[1], D.y) - 220 + D.sy;
+    const x = (1 - e) * (1 - e) * (src[0] + D.sx * .4) + 2 * (1 - e) * e * mx + e * e * D.x;
+    const y = (1 - e) * (1 - e) * (src[1] + D.sy * .4) + 2 * (1 - e) * e * my + e * e * D.y;
+    D.d.setAttribute('cx', x.toFixed(1)); D.d.setAttribute('cy', y.toFixed(1));
+    op(D.d, Math.min(1, u * 4));
+  }
+  cnt.textContent = played.toLocaleString('en-US');
+  tr(counter, 600, 150);
+  op(counter, fade(t, 8.3, 13.9));
+  // Live percentages while the bins fill, then settle on the tool's rounded shares.
+  const seen = { w: 0, m: 0, f: 0 };
+  for (let i = 0; i < played; i++) seen[RUNS[i].toLowerCase()]++;
+  binLabs.forEach((b, i) => {
+    const k = BINS[i].k;
+    const v = played ? Math.round(seen[k] / played * 100) : 0;
+    b.pct.textContent = v + '%';
+    const top = BASE - Math.ceil(BINS[i].n / NC) * PITCH - 40;
+    b.pct.setAttribute('y', top.toFixed(0));
+    op(b.pct, ease.out(seg(t, 8.6, 9.0)));
+    op(b.lab, ease.out(seg(t, 8.4 + i * .1, 8.8 + i * .1)));
+    const glow = t > 11.2 && t < 13.6;
+    b.pct.setAttribute('filter', glow && i === 0 ? 'url(#kit-glow)' : '');
+    const s = 1 + (i === 0 ? .14 * ease.back(seg(t, 11.2, 11.7)) : 0);
+    const cx = BX[i] + NC * PITCH / 2;
+    b.pct.setAttribute('transform', `translate(${cx},${top}) scale(${s.toFixed(3)}) translate(${-cx},${-top})`);
+  });
+  // Payoff: escalation bar and the fine print.
+  const eu = ease.out(seg(t, 11.4, 12.4));
+  op(esc, ease.out(seg(t, 11.3, 11.7)));
+  escBar.setAttribute('width', (400 * .447 * eu).toFixed(1));
+  escPct.textContent = Math.round(44.7 * eu) + '% of games';
+  op(fine, ease.out(seg(t, 11.8, 12.3)));
+
+  cap(t);
+  end(t, 13.8, 17);
+}
+run({ duration: 17, poster: 9.9, frame });
+</script>
+</body></html>

@@ -30,9 +30,14 @@
         .shows { margin: 0; }
         .shows-frame { position: relative; border-radius: 10px; overflow: hidden; background: var(--surface); border: 1px solid var(--border);
             box-shadow: 0 18px 40px -22px rgba(26, 58, 42, .45); aspect-ratio: 16 / 10; max-height: min(58vh, 520px); margin-inline: auto; }
-        .shows-frame a { display: block; height: 100%; }
-        .shows-frame img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; transition: opacity .45s ease; }
-        .shows-frame img.fading { opacity: 0; }
+        .shows-frame { background: #0b1712; }
+        .shows-layer { position: absolute; inset: 0; opacity: 0; transition: opacity .6s ease; }
+        .shows-layer.on { opacity: 1; }
+        .shows-layer img, .shows-layer iframe { width: 100%; height: 100%; border: 0; display: block; object-fit: cover; object-position: top center; }
+        .shows-layer iframe { pointer-events: none; background: #0b1712; }
+        .shows-hit { position: absolute; inset: 0; z-index: 2; }
+        .shows-arrow { z-index: 3; }
+        .shows-prog { position: absolute; left: 0; bottom: 0; height: 3px; width: 0; background: #f0a93b; z-index: 3; opacity: .9; }
         .shows-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border);
             background: rgba(255, 255, 255, .92); color: var(--green-900); font-size: 22px; line-height: 1; cursor: pointer; display: grid; place-items: center; }
         .shows-arrow:hover, .shows-arrow:focus-visible { background: #fff; border-color: var(--green-600); outline: none; box-shadow: 0 0 0 3px var(--accent-glow); }
@@ -51,7 +56,7 @@
             .shows-frame { max-height: none; }
             .shows-cap { flex-direction: column; gap: 6px; }
         }
-        @media (prefers-reduced-motion: reduce) { .shows-frame img { transition: none; } }
+        @media (prefers-reduced-motion: reduce) { .shows-layer { transition: none; } .shows-prog { display: none; } }
     </style>
 </head>
 <body>
@@ -87,7 +92,9 @@
 
         <figure class="shows" aria-roledescription="carousel" aria-label="A look at the tools">
             <div class="shows-frame">
-                <a id="shows-link" href="/deterrence-playground/"><img id="shows-img" src="img/budget-allocator.webp" alt="" width="1440" height="900"></a>
+                <div id="shows-stage"></div>
+                <a id="shows-link" class="shows-hit" href="/deterrence-playground/" aria-label="Open this tool"></a>
+                <div class="shows-prog" id="shows-prog"></div>
                 <button type="button" class="shows-arrow prev" aria-label="Previous tool">‹</button>
                 <button type="button" class="shows-arrow next" aria-label="Next tool">›</button>
             </div>
@@ -102,48 +109,88 @@
 
 <script>
 (() => {
-    // Screenshots of tools on Interactive Deterrence. Taglines match the site's landing page.
+    // Tools on Interactive Deterrence. Those with a trailer (motion/<slug>/) play it; the rest show a screenshot.
+    // Taglines match the site's landing page.
     const SHOWS = [
-        ['budget-allocator', 'Defense Budget Allocator', "Split a real defense budget, Taiwan's, Japan's, the Philippines' or Poland's. Make changes and see how the mix holds up."],
-        ['raid-night', 'Raid Night', 'Defend four cities through waves of drones and missiles, and see what each night costs you in interceptors.'],
-        ['kharg-island', 'Kharg Island', "Seize, raid or blockade Iran's oil export hub in a dice-driven wargame, then see how 1,000 replays turn out."],
-        ['game-theory-gallery', 'Game Theory Gallery', "Play with interactive models and tables of the field's most influential theories."],
-        ['nuclear-arsenals', 'Nuclear Arsenals', 'Explore eighty years of warhead counts for every nuclear-armed state, set against the treaties that tried to limit them.'],
-        ['red-sea-hormuz', 'Red Sea & Hormuz Pulse', 'Watch daily ship traffic through the Red Sea and Hormuz set against every attack, strike and pause.'],
-        ['berlin-airlift', 'Airlift: Berlin 1948–49', 'Keep West Berlin fed and warm by air, day by day, and see how your tonnage stacks up against 1948–49.'],
-        ['kill-chain-builder', 'Kill Chain Builder', 'Wire sensors, command nodes and shooters into a kill chain, race a moving target, then find the link that breaks it.'],
-        ['nuclear-tests', 'Every Nuclear Test', 'All 2,056 nuclear tests since Trinity, by country, yield and site, on one timeline.'],
-        ['iran-enrichment', "Iran's Enrichment Clock", "Iran's enriched uranium from every IAEA report since 2016, against the deal's limits and quoted breakout estimates."],
-        ['sub-hunt', 'The Hunt', 'Every empty search is a clue. Find the sub before it slips into the Atlantic.'],
+        ['budget-allocator', 'Defense Budget Allocator', "Split a real defense budget, Taiwan's, Japan's, the Philippines' or Poland's. Make changes and see how the mix holds up.", 1],
+        // ['fog-of-command', 'Fog of Command', 'Your orders run late, your scouts see only so far, and the truth only appears in the review.', 1],  (trailer pending)
+        ['raid-night', 'Raid Night', 'Defend four cities through waves of drones and missiles, and see what each night costs you in interceptors.', 0],
+        ['sub-hunt', 'The Hunt', "Spend your effort, learn the sub's habits, and pounce before it slips into the Atlantic.", 0],
+        // ['orbital-denial', 'Orbital Denial', 'Every satellite you destroy leaves debris in an orbit both sides share.', 1],  (trailer pending)
+        ['kharg-island', 'Kharg Island', "Seize, raid or blockade Iran's oil export hub in a dice-driven wargame, then see how 1,000 replays turn out.", 1],
+        ['game-theory-gallery', 'Game Theory Gallery', "Play with interactive models and tables of the field's most influential theories.", 0],
+        ['nuclear-arsenals', 'Nuclear Arsenals', 'Explore eighty years of warhead counts for every nuclear-armed state, set against the treaties that tried to limit them.', 1],
+        ['red-sea-hormuz', 'Red Sea & Hormuz Pulse', 'Watch daily ship traffic through the Red Sea and Hormuz set against every attack, strike and pause.', 0],
+        ['berlin-airlift', 'Airlift: Berlin 1948–49', 'Keep West Berlin fed and warm by air, day by day, and see how your tonnage stacks up against 1948–49.', 0],
+        ['kill-chain-builder', 'Kill Chain Builder', 'Wire sensors, command nodes and shooters into a kill chain, race a moving target, then find the link that breaks it.', 0],
+        ['nuclear-tests', 'Every Nuclear Test', 'All 2,056 nuclear tests since Trinity, by country, yield and site, on one timeline.', 0],
+        ['iran-enrichment', "Iran's Enrichment Clock", "Iran's enriched uranium from every IAEA report since 2016, against the deal's limits and quoted breakout estimates.", 0],
     ];
+    const IMG_MS = 6000, TRAILER_MS = 16000;
     const $ = id => document.getElementById(id);
-    const img = $('shows-img'), dots = document.querySelector('.shows-dots');
+    const stage = $('shows-stage'), dots = document.querySelector('.shows-dots'), prog = $('shows-prog');
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    SHOWS.forEach(([slug]) => { const pre = new Image(); pre.src = 'img/' + slug + '.webp'; });
-    dots.innerHTML = SHOWS.map(([, t], k) => '<button type="button" role="tab" aria-label="' + t + '"></button>').join('');
-    let i = 0, timer = null, hold = false;
+    dots.innerHTML = SHOWS.map(([, t]) => '<button type="button" role="tab" aria-label="' + t + '"></button>').join('');
+    let i = 0, timer = 0, hold = false, dur = IMG_MS, started = 0, left = 0;
+
+    function layer(slug, title, motion) {
+        const d = document.createElement('div');
+        d.className = 'shows-layer';
+        if (motion) {
+            const f = document.createElement('iframe');
+            f.src = 'motion/' + slug + '/' + (reduced ? '?poster' : '');
+            f.title = 'Animated preview of ' + title; f.tabIndex = -1; f.setAttribute('aria-hidden', 'true');
+            f.loading = 'eager';
+            d.appendChild(f);
+        } else {
+            const im = new Image(); im.src = 'img/' + slug + '.webp'; im.alt = 'Screenshot of ' + title; im.width = 1440; im.height = 900;
+            d.appendChild(im);
+        }
+        return d;
+    }
     function show(n) {
         i = (n + SHOWS.length) % SHOWS.length;
-        const [slug, title, line] = SHOWS[i], href = '/deterrence-playground/tools/' + slug + '/';
-        const apply = () => {
-            img.src = 'img/' + slug + '.webp'; img.alt = 'Screenshot of ' + title;
-            $('shows-link').href = href; $('shows-open').href = href; $('shows-open').setAttribute('aria-label', 'Open ' + title);
-            $('shows-title').textContent = title; $('shows-line').textContent = line;
-            img.classList.remove('fading');
-        };
-        if (reduced || !img.getAttribute('data-ready')) { apply(); img.setAttribute('data-ready', '1'); }
-        else { img.classList.add('fading'); setTimeout(apply, 250); }
+        const [slug, title, line, motion] = SHOWS[i], href = '/deterrence-playground/tools/' + slug + '/';
+        const old = [...stage.children], d = layer(slug, title, motion);
+        stage.appendChild(d);
+        requestAnimationFrame(() => requestAnimationFrame(() => d.classList.add('on')));
+        setTimeout(() => old.forEach(o => o.remove()), reduced ? 0 : 700);
+        $('shows-link').href = href; $('shows-link').setAttribute('aria-label', 'Open ' + title);
+        $('shows-open').href = href; $('shows-open').setAttribute('aria-label', 'Open ' + title);
+        $('shows-title').textContent = title; $('shows-line').textContent = line;
         dots.querySelectorAll('button').forEach((b, k) => b.setAttribute('aria-current', String(k === i)));
+        schedule(motion ? TRAILER_MS : IMG_MS);
     }
-    function restart() { clearInterval(timer); if (!reduced) timer = setInterval(() => { if (!hold && !document.hidden) show(i + 1); }, 6000); }
-    document.querySelector('.shows-arrow.prev').onclick = () => { show(i - 1); restart(); };
-    document.querySelector('.shows-arrow.next').onclick = () => { show(i + 1); restart(); };
-    dots.addEventListener('click', e => { const b = e.target.closest('button'); if (b) { show([...dots.children].indexOf(b)); restart(); } });
+    // A trailer reports its loop length when it starts; advance when it ends.
+    addEventListener('message', e => {
+        const m = e.data;
+        if (m && m.trailer && m.trailer.includes('/motion/' + SHOWS[i][0] + '/') && m.duration) schedule(m.duration * 1000);
+    });
+    function schedule(ms) {
+        clearTimeout(timer); if (reduced) return;
+        dur = ms; started = performance.now(); left = ms;
+        prog.style.transition = 'none'; prog.style.width = '0';
+        if (hold) return;
+        run();
+    }
+    function run() {
+        started = performance.now();
+        clearTimeout(timer); timer = setTimeout(() => { if (!document.hidden) show(i + 1); else schedule(dur); }, left);
+        requestAnimationFrame(() => { prog.style.transition = 'width ' + left + 'ms linear'; prog.style.width = '100%'; });
+    }
+    function pause() {
+        if (hold || reduced) return; hold = true; clearTimeout(timer);
+        left = Math.max(0, left - (performance.now() - started));
+        const w = getComputedStyle(prog).width; prog.style.transition = 'none'; prog.style.width = w;
+    }
+    function resume() { if (!hold) return; hold = false; if (!reduced) run(); }
+    document.querySelector('.shows-arrow.prev').onclick = () => show(i - 1);
+    document.querySelector('.shows-arrow.next').onclick = () => show(i + 1);
+    dots.addEventListener('click', e => { const b = e.target.closest('button'); if (b) show([...dots.children].indexOf(b)); });
     const fig = document.querySelector('.shows');
-    fig.addEventListener('mouseenter', () => { hold = true; }); fig.addEventListener('mouseleave', () => { hold = false; });
-    fig.addEventListener('focusin', () => { hold = true; }); fig.addEventListener('focusout', () => { hold = false; });
-    fig.addEventListener('keydown', e => { if (e.key === 'ArrowRight') { show(i + 1); restart(); } if (e.key === 'ArrowLeft') { show(i - 1); restart(); } });
-    show(0); restart();
+    fig.addEventListener('focusin', pause); fig.addEventListener('focusout', resume);
+    fig.addEventListener('keydown', e => { if (e.key === 'ArrowRight') show(i + 1); if (e.key === 'ArrowLeft') show(i - 1); });
+    show(0);
 })();
 </script>
 

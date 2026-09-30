@@ -1,0 +1,41 @@
+/* Motion kit for the /interactive trailers. One look for the whole series:
+   a night plotting table. Ink-green dark, faint grid, paper grain, amber signal, red threat. */
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400;1,6..72,500&family=Martian+Mono:wght@300;400;600&display=swap');
+
+:root {
+  --ink: #0b1712;        /* table */
+  --ink-2: #11231b;      /* raised panel */
+  --line: #1f3a2d;       /* grid */
+  --paper: #efe9dc;      /* primary text, friendly units */
+  --muted: #8fa89a;      /* labels */
+  --amber: #f0a93b;      /* signal: the player's action */
+  --red: #e0533d;        /* threat / enemy */
+  --blue: #7fb6d9;       /* friendly sensors, water */
+  --green: #6aab82;      /* success, the site's green */
+  --display: 'Newsreader', Georgia, serif;
+  --mono: 'Martian Mono', ui-monospace, monospace;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--ink); overflow: hidden; }
+body { color: var(--paper); font-family: var(--mono); -webkit-font-smoothing: antialiased; }
+
+/* The stage is 1600 x 1000 user units, scaled to fit whatever frame it is in (16:10). */
+.stage { position: absolute; inset: 0; display: grid; place-items: center; }
+.stage > svg { width: 100%; height: 100%; display: block; }
+
+/* Background layers: vignette, grid and grain, drawn by kit.js into <g id="kit-bg">. */
+.kit-grid line { stroke: var(--line); stroke-width: 1; }
+.kit-grain { mix-blend-mode: overlay; opacity: .35; pointer-events: none; }
+
+/* Type */
+.t-kicker { font: 400 18px var(--mono); letter-spacing: .22em; text-transform: uppercase; fill: var(--muted); }
+.t-title  { font: italic 500 92px var(--display); fill: var(--paper); letter-spacing: -.01em; }
+.t-hook   { font: 400 58px var(--display); fill: var(--paper); }
+.t-hook tspan.hot { fill: var(--amber); font-style: italic; }
+.t-cap    { font: 400 22px var(--mono); fill: var(--paper); letter-spacing: .02em; }
+.t-label  { font: 400 15px var(--mono); fill: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+.t-num    { font: 600 26px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+.t-cta    { font: 600 20px var(--mono); fill: var(--ink); letter-spacing: .14em; text-transform: uppercase; }
+
+/* The caption strip bottom-left and the end card are built by kit.js. */
+.kit-cap-bar { fill: var(--amber); }

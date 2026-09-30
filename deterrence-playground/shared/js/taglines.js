@@ -25,6 +25,7 @@ export const TAGLINES = {
   'raid-night': 'Defend four cities through waves of drones and missiles, and see what each night costs you in interceptors.',
   'matrix-game': 'Argue your moves in a fictional Baltic crisis, face the counter-arguments, and let the dice decide.',
   'fog-of-command': 'Your orders run late, your reports lie, and the truth only appears in the review.',
+  'orbital-denial': 'Every satellite you destroy leaves debris in an orbit both sides share.',
   'sub-hunt': 'Every empty search is a clue. Find the sub before it slips into the Atlantic.',
   'berlin-airlift': 'Keep West Berlin fed and warm by air, day by day, and see how your tonnage stacks up against 1948–49.',
   'markets-vs-analysts': 'What traders paid for a Chinese invasion, blockade or clash over Taiwan, set against the PLA activity record.',

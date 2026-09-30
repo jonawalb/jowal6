@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Orbital Denial | Interactive Deterrence</title>
+<meta name="description" content="A space-conflict wargame between two notional powers: jam, dazzle, hack or shoot down satellites for ten months, then see the debris field, each side's surviving capability and escalation risk against a reversible-only plan on the same dice.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@500;600;700;800&family=DM+Mono:wght@400;500&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="orbital-denial.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+<div class="od-actions">
+  <p class="od-flag"><b>Notional model.</b> Both powers and their satellites are invented. The debris physics and the 2007 and 2021 ASAT test anchors are real.</p>
+  <div><button type="button" class="btn" id="show-howto">How to play</button>
+  <button type="button" class="btn" id="start-tour">Walkthrough</button>
+  <button type="button" class="btn" id="copy-link">Copy link</button>
+  <button type="button" class="btn" id="new-game">New game</button></div>
+</div>
+
+<section class="card od-howto" id="howto" aria-labelledby="howto-t">
+      <div class="od-howto-h"><h2 id="howto-t">How to play</h2><button type="button" class="btn solid" id="hide-howto">Got it</button></div>
+      <p>You command the satellites of <b>Blue</b>, a notional power, through a ten-month crisis that turns into war with <b>Red</b>. Both sides rely on four constellations: reconnaissance, communications, navigation, and early warning with nuclear command. Each month, pick <b>two actions</b> in the panel, then press <b>End month</b>. Red moves at the same time.</p>
+      <p><b>Reversible</b> attacks (jam, dazzle, cyber) wear off. <b>Destructive</b> ones (missile, co-orbital) kill satellites for good, but a missile kill leaves a debris cloud that also threatens your own satellites and everyone else's in that orbit. Touching early-warning satellites raises the risk of nuclear escalation. You win if your space support beats Red's over the war without crossing the nuclear threshold.</p>
+    </section>
+
+<main class="layout">
+  <div class="stage">
+
+    <div class="card od-bar" id="bar">
+      <div class="od-month">
+        <p class="eyebrow" id="phase-t">Crisis</p>
+        <p class="od-month-t"><b class="num" id="month">Month 1</b><span class="muted num"> of 10</span></p>
+        <ol class="od-pips" id="pips" aria-hidden="true"></ol>
+      </div>
+      <div class="od-kpis">
+        <div class="od-kpi"><span class="k-l">Space support</span><span class="od-vs"><b class="num you" id="k-sb">100</b><span class="muted">vs</span><b class="num red" id="k-sr">100</b></span><span class="k-s">yours vs Red's, out of 100</span></div>
+        <div class="od-kpi"><span class="k-l">Advantage so far</span><b class="num" id="k-adv">0.00</b><span class="k-s" id="k-adv-s">±0.50 decides the war</span></div>
+        <div class="od-kpi"><span class="k-l">Nuclear escalation risk <span class="notional">notional</span></span><b class="num" id="k-esc">0%</b><span class="k-s" id="k-esc-s">so far this game</span></div>
+      </div>
+    </div>
+
+    <div class="card od-orbitcard">
+      <div class="od-card-h"><p class="eyebrow">Orbits</p><p class="fine" id="pick-hint">Pick an action in the panel, then a target here or in the panel.</p></div>
+      <svg id="orbit" class="od-orbit" role="group" aria-label="Schematic of four orbital shells. Your satellites are on the left half, Red's on the right. Grey speckle is debris."></svg>
+      <div class="od-legend">
+        <span><i class="lg-you"></i>Your satellites</span><span><i class="lg-red"></i>Red's satellites</span>
+        <span><i class="lg-pend"></i>Arriving next month</span><span><i class="lg-lost">×</i>Lost</span>
+        <span><i class="lg-jam"></i>Jammed, blinded or hacked</span><span><i class="lg-deb"></i>Debris</span>
+      </div>
+      <p class="fine" id="bg-note"></p>
+    </div>
+
+    <div class="od-cols">
+      <div class="card od-res">
+        <p class="eyebrow">What happened</p>
+        <ol class="od-log" id="log" aria-live="polite"></ol>
+      </div>
+      <div class="card od-res">
+        <p class="eyebrow">Debris outlook <span class="notional">model</span></p>
+        <dl class="readout" id="outlook"></dl>
+        <p class="fine" id="outlook-note"></p>
+      </div>
+    </div>
+
+    <section class="card od-aar" id="aar" hidden aria-labelledby="aar-t">
+      <div class="status" id="aar-status"><b id="aar-t"></b><span id="aar-sub"></span></div>
+      <div class="od-verdicts" id="verdicts"></div>
+      <div class="od-replay">
+        <label class="slider"><span class="sl-h"><span>Month shown in the orbit view</span><output id="rp-o" class="num">10</output></span>
+          <input type="range" id="rp" min="0" max="10" step="1" value="10"></label>
+      </div>
+      <h3 class="od-h3">The debris field over time</h3>
+      <p class="fine">Trackable fragments in the two LEO shells: your game (solid) and the same months and targets played with reversible means only, on the same dice (dashed). After month 10 both sides keep their constellations at full strength.</p>
+      <div class="seg od-hz" role="group" aria-label="Years shown after the war" id="hz">
+        <button type="button" data-y="25" aria-pressed="true">25 years</button><button type="button" data-y="50" aria-pressed="false">50 years</button><button type="button" data-y="100" aria-pressed="false">100 years</button>
+      </div>
+      <p class="fine"><span class="od-key" style="color:var(--c3)"></span>Low LEO <span class="od-key" style="color:var(--c2)"></span>High LEO <span class="od-key dash" style="color:var(--muted)"></span>Reversible only</p>
+      <svg id="ch-deb" class="od-chart" role="img" aria-label="Fragments in low and high LEO over time, your game against a reversible-only plan"></svg>
+      <p class="fine od-hover" id="ch-deb-o">Hover or tap the chart to read a point.</p>
+      <h3 class="od-h3">Surviving capability</h3>
+      <p class="fine"><span class="od-key" style="color:var(--blue)"></span>You <span class="od-key" style="color:var(--red)"></span>Red <span class="od-key dash" style="color:var(--muted)"></span>Same months, reversible only</p>
+      <svg id="ch-cap" class="od-chart" role="img" aria-label="Space support for each side by month, your game against a reversible-only plan"></svg>
+      <p class="fine od-hover" id="ch-cap-o">Hover or tap the chart to read a month.</p>
+      <h3 class="od-h3">Escalation risk</h3>
+      <p class="fine"><span class="od-key" style="color:var(--red)"></span>Your plan <span class="od-key dash" style="color:var(--blue)"></span>Reversible only <span class="od-key dash" style="color:var(--muted)"></span>Defenses only</p>
+      <svg id="ch-esc" class="od-chart" role="img" aria-label="Cumulative chance of nuclear escalation by month for your game, reversible-only and hold-fire plans"></svg>
+      <p class="fine od-hover" id="ch-esc-o">Hover or tap the chart to read a month.</p>
+      <h3 class="od-h3">1,000 replays of your plan</h3>
+      <p class="fine" id="mc-note">Your ten months of orders replayed against 1,000 new sets of dice, with Red's posture drawn at random each time, next to the same orders with every destructive attack swapped for a reversible one, and with attacks removed but defenses kept.</p>
+      <div class="tablewrap"><table class="od-mc" id="mc"><tbody><tr><td>Running…</td></tr></tbody></table></div>
+      <div class="od-go"><button type="button" class="btn solid" id="again">Same seed, play again</button> <button type="button" class="btn" id="again-new">New seed</button></div>
+    </section>
+  </div>
+
+  <aside class="panel" id="panel" aria-label="Your orders">
+    <div class="sec">
+      <div class="status" id="prompt" data-s="warn"><b id="prompt-t">Your first move</b><span id="prompt-s"></span></div>
+      <p class="eyebrow">This month's orders</p>
+      <ol class="od-slots" id="slots"></ol>
+      <div class="od-go"><button type="button" class="btn" id="undo">Undo</button><button type="button" class="btn solid" id="end">End month</button></div>
+    </div>
+    <div class="sec">
+      <p class="eyebrow">1 · Choose an action</p>
+      <p class="lab">Reversible</p>
+      <div class="choices od-acts" id="acts-rev" role="group" aria-label="Reversible attacks"></div>
+      <p class="lab">Destructive</p>
+      <div class="choices od-acts" id="acts-kin" role="group" aria-label="Destructive attacks"></div>
+      <p class="lab">Defend</p>
+      <div class="choices od-acts" id="acts-def" role="group" aria-label="Defenses"></div>
+      <p class="fine" id="act-d"></p>
+    </div>
+    <div class="sec">
+      <p class="eyebrow">2 · Choose a target</p>
+      <div class="choices od-tgts" id="tgts" role="group" aria-label="Target"></div>
+    </div>
+    <details class="sec od-adv">
+      <summary>Advanced</summary>
+      <p class="lab">Red's posture</p>
+      <div class="seg" role="group" aria-label="Red's posture" id="red-post">
+        <button type="button" data-v="unknown">Hidden</button><button type="button" data-v="restrained">Restrained</button><button type="button" data-v="reciprocal">Reciprocal</button><button type="button" data-v="aggressive">Aggressive</button>
+      </div>
+      <p class="fine">Hidden draws one of the three from the seed; the review reveals it.</p>
+      <p class="lab">Fragments per missile kill</p>
+      <div class="seg" role="group" aria-label="Fragment model" id="frag">
+        <button type="button" data-v="1">Breakup model (Cosmos 1408-like)</button><button type="button" data-v="4">×4 (Fengyun-1C-like)</button>
+      </div>
+      <div class="od-seed"><label for="seed">Seed</label> <input id="seed" type="number" min="1" max="999999" inputmode="numeric" class="num">
+        <button type="button" class="btn" id="restart">Restart</button></div>
+      <p class="fine">Changing a setting starts the game again. The seed fixes every roll, so the same link replays the same game.</p>
+    </details>
+  </aside>
+</main>
+<div class="od-tour" id="tour" hidden role="dialog" aria-label="Walkthrough"></div>
+
+<section class="below" id="below"></section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Orbital Denial', sub: 'A space-conflict wargame between two notional powers: every satellite you destroy leaves debris in an orbit both sides share.', category: 'Force & wargame models' });
+  document.title = 'Orbital Denial | Interactive Deterrence';
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

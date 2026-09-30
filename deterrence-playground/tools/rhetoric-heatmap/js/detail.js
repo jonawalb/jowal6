@@ -74,7 +74,11 @@ export function renderDetail(box, S, agg, recs) {
   const head = `<div class="d-head"><p class="eyebrow">Week of ${weekStart(sel.w)}</p><h3>${name}</h3>
     <p class="d-count"><b class="num">${ids.length}</b> of <span class="num">${tot}</span> Taiwan-related statements with ${zh ? 'Chinese' : 'English'} text${tot ? ` (${Math.round(100 * ids.length / tot)}%)` : ''} ${split}</p>${filt}${weekLinks(weekStart(sel.w))}</div>`;
   if (!ids.length) {
-    box.innerHTML = head + `<p class="fine">${tot ? 'No statement this week matched.' : 'TSM holds no Taiwan-related statements from the selected sources for this week.'}</p>`;
+    const held = agg.held[sel.w], other = held - tot;
+    const msg = tot ? 'No statement this week matched.'
+      : other ? `TSM holds ${other} Taiwan-related statement${other === 1 ? '' : 's'} from the selected sources this week without ${zh ? 'Chinese' : 'English'} text${zh ? '' : ' (Chinese only; theme rules read English, so they cannot match; search a Chinese phrase such as 台独 to read them)'}.`
+      : 'TSM holds no Taiwan-related statements from the selected sources for this week. That does not mean no briefing was held: many briefings take no Taiwan question.';
+    box.innerHTML = head + `<p class="fine">${msg}</p>`;
     return;
   }
   let shown = PAGE;

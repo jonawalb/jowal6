@@ -66,7 +66,7 @@ export function createGrid({ labelSvg, svg, scroller, tip, onSelect, onHover }) 
       for (let w = w0; w <= w1; w++) {
         const n = agg.cells[r.k][w].length;
         const rect = el('rect', { x: x(w) + (cw > 5 ? 0.5 : 0), y, width: Math.max(1, cw - (cw > 5 ? 1 : 0.3)), height: ROW }, g);
-        if (!agg.total[w]) { rect.setAttribute('class', 'c-empty'); continue; }
+        if (!agg.held[w]) { rect.setAttribute('class', 'c-empty'); continue; }
         if (!n) { rect.setAttribute('class', 'c-zero'); continue; }
         rect.style.fill = `color-mix(in oklab, var(${r.kind === 'phrase' ? '--heat2' : '--heat'}) ${Math.max(12, pct(valueOf(agg, r.k, w, S.metric))).toFixed(0)}%, var(--cell0))`;
       }
@@ -133,7 +133,7 @@ export function createGrid({ labelSvg, svg, scroller, tip, onSelect, onHover }) 
       if (r.kind === 'theme') t.appendChild(el('title', {}, null, THEMES[r.k].label));
     });
     el('text', { x: LABW - 8, y: yTick + 11, class: 'lab-small' }, labelSvg, 'Readiness patrols');
-    SOURCES.forEach((s, i) => el('text', { x: LABW - 8, y: yCov + i * (COVH + 3) + 9, class: 'lab-small' }, labelSvg, `${s} statements held`));
+    SOURCES.forEach((s, i) => el('text', { x: LABW - 8, y: yCov + i * (COVH + 3) + 9, class: 'lab-small' }, labelSvg, `${s} Taiwan items held`));
   }
 
   function hit(e) {
@@ -160,7 +160,10 @@ export function createGrid({ labelSvg, svg, scroller, tip, onSelect, onHover }) 
     if (!h) { tip.hidden = true; onHover?.(null); return; }
     const n = G.agg.cells[h.row][h.w].length, tot = G.agg.total[h.w];
     const name = h.row === THEMES.length ? `“${G.S.matcher.phrase}”` : THEMES[h.row].label;
-    tip.innerHTML = `<b>${name}</b><br>Week of ${weekStart(h.w)}<br><span class="num">${n}</span> of <span class="num">${tot}</span> Taiwan statements${tot ? ` (${Math.round(100 * n / tot)}%)` : ''}`;
+    const held = G.agg.held[h.w], lang = G.S.matcher?.zh ? 'Chinese' : 'English';
+    tip.innerHTML = `<b>${name}</b><br>Week of ${weekStart(h.w)}<br>` + (!held ? 'No Taiwan-related statements held for the selected sources'
+      : `<span class="num">${n}</span> of <span class="num">${tot}</span> Taiwan statements with ${lang} text${tot ? ` (${Math.round(100 * n / tot)}%)` : ''}`
+        + (held > tot ? `<br><span class="num">${held - tot}</span> more held without ${lang} text` : ''));
     const box = scroller.parentElement.getBoundingClientRect();
     tip.hidden = false;
     const tx = Math.min(e.clientX - box.left + 14, box.width - tip.offsetWidth - 6);

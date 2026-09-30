@@ -93,12 +93,6 @@ const tour = createTour(document.getElementById('tour-root'), set => {
   mount();
 });
 document.getElementById('start-tour').addEventListener('click', () => tour.start());
-document.getElementById('copy-link').addEventListener('click', async e => {
-  const b = e.currentTarget;
-  try { await navigator.clipboard.writeText(location.href); b.textContent = 'Link copied'; }
-  catch (err) { b.textContent = 'Copy the address bar'; }
-  setTimeout(() => { b.textContent = 'Copy link to this setup'; }, 1800);
-});
 document.querySelectorAll('[data-goto]').forEach(a => a.addEventListener('click', ev => {
   ev.preventDefault(); S.m = a.dataset.goto; mount(); document.querySelector('.tabs').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }));

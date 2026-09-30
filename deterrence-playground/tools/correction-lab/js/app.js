@@ -111,11 +111,6 @@ function changed() { render(); writeHash(); }
 
 const tour = createTour($('tour-root'), set => { Object.assign(S, DEFAULTS, set); changed(); });
 $('start-tour').addEventListener('click', () => tour.start());
-$('copy-link').addEventListener('click', async e => {
-  const b = e.currentTarget;
-  try { await navigator.clipboard.writeText(location.href); b.textContent = 'Link copied'; } catch (err) { b.textContent = 'Copy the address bar'; }
-  setTimeout(() => { b.textContent = 'Copy link to this setup'; }, 1800);
-});
 $('reset').addEventListener('click', () => { Object.assign(S, DEFAULTS); changed(); });
 $('calib').textContent = `e0 = ${NOTIONAL.e0.toFixed(2)}, C0 = ${NOTIONAL.C0}, spread of U_I = ${NOTIONAL.sdI}`;
 

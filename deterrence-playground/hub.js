@@ -136,6 +136,8 @@ function render() {
   const cats = CATEGORIES.filter(c => cat === 'all' || c.id === cat);
   const liveNow = TOOLS.filter(t => t.status === 'live' && (cat === 'all' ? t.cat !== 'dev' : inCat(t, cat)) && match(t));
   document.body.classList.toggle('home-overview', TILES && !q && cat === 'all');
+  // Inside a section or subsection the headline, search and gallery card step aside.
+  document.body.classList.toggle('in-section', TILES && !q && cat !== 'all');
   if (TILES && !q) {
     // Overview: one tile per section (TSM last). A section: its tools, with a way back.
     if (cat === 'all') {

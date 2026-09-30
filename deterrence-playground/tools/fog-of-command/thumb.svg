@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+  <defs>
+    <radialGradient id="fog" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#f2f2ee" stop-opacity=".95"/>
+      <stop offset="1" stop-color="#f2f2ee" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="640" height="400" fill="#e9e4d4"/>
+  <path d="M0 330 C140 312 250 340 330 326 C430 310 540 340 640 322 V400 H0 Z" fill="#d6e1e1" stroke="#97a197"/>
+  <path d="M214 20 C236 80 206 140 228 200" fill="none" stroke="#97a197" stroke-width="9" stroke-dasharray="2 7" stroke-linecap="round"/>
+  <path d="M424 20 C446 80 416 140 438 200" fill="none" stroke="#97a197" stroke-width="9" stroke-dasharray="2 7" stroke-linecap="round"/>
+  <path d="M110 40 V200 L320 290 M320 40 V290 M530 40 V200 L320 290" fill="none" stroke="#97a197" stroke-width="5" stroke-linecap="round"/>
+  <g fill="#fbfbf8" stroke="#b3261e" stroke-width="3.5">
+    <path d="M110 64 l22 22 l-22 22 l-22 -22 Z" stroke-dasharray="5 4"/>
+    <path d="M320 58 l22 22 l-22 22 l-22 -22 Z"/>
+    <path d="M530 70 l22 22 l-22 22 l-22 -22 Z" stroke-dasharray="5 4"/>
+  </g>
+  <ellipse cx="320" cy="88" rx="120" ry="70" fill="url(#fog)"/>
+  <ellipse cx="530" cy="96" rx="90" ry="60" fill="url(#fog)"/>
+  <g fill="#fbfbf8" stroke="#1b4fd4" stroke-width="3.5">
+    <rect x="84" y="182" width="52" height="34"/><rect x="294" y="182" width="52" height="34"/><rect x="504" y="182" width="52" height="34"/><rect x="294" y="262" width="52" height="34"/>
+  </g>
+  <path d="M320 260 C300 230 200 220 136 206" fill="none" stroke="#1b4fd4" stroke-width="3.5" stroke-dasharray="10 7"/>
+  <text x="32" y="372" font-family="Georgia, serif" font-weight="700" font-size="40" fill="#14201a">Fog of Command</text>
+</svg>

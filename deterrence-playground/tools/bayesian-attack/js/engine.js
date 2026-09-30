@@ -1,5 +1,5 @@
 // Gaussian precision-weighting engine: a line-by-line port of sim/engine.py from
-// Walberg, "Emotional Priors and Narrative Warfare: A Bayesian Game of Cognitive Manipulation" (working paper, June 11, 2026).
+// Walberg, "Emotional Priors and Narrative Warfare: A Bayesian Game of Cognitive Manipulation" (working paper, June 2026).
 //
 //   Prior θ ~ N(μ0, 1/ρ0). Signal s = θ + ε, ε ~ N(0, 1/ρs).
 //   Neutral update:  ρ' = ρ0 + ρs,        μ' = (ρ0 μ0 + ρs s) / ρ'

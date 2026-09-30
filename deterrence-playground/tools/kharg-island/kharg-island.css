@@ -248,3 +248,65 @@ details[open] summary { margin-bottom: 8px; }
   .choices button { min-height: 44px; }
 }
 @media (prefers-reduced-motion: reduce) { .seg, .meter > span, .budget .bar span { transition: none; } .budget .flash { animation: none; } }
+
+/* ---- Motion (both looks). Only when the viewer has not asked for reduced motion; see js/fx.js. ---- */
+.kh-die { display: none; }
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes kh-row { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: none; } }
+  @keyframes kh-tumble { 0% { opacity: 0; transform: translateY(-9px) rotate(-220deg) scale(.5); } 70% { opacity: 1; transform: translateY(1px) rotate(12deg) scale(1.08); } 100% { transform: none; } }
+  @keyframes kh-hitglow { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 70%, transparent); } 100% { box-shadow: 0 0 0 7px transparent; } }
+  #log.kh-anim tbody tr { animation: kh-row .32s cubic-bezier(.2,.8,.2,1) both; }
+  #log.kh-anim .roll { animation: kh-tumble .42s cubic-bezier(.2,.8,.2,1) both; }
+  #log.kh-anim .roll.hit { animation: kh-tumble .42s cubic-bezier(.2,.8,.2,1) both, kh-hitglow .6s ease-out; }
+  @keyframes kh-col { 0% { background: color-mix(in srgb, var(--accent) 45%, transparent); } 100% { background: color-mix(in srgb, var(--accent) 8%, transparent); } }
+  @keyframes kh-cell { 0%, 55% { transform: scale(1); } 75% { transform: scale(1.35); } 100% { transform: scale(1); } }
+  #crt.kh-anim td.col { animation: kh-col .5s ease-out both; }
+  #crt.kh-anim td.hit { animation: kh-cell .9s cubic-bezier(.2,.8,.2,1) both; position: relative; z-index: 1; }
+  @keyframes kh-dieroll { 0% { transform: translate(-26px, -10px) rotate(-540deg) scale(.6); opacity: 0; } 60% { transform: translate(2px, 1px) rotate(12deg) scale(1.05); opacity: 1; } 100% { transform: none; } }
+  #crt-note.kh-anim .kh-die { animation: kh-dieroll .65s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes kh-endin { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  .endline.kh-end { animation: kh-endin .5s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes kh-alarm { 0% { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--red) 70%, transparent); } 100% { box-shadow: inset 0 0 0 1px transparent; } }
+  .kh-alarm { animation: kh-alarm 1s ease-out; }
+  @keyframes kh-grow { from { transform: scaleX(0); } to { transform: none; } }
+  #mc.kh-anim .eb-bar span { transform-origin: left; animation: kh-grow .6s cubic-bezier(.2,.8,.2,1) both; }
+  #mc.kh-anim td.dbar span { transform-origin: left; animation: kh-grow .5s cubic-bezier(.2,.8,.2,1) both; }
+  #mc.kh-anim td.dbar span.down { transform-origin: right; }
+  @keyframes kh-done { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 60%, transparent); } 100% { box-shadow: 0 0 0 8px transparent; } }
+  .mc-bar.kh-done { animation: kh-done .7s ease-out; }
+  .kh-filling .mc-bar { background: repeating-linear-gradient(90deg, var(--chip) 0 6px, transparent 6px 10px); }
+}
+
+/* ---- Trailer look: the night plotting table. Tokens come from shared/css/trailer.css; these are the extras. ---- */
+:root[data-skin="trailer"] { --kh-mixed: #cbbf9f; }
+:root[data-skin="trailer"] .seg.mixed, :root[data-skin="trailer"] .sw.mixed { background: var(--kh-mixed); }
+:root[data-skin="trailer"] .kh-die { display: inline-grid; grid-template-columns: repeat(3, 4px); grid-auto-rows: 4px; gap: 2px; padding: 3px;
+  width: 22px; height: 22px; box-sizing: border-box; margin-right: 7px; vertical-align: -6px; border-radius: 4px; background: var(--ink); box-shadow: var(--glow); }
+:root[data-skin="trailer"] .kh-die i { display: block; width: 4px; height: 4px; border-radius: 50%; }
+:root[data-skin="trailer"] .kh-die i.p { background: #0b1712; }
+:root[data-skin="trailer"] .roll { font-family: var(--mono); border: 1px solid var(--rule); border-radius: 4px; padding: 0 4px; margin: 1px 0; background: var(--chip); }
+:root[data-skin="trailer"] .roll.hit { border-color: var(--accent); color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, var(--chip)); box-shadow: 0 0 10px -3px var(--accent); }
+:root[data-skin="trailer"] table.crt td.hit { box-shadow: var(--glow); color: #111; background: var(--accent); }
+:root[data-skin="trailer"] table.crt th.on { color: var(--accent); }
+:root[data-skin="trailer"] .endline { background: color-mix(in srgb, var(--panel) 70%, transparent); font-family: var(--body); }
+:root[data-skin="trailer"] .endline.win { box-shadow: -8px 0 22px -14px var(--us); }
+:root[data-skin="trailer"] .endline.fail { box-shadow: -8px 0 22px -14px var(--red); }
+:root[data-skin="trailer"] .kh-mine { filter: drop-shadow(0 0 2px var(--red)); }
+:root[data-skin="trailer"] .kh-lodge circle { filter: drop-shadow(0 0 5px var(--us)); }
+:root[data-skin="trailer"] .kh-garr rect { filter: drop-shadow(0 0 4px var(--red)); }
+:root[data-skin="trailer"] .kh-sector.on .kh-route, :root[data-skin="trailer"] .kh-adv { filter: drop-shadow(0 0 4px var(--us)); }
+:root[data-skin="trailer"] .kh-inbox { fill: color-mix(in srgb, var(--sea) 80%, #000); stroke: var(--coast); }
+:root[data-skin="trailer"] .kh-zone rect { fill: color-mix(in srgb, var(--panel) 92%, transparent); }
+:root[data-skin="trailer"] .kh-big { font-style: italic; font-weight: 500; letter-spacing: .12em; fill: color-mix(in srgb, var(--muted) 70%, transparent); }
+:root[data-skin="trailer"] .kh-ztitle, :root[data-skin="trailer"] .kh-ilabel, :root[data-skin="trailer"] .kh-plabel, :root[data-skin="trailer"] .kh-slabel { font-style: italic; font-weight: 500; }
+:root[data-skin="trailer"] .mc-bar { border-color: var(--rule); box-shadow: 0 0 24px -12px var(--accent); }
+:root[data-skin="trailer"] .meter.esc > span { box-shadow: 0 0 10px -2px var(--red); }
+:root[data-skin="trailer"] .meter.cost > span { box-shadow: 0 0 10px -2px var(--accent); }
+:root[data-skin="trailer"] .kh-flag { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 6%, transparent); }
+:root[data-skin="trailer"] .tour { box-shadow: 0 18px 40px -20px #000, var(--glow); }
+:root[data-skin="trailer"] .kh-tabs { background: #08120d; }
+:root[data-skin="trailer"] .kh-tabs button[aria-selected="true"] { color: #111; }
+:root[data-skin="trailer"] .layout[data-tab="play"] .playbar { box-shadow: 0 -6px 30px -10px #000; }
+:root[data-skin="trailer"] .kh-note { letter-spacing: -.03em; }
+:root[data-skin="trailer"] .kh-zone .kh-note { font-size: 10.5px; }
+@media (max-width: 760px) { :root[data-skin="trailer"] .layout[data-tab="play"] .playbar { background: var(--panel); backdrop-filter: none; } }

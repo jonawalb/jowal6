@@ -10,6 +10,8 @@ import { feedHTML, status, fireText, renderBelow, hhmm, NAME, DEF, foeOf } from 
 import { createAAR } from './aar.js';
 import { createTour } from './tour.js';
 import { readHash, writeHash } from './hash.js';
+import { snap, slide, shell, spot, contacts, lift } from './fx.js';
+import { pulse, shake, flash } from '../../../shared/js/motion.js';
 
 const $ = id => document.getElementById(id);
 const newSeed = () => 1 + Math.floor(Math.random() * 999998);
@@ -17,8 +19,8 @@ const reduce = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 const narrowQ = matchMedia('(max-width: 640px)');
 
 let g = null, me = 'blue', sel = null, view = 'belief', aarHour = null;
-let map = createMap($('map'), onSector, onSectorKey, narrowQ.matches, false);
-const remap = () => { map = createMap($('map'), onSector, onSectorKey, narrowQ.matches, !!g && me === 'red'); };
+let map = createMap($('map'), onSector, onSectorKey, narrowQ.matches, false, onArty);
+const remap = () => { map = createMap($('map'), onSector, onSectorKey, narrowQ.matches, !!g && me === 'red', onArty); };
 
 const say = html => { $('say').innerHTML = html; };
 const mineUnits = () => g.units.filter(u => u.side === me);
@@ -117,7 +119,7 @@ function routes() {
 function liveView() {
   const foe = foeOf(me);
   return {
-    me, units: g.units, pic: beliefAt(g, me, g.t), mode: 'belief', routes: routes(), selected: sel,
+    me, units: g.units, pic: beliefAt(g, me, g.t), mode: 'belief', live: true, routes: routes(), selected: sel,
     target: g.fire[me][g.t] || null,
     hits: g.fires.filter(f => f.t === g.t && f.side === foe && f.hits.some(x => DEF[x.unit].side === me)).map(f => f.node),
     fights: g.fights.filter(f => f.t === g.t - 1).map(f => f.node),
@@ -160,10 +162,11 @@ function onSector(node) {
     sel = here[0].id; draw(); return;
   }
   const u = unit(g, sel);
+  let fired = null;
   if (u.type === 'arty') {
     if (g.fire[me][g.t]) { say('Your artillery has already fired this hour.'); return; }
     const f = setFire(g, me, node);
-    if (f) say(fireText(g, f));
+    if (f) { say(fireText(g, f)); fired = f; }
     sel = null;
   } else if (u.node === 'off') {
     if (!NORTH.includes(node)) { say(`${u.short} has not arrived yet. It can only enter through a north sector.`); return; }
@@ -181,6 +184,18 @@ function onSector(node) {
   }
   writeHash(g, me);
   draw();
+  if (fired) {
+    // The round flies from your battery; a recon troop next door watches it land.
+    const m = map;
+    shell(m, fired.node, { from: m.G.battery }).then(() => { if (fired.spotter && m === map) spot(m, fired.spotter, fired.node); });
+  }
+}
+
+/** Your battery on the map: clicking it arms a fire mission, like the A key. */
+function onArty(id) {
+  if (!g || g.over) return;
+  select(id);
+  if (sel === id) say(g.fire[me][g.t] ? 'Your artillery has already fired this hour.' : 'Artillery ready: click the sector to fire on.');
 }
 
 /** Keyboard on a sector: Enter/Space acts, arrow keys move between sectors. */
@@ -202,11 +217,35 @@ function endHour() {
   if (!g || g.over) return;
   sel = null;
   const t0 = g.t;
+  const before = snap(map);
+  const was = new Map(beliefAt(g, me, t0).tracks.filter(tr => tr.elem).map(tr => [tr.elem, tr]));
+  const str0 = new Map(mineUnits().map(u => [u.id, u.str]));
+  pulse($('end'));
   advance(g);
   const fights = g.fights.filter(f => f.t === t0).length;
   say(`<b>${hhmm(g.t)}.</b> ${fights ? `Fighting in ${fights} sector${fights > 1 ? 's' : ''}. ` : ''}New reports are on the ${narrowQ.matches ? 'page below the map' : 'right'}.`);
   writeHash(g, me);
-  if (g.over) finish(true); else draw();
+  if (g.over) finish(true);
+  else {
+    draw();
+    hourFx(t0, before, was, str0);
+  }
+}
+
+/** The hour's motion: units slide to where they are now, enemy rounds land, fights flare, new contacts ping. */
+function hourFx(t0, before, was, str0) {
+  const m = map;
+  slide(m, before);
+  flash($('clock'));
+  for (const tr of beliefAt(g, me, g.t).tracks) {
+    const p = tr.elem && was.get(tr.elem);
+    if (tr.age === 0 && tr.elem && (!p || p.node !== tr.node || p.age > 0)) m.svg.querySelector(`[data-elem="${tr.elem}"]`)?.classList.add('fresh');
+  }
+  const hurt = () => mineUnits().filter(u => str0.has(u.id) && u.str < str0.get(u.id) - 1e-9)
+    .forEach(u => { const b = $('units').querySelector(`[data-u="${u.id}"]`); shake(b); flash(b); });
+  const hits = liveView().hits;
+  setTimeout(() => { if (m === map) contacts(m, g.fights.filter(f => f.t === t0).map(f => f.node)); }, 380);
+  Promise.all(hits.map((n, i) => new Promise(r => setTimeout(r, i * 140)).then(() => shell(m, n, { foe: true })))).then(hurt);
 }
 
 function finish(scroll) {
@@ -219,6 +258,7 @@ function finish(scroll) {
 }
 
 function reviewAt(h) {
+  const prev = aarHour, before = prev !== null ? snap(map) : null;
   aarHour = h;
   const s = g.snaps[h];
   if (!s) return;
@@ -228,12 +268,18 @@ function reviewAt(h) {
     me, units, pic: view === 'truth' ? truthPic : beliefAt(g, me, h), mode: view, routes: [], selected: null,
     target: g.fire[me][h] || null, hits: [], fights: g.fights.filter(f => f.t === h - 1).map(f => f.node),
   });
+  if (before && prev !== h) slide(map, before, { ms: 420, forward: h === prev + 1 });
 }
 
 function setView(v) {
+  const changed = v !== view;
   view = v;
   document.querySelectorAll('#viewbar [data-view]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.view === v)));
-  if (g && g.over && aarHour !== null) reviewAt(aarHour);
+  if (g && g.over && aarHour !== null) {
+    const before = changed ? snap(map) : null;
+    reviewAt(aarHour);
+    if (changed) { slide(map, before, { forward: false }); lift(map, v === 'truth'); }
+  }
 }
 
 const aar = createAAR({ onHour: reviewAt, onAgain: () => start(me, g.seed), onNew: showStart });

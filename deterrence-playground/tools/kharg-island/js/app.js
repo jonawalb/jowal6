@@ -10,13 +10,14 @@ import { escalationHtml, oilHtml } from './tracks.js';
 import { writeHash, readHash } from './hash.js';
 import { createTour, DEFAULT } from './tour.js';
 import { addExportBar } from '../../../shared/js/export.js';
+import { turnFx, mcFx, press, dieHtml } from './fx.js';
 
 const $ = id => document.getElementById(id);
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 const copyCfg = c => ({ us: { ...c.us }, ir: { ...c.ir }, turns: c.turns });
 
 let { cfg, P, seed, view } = readHash(copyCfg(DEFAULT), { ...PROB_DEF }, 1987);
-let game, anim = null, mcTimer = null;
+let game, anim = null, mcTimer = null, shownView = null, shownGame = null;
 
 $('panel').innerHTML = panelHtml();
 const map = createMap($('map'), $('tip'), { onSector: k => { cfg.us.sector = k; changed(); } });
@@ -94,9 +95,9 @@ $('assume-reset').onclick = () => { P = { ...PROB_DEF }; changed(); };
 
 // Turn stepping
 $('prev').onclick = () => { stop(); setView(view - 1); };
-$('next').onclick = () => { stop(); setView(view + 1); };
+$('next').onclick = () => { stop(); setView(view + 1); press($('next')); };
 $('scrub').oninput = e => { stop(); setView(+e.target.value); };
-$('playall').onclick = playAll;
+$('playall').onclick = () => { playAll(); press($('playall')); };
 $('start-tour').onclick = () => { showTab('play'); tour.start(); };
 document.addEventListener('click', e => {
   if (!e.target.closest('.open-assume')) return;
@@ -148,6 +149,7 @@ function setView(v) {
   $('scrub').value = view;
   $('prev').disabled = view === 0; $('next').disabled = view >= game.turns.length;
   $('turn-t').textContent = view ? `Turn ${view} of ${game.turns.length} · ${T.label} · ${T.phase}` : `Setup · up to ${cfg.turns} turns to play`;
+  const was = [...document.querySelectorAll('#readout dd')].map(d => d.textContent);
   $('readout').innerHTML = readoutHtml(st, cfg);
   $('log').innerHTML = turnLogHtml(game, view, cfg);
   $('crt-wrap').hidden = cfg.us.obj === 'blockade';
@@ -155,6 +157,12 @@ function setView(v) {
   $('crt-note').textContent = T && T.crt ? `This turn: ratio ${T.crt.ratio === Infinity ? 'unopposed' : T.crt.ratio.toFixed(2)} (column ${['< 1:2', '1:2', '1:1', '1.5:1', '2:1', '3:1+'][T.crt.col]}), die ${T.crt.roll}.` : 'No ground combat this turn.';
   $('esc').innerHTML = escalationHtml(game, view, st, cfg, P);
   $('oil').innerHTML = oilHtml(game, view, st, cfg, P);
+  if (T && T.crt) $('crt-note').insertAdjacentHTML('afterbegin', dieHtml(T.crt.roll));
+  if (game === shownGame && view === shownView + 1) {
+    turnFx({ svg: $('map'), T, prev: view > 1 ? game.turns[view - 2].state : startState(), st, cfg, was,
+      last: view === game.turns.length, outcome: game.outcome });
+  }
+  shownView = view; shownGame = game;
   writeHash(cfg, P, seed, view);
 }
 
@@ -163,9 +171,11 @@ function scheduleMc() {
   $('mc').classList.add('busy');
   mcTimer = setTimeout(() => {
     const mc = monteCarlo(cfg, P, seed);
+    const shares = [...document.querySelectorAll('#mc .mc-bar .seg')].map(s => parseFloat(s.style.width));
     $('mc').innerHTML = mcHtml(mc, drivers(cfg, P, seed, mc), cfg);
     $('mc').classList.remove('busy');
     $('mc-h').textContent = `${RUNS.toLocaleString('en-US')} games, dice seed ${seed}`;
+    mcFx($('mc'), mc, shares.length === 3 ? shares : null);
     status(mc);
   }, 60);
 }

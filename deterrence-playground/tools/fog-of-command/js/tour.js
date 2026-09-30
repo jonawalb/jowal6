@@ -5,7 +5,7 @@ const STEPS = [
   { sel: '#units', title: 'Give orders',
     body: 'Pick a unit (or press its number), then click the sector it should go to. Orders start now or next hour, as the bar says. "Give ground" makes a unit fall back one sector when a stronger enemy attacks it: good bait, if something strong waits behind.' },
   { sel: '#units .fc-arty', title: 'Artillery and recon',
-    body: 'Press A, then click a sector to fire. The damage report comes back at once and is right 9 times in 10. If one of your recon troops is next to the target, it watches the fall of shot: you see exactly what is there and how hurt it is, and decoys are exposed. A recon troop inside the target may be hit.' },
+    body: 'Your battery sits fixed in the bottom-right corner of the map. Press A or click it, then click a sector to fire. The damage report comes back at once and is right 9 times in 10. If one of your recon troops is next to the target, it watches the fall of shot: you see exactly what is there and how hurt it is, and decoys are exposed. A recon troop inside the target may be hit.' },
   { sel: '#end', title: 'End the hour',
     body: 'Units move, fights happen where both sides meet, and new reports arrive on the right. Hit a defender from a second direction and its defense counts for nothing. After 22:00, or when the crossing falls, the review shows what you saw against what was true.' },
 ];

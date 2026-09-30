@@ -164,3 +164,52 @@
   .log li { grid-template-columns: 4.8em 1fr; }
 }
 @media (prefers-reduced-motion: reduce) { .meter .m-bar i { transition: none; } }
+
+/* ---- Motion (both looks); see js/fx.js. ---- */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes ba-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  .ba-rise { animation: ba-rise .5s cubic-bezier(.2,.8,.2,1) both; }
+}
+
+/* ---- Trailer look: the night plotting table. Tokens come from shared/css/trailer.css; these are the extras. ---- */
+:root[data-skin="trailer"] .stage, :root[data-skin="trailer"] .panel, :root[data-skin="trailer"] .below {
+  --you: var(--accent); --hist: var(--blue); --req: var(--ink); --food: var(--good); --coal: #b9a57d; --other: #a68ef0; }
+:root[data-skin="trailer"] .st-date { font-style: italic; font-weight: 500; font-size: 36px; }
+:root[data-skin="trailer"] .kpi { background: color-mix(in srgb, var(--chip) 70%, transparent); border-color: var(--rule); }
+:root[data-skin="trailer"] .kpi b { font-family: var(--mono); font-size: 19px; font-variant-numeric: tabular-nums; }
+:root[data-skin="trailer"] #k-cum { color: var(--accent); text-shadow: 0 0 14px color-mix(in srgb, var(--accent) 45%, transparent); }
+:root[data-skin="trailer"] .kpi.good b { text-shadow: 0 0 12px color-mix(in srgb, var(--good) 40%, transparent); }
+:root[data-skin="trailer"] .kpi.bad b { text-shadow: 0 0 12px color-mix(in srgb, var(--bad) 40%, transparent); }
+:root[data-skin="trailer"] .meter .m-bar i { box-shadow: 0 0 10px -2px var(--good); }
+:root[data-skin="trailer"] .meter[data-s="warn"] .m-bar i { box-shadow: 0 0 10px -2px var(--warn); }
+:root[data-skin="trailer"] .meter[data-s="bad"] .m-bar i { box-shadow: 0 0 10px -2px var(--bad); }
+:root[data-skin="trailer"] .evcard { box-shadow: 0 18px 40px -26px #000, var(--glow); }
+:root[data-skin="trailer"] .ev-ch button, :root[data-skin="trailer"] :is(.panel, .chartcard) .seg button { color: var(--ink); background: var(--chip); }
+:root[data-skin="trailer"] .ev-ch button:hover { border-color: var(--accent); box-shadow: var(--glow); }
+:root[data-skin="trailer"] :is(.panel, .chartcard) .seg button[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 18%, var(--chip)); }
+:root[data-skin="trailer"] .debrief { border-top-color: var(--accent); }
+:root[data-skin="trailer"] .debrief .db-grade b { color: var(--accent); font-family: var(--mono); }
+/* Map: the corridors as lit lanes over the zones, aircraft as glowing blips. */
+:root[data-skin="trailer"] .mp-soviet { fill: color-mix(in srgb, var(--red) 5%, #08120d); stroke: var(--rule); }
+:root[data-skin="trailer"] .mp-zone { fill: var(--land); stroke: var(--coast); }
+:root[data-skin="trailer"] .mp-cor { stroke: color-mix(in srgb, var(--blue) 12%, var(--sea)); }
+:root[data-skin="trailer"] .mp-cl { stroke: color-mix(in srgb, var(--blue) 45%, transparent); }
+:root[data-skin="trailer"] .mp-berlin { fill: color-mix(in srgb, var(--panel) 80%, #000); stroke: var(--coast); stroke-width: 1.5; }
+:root[data-skin="trailer"] .mp-zt { font-family: var(--mono); font-weight: 400; letter-spacing: .14em; }
+:root[data-skin="trailer"] .mp-ft { font-family: var(--display); font-style: italic; font-weight: 500; font-size: 14px; }
+:root[data-skin="trailer"] .mp-base { fill: var(--bg); stroke: var(--muted); }
+:root[data-skin="trailer"] .mp-bt, :root[data-skin="trailer"] .mp-ct { stroke: #0b1712; }
+:root[data-skin="trailer"] .mp-dot { stroke: color-mix(in srgb, var(--you) 35%, transparent); stroke-width: 5; }
+:root[data-skin="trailer"] .mp-dot.br { fill: var(--blue); stroke: color-mix(in srgb, var(--blue) 35%, transparent); }
+:root[data-skin="trailer"] .mp-dot.ret { fill: var(--muted); stroke: none; }
+:root[data-skin="trailer"] .mp-use { filter: drop-shadow(0 0 3px var(--you)); }
+:root[data-skin="trailer"] .mp-use.full { fill: var(--red); filter: drop-shadow(0 0 3px var(--red)); }
+/* Chart */
+:root[data-skin="trailer"] .chart .you { fill: color-mix(in srgb, var(--you) 60%, transparent); }
+:root[data-skin="trailer"] .chart .you-l { filter: drop-shadow(0 0 4px var(--you)); }
+:root[data-skin="trailer"] .chart .anc-t { stroke: #0b1712; }
+:root[data-skin="trailer"] .chart .rec { filter: drop-shadow(0 0 5px var(--accent)); }
+:root[data-skin="trailer"] .coefwrap input { background: var(--bg); }
+:root[data-skin="trailer"] .tour { box-shadow: var(--glow); }
+:root[data-skin="trailer"] :is(.mp-ct, .mp-wx, .mp-fs) { font-size: 9.5px; letter-spacing: -.03em; }
+@media (max-width: 560px) { :root[data-skin="trailer"] .mp-ct { font-size: 17px; } :root[data-skin="trailer"] :is(.mp-wx, .mp-fs) { font-size: 15.5px; } :root[data-skin="trailer"] .mp-zt { font-size: 16px; letter-spacing: .06em; } :root[data-skin="trailer"] .mp-ft { font-size: 19px; } }

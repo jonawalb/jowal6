@@ -8,6 +8,7 @@ import { mountC } from './viewC.js';
 import { createTour } from './tour.js';
 import { mountCases, pickCase } from './cases.js';
 import { addExportBar } from '../../../shared/js/export.js';
+import { snap, morph, drawIn } from './fx.js';
 
 const S = { m: 'A', A: { ...A_DEFAULTS }, B: { ...B_DEFAULTS }, C: { ...C_DEFAULTS } };
 const KEYS = {
@@ -51,7 +52,8 @@ function mount() {
   tabs.forEach(t => { const on = t.dataset.m === S.m; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; });
   view = MOUNT[S.m](stage, panel, S, changed);
   view.render();
-  cases = mountCases(stage, S.m, set => { Object.assign(S[S.m], set); cancelAnimationFrame(raf); view.render(); cases.sync(S[S.m]); writeHash(); });
+  drawIn(document.querySelector('main') || document);
+  cases = mountCases(stage, S.m, set => { Object.assign(S[S.m], set); cancelAnimationFrame(raf); const b = snap(root()); view.render(); morph(root(), b); cases.sync(S[S.m]); writeHash(); });
   cases.sync(S[S.m]);
   addExports();
   writeHash();
@@ -71,9 +73,10 @@ function addExports() {
   });
 }
 let raf = 0;
+const root = () => document.querySelector('main') || document;
 function changed() {
   cancelAnimationFrame(raf);
-  raf = requestAnimationFrame(() => { view.render(); cases.sync(S[S.m]); writeHash(); });
+  raf = requestAnimationFrame(() => { const b = snap(root()); view.render(); morph(root(), b); cases.sync(S[S.m]); writeHash(); });
 }
 
 tabs.forEach((t, i) => {

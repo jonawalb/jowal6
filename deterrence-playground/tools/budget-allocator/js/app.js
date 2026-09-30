@@ -13,6 +13,7 @@ import { createTour } from './tour.js';
 import { renderDoc } from './doc.js';
 import { mountParams, readOver, writeOver } from './params.js';
 import { addExportBar, tableRows } from '../../../shared/js/export.js';
+import * as fx from './fx.js';
 
 const $ = id => document.getElementById(id);
 const byKey = k => COUNTRIES.find(c => c.k === k);
@@ -116,7 +117,7 @@ function bindRange(id, get, set, f) {
 }
 const drawSupp = bindRange('supp', () => Math.round(S.supp * 100), v => { S.supp = v / 100; }, v => v + '%');
 const drawWarn = bindRange('warn', () => S.warn, v => { S.warn = v; }, v => v + (v === 1 ? ' day' : ' days'));
-$('play').onclick = () => strip.play();
+$('play').onclick = () => { fx.press($('play')); strip.play(); };
 
 // ---- render ----------------------------------------------------------------------
 function referenceHtml(p) {
@@ -142,6 +143,7 @@ function render() {
   $('reference').innerHTML = referenceHtml(p);
   // status + readout
   const st = $('status'); st.dataset.s = v.s; st.innerHTML = `<b>${v.b}</b><span>${v.t}</span>`;
+  fx.verdict(st, v.b);
   const T = p.text.tiles;
   $('tiles').innerHTML = [
     ['Force engaged', Math.round(r.engaged * 100) + '%', T.engaged],
@@ -149,8 +151,10 @@ function render() {
     ['Shooters left', Math.round(mobileWeighted(r) * 100) + '%', T.shooters],
     ['Resilience', Math.round(r.resilience), 'out of 100'],
   ].map(([t, b, s]) => `<div class="tile"><span>${t}</span><b>${b}</b><small>${s}</small></div>`).join('');
+  fx.tiles($('tiles'));
   $('why').innerHTML = explain(r);
   $('layers').innerHTML = r.layers.map(l => `<li><span class="sw8" style="background:var(${l.col})"></span>${l.t}<span class="lbar"><i style="width:${Math.round(l.st * 100)}%;background:var(${l.col})"></i></span><span class="num">${Math.round(l.p * 100)}%</span></li>`).join('');
+  fx.widths($('layers'), '.lbar i', e => e.closest('li').textContent.replace(/\d+%$/, ''));
   // comparison
   const rows = [{ t: 'Your plan', you: true, shares: S.shares },
     { t: p.presets.porcupine.t, s: p.presets.porcupine.s, shares: mixOf('porcupine') },

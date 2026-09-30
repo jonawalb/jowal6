@@ -1,5 +1,6 @@
 // Allocation controls: a draggable stacked bar and one slider per category, locked to the total.
 import { ctx } from './ctx.js';
+import { ON as MOTION } from './fx.js';
 
 export const fmtBn = v => v >= 1000 ? Math.round(v).toLocaleString('en-US') : v >= 10 ? v.toFixed(1) : v.toFixed(2);
 /** Money in the active country's currency, e.g. "NT$145.7bn". */
@@ -47,6 +48,18 @@ export function barHtml(shares, { labels = false } = {}) {
 export function mountDragBar(el, get, onChange) {
   const draw = () => {
     const s = get().shares;
+    // Interactive Deterrence: update the segments in place so the bar reflows smoothly (see budget-allocator.css).
+    if (MOTION && el.dataset.k === ctx.P.k && el.querySelectorAll('.seg').length === ctx.cats.length) {
+      let x = 0;
+      const grips = el.querySelectorAll('.grip');
+      ctx.cats.forEach((c, i) => {
+        const w = s[c.id], seg = el.querySelector(`.seg[data-id="${c.id}"]`);
+        seg.style.flex = w; seg.textContent = w > 0.06 ? Math.round(w * 100) + '%' : '';
+        x += w; if (grips[i]) grips[i].style.left = `${x * 100}%`;
+      });
+      return;
+    }
+    if (MOTION) el.dataset.k = ctx.P.k;
     el.innerHTML = ctx.cats.map(c => { const w = s[c.id]; return `<span class="seg" style="flex:${w};background:var(${c.col})" data-id="${c.id}">${w > 0.06 ? Math.round(w * 100) + '%' : ''}</span>`; }).join('')
       + ctx.cats.slice(0, -1).map((c, i) => { const x = ctx.cats.slice(0, i + 1).reduce((a, d) => a + s[d.id], 0); return `<i class="grip" style="left:${x * 100}%" data-i="${i}"></i>`; }).join('');
   };

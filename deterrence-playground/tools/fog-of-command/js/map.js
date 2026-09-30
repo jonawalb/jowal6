@@ -32,9 +32,15 @@ export function geometry(L, flip = false) {
   return G;
 }
 
-export function createMap(svg, onSector, onKey, narrow, flip = false) {
+export function createMap(svg, onSector, onKey, narrow, flip = false, onArty = null) {
   const G = geometry(narrow ? LAYOUTS.narrow : LAYOUTS.wide, flip);
-  svg.setAttribute('viewBox', `0 0 ${G.W} ${G.H}`);
+  // Your artillery sits fixed in the bottom-right corner, behind your side of the board. Defending, that is
+  // the band beside Tarn Crossing below Stonegate; attacking, a strip added below Red's entry edge.
+  const pad = flip ? Math.round(46 * G.k) : 0;
+  const by = flip ? G.H - G.top + 22 * G.k : G.top + 4 * G.ch + 34 * G.k;
+  G.battery = { x: G.W - 64 * G.k, y: by };
+  G.Hv = G.H + pad;
+  svg.setAttribute('viewBox', `0 0 ${G.W} ${G.Hv}`);
   svg.replaceChildren();
   defs(svg);
   terrain(svg, G);
@@ -52,7 +58,7 @@ export function createMap(svg, onSector, onKey, narrow, flip = false) {
     g.addEventListener('keydown', e => onKey(e, n.id));
   }
   const layers = { routes: el('g', {}, svg), marks: el('g', {}, svg), foe: el('g', {}, svg), mine: el('g', {}, svg), top: el('g', {}, svg) };
-  return { svg, G, nodes, layers, narrow, flip };
+  return { svg, G, nodes, layers, narrow, flip, onArty };
 }
 
 function defs(svg) {
@@ -65,10 +71,10 @@ function defs(svg) {
 
 function terrain(svg, G) {
   const t = el('g', { class: 'fc-terrain', 'aria-hidden': 'true' }, svg);
-  el('rect', { x: 0, y: 0, width: G.W, height: G.H, class: 'fc-ground' }, t);
+  el('rect', { x: 0, y: 0, width: G.W, height: G.Hv, class: 'fc-ground' }, t);
   const fy = G.fy;
   const zy = Math.min(fy(0), fy(G.top + G.ch));
-  el('rect', { x: 0, y: zy, width: G.W, height: G.top + G.ch, class: 'fc-redzone' }, t);
+  el('rect', { x: 0, y: zy, width: G.W, height: G.top + G.ch + (G.Hv - G.H), class: 'fc-redzone' }, t);
   const z = el('text', { x: G.W / 2, y: G.flip ? G.H - 10 : G.top - 10, class: 'fc-zone' }, t, 'Red enters from the north');
   z.setAttribute('text-anchor', 'middle');
   // River and bridge at the crossing (drawn in unturned coordinates, then turned if needed).
@@ -162,7 +168,7 @@ export function render(m, v) {
     const s3 = Math.min(s2, (c.w - 8) / per / (50 * K));
     slots(own.length, per, c.x, y0 + 14 * K * s3, c.w, Math.min(56 * K * s3, (c.w - 6) / per), 42 * K * s3).forEach((p, i) => unitBox(L.mine, p, own[i], v, K * s3, s3 > 0.75 && own.length <= (narrow ? 2 : 3)));
     if (v.fights && v.fights.includes(n.id)) {
-      const g = el('g', { class: 'fc-fight', transform: `translate(${c.x + c.w - 16 * K} ${c.y + 16 * K}) scale(${K})` }, L.top);
+      const g = el('g', { class: 'fc-fight', 'data-node': n.id, transform: `translate(${c.x + c.w - 16 * K} ${c.y + 16 * K}) scale(${K})` }, L.top);
       el('circle', { r: 10 }, g); el('path', { d: 'M-5 -5L5 5M5 -5L-5 5' }, g);
       el('title', {}, g, `Fighting in ${n.name}`);
     }
@@ -172,6 +178,8 @@ export function render(m, v) {
       el('title', {}, g, `Enemy artillery hit ${n.name} this hour`);
     }
   }
+  const arty = v.units.find(u => u.side === v.me && u.type === 'arty' && !u.broken);
+  if (arty) battery(m, arty, v);
   if (v.target) {
     const c = G.cells[v.target];
     const g = el('g', { class: 'fc-target', transform: `translate(${c.x + (v.target === 'x' ? 24 : c.w - 22 * K)} ${c.y + c.h - 20 * K}) scale(${K})` }, L.top);
@@ -187,6 +195,7 @@ function diamond(parent, [x, y], tr, mode, k) {
   if (!truth && tr.age > 0) cls.push('old');
   if (!truth && !tr.exact) cls.push('rough');
   const g = el('g', { class: cls.join(' '), transform: `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${k})` }, parent);
+  if (tr.elem) g.dataset.elem = tr.elem;
   el('path', { d: 'M0 -13L13 0L0 13L-13 0Z' }, g);
   const t = el('text', { y: 4.5, class: 'fc-trk-l' }, g, LETTER(tr.type));
   t.setAttribute('text-anchor', 'middle');
@@ -226,4 +235,24 @@ function unitBox(parent, [x, y], u, v, k, labels) {
   if (u.key) { const kk = el('text', { x: 17, y: 10, class: 'fc-ukey' }, g, u.key.toUpperCase()); kk.setAttribute('text-anchor', 'end'); }
   if (labels) { const l = el('text', { y: 26, class: 'fc-ulab' }, g, u.short); l.setAttribute('text-anchor', 'middle'); }
   el('title', {}, g, `${u.name}: strength ${u.str.toFixed(1)} of ${u.str0}${u.stance === 'give' ? ', gives ground' : ''}${moving ? ', on the move' : ''}`);
+}
+
+/** Your artillery battalion, fixed in the bottom-right corner. Clicking it (or Enter) arms a fire mission. */
+function battery(m, u, v) {
+  const { x, y } = m.G.battery, k = m.G.k;
+  const fired = !!v.target;
+  const live = typeof m.onArty === 'function' && v.mode === 'belief' && v.live;
+  const g = el('g', { class: `fc-unit fc-bat ${u.side}${u.id === v.selected ? ' sel' : ''}${fired ? ' fired' : ''}`, transform: `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${k})`, 'data-unit': u.id }, m.layers.mine);
+  if (live) {
+    g.setAttribute('tabindex', 0); g.setAttribute('role', 'button');
+    g.setAttribute('aria-label', fired ? 'Your artillery (fixed): it has fired this hour' : 'Your artillery (fixed): press to choose a sector to fire on');
+    g.addEventListener('click', () => m.onArty(u.id));
+    g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); m.onArty(u.id); } });
+  }
+  el('rect', { x: -21, y: -13, width: 42, height: 26, rx: 2, class: 'fc-ubox' }, g);
+  el('circle', { cx: 0, cy: 0, r: 4.5, class: 'glyph fc-batdot' }, g);
+  if (u.key) { const kk = el('text', { x: 17, y: 10, class: 'fc-ukey' }, g, u.key.toUpperCase()); kk.setAttribute('text-anchor', 'end'); }
+  const l = el('text', { y: 26, class: 'fc-ulab' }, g, 'Artillery (fixed)');
+  l.setAttribute('text-anchor', 'middle');
+  el('title', {}, g, `${u.name}: fixed behind your line; it cannot move or be attacked. ${fired ? 'It has fired this hour.' : live ? 'Click it, or press A, then click a sector to fire.' : ''}`.trim());
 }

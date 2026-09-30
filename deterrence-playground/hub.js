@@ -137,7 +137,7 @@ function render() {
   if (TILES && !q) {
     // Overview: one tile per section (TSM last). A section: its tools, with a way back.
     if (cat === 'all') {
-      $('sections').innerHTML = `<section class="cat-sec"><div class="cat-h"><h2>Pick a section</h2>
+      $('sections').innerHTML = `<section class="cat-sec overview"><div class="cat-h"><h2>Pick a section</h2>
         <p>${COUNTED.length} tools in ${CATEGORIES.filter(c => c.id !== 'dev').length} sections.</p></div><div class="sec-tiles">${CATEGORIES.map(tile).join('')}</div></section>`;
     } else {
       const c = CATEGORIES.find(x => x.id === cat), list = TOOLS.filter(t => inCat(t, cat));

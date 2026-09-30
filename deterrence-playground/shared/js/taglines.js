@@ -26,6 +26,7 @@ export const TAGLINES = {
   'matrix-game': 'Argue your moves in a fictional Baltic crisis, face the counter-arguments, and let the dice decide.',
   'sub-hunt': 'Hunt a hidden submarine with sonobuoys and patrol aircraft as a probability map updates every hour.',
   'berlin-airlift': 'Keep two million Berliners fed and warm by air, day by day, and see how your tonnage stacks up against 1948–49.',
+  'markets-vs-analysts': 'What traders paid for a Chinese invasion, blockade or clash over Taiwan, set against the PLA activity record.',
   'war-markets': 'See what prediction markets priced for strikes on Iran, ceasefires and a Russia–NATO clash, and how each bet turned out.',
   'budget-allocator': "Split a real defense budget, Taiwan's, Japan's, the Philippines' or Poland's. Make changes and see how the mix holds up.",
   'kill-chain-builder': 'Wire sensors, command nodes and shooters into a kill chain, race a moving target, then find the link that breaks it.',

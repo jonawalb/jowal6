@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Baltic Matrix Game</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .mg-card { fill: #0a1510; fill-opacity: .9; stroke: var(--line); }
+  .mg-eyebrow { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .12em; text-transform: uppercase; }
+  .mg-ititle { font: italic 500 40px var(--display); fill: var(--paper); }
+  .mg-itext { font: 400 20px var(--display); fill: var(--paper); fill-opacity: .85; }
+  .mg-pill { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .06em; }
+  .mg-tname { font: 400 15px var(--mono); fill: var(--paper); letter-spacing: .04em; }
+  .mg-tend { font: 400 12px var(--mono); fill: var(--muted); letter-spacing: .04em; }
+  .mg-tval { font: 600 22px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; text-anchor: end; }
+  .mg-act { font: 400 27px var(--display); fill: var(--paper); }
+  .mg-chip { font: 600 14px var(--mono); fill: var(--ink); letter-spacing: .08em; text-transform: uppercase; }
+  .mg-lab { font: 600 14px var(--mono); fill: var(--paper); letter-spacing: .08em; text-transform: uppercase; }
+  .mg-rt { font: 400 19px var(--display); fill: var(--paper); }
+  .mg-why { font: 400 12.5px var(--mono); fill: var(--muted); letter-spacing: 0; }
+  .mg-mod { font: 600 20px var(--mono); text-anchor: middle; font-variant-numeric: tabular-nums; }
+  .mg-net { font: 400 18px var(--mono); fill: var(--paper); }
+  .mg-p { font: 600 40px var(--mono); fill: var(--amber); font-variant-numeric: tabular-nums; }
+  .mg-dt { font: 400 13px var(--mono); fill: var(--muted); text-anchor: middle; }
+  .mg-band { font: italic 500 44px var(--display); }
+  .mg-res { font: 400 16px var(--mono); fill: var(--paper); }
+  .mg-big { font: 600 64px var(--mono); fill: var(--amber); font-variant-numeric: tabular-nums; }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of the Baltic Matrix Game, a fictional crisis on the Narva River: playing Estonia, the player argues an action with three reasons, Russia counter-argues, the odds settle at 72 percent, and two dice come up one and one, so the move backfires and escalation rises."><title>Baltic Matrix Game</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard, clamp } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Real values from tools/matrix-game ------------------------------------------------------------------------
+// The first turn of the page's default game (actor Estonia, dice seed 2031; js/app.js). The player picks the first
+// action and reasons 1, 8 and 6 from Estonia's list; js/engine.js adjudicates exactly as the page would (replay link:
+// #a=estonia&s=2031). Board, inject and tracks: data/scenario.js; action, reasons, Russia's counter: data/moves.js.
+// The scenario is fictional.
+const TRACKS = [['Escalation', 'calm', 'armed clash', 3], ['Allied cohesion', 'split', 'united', 6], ['Local sentiment', 'alienated', 'confident', 5], ['International attention', 'ignored', 'headline', 3]];
+const INJ = { title: 'Markers gone again', tags: ['border', 'law and sovereignty'],
+  lines: ['Overnight, several of Estonia’s navigation buoys', 'on the Narva River disappear. The Russian border', 'service says they sat in Russian waters. Estonia’s', 'border guard publishes photos of the empty moorings.'] };
+const ACTION = ['Replace the buoys and step up Police', 'and Border Guard patrols on the river'];
+const ROWS = [
+  [0, 'Base', 'a reasonable action', 'No penalty: the action is within what this actor can plausibly do.'],
+  [1, 'Reason', '“Estonian law applies on Estonia’s side of the river.”', 'Strong: it bears on law and sovereignty, border.'],
+  [1, 'Reason', '“Estonia has handled border incidents like this before, in 2014 and 2024.”', 'Strong: it bears on border, and this turn’s inject is a border issue.'],
+  [0, 'Reason', '“The world is watching this border.”', 'Weak: relevant (law and sovereignty), but international attention is 4 (needs 5 or more).'],
+  [-1, 'Counter', 'Russia: “The markers were in Russian waters.”', 'Strong: it engages border, law and sovereignty, and this turn’s inject is a border issue.'],
+];
+// P(2d6 + net >= 7), as js/engine.js pSuccess.
+const pSuccess = net => { let n = 0; for (let a = 1; a <= 6; a++) for (let b = 1; b <= 6; b++) if (a + b + net >= 7) n++; return n / 36; };
+const BANDS = [{ k: 'decisive', min: 10, label: 'Decisive success' }, { k: 'success', min: 7, label: 'Success' }, { k: 'fail', min: 5, label: 'Fails' }, { k: 'backfire', min: -99, label: 'Backfires' }];
+const BCOL = { decisive: 'var(--green)', success: 'var(--green)', fail: 'var(--amber)', backfire: 'var(--red)' };
+const NET = 1, DICE = [1, 1], TOTAL = DICE[0] + DICE[1] + NET; // seed 2031, turn 1: 1 + 1 + 1 = 3, Backfires
+const ESC_AFTER = 5; // backfire: the action's cost (escalation +1) plus 1 more
+
+// ---- Scene ------------------------------------------------------------------------------------------------------
+const cam = el('g', {}, svg);
+const scene = el('g', {}, cam);
+const T = (x, y, cls, s, a = {}, p = scene) => { const n = el('text', { x, y, class: cls, ...a }, p); if (s != null) n.textContent = s; return n; };
+const op = (n, v) => n.setAttribute('opacity', clamp(v).toFixed(3));
+const sign = v => (v > 0 ? `+${v}` : v < 0 ? `−${-v}` : '0');
+
+// Left: the inject and the crisis board.
+const left = el('g', {}, scene);
+T(80, 78, 't-kicker', 'Fictional exercise scenario', {}, left);
+const inj = el('g', {}, left);
+el('rect', { x: 80, y: 110, width: 490, height: 270, rx: 6, class: 'mg-card' }, inj);
+T(104, 144, 'mg-eyebrow', 'Turn 1 of 6 · inject', {}, inj);
+T(104, 192, 'mg-ititle', INJ.title, {}, inj);
+INJ.lines.forEach((s, i) => T(104, 232 + i * 28, 'mg-itext', s, {}, inj));
+{ let x = 104; INJ.tags.forEach(s => { const w = s.length * 8.6 + 24; el('rect', { x, y: 344, width: w, height: 24, rx: 12, fill: 'none', stroke: 'var(--muted)' }, inj); T(x + w / 2, 361, 'mg-pill', s, { 'text-anchor': 'middle' }, inj); x += w + 8; }); }
+const board = el('g', {}, left);
+el('rect', { x: 80, y: 400, width: 490, height: 330, rx: 6, class: 'mg-card' }, board);
+T(104, 434, 'mg-eyebrow', 'Crisis board · notional', {}, board);
+const tr = TRACKS.map(([name, lo, hi, v], i) => {
+  const y = 480 + i * 64, g = el('g', {}, board);
+  T(104, y, 'mg-tname', name, {}, g);
+  const val = T(546, y, 'mg-tval', v, {}, g);
+  const cells = Array.from({ length: 10 }, (_, j) => el('rect', { x: 104 + j * 44.2, y: y + 12, width: 40, height: 14, rx: 2, fill: 'var(--line)' }, g));
+  T(104, y + 44, 'mg-tend', lo, {}, g); T(546, y + 44, 'mg-tend', hi, { 'text-anchor': 'end' }, g);
+  return { g, val, cells };
+});
+
+// Right: the adjudicator.
+const adj = el('g', {}, scene);
+el('rect', { x: 610, y: 60, width: 910, height: 790, rx: 6, class: 'mg-card' }, adj);
+T(636, 96, 'mg-eyebrow', 'Adjudicator · you', {}, adj);
+const chip = el('g', { transform: 'translate(636,116)' }, adj);
+el('rect', { width: 96, height: 30, rx: 15, fill: 'var(--amber)' }, chip);
+T(48, 20, 'mg-chip', 'Estonia', { 'text-anchor': 'middle' }, chip);
+ACTION.forEach((s, i) => T(748, 140 + i * 34, 'mg-act', s, {}, adj));
+const rows = ROWS.map(([m, lab, text, why], i) => {
+  const g = el('g', { transform: `translate(636,${226 + i * 74})` }, adj);
+  const col = m > 0 ? 'var(--green)' : m < 0 ? 'var(--red)' : 'var(--muted)';
+  el('rect', { x: 0, y: 0, width: 52, height: 40, rx: 6, fill: 'none', stroke: col, 'stroke-width': 1.6 }, g);
+  T(26, 27, 'mg-mod', sign(m), { style: `fill:${col}` }, g);
+  T(70, 16, 'mg-lab', lab, { style: lab === 'Counter' ? 'fill:var(--red)' : '' }, g);
+  T(70 + lab.length * 10 + 14, 16, 'mg-rt', text, {}, g);
+  T(70, 40, 'mg-why', why, {}, g);
+  const flash = el('rect', { x: -6, y: -8, width: 870, height: 62, rx: 8, fill: col, opacity: 0 }, g);
+  g.insertBefore(flash, g.firstChild);
+  return { g, m, flash };
+});
+el('line', { x1: 636, x2: 1494, y1: 606, y2: 606, stroke: 'var(--line)' }, adj);
+const netT = T(636, 648, 'mg-net', '', {}, adj);
+const needT = T(636, 676, 'mg-net', '', { style: 'fill:var(--muted)' }, adj);
+el('rect', { x: 636, y: 698, width: 380, height: 12, rx: 6, fill: 'var(--line)' }, adj);
+const pbar = el('rect', { x: 636, y: 698, height: 12, rx: 6, fill: 'var(--amber)', filter: 'url(#kit-glow)' }, adj);
+const pT = T(636, 766, 'mg-p', '', {}, adj);
+T(636, 792, 'mg-why', 'chance of success', {}, adj);
+// Dice chart: every total 2..12, bar height = ways to roll it, shaded by outcome after the modifier.
+const ways = t => 6 - Math.abs(7 - t);
+const chart = el('g', {}, adj);
+const DC = { x: 1070, y: 800, bw: 38, H: 150 };
+const bars = [];
+for (let t = 2; t <= 12; t++) {
+  const band = BANDS.find(b => t + NET >= b.min), x = DC.x + (t - 2) * DC.bw, h = ways(t) / 6 * DC.H;
+  const r = el('rect', { x: x + 3, y: DC.y - h, width: DC.bw - 6, height: h, rx: 2, fill: BCOL[band.k], opacity: .75 }, chart);
+  T(x + DC.bw / 2, DC.y + 20, 'mg-dt', t, {}, chart);
+  bars.push({ r, h, t, band });
+}
+T(DC.x, 636, 'mg-eyebrow', 'How each dice total lands', {}, chart);
+const hitRing = el('rect', { fill: 'none', stroke: 'var(--paper)', 'stroke-width': 2.5, rx: 3, filter: 'url(#kit-glow)' }, chart);
+
+// The two dice, and the result.
+const PIPS = { 1: [[0, 0]], 2: [[-14, -14], [14, 14]], 3: [[-15, -15], [0, 0], [15, 15]], 4: [[-14, -14], [14, -14], [-14, 14], [14, 14]], 5: [[-15, -15], [15, -15], [0, 0], [-15, 15], [15, 15]], 6: [[-14, -16], [14, -16], [-14, 0], [14, 0], [-14, 16], [14, 16]] };
+const mkDie = () => { const g = el('g', {}, svg); el('rect', { x: -34, y: -34, width: 68, height: 68, rx: 12, fill: 'var(--paper)' }, g); const pips = Array.from({ length: 6 }, () => el('circle', { r: 6, fill: 'var(--ink)' }, g)); return { g, pips }; };
+const face = (d, n) => d.pips.forEach((p, i) => { const q = PIPS[n][i]; p.setAttribute('opacity', q ? 1 : 0); if (q) { p.setAttribute('cx', q[0]); p.setAttribute('cy', q[1]); } });
+const dim = el('rect', { x: 610, y: 60, width: 910, height: 790, rx: 6, fill: '#070f0b' }, svg);
+const dice = [mkDie(), mkDie()];
+const resG = el('g', {}, svg);
+const bandT = T(1065, 540, 'mg-band', 'Backfires', { 'text-anchor': 'middle', style: 'fill:var(--red);font-size:56px' }, resG);
+T(1065, 590, 'mg-res', `Rolled ${DICE[0]} + ${DICE[1]} = ${DICE[0] + DICE[1]}, ${sign(NET)} modifier = ${TOTAL}.`, { 'text-anchor': 'middle' }, resG);
+T(1065, 620, 'mg-res', 'It fails badly: the cost lands and escalation rises by 1.', { 'text-anchor': 'middle', style: 'fill:var(--muted)' }, resG);
+
+// ---- Hook and payoff ------------------------------------------------------------------------------------------------
+const hook = el('g', {}, svg);
+const H1 = T(800, 440, 't-hook', 'Win the argument.', { 'text-anchor': 'middle' }, hook);
+const H2 = el('text', { x: 800, y: 540, 'text-anchor': 'middle', class: 't-hook', style: 'font-size:80px' }, hook);
+const hot = el('tspan', { class: 'hot' }, H2); hot.textContent = 'Then face the dice.';
+const pay = el('g', {}, svg);
+const P1 = T(800, 330, 'mg-big', '72.2%', { 'text-anchor': 'middle', style: 'font-size:120px' }, pay);
+const P2 = T(800, 392, 't-hook', 'chance of success, and it backfired.', { 'text-anchor': 'middle', style: 'font-size:46px' }, pay);
+const P3 = T(800, 500, 't-hook', null, { 'text-anchor': 'middle', style: 'font-size:52px' }, pay);
+P3.appendChild(document.createTextNode('Good arguments move the odds. '));
+const P3h = el('tspan', { class: 'hot' }, P3); P3h.textContent = 'The dice decide.';
+const P4 = T(800, 580, 'mg-why', 'Five actors · six turns · a debrief of which arguments carried weight', { 'text-anchor': 'middle', style: 'font-size:17px' }, pay);
+
+const cap = captions(svg, [
+  [3.3, 5.3, 'A fictional crisis on the Narva River. You play Estonia.'],
+  [5.4, 8.3, 'Argue an action: strong reasons +1, counters −1'],
+  [8.4, 10.9, 'Roll 2d6 plus modifiers: 7 or more succeeds'],
+  [11.1, 14.0, 'Every reason, counter and roll is explained'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Baltic Matrix Game', line: 'Argue, counter-argue and roll, in a fictional crisis around Narva.' });
+
+// ---- Timeline -----------------------------------------------------------------------------------------------------
+const RT = [5.0, 5.55, 6.1, 6.65, 7.3]; // when each adjudicator row lands
+function frame(t) {
+  const z = lerp(1, 1.05, ease.inOut(seg(t, 3, 10.8)));
+  cam.setAttribute('transform', `translate(800,480) scale(${z.toFixed(4)}) translate(-800,-480)`);
+  const vis = lerp(.2 * ease.out(seg(t, 0, 1)), 1, ease.inOut(seg(t, 2.8, 3.5)));
+  op(scene, vis * lerp(1, .05, ease.inOut(seg(t, 10.9, 11.4))) * (1 - seg(t, 14.1, 14.8)));
+
+  // Hook.
+  const h1 = ease.out(seg(t, .25, .95));
+  op(H1, h1 * (1 - seg(t, 2.6, 3.1)));
+  H1.setAttribute('transform', `translate(0,${((1 - h1) * 22 - seg(t, 2.6, 3.2) * 18).toFixed(1)})`);
+  op(H2, ease.out(seg(t, .9, 1.6)) * (1 - seg(t, 2.7, 3.2)));
+  H2.setAttribute('transform', `translate(800,520) scale(${lerp(.93, 1, ease.back(seg(t, .9, 1.7))).toFixed(3)}) translate(-800,-520) translate(0,${(-seg(t, 2.7, 3.3) * 18).toFixed(1)})`);
+  hot.setAttribute('filter', t > 1.5 && t < 3 ? 'url(#kit-glow)' : '');
+
+  // Inject and board.
+  const iu = ease.out(seg(t, 3.2, 3.8));
+  op(inj, iu); inj.setAttribute('transform', `translate(${((1 - iu) * -30).toFixed(1)},0)`);
+  op(board, ease.out(seg(t, 3.5, 4.1)));
+  const escV = t < 9.9 ? 3 : Math.round(lerp(3, ESC_AFTER, ease.out(seg(t, 9.9, 10.4))));
+  const attV = t < 4.3 ? 3 : 4; // the inject nudges attention +1
+  const vals = [escV, 6, 5, attV];
+  tr.forEach((q, i) => {
+    q.val.textContent = vals[i];
+    q.cells.forEach((c, j) => {
+      const on = j < vals[i], hot2 = (i === 0 && t > 9.9 && j >= 3 && j < ESC_AFTER) || (i === 3 && t > 4.3 && t < 5.4 && j === 3);
+      c.setAttribute('fill', on ? (hot2 ? (i === 0 ? 'var(--red)' : 'var(--amber)') : 'var(--paper)') : 'var(--line)');
+      c.setAttribute('opacity', on ? (hot2 ? 1 : .65) : 1);
+      c.setAttribute('filter', hot2 ? 'url(#kit-glow)' : '');
+    });
+    q.val.style.fill = (i === 0 && t > 9.9) ? 'var(--red)' : (i === 3 && t > 4.3 && t < 5.4) ? 'var(--amber)' : '';
+  });
+
+  // The adjudicator: action, then each row lands and moves the odds.
+  const au = ease.out(seg(t, 4.4, 5.0));
+  op(adj, au); adj.setAttribute('transform', `translate(${((1 - au) * 40).toFixed(1)},0)`);
+  let net = 0;
+  rows.forEach((r, i) => {
+    const u = ease.out(seg(t, RT[i], RT[i] + .35));
+    op(r.g, u);
+    r.g.setAttribute('transform', `translate(${(636 + (1 - u) * 20).toFixed(1)},${226 + i * 74})`);
+    const f = seg(t, RT[i] + .1, RT[i] + .7);
+    op(r.flash, f > 0 && f < 1 ? .18 * (1 - f) : 0);
+    if (t >= RT[i] + .15) net += r.m;
+  });
+  const p = pSuccess(net), shown = t >= RT[0];
+  netT.textContent = shown ? `Net modifier ${sign(net)}` : '';
+  needT.textContent = shown ? `Needs ${7 - net}+ on 2d6` : '';
+  // The odds bar glides to each new value.
+  let pv = pSuccess(0); { let n = 0; rows.forEach((r, i) => { const u = ease.inOut(seg(t, RT[i] + .15, RT[i] + .55)); const a = pSuccess(n); n += r.m; pv = lerp(pv, pSuccess(n), u) + 0 * a; }); }
+  pbar.setAttribute('width', (380 * pv).toFixed(1));
+  pT.textContent = shown ? `${(pv * 100).toFixed(1)}%` : '';
+  op(pbar, shown ? 1 : 0);
+  // Dice chart grows in after the counter.
+  bars.forEach((b, i) => { const u = ease.out(seg(t, 7.7 + i * .04, 8.1 + i * .04)); b.r.setAttribute('height', (b.h * u).toFixed(1)); b.r.setAttribute('y', (DC.y - b.h * u).toFixed(1)); });
+  op(chart, ease.out(seg(t, 7.6, 7.9)));
+  const hb = bars[DICE[0] + DICE[1] - 2];
+  hitRing.setAttribute('x', hb.r.getAttribute('x') - 4); hitRing.setAttribute('y', DC.y - hb.h - 4);
+  hitRing.setAttribute('width', DC.bw - 6 + 8); hitRing.setAttribute('height', hb.h + 8);
+  op(hitRing, t > 10.2 ? 1 : 0);
+
+  // The roll: the panel dims, two dice tumble and land on 1 and 1.
+  const r0 = 8.5, r1 = 9.35;
+  op(dim, .9 * ease.out(seg(t, 8.35, 8.6)) * (1 - ease.inOut(seg(t, 10.1, 10.5))));
+  dice.forEach((d, i) => {
+    const u = seg(t, r0 + i * .08, r1 + i * .08), e = ease.out(u);
+    const land = [1015 + i * 100, 420];
+    const x = lerp(land[0] - 260 + i * 60, land[0], e), y = land[1] - Math.abs(Math.sin(u * 8)) * (1 - u) * 110;
+    // After the result, the dice slide to the result row and shrink.
+    const s = ease.inOut(seg(t, 10.1, 10.6));
+    const fx = lerp(x, 880 + i * 62, s), fy = lerp(y, 752, s), sc = lerp(1.25, .66, s);
+    d.g.setAttribute('transform', `translate(${fx.toFixed(1)},${fy.toFixed(1)}) rotate(${((1 - e) * (i ? -620 : 540)).toFixed(1)}) scale(${sc.toFixed(3)})`);
+    face(d, u < 1 ? 1 + Math.floor(Math.abs(Math.sin(t * (29 + i * 7))) * 6) % 6 : DICE[i]);
+    op(d.g, seg(t, r0 - .05, r0 + .1) * (1 - seg(t, 10.9, 11.2)));
+    d.g.setAttribute('filter', u < 1 ? 'url(#kit-glow)' : '');
+  });
+  const ru = ease.out(seg(t, 9.5, 9.9));
+  op(resG, ru * (1 - ease.inOut(seg(t, 10.1, 10.4))));
+  resG.setAttribute('transform', `translate(0,${((1 - ru) * 14).toFixed(1)})`);
+  bandT.setAttribute('filter', t > 9.5 && t < 10.2 ? 'url(#kit-glow)' : '');
+
+  // Payoff.
+  const pu = ease.out(seg(t, 11.2, 11.8));
+  op(pay, pu * (1 - seg(t, 14.1, 14.6)));
+  P1.setAttribute('transform', `translate(800,300) scale(${lerp(.9, 1, ease.back(seg(t, 11.2, 11.9))).toFixed(3)}) translate(-800,-300)`);
+  op(P2, ease.out(seg(t, 11.6, 12.1)));
+  op(P3, ease.out(seg(t, 12.3, 12.9)));
+  P3.setAttribute('transform', `translate(0,${((1 - ease.out(seg(t, 12.3, 12.9))) * 14).toFixed(1)})`);
+  P3h.setAttribute('filter', t > 12.6 && t < 14 ? 'url(#kit-glow)' : '');
+  op(P4, ease.out(seg(t, 13.0, 13.5)));
+
+  cap(t); end(t, 14.2, 17.4);
+}
+run({ duration: 17.4, poster: 9.8, frame });
+</script>
+</body></html>

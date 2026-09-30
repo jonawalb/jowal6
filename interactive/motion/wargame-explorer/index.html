@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Wargame Results Explorer</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  :root { --sand: #c9b27c; }
+  .we-hd { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+  .we-hd.on { fill: var(--amber); }
+  .we-study { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .04em; }
+  .we-var { font: 400 17px var(--display); fill: var(--paper); }
+  .we-n { font: 600 15px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; text-anchor: end; }
+  .we-val { font: 400 14px var(--mono); fill: var(--paper); fill-opacity: .8; }
+  .we-grp { font: italic 500 20px var(--display); fill: var(--amber); }
+  .we-rule { stroke: var(--line); stroke-width: 1; }
+  .we-panel { fill: #0a1510; fill-opacity: .9; stroke: var(--line); }
+  .we-dl { font: italic 500 30px var(--display); fill: var(--paper); }
+  .we-ds { font: 400 14px var(--mono); fill: var(--muted); letter-spacing: .04em; }
+  .we-dn { font: 600 34px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .we-leg { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .04em; }
+  .we-q { font: 400 34px var(--display); fill: var(--paper); }
+  .we-cite { font: 400 14px var(--mono); fill: var(--amber); letter-spacing: .04em; }
+  .we-cn { font: italic 500 34px var(--display); fill: var(--paper); }
+  .we-res { font: 400 15px var(--mono); fill: var(--paper); fill-opacity: .85; }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of the Wargame Results Explorer: seventeen scenario rows from eight published Taiwan wargames fill a table of assumptions and outcomes, the rows regroup by Japan basing, the outcomes are tallied by run, and a controlled comparison from CSIS appears with its page citation."><title>Wargame Results Explorer</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard, clamp } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Real values from tools/wargame-explorer/data/cases.js and data/games.js --------------------------------
+// Rows in the page's order: [study, variant, runs, tally by outcome class, Japan basing, U.S. intervention].
+// Outcome classes and colours follow the page's key: fails (Invasion fails / Taiwan sustained), mixed (Stalemate or
+// partial result), prc (PRC gains), nuclear (Strategic nuclear exchange), na (Not scored).
+const ROWS = [
+  ['CSIS First Battle', 'Base scenario', 3, { fails: 2, mixed: 1 }, 'yes', 'early'],
+  ['CSIS First Battle', 'Optimistic scenarios', 2, { fails: 2 }, 'yes', 'early'],
+  ['CSIS First Battle', 'Pessimistic scenarios', 18, { fails: 4, mixed: 14 }, 'yes', 'late'],
+  ['CSIS First Battle', 'Taiwan stands alone', 1, { prc: 1 }, 'none', 'none'],
+  ['CSIS First Battle', '“Ragnarok”', 1, { prc: 1 }, 'no', 'early'],
+  ['CSIS Confronting Armageddon', 'Nuclear-enabled iterations', 15, { fails: 6, mixed: 6, nuclear: 3 }, 'yes', 'early'],
+  ['CSIS Lights Out?', 'Coast guard boarding vs. constrained Taiwan (1x1)', 1, { prc: 1 }, 'none', 'none'],
+  ['CSIS Lights Out?', 'Subs and mines vs. assertive Taiwan with U.S. arms (2x2 Ukraine)', 1, { prc: 1 }, 'none', 'arms'],
+  ['CSIS Lights Out?', 'Offshore kinetic vs. U.S. convoys (3x3 base)', 1, { fails: 1 }, 'yes', 'early'],
+  ['CSIS Lights Out?', 'Same, with Japan out (3x3 Japan Out)', 1, { fails: 1 }, 'no', 'early'],
+  ['CSIS Lights Out?', 'Wider war on both sides (4x4 base)', 1, { fails: 1 }, 'yes', 'early'],
+  ['CSIS Lights Out?', 'Free-play games', 5, { na: 5 }, 'ns', 'ns'],
+  ['CNAS Dangerous Straits', 'Single run', 1, { mixed: 1 }, 'yes', 'early'],
+  ['CNAS House Select Committee TTX', 'Single run (six days)', 1, { mixed: 1 }, 'yes', 'early'],
+  ['CNAS Poison Frog', 'Dongsha seizure', 1, { prc: 1 }, 'ns', 'ns'],
+  ['SPF Taiwan Strait TTX', 'Single run', 1, { fails: 1 }, 'yes', 'early'],
+  ['JFSS 3rd Policy Simulation', 'Policy simulation', 1, { na: 1 }, 'ns', 'ns'],
+];
+const JAPAN = { yes: 'U.S. can fight from Japan', no: 'Japan closed', none: 'No U.S. combat', ns: 'Not stated' };
+const US = { early: 'Immediate or early', late: 'Delayed (some runs)', arms: 'Arms aid only', none: 'None', ns: 'Not stated' };
+const ORDER = ['fails', 'mixed', 'prc', 'nuclear', 'na'];
+const OUT = { fails: 'Invasion fails / Taiwan sustained', mixed: 'Stalemate or partial result', prc: 'PRC gains', nuclear: 'Strategic nuclear exchange', na: 'Not scored' };
+const COL = { fails: 'var(--blue)', mixed: 'var(--sand)', prc: 'var(--red)', nuclear: 'var(--paper)', na: 'url(#we-hatch)' };
+
+// Outcomes by Japan basing, counting runs, computed from ROWS exactly as js/matrix.js renderDrivers does
+// (43 / 2 / 3 / 7 runs; 6, 2, 2 and 3 studies).
+const GROUPS = Object.keys(JAPAN).map(v => {
+  const rs = ROWS.filter(r => r[4] === v), t = {}; let n = 0;
+  rs.forEach(r => ORDER.forEach(k => { if (r[3][k]) { t[k] = (t[k] || 0) + r[3][k]; n += r[3][k]; } }));
+  return { v, rs, t, n, studies: new Set(rs.map(r => r[0])).size };
+});
+const TOTAL = ROWS.reduce((a, r) => a + r[2], 0); // 55
+
+// ---- Scene -------------------------------------------------------------------------------------------------
+const defs = el('defs', {}, svg);
+defs.innerHTML = '<pattern id="we-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="#1f3a2d"/><rect width="3" height="6" fill="#4d6b5c"/></pattern>';
+const cam = el('g', {}, svg);
+const scene = el('g', {}, cam);
+const T = (x, y, cls, s, a = {}, p = scene) => { const n = el('text', { x, y, class: cls, ...a }, p); if (s != null) n.textContent = s; return n; };
+const op = (n, v) => n.setAttribute('opacity', clamp(v).toFixed(3));
+/** A centred legend row of the five outcome classes. */
+function legendRow(p, y) {
+  const w = ORDER.map(k => 22 + OUT[k].length * 9.1 + 30), tot = w.reduce((a, b) => a + b, 0) - 34;
+  let x = 800 - tot / 2;
+  ORDER.forEach((k, i) => { el('rect', { x, y, width: 14, height: 14, fill: COL[k] }, p); T(x + 22, y + 12, 'we-leg', OUT[k], {}, p).setAttribute('x', x + 22); p.lastChild.previousSibling.setAttribute('x', x); x += w[i]; });
+}
+const fit = (s, n) => (s.length > n ? s.slice(0, n - 1).trimEnd() + '…' : s);
+
+// Table geometry.
+const X = { study: 120, vr: 400, n: 780, bar: 805, japan: 1020, us: 1290 }, BARW = 190, RH = 29, Y0 = 212;
+const table = el('g', {}, scene);
+const head = el('g', {}, table);
+T(X.study, 180, 'we-hd', 'Study', {}, head);
+T(X.vr, 180, 'we-hd', 'Variant', {}, head);
+T(X.n, 180, 'we-hd', 'Runs', { 'text-anchor': 'end' }, head);
+T(X.bar, 180, 'we-hd', 'Outcome', {}, head);
+const hJapan = T(X.japan, 180, 'we-hd', 'Japan basing', {}, head);
+T(X.us, 180, 'we-hd', 'U.S. intervention', {}, head);
+el('line', { x1: X.study, x2: 1490, y1: 194, y2: 194, class: 'we-rule' }, head);
+const colGlow = el('rect', { x: X.japan - 14, y: 158, width: 236, height: 34, rx: 17, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 2, filter: 'url(#kit-glow)' }, head);
+const cursor = el('path', { d: 'M0,0 L0,24 L7,18 L12,29 L16,27 L11,16 L20,16 Z', fill: 'var(--paper)', stroke: 'var(--ink)', 'stroke-width': 1.5 }, svg);
+
+// Group layout: rows sorted into Japan-basing groups with a header line each.
+const grpHdr = {}, slotG = [];
+{ let y = Y0; for (const v of Object.keys(JAPAN)) { grpHdr[v] = y; y += RH; ROWS.forEach((r, i) => { if (r[4] === v) { slotG[i] = y; y += RH; } }); } }
+const gh = Object.keys(JAPAN).map(v => { const g = el('g', {}, table); T(X.study, grpHdr[v] + 21, 'we-grp', `Japan basing: ${JAPAN[v]}`, {}, g); return g; });
+
+const rowEls = ROWS.map((r, i) => {
+  const g = el('g', {}, table);
+  el('line', { x1: X.study, x2: 1490, y1: RH, y2: RH, class: 'we-rule', 'stroke-opacity': .5 }, g);
+  T(X.study, 19, 'we-study', fit(r[0], 29), {}, g);
+  T(X.vr, 20, 'we-var', fit(r[1], 38), {}, g);
+  T(X.n, 20, 'we-n', r[2], {}, g);
+  const bars = []; let x = 0;
+  ORDER.forEach(k => { if (!r[3][k]) return; const w = BARW * r[3][k] / r[2]; bars.push(el('rect', { x: X.bar + x, y: 7, width: Math.max(0, w - 2), height: 14, rx: 2, fill: COL[k] }, g)); x += w; });
+  const jv = T(X.japan, 20, 'we-val', JAPAN[r[4]], {}, g);
+  T(X.us, 20, 'we-val', US[r[5]], {}, g);
+  return { g, bars, jv };
+});
+// Legend under the table.
+const leg = el('g', {}, scene);
+legendRow(leg, 858);
+
+// Driver bars: outcomes by Japan basing, counting runs.
+const drv = el('g', {}, svg);
+T(800, 238, 't-kicker', 'Which assumptions drive results', { 'text-anchor': 'middle' }, drv);
+T(800, 290, 'we-q', `Outcomes by Japan basing, counting ${TOTAL} runs`, { 'text-anchor': 'middle' }, drv);
+const DX = 640, DW = 760, DMAX = Math.max(...GROUPS.map(g => g.n));
+const DB = GROUPS.map((G, i) => {
+  const g = el('g', { transform: `translate(0,${370 + i * 118})` }, drv);
+  T(DX - 30, 0, 'we-dl', JAPAN[G.v], { 'text-anchor': 'end' }, g);
+  T(DX - 30, 28, 'we-ds', `${G.n} run${G.n === 1 ? '' : 's'} · ${G.studies} ${G.studies === 1 ? 'study' : 'studies'}`, { 'text-anchor': 'end' }, g);
+  const segs = ORDER.filter(k => G.t[k]).map(k => ({ k, v: G.t[k], r: el('rect', { y: -26, height: 44, fill: COL[k] }, g) }));
+  const num = T(DX, 8, 'we-dn', G.n, {}, g);
+  return { g, segs, num, G };
+});
+const drvLeg = el('g', { transform: 'translate(0,840)' }, drv);
+legendRow(drvLeg, -12);
+
+// Payoff: the controlled comparison the page lists for Japan basing (data/cases.js CONTRASTS[0]).
+const pay = el('g', {}, svg);
+T(800, 232, 't-kicker', 'Controlled comparison · CSIS First Battle · Japan basing', { 'text-anchor': 'middle' }, pay);
+const PC = [['Base scenario', 'U.S. can fight from Japan', 3, { fails: 2, mixed: 1 }, '2 decisive Chinese defeats, 1 stalemate'], ['“Ragnarok”', 'Japan closed', 1, { prc: 1 }, 'PLA victory']].map((c, i) => {
+  const g = el('g', { transform: `translate(${i ? 850 : 250},300)` }, pay);
+  el('rect', { x: 0, y: 0, width: 500, height: 200, rx: 8, class: 'we-panel' }, g);
+  T(30, 56, 'we-cn', c[0], {}, g);
+  T(30, 86, 'we-ds', `${c[1]} · ${c[2]} run${c[2] > 1 ? 's' : ''}`, {}, g);
+  let x = 0; const segs = [];
+  ORDER.forEach(k => { if (!c[3][k]) return; const w = 440 * c[3][k] / c[2]; segs.push({ r: el('rect', { x: 30 + x, y: 112, width: w - 3, height: 26, rx: 3, fill: COL[k] }, g), w }); x += w; });
+  T(30, 172, 'we-res', c[4], {}, g);
+  return { g, segs };
+});
+const vs = T(800, 412, 'we-cn', 'vs', { 'text-anchor': 'middle', style: 'fill:var(--muted)' }, pay);
+const quote = el('g', {}, pay);
+T(800, 590, 'we-q', 'CSIS ranks “Japan neutral” with “Taiwan stands alone”', { 'text-anchor': 'middle' }, quote);
+T(800, 636, 'we-q', 'as the two assumptions with the most pronounced', { 'text-anchor': 'middle' }, quote);
+const q3 = T(800, 682, 'we-q', null, { 'text-anchor': 'middle' }, quote);
+q3.appendChild(document.createTextNode('effect '));
+const qh = el('tspan', { style: 'fill:var(--amber);font-style:italic' }, q3); qh.textContent = 'in China’s favor.';
+const cite = T(800, 736, 'we-cite', 'CSIS, The First Battle of the Next War, pp. 4, 99  ↗', { 'text-anchor': 'middle' }, pay);
+
+// ---- Hook ------------------------------------------------------------------------------------------------------
+const hook = el('g', {}, svg);
+const H1 = T(800, 430, 't-hook', `Eight published wargames. ${TOTAL} runs.`, { 'text-anchor': 'middle' }, hook);
+const H2 = el('text', { x: 800, y: 530, 'text-anchor': 'middle', class: 't-hook', style: 'font-size:76px' }, hook);
+const hot = el('tspan', { class: 'hot' }, H2); hot.textContent = 'What decides who wins?';
+
+const cap = captions(svg, [
+  [3.3, 5.5, 'Every scenario, what it assumed, and how it was scored'],
+  [5.6, 8.1, 'Group by an assumption and the rows sort themselves'],
+  [8.2, 10.8, 'Count the runs: outcomes split by Japan basing'],
+  [11.0, 14.2, 'Every figure links to the page it came from'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Wargame Results Explorer', line: 'Published Taiwan wargames side by side, cited to the page.', cta: 'Explore' });
+
+// ---- Timeline ------------------------------------------------------------------------------------------------------
+function frame(t) {
+  const z = lerp(1, 1.05, ease.inOut(seg(t, 3, 8.2)));
+  cam.setAttribute('transform', `translate(800,520) scale(${z.toFixed(4)}) translate(-800,-520)`);
+  const vis = lerp(.18 * ease.out(seg(t, 0, 1)), 1, ease.inOut(seg(t, 2.8, 3.5)));
+  op(scene, vis * lerp(1, 0, ease.inOut(seg(t, 8.0, 8.6))));
+
+  // Hook.
+  const h1 = ease.out(seg(t, .25, .95));
+  op(H1, h1 * (1 - seg(t, 2.6, 3.1)));
+  H1.setAttribute('transform', `translate(0,${((1 - h1) * 22 - seg(t, 2.6, 3.2) * 18).toFixed(1)})`);
+  op(H2, ease.out(seg(t, .9, 1.6)) * (1 - seg(t, 2.7, 3.2)));
+  H2.setAttribute('transform', `translate(800,510) scale(${lerp(.93, 1, ease.back(seg(t, .9, 1.7))).toFixed(3)}) translate(-800,-510) translate(0,${(-seg(t, 2.7, 3.3) * 18).toFixed(1)})`);
+  hot.setAttribute('filter', t > 1.5 && t < 3 ? 'url(#kit-glow)' : '');
+
+  // Rows fill in, staggered; then the click on "Japan basing" regroups them.
+  op(head, ease.out(seg(t, 3.0, 3.4)));
+  const gu = ease.inOut(seg(t, 5.95, 6.9));
+  rowEls.forEach((R, i) => {
+    const a = 3.2 + i * .1, u = ease.out(seg(t, a, a + .45));
+    const y = lerp(Y0 + i * RH, slotG[i], gu);
+    R.g.setAttribute('transform', `translate(${((1 - u) * 30).toFixed(1)},${y.toFixed(1)})`);
+    op(R.g, u);
+    R.bars.forEach((b, j) => b.setAttribute('transform', `translate(${X.bar},0) scale(${ease.out(seg(t, a + .2 + j * .05, a + .6 + j * .05)).toFixed(3)},1) translate(${-X.bar},0)`));
+    R.jv.style.fill = t > 5.9 ? 'var(--amber)' : '';
+  });
+  gh.forEach((g, i) => op(g, ease.out(seg(t, 6.5 + i * .12, 6.9 + i * .12))));
+  op(leg, ease.out(seg(t, 4.6, 5.0)));
+  // Cursor moves to the column heading and clicks.
+  const cm = ease.inOut(seg(t, 4.9, 5.7));
+  cursor.setAttribute('transform', `translate(${lerp(1180, X.japan + 50, cm).toFixed(1)},${lerp(560, 176, cm).toFixed(1)}) scale(${(1 - .12 * Math.sin(Math.PI * seg(t, 5.75, 5.95))).toFixed(3)})`);
+  op(cursor, seg(t, 4.8, 5.0) * (1 - seg(t, 6.6, 6.9)) * (1 - seg(t, 8.0, 8.3)));
+  const click = seg(t, 5.8, 6.3);
+  op(colGlow, t > 5.8 ? (click < 1 ? click : 1) : 0);
+  colGlow.setAttribute('transform', `translate(${X.japan + 104},175) scale(${lerp(1.25, 1, ease.out(click)).toFixed(3)}) translate(${-X.japan - 104},-175)`);
+  hJapan.setAttribute('class', t > 5.8 ? 'we-hd on' : 'we-hd');
+
+  // Driver bars.
+  const dv = ease.out(seg(t, 8.3, 8.8)) * (1 - ease.inOut(seg(t, 10.7, 11.1)));
+  op(drv, dv);
+  DB.forEach((b, i) => {
+    const a = 8.6 + i * .28, u = ease.out(seg(t, a, a + .7));
+    let x = DX;
+    b.segs.forEach(s => { const w = DW * s.v / DMAX * u; s.r.setAttribute('x', x.toFixed(1)); s.r.setAttribute('width', Math.max(0, w - 2).toFixed(1)); x += w; });
+    b.num.setAttribute('x', (x + 16).toFixed(1));
+    b.num.textContent = Math.round(b.G.n * u);
+    op(b.g, seg(t, a - .1, a + .2));
+    b.segs.forEach(s => s.r.setAttribute('filter', s.k === 'prc' && t > a + .7 && t < 10.6 ? 'url(#kit-glow)' : ''));
+  });
+
+  // Payoff.
+  const p = ease.out(seg(t, 11.0, 11.5));
+  op(pay, p * (1 - seg(t, 14.2, 14.7)));
+  PC.forEach((c, i) => {
+    const u = ease.out(seg(t, 11.1 + i * .45, 11.7 + i * .45));
+    c.g.setAttribute('transform', `translate(${(i ? 850 : 250) + (1 - u) * (i ? 50 : -50)},300)`);
+    op(c.g, u);
+    c.segs.forEach((s, j) => s.r.setAttribute('width', Math.max(0, (s.w - 3) * ease.out(seg(t, 11.4 + i * .45 + j * .1, 11.9 + i * .45 + j * .1))).toFixed(1)));
+    if (i === 1) c.segs[0].r.setAttribute('filter', t > 12.1 ? 'url(#kit-glow)' : '');
+  });
+  op(vs, ease.out(seg(t, 11.5, 11.8)));
+  op(quote, ease.out(seg(t, 12.3, 12.9)));
+  quote.setAttribute('transform', `translate(0,${((1 - ease.out(seg(t, 12.3, 12.9))) * 16).toFixed(1)})`);
+  op(cite, ease.out(seg(t, 12.9, 13.3)));
+
+  cap(t); end(t, 14.3, 17.3);
+}
+run({ duration: 17.3, poster: 7.4, frame });
+</script>
+</body></html>

@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Penghu Gambit</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  :root { --teal: #4cc3ae; }
+  .pg-land { fill: #0d1c15; stroke: var(--muted); stroke-opacity: .55; stroke-width: 1.3; }
+  .pg-sea { font: italic 400 24px var(--display); fill: var(--muted); fill-opacity: .7; }
+  .pg-note { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .06em; }
+  .pg-route { fill: none; stroke: var(--muted); stroke-width: 1.6; stroke-dasharray: 3 6; stroke-opacity: .7; }
+  .pg-beach { fill: var(--muted); fill-opacity: .06; stroke: var(--muted); stroke-width: 1.6; stroke-dasharray: 5 4; }
+  .pg-beach.on { fill: var(--red); fill-opacity: .14; stroke: var(--red); stroke-dasharray: none; stroke-width: 2.4; }
+  .pg-slabel { font: 400 15px var(--mono); fill: var(--paper); letter-spacing: .08em; text-transform: uppercase; }
+  .pg-mine { fill: var(--teal); }
+  .pg-town { fill: var(--ink); stroke: var(--paper); stroke-width: 2.5; }
+  .pg-af { fill: var(--teal); stroke: var(--paper); stroke-width: 1.4; }
+  .pg-plabel { font: italic 500 22px var(--display); fill: var(--paper); }
+  .pg-ship { fill: var(--red); }
+  .pg-zone { fill: #0a1510; fill-opacity: .9; stroke: var(--teal); stroke-width: 1.5; stroke-dasharray: 6 4; }
+  .pg-ztitle { font: italic 500 22px var(--display); fill: var(--teal); }
+  .pg-zl { font: 400 13px var(--mono); fill: var(--paper); letter-spacing: .04em; }
+  .pg-tok { fill: var(--teal); }
+  .pg-x { stroke: var(--red); stroke-width: 2.6; stroke-linecap: round; }
+  .pg-lodge { fill: var(--red); }
+  .pg-lodgeT { font: 600 16px var(--mono); fill: var(--ink); text-anchor: middle; font-variant-numeric: tabular-nums; }
+  .pg-mis { fill: none; stroke: var(--teal); stroke-linecap: round; }
+  .pg-hud { fill: #0a1510; fill-opacity: .88; stroke: var(--line); }
+  .pg-turn { font: italic 500 38px var(--display); fill: var(--paper); }
+  .pg-small { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+  .pg-ph { font: 400 12px var(--mono); fill: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+  .pg-ev { font: 400 15px var(--mono); fill: var(--paper); }
+  .pg-pc { font: 600 15px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .pg-roll { font: 600 14px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; text-anchor: middle; }
+  .pg-res { font: 400 15px var(--mono); fill: var(--amber); }
+  .pg-crt { font: 600 17px var(--mono); fill: var(--muted); text-anchor: middle; }
+  .pg-crth { font: 400 13px var(--mono); fill: var(--muted); text-anchor: middle; }
+  .pg-out { font: italic 500 48px var(--display); fill: var(--paper); }
+  .pg-pct { font: 600 50px var(--mono); fill: var(--red); font-variant-numeric: tabular-nums; }
+  .pg-rowt { font: 400 28px var(--display); fill: var(--paper); }
+  .pg-chip { font: 400 14px var(--mono); fill: var(--amber); letter-spacing: .06em; }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of Penghu Gambit: Taiwan's defenses are set, PLA landing groups sail for the east coast of the Penghu islands through missile salvos and mines, every chance and die roll is logged, a die picks a cell on the combat results table, and a thousand replays show how the odds move with the plan."><title>Penghu Gambit</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard, clamp } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Real values from tools/penghu-gambit ------------------------------------------------------------------
+// The game every visitor sees first: the tool's default setup (js/app.js defaults()) on its default dice seed 1683,
+// played by js/model.js playGame. Chances, rolls, dice and results are copied from that game's log; chances are
+// formatted as the page does (js/views.js). Strength points are notional (1 point ≈ 1,000 troops).
+const ROC_SET = [['Missile batteries', 2, 'tri'], ['Air defense', 2, 'circ'], ['Drone teams', 1, 'dia']];
+const PLAN = ['1 strike turn', 'East coast', '4 landing groups', 'Heliborne'];
+// Turn 1 (preparatory strikes) and turn 2 (landing) rows: [phase, event, chance, rolls, result].
+const T1 = [
+  ['Prep strikes', '2 missile batteries targeted', '15%', [0.44, 0.54], 'all survive', 0.15],
+  ['Prep strikes', '2 air defense units targeted', '20%', [0.77, 0.30], 'all survive', 0.2],
+  ['Prep strikes', '1 drone team targeted', '10%', [0.36], 'all survive', 0.1],
+  ['Mine clearing', 'PLA sweeps the east coast approaches', '', [], 'mine threat 100% → 70%', null],
+];
+const T2 = [
+  ['Sea crossing', '4 landing groups sail; 2 missile salvos', '42%', [0.43, 0.54], '0 groups sunk', 0.42],
+  ['Mines', '4 groups cross the mined sector', '10.5%', [0.95, 0.46, 0.11, 0.77], '0 stopped', 0.105],
+  ['Air lift', '2 helicopter lift groups vs 2 air defense units', '19%', [0.83, 0.82], '0 downed, +0.5 pts', 0.19],
+  ['Drones', '1 drone team strikes the lodgment', '40%', [0.20], '−0.4 pts', 0.4],
+  ['Ground', 'PLA 4.1 vs ROC 12 (strength 8 × 1.5 terrain)', '', [], 'die 3, < 1:2: Attack repulsed', null],
+];
+// Every turn's combat: CRT column, die, code, result, then state after the turn (PLA ashore, ROC garrison).
+const CRT_COLS = ['< 1:2', '1:2', '1:1', '1.5:1', '2:1', '3:1+'];
+const CRT = [
+  ['AR', 'AR', 'AL', 'AL', 'EX', 'EX'], ['AR', 'AL', 'AL', 'EX', 'EX', 'DL'], ['AR', 'AL', 'EX', 'EX', 'DL', 'DL'],
+  ['AL', 'AL', 'EX', 'DL', 'DL', 'DR'], ['AL', 'EX', 'DL', 'DL', 'DR', 'DR'], ['EX', 'EX', 'DL', 'DR', 'DR', 'DR'],
+];
+const RES = { AR: 'Attack repulsed', AL: 'Attacker losses', EX: 'Exchange', DL: 'Defender falls back', DR: 'Defender routed' };
+const FIGHT = [ // turns 2..8
+  { col: 0, die: 3, ashore: 2.87, gar: 7.6 }, { col: 0, die: 6, ashore: 4.56, gar: 6.46 }, { col: 1, die: 5, ashore: 5.58, gar: 5.49 },
+  { col: 1, die: 1, ashore: 5.31, gar: 5.22 }, { col: 1, die: 5, ashore: 6.21, gar: 4.43 }, { col: 2, die: 4, ashore: 6.98, gar: 3.77 },
+  { col: 3, die: 3, ashore: 7.63, gar: 3.2 },
+];
+// Monte Carlo, 1,000 seeded games (js/montecarlo.js, seed 1683), in the walkthrough's order (js/tour.js steps 4–6):
+// [label, PLA holds Magong, stalemate, defense holds] in percent, rounded as the page rounds them.
+const MC = [['East coast, mined (default)', 9, 58, 33], ['Land in the west instead', 34, 62, 4], ['West, six groups, two strike turns', 58, 42, 0]];
+
+// ---- Geography (tools/penghu-gambit/data/land.js, Natural Earth 10m; data/sources.js places and sectors) -----
+const LAND = 'M575.4 479L582.5 501.3L579.3 517.7L568.6 506.8L554.6 497.5L539 494.5L517.4 506.6L502 508.5L494.3 512.8L490.1 520.8L484.2 543.2L480.4 549.8L454.8 564.8L428.2 568.4L401.6 558.2L374.9 531.5L382 517.7L396.7 535.3L418.7 540.1L442.3 533.4L461.8 517.7L448.3 512.6L437.8 506.1L429.1 497.3L421.4 485.3L418.3 490.4L418.3 492.1L411.5 496.1L410.2 474L411.5 452.1L421.4 452.1L432.9 455.1L473.8 429.5L499.2 420.7L492.4 445L489.4 452.1L511.5 445.3L528.4 447.2L540.8 446.2L549.7 431.4L575.4 479ZM435.9 374.3L425.1 358.4L401.2 334.6L431.7 312L449.8 321.6L467.4 336.8L474.8 352.9L461.3 366L466.8 385.2L458.7 398L446.7 401.4L440.7 393.2L435.9 374.3ZM320.4 374.5L337.6 357.4L360.7 377.6L347 385.8L337.5 405.7L322.3 452.1L321.6 464.5L325.3 475.1L323.7 482.7L286.7 487.2L279.6 490.5L273 496.1L252.5 496.1L255.9 484.5L262.7 477.8L273 474.5L286.9 473.5L298.9 468.9L302.2 457.7L302.6 431.4L320.4 374.5ZM580.4 967.9L578.3 973.6L580.4 974.8L574.5 983L570.3 993.3L564.3 977.8L565.4 967.9L566 966.6L568 967.9L580.4 967.9ZM554.9 967.9L556.2 967.9L556.2 970.7L550.4 969.3L551 968.7L549.2 967.9L551.7 967.9L555.9 963.8L554.9 967.9ZM497.2 986L500.4 990.7L487.1 992.3L480.7 984.4L483 983.5L482.2 981L492.9 979.5L495.7 979.9L498.3 983.8L497.2 986ZM496.6 210.5L484.2 217.6L473.5 230.7L471.7 235.9L464.7 219.3L466.1 216.8L463.7 211.4L473.1 203.7L482.2 187.3L484.9 192.8L498.8 200.7L496.6 210.5ZM493.9 978.6L494.9 974.7L496.5 977.6L496 978.6L493.9 978.6ZM384.3 598.9L367.7 610.5L363.9 610.9L356.4 613.7L343.8 620.2L342.4 617.8L337.2 617.2L335.3 607.1L339.1 603.9L349.2 606.9L371 595.9L384.3 598.9ZM374.8 791.4L383 796.5L381.8 803.4L372.7 804.3L356.3 813.8L354.1 811.9L356.3 804.5L362 796.3L366.2 793.2L374.8 791.4ZM347 795L343.4 803.6L337.2 810L337.6 815.1L340.2 820.6L332.3 823.7L314.8 822.2L306.2 818.4L314 801.2L312.7 778.2L307.8 781.6L297 785L293.8 772.2L304.9 744.3L314 742.4L328.9 762.6L332.4 763.3L335.6 766.7L336.2 779.6L338.9 788.1L347 795ZM338.5 950.1L341.8 955.4L332 959.8L338.5 950.1ZM243.2 1036.6L244.2 1048.1L242.6 1057.1L236.1 1063.3L227.3 1075.7L217.6 1080.6L210.4 1072.4L202.2 1046.6L207.5 1039.6L228.3 1032.4L243.2 1036.6ZM199.4 1023.1L188.3 1009.7L186.8 995.9L193.4 989.8L211 992.6L221.1 1009.7L211.7 1026.7L199.4 1023.1ZM87.3 878.6L85.2 870.1L89.6 873.1L89.1 878.8L87.3 878.6ZM88.8 879.7L89.3 882.6L87.5 883.5L85.2 880.4L88.8 879.7ZM60.2 752.9L56 749.6L61.7 737.3L63.8 735.1L76.6 738.7L75.1 741.6L76.8 747.6L73.5 752.6L62 755.6L60.2 752.9ZM67.5 871.2L67.9 873.9L66.1 874.8L63.8 871.8L66.7 870.4L67.5 871.2ZM243.2 1036.6L244.2 1048.1L242.6 1057.1L236.1 1063.3L227.3 1075.7L217.6 1080.6L210.4 1072.4L202.2 1046.6L207.5 1039.6L228.3 1032.4L243.2 1036.6ZM199.4 1023.1L188.3 1009.7L186.8 995.9L193.4 989.8L211 992.6L221.1 1009.7L211.7 1026.7L199.4 1023.1ZM497.2 986L500.4 990.7L487.1 992.3L480.7 984.4L483 983.5L482.2 981L492.9 979.5L495.7 979.9L498.3 983.8L497.2 986ZM493.9 978.6L494.9 974.7L496.5 977.6L496 978.6L493.9 978.6ZM580.4 967.9L578.3 973.6L580.4 974.8L574.5 983L570.3 993.3L564.3 977.8L565.4 967.9L566 966.6L568 967.9L580.4 967.9ZM554.9 967.9L556.2 967.9L556.2 970.7L550.4 969.3L551 968.7L549.2 967.9L551.7 967.9L555.9 963.8L554.9 967.9ZM338.5 950.1L341.8 955.4L332 959.8L338.5 950.1ZM88.8 879.7L89.3 882.6L87.5 883.5L85.2 880.4L88.8 879.7ZM67.5 871.2L67.9 873.9L66.1 874.8L63.8 871.8L66.7 870.4L67.5 871.2ZM87.3 878.6L85.2 870.1L89.6 873.1L89.1 878.8L87.3 878.6ZM374.8 791.4L383 796.5L381.8 803.4L372.7 804.3L356.3 813.8L354.1 811.9L356.3 804.5L362 796.3L366.2 793.2L374.8 791.4ZM347 795L343.4 803.6L337.2 810L337.6 815.1L340.2 820.6L332.3 823.7L314.8 822.2L306.2 818.4L314 801.2L312.7 778.2L307.8 781.6L297 785L293.8 772.2L304.9 744.3L314 742.4L328.9 762.6L332.4 763.3L335.6 766.7L336.2 779.6L338.9 788.1L347 795ZM60.2 752.9L56 749.6L61.7 737.3L63.8 735.1L76.6 738.7L75.1 741.6L76.8 747.6L73.5 752.6L62 755.6L60.2 752.9ZM384.3 598.9L367.7 610.5L363.9 610.9L356.4 613.7L343.8 620.2L342.4 617.8L337.2 617.2L335.3 607.1L339.1 603.9L349.2 606.9L371 595.9L384.3 598.9ZM496.6 210.5L484.2 217.6L473.5 230.7L471.7 235.9L464.7 219.3L466.1 216.8L463.7 211.4L473.1 203.7L482.2 187.3L484.9 192.8L498.8 200.7L496.6 210.5Z';
+const GEO = {"places":[{"k":"magong","t":"Magong","p":[455.7,489]},{"k":"airbase","t":"Magong Air Base","p":[523.6,489]}],"sectors":{"N":{"label":[335.7,208.3],"path":[[480.3,137.3],[480.3,247.7],[480.3,334.4],[516.4,405.4],[523.6,489],[455.7,489]]},"E":{"label":[769.4,381.7],"path":[[754.9,476.3],[624.8,476.3],[574.2,484.2],[523.6,489],[455.7,489]]},"W":{"label":[133.4,342.3],"path":[[147.8,389.6],[292.4,421.2],[335.7,436.9],[393.5,463.7],[455.7,489]]}},"taiwan":[1246.4,910],"channel":[957.3,310.8],"fujian":[32.2,50.6],"zone":[653.7,705]};
+
+// ---- Scene ---------------------------------------------------------------------------------------------------
+const cam = el('g', {}, svg);
+const scene = el('g', {}, cam);
+const map = el('g', {}, scene);
+const T = (x, y, cls, s, a = {}, p = map) => { const n = el('text', { x, y, class: cls, ...a }, p); if (s != null) n.textContent = s; return n; };
+const op = (n, v) => n.setAttribute('opacity', clamp(v).toFixed(3));
+el('path', { d: LAND, class: 'pg-land' }, map);
+T(800, 300, 'pg-sea', 'Penghu Channel', { 'text-anchor': 'middle' });
+el('path', { d: 'M92,600 L42,600 M50,593 L42,600 L50,607', stroke: 'var(--muted)', 'stroke-width': 1.4, fill: 'none' }, map);
+T(100, 605, 'pg-note', 'Fujian coast about 145 km');
+el('path', { d: 'M880,560 L930,560 M922,553 L930,560 L922,567', stroke: 'var(--muted)', 'stroke-width': 1.4, fill: 'none' }, map);
+T(870, 565, 'pg-note', 'Taiwan about 50 km', { 'text-anchor': 'end' });
+
+// Sectors: route to Magong, beach ellipse, label. The east coast is mined (ten mine marks, as the page draws them).
+const sectors = {};
+for (const [k, g] of Object.entries(GEO.sectors)) {
+  const grp = el('g', {}, map);
+  const route = el('path', { d: 'M' + g.path.slice(1).map(p => p.join(',')).join(' L'), class: 'pg-route' }, grp);
+  const [bx, by] = g.path[1];
+  const beach = el('ellipse', { cx: bx, cy: by, rx: 38, ry: 25, class: 'pg-beach' }, grp);
+  const name = { N: 'North coast', E: 'East coast', W: 'West coast' }[k];
+  T(g.label[0], g.label[1], 'pg-slabel', name, { 'text-anchor': 'middle' }, grp);
+  const sub = T(g.label[0], g.label[1] + 18, 'pg-note', 'notional sector', { 'text-anchor': 'middle' }, grp);
+  sectors[k] = { grp, route, beach, sub, b: [bx, by], path: g.path };
+}
+const E = sectors.E;
+const mines = el('g', {}, map);
+for (let i = 0; i < 10; i++) { const a = i / 10 * Math.PI * 2; el('circle', { cx: E.b[0] + 50 * Math.cos(a), cy: E.b[1] + 34 * Math.sin(a), r: 3.6, class: 'pg-mine' }, mines); }
+// Places: Magong and Magong Air Base (public, base level).
+const MG = GEO.places.find(p => p.k === 'magong').p, AB = GEO.places.find(p => p.k === 'airbase').p;
+el('rect', { x: AB[0] - 12, y: AB[1] - 4.5, width: 24, height: 9, rx: 2, class: 'pg-af', transform: `rotate(-70 ${AB[0]} ${AB[1]})` }, map);
+T(AB[0] + 12, AB[1] - 34, 'pg-note', 'Magong Air Base', { 'text-anchor': 'end', style: 'fill:var(--paper)' });
+el('circle', { cx: MG[0], cy: MG[1], r: 8, class: 'pg-town' }, map);
+T(MG[0] - 14, MG[1] + 30, 'pg-plabel', 'Magong', { 'text-anchor': 'end' });
+
+// Taiwan's assets: one notional zone off the islands, as on the page.
+const ZX = 535, ZY = 630, ZW = 365, ZH = 196;
+const zone = el('g', {}, map);
+el('rect', { x: ZX, y: ZY, width: ZW, height: ZH, rx: 6, class: 'pg-zone' }, zone);
+T(ZX + 14, ZY + 30, 'pg-ztitle', 'ROC assets', {}, zone);
+T(ZX + 14, ZY + 50, 'pg-note', 'Notional zone, not real positions', {}, zone);
+const toks = [];
+ROC_SET.forEach(([t, n, shape], r) => {
+  const y = ZY + 82 + r * 30;
+  T(ZX + 14, y + 5, 'pg-zl', t, {}, zone);
+  for (let i = 0; i < n; i++) {
+    const x = ZX + 200 + i * 32, g = el('g', { transform: `translate(${x},${y})` }, zone);
+    if (shape === 'tri') el('path', { d: 'M0,-10 L10,8 L-10,8 Z', class: 'pg-tok' }, g);
+    else if (shape === 'circ') el('circle', { r: 9, class: 'pg-tok' }, g);
+    else el('path', { d: 'M0,-10 L10,0 L0,10 L-10,0 Z', class: 'pg-tok' }, g);
+    const x2 = el('path', { d: 'M-9,-9 L9,9 M9,-9 L-9,9', class: 'pg-x', opacity: 0 }, g);
+    const ret = el('circle', { r: 16, fill: 'none', stroke: 'var(--red)', 'stroke-width': 1.6, opacity: 0 }, g);
+    toks.push({ k: shape, i, g, x2, ret, x, y });
+  }
+});
+const garT = T(ZX + 14, ZY + ZH - 14, 'pg-zl', '', {}, zone);
+
+// Landing groups (4), helicopters (2), the drone, missile streaks.
+const shipG = el('g', {}, map), fxG = el('g', {}, map);
+const SHIP = 'M-11,0 l4,-6 h14 l4,6 l-4,5 h-14 z';
+const ships = [0, 1, 2, 3].map(i => ({ i, n: el('path', { d: SHIP, class: 'pg-ship' }, shipG) }));
+const helis = [0, 1].map(i => { const g = el('g', {}, shipG); el('circle', { r: 5, fill: 'var(--red)' }, g); el('path', { d: 'M-12,-8 L12,-8', stroke: 'var(--red)', 'stroke-width': 2 }, g); return g; });
+const drone = el('path', { d: 'M0,-9 L9,0 L0,9 L-9,0 Z', class: 'pg-tok', filter: 'url(#kit-glow)' }, fxG);
+const salvos = [0, 1].map(() => ({ p: el('path', { class: 'pg-mis', 'stroke-width': 2.4, filter: 'url(#kit-glow)' }, fxG), puff: el('circle', { r: 0, fill: 'none', stroke: 'var(--paper)', 'stroke-width': 2 }, fxG) }));
+const strikeG = el('g', {}, fxG);
+const lodge = el('g', {}, map);
+const lodgeC = el('circle', { r: 20, class: 'pg-lodge', filter: 'url(#kit-glow)' }, lodge);
+const lodgeT = T(0, 6, 'pg-lodgeT', '', {}, lodge);
+const hitFx = el('circle', { r: 0, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 3, filter: 'url(#kit-glow)' }, fxG);
+
+// ---- The side panel: turn clock, the log of every roll, the combat results table and the die ----------------
+const side = el('g', {}, svg);
+el('rect', { x: 960, y: 60, width: 580, height: 90, rx: 4, class: 'pg-hud' }, side);
+const turnT = T(984, 115, 'pg-turn', '', {}, side);
+const hoursT = T(1516, 92, 'pg-small', '', { 'text-anchor': 'end' }, side);
+const phaseT = T(1516, 130, 'pg-small', '', { 'text-anchor': 'end', style: 'fill:var(--amber)' }, side);
+el('rect', { x: 960, y: 162, width: 580, height: 383, rx: 4, class: 'pg-hud' }, side);
+const logTitle = T(984, 190, 'pg-small', 'This turn: every roll', {}, side);
+const LOGR = [0, 1, 2, 3, 4].map(i => {
+  const g = el('g', { transform: `translate(984,${226 + i * 64})` }, side);
+  const ph = T(0, 0, 'pg-ph', '', {}, g), ev = T(0, 20, 'pg-ev', '', {}, g);
+  const pc = T(0, 44, 'pg-pc', '', {}, g);
+  const rolls = [0, 1, 2, 3].map(j => { const r = el('g', {}, g); const b = el('rect', { x: 0, y: 28, width: 50, height: 22, rx: 4, fill: 'none', 'stroke-width': 1.4 }, r); const t = T(25, 44, 'pg-roll', '', {}, r); return { r, b, t }; });
+  const res = T(532, 44, 'pg-res', '', { 'text-anchor': 'end' }, g);
+  return { g, ph, ev, pc, rolls, res, y: 226 + i * 64 };
+});
+// CRT
+el('rect', { x: 960, y: 557, width: 580, height: 343, rx: 4, class: 'pg-hud' }, side);
+T(984, 585, 'pg-small', 'Combat results table · notional', {}, side);
+const CX = 1030, CY = 598, CW = 64, CHh = 36;
+const colHead = CRT_COLS.map((s, c) => T(CX + c * CW + CW / 2, CY + 14, 'pg-crth', s, {}, side));
+const colBand = el('rect', { x: CX, y: CY - 4, width: CW, height: 26 + 6 * CHh + 10, rx: 4, fill: 'var(--amber)', 'fill-opacity': .08, stroke: 'var(--amber)', 'stroke-opacity': .5 }, side);
+const cells = CRT.map((row, r) => row.map((code, c) => {
+  T(CX - 22, CY + 30 + r * CHh + 26, 'pg-crth', r + 1, {}, side);
+  return T(CX + c * CW + CW / 2, CY + 30 + r * CHh + 26, 'pg-crt', code, {}, side);
+}));
+const hitCell = el('rect', { width: CW - 8, height: CHh - 6, rx: 5, fill: 'var(--amber)', filter: 'url(#kit-glow)' }, side);
+side.insertBefore(hitCell, cells[0][0]);
+const resT = T(984, 882, 'pg-res', '', { style: 'font-size:17px' }, side);
+// The die.
+const die = el('g', {}, svg);
+el('rect', { x: -34, y: -34, width: 68, height: 68, rx: 12, fill: 'var(--paper)' }, die);
+const PIPS = { 1: [[0, 0]], 2: [[-14, -14], [14, 14]], 3: [[-15, -15], [0, 0], [15, 15]], 4: [[-14, -14], [14, -14], [-14, 14], [14, 14]], 5: [[-15, -15], [15, -15], [0, 0], [-15, 15], [15, 15]], 6: [[-14, -16], [14, -16], [-14, 0], [14, 0], [-14, 16], [14, 16]] };
+const pips = Array.from({ length: 6 }, () => el('circle', { r: 6, fill: 'var(--ink)' }, die));
+const face = n => pips.forEach((p, i) => { const q = PIPS[n][i]; p.setAttribute('opacity', q ? 1 : 0); if (q) { p.setAttribute('cx', q[0]); p.setAttribute('cy', q[1]); } });
+// Ledger of the fight ashore, one line per turn (turns 2-8), and the end of the game.
+const ledger = el('g', {}, side);
+const LED = FIGHT.map((f, i) => {
+  const g = el('g', { transform: `translate(984,${226 + i * 30})` }, ledger);
+  T(0, 0, 'pg-ph', `Turn ${i + 2}`, { style: 'font-size:13px' }, g);
+  T(84, 0, 'pg-ev', `die ${f.die} · ${CRT_COLS[f.col]} · ${RES[CRT[f.die - 1][f.col]]}`, {}, g);
+  T(532, 0, 'pg-pc', `PLA ${f.ashore.toFixed(2)}`, { 'text-anchor': 'end' }, g);
+  return g;
+});
+const outG = el('g', {}, side);
+T(984, 470, 'pg-out', 'Stalemate after 8 turns', { style: 'font-size:40px' }, outG);
+T(986, 500, 'pg-note', 'The PLA holds a lodgment but not Magong', {}, outG);
+
+// ---- HUD: the setup chips ------------------------------------------------------------------------------------
+const hud = el('g', {}, svg);
+T(72, 78, 't-kicker', 'PLA plan', {}, hud);
+const chips = PLAN.map(s => { const g = el('g', {}, hud), w = s.length * 11.2 + 34; el('rect', { width: w, height: 38, rx: 19, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 1.6 }, g); T(w / 2, 25, 'pg-chip', s, { 'text-anchor': 'middle' }, g); return { g, w }; });
+{ let x = 72; for (const c of chips) { c.x = x; x += c.w + 10; } }
+
+// ---- Hook and payoff ------------------------------------------------------------------------------------------
+const hook = el('g', {}, svg);
+const H1 = T(800, 440, 't-hook', 'Penghu sits in the middle of the Strait.', { 'text-anchor': 'middle' }, hook);
+const H2 = el('text', { x: 800, y: 540, 'text-anchor': 'middle', class: 't-hook', style: 'font-size:74px' }, hook);
+const hot = el('tspan', { class: 'hot' }, H2); hot.textContent = 'What would it take to seize it?';
+const pay = el('g', {}, svg);
+T(800, 250, 't-kicker', '1,000 games per setup', { 'text-anchor': 'middle' }, pay);
+T(800, 300, 'pg-rowt', 'How often the PLA holds Magong', { 'text-anchor': 'middle', style: 'font-size:32px' }, pay);
+const BX0 = 470, BW = 760;
+const MB = MC.map(([lab, pla, st, roc], i) => {
+  const g = el('g', { transform: `translate(0,${400 + i * 130})` }, pay);
+  T(BX0, -20, 'pg-rowt', lab, {}, g);
+  const segs = [['var(--red)', pla], ['var(--muted)', st], ['var(--teal)', roc]].map(([c, v]) => el('rect', { y: 0, height: 36, fill: c, opacity: c === 'var(--muted)' ? .35 : 1 }, g));
+  const num = T(BX0 - 26, 34, 'pg-pct', `${pla}%`, { 'text-anchor': 'end' }, g);
+  return { g, segs, vals: [pla, st, roc], num };
+});
+const legend = el('g', { transform: 'translate(0,790)' }, pay);
+[['PLA holds Magong', 'var(--red)'], ['Stalemate', 'var(--muted)'], ['Defense holds', 'var(--teal)']].forEach(([s, c], i) => {
+  el('rect', { x: BX0 + i * 260, y: -12, width: 14, height: 14, fill: c }, legend);
+  T(BX0 + 24 + i * 260, 0, 'pg-note', s, {}, legend);
+});
+T(800, 830, 'pg-note', 'Notional model · every probability can be changed', { 'text-anchor': 'middle' }, pay);
+
+const cap = captions(svg, [
+  [3.3, 5.5, 'Set Taiwan’s defenses, then plan the PLA’s assault'],
+  [5.6, 8.9, 'Every chance and every die roll is on the table'],
+  [9.0, 11.8, 'Twelve-hour turns until Magong falls or time runs out'],
+  [12.0, 14.5, 'Replay it 1,000 times: move the beach, the odds jump'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Penghu Gambit', line: 'Set Taiwan’s defenses, roll every die, then run 1,000 games.' });
+
+// ---- Timeline ---------------------------------------------------------------------------------------------------
+// Turn k (1..8) starts at TK[k-1]; turn 2 (the landing) gets the most time.
+const TK = [4.9, 5.7, 9.05, 9.37, 9.69, 10.01, 10.33, 10.65, 10.97];
+const turnAt = t => { let k = 0; for (let i = 0; i < 8; i++) if (t >= TK[i]) k = i + 1; return k; };
+const DIE2 = 8.05; // the landing turn's die settles here
+const along = (path, u) => { // point along a polyline at fraction u
+  const L = []; let tot = 0; for (let i = 1; i < path.length; i++) { const d = Math.hypot(path[i][0] - path[i - 1][0], path[i][1] - path[i - 1][1]); L.push(d); tot += d; }
+  let s = u * tot; for (let i = 1; i < path.length; i++) { if (s <= L[i - 1]) { const v = s / L[i - 1]; return [lerp(path[i - 1][0], path[i][0], v), lerp(path[i - 1][1], path[i][1], v)]; } s -= L[i - 1]; }
+  return path[path.length - 1];
+};
+function setRow(R, row, t0, t) {
+  if (!row) { op(R.g, 0); return; }
+  const [ph, ev, pc, rolls, res, p] = row;
+  op(R.g, ease.out(seg(t, t0, t0 + .3)));
+  R.g.setAttribute('transform', `translate(${(984 + (1 - ease.out(seg(t, t0, t0 + .4))) * 16).toFixed(1)},${R.y})`);
+  R.ph.textContent = ph; R.ev.textContent = ev; R.pc.textContent = pc ? `chance ${pc}` : '';
+  const x0 = pc ? 150 : 0;
+  R.rolls.forEach((q, j) => {
+    const v = rolls[j];
+    if (v == null) { op(q.r, 0); return; }
+    const shown = seg(t, t0 + .15 + j * .12, t0 + .3 + j * .12), hit = v < p;
+    q.r.setAttribute('transform', `translate(${x0 + j * 58},0)`);
+    q.t.textContent = shown < 1 ? (Math.abs(Math.sin((t + j) * 37)) * .99).toFixed(2) : v.toFixed(2);
+    q.b.setAttribute('stroke', hit ? 'var(--amber)' : 'var(--line)');
+    q.b.setAttribute('fill', hit && shown >= 1 ? 'var(--amber)' : 'none');
+    q.t.style.fill = hit && shown >= 1 ? 'var(--ink)' : '';
+    op(q.r, seg(t, t0 + .1 + j * .12, t0 + .2 + j * .12));
+  });
+  R.res.textContent = res;
+  op(R.res, ease.out(seg(t, t0 + .35 + rolls.length * .12, t0 + .6 + rolls.length * .12)));
+}
+
+
+function frame(t) {
+  const z = lerp(1, 1.06, ease.inOut(seg(t, 3, 11)));
+  cam.setAttribute('transform', `translate(540,470) scale(${z.toFixed(4)}) translate(-540,-470)`);
+  const vis = lerp(.25 * ease.out(seg(t, 0, 1)), 1, ease.inOut(seg(t, 2.8, 3.6)));
+  op(scene, vis * lerp(1, .07, ease.inOut(seg(t, 11.6, 12.1))) * (1 - seg(t, 14.5, 15.2)));
+  const panelV = ease.out(seg(t, 4.6, 5.1)) * (1 - ease.inOut(seg(t, 11.6, 12.0)));
+  op(side, panelV);
+  side.setAttribute('transform', `translate(${((1 - ease.out(seg(t, 4.6, 5.2))) * 40).toFixed(1)},0)`);
+  op(hud, ease.out(seg(t, 3.9, 4.3)) * (1 - ease.inOut(seg(t, 11.6, 12.0))));
+
+  // Hook.
+  const h1 = ease.out(seg(t, .25, .95));
+  op(H1, h1 * (1 - seg(t, 2.6, 3.1)));
+  H1.setAttribute('transform', `translate(0,${((1 - h1) * 22 - seg(t, 2.6, 3.2) * 18).toFixed(1)})`);
+  op(H2, ease.out(seg(t, .9, 1.6)) * (1 - seg(t, 2.7, 3.2)));
+  H2.setAttribute('transform', `translate(800,520) scale(${lerp(.93, 1, ease.back(seg(t, .9, 1.7))).toFixed(3)}) translate(-800,-520) translate(0,${(-seg(t, 2.7, 3.3) * 18).toFixed(1)})`);
+  hot.setAttribute('filter', t > 1.5 && t < 3 ? 'url(#kit-glow)' : '');
+
+  // Setup: Taiwan's assets appear in the notional zone, mines go down on the east coast, then the PLA plan.
+  op(zone, ease.out(seg(t, 3.2, 3.6)));
+  toks.forEach((k, j) => { const u = ease.back(seg(t, 3.35 + j * .09, 3.7 + j * .09)); k.g.setAttribute('transform', `translate(${k.x},${k.y}) scale(${Math.max(0, u).toFixed(3)})`); });
+  const mineEff = t < TK[0] + .5 ? 1 : lerp(1, .7, ease.inOut(seg(t, TK[0] + .5, TK[0] + .8)));
+  op(mines, ease.out(seg(t, 3.7, 4.1)) * (.25 + .75 * mineEff));
+  mines.setAttribute('filter', t > 3.7 && t < 4.4 ? 'url(#kit-glow)' : '');
+  chips.forEach((c, i) => { const u = ease.back(seg(t, 3.95 + i * .16, 4.35 + i * .16)); c.g.setAttribute('transform', `translate(${c.x},${100 + (1 - u) * 14})`); op(c.g, seg(t, 3.95 + i * .16, 4.2 + i * .16)); });
+  const on = t > 4.3;
+  E.beach.setAttribute('class', on ? 'pg-beach on' : 'pg-beach');
+  E.route.setAttribute('stroke', on ? 'var(--red)' : ''); E.route.style.stroke = on ? 'var(--red)' : '';
+  E.sub.textContent = on ? 'PLA landing sector' : 'notional sector';
+
+  // Turn clock.
+  const k = turnAt(t);
+  turnT.textContent = k ? `Turn ${k} of 8` : 'Setup';
+  hoursT.textContent = k ? `Hours ${(k - 1) * 12}–${k * 12}` : '';
+  phaseT.textContent = k === 1 ? 'Preparatory strikes' : k === 2 ? 'Landing' : k > 2 ? 'Fight ashore' : '';
+
+  // Turn 1: strikes at the notional zone (reticles), all survive.
+  toks.forEach((q, j) => {
+    const a = TK[0] + .1 + j * .08, u = seg(t, a, a + .35);
+    op(q.ret, u > 0 && u < 1 ? 1 - u : 0);
+    q.ret.setAttribute('r', (26 - 12 * ease.out(u)).toFixed(1));
+    // Turn 3: one air defense unit destroyed; turn 5: the drone team.
+    const dead = (q.k === 'circ' && q.i === 1 && t >= TK[2] + .1) || (q.k === 'dia' && t >= TK[4] + .1);
+    op(q.x2, dead ? 1 : 0);
+    q.g.firstChild.setAttribute('opacity', dead ? .3 : 1);
+  });
+  const st = k >= 2 ? FIGHT[Math.min(k, 8) - 2] : null;
+  garT.textContent = `Garrison ${st ? st.gar.toFixed(1) : '8.0'} pts`;
+
+  // Log rows: turn 1 then turn 2 in full, later turns show their ground result only.
+  let rows = [], t0 = 0;
+  if (k === 1) { rows = T1; t0 = TK[0]; }
+  else if (k === 2) { rows = T2; t0 = TK[1]; }
+  const gap = k === 2 ? [0, .45, .95, 1.5, 1.95] : [0, .18, .36, .54, .72];
+  LOGR.forEach((R, i) => setRow(R, rows[i], t0 + gap[i], t));
+  logTitle.textContent = k > 2 ? 'Every turn: the fight ashore' : 'This turn: every roll';
+  LED.forEach((g, i) => { const a = i === 0 ? TK[2] : TK[i + 1] + .18; op(g, k > 2 ? ease.out(seg(t, a, a + .2)) : 0); g.setAttribute('font-weight', ''); g.style.opacity = ''; });
+  LED.forEach((g, i) => g.lastChild.style.fill = k - 2 === i ? 'var(--amber)' : '');
+
+  // Ships sail on turn 2 for the east beach, through two salvos (both miss) and the mines (none stopped).
+  const beach = E.b, start = [940, 430];
+  ships.forEach((s, i) => {
+    const u = ease.inOut(seg(t, TK[1] + i * .06, TK[1] + 1.2 + i * .06));
+    const lane = (i - 1.5) * 16;
+    const x = lerp(start[0], beach[0] + 30, u), y = lerp(start[1] + lane * 1.5, beach[1] + lane, u);
+    s.n.setAttribute('transform', `translate(${x.toFixed(1)},${y.toFixed(1)})`);
+    // Turn 3 wave: one group sunk and one stopped by mines; two left afloat afterwards.
+    const lostOn3 = i >= 2 && t >= TK[2] + .15;
+    op(s.n, seg(t, TK[1] - .1, TK[1] + .1) * (1 - ease.in(seg(t, TK[1] + 1.25, TK[1] + 1.5))) + (t >= TK[2] && !lostOn3 ? .9 * (1 - seg(t, TK[2] + .2, TK[2] + .3)) : 0));
+  });
+  // The two salvos from the notional zone, missing (puffs).
+  salvos.forEach((s, j) => {
+    const th = TK[1] + .7 + j * .28, tf = th - .38, v = seg(t, tf, th);
+    const from = [ZX + 30 + j * 40, ZY], tgt = [lerp(start[0], beach[0] + 30, .6) - 20 + j * 30, lerp(start[1], beach[1], .6) - 40 + j * 18];
+    const mid = [(from[0] + tgt[0]) / 2 + 30, Math.min(from[1], tgt[1]) - 80];
+    const bz = w => { const q = 1 - w; return [q * q * from[0] + 2 * q * w * mid[0] + w * w * tgt[0], q * q * from[1] + 2 * q * w * mid[1] + w * w * tgt[1]]; };
+    if (t >= tf && t < th) { const pts = []; for (let n = 0; n <= 8; n++) pts.push(bz(Math.max(0, v - .25 + .25 * n / 8))); s.p.setAttribute('d', 'M' + pts.map(p => p.map(q => q.toFixed(1)).join(',')).join(' L')); op(s.p, 1); } else op(s.p, 0);
+    const b = seg(t, th, th + .5);
+    s.puff.setAttribute('cx', tgt[0]); s.puff.setAttribute('cy', tgt[1]);
+    s.puff.setAttribute('r', (ease.out(b) * 16).toFixed(1)); op(s.puff, b > 0 && b < 1 ? 1 - b : 0);
+  });
+  // Helicopters come in from the north-east and land at the beach.
+  helis.forEach((h, j) => {
+    const u = ease.inOut(seg(t, TK[1] + 1.3 + j * .12, TK[1] + 2.1 + j * .12));
+    h.setAttribute('transform', `translate(${lerp(860 + j * 30, beach[0] + 10 + j * 20, u).toFixed(1)},${lerp(180, beach[1] - 30, u).toFixed(1)})`);
+    op(h, seg(t, TK[1] + 1.2, TK[1] + 1.4) * (1 - seg(t, TK[1] + 2.1, TK[1] + 2.3)));
+  });
+  // The drone hits the lodgment (roll 0.20 under 40%).
+  { const th = TK[1] + 2.2, u = ease.in(seg(t, th - .5, th));
+    drone.setAttribute('transform', `translate(${lerp(ZX + 210, beach[0], u).toFixed(1)},${lerp(ZY + 142, beach[1], u).toFixed(1)})`);
+    op(drone, seg(t, th - .55, th - .4) * (1 - seg(t, th, th + .05)));
+    const b = seg(t, th, th + .5); hitFx.setAttribute('cx', beach[0]); hitFx.setAttribute('cy', beach[1]);
+    hitFx.setAttribute('r', (ease.out(b) * 34).toFixed(1)); op(hitFx, b > 0 && b < 1 ? 1 - b : 0); }
+  // The lodgment: strength ashore after each turn, at the beach (objective 0 all game).
+  const ashore = k < 2 ? 0 : t < TK[1] + 1.4 ? 0 : k === 2 ? (t < TK[1] + 2.2 ? 4.5 : t < DIE2 ? 4.1 : 2.87) : FIGHT[k - 2].ashore;
+  lodge.setAttribute('transform', `translate(${beach[0] - 6},${beach[1]})`);
+  lodgeC.setAttribute('r', (14 + Math.sqrt(ashore) * 7).toFixed(1));
+  lodgeT.textContent = ashore.toFixed(1);
+  op(lodge, ease.out(seg(t, TK[1] + 1.35, TK[1] + 1.6)));
+
+  // Combat results table and die.
+  const f = k >= 2 ? FIGHT[k - 2] : null;
+  const dieT = k === 2 ? DIE2 : k > 2 ? TK[k - 1] + .18 : 99;
+  const showCrt = k >= 2 && t > TK[1] + 2.3;
+  op(colBand, showCrt ? 1 : 0);
+  if (f) colBand.setAttribute('x', CX + f.col * CW);
+  colHead.forEach((h, c) => { h.style.fill = f && c === f.col && showCrt ? 'var(--amber)' : ''; });
+  const settled = f && t >= dieT;
+  cells.forEach((row, r) => row.forEach((n, c) => { n.style.fill = settled && f.col === c && f.die === r + 1 ? 'var(--ink)' : ''; }));
+  if (settled) { hitCell.setAttribute('x', CX + f.col * CW + 4); hitCell.setAttribute('y', CY + 30 + (f.die - 1) * CHh + 3); }
+  op(hitCell, settled ? ease.out(seg(t, dieT, dieT + .15)) : 0);
+  resT.textContent = settled ? `die ${f.die} · ${RES[CRT[f.die - 1][f.col]]}` : '';
+  // The die: tumbles in, settles on the turn's roll.
+  const rollA = k === 2 ? DIE2 - .7 : dieT - .25;
+  const du = seg(t, rollA, dieT);
+  const dv = k >= 2 && t > rollA - .05 && (k > 2 || t > TK[1] + 2.3);
+  op(die, dv ? panelV : 0);
+  if (dv) {
+    const dx = 1488, dy = CY + 30 + (f.die - .5) * CHh;
+    face(du < 1 ? 1 + Math.floor(Math.abs(Math.sin(t * 23)) * 6) % 6 : f.die);
+    const sc = (du < 1 ? .62 + .1 * Math.abs(Math.sin(du * 9)) : .66 + .06 * (1 - seg(t, dieT, dieT + .3)));
+    die.setAttribute('transform', `translate(${dx},${(dy - Math.abs(Math.sin(du * 7)) * (1 - du) * 60).toFixed(1)}) rotate(${((1 - ease.out(du)) * 540).toFixed(1)}) scale(${sc.toFixed(3)})`);
+    die.setAttribute('filter', du < 1 ? 'url(#kit-glow)' : '');
+  }
+  op(resT, settled ? 1 : 0);
+  op(outG, ease.out(seg(t, 10.95, 11.2)));
+  outG.setAttribute('transform', `translate(0,${((1 - ease.out(seg(t, 10.95, 11.3))) * 12).toFixed(1)})`);
+
+  // Payoff: 1,000 games for each of the walkthrough's three setups.
+  const p = ease.out(seg(t, 11.95, 12.4));
+  op(pay, p * (1 - seg(t, 14.5, 15.0)));
+  MB.forEach((b, i) => {
+    const u = ease.inOut(seg(t, 12.25 + i * .5, 13.0 + i * .5));
+    let x = BX0;
+    b.segs.forEach((r, j) => { const w = BW * b.vals[j] / 100 * u; r.setAttribute('x', x.toFixed(1)); r.setAttribute('width', Math.max(0, w).toFixed(1)); x += w; });
+    b.segs[0].setAttribute('filter', i === 2 && u > .9 ? 'url(#kit-glow)' : '');
+    b.num.textContent = `${Math.round(b.vals[0] * u)}%`;
+    op(b.g, seg(t, 12.15 + i * .5, 12.45 + i * .5));
+  });
+
+  cap(t); end(t, 14.6, 17.6);
+}
+run({ duration: 17.6, poster: 8.3, frame });
+</script>
+</body></html>

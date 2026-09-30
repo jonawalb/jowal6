@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Strait Landing</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  :root { --teal: #4cc3ae; }
+  .sl-land { fill: #0d1c15; stroke: var(--muted); stroke-opacity: .5; stroke-width: 1.3; }
+  .sl-big { font: 400 17px var(--mono); fill: var(--muted); letter-spacing: .42em; }
+  .sl-sea { font: italic 400 26px var(--display); fill: var(--muted); fill-opacity: .7; }
+  .sl-city { fill: var(--paper); }
+  .sl-place { font: 400 13px var(--mono); fill: var(--paper); fill-opacity: .8; letter-spacing: .08em; text-transform: uppercase; }
+  .sl-zone { fill: none; stroke: var(--muted); stroke-width: 5; stroke-linecap: round; stroke-opacity: .45; }
+  .sl-zone.on { stroke: var(--amber); stroke-opacity: 1; }
+  .sl-lane { fill: none; stroke: var(--muted); stroke-width: 1.4; stroke-dasharray: 4 7; stroke-opacity: .6; }
+  .sl-lane.on { stroke: var(--amber); stroke-opacity: .9; }
+  .sl-zname { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+  .sl-amph { fill: var(--red); }
+  .sl-mis { fill: none; stroke: var(--teal); stroke-linecap: round; }
+  .sl-burst { fill: none; stroke: var(--amber); }
+  .sl-puff { fill: none; stroke: var(--paper); stroke-opacity: .7; }
+  .sl-wave { fill: none; stroke-linecap: round; }
+  .sl-res { fill: var(--teal); }
+  .sl-port { fill: var(--teal); stroke: var(--ink); stroke-width: 1.5; }
+  .sl-bar-a { fill: var(--red); } .sl-bar-d { fill: var(--teal); }
+  .sl-bart { font: 600 15px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .sl-hud { fill: #0a1510; fill-opacity: .86; stroke: var(--line); }
+  .sl-chip { font: 400 14px var(--mono); letter-spacing: .06em; }
+  .sl-small { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+  .sl-log { font: 400 16px var(--mono); fill: var(--paper); }
+  .sl-turn { font: italic 500 40px var(--display); fill: var(--paper); }
+  .sl-ax { font: 400 12px var(--mono); fill: var(--muted); font-variant-numeric: tabular-nums; }
+  .sl-grid { stroke: var(--line); stroke-width: 1; }
+  .sl-lineA { fill: none; stroke: var(--red); stroke-width: 3.2; stroke-linejoin: round; }
+  .sl-lineD { fill: none; stroke: var(--teal); stroke-width: 3.2; stroke-linejoin: round; }
+  .sl-afloat { fill: var(--red); fill-opacity: .14; stroke: var(--red); stroke-width: .8; stroke-dasharray: 3 3; }
+  .sl-seanum { font: 600 12px var(--mono); fill: var(--ink); text-anchor: middle; }
+  .sl-out { font: italic 500 46px var(--display); fill: var(--teal); }
+  .sl-pct { font: 600 44px var(--mono); fill: var(--amber); font-variant-numeric: tabular-nums; }
+  .sl-plan { font: 400 30px var(--display); fill: var(--paper); }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of Strait Landing: twenty amphibious ship groups cross the Taiwan Strait to the central west coast through missiles and mines, the real seas of that April week turn rough so nothing more can sail, and Taiwan's defenders overtake the troops ashore."><title>Strait Landing</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard, clamp } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Real values from tools/strait-landing ----------------------------------------------------------------
+// One game of the tool's doctrinal plan (data/params.js, js/policy.js PLA_SETUPS.doctrine: April, wait for calm,
+// central west coast, hunt launchers, ferries only to a port) against Taiwan's doctrine, seed 3, as played by
+// js/model.js. The seed draws the real week: waited 1 day, D-day 21 Apr 1997. Central-point ERA5 seas per
+// 12-hour turn (data/seastate.js), strength ashore / afloat / Taiwan at the beaches after each turn (G.hist),
+// in points (1 point ≈ 1,000 troops, notional). Log lines are the tool's own wording.
+const SEAS = [0.5, 0.5, 3, 3, 3.6, 3.6, 3.6, 3.6];
+const A = [0, 5.8, 10.2, 9.4, 8.7, 7.3, 5.8, 3.6, 2.3];
+const F = [0, 5, 0, 0, 0, 0, 0, 0, 0];
+const D = [6.8, 3.6, 5.4, 11.9, 12.4, 11.7, 11.4, 11.4, 11.7];
+const TURN = ['D-day day', 'D-day night', 'D+1 day', 'D+1 night', 'D+2 day', 'D+2 night', 'D+3 day', 'D+3 night'];
+const DATE = ['21 Apr 1997', '21 Apr 1997', '22 Apr 1997', '22 Apr 1997', '23 Apr 1997', '23 Apr 1997', '24 Apr 1997', '24 Apr 1997'];
+const band = m => (m <= 1.25 ? 0 : m <= 2.5 ? 1 : 2);
+const BAND = ['slight', 'moderate', 'rough'];
+// Balance check, 1,000 seeded weeks, doctrinal plans (METHOD.md; the page's balance table): PLA lodgment secure.
+const MC = [['April, wait for calm', 24], ['April, go at once', 8], ['October, wait for calm', 4]];
+
+// ---- Geography (shared/data/land-taiwan.js, Natural Earth 10m; data/geo.js zones, ports and cities) ---------
+const LAND = 'M522 714L519 716L517 712L521 710L523 710L522 714ZM518 709L515 707L516 705L518 705L520 707L518 709ZM531 673L534 675L536 679L535 682L531 682L531 677L529 678L529 676L531 673ZM69 670L58 669L57 668L65 662L70 666L75 664L77 658L80 658L85 661L87 660L88 657L92 657L91 660L95 663L92 674L84 671L77 673L69 670ZM534 655L541 654L536 656L534 655ZM64 641L69 640L70 642L66 648L63 650L56 648L56 646L64 641ZM61 642L59 644L55 645L53 642L58 638L59 634L62 633L63 634L61 642ZM524 640L525 638L530 637L532 625L535 623L538 625L535 629L533 639L524 640ZM149 636L128 638L137 628L142 617L138 615L132 615L132 612L138 606L138 599L145 598L146 601L152 604L156 601L166 604L164 609L161 608L158 610L158 620L155 621L151 619L147 623L145 631L149 636ZM302 459L304 460L303 464L296 467L294 467L298 459L302 459ZM307 467L309 463L307 453L314 450L321 455L326 454L328 444L334 443L339 447L342 456L341 463L338 466L330 462L324 462L314 471L308 469L307 467ZM272 461L268 457L274 453L274 450L270 452L268 449L272 437L280 441L288 441L290 450L285 454L283 462L280 463L272 461ZM315 435L317 437L316 440L310 436L315 435ZM530 349L528 351L527 348L530 347L530 349ZM462 330L470 326L467 330L468 335L464 341L461 337L463 334L462 330ZM535 305L532 306L527 305L525 303L525 298L529 295L533 297L537 303L547 304L544 306L542 313L538 311L537 306L535 305ZM759 -209L746 -219L747 -215L753 -208L755 -203L752 -199L754 -198L752 -191L746 -187L739 -179L743 -168L751 -166L755 -161L752 -155L748 -154L746 -148L749 -145L746 -140L730 -145L729 -137L726 -134L722 -133L730 -128L729 -121L724 -117L726 -112L723 -107L724 -104L715 -100L714 -108L707 -108L708 -98L704 -100L698 -111L693 -114L684 -112L682 -117L687 -122L684 -124L686 -128L681 -125L677 -129L678 -125L676 -124L670 -126L673 -122L670 -118L664 -124L664 -117L660 -112L662 -107L665 -107L667 -111L676 -115L685 -107L690 -111L691 -110L693 -112L696 -109L693 -100L697 -101L707 -93L698 -93L704 -91L704 -90L699 -88L698 -90L696 -88L699 -87L698 -84L701 -84L698 -83L681 -86L677 -89L673 -90L680 -76L678 -75L676 -78L668 -70L673 -70L676 -66L675 -62L672 -59L671 -60L656 -59L663 -55L672 -56L673 -54L671 -51L672 -48L669 -45L651 -48L649 -46L650 -42L646 -40L634 -42L638 -40L632 -34L632 -30L652 -21L646 -13L646 -10L654 -8L656 -6L655 -3L648 -2L647 1L650 10L653 8L653 10L643 16L642 13L644 11L643 10L631 17L620 17L617 21L616 27L606 35L599 35L597 33L597 29L597 27L601 26L601 19L603 17L615 14L625 8L623 4L630 -6L634 -5L634 -7L643 -21L614 -20L616 -13L607 1L609 7L605 8L601 8L601 1L596 -4L589 1L591 -15L598 -20L593 -21L589 -20L590 -25L597 -29L599 -32L590 -30L587 -28L584 -21L585 -13L582 -9L577 -10L578 -14L574 -23L570 -25L569 -24L568 -14L577 -5L576 -1L571 -3L562 -12L558 -11L557 -19L554 -21L549 -19L549 -17L544 -11L545 -3L554 0L553 10L545 5L542 8L545 16L552 21L553 25L567 15L572 17L578 17L580 19L579 21L588 24L588 29L585 26L583 29L584 33L590 36L588 39L591 42L594 49L593 53L589 53L589 57L583 59L579 51L570 48L563 40L557 46L553 45L549 45L547 49L548 52L556 52L559 50L562 52L564 69L565 72L570 73L568 77L581 75L582 66L585 67L589 59L595 54L600 61L598 64L608 68L618 66L618 67L605 78L601 75L591 77L588 81L591 82L589 84L584 81L563 86L559 90L566 92L566 96L560 98L553 106L552 108L553 112L546 116L527 145L523 146L519 140L502 132L493 131L481 121L471 119L459 112L470 123L475 122L478 124L480 133L487 143L487 149L503 153L512 154L523 149L533 143L535 134L538 133L547 132L562 139L567 137L571 141L572 145L567 157L563 161L556 164L553 174L550 167L548 165L547 168L549 170L550 179L555 182L554 189L557 191L552 197L551 206L548 207L541 202L539 202L538 205L530 207L525 206L528 221L531 218L531 228L533 231L538 232L541 229L545 231L549 227L547 234L548 237L552 238L550 241L547 241L553 242L548 245L548 247L554 246L553 249L558 252L556 257L559 258L562 266L557 272L563 273L549 276L553 270L549 261L552 257L549 251L544 253L542 252L541 261L545 264L543 269L531 270L535 258L533 255L536 249L528 249L525 257L523 255L525 243L508 239L508 234L512 225L508 228L508 224L501 221L498 223L501 226L493 230L491 239L486 248L475 251L460 260L470 272L473 280L477 276L478 273L479 273L483 282L475 287L479 293L483 289L487 279L491 281L493 279L497 282L495 282L501 289L506 292L507 294L505 297L494 297L492 299L495 308L494 310L489 310L484 307L474 310L468 301L463 303L460 306L461 309L466 318L470 318L466 321L459 319L457 321L460 324L453 321L456 315L453 313L451 314L449 321L447 318L454 305L454 302L448 300L439 301L435 300L437 296L446 293L446 290L438 288L422 294L418 296L416 300L425 302L425 310L431 306L437 309L431 324L426 326L420 325L415 326L413 329L413 331L418 338L429 342L428 343L433 346L437 344L441 335L442 336L438 347L441 356L445 355L443 357L437 360L434 356L425 356L423 359L424 365L429 370L436 367L437 371L432 373L422 372L416 369L409 371L402 369L400 370L400 373L388 378L385 375L387 372L391 370L391 367L384 359L385 365L383 368L383 362L379 356L374 364L380 369L380 372L371 373L361 370L369 376L370 386L374 393L375 391L379 391L383 389L386 385L388 388L389 394L393 392L397 395L394 403L391 404L382 415L377 409L374 412L373 422L374 425L379 426L378 430L370 439L358 445L358 438L362 436L348 427L334 422L335 408L329 413L333 423L330 427L320 432L308 429L306 433L301 433L300 440L295 440L291 437L288 433L289 429L295 427L295 425L287 423L290 417L284 409L284 415L281 417L275 431L263 425L262 429L263 433L262 436L259 437L255 436L256 432L250 438L251 440L259 441L265 445L262 450L256 451L255 455L259 460L254 459L230 451L222 453L233 455L236 458L220 454L216 455L231 470L237 472L253 470L260 466L263 468L262 476L259 479L258 484L259 485L265 480L272 481L274 487L277 490L278 497L270 500L268 499L259 509L253 511L251 518L249 518L247 509L244 507L237 513L242 514L243 518L235 533L235 545L229 544L225 546L212 559L210 568L208 570L204 567L206 561L216 551L217 546L215 545L210 548L209 546L213 543L210 537L208 543L203 544L193 538L195 543L200 544L196 551L198 560L189 570L185 584L185 589L187 593L179 605L178 596L180 592L180 581L175 571L168 567L153 566L146 562L144 565L145 569L156 569L161 577L159 585L154 594L149 597L139 593L137 593L133 598L128 600L123 594L120 595L123 600L119 608L120 615L117 621L120 625L113 632L112 625L114 621L111 614L107 619L109 627L96 631L92 638L84 643L83 625L81 622L72 621L71 623L65 625L62 630L59 630L53 625L57 621L53 620L44 631L46 635L46 641L40 651L44 658L43 663L26 684L11 682L4 683L-12 675L-17 669L-21 670L-21 678L-12 689L-9 691L1 690L5 687L10 686L14 690L17 691L18 688L21 689L24 695L26 706L32 707L28 712L13 699L6 698L14 702L15 706L7 711L2 722L-4 719L-4 707L-12 705L-24 708L-24 711L-20 714L-13 710L-6 711L-6 712L-6 715L-12 719L-17 726L-19 733L-16 738L-16 742L-13 752L-21 756L-22 762L-26 768L-33 766L-48 770L-63 763L-65 760L-70 761L-79 759L-81 761L-75 764L-68 762L-66 764L-77 772L-87 783L-91 787L-101 791L-103 786L-102 782L-95 777L-111 769L-111 771L-102 778L-104 782L-119 789L-126 795L-131 795L-136 799L-140 797L-148 803L-151 807L-154 807L-156 806L-158 797L-157 796L-153 801L-155 793L-168 786L-175 786L-174 782L-177 780L-176 776L-171 775L-169 769L-176 770L-183 777L-197 781L-200 786L-206 784L-203 777L-211 776L-221 769L-225 772L-229 771L-225 776L-222 776L-219 773L-215 775L-213 780L-213 784L-218 785L-218 786L-201 789L-191 783L-207 803L-207 808L-201 814L-199 807L-196 808L-195 809L-200 816L-198 823L-205 823L-218 817L-223 817L-227 819L-235 818L-242 810L-240 807L-233 807L-226 804L-228 799L-233 800L-237 804L-243 799L-262 799L-262 795L-245 786L-244 784L-247 782L-246 775L-251 777L-259 789L-269 790L-273 792L-271 799L-276 798L-277 794L-293 797L-302 809L-300 815L-305 816L-305 -267L762 -267L768 -262L786 -257L789 -251L790 -243L787 -238L778 -234L776 -227L766 -213L763 -209L759 -209ZM494 248L498 235L505 229L507 233L503 251L504 257L497 260L494 248ZM487 136L482 130L480 122L489 132L510 139L516 143L517 146L512 149L489 142L487 136ZM633 741L636 745L636 746L633 741ZM637 726L635 731L637 721L637 726ZM642 711L639 717L642 711ZM651 643L645 653L637 662L629 667L649 643L651 643ZM543 648L540 645L540 643L545 646L551 643L545 639L544 640L544 635L547 635L556 631L554 635L561 634L562 632L565 638L566 643L561 640L555 643L553 647L550 649L543 648ZM543 619L547 617L551 620L551 626L549 628L543 619ZM556 602L552 607L551 603L553 600L556 602ZM582 264L573 260L570 257L574 250L574 247L570 248L566 247L569 242L581 243L584 243L586 240L583 238L577 239L575 237L577 225L572 228L570 225L572 221L577 214L584 212L587 212L586 216L589 223L593 222L597 225L594 228L604 232L599 237L597 234L591 237L590 241L592 245L598 248L599 252L594 251L585 254L583 258L582 264ZM565 215L568 212L575 211L575 212L575 215L568 216L565 215ZM547 214L548 215L552 210L555 209L554 212L549 217L546 216L547 214ZM622 153L623 149L626 148L622 153ZM616 149L615 147L617 146L619 147L616 149ZM547 125L545 122L548 117L553 116L558 120L561 126L560 127L557 129L547 125ZM613 107L616 109L621 108L619 111L615 113L612 112L613 107ZM630 96L630 100L628 97L624 98L622 103L622 97L627 94L630 96ZM634 41L634 36L639 35L639 39L634 41ZM589 16L586 18L583 16L585 14L590 13L593 14L592 16L589 16ZM581 6L571 11L565 11L563 7L565 5L577 6L580 3L582 4L581 6ZM617 6L610 1L610 0L617 0L616 3L617 6ZM981 1305L981 1308L976 1313L973 1313L971 1299L975 1298L981 1305ZM963 1306L965 1300L967 1304L965 1307L963 1306ZM979 1206L978 1212L973 1222L969 1226L964 1228L961 1225L962 1220L972 1199L976 1198L979 1206ZM920 943L919 951L924 955L924 957L920 958L910 953L907 950L908 946L906 943L920 943ZM698 890L693 895L692 892L695 888L697 887L698 890ZM902 829L899 822L908 822L907 830L902 829ZM649 687L646 693L649 687ZM979 429L971 430L974 438L973 442L969 445L971 453L960 462L960 469L956 483L959 488L946 502L945 506L938 511L934 524L928 535L932 548L928 555L915 614L912 621L901 685L891 703L889 726L886 733L879 738L874 750L870 764L862 776L850 788L850 796L847 801L841 808L829 816L820 825L813 841L805 852L800 873L792 889L792 949L789 958L784 963L784 979L781 975L771 968L765 967L765 972L763 973L758 971L759 964L755 955L755 944L758 937L744 900L734 884L724 877L723 873L705 861L699 861L690 854L681 841L690 852L689 847L673 825L675 819L674 815L665 798L666 788L661 779L658 765L654 760L658 757L659 753L659 749L654 748L651 754L649 754L648 745L645 744L640 748L638 746L639 740L646 738L646 736L639 733L639 732L644 731L639 725L639 722L644 718L643 713L648 697L651 695L648 693L650 690L656 690L655 687L650 688L652 682L659 681L653 668L654 664L652 663L657 655L651 655L651 649L654 645L655 625L660 612L662 599L669 588L673 585L676 576L682 569L693 543L700 538L701 534L705 531L707 520L720 504L723 490L732 472L749 452L759 427L764 425L773 415L782 415L781 411L786 405L788 400L790 399L797 384L796 380L800 375L801 370L806 366L808 359L815 346L825 336L838 332L847 326L876 320L887 314L891 315L895 319L897 319L888 309L889 307L900 293L915 288L923 288L926 291L936 306L942 305L940 310L946 314L981 323L983 324L982 329L986 342L995 342L1002 346L983 357L970 373L966 381L965 392L967 408L966 419L969 423L979 429ZM992 378L992 380L990 380L987 377L990 376L992 378ZM719 67L717 66L719 62L723 65L719 67ZM658 24L652 28L650 26L656 18L658 19L658 24ZM687 -50L683 -48L681 -49L684 -51L687 -50ZM700 -49L694 -47L689 -50L687 -54L693 -57L700 -49ZM823 -158L828 -161L834 -157L834 -155L827 -156L829 -152L827 -152L823 -158ZM833 -230L832 -232L836 -235L842 -236L844 -236L843 -238L849 -239L850 -236L847 -235L846 -230L840 -231L833 -230ZM824 -238L818 -234L817 -236L818 -240L822 -242L825 -239L830 -240L826 -236L824 -238ZM832 -257L822 -259L827 -264L835 -264L840 -260L838 -257L832 -257ZM781 -265L774 -267L810 -267L808 -265L800 -264L792 -267L781 -265ZM985 1292L995 1275L1003 1269L1006 1271L1007 1274L994 1286L996 1292L993 1296L990 1298L986 1297L985 1292ZM1336 543L1329 542L1331 539L1337 538L1338 540L1336 543ZM1379 503L1379 506L1375 507L1373 500L1379 503ZM1393 486L1391 489L1389 486L1390 484L1391 484L1393 486ZM1365 484L1368 480L1371 480L1374 485L1365 484ZM1319 484L1323 486L1326 485L1331 465L1332 465L1340 471L1350 471L1362 476L1362 481L1350 498L1315 493L1312 490L1315 485L1318 486L1319 484ZM1191 457L1187 461L1178 461L1176 458L1179 454L1188 454L1190 455L1191 457ZM1399 471L1397 466L1389 463L1389 462L1392 461L1396 455L1398 455L1403 460L1414 459L1419 450L1424 447L1433 431L1435 431L1436 434L1425 451L1419 476L1414 482L1407 483L1400 481L1397 477L1401 472L1399 471ZM1505 422L1501 421L1500 418L1503 414L1506 414L1509 419L1505 422ZM1283 189L1288 188L1289 190L1283 191L1283 189Z';
+const GEO = {"zones":{"north":{"d":"M797 384L796 380L800 375L801 370L806 366L808 359L815 346L825 336L838 332L847 326","mid":[808,359],"from":[563,273],"label":[693,285]},"central":{"d":"M693 543L700 538L701 534L705 531L707 520L720 504L723 490L730 479L732 472L749 452","mid":[720,504],"from":[494,310],"label":[576,490]},"south":{"d":"M681 841L673 825L675 819L674 815L665 798L664 792L666 788L661 779L658 765L654 760L658 757L659 753L659 749L654 748L651 754L649 754L648 745L645 744L642 748L640 748L638 746L637 744L639 740L646 738L646 736L639 733L639 732L644 731","mid":[654,748],"from":[370,439],"label":[488,776]}},"ports":{"north":{"t":"Port of Taipei","p":[880,314]},"central":{"t":"Port of Taichung","p":[719,492]},"south":{"t":"Port of Kaohsiung","p":[680,835]}},"cities":[{"t":"Taipei","p":[919,338],"big":true},{"t":"Taoyuan","p":[872,348],"big":false},{"t":"Taichung","p":[755,522],"big":false},{"t":"Tainan","p":[663,758],"big":false},{"t":"Kaohsiung","p":[684,833],"big":false},{"t":"Fuzhou","p":[497,127],"big":false},{"t":"Xiamen","p":[271,453],"big":false}],"labels":{"taiwan":[762,643],"fujian":[227,234],"strait":[432,602]}};
+
+// ---- Scene ---------------------------------------------------------------------------------------------------
+const cam = el('g', {}, svg);
+const scene = el('g', {}, cam);
+const map = el('g', {}, scene);
+el('path', { d: LAND, class: 'sl-land' }, map);
+// Wave marks on open water, sized by the sea state of the turn.
+const waves = el('g', {}, map);
+const WV = [];
+for (let i = 0; i < 70; i++) {
+  const x = 330 + ((i * 97) % 380) + (i % 3) * 11, y = 330 + ((i * 53) % 470);
+  if (x > 0.93 * y + 300 && y < 520) continue; // keep off the Taiwan coast north of the lane
+  const p = el('path', { class: 'sl-wave' }, waves);
+  WV.push({ p, x, y, ph: i * 0.7 });
+}
+const labels = el('g', {}, map);
+const txt = (x, y, cls, s, a = {}, p = labels) => { const n = el('text', { x, y, class: cls, ...a }, p); n.textContent = s; return n; };
+txt(GEO.labels.taiwan[0] + 20, GEO.labels.taiwan[1], 'sl-big', 'TAIWAN');
+txt(GEO.labels.fujian[0] + 20, GEO.labels.fujian[1] + 30, 'sl-big', 'FUJIAN');
+txt(GEO.labels.strait[0] - 50, GEO.labels.strait[1] + 150, 'sl-sea', 'Taiwan Strait');
+for (const c of GEO.cities) {
+  if (c.t === 'Taoyuan' || c.t === 'Tainan' || c.t === 'Fuzhou') continue;
+  el('circle', { cx: c.p[0], cy: c.p[1], r: c.big ? 4 : 3, class: 'sl-city' }, labels);
+  txt(c.p[0] + 8, c.p[1] - 6, 'sl-place', c.t);
+}
+// Zones and lanes. The central west coast is the plan's choice (amber).
+const zoneEls = {}, laneEls = {};
+for (const z of ['north', 'central', 'south']) {
+  const Z = GEO.zones[z];
+  laneEls[z] = el('path', { d: `M${Z.from[0]},${Z.from[1]} L${Z.mid[0] - (Z.mid[0] - Z.from[0]) * .06},${Z.mid[1] - (Z.mid[1] - Z.from[1]) * .06}`, class: 'sl-lane' }, map);
+  zoneEls[z] = el('path', { d: Z.d, class: 'sl-zone' }, map);
+  const [px, py] = GEO.ports[z].p;
+  el('rect', { x: px - 6, y: py - 6, width: 12, height: 12, class: 'sl-port' }, map);
+}
+const zlab = el('g', {}, map);
+const ZL = [548, 470];
+txt(ZL[0], ZL[1], 'sl-zname', 'Central west coast', { 'text-anchor': 'end' }, zlab);
+txt(ZL[0], ZL[1] + 18, 'sl-zname', 'Taichung area', { 'text-anchor': 'end', style: 'fill:var(--paper);fill-opacity:.8' }, zlab);
+const seaT = txt(ZL[0], ZL[1] + 40, 'sl-chip', '', { 'text-anchor': 'end' }, zlab);
+
+// Lane geometry for the central crossing.
+const FR = GEO.zones.central.from, MI = GEO.zones.central.mid;
+const LX = MI[0] - FR[0], LY = MI[1] - FR[1], LL = Math.hypot(LX, LY), UX = LX / LL, UY = LY / LL, NX = -UY, NY = UX;
+const along = (s, off = 0, back = 0) => [FR[0] + UX * (s * LL - back) + NX * off, FR[1] + UY * (s * LL - back) + NY * off];
+
+// Taiwan's reserves moving to the landing (teal chevrons along the land, schematic).
+const resG = el('g', {}, map);
+const RES = [
+  { from: [880, 360], to: [770, 470], t0: 5.6, t1: 8.4 },
+  { from: [690, 770], to: [745, 560], t0: 6.0, t1: 8.8 },
+  { from: [850, 400], to: [778, 490], t0: 7.4, t1: 9.3 },
+].map(r => ({ ...r, n: el('path', { d: 'M-8,-7 L6,0 L-8,7 L-4,0 Z', class: 'sl-res', filter: 'url(#kit-glow)' }, resG), trail: el('path', { class: 'sl-mis', 'stroke-width': 2, 'stroke-dasharray': '2 6' }, resG) }));
+
+// The lodgment bars at the zone, as the tool's map draws them ("A v D").
+const bars = el('g', {}, map);
+const BX = MI[0] + 16, BY = MI[1] + 20, BS = 5.4;
+const barA = el('rect', { x: BX, width: 13, class: 'sl-bar-a' }, bars);
+const barD = el('rect', { x: BX + 16, width: 13, class: 'sl-bar-d' }, bars);
+const barT = txt(BX - 2, BY + 22, 'sl-bart', '', {}, bars);
+
+// Ships: 20 amphibious groups (turn 1). 7 lost to missiles, 2 to mines, 6 unload, 5 wait offshore and unload on turn 2.
+const shipG = el('g', {}, map), fxG = el('g', {}, map);
+const FATE = ['u', 'm', 'u', 'w', 'x', 'u', 'w', 'm', 'x', 'u', 'w', 'x', 'u', 'x', 'w', 'u', 'x', 'w', 'x', 'x'];
+const LAUNCH = [[800, 430], [772, 560], [760, 640], [840, 470], [745, 700], [812, 520], [790, 610]];
+const ships = FATE.map((fate, i) => {
+  const row = Math.floor(i / 5), col = i % 5;
+  const s = { fate, i, off: (col - 2) * 15 + (row % 2) * 7, back: row * 17 + (col % 2) * 5, n: el('circle', { r: 5.2, class: 'sl-amph' }, shipG) };
+  return s;
+});
+const lost = ships.filter(s => s.fate === 'x'), mined = ships.filter(s => s.fate === 'm'), waitS = ships.filter(s => s.fate === 'w');
+// Missiles: one streak per hit group, plus streaks stopped by the escort screen (puff mid-air).
+const shots = [];
+lost.forEach((s, k) => { s.tk = 6.05 + k * 0.13; shots.push({ ship: s, th: s.tk, from: LAUNCH[k % LAUNCH.length], hit: true }); });
+[0.2, 0.33, 0.47, 0.58, 0.7, 0.83, 0.95].forEach((d, k) => shots.push({ ship: ships[(k * 3 + 1) % 20], th: 5.85 + d, from: LAUNCH[(k + 3) % LAUNCH.length], hit: false }));
+mined.forEach((s, k) => { s.tk = 6.55 + k * 0.18; });
+for (const sh of shots) {
+  sh.path = el('path', { class: 'sl-mis', 'stroke-width': 2, filter: 'url(#kit-glow)' }, fxG);
+  sh.burst = el('circle', { r: 0, class: sh.hit ? 'sl-burst' : 'sl-puff', filter: sh.hit ? 'url(#kit-glow)' : null }, fxG);
+}
+const mineFx = mined.map(s => el('circle', { r: 0, class: 'sl-burst', filter: 'url(#kit-glow)' }, fxG));
+// Ships waiting in port for calm seas (ready again on D+1: 6, then 11 groups).
+const portG = el('g', {}, map);
+const portShips = Array.from({ length: 11 }, (_, i) => el('circle', { cx: FR[0] - 22 - (i % 6) * 13, cy: FR[1] - 16 + Math.floor(i / 6) * 13, r: 4.6, class: 'sl-amph' }, portG));
+const portNote = txt(FR[0] - 20, FR[1] + 30, 'sl-chip', 'too rough: the wave stays in port', { 'text-anchor': 'end', style: 'fill:var(--red)' }, portG);
+
+// ---- HUD: plan chips, turn clock, the turn's log -------------------------------------------------------------
+const hud = el('g', {}, svg);
+const plan = el('g', {}, hud);
+txt(72, 78, 't-kicker', 'Your plan', {}, plan);
+const CH = ['April', 'Wait for calm', 'Central west coast', 'Hunt missile launchers'].map((s, i) => {
+  const g = el('g', {}, plan), w = s.length * 11.2 + 34;
+  const x = [72, 0, 0, 0][i];
+  el('rect', { x: 0, y: 0, width: w, height: 38, rx: 19, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 1.6 }, g);
+  txt(w / 2, 25, 'sl-chip', s, { 'text-anchor': 'middle', style: 'fill:var(--amber)' }, g);
+  return { g, w };
+});
+{ let x = 72; for (const c of CH) { c.x = x; x += c.w + 10; } }
+const clock = el('g', {}, hud);
+el('rect', { x: 1150, y: 46, width: 378, height: 92, rx: 4, class: 'sl-hud' }, clock);
+const turnT = txt(1170, 104, 'sl-turn', '', {}, clock);
+const dateT = txt(1508, 76, 'sl-small', '', { 'text-anchor': 'end' }, clock);
+const turnN = txt(1508, 124, 'sl-small', '', { 'text-anchor': 'end' }, clock);
+const log = el('g', {}, hud);
+el('rect', { x: 1150, y: 150, width: 378, height: 132, rx: 4, class: 'sl-hud' }, log);
+const LOG = [0, 1, 2].map(i => txt(1170, 190 + i * 34, 'sl-log', ''));
+LOG.forEach(n => log.appendChild(n));
+
+// ---- The build-up race chart (tools/strait-landing/js/chart.js, restyled) -------------------------------------
+const race = el('g', {}, svg);
+const CX0 = 1010, CX1 = 1510, CY0 = 420, CY1 = 700, YMAX = 20;
+const cx = t => CX0 + (CX1 - CX0) * t / 8, cy = v => CY1 - (CY1 - CY0) * v / YMAX;
+el('rect', { x: CX0 - 60, y: CY0 - 64, width: CX1 - CX0 + 90, height: CY1 - CY0 + 190, rx: 6, class: 'sl-hud' }, race);
+txt(CX0 - 40, CY0 - 32, 't-label', 'The build-up race', {}, race);
+txt(CX0 - 40, CY0 - 12, 'sl-ax', 'Strength (points, 1 ≈ 1,000 troops)', {}, race);
+for (let v = 0; v <= YMAX; v += 10) {
+  el('line', { x1: CX0, x2: CX1, y1: cy(v), y2: cy(v), class: 'sl-grid' }, race);
+  txt(CX0 - 8, cy(v) + 4, 'sl-ax', String(v), { 'text-anchor': 'end' }, race);
+}
+['H-hour', 'D-day end', 'D+1 end', 'D+2 end', 'D+3 end'].forEach((s, i) => txt(cx(i * 2), CY1 + 20, 'sl-ax', s, { 'text-anchor': 'middle' }, race));
+txt(CX0 - 8, CY1 + 49, 'sl-ax', 'Seas', { 'text-anchor': 'end' }, race);
+const cells = SEAS.map((m, i) => {
+  const g = el('g', { opacity: 0 }, race), b = band(m);
+  el('rect', { x: cx(i) + 2, y: CY1 + 36, width: cx(1) - cx(0) - 4, height: 18, rx: 2, fill: b === 2 ? 'var(--red)' : b === 1 ? 'var(--amber)' : 'var(--blue)', opacity: b === 2 ? .85 : .7 }, g);
+  txt(cx(i + .5), CY1 + 50, 'sl-seanum', `${m}`, {}, g);
+  return g;
+});
+const afloat = el('polygon', { class: 'sl-afloat' }, race);
+const lineD = el('polyline', { class: 'sl-lineD', filter: 'url(#kit-glow)' }, race);
+const lineA = el('polyline', { class: 'sl-lineA', filter: 'url(#kit-glow)' }, race);
+const dotA = el('circle', { r: 6, fill: 'var(--red)' }, race), dotD = el('circle', { r: 6, fill: 'var(--teal)' }, race);
+const legA = txt(CX1 + 8, 0, 'sl-small', 'PLA ashore', { style: 'fill:var(--red)' }, race);
+const legD = txt(CX1 + 8, 0, 'sl-small', 'Taiwan', { style: 'fill:var(--teal)' }, race);
+legA.setAttribute('text-anchor', 'end'); legD.setAttribute('text-anchor', 'end');
+const outG = el('g', {}, race);
+txt(CX0 - 40, CY1 + 112, 'sl-out', 'Landing defeated', {}, outG);
+
+// ---- Hook and payoff ------------------------------------------------------------------------------------------
+const hook = el('g', {}, svg);
+const H1 = txt(800, 440, 't-hook', 'Put 20,000 troops ashore', { 'text-anchor': 'middle' }, hook);
+const H2 = el('text', { x: 800, y: 530, 'text-anchor': 'middle', class: 't-hook', style: 'font-size:72px' }, hook);
+const hot = el('tspan', { class: 'hot' }, H2); hot.textContent = 'before the seas turn.';
+const pay = el('g', {}, svg);
+txt(800, 300, 't-kicker', 'The doctrinal plan · 1,000 seeded weeks each', { 'text-anchor': 'middle' }, pay);
+txt(800, 350, 'sl-plan', 'How often the PLA holds a secure lodgment', { 'text-anchor': 'middle' }, pay);
+const PB = MC.map(([s, v], i) => {
+  const g = el('g', { transform: `translate(0,${420 + i * 100})` }, pay);
+  txt(560, 0, 'sl-plan', s, { 'text-anchor': 'end', style: 'font-size:28px' }, g);
+  el('rect', { x: 590, y: -30, width: 600, height: 38, rx: 3, fill: 'var(--line)', opacity: .8 }, g);
+  el('line', { x1: 1190, x2: 1190, y1: -36, y2: 14, stroke: 'var(--muted)', 'stroke-opacity': .5 }, g);
+  const bar = el('rect', { x: 590, y: -30, width: 0, height: 38, rx: 3, fill: 'var(--amber)', filter: i === 0 ? 'url(#kit-glow)' : null }, g);
+  const num = txt(1130, 4, 'sl-pct', '', {}, g);
+  return { g, bar, num, v };
+});
+txt(590, 700, 'sl-ax', '0%', { 'text-anchor': 'middle' }, pay); txt(1190, 700, 'sl-ax', '100%', { 'text-anchor': 'middle' }, pay);
+const payNote = txt(800, 760, 'sl-small', 'Notional model · sea states: ERA5 reanalysis, 1996–2025', { 'text-anchor': 'middle' }, pay);
+
+const cap = captions(svg, [
+  [3.4, 5.2, 'Pick a month, a coast and when to go'],
+  [5.3, 7.9, 'D-day: 20 ship groups sail into missiles and mines'],
+  [8.0, 11.4, 'That week’s real seas turn rough. Nothing can sail.'],
+  [11.7, 14.3, 'Across 1,000 weeks, the month and the wait swing the odds'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Strait Landing', line: 'Land troops through real historical weather. Race the counterattack.' });
+
+// ---- Timeline helpers -------------------------------------------------------------------------------------------
+const op = (n, v) => n.setAttribute('opacity', clamp(v).toFixed(3));
+// Turn clock: turn k (1-based) starts at TT[k-1].
+const TT = [5.3, 6.9, 8.0, 8.9, 9.35, 9.8, 10.25, 10.7, 11.15];
+const turnAt = t => { let k = 0; for (let i = 0; i < 8; i++) if (t >= TT[i]) k = i + 1; return k; };
+const hist = (arr, t) => { // value of a series at time t, eased between turn ends
+  const k = turnAt(t); if (k === 0) return arr[0];
+  const u = ease.inOut(seg(t, TT[k] - Math.min(.45, TT[k] - TT[k - 1]), TT[k]));
+  return lerp(arr[k - 1], arr[k], u);
+};
+const LOGS = {
+  1: ['20 amphibious groups sail', '80 missiles; escorts stop up to 38', '22 hits: 7 groups lost · mines: 2'],
+  2: ['Seas 0.5 m: 5 groups unload', 'Reserves reach the Taichung area', 'PLA 10 v Taiwan 5'],
+  3: ['Seas 3 m: nothing sails', 'Supply cut to the troops ashore', 'Reserves arrive: Taiwan 12'],
+  5: ['Seas 3.6 m: too rough to sail', 'Taiwan counterattacks', 'PLA 7 v Taiwan 12'],
+  8: ['Seas 3.6 m: too rough to sail', 'Taiwan counterattacks', 'PLA 2 v Taiwan 12'],
+};
+const logAt = k => { let s = null; for (const j of [1, 2, 3, 5, 8]) if (k >= j) s = j; return s; };
+
+function frame(t) {
+  // Camera: a slow push toward the crossing, then a pan left to make room for the race chart.
+  const z = lerp(1.0, 1.12, ease.inOut(seg(t, 2.8, 8.2)));
+  const pan = ease.inOut(seg(t, 7.6, 8.6));
+  const fx = lerp(640, 600, pan), fy = lerp(520, 520, pan);
+  cam.setAttribute('transform', `translate(${lerp(800, 560, pan).toFixed(1)},${lerp(520, 540, pan).toFixed(1)}) scale(${lerp(z, 1.0, pan).toFixed(4)}) translate(${-fx},${-fy})`);
+  const vis = lerp(.25 * ease.out(seg(t, 0, 1)), 1, ease.inOut(seg(t, 2.8, 3.6)));
+  const dim = lerp(1, .12, ease.inOut(seg(t, 11.4, 12.1)));
+  op(scene, vis * dim * (1 - seg(t, 14.3, 15)));
+  op(hud, ease.out(seg(t, 3.2, 3.8)) * lerp(1, 0, ease.inOut(seg(t, 11.3, 11.9))));
+
+  // Hook.
+  op(H1, ease.out(seg(t, .25, .95)) * (1 - seg(t, 2.6, 3.1)));
+  H1.setAttribute('transform', `translate(0,${((1 - ease.out(seg(t, .25, .95))) * 22 - seg(t, 2.6, 3.2) * 18).toFixed(1)})`);
+  const h2 = ease.out(seg(t, .8, 1.5));
+  op(H2, h2 * (1 - seg(t, 2.7, 3.2)));
+  H2.setAttribute('transform', `translate(800,510) scale(${lerp(.93, 1, ease.back(seg(t, .8, 1.6))).toFixed(3)}) translate(-800,-510) translate(0,${(-seg(t, 2.7, 3.3) * 18).toFixed(1)})`);
+  hot.setAttribute('filter', t > 1.4 && t < 3 ? 'url(#kit-glow)' : '');
+
+  // Plan chips click in one by one.
+  CH.forEach((c, i) => {
+    const u = ease.back(seg(t, 3.5 + i * .32, 3.95 + i * .32));
+    c.g.setAttribute('transform', `translate(${c.x},${100 + (1 - u) * 14})`);
+    op(c.g, seg(t, 3.5 + i * .32, 3.8 + i * .32));
+  });
+  const zon = t > 4.3;
+  zoneEls.central.classList.toggle('on', zon); laneEls.central.classList.toggle('on', zon);
+  zoneEls.central.setAttribute('filter', zon && t < 8 ? 'url(#kit-glow)' : '');
+  op(zlab, ease.out(seg(t, 4.3, 4.8)));
+
+  // Turn clock and log.
+  const k = turnAt(t);
+  op(clock, ease.out(seg(t, 4.9, 5.3)));
+  turnT.textContent = k ? TURN[k - 1] : 'Waiting';
+  dateT.textContent = k ? DATE[k - 1] : '20 Apr 1997';
+  turnN.textContent = k ? `Turn ${k} of 8` : 'Waiting for calm';
+  const lk = logAt(k);
+  op(log, lk ? ease.out(seg(t, 5.4, 5.8)) : 0);
+  if (lk) LOGS[lk].forEach((s, i) => { LOG[i].textContent = s; op(LOG[i], ease.out(seg(t, TT[lk - 1] + .1 + i * .18, TT[lk - 1] + .4 + i * .18))); });
+  const sea = k ? SEAS[k - 1] : 0.5, b = band(sea);
+  seaT.textContent = `Seas ${sea} m, ${BAND[b]}`;
+  seaT.style.fill = b === 2 ? 'var(--red)' : 'var(--blue)';
+  seaT.setAttribute('filter', b === 2 && t < 9.6 ? 'url(#kit-glow)' : '');
+
+  // Waves: small and blue in slight seas, big and red once the rough seas arrive.
+  const rough = ease.inOut(seg(t, 7.95, 8.6));
+  for (const w of WV) {
+    const a = lerp(6, 15, rough), h = lerp(2, 6, rough), x = w.x + Math.sin(t * lerp(1.2, 2.6, rough) + w.ph) * lerp(3, 9, rough);
+    w.p.setAttribute('d', `M${(x - a).toFixed(1)},${w.y} q${(a / 2).toFixed(1)},${(-h).toFixed(1)} ${a.toFixed(1)},0 q${(a / 2).toFixed(1)},${h.toFixed(1)} ${a.toFixed(1)},0`);
+    w.p.setAttribute('stroke', rough > .5 ? 'var(--red)' : 'var(--blue)');
+    w.p.setAttribute('stroke-width', lerp(1.2, 2.2, rough).toFixed(2));
+    op(w.p, lerp(.28, .75, rough) * (.6 + .4 * Math.sin(t * 2 + w.ph)));
+  }
+
+  // Ships cross on turn 1 (5.3–6.9), the waiting five unload on turn 2.
+  for (const s of ships) {
+    const u = ease.inOut(seg(t, 5.3 + (s.i % 5) * .04, 6.75));
+    const gone = s.tk != null && t >= s.tk;
+    const land = s.fate === 'u' ? ease.in(seg(t, 6.75, 7.05)) : s.fate === 'w' ? ease.in(seg(t, 7.2, 7.6)) : 0;
+    const [x, y] = along(lerp(0, .9, u), s.off * (1 - .4 * u), s.back - 34 * land);
+    s.n.setAttribute('cx', x.toFixed(1)); s.n.setAttribute('cy', y.toFixed(1));
+    op(s.n, t < 5.1 ? 0 : gone ? 0 : (1 - land) * ease.out(seg(t, 5.1, 5.4)));
+    s.n.setAttribute('filter', s.fate === 'w' && t > 6.8 && t < 7.3 ? 'url(#kit-glow)' : '');
+  }
+  for (const sh of shots) {
+    const tf = sh.th - .45, v = seg(t, tf, sh.th);
+    const [tx, ty] = [+sh.ship.n.getAttribute('cx'), +sh.ship.n.getAttribute('cy')];
+    const end = sh.hit ? [tx, ty] : [lerp(sh.from[0], tx, .72), lerp(sh.from[1], ty, .72) - 20];
+    const mid = [(sh.from[0] + end[0]) / 2, Math.min(sh.from[1], end[1]) - 90];
+    const bz = w => { const q = 1 - w; return [q * q * sh.from[0] + 2 * q * w * mid[0] + w * w * end[0], q * q * sh.from[1] + 2 * q * w * mid[1] + w * w * end[1]]; };
+    if (t >= tf && t < sh.th) {
+      const pts = []; for (let j = 0; j <= 8; j++) pts.push(bz(Math.max(0, v - .16 + .16 * j / 8)));
+      sh.path.setAttribute('d', 'M' + pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' L'));
+      op(sh.path, 1);
+    } else op(sh.path, 0);
+    const bu = seg(t, sh.th, sh.th + .55);
+    sh.burst.setAttribute('cx', end[0].toFixed(1)); sh.burst.setAttribute('cy', end[1].toFixed(1));
+    sh.burst.setAttribute('r', (ease.out(bu) * (sh.hit ? 26 : 12)).toFixed(1));
+    sh.burst.setAttribute('stroke-width', (1 + (1 - bu) * (sh.hit ? 5 : 2)).toFixed(2));
+    op(sh.burst, bu > 0 && bu < 1 ? 1 - bu : 0);
+  }
+  mined.forEach((s, j) => {
+    const bu = seg(t, s.tk, s.tk + .6);
+    mineFx[j].setAttribute('cx', s.n.getAttribute('cx')); mineFx[j].setAttribute('cy', s.n.getAttribute('cy'));
+    mineFx[j].setAttribute('r', (ease.out(bu) * 22).toFixed(1));
+    mineFx[j].setAttribute('stroke-width', (1 + (1 - bu) * 4).toFixed(2));
+    op(mineFx[j], bu > 0 && bu < 1 ? 1 - bu : 0);
+  });
+  // Groups back in port and ready, held by the rough seas (6 ready on D+1 day, 11 from D+1 night).
+  const ready = k >= 4 ? 11 : k >= 3 ? 6 : 0;
+  portShips.forEach((n, i) => op(n, i < ready ? ease.out(seg(t, (i < 6 ? 8.1 : 8.95) + (i % 6) * .05, (i < 6 ? 8.4 : 9.25) + (i % 6) * .05)) : 0));
+  op(portNote, ease.out(seg(t, 9.0, 9.4)) * (1 - seg(t, 11.2, 11.6)));
+
+  // Reserves.
+  for (const r of RES) {
+    const u = ease.inOut(seg(t, r.t0, r.t1)), x = lerp(r.from[0], r.to[0], u), y = lerp(r.from[1], r.to[1], u);
+    const ang = Math.atan2(r.to[1] - r.from[1], r.to[0] - r.from[0]) * 180 / Math.PI;
+    r.n.setAttribute('transform', `translate(${x.toFixed(1)},${y.toFixed(1)}) rotate(${ang.toFixed(1)})`);
+    op(r.n, seg(t, r.t0 - .2, r.t0) * (1 - seg(t, r.t1, r.t1 + .4)));
+    r.trail.setAttribute('d', `M${r.from[0]},${r.from[1]} L${x.toFixed(1)},${y.toFixed(1)}`);
+    op(r.trail, .8 * seg(t, r.t0 - .2, r.t0) * (1 - seg(t, r.t1, r.t1 + .6)));
+  }
+
+  // Lodgment bars at the zone.
+  const a = hist(A, t), d = hist(D, t);
+  barA.setAttribute('y', (BY - a * BS).toFixed(1)); barA.setAttribute('height', (a * BS).toFixed(1));
+  barD.setAttribute('y', (BY - d * BS).toFixed(1)); barD.setAttribute('height', (d * BS).toFixed(1));
+  barT.textContent = `${Math.round(a)} v ${Math.round(d)}`;
+  op(bars, ease.out(seg(t, 5.0, 5.4)));
+
+  // Race chart.
+  const rv = ease.out(seg(t, 7.7, 8.4));
+  op(race, rv * (1 - ease.inOut(seg(t, 11.3, 11.9))));
+  race.setAttribute('transform', `translate(${((1 - rv) * 60).toFixed(1)},0)`);
+  const tf = clamp(k === 0 ? 0 : (k - 1) + seg(t, TT[k] - Math.min(.45, TT[k] - TT[k - 1]), TT[k]), 0, 8);
+  const ptsOf = arr => { const p = []; for (let i = 0; i <= Math.floor(tf); i++) p.push([i, arr[i]]); if (tf % 1 > 0) p.push([tf, lerp(arr[Math.floor(tf)], arr[Math.ceil(tf)], tf % 1)]); return p; };
+  const pa = ptsOf(A), pd = ptsOf(D), pf = ptsOf(F);
+  lineA.setAttribute('points', pa.map(([i, v]) => `${cx(i).toFixed(1)},${cy(v).toFixed(1)}`).join(' '));
+  lineD.setAttribute('points', pd.map(([i, v]) => `${cx(i).toFixed(1)},${cy(v).toFixed(1)}`).join(' '));
+  afloat.setAttribute('points', [...pa.map(([i, v], j) => `${cx(i).toFixed(1)},${cy(v + pf[j][1]).toFixed(1)}`), ...pa.slice().reverse().map(([i, v]) => `${cx(i).toFixed(1)},${cy(v).toFixed(1)}`)].join(' '));
+  const la = pa[pa.length - 1], ld = pd[pd.length - 1];
+  dotA.setAttribute('cx', cx(la[0]).toFixed(1)); dotA.setAttribute('cy', cy(la[1]).toFixed(1));
+  dotD.setAttribute('cx', cx(ld[0]).toFixed(1)); dotD.setAttribute('cy', cy(ld[1]).toFixed(1));
+  legA.setAttribute('x', (cx(la[0]) - 12).toFixed(1)); legA.setAttribute('y', (cy(la[1]) + (la[1] < ld[1] ? 26 : -14)).toFixed(1));
+  legD.setAttribute('x', (cx(ld[0]) - 12).toFixed(1)); legD.setAttribute('y', (cy(ld[1]) + (la[1] < ld[1] ? -14 : 26)).toFixed(1));
+  cells.forEach((c, i) => op(c, ease.out(seg(t, TT[i], TT[i] + .3))));
+  const ou = ease.out(seg(t, 11.0, 11.4));
+  op(outG, ou);
+  outG.setAttribute('transform', `translate(0,${((1 - ou) * 12).toFixed(1)})`);
+
+  // Payoff: the same doctrine over 1,000 weeks, by month and waiting rule.
+  const p = ease.out(seg(t, 11.8, 12.4));
+  op(pay, p * (1 - seg(t, 14.3, 14.8)));
+  pay.setAttribute('transform', `translate(0,${((1 - p) * 20).toFixed(1)})`);
+  PB.forEach((q, i) => {
+    const u = ease.out(seg(t, 12.3 + i * .3, 13.1 + i * .3));
+    q.bar.setAttribute('width', (600 * q.v / 100 * u).toFixed(1));
+    q.num.textContent = `${Math.round(q.v * u)}%`;
+    q.num.setAttribute('x', (590 + 600 * q.v / 100 * u + 18).toFixed(1));
+    op(q.g, seg(t, 12.2 + i * .3, 12.5 + i * .3));
+  });
+  op(payNote, ease.out(seg(t, 13.4, 13.9)));
+
+  cap(t); end(t, 14.4, 17.5);
+}
+run({ duration: 17.5, poster: 6.3, frame });
+</script>
+</body></html>

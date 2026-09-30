@@ -14,8 +14,6 @@ export const ALL_CATEGORIES = [
   { id: 'narrative', name: 'Narrative & rhetoric', blurb: 'What Beijing says, how it spreads, and what markets and analysts expect.' },
   { id: 'classroom', name: 'Classroom', blurb: 'Teaching tools for courses on deterrence, strategy and cross-Strait history.' },
   { id: 'public', name: 'Public explainers', blurb: 'Short, shareable pieces for a general audience.' },
-  { id: 'deterrence', name: 'Deterrence & signaling', sites: ['deterrence'],
-    blurb: 'Threats, promises and signals as formal models and history, from conventional to extended nuclear deterrence.' },
   { id: 'gametheory', name: 'Game theory', sites: ['deterrence'],
     blurb: 'Every tool built on a game-theory model: bargaining, signaling, brinkmanship, deterrence, inspection and cascades.' },
   { id: 'nuclear', name: 'Nuclear weapons & arms control', sites: ['deterrence'],
@@ -113,17 +111,17 @@ export const ALL_TOOLS = [
     blurb: 'One real day of gray-zone pressure around Taiwan, built from the data. Pick any day of 2026.' },
   { slug: 'how-close', sites: ['tsm'], cat: 'public', title: 'How Close Is China?', status: 'live',
     blurb: 'Type a city and see how far it is from Taiwan and from China, with the Taiwan Strait for scale.' },
-  { slug: 'conceal-reveal', dev: true, also: ['gametheory'], cat: 'deterrence', sites: ['deterrence'], title: 'Conceal or Reveal?', status: 'live',
+  { slug: 'conceal-reveal', dev: true, cat: 'gametheory', sites: ['deterrence'], title: 'Conceal or Reveal?', status: 'live',
     blurb: "Why do states with similar weapons make opposite choices about showing them? Move the costs and beliefs in Walberg's signaling model and watch coercive states reveal while operational states conceal." },
-  { slug: 'dissertation-games', also: ['gametheory'], cat: 'deterrence', sites: ['deterrence'], vault: 'dissertation', title: 'Jon Dissertation Games', status: 'live',
+  { slug: 'dissertation-games', cat: 'gametheory', sites: ['deterrence'], vault: 'dissertation', title: 'Jon Dissertation Games', status: 'live',
     blurb: "Working game trees from Jonathan Walberg's dissertation." },
-  { slug: 'extended-deterrence', dev: true, also: ['gametheory'], cat: 'deterrence', sites: ['deterrence'], title: 'Extended Deterrence', status: 'live',
+  { slug: 'extended-deterrence', dev: true, cat: 'gametheory', sites: ['deterrence'], title: 'Extended Deterrence', status: 'live',
     blurb: 'Would a patron trade Boston for Bonn? Stack treaties, pledges, a tripwire force and nuclear sharing, see what each does to credibility and entrapment, then check the real U.S. commitments.' },
   { slug: 'nuclear-arsenals', sub: { nuclear: 'facts' }, cat: 'nuclear', sites: ['deterrence'], title: 'Nuclear Arsenals', status: 'live',
     blurb: "Scrub eighty years of FAS nuclear warhead estimates for every nuclear-armed state, against the treaties from the NPT to New START's lapse in February 2026." },
   { slug: 'escalation-ladder-kahn', sub: { nuclear: 'playground' }, cat: 'nuclear', sites: ['deterrence'], title: "Kahn's Escalation Ladder", status: 'live',
     blurb: "Step through nuclear crises from Cuba 1962 to Russia 2022 and India–Pakistan 2025 on Herman Kahn's 44-rung ladder, compare them, and read why the ladder misleads." },
-  { slug: 'deterrence-lab-general', also: ['gametheory'], cat: 'deterrence', sites: ['deterrence'], title: 'Deterrence Lab', status: 'live',
+  { slug: 'deterrence-lab-general', cat: 'gametheory', sites: ['deterrence'], title: 'Deterrence Lab', status: 'live',
     blurb: 'Move the costs and beliefs in three classic deterrence models (audience costs, costly signals and salami tactics) and test them against sourced crises from Fashoda in 1898 to Crimea in 2014.' },
   { slug: 'misinfo-cascade', sub: { narratives: 'disinfo' }, dev: true, also: ['gametheory'], cat: 'narratives', sites: ['deterrence'], locked: true, title: 'Misinformation Cascade', status: 'live',
     blurb: "Watch a report of 16 aircraft become 'the island is surrounded' as it spreads, and test when a correction can still stop it." },
@@ -163,7 +161,7 @@ export const ALL_TOOLS = [
     blurb: 'Sixty years of sanctions threats and impositions from the TIES dataset: filter by sender, target, objective and type, see how often the target gave in, and set that beside what the Global Sanctions Data Base authors report.' },
   { slug: 'cost-ratio', dev: true, cat: 'gametheory', sites: ['deterrence'], title: 'Cost Ratio Bargaining', status: 'live',
     blurb: 'Hold the total cost of war fixed, shift who pays it, and watch the peaceful settlement move toward the side whose cost of fighting fell.' },
-  { slug: 'humiliation-motivation', dev: true, cat: 'deterrence', also: ['gametheory'], sites: ['deterrence'], title: 'Humiliation to Motivation', status: 'live',
+  { slug: 'humiliation-motivation', dev: true, cat: 'gametheory', sites: ['deterrence'], title: 'Humiliation to Motivation', status: 'live',
     blurb: 'Past a severity threshold even weak states challenge the order that humiliated them, and a challenge stops telling the dominant power anything.' },
   { slug: 'proliferation-paths', sub: { nuclear: 'facts' }, cat: 'nuclear', sites: ['deterrence'], title: 'Proliferation Paths', status: 'live',
     blurb: 'Scrub from 1939 to 2017 to watch states explore, pursue, acquire and give up nuclear weapons, as three published datasets code it, with every disagreement between them shown.' },
@@ -198,7 +196,7 @@ export const ALL_TOOLS = [
 export const onSite = (x, site = SITE) => !x.sites || x.sites.includes(site);
 /** A tool's category on a given site (siteCat overrides cat per site). */
 export const catOn = (t, site = SITE) => (t.dev && site === 'deterrence' ? 'dev' : (t.siteCat && t.siteCat[site]) || t.cat);
-const ORDER = { deterrence: ['deterrence', 'gametheory', 'nuclear', 'regions', 'narratives', 'coercion', 'models', 'tsm', 'dev'] };
+const ORDER = { deterrence: ['gametheory', 'nuclear', 'regions', 'narratives', 'coercion', 'models', 'tsm', 'dev'] };
 // `also` lists extra categories a tool appears in; `cats` is its primary category plus those.
 export const TOOLS = ALL_TOOLS.filter(t => onSite(t)).map(t => ({ ...t, cat: catOn(t), cats: catOn(t) === 'dev' ? ['dev'] : [catOn(t), ...(t.also || [])],
   blurb: (t.siteBlurb && t.siteBlurb[SITE]) || t.blurb }));

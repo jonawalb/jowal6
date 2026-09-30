@@ -1,5 +1,5 @@
 // Landing page: this week's dashboard, category selector, search, tool cards, keyboard navigation and help.
-import { CATEGORIES, TOOLS, inCat } from './shared/js/registry.js';
+import { ALL_CATEGORIES, CATEGORIES, TOOLS, inCat, onSite } from './shared/js/registry.js';
 import { createProjection, drawBasemap, el } from './shared/js/mapkit.js';
 import { LAND_INDOPAC } from './shared/data/land-indopac.js';
 import { mountWeek } from './shared/js/week/week.js';
@@ -60,7 +60,8 @@ el('text', { x: tx + 9, y: ty + 4, class: 'hero-lbl' }, root, 'Taiwan');
 // State: a section (`cat`) and, for sections with subsections, an open subsection (`sub`). Hash: #cat or #cat/sub.
 let [cat, sub = ''] = location.hash.slice(1).split('/');
 if (!CATEGORIES.some(c => c.id === cat)) { cat = 'all'; sub = ''; }
-const catName = Object.fromEntries(CATEGORIES.map(c => [c.id, c.name]));
+// Includes hidden sections (e.g. the Indo-Pacific tools listed under Regions) so their cards still get a label.
+const catName = Object.fromEntries(ALL_CATEGORIES.filter(c => onSite(c)).map(c => [c.id, c.name]));
 const counts = Object.fromEntries(CATEGORIES.map(c => [c.id, TOOLS.filter(t => inCat(t, c.id)).length]));
 // Interactive Deterrence lists every tool under "Everything"; other sites open on an overview of section tiles.
 const TILES = SITE !== 'tsm';
@@ -82,7 +83,7 @@ $('sections').addEventListener('click', e => {
 $('q').addEventListener('input', render);
 
 // Categories (and single tools) whose tools need a second password on this site.
-const locked = new Set(CATEGORIES.filter(c => c.locked).map(c => c.id));
+const locked = new Set(ALL_CATEGORIES.filter(c => c.locked && onSite(c)).map(c => c.id));
 const isLocked = t => locked.has(t.cat) || !!t.locked || !!t.vault;
 const LOCK = ' <span class="lock-badge" title="Opening this tool asks for a password">🔒 Password Protected</span>';
 
@@ -118,9 +119,9 @@ function subGroups(c, list) {
 }
 /** Tile for one subsection, opened like a section tile. */
 function subTile(c, s, ts) {
-  return `<button type="button" class="sec-tile" data-open-cat="${c.id}/${s.id}">
+  return `<button type="button" class="sec-tile${s.locked ? ' locked' : ''}" data-open-cat="${c.id}/${s.id}">
     <span class="sec-tile-n">${ts.length} tool${ts.length === 1 ? '' : 's'}</span>
-    <b>${esc(s.name)}</b><span class="sec-tile-b">${esc(s.blurb)}</span>
+    <b>${esc(s.name)}${s.locked ? LOCK : ''}</b><span class="sec-tile-b">${esc(s.blurb)}</span>
     <span class="sec-tile-l">${ts.slice(0, 4).map(t => esc(t.title)).join(' · ')}${ts.length > 4 ? ' · …' : ''}</span>
     <span class="go">Open →</span></button>`;
 }
@@ -146,7 +147,7 @@ function render() {
         // Inside a subsection: its tools, with a way back to the section.
         const [s, ts] = open;
         $('sections').innerHTML = `<section class="cat-sec" id="sec-${c.id}-${s.id}"><button type="button" class="btn sec-back" data-open-cat="${c.id}">← ${esc(c.name)}</button>
-          <div class="cat-h"><h2>${esc(s.name)}</h2><p>${esc(s.blurb)}</p></div>
+          <div class="cat-h"><h2>${esc(s.name)}${s.locked ? LOCK : ''}</h2><p>${esc(s.blurb)}</p></div>
           <div class="tools">${ts.map(card).join('')}</div></section>`;
       } else {
         $('sections').innerHTML = `<section class="cat-sec" id="sec-${c.id}"><button type="button" class="btn sec-back" data-open-cat="all">← All sections</button>

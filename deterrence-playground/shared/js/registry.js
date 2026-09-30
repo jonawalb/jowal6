@@ -179,6 +179,8 @@ export const ALL_TOOLS = [
     blurb: 'Defend four notional cities through three real-time waves of drones and missiles modelled on real raids, and watch the cost exchange as your interceptors run out.' },
   { slug: 'matrix-game', cat: 'models', also: ['ukraine'], sites: ['deterrence'], title: 'Baltic Matrix Game', status: 'live',
     blurb: 'An argument-based matrix wargame of a fictional Narva crisis: argue an action with three reasons, face counter-arguments, and roll 2d6 over six turns.' },
+  { slug: 'sub-hunt', cat: 'models', sites: ['deterrence'], title: 'The Hunt', status: 'live',
+    blurb: 'Hunt a hidden submarine in a notional Greenland–Iceland–UK gap with sonobuoys, patrol aircraft and a towed array, on a Bayesian probability map that updates every hour, then see its true track.' },
 ];
 
 export const onSite = (x, site = SITE) => !x.sites || x.sites.includes(site);

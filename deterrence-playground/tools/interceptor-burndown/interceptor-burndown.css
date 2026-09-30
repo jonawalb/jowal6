@@ -96,3 +96,40 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
 }
 @media (prefers-reduced-motion: reduce) { .mags .mbar span { transition: none; } }
 .chart .tb-t.in { fill: var(--ink); }
+
+/* ---- Motion: Interactive Deterrence only (the .ib-m class is set by js/fx.js there and on localhost) ---- */
+.ib-m .chartcard { position: relative; }
+.ib-m .ib-fx { position: absolute; pointer-events: none; overflow: visible; }
+.ib-m .chart.ib-pre { clip-path: inset(0 100% 0 0); }
+.ib-m .chart.ib-draw { animation: ib-wipe .7s cubic-bezier(.3, .7, .2, 1) both; }
+@keyframes ib-wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+.ib-m .tbar.ib-grow { transform-box: fill-box; animation: ib-grow .5s cubic-bezier(.2, .8, .2, 1) both; }
+@keyframes ib-grow { from { transform: scaleX(0); } }
+.ib-m .mags .mbar span { transition: width .25s ease-out; }
+@media (prefers-reduced-motion: reduce) {
+  .ib-m .chart.ib-pre { clip-path: none; }
+  .ib-m .chart.ib-draw, .ib-m .tbar.ib-grow { animation: none; }
+}
+
+/* ---- Trailer look (the night plotting table; only when a player picks it on Interactive Deterrence) ----
+   Seven interceptor bands and three threat types, re-tuned for the dark table and kept apart in hue and
+   lightness: amber, teal, pink, lime, violet, blue, sand, with red for the ballistic threat. */
+:root[data-skin="trailer"] {
+  --c1: #f0a93b; --c2: #e8604a; --c3: #5fc4b0; --c4: #d98cc0; --c5: #c9dc7a; --c6: #a68ef0; --c7: #7fb6d9; --c8: #cdb98f;
+}
+:root[data-skin="trailer"] .daylabel b { font-style: italic; font-weight: 500; font-size: 36px; color: var(--accent); text-shadow: 0 0 18px rgba(240, 169, 59, .3); }
+:root[data-skin="trailer"] .play { font-family: var(--mono); letter-spacing: .08em; text-transform: uppercase; font-size: 12px; }
+:root[data-skin="trailer"] .mags .mbar { background: #0a1510; }
+:root[data-skin="trailer"] .mags .mbar span { box-shadow: 0 0 10px -3px currentColor; }
+:root[data-skin="trailer"] .mags .mn { font-family: var(--mono); font-weight: 400; font-size: 11.5px; letter-spacing: .03em; }
+:root[data-skin="trailer"] .chart .area { opacity: .78; }
+:root[data-skin="trailer"] .chart .cur { filter: drop-shadow(0 0 4px rgba(240, 169, 59, .7)); }
+:root[data-skin="trailer"] .chart .drymark { filter: drop-shadow(0 0 3px rgba(232, 96, 74, .7)); }
+:root[data-skin="trailer"] .chart .dry-t, :root[data-skin="trailer"] .chart .tb-t { font-family: var(--mono); font-size: 10.5px; }
+:root[data-skin="trailer"] .chart .row-t { font-family: var(--body); }
+:root[data-skin="trailer"] .chart-h .seg button { color: var(--ink); }
+:root[data-skin="trailer"] .chart-h .seg button[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); }
+:root[data-skin="trailer"] .tour { background: color-mix(in srgb, var(--panel) 94%, transparent); box-shadow: 0 22px 50px -24px #000; }
+:root[data-skin="trailer"] .mags .mv { font-size: 11.5px; }
+:root[data-skin="trailer"] .mags li { grid-template-columns: 96px minmax(0, 1fr) 60px; }
+@media (max-width: 520px) { :root[data-skin="trailer"] .mags li { grid-template-columns: 84px minmax(0, 1fr) 56px; } }

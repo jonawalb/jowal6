@@ -169,3 +169,30 @@
   .od-chart text { font-size: 19px !important; }
   .od-mc td, .od-mc th { padding: 6px 6px; }
 }
+
+/* Trailer look (Interactive Deterrence "Graphics: Trailer"; the attribute is only ever set there).
+   Shared tokens come from shared/css/trailer.css. Here: the chart series colours, the orbit view as a
+   night plot (glowing constellations, an atmosphere rim on the Earth, mono labels) and glow on the effects. */
+:root[data-skin="trailer"] { --c2: #ff8a3d; --c3: #2cc2ac; }
+:root[data-skin="trailer"] .od-orbit { background: radial-gradient(90% 120% at 50% 100%, #10262a 0%, var(--sea) 55%, #081310 100%); box-shadow: inset 0 0 0 1px var(--rule); }
+:root[data-skin="trailer"] .od-earth { fill: #12251c; stroke: var(--blue); stroke-width: 1.4; filter: drop-shadow(0 0 7px rgba(127, 182, 217, .45)); }
+:root[data-skin="trailer"] .od-earth-t { font-family: var(--display); font-size: 15px; fill: var(--blue); fill-opacity: .7; }
+:root[data-skin="trailer"] .od-shell { stroke: var(--blue); stroke-opacity: .08; }
+:root[data-skin="trailer"] .od-divider { stroke: var(--blue); stroke-opacity: .35; }
+:root[data-skin="trailer"] .od-side { font-family: var(--mono); font-weight: 400; font-size: 12px; letter-spacing: .2em; }
+:root[data-skin="trailer"] .od-shell-t { font-family: var(--mono); font-weight: 400; font-size: 10.5px; letter-spacing: .08em; fill: var(--muted); }
+:root[data-skin="trailer"] .od-sat.on, :root[data-skin="trailer"] .od-jam, :root[data-skin="trailer"] .od-fx > * { filter: url(#od-glow); }
+:root[data-skin="trailer"] .od-deb circle { fill: #c9d6cc; opacity: .55; }
+:root[data-skin="trailer"] .od-grp.pick .od-hit { stroke-opacity: .22; }
+:root[data-skin="trailer"] .od-month-t b, :root[data-skin="trailer"] .od-kpi b { font-family: var(--mono); font-weight: 600; }
+:root[data-skin="trailer"] .od-pips li.now { box-shadow: 0 0 8px var(--accent); }
+:root[data-skin="trailer"] .od-log b, :root[data-skin="trailer"] .od-h3 { font-family: var(--display); font-style: italic; font-weight: 500; }
+:root[data-skin="trailer"] .od-acts button.kin[aria-pressed="true"] { box-shadow: 0 0 0 1px var(--bad), 0 0 16px -4px var(--bad); }
+:root[data-skin="trailer"] #end.ready { box-shadow: var(--glow); }
+:root[data-skin="trailer"] .od-tour { box-shadow: 0 18px 50px -20px #000, var(--glow); }
+@media (max-width: 560px) {
+  :root[data-skin="trailer"] .od-side { font-size: 16px; letter-spacing: .02em; }
+  :root[data-skin="trailer"] .od-note, :root[data-skin="trailer"] .od-deb-t { font-size: 13px; }
+  :root[data-skin="trailer"] .od-shell-t { font-size: 16px; }
+  :root[data-skin="trailer"] .od-earth-t { font-size: 18px; }
+}

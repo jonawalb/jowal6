@@ -20,8 +20,8 @@ export function drawChain(svg, chain) {
     for (const s of STATES) {
       const w = W * row.mu[s.id];
       if (w > 0.3) {
-        el('rect', { x, y, width: w, height: 30, fill: `var(${s.col})`, class: 'seg' }, svg);
-        if (w > 44) el('text', { x: x + w / 2, y: y + 20, 'text-anchor': 'middle', class: 'segl' }, svg, pc1(row.mu[s.id]));
+        el('rect', { x, y, width: w, height: 30, fill: `var(${s.col})`, class: 'seg', 'data-row': k, 'data-s': s.id }, svg);
+        if (w > 44) el('text', { x: x + w / 2, y: y + 20, 'text-anchor': 'middle', class: 'segl', 'data-row': k, 'data-s': s.id }, svg, pc1(row.mu[s.id]));
       }
       x += w;
     }

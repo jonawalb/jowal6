@@ -8,6 +8,7 @@ import { drawBurn, drawLeak, drawTornado } from './charts.js';
 import { mountControls, syncControls, DRONE_POL } from './controls.js';
 import { createTour } from './tour.js';
 import { addExportBar, tableRows } from '../../../shared/js/export.js';
+import { MOTION, tween, press, changed, hit, drawIn, growBars, dryBurst } from './fx.js';
 
 const $ = id => document.getElementById(id);
 const HZ = [30, 60, 90];
@@ -51,6 +52,7 @@ function readHash() {
 const dryText = v => (v == null ? `lasts ${S.horizon}+ days` : `dry day ${v}`);
 
 function renderMags() {
+  if (MOTION) return renderMagsLive();
   const d = sim.days[S.day];
   $('mags').innerHTML = SYSTEMS.filter(s => sim.start[s.k] >= 1 || S.inv[s.k] > 0).map(s => {
     const cap = Math.max(1, sim.start[s.k]), v = d.stock[s.k], f = Math.max(0, Math.min(1, v / cap));
@@ -59,6 +61,34 @@ function renderMags() {
       <span class="mbar" role="meter" aria-label="${s.n} interceptors left" aria-valuemin="0" aria-valuemax="${Math.round(cap)}" aria-valuenow="${Math.round(v)}"><span style="width:${(f * 100).toFixed(1)}%;background:${s.col}"></span></span>
       <span class="mv num">${v < 1 ? 'Empty' : r0(v)}</span><span class="md">${dryText(sim.dry[s.k])}</span></li>`;
   }).join('') || '<li class="none">No interceptors in the magazine. Pick an inventory preset.</li>';
+}
+
+// Interactive Deterrence: the same rows, updated in place so the bars slide, the counts tween when the
+// scenario changes, and a row that runs dry shakes. Same markup, text and attributes as renderMags().
+function renderMagsLive() {
+  const d = sim.days[S.day], list = SYSTEMS.filter(s => sim.start[s.k] >= 1 || S.inv[s.k] > 0), ul = $('mags');
+  const keys = list.map(s => s.k).join();
+  if (!list.length) { ul.dataset.keys = ''; ul.innerHTML = '<li class="none">No interceptors in the magazine. Pick an inventory preset.</li>'; return; }
+  if (ul.dataset.keys !== keys) {
+    ul.dataset.keys = keys;
+    ul.innerHTML = list.map(s => `<li data-k="${s.k}"><span class="mn">${s.n}</span>
+      <span class="mbar" role="meter" aria-label="${s.n} interceptors left" aria-valuemin="0"><span style="background:${s.col}"></span></span>
+      <span class="mv num"></span><span class="md"></span></li>`).join('');
+  }
+  list.forEach((s, i) => {
+    const li = ul.children[i], cap = Math.max(1, sim.start[s.k]), v = d.stock[s.k], f = Math.max(0, Math.min(1, v / cap));
+    const st = v < 1 ? 'empty' : f < 0.25 ? 'low' : 'ok', was = li.dataset.state;
+    li.dataset.state = st;
+    const bar = li.querySelector('.mbar');
+    bar.setAttribute('aria-valuemax', Math.round(cap)); bar.setAttribute('aria-valuenow', Math.round(v));
+    bar.firstElementChild.style.width = `${(f * 100).toFixed(1)}%`;
+    const mv = li.querySelector('.mv');
+    // During play the day ticks every 110 ms, so counts jump with the day; scenario changes tween.
+    if (playing) { mv.dataset.v = v; mv.textContent = v < 1 ? 'Empty' : r0(v); }
+    else tween(mv, v, x => (x < 1 ? 'Empty' : r0(x)));
+    li.querySelector('.md').textContent = dryText(sim.dry[s.k]);
+    if (playing && was && was !== 'empty' && st === 'empty') { hit(li); changed(mv); }
+  });
 }
 
 function renderDay() {
@@ -71,6 +101,7 @@ function renderDay() {
   const scrub = t => { stop(); S.day = t; renderDay(); writeHash(); };
   drawBurn($('burn'), sim, S.day, scrub);
   drawLeak($('leak'), sim, S.day, scrub);
+  if (playing && S.day === sim.bmdDry) { dryBurst($('burn')); hit($('status')); changed($('status')); }
   $('leak-day').innerHTML = S.day === 0 ? 'Drag across the chart to read any day.' :
     THREATS.map(t => `<span><i class="key" style="background:${t.col}"></i>${t.n}: <b class="num">${r0(d.leak[t.k])}</b> of ${r0(d.inc[t.k])} through</span>`).join('');
 }
@@ -78,8 +109,10 @@ function renderDay() {
 function renderStatus() {
   const st = $('status'), bd = sim.bmdDry;
   st.dataset.s = bd == null ? 'good' : bd > 30 ? 'warn' : 'bad';
-  st.querySelector('b').textContent = S.salvo.b <= 0 ? 'No ballistic missiles in this salvo'
+  const head = S.salvo.b <= 0 ? 'No ballistic missiles in this salvo'
     : bd == null ? `Ballistic defense lasts past day ${S.horizon}` : `Ballistic defense runs dry on day ${bd}`;
+  if (st.querySelector('b').textContent && st.querySelector('b').textContent !== head) changed(st);
+  st.querySelector('b').textContent = head;
   const b30 = sim.days.slice(1, 31).reduce((a, x) => a + x.leak.b, 0);
   const sb = shot('b', 'mse', S);
   st.querySelector('span').textContent = (bd ? 'By then every interceptor that can engage a ballistic missile is spent. ' : '') +
@@ -90,22 +123,27 @@ function renderStatus() {
 function renderSummary() {
   const rows = SYSTEMS.filter(s => sim.start[s.k] >= 1).map(s => `<dt>${s.n}</dt><dd>${dryText(sim.dry[s.k])}</dd>`).join('');
   const po = sim.prcOut;
+  const before = [...$('summary').querySelectorAll('dd')].map(x => x.textContent);
   $('summary').innerHTML = rows +
     `<dt>PRC SRBMs used up</dt><dd>${S.cap ? (po.b ? 'day ' + po.b : 'not within ' + S.horizon + ' days') : 'no limit set'}</dd>
      <dt>PRC GLCMs used up</dt><dd>${S.cap ? (po.c ? 'day ' + po.c : 'not within ' + S.horizon + ' days') : 'no limit set'}</dd>
      <dt>Leakers, days 1-30</dt><dd>${r0(leakersBy(sim, 30))}</dd>
      <dt>Interceptors fired</dt><dd>${r0(sim.cum.fired)} of ${r0(sim.startTotal)} usable${S.prod > 0 || S.us > 0 ? ' at the start, plus resupply' : ''}</dd>`;
+  const dds = $('summary').querySelectorAll('dd');
+  if (before.length === dds.length) dds.forEach((x, i) => { if (x.textContent !== before[i]) changed(x); });
 }
 
 function renderTornado() {
   const tor = tornado(S, S.metric);
   $('metric-choices').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.k === S.metric));
   drawTornado($('tornado'), tor, S.metric, S.horizon);
+  if (growNext) { growNext = false; growBars($('tornado')); }
   const top = tor.rows[0];
   $('tor-note').textContent = top && top.swing > 0.05
     ? `${top.n} moves the result most: from ${fmtM(top.lo)} to ${fmtM(top.hi)}. Each input is moved on its own, 25% down and up unless labelled, with the rest held fixed.`
     : 'No single input moves this result much in the current scenario.';
 }
+let growNext = false;
 const fmtM = v => (S.metric === 'dry' ? (v > S.horizon ? `past day ${S.horizon}` : `day ${v.toFixed(1)}`) : `${r0(v)} leakers`);
 
 function update() {
@@ -152,11 +190,11 @@ tables();
 $('legend-burn').innerHTML = SYSTEMS.map(s => `<li><i class="sw" style="background:${s.col}"></i>${s.n}</li>`).join('');
 $('legend-leak').innerHTML = THREATS.map(t => `<li><i class="sw" style="background:${t.col}"></i>${t.n} through</li>`).join('') + '<li><i class="sw incsw"></i>All incoming</li>';
 $('metric-choices').innerHTML = METRICS.map(m => `<button type="button" class="btn" data-k="${m.k}">${m.n}</button>`).join('');
-$('metric-choices').querySelectorAll('button').forEach(b => b.onclick = () => { S.metric = b.dataset.k; renderTornado(); writeHash(); });
+$('metric-choices').querySelectorAll('button').forEach(b => b.onclick = () => { S.metric = b.dataset.k; growNext = true; renderTornado(); writeHash(); });
 $('hz-choices').innerHTML = HZ.map(h => `<button type="button" class="btn" data-h="${h}">${h} days</button>`).join('');
 $('hz-choices').querySelectorAll('button').forEach(b => b.onclick = () => { S.horizon = +b.dataset.h; update(); });
 $('day').oninput = e => { stop(); S.day = +e.target.value; renderDay(); writeHash(); };
-$('play').onclick = () => (playing ? stop() : play());
+$('play').onclick = () => { press($('play')); playing ? stop() : play(); };
 const tour = createTour($('stage'), set => {
   stop();
   Object.assign(S, DEFAULT(), JSON.parse(JSON.stringify(set)));
@@ -173,6 +211,11 @@ document.addEventListener('keydown', e => {
   if (e.key === ' ' && e.target === document.body) { e.preventDefault(); playing ? stop() : play(); }
 });
 update();
+drawIn([$('burn'), $('leak')]);
+if (MOTION && 'IntersectionObserver' in window) {
+  const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { io.disconnect(); growBars($('tornado')); } }, { threshold: .3 });
+  io.observe($('tornado'));
+}
 let rz = null;
 addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { renderDay(); renderTornado(); }, 120); });
 const NOTE = 'Notional model (TSM Interceptor Burn-down). Inventories: open-source estimates; kill chances and drone rates notional.';

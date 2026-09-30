@@ -8,6 +8,7 @@ import { renderTimeline, renderChecks } from './timeline.js';
 import { readHash, writeHash } from './hash.js';
 import { createTour } from './tour.js';
 import { addExportBar } from '../../../shared/js/export.js';
+import { initFx, before as fxBefore, after as fxAfter } from './fx.js';
 
 const S = { sc: { target: 'cv', D: 1200, kt: 30, emcon: false }, nodes: [], links: [], dead: new Set(), sel: null, choose: false, nid: 0, preset: null };
 const CAT_ORDER = { sensor: 0, c2: 1, shooter: 2 };
@@ -35,11 +36,13 @@ const api = {
     const g = { nodes: S.nodes, links: S.links, dead: S.dead };
     const r = evaluate(g, S.sc), spof = singlePoints(g, S.sc);
     const r0 = S.dead.size ? evaluate({ ...g, dead: new Set() }, S.sc) : r;
+    fxBefore();
     board.render(r, spof, opts.focus ?? null);
     panel.render(r, spof, r0);
     renderTimeline(document.getElementById('kc-timeline'), r, S, label);
     renderChecks(document.getElementById('kc-checks'), r, S, label);
     document.body.classList.toggle('choosing', S.choose);
+    fxAfter(r);
     writeHash(S);
   },
   loadPreset(key) {
@@ -89,6 +92,7 @@ const api = {
 };
 
 const board = createBoard(document.getElementById('kc-board'), api);
+initFx(api);
 const panel = createPanel(document.getElementById('panel'), api);
 
 // Palette: click or Enter adds a node to its lane; drag drops it where you release.

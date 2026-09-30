@@ -95,3 +95,31 @@
 .costs input { width: 58px; font: 12px var(--mono); padding: 2px 4px; border: 1px solid var(--rule); border-radius: 3px; background: var(--bg); color: var(--ink); }
 .tk { font: 10.5px var(--mono); fill: var(--muted); }
 .cuml { font: 600 12px var(--body); fill: var(--ink); paint-order: stroke; stroke: var(--panel); stroke-width: 3px; }
+
+/* ---- Trailer graphics (Interactive Deterrence games only) ---- */
+:root[data-skin="trailer"] {
+  --c1: #7fb6d9; --c2: #ff8a3d; --c3: #2cc2ac; --c4: #d77ab0; --c5: #efc12f; --c6: #a68ef0; --c7: #63b3d6; --c8: #c8b48a;
+}
+:root[data-skin="trailer"] .chain .segl { fill: #0b1712; stroke: none; font-weight: 600; }
+:root[data-skin="trailer"] .chain .seg[data-s="N"] { filter: drop-shadow(0 0 6px rgba(232, 96, 74, .6)); }
+:root[data-skin="trailer"] .chain .rn, :root[data-skin="trailer"] .dec .rn { font-family: var(--display); font-style: italic; font-weight: 500; font-size: 15px; }
+:root[data-skin="trailer"] .cbar.best { stroke: var(--accent); stroke-width: 2; filter: drop-shadow(0 0 8px rgba(240, 169, 59, .55)); }
+:root[data-skin="trailer"] .pbm { fill: var(--accent); }
+:root[data-skin="trailer"] .pbl { stroke: var(--accent); }
+:root[data-skin="trailer"] .mark { fill: #0b1712; stroke: var(--accent); filter: drop-shadow(0 0 6px rgba(240, 169, 59, .7)); }
+:root[data-skin="trailer"] .eo { stroke: var(--blue); }
+:root[data-skin="trailer"] .tile, :root[data-skin="trailer"] .ccard { background: rgba(8, 18, 13, .5); }
+:root[data-skin="trailer"] .tile b { font-family: var(--mono); font-weight: 400; font-size: 19px; }
+:root[data-skin="trailer"] .tile.bad { background: color-mix(in srgb, var(--bad) 10%, transparent); box-shadow: 0 0 22px -10px var(--bad); }
+:root[data-skin="trailer"] .ccard h3, :root[data-skin="trailer"] .tour h3 { font-family: var(--display); font-style: italic; font-weight: 500; }
+:root[data-skin="trailer"] .status[data-s="good"] { border-color: var(--good); }
+:root[data-skin="trailer"] .status[data-s="bad"] { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 10%, var(--panel)); box-shadow: 0 0 24px -10px var(--bad); }
+:root[data-skin="trailer"] .tour { box-shadow: 0 20px 50px -20px #000, var(--glow); }
+:root[data-skin="trailer"] .readout dt { font-size: 11px; letter-spacing: 0; }
+:root[data-skin="trailer"] .pill { white-space: normal; letter-spacing: 0; }
+:root[data-skin="trailer"] .costs input { background: rgba(8, 18, 13, .6); }
+
+/* ---- Motion (both looks) ---- */
+@keyframes fx-flash { from { background: color-mix(in srgb, var(--accent) 24%, transparent); } }
+.fx-flash { animation: fx-flash .9s ease-out; }
+@media (prefers-reduced-motion: reduce) { .fx-flash { animation: none; } }

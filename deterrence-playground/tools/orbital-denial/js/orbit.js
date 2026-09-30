@@ -5,6 +5,8 @@ import { SHELL_KEYS, SHELLS, MISSIONS, MISSION_KEYS, BACKGROUND } from '../data/
 const NS = 'http://www.w3.org/2000/svg';
 const W = 640, H = 350, CX = 320, CY = 332, RE = 58;
 const RADII = { low: 96, high: 146, meo: 206, geo: 268 };
+/** Geometry for the motion layer (fx.js): centre, Earth radius, shell radii and the point on a shell at an angle. */
+export const GEOM = { CX, CY, RE, RADII, pt: (r, deg) => pt(r, deg) };
 const MISSION_OF = Object.fromEntries(MISSION_KEYS.map(m => [MISSIONS[m].shell, m]));
 const el = (tag, attrs, parent, text) => {
   const e = document.createElementNS(NS, tag);

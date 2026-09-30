@@ -7,6 +7,7 @@ import { newGame, replay, cur, playerArgue, playerRoll, aiArgue, aiRoll, nextTur
 import { renderBoard, renderInject, renderAdjudication, renderLog, logText, esc, actorChip, diceHtml } from './views.js';
 import { renderDebrief } from './debrief.js';
 import { createTour } from './tour.js';
+import { dealFx, tumble, landFx, pickFx, injectFx, debriefFx } from './fx.js';
 
 const $ = s => document.querySelector(s);
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -129,11 +130,13 @@ function doRoll(who) {
     ui.phase = who === 'p' ? 'p-res' : 'ai-res';
     if (who === 'ai' || g.over) writeHash();
     render();
+    landFx($('#mg-adj'), $('#mg-board'), ui.delta, res);
     $('#mg-adj .mg-res')?.setAttribute('tabindex', '-1');
     $('#mg-adj .mg-res')?.focus({ preventScroll: true });
   };
   if (reduce) return finish();
   const row = adj.querySelector('.mg-rollrow');
+  tumble(row);
   let n = 0;
   const tick = setInterval(() => {
     row.innerHTML = `${diceHtml([1 + Math.floor(Math.random() * 6), 1 + Math.floor(Math.random() * 6)])}<span class="fine">Rolling…</span>`;
@@ -155,20 +158,20 @@ document.addEventListener('click', e => {
   if (t.dataset.ctr != null) { ui.counter = t.dataset.ctr === 'none' ? 'none' : +t.dataset.ctr; renderPanel(); focusSame(`[data-ctr="${t.dataset.ctr}"]`); return; }
   if (t.id === 'mg-submit' && ui.action != null) {
     playerArgue(g, ui.action, ui.reasons);
-    ui.phase = 'p-adj'; ui.delta = {}; render(); scrollAdj(); return;
+    ui.phase = 'p-adj'; ui.delta = {}; render(); scrollAdj(); dealFx($('#mg-adj')); return;
   }
   if (t.id === 'mg-csubmit' && ui.counter != null) {
     aiArgue(g, ui.counter === 'none' ? null : ui.counter);
-    ui.phase = 'ai-adj'; ui.delta = {}; render(); scrollAdj(); return;
+    ui.phase = 'ai-adj'; ui.delta = {}; render(); scrollAdj(); dealFx($('#mg-adj')); return;
   }
   if (t.dataset.next === 'ai') { ui.phase = 'ai-counter'; ui.counter = null; render(); return; }
-  if (t.dataset.next === 'turn') { nextTurn(g); ui = { phase: 'compose', action: null, reasons: [], counter: null, delta: {} }; render(); $('#mg-inject').scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' }); return; }
-  if (t.dataset.next === 'debrief') { ui.phase = 'debrief'; render(); $('#mg-debrief').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' }); return; }
+  if (t.dataset.next === 'turn') { nextTurn(g); ui = { phase: 'compose', action: null, reasons: [], counter: null, delta: {} }; render(); injectFx($('#mg-inject')); $('#mg-inject').scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' }); return; }
+  if (t.dataset.next === 'debrief') { ui.phase = 'debrief'; render(); debriefFx($('#mg-debrief')); $('#mg-debrief').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' }); return; }
   if (t.hasAttribute('data-again') || t.id === 'mg-new') return load(g.actor, newSeed(), '');
   if (t.hasAttribute('data-print') || t.id === 'mg-print') return window.print();
   if (t.hasAttribute('data-dl') || t.id === 'mg-dl') return download();
 });
-const focusSame = sel => $('#mg-panel ' + sel)?.focus();
+const focusSame = sel => { const el = $('#mg-panel ' + sel); el?.focus(); pickFx(el); };
 function scrollAdj() {
   const el = $('#mg-adj');
   if (el.getBoundingClientRect().top > innerHeight * 0.6 || el.getBoundingClientRect().top < 0) el.scrollIntoView({ block: 'start', behavior: reduce ? 'auto' : 'smooth' });

@@ -11,6 +11,8 @@ import { readHash, writeHash } from './hash.js';
 import { pWithin } from './filter.js';
 import { covers, lineEnds } from './sensors.js';
 import { isLand, step, BOX } from './geo.js';
+import { pulse } from '../../../shared/js/motion.js';
+import { fxLayer, dropFx, heatFade, turnFx, replayFx, tick, revealFx } from './fx.js';
 
 const $ = id => document.getElementById(id);
 const newSeed = () => 1 + Math.floor(Math.random() * 999998);
@@ -18,6 +20,7 @@ const store = { get: k => { try { return localStorage.getItem(k); } catch { retu
   set: (k, v) => { try { localStorage.setItem(k, v); } catch { /* storage blocked: fine */ } } };
 
 const map = createMap($('map'));
+const fx = fxLayer(map);
 const phone = matchMedia('(max-width: 720px)'); // matches the CSS that moves the map above the controls
 let color = tokenColor('--c2', document.body);
 let g, tool = 'circle', cursor = null, ang = 90, coached = false;
@@ -58,6 +61,7 @@ function draw() {
   const order = g.over ? null : shipOrder(g);
   if (!g.over) render(map, g, { hour: hourOf(g), snap: lastSnap(g), reveal: false, order }, color);
   renderStatus(g);
+  countStatus();
   renderQueue(g);
   if (!g.over) renderLog(g);
   $('undo').disabled = !!g.over || !thisTurn(g).length;
@@ -98,6 +102,13 @@ function coach() {
   box.hidden = false;
 }
 
+/** Readouts count to their new values (the text renderStatus wrote is the real number; this only animates it). */
+function countStatus() {
+  const n = id => parseInt($(id).textContent, 10);
+  tick($('odds'), n('odds'), v => `${Math.round(v)}%`);
+  ['effort', 'buoys', 'torps'].forEach(id => { if (!Number.isNaN(n(id))) tick($(id), n(id), v => `${Math.round(v)}`); });
+}
+
 const say = html => { $('say').innerHTML = html; };
 
 function setTool(t) { tool = t; draw(); }
@@ -109,6 +120,7 @@ function act(p) {
   const odds = covered(p, tool);
   const r = place(g, tool, p, ang);
   const a = ACTIONS[tool];
+  dropFx(fx, map, tool, r, document.querySelector(`#tools button[data-tool="${tool}"]`));
   if (tool === 'attack') say(`Attack queued: your map gives this ring <b>${pct(odds)}</b>. It strikes when you press End turn, before the sub moves. Undo to cancel.`);
   else if (tool === 'move' || tool === 'dash') say(`Ship ordered ${tool === 'dash' ? 'to sprint (deaf this turn)' : 'to move, listening'}. One ship order per turn: a new one replaces it.`);
   else say(`${a.name} ${r.name} queued for ${a.cost} effort, over water holding <b>${pct(odds)}</b> of the odds. ${effortLeft(g)} effort left.`);
@@ -119,10 +131,14 @@ function act(p) {
 function end() {
   if (g.over) return;
   coached = true;
+  const oldHeat = map.heatImg.getAttribute('href');
   const ev = endTurn(g);
   say(turnText(g, ev));
   writeHash(g);
   if (g.over) finish(true); else draw();
+  heatFade(map, oldHeat);
+  turnFx(fx, map, g, ev, g.over ? $('rv-status') : $('status'));
+  pulse($('end'));
 }
 
 function finish(scroll) {
@@ -130,11 +146,17 @@ function finish(scroll) {
   document.body.classList.add('sh-over');
   draw();
   reveal.show(g);
+  revealFx($('reveal'));
   if (scroll) $('reveal').scrollIntoView({ block: 'nearest', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
 }
 
+let lastH = -1;
 const reveal = createReveal({
-  onHour: h => { render(map, g, { hour: h, snap: g.snaps[h], reveal: true }, color); renderLog(g, h); },
+  onHour: h => {
+    render(map, g, { hour: h, snap: g.snaps[h], reveal: true }, color); renderLog(g, h);
+    if (h === lastH + 1) replayFx(fx, map, g, h);
+    lastH = h;
+  },
   onAgain: () => start({ seed: g.seed, beh: g.beh }),
   onNew: () => start({ seed: newSeed(), beh: g.beh }),
 });
@@ -217,6 +239,12 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
   color = tokenColor('--c2', document.body);
   if (g.over) reveal.show(g); else draw();
 });
+const recolor = () => {
+  color = tokenColor('--c2', document.body);
+  if (g.over) reveal.redraw(); else draw();
+};
+// Graphics switch (Original / Trailer): the probability map is a baked image, so repaint it in the new colours.
+addEventListener('skinchange', recolor);
 
 const narrow = matchMedia('(max-width: 640px)');
 fitView(map, narrow.matches);

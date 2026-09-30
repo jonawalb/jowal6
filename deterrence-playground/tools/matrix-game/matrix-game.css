@@ -135,6 +135,35 @@
 .mg-lit { outline: 3px solid var(--accent); outline-offset: 3px; }
 @media (max-width: 800px) { .mg-tour { left: 12px; right: 12px; bottom: 12px; width: auto; } }
 
+/* Motion (js/fx.js). The dice faces the controller swaps in while rolling tumble; bars grow from their base. */
+.mg-dist rect { transform-box: fill-box; transform-origin: 50% 100%; }
+@keyframes mg-tumble { 0% { transform: rotate(0) translateY(0); } 25% { transform: rotate(90deg) translateY(-6px); } 50% { transform: rotate(180deg) translateY(0); } 75% { transform: rotate(270deg) translateY(-4px); } 100% { transform: rotate(360deg) translateY(0); } }
+.mg-rolling .mg-die { animation: mg-tumble .28s linear infinite; }
+.mg-rolling .mg-die + .mg-die { animation-direction: reverse; animation-duration: .34s; }
+@media (prefers-reduced-motion: reduce) { .mg-rolling .mg-die { animation: none; } }
+
+/* Trailer look (Interactive Deterrence "Graphics: Trailer"; the attribute is only ever set there).
+   Shared tokens come from shared/css/trailer.css. Actor and track colours are re-picked to read on the
+   night table and stay apart from amber (the player's action): Estonia teal, Russia red, NATO blue,
+   EU violet, Narva community sand. */
+:root[data-skin="trailer"] { --c2: #ff8a3d; --c3: #2cc2ac; --c5: #e3d3a0; --c6: #b9a3f0; }
+:root[data-skin="trailer"] .mg-th b, :root[data-skin="trailer"] .mg-actors b, :root[data-skin="trailer"] .mg-adj h3,
+:root[data-skin="trailer"] .mg-inject h2, :root[data-skin="trailer"] .mg-debrief h2, :root[data-skin="trailer"] .mg-logh h2 { font-family: var(--display); font-style: italic; font-weight: 500; }
+:root[data-skin="trailer"] .mg-tv, :root[data-skin="trailer"] .mg-mod, :root[data-skin="trailer"] .mg-net b { font-family: var(--mono); }
+:root[data-skin="trailer"] .mg-cells i.cur { box-shadow: 0 0 8px var(--tc); }
+:root[data-skin="trailer"] .mg-tf polyline { filter: drop-shadow(0 0 2px var(--tc)); }
+:root[data-skin="trailer"] .mg-inject { border-left-color: var(--accent); box-shadow: 0 18px 40px -26px #000, inset 3px 0 12px -8px var(--accent); }
+:root[data-skin="trailer"] .mg-rows li { background: color-mix(in srgb, var(--chip) 70%, transparent); border-left: 3px solid var(--rule); }
+:root[data-skin="trailer"] .mg-rows li.strong { border-left-color: var(--good); }
+:root[data-skin="trailer"] .mg-rows li:has(.mg-mod.dn) { border-left-color: var(--bad); }
+:root[data-skin="trailer"] .mg-pbar i { box-shadow: 0 0 10px var(--good); }
+:root[data-skin="trailer"] .mg-die { background: #efe9dc; border-color: #efe9dc; box-shadow: 0 6px 16px -6px #000, 0 0 14px -4px rgba(240, 169, 59, .6); }
+:root[data-skin="trailer"] .mg-die i.on { background: #0b1712; }
+:root[data-skin="trailer"] .mg-bar.hit rect { stroke: var(--accent); filter: drop-shadow(0 0 4px var(--accent)); }
+:root[data-skin="trailer"] .mg-bar.hit text { fill: var(--accent); }
+:root[data-skin="trailer"] .mg-list button[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent); }
+:root[data-skin="trailer"] .mg-tour { box-shadow: 0 18px 50px -20px #000, var(--glow); }
+
 @media print {
   body { background: #fff; color: #000; padding: 0; }
   #tsm-bar, .tsm-bar, #tsm-head, #tsm-foot, .mg-actions-bar, .below, .mg-tour, .mg-grid > :not(.mg-logcard), .mg-logh .mg-btns { display: none !important; }

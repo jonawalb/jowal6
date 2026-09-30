@@ -20,7 +20,7 @@ const STEPS = [
     body: 'TIES also scores how each side fared, 0 to 10. Its manual calls these scores questionable on their own. In 75 of 912 cases the higher-scoring side is the opposite of what the outcome code implies. This case is one: coded a negotiated settlement, with the target scoring higher.',
     set: { dis: true, c: 1949050101 } },
   { title: 'Where the GSDB fits',
-    body: 'The Global Sanctions Data Base covers imposed sanctions only, 1950 to the present, and codes success per objective. Its data may not be republished, so the side panel sets its authors’ published figures next to the TIES rate for imposed cases. Read them as two different yardsticks.',
+    body: 'The Global Sanctions Data Base covers imposed sanctions only, 1949 to 2025 in its latest release, and codes success per objective. Its data may not be republished, so the side panel sets its authors’ published figures next to the TIES rate for imposed cases. Read them as two different yardsticks.',
     set: { st: 'imposed', focus: 'compare' } },
 ];
 

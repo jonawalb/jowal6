@@ -4,7 +4,7 @@ export const STEPS = [
     body: 'Each bar is one of Iran\'s direct attacks on Israel. April 2024 mixed drones, cruise missiles and ballistic missiles. October 2024 was ballistic missiles only. June 2025 was far larger in both. The black whisker is the spread between sources.',
     set: { ep: 'apr24' } },
   { title: 'April 2024: most of it never arrived',
-    body: 'The IDF said 99 percent was intercepted. A U.S. intelligence estimate held that about half the weapons failed on their own, and U.S., British, French and Jordanian aircraft downed many drones far from Israel. At least seven to nine missiles still landed.',
+    body: 'The IDF said 99 percent was intercepted. A U.S. intelligence estimate held that as many as half the weapons failed on their own, and U.S., British, French and Jordanian aircraft downed many drones far from Israel. At least seven to nine missiles still landed.',
     set: { ep: 'apr24' } },
   { title: 'October 2024: a harder test',
     body: 'About 180 to 200 ballistic missiles and no drones or cruise missiles. Official statements said the attack failed; satellite and video analysis found dozens of impacts at air bases. The disagreement box lists both.',

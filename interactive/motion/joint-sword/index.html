@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Anatomy of an Exercise</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .js-land { fill: #1b3428; stroke: var(--muted); stroke-opacity: .55; stroke-width: 1.2; stroke-linejoin: round; }
+  .js-adiz { fill: none; stroke: var(--muted); stroke-opacity: .6; stroke-width: 1.4; stroke-dasharray: 8 5; }
+  .js-med { fill: none; stroke: var(--muted); stroke-opacity: .6; stroke-width: 1.4; stroke-dasharray: 2 5; }
+  .js-geo { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .06em; }
+  .js-big { font: 600 20px var(--mono); fill: var(--paper); fill-opacity: .8; letter-spacing: .3em; text-anchor: middle; }
+  .js-sea { font: italic 400 20px var(--display); fill: var(--muted); fill-opacity: .75; text-anchor: middle; }
+  .js-place { font: 400 13px var(--mono); fill: var(--paper); fill-opacity: .8; }
+  .js-zone { stroke: var(--red); stroke-linejoin: round; }
+  .js-zl { font: 600 17px var(--mono); fill: var(--red); text-anchor: middle; }
+  .js-hud { fill: #0a1510; fill-opacity: .86; stroke: var(--line); stroke-width: 1.2; }
+  .js-name { font: italic 500 44px var(--display); fill: var(--paper); }
+  .js-date { font: 600 30px var(--mono); fill: var(--amber); font-variant-numeric: tabular-nums; }
+  .js-k { font: 400 20px var(--mono); fill: var(--muted); }
+  .js-ax { font: 400 13px var(--mono); fill: var(--muted); font-variant-numeric: tabular-nums; }
+  .js-bv { font: 600 15px var(--mono); fill: var(--paper); text-anchor: middle; font-variant-numeric: tabular-nums; }
+  .js-who { font: 600 15px var(--mono); fill: var(--paper); letter-spacing: .02em; }
+  .js-st { font: 400 15px var(--mono); fill: var(--muted); }
+  .js-src { font: 400 12px var(--mono); fill: var(--muted); letter-spacing: .1em; text-transform: uppercase; opacity: .8; }
+  .js-leg { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .04em; }
+  .js-fine { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+  .js-pk { font: 600 18px var(--mono); font-variant-numeric: tabular-nums; }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of Anatomy of an Exercise: Justice Mission-2025 replayed day by day, with seven officially published zones around Taiwan appearing on Dec. 29, 2025 and coming into force on Dec. 30, daily PLA aircraft spiking to 130, and dated statements, then six exercises overlaid to show each spike falling back within days."><title>Anatomy of an Exercise</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Real data (tools/joint-sword/data, computed with js/data.js) ------------------------------------------
+// ZONES['justice-mission-2025'] (data/annotations.js): 5 zones in the Eastern Theater Command notice and 7 in the
+// China MSA warning, all announced Dec. 29 and in force 08:00-18:00 Dec. 30, 2025 (Beijing time). Vertices [lon, lat].
+const ZONES = [
+  ['1', [[121.666667, 26.533333], [122.6, 26.533333], [122.6, 25.716667], [121.666667, 25.716667]]],
+  ['2', [[120.066667, 24.983333], [121.216667, 25.65], [121.216667, 26.283333], [120.066667, 25.616667]]],
+  ['3', [[118.233333, 23.45], [119.216667, 23.45], [119.733333, 22.216667], [118.75, 22.216667]]],
+  ['4', [[119.266667, 21.816667], [121, 21.816667], [121, 21.083333], [119.266667, 21.083333]]],
+  ['5', [[121.666667, 21.966667], [122.466667, 21.966667], [122.466667, 23.383333], [121.666667, 23.383333]]],
+  ['6', [[121.216667, 26.283333], [121.216667, 25.65], [121.666667, 25.716667], [121.666667, 26.533333]]],
+  ['7', [[118.233333, 23.45], [118.6, 24.516667], [119.583333, 24.516667], [119.216667, 23.45]]],
+];
+const ADIZ = [[117.9844, 21.011], [121.5, 21.0], [123.0, 22.5], [123.0046, 27.0125], [122.0, 27.0], [118.0, 23.0], [117.9844, 21.011]]; // shared/data/adiz.js
+const MEDIAN = [[122.0, 27.0], [118.0, 23.0]];                                                                    // js/map.js
+// windowOf(justice-mission-2025): TSM daily PLA aircraft, Dec. 22, 2025 (day -7) to Jan. 7, 2026 (day +8); exercise days 0 and +1.
+const START = Date.UTC(2025, 11, 29);
+const AIR = [6, 5, 6, 2, 13, 3, 2, 130, 77, 3, 0, 4, 0, 3, 8, 11];
+// timelineOf(justice-mission-2025), data/annotations.js: dated statements, verbatim, with the page's source labels.
+const TL = [
+  [0, 'Eastern Theater Command', 'launches "Justice Mission 2025" drills around Taiwan.', 'PRC MND'],
+  [0, 'China MSA', 'issues a navigation warning listing seven zones.', 'Guancha'],
+  [1, 'Taiwan MND', 'reports 27 rockets fired, 10 landing inside Taiwan\'s contiguous zone.', 'Global Taiwan Institute'],
+  [1, 'President Lai', 'expresses his "strongest condemnation" of the drills.', 'CNN'],
+  [2, 'Eastern Theater Command', 'says the drills were "successfully completed".', 'PBS NewsHour'],
+];
+// Compare view, "× usual level": daily aircraft / mean of the prior 30 days (days -37..-8), priorMean() in js/data.js.
+// The tour's six picks, days -7..+8 (null past the window).
+const CMP = [
+  ['December 2022 drills', [1.332, 1.018, 0.862, 3.055, 0.705, 0.862, 0.627, 5.561, 0.47, 0.862, 0.94, 0.705, 0.705, 1.88, 0.627, 0.078]],
+  ['Joint Sword', [0.977, 0.489, 1.954, 1.368, 0.098, 0.195, 1.27, 6.938, 6.84, 8.893, 3.42, 2.541, 0.391, 0.782, 1.466, 1.759]],
+  ['Joint Sword-2024A', [0.725, 1.631, 0.634, 0.544, 0, 0, 0.091, 4.441, 5.619, 0.634, 1.903, 0.272, 1.178, 3.444, 1.178, 0.816]],
+  ['Joint Sword-2024B', [0.902, 0.902, 2.03, 1.504, 1.805, 0.827, 1.88, 11.504, 1.654, 1.504, 1.429, 0.752, 0.451, 1.053, 1.278, null]],
+  ['Strait Thunder-2025A', [1.8, 1.333, 2, 0.067, 0.067, 0, 0, 5.067, 3.933, 1.067, 0.8, 0.467, 0.267, 1.067, 1.667, 0.733]],
+  ['Justice Mission-2025', [0.456, 0.38, 0.456, 0.152, 0.987, 0.228, 0.152, 9.873, 5.848, 0.228, 0, 0.304, 0, 0.228, 0.608, 0.835]],
+];
+
+// ---- Stage projection (equirectangular, the tool's map extent 117.1-124.3E / 20.55-27.35N) -------------------
+const K = 108, C24 = Math.cos(24.5 * Math.PI / 180);
+const P = ([lon, lat]) => [540 + (lon - 120.7) * K * C24, 500 + (23.95 - lat) * K];
+const line = (pts, close) => 'M' + pts.map(p => P(p).map(v => v.toFixed(1)).join(' ')).join('L') + (close ? 'Z' : '');
+const LAND = 'M420 559L422 560L422 564L420 564L420 561L419 561L420 559ZM177 557L171 556L175 553L177 555L180 554L181 551L183 551L185 553L187 551L189 550L188 552L190 554L189 560L177 557ZM174 542L177 543L175 546L174 547L170 546L170 545L174 542ZM173 543L169 544L168 543L173 538L173 543ZM416 542L420 540L422 532L424 534L422 536L421 541L416 542ZM219 540L208 541L213 535L215 529L210 528L213 524L213 520L214 519L217 519L218 521L220 522L222 521L228 523L227 525L224 526L224 531L220 531L218 533L217 537L219 540ZM300 446L300 449L295 450L298 446L300 446ZM302 450L303 448L302 443L306 441L310 444L312 443L313 438L316 438L319 440L321 445L319 450L314 448L311 448L306 452L302 450ZM284 447L282 445L285 443L285 441L283 443L282 441L284 435L288 437L292 437L293 441L291 444L290 447L288 448L284 447ZM384 378L388 376L386 378L387 381L385 384L383 381L385 380L384 378ZM422 365L421 365L418 365L417 361L419 359L423 364L429 364L426 369L424 368L422 365ZM540 94L534 88L534 90L537 94L538 99L537 103L530 109L532 115L536 116L538 119L537 122L535 123L534 126L535 127L534 130L525 127L524 131L521 133L525 136L525 140L522 142L523 145L521 147L522 149L517 151L516 147L513 147L513 152L511 151L508 145L505 144L501 144L500 142L503 139L501 138L502 136L499 138L497 136L498 138L497 138L493 137L495 139L493 142L490 138L490 142L488 145L489 147L491 147L492 145L496 143L501 147L505 144L507 146L505 151L508 150L513 155L508 155L511 155L507 157L509 158L508 159L510 159L508 160L499 159L495 156L499 164L498 164L497 163L492 167L495 167L496 171L494 173L486 173L490 174L494 174L494 178L493 180L484 178L482 179L483 181L481 183L474 181L477 183L474 186L474 188L484 193L481 197L481 198L485 199L486 201L481 204L483 209L484 208L484 209L479 212L479 209L473 213L467 213L465 215L465 218L460 222L456 222L455 219L455 218L457 218L457 214L470 208L469 206L472 201L474 201L479 193L464 193L465 197L460 204L462 207L459 208L457 208L457 204L454 201L451 204L452 196L455 193L453 192L451 193L451 190L455 189L456 187L450 189L448 193L449 197L447 199L445 198L445 196L443 191L440 191L440 196L444 201L444 203L441 202L436 197L435 198L434 194L432 193L430 193L430 195L427 198L428 202L432 204L432 209L428 207L426 208L427 212L431 215L432 217L439 212L445 213L445 215L450 216L450 219L449 218L448 221L451 223L450 224L453 230L453 232L451 232L451 234L448 235L445 231L441 229L437 225L434 228L430 228L429 229L429 231L433 231L435 230L437 231L437 240L438 242L441 242L440 244L446 243L447 238L449 239L451 235L454 232L457 236L455 238L461 240L466 239L459 245L457 243L452 244L450 247L452 247L451 248L448 247L437 249L435 251L439 252L439 255L436 256L432 260L432 263L428 265L418 281L416 281L414 278L405 273L400 273L394 268L389 267L382 263L388 269L391 268L392 269L397 282L405 285L410 285L416 282L421 279L422 275L424 274L429 273L437 277L439 276L441 278L442 280L439 287L433 290L432 295L430 292L429 291L429 292L430 294L430 298L433 300L432 304L434 305L432 308L431 312L429 313L426 310L420 313L417 312L419 320L420 319L420 324L421 326L424 326L425 324L428 326L430 323L429 328L429 329L431 329L429 331L432 332L429 334L432 334L432 335L435 337L433 339L435 340L436 344L434 347L437 348L430 349L432 347L430 341L431 339L430 336L427 338L426 337L426 341L428 343L426 346L420 347L422 340L421 338L423 335L419 335L417 339L415 337L417 332L408 330L408 327L410 323L408 324L407 321L403 321L404 323L400 325L399 330L396 335L383 341L388 347L390 352L393 348L395 352L391 355L393 359L395 356L397 351L399 352L400 351L404 356L407 358L407 360L401 361L400 362L401 366L401 367L398 368L395 366L390 367L387 363L384 363L383 367L386 372L388 371L386 373L382 372L381 373L383 375L379 373L381 370L379 369L378 370L377 373L376 371L380 363L376 362L370 362L371 360L375 359L376 357L371 356L361 360L360 362L364 363L365 367L368 365L370 367L367 375L359 376L358 379L361 382L367 384L366 385L368 386L371 385L373 381L373 381L371 387L373 392L375 391L371 394L369 392L364 392L363 393L364 397L366 399L370 398L371 400L368 401L363 400L360 398L356 400L352 398L351 399L351 401L345 403L343 402L346 399L346 397L343 393L342 398L342 395L340 392L338 396L341 399L341 400L336 401L331 399L335 402L335 408L337 411L344 407L345 412L348 411L350 412L348 417L342 423L339 420L338 421L337 427L340 429L340 431L336 436L329 439L329 435L331 434L324 429L317 426L317 419L314 422L316 427L314 429L309 432L303 430L301 433L299 432L298 436L296 436L292 432L293 430L296 429L296 428L292 427L293 424L290 420L290 423L289 424L285 432L279 428L278 434L275 434L276 432L272 435L280 439L275 444L277 446L262 442L258 443L263 444L265 446L257 444L254 444L262 452L266 453L274 452L278 450L279 451L279 455L276 459L280 457L284 458L286 462L287 466L283 468L282 467L277 472L274 474L273 477L272 477L271 473L269 472L266 475L268 475L269 477L264 485L264 492L261 491L259 492L252 499L250 505L248 503L249 500L255 492L254 492L251 493L251 492L253 491L251 487L250 491L248 491L242 488L243 490L246 491L244 495L245 500L240 504L238 512L239 517L235 523L235 511L232 505L229 503L221 503L217 500L217 504L222 504L226 508L225 513L222 517L219 519L214 517L208 520L205 517L204 518L205 520L203 525L202 532L204 534L200 537L200 532L199 528L197 531L198 535L191 537L189 541L185 543L183 532L179 531L172 537L168 534L171 531L168 531L164 537L165 542L162 547L164 551L163 554L154 565L146 564L143 564L134 560L131 557L130 557L130 562L134 568L141 568L143 566L146 566L148 568L150 568L150 567L152 567L154 577L157 577L155 580L147 573L144 572L148 575L148 576L144 579L142 585L139 583L138 577L134 576L128 577L128 579L130 581L134 579L138 580L132 587L131 591L132 593L133 601L129 603L129 606L127 609L123 608L115 610L107 607L107 605L99 604L98 606L101 607L105 606L106 607L92 619L88 621L87 617L90 614L82 610L82 611L87 614L86 617L78 620L74 624L72 624L69 625L67 625L61 630L59 630L57 624L60 627L59 623L52 619L48 619L49 617L47 616L48 613L51 613L52 610L48 610L44 614L37 616L35 619L32 618L34 614L30 614L24 610L22 611L20 611L22 613L25 612L27 613L28 618L26 619L35 620L40 617L32 628L31 630L34 633L36 630L38 631L35 634L36 638L33 638L26 635L21 636L17 636L13 631L14 630L18 630L21 628L20 625L16 628L12 625L3 625L3 624L11 619L12 618L10 617L11 613L9 614L4 620L-3 622L-2 626L-5 625L-5 623L-14 625L-18 631L-17 634L-20 635L-20 63L542 63L545 65L554 68L557 75L555 78L551 80L544 91L540 94ZM401 334L403 328L407 325L408 327L405 336L406 339L402 341L401 334ZM397 276L394 272L393 268L398 273L409 277L412 279L413 281L410 282L398 278L397 276ZM476 587L475 590L476 587ZM483 543L480 549L472 556L483 543ZM427 546L425 544L425 543L428 545L431 543L428 541L427 542L427 539L433 537L432 539L437 537L439 543L436 542L433 543L432 546L430 547L427 546ZM426 531L429 529L431 531L430 535L426 531ZM447 343L441 339L443 334L439 334L440 332L447 332L449 330L448 329L444 330L443 329L444 323L442 324L441 322L445 317L450 315L450 320L455 323L453 324L459 326L456 329L455 327L452 329L452 333L455 335L456 337L454 336L449 338L447 343ZM438 317L443 315L443 317L438 317ZM428 317L429 317L433 314L430 318L428 318L428 317ZM428 270L427 268L432 265L436 270L434 272L428 270ZM463 260L465 262L468 261L465 263L463 263L463 260ZM472 255L473 256L471 255L469 255L468 258L468 257L468 255L471 253L472 255ZM451 212L449 213L448 212L451 210L453 211L451 212ZM447 207L441 210L438 209L437 207L438 206L444 207L446 205L447 206L447 207ZM657 893L657 895L653 897L652 890L654 889L657 893ZM656 840L653 849L648 852L647 851L647 848L653 837L655 836L656 840ZM625 702L625 706L627 708L625 710L618 705L619 703L618 702L625 702ZM616 641L614 638L619 638L618 642L616 641ZM656 430L652 431L654 435L653 437L651 439L652 443L646 448L644 459L645 461L635 474L629 486L631 493L630 497L623 528L621 531L615 566L610 575L609 587L607 591L604 594L599 607L595 614L588 620L588 624L587 626L572 640L564 654L562 665L558 673L558 705L556 710L553 712L554 721L552 718L547 715L544 714L544 717L541 717L540 716L540 713L538 708L538 702L540 698L532 679L527 670L522 667L522 665L512 659L509 658L504 654L499 648L504 654L503 651L495 639L496 636L495 634L491 625L491 620L489 615L487 608L485 605L488 601L488 599L485 599L484 602L482 602L482 597L480 597L478 599L477 598L477 594L481 593L481 592L477 591L480 590L477 586L480 583L479 580L482 572L483 571L482 570L483 568L486 568L486 567L483 567L483 566L484 564L487 564L484 557L485 554L484 554L487 550L483 550L483 546L485 544L485 534L489 520L495 513L496 508L500 504L506 490L512 484L513 478L520 470L526 453L535 442L540 429L543 428L548 423L552 423L552 421L557 414L561 406L560 404L562 399L565 397L570 386L575 381L590 375L602 372L608 369L610 370L612 372L613 372L608 367L615 358L623 356L627 356L633 365L637 365L636 367L639 370L657 374L658 375L658 378L660 384L665 384L668 386L659 392L652 400L650 405L650 425L651 427L656 430ZM487 216L484 219L483 218L486 213L487 214L487 216ZM509 178L506 179L503 175L506 174L509 178ZM574 120L577 119L580 122L576 121L577 123L576 123L574 120ZM579 82L581 79L588 77L586 82L579 82ZM575 78L571 80L571 79L572 77L574 76L575 77L578 77L576 79L575 78ZM579 68L573 67L576 64L580 64L583 67L579 68ZM552 64L548 63L567 63L566 64L562 65L558 63L552 64ZM660 886L664 877L669 874L671 875L670 877L664 883L665 886L664 888L660 888L660 886ZM844 490L841 490L841 489L845 488L844 490ZM860 459L862 457L864 460L860 459ZM836 459L839 460L842 449L846 452L852 452L858 455L858 458L852 467L833 464L832 463L833 460L835 460L836 459ZM768 445L766 447L760 447L762 444L766 443L768 445ZM877 452L876 450L872 448L877 444L880 447L885 446L888 441L891 440L895 431L897 432L896 434L891 442L888 455L885 458L878 458L876 456L878 453L877 452ZM933 427L931 426L931 424L934 422L936 425L933 427Z';
+const txt = (x, y, cls, s, a = {}, p) => { const n = el('text', { x, y, class: cls, ...a }, p); n.textContent = s; return n; };
+const op = (n, v) => n.setAttribute('opacity', Math.max(0, Math.min(1, v)).toFixed(3));
+const MON = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'June', 'July', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.'];
+const dateOf = k => { const d = new Date(START + k * 864e5); return `${MON[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`; };
+const dayLabel = k => (k === 0 ? 'Day 0' : `Day ${k > 0 ? '+' : '−'}${Math.abs(k)}`);
+
+// ---- Map --------------------------------------------------------------------------------------------------
+const cam = el('g', {}, svg);
+const map = el('g', {}, cam);
+el('path', { d: LAND, class: 'js-land', 'fill-rule': 'evenodd' }, map);
+el('path', { d: line(ADIZ, true), class: 'js-adiz' }, map);
+el('path', { d: line(MEDIAN), class: 'js-med' }, map);
+{ const [x, y] = P([123.08, 26.6]); txt(x, y, 'js-geo', 'Taiwan ADIZ', {}, map); }
+{ const [x, y] = P([121.52, 26.74]); txt(x, y, 'js-geo', 'median line', { transform: `rotate(-47 ${x} ${y})` }, map); }
+[['TAIWAN', [120.9, 23.75], 'js-big'], ['FUJIAN', [117.6, 25.9], 'js-big'], ['Taiwan Strait', [119.3, 24.2], 'js-sea'],
+  ['Philippine Sea', [123.4, 22.2], 'js-sea'], ['East China Sea', [122.4, 27.55], 'js-sea']].forEach(([s, p, c]) => txt(...P(p), c, s, {}, map));
+[['Kinmen', [118.35, 24.44]], ['Matsu', [119.95, 26.16]], ['Penghu', [119.58, 23.57]], ['Taipei', [121.52, 25.04]], ['Kaohsiung', [120.3, 22.62]]].forEach(([s, p]) => {
+  const [x, y] = P(p); el('circle', { cx: x, cy: y, r: 3.5, fill: 'var(--paper)', 'fill-opacity': .8 }, map); txt(x + 9, y + 5, 'js-place', s, {}, map);
+});
+const zg = el('g', {}, map);
+const zones = ZONES.map(([lab, pts]) => {
+  const g = el('g', {}, zg), c = pts.reduce((a, p) => [a[0] + p[0] / pts.length, a[1] + p[1] / pts.length], [0, 0]);
+  const path = el('path', { d: line(pts, true), class: 'js-zone', fill: 'var(--red)', 'fill-opacity': 0, 'stroke-width': 2, pathLength: 1 }, g);
+  const [x, y] = P(c); const l = txt(x, y + 6, 'js-zl', lab, {}, g);
+  return { g, path, l, lab };
+});
+const mapTag = el('g', {}, map);
+el('rect', { x: 186, y: 128, width: 346, height: 70, rx: 5, class: 'js-hud' }, mapTag);
+const tagA = txt(202, 156, 'js-leg', '', { style: 'fill:var(--paper)' }, mapTag), tagB = txt(202, 180, 'js-leg', '', {}, mapTag);
+
+// ---- Right column: exercise, date, daily chart with cursor, day slider, statements ------------------------
+const col = el('g', {}, cam);
+el('rect', { x: 975, y: 96, width: 550, height: 800, rx: 6, class: 'js-hud' }, col);
+txt(1010, 132, 't-label', 'Replay · Dec. 2025', { style: 'font-size:13px' }, col);
+txt(1008, 180, 'js-name', 'Justice Mission-2025', {}, col);
+const dateT = txt(1010, 226, 'js-date', '', {}, col), kT = txt(1268, 226, 'js-k', '', {}, col);
+const BX0 = 1030, BW = 30, BY0 = 520, KY = 1.45;
+const xb = i => BX0 + i * BW;
+el('rect', { x: xb(7), y: BY0 - 236, width: 2 * BW, height: 236, fill: 'var(--red)', 'fill-opacity': .08 }, col);
+txt(xb(7) + 4, BY0 - 222, 'js-ax', 'exercise', { style: 'fill:var(--red)' }, col);
+[0, 50, 100].forEach(v => { el('line', { x1: BX0, x2: xb(16), y1: BY0 - v * KY, y2: BY0 - v * KY, stroke: v ? '#27493a' : 'var(--muted)', 'stroke-dasharray': v ? '2 6' : '' }, col); txt(BX0 - 8, BY0 - v * KY + 4, 'js-ax', v, { 'text-anchor': 'end' }, col); });
+txt(1010, BY0 - 248, 'js-ax', 'PLA aircraft per day', {}, col);
+const bars = AIR.map((v, i) => {
+  const r = el('rect', { x: xb(i) + 6, y: BY0 - Math.max(1, v * KY), width: BW - 12, height: Math.max(1, v * KY), rx: 2, fill: '#5f7d6d' }, col);
+  const t = txt(xb(i) + BW / 2, BY0 - v * KY - 8, 'js-bv', v, { opacity: 0 }, col);
+  return { r, t, v, k: i - 7 };
+});
+[-7, 0, 8].forEach(k => txt(xb(k + 7) + BW / 2, BY0 + 22, 'js-ax', k === 0 ? '0' : (k > 0 ? '+' : '−') + Math.abs(k), { 'text-anchor': 'middle' }, col));
+const cur = el('line', { y1: BY0 - 250, y2: BY0 + 6, stroke: 'var(--amber)', 'stroke-width': 2 }, col);
+// slider
+const SLY = 590;
+el('line', { x1: xb(0) + BW / 2, x2: xb(15) + BW / 2, y1: SLY, y2: SLY, stroke: 'var(--line)', 'stroke-width': 4, 'stroke-linecap': 'round' }, col);
+const slFill = el('line', { x1: xb(0) + BW / 2, y1: SLY, y2: SLY, stroke: 'var(--amber)', 'stroke-width': 4, 'stroke-linecap': 'round' }, col);
+const thumb = el('circle', { cy: SLY, r: 11, fill: 'var(--amber)', stroke: '#0b1712', 'stroke-width': 3, filter: 'url(#kit-glow)' }, col);
+txt(1010, 632, 't-label', 'Statements that day', { style: 'font-size:12px' }, col);
+const feed = el('g', {}, col);
+const wrap = (s, n) => { const a = []; let c = ''; for (const w of s.split(' ')) { if ((c + ' ' + w).trim().length > n) { a.push(c); c = w; } else c = (c + ' ' + w).trim(); } a.push(c); return a; };
+const items = TL.map(([k, who, s, src]) => {
+  const g = el('g', { opacity: 0 }, feed);
+  el('rect', { x: 1010, y: -16, width: 4, height: 64, fill: 'var(--amber)' }, g);
+  txt(1026, 0, 'js-who', who, {}, g);
+  wrap(s, 50).forEach((ln, j) => txt(1026, 22 + j * 20, 'js-st', ln, {}, g));
+  txt(1026, 44 + (wrap(s, 50).length - 1) * 20, 'js-src', src, {}, g);
+  return { g, k, h: 76 + (wrap(s, 50).length - 1) * 20 };
+});
+
+// ---- Hook and payoff -----------------------------------------------------------------------------------------
+const hook = el('g', {}, svg);
+const h1 = txt(800, 440, 't-hook', 'Seven zones around Taiwan,', { 'text-anchor': 'middle', style: 'font-size:66px' }, hook);
+const h2 = el('text', { x: 800, y: 530, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:66px' }, hook);
+h2.innerHTML = 'published the <tspan class="hot">morning before.</tspan>';
+
+const pay = el('g', { opacity: 0 }, svg);
+el('rect', { width: 1600, height: 1000, fill: '#070f0b', opacity: .9 }, pay);
+const pH = el('text', { x: 800, y: 178, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:52px' }, pay);
+pH.innerHTML = 'Six exercises. Each spike <tspan class="hot">falls back.</tspan>';
+const pS = txt(800, 220, 'js-fine', 'PLA aircraft as a multiple of the prior 30-day mean, aligned on day 0', { 'text-anchor': 'middle' }, pay);
+const GX0 = 330, GX1 = 1270, GY0 = 720, GKY = 36;
+const gx = k => GX0 + (k + 7) / 15 * (GX1 - GX0), gy = v => GY0 - v * GKY;
+const pAx = el('g', {}, pay);
+[0, 4, 8, 12].forEach(v => { el('line', { x1: GX0, x2: GX1, y1: gy(v), y2: gy(v), stroke: v ? '#27493a' : 'var(--muted)', 'stroke-dasharray': v ? '2 6' : '' }, pAx); txt(GX0 - 12, gy(v) + 5, 'js-ax', v + '×', { 'text-anchor': 'end', style: 'font-size:15px' }, pAx); });
+el('line', { x1: GX0, x2: GX1, y1: gy(1), y2: gy(1), stroke: 'var(--paper)', 'stroke-width': 1.5, 'stroke-dasharray': '8 6', opacity: .6 }, pAx);
+txt(GX1, gy(1) - 8, 'js-ax', '1× = usual level', { 'text-anchor': 'end', style: 'font-size:14px;fill:var(--paper)' }, pAx);
+[-7, 0, 8].forEach(k => txt(gx(k), GY0 + 28, 'js-ax', k === 0 ? 'day 0' : (k > 0 ? '+' : '−') + Math.abs(k), { 'text-anchor': 'middle', style: 'font-size:15px' }, pAx));
+const lines = CMP.map(([name, v], i) => {
+  const jm = i === 5, pts = v.map((y, j) => (y == null ? null : [gx(j - 7), gy(y)])).filter(Boolean);
+  const p = el('path', { d: 'M' + pts.map(q => q.map(n => n.toFixed(1)).join(' ')).join('L'), fill: 'none', stroke: jm ? 'var(--red)' : i === 3 ? 'var(--amber)' : 'var(--muted)', 'stroke-width': jm || i === 3 ? 3.2 : 1.8, 'stroke-linejoin': 'round', pathLength: 1, opacity: jm || i === 3 ? 1 : .75 }, pay);
+  if (jm || i === 3) p.setAttribute('filter', 'url(#kit-glow)');
+  return p;
+});
+const pk1 = el('g', {}, pay); txt(gx(0) + 14, gy(11.504) + 6, 'js-pk', 'Joint Sword-2024B 11.5×', { style: 'fill:var(--amber)' }, pk1);
+const pk2 = el('g', {}, pay); txt(gx(0) - 14, gy(9.873) + 6, 'js-pk', 'Justice Mission-2025 9.9×', { 'text-anchor': 'end', style: 'fill:var(--red)' }, pk2);
+const pN = txt(800, 808, 'js-fine', 'Also shown: Dec. 2022 drills, Joint Sword, Joint Sword-2024A, Strait Thunder-2025A', { 'text-anchor': 'middle' }, pay);
+
+const cap = captions(svg, [
+  [3.3, 5.6, 'Replay a PLA exercise day by day'],
+  [5.7, 8.3, 'Published zones, daily counts and statements, dated'],
+  [8.4, 10.0, 'Then it ends, and the count drops'],
+  [10.4, 13.0, 'Overlay any exercises on day 0 and compare'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Anatomy of an Exercise', line: 'Major PLA exercises around Taiwan, replayed day by day.' });
+
+// ---- Timeline --------------------------------------------------------------------------------------------------
+const D = 16.5;
+// Slider keyframes [time, day offset]: glide from day -4 into the exercise, hold on the key days.
+const KF = [[3.2, -4], [5.0, -1], [5.5, 0], [7.2, 0], [7.5, 1], [8.9, 1], [9.2, 2], [10.2, 2]];
+function dayAt(t) {
+  if (t <= KF[0][0]) return KF[0][1];
+  for (let i = 1; i < KF.length; i++) if (t <= KF[i][0]) return lerp(KF[i - 1][1], KF[i][1], ease.inOut(seg(t, KF[i - 1][0], KF[i][0])));
+  return KF[KF.length - 1][1];
+}
+const kStart = k => KF.find(([, v], i) => v >= k && (i === 0 || KF[i - 1][1] < k))?.[0] ?? 0;
+
+function frame(t) {
+  const out = 1 - seg(t, 13.3, 13.9);
+  [h1, h2].forEach((h, i) => {
+    const u = ease.out(seg(t, 0.25 + i * 0.4, 1.0 + i * 0.4)), o = 1 - seg(t, 2.6 + i * 0.1, 3.1 + i * 0.1);
+    op(h, u * o); h.setAttribute('transform', `translate(0,${((1 - u) * 24 - seg(t, 2.6, 3.2) * 18).toFixed(1)})`);
+  });
+  const push = ease.inOut(seg(t, 3.0, 13.5));
+  cam.setAttribute('transform', `translate(760,500) scale(${(1 + 0.035 * push).toFixed(4)}) translate(-760,-500)`);
+  op(map, lerp(0.3 * ease.out(seg(t, 0, 1)), 1, ease.inOut(seg(t, 2.6, 3.4))) * lerp(1, 0.2, ease.inOut(seg(t, 10.2, 10.8))) * out);
+  op(col, ease.out(seg(t, 3.0, 3.6)) * lerp(1, 0.15, ease.inOut(seg(t, 10.2, 10.8))) * out);
+  col.setAttribute('transform', `translate(${((1 - ease.out(seg(t, 3.0, 3.8))) * 40).toFixed(1)},0)`);
+
+  // Day, slider, cursor.
+  const kf = dayAt(t), k = Math.round(kf), i = k + 7;
+  dateT.textContent = dateOf(k); kT.textContent = '· ' + dayLabel(k);
+  const cx = xb(kf + 7) + BW / 2;
+  thumb.setAttribute('cx', cx.toFixed(1)); slFill.setAttribute('x2', cx.toFixed(1));
+  cur.setAttribute('x1', cx.toFixed(1)); cur.setAttribute('x2', cx.toFixed(1));
+  bars.forEach((b, j) => {
+    const isCur = j === i, during = b.k === 0 || b.k === 1;
+    const ks = kStart(b.k), pop = isCur && b.k >= 0 ? ease.back(seg(t, ks, ks + 0.35)) : 1;
+    const h = Math.max(1, b.v * KY) * (isCur ? pop : 1);
+    b.r.setAttribute('y', (BY0 - h).toFixed(1)); b.r.setAttribute('height', h.toFixed(1));
+    b.r.setAttribute('fill', isCur ? 'var(--amber)' : during ? 'var(--red)' : '#5f7d6d');
+    b.r.setAttribute('filter', isCur && during ? 'url(#kit-glow)' : '');
+    op(b.t, isCur ? 1 : 0); b.t.setAttribute('y', (BY0 - h - 8).toFixed(1)); b.t.style.fill = isCur ? 'var(--amber)' : '';
+  });
+
+  // Zones: hidden before Dec. 29, announced (dashed outline) on Dec. 29, in force Dec. 30, done after.
+  const tA = kStart(0), tOn = kStart(1), tDone = kStart(2);
+  zones.forEach((z, j) => {
+    const a = tA + 0.15 + j * 0.12, u = ease.inOut(seg(t, a, a + 0.7));
+    const on = ease.out(seg(t, tOn + 0.1 + j * 0.06, tOn + 0.5 + j * 0.06)), done = ease.out(seg(t, tDone, tDone + 0.5));
+    z.path.setAttribute('stroke-dasharray', on > 0 ? '' : `${(u * 0.012).toFixed(4)} 0.012`);
+    if (on === 0 && u < 1) z.path.setAttribute('stroke-dasharray', `${u.toFixed(4)} 1`);
+    else if (on === 0) z.path.setAttribute('stroke-dasharray', '0.012 0.01');
+    z.path.setAttribute('fill-opacity', (0.32 * on * (1 - 0.6 * done)).toFixed(3));
+    z.path.setAttribute('stroke-width', (2 + on * (1 - done) * (1 + Math.sin(t * 6 + j)) * 0.8).toFixed(2));
+    z.path.setAttribute('filter', on > 0.5 && done < 0.5 ? 'url(#kit-glow)' : '');
+    op(z.g, (t < a ? 0 : 1) * (1 - 0.55 * done));
+    op(z.l, seg(t, a + 0.4, a + 0.7));
+  });
+  const st = t < tA ? 0 : t < tOn ? 1 : t < tDone ? 2 : 3;
+  tagA.textContent = ['No zones announced yet', '7 zones announced (dashed)', '7 zones in force, 08:00–18:00', 'Zones expired'][st];
+  tagB.textContent = ['Official notices drawn, vertex by vertex', 'ETC notice: 5 · China MSA warning: 7', 'Beijing time, per the notices', 'Drills declared complete Dec. 31'][st];
+  tagA.style.fill = st === 2 ? 'var(--red)' : 'var(--paper)';
+  op(mapTag, ease.out(seg(t, 3.3, 3.8)));
+
+  // Statements for the current day, stacked.
+  let y = 668;
+  items.forEach(it => {
+    const show = it.k === k && t >= kStart(it.k);
+    const idx = TL.filter(x => x[0] === it.k).findIndex(x => x[2] === TL[items.indexOf(it)][2]);
+    const u = show ? ease.out(seg(t, kStart(it.k) + 0.2 + idx * 0.35, kStart(it.k) + 0.6 + idx * 0.35)) : 0;
+    op(it.g, u);
+    if (show) { it.g.setAttribute('transform', `translate(${((1 - u) * 24).toFixed(1)},${y})`); y += it.h; }
+  });
+
+  // Payoff: the compare overlay.
+  const pu = ease.out(seg(t, 10.3, 10.9)) * (1 - seg(t, 13.3, 13.8));
+  op(pay, pu);
+  op(pH, ease.out(seg(t, 10.4, 11.0))); op(pS, ease.out(seg(t, 10.6, 11.1))); op(pAx, ease.out(seg(t, 10.5, 11.0)));
+  lines.forEach((p, j) => { const a = 10.8 + j * 0.12, u = ease.inOut(seg(t, a, a + 1.3)); p.setAttribute('stroke-dasharray', `${u.toFixed(4)} 1`); });
+  op(pk1, ease.out(seg(t, 11.8, 12.2))); op(pk2, ease.out(seg(t, 12.0, 12.4))); op(pN, ease.out(seg(t, 12.1, 12.5)));
+
+  cap(t); end(t, 13.5, D);
+}
+run({ duration: D, poster: 8.2, frame });
+</script>
+</body></html>

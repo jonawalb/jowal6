@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Every Nuclear Test</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .yr { font: 600 84px var(--mono); fill: var(--amber); font-variant-numeric: tabular-nums; letter-spacing: -.03em; }
+  .ro-n { font: 400 14px var(--mono); fill: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+  .ro-v { font: 600 30px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .ro-s { font: 400 18px var(--mono); fill: var(--muted); font-variant-numeric: tabular-nums; }
+  .ax { font: 400 14px var(--mono); fill: var(--muted); font-variant-numeric: tabular-nums; }
+  .lg { font: 400 14px var(--mono); fill: var(--paper); letter-spacing: .03em; }
+  .ms-t { font: 600 14px var(--mono); fill: var(--paper); letter-spacing: .04em; }
+  .tg { font: 600 14px var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+  .pk { font: 600 30px var(--mono); fill: var(--amber); font-variant-numeric: tabular-nums; }
+  .src { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .04em; }
+  .q { font: italic 400 38px var(--display); fill: var(--paper); }
+  .qw { font: 400 15px var(--mono); fill: var(--muted); letter-spacing: .12em; text-transform: uppercase; }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of Every Nuclear Test: yearly test counts from 1945 build up to the 1962 peak of 178, the view switches from states to test environments as the 1963 treaty pushes testing underground, and the series ends with North Korea's test of Sept. 3, 2017."><title>Every Nuclear Test</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Real data (tools/nuclear-tests/data) -------------------------------------------------------
+// tests.js: 2,056 test rows (SIPRI/FOA list via TidyTuesday, less the two combat uses, plus one un-itemized
+// Soviet 1972 test and North Korea's six tests from USGS). Counted here per year by state (row[1]) and by
+// environment (row[2]) with the tool's own byYear() logic; 1945..2026, one row per year.
+// State order: U.S., USSR, UK, France, China, India, Pakistan, N. Korea.
+// Environment order: Atmospheric, Underground, Underwater, High altitude / space.
+const BY_STATE = [[1,0,0,0,0,0,0,0],[2,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[3,0,0,0,0,0,0,0],[0,1,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[16,2,0,0,0,0,0,0],[10,0,1,0,0,0,0,0],[11,5,2,0,0,0,0,0],[6,10,0,0,0,0,0,0],[18,6,0,0,0,0,0,0],[18,9,6,0,0,0,0,0],[32,16,7,0,0,0,0,0],[77,34,5,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,3,0,0,0,0],[10,59,0,2,0,0,0,0],[96,79,2,1,0,0,0,0],[47,0,0,3,0,0,0,0],[45,9,2,3,1,0,0,0],[38,14,1,4,1,0,0,0],[48,18,0,7,3,0,0,0],[42,17,0,3,2,0,0,0],[56,17,0,5,1,0,0,0],[46,19,0,0,2,0,0,0],[39,16,0,8,1,0,0,0],[24,23,0,5,1,0,0,0],[27,24,0,4,2,0,0,0],[24,17,0,6,1,0,0,0],[22,21,1,9,1,1,0,0],[22,19,0,2,1,0,0,0],[20,21,1,5,4,0,0,0],[20,24,0,9,1,0,0,0],[19,31,2,11,3,0,0,0],[15,31,1,10,1,0,0,0],[14,24,3,12,1,0,0,0],[16,21,1,12,0,0,0,0],[18,19,1,10,1,0,0,0],[18,25,1,9,2,0,0,0],[18,27,2,8,2,0,0,0],[17,10,1,8,0,0,0,0],[14,0,1,8,0,0,0,0],[14,23,1,8,1,0,0,0],[15,16,0,8,1,0,0,0],[11,7,1,9,0,0,0,0],[8,1,1,6,2,0,0,0],[7,0,1,6,0,0,0,0],[6,0,0,0,2,0,0,0],[0,0,0,0,1,0,0,0],[0,0,0,0,2,0,0,0],[0,0,0,5,2,0,0,0],[0,0,0,1,2,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,2,2,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,1],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,1],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,1],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,2],[0,0,0,0,0,0,0,1],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]];
+const BY_ENV = [[1,0,0,0],[1,0,1,0],[0,0,0,0],[3,0,0,0],[1,0,0,0],[0,0,0,0],[17,1,0,0],[11,0,0,0],[18,0,0,0],[16,0,0,0],[21,1,2,0],[33,0,0,0],[49,5,1,0],[94,15,2,5],[0,0,0,0],[3,0,0,0],[56,12,1,2],[109,61,1,7],[4,46,0,0],[1,59,0,0],[1,57,0,0],[9,67,0,0],[5,59,0,0],[6,73,0,0],[1,66,0,0],[9,55,0,0],[6,47,0,0],[6,51,0,0],[7,41,0,0],[10,45,0,0],[0,44,0,0],[3,48,0,0],[1,53,0,0],[2,64,0,0],[1,57,0,0],[1,53,0,0],[0,50,0,0],[0,49,0,0],[0,55,0,0],[0,57,0,0],[0,36,0,0],[0,23,0,0],[0,47,0,0],[0,40,0,0],[0,28,0,0],[0,18,0,0],[0,14,0,0],[0,8,0,0],[0,1,0,0],[0,2,0,0],[0,7,0,0],[0,3,0,0],[0,0,0,0],[0,4,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,1,0,0],[0,0,0,0],[0,0,0,0],[0,1,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,1,0,0],[0,0,0,0],[0,0,0,0],[0,2,0,0],[0,1,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];
+// milestones.js: short labels and years; the 2017 and 2025 cards supply the payoff lines verbatim.
+const Y0 = 1945, Y1 = 2026, TOTAL = 2056;
+const SHORT = ['U.S.', 'USSR', 'UK', 'France', 'China', 'India', 'Pakistan', 'N. Korea'];
+const SCOL = ['#7fb6d9', '#c9674f', '#9cc3aa', '#b69ad8', '#e8dcae', '#6aab82', '#4fb39c', '#d98aa8'];
+const ENVS = ['Atmospheric', 'Underground', 'Underwater', 'High altitude / space'];
+const ECOL = ['#e8894a', '#5f9fc4', '#4fb39c', '#b69ad8'];
+const MS = [[1958, 'Moratorium'], [1963, 'PTBT'], [1996, 'CTBT'], [2017, 'DPRK 6th']];
+const tot = BY_STATE.map(r => r.reduce((a, b) => a + b, 0));
+const cumTot = []; tot.reduce((a, v, i) => (cumTot[i] = a + v), 0);
+const fmt = v => Math.round(v).toLocaleString('en-US');
+
+// ---- Geometry -----------------------------------------------------------------------------------
+const PL = 250, PR = 1350, PT = 330, PB = 780, YMAX = 190;
+const BW = (PR - PL) / (Y1 - Y0 + 1);
+const X = y => PL + (y - Y0) * BW;
+const H = v => v / YMAX * (PB - PT);
+const blurF = el('filter', { id: 'nt-blur', x: '-5%', y: '-5%', width: '110%', height: '110%' }, svg);
+const blurG = el('feGaussianBlur', { stdDeviation: 0 }, blurF);
+const cam = el('g', {}, svg);
+
+const axes = el('g', {}, cam);
+[50, 100, 150].forEach(v => {
+  el('line', { x1: PL, x2: PR, y1: PB - H(v), y2: PB - H(v), stroke: '#27493a', 'stroke-dasharray': '2 6' }, axes);
+  el('text', { x: PL - 14, y: PB - H(v) + 5, class: 'ax', 'text-anchor': 'end' }, axes).textContent = v;
+});
+el('line', { x1: PL, x2: PR, y1: PB, y2: PB, stroke: 'var(--muted)', 'stroke-width': 1.5 }, axes);
+[1945, 1960, 1975, 1990, 2005, 2026].forEach(y => {
+  el('text', { x: X(y) + BW / 2, y: PB + 32, class: 'ax', 'text-anchor': y === 2026 ? 'end' : y === 1945 ? 'start' : 'middle' }, axes).textContent = y;
+});
+el('text', { x: PR, y: PB + 62, class: 'src', 'text-anchor': 'end' }, axes).textContent = 'Tests per year · SIPRI/FOA list plus USGS for North Korea · 2,056 tests';
+
+// Two stacked bar sets (by state, by environment), revealed by the year sweep.
+const clip = el('clipPath', { id: 'nt-clip' }, svg);
+const clipR = el('rect', { x: PL - 2, y: 0, width: 0, height: 1000 }, clip);
+const barsWrap = el('g', { 'clip-path': 'url(#nt-clip)' }, cam);
+function barSet(M, cols) {
+  const g = el('g', {}, barsWrap);
+  M.forEach((row, i) => {
+    let y = PB;
+    const col = el('g', {}, g);
+    row.forEach((v, k) => {
+      if (!v) return;
+      const h = H(v);
+      el('rect', { x: X(Y0 + i) + 1.2, y: y - h, width: BW - 2.4, height: h, fill: cols[k] }, col);
+      y -= h;
+    });
+  });
+  return g;
+}
+const setS = barSet(BY_STATE, SCOL), setE = barSet(BY_ENV, ECOL);
+const envCols = [...setE.children];
+// Environment wipe: a second clip that grows left to right when the view switches.
+const clip2 = el('clipPath', { id: 'nt-clip2' }, svg);
+const clip2R = el('rect', { x: PL - 2, y: 0, width: 0, height: 1000 }, clip2);
+setE.setAttribute('clip-path', 'url(#nt-clip2)');
+
+// Milestones
+const msG = el('g', {}, cam);
+const ms = MS.map(([y, t], i) => {
+  const g = el('g', { opacity: 0 }, msG), x = X(y) + BW / 2, ly = PT - 26 - (i % 2) * 32;
+  el('line', { x1: x, x2: x, y1: ly + 8, y2: PB, stroke: 'var(--muted)', 'stroke-dasharray': '2 4', opacity: .7 }, g);
+  const w = t.length * 9.2 + 18, end = y > 2010 || y === 1958, bx = end ? x - w + 9 : x - 9;
+  const box = el('rect', { x: bx, y: ly - 18, width: w, height: 26, rx: 4, fill: '#0b1712', stroke: 'var(--paper)', 'stroke-width': 1.5 }, g);
+  const tx = el('text', { x: bx + 9, y: ly, class: 'ms-t' }, g); tx.textContent = t;
+  return { y, g, box, tx };
+});
+
+// 1962 peak tag
+const peak = el('g', { opacity: 0 }, cam);
+const px = X(1962) + BW / 2, py = PB - H(178);
+el('circle', { cx: px, cy: py, r: 7, fill: 'var(--amber)', filter: 'url(#kit-glow)' }, peak);
+el('text', { x: px + 18, y: py + 10, class: 'pk' }, peak).textContent = '178 in 1962';
+
+// Year cursor
+const head = el('g', { opacity: 0 }, cam);
+const hLine = el('rect', { y: PT - 4, height: PB - PT + 4, width: 3, fill: 'var(--amber)', filter: 'url(#kit-glow)' }, head);
+const hDot = el('circle', { r: 8, fill: 'var(--amber)', stroke: '#0b1712', 'stroke-width': 3, filter: 'url(#kit-glow)' }, head);
+
+// Header: year, readouts, stack toggle and legend
+const top = el('g', {}, cam);
+el('text', { x: PL, y: 84, class: 't-label' }, top).textContent = 'Nuclear tests per year · drag to move the year';
+const yrT = el('text', { x: PL - 6, y: 186, class: 'yr' }, top);
+el('text', { x: 560, y: 130, class: 'ro-n' }, top).textContent = 'Tests that year';
+const roYear = el('text', { x: 560, y: 172, class: 'ro-v' }, top);
+el('text', { x: 800, y: 130, class: 'ro-n' }, top).textContent = 'Total so far';
+const roTotT = el('text', { x: 800, y: 172, class: 'ro-v' }, top);
+const roTot = el('tspan', {}, roTotT);
+const roOf = el('tspan', { class: 'ro-s', dx: 10 }, roTotT);
+// Toggle: Stack by  [State | Environment]
+const tog = el('g', {}, top);
+el('text', { x: 1350, y: 108, class: 'ro-n', 'text-anchor': 'end' }, tog).textContent = 'Stack by';
+el('rect', { x: 1060, y: 124, width: 290, height: 44, rx: 22, fill: 'none', stroke: 'var(--line)', 'stroke-width': 2 }, tog);
+const knob = el('rect', { y: 128, height: 36, rx: 18, fill: 'var(--amber)' }, tog);
+const tS = el('text', { x: 1122, y: 151, class: 'tg', 'text-anchor': 'middle' }, tog); tS.textContent = 'State';
+const tE = el('text', { x: 1262, y: 151, class: 'tg', 'text-anchor': 'middle' }, tog); tE.textContent = 'Environment';
+function legend(names, cols) {
+  const g = el('g', {}, top); let x = PL;
+  names.forEach((n, k) => {
+    el('rect', { x, y: 232, width: 14, height: 14, fill: cols[k] }, g);
+    el('text', { x: x + 22, y: 245, class: 'lg' }, g).textContent = n;
+    x += 22 + n.length * 9.4 + 26;
+  });
+  return g;
+}
+const lgS = legend(SHORT, SCOL), lgE = legend(ENVS, ECOL);
+
+// Cursor (the player's hand) for the toggle click
+const cur = el('g', { opacity: 0 }, cam);
+const ring = el('circle', { r: 22, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 3, filter: 'url(#kit-glow)' }, cur);
+el('path', { d: 'M0 0l0 30l8 -7l6 13l6 -3l-6 -12l11 0z', fill: 'var(--paper)', stroke: '#0b1712', 'stroke-width': 2 }, cur);
+
+// Hook
+const hook = el('g', {}, svg);
+const h1 = el('text', { x: 800, y: 400, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:64px' }, hook);
+h1.textContent = 'Since Trinity, states have set off';
+const hn = el('text', { x: 800, y: 560, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:170px' }, svg);
+const hnSpan = el('tspan', { class: 'hot' }, hn);
+const h2 = el('text', { x: 800, y: 660, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:64px' }, hook);
+h2.textContent = 'nuclear tests.';
+
+// Payoff
+const pay = el('g', { opacity: 0 }, svg);
+el('rect', { width: 1600, height: 1000, fill: '#070f0b', opacity: .8 }, pay);
+const p1 = el('text', { x: 800, y: 300, class: 't-hook', 'text-anchor': 'middle' }, pay);
+p1.innerHTML = 'The last confirmed test: <tspan class="hot">Sept. 3, 2017</tspan>.';
+const p2 = el('text', { x: 800, y: 362, class: 't-cap', 'text-anchor': 'middle', style: 'fill:var(--muted)' }, pay);
+p2.textContent = 'North Korea, Punggye-ri · magnitude 6.3 at USGS';
+const pq = el('g', {}, pay);
+el('line', { x1: 400, x2: 1200, y1: 440, y2: 440, stroke: 'var(--line)', 'stroke-width': 2 }, pq);
+el('text', { x: 800, y: 500, class: 'qw', 'text-anchor': 'middle' }, pq).textContent = 'President Trump · Oct. 29, 2025';
+el('text', { x: 800, y: 568, class: 'q', 'text-anchor': 'middle' }, pq).textContent = '“I have instructed the Department of War to start';
+el('text', { x: 800, y: 620, class: 'q', 'text-anchor': 'middle' }, pq).textContent = 'testing our Nuclear Weapons on an equal basis.”';
+const pq2 = el('g', {}, pay);
+el('text', { x: 800, y: 700, class: 'qw', 'text-anchor': 'middle' }, pq2).textContent = 'Energy Secretary Wright · Nov. 2, 2025';
+el('text', { x: 800, y: 752, class: 'q', 'text-anchor': 'middle', style: 'font-size:32px;fill:var(--muted)' }, pq2).textContent = '“These are not nuclear explosions.”';
+
+const cap = captions(svg, [
+  [0.3, 3.3, 'Every test from 1945 to 2017, counted one by one'],
+  [3.6, 7.0, 'Move the year: 178 tests in 1962 alone'],
+  [7.2, 10.6, 'Stack by environment: after 1963, tests go underground'],
+  [10.9, 13.8, 'No announced or confirmed nuclear test since 2017'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Every Nuclear Test', line: 'All 2,056 tests since Trinity, by country, yield and site.' });
+
+// ---- Timeline -----------------------------------------------------------------------------------
+const D = 17;
+function yearAt(t) {
+  if (t < 3.9) return Y0;
+  if (t < 6.3) return lerp(Y0, 1962, ease.inOut(seg(t, 3.9, 6.3)));
+  if (t < 7.9) return 1962;
+  return lerp(1962, Y1, ease.inOut(seg(t, 7.9, 10.6)));
+}
+const cumAt = y => { const i = Math.floor(y - Y0); return i < 0 ? 0 : cumTot[Math.min(i, cumTot.length - 1)]; };
+const T0 = 1060 + 4, T1 = 1200;   // knob x at State, at Environment
+function frame(t) {
+  // hook
+  const hu = ease.out(seg(t, 0.2, 0.9)), fly = ease.inOut(seg(t, 2.9, 3.7));
+  h1.setAttribute('opacity', hu * (1 - seg(t, 2.8, 3.2)));
+  h1.setAttribute('transform', `translate(0,${(1 - hu) * 20})`);
+  h2.setAttribute('opacity', ease.out(seg(t, 0.7, 1.3)) * (1 - seg(t, 2.8, 3.2)));
+  hnSpan.textContent = fmt(TOTAL * ease.out(seg(t, 0.4, 2.3)));
+  // fly the number into the "of 2,056" slot
+  const tx = 930, ty = 172;
+  hn.setAttribute('opacity', ease.out(seg(t, 0.35, 0.8)) * (1 - seg(t, 3.55, 3.75)));
+  hn.setAttribute('transform', `translate(${lerp(0, tx - 800, fly)},${lerp(0, ty - 560, fly)}) translate(800,560) scale(${lerp(1, 0.13, fly)}) translate(-800,-560)`);
+
+  const out = 1 - seg(t, 15.0, 15.6);
+  axes.setAttribute('opacity', ease.out(seg(t, 3.2, 4.0)) * out);
+  top.setAttribute('opacity', ease.out(seg(t, 3.4, 4.0)) * out);
+  barsWrap.setAttribute('opacity', seg(t, 3.5, 3.9) * out);
+  const y = yearAt(t), yi = Math.min(Y1, Math.floor(y + 1e-6)), hx = X(y) + BW;
+  clipR.setAttribute('width', Math.max(0, hx - PL + 2));
+  yrT.textContent = yi;
+  roYear.textContent = fmt(tot[yi - Y0]);
+  const c = cumAt(y);
+  roTot.textContent = fmt(c);
+  roOf.textContent = 'of ' + fmt(TOTAL);
+  roOf.setAttribute('opacity', seg(t, 3.7, 3.9));
+  head.setAttribute('opacity', seg(t, 3.8, 4.1) * (1 - seg(t, 10.6, 11.0)));
+  const cx = X(yi) + BW / 2;
+  hLine.setAttribute('x', hx + 1.5);
+  hDot.setAttribute('cx', cx); hDot.setAttribute('cy', PB - H(tot[yi - Y0]));
+
+  // 1962 peak moment
+  const pk = seg(t, 6.2, 6.5) * (1 - seg(t, 7.6, 8.2));
+  peak.setAttribute('opacity', pk);
+  peak.setAttribute('transform', `translate(0,${(1 - ease.back(seg(t, 6.2, 6.7))) * 12})`);
+  hDot.setAttribute('r', 8 + 6 * seg(t, 6.2, 6.4) * (1 - seg(t, 6.9, 7.3)));
+  roYear.setAttribute('filter', pk > .5 ? 'url(#kit-glow)' : '');
+  roYear.style.fill = pk > .5 ? 'var(--amber)' : 'var(--paper)';
+
+  // toggle: cursor clicks "Environment"
+  const sw = ease.inOut(seg(t, 7.15, 7.5));
+  knob.setAttribute('x', lerp(T0, T1, sw)); knob.setAttribute('width', lerp(118, 146, sw));
+  tS.style.fill = sw < .5 ? '#0b1712' : 'var(--muted)';
+  tE.style.fill = sw < .5 ? 'var(--muted)' : '#0b1712';
+  const cIn = ease.out(seg(t, 6.6, 7.1)), cOut = seg(t, 7.8, 8.2);
+  cur.setAttribute('opacity', cIn * (1 - cOut));
+  const cxp = lerp(1180, 1268, cIn), cyp = lerp(260, 150, cIn);
+  cur.setAttribute('transform', `translate(${cxp},${cyp})`);
+  const press = seg(t, 7.05, 7.15) * (1 - seg(t, 7.3, 7.6));
+  ring.setAttribute('r', 22 + 18 * seg(t, 7.1, 7.6)); ring.setAttribute('opacity', seg(t, 7.05, 7.15) * (1 - seg(t, 7.3, 7.7)));
+  cur.lastChild.setAttribute('transform', `scale(${1 - press * .12})`);
+  const wipe = ease.inOut(seg(t, 7.3, 8.0));
+  clip2R.setAttribute('width', wipe * (PR - PL + 4));
+  setS.setAttribute('opacity', 1 - seg(t, 7.7, 8.0));
+  lgS.setAttribute('opacity', 1 - seg(t, 7.2, 7.5)); lgE.setAttribute('opacity', seg(t, 7.4, 7.8));
+
+  ms.forEach(m => {
+    const u = ease.back(seg(y, m.y - 0.3, m.y + 1.6));
+    const lit = t < 10.6 ? seg(y, m.y - 0.3, m.y) * (1 - seg(y, m.y + 2, m.y + 7)) : 0;
+    m.g.setAttribute('opacity', seg(y, m.y - 0.3, m.y + 0.4) * out);
+    m.g.setAttribute('transform', `translate(0,${(1 - u) * 14})`);
+    m.box.setAttribute('fill', lit > .5 ? 'var(--amber)' : '#0b1712');
+    m.box.setAttribute('stroke', lit > .5 ? 'var(--amber)' : 'var(--paper)');
+    m.tx.style.fill = lit > .5 ? '#0b1712' : 'var(--paper)';
+    m.box.setAttribute('filter', lit > .5 ? 'url(#kit-glow)' : '');
+  });
+
+  // camera: push toward the peak, then drift right with the long decline
+  const push = ease.inOut(seg(t, 3.4, 6.6)), back = ease.inOut(seg(t, 7.9, 10.6));
+  const s = 1 + 0.06 * push - 0.04 * back, dx = lerp(0, 90, push) - lerp(0, 100, back);
+  cam.setAttribute('transform', `translate(800,540) scale(${s}) translate(${-800 + dx},-540)`);
+
+  // payoff
+  const pu = ease.out(seg(t, 10.9, 11.6)) * (1 - seg(t, 13.8, 14.2));
+  pay.setAttribute('opacity', pu);
+  const bl = Math.max(pu, seg(t, 13.8, 14.2));
+  blurG.setAttribute('stdDeviation', (bl * 6).toFixed(2));
+  cam.setAttribute('filter', bl > 0.01 ? 'url(#nt-blur)' : '');
+  const q1 = ease.out(seg(t, 11.5, 12.2)), q2 = ease.out(seg(t, 12.4, 13.0));
+  pq.setAttribute('opacity', q1); pq.setAttribute('transform', `translate(0,${(1 - q1) * 24})`);
+  pq2.setAttribute('opacity', q2); pq2.setAttribute('transform', `translate(0,${(1 - q2) * 24})`);
+
+  cap(t); end(t, 14.0, D);
+}
+run({ duration: D, poster: 6.7, frame });
+</script>
+</body></html>

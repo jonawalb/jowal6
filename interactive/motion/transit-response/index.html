@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Transit Response Explorer</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .tr-hud { fill: #0a1510; fill-opacity: .86; stroke: var(--line); stroke-width: 1.2; }
+  .tr-ax { font: 400 14px var(--mono); fill: var(--muted); font-variant-numeric: tabular-nums; }
+  .tr-yr { font: 400 14px var(--mono); fill: var(--muted); text-anchor: middle; }
+  .tr-ship { font: italic 500 40px var(--display); fill: var(--paper); }
+  .tr-meta { font: 400 15px var(--mono); fill: var(--muted); letter-spacing: .04em; }
+  .tr-head { font: 600 76px var(--mono); fill: var(--amber); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+  .tr-hs { font: 400 15px var(--mono); fill: var(--muted); }
+  .tr-dt { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+  .tr-dd { font: 600 19px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .tr-bv { font: 600 15px var(--mono); fill: var(--paper); text-anchor: middle; font-variant-numeric: tabular-nums; }
+  .tr-j { font: 600 13px var(--mono); fill: var(--amber); text-anchor: middle; }
+  .tr-g { font: italic 500 38px var(--display); fill: var(--paper); }
+  .tr-gv { font: 600 40px var(--mono); font-variant-numeric: tabular-nums; }
+  .tr-ci { font: 400 16px var(--mono); fill: var(--muted); font-variant-numeric: tabular-nums; }
+  .tr-fine { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of the Transit Response Explorer: a timeline of 85 allied Taiwan Strait transits, the Aug. 22, 2024 USS Ralph Johnson transit selected, daily PLA aircraft bars rising around it against a 30-day baseline, then U.S. and non-U.S. transits compared with overlapping intervals."><title>Transit Response Explorer</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Real data, computed with the tool's own code (tools/transit-response/js/events.js) ----------------
+// shared/data/tsm.js (asOf 2026-09-28) via EVENTS: 85 transit days, 2017-07-17 to 2026-09-18, same-day ships merged.
+// Each: yymmdd, u = at least one U.S. ship / a = no U.S. ship, 1 = analyzable for PLA aircraft / 0 = not.
+const EV = '170717u0 180707u0 181022u0 181128u0 190124u0 190225u0 190324u0 190406a0 190428u0 190522u0 190618a0 190725u0 190823u0 190910a0 190920u0 191112u0 200116u0 200215u0 200325u0 200410u0 200423u0 200513u0 200604u0 200611u0 200710u0 200818u0 200830u0 201014u0 201121u0 201219u0 201231u0 210204u0 210224u0 210310u0 210407u0 210518u0 210622u0 210728u0 210827u0 210917u0 210927a0 211014u0 211123u0 211215u0 220122u0 220226u0 220317u0 220426u0 220510u0 220719u0 220828u1 220920u1 221105u1 230105u1 230416u1 230603u1 230620u1 230909u1 231101u1 231123a1 240124u1 240305u1 240508u1 240531a1 240731a1 240822u1 240913a1 240925a1 241020u1 241028a1 250205a1 250210u1 250216a1 250423u1 250612a1 250618a1 250906a1 250912u1 251105a1 260116u1 260220a1 260417a1 260522a1 260605a1 260918a1'
+  .split(' ').map(s => ({ y: 2000 + +s.slice(0, 2), m: +s.slice(2, 4), d: +s.slice(4, 6), us: s[6] === 'u', ok: s[7] === '1' }));
+const SEL = EV.findIndex(e => e.y === 2024 && e.m === 8 && e.d === 22);
+// analyze(event 2024-08-22, 'air'): daily PLA aircraft, days -7..+10; J = joint combat readiness patrol that day.
+const DAYS = [13, 13, 7, 8, 5, 11, 8, 41, 38, 12, 12, 15, 30, 13, 25, 30, 10, 18];
+const JDAYS = [1, 8];
+const BASE = { mean: 12.26, sd: 9.96, n: 23, excl: 7 };   // days -30..-1, 7 left out near other transits
+const HEAD = 13.49;                                        // mean deviation, day 0 to +3 -> shown as "+13"
+// aggregate('air', {unit:'count', to:3}): percentile bootstrap, seed 20260916, 2,000 reps.
+const AGG = { us: { m: 4.7699, ci: [1.1507, 8.3808], n: 18 }, ally: { m: 1.4865, ci: [-3.0166, 6.1071], n: 17 }, diff: { m: 3.2834, ci: [-2.5975, 9.0541] } };
+// Number formats from js/chart.js (f1 / sgn): one decimal under 10, whole numbers from 10.
+const f1 = v => (Math.abs(v) >= 10 ? Math.round(v) : v.toFixed(1));
+const sgn = v => (v > 0 ? '+' : v < 0 ? '−' : '±') + f1(Math.abs(v));
+
+const txt = (x, y, cls, s, a = {}, p) => { const n = el('text', { x, y, class: cls, ...a }, p); n.textContent = s; return n; };
+const op = (n, v) => n.setAttribute('opacity', Math.max(0, Math.min(1, v)).toFixed(3));
+
+// ---- Timeline strip of every transit -------------------------------------------------------------------
+const cam = el('g', {}, svg);
+const strip = el('g', {}, cam);
+const SX0 = 150, SX1 = 1450, SY = 150;
+const xDate = (y, m, d) => SX0 + ((y - 2017) + (m - 1) / 12 + (d - 1) / 365) / 10 * (SX1 - SX0);
+txt(SX0, 72, 't-label', 'Allied Taiwan Strait transits, 2017–2026 · 85 events', {}, strip);
+el('line', { x1: SX0, x2: SX1, y1: SY, y2: SY, stroke: 'var(--line)', 'stroke-width': 2 }, strip);
+for (let y = 2017; y <= 2026; y++) {
+  el('line', { x1: xDate(y, 1, 1), x2: xDate(y, 1, 1), y1: SY + 8, y2: SY + 16, stroke: 'var(--muted)' }, strip);
+  txt(xDate(y, 7, 1), SY + 42, 'tr-yr', y, {}, strip);
+}
+const lg = el('g', {}, strip);
+[['var(--blue)', 'U.S. ship present', true], ['var(--green)', 'No U.S. ship', true], ['var(--muted)', 'Not analyzable', false]].forEach(([c, s, fill], i) => {
+  const x = 870 + i * 205;
+  el('circle', { cx: x, cy: 66, r: 6, fill: fill ? c : 'none', stroke: c, 'stroke-width': 1.6 }, lg);
+  txt(x + 14, 71, 'tr-meta', s, { style: 'font-size:13px' }, lg);
+});
+// Dots stack upward when two events fall within a few pixels.
+const dots = EV.map((e, i) => {
+  const x = xDate(e.y, e.m, e.d);
+  let lift = 0; for (let j = i - 1; j >= 0 && x - xDate(EV[j].y, EV[j].m, EV[j].d) < 11; j--) lift++;
+  const col = e.us ? 'var(--blue)' : 'var(--green)';
+  const c = el('circle', { cx: x, cy: SY - 14 - (lift % 3) * 15, r: 6, fill: e.ok ? col : 'none', stroke: e.ok ? col : 'var(--muted)', 'stroke-width': 1.6 }, strip);
+  return { c, x, cy: SY - 14 - (lift % 3) * 15 };
+});
+const selRing = el('circle', { r: 16, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 2.5, filter: 'url(#kit-glow)', opacity: 0 }, strip);
+const selDrop = el('line', { stroke: 'var(--amber)', 'stroke-width': 1.5, 'stroke-dasharray': '3 5', opacity: 0 }, strip);
+
+// ---- Event window chart ---------------------------------------------------------------------------------
+const chart = el('g', {}, cam);
+const CX0 = 170, BW = 50, CY0 = 790, KY = 8.2; // 18 day bands, 8.2 px per aircraft
+const xOf = k => CX0 + (k + 7) * BW, yOf = v => CY0 - v * KY;
+const shipG = el('g', {}, chart);
+txt(CX0, 300, 't-label', 'Event window · Aug. 22, 2024', {}, shipG);
+txt(CX0, 346, 'tr-ship', 'USS Ralph Johnson', {}, shipG);
+txt(CX0 + 360, 346, 'tr-meta', 'DDG-114 · Arleigh Burke Flight IIA · Destroyer', {}, shipG);
+const grid = el('g', {}, chart);
+[0, 10, 20, 30, 40].forEach(v => {
+  el('line', { x1: CX0, x2: CX0 + 18 * BW, y1: yOf(v), y2: yOf(v), stroke: v ? '#27493a' : 'var(--muted)', 'stroke-dasharray': v ? '2 6' : '', 'stroke-width': v ? 1 : 1.5 }, grid);
+  txt(CX0 - 12, yOf(v) + 5, 'tr-ax', v, { 'text-anchor': 'end' }, grid);
+});
+[-7, 0, 3, 10].forEach(k => txt(xOf(k) + BW / 2, CY0 + 30, 'tr-ax', k === 0 ? 'day 0' : (k > 0 ? '+' : '−') + Math.abs(k), { 'text-anchor': 'middle', style: k === 0 ? 'fill:var(--amber)' : '' }, grid));
+txt(CX0 - 44, yOf(47.5), 'tr-ax', 'PLA aircraft per day', {}, grid);
+const band = el('rect', { x: CX0, width: 0, y: yOf(BASE.mean + BASE.sd), height: (2 * BASE.sd) * KY, fill: 'var(--paper)', 'fill-opacity': .06 }, chart);
+const baseL = el('line', { x1: CX0, y1: yOf(BASE.mean), y2: yOf(BASE.mean), stroke: 'var(--paper)', 'stroke-width': 2, 'stroke-dasharray': '8 6' }, chart);
+const baseT = txt(CX0 + 6, yOf(BASE.mean + BASE.sd) - 10, 'tr-meta', '30-day baseline 12, ± 1 sd band', { style: 'font-size:13px;fill:var(--paper)' }, chart);
+const win = el('rect', { x: xOf(0) + 2, y: yOf(46), width: 4 * BW - 4, height: 46 * KY, fill: 'var(--amber)', 'fill-opacity': .07, stroke: 'var(--amber)', 'stroke-opacity': .5, 'stroke-dasharray': '4 6' }, chart);
+const winT = txt(xOf(4) - 8, yOf(46) + 20, 'tr-meta', 'day 0 to +3', { 'text-anchor': 'end', style: 'font-size:13px;fill:var(--amber)' }, chart);
+const bars = DAYS.map((v, i) => {
+  const k = i - 7, g = el('g', {}, chart);
+  const r = el('rect', { x: xOf(k) + 8, width: BW - 16, rx: 2, fill: v > BASE.mean ? 'var(--red)' : '#5f7d6d' }, g);
+  const t = txt(xOf(k) + BW / 2, 0, 'tr-bv', v, {}, g);
+  const j = JDAYS.includes(k) ? txt(xOf(k) + BW / 2, 0, 'tr-j', 'J', {}, g) : null;
+  return { k, v, g, r, t, j };
+});
+const d0 = el('line', { x1: xOf(0) + BW / 2, x2: xOf(0) + BW / 2, y1: yOf(0), y2: yOf(48), stroke: 'var(--amber)', 'stroke-width': 2 }, chart);
+
+// Side readout, worded as js/panel.js does.
+const ro = el('g', {}, cam);
+el('rect', { x: 1170, y: 270, width: 370, height: 560, rx: 6, class: 'tr-hud' }, ro);
+const headT = txt(1192, 360, 'tr-head', '+0', {}, ro);
+txt(1194, 392, 'tr-hs', 'aircraft per day against the', {}, ro);
+txt(1194, 414, 'tr-hs', 'baseline, day 0 to +3', {}, ro);
+const sdNote = txt(1194, 448, 'tr-hs', 'More than one standard deviation', { style: 'fill:var(--paper);font-size:14px' }, ro);
+const RO = [['Baseline', '12 aircraft/day (sd 10)'], ['Baseline days', `${BASE.n} of 30 · ${BASE.excl} excluded`], ['Transit day', `41 aircraft (${sgn(41 - BASE.mean)})`], ['Window peak', '41 on day 0']];
+const rows = RO.map(([a, b], i) => { const g = el('g', {}, ro), y = 500 + i * 76; el('line', { x1: 1192, x2: 1518, y1: y - 22, y2: y - 22, stroke: 'var(--line)' }, g); txt(1192, y, 'tr-dt', a, {}, g); txt(1192, y + 30, 'tr-dd', b, {}, g); return g; });
+
+// ---- Hook and payoff --------------------------------------------------------------------------------------
+const hook = el('g', {}, svg);
+const h1 = txt(800, 440, 't-hook', 'An allied warship sails the Strait.', { 'text-anchor': 'middle', style: 'font-size:64px' }, hook);
+const h2 = el('text', { x: 800, y: 530, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:64px' }, hook);
+h2.innerHTML = 'Does the PLA <tspan class="hot">answer?</tspan>';
+
+const pay = el('g', { opacity: 0 }, svg);
+el('rect', { width: 1600, height: 1000, fill: '#070f0b', opacity: .9 }, pay);
+const pH = txt(800, 196, 't-hook', 'U.S. transits against the rest', { 'text-anchor': 'middle', style: 'font-size:54px' }, pay);
+const pS = txt(800, 240, 'tr-fine', 'Mean change in PLA aircraft per day, day 0 to +3 · 95% bootstrap intervals', { 'text-anchor': 'middle' }, pay);
+const AX0 = 560, AX1 = 1300, V0 = -6, V1 = 12, xv = v => AX0 + (v - V0) / (V1 - V0) * (AX1 - AX0);
+const axG = el('g', {}, pay);
+[-5, 0, 5, 10].forEach(v => { el('line', { x1: xv(v), x2: xv(v), y1: 300, y2: 610, stroke: v ? '#27493a' : 'var(--muted)', 'stroke-dasharray': v ? '2 6' : '', 'stroke-width': v ? 1 : 1.5 }, axG); txt(xv(v), 640, 'tr-ax', v > 0 ? '+' + v : v < 0 ? '−' + -v : '0', { 'text-anchor': 'middle' }, axG); });
+const GR = [['U.S. ship present', AGG.us, 'var(--blue)', 390], ['No U.S. ship', AGG.ally, 'var(--green)', 530]].map(([name, G, col, y]) => {
+  const g = el('g', {}, pay);
+  txt(300, y - 6, 'tr-g', name, {}, g);
+  txt(300, y + 26, 'tr-ci', `n = ${G.n} events`, {}, g);
+  const bar = el('rect', { y: y - 12, height: 24, rx: 12, fill: col, 'fill-opacity': .28, stroke: col, 'stroke-width': 1.5 }, g);
+  const dot = el('circle', { cy: y, r: 11, fill: col, stroke: '#0b1712', 'stroke-width': 3, filter: 'url(#kit-glow)' }, g);
+  const v = txt(1330, y + 8, 'tr-gv', sgn(G.m), { style: `fill:${col}` }, g);
+  const ci = txt(1330, y + 36, 'tr-ci', `[${sgn(G.ci[0])}, ${sgn(G.ci[1])}]`, {}, g);
+  return { g, G, bar, dot, v, ci, y };
+});
+const pOver = el('rect', { x: xv(AGG.us.ci[0]), width: xv(AGG.ally.ci[1]) - xv(AGG.us.ci[0]), y: 330, height: 260, fill: 'var(--amber)', 'fill-opacity': .09, stroke: 'var(--amber)', 'stroke-dasharray': '4 6', 'stroke-opacity': .7 }, pay);
+const pOverT = txt((xv(AGG.us.ci[0]) + xv(AGG.ally.ci[1])) / 2, 322, 'tr-fine', 'Overlap', { 'text-anchor': 'middle', style: 'fill:var(--amber)' }, pay);
+const pL = el('text', { x: 800, y: 720, class: 't-cap', 'text-anchor': 'middle' }, pay);
+pL.innerHTML = `Difference <tspan fill="var(--amber)" style="fill:var(--amber)">${sgn(AGG.diff.m)}</tspan>, interval ${sgn(AGG.diff.ci[0])} to ${sgn(AGG.diff.ci[1])}: the data do not separate the groups.`;
+const pN = txt(800, 762, 'tr-fine', 'Descriptive, not causal · 35 analyzable transits since Aug. 2022', { 'text-anchor': 'middle' }, pay);
+
+const cap = captions(svg, [
+  [3.3, 5.3, 'Every allied transit since 2017, one dot each'],
+  [5.5, 9.3, 'Pick one: PLA aircraft around it, against a baseline'],
+  [9.6, 12.7, 'Then average every event and test the gap'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Transit Response', line: 'Pick an allied Strait transit and see how the PLA answered.' });
+
+// ---- Timeline ---------------------------------------------------------------------------------------------
+const D = 16;
+function frame(t) {
+  const out = 1 - seg(t, 12.8, 13.4);
+  [h1, h2].forEach((h, i) => {
+    const u = ease.out(seg(t, 0.25 + i * 0.4, 1.0 + i * 0.4)), o = 1 - seg(t, 2.6 + i * 0.1, 3.1 + i * 0.1);
+    op(h, u * o); h.setAttribute('transform', `translate(0,${((1 - u) * 24 - seg(t, 2.6, 3.2) * 18).toFixed(1)})`);
+  });
+  const push = ease.inOut(seg(t, 3.0, 12.8)), dim = lerp(1, 0.15, ease.inOut(seg(t, 9.4, 10.0)));
+  cam.setAttribute('transform', `translate(800,520) scale(${(1 + 0.035 * push).toFixed(4)}) translate(-800,-520)`);
+  op(cam, dim * out);
+
+  // Strip: dots pop in left to right, 2017 -> 2026.
+  op(strip, ease.out(seg(t, 2.9, 3.4)));
+  const su0 = ease.inOut(seg(t, 4.95, 5.7));
+  strip.setAttribute('transform', `translate(800,${lerp(440, 150, su0).toFixed(1)}) scale(${lerp(1.1, 1, su0).toFixed(4)}) translate(-800,-150)`);
+  dots.forEach((d, i) => {
+    const a = 3.1 + (d.x - SX0) / (SX1 - SX0) * 1.5, u = ease.back(seg(t, a, a + 0.35));
+    d.c.setAttribute('r', (6 * u).toFixed(2));
+    const hi = i === SEL && t > 4.6;
+    d.c.setAttribute('fill', hi ? 'var(--amber)' : d.c.getAttribute('stroke') === 'var(--muted)' ? 'none' : (EV[i].us ? 'var(--blue)' : 'var(--green)'));
+  });
+  const sd = dots[SEL], su = ease.back(seg(t, 4.5, 4.9));
+  selRing.setAttribute('cx', sd.x); selRing.setAttribute('cy', sd.cy); selRing.setAttribute('r', (16 + (1 - su) * 20).toFixed(1));
+  op(selRing, seg(t, 4.5, 4.7));
+  selDrop.setAttribute('x1', sd.x); selDrop.setAttribute('x2', sd.x); selDrop.setAttribute('y1', sd.cy + 16); selDrop.setAttribute('y2', lerp(sd.cy + 16, 262, ease.out(seg(t, 5.3, 5.8))));
+  op(selDrop, seg(t, 5.3, 5.5) * 0.8);
+
+  // Chart builds: ship card, axes, baseline, then bars day by day.
+  op(shipG, ease.out(seg(t, 5.3, 5.8))); shipG.setAttribute('transform', `translate(${((1 - ease.out(seg(t, 5.3, 5.9))) * -30).toFixed(1)},0)`);
+  op(grid, ease.out(seg(t, 5.0, 5.5)));
+  const bu = ease.inOut(seg(t, 5.2, 5.9));
+  band.setAttribute('width', (18 * BW * bu).toFixed(1)); baseL.setAttribute('x2', (CX0 + 18 * BW * bu).toFixed(1)); op(baseT, seg(t, 5.6, 5.9));
+  bars.forEach((b, i) => {
+    const a = 5.8 + i * 0.16, u = ease.out(seg(t, a, a + 0.45)), h = b.v * KY * u;
+    b.r.setAttribute('y', (CY0 - h).toFixed(1)); b.r.setAttribute('height', h.toFixed(1));
+    b.t.setAttribute('y', (CY0 - h - 10).toFixed(1)); op(b.t, seg(t, a + 0.2, a + 0.45));
+    if (b.j) { b.j.setAttribute('y', (CY0 - h - 30).toFixed(1)); op(b.j, seg(t, a + 0.3, a + 0.5)); }
+    const zero = b.k === 0, flash = zero ? 1 - seg(t, a + 0.3, a + 1.4) : 0;
+    b.r.setAttribute('filter', zero && t > a + 0.2 ? 'url(#kit-glow)' : '');
+    b.r.setAttribute('fill', zero && flash > 0.3 ? 'var(--amber)' : b.v > BASE.mean ? 'var(--red)' : '#5f7d6d');
+  });
+  op(d0, ease.out(seg(t, 5.9, 6.3)));
+  op(win, ease.out(seg(t, 7.3, 7.8))); op(winT, ease.out(seg(t, 7.4, 7.9)));
+
+  // Readout: headline counts up once day +3 is in.
+  op(ro, ease.out(seg(t, 5.3, 5.8))); ro.setAttribute('transform', `translate(${((1 - ease.out(seg(t, 5.3, 6.0))) * 30).toFixed(1)},0)`);
+  const hu = ease.out(seg(t, 7.4, 8.3));
+  headT.textContent = sgn(HEAD * hu).replace('±0.0', '+0');
+  headT.setAttribute('filter', hu > 0 && hu < 1 ? 'url(#kit-glow)' : '');
+  op(sdNote, seg(t, 8.2, 8.5));
+  rows.forEach((r, i) => { const u = ease.out(seg(t, 6.0 + i * 0.25, 6.5 + i * 0.25)); op(r, u); });
+
+  // Payoff: the aggregate view.
+  const pu = ease.out(seg(t, 9.5, 10.1)) * (1 - seg(t, 12.8, 13.3));
+  op(pay, pu);
+  [pH, pS].forEach((n, i) => { const u = ease.out(seg(t, 9.6 + i * 0.15, 10.2 + i * 0.15)); op(n, u); n.setAttribute('transform', `translate(0,${((1 - u) * 14).toFixed(1)})`); });
+  op(axG, ease.out(seg(t, 9.8, 10.3)));
+  GR.forEach((g, i) => {
+    const a = 10.0 + i * 0.3, u = ease.inOut(seg(t, a, a + 0.8));
+    op(g.g, ease.out(seg(t, a, a + 0.3)));
+    const lo = lerp(g.G.m, g.G.ci[0], u), hi = lerp(g.G.m, g.G.ci[1], u);
+    g.bar.setAttribute('x', xv(lo).toFixed(1)); g.bar.setAttribute('width', Math.max(0, xv(hi) - xv(lo)).toFixed(1));
+    const mu = ease.out(seg(t, a, a + 0.6));
+    g.dot.setAttribute('cx', xv(lerp(0, g.G.m, mu)).toFixed(1));
+    g.v.textContent = sgn(g.G.m * mu).replace('±0.0', '+0.0');
+    op(g.ci, seg(t, a + 0.6, a + 0.9));
+  });
+  op(pOver, ease.out(seg(t, 11.1, 11.5)) * 0.9); op(pOverT, ease.out(seg(t, 11.2, 11.6)));
+  op(pL, ease.out(seg(t, 11.4, 11.9))); op(pN, ease.out(seg(t, 11.6, 12.1)));
+
+  cap(t); end(t, 13.0, D);
+}
+run({ duration: D, poster: 8.6, frame });
+</script>
+</body></html>

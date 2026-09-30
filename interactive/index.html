@@ -20,10 +20,38 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="stylesheet" href="/style.css">
     <style>
-        .interactive-intro { max-width: 760px; margin: 0 auto 2.5rem; text-align: center; }
-        .interactive-intro p { margin-bottom: 1rem; }
-        .interactive-cta { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; margin-top: 1.5rem; }
-        .interactive-note { font-size: 0.9rem; opacity: 0.8; }
+        #interactive.section { padding: calc(var(--nav-h) + 28px) 24px 36px; min-height: 100vh; display: flex; align-items: center; }
+        #interactive .container { width: 100%; }
+        .ix { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 48px; align-items: center; }
+        .ix .section-title { margin-bottom: 28px; }
+        .ix-intro p { margin-bottom: 1rem; line-height: 1.65; }
+        .interactive-cta { display: flex; gap: 0.75rem; flex-wrap: wrap; margin: 1.5rem 0 1rem; }
+        .interactive-note { font-size: 0.9rem; color: var(--text-muted); }
+        .shows { margin: 0; }
+        .shows-frame { position: relative; border-radius: 10px; overflow: hidden; background: var(--surface); border: 1px solid var(--border);
+            box-shadow: 0 18px 40px -22px rgba(26, 58, 42, .45); aspect-ratio: 16 / 10; max-height: min(58vh, 520px); margin-inline: auto; }
+        .shows-frame a { display: block; height: 100%; }
+        .shows-frame img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; transition: opacity .45s ease; }
+        .shows-frame img.fading { opacity: 0; }
+        .shows-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border);
+            background: rgba(255, 255, 255, .92); color: var(--green-900); font-size: 22px; line-height: 1; cursor: pointer; display: grid; place-items: center; }
+        .shows-arrow:hover, .shows-arrow:focus-visible { background: #fff; border-color: var(--green-600); outline: none; box-shadow: 0 0 0 3px var(--accent-glow); }
+        .shows-arrow.prev { left: 12px; } .shows-arrow.next { right: 12px; }
+        .shows-cap { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-top: 14px; min-height: 3.4em; }
+        .shows-cap h3 { font-family: var(--font-serif); font-size: 1.2rem; color: var(--green-900); margin: 0 0 4px; }
+        .shows-cap p { margin: 0; color: var(--text-muted); font-size: .95rem; line-height: 1.5; }
+        .shows-cap a { color: var(--green-700); font-weight: 600; font-size: .9rem; white-space: nowrap; text-decoration: none; }
+        .shows-cap a:hover { text-decoration: underline; }
+        .shows-dots { display: flex; gap: 7px; justify-content: center; margin-top: 12px; }
+        .shows-dots button { width: 8px; height: 8px; padding: 0; border-radius: 50%; border: 0; background: var(--border); cursor: pointer; }
+        .shows-dots button[aria-current="true"] { background: var(--green-600); width: 22px; border-radius: 4px; }
+        @media (max-width: 999px) {
+            #interactive.section { min-height: 0; padding-top: calc(var(--nav-h) + 24px); }
+            .ix { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+            .shows-frame { max-height: none; }
+            .shows-cap { flex-direction: column; gap: 6px; }
+        }
+        @media (prefers-reduced-motion: reduce) { .shows-frame img { transition: none; } }
     </style>
 </head>
 <body>
@@ -47,9 +75,9 @@
 </nav>
 
 <section class="section section-alt" id="interactive">
-    <div class="container">
-        <h2 class="section-title">Interactive Deterrence</h2>
-        <div class="interactive-intro">
+    <div class="container ix">
+        <div class="ix-intro">
+            <h2 class="section-title">Interactive Deterrence</h2>
             <p>Maps, models and explainers on deterrence, nuclear weapons, war and information warfare. Some tools turn my working papers into models you can play with; others put open data on strikes, shipping, arsenals and trade in one place. Every figure is sourced, and anything a model has to assume is marked as notional.</p>
             <div class="interactive-cta">
                 <a class="btn btn-primary" href="/deterrence-playground/">Open Interactive Deterrence</a>
@@ -58,45 +86,67 @@
             <p class="interactive-note">The site is password protected while it is in development. For access, get in touch.</p>
         </div>
 
-        <div class="projects-grid">
-            <div class="project-card">
-                <h4>Deterrence &amp; Signaling</h4>
-                <p class="project-desc">Threats, promises and signals as formal models and history, from when states conceal or reveal a weapon to the credibility problem of extended deterrence.</p>
-                <div class="project-methods"><span>Formal models</span><span>Historical cases</span></div>
+        <figure class="shows" aria-roledescription="carousel" aria-label="A look at the tools">
+            <div class="shows-frame">
+                <a id="shows-link" href="/deterrence-playground/"><img id="shows-img" src="img/budget-allocator.webp" alt="" width="1440" height="900"></a>
+                <button type="button" class="shows-arrow prev" aria-label="Previous tool">‹</button>
+                <button type="button" class="shows-arrow next" aria-label="Next tool">›</button>
             </div>
-            <div class="project-card">
-                <h4>Nuclear Weapons &amp; Arms Control</h4>
-                <p class="project-desc">Arsenals over time, the treaties that shaped them, and how real crises climbed Herman Kahn's escalation ladder.</p>
-                <div class="project-methods"><span>Open data</span><span>Escalation</span></div>
-            </div>
-            <div class="project-card">
-                <h4>Russia &amp; Ukraine</h4>
-                <p class="project-desc">The air war in daily data, and a sourced timeline of Russia's nuclear signaling since 2022.</p>
-                <div class="project-methods"><span>Open data</span><span>Timelines</span></div>
-            </div>
-            <div class="project-card">
-                <h4>Middle East</h4>
-                <p class="project-desc">Shipping through the Red Sea and Hormuz, and the missile and drone exchanges between Iran and Israel.</p>
-                <div class="project-methods"><span>Chokepoints</span><span>Missile defense</span></div>
-            </div>
-            <div class="project-card">
-                <h4>Disinformation &amp; Cognitive Warfare</h4>
-                <p class="project-desc">How a small true event turns into a viral false one, and what happens when an adversary attacks how people weigh evidence rather than the evidence itself.</p>
-                <div class="project-methods"><span>Cascades</span><span>Bayesian updating</span></div>
-            </div>
-            <div class="project-card">
-                <h4>Economic Coercion &amp; War Markets</h4>
-                <p class="project-desc">How Australia and South Korea weathered China's trade pressure, and what prediction markets priced for wars and ceasefires.</p>
-                <div class="project-methods"><span>Trade data</span><span>Prediction markets</span></div>
-            </div>
-            <div class="project-card">
-                <h4>Taiwan Strait &amp; Indo-Pacific</h4>
-                <p class="project-desc">Trackers, wargames and explainers on Taiwan: PLA activity, coast guard pressure, crossing windows, missile defense and published wargames side by side.</p>
-                <div class="project-methods"><span>Trackers</span><span>Wargames</span></div>
-            </div>
-        </div>
+            <figcaption class="shows-cap" aria-live="polite">
+                <div><h3 id="shows-title"></h3><p id="shows-line"></p></div>
+                <a id="shows-open" href="/deterrence-playground/">Open →</a>
+            </figcaption>
+            <div class="shows-dots" role="tablist" aria-label="Choose a tool"></div>
+        </figure>
     </div>
 </section>
+
+<script>
+(() => {
+    // Screenshots of tools on Interactive Deterrence. Taglines match the site's landing page.
+    const SHOWS = [
+        ['budget-allocator', 'Defense Budget Allocator', "Split a real defense budget, Taiwan's, Japan's, the Philippines' or Poland's, and see how the mix holds up."],
+        ['raid-night', 'Raid Night', 'Defend four cities through waves of drones and missiles, and see what each night costs you in interceptors.'],
+        ['kharg-island', 'Kharg Island', "Seize, raid or blockade Iran's oil export hub in a dice-driven wargame, then see how 1,000 replays turn out."],
+        ['game-theory-gallery', 'Game Theory Gallery', "Play with interactive models and tables of the field's most influential theories."],
+        ['nuclear-arsenals', 'Nuclear Arsenals', 'Scrub eighty years of warhead counts for every nuclear-armed state and watch the treaties bend the curves.'],
+        ['red-sea-hormuz', 'Red Sea & Hormuz Pulse', 'Watch daily ship traffic through the Red Sea and Hormuz rise and fall with every attack, strike and pause.'],
+        ['berlin-airlift', 'Airlift: Berlin 1948–49', 'Keep two million Berliners fed and warm by air, day by day, and see how your tonnage stacks up against 1948–49.'],
+        ['kill-chain-builder', 'Kill Chain Builder', 'Wire sensors, command nodes and shooters into a kill chain, race a moving target, then find the link that breaks it.'],
+        ['nuclear-tests', 'Every Nuclear Test', 'All 2,056 nuclear tests since Trinity, by country, yield and site, on one timeline.'],
+        ['iran-enrichment', "Iran's Enrichment Clock", "Iran's enriched uranium from every IAEA report since 2016, against the deal's limits and quoted breakout estimates."],
+        ['sub-hunt', 'The Hunt', 'Hunt a hidden submarine with sonobuoys and patrol aircraft as a probability map updates every hour.'],
+    ];
+    const $ = id => document.getElementById(id);
+    const img = $('shows-img'), dots = document.querySelector('.shows-dots');
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    SHOWS.forEach(([slug]) => { const pre = new Image(); pre.src = 'img/' + slug + '.webp'; });
+    dots.innerHTML = SHOWS.map(([, t], k) => '<button type="button" role="tab" aria-label="' + t + '"></button>').join('');
+    let i = 0, timer = null, hold = false;
+    function show(n) {
+        i = (n + SHOWS.length) % SHOWS.length;
+        const [slug, title, line] = SHOWS[i], href = '/deterrence-playground/tools/' + slug + '/';
+        const apply = () => {
+            img.src = 'img/' + slug + '.webp'; img.alt = 'Screenshot of ' + title;
+            $('shows-link').href = href; $('shows-open').href = href; $('shows-open').setAttribute('aria-label', 'Open ' + title);
+            $('shows-title').textContent = title; $('shows-line').textContent = line;
+            img.classList.remove('fading');
+        };
+        if (reduced || !img.getAttribute('data-ready')) { apply(); img.setAttribute('data-ready', '1'); }
+        else { img.classList.add('fading'); setTimeout(apply, 250); }
+        dots.querySelectorAll('button').forEach((b, k) => b.setAttribute('aria-current', String(k === i)));
+    }
+    function restart() { clearInterval(timer); if (!reduced) timer = setInterval(() => { if (!hold && !document.hidden) show(i + 1); }, 6000); }
+    document.querySelector('.shows-arrow.prev').onclick = () => { show(i - 1); restart(); };
+    document.querySelector('.shows-arrow.next').onclick = () => { show(i + 1); restart(); };
+    dots.addEventListener('click', e => { const b = e.target.closest('button'); if (b) { show([...dots.children].indexOf(b)); restart(); } });
+    const fig = document.querySelector('.shows');
+    fig.addEventListener('mouseenter', () => { hold = true; }); fig.addEventListener('mouseleave', () => { hold = false; });
+    fig.addEventListener('focusin', () => { hold = true; }); fig.addEventListener('focusout', () => { hold = false; });
+    fig.addEventListener('keydown', e => { if (e.key === 'ArrowRight') { show(i + 1); restart(); } if (e.key === 'ArrowLeft') { show(i - 1); restart(); } });
+    show(0); restart();
+})();
+</script>
 
 <!-- Footer -->
 <footer class="footer">

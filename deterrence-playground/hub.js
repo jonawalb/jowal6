@@ -103,6 +103,14 @@ function card(t) {
   return soon ? `<div class="tool soon" aria-disabled="true">${inner}</div>` : `<a class="tool" href="${href}">${inner}</a>`;
 }
 
+/** A section split into its subsections (registry `subs`); tools without a subsection go last. */
+function subsections(c, list) {
+  const groups = [...c.subs.map(s => [s, list.filter(t => t.sub && t.sub[c.id] === s.id)]),
+    [{ name: 'More', blurb: '' }, list.filter(t => !(t.sub && c.subs.some(s => s.id === t.sub[c.id])))]];
+  return groups.filter(([, ts]) => ts.length).map(([s, ts]) => `<div class="sub-sec"><div class="sub-h"><h3>${esc(s.name)}</h3>
+    ${s.blurb ? `<p>${esc(s.blurb)}</p>` : ''}</div><div class="tools">${ts.map(card).join('')}</div></div>`).join('');
+}
+
 function render() {
   catBtns.forEach(b => b.setAttribute('aria-pressed', b.dataset.cat === cat));
   const q = $('q').value.trim().toLowerCase();
@@ -120,7 +128,7 @@ function render() {
       const c = CATEGORIES.find(x => x.id === cat), list = TOOLS.filter(t => inCat(t, cat));
       $('sections').innerHTML = `<section class="cat-sec" id="sec-${c.id}"><button type="button" class="btn sec-back" data-open-cat="all">← All sections</button>
         <div class="cat-h"><h2>${c.name}${c.locked ? LOCK : ''}</h2><p>${c.blurb}</p></div>
-        <div class="tools">${list.map(card).join('')}</div></section>`;
+        ${c.subs ? subsections(c, list) : `<div class="tools">${list.map(card).join('')}</div>`}</section>`;
     }
     $('q-status').textContent = '';
     return;

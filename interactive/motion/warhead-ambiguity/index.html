@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Is It a Nuke?</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .w-row { font: 400 22px var(--display); fill: var(--paper); }
+  .w-note { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .03em; }
+  .w-chip { font: 600 13px var(--mono); fill: var(--paper); letter-spacing: .04em; }
+  .w-seg { font: 600 15px var(--mono); fill: var(--ink); text-anchor: middle; font-variant-numeric: tabular-nums; }
+  .w-leg { font: 400 14px var(--mono); fill: var(--muted); }
+  .w-act { font: 400 17px var(--mono); fill: var(--paper); }
+  .w-cost { font: 600 16px var(--mono); fill: var(--muted); font-variant-numeric: tabular-nums; }
+  .w-best { font: italic 500 40px var(--display); fill: var(--paper); }
+  .w-tag { font: 600 11px var(--mono); letter-spacing: .12em; text-transform: uppercase; fill: var(--amber); }
+  .w-sub { font: italic 400 28px var(--display); fill: var(--muted); }
+  .w-big { font: 600 150px var(--mono); fill: var(--red); font-variant-numeric: tabular-nums; letter-spacing: -.04em; }
+  .w-line { font: 400 30px var(--display); fill: var(--paper); }
+  .w-small { font: 400 17px var(--mono); fill: var(--muted); letter-spacing: .02em; }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of Is It a Nuke?: a belief chain splits an incoming missile between no attack, conventional and nuclear; one clue, a launch from a nuclear site, flips the best response to launch on warning; and misjudging entanglement makes a campaign of 50 conventional launches 39% likely to trigger a nuclear launch."><title>Is It a Nuke?</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Real data (tools/warhead-ambiguity) ---------------------------------------------------------------------
+// js/model.js update() and decide() with the tool's DEFAULTS (conventional war: Pr(real) 0.9, Pr(nuclear | real) 0.1;
+// one sensor; assumed entanglement 0.2; trajectory "Dual-use warning or command asset"). All notional.
+// Beliefs are [no attack, conventional, nuclear]; costs are the tool's expected costs, rounded as it shows them.
+const ROWS = ['Prior', 'One sensor only', 'Launch site', 'Trajectory and target'];
+const MIX = { chain: [[.1, .81, .09], [.1, .81, .09], [.0507, .8543, .0949], [.0331, .7809, .1859]],
+  notes: ['context and priors', 'no corroboration', 'nuclear vs conventional ×1.0', 'nuclear vs conventional ×2.1'],
+  site: 'Mixed or co-located site', cost: [116, 113, 714], best: 1 };
+const NUC = { chain: [[.1, .81, .09], [.1, .81, .09], [.1191, .191, .6899], [.0485, .1089, .8426]],
+  notes: ['context and priors', 'no corroboration', 'nuclear vs conventional ×33', 'nuclear vs conventional ×2.1'],
+  site: 'Nuclear site', cost: [490, 483, 388], best: 2 };
+const CHIPS = ['Conventional war', 'No second sensor', null, 'Dual-use warning or command asset'];
+const STATES = [['No attack', '#5d7f73'], ['Conventional', '#7fb6d9'], ['Nuclear', '#e0533d']];
+const ACTS = [['Wait', '#6aab82'], ['Retaliate conventionally', '#7fb6d9'], ['Launch on warning', '#e0533d']];
+// Long-run tiles (js/views.js drawRates via longRun): default actual entanglement 0.6, assumed 0.2, 50 launches:
+// r = 0.0099 nuclear responses per conventional launch (10 per 1,000); campaign 1 − (1 − r)^50 = 0.392.
+// Read at the actual level (assumed 0.6), r = 0 and the campaign figure is 0%.
+const pc1 = x => (x < 0.001 ? '<0.1%' : x < 0.1 ? (x * 100).toFixed(1) + '%' : Math.round(x * 100) + '%');
+
+// ---- Helpers --------------------------------------------------------------------------------------------------
+const T = (p, x, y, cls, s, a = {}) => { const n = el('text', { x, y, class: cls, ...a }, p); if (s != null) n.textContent = s; return n; };
+const op = (n, v) => n.setAttribute('opacity', Math.max(0, Math.min(1, v)).toFixed(3));
+const cam = el('g', {}, svg);
+const scene = el('g', { transform: 'translate(0,40)' }, cam);
+
+// ---- Belief chain -----------------------------------------------------------------------------------------------
+const LX = 240, BX = 630, BW = 380, RY = 280, RH = 96;
+const chainG = el('g', {}, scene);
+const tag = el('g', {}, chainG);
+el('rect', { x: LX, y: 176, width: 150, height: 24, rx: 4, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 1.2 }, tag);
+T(tag, LX + 75, 193, 'w-tag', 'Notional model', { 'text-anchor': 'middle' });
+T(chainG, LX, 238, 't-label', 'Your belief, clue by clue');
+const rows = ROWS.map((name, k) => {
+  const y = RY + k * RH, g = el('g', {}, chainG);
+  T(g, LX, y + 4, 'w-row', name);
+  const chip = el('g', {}, g);
+  const chipBox = el('rect', { x: LX, y: y + 16, height: 26, rx: 13, fill: 'none', stroke: 'var(--line)', 'stroke-width': 1.5 }, chip);
+  const chipT = T(chip, LX + 12, y + 34, 'w-chip', '');
+  const note = T(g, BX, y + 62, 'w-note', '');
+  el('rect', { x: BX, y: y - 16, width: BW, height: 44, fill: 'var(--ink-2)' }, g);
+  const segs = STATES.map(([, c]) => el('rect', { y: y - 16, height: 44, fill: c }, g));
+  const labs = STATES.map(() => T(g, 0, y + 12, 'w-seg', ''));
+  return { g, chipBox, chipT, note, segs, labs, y };
+});
+const leg = el('g', {}, chainG);
+STATES.forEach(([n, c], i) => { const x = BX + i * 150; el('rect', { x, y: RY + 4 * RH - 20, width: 13, height: 13, rx: 2, fill: c }, leg); T(leg, x + 21, RY + 4 * RH - 8, 'w-leg', n); });
+
+// ---- Decision -------------------------------------------------------------------------------------------------------
+const DX = 1080, DW = 200;
+const dec = el('g', {}, scene);
+T(dec, DX, 238, 't-label', 'Expected cost');
+const acts = ACTS.map(([n, c], i) => {
+  const y = RY + i * 76, g = el('g', {}, dec);
+  T(g, DX, y - 2, 'w-act', n);
+  const bar = el('rect', { x: DX, y: y + 10, height: 22, rx: 3, fill: c }, g);
+  const val = T(g, 0, y + 27, 'w-cost', '');
+  const ring = el('rect', { x: DX - 12, y: y - 26, width: DW + 90, height: 68, rx: 8, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 2.5, opacity: 0 }, g);
+  return { bar, val, ring };
+});
+T(dec, DX, RY + 3 * 76 + 10, 't-label', 'Best response');
+const bestT = T(dec, DX, RY + 3 * 76 + 58, 'w-best', '');
+
+// ---- Hook ---------------------------------------------------------------------------------------------------------------
+const hook = el('g', {}, svg);
+const h1 = T(hook, 800, 470, 't-hook', null, { 'text-anchor': 'middle', style: 'font-size:76px' });
+el('tspan', {}, h1).textContent = 'Incoming missile. Is it ';
+const hot = el('tspan', { class: 'hot' }, h1); hot.textContent = 'a nuke';
+el('tspan', {}, h1).textContent = '?';
+const h2 = T(hook, 800, 548, 'w-sub', 'It could carry either kind of warhead.', { 'text-anchor': 'middle' });
+
+// ---- Payoff ---------------------------------------------------------------------------------------------------------------
+const pay = el('g', {}, svg);
+T(pay, 800, 300, 't-label', 'Assume too little entanglement · 50 conventional launches', { 'text-anchor': 'middle' });
+const pBig = T(pay, 800, 470, 'w-big', '39%', { 'text-anchor': 'middle' });
+const pL1 = T(pay, 800, 540, 'w-line', 'chance at least one conventional launch', { 'text-anchor': 'middle' });
+const pL2 = T(pay, 800, 580, 'w-line', 'triggers launch on warning', { 'text-anchor': 'middle' });
+const pRule = el('rect', { x: 800, y: 626, width: 0, height: 2, fill: 'var(--amber)' }, pay);
+const pS = T(pay, 800, 672, 'w-small', 'Read at the actual entanglement: 0%', { 'text-anchor': 'middle' });
+
+const cap = captions(svg, [
+  [3.4, 7.0, 'Each clue shifts the odds: no attack, conventional, nuclear'],
+  [7.2, 10.0, 'One clue changes, and the best response flips'],
+  [10.3, 13.6, 'Assume too little entanglement, and mistakes go nuclear'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Is It a Nuke?', line: 'Read the clues, update your beliefs, then wait or strike back.' });
+
+// ---- Frame ------------------------------------------------------------------------------------------------------------------
+const RT = [3.7, 4.5, 5.3, 6.1];     // rows land
+const TF = 7.6;                       // launch site flips to "Nuclear site"
+function frame(t) {
+  op(h1, ease.out(seg(t, .2, .8)) * (1 - seg(t, 2.6, 3.1)));
+  h1.setAttribute('transform', `translate(800,450) scale(${lerp(.93, 1, ease.back(seg(t, .2, 1))).toFixed(3)}) translate(-800,-450)`);
+  op(h2, ease.out(seg(t, .9, 1.5)) * (1 - seg(t, 2.6, 3.1)));
+  h2.setAttribute('transform', `translate(0,${((1 - ease.out(seg(t, .9, 1.6))) * 16).toFixed(1)})`);
+  hot.setAttribute('filter', t > .9 && t < 2.7 ? 'url(#kit-glow)' : '');
+  const dim = lerp(1, .03, ease.inOut(seg(t, 10.1, 10.8)));
+  op(scene, lerp(.1 * seg(t, 0, 1), 1, ease.inOut(seg(t, 2.7, 3.5))) * dim * (1 - seg(t, 13.5, 14)));
+  cam.setAttribute('transform', `translate(800,480) scale(${lerp(1, 1.05, ease.inOut(seg(t, 2.8, 10.5))).toFixed(4)}) translate(-800,-480)`);
+
+  const flip = ease.inOut(seg(t, TF + .25, TF + .9));
+  rows.forEach((R, k) => {
+    const on = ease.out(seg(t, RT[k], RT[k] + .5));
+    op(R.g, on);
+    R.g.setAttribute('transform', `translate(${((1 - on) * 24).toFixed(1)},0)`);
+    const mu = MIX.chain[k].map((v, i) => lerp(v, NUC.chain[k][i], flip));
+    const grow = ease.inOut(seg(t, RT[k] + .1, RT[k] + .7));
+    // The bar grows from the previous row's belief to this row's.
+    const prev = k ? MIX.chain[k - 1] : mu;
+    const m = mu.map((v, i) => lerp(prev[i], v, grow));
+    let x = BX;
+    m.forEach((v, i) => {
+      const w = v * BW;
+      R.segs[i].setAttribute('x', x.toFixed(1)); R.segs[i].setAttribute('width', Math.max(0, w).toFixed(1));
+      R.labs[i].setAttribute('x', (x + w / 2).toFixed(1)); R.labs[i].textContent = w > 54 ? pc1(v) : '';
+      x += w;
+    });
+    R.segs[2].setAttribute('filter', k >= 2 && t > TF + .3 && t < TF + 1.6 ? 'url(#kit-glow)' : '');
+    // Evidence chip and note.
+    const chip = k === 2 ? (t >= TF + .15 ? NUC.site : MIX.site) : CHIPS[k];
+    R.chipT.textContent = chip;
+    R.chipBox.setAttribute('width', (chip.length * 8.6 + 24).toFixed(1));
+    const hotChip = k === 2 && t > TF - .2 && t < TF + 1.4;
+    R.chipBox.setAttribute('stroke', hotChip ? 'var(--amber)' : 'var(--line)');
+    R.chipBox.setAttribute('filter', hotChip ? 'url(#kit-glow)' : '');
+    R.chipT.style.fill = hotChip ? 'var(--amber)' : '';
+    R.note.textContent = t >= TF + .15 ? NUC.notes[k] : MIX.notes[k];
+    R.note.style.fill = k === 2 && t >= TF + .15 && t < 9.8 ? 'var(--red)' : '';
+  });
+  op(leg, ease.out(seg(t, 6.4, 6.9)));
+
+  // Expected costs and the best response.
+  const dIn = ease.out(seg(t, 6.5, 7.0));
+  op(dec, dIn);
+  dec.setAttribute('transform', `translate(${((1 - dIn) * 30).toFixed(1)},0)`);
+  const cost = MIX.cost.map((v, i) => lerp(v, NUC.cost[i], flip));
+  const best = flip > .5 ? NUC.best : MIX.best;
+  acts.forEach((A, i) => {
+    const w = DW * cost[i] / 714 * ease.out(seg(t, 6.6 + i * .08, 7.1 + i * .08));
+    A.bar.setAttribute('width', Math.max(1, w).toFixed(1));
+    A.val.setAttribute('x', (DX + w + 10).toFixed(1)); A.val.textContent = Math.round(cost[i]);
+    A.val.style.fill = i === best ? 'var(--paper)' : '';
+    op(A.ring, i === best ? ease.out(seg(t, i === 2 ? TF + .7 : 7.0, i === 2 ? TF + 1.0 : 7.3)) : 0);
+    A.ring.setAttribute('filter', i === 2 && t > TF + .7 && t < TF + 1.8 ? 'url(#kit-glow)' : '');
+  });
+  bestT.textContent = ACTS[best][0];
+  bestT.style.fill = best === 2 ? 'var(--red)' : 'var(--paper)';
+  const bf = Math.abs(t - (TF + .575)) < .15 ? Math.abs(t - (TF + .575)) / .15 : 1;
+  bestT.setAttribute('transform', `translate(0,${RY + 3 * 76 + 44}) scale(1,${Math.max(.02, bf).toFixed(3)}) translate(0,${-(RY + 3 * 76 + 44)})`);
+  bestT.setAttribute('filter', best === 2 && t < TF + 2 ? 'url(#kit-glow)' : '');
+
+  // Payoff.
+  op(pay, ease.out(seg(t, 10.4, 11)) * (1 - seg(t, 13.3, 13.8)));
+  const pb = ease.back(seg(t, 10.5, 11.2));
+  pBig.setAttribute('transform', `translate(800,420) scale(${lerp(.75, 1, pb).toFixed(3)}) translate(-800,-420)`);
+  pBig.setAttribute('filter', t > 10.7 && t < 12 ? 'url(#kit-glow)' : '');
+  op(pL1, ease.out(seg(t, 10.9, 11.3))); op(pL2, ease.out(seg(t, 11.05, 11.45)));
+  const rw = 460 * ease.inOut(seg(t, 11.4, 12));
+  pRule.setAttribute('x', (800 - rw / 2).toFixed(1)); pRule.setAttribute('width', rw.toFixed(1));
+  op(pS, ease.out(seg(t, 11.8, 12.3)));
+
+  cap(t); end(t, 13.7, 17);
+}
+run({ duration: 17, poster: 8.8, frame });
+</script>
+</body></html>

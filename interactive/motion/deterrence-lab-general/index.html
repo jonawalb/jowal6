@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Deterrence Lab</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .dl-edge { stroke-linecap: round; fill: none; }
+  .dl-el { font: 400 14px var(--mono); fill: var(--muted); letter-spacing: .02em; }
+  .dl-ep { font: 600 14px var(--mono); font-variant-numeric: tabular-nums; }
+  .dl-nd { fill: #0b1712; stroke: var(--paper); stroke-width: 2; }
+  .dl-nd.r { stroke: var(--red); }
+  .dl-nl { font: 600 13px var(--mono); fill: var(--paper); }
+  .dl-lfn { font: 400 13px var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+  .dl-lfp { font: 600 17px var(--mono); font-variant-numeric: tabular-nums; }
+  .dl-info { fill: none; stroke: var(--red); stroke-width: 1.4; stroke-dasharray: 5 6; opacity: .6; }
+  .dl-ax { font: 400 13px var(--mono); fill: var(--muted); font-variant-numeric: tabular-nums; }
+  .dl-reg { font: italic 400 22px var(--display); fill: var(--paper); }
+  .dl-bl { font: 400 12px var(--mono); fill: var(--muted); }
+  .dl-status { font: italic 500 40px var(--display); }
+  .dl-big { font: 600 64px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+  .dl-mid { font: 600 34px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .dl-sm { font: 400 14px var(--mono); fill: var(--muted); letter-spacing: .04em; }
+  .dl-chip { font: 400 16px var(--mono); fill: var(--paper); letter-spacing: .02em; }
+  .dl-card-t { font: italic 500 34px var(--display); fill: var(--paper); }
+  .dl-card-r { font: 400 18px var(--display); fill: var(--paper); }
+  .dl-huge { font: 600 150px var(--mono); font-variant-numeric: tabular-nums; letter-spacing: -.04em; }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of Deterrence Lab: in a crisis game with a hidden bluffer, the audience cost of backing down is raised until every threat becomes credible, the chance of war falls from 25% to 0%, and the Cuban Missile Crisis reading is loaded."><title>Deterrence Lab</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Real model: tools/deterrence-lab-general/js/models/crisis.js (Module A, after Fearon 1994), copied unchanged ----
+// Defaults A_DEFAULTS; Cuba reading "Hands tied by the September warning" sets a = 0.8 (data/cases.js, notional).
+const A_DEFAULTS = { p: 0.3, a: 0.2, q: 0.5, cL: 0.2, cH: 0.9, cR: 0.8 };
+const EPS = 1e-9;
+function typeInfo(P) {
+  const mk = (c, prior) => { const fight = P.q - c >= -P.a - EPS; return { c, prior, fight, r: fight ? P.q - c : -P.a }; };
+  return { L: mk(P.cL, P.p), H: mk(P.cH, 1 - P.p) };
+}
+const muStar = P => 1 / (P.q + P.cR);
+function solveCrisis(P) {
+  const T = typeInfo(P), ms = muStar(P), out = [];
+  const mu = (sL, sH) => { const den = T.L.prior * sL + T.H.prior * sH; return den < EPS ? null : (T.L.prior * sL * +T.L.fight + T.H.prior * sH * +T.H.fight) / den; };
+  const m0 = mu(1, 1);
+  if (m0 != null && m0 >= ms - EPS) out.push({ cls: T.H.fight && T.L.fight ? 'commit' : 'pool', sigma: { L: 1, H: 1 }, rho: 0, mu: m0 });
+  const sL = T.L.r > EPS ? 1 : 0, sH = T.H.r > EPS ? 1 : 0, m1 = mu(sL, sH);
+  if (m1 == null) out.push({ cls: 'quiet', sigma: { L: 0, H: 0 }, rho: 1, mu: null });
+  else if (m1 <= ms + EPS) out.push({ cls: sL && sH ? 'war' : 'sep', sigma: { L: sL, H: sH }, rho: 1, mu: m1 });
+  if (ms < 1 - EPS) {
+    for (const [t, s] of [['H', 'L'], ['L', 'H']]) {
+      const Tt = T[t], Ts = T[s];
+      if (Tt.r > EPS) continue;
+      const rho = 1 / (1 - Tt.r), sThreat = Ts.r > Tt.r + EPS ? 1 : 0;
+      const A = Ts.prior * sThreat * +Ts.fight, B = Ts.prior * sThreat, den = Tt.prior * (ms - +Tt.fight);
+      if (Math.abs(den) < EPS) continue;
+      const sig = (A - ms * B) / den;
+      if (sig > EPS && sig < 1 - EPS) out.push({ cls: 'semi', sigma: { [s]: sThreat, [t]: sig }, rho, mu: ms });
+    }
+  }
+  return out.map(e => ({ ...e, ...outcomes(T, e) }));
+}
+function outcomes(T, e) {
+  let threat = 0, war = 0, back = 0, concede = 0;
+  for (const t of ['L', 'H']) { const w = T[t].prior * e.sigma[t]; threat += w; concede += w * (1 - e.rho); if (T[t].fight) war += w * e.rho; else back += w * e.rho; }
+  return { pThreat: threat, pWar: war, pBack: back, pConcede: concede, pQuiet: 1 - threat };
+}
+const eqAt = a => solveCrisis({ ...A_DEFAULTS, a })[0];
+// Formatting as tools/deterrence-lab-general/js/ui.js.
+const f2 = x => (Math.abs(x) < 5e-4 ? '0' : x.toFixed(2).replace('-', '−'));
+const pct = x => `${Math.round(x * 100)}%`;
+const LABEL = { semi: 'Semi-separating', commit: 'Commitment', pool: 'Pooling bluff' };
+const SHORT = {
+  semi: 'The bluffer sometimes threatens, and R sometimes calls.',
+  commit: 'Both types would fight. Every threat is credible.',
+};
+const COL = { semi: 'var(--red)', commit: 'var(--green)', pool: 'var(--blue)' };
+const E0 = eqAt(0.2), E1 = eqAt(0.8), ATIE = A_DEFAULTS.cH - A_DEFAULTS.q, MS = muStar(A_DEFAULTS);
+
+// ---- Timeline of the audience cost a (the player's slider) -----------------------------------------------------------
+const DRAG0 = 6.3, DRAG1 = 8.7;
+const aAt = t => lerp(0.2, 0.8, ease.inOut(seg(t, DRAG0, DRAG1)));
+let TC = DRAG0; // time the slider crosses a = cH - q
+for (let t = DRAG0; t < DRAG1; t += 0.005) if (aAt(t) >= ATIE - EPS) { TC = t; break; }
+/** Displayed state: the model at a(t), with a short tween across the jump at the region boundary. */
+function stateAt(t) {
+  const a = aAt(t), e = eqAt(a);
+  const b = ease.inOut(seg(t, TC, TC + 0.5));
+  if (b <= 0 || b >= 1) return { a, e, d: e };
+  const pre = eqAt(ATIE - 0.001), mix = (x, y) => lerp(x, y, b);
+  return { a, e, d: { sigma: { L: 1, H: mix(pre.sigma.H, e.sigma.H) }, rho: mix(pre.rho, e.rho) } };
+}
+
+// ---- Scene ---------------------------------------------------------------------------------------------------------
+const cam = el('g', {}, svg);
+const scene = el('g', {}, cam);
+const T = (p, x, y, cls, s, a = {}) => { const n = el('text', { x, y, class: cls, ...a }, p); if (s != null) n.textContent = s; return n; };
+const op = (n, v) => n.setAttribute('opacity', Math.max(0, Math.min(1, v)).toFixed(3));
+
+// Header
+const head = el('g', {}, scene);
+T(head, 150, 150, 't-kicker', 'Module A · Audience costs');
+T(head, 150, 182, 'dl-sm', 'A crisis game with a hidden bluffer, after Fearon (1994)');
+
+// Game tree (the tool's layout, viewBox 760 x 430), scaled into the left half.
+const TREE = { x: 150, y: 222, k: 0.98 };
+const tree = el('g', { transform: `translate(${TREE.x},${TREE.y}) scale(${TREE.k})` }, scene);
+const gE = el('g', {}, tree), gL = el('g', {}, tree), gN = el('g', {}, tree);
+const edges = [], leaves = [];
+function edge(x1, y1, x2, y2, label, anchorEnd = false) {
+  const line = el('line', { x1, y1, x2, y2, class: 'dl-edge' }, gE);
+  const len = Math.hypot(x2 - x1, y2 - y1), nx = (y1 - y2) / len, ny = (x2 - x1) / len;
+  const mx = (x1 + x2) / 2, my = (y1 + y2) / 2, o = y2 > y1 + 1 ? 1 : -1;
+  const t = anchorEnd
+    ? T(gL, mx - 10, my + (o > 0 ? 22 : -8), 'dl-el', null, { 'text-anchor': 'end' })
+    : T(gL, mx + o * nx * 15 - (label === 'Threaten' ? 14 : 0), my + o * ny * 15 + (o > 0 ? 11 : 0), 'dl-el', null, { 'text-anchor': 'middle' });
+  el('tspan', {}, t).textContent = label + ' ';
+  const p = el('tspan', { class: 'dl-ep' }, t);
+  const e = { line, p }; edges.push(e); return e;
+}
+function node(x, y, l, cls = '') { el('circle', { cx: x, cy: y, r: 14, class: 'dl-nd ' + cls }, gN); T(gN, x, y + 4.5, 'dl-nl', l, { 'text-anchor': 'middle' }); }
+function leaf(x, y, name, kind) {
+  const g = el('g', {}, gL);
+  const n = T(g, x, y + 4, 'dl-lfn', null);
+  el('tspan', {}, n).textContent = name + '  ';
+  const p = el('tspan', { class: 'dl-lfp' }, n);
+  const l = { g, n, p, kind, x, y }; leaves.push(l); return l;
+}
+node(36, 215, 'N');
+const BR = {};
+for (const [t, y0, name] of [['L', 108, 'Resolute'], ['H', 322, 'Irresolute']]) {
+  const b = BR[t] = {};
+  b.nat = edge(36, 215, 150, y0, name, true);
+  node(150, y0, 'S');
+  b.quiet = edge(150, y0, 330, y0 - 64, 'Quiet');
+  b.lQuiet = leaf(340, y0 - 64, 'Status quo', 'quiet');
+  b.thr = edge(150, y0, 300, y0 + 22, 'Threaten');
+  node(300, y0 + 22, 'R', 'r');
+  b.con = edge(300, y0 + 22, 440, y0 - 16, 'Concede');
+  b.lCon = leaf(450, y0 - 16, 'S gets the stake', 'win');
+  b.res = edge(300, y0 + 22, 450, y0 + 56, 'Resist');
+  node(450, y0 + 56, 'S');
+  b.back = edge(450, y0 + 56, 590, y0 + 26, 'Back down');
+  b.lBack = leaf(600, y0 + 26, 'Audience cost', 'back');
+  b.fight = edge(450, y0 + 56, 590, y0 + 90, 'Fight');
+  b.lWar = leaf(600, y0 + 90, 'War', 'war');
+}
+el('path', { d: 'M300 143 C 322 220, 322 280, 300 331', class: 'dl-info' }, gE);
+T(gL, 328, 236, 'dl-el', 'R cannot tell the types apart', { style: 'font-size:13px' });
+
+function setEdge(e, prob, reach, tone = 'on') {
+  const on = reach * prob > 0.001;
+  e.line.setAttribute('stroke', on ? (tone === 'war' ? 'var(--red)' : 'var(--paper)') : 'var(--line)');
+  e.line.setAttribute('stroke-width', on ? (1.4 + 6 * prob).toFixed(2) : 1.4);
+  e.line.setAttribute('stroke-opacity', on ? (tone === 'war' ? 0.95 : 0.8) : 1);
+  e.p.textContent = pct(prob);
+  e.p.style.fill = on ? (tone === 'war' ? 'var(--red)' : 'var(--paper)') : 'var(--muted)';
+  e.p.setAttribute('opacity', on ? 1 : 0.55);
+}
+const LEAFCOL = { quiet: 'var(--paper)', win: 'var(--paper)', back: 'var(--amber)', war: 'var(--red)' };
+function setLeaf(l, reach) {
+  const on = reach > 0.004;
+  l.n.style.fill = on ? LEAFCOL[l.kind] : 'var(--muted)';
+  l.n.setAttribute('opacity', on ? 1 : 0.45);
+  l.p.textContent = on ? pct(reach) : '';
+  l.p.style.fill = LEAFCOL[l.kind];
+}
+function drawTree(st) {
+  const P = { ...A_DEFAULTS, a: st.a }, TI = typeInfo(P), d = st.d;
+  for (const t of ['L', 'H']) {
+    const b = BR[t], pr = TI[t].prior, sg = d.sigma[t], rho = d.rho, fight = TI[t].fight, reach = pr * sg * rho;
+    setEdge(b.nat, pr, 1);
+    setEdge(b.quiet, 1 - sg, pr); setLeaf(b.lQuiet, pr * (1 - sg));
+    setEdge(b.thr, sg, pr); setEdge(b.con, 1 - rho, pr * sg); setLeaf(b.lCon, pr * sg * (1 - rho));
+    setEdge(b.res, rho, pr * sg);
+    setEdge(b.back, fight ? 0 : 1, reach); setLeaf(b.lBack, fight ? 0 : reach);
+    setEdge(b.fight, fight ? 1 : 0, reach, 'war'); setLeaf(b.lWar, fight ? reach : 0);
+  }
+}
+
+// Region plot: audience cost a (0-1.5) by prior p (0-1), colored by the equilibrium the model returns.
+const RG = { x: 980, y: 250, w: 420, h: 250 };
+const rsx = a => RG.x + (a / 1.5) * RG.w, rsy = p => RG.y + RG.h - p * RG.h;
+const region = el('g', {}, scene);
+const rclip = el('clipPath', { id: 'dl-rclip' }, svg);
+const rclipR = el('rect', { x: RG.x, y: RG.y, width: 0, height: RG.h }, rclip);
+const raster = el('g', { 'clip-path': 'url(#dl-rclip)' }, region);
+{
+  const NX = 60, NY = 30, cw = RG.w / NX, ch = RG.h / NY;
+  for (let i = 0; i < NX; i++) for (let j = 0; j < NY; j++) {
+    const a = (i + 0.5) / NX * 1.5, p = (j + 0.5) / NY, e = solveCrisis({ ...A_DEFAULTS, a, p })[0];
+    el('rect', { x: (RG.x + i * cw).toFixed(2), y: (RG.y + RG.h - (j + 1) * ch).toFixed(2), width: (cw + 0.6).toFixed(2), height: (ch + 0.6).toFixed(2), fill: COL[e.cls] || 'var(--muted)', 'fill-opacity': 0.2 }, raster);
+  }
+  el('line', { x1: rsx(ATIE), x2: rsx(ATIE), y1: RG.y, y2: RG.y + RG.h, stroke: 'var(--muted)', 'stroke-dasharray': '4 5' }, raster);
+  el('line', { x1: RG.x, x2: rsx(ATIE), y1: rsy(MS), y2: rsy(MS), stroke: 'var(--muted)', 'stroke-dasharray': '4 5' }, raster);
+  T(raster, rsx(ATIE) + 6, RG.y + 18, 'dl-bl', 'a = cₕ − q');
+  T(raster, RG.x + 12, (rsy(MS) + RG.y) / 2 + 8, 'dl-reg', 'Pooling bluff', { style: 'font-size:18px' });
+  T(raster, RG.x + 12, rsy(0.3) + 42, 'dl-reg', 'Semi-separating', { style: 'font-size:18px' });
+  T(raster, rsx(0.95), RG.y + 150, 'dl-reg', 'Commitment', { 'text-anchor': 'middle' });
+  el('rect', { x: RG.x, y: RG.y, width: RG.w, height: RG.h, fill: 'none', stroke: 'var(--line)' }, region);
+  for (const v of [0, 0.5, 1, 1.5]) T(region, rsx(v), RG.y + RG.h + 22, 'dl-ax', String(v), { 'text-anchor': 'middle' });
+  T(region, RG.x + RG.w, RG.y + RG.h + 46, 'dl-ax', 'Audience cost a →', { 'text-anchor': 'end' });
+  for (const v of [0, 0.5, 1]) T(region, RG.x - 10, rsy(v) + 5, 'dl-ax', String(v), { 'text-anchor': 'end' });
+  T(region, RG.x, RG.y - 14, 'dl-ax', 'Prior that S is resolute ↑');
+}
+const markG = el('g', {}, region);
+const markHalo = el('circle', { r: 16, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 2 }, markG);
+el('circle', { r: 8, fill: 'var(--amber)', filter: 'url(#kit-glow)' }, markG);
+
+// Slider: Audience cost of backing down.
+const SL = { x: 980, y: 680, w: 420 };
+const slider = el('g', {}, scene);
+T(slider, SL.x, SL.y - 70, 't-label', 'Audience cost of backing down');
+const aVal = T(slider, SL.x, SL.y - 26, 't-num', '', { 'text-anchor': 'middle', style: 'font-size:22px' });
+el('rect', { x: SL.x, y: SL.y - 3, width: SL.w, height: 6, rx: 3, fill: 'var(--line)' }, slider);
+const slFill = el('rect', { x: SL.x, y: SL.y - 3, height: 6, rx: 3, fill: 'var(--amber)' }, slider);
+const tick = el('line', { x1: SL.x + SL.w * ATIE / 1.5, x2: SL.x + SL.w * ATIE / 1.5, y1: SL.y - 12, y2: SL.y + 12, stroke: 'var(--muted)', 'stroke-dasharray': '3 3' }, slider);
+const thumb = el('circle', { cy: SL.y, r: 13, fill: 'var(--paper)', stroke: 'var(--amber)', 'stroke-width': 4 }, slider);
+T(slider, SL.x, SL.y + 34, 'dl-sm', 'Paid only if S threatens in public, then retreats', { style: 'font-size:13px' });
+
+// Status + readouts
+const status = el('g', {}, scene);
+T(status, SL.x, 772, 't-label', 'Equilibrium');
+const stT = T(status, SL.x, 818, 'dl-status', '');
+const stS = T(status, SL.x, 850, 'dl-sm', '');
+const read = el('g', {}, scene);
+T(read, 150, 730, 't-label', 'Chance of war');
+const warN = T(read, 146, 802, 'dl-big', '');
+T(read, 420, 730, 't-label', 'R resists a threat');
+const resN = T(read, 420, 790, 'dl-mid', '');
+T(read, 660, 730, 't-label', 'R concedes');
+const conN = T(read, 660, 790, 'dl-mid', '');
+
+// Cursor
+const cur = el('g', { opacity: 0 }, scene);
+const ring = el('circle', { r: 22, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 3, filter: 'url(#kit-glow)' }, cur);
+el('path', { d: 'M0 0l0 30l8 -7l6 13l6 -3l-6 -12l11 0z', fill: 'var(--paper)', stroke: '#0b1712', 'stroke-width': 2 }, cur);
+
+// Boundary flash on the region plot
+const flash = el('line', { x1: rsx(ATIE), x2: rsx(ATIE), y1: RG.y, y2: RG.y + RG.h, stroke: 'var(--amber)', 'stroke-width': 4, filter: 'url(#kit-glow)', opacity: 0 }, scene);
+
+// Case card: Cuban Missile Crisis (data/cases.js)
+const card = el('g', { opacity: 0 }, svg);
+el('rect', { x: 930, y: 470, width: 540, height: 290, rx: 6, fill: '#0a1510', 'fill-opacity': 0.97, stroke: 'var(--amber)', 'stroke-opacity': 0.7 }, card);
+T(card, 958, 510, 't-label', 'Case · 1962 · Caribbean');
+T(card, 958, 556, 'dl-card-t', 'Cuban Missile Crisis');
+T(card, 958, 598, 'dl-sm', 'Reading', { style: 'fill:var(--amber)' });
+T(card, 958, 630, 'dl-card-r', 'Hands tied by the September warning');
+T(card, 958, 676, 'dl-sm', 'Loads a = 0.80 · notional value');
+T(card, 958, 706, 'dl-sm', 'Caveat: audience costs “did not rank very high”');
+T(card, 958, 732, 'dl-sm', 'in Khrushchev’s calculations. Trachtenberg 2012');
+
+// Hook
+const hook = el('g', {}, svg);
+const h1 = el('text', { x: 800, y: 400, 'text-anchor': 'middle', class: 't-hook' }, hook);
+h1.textContent = 'Every threat hides a question:';
+const h2 = el('text', { x: 800, y: 486, 'text-anchor': 'middle', class: 't-hook', style: 'font-size:72px' }, hook);
+el('tspan', { class: 'hot' }, h2).textContent = 'would they really fight?';
+const CASES = [['Fashoda', '1898'], ['Berlin airlift', '1948–49'], ['Berlin blockade', '1948'], ['Berlin crisis', '1961'], ['Cuba', '1962'],
+  ['Georgia', '2008–'], ['Syria red line', '2012–13'], ['Crimea', '2014'], ['NATO eFP', '2016–17']];
+const chipG = el('g', {}, hook);
+const chips = CASES.map(([n, y], i) => {
+  const g = el('g', {}, chipG), row = i < 5 ? 0 : 1, list = row ? CASES.slice(5) : CASES.slice(0, 5), idx = row ? i - 5 : i;
+  const W = ([a, b]) => (a.length + b.length + 1) * 10.4 + 40, tot = list.reduce((s, c) => s + W(c), 0) + (list.length - 1) * 14;
+  const w = W(CASES[i]), x = 800 - tot / 2 + list.slice(0, idx).reduce((s, c) => s + W(c) + 14, 0), yy = 580 + row * 60;
+  el('rect', { x, y: yy, width: w, height: 44, rx: 22, fill: 'none', stroke: 'var(--line)', 'stroke-width': 1.6 }, g);
+  const t = T(g, x + w / 2, yy + 28, 'dl-chip', null, { 'text-anchor': 'middle' });
+  el('tspan', {}, t).textContent = n + ' ';
+  el('tspan', { style: 'fill:var(--muted)' }, t).textContent = y;
+  return g;
+});
+
+// Payoff
+const pay = el('g', { opacity: 0 }, svg);
+el('rect', { width: 1600, height: 1000, fill: '#070f0b', opacity: 0.8 }, pay);
+const p1 = el('text', { x: 800, y: 300, 'text-anchor': 'middle', class: 't-hook' }, pay);
+p1.textContent = 'Make backing down costly enough';
+const p2 = el('text', { x: 800, y: 372, 'text-anchor': 'middle', class: 't-hook' }, pay);
+p2.textContent = 'and ';
+el('tspan', { class: 'hot' }, p2).textContent = 'the bluff disappears.';
+const pw = el('g', {}, pay);
+T(pw, 800, 470, 't-label', 'Chance of war in the model', { 'text-anchor': 'middle' });
+const payFrom = T(pw, 575, 630, 'dl-huge', pct(E0.pWar), { 'text-anchor': 'middle', style: 'fill:var(--red)' });
+const payArrow = T(pw, 800, 596, 'dl-reg', '→', { 'text-anchor': 'middle', style: 'font-size:70px;fill:var(--muted)' });
+const payTo = T(pw, 1020, 630, 'dl-huge', pct(E1.pWar), { 'text-anchor': 'middle', style: 'fill:var(--green)', filter: 'url(#kit-glow)' });
+const payNote = T(pay, 800, 700, 'dl-sm', `a = 0.20 → a = 0.80 · abstract payoffs, notional values · the audience cost is never paid`, { 'text-anchor': 'middle' });
+
+const cap = captions(svg, [
+  [3.4, 6.1, 'A threat is information. R must guess who is bluffing.'],
+  [6.3, 9.0, 'Raise the audience cost of backing down'],
+  [9.2, 11.4, 'Load a real crisis and see where it lands'],
+  [11.6, 13.9, 'Three classic models. Nine sourced crises.'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Deterrence Lab', line: 'Move the costs and beliefs. Test them against real crises.' });
+
+// ---- Frame ---------------------------------------------------------------------------------------------------------
+const D = 17;
+function frame(t) {
+  // Hook
+  op(h1, ease.out(seg(t, 0.2, 0.9)) * (1 - seg(t, 2.7, 3.2)));
+  h1.setAttribute('transform', `translate(0,${((1 - ease.out(seg(t, 0.2, 0.9))) * 22 - seg(t, 2.7, 3.3) * 18).toFixed(1)})`);
+  op(h2, ease.out(seg(t, 0.7, 1.4)) * (1 - seg(t, 2.75, 3.25)));
+  h2.setAttribute('transform', `translate(0,${((1 - ease.out(seg(t, 0.7, 1.4))) * 22 - seg(t, 2.75, 3.35) * 18).toFixed(1)})`);
+  chips.forEach((c, i) => {
+    const u = ease.out(seg(t, 1.3 + i * 0.09, 1.8 + i * 0.09)), o = 1 - seg(t, 2.8 + i * 0.02, 3.3 + i * 0.02);
+    op(c, u * o);
+    c.setAttribute('transform', `translate(0,${((1 - u) * 18).toFixed(1)})`);
+  });
+
+  // Scene visibility and camera
+  const vis = ease.out(seg(t, 3.0, 3.8)), out = 1 - seg(t, 13.9, 14.5);
+  const dim = lerp(1, 0.15, ease.inOut(seg(t, 11.4, 12.0)));
+  op(scene, vis * dim * out);
+  const z = 1 + 0.05 * ease.inOut(seg(t, 3.0, 11.5));
+  cam.setAttribute('transform', `translate(800,500) scale(${z.toFixed(4)}) translate(-800,-500)`);
+
+  // Build-in stagger
+  const bu = k => ease.out(seg(t, 3.1 + k * 0.18, 3.8 + k * 0.18));
+  op(head, bu(0)); op(tree, bu(1)); op(region, bu(2)); op(slider, bu(3)); op(read, bu(3.5)); op(status, bu(4));
+  tree.setAttribute('transform', `translate(${TREE.x - (1 - bu(1)) * 30},${TREE.y}) scale(${TREE.k})`);
+  rclipR.setAttribute('width', (RG.w * ease.inOut(seg(t, 3.4, 4.4))).toFixed(1));
+
+  // Model state
+  const st = stateAt(t);
+  drawTree(st);
+  const e = st.e;
+  aVal.textContent = 'a = ' + f2(st.a);
+  aVal.style.fill = t > DRAG0 - 0.3 && t < DRAG1 + 0.3 ? 'var(--amber)' : 'var(--paper)';
+  const tx = SL.x + SL.w * st.a / 1.5;
+  thumb.setAttribute('cx', tx.toFixed(1)); aVal.setAttribute('x', tx.toFixed(1)); slFill.setAttribute('width', (tx - SL.x).toFixed(1));
+  markG.setAttribute('transform', `translate(${rsx(st.a).toFixed(1)},${rsy(A_DEFAULTS.p).toFixed(1)})`);
+  markHalo.setAttribute('r', (16 + 6 * Math.sin(t * 5)).toFixed(1));
+  stT.textContent = LABEL[e.cls]; stT.style.fill = COL[e.cls];
+  stS.textContent = SHORT[e.cls] || '';
+  const post = seg(t, TC, TC + 0.6);
+  const popS = 1 + 0.08 * Math.sin(Math.PI * post);
+  stT.setAttribute('transform', `translate(${SL.x},818) scale(${popS.toFixed(3)}) translate(${-SL.x},-818)`);
+  stT.setAttribute('filter', post > 0 && post < 1 ? 'url(#kit-glow)' : '');
+  warN.textContent = pct(e.pWar); warN.style.fill = e.pWar > 0 ? 'var(--red)' : 'var(--green)';
+  warN.setAttribute('filter', post > 0 && post < 1 ? 'url(#kit-glow)' : '');
+  resN.textContent = pct(e.rho); conN.textContent = pct(e.pConcede);
+  op(flash, (1 - seg(t, TC, TC + 0.9)) * (t >= TC ? 1 : 0) * vis);
+
+  // War leaves pulse before the drag
+  const pulse = seg(t, 4.6, 5.0) * (1 - seg(t, 5.8, 6.2));
+  for (const t2 of ['L', 'H']) BR[t2].lWar.p.setAttribute('filter', pulse > 0.3 ? 'url(#kit-glow)' : '');
+
+  // Cursor: approach the thumb, drag, leave
+  const th0 = SL.x + SL.w * 0.2 / 1.5, ap = ease.inOut(seg(t, 5.4, 6.2)), lv = ease.inOut(seg(t, DRAG1 + 0.1, DRAG1 + 0.8));
+  let cx = lerp(th0 + 180, th0, ap), cy = lerp(SL.y + 190, SL.y, ap);
+  if (t > 6.2) { cx = tx; cy = SL.y; }
+  cx += lv * 120; cy += lv * 150;
+  op(cur, seg(t, 5.4, 5.7) * (1 - lv) * dim);
+  cur.setAttribute('transform', `translate(${cx.toFixed(1)},${cy.toFixed(1)})`);
+  const press = seg(t, 6.05, 6.25) * (1 - seg(t, DRAG1 - 0.05, DRAG1 + 0.15));
+  ring.setAttribute('r', lerp(26, 16, press).toFixed(1)); op(ring, press);
+
+  // Case card
+  const cu = ease.out(seg(t, 9.2, 9.8)), co = 1 - seg(t, 11.2, 11.6);
+  op(card, cu * co);
+  card.setAttribute('transform', `translate(${((1 - cu) * 60).toFixed(1)},0)`);
+
+  // Payoff
+  const pu = ease.out(seg(t, 11.5, 12.1)), po = 1 - seg(t, 13.8, 14.3);
+  op(pay, pu * po);
+  op(p1, ease.out(seg(t, 11.6, 12.2))); op(p2, ease.out(seg(t, 11.85, 12.45)));
+  const n1 = ease.out(seg(t, 12.1, 12.6)), n2 = ease.back(seg(t, 12.55, 13.1));
+  op(payFrom, n1); op(payArrow, seg(t, 12.35, 12.7)); op(payTo, n2);
+  payTo.setAttribute('transform', `translate(1020,580) scale(${(0.7 + 0.3 * n2).toFixed(3)}) translate(-1020,-580)`);
+  op(payNote, seg(t, 12.9, 13.3));
+
+  cap(t); end(t, 14.0, D);
+}
+run({ duration: D, poster: 8.4, frame });
+</script>
+</body></html>

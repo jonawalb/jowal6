@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Nuclear Entanglement</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .e-cat { font: 400 20px var(--display); fill: var(--paper); }
+  .e-role { font: 400 12px var(--mono); fill: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+  .e-ph { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .1em; text-transform: uppercase; text-anchor: middle; }
+  .e-big { font: 600 108px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; letter-spacing: -.03em; }
+  .e-sub { font: 400 15px var(--mono); fill: var(--muted); letter-spacing: .02em; }
+  .e-subv { font: 600 15px var(--mono); fill: var(--paper); }
+  .e-ax { font: 400 13px var(--mono); fill: var(--muted); font-variant-numeric: tabular-nums; }
+  .e-leg { font: 400 13px var(--mono); fill: var(--muted); }
+  .e-tag { font: 600 11px var(--mono); letter-spacing: .12em; text-transform: uppercase; fill: var(--amber); }
+  .e-lev { font: 400 18px var(--mono); fill: var(--paper); }
+  .e-cv { font: 600 34px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .e-strike { font: 600 12px var(--mono); fill: var(--ink); letter-spacing: .1em; text-anchor: middle; }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of Nuclear Entanglement: strikes on dual-use early warning, command links, dual-capable launchers, co-located bases and surveillance are planned phase by phase, and a notional chance of nuclear use climbs from 2% to 43%; strike exclusions cut it to 17% at a cost in conventional effect."><title>Nuclear Entanglement</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Real data (tools/entanglement) --------------------------------------------------------------------------
+// js/model.js CATS: the five generic categories and their notional nuclear roles; DEFAULT_PLAN: the tool's default
+// campaign (13 strikes). Every number below comes from the tool's run() with default parameters, all notional:
+// PROG[k] = after the k-th strike is added (in the order animated here): cumulative chance of nuclear use, conventional
+// effect (x100 = the panel's "/ 100"), and per-phase hazards [use-or-lose, misinterpreted warning, ambiguity, total].
+// The damage-limitation channel is 0 because the target has no such doctrine by default.
+const CATS = [['ew', 'Early warning', .8], ['nc3', 'NC3 / comms', .6], ['dcd', 'Dual-capable', .4], ['colo', 'Co-located', .5], ['isr', 'ISR', .3]];
+const H0 = 0.004;                    // baseline hazard per phase (no entangled strikes); cumulative 0.0159 after 4 phases
+const BASE = [0.004, 0.008, 0.0119, 0.0159];
+const ORDER = [['dcd', 0], ['isr', 0], ['ew', 1], ['dcd', 1], ['colo', 1], ['isr', 1], ['ew', 2], ['nc3', 2], ['dcd', 2], ['colo', 2], ['ew', 3], ['nc3', 3], ['dcd', 3]];
+const PROG = [[0.0555, 0.0461, [[0.008, 0.0007, 0.0042, 0.0169], [0.0068, 0.0006, 0.0036, 0.015], [0.0058, 0.0005, 0.003, 0.0133], [0.0049, 0.0004, 0.0026, 0.0119]]], [0.0689, 0.0676, [[0.0102, 0.0028, 0.0046, 0.0217], [0.0086, 0.0023, 0.0039, 0.0188], [0.0072, 0.002, 0.0033, 0.0164], [0.0061, 0.0017, 0.0027, 0.0145]]], [0.1428, 0.1055, [[0.0102, 0.0028, 0.0046, 0.0217], [0.0158, 0.0278, 0.0046, 0.0522], [0.013, 0.0229, 0.0038, 0.0436], [0.0107, 0.0189, 0.0031, 0.0367]]], [0.1741, 0.1543, [[0.0102, 0.0028, 0.0046, 0.0217], [0.025, 0.0286, 0.0094, 0.067], [0.0205, 0.0235, 0.0077, 0.0558], [0.017, 0.0194, 0.0064, 0.0468]]], [0.2205, 0.1976, [[0.0102, 0.0028, 0.0046, 0.0217], [0.0378, 0.0331, 0.0154, 0.0902], [0.031, 0.0272, 0.0126, 0.0748], [0.0256, 0.0224, 0.0104, 0.0624]]], [0.2367, 0.2178, [[0.0102, 0.0028, 0.0046, 0.0217], [0.0416, 0.0373, 0.0164, 0.0993], [0.0339, 0.0304, 0.0133, 0.0816], [0.0278, 0.0249, 0.0109, 0.0676]]], [0.2859, 0.2535, [[0.0102, 0.0028, 0.0046, 0.0217], [0.0416, 0.0373, 0.0164, 0.0993], [0.0431, 0.057, 0.0149, 0.1189], [0.0349, 0.0461, 0.012, 0.0969]]], [0.3279, 0.3173, [[0.0102, 0.0028, 0.0046, 0.0217], [0.0416, 0.0373, 0.0164, 0.0993], [0.0548, 0.078, 0.0161, 0.1529], [0.044, 0.0625, 0.0129, 0.1235]]], [0.3482, 0.3699, [[0.0102, 0.0028, 0.0046, 0.0217], [0.0416, 0.0373, 0.0164, 0.0993], [0.0654, 0.0789, 0.0217, 0.1699], [0.0525, 0.0633, 0.0174, 0.1371]]], [0.3771, 0.4132, [[0.0102, 0.0028, 0.0046, 0.0217], [0.0416, 0.0373, 0.0164, 0.0993], [0.0792, 0.084, 0.0281, 0.1952], [0.0635, 0.0673, 0.0225, 0.1572]]], [0.4012, 0.4484, [[0.0102, 0.0028, 0.0046, 0.0217], [0.0416, 0.0373, 0.0164, 0.0993], [0.0792, 0.084, 0.0281, 0.1952], [0.0737, 0.0946, 0.0244, 0.1966]]], [0.4218, 0.5122, [[0.0102, 0.0028, 0.0046, 0.0217], [0.0416, 0.0373, 0.0164, 0.0993], [0.0792, 0.084, 0.0281, 0.1952], [0.086, 0.1157, 0.0259, 0.2317]]], [0.4318, 0.5698, [[0.0102, 0.0028, 0.0046, 0.0217], [0.0416, 0.0373, 0.0164, 0.0993], [0.0792, 0.084, 0.0281, 0.1952], [0.0968, 0.1167, 0.0316, 0.2491]]]];
+const START = [0.0159, 0, [[0, 0, 0, H0], [0, 0, 0, H0], [0, 0, 0, H0], [0, 0, 0, H0]]];
+// Same plan with the "Strike exclusions" lever on (run() with mit.excl = 1).
+const EXCL = [0.1654, 0.3588, [[0.0031, 0.0008, 0.0014, 0.0093], [0.0125, 0.0112, 0.0049, 0.0326], [0.0238, 0.0252, 0.0084, 0.0614], [0.029, 0.035, 0.0095, 0.0775]]];
+const CH = [['Use them or lose them', '#e0533d'], ['Misinterpreted warning', '#d77ab0'], ['Warhead and target ambiguity', '#a68ef0']];
+const pct = x => Math.round(x * 100) + '%';
+
+// ---- Helpers ---------------------------------------------------------------------------------------------------
+const T = (p, x, y, cls, s, a = {}) => { const n = el('text', { x, y, class: cls, ...a }, p); if (s != null) n.textContent = s; return n; };
+const op = (n, v) => n.setAttribute('opacity', Math.max(0, Math.min(1, v)).toFixed(3));
+const mixS = (a, b, u) => [lerp(a[0], b[0], u), lerp(a[1], b[1], u), a[2].map((ph, i) => ph.map((v, k) => lerp(v, b[2][i][k], u)))];
+const cam = el('g', {}, svg);
+const scene = el('g', {}, cam);
+
+// ---- Planner grid ------------------------------------------------------------------------------------------------
+const GX = 470, GY = 250, CW = 82, CHh = 66, GAP = 8;
+const grid = el('g', {}, scene);
+T(grid, 250, GY - 52, 't-label', 'Your campaign · click to strike');
+['Phase 1', 'Phase 2', 'Phase 3', 'Phase 4'].forEach((s, i) => T(grid, GX + i * (CW + GAP) + CW / 2, GY - 14, 'e-ph', s));
+const cells = {};
+CATS.forEach(([id, name, n], r) => {
+  const y = GY + r * (CHh + GAP), g = el('g', {}, grid);
+  T(g, 250, y + 30, 'e-cat', name);
+  T(g, 250, y + 52, 'e-role', `${Math.round(n * 100)}% nuclear role`);
+  cells[id] = [0, 1, 2, 3].map(t => {
+    const x = GX + t * (CW + GAP);
+    const bgR = el('rect', { x, y, width: CW, height: CHh, rx: 6, fill: 'var(--ink-2)', stroke: 'var(--line)', 'stroke-width': 1.5 }, g);
+    const on = el('rect', { x, y, width: CW, height: CHh, rx: 6, fill: 'var(--amber)', opacity: 0 }, g);
+    const lab = T(g, x + CW / 2, y + CHh / 2 + 5, 'e-strike', 'STRIKE', { opacity: 0 });
+    // Exclusions spare the nuclear-serving share: hatch that share of the cell.
+    const hatch = el('rect', { x: x + CW * (1 - n), y, width: CW * n, height: CHh, fill: 'url(#e-hatch)', opacity: 0 }, g);
+    return { on, lab, hatch, cx: x + CW / 2, cy: y + CHh / 2, bgR };
+  });
+});
+const defs = el('defs', {}, svg);
+defs.innerHTML = `<pattern id="e-hatch" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="10" height="10" fill="rgba(11,23,18,.55)"/><line x1="0" y1="0" x2="0" y2="10" stroke="#0b1712" stroke-width="4"/></pattern>`;
+// Cursor.
+const cursor = el('path', { d: 'M0 0 L0 26 L7 20 L12 31 L17 29 L12 18 L21 18 Z', fill: 'var(--paper)', stroke: 'var(--ink)', 'stroke-width': 2 }, scene);
+const ripple = el('circle', { r: 10, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 2.5 }, scene);
+
+// ---- Readout and risk chart -------------------------------------------------------------------------------------------
+const RX = 910;
+const right = el('g', {}, scene);
+const tag = el('g', {}, right);
+el('rect', { x: RX, y: 186, width: 150, height: 24, rx: 4, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 1.2 }, tag);
+T(tag, RX + 75, 203, 'e-tag', 'Notional model', { 'text-anchor': 'middle' });
+T(right, RX, 250, 't-label', 'Chance of nuclear use');
+const big = T(right, RX - 4, 350, 'e-big', '2%');
+const sub = T(right, RX, 386, 'e-sub', null);
+el('tspan', {}, sub).textContent = '2% in the same war without these strikes';
+const sub2 = T(right, RX, 412, 'e-sub', 'Entangled strikes multiply the risk.', { style: 'fill:var(--paper)' });
+const cvG = el('g', {}, right);
+T(cvG, RX + 330, 250, 't-label', 'Conventional effect');
+const cv = T(cvG, RX + 330, 300, 'e-cv', '0 / 100');
+
+const CX = RX, CY = 450, CWd = 420, CHt = 190;
+const chart = el('g', {}, right);
+el('line', { x1: CX, x2: CX + CWd, y1: CY + CHt, y2: CY + CHt, stroke: 'var(--muted)', 'stroke-width': 1.5 }, chart);
+[.25, .5].forEach(v => {
+  el('line', { x1: CX, x2: CX + CWd, y1: CY + CHt - v * 2 * CHt, y2: CY + CHt - v * 2 * CHt, stroke: '#23402f', 'stroke-dasharray': '2 6' }, chart);
+  T(chart, CX + CWd + 10, CY + CHt - v * 2 * CHt + 5, 'e-ax', pct(v));
+});
+const HY = h => h / 0.26 * CHt, PY = p => CY + CHt - p * 2 * CHt;
+const BW = 56, bx = i => CX + 22 + i * (CWd / 4);
+const bars = [0, 1, 2, 3].map(i => {
+  const g = el('g', {}, chart);
+  T(g, bx(i) + BW / 2, CY + CHt + 22, 'e-ph', 'P' + (i + 1));
+  return { base: el('rect', { x: bx(i), width: BW, fill: '#4c6a5c' }, g), s: CH.map(([, c]) => el('rect', { x: bx(i), width: BW, fill: c }, g)) };
+});
+const baseLine = el('path', { fill: 'none', stroke: 'var(--paper)', 'stroke-width': 2, 'stroke-dasharray': '6 5', opacity: .7 }, chart);
+const cumLine = el('path', { fill: 'none', stroke: 'var(--paper)', 'stroke-width': 3, filter: 'url(#kit-glow)' }, chart);
+const cumDot = el('circle', { r: 7, fill: 'var(--paper)', stroke: 'var(--ink)', 'stroke-width': 2.5 }, chart);
+CH.forEach(([n, c], i) => {
+  const y = CY + CHt + 56 + i * 24;
+  el('rect', { x: CX, y: y - 11, width: 13, height: 13, rx: 2, fill: c }, chart);
+  T(chart, CX + 22, y, 'e-leg', n);
+});
+el('line', { x1: CX + 270, x2: CX + 296, y1: CY + CHt + 51, y2: CY + CHt + 51, stroke: 'var(--paper)', 'stroke-width': 3 }, chart);
+T(chart, CX + 304, CY + CHt + 56, 'e-leg', 'Cumulative');
+el('line', { x1: CX + 270, x2: CX + 296, y1: CY + CHt + 75, y2: CY + CHt + 75, stroke: 'var(--paper)', 'stroke-width': 2, 'stroke-dasharray': '6 5', opacity: .7 }, chart);
+T(chart, CX + 304, CY + CHt + 80, 'e-leg', 'No entangled strikes');
+
+// Lever (appears for the payoff).
+const lev = el('g', { opacity: 0 }, scene);
+const LX = 250, LY = 660;
+el('rect', { x: LX - 16, y: LY - 34, width: 560, height: 82, rx: 8, fill: 'var(--ink-2)', stroke: 'var(--line)', 'stroke-width': 1.5 }, lev);
+const tr = el('rect', { x: LX, y: LY - 15, width: 52, height: 28, rx: 14, fill: '#2c4a3c' }, lev);
+const kn = el('circle', { cx: LX + 14, cy: LY - 1, r: 10, fill: 'var(--paper)' }, lev);
+T(lev, LX + 70, LY + 5, 'e-lev', 'Strike exclusions');
+const levD = T(lev, LX + 70, LY + 33, 'e-sub', 'risk −27 pts, conventional effect −21', { style: 'fill:var(--amber)' });
+
+// ---- Hook ---------------------------------------------------------------------------------------------------------------
+const hook = el('g', {}, svg);
+const h1 = T(hook, 800, 455, 't-hook', 'In a conventional war, the same targets', { 'text-anchor': 'middle' });
+const h2 = T(hook, 800, 540, 't-hook', null, { 'text-anchor': 'middle', style: 'font-size:66px' });
+el('tspan', {}, h2).textContent = 'also serve ';
+const hot = el('tspan', { class: 'hot' }, h2); hot.textContent = 'nuclear forces';
+el('tspan', {}, h2).textContent = '.';
+
+const cap = captions(svg, [
+  [3.4, 6.3, 'Choose what to strike, and when'],
+  [6.4, 9.6, 'Each hit also wears down nuclear forces. Risk climbs.'],
+  [9.9, 13.5, 'Spare what serves nuclear forces: less risk, less effect'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Nuclear Entanglement', line: 'Strike dual-use targets. Watch use-or-lose pressure build.' });
+
+// ---- Frame ----------------------------------------------------------------------------------------------------------------
+const K0 = 4.0, KD = 0.4;                         // strike k lands at K0 + k*KD
+const TL = 10.3;                                  // lever click
+function frame(t) {
+  // Hook.
+  op(h1, ease.out(seg(t, .2, .8)) * (1 - seg(t, 2.6, 3.1)));
+  h1.setAttribute('transform', `translate(0,${((1 - ease.out(seg(t, .2, .9))) * 20 - seg(t, 2.6, 3.2) * 16).toFixed(1)})`);
+  op(h2, ease.out(seg(t, .6, 1.3)) * (1 - seg(t, 2.7, 3.2)));
+  h2.setAttribute('transform', `translate(800,520) scale(${lerp(.93, 1, ease.back(seg(t, .6, 1.4))).toFixed(3)}) translate(-800,-520)`);
+  hot.setAttribute('filter', t > 1.2 && t < 2.8 ? 'url(#kit-glow)' : '');
+  op(scene, lerp(.15 * seg(t, 0, 1), 1, ease.inOut(seg(t, 2.7, 3.5))) * (1 - seg(t, 13.4, 14)));
+  const z = lerp(1, 1.05, ease.inOut(seg(t, 2.8, 13)));
+  cam.setAttribute('transform', `translate(800,470) scale(${z.toFixed(4)}) translate(-800,-470)`);
+  op(right, ease.out(seg(t, 3.2, 3.9)));
+
+  // Strikes.
+  const nOn = ORDER.filter((_, k) => t >= K0 + k * KD).length;
+  ORDER.forEach(([id, ph], k) => {
+    const c = cells[id][ph], a = K0 + k * KD, u = ease.back(seg(t, a, a + .3));
+    op(c.on, t >= a ? .92 : 0); op(c.lab, t >= a ? 1 : 0);
+    c.on.setAttribute('transform', `translate(${c.cx},${c.cy}) scale(${Math.max(.01, u).toFixed(3)}) translate(${-c.cx},${-c.cy})`);
+    c.on.setAttribute('filter', t >= a && t < a + .5 ? 'url(#kit-glow)' : '');
+    op(c.hatch, ease.inOut(seg(t, TL + .15, TL + .7)) * .9);
+  });
+  // Cursor glides to each cell, clicks, then to the lever.
+  let cx = 1040, cy = 820;
+  const pts = ORDER.map(([id, ph]) => [cells[id][ph].cx + 10, cells[id][ph].cy + 8]);
+  const k = Math.min(ORDER.length - 1, Math.max(0, Math.floor((t - K0 + KD) / KD)));
+  if (t < K0 - KD) { const u = ease.inOut(seg(t, 3.2, K0 - .05)); cx = lerp(900, pts[0][0], u); cy = lerp(760, pts[0][1], u); }
+  else if (t < K0 + (ORDER.length - 1) * KD + .05) {
+    const kk = Math.max(0, Math.min(ORDER.length - 1, Math.ceil((t - K0) / KD))), prev = Math.max(0, kk - 1);
+    const u = ease.inOut(seg(t, K0 + prev * KD + .08, K0 + kk * KD - .04));
+    cx = lerp(pts[prev][0], pts[kk][0], u); cy = lerp(pts[prev][1], pts[kk][1], u);
+  } else {
+    const u = ease.inOut(seg(t, TL - .7, TL - .08));
+    const last = pts[ORDER.length - 1];
+    cx = lerp(last[0], LX + 30, u); cy = lerp(last[1], LY + 4, u);
+  }
+  cursor.setAttribute('transform', `translate(${cx.toFixed(1)},${cy.toFixed(1)})`);
+  op(cursor, seg(t, 3.2, 3.6) * (1 - seg(t, 12.2, 12.6)));
+  const clicks = [...ORDER.map((_, j) => K0 + j * KD), TL];
+  const lc = clicks.filter(a => t >= a).at(-1) ?? -9, ru = seg(t, lc, lc + .45);
+  const tgt = lc === TL ? [LX + 26, LY - 1] : (() => { const j = clicks.indexOf(lc); return j >= 0 ? [ORDER[j] && cells[ORDER[j][0]][ORDER[j][1]].cx, ORDER[j] && cells[ORDER[j][0]][ORDER[j][1]].cy] : [0, 0]; })();
+  ripple.setAttribute('cx', tgt[0]); ripple.setAttribute('cy', tgt[1]);
+  ripple.setAttribute('r', (8 + ease.out(ru) * 40).toFixed(1)); op(ripple, ru > 0 && ru < 1 ? 1 - ru : 0);
+
+  // Model state: tween into each new strike's result, then into the exclusions run.
+  let S = START;
+  for (let j = 0; j < ORDER.length; j++) if (t >= K0 + j * KD) S = mixS(j ? PROG[j - 1] : START, PROG[j], ease.out(seg(t, K0 + j * KD, K0 + j * KD + .35)));
+  if (t >= TL) S = mixS(PROG[12], EXCL, ease.inOut(seg(t, TL + .1, TL + .8)));
+  const [p, mil, ph] = S;
+  big.textContent = pct(p);
+  big.style.fill = p < .1 ? 'var(--paper)' : p < .3 ? 'var(--amber)' : 'var(--red)';
+  big.setAttribute('filter', (t > K0 + 12 * KD && t < K0 + 12 * KD + 1) ? 'url(#kit-glow)' : '');
+  cv.textContent = `${Math.round(mil * 100)} / 100`;
+  op(sub2, p > 2 * 0.0159 + 0.02 ? 1 : 0);
+  op(levD, ease.out(seg(t, TL + .7, TL + 1.1)));
+  cv.style.fill = t > TL + .2 && t < 13.2 ? 'var(--amber)' : '';
+  op(cvG, ease.out(seg(t, 3.6, 4.2)));
+
+  // Chart: per-phase stacked hazards and the cumulative line.
+  const cum = []; let surv = 1;
+  ph.forEach((hs, i) => {
+    const B = bars[i]; let y = CY + CHt;
+    const hb = HY(H0); y -= hb; B.base.setAttribute('y', y.toFixed(1)); B.base.setAttribute('height', hb.toFixed(1));
+    hs.slice(0, 3).forEach((h, c) => { const hh = HY(h); y -= hh; B.s[c].setAttribute('y', y.toFixed(1)); B.s[c].setAttribute('height', Math.max(0, hh).toFixed(1)); });
+    surv *= Math.exp(-hs[3]); cum.push(1 - surv);
+  });
+  // Scale the phase curve so its end matches the tool's cumulative total exactly.
+  const endK = p / (cum[3] || 1);
+  const d = cum.map((c, i) => `${i ? 'L' : 'M'}${(bx(i) + BW / 2).toFixed(1)} ${PY(c * endK).toFixed(1)}`).join('');
+  cumLine.setAttribute('d', d);
+  cumDot.setAttribute('cx', bx(3) + BW / 2); cumDot.setAttribute('cy', PY(p).toFixed(1));
+  baseLine.setAttribute('d', BASE.map((c, i) => `${i ? 'L' : 'M'}${(bx(i) + BW / 2).toFixed(1)} ${PY(c).toFixed(1)}`).join(''));
+
+  // Lever.
+  op(lev, ease.out(seg(t, 9.6, 10.1)) * (1 - seg(t, 13.2, 13.6)));
+  lev.setAttribute('transform', `translate(0,${((1 - ease.out(seg(t, 9.6, 10.2))) * 16).toFixed(1)})`);
+  const on = ease.inOut(seg(t, TL, TL + .25));
+  kn.setAttribute('cx', (LX + 14 + 24 * on).toFixed(1));
+  tr.setAttribute('fill', on > .5 ? 'var(--amber)' : '#2c4a3c');
+  tr.setAttribute('filter', t > TL && t < TL + .8 ? 'url(#kit-glow)' : '');
+
+  cap(t); end(t, 13.7, 17);
+}
+run({ duration: 17, poster: 8.9, frame });
+</script>
+</body></html>

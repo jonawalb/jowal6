@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Interceptor Burn-down</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .ib-panel { fill: #0a1510; fill-opacity: .82; stroke: var(--line); }
+  .ib-small { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+  .ib-row { font: 400 16px var(--mono); fill: var(--paper); letter-spacing: .02em; }
+  .ib-val { font: 600 17px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .ib-chip { font: 400 15px var(--mono); fill: var(--paper); letter-spacing: .03em; }
+  .ib-ax { font: 400 12px var(--mono); fill: var(--muted); font-variant-numeric: tabular-nums; }
+  .ib-grid { stroke: var(--line); stroke-width: 1; }
+  .ib-day { font: 600 64px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+  .ib-dry { font: 600 13px var(--mono); fill: var(--red); letter-spacing: .08em; text-transform: uppercase; }
+  .ib-status { font: italic 500 34px var(--display); }
+  .ib-streak { fill: none; stroke-linecap: round; }
+  .ib-cmp-h { font: 400 14px var(--mono); fill: var(--muted); letter-spacing: .14em; text-transform: uppercase; }
+  .ib-cmp-n { font: italic 500 40px var(--display); fill: var(--paper); }
+  .ib-cmp-v { font: 600 56px var(--mono); font-variant-numeric: tabular-nums; }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of Interceptor Burn-down: a daily salvo of 90 ballistic missiles, 40 cruise missiles and 100 drones drains Taiwan's estimated interceptor stocks type by type until ballistic missile defense runs dry on day 5 in the tool's notional model."><title>Interceptor Burn-down</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard, clamp } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Real data and model (tools/interceptor-burndown) ---------------------------------------------
+// data/inventory.js: SYSTEMS, ORDER, PAC3 and the 'open' preset ("Open estimates, 2026"), copied unchanged
+//   (colors swapped for the trailer palette). data/threats.js: THREATS, PRC_STOCK, DOCTRINES, NOTIONAL and the
+//   salvo presets 'cmpr10' (SRBM stock in 10 days: 90/40/100) and 'low' (Harassment: 20/10/50).
+// js/model.js simulate(), copied unchanged; state = the tool's DEFAULT() in js/app.js (horizon 30).
+const SYSTEMS = [
+  { k: 'mse', n: 'PAC-3 MSE', roles: ['b', 'c', 'd'], limB: false, col: '#7fb6d9' },
+  { k: 'cri', n: 'PAC-3 CRI', roles: ['b', 'c', 'd'], limB: false, col: '#4f8fb3' },
+  { k: 'gem', n: 'PAC-2 GEM', roles: ['b', 'c', 'd'], limB: true, col: '#9c8ee0' },
+  { k: 'tk3', n: 'Tien Kung III', roles: ['b', 'c', 'd'], limB: true, col: '#4fb39c' },
+  { k: 'tk2', n: 'Tien Kung II', roles: ['c', 'd'], limB: true, col: '#a8c87c' },
+  { k: 'nasams', n: 'NASAMS', roles: ['c', 'd'], limB: true, col: '#d77ab0' },
+  { k: 'tk4', n: 'Tien Kung IV', roles: ['b', 'c', 'd'], limB: false, col: '#72a0ff' },
+];
+const ORDER = { b: ['tk4', 'cri', 'mse', 'tk3', 'gem'], c: ['tk2', 'nasams', 'tk3', 'gem', 'tk4', 'cri', 'mse'], d: ['nasams', 'tk2', 'tk3', 'gem', 'cri', 'mse', 'tk4'] };
+const PAC3 = new Set(['mse', 'cri', 'tk4']);
+const THREATS = [{ k: 'b', n: 'Ballistic', max: 400 }, { k: 'c', n: 'Cruise', max: 200 }, { k: 'd', n: 'Drones', max: 1000 }];
+const PRC_STOCK = { b: 900, c: 400 };
+const DOC = {
+  s: (pk) => ({ e: 1, p: pk }),
+  sls: (pk, look) => ({ e: 1 + (1 - pk) * look, p: pk + (1 - pk) * look * pk }),
+  ss: (pk) => ({ e: 2, p: 1 - (1 - pk) ** 2 }),
+};
+const NOTIONAL = { look: { b: 0.5, c: 0.9, d: 1 }, limB: 0.6, pk: { b: 0.6, c: 0.75, d: 0.8 }, doc: { b: 'ss', c: 's', d: 's' }, avail: 0.8, nk: 0.4, surge: 1 };
+const OPEN = { mse: 102, cri: 380, gem: 200, tk3: 400, tk2: 430, nasams: 0, tk4: 0 };
+const SALVO = { b: 90, c: 40, d: 100 }, HARASS = { b: 20, c: 10, d: 50 };
+const BMD = SYSTEMS.filter(s => s.roles.includes('b')).map(s => s.k);
+function shooters(cls, S) {
+  let list = ORDER[cls];
+  if (cls === 'c' && S.savePac) list = list.filter(k => !PAC3.has(k));
+  if (cls === 'd') {
+    if (S.dronePol === 'none') return [];
+    if (S.dronePol === 'cheap') list = list.filter(k => k === 'nasams' || k === 'tk2');
+    else if (S.savePac) list = list.filter(k => !PAC3.has(k));
+  }
+  return list;
+}
+function shot(cls, sysKey, S) {
+  const sys = SYSTEMS.find(s => s.k === sysKey);
+  const pk = Math.min(0.99, S.pk[cls] * (cls === 'b' && sys.limB ? NOTIONAL.limB : 1));
+  return DOC[S.doc[cls]](pk, NOTIONAL.look[cls]);
+}
+function simulate(S) {
+  const H = S.horizon;
+  const stock = Object.fromEntries(SYSTEMS.map(s => [s.k, (S.inv[s.k] || 0) * S.avail]));
+  const start = { ...stock };
+  const prcLeft = { b: S.cap ? PRC_STOCK.b : Infinity, c: S.cap ? PRC_STOCK.c : Infinity, d: Infinity };
+  const days = [{ t: 0, stock: { ...stock }, inc: { b: 0, c: 0, d: 0 }, leak: { b: 0, c: 0, d: 0 } }];
+  const dry = Object.fromEntries(SYSTEMS.map(s => [s.k, null]));
+  let bmdDry = null; const e0 = shot('b', 'mse', S).e;
+  for (let t = 1; t <= H; t++) {
+    const mult = t <= 3 ? S.surge : 1, inc = {}, leak = {};
+    for (const th of THREATS) {
+      const n = Math.min(S.salvo[th.k] * mult, prcLeft[th.k]);
+      prcLeft[th.k] -= n; inc[th.k] = n;
+      let left = n, missed = 0;
+      if (th.k === 'd') left -= left * S.nk;
+      for (const sk of shooters(th.k, S)) {
+        if (left <= 1e-9) break;
+        if (stock[sk] < 1e-6) continue;
+        const { e, p } = shot(th.k, sk, S);
+        const engaged = Math.min(left, stock[sk] / e);
+        stock[sk] -= engaged * e; missed += engaged * (1 - p); left -= engaged;
+      }
+      leak[th.k] = left + missed;
+    }
+    if (S.prod > 0) stock.tk3 += S.prod / 365;
+    if (S.us > 0) stock.mse += S.us / 7;
+    for (const s of SYSTEMS) if (dry[s.k] === null && start[s.k] >= 1 && stock[s.k] < 1) dry[s.k] = t;
+    const bmdLeft = BMD.reduce((a, k) => a + stock[k], 0);
+    if (bmdDry === null && bmdLeft < e0 && S.salvo.b > 0) bmdDry = t;
+    days.push({ t, stock: { ...stock }, inc, leak });
+  }
+  const startTotal = Object.values(start).reduce((a, b) => a + b, 0);
+  return { days, dry, bmdDry, start, startTotal };
+}
+const DEF = { salvo: SALVO, surge: 1, cap: true, inv: OPEN, avail: NOTIONAL.avail, pk: NOTIONAL.pk, doc: NOTIONAL.doc,
+  dronePol: 'cheap', savePac: true, nk: NOTIONAL.nk, prod: 96, us: 0, horizon: 30 };
+const SIM = simulate(DEF);                                           // two shots at each ballistic missile (default)
+const SLS = simulate({ ...DEF, doc: { b: 'sls', c: 's', d: 's' } });  // shoot-look-shoot against ballistic missiles
+const leakB30 = s => s.days.slice(1, 31).reduce((a, x) => a + x.leak.b, 0);
+const raw = Object.values(OPEN).reduce((a, b) => a + b, 0);          // 1,512 rounds in the open estimate
+const r0 = v => Math.round(v).toLocaleString('en-US');
+const LIVE = SYSTEMS.filter(s => SIM.start[s.k] >= 1);
+
+// ---- Scene ----------------------------------------------------------------------------------------
+const cam = el('g', {}, svg);
+const scene = el('g', {}, cam);
+
+// Left: the salvo controls.
+const LX = 150, left = el('g', {}, scene);
+el('text', { x: LX, y: 262, class: 't-label' }, left).textContent = 'Daily salvo';
+const presets = [['Harassment', 150], ['SRBM stock in 10 days', 262]].map(([n, w], i) => {
+  const g = el('g', {}, left), y = 290 + i * 52;
+  const r = el('rect', { x: LX, y, width: w, height: 40, rx: 20, fill: 'none', stroke: 'var(--line)', 'stroke-width': 2 }, g);
+  el('text', { x: LX + w / 2, y: y + 26, 'text-anchor': 'middle', class: 'ib-chip' }, g).textContent = n;
+  return { g, r };
+});
+const sliders = THREATS.map((th, i) => {
+  const g = el('g', {}, left), y = 470 + i * 82;
+  el('text', { x: LX, y: y - 16, class: 'ib-row' }, g).textContent = th.n;
+  const v = el('text', { x: LX + 300, y: y - 16, 'text-anchor': 'end', class: 'ib-val' }, g);
+  el('rect', { x: LX, y: y - 3, width: 300, height: 6, rx: 3, fill: 'var(--line)' }, g);
+  const f = el('rect', { x: LX, y: y - 3, height: 6, rx: 3, fill: 'var(--red)' }, g);
+  const k = el('circle', { cy: y, r: 10, fill: 'var(--paper)', stroke: '#0b1712', 'stroke-width': 3 }, g);
+  return { th, g, v, f, k };
+});
+const note = el('text', { x: LX, y: 745, class: 'ib-small', style: 'font-size:12px' }, left);
+note.textContent = 'DoD’s 900 SRBMs and 400 GLCMs';
+const note2 = el('text', { x: LX, y: 765, class: 'ib-small', style: 'font-size:12px' }, left);
+note2.textContent = 'spread over 10 days';
+
+// Centre: the burn-down chart (stacked area by system), days 0-10.
+const CX0 = 560, CX1 = 1100, CY0 = 300, CY1 = 690, DMAX = 10, VMAX = 1500;
+const xOf = d => CX0 + d / DMAX * (CX1 - CX0), yOf = v => CY1 - v / VMAX * (CY1 - CY0);
+const chart = el('g', {}, scene);
+el('text', { x: CX0, y: 262, class: 't-label' }, chart).textContent = 'Interceptors left, by system';
+for (let v = 0; v <= VMAX; v += 500) {
+  el('line', { x1: CX0, x2: CX1, y1: yOf(v), y2: yOf(v), class: 'ib-grid' }, chart);
+  el('text', { x: CX0 - 10, y: yOf(v) + 4, 'text-anchor': 'end', class: 'ib-ax' }, chart).textContent = v >= 1000 ? v / 1000 + 'k' : v;
+}
+for (let d = 0; d <= DMAX; d += 2) el('text', { x: xOf(d), y: CY1 + 24, 'text-anchor': 'middle', class: 'ib-ax' }, chart).textContent = d ? d : 'Day 0';
+const clip = el('clipPath', { id: 'ib-clip' }, svg);
+const clipR = el('rect', { x: CX0, y: CY0 - 40, width: 0, height: CY1 - CY0 + 40 }, clip);
+const areaG = el('g', { 'clip-path': 'url(#ib-clip)' }, chart);
+{
+  const base = SIM.days.map(() => 0);
+  for (const s of SYSTEMS) {
+    const top = SIM.days.map((d, i) => base[i] + d.stock[s.k]);
+    if (top.every((v, i) => v - base[i] < 0.5)) continue;
+    const up = [], dn = [];
+    for (let i = 0; i <= DMAX; i++) { up.push(`${xOf(i).toFixed(1)} ${yOf(top[i]).toFixed(1)}`); dn.push(`${xOf(i).toFixed(1)} ${yOf(base[i]).toFixed(1)}`); }
+    el('path', { d: `M${up.join('L')}L${dn.reverse().join('L')}Z`, fill: s.col, 'fill-opacity': .78 }, areaG);
+    top.forEach((v, i) => { base[i] = v; });
+  }
+}
+const curG = el('g', {}, chart);
+const curL = el('line', { y1: CY0 - 20, y2: CY1, stroke: 'var(--amber)', 'stroke-width': 2 }, curG);
+const curH = el('circle', { cy: CY0 - 20, r: 8, fill: 'var(--amber)', filter: 'url(#kit-glow)' }, curG);
+const dryG = el('g', { opacity: 0 }, chart);
+const dx = xOf(SIM.bmdDry);
+el('line', { x1: dx, x2: dx, y1: CY0 - 6, y2: CY1, stroke: 'var(--red)', 'stroke-width': 2.5, 'stroke-dasharray': '6 6', filter: 'url(#kit-glow)' }, dryG);
+el('text', { x: dx + 10, y: CY0 + 8, class: 'ib-dry' }, dryG).textContent = `Ballistic defense dry, day ${SIM.bmdDry}`;
+
+// Salvo streaks: each day's raid comes in from the upper right; amber interceptors rise to meet part of it.
+const fxClip = el('clipPath', { id: 'ib-fxclip' }, svg);
+el('rect', { x: CX0 - 20, y: CY0 - 20, width: CX1 - CX0 + 40, height: CY1 - CY0 + 30 }, fxClip);
+const fx = el('g', { 'clip-path': 'url(#ib-fxclip)' }, chart);
+function prng(s) { return () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; }; }
+const R = prng(7), STREAKS = [];
+for (let d = 1; d <= 6; d++) {
+  const day = SIM.days[d], inc = day.inc.b + day.inc.c + day.inc.d, lk = day.leak.b + day.leak.c + day.leak.d;
+  const n = 18, nLeak = Math.round(n * lk / inc);
+  for (let i = 0; i < n; i++) {
+    const t0 = 0.05 + R() * 0.55, leak = i < nLeak;
+    const ex = CX0 + 30 + R() * (CX1 - CX0 - 60), ey = leak ? CY1 - 4 : CY0 + 20 + R() * 180;
+    const s = { d, t0, leak, a: [ex + 300 + R() * 200, CY0 - 180 - R() * 80], b: [ex, ey] };
+    s.p = el('path', { class: 'ib-streak', stroke: 'var(--red)', 'stroke-width': 2 }, fx);
+    s.h = el('circle', { r: 3.2, fill: 'var(--red)' }, fx);
+    if (!leak) { s.i = el('path', { class: 'ib-streak', stroke: 'var(--amber)', 'stroke-width': 2.2 }, fx); s.ia = [ex - 40 + R() * 80, CY1]; }
+    s.burst = el('circle', { cx: ex, cy: ey, r: 0, fill: 'none', stroke: leak ? 'var(--red)' : 'var(--amber)', filter: 'url(#kit-glow)' }, fx);
+    STREAKS.push(s);
+  }
+}
+
+// Top-right: the day counter.
+const dayG = el('g', {}, scene);
+el('text', { x: CX0, y: 128, class: 't-label' }, dayG).textContent = 'Magazine on';
+const dayN = el('text', { x: CX0 - 4, y: 196, class: 'ib-day' }, dayG);
+const dayS = el('text', { x: CX1, y: 128, 'text-anchor': 'end', class: 'ib-row', style: 'fill:var(--muted)' }, dayG);
+
+// Right: the magazines.
+const MX = 1160, mag = el('g', {}, scene);
+el('text', { x: MX, y: 262, class: 't-label' }, mag).textContent = 'Interceptors left';
+const mags = LIVE.map((s, i) => {
+  const y = 318 + i * 86, g = el('g', {}, mag);
+  el('rect', { x: MX, y: y - 30, width: 12, height: 12, fill: s.col }, g);
+  el('text', { x: MX + 22, y: y - 19, class: 'ib-row' }, g).textContent = s.n;
+  const num = el('text', { x: MX + 300, y: y - 19, 'text-anchor': 'end', class: 'ib-val' }, g);
+  el('rect', { x: MX, y: y - 4, width: 300, height: 8, rx: 2, fill: 'var(--line)' }, g);
+  const f = el('rect', { x: MX, y: y - 4, height: 8, rx: 2, fill: s.col }, g);
+  const tag = el('text', { x: MX, y: y + 26, class: 'ib-dry', opacity: 0 }, g); tag.textContent = `Dry day ${SIM.dry[s.k]}`;
+  return { s, g, num, f, tag };
+});
+
+// Bottom: status line, as the tool words it.
+const status = el('text', { x: CX0, y: 780, class: 'ib-status', opacity: 0 }, scene);
+status.textContent = `Ballistic defense runs dry on day ${SIM.bmdDry}`;
+status.style.fill = 'var(--red)';
+const status2 = el('text', { x: CX0, y: 816, class: 'ib-small', opacity: 0 }, scene);
+status2.textContent = `${r0(raw)} rounds, 80% assumed able to fire: ${r0(SIM.startTotal)} usable`;
+
+// Cursor (the player's hand).
+const cur = el('g', { opacity: 0 }, scene);
+const ring = el('circle', { r: 22, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 3, filter: 'url(#kit-glow)' }, cur);
+el('path', { d: 'M0 0l0 30l8 -7l6 13l6 -3l-6 -12l11 0z', fill: 'var(--paper)', stroke: '#0b1712', 'stroke-width': 2 }, cur);
+
+// Hook.
+const hook = el('g', {}, svg);
+const hookLines = [`About ${r0(Math.round(raw / 100) * 100)} interceptors.`, 'A salvo every day.', null].map((s, i) => {
+  const t = el('text', { x: 800, y: 420 + i * 78, 'text-anchor': 'middle', class: 't-hook' }, hook);
+  if (s) t.textContent = s; else el('tspan', { class: 'hot' }, t).textContent = 'How long do they last?';
+  return t;
+});
+const hookNote = el('text', { x: 800, y: 640, 'text-anchor': 'middle', class: 'ib-small' }, hook);
+hookNote.textContent = 'Taiwan’s long-range interceptors · open-source estimates, not official counts';
+
+// Payoff: firing doctrine against ballistic missiles moves the dry day.
+const cmp = el('g', { opacity: 0 }, svg);
+el('rect', { width: 1600, height: 1000, fill: '#070f0b', opacity: .8 }, cmp);
+const cmpT = el('text', { x: 800, y: 290, 'text-anchor': 'middle', class: 't-hook' }, cmp);
+cmpT.innerHTML = `Same magazine. <tspan class="hot">${SLS.bmdDry - SIM.bmdDry} more days.</tspan>`;
+el('text', { x: 1000, y: 376, 'text-anchor': 'end', class: 'ib-cmp-h' }, cmp).textContent = 'Ballistic defense';
+el('text', { x: 1000, y: 400, 'text-anchor': 'end', class: 'ib-cmp-h' }, cmp).textContent = 'runs dry';
+el('text', { x: 1270, y: 376, 'text-anchor': 'end', class: 'ib-cmp-h' }, cmp).textContent = 'Ballistic missiles';
+el('text', { x: 1270, y: 400, 'text-anchor': 'end', class: 'ib-cmp-h' }, cmp).textContent = 'through, days 1–30';
+const cmpRows = [['Two shots per missile', SIM, 'var(--red)'], ['Shoot-look-shoot', SLS, 'var(--amber)']].map(([n, s, col], i) => {
+  const g = el('g', {}, cmp), y = 500 + i * 150;
+  el('line', { x1: 330, x2: 1270, y1: y - 62, y2: y - 62, stroke: 'var(--line)', 'stroke-width': 2 }, g);
+  el('text', { x: 330, y, class: 'ib-cmp-n' }, g).textContent = n;
+  el('text', { x: 330, y: y + 38, class: 'ib-small' }, g).textContent = i ? 'Fire again only after a miss' : '2 shots at once';
+  const v = el('text', { x: 1000, y: y + 8, 'text-anchor': 'end', class: 'ib-cmp-v' }, g); v.textContent = 'Day ' + s.bmdDry; v.style.fill = col;
+  el('text', { x: 1270, y: y + 8, 'text-anchor': 'end', class: 'ib-cmp-v', style: 'fill:var(--paper);font-size:44px' }, g).textContent = r0(leakB30(s));
+  return g;
+});
+el('text', { x: 800, y: 810, 'text-anchor': 'middle', class: 'ib-small' }, cmp).textContent = 'Notional teaching model · open-source stock estimates · 90 ballistic, 40 cruise, 100 drones a day';
+
+const cap = captions(svg, [
+  [0.3, 3.1, 'Taiwan’s long-range interceptors, by open estimates'],
+  [3.5, 6.4, 'Pick a salvo: 90 ballistic, 40 cruise, 100 drones a day'],
+  [6.6, 10.9, 'Watch each interceptor type run dry, day by day'],
+  [11.1, 13.9, 'Change how you fire, and the clock moves'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Interceptor Burn-down', line: 'Fire a daily salvo. See the day each stock runs dry.' });
+
+// ---- Timeline -------------------------------------------------------------------------------------
+const D = 17.5, TD0 = 5.6, SPD = 0.95, DLAST = 6;   // day d is reached at TD0 + d * SPD
+const dayAt = t => { const x = clamp((t - TD0) / SPD, 0, DLAST), k = Math.floor(x); return k + ease.inOut(x - k); };
+const stockAt = (f, k) => { const i = Math.min(DMAX, Math.floor(f)), j = Math.min(DMAX, i + 1); return lerp(SIM.days[i].stock[k], SIM.days[j].stock[k], f - i); };
+const qp = (a, b, c, v) => { const q = 1 - v; return [q * q * a[0] + 2 * q * v * b[0] + v * v * c[0], q * q * a[1] + 2 * q * v * b[1] + v * v * c[1]]; };
+
+function frame(t) {
+  // Hook
+  hookLines.forEach((l, i) => {
+    const u = ease.out(seg(t, 0.25 + i * 0.3, 0.95 + i * 0.3)), o = 1 - seg(t, 2.7 + i * 0.08, 3.3 + i * 0.08);
+    l.setAttribute('opacity', (u * o).toFixed(3));
+    l.setAttribute('transform', `translate(0,${((1 - u) * 22 - seg(t, 2.7, 3.4) * 18).toFixed(1)})`);
+  });
+  hookNote.setAttribute('opacity', (ease.out(seg(t, 1.3, 1.9)) * (1 - seg(t, 2.7, 3.2))).toFixed(3));
+
+  const sceneIn = ease.out(seg(t, 3.0, 3.8)), dim = lerp(1, 0.18, ease.inOut(seg(t, 11.0, 11.7)));
+  scene.setAttribute('opacity', (sceneIn * dim * (1 - seg(t, 14.1, 14.6))).toFixed(3));
+  const z = lerp(1, 1.06, ease.inOut(seg(t, 3.0, 11.5)));
+  cam.setAttribute('transform', `translate(830,520) scale(${z.toFixed(4)}) translate(-830,-520)`);
+
+  // Salvo controls: Harassment first, then the cursor picks "SRBM stock in 10 days".
+  const pick = ease.inOut(seg(t, 4.55, 5.2));
+  presets.forEach((p, i) => {
+    const on = i === 0 ? 1 - pick : pick, u = ease.out(seg(t, 3.2 + i * 0.12, 3.8 + i * 0.12));
+    p.g.setAttribute('opacity', u.toFixed(3));
+    p.r.setAttribute('stroke', on > 0.5 ? 'var(--amber)' : 'var(--line)');
+    p.r.setAttribute('fill', `rgba(240,169,59,${(0.16 * on).toFixed(3)})`);
+  });
+  sliders.forEach((s, i) => {
+    const u = ease.out(seg(t, 3.4 + i * 0.1, 4.0 + i * 0.1));
+    s.g.setAttribute('opacity', u.toFixed(3));
+    s.g.setAttribute('transform', `translate(${((1 - u) * -26).toFixed(1)},0)`);
+    const v = lerp(HARASS[s.th.k], SALVO[s.th.k], ease.inOut(seg(t, 4.75 + i * 0.1, 5.5 + i * 0.1)));
+    const x = LX + 300 * v / s.th.max;
+    s.f.setAttribute('width', (x - LX).toFixed(1)); s.k.setAttribute('cx', x.toFixed(1));
+    s.v.textContent = Math.round(v);
+  });
+  const nu = seg(t, 5.3, 5.8);
+  note.setAttribute('opacity', nu); note2.setAttribute('opacity', nu);
+  const ap = ease.inOut(seg(t, 3.9, 4.6)), lv = ease.inOut(seg(t, 5.2, 5.9));
+  const px = LX + 190, py = 362;
+  cur.setAttribute('transform', `translate(${lerp(px + 220, px, ap) + lv * 60},${lerp(py + 240, py, ap) + lv * 220})`);
+  cur.setAttribute('opacity', (seg(t, 3.9, 4.2) * (1 - lv)).toFixed(3));
+  const press = seg(t, 4.5, 4.62) * (1 - seg(t, 4.8, 5.0));
+  ring.setAttribute('r', lerp(26, 15, press).toFixed(1)); ring.setAttribute('opacity', press.toFixed(3));
+
+  // Chart and day counter.
+  const f = dayAt(t), day = Math.round(f);
+  chart.setAttribute('opacity', ease.out(seg(t, 3.3, 4.0)).toFixed(3));
+  clipR.setAttribute('width', (xOf(f) - CX0 + 6).toFixed(1));
+  const cx = xOf(f);
+  curL.setAttribute('x1', cx); curL.setAttribute('x2', cx); curH.setAttribute('cx', cx);
+  dayN.textContent = 'Day ' + day;
+  const dd = SIM.days[day];
+  const inc = dd.inc.b + dd.inc.c + dd.inc.d, lk = dd.leak.b + dd.leak.c + dd.leak.d;
+  dayS.textContent = day === 0 ? 'starting magazine' : `${r0(inc)} incoming, ${r0(lk)} get through`;
+  dayS.style.fill = day >= SIM.bmdDry ? 'var(--red)' : 'var(--muted)';
+  dayG.setAttribute('opacity', ease.out(seg(t, 3.4, 4.1)).toFixed(3));
+  const flash = seg(t, TD0 + (SIM.bmdDry - 0.5) * SPD, TD0 + SIM.bmdDry * SPD);
+  dayN.setAttribute('filter', day >= SIM.bmdDry && t < TD0 + (SIM.bmdDry + 1) * SPD ? 'url(#kit-glow)' : '');
+  dayN.style.fill = day >= SIM.bmdDry ? 'var(--red)' : 'var(--paper)';
+  dryG.setAttribute('opacity', ease.out(flash).toFixed(3));
+  const su = ease.out(seg(t, TD0 + SIM.bmdDry * SPD, TD0 + SIM.bmdDry * SPD + 0.5));
+  status.setAttribute('opacity', su.toFixed(3));
+  status.setAttribute('transform', `translate(0,${((1 - su) * 16).toFixed(1)})`);
+  status2.setAttribute('opacity', (ease.out(seg(t, 4.0, 4.6)) * lerp(1, 0.7, su)).toFixed(3));
+
+  // Streaks for each day's salvo.
+  for (const s of STREAKS) {
+    const a = TD0 + (s.d - 1) * SPD + s.t0 * SPD, fl = 0.55, u = seg(t, a, a + fl), hit = t >= a + fl;
+    if (t < a || t > a + fl + 0.7) { s.p.setAttribute('opacity', 0); s.h.setAttribute('opacity', 0); if (s.i) s.i.setAttribute('opacity', 0); s.burst.setAttribute('opacity', 0); continue; }
+    const mid = [lerp(s.a[0], s.b[0], .5) + 40, lerp(s.a[1], s.b[1], .5) - 30];
+    const pts = []; for (let k = 0; k <= 8; k++) pts.push(qp(s.a, mid, s.b, Math.max(0, u - 0.35 + 0.35 * k / 8)));
+    s.p.setAttribute('d', 'M' + pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join('L'));
+    s.p.setAttribute('opacity', (hit ? 0.5 * (1 - seg(t, a + fl, a + fl + 0.3)) : 0.75).toFixed(3));
+    s.h.setAttribute('cx', pts[8][0].toFixed(1)); s.h.setAttribute('cy', pts[8][1].toFixed(1)); s.h.setAttribute('opacity', hit ? 0 : 1);
+    if (s.i) {
+      const v = seg(t, a + fl * 0.45, a + fl), q = [];
+      for (let k = 0; k <= 6; k++) { const w = Math.max(0, v - 0.4 + 0.4 * k / 6); q.push([lerp(s.ia[0], s.b[0], w), lerp(s.ia[1], s.b[1], w)]); }
+      s.i.setAttribute('d', 'M' + q.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join('L'));
+      s.i.setAttribute('opacity', (v > 0 && !hit ? 0.9 : 0).toFixed(2));
+    }
+    const b = seg(t, a + fl, a + fl + 0.6);
+    s.burst.setAttribute('r', (ease.out(b) * (s.leak ? 14 : 20)).toFixed(1));
+    s.burst.setAttribute('stroke-width', (1 + (1 - b) * 3).toFixed(2));
+    s.burst.setAttribute('opacity', (b > 0 && b < 1 ? 1 - b : 0).toFixed(3));
+  }
+  fx.setAttribute('opacity', (1 - seg(t, TD0 + SIM.bmdDry * SPD - 0.15, TD0 + SIM.bmdDry * SPD + 0.2)).toFixed(3));  // clear by the dry-day marker
+
+  // Magazines.
+  mag.setAttribute('opacity', ease.out(seg(t, 3.5, 4.2)).toFixed(3));
+  mags.forEach((m, i) => {
+    const u = ease.out(seg(t, 3.6 + i * 0.08, 4.2 + i * 0.08));
+    m.g.setAttribute('transform', `translate(${((1 - u) * 26).toFixed(1)},0)`);
+    const v = stockAt(f, m.s.k), frac = clamp(v / SIM.start[m.s.k]);
+    m.f.setAttribute('width', (300 * frac).toFixed(1));
+    const vd = SIM.days[day].stock[m.s.k];   // the counter shows the tool's number for the day on the clock
+    m.num.textContent = vd < 1 ? 'Empty' : r0(vd);
+    m.num.style.fill = vd < 1 ? 'var(--red)' : '';
+    const dT = TD0 + (SIM.dry[m.s.k] - 0.5) * SPD;
+    m.tag.setAttribute('opacity', ease.out(seg(t, dT, dT + 0.35)).toFixed(3));
+  });
+
+  // Payoff.
+  const pu = ease.out(seg(t, 11.1, 11.8)) * (1 - seg(t, 13.9, 14.3));
+  cmp.setAttribute('opacity', pu.toFixed(3));
+  cmpT.setAttribute('transform', `translate(0,${((1 - ease.out(seg(t, 11.1, 11.8))) * 20).toFixed(1)})`);
+  cmpRows.forEach((g, i) => {
+    const u = ease.out(seg(t, 11.4 + i * 0.35, 12.1 + i * 0.35));
+    g.setAttribute('opacity', u.toFixed(3)); g.setAttribute('transform', `translate(${((1 - u) * 40).toFixed(1)},0)`);
+  });
+
+  cap(t); end(t, 14.2, D);
+}
+run({ duration: D, poster: 10.7, frame });
+</script>
+</body></html>

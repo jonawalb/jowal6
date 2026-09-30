@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Kahn's Escalation Ladder</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .k-num { font: 400 13px var(--mono); fill: var(--muted); text-anchor: end; font-variant-numeric: tabular-nums; }
+  .k-thr { font: 400 11px var(--mono); fill: var(--red); letter-spacing: .06em; text-anchor: end; text-transform: uppercase; }
+  .k-date { font: 600 20px var(--mono); fill: var(--amber); letter-spacing: .04em; }
+  .k-title { font: 400 34px var(--display); fill: var(--paper); }
+  .k-rung { font: 600 19px var(--mono); fill: var(--amber); letter-spacing: .06em; }
+  .k-rname { font: italic 400 28px var(--display); fill: var(--paper); }
+  .k-grp { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .12em; text-transform: uppercase; }
+  .k-leg { font: 400 15px var(--mono); fill: var(--muted); }
+  .k-legv { font: 600 17px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .k-tag { font: 600 11px var(--mono); letter-spacing: .12em; text-transform: uppercase; }
+  .k-opt { font: 400 18px var(--mono); fill: var(--paper); }
+  .k-ask { font: italic 400 26px var(--display); fill: var(--paper); }
+  .k-big { font: 600 64px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .k-small { font: 400 15px var(--mono); fill: var(--muted); letter-spacing: .04em; }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of Kahn's Escalation Ladder: the Cuban Missile Crisis climbs Herman Kahn's 44-rung ladder to DEFCON 2 on rung 11 and comes back down, then a retry from the U.S. side attacks Cuba and a notional model's war-or-worse share rises."><title>Kahn's Escalation Ladder</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Real data (tools/escalation-ladder-kahn) ----------------------------------------------------------
+// data/ladder.js: Kahn's 44 rungs, groups and thresholds (On Escalation, 1965, p. 39, via RAND R-3235 Fig. 2).
+const RUNGS = [null, 'Ostensible crisis', 'Political, economic, and diplomatic gestures', 'Solemn and formal declarations',
+  'Hardening of positions—confrontation of wills', 'Show of force', 'Significant mobilization', '“Legal” harassment—retortions',
+  'Harassing acts of violence', 'Dramatic military confrontations', 'Provocative breaking off of diplomatic relations',
+  'Super-ready status', 'Large conventional war (or actions)', 'Large compound escalation', 'Declaration of limited conventional war'];
+const GROUPS = [
+  { name: 'Subcrisis Maneuvering', to: 3, after: "Don't Rock the Boat Threshold" },
+  { name: 'Traditional Crises', to: 9, after: 'Nuclear War Is Unthinkable Threshold' },
+  { name: 'Intense Crises', to: 20, after: 'No Nuclear Use Threshold' },
+  { name: 'Bizarre Crises', to: 25, after: 'Central Sanctuary Threshold' },
+  { name: 'Exemplary Central Attacks', to: 31, after: 'Central War Threshold' },
+  { name: 'Military Central Wars', to: 38, after: 'City Targeting Threshold' },
+  { name: 'Civilian Central Wars', to: 44, after: null },
+];
+const groupOf = r => GROUPS.find(g => r <= g.to).name;
+// data/crises.js, id 'cuba': the six steps, dates, titles and rungs (rungs are the tool author's coding).
+const STEPS = [
+  { date: 'Oct. 22, 1962', rung: 4, title: 'Kennedy announces a quarantine and a retaliation policy' },
+  { date: 'Oct. 22–23, 1962', rung: 6, title: 'DEFCON 3' },
+  { date: 'Oct. 24, 1962', rung: 9, title: 'The quarantine takes effect' },
+  { date: 'Oct. 24, 1962', rung: 11, title: 'DEFCON 2' },
+  { date: 'Oct. 27, 1962', rung: 8, title: 'A U-2 is shot down over Cuba' },
+  { date: 'Oct. 28 – Nov. 20, 1962', rung: 2, title: 'Khrushchev agrees to remove the missiles' },
+];
+// Outcome distributions [settlement, standoff, limited war, nuclear use] from the tool's own js/model.js run()
+// with default parameters: HIST = the historical path (prior, then after each step);
+// ATTACK = the retry that picks "Attack Cuba" at decision 2 (data/counterfactuals.js), default dice seed 163:
+// your move to rung 12, Moscow "matches" to rung 14 (js/branch.js). Both notional, as the tool labels them.
+const HIST = [[0.4, 0.5, 0.09, 0.01], [0.4216, 0.4412, 0.1259, 0.0113], [0.4391, 0.4017, 0.1463, 0.0129], [0.4452, 0.3747, 0.1652, 0.015],
+  [0.3909, 0.3757, 0.2143, 0.0191], [0.4351, 0.3476, 0.1963, 0.021], [0.6152, 0.2429, 0.1202, 0.0216]];
+const ATTACK = [0.3602, 0.3586, 0.254, 0.0272];
+const OUT = [['Negotiated settlement', '#6aab82'], ['Frozen standoff', '#5f8298'], ['Limited conventional war', '#b0583f'], ['Nuclear use', '#ff4d33']];
+const pct = x => Math.round(x * 100) + '%';
+
+// ---- Helpers ---------------------------------------------------------------------------------------------
+const T = (p, x, y, cls, s, a = {}) => { const n = el('text', { x, y, class: cls, ...a }, p); if (s != null) n.textContent = s; return n; };
+const op = (n, v) => n.setAttribute('opacity', Math.max(0, Math.min(1, v)).toFixed(3));
+const fade = (t, a, b, d = .4) => Math.min(ease.out(seg(t, a, a + d)), 1 - seg(t, b - d, b));
+function wrap(s, n) { const w = s.split(' '), out = ['']; for (const x of w) { if ((out.at(-1) + ' ' + x).trim().length > n) out.push(x); else out[out.length - 1] = (out.at(-1) + ' ' + x).trim(); } return out; }
+
+// ---- Ladder ------------------------------------------------------------------------------------------------
+const cam = el('g', {}, svg);
+const scene = el('g', {}, cam);
+const RL = 500, RR = 740, YB = 850;
+const ladder = el('g', {}, scene);
+const railL = el('line', { x1: RL, x2: RL, y1: YB + 20, stroke: 'var(--muted)', 'stroke-width': 2, opacity: .7 }, ladder);
+const railR = el('line', { x1: RR, x2: RR, y1: YB + 20, stroke: 'var(--muted)', 'stroke-width': 2, opacity: .7 }, ladder);
+const rungs = [];
+for (let r = 1; r <= 44; r++) {
+  const g = el('g', {}, ladder);
+  const bar = el('rect', { x: RL, width: RR - RL, height: 4, rx: 2, fill: '#2c4a3c' }, g);
+  const num = T(g, RL - 14, 0, 'k-num', String(r));
+  rungs.push({ g, bar, num });
+}
+const thr = GROUPS.filter(g => g.after).map(g => {
+  const n = el('g', {}, ladder);
+  el('line', { x1: 150, x2: RR + 30, y1: 0, y2: 0, stroke: 'var(--red)', 'stroke-width': 1.5, 'stroke-dasharray': '6 6', opacity: .75 }, n);
+  const tx = T(n, RL - 44, -7, 'k-thr', g.after);
+  return { n, tx, at: g.to + .5 };
+});
+const top = T(ladder, (RL + RR) / 2, 0, 'k-grp', 'Rung 44 · Spasm or insensate war', { 'text-anchor': 'middle' });
+
+// Path: one dot per step, marching right across the rails.
+const path = el('g', {}, scene);
+const DX = i => RL + 30 + i * 30;
+const gLine = el('path', { fill: 'none', stroke: 'var(--amber)', 'stroke-width': 2, 'stroke-dasharray': '3 5' }, path);
+const hLine = el('path', { fill: 'none', stroke: 'var(--amber)', 'stroke-width': 3, 'stroke-linejoin': 'round', filter: 'url(#kit-glow)' }, path);
+const bLine = el('path', { fill: 'none', stroke: '#b69ad8', 'stroke-width': 3, 'stroke-dasharray': '8 6' }, path);
+const dots = STEPS.map(() => el('circle', { r: 9, fill: 'var(--amber)', stroke: 'var(--ink)', 'stroke-width': 3 }, path));
+const bDots = [0, 1].map(() => el('circle', { r: 9, fill: 'var(--ink)', stroke: '#b69ad8', 'stroke-width': 3, 'stroke-dasharray': '4 3' }, path));
+const pulse = el('circle', { r: 10, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 2 }, path);
+
+// ---- Right panel -----------------------------------------------------------------------------------------
+const PX = 830;
+const panel = el('g', {}, scene);
+T(panel, PX, 170, 't-label', 'Cuban Missile Crisis · 1962');
+const read = el('g', {}, panel);
+const rDate = T(read, PX, 238, 'k-date', '');
+const rTitle = [T(read, PX, 290, 'k-title', ''), T(read, PX, 332, 'k-title', '')];
+const rRung = T(read, PX, 404, 'k-rung', '');
+const rName = T(read, PX, 442, 'k-rname', '');
+const rGrp = T(read, PX, 474, 'k-grp', '');
+
+// Decision card (Retry from the allied side, decision 2 of 2).
+const dec = el('g', { opacity: 0 }, panel);
+T(dec, PX, 216, 'k-tag', 'Retry from the allied side · you play the United States', { fill: 'var(--amber)' });
+T(dec, PX, 250, 'k-date', 'Oct. 27, 1962', { style: 'fill:var(--paper)' });
+T(dec, PX, 292, 'k-title', 'Black Saturday: two letters and a downed U-2', { style: 'font-size:27px' });
+const OPTS = ['Answer the first letter: no-invasion pledge…', 'Attack Cuba', 'Accept the missiles in Cuba'];
+const opts = OPTS.map((s, i) => {
+  const g = el('g', {}, dec);
+  const box = el('rect', { x: PX, y: -30, width: 520, height: 46, rx: 6, fill: 'var(--ink-2)', stroke: 'var(--line)', 'stroke-width': 1.5 }, g);
+  T(g, PX + 18, 0, 'k-opt', s);
+  return { g, box, y0: 346 + i * 58 };
+});
+const pill = el('g', { opacity: 0 }, dec);
+el('rect', { x: PX + 520 - 226, y: -12, width: 212, height: 24, rx: 12, fill: 'none', stroke: 'var(--red)', 'stroke-width': 1.5 }, pill);
+T(pill, PX + 520 - 120, 5, 'k-tag', 'departs from the record', { fill: 'var(--red)', 'text-anchor': 'middle' });
+const payoff = el('g', { opacity: 0 }, dec);
+T(payoff, PX, 418, 'k-grp', 'War or worse in the model');
+const pFrom = T(payoff, PX, 484, 'k-big', '22%', { style: 'fill:var(--muted)' });
+const pArrow = T(payoff, PX + 150, 480, 'k-big', '→', { style: 'font-size:44px;fill:var(--muted)' });
+const pTo = T(payoff, PX + 220, 484, 'k-big', '28%', { style: 'fill:var(--red)' });
+const pHist = T(payoff, PX + 400, 454, 'k-small', 'as it happened:');
+T(payoff, PX + 400, 482, 'k-legv', '14%', { style: 'fill:var(--green)' });
+
+// Outcome bar.
+const BY = 600, BW = 520;
+const barG = el('g', {}, panel);
+T(barG, PX, BY - 22, 'k-grp', 'Where this crisis ends');
+const tagBox = el('rect', { x: PX, y: BY - 78, width: 290, height: 24, rx: 4, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 1.2 }, barG);
+T(barG, PX + 145, BY - 61, 'k-tag', 'Notional model, not a prediction', { fill: 'var(--amber)', 'text-anchor': 'middle' });
+el('rect', { x: PX - 2, y: BY - 2, width: BW + 4, height: 44, rx: 5, fill: 'none', stroke: 'var(--line)', 'stroke-width': 1.5 }, barG);
+const segs = OUT.map(([, c], i) => el('rect', { y: BY, height: 40, fill: c, filter: i === 3 ? 'url(#kit-glow)' : '' }, barG));
+const legs = OUT.map(([n, c], i) => {
+  const x = PX, y = BY + 80 + i * 32;
+  el('rect', { x, y: y - 12, width: 14, height: 14, rx: 2, fill: c }, barG);
+  T(barG, x + 80, y, 'k-leg', n);
+  return T(barG, x + 70, y, 'k-legv', '', { 'text-anchor': 'end' });
+});
+
+// ---- Hook ------------------------------------------------------------------------------------------------
+const hook = el('g', {}, svg);
+const h1 = T(hook, 800, 470, 't-hook', 'Herman Kahn drew escalation as', { 'text-anchor': 'middle' });
+const h2 = T(hook, 800, 552, 't-hook', null, { 'text-anchor': 'middle', style: 'font-size:66px' });
+const hot = el('tspan', { class: 'hot' }, h2); hot.textContent = 'a ladder';
+el('tspan', {}, h2).textContent = ' of 44 rungs.';
+
+const cap = captions(svg, [
+  [3.5, 6.7, 'Cuba, 1962: each dot is a dated, sourced step'],
+  [6.9, 9.5, 'DEFCON 2 on rung 11, then back down the ladder'],
+  [9.8, 13.5, 'Retry it as the U.S.: attack Cuba, and the odds shift'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Kahn’s Escalation Ladder', line: 'Walk real nuclear crises rung by rung, then replay them.' });
+
+// ---- Timeline ---------------------------------------------------------------------------------------------
+const ST = [4.1, 5.0, 5.9, 6.8, 8.0, 8.9];   // historical steps land
+const TD = 9.9, TPICK = 10.7, TB1 = 11.25, TB2 = 11.85;
+const mix = (a, b, u) => a.map((x, i) => lerp(x, b[i], u));
+
+function frame(t) {
+  // Hook in, then the scene takes over.
+  op(h1, ease.out(seg(t, .2, .8)) * (1 - seg(t, 2.6, 3.1)));
+  h1.setAttribute('transform', `translate(0,${((1 - ease.out(seg(t, .2, .9))) * 20 - seg(t, 2.6, 3.2) * 16).toFixed(1)})`);
+  op(h2, ease.out(seg(t, .6, 1.3)) * (1 - seg(t, 2.7, 3.2)));
+  h2.setAttribute('transform', `translate(800,530) scale(${lerp(.93, 1, ease.back(seg(t, .6, 1.4))).toFixed(3)}) translate(-800,-530)`);
+  hot.setAttribute('filter', t > 1.2 && t < 2.8 ? 'url(#kit-glow)' : '');
+  const vis = lerp(.22 * ease.out(seg(t, 0, 1)), 1, ease.inOut(seg(t, 2.6, 3.5)));
+  op(scene, vis * (1 - seg(t, 13.6, 14.3)));
+  op(panel, ease.out(seg(t, 3.2, 3.9)));
+
+  // Camera: the whole ladder, then a push onto the rungs real crises used.
+  const z = ease.inOut(seg(t, 2.9, 4.2));
+  const H = lerp(15.6, 29, z);
+  cam.setAttribute('transform', `translate(800,520) scale(${lerp(1, 1.035, ease.inOut(seg(t, 3, 13.5))).toFixed(4)}) translate(-800,-520)`);
+  const Y = r => YB - (r - 1) * H;
+  const TOPY = lerp(120, 150, z);
+  rungs.forEach((R, i) => {
+    const y = Y(i + 1), vis = y < TOPY ? Math.max(0, 1 - (TOPY - y) / 40) : 1;
+    R.bar.setAttribute('y', (y - 2).toFixed(1));
+    R.num.setAttribute('y', (y + 4.5).toFixed(1));
+    op(R.g, vis);
+    op(R.num, lerp(i % 5 === 4 || i === 0 ? 1 : 0, 1, z));
+  });
+  const topY = Math.max(TOPY - 30, Y(44.8));
+  railL.setAttribute('y2', topY.toFixed(1)); railR.setAttribute('y2', topY.toFixed(1));
+  top.setAttribute('y', (Y(44) - 18).toFixed(1)); op(top, (1 - z) * seg(t, .3, 1.2));
+  thr.forEach(o => { const y = Y(o.at); o.n.setAttribute('transform', `translate(0,${y.toFixed(1)})`); op(o.n, (y < TOPY ? 0 : 1) * lerp(.55, 1, z)); op(o.tx, z); });
+
+  // Which historical steps are on the board, and is the last one undone by the retry?
+  const undo = ease.inOut(seg(t, TD, TD + .5));
+  let cur = -1;
+  const pts = [];
+  STEPS.forEach((s, i) => {
+    const u = ease.back(seg(t, ST[i], ST[i] + .45)), on = t >= ST[i];
+    if (on) cur = i;
+    const d = dots[i];
+    d.setAttribute('cx', DX(i)); d.setAttribute('cy', (Y(s.rung) - (1 - ease.out(seg(t, ST[i], ST[i] + .4))) * 40).toFixed(1));
+    d.setAttribute('r', (9 * u).toFixed(2));
+    op(d, (on ? 1 : 0) * (i === 5 ? 1 - .8 * undo : 1));
+    if (on) pts.push([DX(i), Y(s.rung), ease.inOut(seg(t, ST[i] - .25, ST[i] + .25)), i]);
+  });
+  // Amber line grows into each new dot.
+  let d = '';
+  pts.forEach(([x, y, u, i], k) => {
+    if (!k) { d += `M${x} ${y}`; return; }
+    const [px, py] = pts[k - 1];
+    d += `L${lerp(px, x, u).toFixed(1)} ${lerp(py, y, u).toFixed(1)}`;
+  });
+  // After the retry rolls history back to Oct. 27, the last historical segment becomes a faint ghost.
+  const undoing = t >= TD && pts.length === 6;
+  if (undoing) {
+    const k = d.lastIndexOf('L'); gLine.setAttribute('d', 'M' + d.slice(d.lastIndexOf('L', k - 1) + 1, k) + d.slice(k)); d = d.slice(0, k);
+    op(gLine, .9 - .6 * undo);
+  } else op(gLine, 0);
+  hLine.setAttribute('d', d);
+  op(hLine, 1);
+  hLine.setAttribute('stroke-dasharray', '');
+  // Current rung glows.
+  rungs.forEach((R, i) => { R.bar.setAttribute('fill', '#2c4a3c'); R.bar.removeAttribute('filter'); R.num.style.fill = ''; });
+  const retry = t >= TD;
+  const liveRung = t >= TB2 ? 14 : t >= TB1 ? 12 : retry ? 8 : cur >= 0 ? STEPS[cur].rung : 0;
+  if (liveRung) {
+    const R = rungs[liveRung - 1];
+    R.bar.setAttribute('fill', t >= TB1 ? '#b69ad8' : 'var(--amber)'); R.bar.setAttribute('filter', 'url(#kit-glow)');
+    R.num.style.fill = t >= TB1 ? '#b69ad8' : 'var(--amber)';
+  }
+  // Ping on each landing, biggest at DEFCON 2.
+  const last = [...ST, TB1, TB2].filter(x => t >= x).at(-1) ?? -9;
+  const pu = seg(t, last, last + .7), pi = [...ST, TB1, TB2].indexOf(last);
+  const px = pi < 0 ? 0 : pi < 6 ? DX(pi) : DX(pi - 1), py = pi < 0 ? 0 : pi < 6 ? Y(STEPS[pi].rung) : Y(pi === 6 ? 12 : 14);
+  pulse.setAttribute('cx', px); pulse.setAttribute('cy', py.toFixed(1));
+  pulse.setAttribute('r', (10 + ease.out(pu) * (pi === 3 ? 60 : 30)).toFixed(1));
+  pulse.setAttribute('stroke', pi >= 6 ? '#b69ad8' : 'var(--amber)');
+  op(pulse, pu > 0 && pu < 1 ? (1 - pu) : 0);
+
+  // Model branch after "Attack Cuba".
+  const b1 = seg(t, TB1 - .3, TB1 + .2), b2 = seg(t, TB2 - .3, TB2 + .2);
+  const x5 = DX(4), y5 = Y(8), x6 = DX(5), y6 = Y(12), x7 = DX(6), y7 = Y(14);
+  let bd = `M${x5} ${y5}`;
+  if (b1 > 0) bd += `L${lerp(x5, x6, ease.inOut(b1)).toFixed(1)} ${lerp(y5, y6, ease.inOut(b1)).toFixed(1)}`;
+  if (b2 > 0) bd += `L${lerp(x6, x7, ease.inOut(b2)).toFixed(1)} ${lerp(y6, y7, ease.inOut(b2)).toFixed(1)}`;
+  bLine.setAttribute('d', bd); op(bLine, b1 > 0 ? 1 : 0);
+  [[x6, y6, TB1], [x7, y7, TB2]].forEach(([x, y, a], k) => {
+    bDots[k].setAttribute('cx', x); bDots[k].setAttribute('cy', y.toFixed(1));
+    bDots[k].setAttribute('r', (9 * ease.back(seg(t, a, a + .4))).toFixed(2)); op(bDots[k], t >= a ? 1 : 0);
+  });
+
+  // Readout for the current step.
+  const sOn = cur >= 0 ? cur : 0, sIn = ease.out(seg(t, ST[sOn], ST[sOn] + .4));
+  const s = STEPS[sOn];
+  rDate.textContent = s.date;
+  const lines = wrap(s.title, 30);
+  rTitle[0].textContent = lines[0]; rTitle[1].textContent = lines[1] || '';
+  rRung.textContent = 'RUNG ' + s.rung;
+  rName.textContent = RUNGS[s.rung];
+  rGrp.textContent = groupOf(s.rung);
+  op(read, (cur >= 0 ? 1 : 0) * (1 - seg(t, TD - .3, TD)));
+  read.setAttribute('transform', `translate(${((1 - sIn) * 18).toFixed(1)},0)`);
+  op(rDate, sIn); rTitle.forEach(n => op(n, sIn)); op(rName, ease.out(seg(t, ST[sOn] + .1, ST[sOn] + .5)));
+  rRung.setAttribute('filter', sOn === 3 && t < ST[3] + 1 ? 'url(#kit-glow)' : '');
+
+  // Decision card.
+  const dIn = ease.out(seg(t, TD, TD + .5));
+  op(dec, dIn);
+  dec.setAttribute('transform', `translate(${((1 - dIn) * 30).toFixed(1)},0)`);
+  const pick = ease.out(seg(t, TPICK, TPICK + .25)), press = Math.sin(Math.PI * seg(t, TPICK + .25, TPICK + .45));
+  const collapse = ease.inOut(seg(t, TPICK + .5, TPICK + 1));
+  opts.forEach((o, i) => {
+    const on = i === 1;
+    const y = on ? lerp(o.y0, 346, collapse) : o.y0;
+    o.g.setAttribute('transform', `translate(0,${(y + (on ? press * 2 : 0)).toFixed(1)})` + (on ? ` translate(${PX + 270},0) scale(${(1 - .02 * press).toFixed(3)}) translate(${-(PX + 270)},0)` : ''));
+    o.g.style.opacity = String(ease.out(seg(t, TD + .15 + i * .1, TD + .5 + i * .1)) * (on ? 1 : 1 - collapse));
+    o.box.setAttribute('stroke', on && pick > 0 ? 'var(--amber)' : 'var(--line)');
+    o.box.setAttribute('stroke-width', on ? lerp(1.5, 2.5, pick) : 1.5);
+    o.box.setAttribute('filter', on && t > TPICK + .2 && t < TPICK + .9 ? 'url(#kit-glow)' : '');
+  });
+  op(pill, ease.out(seg(t, TPICK + .9, TPICK + 1.2)));
+  pill.setAttribute('transform', `translate(0,${346 - 7})`);
+  const pay = ease.out(seg(t, TB2 + .1, TB2 + .6));
+  op(payoff, pay);
+  payoff.setAttribute('transform', `translate(0,${((1 - pay) * 14).toFixed(1)})`);
+  pTo.setAttribute('filter', t > TB2 + .3 && t < TB2 + 1.4 ? 'url(#kit-glow)' : '');
+
+  // Outcome bar: historical steps, then back to Oct. 27 (rung 8), then the attack branch.
+  let D = HIST[0];
+  for (let i = 0; i < 6; i++) if (t >= ST[i]) D = mix(D, HIST[i + 1], ease.inOut(seg(t, ST[i], ST[i] + .55)));
+  if (t >= TD) D = mix(HIST[6], HIST[5], ease.inOut(seg(t, TD, TD + .5)));
+  if (t >= TB1) D = mix(HIST[5], ATTACK, ease.inOut(seg(t, TB2 - .2, TB2 + .5)));
+  let x = PX;
+  D.forEach((v, i) => { segs[i].setAttribute('x', x.toFixed(1)); segs[i].setAttribute('width', Math.max(0, v * BW - (i < 3 ? 2 : 0)).toFixed(1)); x += v * BW; legs[i].textContent = pct(v); });
+  const w = D[2] + D[3];
+  legs[2].style.fill = legs[3].style.fill = t > TB2 && t < 13.4 ? 'var(--red)' : '';
+
+  cap(t); end(t, 13.9, 17);
+}
+run({ duration: 17, poster: 7.2, frame });
+</script>
+</body></html>

@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Who Promises What</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .st-n { font: italic 500 27px var(--display); fill: var(--paper); }
+  .st-s { font: 400 11px var(--mono); fill: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+  .col-h { font: 600 13px var(--mono); fill: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+  .tag { font: 400 12.5px var(--mono); letter-spacing: 0; }
+  .yr { font: 600 64px var(--mono); fill: var(--amber); font-variant-numeric: tabular-nums; letter-spacing: -.03em; }
+  .q { font: italic 400 40px var(--display); fill: var(--paper); }
+  .qx { font: italic 500 40px var(--display); }
+  .qh { font: 400 14px var(--mono); fill: var(--muted); letter-spacing: .12em; text-transform: uppercase; }
+  .qt { font: 600 22px var(--mono); fill: var(--paper); letter-spacing: .02em; }
+  .src { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .02em; }
+  .big { font: italic 500 150px var(--display); fill: var(--amber); }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of Who Promises What: a matrix of nine nuclear-armed states and five policy elements fills in, China's no-first-use pledge opens as a quote from its 2025 white paper, and moving the year from 2020 to 2024 shows Russia dropping the word exclusively from its deterrence doctrine."><title>Who Promises What</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Real data (tools/declaratory-policy/data/policies.js) ------------------------------------------------
+// Q: every non-supplementary quote as [state, element, year, kind, tag], copied unchanged. The matrix cell for a
+// state and element is the latest quote dated in or before the chosen year, the tool's own inForce() rule.
+const Q = [["CHN","alert","2019","stmt","“Appropriate level of readiness”"],["CHN","nfu","2019","pledge","Pledge: any time, any circumstances"],["CHN","nfu","2025","pledge","Pledge: any time, any circumstances"],["CHN","nsa","2019","pledge","Unconditional"],["CHN","nsa","2025","pledge","Unconditional"],["CHN","role","2019","stmt","Self-defense nuclear strategy"],["CHN","role","2025","stmt","Defense and self-protection; minimum level"],["FRA","alert","2020","stmt","Permanent deterrence posture"],["FRA","alert","2026","stmt","Permanent presence at sea; air forces can disperse in Europe"],["FRA","conditions","2020","qualified","Vital interests, with a European dimension; one-time warning"],["FRA","conditions","2026","qualified","Vital interests left undefined; warning shot; no shared decision"],["FRA","role","2020","stmt","Last resort for vital interests; no nuclear battle"],["FRA","role","2026","stmt","“Strictly defensive character”"],["GBR","alert","2021","stmt","Several days’ notice to fire"],["GBR","alert","2025","stmt","Continuous at-sea deterrent"],["GBR","conditions","2021","qualified","Extreme self-defence, incl. NATO allies"],["GBR","conditions","2023","qualified","Extreme self-defence, incl. NATO allies"],["GBR","conditions","2025","qualified","Extreme self-defence incl. NATO; deliberate ambiguity"],["GBR","nsa","2021","qualified","Assurance, with a right to review it"],["GBR","nsa","2023","pledge","Assurance “unchanged”"],["GBR","nsa","2025","pledge","Assurance, except states in material breach"],["GBR","role","2021","stmt","Preserve peace, prevent coercion, deter aggression"],["GBR","role","2025","stmt","Preserve peace, prevent coercion, deter aggression"],["IND","alert","2003","stmt","Readiness reviewed; no level stated"],["IND","conditions","2003","qualified","Massive retaliation; option vs. chemical or biological attack"],["IND","nfu","2003","pledge","Pledge: retaliation only"],["IND","nsa","1999","qualified","Draft: non-use against states not aligned with nuclear powers"],["IND","nsa","2003","pledge","Non-use against non-nuclear states"],["IND","role","1999","stmt","Draft: credible minimum deterrence, retaliation only"],["IND","role","2003","stmt","Credible minimum deterrent"],["ISR","nfu","1965","qualified","“Not the first to introduce” (not an NFU pledge)"],["ISR","nfu","1968","qualified","“Not the first to introduce” (not an NFU pledge)"],["PAK","nfu","2019","reject","No pledge; calls NFU pledges “non-verifiable”"],["PAK","nsa","2016","qualified","Backs an NSA treaty; no unilateral pledge found"],["PAK","role","2015","stmt","Full spectrum deterrence"],["PAK","role","2019","stmt","Credible minimum deterrence"],["PRK","alert","2022","stmt","Regularly ready to execute immediately"],["PRK","conditions","2013","qualified","Repel or retaliate against a nuclear-armed attacker"],["PRK","conditions","2022","qualified","Five conditions, incl. imminent attack; automatic strike"],["PRK","nfu","2016","qualified","Conditional no first use (2016)"],["PRK","nsa","2013","qualified","Assurance unless a state joins an attack"],["PRK","nsa","2022","qualified","Assurance unless a state joins an attack"],["PRK","role","2022","stmt","Deter war; use as the “last means”"],["RUS","alert","2020","stmt","Permanent readiness of a designated fraction"],["RUS","alert","2024","stmt","Constant readiness of a designated part"],["RUS","conditions","2020","qualified","WMD attack, or the state’s existence in jeopardy"],["RUS","conditions","2024","qualified","WMD attack; conventional “critical threat”; Belarus covered"],["RUS","role","2020","stmt","“Exclusively” deterrence"],["RUS","role","2024","stmt","Deterrence; use “extreme and compelled”"],["USA","alert","2018","stmt","A portion on alert day-to-day"],["USA","alert","2022","stmt","Day-to-day alert; no reliance on launch under attack"],["USA","conditions","2018","qualified","Extreme circumstances, incl. non-nuclear strategic attack"],["USA","conditions","2022","qualified","Extreme circumstances, vital interests"],["USA","nfu","2018","reject","Never adopted, “not justified today”"],["USA","nfu","2022","reject","Rejected, with sole purpose"],["USA","nsa","2018","qualified","Assurance, with a right to adjust it"],["USA","nsa","2022","pledge","Assurance to NPT states in compliance"],["USA","role","2018","stmt","Not the sole purpose"],["USA","role","2022","stmt","Fundamental role; sole purpose a goal"]];
+const STATES = [['USA', 'United States', 'NPT nuclear-weapon state'], ['RUS', 'Russia', 'NPT nuclear-weapon state'], ['GBR', 'United Kingdom', 'NPT nuclear-weapon state'], ['FRA', 'France', 'NPT nuclear-weapon state'], ['CHN', 'China', 'NPT nuclear-weapon state'], ['IND', 'India', 'Outside the NPT'], ['PAK', 'Pakistan', 'Outside the NPT'], ['ISR', 'Israel', 'Outside the NPT'], ['PRK', 'North Korea', 'Outside the NPT']];
+const ELS = [['nfu', 'No first use'], ['nsa', 'Negative security', 'assurance'], ['role', 'Role'], ['conditions', 'Conditions', 'for use'], ['alert', 'Alert posture']];
+const inForce = (st, e, y) => Q.filter(q => q[0] === st && q[1] === e && +q[2] <= y).sort((a, b) => b[2] - a[2])[0] || null;
+const firstYear = (st, e) => Math.min(...Q.filter(q => q[0] === st && q[1] === e).map(q => +q[2]));
+const KC = { pledge: '#6aab82', reject: '#e0533d', qualified: '#d2b27a', stmt: '#efe9dc', none: '#5d7a6b' };
+// Quotes shown in full (verbatim from policies.js "parts").
+const CHN = { head: 'China · No first use', tag: 'Pledge: any time, any circumstances',
+  lines: ['“China has always remained committed to the', 'principle of no-first-use of nuclear weapons', 'at any time and under any circumstances”'],
+  src: 'China’s Arms Control, Disarmament, and Nonproliferation in the New Era (white paper) · 27 Nov 2025' };
+const RUS20 = ['“The Russian Federation considers nuclear weapons', ['exclusively', ' as a means of deterrence, their use'], 'being an extreme and compelled measure”'];
+const RUS24 = ['“The Russian Federation considers nuclear weapons', 'as a means of deterrence, the employment of', 'which is an extreme and compelled measure”'];
+const RSRC20 = 'Basic Principles of State Policy of the Russian Federation on Nuclear Deterrence (Executive Order No. 355) · 2 Jun 2020';
+const RSRC24 = 'Fundamentals of State Policy of the Russian Federation on Nuclear Deterrence (Executive Order No. 991) · 19 Nov 2024';
+
+// ---- Matrix ---------------------------------------------------------------------------------------------
+const defs = el('defs', {}, svg);
+defs.innerHTML = '<pattern id="dp-hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#1f3a2d" stroke-width="3"/></pattern>';
+const blurF = el('filter', { id: 'dp-blur', x: '-5%', y: '-5%', width: '110%', height: '110%' }, svg);
+const blurG = el('feGaussianBlur', { stdDeviation: 0 }, blurF);
+const cam = el('g', {}, svg);
+const MX = 150, SW = 250, CX0 = MX + SW, CW = 206, GAP = 8, RY0 = 282, RH = 56, RG = 6;
+const cx = j => CX0 + j * (CW + GAP), ry = i => RY0 + i * (RH + RG);
+const hdr = el('g', {}, svg);   // outside the camera: the year slider stays sharp while the card is open
+el('text', { x: MX, y: 110, class: 't-label' }, hdr).textContent = 'Declared nuclear policy · policy on record as of';
+const yrT = el('text', { x: MX - 4, y: 184, class: 'yr' }, hdr);
+// slider
+const SL0 = 420, SL1 = 1440, SLY = 164, sy = y => SL0 + (y - 1965) / (2026 - 1965) * (SL1 - SL0);
+el('line', { x1: SL0, x2: SL1, y1: SLY, y2: SLY, stroke: 'var(--line)', 'stroke-width': 6, 'stroke-linecap': 'round' }, hdr);
+const slFill = el('line', { x1: SL0, y1: SLY, y2: SLY, stroke: 'var(--amber)', 'stroke-width': 6, 'stroke-linecap': 'round' }, hdr);
+[1965, 1980, 1995, 2010, 2026].forEach(y => { el('text', { x: sy(y), y: SLY + 34, class: 'src', 'text-anchor': 'middle', style: 'font-size:12px' }, hdr).textContent = y; });
+const knob = el('circle', { cy: SLY, r: 13, fill: 'var(--paper)', stroke: '#0b1712', 'stroke-width': 3 }, hdr);
+const colHead = el('g', {}, cam);
+ELS.forEach(([id, a, b], j) => {
+  const t = el('text', { x: cx(j) + 10, y: b ? RY0 - 32 : RY0 - 14, class: 'col-h' }, colHead); t.textContent = a;
+  if (b) el('text', { x: cx(j) + 10, y: RY0 - 14, class: 'col-h' }, colHead).textContent = b;
+});
+const colHi = el('rect', { x: cx(0) - 5, y: RY0 - 50, width: CW + 10, height: 9 * (RH + RG) + 44, rx: 10, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 3, filter: 'url(#kit-glow)', opacity: 0 }, cam);
+// Two lines at most; a longer tag is cut at a word boundary with an ellipsis, as the tool's clip() does.
+const wrap = (s, n) => { const w = s.split(' '), out = ['']; for (const x of w) { const c = out[out.length - 1]; if (c && (c + ' ' + x).length > n) out.push(x); else out[out.length - 1] = (c + ' ' + x).trim(); }
+  if (out.length > 2) { let l2 = out.slice(1).join(' '); l2 = l2.slice(0, n - 2); l2 = l2.includes(' ') ? l2.slice(0, l2.lastIndexOf(' ')) : l2; out.length = 1; out.push(l2.replace(/[;,]$/, '') + ' …'); } return out; };
+const rows = STATES.map(([id, name, status], i) => {
+  const g = el('g', {}, cam), y = ry(i);
+  el('text', { x: MX, y: y + 30, class: 'st-n' }, g).textContent = name;
+  el('text', { x: MX, y: y + 50, class: 'st-s' }, g).textContent = status;
+  const cells = ELS.map(([e], j) => {
+    const c = el('g', {}, g), x = cx(j);
+    const box = el('rect', { x, y, width: CW, height: RH, rx: 6 }, c);
+    const t1 = el('text', { x: x + 12, y: y + 25, class: 'tag' }, c), t2 = el('text', { x: x + 12, y: y + 44, class: 'tag' }, c);
+    return { st: id, e, c, box, t1, t2, key: '' };
+  });
+  return { g, cells };
+});
+const cellsAll = rows.flatMap(r => r.cells);
+function paint(year) {
+  cellsAll.forEach(k => {
+    const q = inForce(k.st, k.e, year), kind = q ? q[3] : 'none';
+    const txt = q ? q[4] : (Q.some(x => x[0] === k.st && x[1] === k.e) ? 'None quoted before ' + firstYear(k.st, k.e) : 'Not declared');
+    if (k.key === txt) return; k.key = txt;
+    const [a, b = ''] = wrap(txt, 21);
+    k.t1.textContent = a; k.t2.textContent = b;
+    k.t1.style.fill = k.t2.style.fill = KC[kind];
+    k.box.setAttribute('fill', q ? '#10231a' : 'url(#dp-hatch)');
+    k.box.setAttribute('stroke', q ? (kind === 'stmt' ? '#2c4a3b' : KC[kind]) : '#1f3a2d');
+    k.box.setAttribute('stroke-width', q && kind !== 'stmt' ? 1.6 : 1.2);
+    k.box.setAttribute('stroke-opacity', q && kind !== 'stmt' ? .75 : 1);
+  });
+}
+const cellOf = (st, e) => cellsAll.find(k => k.st === st && k.e === e);
+
+// Cursor (drawn in screen space, above the card)
+const curLayer = el('g', {}, svg);
+const cur = el('g', { opacity: 0 }, curLayer);
+const ring = el('circle', { r: 22, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 3, filter: 'url(#kit-glow)' }, cur);
+const arrow = el('path', { d: 'M0 0l0 30l8 -7l6 13l6 -3l-6 -12l11 0z', fill: 'var(--paper)', stroke: '#0b1712', 'stroke-width': 2 }, cur);
+
+// Quote card
+const card = el('g', { opacity: 0 }, svg);
+const cardBg = el('rect', { x: 230, y: 300, width: 1140, height: 420, rx: 14, fill: '#0e1f17', stroke: 'var(--amber)', 'stroke-width': 2 }, card);
+const cardHead = el('text', { x: 290, y: 362, class: 'qh' }, card);
+const cardTag = el('text', { x: 290, y: 400, class: 'qt' }, card);
+const qA = el('g', {}, card), qB = el('g', {}, card), qC = el('g', {}, card);
+CHN.lines.forEach((l, i) => { el('text', { x: 290, y: 480 + i * 56, class: 'q' }, qA).textContent = l; });
+let exW = null;
+RUS20.forEach((l, i) => {
+  const t = el('text', { x: 290, y: 480 + i * 56, class: 'q' }, qB);
+  if (Array.isArray(l)) { exW = el('tspan', { class: 'qx', fill: 'var(--paper)' }, t); exW.textContent = l[0]; el('tspan', {}, t).textContent = l[1]; }
+  else t.textContent = l;
+});
+const strike = el('line', { y1: 480 + 56 - 13, y2: 480 + 56 - 13, stroke: 'var(--red)', 'stroke-width': 4, 'stroke-linecap': 'round', x1: 290 }, qB);
+RUS24.forEach((l, i) => { el('text', { x: 290, y: 480 + i * 56, class: 'q' }, qC).textContent = l; });
+const cardSrc = el('text', { x: 290, y: 680, class: 'src' }, card);
+
+svg.appendChild(curLayer);
+
+// Hook
+const hook = el('g', {}, svg);
+const h1 = el('text', { x: 800, y: 440, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:70px' }, hook);
+h1.textContent = 'Nine nuclear-armed states.';
+const h2 = el('text', { x: 800, y: 560, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:88px' }, hook);
+h2.innerHTML = 'What do they <tspan class="hot">actually promise</tspan>?';
+
+// Payoff
+const pay = el('g', { opacity: 0 }, svg);
+el('rect', { width: 1600, height: 1000, fill: '#070f0b', opacity: .82 }, pay);
+el('text', { x: 800, y: 330, class: 't-kicker', 'text-anchor': 'middle' }, pay).textContent = 'No first use, as of 2026';
+const pRow = el('g', {}, pay);
+const PAY = [['Pledge', ['China', 'India'], KC.pledge], ['Reject', ['United States', 'Pakistan'], KC.reject], ['Qualified', ['Israel', 'North Korea'], KC.qualified], ['Not declared', ['Russia', 'UK', 'France'], KC.none]];
+const payCols = PAY.map(([h, names, col], j) => {
+  const g = el('g', {}, pRow), x = 310 + j * 275;
+  el('text', { x, y: 440, class: 'big', style: `fill:${col};font-size:120px` }, g).textContent = names.length;
+  el('text', { x, y: 490, class: 'qh', style: `fill:${col}` }, g).textContent = h;
+  names.forEach((n, k) => { el('text', { x, y: 540 + k * 40, class: 'st-n', style: 'font-size:30px' }, g).textContent = n; });
+  return g;
+});
+const pLine = el('text', { x: 800, y: 740, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:46px' }, pay);
+pLine.innerHTML = 'Every cell quotes an <tspan class="hot">official document</tspan>.';
+
+const cap = captions(svg, [
+  [0.3, 3.2, 'Declared nuclear policy, in each state’s own words'],
+  [3.5, 6.3, 'Nine states, five kinds of promise, one matrix'],
+  [6.5, 9.3, 'Click a cell for the full quote and its source'],
+  [9.5, 12.1, 'Move the year: Russia dropped “exclusively” in 2024'],
+  [12.4, 14.3, 'The no-first-use column, as the tool shows it'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Who Promises What', line: 'What each nuclear-armed state promises, quoted from its own documents.' });
+
+// ---- Timeline -------------------------------------------------------------------------------------------
+const D = 17.5;
+function yearAt(t) {
+  if (t < 9.6) return 2026;
+  if (t < 10.1) return Math.round(lerp(2026, 2020, ease.inOut(seg(t, 9.6, 10.0))));
+  if (t < 10.9) return 2020;
+  if (t < 12.0) return Math.round(lerp(2020, 2024, ease.inOut(seg(t, 10.9, 11.4))));
+  return Math.round(lerp(2024, 2026, ease.inOut(seg(t, 12.0, 12.4))));
+}
+function frame(t) {
+  const hu = ease.out(seg(t, 0.2, 0.9)), h2u = ease.out(seg(t, 0.8, 1.5)), ho = 1 - seg(t, 2.9, 3.3);
+  h1.setAttribute('opacity', hu * ho); h1.setAttribute('transform', `translate(0,${(1 - hu) * 20})`);
+  h2.setAttribute('opacity', h2u * ho); h2.setAttribute('transform', `translate(0,${(1 - h2u) * 24 - 30 * seg(t, 2.9, 3.3)})`);
+
+  const y = yearAt(t);
+  paint(y);
+  const out = 1 - seg(t, 15.2, 15.8);
+  hdr.setAttribute('opacity', ease.out(seg(t, 3.2, 3.8)) * out);
+  colHead.setAttribute('opacity', ease.out(seg(t, 3.4, 3.9)) * out);
+  yrT.textContent = y;
+  knob.setAttribute('cx', sy(y)); slFill.setAttribute('x2', sy(y));
+  rows.forEach((r, i) => {
+    const u = ease.out(seg(t, 3.5 + i * 0.12, 4.1 + i * 0.12));
+    r.g.setAttribute('opacity', u * out);
+    r.cells.forEach((k, j) => {
+      const v = ease.back(seg(t, 3.8 + i * 0.1 + j * 0.09, 4.4 + i * 0.1 + j * 0.09));
+      k.c.setAttribute('opacity', seg(t, 3.8 + i * 0.1 + j * 0.09, 4.1 + i * 0.1 + j * 0.09));
+      k.c.setAttribute('transform', `translate(${cx(j) + CW / 2},${ry(i) + RH / 2}) scale(${0.85 + 0.15 * v}) translate(${-cx(j) - CW / 2},${-ry(i) - RH / 2})`);
+    });
+  });
+  colHi.setAttribute('opacity', ease.out(seg(t, 5.4, 5.8)) * (1 - seg(t, 6.5, 6.8)));
+
+  // Cursor: to China / No first use, click; later to the year slider and drag 2026 -> 2020 -> 2024
+  const cc = cellOf('CHN', 'nfu'), ccx = cx(0) + CW * .6, ccy = ry(4) + RH * .6;
+  let px = 1300, py = 900, vis = 0;
+  if (t < 7.2) { const u = ease.inOut(seg(t, 5.6, 6.4)); px = lerp(1300, ccx, u); py = lerp(900, ccy, u); vis = seg(t, 5.6, 5.9) * (1 - seg(t, 6.9, 7.2)); }
+  else if (t < 12) {
+    const u = ease.inOut(seg(t, 9.0, 9.55)); px = lerp(1250, sy(2026), u); py = lerp(260, SLY, u);
+    if (t >= 9.6) px = sy(y) + (t < 10.9 ? lerp(sy(2026), sy(2020), ease.inOut(seg(t, 9.6, 10.0))) - sy(y) : lerp(sy(2020), sy(2024), ease.inOut(seg(t, 10.9, 11.4))) - sy(y));
+    vis = seg(t, 9.0, 9.3) * (1 - seg(t, 11.6, 11.9));
+  }
+  cur.setAttribute('opacity', vis * out);
+  if (t < 7.2) { const s = 1 + 0.035 * ease.inOut(seg(t, 3.3, 12.0)); px = 800 + (px - 800) * s; py = 540 + (py - 540) * s; }
+  cur.setAttribute('transform', `translate(${px},${py})`);
+  const click = seg(t, 6.35, 6.45) * (1 - seg(t, 6.6, 6.9));
+  ring.setAttribute('opacity', t < 7.2 ? click : seg(t, 9.5, 9.6) * (1 - seg(t, 11.4, 11.7)));
+  ring.setAttribute('r', t < 7.2 ? 22 + 18 * seg(t, 6.4, 6.9) : 20);
+  cc.box.setAttribute('filter', t > 6.4 && t < 9.3 ? 'url(#kit-glow)' : '');
+  if (t > 6.4 && t < 9.3) cc.box.setAttribute('stroke', 'var(--amber)');
+
+  // Quote card: grows from the China cell, then becomes Russia's "Role" card for the year move
+  const open = ease.out(seg(t, 6.5, 7.1)), closeAll = seg(t, 11.9, 12.3);
+  const k = ease.inOut(seg(t, 8.8, 9.3));            // China -> Russia switch
+  const fx = cx(0) + CW / 2, fy = ry(4) + RH / 2;
+  const sc = lerp(0.18, 1, open);
+  card.setAttribute('opacity', seg(t, 6.5, 6.8) * (1 - closeAll));
+  card.setAttribute('transform', `translate(${lerp(fx, 800, open)},${lerp(fy, 510, open)}) scale(${sc}) translate(-800,-510)`);
+  const ruso = k > .5;
+  cardHead.textContent = ruso ? 'Russia · Role' : CHN.head;
+  cardTag.textContent = ruso ? (y < 2024 ? '“Exclusively” deterrence' : 'Deterrence; use “extreme and compelled”') : CHN.tag;
+  cardTag.style.fill = ruso ? KC.stmt : KC.pledge;
+  const sw = Math.abs(k - .5) * 2;
+  [cardHead, cardTag, cardSrc].forEach(n => n.setAttribute('opacity', sw));
+  qA.setAttribute('opacity', (1 - k) * ease.out(seg(t, 6.9, 7.4)));
+  // Russia opens at 2026 (2024 wording); back to 2020 the older wording returns; forward to 2024 it goes again.
+  const past = ease.inOut(seg(t, 9.85, 10.05)) * (1 - ease.inOut(seg(t, 11.1, 11.5)));
+  qB.setAttribute('opacity', k * past); qC.setAttribute('opacity', k * (1 - past));
+  qC.setAttribute('transform', `translate(0,${t > 11 ? past * 10 : 0})`);
+  cardSrc.textContent = !ruso ? CHN.src : y < 2024 ? RSRC20 : RSRC24;
+  // "exclusively": lights red as the year reaches 2020, then a strike line draws before the 2024 wording
+  const lit = seg(t, 10.0, 10.3);
+  exW.setAttribute('fill', lit > .5 ? 'var(--red)' : 'var(--paper)');
+  exW.setAttribute('filter', lit > .5 ? 'url(#kit-glow)' : '');
+  const ew = 196, sx = ease.inOut(seg(t, 10.45, 10.9));
+  strike.setAttribute('x2', 290 + ew * sx); strike.setAttribute('opacity', sx > 0 ? 1 : 0);
+  cardBg.setAttribute('stroke', ruso ? (lit > .5 && past > .5 ? 'var(--red)' : '#2c4a3b') : 'var(--amber)');
+
+  // Matrix recedes while the card is open; camera push
+  const dim = Math.max(open * (1 - closeAll), 0);
+  const push = ease.inOut(seg(t, 3.3, 12.0));
+  cam.setAttribute('transform', `translate(800,540) scale(${1 + 0.035 * push}) translate(-800,-540)`);
+  // payoff
+  const pu = ease.out(seg(t, 12.3, 12.9)) * (1 - seg(t, 14.4, 14.8));
+  pay.setAttribute('opacity', pu);
+  payCols.forEach((g, j) => { const u = ease.out(seg(t, 12.5 + j * 0.18, 13.1 + j * 0.18)); g.setAttribute('opacity', u); g.setAttribute('transform', `translate(0,${(1 - u) * 30})`); });
+  pLine.setAttribute('opacity', ease.out(seg(t, 13.4, 13.9)));
+  const bl = Math.max(dim * .7, pu, seg(t, 14.4, 14.8));
+  blurG.setAttribute('stdDeviation', (bl * 6).toFixed(2));
+  cam.setAttribute('filter', bl > 0.01 ? 'url(#dp-blur)' : '');
+  cam.setAttribute('opacity', 1 - dim * .45);
+  // keep the slider readable above the card during the year move
+
+  cap(t); end(t, 14.5, D);
+}
+run({ duration: D, poster: 10.75, frame });
+</script>
+</body></html>

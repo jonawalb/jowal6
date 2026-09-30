@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Indicators &amp; Warning Board</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .wb-hud { fill: #0a1510; fill-opacity: .86; stroke: var(--line); stroke-width: 1.2; }
+  .wb-dom { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .12em; text-transform: uppercase; }
+  .wb-sc { font: 600 30px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .wb-lit { font: 400 13px var(--mono); fill: var(--muted); font-variant-numeric: tabular-nums; }
+  .wb-tn { font: 400 12px var(--mono); fill: var(--muted); }
+  .wb-tn3 { font: 400 11px var(--mono); fill: var(--muted); }
+  .wb-tag { font: 600 10px var(--mono); letter-spacing: .12em; text-transform: uppercase; }
+  .wb-pre { font: italic 500 26px var(--display); fill: var(--paper); }
+  .wb-pill { font: 600 13px var(--mono); letter-spacing: .12em; text-transform: uppercase; text-anchor: middle; }
+  .wb-band { font: 400 15px var(--mono); fill: var(--muted); }
+  .wb-pct { font: 600 26px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .wb-small { font: 400 13px var(--mono); fill: var(--muted); }
+  .wb-fine { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+  .wb-chip { font: 600 22px var(--mono); fill: var(--paper); text-anchor: middle; letter-spacing: .02em; }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of the Indicators and Warning Board: 33 indicator tiles in five domains light up for a major exercise and the assessment settles on an exercise-consistent pattern, then long-lead indicators such as stop-loss, mobilization and blood drives light in a hypothetical pre-conflict case and the assessment moves to strategic warning."><title>Indicators &amp; Warning Board</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- The tool's indicators, presets and model (tools/warning-board) ----------------------------------------
+// data/indicators.js: [id, domain, name, weight w (NOTIONAL 1-3), exercise overlap ex (h/s/l)]. 33 indicators.
+const IND = [['stoploss','mil','Stop-loss: demobilization halted',3,'l'],['leave','mil','Leave cancelled, troops confined',2,'s'],['munitions','mil','Munitions and missile production surge',1,'l'],['training','mil','Training halt and maintenance surge',2,'l'],['amphib','mil','Amphibious lift build-up',1,'s'],['forward','mil','Forward deployment under exercise cover',2,'h'],['zones','mil','Closure zones in new areas',2,'h'],['ports','mil','Coast guard massing at ports and chokepoints',2,'h'],['disperse','mil','Command posts and repair capacity disperse',2,'s'],['mobilize','log','National mobilization ordered',3,'l'],['roro','log','Ro-ro ferries and merchant ships requisitioned',3,'h'],['dark','log','Ferries leave routes or go dark',2,'s'],['militia','log','Maritime militia activated',2,'s'],['fuel','log','Fuel and ammunition move to the coast',3,'s'],['hospitals','log','Field and wartime hospitals prepared',2,'l'],['blood','log','Public blood drives',2,'l'],['reserves','log','Reservists and veterans recalled',3,'s'],['flights','log','Civil flights and cargo disrupted',2,'s'],['shelters','log','Air-raid shelters and drills in Fujian',1,'l'],['laws','pol','Mobilization and defense laws revised',1,'l'],['wartimelaw','pol','Wartime authorities and "separatist" cases',1,'l'],['rhetoric','pol','Red-line rhetoric and pretexts',2,'h'],['travel','pol','Elite travel limits, advisories abroad',2,'l'],['capital','eco','Tighter capital controls',2,'l'],['assets','eco','Assets repatriated, foreign assets frozen',3,'l'],['sanctionproof','eco','Sanctions-proofing and gold buying',1,'l'],['energy','eco','Energy stockpiling beyond norms',1,'l'],['food','eco','Food and mineral stockpiling',1,'l'],['exports','eco','Export halts, rationing, war production',3,'l'],['propaganda','inf','Public prepared for war and hardship',2,'s'],['preposition','inf','Cyber access in infrastructure',1,'l'],['cyber','inf','Cyberattack and disinformation spike',1,'h'],['censor','inf','Censorship hides preparations',2,'s']]
+  .map(([id, d, name, w, ex]) => ({ id, d, name, w, ex: { h: 'high', s: 'some', l: 'low' }[ex] }));
+const DOMAINS = [['mil', 'Military'], ['log', 'Logistics & mobilization'], ['pol', 'Political & legal'], ['eco', 'Economic & financial'], ['inf', 'Information']];
+// PRESETS (0 not observed, 1 ambiguous, 2 observed). "Routine" and "Exercise" are stylized composites; pre-conflict is invented.
+const PRESETS = {
+  routine: { name: 'Routine year', set: { amphib: 2, laws: 2, wartimelaw: 2, sanctionproof: 1, energy: 1, food: 1, preposition: 2, propaganda: 1, cyber: 1, ports: 1, militia: 1, shelters: 1, munitions: 1 } },
+  exercise: { name: 'Major exercise (Joint Sword-type)', set: { amphib: 2, laws: 2, wartimelaw: 2, sanctionproof: 1, energy: 1, food: 1, preposition: 2, propaganda: 1, cyber: 2, militia: 1, shelters: 1, munitions: 1,
+    forward: 2, zones: 2, ports: 2, rhetoric: 2, roro: 1, dark: 1, flights: 1, leave: 1, disperse: 1 } },
+  preconflict: { name: 'Hypothetical pre-conflict', set: { stoploss: 2, leave: 2, munitions: 2, training: 2, amphib: 2, forward: 1, zones: 1, ports: 1, disperse: 2,
+    mobilize: 2, roro: 2, dark: 2, militia: 2, fuel: 2, hospitals: 2, blood: 2, reserves: 2, flights: 1, shelters: 2,
+    laws: 2, wartimelaw: 2, rhetoric: 2, travel: 2, capital: 2, assets: 2, sanctionproof: 2, energy: 2, food: 2, exports: 1,
+    propaganda: 2, preposition: 2, cyber: 1, censor: 2 } },
+};
+// js/model.js: assess(), copied (all weights, overlaps and thresholds are NOTIONAL teaching values).
+const VAL = [0, 0.5, 1], EXO = { high: 0.8, some: 0.4, low: 0.1 }, TF = { days: 0.75, weeks: 1, months: 1.1 };
+const BANDS = ['Routine', 'Elevated', 'Exercise-like', 'Anomalous', 'Warning'];
+const BAND_NAMES = ['Routine baseline', 'Elevated activity', 'Exercise-consistent pattern', 'Beyond an exercise', 'Strategic warning'];
+const sum = (l, f) => l.reduce((a, x) => a + f(x), 0);
+function assess(states, timing) {
+  const v = i => VAL[states[i.id] || 0];
+  const domains = DOMAINS.map(([id]) => { const l = IND.filter(i => i.d === id); return { id, score: sum(l, i => i.w * v(i)) / sum(l, i => i.w), lit: l.filter(i => states[i.id]).length, n: l.length }; });
+  const S = sum(IND, i => i.w * v(i)) / sum(IND, i => i.w);
+  const D = sum(IND, i => i.w * v(i) * (1 - EXO[i.ex])) / sum(IND, i => i.w * (1 - EXO[i.ex]));
+  const litW = sum(IND, i => i.w * v(i));
+  const exShare = litW ? sum(IND, i => i.w * v(i) * EXO[i.ex]) / litW : 0;
+  const breadth = domains.filter(d => d.score >= 0.35).length, Dt = Math.min(1, D * TF[timing]);
+  let band = 0;
+  if (S >= 0.22) band = 1;
+  if (S >= 0.25 && exShare >= 0.4 && Dt < 0.3) band = 2;
+  if (Dt >= 0.3) band = 3;
+  if (Dt >= 0.45 && breadth >= 4) band = 4;
+  if (band === 4 && timing === 'days') band = 3;
+  return { domains, S, Dt, exShare, band, lit: IND.filter(i => states[i.id]).length };
+}
+// The walkthrough's states: routine (months) -> exercise (days) -> pre-conflict (weeks).
+const STAGES = [['routine', 'months'], ['exercise', 'days'], ['preconflict', 'weeks']].map(([p, tm]) => ({ p, tm, set: PRESETS[p].set, a: assess(PRESETS[p].set, tm) }));
+const MISSING = ['stoploss', 'mobilize', 'assets', 'blood'];   // tour step 3: "no stop-loss, no mobilization order, no asset repatriation, no blood drives"
+
+const txt = (x, y, cls, s, a = {}, p) => { const n = el('text', { x, y, class: cls, ...a }, p); n.textContent = s; return n; };
+const op = (n, v) => n.setAttribute('opacity', Math.max(0, Math.min(1, v)).toFixed(3));
+const wrap = (s, n) => { const a = []; let c = ''; for (const w of s.split(' ')) { if ((c + ' ' + w).trim().length > n) { a.push(c); c = w; } else c = (c + ' ' + w).trim(); } a.push(c); return a; };
+
+// ---- Board ---------------------------------------------------------------------------------------------
+const cam = el('g', {}, svg);
+const board = el('g', {}, cam);
+const COLX = [56, 286, 516, 746, 976], TW = 224, TH = 46, TY0 = 262, TG = 7;
+const heads = DOMAINS.map(([id, name], c) => {
+  const g = el('g', {}, board), x = COLX[c];
+  wrap(name, 16).forEach((ln, j) => txt(x, 176 + j * 17, 'wb-dom', ln, {}, g));
+  const sc = txt(x, 236, 'wb-sc', '0', {}, g), lit = txt(x + 82, 236, 'wb-lit', '', {}, g);
+  el('rect', { x, y: 244, width: TW, height: 3, fill: 'var(--line)' }, g);
+  const bar = el('rect', { x, y: 244, width: 0, height: 3, fill: 'var(--amber)' }, g);
+  return { g, sc, lit, bar };
+});
+const tiles = {};
+DOMAINS.forEach(([id], c) => IND.filter(i => i.d === id).forEach((ind, r) => {
+  const x = COLX[c], y = TY0 + r * (TH + TG), g = el('g', {}, board);
+  const box = el('rect', { x, y, width: TW, height: TH, rx: 4, fill: 'var(--amber)', 'fill-opacity': 0, stroke: 'var(--line)', 'stroke-width': 1.4 }, g);
+  const lines = wrap(ind.name, 25), n = lines.length;
+  const tl = lines.map((ln, j) => txt(x + 10, y + (n === 3 ? 14 + j * 13 : n === 2 ? 19 + j * 16 : 28), n === 3 ? 'wb-tn3' : 'wb-tn', ln, {}, g));
+  let tag = null;
+  if (ind.ex === 'high') {
+    tag = el('g', { opacity: 0 }, g);
+    el('rect', { x: x + TW - 62, y: y - 8, width: 54, height: 16, rx: 8, fill: '#0b1712', stroke: 'var(--amber)', 'stroke-width': 1.2 }, tag);
+    txt(x + TW - 35, y + 4, 'wb-tag', 'drill', { 'text-anchor': 'middle', style: 'fill:var(--amber)' }, tag);
+  }
+  tiles[ind.id] = { g, box, tl, tag, ind, x, y };
+}));
+
+// ---- Assessment panel ------------------------------------------------------------------------------------
+const pan = el('g', {}, cam);
+const PX = 1222;
+el('rect', { x: PX, y: 150, width: 320, height: 640, rx: 6, class: 'wb-hud' }, pan);
+txt(PX + 20, 182, 't-label', 'Preset', { style: 'font-size:12px' }, pan);
+const preT = [txt(PX + 20, 216, 'wb-pre', '', {}, pan), txt(PX + 20, 246, 'wb-pre', '', {}, pan)];
+txt(PX + 20, 286, 't-label', 'Signals appeared within', { style: 'font-size:12px' }, pan);
+const pills = ['days', 'weeks', 'months'].map((k, i) => { const g = el('g', {}, pan), x = PX + 20 + i * 96; const r = el('rect', { x, y: 298, width: 88, height: 30, rx: 15, fill: 'none', stroke: 'var(--muted)', 'stroke-width': 1.3 }, g); const t = txt(x + 44, 318, 'wb-pill', k, {}, g); return { k, r, t }; });
+txt(PX + 20, 370, 't-label', 'Assessment', { style: 'font-size:12px' }, pan);
+const bandRows = BANDS.map((b, i) => { const y = 400 + i * 38, g = el('g', {}, pan); const d = el('circle', { cx: PX + 30, cy: y - 5, r: 7, fill: 'none', stroke: 'var(--line)', 'stroke-width': 1.5 }, g); const t = txt(PX + 48, y, 'wb-band', BAND_NAMES[i], {}, g); return { g, d, t, y }; });
+const mark = el('path', { d: 'M0,-9 L12,0 L0,9 Z', fill: 'var(--amber)', filter: 'url(#kit-glow)' }, pan);
+el('line', { x1: PX + 20, x2: PX + 300, y1: 604, y2: 604, stroke: 'var(--line)' }, pan);
+txt(PX + 20, 632, 'wb-small', 'Signal an exercise could explain', {}, pan);
+const exPct = txt(PX + 300, 670, 'wb-pct', '', { 'text-anchor': 'end' }, pan);
+el('rect', { x: PX + 20, y: 682, width: 280, height: 8, rx: 4, fill: 'var(--line)' }, pan);
+const exBar = el('rect', { x: PX + 20, y: 682, width: 0, height: 8, rx: 4, fill: 'var(--amber)' }, pan);
+txt(PX + 20, 730, 'wb-small', 'Hard-to-fake signal', {}, pan);
+const hfT = txt(PX + 300, 766, 'wb-pct', '', { 'text-anchor': 'end' }, pan);
+txt(PX + 20, 766, 'wb-fine', 'notional', { style: 'font-size:11px' }, pan);
+
+// Callout on the missing long-lead indicators during the exercise beat.
+const missG = el('g', {}, cam);
+const missRings = MISSING.map(id => { const tl = tiles[id]; return el('rect', { x: tl.x - 4, y: tl.y - 4, width: TW + 8, height: TH + 8, rx: 6, fill: 'none', stroke: 'var(--paper)', 'stroke-width': 1.6, 'stroke-dasharray': '5 5' }, missG); });
+
+// ---- Hook and payoff -------------------------------------------------------------------------------------
+const hook = el('g', {}, svg);
+const h1 = txt(800, 440, 't-hook', 'A drill lights up the board.', { 'text-anchor': 'middle', style: 'font-size:66px' }, hook);
+const h2 = el('text', { x: 800, y: 530, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:66px' }, hook);
+h2.innerHTML = 'What separates it from <tspan class="hot">war?</tspan>';
+
+const pay = el('g', { opacity: 0 }, svg);
+el('rect', { width: 1600, height: 1000, fill: '#070f0b', opacity: .88 }, pay);
+const pH = el('text', { x: 800, y: 290, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:58px' }, pay);
+pH.innerHTML = 'The tell is what drills <tspan class="hot">rarely do.</tspan>';
+const pS = txt(800, 342, 't-cap', 'Slow, costly moves, all unlit in the exercise case:', { 'text-anchor': 'middle', style: 'fill:var(--muted)' }, pay);
+const CHIPS = ['Stop-loss', 'Mobilization order', 'Asset repatriation', 'Blood drives'];
+const CW = CHIPS.map(s => s.length * 15 + 56), CX0 = 800 - (CW.reduce((a, b) => a + b, 0) + 3 * 24) / 2;
+const chips = CHIPS.map((s, i) => {
+  const g = el('g', {}, pay), w = CW[i], x = CX0 + CW.slice(0, i).reduce((a, b) => a + b + 24, 0) + w / 2, y = 450;
+  el('rect', { x: x - w / 2, y: y - 34, width: w, height: 56, rx: 28, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 2 }, g);
+  txt(x, y + 2, 'wb-chip', s, {}, g);
+  return g;
+});
+const pN = txt(800, 560, 'wb-fine', '33 sourced indicators · notional weights · the pre-conflict case is invented', { 'text-anchor': 'middle' }, pay);
+
+const cap = captions(svg, [
+  [3.3, 4.6, 'A routine year: long-running trends, no crisis'],
+  [4.7, 7.6, 'An exercise lights the board, in an exercise-shaped pattern'],
+  [7.8, 10.6, 'Preparation builds over weeks, in every domain'],
+  [10.8, 13.0, '33 indicators, each sourced, each yours to set'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Indicators & Warning', line: 'See what separates a drill from preparation for war.' });
+
+// ---- Timeline ----------------------------------------------------------------------------------------------
+const D = 16;
+const T_STAGE = [3.4, 4.8, 8.0];            // when each preset is applied
+const stageAt = t => (t < T_STAGE[1] ? 0 : t < T_STAGE[2] ? 1 : 2);
+// Tiles that change between stages switch in a stagger; a tile's state blends from the old to the new value.
+const ORDER = IND.map(i => i.id);
+function tileVal(id, t) {
+  let v = 0, from = 0;
+  for (let s = 0; s < 3; s++) {
+    const nv = VAL[STAGES[s].set[id] || 0];
+    if (nv !== from) { const j = ORDER.indexOf(id), a = T_STAGE[s] + (s === 0 ? j * 0.012 : j * 0.045); v = lerp(v, nv, ease.out(seg(t, a, a + 0.35))); }
+    else v = t >= T_STAGE[s] ? nv : v;
+    from = nv;
+  }
+  return v;
+}
+const mix = (a, b, u) => lerp(a, b, u);
+function frame(t) {
+  const out = 1 - seg(t, 12.9, 13.5);
+  [h1, h2].forEach((h, i) => {
+    const u = ease.out(seg(t, 0.25 + i * 0.4, 1.0 + i * 0.4)), o = 1 - seg(t, 2.6 + i * 0.1, 3.1 + i * 0.1);
+    op(h, u * o); h.setAttribute('transform', `translate(0,${((1 - u) * 24 - seg(t, 2.6, 3.2) * 18).toFixed(1)})`);
+  });
+  const push = ease.inOut(seg(t, 3.0, 12.9));
+  cam.setAttribute('transform', `translate(800,480) scale(${(1 + 0.03 * push).toFixed(4)}) translate(-800,-480)`);
+  op(cam, lerp(0.1 * ease.out(seg(t, 0, 1)), 1, ease.inOut(seg(t, 2.6, 3.4))) * lerp(1, 0.2, ease.inOut(seg(t, 10.6, 11.2))) * out);
+
+  // Tiles.
+  for (const id of ORDER) {
+    const T = tiles[id], v = tileVal(id, t);
+    T.box.setAttribute('fill-opacity', (v >= 0.99 ? 0.92 : v * 0.5).toFixed(3));
+    T.box.setAttribute('stroke', v > 0.05 ? 'var(--amber)' : 'var(--line)');
+    T.tl.forEach(n => (n.style.fill = v > 0.75 ? '#0b1712' : v > 0.05 ? 'var(--paper)' : ''));
+    if (T.tag) op(T.tag, seg(t, 5.9, 6.3) * (1 - seg(t, 7.8, 8.2)));
+  }
+  // Exercise-typical highlight (tour step 3), then the missing long-lead indicators.
+  const hx = seg(t, 5.9, 6.3) * (1 - seg(t, 7.8, 8.2));
+  for (const id of ORDER) if (tiles[id].ind.ex === 'high') tiles[id].box.setAttribute('filter', hx > 0.5 ? 'url(#kit-glow)' : '');
+  op(missG, ease.out(seg(t, 6.6, 7.0)) * (1 - seg(t, 8.0, 8.3)));
+  missRings.forEach((r, i) => r.setAttribute('stroke-dashoffset', (-t * 18).toFixed(1)));
+
+  // Numbers: blend between stage results as the tiles change.
+  const s = stageAt(t), prev = STAGES[Math.max(0, s - 1)].a, curA = STAGES[s].a;
+  const u = s === 0 ? ease.out(seg(t, 3.4, 4.0)) : ease.inOut(seg(t, T_STAGE[s], T_STAGE[s] + 1.3));
+  const from = s === 0 ? { domains: curA.domains.map(d => ({ ...d, score: 0, lit: 0 })), exShare: 0, Dt: 0 } : prev;
+  heads.forEach((h, i) => {
+    const sc = mix(from.domains[i].score, curA.domains[i].score, u);
+    h.sc.textContent = Math.round(sc * 100); h.bar.setAttribute('width', (TW * sc).toFixed(1));
+    h.lit.textContent = `${u > 0.5 ? curA.domains[i].lit : from.domains[i].lit} of ${curA.domains[i].n} lit`;
+  });
+  const ex = mix(from.exShare, curA.exShare, u), hf = mix(from.Dt, curA.Dt, u);
+  exPct.textContent = Math.round(ex * 100) + '%'; exBar.setAttribute('width', (280 * ex).toFixed(1));
+  hfT.textContent = Math.round(hf * 100);
+  const nm = wrap(PRESETS[STAGES[s].p].name, 20);
+  preT[0].textContent = nm[0]; preT[1].textContent = nm[1] || '';
+  pills.forEach(p => { const on = p.k === STAGES[s].tm; p.r.setAttribute('fill', on ? 'var(--amber)' : 'none'); p.r.setAttribute('stroke', on ? 'var(--amber)' : 'var(--muted)'); p.t.style.fill = on ? '#0b1712' : 'var(--muted)'; });
+  // Band marker glides to the current band once the numbers settle.
+  const bFrom = s === 0 ? 0 : prev.band, bTo = curA.band, bu = ease.inOut(seg(t, T_STAGE[s] + 0.6, T_STAGE[s] + 1.4));
+  const by = lerp(bandRows[bFrom].y, bandRows[bTo].y, bu) - 5;
+  mark.setAttribute('transform', `translate(${PX + 6},${by.toFixed(1)})`);
+  const bandCol = b => (b === 4 ? 'var(--red)' : b >= 2 ? 'var(--amber)' : 'var(--paper)');
+  mark.setAttribute('fill', bandCol(bu > 0.5 ? bTo : bFrom));
+  bandRows.forEach((r, i) => {
+    const on = i === (bu > 0.5 ? bTo : bFrom);
+    r.d.setAttribute('fill', on ? bandCol(i) : 'none'); r.d.setAttribute('stroke', on ? bandCol(i) : 'var(--line)');
+    r.t.style.fill = on ? bandCol(i) : ''; r.t.style.fontWeight = on ? '600' : '';
+    r.d.setAttribute('filter', on && i === 4 ? 'url(#kit-glow)' : '');
+  });
+
+  // Payoff.
+  const pu = ease.out(seg(t, 10.7, 11.3)) * (1 - seg(t, 12.9, 13.4));
+  op(pay, pu);
+  op(pH, ease.out(seg(t, 10.8, 11.4))); op(pS, ease.out(seg(t, 11.0, 11.5)));
+  chips.forEach((c, i) => { const a = 11.2 + i * 0.15, v = ease.back(seg(t, a, a + 0.5)); op(c, seg(t, a, a + 0.2)); c.setAttribute('transform', `translate(0,${((1 - v) * 18).toFixed(1)})`); });
+  op(pN, ease.out(seg(t, 11.9, 12.3)));
+
+  cap(t); end(t, 13.1, D);
+}
+run({ duration: D, poster: 9.6, frame });
+</script>
+</body></html>

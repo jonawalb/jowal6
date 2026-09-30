@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Treaty Tracker</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .yr { font: 600 84px var(--mono); fill: var(--amber); font-variant-numeric: tabular-nums; letter-spacing: -.03em; }
+  .st-n { font: italic 500 26px var(--display); fill: var(--paper); }
+  .col-h { font: 600 13px var(--mono); fill: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+  .lg { font: 400 13px var(--mono); fill: var(--paper); }
+  .ev-d { font: 600 15px var(--mono); fill: var(--amber); font-variant-numeric: tabular-nums; }
+  .ev-t { font: 400 17px var(--mono); fill: var(--paper); }
+  .src { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .04em; }
+  .tl { font: 400 13px var(--mono); fill: var(--paper); text-anchor: middle; }
+  .dt { font: 600 44px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .kc { font: 600 64px var(--mono); font-variant-numeric: tabular-nums; }
+  .kl { font: 400 14px var(--mono); fill: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of the Treaty Tracker: a matrix of the nine nuclear-armed states and eleven treaties fills in from 1963, then turns red and orange as the INF Treaty, Open Skies, the CTBT ratification, the CFE Treaty and New START fall away; 26 of the 29 remaining CFE parties suspend the treaty."><title>Treaty Tracker</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Real data (tools/treaty-tracker) -------------------------------------------------------------------
+// M: status of each nuclear-armed state (the tool's "Nuclear-armed" preset) under eleven of its treaties at the
+// end of each year 1963..2026 (2026 = records retrieved 29 Sept 2026), from the tool's own statusAt() in
+// js/common.js over data/treaties.js (UNODA depositary records plus the bilateral evidence file).
+// Codes: p party, r ratified (treaty not in force), s signed only, h partly suspended, u suspended,
+// d withdrawal announced (disputed), v ratification revoked, w withdrawn, e treaty ended, n not signed.
+// CFE: every state with a CFE instrument deposited: [iso, name, status on 29 Sept 2026, suspension dates].
+const M = {"USA":["pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","psnnnnnnnnn","psnnnnnnnnn","ppnnnnnnnnn","ppnnnnnnnnn","ppnnsnnnnnn","ppnnsnnnnnn","ppnnsnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnsnnnn","ppnnpnpnnnn","ppnnpnpnnnn","ppnnpnpnnsn","ppnnpnpsnsn","ppnnpnpsnps","ppnnpspsnpr","ppnnpsppnpr","ppnnpsppnpr","ppsnpsppnpr","ppsnppppnpr","ppsnppppnpr","ppsnppppnpr","ppsnppppnpr","ppsnppppnpr","ppsnppppnpp","ppsnppppnpp","ppsnppppnpp","ppsnppppnpp","ppsnppppnpp","ppsnppppnpp","ppsnppppnpp","ppsnpppenpp","ppsnpppespp","ppsnpppeppp","ppsnpppeppp","ppsnpppeppp","ppsnpppeppp","ppsnpppeppp","ppsnpppeppp","ppsnpppeppp","ppsnpppeppp","ppsnppeeppp","ppsnppeeppw","ppsnppeeppw","ppsnppeeppw","ppsnppeepuw","ppsnppeepuw","ppsnppeepuw","ppsnppeeeuw"],"RUS":["pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","psnnnnnnnnn","psnnnnnnnnn","ppnnnnnnnnn","ppnnnnnnnnn","ppnnsnnnnnn","ppnnsnnnnnn","ppnnsnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnsnnnn","ppnnpnpnnnn","ppnnpnpnnnn","ppnnpnpnnsn","ppnnpnpsnsn","ppnnpnpsnps","ppnnpspsnps","ppnnpsppnps","ppnnpsppnps","ppsnpsppnps","ppsnppppnps","ppsnppppnps","ppsnppppnps","pprnppppnps","pprnppppnpr","pprnppppnpp","pprnppppnpp","pprnppppnpp","pprnppppnpp","pprnppppnpp","pprnppppnup","pprnppppnup","pprnpppenup","pprnpppesup","pprnpppepup","pprnpppepup","pprnpppepup","pprnpppepup","pprnpppepup","pprnpppepup","pprnpppepup","pprnpppepup","pprnppeepup","pprnppeepup","pprnppeepuw","pprnppeepuw","ppvnppeeuww","ppvnppeeuww","ppvnppeeuww","ppvnppeeeww"],"GBR":["pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","prnnnnnnnnn","prnnnnnnnnn","ppnnnnnnnnn","ppnnnnnnnnn","ppnnsnnnnnn","ppnnsnnnnnn","ppnnsnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnnn","ppnnpnnnnsn","ppnnpnnnnrn","ppnnpnnnnps","ppnnpsnnnpr","ppnnpsnnnpr","ppnnpsnnnpr","ppsnprnnnpr","ppsnppnnnpr","pprnppnnnpr","pprnppnnnpr","pprnppnnnpr","pprnppnnnpr","pprnppnnnpp","pprnppnnnpp","pprnppnnnpp","pprnppnnnpp","pprnppnnnpp","pprnppnnnpp","pprnppnnnpp","pprnppnnnpp","pprnppnnnpp","pprnppnnnpp","pprnppnnnpp","pprnppnnnpp","pprnppnnnpp","pprnppnnnpp","pprnppnnnpp","pprnppnnnpp","pprnppnnnpp","pprnppnnnpp","pprnppnnnpp","pprnppnnnpp","pprnppnnnpp","pprnppnnnup","pprnppnnnup","pprnppnnnup","pprnppnnnup"],"FRA":["nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnpnnnnnn","nnnnpnnnnnn","nnnnpnnnnnn","nnnnpnnnnnn","nnnnpnnnnnn","nnnnpnnnnnn","nnnnpnnnnsn","nnnnpnnnnsn","npnnpnnnnps","npnnpsnnnpr","npnnpsnnnpr","npnnprnnnpr","npsnprnnnpr","npsnppnnnpr","nprnppnnnpr","nprnppnnnpr","nprnppnnnpr","nprnppnnnpr","nprnppnnnpp","nprnppnnnpp","nprnppnnnpp","nprnppnnnpp","nprnppnnnpp","nprnppnnnpp","nprnppnnnpp","nprnppnnnpp","nprnppnnnpp","nprnppnnnpp","nprnppnnnpp","nprnppnnnpp","nprnppnnnpp","nprnppnnnpp","nprnppnnnpp","nprnppnnnpp","nprnppnnnpp","nprnppnnnpp","nprnppnnnpp","nprnppnnnpp","nprnppnnnpp","nprnppnnnup","nprnppnnnup","nprnppnnnup","nprnppnnnup"],"CHN":["nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnpnnnnnn","nnnnpnnnnnn","nnnnpnnnnnn","nnnnpnnnnnn","nnnnpnnnnnn","nnnnpnnnnnn","nnnnpnnnnnn","nnnnpnnnnnn","npnnpnnnnnn","npnnpsnnnnn","npnnpsnnnnn","npnnpsnnnnn","npsnpsnnnnn","npsnppnnnnn","npsnppnnnnn","npsnppnnnnn","npsnppnnnnn","npsnppnnnnn","npsnppnnnnn","npsnppnnnnn","npsnppnnnnn","npsnppnnnnn","npsnppnnnnn","npsnppnnnnn","npsnppnnnnn","npsnppnnnnn","npsnppnnnnn","npsnppnnnnn","npsnppnnnnn","npsnppnnnnn","npsnppnnnnn","npsnppnnnnn","npsnppnnnnn","npsnppnnnnn","npsnppnnnnn","npsnppnnnnn","npsnppnnnnn","npsnppnnnnn","npsnppnnnnn","npsnppnnnnn","npsnppnnnnn","npsnppnnnnn","npsnppnnnnn"],"IND":["pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnsnnnnnn","pnnnrnnnnnn","pnnnpnnnnnn","pnnnpnnnnnn","pnnnpnnnnnn","pnnnpnnnnnn","pnnnpnnnnnn","pnnnpnnnnnn","pnnnpnnnnnn","pnnnpnnnnnn","pnnnpnnnnnn","pnnnpnnnnnn","pnnnpnnnnnn","pnnnpnnnnnn","pnnnpnnnnnn","pnnnpnnnnnn","pnnnpnnnnnn","pnnnpnnnnnn","pnnnpnnnnnn","pnnnpnnnnnn","pnnnpsnnnnn","pnnnpsnnnnn","pnnnpsnnnnn","pnnnprnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn"],"PAK":["snnnnnnnnnn","snnnnnnnnnn","snnnnnnnnnn","snnnnnnnnnn","snnnnnnnnnn","snnnnnnnnnn","snnnnnnnnnn","snnnnnnnnnn","snnnnnnnnnn","snnnsnnnnnn","snnnsnnnnnn","snnnrnnnnnn","snnnpnnnnnn","snnnpnnnnnn","snnnpnnnnnn","snnnpnnnnnn","snnnpnnnnnn","snnnpnnnnnn","snnnpnnnnnn","snnnpnnnnnn","snnnpnnnnnn","snnnpnnnnnn","snnnpnnnnnn","snnnpnnnnnn","snnnpnnnnnn","pnnnpnnnnnn","pnnnpnnnnnn","pnnnpnnnnnn","pnnnpnnnnnn","pnnnpnnnnnn","pnnnpsnnnnn","pnnnpsnnnnn","pnnnpsnnnnn","pnnnpsnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn","pnnnppnnnnn"],"ISR":["snnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnnnnnnn","pnnnnsnnnnn","pnnnnsnnnnn","pnnnnsnnnnn","pnsnnsnnnnn","pnsnnsnnnnn","pnsnnsnnnnn","pnsnnsnnnnn","pnsnnsnnnnn","pnsnnsnnnnn","pnsnnsnnnnn","pnsnnsnnnnn","pnsnnsnnnnn","pnsnnsnnnnn","pnsnnsnnnnn","pnsnnsnnnnn","pnsnnsnnnnn","pnsnnsnnnnn","pnsnnsnnnnn","pnsnnsnnnnn","pnsnnsnnnnn","pnsnnsnnnnn","pnsnnsnnnnn","pnsnnsnnnnn","pnsnnsnnnnn","pnsnnsnnnnn","pnsnnsnnnnn","pnsnnsnnnnn","pnsnnsnnnnn","pnsnnsnnnnn","pnsnnsnnnnn","pnsnnsnnnnn","pnsnnsnnnnn","pnsnnsnnnnn","pnsnnsnnnnn"],"PRK":["nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","nnnnnnnnnnn","npnnnnnnnnn","npnnnnnnnnn","npnnpnnnnnn","npnnpnnnnnn","npnnpnnnnnn","npnnpnnnnnn","npnnpnnnnnn","npnnpnnnnnn","npnnpnnnnnn","npnnpnnnnnn","npnnpnnnnnn","npnnpnnnnnn","npnnpnnnnnn","npnnpnnnnnn","npnnpnnnnnn","npnnpnnnnnn","npnnpnnnnnn","npnnpnnnnnn","ndnnpnnnnnn","ndnnpnnnnnn","ndnnpnnnnnn","ndnnpnnnnnn","ndnnpnnnnnn","ndnnpnnnnnn","ndnnpnnnnnn","ndnnpnnnnnn","ndnnpnnnnnn","ndnnpnnnnnn","ndnnpnnnnnn","ndnnpnnnnnn","ndnnpnnnnnn","ndnnpnnnnnn","ndnnpnnnnnn","ndnnpnnnnnn","ndnnpnnnnnn","ndnnpnnnnnn","ndnnpnnnnnn","ndnnpnnnnnn","ndnnpnnnnnn","ndnnpnnnnnn","ndnnpnnnnnn","ndnnpnnnnnn"]};
+const CFE = [["AZE","Azerbaijan","party",""],["UKR","Ukraine","party",""],["ARM","Armenia","party",""],["BEL","Belgium","suspended","2023-11-07"],["BGR","Bulgaria","suspended","2023-11-07"],["CAN","Canada","suspended","2023-11-07"],["CZE","Czechia","suspended","2023-11-07"],["DNK","Denmark","suspended","2023-11-07"],["LUX","Luxembourg","suspended","2023-11-07"],["RUS","Russia","withdrawn","2007-12-12"],["GBR","United Kingdom","suspended","2023-11-07"],["GRC","Greece","suspended","2023-11-09"],["DEU","Germany","suspended","2023-11-10"],["ISL","Iceland","suspended","2023-11-15"],["GEO","Georgia","suspended","2023-11-22"],["NOR","Norway","suspended","2023-11-23"],["PRT","Portugal","suspended","2023-11-24"],["FRA","France","suspended","2023-12-07"],["ITA","Italy","suspended","2023-12-07"],["NLD","Netherlands","suspended","2023-12-07"],["USA","United States","suspended","2023-12-07"],["SVK","Slovakia","suspended","2023-12-12"],["ROU","Romania","suspended","2023-12-14"],["TUR","Türkiye","suspended","2024-04-08"],["HUN","Hungary","suspended","2024-04-30"],["POL","Poland","suspended","2024-05-23"],["MDA","Moldova","suspended","2024-06-04"],["BLR","Belarus","suspended","2023-10-30p,2024-06-12"],["ESP","Spain","suspended","2024-07-01"],["KAZ","Kazakhstan","suspended","2025-12-08"]];
+const TR = ['PTBT', 'NPT', 'CTBT', 'TPNW', 'BWC', 'CWC', 'INF', 'START I', 'New START', 'CFE', 'Open Skies'];
+const ST = [['USA', 'United States'], ['RUS', 'Russia'], ['GBR', 'United Kingdom'], ['FRA', 'France'], ['CHN', 'China'], ['IND', 'India'], ['PAK', 'Pakistan'], ['ISR', 'Israel'], ['PRK', 'North Korea']];
+// data/treaties.js EVENTS (titles as the tool gives them), U.S.-Russian subset.
+const EV = [[2019.58, '2 Aug 2019', 'U.S. withdrawal takes effect; the INF Treaty ends'],
+  [2020.89, '22 Nov 2020', 'United States withdraws from the Open Skies'],
+  [2021.96, '18 Dec 2021', 'Russia withdraws from the Open Skies'],
+  [2023.16, '28 Feb 2023', 'Putin signs the law suspending New START'],
+  [2023.84, '2 Nov 2023', 'Putin signs the law revoking Russia’s ratification of the CTBT'],
+  [2023.85, '7 Nov 2023', 'Russia withdraws from the CFE'],
+  [2026.10, '5 Feb 2026', 'New START expires with no replacement']];
+const SCOL = { p: '#6aab82', r: '#6aab82', s: '#4d7394', h: '#d0763f', u: '#d0763f', d: '#e0533d', v: '#b77aa6', w: '#e0533d', e: '#56665d', n: 'none' };
+const SNAME = [['p', 'Party'], ['r', 'Ratified, not in force'], ['s', 'Signed only'], ['u', 'Suspended'], ['v', 'Ratification revoked'], ['d', 'Withdrawal disputed'], ['w', 'Withdrawn'], ['e', 'Treaty ended']];
+const HATCH = new Set(['r', 'h', 'd']);
+
+// ---- Scene ----------------------------------------------------------------------------------------------
+const defs = el('defs', {}, svg);
+defs.innerHTML = Object.entries({ r: '#6aab82', h: '#d0763f', d: '#e0533d' }).map(([k, c]) => `<pattern id="tt-${k}" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" fill="#0e1f17"/><rect width="3.2" height="7" fill="${c}"/></pattern>`).join('');
+const blurF = el('filter', { id: 'tt-blur', x: '-5%', y: '-5%', width: '110%', height: '110%' }, svg);
+const blurG = el('feGaussianBlur', { stdDeviation: 0 }, blurF);
+const cam = el('g', {}, svg);
+const NX = 150, CX0 = 400, CW = 88, CG = 8, RY0 = 306, RH = 44, RG = 7;
+const cx = j => CX0 + j * (CW + CG), ry = i => RY0 + i * (RH + RG);
+
+const top = el('g', {}, cam);
+el('text', { x: NX, y: 90, class: 't-label' }, top).textContent = 'Treaty membership · nuclear-armed states';
+const yrT = el('text', { x: NX - 6, y: 190, class: 'yr' }, top);
+const whenT = el('text', { x: NX, y: 226, class: 'src' }, top);
+// slider
+const SL0 = 520, SL1 = 1450, SLY = 160, sx = y => SL0 + (y - 1963) / (2026 - 1963) * (SL1 - SL0);
+el('line', { x1: SL0, x2: SL1, y1: SLY, y2: SLY, stroke: 'var(--line)', 'stroke-width': 6, 'stroke-linecap': 'round' }, top);
+const slFill = el('line', { x1: SL0, y1: SLY, y2: SLY, stroke: 'var(--amber)', 'stroke-width': 6, 'stroke-linecap': 'round' }, top);
+[1963, 1980, 2000, 2026].forEach(y => { el('text', { x: sx(y), y: SLY + 32, class: 'src', 'text-anchor': 'middle' }, top).textContent = y; });
+const knob = el('circle', { cy: SLY, r: 13, fill: 'var(--paper)', stroke: '#0b1712', 'stroke-width': 3 }, top);
+// legend
+const lg = el('g', {}, top);
+SNAME.forEach(([k, n], i) => { const lx = 520 + (i % 4) * 232, ly = 214 + Math.floor(i / 4) * 26; el('rect', { x: lx, y: ly - 11, width: 13, height: 13, rx: 2, fill: HATCH.has(k) ? `url(#tt-${k})` : SCOL[k] }, lg); el('text', { x: lx + 20, y: ly, class: 'lg', style: 'font-size:12px' }, lg).textContent = n; });
+
+const heads = el('g', {}, cam);
+TR.forEach((t, j) => { el('text', { x: cx(j) + CW / 2, y: RY0 - 14, class: 'col-h', 'text-anchor': 'middle', style: t.length > 7 ? 'font-size:11px' : '' }, heads).textContent = t; });
+const rows = ST.map(([iso, name], i) => {
+  const g = el('g', {}, cam);
+  el('text', { x: NX, y: ry(i) + 30, class: 'st-n' }, g).textContent = name;
+  const cells = TR.map((_, j) => el('rect', { x: cx(j), y: ry(i), width: CW, height: RH, rx: 5, 'stroke-width': 1.2 }, g));
+  return { iso, g, cells, prev: '' };
+});
+const usRus = el('rect', { x: NX - 14, y: ry(0) - 5, width: cx(10) + CW - NX + 24, height: 2 * (RH + RG) + 2, rx: 10, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 2.5, filter: 'url(#kit-glow)', opacity: 0 }, cam);
+const flashes = [];
+function paint(yf) {
+  const yi = Math.max(1963, Math.min(2026, Math.floor(yf)));
+  rows.forEach((r, i) => {
+    const s = M[r.iso][yi - 1963];
+    r.cells.forEach((c, j) => {
+      const k = s[j];
+      c.setAttribute('fill', k === 'n' ? 'none' : HATCH.has(k) ? `url(#tt-${k})` : SCOL[k]);
+      c.setAttribute('stroke', k === 'n' ? '#1f3a2d' : HATCH.has(k) ? SCOL[k] : 'none');
+      const bad = 'uwvde'.includes(k), wasGood = 'prs'.includes(M[r.iso][Math.max(0, yi - 1964)][j]);
+      c.setAttribute('filter', bad && wasGood && yi > 1963 ? 'url(#kit-glow)' : '');
+    });
+  });
+}
+// event toast
+const toast = el('g', { opacity: 0 }, svg);
+const toastBg = el('rect', { x: 750, width: 750, rx: 10, fill: '#0e1f17', stroke: 'var(--red)', 'stroke-width': 1.6 }, toast);
+const evL = [0, 1, 2].map(() => { const d = el('text', { x: 772, class: 'ev-d', style: 'font-size:14px' }, toast), tx = el('text', { x: 892, class: 'ev-t', style: 'font-size:14px' }, toast); return { d, tx }; });
+
+// CFE payoff
+const pay = el('g', { opacity: 0 }, svg);
+el('rect', { width: 1600, height: 1000, fill: '#070f0b', opacity: .84 }, pay);
+const pT = el('text', { x: 800, y: 205, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:52px' }, pay);
+pT.innerHTML = 'Russia left the CFE Treaty. <tspan class="hot">26 others</tspan> suspended it.';
+const ORDER = [...CFE].map(r => ({ iso: r[0], name: r[1], st: r[2], d: r[0] === 'RUS' ? '2023-11-07' : (r[3].split(',').pop() || ''), part: r[3].includes('p') ? r[3].split(',')[0].replace('p', '') : '' }));
+ORDER.sort((a, b) => (a.st === 'party') - (b.st === 'party') || (a.d > b.d) - (a.d < b.d) || (a.iso !== 'RUS') - (b.iso !== 'RUS'));
+const TW = 150, TH = 58, TG = 10, TX0 = 800 - (6 * TW + 5 * TG) / 2, TY0 = 270;
+const tiles = ORDER.map((r, i) => {
+  const g = el('g', {}, pay), x = TX0 + (i % 6) * (TW + TG), y = TY0 + Math.floor(i / 6) * (TH + TG);
+  const b = el('rect', { x, y, width: TW, height: TH, rx: 6, fill: '#10231a', stroke: '#2c4a3b' }, g);
+  const t = el('text', { x: x + TW / 2, y: y + 35, class: 'tl' }, g); t.textContent = r.name;
+  return { ...r, g, b, t };
+});
+const dateT = el('text', { x: 800, y: 700, class: 'dt', 'text-anchor': 'middle' }, pay);
+const kW = el('text', { x: 560, y: 800, class: 'kc', 'text-anchor': 'middle', style: 'fill:#e0533d' }, pay);
+el('text', { x: 560, y: 832, class: 'kl', 'text-anchor': 'middle' }, pay).textContent = 'withdrew';
+const kS = el('text', { x: 800, y: 800, class: 'kc', 'text-anchor': 'middle', style: 'fill:#d0763f' }, pay);
+el('text', { x: 800, y: 832, class: 'kl', 'text-anchor': 'middle' }, pay).textContent = 'suspended';
+const kP = el('text', { x: 1040, y: 800, class: 'kc', 'text-anchor': 'middle', style: 'fill:#6aab82' }, pay);
+el('text', { x: 1040, y: 832, class: 'kl', 'text-anchor': 'middle' }, pay).textContent = 'still a party';
+el('text', { x: 800, y: 880, class: 'src', 'text-anchor': 'middle' }, pay).textContent = 'CFE Treaty status by depositary record, Nov. 2023 to 29 Sept 2026';
+
+// Hook
+const hook = el('g', {}, svg);
+const h1 = el('text', { x: 800, y: 430, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:74px' }, hook);
+h1.textContent = 'Six decades of arms control.';
+const h2 = el('text', { x: 800, y: 560, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:96px' }, hook);
+h2.innerHTML = 'Watch who <tspan class="hot">walked away</tspan>.';
+
+const cap = captions(svg, [
+  [0.3, 3.2, 'Who signed, joined, suspended or left, year by year'],
+  [3.5, 6.6, 'Move the year: the matrix fills in from 1963'],
+  [6.8, 10.4, 'From 2019 the U.S.–Russian treaties fall away'],
+  [10.7, 13.8, 'CFE: 26 of the 29 remaining parties suspended it'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Treaty Tracker', line: 'Six decades of arms control: who signed, joined, suspended or walked away.' });
+
+// ---- Timeline -------------------------------------------------------------------------------------------
+const D = 17;
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+function yearAt(t) {
+  if (t < 3.9) return 1963;
+  if (t < 6.5) return lerp(1963, 2018.99, ease.inOut(seg(t, 3.9, 6.5)));
+  if (t < 6.8) return 2018.99;
+  return lerp(2018.99, 2026.5, seg(t, 6.8, 10.2));
+}
+const dnum = d => Date.parse(d + 'T00:00:00Z') / 864e5;   // days
+function frame(t) {
+  const hu = ease.out(seg(t, 0.2, 0.9)), h2u = ease.out(seg(t, 0.8, 1.5)), ho = 1 - seg(t, 2.9, 3.3);
+  h1.setAttribute('opacity', hu * ho); h1.setAttribute('transform', `translate(0,${(1 - hu) * 20})`);
+  h2.setAttribute('opacity', h2u * ho); h2.setAttribute('transform', `translate(0,${(1 - h2u) * 24})`);
+
+  const out = 1 - seg(t, 15.0, 15.6), inn = ease.out(seg(t, 3.2, 3.9));
+  const y = yearAt(t), yi = Math.min(2026, Math.floor(y));
+  paint(y);
+  yrT.textContent = yi;
+  whenT.textContent = yi >= 2026 ? 'on 29 September 2026' : `at the end of ${yi}`;
+  knob.setAttribute('cx', sx(Math.min(2026, y))); slFill.setAttribute('x2', sx(Math.min(2026, y)));
+  top.setAttribute('opacity', inn * out); heads.setAttribute('opacity', inn * out);
+  rows.forEach((r, i) => { const u = ease.out(seg(t, 3.4 + i * .07, 3.9 + i * .07)); r.g.setAttribute('opacity', u * out); r.g.setAttribute('transform', `translate(${(1 - u) * -20},0)`); });
+  usRus.setAttribute('opacity', seg(t, 6.6, 7.0) * (1 - seg(t, 10.3, 10.7)));
+  // toast: latest event passed
+  // the latest event in the year the matrix shows (it reads status at the end of that year)
+  const ev = [...EV].reverse().find(e => yi >= Math.floor(e[0]));
+  const show = t > 6.8 && t < 10.6 && ev;
+  toast.setAttribute('opacity', show ? Math.min(1, (y - Math.floor(ev[0])) * 5) * (1 - seg(t, 10.3, 10.6)) : 0);
+  if (ev) {
+    const list = EV.filter(e => Math.floor(e[0]) === Math.floor(ev[0])), h = 22 + list.length * 26, y0 = 902 - h;
+    toastBg.setAttribute('y', y0); toastBg.setAttribute('height', h);
+    evL.forEach((l, i) => { const e = list[i]; l.d.textContent = e ? e[1] : ''; l.tx.textContent = e ? e[2] : ''; l.d.setAttribute('y', y0 + 30 + i * 26); l.tx.setAttribute('y', y0 + 30 + i * 26); });
+  }
+  const push = ease.inOut(seg(t, 3.4, 10.4));
+  cam.setAttribute('transform', `translate(800,420) scale(${1 + 0.05 * push}) translate(-800,-420)`);
+
+  // CFE payoff: a date sweep from Oct 2023 to Dec 2025 flips each tile on its depositary date
+  const pu = ease.out(seg(t, 10.6, 11.2)) * (1 - seg(t, 13.9, 14.3));
+  pay.setAttribute('opacity', pu);
+  const d0 = dnum('2023-10-20'), d1 = dnum('2025-12-20');
+  const dn = lerp(d0, d1, ease.inOut(seg(t, 11.2, 13.1)));
+  // Every tile starts as a party, except Russia (suspended since 12 Dec 2007); each flips on its record date.
+  let w = 0, s = 0, p = 0;
+  tiles.forEach(r => {
+    const on = r.st !== 'party' && dn >= dnum(r.d), half = r.part && dn >= dnum(r.part) && !on;
+    const k = r.iso === 'RUS' ? (on ? 'w' : 'u') : on ? 'u' : half ? 'h' : 'p';
+    r.b.setAttribute('fill', k === 'h' ? 'url(#tt-h)' : SCOL[k]);
+    r.b.setAttribute('stroke', SCOL[k]);
+    r.t.style.fill = k === 'h' ? 'var(--paper)' : '#0b1712';
+    r.b.setAttribute('filter', on && dn - dnum(r.d) < 60 ? 'url(#kit-glow)' : '');
+    if (k === 'w') w++; else if (k === 'u') s++; else if (k === 'p') p++;
+  });
+  kW.textContent = w; kS.textContent = s; kP.textContent = p;
+  const dd = new Date(dn * 864e5);
+  dateT.textContent = `${MON[dd.getUTCMonth()]} ${dd.getUTCFullYear()}`;
+  tiles.forEach((r, i) => { const u = ease.out(seg(t, 10.8 + i * .012, 11.2 + i * .012)); r.g.setAttribute('opacity', u); });
+  const bl = Math.max(pu, seg(t, 13.9, 14.3));
+  blurG.setAttribute('stdDeviation', (bl * 6).toFixed(2));
+  cam.setAttribute('filter', bl > 0.01 ? 'url(#tt-blur)' : '');
+
+  cap(t); end(t, 14.0, D);
+}
+run({ duration: D, poster: 9.4, frame });
+</script>
+</body></html>

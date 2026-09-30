@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Strait Layers</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .sl-land { fill: #1b3428; stroke: var(--muted); stroke-opacity: .5; stroke-width: 1.1; stroke-linejoin: round; }
+  .sl-tw { fill: #1a3528; stroke: var(--paper); stroke-opacity: .7; stroke-width: 1.4; }
+  .sl-sea { font: italic 400 22px var(--display); fill: var(--muted); fill-opacity: .7; letter-spacing: .06em; }
+  .sl-place { font: 400 14px var(--mono); fill: var(--paper); letter-spacing: .1em; text-transform: uppercase; }
+  .sl-ring { fill: none; stroke: var(--red); stroke-linejoin: round; }
+  .sl-sensor { fill: none; stroke: #d98a7c; stroke-width: 1.4; stroke-dasharray: 3 7; }
+  .sl-rlab { font: 400 14px var(--mono); letter-spacing: .06em; paint-order: stroke; stroke: #0b1712; stroke-width: 5px; stroke-linejoin: round; }
+  .sl-route { fill: none; stroke: var(--blue); stroke-width: 1.6; stroke-dasharray: 2 8; stroke-linecap: round; opacity: .7; }
+  .sl-wake { fill: none; stroke: var(--blue); stroke-width: 3; stroke-linecap: round; }
+  .sl-hud { fill: #0a1510; fill-opacity: .86; stroke: var(--line); stroke-width: 1.2; }
+  .sl-chip { font: 600 17px var(--mono); letter-spacing: .16em; text-anchor: middle; }
+  .sl-src { font: 400 15px var(--mono); fill: var(--muted); letter-spacing: .02em; text-anchor: middle; }
+  .sl-st { font: 600 17px var(--mono); letter-spacing: .01em; }
+  .sl-sub { font: 400 15px var(--mono); fill: var(--muted); }
+  .sl-act { font: 400 16px var(--mono); fill: var(--paper); }
+  .sl-fine { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+  .sl-big { font: italic 500 76px var(--display); fill: var(--paper); text-anchor: middle; }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of Strait Layers: a U.S. surface group sails into PLA missile and sensor rings east of Taiwan while the six-step kill chain lights red, then jamming the skywave radar and blinding the satellites breaks the chain even though the group is still in range."><title>Strait Layers</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- The tool's own geometry and model (tools/strait-layers/js) -------------------------------------
+// geo.js: great-circle distance, destination point and point-along-route, copied unchanged.
+const RE = 6371, rad = d => d * Math.PI / 180, deg = r => r * 180 / Math.PI;
+function distKm(a, b) {
+  const dp = rad(b[1] - a[1]), dl = rad(b[0] - a[0]);
+  const h = Math.sin(dp / 2) ** 2 + Math.cos(rad(a[1])) * Math.cos(rad(b[1])) * Math.sin(dl / 2) ** 2;
+  return 2 * RE * Math.asin(Math.min(1, Math.sqrt(h)));
+}
+function destination([lon, lat], bearing, km) {
+  const d = km / RE, t = rad(bearing), p1 = rad(lat), l1 = rad(lon);
+  const p2 = Math.asin(Math.sin(p1) * Math.cos(d) + Math.cos(p1) * Math.sin(d) * Math.cos(t));
+  const l2 = l1 + Math.atan2(Math.sin(t) * Math.sin(d) * Math.cos(p1), Math.cos(d) - Math.sin(p1) * Math.sin(p2));
+  return [deg(l2), deg(p2)];
+}
+function along(pts, t) {
+  const L = [0];
+  for (let i = 1; i < pts.length; i++) L.push(L[i - 1] + distKm(pts[i - 1], pts[i]));
+  const d = Math.max(0, Math.min(1, t)) * L[L.length - 1];
+  for (let i = 1; i < pts.length; i++) if (d <= L[i]) {
+    const f = (d - L[i - 1]) / (L[i] - L[i - 1] || 1);
+    return [pts[i - 1][0] + f * (pts[i][0] - pts[i - 1][0]), pts[i - 1][1] + f * (pts[i][1] - pts[i - 1][1])];
+  }
+  return pts[pts.length - 1];
+}
+// layers.js: PLA layers (ranges; * = notional in the tool) and the Philippine Sea approach route.
+const FUJIAN = [119.78, 25.50];
+const PLA = [
+  { id: 'df26', name: 'DF-26 IRBM', r: 4000, c: [112.9, 27.3], role: 'ship', c2: true },
+  { id: 'df21', name: 'DF-21D ASBM', r: 1500, c: [115.9, 26.3], role: 'ship', c2: true },
+  { id: 'ascm', name: 'Coastal anti-ship missiles', r: 400, c: FUJIAN, role: 'ship', c2: false },
+  { id: 'srbm', name: 'DF-15/16 SRBM', r: 900, c: [117.7, 25.7], role: 'land' },
+  { id: 'sam', name: 'Long-range SAM', r: 250, c: FUJIAN, role: 'air' },
+  { id: 'sky', name: 'Skywave OTH radar', r: 2800, rin: 800, c: [114.7, 30.4], role: 'sensor' },
+  { id: 'sig', name: 'Passive signals intercept', r: 1000, c: FUJIAN, role: 'sensor' },
+  { id: 'aew', name: 'KJ-500', r: 400, c: [119.25, 24.35], role: 'sensor' },
+  { id: 'surf', name: 'Surface-wave OTH radar', r: 300, c: FUJIAN, role: 'sensor' },
+];
+const L = Object.fromEntries(PLA.map(l => [l.id, l]));
+const ROUTE = [[133.6, 19.4], [128.5, 21.4], [125.0, 22.7], [122.55, 23.45]]; // 'Philippine Sea approach'
+// modes/approach.js: assessBlue, statusOf and whyText, copied (why text without the HTML tags).
+const listText = a => a.length <= 1 ? (a[0] || '') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1];
+function assessBlue(p, cm) {
+  const d = Object.fromEntries(PLA.map(l => [l.id, distKm(l.c, p)]));
+  const sky = !cm.jam && d.sky >= L.sky.rin && d.sky <= L.sky.r, sig = !cm.emcon && d.sig <= L.sig.r;
+  const surf = d.surf <= L.surf.r, aew = !cm.aew && d.aew <= L.aew.r, sat = !cm.blind;
+  const src = { find: [], fix: [], track: [] };
+  if (sky) src.find.push('skywave radar');
+  if (sig) src.find.push('signals intercept');
+  if (sat) { src.find.push('satellites'); src.fix.push('satellites'); }
+  if (surf) ['find', 'fix', 'track'].forEach(k => src[k].push('surface-wave radar'));
+  if (aew) ['find', 'fix', 'track'].forEach(k => src[k].push('KJ-500'));
+  if (sat && (sky || sig)) src.track.push('satellite passes cued by ' + (sky ? 'skywave radar' : 'signals intercept'));
+  const find = src.find.length > 0, fix = find && src.fix.length > 0, track = fix && src.track.length > 0;
+  const inRange = PLA.filter(l => l.role === 'ship' && d[l.id] <= l.r);
+  const cleared = track ? inRange.filter(l => !(l.c2 && cm.c2)) : [];
+  return { src, find, fix, track, inRange, cleared, chain: [find, fix, track, cleared.length > 0, cleared.length > 0, cleared.length > 0 && fix] };
+}
+function statusOf(r) {
+  if (!r.find) return { s: 'clear', b: 'Undetected', t: 'No PLA sensor covers this position.' };
+  if (!r.track) return { s: 'seen', b: 'Detected, no firing track', t: 'The PLA knows roughly where the group is but cannot aim.' };
+  if (!r.cleared.length) return { s: 'tracked', b: 'Tracked, not engageable', t: '' };
+  return { s: 'hot', b: `Targetable by ${r.cleared.length} layer${r.cleared.length > 1 ? 's' : ''}`, t: listText(r.cleared.map(l => l.name)) + '.' };
+}
+function whyText(r) {
+  if (!r.find) return 'No sensor sees the group. Every link after Find fails.';
+  if (!r.fix) return `Found by ${listText(r.src.find)}, but nothing fixes its position precisely enough to aim.`;
+  if (!r.track) return `Fixed by ${listText(r.src.fix)}, but only in snapshots.`;
+  return `Chain closed. Found by ${listText(r.src.find)}; tracked by ${listText(r.src.track)}.`;
+}
+// The guided briefing's steps 2 and 3: the group at t = 0.55 on this route, then "Jam skywave radar" + "Blind satellites".
+const T0 = 0.12, T1 = 0.55;
+const ACTIONS = ['Go silent (EMCON)', 'Jam skywave radar', 'Blind satellites', 'Shoot down the KJ-500', 'Disrupt joint command'];
+
+// ---- Stage projection: equirectangular at the tool's 24.5° standard parallel -------------------------
+const K = 62, C24 = Math.cos(rad(24.5));
+const P = ([lon, lat]) => [620 + (lon - 121) * K * C24, 470 + (23.5 - lat) * K];
+const circle = (c, km) => { let s = ''; for (let b = 0; b <= 360; b += 2) { const [x, y] = P(destination(c, b, km)); s += (b ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1); } return s + 'Z'; };
+const LAND = 'M47 716L46 712L48 711L44 712L45 719L37 725L32 739L26 738L30 743L32 740L28 755L24 760L27 762L28 756L29 762L26 763L22 770L19 769L22 768L15 769L4 780L1 779L4 781L2 787L-2 787L1 783L-10 787L-15 786L-16 794L-19 794L-15 795L-17 798L-19 796L-25 800L-25 795L-30 799L-28 796L-32 793L-40 793L-40 692L-30 698L-24 696L-28 694L-25 692L-27 690L-16 686L-16 689L-11 690L-11 688L-10 691L-4 688L-1 693L-0 689L6 689L8 686L3 688L8 683L19 683L23 692L21 682L32 687L34 692L32 683L38 677L44 686L51 686L55 695L58 709L47 716ZM29 629L20 624L15 627L14 623L21 619L23 623L29 620L29 629ZM30 619L23 614L30 613L30 615L34 613L30 619ZM113 585L102 590L103 585L113 585ZM149 585L142 587L144 583L149 581L149 585ZM157 581L158 588L155 589L153 586L156 582L152 582L156 577L161 577L157 581ZM239 551L237 548L237 551L231 546L239 546L239 551ZM217 551L219 545L221 546L228 542L224 550L222 548L217 551ZM205 526L196 518L200 518L205 526ZM203 516L191 507L196 508L203 516ZM1640 -40L425 -40L715 -40L518 -40L672 -40L666 -38L636 -40L542 -40L610 -40L628 -37L638 -26L661 -12L674 6L674 13L650 16L620 32L615 44L608 49L603 43L591 42L588 43L585 50L578 48L572 55L579 50L585 52L589 44L599 44L605 53L599 60L602 62L608 63L600 59L606 53L614 56L634 45L644 49L661 69L673 74L684 73L669 82L659 94L645 97L645 103L648 99L647 105L660 96L663 96L664 100L667 96L662 96L665 92L672 89L675 92L671 97L675 101L672 103L671 110L676 113L673 117L665 118L665 110L667 109L665 109L665 106L661 118L657 118L656 110L656 117L652 110L648 118L643 119L646 121L643 122L655 122L654 125L650 125L650 128L656 126L659 128L657 130L661 132L658 135L653 131L652 133L649 131L648 133L658 140L655 145L640 147L628 138L637 146L635 149L643 148L649 150L653 160L649 161L654 161L653 164L657 170L653 175L650 171L643 172L640 182L633 176L634 174L631 171L635 168L630 167L627 172L621 172L627 174L627 176L618 192L598 189L596 184L595 184L597 189L611 193L613 198L604 208L600 206L602 212L597 218L602 223L600 229L595 228L592 232L595 233L593 241L587 239L588 242L585 238L581 238L581 233L576 234L577 236L575 234L574 239L583 238L583 242L587 244L584 244L587 244L585 247L577 245L579 249L576 251L578 253L572 254L577 255L576 258L565 259L565 263L571 265L569 268L572 270L569 272L571 275L561 277L555 283L555 278L562 275L568 265L560 266L557 274L554 271L552 272L555 266L552 264L555 262L551 264L550 269L546 265L548 272L542 265L538 268L542 272L541 275L538 274L541 280L546 277L551 279L552 290L544 284L539 287L544 288L546 295L549 295L554 288L555 291L561 293L552 298L544 298L545 301L541 304L533 316L512 306L518 309L521 317L526 319L532 317L537 313L547 315L541 325L539 323L542 330L540 334L533 334L535 342L540 341L539 347L543 348L542 355L544 355L540 356L540 348L538 348L538 353L534 354L536 348L533 350L533 345L527 344L529 340L525 340L521 347L513 351L517 357L518 355L518 361L523 357L526 362L523 362L522 366L514 364L516 368L513 370L511 367L509 368L511 363L505 363L509 360L500 362L503 366L505 366L504 370L499 373L504 377L507 374L508 379L502 380L504 385L495 384L491 387L492 383L490 381L490 383L489 380L489 385L483 384L487 391L490 389L494 392L490 397L487 397L488 402L486 405L482 407L483 404L475 400L475 396L473 401L467 402L463 406L460 396L457 403L453 401L453 404L449 405L454 407L451 410L452 411L439 410L446 415L453 414L452 419L456 418L458 423L450 429L447 426L446 427L447 429L445 437L442 438L437 445L439 438L437 438L437 435L435 437L432 435L434 437L434 442L428 455L426 445L418 442L423 447L422 450L419 453L410 453L409 463L407 458L407 462L399 467L398 461L392 463L390 460L387 463L387 473L381 479L367 475L370 481L380 481L383 486L376 484L379 486L375 491L372 486L367 487L372 488L368 494L370 500L366 505L350 502L354 503L346 510L344 512L345 508L340 505L342 509L327 516L327 512L320 508L323 505L313 510L313 507L305 505L309 507L308 510L316 510L311 515L313 519L315 517L314 521L302 520L301 518L305 514L294 514L300 510L298 507L291 512L292 515L285 513L281 520L278 516L274 516L280 521L276 529L274 526L267 525L267 518L271 513L265 514L254 519L254 523L258 523L253 528L260 531L254 535L248 525L241 526L237 530L239 529L241 531L244 531L235 535L237 538L243 533L245 537L245 534L248 536L245 543L243 539L240 541L242 547L240 543L239 546L236 543L235 545L231 540L220 539L219 538L230 531L223 530L219 535L219 531L212 516L205 516L202 508L205 499L203 506L204 499L201 505L201 500L199 502L199 497L209 492L215 494L208 491L197 497L192 495L197 500L196 506L181 507L188 508L196 515L193 517L190 515L203 527L200 536L200 539L203 540L202 548L196 553L184 540L178 527L178 533L191 552L186 552L183 556L183 560L178 562L174 550L172 556L170 555L170 566L164 572L159 565L149 572L147 577L143 577L137 572L135 569L140 565L134 565L135 559L133 564L135 575L129 581L122 578L123 573L114 575L114 570L111 574L106 567L107 574L112 577L105 583L103 577L94 577L99 580L98 585L100 587L96 587L91 592L89 589L90 592L83 593L80 588L81 592L76 592L78 592L71 598L73 594L67 592L65 593L69 594L61 596L63 594L58 592L55 598L60 596L55 599L43 600L36 609L38 603L36 605L36 602L42 600L42 598L36 601L36 611L24 613L23 607L26 608L24 606L27 604L24 606L24 600L20 598L21 605L18 604L23 610L22 614L12 623L11 621L7 626L8 634L20 634L23 640L20 642L19 636L16 646L18 645L17 647L26 652L29 657L23 668L15 672L7 672L2 668L-5 672L-5 667L-8 662L-6 660L-2 665L-0 660L-5 655L-5 660L-11 655L-9 650L-11 653L-15 645L-8 642L-12 644L-14 634L-15 637L-18 635L-16 637L-20 629L-17 623L-19 618L-14 611L-14 603L-5 603L-4 595L-10 593L-11 596L-14 589L-14 595L-20 593L-19 587L-23 589L-25 578L-29 582L-28 583L-31 584L-25 589L-27 595L-33 597L-39 595L-40 598L-40 595L-40 600L-40 566L-40 1040L-30 1040L-40 1040L-37 1040L-40 1040L-40 -40L1640 -40ZM402 476L391 474L402 471L402 476ZM545 467L539 469L537 468L540 467L538 464L544 464L545 467ZM418 462L419 465L412 466L416 459L414 458L415 453L424 455L418 462ZM468 414L467 409L476 407L476 413L468 414ZM459 412L455 411L456 404L461 406L459 412ZM538 366L533 365L533 362L539 365L538 366ZM524 351L523 347L526 342L526 350L524 351ZM555 348L547 351L547 347L545 347L551 345L548 344L546 340L551 336L556 342L552 345L555 348ZM522 315L519 309L530 316L522 315ZM560 916L563 914L564 921L560 916ZM636 758L636 756L640 755L647 756L636 758ZM632 740L634 744L634 748L631 743L632 740ZM651 732L643 730L640 725L649 725L651 732ZM666 399L670 402L667 402L667 409L664 412L663 420L654 434L656 438L643 492L630 515L617 530L613 541L611 569L607 565L604 567L599 544L592 537L582 531L577 522L571 502L573 499L567 499L569 495L567 492L572 481L570 480L573 479L570 469L574 454L603 401L610 397L621 377L632 370L645 368L643 366L646 361L653 360L659 367L670 370L672 376L677 377L666 386L666 399ZM636 185L628 189L627 182L633 177L636 185ZM653 -22L663 -18L664 -15L653 -22ZM668 -22L630 -40L642 -40L672 -31L676 -26L668 -22ZM683 1007L688 1007L691 1012L683 1009L683 1007ZM677 998L675 1003L678 1014L673 1019L672 1009L666 1000L667 995L677 995L680 998L677 998ZM686 805L684 827L688 843L691 851L700 853L700 864L705 864L706 867L700 886L688 908L688 920L676 933L684 919L679 924L662 930L653 939L651 946L656 951L653 955L656 956L641 975L653 1006L661 1014L654 1016L654 1020L663 1040L661 1040L694 1040L685 1040L706 1037L713 1040L715 1040L715 1037L726 1040L799 1040L596 1040L599 1040L618 1028L617 1017L611 1012L600 1010L599 1005L597 1008L597 1003L594 1014L597 1027L595 1032L590 1033L585 1029L584 1021L578 1016L580 1008L575 1004L574 1012L568 1009L564 980L557 970L561 965L556 951L558 943L555 938L551 941L550 923L552 913L557 911L560 913L558 920L569 925L570 931L580 931L581 934L584 931L582 931L586 922L583 917L579 897L582 884L588 874L586 860L588 849L586 841L582 838L583 831L587 829L586 825L590 805L596 791L596 780L607 776L609 771L616 776L626 771L653 787L657 792L657 788L672 794L679 791L685 779L689 779L694 787L694 793L686 805ZM667 760L669 751L674 748L676 752L667 760ZM675 664L672 663L678 657L674 662L675 664ZM669 635L669 641L665 644L665 642L669 635ZM671 118L674 120L673 125L669 121L671 118ZM687 87L679 84L680 81L683 80L687 87ZM699 78L694 70L700 70L699 78ZM687 68L677 67L674 58L682 58L695 66L693 71L687 68ZM692 52L699 50L700 52L692 52ZM688 52L680 49L688 45L688 52ZM692 39L692 37L697 37L700 42L692 39ZM771 419L775 419L777 413L785 416L782 423L771 421L771 419ZM796 417L797 415L794 412L801 411L808 403L803 417L796 417ZM860 394L860 384L871 393L860 394ZM948 295L942 292L947 291L948 295ZM1032 272L1024 277L1023 281L1006 288L1010 296L1005 295L1002 301L1005 303L1004 306L995 310L995 302L1000 295L999 288L1013 280L1009 277L1008 272L1018 275L1028 265L1030 260L1034 265L1032 272ZM1049 231L1045 231L1045 227L1055 225L1049 231ZM1067 210L1065 202L1069 197L1073 205L1070 210L1067 210ZM1091 184L1084 185L1081 179L1091 184ZM1112 164L1100 173L1097 173L1095 176L1098 177L1091 181L1093 184L1087 177L1080 176L1087 175L1088 174L1084 172L1086 171L1098 165L1101 167L1107 161L1107 164L1110 159L1112 164ZM1129 168L1127 174L1123 172L1129 168ZM1149 44L1156 38L1166 44L1162 52L1155 53L1153 52L1149 44ZM1136 37L1142 40L1140 41L1136 37ZM1189 19L1182 37L1182 44L1177 46L1176 38L1180 34L1181 25L1188 15L1189 19ZM1109 -36L1114 -40L1116 -40L1113 -35L1109 -36ZM1219 -40L1210 -40L1212 -40L1210 -33L1206 -29L1203 -18L1198 -19L1196 -23L1188 -23L1185 -17L1190 -15L1188 -12L1192 -12L1185 -9L1181 -2L1165 5L1165 1L1170 -2L1173 -16L1167 -24L1167 -29L1161 -32L1167 -33L1171 -30L1173 -35L1172 -39L1164 -39L1158 -27L1159 -15L1165 -12L1161 -5L1153 -10L1140 -10L1140 -16L1135 -20L1141 -19L1146 -30L1146 -35L1137 -40L1166 -40L1102 -40L1219 -40Z';
+
+// ---- Scene ------------------------------------------------------------------------------------------
+const cam = el('g', {}, svg);
+const scene = el('g', {}, cam);
+el('path', { d: LAND, class: 'sl-land', 'fill-rule': 'evenodd' }, scene);
+const txt = (x, y, cls, s, a = {}, p = scene) => { const n = el('text', { x, y, class: cls, ...a }, p); n.textContent = s; return n; };
+[['Philippine Sea', [129.3, 17.6]], ['South China Sea', [115.2, 19.2]], ['East China Sea', [125.4, 29.3]]].forEach(([s, ll]) => txt(...P(ll), 'sl-sea', s, { 'text-anchor': 'middle' }));
+txt(...P([121.1, 23.6]), 'sl-place', 'Taiwan', { 'text-anchor': 'middle', style: 'font-size:13px' });
+
+// Rings (the tool draws each as a geodesic circle around its representative launch area).
+const rings = el('g', {}, scene);
+const mkRing = (id, cls, extra = {}) => el('path', { d: circle(L[id].c, L[id].r), class: cls, ...(cls === 'sl-ring' ? { pathLength: 1 } : {}), ...extra }, rings);
+const skyG = el('g', {}, rings);
+el('path', { d: circle(L.sky.c, L.sky.r) + circle(L.sky.c, L.sky.rin), fill: '#d98a7c', 'fill-opacity': .07, 'fill-rule': 'evenodd' }, skyG);
+const skyIn = el('path', { d: circle(L.sky.c, L.sky.rin), class: 'sl-sensor' }, skyG);
+const sigR = mkRing('sig', 'sl-sensor');
+const df21 = mkRing('df21', 'sl-ring', { 'stroke-width': 2.4 });
+const ascm = mkRing('ascm', 'sl-ring', { 'stroke-width': 1.6, 'stroke-opacity': .8 });
+const RING = [[df21, 0], [ascm, .3]];
+const labs = el('g', {}, rings);
+const rlab = (id, brg, s, fill, dx = 0, dy = 0, end = false) => { const [x, y] = P(destination(L[id].c, brg, id === 'sky' ? L.sky.rin : L[id].r)); return txt(x + dx, y + dy, 'sl-rlab', s, { fill, style: `fill:${fill}`, ...(end ? { 'text-anchor': 'end' } : {}) }, labs); };
+rlab('df21', 118, 'DF-21D ASBM ~1,500 km', 'var(--red)', 8);
+rlab('ascm', 158, 'Coastal anti-ship ~400 km*', 'var(--red)', 6);
+rlab('sig', 100, 'Signals intercept ~1,000 km*', '#e6a597', -10, -10, true);
+const skyLab = rlab('sky', 128, 'Skywave OTH radar 800–2,800 km*', '#e6a597', 10);
+el('circle', { cx: P(FUJIAN)[0], cy: P(FUJIAN)[1], r: 4, fill: 'var(--red)' }, rings);
+el('circle', { cx: P(L.df21.c)[0], cy: P(L.df21.c)[1], r: 4, fill: 'var(--red)' }, rings);
+
+// Route and the U.S. surface group.
+const routeD = 'M' + Array.from({ length: 41 }, (_, i) => P(along(ROUTE, i / 40)).map(v => v.toFixed(1)).join(' ')).join('L');
+const route = el('path', { d: routeD, class: 'sl-route' }, scene);
+const wake = el('path', { class: 'sl-wake' }, scene);
+const grp = el('g', {}, scene);
+const halo = el('circle', { r: 30, fill: 'none', stroke: 'var(--blue)', 'stroke-width': 1.5 }, grp);
+el('circle', { r: 11, fill: 'var(--blue)', stroke: '#0b1712', 'stroke-width': 3, filter: 'url(#kit-glow)' }, grp);
+txt(0, 52, 't-label', 'U.S. surface group', { 'text-anchor': 'middle', style: 'fill:var(--blue);font-size:14px' }, grp);
+const ret = el('g', { fill: 'none', stroke: 'var(--red)', 'stroke-width': 2.6 }, grp);
+[0, 90, 180, 270].forEach(a => el('path', { d: 'M-30,-18 v-12 h12', transform: `rotate(${a})` }, ret));
+
+// ---- HUD: the kill chain strip (top) and the side panel (status, Blue actions) -------------------------
+const hud = el('g', {}, svg);
+const CH = ['Find', 'Fix', 'Track', 'Target', 'Engage', 'Assess'];
+el('rect', { x: 300, y: 36, width: 1000, height: 142, rx: 6, class: 'sl-hud' }, hud);
+txt(318, 64, 't-label', 'PLA kill chain · F2T2EA', { style: 'font-size:13px' }, hud);
+const chips = CH.map((s, i) => {
+  const x = 318 + i * 163, g = el('g', {}, hud);
+  const box = el('rect', { x, y: 78, width: 150, height: 48, rx: 4, fill: 'none', stroke: 'var(--line)', 'stroke-width': 1.5 }, g);
+  const tx = txt(x + 75, 109, 'sl-chip', s.toUpperCase(), {}, g);
+  if (i < 5) el('path', { d: `M${x + 152},102 h9`, stroke: 'var(--line)', 'stroke-width': 2 }, g);
+  return { g, box, tx, x };
+});
+const why = txt(800, 158, 'sl-src', '', {}, hud);
+
+const pan = el('g', {}, svg);
+el('rect', { x: 1180, y: 214, width: 360, height: 384, rx: 6, class: 'sl-hud' }, pan);
+txt(1200, 244, 't-label', 'Status', { style: 'font-size:13px' }, pan);
+const stB = txt(1200, 280, 'sl-st', '', {}, pan);
+const stT1 = txt(1200, 308, 'sl-sub', '', {}, pan), stT2 = txt(1200, 330, 'sl-sub', '', {}, pan);
+el('line', { x1: 1200, x2: 1520, y1: 352, y2: 352, stroke: 'var(--line)', 'stroke-width': 1.5 }, pan);
+txt(1200, 382, 't-label', 'Blue actions', { style: 'font-size:13px' }, pan);
+const acts = ACTIONS.map((s, i) => {
+  const y = 414 + i * 38, g = el('g', {}, pan);
+  const box = el('rect', { x: 1200, y: y - 15, width: 20, height: 20, rx: 3, fill: 'none', stroke: 'var(--muted)', 'stroke-width': 1.6 }, g);
+  const tick = el('path', { d: `M1204,${y - 5} l5,5 l8,-10`, fill: 'none', stroke: 'var(--ink)', 'stroke-width': 2.6, 'stroke-linecap': 'round', opacity: 0 }, g);
+  const tx = txt(1234, y + 1, 'sl-act', s, {}, g);
+  return { g, box, tick, tx, y };
+});
+const ptr = el('path', { d: 'M0,0 L0,24 L6,18 L11,29 L15,27 L10,16 L18,16 Z', fill: 'var(--paper)', stroke: '#0b1712', 'stroke-width': 1.5, opacity: 0 }, svg);
+const click = el('circle', { r: 0, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 2, opacity: 0 }, svg);
+
+// ---- Hook and payoff type ---------------------------------------------------------------------------
+const hook = el('g', {}, svg);
+const h1 = txt(800, 452, 't-hook', 'Range rings show reach,', { 'text-anchor': 'middle', style: 'font-size:70px' }, hook);
+const h2 = el('text', { x: 800, y: 540, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:70px' }, hook);
+h2.innerHTML = 'not <tspan class="hot">threat.</tspan>';
+const pay = el('g', { opacity: 0 }, svg);
+el('rect', { width: 1600, height: 1000, fill: '#070f0b', opacity: .74 }, pay);
+const p0 = txt(800, 330, 't-label', 'Same position · still in range of DF-26 and DF-21D', { 'text-anchor': 'middle' }, pay);
+const p1 = txt(800, 440, 'sl-big', 'Detected, but', {}, pay);
+const p2 = el('text', { x: 800, y: 530, class: 'sl-big' }, pay);
+p2.innerHTML = '<tspan fill="var(--amber)" style="fill:var(--amber)">no firing track.</tspan>';
+const p3 = txt(800, 610, 't-cap', 'Out here, defending the ship starts with denying the sensors.', { 'text-anchor': 'middle', style: 'fill:var(--muted)' }, pay);
+const p4 = txt(800, 668, 'sl-fine', 'Simplified model · * notional ranges · missile ranges per CSIS', { 'text-anchor': 'middle' }, pay);
+
+const cap = captions(svg, [
+  [3.5, 7.2, 'Sail a U.S. group into the PLA rings'],
+  [7.4, 9.0, 'Jam the skywave radar: signals intercept still finds it'],
+  [9.1, 10.9, 'Blind the satellites and the kill chain breaks'],
+  [11.0, 13.2, 'Five counter-targeting moves, four scenario tabs'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Strait Layers', line: 'Move a surface group through the rings. Watch the kill chain close or break.' });
+
+// ---- Timeline ---------------------------------------------------------------------------------------
+const D = 16;
+const JAM = 7.9, BLIND = 9.1;                        // clicks on the two Blue actions
+const tAt = t => lerp(T0, T1, ease.inOut(seg(t, 3.3, 7.5)));
+const cmAt = t => ({ emcon: false, jam: t >= JAM, blind: t >= BLIND, aew: false, c2: false });
+const pWrap = (s, n) => { const w = s.split(' '), a = []; let cur = ''; for (const x of w) { if ((cur + ' ' + x).trim().length > n) { a.push(cur); cur = x; } else cur = (cur + ' ' + x).trim(); } a.push(cur); return a; };
+const op = (n, v) => n.setAttribute('opacity', Math.max(0, Math.min(1, v)).toFixed(3));
+
+function frame(t) {
+  const out = 1 - seg(t, 12.9, 13.5);
+  // Hook
+  [h1, h2].forEach((h, i) => {
+    const u = ease.out(seg(t, 0.25 + i * 0.35, 1.0 + i * 0.35)), o = 1 - seg(t, 2.6 + i * 0.1, 3.2 + i * 0.1);
+    op(h, u * o); h.setAttribute('transform', `translate(0,${((1 - u) * 24 - seg(t, 2.6, 3.3) * 18).toFixed(1)})`);
+  });
+  // Scene: dim under the hook, full for the mechanic.
+  op(scene, lerp(0.28 * ease.out(seg(t, 0, 1)), 1, ease.inOut(seg(t, 2.6, 3.5))) * lerp(1, 0.45, ease.inOut(seg(t, 10.6, 11.2))) * out);
+  const push = ease.inOut(seg(t, 2.8, 12.5));
+  cam.setAttribute('transform', `translate(930,560) scale(${(1 + 0.12 * push).toFixed(4)}) translate(${(-930 - 30 * push).toFixed(1)},-560)`);
+
+  // Rings draw in.
+  RING.forEach(([r, d]) => { const u = ease.inOut(seg(t, 2.7 + d, 4.1 + d)); r.setAttribute('stroke-dasharray', `${u.toFixed(4)} 1`); });
+  op(sigR, ease.out(seg(t, 3.1, 3.9))); op(labs, ease.out(seg(t, 3.6, 4.3)));
+  const skyOff = ease.inOut(seg(t, JAM + 0.1, JAM + 0.7));
+  op(skyG, ease.out(seg(t, 3.3, 4.2)) * (1 - 0.85 * skyOff)); op(skyLab, 1 - 0.8 * skyOff);
+
+  // Group along the route.
+  const tt = tAt(t), p = along(ROUTE, tt), [gx, gy] = P(p);
+  grp.setAttribute('transform', `translate(${gx.toFixed(1)},${gy.toFixed(1)})`);
+  op(grp, ease.out(seg(t, 3.0, 3.6)));
+  wake.setAttribute('d', 'M' + Array.from({ length: 21 }, (_, i) => P(along(ROUTE, lerp(T0 - 0.04, tt, i / 20))).map(v => v.toFixed(1)).join(' ')).join('L'));
+  op(wake, ease.out(seg(t, 3.3, 3.8)) * 0.55);
+  op(route, ease.out(seg(t, 2.9, 3.6)) * 0.8);
+  halo.setAttribute('r', (22 + 10 * ((t * 1.1) % 1)).toFixed(1)); op(halo, 0.7 * (1 - ((t * 1.1) % 1)));
+
+  // Model at this moment.
+  const r = assessBlue(p, cmAt(t)), st = statusOf(r);
+  const litU = k => ease.out(seg(t, 3.9 + k * 0.16, 4.3 + k * 0.16));
+  chips.forEach((c, k) => {
+    const on = r.chain[k] ? litU(k) : 0;
+    const drop = !r.chain[k] && t >= BLIND ? 1 - ease.out(seg(t, BLIND + 0.05 + (k - 1) * 0.12, BLIND + 0.35 + (k - 1) * 0.12)) : 0;
+    const v = Math.max(on, drop);
+    c.box.setAttribute('fill', v > 0.02 ? 'var(--red)' : 'none');
+    c.box.setAttribute('fill-opacity', (0.9 * v).toFixed(3));
+    c.box.setAttribute('stroke', v > 0.5 ? 'var(--red)' : 'var(--line)');
+    c.box.setAttribute('filter', v > 0.6 ? 'url(#kit-glow)' : '');
+    c.tx.style.fill = v > 0.5 ? '#0b1712' : (r.chain[k] ? 'var(--paper)' : 'var(--muted)');
+    c.g.setAttribute('transform', `translate(0,${(-(1 - litU(k)) * 8 * (t < 4.8 ? 1 : 0)).toFixed(1)})`);
+  });
+  why.textContent = t < 3.9 ? '' : whyText(r);
+  op(why, ease.out(seg(t, 3.9, 4.4)));
+  const hot = st.s === 'hot';
+  stB.textContent = st.b; stB.style.fill = hot ? 'var(--red)' : 'var(--amber)';
+  const lines = pWrap(st.t, 33); stT1.textContent = lines[0] || ''; stT2.textContent = lines[1] || '';
+  // Pulse when the status changes (entering DF-21D range; the chain breaking).
+  const flips = [];
+  for (let s = 3.4; s < Math.min(t, 12); s += 0.05) { const a = statusOf(assessBlue(along(ROUTE, tAt(s)), cmAt(s))).b, b = statusOf(assessBlue(along(ROUTE, tAt(s + 0.05)), cmAt(s + 0.05))).b; if (a !== b) flips.push(s + 0.05); }
+  const lastFlip = flips.length ? flips[flips.length - 1] : -9, pulse = 1 - seg(t, lastFlip, lastFlip + 0.7);
+  stB.setAttribute('filter', pulse > 0.3 ? 'url(#kit-glow)' : '');
+  stB.setAttribute('transform', `translate(${(pulse * -6).toFixed(1)},0)`);
+  op(ret, hot ? ease.out(seg(t, 4.6, 5.0)) * (0.75 + 0.25 * Math.sin(t * 9)) : 1 - seg(t, BLIND, BLIND + 0.4));
+  ret.setAttribute('transform', `scale(${(hot ? 1 : 1 + 0.6 * seg(t, BLIND, BLIND + 0.4)).toFixed(3)})`);
+
+  op(hud, ease.out(seg(t, 3.2, 3.8)) * lerp(1, 0.2, ease.inOut(seg(t, 10.6, 11.2))) * out);
+  op(pan, ease.out(seg(t, 3.4, 4.0)) * lerp(1, 0.2, ease.inOut(seg(t, 10.6, 11.2))) * out);
+  pan.setAttribute('transform', `translate(${((1 - ease.out(seg(t, 3.4, 4.1))) * 30).toFixed(1)},0)`);
+
+  // Blue actions: the pointer clicks "Jam skywave radar", then "Blind satellites".
+  acts.forEach((a, i) => {
+    const tc = i === 1 ? JAM : i === 2 ? BLIND : null, on = tc != null && t >= tc;
+    const b = on ? ease.back(seg(t, tc, tc + 0.3)) : 0;
+    a.box.setAttribute('fill', on ? 'var(--amber)' : 'none'); a.box.setAttribute('stroke', on ? 'var(--amber)' : 'var(--muted)');
+    a.box.setAttribute('filter', on && t < tc + 0.8 ? 'url(#kit-glow)' : '');
+    op(a.tick, b); a.tx.style.fill = on ? 'var(--amber)' : 'var(--paper)';
+  });
+  const target = tc => [1206, acts[tc === JAM ? 1 : 2].y - 4];
+  const [ax, ay] = target(JAM), [bx, by] = target(BLIND);
+  let px = 1440, py = 700;
+  if (t < JAM) { const u = ease.inOut(seg(t, JAM - 1.0, JAM - 0.1)); px = lerp(1440, ax, u); py = lerp(700, ay, u); }
+  else if (t < BLIND) { const u = ease.inOut(seg(t, BLIND - 0.8, BLIND - 0.1)); px = lerp(ax, bx, u); py = lerp(ay, by, u); }
+  else { const u = ease.inOut(seg(t, BLIND + 0.4, BLIND + 1.3)); px = lerp(bx, 1460, u); py = lerp(by, 720, u); }
+  const press = Math.max(1 - Math.abs(t - JAM) / 0.12, 1 - Math.abs(t - BLIND) / 0.12, 0);
+  ptr.setAttribute('transform', `translate(${px.toFixed(1)},${py.toFixed(1)}) scale(${(1 - 0.12 * press).toFixed(3)})`);
+  op(ptr, ease.out(seg(t, JAM - 1.1, JAM - 0.8)) * (1 - seg(t, BLIND + 1.1, BLIND + 1.5)));
+  const lc = t >= BLIND ? BLIND : JAM, cu = seg(t, lc, lc + 0.5), [cx, cy] = lc === JAM ? [ax, ay] : [bx, by];
+  click.setAttribute('cx', cx); click.setAttribute('cy', cy); click.setAttribute('r', (6 + 26 * ease.out(cu)).toFixed(1));
+  op(click, t >= JAM && cu < 1 ? 1 - cu : 0);
+
+  // Payoff.
+  const pu = ease.out(seg(t, 10.7, 11.4)) * (1 - seg(t, 12.9, 13.4));
+  op(pay, pu);
+  [p0, p1, p2, p3, p4].forEach((n, i) => { const u = ease.out(seg(t, 10.8 + i * 0.16, 11.5 + i * 0.16)); op(n, u); n.setAttribute('transform', `translate(0,${((1 - u) * 16).toFixed(1)})`); });
+
+  cap(t); end(t, 13.2, D);
+}
+run({ duration: D, poster: 9.9, frame });
+</script>
+</body></html>

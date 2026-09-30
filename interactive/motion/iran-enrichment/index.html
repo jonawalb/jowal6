@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Iran's Enrichment Clock</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .ax { font: 400 14px var(--mono); fill: var(--muted); font-variant-numeric: tabular-nums; }
+  .rid { font: 600 20px var(--mono); fill: var(--amber); letter-spacing: .02em; }
+  .rdt { font: 400 15px var(--mono); fill: var(--muted); }
+  .ro-n { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+  .ro-v { font: 600 40px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .ro-u { font: 400 18px var(--mono); fill: var(--muted); }
+  .lg { font: 400 14px var(--mono); fill: var(--paper); }
+  .lim { font: 600 15px var(--mono); fill: var(--paper); letter-spacing: .03em; }
+  .ev { font: 600 13px var(--mono); fill: var(--paper); letter-spacing: .04em; }
+  .unk { font: 600 16px var(--mono); fill: var(--paper); letter-spacing: .02em; }
+  .src { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .04em; }
+  .big { font: 600 190px var(--mono); fill: var(--amber); font-variant-numeric: tabular-nums; letter-spacing: -.04em; }
+  .q { font: italic 400 36px var(--display); fill: var(--paper); }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of Iran's Enrichment Clock: Iran's enriched uranium climbs report by report from under the deal's 202.8 kg limit to 9,874.9 kg in June 2025, after which the IAEA has had no estimate for 473 days."><title>Iran's Enrichment Clock</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Real data (tools/iran-enrichment) ------------------------------------------------------------------
+// NUM: every IAEA report with figures, from the tool's own js/series.js ROWS (data/stockpile.js, IAEA GOV/ series):
+// [report, as-of date, basis, up to 2%, up to 5%, up to 20%, up to 60%, total in all forms], kg of uranium.
+const NUM = [["GOV/2018/7","2018-02-12","verified",0,109.5,0,0,109.5],["GOV/2018/24","2018-05-14","verified",0,123.9,0,0,123.9],["GOV/2018/33","2018-08-18","verified",0,139.4,0,0,139.4],["GOV/2018/47","2018-11-04","verified",0,149.4,0,0,149.4],["GOV/2019/10","2019-02-16","verified",0,163.8,0,0,163.8],["GOV/2019/21","2019-05-20","verified",0,174.1,0,0,174.1],["GOV/2019/32","2019-08-19","verified",0,241.6,0,0,241.6],["GOV/2019/55","2019-11-03","verified",0,372.3,0,0,372.3],["GOV/2020/5","2020-02-19","verified",268.5,752.4,0,0,1020.9],["GOV/2020/26","2020-05-20","verified",483.1,1088.5,0,0,1571.6],["GOV/2020/41","2020-08-25","verified",638.8,1466.6,0,0,2105.4],["GOV/2020/51","2020-11-02","verified",692.7,1750.2,0,0,2442.9],["GOV/2021/10","2021-02-16","verified",1025.5,1890,17.6,0,2967.8],["GOV/2021/28","2021-05-22","estimated",1367.9,1773.2,62.8,2.4,3241],["GOV/2021/39","2021-08-30","estimated",503.8,1774.8,84.3,10,2441.3],["GOV/2021/51","2021-11-06","estimated",559.6,1622.3,113.8,17.7,2489.7],["GOV/2022/4","2022-02-19","estimated",1390,1277.9,182.1,33.2,3197.1],["GOV/2022/24","2022-05-15","estimated",2154.4,1055.9,238.4,43.1,3809.3],["GOV/2022/39","2022-08-21","estimated",2519.9,713.9,331.9,55.6,3940.9],["GOV/2022/62","2022-10-22","estimated",1844.5,1029.9,386.4,62.3,3673.7],["GOV/2023/8","2023-02-12","estimated",1555.3,1324.5,434.7,87.5,3760.8],["GOV/2023/24","2023-05-13","estimated",2459.6,1340.2,470.9,114.1,4744.5],["GOV/2023/39","2023-08-19","estimated",833,1950.9,535.8,121.6,3795.5],["GOV/2023/57","2023-10-28","estimated",1217.2,2218.1,567.1,128.3,4486.8],["GOV/2024/7","2024-02-10","estimated",1934,2396.8,712.2,121.5,5525.5],["GOV/2024/26","2024-05-11","estimated",2571,2376.9,751.3,142.1,6201.3],["GOV/2024/41","2024-08-17","estimated",1651,2321.5,813.9,164.7,5751.8],["GOV/2024/61","2024-10-26","estimated",2190.9,2594.8,839.2,182.3,6604.4],["GOV/2025/8","2025-02-08","estimated",2927,3655.4,606.8,274.8,8294.4],["GOV/2025/24","2025-05-17","estimated",2221.4,5508.8,274.5,408.6,9247.6],["GOV/2025/50","2025-06-13","estimated",2391.1,6024.4,184.1,440.9,9874.9]];
+const LIMIT = 202.8, LAST = '2025-06-13', AS_OF = '2026-09-29';
+// data/events.js short labels and dates (a subset).
+const EVS = [['2018-05-08', 'U.S. exit'], ['2019-07-01', '>300 kg'], ['2021-04-17', '60%'], ['2025-06-13', 'Strikes']];
+const LV = [['Up to 2%', '#4f8aa3'], ['Up to 5%', '#7fb6d9'], ['Up to 20%', '#c9b27a'], ['Up to 60%', '#e0533d']];
+const DAY = 864e5, tm = d => Date.parse(d + 'T00:00:00Z');
+const days = Math.round((tm(AS_OF) - tm(LAST)) / DAY);          // 473, as the tool's clock computes it
+const fmtKg = v => v >= 1000 ? Math.round(v).toLocaleString('en-US') : (Math.round(v * 10) / 10).toLocaleString('en-US');
+const nice = d => { const [y, m, dd] = d.split('-').map(Number); return `${dd} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][m - 1]} ${y}`; };
+
+// ---- Geometry -------------------------------------------------------------------------------------------
+const PL = 250, PR = 1370, PT = 330, PB = 790, YMAX = 10000;
+const X0 = tm('2016-01-01'), X1 = tm(AS_OF);
+const X = ms => PL + (ms - X0) / (X1 - X0) * (PR - PL);
+const Y = v => PB - v / YMAX * (PB - PT);
+const blurF = el('filter', { id: 'ie-blur', x: '-5%', y: '-5%', width: '110%', height: '110%' }, svg);
+const blurG = el('feGaussianBlur', { stdDeviation: 0 }, blurF);
+const defs = el('defs', {}, svg);
+defs.innerHTML = '<pattern id="ie-hatch" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="10" height="10" fill="#0e1b16"/><rect width="3" height="10" fill="#27493a"/></pattern>';
+const cam = el('g', {}, svg);
+const axes = el('g', {}, cam);
+[2500, 5000, 7500, 10000].forEach(v => {
+  el('line', { x1: PL, x2: PR, y1: Y(v), y2: Y(v), stroke: '#27493a', 'stroke-dasharray': '2 6' }, axes);
+  el('text', { x: PL - 14, y: Y(v) + 5, class: 'ax', 'text-anchor': 'end' }, axes).textContent = (v / 1000) + 'k kg';
+});
+el('line', { x1: PL, x2: PR, y1: PB, y2: PB, stroke: 'var(--muted)', 'stroke-width': 1.5 }, axes);
+for (let y = 2016; y <= 2026; y += 2) el('text', { x: X(tm(`${y}-07-01`)), y: PB + 30, class: 'ax', 'text-anchor': 'middle' }, axes).textContent = y;
+el('text', { x: PR, y: PB + 60, class: 'src', 'text-anchor': 'end' }, axes).textContent = 'Enriched uranium, kg of U · IAEA reports to the Board of Governors, 2016–2026';
+
+// 2016-17 band: under the limit, no figures
+const j0 = X(tm('2016-01-16')), j1 = X(tm(NUM[0][1]));
+const early = el('g', {}, cam);
+el('rect', { x: j0, y: Y(LIMIT), width: j1 - j0, height: PB - Y(LIMIT), fill: '#6aab82', opacity: .35 }, early);
+el('text', { x: j0 + 4, y: Y(LIMIT) - 44, class: 'src' }, early).textContent = '2016–17: under the limit, no figures';
+
+// Stacked areas, revealed by the report cursor
+const clip = el('clipPath', { id: 'ie-clip' }, svg);
+const clipR = el('rect', { x: PL, y: 0, width: 0, height: 1000 }, clip);
+const plot = el('g', { 'clip-path': 'url(#ie-clip)' }, cam);
+const base = NUM.map(() => 0);
+LV.forEach(([, col], k) => {
+  const topv = NUM.map((r, j) => base[j] + r[3 + k]);
+  const up = NUM.map((r, j) => `${X(tm(r[1])).toFixed(1)},${Y(topv[j]).toFixed(1)}`);
+  const dn = NUM.map((r, j) => `${X(tm(r[1])).toFixed(1)},${Y(base[j]).toFixed(1)}`).reverse();
+  el('path', { d: `M${up.join('L')}L${dn.join('L')}Z`, fill: col, 'fill-opacity': k === 3 ? .95 : .8, stroke: '#0b1712', 'stroke-width': .8 }, plot);
+  topv.forEach((v, j) => { base[j] = v; });
+});
+el('path', { d: 'M' + NUM.map(r => `${X(tm(r[1])).toFixed(1)},${Y(r[7]).toFixed(1)}`).join('L'), fill: 'none', stroke: 'var(--paper)', 'stroke-width': 2, 'stroke-dasharray': '7 6' }, plot);
+NUM.forEach(r => el('circle', { cx: X(tm(r[1])), cy: Y(r[7]), r: 3.2, fill: 'var(--paper)' }, plot));
+
+// JCPOA limit line
+const limG = el('g', {}, cam);
+el('line', { x1: j0, x2: PR, y1: Y(LIMIT), y2: Y(LIMIT), stroke: 'var(--amber)', 'stroke-width': 8, opacity: .18 }, limG);   // soft glow (a filter would drop a zero-height line)
+el('line', { x1: j0, x2: PR, y1: Y(LIMIT), y2: Y(LIMIT), stroke: 'var(--amber)', 'stroke-width': 2.5, 'stroke-dasharray': '10 6' }, limG);
+const limT = el('text', { x: j0 + 4, y: Y(LIMIT) - 12, class: 'lim' }, limG); limT.textContent = 'JCPOA limit, 202.8 kg';
+
+// Event flags
+const evG = el('g', {}, cam);
+const evs = EVS.map(([d, s], i) => {
+  const x = X(tm(d)), g = el('g', { opacity: 0 }, evG), ly = PT - 18 - (i % 2) * 30, strike = s === 'Strikes';
+  el('line', { x1: x, x2: x, y1: ly + 8, y2: PB, stroke: strike ? 'var(--red)' : 'var(--muted)', 'stroke-dasharray': '2 4', opacity: .8 }, g);
+  const w = s.length * 9 + 18, bx = strike ? x - w + 9 : x - 9;
+  const box = el('rect', { x: bx, y: ly - 18, width: w, height: 26, rx: 4, fill: strike ? 'var(--red)' : '#0b1712', stroke: strike ? 'var(--red)' : 'var(--paper)', 'stroke-width': 1.5 }, g);
+  el('text', { x: bx + 9, y: ly, class: 'ev', style: strike ? 'fill:#0b1712' : '' }, g).textContent = s;
+  return { t: tm(d), g, box, strike };
+});
+
+// Unknown period
+const unk = el('g', { opacity: 0 }, cam);
+const u0 = X(tm(LAST));
+const unkR = el('rect', { x: u0, y: PT, width: 0, height: PB - PT, fill: 'url(#ie-hatch)' }, unk);
+const unkQ = el('text', { x: (u0 + PR) / 2, y: Y(5200), class: 'big', 'text-anchor': 'middle', style: 'font-size:120px;fill:var(--paper);opacity:.9' }, unk); unkQ.textContent = '?';
+el('text', { x: PR - 6, y: PB - 34, class: 'unk', 'text-anchor': 'end' }, unk).textContent = 'Not verified since';
+el('text', { x: PR - 6, y: PB - 12, class: 'unk', 'text-anchor': 'end' }, unk).textContent = '13 June 2025';
+
+// Report cursor
+const head = el('g', { opacity: 0 }, cam);
+const hLine = el('rect', { y: PT - 4, width: 3, height: PB - PT + 4, fill: 'var(--amber)', filter: 'url(#kit-glow)' }, head);
+const hDot = el('circle', { r: 8, fill: 'var(--amber)', stroke: '#0b1712', 'stroke-width': 3, filter: 'url(#kit-glow)' }, head);
+
+// Header readouts
+const top = el('g', {}, cam);
+el('text', { x: PL, y: 84, class: 't-label' }, top).textContent = 'Iran’s enriched uranium, IAEA report by report · drag across the chart';
+const rid = el('text', { x: PL, y: 132, class: 'rid' }, top);
+const rdt = el('text', { x: PL, y: 160, class: 'rdt' }, top);
+el('text', { x: 620, y: 124, class: 'ro-n' }, top).textContent = 'Total, all forms';
+const roT = el('text', { x: 620, y: 172, class: 'ro-v' }, top);
+el('text', { x: 920, y: 124, class: 'ro-n' }, top).textContent = 'Times the JCPOA limit';
+const roM = el('text', { x: 920, y: 172, class: 'ro-v' }, top);
+el('text', { x: 1170, y: 124, class: 'ro-n' }, top).textContent = 'Up to 60%';
+const ro60 = el('text', { x: 1170, y: 172, class: 'ro-v', style: 'fill:#e0533d' }, top);
+const lg = el('g', {}, top); let lx = PL;
+LV.forEach(([n, c]) => { el('rect', { x: lx, y: 222, width: 14, height: 14, fill: c }, lg); el('text', { x: lx + 22, y: 235, class: 'lg' }, lg).textContent = n; lx += 22 + n.length * 9 + 30; });
+el('line', { x1: lx, x2: lx + 30, y1: 229, y2: 229, stroke: 'var(--paper)', 'stroke-width': 2, 'stroke-dasharray': '7 5' }, lg);
+el('text', { x: lx + 40, y: 235, class: 'lg' }, lg).textContent = 'Total, all forms';
+
+// Hook
+const hook = el('g', {}, svg);
+const h1 = el('text', { x: 800, y: 400, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:62px' }, hook);
+h1.textContent = 'The nuclear deal capped Iran at';
+const hn = el('text', { x: 800, y: 575, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:170px' }, svg);
+const hnS = el('tspan', { class: 'hot' }, hn); hnS.textContent = '202.8 kg';
+const h2 = el('text', { x: 800, y: 670, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:62px' }, hook);
+h2.textContent = 'of enriched uranium.';
+
+// Payoff
+const pay = el('g', { opacity: 0 }, svg);
+el('rect', { width: 1600, height: 1000, fill: '#070f0b', opacity: .84 }, pay);
+const pBig = el('text', { x: 800, y: 400, class: 'big', 'text-anchor': 'middle' }, pay);
+el('text', { x: 800, y: 470, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:46px' }, pay).textContent = 'days since the IAEA’s last estimate of the stockpile';
+const pq = el('g', {}, pay);
+el('text', { x: 800, y: 580, class: 'q', 'text-anchor': 'middle' }, pq).textContent = '“cannot provide any information on the current size,';
+el('text', { x: 800, y: 630, class: 'q', 'text-anchor': 'middle' }, pq).textContent = 'composition or whereabouts of the stockpile';
+el('text', { x: 800, y: 680, class: 'q', 'text-anchor': 'middle' }, pq).textContent = 'of enriched uranium in Iran”';
+el('text', { x: 800, y: 740, class: 'src', 'text-anchor': 'middle', style: 'font-size:15px' }, pq).textContent = 'IAEA, GOV/2026/50 · 1 Sept 2026 · days counted to 29 Sept 2026';
+
+const cap = captions(svg, [
+  [0.3, 3.3, 'The JCPOA limit: 300 kg of UF6, or 202.8 kg of uranium'],
+  [3.6, 9.2, 'Every IAEA report since 2016, level by level'],
+  [9.4, 10.8, 'Then the strikes, and no more figures'],
+  [11.0, 13.9, 'The IAEA’s last estimate: 9,874.9 kg, as of 13 June 2025'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Iran’s Enrichment Clock', line: 'Every IAEA report since 2016, against the deal’s limit.' });
+
+// ---- Timeline -------------------------------------------------------------------------------------------
+const D = 17.5;
+const T_A = tm('2016-01-16'), T_L = tm(LAST);
+const timeAt = t => t < 4.0 ? T_A : lerp(T_A, T_L, ease.inOut(seg(t, 4.0, 8.9)));
+function frame(t) {
+  // hook: the number flies down onto the limit line's label
+  const hu = ease.out(seg(t, 0.2, 0.9)), fly = ease.inOut(seg(t, 2.9, 3.8));
+  h1.setAttribute('opacity', hu * (1 - seg(t, 2.8, 3.2)));
+  h1.setAttribute('transform', `translate(0,${(1 - hu) * 20})`);
+  h2.setAttribute('opacity', ease.out(seg(t, 0.7, 1.3)) * (1 - seg(t, 2.8, 3.2)));
+  const hs = ease.out(seg(t, 0.35, 1.0));
+  const tx = j0 + 4 + 161, ty = Y(LIMIT) - 12;
+  hn.setAttribute('opacity', hs * (1 - seg(t, 3.65, 3.85)));
+  hn.setAttribute('transform', `translate(${lerp(0, tx - 800, fly)},${lerp(0, ty - 575, fly)}) translate(800,575) scale(${lerp(0.9 + 0.1 * hs, 0.09, fly)}) translate(-800,-575)`);
+
+  const out = 1 - seg(t, 15.0, 15.6), inn = ease.out(seg(t, 3.3, 4.0));
+  axes.setAttribute('opacity', inn * out); top.setAttribute('opacity', inn * out);
+  early.setAttribute('opacity', inn * out); plot.setAttribute('opacity', out);
+  limG.setAttribute('opacity', seg(t, 3.7, 3.9) * out);
+  const ms = timeAt(t), hx = X(ms);
+  clipR.setAttribute('width', Math.max(0, hx - PL + 2));
+  head.setAttribute('opacity', seg(t, 3.9, 4.2) * (1 - seg(t, 9.3, 9.6)) * out);
+  hLine.setAttribute('x', hx - 1.5);
+  // the latest report at or before the cursor
+  const r = [...NUM].reverse().find(r => tm(r[1]) <= ms + 1);
+  const lost = seg(t, 9.6, 9.8);
+  if (lost > .5) {
+    rid.textContent = 'GOV/2026/50'; rdt.textContent = 'dated 1 Sept 2026 · no figures';
+    roT.textContent = '?'; roM.textContent = '?'; ro60.textContent = '?';
+  } else if (r) {
+    rid.textContent = r[0]; rdt.textContent = `as of ${nice(r[1])} · ${r[2]}`;
+    roT.textContent = fmtKg(r[7]); roM.textContent = (r[7] / LIMIT >= 10 ? Math.round(r[7] / LIMIT) : (r[7] / LIMIT).toFixed(1)) + '×'; ro60.textContent = fmtKg(r[6]);
+  } else {
+    rid.textContent = 'GOV/2016/8'; rdt.textContent = 'under the limit, no figures';
+    roT.textContent = '—'; roM.textContent = 'under'; ro60.textContent = '—';
+  }
+  const cy = r ? Y(lerp(r[7], r[7], 0)) : Y(0);
+  hDot.setAttribute('cx', r ? X(tm(r[1])) : hx); hDot.setAttribute('cy', cy);
+  const over = r && r[7] > LIMIT;
+  roM.style.fill = over ? 'var(--red)' : 'var(--paper)';
+  evs.forEach(e => {
+    const u = Math.max(seg(ms, e.t - 5 * DAY, e.t + 40 * DAY), e.strike ? seg(t, 9.0, 9.3) : 0), lit = seg(ms, e.t, e.t + DAY) * (1 - seg(ms, e.t + 200 * DAY, e.t + 500 * DAY));
+    e.g.setAttribute('opacity', u * out);
+    e.g.setAttribute('transform', `translate(0,${(1 - ease.back(u)) * 12})`);
+    if (!e.strike) { e.box.setAttribute('fill', lit > .5 ? 'var(--amber)' : '#0b1712'); e.box.setAttribute('filter', lit > .5 ? 'url(#kit-glow)' : ''); e.g.lastChild.style.fill = lit > .5 ? '#0b1712' : 'var(--paper)'; }
+    else e.box.setAttribute('filter', 'url(#kit-glow)');
+  });
+  // unknown band grows to today
+  const ug = ease.inOut(seg(t, 9.4, 10.6));
+  unk.setAttribute('opacity', seg(t, 9.3, 9.5) * out);
+  unkR.setAttribute('width', (PR - u0) * ug);
+  unkQ.setAttribute('opacity', ease.out(seg(t, 10.2, 10.7)) * .9);
+
+  // camera push toward the right edge
+  const push = ease.inOut(seg(t, 3.4, 10.8));
+  cam.setAttribute('transform', `translate(800,520) scale(${1 + 0.05 * push}) translate(${-800 - 30 * push},-520)`);
+  // payoff
+  const pu = ease.out(seg(t, 11.0, 11.6)) * (1 - seg(t, 13.9, 14.3));
+  pay.setAttribute('opacity', pu);
+  pBig.textContent = Math.round(days * ease.out(seg(t, 11.1, 12.3)));
+  const q = ease.out(seg(t, 12.0, 12.6));
+  pq.setAttribute('opacity', q); pq.setAttribute('transform', `translate(0,${(1 - q) * 20})`);
+  const bl = Math.max(pu, seg(t, 13.9, 14.3));
+  blurG.setAttribute('stdDeviation', (bl * 6).toFixed(2));
+  cam.setAttribute('filter', bl > 0.01 ? 'url(#ie-blur)' : '');
+
+  cap(t); end(t, 14.2, D);
+}
+run({ duration: D, poster: 9.3, frame });
+</script>
+</body></html>

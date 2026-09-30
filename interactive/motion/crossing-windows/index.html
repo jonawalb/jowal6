@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Crossing Windows</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .cw-hud { fill: #0a1510; fill-opacity: .86; stroke: var(--line); stroke-width: 1.2; }
+  .cw-ax { font: 400 13px var(--mono); fill: var(--muted); font-variant-numeric: tabular-nums; }
+  .cw-mo { font: 400 14px var(--mono); fill: var(--muted); letter-spacing: .04em; }
+  .cw-v { font: 600 15px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .cw-sl { font: 400 14px var(--mono); fill: var(--muted); }
+  .cw-out { font: 600 18px var(--mono); fill: var(--amber); font-variant-numeric: tabular-nums; }
+  .cw-pill { font: 600 13px var(--mono); letter-spacing: .1em; text-transform: uppercase; text-anchor: middle; }
+  .cw-claim { font: 600 14px var(--mono); fill: var(--paper); letter-spacing: .06em; }
+  .cw-fine { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+  .cw-stat { font: 600 64px var(--mono); font-variant-numeric: tabular-nums; text-anchor: middle; }
+  .cw-sm { font: italic 500 30px var(--display); fill: var(--paper); text-anchor: middle; }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of Crossing Windows: a thirty-year grid of Taiwan Strait weeks fills in year by year, showing which weeks allowed a three-day crossing window; the claimed April and October windows are bracketed and score 13 and 3 percent against summer's 50-plus, then loosening the limit to sea state 4 lifts April to 36 and October to 28 percent."><title>Crossing Windows</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Real data, computed with the tool's own model (tools/crossing-windows/js/model.js on data/climate.js) ----
+// Settings = the page defaults (Central Strait point 119.5E 24N, 3 days in a row, fog at Xiamen, typhoons within
+// 500 km), first with its sea state 3 preset (waves 1.25 m, wind 21 kt), then the sea state 4 preset (2.5 m, 27 kt).
+// MONTH: share of days that open a 3-day window, aggregate(windows(evaluate(s).go, 3)).month.
+// GRID: aggregate(...).grid, 30 years (1996-2025) x 52 weeks, each week's share stored as round(share x 9), 0-9.
+const A = { month: [0.0032,0.013,0.0462,0.1256,0.2978,0.5311,0.5527,0.4882,0.2244,0.0312,0.01,0.0011],
+  grid: '000000100000000055000399139990015980000100000000000000000000030000003441160084468500061510001000000000000000000000001008056933483660193868160000000000000000000000010000000310141119395650605356000000000000000000000000000000030013499359043559900111930000000000000000000000300000051141533603636905000000000000000000030000001301011318093449980338045891000403001100000000000000000030030443101004866539514550003000100000000000000000000001030034048005649414130400000000000000000000000100000045001040454516110530630000013000000000000000001010000931500599605141999500000100000000000000140010000033041899169454898005910000000000000000000000000010100045105353436833348195040000000000000000000000001000400034136904944900893000000000300000000000000000100000040330436639938399035000100000000000000000000000001040041553539419999518100010000000000000000000000000103415103003998301314943000000000000000000000001100031305869813891594831004000000000000000000010000001001100010300994815531895315000000000000000000000001003331014159946040863400304000000000000000000000011004100044059839551993518301004003000000000000000000000011100500040866953458104064000000000000000000000001003134139431036334995313405000000000000000000000000000001301003806400390011330003000000000000000000000000000503050895999999334114400000000000000000000001001010000069566954994005999846400000000000000000000003100033500006049539999954404133000000000000000000000001003101351399948640369911950000010000100000000030000350001003304994998099658030100000000000000000000030030148033910619904000569948045500000000000' };
+const B = { month: [0.1043,0.1167,0.186,0.3611,0.6172,0.8078,0.8032,0.7462,0.6067,0.2763,0.1567,0.0839],
+  grid: '100000301300000085611399999991138995991900030000040300040000040145514459968999999958181993396830503105321310440101503069556939999966993999996503600503000001000303345000053943995349999994668566545030910030000553000300000111083895999459459999933559994140001000100033001430500141091365553915636999584014116100081002440003014505615349999959996599469994649445113304010000000000400050144659139489999939564994605030300000104000016133003013159999489445699664893830500880000010000301000510015995558395999839446936646300444111001010100000363013034933534899916491999515449901044000020000340140100384449999599999998039996150000003001410400000003331338455145459999934658499141515143100130000600501001010641999999939985983999959100311503011101003310000101000553394639999999999046353600000043331000045051010034653495858589999999839940051130104100003300000000033133595536934999819914946040441100001000031300004310053855999959991599963195100101040336002300030030014004500010310999956959999419004130010000100110110001114535135159999184984530944150050193400000000010031006100049159999956995599993135045011300010800000300010344133999554866954698444499100000400000000300000311494155349999149859995985506041141330400300001001141400001505033916568599394996348516010000530304340010016115614384899999999345499954400000340000201441113316330143069966999995946999859990034430000003001010044800543541418449999999999464353000018500000000010001613418534559399999991999915996034850030600001101150000354051534304999998199999999405400000500000041100033150848199949999905359669998099930000030000' };
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const MONTH_WK = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334].map(d => d / 7);      // js/charts.js
+const CLAIMS = [[90 / 7, 120 / 7, 'April'], [273 / 7, 304 / 7, 'October']];                     // CLAIMS.easton
+const pct = v => Math.round(v * 100) + '%';                                                        // js/app.js
+const cell = (G, r, w) => +G.grid[r * 52 + w] / 9;
+
+const txt = (x, y, cls, s, a = {}, p) => { const n = el('text', { x, y, class: cls, ...a }, p); n.textContent = s; return n; };
+const op = (n, v) => n.setAttribute('opacity', Math.max(0, Math.min(1, v)).toFixed(3));
+
+// ---- Heatmap -------------------------------------------------------------------------------------------
+const cam = el('g', {}, svg);
+const ui = el('g', {}, cam);
+const GX = 150, CW = 19.4, GY = 330, CH = 14.2;
+const gx = w => GX + w * CW, gy = r => GY + r * CH;
+txt(GX, 112, 't-label', 'When the Strait allowed a crossing · every week, 1996 to 2025', {}, ui);
+txt(GX, 138, 'cw-fine', 'Central Strait · 3 days in a row · fog at Xiamen · typhoons within 500 km', { style: 'font-size:12px' }, ui);
+const ax = el('g', {}, ui);
+MONTHS.forEach((m, i) => txt(gx(MONTH_WK[i]) + 3, GY - 12, 'cw-ax', m, {}, ax));
+[1996, 2000, 2005, 2010, 2015, 2020, 2025].forEach(y => txt(GX - 10, gy(y - 1996) + CH - 3, 'cw-ax', y, { 'text-anchor': 'end' }, ax));
+const cells = [];
+const grid = el('g', {}, ui);
+for (let r = 0; r < 30; r++) for (let w = 0; w < 52; w++) cells.push({ r, w, n: el('rect', { x: gx(w) + 0.6, y: gy(r) + 0.6, width: CW - 1.2, height: CH - 1.2, fill: 'var(--green)' }, grid) });
+// Claimed windows: shaded bands and brackets (Easton, as quoted by 19FortyFive: April and October).
+const claims = el('g', {}, ui);
+CLAIMS.forEach(([a, b, name]) => {
+  el('rect', { x: gx(a), y: GY - 2, width: gx(b) - gx(a), height: 30 * CH + 4, fill: 'none', stroke: 'var(--paper)', 'stroke-width': 2, 'stroke-dasharray': '6 5' }, claims);
+  el('path', { d: `M${gx(a)},${GY - 44} v-8 H${gx(b)} v8`, fill: 'none', stroke: 'var(--paper)', 'stroke-width': 2 }, claims);
+  txt((gx(a) + gx(b)) / 2, GY - 60, 'cw-claim', name + ' · claimed', { 'text-anchor': 'middle' }, claims);
+});
+// Legend
+const lg = el('g', {}, ui);
+txt(GX, gy(30) + 34, 'cw-ax', 'Share of the week’s days that open a window:', {}, lg);
+[0, .25, .5, .75, 1].forEach((v, i) => { el('rect', { x: GX + 420 + i * 34, y: gy(30) + 21, width: 30, height: 16, fill: v ? 'var(--green)' : '#1b3428', 'fill-opacity': v ? 0.12 + 0.88 * v : 1 }, lg); });
+txt(GX + 420 + 5 * 34 + 8, gy(30) + 34, 'cw-ax', 'none to all', {}, lg);
+
+// ---- Month bars (right) ----------------------------------------------------------------------------------
+const mb = el('g', {}, cam);
+const MX = 1230, MW = 250, MY = GY, MH = 36;
+el('rect', { x: MX - 20, y: MY - 60, width: 330, height: 12 * MH + 80, rx: 6, class: 'cw-hud' }, mb);
+txt(MX, MY - 30, 't-label', 'By month', { style: 'font-size:12px' }, mb);
+const mrows = MONTHS.map((m, i) => {
+  const y = MY + i * MH, claim = i === 3 || i === 9, g = el('g', {}, mb);
+  const lab = txt(MX, y + 22, 'cw-mo', m, { style: claim ? 'fill:var(--paper);font-weight:600' : '' }, g);
+  el('rect', { x: MX + 46, y: y + 10, width: MW - 70, height: 16, fill: 'var(--line)', 'fill-opacity': .5 }, g);
+  const bar = el('rect', { x: MX + 46, y: y + 10, width: 0, height: 16, fill: 'var(--green)' }, g);
+  if (claim) el('rect', { x: MX + 42, y: y + 6, width: MW - 62, height: 24, fill: 'none', stroke: 'var(--paper)', 'stroke-dasharray': '5 4', 'stroke-width': 1.5 }, g);
+  const v = txt(MX + MW + 50, y + 23, 'cw-v', '', { 'text-anchor': 'end' }, g);
+  return { g, bar, v, claim };
+});
+
+// ---- Threshold controls (top right of the heatmap) ------------------------------------------------------
+const ctl = el('g', {}, cam);
+const pills = [['ss3', 'Sea state 3'], ['ss2', 'Sea state 2'], ['ss4', 'Sea state 4']].map(([k, s], i) => {
+  const g = el('g', {}, ctl), x = 1206 + i * 112;
+  const r = el('rect', { x, y: 96, width: 106, height: 32, rx: 16, fill: 'none', stroke: 'var(--muted)', 'stroke-width': 1.3 }, g);
+  const t = txt(x + 53, 117, 'cw-pill', s, { style: 'font-size:11px;letter-spacing:.06em' }, g);
+  return { k, r, t, x };
+});
+const SL = [['Max wave height', 1.25, 2.5, v => v.toFixed(2) + ' m', 0.25, 4], ['Max wind', 21, 27, v => Math.round(v) + ' kt', 6, 40]].map(([name, a, b, f, lo, hi], i) => {
+  const g = el('g', {}, ctl), X0 = 150 + i * 420, X1 = X0 + 360, y = 196;
+  txt(X0, y, 'cw-sl', name, {}, g);
+  const out = txt(X1, y, 'cw-out', f(a), { 'text-anchor': 'end' }, g);
+  el('line', { x1: X0, x2: X1, y1: y + 16, y2: y + 16, stroke: 'var(--line)', 'stroke-width': 4, 'stroke-linecap': 'round' }, g);
+  const fill = el('line', { x1: X0, y1: y + 16, y2: y + 16, stroke: 'var(--amber)', 'stroke-width': 4, 'stroke-linecap': 'round' }, g);
+  const th = el('circle', { cy: y + 16, r: 9, fill: 'var(--amber)', stroke: '#0b1712', 'stroke-width': 3 }, g);
+  const xv = v => X0 + (v - lo) / (hi - lo) * (X1 - X0);
+  return { a, b, f, out, fill, th, xv };
+});
+const ptr = el('path', { d: 'M0,0 L0,24 L6,18 L11,29 L15,27 L10,16 L18,16 Z', fill: 'var(--paper)', stroke: '#0b1712', 'stroke-width': 1.5, opacity: 0 }, svg);
+const click = el('circle', { r: 0, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 2, opacity: 0 }, svg);
+
+// ---- Hook and payoff -------------------------------------------------------------------------------------
+const hook = el('g', {}, svg);
+const h1 = txt(800, 440, 't-hook', 'April and October:', { 'text-anchor': 'middle', style: 'font-size:68px' }, hook);
+const h2 = el('text', { x: 800, y: 532, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:68px' }, hook);
+h2.innerHTML = 'the claimed <tspan class="hot">crossing windows.</tspan>';
+
+const pay = el('g', { opacity: 0 }, svg);
+el('rect', { width: 1600, height: 1000, fill: '#070f0b', opacity: .88 }, pay);
+const pH = el('text', { x: 800, y: 250, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:56px' }, pay);
+pH.innerHTML = 'Thirty years favor <tspan class="hot">late spring and summer.</tspan>';
+const pS = txt(800, 296, 'cw-fine', 'Share of days opening a 3-day window · waves 1.25 m, wind 21 kt', { 'text-anchor': 'middle' }, pay);
+const STATS = [[3, 'April', 'var(--paper)'], [9, 'October', 'var(--paper)'], [5, 'June', 'var(--green)'], [6, 'July', 'var(--green)']];
+const stats = STATS.map(([m, name, col], i) => {
+  const g = el('g', {}, pay), x = 350 + i * 300;
+  const v = txt(x, 420, 'cw-stat', '0%', { style: `fill:${col}` }, g);
+  txt(x, 466, 'cw-sm', name, {}, g);
+  return { g, v, m };
+});
+const pL = txt(800, 560, 't-cap', 'At sea state 4 and 27 kt, April rises to ' + pct(B.month[3]) + ' and October to ' + pct(B.month[9]) + '.', { 'text-anchor': 'middle' }, pay);
+const pQ = txt(800, 610, 't-cap', 'The answer depends on what the landing craft can take.', { 'text-anchor': 'middle', style: 'fill:var(--muted)' }, pay);
+const pN = txt(800, 660, 'cw-fine', 'ERA5 wind and waves · NOAA fog reports · IBTrACS typhoons · limits are yours to set', { 'text-anchor': 'middle' }, pay);
+
+const cap = captions(svg, [
+  [3.3, 5.6, 'Thirty years of Strait weather, one row per year'],
+  [5.7, 7.6, 'The claimed months score low: April 13%, October 3%'],
+  [7.7, 10.2, 'Loosen the limit and watch the windows open'],
+  [10.4, 13.0, 'Wind, waves, fog and typhoons, tested day by day'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Crossing Windows', line: 'Thirty years of Strait weather, tested against limits you set.' });
+
+// ---- Timeline -------------------------------------------------------------------------------------------
+const D = 16;
+const CLICK = 7.9, SLIDE = [8.05, 9.4];
+function frame(t) {
+  const out = 1 - seg(t, 12.9, 13.5);
+  [h1, h2].forEach((h, i) => {
+    const u = ease.out(seg(t, 0.25 + i * 0.4, 1.0 + i * 0.4)), o = 1 - seg(t, 2.6 + i * 0.1, 3.1 + i * 0.1);
+    op(h, u * o); h.setAttribute('transform', `translate(0,${((1 - u) * 24 - seg(t, 2.6, 3.2) * 18).toFixed(1)})`);
+  });
+  const push = ease.inOut(seg(t, 3.0, 12.9));
+  cam.setAttribute('transform', `translate(760,520) scale(${(1 + 0.035 * push).toFixed(4)}) translate(-760,-520)`);
+  op(cam, ease.out(seg(t, 2.8, 3.5)) * lerp(1, 0.18, ease.inOut(seg(t, 10.3, 10.9))) * out);
+
+  // Threshold change: sea state 3 -> sea state 4 preset.
+  const su = ease.inOut(seg(t, SLIDE[0], SLIDE[1]));
+  // Cells fill in year by year, then cross-fade as the limit loosens (each week column a touch later).
+  for (const c of cells) {
+    const a = 3.3 + c.r * 0.066, u = ease.out(seg(t, a, a + 0.3));
+    const wu = ease.inOut(seg(t, SLIDE[0] + c.w * 0.012, SLIDE[1] - 0.6 + c.w * 0.012));
+    const v = lerp(cell(A, c.r, c.w), cell(B, c.r, c.w), wu);
+    c.n.setAttribute('fill', v > 0.001 ? 'var(--green)' : '#1b3428');
+    c.n.setAttribute('fill-opacity', ((v > 0.001 ? 0.12 + 0.88 * v : 1) * u).toFixed(3));
+  }
+  op(ax, ease.out(seg(t, 3.1, 3.6))); op(lg, ease.out(seg(t, 5.0, 5.5)));
+  op(claims, ease.out(seg(t, 5.8, 6.3)));
+  claims.setAttribute('transform', `translate(0,${((1 - ease.out(seg(t, 5.8, 6.4))) * -12).toFixed(1)})`);
+
+  // Month bars.
+  op(mb, ease.out(seg(t, 4.6, 5.1)));
+  mrows.forEach((m, i) => {
+    const a = 5.0 + i * 0.05, g = ease.out(seg(t, a, a + 0.6));
+    const v = lerp(A.month[i], B.month[i], su) * g;
+    m.bar.setAttribute('width', ((MW - 70) * v).toFixed(1)); m.v.textContent = pct(v);
+    const hot = m.claim && t > 5.9 && t < 7.8;
+    m.bar.setAttribute('fill', m.claim ? 'var(--paper)' : 'var(--green)');
+    m.v.style.fill = m.claim ? 'var(--paper)' : ''; m.g.setAttribute('filter', hot ? 'url(#kit-glow)' : '');
+  });
+
+  // Controls: preset pills and sliders; the pointer clicks "Sea state 4".
+  op(ctl, ease.out(seg(t, 3.2, 3.8)));
+  pills.forEach(p => { const on = p.k === (t >= CLICK ? 'ss4' : 'ss3'); p.r.setAttribute('fill', on ? 'var(--amber)' : 'none'); p.r.setAttribute('stroke', on ? 'var(--amber)' : 'var(--muted)'); p.t.style.fill = on ? '#0b1712' : 'var(--muted)'; p.r.setAttribute('filter', on && t >= CLICK && t < CLICK + 0.8 ? 'url(#kit-glow)' : ''); });
+  SL.forEach((s, i) => {
+    const v = lerp(s.a, s.b, ease.inOut(seg(t, SLIDE[0] + i * 0.15, SLIDE[1] + i * 0.15)));
+    const x = s.xv(v); s.th.setAttribute('cx', x.toFixed(1)); s.fill.setAttribute('x2', x.toFixed(1));
+    s.out.textContent = s.f(v);
+    s.th.setAttribute('filter', t > SLIDE[0] && t < SLIDE[1] + 0.4 ? 'url(#kit-glow)' : '');
+  });
+  const tx = pills[2].x + 53, ty = 112;
+  const pu = ease.inOut(seg(t, CLICK - 0.9, CLICK - 0.1));
+  ptr.setAttribute('transform', `translate(${lerp(1470, tx, pu).toFixed(1)},${lerp(300, ty, pu).toFixed(1)}) scale(${(1 - 0.12 * Math.max(0, 1 - Math.abs(t - CLICK) / 0.12)).toFixed(3)})`);
+  op(ptr, ease.out(seg(t, CLICK - 1.0, CLICK - 0.7)) * (1 - seg(t, CLICK + 0.6, CLICK + 1.0)));
+  const cu = seg(t, CLICK, CLICK + 0.5);
+  click.setAttribute('cx', tx); click.setAttribute('cy', ty); click.setAttribute('r', (8 + 30 * ease.out(cu)).toFixed(1));
+  op(click, t >= CLICK && cu < 1 ? 1 - cu : 0);
+
+  // Payoff.
+  const pv = ease.out(seg(t, 10.4, 11.0)) * (1 - seg(t, 12.9, 13.4));
+  op(pay, pv);
+  op(pH, ease.out(seg(t, 10.5, 11.1))); op(pS, ease.out(seg(t, 10.7, 11.2)));
+  stats.forEach((s, i) => { const a = 10.8 + i * 0.15, u = ease.out(seg(t, a, a + 0.6)); op(s.g, seg(t, a, a + 0.2)); s.v.textContent = pct(A.month[s.m] * u); s.g.setAttribute('transform', `translate(0,${((1 - u) * 16).toFixed(1)})`); });
+  op(pL, ease.out(seg(t, 11.5, 11.9))); op(pQ, ease.out(seg(t, 11.8, 12.2))); op(pN, ease.out(seg(t, 12.0, 12.4)));
+
+  cap(t); end(t, 13.1, D);
+}
+run({ duration: D, poster: 6.6, frame });
+</script>
+</body></html>

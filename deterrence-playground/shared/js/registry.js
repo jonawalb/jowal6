@@ -181,6 +181,8 @@ export const ALL_TOOLS = [
     blurb: 'An argument-based matrix wargame of a fictional Narva crisis: argue an action with three reasons, face counter-arguments, and roll 2d6 over six turns.' },
   { slug: 'sub-hunt', cat: 'models', sites: ['deterrence'], title: 'The Hunt', status: 'live',
     blurb: 'Hunt a hidden submarine in a notional Greenland–Iceland–UK gap with sonobuoys, patrol aircraft and a towed array, on a Bayesian probability map that updates every hour, then see its true track.' },
+  { slug: 'berlin-airlift', cat: 'models', also: ['coercion'], sites: ['deterrence'], title: 'Airlift: Berlin 1948–49', status: 'live',
+    blurb: 'Run the Berlin Airlift day by day: juggle C-54s, crews, inspections, runways, fog and the coal-food mix to keep 2 million Berliners supplied, then see your tonnage against the 1948–49 record.' },
 ];
 
 export const onSite = (x, site = SITE) => !x.sites || x.sites.includes(site);

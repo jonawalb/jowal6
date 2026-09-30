@@ -4,11 +4,12 @@
 // Entries without `sites` appear on both. The build writes the site id into site.js.
 import { SITE } from './site.js';
 
-export const ALL_CATEGORIES = [
+const CATEGORY_LIST = [
   { id: 'trackers', name: 'Live trackers', blurb: 'Taiwan Strait tracker data you can filter, scrub and explore.' },
   { id: 'crisis', name: 'Crises & exercises', blurb: 'How PLA pressure campaigns unfold, and how to read the warning signs.' },
   { id: 'geo', name: 'Indo-Pacific geography', blurb: 'Island chains, chokepoints, contested features and the cables beneath them.' },
-  { id: 'models', name: 'Force & wargame models', blurb: 'Hands-on models of kill chains, blockades, mines and defense budgets.',
+  { id: 'models', name: 'Force & wargame models', siteName: { deterrence: 'War Games and Simulations' },
+    blurb: 'Hands-on models of kill chains, blockades, mines and defense budgets.',
     subs: [{ id: 'wargames', name: 'Wargames', blurb: 'Play a side: raids, island assaults, submarine hunts, matrix games and the Berlin Airlift.' },
       { id: 'budget', name: 'Budget and Logistics', blurb: 'Budgets, kill chains, interceptor stocks and mine clearance.' }] },
   { id: 'narrative', name: 'Narrative & rhetoric', blurb: 'What Beijing says, how it spreads, and what markets and analysts expect.' },
@@ -37,6 +38,8 @@ export const ALL_CATEGORIES = [
   { id: 'dev', name: 'Coming Soon', sites: ['deterrence'], locked: true,
     blurb: 'Tools still being built and checked.' },
 ];
+// siteName renames a section on one site only.
+export const ALL_CATEGORIES = CATEGORY_LIST.map(c => ({ ...c, name: (c.siteName && c.siteName[SITE]) || c.name }));
 
 export const ALL_TOOLS = [
   { slug: 'strait-layers', siteCat: { deterrence: 'tsm' }, also: ['regions'], sub: { regions: 'indopacific' }, cat: 'models', title: 'Strait Layers', status: 'live',

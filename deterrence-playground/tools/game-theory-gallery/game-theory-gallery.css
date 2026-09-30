@@ -193,3 +193,53 @@ ol.path .q, .checks .q { color: var(--muted); font-size: 12px; }
 .fig svg.wide { min-width: 640px; }
 .layout > *, .figs, .extras, .mhead, .fig { min-width: 0; max-width: 100%; }
 .method p { overflow-x: auto; overflow-y: hidden; }
+
+/* "Start here" primer (js/primer.js) */
+.primer-wrap { max-width: 1400px; margin: 14px auto 0; }
+.primer { padding: 0; border-top: 3px solid var(--accent); }
+.primer > summary { list-style: none; cursor: pointer; padding: 14px 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+.primer > summary::-webkit-details-marker { display: none; }
+.pr-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.pr-tog { font: 600 12.5px var(--body); color: var(--blue); white-space: nowrap; text-decoration: underline; text-underline-offset: 2px; }
+.pr-tog::after { content: "Hide the primer"; }
+.primer:not([open]) .pr-tog::after { content: "Show the primer"; }
+.pr-qlab { font: 11.5px var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-top: 4px; }
+.pr-q { margin: 0; font-size: clamp(21px, 2.5vw, 30px); line-height: 1.2; font-weight: 600; max-width: 46ch; }
+.pr-body { padding: 0 16px 16px; display: flex; flex-direction: column; gap: 18px; }
+.pr-sec h3 { margin: 0 0 6px; font-size: 19px; line-height: 1.2; }
+.pr-sec > p, .pr-lead { margin: 0; max-width: 80ch; font-size: 14.5px; line-height: 1.6; }
+.pr-sec > .fine { margin: -2px 0 8px; }
+.pr-others { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr)); gap: 8px; }
+.pr-oth { border: 1px solid var(--rule); border-radius: 4px; background: var(--bg); padding: 10px 12px; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.pr-oth p { margin: 0; font-size: 13.5px; line-height: 1.5; }
+.pr-oth-n { font-family: var(--display); font-weight: 600; font-size: 16px !important; line-height: 1.2 !important; }
+.pr-oth-t { color: var(--ink); border-left: 3px solid var(--c3); padding-left: 8px; }
+.pr-lab { font-weight: 600; }
+.pr-oth .pg, .pr-sec .pg { font: 11.5px var(--mono); color: var(--muted); white-space: nowrap; }
+.pr-gloss > summary { cursor: pointer; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+.pr-gloss > summary h3 { display: inline; margin: 0; }
+.pr-gloss[open] > summary { margin-bottom: 8px; }
+.pr-terms { margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 6px 22px; }
+.pr-term { min-width: 0; padding: 6px 0; border-top: 1px solid var(--rule); }
+.pr-term dt { font-weight: 600; font-size: 13.5px; }
+.pr-term dd { margin: 2px 0 0; font-size: 13.5px; line-height: 1.5; color: var(--ink); }
+.pr-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; counter-reset: none; }
+.pr-step { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; align-items: start; padding: 10px 12px; border: 1px solid var(--rule); border-radius: 4px; background: var(--bg); }
+.pr-step.on { border-color: var(--brand-ink); box-shadow: inset 3px 0 0 var(--accent); }
+.pr-num { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font: 600 13px var(--mono); background: var(--chip); border: 1px solid var(--rule); color: var(--ink); }
+.pr-step.on .pr-num { background: var(--accent); border-color: var(--accent); color: #14201a; }
+.pr-step-b { min-width: 0; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+.pr-step-b h4 { margin: 3px 0 0; font-family: var(--display); font-size: 16.5px; line-height: 1.25; }
+.pr-step-b p { margin: 0; font-size: 14px; line-height: 1.6; max-width: 78ch; }
+.pr-show { color: var(--ink); }
+.pr-answer { border-left: 4px solid var(--accent); padding-left: 12px; }
+.pr-now { margin: 0; padding: 10px 12px; background: var(--blue-soft); border-radius: 4px; font-size: 14px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+@media (max-width: 520px) {
+  .primer > summary { padding: 12px 12px 10px; }
+  .pr-body { padding: 0 12px 14px; gap: 16px; }
+  .pr-top { flex-direction: column; gap: 4px; }
+  .pr-step { grid-template-columns: minmax(0, 1fr); padding: 10px; }
+  .pr-num { width: 24px; height: 24px; font-size: 12px; }
+  .pr-sec > p, .pr-lead, .pr-step-b p { font-size: 14px; }
+}

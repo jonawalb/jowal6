@@ -10,7 +10,9 @@ import rubinstein82 from './views/rubinstein82.js';
 import { NOTES_A } from '../data/notes.js';
 import { NOTES_B } from '../data/notes-b.js';
 import { CARDS, SOURCES } from '../data/catalog.js';
+import { PRIMERS } from '../data/primers.js';
 import { mountModel } from './shell.js';
+import { renderPrimer } from './primer.js';
 import { createTour } from './tour.js';
 import { cardIcon } from './icons.js';
 import { esc } from './ui.js';
@@ -22,8 +24,9 @@ const NOTES = { ...NOTES_A, ...NOTES_B };
 const S = { m: 'fearon95', P: Object.fromEntries(Object.entries(MODELS).map(([k, m]) => [k, { ...m.defaults }])) };
 
 const stage = document.getElementById('stage'), panel = document.getElementById('panel');
-const picker = document.getElementById('picker');
+const picker = document.getElementById('picker'), primerHost = document.getElementById('primer');
 let current = null;
+const reduceMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // ---- Picker -----------------------------------------------------------------------------------
 picker.innerHTML = CARDS.map(c => c.href
@@ -31,14 +34,26 @@ picker.innerHTML = CARDS.map(c => c.href
   : `<button type="button" class="mcard" data-m="${c.id}" aria-pressed="false">${cardIcon(c.icon)}<span class="mc-t"><b>${esc(c.title)}</b><span class="mc-who">${esc(c.who)}</span><span class="mc-bl">${esc(c.blurb)}</span></span></button>`).join('');
 picker.querySelectorAll('[data-m]').forEach(b => b.addEventListener('click', () => {
   if (S.m !== b.dataset.m) { S.m = b.dataset.m; mount(); }
-  document.getElementById('stage').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+  (primerHost.hidden ? stage : primerHost).scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'start' });
 }));
 
 function mount() {
   picker.querySelectorAll('[data-m]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.m === S.m)));
   document.body.dataset.model = S.m;
   current = mountModel(stage, panel, MODELS[S.m], S.P[S.m], NOTES[S.m], writeHash);
+  renderPrimer(primerHost, PRIMERS[S.m], NOTES[S.m].kicker, showStep);
   writeHash();
+}
+
+// "Show me" in the primer: load the step through the same path as a "Try this" prompt, then bring the figures
+// into view and move keyboard focus there. On wide screens the model header and panel sit side by side, so scroll
+// to the top of the layout; on narrow screens the figures come first.
+function showStep(step, i, n) {
+  current.apply({ ...MODELS[S.m].defaults, ...step.set }, 'try', `Step ${i + 1} of ${n}: ${step.t}`);
+  const figs = stage.querySelector('.figs');
+  const target = innerWidth <= 1020 && figs ? figs : document.querySelector('.layout');
+  target.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'start' });
+  if (figs) { figs.setAttribute('tabindex', '-1'); figs.focus({ preventScroll: true }); }
 }
 
 // ---- Hash -------------------------------------------------------------------------------------

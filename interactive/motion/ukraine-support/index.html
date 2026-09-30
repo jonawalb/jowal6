@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Who Supports Ukraine</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .rk-n { font: 600 17px var(--mono); fill: var(--muted); font-variant-numeric: tabular-nums; }
+  .rk-d { font: 400 18px var(--mono); fill: var(--paper); }
+  .rk-v { font: 600 18px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .rk-s { font: 400 14px var(--mono); fill: var(--muted); font-variant-numeric: tabular-nums; }
+  .seg { fill: #0b1712; stroke: #2b4a3b; stroke-width: 1.2; }
+  .seg-t { font: 400 15px var(--mono); fill: var(--muted); }
+  .key { font: 400 14px var(--mono); fill: var(--muted); }
+  .src { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .04em; }
+  .hk-n { font: 600 104px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; letter-spacing: -.03em; }
+  .hk-l { font: italic 400 46px var(--display); fill: var(--muted); }
+  .cmp-n { font: italic 500 44px var(--display); fill: var(--paper); }
+  .cmp-v { font: 600 64px var(--mono); font-variant-numeric: tabular-nums; }
+  .cmp-s { font: 400 15px var(--mono); fill: var(--muted); letter-spacing: .06em; }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of Who Supports Ukraine: a ranking of donors by aid allocated in euros reorders when the units switch to share of GDP, moving Denmark, Estonia and Lithuania to the top and the United States to 16th."><title>Who Supports Ukraine</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Real data (tools/ukraine-support) ------------------------------------------------------------
+// Kiel Institute Ukraine Support Tracker, release 30 (24 Jan 2022 to 30 Jun 2026), as aggregated in data/aid.js.
+// Rows below come from the tool's js/model.js ranking(): default view (all periods, all aid types, all donor
+// groups, allocated bar + committed outline) in € billion (r1 = rank) and in % of 2021 GDP (r2 = rank; 0 = not
+// ranked: EU institutions have no GDP). a = allocations by type [military, humanitarian, financial], € bn;
+// vc = commitments, € bn; ga/gc = allocations/commitments as % of 2021 GDP; e1/e2 = the value text the page prints.
+const DON = [{"n":"United States","r1":1,"r2":16,"a":[64.617,3.467,47.297],"vc":118.963,"gdp":19712.764,"ga":0.5853,"gc":0.6035,"e1":"€115.4 bn of €119.0 bn","e2":"0.59% of 0.60%"},{"n":"EU (Commission and Council)","r1":2,"r2":0,"a":[4.404,3.262,84.441],"vc":187.607,"gdp":null,"ga":null,"gc":null,"e1":"€92.1 bn of €187.6 bn","e2":""},{"n":"Germany","r1":3,"r2":10,"a":[24.904,4.066,1.663],"vc":47.68,"gdp":3601.75,"ga":0.8505,"gc":1.3238,"e1":"€30.6 bn of €47.7 bn","e2":"0.85% of 1.32%"},{"n":"United Kingdom","r1":4,"r2":11,"a":[15.884,1.464,5.154],"vc":33.851,"gdp":2647.562,"ga":0.8499,"gc":1.2786,"e1":"€22.5 bn of €33.9 bn","e2":"0.85% of 1.28%"},{"n":"Canada","r1":5,"r2":12,"a":[5.243,0.61,8.424],"vc":16.419,"gdp":1681.127,"ga":0.8492,"gc":0.9767,"e1":"€14.3 bn of €16.4 bn","e2":"0.85% of 0.98%"},{"n":"Japan","r1":6,"r2":21,"a":[0.076,1.708,10.378],"vc":18.791,"gdp":4177.483,"ga":0.2911,"gc":0.4498,"e1":"€12.2 bn of €18.8 bn","e2":"0.29% of 0.45%"},{"n":"Denmark","r1":7,"r2":1,"a":[10.538,0.99,0.115],"vc":12.075,"gdp":336.763,"ga":3.4574,"gc":3.5855,"e1":"€11.6 bn of €12.1 bn","e2":"3.46% of 3.59%"},{"n":"Sweden","r1":8,"r2":5,"a":[9.25,1.048,1.105],"vc":19.345,"gdp":537.45,"ga":2.1218,"gc":3.5995,"e1":"€11.4 bn of €19.3 bn","e2":"2.12% of 3.60%"},{"n":"Norway","r1":9,"r2":4,"a":[7.19,1.99,2.043],"vc":24.724,"gdp":407.676,"ga":2.7528,"gc":6.0646,"e1":"€11.2 bn of €24.7 bn","e2":"2.75% of 6.06%"},{"n":"Netherlands","r1":10,"r2":8,"a":[9.357,1.126,0.716],"vc":13.229,"gdp":856.356,"ga":1.3078,"gc":1.5448,"e1":"€11.2 bn of €13.2 bn","e2":"1.31% of 1.54%"},{"n":"Estonia","r1":21,"r2":2,"a":[0.888,0.066,0.01],"vc":1.219,"gdp":31.445,"ga":3.0647,"gc":3.8776,"e1":"€964 m of €1.22 bn","e2":"3.06% of 3.88%"},{"n":"Lithuania","r1":18,"r2":3,"a":[1.164,0.39,0.051],"vc":1.793,"gdp":56.179,"ga":2.8578,"gc":3.1919,"e1":"€1.61 bn of €1.79 bn","e2":"2.86% of 3.19%"},{"n":"Latvia","r1":23,"r2":6,"a":[0.635,0.029,0.047],"vc":0.711,"gdp":33.696,"ga":2.1109,"gc":2.11,"e1":"€711 m of €711 m","e2":"2.11% of 2.11%"},{"n":"Finland","r1":14,"r2":7,"a":[3.337,0.279,0.159],"vc":4.37,"gdp":251.367,"ga":1.5018,"gc":1.7387,"e1":"€3.78 bn of €4.37 bn","e2":"1.50% of 1.74%"},{"n":"Poland","r1":12,"r2":9,"a":[4.452,0.506,0.928],"vc":6.433,"gdp":574.467,"ga":1.0246,"gc":1.1198,"e1":"€5.89 bn of €6.43 bn","e2":"1.02% of 1.12%"}];
+// Totals from summary(): €374.2 bn allocated, €549.4 bn committed.
+const TYPE_COL = ['#c9b27a', '#7fb6d9', '#9cc3aa'];
+const TYPE_N = ['Military', 'Humanitarian', 'Financial'];
+const MAX1 = Math.max(...DON.filter(d => d.r1 && d.r1 <= 10).map(d => Math.max(d.a[0] + d.a[1] + d.a[2], d.vc)));   // renderRanking(): largest bar in view
+const MAX2 = Math.max(...DON.filter(d => d.r2 && d.r2 <= 10).map(d => Math.max(d.ga, d.gc)));
+const short = n => n === 'EU (Commission and Council)' ? 'EU (Commission, Council)' : n;
+
+// ---- Layout ----------------------------------------------------------------------------------------
+const X_N = 250, X_D = 290, BX = 640, BW = 470, X_V = 1400, Y0 = 282, ROW = 46;
+const slotY = r => r <= 10 ? Y0 + (r - 1) * ROW : Y0 + 10 * ROW + 36;     // rank 16 sits below a gap
+const blurF = el('filter', { id: 'us-blur', x: '-5%', y: '-5%', width: '110%', height: '110%' }, svg);
+const blurG = el('feGaussianBlur', { stdDeviation: 0 }, blurF);
+const cam = el('g', {}, svg);
+const head = el('g', {}, cam);
+const title = el('text', { x: X_N, y: 160, class: 't-label' }, head);
+el('text', { x: X_N, y: 228, class: 'key' }, head).textContent = '';
+// key
+let kx = X_N;
+TYPE_N.forEach((n, i) => { el('rect', { x: kx, y: 214, width: 14, height: 14, rx: 2, fill: TYPE_COL[i] }, head); el('text', { x: kx + 22, y: 226, class: 'key' }, head).textContent = n; kx += n.length * 10 + 50; });
+el('rect', { x: kx, y: 214, width: 30, height: 14, fill: 'none', stroke: 'var(--paper)', 'stroke-width': 1.3, rx: 2 }, head);
+el('text', { x: kx + 40, y: 226, class: 'key' }, head).textContent = 'Committed';
+// units control (js/app.js SCALES)
+const SEGS = [['€ billion', 1010], ['% of 2021 GDP', 1160]].map(([n, x], i) => {
+  const w = i ? 240 : 140, g = el('g', {}, head);
+  const r = el('rect', { x: i ? 1160 : 1010, y: 140, width: w, height: 38, rx: 6, class: 'seg' }, g);
+  const t = el('text', { x: (i ? 1160 : 1010) + w / 2, y: 165, class: 'seg-t', 'text-anchor': 'middle' }, g); t.textContent = n;
+  return { r, t, cx: (i ? 1160 : 1010) + w / 2, cy: 159 };
+});
+const note = el('text', { x: X_N, y: 850, class: 'src' }, head);
+el('text', { x: X_V, y: 850, class: 'src', 'text-anchor': 'end' }, head).textContent = 'Kiel Ukraine Support Tracker, release 30';
+const gap = el('text', { x: X_N + 8, y: Y0 + 10 * ROW - 2, class: 'rk-n' }, head); gap.textContent = '⋮';
+
+const rowsG = el('g', {}, cam);
+const rows = DON.map(d => {
+  const g = el('g', {}, rowsG);
+  const hl = el('rect', { x: X_N - 20, y: -30, width: X_V - X_N + 40, height: 44, rx: 6, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 1.5, opacity: 0, filter: 'url(#kit-glow)' }, g);
+  const num = el('text', { x: X_N, y: 0, class: 'rk-n' }, g);
+  el('text', { x: X_D, y: 0, class: 'rk-d' }, g).textContent = short(d.n);
+  const segs = d.a.map((_, k) => el('rect', { y: -20, height: 22, fill: TYPE_COL[k] }, g));
+  const cm = el('rect', { x: BX, y: -24, height: 30, fill: 'none', stroke: 'var(--paper)', 'stroke-width': 1.3, rx: 2, opacity: .85 }, g);
+  const v1 = el('text', { x: X_V, y: 0, class: 'rk-v', 'text-anchor': 'end' }, g);
+  const v2 = el('text', { x: X_V, y: 0, class: 'rk-v', 'text-anchor': 'end', opacity: 0 }, g);
+  const [a1, o1] = d.e1.split(' of '); v1.innerHTML = `${a1}<tspan class="rk-s"> of ${o1}</tspan>`;
+  if (d.e2) { const [a2, o2] = d.e2.split(' of '); v2.innerHTML = `${a2}<tspan class="rk-s"> of ${o2}</tspan>`; }
+  return { d, g, hl, num, segs, cm, v1, v2 };
+});
+
+// Cursor.
+const cur = el('g', { opacity: 0 }, cam);
+const ring = el('circle', { r: 22, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 3, filter: 'url(#kit-glow)' }, cur);
+el('path', { d: 'M0 0l0 30l8 -7l6 13l6 -3l-6 -12l11 0z', fill: 'var(--paper)', stroke: '#0b1712', 'stroke-width': 2 }, cur);
+
+// Hook.
+const hook = el('g', {}, svg);
+const hA = el('g', {}, hook), hB = el('g', {}, hook);
+const hAt = el('text', { x: 800, y: 420, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:92px' }, hA);
+hAt.innerHTML = '€549.4 bn <tspan style="fill:var(--muted);font-style:italic">committed.</tspan>';
+const hbn = el('text', { x: 800, y: 545, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:92px' }, hB);
+hbn.innerHTML = '<tspan class="hot">€374.2 bn</tspan> allocated.';
+const hS = el('text', { x: 800, y: 640, class: 't-label', 'text-anchor': 'middle' }, hook);
+hS.textContent = 'Government aid to Ukraine, Jan 2022 to June 2026 · Kiel Institute';
+
+// Payoff.
+const pay = el('g', { opacity: 0 }, svg);
+el('rect', { width: 1600, height: 1000, fill: '#070f0b', opacity: .82 }, pay);
+const p1 = el('text', { x: 800, y: 270, class: 't-hook', 'text-anchor': 'middle' }, pay);
+p1.innerHTML = 'Against their economies, <tspan class="hot">small neighbours lead</tspan>.';
+el('text', { x: 800, y: 326, class: 't-label', 'text-anchor': 'middle' }, pay).textContent = 'Aid allocated, as a share of 2021 GDP';
+const PAY = [['Denmark', 'var(--amber)'], ['Estonia', 'var(--paper)'], ['Lithuania', 'var(--paper)'], ['United States', 'var(--muted)']].map(([n, c], i) => {
+  const d = DON.find(x => x.n === n), g = el('g', {}, pay), y = 440 + i * 98 + (i === 3 ? 26 : 0);
+  el('line', { x1: 380, x2: 1220, y1: y - 64, y2: y - 64, stroke: 'var(--line)', 'stroke-width': 2 }, g);
+  el('text', { x: 380, y, class: 'cmp-n' }, g).textContent = n;
+  el('text', { x: 900, y, class: 'cmp-s', 'text-anchor': 'end' }, g).textContent = `#${d.r2}`;
+  const v = el('text', { x: 1220, y: y + 4, class: 'cmp-v', 'text-anchor': 'end', style: `fill:${c}` }, g);
+  return { g, v, to: d.ga };
+});
+
+const cap = captions(svg, [
+  [0.3, 3.2, 'Committed is promised. Allocated is delivered or earmarked'],
+  [3.6, 6.9, 'Filled bar: allocated. Outline: committed'],
+  [7.1, 10.6, 'Switch the units to share of GDP and the ranking flips'],
+  [11.1, 14.4, 'Denmark 3.46% of GDP. The United States 0.59%'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Who Supports Ukraine', line: 'Who pledged aid to Ukraine, and how much each donor has allocated.' });
+
+// ---- Timeline -----------------------------------------------------------------------------------
+const D = 17.5, SW0 = 7.4, SW1 = 9.2;      // unit switch
+function frame(t) {
+  // hook
+  const a = ease.out(seg(t, 0.2, 0.9)), b = ease.out(seg(t, 1.0, 1.7)), hOut = 1 - seg(t, 2.9, 3.4);
+  hA.setAttribute('opacity', a * hOut); hA.setAttribute('transform', `translate(0,${(1 - a) * 18})`);
+  hB.setAttribute('opacity', b * hOut); hB.setAttribute('transform', `translate(0,${(1 - b) * 18})`);
+  hbn.setAttribute('filter', t > 1.6 && t < 2.8 ? 'url(#kit-glow)' : '');
+  hS.setAttribute('opacity', ease.out(seg(t, 1.6, 2.1)) * hOut);
+
+  // chrome
+  const ch = ease.out(seg(t, 3.2, 3.9));
+  head.setAttribute('opacity', ch); head.setAttribute('transform', `translate(0,${(1 - ch) * -10})`);
+  const sw = ease.inOut(seg(t, SW0, SW1));
+  title.textContent = sw < 0.5 ? 'Allocated (bar) and committed (outline), € billion' : 'Allocated (bar) and committed (outline), percent of 2021 GDP';
+  note.textContent = sw < 0.5 ? 'Top 10 of 43 donors · current euros' : 'EU institutions have no GDP and are left out. GDP is 2021 (pre-war).';
+  SEGS.forEach((s, i) => { const on = (i === 0) === (t < SW0 - 0.1); s.r.style.fill = on ? 'var(--amber)' : ''; s.r.style.stroke = on ? 'var(--amber)' : ''; s.t.style.fill = on ? '#0b1712' : ''; });
+  gap.setAttribute('opacity', seg(t, SW1 - 0.4, SW1));
+
+  // rows
+  const grow = i => ease.out(seg(t, 3.6 + i * 0.12, 4.9 + i * 0.12));
+  rows.forEach(r => {
+    const d = r.d;
+    const on1 = d.r1 >= 1 && d.r1 <= 10, on2 = d.r2 >= 1 && (d.r2 <= 10 || d.n === 'United States');
+    const y1 = on1 ? slotY(d.r1) : Y0 + 12 * ROW, y2 = on2 ? slotY(d.r2) : Y0 + 12 * ROW;
+    const k = on1 && on2 ? ease.inOut(seg(t, SW0 + 0.25 + 0.04 * d.r2, SW1 - 0.45 + 0.04 * d.r2)) : ease.inOut(seg(t, SW0, SW1));
+    const y = lerp(y1, y2, k);
+    const kk = seg(t, SW0, SW1);
+    const o = (on1 && on2 ? 1 : on1 ? 1 - seg(kk, 0, 0.3) : on2 ? seg(kk, 0.55, 0.9) : 0) * (on1 ? ease.out(seg(t, 3.5 + d.r1 * 0.08, 4.0 + d.r1 * 0.08)) : 1);
+    r.g.setAttribute('opacity', o.toFixed(3));
+    r.g.setAttribute('transform', `translate(0,${y.toFixed(1)})`);
+    r.num.textContent = k < 0.5 ? (on1 ? d.r1 : '') : (on2 ? d.r2 : '');
+    r.num.setAttribute('opacity', on1 && on2 ? Math.min(1, Math.abs(k - 0.5) * 2.4) ** 2 : 1);
+    const gw = on1 ? grow(d.r1 - 1) : 1;
+    // bar widths: € view uses € bn / MAX1, GDP view uses % / MAX2 (renderRanking scale)
+    let x = BX;
+    d.a.forEach((v, j) => {
+      const w1 = v / MAX1 * BW, w2 = d.gdp ? (v / d.gdp * 100) / MAX2 * BW : 0;
+      const w = lerp(w1, w2, sw) * gw;
+      r.segs[j].setAttribute('x', x.toFixed(1)); r.segs[j].setAttribute('width', Math.max(0, w).toFixed(1)); x += w;
+    });
+    const cw = lerp(d.vc / MAX1 * BW, d.gc ? d.gc / MAX2 * BW : 0, sw) * gw;
+    r.cm.setAttribute('width', Math.max(0, cw).toFixed(1));
+    r.cm.setAttribute('opacity', (0.85 * seg(t, 4.2 + d.r1 * 0.12, 4.8 + d.r1 * 0.12)).toFixed(2));
+    r.v1.setAttribute('opacity', (1 - seg(sw, 0.1, 0.3)) * seg(t, 4.0 + d.r1 * 0.12, 4.5 + d.r1 * 0.12));
+    r.v2.setAttribute('opacity', seg(sw, 0.7, 0.9));
+    const lit = (d.n === 'Denmark' && t > 9.4 && t < 11.0) || (d.n === 'United States' && t > 9.9 && t < 11.0);
+    r.hl.setAttribute('opacity', lit ? 1 : 0);
+    r.hl.setAttribute('stroke', d.n === 'United States' ? 'var(--paper)' : 'var(--amber)');
+  });
+
+  // cursor: to the GDP unit button and click
+  const s2 = SEGS[1], u = ease.inOut(seg(t, 6.3, 7.2));
+  cur.setAttribute('opacity', seg(t, 6.2, 6.5) * (1 - seg(t, 8.0, 8.4)));
+  cur.setAttribute('transform', `translate(${lerp(1150, s2.cx, u) + 30 * ease.inOut(seg(t, 7.6, 8.4))},${lerp(520, s2.cy, u) + 90 * ease.inOut(seg(t, 7.6, 8.4))})`);
+  const press = seg(t, 7.2, 7.35) * (1 - seg(t, 7.45, 7.75));
+  ring.setAttribute('r', lerp(28, 14, press)); ring.setAttribute('opacity', press);
+
+  // camera
+  const push = ease.inOut(seg(t, 3.2, 11.2));
+  cam.setAttribute('transform', `translate(800,500) scale(${1 + 0.035 * push}) translate(-800,${-500 + 10 * push})`);
+
+  // payoff
+  const po = ease.out(seg(t, 11.0, 11.6)) * (1 - seg(t, 14.4, 14.8));
+  pay.setAttribute('opacity', po);
+  const bl = Math.max(po, seg(t, 14.4, 14.8));
+  blurG.setAttribute('stdDeviation', (bl * 6).toFixed(2));
+  cam.setAttribute('filter', bl > 0.01 ? 'url(#us-blur)' : '');
+  PAY.forEach((p, i) => {
+    const q = ease.out(seg(t, 11.3 + i * 0.2, 12.0 + i * 0.2));
+    p.g.setAttribute('opacity', q); p.g.setAttribute('transform', `translate(${(1 - q) * 40},0)`);
+    p.v.textContent = (p.to * ease.out(seg(t, 11.5 + i * 0.2, 12.5 + i * 0.2))).toFixed(2) + '%';
+    p.v.setAttribute('filter', i === 0 && t > 12.5 && t < 14.4 ? 'url(#kit-glow)' : '');
+  });
+
+  cap(t); end(t, 14.5, D);
+}
+run({ duration: D, poster: 9.6, frame });
+</script>
+</body></html>

@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: PRC Rhetoric Heatmap</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .row-t { font: 400 15px var(--mono); fill: var(--muted); letter-spacing: .02em; }
+  .yr { font: 600 15px var(--mono); fill: var(--paper); letter-spacing: .04em; }
+  .ev-t { font: 400 11px var(--mono); fill: var(--muted); letter-spacing: .04em; }
+  .src { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .04em; }
+  .card { fill: #0a1510; fill-opacity: .96; stroke: var(--amber); stroke-width: 1.5; }
+  .c-e { font: 400 12px var(--mono); fill: var(--amber); letter-spacing: .14em; text-transform: uppercase; }
+  .c-h { font: italic 500 27px var(--display); fill: var(--paper); }
+  .c-q { font: italic 400 30px var(--display); fill: var(--paper); }
+  .c-m { font: 400 14px var(--mono); fill: var(--muted); letter-spacing: .03em; }
+  .b-n { font: 600 15px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .cmp-v { font: 600 96px var(--mono); font-variant-numeric: tabular-nums; letter-spacing: -.03em; }
+  .cmp-h { font: 400 14px var(--mono); fill: var(--muted); letter-spacing: .12em; text-transform: uppercase; }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of the PRC Rhetoric Heatmap: a grid of themes by week fills in from July 2022 to September 2026, the Japan row lights up in late 2025, and one statement is opened."><title>PRC Rhetoric Heatmap</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Real data (tools/rhetoric-heatmap) ----------------------------------------------------------
+// G.g[theme][week]: statements per week whose answer matches each theme rule (data/themes.js), and G.held[week]
+// (1 = at least one statement held), from the tool's js/model.js parseRows() + aggregate() over data/statements.js
+// (1,565 Taiwan-related Q&A items, 4 Jul 2022 to 30 Sep 2026; all three sources; metric = count).
+// Weeks start Monday 27 Jun 2022 (FIRST_WEEK); 223 weeks.
+const G = {"g":[[0,2,1,5,6,12,13,5,1,2,4,6,4,4,2,0,2,6,1,1,1,0,0,2,0,0,3,0,1,0,0,1,0,0,3,0,2,1,1,4,1,3,4,5,0,5,1,1,2,1,0,0,1,0,0,2,1,0,0,4,2,2,2,0,0,4,0,1,0,2,1,2,4,0,2,2,1,3,3,0,4,2,4,1,1,0,2,0,0,2,4,5,1,3,1,3,1,1,4,10,7,3,1,1,9,0,1,0,4,3,0,2,2,6,0,0,1,5,0,3,4,0,4,0,3,2,3,4,2,2,4,0,0,1,0,0,0,2,1,4,0,2,0,5,4,0,0,3,0,1,1,1,0,0,2,1,6,1,1,4,0,10,2,2,1,2,0,2,3,6,1,2,2,1,5,2,4,1,5,2,1,3,6,4,0,4,0,0,0,2,0,1,0,3,2,2,11,6,12,14,8,6,13,26,14,10,10,11,13,13,10,3,11,12,0,2,11,10,4,6,14,13,9],[0,2,1,0,2,1,8,0,1,2,1,2,3,1,1,0,0,4,2,1,0,0,0,0,0,1,2,0,0,0,0,1,0,0,2,0,1,1,1,4,2,0,1,3,1,1,2,1,3,1,1,0,1,0,1,0,1,0,0,3,0,1,1,0,0,5,0,1,0,2,0,1,1,0,2,2,0,0,3,0,1,0,4,0,0,0,1,0,0,0,1,5,0,1,0,0,0,1,4,2,1,2,1,1,5,0,1,0,5,5,0,1,0,1,0,0,1,4,0,2,0,2,3,0,2,2,3,3,0,1,1,0,0,0,0,1,0,0,0,3,1,1,1,2,2,3,0,2,1,1,1,0,0,1,1,2,5,1,2,4,0,7,1,1,1,2,0,2,1,6,2,2,1,1,5,1,1,0,5,1,0,3,5,1,1,3,0,0,0,1,0,1,0,2,2,2,14,9,16,15,10,4,20,26,20,14,17,20,16,16,14,10,21,16,0,2,19,18,9,15,14,14,10],[0,1,0,4,4,8,9,3,1,0,3,4,3,4,2,0,1,1,2,2,0,0,1,0,1,0,2,0,0,1,0,2,0,1,2,1,0,0,1,0,0,3,2,3,1,0,1,1,0,1,4,0,2,0,0,0,3,0,0,1,2,1,2,1,0,3,0,1,0,1,0,1,2,1,2,2,0,1,3,0,3,1,4,0,0,0,0,0,0,1,2,3,0,4,0,1,0,0,0,7,7,3,0,1,6,0,1,3,2,4,0,1,0,2,0,0,1,4,0,3,4,0,2,0,0,1,2,3,1,1,4,0,0,1,0,0,0,1,1,3,0,1,3,3,3,2,0,1,0,1,0,0,0,0,2,1,4,1,0,2,0,6,0,0,0,2,1,2,2,6,2,1,1,1,2,0,3,2,5,1,2,3,8,3,3,2,0,1,0,0,0,1,1,1,3,2,6,3,4,6,4,0,4,11,3,5,3,1,3,7,6,4,2,0,0,1,2,3,0,0,5,4,6],[0,1,0,6,12,26,14,6,2,5,3,2,5,2,0,0,2,6,1,2,0,0,0,2,2,0,5,0,3,1,0,1,0,0,4,3,2,1,1,3,2,1,2,3,1,4,1,1,2,8,5,0,2,1,1,2,1,0,0,4,3,2,2,4,1,5,0,0,0,3,1,0,4,1,2,1,1,3,4,0,4,1,5,0,0,0,1,0,0,3,2,7,1,4,2,3,1,1,3,4,7,3,0,3,6,0,0,3,1,1,0,0,1,3,0,0,1,4,0,1,1,2,5,1,1,1,3,4,2,2,5,0,0,2,0,1,0,2,0,4,1,1,1,3,2,4,0,3,0,1,1,0,1,0,1,1,5,1,1,2,0,7,2,0,1,2,0,0,2,6,0,0,1,1,3,1,1,0,4,1,2,2,5,1,0,3,0,0,0,1,0,1,0,1,2,2,7,5,6,6,5,1,10,14,8,6,3,5,3,4,6,2,2,0,0,0,2,3,0,2,3,3,5],[0,0,0,2,1,3,0,0,0,0,2,0,0,0,0,0,1,1,0,1,0,0,0,1,1,0,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0,0,0,1,1,0,0,1,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,1,0,0,0,0,1,0,1,0,0,0,1,1,0,0,0,0,1,0,0,1,2,0,0,0,0,1,0,0,0,0,1,0,1,2,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,0,1,1,0,0,0,1,0,3,5,3,0,0,1,1,0,1,0,0,0,0,0,0,1,0,0,0,1,0],[0,0,1,1,1,10,4,2,1,1,1,1,0,1,0,0,0,2,0,0,0,0,0,0,1,0,2,0,3,1,0,1,0,0,0,0,0,0,0,0,0,0,2,0,0,1,1,0,0,0,0,0,0,2,0,0,2,0,0,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,2,0,1,0,0,0,0,0,0,0,0,2,0,0,0,0,2,3,2,1,1,0,1,0,0,0,1,2,0,2,0,0,0,0,0,4,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,2,0,1,2,3,3,1,0,1,0,1,0,1,1,0,0,0,0,0,0,0,0,3,0,1,1,1,0,2,1,6,1,1,0,3,3,1,5,4,11,3,5,6,7,2,1,1,0,1,0,3,0,0,0,1,3,4,3,1,2,5,1,2,1,1,4,4,4,2,5,4,1,0,0,1,1,0,3,2,0,2,2,3,3],[0,2,2,9,5,15,17,8,2,6,4,7,6,5,2,0,2,8,1,3,1,0,0,3,1,2,4,1,2,0,0,1,0,1,4,1,4,1,5,5,2,3,5,5,1,5,3,2,3,5,1,0,4,1,3,2,2,0,0,5,3,4,2,4,1,6,0,1,0,2,1,2,4,0,2,4,0,3,3,0,6,4,4,2,2,0,2,1,0,3,4,9,0,4,1,3,2,1,6,12,7,5,1,2,6,0,2,1,4,6,2,1,2,3,1,2,1,3,0,3,4,4,2,2,3,2,4,4,4,2,5,0,0,1,0,0,0,3,1,3,1,2,1,7,4,4,1,3,1,1,1,2,1,2,1,2,4,2,1,3,1,8,1,2,2,3,0,3,2,8,2,1,2,3,6,3,4,3,8,3,1,4,8,4,3,3,0,1,1,2,0,1,1,3,4,4,12,5,9,12,9,7,12,21,13,14,10,9,10,10,10,5,11,10,2,2,7,10,6,9,13,13,11],[0,0,0,0,1,2,4,2,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,2,2,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,3,1,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,2,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,1,1,0,0,1,0,0,1,2,4,1,1,0,0,2,1,5,2,6,2,1,2,1,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,1,0,2,3,0,0,0,0,0,0,0,1,0,1,0,1,2,0,0,2,0,2,3],[0,1,0,1,1,4,4,3,0,1,0,2,1,0,0,0,0,0,1,1,0,0,0,0,1,0,2,0,1,1,0,2,0,0,0,1,2,0,0,1,0,1,1,1,0,3,0,0,0,1,0,0,1,0,0,2,0,0,0,4,0,2,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,1,2,1,1,0,0,0,0,1,0,2,1,0,1,1,1,2,1,4,2,1,0,2,3,0,0,1,1,0,0,1,0,1,0,0,1,1,0,0,0,0,1,0,0,1,0,5,1,0,1,0,0,0,0,0,0,1,0,0,0,0,1,2,1,0,0,1,0,1,0,0,1,0,1,0,0,0,0,0,1,2,0,0,0,0,1,0,0,1,0,0,1,0,1,1,3,1,2,0,1,2,2,1,1,0,0,0,0,1,0,0,0,0,0,2,3,0,1,1,0,1,2,2,1,2,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1],[0,1,0,1,7,11,13,1,1,2,1,2,2,2,1,0,0,2,1,0,0,0,0,1,1,1,4,1,0,1,0,0,0,1,1,1,0,0,1,1,0,0,1,2,1,1,2,0,2,1,1,0,1,1,1,2,1,0,0,2,2,0,1,0,0,2,0,0,0,1,0,0,0,0,1,1,0,1,2,0,1,0,1,0,1,0,0,0,0,1,3,1,1,1,0,1,1,0,3,6,3,1,1,1,4,0,1,1,3,2,0,1,0,2,0,0,1,2,0,2,1,0,4,0,0,0,0,2,1,1,5,0,0,0,0,0,0,1,0,2,0,0,0,2,2,3,0,2,0,1,1,0,0,0,2,1,4,0,2,1,0,2,0,0,0,1,1,2,2,1,0,1,1,1,2,1,2,0,4,2,2,3,4,4,1,2,0,0,0,3,0,1,0,2,0,3,6,2,2,3,1,3,6,10,2,8,3,3,3,5,6,1,1,5,0,0,0,2,2,2,6,2,2],[0,1,0,0,4,4,5,0,2,2,0,0,1,0,0,0,0,3,0,0,0,0,0,0,0,0,2,0,0,1,0,0,0,0,1,0,0,0,0,0,0,1,2,1,0,0,0,0,0,1,0,0,1,0,0,0,1,0,0,0,1,0,0,2,0,6,0,0,0,2,0,0,0,0,2,0,0,0,2,0,0,0,6,0,0,0,0,0,0,1,1,4,0,1,0,0,0,0,0,2,7,1,1,0,6,0,0,0,4,0,0,0,0,5,0,1,0,7,0,0,0,2,5,0,0,0,0,0,1,0,3,0,0,1,0,0,0,2,0,4,0,0,0,4,2,0,0,3,0,0,0,0,0,0,1,0,6,0,1,1,0,4,1,1,0,1,0,0,0,1,0,1,1,0,1,0,1,0,2,0,0,0,6,3,0,1,0,0,0,1,0,0,0,0,0,1,0,1,1,0,0,1,0,1,0,0,0,0,1,0,1,1,1,5,0,1,1,1,0,0,0,2,1],[0,0,0,0,0,0,3,1,1,1,0,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,2,0,0,0,0,0,0,1,1,0,1,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,2,0,0,0,2,0,0,0,2,0,0,0,1,0,0,1,0,4,0,1,1,0,1,0,0,0,0,0,0,1,2,1,0,0,0,3,0,1,1,2,0,0,1,1,0,0,0,0,0,0,0,0,1,0,0,2,1,13,9,17,14,13,1,19,22,15,16,18,16,16,21,16,14,19,13,0,1,17,20,14,13,19,18,16]],"held":[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,0,0,1,1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]};
+const THEMES = ['Separatism', 'Lai / DPP', 'Interference', 'U.S.', 'Arms sales', 'Japan', 'Reunification', 'History / 2758', 'Red line', 'Warnings', 'PLA / drills', 'Integration'];
+const NW = G.g[0].length, JP = 5;
+const MAX = Math.max(...G.g.flat());                       // grid.js: sqrt(v / max), floor 12%
+const T0 = Date.parse('2022-06-27'), weekOf = d => Math.floor((Date.parse(d) - T0) / (7 * 864e5));
+// Large PLA exercises (data/events.js) and collection seams (SEAMS in data/events.js).
+const EXER = [['2022-08-04', '2022-08-07', 'Aug 2022'], ['2022-12-25', '2022-12-26', ''], ['2023-04-08', '2023-04-10', 'Joint Sword'], ['2023-08-19', '2023-08-19', ''], ['2023-09-11', '2023-09-18', ''],
+  ['2024-05-23', '2024-05-24', 'JS-2024A'], ['2024-10-14', '2024-10-14', 'JS-2024B'], ['2024-12-09', '2024-12-11', ''], ['2025-02-26', '2025-02-26', ''], ['2025-04-01', '2025-04-02', 'Strait Thunder'], ['2025-12-29', '2025-12-30', 'Justice Mission']];
+const SEAMS = ['2026-01-01', '2026-04-01', '2026-05-01', '2026-07-01'];
+const SEL_W = weekOf('2025-11-24');                        // tour step 3: Japan row, week of 24 Nov 2025 (11 statements)
+// Quote: Defense Ministry, spokesperson Jiang Bin, 27 Nov 2025, official English (data/statements.js).
+// Payoff: Japan row, 8 weeks from 3 Nov 2025 (the week of Takaichi's 7 Nov remarks) vs the 8 weeks before.
+const sumJP = (a, b) => { let s = 0; for (let w = weekOf(a); w <= weekOf(b); w++) s += G.g[JP][w]; return s; };
+const BEF = sumJP('2025-09-08', '2025-11-02'), AFT = sumJP('2025-11-03', '2025-12-28');   // 17, 42
+
+// ---- Geometry ------------------------------------------------------------------------------------
+const GX = 330, GW = 1110, CW = GW / NW, GY = 300, RH = 32, RG = 3;
+const X = w => GX + w * CW;
+// Heat colour: grid.js mixes --heat into the empty-cell colour by sqrt(v / max), floor 12%.
+const heat = p => { const a = [0x24, 0x40, 0x31], b = [0xff, 0x6b, 0x4a]; return `rgb(${a.map((c, i) => Math.round(c + (b[i] - c) * p)).join(',')})`; };
+const blurF = el('filter', { id: 'rhm-blur', x: '-5%', y: '-5%', width: '110%', height: '110%' }, svg);
+const blurG = el('feGaussianBlur', { stdDeviation: 0 }, blurF);
+const clip = el('clipPath', { id: 'rhm-clip' }, svg);
+const clipR = el('rect', { x: GX - 2, y: 0, width: 0, height: 1000 }, clip);
+const cam = el('g', {}, svg);
+const head = el('g', {}, cam);
+el('text', { x: GX, y: 150, class: 't-label' }, head).textContent = 'Taiwan statements by theme · each column one week · Jul 2022 – Sep 2026';
+el('text', { x: GX + GW, y: 184, class: 'src', 'text-anchor': 'end' }, head).textContent = 'Foreign Ministry · Defense Ministry · Taiwan Affairs Office';
+const rowLab = THEMES.map((n, k) => { const t = el('text', { x: GX - 14, y: GY + k * (RH + RG) + RH / 2 + 5, class: 'row-t', 'text-anchor': 'end' }, head); t.textContent = n; return t; });
+// exercise bands + labels
+const bands = el('g', {}, cam);
+EXER.forEach(([a, b, n], i) => {
+  const xa = X(weekOf(a)), xb = X(weekOf(b) + 1);
+  el('rect', { x: xa, y: GY - 6, width: xb - xa, height: 12 * (RH + RG) + 6, fill: '#8fa89a', opacity: .13 }, bands);
+  if (n) { el('path', { d: `M${xa + .5} ${GY - 8 - (i % 2) * 16}V${GY - 6}`, stroke: '#8fa89a', opacity: .6 }, bands); el('text', { x: xa + 3, y: GY - 12 - (i % 2) * 16, class: 'ev-t' }, bands).textContent = n; }
+});
+// cells, drawn once and revealed by a sweeping clip
+const cellsG = el('g', { 'clip-path': 'url(#rhm-clip)' }, cam);
+const cells = G.g.map((row, k) => {
+  const g = el('g', {}, cellsG), y = GY + k * (RH + RG);
+  row.forEach((v, w) => {
+    if (!G.held[w]) { el('rect', { x: X(w) + .3, y, width: CW - .6, height: RH, fill: '#0c1712' }, g); return; }
+    const p = v ? Math.max(12, Math.sqrt(v / MAX) * 100) / 100 : 0;
+    el('rect', { x: X(w) + .3, y, width: CW - .6, height: RH, fill: v ? heat(p) : '#17301f' }, g);
+  });
+  return g;
+});
+SEAMS.forEach(d => el('path', { d: `M${X(weekOf(d))} ${GY - 4}V${GY + 12 * (RH + RG)}`, stroke: 'var(--paper)', 'stroke-dasharray': '3 4', opacity: .45 }, cellsG));
+const axis = el('g', {}, cam);
+[['2023-01-01', 2023], ['2024-01-01', 2024], ['2025-01-01', 2025], ['2026-01-01', 2026]].forEach(([d, y]) => el('text', { x: X(weekOf(d)), y: GY + 12 * (RH + RG) + 26, class: 'yr' }, axis).textContent = y);
+el('text', { x: GX, y: GY + 12 * (RH + RG) + 26, class: 'yr' }, axis).textContent = '2022';
+el('text', { x: GX + GW, y: GY + 12 * (RH + RG) + 56, class: 'src', 'text-anchor': 'end' }, axis).textContent = 'Grey bands: large PLA exercises · dashed: collection changes';
+const scan = el('line', { y1: GY - 10, y2: GY + 12 * (RH + RG), stroke: 'var(--amber)', 'stroke-width': 2.5, filter: 'url(#kit-glow)', opacity: 0 }, cam);
+// row highlight and selected cell
+const rowHL = el('rect', { x: GX - 4, y: GY + JP * (RH + RG) - 3, width: GW + 8, height: RH + 6, rx: 3, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 1.3, opacity: 0 }, cam);
+const selBox = el('rect', { x: X(SEL_W) - 3, y: GY + JP * (RH + RG) - 5, width: CW + 6, height: RH + 10, rx: 2, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 2.5, filter: 'url(#kit-glow)', opacity: 0 }, cam);
+// panel card
+const card = el('g', { opacity: 0 }, cam);
+const CX = 330, CY = GY + 6 * (RH + RG) + 26, CWd = 820;
+el('rect', { x: CX, y: CY, width: CWd, height: 196, rx: 6, class: 'card' }, card);
+el('text', { x: CX + 26, y: CY + 36, class: 'c-e' }, card).textContent = `Week of 24 Nov 2025 · Japan · ${G.g[JP][SEL_W]} statements`;
+const q = el('text', { x: CX + 26, y: CY + 90, class: 'c-q' }, card);
+q.innerHTML = '“How to solve the Taiwan question is a matter for the Chinese,';
+const q2 = el('text', { x: CX + 26, y: CY + 130, class: 'c-q' }, card);
+q2.innerHTML = 'and has nothing to do with <tspan style="fill:var(--amber)">Japan</tspan>.”';
+el('text', { x: CX + 26, y: CY + 172, class: 'c-m' }, card).textContent = 'Defense Ministry · Jiang Bin · 27 Nov 2025 · official English transcript';
+el('path', { d: `M${CX + CWd},${CY + 40} L${X(SEL_W) + CW / 2},${GY + JP * (RH + RG) + RH + 6}`, stroke: 'var(--amber)', 'stroke-dasharray': '4 4', 'stroke-width': 1.3, fill: 'none' }, card);
+
+// Cursor.
+const cur = el('g', { opacity: 0 }, cam);
+const ring = el('circle', { r: 22, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 3, filter: 'url(#kit-glow)' }, cur);
+el('path', { d: 'M0 0l0 30l8 -7l6 13l6 -3l-6 -12l11 0z', fill: 'var(--paper)', stroke: '#0b1712', 'stroke-width': 2 }, cur);
+
+// Hook.
+const hook = el('g', {}, svg);
+const h1 = el('text', { x: 800, y: 430, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:64px' }, hook);
+h1.innerHTML = 'Watch Beijing’s language <tspan class="hot">heat up</tspan>';
+const h2 = el('text', { x: 800, y: 515, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:64px' }, hook);
+h2.textContent = 'and cool down, week by week.';
+const h3 = el('text', { x: 800, y: 600, class: 't-label', 'text-anchor': 'middle' }, hook);
+h3.textContent = '1,565 Taiwan statements from three PRC spokesperson offices';
+
+// Payoff: weekly Japan counts, Sep 2025 to Feb 2026, split at the week of 3 Nov 2025.
+const pay = el('g', { opacity: 0 }, svg);
+el('rect', { width: 1600, height: 1000, fill: '#070f0b', opacity: .84 }, pay);
+const p1 = el('text', { x: 800, y: 240, class: 't-hook', 'text-anchor': 'middle' }, pay);
+p1.innerHTML = 'After Takaichi’s remarks, <tspan class="hot">Japan moved in</tspan>.';
+el('text', { x: 800, y: 292, class: 't-label', 'text-anchor': 'middle' }, pay).textContent = 'Taiwan answers naming Japan, per week';
+const PW0 = weekOf('2025-09-01'), PN = 26, PBX = 470, PBW = 660, PBY = 610;
+const pbars = Array.from({ length: PN }, (_, i) => {
+  const v = G.g[JP][PW0 + i], after = PW0 + i >= weekOf('2025-11-03') && PW0 + i <= weekOf('2025-12-28');
+  const r = el('rect', { x: PBX + i * PBW / PN + 2, width: PBW / PN - 4, y: PBY, height: 0, rx: 2, fill: after ? 'var(--red)' : '#4d6b5c' }, pay);
+  return { r, v };
+});
+const mk = el('g', {}, pay), mx = PBX + (weekOf('2025-11-03') - PW0) * PBW / PN;
+el('path', { d: `M${mx} ${PBY - 250}V${PBY + 6}`, stroke: 'var(--amber)', 'stroke-dasharray': '4 4' }, mk);
+el('text', { x: mx + 8, y: PBY - 236, class: 'c-m', style: 'fill:var(--amber)' }, mk).textContent = '7 Nov 2025';
+const sx = PBX + (weekOf('2026-01-01') - PW0) * PBW / PN;
+el('path', { d: `M${sx} ${PBY - 120}V${PBY + 6}`, stroke: 'var(--paper)', 'stroke-dasharray': '3 4', opacity: .5 }, mk);
+el('text', { x: sx + 6, y: PBY - 108, class: 'ev-t' }, mk).textContent = 'collection change';
+el('line', { x1: PBX, x2: PBX + PBW, y1: PBY, y2: PBY, stroke: 'var(--muted)' }, pay);
+['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'].forEach((m, i) => el('text', { x: PBX + (i * 4.35 + 0.3) * PBW / PN, y: PBY + 24, class: 'ev-t' }, pay).textContent = m);
+const nB = el('text', { x: 300, y: 520, class: 'cmp-v', 'text-anchor': 'middle', style: 'fill:var(--muted)' }, pay);
+el('text', { x: 300, y: 560, class: 'cmp-h', 'text-anchor': 'middle' }, pay).textContent = '8 weeks before';
+const nA = el('text', { x: 1300, y: 520, class: 'cmp-v', 'text-anchor': 'middle', style: 'fill:var(--red)' }, pay);
+el('text', { x: 1300, y: 560, class: 'cmp-h', 'text-anchor': 'middle' }, pay).textContent = '8 weeks after';
+
+const cap = captions(svg, [
+  [0.3, 3.2, 'Foreign Ministry, Defense Ministry, Taiwan Affairs Office'],
+  [3.5, 6.9, 'Every row a theme, every column a week. Darker is more'],
+  [7.0, 8.4, 'Late 2025: the Japan row lights up'],
+  [8.5, 11.3, 'Click any cell to read the words behind it'],
+  [11.6, 14.4, 'Japan named in 17 answers before, 42 in the 8 weeks after'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'PRC Rhetoric Heatmap', line: 'Beijing’s Taiwan language, week by week, with every statement one click away.' });
+
+// ---- Timeline -----------------------------------------------------------------------------------
+const D = 17.5;
+function frame(t) {
+  // hook
+  const a = ease.out(seg(t, 0.2, 0.9)), b = ease.out(seg(t, 0.8, 1.5)), c = ease.out(seg(t, 1.5, 2.0)), hOut = 1 - seg(t, 2.9, 3.4);
+  h1.setAttribute('opacity', a * hOut); h1.setAttribute('transform', `translate(0,${(1 - a) * 18})`);
+  h2.setAttribute('opacity', b * hOut); h2.setAttribute('transform', `translate(0,${(1 - b) * 18})`);
+  h3.setAttribute('opacity', c * hOut);
+
+  // grid build
+  const ch = ease.out(seg(t, 3.1, 3.8));
+  head.setAttribute('opacity', ch); axis.setAttribute('opacity', ch);
+  const sw = ease.inOut(seg(t, 3.5, 6.6));
+  clipR.setAttribute('width', (GW + 4) * sw);
+  bands.setAttribute('opacity', seg(t, 3.5, 4.0));
+  scan.setAttribute('x1', GX + GW * sw); scan.setAttribute('x2', GX + GW * sw);
+  scan.setAttribute('opacity', seg(t, 3.5, 3.7) * (1 - seg(t, 6.5, 6.8)));
+
+  // focus on the Japan row
+  const f = ease.inOut(seg(t, 7.0, 7.6)) * (1 - ease.inOut(seg(t, 11.2, 11.7)));
+  cells.forEach((g, k) => g.setAttribute('opacity', k === JP ? 1 : 1 - 0.7 * f));
+  rowLab.forEach((l, k) => { l.style.fill = k === JP && f > 0.5 ? 'var(--amber)' : ''; });
+  rowHL.setAttribute('opacity', f);
+  selBox.setAttribute('opacity', ease.out(seg(t, 8.5, 8.8)) * (1 - seg(t, 11.2, 11.6)));
+  const cu = ease.out(seg(t, 8.8, 9.4)) * (1 - seg(t, 11.1, 11.5));
+  card.setAttribute('opacity', cu); card.setAttribute('transform', `translate(0,${(1 - cu) * 16})`);
+
+  // cursor to the selected cell
+  const tx = X(SEL_W) + CW / 2, ty = GY + JP * (RH + RG) + RH / 2, u = ease.inOut(seg(t, 7.4, 8.4));
+  cur.setAttribute('opacity', seg(t, 7.2, 7.5) * (1 - seg(t, 9.6, 10.0)));
+  const lv = ease.inOut(seg(t, 9.2, 10.0));
+  cur.setAttribute('transform', `translate(${lerp(1100, tx, u) + 50 * lv},${lerp(760, ty, u) + 120 * lv})`);
+  const press = seg(t, 8.35, 8.5) * (1 - seg(t, 8.6, 8.9));
+  ring.setAttribute('r', lerp(28, 14, press)); ring.setAttribute('opacity', press);
+
+  // camera: slow push, lean toward late 2025
+  const push = ease.inOut(seg(t, 3.0, 11.5)), lean = ease.inOut(seg(t, 7.0, 9.0)) * (1 - ease.inOut(seg(t, 11.0, 12.0)));
+  cam.setAttribute('transform', `translate(800,500) scale(${1 + 0.03 * push + 0.03 * lean}) translate(${-800 - 40 * lean},${-500 + 10 * lean})`);
+
+  // payoff
+  const po = ease.out(seg(t, 11.5, 12.1)) * (1 - seg(t, 14.4, 14.8));
+  pay.setAttribute('opacity', po);
+  const bl = Math.max(po, seg(t, 14.4, 14.8));
+  blurG.setAttribute('stdDeviation', (bl * 6).toFixed(2));
+  cam.setAttribute('filter', bl > 0.01 ? 'url(#rhm-blur)' : '');
+  pbars.forEach((p, i) => { const h = p.v * 20 * ease.out(seg(t, 11.9 + i * 0.03, 12.6 + i * 0.03)); p.r.setAttribute('y', PBY - h); p.r.setAttribute('height', h); });
+  nB.textContent = Math.round(BEF * ease.out(seg(t, 12.2, 13.0)));
+  nA.textContent = Math.round(AFT * ease.out(seg(t, 12.5, 13.4)));
+  nA.setAttribute('filter', t > 13.4 && t < 14.4 ? 'url(#kit-glow)' : '');
+
+  cap(t); end(t, 14.5, D);
+}
+run({ duration: D, poster: 9.8, frame });
+</script>
+</body></html>

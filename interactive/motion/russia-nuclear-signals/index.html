@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Russia's Nuclear Signals</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .lv-t { font: 400 14px var(--mono); fill: var(--muted); letter-spacing: .03em; }
+  .lv-n { font: 600 15px var(--mono); fill: var(--paper); }
+  .lane { fill: #0e1f17; stroke: #1f3a2d; }
+  .yr { font: 600 15px var(--mono); fill: var(--paper); letter-spacing: .04em; }
+  .src { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .04em; }
+  .ctl { fill: #0b1712; stroke: #2b4a3b; stroke-width: 1.2; }
+  .ctl-t { font: 400 14px var(--mono); fill: var(--muted); }
+  .card { fill: #0a1510; fill-opacity: .95; stroke: var(--amber); stroke-width: 1.5; }
+  .c-e { font: 400 12px var(--mono); fill: var(--amber); letter-spacing: .16em; text-transform: uppercase; }
+  .c-h { font: italic 500 30px var(--display); fill: var(--paper); }
+  .c-q { font: italic 400 44px var(--display); fill: var(--paper); }
+  .c-m { font: 400 14px var(--mono); fill: var(--muted); letter-spacing: .04em; }
+  .c-l { font: 600 16px var(--mono); fill: var(--paper); letter-spacing: .02em; }
+  .cmp-n { font: 400 15px var(--mono); fill: var(--muted); letter-spacing: .04em; }
+  .cmp-v { font: 600 34px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .note { font: italic 400 30px var(--display); fill: var(--muted); }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of Russia's Nuclear Signals: Russian nuclear signals since February 2022 appear on a timeline by escalation level, two are opened, and a filter leaves only the signals that changed rules, forces or use."><title>Russia's Nuclear Signals</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Real data (tools/russia-nuclear-signals) ----------------------------------------------------
+// data/events.js (built 2026-09-30): all 73 items as [date, group (r = Russian signal, w = Western/NATO
+// response, b = battlefield moment), type, level (-1 = not scored)]. Levels are the tool author's coding,
+// data/coding.js. Level names from LEVELS; the timeline range 'all' runs 2022-01-15 to 2026-10-15 (js/model.js).
+const EV = [["2022-02-24","b","battle",-1],["2022-02-24","r","statement",2],["2022-02-27","r","deployment",4],["2022-02-27","w","response",-1],["2022-04-02","b","battle",-1],["2022-09-09","b","battle",-1],["2022-09-21","r","statement",2],["2022-09-22","r","statement",2],["2022-09-27","r","statement",2],["2022-09-30","r","statement",1],["2022-10-06","w","statement",-1],["2022-10-17","w","exercise",-1],["2022-10-23","r","statement",1],["2022-10-26","r","exercise",1],["2022-10-27","w","response",-1],["2022-11-11","b","battle",-1],["2023-01-19","r","statement",2],["2023-02-21","r","treaty",3],["2023-02-21","w","response",-1],["2023-02-22","w","response",-1],["2023-02-28","r","treaty",3],["2023-03-25","r","deployment",4],["2023-03-29","r","exercise",1],["2023-03-31","w","response",-1],["2023-05-19","w","statement",-1],["2023-05-20","b","battle",-1],["2023-06-01","w","treaty",-1],["2023-06-04","b","battle",-1],["2023-06-14","r","deployment",4],["2023-06-16","r","deployment",4],["2023-06-24","b","battle",-1],["2023-10-05","r","statement",2],["2023-10-06","w","response",-1],["2023-10-17","r","treaty",3],["2023-11-02","r","treaty",3],["2024-02-17","b","battle",-1],["2024-05-06","r","exercise",3],["2024-05-06","w","response",-1],["2024-05-10","r","statement",2],["2024-05-21","r","exercise",3],["2024-08-06","b","battle",-1],["2024-09-25","r","doctrine",2],["2024-10-14","w","exercise",-1],["2024-10-19","b","battle",-1],["2024-10-29","r","exercise",1],["2024-11-17","w","response",-1],["2024-11-19","b","battle",-1],["2024-11-19","r","doctrine",3],["2024-11-21","r","use",5],["2024-11-21","w","response",-1],["2025-06-01","b","battle",-1],["2025-07-31","r","statement",2],["2025-08-01","r","deployment",4],["2025-08-01","w","deployment",-1],["2025-08-04","r","treaty",3],["2025-09-16","r","exercise",3],["2025-09-22","r","treaty",0],["2025-10-13","w","exercise",-1],["2025-10-22","r","exercise",1],["2025-10-26","r","statement",1],["2025-10-29","r","statement",1],["2025-10-30","w","statement",-1],["2025-12-30","r","deployment",4],["2026-01-08","r","use",5],["2026-01-08","w","statement",-1],["2026-01-12","w","response",-1],["2026-02-05","w","treaty",-1],["2026-02-11","r","treaty",0],["2026-02-24","r","statement",1],["2026-05-12","r","statement",1],["2026-05-20","w","response",-1],["2026-05-21","r","exercise",3],["2026-05-24","r","use",5]];
+const LEVELS = ['Restraint', 'Reminder', 'Conditional threat', 'Rules change', 'Forces change', 'Combat use'];
+const TYPE_COL = { statement: '#d9d2c3', doctrine: '#b69ad8', exercise: '#6fc2b0', deployment: '#d6a08e', treaty: '#b7b877', use: 'var(--red)' };
+const WEST = '#7fb6d9', BATTLE = '#8fa89a';
+const T0 = Date.parse('2022-01-15'), T1 = Date.parse('2026-10-15');
+// The two items opened in the trailer, text from data/events.js:
+//   2022-09-21 "Mobilisation speech: 'This is not a bluff'", Putin, level 2, quote "This is not a bluff."
+//   2024-11-21 "Oreshnik missile fired at Dnipro", Putin, type use, level 5.
+const A = EV.findIndex(e => e[0] === '2022-09-21' && e[1] === 'r');
+const B = EV.findIndex(e => e[0] === '2024-11-21' && e[2] === 'use');
+// Level counts of the 40 Russian signals (tally() in js/model.js): 0:2 1:10 2:9 3:10 4:6 5:3.
+const COUNT = [0, 1, 2, 3, 4, 5].map(v => EV.filter(e => e[1] === 'r' && e[3] === v).length);
+
+// ---- Geometry (mirrors js/timeline.js: battlefield lane on top, six level bands, West lane below) ----
+const L = 350, R = 1430, laneB = 44, band = 56, laneW = 44;
+const yB0 = 300, y0 = yB0 + laneB + 10, yW0 = y0 + band * 6 + 10, yAx = yW0 + laneW + 32;
+const X = d => L + (Date.parse(d) - T0) / (T1 - T0) * (R - L);
+const blurF = el('filter', { id: 'rns-blur', x: '-5%', y: '-5%', width: '110%', height: '110%' }, svg);
+const blurG = el('feGaussianBlur', { stdDeviation: 0 }, blurF);
+const cam = el('g', {}, svg);
+const chart = el('g', {}, cam);
+
+const head = el('g', {}, chart);
+el('text', { x: L, y: 170, class: 't-label' }, head).textContent = 'Signals by escalation level · Feb 2022 to now';
+el('text', { x: R, y: 170, class: 'src', 'text-anchor': 'end' }, head).textContent = 'Levels: the tool author’s coding';
+// Minimum-level control and context toggles, as on the page.
+el('text', { x: L, y: 226, class: 'ctl-t' }, head).textContent = 'Minimum level';
+const lvBtn = [0, 1, 2, 3, 4, 5].map(v => {
+  const x = L + 150 + v * 44, g = el('g', {}, head);
+  const r = el('rect', { x, y: 204, width: 36, height: 32, rx: 5, class: 'ctl' }, g);
+  const tx = el('text', { x: x + 18, y: 226, class: 'ctl-t', 'text-anchor': 'middle' }, g); tx.textContent = v;
+  return { r, tx, cx: x + 18, cy: 220 };
+});
+const tog = [['Western and NATO responses', WEST], ['Battlefield moments', BATTLE]].map(([n, c], i) => {
+  const x = i ? 1180 : 890, g = el('g', {}, head), w = n.length * 9.4 + 44;
+  const r = el('rect', { x: i ? R - w : x, y: 204, width: w, height: 32, rx: 16, class: 'ctl' }, g);
+  const x0 = i ? R - w : x;
+  const sw = el('rect', { x: x0 + 13, y: 214, width: 12, height: 12, rx: 2, fill: c }, g);
+  const tx = el('text', { x: x0 + 32, y: 225, class: 'ctl-t' }, g); tx.textContent = n; tx.style.fill = 'var(--paper)';
+  return { r, sw, tx, cx: x0 + w / 2, cy: 220 };
+});
+// fix the first toggle's x so it sits left of the second
+{ const w0 = 'Western and NATO responses'.length * 9.4 + 44, w1 = 'Battlefield moments'.length * 9.4 + 44, x0 = R - w1 - 12 - w0;
+  tog[0].r.setAttribute('x', x0); tog[0].sw.setAttribute('x', x0 + 13); tog[0].tx.setAttribute('x', x0 + 32); tog[0].cx = x0 + w0 / 2; }
+
+const lanes = el('g', {}, chart);
+const bLane = el('g', {}, lanes), wLane = el('g', {}, lanes);
+el('rect', { x: L, y: yB0, width: R - L, height: laneB, class: 'lane' }, bLane);
+el('text', { x: L - 14, y: yB0 + laneB / 2 + 5, class: 'lv-t', 'text-anchor': 'end' }, bLane).textContent = 'Battlefield';
+el('rect', { x: L, y: yW0, width: R - L, height: laneW, class: 'lane' }, wLane);
+el('text', { x: L - 14, y: yW0 + laneW / 2 + 5, class: 'lv-t', 'text-anchor': 'end' }, wLane).textContent = 'West / NATO';
+const bands = LEVELS.map((n, v) => {
+  const y = y0 + band * (5 - v), g = el('g', {}, lanes);
+  el('rect', { x: L, y, width: R - L, height: band, fill: v === 5 ? '#e0533d' : '#efe9dc', opacity: v === 5 ? .07 : 0.015 + v * 0.01 }, g);
+  el('line', { x1: L, x2: R, y1: y, y2: y, stroke: '#1f3a2d' }, g);
+  const t = el('text', { x: L - 14, y: y + band / 2 + 5, class: 'lv-t', 'text-anchor': 'end' }, g);
+  t.innerHTML = `<tspan class="lv-n">${v}</tspan>  ${n}`;
+  return { g, t };
+});
+const axis = el('g', {}, chart);
+el('text', { x: L + 3, y: yAx, class: 'yr' }, axis).textContent = '2022';
+for (const y of [2023, 2024, 2025, 2026]) {
+  const x = X(`${y}-01-01`);
+  el('line', { x1: x, x2: x, y1: yB0, y2: yAx - 18, stroke: '#2b4a3b' }, axis);
+  el('text', { x: x + 5, y: yAx, class: 'yr' }, axis).textContent = y;
+}
+
+// Marks, placed with the page's nudge rule (items close in time on one row step up and down).
+const rows = new Map();
+const place = (key, px, base, step, spread) => {
+  const xs = rows.get(key) || []; let k = 0;
+  while (xs.some(([ox, ok]) => ok === k && Math.abs(ox - px) < 13) && k < 6) k++;
+  xs.push([px, k]); rows.set(key, xs);
+  const off = k === 0 ? 0 : (k % 2 ? 1 : -1) * Math.ceil(k / 2) * step;
+  return base + Math.max(-spread, Math.min(spread, off));
+};
+const marksG = el('g', {}, chart);
+const selLine = el('line', { y1: yB0, y2: yAx - 18, stroke: 'var(--amber)', 'stroke-width': 1.5, 'stroke-dasharray': '4 4', opacity: 0 }, marksG);
+const marks = EV.map(([d, g, type, lv], i) => {
+  const px = X(d); let py, node;
+  const r = 8;
+  if (g === 'b') { py = place('b', px, yB0 + laneB / 2, 11, laneB / 2 - 8); node = el('path', { d: `M0 ${-r}L${r} 0L0 ${r}L${-r} 0Z`, fill: BATTLE }, marksG); }
+  else if (g === 'w') { py = place('w', px, yW0 + laneW / 2, 11, laneW / 2 - 8); node = el('rect', { x: -r + 1.5, y: -r + 1.5, width: 2 * r - 3, height: 2 * r - 3, fill: WEST }, marksG); }
+  else { py = place('l' + lv, px, y0 + band * (5 - lv) + band / 2, 13, band / 2 - 9); node = el('circle', { r, fill: TYPE_COL[type], stroke: '#0b1712', 'stroke-width': 1.5 }, marksG); }
+  return { d, g, lv, px, py, node, t: 0 };
+});
+// Sweep reveal: each mark pops when the date line passes it.
+const sweep = el('line', { y1: yB0 - 10, y2: yAx - 18, stroke: 'var(--amber)', 'stroke-width': 2.5, filter: 'url(#kit-glow)', opacity: 0 }, chart);
+const sweepD = el('text', { y: yB0 - 20, class: 'c-e', 'text-anchor': 'middle', opacity: 0 }, chart);
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+// Detail cards (text from data/events.js and data/coding.js).
+function card(x, y, w, h, lines) {
+  const g = el('g', { opacity: 0 }, cam);
+  el('rect', { x, y, width: w, height: h, rx: 6, class: 'card' }, g);
+  lines(g, x + 26, y);
+  return g;
+}
+const cardA = card(830, 450, 560, 196, (g, x, y) => {
+  el('text', { x, y: y + 36, class: 'c-e' }, g).textContent = '21 September 2022 · Putin';
+  el('text', { x, y: y + 96, class: 'c-q' }, g).textContent = '“This is not a bluff.”';
+  el('text', { x, y: y + 144, class: 'c-l' }, g).textContent = 'Level 2: Conditional threat';
+  el('text', { x, y: y + 172, class: 'c-m' }, g).textContent = 'Words with a condition. No change to forces.';
+});
+const cardB = card(410, 340, 560, 214, (g, x, y) => {
+  el('text', { x, y: y + 36, class: 'c-e' }, g).textContent = '21 November 2024 · Putin';
+  el('text', { x, y: y + 80, class: 'c-h' }, g).textContent = 'Oreshnik missile fired at Dnipro';
+  const bar = el('g', {}, g);
+  for (let k = 0; k < 5; k++) el('rect', { x: x + k * 34, y: y + 106, width: 28, height: 8, rx: 2, fill: 'var(--red)' }, bar);
+  el('text', { x, y: y + 150, class: 'c-l' }, g).textContent = 'Level 5: Combat use of a';
+  el('text', { x, y: y + 174, class: 'c-l' }, g).textContent = 'nuclear-capable weapon';
+  el('text', { x, y: y + 200, class: 'c-m' }, g).textContent = 'Putin said it carried a non-nuclear payload.';
+});
+const leadA = el('path', { d: `M${marks[A].px + 12},${marks[A].py} L830,${marks[A].py}`, stroke: 'var(--amber)', 'stroke-width': 1.3, 'stroke-dasharray': '4 4', fill: 'none', opacity: 0 }, cam);
+const leadB = el('path', { d: `M970,${marks[B].py} L${marks[B].px - 12},${marks[B].py}`, stroke: 'var(--amber)', 'stroke-width': 1.3, 'stroke-dasharray': '4 4', fill: 'none', opacity: 0 }, cam);
+const ringSel = el('circle', { r: 16, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 2.5, filter: 'url(#kit-glow)', opacity: 0 }, cam);
+
+// Cursor.
+const cur = el('g', { opacity: 0 }, cam);
+const ring = el('circle', { r: 22, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 3, filter: 'url(#kit-glow)' }, cur);
+el('path', { d: 'M0 0l0 30l8 -7l6 13l6 -3l-6 -12l11 0z', fill: 'var(--paper)', stroke: '#0b1712', 'stroke-width': 2 }, cur);
+
+// Hook.
+const hook = el('g', {}, svg);
+const h1 = el('text', { x: 800, y: 440, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:64px' }, hook);
+h1.textContent = 'Every major Russian nuclear signal since 2022,';
+const h2 = el('text', { x: 800, y: 530, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:64px' }, hook);
+h2.innerHTML = 'scored by <tspan class="hot">what it changed</tspan>.';
+
+// Payoff: the level tally.
+const pay = el('g', { opacity: 0 }, svg);
+el('rect', { width: 1600, height: 1000, fill: '#070f0b', opacity: .82 }, pay);
+const p1 = el('text', { x: 800, y: 250, class: 't-hook', 'text-anchor': 'middle' }, pay);
+const nChanged = COUNT[3] + COUNT[4] + COUNT[5], nAll = COUNT.reduce((a, b) => a + b, 0);
+p1.innerHTML = `${nAll} signals. <tspan class="hot">${nChanged}</tspan> changed rules, forces or use.`;
+const payBars = COUNT.map((c, v) => {
+  const g = el('g', {}, pay), x = 420 + v * 130, h = c * 26;
+  const col = v >= 3 ? (v === 5 ? 'var(--red)' : 'var(--amber)') : '#4d6b5c';
+  const bar = el('rect', { x, y: 640, width: 86, height: 0, rx: 3, fill: col }, g);
+  const n = el('text', { x: x + 43, y: 640, class: 'cmp-v', 'text-anchor': 'middle' }, g); n.textContent = c;
+  el('text', { x: x + 43, y: 676, class: 'cmp-n', 'text-anchor': 'middle' }, g).textContent = `Level ${v}`;
+  return { g, bar, n, h, x };
+});
+el('text', { x: 800, y: 760, class: 'note', 'text-anchor': 'middle' }, pay).textContent = 'No nuclear weapon has been used.';
+el('text', { x: 800, y: 800, class: 'cmp-n', 'text-anchor': 'middle', style: 'font-size:13px' }, pay).textContent = 'Russian signals by level, in the tool author’s coding';
+
+const cap = captions(svg, [
+  [0.3, 3.2, 'Threats, doctrine, drills, deployments, treaty moves'],
+  [3.5, 7.1, 'Circles rise with what each signal changed'],
+  [7.3, 9.4, 'Loud is not high: “not a bluff” is a level 2'],
+  [9.5, 11.4, 'Nov. 2024: a nuclear-capable missile fired at Dnipro'],
+  [11.6, 13.3, 'Set the minimum to 3: rules, forces and use remain'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Russia’s Nuclear Signals', line: 'Every major signal since 2022, and what, if anything, each one changed.' });
+
+// ---- Timeline -----------------------------------------------------------------------------------
+const D = 18;
+const S0 = 3.6, S1 = 7.0;             // sweep window
+function frame(t) {
+  // hook
+  const hu = ease.out(seg(t, 0.2, 0.9)), hOut = 1 - seg(t, 2.8, 3.3);
+  h1.setAttribute('opacity', hu * hOut); h1.setAttribute('transform', `translate(0,${(1 - hu) * 18})`);
+  const h2u = ease.out(seg(t, 0.8, 1.5));
+  h2.setAttribute('opacity', h2u * hOut); h2.setAttribute('transform', `translate(0,${(1 - h2u) * 18})`);
+
+  // chart chrome
+  const out = 1 - seg(t, 13.4, 13.9);
+  const ch = ease.out(seg(t, 3.0, 3.8));
+  chart.setAttribute('opacity', ch);
+  head.setAttribute('opacity', ease.out(seg(t, 3.3, 3.9)));
+  bands.forEach((b, v) => b.g.setAttribute('opacity', ease.out(seg(t, 3.1 + (5 - v) * 0.07, 3.6 + (5 - v) * 0.07))));
+
+  // sweep
+  const su = ease.inOut(seg(t, S0, S1)), sd = T0 + su * (Date.parse('2026-06-15') - T0);
+  const sx = L + (sd - T0) / (T1 - T0) * (R - L);
+  const sOn = seg(t, S0 - 0.1, S0 + 0.1) * (1 - seg(t, S1, S1 + 0.3));
+  sweep.setAttribute('x1', sx); sweep.setAttribute('x2', sx); sweep.setAttribute('opacity', sOn);
+  const dd = new Date(sd);
+  sweepD.textContent = `${MON[dd.getUTCMonth()]} ${dd.getUTCFullYear()}`;
+  sweepD.setAttribute('x', sx); sweepD.setAttribute('opacity', sOn);
+
+  // filter: min level 3 from 11.6; context lanes off at 12.2 and 12.5
+  const f3 = ease.inOut(seg(t, 11.75, 12.2)) * out;
+  const wOff = ease.inOut(seg(t, 12.25, 12.55)), bOff = ease.inOut(seg(t, 12.6, 12.9));
+  lvBtn.forEach((b, v) => {
+    const on = v === 3 ? f3 > 0.5 : v === 0 && f3 <= 0.5;
+    b.r.style.fill = on ? 'var(--amber)' : ''; b.r.style.stroke = on ? 'var(--amber)' : '';
+    b.tx.style.fill = on ? '#0b1712' : '';
+  });
+  tog[0].sw.setAttribute('opacity', 1 - 0.65 * wOff); tog[0].tx.style.fill = wOff > 0.5 ? 'var(--muted)' : 'var(--paper)';
+  tog[1].sw.setAttribute('opacity', 1 - 0.65 * bOff); tog[1].tx.style.fill = bOff > 0.5 ? 'var(--muted)' : 'var(--paper)';
+  wLane.setAttribute('opacity', 1 - 0.7 * wOff); bLane.setAttribute('opacity', 1 - 0.7 * bOff);
+  bands.forEach((b, v) => { if (v < 3) b.t.setAttribute('opacity', 1 - 0.6 * f3); });
+
+  // marks
+  const pickA = seg(t, 7.6, 7.8) * (1 - seg(t, 9.2, 9.5)), pickB = seg(t, 9.7, 9.9) * (1 - seg(t, 11.4, 11.7));
+  const focus = Math.max(pickA, pickB);
+  marks.forEach((m, i) => {
+    const pu = seg(sx - m.px, 0, 26), pop = ease.back(pu);
+    let o = pu > 0 ? 1 : 0, s = pop;
+    if (m.g === 'r' && m.lv < 3) o *= 1 - 0.85 * f3, s *= 1 - 0.4 * f3;
+    if (m.g === 'w') o *= 1 - wOff; if (m.g === 'b') o *= 1 - bOff;
+    const isSel = (i === A && pickA > 0) || (i === B && pickB > 0);
+    if (!isSel) o *= 1 - 0.6 * focus;
+    const flash = m.g === 'r' ? (1 - seg(sx - m.px, 0, 90)) * (1 - seg(t, S1 - 0.2, S1 + 0.3)) : 0;
+    m.node.setAttribute('opacity', o.toFixed(3));
+    m.node.setAttribute('transform', `translate(${m.px.toFixed(1)},${m.py.toFixed(1)}) scale(${(s * (1 + 0.5 * flash + (isSel ? 0.35 : 0))).toFixed(3)})`);
+    m.node.setAttribute('filter', (flash > 0.3 && pu > 0) || isSel || (m.g === 'r' && m.lv === 5 && t > 12.2 && t < 13.4) ? 'url(#kit-glow)' : '');
+  });
+  const selM = pickB > 0 ? marks[B] : marks[A];
+  ringSel.setAttribute('cx', selM.px); ringSel.setAttribute('cy', selM.py);
+  ringSel.setAttribute('opacity', focus); ringSel.setAttribute('r', 14 + 6 * (1 - ease.out(seg(t, pickB > 0 ? 9.7 : 7.6, (pickB > 0 ? 9.7 : 7.6) + 0.5))));
+  selLine.setAttribute('x1', selM.px); selLine.setAttribute('x2', selM.px); selLine.setAttribute('opacity', focus * 0.8);
+  const ca = ease.out(seg(t, 7.75, 8.3)) * (1 - seg(t, 9.2, 9.5)), cb = ease.out(seg(t, 9.85, 10.4)) * (1 - seg(t, 11.4, 11.7));
+  cardA.setAttribute('opacity', ca); cardA.setAttribute('transform', `translate(${(1 - ca) * 24},0)`); leadA.setAttribute('opacity', ca);
+  cardB.setAttribute('opacity', cb); cardB.setAttribute('transform', `translate(${(1 - cb) * -24},0)`); leadB.setAttribute('opacity', cb);
+
+  // cursor path: to item A, to item B, to the "3" button, to the two toggles
+  const P = [[980, 760], [marks[A].px + 4, marks[A].py + 4], [marks[B].px + 4, marks[B].py + 4], [lvBtn[3].cx, lvBtn[3].cy + 4], [tog[0].cx, tog[0].cy + 4], [tog[1].cx, tog[1].cy + 4], [tog[1].cx + 60, tog[1].cy + 120]];
+  const K = [[6.9, 7.55], [9.1, 9.65], [11.2, 11.7], [11.85, 12.2], [12.3, 12.55], [12.8, 13.3]];
+  let cx = P[0][0], cy = P[0][1];
+  K.forEach(([a, b], k) => { const u = ease.inOut(seg(t, a, b)); if (t >= a) { cx = lerp(P[k][0], P[k + 1][0], u); cy = lerp(P[k][1], P[k + 1][1], u); } });
+  cur.setAttribute('opacity', seg(t, 6.8, 7.1) * (1 - seg(t, 12.9, 13.3)));
+  cur.setAttribute('transform', `translate(${cx.toFixed(1)},${cy.toFixed(1)})`);
+  const press = Math.max(...[7.6, 9.7, 11.72, 12.22, 12.57].map(a => seg(t, a - 0.12, a) * (1 - seg(t, a + 0.05, a + 0.35))));
+  ring.setAttribute('r', lerp(28, 14, press)); ring.setAttribute('opacity', press);
+
+  // camera: gentle push, then lean toward each opened item
+  const push = ease.inOut(seg(t, 3.0, 13.4));
+  const la = ease.inOut(seg(t, 7.5, 8.4)) * (1 - ease.inOut(seg(t, 9.1, 9.9)));
+  const lb = ease.inOut(seg(t, 9.4, 10.4)) * (1 - ease.inOut(seg(t, 11.2, 12.0)));
+  const s = 1 + 0.03 * push + 0.035 * (la + lb);
+  cam.setAttribute('transform', `translate(800,500) scale(${s}) translate(${-800 + 40 * la - 30 * lb},${-500 + 10 * push})`);
+
+  // payoff
+  const po = ease.out(seg(t, 13.4, 14.0)) * (1 - seg(t, 15.4, 15.8));
+  pay.setAttribute('opacity', po);
+  const bl = Math.max(po, seg(t, 15.4, 15.8));
+  blurG.setAttribute('stdDeviation', (bl * 6).toFixed(2));
+  cam.setAttribute('filter', bl > 0.01 ? 'url(#rns-blur)' : '');
+  payBars.forEach((b, v) => {
+    const u = ease.out(seg(t, 13.6 + v * 0.1, 14.3 + v * 0.1)), h = b.h * u;
+    b.bar.setAttribute('y', 640 - 20 - h); b.bar.setAttribute('height', h);
+    b.n.setAttribute('y', 640 - 34 - h); b.n.setAttribute('opacity', u);
+    b.bar.setAttribute('filter', v === 5 && t > 14.4 ? 'url(#kit-glow)' : '');
+  });
+
+  cap(t); end(t, 15.5, D);
+}
+run({ duration: D, poster: 10.6, frame });
+</script>
+</body></html>

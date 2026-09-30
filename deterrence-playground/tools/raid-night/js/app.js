@@ -158,7 +158,14 @@ document.addEventListener('keydown', e => {
   if (k === '1' || k === '2' || k === '3') { setWeapon(WEAPON_ORDER[+k - 1]); return; }
   if (k === 'p' || k === 'P' || (k === 'Escape' && started)) { setPaused(!paused); e.preventDefault(); return; }
   if ((k === 'n' || k === 'N') && S.phase === 'break') { goNext(); return; }
-  const inGame = document.activeElement === canvas;
+  // While a wave is running the arrows, Space and Tab work anywhere on the page (not only with the field focused).
+  // Paused or between waves, Tab goes back to moving between controls.
+  const live = started && !paused && S.phase === 'wave';
+  if (k === 'Tab' && live) {
+    const i = WEAPON_ORDER.indexOf(weapon), n = WEAPON_ORDER.length;
+    setWeapon(WEAPON_ORDER[(i + (e.shiftKey ? n - 1 : 1)) % n]); e.preventDefault(); return;
+  }
+  const inGame = document.activeElement === canvas || live;
   if (!inGame) return;
   if (k === 'ArrowRight' || k === 'ArrowDown' || k === 'k' || k === 'K') { cycle(1); e.preventDefault(); }
   else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'j' || k === 'J') { cycle(-1); e.preventDefault(); }

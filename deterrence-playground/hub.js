@@ -145,7 +145,8 @@ function render() {
         <p>${COUNTED.length} tools in ${CATEGORIES.filter(c => c.id !== 'dev').length} sections.</p></div><div class="sec-tiles">${CATEGORIES.map(tile).join('')}</div></section>`;
     } else {
       const c = CATEGORIES.find(x => x.id === cat), list = TOOLS.filter(t => inCat(t, cat));
-      const groups = c.subs ? subGroups(c, list) : [];
+      // A section whose tools all fall in one subsection skips the tile step and lists them directly.
+      const groups = c.subs && subGroups(c, list).length > 1 ? subGroups(c, list) : [];
       const open = groups.find(([s]) => s.id === sub);
       if (open) {
         // Inside a subsection: its tools, with a way back to the section.

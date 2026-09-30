@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Airlift: Berlin 1948–49 | Interactive Deterrence</title>
+<meta name="description" content="A logistics game: run the Berlin Airlift day by day, from aircraft and crews to runways, weather and cargo, and compare your tonnage with the historical record.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@500;600;700;800&family=DM+Mono:wght@400;500&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="berlin-airlift.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<main class="layout">
+  <div class="stage" id="stage">
+    <p class="nbanner"><span class="notional">Notional model</span> Dates, fleet sizes, requirements and the historical tonnage come from the sources listed below. The throughput model, the weather, crew fatigue, accidents and the politics meter are notional. Every coefficient is listed, sourced or marked, and editable under Model inputs.</p>
+
+    <div class="card statcard" id="statcard">
+      <div class="stat-top">
+        <div>
+          <p class="eyebrow" id="st-week">Week 1 of 46</p>
+          <p class="st-date" id="st-date">26 Jun 1948</p>
+          <p class="st-sub" id="st-sub">Blockade day 1</p>
+        </div>
+        <div class="st-btns">
+          <button type="button" class="btn solid" id="run-week">Fly 1 week</button>
+          <button type="button" class="btn" id="run-day">1 day</button>
+          <button type="button" class="btn" id="run-month">4 weeks</button>
+        </div>
+      </div>
+      <div class="kpis">
+        <div class="kpi"><span class="k-l">Last 7 days</span><b class="num" id="k-week">–</b><span class="k-s" id="k-week-s">tons a day</span></div>
+        <div class="kpi"><span class="k-l">Requirement</span><b class="num" id="k-req">4,500</b><span class="k-s">tons a day</span></div>
+        <div class="kpi"><span class="k-l">Delivered so far</span><b class="num" id="k-cum">0</b><span class="k-s" id="k-cum-s">history: 0</span></div>
+        <div class="kpi"><span class="k-l">Accidents</span><b class="num" id="k-acc">0</b><span class="k-s" id="k-acc-s">0 fatal</span></div>
+      </div>
+      <div class="meters">
+        <div class="meter" id="m-food"><span class="m-l">Food reserve</span><span class="m-bar"><i></i></span><span class="m-v num"></span></div>
+        <div class="meter" id="m-coal"><span class="m-l">Coal reserve</span><span class="m-bar"><i></i></span><span class="m-v num"></span></div>
+        <div class="meter" id="m-sup"><span class="m-l">Political support <span class="notional">notional</span></span><span class="m-bar"><i></i></span><span class="m-v num"></span></div>
+      </div>
+      <div class="st-foot">
+        <label class="tg auto"><input type="checkbox" id="autopilot"><span class="sw"></span><span class="t">Autopilot: fly it as the Allies did<small>Makes the historical choices each day so you can watch a full season.</small></span></label>
+        <div class="st-links">
+          <button type="button" class="btn" id="tour-btn">Walkthrough</button>
+          <button type="button" class="btn" id="copy">Copy link</button>
+          <button type="button" class="btn" id="newgame">New game</button>
+        </div>
+      </div>
+    </div>
+
+    <section class="card evcard" id="event" hidden aria-live="polite"></section>
+    <section class="card debrief" id="debrief" hidden></section>
+
+    <div class="card mapcard" id="mapcard">
+      <div class="card-h"><p class="eyebrow">Corridors and airfields</p><p class="fine" id="map-note">Schematic, not to scale</p></div>
+      <svg id="map" viewBox="0 0 640 330" role="img" aria-label="Schematic of the three air corridors from the western zones to Berlin's airfields, with yesterday's landings against each airfield's landing slots."></svg>
+      <p class="fine map-read" id="map-read"></p>
+    </div>
+
+    <div class="card chartcard" id="chartcard">
+      <div class="card-h">
+        <div class="seg tabs" role="group" aria-label="Chart">
+          <button type="button" data-tab="daily" aria-pressed="true">Daily tons</button>
+          <button type="button" data-tab="cum" aria-pressed="false">Cumulative</button>
+          <button type="button" data-tab="stocks" aria-pressed="false">Reserves</button>
+        </div>
+        <ul class="legend" id="legend"></ul>
+      </div>
+      <svg id="chart" class="chart" role="img" aria-label="Your daily tonnage compared with the historical monthly averages and sourced single days."></svg>
+      <p class="hover" id="hover">Hover or tap the chart to read a day.</p>
+      <div class="replay">
+        <label for="scrub" class="fine">Replay</label>
+        <input type="range" id="scrub" min="0" max="0" value="0" step="1" aria-describedby="scrub-out">
+        <output id="scrub-out" class="num fine">–</output>
+      </div>
+    </div>
+
+    <div class="card logcard">
+      <div class="card-h"><p class="eyebrow">Operations log</p></div>
+      <ol class="log" id="log"></ol>
+    </div>
+  </div>
+
+  <aside class="panel" id="panel" aria-label="This week's plan">
+    <div class="sec" id="sec-fore">
+      <p class="eyebrow">Your plan, per day</p>
+      <div class="tablewrap fore"><table>
+        <thead><tr><th scope="col">Weather</th><th scope="col" class="r">Tons</th><th scope="col" class="r">Landings</th></tr></thead>
+        <tbody id="fore"></tbody>
+      </table></div>
+      <p class="fine" id="fore-lim"></p>
+      <button type="button" class="btn" id="ask" hidden></button>
+    </div>
+
+    <div class="sec" id="sec-fleet">
+      <p class="eyebrow">Fleet and bases</p>
+      <dl class="readout" id="fleet"></dl>
+      <div class="slider"><div class="sl-h"><label for="north">C-54s based in the British zone</label><output id="north-o">0</output></div>
+        <input type="range" id="north" min="0" max="0" step="1" value="0"><small id="north-s">Fassberg opens to C-54s on 21 Aug 1948.</small></div>
+      <div class="slider"><div class="sl-h"><label for="c47">U.S. C-47s flying</label><output id="c47-o">0</output></div>
+        <input type="range" id="c47" min="0" max="110" step="1" value="110"><small>Each takes a Tempelhof slot for about 3 tons.</small></div>
+      <label class="tg"><input type="checkbox" id="dak" checked><span class="sw"></span><span class="t">Keep RAF Dakotas on the lift<small>Mixed types force four-minute spacing at Gatow.</small></span></label>
+    </div>
+
+    <div class="sec" id="sec-traffic">
+      <p class="eyebrow">Traffic rules</p>
+      <p class="lab">Landing interval</p>
+      <div class="seg" role="group" aria-label="Landing interval" id="interval">
+        <button type="button" data-v="3">3 min</button><button type="button" data-v="4">4 min</button><button type="button" data-v="5">5 min</button>
+      </div>
+      <p class="lab">Missed approach</p>
+      <div class="seg" role="group" aria-label="Missed approach rule" id="approach">
+        <button type="button" data-v="stack">Stack and circle</button><button type="button" data-v="straight">One attempt, fly home</button>
+      </div>
+    </div>
+
+    <div class="sec" id="sec-crews">
+      <p class="eyebrow">Crews and maintenance</p>
+      <p class="lab">Crew flying hours a month</p>
+      <div class="seg" role="group" aria-label="Crew hours" id="hours">
+        <button type="button" data-v="90">90 (plan)</button><button type="button" data-v="120">120</button><button type="button" data-v="150">150 (surge)</button>
+      </div>
+      <div class="meter small" id="m-fat"><span class="m-l">Crew fatigue <span class="notional">notional</span></span><span class="m-bar"><i></i></span><span class="m-v num"></span></div>
+      <label class="tg"><input type="checkbox" id="field"><span class="sw"></span><span class="t">200-hour inspections at the flying bases<small>Clears the backlog but takes mechanics off the flight line.</small></span></label>
+      <dl class="readout" id="maint"></dl>
+    </div>
+
+    <div class="sec" id="sec-cargo">
+      <p class="eyebrow">Cargo</p>
+      <div class="slider"><div class="sl-h"><label for="coal">Coal</label><output id="coal-o">45%</output></div><input type="range" id="coal" min="0" max="100" step="1" value="45"></div>
+      <div class="slider"><div class="sl-h"><label for="food">Food</label><output id="food-o">40%</output></div><input type="range" id="food" min="0" max="100" step="1" value="40"></div>
+      <div class="mixbar" id="mixbar" aria-hidden="true"><i class="mx-coal"></i><i class="mx-food"></i><i class="mx-other"></i></div>
+      <p class="fine" id="mix-note"></p>
+      <p class="lab">Construction material for Berlin's runways</p>
+      <div class="seg" role="group" aria-label="Construction lift" id="build">
+        <button type="button" data-v="0">None</button><button type="button" data-v="25">25 t</button><button type="button" data-v="50">50 t</button><button type="button" data-v="100">100 t</button>
+      </div>
+      <label class="tg"><input type="checkbox" id="prio"><span class="sw"></span><span class="t">Tegel first<small>Otherwise the new Tempelhof runways get the double share.</small></span></label>
+      <dl class="readout" id="proj"></dl>
+    </div>
+  </aside>
+</main>
+
+<section class="below">
+  <div class="col">
+    <h2>How to play</h2>
+    <p>You run the Anglo-American airlift from 26 June 1948, when the Soviet blockade closes the roads, railways and canals into West Berlin, until 12 May 1949, when it is lifted. Each turn is a day, and the buttons fly one day, one week or four weeks with your current plan. Dated events stop the clock and ask for a decision.</p>
+    <p>Berlin needs a minimum tonnage every day: 4,500 tons until the end of 1948 and 5,620 from January. Food and coal come out of the city's reserves when you fall short. You lose if political support in Washington and London runs out, or if the food reserve stays empty for five days.</p>
+    <p>Tonnage is aircraft times trips times load. Crews limit the trips each aircraft can fly, and the aircraft in commission cap them. Landing slots in Berlin then limit how many of those trips can land: one aircraft every three minutes per airfield in good weather, fewer in cloud and fog. The forecast table in the panel shows what your plan delivers tomorrow in each kind of weather and which limit binds.</p>
+    <p>The chart compares your daily tonnage with the historical monthly averages from the USAFE summary and with single days the sources record, such as Air Force Day and the Easter Parade. After the season, drag the replay slider to step back through your airlift day by day.</p>
+
+    <h2 class="mt">How the model works</h2>
+    <p><b>Trips.</b> For each stream of aircraft, trips per day = min(aircraft × crews per aircraft × monthly hours ÷ 30 ÷ round-trip hours, aircraft in commission × 24 ÷ (round trip + ground time)). American C-54s fly from Rhein-Main and Wiesbaden down the southern corridor to Tempelhof; C-54s you base in the British zone, and all British aircraft, fly the shorter northern corridor to Gatow and, once it is built, Tegel. Everyone returns through the central corridor.</p>
+    <p><b>Slots.</b> Each airfield lands 1,440 ÷ interval aircraft a day in good weather, times a weather factor. Gatow needs four minutes while RAF Dakotas mix with faster types. Tempelhof runs at reduced capacity until its second runway opens. When demand exceeds slots, the heaviest aircraft land first. Stacking in bad weather wastes slots; the one-attempt rule keeps them but sends a missed aircraft home with its load.</p>
+    <p><b>Maintenance.</b> Every 200 C-54 flying hours create one inspection. Depots clear a sourced number each month; field inspections clear more at a cost to the in-commission rate. Inspections more than three aircraft overdue ground aircraft until cleared.</p>
+    <p><b>Accidents and politics.</b> The accident rate per flight comes from the airlift's own totals, scaled by weather, fatigue, landing interval and stacking. Political support moves each week with deliveries against what Washington expects, falls with fatal crashes and empty reserves, and moves with events. These scalings are notional.</p>
+    <p><b>Calibration.</b> Flown with the historical choices, the model delivers within 1 percent of the historical total to 12 May 1949 across 20 weather seeds. It runs about 15 percent behind history in July 1948 and 15 to 27 percent ahead in November and December, when the real airlift also lost aircraft and time to problems the model leaves out. On the two record days it delivers about 6,900 tons for Air Force Day (history 6,989) and about 10,000 for the Easter Parade (history 12,941).</p>
+    <p><b>What the model leaves out:</b> ground transport to the airfields, loading crews, fuel supply, the French contribution, Sunderland flying boats, outbound cargo and passengers, Soviet harassment in the corridors, and much of the politics. It is a teaching model of the operation's bottlenecks, not a reconstruction.</p>
+  </div>
+  <div class="col">
+    <h2>Model inputs</h2>
+    <p class="fine">Edit any value; the game uses it from the next day. <span class="notional">notional</span> marks values without a source. <button type="button" class="btn tiny" id="coef-reset">Reset all</button></p>
+    <div class="tablewrap coefwrap"><table><tbody id="coefs"></tbody></table></div>
+
+    <h2 class="mt">The historical record</h2>
+    <div class="tablewrap"><table class="histtab"><thead><tr><th scope="col">Month</th><th scope="col" class="r">Tons</th><th scope="col" class="r">Per day</th><th scope="col" class="r">Flights</th><th scope="col" class="r">Coal</th></tr></thead><tbody id="histtab"></tbody></table></div>
+    <p class="fine">USAFE summary, p. 12 (U.S. short tons). June 1948 covers 26–30 June. The airlift continued after the blockade ended and delivered 2,325,509.6 tons in 277,569 flights by the end of September 1949.</p>
+    <p class="fine"><b>Where the sources differ.</b> For the Easter Parade, Miller gives 12,941 tons in 1,383 flights, the figure painted on the last C-54; the AlliiertenMuseum gives 12,940 tons in 1,398 flights. Miller's text also calls it April 18 once and misnames the weekdays; it ran from noon on 15 April to noon on 16 April 1949. The RAF's history page gives "roughly 400,821 tonnes" without saying what the figure covers; the USAFE summary credits British aircraft with 541,936.9 short tons, including 146,980 by civil charter firms.</p>
+
+    <h2 class="mt">Sources</h2>
+    <ul class="src" id="srclist"></ul>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Airlift: Berlin 1948–49', sub: 'Run the Berlin Airlift day by day: aircraft, crews, runways, weather and cargo against the city\'s daily minimum.', category: 'Force & wargame models' });
+  document.title = 'Airlift: Berlin 1948–49 | Interactive Deterrence';
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

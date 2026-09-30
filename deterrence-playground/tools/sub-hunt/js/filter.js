@@ -41,13 +41,6 @@ export function update(f, obs) {
   return pAny;
 }
 
-/** Reweight by a clue: fn(s) returns the likelihood of the clue if the sub were at particle s. */
-export function applyClue(f, fn) {
-  let tot = 0;
-  for (let i = 0; i < f.n; i++) { f.w[i] *= fn(f.parts[i]); tot += f.w[i]; }
-  normalize(f, tot);
-}
-
 function normalize(f, tot) {
   if (!(tot > 0)) { f.w.fill(1 / f.n); return; }
   for (let i = 0; i < f.n; i++) f.w[i] /= tot;
@@ -120,4 +113,31 @@ export function halfArea(g) {
   let s = 0, n = 0;
   for (const x of v) { if (s >= tot / 2) break; s += x; n += 1; }
   return n;
+}
+
+/** Probability-weighted centre [lon, lat] of the map (subs still in the gap only), or null. */
+export function centre(f) {
+  let x = 0, y = 0, s = 0;
+  f.parts.forEach((p, i) => { if (!p.out) { x += p.lon * f.w[i]; y += p.lat * f.w[i]; s += f.w[i]; } });
+  return s > 0 ? [x / s, y / s] : null;
+}
+
+/**
+ * The best attack the map allows right now: the point, among the brightest cells and any extra
+ * candidates (recent contacts), whose ring of radius r holds the most probability. Refined by a small
+ * local search. Returns { p, v }.
+ */
+export function bestShot(f, heatGrid, r, extra = []) {
+  const top = Array.from(heatGrid.keys()).sort((a, b) => heatGrid[b] - heatGrid[a]).slice(0, 10).map(cellCenter);
+  let best = { p: top[0], v: -1 };
+  for (const c of [...top, ...extra]) { const v = pWithin(f, c, r); if (v > best.v) best = { p: c, v }; }
+  for (const d of [6, 3]) {
+    for (let k = 0; k < 8; k++) {
+      const q = step(best.p, k * 45, d);
+      if (isLand(q[0], q[1])) continue;
+      const v = pWithin(f, q, r);
+      if (v > best.v) best = { p: q, v };
+    }
+  }
+  return best;
 }

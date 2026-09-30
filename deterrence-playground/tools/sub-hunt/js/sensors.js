@@ -33,6 +33,9 @@ export const activeAt = (a, h) => h >= a.t0 && h <= a.t1;
 
 function insideBox(q, c) { const [x, y] = offset(c, q); return Math.abs(x) <= M.half && Math.abs(y) <= M.half; }
 
+/** Is point q inside a sonobuoy circle or an aircraft square? */
+export const covers = (a, q) => (a.type === 'buoy' ? dist(q, a.p) <= B.fieldR : insideBox(q, a.p));
+
 /**
  * Detection chance this hour against a sub state s (truth or particle).
  * a: asset, or {type:'ship', seg:[a,b]}.

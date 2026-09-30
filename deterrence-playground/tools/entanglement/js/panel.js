@@ -32,7 +32,7 @@ export function buildPanel(panel, S, onChange) {
     help: 'Higher means the incoming weapons themselves could be nuclear.' }, S.P.amb, v => { S.P.amb = v; onChange(); });
   const dl = document.createElement('label');
   dl.className = 'tg';
-  dl.innerHTML = `<input type="checkbox" id="en-dl"><span class="sw"></span><span class="t">Target has a damage-limitation doctrine<small>It plans to hunt the other side’s nuclear forces and intercept its missiles. Acton argues this applies mainly to the United States.</small></span>`;
+  dl.innerHTML = `<input type="checkbox" id="en-dl"><span class="sw"></span><span class="t">Target has a damage-limitation doctrine<small>It plans to hunt the other side’s nuclear forces and intercept its missiles. Acton (2018, p. 74) says this pressure could arise in the United States and Russia, but not China.</small></span>`;
   tp.appendChild(dl);
   const dlIn = dl.querySelector('input');
   dlIn.addEventListener('change', e => { S.P.dlDoc = e.target.checked ? 1 : 0; onChange(); });

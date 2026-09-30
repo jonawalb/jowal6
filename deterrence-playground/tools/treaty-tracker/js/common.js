@@ -1,7 +1,10 @@
 // Treaty Tracker: status of a state under a treaty at the end of a chosen year, plus shared helpers.
-import { TREATIES, STATES, RECS, EVENTS } from '../data/treaties.js';
+import { TREATIES, STATES, RECS, EVENTS, AS_OF } from '../data/treaties.js';
 
 export const Y0 = 1963, Y1 = 2026;
+const MON = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+/** 'end of 1990', or for the current year the date the records were retrieved (the year is not over). */
+export function when(y) { return Number(y) >= Number(AS_OF.slice(0, 4)) ? `on ${Number(AS_OF.slice(8))} ${MON[Number(AS_OF.slice(5, 7)) - 1]} ${AS_OF.slice(0, 4)}` : `at the end of ${y}`; }
 export const GROUPS = [
   { id: 'nuclear', name: 'Nuclear tests and weapons', help: 'PTBT, NPT, CTBT, TPNW' },
   { id: 'wmd', name: 'Other weapons of mass destruction', help: 'BWC, CWC, Outer Space, Sea-bed' },

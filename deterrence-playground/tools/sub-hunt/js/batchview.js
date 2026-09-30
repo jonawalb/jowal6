@@ -4,7 +4,7 @@ import { BEHAVIOURS } from '../data/params.js';
 import { runBatch, PER } from './batch.js';
 
 const $ = id => document.getElementById(id);
-const KINDS = [['found', 'Found'], ['missed', 'Attack missed'], ['escaped', 'Broke out'], ['timeout', 'Ran out of time']];
+const KINDS = [['found', 'Found'], ['missed', 'Attack missed'], ['escaped', 'Slipped out'], ['timeout', 'Ran out of time']];
 
 function draw(rows) {
   const svg = $('bt-chart');

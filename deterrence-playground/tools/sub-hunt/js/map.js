@@ -1,4 +1,4 @@
-// Map rendering: basemap, belief heat map, search assets, contacts, clues and (after the hunt) the truth.
+// Map rendering: basemap, probability map, search assets, contacts and (after the hunt) the truth.
 import { createProjection, drawBasemap, el, circlePath, svgPoint } from '../../../shared/js/mapkit.js';
 import { LAND, BOX } from '../data/land.js';
 import { ROUTES, SENSORS, GAME } from '../data/params.js';
@@ -52,18 +52,21 @@ export function createMap(svg) {
   for (let lon = -30; lon <= 0; lon += 10) {
     const [x] = P([lon, 60]);
     el('line', { x1: x, y1: 0, x2: x, y2: proj.H }, grat);
-    el('text', { x: x + 3, y: proj.H - 5 }, grat, lon === 0 ? '0°' : `${-lon}°W`);
+    const t = lon === 0 ? '0°' : `${-lon}°W`;
+    el('text', { x: x + 3, y: P([lon, 59.05])[1], class: 'sh-gw' }, grat, t);
+    if (lon > -20) el('text', { x: x + 3, y: P([lon, 67.3])[1], class: 'sh-narrow' }, grat, t);
   }
   for (let lat = 60; lat <= 68; lat += 4) {
     const [, y] = P([0, lat]);
     el('line', { x1: 0, y1: y, x2: proj.W, y2: y }, grat);
-    el('text', { x: 4, y: y - 3 }, grat, `${lat}°N`);
+    el('text', { x: P([-25.8, lat])[0], y: y - 3, class: 'sh-gw' }, grat, `${lat}°N`);
+    if (lat > 60) el('text', { x: P([-19.8, lat])[0], y: y - 3, class: 'sh-narrow' }, grat, `${lat}°N`);
   }
   root.insertBefore(grat, root.querySelector('.tsm-land'));
   const heatImg = el('image', { x: 0, y: 0, width: proj.W, height: proj.H, preserveAspectRatio: 'none', class: 'sh-heat' });
   root.insertBefore(heatImg, root.querySelector('.tsm-land'));
   const names = el('g', { class: 'sh-names' }, root);
-  [['Greenland', -33, 67.4, 'sh-mid'], ['Iceland', -18.6, 64.9, 'sh-mid'], ['Faroes', -6.9, 62.55, 'sh-mid'], ['Shetland', -1.2, 60.9, 'sh-mid'],
+  [['Greenland', -23.2, 68.75, 'sh-mid'], ['Iceland', -18.6, 64.9, 'sh-mid'], ['Faroes', -6.9, 62.55, 'sh-mid'], ['Shetland', -1.2, 60.9, 'sh-mid'],
     ['Scotland', -4.3, 57.9, 'sh-mid'], ['Norway', 2.9, 61.6, 'sh-end']]
     .forEach(([t, lon, lat, c]) => el('text', { x: P([lon, lat])[0], y: P([lon, lat])[1], class: `t-place ${c}` }, names, t));
   [['Norwegian Sea', -3.5, 68.3], ['North Atlantic', -18.5, 59.4]].forEach(([t, lon, lat]) =>
@@ -75,10 +78,10 @@ export function createMap(svg) {
     const [x, y] = P(last);
     el('text', { x, y: y + 34, class: 'sh-exitlab sh-mid' }, routes, `${r.name} exit`);
   });
-  const [ex, ey] = P([-24.6, 65.9]);
-  el('text', { x: ex, y: ey, class: 'sh-exitlab sh-narrow' }, routes, '← Denmark Strait route');
+  const [ex, ey] = P([-19.6, 66.9]);
+  el('text', { x: ex, y: ey, class: 'sh-exitlab' }, routes, '← to the Denmark Strait');
   const layers = {};
-  for (const k of ['datum', 'clues', 'assets', 'ship', 'truth', 'contacts', 'cursor']) layers[k] = el('g', { class: `sh-${k}` }, root);
+  for (const k of ['datum', 'assets', 'ship', 'truth', 'contacts', 'cursor']) layers[k] = el('g', { class: `sh-${k}` }, root);
   return { svg, heatImg, layers, point: e => proj.unproject(...svgPoint(svg, e)) };
 }
 
@@ -92,39 +95,22 @@ export function render(m, g, view, color) {
   m.heatImg.setAttribute('href', heatImage(view.snap.heat, color));
   el('path', { d: ring(g.datum, GAME.datumR), class: 'sh-datum' }, L.datum);
   const [dx, dy] = P(step(g.datum, 0, GAME.datumR));
-  el('text', { x: dx, y: dy - 5, class: 'sh-lab sh-mid' }, L.datum, 'Opening cue, hour 0');
-
-  for (const c of g.clues.filter(c => c.h <= h)) {
-    if (c.kind === 'side') {
-      const a = c.axis === 'lon' ? [[c.cut, 62], [c.cut, 69.5]] : [[-20, c.cut], [2, c.cut]];
-      el('path', { d: proj.line(a), class: 'sh-clueline' }, L.clues);
-      const [x, y] = P(a[1]);
-      el('text', { x: x + (c.axis === 'lon' ? 4 : -4), y: y + (c.axis === 'lon' ? 12 : -5), class: `sh-lab sh-clue ${c.axis === 'lon' ? '' : 'sh-end'}` }, L.clues,
-        `Clue h${c.h}: ${c.axis === 'lon' ? (c.says ? '← west' : 'east →') : (c.says ? 'north ↑' : 'south ↓')}`);
-    } else {
-      el('path', { d: ring(c.p, c.sigma), class: 'sh-cluept' }, L.clues);
-      const [x, y] = P(c.p);
-      el('text', { x, y: y - 20, class: 'sh-lab sh-clue sh-mid' }, L.clues, `Report h${c.h}`);
-    }
-  }
+  el('text', { x: dx, y: dy - 5, class: 'sh-lab sh-mid' }, L.datum, 'Opening report, hour 0');
 
   for (const a of g.assets) {
-    if (a.t0 - (a.type === 'mpa' ? 1 + SENSORS.mpa.delay : 1) > h) continue;
+    if (a.t0 - 1 > h) continue;
     const live = activeAt(a, h + 1) || activeAt(a, h), pending = a.t0 > h + 1, done = a.t1 <= h;
     const cls = `sh-asset sh-${a.type}${pending ? ' pending' : ''}${done ? ' done' : ''}${live ? ' live' : ''}`;
     const d = a.type === 'buoy' ? ring(a.p, SENSORS.buoy.fieldR) : boxPath(a.p, SENSORS.mpa.half);
     el('path', { d, class: cls }, L.assets);
     const edge = a.type === 'buoy' ? P(step(a.p, 180, SENSORS.buoy.fieldR)) : P(step(a.p, 0, SENSORS.mpa.half));
-    const lab = a.type === 'buoy' ? `Buoys h${a.t0}–${a.t1}` : `Air h${a.t0}–${a.t1}`;
-    el('text', { x: edge[0], y: a.type === 'buoy' ? edge[1] + 13 : edge[1] - 5, class: `sh-lab sh-mid sh-alab${done ? ' done' : ''}` }, L.assets, lab);
+    const lab = done ? a.name : `${a.name} · ${a.t1 - h}h left`;
+    if (!done || view.reveal) el('text', { x: edge[0], y: a.type === 'buoy' ? edge[1] + 13 : edge[1] - 5, class: `sh-lab sh-mid sh-alab${done ? ' done' : ''}` }, L.assets, lab);
   }
 
   const trk = g.ship.track.slice(0, h + 1);
   el('path', { d: proj.line(trk), class: 'sh-shiptrack' }, L.ship);
   const sp = trk[trk.length - 1];
-  if (!view.reveal && !g.over) {
-    el('path', { d: proj.line([sp, g.ship.dest]), class: 'sh-shipdest' }, L.ship);
-  }
   const [sx, sy] = P(sp);
   el('path', { d: `M${sx} ${sy - 8}L${sx + 6} ${sy + 6}L${sx - 6} ${sy + 6}Z`, class: 'sh-shipicon' }, L.ship);
   el('text', { x: sx + 9, y: sy + 4, class: 'sh-lab' }, L.ship, 'Ship');
@@ -163,10 +149,19 @@ export function drawCursor(m, p, tool) {
   el('path', { d: `M${x - 6} ${y}H${x + 6}M${x} ${y - 6}V${y + 6}`, class: 'sh-cross' }, L);
 }
 
-/** Phones get a tighter crop of the gap so labels stay legible; the Denmark Strait exit falls off the left edge. */
+/**
+ * Crop the view to the water where a 24-hour hunt plays out. Phones get a tighter crop so labels stay
+ * legible. The Denmark Strait exit lies off the left edge in both: no sub reaches it within 24 hours.
+ */
 export function fitView(m, narrow) {
-  if (!narrow) { m.svg.setAttribute('viewBox', `0 0 ${proj.W} ${proj.H}`); m.svg.classList.remove('narrow'); return; }
-  const [x0, y0] = P([-25, 68.8]), [x1, y1] = P([3, 58.8]);
+  const [a, b] = narrow ? [[-20, 68.5], [1, 59.9]] : [[-26, 69.3], [3, 58.9]];
+  const [x0, y0] = P(a), [x1, y1] = P(b);
   m.svg.setAttribute('viewBox', `${x0.toFixed(1)} ${y0.toFixed(1)} ${(x1 - x0).toFixed(1)} ${(y1 - y0).toFixed(1)}`);
-  m.svg.classList.add('narrow');
+  m.svg.classList.toggle('narrow', narrow);
+}
+
+/** Position of [lon, lat] as percentages of the map box's current view, for HTML overlays. */
+export function toPct(m, p) {
+  const [x, y] = P(p), vb = m.svg.viewBox.baseVal;
+  return [(x - vb.x) / vb.width * 100, (y - vb.y) / vb.height * 100];
 }

@@ -1,7 +1,7 @@
 // Timeline of withdrawals, suspensions, revocations and expiries, one row per treaty. Markers that fall close
 // together stack upward. Click a marker for its source passage; drag across the chart to set the year.
 import { EVENTS } from '../data/treaties.js';
-import { T, esc, dateText, stateName } from './common.js';
+import { T, when, esc, dateText, stateName } from './common.js';
 
 export const TL0 = 2002, TL1 = 2026;
 export const KINDS = [
@@ -93,7 +93,7 @@ export function createTimeline(host, { onYear, onEvent }) {
     if (state.year >= TL0) {
       const cx = x(state.year + 1), right = cx > W - 80;
       mk('line', { class: 'cursor', x1: cx, x2: cx, y1: m.t - 10, y2: H - m.b }, svg);
-      mk('text', { class: 'cursor-lab', x: cx + (right ? -5 : 5), y: m.t - 8, 'text-anchor': right ? 'end' : 'start' }, svg).textContent = `end of ${state.year}`;
+      mk('text', { class: 'cursor-lab', x: cx + (right ? -5 : 5), y: m.t - 8, 'text-anchor': right ? 'end' : 'start' }, svg).textContent = when(state.year).replace(/^(at the |on )/, '');
     }
   }
   return { draw };

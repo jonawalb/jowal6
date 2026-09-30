@@ -1,7 +1,7 @@
 // Side panel: the selected cell's dated record and sources, and a summary of the selected treaty with a
 // chart of how many states were bound by it each year.
 import { STATES, UNTC } from '../data/treaties.js';
-import { T, Y0, Y1, STATUS, statusAt, statusName, recordLines, eventsFor, esc, dateText, stateName, counts, BOUND } from './common.js';
+import { T, Y0, Y1, STATUS, when, statusAt, statusName, recordLines, eventsFor, esc, dateText, stateName, counts, BOUND } from './common.js';
 
 const src = (url, title) => `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(title)}</a>`;
 
@@ -15,7 +15,7 @@ export function cellHTML(sel, year) {
     ? src(t.url + '/participants', `UNODA Treaties Database: ${t.short} participants`)
     : (t.evidence || []).map(e => src(e.url, e.title)).filter((v, i, a) => a.indexOf(v) === i).join('; ');
   return `<p class="eyebrow">${esc(stateName(iso))} · ${esc(t.short)}</p>
-    <h3 class="tt-dh"><span class="tt-sw" data-s="${st.s}"></span>${esc(statusName(st.s))} <span class="num fine">end of ${year}</span></h3>
+    <h3 class="tt-dh"><span class="tt-sw" data-s="${st.s}"></span>${esc(statusName(st.s))} <span class="num fine">${when(year)}</span></h3>
     ${lines.length ? `<ol class="tt-rec">${lines.map(l => `<li class="${l.d > year + '-12-31' ? 'later' : ''}"><span class="num">${dateText(l.d)}</span> ${esc(l.t)}</li>`).join('')}</ol>`
       : '<p class="fine">No signature, deposit or other action on record for this state.</p>'}
     ${evs.map(e => `<details${e.state === iso ? ' open' : ''}><summary>${dateText(e.date)}: ${esc(e.title)}</summary><blockquote class="tt-q">${esc(e.text)}</blockquote><p class="fine">${src(e.url, e.srcTitle)}</p></details>`).join('')}

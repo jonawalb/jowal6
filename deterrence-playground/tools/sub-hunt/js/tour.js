@@ -1,19 +1,15 @@
 // Guided walkthrough: points at parts of the page in turn. It explains; it does not play for you.
 const STEPS = [
-  { sel: '#box', title: 'The haze is your belief',
-    body: 'The shaded map shows where the hidden submarine could be. It starts as the opening cue ring and spreads every hour, because the sub keeps moving and you do not know which way.' },
-  { sel: '#rules-sec', title: 'The sub follows rules you can read',
-    body: 'Pick how the sub behaves: transit toward one of three gaps, loiter, or evade you. Each hour it rolls to sprint. Sprinting covers more water but makes far more noise.' },
-  { sel: '#controls', title: 'Spend a small budget',
-    body: 'Sonobuoy fields and aircraft sweeps cost points; the towed-array ship is free but slow. Place them where the haze is thick, then advance the clock.' },
-  { sel: '#math-sec', title: 'Search theory from 1946',
-    body: 'Detection chances come from Koopman\'s random search formula and lateral range curves. The numbers are notional; the formulas are the classics.' },
-  { sel: '#read', title: 'Silence is information',
-    body: 'When a sensor hears nothing, the map drains probability out of the area it covered. That is Bayes\' rule, the same logic used to find the Scorpion and Air France 447.' },
-  { sel: '#log', title: 'Contacts lie',
-    body: 'Some contacts are real and some are noise. Clues arrive at hours 6, 15 and 24 with stated reliability. The map weighs each one; you decide how far to trust it.' },
-  { sel: '.sh-prosbtn', title: 'One shot',
-    body: 'When you think you have it, prosecute. You see your map\'s odds before you commit. Afterwards the reveal shows the true track over your search.' },
+  { sel: '#box', title: 'The glow is where the sub could be',
+    body: 'Brighter orange means more likely. At hour 0 the glow fills the ring from the opening report. Each hour it spreads, because the sub keeps moving and you do not know which way.' },
+  { sel: '#tools', title: 'Search: one tool per hour',
+    body: 'Pick sonobuoys (they listen in a circle for 6 hours) or the patrol aircraft (it sweeps a big square for 2 hours), then click the map. You have 6 sonobuoy drops and 3 flights. Your towed-array ship is free and steers itself toward the brightest water.' },
+  { sel: '#end', title: 'End the hour and watch the map',
+    body: 'The sub moves, your sensors listen, and the map updates by Bayes\' rule. Hearing nothing is information: where you searched goes darker, and everywhere else gets a little brighter. The same idea guided the searches that found the Scorpion wreck in 1968 and the Air France 447 wreck in 2011.' },
+  { sel: '#log', title: 'Read what happened',
+    body: 'Each hour is summed up here in words. A contact pulls the odds toward it, but some contacts are noise. You only learn which after the hunt.' },
+  { sel: '#meter', title: 'Attack when the odds look good',
+    body: 'Best attack odds is the chance your map gives to the single best spot. When you are confident, press Attack and click that spot. You get one shot. Then the true track appears, and a slider replays the whole hunt.' },
 ];
 
 export function createTour(card) {

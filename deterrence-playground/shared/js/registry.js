@@ -155,7 +155,7 @@ export const ALL_TOOLS = [
   { slug: 'nuclear-tests', sub: { nuclear: 'facts' }, cat: 'nuclear', sites: ['deterrence'], title: 'Every Nuclear Test', status: 'live',
     blurb: 'Explore all 2,056 nuclear tests since Trinity by state, environment, yield and test site, reconciled against the ACA, SIPRI and DOE counts and the treaties that drove testing underground and then stopped it.' },
   { slug: 'declaratory-policy', sub: { nuclear: 'facts' }, cat: 'nuclear', sites: ['deterrence'], title: 'Who Promises What', status: 'live',
-    blurb: "No-first-use pledges, assurances, red lines and alert postures for all nine nuclear-armed states, quoted from their own documents and dated, with 'not declared' where a state has said nothing." },
+    blurb: "No-first-use pledges, security assurances, conditions for use and alert postures for all nine nuclear-armed states, quoted from their own documents and dated, with 'not declared' where no official statement was found." },
   { slug: 'game-theory-gallery', cat: 'gametheory', also: ['deterrence'], sites: ['deterrence'], title: 'Game Theory Gallery', status: 'live',
     blurb: "Move the costs, beliefs and balance of power in eight classic game-theory models of war and cooperation, from Fearon's bargaining range to Schelling's brinkmanship, and watch the equilibrium change, with every result cited to the page." },
   { slug: 'ukraine-support', sub: { regions: 'ukraine' }, cat: 'regions', sites: ['deterrence'], title: 'Who Supports Ukraine', status: 'live',
@@ -193,7 +193,7 @@ export const ALL_TOOLS = [
   { slug: 'matrix-game', sub: { models: 'wargames', regions: 'ukraine' }, cat: 'models', also: ['regions'], sites: ['deterrence'], title: 'Baltic Matrix Game', status: 'live',
     blurb: 'An argument-based matrix wargame of a fictional Narva crisis: argue an action with three reasons, face counter-arguments, and roll 2d6 over six turns.' },
   { slug: 'sub-hunt', sub: { models: 'wargames' }, cat: 'models', sites: ['deterrence'], title: 'The Hunt', status: 'live',
-    blurb: 'Hunt a hidden submarine in a notional Greenland–Iceland–UK gap with sonobuoys, patrol aircraft and a towed array, on a Bayesian probability map that updates every hour, then see its true track.' },
+    blurb: 'Hunt a hidden submarine in the Greenland–Iceland–UK gap: drop sonobuoys, fly a patrol aircraft, and watch a Bayesian probability map update every hour until you take your one shot.' },
   { slug: 'berlin-airlift', sub: { models: 'wargames' }, cat: 'models', sites: ['deterrence'], title: 'Airlift: Berlin 1948–49', status: 'live',
     blurb: 'Run the Berlin Airlift day by day: juggle C-54s, crews, inspections, runways, fog and the coal-food mix to keep 2 million Berliners supplied, then see your tonnage against the 1948–49 record.' },
 ];

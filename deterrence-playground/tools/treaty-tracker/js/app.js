@@ -1,6 +1,6 @@
 // Treaty Tracker: state, URL hash, filters and wiring between the matrix, panel, timeline, comparison and tour.
 import { TREATIES, EVENTS } from '../data/treaties.js';
-import { GROUPS, STATUS, Y0, Y1, T, S, esc, reduceMotion } from './common.js';
+import { GROUPS, STATUS, Y0, Y1, T, S, esc, reduceMotion, when } from './common.js';
 import { createMatrix } from './matrix.js';
 import { cellHTML, treatyHTML } from './panel.js';
 import { createTimeline, eventCard, KINDS } from './timeline.js';
@@ -72,7 +72,7 @@ const timeline = createTimeline($('timeline'), {
 });
 
 function render() {
-  $('year-out').textContent = state.year;
+  $('year-out').textContent = when(state.year);
   range.value = state.year;
   matrix.draw(state);
   $('m-note').textContent = state.sort !== 'name' ? `Rows sorted by ${T[state.sort].short} status. Click the column again to sort by name.` : 'Click a column heading to sort states by that treaty.';
@@ -85,7 +85,7 @@ function render() {
   timeline.draw(state);
   $('ev-card').innerHTML = eventCard(state.ev);
   $('cmp-a').value = state.cmp[0]; $('cmp-b').value = state.cmp[1];
-  $('cmp-year').textContent = state.year;
+  $('cmp-year').textContent = when(state.year);
   renderCompare($('compare'), state);
   writeHash();
 }

@@ -1,102 +1,138 @@
-// Prebunking Game: state, URL hash and screen dispatch.
-// Hash keys: s = stage (intro|pre|learn|post|done), o = set order (0: A then B, 1: B then A),
-// a / b = pre / post ratings as 9 digits (0 = not rated), c = training choices as 6 chars (- = none, 0-2),
-// q = current quiz post, t = current technique.
-import { renderIntro, renderQuiz, renderLearn, renderPanel } from './views.js';
-import { renderResults } from './results.js';
+// Borrowed Feelings: game flow, panel and shareable state.
+// Flow: intro -> practice -> practice answer -> Part 1 (6 rounds) -> mirror -> Part 2 (6 rounds) -> results.
+// The URL hash stores answers (#a=..) so a results screen can be shared. Nothing is sent anywhere.
+
+import { PRACTICE, ROUNDS, CHANNELS } from '../data/rounds.js';
+import { scoreAll } from './score.js';
+import { renderRound, cleanup } from './round.js';
+import { renderIntro, renderPractice, renderMirror, renderResults } from './screens.js';
 import { createTour } from './tour.js';
+import { stopDrone, audioAvailable } from './audio.js';
 
-document.title = 'Prebunking Game | Interactive Deterrence';
-const $ = id => document.getElementById(id);
-const STAGES = ['intro', 'pre', 'learn', 'post', 'done'];
-const fresh = () => ({ s: 'intro', o: Math.random() < 0.5 ? 0 : 1, a: Array(9).fill(null), b: Array(9).fill(null), c: Array(6).fill(null), qi: 0, t: 0 });
+const screen = document.getElementById('screen');
+const P1 = ROUNDS.filter(r => r.part === 1), P2 = ROUNDS.filter(r => r.part === 2);
+
+const fresh = () => ({ stage: 'intro', i: 0, answers: {}, checks: {}, checkin: [], soundOn: false });
 let S = fresh();
-let saved = null;
 
-// ---- Hash ----------------------------------------------------------------------------------------
-const digits = (str, n) => Array.from({ length: n }, (_, i) => { const v = Number((str || '')[i]); return v >= 1 && v <= 7 ? v : null; });
-function readHash() {
-  const q = new URLSearchParams(location.hash.slice(1));
-  if (STAGES.includes(q.get('s'))) S.s = q.get('s');
-  if (q.get('o') === '0' || q.get('o') === '1') S.o = Number(q.get('o'));
-  S.a = digits(q.get('a'), 9);
-  S.b = digits(q.get('b'), 9);
-  const cs = q.get('c') || '';
-  S.c = Array.from({ length: 6 }, (_, i) => (/[0-2]/.test(cs[i] || '') ? Number(cs[i]) : null));
-  const qi = Number(q.get('q')), t = Number(q.get('t'));
-  S.qi = Number.isInteger(qi) && qi >= 0 && qi < 9 ? qi : 0;
-  S.t = Number.isInteger(t) && t >= 0 && t < 6 ? t : 0;
-}
+// ---------- hash ----------
 function writeHash() {
-  if (tour.active()) return;
-  const enc = r => r.map(v => v || 0).join('');
-  const q = new URLSearchParams({ s: S.s, o: S.o, a: enc(S.a), b: enc(S.b), c: S.c.map(v => (v == null ? '-' : v)).join('') });
-  if (S.s === 'pre' || S.s === 'post') q.set('q', S.qi);
-  if (S.s === 'learn') q.set('t', S.t);
-  history.replaceState(null, '', '#' + q.toString());
+  const vals = ROUNDS.map(r => S.answers[r.id] ?? '').join(',');
+  const any = ROUNDS.some(r => S.answers[r.id] != null);
+  history.replaceState(null, '', any ? `#a=${vals}` : location.pathname + location.search);
+}
+function readHash() {
+  const m = location.hash.match(/a=([\d,]*)/);
+  if (!m) return;
+  const vals = m[1].split(',');
+  ROUNDS.forEach((r, k) => {
+    const v = parseInt(vals[k], 10);
+    if (Number.isFinite(v) && v >= 0 && v <= 100) S.answers[r.id] = v;
+  });
+  const n1 = P1.filter(r => S.answers[r.id] != null).length, n2 = P2.filter(r => S.answers[r.id] != null).length;
+  if (n1 === P1.length && n2 === P2.length) S.stage = 'results';
+  else if (n1 === P1.length) S.stage = 'mirror';
+  else S.answers = {};
 }
 
-// ---- Actions -------------------------------------------------------------------------------------
-const act = {
-  phase(p) {
-    S.s = p;
-    if (p === 'pre' || p === 'post') { const R = p === 'pre' ? S.a : S.b; const k = R.findIndex(v => !v); S.qi = k < 0 ? 0 : k; }
-    if (p === 'learn') { const k = S.c.findIndex(v => v == null); S.t = k < 0 ? 0 : k; }
-    update(true);
-  },
-  rate(v) {
-    const R = S.s === 'pre' ? S.a : S.b;
-    R[S.qi] = v;
-    if (S.qi < 8) S.qi += 1;
-    update(false, true);
-  },
-  goItem(k) { S.qi = Math.max(0, Math.min(8, k)); update(false, true); },
-  choose(k) { if (S.c[S.t] == null) { S.c[S.t] = k; update(false); focusFeedback(); } },
-  goTech(k) { S.t = k; update(true); },
-  restart() { S = fresh(); update(true); },
-};
-
-function focusFeedback() {
-  const fb = document.querySelector('.fb');
-  if (fb) fb.scrollIntoView({ block: 'nearest', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+// ---------- panel ----------
+function panel() {
+  const st = document.getElementById('st'), prog = document.getElementById('prog');
+  const done = id => S.answers[id] != null;
+  const labels = {
+    intro: ['Ready', 'Start with the check-in and one practice round.'],
+    practice: ['Practice', 'One round with the answer shown afterwards.'],
+    'practice-fb': ['Practice', 'The worked answer.'],
+    round: [`Part ${S.stage === 'round' && S.i >= P1.length ? 2 : 1}`, S.i >= P1.length ? 'Feel it, name it, place it, then answer.' : 'Judge each report. Answers come after six rounds.'],
+    mirror: ['The mirror', 'Your weights in Part 1, loaded rounds against their twins.'],
+    results: ['Results', 'Both parts, with what Walberg’s model predicts.'],
+  };
+  const [b, s] = labels[S.stage];
+  st.querySelector('b').textContent = b;
+  st.querySelector('span').textContent = s;
+  const cur = S.stage === 'round' ? ROUNDS[S.i]?.id : null;
+  const li = r => `<li class="${done(r.id) ? 'done' : ''}${r.id === cur ? ' cur' : ''}" title="${r.kind === 'loaded' && S.stage !== 'round' ? CHANNELS[r.channel].name : ''}"><span class="num">${r.id.slice(1)}</span></li>`;
+  prog.innerHTML = `<p class="fine">Part 1</p><ol>${P1.map(li).join('')}</ol><p class="fine">Part 2</p><ol>${P2.map(li).join('')}</ol>`;
 }
 
-// ---- Render --------------------------------------------------------------------------------------
-function update(scrollTop = false, focusScale = false) {
-  const host = $('screen');
-  if (S.s === 'intro') renderIntro(host, act);
-  else if (S.s === 'pre' || S.s === 'post') renderQuiz(host, S, act);
-  else if (S.s === 'learn') renderLearn(host, S, act);
-  else renderResults(host, S, act);
-  renderPanel(S);
-  writeHash();
-  if (focusScale) host.querySelector('.scale-b button[aria-pressed="true"], .scale-b button')?.focus({ preventScroll: true });
-  if (scrollTop && !tour.active()) {
-    const top = $('stage').getBoundingClientRect().top;
-    if (top < 0) $('stage').scrollIntoView({ block: 'start' });
+// ---------- render ----------
+function render() {
+  cleanup();
+  panel();
+  const top = () => document.getElementById('stage').scrollIntoView({ block: 'start', behavior: 'auto' });
+  if (S.stage === 'intro') {
+    renderIntro(screen, S, () => { S.stage = 'practice'; render(); top(); });
+  } else if (S.stage === 'practice') {
+    renderRound(screen, PRACTICE, { part: 1, idx: 0, total: 1, practice: true, soundOn: S.soundOn, checkin: S.checkin },
+      a => { S.practice = a; S.stage = 'practice-fb'; render(); top(); });
+  } else if (S.stage === 'practice-fb') {
+    renderPractice(screen, S.practice ?? 50, () => { S.stage = 'round'; S.i = 0; render(); top(); });
+  } else if (S.stage === 'round') {
+    const r = ROUNDS[S.i], list = r.part === 1 ? P1 : P2;
+    renderRound(screen, r, {
+      part: r.part, idx: list.indexOf(r), total: list.length, soundOn: S.soundOn, checkin: S.checkin,
+      onSoundToggle: on => { S.soundOn = on; syncSound(); },
+    }, (a, check) => {
+      S.answers[r.id] = a;
+      if (check) S.checks[r.id] = check;
+      S.i += 1;
+      if (S.i === P1.length) S.stage = 'mirror';
+      else if (S.i >= ROUNDS.length) S.stage = 'results';
+      writeHash(); render(); top();
+    });
+  } else if (S.stage === 'mirror') {
+    renderMirror(screen, scoreAll(S.answers), () => { S.stage = 'round'; S.i = P1.length; render(); top(); });
+  } else if (S.stage === 'results') {
+    const c = renderResults(screen, scoreAll(S.answers), S.checks, restart);
+    c.addEventListener('click', () => copyLink(c));
   }
 }
 
-// ---- Boot ----------------------------------------------------------------------------------------
-const tour = createTour($('stage'), {
-  save: () => { saved = JSON.parse(JSON.stringify(S)); },
-  restore: () => { if (saved) S = saved; saved = null; update(); },
-  apply: set => {
-    S = { ...fresh(), o: 0, ...JSON.parse(JSON.stringify(set)) };
-    update();
-    if (set.focus === 'research') $('research')?.scrollIntoView({ block: 'nearest' });
+function restart() {
+  stopDrone();
+  S = fresh();
+  writeHash();
+  render();
+}
+
+// ---------- tour previews ----------
+const EXAMPLE = { r1: 40, r2: 25, r3: 45, r4: 60, r5: 40, r6: 25 };
+const tour = createTour(document.getElementById('tour-root'), {
+  show: which => {
+    if (which === null) return;
+    cleanup();
+    const pv = { idx: 0, total: 6, soundOn: false, checkin: S.checkin, practice: false };
+    if (which === 'p1') renderRound(screen, ROUNDS.find(r => r.id === 'r4'), { ...pv, part: 1, idx: 3 }, () => {});
+    if (which === 'p2') renderRound(screen, ROUNDS.find(r => r.id === 'r10'), { ...pv, part: 2, idx: 3 }, () => {});
+    if (which === 'mirror') renderMirror(screen, scoreAll(EXAMPLE), () => {});
   },
+  restore: render,
 });
-$('tour-btn').onclick = () => tour.start();
-$('restart').onclick = () => { tour.stop(); act.restart(); };
-$('copy').onclick = async () => {
-  try { await navigator.clipboard.writeText(location.href); $('copy').textContent = 'Copied'; }
-  catch { $('copy').textContent = 'Copy failed'; }
-  setTimeout(() => { $('copy').textContent = 'Copy link'; }, 1500);
-};
-document.querySelectorAll('#stages button').forEach(b => {
-  b.onclick = () => { tour.stop(); act.phase(b.dataset.k); };
+
+// ---------- controls ----------
+function syncSound() {
+  const t = document.getElementById('snd');
+  if (t) t.checked = S.soundOn;
+  if (!S.soundOn) stopDrone();
+}
+async function copyLink(btn) {
+  writeHash();
+  const old = btn.textContent;
+  try { await navigator.clipboard.writeText(location.href); btn.textContent = 'Link copied'; }
+  catch (e) { btn.textContent = 'Copy the address bar'; }
+  setTimeout(() => { btn.textContent = old; }, 1600);
+}
+
+document.getElementById('start-tour').addEventListener('click', () => tour.start());
+document.getElementById('restart').addEventListener('click', () => { tour.stop(); restart(); });
+document.getElementById('copy-link').addEventListener('click', e => copyLink(e.currentTarget));
+const snd = document.getElementById('snd');
+if (!audioAvailable()) { snd.disabled = true; snd.closest('label').classList.add('off'); }
+snd.addEventListener('change', () => {
+  S.soundOn = snd.checked;
+  if (S.stage === 'round' && ROUNDS[S.i]?.channel === 'sound' && !tour.active()) render();
+  else syncSound();
 });
-addEventListener('hashchange', () => { if (!tour.active()) { readHash(); update(); } });
+
 readHash();
-update();
+render();

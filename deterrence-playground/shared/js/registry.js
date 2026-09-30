@@ -30,6 +30,9 @@ export const ALL_CATEGORIES = [
     blurb: 'Trade pressure, resilience, and what betting markets say about war.' },
   { id: 'tsm', name: 'TSM', sites: ['deterrence'], locked: true,
     blurb: 'Taiwan Strait trackers, exercise replays and wargames from the Taiwan Security Monitor. Password protected.' },
+  // Tools marked `dev: true` show only here (never in their other categories) and need their own password.
+  { id: 'dev', name: 'Under Development', sites: ['deterrence'], locked: true,
+    blurb: 'Tools still being built and checked. Password protected.' },
 ];
 
 export const ALL_TOOLS = [
@@ -105,7 +108,7 @@ export const ALL_TOOLS = [
     blurb: 'One real day of gray-zone pressure around Taiwan, built from the data. Pick any day of 2026.' },
   { slug: 'how-close', sites: ['tsm'], cat: 'public', title: 'How Close Is China?', status: 'live',
     blurb: 'Type a city and see how far it is from Taiwan and from China, with the Taiwan Strait for scale.' },
-  { slug: 'conceal-reveal', also: ['gametheory'], cat: 'deterrence', sites: ['deterrence'], title: 'Conceal or Reveal?', status: 'live',
+  { slug: 'conceal-reveal', dev: true, also: ['gametheory'], cat: 'deterrence', sites: ['deterrence'], title: 'Conceal or Reveal?', status: 'live',
     blurb: "Why do states with similar weapons make opposite choices about showing them? Move the costs and beliefs in Walberg's signaling model and watch coercive states reveal while operational states conceal." },
   { slug: 'dissertation-games', also: ['gametheory'], cat: 'deterrence', sites: ['deterrence'], vault: 'dissertation', title: 'Jon Dissertation Games', status: 'live',
     blurb: "Working game trees from Jonathan Walberg's dissertation. Needs its own password." },
@@ -117,9 +120,9 @@ export const ALL_TOOLS = [
     blurb: "Step through nuclear crises from Cuba 1962 to Russia 2022 and India–Pakistan 2025 on Herman Kahn's 44-rung ladder, compare them, and read why the ladder misleads." },
   { slug: 'deterrence-lab-general', also: ['gametheory'], cat: 'deterrence', sites: ['deterrence'], title: 'Deterrence Lab', status: 'live',
     blurb: 'Move the costs and beliefs in three classic deterrence models (audience costs, costly signals and salami tactics) and test them against sourced crises from Fashoda in 1898 to Crimea in 2014.' },
-  { slug: 'misinfo-cascade', also: ['gametheory'], cat: 'infowar', sites: ['deterrence'], locked: true, title: 'Misinformation Cascade', status: 'live',
+  { slug: 'misinfo-cascade', dev: true, also: ['gametheory'], cat: 'infowar', sites: ['deterrence'], locked: true, title: 'Misinformation Cascade', status: 'live',
     blurb: "Watch a report of 16 aircraft become 'the island is surrounded' as it spreads, and test when a correction can still stop it." },
-  { slug: 'bayesian-attack', also: ['gametheory'], cat: 'infowar', sites: ['deterrence'], title: 'Attacking the Update', status: 'live',
+  { slug: 'bayesian-attack', dev: true, also: ['gametheory'], cat: 'infowar', sites: ['deterrence'], title: 'Attacking the Update', status: 'live',
     blurb: "An adversary doesn't fake the evidence; it changes how much you weigh it. Watch true signals produce a false conclusion, and see which defenses still work." },
   { slug: 'ukraine-air-war', cat: 'ukraine', sites: ['deterrence'], title: "Ukraine's Air War", status: 'live',
     blurb: 'Russian missile and drone launches against Ukraine since 2022, by weapon type, with the share the Ukrainian Air Force reported shooting down.' },
@@ -127,11 +130,11 @@ export const ALL_TOOLS = [
     blurb: 'Every major Russian nuclear signal since February 2022, sourced and scored by what it changed, set against Western responses and the course of the war.' },
   { slug: 'red-sea-hormuz', cat: 'mideast', sites: ['deterrence'], title: 'Red Sea & Hormuz Pulse', status: 'live',
     blurb: 'Daily ship counts through Bab el-Mandeb, Suez and Hormuz from IMF PortWatch, against a sourced timeline of Houthi attacks, strikes, pauses and the 2026 Hormuz mining.' },
-  { slug: 'iran-israel-salvos', cat: 'mideast', sites: ['deterrence'], title: 'Iran–Israel Salvos', status: 'live',
+  { slug: 'iran-israel-salvos', dev: true, cat: 'mideast', sites: ['deterrence'], title: 'Iran–Israel Salvos', status: 'live',
     blurb: "Iran's three direct attacks on Israel side by side: what was launched, what was stopped, who defended with what, and what it cost, with every figure sourced and every disagreement shown." },
   { slug: 'coercion-resilience', cat: 'coercion', sites: ['deterrence'], title: 'Coercion Without Concession', status: 'live',
     blurb: "China's trade punishment of Australia and South Korea in real trade and tourism data: what was hit, what found other buyers, and what Beijing failed to change." },
-  { slug: 'war-markets', cat: 'coercion', sites: ['deterrence'], title: 'War Markets', status: 'live',
+  { slug: 'war-markets', dev: true, cat: 'coercion', sites: ['deterrence'], title: 'War Markets', status: 'live',
     blurb: 'What prediction markets priced for strikes on Iran, ceasefires and a Russia–NATO clash in 2026, set against how each contract resolved.' },
   { slug: 'crisis-stability', cat: 'nuclear', sites: ['deterrence'], title: 'Crisis Stability Calculator', status: 'live',
     blurb: "Set two notional force postures and see Kent and Thaler's first-strike stability index: who gains by striking first, and how MIRVed silos, alert rates and launch under attack move it." },
@@ -149,23 +152,23 @@ export const ALL_TOOLS = [
     blurb: "Move the costs, beliefs and balance of power in eight classic game-theory models of war and cooperation, from Fearon's bargaining range to Schelling's brinkmanship, and watch the equilibrium change, with every result cited to the page." },
   { slug: 'ukraine-support', cat: 'ukraine', sites: ['deterrence'], title: 'Who Supports Ukraine', status: 'live',
     blurb: 'Who pledged aid to Ukraine and who delivered it: military, financial and humanitarian support by donor since 2022, in euros or as a share of GDP, from the Kiel Institute.' },
-  { slug: 'prebunking-game', cat: 'infowar', sites: ['deterrence'], title: 'Prebunking Game', status: 'live',
+  { slug: 'prebunking-game', dev: true, cat: 'infowar', sites: ['deterrence'], title: 'Prebunking Game', status: 'live',
     blurb: 'Learn six manipulation techniques on invented posts, then see whether you tell manipulative posts from plain ones better, next to what the published Bad News studies found.' },
   { slug: 'sanctions-explorer', cat: 'coercion', sites: ['deterrence'], title: 'Sanctions Explorer', status: 'live',
     blurb: 'Sixty years of sanctions threats and impositions from the TIES dataset: filter by sender, target, objective and type, see how often the target gave in, and set that beside what the Global Sanctions Data Base authors report.' },
-  { slug: 'cost-ratio', cat: 'gametheory', sites: ['deterrence'], title: 'Cost Ratio Bargaining', status: 'live',
+  { slug: 'cost-ratio', dev: true, cat: 'gametheory', sites: ['deterrence'], title: 'Cost Ratio Bargaining', status: 'live',
     blurb: 'Hold the total cost of war fixed, shift who pays it, and watch the peaceful settlement move toward the side whose cost of fighting fell.' },
-  { slug: 'humiliation-motivation', cat: 'deterrence', also: ['gametheory'], sites: ['deterrence'], title: 'Humiliation to Motivation', status: 'live',
+  { slug: 'humiliation-motivation', dev: true, cat: 'deterrence', also: ['gametheory'], sites: ['deterrence'], title: 'Humiliation to Motivation', status: 'live',
     blurb: 'Past a severity threshold even weak states challenge the order that humiliated them, and a challenge stops telling the dominant power anything.' },
   { slug: 'proliferation-paths', cat: 'nuclear', sites: ['deterrence'], title: 'Proliferation Paths', status: 'live',
     blurb: 'Scrub from 1939 to 2017 to watch states explore, pursue, acquire and give up nuclear weapons, as three published datasets code it, with every disagreement between them shown.' },
   { slug: 'treaty-tracker', cat: 'nuclear', sites: ['deterrence'], title: 'Treaty Tracker', status: 'live',
     blurb: 'Twenty nuclear and arms-control treaties, 197 states, 1963 to 2026: scrub the years to see who signed, joined, suspended or walked away, with every date traced to a depositary record or official statement.' },
-  { slug: 'sea-control', cat: 'gametheory', also: ['models'], sites: ['deterrence'], title: 'Sea Control Game', status: 'live',
+  { slug: 'sea-control', dev: true, cat: 'gametheory', also: ['models'], sites: ['deterrence'], title: 'Sea Control Game', status: 'live',
     blurb: "Split a navy's budget between a Mahanian battle fleet and Corbettian distributed forces, and see whether the challenger fights, waits or denies." },
   { slug: 'arms-race', cat: 'gametheory', also: ['nuclear'], sites: ['deterrence'], title: 'Arms Race Dynamics', status: 'live',
     blurb: "Richardson's arms-race equations as a phase plane you can click: set reaction, fatigue and grievance, and see which races settle, which run away, and what happens with a third rival." },
-  { slug: 'qre-explorer', cat: 'gametheory', sites: ['deterrence'], title: 'Quantal Response Explorer', status: 'live',
+  { slug: 'qre-explorer', dev: true, cat: 'gametheory', sites: ['deterrence'], title: 'Quantal Response Explorer', status: 'live',
     blurb: 'See how logit quantal response equilibrium departs from Nash in crisis and deterrence games as precision runs from 0 to infinity, and why estimating these games needs care.' },
   { slug: 'correction-lab', cat: 'infowar', sites: ['deterrence'], title: 'Correction Lab', status: 'live',
     blurb: "Design a correction to a false story and see how much belief persists: meta-analytic effect sizes on timing, source, repetition and explanation, combined with Walberg's Sticky Affect condition in a notional model." },
@@ -189,10 +192,10 @@ export const ALL_TOOLS = [
 
 export const onSite = (x, site = SITE) => !x.sites || x.sites.includes(site);
 /** A tool's category on a given site (siteCat overrides cat per site). */
-export const catOn = (t, site = SITE) => (t.siteCat && t.siteCat[site]) || t.cat;
-const ORDER = { deterrence: ['deterrence', 'gametheory', 'nuclear', 'ukraine', 'mideast', 'infowar', 'rhetoric', 'coercion', 'models', 'tsm'] };
+export const catOn = (t, site = SITE) => (t.dev && site === 'deterrence' ? 'dev' : (t.siteCat && t.siteCat[site]) || t.cat);
+const ORDER = { deterrence: ['deterrence', 'gametheory', 'nuclear', 'ukraine', 'mideast', 'infowar', 'rhetoric', 'coercion', 'models', 'tsm', 'dev'] };
 // `also` lists extra categories a tool appears in; `cats` is its primary category plus those.
-export const TOOLS = ALL_TOOLS.filter(t => onSite(t)).map(t => ({ ...t, cat: catOn(t), cats: [catOn(t), ...(t.also || [])],
+export const TOOLS = ALL_TOOLS.filter(t => onSite(t)).map(t => ({ ...t, cat: catOn(t), cats: catOn(t) === 'dev' ? ['dev'] : [catOn(t), ...(t.also || [])],
   blurb: (t.siteBlurb && t.siteBlurb[SITE]) || t.blurb }));
 export const inCat = (t, id) => t.cats.includes(id);
 const rank = c => (ORDER[SITE] ? ORDER[SITE].indexOf(c.id) : -1);

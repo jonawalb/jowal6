@@ -1,6 +1,6 @@
 // The paper's experiments, rerun in the browser with seeded draws. Protocols and constants follow
 // sim/fh2_dominance.py and sim/fh3_counterstrategy.py (Walberg, "Emotional Priors and Narrative Warfare",
-// working paper, June 11, 2026). Draws come from mulberry32, not numpy, so numbers differ slightly from the paper's.
+// working paper, June 2026). Draws come from mulberry32, not numpy, so numbers differ slightly from the paper's.
 import { update, actionProb, decayed } from './engine.js';
 import { mulberry32, normal } from './rng.js';
 import { FH2, FH3 } from '../data/params.js';

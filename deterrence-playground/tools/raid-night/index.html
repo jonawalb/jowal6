@@ -30,7 +30,7 @@
       </div>
       <div class="mapbox fieldbox" id="fieldbox">
         <canvas id="field" tabindex="0" role="application" aria-roledescription="air-defense game"
-          aria-label="Raid Night game field. Incoming tracks fly from the sea at the top toward four cities on the coast. Keys: 1, 2, 3 choose a weapon; arrow keys or J and K select a track; Space or Enter fires; P pauses."
+          aria-label="Raid Night game field. Incoming tracks fly from the sea at the top toward four cities on the coast. Keys: arrow keys select a track; Space fires; Tab (or 1, 2, 3) switches between guns, short-range and long-range; P pauses."
           aria-describedby="sel-live"></canvas>
         <div class="overlay" id="overlay"></div>
         <div class="tour-slot" id="tour-slot"></div>
@@ -74,7 +74,7 @@
       <label class="tg"><input type="checkbox" id="reduced"><span class="sw"></span><span class="t">Reduced motion<small>Slows the game to about half speed and turns off expanding flashes.</small></span></label>
       <button type="button" class="btn" id="restart">Restart this night</button>
       <details class="keys"><summary>Keyboard controls</summary>
-        <dl class="readout"><dt>1 2 3</dt><dd>choose guns / short-range / long-range</dd><dt>← → or J K</dt><dd>select the next or previous track, soonest impact first</dd><dt>Space, Enter</dt><dd>fire the chosen weapon at the selected track</dd><dt>P or Esc</dt><dd>pause and resume</dd><dt>N</dt><dd>start the next wave during a break</dd></dl>
+        <dl class="readout"><dt>← → ↑ ↓</dt><dd>select the next or previous track, soonest impact first (J K also work)</dd><dt>Space</dt><dd>fire the chosen weapon at the selected track (Enter also works)</dd><dt>Tab, Shift+Tab</dt><dd>switch between guns, short-range and long-range during a wave</dd><dt>1 2 3</dt><dd>choose guns / short-range / long-range directly</dd><dt>P or Esc</dt><dd>pause and resume</dd><dt>N</dt><dd>start the next wave during a break</dd></dl>
       </details>
     </div>
   </aside>

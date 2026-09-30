@@ -7,7 +7,7 @@ const STEPS = [
   { t: 'Three weapons', el: 'weapons',
     b: 'Guns and electronic warfare are cheap and plentiful but reach only the area around each city, and cannot stop a ballistic missile. Short-range interceptors cost tens of thousands of dollars each. Long-range interceptors reach almost the whole map and are the only good answer to ballistic missiles, at millions of dollars each, and there are only 22.' },
   { t: 'Engage', el: 'fieldbox',
-    b: 'Choose a weapon (keys 1, 2, 3), then click or tap a track. The dashed circles show where that weapon reaches. Each site needs time to reload. From the keyboard, the arrow keys pick tracks in order of time to impact and Space fires. P pauses at any time.' },
+    b: 'Choose a weapon (keys 1, 2, 3), then click or tap a track. The dashed circles show where that weapon reaches. Each site needs time to reload. From the keyboard, the arrow keys pick tracks in order of time to impact, Space fires, and Tab switches between guns, short-range and long-range (1, 2, 3 also work). P pauses at any time.' },
   { t: 'Watch the exchange', el: 'sec-exchange',
     b: 'The panel keeps the running cost exchange: dollars spent on interceptors against the dollar value of the threats destroyed, at low and high published estimates. Leakers and damage are scored next to it, because the dollars leave out what a leaker destroys.' },
   { t: 'After the night', el: 'fieldbox',

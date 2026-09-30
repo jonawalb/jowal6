@@ -10,6 +10,7 @@ import { renderAAR, runBatch, aiSetup, OUT } from './aar.js';
 import { renderInfo } from './info.js';
 import { createTour } from './tour.js';
 import { randomSeed } from './rng.js';
+import * as fx from './fx.js';
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -153,6 +154,7 @@ function launch() {
   const pre = G.prepLog.length ? G.prepLog : [{ ph: 'D-day', ev: 'No waiting: the fleet sails at once', res: 'strikes start with the landing', tone: '' }];
   logTurn(S.role === 'pla' ? `Before H-hour: D-day is ${dday()}` : `Before H-hour: the PLA has picked its beaches (hidden). D-day is ${dday()}`, pre);
   render();
+  fx.launch();
   $('panel').querySelector('#resolve')?.focus({ preventScroll: true });
 }
 const dday = () => { const d = new Date(Date.UTC(1996, 0, 1) + G.dday * 864e5); return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }); };
@@ -172,11 +174,13 @@ function resolve() {
     roc = { fire: orders.fire, moves: { ...orders.moves }, ca: { ...orders.ca }, mobTo: orders.mobTo || busiest(G) };
     rec[t] = roc;
   }
+  const pre = fx.snap(G);
   const rows = step(G, pla, roc);
   logTurn(`Turn ${t}: ${turnLabel(t)}`, rows);
   if (G.over) finish();
   else { const keep = S.role === 'pla' ? { strike: orders.strike, share: orders.share, port: orders.port } : { fire: orders.fire, mobTo: orders.mobTo }; orders = { ...defaultOrders(S, G), ...keep }; }
   render();
+  fx.turn({ pre, G, rows, geom: map.geom, svg: $('map') });
   if (!G.over) $('panel').querySelector('#resolve')?.focus({ preventScroll: true });
 }
 
@@ -184,8 +188,9 @@ function finish() {
   S.phase = 'over';
   renderAAR(S, G, rec);
   $('aar').hidden = false;
+  fx.aar();
   $('mc-out').innerHTML = '<p class="fine">Running 1,000 weeks…</p>';
-  runBatch(S, rec, html => { $('mc-out').innerHTML = html; });
+  runBatch(S, rec, html => { $('mc-out').innerHTML = html; fx.mc($('mc-out')); });
 }
 
 function reset(keepSeed = true) {

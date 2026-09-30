@@ -69,7 +69,7 @@ export function createMap(svg, tip, { onZone }) {
       n.addEventListener('pointermove', move);
       n.addEventListener('pointerleave', () => { tip.hidden = true; });
     }
-    nodes[z] = { g, line, lane, t3, mid: [mx, my], from: [fx, fy], port, t1, t2 };
+    nodes[z] = { g, line, lane, t3, mid: [mx, my], from: [fx, fy], port, t1, t2, portAt: [px, py] };
   }
 
   let last = null;
@@ -129,7 +129,9 @@ export function createMap(svg, tip, { onZone }) {
       }
     }
   }
-  return { draw };
+  /** Zone geometry for the motion layer (js/fx.js): lane start, coast midpoint, port. */
+  const geom = z => ({ from: nodes[z].from, mid: nodes[z].mid, port: nodes[z].portAt });
+  return { draw, geom };
 }
 
 export const portWord = s => (s === 'pla' ? 'held by the PLA' : s === 'wrecked' ? 'taken but wrecked' : 'held by Taiwan');

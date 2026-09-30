@@ -3,8 +3,9 @@
 //   import { mountChrome } from '../../shared/js/chrome.js';
 //   mountChrome({ title: 'CCG Gray-Zone Map', sub: 'One-sentence description.', category: 'Live trackers' });
 // Pages with their own header (strait-layers) call mountNav() alone: it prepends the site bar to <body>.
-import { CATEGORIES, TOOLS } from './registry.js';
+import { CATEGORIES, TOOLS, ALL_TOOLS } from './registry.js';
 import { NAV_CSS } from './nav-css.js';
+import { initSkin } from './skin.js';
 
 const ROOT = new URL('../../', import.meta.url).href;
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -87,6 +88,8 @@ export function mountNav() {
   document.body.prepend(bar);
   wireMenu(bar);
   wireSearch(bar, live, href);
+  // Games offer a choice of graphics (Original or Trailer), asked per game, on whichever site they appear.
+  if (ALL_TOOLS.find(t => t.slug === slug)?.game) initSkin();
 }
 
 function wireMenu(bar) {

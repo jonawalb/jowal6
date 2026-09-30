@@ -209,3 +209,49 @@ details[open] summary { margin-bottom: 8px; }
   .choices button, .seg { min-height: 44px; }
 }
 @media (prefers-reduced-motion: reduce) { .seg, .cb-b, .budget .bar span { transition: none; } .budget .flash { animation: none; } }
+
+/* ---- Motion (.pg-fx is set by js/fx.js) ---- */
+@keyframes pg-rowin { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes pg-pop { 0% { transform: scale(1.35); } 100% { transform: scale(1); } }
+@keyframes pg-land { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 70%, transparent); } 100% { box-shadow: 0 0 0 10px transparent; } }
+.pg-fx table.log tr.pg-in { animation: pg-rowin .32s ease-out both; animation-delay: calc(var(--i, 0) * 40ms); }
+.pg-fx .roll.pg-tumbling { color: var(--faint); background: transparent; font-weight: 400; }
+.pg-fx .roll.pg-settled { display: inline-block; animation: pg-pop .22s ease-out; }
+.pg-fx table.crt td.pg-rolling { background: color-mix(in srgb, var(--accent) 30%, transparent); }
+.pg-fx table.crt td.pg-land { animation: pg-land .6s ease-out; }
+.pg-fx .pg-grow { transition: width .6s cubic-bezier(.2, .8, .2, 1), height .6s cubic-bezier(.2, .8, .2, 1); }
+.pg-fx .pg-zone, .pg-fx .pg-fleet { transform-box: fill-box; }
+@media (prefers-reduced-motion: reduce) {
+  .pg-fx table.log tr.pg-in, .pg-fx .roll.pg-settled, .pg-fx table.crt td.pg-land { animation: none; }
+  .pg-fx .pg-grow { transition: none; }
+}
+
+/* ---- Trailer look (the night plotting table; only when the player picks it) ---- */
+:root[data-skin="trailer"] .tsm-sea { fill: color-mix(in srgb, var(--sea) 72%, transparent); }
+:root[data-skin="trailer"] .tsm-grat line { stroke: rgba(63, 97, 80, .35); }
+:root[data-skin="trailer"] .pg-big { font-family: var(--display); font-style: italic; font-weight: 500; letter-spacing: .32em; fill: var(--faint); }
+:root[data-skin="trailer"] .pg-slabel, :root[data-skin="trailer"] .pg-plabel, :root[data-skin="trailer"] .pg-ztitle { font-family: var(--display); font-style: italic; font-weight: 500; }
+:root[data-skin="trailer"] .pg-note, :root[data-skin="trailer"] .pg-scale text { font-family: var(--mono); font-size: 10.5px; }
+:root[data-skin="trailer"] .pg-zone .pg-note { font-family: var(--body); font-size: 12px; font-style: italic; }
+:root[data-skin="trailer"] .pg-sector.on .pg-beach { filter: drop-shadow(0 0 6px rgba(232, 96, 74, .55)); }
+:root[data-skin="trailer"] .pg-adv { filter: drop-shadow(0 0 5px rgba(255, 90, 78, .6)); }
+:root[data-skin="trailer"] .pg-lodge circle, :root[data-skin="trailer"] .pg-town.taken { filter: drop-shadow(0 0 8px rgba(255, 90, 78, .7)); }
+:root[data-skin="trailer"] .pg-lodge text { fill: #0b1712; }
+:root[data-skin="trailer"] .pg-zone rect { fill: color-mix(in srgb, var(--panel) 92%, transparent); }
+:root[data-skin="trailer"] .pg-tok:not(.dead) { filter: drop-shadow(0 0 4px rgba(44, 194, 172, .55)); }
+:root[data-skin="trailer"] .pg-fxg { filter: drop-shadow(0 0 4px rgba(240, 169, 59, .55)); }
+:root[data-skin="trailer"] .roll { font-family: var(--mono); border: 1px solid var(--rule); border-radius: 3px; padding: 0 4px; margin: 1px 0; }
+:root[data-skin="trailer"] .roll.hit { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 22%, transparent); box-shadow: 0 0 10px -2px rgba(240, 169, 59, .6); }
+:root[data-skin="trailer"] table.crt td.hit { box-shadow: 0 0 14px -2px rgba(240, 169, 59, .7); }
+:root[data-skin="trailer"] .endline { background: color-mix(in srgb, var(--panel) 80%, transparent); font-family: var(--body); }
+:root[data-skin="trailer"] .endline b { font-family: var(--display); font-style: italic; font-weight: 500; font-size: 15px; }
+:root[data-skin="trailer"] .mc-bar { border-color: var(--rule); box-shadow: 0 0 18px -8px rgba(240, 169, 59, .5); }
+:root[data-skin="trailer"] .cb-b { box-shadow: 0 0 10px -3px rgba(255, 90, 78, .7); }
+:root[data-skin="trailer"] .step { color: #0b1712; }
+:root[data-skin="trailer"] .pg-tabs button[aria-selected="true"] { color: #111; }
+:root[data-skin="trailer"] .tour, :root[data-skin="trailer"] .layout[data-tab="play"] .playbar { box-shadow: 0 18px 40px -20px #000; }
+:root[data-skin="trailer"] .as-i input { background: var(--chip); }
+:root[data-skin="trailer"] .history h3 { font-family: var(--display); font-style: italic; font-weight: 500; }
+@media (max-width: 600px) {
+  :root[data-skin="trailer"] .pg-note, :root[data-skin="trailer"] .pg-scale text { font-size: 12.5px; }
+}

@@ -15,7 +15,7 @@ export function buildPanel(panel, S, onChange) {
 
   const sk = sec(panel, 'Stakes');
   const sl = {
-    w: slider(sk, { key: 'w', label: 'Patron’s cost of fighting for the ally', math: 'w', min: 0, max: 1.5, step: 0.01, help: 'Rises when the challenger can strike the patron’s homeland: the “Boston for Bonn” problem. The patron’s value of the ally is at most 1.' }, S.w, v => { S.w = v; onChange(); }),
+    w: slider(sk, { key: 'w', label: 'Patron’s cost of fighting for the ally', math: 'w', min: 0, max: 1.5, step: 0.01, help: 'Rises when the challenger can strike the patron’s homeland: would Boston be traded for Bonn?. The patron’s value of the ally is at most 1.' }, S.w, v => { S.w = v; onChange(); }),
     kC: slider(sk, { key: 'kC', label: 'Challenger’s loss if the patron fights', math: 'k<sub>C</sub>', min: 0, max: 2, step: 0.01, help: 'Before any denial effect of forward forces. Its gain from an unopposed attack is at most 1.' }, S.kC, v => { S.kC = v; onChange(); }),
   };
 

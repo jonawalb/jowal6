@@ -20,7 +20,7 @@ export const STEPS = [
     body: 'Add strikes on command links and surveillance. The fog card shows the target losing sight of the battle. With less to go on, it assumes the worst, and the fog multiplies the other channels.',
     set: { plan: withRows({ ew: ALL, nc3: [0, 1, 1, 1], isr: ALL }) } },
   { title: 'The damage-limitation window',
-    body: 'Acton’s second new mechanism applies to a state that plans to limit damage by hunting the other side’s nuclear forces and intercepting its missiles, as the United States does. When its sensors come under attack, it may fear its window is closing and act first. Here the target has that doctrine.',
+    body: 'Acton’s second new mechanism applies to a state that plans to limit damage by hunting the other side’s nuclear forces and intercepting its missiles. When its sensors come under attack, it may fear its window is closing and act first. Here the target has that doctrine.',
     set: { plan: withRows({ ew: ALL, isr: ALL }), P: { dlDoc: 1 } } },
   { title: 'Levers: separation and restraint',
     body: 'Return to the default campaign and turn on separation and declaratory restraint. Separation halves the nuclear role of every category; restraint makes misinterpretation less likely. Each lever in the panel shows what it buys, and names where the literature proposes it.',

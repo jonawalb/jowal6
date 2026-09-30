@@ -1,7 +1,7 @@
 // Slantchev (2003), "The Principle of Convergence in Wartime Negotiations," APSR 97(4): 621-632.
 // Pure functions, no DOM. Players alternate offers over a flow worth pi = 1 per period (player 1 offers in even
 // periods). Each rejection is followed by a battle that player 1 wins with probability p, moving the military
-// position k one step toward N (2 defeated) or 0 (1 defeated). Per-period war payoffs are b_i < s_i (p. 622-623).
+// position k one step toward N (2 defeated) or 0 (1 defeated). Per-period war payoffs are b_i < s_i (pp. 622-623).
 //   Fight to the finish (p. 623): W_k^i = (1-delta)b_i + delta[p W_{k+1}^i + (1-p) W_{k-1}^i].
 //   Complete information (Proposition 1, p. 624; appendix eq. 1, p. 630): unique stationary no-delay MPE offers
 //     1 - x_k = (1-delta)b2 + delta[p y_{k+1} + (1-p) y_{k-1}],  1 - y_k = (1-delta)b1 + delta[p x_{k+1} + (1-p) x_{k-1}],

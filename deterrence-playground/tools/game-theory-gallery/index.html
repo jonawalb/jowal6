@@ -50,8 +50,8 @@
     <p>Fearon’s 1997 comparison of tying hands and sinking costs is already built as module B of the <a href="../deterrence-lab-general/#m=B">Deterrence Lab</a>, so it is not repeated here. The Deterrence Lab’s audience-cost module is a two-type, one-round simplification; the audience-cost model in this gallery is Fearon’s 1994 war of attrition itself.</p>
     <h2 class="mt">What we simplified, and what we left out</h2>
     <ul class="howto">
-      <li><b>Fearon 1995.</b> Risk-neutral states only; the article also allows risk aversion. For Claim 2 we draw B’s cost from a uniform distribution, one case of the general distribution Fearon allows. In the preventive-war part, A’s later demand is capped at 1 when the formula would exceed it.</li>
-      <li><b>Powell 2006.</b> In the strategic-territory part only the jump in p matters; the straight lines drawn on either side of it are notional. The guns-versus-butter mechanism (pp. 192-194) is described in the article but not built here.</li>
+      <li><b>Fearon 1995.</b> Risk-neutral states only; the article also allows risk aversion. For Claim 2 we draw B’s cost from a uniform distribution on [0, c̄], a stylized choice that has the nondecreasing hazard rate Fearon assumes. In the preventive-war part, A’s later demand is capped at 1 when the formula would exceed it.</li>
+      <li><b>Powell 2006.</b> In the strategic-territory part only the jump in p matters; the straight lines drawn on either side of it are notional. The guns-versus-butter mechanism (pp. 192-194) is described in the article but not built here. Powell (p. 188) notes the territory result depends on fixed war costs; if war destroys a fraction d of the flow, the jump must be at least d/(1 − d) to cause war.</li>
       <li><b>Brinkmanship.</b> We could not open Powell’s 1990 book or his 2015 article, in which states choose the level of risk directly, so neither is implemented. The model here is Powell 1987, where each escalation adds a fixed increment of risk. Payoffs are rescaled so that prevailing = 1 and disaster = 0 for each state, which leaves every equilibrium unchanged. When both states can make the same number of bids, the tool resolves the tie by backward induction (I makes the last bid and prevails); Proposition 1 states only the strict cases.</li>
       <li><b>Fearon 1994.</b> Linear audience costs and uniform priors on each state’s value for war; the article’s propositions hold for general distributions. The article reports each side’s odds of backing down; the stacked bar of who backs down first is our calculation from the equilibrium distributions.</li>
       <li><b>Jervis 1978.</b> The article ranks outcomes but gives no numbers, so the payoffs are notional. The expected-value comparison formalizes his statement on p. 179; the “wait and see” switch formalizes p. 172; the repeated-game threshold is the textbook grim-trigger result, not Jervis’s. The four worlds are shown as he describes them, without numbers.</li>
@@ -59,7 +59,7 @@
       <li><b>Slantchev 2003.</b> The tool computes the separating equilibrium of Proposition 2 and checks the appendix’s conditions for it, including the one Slantchev checks numerically. When they fail, it does not compute the semi-separating or pooling equilibria the paper mentions but does not characterize.</li>
     </ul>
     <h2 class="mt">Sources</h2>
-    <p class="fine">Every source below except Fearon 1997, which the Deterrence Lab covers, was opened and read for this tool; results are cited to the printed page. No outside data are used.</p>
+    <p class="fine">Every source below except Fearon 1997, which the Deterrence Lab covers, and Schelling 1966, cited through Powell 1987, was opened and read for this tool; results are cited to the printed page. No outside data are used.</p>
     <ol class="src" id="sources"></ol>
   </div>
   <div class="col method">
@@ -74,7 +74,7 @@
     <p><b>Jervis 1978.</b> Cooperate iff \(qCC+(1-q)CD\ge qDC+(1-q)DD\), i.e. \(q\ge q^*=\tfrac{DD-CD}{(CC-DC)+(DD-CD)}\).</p>
     <p><b>Kydd 2000.</b> Trust-game threshold \(p^*=S/(R+S)\) (p. 332). A gesture \(\alpha^*\) separates iff (p. 354)</p>
     $$\frac{T_{1M}}{T_{1M}-p_2R_{1M}+(1-p_2)S_{1M}}\;<\;\alpha^*\;<\;\frac{R_{1N}}{(1-p_2)(R_{1N}+S_{1N})}.$$
-    <p><b>Slantchev 2003.</b> Offers solve \(1-x_k=(1-\delta)b_2+\delta[p\,y_{k+1}+(1-p)y_{k-1}]\) and \(1-y_k=(1-\delta)b_1+\delta[p\,x_{k+1}+(1-p)x_{k-1}]\) (p. 630); beliefs update by Bayes’ rule on battle outcomes (eq. 4); the separating equilibrium’s offers and conditions are equations (2)-(7) on pp. 630-631.</p>
+    <p><b>Slantchev 2003.</b> Offers solve \(1-x_k=(1-\delta)b_2+\delta[p\,y_{k+1}+(1-p)y_{k-1}]\) and \(1-y_k=(1-\delta)b_1+\delta[p\,x_{k+1}+(1-p)x_{k-1}]\) (p. 630), with the flow of benefits π normalized to 1; beliefs update by Bayes’ rule on battle outcomes (eq. 4); the separating equilibrium’s offers and conditions are equations (2)-(7) on pp. 630-631.</p>
     <p><b>Rubinstein 1982.</b> Player 1’s share \(M=\tfrac{1-\delta_2}{1-\delta_1\delta_2}\) (p. 108); with fixed costs, 1 gets \(c_2\) if \(c_1>c_2\) and everything if \(c_1<c_2\) (p. 107).</p>
   </div>
 </section>

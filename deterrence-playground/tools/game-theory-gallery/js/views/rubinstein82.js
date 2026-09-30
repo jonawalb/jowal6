@@ -39,17 +39,17 @@ export default {
   solve(P) { return P.v === 'disc' ? solveDisc(P) : solveCost(P); },
 
   status(P, e) {
-    if (P.v === 'disc') return { s: 'good', b: `Immediate agreement: player 1 gets ${f2(e.M)}`, t: 'The unique perfect equilibrium ends bargaining with the first offer (p. 108).' };
+    if (P.v === 'disc') return { s: 'good', b: `Immediate agreement: player 1 gets ${f2(e.M)}`, t: 'The unique perfect equilibrium ends bargaining with the first offer (pp. 107-108).' };
     if (e.kind === 'equal') return { s: 'warn', b: 'Many equilibria', t: `With equal costs, any split giving player 1 at least ${f2(P.c1)} is a perfect equilibrium partition (p. 107).` };
-    return { s: 'good', b: e.kind === 'c1<c2' ? 'Player 1 takes the whole pie' : `Player 1 gets only ${f2(e.M)}`, t: 'The side with the lower cost of delay wins almost everything (p. 107).' };
+    return { s: 'good', b: e.kind === 'c1<c2' ? 'Player 1 takes the whole pie' : `Player 1 gets only ${f2(e.M)}`, t: 'The side with the higher cost of delay gets at most the other side’s one-round cost (pp. 99, 107).' };
   },
 
   why(P, e) {
-    if (P.v === 'disc') return `Player 1 must offer player 2 what 2 would get by refusing and proposing next period, discounted: 1 − M = δ<sub>2</sub>(1 − δ<sub>1</sub>M). Solving gives M = (1 − δ<sub>2</sub>)/(1 − δ<sub>1</sub>δ<sub>2</sub>) = ${f2(e.M)} (Conclusion 2, p. 108). Had player 2 moved first, it would offer 1 only δ<sub>1</sub>M = ${f2(e.offer2)}. ${Math.abs(P.d1 - P.d2) < 0.001 ? `With equal patience, 1’s edge from moving first is ${f2(e.firstMover)} and shrinks as δ → 1.` : `The more patient player gets more.`} Slantchev (2003, 622) builds his model of bargaining during war on this protocol.`;
+    if (P.v === 'disc') return `Player 1 must offer player 2 what 2 would get by refusing and proposing next period, discounted: 1 − M = δ<sub>2</sub>(1 − δ<sub>1</sub>M). Solving gives M = (1 − δ<sub>2</sub>)/(1 − δ<sub>1</sub>δ<sub>2</sub>) = ${f2(e.M)} (Conclusion 2, p. 108). Had player 2 moved first, it would offer 1 only δ<sub>1</sub>M = ${f2(e.offer2)}. ${Math.abs(P.d1 - P.d2) < 0.001 ? `With equal patience, 1’s edge from moving first is ${f2(e.firstMover)} and shrinks as δ → 1.` : `Each player’s share rises with its own patience (p. 99).`} Slantchev (2003, 622) builds his model of bargaining during war on this protocol.`;
     if (e.kind === 'equal') return `Equal costs leave the split indeterminate: any x with ${f2(P.c1)} ≤ x ≤ 1 can be supported (Conclusion 1, p. 107).`;
     return e.kind === 'c1<c2'
       ? `Player 2 loses more from each round of delay (c<sub>2</sub> = ${f2(P.c2)} > c<sub>1</sub> = ${f2(P.c1)}), so player 1 can hold out for everything (Conclusion 1(3), p. 107).`
-      : `Player 1 loses more from delay, so the most it can extract is c<sub>2</sub> = ${f2(P.c2)}, what player 2 would lose by waiting one round (Conclusion 1(1), p. 107).`;
+      : `Player 1 loses more from delay, so it gets only c<sub>2</sub> = ${f2(P.c2)}, what player 2 would lose by waiting one round (Conclusion 1(1), p. 107).`;
   },
 
   effect(k, P, e, pP) {

@@ -8,7 +8,7 @@ const R = (key, label, math, min, max, step, help, notional) => ({ type: 'range'
 export default {
   id: 'kydd00',
   defaults: K00_DEFAULTS,
-  scaleNote: 'Mutual defection pays 0, as in Kydd. The defaults are Kydd’s own example payoffs (p. 336): R<sub>N</sub> = T<sub>M</sub> = 2, T<sub>N</sub> = R<sub>M</sub> = 1, S = 1. They are illustrative, not estimates.',
+  scaleNote: 'Mutual defection pays 0, as in Kydd. The defaults are Kydd’s own example payoffs (p. 336): R<sub>N</sub> = T<sub>M</sub> = 2, T<sub>N</sub> = R<sub>M</sub> = 1, S = 1 (a sucker’s payoff of −1). They are illustrative, not estimates.',
 
   controls() {
     return [
@@ -35,7 +35,7 @@ export default {
   why(P, e) {
     const one = `In the one-round trust game, player 1 cooperates only if trust p<sub>2</sub> exceeds p* = S/(R + S) = ${f2(e.pStarN)} (p. 332); here trust is ${f2(P.p2)}, so ${e.trustGame ? 'it would' : 'it would not'}.`;
     if (!e.sep) return `${one} In the reassurance game a separating signal needs trust between ${e.pLow != null ? f2(Math.max(0, e.pLow)) : '–'} and p<sub>2</sub>*<sup>M</sup> = ${f2(e.pStarM)}${e.propHolds ? '' : ', and it needs the nice type to be the bolder cooperator (p<sub>2</sub>*<sup>N</sup> < p<sub>2</sub>*<sup>M</sup>), which fails here (Proposition, p. 339)'}.`;
-    const size = P.a <= e.lo ? `At α = ${f2(P.a)} the gesture is too cheap: a mean type would make it too, to lure player 2 into cooperating and then exploit it (p. 338).`
+    const size = P.a <= e.lo ? `At α = ${f2(P.a)} the gesture is too cheap: a mean type would make it too, to lure player 2 into cooperating and then exploit it (pp. 337-338).`
       : P.a >= e.hi ? `At α = ${f2(P.a)} the gesture is too risky: a nice player 1 would not stake that much on a player 2 who may be mean.`
         : `At α = ${f2(P.a)} only the nice type will stake the first round, so the gesture reveals its type.`;
     return `${one} With a first round to spend, a costly gesture can build trust. It must be large enough that the mean type won’t fake it (α > ${f2(e.lo)}) and small enough that the nice type will risk it (α < ${f2(e.hi)}). ${size} Both bounds rise with trust: the more fearful player 1 is, the smaller the first step must be, which fits Osgood’s GRIT (p. 340).`;

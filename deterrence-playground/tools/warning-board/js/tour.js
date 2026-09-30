@@ -10,7 +10,7 @@ export const STEPS = [
     body: 'About half of the weighted signal comes from indicators that exercises routinely produce. What is missing matters more: no stop-loss, no mobilization order, no asset repatriation, no blood drives.',
     set: { preset: 'exercise', timing: 'days' }, focus: 'overlap' },
   { title: 'Short events are hard to see',
-    body: 'Every major exercise charted below lasted one to four days. A TSM-affiliated working paper argues that satellite imagery of PLA bases cannot reliably catch surges that short, which makes base imagery a surveillance tool more than a warning tool.',
+    body: 'Each exercise charted below ran one to four days by its announced or reported dates. A TSM-affiliated working paper argues that satellite imagery of PLA bases cannot reliably catch surges that short, which makes base imagery a surveillance tool more than a warning tool.',
     set: { preset: 'exercise', timing: 'days' }, focus: 'exercises' },
   { title: 'Preparation looks different',
     body: 'In this invented case, slow and costly preparations appear in every domain and build over weeks: stop-loss, mobilization, blood drives, asset repatriation, public messaging about sacrifice. The combination supports strategic warning.',

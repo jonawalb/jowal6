@@ -3,7 +3,7 @@ const BASE = { unit: 'count', to: 3, dropx: false, clean: false, showev: true, m
 
 export const STEPS = [
   { title: 'One dot, one transit day',
-    body: 'Each dot is a day when allied warships went through the Taiwan Strait. Filled dots have enough TSM daily data to analyze; hollow ones came before the daily record began. This is the most recent event in the tracker.',
+    body: 'Each dot is a day when allied warships went through the Taiwan Strait. Filled dots have enough TSM daily data to analyze; hollow ones came before the daily record began or lack enough data. This is the most recent event in the tracker.',
     set: { ...BASE, view: 'single', ev: '2026-09-18' } },
   { title: 'Start from a baseline',
     body: 'The dashed line is the average of the 30 days before the transit, leaving out days near other transits. The lower panel shows each day above or below it. Here, a U.S. destroyer transit in August 2024.',

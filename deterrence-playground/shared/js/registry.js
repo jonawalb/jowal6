@@ -31,7 +31,7 @@ export const ALL_CATEGORIES = [
   { id: 'tsm', name: 'TSM', sites: ['deterrence'], locked: true,
     blurb: 'Taiwan Strait trackers, exercise replays and wargames from the Taiwan Security Monitor. Password protected.' },
   // Tools marked `dev: true` show only here (never in their other categories) and need their own password.
-  { id: 'dev', name: 'Under Development', sites: ['deterrence'], locked: true,
+  { id: 'dev', name: 'Coming Soon', sites: ['deterrence'], locked: true,
     blurb: 'Tools still being built and checked. Password protected.' },
 ];
 

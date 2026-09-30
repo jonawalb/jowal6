@@ -197,7 +197,7 @@ export const ALL_TOOLS = [
   { slug: 'sub-hunt', sub: { models: 'wargames' }, cat: 'models', sites: ['deterrence'], title: 'The Hunt', status: 'live',
     blurb: 'Hunt a hidden submarine in the Greenland–Iceland–UK gap: spend each turn\'s effort on buoys, aircraft, helicopter and ship, learn how it moves, and pounce.' },
   { slug: 'fog-of-command', sub: { models: 'wargames' }, cat: 'models', sites: ['deterrence'], title: 'Fog of Command', status: 'live',
-    blurb: 'Command a notional brigade in a fictional valley against an enemy you only see through late, partial and sometimes wrong reports, then see what the fog cost you.' },
+    blurb: 'Defend or attack a fictional valley crossing against a commander who acts only on what it can see. Feint, bait, hit flanks, and spot your artillery with recon.' },
   { slug: 'orbital-denial', sub: { models: 'wargames', nuclear: 'playground' }, cat: 'models', also: ['nuclear'], sites: ['deterrence'], title: 'Orbital Denial', status: 'live',
     blurb: 'Jam, dazzle, hack or shoot down a notional rival\'s satellites over a 10-month crisis and war, then see what your debris costs both sides for decades, with the escalation risk you ran.' },
   { slug: 'berlin-airlift', sub: { models: 'wargames' }, cat: 'models', sites: ['deterrence'], title: 'Airlift: Berlin 1948–49', status: 'live',

@@ -1,15 +1,15 @@
-// Movement graph: neighbours and shortest paths (Dijkstra over a 7-node graph).
+// Movement graph: neighbours, hop distances and shortest paths (Dijkstra over the 13-sector map).
 import { NODES, EDGES } from '../data/map.js';
 
 const ADJ = Object.fromEntries(NODES.map(n => [n.id, []]));
 for (const [a, b, h] of EDGES) { ADJ[a].push([b, h]); ADJ[b].push([a, h]); }
 
-export const neighbours = id => ADJ[id].map(([b]) => b);
-export const edgeHours = (a, b) => (ADJ[a].find(([n]) => n === b) || [null, Infinity])[1];
+export const neighbours = id => (ADJ[id] || []).map(([b]) => b);
+export const edgeHours = (a, b) => ((ADJ[a] || []).find(([n]) => n === b) || [null, Infinity])[1];
 
-/** Shortest path from a to b as a list of node ids (excluding a). */
+/** Shortest path by hours from a to b as a list of node ids (excluding a). */
 export function path(a, b) {
-  if (a === b) return [];
+  if (a === b || !ADJ[a] || !ADJ[b]) return [];
   const dist = { [a]: 0 }, prev = {}, open = new Set([a]);
   while (open.size) {
     let u = null;
@@ -27,3 +27,12 @@ export function path(a, b) {
 }
 
 export const travelHours = (a, b) => { let t = 0, cur = a; for (const n of path(a, b)) { t += edgeHours(cur, n); cur = n; } return t; };
+
+/** Hop distance (roads, ignoring hours) between every pair: used for how far units can see. */
+const HOPS = {};
+for (const a of NODES) {
+  const d = { [a.id]: 0 }, q = [a.id];
+  while (q.length) { const u = q.shift(); for (const [v] of ADJ[u]) if (d[v] === undefined) { d[v] = d[u] + 1; q.push(v); } }
+  HOPS[a.id] = d;
+}
+export const hops = (a, b) => (HOPS[a] && HOPS[a][b] !== undefined ? HOPS[a][b] : Infinity);

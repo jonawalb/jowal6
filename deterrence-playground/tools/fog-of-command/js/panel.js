@@ -1,89 +1,136 @@
-// Side panel and text: status, the picture bars, the report log, orders in transit, the parameter table,
-// quotes and sources.
-import { NODES, AXES } from '../data/map.js';
-import { SENSORS, TYPES, COMBAT, REPORT, ORDER_DELAY, GAME, KENT } from '../data/params.js';
+// Text for the play screen and the page: clock, status, the hour-by-hour report feed, the parameter
+// table, balance tables, quotes and sources.
+import { NODES } from '../data/map.js';
+import { GAME, TYPES, COMBAT, ORDER_DELAY, ARTILLERY, VISION, FORCES, DISENGAGE } from '../data/params.js';
 import { SOURCES } from '../data/sources.js';
 import { BALANCE } from '../data/balance.js';
-import { INFO } from './map.js';
+import { beliefAt } from './vision.js';
 
-const $ = id => document.getElementById(id);
 export const NAME = Object.fromEntries(NODES.map(n => [n.id, n.name]));
-export const UNIT_NAME = { a: '1st Mech Bn', b: '2nd Mech Bn', e: '3rd Mech Bn', c: 'Recon Sqn', d: 'Armor Bn', drone: 'Drone' };
+export const SIDE = { blue: 'Blue', red: 'Red' };
+export const foeOf = s => (s === 'blue' ? 'red' : 'blue');
+export const DEF = Object.fromEntries([...FORCES.blue, ...FORCES.red].map(d => [d.id, d]));
 export const hhmm = x => { const m = Math.round((GAME.startClock + x) * 60); return `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`; };
-const TYPE_WORD = { armor: 'tank battalion', mech: 'mechanized battalion', recon: 'recon company', decoy: 'decoy' };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const n1 = x => (Math.round(x * 10) / 10).toFixed(1);
+const list = a => (a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`);
+const word = t => TYPES[t]?.word || 'unit';
 
-export function reportText(r) {
-  const who = r.sensor === 'watch' ? `${UNIT_NAME[r.by]} observers` : r.sensor === 'reconAdj' ? `${UNIT_NAME[r.by]} (looking next door)` : UNIT_NAME[r.by];
-  const what = r.type === 'decoy' ? 'a decoy, not a real unit' : r.type ? `${TYPE_WORD[r.type]}${r.str != null ? `, about ${r.str}` : ''}` : 'enemy activity';
-  return `<b>${who}</b>: <i>${r.word}</i> ${what} in ${NAME[r.node]} <span class="muted">(seen ${hhmm(r.obsT)})</span>`;
+/** One line for a fire mission, as the firing side hears it. */
+export function fireText(g, f) {
+  const rep = f.reported < 0.25 ? 'no effect seen' : `about ${n1(f.reported)} points of damage`;
+  let s = `Your artillery fired on <b>${NAME[f.node]}</b>: ${rep}.`;
+  if (f.spotter) {
+    const seen = f.reveal.map(r => (r.type === 'decoy' ? '<b>a decoy group</b> (now exposed)' : `${word(r.type)} at <b>${Math.round(100 * r.hp)}%</b>`));
+    s += ` ${DEF[f.spotter].name} watched it land: ${seen.length ? list(seen) : 'nothing there'}.`;
+  } else s += ' <span class="muted">No recon next to it, so no one saw what was hit. Damage reports are right 9 times in 10.</span>';
+  for (const x of f.friendly) s += ` <b class="fc-bad">Danger close: ${DEF[x.unit].name} was hit by your own fire (lost ${n1(x.loss)}).</b>`;
+  return s;
 }
 
-export function renderStatus(g, lossB) {
-  const st = $('status');
-  if (!g.over) {
-    st.dataset.s = 'warn';
-    $('st-t').textContent = 'Hold the crossing';
-    $('st-s').textContent = `${GAME.hours - g.t} hours to go. Blue strength ${Math.round(46 - lossB)} of 46.`;
-  } else {
-    st.dataset.s = g.over.held ? 'good' : 'bad';
-    $('st-t').textContent = g.over.held ? 'Crossing held' : `Crossing lost at ${hhmm(g.over.h)}`;
-    $('st-s').textContent = 'The review is below the map.';
+/** Feed entries for hour h, from side `me`'s point of view. `now`: only the start-of-hour items. */
+function hourItems(g, me, h, now) {
+  const foe = foeOf(me), out = [];
+  const mine = id => DEF[id]?.side === me || g.units.find(u => u.id === id)?.side === me;
+  for (const f of g.fires.filter(x => x.t === h && x.side === foe)) {
+    const hit = f.hits.filter(x => mine(x.unit) && x.loss > 0.05);
+    if (hit.length) out.push(['bad', `${SIDE[foe]} artillery hit <b>${NAME[f.node]}</b>: ${list(hit.map(x => `${DEF[x.unit].short} lost ${n1(x.loss)}`))}.`]);
   }
+  for (const f of g.fires.filter(x => x.t === h && x.side === me)) out.push(['', fireText(g, f)]);
+  const arr = g.events.filter(e => e.t === h && e.kind === 'arrive' && mine(e.unit));
+  for (const n of [...new Set(arr.map(e => e.node))]) out.push(['', `Arrived at <b>${NAME[n]}</b>: ${list(arr.filter(e => e.node === n).map(e => DEF[e.unit].short))}.`]);
+  if (now) return out;
+  const moving = g.events.filter(e => e.t === h && e.kind === 'order' && mine(e.unit));
+  if (moving.length) out.push(['', `On the move: ${moving.map(e => `${DEF[e.unit].short} to ${NAME[e.dest]}${e.sent < h ? ` (ordered ${hhmm(e.sent)})` : ''}`).join('; ')}.`]);
+  for (const e of g.events.filter(x => x.t === h)) {
+    if (e.kind === 'give' && mine(e.unit)) out.push(['', `${DEF[e.unit].short} gave ground from ${NAME[e.from]} to ${NAME[e.to]} (lost ${n1(e.loss)}).`]);
+    if (e.kind === 'give' && !mine(e.unit) && g.fights.some(f => f.t === h && f.node === e.to)) out.push(['good', `The enemy gave ground from ${NAME[e.from]}.`]);
+    if (e.kind === 'leave' && mine(e.unit)) out.push(['', `${DEF[e.unit].short} broke contact at ${NAME[e.node]} (lost ${n1(e.loss)}).`]);
+  }
+  for (const f of g.fights.filter(x => x.t === h)) {
+    const iDef = f.def === me;
+    const how = f.kind === 'meeting' ? 'a meeting engagement' : f.kind === 'flank' ? `<b>a flank attack</b>: ${iDef ? 'your' : 'their'} defense counts for nothing`
+      : iDef ? `you defend, ${f.kind}` : `you attack a ${f.kind} defense`;
+    const [lm, lf] = me === 'blue' ? [f.lb, f.lr] : [f.lr, f.lb];
+    out.push([f.kind === 'flank' ? (iDef ? 'bad' : 'good') : '', `Fighting at <b>${NAME[f.node]}</b> (${how}): you lost ${n1(lm)}, the enemy ${n1(lf)}.`]);
+  }
+  for (const e of g.events.filter(x => x.t === h && x.kind === 'break')) {
+    if (mine(e.unit)) out.push(['bad', `<b>${DEF[e.unit].short} broke</b> after heavy losses and left the battle.`]);
+    else if (g.fights.some(f => f.t === h && f.node === e.node)) out.push(['good', `An enemy ${word(DEF[e.unit].type)} broke at ${NAME[e.node]}.`]);
+  }
+  // New sightings at the end of the hour.
+  const before = beliefAt(g, me, h), after = beliefAt(g, me, h + 1);
+  const known = new Map(before.tracks.map(t => [t.elem, t.node]));
+  const fresh = after.tracks.filter(t => t.age === 0 && (!known.has(t.elem) || known.get(t.elem) !== t.node));
+  for (const n of [...new Set(fresh.map(t => t.node))]) out.push(['seen', `Seen at <b>${NAME[n]}</b>: ${list(fresh.filter(t => t.node === n).map(t => (t.type === 'decoy' ? 'a decoy group' : word(t.type))))}.`]);
+  const oldMarks = new Set(before.marks.map(m => m.node));
+  const newMarks = after.marks.filter(m => !oldMarks.has(m.node));
+  if (newMarks.length) out.push(['seen', `Recon reports movement at ${list(newMarks.map(m => `<b>${NAME[m.node]}</b>`))} (an hour old).`]);
+  return out;
 }
 
-export function renderPicture(pic, label = 'estimate') {
-  const max = 60;
-  const rows = AXES.map((a, i) => [a, pic.axis[i]]);
-  if (pic.node.x > 0) rows.push(['Crossing', pic.node.x]);
-  $('picture').innerHTML = rows.map(([a, v]) => `<div class="fc-pbar"><span>${a}</span><span class="fc-pbar-t"><i style="width:${Math.min(100, 100 * v / max).toFixed(0)}%"></i></span><b class="num">${Math.round(v)}</b></div>`).join('')
-    + `<p class="fine fc-pscale">Red strength points (${label}). A Red tank battalion is about 12.</p>`;
+/** The report feed: this hour so far, then the last few hours, newest first. */
+export function feedHTML(g, me, hours = 4) {
+  const blocks = [];
+  if (!g.over) {
+    const now = hourItems(g, me, g.t, true);
+    if (now.length) blocks.push(block(`Now, ${hhmm(g.t)}`, now));
+  }
+  for (let h = g.t - 1; h >= Math.max(0, g.t - hours); h--) {
+    const items = hourItems(g, me, h, false);
+    const extra = g.over || h < g.t - 1 ? [] : [];
+    blocks.push(block(`${hhmm(h)} to ${hhmm(h + 1)}`, items.length ? items.concat(extra) : [['muted', 'Nothing new.']]));
+  }
+  return blocks.join('') || '<li class="muted">No reports yet. Pick a unit, click where it should go, then press End hour.</li>';
+}
+const block = (head, items) => `<li class="fc-fh"><span class="num">${head}</span><ul>${items.map(([c, t]) => `<li class="${c}">${t}</li>`).join('')}</ul></li>`;
+
+/** Status box text for side `me`. */
+export function status(g, me, pic) {
+  const tot = g.units.filter(u => u.side === me).reduce((s, u) => s + u.str0, 0);
+  const now = g.units.filter(u => u.side === me && !u.broken && u.node !== 'gone').reduce((s, u) => s + u.str, 0);
+  const seen = Math.round(pic.tracks.reduce((s, t) => s + t.est, 0));
+  if (!g.over) {
+    return { s: 'warn', t: me === 'blue' ? 'Hold Tarn Crossing' : 'Take Tarn Crossing',
+      sub: `${GAME.hours - g.t} hours left. Your strength ${Math.round(now)} of ${tot}. Enemy strength you can see: ${seen}${pic.marks.length ? ', plus movement' : ''}.` };
+  }
+  const won = g.over.winner === me;
+  const t = g.over.winner === 'blue' ? (me === 'blue' ? 'You held Tarn Crossing' : 'Blue held Tarn Crossing') : (me === 'red' ? `You took Tarn Crossing at ${hhmm(g.over.h)}` : `Tarn Crossing fell at ${hhmm(g.over.h)}`);
+  return { s: won ? 'good' : 'bad', t, sub: 'The review is below the map.' };
 }
 
-export function renderReports(g) {
-  const got = g.reports.filter(r => r.arrT <= g.t + 1e-9).sort((a, b) => b.arrT - a.arrT);
-  const fresh = r => r.arrT > g.t - 1;
-  $('reports').innerHTML = got.length ? got.slice(0, 40).map(r => `<li class="${fresh(r) ? 'new' : ''}"><span class="num fc-rt">${hhmm(r.arrT)}</span> ${reportText(r)}</li>`).join('')
-    : '<li class="muted">No reports yet. Task the drone, or wait for your units to see something.</li>';
-}
-
-export function renderOrders(g) {
-  const pend = g.orders.filter(o => !o.done && !o.cancelled);
-  $('orders').innerHTML = pend.length ? pend.map(o => `<li><b>${UNIT_NAME[o.unit]}</b> → ${NAME[o.dest]} <span class="muted">sent ${hhmm(o.t)}, not yet received</span></li>`).join('')
-    : '<li class="muted">None. Orders appear here until the unit receives them.</li>';
-}
-
-export function renderBelow() {
-  const n = v => `<span class="notional">notional</span>`;
+export function renderBelow($) {
+  const N = '<span class="notional">notional</span>';
   const rows = [
-    ['Blue units', 'Mech bn 10, armor bn 12, recon 4 (total 46)', n()],
-    ['Red units', '5 mech/tank bns in the main effort and second echelon, 1 feint bn, 1 recon coy, 2 decoy groups (real strength 80)', n()],
-    ['Red timing', 'Main effort reaches the north edge at 09:00, 10:00 or 11:00, attacks 3 hours later; feint 1 hour earlier; second echelon 5 hours after the main effort', n()],
-    ['Defender multiplier k', `Prepared ${COMBAT.k.prepared}, hasty ${COMBAT.k.hasty}, meeting ${COMBAT.k.meeting}; √k matches FM 5-0 Table B-1 (3:1, 2.5:1, 1:1)`, 'calibrated'],
-    ['Base kill rate c', `${COMBAT.c} per hour`, n()],
-    ['Break threshold', `${COMBAT.breakFrac * 100}% losses, both sides (as in Mearsheimer's reconstruction)`, n()],
-    ['Loss noise', `lognormal, σ = ${COMBAT.sigma} per hour; unit quality σ = ${COMBAT.quality}`, n()],
-    ['Prepared after', `${GAME.prepHours} hours in place`, n()],
-    ['Order delay', ORDER_DELAY.map(([h, p]) => `${h} h: ${p * 100}%`).join(', '), n()],
-    ...Object.entries(SENSORS).map(([, s]) => [s.label, `detect ${Math.round(s.pd * 100)}%${s.pdEngaged ? ` (${Math.round(s.pdEngaged * 100)}% in a fight)` : ''}, names type ${Math.round(s.pid * 100)}%, type right ${Math.round(s.acc * 100)}%, decoy passes as tank ${Math.round(s.spoof * 100)}%, strength error σ ${s.sig}, median delay ${s.delay} h; says "${s.word}"`, n()]),
-    ['False contacts', `${REPORT.falseRate} per sensor, per sector watched, per hour`, n()],
-    ['Track life', `${REPORT.trackLife} hours without a new report; an unidentified contact counts as ${REPORT.unknownStr}`, n()],
-    ['Confidence words', Object.entries(KENT).map(([w, k]) => `${w} ${k.p * 100}% ± ${k.pm * 100}`).join('; '), 'Kent 1964'],
+    ['Blue force', `${FORCES.blue.length} units: 4 mech battalions (10 each), a tank battalion (12), a weapons company (6), 2 recon troops (4 each) and an artillery battalion. 66 points.`, N],
+    ['Red force', `${FORCES.red.length} units: 2 recon troops, 3 mech battalions, 5 tank battalions, a weapons company, a decoy group and an artillery battalion. 104 real points. Recon at 06:00, the first echelon at 07:00, the second at 11:00.`, N],
+    ['Defender multiplier k', `Prepared ${COMBAT.k.prepared}, hasty ${COMBAT.k.hasty}, meeting ${COMBAT.k.meeting}, flank ${COMBAT.k.flank}; √k matches FM 5-0 Table B-1 (3:1, 2.5:1, 1:1, 1:1)`, 'calibrated'],
+    ['Prepared after', `${GAME.prepHours} hours in place`, N],
+    ['Flank attack', 'A defender already fighting attackers from one sector and then hit from a second sector fights at k = 1 (Table B-1: flank counterattack 1:1)', 'rule notional, value sourced'],
+    ['Base kill rate c', `${COMBAT.c} per hour`, N],
+    ['Break threshold', `${COMBAT.breakFrac * 100}% losses, both sides (as in Mearsheimer's reconstruction)`, N],
+    ['Loss noise', `lognormal, σ = ${COMBAT.sigma} per hour; unit quality σ = ${COMBAT.quality}`, N],
+    ['Weapons company', `×${TYPES.weapons.prepared} in a prepared defense, ×${TYPES.weapons.attack} when attacking`, N],
+    ['Breaking contact', `A unit leaving a sector the enemy holds takes ${DISENGAGE * 100}% of one hour of the enemy's fire (k = 1)`, N],
+    ['Artillery', `One mission an hour; each enemy unit in the sector loses ${ARTILLERY.frac * 100}% (σ ${ARTILLERY.sigma}); report right ${ARTILLERY.reportRight * 100}% of the time; recon in the sector hit ${ARTILLERY.friendlyHit * 100}% of the time for ${ARTILLERY.friendlyFrac * 100}%; recon next door shows the sector exactly`, 'rules from the brief; values notional'],
+    ['Seeing', `Your sector: exact. Next door: ${VISION.next * 100}% chance per unit, type and full strength, decoys look like tanks. Recon: movement up to ${VISION.farHops} sectors away, ${VISION.farDelay} hour late. Sightings kept ${VISION.memory} hours`, N],
+    ['Order delay', `${ORDER_DELAY.map(([h, p]) => `${h} h: ${p * 100}%`).join(', ')}; one roll per side per hour, shown before you give orders`, N],
+    ['Movement', '1 hour per sector on a road; 2 across a ridge and on the long roads from the outer columns to the crossing', N],
   ];
   $('param-table').innerHTML = '<thead><tr><th>Value</th><th>Setting</th><th>Basis</th></tr></thead><tbody>'
     + rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('') + '</tbody>';
+  const table = (rows, head) => `<div class="tablewrap"><table><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map((c, i) => `<td${i ? ' class="num"' : ''}>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+  $('balance').innerHTML = `<p class="fine">${BALANCE.games.toLocaleString('en-US')} seeded games per row (the same scenarios in every row).</p>`
+    + `<p class="eyebrow">Defending, against the game's Red commander</p>` + table(BALANCE.defend, ['Blue strategy', 'Blue holds', `Blue losses (of ${BALANCE.blue})`, `Red losses (of ${BALANCE.red})`, 'Reserve sent first to the feint'])
+    + `<p class="eyebrow mt">Attacking, against the game's Blue commander</p>` + table(BALANCE.attack, ['Red strategy', 'Red takes the crossing', `Blue losses (of ${BALANCE.blue})`, `Red losses (of ${BALANCE.red})`, 'Blue reserve sent first to the feint']);
   const Q = [
-    ['Clausewitz, Book I, ch. III', 'War is the province of uncertainty: three-fourths of those things upon which action in War must be calculated, are hidden more or less in the clouds of great uncertainty.', 'clausewitz'],
-    ['Clausewitz, Book I, ch. VI', 'Great part of the information obtained in War is contradictory, a still greater part is false, and by far the greatest part is of a doubtful character. … The law of probability must be his guide.', 'clausewitz'],
-    ['Clausewitz, Book I, ch. VII', 'Everything is very simple in War, but the simplest thing is difficult.', 'clausewitz'],
-    ['Boyd, The Essence of Winning and Losing', 'Without OODA loops embracing all of the above and without the ability to get inside other OODA loops (or other environments), we will find it impossible to comprehend, shape, adapt to and in turn be shaped by an unfolding evolving reality that is uncertain, everchanging, and unpredictable', 'boyd'],
+    ['Clausewitz, On War, Book I, ch. VI', 'Great part of the information obtained in War is contradictory, a still greater part is false, and by far the greatest part is of a doubtful character. … The law of probability must be his guide.', 'clausewitz'],
+    ['Clausewitz, On War, Book I, ch. VII', 'Everything is very simple in War, but the simplest thing is difficult.', 'clausewitz'],
+    ['FM 3-90, para. 5-160', 'A feint is a form of attack used to deceive the enemy as to the location or time of the actual decisive operation. Forces conducting a feint seek direct fire contact with the enemy but avoid decisive engagement.', 'fm390'],
+    ['FM 3-90, ch. 10', 'It focuses on destroying the attacking force by permitting the enemy to advance into a position that exposes him to counterattack and envelopment.', 'fm390'],
+    ['FM 3-90, para. 3-29', 'Generally, a commander prefers to conduct an envelopment instead of a penetration or a frontal attack because the attacking force tends to suffer fewer casualties while having the most opportunities to destroy the enemy.', 'fm390'],
   ];
   const idx = id => SOURCES.findIndex(s => s.id === id) + 1;
-  $('quotes').innerHTML = Q.map(([who, q, id]) => `<li><b>${who}</b> “${esc(q)}” <a href="#src-${id}">[${idx(id)}]</a></li>`).join('')
-    + `<li><b>Kent's chart</b> gives each estimative word a range of odds: almost certain, 93% give or take about 6%; probable, 75% give or take about 12%; chances about even, 50% give or take about 10%. Every report in the game carries one of these words. <a href="#src-kent">[${idx('kent')}]</a></li>`;
+  $('quotes').innerHTML = Q.map(([who, q, id]) => `<li><b>${who}</b> “${esc(q)}” <a href="#src-${id}">[${idx(id)}]</a></li>`).join('');
   $('sources').innerHTML = SOURCES.map(s => `<li id="src-${s.id}">${esc(s.text)} <a href="${s.url}" target="_blank" rel="noopener">link</a></li>`).join('');
-  $('balance').innerHTML = `<p class="fine">${BALANCE.note}</p><div class="tablewrap"><table><thead><tr><th>Strategy</th><th>Crossing held</th><th>Blue losses (of 46)</th><th>Red losses (of 80)</th></tr></thead><tbody>`
-    + BALANCE.rows.map(r => `<tr><td>${r[0]}</td><td class="num">${r[1]}</td><td class="num">${r[2]}</td><td class="num">${r[3]}</td></tr>`).join('') + '</tbody></table></div>';
 }
-
-export { INFO, TYPES };

@@ -24,7 +24,7 @@ export const TAGLINES = {
   'correction-lab': 'Design a correction to a false story and see how much of the belief survives it.',
   'raid-night': 'Defend four cities through waves of drones and missiles, and see what each night costs you in interceptors.',
   'matrix-game': 'Argue your moves in a fictional Baltic crisis, face the counter-arguments, and let the dice decide.',
-  'fog-of-command': 'Your orders run late, your reports lie, and the truth only appears in the review.',
+  'fog-of-command': 'Maneuver, feints and bait against an opponent who can be fooled.',
   'orbital-denial': 'Every satellite you destroy leaves debris in an orbit both sides share.',
   'strait-landing': 'Land troops on Taiwan through real historical weather, and race to build up ashore before the counterattack arrives.',
   'sub-hunt': "Spend your effort, learn the sub's habits, and pounce before it slips into the Atlantic.",

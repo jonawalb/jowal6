@@ -195,7 +195,7 @@ export const ALL_TOOLS = [
   { slug: 'matrix-game', sub: { models: 'wargames', regions: 'ukraine' }, cat: 'models', also: ['regions'], sites: ['deterrence'], title: 'Baltic Matrix Game', status: 'live',
     blurb: 'An argument-based matrix wargame of a fictional Narva crisis: argue an action with three reasons, face counter-arguments, and roll 2d6 over six turns.' },
   { slug: 'sub-hunt', sub: { models: 'wargames' }, cat: 'models', sites: ['deterrence'], title: 'The Hunt', status: 'live',
-    blurb: 'Hunt a hidden submarine in the Greenland–Iceland–UK gap: drop sonobuoys, fly a patrol aircraft, and watch a Bayesian probability map update every hour until you take your one shot.' },
+    blurb: 'Hunt a hidden submarine in the Greenland–Iceland–UK gap: spend each turn\'s effort on buoys, aircraft, helicopter and ship, learn how it moves, and pounce.' },
   { slug: 'fog-of-command', sub: { models: 'wargames' }, cat: 'models', sites: ['deterrence'], title: 'Fog of Command', status: 'live',
     blurb: 'Command a notional brigade in a fictional valley against an enemy you only see through late, partial and sometimes wrong reports, then see what the fog cost you.' },
   { slug: 'orbital-denial', sub: { models: 'wargames', nuclear: 'playground' }, cat: 'models', also: ['nuclear'], sites: ['deterrence'], title: 'Orbital Denial', status: 'live',

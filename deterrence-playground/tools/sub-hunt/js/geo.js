@@ -64,6 +64,16 @@ export function distToSegment(p, a, b) {
   return Math.hypot(px - t * bx, py - t * by);
 }
 
+/** Does segment p1-p2 cross segment q1-q2? (Flat offsets from p1, fine at these scales.) */
+export function segmentsCross(p1, p2, q1, q2) {
+  const b = offset(p1, p2), c = offset(p1, q1), d = offset(p1, q2);
+  const cross = (u, v) => u[0] * v[1] - u[1] * v[0];
+  const sub = (u, v) => [u[0] - v[0], u[1] - v[1]];
+  const d1 = cross(b, c), d2 = cross(b, d);
+  const e = sub(d, c), d3 = cross(e, [-c[0], -c[1]]), d4 = cross(e, sub(b, c));
+  return d1 * d2 < 0 && d3 * d4 < 0;
+}
+
 /** Random sea point within r nm of c. */
 export function seaPointNear(rng, c, r) {
   for (let k = 0; k < 200; k++) {

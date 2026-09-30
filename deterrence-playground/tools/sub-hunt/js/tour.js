@@ -1,21 +1,25 @@
-// Guided walkthrough: points at parts of the page in turn. It explains; it does not play for you.
+// Walkthrough: five cards that point at parts of the page in turn. It opens by itself on a first visit
+// (remembered in this browser only) and from the Walkthrough button. It explains; it does not play.
+import { GAME, ACTIONS } from '../data/params.js';
+
+const A = ACTIONS;
 const STEPS = [
   { sel: '#box', title: 'The glow is where the sub could be',
-    body: 'Brighter orange means more likely. At hour 0 the glow fills the ring from the opening report. Each hour it spreads, because the sub keeps moving and you do not know which way.' },
-  { sel: '#tools', title: 'Search: one tool per hour',
-    body: 'Pick sonobuoys (they listen in a circle for 6 hours) or the patrol aircraft (it sweeps a big square for 2 hours), then click the map. You have 6 sonobuoy drops and 3 flights. Your towed-array ship is free and steers itself toward the brightest water.' },
-  { sel: '#end', title: 'End the hour and watch the map',
-    body: 'The sub moves, your sensors listen, and the map updates by Bayes\' rule. Hearing nothing is information: where you searched goes darker, and everywhere else gets a little brighter. The same idea guided the searches that found the Scorpion wreck in 1968 and the Air France 447 wreck in 2011.' },
-  { sel: '#log', title: 'Read what happened',
-    body: 'Each hour is summed up here in words. A contact pulls the odds toward it, but some contacts are noise. You only learn which after the hunt.' },
-  { sel: '#meter', title: 'Attack when the odds look good',
-    body: 'Best attack odds is the chance your map gives to the single best spot. When you are confident, press Attack and click that spot. You get one shot. Then the true track appears, and a slider replays the whole hunt.' },
+    body: `A report ${GAME.reportAge} hours old put a submarine inside the dashed ring. Brighter orange means more likely. Each turn the glow spreads, because the sub keeps moving. Most subs are heading south for a gap into the Atlantic; one kind circles a marked patrol point (P1 or P2).` },
+  { sel: '#meter-effort', title: `You get ${GAME.effort} effort points a turn`,
+    body: `Spend them on as many actions as they cover, then press End turn: two hours pass. Unspent points carry over, up to ${GAME.bank}, so you can save up for a big turn. Buoys (${GAME.buoyLoads} patterns) and attacks (${GAME.torpedoes}) must last the whole hunt.` },
+  { sel: '#tools', title: 'Wide and blurry, or narrow and sharp',
+    body: `The aircraft box (${A.air.cost}) and buoy lines (${A.line.cost}) cover a lot of water but place a contact only roughly. A helicopter dip (${A.helo.cost}) covers a small spot near your ship but pins the sub to ±2 nm. Moving the ship is free, and its towed array hears bearings. Queue several, undo any, then End turn.` },
+  { sel: '#beh-card', title: 'Learn how it moves',
+    body: 'The sub follows one of four habits: it sprints and drifts, zig-zags to a gap, hides from your ship and helicopter, or loiters. Sprints are loud, so every sensor hears them better. This panel shows the map\'s odds on each habit; they sharpen as you gather contacts.' },
+  { sel: '#meter', title: 'Pounce when the odds are high',
+    body: `Best attack odds is the chance your map gives the single best ${GAME.prosR} nm ring. Choose Attack and click there; it strikes when you press End turn, before the sub moves. A miss rules that ring out, but a sub nearby hears it and bolts. After the hunt, a review replays the sub's true track against your searches.` },
 ];
 
 export function createTour(card) {
   let i = -1, lit = null;
   const light = el => { lit?.classList.remove('sh-hl'); lit = el; el?.classList.add('sh-hl'); };
-  const stop = () => { card.hidden = true; i = -1; light(null); };
+  const stop = () => { if (card.hidden) return; card.hidden = true; i = -1; light(null); };
   const show = () => {
     const s = STEPS[i], target = document.querySelector(s.sel);
     light(target);
@@ -28,6 +32,6 @@ export function createTour(card) {
     card.querySelectorAll('[data-d]').forEach(b => { b.onclick = () => { const n = i + Number(b.dataset.d); if (n >= STEPS.length) stop(); else { i = n; show(); } }; });
     card.querySelector('.btn.solid').focus({ preventScroll: true });
   };
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !card.hidden) stop(); });
-  return { start: () => { i = 0; card.hidden = false; show(); }, stop };
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !card.hidden) { e.stopPropagation(); stop(); } }, true);
+  return { start: () => { i = 0; card.hidden = false; show(); }, stop, get open() { return !card.hidden; } };
 }

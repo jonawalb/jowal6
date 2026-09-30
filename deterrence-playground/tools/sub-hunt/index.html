@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>The Hunt | Interactive Deterrence</title>
-<meta name="description" content="A submarine search game in a notional Greenland–Iceland–UK gap: drop sonobuoys and send a patrol aircraft, watch a Bayesian probability map update every hour, attack once, then see the sub's true track.">
+<meta name="description" content="A submarine search game in a notional Greenland–Iceland–UK gap: spend effort each turn on buoy lines, buoy circles, an aircraft, helicopter dips and your ship, learn the sub's habits from a Bayesian probability map, pounce, then replay its true track.">
 <link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,7 +16,7 @@
 <body>
 <header id="tsm-head"></header>
 <div class="sh-actions">
-  <p class="sh-flag"><b>Notional model.</b> The coastlines are real. Every sensor range, speed and probability is invented for teaching.</p>
+  <p class="sh-flag"><b>Notional model.</b> The coastlines are real. Every sensor, speed, habit and probability is invented for teaching.</p>
   <div><button type="button" class="btn" id="show-howto">How to play</button>
   <button type="button" class="btn" id="start-tour">Walkthrough</button>
   <button type="button" class="btn" id="copy-link">Copy link</button></div>
@@ -25,52 +25,31 @@
   <div class="stage">
     <section class="card sh-howto" id="howto" aria-labelledby="howto-t">
       <div class="sh-howto-h"><h2 id="howto-t">How to play</h2><button type="button" class="btn solid" id="hide-howto">Got it</button></div>
-      <p>A submarine is hiding in the glowing ring north of the Faroes and trying to slip out into the Atlantic. Each hour, pick <b>Sonobuoys</b> or the <b>Patrol aircraft</b>, click the map to search there, then press <b>End hour</b>. The glow is your probability map: brighter means more likely, and it updates after every search. When you think you know where the sub is, press <b>Attack</b> and click that spot. You have one shot and 24 hours.</p>
+      <p>A report 4 hours old put a submarine inside the dashed ring. It has moved since, most likely south toward a gap into the Atlantic. Each turn you get <b>effort points</b>. Pick an action, click the map, and repeat until you have spent what you want; then press <b>End turn</b> and two hours pass. The orange glow is your probability map: brighter means more likely. When it is bright in one spot, <b>Attack</b> there. You have 12 turns.</p>
     </section>
 
-    <div class="card sh-console" id="controls">
-      <div class="sh-hourbar">
-        <p class="sh-hour"><span class="eyebrow">Hour</span> <b class="num" id="hour">0</b><span class="muted num"> / 24</span> <span class="sh-left" id="hours-left"></span></p>
-        <div class="sh-meter" id="meter">
-          <span class="sh-meter-h"><span>Best attack odds</span><b class="num" id="odds">0%</b></span>
-          <span class="sh-meter-bar" aria-hidden="true"><i id="odds-bar"></i></span>
-        </div>
-      </div>
-      <div class="sh-row">
-        <div class="choices sh-tools" id="tools" role="group" aria-label="Search tool">
-          <button type="button" data-tool="buoy" aria-pressed="true"><b>Sonobuoys</b><small>listen 6 h in a circle</small><small class="num" id="left-buoy"></small></button>
-          <button type="button" data-tool="mpa" aria-pressed="false"><b>Patrol aircraft</b><small>sweeps a square for 2 h</small><small class="num" id="left-mpa"></small></button>
-          <button type="button" data-tool="pros" aria-pressed="false" class="sh-prosbtn"><b>Attack</b><small>one shot, ends the hunt</small></button>
-        </div>
-        <div class="sh-go">
-          <button type="button" class="btn" id="undo">Undo</button>
-          <button type="button" class="btn solid sh-end" id="end">End hour</button>
-        </div>
-      </div>
-      <p class="fine sh-hint" id="hint"></p>
-      <div class="sh-prosbox" id="pros-box" hidden>
-        <p>Your map gives <b class="num" id="pros-p">0%</b> that the sub is inside this ring.</p>
-        <div><button type="button" class="btn solid" id="pros-go">Attack here</button> <button type="button" class="btn" id="pros-cancel">Cancel</button></div>
-      </div>
-    </div>
     <p class="sh-say card" id="say" aria-live="polite"></p>
 
     <div class="mapbox" id="box">
-      <svg id="map" tabindex="0" role="application" aria-label="Map of the Greenland–Iceland–UK gap. The orange glow is the probability map of where the hidden submarine could be. Use the arrow keys to move the crosshair and Enter to use the selected tool."></svg>
+      <svg id="map" tabindex="0" role="application" aria-label="Map of the Greenland–Iceland–UK gap. The orange glow is the probability map of where the hidden submarine could be. Arrow keys move the crosshair, Enter uses the selected action, number keys 1 to 7 choose an action."></svg>
       <div class="tooltip" id="tip" hidden></div>
       <div class="sh-callout" id="callout" hidden></div>
     </div>
     <div class="sh-legend">
       <span><i class="lg-heat"></i>Brighter = more likely the sub is here</span>
-      <span><i class="lg-asset"></i>Your sensors (faded = finished)</span>
+      <span><i class="lg-asset"></i>Your sensors (dashed = queued)</span>
       <span><i class="lg-ship"></i>Your ship</span>
-      <span><i class="lg-contact"></i>Contact (may be noise)</span>
-      <span class="rv"><i class="lg-truth"></i>The sub's true track</span>
-      <p class="sh-why">Why a searched area goes dark: no contact there lowers the odds there and raises them everywhere else.</p>
+      <span><i class="lg-contact"></i>Contact, with its stated error</span>
+      <span><i class="lg-wedge"></i>Ship bearing</span>
+      <span><i class="lg-patrol"></i>Patrol point</span>
+      <span class="rv"><i class="lg-truth"></i>The sub's true track (thick = sprint)</span>
     </div>
 
     <section class="card sh-reveal" id="reveal" hidden aria-labelledby="rv-title">
       <div class="status" id="rv-status"><b id="rv-title"></b><span id="rv-sub"></span></div>
+      <p class="sh-story" id="rv-story"></p>
+      <p class="eyebrow">Where you nearly had it</p>
+      <ul class="sh-near" id="rv-near"></ul>
       <div class="sh-replay">
         <button type="button" class="btn" id="rv-play">Replay the hunt</button>
         <label class="slider"><span class="sl-h"><span>Hour shown on the map</span><output id="rv-h" class="num">0</output></span>
@@ -78,7 +57,7 @@
       </div>
       <p class="eyebrow">How close your map got</p>
       <svg id="rv-chart" class="sh-chart" viewBox="0 0 640 230" role="img" aria-label="Chart of how much of the map's probability lay near the true submarine, hour by hour"></svg>
-      <p class="fine" id="rv-note"></p>
+      <p class="fine">When the line climbs, your searches were squeezing the odds onto the sub. When it falls, the sub was slipping out of the water you searched, or a false contact pulled the map away.</p>
       <dl class="readout" id="rv-read"></dl>
       <div class="sh-go">
         <button type="button" class="btn solid" id="rv-again">Same sub, hunt again</button>
@@ -88,22 +67,64 @@
   </div>
 
   <aside class="panel" aria-label="Hunt panel">
+    <div class="sec sh-console" id="controls">
+      <div class="sh-hourbar">
+        <p class="sh-hour"><span class="eyebrow">Turn</span> <b class="num" id="turn">1</b><span class="muted num"> / 12</span> <span class="sh-left" id="hours"></span></p>
+        <div class="sh-effort" id="meter-effort">
+          <span class="sh-meter-h"><span>Effort left</span><span><b class="num" id="effort">6</b><span class="muted num" id="effort-of"></span></span></span>
+          <span class="sh-pips" id="pips" aria-hidden="true"></span>
+        </div>
+        <p class="sh-stock"><span>Buoys <b class="num" id="buoys">10</b></span> <span>Attacks <b class="num" id="torps">2</b></span></p>
+        <div class="sh-meter" id="meter">
+          <span class="sh-meter-h"><span>Best attack odds</span><b class="num" id="odds">0%</b></span>
+          <span class="sh-meter-bar" aria-hidden="true"><i id="odds-bar"></i></span>
+        </div>
+      </div>
+      <div class="choices sh-tools" id="tools" role="group" aria-label="Actions"></div>
+      <div class="sh-lineopt" id="lineopt" hidden>
+        <span>Line heading <b class="num" id="line-ang">90°</b></span>
+        <button type="button" class="btn" id="rotate" aria-keyshortcuts="R">Rotate 30° (R)</button>
+      </div>
+      <div class="sh-row">
+        <div class="sh-queue"><span class="eyebrow">This turn</span><ul id="queue"></ul></div>
+        <div class="sh-go">
+          <button type="button" class="btn" id="undo" aria-keyshortcuts="U">Undo</button>
+          <button type="button" class="btn solid sh-end" id="end" aria-keyshortcuts="E">End turn</button>
+        </div>
+      </div>
+      <p class="fine sh-hint" id="hint"></p>
+    </div>
     <div class="sec">
       <div class="status" id="status" data-s="warn"><b id="st-t">Find the submarine</b><span id="st-s"></span></div>
+    </div>
+    <div class="sec" id="beh-card">
+      <p class="eyebrow">What the map thinks it is doing</p>
+      <div id="beh-odds" class="sh-behodds"></div>
+      <p class="fine">Four habits, explained under the map. The map knows the habits but not which one this sub has.</p>
     </div>
     <div class="sec">
       <p class="eyebrow">What happened</p>
       <ol class="sh-log" id="log" aria-live="polite"></ol>
     </div>
     <details class="sec sh-adv" id="adv">
-      <summary>Advanced</summary>
-      <p class="fine">Change how the sub behaves. Changing a setting starts a new hunt.</p>
-      <div class="choices sh-beh" id="beh" role="group" aria-label="Submarine behaviour"></div>
-      <label class="slider"><span class="sl-h"><span>Chance it sprints each hour</span><output id="sp-o" class="num">25%</output></span>
-        <input type="range" id="sp" min="0" max="60" step="5" value="25"><small>Quiet: 6 kt and hard to hear. Sprint: 16 kt and loud. <span class="notional">notional</span></small></label>
+      <summary>Practice and seed</summary>
+      <p class="fine">Practise against one habit. The map is then told which one. Changing it starts a new hunt.</p>
+      <div class="choices sh-beh" id="beh" role="group" aria-label="Submarine habit"></div>
       <div class="sh-seed"><label for="seed">Seed</label> <input id="seed" type="number" min="1" max="999999" inputmode="numeric" class="num">
         <button type="button" class="btn" id="restart">Restart</button> <button type="button" class="btn" id="newsub">New sub</button></div>
-      <p class="fine">The seed fixes the sub's path and every roll of the dice, so the same link replays the same hunt.</p>
+      <p class="fine">The seed fixes the sub and every roll of the dice, so the same link replays the same hunt.</p>
+    </details>
+    <details class="sec sh-adv">
+      <summary>Keyboard</summary>
+      <dl class="readout">
+        <dt>1–7</dt><dd>choose an action</dd>
+        <dt>Arrows</dt><dd>move the crosshair on the map (Shift for bigger steps)</dd>
+        <dt>Enter</dt><dd>use the action at the crosshair</dd>
+        <dt>B</dt><dd>jump the crosshair to the brightest spot</dd>
+        <dt>R</dt><dd>rotate the buoy line</dd>
+        <dt>U</dt><dd>undo the last queued action</dd>
+        <dt>E</dt><dd>end the turn</dd>
+      </dl>
     </details>
   </aside>
 </main>
@@ -111,29 +132,32 @@
 <section class="below">
   <div class="col">
     <h2>How it works</h2>
-    <p><b>The goal.</b> A report puts a submarine somewhere inside the dashed ring. It is heading for one of three gaps into the Atlantic. You have 24 hours to find it, 6 sonobuoy drops, 3 aircraft flights and one attack. If it reaches an exit, or time runs out, you lose.</p>
-    <p><b>Each hour.</b> Use at most one tool: drop sonobuoys (16 buoys in a circle that listen for 6 hours) or send the patrol aircraft (it searches a square for 2 hours). Your towed-array ship costs nothing and steers itself toward the brightest part of the map, listening as it goes. Then press End hour.</p>
-    <p><b>The glow.</b> The orange glow is your probability map. It spreads each hour because the sub moves. When a sensor searches an area and hears nothing, the odds there drop, and because the sub must be somewhere, the odds everywhere else rise. A contact pulls the odds toward it, but some contacts are noise. Best attack odds is the most probability your map puts inside any one attack ring.</p>
-    <p><b>Afterwards.</b> The reveal draws the sub's true track, marks which contacts were real, and charts how much of your map sat near the sub each hour. Move the slider to replay the hunt. The link in the address bar replays your exact hunt.</p>
+    <p><b>The goal.</b> A report put a submarine within 35 nm of the ring's centre 4 hours before the hunt starts, so by hour 0 it could be well outside the ring. Hit it with an attack before it slips out through one of the gaps into the Atlantic or the 24 hours (12 turns of 2 hours) run out.</p>
+    <p><b>Each turn.</b> You get 6 effort points; unspent points carry over, up to 12. Spend them on as many actions as they cover. Buoy lines and circles cost 2 each and come from a stock of 10 patterns for the whole hunt. The aircraft box costs 3. A helicopter dip costs 3 and must be within 50 nm of your ship. Moving the ship is free; sprinting it costs 1 and leaves it deaf for the turn. An attack costs 3, and you have 2. Undo takes back the last action queued this turn. End turn resolves any attack first, against where the sub is now, then plays two hours.</p>
+    <p><b>The trade-offs.</b> Wide tools (the aircraft box, a buoy line) cover a lot of water cheaply but place a contact only roughly, and the aircraft mostly hears sprints. Narrow tools (a helicopter dip, a buoy circle) cost more per square mile but pin the sub down. Spending now finds the sub sooner; saving lets you pounce with several dips and an attack in one turn.</p>
+    <p><b>The glow.</b> The orange glow is your probability map. It spreads every hour because the sub moves. A sensor that hears nothing lowers the odds where it listened and, because the sub must be somewhere, raises them everywhere else. A contact pulls the odds toward it, by an amount that depends on its stated error; some contacts are noise. A sharp contact makes the glow shrink to a small bright patch.</p>
+    <h3>The four habits</h3>
+    <ul class="sh-habits" id="beh-list"></ul>
+    <p>Sprints are loud: every sensor hears a sprinting sub far better, and the free listening network hears only sprints. A sprint-and-drift sub is easiest just after it has been heard, while it crawls. A zig-zagger's straight-line course to its gap is predictable, so a buoy line across that course catches it. A shy sub is best hunted with buoys and the aircraft, which it cannot hear. A loiterer never goes far from its patrol point.</p>
+    <p><b>Afterwards.</b> The review names the habit, draws the sub's true track against your searches, lists where you nearly had it, and replays the hunt hour by hour. The link in the address bar replays your exact hunt.</p>
 
     <h2 class="mt">Method and notional values</h2>
-    <p>Detection follows classical search theory. The sonobuoys and the aircraft use Koopman's random search formula, P = 1 − e<sup>−WL/A</sup>, where W is the sweep width, L the length of search track and A the area (Koopman 1946, p. 28). For sonobuoys, which sit still, the sub's own speed supplies the track length. The towed array uses a lateral range curve, the chance of detection against how close the sub passes, whose area is the sweep width (Koopman, p. 24).</p>
-    <p>The probability map is a particle filter: 4,000 possible submarines, each moved by the same rules as the real one, each reweighted every hour by Bayes' rule given what your sensors did and did not hear. Stone et al. (2014) used the same representation in the Air France 447 search, and name the 1968 search for USS Scorpion as an earlier success of the Bayesian approach. The opening ring is a version of the "flaming datum" problem: the longer you wait, the larger the area the sub could be in (Washburn 1980).</p>
-    <p>Your map uses the true rules and the true sprint rate. Real searchers never have that. The only unknowns here are the dice, the route and, if you pick "Unknown" under Advanced, the behaviour. Treat your score as an upper bound.</p>
-    <p>The coastlines are Natural Earth. Everything tactical is <span class="notional">notional</span>: the sensors, ranges and sweep widths, the aircraft and ship performance, the sub's speeds and routes, the start area, false-contact rates and the attack radius. None describes a real system, patrol area or operation. The table lists every value.</p>
+    <p>Detection follows classical search theory. The buoy circle and the aircraft box use Koopman's random search formula, P = 1 − e<sup>−WL/A</sup>, where W is the sweep width, L the length of search track and A the area (Koopman 1946, p. 28). For the circle, which sits still, the sub's own speed supplies the track length, so a slow sub is hard to hear. The ship's towed array uses a lateral range curve, the chance of detection against how close the sub passes, whose area is the sweep width (Koopman, p. 24). The buoy line uses plain geometry, and the helicopter dip and the listening network use flat chances.</p>
+    <p>The probability map is a particle filter: 4,000 possible submarines, each given one of the four habits and moved by the same rules as the real one, each reweighted every hour by Bayes' rule given what your sensors did and did not hear. A missed attack is information too: it rules out the ring. Stone et al. (2014) used the same representation in the Air France 447 search, and name the 1968 search for USS Scorpion as an earlier success of the Bayesian approach. The 4-hour-old report is a version of the "flaming datum" problem: the longer since the sub was placed, the larger the area it could be in (Washburn 1980).</p>
+    <p>The four habits are <span class="notional">notional</span> teaching devices, chosen to be learnable. They are not drawn from any source on how real submarines are handled, and nothing here describes real tactics. Your map knows the true rules; real searchers never do. The only unknowns here are the habit, the gap, the timing and the dice, so treat your score as an upper bound.</p>
+    <p>The coastlines are Natural Earth. Everything tactical is <span class="notional">notional</span>: the sensors, ranges and sweep widths, the aircraft, helicopter and ship performance, the sub's speeds, habits and routes, the patrol points, the start area, false-contact rates, the effort costs and the attack radius. None describes a real system, patrol area or operation. The table lists every value.</p>
     <p>Left out: sound propagation, thermal layers and weather; ice; the sub's own sonar and weapons; real surveillance networks; allied and opposing forces; and the time needed to attack. The game teaches how search reasoning works, not how any real hunt would go.</p>
     <div class="tablewrap"><table id="param-table"></table></div>
+
+    <h3 class="mt" id="balance-h">Balance: 1,000 hunts per scripted player</h3>
+    <p>Five simple scripted players each played the same 1,000 seeded hunts (seeds 1–1,000) with the game's own engine (<code>scripts/balance.mjs</code>). They are rules of thumb, not optimal play.</p>
+    <ul class="sh-habits" id="bal-who"></ul>
+    <div class="tablewrap"><table id="bal-table"></table></div>
+    <p class="fine" id="bal-note"></p>
 
     <details class="sh-more">
       <summary>The math behind each sensor</summary>
       <div id="math" class="sh-math"></div>
-    </details>
-    <details class="sh-more" id="batch">
-      <summary>Run 200 automatic hunts</summary>
-      <p class="fine">A simple automatic hunter plays 50 hunts at each of four sprint rates against the behaviour set under Advanced. It drops sonobuoys every fourth hour and sends the aircraft every eighth, each on the brightest water not already covered, and attacks once its best attack odds reach 50% (or on the last hour).</p>
-      <div class="sh-go"><button type="button" class="btn" id="bt-run">Run 200 hunts</button> <span class="fine num" id="bt-prog"></span></div>
-      <svg id="bt-chart" class="sh-chart" viewBox="0 0 640 230" role="img" aria-label="Outcomes of 200 automatic hunts by the sub's sprint rate" hidden></svg>
-      <p class="fine" id="bt-note"></p>
     </details>
   </div>
   <div class="col">
@@ -147,7 +171,7 @@
 <footer id="tsm-foot"></footer>
 <script type="module">
   import { mountChrome } from '../../shared/js/chrome.js';
-  mountChrome({ title: 'The Hunt', sub: 'Find a hidden submarine in a notional Greenland–Iceland–UK gap by searching a probability map that updates every hour.', category: 'Force & wargame models' });
+  mountChrome({ title: 'The Hunt', sub: 'Spend a turn\'s effort on buoys, aircraft, helicopter and ship, learn how the hidden sub moves, and pounce before it slips through the Greenland–Iceland–UK gap.', category: 'Force & wargame models' });
 </script>
 <script type="module" src="js/app.js"></script>
 </body>

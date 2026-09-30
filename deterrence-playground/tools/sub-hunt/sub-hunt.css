@@ -18,10 +18,23 @@
 .sh-console { padding: 10px 14px; display: flex; flex-direction: column; gap: 8px; }
 .sh-console.done .sh-tools { opacity: .5; }
 .sh-hourbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 24px; }
-.sh-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: stretch; }
+.sh-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; }
 .sh-row .sh-go { flex-wrap: nowrap; }
-.sh-row .sh-end { height: 100%; }
-@media (max-width: 720px) { .sh-row { grid-template-columns: minmax(0, 1fr); } .sh-row .sh-go { justify-content: flex-end; } .sh-row .sh-end { height: auto; } }
+@media (max-width: 720px) { .sh-row { grid-template-columns: minmax(0, 1fr); } .sh-row .sh-go { justify-content: flex-end; } }
+.sh-queue { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-width: 0; }
+.sh-queue ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px; }
+.sh-queue li { font-size: 12px; border: 1px solid var(--blue); background: var(--blue-soft); border-radius: 10px; padding: 1px 8px; }
+.sh-queue li span { font-family: var(--mono); color: var(--muted); margin-left: 2px; }
+.sh-queue li.muted { border-color: transparent; background: none; padding: 1px 0; color: var(--muted); }
+.sh-lineopt { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+.sh-lineopt[hidden] { display: none; }
+.sh-effort { display: flex; flex-direction: column; gap: 4px; flex: 0 1 230px; min-width: 170px; }
+.sh-pips { display: flex; gap: 3px; }
+.sh-pips i { flex: 1 1 0; height: 10px; border-radius: 2px; border: 1px solid var(--rule); background: transparent; }
+.sh-pips i.on { background: var(--accent); border-color: var(--accent); }
+.sh-pips i.used { background: color-mix(in srgb, var(--accent) 30%, transparent); border-color: var(--accent); border-style: dashed; }
+.sh-stock { margin: 0; display: flex; gap: 14px; font-size: 13px; }
+.sh-stock b { font: 700 18px var(--display); }
 .sh-hour { margin: 0; display: flex; align-items: baseline; gap: 6px; }
 .sh-hour b { font: 700 26px var(--display); }
 .sh-left { margin-left: 8px; font-size: 13px; color: var(--muted); }
@@ -86,10 +99,14 @@
 body.sh-over .sh-legend .rv { display: inline-flex; }
 
 /* Controls */
-.sh-tools { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.sh-tools button b { font-size: 14px; }
-.sh-tools button { display: flex; flex-direction: column; gap: 2px; }
-.sh-tools small, .sh-beh small { color: var(--muted); font-size: 11.5px; }
+.sh-tools { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.sh-tools button b { font-size: 13.5px; }
+.sh-tools button { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.sh-th { display: flex; align-items: baseline; gap: 6px; }
+.sh-th b { flex: 1 1 auto; min-width: 0; }
+.sh-k { font: 500 10.5px var(--mono); color: var(--muted); border: 1px solid var(--rule); border-radius: 3px; padding: 0 4px; }
+.sh-cost { font: 600 11px var(--mono); color: var(--accent); white-space: nowrap; }
+.sh-tools small, .sh-beh small { color: var(--muted); font-size: 11.5px; line-height: 1.3; }
 .sh-tools button:disabled { opacity: .45; cursor: default; }
 .sh-prosbtn b { color: var(--red); }
 .sh-go { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
@@ -101,6 +118,11 @@ body.sh-over .sh-legend .rv { display: inline-flex; }
 @keyframes sh-pulse { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 70%, transparent); } 50% { box-shadow: 0 0 0 7px color-mix(in srgb, var(--accent) 0%, transparent); } }
 
 /* Panel */
+.sh-behodds { display: flex; flex-direction: column; gap: 5px; }
+.sh-bo { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 8px; font-size: 13px; align-items: baseline; }
+.sh-bo b { font-family: var(--mono); font-size: 12.5px; }
+.sh-bo-bar { grid-column: 1 / -1; height: 6px; background: var(--rule); border-radius: 3px; overflow: hidden; }
+.sh-bo-bar i { display: block; height: 100%; background: var(--c6); transition: width .4s ease; }
 .sh-log { list-style: none; margin: 0; padding: 0; max-height: 260px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; }
 .sh-log { max-height: 340px; font-size: 13px; line-height: 1.4; }
 .sh-log li { border-left: 3px solid var(--rule); padding: 2px 8px; }
@@ -154,20 +176,29 @@ body.sh-over .sh-legend .rv { display: inline-flex; }
 .sh-narrow { display: none; }
 #map.narrow .sh-narrow { display: inline; }
 #map.narrow .sh-gw { display: none; }
-#map.narrow .sh-lab { font-size: 17px; stroke-width: 4px; }
-#map.narrow .sh-exitlab { font-size: 16px; }
-#map.narrow .sh-names .t-place { font-size: 22px; }
-#map.narrow .sh-names .t-sea { font-size: 20px; }
-#map.narrow .tsm-grat text { font-size: 16px; }
-/* Phones: the map comes first, then the controls and the hour's summary. */
-@media (max-width: 720px) {
-  .stage > .sh-howto { order: 1; } .stage > .mapbox { order: 2; } .stage > .sh-legend { order: 3; margin-top: 0; }
-  .stage > .sh-console { order: 4; } .stage > .sh-say { order: 5; } .stage > .sh-reveal { order: 6; }
-  body.sh-over .stage > .sh-reveal { order: 4; }
-  body.sh-over .stage > .sh-console { display: none; }
+/* Map text and marks keep a constant on-screen size: --u is SVG units per screen pixel (set in map.js). */
+#map { --u: 1; }
+#map .sh-lab { font-size: calc(12px * var(--u)); stroke-width: calc(3px * var(--u)); }
+#map .sh-exitlab { font-size: calc(11.5px * var(--u)); stroke-width: calc(3px * var(--u)); }
+#map .sh-names .t-place { font-size: calc(15px * var(--u)); }
+#map .sh-names .t-sea { font-size: calc(15px * var(--u)); }
+#map .tsm-grat text { font-size: calc(11px * var(--u)); }
+#map path, #map line, #map circle { vector-effect: non-scaling-stroke; }
+/* Desktop: the controls sit in the side panel, which stays in view beside the map. */
+@media (min-width: 1021px) {
+  .layout > .panel { position: sticky; top: 8px; max-height: calc(100vh - 16px); overflow-y: auto; }
+  .sh-console .sh-tools { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+/* Phones and tablets: the map comes first, then its legend and the turn summary, then the controls. */
+@media (max-width: 1020px) {
+  .stage > .sh-howto { order: 1; } .stage > .mapbox { order: 2; } .stage > .sh-legend { order: 3; margin-top: 0; }
+  .stage > .sh-say { order: 4; } .stage > .sh-reveal { order: 5; }
+}
+body.sh-over .sh-console { display: none; }
+@media (max-width: 720px) { .sh-tools { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 520px) {
   .sh-hour b { font-size: 22px; }
+  .sh-effort { flex-basis: 100%; }
   .sh-legend { font-size: 12px; gap: 3px 12px; }
   .sh-replay { grid-template-columns: 1fr; }
   .sh-tools button { padding: 7px 6px; }
@@ -175,3 +206,31 @@ body.sh-over .sh-legend .rv { display: inline-flex; }
   .sh-meter { flex-basis: 100%; }
   .sh-tour { right: 8px; left: 8px; bottom: 8px; width: auto; }
 }
+
+/* Map marks added for the effort-per-turn version */
+.sh-patrol { stroke: var(--c6); stroke-width: 2; fill: none; stroke-dasharray: none; }
+.sh-range { fill: none; stroke: var(--blue); stroke-width: 1.2; stroke-dasharray: 3 5; opacity: .8; pointer-events: none; }
+.sh-cur.bad { stroke: var(--bad); fill: color-mix(in srgb, var(--bad) 8%, transparent); }
+.sh-cur.line, .sh-cur.move { fill: none; stroke-width: 3; }
+.sh-cur.attack { stroke: var(--red); fill: color-mix(in srgb, var(--red) 8%, transparent); stroke-dasharray: none; stroke-width: 2; }
+.sh-asset.sh-line { fill: none; stroke-width: 2.4; }
+.sh-asset.sh-helo { stroke: var(--c3); fill: color-mix(in srgb, var(--c3) 14%, transparent); }
+.sh-asset.sh-air { fill: color-mix(in srgb, var(--blue) 6%, transparent); stroke-dasharray: 8 3; }
+.sh-asset.sh-air.pending, .sh-asset.pending { stroke-dasharray: 5 4; }
+.sh-buoy { fill: var(--blue); stroke: var(--panel); stroke-width: 1; }
+.sh-buoy.done { fill: var(--muted); }
+.sh-shipplan { fill: none; stroke: var(--blue); stroke-width: 2; stroke-dasharray: 5 4; }
+.sh-shipplan.dash { stroke-dasharray: 2 3; stroke-width: 3; }
+.sh-contact .sh-wedge { fill: color-mix(in srgb, var(--ink) 10%, transparent); stroke: var(--ink); stroke-width: 1; stroke-dasharray: 3 3; }
+.sh-contact.real .sh-contact .sh-wedge { fill: color-mix(in srgb, var(--red) 16%, transparent); stroke: var(--red); }
+.sh-contact .sh-err { fill: none; stroke: var(--ink); stroke-width: 1.2; stroke-dasharray: 2 3; }
+.sh-contact.sh-c-net .sh-err { stroke: var(--c6); stroke-width: 1.6; stroke-dasharray: 6 4; }
+.sh-contact.sh-c-net path:not(.sh-err) { fill: var(--c6); }
+.sh-pros.queued { stroke: var(--red); stroke-dasharray: 5 4; }
+.sh-truth.hide { stroke-dasharray: 3 3; }
+.lg-wedge { width: 18px !important; height: 10px !important; background: color-mix(in srgb, var(--ink) 18%, transparent); clip-path: polygon(0 50%, 100% 0, 100% 100%); }
+.lg-patrol { width: 12px !important; height: 12px !important; background: linear-gradient(var(--c6), var(--c6)) center / 2px 100% no-repeat, linear-gradient(var(--c6), var(--c6)) center / 100% 2px no-repeat; }
+.sh-story { margin: 0; font-size: 14.5px; line-height: 1.5; }
+.sh-near { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; font-size: 14px; line-height: 1.45; }
+.sh-habits { margin: 4px 0 10px; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
+.below h3 { font-size: 18px; margin: 16px 0 6px; }

@@ -17,7 +17,7 @@ export const STEPS = [
     body: 'Hormuz traffic held up through the June 2025 war. In 2026 it collapsed. Choose the 2026 comparison to see the fall. PortWatch counts ships by AIS; ships that switch off their transponders are missed, so near-zero counts can understate real traffic.',
     set: { preset: 'hormuz26' } },
   { title: 'Mines outlast the fighting',
-    body: 'Jonathan Walberg\'s commentary on the 2026 mine clearance makes the point this chart shows: a handful of mines kept commercial traffic away for months, and insurers did not return when the military declared the lanes clear.',
+    body: 'Ethan Connell and Jonathan Walberg argue that mines work by deterring underwriters as well as by sinking ships. Hormuz counts stayed far below their pre-war level for months, and they stayed low after CENTCOM said on 27 August that the lanes were clear of mines.',
     set: { preset: 'clearance' } },
 ];
 

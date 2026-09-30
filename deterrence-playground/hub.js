@@ -76,7 +76,7 @@ $('q').addEventListener('input', render);
 
 // Categories (and single tools) whose tools need a second password on this site.
 const locked = new Set(CATEGORIES.filter(c => c.locked).map(c => c.id));
-const isLocked = t => locked.has(t.cat) || !!t.locked;
+const isLocked = t => locked.has(t.cat) || !!t.locked || !!t.vault;
 const LOCK = ' <span class="lock-badge" title="Opening this tool asks for a password">🔒 Password Protected</span>';
 
 /** Overview tile for one section: name, blurb, tool count and the first few tool names. */

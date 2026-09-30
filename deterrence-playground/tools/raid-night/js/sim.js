@@ -1,6 +1,6 @@
 // Raid Night simulation: pure state and a fixed-step update, shared by the live game and the headless
 // heuristic replays in the after-action review. No DOM access here.
-import { FIELD, CITIES, WEAPONS, WEAPON_ORDER, THREATS, THREAT_ORDER, WAVE_TRACKS, SPAWN } from '../data/params.js';
+import { FIELD, CITIES, WEAPONS, WEAPON_ORDER, THREATS, THREAT_ORDER, WAVE_TRACKS, SPAWN, RESUPPLY } from '../data/params.js';
 import { RAIDS } from '../data/raids.js';
 import { COST, THREAT_COST } from '../data/costs.js';
 import { mulberry32, hash01 } from './rng.js';
@@ -60,9 +60,9 @@ export function buildWaves(seed) {
 const zero = () => ({ drone: 0, cruise: 0, ballistic: 0 });
 const byW = v => ({ gun: v, sri: v, lri: v });
 
-export function createGame(seed, { headless = false } = {}) {
+export function createGame(seed, { headless = false, budget = RESUPPLY.budget.normal } = {}) {
   const S = {
-    seed, headless, waves: buildWaves(seed), wave: 0, t: 0, time: 0, phase: 'wave', next: 0,
+    seed, headless, budget, waves: buildWaves(seed), wave: 0, t: 0, time: 0, phase: 'wave', next: 0,
     threats: [], shots: [], events: [],
     ammo: Object.fromEntries(WEAPON_ORDER.map(k => [k, WEAPONS[k].mag])),
     cool: Object.fromEntries(WEAPON_ORDER.map(k => [k, WEAPONS[k].sites.map(() => 0)])),
@@ -70,8 +70,9 @@ export function createGame(seed, { headless = false } = {}) {
     spent: { lo: 0, hi: 0 }, value: { lo: 0, hi: 0 },
     kills: zero(), leaks: zero(), unpricedKills: 0,
     dmg: Object.fromEntries(CITIES.map(c => [c.k, 0])),
-    perWave: [],
+    perWave: [], resupplied: [],
   };
+  S.startAmmo = { ...S.ammo };
   return S;
 }
 
@@ -100,14 +101,16 @@ export function coverage(S, th) {
   return 1 - miss;
 }
 
-/** Why a weapon cannot fire at a threat right now, or '' if it can (and which site would fire). */
-export function canFire(S, w, th) {
+/** Why a weapon cannot fire at a threat right now, or '' if it can (and which site would fire).
+ *  `sites` optionally limits the search to some site indices (hard mode: one battery's sites). */
+export function canFire(S, w, th, sites = null) {
   if (!th || !th.alive) return { reason: 'gone' };
   if (S.ammo[w] <= 0) return { reason: 'empty' };
   const W = WEAPONS[w];
   if (W.pk[th.type] <= 0) return { reason: 'ineffective' };
   let best = -1, bestD = Infinity, inRange = false;
   W.sites.forEach((s, i) => {
+    if (sites && !sites.includes(i)) return;
     const d = Math.hypot(s.x - th.x, s.y - th.y);
     if (d > W.range) return;
     inRange = true;
@@ -118,11 +121,11 @@ export function canFire(S, w, th) {
   return { reason: '', site: best };
 }
 
-/** Assign weapon w to threat id. Returns { ok, reason }. */
-export function fire(S, w, id) {
+/** Assign weapon w to threat id, optionally from a subset of sites. Returns { ok, reason }. */
+export function fire(S, w, id, sites = null) {
   if (S.phase !== 'wave') return { ok: false, reason: 'idle' };
   const th = S.threats.find(t => t.id === id);
-  const c = canFire(S, w, th);
+  const c = canFire(S, w, th, sites);
   if (c.reason) return { ok: false, reason: c.reason };
   const site = WEAPONS[w].sites[c.site];
   S.cool[w][c.site] = WEAPONS[w].reload;
@@ -195,6 +198,7 @@ export function nextWave(S) {
   if (S.phase !== 'break') return false;
   S.wave++; S.t = 0; S.next = 0; S.phase = 'wave';
   for (const w of WEAPON_ORDER) S.cool[w] = S.cool[w].map(() => 0);
+  S.startAmmo = { ...S.ammo };
   return true;
 }
 
@@ -205,5 +209,6 @@ export function summary(S) {
   const dmgTotal = Object.values(S.dmg).reduce((a, b) => a + b, 0);
   const ratio = { lo: S.value.lo ? S.spent.lo / S.value.lo : null, hi: S.value.hi ? S.spent.hi / S.value.hi : null };
   return { leakTotal, killTotal, dmgTotal, ratio, spent: S.spent, value: S.value, ammo: S.ammo, fired: S.fired,
-    wasted: S.wasted, use: S.use, kills: S.kills, leaks: S.leaks, dmg: S.dmg, perWave: S.perWave, unpricedKills: S.unpricedKills };
+    wasted: S.wasted, use: S.use, kills: S.kills, leaks: S.leaks, dmg: S.dmg, perWave: S.perWave, unpricedKills: S.unpricedKills,
+    resupplied: S.resupplied, budget: S.budget };
 }

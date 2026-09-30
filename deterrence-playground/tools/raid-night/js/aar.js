@@ -1,13 +1,17 @@
 // After-action review: the player's night beside two headless replays of the same seed.
-import { WEAPONS, WEAPON_ORDER, THREAT_ORDER } from '../data/params.js';
+import { WEAPONS, WEAPON_ORDER, THREAT_ORDER, RESUPPLY, MODE_NAME } from '../data/params.js';
 import { replay } from './policy.js';
 import { COST } from '../data/costs.js';
 import { range, ratio, esc } from './fmt.js';
+import { orderInfo } from './targeting.js';
 
 const RUNS = [['you', 'Your night'], ['heuristic', 'Cheapest-capable rule'], ['premium', 'Best-weapon-first rule']];
 
-export function renderAAR(you, seed) {
-  const R = { you, heuristic: replay(seed, 'heuristic'), premium: replay(seed, 'premium') };
+const bought = (r, w) => r.resupplied.reduce((a, x) => a + x.added[w], 0);
+
+export function renderAAR(you, seed, { mode = 'normal', batFired = null, lock = 'closest' } = {}) {
+  const budget = RESUPPLY.budget[mode] ?? RESUPPLY.budget.normal;
+  const R = { you, heuristic: replay(seed, 'heuristic', budget), premium: replay(seed, 'premium', budget) };
   const cell = f => RUNS.map(([k]) => `<td class="num">${f(R[k])}</td>`).join('');
   const rows = [
     ['Leakers (drone / cruise / ballistic)', r => `${r.leakTotal} <span class="muted">(${THREAT_ORDER.map(t => r.leaks[t]).join(' / ')})</span>`],
@@ -20,6 +24,8 @@ export function renderAAR(you, seed) {
     ['Short-range fired', r => r.fired.sri],
     ['Gun and EW bursts', r => r.fired.gun],
     ['Shots at tracks already down', r => WEAPON_ORDER.reduce((a, w) => a + r.wasted[w], 0)],
+    ['Rounds resupplied (guns / short / long)', r => WEAPON_ORDER.map(w => bought(r, w)).join(' / ')],
+    ['Resupply points used', r => `${r.resupplied.reduce((a, x) => a + x.pts, 0)} of ${r.budget * 2}`],
   ];
   document.getElementById('aar-table').innerHTML = `<thead><tr><th scope="col">Seed ${seed}</th>${RUNS.map(([, n]) => `<th scope="col">${n}</th>`).join('')}</tr></thead><tbody>`
     + rows.map(([n, f]) => `<tr><th scope="row">${n}</th>${cell(f)}</tr>`).join('') + '</tbody>';
@@ -37,6 +43,12 @@ export function renderAAR(you, seed) {
       <div class="tablewrap"><table class="magt"><thead><tr><th></th><th>after wave 1</th><th>2</th><th>3</th></tr></thead><tbody>${RUNS.map(line).join('')}</tbody></table></div>`;
   }).join('');
 
+  const hard = mode === 'hard';
+  document.getElementById('aar-mode').innerHTML = `<span class="pill">${hard ? 'Hard mode: two batteries' : `${MODE_NAME[mode]} mode`}</span> `
+    + esc(`Lock order at the end: ${orderInfo(lock).name.toLowerCase()}. `)
+    + (hard && batFired ? esc(`Left battery fired ${batFired.L} shot${batFired.L === 1 ? '' : 's'}, right battery ${batFired.R}. The rules fire from every site as one defense. `) : '')
+    + esc(`Every run got the ${MODE_NAME[mode]}-mode budget of ${budget} resupply points before waves 2 and 3; the rules split theirs in proportion to what they fired in the wave before (see the method).`);
+
   const h = R.heuristic, lriCheap = you.use.lri.drone + you.use.lri.cruise;
   const parts = [`You let ${you.leakTotal} track${you.leakTotal === 1 ? '' : 's'} through for ${you.dmgTotal} damage points and spent ${range(you.spent.lo, you.spent.hi)}.`,
     `Facing the same raids, the cheapest-capable rule let ${h.leakTotal} through for ${h.dmgTotal} points and spent ${range(h.spent.lo, h.spent.hi)}.`];
@@ -50,7 +62,7 @@ export function renderAAR(you, seed) {
 }
 
 /** Plain-text result for sharing. */
-export function resultText(you, seed, url) {
-  return `Raid Night, seed ${seed}: ${you.leakTotal} leakers, ${you.dmgTotal} damage points, spent ${range(you.spent.lo, you.spent.hi)}, `
+export function resultText(you, seed, url, mode = 'normal') {
+  return `Raid Night, seed ${seed}, ${(MODE_NAME[mode] || 'Normal').toLowerCase()} mode: ${you.leakTotal} leakers, ${you.dmgTotal} damage points, spent ${range(you.spent.lo, you.spent.hi)}, `
     + `exchange ${ratio(you.ratio.lo)} to ${ratio(you.ratio.hi)} (notional model). Same raids: ${url}`;
 }

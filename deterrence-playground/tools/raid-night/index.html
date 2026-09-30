@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Raid Night | Interactive Deterrence</title>
-<meta name="description" content="A real-time, notional air-defense game about the cost-exchange problem: defend four notional cities against three waves of drones, cruise missiles and ballistic missiles whose mix is modelled on real raids, then compare your night with a simple fire-control heuristic.">
+<meta name="description" content="A real-time, notional air-defense game about the cost-exchange problem: defend four notional cities against three waves of drones, cruise missiles and ballistic missiles whose mix is modelled on real raids, resupply between waves, then compare your night with two simple fire-control rules.">
 <link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,23 +24,26 @@
   <div class="stage">
     <div class="card game">
       <div class="hud">
-        <p class="hud-wave"><b id="wave-t">Wave 1 of 3</b> <span id="mix-t" class="muted"></span></p>
+        <p class="hud-wave"><b id="wave-t">Wave 1 of 3</b> <span id="mix-t" class="muted"></span> <span class="pill" id="mode-now">Normal</span></p>
         <p class="hud-clock num" id="clock">0:00</p>
         <button type="button" class="btn" id="pause" aria-keyshortcuts="P">Pause</button>
       </div>
       <div class="mapbox fieldbox" id="fieldbox">
         <canvas id="field" tabindex="0" role="application" aria-roledescription="air-defense game"
-          aria-label="Raid Night game field. Incoming tracks fly from the sea at the top toward four cities on the coast. Keys: arrow keys select a track; Space fires; Tab (or 1, 2, 3) switches between guns, short-range and long-range; P pauses."
+          aria-label="Raid Night game field, normal mode. Incoming tracks fly from the sea at the top toward four cities on the coast. Keys: arrow keys select a track in the chosen lock order; Space fires; Tab (or 1, 2, 3) switches between guns, short-range and long-range; O changes the lock order; P pauses."
           aria-describedby="sel-live"></canvas>
         <div class="overlay" id="overlay"></div>
         <div class="tour-slot" id="tour-slot"></div>
       </div>
-      <div class="weapons" role="group" aria-label="Choose a weapon">
+      <div class="weapons" id="weapons" role="group" aria-label="Choose a weapon">
         <button type="button" class="wbtn" data-w="gun" aria-pressed="true" aria-keyshortcuts="1"><span class="k">1</span><span class="wn">Guns / EW</span><span class="wa num" data-a="gun"></span><span class="wr" data-r="gun"></span></button>
         <button type="button" class="wbtn" data-w="sri" aria-pressed="false" aria-keyshortcuts="2"><span class="k">2</span><span class="wn">Short-range</span><span class="wa num" data-a="sri"></span><span class="wr" data-r="sri"></span></button>
         <button type="button" class="wbtn" data-w="lri" aria-pressed="false" aria-keyshortcuts="3"><span class="k">3</span><span class="wn">Long-range</span><span class="wa num" data-a="lri"></span><span class="wr" data-r="lri"></span></button>
       </div>
+      <div class="bats" id="bats" hidden></div>
+      <div class="lock" id="lockorder" role="group" aria-label="Lock order: which track the reticle picks first and the order the target keys step through"></div>
       <div class="tgtbar">
+        <p class="hard-note fine" id="hard-note" hidden>Hard mode is designed for a keyboard. Tapping or clicking a track fires the battery on that half of the map at it, with that battery's munition.</p>
         <button type="button" class="btn" id="sel-prev" aria-label="Select the previous track" aria-keyshortcuts="J">&lsaquo; Track</button>
         <button type="button" class="btn solid" id="fire-sel" aria-keyshortcuts="Space">Fire at selected</button>
         <button type="button" class="btn" id="sel-next" aria-label="Select the next track" aria-keyshortcuts="K">Track &rsaquo;</button>
@@ -74,7 +77,15 @@
       <label class="tg"><input type="checkbox" id="reduced"><span class="sw"></span><span class="t">Reduced motion<small>Slows the game to about half speed and turns off expanding flashes.</small></span></label>
       <button type="button" class="btn" id="restart">Restart this night</button>
       <details class="keys"><summary>Keyboard controls</summary>
-        <dl class="readout"><dt>← → ↑ ↓</dt><dd>select the next or previous track, soonest impact first (J K also work)</dd><dt>Space</dt><dd>fire the chosen weapon at the selected track (Enter also works)</dd><dt>Tab, Shift+Tab</dt><dd>switch between guns, short-range and long-range during a wave</dd><dt>1 2 3</dt><dd>choose guns / short-range / long-range directly</dd><dt>P or Esc</dt><dd>pause and resume</dd><dt>N</dt><dd>start the next wave during a break</dd></dl>
+        <p class="keys-h">Both modes</p>
+        <dl class="readout"><dt>O, Shift+O</dt><dd>change the lock order (now: <span class="order-now">Closest</span>): closest = soonest impact, fastest, left → right, right → left</dd><dt>P or Esc</dt><dd>pause and resume</dd><dt>N</dt><dd>load the resupply and start the next wave during a break</dd></dl>
+        <p class="keys-h">Easy and Normal modes</p>
+        <dl class="readout"><dt>← → ↑ ↓</dt><dd>select the next or previous track in the lock order (J K also work)</dd><dt>Space</dt><dd>fire the chosen weapon at the selected track (Enter also works)</dd><dt>Tab, Shift+Tab</dt><dd>switch between guns, short-range and long-range during a wave</dd><dt>1 2 3</dt><dd>choose guns / short-range / long-range directly</dd></dl>
+        <p class="keys-h">Hard mode: left battery (cities A–B)</p>
+        <dl class="readout"><dt>W</dt><dd>fire</dd><dt>A, D</dt><dd>previous / next track in the lock order</dd><dt>Tab</dt><dd>switch munition (Shift+Tab goes back)</dd></dl>
+        <p class="keys-h">Hard mode: right battery (cities C–D)</p>
+        <dl class="readout"><dt>Space or ↑</dt><dd>fire</dd><dt>← →</dt><dd>previous / next track in the lock order</dd><dt>Return, \, Delete</dt><dd>switch munition (Backspace, the Mac delete key, also works)</dd></dl>
+        <p class="fine">While a wave runs these keys work anywhere on the page. Paused or between waves, Tab moves between controls again.</p>
       </details>
     </div>
   </aside>
@@ -82,10 +93,11 @@
 
 <section class="aar" id="aar" hidden aria-labelledby="aar-h">
   <h2 id="aar-h">After-action review</h2>
+  <p class="aar-mode" id="aar-mode"></p>
   <p class="aar-lede" id="aar-lede"></p>
   <div class="aar-grid">
     <div class="card aar-card"><p class="eyebrow">Your night against two fire-control rules, same seed</p><div class="tablewrap"><table id="aar-table"></table></div></div>
-    <div class="card aar-card"><p class="eyebrow">Magazine left after each wave</p><div id="aar-mags"></div></div>
+    <div class="card aar-card"><p class="eyebrow">Magazine left after each wave, before resupply</p><div id="aar-mags"></div></div>
   </div>
   <div class="card aar-card aar-debate">
     <p class="eyebrow">The real debate</p>
@@ -98,15 +110,20 @@
   <div class="col">
     <h2>How to play</h2>
     <p><b>The night.</b> Three waves of tracks fly in from the sea toward four cities. Drones (triangles) are slow and many. Cruise missiles (diamonds) are faster. Ballistic missiles (circles with long trails) arrive in salvos within seconds, and a dashed ring marks where each will land. Each wave takes about a minute.</p>
+    <p><b>Three modes.</b> Before the first wave you choose a mode. <i>Normal</i> gives you one defense: the arrow keys pick a track, Space fires and Tab (or 1, 2, 3) switches weapons. <i>Easy</i> has the same controls and twice the resupply budget. <i>Hard</i> splits the defense at the middle of the map into a left battery (cities A and B, the two left gun sites, the left short-range site and the left long-range site) and a right battery (cities C and D and the matching right-hand sites). Each battery has its own target, its own munition and its own fire key: W, A/D and Tab on the left; Space or ↑, ← → and Return, \ or Delete on the right. Both batteries draw on the same magazines. Hard mode is designed for a keyboard; a tap fires the battery on that half of the map. The link remembers the mode.</p>
     <p><b>Engage.</b> Pick a weapon, then click or tap a track to fire at it. The dashed circles show where the chosen weapon can reach. Guns and electronic warfare are cheap and deep but short-ranged and useless against ballistic missiles. Short-range interceptors are cheap and handle drones and cruise missiles well. Long-range interceptors reach almost the whole map and are the only good answer to ballistic missiles, but there are few of them and each costs millions. Every site needs time to reload, shown as an arc around it. A thin ring marks a track that already has a shot flying at it.</p>
+    <p><b>Lock order.</b> The switch under the field (or the O key) sets the order in which the target keys step through tracks: <i>closest</i> (soonest time to impact, the default), <i>fastest</i> (ballistic, then cruise, then drones, soonest impact first within a type), <i>left → right</i> or <i>right → left</i> across the map. When a target is destroyed or leaks, the reticle locks onto the first track in that order that the selected weapon can reach, or the first track if none is in reach. In hard mode each battery prefers tracks bound for its own cities.</p>
+    <p><b>Resupply.</b> Between waves you get <span class="rs-budget">100</span> points (<span class="rs-budget-easy">200</span> in Easy mode) to buy reloads with the + and − steppers: guns and EW, short-range or long-range. No magazine can be filled past what it held at dusk, and unspent points are lost. The budget and prices are <span class="notional">notional</span> (see the method).</p>
     <p><b>Score.</b> The panel keeps the running cost exchange: dollars spent on interceptors against the dollar value of the threats you destroyed. Leakers do damage to cities: 1 point for a drone, 3 for a cruise missile, 6 for a ballistic missile (<span class="notional">notional</span>). After the third wave the review replays the same raids with two fire-control rules so you can see what a different allocation would have cost.</p>
     <p><b>Share.</b> The raids are seeded. The link carries the seed, so anyone who opens it faces the same tracks at the same times, and the same shot at the same track rolls the same die.</p>
 
     <h2 class="mt" id="method">Method and notional values</h2>
     <p>Raid Night is a teaching game about one question: how to spend a limited, expensive magazine against a raid built mostly from cheap weapons. It is not a model of any real country, battle or air-defense system. The coastline, cities and defense sites are invented, and no range, speed, reload time or kill probability comes from a real system.</p>
     <p><b>What is sourced.</b> The proportions of drones, cruise missiles and ballistic missiles in each wave: raid mix modelled on the attack on Ukraine that began 6 September 2025 and the one that began 2 February 2026 (Ukrainian Air Force reports, compiled in Petro Ivaniuk's Kaggle dataset), and on Iran's attack on Israel of 13–14 April 2024 (IDF figures reported by CNN and AP). Each wave scales its real mix down to 30, 36 or 40 tracks and keeps at least one of each weapon type the raid used. The unit costs are published estimates, shown as low–high ranges: they are the figures that the Iran–Israel Salvos tool on this site sourced, re-checked for this game.</p>
-    <p><b>What is left out.</b> Cruise missiles and guns or EW are not priced because no sourced figure is in the data this game uses; destroyed cruise missiles are counted separately. Real raids stretch over hours and include decoys, launch failures, fighter aircraft and many more defense layers. Here each wave is compressed into about a minute. Damage points stand in for harm to people and property and are not a casualty model.</p>
-    <p><b>The two rules in the review.</b> The <i>cheapest-capable</i> rule looks at tracks in order of time to impact and fires the cheapest weapon that can do the job: guns at drones, short-range interceptors at cruise missiles, long-range interceptors at ballistic missiles. It fires a more expensive weapon only when a leak is seconds away, and it shoots again only after a miss (shoot-look-shoot). The <i>best-weapon-first</i> rule fires the most capable weapon available at every track. Neither is an optimum; they bracket the choice. The seeded dice mean that if you and a rule fire the same number of shots at the same track, the results match.</p>
+    <p><b>What is left out.</b> Cruise missiles and guns or EW are not priced because no sourced figure is in the data this game uses; destroyed cruise missiles are counted separately. Every drone track is priced like a Shahed, although the Ukrainian Air Force totals used for waves 1 and 2 include decoy drones and other types that the reports do not price. Real raids stretch over hours and include decoys, launch failures, fighter aircraft and many more defense layers. Here each wave is compressed into about a minute. Damage points stand in for harm to people and property and are not a casualty model.</p>
+    <p><b>The two rules in the review.</b> The <i>cheapest-capable</i> rule looks at tracks in order of time to impact and fires the cheapest weapon that can do the job: guns at drones, short-range interceptors at cruise missiles, long-range interceptors at ballistic missiles. It fires a more expensive weapon only when a leak is seconds away, and it shoots again only after a miss (shoot-look-shoot). The <i>best-weapon-first</i> rule fires the most capable weapon available at every track. Neither is an optimum; they bracket the choice. The seeded dice mean that if you and a rule fire the same number of shots at the same track, the results match. Both rules fire from every site, as one defense; in hard mode your two batteries together hold the same sites, so the comparison uses the same defense split two ways.</p>
+    <p id="resupply-method"></p>
+    <p><b>Modes and lock order.</b> Both are game mechanics with no real-world counterpart and are <span class="notional">notional</span>. Easy mode differs from Normal only in its larger resupply budget; Hard uses the Normal budget. Hard mode splits the sites at the middle of the map because the field is symmetric: each half holds two cities, two gun sites, one short-range site and one long-range site. "Closest" in the lock order means soonest time to impact; among tracks of the same type it is also the one with the least distance left to fly.</p>
     <div class="tablewrap"><table id="param-table"></table></div>
   </div>
   <div class="col">

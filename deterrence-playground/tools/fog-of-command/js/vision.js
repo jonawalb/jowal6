@@ -34,7 +34,9 @@ export function sight(g, side, rng) {
       continue;
     }
     if (eyes.some(o => o.type === 'recon' && hops(posOf(o), at) <= VISION.farHops)) {
-      out.push({ obsT: T, arrT: T + VISION.farDelay, elem: null, node: at, far: true });
+      // A decoy group is built to be noticed: recon farther out report it as a tank battalion, an hour late.
+      if (e.type === 'decoy' && VISION.decoyLooksReal && VISION.decoyHeard) out.push({ obsT: T, arrT: T + (VISION.heardDelay ?? VISION.farDelay), elem: e.id, node: at, type: 'armor', str: TYPES.armor.str, exact: false, heard: true });
+      else out.push({ obsT: T, arrT: T + VISION.farDelay, elem: null, node: at, far: true });
     }
   }
 }

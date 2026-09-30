@@ -143,7 +143,7 @@ function selPanel() {
   const info = `<b>${u.name}</b> · ${TYPES[u.type].label.toLowerCase()} · ${u.str0 ? `strength ${u.str.toFixed(1)} of ${u.str0}` : 'no combat strength'}`;
   const where_ = u.node === 'off' ? `Enters at <b>${NAME[u.entry]}</b> at ${hhmm(u.arrive)}. Click a sector on your entry edge to change where.` : `At ${NAME[where(u)] || 'the front'}. Click a sector to send it there.`;
   const recon = u.type === 'recon' && u.stance === 'give' ? ' <span class="muted">Recon troops start set to give ground, so they fall back from a stronger enemy instead of being destroyed. Choose Hold to make one stand.</span>' : '';
-  const stance = u.type === 'decoy' ? '<span class="muted">The decoy cannot fight; enemy units next door see it as a tank battalion until they share its sector or watch it under fire.</span>'
+  const stance = u.type === 'decoy' ? '<span class="muted">The decoy cannot fight; enemy units next door see it as a tank battalion until they share its sector or watch it under fire, and enemy recon two sectors away hear it as one at once. Keep it two sectors from Blue\'s recon: heard, never watched.</span>'
     : `<span class="fc-stance" role="group" aria-label="Standing order (key G)"><button type="button" class="btn" data-stance="hold" aria-pressed="${u.stance !== 'give'}">Hold</button><button type="button" class="btn" data-stance="give" aria-pressed="${u.stance === 'give'}">Give ground</button></span>`;
   box.innerHTML = `<span>${info}. ${where_}${recon}</span> ${stance}`;
 }

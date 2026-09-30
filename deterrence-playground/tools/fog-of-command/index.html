@@ -94,7 +94,7 @@
       </div>
       <p class="eyebrow">Enemy strength on each road: what you saw and what was true</p>
       <svg id="aar-chart" class="fc-chart" viewBox="0 0 640 300" role="img" aria-label="Four small charts, one per road, each showing the enemy strength you had seen and the true enemy strength, hour by hour"></svg>
-      <p class="fine" id="aar-chart-note">Strength is in combat points (a mech battalion is 10). A decoy seen from next door counts as a tank (12); movement counts 6.</p>
+      <p class="fine" id="aar-chart-note">Strength is in combat points (a mech battalion is 10). A decoy seen from next door or heard two sectors out counts as a tank (12); movement counts 6.</p>
       <div class="fc-aar-cols">
         <div><p class="eyebrow">Artillery</p><dl class="readout" id="aar-arty"></dl></div>
         <div><p class="eyebrow">Replays of this scenario (500 each, fresh dice)</p><div id="aar-fog" class="fc-fog"></div></div>
@@ -118,9 +118,9 @@
     <h2>How to play</h2>
     <p><b>The goal.</b> Defending as Blue, hold Tarn Crossing until <span data-fill="end">18:00</span>. Attacking as Red, take it: Red wins the moment it holds the crossing with no Blue unit there. The game is <span data-fill="turns">12 one-hour turns</span>; Red's units arrive in waves: <span data-fill="waves"></span>.</p>
     <p><b>Each hour.</b> Pick a unit (click it in the list or on the map, or press its key) and click the sector where it should go; clicking an enemy marker sends it to that sector. Click the same sector again to step through a stack. The bar says whether this hour's orders start now or next hour; a clock on a unit means its order waits an hour. Attacking, your units that have not arrived wait in the staging tray below your entry edge: pick one and click a sector on the entry edge to choose where it comes in. Fire your artillery at one sector (press A, or click your battery in the bottom-right corner of the map, then click the sector). The battery is fixed: it cannot move and cannot be attacked. Press End hour: units move, fights happen where both sides meet, and new reports come in.</p>
-    <p><b>What you see.</b> Enemy units in a sector you hold are seen exactly. In a sector next to one of your units you see their type, not their losses, and you miss one time in ten; a decoy looks like a tank battalion. Your recon troops also report movement two sectors out, an hour late. Fire watched by a recon troop next to the target shows exactly what is there and how hurt it is.</p>
+    <p><b>What you see.</b> Enemy units in a sector you hold are seen exactly. In a sector next to one of your units you see their type, not their losses, and you miss one time in ten; a decoy looks like a tank battalion. Your recon troops also report movement two sectors out, an hour late; a decoy group two sectors out is built to be noticed, so they report it at once as a tank battalion, heard but not seen. Fire watched by a recon troop next to the target shows exactly what is there and how hurt it is.</p>
     <p><b>Winning fights.</b> A unit that has sat in a sector for two hours defends as if it were three times its size. Attack where the defender is thin, or hit a defender that is already fighting from a second direction: then its defense counts for nothing. A unit set to <i>give ground</i> falls back one sector when a stronger enemy attacks it, and an enemy that follows it can run into a prepared position.</p>
-    <p><b>The other commander</b> acts only on what it can see. The Red commander sends its second echelon down the road that looks weakest (it chooses at <span data-fill="pick">08:00</span>) and follows units that give ground. The Blue commander commits its reserve to the road that looks strongest, checks contacts with spotted fire first, and counterattacks enemy units that look weak.</p>
+    <p><b>The other commander</b> acts only on what it can see. The Red commander sends its second echelon down the road that looks weakest (it chooses at <span data-fill="pick">08:00</span>) and follows units that give ground. The Blue commander commits its reserve once, to the road that looks strongest when the enemy on it reaches the forward zone, checks contacts with spotted fire first, and counterattacks enemy units that look weak. A decoy it can only hear cannot be checked that way.</p>
 
     <details class="fc-more" id="model">
       <summary>How the model works</summary>
@@ -134,7 +134,7 @@
       <p><b>Left out.</b> Air power, engineers and obstacles, supply, night and weather, civilians, terrain effects beyond road times, and morale beyond the break threshold.</p>
       <div class="tablewrap"><table id="param-table"></table></div>
       <h3>Balance check</h3>
-      <p class="fine">Scripted strategies stand in for players. The doctrinal defender and the feint-and-mass attacker are meant to be what a decent human does; both win a little over half the time. Naive play loses. The numbers below are for the <span data-fill="turns">12 one-hour turns</span>. The rows comparing an opponent who sees everything show what deception is worth; the artillery rows show what recon spotting is worth.</p>
+      <p class="fine">Scripted strategies stand in for players. The doctrinal defender and the feint-and-mass attacker are meant to be what a decent human does: the defender holds about half its games, and the attacker takes the crossing in about two games in three with a feint and a little over half without one. Naive play loses. The numbers below are for the <span data-fill="turns">12 one-hour turns</span>. The rows comparing an opponent who sees everything show what deception is worth (the feint-payoff table at the end sets the two side by side); the artillery rows show what recon spotting is worth.</p>
       <div id="balance"></div>
     </details>
   </div>

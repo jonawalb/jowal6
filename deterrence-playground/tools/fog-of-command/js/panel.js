@@ -107,7 +107,9 @@ function hourItems(g, me, h, now) {
   const before = beliefAt(g, me, h), after = beliefAt(g, me, h + 1);
   const known = new Map(before.tracks.map(t => [t.elem, t.node]));
   const fresh = after.tracks.filter(t => t.age === 0 && (!known.has(t.elem) || known.get(t.elem) !== t.node));
-  for (const n of [...new Set(fresh.map(t => t.node))]) out.push(['seen', `Seen at <b>${NAME[n]}</b>: ${list(fresh.filter(t => t.node === n).map(t => (t.type === 'decoy' ? 'a decoy group' : word(t.type))))}.`]);
+  const seenNow = fresh.filter(t => !t.heard), heard = fresh.filter(t => t.heard);
+  for (const n of [...new Set(seenNow.map(t => t.node))]) out.push(['seen', `Seen at <b>${NAME[n]}</b>: ${list(seenNow.filter(t => t.node === n).map(t => (t.type === 'decoy' ? 'a decoy group' : word(t.type))))}.`]);
+  for (const n of [...new Set(heard.map(t => t.node))]) out.push(['seen', `Recon hear what sounds like a tank battalion at <b>${NAME[n]}</b> (two sectors out; not seen).`]);
   const oldMarks = new Set(before.marks.map(m => m.node));
   const newMarks = after.marks.filter(m => !oldMarks.has(m.node));
   if (newMarks.length) out.push(['seen', `Recon reports movement at ${list(newMarks.map(m => `<b>${NAME[m.node]}</b>`))} (an hour old).`]);
@@ -164,7 +166,7 @@ export function renderBelow($) {
     ['Weapons company', `×${TYPES.weapons.prepared} in a prepared defense, ×${TYPES.weapons.attack} when attacking`, N],
     ['Breaking contact', `A unit leaving a sector the enemy holds takes ${DISENGAGE * 100}% of one hour of the enemy's fire (k = 1)`, N],
     ['Artillery', `One mission an hour; each enemy unit in the sector loses ${ARTILLERY.frac * 100}% (σ ${ARTILLERY.sigma}); report right ${ARTILLERY.reportRight * 100}% of the time; recon in the sector hit ${ARTILLERY.friendlyHit * 100}% of the time for ${ARTILLERY.friendlyFrac * 100}%; recon next door shows the sector exactly`, 'rules from the brief; values notional'],
-    ['Seeing', `Your sector: exact. Next door: ${VISION.next * 100}% chance per unit, type and full strength, decoys look like tanks. Recon: movement up to ${VISION.farHops} sectors away, ${VISION.farDelay} hour late. Sightings kept ${VISION.memory} hours`, N],
+    ['Seeing', `Your sector: exact. Next door: ${VISION.next * 100}% chance per unit, type and full strength, decoys look like tanks. Recon: movement up to ${VISION.farHops} sectors away, ${VISION.farDelay} hour late${VISION.decoyHeard ? `; a decoy group that far is heard as a tank battalion${VISION.heardDelay ? `, ${VISION.heardDelay} hour late` : ', at once'}` : ''}. Sightings kept ${VISION.memory} hours`, N],
     ['Order delay', `${ORDER_DELAY.map(([h, p]) => `${h} h: ${p * 100}%`).join(', ')}; one roll per side per hour, shown before you give orders${ORDER_DELAY_MAXRUN ? `; never more than ${ORDER_DELAY_MAXRUN} late hours in a row` : ''}`, N],
     ['Movement', '1 hour per sector on a road; 2 across a ridge and on the long roads from the outer columns to the crossing', N],
   ];
@@ -173,7 +175,9 @@ export function renderBelow($) {
   const table = (rows, head) => `<div class="tablewrap"><table><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map((c, i) => `<td${i ? ' class="num"' : ''}>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
   $('balance').innerHTML = `<p class="fine">${BALANCE.games.toLocaleString('en-US')} seeded games per row (the same scenarios in every row).</p>`
     + `<p class="eyebrow">Defending, against the game's Red commander</p>` + table(BALANCE.defend, ['Blue strategy', 'Blue holds', `Blue losses (of ${BALANCE.blue})`, `Red losses (of ${BALANCE.red})`, 'Reserve sent first to the feint'])
-    + `<p class="eyebrow mt">Attacking, against the game's Blue commander</p>` + table(BALANCE.attack, ['Red strategy', 'Red takes the crossing', `Blue losses (of ${BALANCE.blue})`, `Red losses (of ${BALANCE.red})`, 'Blue reserve sent first to the feint']);
+    + `<p class="eyebrow mt">Attacking, against the game's Blue commander</p>` + table(BALANCE.attack, ['Red strategy', 'Red takes the crossing', `Blue losses (of ${BALANCE.blue})`, `Red losses (of ${BALANCE.red})`, 'Blue reserve sent first to the feint'])
+    + (BALANCE.payoff ? `<p class="eyebrow mt">Feint payoff: feint and mass minus mass on one road</p>` + table([['Feint payoff (percentage points)', BALANCE.payoff.fog, BALANCE.payoff.truth]], ['', "Against the game's Blue commander", 'Against a Blue commander who sees everything'])
+      + `<p class="fine">The gain comes from fooling Blue: against a commander who sees everything, the same feint adds almost nothing.</p>` : '');
   const Q = [
     ['Clausewitz, On War, Book I, ch. VI', 'Great part of the information obtained in War is contradictory, a still greater part is false, and by far the greatest part is of a doubtful character. … The law of probability must be his guide.', 'clausewitz'],
     ['Clausewitz, On War, Book I, ch. VII', 'Everything is very simple in War, but the simplest thing is difficult.', 'clausewitz'],

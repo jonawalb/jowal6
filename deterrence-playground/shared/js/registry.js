@@ -9,7 +9,7 @@ const CATEGORY_LIST = [
   { id: 'crisis', name: 'Crises & exercises', blurb: 'How PLA pressure campaigns unfold, and how to read the warning signs.' },
   { id: 'geo', name: 'Indo-Pacific geography', blurb: 'Island chains, chokepoints, contested features and the cables beneath them.' },
   { id: 'models', name: 'Force & wargame models', siteName: { deterrence: 'War Games and Simulations' },
-    siteBlurb: { deterrence: 'Wargames you can play, from Kharg Island to the Berlin Airlift, and models of kill chains, interceptors, mines and defense budgets.' },
+    siteBlurb: { deterrence: 'Wargames to play, from Kharg Island to the Berlin Airlift, and models of kill chains and budgets.' },
     blurb: 'Hands-on models of kill chains, blockades, mines and defense budgets.',
     subs: [{ id: 'wargames', name: 'Wargames', blurb: 'Play a side: raids, island assaults, submarine hunts, matrix games and the Berlin Airlift.' },
       { id: 'budget', name: 'Budget and Logistics', blurb: 'Budgets, kill chains, interceptor stocks and mine clearance.' }] },

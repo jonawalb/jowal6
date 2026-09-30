@@ -10,23 +10,30 @@ const LAYOUTS = {
   narrow: { W: 600, top: 34, cw: 150, ch: 176, xh: 150, k: 1.4 },
 };
 
-/** Sector rectangles and centres for a layout. */
-export function geometry(L) {
-  const G = { ...L, cells: {}, H: L.top + 4 * L.ch + L.xh };
+/**
+ * Sector rectangles and centres for a layout. flip: the board turned 180 degrees (used when you attack),
+ * so the north approach is at the bottom, Tarn Crossing at the top and West on the right. Only positions
+ * move; every label is drawn upright.
+ */
+export function geometry(L, flip = false) {
+  const H = L.top + 4 * L.ch + L.xh;
+  const gy0 = flip ? L.xh : L.top;
+  const G = { ...L, flip, cells: {}, H, gx0: 0, gy0, fy: y => (flip ? H - y : y) };
   for (const n of NODES) {
     if (n.id === 'x') {
-      const w = L.cw * 1.3, x = (L.W - w) / 2, y = L.top + 4 * L.ch + 12, h = L.xh - 50;
+      const w = L.cw * 1.3, x = (L.W - w) / 2, h = L.xh - 50, y = flip ? 38 : L.top + 4 * L.ch + 12;
       G.cells.x = { x, y, w, h, cx: x + w / 2, cy: y + h / 2 };
     } else {
-      const x = n.col * L.cw, y = L.top + n.row * L.ch;
+      const dc = flip ? 3 - n.col : n.col, dr = flip ? 3 - n.row : n.row;
+      const x = dc * L.cw, y = gy0 + dr * L.ch;
       G.cells[n.id] = { x, y, w: L.cw, h: L.ch, cx: x + L.cw / 2, cy: y + L.ch / 2 };
     }
   }
   return G;
 }
 
-export function createMap(svg, onSector, onKey, narrow) {
-  const G = geometry(narrow ? LAYOUTS.narrow : LAYOUTS.wide);
+export function createMap(svg, onSector, onKey, narrow, flip = false) {
+  const G = geometry(narrow ? LAYOUTS.narrow : LAYOUTS.wide, flip);
   svg.setAttribute('viewBox', `0 0 ${G.W} ${G.H}`);
   svg.replaceChildren();
   defs(svg);
@@ -45,7 +52,7 @@ export function createMap(svg, onSector, onKey, narrow) {
     g.addEventListener('keydown', e => onKey(e, n.id));
   }
   const layers = { routes: el('g', {}, svg), marks: el('g', {}, svg), foe: el('g', {}, svg), mine: el('g', {}, svg), top: el('g', {}, svg) };
-  return { svg, G, nodes, layers, narrow };
+  return { svg, G, nodes, layers, narrow, flip };
 }
 
 function defs(svg) {
@@ -59,13 +66,16 @@ function defs(svg) {
 function terrain(svg, G) {
   const t = el('g', { class: 'fc-terrain', 'aria-hidden': 'true' }, svg);
   el('rect', { x: 0, y: 0, width: G.W, height: G.H, class: 'fc-ground' }, t);
-  el('rect', { x: 0, y: 0, width: G.W, height: G.top + G.ch, class: 'fc-redzone' }, t);
-  const z = el('text', { x: G.W / 2, y: G.top - 10, class: 'fc-zone' }, t, 'Red enters from the north');
+  const fy = G.fy;
+  const zy = Math.min(fy(0), fy(G.top + G.ch));
+  el('rect', { x: 0, y: zy, width: G.W, height: G.top + G.ch, class: 'fc-redzone' }, t);
+  const z = el('text', { x: G.W / 2, y: G.flip ? G.H - 10 : G.top - 10, class: 'fc-zone' }, t, 'Red enters from the north');
   z.setAttribute('text-anchor', 'middle');
-  // River, bridge and village at the crossing.
+  // River and bridge at the crossing (drawn in unturned coordinates, then turned if needed).
   const ry = G.top + 4 * G.ch + G.xh - 26;
-  el('path', { d: `M0 ${ry} C${G.W * 0.2} ${ry - 16} ${G.W * 0.35} ${ry + 12} ${G.W / 2} ${ry - 2} C${G.W * 0.65} ${ry - 14} ${G.W * 0.8} ${ry + 10} ${G.W} ${ry - 6} L${G.W} ${G.H} L0 ${G.H} Z`, class: 'fc-river' }, t);
-  el('rect', { x: G.W / 2 - 13, y: ry - 22, width: 26, height: 40, class: 'fc-bridge' }, t);
+  const P = (x, y) => `${x} ${fy(y)}`;
+  el('path', { d: `M${P(0, ry)} C${P(G.W * 0.2, ry - 16)} ${P(G.W * 0.35, ry + 12)} ${P(G.W / 2, ry - 2)} C${P(G.W * 0.65, ry - 14)} ${P(G.W * 0.8, ry + 10)} ${P(G.W, ry - 6)} L${P(G.W, G.H)} L${P(0, G.H)} Z`, class: 'fc-river' }, t);
+  el('rect', { x: G.W / 2 - 13, y: G.flip ? fy(ry + 18) : ry - 22, width: 26, height: 40, class: 'fc-bridge' }, t);
   // Terrain hints inside each sector (kept to the lower corners so markers stay readable).
   for (const n of NODES) {
     if (n.id === 'x') continue;
@@ -83,9 +93,16 @@ function terrain(svg, G) {
     el('path', { d: `M${A.cx} ${A.cy}L${B.cx} ${B.cy}`, class: `${cls}${h > 1 ? ' slow' : ''}` }, t);
   }
   for (const [a, b] of [['n0', 'n1'], ['n1', 'n2'], ['n2', 'n3'], ['f1', 'f2']]) {
-    const A = G.cells[a];
-    el('path', { d: `M${A.x + A.w} ${A.y + 8}V${A.y + A.h - 8}`, class: 'fc-ridge' }, t);
+    const A = G.cells[a], B = G.cells[b];
+    el('path', { d: `M${(A.cx + B.cx) / 2} ${A.y + 8}V${A.y + A.h - 8}`, class: 'fc-ridge' }, t);
   }
+  // Sector boundaries: one dashed grid (planning lines, not physical features). Row lines a little
+  // stronger than column lines so the four bands read at a glance.
+  const b = el('g', { class: 'fc-bounds' }, svg);
+  const x1 = G.gx0 + 4 * G.cw, y0 = G.gy0, y1 = G.gy0 + 4 * G.ch;
+  for (let i = 1; i < 4; i++) el('path', { d: `M${G.gx0 + i * G.cw} ${y0}V${y1}`, class: 'fc-bound col' }, b);
+  for (let i = 1; i < 4; i++) el('path', { d: `M${G.gx0} ${y0 + i * G.ch}H${x1}`, class: 'fc-bound row' }, b);
+  el('rect', { x: G.gx0 + 1, y: y0, width: 4 * G.cw - 2, height: 4 * G.ch, class: 'fc-bound edge' }, b);
 }
 
 const LETTER = t => TYPES[t]?.letter || '?';

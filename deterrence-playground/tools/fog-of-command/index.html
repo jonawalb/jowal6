@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fog of Command | Interactive Deterrence</title>
+<meta name="description" content="Command a notional brigade in a fictional valley against an enemy you only see through late, partial and sometimes wrong reports. Orders take time to arrive. The review replays what you believed against what was true.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@500;600;700;800&family=DM+Mono:wght@400;500&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="fog-of-command.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+<div class="fc-actions">
+  <p class="fc-flag"><b>Fictional and notional.</b> The valley, the units and every sensor and combat number are invented for teaching. The combat model is calibrated to a published planning rule.</p>
+  <div><button type="button" class="btn" id="show-howto">How to play</button>
+  <button type="button" class="btn" id="start-tour">Walkthrough</button>
+  <button type="button" class="btn" id="copy-link">Copy link</button></div>
+</div>
+<main class="layout">
+  <div class="stage">
+    <section class="card fc-howto" id="howto" aria-labelledby="howto-t">
+      <div class="fc-howto-h"><h2 id="howto-t">How to play</h2><button type="button" class="btn solid" id="hide-howto">Got it</button></div>
+      <p>You command a Blue brigade holding the Varn valley. Red will attack down one of three roads, West, Center or East, and you must hold <b>Tarn Crossing</b> until 22:00. You cannot see Red. You only see <b>reports</b>, and they arrive late, miss things and are sometimes wrong. Each hour: <b>task the drone</b> to look at one sector, <b>send orders</b> (pick a unit, then click a sector), then press <b>End hour</b>. Orders take 0–2 hours to reach a unit. Your armored reserve can only be in one place.</p>
+    </section>
+
+    <div class="card fc-console" id="controls">
+      <div class="fc-clockbar">
+        <p class="fc-clock"><span class="eyebrow">Time</span> <b class="num" id="clock">06:00</b> <span class="muted num" id="hourof">hour 0 of 16</span></p>
+        <p class="fc-mission"><span class="eyebrow">Mission</span> Hold Tarn Crossing until 22:00</p>
+      </div>
+      <div class="fc-row">
+        <div class="choices fc-units" id="units" role="group" aria-label="Choose a unit to order, or the drone"></div>
+        <div class="fc-go">
+          <button type="button" class="btn" id="undo">Undo</button>
+          <button type="button" class="btn solid fc-end" id="end">End hour</button>
+        </div>
+      </div>
+      <p class="fine fc-hint" id="hint"></p>
+    </div>
+    <p class="fc-say card" id="say" aria-live="polite"></p>
+
+    <div class="mapbox fc-mapbox" id="box">
+      <div class="fc-viewbar" id="viewbar" hidden>
+        <div class="choices fc-views" role="group" aria-label="What the map shows">
+          <button type="button" data-view="belief" aria-pressed="true">What you believed</button>
+          <button type="button" data-view="truth" aria-pressed="false">What was true</button>
+          <button type="button" data-view="both" aria-pressed="false">Both</button>
+        </div>
+      </div>
+      <svg id="map" role="group" aria-label="Map of the fictional Varn valley. Seven sectors: West Pass, Center Gap and East Track in the north; Alder Woods, Millfield and Kestrel Hills on your line; Tarn Crossing at the river. Tab to a sector and press Enter to send the selected unit or the drone there."></svg>
+      <div class="fc-callout" id="callout" hidden></div>
+    </div>
+    <div class="fc-legend">
+      <span><i class="lg-blue"></i>Your unit (bar = strength)</span>
+      <span><i class="lg-trk"></i>Reported Red unit (T tank, M mech, R recon, ? unknown; faded = older)</span>
+      <span><i class="lg-arrow"></i>Order sent, not yet received</span>
+      <span><i class="lg-drone"></i>Drone</span>
+      <span><i class="lg-fight"></i>Fighting</span>
+    </div>
+
+    <section class="card fc-aar" id="aar" hidden aria-labelledby="aar-t">
+      <div class="status" id="aar-status"><b id="aar-t"></b><span id="aar-sub"></span></div>
+      <div class="fc-replay">
+        <button type="button" class="btn" id="aar-play">Replay</button>
+        <label class="slider"><span class="sl-h"><span>Time shown on the map</span><output id="aar-h" class="num">06:00</output></span>
+          <input type="range" id="aar-range" min="0" max="16" step="1" value="0"></label>
+      </div>
+      <p class="eyebrow">Red strength on each road: what you believed and what was true</p>
+      <svg id="aar-chart" class="fc-chart" viewBox="0 0 640 220" role="img" aria-label="Three small charts, West, Center and East, each showing your estimate of Red strength and the true Red strength, hour by hour"></svg>
+      <p class="fine" id="aar-note"></p>
+      <div class="fc-aar-cols">
+        <div><p class="eyebrow">Your reports</p><dl class="readout" id="aar-read"></dl></div>
+        <div><p class="eyebrow">How good were the confidence words?</p><div class="tablewrap"><table id="aar-kent"></table></div></div>
+      </div>
+      <p class="eyebrow">The cost of fog: 1,000 replays of this scenario</p>
+      <p class="fine">Same Red plan and units; fresh dice for combat, reports and order delays in each replay.</p>
+      <div id="aar-fog" class="fc-fog"><p class="fine num" id="fog-prog">Running…</p></div>
+      <p id="fog-sum" class="fc-fogsum"></p>
+      <div class="fc-go">
+        <button type="button" class="btn solid" id="aar-again">Same scenario, play again</button>
+        <button type="button" class="btn" id="aar-new">New scenario</button>
+      </div>
+    </section>
+  </div>
+
+  <aside class="panel" aria-label="Command panel">
+    <div class="sec">
+      <div class="status" id="status" data-s="warn"><b id="st-t">Hold the crossing</b><span id="st-s"></span></div>
+    </div>
+    <div class="sec">
+      <p class="eyebrow">Your picture: Red strength by road</p>
+      <div id="picture" class="fc-picture"></div>
+      <p class="fine" id="pic-note">Your staff's estimate from reports received so far. It is not the truth.</p>
+    </div>
+    <div class="sec">
+      <p class="eyebrow">Reports received</p>
+      <ol class="fc-log" id="reports" aria-live="polite"></ol>
+    </div>
+    <div class="sec">
+      <p class="eyebrow">Orders in transit</p>
+      <ul class="fc-orders" id="orders"></ul>
+    </div>
+    <details class="sec fc-adv">
+      <summary>Scenario</summary>
+      <div class="fc-seed"><label for="seed">Scenario number</label> <input id="seed" type="number" min="1" max="999999" inputmode="numeric" class="num">
+        <button type="button" class="btn" id="restart">Restart</button> <button type="button" class="btn" id="newgame">New scenario</button></div>
+      <p class="fine">The number fixes Red's plan and every roll of the dice, so the same link replays the same game.</p>
+      <p class="fine">Keys: <b>1–5</b> pick a unit, <b>D</b> the drone, <b>Tab</b> to a sector and <b>Enter</b> to send, <b>N</b> ends the hour.</p>
+    </details>
+  </aside>
+</main>
+
+<section class="below">
+  <div class="col">
+    <h2>How it works</h2>
+    <p><b>The situation.</b> Your brigade holds a line across the Varn valley: three mechanized battalions, one on each road, a reconnaissance squadron forward in Center Gap, and an armored battalion in reserve at Tarn Crossing. Red has nearly twice your strength. It will mass on one road (its main effort), make a noisy feint on another, probe the third, and later push a second echelon wherever it is winning. Which road is which changes with every scenario.</p>
+    <p><b>Each hour.</b> Task the drone to look at one sector. Send orders by picking a unit and clicking where it should go. An order takes 0, 1 or 2 hours to reach the unit, and then the unit moves at road speed: one hour per sector, two across the ridges or on the long roads to the crossing. Press End hour. Red moves, units in the same sector fight, and your sensors observe.</p>
+    <p><b>Reports.</b> Every sensor can miss what is there, name the wrong type, misjudge strength or report something that is not there. Red's decoys can pass as tank battalions. Each report carries the time it was seen and a confidence word from Sherman Kent's scale. A report can arrive an hour or more after the moment it describes.</p>
+    <p><b>Winning.</b> You hold if Tarn Crossing is still yours at 22:00. You lose the moment Red holds it with none of your units there.</p>
+    <p><b>Afterwards.</b> The review shows what you believed against what was true, hour by hour, and grades the confidence words. It then replays this scenario 1,000 times with your orders, with your plan re-aimed by perfect information, with your orders sent without delay, and with a scripted doctrinal commander, so you can see what the fog and the friction cost you.</p>
+
+    <h2 class="mt">Method</h2>
+    <p><b>Fog and friction.</b> Clausewitz wrote that three-fourths of what action in war depends on is "hidden more or less in the clouds of great uncertainty," that a "great part of the information obtained in War is contradictory, a still greater part is false," and that "everything is very simple in War, but the simplest thing is difficult." The game splits these apart: the report model is the fog; order delays and travel time are the friction. Boyd's OODA loop (observe, orient, decide, act) is the cycle you run each hour, and the delays are what make it slow.</p>
+    <p><b>Combat.</b> Units in the same sector fight hour by hour under a stochastic version of Lanchester's square law: each side's losses are proportional to the other side's fighting power. The defender's posture multiplies its fighting value by <i>k</i>. Under the square law a battle breaks even when the attacker's numbers exceed the defender's by √<i>k</i>, so <i>k</i> = 9 for a prepared defense and 6.25 for a hasty one reproduce the U.S. Army's historical minimum planning ratios of 3:1 and 2.5:1 (FM 5-0, Table B-1). A unit breaks at 50% losses, the same threshold for both sides, as in Mearsheimer's reconstruction of the 3:1 rule. Each unit also has a hidden quality factor, so ratios alone never settle a fight.</p>
+    <p><b>Calibration.</b> FM 5-0 says defenders have "over a 50 percent probability" of defeating an attacker about three times their strength. In 10,000 one-on-one trials of the game's combat model, a prepared defender at 3:1 holds 53.8% of the time; a hasty defender at 2.5:1 holds 53.3%; an even meeting engagement splits 50.9%.</p>
+    <p><b>The critics.</b> The 3:1 rule is a planning rule of thumb, and it is contested. Mearsheimer defends it for breakthrough battles only, in reply to Joshua Epstein, who offered historical evidence against it; Epstein answered in the same issue, and Dupuy disputed Mearsheimer's corrections to his combat data. Fits of Lanchester equations to the detailed daily records of Kursk and the Ardennes found that none of the basic laws fit well, and that which forces are actually engaged matters more than which law is used (Lucas and Turkes; Lucas and Dinges). Treat the combat here as a teaching model with a sourced anchor, not a prediction.</p>
+    <p><b>The cost of fog.</b> The review uses the idea behind the value of information (Howard 1966): run the same decision rule with and without perfect information on the same scenario, and the difference in outcomes is what the missing information was worth.</p>
+    <p><b>Notional values.</b> Everything else is <span class="notional">notional</span>: unit strengths, Red's plan and timings, movement times, the sensor detection and error rates, report delays, false-contact rates, order delays, the base kill rate and the noise. The table lists every value and why.</p>
+    <p><b>Left out.</b> Artillery and air as separate systems, supply, terrain effects beyond road times, night, civilians, friendly-unit reporting delays (your own positions are shown correctly), Red's own fog (Red reads the truth), and the chance that your staff counts one Red unit twice.</p>
+    <div class="tablewrap"><table id="param-table"></table></div>
+    <details class="fc-more" id="batch">
+      <summary>Balance check: 1,000 scripted games per strategy</summary>
+      <div id="balance"></div>
+    </details>
+  </div>
+  <div class="col">
+    <h2>Why reports lie</h2>
+    <ol class="fc-quotes" id="quotes"></ol>
+    <h2 class="mt">Sources</h2>
+    <ol class="src" id="sources"></ol>
+  </div>
+</section>
+<div class="fc-tour" id="tour" hidden role="dialog" aria-label="Walkthrough"></div>
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Fog of Command', sub: 'Command a notional brigade against an enemy you only see through late, partial and sometimes wrong reports.', category: 'Force & wargame models' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

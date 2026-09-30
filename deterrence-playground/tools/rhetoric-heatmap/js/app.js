@@ -9,6 +9,7 @@ import { createTour } from './tour.js';
 import { renderRules } from './rules.js';
 import { renderProfile } from './profile.js';
 import { addExportBar } from '../../../shared/js/export.js';
+import { chart, wipe, fade, grow, rise, count, onChange, ring } from './fx.js';
 
 const $ = id => document.getElementById(id);
 const S = { rangeKey: 'all', range: RANGES.all, metric: 'count', sources: [...SOURCES], phrase: '', matcher: null,
@@ -111,12 +112,37 @@ function render() {
     : `${recs.length.toLocaleString()} Taiwan-related statements, July 2022 to September 2026.`;
   renderDetail($('detail'), S, agg, recs);
   renderProfile($('profile'), S, agg, recs);
+  animate();
   writeHash();
+}
+
+// Motion (see fx.js). Runs after each render and never changes what was drawn.
+function animate() {
+  const svg = $('hm-svg');
+  const view = [S.rangeKey, S.metric, S.sources.join('.'), S.phrase].join('|');
+  onChange('view', view, () => {
+    chart(svg, first => {
+      wipe(svg.querySelector('.cells'), { first });
+      fade(svg.querySelectorAll('.ev-band, .ev-label, .ev-stem'), { first, delay: first ? 250 : 100, max: 40 });
+    }, { gap: 0 });
+    chart($('profile'), first => grow($('profile').querySelectorAll('.pf-bar'), { first, axis: 'x', stagger: first ? 320 : 140 }), { gap: 0 });
+  });
+  count($('legend-max'));
+  SOURCES.forEach(s => count($('n-' + s)));
+  selMotion();
+}
+function selMotion() {
+  onChange('sel', S.sel ? S.sel.row + '@' + S.sel.w : null, first => {
+    if (first || !S.sel) return;
+    const r = $('hm-svg').querySelector('.sel');
+    if (r) ring($('hm-svg'), +r.getAttribute('x') + +r.getAttribute('width') / 2, +r.getAttribute('y') + +r.getAttribute('height') / 2, { r: 22 });
+    rise($('detail').children, { stagger: 35, max: 12 });
+  });
 }
 
 const grid = createGrid({
   labelSvg: $('hm-labels'), svg: $('hm-svg'), scroller: $('hm-scroll'), tip: $('hm-tip'),
-  onSelect: sel => { S.sel = sel; grid.drawSelection(); renderDetail($('detail'), S, agg, recs); writeHash(); },
+  onSelect: sel => { S.sel = sel; grid.drawSelection(); renderDetail($('detail'), S, agg, recs); selMotion(); writeHash(); },
 });
 
 // ---- Export ----------------------------------------------------------------

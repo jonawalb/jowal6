@@ -8,6 +8,7 @@ import { createBrush } from './brush.js';
 import { crossCorr, drawXcorr, xcorrText } from './xcorr.js';
 import { panelHtml, syncPicker, focusHtml, PRESETS, MAX_SEL } from './panel.js';
 import { createTour } from './tour.js';
+import { chart as motion, stroke, fade, grow, rise, flashIfChanged, onChange } from './fx.js';
 
 const $ = id => document.getElementById(id);
 
@@ -78,7 +79,19 @@ function bindFocus() {
 function draw(done = true) {
   chart.render(S);
   $('win-label').textContent = `${nice(S.win[0])} – ${nice(S.win[1])} · ${S.win[1] - S.win[0] + 1} days`;
-  if (done) { renderSide(); writeHash(); }
+  if (done) { renderSide(); writeHash(); animateMain(); }
+}
+
+// Motion (see fx.js). Runs after each finished render and never changes what was drawn. Brush drags
+// (draw(false)) and quick slider moves are left still.
+function animateMain() {
+  const c = $('chart');
+  motion(c, first => {
+    fade(c.querySelectorAll('.ex-band, .vol'), { first, max: 200 });
+    stroke(c.querySelectorAll('.air-line, .price'), { first, delay: first ? 80 : 0 });
+    fade(c.querySelectorAll('.jcrp, .deadline'), { first, delay: first ? 350 : 120, max: 200 });
+  });
+  onChange('focus', S.focus, first => { if (!first) rise($('focus-card').children, { stagger: 40 }); });
 }
 
 function renderSide() {
@@ -94,6 +107,9 @@ function renderSide() {
   $('xc-diff').checked = S.xc.diff;
   document.querySelectorAll('#xc-src button').forEach(b => b.setAttribute('aria-pressed', b.dataset.src === S.xc.src));
   $('xc-lag').value = S.xc.lag; $('xc-lag-out').textContent = `±${S.xc.lag} days`;
+  const xc = $('xc'), zero = xc.querySelector('.xc-zero');
+  motion(xc, first => grow(xc.querySelectorAll('.xc-bar'), { first, baseY: zero ? +zero.getAttribute('y1') : null, stagger: first ? 260 : 100 }));
+  flashIfChanged($('xc-text'));
 }
 
 function render() { brush.render(S); draw(true); }

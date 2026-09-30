@@ -6,6 +6,7 @@ import { renderDetail, loadQuotes } from './detail.js';
 import { renderCompare } from './compare.js';
 import { renderDictionary, renderEvents } from './dict.js';
 import { createTour } from './tour.js';
+import { chart, wipe, fade, grow, stroke, rise, count, onChange, ring } from './fx.js';
 
 const $ = id => document.getElementById(id);
 const S = { cc: 'ru', rangeKey: 'war', range: RANGES.war, metric: 'rate', cat: 'all', sel: null, rows: [] };
@@ -97,8 +98,34 @@ function render() {
   renderDetail($('detail'), S);
   renderCompare($('compare'), S);
   renderEvents($('events-list'), EVENTS, S.cc, ev => jumpToEvent(ev));
+  animate();
   writeHash();
   if (S.sel) requestAnimationFrame(() => grid.scrollTo(S.sel.w, 60));
+}
+
+// Motion (see fx.js). Runs after each render and never changes what was drawn.
+function animate() {
+  const svg = $('hm-svg');
+  onChange('view', [S.cc, S.rangeKey, S.metric, S.cat].join('|'), () => chart(svg, first => {
+    wipe(svg.querySelector('.cells'), { first });
+    grow(svg.querySelectorAll('.cov'), { first, stagger: first ? 300 : 120 });
+    fade(svg.querySelectorAll('.ev-band, .ev-label, .ev-stem'), { first, delay: first ? 250 : 100, max: 40 });
+  }, { gap: 0 }));
+  onChange('cmp', [S.cc, S.rangeKey].join('|'), () => chart($('compare'), first => {
+    stroke($('compare').querySelectorAll('.cmp-line'), { first });
+    $('compare').querySelectorAll('.cmp-all b').forEach((b, i) => count(b, 'cmp' + i));
+  }, { gap: 0 }));
+  onChange('src', S.cc, first => { if (!first) rise($('source-card').children, { stagger: 40 }); });
+  count($('legend-max'));
+  selMotion();
+}
+function selMotion() {
+  onChange('sel', S.sel ? S.cc + S.sel.k + '@' + S.sel.w : null, first => {
+    if (first || !S.sel) return;
+    const r = $('hm-svg').querySelector('.sel');
+    if (r) ring($('hm-svg'), +r.getAttribute('x') + +r.getAttribute('width') / 2, +r.getAttribute('y') + +r.getAttribute('height') / 2, { r: 22 });
+    rise($('detail').children, { stagger: 35, max: 12 });
+  });
 }
 
 function jumpToEvent(ev) {
@@ -113,7 +140,7 @@ const grid = createGrid({
   labelSvg: $('hm-labels'), svg: $('hm-svg'), scroller: $('hm-scroll'), tip: $('hm-tip'),
   onSelect: sel => {
     if (sel.w == null) { apply({ sel }); return; }
-    S.sel = sel; grid.drawSelection(); renderDetail($('detail'), S); writeHash();
+    S.sel = sel; grid.drawSelection(); renderDetail($('detail'), S); selMotion(); writeHash();
   },
   onEvent: ev => jumpToEvent(ev),
 });

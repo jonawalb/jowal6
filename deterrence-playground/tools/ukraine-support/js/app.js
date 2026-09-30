@@ -5,6 +5,7 @@ import { META, MONTHS, DONORS, TYPES, GROUPS, PERIODS, ranking, monthly, cumulat
 import { renderRanking, drawTimeline } from './charts.js';
 import { renderPanel, renderMonth } from './panel.js';
 import { createTour } from './tour.js';
+import { chart, grow, stroke, fade, rise, count, flashIfChanged, onChange } from './fx.js';
 
 document.title = 'Who Supports Ukraine | Interactive Deterrence';
 const $ = id => document.getElementById(id);
@@ -107,7 +108,27 @@ function update() {
   renderPanel(S, summary(S));
   renderMonth($('month'), S, series, i => pickDonor(i));
   const cm = $('clear-month'); if (cm) cm.onclick = () => { S.month = null; update(); };
+  animate();
   writeHash();
+}
+
+// Motion (see fx.js). Runs after each render and never changes what was drawn.
+function animate() {
+  const tl = $('tl'), rank = $('rank');
+  const view = [S.measure, S.scale, S.period, S.types.join('.'), S.groups.join('.'), S.euc].join('|');
+  onChange('rank', view + S.all, () => chart(rank, first => {
+    rise(rank.children, { first, max: 20 });
+    grow(rank.querySelectorAll('.rk-bar'), { first, axis: 'x', stagger: first ? 300 : 120 });
+  }, { gap: 0 }));
+  onChange('tl', view + S.tl + S.donor, () => chart(tl, first => {
+    grow(tl.querySelectorAll('g > rect[style]'), { first, stack: true });
+    fade(tl.querySelectorAll('.ctick, .gap'), { first, delay: first ? 300 : 120, max: 80 });
+    stroke(tl.querySelectorAll('.aline, .cline'), { first });
+  }, { gap: 0 }));
+  onChange('month', S.month === null ? null : S.month + '|' + S.donor, () => { fade(tl.querySelector('.selbox'), { ms: 240 }); rise($('month').children, { stagger: 40 }); });
+  count($('st-b'), 'st-b');
+  $('summary').querySelectorAll('dd').forEach((dd, i) => count(dd, 'sum' + i + (S.donor !== null)));
+  $('split').querySelectorAll('td.num').forEach((td, i) => flashIfChanged(td, 'split' + i));
 }
 function pickDonor(i) { S.donor = S.donor === i ? null : i; update(); }
 function pickMonth(i, keepFocus) {

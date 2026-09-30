@@ -9,6 +9,7 @@ import { createCharts } from './charts.js';
 import { createMap } from './map.js';
 import { buildPanel, renderPanel } from './panel.js';
 import { createTour } from './tour.js';
+import { chart, stroke, fade, pop, grow, rise, count, flashIfChanged, onChange } from './fx.js';
 
 const DEF = PRESETS[0];
 const S = { metric: 'total', smooth: 7, from: '2023-01-01', preset: DEF.id, before: [...DEF.before], after: [...DEF.after],
@@ -70,7 +71,33 @@ function update() {
   if (S.cats.size !== Object.keys(CATS).length) h.set('c', [...S.cats].join(','));
   if (S.cape) h.set('cape', '1');
   history.replaceState(null, '', '#' + h.toString());
+  animate();
 }
+
+// Motion (see fx.js). Runs after each render and never changes what was drawn.
+// Date moves from the slider or a chart drag come many per second: those are left still so the numbers track the hand.
+let lastUpd = 0;
+function animate() {
+  const now = performance.now(), rapid = now - lastUpd < 200;
+  lastUpd = now;
+  const svgs = [...document.querySelectorAll('#rs-charts .rs-row:not([hidden]) .rs-chart')];
+  const view = [S.metric, S.smooth, S.from, S.cape, S.before, S.after, [...S.cats].join('.')].join('|');
+  onChange('view', view, () => svgs.forEach(svg => chart(svg, first => {
+    stroke(svg.querySelectorAll('.line'), { first });
+    fade(svg.querySelectorAll('.area, .win, .wmean'), { first, delay: first ? 200 : 60 });
+    pop(svg.querySelectorAll('.ev-d'), { first, delay: first ? 300 : 80 });
+  }, { gap: 0 })));
+  onChange('cmp', [S.metric, S.before, S.after].join('|'), first => rise(document.querySelectorAll('#rs-cmp tbody tr'), { first }));
+  document.querySelectorAll('#rs-cmp tbody td:not(:first-child)').forEach((td, i) => flashIfChanged(td, 'cmp' + i));
+  onChange('cats', [...S.cats].join('.'), first => rise(document.querySelectorAll('#rs-evlist li'), { first, max: 30 }));
+  count(document.querySelector('#rs-status b'), 'status', { still: rapid });
+  onChange('ev', S.ev, () => {
+    if (!S.ev || card.hidden) return;
+    rise(card.children, { stagger: 40 });
+    svgs.forEach(svg => pop(svg.querySelectorAll('.rs-ev.on .ev-d'), { ms: 420 }));
+  });
+}
+chart(document.getElementById('rs-eia'), () => grow(document.querySelectorAll('#rs-eia .tr > span'), { axis: 'x', stagger: 160 }));
 
 function applyPreset(id) {
   const p = PRESETS.find(x => x.id === id); if (!p) return;

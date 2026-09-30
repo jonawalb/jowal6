@@ -24,7 +24,7 @@ export const TAGLINES = {
   'correction-lab': 'Design a correction to a false story and see how much of the belief survives it.',
   'raid-night': 'Defend four cities through waves of drones and missiles, and see what each night costs you in interceptors.',
   'matrix-game': 'Argue your moves in a fictional Baltic crisis, face the counter-arguments, and let the dice decide.',
-  'sub-hunt': 'Hunt a hidden submarine with sonobuoys and patrol aircraft as a probability map updates every hour.',
+  'sub-hunt': 'Every empty search is a clue. Find the sub before it slips into the Atlantic.',
   'berlin-airlift': 'Keep two million Berliners fed and warm by air, day by day, and see how your tonnage stacks up against 1948–49.',
   'markets-vs-analysts': 'What traders paid for a Chinese invasion, blockade or clash over Taiwan, set against the PLA activity record.',
   'war-markets': 'See what prediction markets priced for strikes on Iran, ceasefires and a Russia–NATO clash, and how each bet turned out.',

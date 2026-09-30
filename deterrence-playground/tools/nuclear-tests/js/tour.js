@@ -27,7 +27,7 @@ export const STEPS = [
     body: () => 'The Soviet Union stopped in 1990, the United Kingdom in 1991 and the United States in 1992. France and China finished short final series in 1996, the year the Comprehensive Nuclear-Test-Ban Treaty opened for signature. The treaty is still not in force.',
     set: { year: 1996, ms: 'ctbt' } },
   { title: 'Only three states have tested since',
-    body: () => `India and Pakistan tested in May 1998. North Korea has tested six times, most recently on ${dateText(lastOf(t => t[1] === 7))}. It is the only state to have tested this century.`,
+    body: () => `India and Pakistan tested in May 1998. North Korea has tested six times, most recently on ${dateText(lastOf(t => t[1] === 7))}. It is the only state with an announced or confirmed test this century; a U.S. claim that China tested in 2020 has not been confirmed.`,
     set: { year: 2017, st: [5, 6, 7], ms: 'dprk17' } },
   { title: 'Talk of testing again',
     body: () => 'Russia withdrew its ratification of the treaty in 2023, and in 2025 the U.S. and Russian presidents each ordered preparations related to testing. Read the milestone cards for the exact wording, and the section below the map on how the U.S. maintains its weapons without explosive tests.',

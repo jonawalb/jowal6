@@ -1,24 +1,42 @@
 /* The Hunt. Built on shared/css/tsm.css tokens only.
-   Belief heat = --c2 (drawn on a canvas from the resolved token), search assets = --blue,
-   true submarine track = --red, clues = --c4. */
+   Probability glow = --c2 (drawn on a canvas from the resolved token), search assets = --blue,
+   true submarine track = --red. */
 .sh-actions { max-width: 1400px; margin: 12px auto 0; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; }
 .sh-actions > div { display: flex; gap: 8px; flex-wrap: wrap; }
 .sh-flag { margin: 0; font-size: 13px; padding: 5px 10px; border: 1px dashed var(--warn); border-radius: 4px; }
 .sh-flag b { color: var(--warn); }
 .mt { margin-top: 14px !important; }
 
-/* Hour bar */
-.sh-hourbar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; padding: 8px 12px; }
+/* How to play */
+.sh-howto { padding: 12px 16px; border-left: 4px solid var(--accent); }
+.sh-howto[hidden] { display: none; }
+.sh-howto-h { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 4px; }
+.sh-howto h2 { margin: 0; font-size: 21px; }
+.sh-howto p { margin: 0; font-size: 15px; line-height: 1.5; max-width: 92ch; }
+
+/* Hour bar and the per-hour summary */
+.sh-console { padding: 10px 14px; display: flex; flex-direction: column; gap: 8px; }
+.sh-console.done .sh-tools { opacity: .5; }
+.sh-hourbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 24px; }
+.sh-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: stretch; }
+.sh-row .sh-go { flex-wrap: nowrap; }
+.sh-row .sh-end { height: 100%; }
+@media (max-width: 720px) { .sh-row { grid-template-columns: minmax(0, 1fr); } .sh-row .sh-go { justify-content: flex-end; } .sh-row .sh-end { height: auto; } }
 .sh-hour { margin: 0; display: flex; align-items: baseline; gap: 6px; }
 .sh-hour b { font: 700 26px var(--display); }
-.sh-budget { display: flex; align-items: center; gap: 6px; }
-.sh-budget b { font-size: 15px; }
-.sh-pips { display: inline-flex; gap: 2px; }
-.sh-pips i { width: 7px; height: 12px; border-radius: 1px; background: var(--rule); }
-.sh-pips i.on { background: var(--blue); }
-.sh-say { margin: 0; flex: 1 1 260px; font-size: 13px; color: var(--muted); min-height: 1.3em; }
+.sh-left { margin-left: 8px; font-size: 13px; color: var(--muted); }
+.sh-meter { display: flex; flex-direction: column; gap: 4px; flex: 0 1 320px; min-width: 200px; }
+.sh-meter-h { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: 13px; font-weight: 600; }
+.sh-meter-h b { font: 700 22px var(--display); color: var(--good); }
+.sh-meter-bar { display: block; height: 8px; border-radius: 4px; background: var(--rule); overflow: hidden; }
+.sh-meter-bar i { display: block; height: 100%; width: 0; background: var(--good); transition: width .4s ease; }
+.sh-say { margin: 0; padding: 9px 14px; font-size: 14px; line-height: 1.45; min-height: 1.45em; border-left: 4px solid var(--blue); }
+.sh-say .pill { font-size: 10px; }
 
 /* Map */
+.sh-callout { position: absolute; transform: translate(-50%, 0); max-width: min(260px, 70%); background: var(--ink); color: var(--panel); font: 600 13px/1.35 var(--body); padding: 7px 10px; border-radius: 4px; pointer-events: none; box-shadow: 0 4px 14px rgba(0, 0, 0, .25); z-index: 10; }
+.sh-callout::before { content: ""; position: absolute; left: 50%; top: -6px; margin-left: -6px; border: 6px solid transparent; border-top: 0; border-bottom-color: var(--ink); }
+.sh-callout[hidden] { display: none; }
 .mapbox svg:focus-visible { outline-offset: -3px; }
 .sh-heat { image-rendering: auto; pointer-events: none; }
 .sh-mid { text-anchor: middle; }
@@ -35,16 +53,12 @@
 .sh-alab { fill: var(--blue); font-size: 11px; }
 .sh-alab.done { fill: var(--muted); }
 .sh-shiptrack { fill: none; stroke: var(--blue); stroke-width: 2; opacity: .6; }
-.sh-shipdest { fill: none; stroke: var(--blue); stroke-width: 1.4; stroke-dasharray: 3 4; }
 .sh-shipicon { fill: var(--blue); stroke: var(--panel); stroke-width: 1.5; }
 .sh-contact path { fill: var(--ink); stroke: var(--panel); stroke-width: 1.5; }
 .sh-contact.old { opacity: .45; }
 .sh-contact.real path { fill: var(--red); }
 .sh-contact.false { opacity: .7; }
 .sh-contact .sh-x { stroke: var(--ink); stroke-width: 2; fill: none; }
-.sh-clueline { fill: none; stroke: var(--c4); stroke-width: 2; stroke-dasharray: 10 6; }
-.sh-cluept { fill: color-mix(in srgb, var(--c4) 12%, transparent); stroke: var(--c4); stroke-width: 1.6; stroke-dasharray: 5 4; }
-.sh-clue { fill: var(--c4); }
 .sh-truth { fill: none; stroke: var(--red); stroke-width: 2.2; }
 .sh-truth.sprint { stroke-width: 5; }
 .sh-truthdot { fill: var(--red); }
@@ -54,20 +68,26 @@
 .sh-cur { fill: color-mix(in srgb, var(--blue) 6%, transparent); stroke: var(--blue); stroke-width: 1.4; stroke-dasharray: 4 3; pointer-events: none; }
 .sh-cur.pros { stroke: var(--red); fill: color-mix(in srgb, var(--red) 8%, transparent); stroke-dasharray: none; stroke-width: 2; }
 .sh-cross { stroke: var(--ink); stroke-width: 1.4; pointer-events: none; }
-.sh-legend { position: absolute; left: 8px; bottom: 8px; display: flex; flex-wrap: wrap; gap: 4px 12px; max-width: calc(100% - 16px); font-size: 11.5px; background: color-mix(in srgb, var(--panel) 88%, transparent); border: 1px solid var(--rule); border-radius: 3px; padding: 4px 8px; pointer-events: none; }
+.sh-legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 12.5px; margin-top: -4px; padding: 0 2px; }
 .sh-legend span { display: inline-flex; align-items: center; gap: 5px; }
 .sh-legend i { display: inline-block; width: 14px; height: 10px; }
-.lg-heat { background: var(--c2); opacity: .6; border-radius: 2px; }
+.lg-heat { background: linear-gradient(90deg, color-mix(in srgb, var(--c2) 15%, transparent), var(--c2)); border-radius: 2px; width: 26px !important; }
+.lg-ship { width: 0 !important; height: 0 !important; border: 6px solid transparent; border-top: 0; border-bottom: 11px solid var(--blue); }
+.sh-why { flex-basis: 100%; margin: 2px 0 0; font-size: 12.5px; color: var(--muted); }
 .lg-contact { width: 9px !important; height: 9px !important; background: var(--ink); transform: rotate(45deg); }
 .lg-asset { border: 1.6px solid var(--blue); border-radius: 50%; }
 .lg-truth { height: 3px !important; background: var(--red); }
 .sh-legend .rv { display: none; }
+.sh-adv summary, .sh-more summary { cursor: pointer; font-family: var(--display); font-weight: 600; font-size: 15px; }
+.sh-adv[open] { display: flex; flex-direction: column; gap: 10px; }
+.sh-more { margin-top: 16px; border-top: 1px solid var(--rule); padding-top: 12px; display: flex; flex-direction: column; gap: 10px; }
+.sh-math h3 { font-size: 17px; margin: 14px 0 4px; }
+.sh-math p { margin: 0 0 6px; }
 body.sh-over .sh-legend .rv { display: inline-flex; }
 
 /* Controls */
-.sh-controls { padding: 12px; display: flex; flex-direction: column; gap: 10px; }
-.sh-controls.done .sh-tools { opacity: .5; }
-.sh-tools { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.sh-tools { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.sh-tools button b { font-size: 14px; }
 .sh-tools button { display: flex; flex-direction: column; gap: 2px; }
 .sh-tools small, .sh-beh small { color: var(--muted); font-size: 11.5px; }
 .sh-tools button:disabled { opacity: .45; cursor: default; }
@@ -76,12 +96,15 @@ body.sh-over .sh-legend .rv { display: inline-flex; }
 .sh-prosbox { border: 1px solid var(--red); background: var(--red-soft); border-radius: 4px; padding: 10px 12px; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; }
 .sh-prosbox p { margin: 0; }
 .sh-prosbox[hidden] { display: none; }
-@media (max-width: 720px) { .sh-tools { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.sh-go .sh-end { padding: 9px 22px; font-size: 14px; }
+.sh-end.nudge { animation: sh-pulse 1.4s ease-in-out infinite; }
+@keyframes sh-pulse { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 70%, transparent); } 50% { box-shadow: 0 0 0 7px color-mix(in srgb, var(--accent) 0%, transparent); } }
 
 /* Panel */
 .sh-log { list-style: none; margin: 0; padding: 0; max-height: 260px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; }
+.sh-log { max-height: 340px; font-size: 13px; line-height: 1.4; }
 .sh-log li { border-left: 3px solid var(--rule); padding: 2px 8px; }
-.sh-log li.clue { border-left-color: var(--c4); }
+.sh-log li:first-child { border-left-color: var(--blue); }
 .sh-real { color: var(--red); } .sh-false { color: var(--muted); }
 .sh-beh { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .sh-beh button { display: flex; flex-direction: column; gap: 2px; }
@@ -97,16 +120,14 @@ body.sh-over .sh-legend .rv { display: inline-flex; }
 .sh-lrc-t { font: 11px var(--mono); } .sh-lrc-t.sprint { fill: var(--c2); } .sh-lrc-t.quiet { fill: var(--blue); }
 
 /* Reveal and batch */
-.sh-wide { max-width: 1400px; margin: 16px auto 0; }
-.sh-reveal, .sh-batch { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+.sh-reveal { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
 .sh-reveal[hidden] { display: none; }
-.sh-scrub { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: end; }
+.sh-replay { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: end; }
 .sh-chart { width: 100%; height: auto; }
 .sh-chart[hidden] { display: none; }
 .sh-grid { stroke: var(--rule); }
 .sh-l { fill: none; stroke-width: 2.5; }
 .sh-l.near { stroke: var(--c2); }
-.sh-l.out { stroke: var(--muted); stroke-dasharray: 5 4; stroke-width: 2; }
 .sh-now { stroke: var(--ink); stroke-width: 1; stroke-dasharray: 2 3; }
 .sh-tick { stroke-width: 3; }
 .sh-tick.real { stroke: var(--red); } .sh-tick.false { stroke: var(--muted); opacity: .5; }
@@ -132,14 +153,25 @@ body.sh-over .sh-legend .rv { display: inline-flex; }
 
 .sh-narrow { display: none; }
 #map.narrow .sh-narrow { display: inline; }
+#map.narrow .sh-gw { display: none; }
 #map.narrow .sh-lab { font-size: 17px; stroke-width: 4px; }
 #map.narrow .sh-exitlab { font-size: 16px; }
 #map.narrow .sh-names .t-place { font-size: 22px; }
 #map.narrow .sh-names .t-sea { font-size: 20px; }
 #map.narrow .tsm-grat text { font-size: 16px; }
+/* Phones: the map comes first, then the controls and the hour's summary. */
+@media (max-width: 720px) {
+  .stage > .sh-howto { order: 1; } .stage > .mapbox { order: 2; } .stage > .sh-legend { order: 3; margin-top: 0; }
+  .stage > .sh-console { order: 4; } .stage > .sh-say { order: 5; } .stage > .sh-reveal { order: 6; }
+  body.sh-over .stage > .sh-reveal { order: 4; }
+  body.sh-over .stage > .sh-console { display: none; }
+}
 @media (max-width: 520px) {
   .sh-hour b { font-size: 22px; }
-  .sh-legend { font-size: 10.5px; gap: 2px 8px; position: static; border-width: 1px 0 0; border-radius: 0; max-width: none; }
-  .sh-scrub { grid-template-columns: 1fr; }
+  .sh-legend { font-size: 12px; gap: 3px 12px; }
+  .sh-replay { grid-template-columns: 1fr; }
+  .sh-tools button { padding: 7px 6px; }
+  .sh-tools small { font-size: 11px; }
+  .sh-meter { flex-basis: 100%; }
   .sh-tour { right: 8px; left: 8px; bottom: 8px; width: auto; }
 }

@@ -1,4 +1,5 @@
-// Shareable state: #seed=1234&beh=transit&sp=25&n=7&log=1b-950_6362.3s-880_6310
+// Shareable state: #seed=1234&beh=transit&sp=25&n=7&log=0b-750_6512.3m-880_6410
+// Log codes: b = sonobuoys, m = aircraft, p = attack. Older links may hold s (ship orders); they are ignored.
 // n is the number of hours played; log holds every action with its hour. Loading the link replays the
 // hunt exactly, so a finished hunt reopens on its reveal and an unfinished one resumes.
 import { SUB } from '../data/params.js';

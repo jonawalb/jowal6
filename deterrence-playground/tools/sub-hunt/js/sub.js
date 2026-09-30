@@ -7,7 +7,7 @@ const BEH = ['transit', 'loiter', 'evade'];
 
 /**
  * A new sub near the datum.
- * @param rng generator; beh 'transit' | 'loiter' | 'evade' | 'unknown'; datum [lon, lat]; r cue radius (nm)
+ * @param rng generator; beh 'transit' | 'loiter' | 'evade' | 'unknown'; datum [lon, lat]; r opening-report radius (nm)
  */
 export function spawn(rng, beh, datum, r) {
   const b = beh === 'unknown' ? BEH[Math.floor(rng.u() * 3)] : beh;

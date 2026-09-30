@@ -29,4 +29,4 @@ export function makeRng(seed, stream = 0) {
   return { u, normal, poisson, pick };
 }
 
-export const STREAM = { sub: 1, detect: 2, falseAlarm: 3, filter: 4, clue: 5, setup: 6 };
+export const STREAM = { sub: 1, detect: 2, falseAlarm: 3, filter: 4, setup: 6 };

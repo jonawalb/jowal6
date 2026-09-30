@@ -1,6 +1,6 @@
-// After the hunt: outcome, the probability-over-time chart, and the scrubber that replays the map.
+// After the hunt: outcome, the probability-over-time chart, and the slider that replays the map.
 import { el } from '../../../shared/js/mapkit.js';
-import { GAME, BEHAVIOURS } from '../data/params.js';
+import { GAME, BEHAVIOURS, SENSORS } from '../data/params.js';
 import { dist } from './geo.js';
 import { routeName } from './panel.js';
 
@@ -10,13 +10,13 @@ const pct = x => `${Math.round(x * 100)}%`;
 function outcomeText(g) {
   const o = g.over, route = routeName(g.sub.route), beh = BEHAVIOURS[g.sub.beh].label.toLowerCase();
   const where = g.sub.beh === 'loiter' ? 'loitering' : `heading for the ${route} exit`;
-  if (o.kind === 'found') return ['good', `Found it at hour ${o.h}`, `Your attack ring was ${o.d.toFixed(1)} nm from the sub (${beh}, ${where}). Your map gave that ring ${pct(o.pBelief)}.`];
-  if (o.kind === 'missed') return ['bad', `Missed by ${o.d.toFixed(0)} nm`, `The sub (${beh}) was ${where}. Your map gave the ring ${pct(o.pBelief)}, and the attack gave away the hunt.`];
-  if (o.kind === 'escaped') return ['bad', `Broke out through the ${route} route at hour ${o.h}`, `The sub (${beh}) reached the exit before you committed.`];
+  if (o.kind === 'found') return ['good', `Found it at hour ${o.h}`, `Your attack landed ${o.d.toFixed(1)} nm from the sub (${beh}, ${where}). Your map gave that spot ${pct(o.pBelief)}.`];
+  if (o.kind === 'missed') return ['bad', `Missed by ${o.d.toFixed(0)} nm`, `The sub (${beh}) was ${where}. Your map gave that spot ${pct(o.pBelief)}. A miss gives the hunt away.`];
+  if (o.kind === 'escaped') return ['bad', `Slipped out through the ${route} gap at hour ${o.h}`, `The sub (${beh}) reached the exit before you attacked.`];
   return ['bad', 'Time ran out', `After ${GAME.hours} hours the sub (${beh}) was still ${where}, unlocated.`];
 }
 
-/** Line chart: map probability within 20 nm of the truth, and probability the map said it had escaped. */
+/** Line chart: how much of the map's probability lay within 20 nm of the true sub, hour by hour. */
 function chart(g, hour) {
   const svg = $('rv-chart');
   svg.replaceChildren();
@@ -37,14 +37,11 @@ function chart(g, hour) {
   }
   el('text', { x: x0, y: y0 + 44, class: 'sh-ct' }, svg, 'contacts: solid = real, faint = false');
   const line = f => S.map((s, h) => `${h ? 'L' : 'M'}${sx(h).toFixed(1)} ${sy(f(s)).toFixed(1)}`).join('');
-  el('path', { d: line(s => s.pOut), class: 'sh-l out' }, svg);
   el('path', { d: line(s => s.near), class: 'sh-l near' }, svg);
   el('line', { x1: sx(hour), x2: sx(hour), y1: y1, y2: y0, class: 'sh-now' }, svg);
   const lg = el('g', { class: 'sh-lg' }, svg);
   el('path', { d: `M${x0 + 8} ${y1 + 8}h18`, class: 'sh-l near' }, lg);
-  el('text', { x: x0 + 32, y: y1 + 12 }, lg, W < 480 ? 'map within 20 nm of the sub' : 'map probability within 20 nm of the true sub');
-  el('path', { d: `M${x0 + 8} ${y1 + 26}h18`, class: 'sh-l out' }, lg);
-  el('text', { x: x0 + 32, y: y1 + 30 }, lg, W < 480 ? 'map says it broke out' : 'map probability it had already broken out');
+  el('text', { x: x0 + 32, y: y1 + 12 }, lg, W < 480 ? 'odds within 20 nm of the sub' : 'your map\'s odds within 20 nm of the true sub');
 }
 
 export function createReveal({ onHour, onAgain, onNew }) {
@@ -86,13 +83,14 @@ export function createReveal({ onHour, onAgain, onNew }) {
         ['Hours sprinting', `${sprintH} of ${g.subTrack.length - 1}`],
         ...(g.sub.beh === 'evade' ? [['Hours evading you', `${evH}`]] : []),
         ['Contacts', `${real} real, ${fake} false`],
-        ['Budget spent', `${GAME.budget - g.budget} of ${GAME.budget}`],
+        ['Sonobuoys used', `${SENSORS.buoy.count - g.left.buoy} of ${SENSORS.buoy.count}`],
+        ['Aircraft flights', `${SENSORS.mpa.count - g.left.mpa} of ${SENSORS.mpa.count}`],
         ['Map near the sub, peak', `${pct(peak.v)} at hour ${peak.h}`],
         ['Map near the sub, end', pct(last.near)],
       ];
-      if (g.over.p) rows.push(['Attack ring to sub', `${dist(g.over.p, [g.sub.lon, g.sub.lat]).toFixed(1)} nm`]);
+      if (g.over.p) rows.push(['Attack to sub', `${dist(g.over.p, [g.sub.lon, g.sub.lat]).toFixed(1)} nm`]);
       $('rv-read').innerHTML = rows.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('');
-      $('rv-note').textContent = 'Drag the hour to watch the map and the true track together. When a line climbs, your search was squeezing probability onto the sub; when it falls, the sub was slipping out of the area you were searching or a false contact pulled the map away.';
+      $('rv-note').textContent = 'Move the slider to watch your map and the true track together, hour by hour. When the line climbs, your search was squeezing the odds onto the sub. When it falls, the sub was slipping out of the water you searched, or a false contact pulled the map away.';
       setHour(g.snaps.length - 1);
     },
     hide() { stop(); $('reveal').hidden = true; },

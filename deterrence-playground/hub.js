@@ -205,16 +205,22 @@ if (TILES) {
     grid.append(aside);
     let i = Math.floor(Math.random() * pool.length), timer = null, hold = false;
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Each tool's animated trailer (the same ones as jwalberg.com/interactive); the spotlight moves on when it ends.
+    const TRAILERS = 'https://jwalberg.com/interactive/motion/';
+    let dur = 17000;
     const show = () => {
       const t = pool[i];
       aside.querySelector('.spot-card').innerHTML = `<a class="spot-link" href="tools/${t.slug}/"><h3>${esc(t.title)}</h3>
-        <div class="spot-img"><img data-thumb="tools/${t.slug}/" alt="Screenshot of ${esc(t.title)}" width="640" height="400"></div>
+        <div class="spot-img"><iframe src="${TRAILERS}${t.slug}/${reduced ? '?poster' : ''}" title="Animated preview of ${esc(t.title)}"
+          tabindex="-1" aria-hidden="true" loading="eager"></iframe></div>
         <p>${esc(TAGLINES[t.slug])}</p><span class="go">Open →</span></a>`;
       aside.querySelector('.spot-n').textContent = `${i + 1} / ${pool.length}`;
+      dur = 17000;
     };
-    const step = d => { i = (i + d + pool.length) % pool.length; show(); };
-    const tick = () => { clearInterval(timer); if (!reduced) timer = setInterval(() => { if (!hold && !document.hidden) step(1); }, 7000); };
-    aside.addEventListener('click', e => { const b = e.target.closest('.spot-b'); if (b) { step(+b.dataset.d); tick(); } });
+    addEventListener('message', e => { if (e.origin === 'https://jwalberg.com' && e.data?.duration) { dur = e.data.duration * 1000; tick(); } });
+    const step = d => { i = (i + d + pool.length) % pool.length; show(); tick(); };
+    const tick = () => { clearTimeout(timer); if (!reduced) timer = setTimeout(function next() { if (!hold && !document.hidden) step(1); else timer = setTimeout(next, 1500); }, dur); };
+    aside.addEventListener('click', e => { const b = e.target.closest('.spot-b'); if (b) step(+b.dataset.d); });
     aside.addEventListener('pointerenter', () => { hold = true; }); aside.addEventListener('pointerleave', () => { hold = false; });
     aside.addEventListener('focusin', () => { hold = true; }); aside.addEventListener('focusout', () => { hold = false; });
     show(); tick();

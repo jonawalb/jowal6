@@ -117,7 +117,7 @@ export const ALL_TOOLS = [
     blurb: "Why do states with similar weapons make opposite choices about showing them? Move the costs and beliefs in Walberg's signaling model and watch coercive states reveal while operational states conceal." },
   { slug: 'dissertation-games', also: ['gametheory'], cat: 'deterrence', sites: ['deterrence'], vault: 'dissertation', title: 'Jon Dissertation Games', status: 'live',
     blurb: "Working game trees from Jonathan Walberg's dissertation. Needs its own password." },
-  { slug: 'extended-deterrence', also: ['gametheory'], cat: 'deterrence', sites: ['deterrence'], title: 'Extended Deterrence', status: 'live',
+  { slug: 'extended-deterrence', dev: true, also: ['gametheory'], cat: 'deterrence', sites: ['deterrence'], title: 'Extended Deterrence', status: 'live',
     blurb: 'Would a patron trade Boston for Bonn? Stack treaties, pledges, a tripwire force and nuclear sharing, see what each does to credibility and entrapment, then check the real U.S. commitments.' },
   { slug: 'nuclear-arsenals', sub: { nuclear: 'facts' }, cat: 'nuclear', sites: ['deterrence'], title: 'Nuclear Arsenals', status: 'live',
     blurb: "Scrub eighty years of FAS nuclear warhead estimates for every nuclear-armed state, against the treaties from the NPT to New START's lapse in February 2026." },

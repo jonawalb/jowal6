@@ -14,14 +14,22 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="stylesheet" href="/style.css">
     <style>
-        .research-subnav { position: sticky; top: var(--nav-h); z-index: 50; display: flex; gap: 4px 22px; flex-wrap: wrap;
-            margin: -24px 0 36px; padding: 10px 0; background: var(--bg-alt); border-bottom: 1px solid var(--border);
-            font-size: .82rem; letter-spacing: .04em; text-transform: uppercase; }
-        .research-subnav a { color: var(--text-muted); text-decoration: none; padding: 2px 0; border-bottom: 2px solid transparent; }
+        .research-layout { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 32px; align-items: start; }
+        .research-subnav { position: sticky; top: calc(var(--nav-h) + 32px); display: flex; flex-direction: column; gap: 2px;
+            border-left: 1px solid var(--border); font-size: .76rem; letter-spacing: .05em; text-transform: uppercase; }
+        .research-subnav a { color: var(--text-muted); text-decoration: none; padding: 7px 0 7px 14px; margin-left: -1px;
+            border-left: 2px solid transparent; line-height: 1.3; white-space: nowrap; }
         .research-subnav a:hover, .research-subnav a:focus-visible { color: var(--green-800); }
-        .research-subnav a[aria-current="true"] { color: var(--green-800); border-bottom-color: var(--green-600); }
-        #commentary, #academic, #tsm, #working-projects, #presentations { scroll-margin-top: calc(var(--nav-h) + 64px); }
-        @media (max-width: 700px) { .research-subnav { flex-wrap: nowrap; overflow-x: auto; gap: 18px; font-size: .75rem; margin-top: -16px; } .research-subnav a { white-space: nowrap; } }
+        .research-subnav a[aria-current="true"] { color: var(--green-800); border-left-color: var(--green-600); font-weight: 600; }
+        #publications, #working-projects, #presentations { scroll-margin-top: calc(var(--nav-h) + 24px); }
+        @media (max-width: 900px) {
+            .research-layout { grid-template-columns: minmax(0, 1fr); gap: 0; }
+            .research-subnav { top: var(--nav-h); z-index: 50; flex-direction: row; gap: 18px; border-left: 0; border-bottom: 1px solid var(--border);
+                background: var(--bg-alt); margin: -24px 0 28px; padding: 6px 0; overflow-x: auto; }
+            .research-subnav a { padding: 6px 0; margin: 0; border-left: 0; border-bottom: 2px solid transparent; white-space: nowrap; }
+            .research-subnav a[aria-current="true"] { border-bottom-color: var(--green-600); }
+            #publications, #working-projects, #presentations { scroll-margin-top: calc(var(--nav-h) + 56px); }
+        }
     </style>
 </head>
 <body>
@@ -47,14 +55,14 @@
 <section class="section section-alt" id="research">
     <div class="container">
         <h2 class="section-title">Research</h2>
+        <div class="research-layout">
         <nav class="research-subnav" aria-label="Sections of this page">
-            <a href="#commentary">Commentary</a>
-            <a href="#academic">Academic</a>
-            <a href="#tsm">Taiwan Security Monitor</a>
+            <a href="#publications">Publications</a>
             <a href="#working-projects">Working Projects</a>
             <a href="#presentations">Presentations</a>
         </nav>
-        <div class="research-columns">
+        <div class="research-main">
+        <div class="research-columns" id="publications">
 
             <!-- Column 1: Commentary -->
             <div class="research-col">
@@ -311,6 +319,8 @@
                     </div>
                 </div>
             </div>
+        </div>
+        </div>
         </div>
     </div>
 </section>

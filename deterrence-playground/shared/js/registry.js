@@ -34,10 +34,10 @@ export const ALL_CATEGORIES = [
   { id: 'coercion', name: 'Economic coercion & war markets', sites: ['deterrence'],
     blurb: 'Trade pressure, resilience, and what betting markets say about war.' },
   { id: 'tsm', name: 'TSM', sites: ['deterrence'], locked: true,
-    blurb: 'Taiwan Strait trackers, exercise replays and wargames from the Taiwan Security Monitor. Password protected.' },
+    blurb: 'Taiwan Strait trackers, exercise replays and wargames from the Taiwan Security Monitor.' },
   // Tools marked `dev: true` show only here (never in their other categories) and need their own password.
   { id: 'dev', name: 'Coming Soon', sites: ['deterrence'], locked: true,
-    blurb: 'Tools still being built and checked. Password protected.' },
+    blurb: 'Tools still being built and checked.' },
 ];
 
 export const ALL_TOOLS = [
@@ -116,7 +116,7 @@ export const ALL_TOOLS = [
   { slug: 'conceal-reveal', dev: true, also: ['gametheory'], cat: 'deterrence', sites: ['deterrence'], title: 'Conceal or Reveal?', status: 'live',
     blurb: "Why do states with similar weapons make opposite choices about showing them? Move the costs and beliefs in Walberg's signaling model and watch coercive states reveal while operational states conceal." },
   { slug: 'dissertation-games', also: ['gametheory'], cat: 'deterrence', sites: ['deterrence'], vault: 'dissertation', title: 'Jon Dissertation Games', status: 'live',
-    blurb: "Working game trees from Jonathan Walberg's dissertation. Needs its own password." },
+    blurb: "Working game trees from Jonathan Walberg's dissertation." },
   { slug: 'extended-deterrence', dev: true, also: ['gametheory'], cat: 'deterrence', sites: ['deterrence'], title: 'Extended Deterrence', status: 'live',
     blurb: 'Would a patron trade Boston for Bonn? Stack treaties, pledges, a tripwire force and nuclear sharing, see what each does to credibility and entrapment, then check the real U.S. commitments.' },
   { slug: 'nuclear-arsenals', sub: { nuclear: 'facts' }, cat: 'nuclear', sites: ['deterrence'], title: 'Nuclear Arsenals', status: 'live',

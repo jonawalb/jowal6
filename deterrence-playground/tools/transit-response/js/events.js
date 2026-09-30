@@ -30,7 +30,9 @@ export const val = (d, m) => { const r = byDate.get(d); return r && r[METRICS[m]
 
 // ---- Events: same-day ship transits grouped into one event -------------------------------
 const fixShip = ([date, name, hull, cls, type, country]) => {
-  const n = FIXES.names[name] || name;
+  const row = FIXES.rows[`${date}|${name}`] || {};
+  if (row.hull) hull = row.hull;
+  const n = row.name || FIXES.names[name] || name;
   const t = FIXES.types[type] || FIXES.typeByClass[cls] || type || '';
   return { name: n, rawName: name, hull, cls: cls || '', type: t, rawType: type, country };
 };
@@ -38,8 +40,9 @@ const fixShip = ([date, name, hull, cls, type, country]) => {
 export const EVENTS = (() => {
   const m = new Map();
   for (const t of TSM.transits) {
-    if (!m.has(t[0])) m.set(t[0], []);
-    m.get(t[0]).push(fixShip(t));
+    const d = (FIXES.rows[`${t[0]}|${t[1]}`] || {}).date || t[0];
+    if (!m.has(d)) m.set(d, []);
+    m.get(d).push(fixShip(t));
   }
   return [...m.entries()].sort((a, b) => a[0].localeCompare(b[0])).map(([date, ships], idx) => {
     const countries = [...new Set(ships.map(s => s.country))];

@@ -128,7 +128,7 @@ $('srclist').innerHTML = Object.entries(SOURCES).map(([, s]) =>
   `<li>${esc(s.cite)} ${s.url ? `<a href="${s.url}" target="_blank" rel="noopener">Link</a>` : '<i>(not online)</i>'}</li>`).join('');
 drawExercises($('exercises'), EXERCISES);
 $('ex-links').innerHTML = EXERCISES.map(e => { const x = exerciseFor(e.start); return x ? linkHtml(exerciseLink(x.id, e.start), e.name) : ''; }).join('');
-addExportBar($('exercises-box'), { target: () => $('exercises'), title: 'How long major PLA exercises around Taiwan lasted, 2022–2025', note: "Dates: TSM exercise-event list (Exercises as Theater), sources linked in the tool" });
+addExportBar($('exercises-box'), { target: () => $('exercises'), title: 'Announced or reported length of major PLA exercises around Taiwan, 2022–2025', note: "Dates: TSM exercise-event list (Exercises as Theater), sources linked in the tool" });
 $('ind-count').textContent = INDICATORS.length;
 
 readHash();

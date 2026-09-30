@@ -60,7 +60,7 @@ export function flagsHtml(a) {
 export function offHtml(e, why, metric) {
   return `<div class="status" data-s="warn"><b>Not analyzable</b><span>${escapeHtml(why)}.</span></div>
     <p class="fine">The ships and date still show on the map. ${metric !== 'air' && e.date >= '2022-08-06'
-      ? 'Switch the metric to aircraft to analyze this transit.' : `Events need daily ${METRICS[metric].name.toLowerCase()} data on day 0 and at least ${MIN_BASE} usable baseline days.`}</p>`;
+      ? 'Switch the metric to aircraft to analyze this transit.' : `Events need daily ${METRICS[metric].name.replace(/^(ADIZ|Official)/, s => s === 'ADIZ' ? s : s.toLowerCase())} data on day 0 and at least ${MIN_BASE} usable baseline days.`}</p>`;
 }
 
 export function aggReadout(g) {

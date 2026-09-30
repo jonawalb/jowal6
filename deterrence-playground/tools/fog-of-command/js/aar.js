@@ -7,6 +7,7 @@ import { beliefAt } from './vision.js';
 import { runAll, REPLAYS } from './compare.js';
 import { hhmm, DEF, foeOf, status } from './panel.js';
 import { moments, planLine } from './story.js';
+import { countUp, reveal, reduced } from '../../../shared/js/motion.js';
 
 const $ = id => document.getElementById(id);
 const pct = x => `${Math.round(x * 100)}%`;
@@ -18,7 +19,7 @@ function trueCols(g, me, h) {
     && [NORTH[c], FORWARD[c], MAIN[c], REAR[c]].includes(u.node || (u.seg && u.seg.from))).reduce((a, u) => a + u.str, 0));
 }
 
-function chart(g, me, hour) {
+function chart(g, me, hour, draw = false) {
   const svg = $('aar-chart');
   svg.replaceChildren();
   const T = g.snaps.length - 1;
@@ -43,10 +44,37 @@ function chart(g, me, hour) {
     for (const h of [0, 8, 16].filter(x => x <= T)) el('text', { x: sx(h), y: y0 + 14, 'text-anchor': h === 0 ? 'start' : h === T ? 'end' : 'middle' }, ax, hhmm(h));
     el('text', { x: x0, y: y1 - 7, class: `fc-ctitle${c === main ? ' main' : ''}` }, svg, `${COLS[c]}${c === main ? ' (main effort)' : ''}`);
     const line = arr => arr.map((v, h) => `${h ? 'L' : 'M'}${sx(h).toFixed(1)} ${sy(v[c]).toFixed(1)}`).join('');
-    el('path', { d: line(tru), class: 'fc-l true' }, svg);
-    el('path', { d: line(bel), class: 'fc-l bel' }, svg);
+    const lt = el('path', { d: line(tru), class: 'fc-l true' }, svg);
+    const lb = el('path', { d: line(bel), class: 'fc-l bel' }, svg);
+    if (draw) { strokeIn(lt, c * 80); strokeIn(lb, 200 + c * 80); }
     el('line', { x1: sx(hour), x2: sx(hour), y1, y2: y0, class: 'fc-now' }, svg);
   }
+}
+
+/** A line drawing itself in (first view of the review only). The dashed line keeps its dashes. */
+function strokeIn(p, delay) {
+  if (reduced()) return;
+  const L = p.getTotalLength();
+  if (!L) return;
+  const dashed = getComputedStyle(p).strokeDasharray !== 'none';
+  if (dashed) { p.style.clipPath = 'inset(0 100% 0 0)'; p.style.transition = `clip-path .7s ease-out ${delay}ms`; requestAnimationFrame(() => requestAnimationFrame(() => { p.style.clipPath = 'inset(0 0 0 0)'; })); return; }
+  p.style.strokeDasharray = `${L} ${L}`; p.style.strokeDashoffset = L;
+  p.style.transition = `stroke-dashoffset .7s ease-out ${delay}ms`;
+  requestAnimationFrame(() => requestAnimationFrame(() => { p.style.strokeDashoffset = 0; }));
+  p.addEventListener('transitionend', () => { p.style.strokeDasharray = ''; p.style.strokeDashoffset = ''; p.style.transition = ''; }, { once: true });
+}
+
+/** Numbers in a readout count up to their value; text around them stays as written. */
+function countAll(root) {
+  root.querySelectorAll('dd, .fc-fogn b').forEach(n => {
+    const m = /^(\D*)(-?[\d.]+)(.*)$/.exec(n.textContent);
+    if (!m) return;
+    const dec = (m[2].split('.')[1] || '').length, pre = m[1], post = m[3];
+    const span = document.createElement('span');
+    n.textContent = ''; n.append(pre, span, post);
+    span.textContent = (0).toFixed(dec);
+    countUp(span, +m[2], { from: 0, ms: 650, fmt: v => v.toFixed(dec) });
+  });
 }
 
 function artillery(g, me) {
@@ -63,12 +91,19 @@ function artillery(g, me) {
     ['Your recon hit by your own fire', ff],
     ['Damage the enemy artillery did to you', took.toFixed(1)],
   ].map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('');
+  countAll($('aar-arty'));
 }
 
 function fogView(rows, me) {
   $('aar-fog').innerHTML = rows.map(r => `<div class="fc-fogrow${r.key === 'you' ? ' you' : ''}"><div class="fc-fogl"><b>${r.label}</b><small>${r.note}</small></div>
     <div class="fc-fogbar" role="img" aria-label="${r.label}: won ${pct(r.p)} of ${r.n} replays"><i style="width:${(r.p * 100).toFixed(1)}%"></i></div>
     <div class="fc-fogn num"><b>${pct(r.p)}</b><small>won</small></div></div>`).join('');
+  if (!reduced()) {
+    const bars = [...$('aar-fog').querySelectorAll('.fc-fogbar i')], w = bars.map(b => b.style.width);
+    bars.forEach(b => { b.style.width = '0%'; b.style.transition = 'width .65s cubic-bezier(.2,.8,.2,1)'; });
+    requestAnimationFrame(() => requestAnimationFrame(() => bars.forEach((b, i) => { b.style.width = w[i]; })));
+    countAll($('aar-fog'));
+  }
   const by = Object.fromEntries(rows.map(r => [r.key, r]));
   const d = Math.round((by.you.p - by.seer.p) * 100);
   $('fog-sum').innerHTML = `<b>What hiding, feints and bait were worth to you:</b> ${d >= 0 ? '+' : '−'}${Math.abs(d)} points `
@@ -105,6 +140,8 @@ export function createAAR({ onHour, onAgain, onNew }) {
       range.max = g.snaps.length - 1;
       artillery(g, me);
       setHour(g.snaps.length - 1);
+      chart(g, me, g.snaps.length - 1, true);
+      reveal([...$('aar').children], { stagger: 50 });
       ctrl?.abort();
       ctrl = new AbortController();
       $('aar-fog').innerHTML = '<p class="fine num" id="fog-prog">Running replays…</p>';

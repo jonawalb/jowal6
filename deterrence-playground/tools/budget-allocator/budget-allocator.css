@@ -129,3 +129,31 @@
 .menu { font-size: 12.5px; }
 .menu td:nth-child(3) { white-space: nowrap; }
 .panel > .sec[hidden] { display: none; }
+
+/* Motion on Interactive Deterrence only (js/fx.js adds .ba-motion there, never on Interactive Deterrence). */
+.ba-motion .dragbar .seg { transition: flex .35s cubic-bezier(.2, .8, .2, 1); }
+.ba-motion .dragbar .grip { transition: left .35s cubic-bezier(.2, .8, .2, 1); }
+.ba-motion .dragbar.dragging .seg, .ba-motion .dragbar.dragging .grip { transition: none; }
+@media (prefers-reduced-motion: reduce) { .ba-motion .dragbar .seg, .ba-motion .dragbar .grip { transition: none; } }
+
+/* Trailer look (Interactive Deterrence games, when the player picks it; the attribute is never set on TSM
+   Interactive). Shared tokens are remapped by shared/css/trailer.css; here: the dark-mode category palette
+   whatever the OS setting, the strip as a night plotting table, and mono readouts. */
+:root[data-skin="trailer"] { --c1: #72a0ff; --c2: #ff8a3d; --c3: #2cc2ac; --c4: #d77ab0; --c5: #efc12f; --c6: #a68ef0; --c7: #63b3d6; --c8: #c8b48a; }
+:root[data-skin="trailer"] .strip { box-shadow: inset 0 0 0 1px var(--rule), 0 20px 50px -30px #000; }
+:root[data-skin="trailer"] .st-lbl { font: italic 500 17px var(--display); letter-spacing: 0; text-transform: none; fill: var(--ink); }
+:root[data-skin="trailer"] .st-band-t { font: 500 10.5px var(--mono); letter-spacing: .03em; }
+:root[data-skin="trailer"] .st-ship { filter: drop-shadow(0 0 3px rgba(255, 90, 78, .55)); }
+:root[data-skin="trailer"] .st-ship.hit { filter: none; }
+:root[data-skin="trailer"] .st-launcher:not(.dead), :root[data-skin="trailer"] .st-plat:not(.dead) { filter: drop-shadow(0 0 3px rgba(44, 194, 172, .6)); }
+:root[data-skin="trailer"] .dragbar { border-color: var(--rule); box-shadow: 0 0 0 1px rgba(0, 0, 0, .4), 0 10px 24px -16px #000; }
+:root[data-skin="trailer"] .dragbar .seg, :root[data-skin="trailer"] .sbar span { color: #0b1712; font-weight: 600; }
+:root[data-skin="trailer"] .dragbar .grip { border-left-color: #0b1712; }
+:root[data-skin="trailer"] .tile { background: color-mix(in srgb, var(--panel) 92%, transparent); }
+:root[data-skin="trailer"] .tile b { font: 600 22px var(--mono); letter-spacing: -.01em; color: var(--accent); }
+:root[data-skin="trailer"] .tiles { background: var(--rule); border-color: var(--rule); }
+:root[data-skin="trailer"] #clock { color: var(--accent); }
+:root[data-skin="trailer"] .lock[aria-pressed="true"] { box-shadow: var(--glow); }
+:root[data-skin="trailer"] .tour { box-shadow: 0 20px 50px -20px #000, var(--glow); }
+:root[data-skin="trailer"] .cmp tr.you td { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+:root[data-skin="trailer"] .ptab input { background: var(--chip); }

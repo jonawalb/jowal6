@@ -75,12 +75,12 @@ export function drawStrip(svg, S, R, day) {
     for (let i = 0; i < j; i++) if (rand(k * 7 + i * 101) < R.pd) { found = true; break; }
     const cx = X(p.u), cy = y0 + p.v * bandH;
     if (found && rand(k * 53) < clearedShare) {
-      mk('path', { d: `M${cx - 3},${cy - 3}L${cx + 3},${cy + 3}M${cx - 3},${cy + 3}L${cx + 3},${cy - 3}`, class: 'hm-m done' }, dots);
+      mk('path', { d: `M${cx - 3},${cy - 3}L${cx + 3},${cy + 3}M${cx - 3},${cy + 3}L${cx + 3},${cy - 3}`, class: 'hm-m done', 'data-k': k, 'data-x': cx, 'data-y': cy }, dots);
     } else if (found) {
-      mk('circle', { cx, cy, r: 4, class: 'hm-m found' }, dots);
+      mk('circle', { cx, cy, r: 4, class: 'hm-m found', 'data-k': k }, dots);
     } else {
       live++;
-      mk('circle', { cx, cy, r: 3.4, class: 'hm-m live' }, dots);
+      mk('circle', { cx, cy, r: 3.4, class: 'hm-m live', 'data-k': k }, dots);
     }
   }
   return { live, drawn: total, capped: nLaid + nRe > MAX_DOTS };

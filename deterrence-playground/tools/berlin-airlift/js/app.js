@@ -8,6 +8,7 @@ import { drawChart, describeDay, LEGENDS, HIST_CUM } from './charts.js';
 import { bindPanel, renderPanel, renderCoefs } from './panel.js';
 import { showEvent, showDebrief } from './story.js';
 import { createTour } from './tour.js';
+import { afterRender, press } from './fx.js';
 import { N_DAYS, dateOf, fmt, fmtDate, monLabel, esc } from './util.js';
 
 const $ = id => document.getElementById(id);
@@ -115,6 +116,7 @@ function render() {
   if (cursor == null) sc.value = sc.max;
   $('scrub-out').textContent = n ? fmtDate(dateOf(cursor ?? n - 1)) : '–';
   setBusy(busy);
+  afterRender(g, { cursor, avg: wk.length ? avg : null });
 }
 
 function meter(id, v, max, fmtV, bad, warn) {
@@ -167,9 +169,9 @@ function init() {
   const h = readHash();
   $('autopilot').checked = h.auto;
   bindPanel(() => g, onPlan, () => { request(g); writeHash(); render(); });
-  $('run-day').addEventListener('click', () => fly(1));
-  $('run-week').addEventListener('click', () => fly(7));
-  $('run-month').addEventListener('click', () => fly(28));
+  $('run-day').addEventListener('click', () => { press($('run-day')); fly(1); });
+  $('run-week').addEventListener('click', () => { press($('run-week')); fly(7); });
+  $('run-month').addEventListener('click', () => { press($('run-month')); fly(28); });
   $('autopilot').addEventListener('change', () => { writeHash(); render(); });
   $('newgame').addEventListener('click', () => {
     const seed = 1 + Math.floor(Math.random() * 9999);

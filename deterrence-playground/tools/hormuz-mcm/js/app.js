@@ -5,6 +5,7 @@ import { DEFAULTS, run } from './model.js';
 import { drawStrip, drawChart } from './views.js';
 import { panelHTML, renderPanel, wirePanel, pct } from './panel.js';
 import { createTour } from './tour.js';
+import { afterRender, press } from './fx.js';
 
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -55,6 +56,7 @@ function render() {
     const p = PRESETS.find(x => x.k === b.dataset.p);
     b.setAttribute('aria-pressed', JSON.stringify(presetState(p)) === JSON.stringify(S));
   });
+  afterRender({ strip, chart, S, R, day });
   writeHash();
 }
 function presetState(p) {
@@ -73,7 +75,7 @@ const stop = () => { clearInterval(pt); pt = 0; play.textContent = 'Play'; play.
 play.addEventListener('click', () => {
   if (pt) return stop();
   if (day >= last) day = 0;
-  play.textContent = 'Pause'; play.setAttribute('aria-pressed', 'true');
+  play.textContent = 'Pause'; play.setAttribute('aria-pressed', 'true'); press(play);
   const stepD = Math.max(1, Math.round(last / 90));
   pt = setInterval(() => { if (day >= last) return stop(); day = Math.min(last, day + stepD); render(); }, reduce.matches ? 400 : 60);
 });

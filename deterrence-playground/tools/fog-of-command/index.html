@@ -29,7 +29,7 @@
         <button type="button" class="fc-side blue" data-side="blue"><b>Defend</b><span>Blue brigade: hold Tarn Crossing until 22:00.</span><small>9 units, including artillery and 2 recon troops. Red is stronger and has a decoy.</small></button>
         <button type="button" class="fc-side red" data-side="red"><b>Attack</b><span>Red force: take Tarn Crossing by 22:00.</span><small>13 units, including artillery, 2 recon troops and a decoy. Blue's reserve can be fooled. The board turns so you attack up the screen.</small></button>
       </div>
-      <p class="fc-rules"><b>Each hour:</b> pick a unit and click where it should go; fire your artillery at one sector; press <b>End hour</b>. You see the enemy only next to your own units.</p>
+      <p class="fc-rules"><b>Each hour:</b> pick a unit and click where it should go; fire your artillery (the fixed battery in the map's bottom-right corner) at one sector; press <b>End hour</b>. You see the enemy only next to your own units.</p>
       <p class="fine">Keys: <b>1–9</b> pick a unit, <b>A</b> artillery, <b>G</b> give ground or hold, <b>Tab</b> to a sector and <b>Enter</b> to send, arrow keys between sectors, <b>N</b> ends the hour, <b>U</b> undoes.</p>
     </section>
 
@@ -52,13 +52,14 @@
           <button type="button" class="btn" data-view="truth" aria-pressed="false">What was true</button>
         </div>
       </div>
-      <svg id="map" role="group" aria-label="Map of the fictional Varn valley: sixteen sectors in four rows and four columns, and Tarn Crossing behind them. When you attack, the board is turned so your side is at the bottom. Tab to a sector and press Enter to send the selected unit or fire there; arrow keys move between sectors."></svg>
+      <svg id="map" role="group" aria-label="Map of the fictional Varn valley: sixteen sectors in four rows and four columns, and Tarn Crossing behind them. When you attack, the board is turned so your side is at the bottom. Your artillery sits fixed in the bottom-right corner. Tab to a sector and press Enter to send the selected unit or fire there; arrow keys move between sectors."></svg>
     </div>
     <div class="fc-legend" aria-hidden="true">
       <span><i class="lg-mine"></i>Your unit (bar = strength)</span>
       <span><i class="lg-foe"></i>Enemy seen (~ full strength if not hit; % = seen exactly)</span>
       <span><i class="lg-move"></i>Movement</span>
       <span><i class="lg-route"></i>Order (dashed: starts next hour)</span>
+      <span><i class="lg-bat"></i>Your artillery (fixed, bottom right; click it to fire)</span>
       <span><i class="lg-target"></i>Your fire</span>
       <span><i class="lg-fight"></i>Fighting</span>
       <span><i class="lg-bound"></i>Sector boundary: a planning line, not a physical feature</span>
@@ -98,7 +99,7 @@
   <div class="col">
     <h2>How to play</h2>
     <p><b>The goal.</b> Defending as Blue, hold Tarn Crossing until 22:00. Attacking as Red, take it: Red wins the moment it holds the crossing with no Blue unit there.</p>
-    <p><b>Each hour.</b> Pick a unit and click where it should go. The bar says whether this hour's orders start now or next hour. Fire your artillery at one sector (press A, then click). Press End hour: units move, fights happen where both sides meet, and new reports come in.</p>
+    <p><b>Each hour.</b> Pick a unit and click where it should go. The bar says whether this hour's orders start now or next hour. Fire your artillery at one sector (press A, or click your battery in the bottom-right corner of the map, then click the sector). The battery is fixed: it cannot move and cannot be attacked. Press End hour: units move, fights happen where both sides meet, and new reports come in.</p>
     <p><b>What you see.</b> Enemy units in a sector you hold are seen exactly. In a sector next to one of your units you see their type, not their losses, and you miss one time in ten; a decoy looks like a tank battalion. Your recon troops also report movement two sectors out, an hour late. Fire watched by a recon troop next to the target shows exactly what is there and how hurt it is.</p>
     <p><b>Winning fights.</b> A unit that has sat in a sector for two hours defends as if it were three times its size. Attack where the defender is thin, or hit a defender that is already fighting from a second direction: then its defense counts for nothing. A unit set to <i>give ground</i> falls back one sector when a stronger enemy attacks it, and an enemy that follows it can run into a prepared position.</p>
     <p><b>The other commander</b> acts only on what it can see. The Red commander sends its second echelon down the road that looks weakest and follows units that give ground. The Blue commander commits its reserve to the road that looks strongest, checks contacts with spotted fire first, and counterattacks enemy units that look weak.</p>

@@ -2,6 +2,7 @@
 // through the defender's layers. For Taiwan: a PLA wave crossing from the embarkation coast to Taiwan.
 import { el } from '../../../shared/js/mapkit.js';
 import { ctx } from './ctx.js';
+import { hit as fxHit, bands as fxBands, ON as MOTION } from './fx.js';
 
 const W = 1000, H = 250, X0 = 120, X1 = 900, N = 36;
 const CROSSING = { get km() { return ctx.geo.km; } };
@@ -14,7 +15,7 @@ function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let
 
 export function createStrip(svg, onClock) {
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-  let bands, shooters, fleet, ships = [], raf = null, res = null, key = '';
+  let bands, shooters, fleet, fx, ships = [], raf = null, res = null, key = '', shown = null;
 
   // Background, labels and distance scale depend on the country and the approach length.
   function frame() {
@@ -32,6 +33,7 @@ export function createStrip(svg, onClock) {
     for (let k = 0; k <= CROSSING.km; k += step) { const x = kmToX(k); el('line', { x1: x, x2: x, y1: H - 16, y2: H - 10 }, scale); el('text', { x, y: H - 1, 'text-anchor': 'middle' }, scale, k ? `${k} km` : P.strip.zero); }
     shooters = el('g', {}, svg);
     fleet = el('g', {}, svg);
+    fx = MOTION ? el('g', { 'pointer-events': 'none', 'aria-hidden': 'true' }, svg) : null;
     svg.setAttribute('aria-label', P.strip.aria);
   }
 
@@ -44,10 +46,11 @@ export function createStrip(svg, onClock) {
     act.forEach((l, i) => {
       const x = Math.max(0, kmToX(Math.min(l.reach, CROSSING.km + 40)));
       const y = 34 + i * rowH;
-      el('rect', { x, y, width: X1 + 16 - x, height: rowH - 3, fill: `var(${l.col})`, 'fill-opacity': (0.08 + 0.5 * l.st).toFixed(2), class: 'st-band' + (l.active ? '' : ' off') }, bands);
+      el('rect', { x, y, width: X1 + 16 - x, height: rowH - 3, fill: `var(${l.col})`, 'fill-opacity': (0.08 + 0.5 * l.st).toFixed(2), class: 'st-band' + (l.active ? '' : ' off'), ...(MOTION ? { 'data-l': l.t } : {}) }, bands);
       const narrow = X1 - x < 200;
       el('text', { x: narrow ? x - 6 : Math.max(x, X0) + 6, y: y + rowH / 2 + 4, class: 'st-band-t', 'text-anchor': narrow ? 'end' : 'start' }, bands, `${l.t}${l.active ? '' : ' (too weak to count)'}`);
     });
+    if (MOTION) fxBands(bands);
   }
 
   function drawShooters(r) {
@@ -94,6 +97,7 @@ export function createStrip(svg, onClock) {
       const stopped = s.hitAt != null && x >= s.hitAt;
       const px = stopped ? s.hitAt : x;
       if (stopped) hit++;
+      if (MOTION && stopped && shown && !shown.has(s)) { shown.add(s); fxHit(fx, px, s.y, s.by.col, X1 + 30); }
       if (px < X0 - 20) return;
       el('path', { d: ctx.P.strip.vehicle ? `M${px - 9} ${s.y - 4}h16v8h-16z` : `M${px - 9} ${s.y - 3}h14l4 3l-4 3h-14z`, class: 'st-ship' + (stopped ? ' hit' : '') }, fleet);
       if (stopped) el('path', { d: `M${px - 5} ${s.y - 6}l8 12M${px + 3} ${s.y - 6}l-8 12`, class: 'st-x', stroke: `var(${s.by.col})` }, fleet);
@@ -107,9 +111,10 @@ export function createStrip(svg, onClock) {
     stop();
     if (reduced()) { place(1); return; }
     const t0 = performance.now(), dur = 7000;
-    const step = now => { const t = Math.min(1, (now - t0) / dur); place(t); if (t < 1) raf = requestAnimationFrame(step); else raf = null; };
+    shown = new Set();
+    const step = now => { const t = Math.min(1, (now - t0) / dur); place(t); if (t < 1) raf = requestAnimationFrame(step); else { raf = null; shown = null; } };
     raf = requestAnimationFrame(step);
   }
-  function stop() { if (raf) cancelAnimationFrame(raf); raf = null; }
+  function stop() { if (raf) cancelAnimationFrame(raf); raf = null; shown = null; }
   return { set, play, stop, playing: () => !!raf, get res() { return res; } };
 }

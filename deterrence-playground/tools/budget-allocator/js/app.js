@@ -173,7 +173,7 @@ $('start-tour').onclick = () => tour.start();
 addExportBar($('strip-note'), {
   target: () => $('strip'),
   title: () => `${P().strip.exportTitle}, ${money(budget().bn)} plan: ${$('clock').textContent}`,
-  note: 'Notional model (TSM Defense Budget Allocator), not a forecast',
+  note: `Notional model (${SITE === 'tsm' ? 'TSM ' : ''}Defense Budget Allocator), not a forecast`,
   where: 'after',
 });
 addExportBar($('real').parentElement, { csv: () => tableRows($('real')), csvLabel: 'Copy table as CSV', where: 'after' });

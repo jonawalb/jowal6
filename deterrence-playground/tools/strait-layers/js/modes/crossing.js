@@ -7,8 +7,8 @@ export const PLA_ACTIONS = [
   { k: 'mpa', t: 'Shoot down patrol aircraft', s: 'Removes P-3C and MQ-9B coverage over the Strait.' },
 ];
 export const TW_ACTIONS = [
-  { k: 'disperse', t: 'Disperse and hide launchers', s: 'Mobile launchers halve losses to PLA suppression strikes.' },
-  { k: 'mines', t: 'Mine the approaches', s: 'Adds a minefield within ~15 km of the landing area.' },
+  { k: 'disperse', t: 'Disperse and hide launchers', s: 'In this model, mobile launchers halve losses to PLA suppression strikes.' },
+  { k: 'mines', t: 'Mine the approaches', s: 'Adds a notional minefield within ~15 km of the landing area.' },
   { k: 'drones', t: 'Field drones and USVs', s: 'Adds short-range attack drones and uncrewed surface vessels.' },
 ];
 

@@ -1,5 +1,6 @@
 // Layer, site and route definitions. Ranges marked notional are round teaching numbers.
-// Sourced ranges: CSIS Missile Defense Project, "Missile Threat: China".
+// Sourced ranges: CSIS Missile Defense Project, "Missile Threat" (China overview; DF-15, DF-16 via country table, DF-21, DF-26, ATACMS pages).
+// SRBM: DF-15 600-900 km and DF-16 800-1,000 km per CSIS; the ring is drawn at 900 km. ATACMS: 300 km (Block 1A) per CSIS.
 
 export const FUJIAN = [119.78, 25.50]; // Pingtan area, the closest mainland point to Taiwan
 
@@ -11,7 +12,7 @@ export const PLA = [
     rng: '~1,500 km', src: 'CSIS', kmPerMin: 130, ballistic: true },
   { id: 'ascm', group: 'Anti-ship cruise', name: 'Coastal anti-ship missiles', r: 400, c: FUJIAN, col: '--ascm', role: 'ship', c2: false,
     rng: '~400 km*', kmPerMin: 25 },
-  { id: 'srbm', group: 'Land attack', name: 'DF-15/16 SRBM', r: 900, c: [117.7, 25.7], col: '--srbm', role: 'land', rng: '600–900 km', src: 'CSIS' },
+  { id: 'srbm', group: 'Land attack', name: 'DF-15/16 SRBM', r: 900, c: [117.7, 25.7], col: '--srbm', role: 'land', rng: '600–1,000 km', src: 'CSIS' },
   { id: 'sam', group: 'Air defense', name: 'Long-range SAM (HQ-9 / S-400 class)', short: 'Long-range SAM', r: 250, c: FUJIAN, col: '--sam', role: 'air', rng: '~250 km*' },
   { id: 'sky', group: 'Sensors', name: 'Skywave OTH radar', r: 2800, rin: 800, c: [114.7, 30.4], col: '--sky', role: 'sensor', rng: '800–2,800 km*' },
   { id: 'sig', group: 'Sensors', name: 'Passive signals intercept', r: 1000, c: FUJIAN, col: '--sig', role: 'sensor', rng: '~1,000 km*' },
@@ -24,7 +25,7 @@ const TW_WEST = [[121.3, 25.1], [120.6, 24.4], [120.25, 23.6], [120.3, 22.7], [1
 /** Taiwan layers used in the crossing scenario. */
 export const TAIWAN = [
   { id: 'twatacms', group: 'Taiwan strike', name: 'HIMARS / ATACMS (land attack)', short: 'ATACMS', r: 300, cs: [[120.7, 24.5], [120.35, 23.1]],
-    col: '--twland', role: 'land', rng: '~300 km' },
+    col: '--twland', role: 'land', rng: '300 km', src: 'CSIS' },
   { id: 'twmpa', group: 'Taiwan sensors', name: 'Maritime patrol (P-3C / MQ-9B)', short: 'Maritime patrol', r: 400, cs: [[120.6, 23.7]],
     col: '--twsense', role: 'sensor', rng: '~400 km*' },
   { id: 'twradar', group: 'Taiwan sensors', name: 'Coastal surveillance radar', short: 'Coastal radar', r: 100, cs: TW_WEST,

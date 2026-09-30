@@ -7,7 +7,7 @@ export const BLUE_ACTIONS = [
   { k: 'jam', t: 'Jam skywave radar', s: 'Blinds the long-range over-the-horizon radar.' },
   { k: 'blind', t: 'Blind satellites', s: 'Counter-space jamming or dazzling of ISR satellites.' },
   { k: 'aew', t: 'Shoot down the KJ-500', s: 'Removes the airborne radar over the Strait.' },
-  { k: 'c2', t: 'Disrupt joint command', s: 'Long-range shots need theater-level fusion. Coastal units fire on their own.' },
+  { k: 'c2', t: 'Disrupt joint command', s: 'In this model, long-range shots need theater-level fusion and coastal units fire on their own.' },
 ];
 
 const L = Object.fromEntries(PLA.map(l => [l.id, l]));

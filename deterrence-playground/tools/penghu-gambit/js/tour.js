@@ -5,7 +5,7 @@ const set = (roc = {}, pla = {}, extra = {}) => ({ roc: { ...ROC, ...roc, mines:
 
 export const STEPS = [
   { title: 'Why Penghu',
-    body: 'Penghu sits in the middle of the Strait, about 45 km from Taiwan\'s coast. Shi Lang took it first in 1683, Japan did the same in 1895, and in three of 24 CSIS wargame runs China captured it as a staging base. Taiwan\'s missiles there can also hit ships bound for Taiwan itself. This game asks what it would take to seize.',
+    body: 'Penghu sits in the middle of the Strait, about 50 km from Taiwan\'s coast. Shi Lang took it first in 1683, Japan did the same in 1895, and in three of 24 CSIS wargame runs China captured it as a staging base. Taiwan\'s missiles there can also hit ships bound for Taiwan itself. This game asks what it would take to seize.',
     set: set() },
   { title: 'Play one game',
     body: 'Press Next turn to step through a game in 12-hour turns. Every row in the log shows the chance of an event, the dice and the result, so you can see why things happened. Here the PLA spends one turn striking, then lands on the east coast, which Taiwan has mined.',

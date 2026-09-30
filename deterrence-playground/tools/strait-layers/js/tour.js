@@ -13,7 +13,7 @@ export const STEPS = [
     body: 'Jam the skywave radar and blind the satellites. The group is still in range of the same missiles, but the PLA can no longer hold a track, so it cannot aim. Out here, defending the ship starts with denying the sensors.',
     set: { mode: 'approach', blue: { route: 0, t: 0.55, free: null }, cm: { ...NONE, jam: true, blind: true } } },
   { title: 'Close in, the chain is dense',
-    body: 'In the Strait every Blue action is on, and coastal missiles can still fire. Surface-wave radar closes the chain on its own, and coastal units do not need theater command to shoot. Denial is hardest to break at short range.',
+    body: 'In the Strait every Blue action is on, and coastal missiles can still fire. Surface-wave radar closes the chain on its own, and in this model coastal units do not need theater command to shoot. Denial is hardest to break at short range.',
     set: { mode: 'approach', blue: { route: 1, t: 0.42, free: null }, cm: { emcon: true, jam: true, blind: true, aew: true, c2: true }, zoom: 'strait' } },
   { title: 'Range is not the end of the story',
     body: 'Missiles that can fire still have to get through. This salvo model trades incoming missiles against decoys, interceptor kill chances and a finite magazine. Watch the interceptor bar drain across successive salvos.',

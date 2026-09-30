@@ -38,10 +38,10 @@ export const TAIWAN = [
 
 export const BASES = [
   { n: 'Kadena AB, Okinawa', short: 'Kadena AB', c: [127.77, 26.35] },
-  { n: 'Ishigaki (JGSDF)', short: 'Ishigaki', c: [124.16, 24.37], dy: -14 },
-  { n: 'Yonaguni (JGSDF)', short: 'Yonaguni', c: [123.0, 24.47] },
+  { n: 'Ishigaki (JGSDF)', short: 'Ishigaki', c: [124.18, 24.40], dy: -14 },
+  { n: 'Yonaguni (JGSDF)', short: 'Yonaguni', c: [122.95, 24.45] },
   { n: 'Batanes, Philippines', short: 'Batanes', c: [121.97, 20.45] },
-  { n: 'Santa Ana EDCA site', short: 'Santa Ana EDCA', c: [122.14, 18.47] },
+  { n: 'Santa Ana EDCA site', short: 'Santa Ana EDCA', c: [122.15, 18.50] },
   { n: 'Taipei', c: [121.56, 25.04], hidden: true },
   { n: 'Guam', c: [144.8, 13.44], hidden: true },
 ];
@@ -82,5 +82,5 @@ export const PLACES = [
 
 export const SEAS = [
   ['EAST CHINA SEA', 125.3, 29.6, 0], ['PHILIPPINE SEA', 129.2, 19.2, 0], ['SOUTH CHINA SEA', 114.6, 18.0, 0],
-  ['Taiwan Strait', 119.35, 23.95, -58], ['Luzon Strait', 121.4, 20.95, 0], ['Miyako Strait', 126.1, 24.75, 0],
+  ['Taiwan Strait', 119.15, 23.8, -58], ['Luzon Strait', 121.4, 20.95, 0], ['Miyako Strait', 126.1, 24.75, 0],
 ];

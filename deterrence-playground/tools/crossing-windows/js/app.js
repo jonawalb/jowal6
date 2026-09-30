@@ -90,10 +90,10 @@ function claimText(agg, rank, best) {
     <p>The best months in this record are ${top}. The best four straight weeks run ${weekLabel(best.start).split(' to ')[0]} to
     ${weekLabel(endWk).split(' to ')[1]}, at ${pct(best.v)}.</p>
     <p>${aprOk && octOk ? 'Both claimed months hold up under these limits.'
-      : aprOk ? 'April holds up. October does not: the northeast monsoon usually sets in during October, and its waves fail the wave test. Raise the wave limit to see October recover.'
+      : aprOk ? 'April holds up. October does not: most October days fail the wave test. Raise the wave limit to see October recover.'
       : octOk ? 'October holds up under these limits, April less so.'
       : 'Neither claimed month ranks near the top under these limits. Summer weeks score higher on wind and waves; raise the typhoon radius to see how much of that summer calm typhoons take back.'}</p>
-    <p class="fine">Easton's ranking also weighs rain, cloud, heat and sea conditions at the beaches, which this tool does not model. The typhoon test also fails only the days a storm is actually inside the radius; a planner committing a fleet for weeks may weigh the chance of a storm arriving mid-operation far more heavily. The comparison tests only whether the wind, wave, fog and typhoon record agrees with the months named.</p>`;
+    <p class="fine">This tool does not model rain, cloud, heat or conditions at the beaches, any of which may enter an assessment like Easton's. The typhoon test also fails only the days a storm is actually inside the radius; a planner committing a fleet for weeks may weigh the chance of a storm arriving mid-operation far more heavily. The comparison tests only whether the wind, wave, fog and typhoon record agrees with the months named.</p>`;
 }
 
 function render() {

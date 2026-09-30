@@ -3,7 +3,7 @@ import { W, H, project, unproject, destination, circlePath, linePath, distKm, el
 import { COAST, TS12, CZ24, ADIZ } from './data/geo.js';
 import { PLA, TAIWAN, BASES, FUJIAN, MEDIAN_LINE, FIRST_ISLAND_CHAIN, PLACES, SEAS } from './layers.js';
 
-const LABEL_BEARING = { df26: 110, df21: 90, srbm: 345, ascm: 40, sam: 195, sig: 22, aew: 15, surf: 225, sky: 70,
+const LABEL_BEARING = { df26: 110, df21: 90, srbm: 345, ascm: 40, sam: 195, sig: 75, aew: 15, surf: 300, sky: 70,
   twascm: 200, twatacms: 285, twmpa: 150, twradar: 240, twdrone: 250 };
 const labelFits = ([x, y]) => x > 95 && x < W - 95 && y > 30 && y < H - 30;
 
@@ -109,7 +109,7 @@ export function createMap(svg, handlers) {
   { const [x, y] = project([116.8, 28.2]); el('text', { x, y, class: 't-big', 'text-anchor': 'middle' }, g.labels, 'CHINA'); }
   { const y = project([0, 17.2])[1];
     el('path', { d: `M${W - 52} ${y}L${W - 14} ${y}`, class: 'guam-arrow', 'marker-end': 'url(#arrow-ally)' }, g.labels);
-    el('text', { x: W - 56, y: y + 4, class: 't-base', 'text-anchor': 'end' }, g.labels, 'Guam ' + fmt(distKm(FUJIAN, [144.8, 13.44])) + ' km'); }
+    el('text', { x: W - 56, y: y + 4, class: 't-base', 'text-anchor': 'end' }, g.labels, 'Guam ' + fmt(distKm(FUJIAN, [144.8, 13.44])) + ' km from Pingtan'); }
 
   // Allied sites
   BASES.filter(b => !b.hidden).forEach(b => {

@@ -55,7 +55,7 @@ function renderControls() {
     return `<button type="button" data-m="${k}" aria-pressed="${k === S.m}"><b>${M.short}</b><span>${n} events</span></button>`;
   }).join('');
   $('metric').querySelectorAll('button').forEach(b => b.onclick = () => { S.m = b.dataset.m; render(); });
-  $('metric-help').textContent = METRICS[S.m].help + (METRICS[S.m].from > '2025' ? ' Recorded since Jan. 1, 2026.' : ' Recorded since Aug. 6, 2022.');
+  $('metric-help').textContent = METRICS[S.m].help + ` Recorded since ${METRICS[S.m].fromText || 'Aug. 6, 2022'}.`;
   pressed($('unit'), 'u', S.unit);
   $('win').value = S.to; $('win-out').textContent = `day 0 to +${S.to}`;
   $('dropx').checked = S.dropx; $('clean').checked = S.clean; $('showev').checked = S.showev;

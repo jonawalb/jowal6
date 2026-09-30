@@ -105,16 +105,16 @@
   <div>
     <h2>Method</h2>
     <ul class="src">
-      <li><b>Events.</b> Transits on the same date are merged. An event is analyzable for a metric if TSM has a daily value on the transit day and at least 10 usable baseline days. Aircraft counts start Aug. 6, 2022 (with a few missing days); ADIZ entries, PLAN ships and official ships start Jan. 1, 2026. Earlier events appear greyed out with the reason.</li>
+      <li><b>Events.</b> Transits on the same date are merged. An event is analyzable for a metric if TSM has a daily value on the transit day and at least 10 usable baseline days. Aircraft counts start Aug. 6, 2022 and ADIZ entries Aug. 7, 2022 (each with some missing days); PLAN ships and official ships start Aug. 13, 2024. Earlier events appear greyed out with the reason.</li>
       <li><b>Baseline.</b> Mean of days −30 to −1, leaving out any day within 3 days of another transit event. The optional exercise filter also leaves out days within 3 days of a major exercise (list from TSM's <i>Exercises as Theater</i> data). Missing days are skipped.</li>
       <li><b>Deviation.</b> Daily value minus baseline, or that difference as a percent of the baseline. The summary is the mean deviation over day 0 to day +N.</li>
       <li><b>Intervals.</b> Percentile bootstrap: resample events with replacement within each group 2,000 times and take the 2.5th and 97.5th percentiles. The random generator is seeded (mulberry32, seed 20260916), so the intervals are the same on every visit. Groups with fewer than two events get no interval.</li>
-      <li><b>Daily counts</b> come from Taiwan MND reports that cover roughly 06:00 to 06:00 local time; TSM files each under the day the window starts. Transit dates are as recorded in the tracker, which does not give times.</li>
+      <li><b>Daily counts</b> come from Taiwan MND reports that cover roughly 06:00 to 06:00 local time; TSM files each under the day the window starts (rows from Aug. 23 to Sept. 27, 2026 were reset to this convention from MND's own reports). Transit dates are as recorded in the tracker, which does not give times.</li>
     </ul>
     <h2 class="mt">Sources</h2>
     <ul class="src">
       <li>Daily activity: Taiwan Security Monitor PLA Activity Center, compiled from Taiwan Ministry of National Defense daily releases (data through <span id="asof"></span>). <a href="https://tsm.schar.gmu.edu/" target="_blank" rel="noopener">tsm.schar.gmu.edu</a></li>
-      <li>Transits: TSM Taiwan Strait Transit Tracker, 2017–2026. The tracker has a gap from September 2025 to January 2026. Display fixes: "HMCS Ottowa" shown as HMCS Ottawa; ship types filled or aligned with the class where the tracker types the same class consistently elsewhere (Hobart-class destroyer, Halifax-class frigate).</li>
+      <li>Transits: TSM Taiwan Strait Transit Tracker, 2017–2026. Coverage is thin from September 2025 to January 2026: the only transit recorded between Sept. 12, 2025 and Jan. 16, 2026 is HMNZS Aotearoa on Nov. 5, 2025. Display fixes: "HMCS Ottowa" shown as HMCS Ottawa; ship types filled or aligned with the class where the tracker types the same class consistently elsewhere (Hobart-class destroyer, Halifax-class frigate).</li>
       <li>Exercise dates: TSM <i>Exercises as Theater</i> event list (13 URL-sourced events). See the <a href="../joint-sword/">Anatomy of an Exercise</a> tool for each exercise's sources.</li>
       <li>Median line as drawn in TSM's Taiwan ADIZ GIS layer. Coastline: Natural Earth.</li>
     </ul>

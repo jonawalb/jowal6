@@ -8,9 +8,9 @@ export const DAY = 86400000, PRE = 7, POST = 7, BASE = 30;
 export const AS_OF = TSM.asOf;
 export const METRICS = {
   air: { i: 1, name: 'PLA aircraft', short: 'Aircraft', unit: 'aircraft', from: '2022-08-06' },
-  adiz: { i: 2, name: 'ADIZ entries', short: 'ADIZ', unit: 'entries', from: '2026-01-01' },
-  plan: { i: 3, name: 'PLAN ships', short: 'PLAN ships', unit: 'ships', from: '2026-01-01' },
-  off: { i: 4, name: 'Official ships', short: 'Official', unit: 'ships', from: '2026-01-01' },
+  adiz: { i: 2, name: 'ADIZ entries', short: 'ADIZ', unit: 'entries', from: '2022-08-07' },
+  plan: { i: 3, name: 'PLAN ships', short: 'PLAN ships', unit: 'ships', from: '2024-08-13' },
+  off: { i: 4, name: 'Official ships', short: 'Official', unit: 'ships', from: '2024-08-13' },
 };
 
 const iso = t => new Date(t).toISOString().slice(0, 10);

@@ -74,11 +74,6 @@ const tour = createTour(document.getElementById('tour-root'), (step, how) => {
   if (step.focus) document.getElementById(step.focus).scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' });
 });
 document.getElementById('start-tour').addEventListener('click', () => tour.start());
-document.getElementById('copy-link').addEventListener('click', async e => {
-  const b = e.currentTarget;
-  try { await navigator.clipboard.writeText(location.href); b.textContent = 'Link copied'; } catch (err) { b.textContent = 'Copy the address bar'; }
-  setTimeout(() => { b.textContent = 'Copy link to this setup'; }, 1800);
-});
 
 let lastW = innerWidth;
 addEventListener('resize', () => { if (Math.abs(innerWidth - lastW) > 40) { lastW = innerWidth; render(); } });

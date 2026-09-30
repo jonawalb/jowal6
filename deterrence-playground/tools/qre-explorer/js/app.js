@@ -205,11 +205,6 @@ function changed() { renderPanel(); renderMain(); if (S.g === 'chk' || !renderEs
 
 const tour = createTour($('tour-root'), set => { Object.assign(S, DEFAULTS, set); changed(); renderEst(); });
 $('start-tour').addEventListener('click', () => tour.start());
-$('copy-link').addEventListener('click', async e => {
-  const b = e.currentTarget;
-  try { await navigator.clipboard.writeText(location.href); b.textContent = 'Link copied'; } catch (err) { b.textContent = 'Copy the address bar'; }
-  setTimeout(() => { b.textContent = 'Copy link to this setup'; }, 1800);
-});
 $('reset').addEventListener('click', () => { Object.assign(S, DEFAULTS); changed(); renderEst(); });
 $('est-methods').innerHTML = METHODS.map(m => `<li><b style="color:var(${m.c})">${esc(m.t)}.</b> ${esc(m.s)}</li>`).join('');
 

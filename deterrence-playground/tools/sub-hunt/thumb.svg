@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+  <defs>
+    <radialGradient id="h1" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#e8753a" stop-opacity=".85"/>
+      <stop offset="1" stop-color="#e8753a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="640" height="400" fill="#d6e1e1"/>
+  <path d="M0 0 H150 C160 60 120 120 70 170 C40 200 20 230 0 240 Z" fill="#e9e4d4" stroke="#97a197"/>
+  <path d="M215 110 C250 80 330 85 360 110 C372 135 350 160 310 168 C270 172 230 160 212 140 Z" fill="#e9e4d4" stroke="#97a197"/>
+  <path d="M470 205 l10 -6 l6 10 l-8 7 Z" fill="#e9e4d4" stroke="#97a197"/>
+  <path d="M560 400 C575 340 600 300 640 280 V400 Z" fill="#e9e4d4" stroke="#97a197"/>
+  <ellipse cx="400" cy="150" rx="110" ry="70" fill="url(#h1)"/>
+  <ellipse cx="505" cy="260" rx="70" ry="50" fill="url(#h1)"/>
+  <ellipse cx="300" cy="240" rx="55" ry="40" fill="url(#h1)" opacity=".7"/>
+  <circle cx="410" cy="170" r="46" fill="none" stroke="#1b4fd4" stroke-width="3"/>
+  <rect x="455" y="215" width="80" height="80" fill="none" stroke="#1b4fd4" stroke-width="3" stroke-dasharray="10 7"/>
+  <path d="M430 60 C425 110 418 150 430 190 C445 235 480 250 500 262" fill="none" stroke="#b3261e" stroke-width="5" stroke-dasharray="3 9" stroke-linecap="round"/>
+  <path d="M398 176 l9 -9 l9 9 l-9 9 Z" fill="#14201a"/>
+  <path d="M290 238 l9 -9 l9 9 l-9 9 Z" fill="#14201a" opacity=".5"/>
+  <text x="32" y="370" font-family="Georgia, serif" font-weight="700" font-size="40" fill="#14201a">The Hunt</text>
+</svg>

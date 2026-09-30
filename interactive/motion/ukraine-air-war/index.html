@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Ukraine's Air War</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .ax { font: 400 14px var(--mono); fill: var(--muted); font-variant-numeric: tabular-nums; }
+  .yr { font: 600 15px var(--mono); fill: var(--paper); letter-spacing: .04em; }
+  .chip { fill: #0b1712; stroke: #2b4a3b; stroke-width: 1.2; }
+  .chip-t { font: 400 14px var(--mono); fill: var(--muted); letter-spacing: .02em; }
+  .src { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .04em; }
+  .band-t { font: 400 12px var(--mono); fill: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+  .ann { font: italic 500 30px var(--display); fill: var(--paper); }
+  .ann-s { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+  .pn { fill: #0a1510; fill-opacity: .94; stroke: var(--amber); stroke-width: 1.5; }
+  .pn-e { font: 400 12px var(--mono); fill: var(--amber); letter-spacing: .16em; text-transform: uppercase; }
+  .pn-h { font: italic 500 32px var(--display); fill: var(--paper); }
+  .pn-k { font: 400 14px var(--mono); fill: var(--muted); letter-spacing: .06em; }
+  .pn-v { font: 600 26px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .big { font: 600 150px var(--mono); font-variant-numeric: tabular-nums; letter-spacing: -.04em; fill: var(--amber); }
+  .cmp-h { font: 400 14px var(--mono); fill: var(--muted); letter-spacing: .14em; text-transform: uppercase; }
+  .cmp-n { font: italic 500 40px var(--display); fill: var(--paper); }
+  .cmp-v { font: 600 52px var(--mono); font-variant-numeric: tabular-nums; }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of Ukraine's Air War: weekly bars of Russian drone and missile launches since autumn 2022 build up, drones are switched off to show the much smaller missile war, and the busiest week is opened in the side panel."><title>Ukraine's Air War</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Real data (tools/ukraine-air-war) ----------------------------------------------------------
+// Weekly launches by weapon group, computed with the tool's own js/model.js series() over data/attacks.js
+// (Petro Ivaniuk, "Massive Missile Attacks on Ukraine", Kaggle v212, updated 2026-09-26): whole war, week
+// resolution, metric = launched. Weeks run Monday 26 Sep 2022 to Monday 21 Sep 2026. Counts are Ukrainian
+// Air Force claims. Columns follow GROUPS: shahed, drone, cruise, ballistic, sam, mixed, other.
+const W = [[14,7,5,0,0,0,0],[25,6,6,0,16,0,0],[95,13,117,0,0,0,0],[103,0,49,0,0,0,0],[23,0,1,0,0,0,0],[39,4,52,0,0,0,0],[5,1,0,0,0,0,0],[15,4,118,0,0,0,0],[0,5,70,0,0,0,0],[0,0,0,0,0,0,0],[26,3,70,0,0,0,0],[13,0,76,0,27,0,0],[35,2,1,0,0,0,0],[61,5,90,0,0,0,0],[39,1,1,0,0,0,0],[0,4,38,0,0,0,0],[0,2,0,0,0,0,0],[24,2,55,2,0,0,0],[0,0,0,0,0,0,0],[31,2,71,0,35,0,0],[0,1,39,0,0,0,0],[0,0,0,0,0,0,0],[18,0,0,0,0,0,0],[25,0,62,6,13,0,0],[16,0,4,0,0,0,0],[21,0,4,0,0,0,0],[23,1,0,0,0,0,2],[17,1,0,0,0,0,0],[0,2,0,0,0,0,0],[48,6,0,0,0,0,0],[8,12,23,0,0,0,0],[60,10,18,1,0,0,0],[81,19,36,0,0,0,0],[57,17,45,16,0,0,0],[147,4,19,2,12,0,0],[92,6,64,7,0,11,0],[57,18,51,0,0,0,0],[40,16,34,6,0,0,0],[51,5,71,3,0,0,0],[35,4,6,0,4,0,0],[40,8,10,0,0,0,0],[86,21,2,1,0,0,0],[95,20,73,2,0,0,0],[15,4,41,4,0,0,0],[65,7,40,3,0,0,0],[15,0,0,4,0,0,0],[48,7,36,3,8,0,0],[25,0,13,0,0,0,0],[41,0,36,0,0,0,0],[143,0,7,1,0,0,0],[101,1,10,0,0,0,0],[93,10,60,1,6,0,0],[171,9,14,0,0,0,0],[100,0,1,0,0,0,0],[69,2,0,0,0,0,0],[30,6,9,6,11,0,0],[53,7,12,1,0,0,0],[85,9,12,1,0,0,0],[38,2,7,2,1,0,0],[95,5,2,1,0,0,0],[113,2,3,0,4,0,0],[90,5,7,1,8,0,0],[113,8,21,0,12,0,0],[152,0,5,10,0,0,8],[113,1,5,0,2,0,0],[199,5,107,19,6,0,0],[195,14,85,22,7,0,3],[11,3,61,16,14,0,0],[59,7,3,0,7,0,0],[34,2,30,15,11,0,0],[105,7,4,1,8,0,0],[129,2,38,3,5,0,0],[54,3,26,6,8,0,0],[117,4,14,2,6,0,0],[58,12,14,1,7,0,0],[155,5,4,0,5,0,0],[85,2,4,0,12,0,1],[147,12,107,21,31,0,0],[145,5,62,6,7,0,0],[96,8,7,4,8,0,0],[128,15,36,7,20,0,0],[36,12,27,5,2,0,0],[27,23,30,6,6,0,0],[38,12,2,0,4,0,0],[64,23,58,3,2,0,0],[89,20,6,5,0,0,0],[113,9,15,4,0,0,0],[126,14,65,8,15,0,0],[111,26,10,4,0,0,0],[41,12,17,7,0,0,0],[71,20,33,7,0,0,0],[33,45,8,7,0,0,0],[99,33,19,6,0,0,0],[50,35,52,13,0,0,0],[75,56,9,11,0,0,0],[103,40,5,4,0,0,0],[141,39,6,5,4,0,0],[158,16,6,14,0,0,0],[115,24,11,9,0,0,0],[141,21,16,8,0,2,0],[345,11,129,17,4,0,0],[299,14,33,23,4,0,0],[315,28,14,7,2,0,0],[311,10,15,5,3,0,0],[398,21,23,12,1,0,0],[362,9,8,6,0,0,0],[265,16,6,13,3,0,0],[607,1,13,6,8,0,16],[525,6,10,4,0,0,0],[448,21,16,8,0,0,0],[610,22,11,2,0,0,0],[472,3,118,13,4,0,0],[541,12,12,3,1,0,0],[704,13,89,8,3,0,0],[300,0,9,5,0,0,0],[433,13,89,6,1,0,0],[599,12,4,10,1,0,0],[247,9,66,4,16,0,0],[690,43,21,10,5,0,0],[522,31,3,1,0,0,0],[500,16,44,8,0,0,0],[617,1,2,8,0,0,0],[589,16,35,9,0,0,0],[731,15,1,4,0,0,0],[880,28,26,9,2,0,0],[1278,22,2,7,0,14,0],[1080,25,7,2,0,0,0],[1026,21,53,12,5,0,0],[845,19,1,6,0,0,0],[1092,42,0,3,4,0,0],[919,23,0,5,0,0,0],[392,9,19,7,0,0,0],[490,29,0,4,0,0,0],[348,26,10,7,3,0,0],[1038,36,65,11,0,0,0],[992,34,0,12,0,0,0],[570,17,0,5,0,0,0],[824,37,0,1,0,0,0],[1390,45,60,25,0,0,0],[987,25,20,14,2,0,0],[1451,35,56,14,0,0,0],[897,20,23,10,0,0,0],[1367,14,46,18,1,0,0],[1179,30,52,15,3,0,0],[1343,33,4,11,12,0,0],[2051,35,39,16,12,0,0],[1593,42,25,15,0,0,0],[892,33,23,7,0,27,0],[787,30,13,6,5,0,0],[529,29,2,9,0,0,0],[524,54,0,14,2,0,0],[1217,38,39,12,0,0,0],[1585,23,57,19,0,0,0],[2027,49,34,6,6,0,0],[911,42,42,3,3,0,0],[1222,67,32,9,1,0,0],[1337,56,46,5,0,0,0],[1302,17,80,18,0,0,0],[1190,45,17,17,0,0,0],[887,63,9,31,3,0,0],[1024,31,13,26,4,0,3],[1402,55,43,20,5,0,0],[1067,39,0,8,11,38,0],[1287,28,8,21,0,0,0],[1254,54,47,6,0,0,0],[1575,45,42,21,0,0,0],[1491,31,34,24,0,0,0],[1177,58,21,16,0,0,0],[614,111,0,5,0,0,0],[1573,171,65,14,0,0,0],[830,93,0,11,0,0,0],[943,76,22,18,0,0,0],[1035,139,7,24,0,0,0],[1246,133,32,27,0,0,0],[882,80,0,3,0,0,0],[1725,113,83,47,0,0,0],[903,152,10,30,0,0,0],[1230,165,54,31,0,0,0],[1177,203,28,15,0,0,0],[1375,245,16,20,0,0,0],[1194,228,58,14,0,0,0],[1158,264,0,1,0,0,0],[2260,363,27,9,0,0,0],[2223,290,29,10,0,0,0],[693,345,0,0,0,0,0],[1979,448,30,23,0,0,0],[1477,346,35,16,0,0,0],[2166,383,5,4,0,0,0],[599,311,1,15,0,0,0],[3029,490,51,36,0,0,0],[1673,302,59,36,0,0,0],[1450,390,6,5,0,0,0],[2026,499,42,35,0,0,0],[1538,518,46,38,0,0,0],[872,592,0,14,0,0,0],[899,327,2,16,0,0,0],[1468,421,60,27,0,0,0],[893,444,73,38,0,0,0],[842,563,48,18,0,35,0],[1152,438,32,12,0,0,0],[1249,455,86,37,0,0,0],[978,437,36,31,0,11,0],[777,476,15,0,0,0,0],[1080,577,69,2,0,0,0],[1712,292,12,4,0,0,0],[1142,316,4,2,0,0,0],[2095,404,46,4,0,0,0],[1014,381,2,1,0,0,0],[1285,243,12,0,0,0,0]];
+const GROUPS = ['shahed', 'drone', 'cruise', 'ballistic', 'sam', 'mixed', 'other'];
+// Chip names from data/groups.js (GROUP_INFO[g].n). Colours are the trailer's: red family = drones.
+const NAME = ['Shahed-type drones', 'Other drones', 'Cruise missiles', 'Ballistic missiles', 'S-300/S-400 at ground targets', 'Mixed missile reports', 'Guided bombs'];
+const COL = ['#e0533d', '#9c4a3d', '#e3dccb', '#b9a47c', '#8fa89a', '#6f8a7c', '#5d7367'];
+const TOTAL = 145503;                 // totals(): whole war, all groups, launched
+const YEAR_IDX = [[14, '2023'], [66, '2024'], [119, '2025'], [171, '2026']];   // first week of each year
+const HIDE_IDX = 202;                 // week of 10 Aug 2026: Air Force stopped publishing some missile counts
+const SEL = 189;                      // week of 11 May 2026, the tallest bar
+// Detail panel for that week, as renderDetail() prints it: launched 3,606, reported stopped 3,384 (94%).
+const SEL_L = 3606, SEL_X = 3384;
+// Payoff: yearly Shahed-type launches from totals() per calendar year (2023: 3,123; 2025: 54,796).
+const fmt = v => Math.round(v).toLocaleString('en-US');
+const niceMax = v => { if (v <= 0) return 1; const p = 10 ** Math.floor(Math.log10(v)); const f = v / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p; };   // charts.js
+
+// ---- Geometry ------------------------------------------------------------------------------------
+const PL = 200, PR = 1420, PT = 300, PB = 770, N = W.length, BW = (PR - PL) / N;
+const X = i => PL + i * BW;
+const MAX_ALL = niceMax(Math.max(...W.map(r => r.reduce((a, b) => a + b, 0))));   // 5,000
+const MAX_MIS = niceMax(Math.max(...W.map(r => r.slice(2).reduce((a, b) => a + b, 0))));  // 200
+const blurF = el('filter', { id: 'uaw-blur', x: '-5%', y: '-5%', width: '110%', height: '110%' }, svg);
+const blurG = el('feGaussianBlur', { stdDeviation: 0 }, blurF);
+const cam = el('g', {}, svg);
+
+const head = el('g', {}, cam);
+el('text', { x: PL, y: 150, class: 't-label' }, head).textContent = 'Launched per week · whole war';
+el('text', { x: PR, y: 150, class: 'src', 'text-anchor': 'end' }, head).textContent = 'Ukrainian Air Force reports, via Kaggle v212';
+
+// Chips (weapon groups), laid out as one row.
+const chips = [];
+{
+  let x = PL, y = 172;
+  NAME.forEach((n, i) => {
+    if (i === 4) { x = PL; y += 44; }
+    const w = n.length * 9.9 + 40, g = el('g', {}, head);
+    const r = el('rect', { x, y, width: w, height: 34, rx: 17, class: 'chip' }, g);
+    const sw = el('rect', { x: x + 13, y: y + 11.5, width: 11, height: 11, rx: 2, fill: COL[i] }, g);
+    const tx = el('text', { x: x + 31, y: y + 22, class: 'chip-t' }, g); tx.textContent = n;
+    chips.push({ g, r, sw, tx, cx: x + w / 2, cy: y + 17 });
+    x += w + 10;
+  });
+}
+
+// Axes and gridlines (two label sets so the rescale can crossfade).
+const axes = el('g', {}, cam);
+const grid = [0, 1, 2, 3, 4].map(k => {
+  const y = PB - (PB - PT) * k / 4;
+  el('line', { x1: PL, x2: PR, y1: y, y2: y, stroke: '#27493a', 'stroke-dasharray': '2 6' }, axes);
+  const a = el('text', { x: PL - 12, y: y + 5, class: 'ax', 'text-anchor': 'end' }, axes);
+  const b = el('text', { x: PL - 12, y: y + 5, class: 'ax', 'text-anchor': 'end', opacity: 0 }, axes);
+  const lab = v => v >= 1000 ? (v / 1000) + 'k' : fmt(v);
+  a.textContent = lab(MAX_ALL * k / 4); b.textContent = lab(MAX_MIS * k / 4);
+  return { a, b };
+});
+el('rect', { x: X(HIDE_IDX), y: PT, width: PR - X(HIDE_IDX), height: PB - PT, fill: '#e3dccb', opacity: .05 }, axes);
+el('text', { x: PR - 6, y: PT + 18, class: 'band-t', 'text-anchor': 'end' }, axes).textContent = 'Some counts withheld';
+el('line', { x1: PL, x2: PR, y1: PB, y2: PB, stroke: 'var(--muted)', 'stroke-width': 1.5 }, axes);
+el('text', { x: PL + 3, y: PB + 26, class: 'yr' }, axes).textContent = '2022';
+YEAR_IDX.forEach(([i, y]) => {
+  el('line', { x1: X(i), x2: X(i), y1: PT, y2: PB + 6, stroke: '#2b4a3b' }, axes);
+  el('text', { x: X(i) + 5, y: PB + 26, class: 'yr' }, axes).textContent = y;
+});
+
+// Bars: one stacked column per week. Heights set every frame.
+const bars = el('g', {}, cam);
+const cols = W.map((r, i) => GROUPS.map((_, k) => el('rect', { x: (X(i) + .5).toFixed(1), width: (BW - 1).toFixed(2), fill: COL[k], y: PB, height: 0 }, bars)));
+
+// Year annotations shown while drones are off (tour step 2: about 1,400 / 2,200 / 2,000 a year).
+const ann = el('g', { opacity: 0 }, cam);
+[[14, 66, 'about 1,400'], [66, 119, 'about 2,200'], [119, 171, 'about 2,000']].forEach(([a, b, s]) => {
+  const cx = (X(a) + X(b)) / 2;
+  el('text', { x: cx, y: PT + 44, class: 'ann', 'text-anchor': 'middle' }, ann).textContent = s;
+  el('text', { x: cx, y: PT + 68, class: 'ann-s', 'text-anchor': 'middle' }, ann).textContent = 'missiles a year';
+});
+
+// Selection box and detail panel.
+const selG = el('g', { opacity: 0 }, cam);
+const selBox = el('rect', { x: X(SEL) - 3, y: PT - 6, width: BW + 6, height: PB - PT + 10, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 2.5, rx: 2, filter: 'url(#kit-glow)' }, selG);
+const panel = el('g', { opacity: 0 }, cam);
+const PX = 610, PY = 330, PW = 470, PH = 214;
+el('path', { d: `M${PX + PW},${PY + 60} L${X(SEL) - 8},${PY + 60}`, stroke: 'var(--amber)', 'stroke-width': 1.3, 'stroke-dasharray': '4 4' }, panel);
+el('rect', { x: PX, y: PY, width: PW, height: PH, rx: 6, class: 'pn' }, panel);
+el('text', { x: PX + 24, y: PY + 36, class: 'pn-e' }, panel).textContent = 'Selected week';
+el('text', { x: PX + 24, y: PY + 78, class: 'pn-h' }, panel).textContent = 'Week of 11 May 2026';
+el('text', { x: PX + 24, y: PY + 128, class: 'pn-k' }, panel).textContent = 'Launched';
+el('text', { x: PX + 24, y: PY + 178, class: 'pn-k' }, panel).textContent = 'Reported stopped';
+const pL = el('text', { x: PX + PW - 24, y: PY + 130, class: 'pn-v', 'text-anchor': 'end' }, panel);
+const pX = el('text', { x: PX + PW - 24, y: PY + 180, class: 'pn-v', 'text-anchor': 'end' }, panel);
+
+// Cursor (the viewer's hand).
+const cur = el('g', { opacity: 0 }, cam);
+const ring = el('circle', { r: 22, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 3, filter: 'url(#kit-glow)' }, cur);
+el('path', { d: 'M0 0l0 30l8 -7l6 13l6 -3l-6 -12l11 0z', fill: 'var(--paper)', stroke: '#0b1712', 'stroke-width': 2 }, cur);
+
+// Hook.
+const hook = el('g', {}, svg);
+const h1 = el('text', { x: 800, y: 350, class: 't-hook', 'text-anchor': 'middle' }, hook);
+h1.textContent = 'Since autumn 2022, Russia has launched';
+const hnT = el('text', { x: 800, y: 535, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:170px' }, hook);
+const hn = el('tspan', { class: 'hot' }, hnT);
+const h2 = el('text', { x: 800, y: 620, class: 't-hook', 'text-anchor': 'middle' }, hook);
+h2.textContent = 'drones and missiles at Ukraine.';
+
+// Payoff.
+const pay = el('g', { opacity: 0 }, svg);
+el('rect', { width: 1600, height: 1000, fill: '#070f0b', opacity: .8 }, pay);
+const p1 = el('text', { x: 800, y: 280, class: 't-hook', 'text-anchor': 'middle' }, pay);
+p1.innerHTML = 'Nearly all the growth is <tspan class="hot">drones</tspan>.';
+el('text', { x: 1010, y: 400, class: 'cmp-h', 'text-anchor': 'end' }, pay).textContent = '2023';
+el('text', { x: 1270, y: 400, class: 'cmp-h', 'text-anchor': 'end' }, pay).textContent = '2025';
+const ROWS = [['Shahed-type drones', 3123, 54796, 'var(--red)', COL[0]], ['Cruise and ballistic', 1174 + 103, 1265 + 581, 'var(--paper)', COL[2]]].map(([n, a, b, c, sw], i) => {
+  const g = el('g', {}, pay), y = 490 + i * 110;
+  el('line', { x1: 330, x2: 1270, y1: y - 62, y2: y - 62, stroke: 'var(--line)', 'stroke-width': 2 }, g);
+  el('rect', { x: 330, y: y - 28, width: 8, height: 32, fill: sw }, g);
+  el('text', { x: 356, y, class: 'cmp-n' }, g).textContent = n;
+  el('text', { x: 1010, y, class: 'cmp-v', 'text-anchor': 'end', style: 'fill:var(--muted)' }, g).textContent = fmt(a);
+  const bv = el('text', { x: 1270, y, class: 'cmp-v', 'text-anchor': 'end', style: `fill:${c}` }, g);
+  return { g, a, b, bv };
+});
+el('text', { x: 800, y: 760, class: 'src', 'text-anchor': 'middle' }, pay).textContent = 'Launches per calendar year, as reported by the Ukrainian Air Force';
+
+const cap = captions(svg, [
+  [0.3, 3.3, 'Every wave, as the Ukrainian Air Force reported it'],
+  [3.6, 6.6, 'Each bar is one week, stacked by weapon type'],
+  [6.8, 9.9, 'Switch drones off: the missile war is far smaller'],
+  [10.1, 12.8, 'Click the busiest week to read every report in it'],
+  [13.0, 15.0, 'Shahed-type drones: 3,123 in 2023, 54,796 in 2025'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Ukraine’s Air War', line: 'Every Russian missile and drone wave since 2022, week by week.' });
+
+// ---- Timeline ------------------------------------------------------------------------------------
+const D = 18;
+// Chip states: Shahed off at 7.0, Other drones off at 7.6, both back on at 9.9.
+const offAt = [7.0, 7.6], onAt = 9.9;
+function frame(t) {
+  // hook
+  const hu = ease.out(seg(t, 0.2, 0.9)), hOut = 1 - seg(t, 2.9, 3.4);
+  h1.setAttribute('opacity', hu * hOut); h1.setAttribute('transform', `translate(0,${(1 - hu) * 20})`);
+  hnT.setAttribute('opacity', ease.out(seg(t, 0.35, 0.8)) * hOut);
+  hn.textContent = fmt(TOTAL * ease.out(seg(t, 0.4, 2.4)));
+  hnT.setAttribute('filter', seg(t, 2.2, 2.4) * (1 - seg(t, 2.6, 3.0)) > 0.2 ? 'url(#kit-glow)' : '');
+  const hs = 1 + 0.04 * ease.inOut(seg(t, 2.9, 3.4));
+  hook.setAttribute('transform', `translate(800,480) scale(${hs}) translate(-800,-480)`);
+  h2.setAttribute('opacity', ease.out(seg(t, 0.9, 1.5)) * hOut);
+
+  // chart chrome
+  const out = 1 - seg(t, 15.0, 15.5);
+  const chrome = ease.out(seg(t, 3.0, 3.8));
+  axes.setAttribute('opacity', chrome * out); head.setAttribute('opacity', chrome * out);
+  head.setAttribute('transform', `translate(0,${(1 - chrome) * -12})`);
+
+  // chip states
+  const on = [1, 1, 1, 1, 1, 1, 1];
+  offAt.forEach((a, k) => { on[k] = 1 - ease.inOut(seg(t, a, a + 0.5)) + ease.inOut(seg(t, onAt + k * 0.25, onAt + k * 0.25 + 0.6)); });
+  chips.forEach((c, k) => {
+    const lit = on[k] > 0.5;
+    c.sw.setAttribute('opacity', 0.35 + 0.65 * on[k]);
+    c.tx.style.fill = lit ? 'var(--paper)' : 'var(--muted)';
+    c.r.style.stroke = lit ? '#5b7d6c' : '#2b4a3b';
+    const pulse = offAt.map(a => seg(t, a - 0.1, a) * (1 - seg(t, a + 0.1, a + 0.5)))[k] || 0;
+    c.r.style.stroke = pulse > 0.2 ? 'var(--amber)' : c.r.style.stroke;
+    c.g.setAttribute('opacity', ease.out(seg(t, 3.3 + k * 0.08, 3.8 + k * 0.08)));
+  });
+  // scale: 5k while drones show, 200 while they are off
+  const zoom = ease.inOut(seg(t, 8.1, 8.9)) * (1 - ease.inOut(seg(t, 9.9, 10.6)));
+  const M = MAX_ALL * Math.pow(MAX_MIS / MAX_ALL, zoom);     // log-space tween keeps the motion smooth
+  grid.forEach(g => { g.a.setAttribute('opacity', 1 - zoom); g.b.setAttribute('opacity', zoom); });
+  ann.setAttribute('opacity', seg(t, 8.8, 9.2) * (1 - seg(t, 9.8, 10.1)) * out);
+  ann.setAttribute('transform', `translate(0,${(1 - ease.out(seg(t, 8.8, 9.3))) * 10})`);
+
+  // bars: sweep in left to right, then react to chips and scale
+  const sweep = ease.inOut(seg(t, 3.3, 6.4)) * (N + 12);
+  const H = PB - PT;
+  W.forEach((r, i) => {
+    const grow = ease.out(seg(sweep - i, 0, 12));
+    let acc = 0;
+    r.forEach((v, k) => {
+      const h = Math.min(H * 1.02, v * on[k] * grow / M * H);
+      const rc = cols[i][k];
+      rc.setAttribute('y', (PB - acc - h).toFixed(1)); rc.setAttribute('height', Math.max(0, h).toFixed(1));
+      acc += h;
+    });
+  });
+  bars.setAttribute('opacity', out);
+  const dim = seg(t, 11.0, 11.4) * (1 - seg(t, 14.8, 15.2));
+  cols.forEach((c, i) => { const o = i === SEL ? 1 : 1 - 0.45 * dim; if (c._o !== o) { c.forEach(r => r.setAttribute('opacity', o)); c._o = o; } });
+
+  // selection + panel
+  selG.setAttribute('opacity', ease.out(seg(t, 11.0, 11.3)) * out);
+  const pu = ease.out(seg(t, 11.3, 11.9));
+  panel.setAttribute('opacity', pu * out);
+  panel.setAttribute('transform', `translate(${(1 - pu) * 30},0)`);
+  pL.textContent = fmt(SEL_L * ease.out(seg(t, 11.4, 12.3)));
+  const xs = SEL_X * ease.out(seg(t, 11.6, 12.5));
+  pX.textContent = `${fmt(xs)} (${Math.round(SEL_X / SEL_L * 100)}%)`;
+
+  // cursor: to Shahed chip, to Other drones chip, back on, then down to the tallest bar
+  const P = [[1000, 560], [chips[0].cx, chips[0].cy], [chips[1].cx, chips[1].cy], [chips[1].cx + 40, chips[1].cy + 60], [X(SEL) + BW / 2, PT + 160], [X(SEL) + 60, PT + 330]];
+  const K = [[6.3, 6.95], [7.25, 7.55], [8.0, 8.6], [10.3, 10.95], [11.6, 12.3]];
+  let cx = P[0][0], cy = P[0][1];
+  K.forEach(([a, b], k) => { const u = ease.inOut(seg(t, a, b)); if (t >= a) { cx = lerp(P[k][0], P[k + 1][0], u); cy = lerp(P[k][1], P[k + 1][1], u); } });
+  cur.setAttribute('opacity', seg(t, 6.2, 6.5) * (1 - seg(t, 12.0, 12.4)));
+  cur.setAttribute('transform', `translate(${cx.toFixed(1)},${cy.toFixed(1)})`);
+  const press = Math.max(...[7.0, 7.6, 9.9, 11.0].map(a => seg(t, a - 0.12, a) * (1 - seg(t, a + 0.05, a + 0.35))));
+  ring.setAttribute('r', lerp(28, 14, press)); ring.setAttribute('opacity', press);
+
+  // camera: slow push, then lean toward the selected week
+  const push = ease.inOut(seg(t, 3.0, 11.0)), lean = ease.inOut(seg(t, 10.6, 12.6)) * (1 - ease.inOut(seg(t, 14.6, 15.4)));
+  cam.setAttribute('transform', `translate(800,500) scale(${1 + 0.025 * push + 0.05 * lean}) translate(${-800 - 70 * lean},${-500 + 10 * lean})`);
+
+  // payoff
+  const po = ease.out(seg(t, 12.9, 13.5)) * (1 - seg(t, 15.2, 15.6));
+  pay.setAttribute('opacity', po);
+  const bl = Math.max(po, seg(t, 15.2, 15.6));
+  blurG.setAttribute('stdDeviation', (bl * 6).toFixed(2));
+  cam.setAttribute('filter', bl > 0.01 ? 'url(#uaw-blur)' : '');
+  ROWS.forEach((r, i) => {
+    const u = ease.out(seg(t, 13.2 + i * 0.22, 13.9 + i * 0.22));
+    r.g.setAttribute('opacity', u); r.g.setAttribute('transform', `translate(${(1 - u) * 40},0)`);
+    r.bv.textContent = fmt(lerp(r.a, r.b, ease.out(seg(t, 13.4 + i * 0.2, 14.3 + i * 0.2))));
+    r.bv.setAttribute('filter', i === 0 && t > 14.3 && t < 15.2 ? 'url(#kit-glow)' : '');
+  });
+
+  cap(t); end(t, 15.3, D);
+}
+run({ duration: D, poster: 12.5, frame });
+</script>
+</body></html>

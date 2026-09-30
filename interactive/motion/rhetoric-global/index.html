@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Rhetoric Heatmap: Russia and Beyond</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .row-t { font: 400 12.5px var(--mono); fill: var(--muted); }
+  .cat-t { font: 600 11px var(--mono); fill: var(--paper); letter-spacing: .14em; text-transform: uppercase; }
+  .yr { font: 600 15px var(--mono); fill: var(--paper); letter-spacing: .04em; }
+  .ev-t { font: 400 11px var(--mono); fill: var(--muted); letter-spacing: .03em; }
+  .src { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .04em; }
+  .seg { fill: #0b1712; stroke: #2b4a3b; stroke-width: 1.2; }
+  .seg-t { font: 400 15px var(--mono); fill: var(--muted); }
+  .card { fill: #0a1510; fill-opacity: .96; stroke: var(--amber); stroke-width: 1.5; }
+  .c-e { font: 400 12px var(--mono); fill: var(--amber); letter-spacing: .14em; text-transform: uppercase; }
+  .c-q { font: italic 400 29px var(--display); fill: var(--paper); }
+  .c-m { font: 400 14px var(--mono); fill: var(--muted); letter-spacing: .03em; }
+  .p-l { font: italic 500 40px var(--display); fill: var(--paper); }
+  .p-v { font: 600 64px var(--mono); font-variant-numeric: tabular-nums; }
+  .p-s { font: 400 14px var(--mono); fill: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of Rhetoric Heatmap: Russia and Beyond: a heatmap of recurring phrases in Putin's Kremlin transcripts, week by week since 2021, lights up at the February 2022 invasion; one sentence is opened, then the view switches to Iran's Foreign Ministry."><title>Rhetoric Heatmap: Russia and Beyond</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Real data (tools/rhetoric-global) -----------------------------------------------------------
+// data/corpus.js (built 2026-09-29): weekly uses per 1,000 words for every dictionary phrase, Russia (Putin's words
+// in en.kremlin.ru transcripts) and Iran (en.mfa.ir statements), 301 weeks from Monday 28 Dec 2020. Computed with
+// the tool's js/model.js rowsOf(cc,'all'), value(cc,k,w,'rate') and scaleMax() over all weeks; each week is stored
+// as the colour level grid.js would draw: '.' no text held, '0' zero, 'a'..'t' = 14%..100% heat (sqrt scale).
+// n = the phrase's number of transcripts or statements (nDocs); ev = key events from data/events.js.
+const DATA = {"ru":{"max":1.488095238095238,"cats":["War framing","The West and world order","Security architecture","Nuclear","Sanctions and sovereignty"],"rows":[{"c":"War framing"},{"l":"special military operation","id":"smo","n":377,"s":".00000000000000000000000000000000000000000000000000000000000dkgig00gej00ihf0he0k00i00j0fcgllfctiel0jeqcnq0oi0oghnr0hdgdggi0tejl0jsdmlgam00f0jckhaffgnd00fngod0lkhmdgmliegei00f0lgijamij000o00o0pgnt0i0b0ed0tc0lke0ie0h00mlp0eh0o0old0kk0rcmm00q000j0e0tiffjhne0jcinnst00m0g0gpl0pjl00npiqfcdnelt0tqoiijhf0rgm"},{"l":"neo-Nazi","id":"neonazi","n":103,"s":".000000000000000000000000000g0000000000000000000000000000000is0i000i0i0gle00be0000000j00h0odtcndh00d0d0gh00n0e00jp0b00h0000n0c00gidh00a00ff000000000e000f0000000cjhd0b0cigg0000fb0c0be0000h00000c000f0000c00000b00000000000g0h000gdb0e000d000000000gah00a00000000d0a000000000000000000000f00000000n00000a0000"},{"l":"denazification","id":"denazi","n":13,"s":".00000000000000000000000000000000000000000000000000000000000bi0e0000000000000000000000000000000000000000000000000000000000000000b000000000000000e000000000e0000000g0000000000000000ce0000000000000000000000000000000000000000000000000000a0000000000000000000000000000000000000000000000000g00000000000000000"},{"l":"Kiev / Kyiv regime","id":"kievregime","n":101,"s":".00000000000000000000000000000000000000000000000000a00000000d00i00000c00f0f0b0f000000g00c0ii0fnf0000000000000000lg0000d0000000lic0000k00000000000ab0e000000g0h00gd00000edj0000000e00kh0ff000lo00ae0000bf0c00f0cd0000h0000n00e000gl0e000j00f000000000c000ch000000g0cjh00000000dn0g000000d0h0eh0mt00h000n000j00"},{"l":"genocide","id":"genocide","n":47,"s":".000000j000h0000000000000e00c00000000000000000000h000000000cg00k000g0c000000b0de00000g00b0cg000000m0cg00000i000000000000000000000000000000000000c00000000b000000hd000000000000000000e0g000000000b00000000a0000000000000000000e00000000000a00000000000000a000000000000000000000000000000h0000000000000000a0000"},{"l":"new regions / historical lands","id":"newregions","n":175,"s":".000000000000000000000000000i0000000000000000000000c00000000b000000000000000b0000000000000flm0nc00idcdjbo0tdhieejnk0d0h0sg00qelifok0febsof0d00dna0d0k000fgfgd00ncpgb0g0gkgs0000d00c00cj000t0lj0000g0t0000e0000gde0i00000cif0e0000dd00edf00dr0000r000chd0e000g0g0c00a00000000gdl0keh0ngd00000oegl000h0id0a0g0m"},{"l":"Donbass","id":"donbass","n":251,"s":".000000000000000e00j00a0e000k0000h00000000000d000g0i00000fokqsktg00ros0pfeo0lhmp00000r0tmgppmf0lh00e0t0bo0jieigeopkdf0d0g0jnhgriffghfgaq00cdkb0nfad0m000fhfig00ngqid0jheigl0000d00ccpej00oo0l0g0g0g0te0c0d0000fce0i000000ff0ee000dd00e0fgefn0000l0gkch00h000g0g0cdcaht0000000di0keh000d000cen0jt00kh0fdha0g0m"},{"c":"The West and world order"},{"l":"collective West","id":"collwest","n":44,"s":".000000000000000c00000000e000000000b000000000000b00000000000b00igh000000ie0000fo00000m00b0ci000d000000c000000e00000bf0000000000000000000000000000c0000000b00000000d0000000000000000a0c0000000000b00000000d00000a00000000000000000000000000i000000000a000a0000000c00000000000000000000000000cd0c00qd00000c0000"},{"l":"multipolar / unipolar","id":"multipolar","n":182,"s":".000d000000000000000e00000c000000000c000000000d0b00000000d0e0000000c00000000eene0c000t00b0jk0c0j000d0b00h000h00eb00digd00ejn0h00a00h00i00kj00fghedjde0kg0f0c0000gd00e0e000000d0jg00hii0ml0000j000hgg0edk0g00cbc0e00ge000c00000p000dg0000gdfe0000000ng000l0e0000ccdfc000lf0g00d00000000dd0f0d0ec000d00000cl000"},{"l":"hegemony / neocolonial","id":"hegemony","n":85,"s":".0000000000000000000000000b00000000b000000000000000000000000b00000000c0000f0b0fe0c000rn00e0t000j000d0b0e00000000d00bd0000000lc00c0000gl00ii00e0ehfhdg0f0f000000000000b0000d0000fb00d0j00f0000000000d000e0k0i0b00000e0000000g0000000b00000e000000000nd00fd0j0000c0b00000f0000000000000000000a0e00000000000e000"},{"l":"Russophobia","id":"russophobia","n":46,"s":".00000000000000000j0e0c00000f00000000000000000000f0000000000d00000000c0gf000c00000000g0000cg000a00000k0000000000b0000000000n0000a0d00e000000c000000d0000fgc00000e0000b0ed0000000000b0000000000000000000b00000000000000000000000000db00000a00000000000h0000000h0000ca000000000df000000000000000000q0h00d000000"},{"l":"\"rules-based order\"","id":"rulesorder","n":12,"s":".000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000d000a00000000000000000000000000000000000000a000c000d0a00000000ba0000000000000000000000000bc0000000000000000000000000000000000000000000000000000000000000g00000000000000000000000000000000000000000000000000000c000"},{"c":"Security architecture"},{"l":"NATO expansion","id":"natoexp","n":34,"s":".00000000000000000000000be000000000000000ba000g0bb0e00000dgig00000000000f000000e00000000000d000a0000000000000000b0000000000000h00000000000000000dab0000000000000c0e00b00000000000000d00000000000000000000a00c000000000000000000000000000000000000000000000000000000c0000000000000000000d00000000000000000c000"},{"l":"NATO (any mention)","id":"nato","n":131,"s":".0000000000000000000e0c0hjb0f0000e00cg000bg0jdn0fm0m00000ttttngi0000000iie00ceph00000j000cli0e0e000b0b0h00000000l00d0000000000t0h000lgb00i000b00idi0e00000cl000hcdqkjd0e0000000d0ggbkh0000000000an0000mg0i0mk00de000000000000c00000b00000ime000000j0i000m0000e000i0m000f000000000000000l00cej0e000f00f000gg00"},{"l":"indivisible security","id":"indivisible","n":48,"s":".0000000000000000000e0000000000000000d00000f0000000a00000dcee0000000000e000000d0000000000cc00c000000000000000000d00bd000000n0c00000000a00f000000a00000000b0000000d000b000000000db000ef0d00000j0000g0000c000000c00000e0000000000000db000000000000000ka00fc0000000c0000000000000000000000d00c000c00000000000000"},{"l":"security interests","id":"legitsec","n":15,"s":".000000000000000000j00000000000000000d0000000000b000000000e00000000000000000000000i000000000000c0000000000000000000000000000000000000e000000000000b00000000000h00000000000000000b0000000000000000e0000000a000000000000000000000000000000000000000000c00000000000000c00000000000000000000000000000000000000000"},{"l":"red lines","id":"redlines","n":12,"s":".000000000000000c0000000c000000000000000000000g0e00000000000b000000000000000b000000000000000000000000000000000000000000000000000b000000000000000a0000000000000000000000e000000000000000000000000000000000a00000a000000000000000000000000000000000000000000000000000000000000000000000000000000c00000000000000"},{"l":"root causes","id":"rootcauses","n":24,"s":".000000000000g00000000000000000000000000000000000000000000000000000000000000b0000c0000000000000a0000000000000000000b000000000000000000c00000000000000000000000000000000000000000b000bc00000000000000000b0000000000000000000g0c00e0db0e00000000000q00c000a0000000000d0000000000000000000000000000000000000c000"},{"l":"security guarantees","id":"guarantees","n":30,"s":".00000000000000000000000000000000000000000c00000b00c00000dmhe000000f0f0e0000b000000000000e0000000000000000000000b000000000000c00000000000000c000a0000000000000000000000c00000000c00ad00000000000a00d000000000e0000000000000g000000000000000000000000d000000000000000000000000d00000000000000000000000000a0000"},{"c":"Nuclear"},{"l":"nuclear weapons / arms","id":"nuclearw","n":153,"s":".000000000dd0000g000jj00e0b0000h00de000nidd0fd00cd0d00000fe0gg0e00000c0e00000ed000000000bcfd000k000bclceh0000000j00bf00g0m000000el00i0b000000b00dc000000000g0000hfe0kgfg0000000dbk0gdh0d00h00j00a00o00dcmg00leci0000e000000g000te00b0000icf000o000j0c00qe0eegh0cjech000000000d000000000iqicd00c000h000g0d0g0t"},{"l":"strategic stability","id":"stratstab","n":34,"s":".0000000000000000000e0e0fj0000000000c00000a000d0b00d00000000000000000000000000d0000000000000000c00000b00000000000000000000000c00000000000000000000000d00000000000000jd000000000d0000b00f000000000e0000bb0d0000000000e000c0000c0000000000000000000000000ia0000000e0000000000000000000000d000000000000000000000"},{"l":"nuclear deterrence / doctrine","id":"deterrence","n":10,"s":".00000000000000000000000b000000000000000000000000000000000000000000000000000000000000000000000000000000000000000b0000000000000000000000000000000000000000000000000000000000000000e0b000000000000000j0000000000fb0000000000000000000000000a00000000000000000e0000000000000000000000000000000000000000000000000"},{"l":"New START / arms control","id":"newstart","n":22,"s":".000d0h0000000000000e000eeb00000000000000b000000000000000000b00000000000000000d000000000000000000000000000000000h0000000000000h0000000000f000000000000000000000000000000000000000e00b0000000000000000000000000000000000000000c0000000000000000000i00000qaf000000c0000000000000000000000d000000000000000000000"},{"l":"Sarmat / Oreshnik / Burevestnik / Poseidon","id":"newsys","n":44,"s":".000000000000000k000em0000e0000000d000000000j000000c0000000000000000i00000000e0000n00000000000000000000e0t000000d0000000000000000i00000000000000c0b00000000c00000000ei0c00000000000000000000000000000000000tpecfe0000000e0000g0t0000000000d0000000000000e00ett00000g00000000000000000000t00e000000f0000000000"},{"c":"Sanctions and sovereignty"},{"l":"sanctions","id":"sanctions","n":258,"s":".000f000g00df000ch00e0h0d0f000000h0b0g000ge00gd0fg0d000s0hcjiitt0toimm0inhqjoktt0ki00000lthmjg0m000g0blel00d00cef00hh0o00g00ei00e0imijj000j0edgehed0ndf0fjc000he0fjdjdie0e0l000hlichhhg0fj000000b00g00fjeh000ecc000eh000jl0gt000000b00000di00000l00gc000d0hj000ce00c00000h00gg000h000ggdg00jd0h0000o0f00eh0k0"},{"l":"sovereignty","id":"sovereignty","n":540,"s":".000f0hfm0d0ig00c000g0d0egd0n000jhi0edhe0gffm0i0eidaj0g00fkipeqk0l0f0k0in0frrehr0nn00tnficqrqf0lh0mjggmfq0j0h0ghhrqkiqqq0prn0q0thlghtem00in0ihglnlgmnn0dthnok0hehhjigohlkji00h0jimojongii0l000gphjkmfnflkn0mijmkit0ojhf0ilfopk00kdlihenonih000qkl0skelglkilj0m0jgjgidk0tf0g00of0gjhs0klhqmkn0hm000fo0mmlgmm0s"},{"l":"BRICS","id":"brics","n":227,"s":".00000000000f000c000e0a000b000000000m0000b0000i0c0d000000f0i00000000000e000d0tf0000000000e00000e000d0000h0000000b00bf00000000e00d0gpf0i000t00b0qmhmd0hop0kec0000h0eb0hjcm0000f00je0kme0ht00000k0itgt0tttep00kjeee00khh00ef0jncp0g0fiq000dnit000kt00tch0ij0e000gf0kf0000f00g00d000j0it0000hcj0h0000000000ft0g0"},{"l":"national currencies","id":"natcurr","n":142,"s":".000000000000000000000i000b000000000c0000c000000c0d000000d00b0000h0fec0efp0dc0000c0000000i0dfg0g000000h000000000000bh00000000h00e00p0ee0o0j0eb0efe000h0d0decg00000d00000d000000diecgbe0hfj000000e00g0hii0e00gh00e00e0000000g0000000d00000edi00000000c000ah0000kccgca000000000000000000000ffedec000000000dc000"}],"ev":[["2021-06-16","Geneva summit"],["2022-02-21","DPR/LPR recognised"],["2022-02-24","Invasion"],["2022-09-21","Mobilisation"],["2022-09-30","Annexation"],["2023-02-21","New START suspended"],["2023-04-04","Finland in NATO"],["2023-06-24","Wagner mutiny"],["2024-02-29","Fed. Assembly 2024"],["2024-03-07","Sweden in NATO"],["2024-06-14","MFA speech"],["2024-09-25","Doctrine update"],["2024-11-21","Oreshnik"],["2025-05-19","Trump call"],["2025-08-15","Alaska summit"],["2026-05-12","Sarmat test"]]},"ir":{"max":12.522361359570663,"cats":["Israel and the region","Nuclear file","United States and the West","Force and law"],"rows":[{"c":"Israel and the region"},{"l":"Zionist regime","id":"zionist","n":583,"s":"0000000000000000000oj00000000..00.00.0000000...00..0g00k000c00b0gagegm0i00ge0lflckcled00eg00e000ac00m0ebmge0gh0lefgggmmhd0t0cf0g0gcki0gdd000ceb0egemtporrkehk0rlfmgrftljlnmjnjgnlhjog0dnfllmmnlkgnmlonjokdmgidgmgijjeikf0dfckppemolkk0isolmogklelttljkgglpktg.nnk00qnct0sjc0eo.hl...0lgenih0nhlkcbcr0o000d0d."},{"l":"Israeli regime","id":"israelireg","n":261,"s":"000000000000000000h0j00000l00..00.00.0000000...00..00c00000000g00a0dg00000e00000c0cbb00000000000a0b0f0a00d0d00000c000ddc0ek000000000000000000b0000cgeeh0chjc00higb0hf0jjfdgdlji0cb0fb0d0cmfkhjb0gceggghghdcejaacb00f000c0hdc00ge00ibc0cfbgf0ejg0d00bedge00c0b.0cg0000i000edpf0.o0...0igh0cji0l000ec00c0h0opc."},{"l":"genocide","id":"genocide","n":364,"s":"00000000000000000000f00000000..00.00.0000000...00..0000f00000000000000000000000000000000000000000000d000d000d000b00000000000000000000000000000000b0ijkghjhhf00ehij0hitikhdedfgciebhjeefgfiefiiddgmchflkikgmhlfelfhmkjgie0fefhlkekhkfj0dj0eeechmhlopihhdcisfgh.ljf00l0000iicrde.d0...0c0cn0000hd00een0g0000l0."},{"l":"Gaza / Palestine","id":"gaza","n":606,"s":"0000000000000000e0stt00000000..00.00.0000f00...00..0000f00df0000ogoktttr00h00ed0f0cnej00bekdc000gc00p0dekhi0df0dmf00dbmodjt0db0d0q0df0eo00rc0db0pontrtttttrt00ttqtnttttttttpponstlotm0gtjtqtssmplontnrqorotmtfkrmmnsnitcjjqjptomtjpks0gj0fnjaktltttmkjocptfsj.stj00q000domntic.s0...0kj0t0f00mf00lkt0o0000tg."},{"l":"resistance","id":"resistance","n":181,"s":"00000000000000c0h0djq00000000..0g.00.0000000...00..0f000000000bd0achgefe00c00000000dbf0000000000a000d00a0ed0b000dc00bbdc00t0cg0000c000e0f00e0000hbea0geeddbei0eb0fg0a0cj0ehj00cgck0c0e00egcjgp0h00ekdhfgh0bcd00f000l0id0fad00i0e000ba00f000ba0c00000c00e0j000.0fc000000000f00c.f0...00c0lch000d00bht0cf00d0g."},{"l":"martyr / martyrdom","id":"martyr","n":287,"s":"00000j00000000000000f00000000..i0.00.0000f00...00..0m00000f000e0ca00ee0f0h0000f0cd0hmf0d000d0000c0edfbcb0kmibcbfb0c00l0b00t0db000dgm00m0mg0n0b0kgefbe0dcgbf0mtgeabk00ncdbhbhdb000nj0c0jiah0ikdkjdccgdehne0cgb00fd0ce0i000b0a00hhf000e0a0k0ecaac0e0kfed0f0eeg0.0ee000g0n00ha0bh.n0...ie0heohdde0nkfet0c0cjdhn."},{"l":"Lebanon / Hezbollah","id":"lebanon","n":176,"s":"00000000000000000000000000qh0..00.00.0000000...00..0000000000000000000000000000f0000b00f00000000a000000000i00000000000f000000j00000j000dk00000d000c00ce00000r0k00000a00gb0a000a00000000i0giedn0g00pspokprgkij00hb0iceo0e0e000kl00jfbc0aj000ggc000f00ca0f00gm0.0jj00p00t00f00e0.d0...0g0i0ttlijfq00000l000n0n."},{"c":"Nuclear file"},{"l":"JCPOA / nuclear deal","id":"jcpoa","n":114,"s":"0000000js000gtqphtkh00s00i000..g0.00.0000k0h...00..00000e00l0c0f0a00000000h0e0c0c0gf0f000g000000bd0b0bc0h00000id0bj0d000d000ad000000000000000l0000l000000b000000b00000000000000000000g00e0000000000000d000be0ca000c0hd00000e0000000g00e0ba00a000000nmfhnj0l00.jf000000000000b0.00...00000000g000000000000000."},{"l":"snapback","id":"snapback","n":16,"s":"00000000000000000000000000000..00.00.0000000...00..00000000a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000d000000000000000keafhg0f00.0c00000000000000.00...00000000000000c000000000."},{"l":"IAEA / safeguards","id":"iaea","n":100,"s":"0000000d000000000000000000000..00.00.0000000...00..00000000a00000000000000itd0c000j0b000c000000db00g00dbh0d00hdhdg0c0000h0000000g00000000000fn000e000h000d00k0000000000000000000000hfj00000000000000000000il0iae00g0e00c0daep0000000b0s0pkh0gg000000ehmh00f00.ef00000e000000ji.00...00000000nh00000000000000."},{"l":"enrichment / peaceful nuclear","id":"enrich","n":92,"s":"00000000000000000000000000000..00.00.0000000...00..00000000e00000000000000ck00a0c0000000be000000b00g0000f0b00hbd0c0c0000d000000dd00000000000c000000000000000k00000000000000000a0000cdgb0a00000000c00000000ddafaa00c0000c0b0d000e0dfbfqh0ihhbgd0000000ahhc0f00.jf00000c000000e0.00...00000000g0f0000000000000."},{"l":"NPT","id":"npt","n":60,"s":"00000000000000000000000000000..00.00.0000000...00..00000000000000000000000ek0000c0c00000b0000000000000a0000f0f0f0d00b000d000000dd00000000000c000000000000a000000b000000000000000000cdg00d00000000000000000bb0aac0000h0de0f0d00000000f0f0fbe0fa0e0000cadc00b00.0ea00000000000g0.00...00000000d000000000000000."},{"c":"United States and the West"},{"l":"maximum pressure","id":"maxpress","n":25,"s":"0000000000000000h000000000000..00.00.0000c00...00..00000000000000a0000000c0000a0a00bb000b0g00000a0b000d00000b0b00000000000000000000000000000000000000000000000000000000000000b00000000000000000000000c0000d00000000000d000a0000000c0000d000000000000000000000.0000000000000000.00...000000000000000000000000."},{"l":"sanctions / coercive measures","id":"sanctions","n":331,"s":"0l00000ge0lj0milhod00h0i00fj0..d0.m0.0il0chh...00..0c0lfe0hn00bkbfle00000g0ethn0f0clddhfhgg0c0smnci0dkobfbd0pch0mcf0eb0bie00d00000d00fg0ej000hc0c0h000000bj0e00dad0000c0d00d0ij0h0lceeiif0ea00gdgkbdaedde00lb0d0b0c0e0k00ieie0c0emmffkehb00bgh0k000feadi00f0g.00e0fe0c00gec0ee.00...000e0n00000000c000tm00ec."},{"l":"E3 / Europe","id":"e3","n":120,"s":"00000000000000000cde00l000000..00.00.0000c0e...00..0000c000a00000000000000eg000000000000g00000bdb00fdda0d0di0dbdb0000d0ad000000000b0f00000000l000bfb000bb0b0k000a00000000000ad00000cce00e0c00cba0f0000f000bfaea000c00d0000af0c000d0bb0f0ef000ac00f0hrcgpc000b.jhc00000000i0hb0.00...0000e000000000c00000000a."},{"l":"hegemony / arrogance","id":"hegemony","n":83,"s":"000000000000000000de000000000..0g.00.0000f00...00..000000000000f00000e0c0c0000a0000bb0e00000c000bc00d0000be00c00bb00000a0000000000d00bg0aj0000b00000j00bb0b0000b0000000d00a0a0000d000000a0000000000aaa00c00b0aaa000c0000000a0c000d0b00a0000baac00f00000a000gb.0fa00e0e0000000c.00...00000cc0d000cfe000f0000a."},{"l":"double standards / hypocrisy","id":"doublestd","n":132,"s":"00000000000000000000000000000..00.00.0000000...00..0c00c000000ecc00dg000000e00a0f00b000000i0cafbbcb0dgeaf0d0bdedbc0ed000d0000b0000cdf00000000bb0c00b00d0ecbc00000000a0cbdb00a0a0cbec00000bfaa0cf0c0aa0b0c00daaad00c0000000a0000h000ba0b000c0000d00000abac0000.e0a0000e0000a0d0.00...00000c0000000000000000ha."},{"l":"Islamophobia / Quran","id":"islamophobia","n":51,"s":"000000000000000000000h0000000..00.00.0000000...00..0000000000000b0cf0000000000000000f0000000000d000000000g0hhc000b0gdddb00000b000dd0lptb00r000bk00000000000a0000b000000b000000000e000000a0c0a0000000a00000b000a000000000f000000000000000000000000000000000000.0000000000000000.00...000000000000000000000000."},{"c":"Force and law"},{"l":"aggression","id":"aggression","n":383,"s":"000j00000000t00000def00000000..00.00.0000cc0...00..0f00f000000b000dg00f000c0000fcd0hb0h00edd0000c000000b0b000f0f0dc0dgfcdh000b0000b000g000000000e0eee0de0b0ce0cebfkha0bf0hbkgf0dc0efc000aj0fgg0adc0klmiqjkmbhabkfjmfejdeffddkhi0gfjia0ckqsojpkgeefkfejhee0fje.hjj0fj0nn0efe0hp.mq...0hlpehprojhfekn0ijjlrteg."},{"l":"self-defence / Article 51","id":"selfdef","n":65,"s":"00000000000000000000f00000000..00.00.0000000...00..00000000000d000c0000000000000000d000000000000000000000000000000000000000000000000000000000000000c000fd00a0000ab000000000jifc0eb000000000b00000000jcddc000da0a0000000000b000c0000b0000efe000000000000000000.0000000e0000a00c.00...0g0000cjg00d0ec0000edf00."},{"l":"war crime / crimes against humanity","id":"warcrime","n":254,"s":"000000000000000b0000f00d00000..00.00.0000000...00..000ecb000000000c000000000000c00000f0000000000a00b00c0000db0000dc00000dek0000000bd0000000000000beimkhijifg00ihdf00d0ehdgcdehagh0hj00dcagcecgca0jbgefefegedjabhg00g0d000feee0h0fjhef0dd0c0gcahb0ltf000b0n00b.00d00h00n00c00dc.00...0c0chc000000cfe00jjcgfla."},{"l":"UN Charter / international law","id":"uncharter","n":413,"s":"q00000f000l000c0e00000000f0e0..00.00.0000f0e...00..0g0ecb00ec0e000hbe0000ec0e0acdf0fb0e0cg0fc0gbkcd0dbc0dd00fdb0ibccdddbd000ab0g0dbh00000000f000edehjhhfhbeee0efehg0h000jhehfeaic0eecm00cf0hgdeajfcfdfkjd0ffmebgflmehglc0gidegj0gfmhc0dmhmhjkfhhdn0bifihigggn.0fghipknt0eef0jh.fn...0hcmeehml0hhemi00gfngfea."},{"l":"terrorism / terrorist","id":"terror","n":490,"s":"t0t00jiget0j0e0d00dj000d00no0..j0.00.00f0jj0...00..0o00000dc0fkchiqgncff0lcedpeird0hjfjij0ir0giophsfkjlg0ohinkepjjj0gedi0t0tgf0gkd0t0bnldgrilfbkieec0cfblbldmteneft000b0jighihjgglecbnhfggjijftj0hkjei0fklbfjhbfednejg0f0jcinih0fkfba000ba0edhgee00f0g0de0fjb.e0f000pj0kmqi0fc.h0...0ikihkfgle0dkfi00cjhddmg."}],"ev":[["2022-02-24","Ukraine invaded"],["2023-06-30","Sweden protest"],["2023-10-07","Oct 7 attack"],["2024-04-01","Damascus strike"],["2024-04-14","Iran strikes Israel"],["2024-07-31","Haniyeh killed"],["2024-09-29","Nasrallah killed"],["2024-10-02","Iran strikes Israel II"],["2025-02-04","NSPM-2"],["2025-06-13","Israel strikes"],["2025-06-21","U.S. strikes"],["2025-08-28","E3 snapback"],["2025-09-28","UN sanctions back"],["2026-02-28","U.S.–Israeli war"],["2026-03-01","Khamenei killed"],["2026-03-09","New Leader"]]}};
+const NW = 301, T0 = Date.parse('2020-12-28'), weekOf = d => Math.floor((Date.parse(d) - T0) / (7 * 864e5));
+const SEL_W = weekOf('2022-02-24');      // week of 21 Feb 2022
+// Quote: p.ex[0] of 'special military operation' (earliest use in the corpus): Address by the President of the
+// Russian Federation, 24 Feb 2022, en.kremlin.ru/events/president/transcripts/67843.
+
+// ---- Geometry ------------------------------------------------------------------------------------
+const GX = 500, GW = 960, CW = GW / NW, GY = 262, RH = 14.5, CH = 22;
+const X = w => GX + w * CW;
+const heat = p => { const a = [0x24, 0x40, 0x31], b = [0xff, 0x6b, 0x4a]; return `rgb(${a.map((c, i) => Math.round(c + (b[i] - c) * p)).join(',')})`; };
+const blurF = el('filter', { id: 'rg-blur', x: '-5%', y: '-5%', width: '110%', height: '110%' }, svg);
+const blurG = el('feGaussianBlur', { stdDeviation: 0 }, blurF);
+const cam = el('g', {}, svg);
+const head = el('g', {}, cam);
+const title = el('text', { x: GX, y: 130, class: 't-label' }, head);
+const sub = el('text', { x: GX, y: 158, class: 'src' }, head);
+const SEGS = [['Russia', 1180], ['Iran', 1320]].map(([n, x]) => {
+  const g = el('g', {}, head), r = el('rect', { x, y: 110, width: 130, height: 38, rx: 6, class: 'seg' }, g);
+  const t = el('text', { x: x + 65, y: 135, class: 'seg-t', 'text-anchor': 'middle' }, g); t.textContent = n;
+  return { r, t, cx: x + 65, cy: 129 };
+});
+
+function buildGrid(cc) {
+  const D = DATA[cc], g = el('g', {}, cam), cells = el('g', {}, g), labs = el('g', {}, g), evs = el('g', {}, g);
+  const rowY = {};
+  let y = GY;
+  for (const r of D.rows) {
+    if (r.c) { el('text', { x: GX - 12, y: y + 15, class: 'cat-t', 'text-anchor': 'end' }, labs).textContent = r.c; y += CH; continue; }
+    const t = el('text', { x: GX - 12, y: y + RH - 3.5, class: 'row-t', 'text-anchor': 'end' }, labs); t.textContent = r.l;
+    const rg = el('g', {}, cells);
+    for (let w = 0; w < NW; w++) {
+      const ch = r.s[w];
+      el('rect', { x: (X(w) + .2).toFixed(1), y: y.toFixed(1), width: (CW - .4).toFixed(2), height: RH - 1.5, fill: ch === '.' ? '#0c1712' : ch === '0' ? '#17301f' : heat((14 + (ch.charCodeAt(0) - 97) / 19 * 86) / 100) }, rg);
+    }
+    rowY[r.id] = { y, t, g: rg };
+    y += RH;
+  }
+  const H = y - GY;
+  // key events above the grid
+  D.ev.filter(([, n]) => SHOW_EV.includes(n)).forEach(([d, n], i) => {
+    const x = X(weekOf(d)), ly = GY - 14 - (i % 2) * 16;
+    el('path', { d: `M${x} ${ly + 3}V${GY - 2}`, stroke: '#8fa89a', opacity: .5 }, evs);
+    el('text', { x: x + 3, y: ly, class: 'ev-t' }, evs).textContent = n;
+  });
+  for (let yr = 2022; yr <= 2026; yr++) el('text', { x: X(weekOf(`${yr}-01-01`)), y: GY + H + 24, class: 'yr' }, g).textContent = yr;
+  el('text', { x: GX, y: GY + H + 24, class: 'yr' }, g).textContent = 2021;
+  return { g, cells, rowY, H };
+}
+// A subset of the key events, spaced so their labels stay readable.
+const SHOW_EV = ['Invasion', 'Mobilisation', 'New START suspended', 'Wagner mutiny', 'Doctrine update', 'Alaska summit',
+  'Oct 7 attack', 'Nasrallah killed', 'E3 snapback', 'U.S.–Israeli war'];
+const RU = buildGrid('ru'), IR = buildGrid('ir');
+const clipR = el('clipPath', { id: 'rg-ru' }, svg), clipRr = el('rect', { x: 0, y: 0, width: 0, height: 1000 }, clipR);
+const clipI = el('clipPath', { id: 'rg-ir' }, svg), clipIr = el('rect', { x: 0, y: 0, width: 0, height: 1000 }, clipI);
+RU.cells.setAttribute('clip-path', 'url(#rg-ru)'); IR.cells.setAttribute('clip-path', 'url(#rg-ir)');
+const scan = el('line', { y1: GY - 6, y2: GY + RU.H, stroke: 'var(--amber)', 'stroke-width': 2.5, filter: 'url(#kit-glow)', opacity: 0 }, cam);
+
+// selection on the Russia grid: 'special military operation' row, week of 21 Feb 2022
+const smo = RU.rowY.smo;
+const rowHL = el('rect', { x: GX - 4, y: smo.y - 3, width: GW + 8, height: RH + 4, rx: 3, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 1.3, opacity: 0 }, cam);
+const selBox = el('rect', { x: X(SEL_W) - 3, y: smo.y - 5, width: CW + 6, height: RH + 8, rx: 2, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 2.5, filter: 'url(#kit-glow)', opacity: 0 }, cam);
+const card = el('g', { opacity: 0 }, cam);
+const CX = 660, CY = smo.y + 40;
+el('rect', { x: CX, y: CY, width: 780, height: 200, rx: 6, class: 'card' }, card);
+el('text', { x: CX + 26, y: CY + 36, class: 'c-e' }, card).textContent = 'Week of 21 Feb 2022 · special military operation';
+el('text', { x: CX + 26, y: CY + 86, class: 'c-q' }, card).textContent = '“…I made a decision to carry out';
+const q2 = el('text', { x: CX + 26, y: CY + 126, class: 'c-q' }, card);
+q2.innerHTML = 'a <tspan style="fill:var(--amber)">special military operation</tspan>.”';
+el('text', { x: CX + 26, y: CY + 172, class: 'c-m' }, card).textContent = 'Address by the President · 24 Feb 2022 · en.kremlin.ru';
+el('path', { d: `M${CX + 30},${CY} L${X(SEL_W) + CW / 2},${smo.y + RH + 5}`, stroke: 'var(--amber)', 'stroke-dasharray': '4 4', 'stroke-width': 1.3, fill: 'none' }, card);
+// Iran highlight: 'Zionist regime'
+const zr = IR.rowY.zionist;
+const irHL = el('rect', { x: GX - 4, y: zr.y - 3, width: GW + 8, height: RH + 4, rx: 3, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 1.3, opacity: 0 }, cam);
+
+// Cursor.
+const cur = el('g', { opacity: 0 }, cam);
+const ring = el('circle', { r: 22, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 3, filter: 'url(#kit-glow)' }, cur);
+el('path', { d: 'M0 0l0 30l8 -7l6 13l6 -3l-6 -12l11 0z', fill: 'var(--paper)', stroke: '#0b1712', 'stroke-width': 2 }, cur);
+
+// Hook.
+const hook = el('g', {}, svg);
+const h1 = el('text', { x: 800, y: 440, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:84px' }, hook);
+h1.innerHTML = '“<tspan class="hot">special military operation</tspan>”';
+const h2 = el('text', { x: 800, y: 530, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:46px;fill:var(--muted)' }, hook);
+h2.textContent = 'In Kremlin transcripts since 2021, first used 24 February 2022.';
+const h3 = el('text', { x: 800, y: 590, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:46px' }, hook);
+h3.textContent = 'Since then, Putin has used it in 377 transcripts.';
+
+// Payoff: two War-framing formulas side by side, as their heatmap rows.
+const pay = el('g', { opacity: 0 }, svg);
+el('rect', { width: 1600, height: 1000, fill: '#070f0b', opacity: .84 }, pay);
+const p1 = el('text', { x: 800, y: 250, class: 't-hook', 'text-anchor': 'middle' }, pay);
+p1.innerHTML = 'One formula stuck. One <tspan class="hot">faded</tspan>.';
+const PROWS = [['smo', 'special military operation'], ['denazi', 'denazification']].map(([id, n], i) => {
+  const r = DATA.ru.rows.find(x => x.id === id), g = el('g', {}, pay), y = 380 + i * 190;
+  el('text', { x: 300, y, class: 'p-l' }, g).textContent = `“${n}”`;
+  const strip = el('g', {}, g), sw = 1000 / NW;
+  for (let w = 0; w < NW; w++) { const ch = r.s[w]; el('rect', { x: 300 + w * sw, y: y + 26, width: sw - .3, height: 40, fill: ch === '.' ? '#0c1712' : ch === '0' ? '#17301f' : heat((14 + (ch.charCodeAt(0) - 97) / 19 * 86) / 100) }, strip); }
+  const v = el('text', { x: 1300, y, class: 'p-v', 'text-anchor': 'end', style: `fill:${i ? 'var(--muted)' : 'var(--red)'}` }, g);
+  el('text', { x: 1300, y: y + 92, class: 'p-s', 'text-anchor': 'end' }, g).textContent = 'Kremlin transcripts, 2021 – Sep 2026';
+  return { g, v, n: r.n };
+});
+
+const cap = captions(svg, [
+  [0.3, 3.2, 'Putin’s own words, from Kremlin transcripts since 2021'],
+  [3.5, 6.8, 'Every row a phrase, every column a week'],
+  [6.9, 9.5, 'Click a cell to read the sentence behind it'],
+  [9.7, 12.4, 'Switch to Iran: “Zionist regime” in 583 statements'],
+  [12.6, 15.0, '“Denazification”: 13 transcripts in all'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Rhetoric Heatmap: Russia and Beyond', line: 'The phrases the Kremlin and Iran’s Foreign Ministry keep repeating, week by week.' });
+{ const tt = [...svg.querySelectorAll('.t-title')].pop(); tt.style.fontSize = '74px'; }
+
+// ---- Timeline -----------------------------------------------------------------------------------
+const D = 18, SW = 10.0;     // country switch
+function frame(t) {
+  // hook
+  const a = ease.out(seg(t, 0.2, 0.9)), b = ease.out(seg(t, 1.0, 1.6)), c = ease.out(seg(t, 1.7, 2.3)), hOut = 1 - seg(t, 3.0, 3.5);
+  h1.setAttribute('opacity', a * hOut); h1.setAttribute('transform', `translate(800,440) scale(${0.94 + 0.06 * a}) translate(-800,-440)`);
+  h2.setAttribute('opacity', b * hOut); h3.setAttribute('opacity', c * hOut);
+  h3.setAttribute('transform', `translate(0,${(1 - c) * 14})`);
+
+  // chrome and country
+  const ir = t >= SW;
+  const ch = ease.out(seg(t, 3.2, 3.9));
+  head.setAttribute('opacity', ch);
+  title.textContent = ir ? 'Iran · Foreign Ministry · uses per 1,000 words' : 'Russia · Putin’s words · uses per 1,000 words';
+  sub.textContent = ir ? 'en.mfa.ir statements, weekly, January 2021 onward' : 'en.kremlin.ru transcripts, weekly, January 2021 onward';
+  SEGS.forEach((s, i) => { const on = (i === 1) === ir; s.r.style.fill = on ? 'var(--amber)' : ''; s.r.style.stroke = on ? 'var(--amber)' : ''; s.t.style.fill = on ? '#0b1712' : ''; });
+
+  // Russia sweep in, then Iran wipes over it
+  const sw1 = ease.inOut(seg(t, 3.5, 6.4)), sw2 = ease.inOut(seg(t, SW + 0.05, SW + 1.4));
+  clipRr.setAttribute('x', GX - 2 + (GW + 4) * sw2); clipRr.setAttribute('width', Math.max(0, (GW + 4) * (sw1 - sw2)));
+  clipIr.setAttribute('x', GX - 2); clipIr.setAttribute('width', (GW + 4) * sw2);
+  const out = 1 - seg(t, 15.1, 15.5);
+  RU.g.setAttribute('opacity', (t < SW ? ch : 1) * (1 - seg(t, SW + 0.1, SW + 0.5) * 0) * out);
+  RU.g.querySelectorAll(':scope > g:nth-child(2), :scope > g:nth-child(3), :scope > text').forEach(n => n.setAttribute('opacity', 1 - seg(t, SW, SW + 0.5)));
+  IR.g.setAttribute('opacity', out);
+  IR.g.querySelectorAll(':scope > g:nth-child(2), :scope > g:nth-child(3), :scope > text').forEach(n => n.setAttribute('opacity', seg(t, SW + 0.4, SW + 1.0)));
+  const sx = t < SW ? GX + GW * sw1 : GX + GW * sw2;
+  scan.setAttribute('x1', sx); scan.setAttribute('x2', sx);
+  scan.setAttribute('opacity', t < SW ? seg(t, 3.5, 3.7) * (1 - seg(t, 6.3, 6.6)) : seg(t, SW, SW + 0.1) * (1 - seg(t, SW + 1.3, SW + 1.5)));
+
+  // select the row and the cell, open the card
+  const f = ease.inOut(seg(t, 6.9, 7.4)) * (1 - ease.inOut(seg(t, 9.4, 9.9)));
+  RU.cells.querySelectorAll(':scope > g').forEach(g => g.setAttribute('opacity', g === smo.g ? 1 : 1 - 0.6 * f));
+  smo.t.style.fill = f > 0.5 ? 'var(--amber)' : '';
+  rowHL.setAttribute('opacity', f);
+  selBox.setAttribute('opacity', ease.out(seg(t, 7.9, 8.1)) * (1 - seg(t, 9.4, 9.8)));
+  const cu = ease.out(seg(t, 8.1, 8.6)) * (1 - seg(t, 9.4, 9.8));
+  card.setAttribute('opacity', cu); card.setAttribute('transform', `translate(0,${(1 - cu) * 14})`);
+  // Iran: light the 'Zionist regime' row after the wipe
+  const fi = ease.inOut(seg(t, SW + 1.4, SW + 1.9)) * (1 - seg(t, 14.9, 15.3));
+  IR.cells.querySelectorAll(':scope > g').forEach(g => g.setAttribute('opacity', g === zr.g ? 1 : 1 - 0.55 * fi));
+  zr.t.style.fill = fi > 0.5 ? 'var(--amber)' : ''; irHL.setAttribute('opacity', fi);
+
+  // cursor: to the cell, then to the Iran button
+  const cell = [X(SEL_W) + CW / 2, smo.y + RH / 2], btn = [SEGS[1].cx, SEGS[1].cy];
+  let cx = lerp(1100, cell[0], ease.inOut(seg(t, 6.9, 7.85))), cy = lerp(820, cell[1], ease.inOut(seg(t, 6.9, 7.85)));
+  if (t > 9.0) { const u = ease.inOut(seg(t, 9.0, 9.9)); cx = lerp(cell[0], btn[0], u); cy = lerp(cell[1], btn[1], u); }
+  if (t > 10.2) { const u = ease.inOut(seg(t, 10.2, 10.9)); cx = btn[0] + 40 * u; cy = btn[1] + 130 * u; }
+  cur.setAttribute('opacity', seg(t, 6.8, 7.1) * (1 - seg(t, 10.5, 10.9)));
+  cur.setAttribute('transform', `translate(${cx},${cy})`);
+  const press = Math.max(seg(t, 7.8, 7.95) * (1 - seg(t, 8.0, 8.3)), seg(t, 9.85, 10.0) * (1 - seg(t, 10.05, 10.35)));
+  ring.setAttribute('r', lerp(28, 14, press)); ring.setAttribute('opacity', press);
+
+  // camera
+  const push = ease.inOut(seg(t, 3.2, 15)), lean = ease.inOut(seg(t, 6.9, 8.6)) * (1 - ease.inOut(seg(t, 9.4, 10.4)));
+  cam.setAttribute('transform', `translate(800,500) scale(${1 + 0.03 * push + 0.04 * lean}) translate(${-800 + 60 * lean},${-500 + 30 * lean})`);
+
+  // payoff
+  const po = ease.out(seg(t, 12.5, 13.1)) * (1 - seg(t, 15.1, 15.5));
+  pay.setAttribute('opacity', po);
+  const bl = Math.max(po, seg(t, 15.1, 15.5));
+  blurG.setAttribute('stdDeviation', (bl * 6).toFixed(2));
+  cam.setAttribute('filter', bl > 0.01 ? 'url(#rg-blur)' : '');
+  PROWS.forEach((p, i) => {
+    const q = ease.out(seg(t, 12.8 + i * 0.3, 13.5 + i * 0.3));
+    p.g.setAttribute('opacity', q); p.g.setAttribute('transform', `translate(${(1 - q) * 40},0)`);
+    p.v.textContent = Math.round(p.n * ease.out(seg(t, 13.0 + i * 0.3, 13.9 + i * 0.3)));
+  });
+
+  cap(t); end(t, 15.2, D);
+}
+run({ duration: D, poster: 8.8, frame });
+</script>
+</body></html>

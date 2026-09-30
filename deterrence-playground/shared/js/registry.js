@@ -90,11 +90,11 @@ export const ALL_TOOLS = [
     blurb: 'Lay a minefield off a generic beach, choose how the PLA clears it, and see what mines do to a landing\'s timing and cost.' },
   { slug: 'kill-chain-builder', sub: { models: 'budget' }, cat: 'models', title: 'Kill Chain Builder', status: 'live',
     blurb: 'Wire sensors, command nodes and shooters into a kill chain, race the clock against a moving target, then strike nodes to find where it breaks.' },
-  { slug: 'penghu-gambit', siteCat: { deterrence: 'tsm' }, also: ['regions'], sub: { regions: 'indopacific' }, cat: 'models', title: 'Penghu Gambit', status: 'live',
+  { slug: 'penghu-gambit', siteCat: { deterrence: 'tsm' }, also: ['regions', 'models'], sub: { regions: 'indopacific', models: 'wargames' }, cat: 'models', title: 'Penghu Gambit', status: 'live',
     blurb: "Set Taiwan's defenses and the PLA's plan, play out a notional seizure of Penghu in 12-hour turns with every die roll shown, then run 1,000 games to see what drives the outcome." },
   { slug: 'interceptor-burndown', sub: { models: 'budget' }, cat: 'models', title: 'Interceptor Burn-down', status: 'live',
     blurb: "Set a daily PRC missile and drone salvo against open-source estimates of Taiwan's Patriot and Tien Kung stocks and see the day each runs dry, how many threats get through, and which assumption matters most." },
-  { slug: 'strait-landing', siteCat: { deterrence: 'tsm' }, also: ['regions'], sub: { regions: 'indopacific' }, cat: 'models', title: 'Strait Landing', status: 'live',
+  { slug: 'strait-landing', siteCat: { deterrence: 'tsm' }, also: ['regions', 'models'], sub: { regions: 'indopacific', models: 'wargames' }, cat: 'models', title: 'Strait Landing', status: 'live',
     blurb: "Plan a PLA landing on Taiwan's west coast: send amphibious ships and civilian ferries through real historical sea states, suppress missiles and mines, and race the counterattack to D+3." },
   { slug: 'wargame-explorer', siteCat: { deterrence: 'tsm' }, also: ['regions'], sub: { regions: 'indopacific' }, cat: 'models', title: 'Wargame Results Explorer', status: 'live',
     blurb: 'Eight published Taiwan wargames side by side: what each assumed, how it came out, and which assumptions (above all Japan basing and U.S. entry) drive the result, with a page citation for every figure.' },
@@ -209,7 +209,7 @@ export const onSite = (x, site = SITE) => !x.sites || x.sites.includes(site);
 export const catOn = (t, site = SITE) => (t.dev && site === 'deterrence' ? 'dev' : (t.siteCat && t.siteCat[site]) || t.cat);
 const ORDER = { deterrence: ['gametheory', 'nuclear', 'regions', 'narratives', 'models', 'tsm', 'dev'] };
 // `also` lists extra categories a tool appears in; `cats` is its primary category plus those.
-export const TOOLS = ALL_TOOLS.filter(t => onSite(t)).map(t => ({ ...t, cat: catOn(t), cats: catOn(t) === 'dev' ? ['dev'] : [catOn(t), ...(t.also || [])],
+export const TOOLS = ALL_TOOLS.filter(t => onSite(t)).map(t => ({ ...t, cat: catOn(t), cats: catOn(t) === 'dev' ? ['dev'] : [...new Set([catOn(t), ...(t.also || [])])],
   blurb: (t.siteBlurb && t.siteBlurb[SITE]) || t.blurb }));
 export const inCat = (t, id) => t.cats.includes(id);
 const rank = c => (ORDER[SITE] ? ORDER[SITE].indexOf(c.id) : -1);

@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Airlift: Berlin 1948–49</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .ba-soviet { fill: var(--red); fill-opacity: .05; }
+  .ba-zone { fill: #0d1c15; stroke: var(--muted); stroke-opacity: .5; stroke-width: 1.2; }
+  .ba-zt { font: 400 14px var(--mono); fill: var(--muted); letter-spacing: .12em; text-transform: uppercase; }
+  .ba-cor { fill: none; stroke: var(--line); stroke-width: 26; stroke-linecap: round; stroke-opacity: .9; }
+  .ba-cl { fill: none; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 6; stroke-opacity: .6; }
+  .ba-ct { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .06em; }
+  .ba-base { fill: var(--paper); }
+  .ba-bt { font: 400 14px var(--mono); fill: var(--paper); letter-spacing: .04em; }
+  .ba-berlin { fill: #102219; stroke: var(--muted); stroke-opacity: .6; stroke-width: 1.4; }
+  .ba-ft { font: italic 500 21px var(--display); fill: var(--paper); }
+  .ba-fs { font: 400 13px var(--mono); fill: var(--muted); font-variant-numeric: tabular-nums; }
+  .ba-slot { fill: var(--line); } .ba-use { fill: var(--amber); }
+  .ba-card { fill: #0a1510; fill-opacity: .9; stroke: var(--line); }
+  .ba-eyebrow { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .12em; text-transform: uppercase; }
+  .ba-date { font: italic 500 58px var(--display); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .ba-kl { font: 400 12px var(--mono); fill: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+  .ba-kv { font: 600 34px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .ba-ks { font: 400 13px var(--mono); fill: var(--muted); }
+  .ba-btn { font: 600 14px var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+  .ba-ax { font: 400 12px var(--mono); fill: var(--muted); font-variant-numeric: tabular-nums; }
+  .ba-grid { stroke: var(--line); }
+  .ba-you { fill: none; stroke: var(--amber); stroke-width: 1.8; stroke-linejoin: round; }
+  .ba-hist { fill: none; stroke: var(--paper); stroke-opacity: .75; stroke-width: 2; stroke-dasharray: 6 4; }
+  .ba-req { fill: none; stroke: var(--red); stroke-width: 1.6; stroke-dasharray: 3 4; }
+  .ba-anc { fill: var(--paper); }
+  .ba-call { font: 400 14px var(--mono); fill: var(--paper); letter-spacing: .04em; }
+  .ba-leg { font: 400 12px var(--mono); fill: var(--muted); letter-spacing: .04em; }
+  .ba-big { font: 600 60px var(--mono); font-variant-numeric: tabular-nums; }
+  .ba-pl { font: 400 15px var(--mono); fill: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+  .ba-pt { font: 400 30px var(--display); fill: var(--paper); }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of Airlift: Berlin 1948–49: aircraft stream along the three air corridors into Berlin's airfields while the date runs from June 1948 to May 1949, the daily tonnage climbs past the requirement against the historical record, and the season's total lands within half a percent of history."><title>Airlift: Berlin 1948–49</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard, clamp } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Real values from tools/berlin-airlift -----------------------------------------------------------------------
+// D: one full season on the page's default seed (1948) with Autopilot on ("fly it as the Allies did"), run with the
+// tool's own js/model.js and js/play.js: tons delivered each day, Berlin weather, landings and slots per airfield,
+// the season total, the historical total by the same day (js/charts.js HIST_CUM) and the millionth-ton date.
+const D = {"cumD":[104,240,406,634,930,1198,1618,2139,2770,3512,4388,5411,6589,7881,9294,10820,12475,14256,16176,18243,20409,22690,25079,27588,30181,32857,35623,38473,41421,44368,47315,50255,53209,56163,59200,61885,65108,68420,71833,75332,78908,82512,86157,89829,93528,96585,99654,102709,103519,107341,111190,115067,118971,120357,121744,125702,130254,134806,139357,143909,148461,152235,156766,161304,165841,170379,174380,178956,183532,188080,192629,196626,201161,203043,207550,212043,216519,220816,224788,228776,233245,237732,242235,249106,253629,258181,262737,267303,271880,276413,280486,284582,289030,293126,297724,301822,306257,310612,315063,319513,323963,328440,330318,332197,335246,337124,340162,343192,347628,351769,356206,360814,365406,370006,374183,378789,383389,387989,392786,397724,402804,407931,413096,418288,423523,428778,433607,438476,443355,448253,453645,458570,460460,463833,467213,469103,470993,474382,476272,481756,487385,489275,491165,496640,499332,502024,504716,510574,516451,522066,527840,533498,539264,545136,551099,557494,563960,570556,576911,583279,589693,596430,600354,604271,610859,617644,624444,631282,637788,644307,651136,655095,658011,663370,670482,677831,680909,686327,689405,696630,704066,711435,718535,725587,730763,738197,745582,752895,755971,762976,769695,776482,782977,789391,795771,798828,805508,811780,818045,824328,830545,836694,839744,845918,851991,858029,863975,870148,876297,880889,883919,886950,893161,899345,903982,910184,916349,922155,927971,933771,936795,939822,945785,950407,956518,959543,962569,965598,970263,973295,976329,981023,984061,988796,991838,994881,997924,1000967,1004013,1010222,1016335,1022588,1028565,1034710,1040945,1047157,1053221,1059253,1065255,1071097,1076910,1083004,1089212,1095516,1101741,1107863,1114353,1120944,1127658,1134356,1141127,1144182,1151195,1158268,1165073,1172206,1179162,1186522,1193916,1201384,1208873,1216035,1223451,1231007,1238420,1245972,1253546,1261139,1268573,1275763,1282915,1290288,1297763,1305349,1312553,1319763,1327364,1334972,1342655,1350342,1358035,1365697,1372972,1382983,1390211,1397794,1405001,1412597,1420200,1427814,1435437,1443016,1450601,1458193,1465826,1473464,1480656,1483734,1491374,1499069,1506362,1513725,1521091,1528468,1536274,1544049,1551827,1559608,1567343,1570421],"tons":[104,136,167,227,296,268,420,521,631,743,875,1023,1177,1293,1413,1526,1655,1781,1920,2067,2166,2281,2389,2509,2593,2676,2766,2850,2947,2947,2947,2941,2954,2954,3037,2685,3222,3312,3412,3499,3577,3604,3644,3672,3699,3057,3070,3054,810,3822,3849,3877,3904,1387,1387,3958,4552,4552,4552,4552,4552,3774,4531,4538,4538,4538,4001,4576,4576,4549,4549,3997,4535,1882,4508,4492,4477,4296,3972,3988,4469,4486,4503,6871,4523,4552,4556,4566,4576,4533,4073,4097,4447,4096,4598,4099,4434,4356,4450,4450,4450,4477,1879,1879,3049,1878,3039,3029,4437,4141,4437,4608,4593,4600,4177,4606,4600,4600,4797,4939,5080,5127,5165,5192,5235,5255,4828,4870,4879,4898,5392,4926,1890,3373,3380,1890,1890,3389,1890,5484,5630,1890,1890,5474,2692,2692,2692,5857,5877,5615,5774,5658,5767,5871,5963,6395,6466,6596,6355,6369,6413,6737,3924,3917,6588,6786,6800,6838,6506,6520,6828,3960,2916,5358,7112,7349,3078,5418,3078,7225,7436,7369,7100,7052,5176,7434,7385,7313,3077,7005,6718,6787,6495,6414,6380,3057,6680,6272,6264,6283,6217,6150,3050,6174,6073,6037,5946,6173,6149,4592,3029,3032,6210,6184,4637,6202,6165,5807,5816,5799,3025,3027,5963,4622,6111,3024,3027,3029,4665,3032,3034,4694,3039,4734,3042,3043,3043,3044,3046,6209,6113,6254,5976,6146,6234,6212,6064,6032,6002,5842,5813,6094,6208,6304,6225,6122,6490,6591,6714,6698,6770,3056,7013,7073,6806,7133,6956,7361,7394,7468,7489,7161,7416,7556,7413,7552,7573,7593,7434,7190,7152,7373,7475,7586,7204,7211,7601,7608,7683,7688,7692,7662,7275,10011,7228,7583,7207,7596,7602,7614,7623,7579,7586,7592,7633,7638,7192,3078,7640,7695,7293,7363,7366,7377,7807,7775,7778,7781,7735,3078],"wx":[1,0,0,0,0,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,1,1,2,0,0,0,0,2,2,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,2,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,1,1,0,0,0,0,0,2,2,2,2,2,2,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,1,2,2,2,2,2,2,2,1,0,2,2,1,2,2,2,0,0,1,1,1,1,1,1,0,0,0,1,1,1,0,2,2,1,0,0,0,1,1,0,2,2,2,1,1,2,2,2,1,1,1,1,1,2,0,0,0,2,1,1,1,1,1,1,2,0,1,1,1,1,1,2,1,1,1,1,0,0,2,2,2,0,0,2,0,0,1,1,1,2,2,1,2,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,0,0,1,1,1,1,1,0,0,0,1,1,0,0,0,0,0,2,0,0,1,1,1,0,0,0,0,1,1,0,1,0,0,0,1,1,1,1,0,0,1,1,0,0,0,0,0,0,1,1,1,0,1,0,0,0,0,0,0,0,0,0,1,2,0,0,1,1,1,1,0,0,0,0,0,2],"thf":[[30,201],[37,352],[43,352],[51,352],[58,352],[45,45],[77,201],[90,352],[103,352],[116,352],[132,352],[147,352],[164,352],[177,352],[190,352],[200,352],[213,352],[225,352],[238,352],[251,352],[259,352],[269,352],[278,352],[288,352],[297,352],[307,352],[315,352],[324,352],[334,352],[334,352],[334,352],[332,352],[332,352],[332,352],[334,352],[201,201],[343,352],[343,352],[349,352],[352,352],[352,352],[352,352],[352,352],[352,352],[352,352],[201,201],[201,201],[201,201],[45,45],[360,360],[360,360],[360,360],[360,360],[108,108],[108,108],[360,360],[351,360],[351,360],[351,360],[351,360],[351,360],[234,234],[347,360],[349,360],[349,360],[349,360],[312,312],[353,480],[353,480],[351,480],[351,480],[312,312],[350,480],[144,144],[348,480],[348,480],[334,480],[312,312],[308,312],[309,312],[311,480],[313,480],[314,480],[480,480],[316,480],[317,480],[318,480],[319,480],[320,480],[318,480],[312,312],[312,312],[312,312],[312,312],[326,480],[312,312],[312,312],[226,480],[235,480],[235,480],[235,480],[237,480],[144,144],[144,144],[144,144],[144,144],[144,144],[144,144],[233,480],[233,384],[233,480],[206,480],[206,480],[206,480],[206,384],[206,480],[206,480],[206,480],[224,480],[238,480],[252,480],[257,480],[258,480],[260,480],[264,480],[266,480],[270,384],[274,384],[276,384],[278,384],[279,480],[281,384],[144,144],[144,144],[144,144],[144,144],[144,144],[144,144],[144,144],[301,384],[301,480],[144,144],[144,144],[307,384],[144,144],[144,144],[144,144],[313,480],[315,480],[317,384],[319,422],[321,422],[330,422],[340,422],[350,422],[360,528],[368,528],[377,528],[387,422],[389,422],[390,422],[389,528],[158,158],[158,158],[392,422],[393,528],[395,528],[396,528],[398,422],[399,422],[397,528],[158,158],[158,158],[158,158],[310,422],[311,422],[158,158],[158,158],[158,158],[319,422],[318,422],[318,422],[320,422],[321,422],[158,158],[326,528],[327,528],[328,528],[158,158],[319,422],[314,422],[305,422],[300,422],[295,422],[293,422],[158,158],[290,528],[285,422],[284,422],[285,422],[281,422],[277,422],[158,158],[278,422],[272,422],[269,422],[263,422],[258,528],[256,528],[158,158],[158,158],[158,158],[259,528],[257,528],[158,158],[256,528],[254,528],[252,422],[253,422],[251,422],[158,158],[158,158],[250,422],[158,158],[250,528],[158,158],[158,158],[158,158],[158,158],[158,158],[158,158],[158,158],[158,158],[158,158],[158,158],[158,158],[158,158],[158,158],[158,158],[274,422],[268,422],[265,422],[260,422],[258,422],[255,528],[253,528],[251,422],[249,422],[247,422],[248,422],[247,422],[245,528],[251,528],[257,528],[260,422],[265,422],[267,528],[272,528],[279,528],[278,528],[282,528],[158,158],[295,528],[298,528],[304,422],[311,422],[313,422],[315,528],[317,528],[322,528],[323,528],[327,422],[328,422],[327,528],[328,422],[327,528],[328,528],[329,528],[330,422],[328,422],[327,422],[328,422],[324,528],[331,528],[331,422],[331,422],[331,528],[331,528],[334,528],[334,528],[334,528],[333,528],[333,422],[415,422],[333,422],[331,528],[331,422],[331,528],[331,528],[331,528],[331,528],[330,528],[330,528],[330,528],[331,528],[331,528],[328,422],[158,158],[328,528],[330,528],[328,422],[331,422],[331,422],[331,422],[333,528],[331,528],[331,528],[331,528],[330,528],[158,158]],"gat":[[2,201],[5,352],[7,352],[18,352],[31,352],[35,201],[39,201],[44,352],[49,352],[55,352],[61,352],[68,352],[74,352],[81,352],[88,352],[94,352],[103,352],[110,352],[118,352],[127,352],[135,352],[145,352],[153,352],[164,352],[169,352],[175,352],[182,352],[188,352],[195,352],[195,352],[195,352],[195,352],[197,352],[197,352],[197,352],[197,201],[197,352],[199,352],[197,352],[197,352],[197,352],[197,352],[199,352],[199,352],[199,352],[199,352],[201,201],[199,201],[45,45],[199,360],[199,360],[199,360],[199,360],[108,108],[108,108],[199,360],[304,360],[304,360],[304,360],[304,360],[304,360],[234,234],[305,360],[305,360],[305,360],[305,360],[234,234],[309,360],[309,360],[308,360],[308,360],[234,234],[309,360],[108,108],[308,360],[306,360],[310,360],[310,360],[234,234],[234,234],[314,360],[314,360],[314,360],[360,360],[314,360],[318,360],[316,360],[316,360],[316,360],[314,360],[234,234],[234,234],[317,360],[234,234],[312,360],[234,234],[313,360],[312,360],[312,360],[312,360],[312,360],[313,360],[108,108],[108,108],[288,288],[108,108],[288,288],[288,288],[313,360],[288,288],[313,360],[357,360],[355,360],[355,360],[288,288],[357,360],[355,360],[355,360],[358,360],[358,360],[359,360],[359,360],[360,360],[360,360],[360,360],[360,360],[288,288],[288,288],[288,288],[288,288],[360,360],[288,288],[108,108],[288,288],[288,288],[108,108],[108,108],[288,288],[108,108],[360,360],[360,360],[108,108],[108,108],[176,288],[108,108],[108,108],[108,108],[179,360],[179,360],[180,288],[180,360],[181,288],[182,288],[183,288],[183,288],[184,360],[183,360],[185,360],[185,288],[185,288],[187,288],[186,360],[186,288],[185,288],[187,360],[186,360],[186,360],[188,360],[188,288],[188,288],[187,360],[188,288],[108,108],[236,288],[238,288],[238,360],[108,108],[239,288],[108,108],[239,288],[239,360],[236,360],[233,288],[230,288],[228,288],[229,360],[226,360],[223,360],[108,108],[220,360],[219,288],[217,360],[215,288],[213,288],[213,288],[108,108],[212,360],[211,288],[211,288],[212,288],[210,288],[208,288],[108,108],[209,288],[207,288],[207,288],[205,288],[204,360],[204,360],[202,288],[108,108],[108,108],[205,360],[205,360],[204,288],[206,360],[205,360],[203,288],[203,288],[204,288],[108,108],[108,108],[203,360],[203,288],[204,360],[108,108],[108,108],[108,108],[205,288],[108,108],[108,108],[207,288],[108,108],[209,288],[108,108],[108,108],[108,108],[108,108],[108,108],[212,288],[210,288],[209,360],[208,288],[208,360],[208,360],[208,360],[208,360],[207,360],[207,360],[208,288],[207,288],[207,360],[210,360],[211,360],[212,360],[213,288],[214,360],[217,360],[219,360],[219,360],[220,360],[108,108],[225,360],[227,360],[229,288],[230,360],[231,288],[232,360],[232,360],[234,360],[234,360],[234,288],[235,360],[235,360],[235,360],[235,360],[235,360],[235,360],[235,360],[235,288],[233,288],[233,360],[232,360],[234,360],[234,288],[234,288],[234,360],[235,360],[237,360],[237,360],[237,360],[236,360],[236,288],[343,360],[233,288],[232,360],[233,288],[233,360],[233,360],[234,360],[235,360],[233,360],[234,360],[234,360],[235,360],[235,360],[234,288],[108,108],[237,360],[239,360],[239,288],[241,288],[241,288],[241,288],[242,360],[241,360],[241,360],[242,360],[240,360],[108,108]],"teg":[[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[200,326],[122,122],[122,122],[122,122],[203,408],[203,408],[204,326],[204,408],[205,326],[206,326],[207,326],[207,326],[208,408],[208,408],[210,408],[210,326],[210,326],[212,326],[210,408],[210,326],[210,326],[212,408],[211,408],[211,408],[213,408],[213,326],[213,326],[212,408],[213,326],[122,122],[315,384],[317,384],[317,480],[144,144],[319,384],[144,144],[319,384],[318,480],[314,480],[311,384],[307,384],[305,384],[305,480],[302,480],[297,480],[144,144],[293,480],[292,384],[289,480],[287,384],[284,384],[284,384],[144,144],[283,480],[281,384],[282,384],[282,384],[281,384],[278,384],[144,144],[279,384],[276,384],[276,384],[274,384],[271,480],[272,480],[269,384],[144,144],[144,144],[273,480],[273,480],[272,384],[274,480],[273,480],[271,384],[271,384],[272,384],[144,144],[144,144],[270,480],[271,384],[271,480],[144,144],[144,144],[144,144],[273,384],[144,144],[144,144],[276,384],[144,144],[279,384],[144,144],[144,144],[144,144],[144,144],[144,144],[283,384],[280,384],[279,480],[277,384],[278,480],[277,480],[277,480],[277,480],[276,480],[276,480],[277,384],[276,384],[276,480],[280,480],[281,480],[282,480],[285,384],[286,480],[289,480],[292,480],[292,480],[293,480],[144,144],[300,480],[303,480],[305,384],[307,480],[308,384],[309,480],[310,480],[312,480],[311,480],[312,384],[314,480],[313,480],[314,480],[313,480],[313,480],[314,480],[313,480],[313,384],[311,384],[310,480],[310,480],[313,480],[312,384],[312,384],[313,480],[313,480],[316,480],[316,480],[316,480],[315,480],[315,384],[457,480],[311,384],[310,480],[310,384],[311,480],[311,480],[313,480],[313,480],[311,480],[311,480],[312,480],[313,480],[314,480],[312,384],[144,144],[316,480],[318,480],[318,384],[321,384],[321,384],[321,384],[323,480],[322,480],[322,480],[322,480],[320,480],[144,144]],"cum":1570421,"hist":1576366,"million":"1949-02-18","n":320,"flights":[32,41,51,68,89,80,116,134,152,171,192,215,238,258,277,295,315,335,356,378,394,414,432,452,467,482,497,512,529,529,529,527,529,529,531,398,540,542,546,549,549,549,551,551,551,400,402,400,90,559,559,559,559,216,216,559,655,655,655,655,655,468,653,654,654,654,546,662,662,660,660,546,659,252,656,654,644,622,542,543,625,627,628,840,631,635,635,636,637,632,546,546,629,546,638,546,625,538,547,547,547,550,252,252,432,252,432,432,547,521,547,564,562,562,494,564,562,562,582,596,610,615,618,620,624,626,558,562,564,566,639,569,252,432,432,252,252,432,252,661,661,252,252,683,374,374,374,694,696,700,702,706,718,730,739,751,758,772,782,783,789,786,555,554,791,791,792,797,799,800,797,560,389,709,864,866,410,716,410,877,875,869,864,859,691,860,855,847,410,832,825,811,801,793,789,410,785,778,777,779,772,764,410,766,756,752,742,733,731,630,410,410,737,735,635,736,732,726,727,726,410,410,723,632,725,410,410,410,637,410,410,641,410,646,410,410,410,410,410,769,759,754,744,744,740,738,736,733,730,733,730,727,740,749,754,763,767,778,790,789,796,410,821,828,838,849,853,856,860,867,868,873,877,875,877,874,876,878,878,876,871,871,866,878,877,878,878,879,887,887,888,885,883,1214,877,874,874,875,876,878,879,874,875,875,879,880,874,410,881,887,885,893,893,894,897,894,895,895,890,410]};
+// data/history.js: USAFE p. 12 monthly totals (days = days of the airlift in the month), sourced single days,
+// the requirement (4,500 t a day, 5,620 from 1 January 1949).
+const MONTHLY = [['1948-06', 5, 1404.0], ['1948-07', 31, 69005.7], ['1948-08', 31, 119002.6], ['1948-09', 30, 139622.9], ['1948-10', 31, 147580.8], ['1948-11', 30, 113587.9], ['1948-12', 31, 141438.1], ['1949-01', 31, 171959.2], ['1949-02', 28, 152240.7], ['1949-03', 31, 196160.7], ['1949-04', 30, 235363.7], ['1949-05', 31, 250818.5]];
+const ANCHORS = [['1948-06-28', 268], ['1948-07-31', 3156.5], ['1948-08-12', 4724], ['1948-09-18', 6988.7, 'Air Force Day'], ['1948-12-31', 6127.8], ['1949-02-26', 8000], ['1949-04-16', 12941, 'Easter Parade']];
+const T0 = Date.UTC(1948, 5, 26), dateOf = i => new Date(T0 + i * 864e5);
+const dayOf = s => Math.round((Date.parse(s + 'T00:00:00Z') - T0) / 864e5);
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const fmtDate = i => { const d = dateOf(i); return `${d.getUTCDate()} ${MON[d.getUTCMonth()]} ${d.getUTCFullYear()}`; };
+const fmt = v => Math.round(v).toLocaleString('en-US');
+const reqOn = i => (i >= dayOf('1949-01-01') ? 5620 : 4500);
+const N = D.n; // 320 days: 26 Jun 1948 to 11 May 1949
+const cumYou = D.cumD; // running total, as the page's "Delivered so far"
+const HIST = []; // historical daily average for each game day, from the monthly table
+for (let i = 0; i < N; i++) { const d = dateOf(i), m = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`; const r = MONTHLY.find(x => x[0] === m); HIST.push(r[2] / r[1]); }
+const histCum = []; { let c = 0; HIST.forEach(v => { c += v; histCum.push(c); }); }
+
+// ---- Scene --------------------------------------------------------------------------------------------------------
+const cam = el('g', {}, svg);
+const scene = el('g', {}, cam);
+const T = (x, y, cls, s, a = {}, p = scene) => { const n = el('text', { x, y, class: cls, ...a }, p); if (s != null) n.textContent = s; return n; };
+const op = (n, v) => n.setAttribute('opacity', clamp(v).toFixed(3));
+
+// Corridor schematic (tools/berlin-airlift/js/map.js, same paths, scaled): not to scale.
+const map = el('g', { transform: 'translate(150,125) scale(1.25)' }, scene);
+el('rect', { x: 0, y: 0, width: 640, height: 330, rx: 6, class: 'ba-soviet' }, map);
+T(300, 318, 'ba-zt', 'Soviet zone', {}, map);
+el('rect', { x: 8, y: 8, width: 228, height: 150, rx: 4, class: 'ba-zone' }, map);
+el('rect', { x: 8, y: 178, width: 228, height: 144, rx: 4, class: 'ba-zone' }, map);
+T(18, 28, 'ba-zt', 'British zone', {}, map);
+T(18, 312, 'ba-zt', 'U.S. zone', {}, map);
+const PATHS = { north: 'M 150 78 C 280 70 380 88 468 128', south: 'M 142 262 C 300 262 430 238 530 208', ret: 'M 448 168 C 380 168 300 168 236 168' };
+const lines = {};
+for (const [k, d] of Object.entries(PATHS)) { el('path', { d, class: 'ba-cor' }, map); lines[k] = el('path', { d, class: 'ba-cl' }, map); }
+T(236, 52, 'ba-ct', 'Northern corridor, inbound', { style: 'font-size:12px' }, map);
+T(232, 152, 'ba-ct', 'Central corridor, return', { style: 'font-size:11px;letter-spacing:0' }, map);
+T(250, 284, 'ba-ct', 'Southern corridor, inbound', { style: 'font-size:12px' }, map);
+el('circle', { cx: 150, cy: 78, r: 6, class: 'ba-base' }, map); ['Wunstorf, Fassberg,', 'Celle, Lübeck and', 'other British bases'].forEach((l, j) => T(140, 82 + j * 15 - 12, 'ba-bt', l, { 'text-anchor': 'end', style: 'font-size:12px' }, map));
+el('circle', { cx: 142, cy: 262, r: 6, class: 'ba-base' }, map); T(132, 258, 'ba-bt', 'Rhein-Main', { 'text-anchor': 'end', style: 'font-size:12px' }, map); T(132, 273, 'ba-bt', 'Wiesbaden', { 'text-anchor': 'end', style: 'font-size:12px' }, map);
+el('circle', { cx: 518, cy: 165, r: 92, class: 'ba-berlin' }, map);
+T(518, 62, 'ba-zt', 'Berlin', { 'text-anchor': 'middle' }, map);
+const FIELDS = [{ k: 'teg', name: 'Tegel', x: 520, y: 112, top: true }, { k: 'gat', name: 'Gatow', x: 468, y: 176 }, { k: 'thf', name: 'Tempelhof', x: 566, y: 204 }];
+const fields = FIELDS.map(f => {
+  const g = el('g', {}, map);
+  el('circle', { cx: f.x, cy: f.y, r: 7, class: 'ba-base' }, g);
+  T(f.x, f.top ? f.y - 14 : f.y + 24, 'ba-ft', f.name, { 'text-anchor': 'middle', style: 'font-size:17px' }, g);
+  const by = f.top ? f.y + 11 : f.y + 30;
+  el('rect', { x: f.x - 32, y: by, width: 64, height: 6, rx: 3, class: 'ba-slot' }, g);
+  const use = el('rect', { x: f.x - 32, y: by, width: 0, height: 6, rx: 3, class: 'ba-use' }, g);
+  const txt = T(f.x, by + 18, 'ba-fs', '', { 'text-anchor': 'middle', style: 'font-size:11px' }, g);
+  return { ...f, g, use, txt };
+});
+const wxT = T(456, 300, 'ba-ct', '', {}, map);
+// Aircraft on the corridors: dots moving along the paths, their number set by the day's landings.
+const planes = [];
+for (const k of ['north', 'south', 'ret']) for (let i = 0; i < 16; i++) planes.push({ k, i, n: el('circle', { r: 3.4, fill: k === 'ret' ? 'var(--muted)' : 'var(--amber)' }, map) });
+
+// Status card (the page's stat card).
+const card = el('g', {}, scene);
+el('rect', { x: 990, y: 120, width: 540, height: 430, rx: 6, class: 'ba-card' }, card);
+const weekT = T(1016, 156, 'ba-eyebrow', '', {}, card);
+const dateT = T(1016, 216, 'ba-date', '', {}, card);
+const subT = T(1016, 246, 'ba-ks', '', {}, card);
+const K = [['Last 7 days', 'tons a day', 1016, 310], ['Requirement', 'tons a day', 1280, 310], ['Delivered so far', '', 1016, 410], ['History, same day', '', 1280, 410]].map(([l, s, x, y]) => {
+  T(x, y, 'ba-kl', l, {}, card); const v = T(x, y + 40, 'ba-kv', '', {}, card); const sub = T(x, y + 62, 'ba-ks', s, {}, card); return { v, sub };
+});
+const btnFly = el('g', { transform: 'translate(1016,490)' }, card);
+const flyBg = el('rect', { width: 170, height: 40, rx: 20, fill: 'var(--amber)' }, btnFly);
+T(85, 26, 'ba-btn', 'Fly 1 week', { 'text-anchor': 'middle', style: 'fill:var(--ink)' }, btnFly);
+const auto = el('g', { transform: 'translate(1210,490)' }, card);
+const swBg = el('rect', { width: 48, height: 26, rx: 13, y: 7, fill: 'var(--line)' }, auto);
+const swK = el('circle', { cx: 13, cy: 20, r: 10, fill: 'var(--paper)' }, auto);
+T(60, 26, 'ba-btn', 'Autopilot', { style: 'fill:var(--paper)' }, auto);
+const cursor = el('path', { d: 'M0,0 L0,24 L7,18 L12,29 L16,27 L11,16 L20,16 Z', fill: 'var(--paper)', stroke: 'var(--ink)', 'stroke-width': 1.5 }, svg);
+
+// Daily tons chart: you (amber), history monthly average (dashed), sourced single days (dots), requirement (red).
+const chart = el('g', {}, scene);
+const CX0 = 150, CX1 = 1510, CY0 = 610, CY1 = 850, YM = 13000;
+const cx = i => CX0 + (CX1 - CX0) * i / (N - 1), cy = v => CY1 - (CY1 - CY0) * v / YM;
+for (const v of [0, 5000, 10000]) { el('line', { x1: CX0, x2: CX1, y1: cy(v), y2: cy(v), class: 'ba-grid' }, chart); T(CX0 - 10, cy(v) + 4, 'ba-ax', fmt(v), { 'text-anchor': 'end' }, chart); }
+for (let m = 0; m < 12; m++) { const d = new Date(Date.UTC(1948, 6 + m, 1)), i = Math.round((d - T0) / 864e5); if (i >= N) break; T(cx(i), CY1 + 20, 'ba-ax', MON[d.getUTCMonth()], { 'text-anchor': 'middle' }, chart); }
+T(CX0 - 10, CY0 - 14, 'ba-ax', 'Tons a day', { 'text-anchor': 'start', x: CX0 }, chart);
+const reqL = el('path', { class: 'ba-req' }, chart);
+const histL = el('path', { class: 'ba-hist' }, chart);
+const youL = el('path', { class: 'ba-you', filter: 'url(#kit-glow)' }, chart);
+const anc = ANCHORS.map(([d, v, lab]) => { const i = dayOf(d), g = el('g', {}, chart); el('circle', { cx: cx(i), cy: cy(v), r: 5.5, class: 'ba-anc' }, g); if (lab) T(cx(i) - 14, cy(v) + (v > 10000 ? 5 : -10), 'ba-call', `${lab} · ${fmt(v)} t`, { 'text-anchor': 'end' }, g); return { i, g }; });
+const leg = el('g', { transform: `translate(${CX0 + 150},${CY0 - 14})` }, chart);
+[['You, each day', 'var(--amber)', ''], ['History, monthly average', 'var(--paper)', '6 4'], ['Requirement', 'var(--red)', '3 4']].forEach(([s, c, da], j) => {
+  const x = [0, 200, 480][j]; el('line', { x1: x, x2: x + 26, y1: -4, y2: -4, stroke: c, 'stroke-width': 2, 'stroke-dasharray': da }, leg); T(x + 34, 0, 'ba-leg', s, {}, leg);
+});
+
+// ---- Hook and payoff ------------------------------------------------------------------------------------------------
+const hook = el('g', {}, svg);
+const H1 = T(800, 440, 't-hook', 'Every land route into West Berlin is closed.', { 'text-anchor': 'middle' }, hook);
+const H2 = el('text', { x: 800, y: 540, 'text-anchor': 'middle', class: 't-hook', style: 'font-size:78px' }, hook);
+const hot = el('tspan', { class: 'hot' }, H2); hot.textContent = 'Fly in 4,500 tons a day.';
+const pay = el('g', {}, svg);
+T(800, 262, 't-kicker', 'Delivered by 11 May 1949', { 'text-anchor': 'middle' }, pay);
+const PB = [['Autopilot: flown as the Allies did', D.cum, 'var(--amber)'], ['History (USAFE monthly totals)', D.hist, 'var(--paper)']].map(([l, v, c], i) => {
+  const g = el('g', { transform: `translate(0,${360 + i * 140})` }, pay);
+  T(330, -30, 'ba-pl', l, {}, g);
+  const bar = el('rect', { x: 330, y: 0, height: 26, rx: 3, fill: c, opacity: i ? .6 : 1, filter: i ? null : 'url(#kit-glow)' }, g);
+  const num = T(1270, 24, 'ba-big', '', { 'text-anchor': 'end', style: `fill:${c};font-size:48px` }, g);
+  return { g, bar, num, v };
+});
+const payNote = T(800, 690, 'ba-pt', null, { 'text-anchor': 'middle' }, pay);
+payNote.appendChild(document.createTextNode('The millionth ton lands on '));
+const pn = el('tspan', { style: 'fill:var(--amber);font-style:italic' }, payNote); pn.textContent = '18 February 1949';
+payNote.appendChild(document.createTextNode(', as it did in history.'));
+T(800, 740, 'ba-ks', 'Throughput model, weather and politics are notional; tonnage history from the USAFE summary', { 'text-anchor': 'middle', style: 'font-size:14px' }, pay);
+
+const cap = captions(svg, [
+  [3.3, 5.4, 'Three corridors, three airfields, one city to supply'],
+  [5.5, 8.2, 'Fly it day by day: aircraft, crews, runways, cargo'],
+  [8.3, 10.9, 'In November, fog made half the days almost unflyable'],
+  [11.1, 14.2, 'Then measure your tonnage against the real airlift'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Airlift: Berlin 1948–49', line: 'Keep West Berlin fed and warm by air, day by day.' });
+
+// ---- Timeline: which game day is showing at time t ---------------------------------------------------------------------
+const EASTER = dayOf('1949-04-16'); // the page anchors the Easter Parade on 16 April; the autopilot's record day is 15 April
+function dayAt(t) {
+  if (t < 4.35) return 0;
+  if (t < 5.1) return lerp(0, 7, ease.inOut(seg(t, 4.35, 5.05)));                   // "Fly 1 week"
+  if (t < 9.9) return lerp(7, EASTER, ease.inOut(seg(t, 5.55, 9.9)));               // Autopilot on
+  if (t < 10.3) return EASTER;
+  return lerp(EASTER, N - 1, ease.out(seg(t, 10.3, 10.85)));
+}
+const pathTo = (arr, upto, f = v => v) => { let s = ''; for (let i = 0; i <= upto; i++) s += (i ? 'L' : 'M') + cx(i).toFixed(1) + ',' + cy(f(arr[i], i)).toFixed(1); return s; };
+
+function frame(t) {
+  const z = lerp(1, 1.04, ease.inOut(seg(t, 3, 10.9)));
+  cam.setAttribute('transform', `translate(800,500) scale(${z.toFixed(4)}) translate(-800,-500)`);
+  const vis = lerp(.2 * ease.out(seg(t, 0, 1)), 1, ease.inOut(seg(t, 2.8, 3.5)));
+  op(scene, vis * lerp(1, 0, ease.inOut(seg(t, 10.95, 11.4))) * (1 - seg(t, 14.1, 14.8)));
+
+  // Hook.
+  const h1 = ease.out(seg(t, .25, .95));
+  op(H1, h1 * (1 - seg(t, 2.6, 3.1)));
+  H1.setAttribute('transform', `translate(0,${((1 - h1) * 22 - seg(t, 2.6, 3.2) * 18).toFixed(1)})`);
+  op(H2, ease.out(seg(t, .9, 1.6)) * (1 - seg(t, 2.7, 3.2)));
+  H2.setAttribute('transform', `translate(800,520) scale(${lerp(.93, 1, ease.back(seg(t, .9, 1.7))).toFixed(3)}) translate(-800,-520) translate(0,${(-seg(t, 2.7, 3.3) * 18).toFixed(1)})`);
+  hot.setAttribute('filter', t > 1.5 && t < 3 ? 'url(#kit-glow)' : '');
+
+  const dd = dayAt(t), i = Math.floor(dd);
+  // Status card.
+  weekT.textContent = `Week ${Math.min(46, Math.floor(i / 7) + 1)} of 46`;
+  dateT.textContent = fmtDate(i);
+  subT.textContent = `Blockade day ${i + 1}`;
+  const last7 = i > 0 ? D.tons.slice(Math.max(0, i - 6), i + 1).reduce((a, b) => a + b, 0) / Math.min(7, i + 1) : 0;
+  K[0].v.textContent = t < 4.4 ? '–' : fmt(last7);
+  K[0].v.style.fill = t >= 4.4 && last7 >= reqOn(i) ? 'var(--green)' : '';
+  K[1].v.textContent = fmt(reqOn(i));
+  K[2].v.textContent = t < 4.4 ? '0' : fmt(cumYou[i]); K[2].sub.textContent = 'tons';
+  K[3].v.textContent = t < 4.4 ? '0' : fmt(histCum[i]); K[3].sub.textContent = 'tons';
+  op(card, ease.out(seg(t, 3.2, 3.7)));
+  card.setAttribute('transform', `translate(${((1 - ease.out(seg(t, 3.2, 3.8))) * 30).toFixed(1)},0)`);
+  op(chart, ease.out(seg(t, 3.4, 3.9)));
+
+  // Cursor: clicks "Fly 1 week", then switches on Autopilot.
+  const c1 = ease.inOut(seg(t, 3.6, 4.2)), c2 = ease.inOut(seg(t, 4.6, 5.25));
+  const cxp = lerp(lerp(1400, 1100, c1), 1234, c2), cyp = lerp(lerp(700, 512, c1), 512, c2);
+  const press = Math.sin(Math.PI * seg(t, 4.2, 4.38)) + Math.sin(Math.PI * seg(t, 5.3, 5.48));
+  cursor.setAttribute('transform', `translate(${cxp.toFixed(1)},${cyp.toFixed(1)}) scale(${(1 - .12 * press).toFixed(3)})`);
+  op(cursor, seg(t, 3.5, 3.7) * (1 - seg(t, 5.9, 6.2)) * (1 - seg(t, 10.9, 11)));
+  flyBg.setAttribute('filter', t > 4.2 && t < 5.1 ? 'url(#kit-glow)' : '');
+  const on = ease.out(seg(t, 5.3, 5.5));
+  swBg.setAttribute('fill', on > .5 ? 'var(--amber)' : 'var(--line)');
+  swK.setAttribute('cx', (13 + 22 * on).toFixed(1));
+
+  // Map: landings against slots at each airfield, the day's weather in Berlin, aircraft flow.
+  for (const f of fields) {
+    const [land, slots] = D[f.k][i];
+    f.use.setAttribute('width', (slots ? 64 * Math.min(1, land / slots) : 0).toFixed(1));
+    f.use.setAttribute('filter', slots && land / slots > .97 ? 'url(#kit-glow)' : '');
+    f.txt.textContent = slots ? `${fmt(land)} / ${fmt(slots)}` : (f.k === 'teg' ? (i < dayOf('1948-08-05') ? 'not yet begun' : 'under construction') : '');
+    op(f.g, f.k === 'teg' && !slots ? .5 : 1);
+  }
+  wxT.textContent = t < 4.4 ? '' : `Berlin: ${['Good', 'Cloud', 'Fog'][D.wx[i]]}`;
+  wxT.style.fill = D.wx[i] === 2 && t >= 4.4 ? 'var(--red)' : '';
+  const flights = t < 4.3 ? 0 : D.flights[i];
+  const shown = Math.min(16, Math.round(flights / 70));
+  for (const pl of planes) {
+    const L = lines[pl.k].getTotalLength(), u = ((t * (pl.k === 'ret' ? .16 : .22) + pl.i / 16) % 1);
+    const pt = lines[pl.k].getPointAtLength(u * L);
+    pl.n.setAttribute('cx', pt.x.toFixed(1)); pl.n.setAttribute('cy', pt.y.toFixed(1));
+    const vis2 = pl.i < (pl.k === 'ret' ? shown : Math.ceil(shown * (pl.k === 'south' ? .75 : .6)));
+    op(pl.n, vis2 ? Math.min(1, u * 8, (1 - u) * 8) : 0);
+  }
+
+  // Chart: requirement and history up to the current day, your line drawn day by day.
+  if (t >= 4.3) {
+    youL.setAttribute('d', pathTo(D.tons, i));
+    histL.setAttribute('d', pathTo(HIST, i));
+    reqL.setAttribute('d', pathTo(HIST, i, (_, j) => reqOn(j)));
+  } else { youL.setAttribute('d', ''); histL.setAttribute('d', ''); reqL.setAttribute('d', ''); }
+  anc.forEach(a => op(a.g, t >= 4.3 && i >= a.i ? 1 : 0));
+  anc[6].g.setAttribute('filter', t > 9.9 && t < 10.9 ? 'url(#kit-glow)' : '');
+
+  // Payoff: season total against history, and the millionth ton.
+  const p = ease.out(seg(t, 11.1, 11.6));
+  op(pay, p * (1 - seg(t, 14.1, 14.6)));
+  PB.forEach((b, j) => {
+    const u = ease.out(seg(t, 11.3 + j * .35, 12.2 + j * .35));
+    b.bar.setAttribute('width', (560 * b.v / 1.6e6 * u).toFixed(1));
+    b.num.textContent = fmt(b.v * u);
+    op(b.g, seg(t, 11.2 + j * .35, 11.5 + j * .35));
+  });
+  op(payNote, ease.out(seg(t, 12.6, 13.1)));
+
+  cap(t); end(t, 14.2, 17.4);
+}
+run({ duration: 17.4, poster: 9.95, frame });
+</script>
+</body></html>

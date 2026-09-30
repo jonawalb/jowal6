@@ -5,6 +5,7 @@ import { drawTimeline } from './timeline.js';
 import { renderList, renderDetail } from './detail.js';
 import { createTour } from './tour.js';
 import { CODING_NOTES } from '../data/coding.js';
+import { chart, pop, stroke, grow, rise, count, onChange, ring } from './fx.js';
 
 const $ = id => document.getElementById(id);
 const S = { range: 'all', from: RANGES[0].from, to: RANGES[0].to, types: [...TYPE_KEYS], min: 0, west: true, battle: true, q: '', sel: null };
@@ -79,7 +80,27 @@ function update() {
   $('count').textContent = `${rus} Russian signal${rus === 1 ? '' : 's'}, ${list.filter(e => e.group === 'west').length} responses, ${list.filter(e => e.group === 'battle').length} battlefield moments in view`;
   const max = Math.max(1, ...Object.values(T.lv));
   $('lvdist').innerHTML = LEVELS.map(l => `<li><span>${l.v} ${l.n}</span><span class="lvd-b"><i style="width:${(T.lv[l.v] / max * 100).toFixed(1)}%"></i></span><span class="num">${T.lv[l.v]}</span></li>`).join('');
+  animate();
   writeHash();
+}
+// Motion (see fx.js). Runs after each render and never changes what was drawn.
+function animate() {
+  const tl = $('tl');
+  const view = [S.range, S.types.join('.'), S.min, S.west, S.battle, S.q].join('|');
+  onChange('view', view, first => {
+    chart(tl, f => pop(tl.querySelectorAll('.mk'), { first: f, spread: f ? 520 : 200 }), { gap: 0 });
+    rise($('list').children, { first });
+    grow($('lvdist').querySelectorAll('.lvd-b i'), { first, axis: 'x' });
+  });
+  count($('count'));
+  onChange('sel', S.sel, () => {
+    if (!S.sel) return;
+    stroke(tl.querySelector('.selline'), { ms: 360 });
+    const m = tl.querySelector('.mk.sel');
+    if (m) { const b = m.getBBox(); ring(tl, b.x + b.width / 2, b.y + b.height / 2, { color: getComputedStyle(m).fill, r: 26, ms: 700 }); }
+    rise($('detail').children, { stagger: 35 });
+    grow($('detail').querySelectorAll('.lvbar i.on'), { axis: 'x', stagger: 200, ms: 260 });
+  });
 }
 function pick(id) {
   S.sel = S.sel === id ? null : id;

@@ -6,6 +6,7 @@ import { drawTimeline, drawRate } from './charts.js';
 import { renderSalvos, renderClock, renderDetail } from './panels.js';
 import { createTour } from './tour.js';
 import { GROUP_INFO } from '../data/groups.js';
+import { chart, grow, stroke, fade, rise, count, flashIfChanged, onChange } from './fx.js';
 
 const $ = id => document.getElementById(id);
 const RES = [['day', 'Day'], ['week', 'Week'], ['month', 'Month']];
@@ -104,7 +105,22 @@ function update() {
   renderClock($('clock'), clockGrid(S), $('clock-note'));
   renderStatus(totals(S));
   renderDetail($('detail'), S, S.sel);
+  animate();
   writeHash();
+}
+// Motion (see fx.js). Runs after each render and never changes what was drawn.
+function animate() {
+  const tl = $('tl'), rate = $('rate');
+  chart(tl, first => grow(tl.querySelector('.bar')?.parentNode, { first }));
+  chart(rate, first => { stroke(rate.querySelectorAll('.rline'), { first }); fade(rate.querySelectorAll('.rdot'), { first, delay: first ? 380 : 160, max: 400 }); });
+  const view = [S.range, S.res, S.metric, S.lost, S.groups.join('.')].join('|');
+  onChange('view', view, first => {
+    rise($('salvos').children, { first });
+    fade($('clock').querySelectorAll('.ck-row'), { first, stagger: 40 });
+    grow($('clock').querySelectorAll('.wd-b i'), { first, axis: 'x' });
+  });
+  count($('st-b')); count($('st-s')); flashIfChanged($('summary'));
+  onChange('sel', S.sel && view + S.sel, () => rise($('detail').children, { stagger: 40 }));
 }
 function pick(k, keepFocus) {
   S.sel = S.sel === k && !keepFocus ? null : k;

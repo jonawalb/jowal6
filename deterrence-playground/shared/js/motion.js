@@ -29,7 +29,7 @@ export function countUp(el, to, { from, ms = 700, fmt = n => Math.round(n).toLoc
   el.dataset.mv = to;
   if (reduced() || start === to) { el.textContent = fmt(to); return; }
   const t0 = performance.now();
-  const step = now => { const u = Math.min(1, (now - t0) / ms); el.textContent = fmt(start + (to - start) * easeOut(u)); if (u < 1) requestAnimationFrame(step); };
+  const step = now => { const u = Math.min(1, Math.max(0, (now - t0) / ms)); el.textContent = fmt(start + (to - start) * easeOut(u)); if (u < 1) requestAnimationFrame(step); };
   requestAnimationFrame(step);
 }
 
@@ -59,7 +59,7 @@ export const flash = el => once(el, 'm-flash');
 function svgEl(tag, attrs, parent) { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); parent.appendChild(n); return n; }
 function anim(ms, frame, done) {
   const t0 = performance.now();
-  const step = now => { const u = Math.min(1, (now - t0) / ms); frame(u); if (u < 1) requestAnimationFrame(step); else done?.(); };
+  const step = now => { const u = Math.min(1, Math.max(0, (now - t0) / ms)); frame(u); if (u < 1) requestAnimationFrame(step); else done?.(); };
   requestAnimationFrame(step);
 }
 

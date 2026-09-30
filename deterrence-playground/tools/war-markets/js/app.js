@@ -4,6 +4,7 @@ import { BUILT, DATA_LAST, CASES, CASE_BY, MARKETS, caseWindow, caseEvents } fro
 import { createChart } from './chart.js';
 import { panelHtml, listHtml, focusHtml, drawScore } from './panel.js';
 import { createTour } from './tour.js';
+import { chart as motion, stroke, fade, pop, rise, ring, onChange } from './fx.js';
 
 const S = { case: 'strike', focus: '1198479', hidden: new Set() };
 
@@ -46,7 +47,30 @@ function render() {
   const sc = drawScore($('score'), $('scorewrap'), S, (k, id) => { setCase(k, id); render(); $('chartcard').scrollIntoView({ block: 'nearest' }); });
   $('score-text').innerHTML = `<b>${sc.n} resolved contracts.</b> ${sc.yes} happened; ${sc.yesLow} of those were priced under 50¢ a week before. ` +
     `${sc.n - sc.yes} did not happen; ${sc.noHigh} of those were priced at 50¢ or more a week before. Mean Brier score a week out: ${sc.mean.toFixed(3)} (0 is perfect; always saying 50¢ scores 0.25).`;
+  animate();
   writeHash();
+}
+
+// Motion (see fx.js). Runs after each render and never changes what was drawn.
+function animate() {
+  const c = $('chart'), sc = $('score');
+  let caseMoved = false;
+  onChange('case', S.case, first => {
+    caseMoved = !first;
+    motion(c, f => {
+      stroke(c.querySelectorAll('.price'), { first: f });
+      fade(c.querySelectorAll('.ev-line, .deadline'), { first: f, delay: f ? 150 : 60 });
+      pop(c.querySelectorAll('.ev-dot, .settle circle'), { first: f, delay: f ? 380 : 180 });
+    }, { gap: 0 });
+    rise(document.querySelectorAll('#mk-list .mk-row'), { first });
+  });
+  onChange('focus', S.case + '|' + S.focus, first => {
+    if (!first && !caseMoved) stroke(c.querySelector('.price.focus'), { ms: 420 });
+    if (!first) rise($('focus').children, { stagger: 40 });
+    const d = sc.querySelector('.sc-dot.focus circle');
+    if (!first && d) ring(sc, +d.getAttribute('cx'), +d.getAttribute('cy'), { r: 20 });
+  });
+  motion(sc, f => { if (f) pop(sc.querySelectorAll('.sc-dot circle'), { spread: 500 }); });
 }
 
 document.querySelectorAll('#cases button').forEach(b => b.onclick = () => { setCase(b.dataset.k); render(); });

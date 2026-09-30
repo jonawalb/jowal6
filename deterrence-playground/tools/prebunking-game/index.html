@@ -4,8 +4,8 @@
 <script src="../../shared/js/gate.js"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Prebunking Game | Interactive Deterrence</title>
-<meta name="description" content="A five-minute game that teaches six manipulation techniques with invented posts, then checks whether you spot them better, next to what published studies of the Bad News game found.">
+<title>Borrowed Feelings | Interactive Deterrence</title>
+<meta name="description" content="A prebunking game about the weight you give evidence. Judge invented reports while a soundtrack, a crowd or your own body pulls at you, see the weight you gave each report, then practice naming a feeling and tracing its source.">
 <link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,78 +16,129 @@
 <body>
 <header id="tsm-head"></header>
 
+<div class="toolbar-top">
+  <p class="lede">Most prebunking games teach you to spot tricks in a message. Here every report is honest and its strength is a number. The pull comes from outside the message, and the game measures how far it moves the weight you give the evidence.</p>
+  <div class="actions">
+    <button type="button" class="btn solid" id="start-tour">Start the walkthrough</button>
+    <button type="button" class="btn" id="copy-link">Copy link</button>
+    <button type="button" class="btn" id="restart">Restart</button>
+  </div>
+</div>
+
 <main class="layout">
   <div class="stage" id="stage">
-    <p class="caveat"><b>Every post in this game is invented.</b> The accounts, towns and events do not exist. The game follows the design of the published <i>Bad News</i> studies but is a separate, short game that has not been tested or validated.</p>
+    <p class="caveat"><b>Everything in the game is invented:</b> the town, the reports, the comments and the headlines. It is a teaching and research prototype with no efficacy data.</p>
     <div id="screen"></div>
   </div>
 
-  <aside class="panel" aria-label="Game status">
+  <aside class="panel" id="panel" aria-label="Progress and settings">
     <div class="sec">
-      <div class="status" data-s="warn"><b id="st-b"></b><span id="st-s"></span></div>
-      <ol class="stages" id="stages" aria-label="Stages">
-        <li data-k="pre"><button type="button" data-k="pre">1 Pre-test</button></li>
-        <li data-k="learn"><button type="button" data-k="learn">2 Training</button></li>
-        <li data-k="post"><button type="button" data-k="post">3 Post-test</button></li>
-        <li data-k="done"><button type="button" data-k="done">4 Results</button></li>
-      </ol>
-      <div class="acts">
-        <button type="button" class="btn" id="tour-btn">Walkthrough</button>
-        <button type="button" class="btn" id="copy">Copy link</button>
-        <button type="button" class="btn" id="restart">Restart</button>
-      </div>
+      <div class="status" data-s="warn" id="st"><b></b><span></span></div>
     </div>
     <div class="sec">
-      <p class="eyebrow">Your fictional page: The Veloria Signal</p>
-      <div class="meter"><div class="meter-h"><span>Followers</span><b class="num" id="m-f"></b></div><span class="mb"><i id="m-fbar" class="f"></i></span></div>
-      <div class="meter"><div class="meter-h"><span>Credibility</span><b class="num" id="m-c"></b></div><span class="mb"><i id="m-cbar" class="c"></i></span></div>
-      <p class="fine">Game mechanics only <span class="notional">notional</span>. Manipulative picks grow the page, honest ones bore its audience, blatant ones cost credibility. The meters say nothing about you.</p>
+      <p class="eyebrow">Rounds</p>
+      <div class="prog" id="prog"></div>
+      <p class="fine">Loaded rounds and their neutral twins are mixed together. Which is which is shown after each part.</p>
     </div>
     <div class="sec">
-      <p class="eyebrow">Badges</p>
-      <ul class="badges" id="badges"></ul>
-      <p class="fine">A badge is earned by picking the manipulator's post in training.</p>
+      <p class="eyebrow">Sound</p>
+      <label class="tg"><input type="checkbox" id="snd"><span class="sw"></span><span class="t">Play the soundtrack<small>One round has a synthesized low drone. Off by default.</small></span></label>
+    </div>
+    <div class="sec">
+      <p class="eyebrow">What the game reads</p>
+      <p class="formula">posterior odds = prior odds × LR<sup>λ</sup></p>
+      <p class="fine">LR is the report's stated strength. The game solves for λ̂ from your answer. λ = 1 is the Bayesian weight. The form is from Walberg's working papers; the scoring built on it is <span class="notional">notional</span>.</p>
     </div>
   </aside>
 </main>
+<div id="tour-root"></div>
 
 <section class="below">
   <div class="col">
     <h2>How to read it</h2>
-    <p>Prebunking tries to protect people before they meet misinformation, by showing them a weakened example of a technique and explaining how it works. The Cambridge Social Decision-Making Lab built a game on this idea, <i>Bad News</i>, in which players act as a fake-news producer and learn six techniques. This page is a short game in the same spirit.</p>
-    <p>First you rate nine invented posts on how much you would trust them. Then you run an invented page and, for each technique, pick the post a manipulator would write. The feedback highlights the tells and quotes the technique's definition from the research. Then you rate nine different posts, and the results compare the two rounds.</p>
-    <p>The results report two things. Trust in manipulative posts should fall after training. Trust in plain posts should not. <b>Discernment</b> is the gap between the two, and it is the number to watch: rating everything lower is not the same as telling posts apart.</p>
+    <p>Each round asks a yes/no question about the invented town of Ardley. Two lines are evidence: a base rate ("about 30 in 100 calls like this turn out real") and a report with a stated strength ("2× as likely if it is real"). Bayes' rule turns those into one right answer. Everything else on the card, a comment thread, a drone, an earlier headline, a grievance, a countdown, carries no evidence.</p>
+    <p>From your answer the game infers <b>λ̂</b>, the weight you put on the report. At 1 you moved as far as the report justifies; above 1 further; between 0 and 1 less far; below 0 the wrong way. Each loaded round has a <b>neutral twin</b> with identical numbers, so the gap between the two is the part of your answer the feeling moved, not your arithmetic.</p>
+    <p>Part 2 adds three quick steps before each answer: place your feeling on a grid of pleasant to unpleasant and calm to activated, give it a name, and say what on the screen, or in you, produced it. Two of Part 2's pulls are new, to see whether the habit carries over.</p>
 
-    <h2 class="mt">Method</h2>
-    <p><b>Techniques.</b> The six techniques and their definitions come from Roozenbeek and van der Linden (2019), pages 3 and 4: impersonation, emotion, polarization, conspiracy, discrediting and trolling. The paper's abstract calls discrediting "deflecting blame", and its results call the discrediting item "deflection".</p>
-    <p><b>Posts.</b> Every post, account, town and event was written for this game. None comes from the published studies and none refers to a real person or organization. The posts copy the format of the studies, which asked players to rate the reliability of invented posts on a 7-point scale before and after play and included items with no technique as controls. Each test here has six manipulative posts, one per technique, and three plain posts. You get one set before training and the other after, in random order.</p>
-    <p><b>Scoring.</b> Your ratings are averaged separately for manipulative and plain posts. Discernment is the plain average minus the manipulative average. A rating of 1 to 3 counts as flagging a post. The verdict line uses simple rules written for this tool: a drop of at least 0.5 points in trust counts as a change.</p>
-    <p><b>Training meters.</b> Followers and credibility mimic the meters in <i>Bad News</i> but use made-up values. They are marked <span class="notional">notional</span>.</p>
-    <p><b>What this game is not.</b> It is not <i>Bad News</i> and has not been validated. Its items have not been tested for difficulty, so the two sets may differ, and nine ratings per test is too few for a reliable score. Your score says nothing about how the published effects apply to you. Nothing you enter leaves your browser.</p>
+    <h2 class="mt">How it differs from Bad News</h2>
+    <p>This page used to hold a short game in the style of <i>Bad News</i>, the Cambridge and DROG game in which "players take on the role of a fake news producer and learn to master six documented techniques" (Roozenbeek and van der Linden 2019). <i>Go Viral!</i> and <i>Harmony Square</i> follow the same inoculation design. Borrowed Feelings departs from it on mechanism.</p>
+    <div class="cmp" role="table" aria-label="Comparison with the Bad News family">
+      <div class="cmp-r cmp-h" role="row"><span role="columnheader"></span><span role="columnheader">Bad News family</span><span role="columnheader">Borrowed Feelings</span></div>
+      <div class="cmp-r" role="row"><b role="rowheader">Player role</b><span role="cell" data-l="Bad News family">A producer of misinformation (Bad News); "Chief Disinformation Officer" (Harmony Square)</span><span role="cell" data-l="Borrowed Feelings">A resident weighing honest reports</span></div>
+      <div class="cmp-r" role="row"><b role="rowheader">What is taught</b><span role="cell" data-l="Bad News family">Five or six manipulation techniques, such as emotional language, polarisation, conspiracy and trolling</span><span role="cell" data-l="Borrowed Feelings">Notice a feeling, name it, trace its source, then weigh the evidence</span></div>
+      <div class="cmp-r" role="row"><b role="rowheader">Mechanism</b><span role="cell" data-l="Bad News family">Inoculation: weakened exposure to techniques in messages</span><span role="cell" data-l="Borrowed Feelings">Regulating the weight on evidence: affect labeling and correct attribution of feelings that come from somewhere else</span></div>
+      <div class="cmp-r" role="row"><b role="rowheader">Where the pull sits</b><span role="cell" data-l="Bad News family">In the message</span><span role="cell" data-l="Borrowed Feelings">Outside it: sound, crowd, earlier news, grievance, the body</span></div>
+      <div class="cmp-r" role="row"><b role="rowheader">What is measured</b><span role="cell" data-l="Bad News family">Reliability ratings of invented posts before and after play</span><span role="cell" data-l="Borrowed Feelings">The implied weight λ̂, loaded round against its twin</span></div>
+      <div class="cmp-r" role="row"><b role="rowheader">Unit of play</b><span role="cell" data-l="Bad News family">A post</span><span role="cell" data-l="Borrowed Feelings">A feeling, a probability, a weight</span></div>
+    </div>
+    <p class="fine mt-s">Why the scoring matters: a reanalysis of five studies found that Bad News and Go Viral! "did not improve discrimination, but rather elicited more 'false' responses to all news items (more conservative responding)" (Modirrousta-Galian and Higham 2023). Here every report is true and correctly stated, so blanket suspicion scores as badly as over-reaction.</p>
+  </div>
+
+  <div class="col" id="method">
+    <h2>What this is and isn't</h2>
+    <p><b>It is</b> a five-minute demonstration of an idea from Jonathan Walberg's working papers: that emotion changes how much weight people give evidence, and that a campaign can exploit this without faking anything. The λ form comes from the Sonic Vectors design and the Emotional Priors papers. The Emotional Priors paper predicts that teaching people "to notice when their reactions are being moved" should transfer across topics, while topic-specific hardening should not (its hypothesis H4). It also flags whether people who correctly attribute their arousal are still moved as the model's "most exposed seam." Part 2 is a toy version of both questions.</p>
+    <p><b>It isn't</b> a validated measure or an intervention with evidence behind it. There are no efficacy data. Three twin pairs per part is far too few to say anything about a person; Part 2 always follows Part 1, so practice alone could shrink the gap; and the score mixes numeracy with feeling. In Walberg's simulation the transfer of affect-awareness follows from how awareness is specified, so it is a prediction, not a result.</p>
+    <h3>What comes from published work</h3>
+    <ul class="howto">
+      <li>Feelings from one source can be misread as information about another. MacCormack and Lindquist (2019) found that hunger made people "experience negative emotions and to negatively judge a researcher, but only when participants are not aware that they are conceptualizing their affective state as emotions." The attribution step borrows this logic. Schwarz and Clore (1983) is the classic statement of mood as information.</li>
+      <li>Martel, Pennycook and Rand (2020): "inducing reliance on emotion resulted in greater belief in fake (but not real) news stories compared to a control or to inducing reliance on reason."</li>
+      <li>The feeling grid uses the two dimensions of affect, valence and arousal (Russell 1980). Barrett (2017): "Interoceptive sensations are usually experienced as lower dimensional feelings of affect." Feldman, Bliss-Moreau and Lindquist (2024) review how signals from the body give rise to valence and arousal.</li>
+      <li>Naming the feeling follows research on affect labeling, which "can attenuate our emotional experiences" (Torre and Lieberman 2018), and on emotion differentiation (Kashdan, Barrett and McKnight 2015).</li>
+      <li>The grievance round follows the fear and anger contrast in appraisal research (Lerner and Keltner 2001), which Walberg's model turns into two different operators. The crowd round draws on social baseline theory (Beckes and Coan 2011) and Walberg's working hypothesis that false stories persist while the group behind them does.</li>
+    </ul>
+    <h3>What is notional</h3>
+    <ul class="howto">
+      <li>The town, reports, base rates, report strengths, comments and headlines are invented.</li>
+      <li>λ̂ from one answer, answers clamped to 1–99%, λ̂ capped to −1…4, the distance |λ̂ − 1| capped at 3, the twin gap and the verdict thresholds (±0.15) are this game's choices.</li>
+      <li>The drone (two detuned low oscillators, a tritone, a slow pulse), the 15-second countdown and the share counter are design choices, not calibrated inductions.</li>
+    </ul>
+    <p class="fine">Nothing you enter leaves your browser. The link stores only your answers.</p>
+  </div>
+</section>
+
+<section class="below">
+  <div class="col">
+    <h2>Sources</h2>
+    <p class="fine">Walberg's working papers (unpublished)</p>
+    <ul class="src">
+      <li>Jonathan Walberg, "Emotional Priors: How Affect Modulates Bayesian Belief Updating," working paper, June 2026, and its security companion "Emotional Priors and Narrative Warfare: A Bayesian Game of Cognitive Manipulation." Precision weighting, fear and anger as separate operators, the attribution remark, Proposition 4(iii) and H4. See also <a href="../bayesian-attack/">Attacking the Update</a>.</li>
+      <li>Jonathan Walberg, "Sonic Vectors in Affective Disinformation," design specification, June 2026. Posterior ∝ π · L<sup>λ(a)</sup>, music as a route to λ.</li>
+      <li>Jonathan Walberg, "Affective Intelligence and the Stickiness of Disinformation," working paper, March 2026. See <a href="../correction-lab/">Correction Lab</a>.</li>
+      <li>Jonathan Walberg, "Correcting Coherent Disinformation: An Incident Dataset and a Reinforcement Hypothesis, 1900–2024," working paper, 2026. The social reinforcement hypothesis.</li>
+      <li>Jonathan Walberg, "A Coordination Theory of Moral Panic," working paper, June 2026. See <a href="../misinfo-cascade/">Misinformation Cascade</a>.</li>
+      <li>Jonathan Walberg, "Social Affective Neuroscience and the Stickiness of Disinformation," literature review for PSYC7559, Social Affective Neuroscience, University of Virginia, December 2025.</li>
+    </ul>
   </div>
   <div class="col">
-    <h2>What the research found</h2>
-    <p>These are published results for the original game, quoted exactly. They appear again, with more rows, on the results screen.</p>
-    <ul class="effects slim">
-      <li><q>the average inoculation effect was relatively high, M<sub>pre</sub> = 2.61, M<sub>post</sub> = 2.06, M<sub>diff</sub> = −0.55, [95% CI −0.53, −0.57], t(13787) = −61.21, p &lt; 0.001, d = 0.52, Hedges g = 0.43</q><cite>Roozenbeek &amp; van der Linden 2019, p. 7. Self-selected sample, no control group.</cite></li>
-      <li><q>compared to the control condition, the shift in post-pre difference scores was significantly more negative in the inoculation condition ( M = –0.09 vs M = –0.45, M diff = –0.36, 95% CI [–0.19, –0.52], d = –0.60</q><cite>Basol, Roozenbeek &amp; van der Linden 2020, Results. Randomized, N = 196.</cite></li>
-      <li><q>Across the studies, when comparable true and fake news items were used, Bad News and Go Viral! did not improve discrimination, but rather elicited more “false” responses to all news items (more conservative responding).</q><cite>Modirrousta-Galian &amp; Higham 2023, abstract (accepted manuscript). A reanalysis of five studies.</cite></li>
-    </ul>
-    <h2 class="mt">Sources</h2>
+    <p class="fine">Prior games this one departs from</p>
     <ul class="src">
-      <li>Jon Roozenbeek and Sander van der Linden, <a href="https://www.nature.com/articles/s41599-019-0279-9" target="_blank" rel="noopener">"Fake news game confers psychological resistance against online misinformation"</a>, <i>Palgrave Communications</i> 5, 65 (2019), doi:10.1057/s41599-019-0279-9. Open access, CC BY 4.0. Quoted from the corrected version (correction published 29 August 2019).</li>
-      <li>Melisa Basol, Jon Roozenbeek and Sander van der Linden, <a href="https://journalofcognition.org/articles/10.5334/joc.91" target="_blank" rel="noopener">"Good News about Bad News: Gamified Inoculation Boosts Confidence and Cognitive Immunity Against Fake News"</a>, <i>Journal of Cognition</i> 3(1), 2 (2020), doi:10.5334/joc.91. CC BY 4.0.</li>
-      <li>Ariana Modirrousta-Galian and Philip A. Higham, "Gamified Inoculation Interventions Do Not Improve Discrimination Between True and Fake News: Reanalyzing Existing Research With Receiver Operating Characteristic Analysis", <i>Journal of Experimental Psychology: General</i> (2023), doi:10.1037/xge0001395. Quoted from the <a href="https://osf.io/4bgkd" target="_blank" rel="noopener">accepted manuscript on PsyArXiv</a>, which may differ in wording from the published version.</li>
-      <li><a href="https://www.getbadnews.com/" target="_blank" rel="noopener">Bad News</a>, the original game, and the <a href="https://www.sdmlab.psychol.cam.ac.uk/" target="_blank" rel="noopener">Cambridge Social Decision-Making Lab</a>. Neither is affiliated with this tool.</li>
+      <li>Jon Roozenbeek and Sander van der Linden, "Fake news game confers psychological resistance against online misinformation," <i>Palgrave Communications</i> 5 (2019): 65. <a href="https://doi.org/10.1057/s41599-019-0279-9" target="_blank" rel="noopener">doi:10.1057/s41599-019-0279-9</a></li>
+      <li>Melisa Basol, Jon Roozenbeek, Manon Berriche, Fatih Uenal, William P. McClanahan and Sander van der Linden, "Towards psychological herd immunity: Cross-cultural evidence for two prebunking interventions against COVID-19 misinformation," <i>Big Data &amp; Society</i> 8, no. 1 (2021). <a href="https://doi.org/10.1177/20539517211013868" target="_blank" rel="noopener">doi:10.1177/20539517211013868</a>. The Go Viral! study.</li>
+      <li>Jon Roozenbeek and Sander van der Linden, "Breaking Harmony Square: A game that 'inoculates' against political misinformation," <i>Harvard Kennedy School Misinformation Review</i> (2020). <a href="https://doi.org/10.37016/mr-2020-47" target="_blank" rel="noopener">doi:10.37016/mr-2020-47</a></li>
+      <li>Ariana Modirrousta-Galian and Philip A. Higham, "Gamified inoculation interventions do not improve discrimination between true and fake news," <i>Journal of Experimental Psychology: General</i> 152, no. 9 (2023): 2411–2437. <a href="https://doi.org/10.1037/xge0001395" target="_blank" rel="noopener">doi:10.1037/xge0001395</a></li>
     </ul>
-    <p class="fine mt-s">Content files: <code>tools/prebunking-game/data/techniques.js</code> (techniques, training posts), <code>data/quiz.js</code> (test posts), <code>data/research.js</code> (quotes with page references).</p>
+    <p class="fine mt-s">Affect, attribution and labeling</p>
+    <ul class="src">
+      <li>Jennifer K. MacCormack and Kristen A. Lindquist, "Feeling hangry? When hunger is conceptualized as emotion," <i>Emotion</i> 19, no. 2 (2019): 301–319. <a href="https://doi.org/10.1037/emo0000422" target="_blank" rel="noopener">doi:10.1037/emo0000422</a></li>
+      <li>Norbert Schwarz and Gerald L. Clore, "Mood, misattribution, and judgments of well-being: Informative and directive functions of affective states," <i>Journal of Personality and Social Psychology</i> 45, no. 3 (1983): 513–523. <a href="https://doi.org/10.1037/0022-3514.45.3.513" target="_blank" rel="noopener">doi:10.1037/0022-3514.45.3.513</a></li>
+      <li>Cameron Martel, Gordon Pennycook and David G. Rand, "Reliance on emotion promotes belief in fake news," <i>Cognitive Research: Principles and Implications</i> 5 (2020): 47. <a href="https://doi.org/10.1186/s41235-020-00252-3" target="_blank" rel="noopener">doi:10.1186/s41235-020-00252-3</a></li>
+      <li>Lisa Feldman Barrett, "The theory of constructed emotion: an active inference account of interoception and categorization," <i>Social Cognitive and Affective Neuroscience</i> 12, no. 1 (2017): 1–23. <a href="https://doi.org/10.1093/scan/nsw154" target="_blank" rel="noopener">doi:10.1093/scan/nsw154</a></li>
+      <li>Mallory J. Feldman, Eliza Bliss-Moreau and Kristen A. Lindquist, "The neurobiology of interoception and affect," <i>Trends in Cognitive Sciences</i> 28, no. 7 (2024): 643–661. <a href="https://doi.org/10.1016/j.tics.2024.01.009" target="_blank" rel="noopener">doi:10.1016/j.tics.2024.01.009</a></li>
+      <li>James A. Russell, "A circumplex model of affect," <i>Journal of Personality and Social Psychology</i> 39, no. 6 (1980): 1161–1178. <a href="https://doi.org/10.1037/h0077714" target="_blank" rel="noopener">doi:10.1037/h0077714</a></li>
+      <li>Jared B. Torre and Matthew D. Lieberman, "Putting Feelings Into Words: Affect Labeling as Implicit Emotion Regulation," <i>Emotion Review</i> 10, no. 2 (2018): 116–124. <a href="https://doi.org/10.1177/1754073917742706" target="_blank" rel="noopener">doi:10.1177/1754073917742706</a></li>
+      <li>Todd B. Kashdan, Lisa Feldman Barrett and Patrick E. McKnight, "Unpacking Emotion Differentiation," <i>Current Directions in Psychological Science</i> 24, no. 1 (2015): 10–16. <a href="https://doi.org/10.1177/0963721414550708" target="_blank" rel="noopener">doi:10.1177/0963721414550708</a></li>
+      <li>Jennifer S. Lerner and Dacher Keltner, "Fear, anger, and risk," <i>Journal of Personality and Social Psychology</i> 81, no. 1 (2001): 146–159. <a href="https://doi.org/10.1037/0022-3514.81.1.146" target="_blank" rel="noopener">doi:10.1037/0022-3514.81.1.146</a></li>
+      <li>Lane Beckes and James A. Coan, "Social Baseline Theory: The Role of Social Proximity in Emotion and Economy of Action," <i>Social and Personality Psychology Compass</i> 5, no. 12 (2011): 976–988. <a href="https://doi.org/10.1111/j.1751-9004.2011.00400.x" target="_blank" rel="noopener">doi:10.1111/j.1751-9004.2011.00400.x</a></li>
+    </ul>
+    <p class="fine mt-s">Design note: <code>tools/prebunking-game/DESIGN.md</code>. Round content: <code>data/rounds.js</code>.</p>
   </div>
 </section>
 
 <footer id="tsm-foot"></footer>
 <script type="module">
   import { mountChrome } from '../../shared/js/chrome.js';
-  mountChrome({ title: 'Prebunking Game', sub: 'Learn six manipulation techniques with invented posts, then test whether you spot them better.', category: 'Disinformation & cognitive warfare' });
+  mountChrome({ title: 'Borrowed Feelings', sub: 'A prebunking game about the weight you give evidence when a feeling from somewhere else is in the room.', category: 'Disinformation & cognitive warfare' });
+  document.title = 'Borrowed Feelings | Interactive Deterrence';
 </script>
 <script type="module" src="js/app.js"></script>
 </body>

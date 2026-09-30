@@ -1,73 +1,64 @@
-// Prebunking Game: scoring for the pre/post quiz and the training meters.
-import { SETS, ORDER, FLAG_MAX } from '../data/quiz.js';
-import { TECHNIQUES, METER } from '../data/techniques.js';
+// Scoring. Bayes' rule in odds form and the implied evidence weight.
+// Form from Walberg, Sonic Vectors design spec (working paper, June 2026):
+//   posterior odds = prior odds * LR^lambda. lambda = 1 is the Bayesian weight.
+// Clamping, the cap on lambda-hat and the miscalibration score are this tool's own (notional) choices.
 
-/** Items shown in a phase, in display order. o = 0: set A before, B after; o = 1: the reverse. */
-export function itemsFor(phase, o) {
-  const key = (phase === 'pre') === (o === 0) ? 'A' : 'B';
-  return ORDER.map(i => SETS[key][i]);
+import { ROUNDS } from '../data/rounds.js';
+
+const odds = p => p / (1 - p);
+const clampP = p => Math.min(0.99, Math.max(0.01, p));
+export const LAM_MIN = -1, LAM_MAX = 4;
+
+/** Bayesian posterior for a prior and likelihood ratio. */
+export const bayes = (prior, lr) => (prior * lr) / (prior * lr + 1 - prior);
+
+/** Implied weight on the report, from one answer (0-1). */
+export function lambdaHat(prior, lr, answer) {
+  const l = Math.log(odds(clampP(answer)) / odds(prior)) / Math.log(lr);
+  return Math.min(LAM_MAX, Math.max(LAM_MIN, l));
 }
-export const setKey = (phase, o) => ((phase === 'pre') === (o === 0) ? 'A' : 'B');
 
-/** Summary of one quiz: mean trust in manipulative and neutral items, flags, discernment. */
-export function summarize(items, ratings) {
-  const man = [], neu = [];
-  items.forEach((it, i) => { const r = ratings[i]; if (r) (it.tech ? man : neu).push(r); });
-  const mean = a => (a.length ? a.reduce((s, v) => s + v, 0) / a.length : null);
-  const mM = mean(man), mN = mean(neu);
+/** Distance from the Bayesian weight, capped at 3. */
+export const miscal = l => Math.min(3, Math.abs(l - 1));
+
+/** Score every answered round. answers: { id: 0..100 }. */
+export function scoreAll(answers) {
+  const out = {};
+  for (const r of ROUNDS) {
+    const a = answers[r.id];
+    if (a == null) continue;
+    const b = bayes(r.prior, r.lr);
+    const lam = lambdaHat(r.prior, r.lr, a / 100);
+    out[r.id] = { r, answer: a, bayes: b * 100, lam, mis: miscal(lam), pull: a - b * 100 };
+  }
+  return out;
+}
+
+const mean = xs => xs.length ? xs.reduce((s, x) => s + x, 0) / xs.length : null;
+
+/** Twin-pair summaries by part: loaded minus neutral miscalibration and pull. */
+export function summary(scored) {
+  const pairs = ROUNDS.filter(r => r.kind === 'loaded' && scored[r.id] && scored[r.twin])
+    .map(r => {
+      const L = scored[r.id], N = scored[r.twin];
+      return { r, L, N, gap: L.mis - N.mis, pullGap: L.pull - N.pull };
+    });
+  const by = part => pairs.filter(p => p.r.part === part);
+  const s = part => {
+    const ps = by(part);
+    return ps.length ? {
+      n: ps.length,
+      misL: mean(ps.map(p => p.L.mis)), misN: mean(ps.map(p => p.N.mis)),
+      gap: mean(ps.map(p => p.gap)), pullGap: mean(ps.map(p => p.pullGap)),
+    } : null;
+  };
+  const p2 = by(2);
   return {
-    nMan: man.length, nNeu: neu.length,
-    manMean: mM, neuMean: mN,
-    hits: man.filter(r => r <= FLAG_MAX).length,
-    falseAlarms: neu.filter(r => r <= FLAG_MAX).length,
-    discern: mM != null && mN != null ? mN - mM : null,
+    pairs, p1: s(1), p2: s(2),
+    seen: mean(p2.filter(p => p.r.seen).map(p => p.gap)),
+    unseen: mean(p2.filter(p => !p.r.seen).map(p => p.gap)),
   };
 }
 
-/** Pre vs post comparison and a plain-language verdict. */
-export function compare(pre, post) {
-  const dMan = post.manMean - pre.manMean;
-  const dNeu = post.neuMean - pre.neuMean;
-  const dDis = post.discern - pre.discern;
-  let s = 'warn', head, text;
-  if (dMan <= -0.5 && dNeu > -0.5 && dDis > 0) {
-    s = 'good'; head = 'Sharper, not just warier';
-    text = 'You trusted the manipulative posts less after training and kept trusting the plain ones.';
-  } else if (dMan <= -0.5 && dNeu <= -0.5) {
-    head = 'Warier of everything';
-    text = 'You trusted the manipulative posts less, but the plain ones too. Researchers call this a shift in response bias: it is not the same as telling the two apart better.';
-  } else if (dDis > 0.25) {
-    s = 'good'; head = 'Better at telling them apart';
-    text = 'The gap between your trust in plain and manipulative posts grew after training.';
-  } else if (dDis < -0.25) {
-    s = 'bad'; head = 'No gain this round';
-    text = 'The gap between your trust in plain and manipulative posts shrank. The second set may have been harder for you, or the techniques did not stick.';
-  } else {
-    head = 'About the same';
-    text = 'Your ratings moved little. If you already flagged most manipulative posts on the pre-test, there was not much room to improve.';
-  }
-  return { dMan, dNeu, dDis, s, head, text };
-}
-
-/** Per-technique pre vs post rating for the six manipulative items. */
-export function byTechnique(o, a, b) {
-  const pre = itemsFor('pre', o), post = itemsFor('post', o);
-  return TECHNIQUES.map(t => {
-    const i = pre.findIndex(it => it.tech === t.key), j = post.findIndex(it => it.tech === t.key);
-    return { t, pre: a[i] || null, post: b[j] || null };
-  });
-}
-
-/** Meter values after the first n training choices. */
-export function meters(choices, n = choices.length) {
-  let f = METER.start.followers, c = METER.start.cred;
-  for (let i = 0; i < n; i++) {
-    const k = choices[i];
-    if (k == null) continue;
-    const kind = TECHNIQUES[i].options[k].kind;
-    const m = METER[kind];
-    f = Math.round(f * m.followers);
-    c = Math.max(0, Math.min(100, c + m.cred));
-  }
-  return { followers: f, cred: c };
-}
+export const fmtLam = l => (l <= LAM_MIN ? '≤ ' : l >= LAM_MAX ? '≥ ' : '') + l.toFixed(2).replace('-', '−');
+export const fmtSigned = (x, d = 2) => (x > 0 ? '+' : x < 0 ? '−' : '±') + Math.abs(x).toFixed(d);

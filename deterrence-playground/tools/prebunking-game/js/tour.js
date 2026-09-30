@@ -1,52 +1,65 @@
-// Prebunking Game: guided walkthrough. Each step loads a fixed view with made-up example answers;
-// closing the walkthrough restores the player's own game.
-// Example answers in display order (ORDER in data/quiz.js): man, neu, man, man, neu, man, man, neu, man.
-const DEMO_A = [5, 6, 4, 5, 6, 4, 3, 5, 3];
-const DEMO_B = [2, 6, 2, 3, 6, 2, 1, 5, 2];
-const DEMO_C = [1, 2, 0, 1, 0, 2];
+// Guided walkthrough. Each step can put a preview on screen (show) and highlights a target element.
+// Previews use example answers and never touch the player's own answers.
 
-const STEPS = [
-  { title: 'Four short stages',
-    body: 'A pre-test, a training round on six manipulation techniques, a post-test with different posts, and your results. It takes about five minutes.',
-    set: { s: 'intro' } },
-  { title: 'Rate before you learn',
-    body: 'Each post is invented and labelled as such. Rate how much you would trust it, from 1 to 7. Six of the nine posts use a technique; three are plain notices.',
-    set: { s: 'pre', qi: 0, a: Array(9).fill(null) } },
-  { title: 'Play the manipulator',
-    body: 'In training you run a fictional page. For each technique, pick the post a manipulator would publish. The honest post loses followers; the blatant one loses credibility.',
-    set: { s: 'learn', t: 0, c: Array(6).fill(null) } },
-  { title: 'See the tells',
-    body: 'After you pick, the manipulative post shows its tells in highlight, with the technique’s definition from the research paper and a short list of things to look for.',
-    set: { s: 'learn', t: 0, c: [1, null, null, null, null, null] } },
-  { title: 'Your score: sharper, or just warier?',
-    body: 'These are example answers. Results compare trust in manipulative posts with trust in plain ones. Distrusting everything is not the goal: the discernment line rewards keeping trust in plain posts.',
-    set: { s: 'done', o: 0, a: DEMO_A, b: DEMO_B, c: DEMO_C } },
-  { title: 'What the studies found',
-    body: 'Published effects for the original Bad News game sit in a separate card, quoted exactly, with the caveats the literature states. They describe a different, longer game, not your score.',
-    set: { s: 'done', o: 0, a: DEMO_A, b: DEMO_B, c: DEMO_C, focus: 'research' } },
+export const STEPS = [
+  { title: 'Every round is one number', show: 'p1', target: 'ev',
+    body: 'A yes/no question about an invented town, a base rate and one report. The report’s strength is stated plainly, for example “2× as likely if it is real.” Those two lines are the only evidence in the round.' },
+  { title: 'Everything else carries no evidence', show: 'p1', target: 'chan',
+    body: 'Around the evidence sits something that can move a feeling: a comment thread in a panic, a low drone, an unrelated scare read a moment earlier, a grievance, a countdown. None of it changes the answer.' },
+  { title: 'You set a belief, the game reads a weight', show: 'p1', target: 'answer',
+    body: 'From your answer the game works out λ̂, the weight you put on the report. λ = 1 is the Bayesian weight. The form, posterior odds = prior odds × LR^λ, is from Walberg’s working papers on emotional updating.' },
+  { title: 'The mirror', show: 'mirror', target: 'rcard',
+    body: 'After Part 1 each loaded round is drawn against its neutral twin, which had the same numbers. These are example answers, not yours. A gap between a filled and an open dot is the pull of the feeling.' },
+  { title: 'Part 2: feel it, name it, place it', show: 'p2', target: 'check',
+    body: 'Before each answer you tap a valence × arousal grid, pick a word for the feeling and say what produced it. The slider unlocks after that. Two of the pulls in Part 2 are new, to test whether the habit transfers.' },
+  { title: 'Progress and sound', show: null, target: 'panel',
+    body: 'The panel tracks your rounds. The soundtrack round plays a synthesized drone only if you turn sound on here. Nothing you enter leaves your browser.' },
+  { title: 'What this is and is not', show: null, target: 'method', scroll: true,
+    body: 'A teaching and research prototype, with no efficacy data. The method notes say what comes from published studies, what comes from Walberg’s working papers and what is this game’s own invention.' },
 ];
 
-export function createTour(root, { apply, save, restore }) {
-  let i = -1;
+export function createTour(root, { show, restore }) {
+  let i = -1, lastTarget = null;
   const card = document.createElement('div');
   card.className = 'tour';
   card.hidden = true;
   card.setAttribute('role', 'dialog');
   card.setAttribute('aria-label', 'Guided walkthrough');
-  root.prepend(card);
-  const show = () => {
+  root.appendChild(card);
+  const smooth = () => (matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth');
+
+  const mark = id => {
+    if (lastTarget) lastTarget.classList.remove('tour-on');
+    const el = id === 'chan' ? document.querySelector('.chan') : document.getElementById(id);
+    lastTarget = el;
+    if (el) {
+      el.classList.add('tour-on');
+      el.scrollIntoView({ behavior: smooth(), block: 'center' });
+    }
+  };
+  const render = () => {
     const s = STEPS[i];
-    apply(s.set);
+    if (s.show !== undefined) show(s.show);
+    mark(s.target);
     card.innerHTML = `<div class="tour-h"><span>Walkthrough ${i + 1} / ${STEPS.length}</span><button type="button" class="x" aria-label="Close walkthrough">×</button></div>
       <h3>${s.title}</h3><p>${s.body}</p>
       <div class="tour-nav"><button type="button" class="btn" ${i === 0 ? 'disabled' : ''} data-d="-1">Back</button>
       <button type="button" class="btn solid" data-d="1">${i === STEPS.length - 1 ? 'Finish' : 'Next'}</button></div>`;
     card.querySelector('.x').onclick = stop;
-    card.querySelectorAll('[data-d]').forEach(b => { b.onclick = () => { const n = i + Number(b.dataset.d); if (n >= STEPS.length) stop(); else { i = n; show(); } }; });
+    card.querySelectorAll('[data-d]').forEach(b => b.onclick = () => {
+      const n = i + Number(b.dataset.d);
+      if (n >= STEPS.length) stop(); else { i = n; render(); }
+    });
     card.querySelector('.solid').focus({ preventScroll: true });
   };
-  const start = () => { if (i < 0) save(); i = 0; card.hidden = false; show(); };
-  const stop = () => { if (i < 0) return; card.hidden = true; i = -1; restore(); };
+  const start = () => { i = 0; card.hidden = false; render(); };
+  function stop() {
+    if (i < 0) return;
+    card.hidden = true; i = -1;
+    if (lastTarget) lastTarget.classList.remove('tour-on');
+    lastTarget = null;
+    restore();
+  }
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !card.hidden) stop(); });
   return { start, stop, active: () => i >= 0 };
 }

@@ -3,7 +3,8 @@ import { FIELD, CITIES, WEAPONS, WEAPON_ORDER, THREATS } from '../data/params.js
 import { tti } from './sim.js';
 
 const TOK = { sea: '--sea', land: '--land', coast: '--coast', grat: '--grat', ink: '--ink', muted: '--muted', faint: '--faint',
-  panel: '--panel', drone: '--c2', cruise: '--c6', ballistic: '--bad', gun: '--c3', sri: '--c1', lri: '--c4', sel: '--accent', good: '--good' };
+  panel: '--panel', drone: '--c2', cruise: '--c6', ballistic: '--bad', gun: '--c3', sri: '--c1', lri: '--c4', sel: '--accent', good: '--good',
+  L: '--c7', R: '--c5' };
 
 export function createRenderer(canvas) {
   const ctx = canvas.getContext('2d');
@@ -75,11 +76,22 @@ export function createRenderer(canvas) {
     for (let x = 0; x <= FIELD.W; x += 50) ctx.lineTo(x, FIELD.coastY + Math.sin(x / 90) * 14 + Math.sin(x / 37) * 5);
     ctx.lineTo(FIELD.W, FIELD.H); ctx.lineTo(0, FIELD.H); ctx.closePath(); ctx.fill(); ctx.stroke();
 
-    // range rings for the active weapon
-    const aw = view.weapon;
-    ctx.setLineDash([px(5), px(5)]); ctx.strokeStyle = C[aw]; ctx.lineWidth = px(1.2);
-    for (const s of WEAPONS[aw].sites) { ctx.beginPath(); ctx.arc(s.x, s.y, WEAPONS[aw].range, 0, Math.PI * 2); ctx.stroke(); }
+    // range rings for each battery's chosen weapon, from that battery's own sites
+    ctx.setLineDash([px(5), px(5)]); ctx.lineWidth = px(1.2);
+    for (const b of view.bats) {
+      ctx.strokeStyle = C[b.weapon];
+      for (const i of b.sites) { const s = WEAPONS[b.weapon].sites[i]; ctx.beginPath(); ctx.arc(s.x, s.y, WEAPONS[b.weapon].range, 0, Math.PI * 2); ctx.stroke(); }
+    }
     ctx.setLineDash([]);
+    // hard mode: the boundary between the two batteries
+    if (view.mode === 'hard') {
+      ctx.setLineDash([px(2), px(6)]); ctx.strokeStyle = C.muted; ctx.lineWidth = px(1.2);
+      ctx.beginPath(); ctx.moveTo(FIELD.W / 2, FIELD.coastY + 24); ctx.lineTo(FIELD.W / 2, FIELD.H); ctx.stroke(); ctx.setLineDash([]);
+      ctx.font = `600 ${px(12)}px "IBM Plex Mono", monospace`;
+      const wide = scale > 0.6; // on a phone the field is small, so only the letters are drawn
+      ctx.fillStyle = C.L; ctx.textAlign = 'left'; ctx.fillText(wide ? 'L · LEFT BATTERY' : 'L', px(8), FIELD.H - px(8));
+      ctx.fillStyle = C.R; ctx.textAlign = 'right'; ctx.fillText(wide ? 'RIGHT BATTERY · R' : 'R', FIELD.W - px(8), FIELD.H - px(8));
+    }
 
     // cities
     ctx.font = `600 ${px(12)}px "IBM Plex Sans", sans-serif`; ctx.textAlign = 'center';
@@ -92,7 +104,7 @@ export function createRenderer(canvas) {
       if (d) { ctx.fillStyle = C.ballistic; ctx.fillText(`damage ${d}`, c.x, c.y + px(30)); }
     }
     // defense sites
-    for (const w of WEAPON_ORDER) WEAPONS[w].sites.forEach((s, i) => site(w, s, i, S, w === aw));
+    for (const w of WEAPON_ORDER) WEAPONS[w].sites.forEach((s, i) => site(w, s, i, S, view.bats.some(b => b.weapon === w && b.sites.includes(i))));
 
     // ballistic impact predictions
     ctx.setLineDash([px(3), px(3)]); ctx.strokeStyle = C.ballistic; ctx.lineWidth = px(1.2);
@@ -111,18 +123,26 @@ export function createRenderer(canvas) {
       }
       shape(th.type, th.x, th.y, px(th.type === 'drone' ? 6 : 7), col);
       if (view.targeted?.has(th.id)) { ctx.strokeStyle = C.ink; ctx.lineWidth = px(1); ctx.beginPath(); ctx.arc(th.x, th.y, px(10), 0, Math.PI * 2); ctx.stroke(); }
-      if (th.id === view.hover && th.id !== view.sel) { ctx.strokeStyle = C.muted; ctx.lineWidth = px(1.5); ctx.beginPath(); ctx.arc(th.x, th.y, px(14), 0, Math.PI * 2); ctx.stroke(); }
+      if (th.id === view.hover && !view.bats.some(b => b.sel === th.id)) { ctx.strokeStyle = C.muted; ctx.lineWidth = px(1.5); ctx.beginPath(); ctx.arc(th.x, th.y, px(14), 0, Math.PI * 2); ctx.stroke(); }
     }
-    const sel = S.threats.find(t => t.alive && t.id === view.sel);
-    if (sel) {
-      ctx.strokeStyle = C.sel; ctx.lineWidth = px(2.5);
-      ctx.beginPath(); ctx.arc(sel.x, sel.y, px(15), 0, Math.PI * 2); ctx.stroke();
-      const lbl = `${THREATS[sel.type].short} · ${tti(sel).toFixed(1)} s → ${sel.city}`;
-      ctx.font = `500 ${px(12)}px "IBM Plex Mono", monospace`; ctx.textAlign = sel.x > FIELD.W - 160 ? 'right' : 'left';
-      const lx = sel.x + (ctx.textAlign === 'right' ? -px(20) : px(20)), ly = sel.y - px(12);
+    // selection reticles: one accent ring in normal mode; in hard mode a round L reticle and a square R reticle
+    view.bats.forEach(b => {
+      const sel = S.threats.find(t => t.alive && t.id === b.sel);
+      if (!sel) return;
+      const hard = b.k !== 'N', col = hard ? C[b.k] : C.sel, both = hard && view.bats.some(o => o !== b && o.sel === b.sel);
+      const r = px(both && b.k === 'R' ? 20 : 15);
+      ctx.strokeStyle = col; ctx.lineWidth = px(2.5); ctx.beginPath();
+      if (b.k === 'R') ctx.rect(sel.x - r, sel.y - r, r * 2, r * 2); else ctx.arc(sel.x, sel.y, r, 0, Math.PI * 2);
+      ctx.stroke();
+      const lbl = `${hard ? b.k + ' ' : ''}${THREATS[sel.type].short} · ${tti(sel).toFixed(1)} s → ${sel.city}`;
+      ctx.font = `500 ${px(12)}px "IBM Plex Mono", monospace`;
+      // In hard mode the left label sits above-left and the right label below-right, so they do not collide.
+      const right = hard ? (b.k === 'L' ? sel.x > 170 : sel.x > FIELD.W - 170) : sel.x > FIELD.W - 160;
+      ctx.textAlign = right ? 'right' : 'left';
+      const lx = sel.x + (right ? -px(22) : px(22)), ly = sel.y + (hard && b.k === 'R' ? px(22) : -px(12));
       ctx.lineWidth = px(3); ctx.strokeStyle = C.sea; ctx.strokeText(lbl, lx, ly);
-      ctx.fillStyle = C.ink; ctx.fillText(lbl, lx, ly);
-    }
+      ctx.fillStyle = hard ? col : C.ink; ctx.fillText(lbl, lx, ly);
+    });
 
     // interceptors
     for (const sh of S.shots) {

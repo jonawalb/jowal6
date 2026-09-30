@@ -3,8 +3,10 @@
 //   ballistic missiles unless a leak is seconds away.
 // "premium": the most capable weapon available at every track, the way a defender flush with interceptors
 //   (or worried only about leakers) might fight.
+// Between waves both rules resupply with the same budget as the player, split by proportionalOrder.
 import { WEAPONS } from '../data/params.js';
 import { createGame, step, nextWave, liveThreats, tti, coverage, canFire, fire, summary, DT } from './sim.js';
+import { applyResupply, proportionalOrder } from './resupply.js';
 
 const PLANS = {
   heuristic: {
@@ -34,11 +36,11 @@ export function act(S, name) {
 }
 
 /** Play a whole night with a policy, headless. Returns the summary. */
-export function replay(seed, name) {
-  const S = createGame(seed, { headless: true });
+export function replay(seed, name, budget) {
+  const S = createGame(seed, { headless: true, budget });
   let k = 0;
   while (S.phase !== 'over' && k < 60 * 60 * 20) {
-    if (S.phase === 'break') nextWave(S);
+    if (S.phase === 'break') { applyResupply(S, proportionalOrder(S)); nextWave(S); }
     if (k % 3 === 0) act(S, name);
     step(S, DT); k++;
   }

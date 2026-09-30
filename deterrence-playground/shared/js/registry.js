@@ -176,7 +176,7 @@ export const ALL_TOOLS = [
     blurb: "Richardson's arms-race equations as a phase plane you can click: set reaction, fatigue and grievance, and see which races settle, which run away, and what happens with a third rival." },
   { slug: 'qre-explorer', dev: true, cat: 'gametheory', sites: ['deterrence'], title: 'Quantal Response Explorer', status: 'live',
     blurb: 'See how logit quantal response equilibrium departs from Nash in crisis and deterrence games as precision runs from 0 to infinity, and why estimating these games needs care.' },
-  { slug: 'correction-lab', sub: { narratives: 'disinfo' }, cat: 'narratives', sites: ['deterrence'], title: 'Correction Lab', status: 'live',
+  { slug: 'correction-lab', dev: true, sub: { narratives: 'disinfo' }, cat: 'narratives', sites: ['deterrence'], title: 'Correction Lab', status: 'live',
     blurb: "Design a correction to a false story and see how much belief persists: meta-analytic effect sizes on timing, source, repetition and explanation, combined with Walberg's Sticky Affect condition in a notional model." },
   { slug: 'kharg-island', sub: { models: 'wargames', regions: 'mideast' }, cat: 'models', also: ['regions'], sites: ['deterrence'], title: 'Kharg Island', status: 'live',
     blurb: "A notional, dice-driven wargame of a U.S. move on Kharg Island, Iran's oil export hub: seize, raid or blockade it, watch every roll, then see how 1,000 games trade success against escalation and oil prices." },

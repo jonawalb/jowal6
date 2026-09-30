@@ -13,7 +13,7 @@ export const STEPS = [
     body: 'June to August has the calmest wind and waves of the year. But in early August, in roughly a third of years a tropical storm passed within 500 km of the Strait center that week. The red line on the week chart tracks that exposure.',
     set: { wk: 31 }, scroll: 'weekchart' },
   { title: 'Tighten the limit',
-    body: 'Set waves to sea state 2 (0.5 m), the state in which the U.S. Navy rates its LCAC hovercraft. Almost no day in thirty years qualifies at this open-water point.',
+    body: 'Set waves to sea state 2 (0.5 m), the state in which the U.S. Navy rates its LCAC hovercraft. Only about 2 percent of days in thirty years open a three-day window at this open-water point.',
     set: { h: 0.5, w: 16, wk: 22 }, scroll: 'heatmap' },
   { title: 'Loosen it',
     body: 'At sea state 4 (2.5 m) and 27 knots, April and the summer open up and October partly recovers. The answer to "when" depends heavily on what the landing craft can take.',

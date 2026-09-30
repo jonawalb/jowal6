@@ -17,7 +17,7 @@ export const STEPS = [
     body: 'Firing a second interceptor only after the first misses saves rounds, but against a ballistic missile there is often no time to look; the model assumes a second shot is possible half the time. The magazine lasts two days longer, and because the PRC stock is finite, fewer missiles get through in total.',
     set: { doc: { b: 'sls', c: 's', d: 's' }, day: 7 } },
   { title: 'Cheap drones, expensive interceptors',
-    body: 'At the scale of Russia\'s largest night against Ukraine, 810 drones, the magazine holds if long-range missiles are kept for missiles and drones go to guns, jammers and cheaper launchers. The leaker chart shows the price: most drones get through.',
+    body: 'At the scale of Russia\'s 7 September 2025 attack on Ukraine, 810 drones and the largest of the war to that date, the magazine holds if long-range missiles are kept for missiles and drones go to guns, jammers and cheaper launchers. The leaker chart shows the price: most drones get through.',
     set: { salvo: SV('ukr'), day: 20 } },
   { title: 'Or spend everything on them',
     body: 'Let every interceptor fire at drones and the same raid drains the ballistic missile defense in days. Drone counts for a PRC campaign have no public estimate, so this is the input to treat most carefully.',

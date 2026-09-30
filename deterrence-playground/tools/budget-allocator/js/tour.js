@@ -2,7 +2,7 @@
 // STEPS is Taiwan's walkthrough; other countries carry their own `tour` array in their profile.
 export const STEPS = [
   { title: 'Start with the real money',
-    body: 'On September 3, 2026 the cabinet asked for NT$145.7bn in defense spending as part of a supplementary budget. Mapped onto this model, about a third goes to drones and uncrewed boats, and almost half sits in classified programs and personnel lines the model cannot score.',
+    body: 'On September 3, 2026 the cabinet asked for NT$145.7bn in defense spending as part of a supplementary budget. Mapped onto this model, more than a third goes to drones and uncrewed boats, and almost half sits in classified programs and personnel lines the model cannot score.',
     set: { b: 's145', preset: 'cabinet', supp: 0.6, warn: 5 } },
   { title: 'A porcupine mix',
     body: 'Spread the same money across coastal missiles, drones, mines, strike, resilience and ammunition. Cheap, mobile systems survive the opening strikes better and cover more of the crossing, so more of the invasion force comes under fire.',

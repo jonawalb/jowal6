@@ -16,7 +16,7 @@ export const STEPS = [
     body: 'Put most warheads on ten-warhead silos and one incoming warhead can destroy ten. Each side can now push the other far down its curve, and the index falls toward the acute cases in the report. The sweep below shows the same warheads spread over fewer, richer launchers.',
     set: { ...P('silos'), sweep: 'mirv' }, scroll: 'sweepcard' },
   { title: 'Launch under attack changes the arithmetic',
-    body: 'If the striker expects the victim to fire its silo missiles on warning, most of its counterforce strike lands on empty silos. The report found the same: its 1988 case rose from 0.76 to 0.91 (p. 37). The report also flags the danger of this posture, a higher risk of accidental launch.',
+    body: 'If the striker expects the victim to fire its silo missiles on warning, most of its counterforce strike lands on empty silos. The report found the same: its 1988 case rose from 0.76 to 0.91 (pp. 36–37). The report also flags the danger of this posture, a higher risk of accidental launch.',
     set: { ...with2('silos', s => { s.prl = true; }), sweep: 'mirv' } },
   { title: 'Alert rates matter most at low numbers',
     body: 'At about 500 warheads each, forces that sit in port or in garrison are cheap targets. Raise the day-to-day alert rate and the same arsenal becomes stable. Kent and Thaler stress day-to-day posture because an attacker may strike before the victim generates its forces (p. 48).',

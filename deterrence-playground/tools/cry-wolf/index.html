@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cry Wolf | Interactive Deterrence</title>
+<meta name="description" content="A warning-analyst game. Over 26 weeks, read noisy indicators about a notional neighbor, set your probability and your warning level, and learn why base rates, timing and false alarms all matter.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@500;600;700;800&family=DM+Mono:wght@400;500&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="cry-wolf.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+<div class="cw-actions">
+  <p class="cw-flag"><b>Fictional and notional.</b> An invented adversary, "the Neighbor". Indicators are generic categories and every probability is illustrative game design, not data.</p>
+  <div><button type="button" class="btn" id="new-game">New game</button>
+  <button type="button" class="btn" id="copy-link">Copy link</button></div>
+</div>
+
+<main class="cw-main">
+  <section class="card cw-start" id="start" aria-labelledby="start-t">
+    <p class="eyebrow">Your post</p>
+    <h2 id="start-t">Warning analyst, 26 weeks</h2>
+    <p class="cw-lede">The Neighbor is massing pressure again. It may be preparing an attack, or it may be running exercises and bluffing, which look much the same. Each week reports come in. You give the decision-maker a <b>probability</b> and a <b>warning level</b>.</p>
+    <p class="cw-base" id="base"></p>
+    <ul class="cw-rules">
+      <li><b>Warn early enough</b> and the defense is ready. Readiness takes weeks to build.</li>
+      <li><b>Warnings cost</b> money and goodwill every week they stand.</li>
+      <li><b>False alarms cost trust</b>, and each one costs more than the last. A decision-maker who has stopped believing you acts weakly on your next warning.</li>
+      <li>You have <b id="budget0"></b> closer looks for the whole game, at most one a week.</li>
+    </ul>
+    <button type="button" class="btn solid" id="begin">Start week 1</button>
+  </section>
+
+  <section class="cw-play" id="play" hidden>
+    <div class="card cw-bar">
+      <p class="cw-week"><b id="week"></b> <span class="muted">of 26</span></p>
+      <div class="cw-meters" id="meters"></div>
+    </div>
+    <div class="cw-grid2">
+      <section class="card cw-reports" aria-labelledby="rep-t">
+        <h2 id="rep-t">This week's reporting</h2>
+        <p class="fine" id="exnote"></p>
+        <ul class="cw-replist" id="reports"></ul>
+        <p class="fine">Closer looks left: <b class="num" id="looks"></b>. A closer look gives a second, sharper reading on one category this week.</p>
+      </section>
+      <section class="card cw-decide" aria-labelledby="dec-t">
+        <h2 id="dec-t">Your assessment</h2>
+        <label class="cw-slider" for="prob"><span>Probability the Neighbor attacks before the end of week 26</span>
+          <span class="cw-sl"><input type="range" id="prob" min="0" max="100" step="1"><output class="num" id="prob-out" for="prob"></output></span></label>
+        <p class="eyebrow mt">Warning level</p>
+        <div class="cw-levels" id="levels" role="radiogroup" aria-label="Warning level"></div>
+        <p class="fine cw-lvx" id="lvx"></p>
+        <button type="button" class="btn solid cw-go" id="end-week">Send assessment</button>
+        <p class="cw-feed" id="feed" aria-live="polite"></p>
+      </section>
+    </div>
+    <section class="card cw-hist" aria-labelledby="hist-t">
+      <h2 id="hist-t">So far</h2>
+      <svg id="chart" viewBox="0 0 640 240" role="img" aria-label="Your probability estimates by week"></svg>
+      <div class="cw-gw" id="grid"></div>
+    </section>
+  </section>
+
+  <section class="card cw-end" id="end" hidden aria-labelledby="end-t" tabindex="-1">
+    <p class="eyebrow" id="end-k"></p>
+    <h2 id="end-t"></h2>
+    <p id="end-x"></p>
+    <div class="cw-score">
+      <div><p class="cw-big num" id="total"></p><p class="fine">your score out of 100</p></div>
+      <div><p class="cw-big num" id="ai-total"></p><p class="fine">the computer analyst on the same reports</p></div>
+      <div><p class="cw-big num" id="pct">…</p><p class="fine" id="pct-x">comparing with the computer analyst…</p></div>
+    </div>
+    <table class="cw-parts" id="parts"></table>
+    <h3>What a perfect Bayesian would have believed</h3>
+    <p class="fine">Your estimates, the exact Bayesian posterior from the same reports and closer looks you saw (true illustrative likelihood ratios), and the computer analyst, which picks its own closer looks. The strip under the chart is your warning level.</p>
+    <svg id="end-chart" viewBox="0 0 640 240" role="img" aria-label="Your estimates against the Bayesian posterior and the computer analyst"></svg>
+    <p class="cw-key"><span><i class="you"></i>You</span><span><i class="bay"></i>Bayesian posterior</span><span><i class="ai"></i>Computer analyst</span></p>
+    <h3>The reports, with the truth</h3>
+    <p class="fine">Bottom row: the Neighbor's real activity each week (blank: routine, amber: early preparation, red: late preparation).</p>
+    <div class="cw-gw" id="end-grid"></div>
+    <h3>Lessons</h3>
+    <ul class="cw-lessons" id="lessons"></ul>
+    <button type="button" class="btn solid" id="again">Play again</button>
+  </section>
+
+  <section class="card cw-about">
+    <details>
+      <summary><b>How indicators work</b></summary>
+      <p>Each week the Neighbor either announces an exercise or not, and each of seven other indicators is reported or stays quiet. A likelihood ratio says how much likelier a report is if the Neighbor is preparing than if it is not. Multiply your odds by it. Quiet weeks count too: their ratios are below 1. Exercises make routine reports much more common, so a report during an exercise says less. Preparation has two stages: early (the four weeks before the last four) and late (the last four weeks, the attack week included).</p>
+      <div id="lr"></div>
+    </details>
+    <details>
+      <summary><b>How the game works</b></summary>
+      <ul>
+        <li><b>Truth.</b> Each game draws a published base rate (25%, 40% or 55%) and then, with that probability, an attack at the end of a week from 10 to 26. Across many games about 40% end in an attack.</li>
+        <li><b>Levels.</b> Watch, Warning and Alert build readiness toward a ceiling (30, 75, 100) by 6, 18 or 34 points a week, cost 0.5, 2 or 5 points a week, and Warning and Alert wear trust down by 1 or 2.5 a week. Readiness falls 15 a week when you lower the level.</li>
+        <li><b>Trust</b> scales everything the decision-maker does: at 60 trust, readiness builds at 60% of the rate, up to 60% of the ceiling, and costs 60% as much. Stepping down from Warning or Alert with no attack is a false alarm: −10 or −18 trust, and +50% for each earlier false alarm. A warning still standing when the 26 weeks end with no attack counts too. Trust recovers 1 a week at None or Watch.</li>
+        <li><b>Score</b> = 25% calibration (100 × (1 − 2 × Brier score) of your weekly probabilities against what happened) + 50% outcome (readiness when the attack came, or 100 if none came, minus response costs) + 25% trust left. Readiness of 60 or more counts as warned in time.</li>
+        <li><b>The computer analyst</b> computes the exact posterior, spends its closer looks where they tell it most, and sets its level from the chance of an attack within six weeks (Watch 15%, Warning 40%, Alert 70%, stepping down only well below). Your percentile compares you with 60 of its games with the same truth and fresh reporting.</li>
+      </ul>
+      <p class="fine">In 2,000 test games: the computer analyst scores 82 on average and warns in time before 84% of attacks; never warning scores 69; always at Watch 69; always at Warning 50; always on Alert 23; a jumpy analyst who warns on any single strong report (reserves, leave or shipping) 56, with three false alarms a game. Even a perfect Bayesian is typically only about 50% sure four weeks before an attack and 90% sure two weeks before.</p>
+    </details>
+    <details>
+      <summary><b>Further reading</b></summary>
+      <ul class="fine cw-reading">
+        <li>Roberta Wohlstetter, <i>Pearl Harbor: Warning and Decision</i> (Stanford University Press, 1962).</li>
+        <li>Richard K. Betts, <i>Surprise Attack: Lessons for Defense Planning</i> (Brookings Institution, 1982).</li>
+        <li>Shlomo Breznitz, <i>Cry Wolf: The Psychology of False Alarms</i> (Lawrence Erlbaum Associates, 1984).</li>
+        <li>Glenn W. Brier, "Verification of Forecasts Expressed in Terms of Probability," <i>Monthly Weather Review</i> 78, no. 1 (1950): 1–3.</li>
+      </ul>
+      <p class="fine">The game borrows the general ideas these works discuss (signals buried in noise, the cost of false alarms, scoring probability forecasts). Its numbers come from none of them.</p>
+    </details>
+  </section>
+</main>
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Cry Wolf', sub: 'A warning-analyst game: read noisy indicators about a notional neighbor, put a probability on attack, and decide when to sound the alarm.', category: 'Force & wargame models' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

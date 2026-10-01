@@ -37,7 +37,8 @@ const CATEGORY_LIST = [
     blurb: 'Taiwan Strait trackers, exercise replays and wargames.' },
   // Tools marked `dev: true` show only here (never in their other categories) and need their own password.
   { id: 'dev', name: 'Coming Soon', sites: ['deterrence'], locked: true,
-    blurb: 'Tools still being built and checked.' },
+    blurb: 'Tools still being built and checked.',
+    subs: [{ id: 'games', name: 'Coming Soon games', blurb: 'New games to play-test before they go public.' }] },
 ];
 // siteName and siteBlurb rename or re-describe a section on one site only.
 export const ALL_CATEGORIES = CATEGORY_LIST.map(c => ({ ...c, name: (c.siteName && c.siteName[SITE]) || c.name,
@@ -204,6 +205,8 @@ export const ALL_TOOLS = [
     blurb: 'Jam, dazzle, hack or shoot down a notional rival\'s satellites over a 10-month crisis and war, then see what your debris costs both sides for decades, with the escalation risk you ran.' },
   { slug: 'berlin-airlift', game: true, sub: { models: 'wargames' }, cat: 'models', sites: ['deterrence'], title: 'Airlift: Berlin 1948–49', status: 'live',
     blurb: 'Run the Berlin Airlift day by day: juggle C-54s, crews, inspections, runways, fog and the coal-food mix to keep West Berlin supplied, then see your tonnage against the 1948–49 record.' },
+  { slug: 'cry-wolf', dev: true, game: true, sub: { dev: 'games' }, cat: 'models', sites: ['deterrence'], title: 'Cry Wolf', status: 'live',
+    blurb: 'Read the indicators week by week and decide when to warn: every false alarm costs you the next one.' },
 ];
 
 export const onSite = (x, site = SITE) => !x.sites || x.sites.includes(site);

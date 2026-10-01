@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Exercise or Invasion? | Interactive Deterrence</title>
+<meta name="description" content="A two-sided hidden-information game. Red runs a recurring exercise cycle and may secretly be preparing a real attack; Blue spends limited collection on noisy indicators and must decide whether, and when, to warn.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@500;600;700;800&family=DM+Mono:wght@400;500&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="exercise-or-invasion.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+<div class="eo-actions">
+  <p class="eo-flag"><b>Fictional and notional.</b> Two invented sides, Red and Blue. Every number is illustrative game design, not data or a prediction.</p>
+  <div><button type="button" class="btn" id="new-game">New game</button>
+  <button type="button" class="btn" id="copy-link">Copy link</button></div>
+</div>
+
+<main class="eo-main">
+  <section class="card eo-start" id="start" aria-labelledby="start-t">
+    <h2 id="start-t">Pick a side</h2>
+    <p class="eo-lede">Red runs a big exercise twice a quarter, on a published calendar. This time it may be cover for a real attack. Over <b>twelve weeks</b> Red builds readiness, or only trains; Blue watches through four kinds of collection, each blind to something, and has to decide whether, and when, to <b>warn</b>. Warn too late and the attack lands. Warn at an exercise and Blue loses credibility and shows Red which sources it was relying on.</p>
+    <div class="eo-sides" id="sides" role="radiogroup" aria-label="Your side">
+      <button type="button" role="radio" aria-checked="false" class="eo-side" data-side="red"><b>Red</b><small>Run the exercise cycle. Decide, in secret, whether it hides a real attack, then build readiness without being caught.</small></button>
+      <button type="button" role="radio" aria-checked="false" class="eo-side" data-side="blue"><b>Blue</b><small>Spend scarce collection on imagery, signals, human and open sources. Read the noise. Warn in time, and only when it is real.</small></button>
+    </div>
+    <div class="eo-setup" id="setup-red" hidden>
+      <h3 id="intent-t">Your secret intent</h3>
+      <div class="eo-intents" role="radiogroup" aria-labelledby="intent-t" id="intents">
+        <button type="button" role="radio" aria-checked="true" data-intent="attack"><b>Attack</b><span>Reach readiness and strike before Blue is mobilized.</span></button>
+        <button type="button" role="radio" aria-checked="false" data-intent="exercise"><b>Only exercise</b><span>Train, and bait Blue into a false warning.</span></button>
+      </div>
+    </div>
+    <div class="eo-row"><p class="fine" id="side-x">Choose a side to begin. The computer plays the other.</p><button type="button" class="btn solid" id="begin" disabled>Begin</button></div>
+  </section>
+
+  <section class="eo-play" id="play" hidden>
+    <div class="card eo-bar">
+      <p class="eo-week"><b id="week"></b> <span class="muted" id="weekof"></span></p>
+      <ol class="eo-cal" id="cal" aria-label="Exercise calendar"></ol>
+      <div class="eo-pub" id="pub"></div>
+    </div>
+    <div class="eo-grid">
+      <section class="card eo-decide" id="decide" aria-labelledby="dec-t"></section>
+      <aside class="eo-side-col">
+        <div class="card eo-status" id="status" aria-label="Situation"></div>
+        <div class="card eo-feed" id="feed" aria-live="polite"></div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="card eo-end" id="end" hidden aria-labelledby="end-t" tabindex="-1">
+    <p class="eyebrow" id="end-k"></p>
+    <h2 id="end-t"></h2>
+    <p id="end-x"></p>
+    <div class="eo-score">
+      <div><p class="eo-big num" id="total"></p><p class="fine">your score, 0 to 100</p></div>
+      <div><p class="eo-big num" id="pct">…</p><p class="fine" id="pct-x">comparing with the computer in your seat…</p></div>
+    </div>
+    <table class="eo-parts" id="parts"></table>
+    <h3>What was really going on</h3>
+    <p id="reveal"></p>
+    <h3>Readiness against warning, week by week</h3>
+    <p class="fine">Both sides’ beliefs revealed: what Blue’s analyst model concluded, and what Red thought Blue suspected. Red’s attack threshold is the dashed red line; shaded weeks are the published exercise windows.</p>
+    <svg id="timeline" viewBox="0 0 640 250" role="img" aria-label="Week-by-week readiness, mobilization and beliefs"></svg>
+    <div id="legend"></div>
+    <div class="eo-tablewrap"><table class="eo-log" id="log"></table></div>
+    <button type="button" class="btn solid" id="again">Play again</button>
+  </section>
+
+  <section class="card eo-about">
+    <details>
+      <summary><b>How the game works</b></summary>
+      <ul>
+        <li><b>Red</b> has 6 activity points a week. Three activities build readiness: stockpiling logistics, moving reserves and readying key units (each point counts for less after the first in the same week). Exercise tempo builds none but is expected inside the published windows. Deception hides part of this week’s preparation; communications discipline hides it from signals. Preparation can be hidden inside a scheduled exercise or a declared snap exercise, at a cost in speed. From readiness 50 Red may attack; the odds rise with readiness and fall as Blue mobilizes.</li>
+        <li><b>Blue</b> has 6 collection points a week across imagery, signals, human and open sources. Each source reads some Red activities well and others poorly, and more points mean less noise. Blue sees only the readings, and what is public: the calendar and any snap exercise.</li>
+        <li><b>Warning</b> starts mobilization, which grows every week and cuts Red’s odds. Standing a warning down costs credibility (and slower mobilization next time) and shows Red which sources Blue was leaning on, which then read less.</li>
+        <li><b>Winning.</b> Red wins if its attack succeeds, or, if it only exercised, if Blue warned. Blue wins if the attack fails or never comes, or if it kept quiet through an exercise. Scores (0–100) also count mobilization, credibility and wasted weeks.</li>
+        <li><b>The computer.</b> Computer Red draws an intent and a deception style and adapts to how suspicious it thinks Blue is. Computer Blue is a Bayesian: it spends collection where it best separates “attack” from “exercise” and warns on its posterior.</li>
+      </ul>
+      <p class="fine" id="balance-note">All numbers are illustrative game design. In 1,000 computer-against-computer games, Red won 42.6% and Blue 57.4%. Against a Red that meant to attack, Blue stopped or deterred the attack 47% of the time; against an exercise-only Red that ran feints, Blue cried wolf 36% of the time. A Blue that never warns scores 62 on average, one that warns in week 1 scores 57, and the computer Blue 67.</p>
+      <p class="fine"><b>Further reading</b> on surprise attack, warning and deception: Roberta Wohlstetter, <i>Pearl Harbor: Warning and Decision</i> (1962); Barton Whaley, <i>Stratagem: Deception and Surprise in War</i> (2007 edition); Richard K. Betts, <i>Surprise Attack: Lessons for Defense Planning</i> (Brookings Institution, 1982). The game’s mechanics are original and do not model any case in these books.</p>
+    </details>
+  </section>
+</main>
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Exercise or Invasion?', sub: 'A hidden-information game: Red’s exercise may be cover for an attack, and Blue has twelve weeks of noisy collection to decide whether to warn.', category: 'Force & wargame models' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

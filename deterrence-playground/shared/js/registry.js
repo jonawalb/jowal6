@@ -209,6 +209,8 @@ export const ALL_TOOLS = [
     blurb: 'Hold or squeeze a disputed shoal for a year, one slice at a time, against red lines nobody can see.' },
   { slug: 'cry-wolf', dev: true, game: true, sub: { dev: 'games' }, cat: 'models', sites: ['deterrence'], title: 'Cry Wolf', status: 'live',
     blurb: 'Read the indicators week by week and decide when to warn: every false alarm costs you the next one.' },
+  { slug: 'exercise-or-invasion', dev: true, game: true, sub: { dev: 'games' }, cat: 'models', sites: ['deterrence'], title: 'Exercise or Invasion?', status: 'live',
+    blurb: 'Hide a real buildup inside an exercise cycle, or task the collectors and call it in time.' },
   { slug: 'sanctions-architect', dev: true, game: true, sub: { dev: 'games' }, cat: 'coercion', sites: ['deterrence'], title: 'Sanctions Architect', status: 'live',
     blurb: 'Build a sanctions coalition, plug the leaks and count your own costs, quarter by quarter.' },
   { slug: 'magazine-depth', dev: true, game: true, sub: { dev: 'games' }, cat: 'models', sites: ['deterrence'], title: 'Magazine Depth', status: 'live',

@@ -2,8 +2,10 @@
 // one-month lookahead choice by softmax. The computer never reads another capital's true type.
 import { P } from '../data/params.js';
 import { COUNTRIES, IDS } from '../data/countries.js';
-import { ACTIONS, POSTURES, BY_ID, TO, posturesFor, escRoom, isEsc } from '../data/actions.js';
-import { resolveTurn, legalActions, opening } from './engine.js';
+import { ACTIONS, POSTURES, BY_ID, TO, posturesFor, escRoom, isEsc, menu } from '../data/actions.js';
+import { resolveTurn, blockedWhy, opening } from './engine.js';
+import { deployIntensity } from './forces.js';
+import { forceOrders } from './ai-forces.js';
 import { makeRng, STREAM } from './rng.js';
 
 const TYPES = P.types;
@@ -13,10 +15,11 @@ export function initBeliefs() {
   return Object.fromEntries(IDS.map(o => [o, Object.fromEntries(IDS.filter(t => t !== o).map(t => [t, { ...COUNTRIES[t].prior }]))]));
 }
 
-/** How hard a move reads: posture counts half, each escalatory action +1, each accommodating one −1. */
+/** How hard a move reads: posture counts half, each escalatory move +1, each accommodating one −1,
+ * plus forward deployment (massing in one area, Attack stances). */
 export function intensity(move) {
   const lvl = (POSTURES.find(p => p.id === move.posture) || { level: 0 }).level;
-  return 0.5 * lvl + move.actions.reduce((t, id) => t + (BY_ID[id].tags.includes('esc') ? 1 : BY_ID[id].tags.includes('soft') ? -1 : 0), 0);
+  return 0.5 * lvl + move.actions.reduce((t, id) => t + (BY_ID[id].tags.includes('esc') ? 1 : BY_ID[id].tags.includes('soft') ? -1 : 0), 0) + deployIntensity(null, null, move.orders);
 }
 
 const GRID = []; for (let x = -4; x <= 5; x += 0.5) GRID.push(x);
@@ -68,8 +71,8 @@ function riskTerm(s, who, move, B) {
   return r + sign * P.ai.typeTaste * intensity(move);
 }
 
-/** Default guess at a rival's move: what it did last month. */
-const guess = (s, w) => s.last[w] ? { posture: s.last[w].posture, actions: s.last[w].actions.filter(id => !(BY_ID[id].req && BY_ID[id].req(s))) } : { posture: 'hold', actions: [] };
+/** Default guess at a rival's move: last month's posture and moves (no new deployments). */
+const guess = (s, w) => s.last[w] ? { posture: s.last[w].posture, actions: s.last[w].actions.filter(id => !blockedWhy(s, id)), follow: s.last[w].follow || {}, orders: {} } : { posture: 'hold', actions: [], follow: {}, orders: {} };
 
 function utility(s, who, move, B, weights) {
   const moves = Object.fromEntries(IDS.map(w => [w, w === who ? move : guess(s, w)]));
@@ -77,15 +80,31 @@ function utility(s, who, move, B, weights) {
   return objectiveValue(n, who, weights) + P.ai.supportWeight * n.c[who].support + riskTerm(s, who, move, B);
 }
 
-/** Pick a move for `who`. weights: its objective weights; beliefs: its beliefs about the others. */
+/** Best follow-up answers for one move, judged on its own. */
+function bestFollow(s, who, id, B, weights, orders) {
+  const fq = BY_ID[id].follow || [];
+  let best = {}, bu = -Infinity;
+  const combos = fq.reduce((acc, q) => acc.flatMap(c => q.opts.map(o => ({ ...c, [q.id]: o.id }))), [{}]);
+  for (const o of combos) {
+    if (blockedWhy(s, id, o)) continue;
+    const u = utility(s, who, { posture: 'hold', actions: [id], follow: { [id]: o }, orders }, B, weights);
+    if (u > bu) { bu = u; best = o; }
+  }
+  return { o: best, u: bu };
+}
+
+/** Pick a move for `who`: posture, up to three moves with follow-ups, and force orders.
+ * weights: its objective weights; beliefs: its beliefs about the others. */
 export function chooseMove(s, who, beliefs, weights, difficulty = s.difficulty) {
   const rng = makeRng(s.seed, STREAM.ai + s.turn * 10 + IDS.indexOf(who));
-  const legal = legalActions(s, who, ACTIONS[who]);
-  const base = { posture: 'hold', actions: [] };
+  const orders = forceOrders(s, who);
+  const legal = menu(s, who).filter(a => !blockedWhy(s, a.id));
+  const base = { posture: 'hold', actions: [], follow: {}, orders };
   const u0 = utility(s, who, base, beliefs, weights);
-  const pScore = posturesFor(who, s).map(p => ({ id: p.id, u: utility(s, who, { posture: p.id, actions: [] }, beliefs, weights) - u0 }))
+  const pScore = posturesFor(who, s).map(p => ({ id: p.id, u: utility(s, who, { ...base, posture: p.id }, beliefs, weights) - u0 }))
     .sort((a, b) => b.u - a.u).slice(0, P.ai.topPostures);
-  const aScore = legal.map(a => ({ id: a.id, u: utility(s, who, { posture: 'hold', actions: [a.id] }, beliefs, weights) - u0 }))
+  const follow = {};
+  const aScore = legal.map(a => { const r = bestFollow(s, who, a.id, beliefs, weights, orders); follow[a.id] = r.o; return { id: a.id, u: r.u - u0 }; })
     .sort((a, b) => b.u - a.u).slice(0, P.ai.topActions);
   const cands = [];
   const ids = aScore.map(a => a.id);
@@ -95,13 +114,16 @@ export function chooseMove(s, who, beliefs, weights, difficulty = s.difficulty) 
   for (const p of pScore) for (const t of triples) {
     let room = escRoom(p.id);
     const acts = t.filter(id => !isEsc(id) || room-- > 0);
-    cands.push({ posture: p.id, actions: acts });
+    cands.push({ posture: p.id, actions: acts, follow: Object.fromEntries(acts.map(id => [id, follow[id]])), orders });
   }
   const us = cands.map(c => utility(s, who, c, beliefs, weights));
   const T = P.ai.temp[difficulty] || P.ai.temp.normal;
   const mx = Math.max(...us);
   const ws = us.map(u => Math.exp((u - mx) / T));
-  return cands[rng.pick(ws)];
+  const pick = cands[rng.pick(ws)];
+  // Spend any logistics its military moves add.
+  const bonus = pick.actions.reduce((t, id) => t + (BY_ID[id].deploy || 0), 0);
+  return bonus ? { ...pick, orders: forceOrders(s, who, bonus) } : pick;
 }
 
 /** Your read of a rival: the true posterior plus display noise, renormalised. */

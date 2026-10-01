@@ -1,11 +1,15 @@
 // Four Capitals: start screen, the monthly decision, reveal and resolution, and the end-of-game debrief.
 import { P } from '../data/params.js';
 import { COUNTRIES, IDS, defaultWeights } from '../data/countries.js';
-import { ACTIONS, POSTURES, BY_ID, LINES, posturesFor, escRoom, isEsc } from '../data/actions.js';
-import { newGame, brief, resolveTurn, oddsFor, blockedWhy, snapshot, encode, decode } from './engine.js';
+import { POSTURES, BY_ID, answers } from '../data/actions.js';
+import { AREA_LABEL } from '../data/theater.js';
+import { newGame, brief, resolveTurn, snapshot, encode, decode } from './engine.js';
+import { applyOrders, updateControl } from './forces.js';
+import { paintDecide, wireDecide, emptyChoice } from './decide.js';
+import { makeRng, STREAM } from './rng.js';
 import { initBeliefs, updateBeliefs, chooseMove, intelView } from './ai.js';
 import { score, benchmark, percentile } from './score.js';
-import { drawTheatre, paintTheatre, animateMoves, paintLadder, paintTracks, paintCaps, paintIntel, paintBeliefChart, COL } from './view.js';
+import { drawTheatre, paintTheatre, paintZones, animateMoves, paintLadder, paintTracks, paintCaps, paintIntel, paintBeliefChart, COL } from './view.js';
 import { pulse, flash } from '../../../shared/js/motion.js';
 
 const $ = id => document.getElementById(id);
@@ -49,14 +53,30 @@ $('type-go').addEventListener('click', () => { show('play'); paint(); $('end-tur
 
 function begin(start) {
   const s0 = newGame(start);
-  g = { s: brief(s0), B: initBeliefs(), series: [], player: start.player, weights: start.weights, difficulty: start.difficulty, line: 'D', choice: { posture: 'hold', actions: [] } };
+  g = { s: brief(s0), B: initBeliefs(), series: [], player: start.player, weights: start.weights, difficulty: start.difficulty, line: 'D', choice: emptyChoice() };
   g.series.push(g.B);
   document.body.style.setProperty('--c', COL[g.player]);
   drawTheatre($('theatre'));
 }
 
 /* ---------- Decide ---------- */
-const preview = () => Object.fromEntries(IDS.map(w => [w, w === g.player ? g.choice : (g.s.last[w] || { posture: 'hold', actions: [] })]));
+/** What you can see of a capital's strength in an area: exact for yourself, your partners or with fresh intelligence, else ±1. */
+function seenIn(st) {
+  return (w, a) => {
+    const v = st.f[w][a] || 0;
+    const ally = w !== 'cn' && g.player !== 'cn';
+    if (v <= 0 || w === g.player || ally || st.sharp?.[g.player]) return [v, true];
+    const r = makeRng(st.seed, STREAM.intel + 500 + st.turn * 40 + IDS.indexOf(w) * 8 + a.length);
+    return [Math.max(0, v + (r.u() < 0.33 ? -1 : r.u() < 0.5 ? 1 : 0)), false];
+  };
+}
+/** The map shows your planned deployment before you commit. */
+function paintPlan() {
+  const t = JSON.parse(JSON.stringify(g.s));
+  applyOrders(t, g.player, g.choice.orders, g.choice.actions.reduce((n, id) => n + (BY_ID[id].deploy || 0), 0));
+  updateControl(t);
+  paintZones(t, seenIn(t));
+}
 function paint() {
   const s = g.s;
   $('month').textContent = monthName(s.turn);
@@ -65,55 +85,21 @@ function paint() {
   paintLadder($('ladder'), s);
   paintTracks($('tracks'), s, g.before);
   paintCaps($('caps'), s, g.player);
-  paintTheatre(s);
+  paintTheatre(s); paintPlan();
   const views = Object.fromEntries(IDS.filter(w => w !== g.player).map(w => [w, intelView(g.B, s, g.player, w)]));
   const theirs = Object.fromEntries(IDS.filter(w => w !== g.player).map(w => [w, intelView(g.B, s, w, g.player)]));
   paintIntel($('intel'), views, theirs, g.player);
   paintFeed();
-  paintPostures(); paintTabs(); paintActions();
+  paintDecide(g);
   history.replaceState(null, '', '#g=' + encode(s));
 }
+const moveText = (m, w) => [POSTURES.find(p => p.id === m.posture).label + (m.actions.length ? '; ' : ''), m.actions.map(id => BY_ID[id].label.toLowerCase()).join('; ')].join('');
 function paintFeed() {
   const h = g.s.history[g.s.history.length - 1];
-  $('feed').innerHTML = h ? `<h3>Last month</h3><ul>${IDS.map(w => `<li><b style="color:${COL[w]}">${COUNTRIES[w].short}</b>: ${POSTURES.find(p => p.id === h.moves[w].posture).label}${h.moves[w].actions.length ? '; ' + h.moves[w].actions.map(id => BY_ID[id].label.toLowerCase()).join('; ') : ''}</li>`).join('')}</ul>`
-    : '<h3>The situation</h3><p class="fine">Beijing has stepped up pressure on Taiwan after a disputed election result. Washington, Tokyo and Taipei are watching each other as closely as they watch Beijing. Nothing has been fired yet.</p>';
+  $('feed').innerHTML = h ? `<h3>Last month</h3><ul>${IDS.map(w => `<li><b style="color:${COL[w]}">${COUNTRIES[w].short}</b>: ${moveText(h.moves[w], w)}</li>`).join('')}</ul>`
+    : '<h3>The situation</h3><p class="fine">Beijing has stepped up pressure on Taiwan after a disputed election result. Its navy already holds the Strait; Japan watches the North and U.S. ships sit east of Taiwan. Washington, Tokyo and Taipei are watching each other as closely as they watch Beijing. Nothing has been fired yet.</p>';
 }
-function paintPostures() {
-  const ok = posturesFor(g.player, g.s).map(p => p.id);
-  const why = p => p.only && !p.only.includes(g.player) ? 'Only nuclear-armed states can make a nuclear signal' : `Needs the crisis at ${P.ladder[p.minRung]} or above`;
-  $('postures').innerHTML = POSTURES.map(p => `<button type="button" role="radio" data-posture="${p.id}" aria-checked="${g.choice.posture === p.id}" ${ok.includes(p.id) ? '' : `disabled title="${why(p)}"`}>${p.label}</button>`).join('');
-  $('pexp').textContent = POSTURES.find(p => p.id === g.choice.posture).explain;
-}
-function paintTabs() {
-  $('tabs').innerHTML = Object.entries(LINES).map(([k, v]) => {
-    const n = g.choice.actions.filter(id => BY_ID[id].line === k).length;
-    return `<button type="button" role="tab" data-line="${k}" aria-selected="${g.line === k}" title="${v}">${v.slice(0, 4)}${n ? ` <small>(${n})</small>` : ''}</button>`;
-  }).join('');
-  $('count').textContent = `${g.choice.actions.length} of 3`;
-}
-function paintActions() {
-  const mv = preview();
-  $('actions').innerHTML = ACTIONS[g.player].filter(a => a.line === g.line).map(a => {
-    const escUsed = g.choice.actions.filter(isEsc).length;
-    const why = blockedWhy(g.s, a.id) || (!g.choice.actions.includes(a.id) && isEsc(a.id) && escUsed >= escRoom(g.choice.posture)
-      ? `your posture (${POSTURES.find(p => p.id === g.choice.posture).label}) allows ${escRoom(g.choice.posture) === 0 ? 'no' : 'only one'} escalatory move${escRoom(g.choice.posture) === 0 ? 's' : ''}` : null), on = g.choice.actions.includes(a.id);
-    const full = !on && g.choice.actions.length >= 3;
-    const { p, factors } = oddsFor(g.s, mv, g.player, a.id);
-    const tag = a.tags.includes('esc') ? 'tag-esc' : a.tags.includes('soft') ? 'tag-soft' : '';
-    const fac = factors.map(([l, d]) => `${l} ${d > 0 ? '+' : ''}${d}`).join(' · ');
-    return `<label class="k4-act ${on ? 'on' : ''} ${why ? 'off' : ''} ${tag}"><input type="checkbox" data-act="${a.id}" ${on ? 'checked' : ''} ${why || full ? 'disabled' : ''}>
-      <b>${a.label}</b><span class="p">${why ? '—' : Math.round(p * 100) + '%'}</span><small>${a.explain}</small>
-      ${why ? `<span class="why">Not now: ${why}.</span>` : fac ? `<span class="why">${fac}</span>` : ''}</label>`;
-  }).join('') || '<p class="fine">No moves on this line.</p>';
-}
-$('postures').addEventListener('click', e => { const b = e.target.closest('[data-posture]'); if (!b || b.disabled) return; g.choice.posture = b.dataset.posture; { let room = escRoom(g.choice.posture); g.choice.actions = g.choice.actions.filter(id => !isEsc(id) || room-- > 0); } paintPostures(); paintTabs(); paintActions(); pulse(b); });
-$('tabs').addEventListener('click', e => { const b = e.target.closest('[data-line]'); if (!b) return; g.line = b.dataset.line; paintTabs(); paintActions(); });
-$('actions').addEventListener('change', e => {
-  const id = e.target.dataset.act; if (!id) return;
-  const a = g.choice.actions;
-  g.choice.actions = e.target.checked ? [...a, id].slice(0, 3) : a.filter(x => x !== id);
-  paintTabs(); paintActions();
-});
+wireDecide(() => paintPlan());
 
 /* ---------- Resolve ---------- */
 function computerMoves(s, B) {
@@ -131,13 +117,13 @@ function step(playerMove) {
 $('end-turn').addEventListener('click', async () => {
   if (!g || g.s.over || !$('resolve').hidden) return;
   const month = monthName(g.s.turn);
-  const { moves, log, next } = step({ posture: g.choice.posture, actions: [...g.choice.actions] });
+  const { moves, log, next } = step(JSON.parse(JSON.stringify(g.choice)));
   g.s = next;
   show('play', 'resolve'); $('intel').hidden = $('feed').hidden = true; $('decide').hidden = true;
   $('res-t').textContent = `${month}: what happened`;
-  $('reveal').innerHTML = IDS.map(w => `<div class="k4-mv" style="--c:${COL[w]}"><b>${COUNTRIES[w].short}${w === g.player ? ' (you)' : ''}</b><span class="po">${POSTURES.find(p => p.id === moves[w].posture).label}</span><ul>${moves[w].actions.map(id => `<li>${BY_ID[id].label}</li>`).join('') || '<li>No moves</li>'}</ul></div>`).join('');
+  $('reveal').innerHTML = IDS.map(w => `<div class="k4-mv" style="--c:${COL[w]}"><b>${COUNTRIES[w].short}${w === g.player ? ' (you)' : ''}</b><span class="po">${POSTURES.find(p => p.id === moves[w].posture).label}</span><ul>${moves[w].actions.map(id => `<li>${BY_ID[id].label}${followText(id, moves[w].follow)}</li>`).join('') || '<li>No moves</li>'}</ul>${deployText(moves[w].orders)}</div>`).join('');
   $('log').innerHTML = logHTML(log);
-  paintLadder($('ladder'), g.s); paintTracks($('tracks'), g.s, g.before); paintCaps($('caps'), g.s, g.player);
+  paintLadder($('ladder'), g.s); paintTracks($('tracks'), g.s, g.before); paintCaps($('caps'), g.s, g.player); paintTheatre(g.s); paintZones(g.s, seenIn(g.s));
   $('play').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
   $('next').disabled = true;
   for (const w of ['cn', 'us', 'jp', 'tw']) await animateMoves(w, moves[w].actions, log);
@@ -145,21 +131,26 @@ $('end-turn').addEventListener('click', async () => {
   $('next').disabled = false; $('next').focus();
 });
 
+const followText = (id, f) => { const a = BY_ID[id]; if (!a.follow) return ''; const o = answers(id, f?.[id]); return ' <span class="muted">(' + a.follow.map(q => q.opts.find(x => x.id === o[q.id]).label).join(', ') + ')</span>'; };
+const deployText = o => { const m = (o?.moves || []).filter(x => x[2] > 0); return m.length ? `<p class="fine">Forces: ${m.map(([f, t, n]) => `${n} ${AREA_LABEL[f]} → ${AREA_LABEL[t]}`).join('; ')}</p>` : ''; };
 const verb = { success: 'Success', partial: 'Partial', failure: 'Failed', blocked: 'Could not be carried out' };
 function logHTML(log) {
   return log.map(l => {
     if (l.kind === 'note') return `<li class="note">${l.text}</li>`;
+    if (l.kind === 'battle') return `<li class="note battle">${l.text.replace(/\b(CN|US|JP)\b/g, m => ({ CN: 'China', US: 'U.S.', JP: 'Japan' }[m]))}</li>`;
+    if (l.kind === 'order') return l.who === g.player && !l.ok ? `<li style="--c:${COL[l.who]}">Your order ${l.text}</li>` : '';
+    if (l.kind === 'force') return `<li style="--c:${COL[l.who]}">${COUNTRIES[l.who].short}: ${l.text}</li>`;
     if (l.kind === 'nukerisk') return `<li class="note">Nuclear risk this month: ${(l.p * 100).toFixed(1)}%.</li>`;
     if (l.kind === 'posture') return l.support ? `<li style="--c:${COL[l.who]}">${COUNTRIES[l.who].short} posture: ${POSTURES.find(p => p.id === l.posture).label}. <span class="fx">Home support ${l.support > 0 ? '+' : ''}${Math.round(l.support)}${l.who === g.player ? ' (your type’s cost)' : ''}</span></li>` : '';
     const a = BY_ID[l.id];
     const odds = l.status === 'blocked' ? l.reason : `odds ${Math.round(l.p * 100)}%, rolled ${Math.round(l.roll * 100)}${l.factors.length ? ' · ' + l.factors.map(([x, d]) => `${x} ${d > 0 ? '+' : ''}${d}`).join(' · ') : ''}`;
-    return `<li style="--c:${COL[l.who]}"><b>${COUNTRIES[l.who].short}</b>: ${a.label}<span class="st ${l.status}">${verb[l.status]}</span><span class="fx">${odds}</span></li>`;
+    return `<li style="--c:${COL[l.who]}"><b>${COUNTRIES[l.who].short}</b>: ${a.label}${followText(l.id, { [l.id]: l.o })}<span class="st ${l.status}">${verb[l.status]}</span><span class="fx">${odds}</span></li>`;
   }).join('');
 }
 $('next').addEventListener('click', () => {
   if (g.s.over) return finish();
   g.s = brief(g.s);
-  g.choice = { posture: 'hold', actions: [] };
+  g.choice = emptyChoice();
   show('play'); $('intel').hidden = $('feed').hidden = $('decide').hidden = false; paint();
   document.querySelectorAll('#tracks .k4-track').forEach(t => { if (t.querySelector('small')) flash(t); });
   $('play').scrollIntoView({ block: 'start' });

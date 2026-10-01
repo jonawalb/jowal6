@@ -11,7 +11,9 @@ export const COL = { us: 'var(--k-us)', tw: 'var(--k-tw)', cn: 'var(--k-cn)', jp
 export const AT = { cn: [118, 108], tw: [352, 250], jp: [532, 92], us: [596, 330] };
 
 
-let svg, layer, rings;
+let svg, layer, rings, zones;
+// Theater areas on the schematic (centre of each zone).
+export const ZONE = { north: [372, 120], strait: [262, 250], south: [372, 352], east: [492, 250] };
 export function drawTheatre(root) {
   svg = root; svg.innerHTML = '';
   el('rect', { x: -700, y: -200, width: 2040, height: 800, fill: 'var(--sea, #dfe9f1)', id: 'k4-sea' }, svg);
@@ -21,6 +23,7 @@ export function drawTheatre(root) {
   for (const [x, y] of [[452, 170], [432, 184], [412, 196], [392, 206]]) el('circle', { cx: x, cy: y, r: 3, fill: 'var(--land, #eef0ea)', stroke: 'var(--coast, #9aa59a)' }, svg);
   el('text', { x: 300, y: 330, 'font-size': 12, fill: 'var(--muted)', 'font-style': 'italic' }, svg).textContent = 'Taiwan Strait';
   el('text', { x: 470, y: 380, 'font-size': 12, fill: 'var(--muted)', 'font-style': 'italic' }, svg).textContent = 'Pacific (not to scale)';
+  zones = el('g', {}, svg);
   rings = el('g', {}, svg);
   for (const id of IDS) {
     const [x, y] = AT[id];
@@ -30,6 +33,29 @@ export function drawTheatre(root) {
     t.textContent = COUNTRIES[id].capital;
   }
   layer = el('g', {}, svg);
+}
+
+/** Zones with each side's strength. seen(who, area) returns [value, exact]. */
+export function paintZones(s, seen) {
+  if (!zones) return;
+  zones.innerHTML = '';
+  const fill = { red: 'var(--k-cn)', blue: 'var(--k-us)', contested: 'var(--warn)', empty: 'transparent' };
+  for (const [a, [x, y]] of Object.entries(ZONE)) {
+    const c = s.ctrl[a];
+    el('ellipse', { cx: x, cy: y, rx: 58, ry: 34, fill: fill[c], 'fill-opacity': c === 'empty' ? 0 : 0.1, stroke: c === 'contested' ? 'var(--warn)' : fill[c] === 'transparent' ? 'var(--muted)' : fill[c], 'stroke-dasharray': '5 4', 'stroke-opacity': 0.8 }, zones);
+    el('text', { x, y: y - 12, 'font-size': 11, 'font-weight': 700, 'text-anchor': 'middle', fill: 'var(--ink)', 'letter-spacing': '.08em' }, zones).textContent = { north: 'NORTH', strait: 'STRAIT', south: 'SOUTH', east: 'EAST' }[a];
+    const parts = [['cn', 'var(--k-cn)'], ['us', 'var(--k-us)'], ['jp', 'var(--k-jp)']].map(([w, col]) => [w, col, ...seen(w, a)]).filter(([, , v]) => v > 0);
+    let dx = x - (parts.length - 1) * 19;
+    for (const [w, col, v, exact] of parts) {
+      el('circle', { cx: dx, cy: y + 8, r: 13, fill: col, stroke: 'var(--panel)', 'stroke-width': 1.5 }, zones);
+      el('text', { x: dx, y: y + 12, 'font-size': 11, 'font-weight': 700, 'text-anchor': 'middle', fill: '#fff' }, zones).textContent = (exact ? '' : '~') + Math.round(v);
+      dx += 38;
+    }
+    el('text', { x, y: y + 33, 'font-size': 10, 'text-anchor': 'middle', fill: 'var(--muted)' }, zones).textContent = c === 'red' ? 'China holds' : c === 'blue' ? 'Coalition holds' : c === 'contested' ? 'Contested' : '';
+  }
+  const [tx, ty] = AT.tw;
+  const tw = ['tn', 'tc', 'ts'].map(a => seen('tw', a));
+  el('text', { x: tx, y: ty + 58, 'font-size': 10.5, fill: 'var(--k-tw)', 'font-weight': 600, 'text-anchor': 'middle' }, zones).textContent = `Taiwan N ${tw.map(([v, e]) => (e ? '' : '~') + Math.round(v)).join(' · ')} S`;
 }
 
 export function paintTheatre(s) {

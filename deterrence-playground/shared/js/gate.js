@@ -4,7 +4,7 @@
 // In local development (serving the source tree) this file is not loaded and data is plaintext.
 (function () {
   'use strict';
-  var CFG = {"id": "3d314fe2f5", "salt": "Y4WWLNuKMQNV9IJIKHdnMA==", "iter": 600000, "check": "tjkjLw74yJV6+mditJ1VR8hDkJT5Hm3Ucw4HZSJ8PZRGXg==", "remember": false, "t2": {"id": "24323fd3b3", "salt": "1h8efphNDcDulPgKOV6WkA==", "check": "4ufCwV4H5vsTzWw8SsppYG8CYEFPkH2wYaZh4xmBJCzThQ==", "slugs": ["crossing-windows", "four-capitals", "joint-sword", "penghu-gambit", "strait-landing", "strait-layers", "transit-response", "wargame-explorer", "warning-board"], "name": "Indo-Pacific"}, "t3": {"id": "1561121461", "salt": "MVNotf4TEPtaytW5XYSB0A==", "check": "9pi+x9N+EpXYMdBBG8XYpFM4Aoxc+i2ZQWbUvA2rxnLp3w==", "slugs": ["dissertation-games"], "name": "Jon Dissertation Games"}, "t4": {"id": "9de41c846d", "salt": "oqIHHudpJmpc+aW0a7OJag==", "check": "7kATO5IQxdNDiRoSs6Fw3ra6oVcd73LR7qgc2bz5FHguHg==", "slugs": ["arms-race", "bayesian-attack", "brinkmanship", "coercion-resilience", "conceal-reveal", "correction-lab", "cost-ratio", "cry-wolf", "exercise-or-invasion", "extended-deterrence", "hub-and-spokes", "humiliation-motivation", "iran-israel-salvos", "magazine-depth", "misinfo-cascade", "prebunking-game", "qre-explorer", "salami", "sanctions-architect", "sanctions-explorer", "sea-control", "supply-shock", "verification-game", "will-to-fight"], "name": "Coming Soon"}};
+  var CFG = {"id": "3d314fe2f5", "salt": "Y4WWLNuKMQNV9IJIKHdnMA==", "iter": 600000, "check": "tjkjLw74yJV6+mditJ1VR8hDkJT5Hm3Ucw4HZSJ8PZRGXg==", "remember": false, "t2": {"id": "24323fd3b3", "salt": "1h8efphNDcDulPgKOV6WkA==", "check": "4ufCwV4H5vsTzWw8SsppYG8CYEFPkH2wYaZh4xmBJCzThQ==", "slugs": ["crossing-windows", "four-capitals", "joint-sword", "penghu-gambit", "strait-landing", "strait-layers", "transit-response", "wargame-explorer", "warning-board"], "name": "Indo-Pacific"}, "t3": {"id": "1561121461", "salt": "MVNotf4TEPtaytW5XYSB0A==", "check": "9pi+x9N+EpXYMdBBG8XYpFM4Aoxc+i2ZQWbUvA2rxnLp3w==", "slugs": ["dissertation-games", "will-to-fight"], "name": "Jon Dissertation Games"}, "t4": {"id": "9de41c846d", "salt": "oqIHHudpJmpc+aW0a7OJag==", "check": "7kATO5IQxdNDiRoSs6Fw3ra6oVcd73LR7qgc2bz5FHguHg==", "slugs": ["arms-race", "bayesian-attack", "brinkmanship", "coercion-resilience", "conceal-reveal", "correction-lab", "cost-ratio", "cry-wolf", "exercise-or-invasion", "extended-deterrence", "hub-and-spokes", "humiliation-motivation", "iran-israel-salvos", "magazine-depth", "misinfo-cascade", "prebunking-game", "qre-explorer", "salami", "sanctions-architect", "sanctions-explorer", "sea-control", "supply-shock", "verification-game"], "name": "Coming Soon"}};
   var KEYNAME = 'tsm-vault-key-' + (CFG ? CFG.id : 'dev');
   var MAGIC = 'TSMVAULT2:';
   // Optional extra tiers: tools listed in CFG.t2.slugs (or CFG.t3.slugs) have their data sealed with a
@@ -60,8 +60,19 @@
   /** Extra-tier key: asked for on every visit to a locked tool page and never stored, so nothing else can use it. */
   function key2Now(tier) { return tier === PAGE_TIER ? key2Ready : Promise.reject(); }
   // Sites built with remember:false keep the site key only for this tab (sessionStorage), never on the device.
-  var REMEMBER = !CFG || CFG.remember !== false;
+  // remember:'nav' (taiwanmonitor.com) goes further: the key survives only clicks between this site's pages, so a
+  // refresh, a typed or bookmarked URL, or arriving from another site always asks for the password again.
+  var REMEMBER = !CFG || (CFG.remember !== false && CFG.remember !== 'nav');
   if (!REMEMBER) { try { localStorage.removeItem(KEYNAME); } catch (e) { /* storage blocked */ } }
+  if (CFG && CFG.remember === 'nav') {
+    var navType = '';
+    try { navType = (performance.getEntriesByType('navigation')[0] || {}).type || ''; } catch (e) { /* old browser */ }
+    var fromHere = false;
+    try { fromHere = !!document.referrer && new URL(document.referrer).origin === location.origin; } catch (e) { /* bad referrer */ }
+    if (navType === 'reload' || (navType !== 'back_forward' && !fromHere)) {
+      try { sessionStorage.removeItem(KEYNAME); } catch (e) { /* storage blocked */ }
+    }
+  }
   // Drop any second-tier key saved by an earlier version of this gate.
   [KEYNAME2, KEYNAME3, KEYNAME4].forEach(function (n) { if (n) { try { localStorage.removeItem(n); sessionStorage.removeItem(n); } catch (e) { /* storage blocked */ } } });
 

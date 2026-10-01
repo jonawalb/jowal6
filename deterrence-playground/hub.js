@@ -309,7 +309,9 @@ $('help-btn').onclick = openHelp;
 $('help').addEventListener('click', e => { if (e.target === $('help') || e.target.closest('[data-close]')) $('help').close(); });
 
 // This week's dashboard (Taiwan Strait data, TSM site only): small shared data first, heavy tool data after first paint.
-if (SITE === 'tsm') mountWeek($('week')); else $('week').remove();
+// The week panel reads and links into these tools; a promoted-list build (taiwanmonitor.com) may not publish them.
+const WEEK_TOOLS = ['strait-snapshot', 'ccg-grayzone', 'dark-fleet', 'transit-response', 'day-in-the-strait'];
+if (SITE === 'tsm' && WEEK_TOOLS.every(s => TOOLS.some(t => t.slug === s))) mountWeek($('week')); else $('week').remove();
 
 // Thumbnails are screenshots of real data, so the build encrypts them. Load through fetch
 // (which the access gate decrypts), then fall back to the drawn thumb.svg.

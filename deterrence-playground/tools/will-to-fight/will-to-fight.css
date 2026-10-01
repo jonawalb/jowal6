@@ -1,0 +1,88 @@
+/* Will to Fight. Shared tokens only (shared/css/tsm.css supplies light, dark and the Trailer skin). */
+[hidden] { display: none !important; }
+.mt { margin-top: 18px; }
+
+/* Case presets */
+.wf-cases { max-width: 1400px; margin: 16px auto 0; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+.wf-cases-h { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; }
+.wf-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.wf-case-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; }
+.wf-case-g { grid-column: 1 / -1; font: 600 11px var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-top: 4px; }
+.wf-case-list button { text-align: left; padding: 7px 9px; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel); color: var(--ink); cursor: pointer; display: flex; flex-direction: column; gap: 1px; font: inherit; min-width: 0; }
+.wf-case-list button b { font-family: var(--display); font-size: 15px; font-weight: 600; }
+.wf-case-list button span { font-size: 11.5px; color: var(--muted); line-height: 1.3; }
+.wf-case-list button:hover { border-color: var(--muted); }
+.wf-case-list button[aria-pressed="true"] { background: var(--chip); border-color: var(--ink); box-shadow: inset 0 -3px 0 var(--accent); }
+
+/* Summary and status */
+.wf-summary { margin: 0; padding: 10px 14px; font-size: 14px; border-left: 4px solid var(--accent); }
+.wf-status { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.wf-status .status { background: var(--panel); }
+.wf-status .status b { font-size: 18px; }
+@media (max-width: 900px) { .wf-status { grid-template-columns: minmax(0, 1fr); } }
+
+/* Figures */
+.fig { padding: 12px 14px 10px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.fig-h { display: flex; flex-wrap: wrap; gap: 4px 14px; justify-content: space-between; align-items: baseline; }
+.fig svg { display: block; width: 100%; height: auto; }
+.axis line { stroke: var(--muted); stroke-width: 1; }
+.axis text { font: 400 11px var(--mono); fill: var(--muted); }
+.axis .ax-t { font: 12px var(--body); fill: var(--muted); }
+.zero { stroke: var(--ink); stroke-width: 1; opacity: .55; }
+.half { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 2 3; }
+.band { fill: var(--chip); opacity: .7; }
+.zone { fill: var(--accent); opacity: .13; }
+.hyst { fill: var(--bad); opacity: .1; }
+.fightz { fill: var(--good); opacity: .08; }
+.zl { font: 11px var(--mono); fill: var(--muted); }
+.bound { stroke: var(--ink); stroke-width: 1.2; stroke-dasharray: 5 4; opacity: .7; }
+.bl { font: 11px var(--mono); fill: var(--ink); paint-order: stroke; stroke: var(--panel); stroke-width: 3px; }
+.ln { fill: none; stroke-width: 2.4; stroke-linejoin: round; }
+.ln-g { stroke: var(--c1); }
+.ln-s { stroke: var(--c3); }
+.ln-r { stroke: var(--c2); }
+.ln.unstable { stroke-dasharray: 5 4; opacity: .75; }
+.root { fill: var(--c1); stroke: var(--panel); stroke-width: 2; }
+.root.unstable { fill: var(--panel); stroke: var(--c1); stroke-width: 2.2; }
+.sel-ring { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+.mark { fill: var(--panel); stroke: var(--ink); stroke-width: 2.5; }
+.adv-pt { fill: var(--bad); stroke: var(--panel); stroke-width: 2; }
+.adv-line { stroke: var(--bad); stroke-dasharray: 3 3; stroke-width: 1.2; }
+.adv-t { fill: var(--bad); }
+
+/* Resolve gauge */
+.wf-gauge { display: flex; flex-direction: column; gap: 8px; }
+.wf-bar { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px; align-items: center; font: 12px var(--mono); color: var(--muted); }
+.wf-track { position: relative; height: 12px; border-radius: 6px; background: linear-gradient(90deg, color-mix(in srgb, var(--bad) 45%, var(--chip)), var(--chip) 50%, color-mix(in srgb, var(--good) 45%, var(--chip))); }
+.wf-track::after { content: ""; position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--ink); }
+.wf-track i { position: absolute; top: 50%; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; background: var(--panel); border: 3px solid var(--ink); transition: left .35s cubic-bezier(.2, .8, .2, 1); }
+@media (prefers-reduced-motion: reduce) { .wf-track i { transition: none; } }
+.readout b { color: var(--ink); }
+
+/* Panel */
+.panel .sec { gap: 8px; }
+.slider .sym, .wf-card .sym { font-family: var(--mono); color: var(--muted); font-size: 11.5px; }
+.wf-mu { margin: 0; font-size: 11.5px; color: var(--muted); overflow-wrap: anywhere; }
+.seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--rule); border-radius: 3px; overflow: hidden; margin-top: 4px; }
+.seg button { border: 0; background: transparent; padding: 5px 9px; font-size: 12px; cursor: pointer; color: var(--ink); }
+.seg button + button { border-left: 1px solid var(--rule); }
+.seg button[aria-pressed="true"] { background: var(--chip); font-weight: 600; box-shadow: inset 0 -2px 0 var(--accent); }
+.wf-adv summary { cursor: pointer; }
+.wf-adv-b { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+
+/* Justification cards */
+.wf-why { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+.wf-why p { margin: 0 0 8px; font-size: 13.5px; max-width: 80ch; }
+.wf-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px; }
+.wf-card { border: 1px solid var(--rule); border-radius: 4px; padding: 9px 11px; background: var(--bg); min-width: 0; }
+.wf-card h3 { margin: 0 0 4px; font-size: 15px; display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: baseline; }
+.wf-card p { font-size: 12.5px; margin: 0 0 4px; }
+.case-src { font-size: 12px; color: var(--muted); overflow-wrap: anywhere; }
+.case-caveat { border-left: 3px solid var(--warn); padding-left: 10px; }
+.tablewrap td.num { white-space: nowrap; }
+
+/* Learn and method */
+.wf-learn .howto { font-size: 13.5px; padding-left: 1.2em; display: flex; flex-direction: column; gap: 8px; max-width: 70ch; }
+.method p { font-size: 13.5px; }
+.method .katex-display { overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
+.sym-n { text-transform: none; letter-spacing: 0; }

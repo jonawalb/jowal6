@@ -20,6 +20,8 @@ body { --k-c: var(--ph, #a88000); --k-p: var(--ccg, #b0306e); --k-a: var(--ally,
 .sl-seat small { color: var(--muted); font-size: 13px; line-height: 1.4; }
 .sl-seat[aria-checked="true"] { border-color: var(--c); background: color-mix(in srgb, var(--c) 10%, var(--panel)); }
 .sl-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-top: 10px; }
+.sl-diff { font-size: 14px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.sl-diff select { font: inherit; padding: 4px 6px; background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-radius: 3px; max-width: 100%; }
 .btn:disabled { opacity: .45; cursor: not-allowed; }
 
 /* Play */

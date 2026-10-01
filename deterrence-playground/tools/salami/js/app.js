@@ -28,10 +28,10 @@ $('seats').addEventListener('keydown', e => {
   const bs = [...document.querySelectorAll('[data-side]')], i = bs.indexOf(document.activeElement);
   const n = bs[(i + 1) % bs.length]; n.focus(); n.click(); e.preventDefault();
 });
-$('begin').addEventListener('click', () => { if (!pick) return; begin({ seed: newSeed(), side: pick }); show('play'); paint(); $('play').focus(); });
+$('begin').addEventListener('click', () => { if (!pick) return; begin({ seed: newSeed(), side: pick, difficulty: $('difficulty').value }); show('play'); paint(); $('play').focus(); });
 
-function begin({ seed, side }) {
-  g = { s: brief(newGame({ seed, side })), side, before: null };
+function begin({ seed, side, difficulty = 'medium' }) {
+  g = { s: brief(newGame({ seed, side, difficulty })), side, before: null };
   g.choice = emptyChoice(side, g.s); g.smashArmed = false;
   document.body.style.setProperty('--c', side === 'c' ? COL.c : COL.p);
   drawShoal($('shoal'));
@@ -45,7 +45,7 @@ function eventText(s) {
 function paint() {
   const s = g.s;
   $('month').textContent = P.months[s.turn];
-  $('turnof').textContent = `month ${s.turn + 1} of ${P.turns} · you are ${SIDE[g.side]}`;
+  $('turnof').textContent = `month ${s.turn + 1} of ${P.turns} · you are ${SIDE[g.side]} · ${s.difficulty || 'medium'}`;
   $('event').innerHTML = eventText(s);
   paintTracks($('tracks'), s, g.before);
   paintShoal(s, s.lastLevel);
@@ -109,7 +109,7 @@ function finish() {
   history.replaceState(null, '', '#g=' + encode(s));
   show('end');
   const mine = (w === 'coastal' && me === 'c') || (w === 'power' && me === 'p');
-  $('end-k').textContent = `You played ${SIDE[me]} · ${s.over.month} month${s.over.month === 1 ? '' : 's'} · ${mine ? 'you won' : w === 'none' ? 'nobody won' : 'you lost'}`;
+  $('end-k').textContent = `You played ${SIDE[me]} (${s.difficulty || 'medium'}) · ${s.over.month} month${s.over.month === 1 ? '' : 's'} · ${mine ? 'you won' : w === 'none' ? 'nobody won' : 'you lost'}`;
   $('end-t').textContent = s.over.title;
   $('end-x').textContent = s.over.text;
   $('total').textContent = sc.total;

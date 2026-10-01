@@ -15,6 +15,10 @@
   .fc-month { font: italic 500 40px var(--display); fill: var(--paper); }
   .fc-mv { font: 400 15px var(--mono); fill: var(--paper); }
   .fc-type { font: 600 16px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+  .fc-zone { fill: none; stroke: var(--paper); stroke-opacity: .45; stroke-width: 2; stroke-dasharray: 10 8; }
+  .fc-zl { font: 600 15px var(--mono); fill: var(--paper); fill-opacity: .8; letter-spacing: .14em; text-anchor: middle; }
+  .fc-chip { font: 700 17px var(--mono); fill: #fff; text-anchor: middle; }
+  .fc-q2 { font: 400 15px var(--mono); fill: var(--paper); }
 </style>
 </head><body>
 <div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of Four Capitals"><title>Four Capitals</title></svg></div>
@@ -56,6 +60,26 @@ const arrows = MOVES.map(([a, b, c]) => {
 });
 const ringB = el('circle', { cx: 795, cy: 615, r: 120, fill: 'none', stroke: 'var(--cn)', 'stroke-width': 4, 'stroke-dasharray': '18 12', opacity: 0 }, svg);
 
+// Theater areas with force chips; one blue force sails from the Rear to the South.
+const ZN = { north: [930, 330], strait: [640, 610], south: [880, 880], east: [1070, 600] };
+const zg = el('g', { opacity: 0 }, svg);
+for (const [k, [x, y]] of Object.entries(ZN)) {
+  el('ellipse', { cx: x, cy: y, rx: 120, ry: 70, class: 'fc-zone' }, zg);
+  el('text', { x, y: y - 34, class: 'fc-zl' }, zg).textContent = k.toUpperCase();
+}
+const chip = (x, y, col, n) => { const g = el('g', {}, zg); el('circle', { cx: x, cy: y, r: 22, fill: col }, g); const t = el('text', { x, y: y + 6, class: 'fc-chip' }, g); t.textContent = n; return { g, t }; };
+const rs = chip(620, 625, 'var(--cn)', 8), rn = chip(905, 345, 'var(--cn)', 3), jn = chip(955, 345, 'var(--jp)', 4), be = chip(1070, 615, 'var(--us)', 3);
+const sail = chip(1360, 760, 'var(--us)', 2);
+// A follow-up question, as the game asks it.
+const fq = el('g', { opacity: 0 }, svg);
+el('rect', { x: 1150, y: 440, width: 390, height: 150, rx: 8, class: 'fc-hud' }, fq);
+el('text', { x: 1174, y: 476, class: 'fc-small' }, fq).textContent = 'Escort shipping: which route?';
+const r1 = el('circle', { cx: 1186, cy: 514, r: 9, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 2.5 }, fq);
+const r1d = el('circle', { cx: 1186, cy: 514, r: 4.5, fill: 'var(--amber)', opacity: 0 }, fq);
+el('text', { x: 1206, y: 520, class: 'fc-q2' }, fq).textContent = 'Southern route';
+el('circle', { cx: 1186, cy: 554, r: 9, fill: 'none', stroke: 'var(--muted)', 'stroke-width': 2.5 }, fq);
+el('text', { x: 1206, y: 560, class: 'fc-q2' }, fq).textContent = 'Eastern route';
+
 // HUD: month and ladder (left), belief bars (right).
 const hud = el('g', { opacity: 0 }, svg);
 el('rect', { x: 60, y: 420, width: 330, height: 360, rx: 8, class: 'fc-hud' }, hud);
@@ -79,7 +103,7 @@ const bars = T3.map(([l, c], i) => {
   return el('rect', { x: 1340, y: y - 10, width: 57, height: 18, rx: 3, fill: c }, bel);
 });
 
-const cap = captions(svg, [[0.4, 3.8, 'Four capitals. One notional crisis.'], [4.1, 8.4, 'Every month, everyone moves at once.'], [8.7, 12.5, 'Read their resolve from what they do.']]);
+const cap = captions(svg, [[0.4, 3.8, 'Four capitals. One notional crisis.'], [4.1, 8.4, 'Pick your moves, then decide how: routes, ports, forces.'], [8.7, 12.5, 'Read their resolve from what they do.']]);
 const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Four Capitals', line: 'Lead Washington, Taipei, Beijing or Tokyo, and be judged by your own priorities.' });
 const MONTHS = ['March', 'April', 'May', 'June'];
 
@@ -97,6 +121,14 @@ run({ duration: 16, poster: 9.6, frame: t => {
     p.setAttribute('opacity', u > 0 ? 1 : 0);
   });
   ringB.setAttribute('opacity', ease.out(seg(t, 5.6, 6.2)) * 0.9);
+  zg.setAttribute('opacity', ease.out(seg(t, 3.9, 4.6)));
+  rs.t.textContent = t < 5.2 ? 8 : 10;
+  const u = ease.inOut(seg(t, 5.4, 7.2));
+  sail.g.setAttribute('transform', `translate(${lerp(0, 940 - 1360, u)},${lerp(0, 880 - 760, u)})`);
+  sail.g.setAttribute('opacity', 1 - seg(t, 7.2, 7.5));
+  const sb = t >= 7.3; if (!be.south && sb) { be.south = chip(840, 895, 'var(--us)', 3); } if (be.south) be.south.g.setAttribute('opacity', sb ? 1 : 0);
+  fq.setAttribute('opacity', ease.out(seg(t, 4.6, 5.1)) * (1 - seg(t, 8.0, 8.4)));
+  r1d.setAttribute('opacity', seg(t, 5.3, 5.5));
   hud.setAttribute('opacity', ease.out(seg(t, 3.6, 4.3)));
   const m = Math.min(3, Math.floor(seg(t, 4, 11) * 4));
   if (month.textContent !== MONTHS[m] + ' 2029') month.textContent = MONTHS[m] + ' 2029';

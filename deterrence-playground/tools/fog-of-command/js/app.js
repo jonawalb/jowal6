@@ -1,12 +1,13 @@
 // Fog of Command: wires the engine, the map, the order bar, the report feed and the review together.
-import { GAME, TYPES, FORCES, ARTILLERY } from '../data/params.js';
+import { GAME, TYPES, FORCES, ARTILLERY, OFFDEF, COMBAT } from '../data/params.js';
 import { NODES, NODE, NORTH } from '../data/map.js';
 import { replay, issue, setStance, setFire, undoLast, advance, orderDelay, delaySince, unit, where } from './engine.js';
 import { beliefAt } from './vision.js';
 import { redAI, blueAI } from './ai.js';
 import { path, travelHours } from './graph.js';
 import { createMap, render } from './map.js';
-import { feedHTML, status, fireText, fireTag, renderBelow, hhmm, NAME, DEF, foeOf, waveText, endTime, secondPick } from './panel.js';
+import { feedHTML, status, fireText, fireTag, renderBelow, hhmm, NAME, DEF, foeOf, waveText, endTime, secondPick, odWords, odFor } from './panel.js';
+import { tilt } from './combat.js';
 import { createAAR } from './aar.js';
 import { createTour } from './tour.js';
 import { readHash, writeHash } from './hash.js';
@@ -34,7 +35,9 @@ const alive = u => !u.broken && u.node !== 'gone';
 
 /** Fill every on-page time and turn count from the parameters. */
 function fillText() {
-  const f = { end: endTime(), turns: `${GAME.hours} one-hour turns (${hhmm(0)} to ${endTime()})`, waves: waveText(), pick: hhmm(secondPick()), arty: `${Math.round(ARTILLERY.frac * 100)}%` };
+  const kAt = v => (COMBAT.k.prepared * tilt(v)).toFixed(1), rAt = v => Math.sqrt(COMBAT.k.prepared * tilt(v)).toFixed(1);
+  const f = { end: endTime(), turns: `${GAME.hours} one-hour turns (${hhmm(0)} to ${endTime()})`, waves: waveText(), pick: hhmm(secondPick()), arty: `${Math.round(ARTILLERY.frac * 100)}%`,
+    odstep: `${OFFDEF.step}`, odk0: kAt(OFFDEF.min), odr0: rAt(OFFDEF.min), odk10: kAt(OFFDEF.max), odr10: rAt(OFFDEF.max) };
   document.querySelectorAll('[data-fill]').forEach(n => { n.textContent = f[n.dataset.fill]; });
 }
 
@@ -53,10 +56,28 @@ const DECOY_TIP = {
   blue: '<b>Warning: Red has a decoy.</b> One of the "tank battalions" you see or hear may be a Decoy Group with no strength at all, sent to pull your one reserve down the wrong road. Before you commit the reserve, check the road: fire artillery on it while a recon troop watches. A tank that takes no damage is the decoy.',
 };
 
-function start(side, seed, log = [], n = 0) {
+/** The offense-defense slider (start screen): its value, and its words, which update as it moves. */
+const odVal = () => Math.max(OFFDEF.min, Math.min(OFFDEF.max, Math.round(Number($('od').value)) || 0));
+const odTag = v => `Balance: ${v} (${odWords(v).label})`;
+function odShow() {
+  const v = odVal(), w = odWords(v);
+  $('od-out').textContent = `${v} — ${w.label}`;
+  $('od').setAttribute('aria-valuetext', `${v}, ${w.label}`);
+  $('od-desc').textContent = v === OFFDEF.standard ? `Standard: ${w.what}. Lower favors whoever defends a sector; higher favors whoever attacks.`
+    : `${w.label[0].toUpperCase()}${w.label.slice(1)}: ${w.what}. Defending, this is ${odFor(v, 'blue')} for you; attacking, ${odFor(v, 'red')}.`;
+  document.querySelectorAll('[data-odfx]').forEach(n => {
+    const e = odFor(v, n.dataset.odfx);
+    n.textContent = e ? `Balance ${v}: ${e} for you` : 'Standard balance';
+    n.dataset.e = e || '';
+  });
+}
+
+/** Start (or reload) a game. od: the offense-defense balance (OFFDEF); note: a line to show once it has loaded. */
+function start(side, seed, log = [], n = 0, od = odVal(), note = '') {
   me = side;
   const players = me === 'blue' ? { blue: null, red: redAI() } : { red: null, blue: blueAI() };
-  g = replay({ seed, players }, log, n);
+  g = replay({ seed, od, players }, log, n);
+  $('od').value = od; odShow();
   if (map.flip !== (me === 'red')) remap();
   sel = null; prevSel = null; view = 'belief'; aarHour = null; openHours.clear();
   $('start').hidden = true;
@@ -70,7 +91,7 @@ function start(side, seed, log = [], n = 0) {
   $('decoytip').hidden = !!g.over;
   setTab('map');
   setView('belief');
-  if (g.over) finish(false);
+  if (g.over) finish(false, note);
   else {
     aar.hide();
     say(g.t ? `Game resumed at ${hhmm(g.t)}.` : narrowQ.matches ? (me === 'blue'
@@ -79,6 +100,7 @@ function start(side, seed, log = [], n = 0) {
       : me === 'blue'
       ? `06:00. Hold Tarn Crossing until ${endTime()}. Red enters from the north, at the top. Your recon troops are forward in Alder Woods and Millfield, set to give ground so they fall back rather than die; your reserve waits behind the line.`
       : `06:00. Take Tarn Crossing by ${endTime()}. Your entry edge is at the bottom of the map. Arrivals: ${waveText()}. Units not yet on the map wait in the staging tray below the entry edge; dashed markers show where each will enter. To change an entry, click a unit in the tray, then a sector on your entry edge.`);
+    if (note) say(`${note} ${$('say').innerHTML}`);
   }
   writeHash(g, me);
   draw();
@@ -190,7 +212,7 @@ function draw() {
   selPanel();
   $('clock').textContent = hhmm(g.t);
   $('hourof').textContent = g.over ? 'game over' : `hour ${g.t + 1} of ${GAME.hours}`;
-  $('mission').textContent = me === 'blue' ? `Defending: hold Tarn Crossing until ${endTime()}` : `Attacking: take Tarn Crossing by ${endTime()}`;
+  $('mission').textContent = `${me === 'blue' ? `Defending: hold Tarn Crossing until ${endTime()}` : `Attacking: take Tarn Crossing by ${endTime()}`}${g.od === OFFDEF.standard ? '' : ` · ${odTag(g.od).toLowerCase()}`}`;
   const d = !g.over && orderDelay(g, me);
   $('delay').textContent = g.over ? '' : d ? 'Orders start next hour' : 'Orders start now';
   $('delay').classList.toggle('late', !!d);
@@ -354,11 +376,11 @@ function hourFx(t0, before, was, str0) {
   Promise.all(hits.map((n, i) => new Promise(r => setTimeout(r, i * 140)).then(() => shell(m, n, { foe: true })))).then(hurt);
 }
 
-function finish(scroll) {
+function finish(scroll, note = '') {
   document.body.classList.add('fc-over');
   document.body.classList.remove('fc-armed');
   $('viewbar').hidden = false;
-  say(g.over.winner === me ? 'You won. The review is below the map.' : 'You lost. The review is below the map.');
+  say(`${note ? `${note} ` : ''}${g.over.winner === me ? 'You won. The review is below the map.' : 'You lost. The review is below the map.'}`);
   draw();
   aar.show(g, me);
   if (scroll) $('aar').scrollIntoView({ block: 'nearest', behavior: reduce() ? 'auto' : 'smooth' });
@@ -398,10 +420,11 @@ function setTab(t) {
   if (narrowQ.matches && g && !g.over && $('play').getBoundingClientRect().top < 0) $('play').scrollIntoView({ block: 'start', behavior: 'auto' });
 }
 
-const aar = createAAR({ onHour: reviewAt, onAgain: () => start(me, g.seed), onNew: showStart });
+const aar = createAAR({ onHour: reviewAt, onAgain: () => start(me, g.seed, [], 0, g.od), onNew: showStart });
 
 document.querySelectorAll('#viewbar [data-view]').forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
 document.querySelectorAll('.fc-side').forEach(b => b.addEventListener('click', () => start(b.dataset.side, newSeed())));
+$('od').addEventListener('input', odShow);
 $('decoytip-x').addEventListener('click', () => { $('decoytip').hidden = true; });
 document.querySelectorAll('.fc-tabs [data-tab]').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
 $('units').addEventListener('click', e => { const b = e.target.closest('button'); if (b && !b.disabled) select(b.dataset.u); });
@@ -468,6 +491,13 @@ $('quotes').addEventListener('click', e => {
 
 fillText();
 renderBelow($);
-const boot = () => { const h = readHash(); if (h.seed && h.me) start(h.me, h.seed, h.log, h.n); else showStart(); };
+odShow();
+// A link from the 12-hour game (before 2026-10-01) has no h= in it: replay its moves under today's rules, and say so.
+const OLD_LINK = h => `<b>This link was made in the earlier ${h}-hour version of the game.</b> Its moves are replayed under the current rules (${GAME.hours} hours, to ${endTime()}, with a retuned kill rate), so fights may come out differently, and a game that ended at ${hhmm(h)} carries on.`;
+const boot = () => {
+  const h = readHash();
+  if (h.seed && h.me) start(h.me, h.seed, h.log, h.n, h.od, h.hours !== GAME.hours && (h.n || h.log.length) ? OLD_LINK(h.hours) : '');
+  else showStart();
+};
 window.addEventListener('hashchange', () => { if (location.hash.includes('s=')) boot(); });
 boot();

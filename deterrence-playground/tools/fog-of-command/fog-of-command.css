@@ -23,6 +23,19 @@ body[data-side="red"] { --mine: var(--red); --foe: var(--blue); }
 .fc-side.blue:hover { border-color: var(--blue); background: var(--blue-soft); }
 .fc-side.red:hover { border-color: var(--red); background: var(--red-soft); }
 .fc-rules { margin: 0; font-size: 14.5px; max-width: 90ch; }
+/* Offense-defense slider (start screen) */
+.fc-od { display: flex; flex-direction: column; gap: 4px; max-width: 560px; padding: 8px 12px; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel); }
+.fc-od .slider { font-size: 14px; }
+.fc-od .sl-h > span { font-weight: 600; }
+.fc-od .sl-h { flex-wrap: wrap; }
+.fc-od output { font-size: 13px; white-space: nowrap; }
+.fc-od input[type="range"] { min-height: 28px; margin: 0; }
+.fc-od input[type="range"]:focus-visible { outline: 2px solid var(--focus, var(--accent)); outline-offset: 2px; }
+.fc-od-ends { display: flex; justify-content: space-between; gap: 8px; color: var(--muted); font-size: 12px; }
+.fc-od p { margin: 0; }
+.fc-odfx { font-style: normal; font-size: 12.5px; font-weight: 600; color: var(--muted); }
+.fc-odfx[data-e="easier"] { color: var(--good); }
+.fc-odfx[data-e="harder"] { color: var(--warn); }
 @media (max-width: 520px) { .fc-sides { grid-template-columns: minmax(0, 1fr); } }
 
 /* Play area: a sticky order bar, then the unit list beside the map (wide), or tabs (phone). */
@@ -319,6 +332,8 @@ body.fc-armed .fc-sec:hover rect { fill: color-mix(in srgb, var(--c3) 14%, trans
 :root[data-skin="trailer"] .fc-start { border-left-color: var(--accent); }
 :root[data-skin="trailer"] .fc-side { background: color-mix(in srgb, var(--chip) 80%, transparent); }
 :root[data-skin="trailer"] .fc-side b { font: italic 500 26px var(--display); }
+:root[data-skin="trailer"] .fc-od { background: color-mix(in srgb, var(--chip) 80%, transparent); }
+:root[data-skin="trailer"] .fc-od input[type="range"] { accent-color: var(--accent); }
 :root[data-skin="trailer"] .fc-fogbar i { background: var(--good); box-shadow: 0 0 10px -2px var(--good); }
 :root[data-skin="trailer"] .fc-fogn b { font: 600 16px var(--mono); }
 :root[data-skin="trailer"] .fc-tour { box-shadow: 0 20px 50px -20px #000, var(--glow); }

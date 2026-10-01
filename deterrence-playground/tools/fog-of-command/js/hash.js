@@ -1,9 +1,11 @@
-// Shareable state: #p=d&s=4172&n=9&l=0-o-b5-9.0-s-b7-g.1-f-b9-5
-// p = side played (d defend as Blue, a attack as Red); s = scenario; n = hours played;
-// l = your actions: hour-kind-unit-value, kind o order / e entry (value = sector index), s stance (g or h),
-// f fire (sector index). Loading the link replays the game exactly, so a finished game reopens on its review.
+// Shareable state: #p=d&s=4172&b=5&h=14&n=9&l=0-o-b5-9.0-s-b7-g.1-f-b9-5
+// p = side played (d defend as Blue, a attack as Red); s = scenario; b = offense-defense balance (0-10, OFFDEF;
+// missing = 5); h = the game's length in hours when the link was made (missing = an older 12-hour link);
+// n = hours played; l = your actions: hour-kind-unit-value, kind o order / e entry (value = sector index),
+// s stance (g or h), f fire (sector index). Loading the link replays the game exactly, so a finished game
+// reopens on its review. A link from the 12-hour game (no h) replays its moves under the current rules.
 import { NODES } from '../data/map.js';
-import { FORCES, GAME } from '../data/params.js';
+import { FORCES, GAME, OFFDEF } from '../data/params.js';
 
 const IDS = new Set([...FORCES.blue, ...FORCES.red].map(d => d.id));
 
@@ -11,6 +13,8 @@ export function writeHash(g, me) {
   const q = new URLSearchParams();
   q.set('p', me === 'red' ? 'a' : 'd');
   q.set('s', g.seed);
+  q.set('b', g.od);
+  q.set('h', GAME.hours);
   if (g.t) q.set('n', g.t);
   const l = g.log.map(a => `${a.t}-${a.kind}-${a.unit}-${a.kind === 's' ? (a.v === 'give' ? 'g' : 'h') : NODES.findIndex(n => n.id === a.v)}`);
   if (l.length) q.set('l', l.join('.'));
@@ -29,11 +33,13 @@ export function readHash() {
     const node = NODES[+m[4]];
     if (node) log.push({ t, kind, unit: m[3], v: node.id });
   }
-  const p = q.get('p');
+  const p = q.get('p'), b = q.get('b') === null ? NaN : Math.round(Number(q.get('b'))), h = Math.round(Number(q.get('h')));
   return {
     me: p === 'a' ? 'red' : p === 'd' ? 'blue' : null,
     seed: Number.isFinite(s) && s >= 1 && s <= 999999 ? s : null,
+    od: Number.isFinite(b) ? Math.max(OFFDEF.min, Math.min(OFFDEF.max, b)) : OFFDEF.standard,
     n: Math.max(0, Math.min(GAME.hours, Math.round(Number(q.get('n')) || 0))),
+    hours: Number.isFinite(h) && h > 0 ? h : 12,   // the length of the game the link was made in
     log,
   };
 }

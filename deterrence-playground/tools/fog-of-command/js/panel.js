@@ -1,7 +1,9 @@
 // Text for the play screen and the page: clock, status, the hour-by-hour report feed, the parameter
 // table, balance tables, quotes and sources.
 import { NODES } from '../data/map.js';
-import { GAME, TYPES, COMBAT, ORDER_DELAY, ORDER_DELAY_MAXRUN, ARTILLERY, VISION, FORCES, DISENGAGE, AI } from '../data/params.js';
+import { GAME, TYPES, COMBAT, ORDER_DELAY, ORDER_DELAY_MAXRUN, ARTILLERY, VISION, FORCES, DISENGAGE, AI, OFFDEF } from '../data/params.js';
+import { OFFDEF_TABLE } from '../data/offdef.js';
+import { tilt } from './combat.js';
 import { SOURCES } from '../data/sources.js';
 import { BALANCE } from '../data/balance.js';
 import { beliefAt } from './vision.js';
@@ -30,6 +32,24 @@ export function waveText() {
   }));
 }
 export const endTime = () => hhmm(GAME.hours);
+
+/**
+ * The offense-defense slider in words. v: 0-10 (OFFDEF). label: "standard", "defense favored", "offense strongly
+ * favored" ...; what: what it does in combat; ratio: the attack-to-defense ratio at which a prepared defense breaks even.
+ */
+export function odWords(v) {
+  const d = v - OFFDEF.standard, a = Math.abs(d), side = d < 0 ? 'defense' : 'offense';
+  const how = a === 1 ? 'slightly ' : a >= 5 ? 'strongly ' : '';
+  const more = a === 1 ? 'a little ' : a >= 5 ? 'much ' : '';
+  const ratio = Math.sqrt(COMBAT.k.prepared * tilt(v)).toFixed(1);
+  if (!d) return { label: 'standard', what: 'the calibrated game, in which a prepared defense breaks even against 3:1', ratio };
+  return {
+    label: `${side} ${how}favored`, ratio,
+    what: `${d < 0 ? `dug-in units hold ${more}better` : `attacks hit ${more}harder`} (a prepared defense breaks even against ${ratio}:1 instead of 3:1)`,
+  };
+}
+/** How the slider setting changes the game for the side you play: 'easier', 'harder' or null (standard). */
+export const odFor = (v, side) => (v === OFFDEF.standard ? null : (v < OFFDEF.standard) === (side === 'blue') ? 'easier' : 'harder');
 export const secondPick = () => AI.red.secondDecide;
 
 /** Had side `me` already exposed the decoy before this fire mission? */
@@ -157,7 +177,8 @@ export function renderBelow($) {
     ['Blue force', `${FORCES.blue.length} units: 4 mech battalions (10 each), a tank battalion (12), a weapons company (6), 2 recon troops (4 each) and an artillery battalion. 66 points.`, N],
     ['Red force', `${FORCES.red.length} units: 2 recon troops, 3 mech battalions, 5 tank battalions, a weapons company, a decoy group and an artillery battalion. 104 real points. Arrivals: ${waveText()}.`, N],
     ['Length', `${GAME.hours} one-hour turns, ${hhmm(0)} to ${endTime()}`, N],
-    ['Defender multiplier k', `Prepared ${COMBAT.k.prepared}, hasty ${COMBAT.k.hasty}, meeting ${COMBAT.k.meeting}, flank ${COMBAT.k.flank}; √k matches FM 5-0 Table B-1 (3:1, 2.5:1, 1:1, 1:1)`, 'calibrated'],
+    ['Defender multiplier k', `Prepared ${COMBAT.k.prepared}, hasty ${COMBAT.k.hasty}, meeting ${COMBAT.k.meeting}, flank ${COMBAT.k.flank}; √k matches FM 5-0 Table B-1 (3:1, 2.5:1, 1:1, 1:1). These are the standard game (balance ${OFFDEF.standard})`, 'calibrated'],
+    ['Offense–defense balance', `Slider ${OFFDEF.min}–${OFFDEF.max}, standard ${OFFDEF.standard}: prepared and hasty k × ${OFFDEF.step}<sup>(${OFFDEF.standard} − setting)</sup>, from ×${tilt(OFFDEF.min).toFixed(2)} at ${OFFDEF.min} to ×${tilt(OFFDEF.max).toFixed(2)} at ${OFFDEF.max}; meeting and flank unchanged`, 'notional; step calibrated by simulation'],
     ['Prepared after', `${GAME.prepHours} hours in place`, N],
     ['Flank attack', 'A defender already fighting attackers from one sector and then hit from a second sector fights at k = 1 (Table B-1: flank counterattack 1:1)', 'rule notional, value sourced'],
     ['Base kill rate c', `${COMBAT.c} per hour`, N],
@@ -178,6 +199,8 @@ export function renderBelow($) {
     + `<p class="eyebrow mt">Attacking, against the game's Blue commander</p>` + table(BALANCE.attack, ['Red strategy', 'Red takes the crossing', `Blue losses (of ${BALANCE.blue})`, `Red losses (of ${BALANCE.red})`, 'Blue reserve sent first to the feint'])
     + (BALANCE.payoff ? `<p class="eyebrow mt">Feint payoff: feint and mass minus mass on one road</p>` + table([['Feint payoff (percentage points)', BALANCE.payoff.fog, BALANCE.payoff.truth]], ['', "Against the game's Blue commander", 'Against a Blue commander who sees everything'])
       + `<p class="fine">The gain comes from fooling Blue: against a commander who sees everything, the same feint adds almost nothing.</p>` : '');
+  $('od-table').innerHTML = `<p class="fine">${OFFDEF_TABLE.games.toLocaleString('en-US')} seeded games per cell (seeds 1000–${999 + OFFDEF_TABLE.games}, the same scenarios in every cell), step ${OFFDEF_TABLE.step}. Defending rows: scripted Blue against the game's Red commander; attacking rows: scripted Red against the game's Blue commander. The last column is the game's two commanders against each other.</p>`
+    + table(OFFDEF_TABLE.rows, OFFDEF_TABLE.head);
   const Q = [
     ['Clausewitz, On War, Book I, ch. VI', 'Great part of the information obtained in War is contradictory, a still greater part is false, and by far the greatest part is of a doubtful character. … The law of probability must be his guide.', 'clausewitz'],
     ['Clausewitz, On War, Book I, ch. VII', 'Everything is very simple in War, but the simplest thing is difficult.', 'clausewitz'],

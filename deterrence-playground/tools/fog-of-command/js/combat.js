@@ -2,7 +2,7 @@
 // effective units. Lanchester (1916), ch. V, eq. (5): with aimed fire, fighting strength goes as
 // (fighting value) x (numbers)^2. The defender's posture multiplies its fighting value by k; k is
 // calibrated so the square law's break-even ratio sqrt(k) equals FM 5-0's historical planning ratios.
-import { COMBAT, GAME, TYPES, FLANK } from '../data/params.js';
+import { COMBAT, GAME, TYPES, FLANK, OFFDEF } from '../data/params.js';
 
 export const sum = us => us.reduce((s, u) => s + u.str, 0);
 
@@ -16,13 +16,16 @@ export function power(us, role, kind = null) {
   }, 0);
 }
 
+/** The offense-defense slider's factor on k for a prepared or hasty defense (OFFDEF): exactly 1 at 5. */
+export const tilt = (od = OFFDEF.standard) => OFFDEF.step ** (OFFDEF.standard - od);
+
 /**
  * Which side defends in a sector and in what posture. The side whose units have been there longest
  * defends: "prepared" after GAME.prepHours, else "hasty"; both arriving together is a "meeting"
  * engagement. If a defender already fighting attackers from one sector is hit from a second sector
- * (FLANK), it is a "flank" attack and the defender fights at k = 1.
+ * (FLANK), it is a "flank" attack and the defender fights at k = 1. od: the offense-defense slider (OFFDEF).
  */
-export function posture(blue, red, t) {
+export function posture(blue, red, t, od = OFFDEF.standard) {
   const bs = Math.min(...blue.map(u => u.since)), rs = Math.min(...red.map(u => u.since));
   if (bs === rs) return { def: 'blue', kind: 'meeting', k: COMBAT.k.meeting };
   const def = bs < rs ? 'blue' : 'red', since = Math.min(bs, rs);
@@ -34,7 +37,7 @@ export function posture(blue, red, t) {
   for (const u of att) if (u.from) first[u.from] = Math.min(first[u.from] ?? Infinity, u.since);
   const times = Object.values(first).sort((a, b) => a - b);
   if (times.length >= FLANK.minDirections && times[times.length - 1] > times[0]) return { def, kind: 'flank', k: COMBAT.k.flank, dirs: Object.keys(first) };
-  return { def, kind, k: COMBAT.k[kind] };
+  return { def, kind, k: COMBAT.k[kind] * tilt(od) };
 }
 
 /** Expected hourly losses (attacker, defender) for fighting powers A and D under multiplier k. */
@@ -47,9 +50,9 @@ export function take(units, loss) {
   for (const u of units) u.str = Math.max(0, u.str * (1 - f));
 }
 
-/** Fight one hour at a node. Returns an event record for the log and the after-action review. */
-export function fight(blue, red, t, rng) {
-  const p = posture(blue, red, t);
+/** Fight one hour at a node (od: the offense-defense slider). Returns an event record for the log and the review. */
+export function fight(blue, red, t, rng, od = OFFDEF.standard) {
+  const p = posture(blue, red, t, od);
   const B = sum(blue), Rr = sum(red);
   const meet = p.kind === 'meeting';
   const PB = power(blue, meet ? null : p.def === 'blue' ? 'def' : 'att', p.kind);

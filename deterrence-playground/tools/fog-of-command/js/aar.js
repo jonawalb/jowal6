@@ -5,7 +5,7 @@ import { el } from '../../../shared/js/mapkit.js';
 import { COLS, NORTH, FORWARD, MAIN, REAR } from '../data/map.js';
 import { beliefAt } from './vision.js';
 import { runAll, REPLAYS } from './compare.js';
-import { hhmm, DEF, foeOf, status, SIDE } from './panel.js';
+import { hhmm, DEF, foeOf, status, SIDE, odWords } from './panel.js';
 import { moments, planLine } from './story.js';
 import { countUp, reveal, reduced } from '../../../shared/js/motion.js';
 
@@ -148,7 +148,7 @@ export function createAAR({ onHour, onAgain, onNew }) {
       const st = status(g, me, beliefAt(g, me, g.t));
       $('aar').hidden = false;
       $('aar-status').dataset.s = st.s; $('aar-t').textContent = st.t;
-      $('aar-sub').textContent = `${planLine(g, me)} You lost ${(me === 'blue' ? g.over.lossB : g.over.lossR).toFixed(0)} of ${me === 'blue' ? g.over.totB : g.over.totR} strength points; the enemy lost ${(me === 'blue' ? g.over.lossR : g.over.lossB).toFixed(0)} of ${me === 'blue' ? g.over.totR : g.over.totB}.`;
+      $('aar-sub').textContent = `Balance: ${g.od} (${odWords(g.od).label}). ${planLine(g, me)} You lost ${(me === 'blue' ? g.over.lossB : g.over.lossR).toFixed(0)} of ${me === 'blue' ? g.over.totB : g.over.totR} strength points; the enemy lost ${(me === 'blue' ? g.over.lossR : g.over.lossB).toFixed(0)} of ${me === 'blue' ? g.over.totR : g.over.totB}.`;
       const ms = moments(g, me);
       $('aar-moments').innerHTML = ms.length ? ms.map(m => `<li class="${m.tone}"><span class="num">${hhmm(m.t)}</span> ${m.text}</li>`).join('') : '<li class="muted">A quiet day: no decisive moments.</li>';
       range.max = g.snaps.length - 1;

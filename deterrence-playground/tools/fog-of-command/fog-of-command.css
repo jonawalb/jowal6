@@ -59,8 +59,10 @@ body[data-side="red"] { --mine: var(--red); --foe: var(--blue); }
 .fc-units small { color: var(--muted); font-size: 11px; grid-column: 2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .fc-units small.warn { color: var(--warn); font-weight: 600; }
 .fc-key { display: inline-block; font: 600 11px var(--mono); border: 1px solid var(--rule); border-radius: 3px; padding: 1px 5px; color: var(--muted); min-width: 1.6em; text-align: center; }
-.fc-ub { position: absolute; left: 3px; right: 3px; bottom: 1px; height: 3px; border-radius: 2px; background: var(--rule); overflow: hidden; }
-.fc-ub i { display: block; height: 100%; background: var(--mine); opacity: .75; }
+/* Strength bars, both teams alike: green is strength left, red is strength lost. */
+:root { --hp: #2f9e44; --hp-lost: #d63a3a; }
+.fc-ub { position: absolute; left: 3px; right: 3px; bottom: 1px; height: 5px; border-radius: 2px; background: var(--hp-lost); overflow: hidden; }
+.fc-ub i { display: block; height: 100%; background: var(--hp); }
 .fc-bclk { width: 13px; height: 13px; flex: none; }
 .fc-bclk circle, .lg-clk circle, .fc-late svg circle { fill: var(--panel); stroke: var(--warn); stroke-width: 1.6; }
 .fc-bclk path, .lg-clk path, .fc-late svg path { fill: none; stroke: var(--warn); stroke-width: 1.6; stroke-linecap: round; }
@@ -176,8 +178,8 @@ body.fc-armed .fc-sec:hover rect { fill: color-mix(in srgb, var(--c3) 14%, trans
 .fc-ukey { font: 600 9.5px var(--mono); fill: var(--muted); }
 .fc-dl { font: 700 13px var(--mono); fill: var(--red); }
 .fc-ulab { font: 600 10.5px var(--body); fill: var(--ink); paint-order: stroke; stroke: var(--land); stroke-width: 3px; pointer-events: none; }
-.fc-bar0 { fill: var(--rule); }
-.fc-bar { fill: var(--good); } .fc-bar.low { fill: var(--warn); }
+.fc-bar0 { fill: var(--hp-lost); }
+.fc-bar { fill: var(--hp); }
 .fc-route { fill: none; stroke: var(--mine); stroke-width: 2.4; opacity: .75; stroke-linejoin: round; }
 .fc-route.pending { stroke-dasharray: 7 5; }
 .fc-route.sel { opacity: 1; stroke-width: 3.2; }
@@ -194,6 +196,7 @@ body.fc-armed .fc-sec:hover rect { fill: color-mix(in srgb, var(--c3) 14%, trans
 .fc-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; padding: 0 2px; color: var(--muted); }
 .fc-legend span { display: inline-flex; align-items: center; gap: 6px; }
 .fc-legend i { display: inline-block; width: 14px; height: 10px; flex: none; }
+.lg-hp { width: 28px !important; height: 6px !important; border-radius: 2px; background: linear-gradient(90deg, var(--hp) 0 65%, var(--hp-lost) 65% 100%); }
 .lg-mine { border: 2px solid var(--mine); background: color-mix(in srgb, var(--mine) 14%, transparent); }
 .lg-foe { width: 10px !important; height: 10px !important; border: 2px solid var(--foe); transform: rotate(45deg); }
 .lg-move { border: 1.8px dashed var(--foe); border-radius: 50%; width: 12px !important; height: 12px !important; }

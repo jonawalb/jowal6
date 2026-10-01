@@ -313,8 +313,8 @@ function unitBox(parent, [x, y], u, v, k, labels, node) {
   glyph(g, u);
   const f = u.str0 ? Math.max(0, u.str / u.str0) : 1;
   if (u.str0) {
-    el('rect', { x: -21, y: -19, width: 42, height: 4, class: 'fc-bar0' }, g);
-    el('rect', { x: -21, y: -19, width: (42 * f).toFixed(1), height: 4, class: `fc-bar${f < 0.7 ? ' low' : ''}` }, g);
+    el('rect', { x: -21, y: -20, width: 42, height: 5, class: 'fc-bar0' }, g);
+    el('rect', { x: -21, y: -20, width: (42 * f).toFixed(1), height: 5, class: 'fc-bar' }, g);
   }
   if (u.key) { const kk = el('text', { x: 18, y: 10, class: 'fc-ukey' }, g, u.key.toUpperCase()); kk.setAttribute('text-anchor', 'end'); }
   if (late) clock(g, -21, -13);

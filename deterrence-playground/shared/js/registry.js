@@ -36,7 +36,9 @@ const CATEGORY_LIST = [
   { id: 'tsm', name: 'Indo-Pacific', sites: ['deterrence'], locked: true, hidden: true,
     blurb: 'Taiwan Strait trackers, exercise replays and wargames.' },
   // Tools marked `dev: true` show only here (never in their other categories) and need their own password.
-  { id: 'dev', name: 'Coming Soon', sites: ['deterrence'], locked: true,
+  // `sealed`: on the published site their registry entries are encrypted (DEV_SEALED below), so the section
+  // itself asks for the password before it lists anything.
+  { id: 'dev', name: 'Coming Soon', sites: ['deterrence'], locked: true, sealed: true,
     blurb: 'Tools still being built and checked.',
     subs: [{ id: 'games', name: 'Coming Soon games', blurb: 'New games to play-test before they go public.' }] },
 ];
@@ -121,38 +123,24 @@ export const ALL_TOOLS = [
     blurb: 'One real day of gray-zone pressure around Taiwan, built from the data. Pick any day of 2026.' },
   { slug: 'how-close', sites: ['tsm'], cat: 'public', title: 'How Close Is China?', status: 'live',
     blurb: 'Type a city and see how far it is from Taiwan and from China, with the Taiwan Strait for scale.' },
-  { slug: 'conceal-reveal', dev: true, cat: 'gametheory', sites: ['deterrence'], title: 'Conceal or Reveal?', status: 'live',
-    blurb: "Why do states with similar weapons make opposite choices about showing them? Move the costs and beliefs in Walberg's signaling model and watch coercive states reveal while operational states conceal." },
   { slug: 'dissertation-games', cat: 'gametheory', sites: ['deterrence'], vault: 'dissertation', title: 'Jon Dissertation Games', status: 'live',
     blurb: "Working game trees from Jonathan Walberg's dissertation." },
-  { slug: 'extended-deterrence', dev: true, cat: 'gametheory', sites: ['deterrence'], title: 'Extended Deterrence', status: 'live',
-    blurb: 'Would a patron trade Boston for Bonn? Stack treaties, pledges, a tripwire force and nuclear sharing, see what each does to credibility and entrapment, then check the real U.S. commitments.' },
   { slug: 'nuclear-arsenals', sub: { nuclear: 'facts' }, cat: 'nuclear', sites: ['deterrence'], title: 'Nuclear Arsenals', status: 'live',
     blurb: "Explore eighty years of FAS nuclear warhead estimates for every nuclear-armed state, against the treaties from the NPT to New START's lapse in February 2026." },
   { slug: 'escalation-ladder-kahn', game: true, sub: { nuclear: 'playground' }, cat: 'nuclear', sites: ['deterrence'], title: "Kahn's Escalation Ladder", status: 'live',
     blurb: "Step through nuclear crises from Cuba 1962 to Russia 2022 and India–Pakistan 2025 on Herman Kahn's 44-rung ladder, compare them, and read why the ladder misleads." },
   { slug: 'deterrence-lab-general', game: true, cat: 'gametheory', sites: ['deterrence'], title: 'Deterrence Lab', status: 'live',
     blurb: 'Move the costs and beliefs in three classic deterrence models (audience costs, costly signals and salami tactics) and test them against sourced crises from Fashoda in 1898 to NATO\'s eastern flank in 2016–17.' },
-  { slug: 'misinfo-cascade', sub: { narratives: 'disinfo' }, dev: true, also: ['gametheory'], cat: 'narratives', sites: ['deterrence'], locked: true, title: 'Misinformation Cascade', status: 'live',
-    blurb: "Watch a report of 16 aircraft become 'the island is surrounded' as it spreads, and test when a correction can still stop it." },
-  { slug: 'bayesian-attack', sub: { narratives: 'disinfo' }, dev: true, also: ['gametheory'], cat: 'narratives', sites: ['deterrence'], title: 'Attacking the Update', status: 'live',
-    blurb: "An adversary doesn't fake the evidence; it changes how much you weigh it. Watch true signals produce a false conclusion, and see which defenses still work." },
   { slug: 'ukraine-air-war', sub: { regions: 'ukraine' }, cat: 'regions', sites: ['deterrence'], title: "Ukraine's Air War", status: 'live',
     blurb: 'Russian missile and drone launches against Ukraine since 2022, by weapon type, with the share the Ukrainian Air Force reported shooting down.' },
   { slug: 'russia-nuclear-signals', sub: { regions: 'ukraine' }, cat: 'regions', sites: ['deterrence'], title: "Russia's Nuclear Signals", status: 'live',
     blurb: 'Every major Russian nuclear signal since February 2022, sourced and scored by what it changed, set against Western responses and the course of the war.' },
   { slug: 'red-sea-hormuz', sub: { regions: 'mideast' }, cat: 'regions', sites: ['deterrence'], title: 'Red Sea & Hormuz Pulse', status: 'live',
     blurb: 'Daily ship counts through Bab el-Mandeb, Suez and Hormuz from IMF PortWatch, against a sourced timeline of Houthi attacks, strikes, pauses and the 2026 Hormuz mining.' },
-  { slug: 'iran-israel-salvos', sub: { regions: 'mideast' }, dev: true, cat: 'regions', sites: ['deterrence'], title: 'Iran–Israel Salvos', status: 'live',
-    blurb: "Iran's first three direct attacks on Israel (April 2024, October 2024, June 2025) side by side: what was launched, what was stopped, who defended with what, and what it cost, with every figure sourced and every disagreement shown." },
-  { slug: 'coercion-resilience', dev: true, cat: 'coercion', sites: ['deterrence'], title: 'Coercion Without Concession', status: 'live',
-    blurb: "China's trade punishment of Australia and South Korea in real trade and tourism data: what was hit, what found other buyers, and what Beijing failed to change." },
   { slug: 'war-markets', cat: 'gametheory', sites: ['deterrence'], title: 'War Markets', status: 'live',
     blurb: 'What prediction markets priced for strikes on Iran, ceasefires and a Russia–NATO clash in 2026, set against how each contract resolved.' },
   { slug: 'crisis-stability', game: true, sub: { nuclear: 'playground' }, cat: 'nuclear', sites: ['deterrence'], title: 'Crisis Stability Calculator', status: 'live',
     blurb: "Set two notional force postures and see Kent and Thaler's first-strike stability index: who gains by striking first, and how MIRVed silos, alert rates and launch under attack move it." },
-  { slug: 'verification-game', dev: true, also: ['gametheory'], cat: 'nuclear', sites: ['deterrence'], title: 'Trust but Verify', status: 'live',
-    blurb: 'An arms-control inspection game from the published literature: how inspection quotas, detection, false-alarm costs and penalties set the odds of cheating and of getting caught, beside New START, IAEA and CTBT verification.' },
   { slug: 'entanglement', game: true, sub: { nuclear: 'playground' }, cat: 'nuclear', sites: ['deterrence'], title: 'Nuclear Entanglement', status: 'live',
     blurb: 'Plan a conventional campaign against satellites, command links, launchers and bases that also serve nuclear forces, and watch use-or-lose pressure, misread warning and the fog of war push a notional escalation risk up, then test the fixes the literature proposes.' },
   { slug: 'warhead-ambiguity', game: true, sub: { nuclear: 'playground' }, cat: 'nuclear', sites: ['deterrence'], title: 'Is It a Nuke?', status: 'live',
@@ -165,26 +153,10 @@ export const ALL_TOOLS = [
     blurb: "Move the costs, beliefs and balance of power in eight classic game-theory models of war and cooperation, from Fearon's bargaining range to Schelling's brinkmanship, and watch the equilibrium change, with every result cited to its source." },
   { slug: 'ukraine-support', sub: { regions: 'ukraine' }, cat: 'regions', sites: ['deterrence'], title: 'Who Supports Ukraine', status: 'live',
     blurb: 'Who pledged aid to Ukraine and how much each donor has allocated: military, financial and humanitarian support by donor since 2022, in euros or as a share of GDP, from the Kiel Institute.' },
-  { slug: 'prebunking-game', sub: { narratives: 'disinfo' }, dev: true, cat: 'narratives', sites: ['deterrence'], title: 'Borrowed Feelings', status: 'live',
-    blurb: 'Judge invented reports while a soundtrack, a crowd or your own body pulls at you. See the weight you gave each report, then practice naming a feeling and tracing its source before you weigh the evidence.' },
-  { slug: 'sanctions-explorer', dev: true, cat: 'coercion', sites: ['deterrence'], title: 'Sanctions Explorer', status: 'live',
-    blurb: 'Sixty years of sanctions threats and impositions from the TIES dataset: filter by sender, target, objective and type, see how often the target gave in, and set that beside what the Global Sanctions Data Base authors report.' },
-  { slug: 'cost-ratio', dev: true, cat: 'gametheory', sites: ['deterrence'], title: 'Cost Ratio Bargaining', status: 'live',
-    blurb: 'Hold the total cost of war fixed, shift who pays it, and watch the peaceful settlement move toward the side whose cost of fighting fell.' },
-  { slug: 'humiliation-motivation', dev: true, cat: 'gametheory', sites: ['deterrence'], title: 'Humiliation to Motivation', status: 'live',
-    blurb: 'Past a severity threshold even weak states challenge the order that humiliated them, and a challenge stops telling the dominant power anything.' },
   { slug: 'proliferation-paths', sub: { nuclear: 'facts' }, cat: 'nuclear', sites: ['deterrence'], title: 'Proliferation Paths', status: 'live',
     blurb: 'Explore 1939 to 2017 to see which states explored, pursued, acquired and gave up nuclear weapons, as three published datasets code it, with every disagreement between them shown.' },
   { slug: 'treaty-tracker', sub: { nuclear: 'facts' }, cat: 'nuclear', sites: ['deterrence'], title: 'Treaty Tracker', status: 'live',
     blurb: 'Twenty nuclear and arms-control treaties, 197 states, 1963 to 2026: explore the years to see who signed, joined, suspended or walked away, with every date traced to a depositary record or official statement.' },
-  { slug: 'sea-control', dev: true, cat: 'gametheory', also: ['models'], sites: ['deterrence'], title: 'Sea Control Game', status: 'live',
-    blurb: "Split a navy's budget between a Mahanian battle fleet and Corbettian distributed forces, and see whether the challenger fights, waits or denies." },
-  { slug: 'arms-race', dev: true, cat: 'gametheory', also: ['nuclear'], sites: ['deterrence'], title: 'Arms Race Dynamics', status: 'live',
-    blurb: "Richardson's arms-race equations as a phase plane you can click: set reaction, fatigue and grievance, and see which races settle, which run away, and what happens with a third rival." },
-  { slug: 'qre-explorer', dev: true, cat: 'gametheory', sites: ['deterrence'], title: 'Quantal Response Explorer', status: 'live',
-    blurb: 'See how logit quantal response equilibrium departs from Nash in crisis and deterrence games as precision runs from 0 to infinity, and why estimating these games needs care.' },
-  { slug: 'correction-lab', dev: true, sub: { narratives: 'disinfo' }, cat: 'narratives', sites: ['deterrence'], title: 'Correction Lab', status: 'live',
-    blurb: "Design a correction to a false story and see how much belief persists: meta-analytic effect sizes on timing, source, repetition and explanation, combined with Walberg's Sticky Affect condition in a notional model." },
   { slug: 'kharg-island', game: true, sub: { models: 'wargames', regions: 'mideast' }, cat: 'models', also: ['regions'], sites: ['deterrence'], title: 'Kharg Island', status: 'live',
     blurb: "A notional, dice-driven wargame of a U.S. move on Kharg Island, Iran's oil export hub: seize, raid or blockade it, watch every roll, then see how 1,000 games trade success against escalation and oil prices." },
   { slug: 'iran-enrichment', sub: { nuclear: 'facts', regions: 'mideast' }, cat: 'nuclear', also: ['regions'], sites: ['deterrence'], title: "Iran's Enrichment Clock", status: 'live',
@@ -205,22 +177,6 @@ export const ALL_TOOLS = [
     blurb: 'Jam, dazzle, hack or shoot down a notional rival\'s satellites over a 10-month crisis and war, then see what your debris costs both sides for decades, with the escalation risk you ran.' },
   { slug: 'berlin-airlift', game: true, sub: { models: 'wargames' }, cat: 'models', sites: ['deterrence'], title: 'Airlift: Berlin 1948–49', status: 'live',
     blurb: 'Run the Berlin Airlift day by day: juggle C-54s, crews, inspections, runways, fog and the coal-food mix to keep West Berlin supplied, then see your tonnage against the 1948–49 record.' },
-  { slug: 'supply-shock', dev: true, game: true, sub: { dev: 'games' }, cat: 'coercion', sites: ['deterrence'], title: 'Supply Shock', status: 'live',
-    blurb: 'Run a country’s critical-minerals strategy for ten years: mines, refineries, stockpiles and allies, against a dominant supplier’s export controls.' },
-  { slug: 'salami', dev: true, game: true, sub: { dev: 'games' }, cat: 'models', sites: ['deterrence'], title: 'Salami', status: 'live',
-    blurb: 'Hold or squeeze a disputed shoal for a year, one slice at a time, against red lines nobody can see.' },
-  { slug: 'hub-and-spokes', dev: true, game: true, sub: { dev: 'games' }, cat: 'gametheory', sites: ['deterrence'], title: 'Hub and Spokes', status: 'live',
-    blurb: 'Manage four allies for a decade: reassure them without being dragged into their wars, or watch them hedge.' },
-  { slug: 'cry-wolf', dev: true, game: true, sub: { dev: 'games' }, cat: 'models', sites: ['deterrence'], title: 'Cry Wolf', status: 'live',
-    blurb: 'Read the indicators week by week and decide when to warn: every false alarm costs you the next one.' },
-  { slug: 'exercise-or-invasion', dev: true, game: true, sub: { dev: 'games' }, cat: 'models', sites: ['deterrence'], title: 'Exercise or Invasion?', status: 'live',
-    blurb: 'Hide a real buildup inside an exercise cycle, or task the collectors and call it in time.' },
-  { slug: 'sanctions-architect', dev: true, game: true, sub: { dev: 'games' }, cat: 'coercion', sites: ['deterrence'], title: 'Sanctions Architect', status: 'live',
-    blurb: 'Build a sanctions coalition, plug the leaks and count your own costs, quarter by quarter.' },
-  { slug: 'magazine-depth', dev: true, game: true, sub: { dev: 'games' }, cat: 'models', sites: ['deterrence'], title: 'Magazine Depth', status: 'live',
-    blurb: 'Build munitions lines that take years to grow, then find out how long they last when the war comes.' },
-  { slug: 'brinkmanship', dev: true, game: true, sub: { dev: 'games' }, cat: 'gametheory', sites: ['deterrence'], title: 'Brinkmanship', status: 'live',
-    blurb: 'Raise the shared risk of disaster or back down, against an opponent whose resolve you can only guess.' },
 ];
 
 export const onSite = (x, site = SITE) => !x.sites || x.sites.includes(site);
@@ -228,10 +184,18 @@ export const onSite = (x, site = SITE) => !x.sites || x.sites.includes(site);
 export const catOn = (t, site = SITE) => (t.dev && site === 'deterrence' ? 'dev' : (t.siteCat && t.siteCat[site]) || t.cat);
 const ORDER = { deterrence: ['gametheory', 'nuclear', 'regions', 'narratives', 'models', 'tsm', 'dev'] };
 // `also` lists extra categories a tool appears in; `cats` is its primary category plus those.
-export const TOOLS = ALL_TOOLS.filter(t => onSite(t)).map(t => ({ ...t, cat: catOn(t), cats: catOn(t) === 'dev' ? ['dev'] : [...new Set([catOn(t), ...(t.also || [])])],
-  blurb: (t.siteBlurb && t.siteBlurb[SITE]) || t.blurb }));
+const forSite = t => ({ ...t, cat: catOn(t), cats: catOn(t) === 'dev' ? ['dev'] : [...new Set([catOn(t), ...(t.also || [])])],
+  blurb: (t.siteBlurb && t.siteBlurb[SITE]) || t.blurb });
+export const TOOLS = ALL_TOOLS.filter(t => onSite(t)).map(forSite);
+// Published builds replace this with the Coming Soon entries, encrypted with the Coming Soon password
+// (scripts/build_site.py); in the source tree the entries are simply in ALL_TOOLS above.
+export const DEV_SEALED = "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";
+/** Add tools decrypted from DEV_SEALED to the lists every page reads. */
+export function addTools(list) {
+  for (const t of list) if (!ALL_TOOLS.some(x => x.slug === t.slug)) { ALL_TOOLS.push(t); if (onSite(t)) TOOLS.push(forSite(t)); }
+}
 export const inCat = (t, id) => t.cats.includes(id);
 const rank = c => (ORDER[SITE] ? ORDER[SITE].indexOf(c.id) : -1);
 // Only categories with a tool on this site; the deterrence site uses its own order.
-export const CATEGORIES = ALL_CATEGORIES.filter(c => onSite(c) && !c.hidden && TOOLS.some(t => inCat(t, c.id)))
+export const CATEGORIES = ALL_CATEGORIES.filter(c => onSite(c) && !c.hidden && ((c.sealed && DEV_SEALED) || TOOLS.some(t => inCat(t, c.id))))
   .sort((a, b) => (ORDER[SITE] ? rank(a) - rank(b) : 0));

@@ -199,3 +199,8 @@ a.tool:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; tr
 /* Section and subsection views: no landing headline, search or gallery card. */
 .site-deterrence.in-section .hero { display: none; }
 .site-deterrence.in-section #sections { padding-top: 8px; }
+/* Password form for a sealed section (Coming Soon). */
+.sealed-form { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; max-width: 520px; padding: 14px 16px; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel); }
+.sealed-form label { font-weight: 600; }
+.sealed-form input { flex: 1 1 180px; font: inherit; padding: 6px 8px; border: 1px solid var(--rule); border-radius: 3px; background: var(--bg); color: var(--ink); }
+.sealed-msg { flex-basis: 100%; font-size: 13px; color: var(--muted); }

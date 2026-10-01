@@ -33,5 +33,6 @@ export const TAGLINES = {
   'war-markets': 'See what prediction markets priced for strikes on Iran, ceasefires and a Russia–NATO clash, and how each bet turned out.',
   'budget-allocator': "Split a real defense budget, Taiwan's, Japan's, the Philippines' or Poland's. Make changes and see how the mix holds up.",
   'kill-chain-builder': 'Wire sensors, command nodes and shooters into a kill chain, race a moving target, then find the link that breaks it.',
+  'four-capitals': 'Lead Washington, Taipei, Beijing or Tokyo through a notional Taiwan crisis, reading the others’ hidden resolve month by month.',
   'interceptor-burndown': "Fire a daily missile-and-drone salvo at Taiwan's estimated interceptor stocks and watch the day each one runs dry.",
 };

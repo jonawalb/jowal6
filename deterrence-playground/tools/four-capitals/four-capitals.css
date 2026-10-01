@@ -1,0 +1,132 @@
+/* Four Capitals. Built on shared/css/tsm.css tokens only (light, dark and the Trailer skin come from there).
+   Country colours: --us, --roc, --prc, --jp. */
+body { --k-us: var(--us, #2f6db3); --k-tw: var(--roc, #17917f); --k-cn: var(--prc, #c8352b); --k-jp: var(--jp, #a8457f); }
+[hidden] { display: none !important; }
+.mt { margin-top: 14px !important; }
+.k4-actions { max-width: 1400px; margin: 12px auto 0; padding: 0 16px; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; }
+.k4-actions > div { display: flex; gap: 8px; flex-wrap: wrap; }
+.k4-flag { margin: 0; font-size: 13px; padding: 5px 10px; border: 1px dashed var(--warn); border-radius: 4px; max-width: 80ch; }
+.k4-flag b { color: var(--warn); }
+.k4-main { max-width: 1400px; margin: 12px auto 0; padding: 0 16px 24px; display: flex; flex-direction: column; gap: 12px; }
+
+/* Start */
+.k4-start, .k4-type, .k4-resolve, .k4-end, .k4-about { padding: 14px 16px; }
+.k4-start { border-left: 4px solid var(--accent); }
+.k4-start h2, .k4-type h2 { margin: 0 0 6px; font-size: 22px; }
+.k4-lede { margin: 0 0 12px; max-width: 90ch; }
+.k4-seats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.k4-seat { text-align: left; display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; border: 2px solid var(--rule); border-top: 6px solid var(--c); border-radius: 4px; background: var(--panel); color: var(--ink); cursor: pointer; font: inherit; }
+.k4-seat b { font: 700 21px var(--display); color: var(--c); }
+.k4-seat small { color: var(--muted); font-size: 12.5px; line-height: 1.35; }
+.k4-seat[aria-checked="true"] { border-color: var(--c); background: color-mix(in srgb, var(--c) 10%, var(--panel)); }
+.k4-seat:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.k4-setup h3 { margin: 16px 0 2px; }
+.k4-weights { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 24px; margin: 10px 0; }
+.k4-w { display: grid; grid-template-columns: minmax(0, 1fr) 120px 1.5em; gap: 8px; align-items: center; font-size: 14px; }
+.k4-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-top: 8px; }
+.k4-row select { font: inherit; padding: 4px 6px; background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-radius: 3px; }
+.k4-type { border-left: 4px solid var(--c, var(--accent)); max-width: 680px; }
+
+/* Play */
+.k4-play { display: flex; flex-direction: column; gap: 10px; }
+.k4-bar { position: sticky; top: 0; z-index: 20; display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; padding: 8px 12px; border-top: 3px solid var(--c, var(--accent)); }
+.k4-month { margin: 0; } .k4-month b { font: 700 24px var(--display); margin-right: 4px; }
+.k4-event { margin: 0; flex: 1 1 260px; font-size: 13.5px; }
+.k4-event b { display: block; }
+.k4-grid { display: grid; grid-template-columns: 250px minmax(0, 1fr) 380px; gap: 10px; align-items: start; }
+.k4-state, .k4-decide, .k4-intel, .k4-feed { padding: 10px 12px; }
+.k4-centre { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.k4-theatre { padding: 0; overflow: hidden; background: var(--sea, #dfe9f1); }
+.k4-theatre svg { display: block; width: 100%; height: auto; max-height: 380px; }
+
+.k4-ladder { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-direction: column-reverse; gap: 2px; }
+.k4-ladder li { display: flex; gap: 8px; align-items: center; font-size: 13px; padding: 3px 6px; border-radius: 3px; color: var(--muted); }
+.k4-ladder li i { font: 500 11px var(--mono); width: 1.2em; text-align: center; font-style: normal; }
+.k4-ladder li.on { background: color-mix(in srgb, var(--bad) calc(var(--r) * 18%), var(--chip)); color: var(--ink); font-weight: 600; box-shadow: inset 3px 0 0 var(--bad); }
+.k4-ladder li.past { color: var(--ink); }
+.k4-track { margin: 6px 0; font-size: 12.5px; }
+.k4-track > div { display: flex; justify-content: space-between; gap: 6px; }
+.k4-track .bar { height: 6px; background: var(--chip); border-radius: 3px; overflow: hidden; margin-top: 2px; }
+.k4-track .bar span { display: block; height: 100%; background: var(--tc, var(--accent)); transition: width .5s ease; }
+.k4-caps { width: 100%; border-collapse: collapse; font-size: 12.5px; margin-top: 4px; }
+.k4-caps th, .k4-caps td { padding: 3px 4px; text-align: right; border-bottom: 1px solid var(--rule); }
+.k4-caps th:first-child, .k4-caps td:first-child { text-align: left; }
+.k4-caps td:first-child b { color: var(--c); }
+
+.k4-postures { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; margin: 4px 0; }
+.k4-postures button { font: 600 12px var(--body); padding: 7px 2px; border: 1px solid var(--rule); border-radius: 3px; background: var(--chip); color: var(--ink); cursor: pointer; line-height: 1.15; }
+.k4-postures button[aria-checked="true"] { background: var(--accent); border-color: var(--accent); color: #111; }
+.k4-postures button:disabled { opacity: .35; cursor: not-allowed; }
+.k4-pexp { min-height: 2.6em; margin: 2px 0 10px; }
+.k4-lineh { display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap; }
+.k4-tabs { display: flex; gap: 2px; }
+.k4-tabs button { font: 600 12px var(--body); padding: 4px 8px; border: 1px solid var(--rule); background: transparent; color: var(--ink); border-radius: 3px; cursor: pointer; }
+.k4-tabs button[aria-selected="true"] { background: var(--ink); color: var(--panel); }
+.k4-tabs button small { font-weight: 400; opacity: .8; }
+.k4-actlist { display: flex; flex-direction: column; gap: 6px; margin: 8px 0; }
+.k4-act { display: grid; grid-template-columns: 1.3em minmax(0, 1fr) auto; gap: 4px 8px; padding: 8px 10px; border: 1px solid var(--rule); border-radius: 4px; cursor: pointer; background: var(--panel); }
+.k4-act input { margin: 3px 0 0; accent-color: var(--accent); }
+.k4-act b { font-size: 14px; }
+.k4-act .p { font: 600 13px var(--mono); }
+.k4-act small { grid-column: 2 / 4; color: var(--muted); font-size: 12.5px; line-height: 1.35; }
+.k4-act .why { grid-column: 2 / 4; font-size: 12px; color: var(--muted); }
+.k4-act.on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 9%, var(--panel)); }
+.k4-act.off { opacity: .5; cursor: not-allowed; }
+.k4-act.tag-esc b::after { content: " ▲"; color: var(--bad); font-size: 11px; }
+.k4-act.tag-soft b::after { content: " ▼"; color: var(--good); font-size: 11px; }
+
+.k4-intel { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 18px; }
+.k4-intel h3 { grid-column: 1 / -1; margin: 0; font-size: 15px; }
+.k4-tb { font-size: 12.5px; }
+.k4-tb .who { font-weight: 600; color: var(--c); }
+.k4-tb .stack { display: flex; height: 12px; border-radius: 3px; overflow: hidden; margin: 3px 0; background: var(--chip); }
+.k4-tb .stack span { display: block; height: 100%; transition: width .5s ease; }
+.k4-tb .stack .resolute { background: var(--bad); } .k4-tb .stack .cautious { background: var(--good); } .k4-tb .stack .opportunist { background: var(--warn); }
+.k4-key { grid-column: 1 / -1; font-size: 12px; color: var(--muted); display: flex; gap: 12px; flex-wrap: wrap; }
+.k4-key i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+.k4-feed h3 { margin: 0 0 4px; font-size: 15px; }
+.k4-feed ul { margin: 0; padding-left: 18px; font-size: 13px; }
+
+/* Resolve */
+.k4-resolve { border-left: 4px solid var(--accent); }
+.k4-resolve h2 { margin: 0 0 8px; }
+.k4-reveal { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 10px; }
+.k4-mv { border: 1px solid var(--rule); border-top: 4px solid var(--c); border-radius: 4px; padding: 8px 10px; font-size: 13px; }
+.k4-mv b { color: var(--c); display: block; font: 700 16px var(--display); }
+.k4-mv .po { font-weight: 600; }
+.k4-mv ul { margin: 4px 0 0; padding-left: 16px; }
+.k4-log { list-style: none; margin: 0 0 12px; padding: 0; display: flex; flex-direction: column; gap: 4px; font-size: 13.5px; }
+.k4-log li { padding: 6px 8px; border-left: 4px solid var(--c, var(--rule)); background: var(--chip); border-radius: 0 3px 3px 0; }
+.k4-log .st { font: 600 12px var(--mono); padding: 1px 6px; border-radius: 3px; margin-left: 6px; }
+.k4-log .success { background: color-mix(in srgb, var(--good) 25%, transparent); }
+.k4-log .partial { background: color-mix(in srgb, var(--warn) 25%, transparent); }
+.k4-log .failure, .k4-log .blocked { background: color-mix(in srgb, var(--bad) 22%, transparent); }
+.k4-log .fx { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; }
+.k4-log li.note { border-left-color: var(--warn); font-weight: 600; }
+
+/* End */
+.k4-end { border-left: 4px solid var(--c, var(--accent)); }
+.k4-end h2 { margin: 0 0 4px; font-size: 26px; }
+.k4-score { display: flex; gap: 28px; flex-wrap: wrap; margin: 10px 0; }
+.k4-big { font: 700 44px var(--display); margin: 0; line-height: 1; }
+.k4-parts { border-collapse: collapse; font-size: 13.5px; margin-bottom: 8px; }
+.k4-parts td { padding: 4px 10px 4px 0; border-bottom: 1px solid var(--rule); }
+.k4-parts td.num { text-align: right; }
+.k4-types { display: flex; gap: 10px; flex-wrap: wrap; }
+.k4-types div { border: 1px solid var(--rule); border-top: 4px solid var(--c); padding: 6px 10px; border-radius: 4px; font-size: 13.5px; }
+#beliefs { width: 100%; max-width: 760px; height: auto; display: block; margin-bottom: 12px; }
+.k4-about summary { cursor: pointer; }
+.k4-about ul { margin: 8px 0; padding-left: 18px; font-size: 14px; }
+
+@media (max-width: 1180px) { .k4-grid { grid-template-columns: 230px minmax(0, 1fr); } .k4-decide { grid-column: 1 / -1; } }
+.k4-play:has(#resolve:not([hidden])) .k4-grid { grid-template-columns: 250px minmax(0, 1fr); }
+.k4-play:has(#resolve:not([hidden])) .k4-bar #end-turn { visibility: hidden; }
+.k4-play:has(#resolve:not([hidden])) .k4-theatre svg { max-height: 240px; }
+@media (max-width: 760px) {
+  .k4-grid { grid-template-columns: minmax(0, 1fr); }
+  .k4-seats, .k4-reveal { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .k4-weights { grid-template-columns: minmax(0, 1fr); }
+  .k4-intel { grid-template-columns: minmax(0, 1fr); }
+  .k4-state { order: 2; } .k4-decide { order: 1; }
+}
+@media (max-width: 420px) { .k4-postures { grid-template-columns: repeat(3, minmax(0, 1fr)); } }

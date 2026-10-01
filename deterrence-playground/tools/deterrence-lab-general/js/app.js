@@ -5,7 +5,7 @@ import { C_DEFAULTS } from './models/reputation.js';
 import { mountA } from './viewA.js';
 import { mountB } from './viewB.js';
 import { mountC } from './viewC.js';
-import { createTour } from './tour.js';
+import { createTour, B_STEPS } from './tour.js';
 import { mountCases, pickCase } from './cases.js';
 import { addExportBar } from '../../../shared/js/export.js';
 import { snap, morph, drawIn } from './fx.js';
@@ -100,8 +100,12 @@ document.querySelectorAll('[data-goto]').forEach(a => a.addEventListener('click'
   ev.preventDefault(); S.m = a.dataset.goto; mount(); document.querySelector('.tabs').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }));
 
+// #m=B&tour=B (the Game Theory Gallery's Fearon 1997 card) opens the Fearon (1997) walkthrough.
+// Read before mount() rewrites the address.
+const wantTourB = new URLSearchParams(location.hash.slice(1)).get('tour') === 'B';
 readHash();
 mount();
+if (wantTourB) tour.start(B_STEPS);
 
 // Render the method-section math once KaTeX has loaded (the scripts are deferred).
 function renderMath() {

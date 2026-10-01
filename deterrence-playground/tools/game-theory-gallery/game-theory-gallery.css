@@ -287,3 +287,12 @@ body.learning > #tsm-bar { width: 100%; flex: none; }
   .ln-term { padding: 7px 0; }
   .ln-dots { display: none; }
 }
+
+/* Landing: only the cards until a model is picked. */
+.pick-hint { display: none; max-width: 1400px; margin: 14px auto 0; font-size: 15px; color: var(--muted); }
+body.picking .pick-hint { display: block; }
+body.picking main.layout { display: none; }
+@media (max-width: 700px) {
+  body.picking .picker { display: grid; grid-template-columns: minmax(0, 1fr); overflow: visible; }
+  body.picking .mcard { flex: none; }
+}

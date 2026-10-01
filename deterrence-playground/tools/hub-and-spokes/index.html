@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hub and Spokes | Interactive Deterrence</title>
+<meta name="description" content="A ten-year strategy game about managing four bilateral allies. Reassure too little and they hedge; reassure too much and they free-ride or drag you into their crises. Snyder's alliance security dilemma, played.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@500;600;700;800&family=DM+Mono:wght@400;500&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="hub-and-spokes.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+<div class="hs-actions">
+  <p class="hs-flag"><b>Fictional and notional.</b> Invented allies and an invented Rival. Every number is illustrative game design, not a prediction.</p>
+  <div><button type="button" class="btn" id="new-game">New game</button>
+  <button type="button" class="btn" id="copy-link">Copy link</button></div>
+</div>
+
+<main class="hs-main">
+  <section class="card hs-start" id="start" aria-labelledby="start-t">
+    <h2 id="start-t">You are the hub</h2>
+    <p class="hs-lede">Four allies depend on you, each through its own bilateral treaty, and none of them much trusts the others. A <b>Rival</b> watches for weak links. For ten years you spend a limited budget of political capital to keep them with you.</p>
+    <p class="hs-lede">The trap: allies that doubt you <b>hedge</b>, toward the Rival or toward a deterrent of their own (<i>abandonment</i>). Allies that are too sure of you <b>stop paying</b> and <b>start taking risks</b>, and you may be dragged into their quarrels (<i>entrapment</i>). Each ally has a comfort zone you cannot see directly.</p>
+    <div class="hs-intro" id="intro"></div>
+    <button type="button" class="btn solid" id="begin">Begin Year 1</button>
+  </section>
+
+  <section class="hs-play" id="play" hidden>
+    <div class="card hs-bar">
+      <p class="hs-year"><b id="year"></b> <span class="muted" id="yearof"></span></p>
+      <p class="hs-event" id="event"></p>
+      <p class="hs-left"><span class="num" id="left"></span> <span class="muted">capital left</span></p>
+      <button type="button" class="btn solid" id="end-turn">End year</button>
+    </div>
+    <section class="card hs-crisis" id="crisis" hidden aria-labelledby="cr-t" tabindex="-1">
+      <p class="eyebrow" id="cr-k"></p>
+      <h2 id="cr-t"></h2>
+      <p id="cr-x"></p>
+      <div class="hs-resp" id="resp" role="group" aria-label="Your response"></div>
+    </section>
+
+    <section class="card hs-resolve" id="resolve" hidden aria-labelledby="res-t" tabindex="-1">
+      <h2 id="res-t"></h2>
+      <ul class="hs-log" id="log"></ul>
+      <button type="button" class="btn solid" id="next">Continue</button>
+    </section>
+
+    <div class="hs-grid">
+      <div class="hs-col">
+        <div class="card hs-diagram"><svg id="hub" viewBox="0 0 640 400" role="img" aria-label="Diagram of the hub, the four allies and the Rival"></svg>
+          <p class="fine hs-key">Spoke width: how assured the ally feels. Dashed spoke: hedging. Number: cohesion. Orange dotted ring: high abandonment fear. Red ring: high entrapment risk. Red dashes: the Rival probing. Grey dots: ties between allies.</p></div>
+        <div class="card hs-tracks" id="tracks" aria-label="Hub tracks"></div>
+      </div>
+      <div class="hs-col">
+        <div class="hs-allies" id="allies"></div>
+      </div>
+      <section class="card hs-decide" id="decide" aria-labelledby="dec-t">
+        <h2 id="dec-t">Spend your capital</h2>
+        <div class="hs-tabs" role="tablist" id="tabs" aria-label="Ally"></div>
+        <div class="hs-actlist" id="actions" role="tabpanel"></div>
+        <h3 class="hs-sub">This year’s plan</h3>
+        <ol class="hs-plan" id="plan"></ol>
+        <p class="fine">Effects shown are before allies react. Repeating a reassurance on the same ally next year works at 60%.</p>
+      </section>
+    </div>
+  </section>
+
+  <section class="card hs-end" id="end" hidden aria-labelledby="end-t" tabindex="-1">
+    <p class="eyebrow">Ten years on</p>
+    <h2 id="end-t"></h2>
+    <div class="hs-score">
+      <div><p class="hs-big num" id="total"></p><p class="fine">your score, 0–100</p></div>
+      <div><p class="hs-big num" id="pct">…</p><p class="fine" id="pct-x">comparing with the computer…</p></div>
+    </div>
+    <table class="hs-parts" id="parts"></table>
+    <h3>Where the fears peaked</h3>
+    <p class="fine">True values, which you only saw through noisy embassy reporting. Dots mark each ally’s peak.</p>
+    <svg id="ch-fear" class="hs-chart" viewBox="0 0 640 210" role="img" aria-label="Abandonment fear by ally and year"></svg>
+    <svg id="ch-entrap" class="hs-chart" viewBox="0 0 640 210" role="img" aria-label="Entrapment risk by ally and year"></svg>
+    <ul class="hs-peaks" id="peaks"></ul>
+    <h3>Who they really were</h3>
+    <div class="hs-types" id="types"></div>
+    <button type="button" class="btn solid" id="again">Play again</button>
+  </section>
+
+  <div class="sr-only" aria-live="polite" id="live"></div>
+
+  <section class="card hs-about">
+    <details>
+      <summary><b>How the game works</b></summary>
+      <ul>
+        <li><b>Each year</b> an event may shake one ally’s politics or your own, and the Rival probes the allies it thinks you care least about (exposed allies, low assurance, no forces present). Then you spend about 10 points of political capital across the four allies.</li>
+        <li><b>Reassure</b> (forward deployment, summit, joint exercise, guarantee statement, arms transfer), <b>restrain</b> (private warning, conditioning aid, refusing arms), press for <b>burden-sharing</b>, or <b>link</b> two allies directly. Guarantees, arms and pressure ask how far to go.</li>
+        <li><b>Allies react to how assured they feel</b> against a hidden comfort zone that depends on their exposure and their fear of abandonment. Below it they lose cohesion and hedge; above it they cut their own defense effort and, if risk-loving, start provoking the Rival.</li>
+        <li><b>Crises</b> come from Rival probes or from emboldened allies. You back the ally fully, back it with restraint, or stay out. Every ally watches: staying out of a probe costs credibility everywhere, more where you made public or treaty-level pledges. Allies tied to each other feel the shock less.</li>
+        <li><b>Budget strain</b> from deployments, arms and crises cuts next year’s capital.</li>
+        <li><b>Score</b>: 30% alliance cohesion, 30% wars avoided, 20% burden sharing, 20% hub credibility. The computer then plays your same ten years 60 times, with slightly different reads of the allies, and you see where you rank.</li>
+      </ul>
+      <p class="fine" id="balance-note">In 1,000 test games per strategy: the computer hub averaged 83; reassuring everyone as much as possible averaged 52 (2.3 wars a game; burden sharing collapses); restraining everyone averaged 57 (cohesion near zero); doing nothing averaged 42. Numbers are illustrative.</p>
+      <p class="fine">Built on Glenn H. Snyder, “The Security Dilemma in Alliance Politics,” <i>World Politics</i> 36:4 (1984) (abandonment versus entrapment); Mancur Olson and Richard Zeckhauser, “An Economic Theory of Alliances,” <i>Review of Economics and Statistics</i> 48:3 (1966) (free-riding); and Victor D. Cha, “Powerplay: Origins of the U.S. Alliance System in Asia,” <i>International Security</i> 34:3 (2009/10) (bilateral alliances as a means of restraining allies).</p>
+    </details>
+  </section>
+</main>
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Hub and Spokes', sub: 'A strategy game of managing four bilateral allies: reassure too little and they hedge, too much and they free-ride or drag you in.', category: 'Deterrence & signaling' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

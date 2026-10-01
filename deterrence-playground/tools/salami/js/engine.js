@@ -5,6 +5,7 @@ import { makeRng, STREAM } from './rng.js';
 import { patronProbs, statementCat, statementLik, spikeProb, updateR, updateT } from './belief.js';
 import { NORM } from '../data/params.js';
 import { newNorm, isNormal, updateNorm, isAnswer, voiceTired } from './normal.js';
+import { canSmash, resolveSmash } from './smash.js';
 
 export const M = Object.fromEntries(METHODS.map(m => [m.id, m]));
 const clamp = (v, lo = 0, hi = 100) => Math.max(lo, Math.min(hi, v));
@@ -66,6 +67,18 @@ export function resolveTurn(s0, { c, p }) {
   const log = [], t = s.turn, dice = makeRng(s.seed, STREAM.dice + t);
   const roll = { deliver: dice.u(), collide: dice.u(), injure: dice.u(), patron: dice.u(), clash: dice.u() };
   if (c.method === 'patron' && s.patronLeft <= 0) c = { ...c, method: 'cg' };
+  // Smash the red line: either side's all-in move ends the game this month on the Patron's decision.
+  const smasher = canSmash(s) ? (p.smash ? 'p' : c.smash ? 'c' : null) : null;
+  if (smasher) {
+    const r = makeRng(s.seed, STREAM.dice + 50 + t), { over, info } = resolveSmash(s, smasher, r.u(), r.u());
+    log.push({ kind: 'smash', tone: info.stepIn ? (smasher === 'c' ? 'good' : 'bad') : (smasher === 'p' ? 'good' : 'bad'), text: `${smasher === 'p' ? 'The Power' : 'The Coastal State'} smashed the red line. The Patron ${info.stepIn ? 'stepped in' : 'stayed out'}.` });
+    s.history.push({ turn: t, c: clone(c), p: clone(p), P: 0, tAdj: tAdj(s), enc: false, E: 0, resp: info.stepIn ? 'intervene' : 'silence', answered: false, base: s.history[t - 1]?.base ?? 0,
+      odds: 0, delivered: 0, clashP: info.clashP, clash: info.clash, smash: info, after: { supplies: s.supplies, sympathy: s.sympathy, esc: s.esc, cred: s.cred, domC: s.domC, domP: s.domP }, bR: s.bR.slice(), bT: s.bT.slice() });
+    if (info.stepIn) s.intervened = true;
+    s.turn++; s.cur = null; s.over = { ...over, month: s.turn };
+    return { state: s, log };
+  }
+  if (c.smash || p.smash) { c = { ...c, smash: false }; p = { ...p, smash: false }; }
   const m = M[c.method], L = p.level, enc = encounters(L, c.method);
   const Pv = provocation(c, enc), adj = tAdj(s);
 
@@ -162,12 +175,12 @@ export function resolveTurn(s0, { c, p }) {
   return { state: s, log };
 }
 
-/** Copy link: v1.seed.side.moves; each month 3 digits (Coastal) or 4 (Power). */
+/** Copy link: v1.seed.side.moves; each month 3 digits (Coastal) or 4 (Power), plus a trailing 1 for a smash. */
 export function encode(s) {
   const ids = METHODS.map(m => m.id), cms = C_MSGS.map(m => m.id), pms = P_MSGS.map(m => m.id);
   const mv = s.history.map(h => s.side === 'c'
-    ? `${ids.indexOf(h.c.method)}${cms.indexOf(h.c.msg)}${h.c.push ? 1 : 0}`
-    : `${h.p.level}${pms.indexOf(h.p.msg)}${h.p.hold ? 1 : 0}${h.p.detain ? 1 : 0}`);
+    ? `${ids.indexOf(h.c.method)}${cms.indexOf(h.c.msg)}${h.c.push ? 1 : 0}${h.c.smash ? 1 : ''}`
+    : `${h.p.level}${pms.indexOf(h.p.msg)}${h.p.hold ? 1 : 0}${h.p.detain ? 1 : 0}${h.p.smash ? 1 : ''}`);
   return `v1.${s.seed}.${s.side}${mv.length ? '.' + mv.join('-') : ''}`;
 }
 export function decode(str) {
@@ -175,8 +188,8 @@ export function decode(str) {
   if (v !== 'v1' || !/^\d+$/.test(seed) || !['c', 'p'].includes(side)) return null;
   const moves = [];
   for (const x of (mv ? mv.split('-') : [])) {
-    if (side === 'c' && /^[0-5][0-2][01]$/.test(x)) moves.push({ method: METHODS[+x[0]].id, msg: C_MSGS[+x[1]].id, push: x[2] === '1' });
-    else if (side === 'p' && /^[0-5][0-2][01][01]$/.test(x)) moves.push({ level: +x[0], msg: P_MSGS[+x[1]].id, hold: x[2] === '1', detain: x[3] === '1' });
+    if (side === 'c' && /^[0-5][0-2][01]1?$/.test(x)) moves.push({ method: METHODS[+x[0]].id, msg: C_MSGS[+x[1]].id, push: x[2] === '1', ...(x[3] ? { smash: true } : {}) });
+    else if (side === 'p' && /^[0-5][0-2][01][01]1?$/.test(x)) moves.push({ level: +x[0], msg: P_MSGS[+x[1]].id, hold: x[2] === '1', detain: x[3] === '1', ...(x[4] ? { smash: true } : {}) });
     else return null;
   }
   return { seed: +seed, side, moves: moves.slice(0, P.turns) };

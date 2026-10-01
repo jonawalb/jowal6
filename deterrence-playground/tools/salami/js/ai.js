@@ -5,6 +5,8 @@ import { makeRng, STREAM } from './rng.js';
 import { pIntervene, pSpike, spikeProb } from './belief.js';
 import { M, baseE, encounters, provocation, deliveryOdds, tAdj } from './engine.js';
 import { isAnswer, isNormal, unanswered, voiceTired, baseline as baselineOf } from './normal.js';
+import { SMASH } from '../data/params.js';
+import { canSmash, estimate } from './smash.js';
 
 export const AI = {
   power: { denyValue: 14, denyUrgent: 6, intervene: 110, sym: 0.5, esc: 0.25, home: 0.08, onScene: 6, normalize: 6, temp: 2.5 },
@@ -28,7 +30,14 @@ export function methodForecast(s) {
 }
 
 /** The Power's move. rng defaults to the seeded AI stream for this month. */
+/** The computer smashes the line only when its own estimate (from the public belief) says it would win. */
+export const wantsSmash = (s, side) => canSmash(s) && (side === 'p' ? 1 - estimate(s, 'p') : estimate(s, 'c')) >= SMASH.aiAt[side];
+
 export function choosePower(s, rng = makeRng(s.seed, STREAM.ai + s.turn * 2)) {
+  const mv = choosePowerMove(s, rng);
+  return wantsSmash(s, 'p') ? { ...mv, smash: true } : mv;
+}
+function choosePowerMove(s, rng) {
   const A = AI.power, prev = s.history[s.turn - 1], last = s.lastLevel;
   const follow = L => ({ msg: s.sympathy > 56 ? 'narrative' : s.domP > 58 ? 'admin' : 'quiet', hold: s.domP > 55 || L >= 3, detain: s.domP > 65 });
   const snap = rng.u();
@@ -77,6 +86,10 @@ export function levelForecast(s) {
 
 /** The Coastal State's move. */
 export function chooseCoastal(s, rng = makeRng(s.seed, STREAM.ai + s.turn * 2 + 1)) {
+  const mv = chooseCoastalMove(s, rng);
+  return wantsSmash(s, 'c') ? { ...mv, smash: true } : mv;
+}
+function chooseCoastalMove(s, rng) {
   const A = AI.coastal, d = levelForecast(s);
   const v = s.supplies < 1.5 ? A.value[0] : s.supplies < 2.5 ? A.value[1] : s.supplies < 4 ? A.value[2] : A.value[3];
   const cands = [];

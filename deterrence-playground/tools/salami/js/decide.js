@@ -3,7 +3,8 @@ import { LEVELS, METHODS, C_MSGS, P_MSGS, R_VALUES, R_PRIOR, T_VALUES, T_PRIOR }
 import { M, baseE, deliveryOdds, encounters, provocation, tAdj } from './engine.js';
 import { pIntervene, pSpike } from './belief.js';
 import { isAnswer, isNormal, unanswered } from './normal.js';
-import { NORM } from '../data/params.js';
+import { NORM, SMASH } from '../data/params.js';
+import { canSmash, estimate, estimateDrivers } from './smash.js';
 import { paintBelief, levelLabel, COL } from './view.js';
 
 const $ = id => document.getElementById(id);
@@ -38,6 +39,7 @@ export function paintDecide(g) {
     <label class="sl-check"><input type="checkbox" id="hold" ${ch.hold ? 'checked' : ''}><span><b>If they push through, hold course.</b> Halves their gain, risks a collision.</span></label>
     <label class="sl-check"><input type="checkbox" id="detain" ${ch.detain ? 'checked' : ''} ${ch.level === 4 ? '' : 'disabled'}><span><b>Detain crews you board.</b> Pleases home; the Patron counts it as a rung higher.</span></label>`;
   }
+  paintSmash(g);
   paintReadout(g);
 }
 
@@ -65,7 +67,28 @@ export function paintReadout(g) {
   }
 }
 
+/** Smash the red line: the estimate from the player's own belief, the drivers, and a two-step confirm. */
+function paintSmash(g) {
+  const s = g.s, box = $('smash-box'), me = g.side, pct2 = v => `${Math.round(v * 100)}%`;
+  if (!canSmash(s)) { box.innerHTML = `<h3>Smash the red line</h3><p class="fine">Available from ${['January', 'February', 'March'][SMASH.from]}: the Patron’s line has to be probed first.</p>`; return; }
+  const est = estimate(s, me), win = me === 'c' ? est : 1 - est;
+  const what = me === 'c' ? 'Send a massive publicized resupply with Patron observers, push through any block and formally invoke the treaty. You win at once if the Patron comes; if it stays out, the garrison is forced out and you lose.'
+    : 'Seize the outpost and detain the garrison under a cordon. You win at once if the Patron stays out; if it steps in, you lose.';
+  const drv = estimateDrivers(s, me).map(([k, v]) => `<li><span>${k}</span><b class="num ${(me === 'c') === (v >= 0) ? 'up' : 'down'}">${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(1)}</b></li>`).join('');
+  box.innerHTML = `<h3>Smash the red line</h3><p class="fine">${what} Once a game; it ends the game this month.</p>
+    <p>Your estimate that the Patron steps in: <b class="num">${pct2(est)}</b>, so your chance of winning: <b class="num">${pct2(win)}</b>.</p>
+    <details><summary>What drives it (log-odds at the line you believe; + pushes toward stepping in; green helps you)</summary><ul class="sl-drv">${drv}</ul><p class="fine">Estimated from your belief about the Patron’s line, not its true position.</p></details>
+    ${g.smashArmed ? `<p class="sl-confirm" role="alert"><b>This ends the game this month.</b> Smash the red line?</p><button type="button" class="btn solid" id="smash-go">Yes, smash it</button> <button type="button" class="btn" id="smash-cancel">Cancel</button>`
+      : `<button type="button" class="btn" id="smash-arm">Smash the red line…</button>`}`;
+}
+
 export function wireDecide(g, onChange) {
+  $('smash-box').addEventListener('click', e => {
+    const id = e.target.id;
+    if (id === 'smash-arm') { g().smashArmed = true; paintSmash(g()); $('smash-go').focus(); }
+    else if (id === 'smash-cancel') { g().smashArmed = false; paintSmash(g()); $('smash-arm').focus(); }
+    else if (id === 'smash-go') { g().smashArmed = false; g().choice.smash = true; $('end-turn').click(); }
+  });
   $('decide-body').addEventListener('change', e => {
     const t = e.target, ch = g().choice;
     if (t.name === 'method') { ch.method = t.value; if (!M[ch.method].sea) ch.push = false; }

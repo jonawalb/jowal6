@@ -126,6 +126,7 @@ export function paintTimeline(root, s, rows, showT = true) {
     txt(root, { x: L + 4, y: y(Math.max(...rows.map(r => r.base), 0)) - 5, 'font-size': 10.5, fill: 'var(--k-p)', 'font-weight': 700 }, 'normal baseline');
   }
   panel(PH + 30, 6, showT ? s.T : null, 'Coastal provocation', rows.map(r => r.P), i => (rows[i + 1] && s.history[i].p.level <= 3 && s.history[i + 1].p.level >= s.history[i].p.level + 2 ? 'var(--bad)' : 'var(--k-c)'), `Power’s threshold: ${s.T}`);
+  rows.forEach((r, i) => { if (r.smash) txt(root, { x: x(i), y: 4 + PH - 20, 'font-size': 11, 'font-weight': 700, 'text-anchor': 'middle', fill: 'var(--bad)' }, 'SMASH'); });
   rows.forEach((r, i) => txt(root, { x: x(i), y: 2 * PH + 46, 'font-size': 10.5, 'text-anchor': 'middle', fill: 'var(--muted)' }, P.months[i].slice(0, 3)));
 }
 export const levelLabel = i => (i >= LEVELS.length ? 'Beyond' : LEVELS[i].label);

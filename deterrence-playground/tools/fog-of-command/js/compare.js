@@ -1,7 +1,8 @@
 // After-action replays of the same scenario: your actions, your actions against an opponent who sees
 // everything (what your concealment, feints and bait were worth), and a scripted commander in your
 // place with and without perfect information. Each is replayed with fresh dice (combat, sightings,
-// artillery, order delays) while the scenario (Red's plan and hidden unit quality) stays fixed.
+// artillery, order delays) while the scenario (Red's plan, hidden unit quality and the offense-defense
+// balance) stays fixed.
 import { replay, play } from './engine.js';
 import { redAI, blueAI } from './ai.js';
 import { SIDE } from './panel.js';
@@ -16,14 +17,14 @@ export function variants(g, me) {
   const script = mode => (me === 'blue' ? { blue: blueAI({ mode }), red: redAI() } : { red: redAI({ plan: 'smart', mode }), blue: blueAI() });
   return [
     { key: 'you', label: 'Your orders', note: 'exactly what you did, at the hours you did it',
-      run: dice => replay({ seed: g.seed, dice, players: withMe(opp('fog')) }, log) },
+      run: dice => replay({ seed: g.seed, dice, od: g.od, players: withMe(opp('fog')) }, log) },
     { key: 'seer', label: `Your orders, against a ${SIDE[foe]} commander who sees everything`, note: 'the difference is what hiding, feints and bait were worth to you',
-      run: dice => replay({ seed: g.seed, dice, players: withMe(opp('truth')) }, log) },
+      run: dice => replay({ seed: g.seed, dice, od: g.od, players: withMe(opp('truth')) }, log) },
     { key: 'doc', label: me === 'blue' ? 'The doctrinal defender in your place' : 'Scripted feint and mass in your place',
       note: me === 'blue' ? 'commits its reserve when one road clearly leads, after checking it with spotted fire' : 'main effort on an outer road, feint with the decoy on a road away from it',
-      run: dice => play({ seed: g.seed, dice, players: script('fog') }) },
+      run: dice => play({ seed: g.seed, dice, od: g.od, players: script('fog') }) },
     { key: 'docT', label: 'The same script with perfect information', note: 'it reads the true picture; orders are still delayed',
-      run: dice => play({ seed: g.seed, dice, players: script('truth') }) },
+      run: dice => play({ seed: g.seed, dice, od: g.od, players: script('truth') }) },
   ];
 }
 

@@ -1,7 +1,7 @@
 // Fog of Command: the game engine. Pure functions over a plain state object, no DOM, so the same code
 // runs the game, the replays in the after-action review and the Monte Carlo balance script.
 // Either side can be the player (actions logged in g.log) or a scripted commander (a policy function).
-import { GAME, ORDER_DELAY, ORDER_DELAY_MAXRUN, TYPES, COMBAT, FORCES, DISENGAGE, ARTILLERY } from '../data/params.js';
+import { GAME, ORDER_DELAY, ORDER_DELAY_MAXRUN, TYPES, COMBAT, FORCES, DISENGAGE, ARTILLERY, OFFDEF } from '../data/params.js';
 import { NORTH, OBJ, NODE } from '../data/map.js';
 import { makeRng, STREAM } from './rng.js';
 import { fight, breaks, sum, power } from './combat.js';
@@ -9,18 +9,19 @@ import { sight, beliefAt, truthFor, other, posOf, exact } from './vision.js';
 import { path, edgeHours, neighbours, hops } from './graph.js';
 
 /**
- * New game. opts: { seed, dice = 0, noDelay = false, players: { blue: policy|null, red: policy|null },
- * rules: { blind: { blue, red } } } (blind = artillery never spotted, for the balance check). A null player is the human; its actions come from issue(), setStance()
+ * New game. opts: { seed, dice = 0, noDelay = false, od = OFFDEF.standard, players: { blue: policy|null, red: policy|null },
+ * rules: { blind: { blue, red } } } (blind = artillery never spotted, for the balance check; od = the offense-defense
+ * slider, 0-10, part of the scenario). A null player is the human; its actions come from issue(), setStance()
  * and setFire(), and are logged in g.log for replays and share links.
  */
-export function newGame({ seed, dice = 0, noDelay = false, players = {}, rules = {} }) {
+export function newGame({ seed, dice = 0, noDelay = false, od = OFFDEF.standard, players = {}, rules = {} }) {
   const mk = (side, d) => ({
     ...d, side, str: TYPES[d.type].str, str0: TYPES[d.type].str, stance: d.stance || 'hold',
     node: d.type === 'arty' ? 'rear' : side === 'blue' ? d.start : 'off', entry: side === 'red' && d.type !== 'arty' ? d.start : null,
     arrive: d.arrive ?? 0, since: -10, from: null, route: [], seg: null, broken: false,
   });
   const g = {
-    seed, dice, noDelay, t: 0, over: null, rules: { blind: { blue: false, red: false, ...(rules.blind || {}) } },
+    seed, dice, noDelay, od, t: 0, over: null, rules: { blind: { blue: false, red: false, ...(rules.blind || {}) } },
     players: { blue: players.blue || null, red: players.red || null },
     units: [...FORCES.blue.map(d => mk('blue', d)), ...FORCES.red.map(d => mk('red', d))],
     orders: [], log: [], fire: { blue: {}, red: {} }, fires: [], seen: { blue: [], red: [] }, fights: [], events: [], snaps: [],
@@ -252,7 +253,7 @@ function combat(g) {
   for (const n of nodes) {
     const b = eff(g, 'blue', n), r = eff(g, 'red', n);
     if (!b.length || !r.length) continue;
-    g.fights.push({ node: n, units: [...b, ...r].map(u => u.id), ...fight(b, r, g.t, g.rCombat) });
+    g.fights.push({ node: n, units: [...b, ...r].map(u => u.id), ...fight(b, r, g.t, g.rCombat, g.od) });
   }
   for (const u of breaks(g.units)) {
     g.events.push({ t: g.t, kind: 'break', unit: u.id, side: u.side, node: u.node || u.seg?.to });

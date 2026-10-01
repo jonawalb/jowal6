@@ -331,3 +331,9 @@ body.fc-armed .fc-sec:hover rect { fill: color-mix(in srgb, var(--c3) 14%, trans
   .fc-tour p { font-size: 13px; margin-bottom: 6px; }
   .fc-tour .tour-do ~ p { display: none; }   /* action steps: just the action, so the card stays small */
 }
+
+/* The decoy note at the start of a game: Red's how-to, or Blue's warning. */
+.fc-decoy { position: relative; margin: 0 0 8px; padding: 8px 26px 8px 10px; font-size: 13px; line-height: 1.4; border: 1px solid var(--warn); border-left-width: 5px; border-radius: 3px; background: color-mix(in srgb, var(--warn) 10%, var(--panel)); }
+.fc-decoy[hidden] { display: none; }
+.fc-decoy b { color: var(--warn); }
+.fc-decoy-x { position: absolute; top: 2px; right: 4px; border: 0; background: none; font-size: 18px; line-height: 1; cursor: pointer; color: var(--muted); padding: 2px 4px; }

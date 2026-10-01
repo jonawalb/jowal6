@@ -32,7 +32,7 @@ $('begin').addEventListener('click', () => { if (!pick) return; begin({ seed: ne
 
 function begin({ seed, side }) {
   g = { s: brief(newGame({ seed, side })), side, before: null };
-  g.choice = emptyChoice(side, g.s);
+  g.choice = emptyChoice(side, g.s); g.smashArmed = false;
   document.body.style.setProperty('--c', side === 'c' ? COL.c : COL.p);
   drawShoal($('shoal'));
 }
@@ -80,7 +80,7 @@ $('end-turn').addEventListener('click', async () => {
   const h = state.history[state.history.length - 1], b = g.before;
   g.s = state;
   show('play', 'resolve'); $('decide').hidden = true;
-  $('res-t').textContent = `${month}: what happened`;
+  $('res-t').textContent = h.smash ? `${month}: the red line is smashed` : `${month}: what happened`;
   $('reveal').innerHTML = `<div class="sl-mv" style="--c:${COL.c}"><b>Coastal State${g.side === 'c' ? ' (you)' : ''}</b>${M[h.c.method].label}; ${C_MSGS.find(m => m.id === h.c.msg).label.toLowerCase()}${h.c.push ? '; push through' : ''}<small>Provocation ${h.P}</small></div>
     <div class="sl-mv" style="--c:${COL.p}"><b>Power${g.side === 'p' ? ' (you)' : ''}</b>${LEVELS[h.p.level].label}; ${P_MSGS.find(m => m.id === h.p.msg).label.toLowerCase()}${h.p.hold ? '; hold course' : ''}${h.p.detain ? '; detain crews' : ''}</div>
     <div class="sl-mv" style="--c:${COL.a}"><b>Patron</b>${RESPONSE_LABEL[h.resp]}<small>${h.E ? `It saw rung ${h.E}` : 'Nothing reached it'}</small></div>`;
@@ -97,7 +97,7 @@ $('end-turn').addEventListener('click', async () => {
 $('next').addEventListener('click', () => {
   if (g.s.over) return finish();
   g.s = brief(g.s);
-  g.choice = emptyChoice(g.side, g.s);
+  g.choice = emptyChoice(g.side, g.s); g.smashArmed = false;
   show('play'); $('decide').hidden = false; paint();
   document.querySelectorAll('#tracks .sl-track').forEach(t => { if (t.querySelector('small')) flash(t); });
   $('end-turn').focus();
@@ -121,6 +121,9 @@ function finish() {
   $('end-t2-t').textContent = me === 'c' ? 'Final belief about the Power’s threshold' : 'What the computer came to believe about your threshold';
   paintBelief($('end-t2'), { prior: T_PRIOR, post: s.bT, labels: T_VALUES.map(String), truth: me === 'c' ? T_VALUES.indexOf(s.T) : null, color: COL.p });
   $('lessons').innerHTML = lessons(s, rows, me);
+  const sm = s.history.find(h => h.smash)?.smash;
+  $('smash-d').hidden = !sm;
+  if (sm) $('smash-x').innerHTML = `${sm.side === 'c' ? 'The Coastal State' : 'The Power'}${sm.side === me ? ' (you)' : ''} smashed the red line in ${P.months[s.over.month - 1]}. The estimate from ${sm.side === me ? 'your' : 'its'} belief was that the Patron would step in ${pct(sm.est)} of the time; the true chance was <b>${pct(sm.p)}</b>, and it ${sm.stepIn ? 'stepped in' : 'stayed out'}${sm.clashP ? ` (chance of a clash once it did: ${pct(sm.clashP)})` : ''}. What drove it, at the Patron’s true line (log-odds; + toward stepping in): ${sm.drivers.map(([k, v]) => `${k} ${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(1)}`).join('; ')}.`;
   const close = rows.filter(r => r.gapR === -1).length, over = rows.filter(r => r.gapR !== null && r.gapR >= 0).length;
   const hitT = rows.filter(r => r.gapT >= 0).length;
   $('closest').textContent = `The Patron saw a rung one below its line in ${close} month${close === 1 ? '' : 's'} and its line or above in ${over}.` + (me === 'c' ? ` Your provocation reached the Power’s threshold in ${hitT} month${hitT === 1 ? '' : 's'}.` : '');

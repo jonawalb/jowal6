@@ -62,6 +62,7 @@
         <h2 id="dec-t">Your move</h2>
         <div id="decide-body"></div>
         <p class="sl-answer" id="answer-x" aria-live="polite"></p>
+        <div class="sl-smash" id="smash-box" aria-live="polite"></div>
         <p class="fine">Odds assume the other side repeats last month. Both sides move at once.</p>
       </section>
     </div>
@@ -79,6 +80,7 @@
       <div><p class="fine">Final belief about the Patron’s line</p><svg id="end-r" viewBox="0 0 320 150" role="img" aria-label="Final belief about the Patron's line, with the true value marked"></svg></div>
       <div><p class="fine" id="end-t2-t"></p><svg id="end-t2" viewBox="0 0 320 150" role="img" aria-label="Final belief about the Power's threshold, with the true value marked"></svg></div>
     </div>
+    <div id="smash-d" hidden><h3>The smash</h3><p id="smash-x"></p></div>
     <h3>What became normal</h3>
     <p id="lessons"></p>
     <h3>How close each move came</h3>
@@ -97,10 +99,11 @@
         <li><b>The Patron’s hidden line.</b> The Patron intervenes when the rung it sees reaches its line. Observers aboard, injuries, detentions and a surge of international sympathy each add a rung; last month’s heavy Coastal provocation takes one off. Below the line it stays silent, voices concern or warns; its monthly statements are noisy hints.</li>
         <li><b>The Power’s hidden threshold.</b> Provoke the Power past its threshold and it will probably snap: two rungs up the next month.</li>
         <li><b>Normalization.</b> If the Power uses a gray-zone rung (block, water cannon, ram, board) unanswered in 2 of any 6 months, it becomes <b>normal</b>: it then draws far less sympathy and escalation, the Patron sees it as a rung milder, and the Coastal State loses sympathy and credibility at once. Protest, court, journalists, observers or an escort pushing through count as answers; they cost escalation risk and anger the Power. Answering 3 of a normal rung’s last 4 uses, or a Patron warning, pushes it back.</li>
+        <li><b>Smash the red line.</b> Once a game, from March, either side can go all in. The Power seizes the outpost under a cordon and wins if the Patron stays out; the Coastal State forces a convoy through and invokes the treaty, and wins if the Patron comes. The Patron decides from its hidden line, how far past it the move goes, its credibility, sympathy, escalation risk (high risk makes it cautious) and how many rungs have become normal. You see an estimate built from your own belief, not the truth.</li>
         <li><b>Beliefs.</b> The bars show a Bayesian belief, updated every month from what each side does. You only pin a line down by testing it.</li>
         <li><b>Endings.</b> The Coastal State wins by holding twelve months without war; the Power by forcing withdrawal without a Patron intervention. A clash at the shoal, more likely when escalation risk is high and the Patron’s ships are there, means everyone loses.</li>
       </ul>
-      <p class="fine">In 1,000 test games with the computer on both sides, the Coastal State held 40% of the time, the Power forced a clean withdrawal 30%, a withdrawal came only after the Patron intervened 21%, and 9% ended in a clash. A Coastal State that never answered the Power held 26% (and let ramming become normal in a third of games); one that answered every encounter held 28%, paying in escalation and clashes (14%). Against a Coastal State that never answers, a Power that slices one rung above the normal won 59%; one that jumped straight to ramming won 51% and fought 21% of the time. The method notes (METHOD.md) give every number.</p>
+      <p class="fine">In 1,000 test games with the computer on both sides, the Coastal State won 48% (holding twelve months or forcing the issue: it smashed the line in 27% of games and the Patron came in 83% of those), the Power forced a clean withdrawal or won a smash 33%, a withdrawal came only after the Patron intervened 14%, and 5% ended in a clash. Smashing in March whatever the tracks won only 20% for the Coastal State and 15% for the Power. A Coastal State that never answered the Power won 28%; one that answered every encounter also won 28%, paying in escalation and clashes. Against a Coastal State that never answers, a Power that slices one rung above the normal won 59%; one that jumped straight to ramming won 51% and fought 21% of the time. The method notes (METHOD.md) give every number.</p>
     </details>
   </section>
 </main>

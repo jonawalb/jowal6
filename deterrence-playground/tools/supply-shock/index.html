@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Supply Shock | Interactive Deterrence</title>
+<meta name="description" content="A ten-year critical-minerals strategy game. Run a notional import-dependent democracy's minerals policy from 2027 to 2036: fund mines and refineries, buy stockpiles, sign allied offtakes and build a buyers' coalition, against a dominant supplier that can license, ban or dump.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@500;600;700;800&family=DM+Mono:wght@400;500&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="supply-shock.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+<div class="ss-actions">
+  <p class="ss-flag"><b>Fictional and notional.</b> “Your country” and “the Supplier” are invented. Game numbers are illustrative design, not forecasts; the few real figures are sourced and marked.</p>
+  <div><button type="button" class="btn" id="new-game">New game</button>
+  <button type="button" class="btn" id="copy-link">Copy link</button></div>
+</div>
+
+<main class="ss-main">
+  <p class="ss-sr" id="announce" aria-live="polite"></p>
+  <section class="card ss-start" id="start" aria-labelledby="start-t">
+    <h2 id="start-t">Ten years to cut the cord</h2>
+    <p class="ss-lede">It is 2027. You run the critical-minerals policy of an import-dependent industrial democracy. Most of the lithium, graphite, magnet rare earths, gallium, germanium and cobalt your industry uses is refined by one dominant <b>Supplier</b>. Each year you get <b>10 budget points</b> and some <b>political capital</b>. Fund mines and refineries, buy stockpiles, sign allied offtakes, invest in recycling and substitutes, reform permitting, or rally other buyers. The Supplier watches what you do. It may license or ban exports, or dump prices to sink your new projects.</p>
+    <ul class="ss-lessons-pre">
+      <li><b>Money cannot buy time.</b> A mine takes years, often longer than the game.</li>
+      <li><b>Refining is the chokepoint.</b> Ore from friendly mines still has to be processed somewhere.</li>
+      <li><b>Stockpiles buy time only.</b> They cover a cutoff for months, not a decade.</li>
+    </ul>
+    <div class="ss-context" id="context"></div>
+    <button type="button" class="btn solid" id="begin">Begin in 2027</button>
+  </section>
+
+  <section class="ss-play" id="play" hidden>
+    <div class="card ss-bar">
+      <p class="ss-year"><b id="year"></b> <span class="muted" id="turnof"></span></p>
+      <p class="ss-event" id="event"></p>
+      <button type="button" class="btn solid" id="end-year">End year</button>
+    </div>
+    <section class="card ss-results" id="results" hidden aria-labelledby="res-t" tabindex="-1">
+      <h2 id="res-t"></h2>
+      <ul class="ss-moves" id="moves"></ul>
+      <div class="ss-scroll" id="restable"></div>
+      <p class="ss-out" id="outline"></p>
+      <ul class="ss-log" id="news"></ul>
+      <button type="button" class="btn solid" id="next">Continue</button>
+    </section>
+    <div class="ss-grid">
+      <section class="card ss-dash" aria-labelledby="dash-t">
+        <h2 id="dash-t" class="eyebrow">Your minerals</h2>
+        <div id="dash"></div>
+        <p class="fine ss-note">Secure = the smaller of the ore you can reach outside the Supplier and the refining you control, plus allied offtakes and recycling. Everything else runs through the Supplier. Real shares: hover for the source, or see “How the game works” below; n/a = no verified figure.</p>
+      </section>
+      <div class="ss-side">
+        <section class="card ss-decide" id="decide" aria-labelledby="dec-t">
+          <h2 id="dec-t">This year’s plan</h2>
+          <p class="ss-money" id="money"></p>
+          <div class="ss-kinds" id="kinds" role="group" aria-label="Actions"></div>
+          <div class="ss-form" id="form"></div>
+          <ol class="ss-planlist" id="plan" aria-label="Planned actions"></ol>
+        </section>
+        <section class="card ss-read" id="read" aria-live="polite"></section>
+      </div>
+    </div>
+  </section>
+
+  <section class="card ss-end" id="end" hidden aria-labelledby="end-t" tabindex="-1">
+    <p class="eyebrow">2027–2036 debrief</p>
+    <h2 id="end-t"></h2>
+    <div class="ss-score">
+      <div><p class="ss-big num" id="total">0</p><p class="fine">your score (0–100)</p></div>
+      <div><p class="ss-big num" id="base">…</p><p class="fine">doing nothing, same world</p></div>
+      <div><p class="ss-big num" id="pct">…</p><p class="fine" id="pct-x">comparing with the computer in your seat…</p></div>
+    </div>
+    <table class="ss-parts" id="parts"></table>
+    <h3>Share of demand met, by mineral and year</h3>
+    <p class="fine">Hollow dots: export licensing that year. Solid dots: a ban.</p>
+    <svg id="chart" viewBox="0 0 640 260" role="img" aria-label="Share of each mineral's demand met each year"></svg>
+    <details class="ss-tbl"><summary>Show as a table</summary><div class="ss-scroll" id="charttable"></div></details>
+    <h3>Three lessons, in your numbers</h3>
+    <ul class="ss-lessons" id="lessons"></ul>
+    <button type="button" class="btn solid" id="again">Play again</button>
+  </section>
+
+  <section class="card ss-about">
+    <details>
+      <summary><b>How the game works</b></summary>
+      <ul>
+        <li><b>Each year</b> an event lands, you plan up to four actions within your budget and political capital, then the Supplier responds. Projects advance, then each mineral settles: <i>shortfall = demand − (secure supply + what the Supplier still delivers + stockpile draw)</i>. Shortfalls cut an industry output index, weighted by how much each mineral matters.</li>
+        <li><b>Projects</b> draw a lead time when funded and can slip, meet local opposition, fail, or be abandoned if the Supplier dumps prices (unless you pay for a price floor). Refining only adds secure supply where you have ore to feed it.</li>
+        <li><b>The Supplier</b> is commercial, coercive or opportunist, drawn in secret. Tension (raised by your projects, coalition-building and events) and how exposed you look make controls likelier; a buyers’ coalition makes them rarer, shorter and less biting. Your read of its type is Bayes’ rule over its moves.</li>
+        <li><b>Score</b>: supply security 35%, resilience in 2036 (what would survive a total, sustained cutoff) 30%, industry output 20%, cost discipline 15%.</li>
+      </ul>
+      <p class="fine" id="balance-note"></p>
+      <h3 class="ss-h3">The real figures</h3>
+      <ul class="ss-realsrc" id="realsrc"></ul>
+      <p class="fine">Sources for the real figures: <span id="srcs"></span>. Everything else is illustrative; see METHOD.md and FACTCHECK.md in this tool’s folder.</p>
+    </details>
+  </section>
+</main>
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Supply Shock', sub: 'Run a country’s critical-minerals strategy for ten years against a dominant supplier’s export controls.', category: 'Economic coercion & war markets' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

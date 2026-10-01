@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sanctions Architect | Interactive Deterrence</title>
+<meta name="description" content="A turn-based game of economic coercion. Lead a notional sanctions coalition against a notional Target State for eight quarters: choose measures, close leaks, keep partners on side, and see whether the Target concedes.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@500;600;700;800&family=DM+Mono:wght@400;500&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="sanctions-architect.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+<div class="sa-actions">
+  <p class="sa-flag"><b>Fictional and notional.</b> An invented Target State and invented partners. Every number is illustrative game design, not data or a prediction.</p>
+  <div><button type="button" class="btn" id="new-game">New game</button>
+  <button type="button" class="btn" id="copy-link">Copy link</button></div>
+</div>
+
+<main class="sa-main">
+  <section class="card sa-start" id="start" aria-labelledby="start-t">
+    <h2 id="start-t" tabindex="-1">Design a sanctions campaign</h2>
+    <p class="sa-lede">The Target State has crossed a line. You lead a coalition of four partners against it for <b>eight quarters</b>. Each quarter choose up to <b>three measures</b>: which sector, how hard, how to enforce, and how to keep partners on side. The Target adapts: it reroutes trade through neutral hubs, builds evasion networks, counter-sanctions your weakest partner and rallies its public. It concedes only if pain over time outweighs its resolve, and you do not know how resolved it is.</p>
+    <fieldset class="sa-pick"><legend>Your demand</legend><div class="sa-cards" id="demands"></div></fieldset>
+    <fieldset class="sa-pick"><legend>How much you ask for</legend><div class="sa-cards two" id="ambitions"></div></fieldset>
+    <button type="button" class="btn solid" id="begin">Begin</button>
+  </section>
+
+  <section class="sa-play" id="play" hidden>
+    <div class="card sa-bar">
+      <p class="sa-q"><b id="h-quarter" tabindex="-1"></b> <span class="muted" id="turnof"></span></p>
+      <p class="sa-demand" id="h-demand"></p>
+      <button type="button" class="btn solid" id="end-turn">End quarter</button>
+    </div>
+    <div class="sa-grid">
+      <aside class="card sa-state" aria-label="Tracks">
+        <p class="eyebrow">Tracks</p>
+        <div id="tracks"></div>
+        <p class="eyebrow mt">In force</p>
+        <ul class="sa-inforce" id="inforce"></ul>
+      </aside>
+      <div class="sa-centre">
+        <section class="card sa-resolve" id="resolve" hidden aria-labelledby="res-t">
+          <h2 id="res-t" tabindex="-1"></h2>
+          <ul class="sa-log" id="log" aria-live="polite"></ul>
+          <button type="button" class="btn solid" id="next">Continue</button>
+        </section>
+        <div class="card sa-pad sa-scroll"><table class="sa-partners" id="partners"></table></div>
+        <div class="card sa-pad" id="drivers"></div>
+        <div class="card sa-pad sa-feed" id="feed" aria-live="polite"></div>
+      </div>
+      <section class="card sa-decide" id="decide" aria-labelledby="dec-t">
+        <div class="sa-lineh"><h2 id="dec-t">Your measures</h2><span class="muted num" id="count">0 of 3</span></div>
+        <p class="fine">Sector measures and enforcement stay in force at the level you set until you change them. Choose a measure to change it.</p>
+        <div class="sa-measures" id="measures" role="group" aria-label="Measures"></div>
+        <p class="sa-preview" id="preview" aria-live="polite"></p>
+      </section>
+    </div>
+  </section>
+
+  <section class="card sa-end" id="end" hidden aria-labelledby="end-t" tabindex="-1">
+    <p class="eyebrow" id="end-k"></p>
+    <h2 id="end-t"></h2>
+    <p id="end-x"></p>
+    <div class="sa-score">
+      <div><p class="sa-big num" id="total"></p><p class="fine">your score, 0–100</p></div>
+      <div><p class="sa-big num" id="pct">…</p><p class="fine" id="pct-x">comparing with the computer in your seat…</p></div>
+    </div>
+    <table class="sa-parts" id="parts"></table>
+    <p id="type"></p>
+    <h3>Pain vs leakage</h3>
+    <svg id="chart" viewBox="0 0 640 220" role="img" aria-label="Pain and leakage by quarter"></svg>
+    <p class="fine sa-key"><i class="k-imp"></i>Pain imposed <i class="k-land"></i>Pain that landed (left axis) <i class="k-leak"></i>Leakage share (right axis). The gap between the bars is what leaked.</p>
+    <h3>What to take away</h3>
+    <ul class="sa-lessons" id="lessons"></ul>
+    <button type="button" class="btn solid" id="again">Play again</button>
+  </section>
+
+  <section class="card sa-about">
+    <details>
+      <summary><b>How the game works</b></summary>
+      <ul>
+        <li><b>Measures.</b> Five sectors (energy exports as a price cap or an embargo; the central bank or major banks; technology export controls; individuals and elites; shipping and insurance), each Light, Medium or Heavy; three enforcement tools (secondary sanctions, maritime enforcement against a shadow fleet, customs data sharing); and coalition diplomacy (reassure, compensate, carve-out, or court an outsider). Up to three changes a quarter; everything stays in force until you change it.</li>
+        <li><b>Leakage.</b> Pressure slips around sanctions through outsiders (the Neutral Hub and the Transit Port), through members whose commitment is low, and through the Target’s evasion networks. Rerouting makes the outsiders carry more each quarter. Enforcement plugs leaks; each tool has its own cost.</li>
+        <li><b>Partners.</b> Each partner has a trade share, a cost it tolerates per quarter, and a commitment. Costs above tolerance erode commitment; below 30 a partner may leave and its trade reopens. The Target counter-sanctions the weakest member.</li>
+        <li><b>Concession.</b> Pain accumulates (older pain fades by a fifth each quarter), is multiplied by credibility (from cohesion), plus elite pressure, minus the rally round the flag. The Target’s hidden type sets how much pressure it needs; demand and ambition multiply that. Each quarter you see your estimate of the odds, averaged over your belief about its type, which you update every quarter it holds out.</li>
+        <li><b>Score</b> (0–100): the demand achieved, times its ambition value (68 points), coalition cohesion at the end (15), your economic cost (11) and the global price shock (6). You are compared with the computer playing your seat against the same Target.</li>
+      </ul>
+      <p class="fine">All numbers are illustrative game design. In 1,000 test games per row with the computer in your seat: coalition-preserving play won a modest demand 63% of the time (mean score 53) and a maximal demand 19% (mean 36), with no partner defections; everything at once won 71% and 18% but scored 40 and 17 after its costs, price shocks and two to three defections a game; a minimal package won 2% and 1% and scored 31. See METHOD.md.</p>
+      <p class="fine">Further reading on why sanctions succeed or fail: Hufbauer, Schott, Elliott and Oegg, <i>Economic Sanctions Reconsidered</i>; Pape, “Why Economic Sanctions Do Not Work,” <i>International Security</i> 22, no. 2 (1997); Drezner, <i>The Sanctions Paradox</i> (Cambridge University Press, 1999); Early, <i>Busted Sanctions</i> (Stanford University Press, 2015). The game does not reproduce their data or findings.</p>
+    </details>
+  </section>
+</main>
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Sanctions Architect', sub: 'Lead a notional sanctions coalition for eight quarters: choose measures, plug leaks, keep partners on side.', category: 'Economic coercion & war markets' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

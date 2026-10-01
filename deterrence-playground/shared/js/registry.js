@@ -207,6 +207,8 @@ export const ALL_TOOLS = [
     blurb: 'Run the Berlin Airlift day by day: juggle C-54s, crews, inspections, runways, fog and the coal-food mix to keep West Berlin supplied, then see your tonnage against the 1948–49 record.' },
   { slug: 'salami', dev: true, game: true, sub: { dev: 'games' }, cat: 'models', sites: ['deterrence'], title: 'Salami', status: 'live',
     blurb: 'Hold or squeeze a disputed shoal for a year, one slice at a time, against red lines nobody can see.' },
+  { slug: 'hub-and-spokes', dev: true, game: true, sub: { dev: 'games' }, cat: 'gametheory', sites: ['deterrence'], title: 'Hub and Spokes', status: 'live',
+    blurb: 'Manage four allies for a decade: reassure them without being dragged into their wars, or watch them hedge.' },
   { slug: 'cry-wolf', dev: true, game: true, sub: { dev: 'games' }, cat: 'models', sites: ['deterrence'], title: 'Cry Wolf', status: 'live',
     blurb: 'Read the indicators week by week and decide when to warn: every false alarm costs you the next one.' },
   { slug: 'exercise-or-invasion', dev: true, game: true, sub: { dev: 'games' }, cat: 'models', sites: ['deterrence'], title: 'Exercise or Invasion?', status: 'live',

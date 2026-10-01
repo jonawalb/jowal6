@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Four Capitals</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  :root { --tw: #2cc2ac; --jp: #d77ab0; --us: #7fb6d9; --cn: #ff5a4e; }
+  .fc-land { fill: #0d1c15; stroke: var(--muted); stroke-opacity: .55; stroke-width: 1.4; }
+  .fc-sea { font: italic 400 24px var(--display); fill: var(--muted); fill-opacity: .7; }
+  .fc-cap { font: italic 500 30px var(--display); fill: var(--paper); }
+  .fc-q { font: 600 26px var(--mono); fill: var(--ink); text-anchor: middle; }
+  .fc-hud { fill: #0a1510; fill-opacity: .9; stroke: var(--line); }
+  .fc-small { font: 400 14px var(--mono); fill: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+  .fc-rung { font: 400 17px var(--mono); fill: var(--muted); }
+  .fc-rung.on { fill: var(--paper); }
+  .fc-month { font: italic 500 40px var(--display); fill: var(--paper); }
+  .fc-mv { font: 400 15px var(--mono); fill: var(--paper); }
+  .fc-type { font: 600 16px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of Four Capitals"><title>Four Capitals</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// Schematic theatre (not to scale): mainland left, Taiwan centre, Japan arc top right, Washington far right.
+const map = el('g', {}, svg);
+el('path', { d: 'M0 0H560C590 100 560 200 590 300C615 400 680 470 670 570C660 670 590 750 560 850C540 920 520 970 512 1000H0Z', class: 'fc-land' }, map);
+el('path', { d: 'M792 520C820 540 834 600 820 660C810 700 790 720 774 706C758 660 758 580 772 535Z', class: 'fc-land' }, map);
+el('path', { d: 'M1060 380C1120 325 1155 285 1172 245C1205 190 1255 160 1318 120C1355 100 1382 70 1400 35L1418 50C1392 100 1350 145 1300 180C1255 215 1232 260 1200 295C1165 335 1125 375 1080 400Z', class: 'fc-land' }, map);
+for (const [x, y] of [[1018, 425], [972, 460], [926, 490], [880, 515]]) el('circle', { cx: x, cy: y, r: 6, class: 'fc-land' }, map);
+el('text', { x: 660, y: 830, class: 'fc-sea' }, map).textContent = 'Taiwan Strait';
+el('text', { x: 1150, y: 880, class: 'fc-sea' }, map).textContent = 'Pacific';
+
+const CAP = { cn: [265, 270, 'Beijing'], tw: [795, 615, 'Taipei'], jp: [1200, 230, 'Tokyo'], us: [1360, 760, 'Washington'] };
+const caps = {};
+for (const [id, [x, y, name]] of Object.entries(CAP)) {
+  const g = el('g', { opacity: 0 }, svg);
+  const ring = el('circle', { cx: x, cy: y, r: 22, fill: 'none', stroke: `var(--${id})`, 'stroke-width': 2 }, g);
+  el('circle', { cx: x, cy: y, r: 14, fill: `var(--${id})` }, g);
+  const t = el('text', { x: id === 'us' ? x - 34 : x + 34, y: y + 10, class: 'fc-cap', 'text-anchor': id === 'us' ? 'end' : 'start' }, g); t.textContent = name;
+  const badge = el('g', { opacity: 0 }, g);
+  el('rect', { x: x - 20, y: y - 76, width: 40, height: 40, rx: 8, fill: `var(--${id})` }, badge);
+  el('text', { x, y: y - 47, class: 'fc-q' }, badge).textContent = '?';
+  caps[id] = { g, ring, badge };
+}
+
+// Simultaneous moves: arrows from every capital at once.
+const MOVES = [['cn', 'tw', 'var(--cn)'], ['us', 'tw', 'var(--us)'], ['jp', 'us', 'var(--jp)'], ['tw', 'jp', 'var(--tw)'], ['cn', 'jp', 'var(--cn)']];
+const arrows = MOVES.map(([a, b, c]) => {
+  const [x1, y1] = CAP[a], [x2, y2] = CAP[b];
+  const mx = (x1 + x2) / 2 + (y2 - y1) * .15, my = (y1 + y2) / 2 - (x2 - x1) * .15;
+  const p = el('path', { d: `M${x1} ${y1}Q${mx} ${my} ${x2} ${y2}`, fill: 'none', stroke: c, 'stroke-width': 4, 'stroke-linecap': 'round' }, svg);
+  const L = p.getTotalLength(); p.setAttribute('stroke-dasharray', L); p.setAttribute('stroke-dashoffset', L);
+  return { p, L };
+});
+const ringB = el('circle', { cx: 795, cy: 615, r: 120, fill: 'none', stroke: 'var(--cn)', 'stroke-width': 4, 'stroke-dasharray': '18 12', opacity: 0 }, svg);
+
+// HUD: month and ladder (left), belief bars (right).
+const hud = el('g', { opacity: 0 }, svg);
+el('rect', { x: 60, y: 420, width: 330, height: 360, rx: 8, class: 'fc-hud' }, hud);
+const month = el('text', { x: 84, y: 476, class: 'fc-month' }, hud);
+el('text', { x: 84, y: 512, class: 'fc-small' }, hud).textContent = 'Escalation';
+const LAD = ['Pressure', 'Coercion', 'Blockade', 'Limited strikes', 'Major war', 'Nuclear use'];
+const rungs = LAD.map((l, i) => {
+  const y = 750 - i * 40;
+  const r = el('rect', { x: 80, y: y - 26, width: 290, height: 34, rx: 4, fill: 'var(--red)', opacity: 0 }, hud);
+  const t = el('text', { x: 96, y, class: 'fc-rung' }, hud); t.textContent = `${i}  ${l}`;
+  return { r, t };
+});
+const bel = el('g', { opacity: 0 }, svg);
+el('rect', { x: 1150, y: 440, width: 390, height: 190, rx: 8, class: 'fc-hud' }, bel);
+el('text', { x: 1174, y: 478, class: 'fc-small' }, bel).textContent = 'Beijing reads Washington as';
+const T3 = [['Resolute', 'var(--red)'], ['Cautious', 'var(--green)'], ['Opportunist', 'var(--amber)']];
+const bars = T3.map(([l, c], i) => {
+  const y = 512 + i * 38;
+  el('text', { x: 1174, y: y + 6, class: 'fc-type', fill: c }, bel).textContent = l;
+  el('rect', { x: 1340, y: y - 10, width: 170, height: 18, rx: 3, fill: '#16291f' }, bel);
+  return el('rect', { x: 1340, y: y - 10, width: 57, height: 18, rx: 3, fill: c }, bel);
+});
+
+const cap = captions(svg, [[0.4, 3.8, 'Four capitals. One notional crisis.'], [4.1, 8.4, 'Every month, everyone moves at once.'], [8.7, 12.5, 'Read their resolve from what they do.']]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Four Capitals', line: 'Lead Washington, Taipei, Beijing or Tokyo, and be judged by your own priorities.' });
+const MONTHS = ['March', 'April', 'May', 'June'];
+
+run({ duration: 16, poster: 9.6, frame: t => {
+  const ids = ['cn', 'tw', 'jp', 'us'];
+  ids.forEach((id, i) => {
+    const u = ease.out(seg(t, .3 + i * .35, .9 + i * .35));
+    caps[id].g.setAttribute('opacity', u);
+    caps[id].badge.setAttribute('opacity', ease.back(seg(t, 2.2 + i * .2, 2.8 + i * .2)));
+    caps[id].ring.setAttribute('r', 22 + 10 * Math.max(0, Math.sin((t - 4.2) * 3)) * seg(t, 4.2, 4.6) * (1 - seg(t, 8, 8.4)));
+  });
+  arrows.forEach(({ p, L }, i) => {
+    const u = ease.inOut(seg(t, 4.4 + (i % 2) * .15, 5.6 + (i % 2) * .15)) * (1 - seg(t, 7.6, 8.2));
+    p.setAttribute('stroke-dashoffset', L * (1 - u));
+    p.setAttribute('opacity', u > 0 ? 1 : 0);
+  });
+  ringB.setAttribute('opacity', ease.out(seg(t, 5.6, 6.2)) * 0.9);
+  hud.setAttribute('opacity', ease.out(seg(t, 3.6, 4.3)));
+  const m = Math.min(3, Math.floor(seg(t, 4, 11) * 4));
+  if (month.textContent !== MONTHS[m] + ' 2029') month.textContent = MONTHS[m] + ' 2029';
+  const rung = t < 5.8 ? 0 : t < 8.6 ? 2 : 3;
+  rungs.forEach(({ r, t: tx }, i) => { r.setAttribute('opacity', i === rung ? .3 : 0); tx.setAttribute('class', i <= rung ? 'fc-rung on' : 'fc-rung'); });
+  bel.setAttribute('opacity', ease.out(seg(t, 8.6, 9.2)));
+  const v = ease.inOut(seg(t, 9.4, 11.4));
+  const w = [lerp(.34, .71, v), lerp(.33, .12, v), lerp(.33, .17, v)];
+  bars.forEach((b, i) => b.setAttribute('width', 170 * w[i]));
+  cap(t); end(t, 12.8, 16);
+} });
+</script>
+</body></html>

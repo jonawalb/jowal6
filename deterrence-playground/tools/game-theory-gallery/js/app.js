@@ -33,9 +33,10 @@ const reduceMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matche
 
 // ---- Picker -----------------------------------------------------------------------------------
 picker.innerHTML = CARDS.map(c => c.href
-  ? `<a class="mcard ext" href="${c.href}">${cardIcon(c.icon)}<span class="mc-t"><b>${esc(c.title)}</b><span class="mc-who">${esc(c.who)}</span><span class="mc-bl">${esc(c.blurb)}</span></span></a>`
+  ? `<button type="button" class="mcard ext" data-ext="${c.id}">${cardIcon(c.icon)}<span class="mc-t"><b>${esc(c.title)}</b><span class="mc-who">${esc(c.who)}</span><span class="mc-bl">${esc(c.blurb)}</span></span></button>`
   : `<button type="button" class="mcard" data-m="${c.id}" aria-pressed="false">${cardIcon(c.icon)}<span class="mc-t"><b>${esc(c.title)}</b><span class="mc-who">${esc(c.who)}</span><span class="mc-bl">${esc(c.blurb)}</span></span></button>`).join('');
 picker.querySelectorAll('[data-m]').forEach(b => b.addEventListener('click', () => openModel(b.dataset.m)));
+picker.querySelectorAll('[data-ext]').forEach(b => b.addEventListener('click', () => openExternal(cardOf(b.dataset.ext))));
 
 const cardOf = m => CARDS.find(c => c.id === m);
 const scrollOpts = () => ({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'start' });
@@ -56,6 +57,7 @@ function mount() {
 
 // ---- Views: model or learn pages ---------------------------------------------------------------
 function showModel({ push = false, focus = false, scroll = false } = {}) {
+  document.body.classList.remove('picking');
   const wasLearning = !learnHost.hidden;
   document.body.classList.remove('learning');
   learnHost.hidden = true; learnHost.innerHTML = '';
@@ -71,6 +73,7 @@ function showModel({ push = false, focus = false, scroll = false } = {}) {
 
 function showLearn(m, i, push = false) {
   if (!PRIMERS[m]) return showModel();
+  document.body.classList.remove('picking');
   S.m = m; mount();
   const entering = learnHost.hidden;
   document.body.classList.add('learning');
@@ -87,7 +90,18 @@ const learn = createLearn(learnHost, {
   onModel: () => showModel({ push: true, focus: true }),
 });
 
+// A card built in another tool (Fearon 1997, in the Deterrence Lab): the same choice, then leave the page,
+// to its walkthrough (learnHref) or straight to its model (href).
+let ext = null;
+function openExternal(card) {
+  const pref = rememberedChoice();
+  if (pref) { location.href = pref === 'learn' ? card.learnHref : card.href; return; }
+  ext = card;
+  choice.open(card, card.question);
+}
+
 const choice = createChoice(document.getElementById('choose'), pick => {
+  if (ext) { const c = ext; ext = null; location.href = pick === 'learn' ? c.learnHref : c.href; return; }
   if (pick === 'learn') showLearn(S.m, 0, true);
   else showModel({ scroll: true, focus: true });
 });
@@ -148,7 +162,15 @@ function route() {
   if (L && PRIMERS[L]) return showLearn(L, Math.max(1, parseInt(q.get('p'), 10) || 1) - 1);
   const hasSetup = readHash();
   if (q.has('m') && MODELS[q.get('m')] && !hasSetup) return openModel(S.m);
+  if (!q.has('m')) return showPicker();
   showModel();
+}
+
+/** No model named in the address: show only the cards, and wait for a pick. */
+function showPicker() {
+  document.body.classList.add('picking');
+  learnHost.hidden = true; learnHost.innerHTML = '';
+  picker.querySelectorAll('[data-m]').forEach(b => b.setAttribute('aria-pressed', 'false'));
 }
 addEventListener('popstate', route);
 

@@ -1,5 +1,5 @@
 // Landing page: this week's dashboard, category selector, search, tool cards, keyboard navigation and help.
-import { ALL_CATEGORIES, CATEGORIES, TOOLS, inCat, onSite } from './shared/js/registry.js';
+import { ALL_CATEGORIES, CATEGORIES, TOOLS, inCat, onSite, DEV_SEALED, addTools } from './shared/js/registry.js';
 import { createProjection, drawBasemap, el } from './shared/js/mapkit.js';
 import { LAND_INDOPAC } from './shared/data/land-indopac.js';
 import { mountWeek } from './shared/js/week/week.js';
@@ -64,11 +64,14 @@ if (!CATEGORIES.some(c => c.id === cat)) { cat = 'all'; sub = ''; }
 // Includes hidden sections (e.g. the Indo-Pacific tools listed under Regions) so their cards still get a label.
 const catName = Object.fromEntries(ALL_CATEGORIES.filter(c => onSite(c)).map(c => [c.id, c.name]));
 const counts = Object.fromEntries(CATEGORIES.map(c => [c.id, TOOLS.filter(t => inCat(t, c.id)).length]));
+// A sealed section (Coming Soon) lists nothing, not even names, until its password is entered.
+let devOpen = !DEV_SEALED;
+const sealedNow = c => c.sealed && !devOpen;
 // Interactive Deterrence lists every tool under "Everything"; other sites open on an overview of section tiles.
 const TILES = SITE !== 'tsm';
 document.body.classList.add('site-' + SITE);
 $('cats').innerHTML = [{ id: 'all', name: TILES ? 'All sections' : 'Everything' }, ...CATEGORIES].map(c =>
-  `<button type="button" data-cat="${c.id}"><b>${c.name}</b><span>${c.id === 'all' ? COUNTED.length : counts[c.id]}</span></button>`).join('');
+  `<button type="button" data-cat="${c.id}"><b>${c.name}</b><span>${c.id === 'all' ? COUNTED.length : sealedNow(c) ? '🔒' : counts[c.id]}</span></button>`).join('');
 const catBtns = [...$('cats').querySelectorAll('button')];
 function pickCat(c) {
   [cat, sub = ''] = c.split('/');
@@ -90,6 +93,9 @@ const LOCK = ' <span class="lock-badge" title="Opening this tool asks for a pass
 
 /** Overview tile for one section: name, blurb, tool count and the first few tool names. */
 function tile(c) {
+  if (sealedNow(c)) return `<button type="button" class="sec-tile locked" data-open-cat="${c.id}">
+    <b>${esc(c.name)}${LOCK}</b><span class="sec-tile-b">${esc(c.blurb)}</span>
+    <span class="sec-tile-l">Enter the password to see what is here.</span><span class="go">Open section →</span></button>`;
   const ts = TOOLS.filter(t => inCat(t, c.id) && t.status === 'live');
   return `<button type="button" class="sec-tile${c.locked ? ' locked' : ''}" data-open-cat="${c.id}">
     <span class="sec-tile-n">${ts.length} tool${ts.length === 1 ? '' : 's'}</span>
@@ -108,6 +114,29 @@ function card(t) {
     <div class="card-body"><p class="card-cat">${esc(catName[t.cat] || '')}${isLocked(t) ? LOCK : ''}</p><h3>${esc(t.title)}</h3><p>${esc(t.blurb)}</p>
     ${upd}<span class="go">${soon ? 'Coming soon' : 'Open →'}</span></div>`;
   return soon ? `<div class="tool soon" aria-disabled="true">${inner}</div>` : `<a class="tool" href="${href}">${inner}</a>`;
+}
+
+/** Password form for a sealed section; on success the section's tools are decrypted and listed. */
+function sealedForm(c) {
+  $('sections').innerHTML = `<section class="cat-sec" id="sec-${c.id}"><button type="button" class="btn sec-back" data-open-cat="all">← All sections</button>
+    <div class="cat-h"><h2>${esc(c.name)}${LOCK}</h2><p>This section is password protected. Enter the password to see its tools.</p></div>
+    <form class="sealed-form" autocomplete="off"><label for="sealed-pw">Password</label>
+      <input id="sealed-pw" type="password" required autocomplete="off">
+      <button type="submit" class="btn">Unlock</button><span class="sealed-msg" role="alert"></span></form></section>`;
+  const f = $('sections').querySelector('.sealed-form'), pw = f.querySelector('input'), msg = f.querySelector('.sealed-msg');
+  pw.focus();
+  f.addEventListener('submit', e => {
+    e.preventDefault();
+    if (!window.TSMVault?.unsealWithPassword) { msg.textContent = 'Unlocking is not available on this page.'; return; }
+    msg.textContent = 'Checking…';
+    window.TSMVault.unsealWithPassword(DEV_SEALED, 4, pw.value).then(txt => {
+      addTools(JSON.parse(txt));
+      for (const x of CATEGORIES) counts[x.id] = TOOLS.filter(t => inCat(t, x.id)).length;
+      devOpen = true;
+      catBtns.forEach(b => { const x = CATEGORIES.find(y => y.id === b.dataset.cat); if (x) b.querySelector('span').textContent = counts[x.id]; });
+      render();
+    }, () => { msg.textContent = 'That password is not right.'; pw.select(); });
+  });
 }
 
 /** A section's subsections (registry `subs`) with their tools; tools without a subsection go in "More". */
@@ -145,6 +174,7 @@ function render() {
         <p>${COUNTED.length} tools in ${CATEGORIES.filter(c => c.id !== 'dev').length} sections.</p></div><div class="sec-tiles">${CATEGORIES.map(tile).join('')}</div></section>`;
     } else {
       const c = CATEGORIES.find(x => x.id === cat), list = TOOLS.filter(t => inCat(t, cat));
+      if (sealedNow(c)) { sealedForm(c); $('q-status').textContent = ''; return; }
       // A section whose tools all fall in one subsection skips the tile step and lists them directly.
       const groups = c.subs && subGroups(c, list).length > 1 ? subGroups(c, list) : [];
       const open = groups.find(([s]) => s.id === sub);

@@ -82,6 +82,15 @@
         return import(url).finally(function () { URL.revokeObjectURL(url); });
       });
     },
+    /** Decrypt a sealed blob (base64, gzip) with a password typed for `tier`. Rejects on a wrong password. */
+    unsealWithPassword: function (b64, tier, pw) {
+      return derive(pw, tier).then(function (raw) { return tryRaw(raw, tier); }).then(function (k) { return open(k, b64d(b64), true); })
+        .then(function (bytes) { return new TextDecoder().decode(bytes); });
+    },
+    /** Decrypt a sealed blob with the key this page was unlocked with (only on pages of that tier). */
+    unseal: function (b64, tier) {
+      return key2Now(tier).then(function (k) { return open(k, b64d(b64), true); }).then(function (bytes) { return new TextDecoder().decode(bytes); });
+    },
     lock: function () {
       try { [KEYNAME, KEYNAME2, KEYNAME3, KEYNAME4].forEach(function (n) { if (n) { localStorage.removeItem(n); sessionStorage.removeItem(n); } }); } catch (e) { /* storage blocked */ }
       location.reload();

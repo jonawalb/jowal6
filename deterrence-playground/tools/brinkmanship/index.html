@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Brinkmanship | Interactive Deterrence</title>
+<meta name="description" content="A five-minute game of Schelling's competition in risk-taking. Five crises against a computer Rival: each round raise the shared risk of disaster, hold, or back down, while each side reads the other's hidden resolve by Bayes' rule.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@500;600;700;800&family=DM+Mono:wght@400;500&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="brinkmanship.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+<div class="bk-actions">
+  <p class="bk-flag"><b>Notional.</b> Two invented sides, "You" and "the Rival". Every number is illustrative game design, not an estimate.</p>
+  <div><button type="button" class="btn" id="new-game">New series</button>
+  <button type="button" class="btn" id="copy-link">Copy link</button></div>
+</div>
+
+<main class="bk-main">
+  <section class="card bk-learn" id="learn" aria-labelledby="learn-t" tabindex="-1">
+    <p class="eyebrow">Learn first · about a minute</p>
+    <h2 id="learn-t">The threat that leaves something to chance</h2>
+    <ol class="bk-steps">
+      <li><b>The problem.</b> Two sides want the same thing, and neither wants a disaster. A threat to start one on purpose is hard to believe, because carrying it out would hurt the side that made it too.</li>
+      <li><b>Schelling's answer.</b> Don't threaten to jump off the cliff; walk closer to the edge. Take steps that raise a risk of disaster that neither side fully controls. The threat is not that you will choose catastrophe, but that things might slip out of anyone's hands (Schelling 1960, ch. 8; 1966).</li>
+      <li><b>A contest of nerve.</b> A crisis then becomes a competition in risk-taking: who will put up with more shared danger before giving way? The side that cares more about the stake can stand more risk, so it tends to win (Powell 1988, 1990).</li>
+      <li><b>Nobody knows the other's nerve.</b> You don't know how much the Rival cares; it doesn't know how much you do. Every move is a signal, and each side updates its read of the other by Bayes' rule. Bluffs can work, and they can also end in disaster.</li>
+    </ol>
+    <div class="bk-howto">
+      <p class="eyebrow">How a round works</p>
+      <ul>
+        <li>You and the Rival choose at the same time: <b>Raise the risk</b> (adds 4 points to the shared risk, for good), <b>Hold</b> (keep the pressure; the risk still creeps up 1 point), or <b>Back down</b> (concede the stake).</li>
+        <li>If one side backs down, the other wins the stake. If both back down together, it is split.</li>
+        <li>If neither backs down, a die is rolled against the risk meter. Under it: <b>disaster</b>, and both lose 100 points. Otherwise, next round. After six rounds an unresolved crisis is split.</li>
+        <li>Five crises, each with its own stake. Your resolve and the Rival's are drawn fresh each time, so you must read the Rival again.</li>
+      </ul>
+    </div>
+    <div class="bk-row"><button type="button" class="btn solid" id="start">Start the series</button>
+      <p class="fine">Keyboard: <kbd>R</kbd> raise, <kbd>H</kbd> hold, <kbd>B</kbd> back down.</p></div>
+  </section>
+
+  <section class="bk-play" id="play" hidden>
+    <div class="card bk-bar">
+      <div><p class="eyebrow" id="crisis-k"></p><h2 id="crisis-t"></h2><p class="bk-ctext" id="crisis-x"></p></div>
+      <ol class="bk-dots" id="dots" aria-label="Series so far"></ol>
+      <p class="bk-tally num" id="tally"></p>
+    </div>
+    <div class="bk-grid">
+      <div class="card bk-risk">
+        <p class="eyebrow">Risk meter: the danger you both share</p>
+        <div class="bk-meter" id="meter" role="meter" aria-valuemin="0" aria-valuemax="60" aria-label="Chance of disaster this round"></div>
+        <p class="bk-mx" id="meter-x"></p>
+        <div class="bk-stake" id="stake"></div>
+      </div>
+      <section class="card bk-decide" id="decide" aria-labelledby="dec-t">
+        <h2 id="dec-t">Round <span id="round"></span> of 6</h2>
+        <div class="bk-choices" id="choices" role="group" aria-label="Your move"></div>
+        <p class="fine">The Rival chooses at the same moment. It cannot see your move before it picks.</p>
+      </section>
+      <div class="card bk-reads" id="reads"></div>
+    </div>
+    <div class="card bk-feed"><p class="eyebrow">What happened</p><ol class="bk-log" id="log"></ol><p class="bk-sr" id="say" aria-live="polite" aria-atomic="true"></p></div>
+  </section>
+
+  <section class="card bk-after" id="after" hidden aria-labelledby="after-t" tabindex="-1">
+    <p class="eyebrow" id="after-k"></p>
+    <h2 id="after-t"></h2>
+    <p id="after-x"></p>
+    <div class="bk-reveal" id="reveal"></div>
+    <h3>What equilibrium play would do</h3>
+    <p class="fine">For each of your rounds: what the computer would have chosen in your seat, for your resolve and with what you knew then, and the expected points of each option given your read of the Rival at the time (both sides then following the cutoff strategy; simulated). The best option is marked ★.</p>
+    <div class="tablewrap"><table class="bk-eq" id="eq"></table></div>
+    <button type="button" class="btn solid" id="next">Next crisis</button>
+  </section>
+
+  <section class="card bk-end" id="end" hidden aria-labelledby="end-t" tabindex="-1">
+    <p class="eyebrow">Debrief</p>
+    <h2 id="end-t"></h2>
+    <div class="bk-score">
+      <div><p class="bk-big num" id="total"></p><p class="fine">your points over five crises</p></div>
+      <div><p class="bk-big num" id="pct">…</p><p class="fine" id="pct-x">comparing with the computer in your seat…</p></div>
+    </div>
+    <h3>Every decision, with hindsight</h3>
+    <p class="fine">Now that the Rival's resolve is revealed: the expected points of each option at each of your decisions, knowing exactly who you faced and how it plays, with both sides following the cutoff strategy afterwards. Your choice is outlined; the best is marked ★. Values are simulated averages, so very close options are a coin toss.</p>
+    <div id="hind"></div>
+    <button type="button" class="btn solid" id="again">Play again</button>
+  </section>
+
+  <section class="card bk-about">
+    <details>
+      <summary><b>How the game works, and the theory behind it</b></summary>
+      <ul>
+        <li><b>Payoffs.</b> Disaster costs each side 100. Winning a stake is worth the crisis's stake times your resolve: ×0.4 for low, ×1 for medium, ×2.5 for high. Backing down is worth 0; a split is worth half. Your score is the sum over five crises.</li>
+        <li><b>Risk.</b> The meter starts at 2%. Each Raise adds 4 points for good; every round both sides stay in adds 1 more. Nobody fully controls it, which is the point: the danger is shared.</li>
+        <li><b>Resolve.</b> Each side's resolve is drawn from the crisis's known odds (shown as the starting belief bars). Only you see yours.</li>
+        <li><b>The Rival's strategy.</b> It uses a cutoff: it backs down once the risk passes a level that rises with how much it values the stake, and shifts with what it believes about you (it hangs on longer if you look weak, gives way sooner if you look resolved). Before each move it looks ahead, imagining many ways the crisis could unfold if both sides then follow that cutoff rule, and picks the move with the best average, with a little noise.</li>
+        <li><b>Reading each other.</b> Each side reads the other's moves by Bayes' rule, assuming the other follows the cutoff rule and allowing that any move might be a slip. A Raise says "I can afford more risk", so it moves the read toward high resolve.</li>
+        <li><b>Equilibrium play.</b> The overlay and the benchmark use the same strategy as the Rival, in your seat. It is equilibrium-inspired, not a solved equilibrium: the cutoff rule is a simple approximation and the look-ahead is one step of improvement on it.</li>
+      </ul>
+      <p class="fine" id="balance-note">In 1,000 test series against the Rival: playing the computer's resolve-aware strategy averaged 103 points; random moves 80; always raising 73; a cutoff that ignores your own resolve 71; always backing down 69; always holding 20. Always raising or always holding wins most crises, but 26–30% of crises then end in disaster.</p>
+      <p class="bk-src fine"><b>Sources.</b> Thomas C. Schelling, <i>The Strategy of Conflict</i> (Harvard University Press, 1960), ch. 8, "The Threat That Leaves Something to Chance"; Thomas C. Schelling, <i>Arms and Influence</i> (Yale University Press, 1966); Robert Powell, "Nuclear Brinkmanship with Two-Sided Incomplete Information," <i>American Political Science Review</i> 82, no. 1 (1988): 155–178; Robert Powell, <i>Nuclear Deterrence Theory: The Search for Credibility</i> (Cambridge University Press, 1990). The game's rules and numbers are original and simplified; they are not taken from these works.</p>
+    </details>
+  </section>
+</main>
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Brinkmanship', sub: 'A five-minute game of nerve: raise the shared risk, hold, or back down, and read the Rival’s hidden resolve as it reads yours.', category: 'Game theory' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

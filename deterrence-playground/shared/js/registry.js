@@ -217,6 +217,8 @@ export const ALL_TOOLS = [
     blurb: 'Build a sanctions coalition, plug the leaks and count your own costs, quarter by quarter.' },
   { slug: 'magazine-depth', dev: true, game: true, sub: { dev: 'games' }, cat: 'models', sites: ['deterrence'], title: 'Magazine Depth', status: 'live',
     blurb: 'Build munitions lines that take years to grow, then find out how long they last when the war comes.' },
+  { slug: 'brinkmanship', dev: true, game: true, sub: { dev: 'games' }, cat: 'gametheory', sites: ['deterrence'], title: 'Brinkmanship', status: 'live',
+    blurb: 'Raise the shared risk of disaster or back down, against an opponent whose resolve you can only guess.' },
 ];
 
 export const onSite = (x, site = SITE) => !x.sites || x.sites.includes(site);

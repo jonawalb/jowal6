@@ -300,11 +300,23 @@ export function blueAI({ mode = 'fog', commit = true, counter = true, react = fa
       } else if (commit && st.col !== null && !st.guarded) {
         // Red on the main line where the reserve is not: fall back to guard the crossing.
         const breach = [...MAIN, ...REAR].find(m => m !== MAIN[st.col] && !eff(g, 'blue', m).length && pic.tracks.some(tr => tr.node === m && tr.est > 0));
-        if (breach && res.some(u => u.node !== OBJ)) {
-          st.guarded = true;
-          for (const u of res) out.orders.push([u.id, OBJ]);
-          decide(g, 'blue', 'guard', { node: breach, units: RESERVE });
-        }
+        if (breach && res.some(u => u.node !== OBJ)) guard(g, out, st, res, breach);
+      }
+    }
+    // Overrun: the main-line sector the reserve was sent to holds a Red force of at least AI.blue.overrunMin
+    // points and AI.blue.overrunRatio times the Blue strength there (Blue usually holds the sector, so it sees
+    // that force exactly). The line there will not hold, and Red can walk past it, so the reserve falls back to the
+    // crossing, even from the fight, and the nearest line battalion on a road where Blue sees nobody joins it.
+    // Checked before the reserve arrives as well, and not for the bait (its reserve already waits behind).
+    if (commit && !bait && st.col !== null && !st.guarded && res.length) {
+      const M = MAIN[st.col], here = strOf(eff(g, 'blue', M));
+      if (pic.node[M] >= B.overrunMin && pic.node[M] >= B.overrunRatio * here) {
+        const quiet = Object.keys(st.home).filter(id => {
+          const u = unit(g, id), k = colOf(st.home[id]);
+          return k !== st.col && pic.col[k] === 0 && u && !u.broken && u.node === st.home[id] && !contact(g, 'blue', u.node);
+        }).sort((a, b) => travelHours(st.home[a], OBJ) - travelHours(st.home[b], OBJ)).slice(0, B.overrunPull);
+        for (const id of quiet) { out.orders.push([id, OBJ]); delete st.home[id]; }   // it stays at the crossing
+        guard(g, out, st, res, M, quiet);
       }
     }
     if (counter) {
@@ -334,6 +346,13 @@ export function blueAI({ mode = 'fog', commit = true, counter = true, react = fa
     }
     return out;
   };
+}
+
+/** Send the reserve (and any line battalions in `extra`) back to hold the crossing, once. */
+function guard(g, out, st, res, node, extra = []) {
+  st.guarded = true;
+  for (const u of res) out.orders.push([u.id, OBJ]);
+  decide(g, 'blue', 'guard', { node, units: [...RESERVE, ...extra] });
 }
 
 /** The sector on road c holding the biggest unconfirmed contact that a recon troop could spot, or null. */

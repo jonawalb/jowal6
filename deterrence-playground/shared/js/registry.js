@@ -207,6 +207,8 @@ export const ALL_TOOLS = [
     blurb: 'Run the Berlin Airlift day by day: juggle C-54s, crews, inspections, runways, fog and the coal-food mix to keep West Berlin supplied, then see your tonnage against the 1948–49 record.' },
   { slug: 'cry-wolf', dev: true, game: true, sub: { dev: 'games' }, cat: 'models', sites: ['deterrence'], title: 'Cry Wolf', status: 'live',
     blurb: 'Read the indicators week by week and decide when to warn: every false alarm costs you the next one.' },
+  { slug: 'sanctions-architect', dev: true, game: true, sub: { dev: 'games' }, cat: 'coercion', sites: ['deterrence'], title: 'Sanctions Architect', status: 'live',
+    blurb: 'Build a sanctions coalition, plug the leaks and count your own costs, quarter by quarter.' },
 ];
 
 export const onSite = (x, site = SITE) => !x.sites || x.sites.includes(site);

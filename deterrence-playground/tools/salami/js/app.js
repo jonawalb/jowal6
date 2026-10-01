@@ -5,7 +5,8 @@ import { chooseCoastal, choosePower } from './ai.js';
 import { mode } from './belief.js';
 import { score, winner, timeline } from './score.js';
 import { paintDecide, wireDecide, emptyChoice } from './decide.js';
-import { drawShoal, paintShoal, animateMonth, paintTracks, paintBelief, paintTimeline, levelLabel, COL } from './view.js';
+import { drawShoal, paintShoal, animateMonth, paintTracks, paintBelief, paintTimeline, paintNormal, levelLabel, COL } from './view.js';
+import { counters, baseline } from './normal.js';
 import { pulse, flash } from '../../../shared/js/motion.js';
 
 const $ = id => document.getElementById(id);
@@ -49,13 +50,14 @@ function paint() {
   paintTracks($('tracks'), s, g.before);
   paintShoal(s, s.lastLevel);
   paintFeed();
+  paintNormal($('normal'), s, counters(s), baseline(s));
   $('dec-t').textContent = g.side === 'c' ? 'Your move: resupply' : 'Your move: squeeze';
   paintDecide(g);
   history.replaceState(null, '', '#g=' + encode(s));
 }
 function paintFeed() {
   const h = g.s.history[g.s.history.length - 1];
-  $('feed').innerHTML = h ? `<h3>Last month</h3><ul><li><b style="color:${COL.c}">Coastal State</b>: ${M[h.c.method].label.toLowerCase()}, ${C_MSGS.find(m => m.id === h.c.msg).label.toLowerCase()}${h.c.push ? ', pushed through' : ''}. Landed ${h.delivered.toFixed(1)} months of supplies.</li><li><b style="color:${COL.p}">Power</b>: ${LEVELS[h.p.level].label.toLowerCase()}, ${P_MSGS.find(m => m.id === h.p.msg).label.toLowerCase()}.</li><li><b style="color:${COL.a}">Patron</b>: ${RESPONSE_LABEL[h.resp]}${h.E ? ` (it saw rung ${h.E})` : ''}.</li></ul>`
+  $('feed').innerHTML = h ? `<h3>Last month</h3><ul><li><b style="color:${COL.c}">Coastal State</b>: ${M[h.c.method].label.toLowerCase()}, ${C_MSGS.find(m => m.id === h.c.msg).label.toLowerCase()}${h.c.push ? ', pushed through' : ''}. Landed ${h.delivered.toFixed(1)} months of supplies.${h.enc ? (h.answered ? ' <b>Answered</b> the Power.' : ' <b>Left the Power unanswered.</b>') : ''}</li><li><b style="color:${COL.p}">Power</b>: ${LEVELS[h.p.level].label.toLowerCase()}, ${P_MSGS.find(m => m.id === h.p.msg).label.toLowerCase()}.</li><li><b style="color:${COL.a}">Patron</b>: ${RESPONSE_LABEL[h.resp]}${h.E ? ` (it saw rung ${h.E})` : ''}.</li></ul>`
     : `<h3>The situation</h3><p class="fine">The Coastal State keeps a handful of marines on an old ship it ran aground on the shoal years ago. The Coast Guard Power claims the shoal and wants them gone, but not at the price of a fight with the Patron, whose treaty with the Coastal State is vague about places like this. The garrison has ${P.start.supplies} months of supplies and eats ${P.use} a month.</p>`;
 }
 wireDecide(() => g, () => paintShoal(g.s, g.side === 'p' ? g.choice.level : g.s.lastLevel));
@@ -86,7 +88,7 @@ $('end-turn').addEventListener('click', async () => {
   lines.push(`<li class="note">${beliefLine(b.bR, state.bR, R_VALUES, levelLabel, 'The Patron’s line')}</li>`);
   if (g.side === 'c') lines.push(`<li class="note">${beliefLine(b.bT, state.bT, T_VALUES, String, 'The Power’s threshold')}</li>`);
   $('log').innerHTML = lines.join('');
-  paintTracks($('tracks'), g.s, b); paintShoal(g.s, h.p.level);
+  paintTracks($('tracks'), g.s, b); paintShoal(g.s, h.p.level); paintNormal($('normal'), g.s, counters(g.s), baseline(g.s));
   $('next').disabled = true;
   $('resolve').focus();
   await Promise.race([animateMonth(h), new Promise(r => setTimeout(r, 2500))]);
@@ -118,11 +120,22 @@ function finish() {
   paintBelief($('end-r'), { prior: R_PRIOR, post: s.bR, labels: R_VALUES.map(levelLabel), truth: R_VALUES.indexOf(s.R), color: COL.a });
   $('end-t2-t').textContent = me === 'c' ? 'Final belief about the Power’s threshold' : 'What the computer came to believe about your threshold';
   paintBelief($('end-t2'), { prior: T_PRIOR, post: s.bT, labels: T_VALUES.map(String), truth: me === 'c' ? T_VALUES.indexOf(s.T) : null, color: COL.p });
+  $('lessons').innerHTML = lessons(s, rows, me);
   const close = rows.filter(r => r.gapR === -1).length, over = rows.filter(r => r.gapR !== null && r.gapR >= 0).length;
   const hitT = rows.filter(r => r.gapT >= 0).length;
   $('closest').textContent = `The Patron saw a rung one below its line in ${close} month${close === 1 ? '' : 's'} and its line or above in ${over}.` + (me === 'c' ? ` Your provocation reached the Power’s threshold in ${hitT} month${hitT === 1 ? '' : 's'}.` : '');
   $('end').focus();
   pulse($('total'));
+}
+function lessons(s, rows, me) {
+  const enc = rows.filter(r => r.enc), ans = enc.filter(r => r.answered).length, peak = Math.max(0, ...rows.map(r => r.base));
+  const first = rows.find(r => r.base === peak), end = rows[rows.length - 1]?.base ?? 0;
+  const lines = [`The Coastal State answered ${ans} of ${enc.length} encounters.`];
+  if (!peak) lines.push('No rung ever became normal: the Power never used one unanswered twice in six months, so every slice still drew sympathy, risk and the Patron’s full attention.');
+  else lines.push(`The normal crept up to <b>${levelLabel(peak).toLowerCase()}</b> by ${P.months[first.month]}${end < peak ? ` and was pushed back to ${end ? levelLabel(end).toLowerCase() : 'nothing'} by the end` : ' and stayed there'}. Each normal rung drew less sympathy and risk, and the Patron saw it as a rung milder: the line moved without anyone crossing it.`);
+  lines.push(me === 'c' ? 'The lesson for the Coastal State: an unanswered slice is a concession, but answering everything spends escalation risk and wears out your voice. Answer the slice that is one use from becoming normal.'
+    : 'The lesson for the Power: a slice that goes unanswered twice becomes the new floor. Climb from the floor one rung at a time; jumping skips the normalizing and lands you at the Patron’s line.');
+  return lines.join(' ');
 }
 $('again').addEventListener('click', restart);
 $('new-game').addEventListener('click', restart);

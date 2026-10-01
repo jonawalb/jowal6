@@ -41,5 +41,5 @@ export function playOut(seed, side = 'c', policies = {}) {
 
 /** Timeline for the debrief: per month, how close each side came to the other's threshold. */
 export const timeline = s => s.history.map(h => ({
-  month: h.turn, E: h.E, gapR: h.E > 0 ? h.E - s.R : null, resp: h.resp, P: h.P, gapT: h.P - (s.T - h.tAdj), supplies: h.after.supplies, esc: h.after.esc,
+  month: h.turn, base: h.base ?? 0, answered: h.answered, enc: h.enc, E: h.E, gapR: h.E > 0 ? h.E - s.R : null, resp: h.resp, P: h.P, gapT: h.P - (s.T - h.tAdj), supplies: h.after.supplies, esc: h.after.esc,
 }));

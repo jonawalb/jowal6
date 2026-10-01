@@ -1,5 +1,6 @@
 // Drawing: the schematic shoal, the tracks, the belief bars and the debrief timeline. Schematic only: no real places.
-import { P, LEVELS } from '../data/params.js';
+import { P, LEVELS, NORM } from '../data/params.js';
+const NORM_WINDOW = NORM.window;
 import { tracer, burst, ping } from '../../../shared/js/motion.js';
 
 const NS = 'http://www.w3.org/2000/svg';
@@ -119,7 +120,29 @@ export function paintTimeline(root, s, rows, showT = true) {
   };
   const respTone = { none: 'var(--muted)', silence: 'var(--muted)', concern: 'var(--k-a)', warning: 'var(--warn)', intervene: 'var(--bad)' };
   panel(4, 8, s.R, 'What the Patron saw (effective rung)', rows.map(r => r.E), i => respTone[rows[i].resp], `Patron’s line: ${s.R}`);
+  { // the normalized baseline creeping up (or held), drawn as a step line on the same rung scale
+    const y = v => 4 + PH - (v / 8) * (PH - 16), pts = rows.map((r, i) => `${x(i) - 14},${y(r.base)} ${x(i) + 14},${y(r.base)}`).join(' ');
+    el('polyline', { points: pts, fill: 'none', stroke: 'var(--k-p)', 'stroke-width': 3, opacity: 0.75 }, root);
+    txt(root, { x: L + 4, y: y(Math.max(...rows.map(r => r.base), 0)) - 5, 'font-size': 10.5, fill: 'var(--k-p)', 'font-weight': 700 }, 'normal baseline');
+  }
   panel(PH + 30, 6, showT ? s.T : null, 'Coastal provocation', rows.map(r => r.P), i => (rows[i + 1] && s.history[i].p.level <= 3 && s.history[i + 1].p.level >= s.history[i].p.level + 2 ? 'var(--bad)' : 'var(--k-c)'), `Power’s threshold: ${s.T}`);
   rows.forEach((r, i) => txt(root, { x: x(i), y: 2 * PH + 46, 'font-size': 10.5, 'text-anchor': 'middle', fill: 'var(--muted)' }, P.months[i].slice(0, 3)));
 }
 export const levelLabel = i => (i >= LEVELS.length ? 'Beyond' : LEVELS[i].label);
+
+/** The normal at the shoal: every rung's status and counter, the same for both sides. */
+export function paintNormal(div, s, cs, base) {
+  const W = NORM_WINDOW;
+  div.innerHTML = `<h3>The normal at the shoal</h3>
+    <ol class="sl-norm" aria-label="Status of each rung">${LEVELS.map((lv, i) => {
+      const c = cs.find(x => x.r === i);
+      const st = !c ? (i === 0 ? 'base' : 'never') : c.normal ? 'normal' : c.count ? 'tipping' : 'contested';
+      const tag = !c ? (i === 0 ? 'always normal' : 'never normal') : c.normal ? 'normal' : c.count ? `${c.count} of 2` : 'contested';
+      return `<li class="${st}${i === base ? ' top' : ''}"><b>${lv.label}</b><span>${tag}</span>${i === base ? '<i>baseline</i>' : ''}</li>`;
+    }).join('')}</ol>
+    <ul class="sl-normx">${cs.map(c => `<li>${c.normal
+      ? `<b>${c.label}</b>: normal. Answer 3 of its last 4 uses, or draw a Patron warning, to push it back (now ${c.answeredOfLast} of the last ${c.lastUses} answered).`
+      : c.count ? `<b>${c.label}</b>: ${c.count} unanswered use in the last ${W} months. One more and it becomes normal.`
+      : `<b>${c.label}</b>: contested.`}</li>`).join('')}</ul>
+    <p class="fine">Any use of a rung, or a higher one, that meets a mission counts. It is <b>answered</b> if the Coastal State protests or goes to court, sails with journalists or Patron observers, or pushes through with an escort. Answers cost escalation risk and anger the Power, and protests wear thin if repeated month after month.</p>`;
+}

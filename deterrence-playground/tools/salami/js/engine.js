@@ -3,6 +3,8 @@
 import { P, LEVELS, METHODS, C_MSGS, P_MSGS, R_VALUES, R_PRIOR, T_VALUES, T_PRIOR, RESPONSES, ROUGH, CLOUD, STATEMENT, STATEMENTS } from '../data/params.js';
 import { makeRng, STREAM } from './rng.js';
 import { patronProbs, statementCat, statementLik, spikeProb, updateR, updateT } from './belief.js';
+import { NORM } from '../data/params.js';
+import { newNorm, isNormal, updateNorm, isAnswer, voiceTired } from './normal.js';
 
 export const M = Object.fromEntries(METHODS.map(m => [m.id, m]));
 const clamp = (v, lo = 0, hi = 100) => Math.max(lo, Math.min(hi, v));
@@ -14,7 +16,7 @@ export function newGame({ seed, side }) {
   return {
     seed, side, turn: 0, R, T, ...P.start, lastLevel: 0, patronLeft: P.patronUses, onScene: 0,
     intervened: false, lawFiled: false, bR: R_PRIOR.slice(), bT: T_PRIOR.slice(),
-    peakEsc: 0, minSupplies: P.start.supplies, cur: null, history: [], over: null,
+    peakEsc: 0, minSupplies: P.start.supplies, cur: null, history: [], over: null, ...newNorm(),
   };
 }
 
@@ -41,6 +43,7 @@ export function baseE(s, level, method) {
   if (E > 0 && method === 'patron') E++;
   if (E > 0 && s.sympathy >= P.sym.line) E++;
   if (E > 1 && provokedLast(s)) E--;
+  if (E > 0 && level <= 4 && isNormal(s, level)) E--;   // a normal rung looks a step milder to the Patron
   return E;
 }
 /** The Patron will not underwrite provocation: last month's Coastal provocation at or above the bar moves its line out a rung. */
@@ -99,20 +102,22 @@ export function resolveTurn(s0, { c, p }) {
 
   // Tracks
   const cm = C_MSGS.find(x => x.id === c.msg), pm = P_MSGS.find(x => x.id === p.msg);
-  let symGain = enc ? P.sym.byLevel[L] : 0;
-  if (enc && c.method === 'press') symGain *= P.sym.press;
-  if (cm.id === 'protest') symGain *= P.sym.protest;
-  if (cm.id === 'lawfare') symGain *= P.sym.lawfare;
+  const nAt = enc && L <= 4 && isNormal(s, L);   // using a rung that is already normal
+  const ans = isAnswer(c, L, enc), mute = nAt || voiceTired(s);   // normal rungs and worn-out protests get no boost
+  let symGain = enc ? P.sym.byLevel[L] * (nAt ? NORM.sym : 1) : 0;
+  if (enc && c.method === 'press') symGain *= nAt ? NORM.press : P.sym.press;
+  if (cm.id === 'protest' && !mute) symGain *= P.sym.protest;
+  if (cm.id === 'lawfare' && !mute) symGain *= P.sym.lawfare;
   if (pm.id === 'narrative') symGain *= P.sym.narrative;
-  if (cm.id === 'lawfare') { symGain += s.lawFiled ? P.sym.lawAfter : P.sym.lawFirst; s.lawFiled = true; }
+  if (cm.id === 'lawfare') { symGain += s.lawFiled ? (mute ? 0 : P.sym.lawAfter) : P.sym.lawFirst; s.lawFiled = true; }
   if (pm.id === 'admin') symGain += P.sym.admin;
   if (c.method === 'patron') symGain += P.sym.patronMission;
   if (injury) symGain += P.sym.injury;
   if (detained) symGain += P.sym.detain;
   s.sympathy = clamp(50 + (s.sympathy - 50) * P.sym.decay + symGain);
 
-  s.esc = s.esc * P.esc.decay + (enc ? P.esc.byLevel[L] : 0) + Pv * P.esc.perProv + (injury ? P.esc.collision : 0)
-    + (resp === 'warning' ? P.esc.warning : 0) + (resp === 'intervene' ? P.esc.intervene : 0);
+  s.esc = s.esc * P.esc.decay + (enc ? P.esc.byLevel[L] * (nAt ? NORM.esc : 1) : 0) + Pv * P.esc.perProv + (injury ? P.esc.collision : 0)
+    + (resp === 'warning' ? P.esc.warning : 0) + (resp === 'intervene' ? P.esc.intervene : 0) + (ans ? NORM.answerCost.esc : 0);
   s.esc = clamp(s.esc);
   if (resp === 'warning') s.cred += P.cred.warning;
   if (resp === 'intervene') { s.cred += P.cred.intervene; s.intervened = true; s.onScene = P.onSceneMonths + 1; }
@@ -127,13 +132,15 @@ export function resolveTurn(s0, { c, p }) {
   const Q = P.domP;
   s.domP = clamp(Q.home + (s.domP - Q.home) * Q.drift + (delivered >= 2 ? Q.delivered : 0) + Math.max(0, Pv - 2) * Q.perProvAbove2
     + (resp === 'intervene' ? Q.intervene : 0) + (L < s.lastLevel ? Q.backDown : 0) + (L >= 3 ? Q.strong : 0)
-    + (pm.id === 'narrative' ? Q.narrative : 0) + (pm.id === 'admin' ? Q.admin : 0) + (detained ? Q.detain : 0));
+    + (pm.id === 'narrative' ? Q.narrative : 0) + (pm.id === 'admin' ? Q.admin : 0) + (detained ? Q.detain : 0) + (ans ? NORM.answerCost.domP : 0));
 
   s.supplies = Math.max(0, Math.min(P.maxSupplies, s.supplies + delivered - P.use));
   s.minSupplies = Math.min(s.minSupplies, s.supplies);
   s.peakEsc = Math.max(s.peakEsc, s.esc);
   if (c.method === 'patron') s.patronLeft--;
   if (s.onScene > 0) s.onScene--;
+  const nm = updateNorm(s, { c, L, enc, resp, statement: s.cur?.statement });
+  log.push(...nm.log);
 
   // A clash: only when escalation risk is high, likelier with the Patron's ships on scene.
   const ce = P.esc, hot = Math.max(0, (s.esc - ce.clashFrom) / (100 - ce.clashFrom));
@@ -141,7 +148,7 @@ export function resolveTurn(s0, { c, p }) {
   const clash = roll.clash < clashP;
   if (clashP > 0) log.push({ kind: 'risk', text: `Chance of a clash this month: ${(clashP * 100).toFixed(1)}%.` });
 
-  s.history.push({ turn: t, c: clone(c), p: clone(p), P: Pv, tAdj: adj, enc, E, resp, odds, delivered, injury, seized, detained, clashP, clash,
+  s.history.push({ turn: t, c: clone(c), p: clone(p), P: Pv, tAdj: adj, enc, E, resp, answered: nm.answered, base: nm.base, normalAt: nAt, odds, delivered, injury, seized, detained, clashP, clash,
     rough: s.cur?.rough, cloud: s.cur?.cloud, statement: s.cur?.statement,
     after: { supplies: s.supplies, sympathy: s.sympathy, esc: s.esc, cred: s.cred, domC: s.domC, domP: s.domP }, bR: s.bR.slice(), bT: s.bT.slice() });
   s.lastLevel = L; s.turn++; s.cur = null;

@@ -1,0 +1,11 @@
+// Encrypted TSM data. Unlocked in the browser with the site password.
+const __m = await window.TSMVault.module(import.meta.url, "AhWKZOJt63AybpoerAvqWS5zSvRzvXx9NndAJQ4r7id1Yx4aiIuFDdzWDH2tQO0FfQPCELpm6Kqmm4sFpTq+VUZFIQtc2wgd90WkA5ebT/6vc164GKoL4gHD2dnlf+HDgs/TuqhdjQXne419qzBWg6ySE3TkHHle26touHZAMm2wd7Y2cZr1OC+Ifs/YFeITPhThhbKwFy1lY49Lu9Fb+zKkwnsxe6drfwKFiW2o4ZB/W0Ii/8jF7osD9MJqFdYkftLnI1Z1xBaFxfFVQmAMWcTI/RiRceXkdEzMn9QvSSyFKWy/fex/KbnczTcDoVdDjV/G/Ww4JEkMXzhlUOZ6HLmfnk10bNY6Frx6zAT++riEipYpANzXsvZu/bB/tUHjTsnicdBwsDp5DL0JgqJG6afrLGLZjC2N6OOwcZCcUok+gUv0v31AJBln0FG4hmSvoYzKw6DDkBp5lSrh9vDhyGLQw2Vdq4PZFhdPG3D1HSEaqa17BPGk73mQN44cnH2QPd0RsA37/L0dsZV89jDWmq7Z/tw6wCFyHTB5OPN8EUmyagZ1wUX9vHtUjtOE44ahaI2EMFOf3JGoczxzN/WlsOlC6k3kp7ctL2zXh3twbja6iwfe63vvchgOkf2JAK1Sm1fMAmHw+cNxZgd5Ai9LTtjoFfnb50rd/ioY6YUA1LwQ5FlUrZYOUcM/88f8/hZ8Qv3i7cj4iYQK/irhCkhoTdvv1gcYmVHrTSKIIGYgvCNiIZl0Sjusmbgm+SxtWO8u7fKwAMHDkC4ia5ttQla8LuAq3DZTD8jD5Q8znaBHZruyIisdD2iznvHqfDwQ32vLTV0BPgGGKHqG2kgQEH+40MaSWuGza8y62TnSidTQRsvX+WUHSH8hmoDCOdRNSPMBAwFO/RCQa/mgkezTBEu4p+6bC2h2v1lC7wYQrrSIL0H2BH5EkXxW/OWFoWsyoMMuu5qOoYtzYipeJ8LMGP5OLb8havrQIAPWOy0YDS3f8fuGekGbKtVkk9y2pF1mP3cxRs0wCAw07V6xy8JjywkwmfmRVUsRUx3An5TYoPMXbv/VsTeDHVk7ruWIMZMmMxQ1iy1l1tc=", 1, 2);
+export const ROUTE = __m.ROUTE;
+export const SEA_Q = __m.SEA_Q;
+export const T = __m.T;
+export const at = __m.at;
+export const chose = __m.chose;
+export const opt = __m.opt;
+export const post = __m.post;
+export const q = __m.q;
+export const routeOdds = __m.routeOdds;

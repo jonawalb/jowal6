@@ -29,7 +29,9 @@
       <button type="button" role="radio" aria-checked="false" class="sl-seat" data-side="c" style="--c:var(--k-c)"><b>The Coastal State</b><small>Hold the outpost for twelve months without a war. Each supply run risks provoking the Power into a sharper response.</small></button>
       <button type="button" role="radio" aria-checked="false" class="sl-seat" data-side="p" style="--c:var(--k-p)"><b>The Coast Guard Power</b><small>Force the garrison out before December, one slice at a time, without crossing the Patron’s hidden line.</small></button>
     </div>
-    <div class="sl-row"><p class="fine">The computer plays the other side and the Patron.</p><button type="button" class="btn solid" id="begin" disabled>Begin</button></div>
+    <div class="sl-row"><label class="sl-diff">Computer opponent <select id="difficulty"><option value="easy">Easy</option><option value="medium" selected>Medium</option><option value="hard">Hard</option></select></label>
+      <button type="button" class="btn solid" id="begin" disabled>Begin</button></div>
+    <p class="fine">The computer plays the other side and the Patron. Difficulty changes only how well the computer plays, never the rules or the Patron: on Easy it is erratic, misreads the evidence and never smashes the line; on Hard it reads the evidence sharply and exploits every opening. A good strategy wins about 75% of the time on Easy, 50% on Medium and 30% on Hard, as either side.</p>
   </section>
 
   <section class="sl-play" id="play" hidden tabindex="-1" aria-label="The standoff">
@@ -103,7 +105,7 @@
         <li><b>Beliefs.</b> The bars show a Bayesian belief, updated every month from what each side does. You only pin a line down by testing it.</li>
         <li><b>Endings.</b> The Coastal State wins by holding twelve months without war; the Power by forcing withdrawal without a Patron intervention. A clash at the shoal, more likely when escalation risk is high and the Patron’s ships are there, means everyone loses.</li>
       </ul>
-      <p class="fine">In 1,000 test games with the computer on both sides, the Coastal State won 48% (holding twelve months or forcing the issue: it smashed the line in 27% of games and the Patron came in 83% of those), the Power forced a clean withdrawal or won a smash 33%, a withdrawal came only after the Patron intervened 14%, and 5% ended in a clash. Smashing in March whatever the tracks won only 20% for the Coastal State and 15% for the Power. A Coastal State that never answered the Power won 28%; one that answered every encounter also won 28%, paying in escalation and clashes. Against a Coastal State that never answers, a Power that slices one rung above the normal won 59%; one that jumped straight to ramming won 51% and fought 21% of the time. The method notes (METHOD.md) give every number.</p>
+      <p class="fine">Tested over 2,000 games per setting. A fixed good strategy (selective answering, careful slicing, smashing only at high odds) won 76% (Coastal State) and 74% (Power) on Easy, 48% and 47% on Medium, and 33% and 30% on Hard. On Medium the computer won 72% against a passive Coastal State and 100% against a passive Power; reckless play won 16% (Coastal State, with 44% clashes) and 22% (Power); smashing in March won 11% and 31%. With the computer on both sides on Medium, the Coastal State won 42%, the Power 45%, and 2% ended in a clash. The method notes (METHOD.md) give every number.</p>
     </details>
   </section>
 </main>

@@ -36,8 +36,8 @@ export function score(s, side) {
 }
 
 /** Play a whole game. policies: { c(s), p(s) } return moves; missing ones use the computer. */
-export function playOut(seed, side = 'c', policies = {}) {
-  let s = newGame({ seed, side });
+export function playOut(seed, side = 'c', policies = {}, difficulty = 'medium') {
+  let s = newGame({ seed, side, difficulty });
   while (!s.over) {
     s = brief(s);
     const c = (policies.c || chooseCoastal)(s), p = (policies.p || choosePower)(s);

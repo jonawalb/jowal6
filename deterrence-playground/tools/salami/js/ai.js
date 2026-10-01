@@ -5,7 +5,7 @@ import { makeRng, STREAM } from './rng.js';
 import { pIntervene, pSpike, spikeProb } from './belief.js';
 import { M, baseE, encounters, provocation, deliveryOdds, tAdj } from './engine.js';
 import { isAnswer, isNormal, unanswered, voiceTired, baseline as baselineOf } from './normal.js';
-import { SMASH } from '../data/params.js';
+import { SMASH, DIFFICULTY, R_PRIOR, T_PRIOR } from '../data/params.js';
 import { canSmash, estimate } from './smash.js';
 
 export const AI = {
@@ -30,14 +30,25 @@ export function methodForecast(s) {
 }
 
 /** The Power's move. rng defaults to the seeded AI stream for this month. */
-/** The computer smashes the line only when its own estimate (from the public belief) says it would win. */
-export const wantsSmash = (s, side) => canSmash(s) && (side === 'p' ? 1 - estimate(s, 'p') : estimate(s, 'c')) >= SMASH.aiAt[side];
+export const diff = (s, side) => (DIFFICULTY[s.difficulty] || DIFFICULTY.medium)[side];
+const blend = (b, prior, w) => b.map((v, i) => (1 - w) * v + w * prior[i]);
+/** The state as the computer reads it: on easier levels its beliefs are dulled back toward the prior. */
+export const aiView = (s, side) => { const w = diff(s, side).dull; return w ? { ...s, bR: blend(s.bR, R_PRIOR, w), bT: blend(s.bT, T_PRIOR, w) } : s; };
+/** Softmax at the level's temperature, with a chance of a random legal choice. */
+function pickAt(s, cands, temp, rng, side) {
+  const D = diff(s, side), u = rng.u();
+  if (u < D.blunder) return cands[Math.floor(rng.u() * cands.length)];
+  return softmax(cands, temp * D.temp, rng);
+}
+/** The computer smashes the line only when its own estimate (from its belief) clears its level's bar. */
+export const wantsSmash = (s, side) => canSmash(s) && (side === 'p' ? 1 - estimate(aiView(s, 'p'), 'p') : estimate(aiView(s, 'c'), 'c')) >= diff(s, side).smashAt;
 
 export function choosePower(s, rng = makeRng(s.seed, STREAM.ai + s.turn * 2)) {
   const mv = choosePowerMove(s, rng);
   return wantsSmash(s, 'p') ? { ...mv, smash: true } : mv;
 }
-function choosePowerMove(s, rng) {
+function choosePowerMove(s0, rng) {
+  const s = aiView(s0, 'p');
   const A = AI.power, prev = s.history[s.turn - 1], last = s.lastLevel;
   const follow = L => ({ msg: s.sympathy > 56 ? 'narrative' : s.domP > 58 ? 'admin' : 'quiet', hold: s.domP > 55 || L >= 3, detain: s.domP > 65 });
   const snap = rng.u();
@@ -59,12 +70,13 @@ function choosePowerMove(s, rng) {
     // Worth of the next slice: a rung one use from normal counts in full; the first rung above the normal counts half.
     const tip = NORM.rungs.filter(r => r <= L && !isNormal(s, r)).reduce((a, r) => a
       + (unanswered(s, r) === NORM.need - 1 ? r : r === baselineOf(s) + 1 ? r / 2 : 0), 0);
-    const v = A.denyValue + (s.supplies < 2.5 ? A.denyUrgent : 0);
-    const u = v * denied - A.intervene * pI - A.sym * sym - A.esc * P.esc.byLevel[L] * (1 + s.esc / 50)
-      + A.home * (s.domP - P.domP.home) * L - (s.onScene > 0 ? A.onScene * L : 0) + A.normalize * pUn * tip;
+    const v = diff(s, 'p').deny * (A.denyValue + (s.supplies < 2.5 ? A.denyUrgent : 0));
+    const D = diff(s, 'p');
+    const u = v * denied - A.intervene * D.caution * pI - A.sym * sym - A.esc * P.esc.byLevel[L] * (1 + s.esc / 50)
+      + A.home * (s.domP - P.domP.home) * L - (s.onScene > 0 ? A.onScene * L : 0) + A.normalize * D.exploit * pUn * tip;
     cands.push({ L, u });
   }
-  const L = softmax(cands, A.temp, rng).L;
+  const L = pickAt(s, cands, A.temp, rng, 'p').L;
   return { level: L, ...follow(L) };
 }
 
@@ -89,9 +101,10 @@ export function chooseCoastal(s, rng = makeRng(s.seed, STREAM.ai + s.turn * 2 + 
   const mv = chooseCoastalMove(s, rng);
   return wantsSmash(s, 'c') ? { ...mv, smash: true } : mv;
 }
-function chooseCoastalMove(s, rng) {
+function chooseCoastalMove(s0, rng) {
+  const s = aiView(s0, 'c');
   const A = AI.coastal, d = levelForecast(s);
-  const v = s.supplies < 1.5 ? A.value[0] : s.supplies < 2.5 ? A.value[1] : s.supplies < 4 ? A.value[2] : A.value[3];
+  const v = diff(s, 'c').supply * (s.supplies < 1.5 ? A.value[0] : s.supplies < 2.5 ? A.value[1] : s.supplies < 4 ? A.value[2] : A.value[3]);
   const cands = [];
   for (const m of METHODS) {
     if (m.id === 'patron' && s.patronLeft <= 0) continue;
@@ -114,9 +127,9 @@ function chooseCoastalMove(s, rng) {
       }
       if (msg.id === 'lawfare') sym += s.lawFiled ? P.sym.lawAfter : P.sym.lawFirst;
       const u = v * del - A.spike * pSpike(s.bT, Math.round(prov), tAdj(s)) + A.intervene * pI + A.sym * sym
-        - A.esc * prov * (1 + s.esc / 50) - (msg.id === 'quiet' && s.domC > 60 ? A.quietHome : 0) + A.answer * guard - A.answerCost * pAns * (1 + s.esc / 50);
+        - A.esc * prov * (1 + s.esc / 50) - (msg.id === 'quiet' && s.domC > 60 ? A.quietHome : 0) + A.answer * diff(s, 'c').guard * guard - A.answerCost * pAns * (1 + s.esc / 50);
       cands.push({ c, u });
     }
   }
-  return softmax(cands, A.temp, rng).c;
+  return pickAt(s, cands, A.temp, rng, 'c').c;
 }

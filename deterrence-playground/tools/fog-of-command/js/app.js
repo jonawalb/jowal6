@@ -47,6 +47,12 @@ function keyList(side) {
 }
 const keysHint = side => `Keys: <b>${keyList(side)}</b> pick a unit (the key is on each unit), <b>A</b> artillery, <b>G</b> give ground or hold, <b>Tab</b> and <b>Enter</b> or the arrow keys for sectors, <b>N</b> ends the hour, <b>U</b> undoes, <b>Esc</b> clears.`;
 
+// Shown at the start of every game: how Red's decoy works, or a warning that Red has one.
+const DECOY_TIP = {
+  red: '<b>You have a decoy (unit 8, Decoy Group).</b> It has no combat strength, but Blue sees it as a full tank battalion from the next sector, and Blue\'s recon hear it as one from two sectors away. Send it down a road away from your main attack and keep it two sectors from Blue\'s recon: heard, never looked at. If a Blue unit enters its sector, or Blue fires on it while a Blue recon troop watches, it is exposed. Done right, Blue sends its reserve the wrong way.',
+  blue: '<b>Warning: Red has a decoy.</b> One of the "tank battalions" you see or hear may be a Decoy Group with no strength at all, sent to pull your one reserve down the wrong road. Before you commit the reserve, check the road: fire artillery on it while a recon troop watches. A tank that takes no damage is the decoy.',
+};
+
 function start(side, seed, log = [], n = 0) {
   me = side;
   const players = me === 'blue' ? { blue: null, red: redAI() } : { red: null, blue: blueAI() };
@@ -60,6 +66,8 @@ function start(side, seed, log = [], n = 0) {
   document.body.classList.toggle('fc-over', !!g.over);
   $('viewbar').hidden = true;
   $('keys').innerHTML = keysHint(me);
+  $('decoytip-text').innerHTML = DECOY_TIP[me];
+  $('decoytip').hidden = !!g.over;
   setTab('map');
   setView('belief');
   if (g.over) finish(false);
@@ -394,6 +402,7 @@ const aar = createAAR({ onHour: reviewAt, onAgain: () => start(me, g.seed), onNe
 
 document.querySelectorAll('#viewbar [data-view]').forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
 document.querySelectorAll('.fc-side').forEach(b => b.addEventListener('click', () => start(b.dataset.side, newSeed())));
+$('decoytip-x').addEventListener('click', () => { $('decoytip').hidden = true; });
 document.querySelectorAll('.fc-tabs [data-tab]').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
 $('units').addEventListener('click', e => { const b = e.target.closest('button'); if (b && !b.disabled) select(b.dataset.u); });
 $('feed').addEventListener('toggle', e => { const d = e.target; if (d.dataset?.h === undefined) return; if (d.open) openHours.add(+d.dataset.h); else openHours.delete(+d.dataset.h); }, true);

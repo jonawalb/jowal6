@@ -77,7 +77,9 @@ const guess = (s, w) => s.last[w] ? { posture: s.last[w].posture, actions: s.las
 function utility(s, who, move, B, weights) {
   const moves = Object.fromEntries(IDS.map(w => [w, w === who ? move : guess(s, w)]));
   const { state: n } = resolveTurn(s, moves, { expected: true });
-  return objectiveValue(n, who, weights) + P.ai.supportWeight * n.c[who].support + riskTerm(s, who, move, B);
+  // Plus the computer's estimate of payoffs that land after this month (intelligence, rehearsals, dispersal...).
+  const later = move.actions.reduce((t, id) => t + (BY_ID[id].ai ? BY_ID[id].ai(s, who) : 0), 0);
+  return objectiveValue(n, who, weights) + P.ai.supportWeight * n.c[who].support + riskTerm(s, who, move, B) + later;
 }
 
 /** Best follow-up answers for one move, judged on its own. */

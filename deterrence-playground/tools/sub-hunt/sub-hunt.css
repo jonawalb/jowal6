@@ -28,6 +28,15 @@
 .sh-queue li.muted { border-color: transparent; background: none; padding: 1px 0; color: var(--muted); }
 .sh-lineopt { display: flex; align-items: center; gap: 10px; font-size: 13px; }
 .sh-lineopt[hidden] { display: none; }
+.sh-lineopt { flex-wrap: wrap; }
+.sh-rot { display: inline-flex; gap: 6px; margin-left: auto; }
+.sh-rot .btn { min-height: 36px; min-width: 40px; }
+.sh-compass { width: 26px; height: 26px; flex: none; }
+.sh-compass circle { fill: none; stroke: var(--rule); stroke-width: 1.2; }
+.sh-compass path { stroke: var(--muted); stroke-width: 1.2; }
+.sh-compass line { stroke: var(--blue); stroke-width: 2.4; stroke-linecap: round; }
+.sh-cursor .sh-buoy { fill: none; stroke: var(--blue); stroke-width: 1.2; pointer-events: none; }
+.sh-buoy.dry, .sh-cursor .sh-buoy.dry { fill: none; stroke: var(--muted); stroke-dasharray: 2 1.5; }
 .sh-effort { display: flex; flex-direction: column; gap: 4px; flex: 0 1 230px; min-width: 170px; }
 .sh-pips { display: flex; gap: 3px; }
 .sh-pips i { flex: 1 1 0; height: 10px; border-radius: 2px; border: 1px solid var(--rule); background: transparent; }
@@ -259,3 +268,5 @@ body.sh-over .sh-console { display: none; }
 :root[data-skin="trailer"] .sh-meter-bar i { box-shadow: 0 0 10px var(--good); }
 :root[data-skin="trailer"] .sh-pips i.on { box-shadow: 0 0 6px color-mix(in srgb, var(--accent) 60%, transparent); }
 :root[data-skin="trailer"] .sh-tour { box-shadow: 0 18px 50px -20px #000, var(--glow); }
+.sh-rot kbd { font: 600 11px/1 var(--mono, ui-monospace, monospace); padding: 2px 5px; margin-left: 4px; border: 1px solid currentColor; border-radius: 3px; opacity: .8; }
+@media (max-width: 720px) { .sh-rot kbd { display: none; } }

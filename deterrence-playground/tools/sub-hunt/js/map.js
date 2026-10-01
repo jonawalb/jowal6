@@ -4,8 +4,8 @@ import { createProjection, drawBasemap, el, circlePath, svgPoint } from '../../.
 import { LAND, BOX } from '../data/land.js';
 import { ROUTES, SENSORS, GAME } from '../data/params.js';
 import { HEAT } from './filter.js';
-import { lineEnds } from './sensors.js';
-import { step, bearing, dist } from './geo.js';
+import { lineEnds, buoyPoints } from './sensors.js';
+import { step, bearing, dist, isLand } from './geo.js';
 
 const KM = 1.852;
 export const proj = createProjection({ lon0: BOX[0], lon1: BOX[2], lat0: BOX[1], lat1: BOX[3], width: 1000 });
@@ -93,7 +93,8 @@ export function createMap(svg) {
 
 /**
  * Placement preview for the selected tool at p. ship = ship position (for the helicopter range and
- * the ship's path); ang = buoy line heading.
+ * the ship's path); ang = buoy line axis. A buoy line previews its buoys (hollow where they would fall on
+ * land or off the game area) and its axis.
  */
 export function drawCursor(m, p, tool, { ship, ang = 0 } = {}) {
   const L = m.layers.cursor;
@@ -104,7 +105,13 @@ export function drawCursor(m, p, tool, { ship, ang = 0 } = {}) {
   if (tool === 'circle') el('path', { d: ring(p, SENSORS.circle.r), class: 'sh-cur' }, L);
   else if (tool === 'helo') el('path', { d: ring(p, SENSORS.helo.r), class: `sh-cur${ship && dist(p, ship) > SENSORS.helo.range ? ' bad' : ''}` }, L);
   else if (tool === 'air') el('path', { d: boxPath(p, SENSORS.air.half), class: 'sh-cur' }, L);
-  else if (tool === 'line') el('path', { d: proj.line(lineEnds(p, ang)), class: 'sh-cur line' }, L);
+  else if (tool === 'line') {
+    const ends = lineEnds(p, ang);
+    el('path', { d: proj.line(ends), class: 'sh-cur line' }, L);
+    for (const q of buoyPoints(p, ang)) el('circle', { cx: P(q)[0], cy: P(q)[1], r: 2.6 * m.u, class: `sh-buoy${isLand(q[0], q[1]) ? ' dry' : ''}` }, L);
+    const [lx, ly] = P(ends[0]);
+    el('text', { x: lx + 6 * m.u, y: ly - 6 * m.u, class: 'sh-lab' }, L, `Axis ${axisLabel(ang)}`);
+  }
   else if (tool === 'attack') el('path', { d: ring(p, GAME.prosR), class: 'sh-cur attack' }, L);
   else if ((tool === 'move' || tool === 'dash') && ship) {
     const cap = (tool === 'dash' ? SENSORS.ship.sprint : SENSORS.ship.speed) * GAME.turnHours;
@@ -114,6 +121,12 @@ export function drawCursor(m, p, tool, { ship, ang = 0 } = {}) {
   const [x, y] = P(p), k = 6 * m.u;
   el('path', { d: `M${x - k} ${y}H${x + k}M${x} ${y - k}V${y + k}`, class: 'sh-cross' }, L);
 }
+
+const DIRS = ['N–S', 'NNE–SSW', 'NE–SW', 'ENE–WSW', 'E–W', 'ESE–WNW', 'SE–NW', 'SSE–NNW'];
+/** A buoy line axis as text: "45°", "22.5°". */
+export const axisLabel = ang => `${Number.isInteger(ang) ? ang : ang.toFixed(1)}°`;
+/** The compass name of an axis: "NE–SW". */
+export const axisDir = ang => DIRS[Math.round(ang / 22.5) % 8];
 
 /**
  * Crop the view to the water where a 24-hour hunt plays out: the report area, the two southern gaps and

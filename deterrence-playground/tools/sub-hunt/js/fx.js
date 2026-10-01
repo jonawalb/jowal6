@@ -3,7 +3,7 @@
 // beyond positions to draw at. Every effect is skipped under prefers-reduced-motion (see motion.js).
 import { burst as burst0, tracer as tracer0, pulse, shake, countUp, reveal, reduced } from '../../../shared/js/motion.js';
 import { skin } from '../../../shared/js/skin.js';
-import { SENSORS } from '../data/params.js';
+import { buoyPoints } from './sensors.js';
 import { P } from './map.js';
 import { step } from './geo.js';
 
@@ -46,8 +46,7 @@ export function fxLayer(map) {
 /** Where a newly queued sensor lands, as SVG points (a buoy line gives every buoy). */
 function dropPoints(a) {
   if (a.type !== 'line') return [P(a.p)];
-  const n = SENSORS.line.n, [e0, e1] = a.ends;
-  return Array.from({ length: n }, (_, k) => { const t = k / (n - 1); return P([e0[0] + t * (e1[0] - e0[0]), e0[1] + t * (e1[1] - e0[1])]); });
+  return buoyPoints(a.p, a.ang).map(P);
 }
 
 /** A sensor (or an attack) was queued at the player's click. */

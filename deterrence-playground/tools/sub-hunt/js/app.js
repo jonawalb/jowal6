@@ -1,7 +1,7 @@
 // The Hunt: wires the engine, the map and the panel together.
 import { GAME, SENSORS, ACTIONS } from '../data/params.js';
 import { newGame, replay, endTurn, place, undo, why, effortLeft, shipOrder, lastSnap, hourOf, thisTurn } from './game.js';
-import { createMap, drawCursor, tokenColor, fitView, toPct, scale } from './map.js';
+import { createMap, drawCursor, tokenColor, fitView, toPct, scale, axisLabel, axisDir } from './map.js';
 import { render } from './layers.js';
 import { renderStatus, renderLog, renderQueue, renderSetup, renderBelow, turnText, pct } from './panel.js';
 import { renderBalance } from './balanceview.js';
@@ -9,7 +9,7 @@ import { createReveal } from './reveal.js';
 import { createTour } from './tour.js';
 import { readHash, writeHash } from './hash.js';
 import { pWithin } from './filter.js';
-import { covers, lineEnds } from './sensors.js';
+import { covers, lineEnds, AXIS_STEP } from './sensors.js';
 import { isLand, step, BOX } from './geo.js';
 import { pulse } from '../../../shared/js/motion.js';
 import { fxLayer, dropFx, heatFade, turnFx, replayFx, tick, revealFx } from './fx.js';
@@ -23,7 +23,7 @@ const map = createMap($('map'));
 const fx = fxLayer(map);
 const phone = matchMedia('(max-width: 720px)'); // matches the CSS that moves the map above the controls
 let color = tokenColor('--c2', document.body);
-let g, tool = 'circle', cursor = null, ang = 90, coached = false;
+let g, tool = 'circle', cursor = null, ang = 90, coached = false, turned = false;
 
 $('tools').innerHTML = Object.entries(ACTIONS).map(([k, a]) =>
   `<button type="button" data-tool="${k}" aria-pressed="false" aria-keyshortcuts="${a.key}" class="${k === 'attack' ? 'sh-prosbtn' : ''}">
@@ -74,21 +74,28 @@ function draw() {
     b.disabled = !!g.over || !!why(g, t, null);
   });
   $('lineopt').hidden = tool !== 'line' || !!g.over;
-  $('line-ang').textContent = `${ang}°`;
+  $('line-ang').textContent = axisLabel(ang);
+  $('line-dir').textContent = axisDir(ang);
+  $('line-glyph-axis').setAttribute('transform', `rotate(${ang})`);
   const last = !g.over && g.turn === GAME.turns - 1;
   const block = g.over ? '' : why(g, tool, null);
   $('hint').textContent = g.over ? 'The hunt is over. The review is below the map.'
     : last ? 'Last turn. Queue an attack now: when this turn ends, so does the hunt.'
-      : block || `${ACTIONS[tool].name}: ${ACTIONS[tool].help} Click the map to queue it.`;
+      : block || `${ACTIONS[tool].name}: ${ACTIONS[tool].help}${tool === 'line' ? ` ${phone.matches ? 'Tap ⟳ Rotate to turn it.' : 'Shift+R turns it back; the mouse wheel and ⟳ buttons work too.'}` : ''} Click the map to queue it.`;
   drawCursor(map, g.over ? null : cursor, g.over ? null : tool, { ship: g.ship.p, ang });
   coach();
 }
+
+/** How to turn the buoy line, worded for the device. */
+const rotateHow = () => phone.matches ? 'Tap ⟳ Rotate to turn the buoy line (8 axes).' : 'Press R to rotate the buoy line (8 axes).';
 
 /** First-hunt prompts on the map. */
 function coach() {
   const box = $('callout');
   let text = null, at = null;
-  if (!coached && !g.over && g.turn === 0) {
+  if (tool === 'line' && !turned && !g.over) {
+    text = rotateHow(); at = cursor ? step(cursor, 180, 40) : step(g.datum, 180, GAME.datumR + 6);
+  } else if (!coached && !g.over && g.turn === 0) {
     const n = thisTurn(g).length;
     if (!n) { text = 'Start here: click inside the glow to drop a buoy circle. Then try other actions.'; at = step(g.datum, 180, GAME.datumR + 6); }
     else if (effortLeft(g) > 0) { text = `${effortLeft(g)} effort left. Queue more, or press End turn.`; at = step(g.datum, 180, GAME.datumR + 6); }
@@ -180,6 +187,19 @@ function hover(e) {
 $('map').addEventListener('pointermove', e => { if (e.pointerType === 'mouse') hover(e); });
 $('map').addEventListener('pointerleave', () => { tip.hidden = true; drawCursor(map, null, g.over ? null : tool, { ship: g.ship.p, ang }); });
 $('map').addEventListener('click', e => { tip.hidden = true; cursor = map.point(e); act(cursor); });
+// Mouse wheel over the map turns a buoy line while it is being placed (down = clockwise). Trackpads send many
+// small deltas, so they are summed and the line turns one axis per notch's worth.
+let wheel = 0;
+$('map').addEventListener('wheel', e => {
+  if (tool !== 'line' || !g || g.over) return;
+  e.preventDefault();
+  wheel += e.deltaMode ? e.deltaY * 40 : e.deltaY;
+  if (Math.abs(wheel) < 50) return;
+  const dir = Math.sign(wheel);
+  wheel = 0;
+  rotate(dir);
+  hover(e);
+}, { passive: false });
 $('map').addEventListener('keydown', e => {
   const moves = { ArrowUp: 0, ArrowDown: 180, ArrowLeft: 270, ArrowRight: 90 };
   if (!cursor) cursor = lastSnap(g).best.p.slice();
@@ -193,7 +213,14 @@ $('map').addEventListener('keydown', e => {
   } else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); act(cursor); }
 });
 
-const rotate = () => { ang = (ang + 30) % 180; draw(); };
+/** Turn the buoy line one axis (22.5°): dir 1 clockwise, -1 counterclockwise. With no crosshair yet (touch),
+ * the preview appears on the brightest spot so the new axis is visible before a tap places it. */
+function rotate(dir = 1) {
+  turned = true;
+  ang = (ang + dir * AXIS_STEP + 180) % 180;
+  if (!cursor) cursor = lastSnap(g).best.p.slice();
+  draw();
+}
 /** Keyboard help: jump the crosshair to the map's best attack spot. */
 function toBest() {
   cursor = lastSnap(g).best.p.slice();
@@ -204,7 +231,8 @@ function toBest() {
 }
 const doUndo = () => { if (undo(g)) { say(`Undone. ${effortLeft(g)} effort left this turn.`); writeHash(g); draw(); } };
 $('tools').addEventListener('click', e => { const b = e.target.closest('button'); if (b && !b.disabled) setTool(b.dataset.tool); });
-$('rotate').onclick = rotate;
+$('rotate').onclick = () => rotate(1);
+$('rotate-ccw').onclick = () => rotate(-1);
 $('undo').onclick = doUndo;
 $('end').onclick = end;
 document.addEventListener('keydown', e => {
@@ -213,7 +241,7 @@ document.addEventListener('keydown', e => {
   const k = e.key.toLowerCase();
   const t = Object.entries(ACTIONS).find(([, a]) => a.key === k);
   if (t) { e.preventDefault(); if (!why(g, t[0], null)) setTool(t[0]); else say(why(g, t[0], null)); }
-  else if (k === 'r' && tool === 'line') { e.preventDefault(); rotate(); }
+  else if (k === 'r' && tool === 'line') { e.preventDefault(); rotate(e.shiftKey ? -1 : 1); }
   else if (k === 'b') { e.preventDefault(); toBest(); }
   else if (k === 'u') { e.preventDefault(); doUndo(); }
   else if (k === 'e') { e.preventDefault(); end(); }

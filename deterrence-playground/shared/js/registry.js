@@ -209,6 +209,8 @@ export const ALL_TOOLS = [
     blurb: 'Read the indicators week by week and decide when to warn: every false alarm costs you the next one.' },
   { slug: 'sanctions-architect', dev: true, game: true, sub: { dev: 'games' }, cat: 'coercion', sites: ['deterrence'], title: 'Sanctions Architect', status: 'live',
     blurb: 'Build a sanctions coalition, plug the leaks and count your own costs, quarter by quarter.' },
+  { slug: 'magazine-depth', dev: true, game: true, sub: { dev: 'games' }, cat: 'models', sites: ['deterrence'], title: 'Magazine Depth', status: 'live',
+    blurb: 'Build munitions lines that take years to grow, then find out how long they last when the war comes.' },
 ];
 
 export const onSite = (x, site = SITE) => !x.sites || x.sites.includes(site);

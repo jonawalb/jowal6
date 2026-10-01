@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Magazine Depth | Interactive Deterrence</title>
+<meta name="description" content="A production-and-war game. Run a notional country's munitions industry for ten years of peace: buy from existing lines, expand them, second-source sub-tier suppliers, sign multiyear contracts and train workers. Then, at a hidden moment, a war starts and every stockpile begins to drain.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@500;600;700;800&family=DM+Mono:wght@400;500&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="magazine-depth.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+<div class="md-actions">
+  <p class="md-flag"><b>Fictional and notional.</b> An invented country and an invented war. Every cost, production rate, lead time and wartime use rate is illustrative game design, not data.</p>
+  <div><button type="button" class="btn" id="new-game">New game</button>
+  <button type="button" class="btn" id="copy-link">Copy link</button></div>
+</div>
+
+<main class="md-main">
+  <section class="card md-start" id="start" aria-labelledby="start-t">
+    <h2 id="start-t">You run the munitions industry</h2>
+    <p class="md-lede">It is 2027. For up to ten years you set your country's munitions budget: what to <b>buy</b> from the lines you have, which lines to <b>expand</b> (they take two to four years to arrive), which <b>sub-tier suppliers</b> to back up, whether to sign <b>multiyear contracts</b>, <b>train workers</b>, <b>co-produce</b> with a partner or <b>develop new types</b>. Somewhere in those ten years, maybe, a war starts. You will not know when. Watch the warnings.</p>
+    <p class="md-lede">When it comes, the war is fought week by week from what you built. Stocks drain far faster than any line can refill them. You choose how hard to fire each class. You are scored on how many days the line holds, how ready you were and how well you spent.</p>
+    <button type="button" class="btn solid" id="begin">Begin in 2027</button>
+  </section>
+
+  <section class="md-peace" id="peace" hidden aria-labelledby="year-t">
+    <div class="card md-bar">
+      <p class="md-year"><b id="year-t"></b> <span class="muted" id="yearof"></span></p>
+      <p class="md-warn" id="warn"></p>
+      <p class="md-budget" id="budget" aria-live="polite"></p>
+      <button type="button" class="btn solid" id="end-year">End year</button>
+    </div>
+    <div class="card md-result" id="result" aria-live="polite" tabindex="-1" hidden></div>
+    <div class="md-grid">
+      <div class="md-col">
+        <div class="md-lineh"><h2>Production lines</h2>
+          <div class="md-tools"><button type="button" class="btn" id="fill">Order the most the lines can make</button><button type="button" class="btn" id="clear">Clear orders</button><button type="button" class="btn" id="advise">What would the computer do?</button></div></div>
+        <div class="md-lines" id="lines"></div>
+      </div>
+      <aside class="md-col">
+        <h2>Sub-tier suppliers</h2>
+        <p class="fine">Every missile line draws on the same few component makers. A line cannot run faster than its scarcest input.</p>
+        <div class="card md-comps" id="comps"></div>
+        <div class="card md-chartc">
+          <p class="eyebrow">War cover by year (weeks at full fire)</p>
+          <svg id="timeline" role="img" aria-label="Weeks of war cover for each munition class, year by year"></svg>
+          <p class="md-legend" id="legend1"></p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="card md-warstart" id="warstart" hidden aria-labelledby="ws-t" tabindex="-1">
+    <p class="eyebrow">Warning</p>
+    <h2 id="ws-t"></h2>
+    <p id="ws-x"></p>
+    <button type="button" class="btn solid" id="ws-go">To the first week</button>
+  </section>
+
+  <section class="md-war" id="war" hidden aria-labelledby="day-t">
+    <div class="card md-bar war">
+      <p class="md-year"><b id="day-t"></b> <span class="muted" id="weekof"></span></p>
+      <div class="md-hold"><span>The line holds</span><div class="md-bar2" role="meter" aria-valuemin="0" aria-valuemax="100" id="hold-m" aria-label="The line holds"><span id="hold-b"></span><i style="left:35%"></i></div><b class="num" id="hold-v"></b></div>
+      <div class="md-runs"><button type="button" class="btn solid" id="next-week">Next week</button><button type="button" class="btn" id="run4">4 weeks</button><button type="button" class="btn" id="run-end">To the end</button></div>
+    </div>
+    <div class="md-grid">
+      <div class="card md-col md-fire">
+        <h2>Rationing this week</h2>
+        <p class="fine">Full fire meets the front's demand. Conserving saves stock but the line gives ground. Below the dashed mark on the meter is critical shortfall.</p>
+        <table class="md-wt" id="wtable"></table>
+      </div>
+      <div class="md-col">
+        <div class="card md-chartc">
+          <p class="eyebrow">The line (black) and stocks (coloured, scaled) by day</p>
+          <svg id="warchart" role="img" aria-label="The line holds track and stocks over the war"></svg>
+          <p class="md-legend" id="legend2"></p>
+        </div>
+        <div class="card md-wlog" id="wlog" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card md-end" id="end" hidden aria-labelledby="end-t" tabindex="-1">
+    <p class="eyebrow" id="end-k"></p>
+    <h2 id="end-t"></h2>
+    <p id="end-x"></p>
+    <div class="md-score">
+      <div><p class="md-big num" id="total"></p><p class="fine">your score out of 100</p></div>
+      <div><p class="md-big num" id="same">…</p><p class="fine" id="same-x">the computer in your seat, same world</p></div>
+      <div><p class="md-big num" id="pct">…</p><p class="fine" id="pct-x">comparing with the computer across other worlds…</p></div>
+    </div>
+    <table class="md-parts" id="parts"></table>
+    <h3>When each stock ran out</h3>
+    <svg id="endchart" role="img" aria-label="War cover by class over the game, with the day each class ran out"></svg>
+    <p class="md-legend" id="legend3"></p>
+    <ul class="md-dry" id="dry"></ul>
+    <h3>What would have changed it</h3>
+    <p class="fine">Each line replays your game with one extra step in 2027 (orders trimmed to pay for it), against the same war and your same rationing.</p>
+    <ol class="md-cf" id="cf"><li>Working it out…</li></ol>
+    <button type="button" class="btn solid" id="again">Play again</button>
+  </section>
+
+  <section class="card md-about">
+    <details>
+      <summary><b>How the game works</b></summary>
+      <ul>
+        <li><b>Each year</b> you get a budget (it grows a little when warnings rise: the money comes when it is hardest to spend). You pay only for what is delivered; money a bottleneck stops you spending is lost.</li>
+        <li><b>Lines</b> make at most their capacity a year. An expansion takes two to four years to arrive. Trained workers raise output and, in war, how far a line can surge.</li>
+        <li><b>Sub-tier suppliers</b> (energetics, rocket motors, seekers and microelectronics, castings and forgings) are shared across lines. Their real capacity is hidden until you audit them or they run short. A second source adds capacity after a lead time and softens disruptions.</li>
+        <li><b>Multiyear contracts</b> cut unit cost and commit you to a minimum order for five years. Two years in, the demand signal leads suppliers to grow that line and its component makers at their own expense.</li>
+        <li><b>Co-production</b> with a partner adds cheaper output that needs none of your components, but the partner may keep its share, in peace and in war.</li>
+        <li><b>New types</b> count for more in war than old ones, which lose value as the threat moves on; the line slows for two years while it changes over.</li>
+        <li><b>War</b> runs up to 26 weeks. Each class has a weekly demand. Production surges only from lines and suppliers already built, and enemy strikes hit suppliers. The line holds while the front gets what it needs; it gives ground fast when a class runs dry. Below 35 is critical shortfall and the war is lost. If no war comes, the computer fights a stress test with what you built.</li>
+        <li><b>Score</b>: days sustained (60 points), readiness when the war began (25: weeks of stock, second sources and workforce) and peacetime cost efficiency (15: list-price value delivered per dollar). The benchmark is the computer playing your seat.</li>
+      </ul>
+      <p class="fine" id="balance-note">All numbers are illustrative. In 1,000 computer games per strategy: buying stock only scored a median of 71 (the line held a median of 119 days); expanding capacity first, 71 (126 days, but only 77 when the war came after three years); the balanced computer, 81 (140 days). No strategy held all 182 days. No war came in about 20% of games.</p>
+      <p class="fine">Real-world orders of magnitude, from public reporting: in CSIS war games the United States ran out of some long-range precision munitions in less than a week of a Taiwan Strait conflict; replacing major inventories at surge rates was estimated to take years; some missiles take about two years to produce; and new factory capacity takes 18 to 24 months or more (Seth G. Jones, <a href="https://www.csis.org/analysis/empty-bins-wartime-environment-challenge-us-defense-industrial-base" target="_blank" rel="noopener"><i>Empty Bins in a Wartime Environment</i></a>, CSIS, January 2023). The game's own numbers are not drawn from that report.</p>
+    </details>
+  </section>
+</main>
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Magazine Depth', sub: 'A production-and-war game: build a notional munitions industry for ten years, then see how long its stocks last when a war starts.', category: 'Force & wargame models' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

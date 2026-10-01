@@ -82,8 +82,10 @@
       </div>
       <div class="choices sh-tools" id="tools" role="group" aria-label="Actions"></div>
       <div class="sh-lineopt" id="lineopt" hidden>
-        <span>Line heading <b class="num" id="line-ang">90°</b></span>
-        <button type="button" class="btn" id="rotate" aria-keyshortcuts="R">Rotate 30° (R)</button>
+        <svg class="sh-compass" id="line-glyph" viewBox="-12 -12 24 24" aria-hidden="true"><circle r="11"/><path d="M0 -11V-8.5"/><line id="line-glyph-axis" x1="0" y1="-8" x2="0" y2="8"/></svg>
+        <span>Axis <b class="num" id="line-ang" aria-live="polite">90°</b> <span class="muted" id="line-dir">E–W</span></span>
+        <span class="sh-rot"><button type="button" class="btn" id="rotate-ccw" aria-keyshortcuts="Shift+R" aria-label="Rotate the buoy line 22.5° counterclockwise" title="Counterclockwise (Shift+R)">⟲</button>
+        <button type="button" class="btn" id="rotate" aria-keyshortcuts="R" aria-label="Rotate the buoy line 22.5° clockwise" title="Clockwise (R)">⟳ Rotate <kbd>R</kbd></button></span>
       </div>
       <div class="sh-row">
         <div class="sh-queue"><span class="eyebrow">This turn</span><ul id="queue"></ul></div>
@@ -121,7 +123,7 @@
         <dt>Arrows</dt><dd>move the crosshair on the map (Shift for bigger steps)</dd>
         <dt>Enter</dt><dd>use the action at the crosshair</dd>
         <dt>B</dt><dd>jump the crosshair to the brightest spot</dd>
-        <dt>R</dt><dd>rotate the buoy line</dd>
+        <dt>R / Shift+R</dt><dd>turn the buoy line 22.5° clockwise / counterclockwise (8 axes; the mouse wheel over the map does the same)</dd>
         <dt>U</dt><dd>undo the last queued action</dd>
         <dt>E</dt><dd>end the turn</dd>
       </dl>
@@ -133,7 +135,7 @@
   <div class="col">
     <h2>How it works</h2>
     <p><b>The goal.</b> A report put a submarine within 35 nm of the ring's centre 4 hours before the hunt starts, so by hour 0 it could be well outside the ring. Hit it with an attack before it slips out through one of the gaps into the Atlantic or the 24 hours (12 turns of 2 hours) run out.</p>
-    <p><b>Each turn.</b> You get 6 effort points; unspent points carry over, up to 12. Spend them on as many actions as they cover. Buoy lines and circles cost 2 each and come from a stock of 10 patterns for the whole hunt. The aircraft box costs 3. A helicopter dip costs 3 and must be within 50 nm of your ship. Moving the ship is free; sprinting it costs 1 and leaves it deaf for the turn. An attack costs 3, and you have 2. Undo takes back the last action queued this turn. End turn resolves any attack first, against where the sub is now, then plays two hours.</p>
+    <p><b>Each turn.</b> You get 6 effort points; unspent points carry over, up to 12. Spend them on as many actions as they cover. Buoy lines and circles cost 2 each and come from a stock of 10 patterns for the whole hunt. A buoy line can be laid on any of 8 axes, 22.5° apart: turn it with the rotate buttons, R and Shift+R, or the mouse wheel, and the map shows where it will lie before you click. The aircraft box costs 3. A helicopter dip costs 3 and must be within 50 nm of your ship. Moving the ship is free; sprinting it costs 1 and leaves it deaf for the turn. An attack costs 3, and you have 2. Undo takes back the last action queued this turn. End turn resolves any attack first, against where the sub is now, then plays two hours.</p>
     <p><b>The trade-offs.</b> Wide tools (the aircraft box, a buoy line) cover a lot of water cheaply but place a contact only roughly, and the aircraft mostly hears sprints. Narrow tools (a helicopter dip, a buoy circle) cost more per square mile but pin the sub down. Spending now finds the sub sooner; saving lets you pounce with several dips and an attack in one turn.</p>
     <p><b>The glow.</b> The orange glow is your probability map. It spreads every hour because the sub moves. A sensor that hears nothing lowers the odds where it listened and, because the sub must be somewhere, raises them everywhere else. A contact pulls the odds toward it, by an amount that depends on its stated error; some contacts are noise. A sharp contact makes the glow shrink to a small bright patch.</p>
     <h3>The four habits</h3>
@@ -142,7 +144,7 @@
     <p><b>Afterwards.</b> The review names the habit, draws the sub's true track against your searches, lists where you nearly had it, and replays the hunt hour by hour. The link in the address bar replays your exact hunt.</p>
 
     <h2 class="mt">Method and notional values</h2>
-    <p>Detection follows classical search theory. The buoy circle and the aircraft box use Koopman's random search formula, P = 1 − e<sup>−WL/A</sup>, where W is the sweep width, L the length of search track and A the area (Koopman 1946, p. 28). For the circle, which sits still, the sub's own speed supplies the track length, so a slow sub is hard to hear. The ship's towed array uses a lateral range curve, the chance of detection against how close the sub passes, whose area is the sweep width (Koopman, p. 24). The buoy line uses plain geometry, and the helicopter dip and the listening network use flat chances.</p>
+    <p>Detection follows classical search theory. The buoy circle and the aircraft box use Koopman's random search formula, P = 1 − e<sup>−WL/A</sup>, where W is the sweep width, L the length of search track and A the area (Koopman 1946, p. 28). For the circle, which sits still, the sub's own speed supplies the track length, so a slow sub is hard to hear. The ship's towed array uses a lateral range curve, the chance of detection against how close the sub passes, whose area is the sweep width (Koopman, p. 24). The buoy line uses plain geometry: its twelve buoys sit evenly along whichever of the 8 axes you choose, and a sub is heard with a fixed chance if its track that hour crosses the line between its end buoys, so a diagonal line is tested along the diagonal. The helicopter dip and the listening network use flat chances.</p>
     <p>The probability map is a particle filter: 4,000 possible submarines, each given one of the four habits and moved by the same rules as the real one, each reweighted every hour by Bayes' rule given what your sensors did and did not hear. A missed attack is information too: it rules out the ring. Stone et al. (2014) used the same representation in the Air France 447 search, and name the 1968 search for USS Scorpion as an earlier success of the Bayesian approach. The 4-hour-old report is a version of the "flaming datum" problem: the longer since the sub was placed, the larger the area it could be in (Washburn 1980).</p>
     <p>The four habits are <span class="notional">notional</span> teaching devices, chosen to be learnable. They are not drawn from any source on how real submarines are handled, and nothing here describes real tactics. Your map knows the true rules; real searchers never do. The only unknowns here are the habit, the gap, the timing and the dice, so treat your score as an upper bound.</p>
     <p>The coastlines are Natural Earth. Everything tactical is <span class="notional">notional</span>: the sensors, ranges and sweep widths, the aircraft, helicopter and ship performance, the sub's speeds, habits and routes, the patrol points, the start area, false-contact rates, the effort costs and the attack radius. None describes a real system, patrol area or operation. The table lists every value.</p>

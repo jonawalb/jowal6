@@ -28,9 +28,25 @@ export const circleP = (mode, v) => randomSearch(C.n * 2 * C.rDet[mode], Math.ma
 export const airP = mode => randomSearch(A.W[mode], A.L, AIR_AREA);
 export const lineP = mode => Math.min(0.95, 2 * LN.rDet[mode] / SPACING);
 
+/** Buoy lines lie on 8 axes 22.5° apart (a line at θ and θ + 180° is the same line). 90° is east–west. */
+export const AXIS_STEP = 180 / 8;
+export const AXES = Array.from({ length: 8 }, (_, k) => k * AXIS_STEP);
+/** The axis (degrees in [0, 180)) nearest a heading. */
+export const snapAxis = ang => (Math.round((((ang % 180) + 180) % 180) / AXIS_STEP) % 8) * AXIS_STEP;
+/** A line's stored heading: one of the 8 axes, or (from older links) a whole degree in [0, 180). */
+export function lineHeading(ang) {
+  const a = ((ang % 180) + 180) % 180, k = a / AXIS_STEP;
+  return Math.abs(k - Math.round(k)) < 1e-6 ? snapAxis(a) : Math.round(a) % 180;
+}
+
 /** A buoy line centred on p at heading ang: its two ends. */
 export function lineEnds(p, ang) {
   return [step(p, ang, LN.len / 2), step(p, ang + 180, LN.len / 2)];
+}
+
+/** The line's buoys, evenly spaced (len / (n - 1) nm apart) along its axis from ends[0] to ends[1]. */
+export function buoyPoints(p, ang) {
+  return Array.from({ length: LN.n }, (_, k) => step(p, ang, LN.len / 2 - k * SPACING));
 }
 
 /** Build an asset placed during turn t (clock hour t*2). Hours are numbered from 1. */

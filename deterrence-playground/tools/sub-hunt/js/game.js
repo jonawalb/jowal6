@@ -5,7 +5,7 @@
 import { GAME, SENSORS, DATUM_BOX, ACTIONS } from '../data/params.js';
 import { makeRng, STREAM } from './rng.js';
 import { spawn, stepSub, alert } from './sub.js';
-import { makeAsset, activeAt, rollContacts } from './sensors.js';
+import { makeAsset, activeAt, rollContacts, lineHeading } from './sensors.js';
 import { createFilter, predict, update, missed, maybeResample, pOut, pWithin, heat, smooth, centre, bestShot, behOdds } from './filter.js';
 import { dist, bearing, sail, isLand, BOX } from './geo.js';
 
@@ -74,12 +74,15 @@ export function why(g, type, p) {
   return '';
 }
 
-/** Queue an action. For a buoy line, ang is its heading in degrees. Returns the new asset/order, or null. */
-export function place(g, type, p, ang = 0) {
+/**
+ * Queue an action. For a buoy line, ang is the compass heading of its axis in degrees (90 = east–west, the
+ * default); the page offers the 8 axes 22.5° apart. Returns the new asset/order, or null.
+ */
+export function place(g, type, p, ang = 90) {
   if (why(g, type, p)) return null;
   p = p.map(R2);
   const e = { t: g.turn, k: CODE[type], p };
-  if (type === 'line') e.a = Math.round(((ang % 180) + 180) % 180);
+  if (type === 'line') e.a = lineHeading(ang);
   if (type === 'move' || type === 'dash') {
     const old = shipOrder(g);
     if (old) g.log.splice(g.log.indexOf(old), 1);
@@ -90,7 +93,7 @@ export function place(g, type, p, ang = 0) {
     return e;
   }
   if (type === 'attack') { g.log.push(e); return e; }
-  const a = makeAsset(type, p, hourOf(g), g.nextId++, e.a || 0);
+  const a = makeAsset(type, p, hourOf(g), g.nextId++, type === 'line' ? e.a : 0);
   g.count[type] += 1;
   a.name = `${PREFIX[type]}${g.count[type]}`;
   if (ACTIONS[type].stock === 'buoys') g.buoys -= 1;
@@ -184,7 +187,7 @@ export function endTurn(g) {
 export function replay(opts, log, n) {
   const g = newGame(opts);
   for (let t = 0; t <= n && !g.over; t++) {
-    for (const e of log.filter(x => x.t === t)) place(g, TYPE[e.k], e.p, e.a || 0);
+    for (const e of log.filter(x => x.t === t)) place(g, TYPE[e.k], e.p, e.a ?? 90);
     if (t < n && !g.over) endTurn(g);
   }
   return g;

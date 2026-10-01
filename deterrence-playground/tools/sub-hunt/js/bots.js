@@ -2,7 +2,7 @@
 // the same public actions a person uses. They are rules of thumb, not optimal play.
 import { GAME, SENSORS, ROUTES, ACTIONS } from '../data/params.js';
 import { place, endTurn, newGame, effortLeft, lastSnap, why } from './game.js';
-import { activeAt, covers, makeAsset, pDetect } from './sensors.js';
+import { activeAt, covers, makeAsset, pDetect, snapAxis } from './sensors.js';
 import { cellCenter } from './filter.js';
 import { dist, bearing, step, seaPointNear } from './geo.js';
 import { makeRng } from './rng.js';
@@ -49,19 +49,19 @@ export const STRATEGIES = {
     for (let k = 0; k < 6 && effortLeft(g) > 0; k++) {
       const t = types[Math.floor(rng.u() * types.length)];
       const p = t === 'helo' ? seaPointNear(rng, g.ship.p, SENSORS.helo.range) : seaPointNear(rng, g.datum, 90);
-      place(g, t, p, rng.u() * 180);
+      place(g, t, p, snapAxis(rng.u() * 180));
     }
     if ((lastTurn(g) || rng.u() < 0.08) && g.torps > 0) place(g, 'attack', seaPointNear(rng, g.datum, 60));
   },
 
-  /** Lays buoy lines across the two southern gaps' approaches and relays them; checks contacts with the helicopter. */
+  /** Lays buoy lines across the two southern gaps' approaches (on the nearest of the 8 axes) and relays them; checks contacts with the helicopter. */
   barrier(g) {
     attackIf(g, 0.45);
     if (g.turn % 4 === 0 && g.buoys >= 2) {
       const along = [45, 95, 140][g.turn / 4] || 140;
       for (const r of ROUTES.slice(1)) {
         const brg = bearing(g.datum, r.pts[0]);
-        place(g, 'line', step(g.datum, brg, Math.min(along, dist(g.datum, r.pts[0]))), brg + 90);
+        place(g, 'line', step(g.datum, brg, Math.min(along, dist(g.datum, r.pts[0]))), snapAxis(brg + 90));
       }
     }
     const best = lastSnap(g).best;

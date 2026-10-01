@@ -3,8 +3,8 @@
 import { el } from '../../../shared/js/mapkit.js';
 import { SENSORS, GAME, PATROL } from '../data/params.js';
 import { P, proj, ring, boxPath, wedgePath, setHeat } from './map.js';
-import { activeAt } from './sensors.js';
-import { step } from './geo.js';
+import { activeAt, buoyPoints } from './sensors.js';
+import { step, isLand } from './geo.js';
 
 const S = SENSORS;
 const LAB_OFF = { circle: S.circle.r, helo: S.helo.r, air: S.air.half };
@@ -19,9 +19,9 @@ function drawAsset(L, a, h, queued, reveal, u) {
   else d = ring(a.p, a.type === 'circle' ? S.circle.r : S.helo.r);
   el('path', { d, class: cls }, L);
   if (a.type === 'line') {
-    for (let k = 0; k < S.line.n; k++) {
-      const t = k / (S.line.n - 1), q = [a.ends[0][0] + t * (a.ends[1][0] - a.ends[0][0]), a.ends[0][1] + t * (a.ends[1][1] - a.ends[0][1])];
-      el('circle', { cx: P(q)[0], cy: P(q)[1], r: 2.6 * u, class: `sh-buoy${done ? ' done' : ''}` }, L);
+    // A buoy that would fall on land or off the game area is drawn hollow: no sub can pass there.
+    for (const q of buoyPoints(a.p, a.ang)) {
+      el('circle', { cx: P(q)[0], cy: P(q)[1], r: 2.6 * u, class: `sh-buoy${done ? ' done' : ''}${isLand(q[0], q[1]) ? ' dry' : ''}` }, L);
     }
   }
   const at = a.type === 'line' ? P(a.ends[0]) : P(step(a.p, 180, LAB_OFF[a.type]));

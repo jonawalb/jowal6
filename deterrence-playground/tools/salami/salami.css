@@ -67,6 +67,22 @@ body { --k-c: var(--ph, #a88000); --k-p: var(--ccg, #b0306e); --k-a: var(--ally,
 .sl-check input { margin: 3px 0 0; accent-color: var(--accent); }
 .sl-check:has(input:disabled) { opacity: .5; cursor: not-allowed; }
 
+/* Normal at the shoal */
+.sl-normal { padding: 10px 12px; }
+.sl-normal h3 { margin: 0 0 6px; font-size: 15px; }
+.sl-norm { list-style: none; margin: 0 0 8px; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 3px; }
+.sl-norm li { position: relative; padding: 5px 4px 18px; border-radius: 3px; background: var(--chip); font-size: 11.5px; text-align: center; border-top: 3px solid var(--rule); }
+.sl-norm li b { display: block; font-size: 12px; line-height: 1.2; }
+.sl-norm li span { color: var(--muted); }
+.sl-norm li.normal, .sl-norm li.base { background: color-mix(in srgb, var(--k-p) 16%, var(--chip)); border-top-color: var(--k-p); }
+.sl-norm li.tipping { border-top-color: var(--warn); background: color-mix(in srgb, var(--warn) 14%, var(--chip)); }
+.sl-norm li.top i { position: absolute; left: 0; right: 0; bottom: 2px; font: 700 10px var(--mono); font-style: normal; color: var(--k-p); text-transform: uppercase; }
+.sl-normx { margin: 0 0 6px; padding-left: 18px; font-size: 13px; }
+.sl-n { font-style: normal; font-size: 11px; font-weight: 600; padding: 0 5px; border-radius: 3px; background: color-mix(in srgb, var(--k-p) 20%, transparent); }
+.sl-n.tip { background: color-mix(in srgb, var(--warn) 25%, transparent); }
+.sl-answer { font-size: 13px; margin: 4px 0; }
+.sl-answer:empty { display: none; }
+
 /* Resolve */
 .sl-resolve { border-left: 4px solid var(--accent); }
 .sl-resolve:focus { outline: none; }
@@ -96,6 +112,7 @@ body { --k-c: var(--ph, #a88000); --k-p: var(--ccg, #b0306e); --k-a: var(--ally,
 
 @media (max-width: 1180px) { .sl-grid { grid-template-columns: 220px minmax(0, 1fr); } .sl-decide { grid-column: 1 / -1; } }
 @media (max-width: 760px) {
+  .sl-norm { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .sl-grid, .sl-beliefs, .sl-endb { grid-template-columns: minmax(0, 1fr); }
   .sl-seats, .sl-reveal { grid-template-columns: minmax(0, 1fr); }
   .sl-row3 { grid-template-columns: minmax(0, 1fr); }

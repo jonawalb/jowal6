@@ -2,6 +2,8 @@
 import { LEVELS, METHODS, C_MSGS, P_MSGS, R_VALUES, R_PRIOR, T_VALUES, T_PRIOR } from '../data/params.js';
 import { M, baseE, deliveryOdds, encounters, provocation, tAdj } from './engine.js';
 import { pIntervene, pSpike } from './belief.js';
+import { isAnswer, isNormal, unanswered } from './normal.js';
+import { NORM } from '../data/params.js';
 import { paintBelief, levelLabel, COL } from './view.js';
 
 const $ = id => document.getElementById(id);
@@ -29,7 +31,8 @@ export function paintDecide(g) {
     box.innerHTML = `<fieldset><legend>Interdiction <span class="muted">against a ${M[lm].label.toLowerCase()} like last month</span></legend>${LEVELS.map((lv, i) => {
       const deny = M[lm].cargo * (deliveryOdds(s, { method: lm, push: false }, { level: 0 }) - deliveryOdds(s, { method: lm, push: false }, { level: i }));
       const pi = pIntervene(s.bR, baseE(s, i, lm)), pio = pIntervene(s.bR, baseE(s, i, 'patron'));
-      return radio('level', i, ch.level === i, `<span><b><i class="num">${i}</i> ${lv.label}</b><small>${lv.text}</small></span><span class="sl-odds num">−${deny.toFixed(1)} mo<small>Patron acts ${pct(pi)}${pio > pi + 0.01 ? ` · ${pct(pio)} with observers` : ''}</small></span>`, pi >= 0.3 ? 'hot' : '');
+      const tag = i >= 1 && i <= 4 ? (isNormal(s, i) ? ' <em class="sl-n">normal</em>' : unanswered(s, i) === NORM.need - 1 ? ' <em class="sl-n tip">1 from normal</em>' : '') : '';
+      return radio('level', i, ch.level === i, `<span><b><i class="num">${i}</i> ${lv.label}</b>${tag}<small>${lv.text}</small></span><span class="sl-odds num">−${deny.toFixed(1)} mo<small>Patron acts ${pct(pi)}${pio > pi + 0.01 ? ` · ${pct(pio)} with observers` : ''}</small></span>`, pi >= 0.3 ? 'hot' : '');
     }).join('')}</fieldset>
     <fieldset><legend>Messaging</legend><div class="sl-row3">${P_MSGS.map(m => radio('pmsg', m.id, ch.msg === m.id, `<span><b>${m.label}</b><small>${m.text}</small></span>`)).join('')}</div></fieldset>
     <label class="sl-check"><input type="checkbox" id="hold" ${ch.hold ? 'checked' : ''}><span><b>If they push through, hold course.</b> Halves their gain, risks a collision.</span></label>
@@ -48,10 +51,14 @@ export function paintReadout(g) {
     $('belief-a-t').textContent = 'Where is the Patron’s red line?';
     $('belief-a-x').innerHTML = `Bars: your belief about the lowest rung at which the Patron intervenes (dashed: where you started). The marker is what the Patron would see from your choice: everything left of it is a line you would cross. <b>Chance it intervenes: ${pct(pIntervene(s.bR, E))}.</b>`;
     $('belief-b-wrap').hidden = true;
+    $('answer-x').innerHTML = '';
   } else {
     const enc = encounters(s.lastLevel, ch.method), Pv = provocation(ch, enc);
     paintBelief($('belief-a'), { prior: T_PRIOR, post: s.bT, labels: T_VALUES.map(String), mark: Pv - 1, color: COL.p });
     $('belief-a-t').textContent = 'How much will the Power take?';
+    const tipping = NORM.rungs.filter(r => !isNormal(s, r) && unanswered(s, r) === NORM.need - 1).map(r => LEVELS[r].label.toLowerCase());
+    const ans = isAnswer(ch, Math.max(1, s.lastLevel), true);
+    $('answer-x').innerHTML = `${ans ? '<b>This answers the Power</b> if it meets you (+2 escalation risk, angers the Power).' : '<b>This does not answer the Power.</b> If it uses a gray-zone rung on you, that counts toward making it normal.'}${tipping.length ? ` One more unanswered use makes <b>${tipping.join(', ')}</b> normal.` : ''}`;
     $('belief-a-x').innerHTML = `Bars: your belief about the provocation level at which the Power snaps and jumps two rungs the next month. This choice provokes <b>${Pv}</b>${tAdj(s) ? ' (its home pressure is high: it snaps a rung sooner)' : ''}. <b>Chance it snaps: ${pct(pSpike(s.bT, Pv, tAdj(s)))}.</b>`;
     $('belief-b-wrap').hidden = false;
     paintBelief($('belief-b'), { prior: R_PRIOR, post: s.bR, labels: rLabels, color: COL.a });

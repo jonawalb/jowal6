@@ -49,6 +49,7 @@
           <div><h3 id="belief-a-t"></h3><svg id="belief-a" viewBox="0 0 320 150" role="img" aria-label="Your belief about the hidden threshold"></svg><p class="fine" id="belief-a-x"></p></div>
           <div id="belief-b-wrap"><h3>Where is the Patron’s red line?</h3><svg id="belief-b" viewBox="0 0 320 150" role="img" aria-label="Shared belief about the Patron's line"></svg><p class="fine">Both sides see the same statements and responses, so this belief is common ground: the lowest rung of the Power’s ladder at which the Patron intervenes.</p></div>
         </div>
+        <div class="card sl-normal" id="normal" aria-live="polite"></div>
         <div class="card sl-feed" id="feed" aria-live="polite"></div>
         <section class="card sl-resolve" id="resolve" hidden aria-labelledby="res-t" tabindex="-1">
           <h2 id="res-t"></h2>
@@ -60,6 +61,7 @@
       <section class="card sl-decide" id="decide" aria-labelledby="dec-t">
         <h2 id="dec-t">Your move</h2>
         <div id="decide-body"></div>
+        <p class="sl-answer" id="answer-x" aria-live="polite"></p>
         <p class="fine">Odds assume the other side repeats last month. Both sides move at once.</p>
       </section>
     </div>
@@ -77,9 +79,11 @@
       <div><p class="fine">Final belief about the Patron’s line</p><svg id="end-r" viewBox="0 0 320 150" role="img" aria-label="Final belief about the Patron's line, with the true value marked"></svg></div>
       <div><p class="fine" id="end-t2-t"></p><svg id="end-t2" viewBox="0 0 320 150" role="img" aria-label="Final belief about the Power's threshold, with the true value marked"></svg></div>
     </div>
+    <h3>What became normal</h3>
+    <p id="lessons"></p>
     <h3>How close each move came</h3>
     <p class="fine" id="closest"></p>
-    <p class="fine">Top: the rung the Patron saw each month (grey silence, blue concern, amber warning, red intervention) against its line. Bottom: Coastal provocation against the Power’s threshold; red dots made the Power snap the next month.</p>
+    <p class="fine">Top: the rung the Patron saw each month (grey silence, blue concern, amber warning, red intervention) against its line, with the normal baseline as a step line. Bottom: Coastal provocation against the Power’s threshold; red dots made the Power snap the next month.</p>
     <svg id="timeline" viewBox="0 0 640 300" role="img" aria-label="Month by month, each side's moves against the other's hidden threshold"></svg>
     <button type="button" class="btn solid" id="again">Play again</button>
   </section>
@@ -92,10 +96,11 @@
         <li><b>Supplies.</b> The garrison starts with 3 months and eats 1.4 a month. At zero it withdraws. Each method has odds of landing its cargo against each rung; weather and the Patron’s ships change them.</li>
         <li><b>The Patron’s hidden line.</b> The Patron intervenes when the rung it sees reaches its line. Observers aboard, injuries, detentions and a surge of international sympathy each add a rung; last month’s heavy Coastal provocation takes one off. Below the line it stays silent, voices concern or warns; its monthly statements are noisy hints.</li>
         <li><b>The Power’s hidden threshold.</b> Provoke the Power past its threshold and it will probably snap: two rungs up the next month.</li>
+        <li><b>Normalization.</b> If the Power uses a gray-zone rung (block, water cannon, ram, board) unanswered in 2 of any 6 months, it becomes <b>normal</b>: it then draws far less sympathy and escalation, the Patron sees it as a rung milder, and the Coastal State loses sympathy and credibility at once. Protest, court, journalists, observers or an escort pushing through count as answers; they cost escalation risk and anger the Power. Answering 3 of a normal rung’s last 4 uses, or a Patron warning, pushes it back.</li>
         <li><b>Beliefs.</b> The bars show a Bayesian belief, updated every month from what each side does. You only pin a line down by testing it.</li>
         <li><b>Endings.</b> The Coastal State wins by holding twelve months without war; the Power by forcing withdrawal without a Patron intervention. A clash at the shoal, more likely when escalation risk is high and the Patron’s ships are there, means everyone loses.</li>
       </ul>
-      <p class="fine">In 1,000 test games with the computer on both sides, the Coastal State held 49% of the time, the Power forced a clean withdrawal 27%, a withdrawal came only after the Patron intervened 19%, and 5% ended in a clash. A Coastal State that sent only civilian boats and kept quiet held 13%; a Power that went straight to a cordon won 10%. The method notes (METHOD.md) give every number.</p>
+      <p class="fine">In 1,000 test games with the computer on both sides, the Coastal State held 40% of the time, the Power forced a clean withdrawal 30%, a withdrawal came only after the Patron intervened 21%, and 9% ended in a clash. A Coastal State that never answered the Power held 26% (and let ramming become normal in a third of games); one that answered every encounter held 28%, paying in escalation and clashes (14%). Against a Coastal State that never answers, a Power that slices one rung above the normal won 59%; one that jumped straight to ramming won 51% and fought 21% of the time. The method notes (METHOD.md) give every number.</p>
     </details>
   </section>
 </main>

@@ -1,7 +1,7 @@
 // The peace forum (Batch B). The month after a capital's offer of talks succeeds (Taiwan's openness to talks, the
 // U.S. back channel, Beijing's talks offer, Japan's mediation) it may, once a game, call a forum to end the conflict,
 // addressed to a rival. The rival accepts with probability
-//   P = 1 / (1 + e^−z),  z = k0 − kR·R − kA·A + kC·C − kE·E + kL·L (+ a hidden-trait term, Batch C), kept 3–95%,
+//   P = 1 / (1 + e^−z),  z = k0 − kR·R − kA·A + kC·C − kE·E + kL·L + trait, kept 3–95%,
 // every factor on 0–1 (coefficients in data/params.js, P.forum):
 //   R resolve        = 0.6 × type (resolute 1, opportunist 0.6 or 0.9 with an opening, cautious 0.2) + 0.4 × home support
 //   A anger          = anger at the proposer / 50 (strikes and losses it caused; mainland strikes count most; decays)
@@ -9,6 +9,7 @@
 //   E expected gains = 0.45 force balance at sea (as the recipient sees it through the fog) + 0.35 Taiwan's position
 //                      (its inverse for China) + 0.2 landing progress (China) or its absence (the others)
 //   L limited aims   = the recipient's belief that the proposer is cautious, plus half its belief it is opportunist
+//   trait            = the recipient's hidden leader trait, if traits are on (js/traits.js); left out of estimates
 // Accepted: a ceasefire next month, the ladder down a rung, and a settlement if the ceasefire holds. Declined: a
 // small loss of credibility for the proposer. Pure functions; the engine calls them. Illustrative, not a model of
 // any real government's decision.
@@ -28,7 +29,7 @@ export const FORUM_ID = { tw: 'tw_forum', us: 'us_forum', cn: 'cn_forum', jp: 'j
 export const FORUM_BY = Object.fromEntries(Object.entries(FORUM_ID).map(([w, id]) => [id, w]));
 /** Whom a forum call is addressed to: Beijing for the coalition; Washington or Taipei for Beijing. */
 export const forumTo = (who, o = {}) => (who === 'cn' ? (o.to === 'tw' ? 'tw' : 'us') : 'cn');
-/** Hidden leader traits (Batch C) add to z here; none yet. */
+/** Hidden leader traits (Batch C, js/traits.js) add to z here: s.traitForum[who], zero without traits. */
 export const traitTerm = (s, who) => (s.traitForum?.[who] || 0);
 
 // Anger a successful move causes in its target (× the result, so a partial counts half). Mainland strikes weigh most.
@@ -71,7 +72,8 @@ export function forumFactors(s, from, to, view = {}) {
   const A = c01((s.anger?.[to]?.[from] || 0) / F.angerScale);
   const C = oppCost(s, to, !!view.est), E = gains(s, to, view.obs || to);
   const L = c01(view.lim ?? limitedOf(COUNTRIES[from].prior));
-  const terms = { R: -F.kR * R, A: -F.kA * A, C: F.kC * C, E: -F.kE * E, L: F.kL * L }, trait = traitTerm(s, to);
+  // A trait is hidden: a rival's estimate (est) leaves it out; the leader's own weighing includes it.
+  const terms = { R: -F.kR * R, A: -F.kA * A, C: F.kC * C, E: -F.kE * E, L: F.kL * L }, trait = view.est ? 0 : traitTerm(s, to);
   const z = F.k0 + Object.values(terms).reduce((t, x) => t + x, 0) + trait;
   const p = Math.max(F.clamp[0], Math.min(F.clamp[1], 1 / (1 + Math.exp(-z))));
   return { R, A, C, E, L, terms, trait, z, p };

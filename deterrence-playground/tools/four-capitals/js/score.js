@@ -17,13 +17,14 @@ export function score(s, who, weights) {
 export const playOut = start => playOutFrom(newGame(start), start);
 
 /** Benchmark totals for the player's seat over n replays from the same seat, types and weights.
- * Replays vary the dice (seed offsets) but keep the hidden types the player had. */
+ * Replays vary the dice (seed offsets) but keep the hidden types the player had, the scenario, and (Batch C) the
+ * hidden traits (`start.leaders`; the player's seat has none, so neither has the computer playing it). */
 export function benchmark(start, n = P.benchRuns) {
   const out = [];
   for (let i = 1; i <= n; i++) {
     const seed = (start.seed * 31 + i * 7919) >>> 0;
     const s0 = newGame({ ...start, seed });
-    const s = playOutFrom({ ...s0, types: start.types }, start);
+    const s = playOutFrom({ ...s0, types: start.types, ...(start.leaders ? { traits: start.leaders } : {}) }, start);
     out.push(score(s, start.player, start.weights).total);
   }
   return out;

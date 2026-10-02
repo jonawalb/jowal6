@@ -35,7 +35,7 @@ export function paintForces(G) {
     const cur = o ? o[1] : f.type === 'strike' ? (u.focus || 'none') : '';
     const sel = !opts.length ? `<span class="muted">${u.at === 'transit' ? etaText(u.eta ?? s.turn).replace(/^a/, 'A') : f.type === 'land' ? 'Stays home; can follow a landing' : 'Cannot move'}</span>`
       : `<select data-ord="${u.id}" aria-label="Order for ${esc(f.name)}">${f.type === 'strike' ? '' : `<option value="">Stay</option>`}${opts.map(x =>
-        `<option value="${x.to}" ${cur === x.to ? 'selected' : ''} ${x.ok || cur === x.to ? '' : 'disabled'}>${esc(x.label)}${x.cost.lift || x.cost.fuel ? ` · L${n1(x.cost.lift)} F${n1(x.cost.fuel)}` : ''}${x.ok ? '' : ' (can’t afford)'}</option>`).join('')}</select>`;
+        `<option value="${x.to}" ${cur === x.to ? 'selected' : ''} ${x.ok || cur === x.to ? '' : 'disabled'}>${esc(x.label)}${x.cost.lift || x.cost.fuel ? ` · ${[x.cost.lift ? `${n1(x.cost.lift)} lift` : '', x.cost.fuel ? `${n1(x.cost.fuel)} fuel` : ''].filter(Boolean).join(', ')}` : ''}${x.ok ? '' : ' (can’t afford)'}</option>`).join('')}</select>`;
     return `<tr><th scope="row"><span title="${esc(TYPES[f.type].text)}">${esc(f.name)}</span><small>${TYPES[f.type].label} · ${esc(where)}</small></th><td class="num">${n1(u.str)}</td>
       <td class="num ${u.ready < 50 ? 'low' : ''}">${u.ready}</td><td>${sel}</td></tr>`;
   }).join('');

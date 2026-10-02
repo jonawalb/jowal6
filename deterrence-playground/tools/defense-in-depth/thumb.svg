@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+  <defs>
+    <marker id="h" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#1b4fd4"/></marker>
+    <linearGradient id="lane" x1="0" x2="1"><stop offset="0" stop-color="#e08a1e" stop-opacity=".8"/><stop offset="1" stop-color="#e08a1e" stop-opacity=".1"/></linearGradient>
+  </defs>
+  <rect width="640" height="400" fill="#e9e4d4"/>
+  <rect x="0" y="22" width="640" height="96" fill="#dfe4dc"/>
+  <rect x="0" y="126" width="640" height="104" fill="#d4ddd6"/>
+  <rect x="0" y="238" width="640" height="76" fill="#dfe4dc"/>
+  <path d="M0 14H640" stroke="#14201a" stroke-width="2" stroke-dasharray="10 7"/>
+  <g fill="none" stroke="#97a197" stroke-width="2.5" stroke-linejoin="round">
+    <path d="M10 96L40 90L70 96L100 90L130 96L160 90L190 96L220 90L250 96L280 90L310 96L340 90L370 96L400 90L430 96L460 90L490 96L520 90L550 96L580 90L610 96L630 92"/>
+    <path d="M10 196L34 190L58 196L82 190L106 196L130 190L154 196L178 190L202 196L226 190L250 196L274 190L298 196L322 190L346 196L370 190L394 196L418 190L442 196L466 190L490 196L514 190L538 196L562 190L586 196L610 190L630 196"/>
+    <path d="M10 288L38 282L66 288L94 282L122 288L150 282L178 288L206 282L234 288L262 282L290 288L318 282L346 288L374 282L402 288L430 282L458 288L486 282L514 288L542 282L570 288L598 282L630 288"/>
+  </g>
+  <path d="M30 318 L620 304 L620 332 L30 322Z" fill="url(#lane)"/>
+  <rect x="10" y="306" width="30" height="22" rx="2" fill="#fbfbf8" stroke="#1b4fd4" stroke-width="3"/>
+  <g fill="#fbfbf8" stroke="#1b4fd4" stroke-width="3.5">
+    <circle cx="90" cy="262" r="7"/><circle cx="190" cy="274" r="7"/><circle cx="300" cy="262" r="7"/><circle cx="520" cy="274" r="7"/><circle cx="600" cy="262" r="7"/>
+    <rect x="70" y="150" width="44" height="28"/><rect x="230" y="176" width="44" height="28"/><rect x="530" y="150" width="44" height="28"/>
+    <rect x="236" y="38" width="168" height="54"/>
+  </g>
+  <path d="M236 38L404 92M404 38L236 92" stroke="#1b4fd4" stroke-width="2.5"/>
+  <path d="M366 256 C 384 196, 410 146, 440 144 C 470 146, 496 196, 514 256Z" fill="#c62828" fill-opacity=".18" stroke="#c62828" stroke-width="3.5"/>
+  <g fill="#fbfbf8" stroke="#c62828" stroke-width="3">
+    <path d="M420 300 l10 10 l-10 10 l-10 -10Z"/><path d="M450 300 l10 10 l-10 10 l-10 -10Z"/><path d="M160 304 l10 10 l-10 10 l-10 -10Z" opacity=".5"/><path d="M330 300 l10 10 l-10 10 l-10 -10Z" opacity=".5"/>
+  </g>
+  <g fill="none" stroke="#1b4fd4" stroke-width="7" stroke-linecap="round" marker-end="url(#h)">
+    <path d="M280 94 C 270 160, 300 222, 356 244"/>
+    <path d="M380 94 C 480 120, 560 200, 526 244"/>
+  </g>
+  <text x="24" y="380" font-family="Georgia, serif" font-weight="700" font-size="30" fill="#14201a">Defense in Depth</text>
+</svg>

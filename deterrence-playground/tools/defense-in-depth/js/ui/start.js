@@ -44,7 +44,7 @@ export function renderStart() {
   $('start-body').innerHTML = two ? screen2(C) : screen1(C);
   $('od-box').hidden = !two;
   $('start-back').hidden = !two; $('start-go').hidden = !two; $('start-next').hidden = two;
-  $('start-tours').hidden = two;
+  $('start-tours').hidden = two; $('start-practice').hidden = two;
   $('start-go').textContent = startLabel(C);
   odShow();
 }
@@ -60,14 +60,16 @@ export function odShow(v = +$('od').value) {
 
 const go = (a, focus) => { st = startReduce(st, a); renderStart(); if (focus) $(focus)?.focus({ preventScroll: true }); };
 
-/** Wire the start card once. onGo(choices) starts a game; onTour(side) starts a walkthrough. */
-export function wireStart(onGo, onTour) {
+/** Wire the start card once. onGo(choices) starts a game; onTour(side) starts a walkthrough; onPractice(choices)
+ * opens the Practice field with screen 1's side and era. */
+export function wireStart(onGo, onTour, onPractice) {
   $('start').addEventListener('click', e => {
     const b = e.target.closest('[data-c]');
     if (b) { go({ type: 'pick', key: b.dataset.c, v: b.dataset.v }); $('start').querySelector(`[data-c="${b.dataset.c}"][data-v="${b.dataset.v}"]`)?.focus(); return; }
     if (e.target.closest('#start-next')) { go({ type: 'next' }, 'start-go'); return; }
     if (e.target.closest('#start-back')) { go({ type: 'back' }, 'start-next'); return; }
     if (e.target.closest('#start-go')) { onGo(choices()); return; }
+    if (e.target.closest('[data-practice]')) { onPractice(choices()); return; }
     const t = e.target.closest('[data-tour]');
     if (t) onTour(t.dataset.tour);
   });
@@ -80,6 +82,9 @@ export function resetStart() { st = startReduce(st, { type: 'reset' }); }
 export function choices() {
   return { ...st.C, od: Math.max(OFFDEF.min, Math.min(OFFDEF.max, Math.round(+$('od').value))), seed: 1 + Math.floor(Math.random() * 999998) };
 }
+
+/** Screen 2 with screen 1's choices kept (the Practice field's "Start the real game"). */
+export function openStep2(ch) { setChoices(ch); st = startReduce(st, { type: 'next' }); renderStart(); $('start-go').focus({ preventScroll: true }); }
 
 /** Put the controls back to a game's choices (after a share link loads). */
 export function setChoices(ch) {

@@ -71,8 +71,9 @@ function renderLegend(layers) {
 /** A new game on the board: draw its ground, turn the board if you attack, reset the view. */
 export function newBoard() {
   setGame(map, S.g, S.me);
-  mini.show(S.g.scale !== 'd' && !narrow());
-  $('box').querySelector('[data-zoom="mini"]').hidden = S.g.scale === 'd';
+  const big = S.g.scale === 'c' || S.g.scale === 'a';   // the minimap is for the Corps and Army maps only
+  mini.show(big && !narrow());
+  $('box').querySelector('[data-zoom="mini"]').hidden = !big;
   S.sel = []; S.selFmn = null; S.tool = null; S.filter = 'idle'; S.focusSec = -1; S.openHours.clear(); S.planStep = 1;
   S.layers = defaultLayers(S.me); moreOpen = false;
   closeUnitPop(false);
@@ -233,6 +234,7 @@ export function endHour() {
   if (!g || g.over || g.phase !== 'battle') return;
   const t0 = g.t;
   S.tool = null; S.sel = []; S.selFmn = null; $('sheet').hidden = true; closeUnitPop(false);
+  if (S.practice) { say(`<b>${S.practice.hour(g)}</b>`); S.ui.redraw(); $('end').focus({ preventScroll: true }); return; }   // the Practice field's hour
   advance(g);
   const line = tldr(g, S.me, t0).text;
   say(`<b>${line}</b>`);

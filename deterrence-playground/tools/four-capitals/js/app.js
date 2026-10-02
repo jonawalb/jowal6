@@ -60,7 +60,7 @@ $('weights').addEventListener('input', e => { if (e.target.dataset.obj) e.target
 $('begin').addEventListener('click', () => {
   const weights = Object.fromEntries([...$('weights').querySelectorAll('input')].map(i => [i.dataset.obj, +i.value]));
   const traits = document.querySelector('input[name="traits"]:checked')?.value === '1';
-  begin({ seed: newSeed(), player: pick, weights, difficulty: $('difficulty').value, scenario: scen, traits });
+  begin({ seed: newSeed(), player: pick, weights, difficulty: document.querySelector('input[name="difficulty"]:checked')?.value || 'normal', scenario: scen, traits });
   const t = g.s.types[g.player];
   $('type-t').textContent = `You lead ${COUNTRIES[g.player].name}. Your leadership is ${P.typeLabel[t].toLowerCase()}.`;
   $('type-x').textContent = P.typeText[t];

@@ -14,6 +14,18 @@ body { --k-us: var(--us, #2f6db3); --k-tw: var(--roc, #17917f); --k-cn: var(--pr
 .k4-start { border-left: 4px solid var(--accent); }
 .k4-start h2, .k4-type h2 { margin: 0 0 6px; font-size: 22px; }
 .k4-lede { margin: 0 0 12px; max-width: 90ch; }
+.k4-starthead { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; align-items: end; margin-bottom: 12px; }
+.k4-starthead .k4-lede { grid-column: 1 / 4; margin: 0; max-width: none; }
+.k4-diff { grid-column: 4; margin: 0; padding: 0; border: 0; min-width: 0; display: flex; flex-wrap: wrap; }
+.k4-diff legend { width: 100%; padding: 0; margin-bottom: 4px; font-size: 12.5px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.k4-diff label { flex: 1 1 0; cursor: pointer; position: relative; }
+.k4-diff input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.k4-diff span { display: block; text-align: center; padding: 7px 4px; border: 1px solid var(--rule); background: var(--panel); color: var(--ink); font-weight: 600; font-size: 14px; }
+.k4-diff label + label span { border-left: 0; }
+.k4-diff label:first-of-type span { border-radius: 4px 0 0 4px; }
+.k4-diff label:last-of-type span { border-radius: 0 4px 4px 0; }
+.k4-diff input:checked + span { background: var(--accent); border-color: var(--accent); color: #fff; }
+.k4-diff input:focus-visible + span { outline: 2px solid var(--focus); outline-offset: 2px; position: relative; }
 .k4-seats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
 .k4-seat { text-align: left; display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; border: 2px solid var(--rule); border-top: 6px solid var(--c); border-radius: 4px; background: var(--panel); color: var(--ink); cursor: pointer; font: inherit; }
 .k4-seat b { font: 700 21px var(--display); color: var(--c); }
@@ -247,6 +259,8 @@ body { --k-us: var(--us, #2f6db3); --k-tw: var(--roc, #17917f); --k-cn: var(--pr
 @media (max-width: 760px) {
   .k4-grid { grid-template-columns: minmax(0, 1fr); }
   .k4-seats, .k4-reveal { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .k4-starthead { grid-template-columns: minmax(0, 1fr); }
+  .k4-starthead .k4-lede, .k4-diff { grid-column: 1; }
   .k4-weights { grid-template-columns: minmax(0, 1fr); }
   .k4-intel, .k4-fogkey { grid-template-columns: minmax(0, 1fr); }
   .k4-state { order: 2; } .k4-decide { order: 1; }

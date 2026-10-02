@@ -1218,8 +1218,15 @@ a:hover {
     border-bottom: 1px solid transparent;
     transition: color 0.2s, border-color 0.2s, opacity 0.4s;
 }
-.hero-featured.hf-wait a,
-.hero-featured.hf-fade a { opacity: 0; }
+.hero-featured.hf-wait a:not(.hf-scholar),
+.hero-featured.hf-fade a:not(.hf-scholar) { opacity: 0; }
+.hero-featured a.hf-scholar {
+    margin-top: 4px;
+    color: var(--green-900);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    border-bottom: none;
+}
 @media (prefers-reduced-motion: reduce) {
     .hero-featured a { transition: none; }
 }

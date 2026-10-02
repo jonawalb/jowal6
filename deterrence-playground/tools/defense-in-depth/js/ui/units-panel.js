@@ -56,7 +56,8 @@ export function renderTree(box) {
     // #9: open down to battalion rows (companies show when you unfold one); larger scales stop at divisions.
     lastGame = g; open.clear();
     const depth = g.scale === 'd' ? 9 : 2;
-    const walk = (id, d) => { if (d < depth && g.fmns[id].kids.length) { open.add(id); for (const k of g.fmns[id].kids) walk(k, d + 1); } };
+    // The Practice field ('p') opens every formation, so every unit shows in the list.
+    const walk = (id, d) => { if (d < depth && (g.fmns[id].kids.length || g.scale === 'p')) { open.add(id); for (const k of g.fmns[id].kids) walk(k, d + 1); } };
     walk(g.tops[S.me], 0);
   }
   const planning = g.phase === 'plan', f = planning || g.over ? 'all' : S.filter, sel = new Set(S.sel);

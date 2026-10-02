@@ -15,7 +15,7 @@ body.dd-armed .dd-mapbox svg { cursor: crosshair; }
 .dd-t-reverse { fill: color-mix(in srgb, var(--coast) 12%, var(--land)); }
 .dd-t-valley { fill: color-mix(in srgb, var(--sea) 55%, var(--land)); }
 .dd-e2 { filter: brightness(.97); } .dd-e3 { filter: brightness(.93); }
-.dd-tree { fill: color-mix(in srgb, var(--good) 35%, var(--land)); stroke: color-mix(in srgb, var(--good) 50%, var(--land)); stroke-width: .8; pointer-events: none; }
+circle.dd-tree { fill: color-mix(in srgb, var(--good) 35%, var(--land)); stroke: color-mix(in srgb, var(--good) 50%, var(--land)); stroke-width: .8; pointer-events: none; }
 .dd-house { fill: var(--chip); stroke: var(--coast); stroke-width: .9; pointer-events: none; }
 .dd-crater { fill: none; stroke: color-mix(in srgb, var(--warn) 30%, var(--land)); stroke-width: 1; pointer-events: none; }
 .dd-ridge { stroke: var(--coast); stroke-width: 5; stroke-dasharray: 2 6; stroke-linecap: round; opacity: .8; }

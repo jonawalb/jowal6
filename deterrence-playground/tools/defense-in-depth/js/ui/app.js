@@ -8,7 +8,9 @@ import { barrageRows } from '../arty.js';
 import { newCampaign, recordBattle, playerAction, endLearning, encodeCampaign, decodeCampaign } from '../campaign.js';
 import { S, $, esc, say, hhmm, other } from './store.js';
 import { wireTips } from './tips.js';
-import { renderStart, wireStart, setChoices, resetStart } from './start.js';
+import { renderStart, wireStart, setChoices, resetStart, openStep2, choices as startChoices } from './start.js';
+import { newPractice } from '../practice.js';
+import { practiceBegin, practiceEnd, practiceCheck, practiceAsk, wirePractice } from './practice-ui.js';
 import { makeGame, rebuild, beginBattle, linkState, setupFor, campaignChoices } from './game.js';
 import { startPlan, checklist, wirePlan } from './plan-ui.js';
 import { planReady } from '../plan-def.js';
@@ -34,6 +36,7 @@ function redraw() {
   drawPanels();
   status();
   tour.check();
+  practiceCheck();
 }
 S.ui = { redraw, say: html => { $('say').innerHTML = html; }, saved: save, finish, select: (ids, fmn = null) => select(ids, fmn), tab: t => setTab(t) };
 
@@ -58,12 +61,13 @@ function layout(phase) {
   document.body.classList.toggle('dd-live', phase !== 'over');
   document.body.classList.toggle('dd-planning', phase === 'plan');
   document.body.dataset.side = S.me;
+  document.body.classList.toggle('dd-practice', !!S.practice);
   setTab('map');
 }
 
 /** Begin a single battle or a campaign battle in its planning phase (or rebuilt from a link). */
 function launch(ch, link = null) {
-  cancelReplays(); hideAAR();
+  cancelReplays(); hideAAR(); practiceEnd();
   S.choices = ch; S.me = ch.side; S.view = 'belief'; S.aarHour = null;
   S.setup = S.campaign ? setupFor(S.campaign) : null;
   if (S.campaign) S.preToken = encodeCampaign(S.campaign);
@@ -167,7 +171,7 @@ function learn(note) {
 }
 
 function showStart() {
-  cancelReplays(); hideAAR(); hideCamp();
+  cancelReplays(); hideAAR(); hideCamp(); practiceEnd();
   S.g = null; S.campaign = null; S.choices = null; S.sel = []; S.tool = null;
   closeUnitPop(false); resetStart();
   $('start').hidden = false; $('bar').hidden = true; $('board').hidden = true; $('plan').hidden = true;
@@ -186,6 +190,27 @@ function go(ch) {
   if (ch.mode === 'c') campaignStart(ch); else launch(ch);
 }
 
+// ---- The Practice field: a 3 x 4 board, no enemy, a guided drill (js/practice.js, js/ui/practice-ui.js) ----
+function practice(ch, step = 0) {
+  cancelReplays(); hideAAR(); hideCamp(); tour.stop();
+  S.campaign = null; S.choices = null; S.me = ch.side === 'att' ? 'att' : 'def'; S.view = 'belief'; S.aarHour = null;
+  S.g = newPractice({ side: S.me, era: ch.era, seed: 1 + Math.floor(Math.random() * 999998) });
+  practiceBegin(S.g, { ...ch, side: S.me }, step);
+  $('statsec').hidden = true;
+  layout('battle');
+  newBoard();
+  S.filter = 'all'; S.layers = new Set(['lanes', 'barrage']);   // every unit in the list; no zones on this board
+  zoom('fit');
+  say(step ? 'The field is reset.' : 'The Practice field: your units, no enemy. Follow the card above the map.');
+  redraw();
+  $('play').scrollIntoView({ block: 'start', behavior: 'auto' });
+}
+function openPractice() {
+  const ch = S.practice ? S.practice.ch : S.choices || startChoices();
+  if (S.g && !S.practice && S.g.phase === 'battle' && !S.g.over) practiceAsk(() => practice(ch));
+  else practice(ch);
+}
+
 // ---- Boot ----
 const tour = createTour($('tour'), {
   start: side => { S.campaign = null; launch({ side, seed: 1 + Math.floor(Math.random() * 999998), scale: 'd', era: 'w', mode: 's', diff: 's', od: 5 }); },
@@ -194,7 +219,8 @@ const tour = createTour($('tour'), {
 
 wireTips();
 initPlay({ redraw });
-wireStart(go, side => tour.start(side, false));
+wireStart(go, side => tour.start(side, false), ch => practice(ch));
+wirePractice({ real: ch => { showStart(); openStep2(ch); $('start').scrollIntoView({ block: 'start' }); }, leave: showStart, reset: (ch, step) => practice(ch, step) });
 wirePlan(startBattle);
 wireKeys({
   endHour, undo, zoom, pan,
@@ -212,12 +238,13 @@ $('end').onclick = endHour;
 $('undo').onclick = undo;
 $('again').onclick = () => (S.campaign ? $('aar-cont')?.click() : again());
 $('new-game').onclick = showStart;
+$('practice-btn').onclick = openPractice;
 $('start-tour').onclick = () => tour.start(S.g ? S.me : 'def', !!S.g && S.g.phase === 'battle' && !S.g.over);
 // #1: How to play, the sources, how the model works and the lessons sit behind one Reference disclosure.
 const openRef = target => { const d = $('reference'); d.open = true; requestAnimationFrame(() => (target ? $(target) : d).scrollIntoView({ block: 'start' })); };
 $('go-lessons').onclick = () => openRef('lessons');
 $('key-help').onclick = () => { const k = $('keyhelp'); k.innerHTML = keyHelpHTML(); k.hidden = false; k.querySelector('.x').onclick = () => { k.hidden = true; $('key-help').focus(); }; k.querySelector('.x').focus(); };
-$('copy-link').onclick = async () => { if (S.choices) writeHash(linkState(S)); await new Promise(r => setTimeout(r, 200)); try { await navigator.clipboard.writeText(location.href); say('Link copied. It replays this game exactly.'); } catch { say('Copy the address bar to share this game.'); } };
+$('copy-link').onclick = async () => { if (S.practice) { say('The Practice field has no share link.'); return; } if (S.choices) writeHash(linkState(S)); await new Promise(r => setTimeout(r, 200)); try { await navigator.clipboard.writeText(location.href); say('Link copied. It replays this game exactly.'); } catch { say('Copy the address bar to share this game.'); } };
 document.querySelectorAll('#viewbar [data-view]').forEach(b => b.addEventListener('click', () => {
   S.view = b.dataset.view;
   document.querySelectorAll('#viewbar [data-view]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.view === S.view)));

@@ -1,0 +1,49 @@
+/* Defense in Depth, the Practice field (2026-10-02): the start-screen offer, the drill card (in the page flow
+   between the order bar and the board, so it never covers the map or End hour), and what the 3 x 4 practice
+   board hides (zones, objective, ridge, tips, the side panel). Tokens only (light, dark, Trailer). */
+
+/* Start screen 1: a clear but secondary offer. */
+.dd-poffer { margin: 0; }
+.dd-poffer .btn { min-height: 44px; font-weight: 600; border-style: dashed; border-color: var(--mine); }
+.dd-poffer small { font-weight: 400; color: var(--muted); }
+
+/* The drill card. */
+.dd-drill { margin: 8px 0; padding: 8px 12px 10px; border-top: 3px solid var(--accent); }
+.dd-drill-h { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--muted); }
+.dd-drill-k { flex: 1; min-width: 0; font: 600 11.5px var(--mono); text-transform: uppercase; letter-spacing: .04em; color: var(--accent); }
+.dd-drill-dots { display: inline-flex; gap: 4px; }
+.dd-drill-dots i { width: 8px; height: 8px; border-radius: 50%; border: 1px solid var(--rule); }
+.dd-drill-dots i.on { background: var(--good); border-color: var(--good); }
+.dd-drill-dots i.now { background: var(--accent); border-color: var(--accent); }
+.dd-drill .x { border: 0; background: none; font-size: 22px; min-width: 40px; min-height: 40px; cursor: pointer; color: var(--muted); }
+.dd-drill h3 { margin: 0 0 4px; font-size: 18px; outline: none; }
+.dd-drill p { margin: 0 0 6px; font-size: 14px; line-height: 1.45; max-width: 78ch; }
+.dd-drill-do { font-weight: 500; }
+.dd-drill-more { color: var(--muted); font-size: 13px !important; }
+.dd-drill-nudge { color: var(--warn); font-weight: 600; }
+.dd-drill-nav { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.dd-drill-nav .btn { min-height: 40px; }
+.dd-drill-nav [data-preal] { margin-left: auto; }
+.dd-drill-real { font-size: 16px; padding: 8px 18px; }
+:root[data-skin="trailer"] .dd-drill.card { background: var(--panel); }
+
+/* The practice board: one column, no side panel, no zones / objective / ridge / tips, the board fits its box. */
+body.dd-practice .layout { grid-template-columns: minmax(0, 1fr); }
+body.dd-practice #side, body.dd-practice #ctip, body.dd-practice #layerbar, body.dd-practice #viewbar,
+body.dd-practice #objtrack, body.dd-practice #hourof, body.dd-practice #barrage-wrap, body.dd-practice #ammo,
+body.dd-practice .dd-tabs [data-tab="plan"], body.dd-practice .dd-tabs [data-tab="reports"],
+body.dd-practice .dd-l-zones, body.dd-practice .dd-l-obj, body.dd-practice .dd-ridge, body.dd-practice .dd-ridge-l { display: none !important; }
+body.dd-practice .dd-mapbox { height: auto; aspect-ratio: 4 / 3.15; max-height: 56vh; min-height: 0; }   /* a little taller than the board: it always fits, never pans */
+body.dd-practice #practice-btn { border-color: var(--accent); }
+
+@media (max-width: 640px) {
+  .dd-drill { margin: 6px 0; padding: 6px 10px 8px; }
+  .dd-drill h3 { font-size: 15px; }
+  .dd-drill p { font-size: 13px; margin-bottom: 4px; }
+  .dd-drill-more { font-size: 12px !important; }
+  .dd-drill-dots { display: none; }
+  .dd-drill-nav .btn { font-size: 12.5px; padding: 4px 10px; }
+  .dd-drill-nav [data-preal] { margin-left: 0; }
+  body.dd-practice .dd-mapbox { height: auto; max-height: 44vh; }
+  body.dd-practice .dd-zoom { display: none; }   /* the board always fits the width; the buttons would cover column D */
+}

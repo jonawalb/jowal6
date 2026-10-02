@@ -20,6 +20,7 @@ export const S = {
   planStep: 1,        // the open step of the stepped plan panel (js/ui/plan-steps.js)
   focusSec: -1,       // roving-tabindex sector
   openHours: new Set(),
+  practice: null,     // the Practice field's drill (js/ui/practice-ui.js) while it is open, else null
   ui: {},             // callbacks set by app.js: redraw(), say(html), select(ids), ...
 };
 

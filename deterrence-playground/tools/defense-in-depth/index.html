@@ -16,6 +16,7 @@
 <link rel="stylesheet" href="dd-panels.css">
 <link rel="stylesheet" href="dd-lessons.css">
 <link rel="stylesheet" href="dd-stream.css">
+<link rel="stylesheet" href="dd-practice.css">
 </head>
 <body>
 <header id="tsm-head"></header>
@@ -25,6 +26,7 @@
   <span class="dd-vhint fine" id="view-hint" hidden>First game? Try Simple.</span>
   <button type="button" class="btn" id="new-game">New game</button>
   <button type="button" class="btn" id="start-tour">Walkthrough</button>
+  <button type="button" class="btn" id="practice-btn" title="A small board with no enemy, to practise moving troops">Practice field</button>
   <button type="button" class="btn" id="go-lessons">Lessons</button>
   <button type="button" class="btn" id="copy-link">Copy link</button>
   <button type="button" class="btn" id="key-help" aria-label="Keyboard shortcuts">Keys</button></div>
@@ -44,6 +46,7 @@
         <p class="fine" id="od-desc"></p>
       </div>
       <div class="dd-go"><button type="button" class="btn" id="start-back" hidden>Back</button><button type="button" class="btn solid dd-startb" id="start-next">Next: scale and difficulty</button><button type="button" class="btn solid dd-startb" id="start-go" hidden>Plan your defense</button></div>
+      <p class="dd-poffer" id="start-practice"><button type="button" class="btn" data-practice>New? Practice moving troops first <small>(about 2 min)</small></button></p>
       <p class="dd-rules" id="start-tours">New here? <button type="button" class="btn" data-tour="def">Walk me through defending</button> <button type="button" class="btn" data-tour="att">Walk me through attacking</button></p>
     </section>
 
@@ -67,6 +70,7 @@
           <button type="button" role="tab" data-tab="reports" aria-selected="false">Reports</button>
         </div>
       </div>
+      <aside class="card dd-drill" id="drill" hidden aria-live="polite" aria-label="Practice drill"></aside>
       <div class="dd-board" id="board" hidden>
         <div class="dd-ucol" id="ucol">
           <div class="dd-sel" id="sel"></div>

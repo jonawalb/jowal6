@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Defense in Depth</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .band { stroke: none; }
+  .zlab { font: 400 14px var(--mono); letter-spacing: .22em; text-transform: uppercase; fill: var(--muted); }
+  .trench { fill: none; stroke: var(--blue); stroke-opacity: .5; stroke-width: 2.2; stroke-linejoin: round; }
+  .wire { fill: none; stroke: var(--paper); stroke-opacity: .32; stroke-width: 1.4; }
+  .obj { stroke: var(--paper); stroke-opacity: .45; stroke-width: 1.6; stroke-dasharray: 10 8; }
+  .tag { font: 400 13px var(--mono); letter-spacing: .14em; text-transform: uppercase; paint-order: stroke; stroke: #0b1712; stroke-width: 5px; stroke-linejoin: round; }
+  .def rect { fill: #11231b; stroke: var(--blue); stroke-width: 2.2; }
+  .def .sym { fill: none; stroke: var(--blue); stroke-width: 1.7; }
+  .op { fill: #11231b; stroke: var(--blue); stroke-width: 2.4; }
+  .foe { fill: rgba(224, 83, 61, .25); stroke: var(--red); stroke-width: 2.2; }
+  .panel-t { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .2em; text-transform: uppercase; }
+  .row { font: 400 14px var(--mono); fill: var(--paper); letter-spacing: .08em; text-transform: uppercase; }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of Defense in Depth: a single packed trench is shelled away; the defense re-forms as thin outposts, a battle zone of strongpoints and a rear-zone counterstroke group; a flanking machine gun fires along an attacking wave; assault pairs leapfrog behind a creeping barrage while a second column loses its barrage and stalls; the counterstroke closes the break-in."><title>Defense in Depth</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard, clamp } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+const hash = n => { const s = Math.sin(n * 127.1 + 311.7) * 43758.5453; return s - Math.floor(s); };
+
+const defs = svg.querySelector('defs');
+defs.insertAdjacentHTML('beforeend', `
+  <filter id="glowU" filterUnits="userSpaceOnUse" x="-300" y="-300" width="2200" height="1600"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <radialGradient id="boom"><stop offset="0" stop-color="#fff4d6"/><stop offset=".35" stop-color="#f0a93b" stop-opacity=".85"/><stop offset="1" stop-color="#f0a93b" stop-opacity="0"/></radialGradient>
+  <linearGradient id="lane" x1="0" x2="1"><stop offset="0" stop-color="#f0a93b" stop-opacity=".75"/><stop offset="1" stop-color="#f0a93b" stop-opacity=".08"/></linearGradient>
+  <marker id="ah" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#f0a93b"/></marker>`);
+
+// ---- Geometry: the fictional Merrow front. The attacker comes up the screen; the defender's depth runs up to the objective line.
+const X0 = 340, X1 = 1220;
+const Z = { rear: [160, 372], battle: [388, 604], outpost: [620, 764] };
+const OBJ_Y = 132, OP_Y = 692, WIRE_Y = 782;
+const world = el('g', {}, svg);
+const cam = el('g', {}, world);
+
+// Zone bands, labels, trench lines, wire, objective line
+const zones = [['outpost', 'Outpost', .045], ['battle', 'Battle', .07], ['rear', 'Rear', .045]].map(([k, name, a], i) => {
+  const [y0, y1] = Z[k], g = el('g', { opacity: 0 }, cam);
+  el('rect', { class: 'band', x: X0, y: y0, width: X1 - X0, height: y1 - y0, fill: 'var(--blue)', 'fill-opacity': a }, g);
+  el('rect', { x: X0 - 14, y: y0, width: 4, height: y1 - y0, fill: 'var(--blue)', 'fill-opacity': .7 }, g);
+  el('text', { x: X0 - 28, y: (y0 + y1) / 2 + 5, class: 'zlab', 'text-anchor': 'end' }, g).textContent = name;
+  return { g, i };
+});
+const zig = (y, amp, step, x0 = X0 + 20, x1 = X1 - 20) => {
+  let d = `M${x0} ${y}`; for (let x = x0 + step, k = 1; x <= x1; x += step, k++) d += ` L${x} ${y + (k % 2 ? -amp : amp)}`; return d;
+};
+const trenches = [
+  el('path', { class: 'trench', d: zig(OP_Y + 22, 5, 40), opacity: 0 }, cam),
+  el('path', { class: 'trench', d: zig(Z.battle[0] + 120, 6, 34), opacity: 0 }, cam),
+  el('path', { class: 'trench', d: zig(Z.battle[0] + 38, 5, 46), opacity: 0 }, cam),
+  el('path', { class: 'trench', d: zig(Z.rear[0] + 160, 5, 52), opacity: 0 }, cam),
+];
+let wd = ''; for (let x = X0 + 64; x < X1 - 20; x += 22) wd += `M${x - 5} ${WIRE_Y - 5}L${x + 5} ${WIRE_Y + 5}M${x + 5} ${WIRE_Y - 5}L${x - 5} ${WIRE_Y + 5}`;
+const wire = el('path', { class: 'wire', d: wd, opacity: 0 }, cam);
+const objG = el('g', { opacity: 0 }, cam);
+el('line', { class: 'obj', x1: X0, y1: OBJ_Y, x2: X1, y2: OBJ_Y }, objG);
+el('text', { x: X0, y: OBJ_Y - 14, class: 'tag', fill: 'var(--paper)' }, objG).textContent = 'Objective line';
+el('text', { x: X1, y: OBJ_Y - 14, class: 'tag', fill: 'var(--muted)', 'text-anchor': 'end' }, objG).textContent = 'Merrow front';
+
+// ---- Hook: one dense trench, everything forward. Shells walk onto it.
+const dense = el('g', {}, cam);
+el('path', { class: 'trench', d: zig(OP_Y + 6, 7, 30), style: 'stroke-opacity:.85;stroke-width:3' }, dense);
+const packed = [];
+for (let x = X0 + 40; x <= X1 - 40; x += 40) packed.push(el('rect', { class: 'op', x: x - 11, y: OP_Y - 8, width: 22, height: 14, rx: 2 }, dense));
+const shells = Array.from({ length: 9 }, (_, i) => ({ x: X0 + 60 + i * 96 + (hash(i) - .5) * 30, t: .75 + i * .12 }));
+const shellG = el('g', {}, cam);
+const shellC = shells.map(() => el('circle', { cy: OP_Y, r: 0, fill: 'url(#boom)', opacity: 0 }, shellG));
+const hook1 = el('text', { x: 780, y: 470, 'text-anchor': 'middle', class: 't-hook', style: 'font-size:82px' }, svg);
+hook1.innerHTML = 'Hold the <tspan class="hot">line?</tspan>';
+const hook2 = el('text', { x: 780, y: 470, 'text-anchor': 'middle', class: 't-hook', style: 'font-size:82px' }, svg);
+hook2.innerHTML = '<tspan class="hot">Thin</tspan> it.';
+
+// ---- The defense in depth
+const outposts = [];
+for (let i = 0; i < 8; i++) outposts.push(el('circle', { class: 'op', cx: X0 + 85 + i * 103 + (hash(i + 20) - .5) * 26, cy: OP_Y + (i % 2 ? -14 : 10), r: 8, opacity: 0 }, cam));
+const unit = (x, y, kind, w = 46, h = 30) => {
+  const g = el('g', { class: 'def', opacity: 0, transform: `translate(${x} ${y})` }, cam);
+  el('rect', { x: -w / 2, y: -h / 2, width: w, height: h, rx: 2 }, g);
+  const sy = el('g', { class: 'sym' }, g);
+  if (kind === 'inf') el('path', { d: `M${-w / 2} ${-h / 2}L${w / 2} ${h / 2}M${w / 2} ${-h / 2}L${-w / 2} ${h / 2}` }, sy);
+  if (kind === 'mg') { el('path', { d: 'M-12 6L12 6M-6 -6L0 6L6 -6' }, sy); }
+  return { g, x, y };
+};
+const SP = [[470, 470, 'mg'], [640, 548, 'inf'], [800, 448, 'mg'], [985, 540, 'inf'], [1140, 462, 'mg']].map(([x, y, k]) => unit(x, y, k));
+const MG = unit(X0 + 12, 742, 'mg', 40, 26);           // the flanking gun at the edge of the outpost zone
+const CS = unit(790, 262, 'inf', 210, 66);              // Counterstroke Group
+el('ellipse', { rx: 34, ry: 14, class: 'sym', style: 'fill:none;stroke:var(--blue);stroke-width:1.7' }, CS.g);
+const csLab = el('text', { x: 790, y: 322, class: 'tag', fill: 'var(--blue)', 'text-anchor': 'middle', opacity: 0 }, cam); csLab.textContent = 'Counterstroke Group';
+const mgLab = el('text', { x: X0 + 12, y: 786, class: 'tag', fill: 'var(--blue)', 'text-anchor': 'middle', opacity: 0 }, cam); mgLab.textContent = 'MG';
+
+// ---- Beat 3: a wave meets a gun firing along it.
+const LANE_A = [MG.x + 22, 742];
+const lane = el('g', { opacity: 0 }, cam);
+el('path', { d: `M0 -3 L900 -16 L900 16 L0 3Z`, fill: 'url(#lane)' }, lane);
+const tracer = el('line', { x1: 0, y1: 0, x2: 900, y2: 0, stroke: '#fff1cf', 'stroke-width': 2.2, 'stroke-dasharray': '14 30', filter: 'url(#glowU)' }, lane);
+const enf = el('text', { x: 700, y: 822, class: 'tag', fill: 'var(--amber)', 'text-anchor': 'middle', style: 'font-size:20px', opacity: 0 }, cam); enf.textContent = 'Enfilade ×3';
+const waveLab = el('text', { x: 1150, y: 0, class: 'tag', fill: 'var(--red)', 'text-anchor': 'end', opacity: 0 }, cam); waveLab.textContent = 'Orvanese assault';
+const foe = (r = 10) => { const g = el('g', { opacity: 0 }, cam); el('path', { class: 'foe', d: `M0 ${-r}L${r} 0L0 ${r}L${-r} 0Z` }, g); return g; };
+const wave = Array.from({ length: 13 }, (_, i) => ({ x: 550 + i * 46, g: foe(), dies: hash(i + 7) < .72 }));
+
+// ---- Beat 4: two columns behind creeping barrages. One keeps up; one loses its barrage.
+const barrage = cx => {
+  const g = el('g', { opacity: 0 }, cam);
+  el('rect', { x: cx - 125, y: -22, width: 250, height: 44, rx: 22, fill: 'var(--paper)', opacity: .08 }, g);
+  const b = Array.from({ length: 8 }, (_, i) => el('circle', { cx: cx - 105 + i * 30, cy: (hash(i + cx) - .5) * 20, r: 0, fill: 'url(#boom)' }, g));
+  return { g, b, cx };
+};
+const BG = barrage(960), BB = barrage(620);
+const column = cx => [[-22, 0], [22, 0], [-22, 52], [22, 52]].map(([dx, dy]) => ({ dx, dy, g: foe(9), fl: el('line', { stroke: 'var(--amber)', 'stroke-width': 2, opacity: 0 }, cam) }));
+const CG = column(960), CB = column(620);
+const gapG = el('g', { opacity: 0 }, cam);
+const gapLine = el('path', { fill: 'none', stroke: 'var(--red)', 'stroke-width': 2.4 }, gapG);
+const gapTx = el('text', { x: 520, y: 0, class: 'tag', fill: 'var(--red)', 'text-anchor': 'end', style: 'font-size:22px' }, gapG); gapTx.textContent = 'Gap';
+const stallMG = el('line', { x1: 640, y1: 564, x2: 620, y2: 690, stroke: 'var(--amber)', 'stroke-width': 2.4, 'stroke-dasharray': '8 10', filter: 'url(#glowU)', opacity: 0 }, cam);
+const lfLab = el('text', { x: 1030, y: 0, class: 'tag', fill: 'var(--paper)', opacity: 0 }, cam); lfLab.textContent = 'Leapfrog';
+
+// ---- Beat 5: break-in, the race, the counterstroke
+const bulge = el('path', { fill: 'rgba(224,83,61,.22)', stroke: 'var(--red)', 'stroke-width': 2.4, opacity: 0 }, cam);
+const bulgeLab = el('text', { x: 960, y: 0, class: 'tag', fill: 'var(--red)', 'text-anchor': 'middle', opacity: 0 }, cam); bulgeLab.textContent = 'Break-in';
+const arrows = [
+  `M740 336 C 690 440, 760 560, 860 640`,
+  `M850 336 C 1010 380, 1110 520, 1062 640`,
+].map(d => el('path', { d, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 10, 'stroke-linecap': 'round', 'marker-end': 'url(#ah)', pathLength: 1, filter: 'url(#glowU)', opacity: 0 }, cam));
+const sealed = el('text', { x: 960, y: 672, class: 'tag', fill: 'var(--blue)', 'text-anchor': 'middle', style: 'font-size:18px', opacity: 0 }, cam); sealed.textContent = 'Sealed';
+
+const panel = el('g', { opacity: 0 }, world);
+el('text', { x: 1290, y: 300, class: 'panel-t' }, panel).textContent = 'Cohesion';
+el('rect', { x: 1290, y: 316, width: 240, height: 12, rx: 3, fill: 'rgba(224,83,61,.16)' }, panel);
+const coh = el('rect', { x: 1290, y: 316, width: 240, height: 12, rx: 3, fill: 'var(--red)' }, panel);
+const cohN = el('text', { x: 1530, y: 300, class: 'row', 'text-anchor': 'end' }, panel);
+el('text', { x: 1290, y: 392, class: 'panel-t' }, panel).textContent = 'Race clock';
+const dial = el('g', { transform: 'translate(1316 436)' }, panel);
+el('circle', { r: 24, fill: 'none', stroke: 'var(--muted)', 'stroke-width': 1.6 }, dial);
+for (let k = 0; k < 12; k++) el('line', { x1: 0, y1: -24, x2: 0, y2: -19, stroke: 'var(--muted)', transform: `rotate(${k * 30})` }, dial);
+const hand = el('line', { x1: 0, y1: 4, x2: 0, y2: -18, stroke: 'var(--paper)', 'stroke-width': 2.2, 'stroke-linecap': 'round' }, dial);
+const raceRow = (y, label, col) => {
+  el('text', { x: 1356, y: y - 8, class: 'row', style: 'font-size:12px' }, panel).textContent = label;
+  el('rect', { x: 1356, y, width: 174, height: 8, rx: 2, fill: 'rgba(143,168,154,.18)' }, panel);
+  return el('rect', { x: 1356, y, width: 0, height: 8, rx: 2, fill: col }, panel);
+};
+const rA = raceRow(426, 'Break-in → objective', 'var(--red)');
+const rC = raceRow(462, 'Counterstroke → base', 'var(--amber)');
+
+const cap = captions(svg, [
+  [2.5, 4.95, 'Outposts delay. Strongpoints kill. Reserves strike back.'],
+  [5.1, 7.95, 'Machine guns fire along the line, not into it.'],
+  [8.1, 10.45, 'Stay close behind the barrage. Lose it and the attack stalls.'],
+  [10.6, 12.95, 'A break-in tires as it goes. Hit its base in time.'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Defense in Depth', line: 'Thin forward. Strong in depth. Strike back on time.' });
+
+// Leapfrog: pairs alternate; one element bounds while its partner holds and fires.
+const leap = (k, phase) => { const n = Math.floor(k), w = k - n; return n + ease.inOut(clamp(w * 2 - phase)); };
+
+run({ duration: 16, poster: 9.5, frame: t => {
+  const push = ease.inOut(seg(t, 2.4, 10.4)) - ease.inOut(seg(t, 10.6, 12.4)) * .7;
+  const k = 1 + .05 * push, fx = 780 + 40 * push, fy = 480 + 12 * push;
+  cam.setAttribute('transform', `translate(780 500) scale(${k}) translate(${-fx} ${-fy})`);
+  world.setAttribute('opacity', seg(t, 0, .5) * (1 - ease.inOut(seg(t, 13.1, 14.2))));
+
+  // Hook
+  hook1.setAttribute('opacity', ease.out(seg(t, .15, .7)) * (1 - seg(t, 1.35, 1.6)));
+  hook2.setAttribute('opacity', ease.out(seg(t, 1.55, 1.85)) * (1 - ease.in(seg(t, 2.3, 2.8))));
+  hook2.setAttribute('transform', `translate(0 ${-seg(t, 2.3, 2.8) * 26})`);
+  shells.forEach((s, i) => {
+    const u = seg(t, s.t, s.t + .5);
+    shellC[i].setAttribute('cx', s.x); shellC[i].setAttribute('r', 14 + ease.out(u) * 62); shellC[i].setAttribute('opacity', u > 0 && u < 1 ? 1 - u : 0);
+  });
+  packed.forEach((p, i) => {
+    const x = X0 + 40 + i * 40;
+    const near = shells.find(sh => Math.abs(sh.x - x) < 52);
+    p.setAttribute('opacity', near ? 1 - .85 * seg(t, near.t + .1, near.t + .35) : .9);
+  });
+  dense.setAttribute('opacity', 1 - ease.inOut(seg(t, 1.9, 2.5)));
+
+  // Zones paint in: outpost, battle, rear
+  zones.forEach(z => z.g.setAttribute('opacity', ease.out(seg(t, 2.3 + z.i * .55, 2.9 + z.i * .55))));
+  trenches.forEach((p, i) => p.setAttribute('opacity', ease.out(seg(t, 2.4 + [0, .55, .65, 1.1][i], 3.0 + [0, .55, .65, 1.1][i]))));
+  wire.setAttribute('opacity', ease.out(seg(t, 2.4, 3.0)));
+  objG.setAttribute('opacity', ease.out(seg(t, 3.6, 4.2)));
+  outposts.forEach((o, i) => { const u = seg(t, 2.45 + i * .05, 2.85 + i * .05); o.setAttribute('opacity', u); o.setAttribute('r', 8 * ease.back(u)); });
+  SP.forEach((s, i) => { const u = seg(t, 3.0 + i * .08, 3.45 + i * .08); s.g.setAttribute('opacity', u); s.g.setAttribute('transform', `translate(${s.x} ${s.y}) scale(${ease.back(u)})`); });
+  { const u = seg(t, 3.0, 3.45); MG.g.setAttribute('opacity', u); MG.g.setAttribute('transform', `translate(${MG.x} ${MG.y}) scale(${ease.back(u)})`); mgLab.setAttribute('opacity', u); }
+  { const u = seg(t, 3.6, 4.1); CS.g.setAttribute('opacity', u); CS.g.setAttribute('transform', `translate(${CS.x} ${CS.y}) scale(${ease.back(u)})`); csLab.setAttribute('opacity', u); }
+
+  // Beat 3: wave and enfilade
+  const wy = lerp(870, 744, ease.out(seg(t, 5.0, 6.5)));
+  const fire = seg(t, 5.8, 6.0) * (1 - seg(t, 7.7, 8.0));
+  const sweep = Math.sin(t * 5.2) * .9 + .55;
+  lane.setAttribute('transform', `translate(${LANE_A[0]} ${LANE_A[1]}) rotate(${sweep})`);
+  lane.setAttribute('opacity', fire * (.75 + .25 * Math.sin(t * 40)));
+  tracer.setAttribute('stroke-dashoffset', -t * 900);
+  const front = LANE_A[0] + Math.max(0, t - 5.85) * 1100;
+  enf.setAttribute('opacity', seg(t, 6.0, 6.2) * (1 - seg(t, 7.7, 8.0)) * (.7 + .3 * Math.sin(t * 14)));
+  waveLab.setAttribute('y', wy + 74); waveLab.setAttribute('opacity', seg(t, 5.1, 5.5) * (1 - seg(t, 6.6, 7.0)));
+  wave.forEach((w, i) => {
+    const hitT = 5.85 + (w.x - LANE_A[0]) / 1100;
+    const dead = w.dies ? seg(t, hitT, hitT + .25) : 0;
+    const vis = seg(t, 5.0 + i * .02, 5.3 + i * .02) * (1 - seg(t, 7.6, 8.0)) * (1 - .8 * dead);
+    w.g.setAttribute('opacity', vis);
+    w.g.setAttribute('transform', `translate(${w.x} ${wy + (i % 2 ? 6 : -6) + dead * 8}) scale(${1 - .45 * dead}) rotate(${dead * 45})`);
+  });
+
+  // Beat 4: barrages and columns
+  const gF = lerp(820, 572, ease.inOut(seg(t, 8.0, 10.5)));       // good column front
+  const bF = lerp(820, 700, ease.out(seg(t, 8.0, 8.85))) + Math.sin(t * 22) * 2 * seg(t, 8.9, 9.1); // bad column, stalls
+  const gBy = gF - 66;
+  const bBy = lerp(lerp(754, 640, ease.inOut(seg(t, 8.0, 8.7))), 420, ease.inOut(seg(t, 8.7, 9.3))); // lifts too early
+  [[BG, gBy, seg(t, 7.9, 8.2) * (1 - seg(t, 10.3, 10.7))], [BB, bBy, seg(t, 7.9, 8.2) * (1 - seg(t, 9.6, 10.2))]].forEach(([B, y, o]) => {
+    B.g.setAttribute('opacity', o); B.g.setAttribute('transform', `translate(0 ${y})`);
+    B.b.forEach((c, i) => { const ph = (t * 3.1 + hash(i * 3 + B.cx)) % 1; c.setAttribute('r', 6 + ph * 26); c.setAttribute('opacity', 1 - ph); });
+  });
+  const kk = seg(t, 8.0, 10.5) * 4;
+  [[CG, 960, gF, seg(t, 7.95, 8.25) * (1 - seg(t, 10.5, 10.9)), true], [CB, 620, bF, seg(t, 7.95, 8.25) * (1 - seg(t, 10.0, 10.6)), false]].forEach(([C, cx, f, o, good]) => {
+    C.forEach((m, i) => {
+      const pair = m.dx < 0 ? 0 : 1;
+      const lag = good ? (leap(kk, pair) - kk) * 26 : 0;  // bounding element runs ahead, partner holds
+      const x = cx + m.dx, y = f + m.dy - lag;
+      m.g.setAttribute('opacity', o); m.g.setAttribute('transform', `translate(${x} ${y})`);
+      const firing = good && ((kk % 1 < .5) === (pair === 1)) && kk > 0 && kk < 4;
+      m.fl.setAttribute('x1', x); m.fl.setAttribute('y1', y - 12); m.fl.setAttribute('x2', x); m.fl.setAttribute('y2', y - 26);
+      m.fl.setAttribute('opacity', firing ? o * (.5 + .5 * Math.sin(t * 60 + i)) : 0);
+    });
+  });
+  lfLab.setAttribute('y', gF + 30); lfLab.setAttribute('opacity', seg(t, 8.4, 8.8) * (1 - seg(t, 10.2, 10.5)));
+  const gapO = seg(t, 9.0, 9.2) * (1 - seg(t, 10.1, 10.5));
+  gapG.setAttribute('opacity', gapO * (.65 + .35 * (Math.sin(t * 12) > 0)));
+  const gTop = bBy + 24, gBot = bF - 14;
+  gapLine.setAttribute('d', `M504 ${gTop}L496 ${gTop}L496 ${gBot}L504 ${gBot}`);
+  gapTx.setAttribute('y', (gTop + gBot) / 2 + 8); gapTx.setAttribute('x', 484);
+  stallMG.setAttribute('opacity', seg(t, 9.15, 9.3) * (1 - seg(t, 10.0, 10.3)) * (.6 + .4 * Math.sin(t * 50)));
+  stallMG.setAttribute('stroke-dashoffset', -t * 300);
+
+  // Beat 5: bulge, race, counterstroke
+  const grow = ease.out(seg(t, 10.4, 11.5)), shut = ease.inOut(seg(t, 12.1, 12.8));
+  const depth = 30 + 200 * grow * (1 - shut), half = 105 * (1 - .55 * shut), by = 660;
+  bulge.setAttribute('d', `M${960 - half - 30} ${by + 20} C ${960 - half} ${by - depth * .4}, ${960 - half * .6} ${by - depth}, 960 ${by - depth} S ${960 + half} ${by - depth * .4}, ${960 + half + 30} ${by + 20} Z`);
+  bulge.setAttribute('opacity', seg(t, 10.3, 10.6) * (1 - seg(t, 12.35, 12.7)));
+  bulgeLab.setAttribute('y', by - depth + 34); bulgeLab.setAttribute('opacity', seg(t, 10.7, 11.0) * (1 - seg(t, 12.1, 12.4)));
+  arrows.forEach((a, i) => {
+    const u = ease.inOut(seg(t, 11.3 + i * .1, 12.1 + i * .1));
+    a.style.strokeDasharray = `${u} 1`; a.setAttribute('opacity', (u > 0) * (1 - seg(t, 12.7, 13.0)));
+  });
+  sealed.setAttribute('opacity', ease.out(seg(t, 12.45, 12.75)));
+  panel.setAttribute('opacity', ease.out(seg(t, 10.3, 10.7)) * (1 - seg(t, 12.9, 13.2)));
+  const c = 1 - .66 * ease.out(seg(t, 10.5, 12.2));
+  coh.setAttribute('width', 240 * c); cohN.textContent = Math.round(c * 100) + '%';
+  hand.setAttribute('transform', `rotate(${Math.floor(seg(t, 10.5, 12.3) * 24) * 30})`);
+  rA.setAttribute('width', 174 * .68 * ease.out(seg(t, 10.5, 12.1)));
+  rC.setAttribute('width', 174 * ease.inOut(seg(t, 11.0, 12.2)));
+
+  cap(t);
+  end(t, 13.0, 16);
+} });
+</script>
+</body></html>

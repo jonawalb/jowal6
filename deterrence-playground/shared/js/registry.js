@@ -88,7 +88,7 @@ export const ALL_TOOLS = [
   { slug: 'energy-blockade', sites: ['tsm'], cat: 'models', title: 'Energy Blockade Clock', status: 'live',
     blurb: 'Set a quarantine or blockade and watch Taiwan\'s LNG, coal and oil stocks run down, and who loses power first.' },
   { slug: 'budget-allocator', sub: { models: 'budget' }, siteBlurb: { tsm: 'Spend Taiwan\'s NT$145.7bn supplementary defense line, or bigger, and test the mix against a notional crossing model.' }, cat: 'models', title: 'Defense Budget Allocator', status: 'live',
-    blurb: "Spend Taiwan's NT$145.7bn supplementary defense line, or Japan's, the Philippines' or Poland's real defense budgets, and test the mix against a notional model of an attack on each." },
+    blurb: "Spend Taiwan's NT$145.7bn supplementary defense line, or a real defense budget from twelve other Indo-Pacific and European countries, and test the mix against a notional model of an attack on each." },
   { slug: 'mine-warfare', sites: ['tsm'], cat: 'models', title: 'Mine Warfare Simulator', status: 'live',
     blurb: 'Lay a minefield off a generic beach, choose how the PLA clears it, and see what mines do to a landing\'s timing and cost.' },
   { slug: 'kill-chain-builder', game: true, sub: { models: 'budget' }, cat: 'models', title: 'Kill Chain Builder', status: 'live',

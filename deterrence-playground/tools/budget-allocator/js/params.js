@@ -4,13 +4,15 @@
 import { ctx } from './ctx.js';
 
 const FIELDS = [
-  ['base', 'Baseline', 0, 0.9, 0.05, 'Capability already in hand, 0 to 1'],
-  ['k', 'Scale', 1, 100000, 1, 'Spending (bn) that closes about 63% of the remaining gap'],
-  ['reach', 'Reach km', 0, 1000, 5, 'How far from the defended coast or line the layer shoots'],
+  ['base', 'Baseline', 0, 0.9, 0.01, 'Capability already in hand, 0 to 1'],
+  ['k', 'Scale', 0.01, 100000, 'any', 'Spending (bn) that closes about 63% of the remaining gap'],
+  ['reach', 'Reach km', 0, 1000, 1, 'How far from the defended coast or line the layer shoots'],
   ['w', 'Max share', 0, 1, 0.05, 'Largest share of the attacking force the layer could engage'],
 ];
 const shooting = c => c.w > 0 || c.reach > 0;
 const num = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+// Distance slider runs from a quarter to twice the country's default, on a 5 km grid that includes the default.
+const kmMin = km => Math.max(5, km - 5 * Math.floor((km * 0.75) / 5));
 
 export function readOver(q, P) {
   const over = { cats: {}, geo: {} };
@@ -41,7 +43,7 @@ export function mountParams(el, getOver, onChange) {
     const P = ctx.P, g = P.geo, unit = g.unit === 'kn' ? 'knots' : 'km/h';
     el.innerHTML = `<p class="fine">All of these are <span class="notional">notional</span>. Change any of them to test how much the result depends on it. Edits go into the link.</p>
       <div class="slider"><div class="sl-h"><label for="pg-km">${P.geoLabel || 'Approach length'}</label><output id="pg-km-out"></output></div>
-        <input type="range" id="pg-km" min="${Math.round(g.km / 4)}" max="${g.km * 2}" step="5"><small>Distance the attacking force covers under the defender's fires. Default ${g.km} km.</small></div>
+        <input type="range" id="pg-km" min="${kmMin(g.km)}" max="${g.km * 2}" step="5"><small>Distance the attacking force covers under the defender's fires. Default ${g.km} km.</small></div>
       <div class="slider"><div class="sl-h"><label for="pg-v">Attacker speed</label><output id="pg-v-out"></output></div>
         <input type="range" id="pg-v" min="1" max="${Math.max(30, g.speed * 3)}" step="1"><small>Default ${g.speed} ${unit}.</small></div>
       <div class="tablewrap"><table class="ptab"><thead><tr><th>Category</th>${FIELDS.map(f => `<th title="${f[5]}">${f[1]}</th>`).join('')}</tr></thead><tbody>

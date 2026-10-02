@@ -14,7 +14,7 @@ export const PRESETS = [
 export function panelHtml() {
   const fam = FAMILIES.map(f => `
     <div class="fam"><h3>${f.t}</h3><div class="mk-list">${MARKETS.filter(m => m.family === f.k).map(m =>
-      `<button type="button" class="mk" data-id="${m.id}" aria-pressed="false"><i class="sw-c"></i><span>${escapeHtml(m.label)}</span><small class="num">${m.resolved ? 'resolved ' + m.resolved : 'open'}</small></button>`).join('')}
+      `<button type="button" class="mk" data-id="${m.id}" aria-pressed="false"><i class="sw-c"></i><span>${escapeHtml(m.label)}</span><small class="num">${m.resolved ? 'resolved ' + m.resolved : m.closed ? 'closed' : 'open'}</small></button>`).join('')}
     </div></div>`).join('');
   return `
   <div class="sec">

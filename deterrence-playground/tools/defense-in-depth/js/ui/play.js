@@ -223,7 +223,7 @@ export function selClick(e) {
   const again = box.querySelector(Object.entries(d).map(([k, v]) => `[data-${k.replace(/[A-Z]/g, c => '-' + c.toLowerCase())}="${v}"]`).join(''));
   (again || box).focus?.();
 }
-const TOOL_SAY = { move: 'Tap the sector where it should go.', lane: 'Tap a sector up to three away: east or west runs the lane along the attackers’ lines.', riposte: 'Local counterattack: tap a fresh lodgment next to it.',
+const TOOL_SAY = { move: 'Tap the sector where it should go.', lane: 'Tap a sector up to three away: east or west runs the lane along the enemy’s lines.', riposte: 'Local counterattack: tap a fresh lodgment next to it.',
   breach: 'Tap the obstacle sector to clear.', displace: 'Tap a sector your side holds to move the battery there.', attack: 'Tap the target: the formation attacks on that axis.',
   hold: 'Tap a sector: the formation spreads over that zone, three columns wide.', cs: 'Tap one or more lodgments, then Launch counterattack.', leapfrog: 'Tap the target sector for the pair.',
   jam: 'Tap the centre of the area to jam.', row: 'Tap a sector on the row where its units should consolidate.' };

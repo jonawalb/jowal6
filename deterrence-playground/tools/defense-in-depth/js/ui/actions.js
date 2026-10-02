@@ -86,7 +86,7 @@ export function battleTap(sec) {
       const d = G.dirTo(one.sec, sec);
       if (d < 0) { msg = 'Tap a sector up to three away in a straight line or diagonal.'; break; }
       const r = go({ kind: 'lane', unit: one.id, dir: d });
-      msg = r.ok ? `Fire lane: ${nm(one)} will fire ${DIRS[d].k === 'E' || DIRS[d].k === 'W' ? 'across the front, along the attackers’ lines (enfilade)' : 'along that line'}. ${when(r)}` : `No order${why(r)}.`;
+      msg = r.ok ? `Fire lane: ${nm(one)} will fire ${DIRS[d].k === 'E' || DIRS[d].k === 'W' ? `across the front, along the ${one.side === 'att' ? 'defenders’' : 'attackers’'} lines (enfilade)` : 'along that line'}. ${when(r)}` : `No order${why(r)}.`;
       break;
     }
     case 'fire': {

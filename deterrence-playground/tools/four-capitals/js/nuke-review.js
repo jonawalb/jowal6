@@ -66,9 +66,14 @@ export function nukeReviewHTML(rv) {
   const W = 420, H = 160, L = 30, R = 8, T = 10, B = 24, n = rv.months.length;   // narrow, so the labels stay legible on a phone
   const x = i => L + (n <= 1 ? (W - L - R) / 2 : (i / (n - 1)) * (W - L - R)), y = val => T + (1 - val / 100) * (H - T - B);
   const pts = rv.months.map((m, i) => `${x(i).toFixed(1)},${y(m.to).toFixed(1)}`).join(' ');
+  // The line's label sits on whichever side of the line has fewer points under the text (it spans about the left
+  // two-thirds), with a halo in the panel colour so a crossing line never hides it.
+  const under = rv.months.filter((m, i) => x(i) < L + 0.7 * (W - L - R));
+  const near = (lo, hi) => under.filter(m => m.to > lo && m.to <= hi).length;
+  const lab = { y: near(TH, TH + 18) <= near(TH - 18, TH) ? y(TH) - 6 : y(TH) + 15 };
   const chart = `<svg class="k4-nukechart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Nuclear shadow at the end of each month, with the ${TH} line">
     ${[0, 50, 100].map(v => `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--rule)"/><text x="${L - 6}" y="${y(v) + 4}" font-size="12" text-anchor="end" fill="var(--muted)">${v}</text>`).join('')}
-    <line x1="${L}" x2="${W - R}" y1="${y(TH)}" y2="${y(TH)}" stroke="var(--bad)" stroke-dasharray="5 4"/><text x="${L + 6}" y="${y(TH) - 5}" font-size="12" fill="var(--bad)">${TH}: risk of use from Limited strikes up</text>
+    <line x1="${L}" x2="${W - R}" y1="${y(TH)}" y2="${y(TH)}" stroke="var(--bad)" stroke-dasharray="5 4"/><text x="${L + 6}" y="${lab.y}" font-size="12" fill="var(--bad)" stroke="var(--panel)" stroke-width="4" stroke-linejoin="round" paint-order="stroke">${TH}: risk of use from Limited strikes up</text>
     <polyline points="${pts}" fill="none" stroke="var(--bad)" stroke-width="2.5"/>
     ${rv.months.map((m, i) => `<circle cx="${x(i)}" cy="${y(m.to)}" r="4" fill="${m.to > TH ? 'var(--bad)' : 'var(--panel)'}" stroke="var(--bad)" stroke-width="2"/><text x="${x(i)}" y="${H - 6}" font-size="12" text-anchor="middle" fill="var(--muted)">${P.months[m.turn].slice(0, 3)}</text>`).join('')}
   </svg>`;

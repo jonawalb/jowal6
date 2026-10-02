@@ -95,43 +95,42 @@ html #tsm-gate .g-err { color: #a6221a; }
   html #tsm-gate input:focus-visible, html #tsm-gate button:focus-visible { outline-color: #e8825a; }
   html #tsm-gate .g-err { color: #f2675a; }
 }
-/* ---- Theater (the Trailer graphics option on games), lighter: a mid-tone olive plotting table instead of
-   near-black, softer grid, grain and glow. Same fonts and motion as trailer.css. ---- */
+/* ---- Theater (the Trailer graphics option on games): the original green sci-fi plotting table from trailer.css,
+   lifted a step and with brighter text so it reads easily (Jonathan, 2026-10-02: keep the green, less dark). ---- */
 :root[data-skin="trailer"][data-skin][data-skin] {
   color-scheme: dark;
-  --bg: #2e3829; --panel: #384332; --ink: #f5f2e7; --muted: #d3d6c4; --faint: #b8bda7; --rule: #5b684f; --chip: #424e3b;
-  --brand: #f2a65a; --brand-ink: #f2a65a; --accent: #f2a65a; --focus: #f6bd7f;
-  --sea: #2d3d3e; --land: #3d4837; --coast: #7a886f; --grat: #374b4c;
-  --blue: #a3c8ec; --blue-soft: rgba(163, 200, 236, .18); --red: #ff8e7a; --red-soft: rgba(255, 142, 122, .17);
-  --good: #9fd8aa; --warn: #f3b860; --bad: #ff8e7a;
-  --c1: #a3c8ec; --c2: #ffa86a; --c3: #63d8c2; --c4: #eea2cf; --c5: #f2d462; --c6: #bdaaf6; --c7: #8ccbe6; --c8: #dccaa2;
-  --prc: #ff8070; --roc: #63d8c2; --us: #a3c8ec; --jp: #eea2cf; --ph: #f2d462; --ccg: #f78fbc; --ally: #8ccbe6;
+  --bg: #102219; --panel: #173126; --ink: #f7f2e6; --muted: #c6d8cc; --faint: #a7bfb1; --rule: #305843; --chip: #1d3b2c;
+  --brand: #f3ae45; --brand-ink: #f3ae45; --accent: #f3ae45; --focus: #f7c477;
+  --sea: #12292e; --land: #1a3428; --coast: #5f8f77; --grat: #1f3e33;
+  --blue: #8cc4e8; --blue-soft: rgba(140, 196, 232, .18); --red: #f27a63; --red-soft: rgba(242, 122, 99, .17);
+  --good: #82d39f; --warn: #f3ae45; --bad: #f27a63;
+  --prc: #ff6e61; --roc: #3fd2bb; --us: #8cc4e8; --jp: #e48cc0; --ph: #f2cd4d; --ccg: #f37fb2; --ally: #74c2e2;
   --axis-ink: var(--muted); --axis-line: var(--faint);
-  --t-ground: #29331f; --t-well: rgba(30, 38, 26, .55);
-  --glow: 0 0 0 1px rgba(242, 166, 90, .32), 0 0 14px -6px rgba(242, 166, 90, .4);
+  --t-ground: #0e1d16; --t-well: rgba(10, 22, 16, .5);
+  --glow: 0 0 0 1px rgba(243, 174, 69, .38), 0 0 20px -5px rgba(243, 174, 69, .45);
 }
 :root[data-skin="trailer"][data-skin] body {
   background:
-    radial-gradient(120% 90% at 50% 25%, rgba(98, 116, 86, .55), rgba(46, 56, 41, 0) 70%),
-    linear-gradient(rgba(150, 168, 132, .09) 1px, transparent 1px) 0 0 / 64px 64px,
-    linear-gradient(90deg, rgba(150, 168, 132, .09) 1px, transparent 1px) 0 0 / 64px 64px,
-    #2b3426;
+    radial-gradient(120% 90% at 50% 28%, rgba(52, 98, 72, .6), rgba(10, 20, 15, 0) 70%),
+    linear-gradient(rgba(58, 104, 78, .42) 1px, transparent 1px) 0 0 / 64px 64px,
+    linear-gradient(90deg, rgba(58, 104, 78, .42) 1px, transparent 1px) 0 0 / 64px 64px,
+    #0d1c15;
   background-attachment: fixed;
 }
-:root[data-skin="trailer"][data-skin] body::after { opacity: .035; }
-:root[data-skin="trailer"][data-skin] .card, :root[data-skin="trailer"][data-skin] .panel, :root[data-skin="trailer"][data-skin] .mapbox { background: color-mix(in srgb, var(--panel) 94%, transparent); box-shadow: 0 14px 30px -24px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .05); }
-:root[data-skin="trailer"][data-skin] .btn { background: var(--chip); }
-:root[data-skin="trailer"][data-skin] .btn.solid, :root[data-skin="trailer"][data-skin] .btn.primary, :root[data-skin="trailer"][data-skin] .btn[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #1d2118; }
-:root[data-skin="trailer"][data-skin] .btn.solid:hover { background: #f6bd7f; }
-:root[data-skin="trailer"][data-skin] ::selection { background: rgba(242, 166, 90, .35); }
-:root[data-skin="trailer"][data-skin] .tooltip { box-shadow: 0 10px 24px -12px rgba(0, 0, 0, .45); }
+/* Readability: heavier, slightly larger small text; mono labels at a readable weight. */
+:root[data-skin="trailer"][data-skin] body { font-size: 14.5px; }
+:root[data-skin="trailer"][data-skin] .fine, :root[data-skin="trailer"][data-skin] small { color: var(--muted); font-size: 12.5px; }
+:root[data-skin="trailer"][data-skin] .num, :root[data-skin="trailer"][data-skin] .eyebrow, :root[data-skin="trailer"][data-skin] kbd { font-weight: 400; }
+:root[data-skin="trailer"][data-skin] svg text { font-weight: 500; }
+:root[data-skin="trailer"][data-skin] .card, :root[data-skin="trailer"][data-skin] .panel, :root[data-skin="trailer"][data-skin] .mapbox { background: color-mix(in srgb, var(--panel) 95%, transparent); }
+:root[data-skin="trailer"][data-skin] .btn.solid, :root[data-skin="trailer"][data-skin] .btn.primary { background: var(--accent); border-color: var(--accent); color: #10190f; }
+:root[data-skin="trailer"][data-skin] .skin-switch button[aria-pressed="true"] { background: var(--accent); color: #10190f; }
 .skin-chooser .sw.trl { background:
-  radial-gradient(circle at 70% 45%, rgba(242, 166, 90, .95) 0 5px, transparent 6px),
-  radial-gradient(circle at 30% 60%, rgba(255, 142, 122, .95) 0 4px, transparent 5px),
-  linear-gradient(rgba(150, 168, 132, .35) 1px, transparent 1px) 0 0 / 18px 18px,
-  linear-gradient(90deg, rgba(150, 168, 132, .35) 1px, transparent 1px) 0 0 / 18px 18px, #2e3829; }
+  radial-gradient(circle at 70% 45%, rgba(243, 174, 69, .95) 0 5px, transparent 6px),
+  radial-gradient(circle at 30% 60%, rgba(242, 122, 99, .95) 0 4px, transparent 5px),
+  linear-gradient(rgba(58, 104, 78, .7) 1px, transparent 1px) 0 0 / 18px 18px,
+  linear-gradient(90deg, rgba(58, 104, 78, .7) 1px, transparent 1px) 0 0 / 18px 18px, #102219; }
 .skin-chooser .sw.orig { background: linear-gradient(135deg, #e2e6d7 0 58%, #34432b 58% 62%, #a63a17 62% 64%, #e2e6d7 64%); }
-:root[data-skin="trailer"][data-skin] .skin-switch button[aria-pressed="true"] { background: var(--accent); color: #1d2118; }
 /* Tool trailer rules that baked the old near-black table into fills, strokes and wells. */
 :root[data-skin="trailer"][data-skin] .dd-ground, :root[data-skin="trailer"][data-skin] .dd-t-open, :root[data-skin="trailer"][data-skin] .dg-ground, :root[data-skin="trailer"][data-skin] .fc-ground { fill: var(--t-ground); }
 :root[data-skin="trailer"][data-skin] .dg-t, :root[data-skin="trailer"][data-skin] .fc-road { stroke: var(--t-ground); }

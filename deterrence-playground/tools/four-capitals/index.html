@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Four Capitals | Interactive Deterrence</title>
-<meta name="description" content="A turn-based strategy game of a notional 2029 Taiwan crisis. Play Washington, Taipei, Beijing or Tokyo: each month pick a posture and three diplomatic, information, military or economic moves, read your rivals' hidden resolve, and be scored against your own priorities.">
+<meta name="description" content="A turn-based strategy game of a notional 2029 Taiwan crisis. Play Washington, Taipei, Beijing or Tokyo: each month pick a posture and four diplomatic, information, military or economic moves, move named formations within your Lift, fuel, munitions and readiness, read your rivals' hidden resolve, and be scored against your own priorities.">
 <link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,14 +17,16 @@
 <header id="tsm-head"></header>
 <div class="k4-actions">
   <p class="k4-flag"><b>Fictional and notional.</b> An invented 2029 crisis. Odds and effects are illustrative game design, not predictions.</p>
-  <div><button type="button" class="btn" id="new-game">New game</button>
+  <div><button type="button" class="btn" id="tour-btn">Walkthrough</button>
+  <button type="button" class="btn" id="new-game">New game</button>
   <button type="button" class="btn" id="copy-link">Copy link</button></div>
 </div>
 
 <main class="k4-main">
   <section class="card k4-start" id="start" aria-labelledby="start-t">
     <h2 id="start-t">Choose your capital</h2>
-    <p class="k4-lede">March 2029. Beijing is turning up the pressure on Taiwan. Over eight months, each capital picks a <b>posture</b> and <b>three moves</b> a month, all at once. Every capital has a hidden <b>type</b> (resolute, cautious or opportunist) that the others have to read from its behavior.</p>
+    <p class="k4-notice" id="old-link" role="status" hidden></p>
+    <p class="k4-lede">March 2029. Beijing is turning up the pressure on Taiwan. Over eight months, each capital picks a <b>posture</b> and <b>four moves</b> a month, all at once, and moves its <b>formations</b> within four logistics limits: Lift, fuel, munitions and readiness. Every capital has a hidden <b>type</b> (resolute, cautious or opportunist) that the others have to read from its behavior.</p>
     <div class="k4-seats" id="seats" role="radiogroup" aria-label="Your capital"></div>
     <div class="k4-setup" id="setup" hidden>
       <h3>What matters to you?</h3>
@@ -76,11 +78,13 @@
         <p class="eyebrow">Posture</p>
         <div class="k4-postures" id="postures" role="radiogroup" aria-label="Posture"></div>
         <p class="k4-pexp fine" id="pexp"></p>
-        <div class="k4-lineh"><p class="eyebrow">Moves <span class="muted" id="count">0 of 3</span></p>
+        <div class="k4-logiw" id="logi-wrap"><div id="logi"></div><p class="fine k4-logi-sum" id="logi-sum" aria-live="polite"></p></div>
+        <div class="k4-lineh"><p class="eyebrow">Moves <span class="muted" id="count">0 of 4</span></p>
           <div class="k4-tabs" role="tablist" id="tabs"></div></div>
         <div class="k4-actlist" id="actions" role="group" aria-label="Moves"></div>
         <p class="fine">Odds assume the others repeat last month. They are recalculated, with what everyone actually did, when the month resolves. Choosing a move again next month costs −15.</p>
         <div class="k4-forces" id="forces"></div>
+        <div class="k4-openw" id="logi-open"></div>
       </section>
     </div>
   </section>
@@ -99,6 +103,8 @@
     <h3>What they believed about you</h3>
     <p class="fine">Each line is a rival's probability that you were your true type, month by month. The marked month is the move that shifted it most.</p>
     <svg id="beliefs" viewBox="0 0 640 220" role="img" aria-label="Rivals' beliefs about your type"></svg>
+    <h3>Your forces and logistics</h3>
+    <div id="end-logi"></div>
     <button type="button" class="btn solid" id="again">Play again</button>
   </section>
 
@@ -106,15 +112,17 @@
     <details>
       <summary><b>How the game works</b></summary>
       <ul>
-        <li><b>Each month</b> you pick a posture (stand down to escalate; the United States and China can also make a nuclear signal from Blockade up) and up to three strategic moves across seven lines: diplomatic, information, military, economic, financial, intelligence and law enforcement. Each move asks follow-up questions: which route, which ports, which sector, which coast. Some moves unlock as the crisis climbs; opportunity moves (●) appear only when conditions allow. All four capitals reveal at once.</li>
-        <li><b>Forces.</b> Every capital has force points in four sea areas (North, Strait, South, East) and its Rear. Spend your monthly logistics to move them and set each area to Defend, Contest or Attack. Holding areas matters: a blockade needs China to hold the Strait and a flank, escorts need their route, a landing needs the Strait. Below Limited strikes nobody fires; after that, areas where both sides contest fight every month. You see rivals’ strength only roughly (~) unless your intelligence moves paid off.</li>
+        <li><b>Each month</b> you pick a posture (stand down to escalate; the United States and China can also make a nuclear signal from Blockade up) and up to four strategic moves across seven lines: diplomatic, information, military, economic, financial, intelligence and law enforcement. Each move asks follow-up questions: which route, which ports, which sector, how much to commit. Some moves unlock as the crisis climbs; opportunity moves (●) appear only when conditions allow. All four capitals reveal at once.</li>
+        <li><b>Logistics.</b> Four resources limit what you can do. <b>Lift</b> (sealift and airlift) refills each month and pays for moving formations. <b>Fuel</b> is a slowly refilling stock burned by every formation move and every month a formation sits at sea in Contest or Attack. <b>Munitions</b> are a stockpile, slow to rebuild, spent by strikes, blockade enforcement, escorts and combat: China’s is largest, Taiwan’s and Japan’s smallest. <b>Readiness</b> belongs to each formation: it drains while the formation stays forward (faster in Attack and in combat) and recovers in the Rear, and low readiness cuts its strength. Some moves cost resources (shown on each move) and some add them (a U.S. surge adds Lift, Taiwan’s call-up adds Lift and readiness). The logistics table shows what you have, what your choices commit, what is left and what comes back next month; the list below it greys out whatever you can no longer afford. A blockade cuts Taiwan’s fuel refill and stops its munitions resupply.</li>
+        <li><b>Formations.</b> Each capital has a handful of named formations (real public unit types, notional strengths, no real order of battle) in four sea areas (North, Strait, South, East) and its Rear. Give each one an order a month: move it (1 Lift to a neighbouring area, 2 to or from the Rear, amphibious forces 1½×, plus 1 fuel), or aim a strike force at a sea area. Ground forces cannot cross the Strait. Air formations add half their strength to neighbouring areas once the shooting starts; strike forces count only where aimed, and only then. Set each area to Defend, Contest or Attack. Holding areas matters: a blockade needs China to hold the Strait and a flank, escorts need their route. Below Limited strikes nobody fires; after that, areas where both sides contest fight every month. You see rivals’ strength only roughly (~) unless your intelligence moves paid off.</li>
+        <li><b>Taiwan’s coast.</b> The island is four landing sectors (northwest, the approach to the capital; central-west; southwest; east) plus an inland reserve. A landing is possible only once the crisis reaches Limited strikes and needs China to hold the sea in front of the chosen coast with an amphibious formation there, plus Lift. China picks a landing emphasis; Taiwan picks where its reserve waits and the United States where its fires go, without seeing China’s choice. Region level only: no beaches, no real force numbers.</li>
         <li><b>Every move shows its odds</b> and the factors behind them. One roll decides it: success, partial or failure. Military moves need the crisis to have reached a certain rung.</li>
         <li><b>The ladder</b> runs from Pressure to Nuclear use. It climbs when escalatory moves succeed, at most two rungs a month, and eases when capitals step back.</li>
         <li><b>Hidden types.</b> Resolute leaders pay at home for backing down; cautious ones pay for escalating; opportunists escalate when a rival looks weak. The computer updates its beliefs about you by Bayes' rule from what you do, and costly moves say the most.</li>
         <li><b>Nuclear use</b> is never a menu choice. Once the shooting starts, a rising nuclear shadow makes it a risk each month.</li>
         <li><b>Endings:</b> a settlement after two calm months of talks; Beijing stepping back; Taiwan forced to terms; nuclear use; or October.</li>
       </ul>
-      <p class="fine">All numbers are illustrative game design. In 1,000 test games with the computer in every seat on Normal: 14% ended with Taiwan forced to terms, 21% with Beijing stepping back, 2% in a settlement, 6% in nuclear use, and 58% were unresolved in October. 54% saw a blockade or worse, 27% limited strikes or worse, and 24% major war or nuclear use. By month 5 the computer’s best guess of a rival’s type was right 64% of the time (chance is 33%).</p>
+      <p class="fine" id="balance-note">All numbers are illustrative game design. In 1,000 test games with the computer in every seat on Normal: 14% ended with Taiwan forced to terms, 28% with Beijing stepping back, 2% in a settlement, 7% in nuclear use, and 49% were unresolved in October. 60% saw a blockade or worse, 24% limited strikes or worse, and 20% major war or nuclear use. China attempted a landing in 10% of games; 42% of attempts got ashore and 11% more gained a partial lodgement. By month 5 the computer’s best guess of a rival’s type was right 69% of the time (chance is 33%).</p>
     </details>
   </section>
 </main>

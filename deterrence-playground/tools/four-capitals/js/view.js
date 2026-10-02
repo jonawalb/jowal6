@@ -3,6 +3,7 @@
 import { P } from '../data/params.js';
 import { COUNTRIES, IDS } from '../data/countries.js';
 import { BY_ID, TO } from '../data/actions.js';
+import { ISLAND, AREA_SHORT, AREA_LABEL } from '../data/theater.js';
 import { tracer, burst, ping } from '../../../shared/js/motion.js';
 
 const NS = 'http://www.w3.org/2000/svg';
@@ -44,18 +45,25 @@ export function paintZones(s, seen) {
     const c = s.ctrl[a];
     el('ellipse', { cx: x, cy: y, rx: 58, ry: 34, fill: fill[c], 'fill-opacity': c === 'empty' ? 0 : 0.1, stroke: c === 'contested' ? 'var(--warn)' : fill[c] === 'transparent' ? 'var(--muted)' : fill[c], 'stroke-dasharray': '5 4', 'stroke-opacity': 0.8 }, zones);
     el('text', { x, y: y - 12, 'font-size': 11, 'font-weight': 700, 'text-anchor': 'middle', fill: 'var(--ink)', 'letter-spacing': '.08em' }, zones).textContent = { north: 'NORTH', strait: 'STRAIT', south: 'SOUTH', east: 'EAST' }[a];
-    const parts = [['cn', 'var(--k-cn)'], ['us', 'var(--k-us)'], ['jp', 'var(--k-jp)']].map(([w, col]) => [w, col, ...seen(w, a)]).filter(([, , v]) => v > 0);
-    let dx = x - (parts.length - 1) * 19;
+    const parts = [['cn', 'var(--k-cn)'], ['us', 'var(--k-us)'], ['jp', 'var(--k-jp)'], ['tw', 'var(--k-tw)']].map(([w, col]) => [w, col, ...seen(w, a)]).filter(([, , v]) => v > 0);
+    const gap = parts.length > 3 ? 29 : 38;
+    let dx = x - (parts.length - 1) * gap / 2;
     for (const [w, col, v, exact] of parts) {
       el('circle', { cx: dx, cy: y + 8, r: 13, fill: col, stroke: 'var(--panel)', 'stroke-width': 1.5 }, zones);
-      el('text', { x: dx, y: y + 12, 'font-size': 11, 'font-weight': 700, 'text-anchor': 'middle', fill: '#fff' }, zones).textContent = (exact ? '' : '~') + Math.round(v);
-      dx += 38;
+      el('text', { x: dx, y: y + 12, 'font-size': 11, 'font-weight': 700, 'text-anchor': 'middle', fill: '#fff' }, zones).textContent = (exact ? '' : '~') + (v < 1 ? +v.toFixed(1) : Math.round(v));
+      dx += gap;
     }
     el('text', { x, y: y + 33, 'font-size': 10, 'text-anchor': 'middle', fill: 'var(--muted)' }, zones).textContent = c === 'red' ? 'China holds' : c === 'blue' ? 'Coalition holds' : c === 'contested' ? 'Contested' : '';
   }
   const [tx, ty] = AT.tw;
-  const tw = ['tn', 'tc', 'ts'].map(a => seen('tw', a));
-  el('text', { x: tx, y: ty + 58, 'font-size': 10.5, fill: 'var(--k-tw)', 'font-weight': 600, 'text-anchor': 'middle' }, zones).textContent = `Taiwan N ${tw.map(([v, e]) => (e ? '' : '~') + Math.round(v)).join(' · ')} S`;
+  // Taiwan's coast: four landing sectors and the inland reserve, with the strength you can see in each.
+  const t = el('text', { x: tx, y: ty + 58, 'font-size': 10.5, fill: 'var(--k-tw)', 'font-weight': 600, 'text-anchor': 'middle' }, zones);
+  t.textContent = ISLAND.map(a => { const [v, e] = seen('tw', a); return `${AREA_SHORT[a]} ${e ? '' : '~'}${+v.toFixed(1)}`; }).join(' · ');
+  const tt = el('title', {}, t); tt.textContent = ISLAND.map(a => `${AREA_LABEL[a]}: ${+seen('tw', a)[0].toFixed(1)}`).join('; ');
+  for (const [a, dx, dy] of [['nw', -14, -26], ['cw', -16, 0], ['sw', -10, 28], ['ec', 14, 6]]) {
+    const v = seen('tw', a)[0];
+    el('circle', { cx: tx + dx, cy: ty + dy, r: 3 + Math.min(4, v * 1.5), fill: 'var(--k-tw)', 'fill-opacity': v > 0 ? 0.75 : 0.15, stroke: 'var(--panel)', 'stroke-width': 1 }, zones);
+  }
 }
 
 export function paintTheatre(s) {

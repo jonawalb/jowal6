@@ -2,10 +2,11 @@
 // one-month lookahead choice by softmax. The computer never reads another capital's true type.
 import { P } from '../data/params.js';
 import { COUNTRIES, IDS } from '../data/countries.js';
-import { ACTIONS, POSTURES, BY_ID, TO, posturesFor, escRoom, isEsc, menu } from '../data/actions.js';
+import { ACTIONS, POSTURES, BY_ID, TO, posturesFor, escRoom, isEsc, menu, MAX_MOVES } from '../data/actions.js';
 import { resolveTurn, blockedWhy, opening } from './engine.js';
 import { deployIntensity } from './forces.js';
 import { forceOrders } from './ai-forces.js';
+import { costOf, grantOf, short, avgReady, fuelUpkeep, ZERO } from './logistics.js';
 import { makeRng, STREAM } from './rng.js';
 
 const TYPES = P.types;
@@ -19,7 +20,7 @@ export function initBeliefs() {
  * plus forward deployment (massing in one area, Attack stances). */
 export function intensity(move) {
   const lvl = (POSTURES.find(p => p.id === move.posture) || { level: 0 }).level;
-  return 0.5 * lvl + move.actions.reduce((t, id) => t + (BY_ID[id].tags.includes('esc') ? 1 : BY_ID[id].tags.includes('soft') ? -1 : 0), 0) + deployIntensity(null, null, move.orders);
+  return 0.5 * lvl + move.actions.reduce((t, id) => t + (BY_ID[id].tags.includes('esc') ? 1 : BY_ID[id].tags.includes('soft') ? -1 : 0), 0) + deployIntensity(move.orders);
 }
 
 const GRID = []; for (let x = -4; x <= 5; x += 0.5) GRID.push(x);
@@ -79,7 +80,22 @@ function utility(s, who, move, B, weights) {
   const { state: n } = resolveTurn(s, moves, { expected: true });
   // Plus the computer's estimate of payoffs that land after this month (intelligence, rehearsals, dispersal...).
   const later = move.actions.reduce((t, id) => t + (BY_ID[id].ai ? BY_ID[id].ai(s, who) : 0), 0);
-  return objectiveValue(n, who, weights) + P.ai.supportWeight * n.c[who].support + riskTerm(s, who, move, B) + later;
+  return objectiveValue(n, who, weights) + P.ai.supportWeight * n.c[who].support + riskTerm(s, who, move, B) + later - scarcity(s, who, move);
+}
+
+/** What spending stocks costs the computer: the share of fuel and munitions left that a move uses, squared (cheap
+ * while stocks are full, steep when they run low). */
+function scarcity(s, who, move) {
+  const c = move.actions.reduce((t, id) => { const k = costOf(id, move.follow?.[id]); return { fuel: t.fuel + k.fuel, mun: t.mun + k.mun }; }, { fuel: 0, mun: 0 });
+  const f = c.fuel / Math.max(1, s.res[who].fuel), m = c.mun / Math.max(1, s.res[who].mun);
+  return P.ai.scarcity * (f * f + 1.5 * m * m);
+}
+/** Total cost of a set of moves and whether the capital can pay it (after the moves' own grants). */
+function payable(s, who, ids, follow) {
+  const g = grantOf(ids), res = { lift: s.res[who].lift + g.lift, fuel: s.res[who].fuel + g.fuel, mun: s.res[who].mun + g.mun };
+  const c = ids.reduce((t, id) => { const k = costOf(id, follow[id]); for (const r in t) t[r] += k[r]; return t; }, { ...ZERO });
+  const k = short(res, avgReady(s, who) + g.ready, c);
+  return { ok: !k, res: k, left: { lift: res.lift - c.lift, fuel: res.fuel - c.fuel } };
 }
 
 /** Best follow-up answers for one move, judged on its own. */
@@ -88,44 +104,53 @@ function bestFollow(s, who, id, B, weights, orders) {
   let best = {}, bu = -Infinity;
   const combos = fq.reduce((acc, q) => acc.flatMap(c => q.opts.map(o => ({ ...c, [q.id]: o.id }))), [{}]);
   for (const o of combos) {
-    if (blockedWhy(s, id, o)) continue;
+    if (blockedWhy(s, id, o, { [who]: { orders } }) || (combos.length > 1 && !payable(s, who, [id], { [id]: o }).ok)) continue;
     const u = utility(s, who, { posture: 'hold', actions: [id], follow: { [id]: o }, orders }, B, weights);
     if (u > bu) { bu = u; best = o; }
   }
   return { o: best, u: bu };
 }
 
-/** Pick a move for `who`: posture, up to three moves with follow-ups, and force orders.
- * weights: its objective weights; beliefs: its beliefs about the others. */
+/** Pick a move for `who`: posture, up to four moves with follow-ups (only what it can pay for), and force orders.
+ * weights: its objective weights; beliefs: its beliefs about the others. `limits` notes resources that kept a
+ * move it rated highly off the list. */
 export function chooseMove(s, who, beliefs, weights, difficulty = s.difficulty) {
   const rng = makeRng(s.seed, STREAM.ai + s.turn * 10 + IDS.indexOf(who));
-  const orders = forceOrders(s, who);
-  const legal = menu(s, who).filter(a => !blockedWhy(s, a.id));
+  const { limits: _, ...orders } = forceOrders(s, who, { lift: s.res[who].lift, fuel: Math.max(0, s.res[who].fuel - 2) });
+  const legal = menu(s, who).filter(a => !blockedWhy(s, a.id, null, { [who]: { orders } }));
   const base = { posture: 'hold', actions: [], follow: {}, orders };
   const u0 = utility(s, who, base, beliefs, weights);
   const pScore = posturesFor(who, s).map(p => ({ id: p.id, u: utility(s, who, { ...base, posture: p.id }, beliefs, weights) - u0 }))
     .sort((a, b) => b.u - a.u).slice(0, P.ai.topPostures);
   const follow = {};
-  const aScore = legal.map(a => { const r = bestFollow(s, who, a.id, beliefs, weights, orders); follow[a.id] = r.o; return { id: a.id, u: r.u - u0 }; })
-    .sort((a, b) => b.u - a.u).slice(0, P.ai.topActions);
-  const cands = [];
+  const scored = legal.map(a => { const r = bestFollow(s, who, a.id, beliefs, weights, orders); follow[a.id] = r.o; return { id: a.id, u: r.u - u0, pay: payable(s, who, [a.id], { [a.id]: r.o }) }; })
+    .sort((a, b) => b.u - a.u);
+  const aScore = scored.filter(a => a.pay.ok).slice(0, P.ai.topActions);
+  const cut = aScore[Math.min(MAX_MOVES, aScore.length) - 1]?.u ?? -Infinity, limits = {};
+  for (const a of scored) if (!a.pay.ok && a.u > Math.max(0, cut)) limits[a.pay.res] = true;
   const ids = aScore.map(a => a.id);
-  const triples = [];
-  for (let i = 0; i < ids.length; i++) for (let j = i + 1; j < ids.length; j++) for (let k = j + 1; k < ids.length; k++) triples.push([ids[i], ids[j], ids[k]]);
-  if (!triples.length) triples.push(ids.slice(0, 3));
-  for (const p of pScore) for (const t of triples) {
+  const sets = [];
+  const pick = (from, k, acc) => { if (acc.length === k) { sets.push(acc); return; } for (let i = from; i < ids.length; i++) pick(i + 1, k, [...acc, ids[i]]); };
+  pick(0, Math.min(MAX_MOVES, ids.length), []);
+  const cands = [];
+  for (const p of pScore) for (const t of sets) {
     let room = escRoom(p.id);
     const acts = t.filter(id => !isEsc(id) || room-- > 0);
-    cands.push({ posture: p.id, actions: acts, follow: Object.fromEntries(acts.map(id => [id, follow[id]])), orders });
+    const fol = Object.fromEntries(acts.map(id => [id, follow[id]]));
+    if (!payable(s, who, acts, fol).ok) continue;
+    cands.push({ posture: p.id, actions: acts, follow: fol, orders });
   }
+  if (!cands.length) cands.push({ ...base, posture: pScore[0]?.id || 'hold' });
   const us = cands.map(c => utility(s, who, c, beliefs, weights));
   const T = P.ai.temp[difficulty] || P.ai.temp.normal;
   const mx = Math.max(...us);
   const ws = us.map(u => Math.exp((u - mx) / T));
-  const pick = cands[rng.pick(ws)];
-  // Spend any logistics its military moves add.
-  const bonus = pick.actions.reduce((t, id) => t + (BY_ID[id].deploy || 0), 0);
-  return bonus ? { ...pick, orders: forceOrders(s, who, bonus) } : pick;
+  const chosen = cands[rng.pick(ws)];
+  // Re-plan the force orders with what the chosen moves leave (and any Lift they add).
+  const left = payable(s, who, chosen.actions, chosen.follow).left;
+  const { limits: fl, ...ord } = forceOrders(s, who, { lift: left.lift, fuel: Math.max(0, left.fuel - fuelUpkeep(s, who)) });
+  Object.assign(limits, fl);
+  return { ...chosen, orders: ord, ...(Object.keys(limits).length ? { limits } : {}) };
 }
 
 /** Your read of a rival: the true posterior plus display noise, renormalised. */

@@ -1,10 +1,12 @@
 // Game state and turn resolution. No DOM: the same code runs in the page, the tests and the balance script.
 import { P } from '../data/params.js';
 import { COUNTRIES, IDS, START } from '../data/countries.js';
-import { POSTURES, BY_ID, T, escRoom, isEsc, onMenu, answers } from '../data/actions.js';
+import { POSTURES, BY_ID, T, escRoom, isEsc, onMenu, answers, MAX_MOVES } from '../data/actions.js';
 import { EVENTS } from '../data/events.js';
 import { makeRng, STREAM } from './rng.js';
-import { initForces, arrive, applyOrders, updateControl, combat, syncMilitary, hit } from './forces.js';
+import { initForces, arrive, applyOrders, updateControl, combat, syncMilitary, hit, addStr, shiftReady } from './forces.js';
+import { initRes, applyGrants, payMoves, refund, upkeep, regen, noteBinds } from './logistics.js';
+import { RES_LABEL } from '../data/formations.js';
 
 export const ORDER = ['cn', 'us', 'jp', 'tw'];          // resolution order within a line
 const LINE_ORDER = ['D', 'I', 'N', 'L', 'F', 'E', 'M'];  // diplomacy and signals land before force
@@ -22,9 +24,10 @@ export function newGame({ seed, player, weights, difficulty = 'normal' }) {
     basing: 'peacetime', blockade: 0, escort: 0, weather: false,
     struck: { us: 0, jp: 0, mainland: 0 }, jpCombat: 0, usCombat: false,
     nuclearUsed: false, settleRun: 0, settled: false, pressed: false, exposed: false, usCommitted: false,
-    sharp: {}, recon: {}, rehearsed: null, portsHit: false,
+    sharp: {}, recon: {}, rehearsed: null, portsHit: false, landings: [],
     last: {}, event: null, history: [], over: null,
   };
+  initRes(s);
   initForces(s);
   syncMilitary(s);
   return s;
@@ -41,19 +44,19 @@ export function brief(state) {
   return s;
 }
 
-/** Is a move allowed now? null if yes, else the reason. */
-export function blockedWhy(s, id, o) {
+/** Is a move allowed now? null if yes, else the reason. `mv`: everyone's moves this month, when known. */
+export function blockedWhy(s, id, o, mv) {
   const a = BY_ID[id];
   if (!onMenu(s, a)) return a.unlock != null && s.rung < a.unlock ? `Unlocks at ${P.ladder[a.unlock]}` : 'Not available this month';
-  return a.req ? a.req(s, o || answers(id)) : null;
+  return a.req ? a.req(s, o || answers(id), mv) : null;
 }
 export const legalActions = (s, who, list) => list.filter(a => !blockedWhy(s, a.id));
 const followOf = (moves, who, id) => answers(id, moves[who]?.follow?.[id]);
 
-/** Odds for one move given everyone's moves this month: { p, factors: [[label, points]] }. */
-export function oddsFor(s, moves, who, id) {
+/** Odds for one move given everyone's moves this month: { p, factors: [[label, points]] }. `final`: resolving. */
+export function oddsFor(s, moves, who, id, final = false) {
   const a = BY_ID[id], o = followOf(moves, who, id);
-  const factors = (a.f ? a.f(s, moves, who, o) : []).filter(Boolean);
+  const factors = (a.f ? a.f(s, moves, who, o, final) : []).filter(Boolean);
   if (a.line === 'M' && moves[who] && moves[who].posture === 'esc') factors.push(['Your forces on alert (Escalate)', 5]);
   if (a.line === 'M' && s.recon[who]) factors.push(['Surveillance last month', 5]);
   if (s.exposed && who === 'cn' && a.line === 'M') factors.push(['Plans exposed by U.S. intelligence', -5]);
@@ -100,9 +103,9 @@ export function climb(from, target) {
 export function resolveTurn(state, moves, opts = {}) {
   const pre = state, s = clone(state), log = [];
   const rng = makeRng(s.seed, STREAM.dice + s.turn);
-  s.escort = 0; s.pressed = false; s.losses = {};
+  s.escort = 0; s.pressed = false; s.losses = {}; s.short = {}; s.engaged = {}; s.shownEmph = null;
   s.sharpNext = {}; s.reconNext = {}; s.blindNext = {}; s.rehearsedNext = null; s.portsHitNext = false;
-  const ctx = { hit: (w, a, n) => hit(s, w, a, n) };
+  const ctx = { hit: (w, a, n, type) => hit(s, w, a, n, type), add: (w, a, n) => addStr(s, w, a, n), ready: (w, d) => shiftReady(s, w, d) };
 
   // Postures and their cost at home.
   for (const who of ORDER) {
@@ -116,25 +119,32 @@ export function resolveTurn(state, moves, opts = {}) {
     log.push({ who, kind: 'posture', posture: mv.posture, support: d });
   }
 
-  // Forces: last month's U.S. arrivals, then everyone's orders (military moves add logistics).
-  arrive(s, log);
-  for (const who of ORDER) {
-    const mv = moves[who] || HOLD;
-    const picked = mv.actions.filter(id => !blockedWhy(pre, id, followOf(moves, who, id)));
-    const bonus = picked.reduce((t, id) => t + (BY_ID[id].deploy || 0), 0);
-    const r = applyOrders(s, who, mv.orders, bonus);
-    if (who === 'us' && picked.includes('us_surge')) { for (const p of s.pending) s.f.us[p.to] += p.n; s.pending = []; }
-    for (const l of r.log) log.push(l);
-  }
-  updateControl(s);
-
-  // Moves, line by line. A posture caps escalatory moves (extras, in the order chosen, are not carried out).
+  // A posture caps escalatory moves (extras, in the order chosen, are not carried out); at most MAX_MOVES count.
   const dropped = {};
   for (const who of ORDER) {
     const mv = moves[who]; if (!mv) continue;
     let room = escRoom(mv.posture);
-    for (const id of mv.actions) if (isEsc(id)) { if (room > 0) room--; else dropped[who + id] = true; }
+    mv.actions.forEach((id, i) => { if (i >= MAX_MOVES) dropped[who + id] = 'limit'; else if (isEsc(id)) { if (room > 0) room--; else dropped[who + id] = 'posture'; } });
   }
+
+  // Resources and forces: last month's U.S. arrivals; then each capital's grants, the cost of its moves (in the
+  // order chosen) and its force orders, paid from what is left.
+  arrive(s, log);
+  const refused = {}, used = {}, paid = {};
+  for (const who of ORDER) {
+    const mv = moves[who] || HOLD;
+    const picked = mv.actions.filter(id => !dropped[who + id] && !blockedWhy(pre, id, followOf(moves, who, id), moves));
+    applyGrants(s, who, picked);
+    refused[who] = payMoves(s, who, picked, mv.follow || {});
+    paid[who] = new Set(picked.filter(id => !refused[who][id]));
+    used[who] = {};
+    for (const k of Object.values(refused[who])) used[who][k] = true;
+    const r = applyOrders(s, who, mv.orders, { fast: picked.includes('us_surge') && !refused[who].us_surge });
+    for (const l of r.log) { log.push(l); if (l.res) used[who][l.res] = true; }
+  }
+  updateControl(s);
+
+  // Moves, line by line.
   let target = s.rung;
   const succeeded = {};
   for (const line of LINE_ORDER) for (const who of ORDER) {
@@ -144,9 +154,16 @@ export function resolveTurn(state, moves, opts = {}) {
       const a = BY_ID[id];
       if (a.line !== line) continue;
       const o = followOf(moves, who, id);
-      const why = dropped[who + id] ? `Not allowed while you ${mv.posture === 'stand' ? 'stand down' : 'de-escalate'}` : !onMenu(pre, a) ? 'Not available this month' : a.req ? a.req(s, o) : null;
-      if (why) { log.push({ who, kind: 'action', id, o, status: 'blocked', reason: why }); continue; }
-      const { p, factors } = oddsFor(s, moves, who, id);
+      const dr = dropped[who + id], short = refused[who]?.[id];
+      let why = dr === 'limit' ? `Only ${MAX_MOVES} moves a month` : dr ? `Not allowed while you ${mv.posture === 'stand' ? 'stand down' : 'de-escalate'}` : !onMenu(pre, a) ? 'Not available this month'
+        : short ? `Not enough ${RES_LABEL[short].toLowerCase()}` : null;
+      if (!why && a.req) why = a.req(s, o, moves);
+      if (!why && !paid[who]?.has(id)) {   // possible only now (e.g. forces just moved in): pay from what is left
+        const k = payMoves(s, who, [id], mv.follow || {})[id];
+        if (k) { why = `Not enough ${RES_LABEL[k].toLowerCase()}`; used[who][k] = true; }
+      } else if (why && paid[who]?.has(id)) refund(s, who, id, o);
+      if (why) { log.push({ who, kind: 'action', id, o, status: 'blocked', reason: why, res: short }); continue; }
+      const { p, factors } = oddsFor(s, moves, who, id, !opts.expected);
       let m, status, roll = null;
       if (opts.expected) { m = p; status = 'expected'; }
       else {
@@ -173,10 +190,11 @@ export function resolveTurn(state, moves, opts = {}) {
 
   // Fighting at sea, then who holds what.
   if (!opts.expected) combat(s, makeRng(s.seed, STREAM.dice + 70 + s.turn), log);
+  upkeep(s, log);
   updateControl(s);
   if (s.blockade && (s.rung < 2 || s.ctrl.strait !== 'red')) { s.blockade = 0; log.push({ kind: 'note', text: 'China no longer holds the Strait: the blockade lapses.' }); }
   const lost = Object.values(s.losses).reduce((a, b) => a + b, 0);
-  if (lost > 3) T(s, 'nuke', 2 * (lost - 3));
+  if (lost > P.nukeLoss) T(s, 'nuke', 2 * (lost - P.nukeLoss));
   if (lost > P.majorWarLosses && s.rung === 3) { s.rung = 4; s.maxRung = Math.max(s.maxRung, 4); log.push({ kind: 'note', text: `Heavy fighting (${lost.toFixed(1)} force points lost this month): the crisis is now a major war.` }); }
   syncMilitary(s);
 
@@ -198,6 +216,10 @@ export function resolveTurn(state, moves, opts = {}) {
   if (s.rung >= 3 && s.c.cn.military < 45) T(s, 'nuke', 8);
   if (s.rung >= 3) s.nuke = Math.max(s.nuke, 10);
   s.nukePeak = Math.max(s.nukePeak, s.nuke);
+
+  // Which resources held each capital back this month; then next month's Lift, fuel and munitions.
+  for (const who of ORDER) noteBinds(s, who, { ...(moves[who]?.limits || {}), ...(used[who] || {}) });
+  regen(s);
 
   // Nuclear use: a risk, never a choice. Only once the war is shooting.
   if (s.rung >= 3 && s.nuke > P.nuclear.threshold) {
@@ -230,7 +252,8 @@ export function resolveTurn(state, moves, opts = {}) {
 
 export const snapshot = s => ({ rung: s.rung, tw: Math.round(s.tw), coal: Math.round(s.coal), shock: Math.round(s.shock), nuke: Math.round(s.nuke),
   c: Object.fromEntries(IDS.map(id => [id, { support: Math.round(s.c[id].support), economy: Math.round(s.c[id].economy), military: Math.round(s.c[id].military) }])),
-  f: JSON.parse(JSON.stringify(s.f)), ctrl: { ...s.ctrl } });
+  f: JSON.parse(JSON.stringify(s.f)), ctrl: { ...s.ctrl }, res: JSON.parse(JSON.stringify(s.res)),
+  units: Object.fromEntries(IDS.map(id => [id, s.units[id].map(u => ({ id: u.id, at: u.at, str: u.str, ready: u.ready }))])) });
 
 export function isOver(s, succeeded = {}) {
   if (s.nuclearUsed) return { reason: 'nuclear', title: 'Nuclear use', text: 'A nuclear weapon was used. The game ends here.' };
@@ -241,20 +264,25 @@ export function isOver(s, succeeded = {}) {
   return null;
 }
 
-// Copy links (v2): seed, seat, difficulty, weights, then the player's moves as base64url JSON.
+// Copy links (v3): seed, seat, difficulty, weights, then the player's moves as base64url JSON. v2 links (three
+// moves, force points instead of formations) cannot be replayed; decode marks them { old: true }.
 const b64 = str => (typeof btoa === 'function' ? btoa(unescape(encodeURIComponent(str))) : Buffer.from(str, 'utf8').toString('base64')).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 const unb64 = str => { const t = str.replace(/-/g, '+').replace(/_/g, '/'); return typeof atob === 'function' ? decodeURIComponent(escape(atob(t))) : Buffer.from(t, 'base64').toString('utf8'); };
+export const LINK_VERSION = 'v3';
 export function encode(s) {
   const w = COUNTRIES[s.player].objectives.map(o => s.weights[o.id]).join('');
   const mv = s.history.map(h => { const m = h.moves[s.player]; return [m.posture, m.actions, m.follow || {}, m.orders || {}]; });
-  return `v2.${s.seed}.${s.player}.${s.difficulty[0]}.${w}${mv.length ? '.' + b64(JSON.stringify(mv)) : ''}`;
+  return `${LINK_VERSION}.${s.seed}.${s.player}.${s.difficulty[0]}.${w}${mv.length ? '.' + b64(JSON.stringify(mv)) : ''}`;
 }
 export function decode(str) {
   const [v, seed, player, d, w, mv] = String(str).split('.');
-  if (v !== 'v2' || !COUNTRIES[player] || !/^\d+$/.test(seed)) return null;
+  if (/^v[12]$/.test(v) && COUNTRIES[player]) return { old: true, version: v };
+  if (v !== LINK_VERSION || !COUNTRIES[player] || !/^\d+$/.test(seed)) return null;
   const difficulty = { e: 'easy', n: 'normal', h: 'hard' }[d] || 'normal';
   const weights = Object.fromEntries(COUNTRIES[player].objectives.map((o, i) => [o.id, +((w || '')[i] ?? o.w)]));
   let moves = [];
-  try { moves = mv ? JSON.parse(unb64(mv)).map(([posture, actions, follow, orders]) => ({ posture, actions: (actions || []).filter(a => BY_ID[a]), follow: follow || {}, orders: orders || {} })) : []; } catch { moves = []; }
+  try {
+    moves = mv ? JSON.parse(unb64(mv)).map(([posture, actions, follow, orders]) => ({ posture, actions: (actions || []).filter(a => BY_ID[a]).slice(0, MAX_MOVES), follow: follow || {}, orders: orders || {} })) : [];
+  } catch { moves = []; }
   return { seed: +seed, player, difficulty, weights, moves };
 }

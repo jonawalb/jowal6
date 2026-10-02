@@ -42,6 +42,11 @@ body[data-side="red"] { --mine: var(--red); --foe: var(--blue); }
 .fc-play { display: flex; flex-direction: column; gap: 8px; }
 .fc-obar { position: sticky; top: 0; z-index: 30; padding: 8px 12px; display: flex; flex-direction: column; gap: 6px; border-top: 3px solid var(--mine); box-shadow: 0 6px 14px -12px rgba(0, 0, 0, .5); }
 .fc-obar.done .fc-go .btn { opacity: .55; }
+/* Game over: the bar stops following the page, so it does not cover the review, and offers a new game. */
+body.fc-over .fc-obar { position: static; }
+body.fc-over .fc-obar.done .fc-go .btn { opacity: 1; }
+body.fc-over #undo, body.fc-over #end, body.fc-over .fc-tabs, #again { display: none; }
+body.fc-over #again { display: inline-block; }
 .fc-bar-top { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; }
 .fc-clock, .fc-mission, .fc-delay { margin: 0; }
 .fc-clock b { font: 700 24px var(--display); margin-right: 4px; }
@@ -114,6 +119,8 @@ body[data-side="red"] { --mine: var(--red); --foe: var(--blue); }
   .fc-units { grid-template-columns: minmax(0, 1fr); }
   .fc-units button { min-height: 44px; }
   .fc-say { font-size: 13px; min-height: 0; }
+  .fc-stance .btn { min-height: 40px; padding: 6px 14px; }
+  .fc-replay input[type="range"] { height: 40px; margin: 0; }
 }
 
 /* Map */
@@ -144,6 +151,7 @@ body[data-side="red"] { --mine: var(--red); --foe: var(--blue); }
 .fc-ghost text { font: 600 11px var(--mono); fill: var(--mine); }
 .fc-ghost.sel rect { stroke: var(--focus); stroke-width: 2.6; stroke-dasharray: none; }
 .fc-ghost:hover rect { stroke-width: 2.2; }
+.fc-ghost rect.fc-ghit { fill: transparent; stroke: none; }   /* the larger, invisible tap area */
 .fc-clk circle { fill: var(--panel); stroke: var(--warn); stroke-width: 1.8; }
 .fc-clk path { fill: none; stroke: var(--warn); stroke-width: 1.6; stroke-linecap: round; }
 .fc-idle circle { fill: var(--warn); stroke: var(--panel); stroke-width: 1.4; }
@@ -235,6 +243,7 @@ body.fc-armed .fc-sec:hover rect { fill: color-mix(in srgb, var(--c3) 14%, trans
 .fc-old details > summary { cursor: pointer; font-size: 11px; color: var(--muted); list-style-position: inside; padding: 2px 0; }
 .fc-old details > summary small { font-size: 11px; margin-left: 6px; }
 .fc-old details[open] > summary { margin-bottom: 3px; }
+@media (max-width: 640px) { .fc-old details > summary { padding: 10px 0; } }   /* a thumb-sized fold toggle */
 
 /* Review */
 .fc-aar { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
@@ -348,7 +357,8 @@ body.fc-armed .fc-sec:hover rect { fill: color-mix(in srgb, var(--c3) 14%, trans
 }
 
 /* The decoy note at the start of a game: Red's how-to, or Blue's warning. */
-.fc-decoy { position: relative; margin: 0 0 8px; padding: 8px 26px 8px 10px; font-size: 13px; line-height: 1.4; border: 1px solid var(--warn); border-left-width: 5px; border-radius: 3px; background: color-mix(in srgb, var(--warn) 10%, var(--panel)); }
+.fc-decoy { position: relative; margin: 0 0 8px; padding: 8px 36px 8px 10px; font-size: 13px; line-height: 1.4; border: 1px solid var(--warn); border-left-width: 5px; border-radius: 3px; background: color-mix(in srgb, var(--warn) 10%, var(--panel)); }
 .fc-decoy[hidden] { display: none; }
 .fc-decoy b { color: var(--warn); }
-.fc-decoy-x { position: absolute; top: 2px; right: 4px; border: 0; background: none; font-size: 18px; line-height: 1; cursor: pointer; color: var(--muted); padding: 2px 4px; }
+.fc-decoy-x { position: absolute; top: 0; right: 0; width: 36px; height: 36px; border: 0; background: none; font-size: 20px; line-height: 1; cursor: pointer; color: var(--muted); padding: 0; }
+.fc-mcol > .fc-decoy { margin: 0; }   /* on a phone the note sits above the map (moved there by app.js) */

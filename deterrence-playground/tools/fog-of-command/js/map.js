@@ -213,8 +213,9 @@ export function render(m, v) {
     if (!seen.length && marks.has(n.id)) movement(L.marks, [c.cx, top + 14 * K], (v.pic.marks.find(x => x.node === n.id) || {}).age, K);
     // Ghost markers for units that will enter here reserve the bottom of the sector.
     const gs = Object.entries(ghosts[n.id] || {}).sort((a, b) => a[0] - b[0]);
-    const gh = 18 * K;
-    gs.forEach(([t, us], i) => ghost(L.mine, c, c.y + c.h - 6 - (gs.length - i) * gh, us, +t, v, K, n.id));
+    // On a phone the rows sit further apart, so each marker's tap area (see ghost) is a thumb high.
+    const gh = (narrow ? 26 : 18) * K;
+    gs.forEach(([t, us], i) => ghost(L.mine, c, c.y + c.h - 6 - (gs.length - i) * gh, us, +t, v, K, n.id, { up: i ? gh / K - 16 : narrow ? 20 : 2, down: i === gs.length - 1 ? (gh + 4 + G.top) / K - 16 : 0 }));
     // Your units in the lower part.
     const rowsF = seen.length ? Math.ceil(seen.length / perF) : marks.has(n.id) ? 1 : 0;
     const y0 = top + (rowsF ? rowsF * 38 * K * sc + 14 : 0);
@@ -333,8 +334,12 @@ function glyph(g, u) {
   if (t === 'decoy') { const d = el('text', { y: 5, class: 'fc-dl' }, g, 'D'); d.setAttribute('text-anchor', 'middle'); }
 }
 
-/** Ghost marker: units that will enter at this sector at hour t (click it to pick them). */
-function ghost(parent, c, y, us, t, v, K, node) {
+/**
+ * Ghost marker: units that will enter at this sector at hour t (click it to pick them). hit: how far an
+ * invisible tap area reaches above and below the pill (in marker units): up to the marker above, and for
+ * the lowest one down into the entry-edge band, which takes no clicks of its own.
+ */
+function ghost(parent, c, y, us, t, v, K, node, hit) {
   const keys = us.map(u => (u.key || '').toUpperCase()).filter(Boolean);
   const when = `enter${us.length === 1 ? 's' : ''} ${hh(t)}`;
   // The longest label that fits the sector: keys and time, then a count and time, then just the time.
@@ -344,6 +349,7 @@ function ghost(parent, c, y, us, t, v, K, node) {
   const sel = us.some(u => u.id === v.selected);
   const g = el('g', { class: `fc-ghost${sel ? ' sel' : ''}`, 'data-ghost': us.map(u => u.id).join(','), 'data-node': node, transform: `translate(${c.x + 8} ${y.toFixed(1)}) scale(${K})` }, parent);
   const w = s2w(txt, px) + 12;
+  el('rect', { x: -4, y: -hit.up, width: Math.min(w + 8, (c.w - 4) / K), height: 16 + hit.up + hit.down, class: 'fc-ghit' }, g);
   el('rect', { x: 0, y: 0, width: w, height: 16, rx: 8 }, g);
   el('text', { x: 7, y: 11.5 }, g, txt);
   el('title', {}, g, `${us.map(u => u.short).join(', ')} will enter here at ${hh(t)}. Click to pick ${us.length > 1 ? 'them one at a time' : 'it'}; then click another sector on your entry edge to change where.`);

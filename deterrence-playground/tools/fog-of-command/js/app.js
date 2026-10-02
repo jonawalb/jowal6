@@ -89,6 +89,7 @@ function start(side, seed, log = [], n = 0, od = odVal(), note = '') {
   $('keys').innerHTML = keysHint(me);
   $('decoytip-text').innerHTML = DECOY_TIP[me];
   $('decoytip').hidden = !!g.over;
+  placeDecoyTip();
   setTab('map');
   setView('belief');
   if (g.over) finish(false, note);
@@ -380,6 +381,7 @@ function finish(scroll, note = '') {
   document.body.classList.add('fc-over');
   document.body.classList.remove('fc-armed');
   $('viewbar').hidden = false;
+  $('decoytip').hidden = true;
   say(`${note ? `${note} ` : ''}${g.over.winner === me ? 'You won. The review is below the map.' : 'You lost. The review is below the map.'}`);
   draw();
   aar.show(g, me);
@@ -411,6 +413,12 @@ function setView(v) {
   }
 }
 
+/** The decoy note heads the unit list; on a phone, where the Map tab hides that list, it sits above the map. */
+function placeDecoyTip() {
+  const tip = $('decoytip');
+  if (narrowQ.matches) $('box').before(tip); else $('ucol').prepend(tip);
+}
+
 /** Phone tabs: Map, Units, Reports (CSS shows one at a time while a game is on). */
 function setTab(t) {
   tab = t;
@@ -426,6 +434,7 @@ document.querySelectorAll('#viewbar [data-view]').forEach(b => b.addEventListene
 document.querySelectorAll('.fc-side').forEach(b => b.addEventListener('click', () => start(b.dataset.side, newSeed())));
 $('od').addEventListener('input', odShow);
 $('decoytip-x').addEventListener('click', () => { $('decoytip').hidden = true; });
+$('again').addEventListener('click', () => $('aar-again').click());
 document.querySelectorAll('.fc-tabs [data-tab]').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
 $('units').addEventListener('click', e => { const b = e.target.closest('button'); if (b && !b.disabled) select(b.dataset.u); });
 $('feed').addEventListener('toggle', e => { const d = e.target; if (d.dataset?.h === undefined) return; if (d.open) openHours.add(+d.dataset.h); else openHours.delete(+d.dataset.h); }, true);
@@ -479,6 +488,7 @@ $('start-tour').onclick = () => tour.start(g ? me : 'blue', !!g && g.t > 0 && !g
 document.querySelectorAll('[data-tour]').forEach(b => b.addEventListener('click', () => tour.start(b.dataset.tour, false)));
 narrowQ.addEventListener('change', () => {
   remap();
+  placeDecoyTip();
   if (!g) render(map, { me: 'blue', units: [], pic: { tracks: [], marks: [] }, mode: 'belief' });
   else if (g.over && aarHour !== null) reviewAt(aarHour); else draw();
 });

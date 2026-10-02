@@ -15,14 +15,14 @@ const TOK = { sea: '--sea', land: '--land', coast: '--coast', grat: '--grat', in
 export function createRenderer(canvas, { onEvent } = {}) {
   const ctx = canvas.getContext('2d');
   let C = {}, scale = 1, dpr = 1, fx = [];
-  // Trailer look: glow, long tails, mono labels. Original keeps today's fonts exactly.
+  // Trailer look: glow, long tails, mono labels. Original uses the site's own font tokens (--mono, --body).
   let TR = false, MONO = '"IBM Plex Mono", monospace', SANS = '"IBM Plex Sans", sans-serif';
   const readColors = () => {
     const cs = getComputedStyle(document.documentElement);
     for (const [k, v] of Object.entries(TOK)) C[k] = cs.getPropertyValue(v).trim() || '#888';
     TR = skin() === 'trailer';
-    MONO = TR ? '"Martian Mono", monospace' : '"IBM Plex Mono", monospace';
-    SANS = TR ? '"Martian Mono", monospace' : '"IBM Plex Sans", sans-serif';
+    MONO = TR ? '"Martian Mono", monospace' : cs.getPropertyValue('--mono').trim() || '"IBM Plex Mono", monospace';
+    SANS = TR ? '"Martian Mono", monospace' : cs.getPropertyValue('--body').trim() || '"IBM Plex Sans", sans-serif';
   };
   readColors();
   matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', readColors);

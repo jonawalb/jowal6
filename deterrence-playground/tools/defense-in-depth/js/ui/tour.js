@@ -22,6 +22,9 @@ export function createTour(card, api) {
     const hit = (b, [x, y]) => b && !(x + cw < b.left - 8 || x > b.right + 8 || y + ch < b.top - 8 || y > b.bottom + 8);
     const endB = document.getElementById('end')?.getBoundingClientRect();
     const best = spots.find(p => !hit(r, p) && !hit(endB, p)) || spots.find(p => !hit(r, p)) || spots[0];
+    // Clear the stylesheet's right/bottom anchors: with top AND bottom set, a fixed card is squeezed to fit
+    // between them and its text gets cut off.
+    card.style.right = 'auto'; card.style.bottom = 'auto';
     card.style.left = `${Math.max(m, best[0])}px`; card.style.top = `${Math.max(m, best[1])}px`;
     pad();
   }

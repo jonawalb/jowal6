@@ -256,3 +256,7 @@ async function boot() {
 }
 addEventListener('hashchange', () => { if (!S.g && location.hash.includes('s=')) boot(); });
 boot();
+
+// Keep the sticky unit column below the sticky order bar: publish the bar's height as a CSS variable.
+{ const bar = document.querySelector('.dd-obar');
+  if (bar && 'ResizeObserver' in window) new ResizeObserver(() => document.documentElement.style.setProperty('--dd-obar-h', `${Math.ceil(bar.getBoundingClientRect().height)}px`)).observe(bar); }

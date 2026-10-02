@@ -153,3 +153,11 @@ body.dd-planning #undo, body.dd-planning #end { display: none; }
 :root[data-skin="trailer"] .dd-say { background: color-mix(in srgb, var(--bg) 70%, transparent); }
 /* QA fix: the sticky order bar must be opaque in Trailer (the skin makes cards 88% opaque, so text showed through). */
 :root[data-skin="trailer"] .dd-obar.card { background: var(--panel); }
+
+/* Scrolling fixes (2026-10-02): the walkthrough card never grows past the screen — long steps scroll inside it —
+   and on wide screens the unit column is one sticky, scrollable panel instead of a short box nested in the page. */
+.dd-tour { max-height: calc(100vh - 24px); max-height: calc(100dvh - 24px); overflow-y: auto; overscroll-behavior: contain; }
+@media (min-width: 761px) {
+  body.dd-live .dd-ucol { position: sticky; top: calc(var(--dd-obar-h, 100px) + 8px); max-height: calc(100vh - var(--dd-obar-h, 100px) - 16px); overflow-y: auto; overscroll-behavior: contain; padding-right: 4px; }
+  body.dd-live .dd-tree { max-height: none; overflow: visible; }
+}

@@ -8,6 +8,8 @@ import { deployIntensity } from './forces.js';
 import { forceOrders } from './ai-forces.js';
 import { costOf, grantOf, short, avgReady, fuelUpkeep, ZERO } from './logistics.js';
 import { makeRng, STREAM } from './rng.js';
+import { traitUtility } from './traits.js';
+import { mainReason } from './ai-reason.js';
 
 const TYPES = P.types;
 
@@ -74,27 +76,36 @@ export function objectiveValue(s, who, weights) {
   return obs.reduce((t, o) => t + (w[o.id] || 0) * o.measure(s), 0) / tw;
 }
 
-function riskTerm(s, who, move, B) {
+/** The belief-weighted risk term and the type's taste; `parts` also keeps each piece (for the replay's reasons). */
+function riskTerm(s, who, move, B, parts) {
   const nEsc = move.actions.filter(id => BY_ID[id].tags.includes('esc')).length + (move.posture === 'esc' || move.posture === 'nuke' ? 1 : 0);
   const nSoft = move.actions.filter(id => BY_ID[id].tags.includes('soft')).length + (move.posture === 'stand' || move.posture === 'deesc' ? 1 : 0);
   let r = 0;
   if (who === 'cn') r -= P.ai.responseRisk * nEsc * (B.us.resolute + 0.5 * B.jp.resolute);
   else r -= P.ai.weaknessRisk * nSoft * (B.cn.resolute + B.cn.opportunist) * (s.rung >= 1 ? 1 : 0.4);
+  const risk = r;
   if (s.types[who] === 'opportunist' && opening(s, who)) r += P.ai.opportunistBonus * nEsc;
   const t = s.types[who], open = opening(s, who);
   const sign = t === 'resolute' || (t === 'opportunist' && open) ? 1 : t === 'cautious' ? -1 : -0.5;
-  return r + sign * P.ai.typeTaste * intensity(move);
+  const int = intensity(move), taste = sign * P.ai.typeTaste * int;
+  if (parts) Object.assign(parts, { risk, opp: r - risk, taste, int });
+  return r + taste;
 }
 
 /** Default guess at a rival's move: last month's posture and moves (no new deployments). */
 const guess = (s, w) => s.last[w] ? { posture: s.last[w].posture, actions: s.last[w].actions.filter(id => !blockedWhy(s, id)), follow: s.last[w].follow || {}, orders: {} } : { posture: 'hold', actions: [], follow: {}, orders: {} };
 
-function utility(s, who, move, B, weights) {
+/** The computer's one-month value of `move`, and (with `parts`) its pieces: the state it expects (n), objectives,
+ * home support, risk and taste, later payoffs, scarcity and any hidden trait's term (js/traits.js). */
+function utility(s, who, move, B, weights, parts) {
   const moves = Object.fromEntries(IDS.map(w => [w, w === who ? move : guess(s, w)]));
   const { state: n } = resolveTurn(s, moves, { expected: true, planner: who, plannerB: B });
   // Plus the computer's estimate of payoffs that land after this month (intelligence, rehearsals, dispersal...).
   const later = move.actions.reduce((t, id) => t + (BY_ID[id].ai ? BY_ID[id].ai(s, who) : 0), 0);
-  return objectiveValue(n, who, weights) + P.ai.supportWeight * n.c[who].support + riskTerm(s, who, move, B) + later - scarcity(s, who, move);
+  const p = parts || {}, obj = objectiveValue(n, who, weights), sup = P.ai.supportWeight * n.c[who].support, risk = riskTerm(s, who, move, B, p), scar = scarcity(s, who, move);
+  const trait = s.traits ? traitUtility(s, who, move, { later, scar }, p.int ?? intensity(move)) : 0;
+  Object.assign(p, { n, obj, sup, later, scar, trait });
+  return obj + sup + risk + later - scar + trait;
 }
 
 /** What spending stocks costs the computer: the share of fuel and munitions left that a move uses, squared (cheap
@@ -132,8 +143,8 @@ export function chooseMove(s, who, beliefs, weights, difficulty = s.difficulty) 
   const rng = makeRng(s.seed, STREAM.ai + s.turn * 10 + IDS.indexOf(who));
   const { limits: _, ...orders } = forceOrders(s, who, { lift: s.res[who].lift, fuel: Math.max(0, s.res[who].fuel - 2) });
   const legal = menu(s, who).filter(a => !blockedWhy(s, a.id, null, { [who]: { orders } }));
-  const base = { posture: 'hold', actions: [], follow: {}, orders };
-  const u0 = utility(s, who, base, beliefs, weights);
+  const base = { posture: 'hold', actions: [], follow: {}, orders }, p0 = {};
+  const u0 = utility(s, who, base, beliefs, weights, p0);
   const pScore = posturesFor(who, s).map(p => ({ id: p.id, u: utility(s, who, { ...base, posture: p.id }, beliefs, weights) - u0 }))
     .sort((a, b) => b.u - a.u).slice(0, P.ai.topPostures);
   const follow = {};
@@ -164,7 +175,9 @@ export function chooseMove(s, who, beliefs, weights, difficulty = s.difficulty) 
   const left = payable(s, who, chosen.actions, chosen.follow).left;
   const { limits: fl, ...ord } = forceOrders(s, who, { lift: left.lift, fuel: Math.max(0, left.fuel - fuelUpkeep(s, who)) });
   Object.assign(limits, fl);
-  return { ...chosen, orders: ord, ...(Object.keys(limits).length ? { limits } : {}) };
+  // The main reason for the choice, against doing nothing (for the after-action replay; js/ai-reason.js).
+  const p1 = {}; utility(s, who, chosen, beliefs, weights, p1);
+  return { ...chosen, orders: ord, ...(Object.keys(limits).length ? { limits } : {}), why: mainReason(s, who, weights, p1, p0, chosen) };
 }
 
 /** Your read of a rival: the true posterior plus display noise, renormalised. */

@@ -18,6 +18,10 @@ import { askForum, forumText } from './forum-panel.js';
 import { ceasefire } from './politics.js';
 import { score, benchmark, percentile } from './score.js';
 import { drawTheatre, paintTheatre, paintZones, animateMoves, paintLadder, paintTracks, paintCaps, paintIntel, paintBeliefChart, COL } from './view.js';
+import { SCENARIOS, SCENARIO } from '../data/scenarios.js';
+import { tldr } from './tldr.js';
+import { replayRows, replayHTML, leadersHTML } from './replay.js';
+import { nukeReview, nukeReviewHTML } from './nuke-review.js';
 import { pulse, flash } from '../../../shared/js/motion.js';
 
 const $ = id => document.getElementById(id);
@@ -27,6 +31,7 @@ const show = (...ids) => ['start', 'typecard', 'play', 'resolve', 'end'].forEach
 
 let g = null;            // { s, B, series, player, weights, difficulty, choice, line, before }
 let pick = null;         // seat chosen on the start screen
+let scen = 'gray';       // starting situation (data/scenarios.js)
 
 /* ---------- Start ---------- */
 function paintSeats() {
@@ -42,18 +47,26 @@ function paintWeights() {
   const w = defaultWeights(pick);
   $('weights').innerHTML = COUNTRIES[pick].objectives.map(o => `<label class="k4-w"><span>${o.label}</span><input type="range" min="0" max="5" step="1" value="${w[o.id]}" data-obj="${o.id}" aria-label="${o.label}"><output class="num">${w[o.id]}</output></label>`).join('');
 }
+function paintScenarios() {
+  $('scenarios').innerHTML = SCENARIOS.map(x => `<button type="button" role="radio" aria-checked="${scen === x.id}" class="k4-scen" data-scen="${x.id}"><b>${x.label}${x.id === 'gray' ? ' <small>(standard)</small>' : ''}</b><small>${x.short}</small></button>`).join('');
+}
+$('scenarios').addEventListener('click', e => { const b = e.target.closest('[data-scen]'); if (!b) return; scen = b.dataset.scen; paintScenarios(); });
 $('seats').addEventListener('click', e => {
   const b = e.target.closest('[data-seat]'); if (!b) return;
-  pick = b.dataset.seat; paintSeats(); paintWeights(); $('setup').hidden = false;
+  pick = b.dataset.seat; paintSeats(); paintWeights(); paintScenarios(); $('setup').hidden = false;
   $('start').style.setProperty('--accent', COL[pick]);
 });
 $('weights').addEventListener('input', e => { if (e.target.dataset.obj) e.target.nextElementSibling.textContent = e.target.value; });
 $('begin').addEventListener('click', () => {
   const weights = Object.fromEntries([...$('weights').querySelectorAll('input')].map(i => [i.dataset.obj, +i.value]));
-  begin({ seed: newSeed(), player: pick, weights, difficulty: $('difficulty').value });
+  const traits = document.querySelector('input[name="traits"]:checked')?.value === '1';
+  begin({ seed: newSeed(), player: pick, weights, difficulty: $('difficulty').value, scenario: scen, traits });
   const t = g.s.types[g.player];
   $('type-t').textContent = `You lead ${COUNTRIES[g.player].name}. Your leadership is ${P.typeLabel[t].toLowerCase()}.`;
   $('type-x').textContent = P.typeText[t];
+  const sc = SCENARIO[g.s.scenario];
+  $('type-s').textContent = `Starting situation: ${sc.label}. ${g.s.traits ? 'Hidden traits are on: the other leaders each have one, which you will see only at the end.' : 'Hidden traits are off.'}`;
+  $('type-go').textContent = `Go to ${P.months[g.s.turn]}`;
   $('typecard').style.setProperty('--c', COL[g.player]);
   show('typecard'); $('typecard').focus();
 });
@@ -77,7 +90,7 @@ function paintPlan() {
 function paint() {
   const s = g.s;
   $('month').textContent = monthName(s.turn);
-  $('turnof').textContent = `month ${s.turn + 1} of ${P.turns}`;
+  $('turnof').textContent = `month ${s.turn - (s.t0 || 0) + 1} of ${P.turns - (s.t0 || 0)} · ${SCENARIO[s.scenario].label}${s.traits ? ' · hidden traits' : ''}`;
   $('event').innerHTML = (s.event ? `<b>${s.event.title}</b>${s.event.text}` : '') + (ceasefire(s)
     ? `<span class="k4-cease"><b>Ceasefire this month</b> (the ${COUNTRIES[s.cease.from].capital}–${COUNTRIES[s.cease.to].capital} peace forum). Escalatory moves cost more at home; a successful escalatory military or law-enforcement move breaks it, at a heavy cost in credibility. If it holds, the crisis ends in a settlement.</span>` : '');
   paintLadder($('ladder'), s);
@@ -97,7 +110,7 @@ const moveText = (m, w) => [POSTURES.find(p => p.id === m.posture).label + (m.ac
 function paintFeed() {
   const h = g.s.history[g.s.history.length - 1];
   $('feed').innerHTML = h ? `<h3>Last month</h3><ul>${IDS.map(w => `<li><b style="color:${COL[w]}">${COUNTRIES[w].short}</b>: ${moveText(h.moves[w], w)}</li>`).join('')}</ul>`
-    : '<h3>The situation</h3><p class="fine">Beijing has stepped up pressure on Taiwan after a disputed election result. Its navy already holds the Strait; Japan watches the North and U.S. ships sit east of Taiwan. Washington, Tokyo and Taipei are watching each other as closely as they watch Beijing. Nothing has been fired yet.</p>';
+    : `<h3>The situation: ${SCENARIO[g.s.scenario].label}</h3><p class="fine">${SCENARIO[g.s.scenario].brief}</p>`;
 }
 wireDecide(() => paintPlan());
 
@@ -129,6 +142,7 @@ $('end-turn').addEventListener('click', async () => {
   show('play', 'resolve'); $('intel').hidden = $('feed').hidden = true; $('decide').hidden = true;
   $('res-t').textContent = `${month}: what happened`;
   $('reveal').innerHTML = IDS.map(w => `<div class="k4-mv" style="--c:${COL[w]}"><b>${COUNTRIES[w].short}${w === g.player ? ' (you)' : ''}</b><span class="po">${POSTURES.find(p => p.id === moves[w].posture).label}</span><ul>${moves[w].actions.map(id => `<li>${BY_ID[id].label}${followText(id, moves[w].follow)}</li>`).join('') || '<li>No moves</li>'}</ul>${deployText(w, moves[w].orders)}${emphText(w, moves[w], log)}</div>`).join('');
+  $('tldr').innerHTML = `<b>In short:</b> ${tldr(g.before, g.s, log).text}`;   // only this month's results and public tracks
   $('log').innerHTML = logHTML(log);
   paintLadder($('ladder'), g.s); paintTracks($('tracks'), g.s, g.before); paintCaps($('caps'), g.s, g.player); paintTheatre(g.s); paintZones(g.s, seeFor(g.s, g.player)); paintFog($('fog'), g.s, g.player);
   $('play').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
@@ -187,14 +201,17 @@ function finish() {
   const sc = score(s, me, g.weights);
   $('total').textContent = sc.total;
   $('parts').innerHTML = sc.parts.map(p => `<tr><td>${p.label}</td><td class="num">${p.value}</td><td class="muted">weight ${p.weight}</td></tr>`).join('');
-  $('types').innerHTML = IDS.map(w => `<div style="--c:${COL[w]}"><b>${COUNTRIES[w].short}</b>: ${P.typeLabel[s.types[w]]}${w === me ? ' (you)' : ''}</div>`).join('');
+  const rp = replayRows(s, g.series);
+  $('types').innerHTML = leadersHTML(rp, me, COL);
+  $('replay').innerHTML = replayHTML(rp, me, COL);
+  $('nukerev').innerHTML = nukeReviewHTML(nukeReview(s));
   paintBeliefChart($('beliefs'), g.series, me, s.types[me], ['Start', ...s.history.map(h => P.months[h.turn].slice(0, 3))]);
   $('end-logi').innerHTML = endLogi(s, me);
   $('end').focus();
   runBench(sc.total);
 }
 function runBench(total) {
-  const start = { seed: g.s.seed, player: g.player, weights: g.weights, difficulty: g.difficulty, types: g.s.types };
+  const start = { seed: g.s.seed, player: g.player, weights: g.weights, difficulty: g.difficulty, types: g.s.types, scenario: g.s.scenario, traits: !!g.s.traits, leaders: g.s.traits || null };
   const runs = [], N = 60;
   $('pct').textContent = '…'; $('pct-x').textContent = 'comparing with the computer in your seat…';
   const tick = () => {
@@ -241,7 +258,7 @@ function load() {
   const d = m && decode(decodeURIComponent(m[1]));
   if (d && d.old) {
     $('old-link').hidden = false;
-    $('old-link').textContent = 'That link is from an earlier version of Four Capitals (before domestic politics, base consent, the economic shock meter, U.S. reinforcement delays and the peace forum), so it cannot be replayed. Start a new game below.';
+    $('old-link').textContent = 'That link is from an earlier version of Four Capitals (before scenario starts, hidden leader traits and the after-action review), so it cannot be replayed. Start a new game below.';
     history.replaceState(null, '', location.pathname + location.search);
   }
   if (!d || d.old) { paintSeats(); show('start'); return; }

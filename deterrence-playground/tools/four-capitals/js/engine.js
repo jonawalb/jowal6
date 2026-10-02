@@ -11,6 +11,9 @@ import { opening, politicsBlock, politicsFactors, homeAdjust, selfDefence, polit
 import { hostFor, consent, HOST_NAME } from './alliance.js';
 import { econMonth } from './economy.js';
 import { TALKS, forumTo, forumEstimate, settleForum, angerFrom, angerMonth, breach } from './forum.js';
+import { applyScenario } from './scenario.js';
+import { drawTraits, traitsMonth } from './traits.js';
+import { SCENARIO, SCENARIO_BY_CODE } from '../data/scenarios.js';
 export { opening };
 
 export const ORDER = ['cn', 'us', 'jp', 'tw'];          // resolution order within a line
@@ -19,8 +22,9 @@ const clone = s => JSON.parse(JSON.stringify(s));
 export const postureOf = id => POSTURES.find(p => p.id === id);
 export const HOLD = { posture: 'hold', actions: [], follow: {}, orders: {} };
 
-/** human: true when a person plays `player` (the app); the balance script, tests and benchmark leave it out. */
-export function newGame({ seed, player, weights, difficulty = 'normal', human = false }) {
+/** human: true when a person plays `player` (the app); the balance script, tests and benchmark leave it out.
+ * Batch C: `scenario` (data/scenarios.js; default the v5 start) and `traits` (hidden leader traits, js/traits.js). */
+export function newGame({ seed, player, weights, difficulty = 'normal', human = false, scenario, traits = false }) {
   const r = makeRng(seed, STREAM.setup);
   const types = Object.fromEntries(IDS.map(id => [id, P.types[r.pick(P.types.map(t => COUNTRIES[id].prior[t]))]]));
   const s = {
@@ -41,6 +45,9 @@ export function newGame({ seed, player, weights, difficulty = 'normal', human = 
   initRes(s);
   initForces(s);
   syncMilitary(s);
+  applyScenario(s, scenario);
+  s.nuke0 = s.nuke; s.rung0 = s.rung; s.nukeLog = [];                      // the nuclear shadow's ledger (data/ops.js T) starts here
+  if (traits) drawTraits(s);
   return s;
 }
 
@@ -50,7 +57,8 @@ export function brief(state) {
   s.weather = false;
   const pool = EVENTS.filter(e => e.when(s));
   const e = pool[makeRng(s.seed, STREAM.event + s.turn).pick(pool.map(x => x.w || 1))];
-  e.apply(s);
+  s.why = `event:${e.id}`; e.apply(s); delete s.why;
+  traitsMonth(s);
   s.event = { id: e.id, title: e.title, text: e.text };
   return s;
 }
@@ -127,6 +135,7 @@ export function resolveTurn(state, moves, opts = {}) {
     if (po && ((po.only && !po.only.includes(who)) || (po.minRung && pre.rung < po.minRung))) mv.posture = 'hold';
     const d = homeCost(pre, who, mv);
     if (d) T(s, `${who}.support`, d);
+    s.why = `posture:${who}:${mv.posture}`;               // the nuclear ledger's cause (data/ops.js)
     if (mv.posture === 'nuke') T(s, 'nuke', 8);
     if (mv.posture === 'esc') T(s, 'nuke', 1);
     log.push({ who, kind: 'posture', posture: mv.posture, support: d });
@@ -182,6 +191,7 @@ export function resolveTurn(state, moves, opts = {}) {
         if (k) { why = `Not enough ${RES_LABEL[k].toLowerCase()}`; used[who][k] = true; }
       } else if (why && paid[who]?.has(id)) refund(s, who, id, o);
       if (why) { log.push({ who, kind: 'action', id, o, status: 'blocked', reason: why, res: short, ...(host ? { host } : {}) }); continue; }
+      s.why = `${a.forum ? 'forum' : 'move'}:${id}`;
       if (a.forum) {                                       // the peace forum: the rival accepts or declines (js/forum.js)
         log.push(settleForum(s, who, id, o, moves, opts, makeRng(s.seed, STREAM.forum + s.turn, IDS.indexOf(who))));
         if (a.once) s.used[who].push(id);
@@ -199,7 +209,7 @@ export function resolveTurn(state, moves, opts = {}) {
       if (a.once && (a.once !== 'success' || m >= 0.5)) s.used[who].push(id);   // carried out (whatever the roll; a declaration once made)
       angerFrom(s, who, id, m);
       if (!opts.expected && m === 1 && TALKS[who] === id) s.forumOpen[who] = s.turn + 1;   // next month: the forum call
-      if (ceasefire(s) && a.tags.includes('esc') && (a.line === 'M' || a.line === 'L') && m > 0) breach(s, who, m, log);
+      if (ceasefire(s) && a.tags.includes('esc') && (a.line === 'M' || a.line === 'L') && m > 0) { s.why = `breach:${who}`; breach(s, who, m, log); }
       const reach = opts.expected ? p >= 0.5 : m >= 0.5;
       if (reach) { succeeded[id] = true; if (a.rung != null) target = Math.max(target, a.rung); }
       log.push({ who, kind: 'action', id, o, status, p, roll, factors });
@@ -224,6 +234,7 @@ export function resolveTurn(state, moves, opts = {}) {
   updateControl(s);
   if (s.blockade && (s.rung < 2 || s.ctrl.strait !== 'red')) { s.blockade = 0; log.push({ kind: 'note', text: 'China no longer holds the Strait: the blockade lapses.' }); }
   const lost = Object.values(s.losses).reduce((a, b) => a + b, 0);
+  s.why = 'losses';
   if (lost > P.nukeLoss) T(s, 'nuke', 2 * (lost - P.nukeLoss));
   if (lost > P.majorWarLosses && s.rung === 3) { s.rung = 4; s.maxRung = Math.max(s.maxRung, 4); log.push({ kind: 'note', text: `Heavy fighting (${lost.toFixed(1)} force points lost this month): the crisis is now a major war.` }); }
   syncMilitary(s);
@@ -242,10 +253,11 @@ export function resolveTurn(state, moves, opts = {}) {
   if (s.rung <= 1) T(s, 'shock', -4);
   if (s.rung <= 1 && s.tw > 55) T(s, 'cn.support', -P.impatience);
   if (s.rung <= 1) T(s, 'tw', 2);
-  if (s.rung <= 2) T(s, 'nuke', -5);
-  if (s.rung >= 4) T(s, 'nuke', 5);
-  if (s.rung >= 3 && s.c.cn.military < 45) T(s, 'nuke', 8);
-  if (s.rung >= 3) s.nuke = Math.max(s.nuke, 10);
+  s.why = 'decay'; if (s.rung <= 2) T(s, 'nuke', -5);
+  s.why = 'war'; if (s.rung >= 4) T(s, 'nuke', 5);
+  s.why = 'worn'; if (s.rung >= 3 && s.c.cn.military < 45) T(s, 'nuke', 8);
+  s.why = 'floor'; if (s.rung >= 3 && s.nuke < 10) { T(s, 'nuke', 10 - s.nuke); s.nuke = 10; }
+  delete s.why;
   s.nukePeak = Math.max(s.nukePeak, s.nuke);
   politicsMonth(s, log);                                 // the War Powers clock, election results
   angerMonth(s);                                         // anger from this month's fighting, then decay
@@ -297,37 +309,42 @@ export const snapshot = s => ({ rung: s.rung, tw: Math.round(s.tw), coal: Math.r
   f: JSON.parse(JSON.stringify(s.f)), ctrl: { ...s.ctrl }, res: JSON.parse(JSON.stringify(s.res)),
   units: Object.fromEntries(IDS.map(id => [id, s.units[id].map(u => ({ id: u.id, at: u.at, str: u.str, ready: u.ready }))])) });
 
+const MONTHS_ON = { 8: 'Eight', 7: 'Seven', 6: 'Six' };
 export function isOver(s, succeeded = {}, forumHeld = false) {
   if (s.nuclearUsed) return { reason: 'nuclear', title: 'Nuclear use', text: 'A nuclear weapon was used. The game ends here.' };
   if (s.tw <= 0) return { reason: 'capitulation', title: 'Taiwan forced to terms', text: 'Taiwan’s position collapsed and Taipei accepted Beijing’s terms.' };
   if (forumHeld) return { reason: 'settlement', forum: true, title: 'A negotiated settlement', text: 'The peace forum’s ceasefire held, and the forum produced a settlement every capital could live with.' };
   if (succeeded.cn_pause && s.rung <= 2 && s.tw >= 60) return { reason: 'climbdown', title: 'Beijing steps back', text: 'China declared its point made and pulled back, with Taiwan still standing.' };
   if (s.settleRun >= 2) return { reason: 'settlement', title: 'A negotiated settlement', text: 'Two calm months of talks produced a settlement every capital could live with.' };
-  if (s.turn >= P.turns) return { reason: 'time', title: 'October 2029', text: 'Eight months on, the crisis is unresolved but the game is over.' };
+  if (s.turn >= P.turns) return { reason: 'time', title: 'October 2029', text: `${MONTHS_ON[P.turns - (s.t0 || 0)] || 'Months'} months on, the crisis is unresolved but the game is over.` };
   return null;
 }
 
-// Copy links (v5): seed, seat, difficulty, weights, then the player's moves (posture, moves, follow-ups, force orders
-// and any replies to peace forums) as base64url JSON. Older links (v2: three moves and force points; v3: before fog
-// of war, gray-zone and once-a-game moves; v4: before politics, alliance consent, the shock meter, the U.S.
-// reinforcement delay and the peace forum) cannot be replayed; decode marks them { old: true }.
+// Copy links (v6): seed, seat, difficulty, weights, the scenario and hidden traits (Batch C: one letter from
+// data/scenarios.js plus 1 or 0), then the player's moves (posture, moves, follow-ups, force orders and any replies to
+// peace forums) as base64url JSON. Older links (v2: three moves and force points; v3: before fog of war, gray-zone
+// and once-a-game moves; v4: before politics, alliance consent, the shock meter, the U.S. reinforcement delay and the
+// peace forum; v5: before scenarios, hidden traits and the after-action review) cannot be replayed; decode marks
+// them { old: true }.
 const b64 = str => (typeof btoa === 'function' ? btoa(unescape(encodeURIComponent(str))) : Buffer.from(str, 'utf8').toString('base64')).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 const unb64 = str => { const t = str.replace(/-/g, '+').replace(/_/g, '/'); return typeof atob === 'function' ? decodeURIComponent(escape(atob(t))) : Buffer.from(t, 'base64').toString('utf8'); };
-export const LINK_VERSION = 'v5';
+export const LINK_VERSION = 'v6';
 export function encode(s) {
   const w = COUNTRIES[s.player].objectives.map(o => s.weights[o.id]).join('');
+  const st = (SCENARIO[s.scenario] || SCENARIO.gray).code + (s.traits ? 1 : 0);
   const mv = s.history.map(h => { const m = h.moves[s.player]; return [m.posture, m.actions, m.follow || {}, m.orders || {}, ...(m.reply ? [m.reply] : [])]; });
-  return `${LINK_VERSION}.${s.seed}.${s.player}.${s.difficulty[0]}.${w}${mv.length ? '.' + b64(JSON.stringify(mv)) : ''}`;
+  return `${LINK_VERSION}.${s.seed}.${s.player}.${s.difficulty[0]}.${w}.${st}${mv.length ? '.' + b64(JSON.stringify(mv)) : ''}`;
 }
 export function decode(str) {
-  const [v, seed, player, d, w, mv] = String(str).split('.');
-  if (/^v[1-4]$/.test(v) && COUNTRIES[player]) return { old: true, version: v };
+  const [v, seed, player, d, w, st, mv] = String(str).split('.');
+  if (/^v[1-5]$/.test(v) && COUNTRIES[player]) return { old: true, version: v };
   if (v !== LINK_VERSION || !COUNTRIES[player] || !/^\d+$/.test(seed)) return null;
   const difficulty = { e: 'easy', n: 'normal', h: 'hard' }[d] || 'normal';
   const weights = Object.fromEntries(COUNTRIES[player].objectives.map((o, i) => [o.id, +((w || '')[i] ?? o.w)]));
+  const scenario = (SCENARIO_BY_CODE[(st || '')[0]] || SCENARIO.gray).id, traits = (st || '')[1] === '1';
   let moves = [];
   try {
     moves = mv ? JSON.parse(unb64(mv)).map(([posture, actions, follow, orders, reply]) => ({ posture, actions: (actions || []).filter(a => BY_ID[a]).slice(0, MAX_MOVES), follow: follow || {}, orders: orders || {}, ...(reply ? { reply } : {}) })) : [];
   } catch { moves = []; }
-  return { seed: +seed, player, difficulty, weights, moves };
+  return { seed: +seed, player, difficulty, weights, scenario, traits, moves };
 }

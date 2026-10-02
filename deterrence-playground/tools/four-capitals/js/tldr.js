@@ -35,12 +35,21 @@ const NAME = { us: 'the U.S.', tw: 'Taiwan', cn: 'China', jp: 'Japan' };
 const cap = t => t[0].toUpperCase() + t.slice(1);
 const landed = l => ['success', 'partial'].includes(l.status);
 
-/** `before`: the snapshot at the start of the month (js/engine.js snapshot); `next`: the state after; `log`: the month's log. */
-export function tldr(before, next, log) {
+/** `before`: the snapshot at the start of the month (js/engine.js snapshot); `next`: the state after; `log`: the month's log;
+ * `me`: the player's country, named "you" (optional). */
+export function tldr(before, next, log, me = null) {
   const facts = [], turn = next.turn - 1;
+  const name = w => (w === me ? 'you' : NAME[w]);
+  const poss = w => (w === me ? 'your' : `${NAME[w]}’s`);
+  // Present-tense mood verbs agree with "you".
+  const verb = (w, m) => (w !== me ? m : { wavers: 'waver', rallies: 'rally', 'holds firm': 'hold firm', 'is restless': 'are restless', 'holds steady': 'hold steady' }[m]);
   const done = log.filter(l => l.kind === 'action' && !l.forum && landed(l) && DID[l.id]).sort((a, b) => RANK.indexOf(a.id) - RANK.indexOf(b.id));
   const top = w => done.find(l => l.who === w);
-  const use = l => { facts.push({ who: l.who, id: l.id, status: l.status }); return DID[l.id](l.o); };
+  const use = l => {
+    facts.push({ who: l.who, id: l.id, status: l.status });
+    const t = DID[l.id](l.o);
+    return l.who === me ? t.replace(/\bits\b/g, 'your').replace(/\bitself\b/g, 'yourself') : t;
+  };
   const parts = [];
 
   // China first: a landing, or "not yet landed" once the shooting has started, or its main move.
@@ -49,17 +58,19 @@ export function tldr(before, next, log) {
   if (land) {
     facts.push({ who: 'cn', id: 'cn_landing', status: land.status });
     const sec = (next.landings || []).filter(x => x.turn === turn).pop()?.sector, coast = sec ? `Taiwan’s ${AREA_LABEL[sec].toLowerCase()}` : 'Taiwan';
-    parts.push(land.status === 'success' ? `China landed on ${coast}` : land.status === 'partial' ? `China gained a foothold on ${coast}` : `China’s landing on ${coast} was thrown back`);
-  } else if (next.maxRung >= 3 && !(next.landings || []).length) parts.push(cn ? `China has not yet landed, but ${use(cn)}` : 'China has not yet landed');
-  else if (cn) parts.push(`China ${use(cn)}`);
+    parts.push(land.status === 'success' ? `${name('cn')} landed on ${coast}` : land.status === 'partial' ? `${name('cn')} gained a foothold on ${coast}` : `${poss('cn')} landing on ${coast} was thrown back`);
+  } else if (next.maxRung >= 3 && !(next.landings || []).length) {
+    const not = me === 'cn' ? 'you have not yet landed' : 'China has not yet landed';
+    parts.push(cn ? `${not}, but ${me === 'cn' ? 'you ' : ''}${use(cn)}` : not);
+  } else if (cn) parts.push(`${name('cn')} ${use(cn)}`);
 
   // The coalition's main move (the one that leads the ranking among the U.S., Japan and Taiwan).
   const co = done.find(l => l.who !== 'cn');
-  if (co) parts.push(`${NAME[co.who]} ${use(co)}`);
+  if (co) parts.push(`${name(co.who)} ${use(co)}`);
 
   // A peace forum's answer.
   const fo = log.find(l => l.kind === 'action' && l.forum);
-  if (fo) parts.push(`${COUNTRIES[fo.forum.to].capital} ${fo.forum.accepted ? 'accepted' : 'turned down'} ${COUNTRIES[fo.who].capital}’s call for a peace forum`);
+  if (fo) parts.push(`${fo.forum.to === me ? 'you' : COUNTRIES[fo.forum.to].capital} ${fo.forum.accepted ? 'accepted' : 'turned down'} ${fo.who === me ? 'your' : `${COUNTRIES[fo.who].capital}’s`} call for a peace forum`);
 
   // Fighting, if nothing else says so.
   const fights = log.filter(l => l.kind === 'battle').map(l => AREA_LABEL[l.area]);
@@ -77,9 +88,9 @@ export function tldr(before, next, log) {
     const d = Math.round(next.c[w].support) - before.c[w].support, v = next.c[w].support;
     return [w, d, d <= -3 ? 'wavers' : d >= 3 ? 'rallies' : v >= 55 ? 'holds firm' : v < 45 ? 'is restless' : 'holds steady'];
   });
-  const said = mood.filter(([w, d]) => w !== 'tw' || Math.abs(d) >= 3).map(([w, , m]) => `${NAME[w]} ${m}`);
+  const said = mood.filter(([w, d]) => w !== 'tw' || w === me || Math.abs(d) >= 3).map(([w, , m]) => `${name(w)} ${verb(w, m)}`);
   let two = `At home, ${said.slice(0, -1).join(', ')} and ${said.at(-1)}.`;
   const dtw = Math.round(next.tw) - before.tw;
-  if (Math.abs(dtw) >= 5) two += ` Taiwan’s position ${dtw < 0 ? 'fell' : 'rose'} ${Math.abs(dtw)} points.`;
+  if (Math.abs(dtw) >= 5) two += ` ${me === 'tw' ? 'Your' : 'Taiwan’s'} position ${dtw < 0 ? 'fell' : 'rose'} ${Math.abs(dtw)} points.`;
   return { text: `${one} ${two}`, facts };
 }

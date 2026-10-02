@@ -85,7 +85,9 @@ export function mountNav() {
       ${next ? `<a href="${href(next)}" rel="next" title="Next in ${esc(catName)}: ${esc(next.title)}"><span class="tsm-step-t">${esc(next.title)}</span> <span aria-hidden="true">›</span></a>` : ''}
     </div>` : ''}
   </div>`;
-  document.body.prepend(bar);
+  // TSM build: the masthead's green band has a slot for the bar (scripts/build_site.py adds it).
+  const slot = document.getElementById('tsm-mast-bar');
+  if (slot) slot.append(bar); else document.body.prepend(bar);
   wireMenu(bar);
   wireSearch(bar, live, href);
   // Games offer a choice of graphics (Original or Trailer), asked per game, on whichever site they appear.

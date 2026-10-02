@@ -84,6 +84,22 @@
   import { mountChrome } from '../../shared/js/chrome.js';
   mountChrome({ title: 'Rhetoric Search', sub: 'Search the official statements and state media behind the rhetoric heatmaps. Official sentences are quoted; media articles are listed by headline and link.', category: 'State rhetoric' });
 </script>
+<script>
+  // A different set of example searches on each visit, across the collection's languages.
+  (function () {
+    var sets = [
+      'sanctions · independence · "Ottawa Senators"',
+      '制裁 · 台独 · 霸权主义',
+      'санкции · НАТО · Орешник',
+      'بحریہ · سیکیورٹی · دہشت',
+      '"rules-based order" · 和平统一 · санкции',
+      'Oreshnik · "Union State" · "hostile policy"',
+      'deterrence · 威慑 · НАТО · سیکیورٹی'
+    ];
+    var q = document.getElementById('q');
+    if (q) q.placeholder = sets[Math.floor(Math.random() * sets.length)];
+  })();
+</script>
 <script type="module" src="js/app.js"></script>
 </body>
 </html>

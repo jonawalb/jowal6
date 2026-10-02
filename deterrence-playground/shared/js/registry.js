@@ -163,6 +163,8 @@ export const ALL_TOOLS = [
     blurb: 'Set the mines, clutter, forces and threat, and see how long it takes to clear shipping routes through Hormuz and how much risk remains when they are declared clear.' },
   { slug: 'rhetoric-global', sub: { narratives: 'rhetoric', regions: ['ukraine', 'mideast'] }, cat: 'narratives', also: ['regions'], sites: ['deterrence'], title: 'Rhetoric Heatmap: Russia and Beyond', status: 'live',
     blurb: "What the Kremlin and Iran's Foreign Ministry keep saying, week by week since 2021: recurring formulas from 'special military operation' to 'Zionist regime' as a heatmap, with every quote one click from its source." },
+  { slug: 'rhetoric-search', sub: { narratives: 'rhetoric' }, cat: 'narratives', sites: ['deterrence'], vault: 'rhetoric', title: 'Rhetoric Search', status: 'live',
+    blurb: 'Search official statements and state media from Russia, China, Iran, North Korea, Belarus, the U.S., Pakistan and India: official sentences quoted, media listed by headline.' },
   { slug: 'raid-night', game: true, sub: { models: 'wargames', regions: ['ukraine', 'mideast'] }, cat: 'models', also: ['regions'], sites: ['deterrence'], title: 'Raid Night', status: 'live',
     blurb: 'Defend four notional cities through three real-time waves of drones and missiles modelled on real raids, and watch the cost exchange as your interceptors run out.' },
   { slug: 'matrix-game', game: true, sub: { models: 'wargames', regions: 'ukraine' }, cat: 'models', also: ['regions'], sites: ['deterrence'], title: 'Baltic Matrix Game', status: 'live',

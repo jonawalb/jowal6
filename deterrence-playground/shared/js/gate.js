@@ -4,23 +4,25 @@
 // In local development (serving the source tree) this file is not loaded and data is plaintext.
 (function () {
   'use strict';
-  var CFG = {"id": "3d314fe2f5", "salt": "Y4WWLNuKMQNV9IJIKHdnMA==", "iter": 600000, "check": "tjkjLw74yJV6+mditJ1VR8hDkJT5Hm3Ucw4HZSJ8PZRGXg==", "remember": false, "t2": {"id": "24323fd3b3", "salt": "1h8efphNDcDulPgKOV6WkA==", "check": "4ufCwV4H5vsTzWw8SsppYG8CYEFPkH2wYaZh4xmBJCzThQ==", "slugs": ["crossing-windows", "joint-sword", "penghu-gambit", "strait-landing", "strait-layers", "transit-response", "wargame-explorer", "warning-board"], "name": "Indo-Pacific"}, "t3": {"id": "1561121461", "salt": "MVNotf4TEPtaytW5XYSB0A==", "check": "9pi+x9N+EpXYMdBBG8XYpFM4Aoxc+i2ZQWbUvA2rxnLp3w==", "slugs": ["dissertation-games", "will-to-fight"], "name": "Jon Dissertation Games"}, "t4": {"id": "9de41c846d", "salt": "oqIHHudpJmpc+aW0a7OJag==", "check": "7kATO5IQxdNDiRoSs6Fw3ra6oVcd73LR7qgc2bz5FHguHg==", "slugs": ["arms-race", "bayesian-attack", "berlin-airlift", "brinkmanship", "coercion-resilience", "conceal-reveal", "correction-lab", "cost-ratio", "cry-wolf", "exercise-or-invasion", "extended-deterrence", "hub-and-spokes", "humiliation-motivation", "iran-israel-salvos", "magazine-depth", "markets-vs-analysts", "misinfo-cascade", "prebunking-game", "qre-explorer", "salami", "sanctions-architect", "sanctions-explorer", "sea-control", "supply-shock", "verification-game"], "name": "Coming Soon"}};
+  var CFG = {"id": "3d314fe2f5", "salt": "Y4WWLNuKMQNV9IJIKHdnMA==", "iter": 600000, "check": "tjkjLw74yJV6+mditJ1VR8hDkJT5Hm3Ucw4HZSJ8PZRGXg==", "remember": false, "t2": {"id": "24323fd3b3", "salt": "1h8efphNDcDulPgKOV6WkA==", "check": "4ufCwV4H5vsTzWw8SsppYG8CYEFPkH2wYaZh4xmBJCzThQ==", "slugs": ["crossing-windows", "joint-sword", "penghu-gambit", "strait-landing", "strait-layers", "transit-response", "wargame-explorer", "warning-board"], "name": "Indo-Pacific"}, "t3": {"id": "1561121461", "salt": "MVNotf4TEPtaytW5XYSB0A==", "check": "9pi+x9N+EpXYMdBBG8XYpFM4Aoxc+i2ZQWbUvA2rxnLp3w==", "slugs": ["dissertation-games", "will-to-fight"], "name": "Jon Dissertation Games"}, "t4": {"id": "9de41c846d", "salt": "oqIHHudpJmpc+aW0a7OJag==", "check": "7kATO5IQxdNDiRoSs6Fw3ra6oVcd73LR7qgc2bz5FHguHg==", "slugs": ["arms-race", "bayesian-attack", "berlin-airlift", "brinkmanship", "coercion-resilience", "conceal-reveal", "correction-lab", "cost-ratio", "cry-wolf", "exercise-or-invasion", "extended-deterrence", "hub-and-spokes", "humiliation-motivation", "iran-israel-salvos", "magazine-depth", "markets-vs-analysts", "misinfo-cascade", "prebunking-game", "qre-explorer", "salami", "sanctions-architect", "sanctions-explorer", "sea-control", "supply-shock", "verification-game"], "name": "Coming Soon"}, "t5": {"id": "1239aebe04", "salt": "DyDPl80nJR4dOfQcwckpzg==", "check": "XgKzGokjX1q2HMqt52womJcQD9J5iLWRiTtsLJrry1HmXQ==", "slugs": ["rhetoric-search"], "name": "Rhetoric Search"}};
   var KEYNAME = 'tsm-vault-key-' + (CFG ? CFG.id : 'dev');
   var MAGIC = 'TSMVAULT2:';
   // Optional extra tiers: tools listed in CFG.t2.slugs (or CFG.t3.slugs) have their data sealed with a
   // second (or third) password. A page belongs to at most one extra tier.
-  var TIERS = { 2: CFG && CFG.t2, 3: CFG && CFG.t3, 4: CFG && CFG.t4 };
+  var TIERS = { 2: CFG && CFG.t2, 3: CFG && CFG.t3, 4: CFG && CFG.t4, 5: CFG && CFG.t5 };
   var T2 = TIERS[2];
   var KEYNAME2 = T2 ? 'tsm-vault-key-' + T2.id : '';
   var KEYNAME3 = TIERS[3] ? 'tsm-vault-key-' + TIERS[3].id : '';
   var KEYNAME4 = TIERS[4] ? 'tsm-vault-key-' + TIERS[4].id : '';
+  var KEYNAME5 = TIERS[5] ? 'tsm-vault-key-' + TIERS[5].id : '';
   var MAGIC2 = 'TSMVAULT3:';
   var MAGIC3 = 'TSMVAULT4:';
   var MAGIC4 = 'TSMVAULT5:';
+  var MAGIC5 = 'TSMVAULT6:';
   var ROOT = new URL('../../', document.currentScript.src).href;
   var slugMatch = location.pathname.match(/\/tools\/([^/]+)\//);
   var inTier = function (t) { return !!(TIERS[t] && slugMatch && TIERS[t].slugs.indexOf(slugMatch[1]) >= 0); };
-  var PAGE_TIER = inTier(4) ? 4 : inTier(3) ? 3 : inTier(2) ? 2 : 0;
+  var PAGE_TIER = inTier(5) ? 5 : inTier(4) ? 4 : inTier(3) ? 3 : inTier(2) ? 2 : 0;
   var LOCKED_PAGE = PAGE_TIER > 0;
   var resolveKey, resolveKey2;
   var keyReady = new Promise(function (r) { resolveKey = r; });
@@ -74,7 +76,7 @@
     }
   }
   // Drop any second-tier key saved by an earlier version of this gate.
-  [KEYNAME2, KEYNAME3, KEYNAME4].forEach(function (n) { if (n) { try { localStorage.removeItem(n); sessionStorage.removeItem(n); } catch (e) { /* storage blocked */ } } });
+  [KEYNAME2, KEYNAME3, KEYNAME4, KEYNAME5].forEach(function (n) { if (n) { try { localStorage.removeItem(n); sessionStorage.removeItem(n); } catch (e) { /* storage blocked */ } } });
 
   function startsWithMagic(buf, magic) {
     if (buf.length < magic.length) return false;
@@ -103,7 +105,7 @@
       return key2Now(tier).then(function (k) { return open(k, b64d(b64), true); }).then(function (bytes) { return new TextDecoder().decode(bytes); });
     },
     lock: function () {
-      try { [KEYNAME, KEYNAME2, KEYNAME3, KEYNAME4].forEach(function (n) { if (n) { localStorage.removeItem(n); sessionStorage.removeItem(n); } }); } catch (e) { /* storage blocked */ }
+      try { [KEYNAME, KEYNAME2, KEYNAME3, KEYNAME4, KEYNAME5].forEach(function (n) { if (n) { localStorage.removeItem(n); sessionStorage.removeItem(n); } }); } catch (e) { /* storage blocked */ }
       location.reload();
     },
   };
@@ -115,7 +117,7 @@
       if (!r.ok || !/\/data\/|\/thumb\.png$/.test(r.url || '')) return r;
       return r.clone().arrayBuffer().then(function (ab) {
         var buf = new Uint8Array(ab);
-        var tier = startsWithMagic(buf, MAGIC) ? 1 : startsWithMagic(buf, MAGIC2) ? 2 : startsWithMagic(buf, MAGIC3) ? 3 : startsWithMagic(buf, MAGIC4) ? 4 : 0;
+        var tier = startsWithMagic(buf, MAGIC) ? 1 : startsWithMagic(buf, MAGIC2) ? 2 : startsWithMagic(buf, MAGIC3) ? 3 : startsWithMagic(buf, MAGIC4) ? 4 : startsWithMagic(buf, MAGIC5) ? 5 : 0;
         if (!tier) return r;
         return (tier > 1 ? key2Now(tier) : keyReady).then(function (k) { return open(k, b64d(new TextDecoder().decode(buf.subarray(MAGIC.length))), true); })
           .then(function (plain) { return new Response(plain, { status: 200, headers: r.headers }); },

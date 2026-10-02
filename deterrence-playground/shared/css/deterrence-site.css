@@ -85,6 +85,8 @@ html #tsm-gate input[type=password] { background: #fbfbf6; color: #28241d; borde
 html #tsm-gate button { background: #34432b; border-color: #34432b; color: #f3f4ec; border-radius: 999px; }
 html #tsm-gate input:focus-visible, html #tsm-gate button:focus-visible { outline-color: #9c3514; }
 html #tsm-gate .g-err { color: #a6221a; }
+html #tsm-gate .g-contact { font-size: .88em; margin-top: 10px; }
+html #tsm-gate .g-contact a { color: #9c3514; }
 @media (prefers-color-scheme: dark) {
   html #tsm-gate { background: #151711; color: #e8e4d6; }
   html #tsm-gate .g-card { background: #1d2019; border-color: #4b503f; border-top-color: #e8e4d6; }
@@ -94,6 +96,7 @@ html #tsm-gate .g-err { color: #a6221a; }
   html #tsm-gate button { background: #b3c495; border-color: #b3c495; color: #151711; }
   html #tsm-gate input:focus-visible, html #tsm-gate button:focus-visible { outline-color: #e8825a; }
   html #tsm-gate .g-err { color: #f2675a; }
+  html #tsm-gate .g-contact a { color: #e8825a; }
 }
 /* ---- Theater (the Trailer graphics option on games): the original green sci-fi plotting table from trailer.css,
    lifted a step and with brighter text so it reads easily (Jonathan, 2026-10-02: keep the green, less dark). ---- */

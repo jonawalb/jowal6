@@ -163,8 +163,9 @@
     g.setAttribute('aria-labelledby', 'g-title');
     g.innerHTML = '<div class="g-card"><div class="g-brand"><img src="' + ROOT + 'shared/assets/site-logo.svg" alt="">' +
       '<div><p class="g-org">Jonathan Walberg</p><h1 id="g-title">Interactive Deterrence</h1></div></div>' +
-      (tier > 1 ? '<p><b>' + (TIERS[tier].name || 'This section') + '</b> is password protected. Enter the password to continue.</p>'
+      (tier === 4 ? '<p>This tool is password protected. Enter the password to continue.</p>' : tier > 1 ? '<p><b>' + (TIERS[tier].name || 'This section') + '</b> is password protected. Enter the password to continue.</p>'
         : '<p>This site is for invited readers. Enter the access password to continue.</p>') +
+      '<p class="g-contact">To request access, email <a href="mailto:walberg@virginia.edu">walberg@virginia.edu</a>.</p>' +
       '<form><input type="password" id="g-pw" autocomplete="current-password" aria-label="Access password" placeholder="Access password" required>' +
       (tier > 1 || !REMEMBER ? '' : '<label class="g-rem"><input type="checkbox" id="g-rem" checked> Remember on this device</label>') +
       '<button type="submit" id="g-go">Unlock</button><div class="g-err" id="g-err" aria-live="polite"></div></form></div>';

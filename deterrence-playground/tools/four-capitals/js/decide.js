@@ -10,6 +10,10 @@ import { infoBtn } from './tips.js';
 import { ledger, costOf, costText, short, grantOf } from './logistics.js';
 import { paintForces, wireForces } from './forces-panel.js';
 import { paintLogi } from './logi-panel.js';
+import { constraints, homeLine } from './politics.js';
+import { forumEstimate, forumTo, limitedOf } from './forum.js';
+import { forumTip } from './forum-panel.js';
+import { intelView } from './ai.js';
 import { pulse } from '../../../shared/js/motion.js';
 
 const $ = id => document.getElementById(id);
@@ -37,6 +41,14 @@ export function paintDecide(g) {
   G = g;
   G.L = ledger(G.s, G.player, G.choice);
   paintPostures(); paintTabs(); paintActions(); paintForces(G); paintLogi(G);
+  $('home').innerHTML = homeLine(G.s, G.player).map(esc).join(' ');
+}
+
+/** Your estimate for a forum call: your read of the rival's type, and how they seem to read you. */
+function forumOdds(id) {
+  const me = G.player, to = forumTo(me, answers(id, G.choice.follow[id]));
+  const f = forumEstimate(G.s, me, to, { [to]: intelView(G.B, G.s, me, to) }, limitedOf(intelView(G.B, G.s, to, me)));
+  return { f, to };
 }
 function repaint() { paintDecide(G); onChange(); }
 
@@ -70,19 +82,22 @@ function paintActions() {
     const on = G.choice.actions.includes(a.id);
     const w = on ? null : addWhy(G, G.L, a.id);
     const unpaid = on && G.L.refused[a.id];
-    const { p, factors } = oddsFor(G.s, mv, G.player, a.id);
+    const fo = a.forum ? forumOdds(a.id) : null;
+    const { p, factors } = fo ? { p: fo.f.p, factors: [] } : oddsFor(G.s, mv, G.player, a.id);
     const tag = a.tags.includes('esc') ? 'tag-esc' : a.tags.includes('soft') ? 'tag-soft' : '';
     const fac = factors.map(([l, d]) => `${l} ${d > 0 ? '+' : ''}${d}`).join(' · ');
     const c = costOf(a.id, answers(a.id, G.choice.follow[a.id])), ct = costText(c);
     const gt = Object.entries(a.grant || {}).map(([k, v]) => `+${v} ${RES_LABEL[k]}`).join(', ');
     const used = usedUp(G.s, a.id);
-    const extra = [a.opp && infoBtn(oppTip(G.s, a.id), `Opportunity: why ${a.label} is on the menu`, 'Opportunity <i aria-hidden="true">ⓘ</i>', 'k4-opp'),
+    const chips = constraints(G.s, G.player, a.id, answers(a.id, G.choice.follow[a.id]))
+      .map(c => infoBtn(c.tip, `${c.text}: why`, `${esc(c.text)} <i aria-hidden="true">ⓘ</i>`, `k4-chip${c.block ? ' k4-chip-no' : ''}`));
+    const extra = [...chips, a.opp && infoBtn(oppTip(G.s, a.id), `Opportunity: why ${a.label} is on the menu`, a.forum ? 'Peace forum <i aria-hidden="true">ⓘ</i>' : 'Opportunity <i aria-hidden="true">ⓘ</i>', 'k4-opp'),
       a.tags.includes('gray') && infoBtn(GRAY_TIP, 'Gray zone: what it means', 'Gray zone <i aria-hidden="true">ⓘ</i>', 'k4-gray'),
       a.once && !used && infoBtn(ONCE_TIP, 'Once a game: what it means', 'Once a game <i aria-hidden="true">ⓘ</i>', 'k4-once'),
       gt && `<em class="k4-dep">${gt}</em>`, ct && `<em class="k4-cost">Cost: ${ct}</em>`].filter(Boolean).join(' ');
     const off = w && w.kind !== 'full';
     const pct = used ? infoBtn(USED_TIP, `${a.label}: already used`, 'USED', 'k4-used') : w && w.kind === 'rule' ? '—'
-      : `${Math.round(p * 100)}%${infoBtn(oddsTip(G.s, mv, G.player, a.id), `How the ${Math.round(p * 100)}% for ${a.label} is worked out`)}`;
+      : `${Math.round(p * 100)}%${infoBtn(fo ? forumTip(fo.f, fo.to) : oddsTip(G.s, mv, G.player, a.id), `How the ${Math.round(p * 100)}% for ${a.label} is worked out`)}`;
     return `<div class="k4-act ${on ? 'on' : ''} ${off ? 'off' : ''} ${used ? 'used' : ''} ${tag}"><div class="k4-acth"><label><input type="checkbox" data-act="${a.id}" ${on ? 'checked' : ''} ${w ? 'disabled' : ''}>
       <b>${esc(a.label)}</b></label><span class="p">${pct}</span></div><small>${esc(a.explain)} ${extra}</small>
       ${off ? `<span class="why">${w.why === USED ? 'Already used: you can carry this out once a game.' : `Not now: ${esc(w.why)}.`}</span>` : unpaid ? `<span class="why bad">Can’t afford with your other choices (${RES_LABEL[unpaid].toLowerCase()}): it will not be carried out.</span>` : fac ? `<span class="why">${esc(fac)}</span>` : ''}

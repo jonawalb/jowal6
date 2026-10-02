@@ -3,7 +3,7 @@
 import { P } from '../data/params.js';
 import { COUNTRIES, IDS, defaultWeights } from '../data/countries.js';
 import { newGame, brief, resolveTurn } from './engine.js';
-import { initBeliefs, updateBeliefs, chooseMove, objectiveValue } from './ai.js';
+import { initBeliefs, updateBeliefs, chooseMove, objectiveValue, forumLearn } from './ai.js';
 
 export function score(s, who, weights) {
   const obs = COUNTRIES[who].objectives;
@@ -35,7 +35,8 @@ function playOutFrom(s, start, onTurn) {
     s = brief(s);
     const moves = Object.fromEntries(IDS.map(w => [w, chooseMove(s, w, B[w], w === start.player ? start.weights : defaultWeights(w))]));
     B = updateBeliefs(B, s, moves);
-    s = resolveTurn(s, moves).state;
+    const r = resolveTurn(s, moves, { beliefs: B });
+    s = r.state; B = forumLearn(B, r.log);
     if (onTurn) onTurn(s, B);
   }
   return s;

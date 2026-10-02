@@ -3,6 +3,7 @@
 // s.units are the truth; s.f[who][area] is a derived sum of raw strength kept for the moves and the map.
 import { SEA, AREAS, ISLAND, COAST, START_STANCE, START_EMPH, SIDE, WAR, moveCost, adjacent, AREA_LABEL } from '../data/theater.js';
 import { FORMATIONS, FBY, TYPES, UPKEEP, READY, placesFor, readyFactor } from '../data/formations.js';
+import { P } from '../data/params.js';
 
 const IDS = ['us', 'tw', 'cn', 'jp'];
 export const r2 = x => Math.round(x * 100) / 100;
@@ -28,10 +29,16 @@ export function syncF(s) {
   for (const w of IDS) for (const u of s.units[w]) if (u.at in s.f[w]) s.f[w][u.at] = r2(s.f[w][u.at] + u.str);
 }
 
-/** Bring in U.S. formations ordered out of the Rear last month. */
+/** Months a U.S. formation leaving the Rear takes to arrive: 1 (0 with a surge); 2 (1 with a surge) when a human
+ * plays the United States, who must decide early. The computer's United States is unchanged. */
+export const arrivalDelay = (s, who, fast) => Math.max(0, (who === 'us' && s.human === 'us' ? 2 : 1) - (fast ? 1 : 0));
+/** "arrives in May" (or "after the game ends"). */
+export const etaText = eta => (eta < P.turns ? `arrives in ${P.months[eta]}` : 'arrives after the game ends');
+
+/** Bring in U.S. formations whose arrival month has come. */
 export function arrive(s, log) {
-  for (const w of IDS) for (const u of s.units[w]) if (u.at === 'transit') {
-    u.at = u.to; delete u.to;
+  for (const w of IDS) for (const u of s.units[w]) if (u.at === 'transit' && (u.eta ?? s.turn) <= s.turn) {
+    u.at = u.to; delete u.to; delete u.eta;
     log.push({ kind: 'force', who: w, area: u.at, type: FBY[u.id].type, text: `${FBY[u.id].short} arrived in the ${AREA_LABEL[u.at]}` });
   }
   syncF(s);
@@ -56,7 +63,7 @@ export function orderCheck(s, who, [id, to], res, done = {}) {
 /**
  * Apply one capital's force orders, paying from s.res[who]. orders = { moves: [[formationId, to]],
  * stance: { seaArea: 'defend'|'contest'|'attack' }, emph: coastSector }. Unaffordable or illegal orders are
- * refused with a reason; earlier orders stand. opts.fast: U.S. formations leaving the Rear arrive at once.
+ * refused with a reason; earlier orders stand. opts.fast: a U.S. surge (arrivals one month sooner; see arrivalDelay).
  */
 export function applyOrders(s, who, orders = {}, opts = {}) {
   const log = [], res = s.res[who], done = {};
@@ -70,10 +77,11 @@ export function applyOrders(s, who, orders = {}, opts = {}) {
     if (c.aim) { u.focus = to; log.push({ kind: 'order', who, ok: true, text: `${name} aimed at ${to === 'none' ? 'nothing' : 'the ' + AREA_LABEL[to]}` }); continue; }
     res.lift = r2(res.lift - c.lift); res.fuel = r2(res.fuel - c.fuel);
     const from = u.at;
-    if (who === 'us' && from === 'rear' && !opts.fast) { u.at = 'transit'; u.to = to; }
+    const wait = who === 'us' && from === 'rear' ? arrivalDelay(s, who, opts.fast) : 0;
+    if (wait > 0) { u.at = 'transit'; u.to = to; u.eta = s.turn + wait; }
     else u.at = to;
     if (SEA.includes(to)) s.moved[who][to] = (s.moved[who][to] || 0) + u.str;
-    log.push({ kind: 'order', who, ok: true, text: `${name} ${AREA_LABEL[from]} → ${AREA_LABEL[to]}${u.at === 'transit' ? ' (arrives next month)' : ''}` });
+    log.push({ kind: 'order', who, ok: true, text: `${name} ${AREA_LABEL[from]} → ${AREA_LABEL[to]}${u.at === 'transit' ? ` (${etaText(u.eta)})` : ''}` });
   }
   for (const [a, st] of Object.entries(orders.stance || {})) if (SEA.includes(a) && ['defend', 'contest', 'attack'].includes(st)) s.stance[who][a] = st;
   if (who in s.emph && COAST.includes(orders.emph)) s.emph[who] = orders.emph;
@@ -136,8 +144,13 @@ export function combat(s, rng, log) {
       munF[w] = need > 0 ? Math.max(WAR.noMun, pay / need) : 1;
       if (pay < need - 1e-9) (s.short[w] = s.short[w] || {}).mun = true;
     }
-    const dealt = side => con[side].reduce((t, c) => t + eff(c.u) * c.wt * (WAR[st(c.w)]?.dealt ?? 1) * munF[c.w], 0);
+    const by = c => eff(c.u) * c.wt * (WAR[st(c.w)]?.dealt ?? 1) * munF[c.w];
+    const dealt = side => con[side].reduce((t, c) => t + by(c), 0);
     const dmg = { red: dealt('blue'), blue: dealt('red') };
+    // Who dealt each side's damage, by capital (the peace forum's anger reads it: s.hurt[victim][by]).
+    const share = side => { const d = {}; for (const c of con[side]) d[c.w] = (d[c.w] || 0) + by(c); const t = Object.values(d).reduce((a, b) => a + b, 0) || 1; for (const k in d) d[k] /= t; return d; };
+    const from = { red: share('blue'), blue: share('red') };
+    s.hurt = s.hurt || {};
     const lost = {};
     for (const side of ['red', 'blue']) {
       const wts = con[side].map(c => eff(c.u) * c.wt * (c.kind === 'strike' ? WAR.strikeTaken : 1)), sum = wts.reduce((x, y) => x + y, 0) || 1;
@@ -145,6 +158,7 @@ export function combat(s, rng, log) {
         const loss = Math.min(c.u.str, WAR.k * dmg[side] * (wts[i] / sum) * (WAR[st(c.w)]?.taken ?? 1) * (0.7 + 0.6 * rng.u()));
         c.u.str = r2(c.u.str - loss);
         s.losses[c.w] = (s.losses[c.w] || 0) + loss; lost[c.w] = (lost[c.w] || 0) + loss;
+        for (const [k, f] of Object.entries(from[side])) { const h = (s.hurt[c.w] = s.hurt[c.w] || {}); h[k] = (h[k] || 0) + loss * f; }
         s.engaged[c.u.id] = true;
       });
     }

@@ -236,8 +236,9 @@ $('rotate-ccw').onclick = () => rotate(-1);
 $('undo').onclick = doUndo;
 $('end').onclick = end;
 document.addEventListener('keydown', e => {
-  if (e.ctrlKey || e.metaKey || e.altKey || tour.open || !g || g.over) return;
-  if (e.target.closest('input, textarea, select')) return;
+  if (e.ctrlKey || e.metaKey || e.altKey || !g || g.over) return;
+  // The walkthrough can stay open while you play; only keys typed inside its own card belong to it.
+  if (e.target.closest('input, textarea, select, #tour')) return;
   const k = e.key.toLowerCase();
   const t = Object.entries(ACTIONS).find(([, a]) => a.key === k);
   if (t) { e.preventDefault(); if (!why(g, t[0], null)) setTool(t[0]); else say(why(g, t[0], null)); }
@@ -262,6 +263,11 @@ $('hide-howto').onclick = e => { howto(false); store.set('sh-howto', 'hidden'); 
 $('show-howto').onclick = () => { const s = $('howto').hidden; howto(s); store.set('sh-howto', s ? 'shown' : 'hidden'); if (s) $('howto').scrollIntoView({ block: 'nearest' }); };
 
 const tour = createTour($('tour'));
+// While the walkthrough is open, pad the page by its height so it never covers the controls (on phones it
+// is a bar along the bottom of the screen, over End turn).
+const padForTour = () => { const c = $('tour'); document.body.style.paddingBottom = c.hidden ? '' : `${c.offsetHeight + 16}px`; };
+new MutationObserver(padForTour).observe($('tour'), { attributes: true, attributeFilter: ['hidden'], childList: true, subtree: true });
+addEventListener('resize', padForTour);
 $('start-tour').onclick = () => tour.start();
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
   color = tokenColor('--c2', document.body);

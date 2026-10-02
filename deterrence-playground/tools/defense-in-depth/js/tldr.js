@@ -18,6 +18,7 @@
 //   stall        side = assaulting side; sec; gauge
 //   located      side = side that located the battery; unit (the battery)
 //   contact      side = side that made first contact; sec        break  side = side of the unit; unit, sec
+//   laneLost     side = side of the MG; unit (the MG), sec (where it is now); vis = [its side] (it moved off its lane)
 
 const START_HOUR = 5;          // every scale starts at 05:00 (SPEC §2.2)
 export const BIG_ENFILADE = 2; // strength points; below this an enfilade hit is not news (NOTIONAL)
@@ -80,6 +81,7 @@ const CLAUSE = {
   detect: (g, e, me) => (mine(e, me) ? `you spotted infiltrators at ${place(g, e.sec)}` : `your infiltrators were spotted at ${place(g, e.sec)}`),
   stall: (g, e, me) => (mine(e, me) ? `your ${e.side === 'def' ? 'counterstroke' : 'assault'} stalled at ${place(g, e.sec)}` : `you stopped an assault at ${place(g, e.sec)}`),
   located: (g, e, me) => (mine(e, me) ? 'you located an enemy battery' : `the enemy located your ${unitLabel(g, e.unit, me)}`),
+  laneLost: (g, e, me) => (mine(e, me) ? `your ${unitLabel(g, e.unit, me)} moved and lost its lane: lay it again` : ''),
 };
 const ORDER = Object.keys(CLAUSE);
 

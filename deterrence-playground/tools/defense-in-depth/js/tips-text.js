@@ -226,7 +226,7 @@ const ORDERS = {
 const T = {
   def: {
     fog: ['Fog of war', 'You see attackers only next to your units or under an observer. Small groups and infiltrators are hard to spot. Your trench lines are already on his maps; your garrisons and concealed works are not.'],
-    enfilade: ['Enfilade', 'Your MG companies are your enfilade weapon: only they lay fire lanes. Lay each lane across his line of advance from a flank. Flanking fire ignores the cover he faces and hits waves × 3, small groups nearly as hard; fire from the front is stopped by cover.'],
+    enfilade: ['Enfilade', 'Your MG companies are your enfilade weapon: only they lay fire lanes. Lay each lane across his line of advance from a flank. Flanking fire ignores the cover he faces and hits waves × 3, small groups nearly as hard; fire from the front is stopped by cover. Move an MG and its lane is lost: lay it again.'],
     deadGround: ['Dead ground', 'Every sector has folds where he can shelter. Covering a sector from two or more directions removes most of them (the Coverage layer shows how many).'],
     depth: ['Depth', 'A thin outpost zone warns and delays, the battle zone kills, and the rear zone holds your counterstroke. Dense front lines die to bombardment.'],
     suppression: ['Suppression', 'His barrage keeps your men’s heads down while it falls. If it lifts before his infantry arrive, your men man the parapet and fire.'],

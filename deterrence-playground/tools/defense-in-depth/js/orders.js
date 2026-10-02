@@ -188,13 +188,20 @@ export function deliver(g) {
       u.lfT0 = p.lfT0 = g.t; u.lfOw = false; p.lfOw = true;
       const to2 = a.to2 != null ? a.to2 : a.to;
       routeUnit(g, u, a.to); routeUnit(g, p, to2);
-    } else if (a.kind === 'lane') { u.lane = a.dir; layLane(g, u); g.coverDirty = true; }
+    } else if (a.kind === 'lane') {
+      // A lane is sited from where the MG stands; one ordered to an MG still on the move is laid when it stops.
+      if (u.path.length) u.laneWant = a.dir; else { u.lane = a.dir; u.laneWant = null; layLane(g, u); g.coverDirty = true; }
+    }
     else if (a.kind === 'breach') u.breaching = true;
     else if (a.kind === 'riposte') { u.riposteAt = a.sec; u.riposteT = g.t; u.caAuth = false; }
     else if (a.kind === 'displace') {
       u.busy = g.t + ERAS[g.era].displaceHours; u.located = false;
       if (a.sec != null && a.sec >= 0 && g.ctrl[a.sec] === (u.side === 'att' ? 2 : 1)) u.sec = a.sec;
     }
+  }
+  for (const u of g.units) {   // lanes ordered on the move: laid once the MG has stopped
+    if (u.laneWant == null || u.path.length || !alive(u)) continue;
+    u.lane = u.laneWant; u.laneWant = null; layLane(g, u); g.coverDirty = true;
   }
 }
 

@@ -54,7 +54,7 @@ export const DRILL = [
   {
     id: 'lane', title: 'Give a machine gun a fire lane',
     do: () => 'Pick an MG company (M), press <b>Lane</b> in its orders, then tap a box along its row, to its left or right.',
-    more: (side, era) => `Machine guns are the enfilade weapon, and only ${era === 'm' ? 'weapons (MG) companies' : 'MG companies'} lay fire lanes. A lane along the row fires across the enemy’s line of advance, down the length of his line, from the side. It is laid when the hour is played.`,
+    more: (side, era) => `Machine guns are the enfilade weapon, and only ${era === 'm' ? 'weapons (MG) companies' : 'MG companies'} lay fire lanes. A lane along the row fires across the enemy’s line of advance, down the length of his line, from the side. It is laid when the hour is played. A lane belongs to the spot it was laid from: if the company moves, the lane is lost and you lay it again where it stops.`,
     done: c => since(c).some(a => a.kind === 'lane' && ACROSS.has(a.dir)),
     nudge: c => (since(c).some(a => a.kind === 'lane') ? 'That lane points up or down the board, at the enemy’s front. Lay it along the row (left or right) so it enfilades.' : ''),
   },

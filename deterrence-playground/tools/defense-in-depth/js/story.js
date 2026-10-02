@@ -47,6 +47,7 @@ const BUILD = {
   infiltrate: (g, e, me) => (e.side === me
     ? { tone: 'good', text: `Your ${unitLabel(g, e.unit, me)} slipped through ${place(g, e.sec)} unseen.` }
     : { tone: 'bad', text: `An enemy ${unitLabel(g, e.unit, me).replace(/^an enemy /, '')} slipped through ${place(g, e.sec)} without your men seeing it (revealed after the battle).` }),
+  laneLost: (g, e, me) => (e.side === me ? { tone: 'bad', text: `Your ${unitLabel(g, e.unit, me)} lost its lane when it moved (now at ${place(g, e.sec)}): lay it again.` } : null),
   breakthrough: (g, e, me) => (e.side === me ? { tone: 'good', text: `You broke through at ${place(g, e.sec)}.` } : { tone: 'bad', text: `The enemy broke through your line at ${place(g, e.sec)}.` }),
   objective: (g, e, me) => {
     if (e.held === e.prevHeld) return null;
@@ -74,7 +75,7 @@ export function moments(g, me, max = MAX) {   // QA: the hourly reports feed pas
     if (mineB.length) out.push({ t, kind: 'break', tone: 'bad', text: `${mineB.length > 1 ? `${mineB.length} of your units broke` : 'Your unit broke'}: ${mineB.map(e => `${unitLabel(g, e.unit, me)} at ${place(g, e.sec)}`).join(', ')}.` });
     if (foeB.length) out.push({ t, kind: 'break', tone: 'good', text: `${foeB.length > 1 ? `${foeB.length} enemy units broke` : 'An enemy unit broke'} under your fire.` });
   }
-  const pri = ['breakthrough', 'objective', 'counter', 'overrun', 'lodgment', 'lift', 'enfilade', 'infiltrate', 'detect', 'stall', 'break', 'contact'];
+  const pri = ['breakthrough', 'objective', 'counter', 'overrun', 'lodgment', 'lift', 'enfilade', 'infiltrate', 'detect', 'stall', 'break', 'contact', 'laneLost'];
   const keep = out.length <= max ? out : [...out].sort((a, b) => pri.indexOf(a.kind) - pri.indexOf(b.kind)).slice(0, max);
   return keep.sort((a, b) => a.t - b.t).map(m => ({ ...m, when: hhmm(m.t) }));
 }

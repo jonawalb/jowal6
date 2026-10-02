@@ -6,7 +6,7 @@
 // State g (SPEC §10.2; see also js/telemetry.js): { v, seed, dice, scale, era, mode, diff, od, t, turns, over,
 //   phase: 'plan' | 'battle', cols, rows, att: 'att', def: 'def', sectors: { terrain, elev, name, feat, ridge, stream },
 //   units: [{ id, side, type, name, role, fmn: [path], sec, str, str0, q, posture, formation, stance, facing, coh,
-//   supp, pair, lane, laneCells, trained, prog, path, dest, mode, broken, ... }], fmns, ix, ctrl, contest, lodg,
+//   supp, pair, lane, laneCells, laneAt, laneWant, laneLost, trained, prog, path, dest, mode, broken, ... }], fmns, ix, ctrl, contest, lodg,
 //   orders, missions, cstrokes, log, events, seen: { def, att }, snaps, ammo, barrage, telemetry, ... }
 import { BIDDLE, FIRE, SUPP, COHESION, BREAK, TANK, CARDS, CLOCK, OFFDEF } from '../data/params.js';
 import { SCALES, turnsFor } from '../data/scales.js';
@@ -16,7 +16,7 @@ import { makeRng, STREAM } from './rng.js';
 import { gridFor, FWD } from './grid.js';
 import { mapgen } from './mapgen.js';
 import { buildForces, reindex, fighting, alive, isCompany, isBattery, other, knows } from './forces.js';
-import { directFire, computeCover, exposure, geometry, deadGround, leth } from './fire.js';
+import { directFire, computeCover, exposure, geometry, deadGround, leth, dropMovedLanes } from './fire.js';
 import { firePhase, preparation, underGuns } from './arty.js';
 import { moveAll, goToGround, breachWork, inContact } from './move.js';
 import { resolveAssaults, updateCtrl, stallGauge } from './assault.js';
@@ -97,7 +97,7 @@ function initUnit(g, u, rq, doctrine) {
   Object.assign(u, {
     sec: -1, q: Math.exp(FIRE.quality * rq.normal()), posture: u.side === 'att' ? 'rush' : 'hold', formation: 'waves',
     stance: u.side === 'att' ? 'elastic' : 'hold', facing: FWD[u.side], coh: COHESION.start, supp: 0, _ps: 1, pair: null, lane: null,
-    laneCells: null, prog: 0, path: [], dest: null, mode: 'normal', broken: false, staticH: 0, gain: 0, lossH: 0,
+    laneCells: null, laneAt: null, laneWant: null, laneLost: null, prog: 0, path: [], dest: null, mode: 'normal', broken: false, staticH: 0, gain: 0, lossH: 0,
     inc: { fr: 0, fl: 0, ar: 0, dr: 0 }, arrive: null, X: 0,
   });
   const doc = doctrine && doctrine[u.side];
@@ -239,6 +239,7 @@ export function advance(g) {
   if (g.coverDirty) covers(g);
   counterMoves(g);
   moveAll(g, R.move);
+  dropMovedLanes(g);   // an MG that moved this hour has lost its lane (displace, counter-moves, movement)
   for (const u of g.units) { u.supp = Math.min(SUPP.cap, 1 - (u._ps ?? 1)); }
   for (const u of g.units) if (alive(u) && u.sec >= 0) u.X = exposure(g, u);
   covers(g);
@@ -246,6 +247,7 @@ export function advance(g) {
   resolveAssaults(g, R.assault);
   updateCtrl(g);
   afterAction(g);
+  dropMovedLanes(g);   // yields and overruns
   sight(g, 'def', R.senseDef);
   sight(g, 'att', R.senseAtt);
   recordHour(g);

@@ -26,11 +26,12 @@ const ATT = {
     rushSafe: true, bound: 'short', resync: false, pairing: false,
   },
   // Easy (W3, DECISIONS): a bad layout (one narrow column, waves, no fixing attacks, a 2 rows/h creeper) with the
-  // Standard commander's hourly reactions, two hours late. A gentle opponent that still fights back.
+  // Standard commander's hourly reactions, two hours late. A gentle opponent that still fights back. Its pairs
+  // leapfrog in short bounds (DECISIONS "MG lanes are lost on a move": long bounds made it as strong as Standard in Modern).
   easyAssault: { side: 'att', key: 'easyAssault', planAs: { base: 'modernSystem', form: 'waves', fixing: false, rate: 2, front: 'narrow' }, prep: 'hurricane', front: 'main', form: 'groups', leapfrog: true, infil: true,
     rate: 1, fixing: true, reserves: 'success', flankGuards: 1, shiftEvery: 4, consolidate: true,
     fires: 'lead', cb: true, gas: true, smoke: false, feint: false, drones: 'main', ds: true, engineers: true, tanks: 'support',
-    rushSafe: 'w', bound: 'long', resync: false, pairing: true },
+    rushSafe: 'w', bound: 'short', resync: false, pairing: true },
   // Campaign false lesson FL1: a quick rupture behind a fast creeper, still in waves (W1-C tweakPlan).
   quickRupture: {
     side: 'att', key: 'quickRupture', prep: 'hurricane', front: 'narrow', form: 'waves', leapfrog: false, infil: true,

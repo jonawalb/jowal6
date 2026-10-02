@@ -33,7 +33,7 @@ function screen1(C) {
 
 function screen2(C) {
   return `<p class="dd-recap"><b>${recap(C, e => ERAS[e].label)}</b></p>
-    <div class="dd-srow"><span class="eyebrow">Scale</span>${seg('scale', 'Scale', [['d', 'Division (Recommended)', '4 × 10.5 km, 15–16 hours'], ['c', 'Corps (2×)', '6 × 14.5 km, 21 hours'], ['a', 'Army (4×)', '9 × 18.5 km, 25–27 hours']], C.scale)}
+    <div class="dd-srow"><span class="eyebrow">Scale</span>${seg('scale', 'Scale', [['d', 'Division (Recommended)', '4 × 10.5 km, 15–16 hours'], ['c', 'Corps (2×)', '6 × 14.5 km, 20–21 hours'], ['a', 'Army (4×)', '9 × 18.5 km, 25–27 hours']], C.scale)}
       ${C.scale !== 'd' ? `<p class="fine dd-exp">For experienced players: you command every company of a ${C.scale === 'c' ? 'corps (about 150 units)' : 'army (about 300)'}. Formation orders, filters and hotkeys help.</p>` : ''}</div>
     <div class="dd-srow"><span class="eyebrow">Difficulty</span>${seg('diff', 'Difficulty', Object.entries(DIFF).map(([k, [t, d]]) => [k, t, d]), C.diff)}</div>`;
 }

@@ -27,7 +27,7 @@ function statusText(g, u, planning) {
   if (isBattery(u)) { const m = g.missions.find(x => x.bat === u.id && !x.done); return m ? `${m.m} at ${m.due > g.t ? 'next hour' : 'this hour'}` : u.busy > g.t ? 'displacing' : 'ready to fire'; }
   const o = pendingOrder(g, u);
   if (o) return `${o.a.kind} order${o.due > g.t ? ', starts next hour' : ''}`;
-  if (isIdle(g, u)) return 'Needs orders';
+  if (isIdle(g, u)) return u.type === 'mg' && u.lane == null && u.laneLost ? 'Lane lost when it moved — lay it again' : 'Needs orders';
   const bits = [u.side === 'att' ? POSTURE_WORD[u.posture] || u.posture : STANCE_WORD[u.stance] || u.stance];
   if (u.path.length) bits.push(`moving, ${u.path.length} to go`);
   if (u.pair != null) bits.push(u.lfOw ? 'overwatch' : 'bounding');

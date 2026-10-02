@@ -1,0 +1,146 @@
+/* Interactive Deterrence theme ("sage-rust"): sage paper, bark ink, deep-olive brand, rust accent, double-rule
+   header, dashed and dotted secondary rules, pill buttons; Chivo + Work Sans + Spline Sans Mono (loaded by the page's
+   Google Fonts link, which scripts/rebrand.py points at these families).
+   Linked after shared/css/tsm.css on every page of the deterrence build only (scripts/build_site.py,
+   apply_deterrence_theme). The TSM build never ships this file.
+   Original look: tokens + component overrides under :root:not([data-skin="trailer"]).
+   Theater (the Trailer graphics option on games): a lighter olive plotting table, below, overriding trailer.css. */
+:root:not([data-skin="trailer"]) { color-scheme: light;
+  --bg: #e2e6d7; --panel: #f3f4ec; --ink: #28241d; --muted: #545041; --faint: #66614f; --rule: #b4baa2; --rule-strong: #8f9680; --chip: #d5dac8;
+  --brand: #34432b; --brand-ink: #34432b; --brand-hover: #4a5c3e; --on-brand: #f3f4ec;
+  --accent: #9c3514; --accent-fill: #a63a17; --on-accent: #f7f2e8; --focus: #9c3514;
+  --sea: #cbdad5; --land: #efebdc; --coast: #8a8670; --grat: #bac8c2;
+  --blue: #22579a; --blue-soft: rgba(34, 87, 154, .11); --red: #b0261e; --red-soft: rgba(176, 38, 30, .09);
+  --good: #36702a; --warn: #85570a; --bad: #a6221a;
+  --c1: #22579a; --c2: #c2531e; --c3: #2c7a5a; --c4: #8c3c6c; --c5: #8a7000; --c6: #594b97; --c7: #2a6f86; --c8: #6b5a3e;
+  --prc: #b0261e; --roc: #2c7a5a; --us: #22579a; --jp: #8c3c6c; --ph: #8a7000; --ccg: #a8306c; --ally: #2a6f86;
+  --axis-ink: #545041; --axis-line: #8a8670;
+  --display: "Chivo", "Helvetica Neue", Arial, sans-serif; --body: "Work Sans", "Helvetica Neue", Arial, sans-serif; --mono: "Spline Sans Mono", ui-monospace, Menlo, monospace;
+  --panel-shadow-hover: 0 0 0 1px var(--brand-ink); --pop-shadow: 0 10px 26px -12px rgba(40, 36, 29, .35);
+  --pressed-bg: rgba(52, 67, 43, .12); --select: rgba(166, 58, 23, .25); }
+@media (prefers-color-scheme: dark) { :root:not([data-skin="trailer"]) { color-scheme: dark;
+  --bg: #151711; --panel: #1d2019; --ink: #e8e4d6; --muted: #aca893; --faint: #918d79; --rule: #363a2d; --rule-strong: #4b503f; --chip: #262a21;
+  --brand: #b3c495; --brand-ink: #b3c495; --brand-hover: #c4d3a8; --on-brand: #151711;
+  --accent: #e8825a; --accent-fill: #d9693d; --on-accent: #151711; --focus: #e8825a;
+  --sea: #111a18; --land: #22251c; --coast: #4a4e3f; --grat: #1b2421;
+  --blue: #79a6e8; --blue-soft: rgba(121, 166, 232, .15); --red: #f2675a; --red-soft: rgba(242, 103, 90, .13);
+  --good: #7ec46a; --warn: #e2ad4a; --bad: #f2675a;
+  --c1: #79a6e8; --c2: #f08a52; --c3: #4fc095; --c4: #d684b5; --c5: #dcc04a; --c6: #a99aea; --c7: #63b3cc; --c8: #c9b48d;
+  --prc: #f25e52; --roc: #4fc095; --us: #79a6e8; --jp: #d684b5; --ph: #dcc04a; --ccg: #ee6fa6; --ally: #63b3cc;
+  --axis-ink: #aca893; --axis-line: #6e6b58;
+  --pop-shadow: 0 12px 30px -12px #000; --pressed-bg: rgba(179, 196, 149, .14); --select: rgba(217, 105, 61, .35); } }
+/* ---- Original look: components (colours, type, rules, radii, shading only; no layout) ---- */
+:root:not([data-skin="trailer"]) body { background: var(--bg); }
+:root:not([data-skin="trailer"]) h1, :root:not([data-skin="trailer"]) h2, :root:not([data-skin="trailer"]) h3 { font-family: var(--display); letter-spacing: -.01em; }
+:root:not([data-skin="trailer"]) .tsm-title, :root:not([data-skin="trailer"]) .hub-word, :root:not([data-skin="trailer"]) .hero h1 { font-weight: 900; letter-spacing: -.02em; }
+:root:not([data-skin="trailer"]) .eyebrow, :root:not([data-skin="trailer"]) .tsm-org, :root:not([data-skin="trailer"]) .tablewrap th, :root:not([data-skin="trailer"]) .tsm-menu-g p, :root:not([data-skin="trailer"]) .card-cat, :root:not([data-skin="trailer"]) .wk-k, :root:not([data-skin="trailer"]) .sec-tile-n { font-family: var(--display); font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+:root:not([data-skin="trailer"]) .tsm-org { color: var(--accent); }
+:root:not([data-skin="trailer"]) .eyebrow { color: var(--brand-ink); }
+:root:not([data-skin="trailer"]) .tsm-head { border-bottom: 3px double var(--ink); }
+:root:not([data-skin="trailer"]) .tsm-foot { border-top: 1px dashed var(--rule-strong); }
+:root:not([data-skin="trailer"]) .tsm-bar { border-bottom: 1px dashed var(--rule-strong); }
+:root:not([data-skin="trailer"]) .sec { border-bottom: 1px dotted var(--rule-strong); }
+:root:not([data-skin="trailer"]) .sec:last-child { border-bottom: 0; }
+:root:not([data-skin="trailer"]) .tablewrap td { border-bottom: 1px dotted var(--rule-strong); }
+:root:not([data-skin="trailer"]) .tablewrap th { border-bottom: 1px solid var(--rule-strong); }
+:root:not([data-skin="trailer"]) .card, :root:not([data-skin="trailer"]) .panel, :root:not([data-skin="trailer"]) .mapbox, :root:not([data-skin="trailer"]) .tablewrap, :root:not([data-skin="trailer"]) .sec-tile, :root:not([data-skin="trailer"]) .promo, :root:not([data-skin="trailer"]) .spot, :root:not([data-skin="trailer"]) .tool, :root:not([data-skin="trailer"]) .week, :root:not([data-skin="trailer"]) .status, :root:not([data-skin="trailer"]) .sealed-form { border-color: var(--rule-strong); }
+:root:not([data-skin="trailer"]) .sec-tile:hover, :root:not([data-skin="trailer"]) .sec-tile:focus-visible, :root:not([data-skin="trailer"]) .promo:hover, :root:not([data-skin="trailer"]) .promo:focus-visible, :root:not([data-skin="trailer"]) a.tool:hover { box-shadow: var(--panel-shadow-hover); }
+:root:not([data-skin="trailer"]) .sec-tile, :root:not([data-skin="trailer"]) .spot { border-top-color: var(--brand-ink); }
+:root:not([data-skin="trailer"]) .sec-tile.locked, :root:not([data-skin="trailer"]) .promo { border-top-color: var(--accent-fill); }
+:root:not([data-skin="trailer"]) .btn, :root:not([data-skin="trailer"]) .choices button, :root:not([data-skin="trailer"]) .tsm-crumbs a, :root:not([data-skin="trailer"]) .tsm-bar-btn, :root:not([data-skin="trailer"]) .tsm-bar-step a, :root:not([data-skin="trailer"]) .tsm-bar-search input, :root:not([data-skin="trailer"]) .search input, :root:not([data-skin="trailer"]) .help-btn, :root:not([data-skin="trailer"]) .cats button { border-color: var(--rule-strong); }
+:root:not([data-skin="trailer"]) .btn.solid, :root:not([data-skin="trailer"]) .btn.primary { background: var(--brand); border-color: var(--brand); color: var(--on-brand); font-weight: 600; }
+:root:not([data-skin="trailer"]) .btn.solid:hover, :root:not([data-skin="trailer"]) .btn.primary:hover { background: var(--brand-hover); border-color: var(--brand-hover); }
+:root:not([data-skin="trailer"]) .btn[aria-pressed="true"], :root:not([data-skin="trailer"]) .choices button[aria-pressed="true"] { border-color: var(--brand-ink); background: var(--pressed-bg); }
+:root:not([data-skin="trailer"]) .lock-badge { background: var(--accent-fill); color: var(--on-accent); }
+:root:not([data-skin="trailer"]) .skin-switch button[aria-pressed="true"] { background: var(--accent-fill); color: var(--on-accent); }
+:root:not([data-skin="trailer"]) .k4-diff input:checked + span, :root:not([data-skin="trailer"]) .k4-postures button[aria-checked="true"] { background: var(--accent-fill); border-color: var(--accent-fill); color: var(--on-accent); }
+:root:not([data-skin="trailer"]) .pill { border-radius: 999px; }
+:root:not([data-skin="trailer"]) .tooltip { border-color: var(--rule-strong); border-left-color: var(--accent-fill); box-shadow: var(--pop-shadow); }
+:root:not([data-skin="trailer"]) .tsm-menu, :root:not([data-skin="trailer"]) .tsm-q-list { border-color: var(--rule-strong); box-shadow: var(--pop-shadow); }
+:root:not([data-skin="trailer"]) .tsm-menu-g a[aria-current] { box-shadow: inset 3px 0 0 var(--accent-fill); }
+:root:not([data-skin="trailer"]) .tg input:checked + .sw { background: var(--brand-ink); }
+:root:not([data-skin="trailer"]) .slider input, :root:not([data-skin="trailer"]) input[type="range"] { accent-color: var(--brand-ink); }
+:root:not([data-skin="trailer"]) .notional { border-style: dotted; }
+:root:not([data-skin="trailer"])::selection, :root:not([data-skin="trailer"]) ::selection { background: var(--select); }
+:root:not([data-skin="trailer"]) .sec-tile b, :root:not([data-skin="trailer"]) .status b, :root:not([data-skin="trailer"]) .tooltip b:first-child { font-weight: 800; letter-spacing: -.015em; }
+:root:not([data-skin="trailer"]) .tsm-bar-home { font-weight: 800; }
+:root:not([data-skin="trailer"]) .card, :root:not([data-skin="trailer"]) .panel, :root:not([data-skin="trailer"]) .mapbox, :root:not([data-skin="trailer"]) .tablewrap, :root:not([data-skin="trailer"]) .status, :root:not([data-skin="trailer"]) .tooltip, :root:not([data-skin="trailer"]) .sec-tile, :root:not([data-skin="trailer"]) .promo, :root:not([data-skin="trailer"]) .spot, :root:not([data-skin="trailer"]) .tool, :root:not([data-skin="trailer"]) .week, :root:not([data-skin="trailer"]) .hero-map, :root:not([data-skin="trailer"]) .tsm-menu, :root:not([data-skin="trailer"]) .tsm-q-list, :root:not([data-skin="trailer"]) .sealed-form { border-radius: 4px; }
+:root:not([data-skin="trailer"]) .btn, :root:not([data-skin="trailer"]) .choices button, :root:not([data-skin="trailer"]) .tsm-crumbs a, :root:not([data-skin="trailer"]) .tsm-bar-btn, :root:not([data-skin="trailer"]) .tsm-bar-step a, :root:not([data-skin="trailer"]) .tsm-bar-search input, :root:not([data-skin="trailer"]) .search input, :root:not([data-skin="trailer"]) .tg, :root:not([data-skin="trailer"]) .help-btn, :root:not([data-skin="trailer"]) .cats button { border-radius: 999px; }
+:root:not([data-skin="trailer"]) .help-btn span, :root:not([data-skin="trailer"]) .cats button[aria-pressed="true"], :root:not([data-skin="trailer"]) .cats button[aria-pressed="true"] span { color: var(--on-brand); }
+:root:not([data-skin="trailer"]) .cats button[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); }
+:root:not([data-skin="trailer"]) .kl-crises button[aria-pressed="true"], :root:not([data-skin="trailer"]) .cf-entry:hover:not(:disabled), :root:not([data-skin="trailer"]) .cf-opt:hover, :root:not([data-skin="trailer"]) .cf-opt:focus-visible { color: var(--on-brand); }
+:root:not([data-skin="trailer"]) .kl-crises button[aria-pressed="true"] small { color: color-mix(in srgb, var(--on-brand) 82%, var(--brand)); }
+:root:not([data-skin="trailer"]) .ch-btns .btn.solid, :root:not([data-skin="trailer"]) .ln-nav .btn.solid { color: var(--on-brand); }
+:root:not([data-skin="trailer"]) .pg-tabs button[aria-selected="true"] { color: var(--on-brand); }
+:root:not([data-skin="trailer"]) .skin-chooser .sw.orig { background: linear-gradient(135deg, #e2e6d7 0 58%, #34432b 58% 62%, #a63a17 62% 64%, #e2e6d7 64%); }
+:root:not([data-skin="trailer"]) .skin-chooser .box { border-color: var(--rule-strong); }
+@media (prefers-color-scheme: dark) { :root:not([data-skin="trailer"]) #theatre text[fill="#fff"] { fill: #151711; } }
+/* ---- Password screen (shared/js/gate.js injects its own <style>; #id + element outranks it) ---- */
+html #tsm-gate { background: #e2e6d7; color: #28241d; font-family: "Work Sans", Arial, sans-serif; }
+html #tsm-gate .g-card { background: #f3f4ec; border-color: #8f9680; border-top: 3px double #28241d; border-radius: 4px; }
+html #tsm-gate .g-org { font-family: "Chivo", Arial, sans-serif; font-weight: 700; color: #9c3514; }
+html #tsm-gate h1 { font-family: "Chivo", Arial, sans-serif; font-weight: 900; letter-spacing: -.02em; }
+html #tsm-gate p, html #tsm-gate label.g-rem { color: #545041; }
+html #tsm-gate input[type=password] { background: #fbfbf6; color: #28241d; border-color: #8f9680; border-radius: 999px; }
+html #tsm-gate button { background: #34432b; border-color: #34432b; color: #f3f4ec; border-radius: 999px; }
+html #tsm-gate input:focus-visible, html #tsm-gate button:focus-visible { outline-color: #9c3514; }
+html #tsm-gate .g-err { color: #a6221a; }
+@media (prefers-color-scheme: dark) {
+  html #tsm-gate { background: #151711; color: #e8e4d6; }
+  html #tsm-gate .g-card { background: #1d2019; border-color: #4b503f; border-top-color: #e8e4d6; }
+  html #tsm-gate .g-org { color: #e8825a; }
+  html #tsm-gate p, html #tsm-gate label.g-rem { color: #aca893; }
+  html #tsm-gate input[type=password] { background: #151711; color: #e8e4d6; border-color: #4b503f; }
+  html #tsm-gate button { background: #b3c495; border-color: #b3c495; color: #151711; }
+  html #tsm-gate input:focus-visible, html #tsm-gate button:focus-visible { outline-color: #e8825a; }
+  html #tsm-gate .g-err { color: #f2675a; }
+}
+/* ---- Theater (the Trailer graphics option on games), lighter: a mid-tone olive plotting table instead of
+   near-black, softer grid, grain and glow. Same fonts and motion as trailer.css. ---- */
+:root[data-skin="trailer"][data-skin][data-skin] {
+  color-scheme: dark;
+  --bg: #2e3829; --panel: #384332; --ink: #f5f2e7; --muted: #d3d6c4; --faint: #b8bda7; --rule: #5b684f; --chip: #424e3b;
+  --brand: #f2a65a; --brand-ink: #f2a65a; --accent: #f2a65a; --focus: #f6bd7f;
+  --sea: #2d3d3e; --land: #3d4837; --coast: #7a886f; --grat: #374b4c;
+  --blue: #a3c8ec; --blue-soft: rgba(163, 200, 236, .18); --red: #ff8e7a; --red-soft: rgba(255, 142, 122, .17);
+  --good: #9fd8aa; --warn: #f3b860; --bad: #ff8e7a;
+  --c1: #a3c8ec; --c2: #ffa86a; --c3: #63d8c2; --c4: #eea2cf; --c5: #f2d462; --c6: #bdaaf6; --c7: #8ccbe6; --c8: #dccaa2;
+  --prc: #ff8070; --roc: #63d8c2; --us: #a3c8ec; --jp: #eea2cf; --ph: #f2d462; --ccg: #f78fbc; --ally: #8ccbe6;
+  --axis-ink: var(--muted); --axis-line: var(--faint);
+  --t-ground: #29331f; --t-well: rgba(30, 38, 26, .55);
+  --glow: 0 0 0 1px rgba(242, 166, 90, .32), 0 0 14px -6px rgba(242, 166, 90, .4);
+}
+:root[data-skin="trailer"][data-skin] body {
+  background:
+    radial-gradient(120% 90% at 50% 25%, rgba(98, 116, 86, .55), rgba(46, 56, 41, 0) 70%),
+    linear-gradient(rgba(150, 168, 132, .09) 1px, transparent 1px) 0 0 / 64px 64px,
+    linear-gradient(90deg, rgba(150, 168, 132, .09) 1px, transparent 1px) 0 0 / 64px 64px,
+    #2b3426;
+  background-attachment: fixed;
+}
+:root[data-skin="trailer"][data-skin] body::after { opacity: .035; }
+:root[data-skin="trailer"][data-skin] .card, :root[data-skin="trailer"][data-skin] .panel, :root[data-skin="trailer"][data-skin] .mapbox { background: color-mix(in srgb, var(--panel) 94%, transparent); box-shadow: 0 14px 30px -24px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .05); }
+:root[data-skin="trailer"][data-skin] .btn { background: var(--chip); }
+:root[data-skin="trailer"][data-skin] .btn.solid, :root[data-skin="trailer"][data-skin] .btn.primary, :root[data-skin="trailer"][data-skin] .btn[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #1d2118; }
+:root[data-skin="trailer"][data-skin] .btn.solid:hover { background: #f6bd7f; }
+:root[data-skin="trailer"][data-skin] ::selection { background: rgba(242, 166, 90, .35); }
+:root[data-skin="trailer"][data-skin] .tooltip { box-shadow: 0 10px 24px -12px rgba(0, 0, 0, .45); }
+.skin-chooser .sw.trl { background:
+  radial-gradient(circle at 70% 45%, rgba(242, 166, 90, .95) 0 5px, transparent 6px),
+  radial-gradient(circle at 30% 60%, rgba(255, 142, 122, .95) 0 4px, transparent 5px),
+  linear-gradient(rgba(150, 168, 132, .35) 1px, transparent 1px) 0 0 / 18px 18px,
+  linear-gradient(90deg, rgba(150, 168, 132, .35) 1px, transparent 1px) 0 0 / 18px 18px, #2e3829; }
+.skin-chooser .sw.orig { background: linear-gradient(135deg, #e2e6d7 0 58%, #34432b 58% 62%, #a63a17 62% 64%, #e2e6d7 64%); }
+:root[data-skin="trailer"][data-skin] .skin-switch button[aria-pressed="true"] { background: var(--accent); color: #1d2118; }
+/* Tool trailer rules that baked the old near-black table into fills, strokes and wells. */
+:root[data-skin="trailer"][data-skin] .dd-ground, :root[data-skin="trailer"][data-skin] .dd-t-open, :root[data-skin="trailer"][data-skin] .dg-ground, :root[data-skin="trailer"][data-skin] .fc-ground { fill: var(--t-ground); }
+:root[data-skin="trailer"][data-skin] .dg-t, :root[data-skin="trailer"][data-skin] .fc-road { stroke: var(--t-ground); }
+:root[data-skin="trailer"][data-skin] .dd-name, :root[data-skin="trailer"][data-skin] .dd-zlab, :root[data-skin="trailer"][data-skin] .dd-ridge-l, :root[data-skin="trailer"][data-skin] .dd-objname, :root[data-skin="trailer"][data-skin] .dd-covn, :root[data-skin="trailer"][data-skin] .dd-pmark, :root[data-skin="trailer"][data-skin] .fc-name, :root[data-skin="trailer"][data-skin] .fc-ulab, :root[data-skin="trailer"][data-skin] .fc-trk-n { stroke: var(--t-ground); }
+:root[data-skin="trailer"][data-skin] .fc-redzone { fill: color-mix(in srgb, var(--red) 9%, var(--t-ground)); }
+:root[data-skin="trailer"][data-skin] .mp-soviet { fill: color-mix(in srgb, var(--red) 5%, var(--t-ground)); }
+:root[data-skin="trailer"][data-skin] .chart .plotbg { fill: var(--t-well); }
+:root[data-skin="trailer"][data-skin] .pl-c, :root[data-skin="trailer"][data-skin] .ch, :root[data-skin="trailer"][data-skin] .ccard, :root[data-skin="trailer"][data-skin] .tile, :root[data-skin="trailer"][data-skin] .costs input { background: var(--t-well); }
+:root[data-skin="trailer"][data-skin] .mags .mbar, :root[data-skin="trailer"][data-skin] .mag-bar, :root[data-skin="trailer"][data-skin] .mbar, :root[data-skin="trailer"][data-skin] .seedrow input, :root[data-skin="trailer"][data-skin] kbd, :root[data-skin="trailer"][data-skin] .kh-tabs { background: var(--t-ground); }
+:root[data-skin="trailer"][data-skin] .sl-future { fill: var(--t-ground); }
+:root[data-skin="trailer"][data-skin] .dd-mapbox, :root[data-skin="trailer"][data-skin] .fc-mapbox, :root[data-skin="trailer"][data-skin] .strip { box-shadow: 0 16px 36px -26px rgba(0, 0, 0, .6), inset 0 0 0 1px var(--rule); }
+:root[data-skin="trailer"][data-skin] .dd-tour, :root[data-skin="trailer"][data-skin] .fc-tour, :root[data-skin="trailer"][data-skin] .tour { box-shadow: 0 14px 34px -18px rgba(0, 0, 0, .55), var(--glow); }

@@ -155,26 +155,4 @@ h1, h2, h3 { font-family: var(--display); text-wrap: balance; }
 .src { font-size: 12.5px; color: var(--muted); padding-left: 1.1em; margin: 0; display: flex; flex-direction: column; gap: 6px; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 
-/* Interactive Deterrence theme: an institutional briefing look (cool paper, ink, navy, one signal red,
-   Libre Franklin + Public Sans, square corners). Overrides the shared TSM tokens. */
-:root {
-  --bg: #f4f5f6; --panel: #ffffff; --ink: #101317; --muted: #4c535c; --faint: #69717b; --rule: #d3d8dd; --chip: #eaedf0;
-  --brand: #0c1f3a; --brand-ink: #0c1f3a; --accent: #c8102e; --focus: #c8102e;
-  --sea: #dde5ec; --land: #ecebe6; --coast: #97a2ad; --grat: #c9d2da;
-  --display: "Libre Franklin", "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
-  --body: "Public Sans", "Helvetica Neue", Arial, sans-serif;
-  --mono: "DM Mono", ui-monospace, Menlo, Consolas, monospace;
-}
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #0b0e12; --panel: #12161c; --ink: #e5e8ec; --muted: #a2aab4; --faint: #89919b; --rule: #262d36; --chip: #171c23;
-  --brand-ink: #a9c1ee; --accent: #ff4d5e; --focus: #ff4d5e; --sea: #0e161e; --land: #1a1e23; --coast: #3d4854; --grat: #18232d; } }
-:root[data-theme="dark"] {
-  --bg: #0b0e12; --panel: #12161c; --ink: #e5e8ec; --muted: #a2aab4; --faint: #89919b; --rule: #262d36; --chip: #171c23;
-  --brand-ink: #a9c1ee; --accent: #ff4d5e; --focus: #ff4d5e; --sea: #0e161e; --land: #1a1e23; --coast: #3d4854; --grat: #18232d; }
-.btn.solid:hover { background: #1b3257; }
-.card, .panel, .status, .mapbox, .tooltip, .btn, .choices button, .tsm-crumbs a { border-radius: 2px; }
-h1, h2, h3 { letter-spacing: -.012em; }
-.tsm-title { font-weight: 800; letter-spacing: -.02em; }
-.tsm-head { border-bottom: 3px solid var(--ink); }
-.eyebrow, .tsm-org { font-family: var(--body); font-weight: 700; letter-spacing: .05em; }
-.status b, .tooltip b:first-child { font-weight: 800; }
+/* Interactive Deterrence: the site theme is shared/css/deterrence-site.css (linked after this file). */

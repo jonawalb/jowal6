@@ -1,23 +1,36 @@
 // The selection panel (SPEC §8.5) and the reports feed. Every percentage carries an "i" built from your own
 // picture (js/tips-text.js). Buttons are at least 40 px; the panel offers only orders the selection can take.
-import { TYPES } from '../../data/units.js';
 import { ERAS } from '../../data/eras.js';
-import { DETECT, BIDDLE } from '../../data/params.js';
+import { DETECT, BIDDLE, SUPP } from '../../data/params.js';
+import { SCALES } from '../../data/scales.js';
 import { expectedLoss, stallGauge } from '../engine.js';
 import { gridFor } from '../grid.js';
 import { alive, isBattery, isCompany } from '../forces.js';
-import { inContact } from '../move.js';
 import { tldr, visibleTo } from '../tldr.js';
 import { moments } from '../story.js';
 import { S, esc, pct, unitOf, hhmm } from './store.js';
 import { pctTip, momentInfo } from './tips.js';
 import { MISSION_WORD, missionsFor } from './actions.js';
 import { STANDING } from '../ai/standing.js';
+import { orderEffects, EFFECT } from './order-effects.js';
 
-const seg = (group, list, cur, label) => `<div class="dd-seg" role="group" aria-label="${label}">${list.map(([v, t]) => `<button type="button" class="btn" data-${group}="${v}" aria-pressed="${cur === v}">${t}</button>`).join('')}</div>`;
-const toolBtn = (k, t, extra = '') => `<button type="button" class="btn${S.tool && S.tool.kind === k ? ' armed' : ''}" data-tool="${k}" ${extra}>${t}</button>`;
+// A labelled row of choices (#7): each button carries its effect as a tooltip; a choice with no effect for this
+// unit is greyed, tagged with why, and does nothing (#8; js/ui/order-effects.js).
+const btn = (attr, v, t, pressed, fx, tip) => {
+  const off = fx && !fx.active;
+  return `<button type="button" class="btn${off ? ' dd-off' : ''}" data-${attr}="${v}" aria-pressed="${pressed}"${off ? ' aria-disabled="true"' : ''} title="${esc(off ? fx.reason : tip || '')}">${t}${off ? `<span class="dd-sr">: ${esc(fx.reason)}</span>` : ''}</button>`;
+};
+const row = (label, group, list, cur, fxs = {}, tips = {}, cls = '') => `<div class="dd-orow${cls ? ' ' + cls : ''}"><span class="dd-olab">${label}</span><div class="dd-seg" role="group" aria-label="${label}">${list.map(([v, t]) => btn(group, v, t, cur === v, fxs[v], tips[v])).join('')}</div></div>`;
+const toolBtn = (k, t, fx = null, tip = '') => {
+  const off = fx && !fx.active;
+  return `<button type="button" class="btn${S.tool && S.tool.kind === k ? ' armed' : ''}${off ? ' dd-off' : ''}" data-tool="${k}"${off ? ' aria-disabled="true"' : ''} title="${esc(off ? fx.reason : tip || EFFECT.tool[k] || '')}">${t}${off ? `<span class="dd-sr">: ${esc(fx.reason)}</span>` : ''}</button>`;
+};
+const toolRow = (tools, label = 'Action') => `<div class="dd-orow"><span class="dd-olab">${label}</span><div class="dd-tools">${tools.join('')}</div></div>`;
 const ATT_POSTURES = [['rush', 'Rush'], ['infil', 'Infiltrate'], ['hold', 'Hold'], ['consolidate', 'Consolidate'], ['withdraw', 'Withdraw']];
-const DEF_STANCES = [['hold', 'Hold'], ['elastic', 'Elastic'], ['delay', 'Delay'], ['riposte', 'Riposte'], ['reserve', 'Reserve']];
+const DEF_STANCES = [['hold', 'Hold'], ['elastic', 'Give ground'], ['delay', 'Delay'], ['riposte', 'Local counterattack'], ['reserve', 'Reserve']];
+const FORMS = [['waves', 'Waves'], ['groups', 'Small groups']];
+const MODES = [['normal', 'Normal'], ['covered', 'Covered'], ['road', 'Road']];
+const lodgNext = (g, u) => u.sec >= 0 && gridFor(g.scale).nbrs[u.sec].some(s => g.lodg[s]);
 
 function believedWatchers(g, u) {
   const G = gridFor(g.scale), bel = g.beliefSec[u.side], out = [];
@@ -27,91 +40,105 @@ function believedWatchers(g, u) {
 }
 
 function unitFacts(g, u) {
-  const out = [];
+  const out = [], det = '<li class="dd-det">';
   out.push(`<li>Strength ${pctTip(pct(u.str / u.str0), 'strength', { str: u.str, str0: u.str0 })}</li>`);
   if (u.side === 'att') {
     const G = gridFor(g.scale);
-    out.push(`<li>Cohesion ${pctTip(pct(u.coh ?? 1), 'cohesion', { coh: u.coh ?? 1, rows: Math.max(0, G.row[u.sec] - G.S.bands.nml[1]) })}</li>`);
+    out.push(`${det}Cohesion ${pctTip(pct(u.coh ?? 1), 'cohesion', { coh: u.coh ?? 1, rows: Math.max(0, G.row[u.sec] - G.S.bands.nml[1]) })}</li>`);
   }
-  out.push(`<li>Suppression on it ${pctTip(pct(u.supp || 0), 'suppression', { sources: u.supp ? [{ label: 'Fire on it last hour', s: u.supp }] : [] })}</li>`);
+  out.push(`${det}Suppression on it ${pctTip(pct(u.supp || 0), 'suppression', { sources: u.supp ? [{ label: 'Fire on it last hour', s: u.supp }] : [] })}</li>`);
   const to = u.path.length ? u.path[0] : u.sec;
   const el = expectedLoss(g, u.id, { to });
-  out.push(`<li>Expected loss this hour ${pctTip(pct(el.frac), 'expectedLoss', { loss: el.frac, exposure: el.terms.X, deadGround: el.terms.D, era: g.era })}</li>`);
+  out.push(`${det}Expected loss this hour ${pctTip(pct(el.frac), 'expectedLoss', { loss: el.frac, exposure: el.terms.X, deadGround: el.terms.D, era: g.era })}</li>`);
   const tgt = u.path.length ? u.path[0] : null;
   if (tgt != null && g.beliefSec[u.side][tgt] > 0) {
     const sg = stallGauge(g, tgt, u.side, true, [u.id]);
-    out.push(`<li>Assault on the next sector ${pctTip(`${sg.pct}%`, 'stall', { ratio: sg.ratio, k1: sg.k1, fe: sg.fe, supp: sg.supp, coh: sg.coh, od: g.od, ca: sg.ca, believed: true })} of the strength needed</li>`);
+    out.push(`${det}Assault on the next sector ${pctTip(`${sg.pct}%`, 'stall', { ratio: sg.ratio, k1: sg.k1, fe: sg.fe, supp: sg.supp, coh: sg.coh, od: g.od, ca: sg.ca, believed: true })} of the strength needed</li>`);
   }
   if (u.posture === 'infil' && u.stealth) {
     const w = believedWatchers(g, u), p = 1 - w.reduce((a, x) => a * (1 - x.d), 1) * 1, dark = !!(g.dark && g.dark[g.t]);
-    out.push(`<li>Chance of being spotted ${pctTip(pct(dark ? p * 0.5 : p), 'detection', { watchers: w, fogNight: dark })}</li>`);
+    out.push(`${det}Chance of being spotted ${pctTip(pct(dark ? p * 0.5 : p), 'detection', { watchers: w, fogNight: dark })}</li>`);
   }
   if (u.mode === 'road' || u.mode === 'covered') {
     const v = u.mode === 'road' ? 3 : 1, T = ERAS[g.era].T, p = Math.pow(T, -BIDDLE.k2 * v);
-    out.push(`<li>Survives each observed hour on the move ${pctTip(pct(p), 'survival', { p, T, v, k2: BIDDLE.k2, mode: u.mode })}</li>`);
+    out.push(`${det}Survives each observed hour on the move ${pctTip(pct(p), 'survival', { p, T, v, k2: BIDDLE.k2, mode: u.mode })}</li>`);
   }
-  if (u.type === 'tank' && ERAS[g.era].tankBreakdown) out.push(`<li>Breakdown ${pctTip('12% an hour', 'breakdown', { p: 0.12 })}</li>`);
+  if (u.type === 'tank' && ERAS[g.era].tankBreakdown) out.push(`${det}Breakdown ${pctTip('12% an hour', 'breakdown', { p: 0.12 })}</li>`);
   if (u.pair != null) { const p = unitOf(u.pair); out.push(`<li>Leapfrog partner: <b>${esc(p ? p.short : u.pair)}</b>; this hour it ${u.lfOw ? 'overwatches' : 'bounds'}.</li>`); }
   return `<ul class="dd-facts">${out.join('')}</ul>`;
+}
+
+/** Every order row for a unit of this kind, greyed where it has no effect (#8). */
+function orderRows(g, u, fx) {
+  const att = u.side === 'att', cur = k => k;
+  const rows = [att ? row('Posture', 'posture', ATT_POSTURES, cur(u.posture === 'bound' ? null : u.posture), fx.posture, EFFECT.posture)
+    : row('Stance', 'stance', DEF_STANCES, cur(u.stance), fx.stance, EFFECT.stance),
+  row('Formation', 'form', FORMS, cur(u.formation), fx.form, EFFECT.form),
+  row('Route', 'mode', MODES, cur(u.mode), fx.mode, EFFECT.mode)];
+  return rows.join('');
 }
 
 function batteryPanel(g, u) {
   const t = S.tool && S.tool.kind === 'fire' ? S.tool.m : 'suppress';
   const total = ((g.ui && g.ui.ammo0) || g.ammo)[u.side];
   const bns = Object.values(g.fmns).filter(f => f.side === u.side && f.kind === 'bn');
+  const fx = orderEffects(u.type, u.side, { era: g.era });
+  const all = ['suppress', 'destroy', ...(g.era === 'w' ? ['gas'] : []), 'smoke', 'cb', 'precision'];
+  const MTIP = { suppress: 'Keeps heads down while the shells fall', destroy: 'Kills dug-in men and cuts wire: costs far more shells', gas: 'Masks and slows everyone in the sector for 3 hours',
+    smoke: 'Blocks sight and fire lanes for the hour', cb: 'Counter-battery: fire on located enemy batteries', precision: 'A rocket strike on one target' };
+  const cost = m => (SUPP.costs[m] ? ` (${SUPP.costs[m]} ammo)` : '');
+  const mbtn = m => { const x = fx.mission[m] || { active: true }; return `<span class="${m === 'cb' || m === 'gas' ? 'dd-det' : ''}">${btn('mission', m, `${MISSION_WORD[m]}${x.active && SUPP.costs[m] ? ` <small>${SUPP.costs[m]}</small>` : ''}`, t === m, x, `${MTIP[m]}${cost(m)}`)}</span>`; };
   return `<p class="dd-ph"><b>${esc(u.name)}</b> · ${esc(u.typeName || u.type)} · ${u.guns}/${u.guns0} guns${u.located ? ' · <span class="warn">located by the enemy</span>' : ''}</p>
     <p class="fine">Pick a mission, then tap the target sector. Ammunition left ${pctTip(`${g.ammo[u.side]}`, 'ammo', { left: g.ammo[u.side], total })}</p>
-    ${seg('mission', missionsFor(g, u).map(m => [m, MISSION_WORD[m]]), t, 'Mission')}
-    <div class="dd-tools">${toolBtn('displace', 'Displace')}</div>
-    ${u.side === 'att' && g.era === 'w' ? `<label class="dd-lab">Direct support (calls answered at once) <select data-ds="${u.id}"><option value="">None</option>${bns.map(f => `<option value="${f.id}" ${u.ds === f.id ? 'selected' : ''}>${esc(f.name)} (${esc(g.fmns[f.parent]?.name || '')})</option>`).join('')}</select></label>` : ''}`;
+    <div class="dd-orow"><span class="dd-olab">Mission</span><div class="dd-seg" role="group" aria-label="Mission">${all.map(mbtn).join('')}</div></div>
+    ${toolRow([toolBtn('displace', 'Displace', fx.tool.displace), toolBtn('move', 'Move', fx.tool.move), toolBtn('lane', 'Lane', fx.tool.lane), toolBtn('breach', 'Breach', fx.tool.breach)])}
+    <div class="dd-offrows">${orderRows(g, u, fx)}</div>
+    ${u.side === 'att' && g.era === 'w' ? `<label class="dd-lab dd-det">Direct support (calls answered at once) <select data-ds="${u.id}"><option value="">None</option>${bns.map(f => `<option value="${f.id}" ${u.ds === f.id ? 'selected' : ''}>${esc(f.name)} (${esc(g.fmns[f.parent]?.name || '')})</option>`).join('')}</select></label>` : ''}`;
 }
 
 function onePanel(g, u) {
   const path = u.fmn.map(f => g.fmns[f] && g.fmns[f].name).filter(Boolean).join(' › ');
   if (isBattery(u)) return batteryPanel(g, u);
   const head = `<p class="dd-ph"><b>${esc(u.name)}</b> · ${esc(u.typeName || u.type)}<br><small class="muted">${esc(path)}</small></p>`;
-  if (u.type === 'drone') return `${head}<p class="fine">Two recon and two strike sorties an hour. Pick one, then tap a sector.</p>${seg('dronem', [['recon', 'Recon'], ['strike', 'Strike']], S.tool && S.tool.m, 'Sortie')}<div class="dd-tools">${toolBtn('move', 'Move')}</div>`;
-  if (u.type === 'ew') return `${head}<p class="fine">Tap a sector to jam the 5 × 5 area around it: enemy drones abort, his orders and calls for fire run an hour late.</p><div class="dd-tools">${toolBtn('jam', 'Jam')}${toolBtn('move', 'Move')}</div>`;
-  const att = u.side === 'att';
-  const tools = [toolBtn('move', 'Move')];
-  if (u.type === 'mg') tools.push(toolBtn('lane', 'Lane', 'title="MG companies lay enfilading fire lanes"'));
-  if (!att) tools.push(toolBtn('riposte', 'Riposte'));
-  if (TYPES[u.type].engineer) tools.push(toolBtn('breach', 'Breach'));
-  return `${head}${unitFacts(g, u)}
-    ${att ? seg('posture', ATT_POSTURES, u.posture === 'bound' ? null : u.posture, 'Posture (P)') : seg('stance', DEF_STANCES, u.stance, 'Stance (G)')}
-    ${seg('form', [['waves', 'Waves'], ['groups', 'Small groups']], u.formation, 'Formation (W)')}
-    ${!att || !inContact(g, u) ? seg('mode', [['normal', 'Normal'], ['covered', 'Covered'], ['road', 'Road']], u.mode, 'Movement') : ''}
-    <div class="dd-tools">${tools.join('')}</div>
-    ${u.type === 'mg' ? '<p class="fine">MG companies are the enfilade weapon: lay the lane across the enemy’s line of advance, from a flank.</p>' : ''}`;
+  const fx = orderEffects(u.type, u.side, { era: g.era, lodgNext: lodgNext(g, u) });
+  const tools = [toolBtn('move', 'Move', fx.tool.move), toolBtn('lane', 'Lane', fx.tool.lane, 'MG companies lay enfilading fire lanes')];
+  if (u.side === 'def') tools.push(toolBtn('riposte', 'Local counterattack', fx.tool.riposte));
+  tools.push(toolBtn('breach', 'Breach', fx.tool.breach));
+  if (u.type === 'drone') return `${head}<div class="dd-orow"><span class="dd-olab">Sortie</span>${seg2('dronem', [['recon', 'Recon', 'Recon: exact sightings over a 3 × 3 block'], ['strike', 'Strike', 'Strike: hits men caught moving in the open']], S.tool && S.tool.m)}</div>${toolRow(tools)}${row('Route', 'mode', MODES, u.mode, fx.mode, EFFECT.mode)}`;
+  if (u.type === 'ew') return `${head}<p class="fine">Jam the 5 × 5 area around a sector: enemy drones abort, his orders and calls for fire run an hour late.</p>${toolRow([toolBtn('jam', 'Jam', null, 'Tap the centre of the area to jam'), ...tools])}${row('Route', 'mode', MODES, u.mode, fx.mode, EFFECT.mode)}`;
+  return `${head}${unitFacts(g, u)}${orderRows(g, u, fx)}${toolRow(tools)}
+    ${u.type === 'mg' ? '<p class="fine dd-det">MG companies are the enfilade weapon: lay the lane across the enemy’s line of advance, from a flank.</p>' : ''}`;
 }
+const seg2 = (group, list, cur) => `<div class="dd-seg" role="group">${list.map(([v, t, tip]) => btn(group, v, t, cur === v, null, tip)).join('')}</div>`;
 
 function multiPanel(g, units) {
   const att = S.me === 'att';
   const lf = units.length === 2 && units.every(u => isCompany(u));
   return `<p class="dd-ph"><b>${units.length} units selected</b></p>
-    ${att ? seg('posture', ATT_POSTURES, null, 'Posture for all') : seg('stance', DEF_STANCES, null, 'Stance for all')}
-    ${seg('form', [['waves', 'Waves'], ['groups', 'Small groups']], null, 'Formation for all')}
-    <div class="dd-tools">${toolBtn('move', 'Move')}${lf ? toolBtn('leapfrog', 'Leapfrog (L)') : ''}</div>
-    ${lf ? '<p class="fine">Leapfrog: the first bounds while the second overwatches, then they swap. Tap the target sector.</p>' : ''}`;
+    ${att ? row('Posture', 'posture', ATT_POSTURES, null, {}, EFFECT.posture) : row('Stance', 'stance', DEF_STANCES, null, {}, EFFECT.stance)}
+    ${row('Formation', 'form', FORMS, null, {}, EFFECT.form)}
+    ${toolRow([toolBtn('move', 'Move'), lf ? toolBtn('leapfrog', 'Leapfrog (L)', null, 'The first bounds while the second overwatches, then they swap') : toolBtn('leapfrog', 'Leapfrog (L)', { active: false, reason: 'Select exactly two companies to pair them' })])}`;
 }
 
 function fmnPanel(g, id) {
   const F = g.fmns[id], us = F.units.map(unitOf).filter(u => u && alive(u)), att = S.me === 'att';
   const cs = !att && F.cs, picked = S.tool && S.tool.kind === 'cs-pick' ? S.tool.secs.length : 0;
+  const hrs = SCALES[g.scale].csPlan;
   return `<p class="dd-ph"><b>${esc(F.name)}</b> · ${us.length} units<br><small class="muted">One order goes to every unit; the engine keeps their layout. Tap a company in the list to drill down.</small></p>
-    <div class="dd-tools">${toolBtn('move', 'Move')}${att ? toolBtn('attack', 'Attack on axis') : ''}${toolBtn('hold', 'Hold zone')}${cs ? toolBtn('cs', 'Counterstroke') : ''}${att ? toolBtn('row', 'Consolidate at row') : ''}</div>
-    ${cs ? `<p class="fine">Counterstroke: tap lodgments, then launch. It strikes after ${g.ctx && g.ctx.csPlan ? g.ctx.csPlan : 'its'} planning time.</p><button type="button" class="btn solid" data-launch ${picked ? '' : 'disabled'}>Launch counterstroke${picked ? ` (${picked})` : ''}</button>` : ''}
-    ${att ? seg('posture', ATT_POSTURES, null, 'Posture for all') : seg('stance', DEF_STANCES, null, 'Stance for all')}
-    ${seg('form', [['waves', 'Waves'], ['groups', 'Small groups']], null, 'Formation for all')}
-    ${!att ? '<button type="button" class="btn" data-fplan="riposte">Riposte authority on</button>' : ''}`;
+    ${toolRow([toolBtn('move', 'Move'), att ? toolBtn('attack', 'Attack on axis', null, 'Spread over the target column and its neighbours; companies paired to leapfrog') : '', toolBtn('hold', 'Hold zone', null, 'Spread evenly over a zone, three columns wide'),
+      cs ? toolBtn('cs', `Deliberate counterattack <small>· ${hrs} h planning</small>`, null, 'Counterstroke: tap lodgments, then launch; it strikes after its planning time with its own supporting fire') : '', att ? toolBtn('row', 'Consolidate at row', null, 'Units dig in on reaching that row') : ''].filter(Boolean))}
+    ${cs ? `<button type="button" class="btn solid" data-launch ${picked ? '' : 'disabled'}>Launch counterattack${picked ? ` (${picked})` : ''}</button>` : ''}
+    ${att ? row('Posture', 'posture', ATT_POSTURES, null, {}, EFFECT.posture) : row('Stance', 'stance', DEF_STANCES, null, {}, EFFECT.stance)}
+    ${row('Formation', 'form', FORMS, null, {}, EFFECT.form)}
+    ${!att ? '<button type="button" class="btn" data-fplan="riposte" title="Riposte authority: its companies counterattack fresh lodgments next to them at once">Local counterattack authority on</button>' : ''}`;
 }
 
 /** Standing orders (W3): what your units do on their own until you order them; each can be switched off. */
 function standingHTML(g) {
   const st = g.standing && g.standing[S.me];
   if (!st) return '';
-  const rows = STANDING[S.me].map(o => `<li><button type="button" class="btn" data-standing="${o.key}" aria-pressed="${!!st[o.key]}">${esc(o.label)}: ${st[o.key] ? 'on' : 'off'}</button> <small class="muted">${esc(o.text)}</small></li>`);
-  return `<div class="dd-standing"><h3>Standing orders</h3><p class="muted"><small>Your units follow these until you give them an order (then they are yours for 3 hours). Switch one off to take that job over yourself.</small></p><ul>${rows.join('')}</ul></div>`;
+  const rows = STANDING[S.me].map(o => `<li><button type="button" class="btn" data-standing="${o.key}" aria-pressed="${!!st[o.key]}" title="${esc(o.text)}">${esc(o.label.replace('Counterstroke', 'Deliberate counterattack'))}: ${st[o.key] ? 'on' : 'off'}</button></li>`);
+  return `<div class="dd-standing"><h3>Standing orders</h3><p class="muted"><small>Your units follow these until you order them (then they are yours for 3 hours). Switch one off to do that job yourself.</small></p><ul>${rows.join('')}</ul></div>`;
 }
 
 /** The selection panel HTML for battle. */
@@ -120,7 +147,7 @@ export function selPanel() {
   if (!g || g.over || g.phase !== 'battle') return '';
   if (S.selFmn) return fmnPanel(g, S.selFmn);
   const units = S.sel.map(unitOf).filter(u => u && alive(u));
-  if (!units.length) return `<p class="muted dd-hint">Pick a unit or a formation (in the list, on the map, or with <kbd>]</kbd>), then tap where it should go. Batteries: pick, choose a mission, tap the target.</p>${standingHTML(g)}`;
+  if (!units.length) return `<p class="muted dd-hint">Pick a unit or a formation (on the map, in the list, or with <kbd>]</kbd>): its orders open next to it. Then tap where it should go.</p>${standingHTML(g)}`;
   return units.length === 1 ? onePanel(g, units[0]) : multiPanel(g, units);
 }
 

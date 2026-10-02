@@ -11,11 +11,13 @@ export const S = {
   sel: [],            // selected unit ids
   selFmn: null,       // selected formation id (formation orders)
   tool: null,         // armed map tool { kind, ... }: what a tap on a sector does
-  filter: 'all',      // unit filter chip
+  filter: 'idle',     // unit filter chip (default Needs orders)
   view: 'belief',     // review map: 'belief' | 'truth'
   aarHour: null,      // review hour shown on the map
   tab: 'map',         // phone tab
-  layers: new Set(['zones', 'lanes', 'barrage', 'enemy', 'windows']),
+  layers: new Set(['zones', 'lanes', 'enemy', 'obst', 'windows']),   // reset per side by js/ui/layers.js defaultLayers
+  drawLayers: null,   // what the map draws (layers + a plan step's own, less Detailed-only ones in Simple)
+  planStep: 1,        // the open step of the stepped plan panel (js/ui/plan-steps.js)
   focusSec: -1,       // roving-tabindex sector
   openHours: new Set(),
   ui: {},             // callbacks set by app.js: redraw(), say(html), select(ids), ...

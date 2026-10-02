@@ -1,0 +1,144 @@
+/* Defense in Depth, UI streamline (2026-10-02): Simple / Detailed view, the two start screens, the slim order bar
+   and its barrage popover, the contextual tip, layer chips with "More layers", the one-line legend, the unit
+   popover (a bottom sheet on phones), labelled and greyed order rows, the stepped plan panel, battalion chips,
+   the filter menu, the Reference disclosure and the folded review. Tokens only (light, dark, Trailer). */
+
+/* Simple view hides the detail (js/ui/viewmode.js). */
+body.dd-simple .dd-det { display: none !important; }
+.dd-viewsw { display: inline-flex; gap: 0; }
+.dd-viewsw .btn { min-height: 40px; border-radius: 0; }
+.dd-viewsw .btn:first-child { border-radius: 3px 0 0 3px; } .dd-viewsw .btn:last-child { border-radius: 0 3px 3px 0; border-left: 0; }
+.dd-viewsw .btn[aria-pressed="true"] { background: var(--blue-soft); border-color: var(--mine); color: var(--ink); }
+.dd-vhint { align-self: center; color: var(--accent); font-weight: 600; }
+.dd-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Home (start screen): no side panel. */
+body.dd-home .layout { grid-template-columns: minmax(0, 1fr); }
+body.dd-home #side { display: none; }
+.dd-start { max-width: 920px; }
+.dd-sstep { margin: 0; color: var(--accent); font-weight: 600; letter-spacing: .02em; }
+.dd-recap { margin: 0; font-size: 14px; }
+.dd-start .dd-go { margin-top: 2px; }
+
+/* The order bar: one row on desktop (≤ ~64 px). */
+.dd-obar { padding: 6px 12px; gap: 4px; }
+.dd-bar-top { flex-wrap: nowrap; gap: 6px 14px; min-height: 44px; }
+.dd-clock { white-space: nowrap; display: inline-flex; align-items: center; gap: 2px; }
+.dd-objtrack { flex: 0 1 auto; white-space: nowrap; font-weight: 500; }
+.dd-objt b { font-weight: 700; }
+.dd-comms { white-space: pre; display: inline-flex; align-items: center; }
+.dd-ammo { white-space: nowrap; }
+.dd-bwrap { position: relative; }
+.dd-bwrap > .btn { min-height: 40px; white-space: nowrap; }
+.dd-pop { position: absolute; z-index: 45; top: calc(100% + 6px); right: 0; width: min(330px, calc(100vw - 24px)); background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-top: 3px solid var(--accent); border-radius: 4px; padding: 8px 10px; box-shadow: 0 10px 28px rgba(0, 0, 0, .22); display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.dd-pop .dd-barl { margin: 0; flex-basis: 100%; display: flex; align-items: center; font-size: 12.5px; }
+@media (min-width: 641px) and (max-width: 1100px) { .dd-bar-top { flex-wrap: wrap; } }
+@media (max-width: 640px) {
+  .dd-bar-top { flex-wrap: wrap; }
+  .dd-pop { position: fixed; left: 8px; right: 8px; top: auto; bottom: 8px; width: auto; }
+  #bar-meta { display: none; }
+  .dd-objtrack { flex-basis: auto; order: 0; }
+  .dd-gobar { margin-left: auto; gap: 4px; }
+  .dd-bar-top { gap: 4px 6px; }
+  #undo { padding: 6px 6px; } .dd-end { padding: 7px 10px; } .dd-bwrap > .btn { padding: 6px 8px; }
+}
+
+/* The contextual tip: one line above the map. */
+.dd-ctip { display: flex; gap: 8px; align-items: flex-start; margin: 0; padding: 4px 4px 4px 10px; font-size: 13px; line-height: 1.4; border: 1px solid color-mix(in srgb, var(--warn) 55%, var(--rule)); border-left-width: 4px; border-radius: 3px; background: color-mix(in srgb, var(--warn) 8%, var(--panel)); }
+.dd-ctip p { margin: 4px 0; flex: 1; min-width: 0; }
+.dd-ctip-k { font: 600 11px var(--mono); color: var(--warn); text-transform: uppercase; letter-spacing: .04em; }
+.dd-ctip-b { display: flex; gap: 2px; align-items: center; flex: none; }
+.dd-ctip-b .btn { min-height: 36px; padding: 4px 10px; font-size: 12px; }
+.dd-ctip .dd-tips-x { position: static; width: 36px; height: 36px; border: 0; background: none; font-size: 20px; cursor: pointer; color: var(--muted); }
+@media (max-width: 640px) { .dd-ctip { font-size: 12.5px; max-height: 30vh; overflow-y: auto; } }
+
+/* Layer chips and the "More layers" menu. */
+.dd-more { position: relative; display: inline-flex; flex-wrap: wrap; gap: 4px; }
+.dd-more-list { display: inline-flex; flex-wrap: wrap; gap: 4px; padding-left: 4px; border-left: 2px solid var(--rule); }
+@media (max-width: 640px) { .dd-layerbar { flex-wrap: wrap !important; overflow: visible !important; } }
+
+/* The one-line legend and its full key. */
+.dd-legline { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; font-size: 12px; color: var(--muted); }
+.dd-legline span { display: inline-flex; align-items: center; gap: 5px; }
+.dd-legline i { display: inline-block; width: 14px; height: 10px; flex: none; font-style: normal; }
+.dd-legfull { margin-top: 6px; padding: 8px 10px; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel); }
+.lg-zone { background: linear-gradient(180deg, color-mix(in srgb, var(--c2) 22%, transparent) 0 50%, color-mix(in srgb, var(--c1) 18%, transparent) 50%); border-top: 1px dashed var(--muted); }
+.lg-race { border: 1.4px solid var(--ink); border-radius: 3px; width: 20px !important; }
+
+/* The unit popover: next to the unit on wide screens, a bottom sheet on phones. */
+.dd-upop { position: fixed; z-index: 40; width: 330px; max-height: min(70vh, 560px); overflow-y: auto; overscroll-behavior: contain; background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-top: 3px solid var(--mine); border-radius: 5px; padding: 4px 10px 10px; box-shadow: 0 12px 32px rgba(0, 0, 0, .25); font-size: 12.5px; line-height: 1.4; }
+.dd-poph { display: flex; justify-content: space-between; align-items: center; position: sticky; top: -4px; background: var(--panel); z-index: 1; }
+.dd-popt { font: 600 11px var(--mono); text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.dd-poph .x { border: 0; background: none; font-size: 22px; min-width: 40px; min-height: 40px; cursor: pointer; color: var(--muted); }
+.dd-popb { display: flex; flex-direction: column; gap: 6px; }
+.dd-popb p { margin: 0; }
+@media (max-width: 640px) {
+  .dd-upop { left: 0 !important; right: 0; bottom: 0; top: auto !important; width: auto !important; max-height: 46vh; border-radius: 10px 10px 0 0; padding-bottom: calc(10px + env(safe-area-inset-bottom)); }
+  body.dd-popopen { padding-bottom: 46vh; }
+}
+:root[data-skin="trailer"] .dd-upop, :root[data-skin="trailer"] .dd-pop { background: var(--panel); }
+
+/* Labelled order rows (#7) and greyed orders (#8). */
+.dd-orow { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 6px; align-items: center; }
+.dd-olab { font: 600 11px var(--body); color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.dd-orow.dd-stack { grid-template-columns: minmax(0, 1fr); gap: 3px; }
+.dd-orow .dd-seg, .dd-orow .dd-tools { display: flex; flex-wrap: wrap; gap: 4px; }
+.btn.dd-off, .btn[aria-disabled="true"] { opacity: .45; border-style: dashed; cursor: not-allowed; background: transparent; }
+.btn.dd-off[aria-pressed="true"] { outline: none; }
+.dd-offrows { display: flex; flex-direction: column; gap: 4px; }
+.dd-offrows .btn { min-height: 36px; padding: 4px 8px; font-size: 12px; }
+@media (max-width: 400px) { .dd-orow { grid-template-columns: minmax(0, 1fr); gap: 2px; } }
+
+/* The stepped plan panel. */
+.dd-phead { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+.dd-phead .dd-go .btn { min-height: 40px; }
+.dd-steps { display: flex; flex-wrap: wrap; gap: 3px; }
+.dd-steps [role="tab"] { flex: 1 1 88px; display: flex; flex-direction: row; align-items: center; gap: 5px; min-height: 44px; padding: 3px 6px; border: 1px solid var(--rule); border-bottom-width: 3px; border-radius: 3px; background: var(--panel); color: var(--ink); cursor: pointer; text-align: left; min-width: 0; }
+.dd-steps [role="tab"][aria-selected="true"] { border-color: var(--mine); background: var(--blue-soft); }
+.dd-steps [role="tab"].warn { border-bottom-color: var(--warn); }
+.dd-stn { font: 700 11px var(--mono); color: var(--muted); }
+.dd-stl { display: flex; flex-direction: column; min-width: 0; width: 100%; }
+.dd-stl b { font-size: 12px; white-space: nowrap; }
+.dd-stl small { font-size: 10.5px; color: var(--muted); line-height: 1.2; overflow-wrap: anywhere; }
+.dd-steps .warn small { color: var(--warn); font-weight: 600; }
+.dd-lead { margin: 0; font-size: 13px; font-style: italic; border-left: 3px solid var(--accent); padding: 2px 8px; }
+#pstep h3:focus { outline: none; }
+.dd-pnav { display: flex; justify-content: space-between; gap: 8px; }
+.dd-pnav .btn { min-height: 40px; }
+.dd-pnav .btn[data-pnav="1"] { margin-left: auto; }
+.dd-plabel { margin: 0; font-size: 12.5px; }
+.dd-chkh { margin: 0; }
+.dd-mglist .btn { min-height: 40px; padding: 4px 8px; font-size: 12px; }
+.dd-mglist .btn small { color: var(--muted); font-weight: 500; }
+.dd-tools .btn small { font-weight: 500; color: var(--muted); }
+
+
+/* Battalion chips and their chooser (#4). */
+.dd-bnrow { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 12.5px; padding: 2px 0; border-bottom: 1px solid color-mix(in srgb, var(--rule) 60%, transparent); }
+.dd-bnn { display: flex; flex-direction: column; min-width: 0; }
+.dd-bnn b, .dd-bnn small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dd-bnn small { color: var(--muted); font-size: 11px; }
+.dd-bnrow .dd-chip { flex: none; min-height: 38px; }
+.dd-bnall { border-bottom: 2px solid var(--rule); }
+.dd-bnpick { display: flex; flex-direction: column; gap: 4px; padding: 6px 8px; margin: 2px 0 4px; border-left: 3px solid var(--mine); background: color-mix(in srgb, var(--mine) 6%, var(--panel)); }
+
+/* Unit list: the Filter menu (#9). */
+.dd-fmenu { display: inline-flex; flex-wrap: wrap; gap: 4px; }
+.dd-fmenu-list { display: inline-flex; flex-wrap: wrap; gap: 4px; padding-left: 4px; border-left: 2px solid var(--rule); }
+.dd-none { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 4px 0; }
+.dd-none .btn { min-height: 40px; }
+
+/* Reference disclosure (#1). */
+.dd-refwrap { max-width: 1400px; margin: 24px auto 0; }
+.dd-ref > summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 8px 12px; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel); }
+.dd-ref > summary span { font: 700 18px var(--display); }
+.dd-ref[open] > summary { margin-bottom: 8px; }
+.dd-ref .below, .dd-ref .dd-lessons-wrap { margin-top: 16px; }
+
+/* The review folds (#16). */
+.dd-fold > summary { cursor: pointer; min-height: 40px; display: flex; align-items: center; font-weight: 600; font-size: 13.5px; }
+.dd-fold[open] > summary { margin-bottom: 6px; }
+.dd-aarfeed { max-height: 420px; }
+/* After the game the review has the page: no empty side panel. */
+body.dd-over .layout { grid-template-columns: minmax(0, 1fr); }
+body.dd-over #side { display: none; }

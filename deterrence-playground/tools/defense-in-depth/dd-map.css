@@ -139,7 +139,6 @@ body.dd-armed .dd-mapbox svg { cursor: crosshair; }
 .lg-win.green { background: var(--good); } .lg-win.amber { background: var(--warn); } .lg-win.grey { background: var(--muted); }
 .lg-route { height: 0 !important; width: 22px !important; border-top: 2.4px dashed var(--mine); }
 .lg-idle { width: 13px !important; height: 13px !important; border-radius: 50%; background: var(--warn); color: var(--panel); font: 700 10px/13px var(--body) !important; text-align: center; }
-@media (max-width: 640px) { .dd-legend:not([open]) .dd-lgrid { display: none; } }
 
 /* Trailer skin */
 :root[data-skin="trailer"] .dd-ground, :root[data-skin="trailer"] .dd-t-open { fill: #0e1f17; }

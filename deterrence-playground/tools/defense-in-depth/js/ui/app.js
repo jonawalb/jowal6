@@ -8,11 +8,15 @@ import { barrageRows } from '../arty.js';
 import { newCampaign, recordBattle, playerAction, endLearning, encodeCampaign, decodeCampaign } from '../campaign.js';
 import { S, $, esc, say, hhmm, other } from './store.js';
 import { wireTips } from './tips.js';
-import { renderStart, wireStart, setChoices } from './start.js';
+import { renderStart, wireStart, setChoices, resetStart } from './start.js';
 import { makeGame, rebuild, beginBattle, linkState, setupFor, campaignChoices } from './game.js';
 import { startPlan, checklist, wirePlan } from './plan-ui.js';
 import { planReady } from '../plan-def.js';
-import { initPlay, newBoard, drawMap, drawPanels, setTab, showTips, endHour, undo, zoom, pan, hot } from './play.js';
+import { initPlay, newBoard, drawMap, drawPanels, setTab, showTips, endHour, undo, zoom, pan, hot, select } from './play.js';
+import { tipsHidden } from './ctip.js';
+import { wireView } from './viewmode.js';
+import { closeUnitPop } from './unit-pop.js';
+import { wireBarragePop } from './orders-bar.js';
 import { showAAR, hideAAR } from './aar.js';
 import { cancelReplays } from './compare.js';
 import { setupScreen, briefing, learningScreen, reviewScreen, resultText, hideCamp } from './learn-ui.js';
@@ -31,7 +35,7 @@ function redraw() {
   status();
   tour.check();
 }
-S.ui = { redraw, say: html => { $('say').innerHTML = html; }, saved: save, finish };
+S.ui = { redraw, say: html => { $('say').innerHTML = html; }, saved: save, finish, select: (ids, fmn = null) => select(ids, fmn), tab: t => setTab(t) };
 
 function status() {
   const g = S.g, Sc = SCALES[g.scale];
@@ -47,7 +51,9 @@ function layout(phase) {
   $('start').hidden = true;
   $('bar').hidden = false; $('board').hidden = false;
   $('plan').hidden = phase !== 'plan';
-  $('statsec').hidden = phase === 'plan'; $('feedsec').hidden = phase === 'plan';
+  // #12: the status card lives in the bar now; the reports feed shows in battle (and folds into the review after).
+  $('statsec').hidden = true; $('feedsec').hidden = phase !== 'battle';
+  document.body.classList.remove('dd-home');
   $('viewbar').hidden = phase !== 'over';
   document.body.classList.toggle('dd-live', phase !== 'over');
   document.body.classList.toggle('dd-planning', phase === 'plan');
@@ -78,7 +84,7 @@ function startBattle() {
   const g = S.g;
   if (!planReady(checklist())) { say('The checklist has a required item that is not done (marked ✗).'); return; }
   beginBattle(g, JSON.parse(JSON.stringify(S.plan)));
-  S.tool = null; S.sel = []; S.selFmn = null;
+  S.tool = null; S.sel = []; S.selFmn = null; S.filter = 'idle'; closeUnitPop(false);
   layout('battle');
   const warn = g.events.find(e => e.kind === 'warning' && S.me === 'def');
   say(`<b>H-hour, ${hhmm(0)}.</b> ${S.me === 'def' ? 'The attack has begun. Watch your outposts; strike lodgments while their windows are open.' : 'Your barrage is falling. Watch the strip, keep pairs leapfrogging, and keep the guns in range.'}${warn ? ` ${warn.level === 'full' ? 'His long bombardment shows you where he will come.' : 'Registration fire was observed.'}` : ''}`);
@@ -90,7 +96,7 @@ function startBattle() {
 function finish(scroll) {
   const g = S.g;
   document.body.classList.remove('dd-live', 'dd-armed');
-  $('viewbar').hidden = false; $('tips').hidden = true;
+  $('viewbar').hidden = false; $('feedsec').hidden = true; closeUnitPop(false);
   S.aarHour = g.snaps.length - 1; S.sel = []; S.tool = null;
   let cont = null, onCont = null;
   if (S.campaign && !S.recorded) {
@@ -101,6 +107,7 @@ function finish(scroll) {
   }
   if (S.campaign) { cont = S.campaign.phase === 'done' ? 'Campaign review' : 'Continue: learning phase'; onCont = campaignNext; }
   say(`${g.over.winner === S.me ? 'You won.' : 'You lost.'} The review is below the map.`);
+  showTips(false);
   redraw();
   showAAR(g, S.me, { onHour: h => { S.aarHour = h; drawMap(); }, onAgain: again, onNew: showStart, cont, onCont,
     msg: { ch: S.choices, plan: g.plans[S.me], log: g.log, token: S.campaign ? S.preToken : null } });
@@ -129,7 +136,7 @@ function campStatus(text) {
   const C = S.campaign;
   $('st-t').textContent = 'Campaign'; $('status').dataset.s = 'warn';
   $('st-s').textContent = `${text} · won ${C.results.filter(r => r.won).length} of ${C.results.length} so far`;
-  $('feedsec').hidden = true;
+  $('feedsec').hidden = true; $('statsec').hidden = false;
 }
 function campaignBrief() {
   const C = S.campaign, ch = campaignChoices(C);
@@ -162,14 +169,16 @@ function learn(note) {
 function showStart() {
   cancelReplays(); hideAAR(); hideCamp();
   S.g = null; S.campaign = null; S.choices = null; S.sel = []; S.tool = null;
+  closeUnitPop(false); resetStart();
   $('start').hidden = false; $('bar').hidden = true; $('board').hidden = true; $('plan').hidden = true;
-  $('statsec').hidden = false; $('feedsec').hidden = false;
+  $('statsec').hidden = false; $('feedsec').hidden = true;
+  document.body.classList.add('dd-home');
   $('st-t').textContent = 'Defense in Depth'; $('st-s').textContent = 'Choose a side to start.'; $('status').dataset.s = 'warn';
   $('feed').innerHTML = '<li class="muted">Reports appear here once the battle starts.</li>'; $('tldr').textContent = '';
   document.body.classList.remove('dd-live', 'dd-over', 'dd-planning', 'dd-armed');
   history.replaceState(null, '', location.pathname + location.search);
   renderStart();
-  $('start-go').focus({ preventScroll: true });
+  $('start-next').focus({ preventScroll: true });
 }
 
 function go(ch) {
@@ -189,14 +198,14 @@ wireStart(go, side => tour.start(side, false));
 wirePlan(startBattle);
 wireKeys({
   endHour, undo, zoom, pan,
-  clear: () => { S.sel = []; S.selFmn = null; S.tool = null; $('sheet').hidden = true; redraw(); },
+  clear: () => { S.sel = []; S.selFmn = null; S.tool = null; $('sheet').hidden = true; closeUnitPop(false); redraw(); },
   cycleUnit: hot.cycleUnit, cycleFmn: hot.cycleFmn, cycleFilter: hot.cycleFilter,
   posture: () => hot.set('posture', ['rush', 'infil', 'hold', 'consolidate']),
   form: () => hot.set('form', ['waves', 'groups']),
   stance: () => hot.set('stance', ['hold', 'elastic', 'delay', 'riposte', 'reserve']),
   leapfrog: () => hot.tool('leapfrog', () => S.sel.length === 2), riposte: () => hot.tool('riposte', u => u && u.side === 'def'),
   lane: () => hot.tool('lane', u => u && u.type === 'mg'), battery: hot.battery,
-  tips: () => showTips($('tips').hidden),
+  tips: () => showTips(tipsHidden()),
   help: on => { const k = $('keyhelp'); k.innerHTML = keyHelpHTML(); k.hidden = !on; if (on) { k.querySelector('.x').onclick = () => { k.hidden = true; }; k.querySelector('.x').focus(); } },
 });
 $('end').onclick = endHour;
@@ -204,7 +213,9 @@ $('undo').onclick = undo;
 $('again').onclick = () => (S.campaign ? $('aar-cont')?.click() : again());
 $('new-game').onclick = showStart;
 $('start-tour').onclick = () => tour.start(S.g ? S.me : 'def', !!S.g && S.g.phase === 'battle' && !S.g.over);
-$('go-lessons').onclick = () => $('lessons').scrollIntoView({ block: 'start' });
+// #1: How to play, the sources, how the model works and the lessons sit behind one Reference disclosure.
+const openRef = target => { const d = $('reference'); d.open = true; requestAnimationFrame(() => (target ? $(target) : d).scrollIntoView({ block: 'start' })); };
+$('go-lessons').onclick = () => openRef('lessons');
 $('key-help').onclick = () => { const k = $('keyhelp'); k.innerHTML = keyHelpHTML(); k.hidden = false; k.querySelector('.x').onclick = () => { k.hidden = true; $('key-help').focus(); }; k.querySelector('.x').focus(); };
 $('copy-link').onclick = async () => { if (S.choices) writeHash(linkState(S)); await new Promise(r => setTimeout(r, 200)); try { await navigator.clipboard.writeText(location.href); say('Link copied. It replays this game exactly.'); } catch { say('Copy the address bar to share this game.'); } };
 document.querySelectorAll('#viewbar [data-view]').forEach(b => b.addEventListener('click', () => {
@@ -221,6 +232,8 @@ $('barrage-ctl').addEventListener('click', e => {
   save(); redraw();
 });
 addEventListener('skinchange', () => redraw());
+wireBarragePop();
+wireView(() => { if (S.g) redraw(); });
 renderBelow();
 mountLessons();
 renderStart();

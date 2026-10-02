@@ -6,9 +6,9 @@ export const KEYS = [
   ['N', 'End the hour'], ['U', 'Undo the last order this hour'], ['Esc', 'Clear the selection and tool'],
   [']  [', 'Next / previous unit in the current filter (the map pans to it)'], ['}  {', 'Next / previous formation'],
   ['I', 'Next unit that needs orders'], ['C', 'Next unit in contact'], ['F', 'Cycle the unit filter'],
-  ['P', 'Cycle posture (attacker)'], ['W', 'Waves or small groups'], ['G', 'Cycle stance (defender)'],
-  ['L', 'Leapfrog (two units selected)'], ['R', 'Riposte tool (defender)'], ['K', 'Fire-lane tool (MG companies)'],
-  ['A', 'Cycle through your batteries'], ['T', 'Show the start tips'], ['+  −  0', 'Zoom in, out, fit'],
+  ['P', 'Cycle posture (attacker)'], ['W', 'Waves or small groups'], ['G', 'Cycle stance (defender)'], ['Esc', 'Close the orders popover'],
+  ['L', 'Leapfrog (two units selected)'], ['R', 'Local counterattack (riposte) tool, defender'], ['K', 'Fire-lane tool (MG companies)'],
+  ['A', 'Cycle through your batteries'], ['T', 'Show or hide the tips'], ['+  −  0', 'Zoom in, out, fit'],
   ['Tab, then arrows', 'Move between sectors; Enter acts on the focused sector, Esc leaves the map'],
   ['Shift + arrows', 'Pan the map'], ['?', 'This list'],
 ];

@@ -1,6 +1,6 @@
 // Defense Budget Allocator: state, URL hash and rendering.
 // Taiwan is the default country; its page text is the static HTML. Other countries swap in their own profile.
-import { COUNTRIES as ALL_COUNTRIES } from '../data/countries.js';
+import { COUNTRIES as ALL_COUNTRIES, REGIONS } from '../data/countries.js';
 import { SITE } from '../../../shared/js/site.js';
 // Interactive Deterrence shows Taiwan only; Interactive Deterrence shows every country.
 const COUNTRIES = SITE === 'tsm' ? ALL_COUNTRIES.slice(0, 1) : ALL_COUNTRIES;
@@ -68,6 +68,7 @@ const TW = { eyebrow: $('strip-eyebrow').innerHTML, note: $('strip-note').textCo
 function mountCountry() {
   const p = P(), tw = p.k === 'tw';
   $('countries').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.c === p.k));
+  $('country-sub').textContent = `${p.name} · ${p.sub}`;
   $('strip-eyebrow').innerHTML = tw ? TW.eyebrow : p.strip.eyebrow;
   $('strip-note').textContent = tw ? TW.note : p.strip.note;
   $('play').textContent = p.strip.play;
@@ -94,7 +95,11 @@ function mountCountry() {
 function applyPreset(k) { S.shares = mixOf(k); S.preset = k; S.locks = {}; render(); }
 
 $('countries').parentElement.hidden = COUNTRIES.length < 2;
-$('countries').innerHTML = COUNTRIES.map(c => `<button type="button" data-c="${c.k}"><b>${c.name}</b><br><span class="muted">${c.sub}</span></button>`).join('');
+// Grouped by region. Buttons show the name only; the chosen country's scenario line sits underneath.
+$('countries').innerHTML = REGIONS.map(g => {
+  const cs = g.ks.map(byKey).filter(Boolean);
+  return cs.length ? `<p class="cgroup">${g.t}</p><div class="choices countries" role="group" aria-label="${g.t}">${cs.map(c => `<button type="button" data-c="${c.k}" title="${c.sub}">${c.name}</button>`).join('')}</div>` : '';
+}).join('');
 $('countries').querySelectorAll('button').forEach(btn => btn.onclick = () => {
   if (btn.dataset.c === S.c) return;
   useCountry(btn.dataset.c); mountCountry(); render();

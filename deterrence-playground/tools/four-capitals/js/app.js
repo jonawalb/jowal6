@@ -9,7 +9,9 @@ import { updateControl } from './forces.js';
 import { ledger } from './logistics.js';
 import { createTour } from './tour.js';
 import { paintDecide, wireDecide, emptyChoice } from './decide.js';
-import { makeRng, STREAM } from './rng.js';
+import { seeFor, paintFog, seenOrders } from './fog-panel.js';
+import { sight } from './fog.js';
+import { wireTips } from './tips.js';
 import { initBeliefs, updateBeliefs, chooseMove, intelView } from './ai.js';
 import { score, benchmark, percentile } from './score.js';
 import { drawTheatre, paintTheatre, paintZones, animateMoves, paintLadder, paintTracks, paintCaps, paintIntel, paintBeliefChart, COL } from './view.js';
@@ -63,21 +65,11 @@ function begin(start) {
 }
 
 /* ---------- Decide ---------- */
-/** What you can see of a capital's strength in an area: exact for yourself, your partners or with fresh intelligence, else ±1. */
-function seenIn(st) {
-  return (w, a) => {
-    const v = st.f[w][a] || 0;
-    const ally = w !== 'cn' && g.player !== 'cn';
-    if (v <= 0 || w === g.player || ally || st.sharp?.[g.player]) return [v, true];
-    const r = makeRng(st.seed, STREAM.intel + 500 + st.turn * 40 + IDS.indexOf(w) * 8 + a.length);
-    return [Math.max(0, v + (r.u() < 0.33 ? -1 : r.u() < 0.5 ? 1 : 0)), false];
-  };
-}
-/** The map shows your planned deployment before you commit. */
+/** The map shows your planned deployment before you commit; rivals as you see them through the fog (js/fog.js). */
 function paintPlan() {
   const t = (g.L || ledger(g.s, g.player, g.choice)).trial;
   updateControl(t);
-  paintZones(t, seenIn(t));
+  paintZones(t, seeFor(g.s, g.player, t));
 }
 function paint() {
   const s = g.s;
@@ -92,6 +84,7 @@ function paint() {
   const theirs = Object.fromEntries(IDS.filter(w => w !== g.player).map(w => [w, intelView(g.B, s, w, g.player)]));
   paintIntel($('intel'), views, theirs, g.player);
   paintFeed();
+  paintFog($('fog'), s, g.player);
   paintDecide(g);
   paintPlan();
   history.replaceState(null, '', '#g=' + encode(s));
@@ -124,9 +117,9 @@ $('end-turn').addEventListener('click', async () => {
   g.s = next;
   show('play', 'resolve'); $('intel').hidden = $('feed').hidden = true; $('decide').hidden = true;
   $('res-t').textContent = `${month}: what happened`;
-  $('reveal').innerHTML = IDS.map(w => `<div class="k4-mv" style="--c:${COL[w]}"><b>${COUNTRIES[w].short}${w === g.player ? ' (you)' : ''}</b><span class="po">${POSTURES.find(p => p.id === moves[w].posture).label}</span><ul>${moves[w].actions.map(id => `<li>${BY_ID[id].label}${followText(id, moves[w].follow)}</li>`).join('') || '<li>No moves</li>'}</ul>${deployText(moves[w].orders)}${emphText(w, moves[w], log)}</div>`).join('');
+  $('reveal').innerHTML = IDS.map(w => `<div class="k4-mv" style="--c:${COL[w]}"><b>${COUNTRIES[w].short}${w === g.player ? ' (you)' : ''}</b><span class="po">${POSTURES.find(p => p.id === moves[w].posture).label}</span><ul>${moves[w].actions.map(id => `<li>${BY_ID[id].label}${followText(id, moves[w].follow)}</li>`).join('') || '<li>No moves</li>'}</ul>${deployText(w, moves[w].orders)}${emphText(w, moves[w], log)}</div>`).join('');
   $('log').innerHTML = logHTML(log);
-  paintLadder($('ladder'), g.s); paintTracks($('tracks'), g.s, g.before); paintCaps($('caps'), g.s, g.player); paintTheatre(g.s); paintZones(g.s, seenIn(g.s));
+  paintLadder($('ladder'), g.s); paintTracks($('tracks'), g.s, g.before); paintCaps($('caps'), g.s, g.player); paintTheatre(g.s); paintZones(g.s, seeFor(g.s, g.player)); paintFog($('fog'), g.s, g.player);
   $('play').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
   $('next').disabled = true;
   for (const w of ['cn', 'us', 'jp', 'tw']) await animateMoves(w, moves[w].actions, log);
@@ -135,7 +128,8 @@ $('end-turn').addEventListener('click', async () => {
 });
 
 const followText = (id, f) => { const a = BY_ID[id]; if (!a.follow) return ''; const o = answers(id, f?.[id]); return ' <span class="muted">(' + a.follow.map(q => q.opts.find(x => x.id === o[q.id]).label).join(', ') + ')</span>'; };
-const deployText = o => { const m = (o?.moves || []).filter(([id]) => FBY[id]); return m.length ? `<p class="fine">Forces: ${m.map(([id, t]) => FBY[id].type === 'strike' ? `${FBY[id].short} aimed at ${t === 'none' ? 'nothing' : 'the ' + AREA_LABEL[t]}` : `${FBY[id].short} → ${AREA_LABEL[t]}`).join('; ')}</p>` : ''; };
+/** Force orders as you saw them: rivals' through the fog. */
+const deployText = (w, o) => { const m = seenOrders(g.s, g.player, w, o); return m.length ? `<p class="fine">Forces: ${m.join('; ')}</p>` : ''; };
 /** China's landing coast shows once a landing or air-defence strike uses it; your own emphasis always shows to you. */
 const emphText = (w, m, log) => {
   const used = w === 'cn' && log.some(l => l.who === 'cn' && (l.id === 'cn_landing' || (l.id === 'cn_strike' && l.o?.focus === 'airdef')) && l.status !== 'blocked');
@@ -148,7 +142,11 @@ function logHTML(log) {
     if (l.kind === 'note') return `<li class="note">${l.text}</li>`;
     if (l.kind === 'battle') return `<li class="note battle">${l.text.replace(/\b(CN|US|JP|TW)\b/g, m => ({ CN: 'China', US: 'U.S.', JP: 'Japan', TW: 'Taiwan' }[m]))}</li>`;
     if (l.kind === 'order') return l.who === g.player && !l.ok ? `<li style="--c:${COL[l.who]}">Your order ${l.text}</li>` : '';
-    if (l.kind === 'force') return l.short && l.who !== g.player ? '' : `<li style="--c:${COL[l.who]}">${COUNTRIES[l.who].short}: ${l.text}</li>`;
+    if (l.kind === 'force') {
+      if (l.short && l.who !== g.player) return '';
+      const fogged = l.area && sight(g.s, g.player, l.who, l.area) !== 'exact';   // a rival's arrival you did not see clearly
+      return `<li style="--c:${COL[l.who]}">${COUNTRIES[l.who].short}: ${fogged ? `a formation arrived in the ${AREA_LABEL[l.area]}` : l.text}</li>`;
+    }
     if (l.kind === 'nukerisk') return `<li class="note">Nuclear risk this month: ${(l.p * 100).toFixed(1)}%.</li>`;
     if (l.kind === 'posture') return l.support ? `<li style="--c:${COL[l.who]}">${COUNTRIES[l.who].short} posture: ${POSTURES.find(p => p.id === l.posture).label}. <span class="fx">Home support ${l.support > 0 ? '+' : ''}${Math.round(l.support)}${l.who === g.player ? ' (your type’s cost)' : ''}</span></li>` : '';
     const a = BY_ID[l.id];
@@ -231,7 +229,7 @@ function load() {
   const d = m && decode(decodeURIComponent(m[1]));
   if (d && d.old) {
     $('old-link').hidden = false;
-    $('old-link').textContent = 'That link is from an earlier version of Four Capitals (three moves a month, no logistics), so it cannot be replayed. Start a new game below.';
+    $('old-link').textContent = 'That link is from an earlier version of Four Capitals (before fog of war, gray-zone moves and once-a-game moves), so it cannot be replayed. Start a new game below.';
     history.replaceState(null, '', location.pathname + location.search);
   }
   if (!d || d.old) { paintSeats(); show('start'); return; }
@@ -244,4 +242,5 @@ function load() {
   if (g.s.over) return finish();
   show('play'); paint();
 }
+wireTips();
 load();

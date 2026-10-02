@@ -32,7 +32,7 @@ export function syncF(s) {
 export function arrive(s, log) {
   for (const w of IDS) for (const u of s.units[w]) if (u.at === 'transit') {
     u.at = u.to; delete u.to;
-    log.push({ kind: 'force', who: w, text: `${FBY[u.id].short} arrived in the ${AREA_LABEL[u.at]}` });
+    log.push({ kind: 'force', who: w, area: u.at, type: FBY[u.id].type, text: `${FBY[u.id].short} arrived in the ${AREA_LABEL[u.at]}` });
   }
   syncF(s);
 }

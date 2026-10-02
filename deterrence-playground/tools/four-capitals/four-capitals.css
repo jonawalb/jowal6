@@ -65,18 +65,49 @@ body { --k-us: var(--us, #2f6db3); --k-tw: var(--roc, #17917f); --k-cn: var(--pr
 .k4-tabs button small { font-weight: 400; opacity: .8; }
 .k4-actlist { display: flex; flex-direction: column; gap: 6px; margin: 8px 0; }
 .k4-act { padding: 8px 10px; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel); }
-.k4-acth { display: grid; grid-template-columns: 1.3em minmax(0, 1fr) auto; gap: 4px 8px; cursor: pointer; align-items: start; }
+.k4-acth { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 8px; align-items: start; }
+.k4-acth label { display: grid; grid-template-columns: 1.3em minmax(0, 1fr); gap: 4px 8px; cursor: pointer; align-items: start; }
 .k4-act input[type="checkbox"] { margin: 3px 0 0; accent-color: var(--accent); }
 .k4-act b { font-size: 14px; }
-.k4-act .p { font: 600 13px var(--mono); }
+.k4-act .p { font: 600 13px var(--mono); display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
 .k4-act > small { display: block; margin: 2px 0 0 calc(1.3em + 8px); color: var(--muted); font-size: 12.5px; line-height: 1.35; }
 .k4-act .why { display: block; margin-left: calc(1.3em + 8px); font-size: 12px; color: var(--muted); }
 .k4-act.on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 9%, var(--panel)); }
-.k4-act.off { opacity: .5; } .k4-act.off .k4-acth { cursor: not-allowed; }
+.k4-act.off { opacity: .5; } .k4-act.off .k4-acth label { cursor: not-allowed; }
+.k4-act.used { opacity: .62; }
 .k4-act.tag-esc .k4-acth b::after { content: " ▲"; color: var(--bad); font-size: 11px; }
 .k4-act.tag-soft .k4-acth b::after { content: " ▼"; color: var(--good); font-size: 11px; }
-.k4-opp, .k4-dep { font-style: normal; font-weight: 600; font-size: 11.5px; padding: 0 5px; border-radius: 3px; }
+.k4-opp, .k4-dep, .k4-gray, .k4-once { font-style: normal; font-weight: 600; font-size: 11.5px; padding: 0 5px; border-radius: 3px; }
 .k4-opp { background: color-mix(in srgb, var(--warn) 22%, transparent); }
+.k4-gray { background: color-mix(in srgb, var(--muted) 22%, transparent); }
+.k4-once { background: color-mix(in srgb, var(--k-us) 16%, transparent); }
+/* Info buttons and their floating tooltip (js/tips.js). Badges that carry a tip are buttons too. */
+.k4-info { font: 700 11px var(--mono); color: var(--ink); border: 1px solid var(--rule); background: var(--panel); border-radius: 50%; width: 22px; height: 22px; padding: 0; cursor: help; line-height: 1; vertical-align: middle; flex: none; }
+.k4-info.k4-opp, .k4-info.k4-gray, .k4-info.k4-once, .k4-info.k4-used { width: auto; height: auto; min-height: 22px; border-radius: 3px; border: 0; padding: 1px 6px; font: 600 11.5px var(--body); color: var(--ink); }
+.k4-info.k4-opp { background: color-mix(in srgb, var(--warn) 22%, transparent); }
+.k4-info.k4-gray { background: color-mix(in srgb, var(--muted) 22%, transparent); }
+.k4-info.k4-once { background: color-mix(in srgb, var(--k-us) 16%, transparent); }
+.k4-info.k4-used { font: 700 11px var(--mono); letter-spacing: .06em; background: var(--ink); color: var(--panel); }
+.k4-ieg { display: inline-grid; place-items: center; width: 17px; height: 17px; border: 1px solid var(--rule); border-radius: 50%; font: 700 10px var(--mono); vertical-align: 1px; }
+.k4-info i { font-style: normal; opacity: .75; }
+.k4-info:hover, .k4-info[aria-expanded="true"] { border-color: var(--accent); outline: 1px solid var(--accent); }
+.k4-info:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+.k4-tip { position: fixed; z-index: 70; background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-top: 3px solid var(--accent); border-radius: 5px; padding: 8px 11px; font-size: 12.5px; line-height: 1.4; box-shadow: 0 6px 22px rgba(0, 0, 0, .25); }
+.k4-tip[hidden] { display: none; }
+.k4-tip b { display: block; margin-bottom: 3px; font-size: 13px; }
+.k4-tip ul { margin: 0 0 5px; padding-left: 16px; }
+.k4-tip p { margin: 3px 0 0; color: var(--muted); }
+.k4-ladder li small.k4-gz { font: 500 9.5px var(--mono); text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-left: auto; }
+/* Fog of war: rival contacts and the key */
+.k4-fog { padding: 8px 12px; font-size: 13px; }
+.k4-fogd summary { cursor: pointer; font-weight: 700; }
+.k4-contacts { margin: 6px 0; padding-left: 16px; display: flex; flex-direction: column; gap: 2px; }
+.k4-lvl { font: 600 10.5px var(--mono); padding: 0 5px; border-radius: 3px; white-space: nowrap; }
+.k4-lvl.exact { background: color-mix(in srgb, var(--good) 22%, transparent); }
+.k4-lvl.near { background: color-mix(in srgb, var(--warn) 18%, transparent); }
+.k4-lvl.far { background: color-mix(in srgb, var(--bad) 16%, transparent); }
+.k4-fogkey { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 14px; margin: 6px 0; font-size: 12px; }
+.k4-fogkey dt { font-weight: 700; } .k4-fogkey dd { margin: 0; color: var(--muted); }
 .k4-dep { background: color-mix(in srgb, var(--accent) 18%, transparent); }
 .k4-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--warn); margin-left: 3px; vertical-align: 1px; }
 .k4-follow { margin: 8px 0 2px calc(1.3em + 8px); display: flex; flex-direction: column; gap: 8px; }
@@ -198,7 +229,7 @@ body { --k-us: var(--us, #2f6db3); --k-tw: var(--roc, #17917f); --k-cn: var(--pr
   .k4-grid { grid-template-columns: minmax(0, 1fr); }
   .k4-seats, .k4-reveal { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .k4-weights { grid-template-columns: minmax(0, 1fr); }
-  .k4-intel { grid-template-columns: minmax(0, 1fr); }
+  .k4-intel, .k4-fogkey { grid-template-columns: minmax(0, 1fr); }
   .k4-state { order: 2; } .k4-decide { order: 1; }
   .k4-bar { position: static; }
 }

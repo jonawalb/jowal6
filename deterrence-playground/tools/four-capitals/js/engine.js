@@ -1,7 +1,7 @@
 // Game state and turn resolution. No DOM: the same code runs in the page, the tests and the balance script.
 import { P } from '../data/params.js';
 import { COUNTRIES, IDS, START } from '../data/countries.js';
-import { POSTURES, BY_ID, T, escRoom, isEsc, onMenu, answers, MAX_MOVES } from '../data/actions.js';
+import { POSTURES, BY_ID, T, escRoom, isEsc, onMenu, answers, usedUp, MAX_MOVES } from '../data/actions.js';
 import { EVENTS } from '../data/events.js';
 import { makeRng, STREAM } from './rng.js';
 import { initForces, arrive, applyOrders, updateControl, combat, syncMilitary, hit, addStr, shiftReady } from './forces.js';
@@ -24,7 +24,8 @@ export function newGame({ seed, player, weights, difficulty = 'normal' }) {
     basing: 'peacetime', blockade: 0, escort: 0, weather: false,
     struck: { us: 0, jp: 0, mainland: 0 }, jpCombat: 0, usCombat: false,
     nuclearUsed: false, settleRun: 0, settled: false, pressed: false, exposed: false, usCommitted: false,
-    sharp: {}, recon: {}, rehearsed: null, portsHit: false, landings: [],
+    sharp: {}, recon: {}, blind: {}, deceive: {}, rehearsed: null, portsHit: false, landings: [], cables: 0,
+    used: Object.fromEntries(IDS.map(id => [id, []])),
     last: {}, event: null, history: [], over: null,
   };
   initRes(s);
@@ -44,10 +45,12 @@ export function brief(state) {
   return s;
 }
 
+export const USED = 'Already used: once a game';
 /** Is a move allowed now? null if yes, else the reason. `mv`: everyone's moves this month, when known. */
 export function blockedWhy(s, id, o, mv) {
   const a = BY_ID[id];
   if (!onMenu(s, a)) return a.unlock != null && s.rung < a.unlock ? `Unlocks at ${P.ladder[a.unlock]}` : 'Not available this month';
+  if (usedUp(s, id)) return USED;
   return a.req ? a.req(s, o || answers(id), mv) : null;
 }
 export const legalActions = (s, who, list) => list.filter(a => !blockedWhy(s, a.id));
@@ -104,7 +107,8 @@ export function resolveTurn(state, moves, opts = {}) {
   const pre = state, s = clone(state), log = [];
   const rng = makeRng(s.seed, STREAM.dice + s.turn);
   s.escort = 0; s.pressed = false; s.losses = {}; s.short = {}; s.engaged = {}; s.shownEmph = null;
-  s.sharpNext = {}; s.reconNext = {}; s.blindNext = {}; s.rehearsedNext = null; s.portsHitNext = false;
+  s.sharpNext = {}; s.reconNext = {}; s.blindNext = {}; s.deceiveNext = {}; s.rehearsedNext = null; s.portsHitNext = false;
+  s.used = s.used || Object.fromEntries(IDS.map(id => [id, []]));
   const ctx = { hit: (w, a, n, type) => hit(s, w, a, n, type), add: (w, a, n) => addStr(s, w, a, n), ready: (w, d) => shiftReady(s, w, d) };
 
   // Postures and their cost at home.
@@ -157,6 +161,7 @@ export function resolveTurn(state, moves, opts = {}) {
       const dr = dropped[who + id], short = refused[who]?.[id];
       let why = dr === 'limit' ? `Only ${MAX_MOVES} moves a month` : dr ? `Not allowed while you ${mv.posture === 'stand' ? 'stand down' : 'de-escalate'}` : !onMenu(pre, a) ? 'Not available this month'
         : short ? `Not enough ${RES_LABEL[short].toLowerCase()}` : null;
+      if (!why && usedUp(s, id)) why = USED;            // a once-a-game move chosen twice
       if (!why && a.req) why = a.req(s, o, moves);
       if (!why && !paid[who]?.has(id)) {   // possible only now (e.g. forces just moved in): pay from what is left
         const k = payMoves(s, who, [id], mv.follow || {})[id];
@@ -172,6 +177,7 @@ export function resolveTurn(state, moves, opts = {}) {
         status = m === 1 ? 'success' : m === 0.5 ? 'partial' : 'failure';
       }
       a.fx(s, m, o, ctx);
+      if (a.once) s.used[who].push(id);                   // carried out (whatever the roll): it cannot be chosen again
       const reach = opts.expected ? p >= 0.5 : m >= 0.5;
       if (reach) { succeeded[id] = true; if (a.rung != null) target = Math.max(target, a.rung); }
       log.push({ who, kind: 'action', id, o, status, p, roll, factors });
@@ -203,6 +209,10 @@ export function resolveTurn(state, moves, opts = {}) {
     const left = Math.max(0, 1 - s.escort) * s.blockade;
     T(s, 'tw', -P.blockadeDrain.tw * left); T(s, 'tw.economy', -P.blockadeDrain.twEconomy * left); T(s, 'coal', P.blockadeDrain.coal);
     if (s.escort >= 1) { s.blockade = 0; log.push({ kind: 'note', text: 'Convoys broke the blockade this month.' }); }
+  }
+  if (s.cables > 0) {                                   // cut undersea cables keep biting until repaired
+    T(s, 'tw.economy', -P.cables.economy); T(s, 'tw.support', -P.cables.support); s.cables -= 1;
+    log.push({ kind: 'note', text: s.cables > 0 ? 'Taiwan’s undersea cables are still cut.' : 'Taiwan’s undersea cables are repaired.' });
   }
   for (const who of IDS) {
     T(s, `${who}.economy`, -s.shock * P.shockToEconomy[who]);
@@ -237,9 +247,11 @@ export function resolveTurn(state, moves, opts = {}) {
   s.settleRun = talksOK && allCalm ? s.settleRun + 1 : 0;
 
   // What carries into next month.
+  // Sight next month (js/fog.js): surveillance that paid off, sources burned by a public release, deception.
   s.sharp = Object.fromEntries(IDS.map(w => [w, !!s.sharpNext[w] && !s.blindNext[w]]));
+  s.blind = { ...s.blindNext }; s.deceive = { ...s.deceiveNext };
   s.recon = { ...s.reconNext }; s.rehearsed = s.rehearsedNext; s.portsHit = s.portsHitNext;
-  delete s.sharpNext; delete s.reconNext; delete s.blindNext; delete s.rehearsedNext; delete s.portsHitNext;
+  delete s.sharpNext; delete s.reconNext; delete s.blindNext; delete s.deceiveNext; delete s.rehearsedNext; delete s.portsHitNext;
 
   s.last = moves;
   s.history.push({ turn: s.turn, event: s.event, moves, log, after: snapshot(s) });
@@ -264,11 +276,12 @@ export function isOver(s, succeeded = {}) {
   return null;
 }
 
-// Copy links (v3): seed, seat, difficulty, weights, then the player's moves as base64url JSON. v2 links (three
-// moves, force points instead of formations) cannot be replayed; decode marks them { old: true }.
+// Copy links (v4): seed, seat, difficulty, weights, then the player's moves as base64url JSON. Older links (v2: three
+// moves and force points; v3: before fog of war, gray-zone moves and once-a-game moves) cannot be replayed; decode
+// marks them { old: true }.
 const b64 = str => (typeof btoa === 'function' ? btoa(unescape(encodeURIComponent(str))) : Buffer.from(str, 'utf8').toString('base64')).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 const unb64 = str => { const t = str.replace(/-/g, '+').replace(/_/g, '/'); return typeof atob === 'function' ? decodeURIComponent(escape(atob(t))) : Buffer.from(t, 'base64').toString('utf8'); };
-export const LINK_VERSION = 'v3';
+export const LINK_VERSION = 'v4';
 export function encode(s) {
   const w = COUNTRIES[s.player].objectives.map(o => s.weights[o.id]).join('');
   const mv = s.history.map(h => { const m = h.moves[s.player]; return [m.posture, m.actions, m.follow || {}, m.orders || {}]; });
@@ -276,7 +289,7 @@ export function encode(s) {
 }
 export function decode(str) {
   const [v, seed, player, d, w, mv] = String(str).split('.');
-  if (/^v[12]$/.test(v) && COUNTRIES[player]) return { old: true, version: v };
+  if (/^v[123]$/.test(v) && COUNTRIES[player]) return { old: true, version: v };
   if (v !== LINK_VERSION || !COUNTRIES[player] || !/^\d+$/.test(seed)) return null;
   const difficulty = { e: 'easy', n: 'normal', h: 'hard' }[d] || 'normal';
   const weights = Object.fromEntries(COUNTRIES[player].objectives.map((o, i) => [o.id, +((w || '')[i] ?? o.w)]));

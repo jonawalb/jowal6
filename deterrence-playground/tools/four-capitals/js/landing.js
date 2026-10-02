@@ -3,6 +3,7 @@
 import { SECTOR_SEA, AREA_LABEL } from '../data/theater.js';
 import { FBY } from '../data/formations.js';
 import { eff } from './forces.js';
+import { estDefence } from './fog.js';
 
 const sum = l => l.reduce((t, u) => t + eff(u), 0);
 const typ = u => FBY[u.id].type;
@@ -39,11 +40,12 @@ export const defence = (s, sector) => sum(s.units.tw.filter(u => u.at === sector
 /** U.S. fires can only meet a landing from Limited strikes up, with munitions to spare. */
 export const usFiresReady = s => s.rung >= 3 && s.res.us.mun >= 1;
 
-/** Odds factors for a landing. `final`: the month is resolving, so the hidden emphasis choices are known. */
+/** Odds factors for a landing. `final`: the month is resolving, so the hidden emphasis choices and the true defence
+ * are known; before that, China judges the defenders through the fog (js/fog.js). */
 export function landingFactors(s, sector, follow, final) {
-  const att = assault(s, sector, follow), def = defence(s, sector);
+  const att = assault(s, sector, follow), def = final ? defence(s, sector) : estDefence(s, 'cn', sector, LAND.reserve);
   const k = Math.max(LAND.cap[0], Math.min(LAND.cap[1], Math.round(LAND.ratio * (att - 1.5 * def) / Math.max(1, def))));
-  const f = [['Landing force vs defenders on that coast', k]];
+  const f = [[final ? 'Landing force vs defenders on that coast' : 'Landing force vs defenders on that coast (China’s estimate)', k]];
   if (final && s.emph.tw === sector) f.push(['Taiwan’s reserve was waiting on that coast', LAND.twEmph]);
   if (final && s.emph.us === sector && usFiresReady(s)) f.push(['U.S. fires were aimed at that coast', LAND.usEmph]);
   return f;

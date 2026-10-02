@@ -1,10 +1,12 @@
 // The decision panel: posture and the DIMEFIL move menu with follow-up questions and resource costs. The Forces
 // panel (js/forces-panel.js) and the logistics table (js/logi-panel.js) repaint from the same choice.
 import { P } from '../data/params.js';
-import { POSTURES, BY_ID, LINES, LINE_SHORT, posturesFor, escRoom, isEsc, answers, ACTIONS, MAX_MOVES } from '../data/actions.js';
+import { POSTURES, BY_ID, LINES, LINE_SHORT, posturesFor, escRoom, isEsc, answers, usedUp, ACTIONS, MAX_MOVES } from '../data/actions.js';
 import { IDS } from '../data/countries.js';
 import { RES_LABEL } from '../data/formations.js';
-import { oddsFor, blockedWhy } from './engine.js';
+import { oddsFor, blockedWhy, USED } from './engine.js';
+import { oddsTip, oppTip, ONCE_TIP, USED_TIP, GRAY_TIP } from './tips-text.js';
+import { infoBtn } from './tips.js';
 import { ledger, costOf, costText, short, grantOf } from './logistics.js';
 import { paintForces, wireForces } from './forces-panel.js';
 import { paintLogi } from './logi-panel.js';
@@ -50,7 +52,7 @@ function paintTabs() {
   $('tabs').innerHTML = Object.keys(LINES).map(k => {
     const n = G.choice.actions.filter(id => BY_ID[id].line === k).length;
     const opp = avail.some(a => a.line === k && a.opp);
-    return `<button type="button" role="tab" data-line="${k}" aria-selected="${G.line === k}" title="${LINES[k]}">${LINE_SHORT[k]}${opp ? '<i class="k4-dot" title="Opportunity"></i>' : ''}${n ? ` <small>(${n})</small>` : ''}</button>`;
+    return `<button type="button" role="tab" data-line="${k}" aria-selected="${G.line === k}" title="${LINES[k]}${opp ? ': an opportunity move is open' : ''}">${LINE_SHORT[k]}${opp ? '<i class="k4-dot" aria-hidden="true"></i><span class="sr-only"> (opportunity open)</span>' : ''}${n ? ` <small>(${n})</small>` : ''}</button>`;
   }).join('');
   $('count').textContent = `${G.choice.actions.length} of ${MAX_MOVES}`;
 }
@@ -73,11 +75,17 @@ function paintActions() {
     const fac = factors.map(([l, d]) => `${l} ${d > 0 ? '+' : ''}${d}`).join(' · ');
     const c = costOf(a.id, answers(a.id, G.choice.follow[a.id])), ct = costText(c);
     const gt = Object.entries(a.grant || {}).map(([k, v]) => `+${v} ${RES_LABEL[k]}`).join(', ');
-    const extra = [a.opp && '<em class="k4-opp">Opportunity</em>', gt && `<em class="k4-dep">${gt}</em>`, ct && `<em class="k4-cost">Cost: ${ct}</em>`].filter(Boolean).join(' ');
+    const used = usedUp(G.s, a.id);
+    const extra = [a.opp && infoBtn(oppTip(G.s, a.id), `Opportunity: why ${a.label} is on the menu`, 'Opportunity <i aria-hidden="true">ⓘ</i>', 'k4-opp'),
+      a.tags.includes('gray') && infoBtn(GRAY_TIP, 'Gray zone: what it means', 'Gray zone <i aria-hidden="true">ⓘ</i>', 'k4-gray'),
+      a.once && !used && infoBtn(ONCE_TIP, 'Once a game: what it means', 'Once a game <i aria-hidden="true">ⓘ</i>', 'k4-once'),
+      gt && `<em class="k4-dep">${gt}</em>`, ct && `<em class="k4-cost">Cost: ${ct}</em>`].filter(Boolean).join(' ');
     const off = w && w.kind !== 'full';
-    return `<div class="k4-act ${on ? 'on' : ''} ${off ? 'off' : ''} ${tag}"><label class="k4-acth"><input type="checkbox" data-act="${a.id}" ${on ? 'checked' : ''} ${w ? 'disabled' : ''}>
-      <b>${esc(a.label)}</b><span class="p">${w && w.kind === 'rule' ? '—' : Math.round(p * 100) + '%'}</span></label><small>${esc(a.explain)} ${extra}</small>
-      ${off ? `<span class="why">Not now: ${esc(w.why)}.</span>` : unpaid ? `<span class="why bad">Can’t afford with your other choices (${RES_LABEL[unpaid].toLowerCase()}): it will not be carried out.</span>` : fac ? `<span class="why">${esc(fac)}</span>` : ''}
+    const pct = used ? infoBtn(USED_TIP, `${a.label}: already used`, 'USED', 'k4-used') : w && w.kind === 'rule' ? '—'
+      : `${Math.round(p * 100)}%${infoBtn(oddsTip(G.s, mv, G.player, a.id), `How the ${Math.round(p * 100)}% for ${a.label} is worked out`)}`;
+    return `<div class="k4-act ${on ? 'on' : ''} ${off ? 'off' : ''} ${used ? 'used' : ''} ${tag}"><div class="k4-acth"><label><input type="checkbox" data-act="${a.id}" ${on ? 'checked' : ''} ${w ? 'disabled' : ''}>
+      <b>${esc(a.label)}</b></label><span class="p">${pct}</span></div><small>${esc(a.explain)} ${extra}</small>
+      ${off ? `<span class="why">${w.why === USED ? 'Already used: you can carry this out once a game.' : `Not now: ${esc(w.why)}.`}</span>` : unpaid ? `<span class="why bad">Can’t afford with your other choices (${RES_LABEL[unpaid].toLowerCase()}): it will not be carried out.</span>` : fac ? `<span class="why">${esc(fac)}</span>` : ''}
       ${on && a.follow ? `<div class="k4-follow">${followHTML(a)}</div>` : ''}</div>`;
   }).join('') || '<p class="fine">No moves on this line this month.</p>';
 }

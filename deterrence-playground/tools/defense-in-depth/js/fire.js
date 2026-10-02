@@ -258,6 +258,7 @@ export function computeCover(g, side) {
   m.fill(0); lh.fill(0);
   for (const u of g.units) {
     if (u.side !== side || !alive(u) || !isCompany(u) || !TYPES[u.type].fp) continue;
+    keepLane(g, u);
     if (u.lane != null && u.laneCells) for (const c of u.laneCells) { m[c] |= 1 << opp(u.lane); lh[c] = Math.min(255, lh[c] + 1); }
     for (const d of [u.facing, (u.facing + 1) & 7, (u.facing + 7) & 7]) {
       const c = G.at(u.sec, d);
@@ -267,7 +268,28 @@ export function computeCover(g, side) {
   return m;
 }
 
-/** Re-lay an MG's lane cells from its sector and direction (stops at the first LOS-blocked cell). */
+/** Lay an MG's lane cells from its sector and direction (stops at the first LOS-blocked cell). The lane belongs to
+ * that sector (u.laneAt): it is sited from one position. */
 export function layLane(g, u) {
-  u.laneCells = u.lane == null || u.sec < 0 ? null : laneCells(gridFor(g.scale), g.sectors.elev, u.sec, u.lane);
+  const ok = u.lane != null && u.sec >= 0;
+  u.laneCells = ok ? laneCells(gridFor(g.scale), g.sectors.elev, u.sec, u.lane) : null;
+  u.laneAt = ok ? u.sec : null;
+  if (ok) u.laneLost = null;
 }
+
+/**
+ * An MG that has left the sector its lane was laid from loses the lane (DECISIONS "MG lanes are lost on a move"):
+ * the guns, their aiming marks and the wire they sweep stay behind. A new lane is a new lane order, with the
+ * normal order delay. Records u.laneLost = { dir, t, from } for the map and the unit popover. Returns true if lost.
+ */
+export function keepLane(g, u) {
+  if (u.lane == null || u.laneAt == null || u.laneAt === u.sec) return false;
+  u.laneLost = { dir: u.lane, t: g.t, from: u.laneAt };
+  u.lane = null; u.laneCells = null; u.laneAt = null;
+  g.coverDirty = true;
+  if (u.sec >= 0) g.events.push({ t: g.t, kind: 'laneLost', side: u.side, unit: u.id, sec: u.sec, vis: [u.side] });
+  return true;
+}
+
+/** Drop the lanes of every MG that has moved (end of each step that moves units). */
+export function dropMovedLanes(g) { for (const u of g.units) if (u.lane != null) keepLane(g, u); }

@@ -6,7 +6,7 @@
 import { SCALES } from '../../data/scales.js';
 import { COHESION, COUNTER } from '../../data/params.js';
 import { ERAS } from '../../data/eras.js';
-import { gridFor } from '../grid.js';
+import { gridFor, laneCells } from '../grid.js';
 import { fighting, isCompany } from '../forces.js';
 import { raceClock, csPlanTime, CS_ROLES } from '../counter.js';
 import { influence, near } from './influence.js';
@@ -34,6 +34,8 @@ export function defenderPolicy(g, P) {
   const mine = g.units.filter(u => u.side === 'def' && fighting(u));
   const recent = id => mem.pending[id] != null && g.t - mem.pending[id] < 3;
   const order = a => { acts.push(a); if (a.unit != null) mem.pending[a.unit] = g.t; };
+  // An MG on its lane stays there: moving it costs the lane (js/fire.js keepLane), so rifle companies do the shifting.
+  const sited = u => u.type === 'mg' && u.lane != null;
   // 1. The believed main effort: where the believed attacker mass is, weighted by depth (plus any warning).
   const w = mainWidth(g), colBel = new Array(G.cols).fill(0);
   let lead = B.nml[0], total = 0;
@@ -110,7 +112,7 @@ export function defenderPolicy(g, P) {
     for (const c of [...threat].filter(c => c >= 0 && c < G.cols).sort((a, b) => a - b)) {
       const s = G.idx(objRow, c);
       if (inf.mine[s] > 0 || g.ctrl[s] === 2 || g.contest[s]) continue;
-      const cand = mine.filter(u => !CS_ROLES.has(u.role) && !g.contest[u.sec] && !recent(u.id) && !(u.pinned > g.t) && !u.path.length &&
+      const cand = mine.filter(u => !CS_ROLES.has(u.role) && !sited(u) && !g.contest[u.sec] && !recent(u.id) && !(u.pinned > g.t) && !u.path.length &&
         (G.row[u.sec] > objRow || (G.row[u.sec] === objRow && inf.mine[u.sec] > 12)) && G.dist(u.sec, s) <= 4)
         .sort((a, b) => G.dist(a.sec, s) - G.dist(b.sec, s) || (a.id < b.id ? -1 : 1))[0];
       if (cand) { order({ kind: 'move', unit: cand.id, to: s, mode: 'covered' }); order({ kind: 'stance', unit: cand.id, v: 'hold' }); }
@@ -125,7 +127,7 @@ export function defenderPolicy(g, P) {
       const s = G.idx(r, c);
       if (s >= 0 && !slots.includes(s) && g.ctrl[s] !== 2 && !g.contest[s] && inf.mine[s] < 15 && near(G, inf.bel, s) < 8) slots.push(s);
     }
-    const far = mine.filter(u => !CS_ROLES.has(u.role) && u.role !== 'outpost' && !g.contest[u.sec] && !u.path.length && !recent(u.id) && !(u.pinned > g.t) && !u.fixed &&
+    const far = mine.filter(u => !CS_ROLES.has(u.role) && u.role !== 'outpost' && !sited(u) && !g.contest[u.sec] && !u.path.length && !recent(u.id) && !(u.pinned > g.t) && !u.fixed &&
       near(G, inf.bel, u.sec) === 0 && Math.min(...axis.map(c => Math.abs(c - G.col[u.sec]))) >= 3 && G.row[u.sec] >= B.battle[0])
       .sort((a, b) => G.row[b.sec] - G.row[a.sec] || (a.id < b.id ? -1 : 1));
     let n = 0;
@@ -150,7 +152,7 @@ export function defenderPolicy(g, P) {
       if (s >= 1.1 * need) for (const u of adj) ok.add(u.id);
     }
     for (const u of cand) {
-      const want = ok.has(u.id) || !G.nbrs[u.sec].some(c => g.lodg[c]) ? 'riposte' : 'elastic';
+      const want = !sited(u) && (ok.has(u.id) || !G.nbrs[u.sec].some(c => g.lodg[c])) ? 'riposte' : 'elastic';
       if (u.stance !== want) acts.push({ kind: 'stance', unit: u.id, v: want });
     }
   }
@@ -171,8 +173,34 @@ export function defenderPolicy(g, P) {
     const want = near(G, inf.bel, u.path[0]) > 0 || near(G, inf.bel, u.sec) > 0 ? P.movePosture : 'hold';
     if (u.posture !== want) acts.push({ kind: 'posture', unit: u.id, v: want });
   }
+  // 7. Lanes are sited from one position (js/fire.js keepLane): an MG that has moved and stopped lays a new lane, across
+  // the front toward the believed main effort (frontal-lane profiles straight ahead), with the normal order delay.
+  if (P.lanes !== 'none') for (const u of mine) {
+    if (u.type !== 'mg' || u.lane != null || u.laneWant != null || !u.laneLost || u.path.length || u.sec < 0) continue;
+    if (g.orders.some(o => o.unit === u.id && !o.done && !o.cancelled && o.a.kind === 'lane')) continue;
+    acts.push({ kind: 'lane', unit: u.id, dir: relayDir(g, u, P, axis, inf.bel) });
+  }
   const fire = defenderFires(g, P, mem, inf, { axis, lead });
   return { missions: fire.missions, actions: [...acts, ...fire.actions] };
+}
+
+/** Direction for a re-laid lane: straight ahead for frontal-lane profiles; otherwise across the front (east or west),
+ * or the diagonal forward, whichever sweeps the most believed attackers and the ground in front of them (a lane
+ * along the row scores the full enfilade, a diagonal half); with nobody in sight, the longer lateral lane toward
+ * the believed axis. bel: the defender's believed enemy strength per sector. */
+export function relayDir(g, u, P, axis, bel) {
+  if (P.lanes === 'frontal') return 4;
+  const G = gridFor(g.scale), mid = (axis[0] + axis[axis.length - 1]) / 2, c = G.col[u.sec];
+  const toward = mid >= c ? 2 : 6;
+  let best = toward, bv = -Infinity;
+  for (const d of [2, 6, 3, 5]) {
+    const cells = laneCells(G, g.sectors.elev, u.sec, d);
+    const lat = d === 2 || d === 6;
+    let v = lat ? cells.length * 0.01 + (d === toward ? 0.005 : 0) : 0;
+    for (const x of cells) { const ahead = G.at(x, 4); v += (lat ? 1 : 0.5) * (bel[x] + (ahead >= 0 ? 0.5 * bel[ahead] : 0)); }
+    if (v > bv) { bv = v; best = d; }
+  }
+  return best;
 }
 
 /** Column band of a defender division (as the doctrinal layout spreads them). */

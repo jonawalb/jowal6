@@ -12,7 +12,7 @@ import { makeRng, STREAM } from './rng.js';
 import { gridFor, FWD } from './grid.js';
 import { emptyFeat } from './mapgen.js';
 import { reindex, isBattery, other } from './forces.js';
-import { computeCover, layLane } from './fire.js';
+import { computeCover, dropMovedLanes } from './fire.js';
 import { firePhase } from './arty.js';
 import { modernPhase, jamAreas } from './modern.js';
 import { deliver } from './orders.js';
@@ -113,7 +113,8 @@ export function practiceHour(g) {
   deliver(g);
   if (g.coverDirty) covers(g);
   moveAll(g, g.rng.move);
-  for (const u of g.units) { u.supp = 0; u.located = false; if (u.lane != null) layLane(g, u); }   // no enemy: nobody is suppressed or located; a lane moves with its MG
+  for (const u of g.units) { u.supp = 0; u.located = false; }   // no enemy: nobody is suppressed or located
+  dropMovedLanes(g);   // as in the real game: an MG that moved has lost its lane and must lay it again
   reindex(g);
   covers(g);
   const fired = g.units.filter(b => isBattery(b) && b.firedAt === t).map(b => b.id);

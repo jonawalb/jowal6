@@ -64,6 +64,10 @@ function unitFacts(g, u) {
     out.push(`${det}Survives each observed hour on the move ${pctTip(pct(p), 'survival', { p, T, v, k2: BIDDLE.k2, mode: u.mode })}</li>`);
   }
   if (u.type === 'tank' && ERAS[g.era].tankBreakdown) out.push(`${det}Breakdown ${pctTip('12% an hour', 'breakdown', { p: 0.12 })}</li>`);
+  if (u.type === 'mg') {   // DECISIONS "MG lanes are lost on a move"
+    if (u.laneWant != null) out.push('<li>Lane: laid when it stops moving.</li>');
+    else if (u.lane == null && u.laneLost) out.push('<li class="dd-warnl">Lane lost when it moved — lay it again.</li>');
+  }
   if (u.pair != null) { const p = unitOf(u.pair); out.push(`<li>Leapfrog partner: <b>${esc(p ? p.short : u.pair)}</b>; this hour it ${u.lfOw ? 'overwatches' : 'bounds'}.</li>`); }
   return `<ul class="dd-facts">${out.join('')}</ul>`;
 }

@@ -24,6 +24,7 @@ export const isLate = (g, u) => { const o = pendingOrder(g, u); return !!o && o.
 /** A unit waiting for orders: an attacking company stopped short of its goal, or a defender held in reserve. */
 export function isIdle(g, u) {
   if (!fighting(u) || g.phase !== 'battle' || g.over || pendingOrder(g, u) || u.path.length) return false;
+  if (u.type === 'mg' && u.lane == null && u.laneWant == null && u.laneLost) return true;   // moved off its lane: lay it again
   if (u.side === 'att') return !['hold', 'consolidate'].includes(u.posture) && (u.dest == null || u.dest === u.sec || u.stalled || u.pinned > g.t);
   return u.stance === 'reserve' && !u.cs;
 }

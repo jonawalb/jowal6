@@ -12,6 +12,8 @@ import { paintDecide, wireDecide, emptyChoice } from './decide.js';
 import { seeFor, paintFog, seenOrders } from './fog-panel.js';
 import { sight } from './fog.js';
 import { wireTips } from './tips.js';
+import { wireSteps, setStep, setPhoneTab, isPhone } from './steps.js';
+import { zoneStances, refreshPop, closePop } from './area-pop.js';
 import { initBeliefs, updateBeliefs, chooseMove, intelView, forumLearn } from './ai.js';
 import { FORUM_ID, forumTo } from './forum.js';
 import { askForum, forumText } from './forum-panel.js';
@@ -70,7 +72,7 @@ $('begin').addEventListener('click', () => {
   $('typecard').style.setProperty('--c', COL[g.player]);
   show('typecard'); $('typecard').focus();
 });
-$('type-go').addEventListener('click', () => { show('play'); paint(); $('end-turn').focus(); });
+$('type-go').addEventListener('click', () => { show('play'); paint(); $('st-1').focus(); });
 
 function begin(start) {
   const s0 = newGame({ ...start, human: true });
@@ -85,7 +87,8 @@ function begin(start) {
 function paintPlan() {
   const t = (g.L || ledger(g.s, g.player, g.choice)).trial;
   updateControl(t);
-  paintZones(t, seeFor(g.s, g.player, t));
+  paintZones(t, seeFor(g.s, g.player, t), zoneStances(g));
+  refreshPop();
 }
 function paint() {
   const s = g.s;
@@ -139,6 +142,7 @@ $('end-turn').addEventListener('click', async () => {
   $('end-turn').disabled = false;
   const { moves, log, next } = step(mine, theirs);
   g.s = next;
+  closePop();
   show('play', 'resolve'); $('intel').hidden = $('feed').hidden = true; $('decide').hidden = true;
   $('res-t').textContent = `${month}: what happened`;
   $('reveal').innerHTML = IDS.map(w => `<div class="k4-mv" style="--c:${COL[w]}"><b>${COUNTRIES[w].short}${w === g.player ? ' (you)' : ''}</b><span class="po">${POSTURES.find(p => p.id === moves[w].posture).label}</span><ul>${moves[w].actions.map(id => `<li>${BY_ID[id].label}${followText(id, moves[w].follow)}</li>`).join('') || '<li>No moves</li>'}</ul>${deployText(w, moves[w].orders)}${emphText(w, moves[w], log)}</div>`).join('');
@@ -183,7 +187,7 @@ function logHTML(log) {
 $('next').addEventListener('click', () => {
   if (g.s.over) return finish();
   g.s = brief(g.s);
-  g.choice = emptyChoice();
+  g.choice = emptyChoice(); g.step = 1;
   show('play'); $('intel').hidden = $('feed').hidden = $('decide').hidden = false; paint();
   document.querySelectorAll('#tracks .k4-track').forEach(t => { if (t.querySelector('small')) flash(t); });
   $('play').scrollIntoView({ block: 'start' });
@@ -249,6 +253,9 @@ const tour = createTour(() => {
   if (!g) { pick = pick || 'us'; paintSeats(); paintWeights(); $('setup').hidden = false; $('begin').click(); $('type-go').click(); }
   else if (g.s.over || !$('resolve').hidden) return false;
   return true;
+}, st => {   // show the part of the page a walkthrough step is about: its step of the move, and its phone tab
+  if (st.step) setStep(st.step);
+  if (isPhone() && st.tab) setPhoneTab(st.tab);
 });
 $('tour-btn').addEventListener('click', () => tour.start());
 
@@ -272,4 +279,5 @@ function load() {
   show('play'); paint();
 }
 wireTips();
+wireSteps();
 load();

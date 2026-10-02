@@ -1,10 +1,12 @@
-// What the player can see of rival forces: the reader the map uses, the "rival forces you can see" list with the
-// fog-of-war key, and the fogged description of rivals' force orders in the month's reveal. Rules: js/fog.js.
+// What the player can see of rival forces: the reader the map uses, the one-line fog-of-war key (each level's full
+// text behind an info button), the collapsed "rival forces you can see" list, and the fogged description of
+// rivals' force orders in the month's reveal. Rules: js/fog.js.
 import { COUNTRIES, IDS } from '../data/countries.js';
 import { SEA, ISLAND, AREA_LABEL, SIDE } from '../data/theater.js';
 import { FBY, TYPES } from '../data/formations.js';
 import { seen, sight, SIGHT_LABEL } from './fog.js';
 import { FOG_KEY } from './tips-text.js';
+import { infoBtn } from './tips.js';
 
 const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const n1 = x => +(+x).toFixed(1);
@@ -34,11 +36,19 @@ export function paintFog(div, s, player) {
   }
   const blind = s.blind?.[player] ? '<p class="fine bad">Your sources went quiet after last month’s public intelligence release: you see one step blurrier this month.</p>' : '';
   const sharp = s.sharp?.[player] && !s.blind?.[player] ? '<p class="fine">Your surveillance paid off last month: you see rival forces exactly this month.</p>' : '';
-  div.innerHTML = `<details class="k4-fogd" open><summary>Rival forces you can see <span class="muted">(fog of war)</span></summary>${sharp}${blind}
-    <ul class="k4-contacts">${rows.join('') || '<li>No rival forces in sight.</li>'}</ul>
-    <dl class="k4-fogkey">${FOG_KEY.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>
-    <p class="fine">Strengths are raw (before readiness). Who holds each area is public. The computer capitals see you by the same rules.</p></details>`;
+  const wasOpen = div.querySelector('.k4-fogd')?.open;
+  const lvl = { Exact: 'exact', 'Close read': 'near', 'Rough read': 'far', Deception: 'dec' };
+  const key = FOG_KEY.map(([k, v]) => infoBtn({ title: k, lines: [v], notes: [] }, `${k}: what it means`, `${k} <i aria-hidden="true">ⓘ</i>`, `k4-lvlb ${lvl[k]}`)).join(' ');
+  div.innerHTML = `${sharp}${blind}<p class="k4-fogkey"><span class="k4-sub">Fog of war</span> ${key} ${infoBtn(FOG_HOW, 'How the fog of war works', 'How this works', 'k4-how')}</p>
+    <p class="fine k4-maphint">Ranges on the map are rival forces as you see them. Tap or click a sea area to set your stance there.</p>
+    <details class="k4-fogd"${wasOpen ? ' open' : ''}><summary>Rival forces you can see <span class="muted">(${rows.length} contact${rows.length === 1 ? '' : 's'})</span></summary>
+    <ul class="k4-contacts">${rows.join('') || '<li>No rival forces in sight.</li>'}</ul></details>`;
 }
+const FOG_HOW = { title: 'Fog of war', lines: [
+  'You see your own and your partners’ forces exactly; rival forces show as ranges, sharper near your own forces.',
+  'Strengths are raw (before readiness). Who holds each area is public.',
+  'The computer capitals see you by the same rules.',
+], notes: [] };
 
 /** A rival's force orders as you saw them: by name where you see exactly, by type on a close read, else unidentified.
  * `s` is the state after the month (where the formations ended up). Strike aiming shows only where you see exactly. */

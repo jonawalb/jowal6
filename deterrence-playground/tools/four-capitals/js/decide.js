@@ -10,6 +10,8 @@ import { infoBtn } from './tips.js';
 import { ledger, costOf, costText, short, grantOf } from './logistics.js';
 import { paintForces, wireForces } from './forces-panel.js';
 import { paintLogi } from './logi-panel.js';
+import { paintSteps } from './steps.js';
+import { wireAreaPop } from './area-pop.js';
 import { constraints, homeLine } from './politics.js';
 import { forumEstimate, forumTo, limitedOf } from './forum.js';
 import { forumTip } from './forum-panel.js';
@@ -40,8 +42,9 @@ export function addWhy(g, L, id) {
 export function paintDecide(g) {
   G = g;
   G.L = ledger(G.s, G.player, G.choice);
-  paintPostures(); paintTabs(); paintActions(); paintForces(G); paintLogi(G);
+  paintPostures(); paintTabs(); paintActions(); paintForces(G); paintLogi(G); paintSteps(G);
   $('home').innerHTML = homeLine(G.s, G.player).map(esc).join(' ');
+  if (!$('moves-how').firstChild) $('moves-how').innerHTML = infoBtn(MOVES_HOW, 'How moves work', 'How this works', 'k4-how');
 }
 
 /** Your estimate for a forum call: your read of the rival's type, and how they seem to read you. */
@@ -94,7 +97,7 @@ function paintActions() {
     const extra = [...chips, a.opp && infoBtn(oppTip(G.s, a.id), `Opportunity: why ${a.label} is on the menu`, a.forum ? 'Peace forum <i aria-hidden="true">ⓘ</i>' : 'Opportunity <i aria-hidden="true">ⓘ</i>', 'k4-opp'),
       a.tags.includes('gray') && infoBtn(GRAY_TIP, 'Gray zone: what it means', 'Gray zone <i aria-hidden="true">ⓘ</i>', 'k4-gray'),
       a.once && !used && infoBtn(ONCE_TIP, 'Once a game: what it means', 'Once a game <i aria-hidden="true">ⓘ</i>', 'k4-once'),
-      gt && `<em class="k4-dep">${gt}</em>`, ct && `<em class="k4-cost">Cost: ${ct}</em>`].filter(Boolean).join(' ');
+      gt && `<em class="k4-dep">${gt}</em>`, `<em class="k4-cost${ct ? '' : ' free'}">${ct ? `Cost: ${ct}` : 'Free'}</em>`].filter(Boolean).join(' ');
     const off = w && w.kind !== 'full';
     const pct = used ? infoBtn(USED_TIP, `${a.label}: already used`, 'USED', 'k4-used') : w && w.kind === 'rule' ? '—'
       : `${Math.round(p * 100)}%${infoBtn(fo ? forumTip(fo.f, fo.to) : oddsTip(G.s, mv, G.player, a.id), `How the ${Math.round(p * 100)}% for ${a.label} is worked out`)}`;
@@ -105,7 +108,16 @@ function paintActions() {
   }).join('') || '<p class="fine">No moves on this line this month.</p>';
 }
 
-/** Add or remove a move (used by the menu and by the logistics panel's list). */
+/** The explanation that used to sit under the move list, now behind a "How this works" button. */
+const MOVES_HOW = { title: 'How moves work', lines: [
+  'Tap or hover the i beside a move’s % to see how it is worked out.',
+  'Odds assume the others repeat last month; they are recalculated, with what everyone actually did, when the month resolves.',
+  'Choosing a move again next month costs −15.',
+  'Opportunity moves appear only while their condition holds; Once a game moves are marked USED after you carry them out.',
+  'Each move shows its cost (or Free). A move you cannot pay for with your other choices is greyed out with the reason.',
+], notes: [] };
+
+/** Add or remove a move. */
 export function toggleMove(id, on) {
   const a = G.choice.actions;
   if (on && !a.includes(id)) {
@@ -132,8 +144,5 @@ export function wireDecide(change) {
     if (t.dataset.fa) { G.choice.follow[t.dataset.fa] = { ...answers(t.dataset.fa, G.choice.follow[t.dataset.fa]), [t.dataset.fq]: t.value }; repaint(); }
   });
   wireForces(() => G, repaint);
-  $('logi-open').addEventListener('click', e => {
-    const b = e.target.closest('[data-add]'); if (!b || b.disabled) return;
-    G.line = BY_ID[b.dataset.add].line; toggleMove(b.dataset.add, true);
-  });
+  wireAreaPop(() => G, repaint);
 }

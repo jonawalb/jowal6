@@ -38,28 +38,37 @@ export function drawTheatre(root) {
   layer = el('g', {}, svg);
 }
 
-/** Zones with each side's strength. see(who, area) returns null, { exact, v } or a range { lo, hi } (js/fog-panel.js). */
-export function paintZones(s, see) {
+/** Zones with each side's strength. see(who, area) returns null, { exact, v } or a range { lo, hi } (js/fog-panel.js).
+ * `stances` ({ area: 'Contest' }) makes those areas buttons that open the stance popover (js/area-pop.js). */
+export function paintZones(s, see, stances = null) {
   if (!zones) return;
   zones.innerHTML = '';
   const fill = { red: 'var(--k-cn)', blue: 'var(--k-us)', contested: 'var(--warn)', empty: 'transparent' };
   const label = r => (r.exact ? String(r.v < 1 ? +r.v.toFixed(1) : Math.round(r.v)) : `${r.lo}–${r.hi}`);
+  const NAME = { north: 'NORTH', strait: 'STRAIT', south: 'SOUTH', east: 'EAST' };
   for (const [a, [x, y]] of Object.entries(ZONE)) {
-    const c = s.ctrl[a];
-    el('ellipse', { cx: x, cy: y, rx: 58, ry: 34, fill: fill[c], 'fill-opacity': c === 'empty' ? 0 : 0.1, stroke: c === 'contested' ? 'var(--warn)' : fill[c] === 'transparent' ? 'var(--muted)' : fill[c], 'stroke-dasharray': '5 4', 'stroke-opacity': 0.8 }, zones);
-    el('text', { x, y: y - 12, 'font-size': 11, 'font-weight': 700, 'text-anchor': 'middle', fill: 'var(--ink)', 'letter-spacing': '.08em' }, zones).textContent = { north: 'NORTH', strait: 'STRAIT', south: 'SOUTH', east: 'EAST' }[a];
+    const c = s.ctrl[a], st = stances?.[a];
+    const hold = c === 'red' ? 'China holds' : c === 'blue' ? 'Coalition holds' : c === 'contested' ? 'Contested' : '';
+    const seen = [['cn', 'China'], ['us', 'U.S.'], ['jp', 'Japan'], ['tw', 'Taiwan']].map(([w, n]) => { const r = see(w, a); return r ? `${n} ${r.exact ? label(r) : 'about ' + label(r)}` : ''; }).filter(Boolean).join(', ');
+    const g = st ? el('g', { class: 'k4-zone', 'data-area': a, tabindex: 0, role: 'button', 'aria-expanded': 'false',
+      'aria-label': `${AREA_LABEL[a]} sea area. ${hold ? hold + '. ' : ''}${seen ? seen + '. ' : ''}Your stance: ${st}. Change stance` }, zones) : zones;
+    if (st) el('rect', { x: x - 66, y: y - 40, width: 132, height: 84, rx: 18, fill: 'transparent', class: 'k4-zhit' }, g);
+    el('ellipse', { cx: x, cy: y, rx: 58, ry: 34, fill: fill[c], 'fill-opacity': c === 'empty' ? 0 : 0.1, stroke: c === 'contested' ? 'var(--warn)' : fill[c] === 'transparent' ? 'var(--muted)' : fill[c], 'stroke-dasharray': '5 4', 'stroke-opacity': 0.8, class: 'k4-zring' }, g);
+    const nm = el('text', { x, y: y - 12, 'font-size': 11, 'font-weight': 700, 'text-anchor': 'middle', fill: 'var(--ink)', 'letter-spacing': '.08em' }, g);
+    nm.textContent = NAME[a];
+    if (st) el('tspan', { fill: 'var(--mine, var(--ink))', 'letter-spacing': '0', 'font-weight': 600 }, nm).textContent = ` · ${st} ▾`;
     // Exact strengths as discs; ranges (fog of war) as dashed pills.
     const parts = [['cn', 'var(--k-cn)'], ['us', 'var(--k-us)'], ['jp', 'var(--k-jp)'], ['tw', 'var(--k-tw)']].map(([w, col]) => [w, col, see(w, a)]).filter(([, , r]) => r);
     const wd = parts.map(([, , r]) => (r.exact ? 26 : 8 + 6.4 * label(r).length));
     let dx = x - (wd.reduce((t, v) => t + v, 0) + 3 * (parts.length - 1)) / 2;
     parts.forEach(([w, col, r], i) => {
       const cx = dx + wd[i] / 2;
-      if (r.exact) el('circle', { cx, cy: y + 8, r: 13, fill: col, stroke: 'var(--panel)', 'stroke-width': 1.5 }, zones);
-      else el('rect', { x: dx, y: y - 4, width: wd[i], height: 24, rx: 12, fill: col, 'fill-opacity': 0.72, stroke: 'var(--panel)', 'stroke-width': 1.5, 'stroke-dasharray': '3 2' }, zones);
-      el('text', { x: cx, y: y + 12, 'font-size': 11, 'font-weight': 700, 'text-anchor': 'middle', fill: '#fff' }, zones).textContent = label(r);
+      if (r.exact) el('circle', { cx, cy: y + 8, r: 13, fill: col, stroke: 'var(--panel)', 'stroke-width': 1.5 }, g);
+      else el('rect', { x: dx, y: y - 4, width: wd[i], height: 24, rx: 12, fill: col, 'fill-opacity': 0.72, stroke: 'var(--panel)', 'stroke-width': 1.5, 'stroke-dasharray': '3 2' }, g);
+      el('text', { x: cx, y: y + 12, 'font-size': 11, 'font-weight': 700, 'text-anchor': 'middle', fill: '#fff' }, g).textContent = label(r);
       dx += wd[i] + 3;
     });
-    el('text', { x, y: y + 33, 'font-size': 10, 'text-anchor': 'middle', fill: 'var(--muted)' }, zones).textContent = c === 'red' ? 'China holds' : c === 'blue' ? 'Coalition holds' : c === 'contested' ? 'Contested' : '';
+    el('text', { x, y: y + 33, 'font-size': 10, 'text-anchor': 'middle', fill: 'var(--muted)' }, g).textContent = hold;
   }
   const [tx, ty] = AT.tw;
   // Taiwan's coast: four landing sectors and the inland reserve, with the strength you can see in each.
@@ -98,8 +107,8 @@ export async function animateMoves(who, actions, log) {
 }
 
 export function paintLadder(ol, s) {
-  // Rungs 0–1 are the gray zone: coercion below military action (coast guard, militia, cables, cyber).
-  ol.innerHTML = P.ladder.map((l, i) => `<li class="${i === s.rung ? 'on' : i <= s.maxRung ? 'past' : ''}" style="--r:${i}"><i>${i}</i>${i === 0 ? 'Pressure' : l}${i <= 1 ? ' <small class="k4-gz">gray zone</small>' : ''}</li>`).join('');
+  // A horizontal strip, Pressure to Nuclear use. Rungs 0–1 are the gray zone: coercion below military action.
+  ol.innerHTML = P.ladder.map((l, i) => `<li class="${i === s.rung ? 'on' : i <= s.maxRung ? 'past' : ''}${i <= 1 ? ' gz' : ''}" style="--r:${i}"${i === s.rung ? ' aria-current="step"' : ''}><i>${i}</i><span>${i === 0 ? 'Pressure' : l}</span>${i <= 1 ? '<small class="k4-gz">gray zone</small>' : ''}</li>`).join('');
 }
 
 const TRACKS = [
@@ -125,10 +134,19 @@ const stack = v => P.types.map(t => `<span class="${t}" style="width:${(v[t] * 1
 const best = v => P.types.reduce((a, t) => (v[t] > v[a] ? t : a));
 export function paintIntel(div, views, theirs, player) {
   const rivals = IDS.filter(id => id !== player);
-  div.innerHTML = `<h3>Your read of them</h3>` + rivals.map(id => `<div class="k4-tb" style="--c:${COL[id]}"><span class="who">${COUNTRIES[id].short}</span> looks ${P.typeLabel[best(views[id])].toLowerCase()} (${Math.round(views[id][best(views[id])] * 100)}%)<div class="stack">${stack(views[id])}</div></div>`).join('')
-    + `<h3>What they seem to think of you</h3>` + rivals.map(id => `<div class="k4-tb" style="--c:${COL[id]}"><span class="who">${COUNTRIES[id].short}</span> reads you as ${P.typeLabel[best(theirs[id])].toLowerCase()}<div class="stack">${stack(theirs[id])}</div></div>`).join('')
-    + `<p class="k4-key"><span><i style="background:var(--bad)"></i>Resolute</span><span><i style="background:var(--good)"></i>Cautious</span><span><i style="background:var(--warn)"></i>Opportunist</span><span>Estimates are noisy.</span></p>`;
+  const cell = (v, pct) => `<div class="stack">${stack(v)}</div><small>${P.typeLabel[best(v)]}${pct ? ` ${Math.round(v[best(v)] * 100)}%` : ''}</small>`;
+  div.innerHTML = `<h3>Reading the others ${infoBtn(READS_TIP, 'How the reads work', 'How this works', 'k4-how')}</h3>
+    <table class="k4-reads"><caption class="sr-only">Your read of each rival's hidden type, and how each seems to read you</caption>
+    <thead><tr><th scope="col"><span class="sr-only">Capital</span></th><th scope="col">How they look to you</th><th scope="col">How they see you</th></tr></thead><tbody>`
+    + rivals.map(id => `<tr style="--c:${COL[id]}"><th scope="row">${COUNTRIES[id].short}</th><td>${cell(views[id], true)}</td><td>${cell(theirs[id], false)}</td></tr>`).join('')
+    + `</tbody></table><p class="k4-key"><span><i style="background:var(--bad)"></i>Resolute</span><span><i style="background:var(--good)"></i>Cautious</span><span><i style="background:var(--warn)"></i>Opportunist</span><span>Estimates are noisy.</span></p>`;
 }
+const READS_TIP = { title: 'Reading the others', lines: [
+  'Every capital has a hidden type: resolute, cautious or opportunist. Each bar splits the probability across the three.',
+  'How they look to you: your estimate of each rival’s type. How they see you: your guess of what each rival thinks you are.',
+  'Both update after every month by Bayes’ rule; costly moves and forward deployments say the most.',
+  'These reads also matter for a peace forum: a rival that thinks your aims are limited is likelier to accept.',
+], notes: [] };
 
 /** End screen: each rival's probability that the player is their true type, by month. */
 export function paintBeliefChart(root, series, player, trueType, months) {

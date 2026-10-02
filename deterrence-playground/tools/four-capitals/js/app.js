@@ -3,8 +3,11 @@ import { P } from '../data/params.js';
 import { COUNTRIES, IDS, defaultWeights } from '../data/countries.js';
 import { POSTURES, BY_ID, answers } from '../data/actions.js';
 import { AREA_LABEL } from '../data/theater.js';
+import { FBY, RES_LABEL } from '../data/formations.js';
 import { newGame, brief, resolveTurn, snapshot, encode, decode } from './engine.js';
-import { applyOrders, updateControl } from './forces.js';
+import { updateControl } from './forces.js';
+import { ledger } from './logistics.js';
+import { createTour } from './tour.js';
 import { paintDecide, wireDecide, emptyChoice } from './decide.js';
 import { makeRng, STREAM } from './rng.js';
 import { initBeliefs, updateBeliefs, chooseMove, intelView } from './ai.js';
@@ -72,8 +75,7 @@ function seenIn(st) {
 }
 /** The map shows your planned deployment before you commit. */
 function paintPlan() {
-  const t = JSON.parse(JSON.stringify(g.s));
-  applyOrders(t, g.player, g.choice.orders, g.choice.actions.reduce((n, id) => n + (BY_ID[id].deploy || 0), 0));
+  const t = (g.L || ledger(g.s, g.player, g.choice)).trial;
   updateControl(t);
   paintZones(t, seenIn(t));
 }
@@ -85,12 +87,13 @@ function paint() {
   paintLadder($('ladder'), s);
   paintTracks($('tracks'), s, g.before);
   paintCaps($('caps'), s, g.player);
-  paintTheatre(s); paintPlan();
+  paintTheatre(s);
   const views = Object.fromEntries(IDS.filter(w => w !== g.player).map(w => [w, intelView(g.B, s, g.player, w)]));
   const theirs = Object.fromEntries(IDS.filter(w => w !== g.player).map(w => [w, intelView(g.B, s, w, g.player)]));
   paintIntel($('intel'), views, theirs, g.player);
   paintFeed();
   paintDecide(g);
+  paintPlan();
   history.replaceState(null, '', '#g=' + encode(s));
 }
 const moveText = (m, w) => [POSTURES.find(p => p.id === m.posture).label + (m.actions.length ? '; ' : ''), m.actions.map(id => BY_ID[id].label.toLowerCase()).join('; ')].join('');
@@ -121,7 +124,7 @@ $('end-turn').addEventListener('click', async () => {
   g.s = next;
   show('play', 'resolve'); $('intel').hidden = $('feed').hidden = true; $('decide').hidden = true;
   $('res-t').textContent = `${month}: what happened`;
-  $('reveal').innerHTML = IDS.map(w => `<div class="k4-mv" style="--c:${COL[w]}"><b>${COUNTRIES[w].short}${w === g.player ? ' (you)' : ''}</b><span class="po">${POSTURES.find(p => p.id === moves[w].posture).label}</span><ul>${moves[w].actions.map(id => `<li>${BY_ID[id].label}${followText(id, moves[w].follow)}</li>`).join('') || '<li>No moves</li>'}</ul>${deployText(moves[w].orders)}</div>`).join('');
+  $('reveal').innerHTML = IDS.map(w => `<div class="k4-mv" style="--c:${COL[w]}"><b>${COUNTRIES[w].short}${w === g.player ? ' (you)' : ''}</b><span class="po">${POSTURES.find(p => p.id === moves[w].posture).label}</span><ul>${moves[w].actions.map(id => `<li>${BY_ID[id].label}${followText(id, moves[w].follow)}</li>`).join('') || '<li>No moves</li>'}</ul>${deployText(moves[w].orders)}${emphText(w, moves[w], log)}</div>`).join('');
   $('log').innerHTML = logHTML(log);
   paintLadder($('ladder'), g.s); paintTracks($('tracks'), g.s, g.before); paintCaps($('caps'), g.s, g.player); paintTheatre(g.s); paintZones(g.s, seenIn(g.s));
   $('play').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
@@ -132,14 +135,20 @@ $('end-turn').addEventListener('click', async () => {
 });
 
 const followText = (id, f) => { const a = BY_ID[id]; if (!a.follow) return ''; const o = answers(id, f?.[id]); return ' <span class="muted">(' + a.follow.map(q => q.opts.find(x => x.id === o[q.id]).label).join(', ') + ')</span>'; };
-const deployText = o => { const m = (o?.moves || []).filter(x => x[2] > 0); return m.length ? `<p class="fine">Forces: ${m.map(([f, t, n]) => `${n} ${AREA_LABEL[f]} → ${AREA_LABEL[t]}`).join('; ')}</p>` : ''; };
+const deployText = o => { const m = (o?.moves || []).filter(([id]) => FBY[id]); return m.length ? `<p class="fine">Forces: ${m.map(([id, t]) => FBY[id].type === 'strike' ? `${FBY[id].short} aimed at ${t === 'none' ? 'nothing' : 'the ' + AREA_LABEL[t]}` : `${FBY[id].short} → ${AREA_LABEL[t]}`).join('; ')}</p>` : ''; };
+/** China's landing coast shows once a landing or air-defence strike uses it; your own emphasis always shows to you. */
+const emphText = (w, m, log) => {
+  const used = w === 'cn' && log.some(l => l.who === 'cn' && (l.id === 'cn_landing' || (l.id === 'cn_strike' && l.o?.focus === 'airdef')) && l.status !== 'blocked');
+  const e = m.orders?.emph;
+  return e && (used || w === g.player) ? `<p class="fine">${w === 'cn' ? 'Landing' : w === 'tw' ? 'Reserve' : 'Fires'} emphasis: ${AREA_LABEL[e]}</p>` : '';
+};
 const verb = { success: 'Success', partial: 'Partial', failure: 'Failed', blocked: 'Could not be carried out' };
 function logHTML(log) {
   return log.map(l => {
     if (l.kind === 'note') return `<li class="note">${l.text}</li>`;
-    if (l.kind === 'battle') return `<li class="note battle">${l.text.replace(/\b(CN|US|JP)\b/g, m => ({ CN: 'China', US: 'U.S.', JP: 'Japan' }[m]))}</li>`;
+    if (l.kind === 'battle') return `<li class="note battle">${l.text.replace(/\b(CN|US|JP|TW)\b/g, m => ({ CN: 'China', US: 'U.S.', JP: 'Japan', TW: 'Taiwan' }[m]))}</li>`;
     if (l.kind === 'order') return l.who === g.player && !l.ok ? `<li style="--c:${COL[l.who]}">Your order ${l.text}</li>` : '';
-    if (l.kind === 'force') return `<li style="--c:${COL[l.who]}">${COUNTRIES[l.who].short}: ${l.text}</li>`;
+    if (l.kind === 'force') return l.short && l.who !== g.player ? '' : `<li style="--c:${COL[l.who]}">${COUNTRIES[l.who].short}: ${l.text}</li>`;
     if (l.kind === 'nukerisk') return `<li class="note">Nuclear risk this month: ${(l.p * 100).toFixed(1)}%.</li>`;
     if (l.kind === 'posture') return l.support ? `<li style="--c:${COL[l.who]}">${COUNTRIES[l.who].short} posture: ${POSTURES.find(p => p.id === l.posture).label}. <span class="fx">Home support ${l.support > 0 ? '+' : ''}${Math.round(l.support)}${l.who === g.player ? ' (your type’s cost)' : ''}</span></li>` : '';
     const a = BY_ID[l.id];
@@ -170,6 +179,7 @@ function finish() {
   $('parts').innerHTML = sc.parts.map(p => `<tr><td>${p.label}</td><td class="num">${p.value}</td><td class="muted">weight ${p.weight}</td></tr>`).join('');
   $('types').innerHTML = IDS.map(w => `<div style="--c:${COL[w]}"><b>${COUNTRIES[w].short}</b>: ${P.typeLabel[s.types[w]]}${w === me ? ' (you)' : ''}</div>`).join('');
   paintBeliefChart($('beliefs'), g.series, me, s.types[me], ['Start', ...s.history.map(h => P.months[h.turn].slice(0, 3))]);
+  $('end-logi').innerHTML = endLogi(s, me);
   $('end').focus();
   runBench(sc.total);
 }
@@ -189,18 +199,42 @@ function runBench(total) {
 }
 $('again').addEventListener('click', restart);
 $('new-game').addEventListener('click', restart);
-function restart() { g = null; pick = null; history.replaceState(null, '', location.pathname + location.search); paintSeats(); $('setup').hidden = true; show('start'); $('start').scrollIntoView({ block: 'start' }); }
+function restart() { g = null; pick = null; $('old-link').hidden = true; history.replaceState(null, '', location.pathname + location.search); paintSeats(); $('setup').hidden = true; show('start'); $('start').scrollIntoView({ block: 'start' }); }
 
 $('copy-link').addEventListener('click', async e => {
   try { await navigator.clipboard.writeText(location.href); e.target.textContent = 'Link copied'; } catch { e.target.textContent = 'Copy the address bar'; }
   setTimeout(() => { e.target.textContent = 'Copy link'; }, 1600);
 });
 
+/** Debrief: your formations from start to finish, resources left, the months each resource held you back, and landings. */
+function endLogi(s, me) {
+  const fm = s.units[me].map(u => { const f = FBY[u.id]; return `<tr><th scope="row">${f.name}</th><td class="num">${f.str}</td><td class="num">${+u.str.toFixed(1)}</td><td class="num">${u.ready}</td><td>${u.at === 'transit' ? 'In transit' : AREA_LABEL[u.at]}</td></tr>`; }).join('');
+  const b = s.binds[me], months = s.turn;
+  const held = ['lift', 'fuel', 'mun', 'ready'].map(k => `${RES_LABEL[k]} ${b[k]} of ${months}`).join(' · ');
+  const land = s.landings.length ? s.landings.map(l => `${P.months[l.turn]}: ${AREA_LABEL[l.sector].toLowerCase()}, ${l.m === 1 ? 'got ashore' : l.m === 0.5 ? 'a partial lodgement' : 'thrown back'}`).join('; ') : 'No landing was attempted.';
+  return `<div class="k4-scroll"><table class="k4-parts k4-endf"><caption class="sr-only">Your formations at the end</caption><thead><tr><th scope="col">Formation</th><th scope="col">Start</th><th scope="col">End</th><th scope="col">Readiness</th><th scope="col">Where</th></tr></thead><tbody>${fm}</tbody></table></div>
+    <p class="fine">Left at the end: fuel ${+s.res[me].fuel.toFixed(1)}, munitions ${+s.res[me].mun.toFixed(1)}. Months a resource held you back (an order or move you could not pay for, a stance that fell back, combat short of munitions, or a formation below 50 readiness): ${held}.</p>
+    <p class="fine"><b>Landings:</b> ${land}</p>`;
+}
+
+/* ---------- Walkthrough ---------- */
+const tour = createTour(() => {
+  if (!g) { pick = pick || 'us'; paintSeats(); paintWeights(); $('setup').hidden = false; $('begin').click(); $('type-go').click(); }
+  else if (g.s.over || !$('resolve').hidden) return false;
+  return true;
+});
+$('tour-btn').addEventListener('click', () => tour.start());
+
 /* ---------- Load: replay a shared link, or start fresh ---------- */
 function load() {
   const m = location.hash.match(/#g=([^&]+)/);
   const d = m && decode(decodeURIComponent(m[1]));
-  if (!d) { paintSeats(); show('start'); return; }
+  if (d && d.old) {
+    $('old-link').hidden = false;
+    $('old-link').textContent = 'That link is from an earlier version of Four Capitals (three moves a month, no logistics), so it cannot be replayed. Start a new game below.';
+    history.replaceState(null, '', location.pathname + location.search);
+  }
+  if (!d || d.old) { paintSeats(); show('start'); return; }
   begin(d);
   for (const mv of d.moves) {
     if (g.s.over) break;

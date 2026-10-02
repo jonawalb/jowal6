@@ -1,61 +1,104 @@
-// Forces on the theater board: orders, delayed arrivals, who holds each area, and monthly fighting.
-// Pure functions over the game state `s` (they mutate the draft passed in by the engine).
-import { SEA, AREAS, ISLAND, START_FORCES, LOGISTICS, START_STANCE, SIDE, WAR, moveCost, AREA_LABEL } from '../data/theater.js';
+// Formations on the theater board: orders, delayed arrivals, who holds each area, and monthly fighting.
+// Pure functions over the game state `s` (they mutate the draft passed in by the engine). The formations in
+// s.units are the truth; s.f[who][area] is a derived sum of raw strength kept for the moves and the map.
+import { SEA, AREAS, ISLAND, COAST, START_STANCE, START_EMPH, SIDE, WAR, moveCost, adjacent, AREA_LABEL } from '../data/theater.js';
+import { FORMATIONS, FBY, TYPES, UPKEEP, READY, placesFor, readyFactor } from '../data/formations.js';
 
 const IDS = ['us', 'tw', 'cn', 'jp'];
-const round1 = x => Math.round(x * 10) / 10;
-export const total = (s, who) => Object.values(s.f[who]).reduce((a, b) => a + b, 0);
-export const areasOf = who => (who === 'tw' ? ISLAND : AREAS);
+export const r2 = x => Math.round(x * 100) / 100;
+export const areasOf = who => (who === 'tw' ? [...ISLAND, ...SEA] : AREAS);
+export const total = (s, who) => r2(s.units[who].reduce((t, u) => t + u.str, 0));
+export const unit = (s, id) => s.units[FBY[id].who].find(u => u.id === id);
+/** Effective strength: raw strength scaled by readiness. */
+export const eff = u => u.str * readyFactor(u.ready);
 
 export function initForces(s) {
-  s.f = JSON.parse(JSON.stringify(START_FORCES));
-  s.stance = Object.fromEntries(IDS.map(w => [w, Object.fromEntries(areasOf(w).map(a => [a, START_STANCE[w]]))]));
+  s.units = Object.fromEntries(IDS.map(w => [w, FORMATIONS[w].map(f => ({ id: f.id, at: f.at, str: f.str, ready: 100, ...(f.focus ? { focus: f.focus } : {}) }))]));
+  s.stance = Object.fromEntries(IDS.map(w => [w, Object.fromEntries(SEA.map(a => [a, START_STANCE[w]]))]));
+  s.emph = { ...START_EMPH };
+  s.moved = {}; s.losses = {}; s.engaged = {};
+  syncF(s);
   s.fStart = Object.fromEntries(IDS.map(w => [w, total(s, w)]));
-  s.pending = [];
-  s.moved = {};
-  s.losses = {};
   updateControl(s);
 }
 
-/** Bring in U.S. points ordered out of the Rear last month. */
+/** Recompute s.f (raw strength per area) from the formations. */
+export function syncF(s) {
+  s.f = Object.fromEntries(IDS.map(w => [w, Object.fromEntries(areasOf(w).map(a => [a, 0]))]));
+  for (const w of IDS) for (const u of s.units[w]) if (u.at in s.f[w]) s.f[w][u.at] = r2(s.f[w][u.at] + u.str);
+}
+
+/** Bring in U.S. formations ordered out of the Rear last month. */
 export function arrive(s, log) {
-  for (const p of s.pending) {
-    s.f[p.who][p.to] = round1(s.f[p.who][p.to] + p.n);
-    log.push({ kind: 'force', who: p.who, text: `${p.n} point${p.n === 1 ? '' : 's'} arrived in the ${AREA_LABEL[p.to]}` });
+  for (const w of IDS) for (const u of s.units[w]) if (u.at === 'transit') {
+    u.at = u.to; delete u.to;
+    log.push({ kind: 'force', who: w, text: `${FBY[u.id].short} arrived in the ${AREA_LABEL[u.at]}` });
   }
-  s.pending = [];
+  syncF(s);
+}
+
+/** Why one order cannot be carried out (null if it can), and its Lift and fuel cost. */
+export function orderCheck(s, who, [id, to], res, done = {}) {
+  const f = FBY[id], u = f && f.who === who && unit(s, id);
+  if (!u) return { why: 'not your formation' };
+  if (done[id]) return { why: 'already has an order this month' };
+  if (f.type === 'strike') return SEA.includes(to) || to === 'none' ? { lift: 0, fuel: 0, aim: true } : { why: 'can only aim at a sea area' };
+  if (u.at === 'transit') return { why: 'still in transit' };
+  if (!placesFor(id).includes(to)) return { why: `cannot go to the ${AREA_LABEL[to] || to}` };
+  const c = moveCost(u.at, to);
+  if (c == null) return { why: 'not a route from where it is' };
+  const lift = c * TYPES[f.type].lift, fuel = UPKEEP.move;
+  if (res && res.lift < lift - 1e-9) return { why: 'not enough Lift', res: 'lift', lift, fuel };
+  if (res && res.fuel < fuel - 1e-9) return { why: 'not enough fuel', res: 'fuel', lift, fuel };
+  return { lift, fuel };
 }
 
 /**
- * Apply one capital's force orders. orders = { moves: [[from, to, n]], stance: { area: 'defend'|'contest'|'attack' } }.
- * Orders past the logistics budget are trimmed or refused with a reason; earlier valid orders stand.
+ * Apply one capital's force orders, paying from s.res[who]. orders = { moves: [[formationId, to]],
+ * stance: { seaArea: 'defend'|'contest'|'attack' }, emph: coastSector }. Unaffordable or illegal orders are
+ * refused with a reason; earlier orders stand. opts.fast: U.S. formations leaving the Rear arrive at once.
  */
-export function applyOrders(s, who, orders = {}, bonus = 0) {
-  const log = [];
-  let budget = LOGISTICS[who] + bonus;
+export function applyOrders(s, who, orders = {}, opts = {}) {
+  const log = [], res = s.res[who], done = {};
   s.moved[who] = {};
-  for (const [from, to, want] of orders.moves || []) {
-    const c = moveCost(from, to);
-    if (c == null) { log.push({ kind: 'order', who, ok: false, text: `${AREA_LABEL[from]} → ${AREA_LABEL[to]}: not a route` }); continue; }
-    const have = Math.floor(s.f[who][from] ?? 0);
-    const n = Math.min(want, have, Math.floor(budget / c));
-    if (n <= 0) { log.push({ kind: 'order', who, ok: false, text: `${AREA_LABEL[from]} → ${AREA_LABEL[to]}: ${have <= 0 ? 'no forces there' : 'not enough logistics'}` }); continue; }
-    budget -= n * c;
-    s.f[who][from] = round1(s.f[who][from] - n);
-    if (who === 'us' && from === 'rear') s.pending.push({ who, to, n });
-    else s.f[who][to] = round1(s.f[who][to] + n);
-    if (SEA.includes(to)) s.moved[who][to] = (s.moved[who][to] || 0) + n;
-    log.push({ kind: 'order', who, ok: true, text: `${n} point${n === 1 ? '' : 's'} ${AREA_LABEL[from]} → ${AREA_LABEL[to]}${who === 'us' && from === 'rear' ? ' (arrives next month)' : ''}${n < want ? ` (${want - n} short of logistics)` : ''}` });
+  for (const [id, to] of orders.moves || []) {
+    const c = orderCheck(s, who, [id, to], res, done);
+    const name = FBY[id]?.short || id;
+    if (c.why) { log.push({ kind: 'order', who, ok: false, res: c.res, text: `${name} → ${AREA_LABEL[to] || to}: ${c.why}` }); continue; }
+    done[id] = true;
+    const u = unit(s, id);
+    if (c.aim) { u.focus = to; log.push({ kind: 'order', who, ok: true, text: `${name} aimed at ${to === 'none' ? 'nothing' : 'the ' + AREA_LABEL[to]}` }); continue; }
+    res.lift = r2(res.lift - c.lift); res.fuel = r2(res.fuel - c.fuel);
+    const from = u.at;
+    if (who === 'us' && from === 'rear' && !opts.fast) { u.at = 'transit'; u.to = to; }
+    else u.at = to;
+    if (SEA.includes(to)) s.moved[who][to] = (s.moved[who][to] || 0) + u.str;
+    log.push({ kind: 'order', who, ok: true, text: `${name} ${AREA_LABEL[from]} → ${AREA_LABEL[to]}${u.at === 'transit' ? ' (arrives next month)' : ''}` });
   }
-  for (const [a, st] of Object.entries(orders.stance || {})) if (s.stance[who][a] && ['defend', 'contest', 'attack'].includes(st)) s.stance[who][a] = st;
-  return { log, left: budget };
+  for (const [a, st] of Object.entries(orders.stance || {})) if (SEA.includes(a) && ['defend', 'contest', 'attack'].includes(st)) s.stance[who][a] = st;
+  if (who in s.emph && COAST.includes(orders.emph)) s.emph[who] = orders.emph;
+  syncF(s);
+  return { log };
 }
 
-/** Strength of a side in a sea area (Taiwan's island forces count half in the Strait). */
-export function strength(s, side, area) {
-  const own = IDS.filter(w => SIDE[w] === side && w !== 'tw').reduce((t, w) => t + (s.f[w][area] || 0), 0);
-  return own + (side === 'blue' && area === 'strait' ? WAR.twStrait * total(s, 'tw') : 0);
+/** Everything that counts for a side in a sea area: formations there; Taiwan's island forces in the Strait;
+ * from Limited strikes up, air formations next door (half) and strike formations aimed there. */
+export function contributors(s, side, area) {
+  const out = [], war = s.rung >= 3;
+  for (const w of IDS) {
+    if (SIDE[w] !== side) continue;
+    for (const u of s.units[w]) {
+      if (u.str <= 0) continue;
+      const t = FBY[u.id].type;
+      if (u.at === area) out.push({ w, u, wt: 1, kind: 'here' });
+      else if (w === 'tw' && area === 'strait' && ISLAND.includes(u.at)) out.push({ w, u, wt: t === 'air' ? WAR.twAir : WAR.twLand, kind: 'coast' });
+      else if (war && t === 'air' && adjacent(u.at, area)) out.push({ w, u, wt: WAR.support, kind: 'support' });
+      else if (war && t === 'strike' && u.focus === area) out.push({ w, u, wt: 1, kind: 'strike' });
+    }
+  }
+  return out;
 }
+export const strength = (s, side, area) => contributors(s, side, area).reduce((t, c) => t + eff(c.u) * c.wt, 0);
 
 export function updateControl(s) {
   const hold = s.rung >= 3 ? WAR.warHold : WAR.peaceHold;
@@ -67,52 +110,84 @@ export function updateControl(s) {
 }
 export const holds = (s, area, side) => s.ctrl[area] === side;
 
-/** One month of fighting in every sea area where both sides are present and someone is fighting. */
-export function combat(s, rng, log) {
-  if (s.rung < 3) return;
-  for (const a of SEA) {
-    const sides = { red: ['cn'], blue: ['us', 'jp'] };
-    const present = side => sides[side].filter(w => (s.f[w][a] || 0) > 0);
-    if (!present('red').length || !present('blue').length) continue;
-    const st = w => s.stance[w][a];
-    const all = [...present('red'), ...present('blue')];
-    const fighting = all.some(w => st(w) === 'attack') || (present('red').some(w => st(w) !== 'defend') && present('blue').some(w => st(w) !== 'defend'));
-    if (!fighting) continue;
-    const dealt = side => present(side).reduce((t, w) => t + s.f[w][a] * (WAR[st(w)]?.dealt ?? 1), 0) + (side === 'blue' && a === 'strait' ? WAR.twStrait * total(s, 'tw') : 0);
-    const dmg = { red: dealt('blue'), blue: dealt('red') };
-    const parts = [];
-    for (const side of ['red', 'blue']) {
-      const ps = present(side), str = ps.reduce((t, w) => t + s.f[w][a], 0);
-      for (const w of ps) {
-        const loss = Math.min(s.f[w][a], WAR.k * dmg[side] * (s.f[w][a] / str) * (WAR[st(w)]?.taken ?? 1) * (0.7 + 0.6 * rng.u()));
-        s.f[w][a] = round1(s.f[w][a] - loss);
-        s.losses[w] = (s.losses[w] || 0) + loss;
-        parts.push(`${w.toUpperCase()} −${loss.toFixed(1)}`);
-      }
-    }
-    log.push({ kind: 'battle', area: a, text: `Fighting in the ${AREA_LABEL[a]}: ${parts.join(', ')}` });
-  }
+/** Munitions a capital's contributors in one fight need this month. */
+export const munNeed = (list, st) => list.reduce((t, c) => t + (c.kind === 'strike' ? UPKEEP.mun.strike : c.kind === 'support' ? UPKEEP.mun.support : c.kind === 'coast' ? UPKEEP.mun.coast : UPKEEP.mun[st]), 0);
+/** Will this sea area see fighting this month, given both sides' stances? */
+export function fights(s, a, con = { red: contributors(s, 'red', a), blue: contributors(s, 'blue', a) }) {
+  if (s.rung < 3) return false;
+  const here = side => [...new Set(con[side].filter(c => c.kind === 'here').map(c => c.w))];
+  if (!here('red').length || !here('blue').length) return false;
+  const st = w => s.stance[w][a];
+  return [...here('red'), ...here('blue')].some(w => st(w) === 'attack') || (here('red').some(w => st(w) !== 'defend') && here('blue').some(w => st(w) !== 'defend'));
 }
 
-/** Military track = share of starting force points left. */
+/** One month of fighting in every sea area where both sides have forces and someone is fighting. Pays munitions. */
+export function combat(s, rng, log) {
+  if (s.rung < 3) return;
+  s.short = s.short || {};
+  for (const a of SEA) {
+    const con = { red: contributors(s, 'red', a), blue: contributors(s, 'blue', a) };
+    if (!fights(s, a, con)) continue;
+    const st = w => s.stance[w][a];
+    const munF = {};
+    for (const w of new Set([...con.red, ...con.blue].map(c => c.w))) {
+      const need = munNeed([...con.red, ...con.blue].filter(c => c.w === w), st(w)), pay = Math.min(need, s.res[w].mun);
+      s.res[w].mun = r2(s.res[w].mun - pay);
+      munF[w] = need > 0 ? Math.max(WAR.noMun, pay / need) : 1;
+      if (pay < need - 1e-9) (s.short[w] = s.short[w] || {}).mun = true;
+    }
+    const dealt = side => con[side].reduce((t, c) => t + eff(c.u) * c.wt * (WAR[st(c.w)]?.dealt ?? 1) * munF[c.w], 0);
+    const dmg = { red: dealt('blue'), blue: dealt('red') };
+    const lost = {};
+    for (const side of ['red', 'blue']) {
+      const wts = con[side].map(c => eff(c.u) * c.wt * (c.kind === 'strike' ? WAR.strikeTaken : 1)), sum = wts.reduce((x, y) => x + y, 0) || 1;
+      con[side].forEach((c, i) => {
+        const loss = Math.min(c.u.str, WAR.k * dmg[side] * (wts[i] / sum) * (WAR[st(c.w)]?.taken ?? 1) * (0.7 + 0.6 * rng.u()));
+        c.u.str = r2(c.u.str - loss);
+        s.losses[c.w] = (s.losses[c.w] || 0) + loss; lost[c.w] = (lost[c.w] || 0) + loss;
+        s.engaged[c.u.id] = true;
+      });
+    }
+    log.push({ kind: 'battle', area: a, text: `Fighting in the ${AREA_LABEL[a]}: ${Object.entries(lost).map(([w, x]) => `${w.toUpperCase()} −${x.toFixed(1)}`).join(', ')}` });
+  }
+  syncF(s);
+}
+
+/** Military track = share of starting strength left. */
 export function syncMilitary(s) {
   for (const w of IDS) s.c[w].military = Math.max(0, Math.min(100, Math.round(100 * total(s, w) / s.fStart[w])));
 }
 
-/** Damage a capital's forces in one area (strikes). Returns points removed. */
-export function hit(s, who, area, n) {
-  const have = s.f[who][area] || 0, loss = Math.min(have, n);
-  s.f[who][area] = round1(have - loss);
-  s.losses[who] = (s.losses[who] || 0) + loss;
+/** Damage a capital's formations in one area (strikes), spread by strength; `type` limits it to one kind. */
+export function hit(s, who, area, n, type) {
+  const list = s.units[who].filter(u => u.at === area && u.str > 0 && (!type || FBY[u.id].type === type));
+  const have = list.reduce((t, u) => t + u.str, 0), loss = Math.min(have, n);
+  for (const u of list) u.str = r2(u.str - loss * u.str / have);
+  if (loss > 0) s.losses[who] = (s.losses[who] || 0) + loss;
+  syncF(s);
   return loss;
 }
 
-/** How forward and massed a capital's deployment was this month (adds to the move's intensity). */
-export function deployIntensity(s, who, orders) {
+/** Add strength in an area (reserves called up, arms arriving): to the largest formation there, else the reserve. */
+export function addStr(s, who, area, n) {
+  const pick = l => l.sort((x, y) => y.str - x.str)[0];
+  const u = pick(s.units[who].filter(x => x.at === area && FBY[x.id].type !== 'strike')) || pick(s.units[who].filter(x => x.at === 'res' || x.at === 'rear'));
+  if (u) u.str = r2(u.str + n);
+  syncF(s);
+}
+
+/** Change readiness of a capital's formations (all, or those matching `where`). */
+export function shiftReady(s, who, d, where) {
+  for (const u of s.units[who]) if (!where || where(u)) u.ready = Math.round(Math.max(READY.floor, Math.min(100, u.ready + d)));
+}
+
+/** How forward and massed a deployment reads (adds to the move's intensity): uses starting strengths, so it
+ * needs no game state. */
+export function deployIntensity(orders) {
   orders = orders || {};
   let x = 0;
   const into = {};
-  for (const [from, to, n] of orders.moves || []) if (SEA.includes(to)) into[to] = (into[to] || 0) + n;
+  for (const [id, to] of orders.moves || []) if (SEA.includes(to) && FBY[id] && FBY[id].type !== 'strike') into[to] = (into[to] || 0) + FBY[id].str;
   for (const n of Object.values(into)) if (n >= WAR.massing) x += 1;
   for (const st of Object.values(orders.stance || {})) if (st === 'attack') x += 0.5;
   return x;

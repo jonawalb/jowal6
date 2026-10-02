@@ -22,7 +22,10 @@ function label(id) {
   return same.length > 1 ? `${name} ${same.indexOf(n) + 1}` : name;
 }
 
+// The board as it was last loaded (a preset, the blank board or a shared link): what "Reset all" returns to.
+let start = null;
 function load({ sc, nodes, links, dead = [] }, preset = null) {
+  start = { snap: { sc: { ...sc }, nodes: nodes.map(n => ({ ...n })), links: links.map(l => [...l]), dead: [...dead] }, preset };
   S.sc = { ...sc };
   S.nodes = nodes.map((n, i) => ({ ...n, id: i }));
   S.links = links.map(l => [...l]);
@@ -48,6 +51,16 @@ const api = {
   loadPreset(key) {
     if (key === 'blank') load({ sc: { ...S.sc }, nodes: [], links: [] }, 'blank');
     else load(PRESETS[key], key);
+    api.update();
+  },
+  startName() {
+    if (!start || start.preset === 'blank') return 'blank board';
+    return start.preset && PRESETS[start.preset] ? PRESETS[start.preset].name : 'the chain you opened';
+  },
+  resetAll(blank) {
+    if (blank) { const keep = start; load({ sc: { ...S.sc }, nodes: [], links: [] }, 'blank'); start = keep; }
+    else { const { snap, preset } = start; load(snap, preset); }
+    api.msg = blank ? 'Board cleared.' : `Back to ${api.startName()}.`;
     api.update();
   },
   addNode(type, x, y) {

@@ -16,6 +16,14 @@ export function createPanel(root, api) {
     <div class="choices" id="kc-presets">${Object.entries(PRESETS).map(([k, p]) =>
       `<button type="button" data-p="${k}" title="${escapeHtml(p.blurb)}">${p.name}</button>`).join('')}
       <button type="button" data-p="blank">Blank board</button></div>
+    <div class="btnrow kc-reset">
+      <button type="button" class="btn" id="kc-reset" aria-expanded="false" aria-controls="kc-reset-opts">Reset all</button>
+      <span id="kc-reset-opts" hidden>
+        <button type="button" class="btn" id="kc-reset-start"></button>
+        <button type="button" class="btn" id="kc-reset-blank">Clear to a blank board</button>
+        <button type="button" class="btn" id="kc-reset-no">Cancel</button>
+      </span>
+    </div>
   </div>
   <div class="sec">
     <p class="eyebrow">Target</p>
@@ -60,6 +68,14 @@ export function createPanel(root, api) {
   root.querySelectorAll('[data-strike]').forEach(b => b.onclick = () => api.strike(+b.dataset.strike));
   $('#kc-choose').onclick = () => { S.choose = !S.choose; api.update(); };
   $('#kc-restore').onclick = () => api.restore();
+  const resetOpen = open => {
+    $('#kc-reset-opts').hidden = !open; $('#kc-reset').setAttribute('aria-expanded', open);
+    if (open) { $('#kc-reset-start').textContent = `Back to start: ${api.startName()}`; $('#kc-reset-start').focus(); }
+  };
+  $('#kc-reset').onclick = () => resetOpen($('#kc-reset-opts').hidden);
+  $('#kc-reset-start').onclick = () => { resetOpen(false); api.resetAll(false); };
+  $('#kc-reset-blank').onclick = () => { resetOpen(false); api.resetAll(true); };
+  $('#kc-reset-no').onclick = () => resetOpen(false);
   let inspKey = '';
 
   function render(r, spof, r0) {

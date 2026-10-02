@@ -167,3 +167,6 @@
 :root[data-skin="trailer"] .impact.in { filter: drop-shadow(0 0 5px rgba(111, 191, 139, .8)); }
 :root[data-skin="trailer"] .impact.out { filter: drop-shadow(0 0 5px rgba(232, 96, 74, .8)); }
 :root[data-skin="trailer"] .tour { background: color-mix(in srgb, var(--panel) 94%, transparent); box-shadow: 0 22px 50px -24px #000; }
+/* Reset all: the two choices open inline next to the button. */
+.kc-reset { margin-top: 8px; }
+#kc-reset-opts:not([hidden]) { display: contents; }

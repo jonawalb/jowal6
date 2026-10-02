@@ -36,33 +36,38 @@ export function drawTheatre(root) {
   layer = el('g', {}, svg);
 }
 
-/** Zones with each side's strength. seen(who, area) returns [value, exact]. */
-export function paintZones(s, seen) {
+/** Zones with each side's strength. see(who, area) returns null, { exact, v } or a range { lo, hi } (js/fog-panel.js). */
+export function paintZones(s, see) {
   if (!zones) return;
   zones.innerHTML = '';
   const fill = { red: 'var(--k-cn)', blue: 'var(--k-us)', contested: 'var(--warn)', empty: 'transparent' };
+  const label = r => (r.exact ? String(r.v < 1 ? +r.v.toFixed(1) : Math.round(r.v)) : `${r.lo}–${r.hi}`);
   for (const [a, [x, y]] of Object.entries(ZONE)) {
     const c = s.ctrl[a];
     el('ellipse', { cx: x, cy: y, rx: 58, ry: 34, fill: fill[c], 'fill-opacity': c === 'empty' ? 0 : 0.1, stroke: c === 'contested' ? 'var(--warn)' : fill[c] === 'transparent' ? 'var(--muted)' : fill[c], 'stroke-dasharray': '5 4', 'stroke-opacity': 0.8 }, zones);
     el('text', { x, y: y - 12, 'font-size': 11, 'font-weight': 700, 'text-anchor': 'middle', fill: 'var(--ink)', 'letter-spacing': '.08em' }, zones).textContent = { north: 'NORTH', strait: 'STRAIT', south: 'SOUTH', east: 'EAST' }[a];
-    const parts = [['cn', 'var(--k-cn)'], ['us', 'var(--k-us)'], ['jp', 'var(--k-jp)'], ['tw', 'var(--k-tw)']].map(([w, col]) => [w, col, ...seen(w, a)]).filter(([, , v]) => v > 0);
-    const gap = parts.length > 3 ? 29 : 38;
-    let dx = x - (parts.length - 1) * gap / 2;
-    for (const [w, col, v, exact] of parts) {
-      el('circle', { cx: dx, cy: y + 8, r: 13, fill: col, stroke: 'var(--panel)', 'stroke-width': 1.5 }, zones);
-      el('text', { x: dx, y: y + 12, 'font-size': 11, 'font-weight': 700, 'text-anchor': 'middle', fill: '#fff' }, zones).textContent = (exact ? '' : '~') + (v < 1 ? +v.toFixed(1) : Math.round(v));
-      dx += gap;
-    }
+    // Exact strengths as discs; ranges (fog of war) as dashed pills.
+    const parts = [['cn', 'var(--k-cn)'], ['us', 'var(--k-us)'], ['jp', 'var(--k-jp)'], ['tw', 'var(--k-tw)']].map(([w, col]) => [w, col, see(w, a)]).filter(([, , r]) => r);
+    const wd = parts.map(([, , r]) => (r.exact ? 26 : 8 + 6.4 * label(r).length));
+    let dx = x - (wd.reduce((t, v) => t + v, 0) + 3 * (parts.length - 1)) / 2;
+    parts.forEach(([w, col, r], i) => {
+      const cx = dx + wd[i] / 2;
+      if (r.exact) el('circle', { cx, cy: y + 8, r: 13, fill: col, stroke: 'var(--panel)', 'stroke-width': 1.5 }, zones);
+      else el('rect', { x: dx, y: y - 4, width: wd[i], height: 24, rx: 12, fill: col, 'fill-opacity': 0.72, stroke: 'var(--panel)', 'stroke-width': 1.5, 'stroke-dasharray': '3 2' }, zones);
+      el('text', { x: cx, y: y + 12, 'font-size': 11, 'font-weight': 700, 'text-anchor': 'middle', fill: '#fff' }, zones).textContent = label(r);
+      dx += wd[i] + 3;
+    });
     el('text', { x, y: y + 33, 'font-size': 10, 'text-anchor': 'middle', fill: 'var(--muted)' }, zones).textContent = c === 'red' ? 'China holds' : c === 'blue' ? 'Coalition holds' : c === 'contested' ? 'Contested' : '';
   }
   const [tx, ty] = AT.tw;
   // Taiwan's coast: four landing sectors and the inland reserve, with the strength you can see in each.
+  const tv = a => see('tw', a) || { exact: true, v: 0 };
   const t = el('text', { x: tx, y: ty + 58, 'font-size': 10.5, fill: 'var(--k-tw)', 'font-weight': 600, 'text-anchor': 'middle' }, zones);
-  t.textContent = ISLAND.map(a => { const [v, e] = seen('tw', a); return `${AREA_SHORT[a]} ${e ? '' : '~'}${+v.toFixed(1)}`; }).join(' · ');
-  const tt = el('title', {}, t); tt.textContent = ISLAND.map(a => `${AREA_LABEL[a]}: ${+seen('tw', a)[0].toFixed(1)}`).join('; ');
+  t.textContent = ISLAND.map(a => `${AREA_SHORT[a]} ${label(tv(a))}`).join(' · ');
+  const tt = el('title', {}, t); tt.textContent = ISLAND.map(a => `${AREA_LABEL[a]}: ${label(tv(a))}`).join('; ');
   for (const [a, dx, dy] of [['nw', -14, -26], ['cw', -16, 0], ['sw', -10, 28], ['ec', 14, 6]]) {
-    const v = seen('tw', a)[0];
-    el('circle', { cx: tx + dx, cy: ty + dy, r: 3 + Math.min(4, v * 1.5), fill: 'var(--k-tw)', 'fill-opacity': v > 0 ? 0.75 : 0.15, stroke: 'var(--panel)', 'stroke-width': 1 }, zones);
+    const r = tv(a), v = r.exact ? r.v : (r.lo + r.hi) / 2;
+    el('circle', { cx: tx + dx, cy: ty + dy, r: 3 + Math.min(4, v * 1.5), fill: 'var(--k-tw)', 'fill-opacity': v > 0 ? 0.75 : 0.15, stroke: 'var(--panel)', 'stroke-width': 1, ...(r.exact ? {} : { 'stroke-dasharray': '2 1.5' }) }, zones);
   }
 }
 
@@ -91,7 +96,8 @@ export async function animateMoves(who, actions, log) {
 }
 
 export function paintLadder(ol, s) {
-  ol.innerHTML = P.ladder.map((l, i) => `<li class="${i === s.rung ? 'on' : i <= s.maxRung ? 'past' : ''}" style="--r:${i}"><i>${i}</i>${l}</li>`).join('');
+  // Rungs 0–1 are the gray zone: coercion below military action (coast guard, militia, cables, cyber).
+  ol.innerHTML = P.ladder.map((l, i) => `<li class="${i === s.rung ? 'on' : i <= s.maxRung ? 'past' : ''}" style="--r:${i}"><i>${i}</i>${i === 0 ? 'Pressure' : l}${i <= 1 ? ' <small class="k4-gz">gray zone</small>' : ''}</li>`).join('');
 }
 
 const TRACKS = [

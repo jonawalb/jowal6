@@ -2,11 +2,14 @@
 // forward to lean (from its hidden type and the crisis), moves whole formations toward target strengths within its
 // Lift and fuel, rotates worn-out formations home, sets stances it can fuel, aims strike forces, and picks a
 // landing or defensive emphasis by a noisy best guess (China mixes its choice so Taiwan cannot read it for sure).
-import { SEA, COAST, SECTOR_SEA, SECTOR_VALUE, moveCost } from '../data/theater.js';
+// It sees rival forces through the same fog as the player (js/fog.js): the middle of each range, shifted by any
+// deception, exact only where it has surveillance or forces in contact.
+import { SEA, COAST, SECTOR_SEA, SECTOR_VALUE, SIDE, moveCost } from '../data/theater.js';
 import { FBY, UPKEEP, placesFor } from '../data/formations.js';
-import { strength, eff, orderCheck } from './forces.js';
+import { eff, orderCheck } from './forces.js';
 import { opening } from './engine.js';
-import { landingWhy, defence } from './landing.js';
+import { landingWhy, defence, LAND } from './landing.js';
+import { estStrength, estDefence } from './fog.js';
 import { makeRng, STREAM } from './rng.js';
 
 function lean(s, who) {
@@ -50,10 +53,10 @@ function plan(s, who, targets, budget, keepFuel, limits = {}, full = budget) {
 
 /** Stances by type and crisis, then stepped down (least important areas first) until the fuel and munitions last. */
 function stances(s, who, k, budget, order) {
-  const war = s.rung >= 3, side = who === 'cn' ? 'red' : 'blue', foe = side === 'red' ? 'blue' : 'red';
+  const war = s.rung >= 3, side = SIDE[who], foe = side === 'red' ? 'blue' : 'red';
   const st = {};
   for (const a of SEA) if (s.units[who].some(u => u.at === a && u.str > 0) || (s.f[who][a] || 0) > 0) {
-    const ratio = strength(s, side, a) / Math.max(0.1, strength(s, foe, a));
+    const ratio = estStrength(s, who, side, a) / Math.max(0.1, estStrength(s, who, foe, a));
     st[a] = war ? (k >= 0.9 && ratio >= (who === 'cn' ? 1.2 : 1.3) && s.res[who].mun >= 2 ? 'attack' : k >= 0.5 ? 'contest' : 'defend') : k >= 0.5 ? 'contest' : 'defend';
   }
   const fuelFor = () => s.units[who].filter(u => u.str > 0 && st[u.at]).reduce((t, u) => t + UPKEEP.fuel[st[u.at]], 0);
@@ -69,8 +72,8 @@ function pickSector(s, who, score, temp, salt) {
   const sc = COAST.map(score), mx = Math.max(...sc);
   return COAST[r.pick(sc.map(x => Math.exp((x - mx) / temp)))];
 }
-/** Where China would land, as China sees it: valuable, reachable, thinly held coasts. */
-const cnScore = s => x => SECTOR_VALUE[x] / 10 - (landingWhy(s, x) ? 4 : 0) - 1.2 * defence(s, x);
+/** Where China would land, as China sees it: valuable, reachable, thinly held coasts (defenders as estimated). */
+const cnScore = s => x => SECTOR_VALUE[x] / 10 - (landingWhy(s, x) ? 4 : 0) - 1.2 * estDefence(s, 'cn', x, LAND.reserve);
 /** Where Taiwan and the U.S. expect a landing: valuable coasts China can reach, and where its strikes fell last month. */
 const guessScore = s => x => SECTOR_VALUE[x] / 10 + (SECTOR_SEA[x].some(a => s.ctrl[a] === 'red') ? 1.5 : -2) - 0.4 * defence(s, x) + (s.shownEmph === x ? 1.5 : 0);
 
@@ -80,7 +83,7 @@ export function forceOrders(s, who, budget) {
   const F = { ...(budget || { lift: s.res[who].lift, fuel: s.res[who].fuel }) }, B = { ...F };
   B.lift = Math.round(B.lift * (0.5 + 0.5 * k) * 2) / 2;      // cautious capitals spend under three quarters of their Lift
   const keepFuel = Math.min(B.fuel, 0.5 * s.units[who].filter(u => SEA.includes(u.at)).length);
-  const red = a => strength(s, 'red', a), blue = a => strength(s, 'blue', a);
+  const red = a => estStrength(s, who, 'red', a), blue = a => estStrength(s, who, 'blue', a);
   const out = { moves: [], stance: {}, limits: {} };
   if (who === 'tw') {
     // Reserve emphasis on the coast it expects; a cautious Taipei also pulls the Marines up to the capital's coast.

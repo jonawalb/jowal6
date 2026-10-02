@@ -62,26 +62,36 @@
     <button type="button" class="btn solid" id="type-go">Go to March</button>
   </section>
 
-  <section class="k4-play" id="play" hidden>
+  <section class="k4-play" id="play" data-tab="move" hidden>
     <div class="card k4-bar">
       <p class="k4-month"><b id="month"></b> <span class="muted" id="turnof"></span></p>
       <p class="k4-event" id="event"></p>
+      <div class="k4-viewsw"><span class="k4-viewhint" id="view-hint" hidden>First game? Try</span><span class="k4-seg2" role="group" aria-label="View">
+        <button type="button" data-view="simple" aria-pressed="false">Simple</button><button type="button" data-view="detailed" aria-pressed="true">Detailed</button></span></div>
       <button type="button" class="btn solid" id="end-turn">End month</button>
     </div>
+    <div class="k4-ptabs" role="tablist" aria-label="Show">
+      <button type="button" role="tab" id="pt-map" data-ptab="map" aria-selected="false" aria-controls="pane-map">Map</button>
+      <button type="button" role="tab" id="pt-move" data-ptab="move" aria-selected="true" aria-controls="decide">Your move</button>
+      <button type="button" role="tab" id="pt-sit" data-ptab="sit" aria-selected="false" aria-controls="crisis">Situation</button>
+    </div>
     <div class="k4-grid">
-      <aside class="card k4-state" aria-label="The crisis">
-        <p class="eyebrow">Escalation</p>
-        <ol class="k4-ladder" id="ladder"></ol>
-        <p class="eyebrow mt">Shared tracks</p>
-        <div id="tracks"></div>
-        <p class="eyebrow mt">Capitals</p>
-        <table class="k4-caps" id="caps"></table>
-      </aside>
       <div class="k4-centre">
-        <div class="card k4-theatre"><svg id="theatre" viewBox="0 0 640 400" role="img" aria-label="Schematic of the four capitals"></svg></div>
-        <div class="card k4-fog" id="fog"></div>
-        <div class="card k4-intel" id="intel"></div>
-        <div class="card k4-feed" id="feed" aria-live="polite"></div>
+        <div class="card k4-theatre" id="pane-map" data-pane="map">
+          <div class="k4-mapwrap"><svg id="theatre" viewBox="0 0 640 400" role="group" aria-label="Schematic of the four capitals and the four sea areas"></svg>
+            <div class="k4-pop" id="area-pop" role="dialog" aria-modal="false" hidden></div></div>
+          <div class="k4-fog" id="fog"></div>
+        </div>
+        <section class="card k4-crisis" id="crisis" data-pane="sit" aria-labelledby="crisis-t">
+          <h2 class="k4-h" id="crisis-t">State of the crisis</h2>
+          <div class="k4-ladw"><p class="k4-sub">Escalation ladder</p><ol class="k4-ladder" id="ladder"></ol></div>
+          <div class="k4-crisis2">
+            <div><p class="k4-sub">Shared tracks</p><div class="k4-tracks" id="tracks"></div></div>
+            <div><p class="k4-sub">Capitals</p><table class="k4-caps" id="caps"></table></div>
+          </div>
+        </section>
+        <div class="card k4-intel" id="intel" data-pane="sit"></div>
+        <div class="card k4-feed" id="feed" data-pane="sit" aria-live="polite"></div>
     <section class="card k4-resolve" id="resolve" hidden aria-labelledby="res-t" tabindex="-1">
       <h2 id="res-t"></h2>
       <div class="k4-reveal" id="reveal"></div>
@@ -90,19 +100,27 @@
       <button type="button" class="btn solid" id="next">Continue</button>
     </section>
       </div>
-      <section class="card k4-decide" id="decide" aria-labelledby="dec-t">
-        <h2 id="dec-t">Your move</h2>
-        <p class="eyebrow">Posture</p>
-        <div class="k4-postures" id="postures" role="radiogroup" aria-label="Posture"></div>
-        <p class="k4-pexp fine" id="pexp"></p>
-        <p class="k4-home fine" id="home" aria-live="polite"></p>
-        <div class="k4-logiw" id="logi-wrap"><div id="logi"></div><p class="fine k4-logi-sum" id="logi-sum" aria-live="polite"></p></div>
-        <div class="k4-lineh"><p class="eyebrow">Moves <span class="muted" id="count">0 of 4</span></p>
-          <div class="k4-tabs" role="tablist" id="tabs"></div></div>
-        <div class="k4-actlist" id="actions" role="group" aria-label="Moves"></div>
-        <p class="fine">Tap or hover the <span class="k4-ieg" aria-hidden="true">i</span> beside a move’s % to see how it is worked out. Odds assume the others repeat last month; they are recalculated, with what everyone actually did, when the month resolves. Choosing a move again next month costs −15. <b>Opportunity</b> moves appear only while their condition holds; <b>Once a game</b> moves are marked USED after you carry them out.</p>
-        <div class="k4-forces" id="forces"></div>
-        <div class="k4-openw" id="logi-open"></div>
+      <section class="card k4-decide" id="decide" data-pane="move" aria-labelledby="dec-t">
+        <h2 class="k4-h" id="dec-t">Your move</h2>
+        <div class="k4-steps" role="tablist" aria-label="Your move, step by step" id="steps"></div>
+        <div class="k4-step" role="tabpanel" id="step-1" aria-labelledby="st-1">
+          <h3 class="k4-sh" tabindex="-1">Step 1 · Posture</h3>
+          <div class="k4-postures" id="postures" role="radiogroup" aria-label="Posture"></div>
+          <p class="k4-pexp fine" id="pexp"></p>
+          <p class="k4-home fine" id="home" aria-live="polite"></p>
+        </div>
+        <div class="k4-step" role="tabpanel" id="step-2" aria-labelledby="st-2" hidden>
+          <div class="k4-lineh"><h3 class="k4-sh" tabindex="-1">Step 2 · Moves <span class="muted" id="count">0 of 4</span> <span id="moves-how"></span></h3>
+            <div class="k4-tabs" role="tablist" aria-label="Lines of effort" id="tabs"></div></div>
+          <div class="k4-actlist" id="actions" role="group" aria-label="Moves"></div>
+        </div>
+        <div class="k4-step" role="tabpanel" id="step-3" aria-labelledby="st-3" hidden>
+          <div class="k4-lineh"><h3 class="k4-sh" tabindex="-1">Step 3 · Forces <span id="forces-how"></span></h3><span class="k4-left num" id="left-count" aria-live="polite"></span></div>
+          <div class="k4-logiw" id="logi-wrap"><div id="logi"></div></div>
+          <p class="fine k4-logi-sum" id="logi-sum" aria-live="polite"></p>
+          <div class="k4-forces" id="forces"></div>
+        </div>
+        <div class="k4-stepnav"><button type="button" class="btn" id="step-back">Back</button><button type="button" class="btn solid" id="step-next">Next</button></div>
       </section>
     </div>
   </section>

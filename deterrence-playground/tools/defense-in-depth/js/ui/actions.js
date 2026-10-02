@@ -101,7 +101,7 @@ export function battleTap(sec) {
     case 'riposte': {
       if (!one) break;
       const r = go({ kind: 'riposte', unit: one.id, sec });
-      msg = r.ok ? `Riposte: ${nm(one)} counterattacks ${place(sec)} ${r.d ? `at ${hhmm(g.t + r.d)}` : 'this hour'}.` : `No riposte${why(r)}: tap a fresh lodgment next to it.`;
+      msg = r.ok ? `Local counterattack: ${nm(one)} strikes ${place(sec)} ${r.d ? `at ${hhmm(g.t + r.d)}` : 'this hour'}.` : `No local counterattack${why(r)}: tap a fresh lodgment next to it.`;
       break;
     }
     case 'cs': case 'cs-pick': {
@@ -109,7 +109,7 @@ export function battleTap(sec) {
       const secs = new Set(t.secs || []);
       if (secs.has(sec)) secs.delete(sec); else secs.add(sec);
       S.tool = { kind: 'cs-pick', secs: [...secs] };
-      msg = `${secs.size} target${secs.size === 1 ? '' : 's'} picked for the counterstroke. Press <b>Launch counterstroke</b> in the panel.`;
+      msg = `${secs.size} target${secs.size === 1 ? '' : 's'} picked for the deliberate counterattack. Press <b>Launch counterattack</b> in the panel.`;
       break;
     }
     case 'breach': {
@@ -160,9 +160,9 @@ export function battleTap(sec) {
 export function launchCounterstroke() {
   const g = S.g, t = S.tool;
   const fmn = S.selFmn || (S.sel.length && unitOf(S.sel[0]) && Object.values(g.fmns).find(f => f.cs && f.units.includes(S.sel[0]))?.id);
-  if (!fmn || !t || !t.secs || !t.secs.length) { say('Pick the counterstroke formation, then tap one or more lodgments.'); return; }
+  if (!fmn || !t || !t.secs || !t.secs.length) { say('Pick the counterattack force, then tap one or more lodgments.'); return; }
   const r = issue(g, { kind: 'counterstroke', fmn, secs: t.secs, h: g.t });
-  say(r.ok ? `Counterstroke ordered: <b>${esc(g.fmns[fmn].name)}</b> strikes at ${hhmm(r.h)} after its planning time, with its own supporting fire.` : `No counterstroke${why(r)}.`);
+  say(r.ok ? `Deliberate counterattack ordered: <b>${esc(g.fmns[fmn].name)}</b> strikes at ${hhmm(r.h)} after its planning time, with its own supporting fire.` : `No deliberate counterattack${why(r)}.`);
   S.tool = null;
   S.ui.saved && S.ui.saved();
   redraw();

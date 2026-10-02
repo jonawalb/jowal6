@@ -214,7 +214,7 @@ export const TIP_TOPICS = {
 
 const ORDERS = {
   def: {
-    w: 'Orders reach units by runner and telephone: most start next hour. Ripostes go in the hour you order them (in a campaign, once your army has learned that authority). Gas shells mark a sector for 3 hours: men there are masked and slowed, on both sides. Until you order them, standing orders (see the panel when nothing is selected) launch your counterattack formation into a lodgment inside its window, move idle companies to block, and fire your guns; switch any of them off to do that job yourself.',
+    w: 'Orders reach units by runner and telephone: most start next hour. Local counterattacks (ripostes) go in the hour you order them (in a campaign, once your army has learned that authority). Gas shells mark a sector for 3 hours: men there are masked and slowed, on both sides. Until you order them, standing orders (see the panel when nothing is selected) launch your counterattack formation into a lodgment inside its window, move idle companies to block, and fire your guns; switch any of them off to do that job yourself.',
     m: 'Orders go by radio and start at once, unless the enemy jams the area (an hour late, sometimes lost). His drones see dead ground and strike men caught moving in the open; mines hold attackers in your fire; precision rockets and counter-battery hunt located batteries and teams. Your EW team jams his drones and radios. Until you order them, standing orders (see the panel when nothing is selected) launch your counterattack formation into a lodgment inside its window, move idle companies to block, and fire your guns; switch any of them off to do that job yourself.',
   },
   att: {
@@ -230,7 +230,7 @@ const T = {
     deadGround: ['Dead ground', 'Every sector has folds where he can shelter. Covering a sector from two or more directions removes most of them (the Coverage layer shows how many).'],
     depth: ['Depth', 'A thin outpost zone warns and delays, the battle zone kills, and the rear zone holds your counterstroke. Dense front lines die to bombardment.'],
     suppression: ['Suppression', 'His barrage keeps your men’s heads down while it falls. If it lifts before his infantry arrive, your men man the parapet and fire.'],
-    counterattack: ['Counterattack timing', 'Strike a lodgment before it consolidates (2 hours) and beyond his guns. Ripostes by units next to it go in at once; the Counterstroke formation needs its planning time.'],
+    counterattack: ['Counterattack timing', 'Strike a lodgment before it consolidates (2 hours) and beyond his guns. Local counterattacks (ripostes) by units next to it go in at once; a deliberate counterattack by the counterstroke formation needs its planning time.'],
     learning: ['Learning', 'Between battles you can learn only from what your units tried. What you study, test, codify and train decides what your army can do next time.'],
   },
   att: {

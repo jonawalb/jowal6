@@ -73,7 +73,7 @@ export function estWindow(g, sec) {
 function ownChip(g, u, sel, f, live) {
   return {
     id: u.id, sec: u.sec, letter: letterOf(u), hp: hpOf(u), mark: markOf(u), sel: sel.has(u.id), bat: isBattery(u) || TYPES[u.type].cat === 'team',
-    dim: live && f !== 'all' && !matches(g, u, f), idle: live && isIdle(g, u), late: live && isLate(g, u),
+    dim: live && f !== 'all' && f !== 'idle' && !matches(g, u, f), idle: live && isIdle(g, u), late: live && isLate(g, u),
     title: `${u.name} (${u.typeName || u.type}), ${Math.round((hpOf(u) ?? 1) * 100)}%`,
   };
 }
@@ -88,7 +88,7 @@ export function liveView(g, me, extra = {}) {
   const lanes = g.units.filter(u => u.side === me && u.type === 'mg' && alive(u) && u.lane != null && u.laneCells)
     .map(u => ({ from: u.sec, cells: u.laneCells, enf: enfOf(u.lane), sel: sel.has(u.id) }));
   const cover = popcountAll(g.coverDirs[me]);
-  const outGuns = S.layers.has('guns') ? Uint8Array.from({ length: G.n }, (_, s) => (underGuns(g, me, s) ? 0 : 1)) : null;
+  const outGuns = (S.drawLayers || S.layers).has('guns') ? Uint8Array.from({ length: G.n }, (_, s) => (underGuns(g, me, s) ? 0 : 1)) : null;
   const barrage = { now: [], next: [], sos: [], missions: [] };
   if (g.barrage && me === 'att') {
     for (const r of barrageRows(g, g.t)) for (const c of g.barrage.cols) barrage.now.push(G.idx(r, c));
@@ -108,7 +108,7 @@ export function liveView(g, me, extra = {}) {
   const rc = raceClock(g, me);
   const race = rc.deepest != null && rc.csHours != null ? { sec: rc.deepest, first: rc.first, text: `obj ${rc.hoursToObj} h · CS ${rc.csHours} h` } : null;
   const o = objectiveStatus(g);
-  return { layers: S.layers, units, tracks, marks: pic.marks, works: works(g, me, null), lanes, cover, outGuns, barrage, routes, lodg, race,
+  return { layers: S.drawLayers || S.layers, units, tracks, marks: pic.marks, works: works(g, me, null), lanes, cover, outGuns, barrage, routes, lodg, race,
     obj: { row: o.row, name: o.name, held: o.held }, hint: extra.hint || [], focus: extra.focus || [] };
 }
 const popcountAll = m => (m ? Array.from(m, popcount) : null);
@@ -136,7 +136,7 @@ export function planView(g, me, plan, extra = {}) {
   }
   const Sc = SCALES[g.scale], fix = me === 'att' ? Object.entries(plan.fix || {}).filter(([, v]) => v === 'fix').map(([c]) => +c) : [];
   return {
-    layers: S.layers, units, tracks: me === 'att' ? [] : [], marks: [], works: works(g, me, me === 'def' ? plan : null), lanes,
+    layers: S.drawLayers || S.layers, units, tracks: me === 'att' ? [] : [], marks: [], works: works(g, me, me === 'def' ? plan : null), lanes,
     cover: me === 'def' ? previewCover(g, 'def', place, plan.lanes || {}) : null, outGuns: null, barrage, routes: [], lodg: [], race: null,
     obj: { row: Sc.obj.row, name: Sc.obj.name, held: [] }, plan: { mainCols: plan.mainCols, fixCols: fix, marks, paths },
     hint: extra.hint || [], focus: extra.focus || [],
@@ -163,6 +163,6 @@ export function reviewView(g, me, h, mode) {
   }
   const G = gridFor(g.scale), o = SCALES[g.scale].obj;
   const held = Array.from({ length: G.cols }, (_, c) => { const sec = G.idx(o.row, c); return s.ctrl[sec] === 2; });
-  return { layers: S.layers, units, tracks, marks, works: works(g, me, null), lanes: [], cover: null, outGuns: null, barrage: null, routes: [],
+  return { layers: S.drawLayers || S.layers, units, tracks, marks, works: works(g, me, null), lanes: [], cover: null, outGuns: null, barrage: null, routes: [],
     lodg: s.lodg.map(sec => ({ sec, badge: 'grey', title: 'Lodgment' })), race: null, obj: { row: o.row, name: o.name, held }, hint: [], focus: [] };
 }

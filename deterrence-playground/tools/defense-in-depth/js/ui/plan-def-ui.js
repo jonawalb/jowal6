@@ -1,6 +1,7 @@
-// The defender's Plan pane (SPEC §1.2, §8.3): works budget, zone bar with f_r and the mini Fig. A.2, MG fire
-// lanes (MG companies only) with coverage, stances, the counterstroke formation and its plan targets, SOS
-// sectors and counter-battery priority, and the era's systems (drones and EW, or air observation).
+// The defender's plan steps (SPEC §1.2, §8.3; UI streamline #3): Zones (zone bar, share held back = f_r, the
+// mini Fig. A.2, stances), MG lanes (coverage), Works (costs on each button), Counterattack (the counterstroke
+// formation, its planning hours, plan targets) and Artillery (defensive-fire = SOS sectors, counter-battery,
+// the era's systems), plus the per-unit tools the map popover shows.
 import { SCALES } from '../../data/scales.js';
 import { WORKS } from '../../data/terrain.js';
 import { STACK } from '../../data/params.js';
@@ -8,11 +9,12 @@ import { gridFor, laneCells, popcount, FWD, opp } from '../grid.js';
 import { isBattery, isCompany } from '../forces.js';
 import { wpSpent, zoneShares } from '../plan-def.js';
 import { S, esc, pct, unitOf } from './store.js';
+import { EFFECT } from './order-effects.js';
 import { infoBtn, pctTip } from './tips.js';
 import { miniA2 } from './plan-charts.js';
 
 const WORK_ORDER = ['trench', 'comm', 'obst', 'obstC', 'strong', 'concrete', 'dugout', 'dummy'];
-const STANCES = [['hold', 'Hold'], ['elastic', 'Elastic'], ['delay', 'Delay'], ['riposte', 'Riposte'], ['reserve', 'Reserve']];
+const STANCES = [['hold', 'Hold'], ['elastic', 'Give ground'], ['delay', 'Delay'], ['riposte', 'Local counterattack'], ['reserve', 'Reserve']];
 
 /** An empty plan (Clear): no works or lanes, everyone in the rear zone, no counterstroke formation. */
 export function blankDef(g) {
@@ -43,44 +45,72 @@ export function cover2(g, plan) {
   return n ? k / n : 0;
 }
 
-export function defPane(g, plan) {
-  const Sc = SCALES[g.scale], G = gridFor(g.scale), wp = wpSpent(plan), z = zoneShares(g, plan.place);
-  const rows = Object.values(plan.place).filter(s => s >= 0).map(s => G.row[s]);
+const tbtn = (k, t, extra = {}, tip = '') => { const tool = S.tool || {}; return `<button type="button" class="btn${tool.kind === k && (extra.w == null || tool.w === extra.w) ? ' armed' : ''}" data-ptool="${k}"${extra.w ? ` data-w="${extra.w}"` : ''}${tip ? ` title="${esc(tip)}"` : ''}>${t}</button>`; };
+const WORK_TIP = { trench: 'Frontal cover for the men in it', comm: 'Covered movement front to rear', obst: 'Holds attackers in your fire for an hour', obstC: 'Concealed: not on his air photographs',
+  strong: 'All-round cover; keeps firing into the flanks of a break-in', concrete: 'Halves artillery losses in a strongpoint', dugout: 'Cuts artillery losses for men who stay put', dummy: 'Looks like a strongpoint to the enemy' };
+
+/** The numbers behind the step chips. */
+export function defSummary(g, plan) {
+  const Sc = SCALES[g.scale], z = zoneShares(g, plan.place), mgs = g.units.filter(u => u.side === 'def' && u.type === 'mg');
+  const bats = g.units.filter(u => u.side === 'def' && isBattery(u)), cs = plan.cs && g.fmns[plan.cs];
+  return { fr: z.fr, fwd: z.fwd, lanes: mgs.filter(u => plan.lanes[u.id] != null).length, mgs: mgs.length, wp: wpSpent(plan), wpMax: Sc.wp,
+    cs: cs ? cs.name : null, sos: bats.filter(b => plan.sos[b.id] && plan.sos[b.id].length).length, bats: bats.length };
+}
+
+/** One step of the defender's plan: 'zones' | 'lanes' | 'works' | 'cs' | 'arty'. */
+export function defStep(g, plan, id) {
+  const Sc = SCALES[g.scale], G = gridFor(g.scale);
+  if (id === 'works') {
+    const wp = wpSpent(plan);
+    return `<p class="dd-plabel">Work points <b class="num">${wp} of ${Sc.wp}</b></p><div class="dd-budget" aria-hidden="true"><i style="width:${Math.min(100, 100 * wp / Sc.wp)}%"></i></div>
+    <div class="dd-tools">${WORK_ORDER.map(w => tbtn('work', `${WORKS[w].label.replace('Wire / minefield', g.era === 'm' ? 'Mines' : 'Wire')} <small>${WORKS[w].wp} pt${WORKS[w].wp === 1 ? '' : 's'}</small>`, { w }, `${WORK_TIP[w] || ''}: costs ${WORKS[w].wp} work point${WORKS[w].wp === 1 ? '' : 's'}`)).join('')}</div>
+    <p class="fine">Pick a work, then tap sectors behind the outpost line. Tap again to remove. The main trench rows are already dug.</p>`;
+  }
+  if (id === 'lanes') {
+    const mgs = g.units.filter(u => u.side === 'def' && u.type === 'mg'), c2 = cover2(g, plan);
+    return `<p>Battle zone covered from 2+ directions: ${pctTip(pct(c2), 'coverage', { share: c2 })}</p>
+    <div class="dd-tools dd-mglist">${mgs.map(u => `<button type="button" class="btn" data-pselu="${u.id}" aria-pressed="${S.sel.length === 1 && S.sel[0] === u.id}">${esc(u.short)} <small>${plan.lanes[u.id] != null ? '✓ lane' : 'no lane'}</small></button>`).join('')}</div>
+    <div class="dd-tools">${tbtn('lane', 'Lay lane (K)', {}, 'Then tap a sector up to three away from the selected MG')}${tbtn('nolane', 'Clear lane')}</div>
+    <p class="fine">Only MG companies lay fire lanes. Pick one, press Lay lane, tap a sector to its side: east–west lanes run along the attackers’ lines.</p>`;
+  }
+  if (id === 'cs') {
+    const cs = Object.values(g.fmns).filter(f => f.side === 'def' && f.cs);
+    return `<div class="dd-seg" role="group" aria-label="Counterattack formation">${cs.map(f => `<button type="button" class="btn" data-pcs="${f.id}" aria-pressed="${plan.cs === f.id}" title="The counterstroke formation">${esc(f.name)}</button>`).join('')}</div>
+    <p class="fine">It waits in the rear zone and strikes a lodgment <b>${Sc.csPlan} h</b> after you order it (planning time). Marking targets now is optional.</p>
+    <div class="dd-tools">${tbtn('cstgt', 'Mark planned targets')}</div>`;
+  }
+  if (id === 'arty') {
+    const bats = g.units.filter(u => u.side === 'def' && isBattery(u));
+    return `<p class="fine">Each battery fires at once, with no delay, on the first of its two defensive-fire sectors that attackers enter (Hunzeker p. 75). <b>${bats.filter(b => plan.sos[b.id] && plan.sos[b.id].length).length} of ${bats.length}</b> batteries have sectors.</p>
+    <div class="dd-tools dd-mglist">${bats.map(u => `<button type="button" class="btn" data-pselu="${u.id}" aria-pressed="${S.sel.length === 1 && S.sel[0] === u.id}">${esc(u.short)} <small>${(plan.sos[u.id] || []).length} of 2</small></button>`).join('')}</div>
+    <div class="dd-tools">${tbtn('sos', 'Defensive fire sectors', {}, 'SOS: pick a battery, then tap up to two sectors')}</div>
+    <label class="dd-lab dd-det" title="Counter-battery (CB): your guns answer his located batteries">Counter-battery <select data-pcb><option value="located" ${plan.cbPriority !== 'none' ? 'selected' : ''}>Fire on located batteries</option><option value="none" ${plan.cbPriority === 'none' ? 'selected' : ''}>None</option></select></label>
+    ${g.era === 'm' ? `<p class="fine">Drones and EW: pick a drone team and tap its patrol area, or the EW team and tap where it jams.</p><div class="dd-tools">${tbtn('drone', 'Drone patrol')}${tbtn('ew', 'EW position')}</div>`
+    : '<p class="fine dd-det">Air observation (one sortie an hour over a 3 × 3 block) and gas are ordered during the battle.</p>'}`;
+  }
+  // zones
+  const z = zoneShares(g, plan.place), rows = Object.values(plan.place).filter(s => s >= 0).map(s => G.row[s]);
   const depth = rows.length ? (Math.max(...rows) - Sc.bands.outpost[0] + 1) * 0.5 : 0;
-  const tool = S.tool || {};
-  const frTip = { title: `f_r = ${z.fr.toFixed(2)}`, lines: ['Rear-zone share of your infantry strength (Biddle’s reserve fraction f_r)', `Outpost ${pct(z.outpost)} · battle ${pct(z.battle)} · rear ${pct(z.rear)}`],
-    notes: ['On Biddle’s own chart (Fig. A.2, p. 220) shallow defenses or tiny reserves break; depth and reserves are weak substitutes for each other. The dot places your f_r and the depth of your layout on that chart: an illustration, not a forecast for this map.'] };
-  const cs = Object.values(g.fmns).filter(f => f.side === 'def' && f.cs);
-  const sel = S.sel.map(unitOf).filter(Boolean), mgs = g.units.filter(u => u.side === 'def' && u.type === 'mg');
-  const bats = g.units.filter(u => u.side === 'def' && isBattery(u));
-  const c2 = cover2(g, plan);
-  const tbtn = (k, t, extra = {}) => `<button type="button" class="btn${tool.kind === k && (extra.w == null || tool.w === extra.w) ? ' armed' : ''}" data-ptool="${k}"${extra.w ? ` data-w="${extra.w}"` : ''}>${t}</button>`;
-  return `
-  <section class="dd-psec"><h3>Works <small class="num">${wp} / ${Sc.wp} WP</small></h3>
-    <div class="dd-budget" aria-hidden="true"><i style="width:${Math.min(100, 100 * wp / Sc.wp)}%"></i></div>
-    <p class="fine">Pick a work, then tap sectors (behind the outpost line) to add or remove it. Trench rows at the outpost line, the first battle-zone row and the objective line, and every second communication trench, are already dug.</p>
-    <div class="dd-tools">${WORK_ORDER.map(w => tbtn('work', `${WORKS[w].label.replace('Wire / minefield', g.era === 'm' ? 'Mines' : 'Wire')} <small>${WORKS[w].wp}</small>`, { w })).join('')}</div></section>
-  <section class="dd-psec"><h3>Zones</h3>
-    <div class="dd-zbar" aria-label="Infantry strength by zone"><i class="o" style="width:${100 * z.outpost}%"></i><i class="b" style="width:${100 * z.battle}%"></i><i class="r" style="width:${100 * z.rear}%"></i></div>
-    <p class="dd-zl">Outpost ${pct(z.outpost)} · Battle ${pct(z.battle)} · Rear ${pct(z.rear)} · <b>f_r ${z.fr.toFixed(2)}</b>${infoBtn(frTip, 'Reserve fraction')}</p>
+  const sel = S.sel.map(unitOf).filter(Boolean);
+  const frTip = { title: `Share held back: ${pct(z.fr)} (f_r = ${z.fr.toFixed(2)})`, lines: ['Rear-zone share of your infantry strength: Biddle’s reserve fraction f_r', `Outpost ${pct(z.outpost)} · battle ${pct(z.battle)} · rear ${pct(z.rear)}`],
+    notes: ['On Biddle’s own chart (Fig. A.2, p. 220) shallow defenses or tiny reserves break; depth and reserves are weak substitutes for each other. An illustration, not a forecast for this map.'] };
+  return `<div class="dd-zbar" aria-label="Infantry strength by zone"><i class="o" style="width:${100 * z.outpost}%"></i><i class="b" style="width:${100 * z.battle}%"></i><i class="r" style="width:${100 * z.rear}%"></i></div>
+    <p class="dd-zl">Outpost ${pct(z.outpost)} · Battle ${pct(z.battle)} · Rear ${pct(z.rear)} · <b>Share held back ${pct(z.fr)}</b>${infoBtn(frTip, 'Share held back')}</p>
     ${z.fwd > 0.5 ? `<p class="dd-warnl">${pct(z.fwd)} of your infantry is in the outpost zone or the first trench row: dense front lines die to bombardment (Hunzeker pp. 55, 80).</p>` : ''}
-    <div class="dd-a2box">${miniA2(z.fr, depth)}<p class="fine">Biddle’s Fig. A.2 (p. 220), redrawn with his constants. Your dot: f_r ${z.fr.toFixed(2)}, ${depth.toFixed(1)} km deep.</p></div>
-    <p class="fine">Select units (list, map, or a whole formation), then tap a sector to place them. ${S.sel.length ? `<b>${S.sel.length} selected.</b>` : ''}</p>
-    ${sel.length ? `<div class="dd-seg" role="group" aria-label="Stance for the selection">${STANCES.map(([v, t]) => `<button type="button" class="btn" data-pstance="${v}" aria-pressed="${sel.every(u => plan.stance[u.id] === v)}">${t}</button>`).join('')}</div>` : ''}</section>
-  <section class="dd-psec"><h3>MG fire lanes <small>${mgs.filter(u => plan.lanes[u.id] != null).length} / ${mgs.length}</small></h3>
-    <p class="fine">Only MG companies lay fire lanes. Select one, press Lane, then tap a sector up to three away: lanes that run across the front (east–west) enfilade attackers advancing up the columns.</p>
-    <p>Battle zone covered from 2+ directions: ${pctTip(pct(c2), 'coverage', { share: c2 })}</p>
-    <div class="dd-tools">${tbtn('lane', 'Lane (K)')}${tbtn('nolane', 'Clear lane')}</div></section>
-  <section class="dd-psec"><h3>Counterstroke</h3>
-    <div class="dd-seg" role="group" aria-label="Counterstroke formation">${cs.map(f => `<button type="button" class="btn" data-pcs="${f.id}" aria-pressed="${plan.cs === f.id}">${esc(f.name)}</button>`).join('')}</div>
-    <p class="fine">It waits in the rear zone and strikes a lodgment after its planning time (${Sc.csPlan} h). Optionally mark planned targets.</p>
-    <div class="dd-tools">${tbtn('cstgt', 'Plan targets')}</div></section>
-  <section class="dd-psec"><h3>Artillery</h3>
-    <p class="fine">Each battery fires Suppress automatically, with no delay, on the first of its two SOS sectors where attackers appear (Hunzeker p. 75). Select a battery, press SOS, tap up to two sectors. ${bats.filter(b => plan.sos[b.id] && plan.sos[b.id].length).length} of ${bats.length} batteries have SOS sectors.</p>
-    <div class="dd-tools">${tbtn('sos', 'SOS sectors')}</div>
-    <label class="dd-lab">Counter-battery <select data-pcb><option value="located" ${plan.cbPriority !== 'none' ? 'selected' : ''}>Fire on located batteries</option><option value="none" ${plan.cbPriority === 'none' ? 'selected' : ''}>No counter-battery</option></select></label></section>
-  ${g.era === 'm' ? `<section class="dd-psec"><h3>Drones and EW</h3><p class="fine">Select a drone team and tap its patrol area, or the EW team and tap where it jams.</p><div class="dd-tools">${tbtn('drone', 'Drone patrol')}${tbtn('ew', 'EW position')}</div></section>`
-    : `<section class="dd-psec"><h3>Air and gas</h3><p class="fine">Air observation (one sortie an hour over a 3 × 3 block) and gas missions are ordered during the battle.</p></section>`}`;
+    <div class="dd-a2box dd-det">${miniA2(z.fr, depth)}<p class="fine">Biddle’s Fig. A.2 (p. 220), redrawn. Your dot: f_r ${z.fr.toFixed(2)}, ${depth.toFixed(1)} km deep.</p></div>
+    <p class="fine">Select units (map, list, or a whole formation), then tap a sector to place them.${S.sel.length ? ` <b>${S.sel.length} selected.</b>` : ''}</p>
+    ${sel.length ? `<div class="dd-orow"><span class="dd-olab">Stance</span><div class="dd-seg" role="group" aria-label="Stance for the selection">${STANCES.map(([v, t]) => `<button type="button" class="btn" data-pstance="${v}" aria-pressed="${sel.every(u => plan.stance[u.id] === v)}" title="${esc(EFFECT.stance[v])}">${t}</button>`).join('')}</div></div>` : ''}`;
+}
+
+/** Planning tools for one unit (the map popover). */
+export function defUnitTools(g, plan, u) {
+  const out = [];
+  if (isCompany(u)) out.push(`<div class="dd-orow"><span class="dd-olab">Stance</span><div class="dd-seg" role="group" aria-label="Stance">${STANCES.map(([v, t]) => `<button type="button" class="btn" data-pstance="${v}" aria-pressed="${plan.stance[u.id] === v}" title="${esc(EFFECT.stance[v])}">${t}</button>`).join('')}</div></div>`);
+  if (u.type === 'mg') out.push(`<div class="dd-orow"><span class="dd-olab">Fire lane</span><div class="dd-tools">${tbtn('lane', 'Lay lane (K)', {}, 'Then tap a sector up to three away')}${tbtn('nolane', 'Clear lane')}</div></div>`);
+  if (isBattery(u)) out.push(`<div class="dd-orow"><span class="dd-olab">Fire</span><div class="dd-tools">${tbtn('sos', `Defensive fire sectors <small>${(plan.sos[u.id] || []).length} of 2</small>`, {}, 'SOS: tap up to two sectors')}</div></div>`);
+  if (u.type === 'drone') out.push(`<div class="dd-tools">${tbtn('drone', 'Drone patrol')}</div>`);
+  if (u.type === 'ew') out.push(`<div class="dd-tools">${tbtn('ew', 'EW position')}</div>`);
+  return out.join('');
 }
 
 /** A tap on the planning map with a defender tool armed. Returns a message or null. */
@@ -103,7 +133,7 @@ export function defTap(g, plan, sec, tool) {
       if (tool.kind === 'nolane') { delete plan.lanes[one.id]; return 'Lane cleared.'; }
       const from = plan.place[one.id], d = G.dirTo(from, sec);
       if (d < 0) return 'Tap a sector away from the MG, in one of eight directions.';
-      plan.lanes[one.id] = d;
+      plan.lanes[one.id] = d; S.lanesLaid = (S.lanesLaid || 0) + 1;   // the walkthrough watches this count
       const cells = laneCells(G, g.sectors.elev, from, d);
       return `${esc(one.short)} lane laid: ${cells.length} sector${cells.length === 1 ? '' : 's'}${cells.length < 3 ? ' (a crest cuts it short)' : ''}${d === 2 || d === 6 ? ', across the front: it enfilades waves' : ''}.`;
     }
@@ -112,7 +142,7 @@ export function defTap(g, plan, sec, tool) {
       const list = plan.sos[one.id] || (plan.sos[one.id] = []);
       const i = list.indexOf(sec);
       if (i >= 0) list.splice(i, 1); else { if (list.length >= 2) list.shift(); list.push(sec); }
-      return `${esc(one.short)} SOS: ${list.length} sector${list.length === 1 ? '' : 's'}.`;
+      return `${esc(one.short)} defensive fire: ${list.length} sector${list.length === 1 ? '' : 's'}.`;
     }
     case 'cstgt': {
       const t = plan.csTargets || (plan.csTargets = []), i = t.indexOf(sec);

@@ -1,7 +1,7 @@
-// The after-action review (SPEC §7.4), structured like Fog of Command's: the outcome by the territory rule (with
-// losses, exchange and ground, the only place they appear), key moments, the hour slider with "What you saw /
-// What was true", the seen-vs-true and race charts, the fire panel, lessons cards with their diagrams, and
-// the replays (in a Worker), then Play again / New game (or Continue in a campaign).
+// The after-action review (SPEC §7.4; UI streamline #16): the outcome by the territory rule (with losses, exchange
+// and ground, the only place they appear), the top three key moments and the lessons your battle triggered
+// first, then Play again / New game (or Continue in a campaign), the hour slider with "What you saw / What was
+// true", the charts, and folded: the other moments, losses by cause, the hour-by-hour reports and the replays.
 import { SCALES } from '../../data/scales.js';
 import { lessonCards } from '../lessons.js';
 import { moments } from '../story.js';
@@ -12,6 +12,7 @@ import { infoBtn, pctTip, momentInfo } from './tips.js';
 import { replayTip, TIP_BUILDERS } from '../tips-text.js';
 import { chartSeen, chartRace } from './aar-charts.js';
 import { runReplays } from './compare.js';
+import { feedHTML } from './panel.js';
 
 let timer = null, mounted = [];
 
@@ -56,20 +57,26 @@ export function showAAR(g, me, opts) {
   const ms = moments(g, me);
   const cards = lessonCards(g.telemetry, me, {});
   el.hidden = false;
+  // #16: the verdict, three key moments and the lessons your battle triggered come first; the rest folds.
+  const top = ms.slice(0, 3), rest = ms.slice(3);
+  const mli = m => `<li class="${m.tone}"><span class="num">${m.when}</span>${esc(m.text)}${momentInfo(m)}</li>`;
   el.innerHTML = `<div class="status" data-s="${win ? 'good' : 'bad'}"><b id="aar-t">${win ? 'You won' : 'You lost'}: ${me === 'att' ? (win ? `you held ${g.over.best} side-by-side sectors of ${esc(Sc.obj.name)}` : `you held ${g.over.best || 0} of the ${Sc.obj.need} side-by-side sectors you needed`) : win ? `the enemy did not hold ${Sc.obj.need} side-by-side sectors of ${esc(Sc.obj.name)}` : `the enemy held ${g.over.best} side-by-side sectors of ${esc(Sc.obj.name)}`}.</b>
     <span>Territory decides the game. Losses: yours ${st.lossMe.toFixed(0)}, the enemy’s ${st.lossFoe.toFixed(0)} strength points${st.exch != null ? ` (exchange ${st.exch.toFixed(2)} : 1)` : ''}. Deepest attacker advance: ${st.km.toFixed(1)} km past no-man’s land.</span></div>
-    <p class="eyebrow">Key moments</p><ol class="dd-moments">${ms.map(m => `<li class="${m.tone}"><span class="num">${m.when}</span>${esc(m.text)}${momentInfo(m)}</li>`).join('') || '<li>A quiet battle.</li>'}</ol>
+    <p class="eyebrow">Key moments</p><ol class="dd-moments">${top.map(mli).join('') || '<li>A quiet battle.</li>'}</ol>
+    ${rest.length ? `<details class="dd-fold"><summary>All key moments (${ms.length})</summary><ol class="dd-moments">${rest.map(mli).join('')}</ol></details>` : ''}
+    <p class="eyebrow">Lessons your battle triggered</p><div class="dd-lcards">${cards.map(c => `<div class="dd-lcard"><p>${esc(c.text)}${lessonInfo(c)}</p><p class="fine">${esc(c.cite)}</p>
+        <button type="button" class="btn" data-dg="${c.diagram}">Show diagram ${c.diagram}</button><div class="dd-dgslot" data-slot="${c.diagram}"></div></div>`).join('') || '<p class="fine">No lesson triggers fired: a clean battle by these measures.</p>'}</div>
+    <div class="dd-gobar">${opts.cont ? `<button type="button" class="btn solid" id="aar-cont">${esc(opts.cont)}</button>` : ''}<button type="button" class="btn${opts.cont ? '' : ' solid'}" id="aar-again">Same scenario, play again</button><button type="button" class="btn" id="aar-new">New game</button></div>
     <div class="dd-replay"><button type="button" class="btn" id="aar-play">Replay</button>
       <label class="slider"><span class="sl-h"><span>Hour shown on the map</span><output id="aar-h" class="num">${hhmm(T)}</output></span>
       <input type="range" id="aar-range" min="0" max="${T}" step="1" value="${T}"></label></div>
     <p class="fine">Use <b>What you saw / What was true</b> above the map to compare your picture with the truth at each hour.</p>
-    <p class="eyebrow">Enemy strength: what you saw and what was true</p><div id="aar-seen"></div>
-    <p class="eyebrow">The race: penetration against the objective (Biddle A.17, p. 214)</p><div id="aar-race"></div>
-    <div class="dd-aar-cols"><div><p class="eyebrow">Fire and enfilade</p>${firePanel(g, me)}</div>
-      <div><p class="eyebrow">Lessons from your battle</p><div class="dd-lcards">${cards.map(c => `<div class="dd-lcard"><p>${esc(c.text)}${lessonInfo(c)}</p><p class="fine">${esc(c.cite)}</p>
-        <button type="button" class="btn" data-dg="${c.diagram}">Show diagram ${c.diagram}</button><div class="dd-dgslot" data-slot="${c.diagram}"></div></div>`).join('') || '<p class="fine">No lesson triggers fired: a clean battle by these measures.</p>'}</div></div></div>
-    <p class="eyebrow">Replays of this battle (fresh dice)</p><div id="aar-fog" class="dd-fog"><p class="fine" id="aar-prog">Starting the replays…</p></div>
-    <div class="dd-gobar">${opts.cont ? `<button type="button" class="btn solid" id="aar-cont">${esc(opts.cont)}</button>` : ''}<button type="button" class="btn${opts.cont ? '' : ' solid'}" id="aar-again">Same scenario, play again</button><button type="button" class="btn" id="aar-new">New game</button></div>`;
+    <details class="dd-fold dd-det" open><summary>Charts: what you saw against the truth, and the race</summary>
+      <p class="eyebrow">Enemy strength: what you saw and what was true</p><div id="aar-seen"></div>
+      <p class="eyebrow">The race: penetration against the objective (Biddle A.17, p. 214)</p><div id="aar-race"></div></details>
+    <details class="dd-fold"><summary>Losses by cause, fire and enfilade</summary>${firePanel(g, me)}</details>
+    <details class="dd-fold"><summary>Hour-by-hour reports</summary><ol class="dd-feed dd-aarfeed">${feedHTML()}</ol></details>
+    <details class="dd-fold"><summary>Replays of this battle (fresh dice)</summary><div id="aar-fog" class="dd-fog"><p class="fine" id="aar-prog">Starting the replays…</p></div></details>`;
   const w = () => Math.max(300, Math.round(el.getBoundingClientRect().width) - 40);
   const charts = h => { $('aar-seen').innerHTML = chartSeen(g, me, w(), h); $('aar-race').innerHTML = chartRace(g, me, w()); };
   charts(T);

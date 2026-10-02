@@ -1,6 +1,7 @@
-// The attacker's Plan pane (SPEC §1.2, §8.3): frontage (main effort, fixing and quiet columns), each battalion's
-// formation and default posture, infiltration routes, the preparation and the creeping barrage with its
-// timetable strip, battery roles, reserves, engineers' breach targets, the era's systems and the objective type.
+// The attacker's plan steps (SPEC §1.2, §8.3; UI streamline #3–#5): Frontage (main effort, pin = fixing, quiet
+// columns), Battalions (one chip per battalion opening a small chooser, plus Apply to all), Infiltration routes,
+// Fire plan (preparation with its ammunition cost, the creeping barrage; the timetable strip and battery roles
+// in Detailed view) and Reserves (follow success at H+n, engineers, the objective type).
 // The H-hour orders follow from these choices (rebuildAtt), the same layout the default plan uses.
 import { SCALES } from '../../data/scales.js';
 import { STACK, PREP } from '../../data/params.js';
@@ -86,50 +87,90 @@ export function blankAtt(g) {
 }
 
 const opt = (v, cur, t) => `<option value="${v}" ${String(cur) === String(v) ? 'selected' : ''}>${t}</option>`;
+const FORM = { groups: 'Small groups', waves: 'Waves' }, FORM_S = { groups: 'Groups', waves: 'Waves' };
+const POST = { leapfrog: 'Leapfrog', rush: 'Rush', infil: 'Infiltrate', '': 'Second wave' };
+const FORM_TIP = { groups: 'Small groups: harder to spot and to enfilade', waves: 'Waves: easier to control, but flanking fire hits three times as many' };
+const POST_TIP = { leapfrog: 'Leapfrog: companies paired, one fires while the other bounds', rush: 'Rush: fastest and most exposed', infil: 'Infiltrate: storm and rifle companies slip past posts on covered routes', '': 'Second wave: waits in assembly as your reserve' };
+const tbtn = (k, t, tip = '') => `<button type="button" class="btn${(S.tool || {}).kind === k ? ' armed' : ''}" data-ptool="${k}"${tip ? ` title="${esc(tip)}"` : ''}>${t}</button>`;
 
-export function attPane(g, plan) {
-  const G = gridFor(g.scale), Sc = SCALES[g.scale], tool = S.tool || {};
-  const tbtn = (k, t) => `<button type="button" class="btn${tool.kind === k ? ' armed' : ''}" data-ptool="${k}">${t}</button>`;
-  const colBtn = c => { const m = plan.mainCols.includes(c), f = !m && (plan.fix[c] || 'fix') === 'fix'; return `<button type="button" class="dd-colb ${m ? 'main' : f ? 'fix' : 'quiet'}" data-col="${c}" aria-label="Column ${c + 1}: ${m ? 'main effort' : f ? 'fixing' : 'quiet'}">${c + 1}<small>${m ? 'Main' : f ? 'Fix' : '—'}</small></button>`; };
-  const bns = assaultBns(g), bats = g.units.filter(u => u.side === 'att' && isBattery(u));
-  const nb = bats.filter(b => plan.bats[b.id] === 'barrage').length, ncb = bats.filter(b => plan.bats[b.id] === 'cb').length;
-  const b = plan.barrage, bnRows = bns.filter(f => plan.bn[f.id] && plan.bn[f.id].posture).map(f => ({ name: `${g.fmns[f.parent]?.name || ''} ${f.name}`.trim(), posture: plan.bn[f.id].posture, start: f.role === 'wave2' ? 0 : 1 }));
-  const tt = b ? timetable(b, [Sc.bands.outpost[0], Sc.obj.row], g.turns, bnRows) : null;
-  const predicted = g.units.filter(u => u.side === 'att' && isBattery(u)).every(u => knows(u, 'CA1'));
-  const echelon = Object.values(g.fmns).filter(f => f.side === 'att' && f.role === 'echelon2');
-  const cost = prepCost(g, plan);
-  return `
-  <section class="dd-psec"><h3>Frontage</h3>
-    <p class="fine">Tap a column to cycle Main effort → Fixing (one company pins the outposts) → Quiet. Narrow concentrates force but invites enfilade from both shoulders and crowding (Biddle pp. 43–44, 120; Hunzeker pp. 53–54).</p>
+/** The numbers behind the step chips. */
+export function attSummary(g, plan) {
+  const G = gridFor(g.scale), bns = assaultBns(g), Sc = SCALES[g.scale];
+  const storm = g.units.filter(u => u.side === 'att' && u.type === 'storm');
+  const tt = plan.barrage ? timetable(plan.barrage, [Sc.bands.outpost[0], Sc.obj.row], g.turns, bnRows(g, plan)) : null;
+  return { main: plan.mainCols.length, pin: Array.from({ length: G.cols }, (_, c) => c).filter(c => !plan.mainCols.includes(c) && (plan.fix[c] || 'fix') === 'fix').length,
+    bns: bns.length, leapfrog: bns.filter(f => (plan.bn[f.id] || {}).posture === 'leapfrog').length, routes: storm.filter(u => (plan.routes[u.id] || []).length).length, storm: storm.length,
+    prep: plan.prep, barrage: plan.barrage ? plan.barrage.rate : null, gaps: tt ? tt.warn.early + tt.warn.late : 0,
+    follow: Object.values(plan.reserves || {}).filter(r => r && r.mode === 'follow').length };
+}
+const bnRows = (g, plan) => assaultBns(g).filter(f => plan.bn[f.id] && plan.bn[f.id].posture).map(f => ({ name: `${g.fmns[f.parent]?.name || ''} ${f.name}`.trim(), posture: plan.bn[f.id].posture, start: f.role === 'wave2' ? 0 : 1 }));
+
+/** The chooser under a battalion row (or the Apply-to-all row). */
+function chooser(key, st, wave2) {
+  const seg = (k, list, cur, tips) => `<div class="dd-orow"><span class="dd-olab">${k === 'form' ? 'Formation' : 'Movement'}</span><div class="dd-seg" role="group" aria-label="${k === 'form' ? 'Formation' : 'Movement'}">${list.map(v => `<button type="button" class="btn" data-bnset="${key}" data-k="${k}" data-v="${v}" aria-pressed="${cur === v}" title="${esc(tips[v])}">${k === 'form' ? FORM[v] : POST[v]}</button>`).join('')}</div></div>`;
+  return `<div class="dd-bnpick">${seg('form', ['groups', 'waves'], st.form, FORM_TIP)}${seg('posture', [...(wave2 ? [''] : []), 'leapfrog', 'rush', 'infil'], st.posture, POST_TIP)}</div>`;
+}
+
+/** One step of the attacker's plan: 'front' | 'bns' | 'infil' | 'fire' | 'res'. */
+export function attStep(g, plan, id) {
+  const G = gridFor(g.scale), Sc = SCALES[g.scale];
+  if (id === 'front') {
+    const colBtn = c => { const m = plan.mainCols.includes(c), f = !m && (plan.fix[c] || 'fix') === 'fix'; return `<button type="button" class="dd-colb ${m ? 'main' : f ? 'fix' : 'quiet'}" data-col="${c}" aria-label="Column ${c + 1}: ${m ? 'main effort' : f ? 'pin' : 'quiet'}" title="${m ? 'Main effort: your assault battalions' : f ? 'Pin (a fixing attack): one company holds the outposts in place' : 'Quiet: nothing attacks here'}">${c + 1}<small>${m ? 'Main' : f ? 'Pin' : '—'}</small></button>`; };
+    return `<p class="fine">Tap a column: Main effort → Pin → Quiet. Too narrow and his MGs sweep you from both shoulders (Biddle pp. 43–44).</p>
     <div class="dd-cols">${Array.from({ length: G.cols }, (_, c) => colBtn(c)).join('')}</div>
-    ${plan.mainCols.length === 1 ? '<p class="dd-warnl">A one-column main effort is swept from both shoulders.</p>' : ''}</section>
-  <section class="dd-psec"><h3>Battalions</h3>
-    <div class="dd-bns">${bns.map(f => { const st = plan.bn[f.id] || {}; return `<div class="dd-bn"><b>${esc(g.fmns[f.parent]?.name || '')} · ${esc(f.name)}</b>
-      <select data-bnform="${f.id}" aria-label="Formation">${opt('groups', st.form, 'Small groups')}${opt('waves', st.form, 'Waves')}</select>
-      <select data-bnpost="${f.id}" aria-label="Posture">${f.role === 'wave2' ? opt('', st.posture, 'Second wave (assembly)') : ''}${opt('leapfrog', st.posture, 'Leapfrog pairs')}${opt('rush', st.posture, 'Rush')}${opt('infil', st.posture, 'Infiltrate')}</select></div>`; }).join('')}</div>
-    <p class="fine">Leapfrog pairs the battalion’s companies: one overwatches while the other bounds (Hunzeker p. 56). Rush is fastest and most exposed.</p></section>
-  <section class="dd-psec"><h3>Infiltration routes</h3><p class="fine">Select a storm company, press Route, and tap sectors in order. Green sectors are away from the trenches and strongpoints on your air photographs; amber ones are next to them.</p>
-    <div class="dd-tools">${tbtn('route', 'Route')}<button type="button" class="btn" data-clearroute>Clear route</button></div></section>
-  <section class="dd-psec"><h3>Fire plan <small class="num">${g.ammo.att} ammo</small></h3>
-    <label class="dd-lab">Preparation <select data-prep>${opt('none', plan.prep, 'None')}${opt('hurricane', plan.prep, 'Hurricane (1 h)')}${opt('methodical', plan.prep, 'Methodical (6 h)')}</select></label>
-    <p class="fine">${plan.prep === 'hurricane' ? `${predicted ? 'Predicted fire: no registration, no warning.' : 'Without predicted fire, registration warns the defender.'}` : plan.prep === 'methodical' ? `Destroy fire on up to ${PREP.sectorsPerGroup * Math.ceil(bats.length / PREP.groupSize)} sectors: cuts wire, kills exposed men, churns the ground and shows him where you will attack.` : 'No preparation: full surprise, nothing cut.'} Cost ${cost}.</p>
-    ${plan.prep === 'methodical' ? `<div class="dd-tools">${tbtn('prep', `Preparation targets (${plan.prepTargets.length})`)}</div>` : ''}
-    <label class="dd-lab"><input type="checkbox" data-barr ${b ? 'checked' : ''}> Creeping barrage on the main effort</label>
+    ${plan.mainCols.length === 1 ? '<p class="dd-warnl">A one-column main effort is swept from both shoulders.</p>' : ''}`;
+  }
+  if (id === 'bns') {
+    const bns = assaultBns(g), open = S.bnOpen;
+    const all = bns.reduce((a, f) => { const st = plan.bn[f.id] || {}; a.form = a.form === undefined || a.form === st.form ? st.form : null; return a; }, {});
+    return `<div class="dd-bnrow dd-bnall"><b>All battalions</b><button type="button" class="dd-chip" data-bnopen="all" aria-expanded="${open === 'all'}">Apply to all <span aria-hidden="true">▾</span></button></div>
+    ${open === 'all' ? chooser('all', { form: all.form, posture: null }, true) : ''}
+    ${bns.map(f => { const st = plan.bn[f.id] || {}; return `<div class="dd-bnrow"><span class="dd-bnn"><b>${esc(f.name)}</b><small>${esc(g.fmns[f.parent]?.name || '')}</small></span><button type="button" class="dd-chip" data-bnopen="${f.id}" aria-expanded="${open === f.id}" aria-label="${esc(f.name)}, ${esc(g.fmns[f.parent]?.name || '')}: ${FORM[st.form] || 'Small groups'}, ${POST[st.posture || '']}. Change">${FORM_S[st.form] || 'Groups'} · ${POST[st.posture || '']} <span aria-hidden="true">▾</span></button></div>
+      ${open === f.id ? chooser(f.id, st, f.role === 'wave2') : ''}`; }).join('')}`;
+  }
+  if (id === 'infil') {
+    const storm = g.units.filter(u => u.side === 'att' && u.type === 'storm');
+    return `<div class="dd-tools dd-mglist">${storm.map(u => `<button type="button" class="btn" data-pselu="${u.id}" aria-pressed="${S.sel.length === 1 && S.sel[0] === u.id}">${esc(u.short)} <small>${(plan.routes[u.id] || []).length ? `${plan.routes[u.id].length} sectors` : 'no route'}</small></button>`).join('')}</div>
+    <div class="dd-tools">${tbtn('route', 'Draw route', 'Then tap sectors in order from its start')}<button type="button" class="btn" data-clearroute>Clear route</button></div>
+    <p class="fine">Pick a storm company, press Draw route, tap sectors in order. Green sectors are away from the trenches and strongpoints on your air photographs; amber ones are next to them.</p>`;
+  }
+  if (id === 'res') {
+    const echelon = Object.values(g.fmns).filter(f => f.side === 'att' && f.role === 'echelon2');
+    const hh = h => `H+${h} (${String(5 + h).padStart(2, '0')}:00)`;
+    return `${echelon.map(f => { const r = plan.reserves[f.id] || { mode: 'assembly' }; return `<label class="dd-lab" title="H-hour (H+0) is 05:00, when the attack starts; H+4 is four hours later">${esc(f.name)} <select data-res="${f.id}">${opt('assembly', r.mode === 'assembly' ? 'assembly' : '', 'Wait in assembly')}${[2, 3, 4, 5, 6, 8].map(h => opt(h, r.mode === 'follow' ? r.hour : '', `Follow success at ${hh(h)}`)).join('')}</select></label>`; }).join('') || '<p class="fine">Second-wave battalions left in assembly are your reserve: send them in during the battle.</p>'}
+    <p class="fine">Engineers clear wire or mines in 2 hours: pick a pioneer company, press Breach target, tap the obstacle. ${g.era === 'w' ? 'Your tank section follows the main effort; it crushes wire but breaks down often.' : 'Tank companies follow the main effort; keep infantry with them.'}</p>
+    <div class="dd-tools">${tbtn('breach', 'Breach target')}${g.era === 'm' ? tbtn('ew', 'EW position') : ''}</div>
+    <label class="dd-lab">Objective <select data-obj>${opt('breakthrough', plan.objective.type, 'Breakthrough (keep going)')}${opt('bite', plan.objective.type, 'Bite and hold (dig in on a row)')}</select></label>
+    ${plan.objective.type === 'bite' ? `<label class="dd-lab">Limit row <select data-objrow>${Array.from({ length: Sc.obj.row - Sc.bands.outpost[0] + 1 }, (_, i) => Sc.bands.outpost[0] + i).map(r => opt(r, plan.objective.row, `row ${r + 1}${r === Sc.obj.row ? ' (the objective line)' : ''}`)).join('')}</select></label>` : ''}`;
+  }
+  // fire plan
+  const bats = g.units.filter(u => u.side === 'att' && isBattery(u));
+  const nb = bats.filter(b => plan.bats[b.id] === 'barrage').length, ncb = bats.filter(b => plan.bats[b.id] === 'cb').length;
+  const b = plan.barrage, tt = b ? timetable(b, [Sc.bands.outpost[0], Sc.obj.row], g.turns, bnRows(g, plan)) : null;
+  const predicted = bats.every(u => knows(u, 'CA1'));
+  const maxT = PREP.sectorsPerGroup * Math.ceil(bats.length / PREP.groupSize);
+  const PTIP = { none: 'No preparation: full surprise, nothing cut', hurricane: `Hurricane: one hour of fire on the front. ${predicted ? 'Predicted fire: no registration, no warning.' : 'Without predicted fire, registration warns him.'}`,
+    methodical: 'Methodical: six hours of Destroy fire. Cuts wire and kills exposed men, but churns the ground and shows him where you will attack.' };
+  const pcost = { none: 'free', hurricane: `${prepCost(g, { ...plan, prep: 'hurricane' })} ammo`, methodical: `${PREP.methodicalCost} ammo a target` };
+  return `<p class="dd-plabel">Ammunition <b class="num">${g.ammo.att}</b></p>
+    <div class="dd-orow dd-stack"><span class="dd-olab">Preparation</span><div class="dd-seg" role="group" aria-label="Preparation">${['none', 'hurricane', 'methodical'].map(k => `<button type="button" class="btn" data-prepset="${k}" aria-pressed="${plan.prep === k}" title="${esc(PTIP[k])}">${{ none: 'None', hurricane: 'Hurricane (1 h)', methodical: 'Methodical (6 h)' }[k]} <small>${pcost[k]}</small></button>`).join('')}</div></div>
+    ${plan.prep === 'methodical' ? `<div class="dd-tools">${tbtn('prep', `Preparation targets (${plan.prepTargets.length} of ${maxT}) <small>${PREP.methodicalCost * plan.prepTargets.length} ammo</small>`)}</div>` : ''}
+    <label class="dd-lab"><input type="checkbox" data-barr ${b ? 'checked' : ''}> Creeping barrage on the main effort <small class="muted">${nb || Math.ceil(bats.length / 2)} ammo an hour</small></label>
     ${b ? `<label class="dd-lab">Lift rate <select data-rate>${LIFTS.map(r => opt(r, b.rate, `${r} row${r === 1 ? '' : 's'} an hour`)).join('')}</select></label>
-      <label class="dd-lab">Starts on <select data-r0>${Array.from({ length: Sc.bands.battle[0] - Sc.bands.nml[0] + 1 }, (_, i) => Sc.bands.nml[0] + i).map(r => opt(r, b.r0, `row ${r + 1}`)).join('')}</select></label>
-      <div class="dd-ttbox">${tt.svg}</div>
-      <p class="fine${tt.warn.late || tt.warn.early ? ' dd-warnl' : ''}">Predicted: ${tt.warn.early} arrival${tt.warn.early === 1 ? '' : 's'} after the barrage has lifted (gap), ${tt.warn.late} into its own barrage. Dots are battalions at their default pace (NOTIONAL: Rush 1 row/h, Leapfrog 0.75).</p>` : ''}
-    <p>Batteries: <b>${nb}</b> barrage · <b>${ncb}</b> counter-battery · <b>${bats.length - nb - ncb}</b> on call
+      <label class="dd-lab" title="H-hour (H+0) is 05:00: the barrage starts on this row">Starts on <select data-r0>${Array.from({ length: Sc.bands.battle[0] - Sc.bands.nml[0] + 1 }, (_, i) => Sc.bands.nml[0] + i).map(r => opt(r, b.r0, `row ${r + 1}`)).join('')}</select></label>
+      <p class="fine${tt.warn.late || tt.warn.early ? ' dd-warnl' : ''}">Predicted: ${tt.warn.early} arrival${tt.warn.early === 1 ? '' : 's'} after the barrage has lifted (gap), ${tt.warn.late} into its own barrage.</p>
+      <div class="dd-det"><div class="dd-ttbox">${tt.svg}</div><p class="fine">Dots are battalions at their default pace (NOTIONAL: Rush 1 row/h, Leapfrog 0.75).</p></div>` : ''}
+    <p class="dd-det">Batteries: <b>${nb}</b> barrage · <b>${ncb}</b> counter-battery · <b>${bats.length - nb - ncb}</b> on call
       <span class="dd-seg" role="group" aria-label="Batteries on the barrage"><button type="button" class="btn" data-bat="-1" aria-label="One fewer on the barrage">−</button><button type="button" class="btn" data-bat="1" aria-label="One more on the barrage">+</button></span>
-      <span class="dd-seg" role="group" aria-label="Batteries on counter-battery"><button type="button" class="btn" data-cb="-1" aria-label="One fewer on counter-battery">CB −</button><button type="button" class="btn" data-cb="1" aria-label="One more on counter-battery">CB +</button></span></p></section>
-  <section class="dd-psec"><h3>Reserves and support</h3>
-    ${echelon.map(f => { const r = plan.reserves[f.id] || { mode: 'assembly' }; return `<label class="dd-lab">${esc(f.name)} <select data-res="${f.id}">${opt('assembly', r.mode === 'assembly' ? 'assembly' : '', 'Wait in assembly')}${[2, 3, 4, 5, 6, 8].map(h => opt(h, r.mode === 'follow' ? r.hour : '', `Follow success at H+${h}`)).join('')}</select></label>`; }).join('') || '<p class="fine">Second-wave battalions left in assembly are your reserve: send them in during the battle.</p>'}
-    <p class="fine">Engineers clear wire or mines in 2 hours: select a pioneer company, press Breach, tap the obstacle. ${g.era === 'w' ? 'Your tank section follows the main effort; it crushes wire but breaks down often.' : 'Tank companies follow the main effort; keep infantry with them or anti-tank fire shreds them.'}</p>
-    <div class="dd-tools">${tbtn('breach', 'Breach target')}${g.era === 'm' ? tbtn('ew', 'EW position') : ''}</div></section>
-  <section class="dd-psec"><h3>Objective</h3>
-    <label class="dd-lab">Type <select data-obj>${opt('breakthrough', plan.objective.type, 'Breakthrough (keep going)')}${opt('bite', plan.objective.type, 'Bite and hold (consolidate on a row)')}</select></label>
-    ${plan.objective.type === 'bite' ? `<label class="dd-lab">Limit row <select data-objrow>${Array.from({ length: Sc.obj.row - Sc.bands.outpost[0] + 1 }, (_, i) => Sc.bands.outpost[0] + i).map(r => opt(r, plan.objective.row, `row ${r + 1}${r === Sc.obj.row ? ' (the objective line)' : ''}`)).join('')}</select></label>` : ''}
-    <p class="fine">You win only by holding ${Sc.obj.need} side-by-side sectors of ${esc(Sc.obj.name)} at the end. Bite and hold digs in early against counterattacks; breakthrough keeps moving under (or beyond) your guns.</p></section>`;
+      <span class="dd-seg" role="group" aria-label="Batteries on counter-battery"><button type="button" class="btn" data-cb="-1" aria-label="One fewer on counter-battery" title="Counter-battery (CB)">CB −</button><button type="button" class="btn" data-cb="1" aria-label="One more on counter-battery" title="Counter-battery (CB)">CB +</button></span></p>`;
+}
+
+/** Planning tools for one unit (the map popover). */
+export function attUnitTools(g, plan, u) {
+  if (u.type === 'storm') return `<div class="dd-orow"><span class="dd-olab">Route</span><div class="dd-tools">${tbtn('route', 'Draw route', 'Tap sectors in order')}<button type="button" class="btn" data-clearroute>Clear route</button></div></div>`;
+  if (u.type === 'pioneer') return `<div class="dd-tools">${tbtn('breach', 'Breach target')}</div>`;
+  if (u.type === 'ew') return `<div class="dd-tools">${tbtn('ew', 'EW position')}</div>`;
+  return '<p class="fine">Its start and its H-hour orders follow your frontage and battalion choices.</p>';
 }
 
 /** Amber if a sector sits next to a trench or strongpoint on the attacker's air photographs. */
@@ -170,6 +211,18 @@ function cycleCol(g, plan, c) {
 export function attClick(e, g, plan) {
   const col = e.target.closest('[data-col]');
   if (col) return cycleCol(g, plan, +col.dataset.col);
+  const bo = e.target.closest('[data-bnopen]');
+  if (bo) { S.bnOpen = S.bnOpen === bo.dataset.bnopen ? null : bo.dataset.bnopen; return ' '; }
+  const bs = e.target.closest('[data-bnset]');
+  if (bs) {
+    const key = bs.dataset.bnset, k = bs.dataset.k, v = bs.dataset.v;
+    const list = key === 'all' ? assaultBns(g).filter(f => k !== 'posture' || v !== '' || f.role === 'wave2') : [g.fmns[key]];
+    for (const f of list) (plan.bn[f.id] ||= {})[k] = v;
+    rebuildAtt(g, plan);
+    return key === 'all' ? `All battalions: ${k === 'form' ? FORM[v] : POST[v]}.` : `${esc(g.fmns[key].name)}: ${k === 'form' ? FORM[v] : POST[v]}.`;
+  }
+  const ps = e.target.closest('[data-prepset]');
+  if (ps) { plan.prep = ps.dataset.prepset; rebuildAtt(g, plan); return `Preparation: ${ps.textContent.trim()}.`; }
   const bats = g.units.filter(u => u.side === 'att' && isBattery(u));
   const shift = (role, d) => {
     if (d > 0) { const b = bats.find(x => (plan.bats[x.id] || 'call') === 'call'); if (b) plan.bats[b.id] = role; }
@@ -184,10 +237,7 @@ export function attClick(e, g, plan) {
 
 export function attChange(e, g, plan) {
   const t = e.target, Sc = SCALES[g.scale];
-  if (t.matches('[data-bnform]')) { (plan.bn[t.dataset.bnform] ||= {}).form = t.value; }
-  else if (t.matches('[data-bnpost]')) { (plan.bn[t.dataset.bnpost] ||= {}).posture = t.value; }
-  else if (t.matches('[data-prep]')) plan.prep = t.value;
-  else if (t.matches('[data-barr]')) {
+  if (t.matches('[data-barr]')) {
     const bats = g.units.filter(u => u.side === 'att' && isBattery(u));
     if (t.checked) { if (!bats.some(b => plan.bats[b.id] === 'barrage')) bats.slice(0, Math.ceil(bats.length / 2)).forEach(b => { plan.bats[b.id] = 'barrage'; });
       plan.barrage = { cols: plan.mainCols.slice(), r0: Sc.bands.outpost[0], rate: 1, bats: bats.filter(b => plan.bats[b.id] === 'barrage').map(b => b.id) }; }

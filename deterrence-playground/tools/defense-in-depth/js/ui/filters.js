@@ -5,9 +5,10 @@ import { fighting, alive, isBattery, isCompany } from '../forces.js';
 import { inContact } from '../move.js';
 import { underGuns } from '../arty.js';
 
+/** The first two show as chips; the rest sit under the Filter menu (Detailed view only). */
 export const FILTERS = [
+  { id: 'idle', label: 'Needs orders' },
   { id: 'all', label: 'All' },
-  { id: 'idle', label: 'No orders' },
   { id: 'contact', label: 'In contact' },
   { id: 'stalled', label: 'Stalled / pinned' },
   { id: 'weak', label: 'Below 60%' },
@@ -54,4 +55,4 @@ export function markOf(u) {
 
 /** Words for a unit's posture / stance (lists and panels). */
 export const POSTURE_WORD = { rush: 'Rush', bound: 'Leapfrog', infil: 'Infiltrate', hold: 'Hold', consolidate: 'Consolidate', withdraw: 'Withdraw' };
-export const STANCE_WORD = { hold: 'Hold', elastic: 'Elastic', delay: 'Delay', riposte: 'Riposte', reserve: 'Reserve' };
+export const STANCE_WORD = { hold: 'Hold', elastic: 'Give ground', delay: 'Delay', riposte: 'Local counterattack', reserve: 'Reserve' };

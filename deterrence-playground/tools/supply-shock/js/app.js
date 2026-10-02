@@ -18,7 +18,7 @@ let g = null; // { s, plan, draft }
 $('context').innerHTML = `<p class="eyebrow">The real pattern behind the game</p><ul>
   <li>In 2025 China mined an estimated 82% of the world’s natural graphite and about 69% of its rare earths, and produced 99% of primary low-purity gallium (USGS).</li>
   <li>For gallium, graphite and rare earths, China is the top refiner with over 90% of global supply; across key energy minerals other than rare earths, the top refining country’s share averaged 72% in 2025 (IEA).</li>
-  <li>China put export licensing on gallium and germanium from August 2023 and banned both to the United States in December 2024; it tightened rare-earth controls in April 2025, expanded them in October 2025, then suspended the October measures for a year in November 2025 (USGS).</li>
+  <li>China put export licensing on gallium and germanium from August 2023 and banned both to the United States in December 2024, then suspended that ban until 27 November 2026 (<a href="https://www.cnbc.com/2025/11/09/china-suspends-ban-on-exports-of-gallium-germanium-antimony-to-us.html" target="_blank" rel="noopener">CNBC, 9 November 2025</a>); it tightened rare-earth controls in April 2025, expanded them in October 2025, then suspended the October measures for a year in November 2025 (USGS).</li>
   </ul><p class="fine">Sources: ${sourceLinks()}. The game’s Supplier is notional; its moves are not predictions.</p>`;
 $('srcs').innerHTML = sourceLinks();
 $('realsrc').innerHTML = MINERALS.map(m => `<li><b>${m.name}</b>: mining ${m.real.mine ?? 'n/a'}${m.real.mine != null ? '%' : ''} (${m.real.mineNote}); refining ${m.real.refine ? `${m.real.refine}% (${m.real.refineNote})` : 'n/a: no verified per-mineral figure'}.</li>`).join('');

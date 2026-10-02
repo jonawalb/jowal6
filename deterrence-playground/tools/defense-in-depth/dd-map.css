@@ -1,0 +1,153 @@
+/* Defense in Depth: the map. Every colour is a token, so dark mode and the Trailer skin need no redraw. Colour is
+   never the only signal: coverage shows its count, lanes their chevrons, works their shapes, units their letters. */
+.dd-mapbox { background: var(--land); height: min(74vh, 760px); min-height: 320px; position: relative; }
+.dd-mapbox svg { width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
+.dd-mapbox svg:active { cursor: grabbing; }
+body.dd-armed .dd-mapbox svg { cursor: crosshair; }
+@media (max-width: 640px) { .dd-mapbox { height: calc(100svh - 230px); min-height: 300px; } }
+.dd-ground { fill: var(--land); }
+.dd-t { stroke: color-mix(in srgb, var(--coast) 40%, transparent); stroke-width: .6; }
+.dd-t-open { fill: var(--land); }
+.dd-t-broken { fill: color-mix(in srgb, var(--warn) 9%, var(--land)); }
+.dd-t-woods { fill: color-mix(in srgb, var(--good) 18%, var(--land)); }
+.dd-t-village { fill: color-mix(in srgb, var(--chip) 70%, var(--land)); }
+.dd-t-crest { fill: color-mix(in srgb, var(--coast) 22%, var(--land)); }
+.dd-t-reverse { fill: color-mix(in srgb, var(--coast) 12%, var(--land)); }
+.dd-t-valley { fill: color-mix(in srgb, var(--sea) 55%, var(--land)); }
+.dd-e2 { filter: brightness(.97); } .dd-e3 { filter: brightness(.93); }
+.dd-tree { fill: color-mix(in srgb, var(--good) 35%, var(--land)); stroke: color-mix(in srgb, var(--good) 50%, var(--land)); stroke-width: .8; pointer-events: none; }
+.dd-house { fill: var(--chip); stroke: var(--coast); stroke-width: .9; pointer-events: none; }
+.dd-crater { fill: none; stroke: color-mix(in srgb, var(--warn) 30%, var(--land)); stroke-width: 1; pointer-events: none; }
+.dd-ridge { stroke: var(--coast); stroke-width: 5; stroke-dasharray: 2 6; stroke-linecap: round; opacity: .8; }
+.dd-ridge-l, .dd-name { font: 600 11px var(--body); fill: var(--muted); paint-order: stroke; stroke: var(--land); stroke-width: 3px; pointer-events: none; }
+.dd-zone { opacity: .5; pointer-events: none; }
+.dd-z-assembly { fill: color-mix(in srgb, var(--red) 8%, transparent); }
+.dd-z-nml { fill: color-mix(in srgb, var(--warn) 10%, transparent); }
+.dd-z-outpost { fill: color-mix(in srgb, var(--blue) 5%, transparent); }
+.dd-z-battle { fill: color-mix(in srgb, var(--blue) 9%, transparent); }
+.dd-z-switch, .dd-z-second { fill: color-mix(in srgb, var(--blue) 7%, transparent); }
+.dd-z-rear { fill: color-mix(in srgb, var(--good) 6%, transparent); }
+.dd-zline { stroke: var(--faint); stroke-width: 1.2; stroke-dasharray: 6 4; }
+.dd-zlab { font: italic 12px var(--body); fill: var(--muted); paint-order: stroke; stroke: var(--land); stroke-width: 3px; pointer-events: none; }
+.dd-cov { pointer-events: none; }
+.dd-cov.c1 { fill: color-mix(in srgb, var(--c3) 12%, transparent); }
+.dd-cov.c2 { fill: color-mix(in srgb, var(--c3) 26%, transparent); }
+.dd-cov.c3 { fill: color-mix(in srgb, var(--c3) 42%, transparent); }
+.dd-covn { font: 700 11px var(--mono); fill: var(--c3); paint-order: stroke; stroke: var(--land); stroke-width: 3px; pointer-events: none; }
+.dd-outguns { fill: color-mix(in srgb, var(--bad) 8%, transparent); stroke: color-mix(in srgb, var(--bad) 35%, transparent); stroke-dasharray: 2 4; pointer-events: none; }
+.dd-trench { fill: none; stroke: var(--ink); stroke-width: 2.4; stroke-linejoin: round; opacity: .8; pointer-events: none; }
+.dd-trench.seen { stroke-dasharray: 3 2; opacity: .65; }
+.dd-comm { stroke: var(--muted); stroke-width: 1.4; stroke-dasharray: 3 3; pointer-events: none; }
+.dd-wire { stroke: var(--ink); stroke-width: 1.3; opacity: .75; pointer-events: none; }
+.dd-wire.hidden { stroke-dasharray: 2 2; opacity: .5; }
+.dd-strong { fill: color-mix(in srgb, var(--ink) 10%, transparent); stroke: var(--ink); stroke-width: 2; pointer-events: none; }
+.dd-strong.concrete { stroke-width: 3.4; }
+.dd-strong.dummy { stroke-dasharray: 4 3; fill: none; }
+.dd-strong.exposed { stroke: var(--muted); stroke-dasharray: 2 3; }
+.dd-dug { fill: none; stroke: var(--muted); stroke-width: 1.4; pointer-events: none; }
+.dd-bar { pointer-events: none; }
+.dd-bar.now { fill: color-mix(in srgb, var(--accent) 34%, transparent); stroke: var(--accent); stroke-width: 1.5; }
+.dd-bar.next { fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.dd-bar.sos { fill: none; stroke: var(--c3); stroke-width: 1.4; stroke-dasharray: 2 3; }
+.dd-bar.mission { fill: color-mix(in srgb, var(--c2) 18%, transparent); stroke: var(--c2); stroke-width: 1.6; }
+.dd-main { fill: color-mix(in srgb, var(--blue) 8%, transparent); stroke: var(--blue); stroke-width: 1.2; stroke-dasharray: 6 4; pointer-events: none; }
+.dd-fixcol { fill: none; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 2 5; pointer-events: none; }
+.dd-pmark { font: 700 10.5px var(--mono); fill: var(--ink); paint-order: stroke; stroke: var(--land); stroke-width: 3px; pointer-events: none; }
+.dd-pmark.cs { fill: var(--good); } .dd-pmark.prep { fill: var(--accent); }
+.dd-proute { fill: none; stroke: var(--mine); stroke-width: 2; stroke-dasharray: 6 4; opacity: .7; pointer-events: none; }
+.dd-proute.infil { stroke: var(--c6); stroke-dasharray: 2 4; stroke-width: 2.6; }
+.dd-proute.pair { stroke-width: 2.6; }
+.dd-objline { stroke: var(--ink); stroke-width: 3.5; stroke-dasharray: 10 5; pointer-events: none; }
+.dd-objname { font: 700 13px var(--display); fill: var(--ink); paint-order: stroke; stroke: var(--land); stroke-width: 4px; pointer-events: none; }
+.dd-objheld { fill: color-mix(in srgb, var(--foe) 25%, transparent); stroke: var(--foe); stroke-width: 2.5; pointer-events: none; }
+.dd-lane { fill: color-mix(in srgb, var(--mine) 12%, transparent); stroke: var(--mine); stroke-width: 1.4; pointer-events: none; }
+.dd-lane.enf { fill: color-mix(in srgb, var(--c2) 16%, transparent); stroke: var(--c2); stroke-width: 2; }
+.dd-lane.half { fill: color-mix(in srgb, var(--c2) 14%, transparent); stroke: var(--c2); stroke-dasharray: 4 3; }
+.dd-lane.sel { stroke-width: 3; }
+.dd-chev { fill: none; stroke: var(--c2); stroke-width: 2.2; pointer-events: none; }
+.dd-route { fill: none; stroke: var(--mine); stroke-width: 2.4; opacity: .7; stroke-linejoin: round; pointer-events: none; }
+.dd-route.pending { stroke-dasharray: 7 5; }
+.dd-route.sel { opacity: 1; stroke-width: 3.4; }
+.dd-route.cs { stroke: var(--good); stroke-width: 3; }
+.dd-sec { cursor: pointer; outline: none; }
+.dd-sec rect { fill: transparent; stroke: transparent; }
+.dd-sec:hover rect { fill: color-mix(in srgb, var(--mine) 7%, transparent); stroke: color-mix(in srgb, var(--mine) 50%, transparent); }
+.dd-sec:focus-visible rect { stroke: var(--focus); stroke-width: 3.5; }
+.dd-hintc { fill: color-mix(in srgb, var(--accent) 12%, transparent); stroke: var(--accent); stroke-width: 1.4; stroke-dasharray: 4 3; pointer-events: none; }
+.dd-hl { fill: none; stroke: var(--accent); stroke-width: 4; pointer-events: none; }
+.dd-unit { cursor: pointer; }
+.dd-unit .dd-ubox { fill: color-mix(in srgb, var(--mine) 16%, var(--panel)); stroke: var(--mine); stroke-width: 1.8; }
+.dd-unit.bat .dd-ubox { fill: color-mix(in srgb, var(--mine) 8%, var(--panel)); stroke-dasharray: 3 2; }
+.dd-unit.sel .dd-ubox { stroke: var(--focus); stroke-width: 3.4; }
+.dd-unit.idle .dd-ubox { stroke: var(--warn); }
+.dd-unit.dim { opacity: .3; }
+.dd-unit:hover .dd-ubox { stroke-width: 2.8; }
+.dd-glyph { font: 700 13px var(--mono); fill: var(--mine); pointer-events: none; }
+.dd-umark { font: 700 9px var(--body); fill: var(--ink); pointer-events: none; }
+.dd-late { fill: var(--warn); stroke: var(--panel); stroke-width: 1; }
+.dd-idle { font: 800 10px var(--body); fill: var(--warn); }
+.dd-hp0 { fill: var(--hp-lost); } .dd-hp { fill: var(--hp); }
+.dd-stack .dd-ubox { stroke-width: 2; }
+.dd-stack.mine .dd-ubox { fill: color-mix(in srgb, var(--mine) 18%, var(--panel)); stroke: var(--mine); }
+.dd-stack.foe .dd-ubox { fill: color-mix(in srgb, var(--foe) 14%, var(--panel)); stroke: var(--foe); }
+.dd-stack.foe .dd-glyph { fill: var(--foe); }
+.dd-stack.sel .dd-ubox { stroke: var(--focus); stroke-width: 3.4; }
+.dd-stack.dim { opacity: .35; }
+.dd-l-enemy, .dd-l-badges, .dd-stack { pointer-events: none; }
+.dd-trk .dd-tbox { fill: color-mix(in srgb, var(--foe) 12%, var(--panel)); stroke: var(--foe); stroke-width: 1.8; stroke-dasharray: 4 2.5; }
+.dd-trk.exact .dd-tbox { stroke-dasharray: none; }
+.dd-trk.truth .dd-tbox { fill: color-mix(in srgb, var(--foe) 45%, var(--panel)); stroke-dasharray: none; }
+.dd-trk.old { opacity: .5; }
+.dd-tl { font: 700 11px var(--mono); fill: var(--foe); }
+.dd-move circle { fill: none; stroke: var(--foe); stroke-width: 1.8; stroke-dasharray: 3 3; }
+.dd-win circle { stroke: var(--panel); stroke-width: 1.5; }
+.dd-win.green circle { fill: var(--good); } .dd-win.amber circle { fill: var(--warn); } .dd-win.grey circle { fill: var(--muted); }
+.dd-hand { fill: none; stroke: var(--panel); stroke-width: 1.6; stroke-linecap: round; }
+.dd-race rect { fill: var(--panel); stroke: var(--ink); stroke-width: 1; opacity: .92; }
+.dd-race.cs rect { stroke: var(--good); } .dd-race.att rect { stroke: var(--bad); }
+.dd-race text { font: 600 10px var(--mono); fill: var(--ink); }
+#map text { user-select: none; -webkit-user-select: none; }
+.dd-zoom { position: absolute; right: 8px; top: 8px; display: flex; flex-direction: column; gap: 4px; }
+.dd-zoom .btn { min-width: 40px; min-height: 40px; padding: 4px; background: var(--panel); font-size: 16px; }
+.dd-mini { position: absolute; right: 8px; bottom: 8px; border: 1px solid var(--rule); border-radius: 3px; box-shadow: 0 4px 12px -6px rgba(0, 0, 0, .5); cursor: pointer; }
+.dd-layerbar { display: flex; flex-wrap: wrap; gap: 4px; }
+.dd-chip { font: 600 12px var(--body); min-height: 36px; padding: 4px 10px; border: 1px solid var(--rule); border-radius: 18px; background: var(--panel); color: var(--muted); cursor: pointer; }
+.dd-chip[aria-pressed="true"] { color: var(--ink); border-color: var(--mine); background: var(--blue-soft); }
+.dd-viewbar { display: flex; justify-content: center; }
+.dd-views { display: flex; gap: 4px; background: var(--panel); padding: 4px; border-radius: 4px; border: 1px solid var(--rule); }
+.dd-views .btn { min-height: 40px; }
+.dd-legend { font-size: 12px; color: var(--muted); }
+.dd-legend summary { cursor: pointer; min-height: 40px; display: flex; align-items: center; font-weight: 600; }
+.dd-lgrid { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.dd-lgrid span { display: inline-flex; align-items: center; gap: 6px; }
+.dd-lgrid i { display: inline-block; width: 14px; height: 10px; flex: none; font-style: normal; }
+.lg-mine { border: 2px solid var(--mine); background: color-mix(in srgb, var(--mine) 14%, transparent); }
+.lg-hp { width: 28px !important; height: 6px !important; border-radius: 2px; background: linear-gradient(90deg, var(--hp) 0 65%, var(--hp-lost) 65% 100%); }
+.lg-foe { width: 10px !important; height: 10px !important; border: 2px solid var(--foe); transform: rotate(45deg); }
+.lg-move { border: 1.8px dashed var(--foe); border-radius: 50%; width: 12px !important; height: 12px !important; }
+.lg-lane { background: color-mix(in srgb, var(--mine) 18%, transparent); border: 1.4px solid var(--mine); clip-path: polygon(0 50%, 100% 0, 100% 100%); width: 22px !important; }
+.lg-lane.enf { background: color-mix(in srgb, var(--c2) 30%, transparent); border-color: var(--c2); }
+.lg-cov { background: color-mix(in srgb, var(--c3) 30%, transparent); }
+.lg-bar { background: color-mix(in srgb, var(--accent) 34%, transparent); border: 1.5px solid var(--accent); }
+.lg-bar.next { background: none; border-style: dashed; } .lg-bar.sos { background: none; border-color: var(--c3); border-style: dotted; }
+.lg-guns { background: color-mix(in srgb, var(--bad) 10%, transparent); border: 1px dashed var(--bad); }
+.lg-wire { width: auto !important; height: auto !important; font: 700 10px var(--mono); color: var(--ink); }
+.lg-trench { border-bottom: 2.4px solid var(--ink); height: 6px !important; }
+.lg-comm { border-left: 1.4px dashed var(--muted); width: 4px !important; }
+.lg-strong { border: 2px solid var(--ink); width: 10px !important; }
+.lg-win { width: 12px !important; height: 12px !important; border-radius: 50%; }
+.lg-win.green { background: var(--good); } .lg-win.amber { background: var(--warn); } .lg-win.grey { background: var(--muted); }
+.lg-route { height: 0 !important; width: 22px !important; border-top: 2.4px dashed var(--mine); }
+.lg-idle { width: 13px !important; height: 13px !important; border-radius: 50%; background: var(--warn); color: var(--panel); font: 700 10px/13px var(--body) !important; text-align: center; }
+@media (max-width: 640px) { .dd-legend:not([open]) .dd-lgrid { display: none; } }
+
+/* Trailer skin */
+:root[data-skin="trailer"] .dd-ground, :root[data-skin="trailer"] .dd-t-open { fill: #0e1f17; }
+:root[data-skin="trailer"] .dd-name, :root[data-skin="trailer"] .dd-zlab, :root[data-skin="trailer"] .dd-ridge-l, :root[data-skin="trailer"] .dd-objname, :root[data-skin="trailer"] .dd-covn, :root[data-skin="trailer"] .dd-pmark { stroke: #0e1f17; }
+:root[data-skin="trailer"] .dd-name { font: 500 10px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+:root[data-skin="trailer"] .dd-objname { fill: var(--accent); font-style: italic; }
+:root[data-skin="trailer"] .dd-objline { stroke: var(--accent); }
+:root[data-skin="trailer"] .dd-unit.sel .dd-ubox { filter: drop-shadow(0 0 5px var(--focus)); }
+:root[data-skin="trailer"] .dd-bar.now { filter: drop-shadow(0 0 6px var(--accent)); }
+:root[data-skin="trailer"] .dd-lane.enf { filter: drop-shadow(0 0 4px var(--c2)); }
+:root[data-skin="trailer"] .dd-mapbox { box-shadow: 0 24px 60px -30px #000, inset 0 0 0 1px var(--rule); }

@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Defense in Depth</title>
+<meta name="description" content="A wargame of trench defense in depth on a fictional front: site machine guns for enfilade, leapfrog under the barrage, and time the counterstroke. Division to army scale, 1917–18 or modern, with a learning campaign.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@500;600;700;800&family=DM+Mono:wght@400;500&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="dd-base.css">
+<link rel="stylesheet" href="dd-map.css">
+<link rel="stylesheet" href="dd-panels.css">
+<link rel="stylesheet" href="dd-lessons.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+<div class="dd-actions">
+  <p class="dd-flag"><b>Fictional and notional.</b> The front, armies and numbers are invented for teaching. Combat follows Biddle’s model of the modern system, rescaled.</p>
+  <div><button type="button" class="btn" id="new-game">New game</button>
+  <button type="button" class="btn" id="start-tour">Walkthrough</button>
+  <button type="button" class="btn" id="go-lessons">Lessons</button>
+  <button type="button" class="btn" id="copy-link">Copy link</button>
+  <button type="button" class="btn" id="key-help" aria-label="Keyboard shortcuts">Keys</button></div>
+</div>
+<main class="layout">
+  <div class="stage">
+    <p class="dd-oldlink" id="oldlink" hidden></p>
+    <section class="card dd-start" id="start" hidden aria-labelledby="start-t">
+      <h2 id="start-t">Defense in Depth</h2>
+      <p class="dd-lede">Hold or break a trench front on the Merrow front, hour by hour, against a computer commander that acts only on what it can see.</p>
+      <div id="start-body"></div>
+      <div class="dd-od">
+        <label class="slider" for="od"><span class="sl-h"><span>Offense–defense balance</span><output id="od-out" for="od" class="num">5 — standard</output></span>
+          <input type="range" id="od" min="0" max="10" step="1" value="5" aria-describedby="od-desc" aria-valuetext="5, standard">
+          <span class="dd-od-ends" aria-hidden="true"><span>Favors defense</span><span>Favors offense</span></span></label>
+        <p class="fine" id="od-desc"></p>
+      </div>
+      <div class="dd-go"><button type="button" class="btn solid dd-startb" id="start-go">Plan your defense</button></div>
+      <p class="dd-rules">New here? <button type="button" class="btn" data-tour="def">Walk me through defending</button> <button type="button" class="btn" data-tour="att">Walk me through attacking</button></p>
+      <p class="fine">Keys: <b>N</b> ends the hour, <b>U</b> undoes, <b>]</b> and <b>[</b> step through your units, <b>I</b> the next idle one, <b>Tab</b> into the map and the <b>arrow keys</b> between sectors, <b>+</b> <b>−</b> <b>0</b> zoom, <b>?</b> every key.</p>
+    </section>
+
+    <section class="card dd-camp" id="camp" hidden aria-live="polite"></section>
+
+    <div class="dd-play" id="play">
+      <div class="card dd-obar" id="bar" hidden>
+        <div class="dd-bar-top">
+          <p class="dd-clock"><b class="num" id="clock">05:00</b> <span class="muted" id="hourof"></span></p>
+          <p class="dd-objtrack" id="objtrack"></p>
+          <p class="dd-comms" id="comms"></p>
+          <p class="dd-ammo" id="ammo"></p>
+          <div class="dd-gobar"><button type="button" class="btn" id="undo">Undo</button><button type="button" class="btn solid dd-end" id="end">End hour</button><button type="button" class="btn solid dd-end" id="again">Play again</button></div>
+        </div>
+        <p class="dd-late" id="late" hidden></p>
+        <div class="dd-barrage" id="barrage-ctl"></div>
+        <div class="dd-tabs" role="tablist" aria-label="Show">
+          <button type="button" role="tab" data-tab="map" aria-selected="true">Map</button>
+          <button type="button" role="tab" data-tab="plan" aria-selected="false">Plan</button>
+          <button type="button" role="tab" data-tab="units" aria-selected="false">Units</button>
+          <button type="button" role="tab" data-tab="reports" aria-selected="false">Reports</button>
+        </div>
+      </div>
+      <div class="dd-board" id="board" hidden>
+        <div class="dd-ucol" id="ucol">
+          <aside class="dd-tips" id="tips" hidden aria-label="Start tips"><button type="button" class="dd-tips-x" id="tips-x" aria-label="Hide the tips">×</button><div id="tips-text"></div></aside>
+          <div class="dd-sel" id="sel"></div>
+          <p class="eyebrow dd-uh">Your units</p>
+          <div class="dd-filters" id="filters" role="group" aria-label="Filter your units"></div>
+          <div class="dd-tree" id="tree" role="group" aria-label="Your units by formation"></div>
+          <p class="fine dd-keys">Keys: <b>]</b> <b>[</b> next or previous unit, <b>}</b> <b>{</b> formation, <b>I</b> idle, <b>C</b> in contact, <b>F</b> filter, <b>P</b> posture, <b>W</b> waves or small groups, <b>G</b> stance, <b>L</b> leapfrog, <b>K</b> lane, <b>A</b> batteries, <b>T</b> tips, <b>N</b> end hour.</p>
+        </div>
+        <div class="dd-mcol" id="mcol">
+          <p class="dd-say" id="say" aria-live="polite"></p>
+          <div class="dd-layerbar" id="layerbar"></div>
+          <div class="dd-viewbar" id="viewbar" hidden><div class="dd-views" role="group" aria-label="What the map shows">
+            <button type="button" class="btn" data-view="belief" aria-pressed="true">What you saw</button>
+            <button type="button" class="btn" data-view="truth" aria-pressed="false">What was true</button></div></div>
+          <div class="mapbox dd-mapbox" id="box">
+            <svg id="map" role="group" aria-label="Map of the fictional Merrow front, in 500-metre sectors. Tab into the map, move between sectors with the arrow keys, and press Enter to act on the focused sector."></svg>
+            <div class="dd-zoom" role="group" aria-label="Zoom"><button type="button" class="btn" data-zoom="in" aria-label="Zoom in">+</button><button type="button" class="btn" data-zoom="out" aria-label="Zoom out">−</button><button type="button" class="btn" data-zoom="fit" aria-label="Fit the map">Fit</button><button type="button" class="btn" data-zoom="mini" aria-label="Show or hide the minimap" hidden>Mini</button></div>
+          </div>
+          <div class="dd-sheet" id="sheet" hidden role="dialog" aria-label="Units in this sector"></div>
+          <details class="dd-legend" id="legend" open><summary>Legend</summary><div class="dd-lgrid">
+            <span><i class="lg-mine"></i>Your unit (letter = type: R rifle, S storm, M MG, T mortar, P pioneer, K tank, F/H/X battery, D drone, E EW)</span>
+            <span><i class="lg-hp"></i>Health bar: green = strength left, red = lost (both sides)</span>
+            <span><i class="lg-foe"></i>Enemy seen: exact with its bar; “~” type only; faded = an older sighting</span>
+            <span><i class="lg-move"></i>Movement reported by observers</span>
+            <span><i class="lg-lane"></i>MG fire lane</span><span><i class="lg-lane enf"></i>Enfilading lane (across the front)</span>
+            <span><i class="lg-cov"></i>Coverage: number of fire directions (0 / 1 / 2 / 3+)</span>
+            <span><i class="lg-bar"></i>Barrage now</span><span><i class="lg-bar next"></i>Barrage next hour</span><span><i class="lg-bar sos"></i>SOS / fire mission</span>
+            <span><i class="lg-guns"></i>Beyond your guns’ range</span>
+            <span><i class="lg-wire">×××</i>Wire or mines</span><span><i class="lg-trench"></i>Trench</span><span><i class="lg-comm"></i>Communication trench</span><span><i class="lg-strong"></i>Strongpoint (dashed: dummy, yours only)</span>
+            <span><i class="lg-win green"></i>Lodgment: window open</span><span><i class="lg-win amber"></i>closing</span><span><i class="lg-win grey"></i>consolidated</span>
+            <span><i class="lg-route"></i>Order (dashed: starts next hour)</span><span><i class="lg-idle">!</i>Needs orders</span>
+            <span>① overwatch · ② bounding (leapfrog) · ⇢ infiltrating · ⚑ hold · ↺ riposte</span>
+          </div></details>
+        </div>
+      </div>
+    </div>
+
+    <section class="card dd-aar" id="aar" hidden aria-labelledby="aar-t"></section>
+  </div>
+
+  <aside class="panel dd-side-panel" id="side" aria-label="Plan, status and reports">
+    <div class="sec dd-plan" id="plan" hidden><div id="plan-head"></div><div id="plan-body"></div><div id="plan-check"></div></div>
+    <div class="sec dd-statsec" id="statsec"><div class="status" id="status" data-s="warn"><b id="st-t">Defense in Depth</b><span id="st-s">Choose a side to start.</span></div>
+      <p class="dd-tldr" id="tldr" aria-live="polite"></p></div>
+    <div class="sec dd-feedsec" id="feedsec"><p class="eyebrow">Reports <small class="muted">(older hours folded)</small></p><ol class="dd-feed" id="feed"></ol></div>
+  </aside>
+</main>
+
+<section class="below">
+<div class="col">
+  <h2>How to play</h2>
+  <p><b>The goal.</b> The attacker wins only by territory. At the end of the last hour it must hold <span data-fill="need">2</span> side-by-side sectors of the objective line (<span data-fill="needkm">1 km</span>), each with at least half a company and no unbroken defender in it. Otherwise the defender wins. Losses and ground gained do not decide the game; you see them in the review. The objective line is the back edge of the main defended position, and the defender’s counterattack formation waits behind it, so a defender can lose the line and still win by retaking it before the last hour. The battle lasts <span data-fill="turns">15 one-hour turns (16 in the modern era)</span>, from 05:00.</p>
+  <p><b>Before the battle.</b> Both sides plan. Defending, you spend work points on trenches, wire or mines, strongpoints, dugouts and dummy positions; place your companies in the outpost, battle and rear zones; lay your MG companies’ fire lanes; set stances; name your counterattack formation; and give each battery its defensive-fire sectors. Attacking, you choose the main-effort columns, each battalion’s formation and way of moving, infiltration routes, the preparation and the creeping barrage, and your reserves. <i>Auto-plan</i> fills in a sound plan you can then change.</p>
+  <p><b>Each hour.</b> Read the one-line summary of the last hour, then give orders: pick a unit or a whole formation and choose where it goes and how it moves; fire your batteries; re-lay lanes. Press <kbd>N</kbd> (End hour) when you are done. The bar shows whether this hour’s orders start now or next hour. In 1917–18 most orders go by runner and start next hour; in the modern era they go by radio and start at once unless the area is jammed. <b>Standing orders</b> keep your units fighting between your orders: attacking, leading companies rush behind the barrage, leapfrog against live fire and consolidate on the objective, follow-on waves go in behind success and batteries in direct support answer calls; defending, the counterattack formation strikes a lodgment while its window is open, idle companies block the penetration and your batteries fire on what you see. They act on last hour’s picture (two hours late when defending) and never touch a unit you have ordered in the last three hours. See and switch them off in the panel when nothing is selected. A plan from <i>Auto-plan</i> left to its standing orders wins about a third of its battles against the Standard commander; commanding them yourself does much better.</p>
+  <p><b>What you see.</b> You see enemy units exactly only in sectors you hold or are fighting for. Next to your units, with a clear line of sight, you see their type but not their losses, and you may miss them: men in small groups, under cover or concealed are hard to spot, and morning fog or night halves the chance. Observers (aircraft and balloons in 1917–18, drones in the modern era) report movement further out. The attacker starts with the defender’s trench lines, wire and communication trenches mapped from the air, but not who is in them; strongpoints and dummies look the same.</p>
+  <p><b>Enfilade: machine guns.</b> MG companies are the enfilade weapon, and only they lay fire lanes. A lane runs up to three sectors (1.5 km) in a straight line until a crest or smoke blocks it. Fire that comes from the flank and runs along a line of men ignores the cover they face and hits three times as many men in waves; fire from in front hits only the few in its path and is stopped by cover. Site your MGs on the flanks of the ground the enemy must cross, so their lanes run across his front and along your trench lines, and so each sector is covered from two or more directions. Men advancing in small groups still go forward abreast, so flank fire along their frontage hits nearly three times as many (three times for waves); only storm infiltrators slipping through, and garrisons in strongpoints, have no long line to enfilade. A trench line is enfiladed if the enemy gets an MG to its end.</p>
+  <p><b>Dead ground.</b> Every sector has folds and hollows where attackers can shelter from fire. Covering a sector from two or more directions removes most of them; the <i>Coverage</i> layer shows how many directions cover each sector. Attackers moving by leapfrog or infiltration use dead ground far better than men rushing in waves, and use it best where they have scouted (been next to the sector for an hour, or watched it from the air).</p>
+  <p><b>Defense in depth.</b> The defense has three zones. A thin outpost zone warns and delays, the battle zone (behind the crest where possible) is where the attack is stopped, and the rear zone holds the guns and the counterattack formation. Men packed into the front line die to bombardment. Each defending unit has a stance: <i>Hold</i>, <i>Elastic</i> (may give one row inside its zone), <i>Delay</i> (outposts fight an hour and then fall back), <i>Riposte</i> (counterattacks a fresh enemy lodgment next to it) or <i>Reserve</i>.</p>
+  <p><b>Taking a sector.</b> When both sides are in a sector at the end of the hour, the newcomer must have enough strength to push the holder out. One fully concealed defender can halt 2.5 attackers; an exposed one halts fewer, and suppressed defenders count for less. The <i>stall gauge</i> shows the assault as a percentage of the strength needed. Below 100% the assault stalls, and stalled men may go to ground, where artillery destroys them. Above it the holders give ground (Elastic, Delay) or are overrun (Hold).</p>
+  <p><b>Leapfrog.</b> Pair two attacking units. Each hour one is on overwatch, firing on the sector the other is moving into, while the other bounds forward; next hour they swap. The overwatch fire suppresses the defenders, and short bounds keep the moving men exposed for less time. Without an overwatch partner that can see the target sector, the bounding unit is badly exposed, gets no covering fire, moves at three-quarters pace and often goes to ground if the defenders are not suppressed. Away from the enemy (no enemy within a sector of either unit) the pair moves together, both covered. <i>Rush</i> moves fastest and is the most exposed.</p>
+  <p><b>Infiltration.</b> Storm companies (raid companies in the modern era) can move past enemy-held sectors without stopping. Each hour near enemy outposts, riflemen or MG lanes they may be spotted; until then they cannot be shot at and the enemy does not see them. Once spotted they are fair game. Ordinary rifle companies trained to infiltrate can try it too, but they are spotted far more often and, once seen, are as exposed as a lone bounding company. Posts they bypass keep their lanes and fire on the next wave until someone mops them up, and infiltrators beyond their own guns lose cohesion fast.</p>
+  <p><b>Counterattacks.</b> A sector the attacker has just taken is a <i>lodgment</i>. For its first two hours it is not consolidated, and its men are tired and disorganized. A counterattack then needs far less strength than the original attack did, more so if the lodgment is beyond the attacker’s artillery. The clock badge on each lodgment shows the window: green open, amber closing, grey consolidated. A <i>riposte</i> by units next to the lodgment goes in the same hour. The <i>counterstroke</i> by the counterattack formation needs planning time (<span data-fill="cstime">2 hours</span>) and gets its own supporting fire. Attacking, every row you advance and every hour beyond your guns wears your units down.</p>
+  <p><b>Barrages and timing.</b> Artillery fires one mission per battery per hour: suppress, destroy, smoke, gas (1917–18), counter-battery or precision (modern rockets). Suppression keeps heads down only while the shells fall. A creeping barrage moves forward a set number of rows per hour. If it lifts before your infantry arrive, the defenders are up and firing; if your infantry arrive before it lifts, they walk into their own shells. In 1917–18 a change to the barrage after the battle starts is a runner message, two hours late and sometimes lost. A short hurricane preparation keeps surprise; a six-hour methodical one cuts wire and kills exposed men but shows the defender where you will attack. Defending, each battery fires automatically on its defensive-fire sectors when attackers appear there.</p>
+  <p><b>Obstacles, gas and the modern battlefield.</b> Wire (1917–18) or mines (modern) stop a unit for an hour in the open, lined up for enfilade; engineers clear a lane in two hours, and early tanks crush wire. Gas marks a sector for three hours: men there, on either side, are masked and slowed. In the modern era, drones find units and strike men moving in the open, and show dead ground; mines must be found and breached; precision rockets and counter-battery fire hunt located batteries; electronic warfare jams drones and radios, delaying orders. Modern weapons are far deadlier against men in the open and only a little deadlier against men under cover, so the same mistakes cost more.</p>
+  <p><b>Offense–defense balance.</b> The slider at the start (0–10, 5 standard) tilts the battle toward one army. Below 5 the attacking army’s assaults need more strength, the defender’s counterattacks need less, and the defender’s fire costs the attacker more; above 5 the reverse. Each step moves the attacker’s chance of winning by about one and a half points. What each side sees and how the computer thinks stay the same. The setting is saved in the share link.</p>
+  <p><b>Command aids.</b> The unit list is grouped by formation. Tap a formation to select all its units and give one order (advance, attack on an axis, set a stance, hold a zone, plan a counterstroke); tap a company to order it alone. Filters show units without orders, in contact, stalled or pinned, or beyond artillery cover; <kbd>]</kbd> and <kbd>[</kbd> step through them and <kbd>I</kbd> jumps to the next idle unit. Press <kbd>?</kbd> for every key.</p>
+  <p><b>The other commander</b> acts only on what its side can see, with the same rules and dice as you. <i>Easy</i> lays out a poor plan (attacking: one narrow column in waves, no fixing attacks, a barrage too fast to follow; defending: two-thirds of its strength forward on Hold) but then reacts like Standard, two hours late; <i>Standard</i> plays the modern system; <i>Hard</i> adds feints, better lane siting and faster reactions. Difficulty changes the computer’s methods, never its information or luck.</p>
+  <p><b>The campaign.</b> Four battles on the same front, with a learning phase after each of the first three. You choose how your army learns: who reports, who judges what worked, and how training spreads. Your army can learn only from what its units actually tried, and what it copies from the enemy may come across as form without the rules. Each learning style is modeled on one of the three armies in Hunzeker’s study (see Lessons).</p>
+
+  <details class="dd-more" id="model">
+    <summary>How the model works</summary>
+    <p><b>The model.</b> Combat follows Stephen Biddle’s formal model of the “modern system” of force employment (Military Power, Appendix, pp. 209–217), rescaled from a theater and days to 500 m sectors and hours. Biddle argues that since 1918 the decisive question has been how armies reduce their exposure to fire: cover and concealment, dispersion, small-unit maneuver, suppression and combined arms in the attack, and depth, reserves and counterattack in the defense (pp. 33, 35–38, 44–48). Three of his ideas carry the game.</p>
+    <p><b>Halting an assault.</b> Biddle’s constant k1 = 2.5 is the number of attackers one fully concealed, fully reinforced defender can halt (Table A.1, p. 218). How much of that a defender keeps falls with its exposure f<sub>e</sub> (eq. A.6, p. 212). The game runs this test in every contested sector each hour: an assault takes the sector when its strength exceeds 2.5 × (1 − f<sub>e</sub>) × the holders’ strength, with the holders’ strength reduced by suppression and the attacker’s by lost cohesion. The f<sub>e</sub> values by position (a mapped trench on a forward slope 0.5, a strongpoint 0.1, dispersed men 0) are <span class="notional">notional</span>, shaped by Biddle’s Fig. A.3 (p. 221). k1 is never tuned.</p>
+    <p><b>Exposure and speed.</b> In Biddle’s model an attacker’s losses grow with the defender’s density and technology and with assault speed roughly as V(V + k8), and fall as the defender is suppressed or exposed (eq. A.11, p. 213). The game keeps that shape per unit per hour: each posture has an exposure (Rush 1.0; a leapfrog bound with overwatch about 0.27; a dug-in defender about 0.12), multiplied by the fire on the unit, the angle it comes from (flanking fire ignores the cover a unit faces) and the dead ground it can use. Slower, covered movement loses fewer men per sector gained but gives the defender time; the game does not fix a best speed. Biddle’s Fig. A.8 (p. 226) shows the trade-off: ground gained peaks at a moderate assault speed.</p>
+    <p><b>Suppression and fires.</b> A full barrage takes 86% off the target’s fire, after Biddle’s finding that suppression <q>can reduce hostile firing rates by a factor of seven or more</q> (p. 67). Destroying a dug-in target costs ten times the shells of suppressing it (p. 37). A barrage lifted too soon leaves a gap and one lifted too late hits its own infantry (Biddle p. 31; Hunzeker p. 52).</p>
+    <p><b>The reserve race.</b> The defender wins if its counterattack reaches a penetration before the attacker reaches the objective. Moving reserves survive each hour under observation with probability T<sup>−k2′v</sup>, where T is Biddle’s technology index (eq. A.1, p. 211: 1.8 for 1918, 12 for 2020) and v is speed (after eq. A.5, p. 212). So the best reserve speed falls as weapons get deadlier (Fig. A.13, p. 233). The race clock and the review’s race chart show this contest.</p>
+    <p><b>The modern era.</b> The same rules apply with modern weapons. Lethality grows much more against exposed men than against covered ones (Biddle pp. 53–54), so the game multiplies losses by up to 2.5 for men fully exposed and hardly at all for men under cover (<span class="notional">2.5 calibrated</span> so that rushing costs at least half as much again, relative to leapfrog, as it does in 1917–18). In Biddle’s words, <q>technology thus magnifies the consequences of force employment</q> (p. 234). Drone strikes use the shape of his overflight-attrition model (eq. A.22, p. 215), an extrapolation the game labels as such.</p>
+    <p><b>Calibration.</b> The base kill rate is set so that one MG company firing for an hour at a rifle company in the open takes about 15% of it frontally and about 40% from the flank; men in small groups moving by leapfrog behind a full barrage lose 3% or less. Biddle notes that a company in a massed line <q>can be wiped out by a single battalion volley from hostile artillery</q> while a dispersed one loses under 10% (p. 36). All of these targets are <span class="notional">notional</span>; METHOD.md lists them and the runs that check them.</p>
+    <p><b>Offense–defense balance.</b> The slider multiplies Biddle’s halt ratio H for the attacking army’s assaults by s<sup>(5 − setting)</sup> (and divides it for the defender’s counterattacks), and multiplies direct-fire losses on the attacking army by s<sup>(5 − setting)/2</sup> (dividing those on the defender), with s = <span data-fill="odstep">1.03</span> at Division (1.02 at Corps, 1.013 at Army, where more assaults compound it). At 5 the factor is exactly 1, so the standard game is the calibrated one. It is a <span class="notional">notional</span> difficulty setting, not a sourced value.</p>
+    <p><b>Learning.</b> The campaign follows Michael Hunzeker’s account of how armies learn in war (Dying to Learn): they explore new methods, select the ones that work, and act by codifying and training them (pp. 7–10, 22–33). Moderately decentralized command explores best (pp. 8, 28–29); an independent assessment staff filters lessons well (pp. 10, 29–31); centralized training spreads them faithfully (pp. 31–33). In his words, <q>learning sets a higher bar than change</q> (p. 36): a method is learned only when most frontline units can use it (p. 37). Success in unusual conditions can teach a false lesson (pp. 147–148), and copying an enemy’s method without its logic fails (pp. 117–118). The game’s numbers for all of this are <span class="notional">notional</span>.</p>
+    <p><b>The critiques.</b> Biddle says his constants <q>represent assumptions rather than observed values</q> (p. 236). When he doubles or halves them, the curves change height but keep their shapes, except that results are sensitive to k1 (pp. 236–239). The game’s rescaling from theater and days to sectors and hours is its own, and every value not in the sources is labelled notional. Treat it as a teaching model with sourced anchors, not a prediction.</p>
+    <p><b>Left out.</b> Supply beyond ammunition, casualty evacuation, weather other than morning fog, air combat, civilians, and morale beyond cohesion and the break at half strength.</p>
+    <div class="tablewrap"><table id="dd-param-table"></table></div>
+    <h3>Balance check</h3>
+    <div id="dd-balance"></div>
+    <h3>Offense–defense balance check</h3>
+    <div id="dd-od-table"></div>
+  </details>
+</div>
+<div class="col">
+  <h2>In the sources</h2>
+  <ol class="dd-quotes" id="dd-quotes"></ol>
+  <h2 class="mt">Sources</h2>
+  <ol class="src" id="dd-sources"></ol>
+</div>
+</section>
+<section class="dd-lessons-wrap" id="lessons" aria-labelledby="lessons-t">
+  <h2 id="lessons-t">Lessons</h2>
+  <p class="dd-lede">Original diagrams, redrawn and expanded from the books’ figures and descriptions. Each one runs by itself; the review links the ones your battle triggered.</p>
+  <div class="dd-lessons" id="lessons-list"></div>
+</section>
+<div class="dd-tour" id="tour" hidden role="dialog" aria-label="Walkthrough"></div>
+<div class="dd-keyhelp" id="keyhelp" hidden role="dialog" aria-label="Keyboard shortcuts"></div>
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Defense in Depth', sub: 'Hold or break a fictional trench front: machine guns for enfilade, leapfrog under the barrage, and the counterstroke on time.', category: 'Force & wargame models' });
+</script>
+<script type="module" src="js/ui/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+/* Defense in Depth: page layout, start screen, order bar, phone tabs, tips, walkthrough. Built on
+   shared/css/tsm.css tokens only, so light, dark and the Trailer skin come from there. You are always Blue
+   (--mine); the enemy is Red (--foe). Strength bars: green = left, red = lost, both sides (--hp, --hp-lost). */
+body { --mine: var(--blue); --foe: var(--red); --hp: #2f9e44; --hp-lost: #d63a3a; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) body { --hp: #4fbf6d; --hp-lost: #ff6b5e; } }
+:root[data-theme="dark"] body { --hp: #4fbf6d; --hp-lost: #ff6b5e; }
+[hidden] { display: none !important; }
+.mt { margin-top: 14px !important; }
+.warn { color: var(--warn); }
+.dd-actions { max-width: 1400px; margin: 12px auto 0; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; }
+.dd-actions > div { display: flex; gap: 8px; flex-wrap: wrap; }
+.dd-actions .btn, .dd-gobar .btn, .dd-go .btn { min-height: 40px; }
+.dd-flag { margin: 0; font-size: 13px; padding: 5px 10px; border: 1px dashed var(--warn); border-radius: 4px; max-width: 80ch; }
+.dd-flag b { color: var(--warn); }
+.dd-oldlink { margin: 0; padding: 10px 12px; border: 1px solid var(--warn); border-left-width: 5px; border-radius: 4px; background: color-mix(in srgb, var(--warn) 10%, var(--panel)); display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+/* Start screen */
+.dd-start { padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; border-left: 4px solid var(--accent); }
+.dd-start h2 { margin: 0; font-size: 24px; }
+.dd-lede { margin: 0; font-size: 15px; max-width: 80ch; }
+#start-body { display: flex; flex-direction: column; gap: 12px; }
+.dd-srow { display: flex; flex-direction: column; gap: 5px; }
+.dd-seg { display: inline-flex; flex-wrap: wrap; gap: 4px; }
+.dd-seg .btn { min-height: 40px; min-width: 40px; padding: 6px 12px; }
+.dd-seg.dd-big { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 6px; }
+.dd-seg.dd-big .btn { text-align: left; display: flex; flex-direction: column; gap: 2px; padding: 8px 12px; background: var(--panel); }
+.dd-seg.dd-big .btn small { font-weight: 400; color: var(--muted); font-size: 12px; line-height: 1.3; }
+.dd-seg .btn[aria-pressed="true"] { border-color: var(--mine); background: var(--blue-soft); outline: 2px solid var(--mine); outline-offset: -2px; }
+.dd-sides { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.dd-side { text-align: left; display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; border: 2px solid var(--rule); border-radius: 4px; background: var(--panel); cursor: pointer; min-height: 40px; }
+.dd-side b { font: 700 22px var(--display); color: var(--blue); }
+.dd-side span { font-weight: 600; }
+.dd-side small { color: var(--muted); font-size: 12.5px; line-height: 1.35; }
+.dd-side[aria-pressed="true"] { border-color: var(--blue); background: var(--blue-soft); }
+.dd-side:hover { border-color: var(--blue); }
+.dd-odfx { font-style: normal; font-size: 12.5px; font-weight: 600; color: var(--muted); }
+.dd-odfx[data-e="easier"] { color: var(--good); } .dd-odfx[data-e="harder"] { color: var(--warn); }
+.dd-exp { color: var(--warn); }
+.dd-od { display: flex; flex-direction: column; gap: 4px; max-width: 560px; padding: 8px 12px; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel); }
+.dd-od .sl-h { flex-wrap: wrap; } .dd-od .sl-h > span { font-weight: 600; }
+.dd-od input[type="range"] { min-height: 40px; margin: 0; }
+.dd-od-ends { display: flex; justify-content: space-between; gap: 8px; color: var(--muted); font-size: 12px; }
+.dd-rules { margin: 0; font-size: 14px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.dd-rules .btn { min-height: 40px; }
+.dd-go, .dd-gobar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.dd-startb { padding: 9px 22px; font-size: 15px; }
+@media (max-width: 560px) { .dd-sides { grid-template-columns: minmax(0, 1fr); } .dd-seg.dd-big { grid-template-columns: minmax(0, 1fr); } }
+
+/* Play area: a sticky order bar; units column, map column and the side panel on wide screens; tabs on phones. */
+.dd-play { display: flex; flex-direction: column; gap: 8px; }
+.dd-obar { position: sticky; top: 0; z-index: 30; padding: 8px 12px; display: flex; flex-direction: column; gap: 6px; border-top: 3px solid var(--mine); box-shadow: 0 6px 14px -12px rgba(0, 0, 0, .5); }
+body.dd-over .dd-obar { position: static; }
+body.dd-over #undo, body.dd-over #end, body.dd-over .dd-tabs, body.dd-over #comms, body.dd-over #ammo, body.dd-over #barrage-ctl, #again { display: none; }
+body.dd-over #again { display: inline-block; }
+body.dd-planning #undo, body.dd-planning #end { display: none; }
+.dd-bar-top { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; }
+.dd-bar-top p { margin: 0; }
+.dd-clock b { font: 700 24px var(--display); margin-right: 4px; }
+.dd-clock span { font-size: 12.5px; }
+.dd-objtrack { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; flex: 1 1 220px; }
+.dd-objcells { display: inline-flex; gap: 2px; }
+.dd-objcells i { width: 10px; height: 14px; border: 1.5px solid var(--ink); border-radius: 2px; background: var(--panel); }
+.dd-objcells i.held { background: var(--foe); border-color: var(--foe); }
+.dd-comms { font-size: 12.5px; padding: 3px 8px; border: 1px solid var(--rule); border-radius: 3px; }
+.dd-comms:empty, .dd-ammo:empty { display: none; }
+.dd-comms.late { border-color: var(--warn); color: var(--warn); font-weight: 600; }
+.dd-ammo { font-size: 12.5px; display: inline-flex; align-items: center; gap: 4px; }
+.dd-gobar { margin-left: auto; }
+.dd-end { padding: 8px 20px; font-size: 14px; min-height: 40px; }
+#undo { min-height: 40px; }
+.dd-late { margin: 0; padding: 6px 10px; font-size: 13.5px; line-height: 1.4; border: 1px solid var(--warn); border-left-width: 5px; border-radius: 3px; background: color-mix(in srgb, var(--warn) 12%, var(--panel)); display: flex; gap: 8px; align-items: center; }
+.dd-clk { color: var(--warn); font-weight: 700; }
+.dd-barrage { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 12.5px; }
+.dd-barrage:empty { display: none; }
+.dd-barrage .btn { min-height: 40px; }
+.dd-barl { font-weight: 600; }
+.dd-tabs { display: none; }
+.dd-board { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 10px; align-items: start; }
+.dd-ucol, .dd-mcol { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.dd-uh { margin: 4px 0 0; }
+.dd-say { margin: 0; padding: 6px 10px; font-size: 13.5px; line-height: 1.45; border-left: 3px solid var(--mine); background: var(--panel); border-radius: 0 3px 3px 0; min-height: 2.2em; }
+.dd-keys { margin: 4px 0 0; font-size: 11.5px; }
+@media (min-width: 1021px) and (max-width: 1500px) { .layout { grid-template-columns: minmax(0, 1fr) 320px; } }
+@media (min-width: 1021px) { .dd-side-panel { position: sticky; top: 8px; max-height: calc(100vh - 16px); overflow-y: auto; } }
+@media (max-width: 1020px) { .dd-board { grid-template-columns: 250px minmax(0, 1fr); } }
+@media (max-width: 760px) { .dd-board { grid-template-columns: minmax(0, 1fr); } }
+/* Phone: the bar stays on top; tabs show one pane at a time (planning: Map | Plan | Units; battle: Map | Units | Reports). */
+@media (max-width: 640px) {
+  .dd-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+  .dd-tabs button { min-height: 40px; padding: 6px 4px; font: 600 13.5px var(--body); border: 1px solid var(--rule); border-radius: 3px; background: var(--panel); color: var(--ink); cursor: pointer; }
+  .dd-tabs button[aria-selected="true"] { background: var(--mine); color: var(--panel); border-color: var(--mine); }
+  body:not(.dd-planning) .dd-tabs [data-tab="plan"], body.dd-planning .dd-tabs [data-tab="reports"] { display: none; }
+  .dd-obar { padding: 6px 8px; gap: 5px; }
+  .dd-clock b { font-size: 20px; }
+  .dd-clock span { font-size: 11.5px; }
+  .dd-objtrack { flex-basis: 100%; order: 5; font-size: 12px; font-weight: 500; gap: 6px; }
+  .dd-wide, #ammo { display: none !important; }
+  .dd-bar-top { gap: 4px 8px; }
+  .dd-gobar { margin-left: auto; flex-wrap: nowrap; }
+  .dd-comms { font-size: 11.5px; padding: 2px 5px; }
+  .dd-late { font-size: 12.5px; padding: 4px 8px; }
+  .dd-end { padding: 7px 14px; }
+  body.dd-live[data-tab="map"] .dd-ucol, body.dd-live[data-tab="map"] .dd-side-panel,
+  body.dd-live[data-tab="units"] .dd-mcol, body.dd-live[data-tab="units"] .dd-side-panel,
+  body.dd-live[data-tab="plan"] .dd-board, body.dd-live[data-tab="reports"] .dd-board { display: none !important; }
+  body.dd-live:not([data-tab="plan"]):not([data-tab="reports"]) .dd-side-panel { display: none !important; }
+  body.dd-live[data-tab="units"] .dd-mcol > .dd-tips { display: none; }
+  .dd-say { font-size: 13px; min-height: 0; }
+}
+
+/* Start tips: the decoy-note pattern (units column on desktop, top of the Map tab on phones). */
+.dd-tips { position: relative; margin: 0; padding: 8px 40px 8px 10px; font-size: 13px; line-height: 1.4; border: 1px solid var(--warn); border-left-width: 5px; border-radius: 3px; background: color-mix(in srgb, var(--warn) 9%, var(--panel)); max-height: 46vh; overflow-y: auto; }
+.dd-tips ul { margin: 4px 0; padding-left: 16px; display: flex; flex-direction: column; gap: 3px; }
+.dd-tips-h { margin: 0; }
+.dd-tips-h b { color: var(--warn); }
+.dd-tips-x { position: absolute; top: 0; right: 0; width: 40px; height: 40px; border: 0; background: none; font-size: 22px; line-height: 1; cursor: pointer; color: var(--muted); }
+
+/* Walkthrough and key help */
+.dd-tour, .dd-keyhelp { position: fixed; z-index: 50; right: 16px; bottom: 16px; width: min(380px, calc(100vw - 32px)); background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-top: 4px solid var(--accent); border-radius: 4px; padding: 12px 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, .25); transition: left .2s, top .2s; }
+.dd-keyhelp { left: auto; top: auto; max-height: 80vh; overflow-y: auto; }
+.tour-h { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--muted); }
+.tour-h .x { border: 0; background: transparent; font-size: 22px; cursor: pointer; color: var(--muted); min-width: 40px; min-height: 40px; }
+.dd-tour h3 { margin: 4px 0 6px; font-size: 18px; }
+.dd-tour p { margin: 0 0 10px; font-size: 13.5px; line-height: 1.45; }
+.tour-nav { display: flex; justify-content: space-between; }
+.tour-nav .btn { min-height: 40px; }
+.tour-do { font-weight: 600; border-left: 3px solid var(--accent); padding: 4px 8px; background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.tour-ok { color: var(--good); font-weight: 600; }
+.dd-hl-tour { outline: 3px solid var(--accent) !important; outline-offset: 3px; border-radius: 3px; }
+.dd-keylist { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 6px 0 0; font-size: 13px; }
+.dd-keylist dt { white-space: nowrap; } .dd-keylist dd { margin: 0; }
+@media (max-width: 640px) { .dd-tour { padding: 8px 10px; } .dd-tour h3 { font-size: 15px; } .dd-tour p { font-size: 13px; margin-bottom: 6px; } .dd-tour .tour-do ~ p { display: none; } }
+
+/* Below the game */
+.dd-more { margin-top: 10px; }
+.dd-more summary { cursor: pointer; font-family: var(--display); font-weight: 600; font-size: 17px; padding: 8px 0; min-height: 40px; }
+.dd-more h3 { margin: 16px 0 6px; font-size: 17px; }
+.dd-quotes { font-size: 13.5px; padding-left: 1.1em; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.dd-cites { font-size: 12.5px; padding-left: 16px; }
+.src details summary { cursor: pointer; min-height: 32px; font-size: 12.5px; color: var(--muted); }
+.dd-lessons-wrap { max-width: 1400px; margin: 30px auto 0; }
+.dd-lessons-wrap h2 { font-size: 24px; margin: 0 0 6px; }
+.dd-lessons { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 460px), 1fr)); gap: 16px; margin-top: 10px; }
+.dd-lslot { min-height: 120px; min-width: 0; }
+
+/* Trailer skin (Interactive Deterrence): the night plotting table. */
+:root[data-skin="trailer"] { --c1: #72a0ff; --c2: #ff8a3d; --c3: #2cc2ac; --c4: #d77ab0; --c5: #efc12f; --c6: #a68ef0; --c7: #63b3d6; --c8: #c8b48a; }
+:root[data-skin="trailer"] body { --hp: #4fbf6d; --hp-lost: #ff6b5e; }
+:root[data-skin="trailer"] .dd-clock b { color: var(--accent); text-shadow: 0 0 18px rgba(240, 169, 59, .35); }
+:root[data-skin="trailer"] .dd-side, :root[data-skin="trailer"] .dd-od { background: color-mix(in srgb, var(--chip) 80%, transparent); }
+:root[data-skin="trailer"] .dd-side b { font: italic 500 26px var(--display); }
+:root[data-skin="trailer"] .dd-tour { box-shadow: 0 20px 50px -20px #000, var(--glow, none); }
+:root[data-skin="trailer"] .dd-say { background: color-mix(in srgb, var(--bg) 70%, transparent); }
+/* QA fix: the sticky order bar must be opaque in Trailer (the skin makes cards 88% opaque, so text showed through). */
+:root[data-skin="trailer"] .dd-obar.card { background: var(--panel); }

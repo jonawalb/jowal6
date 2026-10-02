@@ -173,6 +173,8 @@ export const ALL_TOOLS = [
     blurb: 'Hunt a hidden submarine in the Greenland–Iceland–UK gap: spend each turn\'s effort on buoys, aircraft, helicopter and ship, learn how it moves, and pounce.' },
   { slug: 'fog-of-command', game: true, sub: { models: 'wargames' }, cat: 'models', sites: ['deterrence'], title: 'Fog of Command', status: 'live',
     blurb: 'Defend or attack a fictional valley crossing against a commander who acts only on what it can see. Feint, bait, hit flanks, and spot your artillery with recon.' },
+  { slug: 'defense-in-depth', game: true, sub: { models: 'wargames' }, cat: 'models', sites: ['deterrence'], title: 'Defense in Depth', status: 'live',
+    blurb: 'Hold or break a fictional trench front: site machine guns for enfilade, leapfrog under the barrage, and time the counterstroke. Division to army scale, 1917–18 or modern, with a learning campaign.' },
   { slug: 'orbital-denial', game: true, sub: { models: 'wargames', nuclear: 'playground' }, cat: 'models', also: ['nuclear'], sites: ['deterrence'], title: 'Orbital Denial', status: 'live',
     blurb: 'Jam, dazzle, hack or shoot down a notional rival\'s satellites over a 10-month crisis and war, then see what your debris costs both sides for decades, with the escalation risk you ran.' },
   { slug: 'berlin-airlift', game: true, sub: { models: 'wargames' }, cat: 'models', sites: ['deterrence'], title: 'Airlift: Berlin 1948–49', status: 'live',

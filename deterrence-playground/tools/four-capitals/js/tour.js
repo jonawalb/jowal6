@@ -4,7 +4,7 @@ export const STEPS = [
   { el: 'postures', title: 'Your month',
     body: 'Each month every capital picks a posture and up to four moves, all at once. Your posture caps how many escalatory (▲) moves you can make: none when you stand down, one when you de-escalate.' },
   { el: 'actions', title: 'Moves, odds and costs',
-    body: 'Moves sit under seven tabs: diplomatic, information, military, economic, financial, intelligence and law enforcement. Each shows its odds and the factors behind them, and many ask a follow-up question. Some cost Lift, fuel, munitions or readiness (shown as “Cost”); some add resources. A move you cannot pay for is greyed out with the reason. Tap or hover the i beside a % for how it is worked out, and the Opportunity, Gray zone and Once a game badges for what they mean.' },
+    body: 'Moves sit under seven tabs: diplomatic, information, military, economic, financial, intelligence and law enforcement. Each shows its odds and the factors behind them, and many ask a follow-up question. Some cost Lift, fuel, munitions or readiness (shown as “Cost”); some add resources. A move you cannot pay for is greyed out with the reason. Tap or hover the i beside a % for how it is worked out, and the Opportunity, Gray zone and Once a game badges for what they mean. Dashed chips are constraints from politics and allies (an election, Taiwan’s legislature, Congress, a host’s consent to use its bases, a ceasefire), each with its reason.' },
   { el: 'logi-wrap', title: 'Four resources',
     body: 'The logistics table updates as you choose. Have is what you start the month with (plus anything your moves add); Committed is what your moves, force orders and this month’s upkeep use; Left is what remains; Next month is what comes back. Lift refills every month. Fuel and munitions are stocks that rebuild slowly. Readiness is the average of your formations, and it falls while they stay forward.' },
   { el: 'forces', title: 'Formations and stances',
@@ -16,7 +16,7 @@ export const STEPS = [
   { el: 'logi-open', title: 'Everything you could still do',
     body: 'This list shows every decision still open this month (moves on the menu, force orders, stance changes, emphasis) with its cost, greyed when you can no longer afford it. Use “Add” to put a move straight into your plan.' },
   { el: 'intel', title: 'Reading the others',
-    body: 'Every capital has a hidden type. Your read of the others, and your guess of what they think of you, update after every month by Bayes’ rule. Costly moves and forward deployments say the most.' },
+    body: 'Every capital has a hidden type. Your read of the others, and your guess of what they think of you, update after every month by Bayes’ rule. Costly moves and forward deployments say the most. These reads also matter if someone calls a peace forum: a rival that thinks your aims are limited is likelier to accept.' },
   { el: 'end-turn', title: 'End the month',
     body: 'When you are ready, end the month. All four capitals reveal at once, the dice roll, fighting (if any) is resolved, upkeep is paid and resources refill for the next month.' },
 ];

@@ -5,6 +5,8 @@ import { COUNTRIES, IDS } from '../data/countries.js';
 import { BY_ID, TO } from '../data/actions.js';
 import { ISLAND, AREA_SHORT, AREA_LABEL } from '../data/theater.js';
 import { tracer, burst, ping } from '../../../shared/js/motion.js';
+import { infoBtn } from './tips.js';
+import { SHOCK_TIP, shockLine } from './economy.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 const el = (tag, a, parent) => { const n = document.createElementNS(NS, tag); for (const k in a) n.setAttribute(k, a[k]); if (parent) parent.appendChild(n); return n; };
@@ -102,12 +104,13 @@ export function paintLadder(ol, s) {
 
 const TRACKS = [
   ['tw', 'Taiwan’s position', 'var(--k-tw)'], ['coal', 'Coalition cohesion', 'var(--k-us)'],
-  ['shock', 'Global economic shock', 'var(--warn)'], ['nuke', 'Nuclear shadow', 'var(--bad)'],
+  ['shock', 'Economic shock', 'var(--warn)'], ['nuke', 'Nuclear shadow', 'var(--bad)'],
 ];
 export function paintTracks(div, s, prev) {
   div.innerHTML = TRACKS.map(([k, label, c]) => {
     const v = Math.round(s[k]), d = prev ? v - Math.round(prev[k]) : 0;
-    return `<div class="k4-track" style="--tc:${c}"><div><span>${label}</span><span class="num">${v}${d ? ` <small class="muted">${d > 0 ? '+' : ''}${d}</small>` : ''}</span></div><div class="bar"><span style="width:${v}%"></span></div></div>`;
+    const shock = k === 'shock';   // the market and shipping-insurance meter: its tooltip and one-line explanation (js/economy.js)
+    return `<div class="k4-track" style="--tc:${c}"><div><span>${label}${shock ? ' ' + infoBtn(SHOCK_TIP, 'Economic shock: what drives it and what it costs') : ''}</span><span class="num">${v}${d ? ` <small class="muted">${d > 0 ? '+' : ''}${d}</small>` : ''}</span></div><div class="bar"><span style="width:${v}%"></span></div>${shock ? `<p class="k4-shockx">${shockLine(s)}</p>` : ''}</div>`;
   }).join('');
 }
 

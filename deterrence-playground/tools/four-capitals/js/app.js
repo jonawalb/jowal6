@@ -4,7 +4,7 @@ import { COUNTRIES, IDS, defaultWeights } from '../data/countries.js';
 import { POSTURES, BY_ID, answers } from '../data/actions.js';
 import { AREA_LABEL } from '../data/theater.js';
 import { FBY, RES_LABEL } from '../data/formations.js';
-import { newGame, brief, resolveTurn, snapshot, encode, decode } from './engine.js';
+import { newGame, brief, resolveTurn, snapshot, encode, decode, blockedWhy } from './engine.js';
 import { updateControl } from './forces.js';
 import { ledger } from './logistics.js';
 import { createTour } from './tour.js';
@@ -12,7 +12,10 @@ import { paintDecide, wireDecide, emptyChoice } from './decide.js';
 import { seeFor, paintFog, seenOrders } from './fog-panel.js';
 import { sight } from './fog.js';
 import { wireTips } from './tips.js';
-import { initBeliefs, updateBeliefs, chooseMove, intelView } from './ai.js';
+import { initBeliefs, updateBeliefs, chooseMove, intelView, forumLearn } from './ai.js';
+import { FORUM_ID, forumTo } from './forum.js';
+import { askForum, forumText } from './forum-panel.js';
+import { ceasefire } from './politics.js';
 import { score, benchmark, percentile } from './score.js';
 import { drawTheatre, paintTheatre, paintZones, animateMoves, paintLadder, paintTracks, paintCaps, paintIntel, paintBeliefChart, COL } from './view.js';
 import { pulse, flash } from '../../../shared/js/motion.js';
@@ -57,7 +60,7 @@ $('begin').addEventListener('click', () => {
 $('type-go').addEventListener('click', () => { show('play'); paint(); $('end-turn').focus(); });
 
 function begin(start) {
-  const s0 = newGame(start);
+  const s0 = newGame({ ...start, human: true });
   g = { s: brief(s0), B: initBeliefs(), series: [], player: start.player, weights: start.weights, difficulty: start.difficulty, line: 'D', choice: emptyChoice() };
   g.series.push(g.B);
   document.body.style.setProperty('--c', COL[g.player]);
@@ -75,7 +78,8 @@ function paint() {
   const s = g.s;
   $('month').textContent = monthName(s.turn);
   $('turnof').textContent = `month ${s.turn + 1} of ${P.turns}`;
-  $('event').innerHTML = s.event ? `<b>${s.event.title}</b>${s.event.text}` : '';
+  $('event').innerHTML = (s.event ? `<b>${s.event.title}</b>${s.event.text}` : '') + (ceasefire(s)
+    ? `<span class="k4-cease"><b>Ceasefire this month</b> (the ${COUNTRIES[s.cease.from].capital}–${COUNTRIES[s.cease.to].capital} peace forum). Escalatory moves cost more at home; a successful escalatory military or law-enforcement move breaks it, at a heavy cost in credibility. If it holds, the crisis ends in a settlement.</span>` : '');
   paintLadder($('ladder'), s);
   paintTracks($('tracks'), s, g.before);
   paintCaps($('caps'), s, g.player);
@@ -101,19 +105,26 @@ wireDecide(() => paintPlan());
 function computerMoves(s, B) {
   return Object.fromEntries(IDS.map(w => [w, w === g.player ? null : chooseMove(s, w, B[w], defaultWeights(w))]));
 }
-function step(playerMove) {
-  const moves = computerMoves(g.s, g.B);
+/** Peace forums the computer capitals are calling, addressed to the player: [[caller, move id]]. */
+const forumsToMe = moves => IDS.filter(w => w !== g.player && moves[w].actions.includes(FORUM_ID[w]) && forumTo(w, moves[w].follow?.[FORUM_ID[w]]) === g.player
+  && !blockedWhy(g.s, FORUM_ID[w])).map(w => [w, FORUM_ID[w]]);
+function step(playerMove, moves = computerMoves(g.s, g.B)) {
   moves[g.player] = playerMove;
   g.B = updateBeliefs(g.B, g.s, moves);
-  g.series.push(g.B);
   g.before = snapshot(g.s);
-  const res = resolveTurn(g.s, moves);
+  const res = resolveTurn(g.s, moves, { beliefs: g.B });
+  g.B = forumLearn(g.B, res.log);                      // a forum's answer teaches the caller about the rival
+  g.series.push(g.B);
   return { moves, log: res.log, next: res.state };
 }
 $('end-turn').addEventListener('click', async () => {
   if (!g || g.s.over || !$('resolve').hidden) return;
   const month = monthName(g.s.turn);
-  const { moves, log, next } = step(JSON.parse(JSON.stringify(g.choice)));
+  const mine = JSON.parse(JSON.stringify(g.choice)), theirs = computerMoves(g.s, g.B);
+  $('end-turn').disabled = true;
+  for (const [w] of forumsToMe(theirs)) mine.reply = { ...(mine.reply || {}), [w]: await askForum(g.s, w, g.player, g.B) };
+  $('end-turn').disabled = false;
+  const { moves, log, next } = step(mine, theirs);
   g.s = next;
   show('play', 'resolve'); $('intel').hidden = $('feed').hidden = true; $('decide').hidden = true;
   $('res-t').textContent = `${month}: what happened`;
@@ -148,6 +159,7 @@ function logHTML(log) {
       return `<li style="--c:${COL[l.who]}">${COUNTRIES[l.who].short}: ${fogged ? `a formation arrived in the ${AREA_LABEL[l.area]}` : l.text}</li>`;
     }
     if (l.kind === 'nukerisk') return `<li class="note">Nuclear risk this month: ${(l.p * 100).toFixed(1)}%.</li>`;
+    if (l.forum && l.kind === 'action') return `<li style="--c:${COL[l.who]}" class="k4-forumli"><b>${COUNTRIES[l.who].short}</b>: Call for a peace forum → ${COUNTRIES[l.forum.to].capital}<span class="st ${l.status}">${l.forum.accepted ? 'Accepted' : 'Declined'}</span><span class="fx">${forumText(l, g.player)}</span></li>`;
     if (l.kind === 'posture') return l.support ? `<li style="--c:${COL[l.who]}">${COUNTRIES[l.who].short} posture: ${POSTURES.find(p => p.id === l.posture).label}. <span class="fx">Home support ${l.support > 0 ? '+' : ''}${Math.round(l.support)}${l.who === g.player ? ' (your type’s cost)' : ''}</span></li>` : '';
     const a = BY_ID[l.id];
     const odds = l.status === 'blocked' ? l.reason : `odds ${Math.round(l.p * 100)}%, rolled ${Math.round(l.roll * 100)}${l.factors.length ? ' · ' + l.factors.map(([x, d]) => `${x} ${d > 0 ? '+' : ''}${d}`).join(' · ') : ''}`;
@@ -229,7 +241,7 @@ function load() {
   const d = m && decode(decodeURIComponent(m[1]));
   if (d && d.old) {
     $('old-link').hidden = false;
-    $('old-link').textContent = 'That link is from an earlier version of Four Capitals (before fog of war, gray-zone moves and once-a-game moves), so it cannot be replayed. Start a new game below.';
+    $('old-link').textContent = 'That link is from an earlier version of Four Capitals (before domestic politics, base consent, the economic shock meter, U.S. reinforcement delays and the peace forum), so it cannot be replayed. Start a new game below.';
     history.replaceState(null, '', location.pathname + location.search);
   }
   if (!d || d.old) { paintSeats(); show('start'); return; }

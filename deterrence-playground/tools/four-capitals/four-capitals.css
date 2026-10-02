@@ -221,6 +221,25 @@ body { --k-us: var(--us, #2f6db3); --k-tw: var(--roc, #17917f); --k-cn: var(--pr
 .k4-about summary { cursor: pointer; }
 .k4-about ul { margin: 8px 0; padding-left: 18px; font-size: 14px; }
 
+/* Batch B: constraint chips, the shock line, the ceasefire banner, the "at home" line and the peace-forum dialog. */
+.k4-info.k4-chip { width: auto; height: auto; min-height: 22px; border-radius: 3px; border: 1px dashed var(--rule); padding: 1px 6px; font: 600 11.5px var(--body); color: var(--ink); background: color-mix(in srgb, var(--k-jp) 10%, transparent); }
+.k4-info.k4-chip-no { border-style: solid; border-color: var(--bad); background: color-mix(in srgb, var(--bad) 12%, transparent); }
+.k4-shockx { margin: 3px 0 0; font-size: 11.5px; line-height: 1.35; color: var(--muted); }
+.k4-cease { display: block; margin-top: 6px; padding: 5px 8px; border-left: 3px solid var(--good); background: color-mix(in srgb, var(--good) 10%, transparent); font-size: 13px; }
+.k4-cease b { display: inline; }
+.k4-home { margin: -4px 0 10px; color: var(--muted); }
+.k4-home:empty { display: none; }
+.k4-dialog { width: min(560px, calc(100vw - 32px)); max-height: calc(100vh - 32px); overflow: auto; border: 1px solid var(--rule); border-top: 4px solid var(--accent); border-radius: 6px; background: var(--panel); color: var(--ink); padding: 16px 18px; box-shadow: 0 10px 40px rgba(0, 0, 0, .35); }
+.k4-dialog::backdrop { background: rgba(10, 14, 20, .55); }
+.k4-dialog h2 { margin: 2px 0 8px; font-size: 20px; }
+.k4-dialog p { font-size: 14px; }
+.k4-forumt { width: 100%; border-collapse: collapse; font-size: 13px; }
+.k4-forumt caption { text-align: left; font-weight: 600; margin-bottom: 4px; }
+.k4-forumt th, .k4-forumt td { padding: 4px 6px; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; }
+.k4-forumt th small { display: block; font-weight: 400; color: var(--muted); font-size: 11.5px; }
+.k4-forumt td.num { text-align: right; white-space: nowrap; }
+.k4-forumt .bad { color: var(--bad); } .k4-forumt .good { color: var(--good); }
+.k4-forump { font-size: 15px; }
 @media (max-width: 1180px) { .k4-grid { grid-template-columns: 230px minmax(0, 1fr); } .k4-decide { grid-column: 1 / -1; } }
 .k4-play:has(#resolve:not([hidden])) .k4-grid { grid-template-columns: 250px minmax(0, 1fr); }
 .k4-play:has(#resolve:not([hidden])) .k4-bar #end-turn { visibility: hidden; }

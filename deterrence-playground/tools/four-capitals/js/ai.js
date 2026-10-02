@@ -51,6 +51,20 @@ export function updateBeliefs(beliefs, s, moves) {
   return out;
 }
 
+/** What a peace forum's answer teaches the caller about the rival (Batch B): a refusal reads as resolve, an
+ * acceptance as caution. `log`: the month's log. Returns new beliefs. */
+export function forumLearn(beliefs, log) {
+  const out = JSON.parse(JSON.stringify(beliefs));
+  for (const l of log) {
+    if (l.kind !== 'action' || !l.forum || l.status === 'expected') continue;
+    const b = out[l.who][l.forum.to], k = l.forum.accepted ? { resolute: 0.75, cautious: 1.4, opportunist: 1 } : { resolute: 1.4, cautious: 0.75, opportunist: 1.1 };
+    for (const t of TYPES) b[t] *= k[t];
+    const z = TYPES.reduce((a, t) => a + b[t], 0);
+    for (const t of TYPES) b[t] /= z;
+  }
+  return out;
+}
+
 /** Weighted objective value 0–100 for `who` in state `s`. */
 export function objectiveValue(s, who, weights) {
   const obs = COUNTRIES[who].objectives;
@@ -77,7 +91,7 @@ const guess = (s, w) => s.last[w] ? { posture: s.last[w].posture, actions: s.las
 
 function utility(s, who, move, B, weights) {
   const moves = Object.fromEntries(IDS.map(w => [w, w === who ? move : guess(s, w)]));
-  const { state: n } = resolveTurn(s, moves, { expected: true });
+  const { state: n } = resolveTurn(s, moves, { expected: true, planner: who, plannerB: B });
   // Plus the computer's estimate of payoffs that land after this month (intelligence, rehearsals, dispersal...).
   const later = move.actions.reduce((t, id) => t + (BY_ID[id].ai ? BY_ID[id].ai(s, who) : 0), 0);
   return objectiveValue(n, who, weights) + P.ai.supportWeight * n.c[who].support + riskTerm(s, who, move, B) + later - scarcity(s, who, move);

@@ -27,4 +27,4 @@ export function makeRng(seed, stream = 0, dice = 0) {
   return { u, normal, pick };
 }
 
-export const STREAM = { setup: 1, event: 100, dice: 200, ai: 300, intel: 400, fog: 2000 };
+export const STREAM = { setup: 1, event: 100, dice: 200, ai: 300, intel: 400, fog: 2000, consent: 3100, forum: 3200 };

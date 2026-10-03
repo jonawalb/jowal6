@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rhetoric Heatmap: Russia and Beyond | Narrative Tracking</title>
+<meta name="description" content="Week-by-week use of recurring official formulas in Kremlin transcripts and Iranian Foreign Ministry statements, with every quote linked to its source.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&family=Spline+Sans+Mono:wght@400;500;600&family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="../../shared/css/deterrence-site.css">
+<link rel="stylesheet" href="rhetoric-global.css">
+</head>
+<body class="loading" data-cc="ru">
+<header id="tsm-head"></header>
+<main class="layout">
+  <div class="stage" id="stage">
+    <div class="toolbar-row">
+      <div class="choices seg country" id="country" role="group" aria-label="Country"></div>
+      <div class="acts">
+        <button type="button" class="btn solid" id="start-tour">Walkthrough</button>
+        <button type="button" class="btn" id="copy-link">Copy link</button>
+      </div>
+    </div>
+    <div class="toolbar-row">
+      <div class="choices seg" id="metric" role="group" aria-label="Measure"></div>
+      <div class="choices seg" id="ranges" role="group" aria-label="Time range"></div>
+      <label class="cat-pick"><span class="vh">Category</span><select id="cats"></select></label>
+    </div>
+    <div class="hm card">
+      <svg id="hm-labels" class="hm-labels" aria-hidden="true"></svg>
+      <div class="hm-scroll" id="hm-scroll">
+        <svg id="hm-svg" tabindex="0" role="img" aria-label="Heatmap of official phrases by week. Arrow keys move the selection; the panel lists the quotes for the selected cell."></svg>
+      </div>
+      <div class="tooltip" id="hm-tip" hidden></div>
+      <div class="loading-note">Loading corpus…</div>
+    </div>
+    <div class="legend">
+      <span class="ramp" aria-hidden="true"></span><span class="num">0</span><span class="num" id="legend-max"></span>
+      <span class="fine" id="legend-note"></span>
+      <span class="key"><i class="k-empty"></i>No text held</span>
+      <span class="key"><i class="k-thin"></i>Thin week (under 300 words)</span>
+      <span class="key"><i class="k-ev"></i>Key event</span>
+    </div>
+    <section class="card compare" id="compare" aria-label="Cross-country comparison"></section>
+  </div>
+  <aside class="panel" aria-label="Corpus and quotes">
+    <div class="sec" id="source-card"></div>
+    <div class="sec detail" id="detail" aria-live="polite"></div>
+  </aside>
+</main>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>Pick a country. Each row is a recurring formula from that government's official English record, and each column is a week (Monday to Sunday). By default a cell shows how often the phrase was used per 1,000 words of official text that week, so a week with one long speech and a week with ten short statements are on the same footing. The other measure, share of statements, counts the transcripts or statements that used the phrase at least once.</p>
+    <p>Click a cell to read the sentences behind it in the panel, with the phrase highlighted and a link to the official page. Arrow keys move the selection once the heatmap has focus; clicking a row label jumps to that phrase's busiest week. Grey cells mean no text is held that week. Hatched cells are thin weeks with under 300 words, where one sentence can swing the rate. The strip under the axis shows how many words the corpus holds each week.</p>
+    <p>Labels above the grid are key events, each with a source in the list below. Click one to move the selection to its week and compare the rhetoric before and after.</p>
+    <h2 class="mt">Key events</h2>
+    <ul class="src events" id="events-list"></ul>
+  </div>
+  <div class="col">
+    <h2>Method and coverage</h2>
+    <ul class="src" id="method">
+      <li><b>Russia.</b> The Kremlin's English transcripts (<a href="http://en.kremlin.ru/events/president/transcripts" target="_blank" rel="noopener">en.kremlin.ru, Transcripts</a>): speeches, addresses, meetings, press conferences, interviews and articles, January 2021 onward. Only Vladimir Putin's own words are counted. The collector follows the speaker labels in each transcript (“Vladimir Putin:”) and skips other officials, guests and journalists. A page without speaker labels counts whole only if it is a single-voice text (an address, article, statement, greetings or message); other unlabelled pages are staff summaries and are skipped. Meetings with permanent members of the Security Council appear here, usually as short opening remarks.</li>
+      <li><b>How the Kremlin pages were read.</b> The Kremlin site stopped answering (HTTP 403) for about 15 minutes after some 150 requests, so the collector slowed to one request every 10 seconds and read about half the transcripts from their Wayback Machine copies (first capture after January 2023). The Kremlin posts long transcripts in parts, so a copy captured within three days of publication can be incomplete; all 203 such copies were fetched again from the Kremlin site. Links always go to en.kremlin.ru.</li>
+      <li><b>Iran.</b> The Iranian Foreign Ministry's English “Statements” feed (<a href="https://en.mfa.ir/portal/newsagencyshow/699" target="_blank" rel="noopener">en.mfa.ir</a>), January 2021 onward: spokesperson remarks, ministry statements and the foreign minister's messages and letters. Many items are written in the third person and quote the spokesperson or minister; the whole item is counted.</li>
+      <li><b>How the Iranian pages were read.</b> The feed's index lists 2,143 items from January 2021 to 2 October 2026. The ministry's server is slow and answered only HTTP 504 for several hours on 29 September 2026, so items were read from the live site when it answered and otherwise from Wayback Machine copies (many archived copies hold a bot-check page instead of the statement and were discarded). In all 2,103 items were read, 1,698 from the live site and 405 from archived copies; 40 could not be read. The feed itself thins out in 2026, to 13 to 31 items a month. Links always go to en.mfa.ir.</li>
+      <li><b>Counting.</b> A phrase matches when its pattern appears anywhere in the counted text, case-insensitive. The rate is matches divided by words, times 1,000, per week. The share is matching items divided by all items that week. The colour scale uses a square root and caps at the 97th percentile of visible cells, so one freak week does not wash out the rest.</li>
+      <li><b>Dictionary.</b> Phrases were chosen as recurring official formulas and checked against the corpus: the table below gives, for each phrase, the number of items that use it and its earliest and latest use in the corpus, quoted and linked. Phrases used in fewer than eight items were dropped and are listed.</li>
+      <li><b>What ships.</b> The page holds derived counts and short quote windows (one sentence, at most 300 characters) with source links. Full texts stay with the publishers; follow the links to read them.</li>
+      <li><b>What is missing.</b> <span id="gaps">The Russian Foreign Ministry (mid.ru), including Maria Zakharova's briefings, answered every request from the collector with a bot-check page and then reset the connection, and the Wayback Machine's copies of the same pages hold that check page, not the briefings. Russia's Security Council site (scrf.gov.ru), where Dmitry Medvedev's official statements appear, did not respond. The Russian mission to the UN asks crawlers to wait 40 seconds between requests, too slow for this build. So the Russian row is the president's voice only. For Iran, the Leader's English site (english.khamenei.ir) refused requests with HTTP 403. North Korea's KCNA is not reachable directly, and the one English mirror found (KCNA Watch) puts articles behind a sign-up form, so there is no third country.</span></li>
+      <li>Keyword rules are blunt. “Sanctions” fires whether Russia is condemning them or boasting about beating them, and a phrase can be quoted in order to reject it. Always read the quotes.</li>
+    </ul>
+    <h2 class="mt">Sources</h2>
+    <ul class="src" id="sources-list">
+      <li>Kremlin transcripts: <a href="http://en.kremlin.ru/events/president/transcripts" target="_blank" rel="noopener">en.kremlin.ru/events/president/transcripts</a>, and their copies in the <a href="https://web.archive.org/" target="_blank" rel="noopener">Wayback Machine</a>. Collected 29 September 2026 and updated to 1 October 2026 on 2 October 2026 by <code>scripts/collect_kremlin.py</code>, which honours the site's robots.txt and spaces its requests.</li>
+      <li>Iranian Foreign Ministry statements: <a href="https://en.mfa.ir/portal/newsagencyshow/699" target="_blank" rel="noopener">en.mfa.ir/portal/newsagencyshow/699</a> (the site publishes no robots.txt), and Wayback Machine copies. Collected 29 September 2026 and updated to 2 October 2026 on 2 October 2026 by <code>scripts/collect_iran_mfa.py</code>.</li>
+      <li>Counts and quotes built by <code>scripts/build_data.py</code> from the dictionary in <code>scripts/dictionary.py</code>. Key-event sources are listed with each event.</li>
+    </ul>
+  </div>
+</section>
+<section class="below dict-wrap">
+  <div class="col wide">
+    <h2>Phrase dictionary</h2>
+    <p>Every phrase on the heatmap, its pattern (a case-insensitive regular expression; <code>\b</code> marks a word boundary, <code>\w*</code> any word ending), how many items use it, and the earliest and latest uses in the corpus.</p>
+    <div id="dict"></div>
+  </div>
+</section>
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Rhetoric Heatmap: Russia and Beyond', sub: 'The Kremlin\'s and Iran\'s Foreign Ministry\'s recurring formulas, week by week since 2021, with every quote one click from its source.', category: 'State rhetoric' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Narrative Tracking | Jonathan Walberg</title>
+    <meta name="description" content="Narrative Tracking: what governments say, week by week. Rhetoric heatmaps for China, Russia and Iran, and a search across official statements and state media, by Jonathan Walberg.">
+    <meta property="og:title" content="Narrative Tracking | Jonathan Walberg">
+    <meta property="og:description" content="What governments say, week by week, with every count traced to its source.">
+    <meta property="og:image" content="https://jwalberg.com/img/thumbnail.jpg">
+    <meta property="og:url" content="https://jwalberg.com/narratives/">
+    <meta property="og:type" content="website">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cormorant+Garamond:ital,wght@1,400;1,500;1,600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        /* Hero: intro left, trailer showcase right (same pattern as /interactive/). */
+        #narratives.section { padding: calc(var(--nav-h) + 20px) 28px 36px; min-height: 100vh; display: flex; align-items: center; }
+        #narratives .container { width: 100%; max-width: 1480px; }
+        .ix { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 44px; align-items: center; }
+        .ix .section-title { font-size: clamp(2.1rem, 2.6vw, 2.9rem); margin-bottom: 28px; }
+        .ix-intro p { font-size: clamp(1rem, 1.05vw, 1.16rem); margin-bottom: 1rem; line-height: 1.65; }
+        .ix-cta { display: flex; gap: 0.75rem; flex-wrap: wrap; margin: 1.5rem 0 1rem; }
+        .ix-count { font-size: 0.9rem; color: var(--text-muted); }
+        .shows { margin: 0; }
+        .shows-frame { position: relative; border-radius: 10px; overflow: hidden; background: #0b1712; border: 1px solid var(--border);
+            box-shadow: 0 18px 40px -22px rgba(26, 58, 42, .45); aspect-ratio: 16 / 10; max-height: calc(100vh - var(--nav-h) - 150px); margin-inline: auto; }
+        .shows-layer { position: absolute; inset: 0; opacity: 0; transition: opacity .6s ease; }
+        .shows-layer.on { opacity: 1; }
+        .shows-layer iframe { width: 100%; height: 100%; border: 0; display: block; pointer-events: none; background: #0b1712; }
+        .shows-hit { position: absolute; inset: 0; z-index: 2; }
+        .shows-prog { position: absolute; left: 0; bottom: 0; height: 3px; width: 0; background: #f0a93b; z-index: 3; opacity: .9; }
+        .shows-arrow { position: absolute; z-index: 3; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border);
+            background: rgba(255, 255, 255, .92); color: var(--green-900); font-size: 22px; line-height: 1; cursor: pointer; display: grid; place-items: center; }
+        .shows-arrow:hover, .shows-arrow:focus-visible { background: #fff; border-color: var(--green-600); outline: none; box-shadow: 0 0 0 3px var(--accent-glow); }
+        .shows-arrow.prev { left: 12px; } .shows-arrow.next { right: 12px; }
+        .shows-cap { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-top: 12px; min-height: 3.2em; }
+        .shows-cap h3 { font-family: var(--font-serif); font-size: 1.35rem; color: var(--green-900); margin: 0 0 4px; }
+        .shows-cap p { margin: 0; color: var(--text-muted); font-size: .95rem; line-height: 1.5; }
+        .shows-cap a { color: var(--green-700); font-weight: 600; font-size: .9rem; white-space: nowrap; text-decoration: none; }
+        .shows-cap a:hover { text-decoration: underline; }
+        .shows-dots { display: flex; gap: 7px; justify-content: center; margin-top: 12px; }
+        .shows-dots button { width: 8px; height: 8px; padding: 0; border-radius: 50%; border: 0; background: var(--border); cursor: pointer; }
+        .shows-dots button[aria-current="true"] { background: var(--green-600); width: 22px; border-radius: 4px; }
+
+        /* Tracker cards: each plays its own trailer on hover or focus. */
+        #trackers.section { padding: 56px 28px 80px; }
+        #trackers .container { max-width: 1480px; }
+        .tk-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+        .tk-head h2 { font-family: var(--font-serif); font-size: clamp(1.6rem, 2vw, 2rem); color: var(--green-900); margin: 0; }
+        .tk-head p { margin: 0; color: var(--text-muted); font-size: .95rem; }
+        .tk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 24px; list-style: none; padding: 0; margin: 0; }
+        .tk { position: relative; display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+            transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+        .tk:hover, .tk:focus-within { transform: translateY(-3px); border-color: var(--green-300); box-shadow: 0 16px 34px -22px rgba(26, 58, 42, .5); }
+        .tk-media { position: relative; aspect-ratio: 16 / 10; background: #0b1712; }
+        .tk-media iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; pointer-events: none; }
+        .tk-play { position: absolute; right: 10px; bottom: 10px; z-index: 1; font: 600 11px/1 var(--font-sans); letter-spacing: .08em; text-transform: uppercase;
+            color: #f3f1ea; background: rgba(7, 15, 11, .72); border: 1px solid rgba(240, 169, 59, .55); border-radius: 999px; padding: 6px 10px; transition: opacity .2s; }
+        .tk.playing .tk-play { opacity: 0; }
+        .tk-body { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+        .tk-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+        .tk-tag { font-size: .72rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--green-700); background: var(--green-50);
+            border: 1px solid var(--green-200); border-radius: 999px; padding: 3px 9px; }
+        .tk-tag.lock { color: #8a5a12; background: #fbf3e4; border-color: #ecd3a6; }
+        .tk h3 { font-family: var(--font-serif); font-size: 1.3rem; color: var(--green-900); margin: 2px 0 0; line-height: 1.25; }
+        .tk h3 a { color: inherit; text-decoration: none; }
+        .tk h3 a::after { content: ''; position: absolute; inset: 0; z-index: 2; } /* whole card is the link */
+        .tk h3 a:focus-visible { outline: none; }
+        .tk:focus-within { outline: 3px solid var(--accent-glow); outline-offset: 2px; }
+        .tk p { margin: 0; color: var(--text-muted); font-size: .95rem; line-height: 1.55; }
+        .tk-open { margin-top: auto; padding-top: 6px; color: var(--green-700); font-weight: 600; font-size: .9rem; }
+        .tk-note { margin-top: 28px; font-size: .9rem; color: var(--text-muted); max-width: 70ch; }
+
+        @media (max-width: 999px) {
+            #narratives.section { min-height: 0; padding-top: calc(var(--nav-h) + 24px); }
+            .ix { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+            .shows-frame { max-height: none; }
+            .shows-cap { flex-direction: column; gap: 6px; }
+        }
+        @media (max-width: 520px) {
+            #narratives.section, #trackers.section { padding-left: 16px; padding-right: 16px; }
+            .shows-arrow { width: 34px; height: 34px; font-size: 19px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .shows-layer { transition: none; } .shows-prog { display: none; }
+            .tk, .tk:hover, .tk:focus-within { transition: none; transform: none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/">Interactive Tools</a></li>
+            <li><a href="/narratives/" class="active">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+
+<main>
+<section class="section section-alt" id="narratives">
+    <div class="container ix">
+        <div class="ix-intro">
+            <h2 class="section-title">Narrative Tracking</h2>
+            <p>What governments say, week by week. These trackers follow the phrases that foreign ministries, defense ministries and leaders keep coming back to, and when the language shifts. Every count leads back to the statement it came from.</p>
+            <p>The heatmaps are open to everyone. Rhetoric Search, which covers official statements and state media from more countries, is password protected.</p>
+            <div class="ix-cta">
+                <a class="btn btn-primary" href="#trackers">See the trackers</a>
+            </div>
+            <p class="ix-count" id="ix-count"></p>
+        </div>
+
+        <figure class="shows" aria-roledescription="carousel" aria-label="Trailers for the trackers">
+            <div class="shows-frame">
+                <div id="shows-stage"></div>
+                <a id="shows-link" class="shows-hit" href="tools/" aria-label="Open this tracker"></a>
+                <div class="shows-prog" id="shows-prog"></div>
+                <button type="button" class="shows-arrow prev" aria-label="Previous tracker">‹</button>
+                <button type="button" class="shows-arrow next" aria-label="Next tracker">›</button>
+            </div>
+            <figcaption class="shows-cap" aria-live="polite">
+                <div><h3 id="shows-title"></h3><p id="shows-line"></p></div>
+                <a id="shows-open" href="tools/">Open →</a>
+            </figcaption>
+            <div class="shows-dots" role="tablist" aria-label="Choose a tracker"></div>
+        </figure>
+    </div>
+</section>
+
+<section class="section" id="trackers">
+    <div class="container">
+        <div class="tk-head">
+            <h2>The trackers</h2>
+            <p id="tk-hint">Hover over a card to play its trailer.</p>
+        </div>
+        <ul class="tk-grid" id="tk-grid"></ul>
+        <p class="tk-note">Phrase counts come from the published texts of each government's own statements and transcripts. State media appear in Rhetoric Search by headline and link only.</p>
+    </div>
+</section>
+</main>
+
+<script>
+(() => {
+    // Every tracker on this page. To add one: publish the tool at tools/<slug>/ (scripts/build_site.py --site narratives
+    // in tsm-strait-layers) and its trailer at motion/<slug>/ (kit in motion/kit), then add a line here.
+    // [slug, title, tagline, tags, locked]
+    const TRACKERS = [
+        ['rhetoric-heatmap', 'PRC Rhetoric Heatmap', 'Foreign Ministry, Defense Ministry and Taiwan Affairs Office language on Taiwan, week by week, with every statement one click away.', ['China'], 0],
+        ['rhetoric-global', 'Rhetoric Heatmap: Russia and Beyond', 'The phrases the Kremlin and Iran’s Foreign Ministry keep repeating, week by week since 2021, each quote linked to its source.', ['Russia', 'Iran'], 0],
+        ['rhetoric-search', 'Rhetoric Search', 'Search official statements and state media from Russia, China, Iran and more: official sentences quoted, media listed by headline, with a Trends view of tone and topics over time.', ['Multi-country', 'Search'], 1],
+    ];
+    const IMG_MS = 6000, TRAILER_MS = 16000;
+    const $ = id => document.getElementById(id);
+    const href = slug => 'tools/' + slug + '/';
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    $('ix-count').textContent = TRACKERS.length + ' trackers so far, with more on the way.';
+
+    // ---- Cards ----
+    const grid = $('tk-grid');
+    grid.innerHTML = TRACKERS.map(([slug, title, line, tags, locked]) => `
+        <li class="tk" data-slug="${slug}">
+            <div class="tk-media"><iframe src="motion/${slug}/?poster" title="Trailer for ${esc(title)}" tabindex="-1" aria-hidden="true" loading="lazy"></iframe>
+                <span class="tk-play" aria-hidden="true">${reduced ? 'Preview' : '▶ Trailer'}</span></div>
+            <div class="tk-body">
+                <div class="tk-meta">${tags.map(t => `<span class="tk-tag">${esc(t)}</span>`).join('')}${locked ? '<span class="tk-tag lock">Password</span>' : '<span class="tk-tag">Open access</span>'}</div>
+                <h3><a href="${href(slug)}">${esc(title)}</a></h3>
+                <p>${esc(line)}</p>
+                <span class="tk-open" aria-hidden="true">Open the tracker →</span>
+            </div>
+        </li>`).join('');
+    // Pointer devices play a card's trailer on hover or focus; touch screens play it while the card is in view.
+    const touch = matchMedia('(hover: none)').matches;
+    if (touch) $('tk-hint').textContent = 'Trailers play as you scroll.';
+    const playing = new Set();
+    function play(card) { if (playing.has(card)) return; playing.add(card); card.classList.add('playing'); card.querySelector('iframe').src = 'motion/' + card.dataset.slug + '/'; }
+    function stop(card) { if (!playing.has(card)) return; playing.delete(card); card.classList.remove('playing'); card.querySelector('iframe').src = 'motion/' + card.dataset.slug + '/?poster'; }
+    if (reduced) $('tk-hint').hidden = true;
+    else if (touch) {
+        const io = new IntersectionObserver(es => es.forEach(e => (e.intersectionRatio >= .6 ? play : stop)(e.target)), { threshold: [0, .6] });
+        grid.querySelectorAll('.tk').forEach(card => io.observe(card));
+    } else grid.querySelectorAll('.tk').forEach(card => {
+        const off = () => { if (!card.matches(':hover, :focus-within')) stop(card); };
+        card.addEventListener('mouseenter', () => play(card)); card.addEventListener('focusin', () => play(card));
+        card.addEventListener('mouseleave', off); card.addEventListener('focusout', () => setTimeout(off, 0));
+    });
+
+    // ---- Showcase carousel (same behavior as /interactive/) ----
+    const stage = $('shows-stage'), dots = document.querySelector('.shows-dots'), prog = $('shows-prog');
+    dots.innerHTML = TRACKERS.map(([, t]) => '<button type="button" role="tab" aria-label="' + esc(t) + '"></button>').join('');
+    let i = 0, timer = 0, hold = false, dur = IMG_MS, started = 0, left = 0, live = null;
+    function show(n) {
+        i = (n + TRACKERS.length) % TRACKERS.length;
+        const [slug, title, line] = TRACKERS[i];
+        const old = [...stage.children], d = document.createElement('div'), f = document.createElement('iframe');
+        d.className = 'shows-layer';
+        f.src = 'motion/' + slug + '/' + (reduced ? '?poster' : ''); f.title = 'Animated preview of ' + title;
+        f.tabIndex = -1; f.setAttribute('aria-hidden', 'true');
+        d.appendChild(f); stage.appendChild(d); live = f;
+        requestAnimationFrame(() => requestAnimationFrame(() => d.classList.add('on')));
+        setTimeout(() => old.forEach(o => o.remove()), reduced ? 0 : 700);
+        for (const a of [$('shows-link'), $('shows-open')]) { a.href = href(slug); a.setAttribute('aria-label', 'Open ' + title); }
+        $('shows-title').textContent = title; $('shows-line').textContent = line;
+        dots.querySelectorAll('button').forEach((b, k) => b.setAttribute('aria-current', String(k === i)));
+        schedule(TRAILER_MS);
+    }
+    // The showcase trailer reports its loop length when it starts; advance when it ends. Card trailers are ignored.
+    addEventListener('message', e => {
+        const m = e.data;
+        if (live && e.source === live.contentWindow && m && m.trailer && m.duration) schedule(m.duration * 1000);
+    });
+    function schedule(ms) {
+        clearTimeout(timer); if (reduced) return;
+        dur = ms; left = ms;
+        prog.style.transition = 'none'; prog.style.width = '0';
+        if (!hold) run();
+    }
+    function run() {
+        started = performance.now();
+        clearTimeout(timer); timer = setTimeout(() => { if (!document.hidden) show(i + 1); else schedule(dur); }, left);
+        requestAnimationFrame(() => { prog.style.transition = 'width ' + left + 'ms linear'; prog.style.width = '100%'; });
+    }
+    function pause() {
+        if (hold || reduced) return; hold = true; clearTimeout(timer);
+        left = Math.max(0, left - (performance.now() - started));
+        const w = getComputedStyle(prog).width; prog.style.transition = 'none'; prog.style.width = w;
+    }
+    function resume() { if (!hold) return; hold = false; if (!reduced) run(); }
+    document.querySelector('.shows-arrow.prev').onclick = () => show(i - 1);
+    document.querySelector('.shows-arrow.next').onclick = () => show(i + 1);
+    dots.addEventListener('click', e => { const b = e.target.closest('button'); if (b) show([...dots.children].indexOf(b)); });
+    const fig = document.querySelector('.shows');
+    fig.addEventListener('focusin', pause); fig.addEventListener('focusout', resume);
+    fig.addEventListener('keydown', e => { if (e.key === 'ArrowRight') show(i + 1); if (e.key === 'ArrowLeft') show(i - 1); });
+    show(0);
+})();
+</script>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+
+<script src="/script.js"></script>
+</body>
+</html>

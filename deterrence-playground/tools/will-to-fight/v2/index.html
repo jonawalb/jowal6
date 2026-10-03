@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Will to Fight v2 | Interactive Deterrence</title>
+<meta name="description" content="The simple version of the Will to Fight model: an adversary attacks or not, fighters coordinate on fighting, and the government fights on or concedes. Game sketch, calculator and the table of what to measure.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&family=Spline+Sans+Mono:wght@400;500;600&family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../../shared/css/tsm.css">
+<link rel="stylesheet" href="../will-to-fight.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<nav class="wf-ver card" aria-label="Model version">
+  <span class="eyebrow">Model version</span>
+  <a href="./" aria-current="page"><b>v2</b> Simple: attack, hold, resolve</a>
+  <a href="../"><b>v1</b> Two-level global game</a>
+</nav>
+
+<main class="wf2">
+  <article class="card wf2-sec" id="intro" aria-live="polite"><p class="fine">Loading…</p></article>
+
+  <section class="card wf2-sec" aria-labelledby="calc-t">
+    <h2 id="calc-t">Try it</h2>
+    <p class="wf-summary" id="v2-summary" aria-live="polite"></p>
+    <div class="wf2-calc">
+      <div class="wf2-ctl" id="v2-panel"></div>
+      <div class="wf2-out">
+        <svg id="v2-fig" role="img" aria-label="Cohesion against the public reading of commitment"></svg>
+        <table class="wf2-read" id="v2-read"></table>
+      </div>
+    </div>
+  </section>
+
+  <section class="card wf2-sec" id="sketch" aria-labelledby="sk-t"></section>
+  <section class="card wf2-sec" id="results" aria-labelledby="res-t"></section>
+  <section class="card wf2-sec" id="measure" aria-labelledby="ms-t"></section>
+  <section class="card wf2-sec" id="link"></section>
+</main>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../../shared/js/chrome.js';
+  mountChrome({ title: 'Will to Fight', sub: 'Model v2, the simple version: an adversary attacks or not, fighters coordinate on fighting, and the government fights on or concedes.', category: 'Game theory' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

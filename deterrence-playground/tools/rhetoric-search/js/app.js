@@ -1,16 +1,16 @@
 // Rhetoric Search: controls, URL hash, progressive search over shards, results and month chart.
-import { Engine, parseQuery } from './engine.js';
+import { Engine, parseQuery, fold } from './engine.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const fmt = (n) => n.toLocaleString('en-US');
-const COUNTRY = { RU: 'Russia', IR: 'Iran', CN: 'China', KP: 'North Korea', BY: 'Belarus', US: 'United States', PK: 'Pakistan', IN: 'India' };
+const COUNTRY = { RU: 'Russia', IR: 'Iran', CN: 'China', KP: 'North Korea', BY: 'Belarus', US: 'United States', PK: 'Pakistan', IN: 'India', TR: 'Türkiye', SY: 'Syria', VE: 'Venezuela', CU: 'Cuba', TW: 'Taiwan' };
 const SOURCE = {
   kremlin_en: 'Kremlin transcripts (Putin)', iran_mfa_en: 'Iran Foreign Ministry', mfa_cn: 'PRC Foreign Ministry',
   mnd_cn: 'PRC Defense Ministry', tao_cn: 'Taiwan Affairs Office', prc_statemedia: 'PRC state media',
   prc_statemedia_headlines: 'PRC state media (headlines)',
 };
-const LANG = { en: 'English', ru: 'Russian', zh: 'Chinese', fa: 'Persian', ko: 'Korean', be: 'Belarusian', ur: 'Urdu', hi: 'Hindi' };
+const LANG = { en: 'English', ru: 'Russian', zh: 'Chinese', fa: 'Persian', ko: 'Korean', be: 'Belarusian', ur: 'Urdu', hi: 'Hindi', tr: 'Turkish', ar: 'Arabic', es: 'Spanish' };
 const PAGE = 50;
 const CONCURRENCY = 4;
 
@@ -20,6 +20,7 @@ let run = 0;            // id of the current search; stale shard results are dro
 let hits = [];          // {sh, doc, sent, spans, date}
 let shown = 0;
 let gen = 0;            // repaint generation: a list render from an older paint is dropped
+let alts = [];          // parsed query of the current search (the reader highlights it)
 
 const srcName = (id) => SOURCE[id] || id.replace(/_/g, ' ');
 
@@ -80,7 +81,7 @@ async function go() {
   $('results').innerHTML = '';
   $('more').hidden = true;
   $('chart').hidden = true;
-  const alts = parseQuery(S.q);
+  alts = parseQuery(S.q);
   if (!alts.length) { document.body.dataset.state = 'done'; $('count').textContent = 'Type a word or phrase.'; $('status').textContent = ''; $('progress').hidden = true; return; }
   const f = { country: S.country, source: S.source, lang: S.lang, from: S.from, to: S.to };
   const t0 = performance.now();
@@ -151,8 +152,12 @@ function officialItem(h, sh) {
   return `<li class="hit" data-cc="${esc(src.country)}">
     <div class="m"><b>${esc(d[0])}</b><span>${esc(COUNTRY[src.country] || src.country)} · ${esc(srcName(src.id))}${d[7] ? ` · ${esc(d[7])}` : ''}</span>${d[4] ? `<span>${esc(d[4])}</span>` : ''}<span>${esc(LANG[meta.langs[d[6]]] || meta.langs[d[6]])}</span></div>
     <p class="s">${highlight(sh.sents[h.sent], h.spans)}</p>
-    <div class="t">${title ? esc(title) + ' · ' : ''}<a href="${esc(d[3])}" target="_blank" rel="noopener">Source</a></div></li>`;
+    <div class="t">${title ? esc(title) + ' · ' : ''}<a href="${esc(safeUrl(d[3]))}" target="_blank" rel="noopener">Source</a>${E.hasDocs && d[8] != null ? ` · <button type="button" class="linkbtn" data-read="${d[8]}">Read document</button>` : ''}</div></li>`;
 }
+
+// Only http(s) links are rendered; anything else becomes an inert '#'.
+const safeUrl = (u) => (/^https?:\/\//i.test(u || '') ? u : '#');
+const waybackOf = (u) => (/^https?:\/\//i.test(u || '') ? `https://web.archive.org/web/${u}` : '#');
 
 function mediaItem(h, row) {
   const meta = E.meta;
@@ -162,8 +167,8 @@ function mediaItem(h, row) {
   const what = headline ? 'in this headline' : 'in this article';
   return `<li class="hit media" data-cc="${esc(src.country)}">
     <div class="m"><b>${esc(h.date)}</b><span>${esc(COUNTRY[src.country] || src.country)} · ${esc(srcName(src.id))}${outlet ? ` · ${esc(outlet)}` : ''}</span>${speaker ? `<span>${esc(speaker)}</span>` : ''}<span>${esc(LANG[lang] || lang)}</span><span class="tag">media: text not shown</span></div>
-    <p class="mt"><a href="${esc(url)}" target="_blank" rel="noopener">${esc(title || url)}</a></p>
-    <div class="t">Matched ${fmt(h.n)} time${h.n === 1 ? '' : 's'} ${what}.</div></li>`;
+    <p class="mt"><a href="${esc(safeUrl(url))}" target="_blank" rel="noopener">${esc(title || url)}</a></p>
+    <div class="t">Matched ${fmt(h.n)} time${h.n === 1 ? '' : 's'} ${what}. <a href="${esc(waybackOf(url))}" target="_blank" rel="noopener">Wayback</a></div></li>`;
 }
 
 function renderList() {
@@ -177,6 +182,57 @@ function renderList() {
     $('more').hidden = shown >= hits.length;
     $('more').textContent = `Show more (${fmt(hits.length - shown)} left)`;
   });
+}
+
+// ---- Reader: the full text of an official document (media articles have no text here) --------------------
+function termSpans(text) {
+  const f = fold(text);
+  const out = [];
+  for (const alt of alts) for (const term of alt) {
+    term.re.lastIndex = 0;
+    let m;
+    while ((m = term.re.exec(f))) { if (!m[0].length) { term.re.lastIndex++; continue; } out.push([m.index, m.index + m[0].length]); }
+  }
+  return out;
+}
+
+async function openReader(rowid) {
+  const dlg = $('reader');
+  const body = $('reader-body');
+  $('reader-title').textContent = 'Loading…';
+  $('reader-meta').innerHTML = '';
+  $('reader-links').innerHTML = '';
+  body.innerHTML = '';
+  if (!dlg.open) dlg.showModal();
+  let doc;
+  try { doc = await E.doc(rowid); } catch (e) { doc = null; console.warn('doc', rowid, e); }
+  if (!doc) { $('reader-title').textContent = 'This document could not be loaded.'; return; }
+  const meta = E.meta;
+  const src = meta.sources.find((s) => s.id === doc.source) || { id: doc.source, country: '' };
+  $('reader-title').textContent = doc.title || '(untitled)';
+  $('reader-meta').innerHTML = [doc.date, `${COUNTRY[src.country] || src.country} · ${srcName(src.id)}${doc.org ? ' · ' + doc.org : ''}`,
+    doc.speaker, LANG[doc.lang] || doc.lang].filter(Boolean).map((x) => `<span>${esc(x)}</span>`).join('');
+  $('reader-links').innerHTML = `<a href="${esc(safeUrl(doc.url))}" target="_blank" rel="noopener">Original source</a>`
+    + ` · <a href="${esc(safeUrl(doc.wayback) !== '#' ? doc.wayback : waybackOf(doc.url))}" target="_blank" rel="noopener">Wayback Machine copy</a>`;
+  let n = 0;
+  body.innerHTML = doc.text.split('\n').filter((x) => x.trim()).map((para) => {
+    const sp = termSpans(para);
+    n += sp.length;
+    return `<p>${highlight(para, sp)}</p>`;
+  }).join('');
+  $('reader-hits').textContent = alts.length ? `${fmt(n)} match${n === 1 ? '' : 'es'} highlighted.` : '';
+  body.scrollTop = 0;
+  const first = body.querySelector('mark');
+  if (first) first.scrollIntoView({ block: 'center' });
+}
+
+function mountReader() {
+  $('results').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-read]');
+    if (b) openReader(Number(b.dataset.read));
+  });
+  $('reader-close').addEventListener('click', () => $('reader').close());
+  $('reader').addEventListener('click', (e) => { if (e.target === $('reader')) $('reader').close(); });
 }
 
 // ---- Chart ----------------------------------------------------------------------------------------------
@@ -232,6 +288,7 @@ async function boot() {
     const meta = await E.init();
     await E.initMedia();
     mountControls(meta);
+    mountReader();
     corpusCard(meta);
     readHash();
     sync();

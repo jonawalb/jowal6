@@ -16,6 +16,7 @@
 </head>
 <body class="loading">
 <header id="tsm-head"></header>
+<nav class="rs-pages" aria-label="Rhetoric Search pages"><a href="index.html" aria-current="page">Search</a><a href="trends.html">Trends</a></nav>
 <main class="layout">
   <div class="stage">
     <form class="card qbox" id="qform" role="search" autocomplete="off">
@@ -50,9 +51,10 @@
       <ul class="tips">
         <li><b>Words with no operators</b> are one exact phrase: <code>collective West</code>.</li>
         <li><b>Quotes and OR</b>: <code>"sanctions" OR "independence"</code>. Terms side by side must all be in the same sentence.</li>
-        <li><b>Prefix</b>: <code>sanction*</code>, <code>плутониев*</code> (Russian endings vary, so a stem with * finds every form).</li>
-        <li><b>Chinese</b> matches anywhere in a sentence: <code>钚芯</code>.</li>
+        <li><b>Prefix</b>: <code>sanction*</code>, <code>санкци*</code> (Russian endings vary, so a stem with * finds every form).</li>
+        <li><b>Chinese</b> matches anywhere in a sentence: <code>台独</code>.</li>
         <li><b>Media articles</b> show headline and link only; several words match if all occur in the article.</li>
+        <li><b>Read document</b> on an official result opens its full text with your words highlighted.</li>
       </ul>
     </div>
     <div class="sec">
@@ -65,7 +67,7 @@
   <div class="col">
     <h2>How it works</h2>
     <p>Every official document is split into sentences of at most 300 characters. A search finds the sentences that contain your words and shows each one with its date, source, speaker and a link to the original page. Official counts are of matching sentences; one long speech can contribute several. Media counts are of articles, with the number of mentions in each.</p>
-    <p><b>Official texts</b> (presidential transcripts, foreign and defence ministry briefings, the Taiwan Affairs Office and other government statements) are public records, so each matching sentence is shown with your words highlighted. <b>State media and commentary</b> (Xinhua, People's Daily, CGTN, TASS, RIA, RT and others) are copyrighted journalism, so the site keeps no text from them at all: a matching article is listed by headline, outlet, date and link, with the number of times your words occur in it. Read the article at the source.</p>
+    <p><b>Official texts</b> (presidential transcripts, foreign and defence ministry briefings, the Taiwan Affairs Office and other government statements) are public records, so each matching sentence is shown with your words highlighted, and <b>Read document</b> opens the full text with links to the original page and its Wayback Machine copy. <b>State media and commentary</b> (Xinhua, People's Daily, CGTN, TASS, RIA, RT and others) are copyrighted journalism, so the site keeps no text from them at all: a matching article is listed by headline, outlet, date and link, with the number of times your words occur in it. Read the article at the source or its Wayback Machine copy.</p>
     <p>The search runs in your browser. The site keeps a word list that says which parts of the collection hold each word, so a search for a rare term downloads only the few parts that contain it. Common words touch many parts, so the count keeps rising for a few seconds while they load; the bar above the results shows progress.</p>
     <p>Matching ignores capitals and accents, treats ё as е and the Arabic and Persian forms of ی and ک as one letter. It does not know grammar: use a stem with * for languages with many word endings.</p>
   </div>
@@ -73,12 +75,23 @@
     <h2>Method and limits</h2>
     <ul class="src" id="method">
       <li>Official texts: phrases match exactly, within one sentence. Media articles: the site holds only a word index of each article, so a phrase or several words match when every word appears somewhere in the article, in any order, and the count shown is the smallest count among those words. Single Chinese characters are not indexed for media; use two or more.</li>
-      <li>Sentences that a source repeats word for word (reposts, standard boilerplate) are listed once, under the newest document. The full texts stay with their publishers; follow the links to read them.</li>
+      <li>Sentences that a source repeats word for word (reposts, standard boilerplate) are listed once, under the newest document. Media articles stay with their publishers; follow the links to read them.</li>
       <li>Translations are labelled with the source. Chinese ministry Q&amp;A rows appear twice where both the Chinese original and an English version exist.</li>
       <li>A match is only a string match. A phrase can be quoted in order to reject it. Always read the sentence and the source.</li>
     </ul>
   </div>
 </section>
+<dialog class="reader" id="reader" aria-labelledby="reader-title">
+  <div class="reader-head">
+    <div class="reader-hd">
+      <h2 id="reader-title"></h2>
+      <div class="m" id="reader-meta"></div>
+      <div class="t"><span id="reader-links"></span> <span class="fine" id="reader-hits"></span></div>
+    </div>
+    <button type="button" class="btn" id="reader-close" aria-label="Close the document">Close</button>
+  </div>
+  <div class="reader-body" id="reader-body"></div>
+</dialog>
 <footer id="tsm-foot"></footer>
 <script type="module">
   import { mountChrome } from '../../shared/js/chrome.js';

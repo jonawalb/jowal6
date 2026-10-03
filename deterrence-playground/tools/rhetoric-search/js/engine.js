@@ -1,7 +1,10 @@
 // Rhetoric Search: client-side engine. Loads the sharded sentence index built by scripts/build_public.py.
 // fold(), tokens() and bucketOf() mirror textnorm.py in the corpus repo exactly; keep them in sync.
 
-const DATA = new URL('../data/', import.meta.url);
+import { dataRoot } from './config.js';
+
+const LOCAL_DATA = new URL('../data/', import.meta.url);
+let DATA = LOCAL_DATA; // set by Engine.init(): the site's data/ or <Hugging Face base>data/<build>/ (js/config.js)
 const CJK = '\\u1100-\\u11ff\\u3040-\\u30ff\\u3130-\\u318f\\u3400-\\u4dbf\\u4e00-\\u9fff\\uac00-\\ud7af\\uf900-\\ufaff';
 const CJK_RUN = new RegExp(`^[${CJK}]+$`, 'u');
 const HAS_CJK = new RegExp(`[${CJK}]`, 'u');
@@ -113,6 +116,9 @@ export class Engine {
   constructor() { this.meta = null; this.buckets = new Map(); this.shards = new Map(); this.folded = new Map(); }
 
   async init() {
+    const root = await dataRoot(LOCAL_DATA);
+    DATA = root.url;
+    this.build = root.build;
     this.meta = await getGz('meta.json.gz');
     this.byId = new Map(this.meta.shards.map((s) => [s[0], s]));
     return this.meta;
@@ -263,6 +269,28 @@ export class Engine {
     const k = Math.floor(d / this.meta.media.chunk);
     if (!this.mchunks.has(k)) this.mchunks.set(k, getGz(`m/d/${k}.json.gz`));
     return (await this.mchunks.get(k))[d % this.meta.media.chunk];
+  }
+
+  // ---- Full documents (official texts only): docs/index.json.gz + docs/<n>.json.gz, keyed by corpus rowid. ----
+  /** True when this build ships full official documents (built by scripts/build_hf_data.py). */
+  get hasDocs() { return !!(this.meta && this.meta.docs && this.meta.docs.shards); }
+
+  /** {rowid: {date, source, title, url, speaker, wayback, lang, org, text}} for the shard holding a document. */
+  async doc(rowid) {
+    if (!this.docIndex) this.docIndex = getGz('docs/index.json.gz');
+    const ranges = (await this.docIndex).ranges; // [[first rowid, last rowid], ...] by shard number
+    let lo = 0, hi = ranges.length - 1, k = -1;
+    while (lo <= hi) {
+      const mid = (lo + hi) >> 1;
+      if (rowid < ranges[mid][0]) hi = mid - 1; else if (rowid > ranges[mid][1]) lo = mid + 1; else { k = mid; break; }
+    }
+    if (k < 0) return null;
+    if (!this.docShards) this.docShards = new Map();
+    if (!this.docShards.has(k)) {
+      this.docShards.set(k, getGz(`docs/${k}.json.gz`));
+      if (this.docShards.size > 8) this.docShards.delete(this.docShards.keys().next().value);
+    }
+    return (await this.docShards.get(k))[rowid] || null;
   }
 
   /** Scan one shard: [{doc, sent, spans}] for sentences matching the query and filters. */

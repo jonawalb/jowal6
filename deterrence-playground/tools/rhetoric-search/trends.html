@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rhetoric Trends | Interactive Deterrence</title>
+<meta name="description" content="Tone, stance toward other states, topics, alerts and cross-country echoes in official statements and state media, each number linked to its evidence.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&family=Spline+Sans+Mono:wght@400;500;600&family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="rhetoric-search.css">
+<link rel="stylesheet" href="trends.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+<nav class="rs-pages" aria-label="Rhetoric Search pages"><a href="index.html">Search</a><a href="trends.html" aria-current="page">Trends</a></nav>
+<main class="wrap" id="app"><p class="fine">Loading…</p></main>
+<section class="below">
+  <div class="col">
+    <h2>How to read the trends</h2>
+    <p>Each series is computed within one stream (a source in one language under one selection regime) and compared with that stream's own recent past. Country lines combine streams with fixed weights, so the <b>change</b> measures are not moved by sources entering or leaving the collection; the <b>level</b> is, and the Coverage tab marks where that happens.</p>
+    <p><b>Tone</b> is the expected share of a document's sentences that express a dimension, scored by a classifier trained to reproduce a zero-shot AI model. It has been checked against that AI model only, not yet against human coders. Compare a stream with itself over time and read the quoted sentences before drawing conclusions.</p>
+    <p><b>Stance</b> is the tone of sentences that mention a target, not tone directed at it. <b>Salience</b> is the share of documents that mention a target.</p>
+  </div>
+  <div class="col">
+    <h2>What this page shows and withholds</h2>
+    <ul class="src">
+      <li>Only aggregates, strong and moderate alerts, and evidence. Weak alerts, which occur about as often as chance predicts, are not shown.</li>
+      <li>Evidence sentences are quoted only from official sources, at most 300 characters each, with a link. State-media and other media evidence is listed by headline and link only.</li>
+      <li>Echo clusters show near-identical passages across countries; "first seen" means first in this collection, not the origin of a line.</li>
+      <li>Search links open Rhetoric Search for the country and dates; they use the English name of a target and miss other languages.</li>
+    </ul>
+  </div>
+</section>
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Rhetoric Trends', sub: 'Tone, stance toward other states, topics, alerts and cross-country echoes in official statements and state media, with every number linked to its evidence.', category: 'State rhetoric' });
+</script>
+<script type="module">
+  import { mount } from './js/trends.js';
+  const DATA = new URL('./data/trends/', import.meta.url);
+  async function getGz(name) {
+    const r = await fetch(new URL(`${name}.json.gz`, DATA));
+    if (!r.ok) throw new Error(`${name}: HTTP ${r.status}`);
+    const buf = new Uint8Array(await r.arrayBuffer());
+    if (buf[0] === 0x1f && buf[1] === 0x8b) {
+      const ds = new Blob([buf]).stream().pipeThrough(new DecompressionStream('gzip'));
+      return JSON.parse(await new Response(ds).text());
+    }
+    return JSON.parse(new TextDecoder().decode(buf)); // a server already inflated it
+  }
+  mount(document.getElementById('app'), {
+    mode: 'public',
+    get: getGz,
+    searchUrl: ({ country, from, to, q }) => 'index.html#' + new URLSearchParams(Object.entries({ q, c: country, from, to }).filter(([, v]) => v)),
+  });
+</script>
+</body>
+</html>

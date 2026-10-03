@@ -112,9 +112,12 @@
 
   // Transparent decryption for fetched data files (json, csv, etc.).
   var nativeFetch = window.fetch.bind(window);
+  var DATA_URL = /\/data\/|\/thumb\.png$/;
   window.fetch = function (input, init) {
+    // Test the requested URL too: a data host (Hugging Face) redirects to a CDN URL without /data/ in it.
+    var asked = typeof input === 'string' ? input : (input && input.url) || String(input);
     return nativeFetch(input, init).then(function (r) {
-      if (!r.ok || !/\/data\/|\/thumb\.png$/.test(r.url || '')) return r;
+      if (!r.ok || !(DATA_URL.test(r.url || '') || DATA_URL.test(asked))) return r;
       return r.clone().arrayBuffer().then(function (ab) {
         var buf = new Uint8Array(ab);
         var tier = startsWithMagic(buf, MAGIC) ? 1 : startsWithMagic(buf, MAGIC2) ? 2 : startsWithMagic(buf, MAGIC3) ? 3 : startsWithMagic(buf, MAGIC4) ? 4 : startsWithMagic(buf, MAGIC5) ? 5 : 0;

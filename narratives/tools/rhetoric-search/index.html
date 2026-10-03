@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rhetoric Search | Narrative Tracking</title>
+<meta name="description" content="Search official statements sentence by sentence, and find state-media articles by headline and link, with every match dated and sourced.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&family=Spline+Sans+Mono:wght@400;500;600&family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="../../shared/css/deterrence-site.css">
+<link rel="stylesheet" href="rhetoric-search.css">
+</head>
+<body class="loading">
+<header id="tsm-head"></header>
+<nav class="rs-pages" aria-label="Rhetoric Search pages"><a href="index.html" aria-current="page">Search</a><a href="trends.html">Trends</a></nav>
+<main class="layout">
+  <div class="stage">
+    <form class="card qbox" id="qform" role="search" autocomplete="off">
+      <label class="vh" for="q">Search terms</label>
+      <input type="search" id="q" name="q" placeholder="sanctions · independence · &quot;Ottawa Senators&quot;" spellcheck="false">
+      <button type="submit" class="btn solid">Search</button>
+    </form>
+    <div class="toolbar-row">
+      <div class="choices seg" id="country" role="group" aria-label="Country"></div>
+      <label class="pick"><span>Source</span><select id="source"><option value="">All sources</option></select></label>
+      <label class="pick"><span>Language</span><select id="lang"><option value="">All</option></select></label>
+      <label class="pick"><span>From</span><input type="date" id="from"></label>
+      <label class="pick"><span>To</span><input type="date" id="to"></label>
+      <button type="button" class="btn" id="clear-dates" hidden>All dates</button>
+    </div>
+    <div class="summary" aria-live="polite">
+      <p id="count" class="count">Type a word or phrase.</p>
+      <div class="progress" id="progress" hidden><i id="bar"></i></div>
+      <p class="fine" id="status"></p>
+    </div>
+    <section class="card chart" id="chart" hidden aria-label="Matching sentences by month">
+      <div class="chart-head"><h2>Matches by month</h2><span class="legend"><span class="key"><i class="k-off"></i>Official sentences</span><span class="key"><i class="k-med"></i>Media articles</span><span class="fine">Click a month to filter to it.</span></span></div>
+      <svg id="hist" role="img" aria-label="Bar chart of matching sentences per month"></svg>
+      <div class="tooltip" id="tip" hidden></div>
+    </section>
+    <ol class="results" id="results"></ol>
+    <button type="button" class="btn more" id="more" hidden>Show more</button>
+  </div>
+  <aside class="panel" aria-label="About the corpus">
+    <div class="sec">
+      <p class="eyebrow">How to search</p>
+      <ul class="tips">
+        <li><b>Words with no operators</b> are one exact phrase: <code>collective West</code>.</li>
+        <li><b>Quotes and OR</b>: <code>"sanctions" OR "independence"</code>. Terms side by side must all be in the same sentence.</li>
+        <li><b>Prefix</b>: <code>sanction*</code>, <code>санкци*</code> (Russian endings vary, so a stem with * finds every form).</li>
+        <li><b>Chinese</b> matches anywhere in a sentence: <code>台独</code>.</li>
+        <li><b>Media articles</b> show headline and link only; several words match if all occur in the article.</li>
+        <li><b>Read document</b> on an official result opens its full text with your words highlighted.</li>
+      </ul>
+    </div>
+    <div class="sec">
+      <p class="eyebrow">What is searched</p>
+      <div id="corpus" class="fine">Loading…</div>
+    </div>
+  </aside>
+</main>
+<section class="below">
+  <div class="col">
+    <h2>How it works</h2>
+    <p>Every official document is split into sentences of at most 300 characters. A search finds the sentences that contain your words and shows each one with its date, source, speaker and a link to the original page. Official counts are of matching sentences; one long speech can contribute several. Media counts are of articles, with the number of mentions in each.</p>
+    <p><b>Official texts</b> (presidential transcripts, foreign and defence ministry briefings, the Taiwan Affairs Office and other government statements) are public records, so each matching sentence is shown with your words highlighted, and <b>Read document</b> opens the full text with links to the original page and its Wayback Machine copy. <b>State media and commentary</b> (Xinhua, People's Daily, CGTN, TASS, RIA, RT and others) are copyrighted journalism, so the site keeps no text from them at all: a matching article is listed by headline, outlet, date and link, with the number of times your words occur in it. Read the article at the source or its Wayback Machine copy.</p>
+    <p>The search runs in your browser. The site keeps a word list that says which parts of the collection hold each word, so a search for a rare term downloads only the few parts that contain it. Common words touch many parts, so the count keeps rising for a few seconds while they load; the bar above the results shows progress.</p>
+    <p>Matching ignores capitals and accents, treats ё as е and the Arabic and Persian forms of ی and ک as one letter. It does not know grammar: use a stem with * for languages with many word endings.</p>
+  </div>
+  <div class="col">
+    <h2>Method and limits</h2>
+    <ul class="src" id="method">
+      <li>Official texts: phrases match exactly, within one sentence. Media articles: the site holds only a word index of each article, so a phrase or several words match when every word appears somewhere in the article, in any order, and the count shown is the smallest count among those words. Single Chinese characters are not indexed for media; use two or more.</li>
+      <li>Sentences that a source repeats word for word (reposts, standard boilerplate) are listed once, under the newest document. Media articles stay with their publishers; follow the links to read them.</li>
+      <li>Translations are labelled with the source. Chinese ministry Q&amp;A rows appear twice where both the Chinese original and an English version exist.</li>
+      <li>A match is only a string match. A phrase can be quoted in order to reject it. Always read the sentence and the source.</li>
+    </ul>
+  </div>
+</section>
+<dialog class="reader" id="reader" aria-labelledby="reader-title">
+  <div class="reader-head">
+    <div class="reader-hd">
+      <h2 id="reader-title"></h2>
+      <div class="m" id="reader-meta"></div>
+      <div class="t"><span id="reader-links"></span> <span class="fine" id="reader-hits"></span></div>
+    </div>
+    <button type="button" class="btn" id="reader-close" aria-label="Close the document">Close</button>
+  </div>
+  <div class="reader-body" id="reader-body"></div>
+</dialog>
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Rhetoric Search', sub: 'Search the official statements and state media behind the rhetoric heatmaps. Official sentences are quoted; media articles are listed by headline and link.', category: 'State rhetoric' });
+</script>
+<script>
+  // A different set of example searches on each visit, across the collection's languages.
+  (function () {
+    var sets = [
+      'sanctions · independence · "Ottawa Senators"',
+      '制裁 · 台独 · 霸权主义',
+      'санкции · НАТО · Орешник',
+      'بحریہ · سیکیورٹی · دہشت',
+      '"rules-based order" · 和平统一 · санкции',
+      'Oreshnik · "Union State" · "hostile policy"',
+      'deterrence · 威慑 · НАТО · سیکیورٹی'
+    ];
+    var q = document.getElementById('q');
+    if (q) q.placeholder = sets[Math.floor(Math.random() * sets.length)];
+  })();
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

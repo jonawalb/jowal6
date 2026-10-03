@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Rhetoric Search</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .box { fill: #0a1510; stroke: #2b4a3b; stroke-width: 1.5; }
+  .q-t { font: italic 400 40px var(--display); fill: var(--paper); }
+  .btn-t { font: 600 16px var(--mono); fill: var(--ink); letter-spacing: .14em; text-transform: uppercase; }
+  .chip { fill: #0b1712; stroke: #2b4a3b; stroke-width: 1.2; }
+  .chip-t { font: 400 14px var(--mono); fill: var(--muted); }
+  .cnt { font: 400 17px var(--mono); fill: var(--muted); letter-spacing: .02em; }
+  .cnt tspan.n { fill: var(--paper); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .row-t { font: 400 17px var(--mono); fill: var(--paper); }
+  .b-n { font: 600 17px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .b-s { font: 400 13px var(--mono); fill: var(--muted); font-variant-numeric: tabular-nums; }
+  .key-t { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .06em; }
+  .card { fill: #0a1510; fill-opacity: .96; stroke: #2b4a3b; stroke-width: 1.2; }
+  .c-e { font: 400 12px var(--mono); fill: var(--muted); letter-spacing: .12em; text-transform: uppercase; }
+  .c-e tspan.d { fill: var(--paper); font-weight: 600; }
+  .c-q { font: italic 400 25px var(--display); fill: var(--paper); }
+  .c-q tspan.k { fill: var(--amber); }
+  .c-h { font: 500 25px var(--display); fill: var(--blue); }
+  .c-m { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .03em; }
+  .tag { fill: none; stroke: var(--muted); stroke-width: 1; }
+  .ax { font: 400 13px var(--mono); fill: var(--muted); font-variant-numeric: tabular-nums; }
+  .yr { font: 600 14px var(--mono); fill: var(--paper); letter-spacing: .04em; }
+  .cmp-v { font: 600 96px var(--mono); font-variant-numeric: tabular-nums; letter-spacing: -.03em; }
+  .cmp-h { font: 400 14px var(--mono); fill: var(--muted); letter-spacing: .12em; text-transform: uppercase; }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of Rhetoric Search: the word sovereignty is typed into a search box, bars show how many official and state-media documents from Russia, China, Iran, the United States, Belarus, Pakistan and India use it, four results appear (quoted official sentences from the Kremlin, China's Foreign Ministry and India's Foreign Ministry, and a TASS headline), then a line chart shows Russia's share of official texts using the word rising from 2021 to 2022."><title>Rhetoric Search</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Real data (~/Projects/rhetoric-corpus/index/corpus.sqlite, opened read-only) ---------------------------------
+// Run 2026-10-03 against the index built 2026-10-03 17:59:12 (meta table). Query: FTS5 table fts_words (title + text,
+// unicode61, so the token "sovereignty" exactly; "sovereign" is not counted), MATCH 'sovereignty', joined to docs on
+// rowid. Countries are the eight in the Rhetoric Search registry blurb (RU CN IR KP BY US PK IN); KP has no documents.
+// c = matching documents per country: [official (docs.outlet = 'official'), state media (outlet = 'state_media')].
+// The match is on the stored text, which for these items is the source's own English-language edition (the India item
+// is MEA's published English translation of the PM's statement); nothing here is our translation.
+// Totals: 7,027 documents = 4,266 official + 2,761 state media.
+// share = official English-language documents (docs.lang = 'en', outlet = 'official', date >= 2021-01-01) per calendar
+// quarter, 2021 Q1 to 2026 Q3: h = documents matching 'sovereignty', n = all such documents. RU = kremlin_en + mid_en,
+// US = whitehouse + state_dept. Russia 2021: 54 / 420 = 12.9 %; 2022: 132 / 467 = 28.3 %. US 2021: 130 / 2,620; 2022: 298 / 2,921.
+// Results: sentences (table sentences, each <= 300 chars) quoted verbatim from official documents; the media item is
+// headline + outlet + date only (docs.title), no body text.
+//   1. kremlin_en:80896, sentence 34. Putin, "First meeting of the 9th State Duma", 2026-09-30,
+//      http://en.kremlin.ru/events/president/transcripts/80896
+//   2. tass_com:c40f6d9ec95f786d (state media; headline only). TASS, 2026-09-30, https://tass.com/politics/2195077
+//   3. mfa_cn:2a4718736de4c16e:en, sentence 5. Guo Jiakun, MFA regular press conference, 2026-06-26,
+//      https://www.fmprc.gov.cn/eng/xw/fyrbt/lxjzh/202606/t20260626_11953253.html
+//   4. in_mea:41726, sentence 42. "English Translation of Prime Minister's Statement at the 26th SCO Summit
+//      (September 1, 2026)", 2026-09-01, https://www.mea.gov.in/speeches-statements?dtl/41726/English_Translation_of_Prime_Ministers_Statement_at_the_26th_SCO_Summit_September_1_2026
+const DATA = {
+  term: 'sovereignty',
+  c: [['Russia', 715, 1191], ['China', 1234, 454], ['Iran', 342, 821], ['United States', 1077, 0], ['Belarus', 374, 295], ['Pakistan', 315, 0], ['India', 209, 0]],
+  share: {
+    q0: '2021Q1',
+    RU: { h: [10, 8, 12, 24, 36, 27, 33, 36, 28, 33, 36, 41, 35, 45, 31, 42, 36, 35, 26, 39, 33, 34, 33], n: [78, 94, 109, 139, 116, 112, 117, 122, 104, 126, 144, 155, 126, 148, 133, 145, 106, 150, 127, 154, 101, 146, 161] },
+    US: { h: [22, 36, 23, 49, 103, 58, 66, 71, 73, 49, 63, 47, 41, 46, 41, 43, 12, 25, 57, 35, 47, 39, 31], n: [485, 697, 730, 708, 733, 808, 737, 643, 678, 686, 613, 657, 639, 661, 603, 554, 378, 476, 616, 459, 532, 515, 406] },
+  },
+  ru21: [54, 420], ru22: [132, 467],
+  results: [
+    { kind: 'official', meta: ['30 Sep 2026', 'Russia · Kremlin · Putin'], foot: 'First meeting of the 9th State Duma · en.kremlin.ru',
+      lines: ['“The cohesion of our society is the surest guarantee that, together, we will achieve our goals and secure', 'reliable guarantees for Russia’s safety and sovereignty for generations to come.”'] },
+    { kind: 'media', meta: ['30 Sep 2026', 'Russia · TASS'], foot: 'Headline and link only · tass.com',
+      lines: ['Putin certain about guarantees of Russia\'s security, sovereignty for generations to come'] },
+    { kind: 'official', meta: ['26 Jun 2026', 'China · Foreign Ministry · Guo Jiakun'], foot: 'Regular press conference · fmprc.gov.cn',
+      lines: ['“In developing its defense capabilities, China aims to safeguard its sovereignty, security and development', 'interests, and does not target any other country.”'] },
+    { kind: 'official', meta: ['1 Sep 2026', 'India · Ministry of External Affairs'], foot: 'Prime Minister’s statement at the 26th SCO Summit, English translation · mea.gov.in',
+      lines: ['“However, it is equally essential that such efforts respect the sovereignty and territorial', 'integrity of all countries.”'] },
+  ],
+};
+const fmt = n => n.toLocaleString('en-US');
+const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const hl = s => esc(s).replace(/sovereignty/g, '<tspan class="k">sovereignty</tspan>');
+const OFF = DATA.c.reduce((a, r) => a + r[1], 0), MED = DATA.c.reduce((a, r) => a + r[2], 0);   // 4,266 and 2,761
+
+// ---- Scene -------------------------------------------------------------------------------------------------------
+const blurF = el('filter', { id: 'rs-blur', x: '-5%', y: '-5%', width: '110%', height: '110%' }, svg);
+const blurG = el('feGaussianBlur', { stdDeviation: 0 }, blurF);
+const cam = el('g', {}, svg);
+
+// search box, chips, count line
+const ui = el('g', {}, cam);
+const BX = 200, BY = 100, BW = 1200, BH = 84;
+el('rect', { x: BX, y: BY, width: BW, height: BH, rx: 8, class: 'box' }, ui);
+el('circle', { cx: BX + 40, cy: BY + 40, r: 11, fill: 'none', stroke: 'var(--muted)', 'stroke-width': 2.2 }, ui);
+el('path', { d: `M${BX + 48} ${BY + 48}l9 9`, stroke: 'var(--muted)', 'stroke-width': 2.4, 'stroke-linecap': 'round' }, ui);
+const qT = el('text', { x: BX + 76, y: BY + 55, class: 'q-t' }, ui);
+const caret = el('rect', { x: BX + 78, y: BY + 22, width: 2.5, height: 42, fill: 'var(--amber)' }, ui);
+const btn = el('g', {}, ui);
+const BTX = BX + BW - 168, BTY = BY + 16;
+el('rect', { x: BTX, y: BTY, width: 152, height: 52, rx: 26, fill: 'var(--amber)' }, btn);
+el('text', { x: BTX + 76, y: BTY + 32, 'text-anchor': 'middle', class: 'btn-t' }, btn).textContent = 'Search';
+const chips = el('g', {}, ui);
+{ let x = BX; ['All', ...DATA.c.map(r => r[0])].forEach((n, i) => {
+  const w = n.length * 9.4 + 34;
+  el('rect', { x, y: 212, width: w, height: 34, rx: 17, class: 'chip', style: i ? '' : 'fill:var(--amber);stroke:var(--amber)' }, chips);
+  el('text', { x: x + w / 2, y: 234, 'text-anchor': 'middle', class: 'chip-t', style: i ? '' : 'fill:#0b1712;font-weight:600' }, chips).textContent = n;
+  x += w + 10; }); }
+const cnt = el('text', { x: BX, y: 294, class: 'cnt' }, ui);
+
+// per-country bars (stacked: official, then state media)
+const bars = el('g', {}, cam);
+const LX = 440, MAXW = 700, RY = 352, RH = 62, MAX = Math.max(...DATA.c.map(r => r[1] + r[2]));
+const rows = DATA.c.map(([n, o, m], i) => {
+  const y = RY + i * RH, g = el('g', {}, bars);
+  el('text', { x: LX - 18, y: y + 25, 'text-anchor': 'end', class: 'row-t' }, g).textContent = n;
+  el('rect', { x: LX, y: y + 6, width: MAXW, height: 28, fill: '#0c1712' }, g);
+  const ro = el('rect', { x: LX, y: y + 6, width: 0, height: 28, fill: 'var(--amber)' }, g);
+  const rm = el('rect', { x: LX, y: y + 6, width: 0, height: 28, fill: '#4d6b5c' }, g);
+  const tn = el('text', { y: y + 26, class: 'b-n' }, g);
+  const ts = el('text', { y: y + 26, class: 'b-s' }, g);
+  return { g, ro, rm, tn, ts, o, m };
+});
+const key = el('g', {}, bars);
+el('rect', { x: LX, y: RY + 7 * RH + 10, width: 14, height: 14, fill: 'var(--amber)' }, key);
+el('text', { x: LX + 22, y: RY + 7 * RH + 22, class: 'key-t' }, key).textContent = 'OFFICIAL TEXTS';
+el('rect', { x: LX + 200, y: RY + 7 * RH + 10, width: 14, height: 14, fill: '#4d6b5c' }, key);
+el('text', { x: LX + 222, y: RY + 7 * RH + 22, class: 'key-t' }, key).textContent = 'STATE MEDIA';
+el('text', { x: LX + MAXW + 260, y: RY + 7 * RH + 22, 'text-anchor': 'end', class: 'key-t' }, key).textContent = 'DOCUMENTS USING THE WORD';
+
+// result cards
+const CX = 200, CWD = 1200;
+let cy = 318;
+const cards = DATA.results.map(r => {
+  const off = r.kind === 'official', h = off ? 76 + r.lines.length * 32 : 106;
+  const g = el('g', { opacity: 0 }, cam), y = cy; cy += h + 10;
+  el('rect', { x: CX, y, width: CWD, height: h, rx: 6, class: 'card' }, g);
+  el('rect', { x: CX, y, width: 5, height: h, fill: off ? 'var(--amber)' : '#4d6b5c' }, g);
+  const m = el('text', { x: CX + 30, y: y + 28, class: 'c-e' }, g);
+  m.innerHTML = `<tspan class="d">${esc(r.meta[0])}</tspan>   ${esc(r.meta[1])}`;
+  if (!off) {
+    el('rect', { x: CX + CWD - 238, y: y + 12, width: 210, height: 24, rx: 4, class: 'tag' }, g);
+    el('text', { x: CX + CWD - 133, y: y + 29, 'text-anchor': 'middle', class: 'c-e' }, g).textContent = 'media: text not shown';
+  }
+  r.lines.forEach((l, k) => { const t = el('text', { x: CX + 30, y: y + 62 + k * 32, class: off ? 'c-q' : 'c-h' }, g); if (off) t.innerHTML = hl(l); else t.textContent = l; });
+  const ul = off ? null : el('line', { x1: CX + 30, x2: CX + 30, y1: y + 70, y2: y + 70, stroke: 'var(--blue)', 'stroke-width': 1, opacity: .45 }, g);
+  el('text', { x: CX + 30, y: y + h - 16, class: 'c-m' }, g).textContent = r.foot;
+  return { g, ul, head: off ? null : g.querySelector('.c-h') };
+});
+
+// cursor
+const cur = el('g', { opacity: 0 }, cam);
+const ring = el('circle', { r: 22, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 3, filter: 'url(#kit-glow)' }, cur);
+el('path', { d: 'M0 0l0 30l8 -7l6 13l6 -3l-6 -12l11 0z', fill: 'var(--paper)', stroke: '#0b1712', 'stroke-width': 2 }, cur);
+
+// hook
+const hook = el('g', {}, svg);
+const h1 = el('text', { x: 800, y: 430, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:64px' }, hook);
+h1.innerHTML = 'Seven governments say <tspan class="hot">“sovereignty”</tspan>.';
+const h2 = el('text', { x: 800, y: 515, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:64px' }, hook);
+h2.textContent = 'Read exactly how, in one search.';
+const h3 = el('text', { x: 800, y: 600, class: 't-label', 'text-anchor': 'middle' }, hook);
+h3.textContent = 'Official statements quoted · state media listed by headline';
+
+// payoff: Russia vs U.S., share of official English texts using the word, by quarter
+const pay = el('g', { opacity: 0 }, svg);
+el('rect', { width: 1600, height: 1000, fill: '#070f0b', opacity: .84 }, pay);
+const p1 = el('text', { x: 800, y: 220, class: 't-hook', 'text-anchor': 'middle' }, pay);
+p1.innerHTML = 'In 2022, Russia’s share <tspan class="hot">more than doubled</tspan>.';
+el('text', { x: 800, y: 272, class: 't-label', 'text-anchor': 'middle' }, pay).textContent = 'Share of official English-language texts using “sovereignty”, by quarter';
+const PX = 480, PW = 640, PY = 660, PH = 300, PMAX = 35, NQ = DATA.share.RU.h.length;
+const px = i => PX + i * PW / (NQ - 1), py = v => PY - v / PMAX * PH;
+[10, 20, 30].forEach(v => {
+  el('line', { x1: PX, x2: PX + PW, y1: py(v), y2: py(v), stroke: '#1f3a2d' }, pay);
+  el('text', { x: PX - 10, y: py(v) + 4, 'text-anchor': 'end', class: 'ax' }, pay).textContent = v + '%';
+});
+el('line', { x1: PX, x2: PX + PW, y1: PY, y2: PY, stroke: 'var(--muted)' }, pay);
+[2021, 2022, 2023, 2024, 2025, 2026].forEach((y, k) => el('text', { x: px(k * 4), y: PY + 26, class: 'yr', 'text-anchor': k ? 'middle' : 'start' }, pay).textContent = y);
+const band = el('rect', { x: px(3.5), y: PY - PH, width: px(7.5) - px(3.5), height: PH, fill: 'var(--red)', opacity: 0 }, pay);
+const line = (s, col) => {
+  const d = s.h.map((h, i) => `${i ? 'L' : 'M'}${px(i).toFixed(1)} ${py(100 * h / s.n[i]).toFixed(1)}`).join('');
+  return el('path', { d, fill: 'none', stroke: col, 'stroke-width': 3, 'stroke-linejoin': 'round' }, pay);
+};
+const lUS = line(DATA.share.US, 'var(--blue)'), lRU = line(DATA.share.RU, 'var(--red)');
+const lk = el('g', {}, pay);
+el('line', { x1: PX, x2: PX + 26, y1: PY + 62, y2: PY + 62, stroke: 'var(--red)', 'stroke-width': 3 }, lk);
+el('text', { x: PX + 36, y: PY + 67, class: 'ax' }, lk).textContent = 'Russia (Kremlin, Foreign Ministry)';
+el('line', { x1: PX + 360, x2: PX + 386, y1: PY + 62, y2: PY + 62, stroke: 'var(--blue)', 'stroke-width': 3 }, lk);
+el('text', { x: PX + 396, y: PY + 67, class: 'ax' }, lk).textContent = 'U.S. (White House, State)';
+const nB = el('text', { x: 270, y: 520, class: 'cmp-v', 'text-anchor': 'middle', style: 'fill:var(--muted)' }, pay);
+el('text', { x: 270, y: 560, class: 'cmp-h', 'text-anchor': 'middle' }, pay).textContent = 'Russia, 2021';
+el('text', { x: 270, y: 584, class: 'ax', 'text-anchor': 'middle' }, pay).textContent = `${DATA.ru21[0]} of ${DATA.ru21[1]} texts`;
+const nA = el('text', { x: 1330, y: 520, class: 'cmp-v', 'text-anchor': 'middle', style: 'fill:var(--red)' }, pay);
+el('text', { x: 1330, y: 560, class: 'cmp-h', 'text-anchor': 'middle' }, pay).textContent = 'Russia, 2022';
+el('text', { x: 1330, y: 584, class: 'ax', 'text-anchor': 'middle' }, pay).textContent = `${DATA.ru22[0]} of ${DATA.ru22[1]} texts`;
+const R21 = 100 * DATA.ru21[0] / DATA.ru21[1], R22 = 100 * DATA.ru22[0] / DATA.ru22[1];   // 12.9, 28.3
+
+const cap = captions(svg, [
+  [0.3, 3.2, 'Russia, China, Iran, Belarus, the U.S., Pakistan and India'],
+  [3.5, 5.1, 'Type a word or phrase'],
+  [5.3, 8.5, 'Who uses it: official texts and state media, by country'],
+  [8.7, 12.3, 'Official sentences quoted. State media: headline and link only'],
+  [12.6, 15.0, 'Russia: 13% of its official English texts in 2021, 28% in 2022'],
+]);
+const end = endCard(svg, { kicker: 'Narrative Tracking', title: 'Rhetoric Search', line: 'Seven governments and their state media, searchable sentence by sentence.' });
+
+// ---- Timeline -----------------------------------------------------------------------------------------------------
+const D = 17.5;
+function frame(t) {
+  // hook
+  const a = ease.out(seg(t, 0.2, 0.9)), b = ease.out(seg(t, 0.8, 1.5)), c = ease.out(seg(t, 1.5, 2.0)), hOut = 1 - seg(t, 2.9, 3.4);
+  h1.setAttribute('opacity', a * hOut); h1.setAttribute('transform', `translate(0,${(1 - a) * 18})`);
+  h2.setAttribute('opacity', b * hOut); h2.setAttribute('transform', `translate(0,${(1 - b) * 18})`);
+  h3.setAttribute('opacity', c * hOut);
+
+  // search box: type the term, click Search
+  const ch = ease.out(seg(t, 3.1, 3.7));
+  ui.setAttribute('opacity', ch); ui.setAttribute('transform', `translate(0,${(1 - ch) * 14})`);
+  const nc = Math.round(DATA.term.length * seg(t, 3.7, 4.6));
+  qT.textContent = DATA.term.slice(0, nc);
+  const tw = nc ? qT.getComputedTextLength() : 0;
+  caret.setAttribute('x', BX + 80 + tw);
+  caret.setAttribute('opacity', t < 5.0 ? (Math.floor(t * 2.5) % 2 || t < 4.7 ? 1 : 0) : 0);
+  const press = seg(t, 4.85, 5.0) * (1 - seg(t, 5.05, 5.35));
+  btn.setAttribute('transform', `translate(${BTX + 76},${BTY + 26}) scale(${1 - 0.05 * press}) translate(${-BTX - 76},${-BTY - 26})`);
+  const k = seg(t, 5.0, 6.8), kk = ease.out(k);
+  const cntOn = t >= 5.0;
+  cnt.setAttribute('opacity', cntOn ? 1 : 0);
+  cnt.innerHTML = `<tspan class="n">${fmt(Math.round((OFF + MED) * kk))}</tspan> documents  ·  <tspan class="n">${fmt(Math.round(OFF * kk))}</tspan> official  ·  <tspan class="n">${fmt(Math.round(MED * kk))}</tspan> state media`;
+
+  // bars grow, then make way for the results
+  const bOut = ease.inOut(seg(t, 8.3, 8.8));
+  bars.setAttribute('opacity', seg(t, 5.0, 5.3) * (1 - bOut));
+  bars.setAttribute('transform', `translate(0,${-24 * bOut})`);
+  rows.forEach((r, i) => {
+    const u = ease.out(seg(t, 5.2 + i * 0.12, 6.6 + i * 0.12));
+    const wo = MAXW * r.o / MAX * u, wm = MAXW * r.m / MAX * u;
+    r.ro.setAttribute('width', wo); r.rm.setAttribute('x', LX + wo); r.rm.setAttribute('width', wm);
+    r.tn.setAttribute('x', LX + wo + wm + 14); r.tn.textContent = fmt(Math.round((r.o + r.m) * u));
+    r.ts.setAttribute('x', LX + wo + wm + 14 + (String(fmt(r.o + r.m)).length * 11.5) + 12);
+    r.ts.textContent = r.m ? `${fmt(r.o)} official · ${fmt(r.m)} media` : 'official only';
+    r.ts.setAttribute('opacity', seg(t, 6.6 + i * 0.12, 7.0 + i * 0.12));
+  });
+
+  // results slide in
+  cards.forEach((cd, i) => {
+    const u = ease.out(seg(t, 8.7 + i * 0.45, 9.3 + i * 0.45));
+    cd.g.setAttribute('opacity', u); cd.g.setAttribute('transform', `translate(${(1 - u) * 40},0)`);
+    if (cd.ul) cd.ul.setAttribute('x2', CX + 30 + cd.head.getComputedTextLength());
+  });
+
+  // cursor: to the Search button, click, leave
+  const bx = BTX + 70, by = BTY + 30, u = ease.inOut(seg(t, 4.0, 4.85)), lv = ease.inOut(seg(t, 5.3, 6.1));
+  cur.setAttribute('opacity', seg(t, 3.9, 4.1) * (1 - seg(t, 5.7, 6.1)));
+  cur.setAttribute('transform', `translate(${lerp(1150, bx, u) + 60 * lv},${lerp(520, by, u) + 140 * lv})`);
+  ring.setAttribute('r', lerp(28, 14, press)); ring.setAttribute('opacity', press);
+
+  // camera: slow push
+  const push = ease.inOut(seg(t, 3.0, 12.5));
+  cam.setAttribute('transform', `translate(800,500) scale(${1 + 0.025 * push}) translate(-800,${-500 + 6 * push})`);
+
+  // payoff
+  const po = ease.out(seg(t, 12.4, 13.0)) * (1 - seg(t, 14.6, 15.0));
+  pay.setAttribute('opacity', po);
+  const bl = Math.max(po, seg(t, 14.6, 15.0));
+  blurG.setAttribute('stdDeviation', (bl * 6).toFixed(2));
+  cam.setAttribute('filter', bl > 0.01 ? 'url(#rs-blur)' : '');
+  [[lUS, 12.7], [lRU, 12.9]].forEach(([p, a0]) => {
+    const L = p.getTotalLength(), v = ease.inOut(seg(t, a0, a0 + 1.0));
+    p.setAttribute('stroke-dasharray', `${L} ${L}`); p.setAttribute('stroke-dashoffset', L * (1 - v));
+  });
+  band.setAttribute('opacity', 0.14 * seg(t, 13.6, 13.9));
+  nB.textContent = Math.round(R21 * ease.out(seg(t, 13.0, 13.8))) + '%';
+  nA.textContent = Math.round(R22 * ease.out(seg(t, 13.3, 14.1))) + '%';
+  nA.setAttribute('filter', t > 14.1 && t < 14.6 ? 'url(#kit-glow)' : '');
+
+  cap(t); end(t, 14.9, D);
+}
+run({ duration: D, poster: 11.2, frame });
+// Stills (?t, ?poster, reduced motion) draw once; redraw when the web fonts arrive so text measurements are right.
+{ const q = new URLSearchParams(location.search), still = q.has('t') ? +q.get('t') : (q.has('poster') || matchMedia('(prefers-reduced-motion: reduce)').matches ? 11.2 : null);
+  if (still != null) document.fonts.ready.then(() => frame(still)); }
+</script>
+</body></html>

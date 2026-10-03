@@ -1,7 +1,8 @@
 // Every TSM interactive, grouped for the landing page. status: 'live' | 'soon'.
 // Each tool lives at tools/<slug>/ with index.html and thumb.svg.
-// sites: which published sites show an entry ('tsm' = Interactive Deterrence, 'deterrence' = Interactive Deterrence).
-// Entries without `sites` appear on both. The build writes the site id into site.js.
+// sites: which published sites show an entry ('tsm' = Interactive Deterrence, 'deterrence' = Interactive Deterrence,
+// 'narratives' = Narrative Tracking at jwalberg.com/narratives/).
+// Entries without `sites` appear on tsm and deterrence. The build writes the site id into site.js.
 import { SITE } from './site.js';
 
 const CATEGORY_LIST = [
@@ -32,6 +33,9 @@ const CATEGORY_LIST = [
     blurb: 'How false stories spread and stick, and what governments say, phrase by phrase.',
     subs: [{ id: 'disinfo', name: 'Disinformation & cognitive warfare', blurb: 'How false stories spread and stick, and how belief updating can be attacked.' },
       { id: 'rhetoric', name: 'State rhetoric', blurb: 'What governments say, week by week: China, Russia and others, phrase by phrase.' }] },
+  // jwalberg.com/narratives/: public rhetoric trackers (Rhetoric Search keeps its own password). Landing page lives in jowal6.
+  { id: 'tracking', name: 'Narrative Tracking', sites: ['narratives'],
+    blurb: 'What governments say, week by week, and every mention searchable.' },
   // Taiwan tools behind the second password. Hidden as a top-level section; shown as Regions › Indo-Pacific.
   { id: 'tsm', name: 'Indo-Pacific', sites: ['deterrence'], locked: true, hidden: true,
     blurb: 'Taiwan Strait trackers, exercise replays and wargames.' },
@@ -103,7 +107,7 @@ export const ALL_TOOLS = [
     blurb: 'Play Washington, Taipei, Beijing or Tokyo through a notional eight-month Taiwan crisis: a posture and four moves a month, named formations limited by Lift, fuel, munitions and readiness, hidden resolve on every side, scored against your own priorities.' },
   { slug: 'wargame-explorer', siteCat: { deterrence: 'tsm' }, also: ['regions'], sub: { regions: 'indopacific' }, cat: 'models', title: 'Wargame Results Explorer', status: 'live',
     blurb: 'Eight published Taiwan wargames side by side: what each assumed, how it came out, and which assumptions (above all Japan basing and U.S. entry) drive the result, with a page citation for every figure.' },
-  { slug: 'rhetoric-heatmap', sub: { narratives: 'rhetoric' }, siteCat: { deterrence: 'narratives' }, cat: 'narrative', title: 'PRC Rhetoric Heatmap', status: 'live',
+  { slug: 'rhetoric-heatmap', siteCat: { narratives: 'tracking' }, cat: 'narrative', sites: ['tsm', 'narratives'], title: 'PRC Rhetoric Heatmap', status: 'live',
     blurb: 'Foreign Ministry, Defense Ministry and Taiwan Affairs Office language, week by week.' },
   { slug: 'beijing-decoder', sites: ['tsm'], cat: 'narrative', title: 'Beijing Decoder', status: 'live',
     blurb: 'Paste a PRC statement and see what each formula has signalled before.' },
@@ -161,9 +165,9 @@ export const ALL_TOOLS = [
     blurb: "Iran's enriched uranium from every IAEA quarterly report since 2016, against the JCPOA limit and quoted breakout estimates, to the June 2025 strikes after which there is no verified figure." },
   { slug: 'hormuz-mcm', game: true, sub: { models: 'budget', regions: 'mideast' }, cat: 'regions', also: ['models'], sites: ['deterrence'], title: 'Hormuz Mine Clearance', status: 'live',
     blurb: 'Set the mines, clutter, forces and threat, and see how long it takes to clear shipping routes through Hormuz and how much risk remains when they are declared clear.' },
-  { slug: 'rhetoric-global', sub: { narratives: 'rhetoric', regions: ['ukraine', 'mideast'] }, cat: 'narratives', also: ['regions'], sites: ['deterrence'], title: 'Rhetoric Heatmap: Russia and Beyond', status: 'live',
+  { slug: 'rhetoric-global', cat: 'tracking', sites: ['narratives'], title: 'Rhetoric Heatmap: Russia and Beyond', status: 'live',
     blurb: "What the Kremlin and Iran's Foreign Ministry keep saying, week by week since 2021: recurring formulas from 'special military operation' to 'Zionist regime' as a heatmap, with every quote one click from its source." },
-  { slug: 'rhetoric-search', sub: { narratives: 'rhetoric' }, cat: 'narratives', sites: ['deterrence'], vault: 'rhetoric', title: 'Rhetoric Search', status: 'live',
+  { slug: 'rhetoric-search', cat: 'tracking', sites: ['narratives'], vault: 'rhetoric', title: 'Rhetoric Search', status: 'live',
     blurb: 'Search official statements and state media from Russia, China, Iran, North Korea, Belarus, the U.S., Pakistan and India: official sentences quoted, media listed by headline. A Trends view tracks tone, stance, topics, alerts and cross-country echoes over time.' },
   { slug: 'raid-night', game: true, sub: { models: 'wargames', regions: ['ukraine', 'mideast'] }, cat: 'models', also: ['regions'], sites: ['deterrence'], title: 'Raid Night', status: 'live',
     blurb: 'Defend four notional cities through three real-time waves of drones and missiles modelled on real raids, and watch the cost exchange as your interceptors run out.' },
@@ -181,10 +185,11 @@ export const ALL_TOOLS = [
     blurb: 'A two-level model of resolve and cohesion: why some armies collapse overnight and others hold, with case presets from Kabul to Ukraine.' },
 ];
 
-export const onSite = (x, site = SITE) => !x.sites || x.sites.includes(site);
+// The narratives site carries only entries that name it; entries without `sites` are on tsm and deterrence.
+export const onSite = (x, site = SITE) => (x.sites ? x.sites.includes(site) : site !== 'narratives');
 /** A tool's category on a given site (siteCat overrides cat per site). */
 export const catOn = (t, site = SITE) => (t.dev && site === 'deterrence' ? 'dev' : (t.siteCat && t.siteCat[site]) || t.cat);
-const ORDER = { deterrence: ['gametheory', 'nuclear', 'regions', 'narratives', 'models', 'tsm', 'dev'] };
+const ORDER = { deterrence: ['gametheory', 'nuclear', 'regions', 'narratives', 'models', 'tsm', 'dev'], narratives: ['tracking'] };
 // `also` lists extra categories a tool appears in; `cats` is its primary category plus those.
 const forSite = t => ({ ...t, cat: catOn(t), cats: catOn(t) === 'dev' ? ['dev'] : [...new Set([catOn(t), ...(t.also || [])])],
   blurb: (t.siteBlurb && t.siteBlurb[SITE]) || t.blurb });

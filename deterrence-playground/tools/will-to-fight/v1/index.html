@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Will to Fight | Interactive Deterrence</title>
+<meta name="description" content="A two-level formal model of the will to fight. Fighters' cohesion is a global game; the government's resolve and the adversary's decision to attack sit on top. Move the parameters, see every equilibrium, and load calibrated readings of ten cases from Finland 1939 to Kabul 2021 and Taiwan.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&family=Spline+Sans+Mono:wght@400;500;600&family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" crossorigin="anonymous">
+<link rel="stylesheet" href="../../../shared/css/tsm.css">
+<link rel="stylesheet" href="../will-to-fight.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<nav class="wf-ver card" aria-label="Model version">
+  <span class="eyebrow">Model version</span>
+  <a href="../"><b>v2</b> Simple: attack, hold, resolve</a>
+  <a href="./" aria-current="page"><b>v1</b> Two-level global game</a>
+</nav>
+
+<section class="wf-cases card" aria-labelledby="cases-t">
+  <div class="wf-cases-h">
+    <h2 id="cases-t" class="eyebrow">Case presets</h2>
+    <div class="wf-actions">
+      <button type="button" class="btn" id="reset">Reset</button>
+      <button type="button" class="btn solid" id="copy-link">Copy link</button>
+      <span class="fine" id="copy-msg" role="status" aria-live="polite"></span>
+    </div>
+  </div>
+  <div class="wf-case-list" id="case-list" role="group" aria-label="Load a case"></div>
+  <p class="fine">Each preset places the parameters at coarse levels (low, mid, high) on evidence that predates the outcome. <span class="notional">calibrated position, not an estimate</span></p>
+</section>
+
+<main class="layout">
+  <div class="stage" id="stage">
+    <p class="wf-summary card" id="summary" aria-live="polite"></p>
+    <div class="wf-status" id="status"></div>
+    <section class="card fig" aria-labelledby="fig1-t">
+      <div class="fig-h"><p class="eyebrow" id="fig1-t">1 · Who fights? The indifference curve</p><span class="fine">Equilibria are the zeros of g (memo eq. 9). Hollow dot: unstable.</span></div>
+      <svg id="fig-g" role="img"></svg>
+    </section>
+    <section class="card fig" aria-labelledby="fig2-t">
+      <div class="fig-h"><p class="eyebrow" id="fig2-t">2 · Expected cohesion against beliefs</p><span class="fine">Exact curve (eqs. 13, 15). Dashed: unstable branch. Shaded: E[W] from 10% to 90%.</span></div>
+      <svg id="fig-s" role="img"></svg>
+    </section>
+    <section class="card fig" aria-labelledby="fig3-t">
+      <div class="fig-h"><p class="eyebrow" id="fig3-t">3 · Government resolve</p><span class="fine">R against realized cohesion (eqs. 23–29). Dotted line: W = 50%.</span></div>
+      <div class="wf-gauge" id="gauge"></div>
+      <svg id="fig-r" role="img"></svg>
+    </section>
+    <section class="card fig" aria-labelledby="adv-t">
+      <div class="fig-h"><p class="eyebrow" id="adv-t">4 · The adversary’s calculation</p><span class="fine">Proposition 4 (eqs. 30–34)</span></div>
+      <div id="adv"></div>
+    </section>
+    <section class="card wf-why" id="why" aria-labelledby="why-t" hidden>
+      <div class="fig-h"><p class="eyebrow" id="why-t">Why these values</p><span class="notional">calibrated position, not an estimate</span></div>
+      <div id="why-body"></div>
+    </section>
+  </div>
+  <aside class="panel" id="panel" aria-label="Parameters"></aside>
+</main>
+
+<section class="below wf-learn" id="learn">
+  <div class="col">
+    <h2>Learn: what a global game is</h2>
+    <p>Picture a unit at the start of a war. Each soldier will fight only if enough of the others fight too: holding a line alone is pointless and dangerous, holding it together can work. That makes fighting a <b>coordination problem</b>. If everyone knew exactly how committed everyone else was, there could be two self-fulfilling outcomes, everyone fights or everyone runs, and nothing in the model would say which.</p>
+    <p>A <b>global game</b> adds one realistic ingredient: each soldier sees the state of the force through a private, noisy lens (what the sergeant said, how the next trench looks, rumours from home). Because nobody knows exactly what others saw, each must ask “what does someone who saw slightly less than me do?”, and that chain of reasoning pins down a single cut-off. Soldiers who see better than the cut-off fight; the rest do not. The share who fight, <b>cohesion W</b>, follows.</p>
+    <p>The common lens is the <b>public mean μ</b>: baseline attachment to the state, what leaders signal, what fighters believe about outside help, and the rally effect of being attacked. How sharp that common lens is, the <b>public precision α</b>, matters as much as where it points.</p>
+    <h2 class="mt">The propositions in plain words</h2>
+    <ol class="howto">
+      <li><b>One equilibrium, if private views are sharp enough</b> (memo §3.2, Prop. 1). When private information is precise relative to public information and to the pull of others' choices, there is exactly one cut-off. The green or red box above checks the exact condition. When it fails, figure 1 shows three cut-offs and figure 2 folds back: the same beliefs can support a fighting force or a collapsing one, and which you get depends on history (try the “follow” selection and move π down and back up).</li>
+      <li><b>Beliefs matter most near the tipping point</b> (§3.3, Prop. 2). A unit of μ moves cohesion most at μ† = k − b/2, where expected cohesion is one half. Far above or below it, a leader staying or an ally wavering barely changes the outcome; inside the tipping zone it decides it.</li>
+      <li><b>Loud public news polarizes</b> (§3.4, Prop. 3). Sharpening public information pushes cohesion away from one half: up if μ is above the tipping point, down if below. A precise, credible announcement that help will not come lowers μ and sharpens it at once, and past a critical α it destroys uniqueness altogether.</li>
+      <li><b>Governments and armies can part ways</b> (§4.2, Prop. 5). The government fights when its resolve R is positive, which happens exactly when cohesion clears a bar W̄ set by stakes, costs and material support. A government with a high cost of conceding can keep resolve while its army dissolves (hollow resolve; the Mosul and Kabul presets); one with a cheap exit can waver while its army holds.</li>
+      <li><b>Collapse spreads through public news</b> (memo v3 §3.5, Prop. 6). When one unit’s collapse becomes public, it is bad news that is also <i>sharper</i> news: it lowers the public mean and raises public precision at once. Below the tipping point both effects cut cohesion, so a local break spreads to units that were not themselves attacked. Above the tipping point the two effects pull apart, and a defeat that is openly acknowledged can leave cohesion higher than it was. This is the formal counterpart of what the U.S. Defense Intelligence Agency’s will-to-fight guidance calls a factor that “significantly” weakens will to fight: one whose effect reaches a larger scope than the unit where it occurred.</li>
+      <li><b>An adversary that forgets the rally attacks too often</b> (§4.3, Prop. 4). An attacker that reads the defender from peacetime information misses the rally effect, overestimates the chance of quick collapse, and attacks across a band of cases it would leave alone with correct beliefs. The band has width (1 − κ)r − η.</li>
+    </ol>
+    <h2 class="mt">How this maps to the DIA framework</h2>
+    <p>The Defense Intelligence Agency’s analytic guidance <i>Analyzing Will To Fight</i> (Version 1.2, September 2024) sorts factors into national, combat, external/operating-environment and adversary groups, rates each from “significantly strengthens” to “significantly weakens,” and asks whether a factor is stable or dynamic and whether outside actors can affect it. The model is narrower but formal. Its national level is resolve R (stakes v and D, cost of conceding L, material support sₑₓₜ); its combat level is cohesion W (attachment θ₀, leadership ℓ, believed support π, private cost k). The guidance separates will to fight from morale and from collapse, and warns that low will to fight does not mean low capability; here those are the individual’s payoff, the share who fight W, the event W &lt; w_c, and the force gap F, which enters resolve separately from W. Its “significantly” rating corresponds to Proposition 6. The guidance itself is qualitative by design, so the mapping is an interpretation, not a DIA method.</p>
+    <p class="fine">The memo (Will to Fight theory memo, v3) holds every definition, assumption and proof; equation numbers on this page and in the code are the memo's.</p>
+  </div>
+  <div class="col method">
+    <h2>Method in brief</h2>
+    <p><b>Level 1.</b> Fighters \(i\in[0,1]\); fundamental \(\theta\sim N(\mu,1/\alpha)\) with \(\mu=\theta_0+\lambda_\ell\ell+\lambda_\pi\pi+rA\); private signal \(x_i=\theta+\varepsilon_i\), \(\varepsilon_i\sim N(0,1/\beta)\). Fighting pays \(\theta+bW-k\), not fighting 0. With cut-off \(x^*\), \(W(\theta)=\Phi(\sqrt\beta(\theta-x^*))\) and the indifference condition is</p>
+    $$g(x^*)=\frac{\alpha\mu+\beta x^*}{\alpha+\beta}+b\,\Phi\!\Big(\frac{\alpha(\mu-x^*)}{(\alpha+\beta)s}\Big)-k=0,\quad s=\sqrt{\tfrac1{\alpha+\beta}+\tfrac1\beta}.$$
+    <p>Unique for all \((\mu,k)\) iff \(\sqrt{\beta(\alpha+2\beta)/(\alpha+\beta)}\ge b\alpha/\sqrt{2\pi}\). Expected cohesion \(E[W]=\Phi\big((\mu-x^*)/\sqrt{1/\alpha+1/\beta}\big)\); tipping point \(\mu^\dagger=k-b/2\).</p>
+    <p><b>Level 2.</b> Each period the war is decided with probability \(1-\rho\); if decided the defender prevails with \(q=1/(1+e^{-(a_0+a_WW+a_ss_{ext}-a_FF)})\) (payoff \(v\)) or loses (\(-D\)); fighting costs \(c\) per period; payoffs are discounted by \(\delta\); conceding pays \(-L\). Resolve</p>
+    $$R=\frac{-c+(1-\rho)\big(qv-(1-q)D\big)}{1-\rho\delta}+L,$$
+    <p>and the government fights iff \(R\ge 0\). <b>Adversary:</b> attacks iff its estimate of the chance of quick collapse, \(P(W&lt;w_c)\), computed at \(\hat\mu\), is at least \(K/(G+K)\).</p>
+    <p><b>Numerics.</b> All roots of g are found by scanning the exact bracket in which they must lie and bisecting every sign change; the S-curve is drawn exactly from its inverse \(\mu(d)\). Tests check the numerical roots against the closed forms, the limits and each proposition on random parameter draws.</p>
+    <p><b>Calibration.</b> Presets are ordinal readings: each parameter is placed low, mid or high on documented evidence, and the three levels map to fixed numbers listed in the parameter cards. They are not estimates. The government's cost of conceding, L, is set by regime type, as L = 1 + 2p, where p is the share of leaders punished within a year of losing office (Debs and Goemans 2010): democracies low, mixed regimes mid, autocracies high. Parameters with no case-specific evidence stay at their defaults.</p>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../../shared/js/chrome.js';
+  mountChrome({ title: 'Will to Fight', sub: 'A two-level model of why armed forces hold or collapse: fighters’ cohesion as a global game, government resolve and the adversary’s gamble on top, with calibrated cases from Finland 1939 to Kabul 2021 and Taiwan.', category: 'Game theory' });
+</script>
+<script type="module" src="../js/app.js"></script>
+</body>
+</html>

@@ -4,351 +4,290 @@
 <link rel="stylesheet" href="../kit/kit.css">
 <style>
   .seg-t { font: 600 17px var(--mono); fill: #0b1712; font-variant-numeric: tabular-nums; }
-  .row-t { font: 400 17px var(--mono); fill: var(--paper); letter-spacing: .02em; }
-  .row-v { font: 600 17px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
-  .band-t { font: 400 13px var(--mono); fill: var(--paper); opacity: .8; letter-spacing: .04em; }
-  .big { font: 600 96px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; letter-spacing: -.03em; }
-  .mid { font: 600 44px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .hd { font: 400 14px var(--mono); fill: var(--muted); letter-spacing: .12em; text-transform: uppercase; }
+  .row-t { font: 400 19px var(--mono); fill: var(--paper); }
+  .row-v { font: 600 19px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .row-u { font: 400 18px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .row-w { font: 600 16px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .tag { font: 400 12px var(--mono); fill: var(--amber); letter-spacing: .06em; }
   .small { font: 400 15px var(--mono); fill: var(--muted); letter-spacing: .04em; }
-  .verdict { font: italic 500 38px var(--display); }
-  .chip-t { font: 400 20px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
-  .cmp-h { font: 400 14px var(--mono); fill: var(--muted); letter-spacing: .14em; text-transform: uppercase; }
-  .cmp-n { font: italic 500 40px var(--display); fill: var(--paper); }
-  .cmp-v { font: 600 56px var(--mono); font-variant-numeric: tabular-nums; }
+  .tr-h { font: 400 15px var(--mono); fill: var(--muted); letter-spacing: .14em; text-transform: uppercase; }
+  .tr-big { font: 600 64px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+  .tr-what { font: italic 500 34px var(--display); fill: var(--paper); }
+  .tr-move { font: 400 40px var(--display); fill: var(--paper); }
+  .tr-move tspan.hot { fill: var(--amber); font-style: italic; }
+  .rg-n { font: italic 500 32px var(--display); fill: var(--paper); }
+  .rg-v { font: 600 34px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .rg-tick { font: 400 14px var(--mono); fill: var(--muted); text-anchor: middle; font-variant-numeric: tabular-nums; }
+  .dv-t { font: 400 19px var(--mono); fill: var(--paper); }
+  .dv-v { font: 600 22px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
 </style>
 </head><body>
-<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of the Defense Budget Allocator: Taiwan's NT$145.7 billion defense line is moved from big platforms to missiles, drones and mines, and a notional PLA crossing comes under heavier attack."><title>Defense Budget Allocator</title></svg></div>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of the Defense Budget Allocator: Taiwan's NT$145.7 billion defense line is split into categories, a table shows what each line buys and how long the matching U.S. arms sale has taken, NT$14.6 billion moves from F-16s to Harpoon coastal launchers, and a notional range model shows overlapping bands rather than a single answer."><title>Defense Budget Allocator</title></svg></div>
 <script type="module">
 import { run, seg, ease, lerp, el, bg, captions, endCard } from '../kit/kit.js';
 const svg = document.querySelector('svg');
 bg(svg);
 
-// ---- Real data (tools/budget-allocator) --------------------------------------------------------
-// Budget: data/budget.js, 's145' = NT$145.7bn, FY2026 supplementary defense line, cabinet proposal Sept. 3, 2026.
-// Other countries' default budgets: data/japan.js (fy26 ¥8,809bn), philippines.js (afp26 ₱40.0bn), poland.js (fwsz PLN 79.5bn).
-// Categories, notional model parameters and preset mixes: data/categories.js (copied unchanged).
-// Model: js/model.js evaluate(), copied unchanged; scenario = Taiwan defaults (60% suppression, 5-day warning).
-const TOTAL = 145.7, SC = { supp: 0.6, warn: 5 }, GEO = { km: 160, kmh: 12 * 1.852 };
+// ---- Numbers as the live tool shows them (tools/budget-allocator, Taiwan, budget 's145') -----------------------
+// Budget: data/budget.js, NT$145.7bn, FY2026 supplementary defense line, cabinet proposal Sept. 3, 2026.
+// Mixes: data/categories.js PRESETS.legacy and .porcupine. Unit costs and units: data/categories.js, via js/buys.js units().
+// Wait column: data/taiwan_fms.js reference cases, via js/buys.js waitText() (as of Aug. 2026).
+// Trade-off: the tool's default trade (10% = NT$14.6bn, Big-ticket platforms -> Coastal anti-ship missiles) on the legacy mix.
+// Range model: js/range.js ranges()/drivers()/midValue(), 200 fixed draws, middle 80% and full spread, read off the page.
+const TOTAL = 145.7;
 const CATS = [
-  { id: 'ascm', t: 'Coastal anti-ship missiles', s: 'Anti-ship missiles', k: 70, base: 0.30, reach: 150, w: 0.6, cls: 'mobile', col: '#4fb39c' },
-  { id: 'drones', t: 'Drones and USVs', s: 'Drones and USVs', k: 45, base: 0.10, reach: 60, w: 0.5, cls: 'mobile', col: '#7fb6d9' },
-  { id: 'mines', t: 'Sea mines', s: 'Sea mines', k: 18, base: 0.15, reach: 15, w: 0.45, cls: 'mines', col: '#a8c87c' },
-  { id: 'strike', t: 'HIMARS and long-range strike', s: 'Long-range strike', k: 90, base: 0.15, reach: 200, w: 0.3, cls: 'mobile', col: '#b69ad8' },
-  { id: 'airdef', t: 'Air and missile defense', s: 'Air defense', k: 140, base: 0.30, reach: 0, w: 0, cls: 'fixed', col: '#6d8fcc' },
-  { id: 'c4isr', t: 'C4ISR and resilience', s: 'C4ISR', k: 35, base: 0.25, reach: 0, w: 0, cls: 'mobile', col: '#9cb3a6' },
-  { id: 'ammo', t: 'Ammunition stocks', s: 'Ammunition', k: 60, base: 0.25, reach: 0, w: 0, cls: 'fixed', col: '#d2c4a0' },
-  { id: 'platforms', t: 'Big-ticket platforms', s: 'Big-ticket platforms', k: 450, base: 0.30, reach: 200, w: 0.45, cls: 'platform', col: '#8d8373' },
+  { id: 'ascm', t: 'Coastal anti-ship missiles', col: '#4fb39c', cost: 0.753144351464435, u: 'Harpoon coastal launcher', src: 1, wait: [3.9, 'first'] },
+  { id: 'drones', t: 'Drones and USVs', col: '#7fb6d9', cost: 1.3734643734643734, u: '1,000 drones or boats', src: 1, wait: [1.8, 'done'] },
+  { id: 'mines', t: 'Sea mines and minelayers', col: '#a8c87c', cost: 0.4, u: 'lot of 100 mines', src: 0, wait: [3.7, 'open'] },
+  { id: 'strike', t: 'HIMARS and long-range strike', col: '#b69ad8', cost: 1.5695351566486377, u: 'HIMARS launcher', src: 1, wait: [3.7, 'open'] },
+  { id: 'airdef', t: 'Air and missile defense', col: '#6d8fcc', cost: 12.287587168758717, u: 'NASAMS fire unit', src: 1, wait: [1.8, 'open'] },
+  { id: 'c4isr', t: 'C4ISR and resilience', col: '#9cb3a6', cost: 0.5, u: 'resilience package', src: 0, wait: [5.2, 'first'] },
+  { id: 'ammo', t: 'Ammunition stocks', col: '#d2c4a0', cost: 2, u: 'day of wartime stock', src: 0, wait: [1.6, 'done'] },
+  { id: 'platforms', t: 'Big-ticket platforms', col: '#8d8373', cost: 3.8519082033726386, u: 'F-16 Block 70', src: 1, wait: [7.0, 'open'] },
 ];
 const LEGACY = { ascm: 0.05, drones: 0.03, mines: 0.02, strike: 0.05, airdef: 0.15, c4isr: 0.04, ammo: 0.06, platforms: 0.6 };
-const PORCUPINE = { ascm: 0.22, drones: 0.24, mines: 0.1, strike: 0.1, airdef: 0.1, c4isr: 0.1, ammo: 0.11, platforms: 0.03 };
-const clamp = (v, lo = 0, hi = 1) => Math.max(lo, Math.min(hi, v));
-function evaluate(shares) {
-  const E = {}; CATS.forEach(c => { E[c.id] = 1 - (1 - c.base) * Math.exp(-(shares[c.id] * TOTAL) / c.k); });
-  const supp = SC.supp;
-  const surv = { mobile: clamp(1 - supp * (1 - 0.55 * E.c4isr) * (1 - 0.35 * E.airdef)), fixed: clamp(1 - supp * (1 - 0.6 * E.airdef)), platform: clamp(1 - 1.1 * supp * (1 - 0.35 * E.airdef)) };
-  const laid = 1 - Math.exp(-SC.warn / 3.5), track = 0.55 + 0.45 * E.c4isr * (1 - 0.4 * supp), sustain = 0.6 + 0.4 * E.ammo;
-  const layers = CATS.filter(c => c.w > 0).map(c => {
-    let st;
-    if (c.id === 'mines') st = E.mines * laid;
-    else if (c.id === 'drones') st = E.drones * surv.mobile * (0.5 + 0.5 * track) * sustain;
-    else st = E[c.id] * surv[c.cls] * track * sustain;
-    return { ...c, st, p: c.w * st };
-  });
-  const engaged = 1 - layers.reduce((a, l) => a * (1 - l.p), 1);
-  let covered = 0;
-  for (let d = 0.5; d < GEO.km; d += 1) if (layers.filter(l => l.reach >= d).reduce((a, l) => a + l.st, 0) >= 0.3) covered += 1;
-  return { layers, engaged, covered, fireHours: covered / GEO.kmh, hours: GEO.km / GEO.kmh };
-}
-const verdict = e => e >= 0.45 ? ['Costly crossing', 'var(--green)'] : e >= 0.28 ? ['Contested crossing', 'var(--amber)'] : ['Crossing largely unopposed', 'var(--red)'];
-const mix = u => Object.fromEntries(CATS.map(c => [c.id, lerp(LEGACY[c.id], PORCUPINE[c.id], u)]));
-const RL = evaluate(LEGACY), RP = evaluate(PORCUPINE);
-const nt = bn => `NT$${bn.toFixed(1)}bn`;
+const MOVE = 0.10;                                    // NT$14.6bn
+const after = { ...LEGACY, platforms: LEGACY.platforms - MOVE, ascm: LEGACY.ascm + MOVE };
+// buys.js units(): two decimals under 1, one decimal under 10, whole numbers above.
+const fmtN = n => n < 1 ? n.toFixed(2) : n < 10 ? n.toFixed(1) : Math.floor(n).toLocaleString('en-US');
+const money = bn => bn >= 100 ? `NT$${bn.toFixed(0)}bn` : bn >= 10 ? `NT$${bn.toFixed(1)}bn` : `NT$${bn.toFixed(2)}bn`;
+const RANGE = {   // force engaged, % of the attacking force: [full min, 10th pct, 90th pct, full max]
+  legacy: [8.5, 14.7, 33.9, 47.6], porcupine: [19.1, 26.5, 58.2, 76.7],
+};
+const DRIVERS = [['How much capability the money buys', 28], ['How much of the force each layer can reach', 27], ['Strength of the opening strikes', 13]];
+const MIX_SWING = 18;   // porcupine vs legacy, every assumption at mid-range (the page's "For scale" line)
 
-// ---- Scene --------------------------------------------------------------------------------------
+// ---- Helpers -----------------------------------------------------------------------------------------------
+const T = (p, x, y, cls, s, a = {}) => { const n = el('text', { x, y, class: cls, ...a }, p); if (s != null) n.textContent = s; return n; };
+const op = (n, v) => n.setAttribute('opacity', Math.max(0, Math.min(1, v)).toFixed(3));
+const fade = (t, a, b, d = .4) => Math.min(ease.out(seg(t, a, a + d)), 1 - seg(t, b - d, b));
+const L = 150, R = 1450, BW = R - L;
+
 const blurF = el('filter', { id: 'camblur', x: '-5%', y: '-5%', width: '110%', height: '110%' }, svg);
 const blurG = el('feGaussianBlur', { stdDeviation: 0 }, blurF);
 const cam = el('g', {}, svg);
-const L = 250, R = 1350, BW = R - L;          // central column
 
 // Hook
-const hook = el('g', {}, cam);
-const chips = [['Taiwan', 'NT$145.7bn'], ['Japan', '¥8.81tn'], ['Philippines', '₱40.0bn'], ['Poland', 'PLN 79.5bn']].map(([n, v], i) => {
-  const W = [262, 210, 272, 238][i], x = L + [0, 278, 504, 792][i] + 35, g = el('g', {}, hook);
-  const r = el('rect', { x, y: 300, width: W, height: 60, rx: 30, fill: 'none', stroke: 'var(--line)', 'stroke-width': 2 }, g);
-  el('text', { x: x + W / 2, y: 337, 'text-anchor': 'middle', class: 'chip-t', style: 'font-size:18px' }, g).textContent = `${n} · ${v}`;
-  return { g, r };
-});
-const hookNum = el('text', { x: L, y: 540, class: 't-hook', style: 'font-size:112px' }, cam);
+const kick = T(cam, L + 100, 330, 't-kicker', 'Taiwan · FY2026 supplementary defense line');
+const hookNum = el('text', { x: L + 100, y: 470, class: 't-hook', style: 'font-size:112px' }, cam);
 hookNum.innerHTML = '<tspan class="hot">NT$145.7 billion.</tspan>';
-const hookQ = el('text', { x: L, y: 640, class: 't-hook', style: 'font-size:72px' }, hook);
-hookQ.textContent = 'Where should it go?';
-const allocLbl = el('text', { x: L, y: 130, class: 't-label' }, cam); allocLbl.textContent = 'Your allocation · Taiwan · Sept. 3, 2026 proposal';
+const hookQ = T(cam, L + 100, 570, 't-hook', 'What does it buy?', { style: 'font-size:72px' });
 
-// Stacked allocation bar
+// Allocation bar
+const allocLbl = T(cam, L, 120, 't-label', 'Your allocation · legacy platforms mix · NT$145.7bn');
 const barG = el('g', {}, cam);
 const segs = CATS.map(c => {
   const g = el('g', {}, barG);
-  const r = el('rect', { y: 200, height: 70, fill: c.col }, g);
-  const t = el('text', { y: 245, class: 'seg-t', 'text-anchor': 'middle' }, g);
-  return { r, t, g };
+  return { r: el('rect', { y: 150, height: 64, fill: c.col }, g), t: el('text', { y: 191, class: 'seg-t', 'text-anchor': 'middle' }, g) };
 });
-const grip = el('rect', { y: 186, width: 8, height: 98, rx: 4, fill: 'var(--amber)', filter: 'url(#kit-glow)' }, barG);
 
-// Slider rows (the four categories that move most)
-const ROWS = ['platforms', 'ascm', 'drones', 'mines'];
-const rowsG = el('g', {}, cam);
-const rows = ROWS.map((id, i) => {
-  const c = CATS.find(d => d.id === id), y = 356 + i * 78, g = el('g', {}, rowsG);
-  el('rect', { x: L, y: y - 30, width: 12, height: 12, fill: c.col }, g);
-  el('text', { x: L + 22, y: y - 19, class: 'row-t' }, g).textContent = c.s;
-  const v = el('text', { x: 630, y: y + 30, class: 'row-v', 'text-anchor': 'end', style: 'fill:var(--muted);font-weight:400;font-size:15px' }, g);
-  el('rect', { x: L, y: y - 2, width: 380, height: 6, rx: 3, fill: 'var(--line)' }, g);
-  const f = el('rect', { x: L, y: y - 2, height: 6, rx: 3, fill: c.col }, g);
-  const th = el('circle', { cy: y + 1, r: 11, fill: 'var(--paper)', stroke: '#0b1712', 'stroke-width': 3 }, g);
-  return { id, g, v, f, th };
+// "What it buys" table
+const tbl = el('g', {}, cam);
+const TY = 300, RH = 58, XA = 690, XU = 712, XW = 1110, YRPX = 42;
+T(tbl, L, TY - 34, 'hd', 'Line');
+T(tbl, XA, TY - 34, 'hd', 'Amount', { 'text-anchor': 'end' });
+T(tbl, XU, TY - 34, 'hd', 'Pays for');
+T(tbl, XW, TY - 34, 'hd', 'U.S. sale so far, years');
+const WCOL = { done: 'var(--green)', first: 'var(--amber)', open: 'var(--red)' };
+const rows = CATS.map((c, i) => {
+  const y = TY + i * RH, g = el('g', {}, tbl);
+  el('line', { x1: L, x2: R, y1: y - 22, y2: y - 22, stroke: 'var(--line)', 'stroke-width': 1.5 }, g);
+  el('rect', { x: L, y: y - 6, width: 14, height: 14, fill: c.col }, g);
+  T(g, L + 26, y + 7, 'row-t', c.t);
+  const amt = T(g, XA, y + 7, 'row-v', '', { 'text-anchor': 'end' });
+  const un = T(g, XU, y + 7, 'row-u', '');
+  if (!c.src) T(g, XU, y + 27, 'tag', 'notional');
+  const [yrs, kind] = c.wait, w = yrs * YRPX;
+  const bar = el('rect', { x: XW, y: y - 6, height: 14, rx: 2, fill: WCOL[kind] }, g);
+  const arrow = kind === 'open' ? el('path', { d: 'M0 -9l12 9l-12 9z', fill: WCOL.open }, g) : null;
+  const wl = T(g, XW + w + (arrow ? 22 : 10), y + 8, 'row-w', `${yrs.toFixed(1)}`);
+  return { c, g, y, amt, un, bar, arrow, wl, w };
 });
-const SMAX = 0.65, sx = s => L + 380 * s / SMAX;
-
-// Crossing strip
-const SX = 680, SY = 320, SW = 670, SH = 330, X0 = SX + 58, X1 = SX + SW - 56;
-const kmToX = km => X1 - km / GEO.km * (X1 - X0);
-const strip = el('g', {}, cam);
-const clip = el('clipPath', { id: 'stripclip' }, svg);
-const clipR = el('rect', { x: SX, y: SY, width: 0, height: SH }, clip);
-strip.setAttribute('clip-path', 'url(#stripclip)');
-el('rect', { x: SX, y: SY, width: SW, height: SH, fill: '#0c1f2a', opacity: .85 }, strip);
-const bandsG = el('g', {}, strip);
-const act = ['strike', 'platforms', 'ascm', 'drones', 'mines'];   // sorted by reach, as the tool draws them
-const bands = act.map((id, i) => {
-  const c = CATS.find(d => d.id === id), rowH = 208 / act.length, y = SY + 42 + i * rowH;
-  const x = Math.max(SX, kmToX(Math.min(c.reach, GEO.km + 40)));
-  const r = el('rect', { x, y, width: X1 + 14 - x, height: rowH - 4, fill: c.col }, bandsG);
-  const narrow = X1 - x < 160;
-  const t = el('text', { x: narrow ? x - 8 : Math.max(x, X0) + 8, y: y + rowH / 2 + 4, class: 'band-t', 'text-anchor': narrow ? 'end' : 'start' }, bandsG); t.textContent = c.s;
-  return { id, r, t };
+const legend = el('g', {}, tbl);
+[['done', 'complete'], ['first', 'first delivery'], ['open', 'none yet, still counting']].forEach(([k, s], i) => {
+  const x = [760, 880, 1066][i];
+  el('rect', { x, y: TY + 8 * RH - 14, width: 12, height: 12, fill: WCOL[k] }, legend);
+  T(legend, x + 18, TY + 8 * RH - 3, 'small', s, { style: 'font-size:13px' });
 });
-el('path', { d: `M${SX} ${SY}H${X0 - 18}C${X0 - 6} ${SY + 90} ${X0 - 30} ${SY + 200} ${X0 - 12} ${SY + SH}H${SX}Z`, fill: '#1c3226' }, strip);
-el('path', { d: `M${SX + SW} ${SY}H${X1 + 22}C${X1 + 8} ${SY + 100} ${X1 + 30} ${SY + 210} ${X1 + 14} ${SY + SH}H${SX + SW}Z`, fill: '#1c3226' }, strip);
-el('text', { x: SX + 12, y: SY + 26, class: 'small' }, strip).textContent = 'Embarkation';
-el('text', { x: SX + SW - 12, y: SY + 26, class: 'small', 'text-anchor': 'end' }, strip).textContent = 'Taiwan';
-for (let k = 0; k <= 160; k += 50) {
-  const x = kmToX(k); el('line', { x1: x, x2: x, y1: SY + SH - 44, y2: SY + SH - 36, stroke: 'var(--muted)' }, strip);
-  el('text', { x, y: SY + SH - 18, class: 'small', 'text-anchor': 'middle', style: 'font-size:12px' }, strip).textContent = k ? `${k} km` : 'coast';
-}
-const fire = el('rect', { y: SY + SH - 56, height: 5, rx: 2.5, fill: 'var(--amber)', filter: 'url(#kit-glow)' }, strip);
-const fireT = el('text', { y: SY + SH - 64, class: 'small', fill: 'var(--amber)', style: 'fill:var(--amber);font-size:12px', 'text-anchor': 'end' }, strip);
-fireT.textContent = 'under fire';
-const fleetG = el('g', {}, strip);
-const tag = el('text', { x: SX + SW, y: SY + SH + 26, class: 'small', 'text-anchor': 'end', style: 'font-size:13px' }, strip);
-tag.textContent = 'notional model · PLA crossing, 60% suppression, 5-day warning';
+T(legend, L, TY + 8 * RH - 3, 'small', 'Matching U.S. arms sales, to Aug. 2026:', { style: 'font-size:13px' });
+const hiRow = el('rect', { x: L - 14, y: 0, width: BW + 28, height: RH - 6, rx: 4, fill: 'var(--amber)', opacity: 0 }, tbl);
+tbl.insertBefore(hiRow, tbl.firstChild);
 
-// Ships: the tool's strip.js plan (seed 11, 36 ships, exactly round(engaged × 36) hit).
-function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
-const N = 36, sxs = (X1 - X0) / 780;   // the tool's strip is 780 units wide between coasts
-function plan(r) {
-  const Rn = rng(11), hitters = r.layers.filter(l => l.p > 0), psum = hitters.reduce((a, l) => a + l.p, 0);
-  const order = Array.from({ length: N }, (_, i) => [Rn(), i]).sort((a, b) => a[0] - b[0]).map(x => x[1]);
-  const hitSet = new Set(order.slice(0, Math.round(r.engaged * N)));
-  return Array.from({ length: N }, (_, i) => {
-    const row = i % 6, col = Math.floor(i / 6);
-    const s = { y: SY + 58 + row * 36 + (col % 2) * 10, start: X0 - 40 - col * 36, end: X1 - 14 - col * 16, hitAt: null, by: null };
-    if (hitSet.has(i)) {
-      let u = Rn() * psum, pick = hitters[0];
-      for (const l of hitters) { if ((u -= l.p) <= 0) { pick = l; break; } }
-      s.hitAt = Math.min(s.end - 2, kmToX(Rn() * Math.min(pick.reach, GEO.km) * 0.95)); s.by = pick;
-    }
-    return s;
-  });
-}
-const PL = plan(RL), PP = plan(RP);
-const shipEls = Array.from({ length: N }, () => {
-  const g = el('g', {}, fleetG);
-  const b = el('path', { d: 'M-11 -4.5h16l5 4.5l-5 4.5h-16z', fill: 'var(--red)' }, g);
-  const x = el('path', { d: 'M-8 -10l14 20M6 -10l-14 20', 'stroke-width': 4, 'stroke-linecap': 'round', fill: 'none', filter: 'url(#kit-glow)' }, g);
-  return { g, b, x };
+// Trade-off card
+const trade = el('g', {}, cam);
+const moveT = el('text', { x: 800, y: 330, class: 'tr-move', 'text-anchor': 'middle' }, trade);
+moveT.innerHTML = 'Move <tspan class="hot">NT$14.6bn</tspan> from big-ticket platforms to coastal anti-ship missiles';
+moveT.style.fontSize = '36px';
+const cards = [['You give up', 'platforms', 'F-16 Block 70, program cost', ['U.S. sale notified Aug. 2019', 'No deliveries by Aug. 2026 (7.0 yrs)']],
+  ['You get', 'ascm', 'Harpoon coastal launchers, with missiles and radars', ['U.S. sale notified Oct. 2020', 'First delivery Sept. 2024 (3.9 yrs)']]].map(([h, id, what, w], i) => {
+  const g = el('g', {}, trade), x = i ? 820 : 180, c = CATS.find(d => d.id === id);
+  el('rect', { x, y: 400, width: 600, height: 330, rx: 8, fill: '#0a1510', 'fill-opacity': .9, stroke: i ? 'var(--amber)' : 'var(--line)', 'stroke-width': 2 }, g);
+  el('rect', { x: x + 32, y: 438, width: 14, height: 14, fill: c.col }, g);
+  T(g, x + 56, 451, 'tr-h', h);
+  const n = T(g, x + 32, 552, 'tr-big', '');
+  T(g, x + 32, 610, 'tr-what', what, { style: 'font-size:25px' });
+  T(g, x + 32, 652, 'small', w[0], { style: 'font-size:15px' });
+  T(g, x + 32, 676, 'small', w[1], { style: 'font-size:15px;fill:var(--paper)' });
+  T(g, x + 32, 708, 'tag', 'cited, est.', { style: 'font-size:13px' });
+  return { g, n, id };
 });
-function placeShips(P, u, alpha) {
-  let hits = 0;
-  P.forEach((s, i) => {
-    const e = shipEls[i], v = u * 1.15, span = s.end - s.start;
-    const xv = s.start + (v < .15 ? ease.in(v / .15) * .09 : .09 + (v - .15) / .85 * .91) * span;
-    const stopped = s.hitAt != null && xv >= s.hitAt, px = stopped ? s.hitAt : Math.min(xv, s.end), x = xv;
-    if (stopped) hits++;
-    const vis = px < X0 - 30 ? 0 : 1;
-    e.g.setAttribute('transform', `translate(${px},${s.y})`);
-    e.g.setAttribute('opacity', vis * alpha);
-    e.b.setAttribute('fill', stopped ? '#5a3a33' : 'var(--red)');
-    if (stopped) {
-      const k = ease.back(clamp((x - s.hitAt) / (0.07 * span)));
-      e.x.setAttribute('stroke', s.by.col); e.x.setAttribute('opacity', 1);
-      e.x.setAttribute('transform', `scale(${k})`);
-    } else e.x.setAttribute('opacity', 0);
-  });
-  return hits;
-}
+const tradeNote = T(trade, 800, 790, 'small', 'Unit costs are program costs, so counts give a sense of scale only.', { 'text-anchor': 'middle' });
 
-// Readout tiles
-const tiles = el('g', {}, cam);
-const tl1 = el('text', { x: L, y: 718, class: 't-label' }, tiles); tl1.textContent = 'Force engaged';
-const engN = el('text', { x: L - 4, y: 810, class: 'big' }, tiles);
-const tl2 = el('text', { x: 560, y: 718, class: 't-label' }, tiles); tl2.textContent = 'Hours under fire';
-const hrsN = el('text', { x: 560, y: 790, class: 'mid' }, tiles);
-const hrsS = el('text', { x: 560, y: 822, class: 'small' }, tiles); hrsS.textContent = `of a ${RL.hours.toFixed(1)} h crossing`;
-const hitN = el('text', { x: 1350, y: 718, class: 't-label', 'text-anchor': 'end' }, tiles);
-const verd = el('text', { x: 1350, y: 790, class: 'verdict', 'text-anchor': 'end' }, tiles);
-
-// Cursor (the player's hand)
+// Cursor that drags the money across the bar
 const cur = el('g', { opacity: 0 }, cam);
 const ring = el('circle', { r: 22, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 3, filter: 'url(#kit-glow)' }, cur);
 el('path', { d: 'M0 0l0 30l8 -7l6 13l6 -3l-6 -12l11 0z', fill: 'var(--paper)', stroke: '#0b1712', 'stroke-width': 2 }, cur);
+const chunk = el('rect', { y: 150, height: 64, rx: 3, fill: '#8d8373', stroke: 'var(--amber)', 'stroke-width': 3, opacity: 0 }, cam);
 
-// Payoff comparison
-const cmp = el('g', { opacity: 0 }, svg);
-el('rect', { x: 0, y: 0, width: 1600, height: 1000, fill: '#070f0b', opacity: .8 }, cmp);
-const cmpTitle = el('text', { x: 800, y: 290, class: 't-hook', 'text-anchor': 'middle' }, cmp);
-cmpTitle.innerHTML = 'Same NT$145.7bn. <tspan class="hot">Nearly double</tspan>';
-const cmpTitle2 = el('text', { x: 800, y: 360, class: 't-hook', 'text-anchor': 'middle' }, cmp);
-cmpTitle2.textContent = 'the crossing force under attack.';
-const cmpRows = [['Legacy platforms', RL, 'var(--muted)'], ['Porcupine', RP, 'var(--amber)']].map(([n, r, col], i) => {
-  const g = el('g', {}, cmp), y = 500 + i * 150;
-  el('line', { x1: 330, x2: 1270, y1: y - 62, y2: y - 62, stroke: 'var(--line)', 'stroke-width': 2 }, g);
-  el('text', { x: 330, y, class: 'cmp-n' }, g).textContent = n;
-  el('text', { x: 330, y: y + 38, class: 'small' }, g).textContent = verdict(r.engaged)[0];
-  const e = el('text', { x: 1000, y: y + 8, class: 'cmp-v', 'text-anchor': 'end', fill: col, style: `fill:${col}` }, g); e.textContent = Math.round(r.engaged * 100) + '%';
-  el('text', { x: 1270, y: y + 8, class: 'cmp-v', 'text-anchor': 'end', style: 'fill:var(--paper);font-size:44px' }, g).textContent = r.fireHours.toFixed(1) + ' h';
-  return g;
+// Range model
+const rng = el('g', { opacity: 0 }, svg);
+el('rect', { width: 1600, height: 1000, fill: '#070f0b', opacity: .84 }, rng);
+T(rng, 800, 150, 't-kicker', 'Range model · notional · 200 runs, six unknowns', { 'text-anchor': 'middle' });
+const rgTitle = el('text', { x: 800, y: 228, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:50px' }, rng);
+rgTitle.innerHTML = 'Not an answer: <tspan class="hot">a range.</tspan>';
+T(rng, 800, 282, 'small', 'Force engaged: share of the attacking force under effective attack', { 'text-anchor': 'middle' });
+const AX0 = 520, AXW = 900, ax = v => AX0 + AXW * v / 100;
+[0, 25, 50, 75, 100].forEach(v => {
+  el('line', { x1: ax(v), x2: ax(v), y1: 330, y2: 540, stroke: 'var(--line)', 'stroke-width': 1.5 }, rng);
+  T(rng, ax(v), 566, 'rg-tick', v + '%');
 });
-el('text', { x: 1000, y: 400, class: 'cmp-h', 'text-anchor': 'end' }, cmp).textContent = 'Force engaged';
-el('text', { x: 1270, y: 400, class: 'cmp-h', 'text-anchor': 'end' }, cmp).textContent = 'Under fire';
-el('text', { x: 800, y: 810, class: 'small', 'text-anchor': 'middle' }, cmp).textContent = 'The tool’s notional teaching model · 60% PLA suppression · 5-day warning';
+const bands = [['Legacy platforms', 'legacy', 'var(--muted)', 390], ['Porcupine', 'porcupine', 'var(--amber)', 480]].map(([n, k, col, y]) => {
+  const g = el('g', {}, rng), [mn, lo, hi, mx] = RANGE[k];
+  T(g, 180, y + 10, 'rg-n', n);
+  const full = el('line', { x1: ax(mn), x2: ax(mx), y1: y, y2: y, stroke: col, 'stroke-width': 3, opacity: .7 }, g);
+  const mid = el('rect', { y: y - 17, height: 34, rx: 4, fill: col }, g);
+  const v = T(g, ax(mx) + 18, y + 9, 'rg-v', `${Math.round(lo)}–${Math.round(hi)}%`, { style: `font-size:24px;fill:${col}` });
+  return { g, full, mid, v, lo, hi, mn, mx, y };
+});
+const ovl = el('rect', { y: 350, height: 160, fill: 'var(--paper)', opacity: 0 }, rng);
+const ovlT = T(rng, 0, 534, 'small', 'overlap', { 'text-anchor': 'middle', style: 'font-size:13px;fill:var(--paper)' });
+T(rng, 180, 630, 'tr-h', 'What moves it most (points of force engaged)');
+const drv = [...DRIVERS.map(([s, v]) => [s, v, 'var(--paper)']), ['Switching porcupine ↔ legacy', MIX_SWING, 'var(--amber)']].map(([s, v, col], i) => {
+  const g = el('g', {}, rng), y = 680 + i * 46;
+  T(g, 180, y + 7, 'dv-t', s, { style: `fill:${col}` });
+  el('rect', { x: 900, y: y - 7, width: 360, height: 12, rx: 3, fill: 'var(--line)' }, g);
+  const b = el('rect', { x: 900, y: y - 7, height: 12, rx: 3, fill: col }, g);
+  T(g, 1420, y + 9, 'dv-v', `${v} pts`, { 'text-anchor': 'end', style: `fill:${col}` });
+  return { g, b, v };
+});
 
 const cap = captions(svg, [
-  [0.3, 3.2, 'Taiwan’s NT$145.7bn defense line, proposed Sept. 3, 2026'],
-  [3.5, 6.5, 'Spend 60% on fighters, subs and big ships…'],
-  [6.6, 10.8, '…or move it to missiles, drones and mines'],
-  [11.0, 13.2, 'Same money, a very different crossing'],
+  [0.3, 3.0, 'Taiwan’s NT$145.7bn defense line, proposed Sept. 3, 2026'],
+  [3.4, 7.4, 'What each line buys, and how long the U.S. sale has taken'],
+  [7.7, 11.0, 'Move money between lines: see what you give up and get'],
+  [11.3, 14.6, 'A notional model run 200 times: ranges, never a verdict'],
 ]);
-const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Defense Budget Allocator', line: 'Split a real defense budget. See how the mix holds up.' });
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Defense Budget Allocator', line: 'Split a real defense budget. See what it buys and what it trades away.', cta: 'Try it' });
 
-// ---- Timeline -----------------------------------------------------------------------------------
-const D = 16.5;
+// ---- Timeline -----------------------------------------------------------------------------------------------
+const D = 17.5;
 function frame(t) {
-  // Hook: country chips, then the number
-  chips.forEach((c, i) => {
-    const u = ease.out(seg(t, 0.15 + i * 0.12, 0.75 + i * 0.12));
-    const out = ease.inOut(seg(t, 2.7, 3.2));
-    const pick = i === 0 ? seg(t, 1.2, 1.6) : 0;
-    c.g.setAttribute('opacity', u * (1 - out) * (i === 0 ? 1 : lerp(1, 0.4, seg(t, 1.2, 1.6))));
-    c.g.setAttribute('transform', `translate(0,${(1 - u) * 24 - out * 30})`);
-    c.r.setAttribute('stroke', i === 0 && pick > 0 ? 'var(--amber)' : 'var(--line)');
-    c.r.setAttribute('fill', i === 0 ? `rgba(240,169,59,${0.14 * pick})` : 'none');
-  });
-  const hn = ease.out(seg(t, 1.0, 1.7)), mv = ease.inOut(seg(t, 2.8, 3.6));
-  hookNum.setAttribute('opacity', hn * (1 - seg(t, 14.8, 15.4)));
-  const sc = lerp(1, 0.42, mv);
-  hookNum.setAttribute('transform', `translate(${L},${lerp(540 + (1 - hn) * 30, 178, mv)}) scale(${sc}) translate(${-L},-540)`);
-  hookQ.setAttribute('opacity', ease.out(seg(t, 1.5, 2.1)) * (1 - seg(t, 2.7, 3.1)));
-  hookQ.setAttribute('transform', `translate(0,${(1 - ease.out(seg(t, 1.5, 2.1))) * 20})`);
-  allocLbl.setAttribute('opacity', seg(t, 3.3, 3.8) * (1 - seg(t, 14.8, 15.4)));
+  // Hook
+  const hk = 1 - ease.inOut(seg(t, 2.7, 3.2));
+  op(kick, ease.out(seg(t, 0.2, 0.8)) * hk);
+  const hn = ease.out(seg(t, 0.6, 1.3));
+  op(hookNum, hn * hk);
+  hookNum.setAttribute('transform', `translate(0,${(1 - hn) * 30 - (1 - hk) * 40})`);
+  op(hookQ, ease.out(seg(t, 1.4, 2.0)) * hk);
+  hookQ.setAttribute('transform', `translate(0,${(1 - ease.out(seg(t, 1.4, 2.0))) * 20})`);
 
-  // Mix: legacy until 6.9, porcupine after 8.6
-  const du = ease.inOut(seg(t, 6.9, 8.6));
-  const m = mix(du), r = evaluate(m);
-  const build = seg(t, 3.3, 4.4), sceneOut = 1 - seg(t, 14.8, 15.4);
-  // bar
+  const sceneOut = 1 - seg(t, 15.0, 15.6);
+  // Bar: legacy mix, then the trade moves 10% from platforms to ASCM
+  const tu = ease.inOut(seg(t, 8.6, 9.6));
+  const m = Object.fromEntries(CATS.map(c => [c.id, lerp(LEGACY[c.id], after[c.id], tu)]));
+  op(allocLbl, seg(t, 3.0, 3.5) * sceneOut);
   let x = L;
+  const xs = {};
   CATS.forEach((c, i) => {
-    const gu = ease.out(seg(build, i * 0.07, i * 0.07 + 0.45));
-    const w = BW * m[c.id] * gu, s = segs[i];
+    const gu = ease.out(seg(t, 3.0 + i * 0.06, 3.5 + i * 0.06)), w = BW * m[c.id] * gu, s = segs[i];
+    xs[c.id] = [x, w];
     s.r.setAttribute('x', x); s.r.setAttribute('width', Math.max(0, w - 2));
-    s.t.setAttribute('x', x + w / 2); s.t.textContent = m[c.id] > 0.055 ? Math.round(m[c.id] * 100) + '%' : '';
-    s.t.setAttribute('opacity', gu);
-    const gain = c.id !== 'platforms' && c.id !== 'airdef' ? seg(t, 6.9, 7.4) * (1 - seg(t, 8.6, 9.4)) : 0;
-    s.r.setAttribute('filter', gain > 0.2 && ['ascm', 'drones', 'mines'].includes(c.id) ? 'url(#kit-glow)' : '');
+    s.t.setAttribute('x', x + w / 2); s.t.textContent = m[c.id] > 0.045 ? Math.round(m[c.id] * 100) + '%' : '';
+    op(s.t, gu);
+    s.r.setAttribute('filter', (c.id === 'ascm' || c.id === 'platforms') && t > 8.5 && t < 10.2 ? 'url(#kit-glow)' : '');
     x += w;
   });
-  barG.setAttribute('opacity', sceneOut);
-  // grip sits on the boundary left of "platforms"
-  const gx = L + BW * (1 - m.platforms);
-  grip.setAttribute('x', gx - 4); grip.setAttribute('opacity', seg(t, 6.3, 6.6) * (1 - seg(t, 8.8, 9.2)));
+  op(barG, sceneOut);
 
-  // slider rows
-  rows.forEach((rw, i) => {
-    const u = ease.out(seg(t, 3.6 + i * 0.1, 4.2 + i * 0.1));
-    rw.g.setAttribute('opacity', u * sceneOut);
-    rw.g.setAttribute('transform', `translate(${(1 - u) * -30},0)`);
-    const s = m[rw.id];
-    rw.f.setAttribute('width', Math.max(0, sx(s) - L));
-    rw.th.setAttribute('cx', sx(s));
-    rw.th.setAttribute('stroke', i === 0 && t > 6.5 && t < 8.8 ? 'var(--amber)' : '#0b1712');
-    rw.v.textContent = `${nt(s * TOTAL)} · ${Math.round(s * 100)}%`;
+  // Table
+  const tblIn = 1 - ease.inOut(seg(t, 7.3, 7.9));
+  op(tbl, seg(t, 3.3, 3.6) * tblIn);
+  rows.forEach((r, i) => {
+    const u = ease.out(seg(t, 3.5 + i * 0.12, 4.1 + i * 0.12));
+    op(r.g, u);
+    r.g.setAttribute('transform', `translate(${(1 - u) * -24},0)`);
+    const bn = LEGACY[r.c.id] * TOTAL;
+    r.amt.textContent = money(bn);
+    r.un.textContent = `${fmtN(bn / r.c.cost)} × ${r.c.u}`;
+    const wu = ease.out(seg(t, 4.6 + i * 0.12, 5.6 + i * 0.12));
+    r.bar.setAttribute('width', Math.max(0, r.w * wu));
+    op(r.wl, seg(t, 5.3 + i * 0.12, 5.7 + i * 0.12));
+    if (r.arrow) {
+      const pulse = t > 5.8 ? (Math.sin((t - 5.8) * 5) + 1) / 2 : 0;
+      r.arrow.setAttribute('transform', `translate(${XW + r.w * wu + 2 + pulse * 4},${r.y + 1})`);
+      op(r.arrow, wu);
+    }
   });
+  const hp = rows[7];
+  hiRow.setAttribute('y', hp.y - 26);
+  op(hiRow, 0.12 * fade(t, 6.2, 7.5, .3));
 
-  // strip reveal (wipe), bands track layer strength live
-  clipR.setAttribute('width', SW * ease.inOut(seg(t, 3.7, 4.6)));
-  strip.setAttribute('opacity', sceneOut);
-  bands.forEach(b => {
-    const l = r.layers.find(q => q.id === b.id);
-    b.r.setAttribute('fill-opacity', (0.06 + 0.8 * l.st).toFixed(3));
-    b.t.setAttribute('opacity', l.st >= 0.1 ? 0.85 : 0.4);
+  // Trade-off
+  const trIn = ease.out(seg(t, 7.8, 8.4)), trOut = 1 - seg(t, 10.9, 11.3);
+  op(trade, trIn * trOut * sceneOut);
+  trade.setAttribute('transform', `translate(0,${(1 - trIn) * 24})`);
+  const gv = MOVE * TOTAL;
+  cards.forEach((c, i) => {
+    const u = ease.out(seg(t, 8.7 + i * .2, 9.8 + i * .2)), cat = CATS.find(d => d.id === c.id);
+    c.n.textContent = fmtN(gv * u / cat.cost) + ' ×';
+    c.g.setAttribute('transform', `translate(0,${(1 - ease.out(seg(t, 8.0 + i * .15, 8.6 + i * .15))) * 30})`);
   });
-  const fw = r.covered / GEO.km * (X1 - X0);
-  fire.setAttribute('x', X1 - fw); fire.setAttribute('width', fw * seg(t, 4.4, 5));
-  fireT.setAttribute('x', X1); fireT.setAttribute('opacity', seg(t, 4.6, 5));
+  op(tradeNote, seg(t, 9.8, 10.2));
 
-  // ships: crossing 1 (legacy), crossing 2 (porcupine)
-  let hits = 0, shown = 0;
-  if (t < 7.2) {
-    const a = seg(t, 4.3, 4.6) * (1 - seg(t, 6.7, 7.1));
-    hits = placeShips(PL, seg(t, 4.4, 6.1), a); shown = a;
-  } else {
-    const a = seg(t, 8.5, 8.8) * sceneOut;
-    hits = placeShips(PP, seg(t, 8.6, 10.3), a); shown = a;
-  }
-  hitN.textContent = `Ships hit ${hits} / ${N}`;
-  hitN.setAttribute('opacity', shown);
-
-  // tiles
-  const tu = ease.out(seg(t, 4.2, 4.8));
-  tiles.setAttribute('opacity', tu * sceneOut);
-  tiles.setAttribute('transform', `translate(0,${(1 - tu) * 20})`);
-  engN.textContent = Math.round(r.engaged * 100) + '%';
-  const flash = seg(t, 8.5, 8.7) * (1 - seg(t, 9.2, 10));
-  engN.setAttribute('filter', flash > 0.05 || (t > 10.4 && t < 11) ? 'url(#kit-glow)' : '');
-  engN.style.fill = du > 0.02 ? 'var(--amber)' : 'var(--paper)';
-  hrsN.textContent = r.fireHours.toFixed(1) + ' h';
-  const [vt, vc] = verdict(r.engaged);
-  verd.textContent = vt; verd.style.fill = vc;
-
-  // cursor: approach the platforms thumb, drag it left, leave
-  const th0 = { x: sx(LEGACY.platforms), y: 357 }, th1 = { x: sx(PORCUPINE.platforms), y: 351 };
-  const ap = ease.inOut(seg(t, 5.9, 6.7)), lv = ease.inOut(seg(t, 8.8, 9.5));
-  let cx = lerp(th0.x + 260, th0.x, ap), cy = lerp(th0.y + 200, th0.y, ap);
-  if (t > 6.7) { cx = sx(m.platforms); cy = th0.y; }
-  cx += lv * 120; cy += lv * 160;
-  cur.setAttribute('opacity', seg(t, 5.9, 6.2) * (1 - lv));
+  // Cursor picks NT$14.6bn off the platforms end of the bar and drops it on the anti-ship segment
+  const [px, pw] = xs.platforms;
+  const cw = BW * MOVE;
+  const grab = { x: px + pw - cw / 2, y: 182 }, drop = { x: L + BW * LEGACY.ascm + cw / 2, y: 182 };
+  const ap = ease.inOut(seg(t, 7.9, 8.5)), dr = ease.inOut(seg(t, 8.6, 9.6)), lv = ease.inOut(seg(t, 9.7, 10.3));
+  let cx = lerp(grab.x + 140, grab.x, ap), cy = lerp(grab.y + 160, grab.y, ap);
+  if (t > 8.5) { cx = lerp(grab.x, drop.x, dr); cy = grab.y - Math.sin(dr * Math.PI) * 40; }
+  cx += lv * 100; cy += lv * 140;
+  op(cur, seg(t, 7.9, 8.1) * (1 - lv) * sceneOut);
   cur.setAttribute('transform', `translate(${cx},${cy})`);
-  const press = seg(t, 6.6, 6.8) * (1 - seg(t, 8.6, 8.8));
-  ring.setAttribute('r', lerp(26, 16, press)); ring.setAttribute('opacity', press);
+  const press = seg(t, 8.4, 8.6) * (1 - seg(t, 9.5, 9.7));
+  ring.setAttribute('r', lerp(26, 16, press)); op(ring, press);
+  op(chunk, press * .9);
+  chunk.setAttribute('x', cx - cw / 2); chunk.setAttribute('width', cw);
+  chunk.setAttribute('y', cy - 32);
+  chunk.setAttribute('fill', dr > .5 ? '#4fb39c' : '#8d8373');
 
-  // camera: slow push during the mechanic, parallax on the strip
-  const push = ease.inOut(seg(t, 3.2, 11)) * 0.035;
-  cam.setAttribute('transform', `translate(800,500) scale(${1 + push + ease.inOut(seg(t, 10.8, 12.5)) * 0.04}) translate(-800,-${500 - push * 200})`);
-  strip.setAttribute('transform', `translate(${-push * 300},0)`);
-
-  // payoff
-  const pu = ease.out(seg(t, 11.0, 11.7)) * (1 - seg(t, 13.2, 13.6));
-  cmp.setAttribute('opacity', pu);
-  const bl = Math.max(pu, seg(t, 13.2, 13.6));
+  // Range model overlay
+  const ru = ease.out(seg(t, 11.2, 11.9)) * (1 - seg(t, 14.6, 15.0));
+  op(rng, ru);
+  const bl = Math.max(ru, seg(t, 14.6, 15.0) * (t < 15.6 ? 1 : 0));
   blurG.setAttribute('stdDeviation', (bl * 6).toFixed(2));
   cam.setAttribute('filter', bl > 0.01 ? 'url(#camblur)' : '');
-  cmpRows.forEach((g, i) => {
-    const u = ease.out(seg(t, 11.2 + i * 0.25, 11.9 + i * 0.25));
-    g.setAttribute('opacity', u); g.setAttribute('transform', `translate(${(1 - u) * 40},0)`);
+  bands.forEach((b, i) => {
+    const u = ease.out(seg(t, 11.6 + i * .35, 12.4 + i * .35));
+    const c = (b.lo + b.hi) / 2, lo = lerp(c, b.lo, u), hi = lerp(c, b.hi, u);
+    b.mid.setAttribute('x', ax(lo)); b.mid.setAttribute('width', Math.max(0, ax(hi) - ax(lo)));
+    const fu = ease.out(seg(t, 12.0 + i * .35, 12.8 + i * .35));
+    b.full.setAttribute('x1', ax(lerp(c, b.mn, fu))); b.full.setAttribute('x2', ax(lerp(c, b.mx, fu)));
+    op(b.v, seg(t, 12.4 + i * .35, 12.8 + i * .35));
+    op(b.g, seg(t, 11.5 + i * .35, 11.8 + i * .35));
+  });
+  const o0 = RANGE.porcupine[1], o1 = RANGE.legacy[2], ou = fade(t, 12.9, 14.6, .3);
+  ovl.setAttribute('x', ax(o0)); ovl.setAttribute('width', ax(o1) - ax(o0)); op(ovl, .14 * ou);
+  ovlT.setAttribute('x', ax((o0 + o1) / 2)); op(ovlT, ou);
+  drv.forEach((d, i) => {
+    const u = ease.out(seg(t, 12.9 + i * .18, 13.6 + i * .18));
+    op(d.g, seg(t, 12.8 + i * .18, 13.1 + i * .18));
+    d.b.setAttribute('width', 360 * d.v / 30 * u);
   });
 
-  cap(t); end(t, 13.3, D);
+  cap(t); end(t, 15.0, D);
 }
-run({ duration: D, poster: 10.4, frame });
+run({ duration: D, poster: 6.8, frame });
 </script>
 </body></html>

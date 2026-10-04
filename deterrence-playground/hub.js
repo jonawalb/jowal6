@@ -121,21 +121,25 @@ function sealedForm(c) {
   $('sections').innerHTML = `<section class="cat-sec" id="sec-${c.id}"><button type="button" class="btn sec-back" data-open-cat="all">← All sections</button>
     <div class="cat-h"><h2>${esc(c.name)}${LOCK}</h2><p>This section is password protected. Enter the password to see its tools.</p></div>
     <form class="sealed-form" autocomplete="off"><label for="sealed-pw">Password</label>
-      <input id="sealed-pw" type="password" required autocomplete="off">
+      <input id="sealed-pw" ${window.TSMVault?.inputAttrs?.() || 'type="password" autocomplete="off"'} required>
       <button type="submit" class="btn">Unlock</button><span class="sealed-msg" role="alert"></span></form></section>`;
   const f = $('sections').querySelector('.sealed-form'), pw = f.querySelector('input'), msg = f.querySelector('.sealed-msg');
   pw.focus();
+  const opened = txt => {
+    if (devOpen) return;
+    addTools(JSON.parse(txt));
+    for (const x of CATEGORIES) counts[x.id] = TOOLS.filter(t => inCat(t, x.id)).length;
+    devOpen = true;
+    catBtns.forEach(b => { const x = CATEGORIES.find(y => y.id === b.dataset.cat); if (x) b.querySelector('span').textContent = counts[x.id]; });
+    render();
+  };
+  // After the master password, this tab already holds the section's key: list its tools without asking.
+  window.TSMVault?.unseal?.(DEV_SEALED, 4).then(opened, () => {});
   f.addEventListener('submit', e => {
     e.preventDefault();
     if (!window.TSMVault?.unsealWithPassword) { msg.textContent = 'Unlocking is not available on this page.'; return; }
     msg.textContent = 'Checking…';
-    window.TSMVault.unsealWithPassword(DEV_SEALED, 4, pw.value).then(txt => {
-      addTools(JSON.parse(txt));
-      for (const x of CATEGORIES) counts[x.id] = TOOLS.filter(t => inCat(t, x.id)).length;
-      devOpen = true;
-      catBtns.forEach(b => { const x = CATEGORIES.find(y => y.id === b.dataset.cat); if (x) b.querySelector('span').textContent = counts[x.id]; });
-      render();
-    }, () => { msg.textContent = 'That password is not right.'; pw.select(); });
+    window.TSMVault.unsealWithPassword(DEV_SEALED, 4, pw.value).then(opened, () => { msg.textContent = 'That password is not right.'; pw.select(); });
   });
 }
 

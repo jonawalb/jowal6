@@ -33,3 +33,18 @@ export async function dataRoot(localRoot) {
   if (!/^[\w.-]+$/.test(cur.build || '')) throw new Error('data/current.json: no build id');
   return { url: new URL(`data/${cur.build}/`, base), build: cur.build };
 }
+
+/** Folder of the Trends data: <base>data/<current build>/trends/ when HF_REPO is set and that build carries Trends
+ *  (rhetoric-corpus publish/build_hf_data.py --trends, refreshed nightly without a site redeploy), else localTrends
+ *  (the site's own data/trends/, built into the site by build_site.py). */
+export async function trendsRoot(localTrends) {
+  try {
+    const root = await dataRoot(null);
+    if (root.build) {
+      const url = new URL('trends/', root.url);
+      const r = await fetch(new URL('index.json.gz', url), { cache: 'no-cache' });
+      if (r.ok) return url;
+    }
+  } catch (e) { /* remote host unreachable or an older build without trends: use the site's copy */ }
+  return localTrends;
+}

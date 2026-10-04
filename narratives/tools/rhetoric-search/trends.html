@@ -42,7 +42,8 @@
 </script>
 <script type="module">
   import { mount } from './js/trends.js';
-  const DATA = new URL('./data/trends/', import.meta.url);
+  import { trendsRoot } from './js/config.js';
+  const DATA = await trendsRoot(new URL('./data/trends/', import.meta.url));
   async function getGz(name) {
     const r = await fetch(new URL(`${name}.json.gz`, DATA));
     if (!r.ok) throw new Error(`${name}: HTTP ${r.status}`);

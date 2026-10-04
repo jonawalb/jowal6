@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Critical-Minerals Chokepoint Twin | Interactive Deterrence</title>
+<meta name="description" content="Nine defense-critical minerals traced from mine to refinery to component, with country shares at each stage from USGS, IEA and DOE, a shock simulator with every assumption on a slider, and the official export controls behind each scenario.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&family=Spline+Sans+Mono:wght@400;500;600&family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="../../shared/css/deterrence-site.css">
+<link rel="stylesheet" href="minerals-twin.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<main class="layout">
+  <div class="stage" id="stage">
+    <p class="caveat"><b>Public data only.</b> Country shares come from USGS, the IEA and the U.S. Department of Energy. The shock model is a stylised throughput calculation: its lead times, inventories and substitution rates are assumptions you can move, marked <span class="notional">assumption</span>.</p>
+
+    <div class="card controls">
+      <div class="row">
+        <div class="seg" id="minerals" role="group" aria-label="Mineral"></div>
+        <div class="acts">
+          <button type="button" class="btn" id="tour-btn">Walkthrough</button>
+          <button type="button" class="btn" id="copy">Copy link</button>
+          <button type="button" class="btn" id="reset">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card chartcard" id="flow-card">
+      <div class="chart-h"><p class="eyebrow" id="flow-h">Supply chain by stage</p><ul class="legend" id="flow-legend"></ul></div>
+      <div class="chartbox">
+        <svg id="flow" class="chart" role="img" aria-labelledby="flow-h flow-desc"></svg>
+        <div class="tooltip" id="flow-tip" hidden></div>
+      </div>
+      <p class="fine" id="flow-desc"></p>
+    </div>
+
+    <div class="card chartcard" id="sim-card">
+      <div class="chart-h"><p class="eyebrow" id="sim-h">Shock simulator</p><ul class="legend" id="sim-legend"></ul></div>
+      <div class="chartbox">
+        <svg id="sim" class="chart" role="img" aria-labelledby="sim-h sim-desc"></svg>
+        <div class="tooltip" id="sim-tip" hidden></div>
+      </div>
+      <label class="slider scrub"><span class="sl-h"><span>Month after the shock</span><output id="scrub-o">0</output></span>
+        <input type="range" id="scrub" min="0" max="119" step="1" value="0" aria-describedby="sim-desc"></label>
+      <p class="fine" id="sim-desc"></p>
+    </div>
+
+  </div>
+
+  <aside class="panel" aria-label="Shock settings and results">
+    <div class="sec">
+      <div class="status" id="status" data-s="warn" aria-live="polite"><b id="st-b"></b><span id="st-s"></span></div>
+      <dl class="readout" id="readout"></dl>
+    </div>
+    <div class="sec">
+      <p class="eyebrow">Shock</p>
+      <div class="choices one" id="scenarios" role="group" aria-label="Shock scenario"></div>
+      <p class="fine" id="sc-basis"></p>
+      <div id="custom" hidden>
+        <label class="fl"><span>Who withholds output</span><select id="cu-actor"></select></label>
+        <div id="cu-stages" class="cu-stages" role="group" aria-label="Stages withheld"></div>
+      </div>
+      <div id="hits"></div>
+      <label class="tg"><input type="checkbox" id="open" checked><span class="sw"></span><span class="t">Open-ended<small>Off: the shock ends after the months set below</small></span></label>
+      <div class="slider" id="dur-wrap"><span class="sl-h"><label for="dur">Shock lasts</label><output id="dur-o"></output></span>
+        <input type="range" id="dur" min="3" max="120" step="3" value="24"></div>
+    </div>
+    <div class="sec">
+      <p class="eyebrow">Whose supply</p>
+      <div class="seg" id="basis" role="group" aria-label="Exposure basis"></div>
+      <p class="fine" id="basis-note"></p>
+    </div>
+    <details class="sec" id="assume">
+      <summary class="eyebrow">Assumptions: 10 sliders <span class="notional">assumption</span></summary>
+      <div id="sliders"></div>
+    </details>
+  </aside>
+</main>
+
+<section class="wide" aria-label="Comparison, end uses and export controls">
+    <div class="card chartcard" id="heat-card">
+    <div class="chart-h"><p class="eyebrow" id="heat-h">Chokepoint heat table: share of world output by country and stage</p></div>
+    <p class="fine">Darker cells mean a larger share. HHI is the Herfindahl–Hirschman index of concentration (10,000 = one country). Click a row to load that mineral.</p>
+    <div class="tablewrap"><table id="heat" aria-labelledby="heat-h"></table></div>
+  </div>
+
+  <div class="card chartcard" id="use-card">
+    <div class="chart-h"><p class="eyebrow" id="use-h">Defense end uses</p></div>
+    <p class="fine" id="use-scale"></p>
+    <div id="uses"></div>
+  </div>
+
+  <div class="card chartcard" id="ctl-card">
+    <div class="chart-h"><p class="eyebrow">Official export controls</p><label class="tg mini"><input type="checkbox" id="ctl-all"><span class="sw"></span><span class="t">All minerals</span></label></div>
+    <ol class="ctl" id="controls"></ol>
+    <p class="fine" id="ctl-note"></p>
+  </div>
+</section>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>Pick a mineral. The top chart follows it through the supply chain: mining, then separation or refining, then a component where public data exist (rare-earth magnets). Each column splits one stage's world output by country. Bands link the same country across stages; they do not show trade between countries, which no public source reports at this level.</p>
+    <p>Pick a shock in the side panel. The country's output at the stages it withholds is hatched, and the simulator below shows what reaches buyers elsewhere, month by month: the narrowest stage sets the flow, inventories and any stockpile cover the gap first, and the red area is the shortfall left. Idle plants restart and new plants come on line after the lead times you set. Scrub the month slider to read any point.</p>
+    <p>The heat table compares every mineral and stage at once. The end-use cards say where each mineral goes in defense systems, quoting the government source.</p>
+
+    <h2 class="mt">Method</h2>
+    <div id="method"></div>
+  </div>
+  <div class="col">
+    <h2>Sources</h2>
+    <ul class="src" id="sources"></ul>
+    <h2 class="mt">How to cite</h2>
+    <p class="fine" id="cite"></p>
+    <p class="fine mt-s">Build script: <code>tools/minerals-twin/scripts/build_data.py</code> holds every transcribed figure with its source, checks country sums against the published world totals and writes <code>data/chain.js</code>. Model tests: <code>scripts/model.test.mjs</code>.</p>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Critical-Minerals Chokepoint Twin', sub: 'Nine defense-critical minerals from mine to component: who holds each stage, which stage binds under a shock, and how long the shortfall lasts.', category: 'Economic coercion & war markets' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

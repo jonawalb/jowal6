@@ -4,7 +4,7 @@
 // In local development (serving the source tree) this file is not loaded and data is plaintext.
 (function () {
   'use strict';
-  var CFG = {"id": "1093097715", "open": true, "iter": 600000, "t5": {"id": "1239aebe04", "salt": "DyDPl80nJR4dOfQcwckpzg==", "check": "XgKzGokjX1q2HMqt52womJcQD9J5iLWRiTtsLJrry1HmXQ==", "slugs": ["rhetoric-search"], "name": "Rhetoric Search"}};
+  var CFG = {"id": "1093097715", "open": true, "iter": 600000, "t5": {"id": "1239aebe04", "salt": "DyDPl80nJR4dOfQcwckpzg==", "check": "XgKzGokjX1q2HMqt52womJcQD9J5iLWRiTtsLJrry1HmXQ==", "slugs": ["rhetoric-search"], "name": "Rhetoric Search"}, "master": {"salt": "vde/ATuxVfD/g0e6EHJAMQ==", "check": "TU+yFg3h69kpOPVjlXBcWXt7p1z0XnU5t6ltqTRR6sgbOw==", "wraps": {"5": "ICCnmjpr/3L6ZxX5H92owjaiQXo+8YKDK50FZkbWh1OYwpmUUUErkVL7PIt0yIfhMiruaZ7hcBqni1RO"}}};
   var KEYNAME = 'tsm-vault-key-' + (CFG ? CFG.id : 'dev');
   var MAGIC = 'TSMVAULT2:';
   // Optional extra tiers: tools listed in CFG.t2.slugs (or CFG.t3.slugs) have their data sealed with a
@@ -24,6 +24,11 @@
   var inTier = function (t) { return !!(TIERS[t] && slugMatch && TIERS[t].slugs.indexOf(slugMatch[1]) >= 0); };
   var PAGE_TIER = inTier(5) ? 5 : inTier(4) ? 4 : inTier(3) ? 3 : inTier(2) ? 2 : 0;
   var LOCKED_PAGE = PAGE_TIER > 0;
+  // Master password (CFG.master): one password that unlocks every tier of the site for this tab. Each tier's key is
+  // published wrapped (AES-GCM) under a key derived from it. The unwrapped keys live only in sessionStorage, so the
+  // master is never kept on the device; the input is built so browsers do not offer to save it.
+  var MKEY = CFG && CFG.master ? 'tsm-master-' + CFG.id : '';
+  var MASTER = null; // {tier: CryptoKey} once the master password has been entered in this tab
   var resolveKey, resolveKey2;
   var keyReady = new Promise(function (r) { resolveKey = r; });
   var key2Ready = new Promise(function (r) { resolveKey2 = r; });
@@ -59,8 +64,48 @@
     try { v = localStorage.getItem(name) || sessionStorage.getItem(name); } catch (e) { /* storage blocked */ }
     return v ? tryRaw(b64d(v), tier) : Promise.reject();
   }
-  /** Extra-tier key: asked for on every visit to a locked tool page and never stored, so nothing else can use it. */
-  function key2Now(tier) { return tier === PAGE_TIER ? key2Ready : Promise.reject(); }
+  /** Extra-tier key: asked for on every visit to a locked tool page and never stored, so nothing else can use it.
+   *  After the master password, every tier's key is available in this tab. */
+  function key2Now(tier) {
+    if (tier === PAGE_TIER) return key2Ready;
+    return MASTER && MASTER[tier] ? Promise.resolve(MASTER[tier]) : Promise.reject();
+  }
+  function deriveMaster(pw) {
+    return crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveBits']).then(function (base) {
+      return crypto.subtle.deriveBits({ name: 'PBKDF2', salt: b64d(CFG.master.salt), iterations: CFG.iter, hash: 'SHA-256' }, base, 256);
+    }).then(function (bits) { return new Uint8Array(bits); });
+  }
+  /** Raw tier keys {tier: Uint8Array} → CryptoKeys, each checked against its tier's token. */
+  function useMasterRaws(raws) {
+    var tiers = Object.keys(raws);
+    return Promise.all(tiers.map(function (t) { return tryRaw(raws[t], +t); })).then(function (keys) {
+      MASTER = {}; tiers.forEach(function (t, i) { MASTER[t] = keys[i]; });
+      return MASTER;
+    });
+  }
+  /** Try `pw` as the master password: unwrap every tier key and keep them for this tab only. Rejects if wrong. */
+  function tryMaster(pw) {
+    if (!MKEY) return Promise.reject();
+    return deriveMaster(pw).then(importRaw).then(function (mk) {
+      return decrypt(mk, b64d(CFG.master.check)).then(function () {
+        var tiers = Object.keys(CFG.master.wraps), raws = {};
+        return Promise.all(tiers.map(function (t) { return decrypt(mk, b64d(CFG.master.wraps[t])).then(function (r) { raws[t] = r; }); }))
+          .then(function () {
+            var out = {}; tiers.forEach(function (t) { out[t] = b64e(raws[t]); });
+            try { sessionStorage.setItem(MKEY, JSON.stringify(out)); } catch (e) { /* storage blocked: this page only */ }
+            return useMasterRaws(raws);
+          });
+      });
+    });
+  }
+  function storedMaster() {
+    var v = null;
+    try { v = MKEY && sessionStorage.getItem(MKEY); } catch (e) { /* storage blocked */ }
+    if (!v) return Promise.reject();
+    var o = JSON.parse(v), raws = {};
+    Object.keys(o).forEach(function (t) { raws[t] = b64d(o[t]); });
+    return useMasterRaws(raws);
+  }
   // Sites built with remember:false keep the site key only for this tab (sessionStorage), never on the device.
   // remember:'nav' (taiwanmonitor.com) goes further: the key survives only clicks between this site's pages, so a
   // refresh, a typed or bookmarked URL, or arriving from another site always asks for the password again.
@@ -72,9 +117,10 @@
     var fromHere = false;
     try { fromHere = !!document.referrer && new URL(document.referrer).origin === location.origin; } catch (e) { /* bad referrer */ }
     if (navType === 'reload' || (navType !== 'back_forward' && !fromHere)) {
-      try { sessionStorage.removeItem(KEYNAME); } catch (e) { /* storage blocked */ }
+      try { sessionStorage.removeItem(KEYNAME); if (MKEY) sessionStorage.removeItem(MKEY); } catch (e) { /* storage blocked */ }
     }
   }
+  if (MKEY) { try { localStorage.removeItem(MKEY); } catch (e) { /* storage blocked */ } }
   // Drop any second-tier key saved by an earlier version of this gate.
   [KEYNAME2, KEYNAME3, KEYNAME4, KEYNAME5].forEach(function (n) { if (n) { try { localStorage.removeItem(n); sessionStorage.removeItem(n); } catch (e) { /* storage blocked */ } } });
 
@@ -97,15 +143,19 @@
     },
     /** Decrypt a sealed blob (base64, gzip) with a password typed for `tier`. Rejects on a wrong password. */
     unsealWithPassword: function (b64, tier, pw) {
-      return derive(pw, tier).then(function (raw) { return tryRaw(raw, tier); }).then(function (k) { return open(k, b64d(b64), true); })
+      return derive(pw, tier).then(function (raw) { return tryRaw(raw, tier); })
+        .catch(function () { return tryMaster(pw).then(function (m) { return m[tier] || Promise.reject(); }); })
+        .then(function (k) { return open(k, b64d(b64), true); })
         .then(function (bytes) { return new TextDecoder().decode(bytes); });
     },
+    /** Attributes for a password box that browsers will not offer to save (used by the hub's section form too). */
+    inputAttrs: function () { return NOSAVE; },
     /** Decrypt a sealed blob with the key this page was unlocked with (only on pages of that tier). */
     unseal: function (b64, tier) {
       return key2Now(tier).then(function (k) { return open(k, b64d(b64), true); }).then(function (bytes) { return new TextDecoder().decode(bytes); });
     },
     lock: function () {
-      try { [KEYNAME, KEYNAME2, KEYNAME3, KEYNAME4, KEYNAME5].forEach(function (n) { if (n) { localStorage.removeItem(n); sessionStorage.removeItem(n); } }); } catch (e) { /* storage blocked */ }
+      try { [KEYNAME, KEYNAME2, KEYNAME3, KEYNAME4, KEYNAME5, MKEY].forEach(function (n) { if (n) { localStorage.removeItem(n); sessionStorage.removeItem(n); } }); } catch (e) { /* storage blocked */ }
       location.reload();
     },
   };
@@ -129,6 +179,13 @@
     });
   };
 
+  // A password box browsers will not offer to save: a text field drawn as dots where the browser supports that,
+  // otherwise a password field marked as a new password. Password managers are told to ignore it.
+  var NOSAVE = (window.CSS && CSS.supports && CSS.supports('-webkit-text-security', 'disc')
+    ? 'type="text" style="-webkit-text-security:disc"' : 'type="password"')
+    + ' autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" data-1p-ignore data-lpignore="true" data-bwignore data-form-type="other"'
+    + ' name="tsm-' + Math.random().toString(36).slice(2) + '"';
+
   if (!CFG) { resolveKey(null); return; }
 
   // Hide the page until unlocked.
@@ -137,13 +194,13 @@
   var style = document.createElement('style');
   style.textContent = 'html.tsm-locked body>*:not(#tsm-gate){visibility:hidden!important}' +
     '#tsm-gate{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:20px;background:#e2e6d7;color:#28241d;font:15px/1.5 "Work Sans",Arial,sans-serif}' +
-    '@media (prefers-color-scheme:dark){#tsm-gate{background:#0c120e;color:#dfe7e1}#tsm-gate .g-card{background:#121a15;border-color:#243129}#tsm-gate input[type=password]{background:#0c120e;color:#dfe7e1;border-color:#243129}}' +
+    '@media (prefers-color-scheme:dark){#tsm-gate{background:#0c120e;color:#dfe7e1}#tsm-gate .g-card{background:#121a15;border-color:#243129}#tsm-gate #g-pw{background:#0c120e;color:#dfe7e1;border-color:#243129}}' +
     '#tsm-gate .g-card{width:min(420px,100%);background:#f3f4ec;border:1px solid #d3d6cd;border-top:4px solid #9c3514;border-radius:6px;padding:26px 24px 22px;display:flex;flex-direction:column;gap:12px}' +
     '#tsm-gate .g-brand{display:flex;align-items:center;gap:12px}#tsm-gate img{width:56px;height:56px}' +
     '#tsm-gate .g-org{margin:0;font:600 12px "Chivo",Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#9c3514}' +
     '#tsm-gate h1{margin:0;font:700 28px/1.05 "Chivo",Arial,sans-serif}#tsm-gate p{margin:0;color:#7f8a83;font-size:13.5px}' +
     '#tsm-gate form{display:flex;flex-direction:column;gap:10px}' +
-    '#tsm-gate input[type=password]{font:inherit;padding:10px 12px;border:1px solid #d3d6cd;border-radius:4px}' +
+    '#tsm-gate #g-pw{font:inherit;padding:10px 12px;border:1px solid #d3d6cd;border-radius:4px}' +
     '#tsm-gate input:focus-visible,#tsm-gate button:focus-visible{outline:2px solid #9c3514;outline-offset:2px}' +
     '#tsm-gate button{font:600 14px inherit;padding:10px 14px;border-radius:4px;border:1px solid #34432b;background:#34432b;color:#e2e6d7;cursor:pointer}' +
     '#tsm-gate button:disabled{opacity:.6;cursor:wait}#tsm-gate label.g-rem{display:flex;gap:8px;align-items:center;font-size:13px;color:#7f8a83}' +
@@ -155,6 +212,7 @@
   function unlock(key) {
     resolveKey(key);
     if (!LOCKED_PAGE) { reveal(); return; }
+    if (MASTER && MASTER[PAGE_TIER]) { unlock2(MASTER[PAGE_TIER]); return; }
     var g = document.getElementById('tsm-gate'); if (g) g.remove();
     if (document.body) showGate(PAGE_TIER); else document.addEventListener('DOMContentLoaded', function () { showGate(PAGE_TIER); });
   }
@@ -170,7 +228,7 @@
       '<div><p class="g-org">Jonathan Walberg</p><h1 id="g-title">Narrative Tracking</h1></div></div>' +
       (tier > 1 ? '<p><b>' + (TIERS[tier].name || 'This section') + '</b> is password protected. Enter the password to continue.</p>'
         : '<p>This site is for invited readers. Enter the access password to continue.</p>') +
-      '<form><input type="password" id="g-pw" autocomplete="current-password" aria-label="Access password" placeholder="Access password" required>' +
+      '<form autocomplete="off"><input ' + NOSAVE + ' id="g-pw" aria-label="Access password" placeholder="Access password" required>' +
       (tier > 1 || !REMEMBER ? '' : '<label class="g-rem"><input type="checkbox" id="g-rem" checked> Remember on this device</label>') +
       '<button type="submit" id="g-go">Unlock</button><div class="g-err" id="g-err" aria-live="polite"></div></form></div>';
     document.body.appendChild(g);
@@ -179,10 +237,16 @@
     g.querySelector('form').addEventListener('submit', function (e) {
       e.preventDefault();
       go.disabled = true; go.textContent = 'Checking\u2026'; err.textContent = '';
-      derive(pw.value, tier).then(function (raw) {
+      var typed = pw.value;
+      derive(typed, tier).then(function (raw) {
         return tryRaw(raw, tier).then(function (k) {
           if (tier === 1) { try { (REMEMBER && g.querySelector('#g-rem').checked ? localStorage : sessionStorage).setItem(KEYNAME, b64e(raw)); } catch (e2) { /* storage blocked */ } }
           (tier > 1 ? unlock2 : unlock)(k);
+        });
+      }).catch(function () {
+        // Not this prompt's password: maybe the master password, which opens every tier for this tab.
+        return tryMaster(typed).then(function (m) {
+          if (tier === 1) unlock(m[1] || null); else unlock2(m[tier]);
         });
       }).catch(function () {
         go.disabled = false; go.textContent = 'Unlock';
@@ -193,8 +257,11 @@
   }
 
   // Public builds (CFG.open, jwalberg.com/narratives/) have no site password: only extra-tier pages ask for one.
-  if (CFG.open) { unlock(null); return; }
-  storedKey(KEYNAME, 1).then(unlock, function () {
-    if (document.body) showGate(1); else document.addEventListener('DOMContentLoaded', function () { showGate(1); });
+  var ask = function () { if (document.body) showGate(1); else document.addEventListener('DOMContentLoaded', function () { showGate(1); }); };
+  storedMaster().then(function (m) {
+    if (CFG.open) unlock(null); else if (m[1]) unlock(m[1]); else return Promise.reject();
+  }).catch(function () {
+    if (CFG.open) { unlock(null); return; }
+    storedKey(KEYNAME, 1).then(unlock, ask);
   });
 })();

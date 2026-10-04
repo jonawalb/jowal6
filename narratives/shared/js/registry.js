@@ -93,6 +93,8 @@ export const ALL_TOOLS = [
     blurb: 'Who holds which reef, what China built, and what the 2016 tribunal ruled.' },
   { slug: 'undersea-cables', sites: ['tsm'], cat: 'geo', title: 'Taiwan\'s Undersea Cables', status: 'live',
     blurb: 'Where Taiwan\'s submarine cables land, and which islands go dark when you cut them.' },
+  { slug: 'cable-atlas', sites: ['tsm'], cat: 'geo', title: 'Undersea Cable Atlas', status: 'live',
+    blurb: 'Every cable and landing site serving Taiwan, the Ryukyus and the Philippines, a sourced log of cuts, repair-ship capacity, and what survives when you cut them.' },
   { slug: 'japan-view', sites: ['tsm'], cat: 'geo', title: "Japan's View: PLA Near Japan", status: 'live',
     blurb: "Every PLA Navy crossing of Japan's straits that Tokyo reported in 2025\u201326, by strait, direction and hull number, set against Taiwan's daily counts." },
   { slug: 'crossing-windows', siteCat: { deterrence: 'tsm' }, also: ['regions'], sub: { regions: 'indopacific' }, cat: 'geo', title: 'Crossing Windows', status: 'live',

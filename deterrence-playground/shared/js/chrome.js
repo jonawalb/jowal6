@@ -102,6 +102,11 @@ function wireMenu(bar) {
   const btn = bar.querySelector('#tsm-menu-btn'), menu = bar.querySelector('#tsm-menu');
   const set = open => {
     menu.hidden = !open; btn.setAttribute('aria-expanded', open);
+    if (open) { // keep the menu inside the viewport on narrow screens (it is anchored to the button's left edge)
+      menu.style.left = '0px';
+      const r = menu.getBoundingClientRect(), over = r.right - (innerWidth - 16);
+      if (over > 0) menu.style.left = `${-Math.min(over, r.left - 16)}px`;
+    }
     if (open) (menu.querySelector('[aria-current]') || menu.querySelector('a')).focus();
   };
   btn.addEventListener('click', () => set(menu.hidden));

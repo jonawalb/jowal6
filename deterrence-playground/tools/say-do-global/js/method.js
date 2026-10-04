@@ -22,7 +22,7 @@ $('validation').innerHTML = `<table><thead><tr><th>Dimension</th><th>AUC</th><th
 const W = META.res.week, D = META.res.day;
 $('params').innerHTML = `<table><thead><tr><th></th><th>Weekly</th><th>Daily</th></tr></thead><tbody>
 <tr><td>Lead-lag range K</td><td class="num">±${W.K} weeks</td><td class="num">±${D.K} days</td></tr>
-<tr><td>Rolling baseline for anomalies</td><td class="num">${W.P} weeks (≥ ${W.min_base} with data)</td><td class="num">${D.P} days (≥ ${D.min_base})</td></tr>
+<tr><td>Rolling baseline for anomalies</td><td class="num">${W.P} weeks (≥ ${W.min_base ?? 6} with data)</td><td class="num">${D.P} days (≥ ${D.min_base ?? 7})</td></tr>
 <tr><td>Minimum documents per period</td><td class="num">${W.min_docs} (stance ${W.min_docs - 1})</td><td class="num">${D.min_docs}</td></tr>
 <tr><td>Minimum overlap / rhetoric coverage</td><td class="num">${W.min_periods} weeks / ${W.min_cov * 100}%</td><td class="num">${D.min_periods} days / ${D.min_cov * 100}%</td></tr>
 <tr><td>Event window, test window, estimation window</td><td class="num">±${W.h}, ${W.H}, ${W.Lest} weeks</td><td class="num">±${D.h}, ${D.H}, ${D.Lest} days</td></tr>

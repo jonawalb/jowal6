@@ -97,7 +97,7 @@ export function renderDrill(root, s, ev) {
   root.querySelector('#dr-storms').innerHTML = `<p><b class="num">${pct(storms.share)}</b> of years had a tropical storm or typhoon within ${s.r || 500} km of the Strait center this week.</p>
     ${st.length ? `<p class="fine">${st.slice(0, 10).map(([n, d]) => `${esc(n)} <span class="num">${d} km</span>`).join(' · ')}${st.length > 10 ? ` and ${st.length - 10} more` : ''}</p>` : '<p class="fine">None in the record for this week.</p>'}`;
   root.querySelector('#dr-fog').innerHTML = fog.share == null ? '<p class="fine">No station reports for this week.</p>'
-    : `<p>Fog was reported on <b class="num">${pct(fog.share)}</b> of days at ${esc(STATIONS[s.st].label)} (${fog.n} station-days).</p>`;
+    : `<p>Fog was reported on <b class="num">${pct(fog.share)}</b> of the ${fog.n} days with a report from ${esc(STATIONS[s.st].label)}. Days with no report pass the fog test, so the fog bar under Which tests fail can read lower.</p>`;
   const days = weekDates(wk, s.yr);
   const rows = tideChart(root.querySelector('#dr-tide'), days, s.port);
   root.querySelector('#dr-tide-h').textContent = `Moon, light and tide, ${fmtDay(days[0])} to ${fmtDay(days[days.length - 1])}, ${s.yr}`;

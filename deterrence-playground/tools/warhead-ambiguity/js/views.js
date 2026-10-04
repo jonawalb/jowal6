@@ -94,5 +94,5 @@ export function drawRates(node, P, costs) {
     <div class="tile bad"><b class="num">${pc1(camp)}</b><span>chance that at least one of ${P.K} conventional launches in a campaign triggers launch on warning</span></div>
     <div class="tile"><b class="num">${per(r.C.low)}</b><span>nuclear launches per 1,000 conventional launches</span></div>
     <div class="tile"><b class="num">${per(r.F.low)} / ${per(r.F.conv)}</b><span>nuclear / conventional responses per 1,000 false alarms</span></div>
-    <div class="tile"><b class="num">${per(r.N.wait)}</b><span>nuclear launches per 1,000 ridden out as if conventional or false</span></div>`;
+    <div class="tile"><b class="num">${per(r.N.wait)}</b><span>real nuclear attacks per 1,000 that you ride out (wait), taking them for conventional strikes or false alarms</span></div>`;
 }

@@ -10,6 +10,9 @@ import { S, $, esc, say, hhmm, other } from './store.js';
 import { wireTips } from './tips.js';
 import { renderStart, wireStart, setChoices, resetStart, openStep2, choices as startChoices } from './start.js';
 import { newPractice } from '../practice.js';
+import { newTutorial } from '../tutorial.js';
+import { tutorialResult, HOWTO } from './tutorial-ui.js';
+import { learnButton, showSheet } from '../../../../shared/js/learn.js';
 import { practiceBegin, practiceEnd, practiceCheck, practiceAsk, wirePractice } from './practice-ui.js';
 import { makeGame, rebuild, beginBattle, linkState, setupFor, campaignChoices } from './game.js';
 import { startPlan, checklist, wirePlan } from './plan-ui.js';
@@ -67,6 +70,7 @@ function layout(phase) {
 
 /** Begin a single battle or a campaign battle in its planning phase (or rebuilt from a link). */
 function launch(ch, link = null) {
+  if (tour.track === 'learn') tour.stop();
   cancelReplays(); hideAAR(); practiceEnd();
   S.choices = ch; S.me = ch.side; S.view = 'belief'; S.aarHour = null;
   S.setup = S.campaign ? setupFor(S.campaign) : null;
@@ -99,6 +103,7 @@ function startBattle() {
 
 function finish(scroll) {
   const g = S.g;
+  if (g.tutorial) { finishTutorial(scroll); return; }
   document.body.classList.remove('dd-live', 'dd-armed');
   $('viewbar').hidden = false; $('feedsec').hidden = true; closeUnitPop(false);
   S.aarHour = g.snaps.length - 1; S.sel = []; S.tool = null;
@@ -171,6 +176,7 @@ function learn(note) {
 }
 
 function showStart() {
+  if (tour.track === 'learn') tour.stop();
   cancelReplays(); hideAAR(); hideCamp(); practiceEnd();
   S.g = null; S.campaign = null; S.choices = null; S.sel = []; S.tool = null;
   closeUnitPop(false); resetStart();
@@ -211,11 +217,54 @@ function openPractice() {
   else practice(ch);
 }
 
+// ---- Learn to play: the small tutorial battle (js/tutorial.js), taught by the tour's 'learn' track ----
+const LEARN_SLUG = 'defense-in-depth';
+function tutorial() {
+  cancelReplays(); hideAAR(); hideCamp(); practiceEnd();
+  S.campaign = null; S.choices = null; S.me = 'def'; S.view = 'belief'; S.aarHour = null;
+  history.replaceState(null, '', location.pathname + location.search);
+  S.g = newTutorial();
+  layout('battle');
+  newBoard();
+  S.filter = 'all';
+  zoom('fit');
+  showTips(false);
+  say('<b>Learn to play.</b> A small battle: you defend. Follow the card.');
+  $('tldr').textContent = '';
+  redraw();
+  $('play').scrollIntoView({ block: 'start', behavior: 'auto' });
+}
+function finishTutorial(scroll) {
+  const g = S.g;
+  document.body.classList.remove('dd-live', 'dd-armed');
+  $('feedsec').hidden = true; closeUnitPop(false);
+  S.sel = []; S.tool = null;
+  say(`${g.over.winner === S.me ? 'You won.' : 'You lost.'} The result is below the map.`);
+  redraw();
+  tutorialResult(g, {
+    onReal: side => { tour.stop(); showStart(); setChoices({ ...startChoices(), side }); openStep2({ ...startChoices(), side }); $('start').scrollIntoView({ block: 'start' }); },
+    onAgain: () => tour.start('learn', false),
+    onSheet: () => showSheet(HOWTO, { onStart: () => tour.start('learn', false) }),
+  });
+  if (scroll) $('aar').scrollIntoView({ block: 'nearest', behavior: 'auto' });
+}
+const learnedNow = () => { try { localStorage.setItem(`learned:${LEARN_SLUG}`, '1'); } catch { /* storage blocked: the banner just keeps its first words */ } };
+const inBattle = () => !!S.g && S.g.phase === 'battle' && !S.g.over && !S.g.tutorial && !S.practice;
+
 // ---- Boot ----
 const tour = createTour($('tour'), {
-  start: side => { S.campaign = null; launch({ side, seed: 1 + Math.floor(Math.random() * 999998), scale: 'd', era: 'w', mode: 's', diff: 's', od: 5 }); },
+  start: track => {
+    if (track === 'learn') { tutorial(); return; }
+    S.campaign = null; launch({ side: track, seed: 1 + Math.floor(Math.random() * 999998), scale: 'd', era: 'w', mode: 's', diff: 's', od: 5 });
+  },
   tab: t => { const g = S.g; const map = { plan: g && g.phase === 'plan' ? 'plan' : 'units', reports: 'reports', units: 'units', map: 'map' }; setTab(map[t] || 'map'); },
+  done: track => { if (track === 'learn') { learnedNow(); banner.refresh(); } },
 });
+const startLearn = () => tour.start('learn', inBattle());
+// The shared "New here? Learn to play" banner (shared/js/learn.js), first thing on the start screen, above the
+// side, scale and balance choices; its "Rules on one screen" opens HOWTO. The lesson itself is ours (tour track).
+const banner = learnButton($('start'), { slug: LEARN_SLUG, minutes: 5, onStart: startLearn, sheet: HOWTO,
+  blurb: 'A short guided battle: you defend a few boxes for five hours. Every term is explained as it comes up.' });
 
 wireTips();
 initPlay({ redraw });
@@ -236,15 +285,17 @@ wireKeys({
 });
 $('end').onclick = endHour;
 $('undo').onclick = undo;
-$('again').onclick = () => (S.campaign ? $('aar-cont')?.click() : again());
+$('again').onclick = () => (S.g && S.g.tutorial ? tour.start('learn', false) : S.campaign ? $('aar-cont')?.click() : again());
 $('new-game').onclick = showStart;
 $('practice-btn').onclick = openPractice;
-$('start-tour').onclick = () => tour.start(S.g ? S.me : 'def', !!S.g && S.g.phase === 'battle' && !S.g.over);
+$('start-tour').onclick = () => tour.start(S.g && !S.g.tutorial ? S.me : 'def', inBattle());
+$('learn-btn').onclick = startLearn;
+$('howto-btn').onclick = () => showSheet(HOWTO, { onStart: startLearn });
 // #1: How to play, the sources, how the model works and the lessons sit behind one Reference disclosure.
 const openRef = target => { const d = $('reference'); d.open = true; requestAnimationFrame(() => (target ? $(target) : d).scrollIntoView({ block: 'start' })); };
 $('go-lessons').onclick = () => openRef('lessons');
 $('key-help').onclick = () => { const k = $('keyhelp'); k.innerHTML = keyHelpHTML(); k.hidden = false; k.querySelector('.x').onclick = () => { k.hidden = true; $('key-help').focus(); }; k.querySelector('.x').focus(); };
-$('copy-link').onclick = async () => { if (S.practice) { say('The Practice field has no share link.'); return; } if (S.choices) writeHash(linkState(S)); await new Promise(r => setTimeout(r, 200)); try { await navigator.clipboard.writeText(location.href); say('Link copied. It replays this game exactly.'); } catch { say('Copy the address bar to share this game.'); } };
+$('copy-link').onclick = async () => { if (S.practice) { say('The Practice field has no share link.'); return; } if (S.g && S.g.tutorial) { say('The lesson battle has no share link.'); return; } if (S.choices) writeHash(linkState(S)); await new Promise(r => setTimeout(r, 200)); try { await navigator.clipboard.writeText(location.href); say('Link copied. It replays this game exactly.'); } catch { say('Copy the address bar to share this game.'); } };
 document.querySelectorAll('#viewbar [data-view]').forEach(b => b.addEventListener('click', () => {
   S.view = b.dataset.view;
   document.querySelectorAll('#viewbar [data-view]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.view === S.view)));

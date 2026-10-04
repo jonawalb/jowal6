@@ -2,11 +2,9 @@
 .sl-actions { max-width: 1400px; margin: 12px auto 0; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; }
 .sl-actions > div { display: flex; flex-wrap: wrap; gap: 6px; }
 .sl-flag { margin: 0; font-size: 13px; color: var(--muted); max-width: 80ch; }
-.sl-howto { padding: 12px 16px; border-top: 3px solid var(--accent); }
-.sl-howto[hidden] { display: none; }
-.sl-howto-h { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-.sl-howto h2 { margin: 0; font-size: 20px; }
-.sl-howto p { margin: 6px 0 0; font-size: 14px; max-width: 90ch; }
+.sl-learn { max-width: 1400px; margin: 12px auto 0; }
+.sl-learn .learn-banner { margin: 0; }
+body:not([data-phase="setup"]) .sl-learn { display: none; }
 .sl-status { background: var(--panel); }
 .sl-status:not([data-s]), .sl-status[data-s=""] { border-color: var(--rule); }
 
@@ -133,24 +131,12 @@ svg.sl-small .t-sea { font-size: 18px; }
 .sl-eq { font-family: var(--mono); font-size: 12.5px; background: var(--chip); padding: 8px 10px; border-radius: 3px; overflow-x: auto; white-space: pre; margin: 0 0 10px; }
 .src li { overflow-wrap: anywhere; }
 
-/* Tour */
-.sl-tour { position: fixed; right: 16px; bottom: 16px; z-index: 60; width: min(380px, calc(100vw - 32px)); background: var(--panel); border: 1px solid var(--rule); border-top: 3px solid var(--accent); border-radius: 4px; padding: 12px 14px; box-shadow: 0 8px 28px rgba(0, 0, 0, .22); display: flex; flex-direction: column; gap: 6px; }
-.sl-tour[hidden] { display: none; }
-.sl-tour h3 { margin: 0; font-size: 19px; }
-.sl-tour p { margin: 0; font-size: 13.5px; }
-.tour-h { display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 11px; color: var(--muted); }
-.tour-h .x { background: none; border: 0; font-size: 20px; line-height: 1; cursor: pointer; color: var(--muted); padding: 0 4px; }
-.tour-nav { display: flex; justify-content: space-between; margin-top: 4px; }
-.tour-hi { outline: 3px solid var(--accent); outline-offset: 3px; }
-@media (max-width: 640px) {
-  .sl-tour { right: 8px; left: 8px; bottom: 8px; width: auto; }
-  .sl-months { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-}
+@media (max-width: 640px) { .sl-months { grid-template-columns: repeat(4, minmax(0, 1fr)); } .sl-aarcard tbody th { min-width: 170px; } }
 
 /* Phones and tablets: orders right under the map, then the chart and the log. */
 @media (max-width: 1020px) {
   .stage { display: contents; }
-  .sl-howto { order: 0; } .sl-status { order: 1; } #box { order: 2; } .sl-legend { order: 3; }
+  .sl-status { order: 1; } #box { order: 2; } .sl-legend { order: 3; }
   #panel { order: 4; } .sl-race { order: 5; } .sl-logcard { order: 6; }
   .layout { gap: 10px; }
 }
@@ -196,8 +182,7 @@ svg.sl-small .t-sea { font-size: 18px; }
 :root[data-skin="trailer"] .sl-turn summary { font-style: italic; font-weight: 500; }
 :root[data-skin="trailer"] .sl-turn li { background: color-mix(in srgb, var(--bg) 70%, transparent); }
 :root[data-skin="trailer"] .sl-prompt { background: color-mix(in srgb, var(--accent) 8%, var(--panel)); }
-:root[data-skin="trailer"] .sl-howto h2, :root[data-skin="trailer"] .sl-tour h3, :root[data-skin="trailer"] .below h3 { font-family: var(--display); font-style: italic; font-weight: 500; }
-:root[data-skin="trailer"] .sl-tour { box-shadow: 0 18px 40px -20px #000; }
+:root[data-skin="trailer"] .below h3 { font-family: var(--display); font-style: italic; font-weight: 500; }
 :root[data-skin="trailer"] .sl-mcbar { box-shadow: 0 0 18px -8px rgba(240, 169, 59, .5); }
 :root[data-skin="trailer"] .sl-res select { background: var(--chip); }
 :root[data-skin="trailer"] .sl-aarcard tbody th { font-family: var(--body); letter-spacing: 0; }

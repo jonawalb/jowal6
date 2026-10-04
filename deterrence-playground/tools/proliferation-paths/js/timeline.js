@@ -68,7 +68,7 @@ export function createTimeline(host, { onYear, onSelect }) {
       const s = STATES.find(k => k.id === id);
       const top = m.t + rowH * i + 4;
       if (i % 2 === 0) mk('rect', { class: 'band', x: 0, y: top - 4, width: W, height: rowH }, svg);
-      const lab = mk('g', { class: 'lab' + (state.sel === id ? ' on' : ''), tabindex: 0, role: 'button', 'aria-label': `Open the card for ${s.name}` }, svg);
+      const lab = mk('g', { class: 'lab' + (state.sel === id ? ' on' : ''), 'data-id': id, tabindex: 0, role: 'button', 'aria-label': `Open the card for ${s.name}` }, svg);
       mk('text', { x: m.l - 8, y: top + lanes.length * laneH / 2 + 4, 'text-anchor': 'end' }, lab).textContent = narrow ? s.short : s.name;
       lab.addEventListener('click', () => onSelect(id));
       lab.addEventListener('keydown', k => { if (k.key === 'Enter' || k.key === ' ') { k.preventDefault(); onSelect(id); } });

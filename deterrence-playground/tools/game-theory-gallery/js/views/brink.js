@@ -1,6 +1,6 @@
 // Brinkmanship view: Chicken, Powell's complete-information escalation ladder, and the crisis equilibrium.
 import { BR_DEFAULTS, solveChicken, solveLadder, solveCrisis, pdCurve } from '../models/brink.js';
-import { el, frame, axes, line, dragPlot, legend, figCard, f2, pct, clamp, stext } from '../ui.js';
+import { el, frame, axes, line, dragPlot, legend, figCard, f2, pct, clamp, stext, keepIn } from '../ui.js';
 import { mark } from './common.js';
 
 const R = (key, label, math, min, max, step, help) => ({ type: 'range', key, label, math, min, max, step, help });
@@ -138,7 +138,7 @@ export default {
             const y = F.m.t + (n - 1 - i) * 30 + 4, w = (F.iw / 2 - 20) * s.risk;
             const x = s.mover === 'II' ? mid - 10 - w : mid + 10;
             el('rect', { x, y, width: Math.max(2, w), height: 22, class: 'vbar ' + (s.ok ? (s.mover === 'I' ? 'c1' : 'c4') : 'bad') }, F.g);
-            el('text', { x: s.mover === 'II' ? x - 6 : x + w + 6, y: y + 15, 'text-anchor': s.mover === 'II' ? 'end' : 'start', class: 'barv' }, F.g, `${s.k}f = ${f2(s.risk)}${s.ok ? '' : ' refused'}`);
+            keepIn(el('text', { x: s.mover === 'II' ? x - 6 : x + w + 6, y: y + 15, 'text-anchor': s.mover === 'II' ? 'end' : 'start', class: 'barv' }, F.g, `${s.k}f = ${f2(s.risk)}${s.ok ? '' : ' refused'}`), F.box.W);
           });
           el('line', { x1: mid, x2: mid, y1: F.m.t, y2: H - F.m.b, class: 'axisl' }, F.g);
           el('text', { x: mid - 12, y: H - 12, 'text-anchor': 'end', class: 'ax-t' }, F.g, 'II’s bids (odd)');

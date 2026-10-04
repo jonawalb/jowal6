@@ -41,7 +41,8 @@ export function summarize(from, to) {
 function delta(cur, prev) {
   if (prev == null || cur == null || prev === 0) return '';
   const p = (cur - prev) / prev * 100;
-  return `<span class="delta ${p >= 0 ? 'up' : 'down'}">${p >= 0 ? '▲' : '▼'} ${Math.abs(p).toFixed(0)}%</span>`;
+  if (Math.abs(p) < 0.5) return '<span class="delta">■ 0%</span>';
+  return `<span class="delta ${p > 0 ? 'up' : 'down'}">${p > 0 ? '▲' : '▼'} ${Math.abs(p).toFixed(0)}%</span>`;
 }
 
 /** Exercises whose dates fall inside the window, oldest first. */
@@ -75,7 +76,7 @@ export function renderStats(s) {
     const xs = exercisesIn(s.from, s.to);
     return xs.length ? `<div class="xlinks"><span class="fine">Major exercises in this window:</span> ${xs.slice(-4).map(x => linkHtml(exerciseLink(x.id), `Replay ${x.short}`)).join(' ')}</div>` : '';
   })()}
-  <p class="fine">ADIZ entries run from August 2022 and PLAN and official-ship counts from August 2024, checked against Taiwan MND reports. Days MND contradicts are left blank.</p>`;
+  <p class="fine">ADIZ entries run from August 2022 and PLAN and official-ship counts from August 2024, checked against Taiwan MND reports. Days MND contradicts are left blank. CCG incursions here start ${nice(TSM.ccg[0][0])}, so longer windows undercount them; the <a href="../ccg-grayzone/">CCG Gray-Zone Map</a> has the full tracker.</p>`;
 }
 
 /** Draw the full-range timeline once; returns { setWindow } to move the selection. */
@@ -127,6 +128,22 @@ export function drawTimeline(svg, from, to, onBrush, onHover) {
   };
   svg.onpointerup = e => { if (start) { const d = toDate(e); const a = start < d ? start : d, b = start < d ? d : start; onBrush(a === b ? addDays(a, -14) : a, a === b ? addDays(a, 14) : b, false, a === b ? a : null); } start = null; };
   svg.onpointerleave = () => { hover.style.display = 'none'; onHover(null); };
+  // Keyboard: arrows step a day (Page Up/Down a month), Enter keeps that day with a four-week window.
+  let kd = null;
+  const lastDay = iso(tEnd);
+  svg.setAttribute('tabindex', '0');
+  svg.onkeydown = e => {
+    const step = { ArrowRight: 1, ArrowLeft: -1, PageUp: 30, PageDown: -30, Home: -1e5, End: 1e5 }[e.key];
+    if (step != null) {
+      e.preventDefault();
+      kd = kd ? addDays(kd, step) : lastDay;
+      if (kd < iso(t0)) kd = iso(t0);
+      if (kd > lastDay) kd = lastDay;
+      hover.style.display = ''; hover.setAttribute('x1', X(kd)); hover.setAttribute('x2', X(kd));
+      onHover(byDate.get(kd) || [kd], TSM.ccg.filter(c => c[0] === kd), TSM.transits.filter(t => t[0] === kd));
+    } else if (e.key === 'Enter' && kd) { e.preventDefault(); onBrush(addDays(kd, -14), addDays(kd, 14), false, kd); }
+  };
+  svg.onblur = () => { hover.style.display = 'none'; };
   return { setWindow };
 }
 

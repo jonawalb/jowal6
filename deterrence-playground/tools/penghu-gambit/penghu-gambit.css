@@ -1,4 +1,6 @@
 /* Penghu Gambit. Built on shared/css/tsm.css tokens only. */
+.pg-learn { max-width: 1400px; margin: 12px auto 0; }
+.pg-learn .learn-banner { margin: 0; }
 .pg-actions { max-width: 1400px; margin: 12px auto 0; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; }
 .pg-actions > div { display: flex; gap: 8px; flex-wrap: wrap; }
 .pg-flag { margin: 0; font-size: 13px; padding: 5px 10px; border: 1px dashed var(--warn); border-radius: 4px; color: var(--ink); }
@@ -146,14 +148,6 @@ details[open] summary { margin-bottom: 8px; }
 .as-i input { width: 64px; font: 12px var(--mono); padding: 3px 4px; border: 1px solid var(--rule); border-radius: 3px; background: var(--bg); color: var(--ink); }
 .as-i small { color: var(--muted); font-size: 10.5px; }
 
-/* Tour card */
-.tour { position: absolute; left: 12px; bottom: 12px; width: min(380px, calc(100% - 24px)); background: var(--panel); border: 1px solid var(--rule); border-top: 3px solid var(--accent); border-radius: 4px; padding: 12px 14px; box-shadow: 0 8px 28px rgba(0, 0, 0, .18); display: flex; flex-direction: column; gap: 6px; z-index: 30; }
-.tour[hidden] { display: none; }
-.tour-h { display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 11px; color: var(--muted); }
-.tour .x { background: none; border: 0; font-size: 20px; line-height: 1; cursor: pointer; color: var(--muted); padding: 0 4px; }
-.tour h3 { margin: 0; font-size: 20px; line-height: 1.15; }
-.tour p { margin: 0; font-size: 13px; }
-.tour-nav { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
 
 /* Below */
 .below h2.mt { margin-top: 22px; }
@@ -171,7 +165,6 @@ details[open] summary { margin-bottom: 8px; }
 @media (max-width: 1020px) { .status-mini { display: flex; } }
 @media (max-width: 900px) { .turncols, .mc-cols { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 600px) {
-  .tour { position: static; width: auto; margin: 8px; box-shadow: none; }
   .playbar { grid-template-columns: 1fr; }
   .choices.three { grid-template-columns: 1fr; }
   .pg-zone { display: none; }
@@ -249,7 +242,7 @@ details[open] summary { margin-bottom: 8px; }
 :root[data-skin="trailer"] .cb-b { box-shadow: 0 0 10px -3px rgba(255, 90, 78, .7); }
 :root[data-skin="trailer"] .step { color: #0b1712; }
 :root[data-skin="trailer"] .pg-tabs button[aria-selected="true"] { color: #111; }
-:root[data-skin="trailer"] .tour, :root[data-skin="trailer"] .layout[data-tab="play"] .playbar { box-shadow: 0 18px 40px -20px #000; }
+:root[data-skin="trailer"] .layout[data-tab="play"] .playbar { box-shadow: 0 18px 40px -20px #000; }
 :root[data-skin="trailer"] .as-i input { background: var(--chip); }
 :root[data-skin="trailer"] .history h3 { font-family: var(--display); font-style: italic; font-weight: 500; }
 @media (max-width: 600px) {

@@ -107,7 +107,8 @@ export function drawDomain(svg, S, R, onHover) {
     el('circle', { cx: X(best.xy[0]), cy: Y(best.xy[1]), r: 5, class: 'hov hov-' + best.side }, hot);
     onHover(best);
   };
-  svg.onpointerleave = () => { hot.replaceChildren(); onHover(null); };
+  svg.onpointerdown = svg.onpointermove;  // a tap reads the nearest point too
+  svg.onpointerleave = e => { if (e.pointerType === 'touch') return; hot.replaceChildren(); onHover(null); };  // keep a tapped reading
 }
 
 /** Probability domain (Fig. 12): box A, where both sides see an advantage in waiting, has area = index. */

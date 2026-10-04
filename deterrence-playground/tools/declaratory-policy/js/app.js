@@ -67,6 +67,8 @@ const timeline = createTimeline($('timeline'), {
 });
 
 function render() {
+  // Matrix cells and timeline markers are rebuilt on every render; keep keyboard focus on the same one.
+  const act = document.activeElement, keepSel = act?.dataset?.sel, keepEv = act?.dataset?.ev;
   const yearMoved = mv.asOf !== null && mv.asOf !== state.asOf;
   const mKey = b => b.dataset.sel, cKey = (e, i) => i;
   const mBefore = cellText($('matrix'), '[data-sel]', mKey), cBefore = cellText($('compare'), '.dp-cmp-r > div', cKey);
@@ -96,6 +98,8 @@ function render() {
   const cmpKey = state.cmp.join() + '|' + [...state.els].join();
   if (mv.cmp !== null && mv.cmp !== cmpKey) $('compare').querySelectorAll('.dp-cmp-h, .dp-cmp-r').forEach((r, i) => rise(r, { delay: i * 40 }));
   else if (yearMoved) flashChanged($('compare'), '.dp-cmp-r > div', cKey, cBefore);
+  if (keepSel) $('matrix').querySelector(`[data-sel="${keepSel}"]`)?.focus({ preventScroll: true });
+  if (keepEv) $('timeline').querySelector(`[data-ev="${keepEv}"]`)?.focus({ preventScroll: true });
   Object.assign(mv, { asOf: state.asOf, sel: state.sel, ev: state.ev, cmp: cmpKey, st: stKey });
   writeHash();
 }
@@ -128,7 +132,7 @@ $('copy-link').addEventListener('click', async e => {
   setTimeout(() => { e.target.textContent = 'Copy link'; }, 1800);
 });
 
-const tour = createTour(s => {
+const tour = createTour(() => $('start-tour').focus({ preventScroll: true }), s => {
   Object.assign(state, fresh(), s, { states: new Set(s.states || ALL_STATES), els: new Set(s.els || ALL_ELS), cmp: s.cmp || [...DEF.cmp] });
   render();
   $(s.scroll || 'matrix-card').scrollIntoView({ block: 'start', behavior: reduceMotion() ? 'auto' : 'smooth' });

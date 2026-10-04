@@ -59,6 +59,7 @@ function update() {
   renderPanel(S);
   slider.value = idx(S.date);
   document.getElementById('rs-day').textContent = niceDate(S.date);
+  document.getElementById('rs-chart-t').textContent = `Daily transits by chokepoint · ${METRICS[S.metric].unit}${S.smooth > 1 ? `, ${S.smooth}-day average` : ''}`;
   document.getElementById('rs-day-s').textContent = S.smooth > 1 ? `${S.smooth}-day average, ${METRICS[S.metric].label.toLowerCase()}` : `${METRICS[S.metric].label}, daily`;
   const h = new URLSearchParams();
   if (S.metric !== 'total') h.set('m', S.metric);

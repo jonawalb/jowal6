@@ -4,7 +4,7 @@ import { PRESETS } from '../data/presets.js';
 const pct = v => Math.round(v * 100) + '%';
 export const FIELDS = [
   { k: 'nf', n: 'Fixed launchers', min: 0, max: 1500, step: 10, fmt: v => Math.round(v).toLocaleString(), help: 'Silo-based or otherwise fixed. Targetable unless launched under attack.' },
-  { k: 'mf', n: 'Warheads per fixed launcher', min: 1, max: 12, step: 1, fmt: v => String(v), help: 'More than one means a MIRVed launcher.' },
+  { k: 'mf', n: 'Warheads per fixed launcher', min: 1, max: 12, step: 1, fmt: v => String(v), help: 'More than one means a MIRVed launcher: several warheads on one missile.' },
   { k: 'ns', n: 'Survivable launchers', min: 0, max: 200, step: 1, fmt: v => Math.round(v).toLocaleString(), help: 'Submarines, mobile missiles or bombers: untargetable only while on alert.' },
   { k: 'ms', n: 'Warheads per survivable launcher', min: 1, max: 24, step: 1, fmt: v => String(v) },
   { k: 'alert', n: 'Day-to-day alert rate', min: 0, max: 1, step: 0.05, fmt: pct, help: 'Share of survivable launchers at sea, dispersed or on strip alert.', notional: true },

@@ -8,7 +8,8 @@ import { createMap } from './map.js';
 import { turnLogHtml, crtHtml, readoutHtml, mcHtml, outcomeText } from './views.js';
 import { escalationHtml, oilHtml } from './tracks.js';
 import { writeHash, readHash } from './hash.js';
-import { createTour, DEFAULT } from './tour.js';
+import { DEFAULT, LESSON_SEED, lessonSteps, SHEET } from './tour.js';
+import { learnButton, runLesson } from '../../../shared/js/learn.js';
 import { addExportBar } from '../../../shared/js/export.js';
 import { turnFx, mcFx, press, dieHtml } from './fx.js';
 
@@ -21,7 +22,6 @@ let game, anim = null, mcTimer = null, shownView = null, shownGame = null;
 
 $('panel').innerHTML = panelHtml();
 const map = createMap($('map'), $('tip'), { onSector: k => { cfg.us.sector = k; changed(); } });
-const tour = createTour($('box'), s => { cfg = copyCfg(s); changed(s.view || 0); });
 
 // ---- Controls --------------------------------------------------------------------------
 const syncs = [];
@@ -98,7 +98,6 @@ $('prev').onclick = () => { stop(); setView(view - 1); };
 $('next').onclick = () => { stop(); setView(view + 1); press($('next')); };
 $('scrub').oninput = e => { stop(); setView(+e.target.value); };
 $('playall').onclick = () => { playAll(); press($('playall')); };
-$('start-tour').onclick = () => { showTab('play'); tour.start(); };
 document.addEventListener('click', e => {
   if (!e.target.closest('.open-assume')) return;
   e.preventDefault(); showTab('setup'); $('assume').open = true; $('assume').scrollIntoView({ behavior: reduced.matches ? 'auto' : 'smooth' });
@@ -207,6 +206,18 @@ $('param-table').innerHTML = `<thead><tr><th>Parameter</th><th>Default</th><th>B
 reduced.addEventListener?.('change', stop);
 
 changed(view);
+
+// "New here? Learn to play": the banner sits at the top of the game, above the setup. The lesson resets to the
+// default setup and dice so every player sees the same first game.
+const banner = learnButton($('learn'), {
+  slug: 'kharg-island', minutes: 6, sheet: SHEET,
+  onStart: () => {
+    cfg = copyCfg(DEFAULT); P = { ...PROB_DEF }; seed = LESSON_SEED;
+    $('iran-d').open = false; $('assume').open = false;
+    changed(0);
+    runLesson(lessonSteps({ showTab }), { slug: 'kharg-island', title: 'Learn to play', onExit: () => banner.refresh() });
+  },
+});
 addExportBar(document.querySelector('.playbar'), {
   target: () => $('map'),
   title: () => `Kharg Island: ${$('turn-t').textContent}`,

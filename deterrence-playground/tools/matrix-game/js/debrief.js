@@ -67,7 +67,7 @@ export function renderDebrief(el, g) {
     <h2>${g.halted ? 'The exercise stopped: escalation reached 10' : 'Six turns played'}</h2>
     <div class="mg-debrief-top">
       <div class="status" data-s="${verdict[0]}"><b>${verdict[1]}</b><span>Goal score for ${esc(ACTORS[g.actor].name)}: <b class="num">${s.toFixed(1)}</b>
-        <span class="notional">notional</span>. Random play as ${esc(ACTORS[g.actor].name)} scores a median of <b class="num">${bm.med.toFixed(1)}</b> (middle half ${bm.q1.toFixed(1)} to ${bm.q3.toFixed(1)}) over 200 simulated games. Board change from the start: ${deltaText(Object.fromEntries(TRACKS.map(t => [t.k, g.board[t.k] - START[t.k]]).filter(x => x[1])))}.</span></div>
+        <span class="notional">notional</span>. Above 0 means the board moved toward ${esc(ACTORS[g.actor].name)}'s aims overall; below 0, away from them. Random play as ${esc(ACTORS[g.actor].name)} scores a median of <b class="num">${bm.med.toFixed(1)}</b> over 200 simulated games, and half of those games land between ${bm.q1.toFixed(1)} and ${bm.q3.toFixed(1)}. Board change from the start: ${deltaText(Object.fromEntries(TRACKS.map(t => [t.k, g.board[t.k] - START[t.k]]).filter(x => x[1])))}.</span></div>
       <div><p class="eyebrow">What the arguments showed</p><ul class="mg-lessons">${lessons.map(l => `<li>${esc(l)}</li>`).join('')}</ul></div>
     </div>
     ${topStrong.length ? `<p class="eyebrow">Your reasons that carried weight</p><ul class="mg-lessons">${topStrong.map(([t, n]) => `<li>“${esc(t)}”${n > 1 ? ` (strong ${n} times)` : ''}</li>`).join('')}</ul>` : ''}

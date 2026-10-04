@@ -4,7 +4,7 @@ import { TIMELINE, CHECKED } from '../data/timeline.js';
 import { DEFAULTS, run } from './model.js';
 import { drawStrip, drawChart } from './views.js';
 import { panelHTML, renderPanel, wirePanel, pct } from './panel.js';
-import { createTour } from './tour.js';
+import { mountLesson } from './lesson.js';
 import { afterRender, press } from './fx.js';
 
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -86,8 +86,7 @@ document.getElementById('hm-copy').addEventListener('click', async e => {
   catch { e.target.textContent = 'Copy the address bar'; }
   setTimeout(() => { e.target.textContent = 'Copy link'; }, 1800);
 });
-const tour = createTour(st => { stop(); S = { ...DEFAULTS, ...st.set }; day = st.day === 'end' ? (run(S).finish ?? 365) : st.day; render(); });
-document.getElementById('hm-tour').addEventListener('click', () => tour.start());
+mountLesson(document.querySelector('.stage'), { reset: () => { stop(); S = { ...DEFAULTS }; day = 0; render(); } });
 
 // Timeline card and benchmarks (static).
 const a = (u, t) => `<a href="${u}" target="_blank" rel="noopener">${t}</a>`;

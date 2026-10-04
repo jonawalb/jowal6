@@ -45,6 +45,7 @@
       </div>
       <div class="chart-f">
         <p class="fine">Shaded from 10 Aug 2026: the Air Force stopped publishing counts for some missile types (dataset note). Those rows are left out, not counted as zero.</p>
+        <a class="to-detail fine" id="to-detail" href="#detail" hidden>Details for the selected period are below the charts &darr;</a>
         <div id="tl-export"></div>
       </div>
     </div>
@@ -68,7 +69,7 @@
       </div>
       <div class="card chartcard" id="clock-card">
         <p class="eyebrow">When attacks begin</p>
-        <p class="fine">Weapons launched, by weekday and start hour given in the report</p>
+        <p class="fine">Weapons launched, by weekday and start hour given in the report. Darker cells mean more weapons.</p>
         <div id="clock"></div>
         <p class="fine" id="clock-note"></p>
       </div>
@@ -84,7 +85,8 @@
     <div class="sec detail" id="detail" aria-live="polite"></div>
     <div class="sec">
       <p class="eyebrow">Weapon groups</p>
-      <p class="fine">The Air Force names weapons in its posts. The tool sorts them into seven groups. Hover a chip above for what each group holds.</p>
+      <p class="fine">The Air Force names weapons in its posts. The tool sorts them into seven groups:</p>
+      <dl class="groups-key" id="groups-key"></dl>
     </div>
   </aside>
 </main>

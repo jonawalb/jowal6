@@ -7,6 +7,7 @@
 .nt-chart svg { display: block; width: 100%; height: auto; touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: crosshair; }
 .nt-chart .grid line { stroke: var(--rule); stroke-width: 1; }
 .nt-chart .bar { stroke: none; }
+.nt-chart .empty { fill: var(--muted); font-size: 13px; paint-order: stroke; stroke: var(--panel); stroke-width: 5px; stroke-linejoin: round; }
 .nt-chart .after { fill: var(--panel); opacity: .55; pointer-events: none; }
 .nt-chart .cursor { stroke: var(--ink); stroke-width: 1.2; }
 .nt-chart .cursor-lab { font: 600 12px var(--mono); fill: var(--ink); paint-order: stroke; stroke: var(--panel); stroke-width: 3px; }

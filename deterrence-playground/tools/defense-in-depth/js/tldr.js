@@ -69,8 +69,9 @@ const CLAUSE = {
   },
   overrun: (g, e, me) => (mine(e, me) ? `your ${unitLabel(g, e.unit, me)} was overrun at ${place(g, e.sec)}` : `you overran ${unitLabel(g, e.unit, me)} at ${place(g, e.sec)}`),
   counter: (g, e, me) => {
-    if (mine(e, me)) return e.won ? `your ${e.how} at ${place(g, e.sec)} went in and succeeded` : `your ${e.how} at ${place(g, e.sec)} stalled`;
-    return e.won ? `an enemy ${e.how} threw you out of ${place(g, e.sec)}` : `you beat off an enemy ${e.how} at ${place(g, e.sec)}`;
+    const how = CA_WORD[e.how] || e.how;
+    if (mine(e, me)) return e.won ? `your ${how} at ${place(g, e.sec)} went in and succeeded` : `your ${how} at ${place(g, e.sec)} stalled`;
+    return e.won ? `an enemy ${how} threw you out of ${place(g, e.sec)}` : `you beat off an enemy ${how} at ${place(g, e.sec)}`;
   },
   lift: (g, e, me) => {
     const p = place(g, e.sec);
@@ -79,11 +80,13 @@ const CLAUSE = {
   },
   enfilade: (g, e, me) => (mine(e, me) ? `your ${unitLabel(g, e.unit, me)} caught attackers along its lane at ${place(g, e.sec)}` : `an enemy MG lane caught your men from the flank at ${place(g, e.sec)}`),
   detect: (g, e, me) => (mine(e, me) ? `you spotted infiltrators at ${place(g, e.sec)}` : `your infiltrators were spotted at ${place(g, e.sec)}`),
-  stall: (g, e, me) => (mine(e, me) ? `your ${e.side === 'def' ? 'counterstroke' : 'assault'} stalled at ${place(g, e.sec)}` : `you stopped an assault at ${place(g, e.sec)}`),
+  stall: (g, e, me) => (mine(e, me) ? `your ${e.side === 'def' ? 'counterattack' : 'assault'} stalled at ${place(g, e.sec)}` : `you stopped an assault at ${place(g, e.sec)}`),
   located: (g, e, me) => (mine(e, me) ? 'you located an enemy battery' : `the enemy located your ${unitLabel(g, e.unit, me)}`),
   laneLost: (g, e, me) => (mine(e, me) ? `your ${unitLabel(g, e.unit, me)} moved and lost its lane: lay it again` : ''),
 };
 const ORDER = Object.keys(CLAUSE);
+// 2026-10-04: the names on the order buttons, not the jargon (a riposte is the "Local counterattack" button).
+const CA_WORD = { riposte: 'local counterattack', counterstroke: 'deliberate counterattack' };
 
 /** Events of hour t that `me` could see and that make news, highest priority first. */
 export function newsOf(g, me, t) {
@@ -92,6 +95,9 @@ export function newsOf(g, me, t) {
     .filter(e => e.kind !== 'lift' || ['early', 'gap', 'late'].includes(e.case))
     .filter(e => e.kind !== 'enfilade' || e.loss == null || e.loss >= BIG_ENFILADE)
     .filter(e => e.kind !== 'objective' || e.held !== e.prevHeld)
+    // 2026-10-04 fix: a failed counterattack also logs a stall in the same sector; say it once (it read
+    // "your riposte at C3 stalled; your counterstroke stalled at C3").
+    .filter(e => !(e.kind === 'stall' && e.side === 'def' && (g.events || []).some(x => x.kind === 'counter' && x.t === e.t && x.sec === e.sec)))
     .sort((a, b) => ORDER.indexOf(a.kind) - ORDER.indexOf(b.kind));
 }
 

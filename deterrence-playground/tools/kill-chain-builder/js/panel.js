@@ -16,6 +16,7 @@ export function createPanel(root, api) {
     <div class="choices" id="kc-presets">${Object.entries(PRESETS).map(([k, p]) =>
       `<button type="button" data-p="${k}" title="${escapeHtml(p.blurb)}">${p.name}</button>`).join('')}
       <button type="button" data-p="blank">Blank board</button></div>
+    <p class="fine" id="kc-pnote"></p>
     <div class="btnrow kc-reset">
       <button type="button" class="btn" id="kc-reset" aria-expanded="false" aria-controls="kc-reset-opts">Reset all</button>
       <span id="kc-reset-opts" hidden>
@@ -81,6 +82,7 @@ export function createPanel(root, api) {
   function render(r, spof, r0) {
     const sc = S.sc, tgt = TARGETS[sc.target];
     root.querySelectorAll('[data-p]').forEach(b => b.setAttribute('aria-pressed', b.dataset.p === S.preset));
+    $('#kc-pnote').textContent = PRESETS[S.preset] ? PRESETS[S.preset].blurb : S.preset === 'blank' ? 'An empty board. Add nodes from the palette above the board.' : 'Your own chain. Pick a preset to compare.';
     root.querySelectorAll('[data-t]').forEach(b => b.setAttribute('aria-pressed', b.dataset.t === sc.target));
     $('#kc-tnote').textContent = tgt.note + (Number.isFinite(tgt.dwell) ? ` It stays located for about ${tgt.dwell} minutes (notional).` : '');
     $('#kc-d').value = sc.D; $('#kc-d-o').textContent = `${fmt(sc.D)} km`;

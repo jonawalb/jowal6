@@ -287,18 +287,6 @@ body.fc-armed .fc-sec:hover rect { fill: color-mix(in srgb, var(--c3) 14%, trans
 .fc-more .tablewrap { margin: 8px 0; }
 .fc-quotes { font-size: 13.5px; padding-left: 1.1em; margin: 0; display: flex; flex-direction: column; gap: 8px; }
 
-/* Walkthrough */
-.fc-tour { position: fixed; z-index: 50; right: 16px; bottom: 16px; transition: left .2s, top .2s; width: min(380px, calc(100vw - 32px)); background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-top: 4px solid var(--accent); border-radius: 4px; padding: 12px 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, .25); }
-.fc-tour .tour-h { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--muted); }
-.fc-tour .x { border: 0; background: transparent; font-size: 20px; cursor: pointer; color: var(--muted); padding: 0 4px; }
-.fc-tour h3 { margin: 4px 0 6px; font-size: 18px; }
-.fc-tour p { margin: 0 0 10px; font-size: 13.5px; line-height: 1.45; }
-.fc-tour .tour-nav { display: flex; justify-content: space-between; }
-.fc-hl { outline: 3px solid var(--accent) !important; outline-offset: 3px; border-radius: 3px; }
-#map .fc-hl rect { stroke: var(--accent); stroke-width: 4; fill: color-mix(in srgb, var(--accent) 14%, transparent); }
-#map .fc-hl { outline: none !important; }
-.fc-tour .tour-do { font-weight: 600; border-left: 3px solid var(--accent); padding: 4px 8px; background: color-mix(in srgb, var(--accent) 10%, transparent); }
-.fc-tour .tour-ok { color: var(--good); font-weight: 600; }
 
 /* Your artillery, fixed on the map (bottom-right, behind your side). */
 .fc-bat { cursor: pointer; outline: none; }
@@ -345,16 +333,9 @@ body.fc-armed .fc-sec:hover rect { fill: color-mix(in srgb, var(--c3) 14%, trans
 :root[data-skin="trailer"] .fc-od input[type="range"] { accent-color: var(--accent); }
 :root[data-skin="trailer"] .fc-fogbar i { background: var(--good); box-shadow: 0 0 10px -2px var(--good); }
 :root[data-skin="trailer"] .fc-fogn b { font: 600 16px var(--mono); }
-:root[data-skin="trailer"] .fc-tour { box-shadow: 0 20px 50px -20px #000, var(--glow); }
 :root[data-skin="trailer"] .fc-fh:first-child li { background: color-mix(in srgb, var(--accent) 6%, transparent); }
 :root[data-skin="trailer"] #aar-arty dd { white-space: nowrap; }
 @media (max-width: 640px) { :root[data-skin="trailer"] .fc-name { font-size: 16px; letter-spacing: .02em; } :root[data-skin="trailer"] .fc-obj .fc-name { font-size: 21px; } :root[data-skin="trailer"] .fc-zone { font-size: 16px; } :root[data-skin="trailer"] .fc-ulab { font-size: 12.5px; } }
-@media (max-width: 640px) {
-  .fc-tour { padding: 8px 10px; }
-  .fc-tour h3 { font-size: 15px; margin: 2px 0 4px; }
-  .fc-tour p { font-size: 13px; margin-bottom: 6px; }
-  .fc-tour .tour-do ~ p { display: none; }   /* action steps: just the action, so the card stays small */
-}
 
 /* The decoy note at the start of a game: Red's how-to, or Blue's warning. */
 .fc-decoy { position: relative; margin: 0 0 8px; padding: 8px 36px 8px 10px; font-size: 13px; line-height: 1.4; border: 1px solid var(--warn); border-left-width: 5px; border-radius: 3px; background: color-mix(in srgb, var(--warn) 10%, var(--panel)); }

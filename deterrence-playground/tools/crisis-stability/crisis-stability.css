@@ -92,15 +92,6 @@
 .lit p { font-size: 13.5px; }
 .chartcard .tsm-export { margin-top: 4px; }
 
-/* Walkthrough card */
-.tour { background: var(--panel); border: 1px solid var(--rule); border-top: 3px solid var(--accent); border-radius: 4px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
-.tour[hidden] { display: none; }
-.tour-h { display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 11px; color: var(--muted); }
-.tour .x { background: none; border: 0; font-size: 20px; line-height: 1; cursor: pointer; color: var(--muted); padding: 0 4px; }
-.tour h3 { margin: 0; font-family: var(--display); font-size: 20px; line-height: 1.15; }
-.tour p { margin: 0; font-size: 13.5px; max-width: 80ch; }
-.tour-nav { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
-
 @media (max-width: 640px) {
   .headcard { grid-template-columns: minmax(0, 1fr); }
   .head-l { flex-direction: row; justify-content: center; gap: 12px; }
@@ -128,7 +119,7 @@
 :root[data-skin="trailer"] .chart .cur { filter: drop-shadow(0 0 4px rgba(240, 169, 59, .7)); }
 :root[data-skin="trailer"] .pd-a { fill: rgba(111, 191, 139, .28); }
 :root[data-skin="trailer"] .pd-all { fill: rgba(232, 96, 74, .1); }
-:root[data-skin="trailer"] .tour h3, :root[data-skin="trailer"] .status b { font-family: var(--display); font-style: italic; font-weight: 500; }
+:root[data-skin="trailer"] .status b { font-family: var(--display); font-style: italic; font-weight: 500; }
 :root[data-skin="trailer"] .costwrap th, :root[data-skin="trailer"] .readout dd { letter-spacing: .02em; }
 :root[data-skin="trailer"] .tabs .ta[aria-pressed="true"], :root[data-skin="trailer"] .tabs .tb[aria-pressed="true"] { box-shadow: 0 0 16px -6px var(--sa); }
 :root[data-skin="trailer"] .choices button[aria-pressed="true"] { box-shadow: var(--glow); }

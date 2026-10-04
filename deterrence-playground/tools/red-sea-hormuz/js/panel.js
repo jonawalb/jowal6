@@ -74,7 +74,7 @@ export function renderPanel(S) {
   // Event list
   const list = document.getElementById('rs-evlist');
   list.innerHTML = EVENTS.filter(e => S.cats.has(e.cat)).map(e =>
-    `<li><button type="button" data-ev="${e.id}" aria-pressed="${e.id === S.ev}"><span class="dot" style="background:${catColor(e.cat)}"></span><span class="dd">${niceDate(e.date)}</span><span>${escapeHtml(e.title)}</span></button></li>`).join('');
+    `<li><button type="button" data-ev="${e.id}" aria-pressed="${e.id === S.ev}"><span class="dot" style="background:${catColor(e.cat)}"></span><span class="dd">${niceDate(e.date)}</span><span>${escapeHtml(e.title)}</span></button></li>`).join('') || '<li class="fine">No events shown. Switch on a category above.</li>';
   const on = list.querySelector('[aria-pressed="true"]');
   if (on) list.scrollTop = Math.max(0, on.offsetTop - list.clientHeight / 2);
 }

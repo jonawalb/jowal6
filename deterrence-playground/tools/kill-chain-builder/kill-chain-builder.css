@@ -108,13 +108,6 @@
 
 /* Walkthrough */
 .stage { position: relative; }
-.tour { position: relative; background: var(--panel); border: 1px solid var(--rule); border-top: 3px solid var(--accent); border-radius: 4px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
-.tour[hidden] { display: none; }
-.tour-h { display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 11px; color: var(--muted); }
-.tour .x { background: none; border: 0; font-size: 20px; line-height: 1; cursor: pointer; color: var(--muted); padding: 0 4px; }
-.tour h3 { margin: 0; font-size: 20px; line-height: 1.15; }
-.tour p { margin: 0; font-size: 13px; }
-.tour-nav { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
 .method li { color: var(--ink); }
 
 @media (max-width: 600px) {
@@ -166,7 +159,6 @@
 :root[data-skin="trailer"] .tl-lbl, :root[data-skin="trailer"] .tick { font-size: 10.5px; }
 :root[data-skin="trailer"] .impact.in { filter: drop-shadow(0 0 5px rgba(111, 191, 139, .8)); }
 :root[data-skin="trailer"] .impact.out { filter: drop-shadow(0 0 5px rgba(232, 96, 74, .8)); }
-:root[data-skin="trailer"] .tour { background: color-mix(in srgb, var(--panel) 94%, transparent); box-shadow: 0 22px 50px -24px #000; }
 /* Reset all: the two choices open inline next to the button. */
 .kc-reset { margin-top: 8px; }
 #kc-reset-opts:not([hidden]) { display: contents; }

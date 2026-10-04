@@ -1,10 +1,10 @@
-// Kahn's Escalation Ladder: state, URL hash, panel, stepping, comparison, path chart and walkthrough.
+// Kahn's Escalation Ladder: state, URL hash, panel, stepping, comparison, path chart and the Learn-to-play lesson.
 import { RUNGS, groupOf, KAHN_SRC } from '../data/ladder.js';
 import { CRISES } from '../data/crises.js';
 import { SOURCES } from '../data/sources.js';
 import { CRITIQUES } from '../data/critiques.js';
 import { buildLadder, markLadder, pathChart } from './ladder-view.js';
-import { createTour } from './tour.js';
+import { mountLesson } from './lesson.js';
 import { CF, EXCLUDED } from '../data/counterfactuals.js';
 import { createPlay, asCrisis } from './play.js';
 import { mountEditor, DEFAULTS } from './model.js';
@@ -83,7 +83,7 @@ panel.innerHTML = `
     <select id="vs" aria-label="Crisis to compare"><option value="">No comparison</option>${CRISES.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select>
     <div class="kl-peaks" id="peaks"></div>
   </div>
-  <div class="sec" id="rungnote"><p class="fine">Click any rung to see which crises in this tool reached it.</p></div>`;
+  <div class="sec" id="rungnote"><p class="fine">Click or tap any rung to see which crises in this tool reached it.</p></div>`;
 
 buildLadder(document.getElementById('ladder'), n => { state.rung = n; render(); });
 
@@ -222,11 +222,6 @@ const used = new Set([...CRISES.flatMap(c => c.steps.flatMap(s => s.src)), ...CR
 document.getElementById('sources').innerHTML = [...used].map(id => SOURCES[id]).sort((a, b) => a.cite.localeCompare(b.cite))
   .map(s => `<li>${esc(s.cite)}${s.url ? ` <a href="${s.url}" target="_blank" rel="noopener">Link</a>` : ''}</li>`).join('');
 
-const tour = createTour(({ mc, ...p }) => {
-  play.reset(); set({ rung: 0, m: '', p: [], b: [], seed: SEED, ...p });
-  if (mc) { document.querySelector('[data-mc]')?.click(); document.querySelector('.cf-mc')?.scrollIntoView({ block: 'start' }); }
-});
-document.getElementById('start-tour').onclick = () => tour.start();
 document.getElementById('copy-link').onclick = async e => {
   try { await navigator.clipboard.writeText(location.href); e.target.textContent = 'Link copied'; }
   catch { e.target.textContent = 'Copy the address bar'; }
@@ -250,7 +245,11 @@ pick.addEventListener('click', e => {
 });
 document.getElementById('change-crisis').onclick = () => { showPicker(true); scrollTo({ top: 0 }); };
 addEventListener('hashchange', () => { if (picking && byId(new URLSearchParams(location.hash.slice(1)).get('c'))) showPicker(false); });
-document.getElementById('start-tour').addEventListener('click', () => { if (picking) showPicker(false); }, true);
+const startLesson = mountLesson(pick, {
+  state: () => state, set,
+  begin: () => { if (picking) showPicker(false); play.reset(); set({ c: 'cuba', s: 0, vs: '', rung: 0, m: '', p: [], b: [], seed: SEED }); scrollTo({ top: 0 }); },
+});
+document.getElementById('start-tour').onclick = () => startLesson();
 
 if (location.hash && !picking) readHash(); else state.s = 0;
 if (picking) showPicker(true);

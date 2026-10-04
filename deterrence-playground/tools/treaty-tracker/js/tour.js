@@ -29,7 +29,7 @@ export function createTour(apply) {
   card.className = 'tt-tour'; card.hidden = true;
   card.setAttribute('role', 'dialog'); card.setAttribute('aria-label', 'Walkthrough');
   document.body.appendChild(card);
-  const stop = () => { card.hidden = true; i = -1; };
+  const stop = () => { const had = card.contains(document.activeElement); card.hidden = true; i = -1; if (had) document.getElementById('start-tour')?.focus(); };
   const show = () => {
     const s = STEPS[i];
     apply(s.set);

@@ -7,7 +7,7 @@ export const STEPS = [
     body: 'All three datasets code South Africa acquiring in 1979. De Klerk ordered the program ended in February 1990, and the weapons were dismantled by September 1991. Bleek and Jo and Gartzke code the return to no activity in 1991; the original Singh and Way coding waited until 1994.',
     set: { year: 1985, ds: 'bleek', sel: 'ZAF' } },
   { title: 'The datasets do not agree on dates',
-    body: 'Switch to "Compare all three" and each timeline row splits into three lanes. Israel acquires in 1966 (Jo and Gartzke), 1967 (Bleek) or 1969 (Way\'s update); the original Singh and Way paper said 1972. Hatched map outlines mark states the datasets code differently in the chosen year.',
+    body: 'Switch to "Compare all three" and each timeline row splits into three lanes. Israel acquires in 1966 (Jo and Gartzke), 1967 (Bleek) or 1969 (Way\'s update); the original Singh and Way paper said 1972. Dashed map outlines mark states the datasets code differently in the chosen year.',
     set: { year: 1968, ds: 'any', sel: 'ISR' } },
   { title: 'Libya, 1970 to 2003',
     body: 'Bleek and Singh and Way both code Libya pursuing from 1970 to its December 2003 announcement that it would dismantle its weapons programs. Way keeps pursuit continuous through years when activity "slowed to a crawl". Jo and Gartzke do not code Libya at all.',
@@ -23,13 +23,13 @@ export const STEPS = [
     set: { year: 2017, ds: 'any', sel: 'IRQ', scroll: 'rec-card' } },
 ];
 
-export function createTour(apply) {
+export function createTour(apply, onClose = () => {}) {
   let i = -1;
   const card = document.createElement('div');
   card.className = 'pp-tour'; card.hidden = true;
   card.setAttribute('role', 'dialog'); card.setAttribute('aria-label', 'Walkthrough');
   document.body.appendChild(card);
-  const stop = () => { card.hidden = true; i = -1; };
+  const stop = () => { const was = !card.hidden; card.hidden = true; i = -1; if (was) onClose(); };
   const show = () => {
     const s = STEPS[i];
     apply(s.set);

@@ -1,6 +1,6 @@
 // Small SVG line charts for the after-action review. x values are already scaled to 0..1.
 const NS = 'http://www.w3.org/2000/svg';
-const W = 640, H = 230, L = 52, R = 14, T = 14, B = 34;
+const W = 640, H = 230, L = 68, R = 26, T = 14, B = 34;
 const el = (tag, attrs, parent, text) => {
   const e = document.createElementNS(NS, tag);
   for (const [k, v] of Object.entries(attrs || {})) e.setAttribute(k, v);

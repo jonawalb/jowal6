@@ -105,6 +105,7 @@ function update() {
   renderClock($('clock'), clockGrid(S), $('clock-note'));
   renderStatus(totals(S));
   renderDetail($('detail'), S, S.sel);
+  $('to-detail').hidden = !S.sel;
   animate();
   writeHash();
 }
@@ -153,5 +154,6 @@ addExportBar($('tl-export'), {
 });
 let rt = null;
 addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(update, 150); });
+$('groups-key').innerHTML = GROUPS.map(g => `<dt><i style="background:${GROUP_INFO[g].col}"></i>${GROUP_INFO[g].n}</dt><dd>${GROUP_INFO[g].d}</dd>`).join('');
 $('asof').textContent = `Data ${META.first} to ${META.last}, dataset version ${META.version} (retrieved ${META.retrieved}).`;
 update();

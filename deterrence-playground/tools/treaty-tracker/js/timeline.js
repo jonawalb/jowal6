@@ -40,7 +40,7 @@ export function createTimeline(host, { onYear, onEvent }) {
 
   function draw(state) {
     const W = Math.max(300, Math.round(host.clientWidth || 800)), narrow = W < 560;
-    const m = { l: narrow ? 74 : 104, r: 12, t: 22, b: 24 }, pw = W - m.l - m.r;
+    const m = { l: narrow ? 74 : 104, r: narrow ? 20 : 12, t: 22, b: 24 }, pw = W - m.l - m.r;
     const x = y => m.l + (y - TL0) / (TL1 + 1 - TL0) * pw;
     geo = { W, xi: px => TL0 + (px - m.l) / pw * (TL1 + 1 - TL0) };
     const evs = EVENTS.filter(e => state.kinds.has(kindOf(e.kind)) && yf(e.date) >= TL0);
@@ -61,6 +61,7 @@ export function createTimeline(host, { onYear, onEvent }) {
     });
     const H = m.t + m.b + rows.reduce((s, rw) => s + rw.h, 0) + 4;
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    const refocus = document.activeElement?.closest?.('.ev')?.dataset.id; // keep keyboard focus across the redraw
     svg.replaceChildren();
     const ax = mk('g', { class: 'tsm-axis' }, svg);
     for (let y = TL0; y <= TL1; y += narrow ? 6 : 2) {
@@ -75,7 +76,7 @@ export function createTimeline(host, { onYear, onEvent }) {
       mk('text', { class: 'rl', x: m.l - 8, y: base + 4, 'text-anchor': 'end' }, svg).textContent = T[rw.tid].short;
       rw.items.forEach(({ e, cx, lane }) => {
         const who = e.state ? stateName(e.state) : 'All parties';
-        const g = mk('g', { class: 'ev' + (state.ev === e.id ? ' on' : ''), tabindex: 0, role: 'button', 'aria-label': `${dateText(e.date)}, ${T[e.treaty].short}: ${e.title}` }, svg);
+        const g = mk('g', { class: 'ev' + (state.ev === e.id ? ' on' : ''), tabindex: 0, role: 'button', 'aria-label': `${dateText(e.date)}, ${T[e.treaty].short}: ${e.title}`, 'data-id': e.id }, svg);
         const c = mk('circle', { cx, cy: base - lane * step, r }, g);
         c.style.fill = KINDS.find(k => k.id === kindOf(e.kind)).color;
         g.addEventListener('click', () => onEvent(e.id));
@@ -87,6 +88,7 @@ export function createTimeline(host, { onYear, onEvent }) {
           tip.style.left = Math.max(0, px) + 'px'; tip.style.top = Math.max(0, ev.clientY - b.top - 8) + 'px'; tip.hidden = false;
         });
         g.addEventListener('pointerleave', () => { tip.hidden = true; });
+        if (refocus === e.id) g.focus({ preventScroll: true });
       });
       top += rw.h;
     });

@@ -104,3 +104,5 @@ code { font-family: var(--mono); font-size: 11.5px; overflow-wrap: anywhere; }
   .tour { position: static; width: auto; box-shadow: none; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
+.to-detail { display: none; }
+@media (max-width: 1020px) { .to-detail:not([hidden]) { display: block; flex-basis: 100%; } }

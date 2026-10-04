@@ -108,6 +108,7 @@ function update() {
   renderPanel(S, summary(S));
   renderMonth($('month'), S, series, i => pickDonor(i));
   const cm = $('clear-month'); if (cm) cm.onclick = () => { S.month = null; update(); };
+  $('to-month').hidden = S.month === null;
   animate();
   writeHash();
 }

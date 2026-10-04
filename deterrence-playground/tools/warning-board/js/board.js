@@ -62,7 +62,7 @@ function tile(i, s, sel, hx) {
     <div class="seg" role="radiogroup" aria-label="${esc(i.name)}">
       ${STATE_LABEL.map((l, v) => `<button type="button" role="radio" aria-checked="${s === v}" data-set="${i.id}" data-v="${v}" class="v${v}">${l}</button>`).join('')}
     </div>
-    <div class="tags"><span class="tag ex-${i.ex}">${i.ex === 'high' ? 'exercise-typical' : i.ex === 'some' ? 'some overlap' : 'rare in drills'}</span><span class="tag">lead: ${i.lead}</span>${'<span class="wdot"></span>'.repeat(i.w)}</div>
+    <div class="tags"><span class="tag ex-${i.ex}">${i.ex === 'high' ? 'exercise-typical' : i.ex === 'some' ? 'some overlap' : 'rare in drills'}</span><span class="tag">lead: ${i.lead}</span><span class="wdots" title="Weight ${i.w} of 3: how diagnostic the indicator is" aria-label="Weight ${i.w} of 3">${'<span class="wdot"></span>'.repeat(i.w)}</span></div>
   </div>`;
 }
 

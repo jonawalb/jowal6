@@ -138,6 +138,7 @@ function setup() {
   });
   $('tour').onclick = () => tour.start();
 
+  $('okey').innerHTML = OUT_ORDER.map(k => `<li><i class="sw o-${k}" aria-hidden="true"></i>${esc(OUTCOMES[k].label)}</li>`).join('');
   $('legend').innerHTML = OUT_ORDER.map(k => `<li><i class="sw o-${k}" aria-hidden="true"></i><span><b>${esc(OUTCOMES[k].label)}.</b> ${esc(OUTCOMES[k].rule)}</span></li>`).join('');
   const used = ['fb', 'ca', 'lo', 'ds', 'bb', 'ap', 'pf', 'spf', 'jfss', 'fbWeb', 'dsWeb', 'bbWeb', 'jfssWeb', 'rand'];
   $('srclist').innerHTML = used.map(k => `<li><a href="${esc(SOURCES[k].url)}" target="_blank" rel="noopener">${esc(SOURCES[k].label)}</a></li>`).join('');

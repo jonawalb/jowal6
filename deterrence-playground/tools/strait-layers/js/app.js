@@ -203,7 +203,7 @@ function renderCrossing() {
 }
 
 let timeline = null, heldDay = null;
-const TL0 = 'Hover the timeline for daily detail. Click a day to keep it here with links, or drag to select a window.';
+const TL0 = 'Hover the timeline (or focus it and use the arrow keys) for daily detail. Click a day, or press Enter, to keep it here with links; drag to select a window.';
 function renderActivity() {
   const [from, to] = S.range;
   const s = summarize(from, to);

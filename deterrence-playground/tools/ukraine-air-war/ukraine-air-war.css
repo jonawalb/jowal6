@@ -97,3 +97,9 @@ code { font-family: var(--mono); font-size: 11.5px; }
   .sv-d small { display: none; }
   .sv-m { padding-left: 24px; }
 }
+.groups-key { margin: 6px 0 0; font-size: 12.5px; }
+.groups-key dt { font-weight: 600; margin-top: 6px; display: flex; align-items: center; gap: 6px; }
+.groups-key dt i { width: 10px; height: 10px; border-radius: 2px; flex: none; }
+.groups-key dd { margin: 2px 0 0 16px; color: var(--muted); line-height: 1.4; }
+.to-detail { display: none; }
+@media (max-width: 1020px) { .to-detail:not([hidden]) { display: block; flex-basis: 100%; margin: 0; } }

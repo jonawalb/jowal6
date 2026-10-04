@@ -19,7 +19,7 @@
 <div class="fc-actions">
   <p class="fc-flag"><b>Fictional and notional.</b> The valley, units and numbers are invented for teaching. Combat is calibrated to a published planning rule.</p>
   <div><button type="button" class="btn" id="new-game">New game</button>
-  <button type="button" class="btn" id="start-tour">Walkthrough</button>
+  <button type="button" class="btn" id="start-tour">Learn to play</button>
   <button type="button" class="btn" id="copy-link">Copy link</button></div>
 </div>
 <main class="layout">
@@ -37,7 +37,7 @@
         <button type="button" class="fc-side red" data-side="red"><b>Attack</b><span>Red force: take Tarn Crossing by <span data-fill="end">20:00</span>.</span><small>13 units, including artillery, 2 recon troops and a decoy. Blue's reserve can be fooled. The board turns so you attack up the screen.</small><em class="fc-odfx" data-odfx="red"></em></button>
       </div>
       <p class="fc-rules"><b>Each hour:</b> pick a unit and click where it should go; fire your artillery (the fixed battery in the map's bottom-right corner) at one sector; press <b>End hour</b>. <span data-fill="turns">14 one-hour turns</span>. You see the enemy only next to your own units.</p>
-      <p class="fc-rules">New here? <button type="button" class="btn" data-tour="blue">Walk me through defending</button> <button type="button" class="btn" data-tour="red">Walk me through attacking</button></p>
+      <p class="fc-rules">Want to attack instead? <button type="button" class="btn" id="learn-red">Learn to attack</button></p>
       <p class="fine">Keys: <b>number keys</b> (shown on each unit) pick a unit, <b>A</b> artillery, <b>G</b> give ground or hold, <b>Tab</b> to a sector and <b>Enter</b> to send, arrow keys between sectors, <b>N</b> ends the hour, <b>U</b> undoes, <b>Esc</b> clears the selection.</p>
     </section>
 
@@ -125,7 +125,7 @@
 <section class="below">
   <div class="col">
     <h2>How to play</h2>
-    <p><b>The goal.</b> Defending as Blue, hold Tarn Crossing until <span data-fill="end">20:00</span>. Attacking as Red, take it: Red wins the moment it holds the crossing with no Blue unit there. The game is <span data-fill="turns">14 one-hour turns</span>; Red's units arrive in waves: <span data-fill="waves"></span>.</p>
+    <p><b>The goal.</b> Defending as Blue, hold Tarn Crossing until <span data-fill="end">20:00</span>. Attacking as Red, take it: Red wins the moment it holds the crossing with no Blue unit there. The game is <span data-fill="turns">14 one-hour turns</span>; Red's units arrive in waves (each wave is an <i>echelon</i>): <span data-fill="waves"></span>.</p>
     <p><b>Each hour.</b> Pick a unit (click it in the list or on the map, or press its key) and click the sector where it should go; clicking an enemy marker sends it to that sector. Click the same sector again to step through a stack. The bar says whether this hour's orders start now or next hour; a clock on a unit means its order waits an hour. Attacking, your units that have not arrived wait in the staging tray below your entry edge: pick one and click a sector on the entry edge to choose where it comes in. Fire your artillery at one sector (press A, or click your battery in the bottom-right corner of the map, then click the sector). The battery is fixed: it cannot move and cannot be attacked. Press End hour: units move, fights happen where both sides meet, and new reports come in.</p>
     <p><b>What you see.</b> Enemy units in a sector you hold are seen exactly. In a sector next to one of your units you see their type, not their losses, and you miss one time in ten; a decoy looks like a tank battalion. Your recon troops also report movement two sectors out, an hour late; a decoy group two sectors out is built to be noticed, so they report it at once as a tank battalion, heard but not seen. Fire watched by a recon troop next to the target shows exactly what is there and how hurt it is.</p>
     <p><b>Decoys.</b> Red has one Decoy Group. It has no combat strength; its job is to make Blue misjudge where the main attack is coming. Seen from a neighbouring sector it looks like a full tank battalion (12 points), and Blue's recon troops hear it as a tank battalion from up to two sectors away, where a real unit shows only as "movement". It is exposed, and shown as a zero-strength decoy for the rest of the game, when a Blue unit is in its sector or when Blue artillery fires on its sector while a Blue recon troop watches. <i>Attacking:</i> send it down a road away from your main effort and keep it two sectors from Blue's recon, so it is heard but never looked at; Blue may send its one reserve the wrong way. <i>Defending:</i> before you commit your reserve, check the road with artillery fire that a recon troop is watching; a "tank battalion" that shows no damage under fire is the decoy.</p>
@@ -159,7 +159,6 @@
     <ol class="src" id="sources"></ol>
   </div>
 </section>
-<div class="fc-tour" id="tour" hidden role="dialog" aria-label="Walkthrough"></div>
 <footer id="tsm-foot"></footer>
 <script type="module">
   import { mountChrome } from '../../shared/js/chrome.js';

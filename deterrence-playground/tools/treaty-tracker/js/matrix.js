@@ -28,6 +28,7 @@ export function createMatrix(host, { onSelect, onSort }) {
     const k = ts.map(t => t.id).join() + '|' + ss.map(s => s.iso).join();
     if (k === key) return false;
     key = k;
+    const fe = document.activeElement, refocus = host.contains(fe) ? (fe.dataset.sort ? `[data-sort="${fe.dataset.sort}"]` : fe.dataset.cell ? `[data-cell="${fe.dataset.cell}"]` : '') : '';
     if (!ts.length || !ss.length) { host.innerHTML = '<p class="fine tt-empty">No states or treaties match the filters.</p>'; return true; }
     const groupCells = GROUPS.filter(g => state.groups.has(g.id)).map(g => {
       const n = ts.filter(t => t.group === g.id).length;
@@ -41,6 +42,7 @@ export function createMatrix(host, { onSelect, onSort }) {
     host.querySelector('tbody').addEventListener('click', e => {
       const b = e.target.closest('[data-cell]'); if (b) onSelect(b.dataset.cell);
     });
+    if (refocus) host.querySelector(refocus)?.focus({ preventScroll: true }); // keep keyboard focus across the rebuild
     return true;
   }
   function paint(state) {

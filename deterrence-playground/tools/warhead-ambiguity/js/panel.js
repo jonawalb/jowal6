@@ -57,7 +57,7 @@ export function buildPanel(panel, S, onChange) {
   adv.innerHTML = `<summary class="eyebrow">Costs and weights <span class="notional">notional</span></summary>
     <p class="fine">Cost of each action if the truth is each state, in arbitrary units. “Deterrent loss” is added in the nuclear case, scaled by one minus survivability.</p>
     <div class="tablewrap"><table class="costs"><thead><tr><th>Action</th>${STATES.map(s => `<th>${s.name}</th>`).join('')}<th>Deterrent loss</th></tr></thead><tbody>
-    ${ACTIONS.map(a => `<tr><th>${a.name}</th>${['F', 'C', 'N', 'Nloss'].map(k => `<td><input type="number" min="0" max="5000" step="1" data-a="${a.id}" data-k="${k}" aria-label="${a.name}, ${k}"></td>`).join('')}</tr>`).join('')}
+    ${ACTIONS.map(a => `<tr><th>${a.name}</th>${['F', 'C', 'N', 'Nloss'].map(k => `<td><input type="number" min="0" max="5000" step="1" data-a="${a.id}" data-k="${k}" aria-label="Cost of ${a.name.toLowerCase()} if ${k === 'Nloss' ? 'nuclear: deterrent loss' : STATES.find(x => x.id === k).name.toLowerCase()}"></td>`).join('')}</tr>`).join('')}
     </tbody></table></div>`;
   panel.appendChild(adv);
   adv.querySelectorAll('input[type=number]').forEach(inp => inp.addEventListener('change', () => {

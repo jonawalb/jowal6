@@ -40,6 +40,7 @@ export function createMap(host, listHost, { onSite }) {
     const stats = siteStats(rows, state.year);
     const stepped = seen && lastYear !== null && state.year !== lastYear;
     lastYear = state.year;
+    const refocus = document.activeElement?.closest?.('[data-site]')?.dataset.site; // keep keyboard focus across the redraw
     layer.replaceChildren();
     const order = SITES.map((s, k) => k).filter(k => SITES[k].pos && stats[k].n).sort((a, b) => stats[b].n - stats[a].n);
     for (const k of order) {
@@ -47,7 +48,8 @@ export function createMap(host, listHost, { onSite }) {
       const r = 3 + Math.sqrt(o.n) * 1.25;
       const main = [...o.states].sort((a, b) => a - b)[0];
       const g = el('g', { class: 'nt-site' + (state.site === s.id ? ' on' : '') + (o.now ? ' now' : ''), tabindex: 0, role: 'button',
-        'aria-label': `${s.name}: ${o.n} tests through ${state.year}` }, layer);
+        'aria-label': `${s.name}: ${o.n} tests through ${state.year}`, 'data-site': s.id }, layer);
+      if (refocus === s.id) queueMicrotask(() => g.focus({ preventScroll: true }));
       if (o.now) el('circle', { cx: px, cy: py, r: r + 5, class: 'ring' }, g);
       const c = el('circle', { cx: px, cy: py, r, class: 'dot' }, g);
       c.style.fill = STATE_COLOR[main];
@@ -65,6 +67,7 @@ export function createMap(host, listHost, { onSite }) {
     listHost.innerHTML = off.length ? `<p class="fine">Not mapped (no single site):</p>` + off.map(([s, o]) =>
       `<button type="button" class="btn nt-offsite" data-site="${s.id}" aria-pressed="${state.site === s.id}">${esc(s.name)} <span class="num">${o.n}</span></button>`).join('') : '';
     listHost.querySelectorAll('[data-site]').forEach(b => b.onclick = () => onSite(b.dataset.site));
+    if (refocus) listHost.querySelector(`[data-site="${refocus}"]`)?.focus({ preventScroll: true });
     return stats;
   }
 

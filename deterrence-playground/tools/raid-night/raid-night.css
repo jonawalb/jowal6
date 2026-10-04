@@ -60,15 +60,6 @@
 .keys summary { cursor: pointer; font-size: 13px; font-weight: 600; }
 .keys .readout { margin-top: 6px; }
 
-.tour-slot { position: absolute; left: 10px; bottom: 10px; width: min(380px, calc(100% - 20px)); z-index: 30; }
-.tour { background: var(--panel); border: 1px solid var(--rule); border-top: 3px solid var(--accent); border-radius: 4px; padding: 12px 14px; box-shadow: 0 8px 28px color-mix(in srgb, var(--ink) 18%, transparent); display: flex; flex-direction: column; gap: 6px; }
-.tour[hidden] { display: none; }
-.tour-h { display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 11px; color: var(--muted); }
-.tour .x { background: none; border: 0; font-size: 22px; line-height: 1; cursor: pointer; color: var(--muted); padding: 0 6px; }
-.tour h3 { margin: 0; font-size: 20px; line-height: 1.15; }
-.tour p { margin: 0; font-size: 13px; }
-.tour-nav { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
-.tour-hi { outline: 3px solid var(--accent); outline-offset: 2px; }
 
 .aar { max-width: 1400px; margin: 24px auto 0; display: flex; flex-direction: column; gap: 12px; }
 .aar[hidden] { display: none; }
@@ -90,8 +81,6 @@
 .raids { padding-left: 1.1em; margin: 0; display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
 
 @media (max-width: 700px) {
-  .tour-slot { position: relative; z-index: 30; width: auto; margin: 8px; left: auto; bottom: auto; }
-  .tour { box-shadow: none; }
   .fieldbox { overflow: visible; }
   .overlay { position: absolute; }
   .ov-card { padding: 10px 12px; gap: 6px; }
@@ -167,7 +156,9 @@ body[data-game-mode="hard"] .hud .pill { color: var(--accent); }
 .aar-mode .pill { font-size: 12px; }
 
 @media (max-width: 700px) {
-  .overlay.tall { position: relative; inset: auto; background: var(--panel); }
+  /* On a phone the start and resupply cards sit above the (idle) field, so the mode choice is in view. */
+  .fieldbox:has(.overlay.tall:not([hidden])) { display: flex; flex-direction: column; }
+  .overlay.tall { position: relative; inset: auto; background: var(--panel); order: -1; }
   .overlay.tall .ov-card { max-width: none; width: 100%; box-shadow: none; }
   .bats { grid-template-columns: minmax(0, 1fr); }
 }
@@ -204,7 +195,7 @@ body[data-game-mode="hard"] .hud .pill { color: var(--accent); }
 :root[data-skin="trailer"] .hud-wave b { font-style: italic; font-weight: 500; font-size: 19px; }
 :root[data-skin="trailer"] .hud-clock { font-family: var(--mono); color: var(--accent); letter-spacing: .06em; text-shadow: 0 0 12px rgba(240, 169, 59, .35); }
 :root[data-skin="trailer"] .overlay { background: color-mix(in srgb, #050c09 62%, transparent); }
-:root[data-skin="trailer"] .ov-card, :root[data-skin="trailer"] .tour { background: color-mix(in srgb, var(--panel) 94%, transparent); box-shadow: 0 22px 50px -24px #000, 0 0 0 1px rgba(240, 169, 59, .12); border-top-color: var(--accent); }
+:root[data-skin="trailer"] .ov-card { background: color-mix(in srgb, var(--panel) 94%, transparent); box-shadow: 0 22px 50px -24px #000, 0 0 0 1px rgba(240, 169, 59, .12); border-top-color: var(--accent); }
 :root[data-skin="trailer"] .ov-card h2 { font-size: 34px; }
 :root[data-skin="trailer"] .mode b { font-style: italic; font-weight: 500; }
 :root[data-skin="trailer"] .mode.on { border-color: var(--accent); box-shadow: var(--glow); }

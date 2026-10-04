@@ -5,7 +5,8 @@ import { evaluate } from './model.js';
 import { SWEEPS, runSweep } from './sweeps.js';
 import { drawDomain, drawProb, drawSweep } from './charts.js';
 import { mountControls, syncControls, FIELDS } from './controls.js';
-import { createTour } from './tour.js';
+import { lessonSteps, SHEET } from './lesson.js';
+import { learnButton, runLesson } from '../../../shared/js/learn.js';
 import { afterUpdate, afterSweep } from './fx.js';
 import { addExportBar } from '../../../shared/js/export.js';
 
@@ -111,14 +112,15 @@ $('sweep-choices').innerHTML = SWEEPS.map(s => `<button type="button" class="btn
 $('sweep-choices').querySelectorAll('button').forEach(b => b.onclick = () => { S.sweep = b.dataset.k; renderSweep(); writeHash(); afterSweep(); });
 $('srclist').innerHTML = SOURCE_ORDER.map(k => `<li>${SOURCES[k]}</li>`).join('');
 $('lit').innerHTML = LIT;
-const tour = createTour($('stage'), set => { Object.assign(S, DEFAULT(), set); update(); });
-$('tour-btn').onclick = () => tour.start();
+// "Learn to play": banner at the top of the stage; the lesson starts from the default posture.
+const startLesson = () => { Object.assign(S, DEFAULT()); update(); scrollTo({ top: 0 }); runLesson(lessonSteps(), { slug: 'crisis-stability', title: 'Learn to play', onFinish: () => learn.refresh() }); };
+const learn = learnButton($('stage'), { slug: 'crisis-stability', minutes: 5, onStart: startLesson, sheet: SHEET });
 $('copy').onclick = async () => {
   try { await navigator.clipboard.writeText(location.href); $('copy').textContent = 'Link copied'; }
   catch { $('copy').textContent = 'Copy failed'; }
   setTimeout(() => { $('copy').textContent = 'Copy link'; }, 1600);
 };
-$('reset').onclick = () => { tour.stop(); Object.assign(S, DEFAULT()); update(); };
+$('reset').onclick = () => { Object.assign(S, DEFAULT()); update(); };
 update();
 let rz = null;
 addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { renderDomain(); drawSweep($('sweep'), SW); }, 120); });

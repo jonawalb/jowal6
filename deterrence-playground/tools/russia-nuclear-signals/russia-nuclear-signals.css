@@ -106,3 +106,4 @@ code { font-family: var(--mono); font-size: 11.5px; }
   .lvdist li { grid-template-columns: 120px minmax(0, 1fr) 24px; }
 }
 .codetbl .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; }
+.chart .lane-k.k-s { fill: var(--us); } .chart .lane-k.k-d { fill: var(--faint); }

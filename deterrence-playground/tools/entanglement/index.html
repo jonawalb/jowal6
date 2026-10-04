@@ -17,18 +17,14 @@
 <body>
 <header id="tsm-head"></header>
 
-<div class="toolbar-top">
+<div class="toolbar-top" id="learn-slot">
   <p class="lede">Many of the satellites, radars, command links, missiles and bases a state would strike in a conventional war also serve its adversary’s nuclear forces. Choose what to hit and when, and watch the pressure to use nuclear weapons build. Notional model, not a prediction.</p>
-  <div class="actions">
-    <button type="button" class="btn solid" id="start-tour">Start the walkthrough</button>
-  </div>
 </div>
 
 <main class="layout">
   <div class="stage" id="stage" aria-live="off"></div>
   <aside class="panel" id="panel" aria-label="Escalation readout, mitigation levers and model parameters"></aside>
 </main>
-<div id="tour-root"></div>
 
 <section class="cases-wrap" id="world" aria-label="Real-world examples of entanglement"></section>
 
@@ -37,9 +33,10 @@
     <h2>How to read it</h2>
     <p>You command a conventional campaign against a nuclear-armed adversary, the target. Your aim is conventional: sink ships, suppress missiles, blind sensors. The trouble is that the target’s assets are <b>entangled</b>. The same early-warning satellites, command links, launchers, bases and surveillance networks serve its conventional and its nuclear forces. James Acton calls this entanglement and argues it could turn a conventional war nuclear even if neither side intends it.</p>
     <ul class="howto">
-      <li>The <b>planner</b> has five generic asset categories and four campaign phases. Click cells to strike. Each category shows its nuclear role, the share of it that serves nuclear forces.</li>
+      <li>The <b>planner</b> has five generic asset categories and four campaign phases. Click or tap cells to strike; click again to cancel. Each category shows its nuclear role, the share of it that serves nuclear forces.</li>
       <li>The <b>risk chart</b> stacks each escalation channel’s hazard per phase and draws the cumulative chance of nuclear use against the same war without entangled strikes.</li>
       <li>The <b>channel cards</b> show why the risk rises: use-or-lose pressure, misinterpreted warning, the damage-limitation window, and warhead and target ambiguity, all amplified by the fog of war.</li>
+      <li>The <b>big number</b> in the side panel is the chance that the target uses nuclear weapons by the end of phase 4. <b>Conventional effect</b> (0 to 100) scores the military value of the damage you did: what you gain. <b>Use-or-lose pressure</b> is how hard the losses push the target to use its nuclear weapons before it loses them, and <b>fog of war</b> how much of its warning, command and surveillance picture is gone.</li>
       <li>The <b>levers</b> in the side panel apply mitigation measures from the literature, each with its source, and show what they buy and what they cost in conventional effect.</li>
       <li>The address bar stores the plan, levers and every parameter, so a link reproduces the setup.</li>
     </ul>

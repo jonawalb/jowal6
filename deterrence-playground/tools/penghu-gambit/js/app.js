@@ -7,7 +7,7 @@ import { panelHtml, assumptionsHtml, spent, NOTIONAL } from './panel.js';
 import { createMap } from './map.js';
 import { turnLogHtml, crtHtml, readoutHtml, mcHtml, outcomeText } from './views.js';
 import { writeHash, readHash } from './hash.js';
-import { createTour } from './tour.js';
+import { mountLesson } from './lesson.js';
 import { addExportBar } from '../../../shared/js/export.js';
 import * as fx from './fx.js';
 
@@ -24,10 +24,6 @@ let game, anim = null, mcTimer = null;
 
 $('panel').innerHTML = panelHtml();
 const map = createMap($('map'), $('tip'), { onSector: k => { cfg.pla.sector = k; changed(); } });
-const tour = createTour($('box'), s => {
-  cfg = { roc: { ...s.roc, mines: { ...s.roc.mines } }, pla: { ...s.pla }, turns: s.turns };
-  changed(s.view);
-});
 
 // ---- Controls --------------------------------------------------------------------------
 const syncs = [];
@@ -105,7 +101,6 @@ $('prev').onclick = () => { stop(); setView(view - 1); };
 $('next').onclick = () => { stop(); setView(view + 1); };
 $('scrub').oninput = e => { stop(); setView(+e.target.value); };
 $('playall').onclick = playAll;
-$('start-tour').onclick = () => { showTab('play'); tour.start(); };
 
 // Phone tabs (Setup / Play / 1,000 games). On wider screens every section shows and the tabs are hidden.
 const phone = matchMedia('(max-width: 760px)');
@@ -206,6 +201,10 @@ $('param-table').innerHTML = `<thead><tr><th>Parameter</th><th>Default</th><th>B
 reduced.addEventListener?.('change', stop);
 
 changed(view);
+mountLesson($('pg-learn'), {
+  reset: () => { cfg = defaults(); P = { ...PROB_DEF }; seed = 1683; changed(0); showTab('play'); },
+  tab: showTab,
+});
 fx.wire([$('next'), $('playall')]);
 addExportBar(document.querySelector('.playbar'), {
   target: () => $('map'),

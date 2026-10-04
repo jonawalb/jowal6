@@ -129,7 +129,20 @@ body.dd-planning #undo, body.dd-planning #end { display: none; }
 .dd-hl-tour { outline: 3px solid var(--accent) !important; outline-offset: 3px; border-radius: 3px; }
 .dd-keylist { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 6px 0 0; font-size: 13px; }
 .dd-keylist dt { white-space: nowrap; } .dd-keylist dd { margin: 0; }
-@media (max-width: 640px) { .dd-tour { padding: 8px 10px; } .dd-tour h3 { font-size: 15px; } .dd-tour p { font-size: 13px; margin-bottom: 6px; } .dd-tour .tour-do ~ p { display: none; } }
+@media (max-width: 640px) { .dd-tour { padding: 8px 10px; } .dd-tour h3 { font-size: 15px; } .dd-tour p { font-size: 13px; margin-bottom: 6px; } }
+/* Learn to play (2026-10-04): the lesson card, highlights on the map (SVG ignores outline), the result card. */
+.dd-tour h3:focus { outline: none; }
+.dd-tour h3:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+#map .dd-hl-tour { outline: none !important; }
+#map .dd-hl-tour > rect:first-of-type { stroke: var(--accent) !important; stroke-width: 4px !important; stroke-dasharray: none !important; }
+#map g.dd-unit.dd-hl-tour > rect:first-of-type { stroke-width: 3px !important; }
+.dd-learnb { border-color: var(--accent); font-weight: 600; }
+.dd-learned { margin: 0; padding-left: 1.2em; font-size: 14px; line-height: 1.5; }
+.dd-learn-go { flex-wrap: wrap; gap: 8px; }
+#start > .learn-banner { margin-bottom: 14px; }
+@media (prefers-reduced-motion: reduce) { .dd-tour { transition: none; } }
+.dd-tour.compact { padding: 6px 10px; } .dd-tour.compact h3, .dd-tour.compact p:not(.tour-do) { display: none; }
+.dd-tour.compact .tour-do { margin-bottom: 4px; } .dd-tour.compact .tour-nav .btn { min-height: 34px; padding-block: 2px; }
 
 /* Below the game */
 .dd-more { margin-top: 10px; }

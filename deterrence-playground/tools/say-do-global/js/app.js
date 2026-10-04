@@ -172,7 +172,7 @@ function testText(c, r, res, b) {
 
 function hover(i, click) {
   const o = seriesState, tip = $('tip');
-  if (!o || i < 0) { tip.innerHTML = 'Hover or tap the chart for values; tap a marked spike to read its evidence.'; return; }
+  if (!o || i < 0) { tip.innerHTML = 'Hover or tap the chart for values (or focus it and use the arrow keys); tap a marked spike, or press Enter on it, to read its evidence.'; return; }
   const sp = o.spikes.find(s => Math.abs(s.i - i) <= (o.res === 'week' ? 0 : 3));
   tip.innerHTML = `<b>${o.res === 'week' ? 'Week of ' : ''}${o.dates[i]}</b> · rhetoric ${o.rhet[i] == null ? 'no documents' : o.rhet[i].toFixed(3)} · ${esc(o.b.short)} ${o.bser[i] == null ? 'no data' : Math.round(o.bser[i] * 10) / 10}` + (sp ? ` · <span class="warn">spike (z ${sp.z.toFixed(1)})</span>` : '');
   if (click && sp) { S.spike = sp.key; update(); $('spikes').scrollIntoView({ block: 'nearest', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); }

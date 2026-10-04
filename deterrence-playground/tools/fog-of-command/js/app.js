@@ -9,7 +9,8 @@ import { createMap, render } from './map.js';
 import { feedHTML, status, fireText, fireTag, renderBelow, hhmm, NAME, DEF, foeOf, waveText, endTime, secondPick, odWords, odFor } from './panel.js';
 import { tilt } from './combat.js';
 import { createAAR } from './aar.js';
-import { createTour } from './tour.js';
+import { lessonSteps, LESSON_SEED, SHEET } from './lesson.js';
+import { learnButton, runLesson } from '../../../shared/js/learn.js';
 import { readHash, writeHash } from './hash.js';
 import { snap, slide, shell, spot, contacts, lift } from './fx.js';
 import { pulse, shake, flash } from '../../../shared/js/motion.js';
@@ -227,7 +228,6 @@ function draw() {
   document.body.classList.toggle('fc-armed', armed());
   const su = sel && unit(g, sel);
   for (const n of NODES) map.nodes[n.id].classList.toggle('sel-can', !g.over && !!su && (su.node !== 'off' || NORTH.includes(n.id)));
-  tour.check();
 }
 
 function select(id, quiet = false) {
@@ -262,6 +262,9 @@ const stackAt = node => mineUnits().filter(u => alive(u) && u.type !== 'arty' &&
 function onUnit(id, node, group = null) {
   if (!g || g.over) return;
   if (armed() && node) { onSector(node); return; }
+  // A unit is already picked and the click lands on another group's entry marker: that is an order to that
+  // sector (the markers fill most of an entry sector on a phone), not a request to pick the group.
+  if (group && sel && !group.includes(sel) && NODE[node]) { onSector(node); return; }
   if (group) { const i = group.indexOf(sel); select(group[(i + 1) % group.length], true); cycleSay(group, i + 1); return; }
   if (sel === id && node) {
     const st = stackAt(node);
@@ -478,14 +481,19 @@ document.addEventListener('keydown', e => {
   }
 });
 
-const tour = createTour($('tour'), {
-  get: () => ({ g, me, sel }),
-  start: side => start(side, newSeed()),
-  map: () => map,
-  tab: setTab,
-});
-$('start-tour').onclick = () => tour.start(g ? me : 'blue', !!g && g.t > 0 && !g.over);
-document.querySelectorAll('[data-tour]').forEach(b => b.addEventListener('click', () => tour.start(b.dataset.tour, false)));
+// "Learn to play": a guided first game on a fixed seed at the standard balance (js/lesson.js).
+let lesson = null;
+function learn(side) {
+  if (g && g.t > 0 && !g.over && !confirm('The lesson starts a new game. To keep this one, cancel and copy its link first.')) return;
+  if (lesson) lesson.stop();
+  start(side, LESSON_SEED, [], 0, OFFDEF.standard);
+  lesson = runLesson(lessonSteps(side, { get: () => ({ g, me, sel }), tab: setTab }),
+    { slug: 'fog-of-command', title: side === 'red' ? 'Learn to attack' : 'Learn to play', onExit: () => { lesson = null; } });
+}
+learnButton($('start'), { slug: 'fog-of-command', minutes: 6, onStart: () => learn('blue'), sheet: SHEET,
+  blurb: 'A guided first game as the defender, about 6 minutes. Every term is explained as it comes up.' });
+$('start-tour').onclick = () => learn(g && !g.over ? me : 'blue');
+$('learn-red').onclick = () => learn('red');
 narrowQ.addEventListener('change', () => {
   remap();
   placeDecoyTip();

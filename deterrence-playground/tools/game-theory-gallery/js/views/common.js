@@ -1,5 +1,5 @@
 // Figure primitives shared by several models: the issue bar, value bars, region rasters.
-import { el, frame, axes, f2, stext, vw } from '../ui.js';
+import { el, frame, axes, f2, stext, vw, keepIn } from '../ui.js';
 
 /**
  * Horizontal issue space X = [0, 1] with a shaded range and labeled markers.
@@ -34,7 +34,7 @@ export function issueBar(svg, o) {
     if (m.x < -0.001 || m.x > 1.001) return;
     const row = m.row || 0, y0 = top + row * 58 + 4, y1 = y0 + 26;
     el('line', { x1: sx(m.x), x2: sx(m.x), y1: y0, y2: y1, class: 'mk ' + (m.cls || '') }, g);
-    stext(g, { x: sx(m.x), y: m.below ? y1 + 14 : y0 - 3, 'text-anchor': 'middle', class: 'mkl ' + (m.cls || '') }, m.label);
+    keepIn(stext(g, { x: sx(m.x), y: m.below ? y1 + 14 : y0 - 3, 'text-anchor': 'middle', class: 'mkl ' + (m.cls || '') }, m.label), F.box.W);
   });
   const ax = el('g', { class: 'axis' }, g);
   [0, 0.25, 0.5, 0.75, 1].forEach(v => {
@@ -56,7 +56,7 @@ export function valueBars(svg, bars, domain, o = {}) {
   const { g, sx } = F;
   bars.forEach((b, i) => {
     const y = F.m.t + i * 40;
-    stext(g, { x: F.m.l - 10, y: y + 17, 'text-anchor': 'end', class: 'barlab' }, b.label);
+    keepIn(stext(g, { x: F.m.l - 10, y: y + 17, 'text-anchor': 'end', class: 'barlab' }, b.label), W, [2, F.m.l - 6]);
     const x0 = sx(Math.max(domain[0], Math.min(0, domain[1]))), x1 = sx(Math.max(domain[0], Math.min(b.v, domain[1])));
     el('rect', { x: Math.min(x0, x1), y, width: Math.max(1, Math.abs(x1 - x0)), height: 24, class: 'vbar ' + (b.cls || '') }, g);
     el('text', { x: Math.max(x0, x1) + 6, y: y + 17, class: 'barv' }, g, (b.fmt || f2)(b.v));

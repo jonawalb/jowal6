@@ -25,8 +25,10 @@
   <p class="dd-flag"><b>Fictional and notional.</b> The front, armies and numbers are invented for teaching. Combat follows Biddle’s model of the modern system, rescaled.</p>
   <div><span class="dd-viewsw" role="group" aria-label="How much detail to show"><button type="button" class="btn" data-vm="simple" aria-pressed="false" title="Fewer numbers and controls: the game runs the same">Simple</button><button type="button" class="btn" data-vm="detailed" aria-pressed="true" title="Every number, chart and control">Detailed</button></span>
   <span class="dd-vhint fine" id="view-hint" hidden>First game? Try Simple.</span>
+  <button type="button" class="btn dd-learnb" id="learn-btn" title="A short guided battle for a first game">Learn to play</button>
+  <button type="button" class="btn" id="howto-btn" title="The rules on one screen">How to play</button>
   <button type="button" class="btn" id="new-game">New game</button>
-  <button type="button" class="btn" id="start-tour">Walkthrough</button>
+  <button type="button" class="btn" id="start-tour" title="A tour of the full game's screens">Walkthrough</button>
   <button type="button" class="btn" id="practice-btn" title="A small board with no enemy, to practise moving troops">Practice field</button>
   <button type="button" class="btn" id="go-lessons">Lessons</button>
   <button type="button" class="btn" id="copy-link">Copy link</button>
@@ -48,7 +50,7 @@
       </div>
       <div class="dd-go"><button type="button" class="btn" id="start-back" hidden>Back</button><button type="button" class="btn solid dd-startb" id="start-next">Next: scale and difficulty</button><button type="button" class="btn solid dd-startb" id="start-go" hidden>Plan your defense</button></div>
       <p class="dd-poffer" id="start-practice"><button type="button" class="btn" data-practice>New? Practice moving troops first <small>(about 2 min)</small></button></p>
-      <p class="dd-rules" id="start-tours">New here? <button type="button" class="btn" data-tour="def">Walk me through defending</button> <button type="button" class="btn" data-tour="att">Walk me through attacking</button></p>
+      <p class="dd-rules" id="start-tours">Know the basics? Tour the full game: <button type="button" class="btn" data-tour="def">Walk me through defending</button> <button type="button" class="btn" data-tour="att">Walk me through attacking</button></p>
     </section>
 
     <section class="card dd-camp" id="camp" hidden aria-live="polite"></section>
@@ -178,6 +180,7 @@
 </section>
 </details></section>
 <div class="dd-tour" id="tour" hidden role="dialog" aria-label="Walkthrough"></div>
+<p class="dd-sr" id="tour-live" aria-live="polite"></p>
 <div class="dd-keyhelp" id="keyhelp" hidden role="dialog" aria-label="Keyboard shortcuts"></div>
 <footer id="tsm-foot"></footer>
 <script type="module">

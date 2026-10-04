@@ -17,18 +17,14 @@
 <body>
 <header id="tsm-head"></header>
 
-<div class="toolbar-top">
+<div class="toolbar-top" id="learn-slot">
   <p class="lede">Your warning systems report an incoming missile that could carry either a nuclear or a conventional warhead. Set the context, read the evidence, and decide: wait, hit back conventionally, or launch on warning. Notional model, not a prediction.</p>
-  <div class="actions">
-    <button type="button" class="btn solid" id="start-tour">Start the walkthrough</button>
-  </div>
 </div>
 
 <main class="layout">
   <div class="stage" id="stage" aria-live="off"></div>
   <aside class="panel" id="panel" aria-label="Decision readout, evidence and parameters"></aside>
 </main>
-<div id="tour-root"></div>
 
 <section class="cases-wrap" id="cases" aria-label="Historical cases"></section>
 
@@ -37,9 +33,11 @@
     <h2>How to read it</h2>
     <p>Many missiles can carry either kind of warhead. James Acton calls the resulting uncertainty <b>warhead ambiguity</b>, and adds two relatives: <b>destination ambiguity</b>, when the observer cannot tell where a maneuvering weapon is headed and may wrongly conclude it is headed for its own territory, and <b>target ambiguity</b>, when a strike on conventional forces looks like a strike on nuclear ones because the two are entangled. China’s DF-26 intermediate-range ballistic missile is one example of a missile that can carry either warhead. This tool puts you in the seat of the state that detects the launch.</p>
     <ul class="howto">
+      <li>The <b>Decision</b> box in the side panel names the response with the lowest <b>expected cost</b>: the cost of each response if the truth is no attack, conventional or nuclear, weighted by how likely you think each one is. All costs are notional units; lower is better.</li>
       <li>The <b>belief chain</b> starts from your priors and adds one piece of evidence per row: a second sensor, the launch site and the trajectory. Colors split your belief between no attack, a conventional strike and a nuclear one.</li>
       <li>The <b>cost chart</b> weighs each response against that belief, and the strip below it shows the thresholds where the best response changes.</li>
       <li>The <b>campaign map</b> runs the same reasoning over every launch a campaign could produce and asks how often a conventional strike is met with nuclear weapons. You read evidence through the entanglement you <i>assume</i>; the map varies the entanglement that is <i>real</i>.</li>
+      <li>The four <b>tiles</b> under the map count outcomes over many launches at the actual entanglement: how often a conventional campaign draws a nuclear launch, how false alarms are answered, and how many real nuclear attacks you would ride out.</li>
       <li>The address bar stores every setting, so a link reproduces the setup.</li>
     </ul>
     <h2 class="mt">Questions to try</h2>

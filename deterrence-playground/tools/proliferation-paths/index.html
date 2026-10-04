@@ -64,7 +64,12 @@
   <section class="card pp-card" id="tl-card" aria-labelledby="tl-h">
     <div class="pp-sub"><h2 id="tl-h">Paths, 1939–2017</h2>
       <label class="fine">Sort by <select id="sort"></select></label></div>
-    <p class="fine">Bars show the stage coded each year; triangles mark a step down (filled: back to no activity; open: to a lower stage). Hatching marks years a dataset does not cover. Drag across to set the year; click a name for its card.</p>
+    <p class="fine">Bars show the stage coded each year; triangles mark a step down (filled: back to no activity; open: to a lower stage). Grey marks years a dataset does not cover. With "Compare all three" each row splits into three lanes: Bleek on top, then Singh &amp; Way, then Jo &amp; Gartzke. Drag across to set the year; click a name for its card.</p>
+    <div class="pp-legend" aria-hidden="true">
+      <span><i class="pp-sw" data-st="explore"></i>Exploring</span>
+      <span><i class="pp-sw" data-st="pursue"></i>Pursuing</span>
+      <span><i class="pp-sw" data-st="acquire"></i>Acquired</span>
+    </div>
     <div class="pp-tl" id="timeline"></div>
   </section>
   <section class="card pp-card" id="rec-card" aria-labelledby="rec-h">
@@ -79,12 +84,12 @@
   <div class="col">
     <h2>How to read it</h2>
     <p>Each dataset sorts nuclear behavior into stages. <b>Exploring</b> means leaders authorized study of a weapons option. <b>Pursuing</b> means concrete steps toward a weapon, such as a cabinet-level decision, weaponization work or dedicated technology. <b>Acquired</b> means the state tested or assembled a nuclear device. A state can skip stages, go back down, or stop altogether, which this tool calls <b>reversal</b>.</p>
-    <p>The three datasets use nearly the same categories but different evidence and different start years, so their dates differ, sometimes by a decade. Pick one dataset to read its story, or "Compare all three" to see the lanes side by side. The map then shades each state by the highest stage any dataset codes and hatches the ones where they disagree.</p>
+    <p>The three datasets use nearly the same categories but different evidence and different start years, so their dates differ, sometimes by a decade. Pick one dataset to read its story, or "Compare all three" to see the lanes side by side. The map then shades each state by the highest stage any dataset codes and gives a dashed outline to the ones where they disagree.</p>
     <p>Only what the datasets code is shown. A blank means none of them codes that state in that year, not that nothing happened.</p>
     <h3>Method</h3>
     <ul class="src">
       <li>Codings are parsed by <code>scripts/build_data.py</code> from the saved source files: Way's "Nuclear Proliferation Dates" (revised 12 June 2012), Table 1 of Bleek (2017, p. 8) and Table 1 of the Jo and Gartzke codebook (September 2006, p. 13). The only hand-transcribed material is the state-card notes and the original Singh and Way codings reported in Bleek's footnotes, each tied to a page, note or document.</li>
-      <li><b>Start years.</b> Singh and Way begin in 1945, so they never code U.S., British or Soviet wartime activity, Germany or Japan. Bleek and Jo and Gartzke begin in 1939. The timeline hatches years a dataset does not cover.</li>
+      <li><b>Start years.</b> Singh and Way begin in 1945, so they never code U.S., British or Soviet wartime activity, Germany or Japan. Bleek and Jo and Gartzke begin in 1939. The timeline greys out years a dataset does not cover.</li>
       <li><b>End years.</b> Way's file was last revised in 2012, Bleek published in June 2017, and Jo and Gartzke's codebook covers 1939 to 2002 (their replication file stops at 1992). An open-ended coding is drawn to the dataset's last year and labelled "open"; the slider stops at 2017 because no dataset goes further.</li>
       <li><b>Two conventions for the last year.</b> Bleek's second year is the year the state dropped back ("returned to no activity in 1991"); Way and Jo and Gartzke give the last active year. The tool draws Bleek's spans one year shorter so both mean the same thing.</li>
       <li><b>Explore is Bleek's and Way's category only.</b> Jo and Gartzke code a program (treated here as pursuit) and possession (acquisition). Bleek's table lists exploration as a running span beneath pursuit; Way's stages do not overlap. The tool shows the highest stage coded in each year, which makes the two layouts comparable.</li>

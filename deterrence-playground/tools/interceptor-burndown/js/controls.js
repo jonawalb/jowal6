@@ -37,6 +37,7 @@ export function mountControls(S, update) {
       <div class="seg" role="group" aria-label="Firing doctrine against ${t.long.toLowerCase()}">
         ${DOCTRINES.map(d => `<button type="button" data-c="${t.k}" data-k="${d.k}" title="${d.s}">${d.n}</button>`).join('')}
       </div>
+      <p class="fine doc-note" id="dn-${t.k}"></p>
       ${slider('pk-' + t.k, 'Kill chance per interceptor', 0.2, 0.95, 0.05)}
     </div>`).join('');
   $('rules').querySelectorAll('.seg button').forEach(b => b.onclick = () => { S.doc[b.dataset.c] = b.dataset.k; update(); });
@@ -70,6 +71,7 @@ export function syncControls(S) {
   $('avail').value = S.avail; $('avail-out').textContent = pctf(S.avail);
 
   $('rules').querySelectorAll('.seg button').forEach(b => b.setAttribute('aria-pressed', S.doc[b.dataset.c] === b.dataset.k));
+  THREATS.forEach(t => { const d = DOCTRINES.find(x => x.k === S.doc[t.k]); $('dn-' + t.k).textContent = d ? `${d.n}: ${d.s.toLowerCase()}.` : ''; });
   THREATS.forEach(t => { $('pk-' + t.k).value = S.pk[t.k]; $(`pk-${t.k}-out`).textContent = pctf(S.pk[t.k]); });
   $('drone-choices').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.k === S.dronePol));
   $('nk').value = S.nk; $('nk-out').textContent = pctf(S.nk);

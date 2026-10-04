@@ -6,7 +6,8 @@ import { render } from './layers.js';
 import { renderStatus, renderLog, renderQueue, renderSetup, renderBelow, turnText, pct } from './panel.js';
 import { renderBalance } from './balanceview.js';
 import { createReveal } from './reveal.js';
-import { createTour } from './tour.js';
+import { lessonSteps, LESSON_SEED, SHEET } from './lesson.js';
+import { learnButton, runLesson, showSheet } from '../../../shared/js/learn.js';
 import { readHash, writeHash } from './hash.js';
 import { pWithin } from './filter.js';
 import { covers, lineEnds, AXIS_STEP } from './sensors.js';
@@ -16,14 +17,12 @@ import { fxLayer, dropFx, heatFade, turnFx, replayFx, tick, revealFx } from './f
 
 const $ = id => document.getElementById(id);
 const newSeed = () => 1 + Math.floor(Math.random() * 999998);
-const store = { get: k => { try { return localStorage.getItem(k); } catch { return null; } },
-  set: (k, v) => { try { localStorage.setItem(k, v); } catch { /* storage blocked: fine */ } } };
 
 const map = createMap($('map'));
 const fx = fxLayer(map);
 const phone = matchMedia('(max-width: 720px)'); // matches the CSS that moves the map above the controls
 let color = tokenColor('--c2', document.body);
-let g, tool = 'circle', cursor = null, ang = 90, coached = false, turned = false;
+let g, tool = 'circle', cursor = null, ang = 90, coached = false, turned = false, lesson = null;
 
 $('tools').innerHTML = Object.entries(ACTIONS).map(([k, a]) =>
   `<button type="button" data-tool="${k}" aria-pressed="false" aria-keyshortcuts="${a.key}" class="${k === 'attack' ? 'sh-prosbtn' : ''}">
@@ -93,6 +92,7 @@ const rotateHow = () => phone.matches ? 'Tap ⟳ Rotate to turn the buoy line (8
 function coach() {
   const box = $('callout');
   let text = null, at = null;
+  if (lesson) { box.hidden = true; return; }   // the lesson card does the coaching
   if (tool === 'line' && !turned && !g.over) {
     text = rotateHow(); at = cursor ? step(cursor, 180, 40) : step(g.datum, 180, GAME.datumR + 6);
   } else if (!coached && !g.over && g.turn === 0) {
@@ -237,8 +237,8 @@ $('undo').onclick = doUndo;
 $('end').onclick = end;
 document.addEventListener('keydown', e => {
   if (e.ctrlKey || e.metaKey || e.altKey || !g || g.over) return;
-  // The walkthrough can stay open while you play; only keys typed inside its own card belong to it.
-  if (e.target.closest('input, textarea, select, #tour')) return;
+  // The lesson stays open while you play; only keys typed inside its own card or the rules sheet belong to them.
+  if (e.target.closest('input, textarea, select, .learn-card, .learn-sheet')) return;
   const k = e.key.toLowerCase();
   const t = Object.entries(ACTIONS).find(([, a]) => a.key === k);
   if (t) { e.preventDefault(); if (!why(g, t[0], null)) setTool(t[0]); else say(why(g, t[0], null)); }
@@ -256,19 +256,18 @@ $('copy-link').onclick = async () => {
   try { await navigator.clipboard.writeText(location.href); say('Link copied. It replays this hunt exactly.'); } catch { say('Copy the address bar to share this hunt.'); }
 };
 
-// "How to play" stays until dismissed; the choice is remembered in this browser only.
-const howto = show => { $('howto').hidden = !show; $('show-howto').setAttribute('aria-pressed', String(show)); };
-howto(store.get('sh-howto') !== 'hidden');
-$('hide-howto').onclick = e => { howto(false); store.set('sh-howto', 'hidden'); if (!e.detail) $('map').focus({ preventScroll: true }); };
-$('show-howto').onclick = () => { const s = $('howto').hidden; howto(s); store.set('sh-howto', s ? 'shown' : 'hidden'); if (s) $('howto').scrollIntoView({ block: 'nearest' }); };
-
-const tour = createTour($('tour'));
-// While the walkthrough is open, pad the page by its height so it never covers the controls (on phones it
-// is a bar along the bottom of the screen, over End turn).
-const padForTour = () => { const c = $('tour'); document.body.style.paddingBottom = c.hidden ? '' : `${c.offsetHeight + 16}px`; };
-new MutationObserver(padForTour).observe($('tour'), { attributes: true, attributeFilter: ['hidden'], childList: true, subtree: true });
-addEventListener('resize', padForTour);
-$('start-tour').onclick = () => tour.start();
+// "Learn to play": a guided first hunt on a fixed seed (js/lesson.js), and the rules on one screen.
+function learn() {
+  if (g && g.turn > 0 && !g.over && !confirm('The lesson starts a new hunt. To keep this one, cancel and copy its link first.')) return;
+  if (lesson) lesson.stop();
+  coached = false; turned = false; tool = 'circle';
+  start({ seed: LESSON_SEED, beh: 'any' });
+  lesson = runLesson(lessonSteps({ get: () => g, tool: () => tool }), { slug: 'sub-hunt', title: 'Learn to play', onExit: () => { lesson = null; coach(); } });
+  coach();
+}
+learnButton(document.querySelector('.stage'), { slug: 'sub-hunt', minutes: 5, onStart: learn, sheet: SHEET });
+$('show-howto').onclick = () => showSheet(SHEET, { onStart: learn });
+$('start-tour').onclick = learn;
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
   color = tokenColor('--c2', document.body);
   if (g.over) reveal.show(g); else draw();
@@ -303,5 +302,3 @@ $('history').addEventListener('click', e => {
   document.querySelector(a.getAttribute('href'))?.scrollIntoView({ block: 'center' });
 });
 boot();
-// First visit: open the walkthrough once (remembered in this browser only).
-if (store.get('sh-tour') !== 'seen' && !g.over) { store.set('sh-tour', 'seen'); tour.start(); }

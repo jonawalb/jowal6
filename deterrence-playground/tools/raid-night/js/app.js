@@ -1,12 +1,13 @@
 // Raid Night: game loop, input, overlays, URL hash and test hooks.
 import { WEAPONS, WEAPON_ORDER, THREATS, SPEED, WAVE_TRACKS, FIELD, BATTERIES, ALL_SITES, MODES, MODE_NAME, RESUPPLY } from '../data/params.js';
 import { RAIDS } from '../data/raids.js';
-import { createGame, step, fire, nextWave, liveThreats, tti, coverage, summary, DT } from './sim.js';
+import { createGame, step, fire, canFire, nextWave, liveThreats, tti, coverage, summary, DT } from './sim.js';
 import { createRenderer } from './render.js';
 import { updateHud, buildControls } from './hud.js';
 import { renderInfo } from './info.js';
 import { renderAAR, resultText } from './aar.js';
-import { createTour } from './tour.js';
+import { learnButton, runLesson } from '../../../shared/js/learn.js';
+import { lessonSteps, LESSON_SEED, SHEET } from './lesson.js';
 import { randomSeed } from './rng.js';
 import { clock, esc } from './fmt.js';
 import { ORDER_KEYS, orderInfo, ordered, autoLock, cycleId } from './targeting.js';
@@ -25,12 +26,13 @@ let seed = hashSeed >= 1 && hashSeed <= 999999 ? hashSeed : randomSeed();
 let reduced = q.has('rm') ? q.get('rm') === '1' : matchMedia('(prefers-reduced-motion: reduce)').matches;
 const pickMode = m => (MODES.includes(m) ? m : 'normal');
 let mode = pickMode(q.get('mode'));
-const modeFromLink = q.has('mode');
+let modeFromLink = q.has('mode'); // true until the first night starts: the ready card says the link chose the mode
 let lock = ORDER_KEYS.includes(q.get('lock')) ? q.get('lock') : 'closest';
 // Batteries: normal mode has one ("N") that uses every site; hard mode has L and R, each with its own sites.
 let bats = {}, order = emptyOrder(), batFired = { L: 0, R: 0 };
 let S, hover = null, started = false, paused = false, shownOver = false;
 let acc = 0, last = 0, hudAt = 0, lastPhase = '';
+let hold = false, lesson = null; // hold: the tutorial freezes the clock while the player reads
 
 const makeBats = () => (mode === 'hard'
   ? { L: { sel: null, weapon: 'gun' }, R: { sel: null, weapon: 'gun' } }
@@ -77,7 +79,10 @@ function setOverlay(html, tall = false) {
   overlay.innerHTML = html; overlay.hidden = !html; overlay.classList.toggle('tall', tall);
   if (html && was) cardIn(overlay.querySelector('.ov-card'));
 }
-function showReady() { setOverlay(readyHTML(seed, mode, mixLine(0), modeFromLink), true); }
+function showReady() {
+  setOverlay(readyHTML(seed, mode, mixLine(0), modeFromLink), true);
+  learnButton(overlay.querySelector('.ov-card'), { slug: 'raid-night', minutes: 4, onStart: startLesson, sheet: SHEET });
+}
 function showBreak(keepFocus) {
   const f = keepFocus && document.activeElement?.closest?.('#overlay [data-act]');
   const sig = f ? `[data-act="${f.dataset.act}"]${f.dataset.w ? `[data-w="${f.dataset.w}"]` : ''}` : '';
@@ -103,6 +108,7 @@ function start(m) {
   if (started) return;
   if (m && m !== mode) { mode = pickMode(m); bats = makeBats(); syncMode(); }
   writeHash();
+  modeFromLink = false;
   started = true; paused = false; setOverlay('');
   announce(`${MODE_NAME[mode]} mode. Wave 1 begins. ${RAIDS[0].short} mix.`);
   canvas.focus({ preventScroll: true }); syncPause();
@@ -269,16 +275,27 @@ $('aar-copy').onclick = e => copy(resultText(summary(S), seed, location.href, mo
 $('aar-again').onclick = () => { reset(seed); $('fieldbox').scrollIntoView({ block: 'center' }); };
 $('aar-new').onclick = () => { reset(randomSeed()); $('fieldbox').scrollIntoView({ block: 'center' }); };
 
-const tour = createTour($('tour-slot'), {
-  onOpen: () => { if (started && !paused && S.phase === 'wave') setPaused(true); },
-  onClose: () => {},
-});
-$('start-tour').onclick = () => tour.start();
+// ---- tutorial: Easy mode, fixed seed ----
+const lessonApi = {
+  get S() { return S; }, get started() { return started; }, get mode() { return mode; },
+  hold: v => { hold = v; },
+  /** Run the wave forward (frozen or not) until pred(S) holds, at most `sec` game seconds. */
+  advanceUntil: (pred, sec) => { for (let i = 0; i < sec / DT && S.phase === 'wave' && !pred(S); i++) step(S); },
+  /** Is a live track of this type inside the reach of this weapon (ready or reloading)? */
+  inReach: (type, w) => liveThreats(S).some(t => t.type === type && !['range', 'ineffective', 'gone'].includes(canFire(S, w, t).reason)),
+};
+function startLesson() {
+  lesson?.stop();
+  modeFromLink = false; mode = 'easy'; reset(LESSON_SEED);
+  $('fieldbox').scrollIntoView({ block: 'start', behavior: 'auto' });
+  lesson = runLesson(lessonSteps(lessonApi), { slug: 'raid-night', title: 'Learn to play',
+    onExit: () => { hold = false; lesson = null; canvas.focus({ preventScroll: true }); } });
+}
 
 // ---- loop ----
 function frame(ts) {
   const dt = Math.min(0.1, (ts - (last || ts)) / 1000); last = ts;
-  if (started && !paused && S.phase === 'wave') {
+  if (started && !paused && !hold && S.phase === 'wave') {
     acc += dt * (reduced ? SPEED.reduced : SPEED.normal);
     while (acc >= DT && S.phase === 'wave') { step(S); acc -= DT; }
   }

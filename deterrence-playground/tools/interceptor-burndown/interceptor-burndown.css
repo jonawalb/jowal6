@@ -78,14 +78,6 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
 .mt-s { margin-top: 8px !important; }
 .tablewrap td.num { text-align: right; }
 
-/* Walkthrough card (pattern from strait-layers) */
-.tour { background: var(--panel); border: 1px solid var(--rule); border-top: 3px solid var(--accent); border-radius: 4px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
-.tour[hidden] { display: none; }
-.tour-h { display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 11px; color: var(--muted); }
-.tour .x { background: none; border: 0; font-size: 20px; line-height: 1; cursor: pointer; color: var(--muted); padding: 0 4px; }
-.tour h3 { margin: 0; font-family: var(--display); font-size: 20px; line-height: 1.15; }
-.tour p { margin: 0; font-size: 13.5px; max-width: 80ch; }
-.tour-nav { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
 .chartcard .tsm-export { margin-top: 4px; }
 .col .tsm-export { margin-top: 6px; }
 
@@ -129,7 +121,7 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
 :root[data-skin="trailer"] .chart .row-t { font-family: var(--body); }
 :root[data-skin="trailer"] .chart-h .seg button { color: var(--ink); }
 :root[data-skin="trailer"] .chart-h .seg button[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); }
-:root[data-skin="trailer"] .tour { background: color-mix(in srgb, var(--panel) 94%, transparent); box-shadow: 0 22px 50px -24px #000; }
 :root[data-skin="trailer"] .mags .mv { font-size: 11.5px; }
 :root[data-skin="trailer"] .mags li { grid-template-columns: 96px minmax(0, 1fr) 60px; }
 @media (max-width: 520px) { :root[data-skin="trailer"] .mags li { grid-template-columns: 84px minmax(0, 1fr) 56px; } }
+.doc-note { margin: 4px 0 0; }

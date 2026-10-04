@@ -125,7 +125,7 @@ export default {
           el('line', { x1: F.sx(P.k0), x2: F.sx(P.k0), y1: F.sy(0), y2: F.sy(1), class: 'refl' }, F.g);
           el('circle', { cx: F.sx(P.k0), cy: F.sy(e.deal), r: 7, class: 'mark' }, F.g);
           axes(F, { xt: ks, yt: [0, 0.5, 1], xl: 'Military position k (0 = player 1 defeated, N = player 2 defeated)', yl: 'Player 1’s share', xf: v => String(v) });
-          legend(a.legend, [['--c1', 'player 1’s offer x_k'], ['--c4', 'player 1’s share when 2 offers, 1 − y_k'], ['--c3', 'better than fighting to the finish for both']]);
+          legend(a.legend, [['--c1', 'player 1’s offer x<sub>k</sub>'], ['--c4', 'player 1’s share when 2 offers, 1 − y<sub>k</sub>'], ['--c3', 'better than fighting to the finish for both']]);
         },
       };
     }

@@ -7,7 +7,8 @@ import { FBY, RES_LABEL } from '../data/formations.js';
 import { newGame, brief, resolveTurn, snapshot, encode, decode, blockedWhy } from './engine.js';
 import { updateControl } from './forces.js';
 import { ledger } from './logistics.js';
-import { createTour } from './tour.js';
+import { lessonSteps, LESSON_SEED, SHEET } from './lesson.js';
+import { learnButton, runLesson } from '../../../shared/js/learn.js';
 import { paintDecide, wireDecide, emptyChoice } from './decide.js';
 import { seeFor, paintFog, seenOrders } from './fog-panel.js';
 import { sight } from './fog.js';
@@ -63,15 +64,19 @@ $('begin').addEventListener('click', () => {
   const weights = Object.fromEntries([...$('weights').querySelectorAll('input')].map(i => [i.dataset.obj, +i.value]));
   const traits = document.querySelector('input[name="traits"]:checked')?.value === '1';
   begin({ seed: newSeed(), player: pick, weights, difficulty: document.querySelector('input[name="difficulty"]:checked')?.value || 'normal', scenario: scen, traits });
+  briefing();
+});
+/** The private briefing card that opens a game: your hidden type and the starting situation. */
+function briefing() {
   const t = g.s.types[g.player];
-  $('type-t').textContent = `You lead ${COUNTRIES[g.player].name}. Your leadership is ${P.typeLabel[t].toLowerCase()}.`;
+  $('type-t').textContent = `You lead ${g.player === 'us' ? 'the ' : ''}${COUNTRIES[g.player].name}. Your leadership is ${P.typeLabel[t].toLowerCase()}.`;
   $('type-x').textContent = P.typeText[t];
   const sc = SCENARIO[g.s.scenario];
   $('type-s').textContent = `Starting situation: ${sc.label}. ${g.s.traits ? 'Hidden traits are on: the other leaders each have one, which you will see only at the end.' : 'Hidden traits are off.'}`;
   $('type-go').textContent = `Go to ${P.months[g.s.turn]}`;
   $('typecard').style.setProperty('--c', COL[g.player]);
   show('typecard'); $('typecard').focus();
-});
+}
 $('type-go').addEventListener('click', () => { show('play'); paint(); $('st-1').focus(); });
 
 function begin(start) {
@@ -248,16 +253,23 @@ function endLogi(s, me) {
     <p class="fine"><b>Landings:</b> ${land}</p>`;
 }
 
-/* ---------- Walkthrough ---------- */
-const tour = createTour(() => {
-  if (!g) { pick = pick || 'us'; paintSeats(); paintWeights(); $('setup').hidden = false; $('begin').click(); $('type-go').click(); }
-  else if (g.s.over || !$('resolve').hidden) return false;
-  return true;
-}, st => {   // show the part of the page a walkthrough step is about: its step of the move, and its phone tab
-  if (st.step) setStep(st.step);
-  if (isPhone() && st.tab) setPhoneTab(st.tab);
-});
-$('tour-btn').addEventListener('click', () => tour.start());
+/* ---------- Learn to play ---------- */
+// A guided first month as Washington from the standard start, on a fixed seed (js/lesson.js).
+let lesson = null;
+function learn() {
+  if (g && !g.s.over && g.s.history.length && !confirm('The lesson starts a new game. To keep this one, cancel and copy its link first.')) return;
+  if (lesson) lesson.stop();
+  $('old-link').hidden = true;
+  pick = 'us'; scen = 'gray'; paintSeats(); paintWeights(); paintScenarios(); $('setup').hidden = false;
+  $('start').style.setProperty('--accent', COL[pick]);
+  begin({ seed: LESSON_SEED, player: 'us', weights: defaultWeights('us'), difficulty: 'normal', scenario: 'gray', traits: false });
+  briefing();
+  document.body.classList.add('k4-learning');
+  lesson = runLesson(lessonSteps({ get: () => g, setStep, setPhoneTab, isPhone }), { slug: 'four-capitals', title: 'Learn to play', onExit: () => { lesson = null; document.body.classList.remove('k4-learning'); } });
+}
+learnButton($('start'), { slug: 'four-capitals', minutes: 7, onStart: learn, sheet: SHEET,
+  blurb: 'A guided first month as Washington, about 7 minutes. Every term is explained as it comes up.' });
+$('tour-btn').addEventListener('click', learn);
 
 /* ---------- Load: replay a shared link, or start fresh ---------- */
 function load() {

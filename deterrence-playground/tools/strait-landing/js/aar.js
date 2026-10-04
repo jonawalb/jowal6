@@ -1,6 +1,6 @@
 // After-action review: the player's game beside other plans on the same seed (same week of weather, same dice),
 // then 1,000 weeks of the player's plan against the doctrinal plan.
-import { ZONES, ZONE_KEYS } from '../data/params.js';
+import { ZONES, ZONE_KEYS, WIN } from '../data/params.js';
 import { play } from './montecarlo.js';
 import { plaDoctrine, plaRecorded, rocDoctrine, rocPassive, rocRecorded, PLA_SETUPS, ROC_SETUP } from './policy.js';
 import { MONTHS } from './weather.js';
@@ -85,7 +85,20 @@ function summary(G, pla) {
   parts.push(`After D+3 the PLA has ${r0(R.total)} points ashore${b ? `, best at the ${ZONES[b.z].area}${b.D < 0.5 ? ', where Taiwan has almost nothing left' : ` at ${b.ratio}:1 against ${b.D} points of Taiwan's forces`}` : ''}.`);
   parts.push(`${s.lostAmph + s.lostFerry} ship groups were lost (${s.lostAmph} amphibious, ${s.lostFerry} ferry), with about ${r0(s.lostTroops)},000 troops, ${s.mined} of them to mines.`);
   parts.push(`Taiwan fired ${s.missiles} anti-ship missiles; strikes destroyed ${s.killedLaunchers} batteries.`);
+  parts.push(why(R));
   return parts.join(' ');
+}
+
+/** One sentence on why the result is what it is, against the win rules (model.js judge). */
+function why(R) {
+  const b = R.best;
+  if (R.outcome === 'pla') return `Secure: at least ${WIN.minAshore} points ashore at ${WIN.ratio} to 1 or better, with a port or ${WIN.noPortAshore} points.`;
+  if (R.outcome === 'roc') return R.total < WIN.repulsed ? `Defeated: fewer than ${WIN.repulsed} points ashore.` : 'Defeated: outnumbered more than 2 to 1 at its largest lodgment.';
+  const miss = [];
+  if (b.A < WIN.minAshore) miss.push(`fewer than ${WIN.minAshore} points ashore`);
+  if (b.ratio < WIN.ratio) miss.push(`below ${WIN.ratio} to 1`);
+  if (b.port === 'roc' && b.A < WIN.noPortAshore) miss.push(`no port and fewer than ${WIN.noPortAshore} points`);
+  return `Contested: the PLA holds on, but its best lodgment has ${miss.join(', ')}.`;
 }
 
 /** 1,000 weeks of your plan and of the doctrinal plan, run in chunks so the page stays responsive. */

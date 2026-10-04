@@ -1,6 +1,8 @@
 // Will to Fight v2 page: text, sketch, measurement table (sealed in ../data/) and the calculator.
 import { MODEL, PARAMS, MEASURES } from '../data/model.js';
 import { solve, cohesion } from './model.js';
+import { lessonSteps, SHEET } from './lesson.js';
+import { learnButton, runLesson } from '../../../../shared/js/learn.js';
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -107,3 +109,11 @@ function render() {
   history.replaceState(null, '', '#' + PARAMS.map(s => `${s[0]}=${P[s[0]]}`).join('&'));
 }
 render();
+
+// ---- Learn to play: banner at the top of the page; the lesson starts from the default settings ----
+function resetDefaults() {
+  for (const s of PARAMS) { P[s[0]] = s[6]; $(`v2-${s[0]}`).value = s[6]; $(`v2o-${s[0]}`).textContent = f2(s[6]); }
+  render();
+}
+const learn = learnButton(document.querySelector('main.wf2'), { slug: 'will-to-fight', minutes: 5, sheet: SHEET,
+  onStart: () => { resetDefaults(); runLesson(lessonSteps(), { slug: 'will-to-fight', title: 'Learn to play', onFinish: () => learn.refresh() }); } });

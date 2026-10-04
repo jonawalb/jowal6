@@ -83,6 +83,16 @@ export function drawSeries(svg, o, onHover) {
   hov.addEventListener('mousemove', ev => { const i = pick(ev); cross.setAttribute('x1', x(i)); cross.setAttribute('x2', x(i)); cross.setAttribute('visibility', 'visible'); onHover(i); });
   hov.addEventListener('mouseleave', () => { cross.setAttribute('visibility', 'hidden'); onHover(-1); });
   hov.addEventListener('click', ev => onHover(pick(ev), true));
+  // Keyboard: focus the chart, arrows step through periods, Enter opens a spike's evidence.
+  let ki = -1;
+  const kshow = i => { ki = Math.max(0, Math.min(n - 1, i)); cross.setAttribute('x1', x(ki)); cross.setAttribute('x2', x(ki)); cross.setAttribute('visibility', 'visible'); onHover(ki); };
+  svg.setAttribute('tabindex', '0');
+  svg.onkeydown = ev => {
+    const step = { ArrowRight: 1, ArrowLeft: -1, PageUp: 10, PageDown: -10, Home: -1e9, End: 1e9 }[ev.key];
+    if (step != null) { ev.preventDefault(); kshow(ki < 0 ? n - 1 : ki + step); }
+    else if (ev.key === 'Enter' && ki >= 0) { ev.preventDefault(); onHover(ki, true); }
+  };
+  svg.onblur = () => { cross.setAttribute('visibility', 'hidden'); };
 }
 
 /** Cross-correlation r_k for k = -K..K with bootstrap CIs. */

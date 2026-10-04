@@ -8,7 +8,7 @@ import { drawRace, turnLabel } from './chart.js';
 import { setupHTML, ordersHTML, defaultOrders } from './panel.js';
 import { renderAAR, runBatch, aiSetup, OUT } from './aar.js';
 import { renderInfo } from './info.js';
-import { createTour } from './tour.js';
+import { mountLesson } from './lesson.js';
 import { randomSeed } from './rng.js';
 import * as fx from './fx.js';
 
@@ -51,10 +51,6 @@ function writeHash() {
 }
 
 // ---------- rendering ----------
-const HOWTO = {
-  pla: $('howto-p').innerHTML,
-  roc: 'You command Taiwan\'s defense of its west coast against a PLA landing played by the computer. <b>Plan:</b> place three loads of mines, choose how much of your army sits at the beaches and whether ports are rigged for demolition. The PLA picks its beaches in secret. <b>Play:</b> eight 12-hour turns from D-day to D+3. Each turn, choose how many missile batteries fire, where your reserve groups go and whether to counterattack, then press <b>Resolve turn</b> (or N). <b>You win</b> if the landing is defeated after D+3, and hold it to a draw if the lodgment is still contested.',
-};
 const map = createMap($('map'), $('tip'), { onZone: z => pickZone(z) });
 
 function pickZone(z) {
@@ -73,7 +69,6 @@ function render() {
   document.body.dataset.phase = S.phase;
   document.body.dataset.role = S.role;
   const panel = $('panel');
-  $('howto-p').innerHTML = S.role === 'pla' ? HOWTO.pla : HOWTO.roc;
   if (S.phase === 'setup') {
     panel.innerHTML = setupHTML(S, startDay());
     // Seas on the first day of the forecast, before any waiting.
@@ -125,7 +120,7 @@ function renderStatus() {
   const D = defAt(G, hot), A = G.ashore[hot];
   const ratio = A / Math.max(0.1, D);
   $('status').dataset.s = G.t === 0 ? '' : S.role === 'pla' ? (ratio >= 1.5 ? 'good' : ratio >= 0.7 ? 'warn' : 'bad') : (ratio >= 1.5 ? 'bad' : ratio >= 0.7 ? 'warn' : 'good');
-  $('status-t').textContent = G.t === 0 ? 'H-hour' : `${r1(A)} vs ${r1(D)} at the ${ZONES[hot].area}`;
+  $('status-t').textContent = G.t === 0 ? 'H-hour' : `PLA ${r1(A)} vs Taiwan ${r1(D)} at the ${ZONES[hot].area}`;
   $('status-s').textContent = `PLA ${r1(ashore)} ashore, ${r1(afloat)} afloat · ${s.lostAmph + s.lostFerry} ship groups lost · Taiwan ${G.launchers.filter(L => L.alive).length} missile batteries left`;
 }
 
@@ -255,12 +250,8 @@ async function copy(text, btn) {
   setTimeout(() => { btn.textContent = old; }, 1500);
 }
 $('copy-link').onclick = e => copy(location.href, e.currentTarget);
-$('show-howto').onclick = () => { $('howto').hidden = false; $('howto').scrollIntoView({ block: 'nearest' }); };
-$('hide-howto').onclick = () => { $('howto').hidden = true; try { localStorage.setItem('sl-howto', '1'); } catch { /* storage blocked */ } };
-try { if (localStorage.getItem('sl-howto') === '1') $('howto').hidden = true; } catch { /* storage blocked */ }
-
-const tour = createTour({ onStep: () => {} });
-$('start-tour').onclick = () => tour.start();
+const lesson = mountLesson($('learn-slot'), { S, game: () => G, reset });
+$('show-rules').onclick = () => lesson.sheet();
 
 readHash();
 renderInfo(S.P);

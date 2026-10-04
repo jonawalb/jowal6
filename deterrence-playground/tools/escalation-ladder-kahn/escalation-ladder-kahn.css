@@ -81,17 +81,8 @@
 .kl-crit .who { font-size: 12px; color: var(--muted); }
 .kl-table td:first-child { white-space: nowrap; }
 
-/* Walkthrough */
-.kl-tour { position: fixed; right: 16px; bottom: 16px; width: min(360px, calc(100vw - 32px)); background: var(--panel); border: 1px solid var(--rule); border-top: 3px solid var(--accent); border-radius: 4px; padding: 12px 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, .22); z-index: 30; }
-.kl-tour[hidden] { display: none; }
-.kl-tour .th { display: flex; justify-content: space-between; align-items: center; font: 600 11.5px var(--mono); color: var(--muted); }
-.kl-tour .x { border: 0; background: transparent; font-size: 20px; cursor: pointer; line-height: 1; padding: 2px 6px; }
-.kl-tour h3 { margin: 6px 0 4px; font-size: 18px; }
-.kl-tour p { margin: 0 0 10px; font-size: 13.5px; }
-.kl-tour .tn { display: flex; justify-content: space-between; gap: 8px; }
 .below h3 { font-family: var(--display); font-size: 17px; margin: 14px 0 4px; }
 .below .src li { overflow-wrap: anywhere; }
-@media (max-width: 520px) { .kl-tour { right: 8px; left: 8px; bottom: 8px; width: auto; } }
 .kl-more { display: none; grid-column: 2; text-align: left; background: transparent; border: 1px dashed var(--rule); border-radius: 3px; padding: 4px 8px; font-size: 12.5px; color: var(--muted); cursor: pointer; margin: 4px 0; }
 .kl-more:hover { border-color: var(--muted); color: var(--ink); }
 .kl-ladder:not(.expanded) .kl-group.collapsed .kl-rungs { display: none; }
@@ -234,8 +225,7 @@ body.kl-picking .layout, body.kl-picking .below { display: none; }
 :root[data-skin="trailer"] .kl-pick-card { background: color-mix(in srgb, var(--panel) 88%, transparent); }
 :root[data-skin="trailer"] .kl-pick-card b, :root[data-skin="trailer"] .cf-ph, :root[data-skin="trailer"] .cf-player,
 :root[data-skin="trailer"] .kl-crises-h, :root[data-skin="trailer"] .kl-step h3, :root[data-skin="trailer"] .cf-dec h3,
-:root[data-skin="trailer"] .cf-end h3, :root[data-skin="trailer"] .kl-crit h3, :root[data-skin="trailer"] .kl-tour h3 { font-family: var(--display); font-style: italic; font-weight: 500; }
-:root[data-skin="trailer"] .kl-tour { box-shadow: 0 20px 50px -20px #000, var(--glow); }
+:root[data-skin="trailer"] .cf-end h3, :root[data-skin="trailer"] .kl-crit h3 { font-family: var(--display); font-style: italic; font-weight: 500; }
 :root[data-skin="trailer"] .pc-dot.a.now { filter: drop-shadow(0 0 6px var(--blue)); }
 :root[data-skin="trailer"] .pc-line.a { filter: drop-shadow(0 0 4px rgba(127, 182, 217, .5)); }
 :root[data-skin="trailer"] .cf-roll { color: var(--accent); }

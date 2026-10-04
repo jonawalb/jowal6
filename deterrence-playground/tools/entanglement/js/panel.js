@@ -73,7 +73,7 @@ export function buildPanel(panel, S, onChange) {
       ['Conventional effect of campaign', `${Math.round(R.mil * 100)} / 100`],
       ['Use-or-lose pressure, peak', pct(R.pressure)],
       ['Fog of war at the end', pct(R.fog)],
-      ['Riskiest phase', `Phase ${peak.t + 1} (${pct(peak.p)})`],
+      ['Riskiest phase', R.phases.every(p => Math.abs(p.p - peak.p) < 1e-9) ? `All equal (${peak.p < 0.005 ? 'under 1%' : pct(peak.p)} each)` : `Phase ${peak.t + 1} (${peak.p < 0.005 ? 'under 1%' : pct(peak.p)})`],
     ].map(([a, b]) => `<dt>${a}</dt><dd>${b}</dd>`).join('');
     for (const e of leverEffects(S)) {
       const node = panel.querySelector(`[data-d="${e.id}"]`);

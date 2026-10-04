@@ -139,7 +139,7 @@ export function createChart(host, { onReport, onEvent }) {
     if (showTotal && state.limit) {
       mk('line', { class: 'ie-limit', x1: jcpoa0, x2: m.l + pw, y1: y(LIMIT_KG_U), y2: y(LIMIT_KG_U) }, plot);
       const lt = mk('text', { class: 'ie-limit-t', x: jcpoa0 + 2, y: y(LIMIT_KG_U) - 5 }, plot);
-      lt.textContent = 'JCPOA limit, 202.8 kg';
+      lt.textContent = W < 560 ? 'JCPOA limit' : 'JCPOA limit, 202.8 kg';
     }
     motion(plot, [state.view, state.limit].join('|'));
     // Report dots

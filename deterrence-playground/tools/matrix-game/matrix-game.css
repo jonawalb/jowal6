@@ -124,16 +124,9 @@
 .mg-print-only { display: none; }
 .mg-facts li { color: var(--ink); }
 
-/* Walkthrough */
-.mg-tour { position: fixed; right: 16px; bottom: 16px; width: min(380px, calc(100vw - 32px)); background: var(--panel); border: 1px solid var(--rule); border-top: 3px solid var(--accent); border-radius: 4px; padding: 12px 14px; box-shadow: 0 8px 28px rgba(0, 0, 0, .2); display: flex; flex-direction: column; gap: 6px; z-index: 50; }
-.mg-tour[hidden] { display: none; }
-.mg-tour-h { display: flex; justify-content: space-between; align-items: center; font: 11px var(--mono); color: var(--muted); }
-.mg-tour .x { background: none; border: 0; font-size: 20px; line-height: 1; cursor: pointer; color: var(--muted); padding: 0 4px; }
-.mg-tour h3 { margin: 0; font-size: 19px; line-height: 1.15; }
-.mg-tour p { margin: 0; font-size: 13px; }
-.mg-tour-nav { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
-.mg-lit { outline: 3px solid var(--accent); outline-offset: 3px; }
-@media (max-width: 800px) { .mg-tour { left: 12px; right: 12px; bottom: 12px; width: auto; } }
+/* Learn-to-play banner (shared/js/learn.js) */
+.mg-learn { max-width: 1400px; margin: 12px auto 0; }
+.mg-learn .learn-banner { margin: 0; }
 
 /* Motion (js/fx.js). The dice faces the controller swaps in while rolling tumble; bars grow from their base. */
 .mg-dist rect { transform-box: fill-box; transform-origin: 50% 100%; }
@@ -162,11 +155,10 @@
 :root[data-skin="trailer"] .mg-bar.hit rect { stroke: var(--accent); filter: drop-shadow(0 0 4px var(--accent)); }
 :root[data-skin="trailer"] .mg-bar.hit text { fill: var(--accent); }
 :root[data-skin="trailer"] .mg-list button[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent); }
-:root[data-skin="trailer"] .mg-tour { box-shadow: 0 18px 50px -20px #000, var(--glow); }
 
 @media print {
   body { background: #fff; color: #000; padding: 0; }
-  #tsm-bar, .tsm-bar, #tsm-head, #tsm-foot, .mg-actions-bar, .below, .mg-tour, .mg-grid > :not(.mg-logcard), .mg-logh .mg-btns { display: none !important; }
+  #tsm-bar, .tsm-bar, #tsm-head, #tsm-foot, .mg-actions-bar, .mg-learn, .below, .mg-grid > :not(.mg-logcard), .mg-logh .mg-btns { display: none !important; }
   .mg-grid { display: block; margin: 0; }
   .mg-logcard { border: 0; padding: 0; background: none; }
   .mg-print-only { display: block; font-size: 12px; margin: 0 0 8px; }

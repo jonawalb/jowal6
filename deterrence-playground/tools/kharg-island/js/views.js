@@ -35,7 +35,10 @@ export function turnLogHtml(game, v, cfg) {
 function endWhy(game, cfg) {
   const s = game.turns[game.turns.length - 1].state;
   const steps = SECTORS[cfg.us.sector].steps;
-  if (cfg.us.obj === 'blockade') return `Kharg loaded ${Math.round(s.share * 100)}% of its normal volume in the last turn; ${f2(s.lostMb)} million barrels went unshipped over the game.`;
+  if (cfg.us.obj === 'blockade') {
+    const avg = game.turns.reduce((a, T) => a + T.state.share, 0) / game.turns.length;
+    return `On average Kharg loaded ${Math.round(avg * 100)}% of its normal volume per turn (the result counts the average: 25% or less is a success, 60% or more a failure); ${f2(s.lostMb)} million barrels went unshipped over the game.`;
+  }
   if (cfg.us.obj === 'raid') {
     return game.outcome === 'fail' ? (s.ashore < 0.05 ? 'The raid force was lost or never got ashore.' : 'The raid force never took the airstrip area.')
       : `The force took the airstrip area and pulled out with ${f2(s.ashore)} points.`;
@@ -96,7 +99,7 @@ export function mcHtml(mc, drv, cfg) {
     <p class="fine">Average per game: ${f2(mc.shipsHit)} U.S. ships put out of action, ${f2(mc.usLost)} U.S. strength points lost, ${f2(mc.lostMb)} million barrels of Iranian crude unshipped. Notional Brent at the end: median $${Math.round(q(0.5))}, 90th percentile $${Math.round(q(0.9))}. Domestic and allied cost index ${Math.round(mc.cost)} of 100.</p>
     <div class="mc-cols">
       <div><p class="lbl"><b>Escalation</b> <small>share of games</small></p>${esc}</div>
-      <div><p class="lbl"><b>Key drivers</b> <small>change in percentage points when one lever moves one step</small></p>
+      <div><p class="lbl"><b>Key drivers</b> <small>change in percentage points when one lever moves one step, replaying the same 1,000 games. Levers are tested even when the budget would not allow them.</small></p>
         <div class="tablewrap"><table class="drv"><thead><tr><th>Lever</th><th colspan="2">U.S. objective met</th><th colspan="2">Major escalation</th></tr></thead><tbody>${dr || '<tr><td>No levers to test.</td></tr>'}</tbody></table></div></div>
     </div>`;
 }

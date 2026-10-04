@@ -1,9 +1,10 @@
-// Is It a Nuke? Wiring: state, URL hash, figures, panel, case cards and walkthrough.
+// Is It a Nuke? Wiring: state, URL hash, figures, panel, case cards and the Learn to play lesson.
 import { DEFAULTS, LIMITS, COSTS, CONTEXTS, SITES, TRAJS, STATES, ACTIONS, update } from './model.js';
 import { drawChain, drawDecision, drawMap, bindMapDrag, drawRates } from './views.js';
 import { buildPanel } from './panel.js';
 import { renderCases } from './cases.js';
-import { createTour } from './tour.js';
+import { learnButton, runLesson } from '../../../shared/js/learn.js';
+import { lessonSteps, SHEET, LESSON_START } from './lesson.js';
 import { legend } from './ui.js';
 import { afterRender } from './fx.js';
 
@@ -84,8 +85,14 @@ renderCases(document.getElementById('cases'), preset => {
   apply(preset);
   document.getElementById('stage').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
 });
-const tour = createTour(document.getElementById('tour-root'), apply);
-document.getElementById('start-tour').addEventListener('click', () => tour.start());
+// Learn to play: reset to the defaults (costs too), load a conventional-looking launch, then run the lesson.
+const startLesson = () => {
+  Object.assign(S.costs, cloneCosts());
+  Object.assign(S.P, DEFAULTS, LESSON_START);
+  render(); writeHash();
+  runLesson(lessonSteps(S, apply), { slug: 'warhead-ambiguity', title: 'Learn to play', onFinish: () => banner.refresh() });
+};
+const banner = learnButton(document.getElementById('learn-slot'), { slug: 'warhead-ambiguity', minutes: 4, onStart: startLesson, sheet: SHEET });
 
 let lastW = innerWidth;
 addEventListener('resize', () => { if (Math.abs(innerWidth - lastW) > 40) { lastW = innerWidth; changed(); } });

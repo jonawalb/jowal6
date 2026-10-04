@@ -1,11 +1,12 @@
-// Deterrence Lab (general edition): tab switching, shared state, URL hash, walkthrough.
+// Deterrence Lab (general edition): tab switching, shared state, URL hash, learn-to-play lesson.
 import { A_DEFAULTS } from './models/crisis.js';
 import { B_DEFAULTS } from './models/signal.js';
 import { C_DEFAULTS } from './models/reputation.js';
 import { mountA } from './viewA.js';
 import { mountB } from './viewB.js';
 import { mountC } from './viewC.js';
-import { createTour, B_STEPS } from './tour.js';
+import { STEPS, fearonSteps, SHEET } from './lesson.js';
+import { learnButton, runLesson } from '../../../shared/js/learn.js';
 import { mountCases, pickCase } from './cases.js';
 import { addExportBar } from '../../../shared/js/export.js';
 import { snap, morph, drawIn } from './fx.js';
@@ -89,23 +90,30 @@ tabs.forEach((t, i) => {
   });
 });
 
-const tour = createTour(document.getElementById('tour-root'), set => {
+// One way to learn: the banner at the top of the game area starts the hands-on lesson from the default setup.
+function apply(set) {
   S.m = set.m;
   if (set[set.m]) Object.assign(S[set.m], set[set.m]);
   if (set.case) pickCase(set.m, set.case);
   mount();
-});
-document.getElementById('start-tour').addEventListener('click', () => tour.start());
+}
+function startLesson() {
+  S.A = { ...A_DEFAULTS }; S.B = { ...B_DEFAULTS }; S.C = { ...C_DEFAULTS };
+  apply({ m: 'A' });
+  document.getElementById('learn-slot').scrollIntoView({ block: 'start' });
+  runLesson(STEPS, { slug: 'deterrence-lab-general', title: 'Learn to play', onFinish: () => learn.refresh() });
+}
+const learn = learnButton(document.getElementById('learn-slot'), { slug: 'deterrence-lab-general', minutes: 6, onStart: startLesson, sheet: SHEET });
 document.querySelectorAll('[data-goto]').forEach(a => a.addEventListener('click', ev => {
   ev.preventDefault(); S.m = a.dataset.goto; mount(); document.querySelector('.tabs').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }));
 
-// #m=B&tour=B (the Game Theory Gallery's Fearon 1997 card) opens the Fearon (1997) walkthrough.
+// #m=B&tour=B (the Game Theory Gallery's Fearon 1997 card) opens the Fearon (1997) lesson.
 // Read before mount() rewrites the address.
 const wantTourB = new URLSearchParams(location.hash.slice(1)).get('tour') === 'B';
 readHash();
 mount();
-if (wantTourB) tour.start(B_STEPS);
+if (wantTourB) runLesson(fearonSteps(apply), { title: 'Fearon (1997)' });
 
 // Render the method-section math once KaTeX has loaded (the scripts are deferred).
 function renderMath() {

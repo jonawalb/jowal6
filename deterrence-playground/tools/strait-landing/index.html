@@ -18,16 +18,12 @@
 <header id="tsm-head"></header>
 <div class="sl-actions">
   <p class="sl-flag"><b>Notional model, not a prediction.</b> Sea states are real ERA5 records; forces are aggregated and notional; sourced values are marked.</p>
-  <div><button type="button" class="btn" id="show-howto">How to play</button>
-  <button type="button" class="btn" id="start-tour">Walkthrough</button>
+  <div><button type="button" class="btn" id="show-rules">Rules</button>
   <button type="button" class="btn" id="copy-link">Copy link</button></div>
 </div>
+<div class="sl-learn" id="learn-slot"></div>
 <main class="layout">
   <div class="stage">
-    <section class="card sl-howto" id="howto" aria-labelledby="howto-t">
-      <div class="sl-howto-h"><h2 id="howto-t">How to play</h2><button type="button" class="btn solid" id="hide-howto">Got it</button></div>
-      <p id="howto-p">You plan the PLA's landing on Taiwan's west coast. <b>Plan:</b> pick a month, a main landing zone and when to go. <b>Play:</b> eight 12-hour turns from D-day to D+3. Each turn, choose how many amphibious ships and civilian ferries sail, what your strikes hit, and whether to storm a port, then press <b>Resolve turn</b> (or N). <b>Win</b> by holding a lodgment of at least 15,000 troops at 1.5 to 1 over the defenders, with a port or twice that many troops, when D+3 ends. You can switch sides and command Taiwan's defense instead.</p>
-    </section>
     <div class="status sl-status" id="status" aria-live="polite"><b id="status-t"></b><span id="status-s"></span></div>
     <div class="mapbox" id="box">
       <svg id="map" role="img" aria-label="Map of the Taiwan Strait with three generalized landing zones on Taiwan's west coast, schematic crossing lanes from the Fujian coast, and the commercial ports of Taipei, Taichung and Kaohsiung."></svg>
@@ -37,6 +33,7 @@
       <span><i class="lg-ship"></i>Amphibious group afloat</span><span><i class="lg-ferry"></i>Ferry group afloat</span>
       <span><i class="lg-a"></i>PLA ashore</span><span><i class="lg-d"></i>Taiwan at the beaches</span>
       <span><i class="lg-port"></i>Port (teal Taiwan, red PLA, grey wrecked)</span>
+      <span>“6 v 4”: PLA v Taiwan points at that zone</span>
     </div>
     <div class="card sl-race" id="race-card">
       <div class="sl-race-h"><p class="eyebrow">The build-up race</p>

@@ -6,7 +6,8 @@ import { MAX_REASONS } from './engine.js';
 import { newGame, replay, cur, playerArgue, playerRoll, aiArgue, aiRoll, nextTurn, encodeMoves, TURNS } from './game.js';
 import { renderBoard, renderInject, renderAdjudication, renderLog, logText, esc, actorChip, diceHtml } from './views.js';
 import { renderDebrief } from './debrief.js';
-import { createTour } from './tour.js';
+import { learnButton, runLesson } from '../../../shared/js/learn.js';
+import { lessonSteps, SHEET, LESSON_SEED } from './lesson.js';
 import { dealFx, tumble, landFx, pickFx, injectFx, debriefFx } from './fx.js';
 
 const $ = s => document.querySelector(s);
@@ -57,7 +58,7 @@ function composeSec() {
   }).join('');
   return `<div class="sec" id="mg-actions"><p class="eyebrow">1 · Your action</p><div class="mg-list">${act}</div></div>
     <div class="sec" id="mg-reasons"><p class="eyebrow">2 · Up to three reasons <span class="num">(${ui.reasons.length}/${MAX_REASONS})</span></p>
-      <p class="fine">A reason counts as strong (+1) if it bears on the action's tags and the board supports it right now.</p>
+      <p class="fine">A reason counts as strong (+1) if it shares a tag with your action and the board supports it right now. Otherwise it adds nothing.</p>
       <div class="mg-list">${rs}</div></div>
     <div class="sec"><button type="button" class="btn solid" id="mg-submit" ${ui.action == null ? 'disabled' : ''}>Put the argument to the adjudicator</button>
       <p class="fine">AI actors will raise counter-arguments. Then you roll.</p></div>`;
@@ -200,13 +201,14 @@ $('#sources').innerHTML = Object.values(SOURCES).map(s => `<li><a href="${s.url}
 $('#tracks-table').innerHTML = `<thead><tr><th>Track</th><th>Start</th><th>Meaning</th></tr></thead><tbody>${TRACKS.map(t =>
   `<tr><td>${t.name}</td><td class="num">${t.start} <span class="notional">notional</span></td><td>${t.help}</td></tr>`).join('')}</tbody>`;
 
-const tour = createTour(document.body, {
-  demo: () => {
-    if (ui.phase !== 'compose') return;
-    ui.action = 0; ui.reasons = [0, 2]; renderPanel();
+learnButton($('#mg-learn'), {
+  slug: 'matrix-game', minutes: 5, sheet: SHEET,
+  onStart: () => {
+    load('estonia', LESSON_SEED, '');
+    scrollTo({ top: 0, behavior: 'auto' });
+    runLesson(lessonSteps(), { slug: 'matrix-game', title: 'Learn to play' });
   },
 });
-$('#start-tour').onclick = () => tour.start();
 
 const h = readHash();
 load(h.actor, h.seed, h.moves);

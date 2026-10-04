@@ -7,7 +7,7 @@ const BW = (W - L - R) / OFFSETS.length;
 const xOf = k => L + (k - OFFSETS[0]) * BW;          // left edge of day k's band
 const xc = k => xOf(k) + BW / 2;
 const f1 = v => (v == null ? 'n/a' : (Math.abs(v) >= 10 ? Math.round(v) : v.toFixed(1)));
-const sgn = v => (v == null ? 'n/a' : (v > 0 ? '+' : v < 0 ? '−' : '±') + f1(Math.abs(v)));
+const sgn = v => (v == null ? 'n/a' : Number(f1(Math.abs(v))) === 0 ? '±0' : (v > 0 ? '+' : '−') + f1(Math.abs(v)));
 export const fmtDev = (v, unit) => (v == null ? 'n/a' : sgn(v) + (unit === 'pct' ? '%' : ''));
 
 function niceMax(v) {

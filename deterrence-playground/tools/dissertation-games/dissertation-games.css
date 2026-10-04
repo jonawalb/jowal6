@@ -12,6 +12,12 @@
 .dg-view p { max-width: 80ch; }
 .dg-fig { margin: 14px 0; background: #fff; border: 1px solid var(--rule); border-radius: 4px; padding: 8px; }
 .dg-fig img { display: block; width: 100%; height: auto; }
+.dg-scroll { overflow-x: auto; }
+.dg-scroll:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.dg-cap { margin-top: 6px; font-size: 12.5px; color: #555; }
+.dg-cap a { color: #1a4f8b; }
+.dg-narrow { display: none; }
+@media (max-width: 700px) { .dg-fig img { width: 720px; max-width: none; } .dg-narrow { display: inline; } }
 .dg-actions { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0 14px; }
 .dg-vars { border-collapse: collapse; width: 100%; font-size: 14px; }
 .dg-vars th, .dg-vars td { text-align: left; vertical-align: top; padding: 6px 10px 6px 0; border-top: 1px solid var(--rule); }

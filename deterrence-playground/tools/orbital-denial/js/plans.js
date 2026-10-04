@@ -56,13 +56,15 @@ export const planPolicy = plan => g => (plan[g.turn] || []).map(x => ({ ...x }))
 // ---- Post-war projection and summary -------------------------------------------------------------------
 const FULL = () => Object.fromEntries(MISSION_KEYS.map(m => [m, MISSIONS[m].n0]));
 let BASE = null;
-/** Satellites lost to debris over `years` after the war, minus what a no-war world loses anyway. */
-export function legacy(g, P, years = 25) {
+/** Satellites lost to debris over `years` after the war, minus what a no-war world loses anyway.
+ *  `at` is the month the projection starts from (the live outlook passes the current month, so the
+ *  no-war baseline has decayed for the same number of months). */
+export function legacy(g, P, years = 25, at = TURNS) {
   const sides = [FULL(), FULL()];
   sides[0].com += 12 * (2 - g.sides.B.stock.prolif); sides[1].com += 12 * (2 - g.sides.R.stock.prolif);
-  const key = JSON.stringify(P) + years;
+  const key = JSON.stringify(P) + years + ':' + at;
   if (!BASE || BASE.key !== key) {
-    const w = newGame(1); decay(w, TURNS * DT, P);
+    const w = newGame(1); decay(w, at * DT, P);
     BASE = { key, s: project(w, years, P, [FULL(), FULL()]) };
   }
   const s = project(g, years, P, sides), end = s[s.length - 1], b = BASE.s[BASE.s.length - 1];

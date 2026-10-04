@@ -87,6 +87,7 @@ export function battleTap(sec) {
       if (d < 0) { msg = 'Tap a sector up to three away in a straight line or diagonal.'; break; }
       const r = go({ kind: 'lane', unit: one.id, dir: d });
       msg = r.ok ? `Fire lane: ${nm(one)} will fire ${DIRS[d].k === 'E' || DIRS[d].k === 'W' ? `across the front, along the ${one.side === 'att' ? 'defenders’' : 'attackers’'} lines (enfilade)` : 'along that line'}. ${when(r)}${one.path.length ? ' It is laid where it stops moving.' : ''} If it moves later, the lane is lost: lay it again.` : `No order${why(r)}.`;
+      if (r.ok) S.tool = null;   // 2026-10-04: one-shot (an armed Lane turned the next tap on a unit into another lane)
       break;
     }
     case 'fire': {
@@ -102,6 +103,7 @@ export function battleTap(sec) {
       if (!one) break;
       const r = go({ kind: 'riposte', unit: one.id, sec });
       msg = r.ok ? `Local counterattack: ${nm(one)} strikes ${place(sec)} ${r.d ? `at ${hhmm(g.t + r.d)}` : 'this hour'}.` : `No local counterattack${why(r)}: tap a fresh lodgment next to it.`;
+      if (r.ok) S.tool = null;   // 2026-10-04: one-shot, so the next tap on a unit selects it instead of ordering another strike
       break;
     }
     case 'cs': case 'cs-pick': {

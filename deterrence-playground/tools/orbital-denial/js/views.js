@@ -51,7 +51,9 @@ export function verdicts(g, alt, L, Lalt) {
   const hi = g.debris.high, hiAlt = alt.debris.high;
   return {
     status: war,
-    sub: `Red's posture was ${g.posture}. Advantage ${g.adv >= 0 ? '+' : ''}${g.adv.toFixed(2)} (±0.50 decides).`,
+    sub: g.outcome === 'escalation'
+      ? `Red's posture was ${g.posture}. The crisis went nuclear, so everyone loses, whatever the advantage (${g.adv >= 0 ? '+' : ''}${g.adv.toFixed(2)}).`
+      : `Red's posture was ${g.posture}. Advantage ${g.adv >= 0 ? '+' : ''}${g.adv.toFixed(2)}: +0.50 or more is your edge, −0.50 or less is Red's, in between a stalemate.`,
     cards: [
       ['The war', war[1], `Same months with reversible means only: ${({ blue: 'you held the edge', red: 'Red held the edge', draw: 'stalemate', escalation: `threshold crossed in month ${alt.turn}` })[alt.outcome]}.`],
       ['Escalation', `${pct(cp)} cumulative risk`, `Reversible only on the same dice: ${pct(ca)}.`],

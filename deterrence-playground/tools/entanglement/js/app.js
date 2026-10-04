@@ -1,9 +1,10 @@
-// Nuclear Entanglement: state, URL hash, figures, panel, real-world examples and walkthrough.
+// Nuclear Entanglement: state, URL hash, figures, panel, real-world examples and the Learn to play lesson.
 import { CATS, CHANNELS, DEFAULTS, LIMITS, DEFAULT_PLAN, DEFAULT_MIT, MITIGATIONS, run, baseline } from './model.js';
 import { drawPlanner, drawTimeline, drawChannels } from './views.js';
 import { buildPanel } from './panel.js';
 import { renderWorld } from './world.js';
-import { createTour } from './tour.js';
+import { learnButton, runLesson } from '../../../shared/js/learn.js';
+import { lessonSteps, SHEET } from './lesson.js';
 import { legend } from './ui.js';
 import { afterRender } from './fx.js';
 
@@ -86,14 +87,14 @@ renderWorld(document.getElementById('world'), cats => {
   document.getElementById('fig-plan').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' });
 });
 
-const tour = createTour(document.getElementById('tour-root'), set => {
-  S.P = { ...DEFAULTS, ...(set.P || {}) };
-  S.plan = clonePlan(set.plan || DEFAULT_PLAN);
-  S.mit = { ...DEFAULT_MIT, ...(set.mit || {}) };
-  S.cats = freshCats(); S.hi = null;
-  changed();
-});
-document.getElementById('start-tour').addEventListener('click', () => tour.start());
+// Learn to play: start from the defaults with an empty plan, then run the hands-on lesson.
+const startLesson = () => {
+  S.P = { ...DEFAULTS }; S.mit = { ...DEFAULT_MIT }; S.cats = freshCats(); S.hi = null;
+  S.plan = Object.fromEntries(CATS.map(c => [c.id, [0, 0, 0, 0]]));
+  render(); writeHash();
+  runLesson(lessonSteps(S), { slug: 'entanglement', title: 'Learn to play', onFinish: () => banner.refresh() });
+};
+const banner = learnButton(document.getElementById('learn-slot'), { slug: 'entanglement', minutes: 4, onStart: startLesson, sheet: SHEET });
 
 let lastW = innerWidth;
 addEventListener('resize', () => { if (Math.abs(innerWidth - lastW) > 40) { lastW = innerWidth; changed(); } });

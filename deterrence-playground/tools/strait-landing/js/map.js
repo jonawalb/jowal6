@@ -67,11 +67,16 @@ export function createMap(svg, tip, { onZone }) {
     for (const n of [g, port]) {
       n.addEventListener('pointerenter', e => show(e, zoneTip(z)));
       n.addEventListener('pointermove', move);
-      n.addEventListener('pointerleave', () => { tip.hidden = true; });
+      // A tap leaves the details up until the next tap elsewhere (touch has no hover).
+      n.addEventListener('pointerleave', e => { if (e.pointerType !== 'touch') tip.hidden = true; });
     }
+    // Keyboard: focusing a zone shows the same details next to its label.
+    g.addEventListener('focus', () => { const r = t1.getBoundingClientRect(); show({ clientX: r.left, clientY: r.bottom + 30 }, zoneTip(z)); });
+    g.addEventListener('blur', () => { tip.hidden = true; });
     nodes[z] = { g, line, lane, t3, mid: [mx, my], from: [fx, fy], port, t1, t2, portAt: [px, py] };
   }
 
+  document.addEventListener('pointerdown', e => { if (!e.target.closest?.('.sl-zone, .sl-port')) tip.hidden = true; });
   let last = null;
   function zoneTip(z) {
     const Z = ZONES[z];
@@ -81,7 +86,7 @@ export function createMap(svg, tip, { onZone }) {
       s += `<span class="tt-d">${sea ? `Seas ${sea.m ?? '?'} m, ${BANDS[sea.b].t.toLowerCase()}` : ''}</span>`;
       s += `<span class="tt-d">PLA ashore ${r1(G.ashore[z])} · Taiwan ${r1(last.def[z])} points</span>`;
       s += `<span class="tt-d">${PORTS[z].t}: ${portWord(G.port[z])} · mines ${Math.round(G.mines[z] * 100)}%</span>`;
-    } else s += `<span class="tt-d">${PORTS[z].t}. Click to choose this zone.</span>`;
+    } else s += `<span class="tt-d">${PORTS[z].t}.${last?.zones?.length ? ' Click to choose this zone.' : ''}</span>`;
     return s;
   }
   function show(e, html) { tip.innerHTML = html; tip.hidden = false; move(e); }

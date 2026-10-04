@@ -54,11 +54,14 @@ export function createMap(svg, tip, { onSector }) {
   const top = el('g', {}, root);
 
   // Tooltips
+  // Mouse: show on hover. Touch: a tap shows the tip, and it stays until the next tap elsewhere on the map.
   const tipOn = (node, html) => {
-    node.addEventListener('pointerenter', e => { tip.innerHTML = html(); tip.hidden = false; move(e); });
-    node.addEventListener('pointermove', move);
-    node.addEventListener('pointerleave', () => { tip.hidden = true; });
+    node.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') { tip.innerHTML = html(); tip.hidden = false; move(e); } });
+    node.addEventListener('pointermove', e => { if (e.pointerType === 'mouse') move(e); });
+    node.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') tip.hidden = true; });
+    node.addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') { e.stopPropagation(); tip.innerHTML = html(); tip.hidden = false; move(e); } });
   };
+  svg.addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') tip.hidden = true; });
   function move(e) {
     const box = svg.parentElement.getBoundingClientRect();
     tip.style.left = Math.max(4, Math.min(e.clientX - box.left + 14, box.width - tip.offsetWidth - 6)) + 'px';

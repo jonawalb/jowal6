@@ -20,13 +20,13 @@ export const STEPS = [
     set: { asOf: 2026, scroll: 'timeline-card' } },
 ];
 
-export function createTour(apply) {
+export function createTour(onClose, apply) {
   let i = -1;
   const card = document.createElement('div');
   card.className = 'dp-tour'; card.hidden = true;
   card.setAttribute('role', 'dialog'); card.setAttribute('aria-label', 'Walkthrough');
   document.body.appendChild(card);
-  const stop = () => { card.hidden = true; i = -1; };
+  const stop = () => { const was = !card.hidden; card.hidden = true; i = -1; if (was) onClose(); };
   const show = () => {
     const s = STEPS[i];
     apply(s.set);

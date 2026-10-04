@@ -6,7 +6,7 @@ import { createBoard, freeSpot } from './board.js';
 import { createPanel } from './panel.js';
 import { renderTimeline, renderChecks } from './timeline.js';
 import { readHash, writeHash } from './hash.js';
-import { createTour } from './tour.js';
+import { mountLesson } from './lesson.js';
 import { addExportBar } from '../../../shared/js/export.js';
 import { initFx, before as fxBefore, after as fxAfter } from './fx.js';
 
@@ -145,13 +145,7 @@ pal.addEventListener('click', e => {
   api.addNode(b.dataset.type);
 });
 
-const tour = createTour(document.getElementById('kc-stage'), set => {
-  load(PRESETS[set.preset], set.preset);
-  (set.dead || []).forEach(i => S.dead.add(i));
-  if (set.sel != null) S.sel = set.sel;
-  api.update();
-});
-document.getElementById('kc-tour').onclick = () => tour.start();
+mountLesson(document.getElementById('kc-stage'), api);
 document.getElementById('kc-copy').onclick = async e => {
   try { await navigator.clipboard.writeText(location.href); e.target.textContent = 'Link copied'; }
   catch { e.target.textContent = 'Copy the address bar'; }

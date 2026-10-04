@@ -18,17 +18,12 @@
 <header id="tsm-head"></header>
 <div class="sh-actions">
   <p class="sh-flag"><b>Notional model.</b> The coastlines are real. Every sensor, speed, habit and probability is invented for teaching.</p>
-  <div><button type="button" class="btn" id="show-howto">How to play</button>
-  <button type="button" class="btn" id="start-tour">Walkthrough</button>
+  <div><button type="button" class="btn" id="show-howto">Rules</button>
+  <button type="button" class="btn" id="start-tour">Learn to play</button>
   <button type="button" class="btn" id="copy-link">Copy link</button></div>
 </div>
 <main class="layout">
   <div class="stage">
-    <section class="card sh-howto" id="howto" aria-labelledby="howto-t">
-      <div class="sh-howto-h"><h2 id="howto-t">How to play</h2><button type="button" class="btn solid" id="hide-howto">Got it</button></div>
-      <p>A report 4 hours old put a submarine inside the dashed ring. It has moved since, most likely south toward a gap into the Atlantic. Each turn you get <b>effort points</b>. Pick an action, click the map, and repeat until you have spent what you want; then press <b>End turn</b> and two hours pass. The orange glow is your probability map: brighter means more likely. When it is bright in one spot, <b>Attack</b> there. You have 12 turns.</p>
-    </section>
-
     <p class="sh-say card" id="say" aria-live="polite"></p>
 
     <div class="mapbox" id="box">
@@ -170,7 +165,6 @@
     <ol class="src" id="sources"></ol>
   </div>
 </section>
-<div class="sh-tour" id="tour" hidden role="dialog" aria-label="Walkthrough"></div>
 <footer id="tsm-foot"></footer>
 <script type="module">
   import { mountChrome } from '../../shared/js/chrome.js';

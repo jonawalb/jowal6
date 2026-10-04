@@ -70,6 +70,7 @@ export function createChart(host, { onYear, onMilestone }) {
     const H = narrow ? 330 : 430;
     const m = { l: narrow ? 44 : 58, r: narrow ? 10 : 70, t: 14, b: 62 };
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    const refocus = document.activeElement?.closest?.('.ms')?.dataset.id; // keep keyboard focus across the redraw
     svg.replaceChildren();
     const pw = W - m.l - m.r, ph = H - m.t - m.b;
     const x = y => m.l + (y - Y0) / (Y1 - Y0) * pw;
@@ -153,7 +154,7 @@ export function createChart(host, { onYear, onMilestone }) {
       MILESTONES.forEach((ms, k) => {
         const mx = x(ms.year);
         mk('line', { class: 'ms-line', x1: mx, x2: mx, y1: m.t, y2: m.t + ph }, plot);
-        const g = mk('g', { class: 'ms' + (state.msId === ms.id ? ' on' : ''), tabindex: 0, role: 'button', 'aria-label': `${ms.label}, ${ms.when}` }, svg);
+        const g = mk('g', { class: 'ms' + (state.msId === ms.id ? ' on' : ''), tabindex: 0, role: 'button', 'aria-label': `${ms.label}, ${ms.when}`, 'data-id': ms.id }, svg);
         const ry = rowY[k % 2];
         const txt = narrow ? String(k + 1) : ms.short;
         const w = narrow ? 18 : txt.length * 6.4 + 10;
@@ -163,6 +164,7 @@ export function createChart(host, { onYear, onMilestone }) {
         mk('title', {}, g).textContent = `${ms.label} (${ms.when})`;
         g.addEventListener('click', () => onMilestone(ms.id));
         g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onMilestone(ms.id); } });
+        if (refocus === ms.id) g.focus({ preventScroll: true });
       });
     }
 

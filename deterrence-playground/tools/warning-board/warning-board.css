@@ -56,7 +56,7 @@
 .tag { font: 10px var(--mono); color: var(--muted); border: 1px solid var(--rule); border-radius: 8px; padding: 0 5px; }
 .tag.ex-high { color: var(--warn); border-color: var(--warn); }
 .wdot { width: 6px; height: 6px; border-radius: 50%; background: var(--dc); display: inline-block; }
-.wdot:first-of-type { margin-left: auto; }
+.wdots { margin-left: auto; display: inline-flex; align-items: center; gap: 3px; }
 
 /* Panel */
 .choices.tri { grid-template-columns: repeat(3, 1fr); }

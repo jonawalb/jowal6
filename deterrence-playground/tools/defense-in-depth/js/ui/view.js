@@ -63,7 +63,10 @@ function previewCover(g, side, place, lanes) {
 export function estWindow(g, sec) {
   const L = g.lodg[sec], G = gridFor(g.scale), Sc = SCALES[g.scale];
   if (!L) return null;
-  const coh = Math.max(0.3, 1 - 0.06 * Math.max(0, G.row[sec] - Sc.bands.nml[1]) - 0.04 * L.hcap);
+  // The attackers' starting cohesion is 1 unless a scenario says otherwise (the Learn to play battle tells both
+  // sides its attackers start tired: g.ctx.attCoh0, js/tutorial.js).
+  const c0 = g.ctx && g.ctx.attCoh0 != null ? g.ctx.attCoh0 : 1;
+  const coh = Math.max(0.3, c0 - 0.06 * Math.max(0, G.row[sec] - Sc.bands.nml[1]) - 0.04 * L.hcap);
   const outside = !underGuns(g, 'att', sec);
   const ca = Math.max(COUNTER.min, Math.min(COUNTER.max, 1 + COUNTER.coh * (1 - coh) + (outside ? COUNTER.outside : 0) - (L.cons ? COUNTER.cons : 0)));
   const badge = L.cons ? 'grey' : ca >= COUNTER.window && L.hcap <= COUNTER.windowHours ? 'green' : 'amber';

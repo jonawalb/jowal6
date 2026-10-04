@@ -1,7 +1,7 @@
 /* Nuclear Entanglement. Built on shared/css/tsm.css tokens only. */
 .toolbar-top { max-width: 1400px; margin: 16px auto 0; display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; }
 .toolbar-top .lede { margin: 0; max-width: 78ch; font-size: 14px; color: var(--muted); }
-.actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.toolbar-top .learn-banner { flex: 1 1 100%; margin: 0; }
 
 .fig { padding: 12px 14px 12px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 .fig-h { display: flex; flex-wrap: wrap; gap: 4px 14px; justify-content: space-between; align-items: baseline; }
@@ -106,14 +106,6 @@
 @media (max-width: 1200px) { .method { grid-template-columns: minmax(0, 1fr); } }
 .method p { font-size: 13.5px; }
 
-/* Walkthrough card */
-.tour { position: fixed; right: 20px; bottom: 20px; width: min(380px, calc(100vw - 32px)); max-height: 70vh; overflow: auto; background: var(--panel); border: 1px solid var(--rule); border-top: 3px solid var(--accent); border-radius: 4px; padding: 12px 14px 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, .22); z-index: 20; }
-.tour-h { display: flex; justify-content: space-between; align-items: center; font: 11px var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
-.tour .x { border: 0; background: transparent; font-size: 20px; cursor: pointer; color: var(--muted); line-height: 1; }
-.tour h3 { margin: 6px 0 4px; font-size: 19px; }
-.tour p { margin: 0 0 10px; font-size: 13px; }
-.tour-nav { display: flex; justify-content: space-between; }
-@media (max-width: 600px) { .tour { right: 8px; bottom: 8px; max-height: 50vh; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
 
 /* ---- Trailer graphics (Interactive Deterrence games only) ---- */
@@ -125,13 +117,12 @@
 :root[data-skin="trailer"] .pl-c[aria-pressed="true"] .pl-strike { color: var(--accent); font-family: var(--mono); font-weight: 400; letter-spacing: .1em; text-transform: uppercase; font-size: 10.5px; }
 :root[data-skin="trailer"] .pl-bar { background: var(--red); box-shadow: 0 0 8px var(--red); }
 :root[data-skin="trailer"] .ch, :root[data-skin="trailer"] .ccard { background: rgba(8, 18, 13, .5); }
-:root[data-skin="trailer"] .ch-v, :root[data-skin="trailer"] .ccard h3, :root[data-skin="trailer"] .tour h3 { font-family: var(--display); font-style: italic; font-weight: 500; }
+:root[data-skin="trailer"] .ch-v, :root[data-skin="trailer"] .ccard h3 { font-family: var(--display); font-style: italic; font-weight: 500; }
 :root[data-skin="trailer"] .cum { stroke: var(--accent); filter: drop-shadow(0 0 4px rgba(240, 169, 59, .6)); }
 :root[data-skin="trailer"] .cumdot { stroke: var(--accent); }
 :root[data-skin="trailer"] .status b { font-family: var(--mono); font-weight: 400; }
 :root[data-skin="trailer"] .status[data-s="good"] { border-color: var(--good); }
 :root[data-skin="trailer"] .status[data-s="bad"] { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 10%, var(--panel)); box-shadow: 0 0 24px -10px var(--bad); }
-:root[data-skin="trailer"] .tour { box-shadow: 0 20px 50px -20px #000, var(--glow); }
 /* Martian Mono runs wider than Plex Mono: keep readouts and lever deltas on their lines. */
 :root[data-skin="trailer"] .readout dd, :root[data-skin="trailer"] .mit .t em { font-size: 11px; letter-spacing: 0; white-space: normal; }
 :root[data-skin="trailer"] .mit .t em { display: inline-block; margin-left: 0; }

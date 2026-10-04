@@ -51,7 +51,7 @@ export function createTimeline(host, { onYear, onEvent }) {
       mk('line', { class: 'row', x1: m.l, x2: m.l + pw, y1: cy, y2: cy }, svg);
       mk('text', { class: 'rl', x: m.l - 8, y: cy + 4, 'text-anchor': 'end' }, svg).textContent = narrow ? s.short : s.name;
       EVENTS.filter(e => e.state === s.id).forEach(e => {
-        const g = mk('g', { class: 'ev' + (state.ev === e.id ? ' on' : ''), tabindex: 0, role: 'button', 'aria-label': `${s.name}, ${dateText(e.date)}: ${e.title}` }, svg);
+        const g = mk('g', { class: 'ev' + (state.ev === e.id ? ' on' : ''), 'data-ev': e.id, tabindex: 0, role: 'button', 'aria-label': `${s.name}, ${dateText(e.date)}: ${e.title}` }, svg);
         const c = mk('circle', { cx: x(yf(e.date)), cy, r: narrow ? 5 : 6 }, g);
         c.style.fill = STATE_COLOR[s.id];
         g.addEventListener('click', () => onEvent(e.id));

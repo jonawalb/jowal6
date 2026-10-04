@@ -167,15 +167,6 @@ body { --k-us: var(--us, #2f6db3); --k-tw: var(--roc, #17917f); --k-cn: var(--pr
 .k4-endf th { text-align: left; font-weight: 600; padding: 4px 10px 4px 0; border-bottom: 1px solid var(--rule); }
 .k4-endf thead th { font-size: 12px; color: var(--muted); }
 .k4-endf td.num { text-align: right; padding-right: 14px; }
-.k4-hl { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
-.k4-tour { position: fixed; z-index: 60; left: 50%; bottom: 12px; transform: translateX(-50%); width: min(440px, calc(100vw - 24px)); background: var(--panel); color: var(--ink);
-  border: 1px solid var(--rule); border-top: 3px solid var(--accent); border-radius: 6px; padding: 10px 14px 12px; box-shadow: 0 8px 28px rgba(0, 0, 0, .28); }
-.k4-tour[hidden] { display: none; }
-.k4-tour-h { display: flex; justify-content: space-between; align-items: center; font: 500 11px var(--mono); color: var(--muted); }
-.k4-tour .x { background: none; border: 0; font-size: 20px; line-height: 1; cursor: pointer; color: var(--muted); padding: 0 4px; }
-.k4-tour h3 { margin: 2px 0 4px; font: 700 18px var(--display); }
-.k4-tour p { margin: 0 0 8px; font-size: 13.5px; line-height: 1.45; }
-.k4-tour-nav { display: flex; justify-content: flex-end; gap: 8px; }
 
 /* Resolve */
 .k4-resolve { border-left: 4px solid var(--accent); }
@@ -454,3 +445,6 @@ body.k4-simple .k4-intel, body.k4-simple .k4-fogd, body.k4-simple #logi-wrap { d
   .k4-info::after { content: ""; position: absolute; inset: -9px -4px; }
   .k4-info.k4-how::after, .k4-info.k4-lvlb::after { inset: -9px 0; }
 }
+
+/* While the lesson runs on a phone its card covers the bottom of the screen: room to scroll anything above it. */
+@media (max-width: 760px) { body.k4-learning { padding-bottom: 50vh; } }

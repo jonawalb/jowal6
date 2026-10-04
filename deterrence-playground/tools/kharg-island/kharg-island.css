@@ -1,5 +1,7 @@
 /* Kharg Island. Built on shared/css/tsm.css tokens only. U.S. = --us, Iran = --red. */
 .kh-actions { max-width: 1400px; margin: 12px auto 0; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; }
+.kh-learn { max-width: 1400px; margin: 12px auto 0; }
+.kh-learn .learn-banner { margin: 0; }
 .kh-actions > div { display: flex; gap: 8px; flex-wrap: wrap; }
 .kh-flag { margin: 0; font-size: 13px; padding: 5px 10px; border: 1px dashed var(--warn); border-radius: 4px; color: var(--ink); }
 .kh-flag b { color: var(--warn); }
@@ -183,15 +185,6 @@ details[open] summary { margin-bottom: 8px; }
 .as-i input { width: 64px; font: 12px var(--mono); padding: 3px 4px; border: 1px solid var(--rule); border-radius: 3px; background: var(--bg); color: var(--ink); }
 .as-i small { color: var(--muted); font-size: 10.5px; }
 
-/* Tour card */
-.tour { position: absolute; left: 12px; bottom: 12px; width: min(380px, calc(100% - 24px)); background: var(--panel); border: 1px solid var(--rule); border-top: 3px solid var(--accent); border-radius: 4px; padding: 12px 14px; box-shadow: 0 8px 28px rgba(0, 0, 0, .18); display: flex; flex-direction: column; gap: 6px; z-index: 30; }
-.tour[hidden] { display: none; }
-.tour-h { display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 11px; color: var(--muted); }
-.tour .x { background: none; border: 0; font-size: 20px; line-height: 1; cursor: pointer; color: var(--muted); padding: 0 4px; }
-.tour h3 { margin: 0; font-size: 20px; line-height: 1.15; }
-.tour p { margin: 0; font-size: 13px; }
-.tour-nav { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
-
 /* Below */
 .below h2.mt { margin-top: 22px; }
 .history { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
@@ -208,7 +201,10 @@ details[open] summary { margin-bottom: 8px; }
 @media (max-width: 1020px) { .status-mini { display: flex; } }
 @media (max-width: 900px) { .turncols, .turncols.tracks, .mc-cols { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 600px) {
-  .tour { position: static; width: auto; margin: 8px; box-shadow: none; }
+  table.log { font-size: 11.5px; }
+  table.log td, table.log th { padding: 4px 4px; }
+  table.log th { font-size: 10.5px; letter-spacing: .02em; }
+  .rolls { max-width: 44px; }
   .playbar { grid-template-columns: 1fr; }
   .choices.three { grid-template-columns: 1fr; }
   .kh-zone, .kh-water { display: none; }
@@ -240,6 +236,8 @@ details[open] summary { margin-bottom: 8px; }
   .layout[data-tab="play"] #mc-card { display: none; }
   .layout[data-tab="mc"] .stage > :not(#mc-card) { display: none; }
   .layout[data-tab="play"] .playbar { position: sticky; bottom: 8px; z-index: 20; box-shadow: 0 4px 18px rgba(0, 0, 0, .18); }
+  /* During the tutorial its card sits at the bottom of the screen, so the turn bar moves above the map and pins under the tabs. */
+  body:has(.learn-card) .layout[data-tab="play"] .playbar { order: -1; top: 62px; bottom: auto; }
   .playbar .tsm-export { display: none; }
   .playbar .pb-btns { display: grid; grid-template-columns: 1fr 1.4fr 1.2fr; gap: 6px; }
   .playbar .btn { min-height: 44px; }
@@ -303,7 +301,6 @@ details[open] summary { margin-bottom: 8px; }
 :root[data-skin="trailer"] .meter.esc > span { box-shadow: 0 0 10px -2px var(--red); }
 :root[data-skin="trailer"] .meter.cost > span { box-shadow: 0 0 10px -2px var(--accent); }
 :root[data-skin="trailer"] .kh-flag { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 6%, transparent); }
-:root[data-skin="trailer"] .tour { box-shadow: 0 18px 40px -20px #000, var(--glow); }
 :root[data-skin="trailer"] .kh-tabs { background: #08120d; }
 :root[data-skin="trailer"] .kh-tabs button[aria-selected="true"] { color: #111; }
 :root[data-skin="trailer"] .layout[data-tab="play"] .playbar { box-shadow: 0 -6px 30px -10px #000; }

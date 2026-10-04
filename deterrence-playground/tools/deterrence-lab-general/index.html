@@ -20,27 +20,24 @@
 <body>
 <header id="tsm-head"></header>
 
+<div class="learn-slot" id="learn-slot"></div>
 <div class="toolbar-top">
   <nav class="tabs" role="tablist" aria-label="Model">
     <button type="button" role="tab" data-m="A" aria-controls="stage"><b>A · Audience costs</b><span>Crisis bargaining, Fearon (1994)</span></button>
     <button type="button" role="tab" data-m="B" aria-controls="stage"><b>B · Costly signals</b><span>Tying hands vs. sinking costs, Fearon (1997)</span></button>
     <button type="button" role="tab" data-m="C" aria-controls="stage"><b>C · Salami tactics</b><span>Reputation, Kreps and Wilson (1982)</span></button>
   </nav>
-  <div class="actions">
-    <button type="button" class="btn solid" id="start-tour">Start the walkthrough</button>
-  </div>
 </div>
 
 <main class="layout">
   <div class="stage" id="stage" role="tabpanel" aria-live="off"></div>
   <aside class="panel" id="panel" aria-label="Parameters and equilibrium readout"></aside>
 </main>
-<div id="tour-root"></div>
 
 <section class="below">
   <div class="col">
     <h2>How to read it</h2>
-    <p>Each tab is a small game of incomplete information. One side, S, knows something the other side, R, does not: whether S is <b>resolute</b> and would really fight. The sliders set payoffs and beliefs. The panel reports the perfect Bayesian equilibrium those values produce, and the figures show how play and beliefs change as you move them.</p>
+    <p>Each tab is a small game of incomplete information. One side, S, knows something the other side, R, does not: whether S is <b>resolute</b> and would really fight. The sliders set payoffs and beliefs. The panel reports the <b>equilibrium</b> those values produce: the stable way the game is played, where neither side can do better by changing its own plan alone and R’s beliefs follow from what it has seen (technically, a perfect Bayesian equilibrium). <b>Payoffs</b> are what each side ends up with in each outcome. The figures show how play and beliefs change as you move the sliders.</p>
     <p>Read S as any government making a threat or commitment and R as its opponent. The models do not say who is who, and nothing in them is calibrated to real governments. All payoffs are abstract utilities where the stake is worth 1. The point is the logic: when a threat is believed, when bluffing pays, and why a little doubt can carry a lot of deterrence.</p>
     <p>Under the figures, each tab has three <b>historical illustrations</b>, from Fashoda in 1898 to NATO’s eastern flank in 2016–17. Each says what happened, with sources, and offers one or two readings you can load into the model. The loaded values are <span class="notional">notional</span>: they show which region of the model a reading implies. A caveat under each case gives the strongest scholarly objection to that reading.</p>
     <ul class="howto">
@@ -48,7 +45,7 @@
       <li><b>Separating</b> means the types act differently, so R learns the type. <b>Pooling</b> means they act alike, so R learns nothing. <b>Semi-separating</b> means one type mixes and R learns something.</li>
       <li>The <b>Bayes box</b> in each panel shows R's updated belief with the current numbers substituted.</li>
       <li>The link in your address bar stores the tab and every parameter, so you can hand a class an exact setup.</li>
-      <li>The walkthrough steps through eight setups and opens the matching case each time.</li>
+      <li><b>Learn to play</b>, at the top of the page, is a hands-on first lesson: you move the levers and watch the equilibrium respond in all three tabs.</li>
     </ul>
     <h2 class="mt">Teaching prompts</h2>
     <ol class="howto">

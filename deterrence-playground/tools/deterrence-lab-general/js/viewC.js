@@ -23,6 +23,7 @@ export function mountC(stage, panel, S, changed) {
       <div class="fig-h"><p class="eyebrow">This draw, in order</p>
         <div class="row"><button type="button" class="btn" id="c-play">Play it out</button><button type="button" class="btn" id="c-new">New draw</button></div></div>
       <ol class="strip" id="c-strip" aria-live="polite"></ol>
+      <p class="fine" id="c-detail" aria-live="polite">Tap or click a slice to read its numbers.</p>
     </div>`;
   const P = S.C;
   const tsec = sec(panel, 'Who is defending');
@@ -42,12 +43,19 @@ export function mountC(stage, panel, S, changed) {
   ci.addEventListener('change', () => { P.p0 = ci.checked ? 0 : 0.05; changed(); });
 
   let shown = Infinity, timer = null;
+  const chartEl = stage.querySelector('#c-chart');
+  // Slice details were hover-only (title); a tap, click or Enter now shows them under the strip.
+  const stripEl = stage.querySelector('#c-strip'), detailEl = stage.querySelector('#c-detail');
+  const showDetail = e => { const li = e.target.closest('li[title]'); if (li && li.title) detailEl.textContent = li.title; };
+  stripEl.addEventListener('click', showDetail);
+  stripEl.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showDetail(e); } });
   stage.querySelector('#c-new').addEventListener('click', () => { P.seed = (P.seed * 7 + 13) % 99991; shown = Infinity; changed(); });
   stage.querySelector('#c-play').addEventListener('click', () => {
     clearInterval(timer);
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) { shown = Infinity; render(); return; }
     shown = 0; render();
-    timer = setInterval(() => { shown++; render(); if (shown >= P.N) clearInterval(timer); }, 380);
+    // Stop if the player switched tabs mid-animation (the chart is no longer on the page).
+    timer = setInterval(() => { if (!chartEl.isConnected) { clearInterval(timer); return; } shown++; render(); if (shown >= P.N) clearInterval(timer); }, 380);
   });
 
   function render() {
@@ -92,7 +100,7 @@ function strip(ol, steps, shown) {
     const kind = !s.probe ? 'out' : s.resist ? 'res' : 'acc';
     const word = { out: 'Held back', res: 'Resisted', acc: 'Allowed' }[kind];
     const detail = `Slice ${i + 1}, ${s.k} left. Reputation ${fmtP(s.p)}. Probe chance ${pct(s.pProbe)}${s.probe ? `; weak defender resists with ${pct(s.pResist ?? 1)}` : ''}.`;
-    return `<li class="${hide ? 'hid' : kind}" title="${detail}"><span class="n">${i + 1}</span><span class="w">${hide ? '' : word}</span><span class="sr">${hide ? '' : detail}</span></li>`;
+    return `<li class="${hide ? 'hid' : kind}"${hide ? '' : ` title="${detail}" tabindex="0"`}><span class="n">${i + 1}</span><span class="w">${hide ? '' : word}</span><span class="sr">${hide ? '' : detail}</span></li>`;
   }).join('');
 }
 

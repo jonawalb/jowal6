@@ -23,10 +23,10 @@ const BUILD = {
     ? { tone: 'bad', text: `Your ${unitLabel(g, e.unit, me)} was overrun at ${place(g, e.sec)}.` }
     : { tone: 'good', text: `You overran ${unitLabel(g, e.unit, me)} at ${place(g, e.sec)}.` }),
   stall: (g, e, me) => (e.side === me
-    ? { tone: 'bad', text: `${e.side === 'def' ? 'Your counterstroke' : 'Your assault'} stalled at ${place(g, e.sec)}${e.gauge != null ? ` at ${e.gauge}% of the strength it needed` : ''}.`, gauge: e.gauge }
+    ? { tone: 'bad', text: `${e.side === 'def' ? 'Your counterattack' : 'Your assault'} stalled at ${place(g, e.sec)}${e.gauge != null ? ` at ${e.gauge}% of the strength it needed` : ''}.`, gauge: e.gauge }
     : { tone: 'good', text: `You stopped an assault at ${place(g, e.sec)}.` }),
   counter: (g, e, me) => {
-    const what = e.how === 'counterstroke' ? 'counterstroke' : 'riposte';
+    const what = e.how === 'counterstroke' ? 'deliberate counterattack (counterstroke)' : 'local counterattack (riposte)';
     const res = e.won ? 'and retook the sector' : 'and stalled';
     if (e.side === me) return { tone: e.won ? 'good' : 'bad', text: `Your ${what} at ${place(g, e.sec)} struck at ${hhmm(e.t)}, ${windowWord(e)}${ca(e.ca)}, ${res}.` };
     return { tone: e.won ? 'bad' : 'good', text: `An enemy ${what} hit your men at ${place(g, e.sec)} at ${hhmm(e.t)} ${e.won ? 'and threw you out' : 'and you beat it off'}.` };

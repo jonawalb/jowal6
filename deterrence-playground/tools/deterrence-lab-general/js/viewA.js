@@ -15,7 +15,7 @@ const A_MAX = 1.5;
 export function mountA(stage, panel, S, changed) {
   stage.innerHTML = `
     <div class="card fig">
-      <div class="fig-h"><p class="eyebrow">Game tree · equilibrium play highlighted</p><p class="fine">Payoffs are (S, R). Line weight shows how likely each move is.</p></div>
+      <div class="fig-h"><p class="eyebrow">Game tree · equilibrium play highlighted</p><p class="fine">Payoffs are (S, R): what each side ends up with, where the stake is worth 1. Line weight shows how likely each move is.</p><p class="fine swipe">Swipe sideways to see the whole tree.</p></div>
       <div class="treewrap"><svg id="a-tree" class="tree" role="img" aria-label="Game tree of the crisis game with the equilibrium path highlighted"></svg></div>
     </div>
     <div class="card fig">

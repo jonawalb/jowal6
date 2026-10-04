@@ -61,6 +61,7 @@ export function createChart(host, { onYear, onMilestone }) {
     const H = narrow ? 300 : 400;
     const m = { l: narrow ? 30 : 40, r: 10, t: 16, b: 84 };
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    const refocus = document.activeElement?.closest?.('.ms')?.dataset.id; // keep keyboard focus across the redraw
     svg.replaceChildren();
     const pw = W - m.l - m.r, ph = H - m.t - m.b, n = Y1 - Y0 + 1, bw = pw / n;
     const x = y => m.l + (y - Y0 + 0.5) * bw;
@@ -106,7 +107,7 @@ export function createChart(host, { onYear, onMilestone }) {
     const rowY = [m.t + ph + 30, m.t + ph + 49, m.t + ph + 68];
     MILESTONES.forEach((ms, k) => {
       const mx = x(ms.year);
-      const g = mk('g', { class: 'ms' + (state.ms === ms.id ? ' on' : ''), tabindex: 0, role: 'button', 'aria-label': `${ms.label}, ${ms.when}` }, svg);
+      const g = mk('g', { class: 'ms' + (state.ms === ms.id ? ' on' : ''), tabindex: 0, role: 'button', 'aria-label': `${ms.label}, ${ms.when}`, 'data-id': ms.id }, svg);
       const ry = rowY[k % rowY.length], txt = narrow ? String(k + 1) : ms.short;
       const w = narrow ? 16 : txt.length * 6.2 + 10;
       const left = Math.min(Math.max(mx - w / 2, 2), W - w - 2);
@@ -115,11 +116,17 @@ export function createChart(host, { onYear, onMilestone }) {
       mk('title', {}, g).textContent = `${ms.label} (${ms.when})`;
       g.addEventListener('click', () => onMilestone(ms.id));
       g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onMilestone(ms.id); } });
+      if (refocus === ms.id) g.focus({ preventScroll: true });
     });
 
     mk('line', { class: 'cursor', x1: cx, x2: cx, y1: m.t - 4, y2: m.t + ph }, svg);
     const right = cx > W - 70;
     mk('text', { class: 'cursor-lab', x: cx + (right ? -6 : 6), y: m.t + 8, 'text-anchor': right ? 'end' : 'start' }, svg).textContent = state.year;
+    if (!mat.some(r => r.some(v => v))) {
+      ['No tests match these filters.', 'Turn a filter back on, or press Reset.'].forEach((line, k) => {
+        mk('text', { class: 'empty', x: m.l + pw / 2, y: m.t + ph / 2 + k * 18, 'text-anchor': 'middle' }, svg).textContent = line;
+      });
+    }
     svg.setAttribute('aria-label', `Nuclear tests per year stacked by ${state.by === 'env' ? 'environment' : 'state'}; peak ${max} in one year. Shown: ${groups.map(g => state.by === 'env' ? ENVS[g] : SHORT[g]).join(', ')}.`);
   }
 

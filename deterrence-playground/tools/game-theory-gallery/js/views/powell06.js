@@ -14,7 +14,7 @@ function race(svg, shift, surplus, labels = ['Shift in power', 'Bargaining surpl
   valueBars(svg, [
     { label: labels[0], v: shift, cls: shift > surplus ? 'bad' : 'mut' },
     { label: labels[1], v: surplus, cls: shift > surplus ? 'mut' : 'ok' },
-  ], [lo, hi], { xl: 'Per-period value (share of one period’s pie)' });
+  ], [lo, hi], { xl: 'Share of one period’s pie' });
 }
 
 export default {
@@ -159,7 +159,7 @@ export default {
           if (cap < xMax) el('rect', { x: F.sx(cap), y: F.sy(0.9), width: F.sx(xMax) - F.sx(cap), height: F.sy(0) - F.sy(0.9), class: 'na' }, F.g);
           axes(F, { xt: P.v === 'shift' ? [0, 0.25, 0.5, 0.75, 1] : [0, 0.1, 0.2, 0.3, 0.4, 0.5], yt: [0, 0.3, 0.6, 0.9], xl: P.v === 'shift' ? 'Shift in state 1’s chance Δ' : 'First-strike advantage f', yl: 'Cost of war d' });
           mark(F, P[xKey], P.d);
-          legend(b.legend, [['--c2', 'war'], ['--c3', 'peace']]);
+          legend(b.legend, cap < xMax ? [['--c2', 'war'], ['--c3', 'peace'], ['--chip', 'not possible at this p (a chance above 1 or below 0)']] : [['--c2', 'war'], ['--c3', 'peace']]);
           if (c) issueBar(c.svg, {
             rows: [{ label: 'Divisions neither state attacks to overturn', lo: e.lo, hi: e.hi, cls: e.empty ? 'bad' : 'ok', empty: e.empty }],
             marks: [{ x: e.lo, label: '(p + f)(1 − d)', cls: 'ra' }, { x: e.hi, label: '(p − f)(1 − d) + d', cls: 'rb', below: true }],

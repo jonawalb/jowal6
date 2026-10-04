@@ -95,7 +95,10 @@ export function createChart(svg, tip, wrap, { onFocus }) {
   }
 
   svg.addEventListener('pointermove', e => geo && hover(dayAt(e)));
-  svg.addEventListener('pointerleave', () => hover(null));
+  // A tap shows that day's values and keeps them up after the finger lifts; tapping outside the chart hides them.
+  svg.addEventListener('pointerdown', e => geo && hover(dayAt(e)));
+  svg.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hover(null); });
+  document.addEventListener('pointerdown', e => { if (hoverD != null && !svg.contains(e.target) && !tip.contains(e.target)) hover(null); });
   svg.addEventListener('click', e => {
     const id = e.target.getAttribute?.('data-id');
     if (id) onFocus(id);

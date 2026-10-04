@@ -44,6 +44,26 @@ export function frame(svg, box) {
   return { g, sx, sy, ix, iy, iw, ih, m, box };
 }
 
+/**
+ * Keep an unrotated SVG label inside [pad, W - pad] of the viewBox (phones use a narrow viewBox): shift it
+ * back in if it sticks out, or shrink it to fit if it is wider than the space. `room` = [left, right] limits.
+ */
+export function keepIn(t, W, room = [2, W - 2]) {
+  if (!t || !t.getBBox) return t;
+  let b;
+  try { b = t.getBBox(); } catch (e) { return t; }
+  if (!b.width) return t;
+  const span = room[1] - room[0];
+  if (b.width > span) {
+    const fs = parseFloat(getComputedStyle(t).fontSize) || 12;
+    t.style.fontSize = (fs * span / b.width * 0.98).toFixed(2) + 'px';
+    b = t.getBBox();
+  }
+  const dx = b.x < room[0] ? room[0] - b.x : b.x + b.width > room[1] ? room[1] - (b.x + b.width) : 0;
+  if (dx) t.setAttribute('x', +t.getAttribute('x') + dx);
+  return t;
+}
+
 /** Axes with ticks and titles. */
 export function axes(F, { xt = [], yt = [], xl = '', yl = '', xf = f2, yf = f2 }) {
   const { g, sx, sy, m, box } = F;
@@ -52,7 +72,7 @@ export function axes(F, { xt = [], yt = [], xl = '', yl = '', xf = f2, yf = f2 }
   el('line', { x1: m.l, x2: m.l, y1: m.t, y2: box.H - m.b }, a);
   xt.forEach(v => { el('line', { x1: sx(v), x2: sx(v), y1: box.H - m.b, y2: box.H - m.b + 4 }, a); el('text', { x: sx(v), y: box.H - m.b + 17, 'text-anchor': 'middle' }, a, xf(v)); });
   yt.forEach(v => { el('line', { x1: m.l - 4, x2: m.l, y1: sy(v), y2: sy(v) }, a); el('text', { x: m.l - 7, y: sy(v) + 4, 'text-anchor': 'end' }, a, yf(v)); });
-  if (xl) el('text', { x: m.l + F.iw / 2, y: box.H - 5, 'text-anchor': 'middle', class: 'ax-t' }, a, xl);
+  if (xl) keepIn(el('text', { x: m.l + F.iw / 2, y: box.H - 5, 'text-anchor': 'middle', class: 'ax-t' }, a, xl), box.W);
   if (yl) el('text', { x: 14, y: m.t + F.ih / 2, 'text-anchor': 'middle', class: 'ax-t', transform: `rotate(-90 14 ${m.t + F.ih / 2})` }, a, yl);
   return a;
 }

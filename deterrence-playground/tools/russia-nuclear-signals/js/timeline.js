@@ -27,8 +27,10 @@ export function drawTimeline(svg, list, S, { onPick, tip }) {
     el('text', { x: L - 6, y: yB + 4, class: 'lane-t', 'text-anchor': 'end' }, g, 'Battlefield');
     el('text', { x: L - 6, y: yW + 4, class: 'lane-t', 'text-anchor': 'end' }, g, 'West / NATO');
   } else {
-    el('text', { x: L + 4, y: T + 11, class: 'lane-t' }, g, 'Battlefield');
-    el('text', { x: L + 4, y: yW - laneW / 2 + 11, class: 'lane-t' }, g, 'West / NATO');
+    // No room for lane names at phone width: label the lanes with the legend's shapes in the gutter.
+    const gx = L - 12;
+    el('path', { d: `M${gx} ${yB - 5}L${gx + 5} ${yB}L${gx} ${yB + 5}L${gx - 5} ${yB}Z`, class: 'lane-k k-d' }, g);
+    el('rect', { x: gx - 4, y: yW - 4, width: 8, height: 8, class: 'lane-k k-s' }, g);
   }
 
   // Month and year ticks.

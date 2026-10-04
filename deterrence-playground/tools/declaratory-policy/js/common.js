@@ -30,8 +30,9 @@ export function emptyLabel(st, el, asOf) {
 /** Quote block with its citation. `mark` highlights a search term. */
 export function quoteHTML(q, mark = '') {
   if (!q) return '';
-  const re = mark ? new RegExp(mark.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi') : null;
-  const hl = t => (re ? esc(t).replace(re, m => `<mark>${m}</mark>`) : esc(t));
+  const re = mark ? new RegExp('(' + mark.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi') : null;
+  // Split the raw text on the term, then escape each piece, so a term can never land inside an HTML entity.
+  const hl = t => (re ? String(t).split(re).map((part, i) => (i % 2 ? `<mark>${esc(part)}</mark>` : esc(part))).join('') : esc(t));
   const text = q.parts.map(p => `<span class="dp-part">“${hl(p)}”</span>`).join('');
   const links = [`<a href="${esc(q.url)}" target="_blank" rel="noopener">${esc(q.doc)}</a>`];
   if (q.archive) links.push(`<a href="${esc(q.archive)}" target="_blank" rel="noopener">archived copy</a>`);

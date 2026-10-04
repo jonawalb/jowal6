@@ -8,7 +8,7 @@ const width = svg => Math.max(300, Math.round(svg.parentNode.clientWidth - 2));
 const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 function xTicks(g, keys, res, x, bw, H, narrow) {
-  let lastY = null, lastM = null, lastX = -99;
+  let lastY = null, lastM = null, lastX = -99, lastMonth = null;
   keys.forEach((k, i) => {
     const d = periodStart(k, res), y = d.slice(0, 4), m = +d.slice(5, 7);
     const px = x(i);
@@ -17,11 +17,14 @@ function xTicks(g, keys, res, x, bw, H, narrow) {
     if (yearTick) {
       lastY = y;
       el('line', { x1: px, x2: px, y1: 0, y2: H + 4, class: 'yr-l' }, g);
+      // Years win over a month label placed just before them.
+      if (px - lastX <= 34 && lastMonth) { lastMonth.remove(); lastX = -99; }
       if (px - lastX > 34) { el('text', { x: px + 3, y: H + 16, class: 'ax-t yr' }, g, y); lastX = px; }
+      lastMonth = null;
     } else if (monthTick && keys.length <= 120 && !narrow && (res !== 'week' || keys.length < 70) && px - lastX > 30) {
-      el('text', { x: px + 3, y: H + 16, class: 'ax-t' }, g, MON[m - 1]); lastX = px;
+      lastMonth = el('text', { x: px + 3, y: H + 16, class: 'ax-t' }, g, MON[m - 1]); lastX = px;
     } else if (res === 'day' && monthTick && px - lastX > 30) {
-      el('text', { x: px + 3, y: H + 16, class: 'ax-t' }, g, MON[m - 1]); lastX = px;
+      lastMonth = el('text', { x: px + 3, y: H + 16, class: 'ax-t' }, g, MON[m - 1]); lastX = px;
     }
   });
 }
@@ -91,6 +94,7 @@ export function drawTimeline(svg, bins, S, { onPick, tip }) {
 /** Monthly interception-rate lines, one per group. Point size shows volume. */
 export function drawRate(svg, lines, S, tip) {
   svg.innerHTML = '';
+  svg.onpointerdown = () => tip(null);
   const W = width(svg), narrow = W < 560, H = narrow ? 170 : 200, L = 40, R = 10, T = 10, B = 24;
   svg.setAttribute('viewBox', `0 0 ${W} ${H + T + B}`);
   const keys = lines[0]?.pts.map(p => p.k) || [];
@@ -116,8 +120,11 @@ export function drawRate(svg, lines, S, tip) {
     ln.pts.forEach((p, i) => {
       if (p.rate == null) return;
       const c = el('circle', { cx: x(i), cy: y(p.rate), r: 1.8 + 4.5 * Math.sqrt(p.l / vmax), class: 'rdot', style: `fill:${col}` }, svg);
-      c.addEventListener('pointerenter', e => tip(e, `<b>${GROUP_INFO[ln.g].n}</b><small>${periodLabel(p.k, 'month')}</small><small>${Math.round(p.rate * 100)}% of ${fmt(p.l)} stopped</small>`));
-      c.addEventListener('pointerleave', () => tip(null));
+      const show = e => tip(e, `<b>${GROUP_INFO[ln.g].n}</b><small>${periodLabel(p.k, 'month')}</small><small>${Math.round(p.rate * 100)}% of ${fmt(p.l)} stopped</small>`);
+      c.addEventListener('pointerenter', show);
+      // Touch has no hover: a tap shows the tooltip and it stays until the next tap elsewhere.
+      c.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse') { e.stopPropagation(); show(e); } });
+      c.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') tip(null); });
     });
   }
 }

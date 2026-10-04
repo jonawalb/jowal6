@@ -205,7 +205,7 @@ export function playGame(cfg, P, seed, log = true) {
       const d = rollMany(R, S.drones, P.pDroneShore);
       const dmg = Math.min(S.ashore, d.hits * P.droneDmg);
       S.ashore -= dmg; S.usLost += dmg;
-      row(T, 'Mainland fire', `${pl(S.drones, 'drone team')} ${S.drones === 1 ? 'strikes' : 'strike'} U.S. troops on the island`, P.pDroneShore, d.rolls, `−${r2(dmg)} pts`, d.hits ? 'ir' : '');
+      row(T, 'Mainland fire', `${pl(S.drones, 'drone team')} ${S.drones === 1 ? 'strikes' : 'strike'} U.S. troops on the island`, P.pDroneShore, d.rolls, d.hits ? `−${r2(dmg)} pts` : 'no hits', d.hits ? 'ir' : '');
     }
     S.peak = Math.max(S.peak, S.ashore);
   }

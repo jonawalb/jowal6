@@ -75,6 +75,8 @@ function readout() {
 }
 
 function render() {
+  // The timeline and the map dots are redrawn or restyled on every render; keep keyboard focus where it was.
+  const keepLab = document.activeElement?.closest?.('#timeline .lab')?.dataset.id;
   const pred = FILTERS[state.f][1];
   state.visible = new Set(ALL_IDS.filter(pred));
   $('year-out').textContent = state.year;
@@ -100,6 +102,7 @@ function render() {
   if (mv.sel !== null && mv.sel !== state.sel) rise($('card'), { ms: 300, dy: 6 });
   $('rec').innerHTML = reconcileHTML(state.gaps);
   if (mv.gaps !== null && mv.gaps !== state.gaps) $('rec').querySelectorAll('tbody tr').forEach((r, i) => rise(r, { ms: 300, delay: Math.min(i, 12) * 25 }));
+  if (keepLab) $('timeline').querySelector(`.lab[data-id="${keepLab}"]`)?.focus({ preventScroll: true });
   Object.assign(mv, { sel: state.sel, gaps: state.gaps, tlKey });
   writeHash();
 }
@@ -142,7 +145,7 @@ const tour = createTour(s => {
   Object.assign(state, DEF, s);
   render();
   $(s.scroll || 'map-card').scrollIntoView({ block: 'start', behavior: reduceMotion() ? 'auto' : 'smooth' });
-});
+}, () => $('start-tour').focus({ preventScroll: true }));
 $('start-tour').addEventListener('click', () => tour.start());
 
 let rw = 0;

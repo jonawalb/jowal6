@@ -8,7 +8,8 @@ import { logItem, promptFor, outlookHtml, actText, pct } from './views.js';
 import { readHash, writeHash } from './hash.js';
 import { showAAR } from './aar.js';
 import { renderBelow } from './below.js';
-import { createTour } from './tour.js';
+import { STEPS, SHEET, LESSON_SEED } from './lesson.js';
+import { learnButton, runLesson } from '../../../shared/js/learn.js';
 import { fxLayer, monthFx, countTo, countFrags, logFx, aarFx } from './fx.js';
 
 const $ = id => document.getElementById(id);
@@ -112,7 +113,7 @@ function renderPanel() {
   $('tgts').innerHTML = MISSION_KEYS.map(m => {
     const ok = sel && valid(g, 'B', { a: sel, m }, pending);
     const who = on === 'own' ? g.sides.B : g.sides.R;
-    return `<button type="button" data-m="${m}" ${ok ? '' : 'disabled'}>${on === 'own' ? 'Your' : 'Red\'s'} ${MISSIONS[m].short}<small>${who.alive[m]} of ${MISSIONS[m].need} needed${MISSIONS[m].entangled ? ' · nuclear role' : ''}</small></button>`;
+    return `<button type="button" data-m="${m}" ${ok ? '' : 'disabled'}>${on === 'own' ? 'Your' : 'Red\'s'} ${MISSIONS[m].short}<small>${who.alive[m]} working, ${MISSIONS[m].need} needed${MISSIONS[m].entangled ? ' · nuclear role' : ''}</small></button>`;
   }).join('');
   $('tgts').querySelectorAll('button').forEach(b => { b.onclick = () => choose(b.dataset.m); });
   $('end').disabled = g.over;
@@ -159,7 +160,7 @@ function render() {
   renderPanel();
   if (g.over) return writeHash(st);
   drawOrbit(g);
-  $('outlook').innerHTML = outlookHtml(g, legacy(g, P, 25), P, DEBRIS0);
+  $('outlook').innerHTML = outlookHtml(g, legacy(g, P, 25, g.turn), P, DEBRIS0);
   $('outlook-note').textContent = 'Risk is the chance per year that debris ends a satellite\'s mission, against the pre-war level. Losses assume both sides rebuild to full strength after the war.';
   writeHash(st);
 }
@@ -177,13 +178,14 @@ $('copy-link').onclick = async () => {
   catch { $('copy-link').textContent = 'Copy the address bar'; }
   setTimeout(() => { $('copy-link').textContent = 'Copy link'; }, 1800);
 };
-const HKEY = 'od-howto-hidden';
-const setHow = hide => { $('howto').hidden = hide; try { localStorage.setItem(HKEY, hide ? '1' : '0'); } catch { /* storage off */ } };
-try { if (localStorage.getItem(HKEY) === '1') $('howto').hidden = true; } catch { /* storage off */ }
-$('hide-howto').onclick = () => setHow(true);
-$('show-howto').onclick = () => { setHow(false); $('howto').scrollIntoView({ behavior: reduced.matches ? 'auto' : 'smooth' }); };
-const tour = createTour($('tour'));
-$('start-tour').onclick = () => tour.start();
+// "Learn to play": a guided first game on a fixed seed with the default settings.
+const lesson = () => {
+  st.seed = LESSON_SEED; st.redSetting = 'unknown'; st.fragMult = 1;
+  restart();
+  window.scrollTo({ top: 0, behavior: 'auto' });
+  runLesson(STEPS, { slug: 'orbital-denial', title: 'Learn to play', onFinish: () => banner.refresh() });
+};
+const banner = learnButton($('learn'), { slug: 'orbital-denial', minutes: 5, onStart: lesson, sheet: SHEET });
 
 buildActs();
 renderBelow($('below'), () => P);

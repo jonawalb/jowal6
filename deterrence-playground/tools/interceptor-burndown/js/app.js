@@ -6,7 +6,7 @@ import { simulate, leakersBy, shot } from './model.js';
 import { tornado, METRICS } from './sensitivity.js';
 import { drawBurn, drawLeak, drawTornado } from './charts.js';
 import { mountControls, syncControls, DRONE_POL } from './controls.js';
-import { createTour } from './tour.js';
+import { mountLesson } from './lesson.js';
 import { addExportBar, tableRows } from '../../../shared/js/export.js';
 import { MOTION, tween, press, changed, hit, drawIn, growBars, dryBurst } from './fx.js';
 
@@ -195,12 +195,7 @@ $('hz-choices').innerHTML = HZ.map(h => `<button type="button" class="btn" data-
 $('hz-choices').querySelectorAll('button').forEach(b => b.onclick = () => { S.horizon = +b.dataset.h; update(); });
 $('day').oninput = e => { stop(); S.day = +e.target.value; renderDay(); writeHash(); };
 $('play').onclick = () => { press($('play')); playing ? stop() : play(); };
-const tour = createTour($('stage'), set => {
-  stop();
-  Object.assign(S, DEFAULT(), JSON.parse(JSON.stringify(set)));
-  update();
-});
-$('tour-btn').onclick = () => tour.start();
+mountLesson($('stage'), { S, reset: () => { stop(); Object.assign(S, DEFAULT(), { day: 0 }); update(); } });
 $('copy').onclick = async () => {
   try { await navigator.clipboard.writeText(location.href); $('copy').textContent = 'Link copied'; }
   catch { $('copy').textContent = 'Copy failed'; }

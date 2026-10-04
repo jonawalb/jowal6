@@ -77,7 +77,8 @@ function update() {
   renderList($('list'), list, S, pick);
   renderDetail($('detail'), byId.get(S.sel), step);
   const T = tally(list), rus = list.filter(e => e.group === 'russia').length;
-  $('count').textContent = `${rus} Russian signal${rus === 1 ? '' : 's'}, ${list.filter(e => e.group === 'west').length} responses, ${list.filter(e => e.group === 'battle').length} battlefield moments in view`;
+  const nw = list.filter(e => e.group === 'west').length, nb = list.filter(e => e.group === 'battle').length;
+  $('count').textContent = `${rus} Russian signal${rus === 1 ? '' : 's'}, ${nw} response${nw === 1 ? '' : 's'}, ${nb} battlefield moment${nb === 1 ? '' : 's'} in view`;
   const max = Math.max(1, ...Object.values(T.lv));
   $('lvdist').innerHTML = LEVELS.map(l => `<li><span>${l.v} ${l.n}</span><span class="lvd-b"><i style="width:${(T.lv[l.v] / max * 100).toFixed(1)}%"></i></span><span class="num">${T.lv[l.v]}</span></li>`).join('');
   animate();

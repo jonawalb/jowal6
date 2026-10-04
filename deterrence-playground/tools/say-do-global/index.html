@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Say–Do Gap Monitor | Interactive Deterrence</title>
+<meta name="description" content="Do Russian, Iranian and Venezuelan statements predict what those states do? Lead-lag, event-study and distributed-lag tests on official and state-media rhetoric and real behaviour series, corrected for multiple testing.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&family=Spline+Sans+Mono:wght@400;500;600&family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="../../shared/css/deterrence-site.css">
+<link rel="stylesheet" href="say-do.css">
+</head>
+<body data-config="global">
+<header id="tsm-head"></header>
+
+<div class="bar">
+  <p class="lede">Pick a country, a stream of official statements or state media, a way of measuring it, and a record of what that state did: Russian strikes on Ukraine and nuclear moves, Iranian attacks and Gulf shipping, Venezuelan state violence. Three tests ask whether rises in the rhetoric come <i>before</i> rises in the behaviour, and the page says plainly when they do not.</p>
+  <div class="acts">
+    <button type="button" class="btn solid" id="start-tour">Start the walkthrough</button>
+    <button type="button" class="btn" id="copy-link">Copy link</button>
+  </div>
+</div>
+
+<main class="layout">
+  <div class="stage">
+    <section class="card pad verdict" id="verdict" aria-live="polite">
+      <p class="eyebrow">Verdict</p>
+      <h2 id="v-head"></h2>
+      <p id="v-pair"></p>
+      <p id="v-body"></p>
+      <ul class="chips" id="chips" aria-label="Test results"></ul>
+    </section>
+
+    <section class="card pad">
+      <div class="cardh">
+        <p class="eyebrow">What was said, what was done</p>
+        <p class="legend"><span><i class="lr"></i>Rhetoric</span><span><i class="lb"></i>Behaviour</span><span><i class="ls"></i>Spike week</span></p>
+      </div>
+      <div class="serieswrap"><svg id="series" class="chart" role="img"></svg></div>
+      <p class="tip" id="tip" aria-live="polite"></p>
+    </section>
+
+    <div class="tests">
+      <section class="card pad">
+        <h3>1. Lead-lag correlation</h3>
+        <svg id="ccf" class="chart" role="img" aria-label="Cross-correlation of rhetoric and behaviour anomalies at each lead and lag, with 95% bootstrap intervals"></svg>
+        <p class="ttext" id="ccf-t"></p>
+      </section>
+      <section class="card pad">
+        <h3>2. Event study around spikes</h3>
+        <svg id="es" class="chart" role="img" aria-label="Average behaviour relative to its pre-spike baseline, from before to after rhetoric spikes, with a 95% bootstrap band"></svg>
+        <p class="ttext" id="es-t"></p>
+      </section>
+      <section class="card pad">
+        <h3>3. Distributed lag</h3>
+        <svg id="dl" class="chart" role="img" aria-label="Regression coefficients on current and lagged rhetoric with 95% Newey-West intervals"></svg>
+        <p class="ttext" id="dl-t"></p>
+      </section>
+    </div>
+
+    <section class="card pad fam">
+      <p class="eyebrow">Multiple testing in this view</p>
+      <p id="fam-sum"></p>
+      <ul class="famlist" id="fam-list" aria-label="Pairs that survive correction"></ul>
+    </section>
+  </div>
+
+  <aside class="panel" aria-label="Controls">
+    <section class="sec">
+      <p class="eyebrow">Say: rhetoric</p>
+      <div class="field" id="country-row"><label for="country">Country</label><select id="country"></select></div>
+      <div class="field"><label for="stream">Source stream</label><select id="stream"></select></div>
+      <div class="field"><span class="lab" id="kind-lab">Measure</span><div class="choices three" id="kind" role="group" aria-labelledby="kind-lab"></div></div>
+      <div class="field" id="target-row"><label for="target">Target</label><select id="target"></select></div>
+      <div class="field" id="dim-row"><label for="dim">Tone dimension</label><select id="dim"></select></div>
+      <p class="help" id="series-help"></p>
+    </section>
+    <section class="sec">
+      <p class="eyebrow">Do: behaviour</p>
+      <div class="field"><label for="beh">Series</label><select id="beh"></select></div>
+      <p class="help" id="beh-help"></p>
+    </section>
+    <section class="sec">
+      <p class="eyebrow">Analysis</p>
+      <div class="field"><span class="lab" id="res-lab">Resolution</span><div class="choices two" id="res" role="group" aria-labelledby="res-lab"></div></div>
+      <div class="field"><span class="lab" id="win-lab">Window</span><div class="choices two" id="win" role="group" aria-labelledby="win-lab"></div></div>
+    </section>
+    <section class="sec">
+      <div class="cardh"><p class="eyebrow">Spike weeks and evidence</p><span class="fine" id="spike-count"></span></div>
+      <div id="spikes"></div>
+    </section>
+  </aside>
+</main>
+
+<section class="below">
+  <div>
+    <h2>How to read this</h2>
+    <p><b>Say.</b> Each rhetoric series comes from one source in one language (a "stream"), such as Kremlin transcripts in Russian or the Iranian Foreign Ministry in English. A machine-learning model scores every sentence for six tones. <i>Overall tone</i> averages all sentences; <i>tone on a target</i> averages only sentences that mention Ukraine, the U.S., NATO, "the West" or Israel; <i>attention</i> is the share of documents that mention the target. Streams are never pooled, so a change in which outlets publish cannot look like a change in tone.</p>
+    <p><b>Do.</b> Russia: missiles and drones launched at Ukraine each day, as the Ukrainian Air Force reported them, and a curated list of Russian nuclear actions. Iran: daily ship transits through Hormuz and Bab el-Mandeb (outcomes, not Iranian actions) and the days of Iran's direct attacks on Israel. Venezuela: weekly ACLED counts of protests, riots and state violence against civilians.</p>
+    <p><b>The three tests</b> all ask whether rhetoric moves <i>first</i>. (1) The lead-lag chart correlates the two series' deviations from their own recent baselines at each offset; blue bars on the right are rhetoric-first. (2) The event study lines up rhetoric spike weeks and measures how behaviour changed from before the spike to after it, against randomly placed pseudo-spikes. (3) The distributed-lag regression asks whether past rhetoric adds anything once behaviour's own recent past is known.</p>
+    <p><b>Verdicts.</b> "Survives correction" means q &lt; 0.05 after Benjamini–Hochberg across every test in the current resolution and window. "Suggestive at most" means p &lt; 0.05 for that test alone. Hundreds of tests run in each view, so dozens pass p &lt; 0.05 by chance.</p>
+    <h2 class="mt">What this can and cannot tell you</h2>
+    <p>Rhetoric and behaviour often rise in the same week because both respond to the same event: a battlefield turn, a summit, a strike by the other side. Same-period correlation is shown for context but is not a test of prediction. Even a surviving result is an association in the past record, not evidence that a statement caused an action or that it will predict the next one. Coverage is uneven (see below), the tone model has been checked only against another model, and a stream's tone can shift when its spokesperson or format changes.</p>
+  </div>
+  <div>
+    <h2>Method &amp; sources</h2>
+    <ul class="src">
+      <li><b>Rhetoric.</b> Local multilingual corpus (~/Projects/rhetoric-corpus), semantic layer. Sentences are embedded with multilingual-e5-small and scored by logistic-regression students trained on labels from a zero-shot NLI teacher (bge-m3-zeroshot-v2.0). Document tone is the mean sentence probability; series are daily sums exported within each stream by <code>scripts/say_do_export.py</code> and aggregated to weeks (Monday start). Keyword-filtered collection regimes are excluded. <span id="asof"></span></li>
+      <li><b>Anomalies.</b> Each period's value minus the document-weighted mean of the previous 12 weeks (28 days) for rhetoric and the plain mean for behaviour. Both are standardised and winsorised at ±3 SD; periods without rhetoric count as zero deviation.</li>
+      <li><b>(a) Lead-lag.</b> Pearson r at each offset. 95% intervals: moving-block bootstrap (block ≈ n<sup>1/3</sup>). p: Fisher z with the Pyper–Peterman effective sample size for autocorrelated series, Bonferroni over the lead lags, so one p per direction. Check: circular-shift permutation of the rhetoric series.</li>
+      <li><b>(b) Event study.</b> Spikes from the export (rule below), declustered so none falls inside another's window. Abnormal behaviour = value minus the mean of an estimation window that ends before the pre-period. Tested statistic: the change in mean abnormal behaviour from the pre-window to the post-window. p from the mean and spread of the same statistic over 3,000–4,000 draws of pseudo-spikes placed away from real ones (normal approximation; the empirical placebo p is shown as a check). Fewer than 5 spikes: shown, not tested.</li>
+      <li><b>(c) Distributed lag.</b> OLS of behaviour on current and lagged rhetoric plus lagged behaviour; Newey–West (Bartlett) covariance with bandwidth ⌊4(n/100)<sup>2/9</sup>⌋; F test that all lagged rhetoric coefficients are zero. Check: the same F under circular shifts of rhetoric.</li>
+      <li><b>Short series.</b> For pairs with fewer than 150 periods (and event studies with fewer than 10 spikes) the p entering the correction is the larger of the model p and the permutation or placebo p, because the model p is unreliable there.</li>
+      <li><b>Multiple testing.</b> Benjamini–Hochberg over the three primary tests of every pair in a resolution and window. Behaviour-leads and same-period correlations are shown without correction, as context.</li>
+      <li><b>Calibration.</b> On simulated unrelated series (200–300 pairs each), nominal 5% tests rejected 3–5% of the time for the lead-lag test, 6–8% for the event study and 7–9% for the distributed-lag model (5.5% for its permutation check). The model-based tests are slightly liberal; the permutation checks are not.</li>
+      <li><b>Text policy.</b> Official sentences are quoted up to 300 characters with a link. State media and other media show only the headline and a link.</li>
+    </ul>
+    <h3>Parameters</h3>
+    <div class="tablewrap" id="params"></div>
+    <h3>Multiple testing by view</h3>
+    <div class="tablewrap" id="bh-table"></div>
+    <h3>Rhetoric coverage</h3>
+    <div class="tablewrap" id="cov-rhet"></div>
+    <p class="fine">Gaps: the Russian "recent" collection regimes (RIA, RT, TASS) start in July 2026 and are too short to test; the TASS English "section" sample ends in July 2026, when its "recent" regime begins. The Russian Defence Ministry stream ends in March 2025. Iranian presidential texts start April 2025, Supreme Leader texts May 2024 to March 2026, and Press TV November 2025 to July 2026. ACLED Venezuela data end on 9 September 2024. Not used: North Korean nuclear tests (no North Korean texts in the corpus; last test 2017), the curated Houthi attack list (10 events, not a census).</p>
+    <h3>Behaviour coverage</h3>
+    <div class="tablewrap" id="cov-beh"></div>
+    <h3>Tone model agreement (teacher vs. student, not human coders)</h3>
+    <div class="tablewrap" id="validation"></div>
+    <p class="fine">Nobody has yet checked the teacher against expert human coding. Grievance is under-detected. Read tone levels as rough; this tool relies on changes within one stream, which are less sensitive to a model's level bias.</p>
+    <h3>How to cite</h3>
+    <p class="fine">Walberg, Jonathan. "Say–Do Gap Monitor: Russia, Iran and Venezuela." Interactive Deterrence, 2026. Data: Petro Ivaniuk, "Massive Missile Attacks on Ukraine" (Kaggle, CC BY-NC-SA 4.0); IMF PortWatch; Armed Conflict Location &amp; Event Data (ACLED), www.acleddata.com; official and state-media texts in the author's rhetoric corpus. Derived Ukraine series are shared under CC BY-NC-SA 4.0.</p>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Say–Do Gap Monitor', sub: 'Do Russian, Iranian and Venezuelan statements predict what those states do? Three tests, corrected for multiple testing, with the evidence for every spike.', category: 'State rhetoric' });
+</script>
+<script type="module" src="js/app.js"></script>
+<script type="module" src="js/method.js"></script>
+</body>
+</html>

@@ -96,6 +96,25 @@ export function mountNav() {
     // Coming Soon pages: their registry entry is sealed; read it once this page's password has been entered.
     window.TSMVault.unseal(DEV_SEALED, 4).then(txt => { addTools(JSON.parse(txt)); if (ALL_TOOLS.find(t => t.slug === slug)?.game) initSkin(); }, () => {});
   }
+  unlinkMissingTools();
+}
+
+// A site built from a subset of tools (taiwanmonitor.com publishes only promoted ones) drops the others from the
+// registry, and every site lists only its own tools. A link from this page to a sibling tool this site does not
+// publish would 404, so it becomes plain text.
+// Tools draw some text later, so links added after load are checked too.
+function unlinkMissingTools() {
+  const toolsRoot = location.pathname.replace(/\/tools\/[^/]+\/.*$/, '/tools/');
+  const check = root => root.querySelectorAll?.('a[href]').forEach(a => {
+    let u; try { u = new URL(a.getAttribute('href'), location.href); } catch { return; }
+    if (u.origin !== location.origin || !u.pathname.startsWith(toolsRoot)) return;
+    const m = u.pathname.slice(toolsRoot.length).match(/^([a-z0-9-]+)\/(index\.html)?$/);
+    if (!m || TOOLS.some(t => t.slug === m[1] && t.status === 'live')) return;
+    a.replaceWith(document.createTextNode(a.textContent));
+  });
+  check(document);
+  new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => n.nodeType === 1 && check(n.parentNode || n))))
+    .observe(document.body, { childList: true, subtree: true });
 }
 
 function wireMenu(bar) {

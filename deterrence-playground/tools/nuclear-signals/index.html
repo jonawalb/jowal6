@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nuclear Signals Observatory | Interactive Deterrence</title>
+<meta name="description" content="Nuclear signalling by all nine nuclear-armed states on one sourced timeline: official rhetoric, tests and exercises, doctrine and arms control, with each rival pair placed on Kahn's escalation ladder by written rules and the evidence behind each placement.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&family=Spline+Sans+Mono:wght@400;500;600&family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="../../shared/css/deterrence-site.css">
+<link rel="stylesheet" href="nuclear-signals.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<main class="layout">
+  <div class="stage" id="stage">
+    <p class="caveat"><b>Ladder placements are this tool's coding.</b> Dates, words and facts come from the linked sources. Which rung an item sits on, and which pair of rivals it counts for, follow written rules you can read under Method &amp; sources and dispute item by item.</p>
+
+    <div class="card controls">
+      <div class="row">
+        <div class="tabs" id="tabs" role="tablist" aria-label="Views"></div>
+        <div class="acts">
+          <button type="button" class="btn" id="tour-btn">Walkthrough</button>
+          <button type="button" class="btn" id="copy">Copy link</button>
+          <button type="button" class="btn" id="reset">Reset</button>
+        </div>
+      </div>
+      <div id="tl-controls" class="controls">
+        <div class="seg" id="range" role="group" aria-label="Time range"></div>
+        <div class="gchips" id="cats" role="group" aria-label="Categories shown"></div>
+        <div class="gchips" id="states" role="group" aria-label="States shown"></div>
+        <div class="row">
+          <label class="tg"><input type="checkbox" id="corpus" checked><span class="sw"></span><span class="t">Corpus sentences<small>highest-threat official sentences, 2021 on</small></span></label>
+          <label class="vh" for="q">Search items</label>
+          <input id="q" class="search" type="search" placeholder="Search: Oreshnik, New START, Agni, no first use" autocomplete="off">
+        </div>
+      </div>
+    </div>
+
+    <div id="view" role="tabpanel" aria-live="polite"></div>
+    <div class="tooltip" id="tip" hidden></div>
+  </div>
+
+  <aside class="panel" aria-label="Details">
+    <div class="sec detail" id="detail" aria-live="polite"></div>
+    <div class="sec">
+      <p class="eyebrow">On the ladder now (last 12 months)</p>
+      <ul class="nowlist" id="now"></ul>
+      <p class="fine">Highest rung of any placed item in each dyad. Click one to see the evidence.</p>
+    </div>
+  </aside>
+</main>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>States signal about nuclear weapons in four ways: what their leaders and ministries say, what their forces do (tests, drills, deployments), what they write into doctrine, and what they do with arms-control treaties. The Observatory puts all four on one timeline for the nine nuclear-armed states.</p>
+    <p><b>Timeline.</b> One lane per state. Filter by category, state and period, or search. Click a mark or a row to read the item, its sources and its coding in the side panel. Arrow keys step through items once one is selected.</p>
+    <p><b>State dossier.</b> One state at a time: warhead estimates, nuclear tests, declared policy, treaty status, where its dyads sit on the ladder, and its signals since 2021.</p>
+    <p><b>Escalation ladder.</b> Each pair of nuclear-armed rivals is placed on Herman Kahn's 44-rung ladder at the highest rung of any placed item in the chosen window. Move the date, change the window, and read the evidence list: every item says which rule set its rung.</p>
+    <p><b>Rhetoric vs events.</b> Month by month, how much official text talks about nuclear weapons and how threatening a tone model scores it, with the same state's events on top. Click a month to read the sentences behind the numbers.</p>
+  </div>
+  <div class="col">
+    <h2>Limits in brief</h2>
+    <p>Rhetoric series exist only for states in the rhetoric corpus: Russia, China, the United States, India and Pakistan (and Iran, which is not nuclear-armed). Missile tests and drills since 2021 are complete for Russia and a verified selection for the others. A rung is an ordinal label for a kind of move, not a probability of war. The full method, coverage gaps and every source are under <b>Method &amp; sources</b>.</p>
+    <p class="fine">Built from the data of Russia's Nuclear Signals, Who Promises What, Treaty Tracker, Every Nuclear Test, Nuclear Arsenals, Kahn's Escalation Ladder, Is It a Nuke? and Nuclear Entanglement, plus events verified for this tool and the rhetoric corpus.</p>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Nuclear Signals Observatory', sub: 'Nuclear rhetoric, tests, doctrine and arms control for all nine nuclear-armed states, with each rival pair placed on Kahn\'s ladder by written rules.', category: 'Coming Soon' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

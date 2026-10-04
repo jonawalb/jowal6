@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+  <rect width="640" height="400" fill="#f2f2ee"/>
+  <rect x="24" y="24" width="400" height="352" rx="8" fill="#fbfbf8" stroke="#d3d6cd"/>
+  <g fill="#e7e9e3">
+    <rect x="44" y="52" width="360" height="30" rx="4"/><rect x="44" y="92" width="360" height="30" rx="4"/>
+    <rect x="44" y="132" width="360" height="30" rx="4"/><rect x="44" y="172" width="360" height="30" rx="4"/>
+    <rect x="44" y="212" width="360" height="30" rx="4"/><rect x="44" y="252" width="360" height="30" rx="4"/>
+  </g>
+  <g fill="#1b4fd4"><circle cx="80" cy="67" r="6"/><circle cx="190" cy="107" r="7"/><circle cx="300" cy="107" r="9"/><circle cx="350" cy="147" r="6"/><circle cx="130" cy="187" r="5"/></g>
+  <g fill="#e8753a"><path d="M240 98 l10 18 h-20z"/><path d="M330 98 l10 18 h-20z"/><path d="M160 258 l9 16 h-18z"/><path d="M270 258 l9 16 h-18z"/></g>
+  <g fill="#b0306e"><rect x="110" y="141" width="12" height="12"/><rect x="380" y="101" width="12" height="12"/></g>
+  <g fill="#0c8474"><path d="M210 217 l9 9 -9 9 -9 -9z"/><path d="M360 217 l9 9 -9 9 -9 -9z"/></g>
+  <path d="M286 220 h6 v-6 h6 v6 h6 v6 h-6 v6 h-6 v-6 h-6z" fill="#b3261e"/>
+  <rect x="452" y="24" width="164" height="352" rx="8" fill="#fbfbf8" stroke="#d3d6cd"/>
+  <g fill="#e7e9e3">
+    <rect x="470" y="48" width="128" height="22" rx="3"/><rect x="470" y="78" width="128" height="22" rx="3"/>
+    <rect x="470" y="108" width="128" height="22" rx="3"/><rect x="470" y="138" width="128" height="22" rx="3"/>
+    <rect x="470" y="198" width="128" height="22" rx="3"/><rect x="470" y="228" width="128" height="22" rx="3"/>
+    <rect x="470" y="258" width="128" height="22" rx="3"/><rect x="470" y="288" width="128" height="22" rx="3"/>
+  </g>
+  <rect x="470" y="168" width="128" height="22" rx="3" fill="#e8753a"/>
+  <line x1="470" y1="134" x2="598" y2="134" stroke="#14201a" stroke-dasharray="5 4"/>
+  <text x="534" y="352" font-family="Georgia, serif" font-size="26" font-weight="700" fill="#14201a" text-anchor="middle">Rung 5</text>
+  <text x="44" y="338" font-family="Georgia, serif" font-size="30" font-weight="700" fill="#033303">Nuclear signals</text>
+</svg>

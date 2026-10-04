@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Situation Room Replay | Interactive Deterrence</title>
+<meta name="description" content="220 National Security Council and White House meetings, 1948 to 1983, coded turn by turn for who disagreed, which camps formed and which way the President leaned.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&family=Spline+Sans+Mono:wght@400;500;600&family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="../../shared/css/deterrence-site.css">
+<link rel="stylesheet" href="situation-room.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<main class="layout">
+  <div class="stage" id="stage">
+    <p class="caveat"><b>Unpublished research data.</b> Coding from the Cheap Talk project (SRS1 and SRS2 deliveries, 220 meetings). Sides and the President's lean are coders' judgments of what was said in the room, not the decision that followed.</p>
+
+    <div class="card controls">
+      <div class="tabs" role="tablist" aria-label="Views" id="tabs">
+        <button type="button" role="tab" id="tab-replay" aria-controls="view-replay" data-v="replay">Meeting replay</button>
+        <button type="button" role="tab" id="tab-timeline" aria-controls="view-timeline" data-v="timeline">Timeline</button>
+        <button type="button" role="tab" id="tab-people" aria-controls="view-people" data-v="people">People</button>
+        <button type="button" role="tab" id="tab-network" aria-controls="view-network" data-v="network">Disagreement network</button>
+        <button type="button" role="tab" id="tab-patterns" aria-controls="view-patterns" data-v="patterns">Patterns</button>
+      </div>
+      <div class="filters">
+        <label class="fl"><span>Administration</span><select id="f-admin"></select></label>
+        <label class="fl"><span>Search subjects and notes</span><input id="f-q" type="search" placeholder="e.g. Berlin, Vietnam, test ban" autocomplete="off"></label>
+        <label class="fl"><span>Meetings</span><select id="f-code">
+          <option value="all">All meetings</option>
+          <option value="issues">With a coded issue</option>
+          <option value="1">With in-room disagreement</option>
+        </select></label>
+        <div class="acts">
+          <button type="button" class="btn" id="tour-btn">Walkthrough</button>
+          <button type="button" class="btn" id="copy">Copy link</button>
+        </div>
+      </div>
+      <p class="fine" id="f-n" aria-live="polite"></p>
+    </div>
+
+    <!-- Meeting replay -->
+    <section class="view" id="view-replay" role="tabpanel" aria-labelledby="tab-replay">
+      <div class="card mhead">
+        <div class="mnav">
+          <button type="button" class="btn" id="m-prev" aria-label="Previous meeting">‹</button>
+          <label class="fl grow"><span>Meeting</span><select id="m-sel"></select></label>
+          <button type="button" class="btn" id="m-next" aria-label="Next meeting">›</button>
+        </div>
+        <h2 class="mtitle" id="m-title"></h2>
+        <p class="fine" id="m-meta"></p>
+        <div class="issues" id="m-issues" role="group" aria-label="Issues in this meeting"></div>
+        <div class="iq" id="m-iq"></div>
+      </div>
+      <div class="card tablecard">
+        <svg id="room" class="room" viewBox="0 0 760 440" role="img" aria-label="Seats around the table, coloured by each speaker's side on the selected issue."></svg>
+        <div class="tooltip" id="room-tip" hidden></div>
+        <ul class="legend" id="room-legend"></ul>
+      </div>
+      <div class="card player">
+        <svg id="strip" class="strip" preserveAspectRatio="none" viewBox="0 0 1000 46" aria-hidden="true"></svg>
+        <div class="pctl">
+          <button type="button" class="btn" id="p-first" aria-label="First turn">⏮</button>
+          <button type="button" class="btn" id="p-back" aria-label="Previous turn">◀</button>
+          <button type="button" class="btn solid" id="p-play">Play</button>
+          <button type="button" class="btn" id="p-fwd" aria-label="Next turn">▶</button>
+          <button type="button" class="btn" id="p-coded" title="Jump to the next turn coded on this issue">Next coded</button>
+          <button type="button" class="btn" id="p-end">Show all</button>
+          <input type="range" id="p-range" min="0" max="0" value="0" aria-label="Turn in the meeting">
+          <span class="num fine" id="p-pos"></span>
+        </div>
+        <div class="turn" id="turn" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- Timeline -->
+    <section class="view" id="view-timeline" role="tabpanel" aria-labelledby="tab-timeline" hidden>
+      <div class="card chartcard">
+        <div class="chart-h"><p class="eyebrow">Every coded meeting, by year</p><ul class="legend" id="tl-legend"></ul></div>
+        <div class="chartbox"><svg id="tl" class="chart" role="img" aria-label="Meetings stacked by year and coloured by whether the coders found disagreement. Select a meeting to replay it."></svg>
+          <div class="tooltip" id="tl-tip" hidden></div></div>
+        <p class="fine">Each square is one meeting. Select one to replay it. The shaded band marks U.S. ground combat in Vietnam, from the Gulf of Tonkin resolution (August 1964) to the Paris Peace Accords (January 1973).</p>
+      </div>
+      <div class="card chartcard">
+        <p class="eyebrow">Meetings in view</p>
+        <ol class="mlist" id="tl-list"></ol>
+        <button type="button" class="btn" id="tl-more" hidden>Show more</button>
+      </div>
+    </section>
+
+    <!-- People -->
+    <section class="view" id="view-people" role="tabpanel" aria-labelledby="tab-people" hidden>
+      <div class="card chartcard">
+        <div class="chart-h"><p class="eyebrow">Speakers</p>
+          <label class="fl inline"><span>Sort</span><select id="pp-sort">
+            <option value="st">Issues they took a side on</option><option value="m">Meetings they spoke in</option>
+            <option value="agree">President sided with them (rate)</option><option value="hawk">Hawk share</option><option value="n">Name</option>
+          </select></label>
+          <label class="fl inline"><span>Find</span><input id="pp-q" type="search" placeholder="Name" autocomplete="off"></label></div>
+        <ol class="plist" id="pp-list"></ol>
+      </div>
+      <div class="card dossier" id="dossier"></div>
+    </section>
+
+    <!-- Network -->
+    <section class="view" id="view-network" role="tabpanel" aria-labelledby="tab-network" hidden>
+      <div class="card chartcard">
+        <div class="chart-h"><p class="eyebrow">Who took opposite sides of the same issue</p>
+          <div class="seg" id="nw-mode" role="group" aria-label="Link type">
+            <button type="button" class="btn" data-k="opp">Opposite sides</button><button type="button" class="btn" data-k="same">Same side</button></div></div>
+        <div class="nwctl">
+          <label class="slider"><span class="sl-h">People shown <output id="nw-n-o"></output></span><input type="range" id="nw-n" min="10" max="50" step="1" value="28"></label>
+          <label class="slider"><span class="sl-h">Fewest shared issues for a link <output id="nw-w-o"></output></span><input type="range" id="nw-w" min="1" max="6" step="1" value="2"></label>
+        </div>
+        <div class="chartbox"><svg id="nw" class="chart" viewBox="0 0 640 640" role="img" aria-label="Circle of the most active speakers, grouped by role; lines join people coded on opposite (or the same) sides, thicker for more issues."></svg>
+          <div class="tooltip" id="nw-tip" hidden></div></div>
+        <ul class="legend" id="nw-legend"></ul>
+      </div>
+      <div class="card chartcard">
+        <p class="eyebrow" id="nw-list-h">Most frequent pairings</p>
+        <ol class="pairs" id="nw-list"></ol>
+      </div>
+    </section>
+
+    <!-- Patterns -->
+    <section class="view" id="view-patterns" role="tabpanel" aria-labelledby="tab-patterns" hidden>
+      <div class="card chartcard">
+        <p class="eyebrow">By administration</p>
+        <div class="tablewrap"><table class="agg" id="pt-admin"></table></div>
+        <p class="fine">Shares of issues unless noted. "President leaned" counts issues where the coders found he came down on a side (POTUS SP = 1).</p>
+      </div>
+      <div class="card chartcard">
+        <p class="eyebrow">When the President leaned on a hawk–dove issue, which side?</p>
+        <div id="pt-hawk"></div>
+        <p class="fine">Hawk side and the President's side come from the issue index. This is his position in the meeting record, not the decision taken later.</p>
+      </div>
+      <div class="card chartcard">
+        <p class="eyebrow">When one side feared looking soft on communism, did the President side with it?</p>
+        <div id="pt-ac"></div>
+        <p class="fine">Only issues where coders named a side worried about looking soft on communism (Side A/C), and the President leaned.</p>
+      </div>
+      <div class="card chartcard">
+        <div class="chart-h"><p class="eyebrow">Issue types over time</p>
+          <div class="seg" id="pt-dim" role="group" aria-label="Issue attribute">
+            <button type="button" class="btn" data-k="hd">Hawk–dove</button><button type="button" class="btn" data-k="ac">About communism</button>
+            <button type="button" class="btn" data-k="fp">Fact or policy</button><button type="button" class="btn" data-k="sp">President leaned</button></div></div>
+        <svg id="pt-time" class="chart" role="img" aria-label="Coded issues by period, split by the chosen attribute."></svg>
+        <ul class="legend" id="pt-time-legend"></ul>
+      </div>
+      <div class="card chartcard">
+        <div class="chart-h"><p class="eyebrow">Whose side did the President take?</p>
+          <label class="slider small"><span class="sl-h">Fewest issues <output id="pt-min-o"></output></span><input type="range" id="pt-min" min="2" max="10" value="5"></label></div>
+        <div id="pt-advice"></div>
+        <p class="fine">For each adviser, the issues where both the adviser and the President took a side in the same meeting; the bar is the share where they matched. Small counts: read as description, not as a measure of influence.</p>
+      </div>
+    </section>
+  </div>
+
+  <aside class="panel" id="panel" aria-label="Details" aria-live="polite"></aside>
+</main>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p><b>Meeting replay.</b> Everyone who speaks in the record sits at the table, the President at the head. Pick an issue, then play the meeting turn by turn. A seat fills with its side the first time that person is coded on the issue: blue for side 1, orange for side 0 (the issue card says what each side argued). A grey dashed seat was asked for a view and gave none (N/A). A double ring means the person was coded on both sides during the meeting. The strip above the player shows every turn; tall marks are coded turns.</p>
+    <p><b>Timeline.</b> Every meeting by year, coloured by whether the coders found in-room disagreement. <b>People</b> gives each speaker's record: meetings, sides taken, how often their side was the hawk side, and how often the President's lean matched theirs. <b>Disagreement network</b> joins people coded on opposite sides of the same issue. <b>Patterns</b> aggregates the issue index by administration and period.</p>
+    <p>The filters at the top apply to every view.</p>
+
+    <h2 class="mt" id="method">Method &amp; sources</h2>
+    <p><b>What the data is.</b> Cheap Talk is Jonathan Walberg's row-level coding of disagreements in U.S. National Security Council and White House meeting records, built with Joe Ruggiero and Matt Malis. Its question is whose advice the President takes. Each meeting record is split into speaker turns (segment IDs read meeting.section.turn). For each disagreement the coders open an issue, write the question with what side 1 and side 0 say, and code every turn that takes a side as 1, 0 or N/A. The tool shows two finished deliveries: <b>SRS1</b> (110 meetings, 98 issues, delivered 26 July 2026 and frozen) and <b>SRS2</b> (110 meetings, 106 issues, completed 9 August 2026 and revised on 10 August against the research assistants' coding). Together: 220 meetings from March 1948 to January 1983, 204 issues, 7,538 turns, 1,228 of them coded.</p>
+    <p><b>What counts as an issue.</b> All four must hold: named people on opposing sides; they contest a decision, or a fact or assessment that bears on one; hawk–dove or fear of communism can be answered (including "neither applies"); and it makes sense to ask which side the President came down on. Sub-questions of one fight are one issue. A meeting's code is 1 when there is in-room disagreement. "Level 2" issues record the President asking for advice when nobody disagreed in the room; those meetings stay code 0 but carry issues (8 meetings here).</p>
+    <p><b>The issue codes.</b> <i>Fact/Policy</i>: F if the dispute is about recovering a fact or assessment, P if it is about what to do. <i>About communism</i>: whether the issue concerns communism. <i>Side A/C</i>: which side is worried about looking soft on communism; left blank when every principal is anti-communist and they split only on means, timing or legality (most Cuban Missile Crisis operational votes). For arms control, summitry or trade with the Soviets, the restraining side carries it. <i>Hawk/Dove</i> and <i>Side H</i>: whether the split is hawk against dove, and which side is the hawk. <i>POTUS SP</i>: 1 only when the President voiced an opinion and came down on a side; <i>President Side</i> is then that side. Asking questions or framing without committing is 0. Vice Presidents (Nixon under Eisenhower, Johnson under Kennedy) are coded as themselves, never as the President.</p>
+    <p><b>How the tool computes things.</b> A person's side on an issue is the side of their last coded turn on it; people coded on both sides are marked as having moved (44 person-issue cases). The President's lean always comes from the issue index, never from his turns (they agree in 139 of 140 checkable cases; in 247a Eisenhower is coded on both sides and the index records side 1). "Opposite sides" in the network counts issues where two people ended on different sides. Hawk share is the share of a person's sides on hawk–dove issues that were the hawk side. Speaker roles (State, Defense, Military and so on) are the tool's grouping of the source position titles by keyword; three people who appear under two spellings were merged (J. William Fulbright, Paul "Pete" McCloskey, Benjamin Gilman), and case-only differences were merged.</p>
+    <p><b>Limits.</b> The sample is not every NSC meeting: it is the SRS draws of the project corpus, heavy on the Eisenhower years (87 meetings) and thin on Carter and Reagan (10). Only 10 meetings name Vietnam in their subject or notes; the project's Vietnam series (about 370 meetings) has research-assistant coding and an automated audit that are not yet validated, so it is not shown. SRS1 and SRS2 were coded under slightly different calibrations (SRS1 recall-first; SRS2 re-coded to the research-assistant rate), and SRS2 has open review items: three Side A/C rulings flagged in the issue comments and an unresolved duplicate (meeting 22331). The records are memoranda and minutes, not verbatim transcripts; who "spoke" means who the note-taker recorded. Quoted text is the coded turn, cut at 280 characters; uncoded turns carry no text here.</p>
+    <p><b>How to cite.</b> Jonathan Walberg, Joe Ruggiero and Matt Malis, Cheap Talk: coded disagreements in U.S. National Security Council meetings, SRS1–SRS2 (unpublished data, 2026), via Situation Room Replay, jwalberg.com. Cite a turn by meeting ID and segment ID, for example 36.1.5.</p>
+  </div>
+  <div class="col">
+    <h2>Sources</h2>
+    <ul class="src">
+      <li>Cheap Talk SRS1 delivery: 110 coded meeting workbooks, <code>cheap_talk_master_index.xlsx</code> and <code>cheap_talk_issue_index.xlsx</code>, with the collaborators' Coding Notes (26 July 2026). Unpublished.</li>
+      <li>Cheap Talk SRS2 delivery: 110 coded meeting workbooks and the two indexes (9–10 August 2026). Unpublished.</li>
+      <li>Cheap Talk project handoff and coding standard (<code>CHEAP_TALK_HANDOFF.md</code>, 9 August 2026): definitions of every code used here.</li>
+      <li>Meeting records: segmented NSC and White House meeting memoranda from the project's meeting corpus (compiled by Matt Malis from declassified U.S. government records). Per-meeting archival citations (for example <i>Foreign Relations of the United States</i> volume and document numbers) are not in the coded files, so the tool cites meetings by project ID and date.</li>
+      <li>Administration dates: inauguration and succession dates of each President.</li>
+    </ul>
+    <p class="fine mt-s">Build script: <code>tools/situation-room/scripts/build_data.py</code> reads the two deliveries, checks the codebook's consistency rules (issue columns match the index; POTUS SP = 1 exactly when President Side is filled; Side H only on hawk–dove issues) and writes <code>data/srs.js</code>. Provenance: <code>data/SOURCES.md</code>.</p>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Situation Room Replay', sub: 'Who was in the room, who disagreed, and which way the President leaned: 220 NSC and White House meetings, 1948–1983, coded turn by turn.', category: 'Coming Soon' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

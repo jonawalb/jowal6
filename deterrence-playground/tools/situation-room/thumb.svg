@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+  <rect width="640" height="400" fill="#f2f2ee"/>
+  <rect x="24" y="24" width="592" height="352" rx="8" fill="#fbfbf8" stroke="#d3d6cd"/>
+  <ellipse cx="320" cy="200" rx="170" ry="78" fill="#e9e4d4" stroke="#97a197" stroke-width="2"/>
+  <line x1="320" y1="96" x2="320" y2="150" stroke="#e8753a" stroke-width="4" stroke-dasharray="7 6"/>
+  <circle cx="320" cy="80" r="30" fill="none" stroke="#e8753a" stroke-width="4"/>
+  <circle cx="320" cy="80" r="22" fill="#e8753a" stroke="#14201a" stroke-width="4"/>
+  <path d="M308 50 l4 -10 l8 6 l8 -6 l4 10 z" fill="#e8753a"/>
+  <g stroke-width="4">
+    <circle cx="160" cy="118" r="22" fill="#1b4fd4" stroke="#1b4fd4"/>
+    <circle cx="480" cy="118" r="22" fill="#e8753a" stroke="#0c8474"/>
+    <circle cx="110" cy="210" r="22" fill="#1b4fd4" stroke="#0c8474"/>
+    <circle cx="530" cy="210" r="22" fill="#fbfbf8" stroke="#b0306e"/>
+    <circle cx="170" cy="300" r="22" fill="#fbfbf8" stroke="#56625b"/>
+    <circle cx="470" cy="300" r="22" fill="#e8753a" stroke="#1b4fd4"/>
+    <circle cx="320" cy="322" r="22" fill="#1b4fd4" stroke="#a88000"/>
+  </g>
+  <g fill="#d3d6cd">
+    <rect x="60" y="352" width="10" height="8"/><rect x="74" y="346" width="10" height="14" fill="#1b4fd4"/><rect x="88" y="352" width="10" height="8"/>
+    <rect x="102" y="352" width="10" height="8"/><rect x="116" y="342" width="10" height="18" fill="#e8753a"/><rect x="130" y="352" width="10" height="8"/>
+  </g>
+  <text x="320" y="210" font-family="Georgia, serif" font-size="26" font-weight="700" fill="#14201a" text-anchor="middle">Side 1 or 0?</text>
+</svg>

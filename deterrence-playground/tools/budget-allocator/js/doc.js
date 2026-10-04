@@ -17,8 +17,9 @@ function method(P) {
     <li><b>Tracking and sustainment.</b> Shooters need a track: <code>0.55 + 0.45·E<sub>${T.c4}</sub>·(1 − 0.4·s)</code>. They need ammunition to keep firing: <code>0.6 + 0.4·E<sub>ammo</sub></code>. Drones carry some of their own sensing and depend on tracking half as much.</li>
     <li><b>${C.mines.t}</b> need no track, but only the share <code>1 − e<sup>−days/3.5</sup></code> is in place before the assault.</li>
     <li><b>Layer strength</b> is capability × survival × tracking × sustainment. Each layer can engage at most a notional share of the force (${w}). The share engaged is <code>1 − Π(1 − p)</code> across layers.</li>
-    <li><b>Hours under fire</b> counts the stretch of a ${g.km} km approach at ${g.speed} ${g.unit === 'kn' ? 'knots' : 'km/h'} where the strengths of all layers that reach it add up to at least 0.3. Layers below 0.1 are drawn faded as too weak to count. Notional reaches from ${T.edge}: ${reach}.</li>
+    <li><b>Approach under fire</b> is the share of a ${g.km} km approach at ${g.speed} ${g.unit === 'kn' ? 'knots' : 'km/h'} where the strengths of all layers that reach it add up to at least 0.3. Notional reaches from ${T.edge}: ${reach}.</li>
     <li><b>Resilience</b> is <code>100 × (0.3·E<sub>${T.c4}</sub> + 0.25·E<sub>ammo</sub> + 0.2·E<sub>air</sub> + 0.25·mobile survival)</code>.</li>
+    <li><b>The ranges.</b> Each of 200 runs draws, uniformly and independently: strike strength <i>s</i> from 20% to 80%; warning from 2 to 10 days; every scale <i>k</i> multiplied by 0.5 to 2; every baseline by 0.6 to 1.4; every maximum share by 0.6 to 1.4; and attacker speed by 0.75 to 1.5. The same draws are used for every plan. Bands show the 10th to 90th percentile of runs, and the thin line the lowest and highest.</li>
   </ol>`;
 }
 
@@ -30,10 +31,13 @@ function menu(P) {
 
 export function renderDoc(P, left, right) {
   const D = P.doc;
-  left.innerHTML = `<h2>How to read it</h2>${D.howto.map(p => `<p>${p}</p>`).join('')}
+  // howto[0] described the old single-run readout; the generic text below replaces it. howto[1+] (the country's mixes) stay.
+  left.innerHTML = `<h2>How to read it</h2>
+    <p>Pick a budget, then divide it across eight kinds of capability. The tool does not say whether a plan would win a fight. <b>What it buys</b> prices each line at the unit costs in the spending menu below, marked cited or <span class="notional">notional</span>, and the trade-off box shows what moving money from one line to another gives up and gets. <b>Range model</b> runs a simple notional model 200 times with six assumptions drawn from wide ranges and shows only the spread of results: never one number, a verdict or a chance of victory. Where two plans' bands overlap, the model cannot separate them.</p>
+    ${D.howto.slice(1).map(p => `<p>${p}</p>`).join('')}
     <h2 class="mt">The scenario</h2><p><b>Notional model, not a prediction.</b> ${D.scenario}</p>
-    <h2 class="mt">How the model works</h2>
-    <p>The model has the same structure as the Taiwan version. Every coefficient, baseline, reach, weight and scale below is <span class="notional">notional</span> and can be changed under "Edit the notional parameters". It is a teaching model and does not predict what any real program would do.</p>
+    <h2 class="mt">How the range model works</h2>
+    <p>The model has the same structure as the Taiwan version. Every coefficient, baseline, reach, weight and scale below is <span class="notional">notional</span>; the central values can be changed under "Edit the notional parameters". It is a teaching model, does not predict what any real program would do, and other factors it leaves out can outweigh everything in it.</p>
     ${method(P)}
     <p>${D.leavesOut}</p>`;
   right.innerHTML = `<h2>The real budgets</h2>

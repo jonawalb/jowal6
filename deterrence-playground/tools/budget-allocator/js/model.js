@@ -1,4 +1,5 @@
 // Notional attack-through-layers model. Every coefficient here is illustrative; see the method section on the page.
+// The page never shows a single run of it: range.js runs it many times across assumption ranges and reports spreads.
 // The structure is the same for every country: an attacking force moves `geo.km` toward the defended coast or line
 // at `geo.kmh`, through layers of the defender's fires. Categories fill fixed roles by id:
 // ascm, drones, mines, strike, platforms (shooting layers), airdef, c4isr, ammo (enablers), other (not modeled).
@@ -15,9 +16,10 @@ export function capability(c, bn) {
 /**
  * Evaluate an allocation.
  * shares: {catId: fraction of total}, total: bn of local currency, sc: { supp: 0..0.9 suppression, warn: days of warning }
+ * env: optional { cats, geo } to run with perturbed parameters instead of the active profile's.
  */
-export function evaluate(shares, total, sc) {
-  const CATS = ctx.cats, G = ctx.geo;
+export function evaluate(shares, total, sc, env = ctx) {
+  const CATS = env.cats, G = env.geo;
   const bn = Object.fromEntries(CATS.map(c => [c.id, (shares[c.id] || 0) * total]));
   const E = Object.fromEntries(CATS.map(c => [c.id, capability(c, bn[c.id])]));
   const supp = sc.supp;
@@ -50,25 +52,4 @@ export function evaluate(shares, total, sc) {
   const hours = G.km / G.kmh, fireHours = covered / G.kmh;
   const resilience = 100 * clamp(0.3 * E.c4isr + 0.25 * E.ammo + 0.2 * E.airdef + 0.25 * surv.mobile);
   return { bn, E, surv, laid, track, sustain, layers, engaged, hours, fireHours, covered, resilience, unscored: shares.other || 0 };
-}
-
-export function verdict(r) {
-  const V = ctx.P.text.verdict;
-  if (r.engaged >= 0.45) return { s: 'good', b: V.good[0], t: V.good[1] };
-  if (r.engaged >= 0.28) return { s: 'warn', b: V.warn[0], t: V.warn[1] };
-  return { s: 'bad', b: V.bad[0], t: V.bad[1] };
-}
-
-/** One or two sentences naming what drives the result. */
-export function explain(r) {
-  const X = ctx.P.text.explain;
-  const top = [...r.layers].sort((a, b) => b.p - a.p);
-  const out = [];
-  if (top[0].p > 0.05) out.push(`<b>${top[0].t}</b> do the most work in this plan${top[1].p > 0.05 ? `, followed by ${top[1].t.charAt(0).toLowerCase() + top[1].t.slice(1)}` : ''}.`);
-  if (r.surv.mobile < 0.55) out.push(X.mobile(Math.round(r.surv.mobile * 100)));
-  if (r.surv.platform < 0.45 && r.E.platforms > 0.35) out.push(X.platform(Math.round(r.surv.platform * 100)));
-  if (r.track < 0.65) out.push(X.track);
-  if (r.laid < 0.6 && r.E.mines > 0.3) out.push(X.mines(Math.round(r.laid * 100)));
-  if (r.unscored > 0.01) out.push(`${Math.round(r.unscored * 100)}% of the money sits in lines the model cannot score.`);
-  return out.join(' ');
 }

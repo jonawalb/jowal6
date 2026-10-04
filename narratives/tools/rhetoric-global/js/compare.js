@@ -1,6 +1,6 @@
 // Cross-country comparison: the same pattern run on both corpora, as monthly uses per 1,000
-// words (3-month rolling mean), one small chart per shared theme. Hovering any chart moves a
-// shared cursor and prints both countries' values for that month.
+// words (3-month rolling mean), one small chart per shared theme. Hovering, tapping or arrow keys on any chart move a
+// shared cursor and print both countries' values for that month.
 import { SHARED } from '../data/corpus.js';
 import { COUNTRIES, CC, escapeHtml, fmtValue } from './model.js';
 
@@ -44,13 +44,13 @@ export function renderCompare(box, S) {
     return `<figure class="cmp" data-id="${t.id}">
       <figcaption><b>${escapeHtml(t.label)}</b><span class="cmp-lead">${lead}</span></figcaption>
       <p class="cmp-all">${series.map(s => `<span class="cc-${s.cc}">${COUNTRIES[s.cc].name} <b class="num">${fmtValue(s.all, 'rate')}</b></span>`).join(' ')} <span class="fine">per 1,000 words</span></p>
-      <svg viewBox="0 -2 ${W} ${H + 18}" preserveAspectRatio="none" role="img" aria-label="${escapeHtml(t.label)}: monthly uses per 1,000 words, Russia and Iran">
+      <svg viewBox="0 -2 ${W} ${H + 18}" preserveAspectRatio="none" role="img" tabindex="0" aria-label="${escapeHtml(t.label)}: monthly uses per 1,000 words, Russia and Iran. Left and right arrow keys step through the months.">
         <path d="M0 ${H - PAD}H${W}" class="cmp-base"/>${yrs}${lines}<path class="cmp-cur" d="" /></svg>
       <p class="cmp-read fine" aria-live="polite"></p>
     </figure>`;
   }).join('');
   box.innerHTML = `<div class="cmp-head"><div><p class="eyebrow">Shared themes</p><h2>Russia and Iran, same patterns</h2>
-    <p class="fine">Each chart runs one pattern on both corpora: monthly uses per 1,000 words, three-month rolling mean, ${monthLabel(months[0])} to ${monthLabel(months[months.length - 1])}. The two corpora are different kinds of text (the Russian president's spoken words against the Iranian Foreign Ministry's written statements), so compare shapes and orders of magnitude, not small gaps. Each chart has its own vertical scale.</p></div>
+    <p class="fine">Each chart runs one pattern on both corpora: monthly uses per 1,000 words, three-month rolling mean, ${monthLabel(months[0])} to ${monthLabel(months[months.length - 1])}. The two corpora are different kinds of text (the Russian president's spoken words against the Iranian Foreign Ministry's written statements), so compare shapes and orders of magnitude, not small gaps. Each chart has its own vertical scale. Hover or tap a chart to read both values for one month.</p></div>
     <p class="cmp-key"><span class="cc-ru">Russia (Kremlin)</span> <span class="cc-ir">Iran (Foreign Ministry)</span></p></div>
     <div class="cmp-grid">${charts}</div>`;
 
@@ -61,12 +61,24 @@ export function renderCompare(box, S) {
     f.querySelector('.cmp-cur').setAttribute('d', i == null ? '' : `M${i * dx} 0V${H}`);
     f.querySelector('.cmp-read').textContent = i == null ? '' : `${monthLabel(months[i])}: Russia ${fmtValue(ru[i], 'rate')}, Iran ${fmtValue(ir[i], 'rate')}`;
   });
+  // Hover, tap or arrow keys move the shared cursor (taps keep it in place; touch has no hover).
+  let cur = null;
+  const at = i => { cur = i; show(i); };
   figs.forEach(f => {
     const svg = f.querySelector('svg');
-    svg.addEventListener('pointermove', e => {
+    const pick = e => {
       const b = svg.getBoundingClientRect();
-      show(Math.max(0, Math.min(months.length - 1, Math.round(((e.clientX - b.left) / b.width) * W / dx))));
+      at(Math.max(0, Math.min(months.length - 1, Math.round(((e.clientX - b.left) / b.width) * W / dx))));
+    };
+    svg.addEventListener('pointermove', pick);
+    svg.addEventListener('pointerdown', pick);
+    svg.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') at(null); });
+    svg.addEventListener('keydown', e => {
+      const step = { ArrowLeft: -1, ArrowRight: 1, Home: -1e9, End: 1e9 }[e.key];
+      if (step == null) return;
+      e.preventDefault();
+      at(Math.max(0, Math.min(months.length - 1, (cur ?? (step > 0 ? -1 : months.length)) + step)));
     });
-    svg.addEventListener('pointerleave', () => show(null));
+    svg.addEventListener('blur', () => { if (!figs.some(g => g.contains(document.activeElement))) at(null); });
   });
 }

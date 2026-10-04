@@ -29,7 +29,7 @@ function sparkline(cc, k, selW) {
   const years = months.map((m, i) => m.endsWith('-01') ? `<text x="${i * dx + 2}" y="${H + 11}" class="sp-yr">${m.slice(0, 4)}</text><path d="M${i * dx} ${H - 2}v4" class="sp-tick"/>` : '').join('');
   return `<svg class="spark" viewBox="0 -2 ${W} ${H + 16}" role="img" aria-label="Monthly uses per 1,000 words of ${escapeHtml(p.label)}">
     <path d="${d}" class="sp-line"/>${si >= 0 ? `<path d="M${si * dx} 0V${H}" class="sp-sel"/>` : ''}${years}</svg>
-    <p class="fine sp-cap">Uses per 1,000 words by month, ${months[0].slice(0, 4)}–${months[months.length - 1].slice(0, 4)}. Peak month ${fmtValue(max, 'rate')}.</p>`;
+    <p class="fine sp-cap">Uses per 1,000 words by month, ${months[0].slice(0, 4)}–${months[months.length - 1].slice(0, 4)}. Busiest month: ${fmtValue(max, 'rate')} per 1,000 words.</p>`;
 }
 
 export async function renderDetail(box, S) {

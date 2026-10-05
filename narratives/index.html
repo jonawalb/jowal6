@@ -173,6 +173,14 @@
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     $('ix-count').textContent = TRACKERS.length + ' trackers so far, with more on the way.';
+    // Document count of Rhetoric Search: plaintext counts the nightly data build publishes next to its sealed data.
+    fetch('https://huggingface.co/datasets/wallabee1/rhetoric-search-data/resolve/main/data/stats.json', { cache: 'no-cache' })
+        .then(r => r.ok ? r.json() : Promise.reject())
+        .then(s => {
+            const n = x => Number(x).toLocaleString('en-US');
+            $('ix-count').textContent += ` Rhetoric Search holds ${n(s.documents)} documents: ${n(s.official_docs)} official statements and ${n(s.media_docs)} media articles, updated ${s.built.slice(0, 10)}.`;
+        })
+        .catch(() => {});
 
     // ---- Cards ----
     const grid = $('tk-grid');

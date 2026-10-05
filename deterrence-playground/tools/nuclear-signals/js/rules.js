@@ -67,7 +67,7 @@ export const DYAD_RULES = [
   { id: 'D1', text: 'An item from a dataset built around one dyad belongs to that dyad: every item in Russia’s Nuclear Signals belongs to Russia ↔ United States & NATO, and every step of a crisis in Kahn’s Escalation Ladder belongs to that crisis’s dyad.' },
   { id: 'D2', text: 'Otherwise an item belongs to a dyad when one side acted and the item’s title, summary or quote names the other side (curated items list the states their source names).' },
   { id: 'D3', text: 'A step in a treaty that binds both sides (INF, START I and II, SORT, New START, CFE, Open Skies) belongs to Russia ↔ United States & NATO.' },
-  { id: 'D4', text: 'A published doctrine or declaratory-policy change, a nuclear explosive test, or a non-routine test flight of a nuclear-capable missile belongs to every dyad of the state that issued or conducted it, because such steps speak to all adversaries at once. If the source names specific states, rule D2 applies instead.' },
+  { id: 'D4', text: 'A nuclear explosive test or a non-routine test flight of a nuclear-capable missile belongs to every dyad of the state that conducted it, because such steps speak to all adversaries at once. Doctrine and declaratory-policy changes place a dyad only when they name the rival (rule D2); otherwise they are shown as context. If a test source names specific states, rule D2 applies instead.' },
   { id: 'D5', text: 'Items that meet none of these rules appear on the timeline and in the state dossier but never place a dyad.' },
 ];
 

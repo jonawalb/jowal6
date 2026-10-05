@@ -65,6 +65,14 @@ function sync() {
   $('clear-dates').hidden = !(S.from || S.to);
 }
 
+// Idle prompt: how many documents the search covers.
+function idleText() {
+  const t = E.meta && E.meta.totals;
+  if (!t) return 'Type a word or phrase.';
+  const media = t.media_docs || 0;
+  return `Search ${fmt(t.docs + media)} documents: ${fmt(t.docs)} official statements and ${fmt(media)} media articles. Type a word or phrase.`;
+}
+
 function corpusCard(meta) {
   const rows = meta.sources.filter((s) => s.docs).map((s) => [s, s]);
   $('corpus').innerHTML = `<p class="fine">${fmt(meta.totals.sentences)} sentences from ${fmt(meta.totals.docs)} official documents, and ${fmt(meta.totals.media_docs || 0)} media articles (headline and link only). Built ${esc(meta.built.slice(0, 10))}.</p>
@@ -82,7 +90,7 @@ async function go() {
   $('more').hidden = true;
   $('chart').hidden = true;
   alts = parseQuery(S.q);
-  if (!alts.length) { document.body.dataset.state = 'done'; $('count').textContent = 'Type a word or phrase.'; $('status').textContent = ''; $('progress').hidden = true; return; }
+  if (!alts.length) { document.body.dataset.state = 'done'; $('count').textContent = idleText(); $('status').textContent = ''; $('progress').hidden = true; return; }
   const f = { country: S.country, source: S.source, lang: S.lang, from: S.from, to: S.to };
   const t0 = performance.now();
   $('count').textContent = 'Searching…';
@@ -290,6 +298,7 @@ async function boot() {
     mountControls(meta);
     mountReader();
     corpusCard(meta);
+    $('count').textContent = idleText();
     readHash();
     sync();
     document.body.classList.remove('loading');

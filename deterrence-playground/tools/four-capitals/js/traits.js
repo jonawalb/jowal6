@@ -39,11 +39,10 @@ export const TRAIT_ODDS = {
   jp: [1, 3, 1.5, 4.5],
 };
 
-/** Draw a trait for every leader, weighted by TRAIT_ODDS (v6 links: uniform), on its own stream; the human's seat
- * has none. */
-export function drawTraits(s, uniform = false) {
+/** Draw a trait for every leader, weighted by TRAIT_ODDS, on its own stream; the human's seat has none. */
+export function drawTraits(s) {
   const r = makeRng(s.seed, STREAM.traits);
-  s.traits = Object.fromEntries(IDS.map(w => [w, TRAIT_IDS[r.pick(uniform ? TRAIT_IDS.map(() => 1) : TRAIT_ODDS[w])]]));
+  s.traits = Object.fromEntries(IDS.map(w => [w, TRAIT_IDS[r.pick(TRAIT_ODDS[w])]]));
   if (s.human) s.traits[s.human] = null;
   traitsMonth(s);
   return s;

@@ -466,3 +466,6 @@ body.k4-simple .k4-intel, body.k4-simple .k4-fogd, body.k4-simple #logi-wrap { d
 
 /* Staff advice off: no Ask your staff button, hint or suggestion line. */
 body.k4-nostaff #advise, body.k4-nostaff #advice, body.k4-nostaff .k4-fhint { display: none; }
+.k4-edge { margin: 8px 0 0; }
+.k4-sign { display: inline-block; margin: 2px 6px 0 0; color: var(--muted); }
+.k4-sign.on { color: var(--ink); font-weight: 600; }

@@ -23,6 +23,7 @@ import { score, benchmark, percentile } from './score.js';
 import { drawTheatre, paintTheatre, paintZones, animateMoves, paintLadder, paintTracks, paintCaps, paintIntel, paintBeliefChart, COL } from './view.js';
 import { SCENARIOS, SCENARIO } from '../data/scenarios.js';
 import { tldr } from './tldr.js';
+import { edgeSigns, EDGE_NEED } from './edge.js';
 import { replayRows, replayHTML, leadersHTML } from './replay.js';
 import { nukeReview, nukeReviewHTML } from './nuke-review.js';
 import { pulse, flash } from '../../../shared/js/motion.js';
@@ -113,6 +114,8 @@ function paint() {
     ? `<span class="k4-cease"><b>Ceasefire this month</b> (the ${COUNTRIES[s.cease.from].capital}–${COUNTRIES[s.cease.to].capital} peace forum). Escalatory moves cost more at home; a successful escalatory military or law-enforcement move breaks it, at a heavy cost in credibility. If it holds, the crisis ends in a settlement.</span>` : '');
   paintLadder($('ladder'), s);
   paintTracks($('tracks'), s, g.before);
+  const sg = edgeSigns(s), n = sg.filter(x => x[1]).length;
+  $('edge').innerHTML = `<b>Coalition’s upper hand: ${n} of 4</b> (Beijing can step back only at ${EDGE_NEED} or more). ${sg.map(([l, ok]) => `<span class="k4-sign${ok ? ' on' : ''}">${ok ? '✓' : '·'} ${l}</span>`).join(' ')}`;
   paintCaps($('caps'), s, g.player);
   paintTheatre(s);
   const views = Object.fromEntries(IDS.filter(w => w !== g.player).map(w => [w, intelView(g.B, s, g.player, w)]));
@@ -288,7 +291,7 @@ function load() {
   const d = m && decode(decodeURIComponent(m[1]));
   if (d && d.old) {
     $('old-link').hidden = false;
-    $('old-link').textContent = 'That link is from an earlier version of Four Capitals (before scenario starts, hidden leader traits and the after-action review), so it cannot be replayed. Start a new game below.';
+    $('old-link').textContent = 'That link is from an earlier version of Four Capitals, whose rules have since changed, so it cannot be replayed. Start a new game below.';
     history.replaceState(null, '', location.pathname + location.search);
   }
   if (!d || d.old) { paintSeats(); show('start'); return; }

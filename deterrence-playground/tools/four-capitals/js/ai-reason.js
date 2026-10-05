@@ -20,6 +20,7 @@ export function mainReason(s, who, weights, p1, p0, move) {
     ['support', 'to shore up support at home', p1.sup - p0.sup],
     ['risk', who === 'cn' ? 'to keep the risk of a U.S. or Japanese response down' : 'to avoid looking weak to Beijing', p1.risk - p0.risk],
     ['opening', 'a rival looked weak: an opening to exploit', p1.opp - p0.opp],
+    ['answer', 'to answer the coalition’s pressure in kind', (p1.answer || 0) - (p0.answer || 0)],
     ['later', lat && lat[1] > 0 ? `the later payoff of “${BY_ID[lat[0]].label}”` : 'payoffs expected after this month', p1.later - p0.later],
     ['stocks', 'to save fuel and munitions', p0.scar - p1.scar],
     ['trait', s.traits?.[who] ? `its leader’s ${TRAITS[s.traits[who]].label.toLowerCase()} streak` : 'its leader’s trait', p1.trait - p0.trait],

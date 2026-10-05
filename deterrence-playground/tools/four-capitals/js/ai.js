@@ -9,6 +9,7 @@ import { forceOrders } from './ai-forces.js';
 import { costOf, grantOf, short, avgReady, fuelUpkeep, ZERO } from './logistics.js';
 import { makeRng, STREAM } from './rng.js';
 import { traitUtility } from './traits.js';
+import { coalitionEdge } from './edge.js';
 import { mainReason } from './ai-reason.js';
 
 const TYPES = P.types;
@@ -85,10 +86,18 @@ function riskTerm(s, who, move, B, parts) {
   else r -= P.ai.weaknessRisk * nSoft * (B.cn.resolute + B.cn.opportunist) * (s.rung >= 1 ? 1 : 0.4);
   const risk = r;
   if (s.types[who] === 'opportunist' && opening(s, who)) r += P.ai.opportunistBonus * nEsc;
+  // Beijing answers pressure in kind unless the coalition has the upper hand: a bonus per escalatory step for each
+  // escalatory posture or move the coalition made last month (up to 3), fading as the coalition's edge grows.
+  let answer = 0;
+  if (who === 'cn' && nEsc) {
+    const pushed = Math.min(3, ['us', 'tw', 'jp'].reduce((t, w) => { const m = s.last[w]; return t + (m ? m.actions.filter(id => BY_ID[id].tags.includes('esc')).length + (['esc', 'nuke'].includes(m.posture) ? 1 : 0) : 0); }, 0));
+    answer = P.ai.answer * nEsc * pushed * (1 - coalitionEdge(s) / 4);
+    r += answer;
+  }
   const t = s.types[who], open = opening(s, who);
   const sign = t === 'resolute' || (t === 'opportunist' && open) ? 1 : t === 'cautious' ? -1 : -0.5;
   const int = intensity(move), taste = sign * P.ai.typeTaste * int;
-  if (parts) Object.assign(parts, { risk, opp: r - risk, taste, int });
+  if (parts) Object.assign(parts, { risk, opp: r - risk - answer, answer, taste, int });
   return r + taste;
 }
 

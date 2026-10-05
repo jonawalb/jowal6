@@ -91,7 +91,7 @@ export const ALL_TOOLS = [
     blurb: 'Close Malacca, Luzon or the Taiwan Strait and watch the tanker reroute, with the added days and cost.' },
   { slug: 'scs-features', sites: ['tsm'], cat: 'geo', title: 'South China Sea Features', status: 'live',
     blurb: 'Who holds which reef, what China built, and what the 2016 tribunal ruled.' },
-  { slug: 'undersea-cables', sites: ['tsm'], cat: 'geo', title: 'Taiwan\'s Undersea Cables', status: 'live',
+  { slug: 'undersea-cables', unlisted: true, sites: ['tsm'], cat: 'geo', title: 'Taiwan\'s Undersea Cables', status: 'live',
     blurb: 'Where Taiwan\'s submarine cables land, and which islands go dark when you cut them.' },
   { slug: 'cable-atlas', sites: ['tsm'], cat: 'geo', title: 'Undersea Cable Atlas', status: 'live',
     blurb: 'Every cable and landing site serving Taiwan, the Ryukyus and the Philippines, a sourced log of cuts, repair-ship capacity, and what survives when you cut them.' },
@@ -99,7 +99,7 @@ export const ALL_TOOLS = [
     blurb: "Every PLA Navy crossing of Japan's straits that Tokyo reported in 2025\u201326, by strait, direction and hull number, set against Taiwan's daily counts." },
   { slug: 'crossing-windows', siteCat: { deterrence: 'tsm' }, also: ['regions'], sub: { regions: 'indopacific' }, cat: 'geo', title: 'Crossing Windows', status: 'live',
     blurb: 'Thirty years of Taiwan Strait wind, wave, fog and typhoon records, tested against sea-state limits you set: which weeks allowed an amphibious crossing, and how the claimed April and October windows hold up.' },
-  { slug: 'energy-blockade', sites: ['tsm'], cat: 'models', title: 'Energy Blockade Clock', status: 'live',
+  { slug: 'energy-blockade', unlisted: true, sites: ['tsm'], cat: 'models', title: 'Energy Blockade Clock', status: 'live',
     blurb: 'Set a quarantine or blockade and watch Taiwan\'s LNG, coal and oil stocks run down, and who loses power first.' },
   { slug: 'blockade-sim', sites: ['tsm'], cat: 'models', title: 'Blockade & Quarantine Simulator', status: 'live',
     blurb: 'Set a PRC coast guard quarantine or naval blockade of Taiwan and follow fuel and power, shipping, war-risk insurance, cable repairs, chip output and exports day by day, then compare scenarios.' },
@@ -265,7 +265,8 @@ const ORDER = { deterrence: ['gametheory', 'nuclear', 'regions', 'narratives', '
 // `also` lists extra categories a tool appears in; `cats` is its primary category plus those.
 const forSite = t => ({ ...t, cat: catOn(t), cats: catOn(t) === 'dev' ? ['dev'] : [...new Set([catOn(t), ...(t.also || [])])],
   blurb: (t.siteBlurb && t.siteBlurb[SITE]) || t.blurb });
-export const TOOLS = ALL_TOOLS.filter(t => onSite(t)).map(forSite);
+// `unlisted` tools are still built (old links keep working) but leave menus and landing pages (superseded tools).
+export const TOOLS = ALL_TOOLS.filter(t => onSite(t) && !t.unlisted).map(forSite);
 // Published builds replace this with the Coming Soon entries, encrypted with the Coming Soon password
 // (scripts/build_site.py); in the source tree the entries are simply in ALL_TOOLS above.
 export const DEV_SEALED = null;

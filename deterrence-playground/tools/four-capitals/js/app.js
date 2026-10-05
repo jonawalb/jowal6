@@ -37,6 +37,16 @@ let pick = null;         // seat chosen on the start screen
 let scen = 'gray';       // starting situation (data/scenarios.js)
 
 /* ---------- Start ---------- */
+// Staff advice (the Ask your staff button) is a per-viewer choice made with the difficulty; it never changes play.
+const SKEY = 'four-capitals:staff';
+function setStaff(on, remember = true) {
+  document.body.classList.toggle('k4-nostaff', !on);
+  const r = document.querySelector(`input[name="staff"][value="${on ? 1 : 0}"]`); if (r) r.checked = true;
+  if (remember) try { localStorage.setItem(SKEY, on ? '1' : '0'); } catch { /* private mode: lasts this page */ }
+}
+let savedStaff = null; try { savedStaff = localStorage.getItem(SKEY); } catch { /* none */ }
+setStaff(savedStaff !== '0', false);
+$('staff-mode').addEventListener('change', e => setStaff(e.target.value === '1'));
 function paintSeats() {
   const blurb = {
     us: 'Keep Taiwan free and the alliance credible without a war you cannot control.',
@@ -262,6 +272,7 @@ function learn() {
   $('old-link').hidden = true;
   pick = 'us'; scen = 'gray'; paintSeats(); paintWeights(); paintScenarios(); $('setup').hidden = false;
   $('start').style.setProperty('--accent', COL[pick]);
+  setStaff(true);                                     // the lesson shows the Ask your staff button
   begin({ seed: LESSON_SEED, player: 'us', weights: defaultWeights('us'), difficulty: 'normal', scenario: 'gray', traits: false });
   briefing();
   document.body.classList.add('k4-learning');

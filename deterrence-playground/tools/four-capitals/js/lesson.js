@@ -42,7 +42,7 @@ export function lessonSteps(api) {
     { title: 'Step 3: forces and supplies', target: () => $('forces'), start: view(3, 'move'),
       body: 'Here you can move your named formations between four sea areas and the Rear, and set a stance in each area. Moves cost <b>Lift</b> (sea and air transport) and fuel; strikes and fighting burn munitions; forces kept forward lose readiness. As Washington, forces leaving the Rear take two months to arrive, so plan early. You can leave everything as it is this month.' },
     { title: 'Stuck? Ask your staff', target: () => $('advise'), start: view(3, 'move'),
-      body: '<b>Ask your staff</b> fills in all three steps with what the computer would do in your seat, for your goals and from your own reads of the rivals. Nothing is locked in: change any of it before you end the month. On Step 3, <b>Let your staff set forces</b> does just the forces.' },
+      body: 'With <b>Staff advice</b> on (you choose it on the start screen, beside the difficulty), <b>Ask your staff</b> fills in all three steps with what the computer would do in your seat, for your goals and from your own reads of the rivals. Nothing is locked in: change any of it before you end the month. On Step 3, <b>Let your staff set forces</b> does just the forces.' },
     { title: 'End the month', target: () => $('end-turn'), start: () => { turn0 = g()?.s.turn ?? 0; view(3, 'move')(); },
       do: 'Press <b>End month</b>.', done: () => !$('resolve').hidden || (g()?.s.turn ?? 0) > turn0 },
     { title: 'What happened', target: () => $('tldr'),

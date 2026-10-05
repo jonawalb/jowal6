@@ -28,13 +28,21 @@
     <h2 id="start-t">Choose your capital</h2>
     <p class="k4-notice" id="old-link" role="status" hidden></p>
     <div class="k4-starthead">
-      <p class="k4-lede">2029. Beijing is turning up the pressure on Taiwan. Lead one of four capitals for up to eight months. Each month you pick a <b>posture</b>, up to <b>four moves</b> and where your <b>forces</b> go, while the other three do the same at once. Every leader has a hidden <b>type</b> the others must read from what it does. <b>First game?</b> Press <b>Learn to play</b>, or keep the defaults below and use <b>Ask your staff</b> each month to see a sensible plan you can change.</p>
-      <fieldset class="k4-diff" aria-label="Opponent difficulty">
-        <legend>Opponents difficulty</legend>
-        <label><input type="radio" name="difficulty" value="easy"><span>Easy</span></label>
-        <label><input type="radio" name="difficulty" value="normal" checked><span>Normal</span></label>
-        <label><input type="radio" name="difficulty" value="hard"><span>Hard</span></label>
-      </fieldset>
+      <p class="k4-lede">2029. Beijing is turning up the pressure on Taiwan. Lead one of four capitals for up to eight months. Each month you pick a <b>posture</b>, up to <b>four moves</b> and where your <b>forces</b> go, while the other three do the same at once. Every leader has a hidden <b>type</b> the others must read from what it does. <b>First game?</b> Press <b>Learn to play</b>, or keep <b>Staff advice</b> on.</p>
+      <div class="k4-opts">
+        <fieldset class="k4-diff" aria-label="Opponent difficulty">
+          <legend>Opponents difficulty</legend>
+          <label><input type="radio" name="difficulty" value="easy"><span>Easy</span></label>
+          <label><input type="radio" name="difficulty" value="normal" checked><span>Normal</span></label>
+          <label><input type="radio" name="difficulty" value="hard"><span>Hard</span></label>
+        </fieldset>
+        <fieldset class="k4-diff" id="staff-mode" aria-describedby="staff-x">
+          <legend>Staff advice</legend>
+          <label><input type="radio" name="staff" value="1" checked><span>On</span></label>
+          <label><input type="radio" name="staff" value="0"><span>Off</span></label>
+        </fieldset>
+        <p class="fine k4-staffx" id="staff-x">On adds an <b>Ask your staff</b> button each month that fills in a sensible plan for your goals, which you can change before you commit. Recommended if you are new to the game.</p>
+      </div>
     </div>
     <div class="k4-seats" id="seats" role="radiogroup" aria-label="Your capital"></div>
     <div class="k4-setup" id="setup" hidden>
@@ -163,7 +171,7 @@
         <li><b>Live within your means.</b> Lift, fuel, munitions and readiness limit what you can do; whatever you cannot afford is greyed out.</li>
         <li><b>You are scored on your own goals</b>, the weights you set at the start, and compared with the computer playing your seat.</li>
       </ol>
-      <p class="fine">Stuck? <b>Ask your staff</b> fills in a sensible plan you can change. Everything else (fog of war, elections, allies’ bases, the economic shock, the peace forum, landings) is explained on the move or the map where it comes up, and in full below.</p>
+      <p class="fine">Stuck? With <b>Staff advice</b> on (set on the start screen), <b>Ask your staff</b> fills in a sensible plan you can change. Everything else (fog of war, elections, allies’ bases, the economic shock, the peace forum, landings) is explained on the move or the map where it comes up, and in full below.</p>
       <details class="k4-full">
       <summary><b>Full rules</b></summary>
       <ul>

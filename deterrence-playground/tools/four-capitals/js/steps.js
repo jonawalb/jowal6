@@ -78,6 +78,6 @@ export function wireSteps() {
   arrows(ptabs, b => { setPhoneTab(b.dataset.ptab); b.focus(); });
   document.querySelector('.k4-viewsw').addEventListener('click', e => { const b = e.target.closest('[data-view]'); if (b) setView(b.dataset.view); });
   const saved = readView();
-  setView(saved === 'simple' ? 'simple' : 'detailed', false);
-  $('view-hint').hidden = !!saved;
+  setView(saved === 'detailed' ? 'detailed' : 'simple', false);   // first visit: Simple, until you pick
+  $('view-hint').hidden = true;
 }

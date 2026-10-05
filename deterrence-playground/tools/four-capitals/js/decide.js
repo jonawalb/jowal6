@@ -15,7 +15,7 @@ import { wireAreaPop } from './area-pop.js';
 import { constraints, homeLine } from './politics.js';
 import { forumEstimate, forumTo, limitedOf } from './forum.js';
 import { forumTip } from './forum-panel.js';
-import { intelView } from './ai.js';
+import { intelView, chooseMove } from './ai.js';
 import { pulse } from '../../../shared/js/motion.js';
 
 const $ = id => document.getElementById(id);
@@ -54,6 +54,28 @@ function forumOdds(id) {
   return { f, to };
 }
 function repaint() { paintDecide(G); onChange(); }
+
+/**
+ * Ask your staff: the computer's plan for your seat, for your goals, from your own reads of the rivals (the noisy
+ * views the Situation panel shows, not their true posteriors), on Hard. `part` 'forces' takes only its force orders.
+ * It fills the three steps; you can change anything before ending the month.
+ */
+export function advise(part = 'all') {
+  const me = G.player;
+  const reads = Object.fromEntries(IDS.filter(w => w !== me).map(w => [w, intelView(G.B, G.s, me, w)]));
+  const { posture, actions, follow, orders } = chooseMove(G.s, me, reads, G.weights, 'hard');
+  const ord = { moves: orders.moves || [], stance: orders.stance || {}, ...(orders.emph ? { emph: orders.emph } : {}) };
+  if (part === 'forces') {
+    G.choice.orders = ord;
+    $('advice').textContent = `Your staff set ${ord.moves.length ? `${ord.moves.length} formation order${ord.moves.length > 1 ? 's' : ''}` : 'no formation moves'} and a stance in each area. Change any of them below.`;
+  } else {
+    G.choice = { posture, actions: [...actions], follow: JSON.parse(JSON.stringify(follow)), orders: ord };
+    const p = POSTURES.find(x => x.id === posture).label;
+    $('advice').innerHTML = `<b>Your staff suggest:</b> ${esc(p)}${actions.length ? '; ' + actions.map(id => esc(BY_ID[id].label[0].toLowerCase() + BY_ID[id].label.slice(1))).join('; ') : '; no moves'}${ord.moves.length ? `; ${ord.moves.length} force order${ord.moves.length > 1 ? 's' : ''}` : ''}. It is filled in on all three steps. Change anything you like, then End month.`;
+  }
+  $('advice').hidden = false;
+  repaint();
+}
 
 function paintPostures() {
   const ok = posturesFor(G.player, G.s).map(p => p.id);
@@ -143,6 +165,8 @@ export function wireDecide(change) {
     if (t.dataset.act) return toggleMove(t.dataset.act, t.checked);
     if (t.dataset.fa) { G.choice.follow[t.dataset.fa] = { ...answers(t.dataset.fa, G.choice.follow[t.dataset.fa]), [t.dataset.fq]: t.value }; repaint(); }
   });
+  $('advise').addEventListener('click', () => advise());
+  $('advise-forces').addEventListener('click', () => advise('forces'));
   wireForces(() => G, repaint);
   wireAreaPop(() => G, repaint);
 }

@@ -29,10 +29,21 @@ export const TRAITS = {
 };
 export const TRAIT_IDS = Object.keys(TRAITS);
 
-/** Draw a trait for every leader (uniform), on its own stream; the human's seat has none. */
-export function drawTraits(s) {
+// How likely each trait is for each leader (order as TRAIT_IDS: risk, face, impatient, prudent). Illustrative.
+// Beijing chose to start this crisis, so its leader is never prudent; Taipei and Tokyo, under pressure and with the
+// most to lose, lean prudent or face-saving; Washington could be any of the four.
+export const TRAIT_ODDS = {
+  us: [1, 1, 1, 1],
+  tw: [1, 3, 1.5, 4.5],
+  cn: [3.5, 4, 2.5, 0],
+  jp: [1, 3, 1.5, 4.5],
+};
+
+/** Draw a trait for every leader, weighted by TRAIT_ODDS (v6 links: uniform), on its own stream; the human's seat
+ * has none. */
+export function drawTraits(s, uniform = false) {
   const r = makeRng(s.seed, STREAM.traits);
-  s.traits = Object.fromEntries(IDS.map(w => [w, TRAIT_IDS[r.pick(TRAIT_IDS.map(() => 1))]]));
+  s.traits = Object.fromEntries(IDS.map(w => [w, TRAIT_IDS[r.pick(uniform ? TRAIT_IDS.map(() => 1) : TRAIT_ODDS[w])]]));
   if (s.human) s.traits[s.human] = null;
   traitsMonth(s);
   return s;

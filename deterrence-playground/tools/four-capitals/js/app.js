@@ -192,7 +192,7 @@ function logHTML(log) {
 $('next').addEventListener('click', () => {
   if (g.s.over) return finish();
   g.s = brief(g.s);
-  g.choice = emptyChoice(); g.step = 1;
+  g.choice = emptyChoice(); g.step = 1; $('advice').hidden = true;
   show('play'); $('intel').hidden = $('feed').hidden = $('decide').hidden = false; paint();
   document.querySelectorAll('#tracks .k4-track').forEach(t => { if (t.querySelector('small')) flash(t); });
   $('play').scrollIntoView({ block: 'start' });

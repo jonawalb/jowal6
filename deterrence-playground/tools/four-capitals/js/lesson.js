@@ -41,12 +41,14 @@ export function lessonSteps(api) {
       do: 'Choose <b>A wide coalition</b>.', done: () => g()?.choice.follow.us_rally?.who === 'wide' },
     { title: 'Step 3: forces and supplies', target: () => $('forces'), start: view(3, 'move'),
       body: 'Here you can move your named formations between four sea areas and the Rear, and set a stance in each area. Moves cost <b>Lift</b> (sea and air transport) and fuel; strikes and fighting burn munitions; forces kept forward lose readiness. As Washington, forces leaving the Rear take two months to arrive, so plan early. You can leave everything as it is this month.' },
+    { title: 'Stuck? Ask your staff', target: () => $('advise'), start: view(3, 'move'),
+      body: '<b>Ask your staff</b> fills in all three steps with what the computer would do in your seat, for your goals and from your own reads of the rivals. Nothing is locked in: change any of it before you end the month. On Step 3, <b>Let your staff set forces</b> does just the forces.' },
     { title: 'End the month', target: () => $('end-turn'), start: () => { turn0 = g()?.s.turn ?? 0; view(3, 'move')(); },
       do: 'Press <b>End month</b>.', done: () => !$('resolve').hidden || (g()?.s.turn ?? 0) > turn0 },
     { title: 'What happened', target: () => $('tldr'),
       body: 'All four capitals\' moves are revealed together. For each move the game rolled 0 to 100: below its odds is a success, up to 20 points above is a partial result, anything higher fails. The line "In short" sums up the month. The rivals\' reads of your type have shifted too.' },
     { title: 'The ideas that win', target: () => $('next'),
-      body: 'Read the others: the Situation panel shows how each rival looks to you and how it seems to see you, and costly moves say the most. Climb the ladder only on purpose, since every rung raises the risk for everyone. When an offer of talks succeeds, you may call a <b>peace forum</b> the next month. Press <b>Continue</b> for the next month; at the end, a debrief replays every month and shows who each leader really was.' },
+      body: 'Read the others: in the <b>Detailed</b> view the Situation panel shows how each rival looks to you and how it seems to see you, and costly moves say the most. Climb the ladder only on purpose, since every rung raises the risk for everyone. When an offer of talks succeeds, you may call a <b>peace forum</b> the next month. Press <b>Continue</b> for the next month; at the end, a debrief replays every month and shows who each leader really was.' },
   ];
 }
 

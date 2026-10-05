@@ -24,7 +24,7 @@ export const HOLD = { posture: 'hold', actions: [], follow: {}, orders: {} };
 
 /** human: true when a person plays `player` (the app); the balance script, tests and benchmark leave it out.
  * Batch C: `scenario` (data/scenarios.js; default the v5 start) and `traits` (hidden leader traits, js/traits.js). */
-export function newGame({ seed, player, weights, difficulty = 'normal', human = false, scenario, traits = false }) {
+export function newGame({ seed, player, weights, difficulty = 'normal', human = false, scenario, traits = false, uniformTraits = false }) {
   const r = makeRng(seed, STREAM.setup);
   const types = Object.fromEntries(IDS.map(id => [id, P.types[r.pick(P.types.map(t => COUNTRIES[id].prior[t]))]]));
   const s = {
@@ -47,7 +47,7 @@ export function newGame({ seed, player, weights, difficulty = 'normal', human = 
   syncMilitary(s);
   applyScenario(s, scenario);
   s.nuke0 = s.nuke; s.rung0 = s.rung; s.nukeLog = [];                      // the nuclear shadow's ledger (data/ops.js T) starts here
-  if (traits) drawTraits(s);
+  if (traits) drawTraits(s, uniformTraits);
   return s;
 }
 
@@ -320,15 +320,15 @@ export function isOver(s, succeeded = {}, forumHeld = false) {
   return null;
 }
 
-// Copy links (v6): seed, seat, difficulty, weights, the scenario and hidden traits (Batch C: one letter from
+// Copy links (v7): seed, seat, difficulty, weights, the scenario and hidden traits (Batch C: one letter from
 // data/scenarios.js plus 1 or 0), then the player's moves (posture, moves, follow-ups, force orders and any replies to
 // peace forums) as base64url JSON. Older links (v2: three moves and force points; v3: before fog of war, gray-zone
 // and once-a-game moves; v4: before politics, alliance consent, the shock meter, the U.S. reinforcement delay and the
 // peace forum; v5: before scenarios, hidden traits and the after-action review) cannot be replayed; decode marks
-// them { old: true }.
+// them { old: true }. v6 links are v7 links whose hidden traits were drawn uniformly; they still replay that way.
 const b64 = str => (typeof btoa === 'function' ? btoa(unescape(encodeURIComponent(str))) : Buffer.from(str, 'utf8').toString('base64')).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 const unb64 = str => { const t = str.replace(/-/g, '+').replace(/_/g, '/'); return typeof atob === 'function' ? decodeURIComponent(escape(atob(t))) : Buffer.from(t, 'base64').toString('utf8'); };
-export const LINK_VERSION = 'v6';
+export const LINK_VERSION = 'v7';
 export function encode(s) {
   const w = COUNTRIES[s.player].objectives.map(o => s.weights[o.id]).join('');
   const st = (SCENARIO[s.scenario] || SCENARIO.gray).code + (s.traits ? 1 : 0);
@@ -338,7 +338,7 @@ export function encode(s) {
 export function decode(str) {
   const [v, seed, player, d, w, st, mv] = String(str).split('.');
   if (/^v[1-5]$/.test(v) && COUNTRIES[player]) return { old: true, version: v };
-  if (v !== LINK_VERSION || !COUNTRIES[player] || !/^\d+$/.test(seed)) return null;
+  if (![LINK_VERSION, 'v6'].includes(v) || !COUNTRIES[player] || !/^\d+$/.test(seed)) return null;
   const difficulty = { e: 'easy', n: 'normal', h: 'hard' }[d] || 'normal';
   const weights = Object.fromEntries(COUNTRIES[player].objectives.map((o, i) => [o.id, +((w || '')[i] ?? o.w)]));
   const scenario = (SCENARIO_BY_CODE[(st || '')[0]] || SCENARIO.gray).id, traits = (st || '')[1] === '1';
@@ -346,5 +346,5 @@ export function decode(str) {
   try {
     moves = mv ? JSON.parse(unb64(mv)).map(([posture, actions, follow, orders, reply]) => ({ posture, actions: (actions || []).filter(a => BY_ID[a]).slice(0, MAX_MOVES), follow: follow || {}, orders: orders || {}, ...(reply ? { reply } : {}) })) : [];
   } catch { moves = []; }
-  return { seed: +seed, player, difficulty, weights, scenario, traits, moves };
+  return { seed: +seed, player, difficulty, weights, scenario, traits, ...(v === 'v6' && traits ? { uniformTraits: true } : {}), moves };
 }

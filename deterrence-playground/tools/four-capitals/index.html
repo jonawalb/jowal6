@@ -28,7 +28,7 @@
     <h2 id="start-t">Choose your capital</h2>
     <p class="k4-notice" id="old-link" role="status" hidden></p>
     <div class="k4-starthead">
-      <p class="k4-lede">2029. Beijing is turning up the pressure on Taiwan. Over up to eight months, each capital picks a <b>posture</b> and <b>four moves</b> a month, all at once, and moves its <b>formations</b> within four logistics limits: Lift, fuel, munitions and readiness. Every capital has a hidden <b>type</b> (resolute, cautious or opportunist) that the others have to read from its behavior. Elections, legislatures and allies’ consent constrain what you can do, and an offer of talks that lands can open the way to a <b>peace forum</b>. After you pick a capital, choose a <b>starting situation</b> and whether the leaders have <b>hidden traits</b>.</p>
+      <p class="k4-lede">2029. Beijing is turning up the pressure on Taiwan. Lead one of four capitals for up to eight months. Each month you pick a <b>posture</b>, up to <b>four moves</b> and where your <b>forces</b> go, while the other three do the same at once. Every leader has a hidden <b>type</b> the others must read from what it does. <b>First game?</b> Press <b>Learn to play</b>, or keep the defaults below and use <b>Ask your staff</b> each month to see a sensible plan you can change.</p>
       <fieldset class="k4-diff" aria-label="Opponent difficulty">
         <legend>Opponents difficulty</legend>
         <label><input type="radio" name="difficulty" value="easy"><span>Easy</span></label>
@@ -41,7 +41,7 @@
       <fieldset class="k4-ask" id="traits-ask">
         <legend>Play a version where the leaders have hidden traits?</legend>
         <label><input type="radio" name="traits" value="0" checked><b>No</b><span>The leaders differ only by their hidden type.</span></label>
-        <label><input type="radio" name="traits" value="1"><b>Yes</b><span>Each computer leader also gets a hidden trait, drawn at random: risk-taking, face-saving, impatient or prudent. It shapes its choices and how it weighs a peace forum. You do not pick them, and you see them only in the after-action replay.</span></label>
+        <label><input type="radio" name="traits" value="1"><b>Yes</b><span>Each computer leader also gets a hidden trait: risk-taking, face-saving, impatient or prudent, drawn at random with odds that fit the capital (Beijing, which started this crisis, is never prudent; Taipei and Tokyo lean prudent). It shapes its choices and how it weighs a peace forum. You do not pick them, and you see them only in the after-action replay.</span></label>
       </fieldset>
       <h3>Starting situation</h3>
       <div class="k4-scens" id="scenarios" role="radiogroup" aria-label="Starting situation"></div>
@@ -68,7 +68,7 @@
       <p class="k4-month"><b id="month"></b> <span class="muted" id="turnof"></span></p>
       <p class="k4-event" id="event"></p>
       <div class="k4-viewsw"><span class="k4-viewhint" id="view-hint" hidden>First game? Try</span><span class="k4-seg2" role="group" aria-label="View">
-        <button type="button" data-view="simple" aria-pressed="false">Simple</button><button type="button" data-view="detailed" aria-pressed="true">Detailed</button></span></div>
+        <button type="button" data-view="simple" aria-pressed="true" title="Hides the belief bars, the fog detail and the logistics table. The game is the same.">Simple</button><button type="button" data-view="detailed" aria-pressed="false" title="Shows everything: belief bars, fog ranges and the logistics table.">Detailed</button></span></div>
       <button type="button" class="btn solid" id="end-turn">End month</button>
     </div>
     <div class="k4-ptabs" role="tablist" aria-label="Show">
@@ -102,7 +102,9 @@
     </section>
       </div>
       <section class="card k4-decide" id="decide" data-pane="move" aria-labelledby="dec-t">
-        <h2 class="k4-h" id="dec-t">Your move</h2>
+        <div class="k4-dhead"><h2 class="k4-h" id="dec-t">Your move</h2>
+          <button type="button" class="btn k4-advise" id="advise" title="Fill in all three steps with what the computer would do in your seat, for your goals. You can change anything.">Ask your staff</button></div>
+        <p class="k4-advice fine" id="advice" aria-live="polite" hidden></p>
         <div class="k4-steps" role="tablist" aria-label="Your move, step by step" id="steps"></div>
         <div class="k4-step" role="tabpanel" id="step-1" aria-labelledby="st-1">
           <h3 class="k4-sh" tabindex="-1">Step 1 · Posture</h3>
@@ -117,6 +119,7 @@
         </div>
         <div class="k4-step" role="tabpanel" id="step-3" aria-labelledby="st-3" hidden>
           <div class="k4-lineh"><h3 class="k4-sh" tabindex="-1">Step 3 · Forces <span id="forces-how"></span></h3><span class="k4-left num" id="left-count" aria-live="polite"></span></div>
+          <p class="fine k4-fhint">Not sure where to send your forces? <button type="button" class="btn" id="advise-forces">Let your staff set forces</button> Leaving everything as it is is also fine.</p>
           <div class="k4-logiw" id="logi-wrap"><div id="logi"></div></div>
           <p class="fine k4-logi-sum" id="logi-sum" aria-live="polite"></p>
           <div class="k4-forces" id="forces"></div>
@@ -152,6 +155,17 @@
   <section class="card k4-about">
     <details>
       <summary><b>How the game works</b></summary>
+      <h3>The basics</h3>
+      <ol class="k4-basics">
+        <li><b>Each month, three steps.</b> Pick a posture (how hard you lean), up to four moves (each shows its odds and cost), and orders for your forces. Then End month. All four capitals reveal at once.</li>
+        <li><b>Read the others.</b> Every leader is secretly resolute, cautious or opportunist. Costly moves reveal the most, about them and about you.</li>
+        <li><b>Mind the ladder.</b> The crisis climbs from gray-zone pressure to war. Every rung raises the risk for everyone, and nuclear use ends the game.</li>
+        <li><b>Live within your means.</b> Lift, fuel, munitions and readiness limit what you can do; whatever you cannot afford is greyed out.</li>
+        <li><b>You are scored on your own goals</b>, the weights you set at the start, and compared with the computer playing your seat.</li>
+      </ol>
+      <p class="fine">Stuck? <b>Ask your staff</b> fills in a sensible plan you can change. Everything else (fog of war, elections, allies’ bases, the economic shock, the peace forum, landings) is explained on the move or the map where it comes up, and in full below.</p>
+      <details class="k4-full">
+      <summary><b>Full rules</b></summary>
       <ul>
         <li><b>Each month</b> you pick a posture (stand down to escalate; the United States and China can also make a nuclear signal from Blockade up) and up to four strategic moves across seven lines: diplomatic, information, military, economic, financial, intelligence and law enforcement. Each move asks follow-up questions: which route, which ports, which sector, how much to commit. Some moves unlock as the crisis climbs. <b>Opportunity</b> moves (● on the tab) are on the menu only while a condition holds, such as markets falling or Taiwan divided; the badge on the move names the condition. <b>Once a game</b> moves (dispersing and hardening, calling up the reserves, asset freezes, Japan’s survival declaration, evacuating the southwest islands) have effects that last, so after the month you carry one out it is marked USED and cannot be chosen again. All four capitals reveal at once.</li>
         <li><b>Gray zone.</b> The bottom two rungs of the ladder are coercion below military action: coast guard “law enforcement” patrols and quarantines, maritime militia swarms, deniable undersea-cable cuts (which keep costing Taiwan until repaired) and cyber intrusions. They build pressure without firing a shot; only the quarantine and the militia swarm climb the ladder, and only to Coercion. Each has an answer: coast guard escorts and expulsions, cable patrols and repairs, cyber defense teams.</li>
@@ -168,10 +182,11 @@
         <li><b>Hidden types.</b> Resolute leaders pay at home for backing down; cautious ones pay for escalating; opportunists escalate when a rival looks weak. The computer updates its beliefs about you by Bayes' rule from what you do, and costly moves say the most.</li>
         <li><b>Nuclear use</b> is never a menu choice. Once the shooting starts, a rising nuclear shadow makes it a risk each month.</li>
         <li><b>Starting situations.</b> Gray-zone pressure (the standard start, March), a coast guard quarantine already under way (March), an energy blockade in force with a second U.S. carrier on its way (April, seven months), China’s seizure of the Kinmen island group (April, seven months), or a crisis after a bitterly disputed election in Taipei with a hostile legislature (March). Each sets its own rung, tracks, resources and a few formations; all notional.</li>
-        <li><b>Hidden traits (optional).</b> Say yes before you start and each computer leader gets one hidden trait, drawn at random: risk-taking (likes bold moves, wants to fight on), face-saving (hates backing down, slow to accept a forum), impatient (discounts later payoffs, keener on a forum as the months pass) or prudent (careful with stocks and escalation, open to a way out). Traits change the computer’s choices and add a term to the peace-forum equation; they are revealed only at the end.</li>
+        <li><b>Hidden traits (optional).</b> Say yes before you start and each computer leader gets one hidden trait, drawn at random with odds that fit the capital: risk-taking (likes bold moves, wants to fight on), face-saving (hates backing down, slow to accept a forum), impatient (discounts later payoffs, keener on a forum as the months pass) or prudent (careful with stocks and escalation, open to a way out). Beijing, which chose to start the crisis, is never prudent and leans face-saving or risk-taking; Taipei and Tokyo lean prudent or face-saving; Washington could be any. Traits change the computer’s choices and add a term to the peace-forum equation; they are revealed only at the end.</li>
         <li><b>After each month</b> a one-sentence summary under the country boxes says what happened, using only that month’s results and public tracks. <b>At the end</b>, an after-action replay shows every month’s moves, how each capital’s type was read, any traits, and the computer’s main reason for its choices; a nuclear review shows what pushed the nuclear shadow, month by month, and when it crossed 65.</li>
         <li><b>Endings:</b> a settlement after two calm months of talks, or after a peace forum’s ceasefire holds; Beijing stepping back; Taiwan forced to terms; nuclear use; or October.</li>
       </ul>
+      </details>
       <p class="fine" id="balance-note">All numbers are illustrative game design. In 1,000 test games from the standard start (gray-zone pressure, no traits) with the computer in every seat on Normal: 11% ended with Taiwan forced to terms, 18% with Beijing stepping back, 7% in a settlement (5% after a peace forum’s ceasefire held), 8% in nuclear use, and 56% were unresolved in October. 57% saw a blockade or worse, 27% limited strikes or worse, and 22% major war or nuclear use. A peace forum was called in 31% of games and 31% of calls were accepted. China attempted a landing in 11% of games; 28% of attempts got ashore and 23% more gained a partial lodgement. By month 5 the computer’s best guess of a rival’s type was right 67% of the time (chance is 33%). The other starting situations and hidden traits change these (tables in the method notes): a quarantine start sees the most nuclear use (about 12%); blockade and Kinmen starts end unresolved most often (65–72%) and see the least major war (10–14%).</p>
     </details>
   </section>

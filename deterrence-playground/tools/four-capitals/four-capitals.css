@@ -431,7 +431,7 @@ body.k4-simple .k4-intel, body.k4-simple .k4-fogd, body.k4-simple #logi-wrap { d
   .k4-play:has(#resolve:not([hidden])) #pane-map, .k4-play:has(#resolve:not([hidden])) #crisis { display: block; }
   .k4-bar { gap: 6px 10px; }
   .k4-month b { font-size: 20px; }
-  .k4-decide > .k4-h { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }   /* the tab already says it */
+  .k4-dhead > .k4-h { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }   /* the tab already says it */
   .k4-viewsw { margin-left: auto; }
   /* Tap targets of at least 40 px */
   #end-turn, .k4-stepnav .btn, .k4-actions .btn { min-height: 44px; }
@@ -448,3 +448,16 @@ body.k4-simple .k4-intel, body.k4-simple .k4-fogd, body.k4-simple #logi-wrap { d
 
 /* While the lesson runs on a phone its card covers the bottom of the screen: room to scroll anything above it. */
 @media (max-width: 760px) { body.k4-learning { padding-bottom: 50vh; } }
+
+/* Ask your staff: the computer's plan for your seat, filled in for you to change. */
+.k4-dhead { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+.k4-dhead .k4-h { margin: 0; }
+.k4-advise { border-color: var(--mine, var(--c)); }
+.k4-advice { margin: -4px 0 10px; padding: 6px 10px; border-left: 3px solid var(--mine, var(--c)); background: color-mix(in srgb, var(--mine, var(--c)) 7%, transparent); }
+.k4-fhint { margin: 0 0 8px; }
+.k4-fhint .btn { padding: 2px 10px; margin: 0 4px; }
+@media (max-width: 760px) { .k4-dhead { justify-content: flex-end; } }
+.k4-about h3 { margin: 10px 0 4px; font-size: 15px; }
+.k4-basics { margin: 4px 0 8px; padding-left: 20px; font-size: 14px; }
+.k4-basics li { margin: 3px 0; }
+.k4-full { margin-top: 8px; }

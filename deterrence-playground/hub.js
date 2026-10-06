@@ -164,6 +164,8 @@ if (COUNTED.length <= 1) {
   const intro = document.querySelector('.hero-text p');
   if (intro) intro.textContent = intro.textContent.replace(', or search for a tool.', '.');
 }
+// With tools in only one section, the section chips (Everything / that section) add nothing either.
+if (CATEGORIES.filter(c => counts[c.id]).length <= 1) $('cats').style.setProperty('display', 'none');
 
 function render() {
   catBtns.forEach(b => b.setAttribute('aria-pressed', b.dataset.cat === cat));

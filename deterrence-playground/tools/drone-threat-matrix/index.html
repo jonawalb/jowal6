@@ -1,31 +1,27 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <script src="../../shared/js/gate.js"></script>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Non-State Drone Misuse Matrix | Jonathan Walberg</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Non-State Drone Misuse Matrix | Interactive Deterrence</title>
 <meta name="description" content="An ATT&CK-style matrix of documented non-state misuse of commercial and small drones, built from public, cited reporting.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet">
-<link rel="icon" type="image/svg+xml" href="/favicon.svg">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&family=Spline+Sans+Mono:wght@400;500;600&family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
 <link rel="stylesheet" href="../../shared/css/deterrence-site.css">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-<nav class="topbar" aria-label="Site">
-  <a href="../../">&larr; All tools</a>
-  <a href="/">jwalberg.com</a>
-</nav>
+<header id="tsm-head"></header>
 
-<main class="wrap">
-  <header class="page">
-    <h1>Non-State Drone Misuse Matrix</h1>
-    <p>How armed groups, criminal networks and individuals have misused commercial and small drones, organised as tactics and techniques in the style of MITRE ATT&amp;CK. Every case links to public reporting.</p>
+<main class="wrap dtm">
+  <div class="page">
     <p class="notice">Techniques are described at category level only. The matrix records <em>that</em> something happened and where it was reported, never how it was done.</p>
     <div class="stats" id="stats" aria-live="polite"></div>
-  </header>
+  </div>
 
   <div class="tabs" role="tablist" aria-label="Views">
     <button role="tab" id="tab-matrix" aria-controls="view-matrix" aria-selected="true">Matrix</button>
@@ -58,7 +54,7 @@
       <div class="tl-scroll" id="timeline"></div>
     </div>
     <div class="card firsts">
-      <h3 style="margin:0 0 8px;font:600 14px var(--ui)">Earliest documented case by actor</h3>
+      <h3 style="margin:0 0 8px;font:600 14px var(--body)">Earliest documented case by actor</h3>
       <div class="table-scroll" id="firsts"></div>
     </div>
   </section>
@@ -107,7 +103,7 @@
     </div>
   </section>
 
-  <footer>Compiled October 2026 from public reporting. Corrections welcome via the contact details on jwalberg.com.</footer>
+  <p class="fine dtm-note">Compiled October 2026 from public reporting. Corrections welcome via the contact details on jwalberg.com.</p>
 </main>
 
 <dialog id="dlg" aria-labelledby="dlg-title">
@@ -118,6 +114,11 @@
   <div class="dlg-body" id="dlg-body"></div>
 </dialog>
 
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Non-State Drone Misuse Matrix', sub: 'How armed groups, criminal networks and individuals have misused commercial and small drones, organised as tactics and techniques in the style of MITRE ATT&amp;CK. Every case links to public reporting.', category: 'Nuclear weapons & arms control' });
+</script>
 <script src="app.js"></script>
 </body>
 </html>

@@ -32,7 +32,7 @@ export function createMatrix(host, { onSelect, onSort }) {
     if (!ts.length || !ss.length) { host.innerHTML = '<p class="fine tt-empty">No states or treaties match the filters.</p>'; return true; }
     const groupCells = GROUPS.filter(g => state.groups.has(g.id)).map(g => {
       const n = ts.filter(t => t.group === g.id).length;
-      return `<th scope="colgroup" colspan="${n}" class="tt-g" data-g="${g.id}"><span>${esc(g.name)}</span></th>`;
+      return `<th scope="colgroup" colspan="${n}" class="tt-g" data-g="${g.id}" title="${esc(g.name)}"><span aria-hidden="true">${esc(g.short || g.name)}</span><span class="sr-only">${esc(g.name)}</span></th>`;
     }).join('');
     const head = ts.map(t => `<th scope="col" class="tt-th"><button type="button" data-sort="${t.id}" title="${esc(t.name)}: sort states by status">${esc(t.short)}</button></th>`).join('');
     const rows = ss.map(s => `<tr data-iso="${s.iso}"><th scope="row" class="tt-rh">${esc(s.name)}</th>${ts.map(t =>

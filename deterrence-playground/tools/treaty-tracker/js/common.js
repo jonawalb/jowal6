@@ -5,14 +5,15 @@ export const Y0 = 1963, Y1 = 2026;
 const MON = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 /** 'end of 1990', or for the current year the date the records were retrieved (the year is not over). */
 export function when(y) { return Number(y) >= Number(AS_OF.slice(0, 4)) ? `on ${Number(AS_OF.slice(8))} ${MON[Number(AS_OF.slice(5, 7)) - 1]} ${AS_OF.slice(0, 4)}` : `at the end of ${y}`; }
+// `short`: the matrix's column-group label (sized to fit its columns); `name` is the full label elsewhere.
 export const GROUPS = [
-  { id: 'nuclear', name: 'Nuclear tests and weapons', help: 'PTBT, NPT, CTBT, TPNW' },
-  { id: 'wmd', name: 'Other weapons of mass destruction', help: 'BWC, CWC, Outer Space, Sea-bed' },
-  { id: 'usrus', name: 'U.S.–Soviet/Russian treaties', help: 'INF, START I, START II, SORT, New START' },
-  { id: 'europe', name: 'European security', help: 'CFE, Adapted CFE, Open Skies' },
-  { id: 'nwfz', name: 'Nuclear-weapon-free zones', help: 'Tlatelolco, Rarotonga, Bangkok, Pelindaba, Semipalatinsk' },
-  { id: 'conventional', name: 'Conventional weapons', help: 'Mine Ban, Cluster Munitions, ATT, CCW, CIFTA, OAS Transparency, Kinshasa. CFE sits under European security.' },
-  { id: 'ccw', name: 'CCW protocols', help: 'Protocols I to V, Amended Protocol II, the 2001 Article 1 amendment. Off at first.' },
+  { id: 'nuclear', short: 'Nuclear', name: 'Nuclear tests and weapons', help: 'PTBT, NPT, CTBT, TPNW' },
+  { id: 'wmd', short: 'Other WMD', name: 'Other weapons of mass destruction', help: 'BWC, CWC, Outer Space, Sea-bed' },
+  { id: 'usrus', short: 'U.S.–Russia', name: 'U.S.–Soviet/Russian treaties', help: 'INF, START I, START II, SORT, New START' },
+  { id: 'europe', short: 'Europe', name: 'European security', help: 'CFE, Adapted CFE, Open Skies' },
+  { id: 'nwfz', short: 'Nuclear-free zones', name: 'Nuclear-weapon-free zones', help: 'Tlatelolco, Rarotonga, Bangkok, Pelindaba, Semipalatinsk' },
+  { id: 'conventional', short: 'Conventional', name: 'Conventional weapons', help: 'Mine Ban, Cluster Munitions, ATT, CCW, CIFTA, OAS Transparency, Kinshasa. CFE sits under European security.' },
+  { id: 'ccw', short: 'CCW protocols', name: 'CCW protocols', help: 'Protocols I to V, Amended Protocol II, the 2001 Article 1 amendment. Off at first.' },
 ];
 // Order matters: the legend and counts follow it.
 export const STATUS = [

@@ -1,30 +1,24 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <script src="../../shared/js/gate.js"></script>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Conventional Weapons Regime Explorer | Jonathan Walberg</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Conventional Weapons Regime Explorer | Interactive Deterrence</title>
 <meta name="description" content="Which US, multilateral and EU legal frameworks govern a given conventional-weapons item, technology or piece of information. Sourced to primary texts, verified 6 October 2026.">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&family=Spline+Sans+Mono:wght@400;500;600&family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
 <link rel="stylesheet" href="../../shared/css/deterrence-site.css">
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<nav class="topbar" aria-label="Site">
-  <a href="../../">&larr; All tools</a>
-  <a href="/">jwalberg.com</a>
-</nav>
+<header id="tsm-head"></header>
 
-<div class="wrap">
-  <header class="intro">
-    <h1>Conventional Weapons Regime Explorer</h1>
-    <p>Which legal and regulatory frameworks govern a conventional-weapons item, technology or piece of information: US export and firearms law, multilateral regimes and treaties, and EU rules. Every entry links to the primary text.</p>
-    <p class="notice"><strong>Not legal advice.</strong> A research and teaching aid. Classification of a real item turns on its exact specifications and the facts of a transaction. Texts verified 6 October 2026.</p>
-  </header>
+<main class="wrap wr">
+  <p class="notice"><strong>Not legal advice.</strong> A research and teaching aid. Classification of a real item turns on its exact specifications and the facts of a transaction. Texts verified 6 October 2026.</p>
 
   <div class="tabs" role="tablist" aria-label="Views">
     <button role="tab" id="tab-finder" aria-controls="view-finder" aria-selected="true">Item finder</button>
@@ -34,7 +28,7 @@
   </div>
 
   <!-- 1. Item finder -->
-  <section class="panel" id="view-finder" role="tabpanel" aria-labelledby="tab-finder">
+  <section class="wr-view" id="view-finder" role="tabpanel" aria-labelledby="tab-finder">
     <p class="lede">Pick an item or technology type. The list shows each regime that reaches it, the controlling provision, a one-line reading, and a link to the text.</p>
     <div class="finder">
       <div class="card item-list" id="item-list" role="group" aria-label="Item types"></div>
@@ -56,7 +50,7 @@
   </section>
 
   <!-- 2. Information, not hardware -->
-  <section class="panel" id="view-info" role="tabpanel" aria-labelledby="tab-info" hidden>
+  <section class="wr-view" id="view-info" role="tabpanel" aria-labelledby="tab-info" hidden>
     <p class="lede">Export controls reach information as well as hardware. Whether a document or file is controlled depends on what it enables and on how it has been made available.</p>
     <div class="info-grid">
       <div class="card info-wide">
@@ -108,7 +102,7 @@
   </section>
 
   <!-- 3. Regime map -->
-  <section class="panel" id="view-map" role="tabpanel" aria-labelledby="tab-map" hidden>
+  <section class="wr-view" id="view-map" role="tabpanel" aria-labelledby="tab-map" hidden>
     <p class="lede">Regimes across the top, item types down the side. Select a cell to see the provision. Coverage is judged from the text of each instrument; "none" means no entry was found, not that the item is unregulated everywhere.</p>
     <div class="map-controls">
       <span class="verified">Show:</span>
@@ -135,7 +129,7 @@
   </section>
 
   <!-- 4. Method -->
-  <section class="panel method" id="view-method" role="tabpanel" aria-labelledby="tab-method" hidden>
+  <section class="wr-view method" id="view-method" role="tabpanel" aria-labelledby="tab-method" hidden>
     <div class="card">
       <h3>What this is</h3>
       <p>A structured index of 20 legal and policy instruments and 16 item types. Each link between an item and a regime records the controlling provision, a one-line plain reading, a coverage level, and a URL to the text it rests on. No data here is synthetic.</p>
@@ -163,12 +157,13 @@
       <div class="scroll-x" style="border:0"><table class="src-table" id="src-table"></table></div>
     </div>
   </section>
-</div>
+</main>
 
-<footer>
-  <div class="wrap">Conventional Weapons Regime Explorer. Not legal advice. Data verified 6 October 2026. <a href="../../">All tools</a></div>
-</footer>
-
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Conventional Weapons Regime Explorer', sub: 'Which legal and regulatory frameworks govern a conventional-weapons item, technology or piece of information: US export and firearms law, multilateral regimes and treaties, and EU rules. Every entry links to the primary text.', category: 'Nuclear weapons & arms control' });
+</script>
 <script src="js/app.js"></script>
 </body>
 </html>

@@ -78,7 +78,7 @@
       '<div class="concern"><h5>Requests that map onto this tactic</h5>' + list(t.signals.concern) + '</div>' +
       '<div class="legit"><h5>Usually legitimate nearby requests</h5>' + list(t.signals.legitimate) + '</div></div>' +
       '<p style="font-size:12.5px;color:var(--muted);margin-top:12px">Category-level reviewer notes, not a policy. The test is whether an answer would give meaningful operational uplift beyond what public reporting already describes.</p>' +
-      '<h5 style="margin:14px 0 4px;font:600 13px var(--ui)">Techniques</h5><ul>' +
+      '<h5 style="margin:14px 0 4px;font:600 13px var(--body)">Techniques</h5><ul>' +
       t.techniques.map(function (x) { return '<li>' + esc(x.id) + ' ' + esc(x.name) + '</li>'; }).join('') + '</ul>';
   }
   function showTactic(t) {

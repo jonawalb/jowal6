@@ -11,6 +11,8 @@ export const TAGLINES = {
   'declaratory-policy': 'What each nuclear-armed state actually promises about using its weapons, quoted from its own documents.',
   'proliferation-paths': 'Watch states explore, pursue, acquire and give up nuclear weapons from 1939 on, and see where the datasets disagree.',
   'treaty-tracker': 'Explore six decades of arms control to see who signed, joined, suspended or walked away.',
+  'weapons-regimes': 'Pick a weapon or a piece of technical data and see every rule that governs it, from ITAR to the Arms Trade Treaty.',
+  'drone-threat-matrix': '78 sourced cases of armed groups and criminal networks misusing commercial drones, by actor and tactic.',
   'iran-enrichment': "Iran's enriched uranium from every IAEA report since 2016, against the deal's limits and quoted breakout estimates.",
   'deterrence-lab-general': 'Move the costs and beliefs in three classic deterrence models and test what they predict against real crises.',
   'ukraine-air-war': 'Every Russian missile and drone wave since September 2022, and how much of each Ukraine reported shooting down.',

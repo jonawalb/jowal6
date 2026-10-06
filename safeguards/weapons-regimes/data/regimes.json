@@ -1,0 +1,843 @@
+{
+  "as_of": "2026-10-06",
+  "regimes": [
+    {
+      "id": "itar",
+      "short": "ITAR / USML",
+      "name": "International Traffic in Arms Regulations and U.S. Munitions List",
+      "jurisdiction": "US",
+      "kind": "Regulation",
+      "force": "Binding (US export and import control)",
+      "cite": "22 CFR parts 120-130; USML at 22 CFR 121.1",
+      "administrator": "Department of State, Directorate of Defense Trade Controls",
+      "summary": "Controls the export and temporary import of defense articles, technical data and defense services listed on the USML (Categories I-XXI).",
+      "key_provisions": [
+        {
+          "cite": "22 CFR 121.1",
+          "text": "USML Categories I (firearms), II (guns and armament), III (ammunition and ordnance), IV (missiles, rockets, bombs, mines), VII (ground vehicles), VIII (aircraft, incl. unmanned), XI (military electronics), XII (fire control, laser, imaging, guidance), XIX (gas turbine engines), among others.",
+          "url": "https://www.ecfr.gov/current/title-22/section-121.1"
+        },
+        {
+          "cite": "22 CFR 120.32",
+          "text": "Defense service: furnishing assistance, including training, to foreign persons in the design, production, operation, repair or use of defense articles.",
+          "url": "https://www.ecfr.gov/current/title-22/section-120.32"
+        },
+        {
+          "cite": "22 CFR 120.33",
+          "text": "Technical data: information (other than software as defined) required for the design, development, production, operation, repair, testing, maintenance or modification of defense articles; excludes general scientific principles taught in schools and public-domain information.",
+          "url": "https://www.ecfr.gov/current/title-22/section-120.33"
+        },
+        {
+          "cite": "22 CFR 120.34",
+          "text": "Public domain: information that is published and generally accessible through listed channels (bookstores, libraries, open conferences, patents, government-approved public release, fundamental research).",
+          "url": "https://www.ecfr.gov/current/title-22/section-120.34"
+        }
+      ],
+      "changes": [
+        {
+          "date": "2020-03-09",
+          "text": "Rule effective that moved most non-automatic and semi-automatic firearms and related items from USML Categories I-III to the EAR (State rule 85 FR 3819; Commerce rule 85 FR 4136, both published 23 Jan 2020).",
+          "url": "https://www.federalregister.gov/documents/2020/01/23/2020-00574/international-traffic-in-arms-regulations-us-munitions-list-categories-i-ii-and-iii"
+        },
+        {
+          "date": "2022-09-06",
+          "text": "Part 120 reorganization effective (87 FR 16396). Definitions renumbered: defense service now 120.32 (was 120.9), technical data now 120.33 (was 120.10), public domain now 120.34.",
+          "url": "https://www.federalregister.gov/documents/2022/03/23/2022-05629/international-traffic-in-arms-regulations-consolidation-and-restructuring-of-purposes-and"
+        },
+        {
+          "date": "2025-09-15",
+          "text": "USML targeted revisions effective (published 17 Jan 2025 as 90 FR 5594; effective date set by 90 FR 41778).",
+          "url": "https://www.federalregister.gov/documents/2025/08/27/2025-16382/international-traffic-in-arms-regulations-us-munitions-list-targeted-revisions"
+        }
+      ],
+      "notes": "Silencers and suppressors (Cat. I(e)) and fully automatic firearms (Cat. I(b)) remained on the USML after the 2020 transfer. Neither the USML nor the Wassenaar Munitions List uses the term 'loitering munition' (text search, 6 Oct 2026).",
+      "sources": [
+        {
+          "label": "eCFR, 22 CFR 121.1 (current through 2 Oct 2026)",
+          "url": "https://www.ecfr.gov/current/title-22/section-121.1"
+        },
+        {
+          "label": "eCFR, 22 CFR part 120 subpart C",
+          "url": "https://www.ecfr.gov/current/title-22/chapter-I/subchapter-M/part-120/subpart-C"
+        }
+      ],
+      "last_verified": "2026-10-06"
+    },
+    {
+      "id": "aeca",
+      "short": "AECA § 38",
+      "name": "Arms Export Control Act, section 38",
+      "jurisdiction": "US",
+      "kind": "Statute",
+      "force": "Binding",
+      "cite": "22 U.S.C. 2778",
+      "administrator": "President, delegated to the Department of State",
+      "summary": "Authorizes the President to control the export and import of defense articles and defense services and to designate the items that make up the USML. It is the statutory basis for the ITAR.",
+      "key_provisions": [
+        {
+          "cite": "22 U.S.C. 2778(a)(1)",
+          "text": "President authorized to control import and export of defense articles and services and to designate them.",
+          "url": "https://www.law.cornell.edu/uscode/text/22/2778"
+        },
+        {
+          "cite": "22 U.S.C. 2778(h)",
+          "text": "Designation of items as defense articles is not subject to judicial review. The Ninth Circuit read this to bar review of both designation and removal (Washington v. Dep't of State, 2021).",
+          "url": "https://cdn.ca9.uscourts.gov/datastore/opinions/2021/04/27/20-35391.pdf"
+        }
+      ],
+      "changes": [],
+      "notes": "",
+      "sources": [
+        {
+          "label": "22 U.S.C. 2778 (Cornell LII)",
+          "url": "https://www.law.cornell.edu/uscode/text/22/2778"
+        }
+      ],
+      "last_verified": "2026-10-06"
+    },
+    {
+      "id": "ear",
+      "short": "EAR / CCL",
+      "name": "Export Administration Regulations and Commerce Control List (600-series and 0x5zz firearms entries)",
+      "jurisdiction": "US",
+      "kind": "Regulation",
+      "force": "Binding (US export control)",
+      "cite": "15 CFR parts 730-774; CCL at Supp. No. 1 to part 774",
+      "administrator": "Department of Commerce, Bureau of Industry and Security",
+      "summary": "Controls dual-use items and less sensitive military items. Since March 2020 it covers most non-automatic and semi-automatic firearms, their ammunition, and related software and technology.",
+      "key_provisions": [
+        {
+          "cite": "ECCN 0A501 / 0A506 / 0A507 / 0A508 / 0A509",
+          "text": "0A501: non-automatic firearms and related items. 0A506-0A508: semi-automatic rifles, pistols and shotguns. 0A509: certain parts and accessories for them.",
+          "url": "https://www.ecfr.gov/current/title-15/part-774"
+        },
+        {
+          "cite": "ECCN 0A505",
+          "text": "Ammunition for firearms controlled on the CCL.",
+          "url": "https://www.ecfr.gov/current/title-15/part-774"
+        },
+        {
+          "cite": "ECCN 0D501 / 0E501",
+          "text": "Software and technology for development, production, operation or maintenance of 0A501, 0A506, 0A507, 0A509 and 0B501 items.",
+          "url": "https://www.ecfr.gov/current/title-15/part-774"
+        },
+        {
+          "cite": "15 CFR 734.7(a)",
+          "text": "Unclassified technology or software is 'published', and so not subject to the EAR, when made available to the public without restriction, including posting on public internet sites.",
+          "url": "https://www.ecfr.gov/current/title-15/section-734.7"
+        },
+        {
+          "cite": "15 CFR 734.7(c)",
+          "text": "Exception: software or technology for producing a firearm, frame or receiver (ECCNs 0A501, 0A506, 0A507, 0A509) posted online in a format ready for insertion into a CNC machine tool or additive manufacturing equipment remains subject to the EAR.",
+          "url": "https://www.ecfr.gov/current/title-15/section-734.7"
+        },
+        {
+          "cite": "ECCN 9A012",
+          "text": "Unmanned aerial vehicles designed for controlled flight beyond the operator's natural vision. Missile technology (MT) controls apply to UAVs capable of at least 300 km range regardless of payload.",
+          "url": "https://www.ecfr.gov/current/title-15/part-774"
+        },
+        {
+          "cite": "ECCN 0A606",
+          "text": "Military ground vehicles and related items not enumerated on the USML.",
+          "url": "https://www.ecfr.gov/current/title-15/part-774"
+        }
+      ],
+      "changes": [
+        {
+          "date": "2020-03-09",
+          "text": "Firearms transfer from USML Categories I-III takes effect; 734.7(c) added (85 FR 4136).",
+          "url": "https://www.federalregister.gov/documents/2020/01/23/2020-00573/control-of-firearms-guns-ammunition-and-related-articles-the-president-determines-no-longer-warrant"
+        },
+        {
+          "date": "2024-04-30",
+          "text": "BIS interim final rule 'Revision of Firearms License Requirements' (89 FR 34680) tightened firearm export licensing and created ECCNs 0A506-0A509.",
+          "url": "https://www.federalregister.gov/documents/2024/04/30/2024-08813/revision-of-firearms-license-requirements"
+        },
+        {
+          "date": "2025-09-30",
+          "text": "BIS final rule (90 FR 47170) rescinded the 2024 interim rule except for the new ECCNs, and removed the congressional notification requirement for certain semi-automatic firearm licence applications.",
+          "url": "https://www.federalregister.gov/documents/2025/09/30/2025-18992/revision-of-firearms-license-requirements"
+        }
+      ],
+      "notes": "Classification of a specific item depends on its technical parameters. This page does not classify any real product.",
+      "sources": [
+        {
+          "label": "eCFR, 15 CFR part 774 (current through 2 Oct 2026)",
+          "url": "https://www.ecfr.gov/current/title-15/part-774"
+        },
+        {
+          "label": "eCFR, 15 CFR 734.7",
+          "url": "https://www.ecfr.gov/current/title-15/section-734.7"
+        }
+      ],
+      "last_verified": "2026-10-06"
+    },
+    {
+      "id": "nfa",
+      "short": "NFA",
+      "name": "National Firearms Act",
+      "jurisdiction": "US",
+      "kind": "Statute",
+      "force": "Binding (domestic registration and tax)",
+      "cite": "26 U.S.C. chapter 53 (5801-5872)",
+      "administrator": "ATF (Department of Justice)",
+      "summary": "Requires registration and taxes the making and transfer of listed 'firearms': short-barreled rifles and shotguns, machineguns, silencers, destructive devices and 'any other weapons'.",
+      "key_provisions": [
+        {
+          "cite": "26 U.S.C. 5845(a)-(b)",
+          "text": "Defines NFA 'firearm' (incl. machinegun and silencer) and 'machinegun' (fires automatically more than one shot by a single function of the trigger, incl. conversion parts).",
+          "url": "https://www.law.cornell.edu/uscode/text/26/5845"
+        },
+        {
+          "cite": "26 U.S.C. 5861",
+          "text": "Makes it unlawful to possess or receive an NFA firearm that is unregistered or transferred or made in violation of the chapter.",
+          "url": "https://www.law.cornell.edu/uscode/text/26/5861"
+        },
+        {
+          "cite": "26 U.S.C. 5811(a)",
+          "text": "Transfer tax: $200 for machineguns and destructive devices; $0 for other NFA firearms (as amended in 2025).",
+          "url": "https://www.law.cornell.edu/uscode/text/26/5811"
+        }
+      ],
+      "changes": [
+        {
+          "date": "2025-07-04",
+          "text": "Pub. L. 119-21, sec. 70436 cut the transfer tax to $0 for NFA firearms other than machineguns and destructive devices (e.g. suppressors, short-barreled rifles), for calendar quarters beginning more than 90 days after enactment. Registration requirements were not removed.",
+          "url": "https://www.law.cornell.edu/uscode/text/26/5811"
+        }
+      ],
+      "notes": "",
+      "sources": [
+        {
+          "label": "26 U.S.C. 5845 (Cornell LII)",
+          "url": "https://www.law.cornell.edu/uscode/text/26/5845"
+        },
+        {
+          "label": "26 U.S.C. 5811 with 2025 amendment note (Cornell LII)",
+          "url": "https://www.law.cornell.edu/uscode/text/26/5811"
+        }
+      ],
+      "last_verified": "2026-10-06"
+    },
+    {
+      "id": "gca",
+      "short": "GCA / § 922(o)",
+      "name": "Gun Control Act of 1968, incl. 18 U.S.C. 922(o)",
+      "jurisdiction": "US",
+      "kind": "Statute",
+      "force": "Binding (domestic)",
+      "cite": "18 U.S.C. chapter 44 (921-934)",
+      "administrator": "ATF (Department of Justice)",
+      "summary": "Licensing of manufacturers, importers and dealers, background checks, serial marking and transfer rules. Section 922(o) bars private transfer or possession of machineguns not lawfully possessed before the provision took effect.",
+      "key_provisions": [
+        {
+          "cite": "18 U.S.C. 921(a)(3)",
+          "text": "Defines 'firearm' to include a weapon designed to or readily convertible to expel a projectile by explosive action, and the frame or receiver of such a weapon.",
+          "url": "https://www.law.cornell.edu/uscode/text/18/921"
+        },
+        {
+          "cite": "18 U.S.C. 922(o)",
+          "text": "Unlawful to transfer or possess a machinegun, except for government use or machineguns lawfully possessed before the subsection took effect.",
+          "url": "https://www.law.cornell.edu/uscode/text/18/922"
+        }
+      ],
+      "changes": [],
+      "notes": "",
+      "sources": [
+        {
+          "label": "18 U.S.C. 922 (Cornell LII)",
+          "url": "https://www.law.cornell.edu/uscode/text/18/922"
+        }
+      ],
+      "last_verified": "2026-10-06"
+    },
+    {
+      "id": "atf_fr",
+      "short": "ATF frame/receiver rule",
+      "name": "ATF rule: Definition of 'Frame or Receiver' and Identification of Firearms (2022)",
+      "jurisdiction": "US",
+      "kind": "Regulation",
+      "force": "Binding; subject to ongoing litigation",
+      "cite": "87 FR 24652; 27 CFR 478.11, 478.12",
+      "administrator": "ATF",
+      "summary": "Interprets the GCA to cover weapon parts kits that can readily be converted to a working firearm and partially complete frames or receivers, bringing them under licensing, background-check, record and serial-number rules.",
+      "key_provisions": [
+        {
+          "cite": "27 CFR 478.12",
+          "text": "Definition of frame or receiver, incl. partially complete, disassembled or nonfunctional frames or receivers.",
+          "url": "https://www.ecfr.gov/current/title-27/section-478.12"
+        }
+      ],
+      "changes": [
+        {
+          "date": "2022-08-24",
+          "text": "Rule effective (published 26 Apr 2022).",
+          "url": "https://www.federalregister.gov/documents/2022/04/26/2022-08026/definition-of-frame-or-receiver-and-identification-of-firearms"
+        },
+        {
+          "date": "2025-03-26",
+          "text": "Bondi v. VanDerStok, No. 23-852: Supreme Court (7-2, Gorsuch, J.) held the rule is not facially inconsistent with the GCA. The Court noted some kits may be too incomplete to qualify.",
+          "url": "https://www.supremecourt.gov/opinions/24pdf/23-852_o7jp.pdf"
+        },
+        {
+          "date": "2026-08-17",
+          "text": "Defense Distributed v. Blanche (N.D. Tex.): district court reportedly held the challenged provisions unconstitutionally vague and contrary to the Second Amendment. Remedy scope and appeal status not verified here.",
+          "url": "https://www.independent.org/article/2026/09/12/atfs-firearm-frame-receiver-rules-invalid/"
+        }
+      ],
+      "notes": "The 2026 district court ruling is reported by a secondary source; read the opinion before relying on it.",
+      "sources": [
+        {
+          "label": "Bondi v. VanDerStok slip opinion",
+          "url": "https://www.supremecourt.gov/opinions/24pdf/23-852_o7jp.pdf"
+        },
+        {
+          "label": "87 FR 24652",
+          "url": "https://www.federalregister.gov/documents/2022/04/26/2022-08026/definition-of-frame-or-receiver-and-identification-of-firearms"
+        }
+      ],
+      "last_verified": "2026-10-06"
+    },
+    {
+      "id": "dodd3000",
+      "short": "DoDD 3000.09",
+      "name": "DoD Directive 3000.09, Autonomy in Weapon Systems",
+      "jurisdiction": "US",
+      "kind": "Policy (internal DoD directive)",
+      "force": "Binding on DoD components only",
+      "cite": "DoDD 3000.09 (25 Jan 2023)",
+      "administrator": "Department of Defense",
+      "summary": "Requires autonomous and semi-autonomous weapon systems to be designed so commanders and operators can exercise appropriate levels of human judgment over the use of force, and sets a senior review process for autonomous systems outside its exemptions.",
+      "key_provisions": [
+        {
+          "cite": "DoDD 3000.09 (2023)",
+          "text": "Defines an autonomous weapon system as one that, once activated, can select and engage targets without further intervention by an operator. The directive does not apply to unarmed platforms, unguided munitions, operator-guided munitions or mines.",
+          "url": "https://www.everycrsreport.com/reports/IF11150.html"
+        }
+      ],
+      "changes": [
+        {
+          "date": "2023-01-25",
+          "text": "Updated directive issued, replacing the 2012 version.",
+          "url": "https://www.everycrsreport.com/reports/IF11150.html"
+        },
+        {
+          "date": "2026-06-05",
+          "text": "NSPM-11, 'Artificial Intelligence in the National Security Enterprise', directs DoD to update 3000.09 within 90 days and review it annually. No revised directive verified as of 6 Oct 2026.",
+          "url": "https://defensescoop.com/2026/06/15/lawmaker-questions-pentagons-plan-to-revise-autonomous-weapons-policy/"
+        }
+      ],
+      "notes": "The official PDF (esd.whs.mil) blocks automated retrieval; content verified through the Congressional Research Service primer IF11150 (updated 26 Mar 2026).",
+      "sources": [
+        {
+          "label": "DoDD 3000.09 (official PDF)",
+          "url": "https://www.esd.whs.mil/Portals/54/Documents/DD/issuances/dodd/300009p.PDF"
+        },
+        {
+          "label": "CRS IF11150, Defense Primer: U.S. Policy on Lethal Autonomous Weapon Systems",
+          "url": "https://www.everycrsreport.com/reports/IF11150.html"
+        }
+      ],
+      "last_verified": "2026-10-06"
+    },
+    {
+      "id": "faa_uas",
+      "short": "FAA Part 107 / § 363",
+      "name": "FAA small UAS rule and statutory ban on weaponized drones",
+      "jurisdiction": "US",
+      "kind": "Regulation + statute",
+      "force": "Binding (civil aviation)",
+      "cite": "14 CFR part 107; Pub. L. 115-254, § 363 (49 U.S.C. 44802 note)",
+      "administrator": "Federal Aviation Administration",
+      "summary": "Part 107 governs civil operation of small unmanned aircraft (under 55 lb). Section 363 of the FAA Reauthorization Act of 2018 bars operating any unmanned aircraft equipped or armed with a dangerous weapon unless the FAA authorizes it.",
+      "key_provisions": [
+        {
+          "cite": "14 CFR 107.3",
+          "text": "Small unmanned aircraft: under 55 pounds on takeoff, including everything on board.",
+          "url": "https://www.ecfr.gov/current/title-14/part-107"
+        },
+        {
+          "cite": "Pub. L. 115-254, § 363",
+          "text": "No operating a UAS equipped or armed with a dangerous weapon (18 U.S.C. 930(g)(2)) unless authorized by the FAA Administrator; civil penalty up to $25,000 per violation.",
+          "url": "https://www.law.cornell.edu/uscode/text/49/44802"
+        }
+      ],
+      "changes": [
+        {
+          "date": "2018-10-05",
+          "text": "FAA Reauthorization Act of 2018 enacted, incl. § 363.",
+          "url": "https://www.faa.gov/newsroom/drones-and-weapons-dangerous-mix"
+        }
+      ],
+      "notes": "Section 363 is an uncodified note to 49 U.S.C. 44802, not a numbered section of title 49.",
+      "sources": [
+        {
+          "label": "49 U.S.C. 44802 and notes (Cornell LII)",
+          "url": "https://www.law.cornell.edu/uscode/text/49/44802"
+        },
+        {
+          "label": "FAA, 'Drones and Weapons, A Dangerous Mix' (22 Aug 2019)",
+          "url": "https://www.faa.gov/newsroom/drones-and-weapons-dangerous-mix"
+        }
+      ],
+      "last_verified": "2026-10-06"
+    },
+    {
+      "id": "wassenaar",
+      "short": "Wassenaar",
+      "name": "Wassenaar Arrangement (Munitions List and Dual-Use List)",
+      "jurisdiction": "Multilateral",
+      "kind": "Export control regime",
+      "force": "Politically binding; implemented through national law",
+      "cite": "WA-LIST (25) 1 Corr., incl. 2025 Plenary changes",
+      "administrator": "Participating States (secretariat in Vienna)",
+      "summary": "Participating States apply export controls to items on the Munitions List (ML1-ML22) and the List of Dual-Use Goods and Technologies. National implementation dates vary.",
+      "key_provisions": [
+        {
+          "cite": "ML1-ML4",
+          "text": "ML1 smooth-bore weapons under 20 mm, other arms and automatic weapons; ML2 larger-calibre weapons; ML3 ammunition; ML4 bombs, rockets, missiles and other explosive devices.",
+          "url": "https://www.wassenaar.org/app/uploads/2026/01/Stand-alone-Munitions-List-2025-Corr.pdf"
+        },
+        {
+          "cite": "ML5, ML6, ML10, ML15",
+          "text": "ML5 fire control and warning equipment; ML6 ground vehicles; ML10 aircraft and UAVs; ML15 imaging or countermeasure equipment.",
+          "url": "https://www.wassenaar.org/app/uploads/2026/01/Stand-alone-Munitions-List-2025-Corr.pdf"
+        },
+        {
+          "cite": "ML21, ML22",
+          "text": "Software and technology. Technology 'in the public domain' (made available without restrictions on further dissemination) is excluded from ML22.",
+          "url": "https://www.wassenaar.org/app/uploads/2026/01/Stand-alone-Munitions-List-2025-Corr.pdf"
+        }
+      ],
+      "changes": [
+        {
+          "date": "2025-12",
+          "text": "2025 Plenary amendments incorporated into the current lists (published Jan 2026).",
+          "url": "https://www.wassenaar.org/control-lists/"
+        }
+      ],
+      "notes": "",
+      "sources": [
+        {
+          "label": "Wassenaar Arrangement, Control Lists",
+          "url": "https://www.wassenaar.org/control-lists/"
+        },
+        {
+          "label": "Stand-alone Munitions List 2025 Corr. (PDF)",
+          "url": "https://www.wassenaar.org/app/uploads/2026/01/Stand-alone-Munitions-List-2025-Corr.pdf"
+        }
+      ],
+      "last_verified": "2026-10-06"
+    },
+    {
+      "id": "mtcr",
+      "short": "MTCR",
+      "name": "Missile Technology Control Regime",
+      "jurisdiction": "Multilateral",
+      "kind": "Export control regime",
+      "force": "Politically binding; implemented through national law",
+      "cite": "MTCR Guidelines and Equipment, Software and Technology Annex",
+      "administrator": "Partner countries",
+      "summary": "Category I covers complete rocket and unmanned air vehicle systems (incl. cruise missiles and target or reconnaissance drones) able to carry at least 500 kg to at least 300 km, plus major subsystems and production facilities. Category II covers other systems with 300 km range and a wide set of components.",
+      "key_provisions": [
+        {
+          "cite": "Guidelines for transfer",
+          "text": "Particular restraint for Category I transfers 'and there will be a strong presumption to deny such transfers'. Category I production facilities will not be authorized until further notice.",
+          "url": "https://www.mtcr.info/en/mtcr-guidelines/guidelines-for-transfer"
+        },
+        {
+          "cite": "MTCR Annex",
+          "text": "Category I: 300 km / 500 kg range-payload threshold. Category II: complete systems with 300 km range not in Category I, and many dual-use items.",
+          "url": "https://www.mtcr.info/en/mtcr-guidelines"
+        }
+      ],
+      "changes": [
+        {
+          "date": "2025-09-15",
+          "text": "US State Department announced it will review exports of advanced UAS similar to manned fighter aircraft rather than under the stricter missile approach, as a US reinterpretation of MTCR commitments.",
+          "url": "https://www.armscontrol.org/act/2025-10/news/us-reinterprets-mtcr-rules-fast-track-drone-sales"
+        }
+      ],
+      "notes": "The 2025 change is a US national policy; the MTCR Annex text itself was not reported as amended.",
+      "sources": [
+        {
+          "label": "MTCR Guidelines",
+          "url": "https://www.mtcr.info/en/mtcr-guidelines"
+        },
+        {
+          "label": "MTCR Guidelines for Transfer",
+          "url": "https://www.mtcr.info/en/mtcr-guidelines/guidelines-for-transfer"
+        }
+      ],
+      "last_verified": "2026-10-06"
+    },
+    {
+      "id": "att",
+      "short": "ATT",
+      "name": "Arms Trade Treaty",
+      "jurisdiction": "Multilateral",
+      "kind": "Treaty",
+      "force": "Legally binding on States Parties",
+      "cite": "New York, 2 April 2013; in force 24 Dec 2014",
+      "administrator": "States Parties (ATT Secretariat, Geneva)",
+      "summary": "Requires States Parties to regulate transfers of eight categories of conventional arms, plus their ammunition and parts, and to deny transfers that would breach embargoes or risk serious violations.",
+      "key_provisions": [
+        {
+          "cite": "Art. 2(1)",
+          "text": "Scope: battle tanks; armoured combat vehicles; large-calibre artillery; combat aircraft; attack helicopters; warships; missiles and launchers; small arms and light weapons.",
+          "url": "https://treaties.un.org/doc/Treaties/2013/04/20130410%2012-01%20PM/Ch_XXVI_08.pdf"
+        },
+        {
+          "cite": "Arts. 3-4",
+          "text": "National control systems for exports of ammunition/munitions and of parts and components for covered arms.",
+          "url": "https://treaties.un.org/doc/Treaties/2013/04/20130410%2012-01%20PM/Ch_XXVI_08.pdf"
+        },
+        {
+          "cite": "Art. 6",
+          "text": "Prohibits authorizing transfers that would violate UN Security Council Chapter VII measures, such as arms embargoes, or other international obligations.",
+          "url": "https://treaties.un.org/doc/Treaties/2013/04/20130410%2012-01%20PM/Ch_XXVI_08.pdf"
+        }
+      ],
+      "changes": [],
+      "notes": "UN Treaty Collection status (6 Oct 2026): 130 signatories, 118 parties. The United States signed in 2013 and later notified the depositary that it does not intend to become a party.",
+      "sources": [
+        {
+          "label": "UN Treaty Collection, ATT status",
+          "url": "https://treaties.un.org/Pages/ViewDetails.aspx?src=TREATY&mtdsg_no=XXVI-8&chapter=26&clang=_en"
+        }
+      ],
+      "last_verified": "2026-10-06"
+    },
+    {
+      "id": "un_salw",
+      "short": "UN PoA / ITI",
+      "name": "UN Programme of Action on Small Arms and Light Weapons and International Tracing Instrument",
+      "jurisdiction": "Multilateral",
+      "kind": "Political commitment",
+      "force": "Politically binding",
+      "cite": "UN PoA (2001); ITI (2005)",
+      "administrator": "UN Office for Disarmament Affairs",
+      "summary": "Sets out national, regional and global steps against illicit trade in small arms and light weapons; the ITI covers marking and record-keeping so weapons can be traced.",
+      "key_provisions": [
+        {
+          "cite": "UN PoA",
+          "text": "Adopted 2001. Steps include laws and administrative procedures to control SALW production and transfer, record-keeping, criminalizing illegal manufacture and trade, marking, and destroying surplus.",
+          "url": "https://www.sipri.org/sites/default/files/SIPRIYB19c09sIII.pdf"
+        },
+        {
+          "cite": "ITI (2005)",
+          "text": "Steps for marking and record-keeping so illicit SALW can be traced.",
+          "url": "https://www.sipri.org/sites/default/files/SIPRIYB19c09sIII.pdf"
+        }
+      ],
+      "changes": [],
+      "notes": "Both instruments are politically, not legally, binding.",
+      "sources": [
+        {
+          "label": "SIPRI Yearbook 2019, ch. 9 sec. III (Bromley)",
+          "url": "https://www.sipri.org/sites/default/files/SIPRIYB19c09sIII.pdf"
+        }
+      ],
+      "last_verified": "2026-10-06"
+    },
+    {
+      "id": "firearms_protocol",
+      "short": "UN Firearms Protocol",
+      "name": "Protocol against the Illicit Manufacturing of and Trafficking in Firearms (supplementing UNTOC)",
+      "jurisdiction": "Multilateral",
+      "kind": "Treaty",
+      "force": "Legally binding on States Parties",
+      "cite": "New York, 31 May 2001; in force 3 July 2005",
+      "administrator": "States Parties (UNODC)",
+      "summary": "Criminal-justice treaty on illicit manufacturing and trafficking of firearms, their parts and ammunition, incl. marking, record-keeping and import/export authorization.",
+      "key_provisions": [
+        {
+          "cite": "Art. 10",
+          "text": "Import, export and transit licensing. The EU implements Art. 10 through Regulation (EU) No 258/2012.",
+          "url": "https://home-affairs.ec.europa.eu/policies/internal-security/organised-crime/trafficking-firearms_en"
+        }
+      ],
+      "changes": [],
+      "notes": "",
+      "sources": [
+        {
+          "label": "UN Treaty Collection, Firearms Protocol status",
+          "url": "https://treaties.un.org/Pages/ViewDetails.aspx?src=TREATY&mtdsg_no=XVIII-12-c&chapter=18&clang=_en"
+        }
+      ],
+      "last_verified": "2026-10-06"
+    },
+    {
+      "id": "ccw",
+      "short": "CCW",
+      "name": "Convention on Certain Conventional Weapons and Protocols; GGE on lethal autonomous weapon systems",
+      "jurisdiction": "Multilateral",
+      "kind": "Treaty (+ expert group)",
+      "force": "Legally binding on High Contracting Parties; GGE outputs are not binding",
+      "cite": "Geneva, 10 Oct 1980; in force 2 Dec 1983",
+      "administrator": "High Contracting Parties (UNODA Geneva)",
+      "summary": "Framework treaty with protocols restricting specific weapons: Protocols I-III (1980), IV on blinding laser weapons (1995), II as amended on mines, booby-traps and other devices (1996), V on explosive remnants of war (2003). Hosts the Group of Governmental Experts on lethal autonomous weapon systems.",
+      "key_provisions": [
+        {
+          "cite": "Amended Protocol II (1996)",
+          "text": "Restrictions on mines, booby-traps and other devices.",
+          "url": "https://treaties.un.org/Pages/Treaties.aspx?id=26&subid=A&clang=_en"
+        },
+        {
+          "cite": "CCW/MSP/2023/7, para. 20",
+          "text": "GGE mandate: further consider and formulate, by consensus, a set of elements of an instrument, without prejudging its nature, and report to the Seventh Review Conference.",
+          "url": "https://docs-library.unoda.org/Convention_on_Certain_Conventional_Weapons_-Group_of_Governmental_Experts_on_Lethal_Autonomous_Weapons_Systems_(2026)/CCW-GGE.1-2026-CRP.1-Rev.1_-_03_September_.pdf"
+        }
+      ],
+      "changes": [
+        {
+          "date": "2026-09-05",
+          "text": "GGE on LAWS adopted by consensus a report completing its 2024-2026 mandate, containing a set of elements of an instrument (paras. 25-44). It goes to the Seventh Review Conference in November 2026; no negotiating mandate exists yet.",
+          "url": "https://opiniojuris.org/2026/10/05/symposium-on-the-ccw-gge-laws-the-end-of-the-beginning-an-introduction/"
+        }
+      ],
+      "notes": "UN Treaty Collection status (6 Oct 2026): 128 parties to the Convention.",
+      "sources": [
+        {
+          "label": "UN Treaty Collection, CCW status",
+          "url": "https://treaties.un.org/Pages/ViewDetails.aspx?src=TREATY&mtdsg_no=XXVI-2&chapter=26&clang=_en"
+        },
+        {
+          "label": "Human Rights Watch, 7 Sep 2026",
+          "url": "https://www.hrw.org/news/2026/09/07/un-talks-on-killer-robots-ends-with-calls-for-negotiations-growing"
+        }
+      ],
+      "last_verified": "2026-10-06"
+    },
+    {
+      "id": "unga_laws",
+      "short": "UNGA LAWS resolutions",
+      "name": "UN General Assembly resolutions on lethal autonomous weapons systems",
+      "jurisdiction": "Multilateral",
+      "kind": "Resolution",
+      "force": "Not legally binding",
+      "cite": "A/RES/78/241 (2023), A/RES/79/62 (2024), A/RES/80/57 (2025)",
+      "administrator": "UN General Assembly",
+      "summary": "Three annual resolutions on autonomous weapons. The 2025 text calls on CCW parties to complete the elements of an instrument with a view to future negotiation.",
+      "key_provisions": [
+        {
+          "cite": "A/RES/78/241",
+          "text": "Adopted 22 Dec 2023: 152 in favour, 4 against, 11 abstentions.",
+          "url": "https://un-project.org/votes/resolution/A-RES-78-241/"
+        },
+        {
+          "cite": "A/RES/79/62",
+          "text": "Adopted 2 Dec 2024: 166 in favour, 3 against, 15 abstentions.",
+          "url": "https://un-project.org/votes/resolution/A-RES-79-62/"
+        },
+        {
+          "cite": "A/RES/80/57",
+          "text": "Adopted 1 Dec 2025: 164 in favour, 6 against (incl. the United States and Russia), 7 abstentions.",
+          "url": "https://un-project.org/votes/resolution/A-RES-80-57/"
+        }
+      ],
+      "changes": [],
+      "notes": "Vote counts from un-project.org, which mirrors UN Digital Library voting records; UN record for A/RES/80/57: digitallibrary.un.org/record/4095989.",
+      "sources": [
+        {
+          "label": "UN Digital Library, A/RES/80/57",
+          "url": "https://digitallibrary.un.org/record/4095989?ln=en"
+        },
+        {
+          "label": "Stop Killer Robots on First Committee vote (6 Nov 2025)",
+          "url": "https://stopkillerrobots.org/news/156-states-support-unga-resolution"
+        }
+      ],
+      "last_verified": "2026-10-06"
+    },
+    {
+      "id": "ottawa",
+      "short": "Ottawa Convention",
+      "name": "Anti-Personnel Mine Ban Convention",
+      "jurisdiction": "Multilateral",
+      "kind": "Treaty",
+      "force": "Legally binding on States Parties",
+      "cite": "Oslo, 18 Sep 1997; in force 1 Mar 1999",
+      "administrator": "States Parties",
+      "summary": "As its full title states, prohibits the use, stockpiling, production and transfer of anti-personnel mines and provides for their destruction.",
+      "key_provisions": [
+        {
+          "cite": "Art. 20(3)",
+          "text": "Withdrawal takes effect six months after notification.",
+          "url": "https://treaties.un.org/Pages/ViewDetails.aspx?src=TREATY&mtdsg_no=XXVI-5&chapter=26&clang=_en"
+        }
+      ],
+      "changes": [
+        {
+          "date": "2025-12-27",
+          "text": "Withdrawals of Estonia, Latvia and Lithuania took effect.",
+          "url": "https://treaties.un.org/Pages/ViewDetails.aspx?src=TREATY&mtdsg_no=XXVI-5&chapter=26&clang=_en"
+        },
+        {
+          "date": "2026-01-10",
+          "text": "Withdrawal of Finland took effect.",
+          "url": "https://treaties.un.org/Pages/ViewDetails.aspx?src=TREATY&mtdsg_no=XXVI-5&chapter=26&clang=_en"
+        },
+        {
+          "date": "2026-02-20",
+          "text": "Withdrawal of Poland took effect.",
+          "url": "https://treaties.un.org/Pages/ViewDetails.aspx?src=TREATY&mtdsg_no=XXVI-5&chapter=26&clang=_en"
+        }
+      ],
+      "notes": "UN Treaty Collection status (6 Oct 2026): 162 parties. The status page does not record a withdrawal by Ukraine.",
+      "sources": [
+        {
+          "label": "UN Treaty Collection, Ottawa Convention status and notes",
+          "url": "https://treaties.un.org/Pages/ViewDetails.aspx?src=TREATY&mtdsg_no=XXVI-5&chapter=26&clang=_en"
+        }
+      ],
+      "last_verified": "2026-10-06"
+    },
+    {
+      "id": "ccm",
+      "short": "Cluster Munitions Convention",
+      "name": "Convention on Cluster Munitions",
+      "jurisdiction": "Multilateral",
+      "kind": "Treaty",
+      "force": "Legally binding on States Parties",
+      "cite": "Dublin, 30 May 2008; in force 1 Aug 2010",
+      "administrator": "States Parties",
+      "summary": "Prohibits use, development, production, acquisition, stockpiling, retention and transfer of cluster munitions as defined in the Convention.",
+      "key_provisions": [
+        {
+          "cite": "Art. 1(1)",
+          "text": "Each State Party undertakes never to use cluster munitions; develop, produce, otherwise acquire, stockpile, retain or transfer them; or assist anyone in prohibited activity.",
+          "url": "https://ihl-databases.icrc.org/en/ihl-treaties/ccm-2008/article-1"
+        },
+        {
+          "cite": "Art. 20(3)",
+          "text": "Withdrawal takes effect six months after notification.",
+          "url": "https://treaties.un.org/Pages/ViewDetails.aspx?src=TREATY&mtdsg_no=XXVI-6&chapter=26&clang=_en"
+        }
+      ],
+      "changes": [
+        {
+          "date": "2025-03-06",
+          "text": "Withdrawal of Lithuania took effect.",
+          "url": "https://treaties.un.org/Pages/ViewDetails.aspx?src=TREATY&mtdsg_no=XXVI-6&chapter=26&clang=_en"
+        }
+      ],
+      "notes": "UN Treaty Collection status (6 Oct 2026): 112 parties.",
+      "sources": [
+        {
+          "label": "UN Treaty Collection, CCM status",
+          "url": "https://treaties.un.org/Pages/ViewDetails.aspx?src=TREATY&mtdsg_no=XXVI-6&chapter=26&clang=_en"
+        }
+      ],
+      "last_verified": "2026-10-06"
+    },
+    {
+      "id": "eu_cp",
+      "short": "EU Common Position",
+      "name": "Council Common Position 2008/944/CFSP on exports of military technology and equipment",
+      "jurisdiction": "EU",
+      "kind": "CFSP Common Position",
+      "force": "Legally binding on Member States",
+      "cite": "Common Position 2008/944/CFSP (8 Dec 2008), amended by Decision (CFSP) 2019/1560",
+      "administrator": "EU Member States (Council Working Party COARM)",
+      "summary": "Member States assess licence applications for items on the EU Common Military List case by case against the criteria in Article 2, starting with international obligations such as sanctions and embargoes.",
+      "key_provisions": [
+        {
+          "cite": "Art. 1-2 (as amended 2019)",
+          "text": "Case-by-case assessment against Article 2 criteria; Member States encouraged to reassess licences when new information arises.",
+          "url": "https://www.legislation.gov.uk/eudn/2019/1560"
+        }
+      ],
+      "changes": [
+        {
+          "date": "2019-09-16",
+          "text": "Decision (CFSP) 2019/1560 amended the Common Position after a Council review.",
+          "url": "https://data.consilium.europa.eu/doc/document/ST-12195-2019-INIT/en/pdf"
+        }
+      ],
+      "notes": "EUR-Lex was not fully available on 6 Oct 2026; text checked through legislation.gov.uk (EU-origin archive) and a Council document.",
+      "sources": [
+        {
+          "label": "Council Decision (CFSP) 2019/1560 (legislation.gov.uk)",
+          "url": "https://www.legislation.gov.uk/eudn/2019/1560"
+        },
+        {
+          "label": "Council conclusions, 16 Sep 2019 (12195/19)",
+          "url": "https://data.consilium.europa.eu/doc/document/ST-12195-2019-INIT/en/pdf"
+        }
+      ],
+      "last_verified": "2026-10-06"
+    },
+    {
+      "id": "eu_dualuse",
+      "short": "EU Dual-Use Reg.",
+      "name": "Regulation (EU) 2021/821 on dual-use items",
+      "jurisdiction": "EU",
+      "kind": "Regulation",
+      "force": "Directly applicable in Member States",
+      "cite": "Regulation (EU) 2021/821, Annex I control list",
+      "administrator": "European Commission and national authorities",
+      "summary": "Common EU export control rules for dual-use items: shared assessment criteria, authorization types, a common EU dual-use list and end-use controls. Military-list items fall under national law and the Common Position instead.",
+      "key_provisions": [
+        {
+          "cite": "Annex I",
+          "text": "EU dual-use control list, updated by delegated regulation to track regime changes.",
+          "url": "https://policy.trade.ec.europa.eu/help-exporters-and-importers/exporting-dual-use-items_en"
+        }
+      ],
+      "changes": [
+        {
+          "date": "2026-09-14",
+          "text": "Commission adopted a Delegated Regulation updating the Annex I list.",
+          "url": "https://policy.trade.ec.europa.eu/help-exporters-and-importers/exporting-dual-use-items_en"
+        }
+      ],
+      "notes": "",
+      "sources": [
+        {
+          "label": "European Commission, Exporting dual-use items",
+          "url": "https://policy.trade.ec.europa.eu/help-exporters-and-importers/exporting-dual-use-items_en"
+        }
+      ],
+      "last_verified": "2026-10-06"
+    },
+    {
+      "id": "eu_firearms",
+      "short": "EU Firearms Directive",
+      "name": "Firearms Directive (EU) 2021/555 and Firearms Regulation (EU) No 258/2012",
+      "jurisdiction": "EU",
+      "kind": "Directive + Regulation",
+      "force": "Binding (Directive via national law; Regulation directly applicable)",
+      "cite": "Directive (EU) 2021/555; Regulation (EU) No 258/2012",
+      "administrator": "European Commission and national authorities",
+      "summary": "The Directive sets minimum common rules on acquisition and possession of civilian firearms and intra-EU transfers. The Regulation governs export, import and transit of civilian firearms, parts and ammunition and does not apply to firearms for military or police use.",
+      "key_provisions": [
+        {
+          "cite": "Directive (EU) 2021/555",
+          "text": "Minimum rules on acquisition, possession and intra-EU transfer of civilian firearms.",
+          "url": "https://home-affairs.ec.europa.eu/policies/internal-security/organised-crime/trafficking-firearms_en"
+        },
+        {
+          "cite": "Regulation (EU) No 258/2012",
+          "text": "Export, import and transit of civilian firearms; implements Art. 10 of the UN Firearms Protocol.",
+          "url": "https://home-affairs.ec.europa.eu/policies/internal-security/organised-crime/trafficking-firearms_en"
+        }
+      ],
+      "changes": [
+        {
+          "date": "2022-10-27",
+          "text": "Commission proposed a recast of the Firearms Regulation (status not checked here).",
+          "url": "https://home-affairs.ec.europa.eu/policies/internal-security/organised-crime/trafficking-firearms_en"
+        }
+      ],
+      "notes": "",
+      "sources": [
+        {
+          "label": "European Commission, Trafficking in firearms",
+          "url": "https://home-affairs.ec.europa.eu/policies/internal-security/organised-crime/trafficking-firearms_en"
+        }
+      ],
+      "last_verified": "2026-10-06"
+    }
+  ]
+}

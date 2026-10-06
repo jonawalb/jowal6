@@ -1,0 +1,255 @@
+{
+ "actors": [
+  {
+   "id": "isis",
+   "name": "Islamic State (Iraq and Syria)",
+   "short": "Islamic State",
+   "type": "Armed group",
+   "region": "Iraq and Syria; online",
+   "state_backed": false,
+   "summary": "The Islamic State ran the most extensive non-state drone programme of 2014-2017. It moved from aerial reconnaissance and propaganda filming in Syria in 2014 to a managed drone unit under its military manufacturing committee, then to armed commercial quadcopters used at scale around Mosul. Use peaked in spring 2017 and fell as the group lost territory; since 2024 supporter networks have circulated drone guidance online.",
+   "sources": [
+    {
+     "publisher": "Combating Terrorism Center at West Point",
+     "title": "The Islamic State and Drones: Supply, Scale, and Future Threats",
+     "url": "https://ctc.westpoint.edu/islamic-state-drones-supply-scale-future-threats/"
+    },
+    {
+     "publisher": "Combating Terrorism Center at West Point",
+     "title": "The Islamic State's Drone Documents: Management, Acquisitions, and DIY Tradecraft",
+     "url": "https://ctc.westpoint.edu/ctc-perspectives-the-islamic-states-drone-documents-management-acquisitions-and-diy-tradecraft"
+    }
+   ]
+  },
+  {
+   "id": "hamas",
+   "name": "Hamas (Izz ad-Din al-Qassam Brigades)",
+   "short": "Hamas",
+   "type": "Armed group",
+   "region": "Gaza and Israel",
+   "state_backed": false,
+   "summary": "Hamas's armed wing has run an in-house drone programme for years, which it credits to engineer Mohamed Zouari, killed in 2016. It showed reconnaissance drones in 2014 and one-way attack drones in 2021. On 7 October 2023 it used small drones at the opening of a combined assault, which researchers describe as a watershed in non-state drone use.",
+   "state_note": "Hamas receives Iranian support, but the cases here concern drones it says it produced itself; it is not flagged as state-backed in the filters.",
+   "sources": [
+    {
+     "publisher": "ICCT / Perspectives on Terrorism",
+     "title": "Drones and the Hamas-led Attack of 7 October 2023: Innovation and Implications",
+     "url": "https://pt.icct.nl/article/drones-and-hamas-led-attack-7-october-2023-innovation-and-implications"
+    },
+    {
+     "publisher": "Al Majalla",
+     "title": "Mohamed Zouari: The Tunisian engineer behind Hamas drones",
+     "url": "https://en.majalla.com/node/301776"
+    }
+   ]
+  },
+  {
+   "id": "houthis",
+   "name": "Houthis (Ansar Allah)",
+   "short": "Houthis",
+   "type": "Armed movement (state-backed)",
+   "region": "Yemen, Gulf, Red Sea, Israel",
+   "state_backed": true,
+   "summary": "Ansar Allah controls much of northern Yemen and has used one-way attack drones against Yemeni government leaders, Saudi and Emirati infrastructure and airports, Red Sea shipping and Israel. Its claims are sometimes contested: UN monitors rejected its claim to the 2019 Abqaiq attack.",
+   "state_note": "The UN Panel of Experts on Yemen documents Iranian-supplied drone systems and technology combined with commercially sourced parts. Its capabilities are not representative of unsupported groups.",
+   "sources": [
+    {
+     "publisher": "Washington Institute for Near East Policy",
+     "title": "The UN Exposes Houthi Reliance on Iranian Weapons",
+     "url": "https://www.washingtoninstitute.org/policy-analysis/un-exposes-houthi-reliance-iranian-weapons"
+    },
+    {
+     "publisher": "Bellingcat",
+     "title": "Houthis Use Armed Drone to Target Yemeni Army Top Brass",
+     "url": "https://www.bellingcat.com/news/mena/2019/01/10/houthis-use-armed-drone-to-target-yemeni-army-top-brass"
+    }
+   ]
+  },
+  {
+   "id": "hezbollah",
+   "name": "Hezbollah",
+   "short": "Hezbollah",
+   "type": "Armed group (state-backed)",
+   "region": "Lebanon and Israel",
+   "state_backed": true,
+   "summary": "Hezbollah has flown drones into Israeli airspace since 2004. In the 2024 war its attack drones killed four soldiers at a training base near Binyamina and hit the prime minister's private home in Caesarea.",
+   "state_note": "Researchers describe its drones as supplied by Iran. Included for comparison; its capabilities sit closer to a state military than to most groups here.",
+   "sources": [
+    {
+     "publisher": "Federation of American Scientists",
+     "title": "Hezbollah and the Use of Drones as a Weapon of Terrorism",
+     "url": "https://fas.org/publication/hezbollah-use-drones-weapon-terrorism/"
+    }
+   ]
+  },
+  {
+   "id": "mexico_cartels",
+   "name": "Mexican cartels",
+   "short": "Mexican cartels",
+   "type": "Criminal organisations",
+   "region": "Mexico and US border",
+   "state_backed": false,
+   "summary": "Mexican criminal groups have used drones to move drugs across the US border since at least 2015. Armed use appeared in 2017-18 and grew quickly from 2020, led by the CJNG, which fields a dedicated drone unit; CSIS cites 5 attacks in 2020 rising to 260 in the first half of 2023. La Nueva Familia Michoacana, Los Viagras and warring Sinaloa factions have since adopted the tactic, mostly against rivals, self-defence groups and rural communities.",
+   "sources": [
+    {
+     "publisher": "CSIS",
+     "title": "Illicit Innovation: Latin America Is Not Prepared to Fight Criminal Drones",
+     "url": "https://www.csis.org/analysis/illicit-innovation-latin-america-not-prepared-fight-criminal-drones"
+    },
+    {
+     "publisher": "Cronkite News",
+     "title": "Senators told of alarming level of drone incursions at southern border",
+     "url": "https://cronkitenews.azpbs.org/2024/03/28/senators-told-of-alarming-level-of-drone-incursions-at-southern-border/"
+    }
+   ]
+  },
+  {
+   "id": "colombia_groups",
+   "name": "Colombian armed groups (FARC dissidents, ELN)",
+   "short": "Colombian armed groups",
+   "type": "Armed groups",
+   "region": "Colombia",
+   "state_backed": false,
+   "summary": "FARC dissident fronts, especially those of the EMC under Iván Mordisco, led drone attacks in Colombia; the ELN and Clan del Golfo followed. Most attacks target military and police in Cauca, Catatumbo and Antioquia, but civilian casualties are rising. ACLED counts rose from 1 attack in 2023 to 38 in 2024 and 149 in 2025; Ministry of Defence counts are higher.",
+   "sources": [
+    {
+     "publisher": "Al Jazeera",
+     "title": "'I always hear them before I see them': Drones strike fear in Colombia",
+     "url": "https://www.aljazeera.com/news/longform/2026/5/22/i-always-hear-them-before-i-see-them-drones-strike-fear-in-colombia"
+    },
+    {
+     "publisher": "ACLED",
+     "title": "Drones reshape war in Colombia as deaths and injuries mount (The Guardian, media citation)",
+     "url": "https://acleddata.com/media-citation/drones-reshape-war-colombia-deaths-and-injuries-mount-guardian"
+    }
+   ]
+  },
+  {
+   "id": "sahel_jihadists",
+   "name": "Sahel and Lake Chad jihadist groups (JNIM, IS Sahel, ISWAP)",
+   "short": "Sahel / Lake Chad jihadists",
+   "type": "Armed groups",
+   "region": "West Africa",
+   "state_backed": false,
+   "summary": "The al-Qaeda affiliate JNIM began armed drone use in Mali in September 2023 and has since extended it to Burkina Faso and Togo. Islamic State affiliates followed: ISWAP in north-east Nigeria from December 2024 and Islamic State Sahel in Niger in 2025. Reporting describes reliance on commercial quadcopters.",
+   "sources": [
+    {
+     "publisher": "ACLED",
+     "title": "Africa Overview: April 2025",
+     "url": "https://acleddata.com/2025/04/04/africa-overview-april-2025"
+    },
+    {
+     "publisher": "Lawfare",
+     "title": "African Non-State Actors Put Drones on the Attack",
+     "url": "https://www.lawfaremedia.org/article/african-non-state-actors-put-drones-on-the-attack"
+    }
+   ]
+  },
+  {
+   "id": "somalia_jihadists",
+   "name": "Somali jihadist groups (al-Shabaab, IS Somalia)",
+   "short": "Somali jihadists",
+   "type": "Armed groups",
+   "region": "East Africa",
+   "state_backed": false,
+   "summary": "Al-Shabaab has mainly used drones for propaganda and surveillance, and UN monitors report it sought weapons and training from the Houthis in 2024. Islamic State Somalia carried out its first recorded drone strikes in January 2025 against Puntland forces.",
+   "sources": [
+    {
+     "publisher": "ISS Africa",
+     "title": "Houthis in Somalia: friends with technological benefits",
+     "url": "https://issafrica.org/iss-today/houthis-in-somalia-friends-with-technological-benefits"
+    }
+   ]
+  },
+  {
+   "id": "myanmar_resistance",
+   "name": "Myanmar resistance forces (PDFs, ethnic armed organisations)",
+   "short": "Myanmar resistance",
+   "type": "Armed groups",
+   "region": "Myanmar",
+   "state_backed": false,
+   "summary": "After the 2021 coup, People's Defence Forces under the National Unity Government and allied ethnic armed organisations built drone units from commercial and locally made aircraft, in effect their only air force. ACLED records more than 2,100 resistance drone strike events since December 2021.",
+   "sources": [
+    {
+     "publisher": "ACLED",
+     "title": "War in the sky: How drone warfare is shaping the conflict in Myanmar",
+     "url": "https://acleddata.com/report/war-sky-how-drone-warfare-shaping-conflict-myanmar"
+    },
+    {
+     "publisher": "Myanmar Now",
+     "title": "Myanmar's resistance 'air force' flies high in fight against regime",
+     "url": "https://myanmar-now.org/en/news/myanmars-resistance-air-force-flies-high-in-fight-against-regime"
+    }
+   ]
+  },
+  {
+   "id": "other_nonstate",
+   "name": "Other non-state actors (Venezuela plot, PKK, Punjab smugglers)",
+   "short": "Other non-state",
+   "type": "Mixed",
+   "region": "Various",
+   "state_backed": false,
+   "summary": "Single well-sourced cases from outside the main theatres: the unattributed 2018 drone attack at a Caracas military parade, the PKK's use of commercial drones against Turkish forces, and cross-border drone drug drops into Indian Punjab. Each case notes its attribution limits.",
+   "sources": [
+    {
+     "publisher": "Bellingcat",
+     "title": "Did Drones Attack Maduro in Caracas?",
+     "url": "https://www.bellingcat.com/news/2018/08/07/drones-attack-maduro-caracas/"
+    }
+   ]
+  },
+  {
+   "id": "prison_contraband",
+   "name": "Prison contraband networks",
+   "short": "Prison contraband",
+   "type": "Criminal networks (non-violent misuse)",
+   "region": "UK, US, Canada, Brazil",
+   "state_backed": false,
+   "summary": "Organised crime groups, often working with inmates who coordinate by smuggled phone, use commercial drones to deliver drugs, phones and weapons into prisons. UK government data recorded 1,712 prison drone incidents in England and Wales in 2024-25, and the Chief Inspector of Prisons called the problem a national security threat.",
+   "sources": [
+    {
+     "publisher": "UK Ministry of Justice",
+     "title": "Counter-drone efforts rise as prison sightings revealed",
+     "url": "https://www.gov.uk/government/news/counter-drone-efforts-rise-as-prison-sightings-revealed"
+    },
+    {
+     "publisher": "HM Inspectorate of Prisons",
+     "title": "Drones dropping drugs and weapons into high security prisons are a threat to national security",
+     "url": "https://hmiprisons.justiceinspectorates.gov.uk/news/drones-dropping-drugs-and-weapons-into-high-security-prisons-are-a-threat-to-national-security"
+    }
+   ]
+  },
+  {
+   "id": "airport_disruption",
+   "name": "Airport disruption (unidentified operators)",
+   "short": "Airport disruption",
+   "type": "Unidentified operators (non-violent misuse)",
+   "region": "Europe, US, Gulf",
+   "state_backed": false,
+   "summary": "Reported drone sightings near runways have suspended flights at major hubs, including Gatwick in 2018, Heathrow, Newark and Dubai in 2019 and Frankfurt in 2020. Operators are rarely identified: the Gatwick investigation closed without charges, and many sightings are never confirmed.",
+   "sources": [
+    {
+     "publisher": "LBC",
+     "title": "Gatwick drone investigation closed by police",
+     "url": "https://www.lbc.co.uk/article/gatwick-drone-investigation-closed-by-police-DWyg8Z_2/"
+    }
+   ]
+  },
+  {
+   "id": "protest_individuals",
+   "name": "Activists, individuals and unattributed overflights",
+   "short": "Activists / individuals",
+   "type": "Individuals (non-violent misuse)",
+   "region": "Europe, Japan, US",
+   "state_backed": false,
+   "summary": "Activists have used small drones as protest tools near leaders and sensitive sites, as in Dresden in 2013, Tokyo in 2015 and at Heathrow in 2019. The cluster also holds unattributed overflights of French nuclear plants and Paris landmarks in 2014-15, and one accidental crash at the White House for contrast. Each case is labelled deliberate, unattributed or accidental.",
+   "sources": [
+    {
+     "publisher": "Center for the Study of the Drone, Bard College",
+     "title": "A Pirate Drone in Germany",
+     "url": "https://dronecenter.bard.edu/pirate-drone-germany"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,76 @@
+{
+  "kappa_by_cohort_pair": {
+    "tenured + tenured": 0.7501,
+    "new-2026-03 + tenured": 0.6263,
+    "new-2026-03 + new-2026-03": 0.5064
+  },
+  "alpha_overall": 0.698,
+  "n_double": 3916,
+  "prf_vs_final_label": {
+    "firearms": {
+      "precision": 0.7962,
+      "recall": 0.6571,
+      "f1": 0.72
+    },
+    "explosives-conventional": {
+      "precision": 0.8294,
+      "recall": 0.7385,
+      "f1": 0.7813
+    },
+    "drones-uas": {
+      "precision": 0.795,
+      "recall": 0.6967,
+      "f1": 0.7426
+    },
+    "ammunition": {
+      "precision": 0.7522,
+      "recall": 0.6617,
+      "f1": 0.7041
+    },
+    "weapons-trafficking": {
+      "precision": 0.8618,
+      "recall": 0.778,
+      "f1": 0.8178
+    },
+    "military-tech-dual-use": {
+      "precision": 0.7223,
+      "recall": 0.6298,
+      "f1": 0.6729
+    },
+    "other": {
+      "precision": 0.6315,
+      "recall": 0.4653,
+      "f1": 0.5358
+    }
+  },
+  "prf_vs_latent_truth_NOT_EXPORTED": {
+    "firearms": {
+      "precision": 0.8145,
+      "recall": 0.9236
+    },
+    "explosives-conventional": {
+      "precision": 0.8638,
+      "recall": 0.8982
+    },
+    "drones-uas": {
+      "precision": 0.8106,
+      "recall": 0.9434
+    },
+    "ammunition": {
+      "precision": 0.7601,
+      "recall": 0.9395
+    },
+    "weapons-trafficking": {
+      "precision": 0.8996,
+      "recall": 0.9372
+    },
+    "military-tech-dual-use": {
+      "precision": 0.7307,
+      "recall": 0.9507
+    },
+    "other": {
+      "precision": 0.6196,
+      "recall": 0.9101
+    }
+  }
+}

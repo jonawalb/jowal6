@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>Weapons Policy and Enforcement Portfolio | Jonathan Walberg</title>
+    <meta name="description" content="Interactive tools on weapons-content enforcement, review-workflow health, threat-actor tracking and conventional-weapons law, by Jonathan Walberg.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cormorant+Garamond:ital,wght@1,400;1,500;1,600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        #pf-hero.section { padding: calc(var(--nav-h) + 48px) 28px 24px; }
+        #pf-hero .container, .pf-sec .container { max-width: 1280px; }
+        .pf-intro { max-width: 72ch; }
+        .pf-intro .section-title { font-size: clamp(2rem, 2.6vw, 2.7rem); margin-bottom: 20px; }
+        .pf-intro p { font-size: clamp(1rem, 1.05vw, 1.12rem); line-height: 1.65; margin-bottom: 1rem; }
+        .pf-skills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; list-style: none; padding: 0; }
+        .pf-skills li { font-size: .8rem; font-weight: 600; color: var(--green-800); background: var(--green-50); border: 1px solid var(--green-200); border-radius: 999px; padding: 5px 12px; }
+        .pf-sec.section { padding: 32px 28px 40px; }
+        .pf-sec h2 { font-family: var(--font-serif); font-size: clamp(1.5rem, 2vw, 1.9rem); color: var(--green-900); margin: 0 0 6px; }
+        .pf-sec .pf-sub { margin: 0 0 22px; color: var(--text-muted); font-size: .95rem; max-width: 80ch; }
+        .tk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 22px; list-style: none; padding: 0; margin: 0; }
+        .tk { position: relative; display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+            transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+        .tk:hover, .tk:focus-within { transform: translateY(-3px); border-color: var(--green-300); box-shadow: 0 16px 34px -22px rgba(26, 58, 42, .5); }
+        .tk:focus-within { outline: 3px solid var(--accent-glow); outline-offset: 2px; }
+        .tk-media { position: relative; aspect-ratio: 16 / 10; background: #0b1712; overflow: hidden; }
+        .tk-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; }
+        .tk-media iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; pointer-events: none; }
+        .tk-media .ph { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 20px;
+            font-family: var(--font-serif); font-size: 1.35rem; color: #e8efe9; background: radial-gradient(120% 90% at 20% 10%, #234d38 0%, #0b1712 70%); }
+        .tk-media .ph small { display: block; font-family: var(--font-sans); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: #8ec4a0; margin-top: 8px; }
+        .tk-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+        .tk-meta { display: flex; gap: 6px; flex-wrap: wrap; }
+        .tk-tag { font-size: .7rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--green-700); background: var(--green-50);
+            border: 1px solid var(--green-200); border-radius: 999px; padding: 3px 9px; }
+        .tk-tag.lock { color: #8a5a12; background: #fbf3e4; border-color: #ecd3a6; }
+        .tk h3 { font-family: var(--font-serif); font-size: 1.25rem; color: var(--green-900); margin: 2px 0 0; line-height: 1.25; }
+        .tk h3 a { color: inherit; text-decoration: none; }
+        .tk h3 a::after { content: ''; position: absolute; inset: 0; z-index: 2; }
+        .tk h3 a:focus-visible { outline: none; }
+        .tk p { margin: 0; color: var(--text-muted); font-size: .93rem; line-height: 1.55; }
+        .tk .shows { color: var(--text); font-size: .88rem; }
+        .tk .shows b { color: var(--green-800); font-weight: 600; }
+        .tk-open { margin-top: auto; padding-top: 6px; color: var(--green-700); font-weight: 600; font-size: .88rem; }
+        .pf-note { margin-top: 24px; font-size: .88rem; color: var(--text-muted); max-width: 80ch; }
+        @media (max-width: 520px) {
+            #pf-hero.section, .pf-sec.section { padding-left: 16px; padding-right: 16px; }
+        }
+        @media (prefers-reduced-motion: reduce) { .tk, .tk:hover, .tk:focus-within { transition: none; transform: none; } }
+    </style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+
+<main>
+<section class="section section-alt" id="pf-hero">
+    <div class="container">
+        <div class="pf-intro">
+            <h2 class="section-title">Weapons Policy and Enforcement</h2>
+            <p>Tools on judging weapons content, measuring a review queue, tracking how armed groups adopt new technology, and the law that governs conventional arms. The first four were built for this page. The rest come from trackers I run for Taiwan Security Monitor and my own research.</p>
+            <ul class="pf-skills" aria-label="Skills shown">
+                <li>Uplift vs. education calls</li><li>SQL workflow metrics</li><li>Threat-actor profiling</li>
+                <li>OSINT collection at scale</li><li>Export controls and arms law</li><li>Python pipelines</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section class="section pf-sec" id="built">
+    <div class="container">
+        <h2>Enforcement tools</h2>
+        <p class="pf-sub">Open access. Each has a Method &amp; sources panel. Scenarios describe requests by category and never include harmful detail.</p>
+        <ul class="tk-grid" id="grid-new"></ul>
+        <p class="pf-note">Built with an AI coding assistant. Sources, verification and limits are documented in each tool's Method panel.</p>
+    </div>
+</section>
+
+<section class="section section-alt pf-sec" id="live">
+    <div class="container">
+        <h2>From live projects</h2>
+        <p class="pf-sub">Running trackers built on open-source collection. Some sit behind a password; access on request.</p>
+        <ul class="tk-grid" id="grid-live"></ul>
+        <p class="pf-note" id="pf-count"></p>
+    </div>
+</section>
+</main>
+
+<script>
+(() => {
+    // [href, title, line, shows, tags, media, locked]
+    // media: 'img:<path>' screenshot, 'mo:<path>' trailer (poster frame), 'ph:<label>' placeholder.
+    const NEW = [
+        ['uplift-line/', "Where's the Uplift Line?", 'A triage trainer for conventional-weapons requests to an AI assistant. Make the call, then compare it with a reference call and the rubric behind it.',
+            'Telling general education apart from operational uplift; over-refusal as a real error', ['Content policy', 'Triage', 'Evals'], 'img:img/uplift-line.webp', 0],
+        ['enforcement-ops/', 'Enforcement Ops', 'Health and quality of a weapons-policy review queue: backlog, time to decision, reviewer agreement, classifier precision and recall, drift alerts. Every chart has its SQL in a live console.',
+            'SQL, workflow monitoring, inter-rater reliability (synthetic data)', ['SQL', 'Workflow health', 'Metrics'], 'img:img/enforcement-ops.webp', 0],
+        ['drone-threat-matrix/', 'Non-State Drone Misuse Matrix', 'How armed groups and criminal networks have misused commercial drones, laid out ATT&CK-style by tactic and actor, with every case sourced.',
+            'Threat-actor profiling, emerging-risk tracking, autonomous systems', ['Threat intel', 'ATT&CK-style', 'UAS'], 'img:img/drone-threat-matrix.webp', 0],
+        ['weapons-regimes/', 'Conventional Weapons Regime Explorer', 'Which rules govern an item or a piece of technical information: ITAR, EAR, NFA, Wassenaar, MTCR, the Arms Trade Treaty, CCW and more, linked to primary text.',
+            'Legal and regulatory frameworks; when information itself is controlled', ['ITAR / EAR', 'Arms control', 'Regulation'], 'img:img/weapons-regimes.webp', 0],
+    ];
+    const LIVE = [
+        ['/narratives/tools/rhetoric-search/', 'Rhetoric Search', 'Full-text search across official statements and state media from Russia, China, Iran and more, with tone and topic trends.',
+            'Collection pipelines at scale, monitoring state actors across sources', ['OSINT', 'Python', 'Search'], 'mo:/narratives/motion/rhetoric-search/?poster', 1],
+        ['/narratives/tools/rhetoric-global/', 'Rhetoric Heatmaps', 'The phrases the Kremlin and Iran's Foreign Ministry keep repeating, week by week, each count linked to the statement it came from.',
+            'Tracking narratives over time, traceable evidence', ['Narratives', 'State actors'], 'mo:/narratives/motion/rhetoric-global/?poster', 0],
+        ['arms-backlog/', 'Arms Sales Backlog', 'Every U.S. arms sale Taiwan is still waiting for, from congressional notification to delivery. Opens on Taiwan Security Monitor.',
+            'Foreign Military Sales process, conventional systems, provenance from archived notifications', ['Conventional arms', 'FMS', 'TSM'], 'ph:Arms Sales Backlog|taiwanmonitor.com', 1],
+        ['warning-board/', 'Indicators & Warning Board', '33 sourced indicators that separate a PLA exercise from preparation for war. Opens on Taiwan Security Monitor.',
+            'Indications and warning tradecraft', ['I&W', 'PLA', 'TSM'], 'mo:/interactive/motion/warning-board/?poster', 1],
+        ['ccg-grayzone/', 'CCG Gray-Zone Map', 'Every China Coast Guard incident Taiwan Security Monitor has recorded since June 2024, on a map with a time slider. Opens on Taiwan Security Monitor.',
+            'Incident coding, pattern tracking', ['Gray zone', 'Maritime', 'TSM'], 'ph:CCG Gray-Zone Map|taiwanmonitor.com', 1],
+        ['/deterrence-playground/tools/interceptor-burndown/', 'Interceptor Burn-down', "Set a daily missile and drone salvo against open-source estimates of Taiwan's Patriot and Tien Kung stocks and see when each runs dry.",
+            'Weapons-systems reasoning from open sources', ['Air defense', 'Modeling'], 'mo:/interactive/motion/interceptor-burndown/?poster', 1],
+        ['/deterrence-playground/tools/ukraine-air-war/', "Ukraine's Air War", 'Russian missile and drone launches against Ukraine since 2022, by weapon type, with the share Ukraine reported shooting down.',
+            'Drone and missile employment data', ['UAS', 'Missiles', 'Ukraine'], 'mo:/interactive/motion/ukraine-air-war/?poster', 1],
+        ['/deterrence-playground/tools/red-sea-hormuz/', 'Red Sea & Hormuz Pulse', 'Daily ship counts through Bab el-Mandeb, Suez and Hormuz against a sourced timeline of Houthi attacks, strikes and pauses.',
+            'Non-state attacks on critical infrastructure', ['Houthis', 'Shipping'], 'img:/interactive/img/red-sea-hormuz.webp', 1],
+    ];
+    const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    function media(m, title) {
+        const [k, v] = [m.slice(0, m.indexOf(':')), m.slice(m.indexOf(':') + 1)];
+        if (k === 'img') return `<img src="${v}" alt="" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'ph',textContent:${esc(JSON.stringify(title))}}))">`;
+        if (k === 'mo') return `<iframe src="${v}" title="Preview of ${esc(title)}" tabindex="-1" aria-hidden="true" loading="lazy"></iframe>`;
+        const [a, b] = v.split('|');
+        return `<div class="ph">${esc(a)}<small>${esc(b || '')}</small></div>`;
+    }
+    const card = ([href, title, line, shows, tags, m, locked]) => `
+        <li class="tk">
+            <div class="tk-media">${media(m, title)}</div>
+            <div class="tk-body">
+                <div class="tk-meta">${tags.map(t => `<span class="tk-tag">${esc(t)}</span>`).join('')}${locked ? '<span class="tk-tag lock">Password</span>' : ''}</div>
+                <h3><a href="${href}">${esc(title)}</a></h3>
+                <p>${esc(line)}</p>
+                <p class="shows"><b>Shows:</b> ${esc(shows)}</p>
+                <span class="tk-open" aria-hidden="true">Open →</span>
+            </div>
+        </li>`;
+    document.getElementById('grid-new').innerHTML = NEW.map(card).join('');
+    document.getElementById('grid-live').innerHTML = LIVE.map(card).join('');
+    fetch('https://huggingface.co/datasets/wallabee1/rhetoric-search-data/resolve/main/data/stats.json', { cache: 'no-cache' })
+        .then(r => r.ok ? r.json() : Promise.reject())
+        .then(s => {
+            const n = x => Number(x).toLocaleString('en-US');
+            document.getElementById('pf-count').textContent = `Rhetoric Search currently holds ${n(s.documents)} documents (${n(s.official_docs)} official statements, ${n(s.media_docs)} media articles), updated ${s.built.slice(0, 10)}.`;
+        })
+        .catch(() => {});
+})();
+</script>
+
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+
+<script src="/script.js"></script>
+</body>
+</html>

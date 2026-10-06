@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Non-State Drone Misuse Matrix | Jonathan Walberg</title>
+<meta name="description" content="An ATT&CK-style matrix of documented non-state misuse of commercial and small drones, built from public, cited reporting.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="topbar" aria-label="Site">
+  <a href="../">&larr; Portfolio</a>
+  <a href="/">jwalberg.com</a>
+</nav>
+
+<main class="wrap">
+  <header class="page">
+    <h1>Non-State Drone Misuse Matrix</h1>
+    <p>How armed groups, criminal networks and individuals have misused commercial and small drones, organised as tactics and techniques in the style of MITRE ATT&amp;CK. Every case links to public reporting.</p>
+    <p class="notice">Techniques are described at category level only. The matrix records <em>that</em> something happened and where it was reported, never how it was done.</p>
+    <div class="stats" id="stats" aria-live="polite"></div>
+  </header>
+
+  <div class="tabs" role="tablist" aria-label="Views">
+    <button role="tab" id="tab-matrix" aria-controls="view-matrix" aria-selected="true">Matrix</button>
+    <button role="tab" id="tab-timeline" aria-controls="view-timeline" aria-selected="false" tabindex="-1">Timeline</button>
+    <button role="tab" id="tab-actors" aria-controls="view-actors" aria-selected="false" tabindex="-1">Actor profiles</button>
+    <button role="tab" id="tab-method" aria-controls="view-method" aria-selected="false" tabindex="-1">Method &amp; sources</button>
+  </div>
+
+  <section id="view-matrix" role="tabpanel" aria-labelledby="tab-matrix">
+    <div class="controls">
+      <label>Actor or cluster
+        <select id="f-actor"></select>
+      </label>
+      <label>Confidence
+        <select id="f-conf">
+          <option value="all">All levels</option>
+          <option value="well-documented">Well-documented only</option>
+          <option value="reported">Well-documented + reported</option>
+        </select>
+      </label>
+      <div class="legend" aria-hidden="true">Fewer <i style="background:var(--heat1)"></i><i style="background:var(--heat2)"></i><i style="background:var(--heat3)"></i><i style="background:var(--heat4)"></i><i style="background:var(--heat5)"></i> More cases</div>
+    </div>
+    <div class="matrix-scroll"><div class="matrix" id="matrix"></div></div>
+    <p style="font-size:13px;color:var(--muted);margin-top:12px">Select a technique to see its cases. Select a tactic header or "Signals" for notes on how requests to an AI assistant map onto that tactic.</p>
+  </section>
+
+  <section id="view-timeline" role="tabpanel" aria-labelledby="tab-timeline" hidden>
+    <div class="card tl">
+      <p style="margin:0 0 10px;font-size:13.5px;color:var(--muted)">Each dot is a documented case. The dark dot marks the earliest case in this dataset for that actor, which is a proxy for first documented use, not proof of first use.</p>
+      <div class="tl-scroll" id="timeline"></div>
+    </div>
+    <div class="card firsts">
+      <h3 style="margin:0 0 8px;font:600 14px var(--ui)">Earliest documented case by actor</h3>
+      <div class="table-scroll" id="firsts"></div>
+    </div>
+  </section>
+
+  <section id="view-actors" role="tabpanel" aria-labelledby="tab-actors" hidden>
+    <div class="controls">
+      <label>Actor or cluster
+        <select id="a-actor"></select>
+      </label>
+    </div>
+    <div id="actor"></div>
+  </section>
+
+  <section id="view-method" role="tabpanel" aria-labelledby="tab-method" hidden>
+    <div class="method card">
+      <h2>Method &amp; sources</h2>
+      <h3>What this is</h3>
+      <p>A threat-intelligence matrix of documented non-state misuse of commercial and small drones. Columns are tactics (the goal), cells are techniques (a category of behaviour), and each technique opens the cases that show it. The layout borrows from <a href="https://attack.mitre.org/" rel="noopener">MITRE ATT&amp;CK</a>, a public knowledge base of adversary behaviour in cyber operations. This project is not affiliated with MITRE.</p>
+      <h3>Inclusion criteria</h3>
+      <ul>
+        <li>The actor is non-state: an armed group, criminal network or individual. State-backed groups (for example the Houthis and Hezbollah) are included but flagged, because sponsor support changes what they can do.</li>
+        <li>The aircraft is a commercial, hobby or small drone, or a group-made or sponsor-supplied small UAV. Military programmes of states are out of scope.</li>
+        <li>The case is reported by at least one reputable public source: research centres (CTC Sentinel, RAND, CNA, ACLED), UN Panels of Experts, government agencies, or major news organisations. Each URL was opened and checked against the claim during compilation; cases that could not be verified were dropped.</li>
+        <li>Descriptions stay at category level. No case includes methods, parts, designs, payloads or defeat techniques.</li>
+      </ul>
+      <h3>Confidence coding</h3>
+      <ul>
+        <li><span class="badge well-documented">well-documented</span> two or more independent reputable sources, including at least one research or official body or several major outlets, with the core facts not in dispute.</li>
+        <li><span class="badge reported">reported</span> credible outlets report the case, but details rest on official or group claims, or the sources are not independent.</li>
+        <li><span class="badge single-source">single-source</span> one verifiable source only. Treat as indicative.</li>
+      </ul>
+      <h3>AI-content enforcement notes</h3>
+      <p>Each tactic carries a short note on what kinds of requests to an AI assistant would map onto it, and which nearby requests are legitimate. The notes are category-level labels for reviewers, not a policy. The line they draw is between general information (history, incident data, policy, defensive research) and operational uplift (methods, targeting, procurement, evasion).</p>
+      <h3>Limits</h3>
+      <ul>
+        <li>Reporting bias. High-profile conflicts (Iraq, Syria, Israel and Gaza, Colombia, Myanmar) are covered far better than rural Sahel or Mexican incidents. Counts measure reporting, not prevalence.</li>
+        <li>The dataset is a curated sample of illustrative cases, not an event dataset. For counts, use ACLED or national statistics.</li>
+        <li>"Earliest case" in the timeline is the earliest case included here, not a claim about first use.</li>
+        <li>Group claims and government statements are both interested sources; where a case rests on them, it is coded "reported".</li>
+        <li>Russia&ndash;Ukraine and other interstate drone warfare is excluded except where it shapes non-state diffusion.</li>
+      </ul>
+      <h3>Data</h3>
+      <p>Cases, actors and the taxonomy are plain JSON in <a href="data/cases.json">data/cases.json</a>, <a href="data/actors.json">data/actors.json</a> and <a href="data/taxonomy.json">data/taxonomy.json</a>. Each case carries its source list with publisher, title, date and URL.</p>
+      <h3>How to cite</h3>
+      <p>Walberg, Jonathan. 2026. "Non-State Drone Misuse Matrix." jwalberg.com. Compiled October 2026. Cite the underlying sources for any specific case.</p>
+    </div>
+  </section>
+
+  <footer>Compiled October 2026 from public reporting. Corrections welcome via the contact details on jwalberg.com.</footer>
+</main>
+
+<dialog id="dlg" aria-labelledby="dlg-title">
+  <div class="dlg-head">
+    <div><h3 id="dlg-title"></h3><div class="sub" id="dlg-sub"></div></div>
+    <button class="close" id="dlg-close" aria-label="Close">&times;</button>
+  </div>
+  <div class="dlg-body" id="dlg-body"></div>
+</dialog>
+
+<script src="app.js"></script>
+</body>
+</html>

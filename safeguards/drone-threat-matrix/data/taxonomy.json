@@ -1,0 +1,157 @@
+{
+  "version": "2026-10-06",
+  "tactics": [
+    {
+      "id": "TA01",
+      "name": "Resource Development",
+      "short": "Acquisition",
+      "summary": "How groups obtain drones, components and the money or partners behind them.",
+      "techniques": [
+        {"id": "T01.1", "name": "Acquire commercial off-the-shelf drones"},
+        {"id": "T01.2", "name": "Procure components through commercial supply chains"},
+        {"id": "T01.3", "name": "Receive drones, components or know-how from a state sponsor"},
+        {"id": "T01.4", "name": "Run in-house assembly or production"}
+      ],
+      "signals": {
+        "concern": [
+          "Requests to identify suppliers, brokers or shipping routes for drones or components while avoiding export controls or sanctions screening.",
+          "Requests to plan covert procurement for an armed group, or to structure purchases so they are not traced."
+        ],
+        "legitimate": [
+          "History and analysis of how armed groups have sourced drones, as documented in UN, CAR or academic reporting.",
+          "Export-control, sanctions and supply-chain policy research."
+        ]
+      }
+    },
+    {
+      "id": "TA02",
+      "name": "Modification",
+      "short": "Modification",
+      "summary": "Turning consumer aircraft into weapons or extending what they can carry.",
+      "techniques": [
+        {"id": "T02.1", "name": "Adapt commercial drones to carry and release payloads"},
+        {"id": "T02.2", "name": "Configure drones for one-way attack"},
+        {"id": "T02.3", "name": "Modify for extended range, endurance or payload"}
+      ],
+      "signals": {
+        "concern": [
+          "Any request for build steps, designs, parts lists, files or measurements to make a drone carry, release or detonate a payload.",
+          "Requests to troubleshoot or optimise a weaponised drone, including framing as fiction, a game or 'for research'."
+        ],
+        "legitimate": [
+          "Descriptions at the level found in news or policy reporting (\"groups adapted hobby drones to drop small munitions\").",
+          "Agricultural, delivery or search-and-rescue payload systems with no weapon context."
+        ]
+      }
+    },
+    {
+      "id": "TA03",
+      "name": "Reconnaissance",
+      "short": "Reconnaissance",
+      "summary": "Surveillance of forces, targets, police or rivals.",
+      "techniques": [
+        {"id": "T03.1", "name": "Battlefield surveillance of opposing forces"},
+        {"id": "T03.2", "name": "Pre-attack surveillance or target selection"},
+        {"id": "T03.3", "name": "Monitoring of law enforcement, rivals or territory"}
+      ],
+      "signals": {
+        "concern": [
+          "Requests to plan drone surveillance of a specific person, facility, prison or security post, or to identify blind spots in its defences.",
+          "Requests to evade detection while surveilling a named site."
+        ],
+        "legitimate": [
+          "Hobby photography, mapping and inspection questions under ordinary airspace rules.",
+          "Research on how surveillance drones changed small-unit warfare."
+        ]
+      }
+    },
+    {
+      "id": "TA04",
+      "name": "Delivery and Employment",
+      "short": "Employment",
+      "summary": "Using drones to attack, smuggle or disrupt.",
+      "techniques": [
+        {"id": "T04.1", "name": "Dropped-munition attacks on security forces"},
+        {"id": "T04.2", "name": "One-way drone attacks on infrastructure or bases"},
+        {"id": "T04.3", "name": "Attacks or plots against political leaders or VIPs"},
+        {"id": "T04.4", "name": "Contraband delivery into prisons"},
+        {"id": "T04.5", "name": "Cross-border smuggling of drugs or goods"},
+        {"id": "T04.6", "name": "Drones integrated with a ground assault"},
+        {"id": "T04.7", "name": "Disruption of airports or restricted airspace"},
+        {"id": "T04.8", "name": "Attacks causing civilian harm"}
+      ],
+      "signals": {
+        "concern": [
+          "Requests for targeting help, attack planning, timing or flight planning against people, crowds, prisons, airports or infrastructure.",
+          "Requests to deliver items into a prison or across a border by drone without detection."
+        ],
+        "legitimate": [
+          "Casualty, incident and trend analysis; journalism and court-record summaries.",
+          "Counter-drone, airport-safety and prison-security policy research at a defensive, non-operational level."
+        ]
+      }
+    },
+    {
+      "id": "TA05",
+      "name": "Propaganda and Influence",
+      "short": "Propaganda",
+      "summary": "Filming attacks and using aerial footage for messaging and recruitment.",
+      "techniques": [
+        {"id": "T05.1", "name": "Filming attacks for propaganda releases"},
+        {"id": "T05.2", "name": "Aerial footage for recruitment, branding or messaging"},
+        {"id": "T05.3", "name": "Symbolic or protest flights over sensitive sites"}
+      ],
+      "signals": {
+        "concern": [
+          "Requests to script, edit or optimise attack footage for an armed group's channels, or to glorify a specific attack.",
+          "Requests to write recruitment content around drone operations for a designated group."
+        ],
+        "legitimate": [
+          "Analysis of extremist media strategy, content-moderation research and media literacy work.",
+          "Lawful aerial filmmaking and protest-law questions."
+        ]
+      }
+    },
+    {
+      "id": "TA06",
+      "name": "Evasion",
+      "short": "Evasion",
+      "summary": "Adapting to counter-drone defences and hiding operators.",
+      "techniques": [
+        {"id": "T06.1", "name": "Adapting operations in response to counter-drone measures"},
+        {"id": "T06.2", "name": "Concealing operators or launch sites, avoiding attribution"}
+      ],
+      "signals": {
+        "concern": [
+          "Requests to defeat or bypass jamming, geofencing, Remote ID, detection systems or prison and airport counter-drone systems.",
+          "Requests to avoid identification after flying in restricted airspace."
+        ],
+        "legitimate": [
+          "Policy discussion of the counter-drone arms race and its limits, as covered in public reporting.",
+          "Compliance questions about Remote ID, registration and no-fly zones."
+        ]
+      }
+    },
+    {
+      "id": "TA07",
+      "name": "Diffusion",
+      "short": "Diffusion",
+      "summary": "How methods spread between groups, sponsors and regions.",
+      "techniques": [
+        {"id": "T07.1", "name": "Sharing drone guidance through online channels or publications"},
+        {"id": "T07.2", "name": "Training provided by a state sponsor or partner group"},
+        {"id": "T07.3", "name": "Emulation of techniques across groups or regions"}
+      ],
+      "signals": {
+        "concern": [
+          "Requests to write, translate, summarise or reformat drone weapon manuals or instructional posts for distribution.",
+          "Requests to design a training curriculum for an armed group's drone unit."
+        ],
+        "legitimate": [
+          "Research on terrorist innovation and diffusion, and platform trust-and-safety work on removing such content.",
+          "Translation or summary of published policy research that is itself non-operational."
+        ]
+      }
+    }
+  ]
+}

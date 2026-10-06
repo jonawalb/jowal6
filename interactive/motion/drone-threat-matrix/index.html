@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Non-State Drone Misuse Matrix</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .yr { font: 600 84px var(--mono); fill: var(--amber); font-variant-numeric: tabular-nums; letter-spacing: -.03em; }
+  .cnt { font: 600 84px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; letter-spacing: -.03em; }
+  .cnt-l { font: 400 14px var(--mono); fill: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+  .src { font: 400 13px var(--mono); fill: var(--muted); letter-spacing: .04em; }
+  .ac-n { font: italic 500 22px var(--display); fill: var(--paper); }
+  .col-h { font: 600 13px var(--mono); fill: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+  .col-id { font: 400 11px var(--mono); fill: #5f7d70; letter-spacing: .08em; }
+  .cv { font: 600 17px var(--mono); fill: var(--ink); font-variant-numeric: tabular-nums; }
+  .bar-n { font: italic 500 30px var(--display); fill: var(--paper); }
+  .bar-v { font: 600 30px var(--mono); fill: var(--paper); font-variant-numeric: tabular-nums; }
+  .note { font: italic 400 24px var(--display); fill: var(--muted); }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of the Non-State Drone Misuse Matrix: a grid of thirteen actor groups by seven tactics fills in year by year from 2013 to 2026 as 78 sourced cases are added, then bars show how many cases touch each tactic, led by Delivery and Employment in 60 of the 78."><title>Non-State Drone Misuse Matrix</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- Real data (tools/drone-threat-matrix) ----------------------------------------------------------------
+// ACT: actors.json order, "short" names. TAC: taxonomy.json tactics TA01..TA07, "short" names.
+// CASES: every case in data/cases.json (78, version 2026-10-06), sorted by date then id, as
+// [actor index, year of `date`, tactics touched]. A case touches a tactic when any of its technique ids starts
+// with that tactic's prefix (T01. for TA01 ...), the same rule app.js uses for its tactic-header counts.
+// A case can touch several tactics, so cell counts sum to more than 78. Computed with a Python script over the
+// three JSON files. Resulting actor x tactic counts (Acq, Mod, Rec, Emp, Prop, Eva, Diff | cases):
+//   Islamic State 5 3 2 4 2 0 1 | 8      Hamas 2 2 1 2 2 0 1 | 4         Houthis 1 4 0 6 0 1 1 | 7
+//   Hezbollah 0 2 0 2 0 0 0 | 2          Mexican cartels 4 7 2 9 1 0 1 | 12
+//   Colombian armed groups 0 3 0 6 0 0 0 | 6                Sahel / Lake Chad jihadists 1 5 1 8 0 0 1 | 8
+//   Somali jihadists 1 1 1 1 1 0 1 | 2   Myanmar resistance 2 2 0 4 1 1 1 | 7   Other non-state 2 1 0 3 1 1 0 | 3
+//   Prison contraband 5 0 0 8 0 1 0 | 8  Airport disruption 0 0 0 5 0 2 0 | 5   Activists / individuals 0 0 1 2 3 2 0 | 6
+// Tactic totals (cases touching each, as the tool's column headers count them): 23 30 8 60 11 8 7.
+// Cases by year: 2013 1, 2014 3, 2015 5, 2016 3, 2017 7, 2018 3, 2019 6, 2020 2, 2021 2, 2022 6, 2023 10,
+// 2024 11, 2025 14, 2026 5 (40 of 78 from 2023 on).
+const ACT = ['Islamic State', 'Hamas', 'Houthis', 'Hezbollah', 'Mexican cartels', 'Colombian armed groups', 'Sahel / Lake Chad jihadists', 'Somali jihadists', 'Myanmar resistance', 'Other non-state', 'Prison contraband', 'Airport disruption', 'Activists / individuals'];
+const TAC = [['TA01', 'Acquisition'], ['TA02', 'Modification'], ['TA03', 'Reconnaissance'], ['TA04', 'Employment'], ['TA05', 'Propaganda'], ['TA06', 'Evasion'], ['TA07', 'Diffusion']];
+const TAC_LONG = ['Resource Development', 'Modification', 'Reconnaissance', 'Delivery and Employment', 'Propaganda and Influence', 'Evasion', 'Diffusion'];
+const CASES = [[12,2013,"5"],[1,2014,"35"],[0,2014,"135"],[12,2014,"36"],[0,2015,"1"],[4,2015,"14"],[12,2015,"4"],[12,2015,"6"],[12,2015,"5"],[0,2016,"12"],[0,2016,"24"],[1,2016,"1"],[0,2017,"124"],[0,2017,"45"],[0,2017,"134"],[9,2017,"145"],[4,2017,"14"],[4,2017,"12"],[10,2017,"14"],[4,2018,"24"],[9,2018,"246"],[11,2018,"46"],[11,2019,"4"],[2,2019,"24"],[11,2019,"4"],[11,2019,"4"],[12,2019,"45"],[2,2019,"46"],[2,2020,"17"],[11,2020,"46"],[4,2021,"24"],[1,2021,"1247"],[10,2022,"4"],[2,2022,"4"],[2,2022,"24"],[8,2022,"15"],[8,2022,"24"],[4,2022,"24"],[8,2023,"17"],[4,2023,"35"],[4,2023,"24"],[6,2023,"24"],[4,2023,"24"],[8,2023,"6"],[4,2023,"17"],[1,2023,"245"],[8,2023,"4"],[2,2023,"24"],[10,2024,"14"],[0,2024,"7"],[8,2024,"24"],[2,2024,"24"],[5,2024,"24"],[3,2024,"24"],[3,2024,"24"],[8,2024,"4"],[9,2024,"14"],[10,2024,"14"],[6,2024,"234"],[7,2025,"24"],[10,2025,"46"],[7,2025,"1357"],[6,2025,"124"],[6,2025,"4"],[6,2025,"247"],[5,2025,"4"],[6,2025,"24"],[10,2025,"4"],[5,2025,"24"],[5,2025,"24"],[4,2025,"24"],[6,2025,"4"],[5,2025,"4"],[10,2026,"14"],[6,2026,"4"],[10,2026,"14"],[4,2026,"34"],[5,2026,"4"]];
+const N = CASES.length, Y0 = 2013, Y1 = 2026;
+// Spread each year's cases evenly through that year so the grid fills case by case.
+const perYear = {}; CASES.forEach(c => { perYear[c[1]] = (perYear[c[1]] || 0) + 1; });
+const seen = {};
+const POS = CASES.map(c => { const k = seen[c[1]] = (seen[c[1]] || 0) + 1; return c[1] + (k - 0.5) / perYear[c[1]]; });
+
+// ---- Scene ----------------------------------------------------------------------------------------------
+const blurF = el('filter', { id: 'dtm-blur', x: '-5%', y: '-5%', width: '110%', height: '110%' }, svg);
+const blurG = el('feGaussianBlur', { stdDeviation: 0 }, blurF);
+const cam = el('g', {}, svg);
+const NX = 110, CX0 = 470, CW = 140, CG = 8, RY0 = 300, RH = 38, RG = 6;
+const cx = j => CX0 + j * (CW + CG), ry = i => RY0 + i * (RH + RG);
+const CMAX = 9;   // largest cell count (Mexican cartels x Employment)
+
+const top = el('g', {}, cam);
+el('text', { x: NX, y: 90, class: 't-label' }, top).textContent = 'Documented cases by actor and tactic';
+const yrT = el('text', { x: NX - 6, y: 190, class: 'yr' }, top);
+el('text', { x: NX, y: 226, class: 'src' }, top).textContent = 'Cases dated up to the end of the year shown';
+const cntT = el('text', { x: 1490, y: 190, class: 'cnt', 'text-anchor': 'end' }, top);
+el('text', { x: 1490, y: 226, class: 'cnt-l', 'text-anchor': 'end' }, top).textContent = 'sourced cases';
+// slider
+const SL0 = 520, SL1 = 1180, SLY = 160, sx = y => SL0 + (y - Y0) / (Y1 + 1 - Y0) * (SL1 - SL0);
+el('line', { x1: SL0, x2: SL1, y1: SLY, y2: SLY, stroke: 'var(--line)', 'stroke-width': 6, 'stroke-linecap': 'round' }, top);
+const slFill = el('line', { x1: SL0, y1: SLY, y2: SLY, stroke: 'var(--amber)', 'stroke-width': 6, 'stroke-linecap': 'round' }, top);
+[2013, 2017, 2021, 2026].forEach(y => { el('text', { x: sx(y + 0.5), y: SLY + 32, class: 'src', 'text-anchor': 'middle' }, top).textContent = y; });
+const knob = el('circle', { cy: SLY, r: 13, fill: 'var(--paper)', stroke: '#0b1712', 'stroke-width': 3 }, top);
+
+const heads = el('g', {}, cam);
+TAC.forEach(([id, n], j) => {
+  el('text', { x: cx(j) + CW / 2, y: RY0 - 34, class: 'col-id', 'text-anchor': 'middle' }, heads).textContent = id;
+  el('text', { x: cx(j) + CW / 2, y: RY0 - 14, class: 'col-h', 'text-anchor': 'middle', style: n.length > 12 ? 'font-size:12px' : '' }, heads).textContent = n;
+});
+const rows = ACT.map((name, i) => {
+  const g = el('g', {}, cam);
+  el('text', { x: NX, y: ry(i) + 26, class: 'ac-n' }, g).textContent = name;
+  const cells = TAC.map((_, j) => {
+    const r = el('rect', { x: cx(j), y: ry(i), width: CW, height: RH, rx: 5, fill: 'none', stroke: '#1f3a2d', 'stroke-width': 1.2 }, g);
+    const v = el('text', { x: cx(j) + CW / 2, y: ry(i) + 25, class: 'cv', 'text-anchor': 'middle' }, g);
+    return { r, v };
+  });
+  return { g, cells };
+});
+const empCol = el('rect', { x: cx(3) - 6, y: RY0 - 54, width: CW + 12, height: ACT.length * (RH + RG) + 54, rx: 10, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 2.5, filter: 'url(#kit-glow)', opacity: 0 }, cam);
+
+function paint(yf) {
+  const M = ACT.map(() => TAC.map(() => 0)), last = ACT.map(() => TAC.map(() => -1));
+  let n = 0;
+  CASES.forEach((c, k) => {
+    if (POS[k] > yf) return;
+    n++;
+    for (const ch of c[2]) { M[c[0]][+ch - 1]++; last[c[0]][+ch - 1] = POS[k]; }
+  });
+  rows.forEach((r, i) => r.cells.forEach((c, j) => {
+    const v = M[i][j];
+    if (!v) { c.r.setAttribute('fill', 'none'); c.r.setAttribute('stroke', '#1f3a2d'); c.v.textContent = ''; c.r.removeAttribute('filter'); return; }
+    const a = 0.35 + 0.65 * Math.sqrt(v / CMAX);
+    c.r.setAttribute('fill', `rgba(240,169,59,${a.toFixed(3)})`);
+    c.r.setAttribute('stroke', 'none');
+    c.v.textContent = v;
+    c.v.style.fill = a > 0.6 ? 'var(--ink)' : 'var(--paper)';
+    if (yf - last[i][j] < 0.35) c.r.setAttribute('filter', 'url(#kit-glow)'); else c.r.removeAttribute('filter');
+  }));
+  return n;
+}
+
+// Payoff: cases touching each tactic
+const pay = el('g', { opacity: 0 }, svg);
+el('rect', { width: 1600, height: 1000, fill: '#070f0b', opacity: .84 }, pay);
+const pT = el('text', { x: 800, y: 205, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:52px' }, pay);
+pT.innerHTML = 'Employment shows up in <tspan class="hot">60 of 78</tspan> cases.';
+const TOT = [23, 30, 8, 60, 11, 8, 7];
+const BL = 640, BR = 1380, BY0 = 290, BH = 56, BG = 18, bw = v => v / N * (BR - BL);
+el('line', { x1: BL + bw(N), x2: BL + bw(N), y1: BY0 - 16, y2: BY0 + 7 * (BH + BG) - 2, stroke: '#2b4a3b', 'stroke-width': 1.2, 'stroke-dasharray': '4 6' }, pay);
+el('text', { x: BL + bw(N), y: BY0 - 24, class: 'src', 'text-anchor': 'end' }, pay).textContent = 'all 78 cases';
+const bars = TOT.map((v, j) => {
+  const g = el('g', {}, pay), y = BY0 + j * (BH + BG);
+  el('text', { x: BL - 24, y: y + 38, class: 'bar-n', 'text-anchor': 'end' }, g).textContent = TAC_LONG[j];
+  el('rect', { x: BL, y, width: bw(N), height: BH, rx: 6, fill: '#10231a' }, g);
+  const b = el('rect', { x: BL, y, height: BH, rx: 6, fill: j === 3 ? 'var(--amber)' : '#6f8a7c' }, g);
+  const t = el('text', { y: y + 39, class: 'bar-v' }, g);
+  return { g, b, t, v };
+});
+el('text', { x: 800, y: 860, class: 'note', 'text-anchor': 'middle' }, pay).textContent = 'A case can show several tactics. The matrix records that it happened, never how.';
+
+// Hook
+const hook = el('g', {}, svg);
+const h1 = el('text', { x: 800, y: 430, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:70px' }, hook);
+h1.textContent = 'Commercial drones, misused.';
+const h2 = el('text', { x: 800, y: 560, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:92px' }, hook);
+h2.innerHTML = 'Every case <tspan class="hot">sourced</tspan>.';
+
+const cap = captions(svg, [
+  [0.3, 3.2, 'Armed groups, criminal networks and individuals'],
+  [3.5, 7.0, 'Each sourced case is placed by actor and tactic'],
+  [7.2, 11.3, 'More than half of the 78 cases date from 2023 on'],
+  [11.4, 14.2, 'Category level only: what happened and where it was reported'],
+]);
+const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'Non-State Drone Misuse Matrix', line: '78 sourced cases of non-state drone misuse, by actor and tactic.', cta: 'Explore' });
+
+// ---- Timeline -------------------------------------------------------------------------------------------
+const D = 17.5;
+function yearAt(t) {
+  if (t < 3.9) return Y0;
+  return lerp(Y0, Y1 + 1, ease.inOut(seg(t, 3.9, 10.6)));
+}
+function frame(t) {
+  const hu = ease.out(seg(t, 0.2, 0.9)), h2u = ease.out(seg(t, 0.8, 1.5)), ho = 1 - seg(t, 2.9, 3.3);
+  h1.setAttribute('opacity', hu * ho); h1.setAttribute('transform', `translate(0,${(1 - hu) * 20})`);
+  h2.setAttribute('opacity', h2u * ho); h2.setAttribute('transform', `translate(0,${(1 - h2u) * 24})`);
+
+  const out = 1 - seg(t, 15.0, 15.6), inn = ease.out(seg(t, 3.2, 3.9));
+  const y = yearAt(t), yi = Math.min(Y1, Math.floor(y));
+  const n = paint(Math.min(y, Y1 + 0.999));
+  yrT.textContent = yi; cntT.textContent = n;
+  knob.setAttribute('cx', sx(y)); slFill.setAttribute('x2', sx(y));
+  top.setAttribute('opacity', inn * out); heads.setAttribute('opacity', inn * out);
+  rows.forEach((r, i) => { const u = ease.out(seg(t, 3.3 + i * .05, 3.8 + i * .05)); r.g.setAttribute('opacity', u * out); r.g.setAttribute('transform', `translate(${(1 - u) * -20},0)`); });
+  empCol.setAttribute('opacity', seg(t, 10.7, 11.0) * (1 - seg(t, 11.3, 11.6)));
+  const push = ease.inOut(seg(t, 3.4, 11.0));
+  cam.setAttribute('transform', `translate(800,560) scale(${1 + 0.03 * push}) translate(-800,-560)`);
+
+  const pu = ease.out(seg(t, 11.3, 11.9)) * (1 - seg(t, 13.9, 14.3));
+  pay.setAttribute('opacity', pu);
+  bars.forEach((r, j) => {
+    const u = ease.out(seg(t, 11.6 + j * .12, 12.6 + j * .12)), w = bw(r.v) * u;
+    r.b.setAttribute('width', Math.max(0.01, w));
+    r.t.setAttribute('x', BL + w + 14); r.t.textContent = Math.round(r.v * u);
+    r.g.setAttribute('opacity', ease.out(seg(t, 11.4 + j * .08, 11.8 + j * .08)));
+  });
+  const bl = Math.max(pu, seg(t, 13.9, 14.3));
+  blurG.setAttribute('stdDeviation', (bl * 6).toFixed(2));
+  cam.setAttribute('filter', bl > 0.01 ? 'url(#dtm-blur)' : '');
+
+  cap(t); end(t, 14.0, D);
+}
+run({ duration: D, poster: 10.8, frame });
+</script>
+</body></html>

@@ -1,3 +1,35 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "xwmcQ4LFPM6PiUmCzk8mj5Tg25yTqQ/ei6TBLbvJJRgJ7Ee6p7rPVYMc13Z1LlVQa9QO18MIDB4BnOcqFX9eSqSht/HcDlUjiLfAs5iCWqfw/i3UjYUkVaYKPpwofB7xQA27omtFGuU6+lpNODplclNmbBJGWWp+VMqUJIYapsG0W4nkQI7YS3iF5ktPRvCw2QXZj8ienolizVZbAIpdjTNeD5nnfo7maB3BaIYsegQiLqBvGAXxeHhSp/iapQDaHgpQgq9GuAYl25WaA3bc0IOB/atIEj5UmuknWYzTx47aERiyiIOjJUuQrDVGWpnWem2OpspimtGC/2O2e2J5Q2o2mey/M8gAFQfgWkBP9wsT86MDQhwFTnD35VfaXJ499RksNCjIrC5ltvHHPjJ6eY3U+4PZ60CTwJhSTCDw0PEvvEFVSRNoMiH4BMfeBlp9id22wCZYvMJ1x8tz3MSRTBj/5A/JY4Eg6hpE6h6by87d4IgONj8SmM2zhPMNAEQt6LGlvoUGfa1HH0AakeZPZud+tL7DEUq2CEbuXNiyHaNmz0ShnS3CkPCSVvpncHOAxbrV+PbDSfjCi1dMgy8k6atsBV9fct3LaIjlwParsHSkZYags+2SwD1W4njR1o/kKMWTaQyHtqe4yOHjYWUpHE6S/6Hd4vI/edFECRI8u0U0hatjaD64/hA/vaU+D1DcKzt50N+4b65SIiw06hwUv6JIBgw40ecgA0DAIKiTSrHQv4XoNBp4aVHODsIG+Xr9W8DzPKxrg5ful9xzuBbflENrQArlFY4dtnLBuKqLwfQeQ0FY9gDwLCe4yqCNfcYAAbNLl/isGWpWo3EwuRh7nrSh5H4yzH8DuXLsSdZM0f+mxog+UV+8BIgP/zQ+iZLM0NSGjmjLXbNNv7IwA4F3+WoXxiz/aKTqYZsm9hoCgu8fpVrwFkpXYBRNTILeHpVAfkgxbh33psnsUp/Z6vSrqldx5OgKD/KiCC7+2Wn79hUbQVMc8o6RtyVitSlqyibyflx1vsj+doE9TyHshjXIdGikvg72B1g4hiO8V0B8kRA35H48fDYPT3m9rXHA3+IQ3zv0VMnzctkd4iAP+d0pqXwH8ytbmxsLu2nYt/6wG6E3jFhOOMBIh+P5GbVaOhUkEsNt8BITFn3FF+dutYGGyX0W7sWv4VyB6VE/1CRYiMINcLnr0YVr98FozuXJL6nHfe07L3vMZ/pSPknwV9v+wlVJoJK/O4u+l4s+h9ZiP5w5YeeqdXWrCBMHiO40w5Qeo2kq1+Ni9yRtgX7ghSGBoT9nK7ggdgIwynUCu1TeaIZ6OTyjenVs+uxUUxhaZYOnpCeyZt1Tqf3lBt4gkgU7fn+wl0pwM4ipTkqUeXXq7noygNiK9vgFyGh8FJ5yOlCVuvPUU7dCrV9BiOVpLEIb641tZFbzN9yBQ6Wio54TQkfUac3KxQwnjoqHFlSdLjLb6U5dlCJ8MLUnt4RzF+RMaYB3TG83d6GRSIJLFPTIfCPPhVQ81ZLvelcMQQ8Va0qhOzXM6/7MiFppTqOMpZ97OjlmJVjvZeszQvlWQB2s589kZUqyhsbi+jo+bQ4E0rhegsmWG3wYXuBjGqhrceCfRjuIURsSwoCbH7OJgQiZQOSJONzO0h4IsqhJZfTeGUd8lxJDuRhKpZ+FSD38hiOQ4FQwsQE0uhMtaG6SKEcsHOHmjl9KZv1aWdQOu1zepchIPh6+3zndwMDOxIhNg++3vhAU26X31elnD23gBxJ70You2ke2eHUEEyHVSbvXXn8JuSsPkWqu7NVBqj+JoYtX71mIzA==", 1);
-export const REFS = __m.REFS;
+// Literature behind the Nuclear Entanglement model. Each link was opened and checked in September 2026:
+// DOIs resolved through Crossref (title, authors, volume, pages); Carnegie pages and PDFs fetched and read;
+// Acton (2018) pp. 56–65 read in the MIT Press preview; Logan (2020) checked by abstract only.
+export const REFS = {
+  acton2018: { short: 'Acton 2018',
+    t: 'James M. Acton, “Escalation through Entanglement: How the Vulnerability of Command-and-Control Systems Raises the Risks of an Inadvertent Nuclear War,” International Security 43, no. 1 (Summer 2018): 56–99',
+    u: 'https://doi.org/10.1162/isec_a_00320' },
+  acton2020: { short: 'Acton 2020',
+    t: 'James M. Acton, “Is It a Nuke? Pre-Launch Ambiguity and Inadvertent Escalation,” Carnegie Endowment for International Peace, 9 April 2020',
+    u: 'https://carnegieendowment.org/research/2020/04/is-it-a-nuke-pre-launch-ambiguity-and-inadvertent-escalation' },
+  acton2019: { short: 'Acton 2019',
+    t: 'James M. Acton, “Why Is Nuclear Entanglement So Dangerous?” Carnegie Endowment for International Peace, Q&A, 23 January 2019',
+    u: 'https://carnegieendowment.org/posts/2019/01/why-is-nuclear-entanglement-so-dangerous' },
+  acton2013: { short: 'Acton 2013',
+    t: 'James M. Acton, Silver Bullet? Asking the Right Questions About Conventional Prompt Global Strike (Carnegie Endowment for International Peace, 2013)',
+    u: 'https://carnegieendowment.org/files/cpgs.pdf' },
+  acton2017: { short: 'Acton ed. 2017',
+    t: 'James M. Acton, ed., Entanglement: Russian and Chinese Perspectives on Non-Nuclear Weapons and Nuclear Risks (Carnegie Endowment for International Peace, 2017)',
+    u: 'https://carnegieendowment.org/research/2017/08/entanglement-russian-and-chinese-perspectives-on-non-nuclear-weapons-and-nuclear-risks' },
+  talmadge2017: { short: 'Talmadge 2017',
+    t: 'Caitlin Talmadge, “Would China Go Nuclear? Assessing the Risk of Chinese Nuclear Escalation in a Conventional War with the United States,” International Security 41, no. 4 (Spring 2017): 50–92',
+    u: 'https://doi.org/10.1162/ISEC_a_00274' },
+  cf2015: { short: 'Cunningham & Fravel 2015',
+    t: 'Fiona S. Cunningham and M. Taylor Fravel, “Assuring Assured Retaliation: China’s Nuclear Posture and U.S.-China Strategic Stability,” International Security 40, no. 2 (Fall 2015): 7–50',
+    u: 'https://doi.org/10.1162/ISEC_a_00215' },
+  cf2019: { short: 'Cunningham & Fravel 2019',
+    t: 'Fiona S. Cunningham and M. Taylor Fravel, “Dangerous Confidence? Chinese Views on Nuclear Escalation,” International Security 44, no. 2 (Fall 2019): 61–109',
+    u: 'https://doi.org/10.1162/isec_a_00359' },
+  logan2020: { short: 'Logan 2020',
+    t: 'David C. Logan, “Are They Reading Schelling in Beijing? The Dimensions, Drivers, and Risks of Nuclear-Conventional Entanglement in China,” Journal of Strategic Studies 46, no. 1 (2023): 5–55 (online 2020)',
+    u: 'https://doi.org/10.1080/01402390.2020.1844671' },
+  posen1991: { short: 'Posen 1991',
+    t: 'Barry R. Posen, Inadvertent Escalation: Conventional War and Nuclear Risks (Cornell University Press, 1991; digital edition 2017)',
+    u: 'https://doi.org/10.7591/9780801468384' },
+};

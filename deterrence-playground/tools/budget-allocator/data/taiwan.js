@@ -1,3 +1,44 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1);
-export const TAIWAN = __m.TAIWAN;
+// Taiwan profile for the Defense Budget Allocator. Wraps the original Taiwan data files unchanged
+// (budget.js: sourced budget figures; categories.js: model parameters and unit costs; taiwan_fms.js: U.S. reference cases) and holds the Taiwan wording.
+// The page's static HTML is Taiwan's method and sources, so this profile has no `doc` block.
+import { BUDGETS, CABINET_145, ACT_780_ITEMS } from './budget.js';
+import { CATS, PRESETS, CROSSING } from './categories.js';
+import { REF_CASES, WAIT_ASOF } from './taiwan_fms.js';
+
+const fmtBn = v => v >= 1000 ? Math.round(v).toLocaleString('en-US') : v >= 10 ? v.toFixed(1) : v.toFixed(2);
+
+export const TAIWAN = {
+  k: 'tw', name: 'Taiwan', sub: 'NT$ · crossing',
+  money: bn => `NT$${fmtBn(bn)}bn`,
+  budgets: BUDGETS,
+  cats: CATS,
+  presets: PRESETS,
+  defaults: { b: 's145', preset: 'porcupine', supp: 0.6, warn: 5 },
+  geo: { km: CROSSING.km, speed: CROSSING.knots, unit: 'kn' },
+  refMix: { budget: 's145', label: 'Cabinet mix', sub: 'Sept. 3 proposal, mapped', lines: CABINET_145,
+    off: 'Only the NT$145.7bn line has a published breakdown', title: 'What the cabinet proposed, Sept. 3, 2026' },
+  refText: {
+    s780: ['What the act names', `The act reserves the money for U.S. Foreign Military Sales cases and names ${ACT_780_ITEMS.join(', ')}. No per-item amounts were published, so there is no reference mix.`],
+    s1250: ['What the plan covered', 'The proposal listed precision artillery, long-range missiles, drones, air and missile defense, AI-enabled command and surveillance, war stocks, production lines and co-development with the United States, across 23 programs. No per-category amounts were published, so there is no reference mix.'],
+  },
+  strip: { left: 'Embarkation', right: 'Taiwan', zero: 'coast', noun: 'ships', play: 'Play the crossing', exportTitle: 'Notional crossing',
+    aria: 'Stylized Taiwan Strait crossing. A PLA amphibious wave sails from the embarkation coast on the left toward Taiwan on the right, through bands showing how far each of Taiwan\'s weapon layers reaches and how strong it is. Ships marked with an X are engaged.' },
+  text: {
+    verdict: {
+      good: ['Costly crossing', 'A large share of the crossing force comes under effective attack.'],
+      warn: ['Contested crossing', 'Taiwan engages part of the force, but most of it arrives untouched.'],
+      bad: ['Crossing largely unopposed', 'Too little of Taiwan\'s firepower survives, sees the fleet or reaches it.'],
+    },
+    explain: {
+      mobile: n => `Only ${n}% of mobile launchers survive the opening strikes; air defense and resilience spending protect them.`,
+      platform: n => `Large platforms are few and easy to find, so only ${n}% remain after suppression.`,
+      track: 'Weak sensors and networks leave shooters without good tracks on the fleet.',
+      mines: n => `With short warning only ${n}% of the minefield is laid in time.`,
+    },
+    tiles: { engaged: 'of the crossing force comes under effective attack', hours: h => `of a ${h} h crossing`, shooters: 'after PLA suppression strikes' },
+    supp: ['PLA suppression strikes', 'Share of Taiwan\'s unprotected forces the opening missile and air strikes would destroy.'],
+    warn: ['Warning before the assault', 'Days Taiwan has to lay mines before the fleet sails.'],
+  },
+  refCases: REF_CASES,
+  refAsof: WAIT_ASOF,
+};

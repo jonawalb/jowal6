@@ -1,3 +1,77 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1);
-export const SOURCES = __m.SOURCES;
+// Sources for the Baltic Matrix Game. Every URL was opened on 2026-09-29 and checked to say what the page claims.
+// Census figures were pulled from the Statistics Estonia PxWeb API (tables RL21422, RL21429, RL21434, Narva city,
+// all ages, both sexes) and are reproduced in data/scenario.js.
+export const SOURCES = {
+  engleHistory: {
+    label: 'Chris Engle, "A short history of matrix games," PAXsims, 26 July 2016',
+    url: 'https://paxsims.wordpress.com/2016/07/26/engle-a-short-history-of-matrix-games/',
+    note: 'Engle dates the invention to January 1988 and describes players making arguments about what happens next.',
+  },
+  engleSimple: {
+    label: 'Chris Engle, "Proposal for a simplified matrix game," PAXsims, 29 July 2016',
+    url: 'https://paxsims.wordpress.com/2016/07/29/engle-proposal-for-a-simplified-matrix-game/',
+    note: 'Actions may be made as arguments ("an action, a result, and three reasons why") but, Engle adds, "don\'t have to be"; all sessions should end with a debriefing.',
+  },
+  mouatAdj: {
+    label: 'Tom Mouat, "Adjudication in matrix games," PAXsims, 30 July 2018',
+    url: 'https://paxsims.wordpress.com/2018/07/30/adjudication-in-matrix-games/',
+    note: 'Weighted probabilities: 2d6, 7 or more succeeds (58.3%), each strong PRO +1 and each strong CON -1, extreme totals give extreme outcomes. Suggests at least six moves.',
+  },
+  magck: {
+    label: 'PAXsims, "MaGCK: The Matrix Game Construction Kit" (product page)',
+    url: 'https://paxsims.wordpress.com/magck/',
+    note: 'The kit whose weighted-probabilities rule this game uses; its development and publication were supported by the UK Defence Science and Technology Laboratory (Dstl). The NATO Wargaming Handbook (footnote 14) recommends it.',
+  },
+  handbook: {
+    label: 'John Curry, Chris Engle and Peter Perla (eds.), The Matrix Games Handbook: Professional Applications from Education to Analysis and Wargaming (History of Wargaming Project, 2018)',
+    url: 'http://www.wargaming.co/professional/details/matrixgameshandbook.htm',
+    note: 'Publisher page. Contents include a sample game on NATO and Russian posturing in the Baltic Sea.',
+  },
+  handbookNews: {
+    label: 'Rex Brynen, "The Matrix Games Handbook now available," PAXsims, 1 August 2018',
+    url: 'https://paxsims.wordpress.com/2018/08/01/the-matrix-game-handbook-now-available/',
+    note: 'Chapter list, including "Baltic Challenge: NATO and Russian posturing in the Baltic Sea".',
+  },
+  curryPrice: {
+    label: 'Rex Brynen, review of John Curry and Tim Price, Matrix Games for Modern Wargaming (History of Wargaming Project, 2014), PAXsims, 20 September 2014',
+    url: 'https://paxsims.wordpress.com/2014/09/20/review-matrix-games-for-modern-wargaming/',
+    note: 'Players argue what they want to do, why it would succeed and its effects; others give counter-arguments; an umpire adjudicates with or without dice.',
+  },
+  ukHandbook: {
+    label: 'UK Ministry of Defence, Development, Concepts and Doctrine Centre, Wargaming Handbook (August 2017), para. 3.6 "Matrix game"',
+    url: 'https://www.gov.uk/government/publications/defence-wargaming-handbook',
+    note: 'Matrix games "demand that players provide several specific arguments for the success of a proposed action"; others counter-argue; an umpire adjudicates.',
+  },
+  natoHandbook: {
+    label: 'NATO Allied Command Transformation, NATO Wargaming Handbook, first version (2023), copy hosted by PAXsims',
+    url: 'https://paxsims.wordpress.com/wp-content/uploads/2023/09/nato-wargaming-handbook-202309.pdf',
+    note: 'Lists matrix wargames among the less rigid types, adjudicated by player consensus on the probability of success; footnote 14 recommends the Matrix Game Construction Kit.',
+  },
+  natoEfp: {
+    label: 'NATO, "Strengthening NATO\'s eastern flank" (topic page)',
+    url: 'https://www.nato.int/cps/en/natohq/topics_136388.htm',
+    note: 'Warsaw Summit 2016 decision on enhanced Forward Presence; battlegroups operational in Estonia, Latvia, Lithuania and Poland by August 2017; Estonia host, United Kingdom framework nation; Madrid 2022 agreement to scale up to brigade-size units where and when required.',
+  },
+  statLang: {
+    label: 'Statistics Estonia, 2021 census table RL21434: population by mother tongue and place of residence (Narva city)',
+    url: 'https://andmed.stat.ee/en/stat/rahvaloendus__rel2021__rahvastiku-demograafilised-ja-etno-kultuurilised-naitajad__rahvus-emakeel/RL21434',
+  },
+  statEthnic: {
+    label: 'Statistics Estonia, 2021 census table RL21429: population by ethnic nationality and place of residence (Narva city)',
+    url: 'https://andmed.stat.ee/en/stat/rahvaloendus__rel2021__rahvastiku-demograafilised-ja-etno-kultuurilised-naitajad__rahvus-emakeel/RL21429',
+  },
+  statCit: {
+    label: 'Statistics Estonia, 2021 census table RL21422: population by citizenship and place of residence (Narva city)',
+    url: 'https://andmed.stat.ee/en/stat/rahvaloendus__rel2021__rahvastiku-demograafilised-ja-etno-kultuurilised-naitajad__kodakondsus/RL21422',
+  },
+  bbcKohver: {
+    label: 'BBC News, "Estonia angry at Russia \'abduction\' on border," 5 September 2014',
+    url: 'https://www.bbc.com/news/world-europe-29078400',
+    note: 'An Internal Security Service officer was taken near the Luhamaa checkpoint; Estonia says inside Estonia, Russia\'s FSB says on Russian territory.',
+  },
+  bbcBuoys: {
+    label: 'BBC News, "Russia\'s removal of border markers \'unacceptable\' - EU," 24 May 2024',
+    url: 'https://www.bbc.com/news/articles/c899844ypj2o',
+    note: '24 of 50 buoys marking Narva River sailing routes removed; Russia disputed about half of 250 planned buoy locations; EU called it unacceptable; Estonia summoned Russia\'s charge d\'affaires.',
+  },
+};

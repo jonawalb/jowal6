@@ -1,14 +1,76 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1);
-export const BENCH = __m.BENCH;
-export const CHANNEL = __m.CHANNEL;
-export const CONF = __m.CONF;
-export const ENVS = __m.ENVS;
-export const ENV_NOTE = __m.ENV_NOTE;
-export const FORCES = __m.FORCES;
-export const MODEL = __m.MODEL;
-export const PRESETS = __m.PRESETS;
-export const S = __m.S;
-export const THREAT = __m.THREAT;
-export const THREAT_LEVELS = __m.THREAT_LEVELS;
-export const THREAT_NOTE = __m.THREAT_NOTE;
+// Parameters for Hormuz Mine Clearance. Each value carries `src` (a cited open source) or `notional: true`.
+// Notional values are round numbers chosen to make the trade-offs visible; they are not estimates of any
+// real force, minefield or operation. Every source below was opened on 29 September 2026.
+export const S = {
+  eyer: { name: 'Kevin Eyer, "The Crisis in Mine Countermeasures," Proceedings, April 2026 (archived copy)', url: 'https://web.archive.org/web/2026/https://www.usni.org/magazines/proceedings/2026/april/crisis-mine-countermeasures' },
+  thales: { name: 'Habonneau, Bousquet and Malkasse (Thales), "Performance Assessment of MCM Toolbox," UDT conference paper', url: 'https://cdn.asp.events/CLIENT_Clarion__96F66098_5056_B733_492B7F3A0E159DC7/sites/UDT-2020/media/libraries/unmanned-remotely-piloted-and-autonomous-systems/28---Jerome-Habonneau-Paper-FINAL.pdf' },
+  cnn: { name: 'CNN, 10 March 2026', url: 'https://www.cnn.com/2026/03/10/politics/iran-begins-laying-mines-in-strait-of-hormuz' },
+  mwc: { name: 'Connell and Walberg, "It\'s Time to Bring Back MINEWARCOM," Center for Maritime Strategy, 31 July 2026', url: 'https://centerformaritimestrategy.org/publications/its-time-to-bring-back-minewarcom/' },
+  nyt91: { name: 'New York Times, "Allied Flotilla Quickly Clears Mines Off Kuwait," 25 June 1991 (archived)', url: 'https://web.archive.org/web/2024/https://www.nytimes.com/1991/06/25/world/allied-flotilla-quickly-clears-mines-off-kuwait.html' },
+  hgram59: { name: 'Naval History and Heritage Command, H-Gram 059 (archived)', url: 'https://web.archive.org/web/20251208110839/https://www.history.navy.mil/about-us/leadership/director/directors-corner/h-grams/h-gram-059.html' },
+  tp: { name: 'Task & Purpose, 28 August 2026', url: 'https://taskandpurpose.com/news/navy-clears-mines-strait-of-hormuz-centcom/' },
+  national: { name: 'The National, 28 August 2026', url: 'https://www.thenationalnews.com/news/us/2026/08/28/hormuz-iran-shipping-lanes-military/' },
+  dote: { name: 'DOT&E FY2025 Annual Report, Littoral Combat Ship (archived copy)', url: 'https://web.archive.org/web/2026/https://www.dote.osd.mil/Portals/97/pub/reports/FY2025/navy/2025lcs.pdf' },
+};
+
+// Channel geometry. Defaults follow Eyer's description of what reopening Hormuz would take.
+export const CHANNEL = {
+  lengthNm: { v: 100, min: 20, max: 160, step: 5, src: 'eyer', q: 'The strait\'s traffic separation scheme stretches roughly 100 nautical miles.' },
+  routes: { v: 2, min: 1, max: 4, step: 1, src: 'eyer', q: 'supporting both inbound and outbound oil and LNG traffic would require two channels' },
+  widthYd: { v: 2000, min: 1000, max: 4000, step: 250, src: 'eyer', q: 'While a standard Q-route is 1,000 yards wide, supporting both inbound and outbound oil and LNG traffic would require two channels, each 2,000 yards wide, covering roughly 200 square miles.' },
+};
+
+// Threat: mines and false contacts.
+export const THREAT = {
+  mines: { v: 40, min: 0, max: 600, step: 10, notional: true, note: 'Default echoes CNN\'s 10 March 2026 report of "a few dozen" mines laid; no source gives a total. Eyer puts Iran\'s inventory at 5,000–6,000 mines, Connell and Walberg at "roughly six thousand".' },
+  shareInRoutes: { v: 50, min: 10, max: 100, step: 5, notional: true, note: 'Percent of mines laid inside the routes being cleared.' },
+  contactsPerNm2: { v: 2, min: 0, max: 6, step: 0.5, notional: true, note: 'Mine-like objects per square nautical mile (debris, wrecks, rocks) that must each be identified. No open source gives a figure for Hormuz.' },
+  remineWeek: { v: 0, min: 0, max: 20, step: 1, notional: true, note: 'Mines laid into the routes each week during clearance. U.S. strikes on Larak Island in August 2026 aimed to stop rocket-laid mines (Al Jazeera, 31 August 2026).' },
+};
+
+// Environment, from the Thales paper's example towed-sonar area coverage rates (square nm per hour).
+export const ENVS = {
+  easy: { label: 'Easy seabed', acr: 0.93 },
+  medium: { label: 'Medium', acr: 0.8 },
+  complex: { label: 'Complex', acr: 0.4 },
+};
+export const ENV_NOTE = 'The Thales paper\'s example: "assume a multi-aspect towed sonar Area Coverage Rate is equal to 0.93 square Nautical Miles per hour (NM²/h) on easy environment, 0.8 NM²/h on medium environment and 0.4NM²/h on complex environment." Other assets are scaled by the same ratios (notional).';
+
+// Forces. acr = square nm searched per asset-hour on an easy seabed; the environment scales it.
+// Only the USV figure comes from a source; the others are notional ratios to it.
+export const FORCES = [
+  { k: 'usv', label: 'Uncrewed boats with towed sonar', short: 'USVs', v: 2, max: 24, acr: 0.93, src: 'thales', note: 'Search rate from the Thales example.' },
+  { k: 'ship', label: 'Crewed MCM ships or LCS', short: 'Ships', v: 1, max: 12, acr: 0.5, notional: true, note: 'Hull-mounted or variable-depth sonar. Eyer writes that U.S. options were limited to three Independence-variant LCS.' },
+  { k: 'helo', label: 'MCM helicopters', short: 'Helicopters', v: 0, max: 12, acr: 1.5, notional: true, note: 'Towed sweep: fast but does not find every mine type. The U.S. retired its MH-53E detachment in August 2025 (Eyer).' },
+  { k: 'eod', label: 'EOD and diver teams', short: 'Teams', v: 4, max: 30, idPerDay: 2, notional: true, note: 'Identify and neutralize contacts; they do not search. Cooper said divers and SEALs led the 2026 clearance (Task & Purpose).' },
+];
+
+export const THREAT_LEVELS = {
+  permissive: { label: 'Permissive', sub: 'No attacks on MCM forces', hours: 12, lossWeek: 0 },
+  harassed: { label: 'Harassed', sub: 'Drones and boats; daylight and escorts only', hours: 8, lossWeek: 0.02 },
+  opposed: { label: 'Opposed', sub: 'Missiles and fire on the swept area', hours: 4, lossWeek: 0.08 },
+};
+export const THREAT_NOTE = 'Hours of productive search and identification work per day, and the weekly loss of MCM assets, are notional. Transit, launch and recovery, sonar data review and re-checks eat much of a day at sea.';
+
+export const CONF = [80, 90, 95, 99];
+export const MODEL = {
+  pdPass: { v: 0.85, notional: true, note: 'Chance one search pass detects a given mine.' },
+  setupDays: { v: 3, notional: true, note: 'Days to arrive and start work.' },
+  dangerWidthM: { v: 60, notional: true, note: 'Width of the path in which a mine can hit a transiting ship.' },
+  actuate: { v: 0.5, notional: true, note: 'Chance a mine in a ship\'s path fires.' },
+  maxDays: 365,
+};
+
+// Historical and 2026 benchmarks, all sourced; the day count is arithmetic on sourced dates.
+export const BENCH = [
+  { k: 'h2026', label: 'Hormuz 2026', from: '2026-04-11', to: '2026-08-27',
+    text: 'Two U.S. destroyers entered the strait to start mine clearance on 11 April 2026 (Task & Purpose). Adm. Brad Cooper said the routes were clear in remarks The National dates to 27 August. Cooper did not say how many mines were removed.', src: ['tp', 'national'] },
+  { k: 'k1991', label: 'Kuwait 1991', text: 'After the Gulf War, "two dozen vessels from nine nations" cleared five shipping channels into Kuwaiti ports by June 1991 and expected to have swept "about 1,000 square miles" by the end of July; about 1,100 mines had been destroyed (New York Times, 25 June 1991). NHHC counts over 1,200 Iraqi mines.', src: ['nyt91', 'hgram59'] },
+];
+
+export const PRESETS = [
+  { k: 'default', label: 'Two routes, light mining', sub: 'Defaults', set: {} },
+  { k: 'heavy', label: 'Heavy mining', sub: '300 mines, more clutter', set: { mines: 300, contactsPerNm2: 4, share: 60 } },
+  { k: 'opposed', label: 'Opposed clearance', sub: 'Under fire, re-mining', set: { threat: 'opposed', remineWeek: 4 } },
+  { k: 'bigforce', label: 'Coalition surge', sub: 'More ships, boats, helicopters, divers', set: { usv: 8, ship: 4, helo: 4, eod: 16 } },
+];

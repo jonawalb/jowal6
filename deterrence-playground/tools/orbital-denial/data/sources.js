@@ -1,3 +1,63 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1);
-export const SOURCES = __m.SOURCES;
+// Sources for Orbital Denial. Every link was opened and the claim checked on 30 September 2026.
+// NASA ODQN issues were read as PDFs from orbitaldebris.jsc.nasa.gov; Kessler & Cour-Palais (1978) was checked
+// through its Crossref record and abstract (OpenAlex); Acton (2018) through Crossref and the Nuclear Entanglement
+// tool's page-checked claims; the U.S. Space Command release through the Internet Archive because the live page
+// blocks scripts.
+export const SOURCES = {
+  kessler1978: {
+    t: 'Donald J. Kessler and Burton G. Cour-Palais, "Collision Frequency of Artificial Satellites: The Creation of a Debris Belt," Journal of Geophysical Research 83, no. A6 (1978): 2637–2646',
+    url: 'https://doi.org/10.1029/JA083iA06p02637',
+    used: 'the idea behind the model: collisions make fragments that make more collisions, so a debris belt can grow even with no new launches' },
+  kessler2010: {
+    t: 'Donald J. Kessler, Nicholas L. Johnson, J.-C. Liou and Mark Matney, "The Kessler Syndrome: Implications to Future Space Operations," AAS 10-016 (2010)',
+    url: 'https://aquarid.physics.uwo.ca/kessler/Kessler%20Syndrome-AAS%20Paper.pdf',
+    used: 'collision rate grows with the square of the population; 45% of collisions between cataloged objects catastrophic; 40 J/g threshold; 10 km/s example impact speed; source-sink "critical density" framing; cascading is slow' },
+  krisko2011: {
+    t: 'P. Krisko, "Proper Implementation of the 1998 NASA Breakup Model," Orbital Debris Quarterly News 15, no. 4 (October 2011): 4–5, summarizing Johnson et al., Advances in Space Research 28, no. 9 (2001): 1377–1384',
+    url: 'https://orbitaldebris.jsc.nasa.gov/quarterly-news/pdfs/odqnv15i4.pdf',
+    used: 'collision fragments N(Lc) = 0.1 · M^0.75 · Lc^−1.71, with M the sum of target and projectile mass' },
+  odqn11_2: {
+    t: 'NASA ODPO, "Chinese Anti-satellite Test Creates Most Severe Orbital Debris Cloud in History," Orbital Debris Quarterly News 11, no. 2 (April 2007): 2–3',
+    url: 'https://orbitaldebris.jsc.nasa.gov/quarterly-news/pdfs/odqnv11i2.pdf',
+    used: 'Fengyun-1C: 11 January 2007, 960 kg, 845 × 865 km at 98.6°; more than 1,200 debris cataloged two months later; debris from 200 to more than 4,000 km; cloud starts as a disk and disperses' },
+  odqn12_1: {
+    t: 'NASA ODPO, "Fengyun-1C Debris: One Year Later," Orbital Debris Quarterly News 12, no. 1 (January 2008): 2',
+    url: 'https://orbitaldebris.jsc.nasa.gov/quarterly-news/pdfs/odqnv12i1.pdf',
+    used: '2,317 debris cataloged by the end of 2007, fewer than 1% reentered; nearly 2,600 large debris (most larger than 10 cm) with those tracked; at least 150,000 debris of 1 cm and larger; both exceed model predictions' },
+  odqn14_4: {
+    t: 'NASA ODPO, "Chinese Debris Reaches New Milestone," Orbital Debris Quarterly News 14, no. 4 (October 2010): 3',
+    url: 'https://orbitaldebris.jsc.nasa.gov/quarterly-news/pdfs/odqnv14i4.pdf',
+    used: '3,037 Fengyun-1C debris cataloged by mid-September 2010, 97% still in orbit' },
+  odqn26_1: {
+    t: 'NASA ODPO, "The Intentional Destruction of Cosmos 1408," Orbital Debris Quarterly News 26, no. 1 (March 2022): 1–5',
+    url: 'https://orbitaldebris.jsc.nasa.gov/quarterly-news/pdfs/odqnv26i1.pdf',
+    used: 'Cosmos 1408: 15 November 2021, 1,750 kg, 490 × 465 km before the test; more than 1,500 trackable fragments; 1,604 cataloged by 7 March 2022' },
+  odqn26_4: {
+    t: 'P. Anz-Meador, "The Influence of Fragmentations and Mission-related Objects on the Space Environment," Orbital Debris Quarterly News 26, no. 4 (December 2022): 5–6',
+    url: 'https://orbitaldebris.jsc.nasa.gov/quarterly-news/pdfs/odqnv26i4.pdf',
+    used: 'as of 1 May 2022: Fengyun-1C 3,532 cataloged, 2,837 on orbit; Cosmos 1408 1,760 cataloged, 990 on orbit (same issue: the ISS maneuvered to avoid a Cosmos 1408 fragment in October 2022)' },
+  odqn28_2: {
+    t: 'A. Manis, M. Matney and P. Anz-Meador, "Evolution of the Cosmos 1408 Breakup Cloud: A Two-Year Status," Orbital Debris Quarterly News 28, no. 2 (April 2024): 1–4',
+    url: 'https://orbitaldebris.jsc.nasa.gov/quarterly-news/pdfs/odqnv28i2.pdf',
+    used: 'about 9% of modeled Cosmos 1408 fragments ≥1 cm left after two years; 1,805 cataloged by 3 February 2024; the NASA breakup model matched early radar data very well' },
+  usspacecom2021: {
+    t: 'U.S. Space Command, "Russian direct-ascent anti-satellite missile test creates significant, long-lasting space debris," 15 November 2021 (archived copy)',
+    url: 'https://web.archive.org/web/20260926165944/https://www.spacecom.mil/Newsroom/News/Article-Display/Article/2842957/russian-direct-ascent-anti-satellite-missile-test-creates-significant-long-last/',
+    used: '"more than 1,500 pieces of trackable orbital debris" and likely "hundreds of thousands of pieces of smaller orbital debris"' },
+  swf2026: {
+    t: 'Victoria Samson and Kathleen Brett, eds., Global Counterspace Capabilities: An Open Source Assessment (Secure World Foundation, April 2026)',
+    url: 'https://swfound.org/counterspace/',
+    used: 'five categories (co-orbital, direct-ascent, electronic warfare, directed energy, cyber); only non-destructive capabilities used in current conflicts; 6,904 cataloged debris from ASAT tests by four countries, 2,773 still on orbit' },
+  csis2025: {
+    t: 'Clayton Swope, Kari A. Bingen, Makena Young and Kendra LaFave, Space Threat Assessment 2025 (CSIS Aerospace Security Project, April 2025)',
+    url: 'https://aerospace.csis.org/wp-content/uploads/2025/10/250425_Swope_Space_Threat.pdf',
+    used: 'kinetic, non-kinetic, electronic and cyber categories; kinetic effects permanent, jamming and spoofing not; dazzlers meant to blind temporarily but may damage; cyber can be temporary or permanent' },
+  acton2018: {
+    t: 'James M. Acton, "Escalation through Entanglement: How the Vulnerability of Command-and-Control Systems Raises the Risks of an Inadvertent Nuclear War," International Security 43, no. 1 (2018): 56–99',
+    url: 'https://doi.org/10.1162/isec_a_00320',
+    used: 'entanglement: satellites that serve both nuclear and non-nuclear forces; attacks on them can be read as a prelude to nuclear attack' },
+  acton2019: {
+    t: 'James M. Acton, "Why Is Nuclear Entanglement So Dangerous?" Carnegie Endowment for International Peace, 23 January 2019',
+    url: 'https://carnegieendowment.org/posts/2019/01/why-is-nuclear-entanglement-so-dangerous',
+    used: 'the early-warning satellite example; disentangling would mean buying more satellites' },
+};

@@ -1,26 +1,221 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1);
-export const ACTIONS = __m.ACTIONS;
-export const ARCHETYPES = __m.ARCHETYPES;
-export const ARCHETYPE_IDS = __m.ARCHETYPE_IDS;
-export const ASSESS_LEVELS = __m.ASSESS_LEVELS;
-export const ASSESS_PRESETS = __m.ASSESS_PRESETS;
-export const BATTLES = __m.BATTLES;
-export const CARDS = __m.CARDS;
-export const CARD_IDS = __m.CARD_IDS;
-export const CONSTRAINTS = __m.CONSTRAINTS;
-export const DOMAINS = __m.DOMAINS;
-export const LATITUDE = __m.LATITUDE;
-export const LEARN = __m.LEARN;
-export const MASTERY_SHARE = __m.MASTERY_SHARE;
-export const PHASE_LETTERS = __m.PHASE_LETTERS;
-export const SEASONS = __m.SEASONS;
-export const SEASON_LABELS = __m.SEASON_LABELS;
-export const SIM_TARGETS = __m.SIM_TARGETS;
-export const STATES = __m.STATES;
-export const STATE_PHASE = __m.STATE_PHASE;
-export const TECH_TRAIN_MULT = __m.TECH_TRAIN_MULT;
-export const TICKS_PER_PHASE = __m.TICKS_PER_PHASE;
-export const TRAINING = __m.TRAINING;
-export const TRAINING_ORDER = __m.TRAINING_ORDER;
-export const TRUE_CARDS = __m.TRUE_CARDS;
+// Campaign and learning data for Defense in Depth (SPEC §6). Standalone: imports nothing.
+// Learning model after Hunzeker, *Dying to Learn* (2021): exploration → selection → action →
+// mastery (pp. 22–24, 36–37); command latitude, assessment and training dials (pp. 27–33, 37–39).
+// Every number is labelled SOURCED (page), CALIBRATED or NOTIONAL.
+
+// ---- Time (D-23) ----
+// One learning phase = 2 seasons; Hunzeker codes transitions by season (p. 37). 8 seasons in all:
+// season 0 before battle 1, 3 phases × 2, season 7 after battle 4.
+export const SEASONS = 8;                       // NOTIONAL (D-23)
+export const TICKS_PER_PHASE = 2;               // NOTIONAL (D-23)
+export const SEASON_LABELS = ['Before B1', 'Phase 1a', 'Phase 1b', 'Phase 2a', 'Phase 2b', 'Phase 3a', 'Phase 3b', 'After B4'];
+export const PHASE_LETTERS = { E: 'Exploration', S: 'Selection', A: 'Action', M: 'Mastery' }; // pp. 22–24, 36–37
+
+// ---- The four battles (SPEC §6.1; D-17, D-18, D-19) ----
+// `ctx` = context modifiers the engine reads from opts.campaign.ctx; all values NOTIONAL unless cited.
+export const BATTLES = [
+  {
+    id: 'B1', name: 'The Break-In at Wendrel', modern: 'The Break-In at Wendrel (drone sky)',
+    inspired: 'Hunzeker Battle 1 (pp. 50–51, 77–78, 102–103, 109)',
+    ctx: { defTrenchRows: [3, 6], defForwardShare: 0.7, counterstrokeArrives: 6, attAmmo: 0.6,
+      attFormation: 'waves', attStorm: 1, tanks: false, drones: 0.5, attOrderDelay: 1 },
+    briefing: 'A shallow linear system with most men forward. A break-in is easy; exploiting it is not, because orders take hours (pp. 78, 103).',
+    beats: ['Barrages that lift early kill waves (p. 103).', 'Linear trenches are enfiladed (p. 77).'],
+  },
+  {
+    id: 'B2', name: 'The Methodical Battle of Hask Rise', modern: 'The Methodical Battle of Hask Rise (drone sky)',
+    inspired: 'Hunzeker Battle 2 (pp. 80, 104, 110, 145); war on a tether (Biddle pp. 32–33)',
+    ctx: { defTrenchRows: [3, 10], defForwardShare: 0.6, attAmmo: 1.6, methodical: true,
+      tanks: true, tankBreakdown: 0.2, pulverized: true, pulverizedStr: 0.4, broken: 'more' },
+    briefing: 'More depth, still dense forward. A long bombardment kills forward garrisons but warns and churns the ground.',
+    beats: ['A fast creeper outruns the infantry (p. 110).', 'Shell-hole defenders enfilade waves (p. 80).'],
+    // Hidden: one column is pulverized (defenders 40%, wire gone), which seeds FL1 (Nivelle trap, p. 147).
+  },
+  {
+    id: 'B3', name: 'The Brannoch Line', modern: 'The Brannoch Line (drone sky)',
+    inspired: 'Hunzeker Battle 3 (pp. 81–82, 98, 113, 148–149); Biddle GOODWOOD (pp. 120–130)',
+    ctx: { defZones: 'learned', reverseSlopeLine: true, attChoice: ['biteHold', 'surprise'], corridor: true },
+    briefing: 'A narrow corridor between two villages, swept from both shoulders (Biddle p. 120).',
+    beats: ['Unsupported armor dies (Biddle pp. 129–130).', 'Ripostes timed to consolidation beat bite-and-hold (Hunzeker p. 82).'],
+  },
+  {
+    id: 'B4', name: 'The Storm', modern: 'The Storm (drone sky)',
+    inspired: 'Hunzeker Battle 4 (pp. 73–74, 117–118); Biddle MICHAEL (pp. 78–107)',
+    ctx: { attDoctrine: 'learned', defLayout: 'learned', fogHours: [0, 3] },
+    briefing: 'Morning fog for three hours. Depth outlasts the fog (Biddle pp. 104–105).',
+    beats: ['Copying the form without the rules fails (Hunzeker p. 117).'],
+  },
+];
+
+// ---- Dials ----
+// Command latitude levels 1–4 (Hunzeker pp. 37–38). Multiplier on observations surfaced (SPEC §6.3).
+export const LATITUDE = [
+  null,
+  { id: 'centralized', label: 'Centralized', mult: 0.5 },
+  { id: 'modCent', label: 'Moderately centralized', mult: 0.8 },
+  { id: 'modDec', label: 'Moderately decentralized', mult: 1.2 },
+  { id: 'decentralized', label: 'Decentralized', mult: 1.5 },
+];
+// Training systems (Hunzeker pp. 31–33, 38–39). rate = share of units trained per tick; resist = share
+// of units that train at half fidelity (pp. 31–33). Rates NOTIONAL (SPEC §6.3).
+export const TRAINING = {
+  decentralized: { label: 'Decentralized', rate: 0.10, resist: 0.30 },
+  partial: { label: 'Partial', rate: 0.20, resist: 0.15 },
+  centralized: { label: 'Centralized', rate: 0.35, resist: 0.00 },
+};
+export const TRAINING_ORDER = ['decentralized', 'partial', 'centralized'];
+export const TECH_TRAIN_MULT = 2;               // technical arms train ×2 (pp. 131–132, 168–169); NOTIONAL value
+export const MASTERY_SHARE = 0.5;               // "majority of frontline units" (p. 37); threshold NOTIONAL
+
+// Assessment: Independent needs independence, prestige and rigor (pp. 10, 29–31). A cell that only
+// forwards paper is a "conduit" (p. 38). `cell: false` = None.
+export const ASSESS_LEVELS = ['none', 'conduit', 'independent'];
+
+// ---- Pipeline parameters (SPEC §6.3; all NOTIONAL unless cited) ----
+export const LEARN = {
+  obsBase: 3,                 // observations surfaced = 3 × latitude multiplier
+  sigma: 0.25,                // apparent-value noise
+  sigmaContext: 0.40,         // with the pulverized-context bonus
+  capacity: 3,                // observations the cell can process per phase; Independent +1
+  overloadLoss: 0.5,          // decentralized: share lost beyond capacity (p. 28 overload)
+  overloadLossListening: 0.25,// at Listening ≥ 2 the loss halves (p. 28)
+  whitewash: 0.3,             // centralized: apparent value biased 30% toward 0 (p. 127)
+  actions: 3, actionsIndependent: 4,
+  analyzeSigma: { independent: 0.5, conduit: 1.0, none: 1.5 },   // × σ
+  falseReveal: 0.7,           // Independent analysis reveals a false lesson
+  garbleNone: 0.5,            // codify with no cell: garbled at p = 0.5, half effect
+  testRollouts: 20,           // micro-battle rollouts: 10 paired games (W3: was 40; ~130 ms a test with real engines)
+  attribution: { rigor: 0.85, plain: 0.6 },   // concept vs execution signal (p. 71)
+  study: { base: 0.4, rigor: 0.3, captured: 0.2 },   // fidelity p_full (pp. 65, 117)
+  staffForwardRisk: 0.1,      // −1 action next phase (pp. 126–127)
+  commanderReplaced: 0.2,     // per phase (p. 164)
+  prestigeQuality: -0.05,     // leader-quality cost for line units (pp. 29–30)
+  pullBattalionShare: 0.15,   // one battalion ≈ 3 of ~20 line companies
+  codifyThreshold: 0.06,      // scripted chooser: codify only if estimate > this (W3: 0.1 -> 0.06, about 2 standard errors of a real micro-battle test)
+  initiativeP: 0.03,          // §6.4: per stalled/pinned unit-hour × latitude level (pp. 28–29)
+};
+
+// ---- Doctrine cards (SPEC §6.3) ----
+// `sides`: which side's army can use it ('a' attacker, 'd' defender). `tech`: technical arm (trains ×2).
+// `effect`: NOTIONAL true effect size on the card's metric (fractional loss reduction etc.), used by the
+// stub battle model and as the ground truth a micro-battle test should recover. `false`: a false lesson
+// (positive-looking in context, harmful in fact). `metric`: the telemetry pair that yields observations.
+export const CARDS = [
+  { id: 'AT1', domain: 'AT', name: 'Small groups', sides: 'a', effect: 0.35,
+    metric: 'Loss per sector gained: small groups vs waves', page: 'Hunzeker pp. 56, 70–72',
+    text: 'Line infantry use small groups at full effect.', seen: 'their companies came in small groups this time' },
+  { id: 'AT2', domain: 'AT', name: 'Infiltration and bypass', sides: 'a', effect: 0.25,
+    metric: 'Detection rate and gain of infiltrators', page: 'Hunzeker pp. 71–72',
+    text: 'Line infantry infiltrate with stealth.', seen: 'their line companies slipped past your posts' },
+  { id: 'AT3', domain: 'AT', name: 'Organic firepower', sides: 'a', effect: 0.30,
+    metric: 'Loss with vs without overwatch', page: 'Hunzeker pp. 71–72',
+    text: '+30% firepower; overwatch cap +0.1.', seen: 'their assault groups carried more firepower' },
+  { id: 'CA1', domain: 'CA', name: 'Predicted fire', sides: 'a', tech: true, effect: 0.30,
+    metric: 'Defender reaction after hurricane vs methodical preparation', page: 'Hunzeker p. 59',
+    text: 'Hurricane preparation without the registration warning.', seen: 'their bombardment came without registration fire' },
+  { id: 'CA2', domain: 'CA', name: 'Artillery–infantry liaison', sides: 'ad', tech: true, effect: 0.40,
+    metric: 'Early/late lifts and their losses', page: 'Hunzeker pp. 52, 110',
+    text: 'Calls for fire −1 h; early-lift residual 0.5; gas discipline.', seen: 'their fire answered calls faster' },
+  { id: 'CA3', domain: 'CA', name: 'Tank–infantry cooperation', modernName: 'Drone–fires link', sides: 'a', modernSides: 'ad', tech: true, effect: 0.20,
+    metric: 'Tank losses supported vs unsupported', page: 'Hunzeker pp. 110–111; Biddle pp. 129–130',
+    text: 'Unsupported-armor penalty halved; tanks suppress at full effect only beside trained infantry (1917–18); a Suppress mission on a drone-watched sector lands as one battery more (modern).', seen: 'their tanks kept infantry close' },
+  { id: 'ED1', domain: 'ED', name: 'Outpost zone and concealed siting', sides: 'd', effect: 0.30,
+    metric: 'Forward-zone bombardment losses', page: 'Hunzeker pp. 78–82',
+    text: 'f_e −0.2 on reverse-slope trenches; dispersed positions fully concealed (f_e 0, untrained 0.3); dummy positions; outpost detection × 1.5.', seen: 'their front line was thinner and harder to find' },
+  { id: 'ED2', domain: 'ED', name: 'Elastic yield', sides: 'd', effect: 0.20,
+    metric: 'Yield outcomes', page: 'Hunzeker pp. 61, 81–82',
+    text: 'Elastic without panic. Untrained: a yield turns into a break at p = 0.5.', seen: 'their posts gave ground and did not break' },
+  { id: 'ED3', domain: 'ED', name: 'Immediate counterattack authority', sides: 'd', effect: 0.40,
+    metric: 'Riposte success by window', page: 'Hunzeker p. 82',
+    text: 'Riposte with no order delay; the counterstroke formation needs no extra 2 hours for orders.', seen: 'their counterattacks came faster' },
+  { id: 'FL1', domain: 'AT', name: 'Quick rupture', sides: 'a', false: true, effect: -0.30, apparent: 0.5,
+    metric: 'Fast win in a context-degraded column', page: 'Hunzeker pp. 138, 147–148',
+    text: 'Defaults become Rush + fast creeper; the auto-plan uses it.', seen: 'they came at a run behind a fast creeper' },
+  { id: 'FL2', domain: 'ED', name: 'Hold every yard', sides: 'd', false: true, effect: -0.25, apparent: 0.45,
+    metric: 'Forward-heavy defense held against a poor attack', page: 'Hunzeker pp. 117–118',
+    text: 'Hold at all costs by default; Elastic disabled.', seen: 'every forward post held to the last' },
+];
+export const CARD_IDS = CARDS.map(c => c.id);
+export const TRUE_CARDS = CARDS.filter(c => !c.false).map(c => c.id);
+export const DOMAINS = [
+  { id: 'AT', label: 'Assault tactics' },
+  { id: 'CA', label: 'Combined arms' },
+  { id: 'ED', label: 'Elastic defense in depth' },
+];
+
+// ---- Archetypes (SPEC §6.2; D-20) ----
+// `path[k]` = dials in force for battle k+1 and the learning phase after battle k (k = 0..3).
+// Dials drift along the path unless the player changed that dial by hand.
+// cell: assessment cell exists; indep/prestige/rigor: its attributes (all three = Independent).
+const IND = { cell: true, indep: true, prestige: true, rigor: true };
+const CONDUIT = { cell: true, indep: false, prestige: false, rigor: false };
+const NONE = { cell: false, indep: false, prestige: false, rigor: false };
+export const ARCHETYPES = {
+  staff: {
+    label: 'Staff model', note: 'modeled on one of the three armies in Hunzeker\'s study; see Lessons',
+    sig: 'Explores later; selects and spreads fastest; copies freely (p. 65).',
+    // latitude modCent → modDec (pp. 83–85); Independent from the start (pp. 86–87);
+    // training partial → centralized (pp. 89–92).
+    path: [
+      { lat: 2, assess: IND, train: 'partial' },
+      { lat: 3, assess: IND, train: 'centralized' },
+      { lat: 3, assess: IND, train: 'centralized' },
+      { lat: 3, assess: IND, train: 'centralized' },
+    ],
+    constraints: [],
+  },
+  regimental: {
+    label: 'Regimental model', note: 'modeled on one of the three armies in Hunzeker\'s study; see Lessons',
+    sig: 'Many pamphlets, no filter (p. 126); technical arms excel (pp. 131–132).',
+    // latitude modCent → centralized (trap) → modDec (pp. 119–124); assessment none → Independent from
+    // the second learning phase (pp. 127–128); training decentralized → partial → centralized (pp. 128–131).
+    path: [
+      { lat: 2, assess: NONE, train: 'decentralized' },
+      { lat: 1, assess: NONE, train: 'decentralized' },
+      { lat: 1, assess: IND, train: 'partial' },
+      { lat: 3, assess: IND, train: 'centralized' },
+    ],
+    constraints: [],
+  },
+  republican: {
+    label: 'Republican model', note: 'modeled on one of the three armies in Hunzeker\'s study; see Lessons',
+    sig: 'Explores first and most; pamphlet cacophony; doctrinal whiplash (p. 164).',
+    // modDec throughout (pp. 159–162); conduit → Independent at the last phase (pp. 163–165);
+    // decentralized training, technical arms centralized (pp. 165–169); political bar on elasticity
+    // (pp. 133–134, 169) as a constraint card (D-24).
+    path: [
+      { lat: 3, assess: CONDUIT, train: 'decentralized', techTrain: 'centralized' },
+      { lat: 3, assess: CONDUIT, train: 'decentralized', techTrain: 'centralized' },
+      { lat: 3, assess: CONDUIT, train: 'decentralized', techTrain: 'centralized' },
+      { lat: 3, assess: IND, train: 'decentralized', techTrain: 'centralized' },
+    ],
+    constraints: ['noYield'],
+  },
+};
+export const ARCHETYPE_IDS = ['staff', 'regimental', 'republican'];
+export const ASSESS_PRESETS = { none: NONE, conduit: CONDUIT, independent: IND };
+
+// Political constraint cards (D-24, P2; Hunzeker pp. 11, 134, 169).
+export const CONSTRAINTS = {
+  noYield: { label: 'No voluntary withdrawal', text: 'The capital forbids yielding ground: Elastic yield cannot be codified.', blocks: ['ED2'], page: 'Hunzeker pp. 133–134, 169' },
+};
+
+// ---- Learning actions (SPEC §6.3) ----
+export const ACTIONS = {
+  analyze: { label: 'Analyze an observation', page: 'pp. 29–31' },
+  test: { label: 'Raise experimental unit', page: 'p. 71', cost: 'One company misses the next battle' },
+  codify: { label: 'Codify', page: 'pp. 36–37' },
+  train: { label: 'Train', page: 'pp. 31–33' },
+  study: { label: 'Study enemy doctrine', page: 'pp. 65, 117' },
+  redteam: { label: 'Red-team memo', page: 'p. 89' },
+  staffForward: { label: 'Staff officers forward', page: 'pp. 126–127' },
+  pullBattalion: { label: 'Pull a battalion off the line', page: 'p. 74', cost: 'The battalion misses the next battle' },
+  dial: { label: 'Change a dial one step', page: 'pp. 29–30' },
+};
+
+// Card state ladder (SPEC §6.3). Index order matters.
+export const STATES = ['unknown', 'observed', 'candidate', 'tested', 'codified', 'training', 'mastered'];
+export const STATE_PHASE = { observed: 'E', candidate: 'E', tested: 'S', codified: 'S', training: 'A', mastered: 'M' };
+
+// Campaign-sim targets (SPEC §9.2 campaign row).
+export const SIM_TARGETS = { icMasters2: 0.70, conduitFalse: 0.30 };

@@ -1,7 +1,72 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1);
-export const INV_PRESETS = __m.INV_PRESETS;
-export const ORDER = __m.ORDER;
-export const PAC3 = __m.PAC3;
-export const SUPPLY = __m.SUPPLY;
-export const SYSTEMS = __m.SYSTEMS;
+// Interceptor Burn-down: Taiwan's long-range air and missile defense interceptors, national totals only.
+// Every figure below is a public open-source estimate or a public order figure. Taiwan's Ministry of National
+// Defense does not publish its interceptor stockpile, so none of these is an official on-hand count.
+// Sources (each opened and checked, September 2026):
+//   Open Nuclear Network (Tianran Xu), "Taiwan's Air and Missile Defence", Part 2 (9 Oct 2024) and Part 4 (29 Apr 2025):
+//     about 200 PAC-2 GEM and about 380 PAC-3 CRI purchased; PAC-3 MSE "possibly in the range of 50 to 100";
+//     Tien Kung-3 "at least 400" (production-based estimate 498-648); 432 Tien Kung-2 silos, likely all armed;
+//     Tien Kung-2 has no anti-ballistic role in live-fire drills.
+//   Open Nuclear Network, Part 3 (23 Jan 2025): Tien Kung-3 mix with Tien Kung-2 and the 12-battery Tien Kung-3 program.
+//   CRS RL30957 (Shirley Kan), Taiwan: Major U.S. Arms Sales Since 1990: 330 PAC-3 notified 3 Oct 2008 and
+//     114 PAC-3 notified 29 Jan 2010 (notification ceilings, 444 total).
+//   The Defense Post, 12 Feb 2026, reporting the Liberty Times: 102 PAC-3 MSE procured; first batch delivered Jan 2026.
+//   DSCA notification TECRO 24-48 (25 Oct 2024), mirrored by GlobalSecurity.org: 3 NASAMS, 123 AMRAAM-ER.
+//   TSM Arms Sales Backlog (tools/arms-backlog/data/cases.js, TSM local): NASAMS fire-unit contract due spring 2031;
+//     PAC-3 MSE case partly delivered.
+//   Taipei Times, 3 Jan 2026: T-Dome plan includes 230 more Tien Kung III and two Chiang Kung (Tien Kung IV/V)
+//     systems with 128 missiles, subject to the special defense budget.
+//   Liberty Times Defense, 3 Sep 2026 (opened 2026-10-02): the May 2026 special act (NT$780bn cap, U.S. FMS only) dropped
+//     13 items including Strong Bow; Strong Bow is in the FY2027 budget and the cabinet's 2026 supplementary request.
+//   Taipei Times, 4 Mar 2022 and 16 Aug 2026: Tien Kung III production capacity 96 a year (up from 48).
+
+export const SYSTEMS = [
+  { k: 'mse', n: 'PAC-3 MSE', long: 'Patriot PAC-3 Missile Segment Enhancement', col: 'var(--c1)',
+    roles: ['b', 'c', 'd'], limB: false, max: 400,
+    basis: '102 ordered; first batch reportedly delivered January 2026', src: 'defpost', tag: 'order' },
+  { k: 'cri', n: 'PAC-3 CRI', long: 'Patriot PAC-3 Cost Reduction Initiative', col: 'var(--c7)',
+    roles: ['b', 'c', 'd'], limB: false, max: 600,
+    basis: 'about 380 purchased (analyst estimate); 444 notified in 2008 and 2010', src: 'onn2', tag: 'estimate' },
+  { k: 'gem', n: 'PAC-2 GEM', long: 'Patriot PAC-2 Guidance Enhanced Missile', col: 'var(--c6)',
+    roles: ['b', 'c', 'd'], limB: true, max: 400,
+    basis: 'about 200 purchased (analyst estimate); limited anti-ballistic role', src: 'onn2', tag: 'estimate' },
+  { k: 'tk3', n: 'Tien Kung III', long: 'Tien Kung III (Sky Bow III)', col: 'var(--c3)',
+    roles: ['b', 'c', 'd'], limB: true, max: 1000,
+    basis: 'at least 400 (analyst estimate from production capacity)', src: 'onn4', tag: 'estimate' },
+  { k: 'tk2', n: 'Tien Kung II', long: 'Tien Kung II (Sky Bow II)', col: 'var(--c5)',
+    roles: ['c', 'd'], limB: true, max: 800,
+    basis: 'about 430 (432 silos, analyst estimate); no anti-ballistic role', src: 'onn4', tag: 'estimate' },
+  { k: 'nasams', n: 'NASAMS', long: 'NASAMS with AMRAAM-ER', col: 'var(--c4)',
+    roles: ['c', 'd'], limB: true, max: 500,
+    basis: '123 AMRAAM-ER notified October 2024; fire units due by spring 2031, so zero today', src: 'dsca', tag: 'order' },
+  { k: 'tk4', n: 'Tien Kung IV', long: 'Tien Kung IV (Chiang Kung program)', col: 'var(--c2)',
+    roles: ['b', 'c', 'd'], limB: false, max: 500,
+    basis: '128 missiles planned under T-Dome; zero today. The special act passed in May 2026 left the Strong Bow (Chiang Kung) system out; the cabinet moved it into the FY2027 budget and the 2026 supplementary request, which the legislature had not passed by 2 October 2026 (Liberty Times, 3 Sept. 2026)', src: 'tt2026', tag: 'planned' },
+];
+
+// Which systems each threat class draws on, in firing order (cheapest adequate interceptor first).
+// The ordering is a modelling choice, not published doctrine: older PAC-3 CRI rounds fire before the newer MSE.
+export const ORDER = {
+  b: ['tk4', 'cri', 'mse', 'tk3', 'gem'],
+  c: ['tk2', 'nasams', 'tk3', 'gem', 'tk4', 'cri', 'mse'],
+  d: ['nasams', 'tk2', 'tk3', 'gem', 'cri', 'mse', 'tk4'],
+};
+export const PAC3 = new Set(['mse', 'cri', 'tk4']);
+
+export const INV_PRESETS = [
+  { k: 'open', n: 'Open estimates, 2026', s: 'Analyst estimates plus the 102-missile MSE order',
+    v: { mse: 102, cri: 380, gem: 200, tk3: 400, tk2: 430, nasams: 0, tk4: 0 },
+    note: 'Open-source estimates. Assumes the full 102-missile PAC-3 MSE order has arrived, which MND has not confirmed. Live-fire use since purchase is not subtracted.' },
+  { k: 'low', n: 'Lean', s: 'MSE at 50, Tien Kung III at the low end',
+    v: { mse: 50, cri: 380, gem: 200, tk3: 400, tk2: 430, nasams: 0, tk4: 0 },
+    note: 'ONN puts the MSE count at possibly 50 to 100 by end of 2026. Other systems as in the open estimate.' },
+  { k: 'planned', n: 'With planned orders', s: 'T-Dome and NASAMS added',
+    v: { mse: 102, cri: 380, gem: 200, tk3: 630, tk2: 430, nasams: 123, tk4: 128 },
+    note: 'Adds 230 Tien Kung III and 128 Tien Kung IV (T-Dome plan, Taipei Times, Jan. 2026) and 123 AMRAAM-ER for NASAMS (due by 2031). The planned PAC-3 battalion is left out because its missile count is not public.' },
+];
+
+// Sourced production and delivery facts used for the resupply controls.
+export const SUPPLY = {
+  tk3PerYear: 96,          // Taipei Times, 4 Mar 2022 and 16 Aug 2026: capacity, not a wartime rate
+  mseOrdered: 102,         // The Defense Post / Liberty Times, Feb 2026
+  nasamsDue: 'spring 2031' // TSM backlog, November 2025 update
+};

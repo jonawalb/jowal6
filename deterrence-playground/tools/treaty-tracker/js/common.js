@@ -9,8 +9,10 @@ export const GROUPS = [
   { id: 'nuclear', name: 'Nuclear tests and weapons', help: 'PTBT, NPT, CTBT, TPNW' },
   { id: 'wmd', name: 'Other weapons of mass destruction', help: 'BWC, CWC, Outer Space, Sea-bed' },
   { id: 'usrus', name: 'U.S.–Soviet/Russian treaties', help: 'INF, START I, START II, SORT, New START' },
-  { id: 'europe', name: 'European security', help: 'CFE, Open Skies' },
+  { id: 'europe', name: 'European security', help: 'CFE, Adapted CFE, Open Skies' },
   { id: 'nwfz', name: 'Nuclear-weapon-free zones', help: 'Tlatelolco, Rarotonga, Bangkok, Pelindaba, Semipalatinsk' },
+  { id: 'conventional', name: 'Conventional weapons', help: 'Mine Ban, Cluster Munitions, ATT, CCW, CIFTA, OAS Transparency, Kinshasa. CFE sits under European security.' },
+  { id: 'ccw', name: 'CCW protocols', help: 'Protocols I to V, Amended Protocol II, the 2001 Article 1 amendment. Off at first.' },
 ];
 // Order matters: the legend and counts follow it.
 export const STATUS = [
@@ -21,6 +23,7 @@ export const STATUS = [
   { id: 'suspended', name: 'Suspended', help: 'Operation of the treaty suspended by this state' },
   { id: 'disputed', name: 'Withdrawal announced, disputed', help: 'Announced withdrawal whose legal effect parties dispute' },
   { id: 'revoked', name: 'Ratification revoked', help: 'Ratification withdrawn; the signature stands' },
+  { id: 'renounced', name: 'Signature renounced', help: 'Signed, then told the depositary it does not intend to become a party' },
   { id: 'withdrawn', name: 'Withdrawn', help: 'Withdrawal has taken effect' },
   { id: 'ended', name: 'Treaty ended', help: 'Was bound until the treaty expired, terminated or was superseded' },
   { id: 'none', name: 'Not signed', help: 'No signature or deposit on record' },
@@ -57,6 +60,7 @@ export function statusAt(tid, iso, year) {
   const susp = (r.susp || []).filter(x => le(x.date)).sort((a, b) => a.date.localeCompare(b.date)).pop();
   if (susp) return { s: susp.scope === 'partial' ? 'susppart' : 'suspended', d: susp.date };
   if (le(r.dep)) return treatyInForce(t, cut) ? { s: 'party', d: r.dep } : { s: 'ratified', d: r.dep };
+  if (le(r.renounced)) return { s: 'renounced', d: r.renounced };
   if (le(r.sig)) {
     if (t.end && t.end <= cut) return { s: 'ended', d: t.end };
     return { s: 'signed', d: r.sig };
@@ -84,6 +88,7 @@ export function recordLines(tid, iso) {
   (r.susp || []).forEach(x => out.push({ d: x.date, t: x.scope === 'partial' ? 'Partial suspension' : 'Suspension' }));
   if (r.disputed) out.push({ d: r.disputed, t: 'Withdrawal announced (status disputed)' });
   if (r.revoked) out.push({ d: r.revoked, t: 'Ratification revoked' });
+  if (r.renounced) out.push({ d: r.renounced, t: 'Told the depositary it does not intend to become a party' });
   if (r.wd) out.push({ d: r.wd, t: 'Withdrawal took effect' });
   if (r.end) out.push({ d: r.end, t: `Treaty ${T[tid].endKind || 'ended'}` });
   return out.sort((a, b) => a.d.localeCompare(b.d));

@@ -1,3 +1,170 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1);
-export const AUSTRALIA = __m.AUSTRALIA;
+// Australia profile for the Defense Budget Allocator.
+// SOURCED (all opened 2026-10-02; defence.gov.au refuses automated requests, so its PDFs were opened via the Wayback Machine):
+//   [P] Defence Portfolio Budget Statements 2026-27 (Budget 12 May 2026):
+//       https://web.archive.org/web/20260514030830/https://www.defence.gov.au/sites/default/files/2026-05/Defence-Portfolio-Budget-Statements-2026-27.pdf
+//       Table 1: total Defence resourcing 2026-27 A$66,385.8m; Table 4a: Defence A$59,501.5m, consolidated Defence, ASD, ASA
+//       and ANNPSR funding A$62,595.5m (A$340,439.9m 2025-26 to 2029-30); Table 5: Capability Acquisition Program A$20,998.1m,
+//       Military Equipment Acquisition Program A$15,398.9m; Table 37: Program 2.16 Nuclear-Powered Submarines A$2,437.7m
+//       (A$5,030.5m in 2025-26); ASA resource statement A$512.5m. Appendix B (Table 54), approved military-equipment expenditure:
+//       LAND 8113 Ph1 first long range fires regiment A$2,136m; SEA 5000 Hunter (six frigates) A$26,570m; SEA 3000 general purpose
+//       frigates A$7,532m; AIR 2025 JORN A$1,243m; SEA 1300 maritime guided weapons A$16,902m approved, A$845m in 2026-27.
+//   [I] 2026 Integrated Investment Program (full text; mirror, the defence.gov.au original was not reachable):
+//       https://www.globalsecurity.org/military/library/policy/int/2026-integrated-investement-program_australia_20260416.pdf
+//       (A$887bn total Defence funding to 2035-36; about A$425bn allocated to capability; A$71-96bn for nuclear-powered submarines;
+//        Chart 1 shares by capability priority; A$1.7bn Ghost Shark contract; A$1.4bn Ghost Bat commitment; 11 Mogami-class frigates;
+//        "deter through denial ... through our northern approaches"; about 3.0% of GDP by 2033-34)
+//   [F] 2026 IIP overview factsheet (official): https://web.archive.org/web/20260725070209/https://www.defence.gov.au/sites/default/files/2026-04/2026%20IIP%20Overview%20factsheet%20A4_WEB%20(1).pdf
+//   [T] Federal Register 2024-20730, DSCA transmittal 23-02 (Tomahawk, US$895m, 200 Block V + 20 Block IV), delivered Mar. 16, 2023
+//   [N] Australian Defence Magazine, 2019-06-24: A$680m NASAMS acquisition contract (LAND 19 Phase 7B)
+//   [S] SIPRI Milex database v1.2 (2026): 2025 calendar year A$54.81bn = US$35.33bn, 1.92% of GDP; implied 1.55 AUD/USD used
+//       for conversions (an estimate).
+// NOTIONAL: every baseline (base), scale (k), reach, weight (w), the approach geometry and the preset mixes. No sea-mine unit
+//   cost was found, so that row is notional.
+
+const fmtBn = v => v >= 1000 ? Math.round(v).toLocaleString('en-US') : v >= 10 ? v.toFixed(1) : v.toFixed(2);
+const AUD = 1.55;
+const PBS = 'https://web.archive.org/web/20260514030830/https://www.defence.gov.au/sites/default/files/2026-05/Defence-Portfolio-Budget-Statements-2026-27.pdf';
+const IIP = 'https://www.globalsecurity.org/military/library/policy/int/2026-integrated-investement-program_australia_20260416.pdf';
+const FS = 'https://web.archive.org/web/20260725070209/https://www.defence.gov.au/sites/default/files/2026-04/2026%20IIP%20Overview%20factsheet%20A4_WEB%20(1).pdf';
+const SIPRI = 'https://www.sipri.org/sites/default/files/SIPRI-Milex-data-1949-2025_v1.2.xlsx';
+const a = (u, t) => `<a href="${u}" target="_blank" rel="noopener">${t}</a>`;
+
+// 2026 IIP Chart 1, share of planned investment by capability priority (percent, as printed), mapped onto the model's categories.
+const IIP_MIX = [
+  { t: 'Undersea warfare (incl. nuclear-powered submarines)', bn: 23, cat: 'platforms' },
+  { t: 'Maritime capabilities for sea denial and sea control', bn: 15, cat: 'platforms' },
+  { t: 'Expeditionary air operations', bn: 8, cat: 'platforms' },
+  { t: 'Targeting and long-range strike', bn: 7, cat: 'strike' },
+  { t: 'Guided weapons and explosive ordnance', bn: 6, cat: 'ammo' },
+  { t: 'Missile defence', bn: 5, cat: 'airdef' },
+  { t: 'Space and cyber', bn: 6, cat: 'c4isr' },
+  { t: 'Theatre command and control', bn: 3, cat: 'c4isr' },
+  { t: 'Northern bases', bn: 3, cat: 'c4isr' },
+  { t: 'Amphibious capable combined-arms land system', bn: 11, cat: 'other' },
+  { t: 'Theatre logistics and health', bn: 4, cat: 'other' },
+  { t: 'Enterprise infrastructure', bn: 7, cat: 'other' },
+  { t: 'Enterprise data and ICT', bn: 3, cat: 'other' },
+  { t: 'Advanced Strategic Capabilities Accelerator', bn: 1, cat: 'other' },
+];
+
+export const AUSTRALIA = {
+  k: 'au', name: 'Australia', sub: 'A$ · northern approaches', cur: 'A$',
+  money: bn => bn >= 1000 ? `A$${(bn / 1000).toFixed(2)}tn` : `A$${fmtBn(bn)}bn`,
+  budgets: [
+    { k: 'mea26', bn: 15.4, t: 'Military equipment acquisition, 2026-27', s: 'A$15.4bn · Budget, May 2026',
+      note: 'The 2026-27 Military Equipment Acquisition Program, the part of Defence\'s budget that buys ships, aircraft, vehicles and weapons. Most of it pays for projects already approved.' },
+    { k: 'def26', bn: 62.6, t: 'Defence portfolio funding, 2026-27', s: 'A$62.6bn · Budget, May 2026',
+      note: 'Funding from government for Defence, the Australian Signals Directorate, the Australian Submarine Agency and the nuclear safety regulator in 2026-27. Most of it pays for people, upkeep and operations.' },
+    { k: 'iip', bn: 425, t: '2026 Integrated Investment Program', s: 'about A$425bn · capability, 2026-27 to 2035-36',
+      note: 'The funding the government has allocated to new capability over ten years in the April 2026 investment program. It is the only line with a published split by capability priority.' },
+  ],
+  cats: [
+    { id: 'ascm', t: 'Land-based maritime strike', col: '--c3', k: 4, base: 0.15, reach: 500, w: 0.55, cls: 'mobile',
+      unit: 'long range fires regiment (HIMARS)', cost: 2.136, s: 'Truck-mounted HIMARS with Precision Strike Missiles that can hit ships from the coast.',
+      src: PBS, srcName: 'Defence PBS 2026-27, Appendix B',
+      basis: 'LAND 8113 Phase 1, Army\'s first long range fires regiment, A$2,136m approved military equipment.' },
+    { id: 'drones', t: 'Uncrewed systems', col: '--c2', k: 3, base: 0.1, reach: 400, w: 0.4, cls: 'mobile',
+      unit: 'Ghost Shark fleet contract (2025)', cost: 1.7, s: 'Ghost Shark undersea vehicles, Ghost Bat aircraft and uncrewed boats.',
+      src: IIP, srcName: '2026 Integrated Investment Program',
+      basis: 'A$1.7bn contract with Anduril Australia in 2025 for a fleet of Ghost Shark extra-large autonomous undersea vehicles (number not published).' },
+    { id: 'mines', t: 'Sea mines', col: '--c5', k: 3, base: 0.05, reach: 20, w: 0.35, cls: 'mines',
+      unit: 'lot of 100 smart sea mines', cost: 0.5, s: 'Smart sea mines laid in chokepoints and approaches before an assault.' },
+    { id: 'strike', t: 'Long-range strike missiles', col: '--c4', k: 5, base: 0.15, reach: 1000, w: 0.3, cls: 'mobile',
+      unit: '100 Tomahawk missiles', cost: 895 / 220 * 100 * AUD / 1000, s: 'Tomahawk and other long-range missiles against the force at sea and its bases.',
+      src: 'https://www.federalregister.gov/documents/2024/09/12/2024-20730/arms-sales-notification', srcName: 'Federal Register, Sept. 12, 2024', est: true,
+      basis: 'US$895m for 200 Block V and 20 Block IV with support (DSCA 23-02), per 100, converted at 1.55.' },
+    { id: 'airdef', t: 'Air and missile defense', col: '--c1', k: 8, base: 0.2, reach: 0, w: 0, cls: 'fixed',
+      unit: 'NASAMS acquisition contract (2019)', cost: 0.68, s: 'NASAMS, ship-based missiles and counter-drone systems that protect forces and bases.',
+      src: 'https://www.australiandefence.com.au/defence/joint/commonwealth-signs-nasams-acquisition-contract', srcName: 'Australian Defence Magazine, June 24, 2019',
+      basis: 'A$680m acquisition contract with Raytheon Australia for NASAMS (LAND 19 Phase 7B); number of fire units not stated.' },
+    { id: 'c4isr', t: 'Surveillance and resilience', col: '--c6', k: 4, base: 0.35, reach: 0, w: 0, cls: 'mobile',
+      unit: 'JORN radar upgrade', cost: 1.243, s: 'Over-the-horizon radar, patrol aircraft, space, networks and hardened northern bases.',
+      src: PBS, srcName: 'Defence PBS 2026-27, Appendix B',
+      basis: 'AIR 2025, modernising the Jindalee Operational Radar Network, A$1,243m approved military equipment.' },
+    { id: 'ammo', t: 'Guided weapons stocks', col: '--c7', k: 5, base: 0.2, reach: 0, w: 0, cls: 'fixed',
+      unit: 'year of Navy guided-weapons buys at the 2026-27 level', cost: 0.845, s: 'Missiles and munitions to keep firing after the first days.',
+      src: PBS, srcName: 'Defence PBS 2026-27, Appendix B',
+      basis: 'SEA 1300 maritime guided weapons and munitions, A$845m budgeted in 2026-27 (A$16,902m approved).' },
+    { id: 'platforms', t: 'Ships, submarines and aircraft', col: '--c8', k: 60, base: 0.35, reach: 800, w: 0.45, cls: 'platform',
+      unit: 'Hunter-class frigate', cost: 26.57 / 6, s: 'Frigates, destroyers, submarines, F-35s and patrol aircraft.',
+      src: PBS, srcName: 'Defence PBS 2026-27, Appendix B', est: true,
+      basis: 'SEA 5000, A$26,570m approved military equipment for six Hunter-class frigates, per ship. Same table: general purpose frigates (Mogami class) A$7,532m approved.' },
+    { id: 'other', t: 'Not modeled', col: '--faint', k: 1, base: 0, reach: 0, w: 0, cls: 'none',
+      unit: '', cost: 0, s: 'Personnel, upkeep, land forces, logistics, estate and IT. Money here has no effect in the model.' },
+  ],
+  presets: {
+    porcupine: { t: 'Denial layers', s: 'Strike missiles, uncrewed systems and surveillance',
+      mix: { ascm: 0.24, drones: 0.18, mines: 0.06, strike: 0.14, airdef: 0.1, c4isr: 0.12, ammo: 0.12, platforms: 0.04, other: 0 } },
+    legacy: { t: 'Ships and aircraft first', s: 'Frigates, submarines and fighters',
+      mix: { ascm: 0.04, drones: 0.03, mines: 0.01, strike: 0.05, airdef: 0.12, c4isr: 0.05, ammo: 0.05, platforms: 0.65, other: 0 } },
+    even: { t: 'Even split', s: 'The same amount to each modeled category',
+      mix: { ascm: 0.125, drones: 0.125, mines: 0.125, strike: 0.125, airdef: 0.125, c4isr: 0.125, ammo: 0.125, platforms: 0.125, other: 0 } },
+  },
+  defaults: { b: 'mea26', preset: 'porcupine', supp: 0.4, warn: 7 },
+  geo: { km: 800, speed: 15, unit: 'kn' },
+  refMix: { budget: 'iip', label: 'Investment Program mix', sub: '2026-36 priorities, mapped', lines: IIP_MIX,
+    off: 'Only the 2026 Integrated Investment Program has a published split by priority', title: 'How the 2026 Integrated Investment Program splits, 2026-36',
+    fmt: v => `${v}%` },
+  refText: {
+    mea26: ['What the line pays for', 'Mostly installments on approved projects such as the Hunter-class frigates, F-35s, HIMARS and guided weapons. There is no full split onto these categories, so there is no reference mix; switch to the Investment Program to see one.'],
+    def26: ['How the budget splits', 'Of Defence\'s A$60.6bn planned spending in 2026-27, about A$18.4bn goes to workforce, A$21.0bn to capability acquisition and A$18.5bn to sustainment. Those are cost types, not capabilities, so there is no reference mix.'],
+  },
+  strip: { left: 'Open ocean', right: 'Northern Australia', zero: 'coast', noun: 'ships', play: 'Play the approach', exportTitle: 'Notional northern approach',
+    eyebrow: 'Notional northern approach <span class="notional">Notional model, not a prediction</span>',
+    note: 'Bands show how far each layer reaches out from Australia\'s northern coast across the sea-air gap; darker means stronger after the attacker\'s opening strikes. Triangles on the right are mobile launchers and drones and rectangles large ships and aircraft; faded ones did not survive the opening strikes. No real coast, base or unit is shown.',
+    aria: 'Stylized northern approach. A hostile naval task group sails from the open ocean on the left toward northern Australia on the right, through bands showing how far each Australian layer reaches and how strong it is. Ships marked with an X are engaged.' },
+  text: {
+    verdict: {
+      good: ['Costly approach', 'A large share of the task group comes under effective attack in the northern approaches.'],
+      warn: ['Contested approach', 'Australia engages part of the task group, but most of it reaches the coast untouched.'],
+      bad: ['Approach largely unopposed', 'Too little Australian firepower survives, sees the ships or reaches them.'],
+    },
+    explain: {
+      mobile: n => `Only ${n}% of launchers and drones survive the opening strikes; air defense and surveillance spending protect them.`,
+      platform: n => `Ships, submarines and aircraft are few and sit at known bases, so only ${n}% remain after the opening strikes.`,
+      track: 'Weak surveillance leaves shooters without good tracks on the ships.',
+      mines: n => `With short warning only ${n}% of the minefield is laid in time.`,
+    },
+    tiles: { engaged: 'of the task group comes under effective attack', hours: h => `of a ${h} h approach`, shooters: 'after the opening strikes' },
+    supp: ['Opening missile and air strikes', 'Share of Australia\'s unprotected forces in the north the opening strikes would destroy.'],
+    warn: ['Warning before the approach', 'Days Australia has to deploy launchers to the north and lay mines before the ships arrive.'],
+  },
+  doc: {
+    terms: { attacker: 'The attacker', c4: 'ISR', platforms: 'Ships, submarines and aircraft', edge: 'the northern coast' },
+    howto: [
+      'Pick a budget, then divide it across eight kinds of capability. The model sends a notional naval task group across the sea-air gap toward northern Australia and reports four things: the share of the group that comes under effective attack, how many hours of the approach are spent inside at least one working layer of Australian fires, the share of Australian shooters that survive the opening strikes, and a resilience score.',
+      'The comparison table sets your plan beside three or four mixes. <b>Denial layers</b> buys land-based strike, uncrewed systems, surveillance and missiles. <b>Ships and aircraft first</b> buys large platforms. For the ten-year program, the <b>Investment Program mix</b> maps the government\'s own split by capability priority onto the model\'s categories.',
+    ],
+    scenario: 'A hostile naval task group sails a notional 800 km at 15 knots across the sea-air gap toward Australia\'s northern coast. One of the five tasks the government sets the Defence Force is to "deter through denial any potential adversary\'s attempt to project power against Australia through our northern approaches". The model is abstract: it includes no real coast, island, base or unit, and does not model U.S. or other allied forces.',
+    leavesOut: 'What the model leaves out matters: the United States and other partners, the attacker\'s submarines, long-range bombers and electronic warfare, weather, the size of the north, fuel and logistics, training, maintenance and delivery schedules. Submarines and frigates that do poorly here are bought for jobs this strip does not show, such as protecting sea lanes far from Australia.',
+    real: {
+      cols: ['Budget line', 'A$bn', 'Notes'],
+      rows: [
+        ['Military Equipment Acquisition Program, 2026-27', '15.4', `Part of the A$21.0bn Capability Acquisition Program. ${a(PBS, 'Defence PBS 2026-27')}, Table 5`],
+        ['Defence portfolio funding from government, 2026-27', '62.6', `Defence A$59.5bn, plus the Signals Directorate, Submarine Agency and nuclear regulator. ${a(PBS, 'PBS')}, Table 4a`],
+        ['Total Defence resourcing, 2026-27', '66.4', `All sources, including administered funding. ${a(PBS, 'PBS')}, Table 1`],
+        ['Nuclear-Powered Submarines program, 2026-27', '2.4', `A$5.0bn in 2025-26; the Submarine Agency gets another A$0.5bn. ${a(PBS, 'PBS')}, Table 37`],
+        ['Nuclear-powered submarines, ten years', '71-96', `Planned investment, 2026-27 to 2035-36. ${a(IIP, '2026 IIP')}`],
+        ['2026 Integrated Investment Program, ten years', '~425', `Allocated to capability, 2026-27 to 2035-36. ${a(FS, 'IIP overview')}`],
+        ['Total Defence funding, ten years', '887', `To 2035-36, including the Signals Directorate and Submarine Agency. ${a(IIP, '2026 IIP')}`],
+      ],
+      note: 'The program and portfolio lines are different bases. The ten-year figures are plans, not appropriations, and the submarine range sits inside the A$425bn.',
+    },
+    menuNote: 'Most budget lines give a project total without a quantity, so several units are whole projects or contracts. No sea-mine price was found, so that row is notional.',
+    related: [
+      { b: 'SIPRI, 2025.', t: 'A$54.8bn, about US$35.3bn, 1.92% of GDP by SIPRI\'s measure.', url: SIPRI, src: 'SIPRI Military Expenditure Database, 2026 (xlsx)' },
+      { b: 'Three percent.', t: 'Defence funding is projected to reach about 3.0% of GDP by 2033-34 on the NATO method; the 2026 program adds A$53bn over ten years.', url: IIP, src: '2026 Integrated Investment Program' },
+      { b: 'General purpose frigates.', t: '11 upgraded Mogami-class frigates, the first three built in Japan; A$7,532m approved so far.', url: PBS, src: 'Defence PBS 2026-27' },
+      { b: 'Ghost Bat.', t: 'A A$1.4bn commitment in December 2025 to make the MQ-28A an operational aircraft.', url: IIP, src: '2026 Integrated Investment Program' },
+      { b: 'Strike range.', t: 'The program says Army strike range grew from 40 km to 500 km between 2024 and 2026, and Navy\'s from 120 km to 2,500 km.', url: IIP, src: '2026 Integrated Investment Program' },
+    ],
+    sources: [
+      { src: 'Department of Defence, Portfolio Budget Statements 2026-27', url: PBS, d: 'May 2026', n: 'Annual totals, program lines and approved project costs (opened via the Wayback Machine).' },
+      { src: 'Department of Defence, 2026 Integrated Investment Program', url: IIP, d: 'April 16, 2026', n: 'Ten-year totals, the split by capability priority and the defence tasks (copy hosted by GlobalSecurity.org).' },
+      { src: 'Department of Defence, 2026 Integrated Investment Program overview factsheet', url: FS, d: 'April 2026', n: 'About A$425bn to 2035-36 and the ranges for each priority.' },
+      { src: 'SIPRI Military Expenditure Database', url: SIPRI, d: '2026', n: 'Also the basis of the 1.55 AUD/USD rate used for conversions (A$54.8bn = US$35.3bn).' },
+      { src: 'Unit-cost sources are linked in the spending menu table.' },
+    ],
+    missing: 'Quantities for most projects (Ghost Shark, NASAMS fire units, PrSM), any sea-mine price, a per-ship cost for the general purpose frigates, and a defence.gov.au copy of the full 2026 Integrated Investment Program that could be opened.',
+  },
+};

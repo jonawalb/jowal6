@@ -1,5 +1,117 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1);
-export const CITES = __m.CITES;
-export const SOURCES = __m.SOURCES;
-export const cite = __m.cite;
+// Sources for Defense in Depth, and every sourced claim the game uses (SPEC §12), with printed page numbers.
+// Each row was checked against a page-tagged text extract of the source on 2026-10-01 (FACTCHECK.md lists the
+// extract line). Anything not in CITES is NOTIONAL. Claims are worded without real place or army names; the
+// historical cases behind them are named in METHOD.md and FACTCHECK.md only. Standalone: imports nothing.
+
+export const SOURCES = [
+  { id: 'biddle', short: 'Biddle', text: 'Stephen Biddle, Military Power: Explaining Victory and Defeat in Modern Battle (Princeton, NJ: Princeton University Press, 2004; paperback 2006). Chapter 3 and the Appendix (the formal model, pp. 209–239).',
+    url: 'https://press.princeton.edu/books/paperback/9780691128023/military-power' },
+  { id: 'hunzeker', short: 'Hunzeker', text: 'Michael A. Hunzeker, Dying to Learn: Wartime Lessons from the Western Front (Ithaca, NY: Cornell University Press, 2021).',
+    url: 'https://www.cornellpress.cornell.edu/book/9781501758454/dying-to-learn/' },
+  { id: 'lh', short: 'Lanoszka and Hunzeker', text: 'Alexander Lanoszka and Michael A. Hunzeker, Conventional Deterrence and Landpower in Northeastern Europe (Carlisle, PA: Strategic Studies Institute and Army War College Press, 2019).',
+    url: 'https://press.armywarcollege.edu/monographs/381/' },
+];
+
+// [n, source id, pages, claim as used in the game, where it is used]
+const ROWS = [
+  [1, 'biddle', '33, 35–38', 'The modern system: cover and concealment, dispersion, small-unit maneuver, suppression, combined arms; a brief, intense preparatory barrage', 'Rules; METHOD §1'],
+  [2, 'biddle', '38–39', 'Lower exposure means slower movement', 'Postures (exposure vs speed); rules'],
+  [3, 'biddle', '44–48', 'The modern-system defense: interlocking fields of fire, depth, reserves and counterattack', 'Rules; defender tips'],
+  [4, 'biddle', '46–47', 'Depth forces furtive movement and buys time; the entropic effect of depth; rear reserves are much harder to pin down (the game makes them unpinnable, a simplification)', 'Cohesion tooltip; fixing rule'],
+  [5, 'biddle', '47–48', 'Counterattacks against disorganized penetrations retake ground cheaply', 'Counterattack window; rules'],
+  [6, 'biddle', '53–59, 73, 234', 'Technology punishes exposure and magnifies the consequences of force employment', 'Era toggle; Modern lethality'],
+  [7, 'biddle', '53–54', 'Newer weapons multiply lethal area by over seven against exposed targets, under 1.5 against covered ones', 'Modern lethality term'],
+  [8, 'biddle', '209–217', 'The formal model: variables and equations A.1–A.23', 'Combat model; Lessons charts'],
+  [9, 'biddle', '218', 'Constants k1 = 2.5, k2 = 0.01, k3 = 0.4, k8 = 0.1 (Table A.1)', 'Stall test; fixing; speed term'],
+  [10, 'biddle', '236–239', 'The constants are assumptions; doubling or halving them changes the curves’ heights, not their shapes (k1 is the exception)', 'How the model works'],
+  [11, 'biddle', '220', 'Depth and reserve fraction decide containment: under 5 km never contains; 15 km with 40% in reserve does (Fig. A.2)', 'Planning chart; Lessons L11'],
+  [12, 'biddle', '221', 'Defender exposure shifts the breakthrough region (Fig. A.3)', 'Lessons L11; f_e values'],
+  [13, 'biddle', '226', 'Territorial gain peaks at a moderate assault speed; casualties rise with speed (Fig. A.8)', 'Lessons L12; speed term'],
+  [14, 'biddle', '233, 234', 'Best reserve speed and best assault speed fall as technology improves (Figs. A.13, A.14)', 'Reserve survival; Lessons L12–L13'],
+  [15, 'biddle', '74, 235', 'Central predictions for modern vs non-modern force employment (Table 4.1; Table A.3)', 'Campaign review; Lessons L14'],
+  [16, 'biddle', '211', 'Theater geometry of the model (Fig. A.1)', 'Lessons L10'],
+  [17, 'biddle', '211', 'Technology index T = (τ − 1900)/10, defined for 1900–2020', 'Reserve survival (T = 1.8 / 12)'],
+  [18, 'biddle', '67', 'Suppression can cut hostile firing rates by a factor of seven or more', 'Suppression 0.86; tooltip'],
+  [19, 'biddle', '37', 'Suppressing a dug-in platoon takes under 4 rounds; destroying it over 40', 'Destroy costs 10× Suppress'],
+  [20, 'biddle', '44', 'Most natural cover is directional; positions are sited to fire across each other’s fronts', 'Directional cover; coverage layer'],
+  [21, 'biddle', '36', 'Most ground within 1,000 m of a position is invisible to it; small folds hide a prone soldier', 'Dead ground values'],
+  [22, 'biddle', '36', 'A massed line can be wiped out by one volley; a dispersed company loses under 10%', 'Calibration anchors'],
+  [23, 'biddle', '38', 'Using dead ground needs careful scouting', 'Scouting rule'],
+  [24, 'biddle', '31–32', 'Rushes from cover to cover; units that stayed in cover were destroyed by artillery', 'Go to ground; trigger T13'],
+  [25, 'biddle', '31', 'A barrage lifted too soon leaves a gap; too late, it hits its own infantry', 'Barrage coordination; trigger T3'],
+  [26, 'biddle', '32–33, 46', 'Long preparatory bombardments reveal the point of attack', 'Methodical preparation warning; trigger T4'],
+  [27, 'biddle', '115, 120', 'A narrow corridor is swept by enfilading fire from both flanks', 'Enfilade; trigger T6'],
+  [28, 'biddle', '61, 121, 129–130', 'Tanks must move with infantry; unsupported armor is lost to anti-tank guns', 'Unsupported armor rule; trigger T5'],
+  [29, 'biddle', '55', 'The outpost zone is oriented to defeat infiltration', 'Detection rule; Lessons L8'],
+  [30, 'biddle', '33, 104', 'Infiltration follows the path of least resistance; teams slipped between posts in fog', 'Infiltration; morning fog'],
+  [31, 'biddle', '89', 'Storm-troop units were too few for every first-wave division', 'Storm companies are scarce'],
+  [32, 'biddle', '96–97', 'Main lines on reverse slopes, observers on crests', 'Crest and reverse slope'],
+  [33, 'biddle', '44, 96', 'Geometric trench lines are mapped from the air; defenders dispersed into shell holes', 'Start knowledge; f_e'],
+  [34, 'biddle', '45', 'Light forward posts fight, then withdraw', 'Delay stance'],
+  [35, 'biddle', '43, 121', 'Breakthrough attempts outrun their artillery', 'Range rings; trigger T12'],
+  [36, 'biddle', '66', 'Defenders wait until the main effort is committed before reacting to feints', 'Hard AI defender'],
+  [37, 'biddle', '87, 99, 101', 'In the great 1918 offensive: theater ratio about 1.17:1; over 530 guns captured; fewer than five of 24 reserve divisions arrived in time', 'Force ratio; batteries can be overrun; race chart'],
+  [38, 'biddle', '88', 'Local artillery ratio about 2.4:1 at the point of attack (Fig. 5.2)', 'Attacker battery count'],
+  [39, 'biddle', '103–104', 'One defending army sealed breaches with local counterattacks; another withdrew', 'Riposte'],
+  [40, 'biddle', '104–105', 'Fog helps the attacker, but depth lets the defender outlast it', 'Campaign battle 4 fog'],
+  [41, 'biddle', '35', 'Of 414 tanks, only 6 were still running four days later', 'Tank breakdown'],
+  [42, 'biddle', '38, 61, 137, 139–140', 'Minefields must be found and breached; engineers lead the breaching lanes; surface-laid mines are visible', 'Obstacles and breaching'],
+  [43, 'biddle', '215–216, 219', 'Overflight attrition E = 1 − (1 − P_k)^n, calibrated to an air campaign', 'Drone strike rule (extrapolated)'],
+  [44, 'biddle', '58', 'Jammers, decoys and obscurants shield brief sprints', 'EW team'],
+  [45, 'biddle', '59', 'The fire-swept zone grows with weapon range', 'Modern range rings'],
+  [46, 'biddle', '62', 'Signals: telephones and runners in 1918; radios later', 'Order delays by era'],
+  [47, 'biddle', '183–184', 'Counterfactual excursions: rerun a battle in simulation with one factor changed (Table 9.1)', 'Review replays'],
+  [48, 'hunzeker', '36–37', 'Learning is not the same as change; mastery means most frontline units can fight the new way', 'Learning score; mastery at 50%'],
+  [49, 'hunzeker', '7–10, 22–33', 'Learning runs through exploration, selection and action; command, assessment and training shape it', 'Campaign learning phase'],
+  [50, 'hunzeker', '8, 28–29', 'Moderate decentralization explores best; most experiments fail', 'Latitude multiplier; initiative events'],
+  [51, 'hunzeker', '127', 'Centralized armies get whitewashed reports', 'Whitewash bias'],
+  [52, 'hunzeker', '10, 29–31', 'Assessment needs independence, prestige and rigor', 'Assessment dials'],
+  [53, 'hunzeker', '31–33', 'Centralized training overcomes resistance and the "telephone" problem', 'Training rates and resisters'],
+  [54, 'hunzeker', '71–72', 'An experimental unit failed through execution; the redesign succeeded', 'Test attribution signal'],
+  [55, 'hunzeker', '138, 147–148', 'Success in unrepresentative conditions breeds false lessons', 'False lesson FL1'],
+  [56, 'hunzeker', '117–118', 'Copying the form of a method without its logic failed', 'Fidelity roll; Lessons L3'],
+  [57, 'hunzeker', '131–132, 168–169', 'Technical arms were trained centrally even where infantry were not', 'Technical cards train × 2'],
+  [58, 'hunzeker', '74', 'Assault training was given selectively to some divisions', 'Pull a battalion off the line'],
+  [59, 'hunzeker', '147, 164', 'Without assessment, doctrine swings back and forth', 'Commander-replaced event'],
+  [60, 'hunzeker', '11, 65–66, 173–174', 'Politics and strategy can override learning', 'Political constraint card; campaign review'],
+  [61, 'hunzeker', '37, 45–46', 'Learning phases coded by season (Figs. 1a–3c)', 'Learning timeline (Lessons L15)'],
+  [62, 'hunzeker', '81–82', 'Zones: outpost 600 m–1 km, battle 1.5–3 km, rear about 3 km; up to about 10 km in all', 'Zone bands; Lessons L3'],
+  [63, 'hunzeker', '79', 'A defensive system about 8 km deep', 'Map depth'],
+  [64, 'hunzeker', '78–79', 'A three-layer position with the main line on the reverse slope, 200 m or more behind the crest', 'Crest row; Lessons L4'],
+  [65, 'hunzeker', '82', 'Immediate counterattacks within 24 hours by nearby units; deliberate ones by assault divisions; squad-level initiative', 'Riposte; Counterstroke'],
+  [66, 'hunzeker', '61–62, 79', 'Counterattack as the attacker begins to consolidate, and beyond his artillery', 'Counterattack window'],
+  [67, 'hunzeker', '60–62', 'Depth, elasticity and counterattack; elasticity is not retreat', 'Elastic stance; trigger T11'],
+  [68, 'hunzeker', '55, 80', 'Dense forward garrisons are destroyed by bombardment', 'Forward-density warning; trigger T10'],
+  [69, 'hunzeker', '77', 'Linear trenches are vulnerable to shell bursts and enfilading fire', 'Trench-garrison enfilade'],
+  [70, 'hunzeker', '54', 'A narrow salient has fire poured into it from all sides', 'Enfilade from the shoulders'],
+  [71, 'hunzeker', '78, 156', 'Strongpoints cover the ground behind the main line with MG fire; MGs cover the intervals between strongpoints', 'MG lanes from strongpoints'],
+  [72, 'hunzeker', '72', 'MGs were given flank protection in the assault', 'Attacker MG companies'],
+  [73, 'hunzeker', '56', 'Fire and movement was "akin to playing a game of leapfrog, albeit with guns"', 'Leapfrog; Lessons L7'],
+  [74, 'hunzeker', '70', 'Prewar regulations prescribed 50- to 100-yard bounds while others fired', 'Short bounds'],
+  [75, 'hunzeker', '57', 'Soldiers who go to ground may refuse to get up again', 'Go to ground'],
+  [76, 'hunzeker', '55–58, 71–72', 'Storm squads of about eight men bypassed strongpoints; mop-up followed', 'Infiltration; bypassed posts'],
+  [77, 'hunzeker', '52', 'A barrage shifted too quickly let defenders climb out of their shelters; too slowly, assault units ran into their own shells; messages took hours', 'Barrage coordination; runner delay'],
+  [78, 'hunzeker', '110, 148', 'Creeping barrages about 100 yards ahead; 75 yards a minute on good ground, 15 on bad; 100 m in 4 minutes proved too fast', 'Lessons L5'],
+  [79, 'hunzeker', '59, 76, 109', 'Hurricane bombardments and predicted fire: a 35-minute barrage; a 60-minute one without registration', 'Hurricane preparation'],
+  [80, 'hunzeker', '76–77', 'A four-phase fire plan; field batteries in direct support of the infantry', 'Direct-support battery; Lessons L6'],
+  [81, 'hunzeker', '75', 'A defensive fire plan triggered when the bombardment lifts', 'SOS fire'],
+  [82, 'hunzeker', '80', 'Counterattack orders took eight hours or more; local initiative was authorized', 'Order delay; riposte authority'],
+  [83, 'hunzeker', '53–55', 'The attacker’s depth and breadth dilemmas; bite-and-hold', 'Frontage; objective type'],
+  [84, 'hunzeker', '110–111; 216 n. 163', '18 of 50 tanks broke down before action; crews were exhausted after about 8 hours', 'Tank breakdown and fatigue'],
+  [85, 'hunzeker', '113', 'Tanks breached wire for the infantry', 'Tanks crush wire'],
+  [86, 'hunzeker', '54, 130', 'Attackers responded with gas; gas instructors', 'Gas (1917–18)'],
+  [87, 'hunzeker', '112', 'Aerial photography and sound ranging fed predicted fire', 'Counter-battery location'],
+  [88, 'lh', '113, 127', 'Trenches and dispersion protect ground forces against precision fires', 'Modern era framing'],
+  [89, 'lh', '35', 'Attackers move away from their support; defenders fall back on theirs', 'Cohesion beyond the guns'],
+];
+
+/** Every sourced claim: { n, src, pages, claim, use }. */
+export const CITES = ROWS.map(([n, src, pages, claim, use]) => ({ n, src, pages, claim, use }));
+
+/** "Biddle p. 44" / "Hunzeker pp. 81–82" for row n. */
+export function cite(n) {
+  const r = CITES.find(c => c.n === n);
+  if (!r) return '';
+  const s = SOURCES.find(x => x.id === r.src).short;
+  return `${s} ${/[–,;]/.test(r.pages) ? 'pp.' : 'p.'} ${r.pages}`;
+}

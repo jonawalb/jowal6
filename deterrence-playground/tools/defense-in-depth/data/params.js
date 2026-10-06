@@ -1,32 +1,194 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1);
-export const AI = __m.AI;
-export const ASSAULT = __m.ASSAULT;
-export const BARRAGE = __m.BARRAGE;
-export const BIDDLE = __m.BIDDLE;
-export const BREAK = __m.BREAK;
-export const CARDS = __m.CARDS;
-export const CB = __m.CB;
-export const CLOCK = __m.CLOCK;
-export const COHESION = __m.COHESION;
-export const COUNTER = __m.COUNTER;
-export const DETECT = __m.DETECT;
-export const DRONE = __m.DRONE;
-export const EW = __m.EW;
-export const EXPOSE = __m.EXPOSE;
-export const FIRE = __m.FIRE;
-export const GAS = __m.GAS;
-export const GROUND = __m.GROUND;
-export const OBSTACLE = __m.OBSTACLE;
-export const OFFDEF = __m.OFFDEF;
-export const ORDERS = __m.ORDERS;
-export const OVERWATCH = __m.OVERWATCH;
-export const PRECISION = __m.PRECISION;
-export const PREP = __m.PREP;
-export const RACE = __m.RACE;
-export const RULES = __m.RULES;
-export const SPEED = __m.SPEED;
-export const STACK = __m.STACK;
-export const SUPP = __m.SUPP;
-export const TANK = __m.TANK;
-export const VISION = __m.VISION;
+// Defense in Depth: every combat-model parameter in one place (SPEC §3.14).
+// Each value is labelled SOURCED (with the printed page), CALIBRATED (set so the model reproduces a target)
+// or NOTIONAL (invented for teaching, with the reason). Sources: Biddle, Military Power (2004), Appendix
+// (pp. 209-239); Hunzeker, Dying to Learn (2021). Calibration: scripts/calibrate.mjs (SPEC §3.2 anchors).
+// This file is data only: it imports nothing.
+
+// Biddle's model constants, rescaled from theater/days to sectors/hours where noted.
+export const BIDDLE = {
+  k1: 2.5,          // SOURCED: Table A.1, p. 218 (attackers one fully reinforced, concealed defender can halt, A.6 p. 212). Never tuned.
+  k3: 0.4,          // SOURCED: Table A.1, p. 218 (pinning density per defender, A.8 p. 213); the fixing ratio (SPEC §3.6)
+  k8: 0.1,          // NOTIONAL: k8' = 0.1 sector/h, a rescale of k8 = 0.1 km/day (Table A.1, p. 218) in the speed term v(v + k8)
+  k2: 0.008,  // NOTIONAL: k2' rescale of k2 = 0.01 (Table A.1, p. 218) for P_s = T^(-k2 v) per observed hour (A.5, p. 212)
+  T: { w: 1.8, m: 12 },  // SOURCED: T = (tau - 1900)/10, A.1 p. 211; tau = 1918 and 2020 (2020 is the model's upper bound, p. 211)
+};
+
+// Suppression and fire missions (SPEC §3.8).
+export const SUPP = {
+  max: 0.86,        // SOURCED: suppression cuts fire "by a factor of seven or more", p. 67 (1 - 1/7 = 0.86)
+  one: 0.6,         // NOTIONAL: one battery alone on a sector; k batteries give min(max, 1 - (1 - one)^k)
+  cap: 0.9,         // NOTIONAL: cap on all sources combined as 1 - prod(1 - s) (barrage, mission, overwatch, tank)
+  light: 0.04,      // NOTIONAL: Suppress light losses a x X x (1 - dugouts) per battery-hour
+  destroyCost: 10,  // SOURCED ratio: suppressing a dug-in platoon takes < 4 rounds, destroying it > 40 (p. 37)
+  destroyLoss: 0.06,// NOTIONAL: Destroy losses per hour (x 0.4 with dugouts)
+  destroyHours: 3,  // NOTIONAL: full Destroy effect after 3 consecutive hours (p. 37 ratio); half effect before
+  destroyObst: 0.5, // NOTIONAL: obstacle integrity removed per Destroy hour
+  destroyCover: 0.1,// NOTIONAL: trench / strongpoint cover lost per Destroy hour
+  dugout: 0.6,      // NOTIONAL: dugouts cut artillery losses by 60% for units not moving
+  concrete: 0.5,    // NOTIONAL: concrete strongpoints halve artillery losses
+  pinnedArty: 1.5,  // NOTIONAL value; pinned units destroyed by artillery (Biddle p. 31; Hunzeker p. 57)
+  crowd: 0.2,       // NOTIONAL: artillery/drone losses x (1 + 0.2 max(0, n - 2)) for n companies in a sector (dispersion, p. 36)
+  smokeLane: 0.3,   // NOTIONAL: lane fire through smoke
+  costs: { suppress: 1, destroy: 10, gas: 2, smoke: 1, cb: 1, precision: 0, sos: 1, barrage: 1 },  // NOTIONAL ammunition per battery-hour
+};
+
+// Exposure X by posture (SPEC §3.6). Moving postures follow Biddle's speed term X = v(v + k8)/(1 + k8)
+// (A.11-A.12, p. 213): Rush at 1 sector/h gives 1.0; a leapfrog pair averaging 0.5 sector/h gives 0.27.
+export const EXPOSE = {
+  rush: 1.0,        // NOTIONAL (from the speed term at v = 1)
+  bound: 0.27,      // NOTIONAL (speed term at v = 0.5): leapfrog bounding element with an overwatch partner
+  boundShort: 0.7,  // NOTIONAL: short bounds (50-100 yd, Hunzeker p. 70) multiply X by 0.7 (0.19)
+  boundAlone: 0.60, // NOTIONAL: no overwatch, no bonus
+  overwatch: 0.15,  // NOTIONAL
+  infil: 0.27,      // NOTIONAL: a storm / raid infiltrator once detected (still in small groups using dead ground)
+  infilLine: 0.60,  // NOTIONAL (W3): a line company infiltrating, once detected: the lone-bounder value (no specialist training, no overwatch)
+  hold: 0.20,       // NOTIONAL: hold / stalled / pinned, attacker or defender in the open
+  consolidate: 0.15,// NOTIONAL
+  withdraw: 0.60,   // NOTIONAL
+  defTrench: 0.12,  // NOTIONAL: defender static in a trench
+  defStrong: 0.08,  // NOTIONAL: in a strongpoint
+  defDispersed: 0.10, // NOTIONAL: dispersed / concealed (shell holes, Biddle p. 96; Hunzeker p. 80)
+  obstacle: 1.5,    // NOTIONAL: held at an obstacle, wire holds attackers in lanes (Hunzeker pp. 54, 80)
+};
+
+// Speeds in sectors per hour (progress accumulator; SPEC §3.6, §3.11). NOTIONAL.
+export const SPEED = {
+  rush: { contact: 1.0, free: 2.0 }, bound: { contact: 1.0, free: 2.0 }, infil: { contact: 1.0, free: 1.5 },
+  withdraw: { contact: 1.0, free: 2.0 }, shortBound: 0.75, covered: 1.0, road: 3.0, tank1917: 1.0,
+  diagonal: 1.4,    // NOTIONAL: diagonal moves cost x1.4 in progress
+  leapPast: 2,      // NOTIONAL (W1-A): in contact, a bounding element with a working overwatch bounds past its partner, two
+                    // bound lengths, so a leapfrog pair keeps a lone bounder's pace at about half its exposure per row gained
+  lone: 0.75,       // NOTIONAL (W3): a bounder with no working overwatch, in contact, makes 0.75 sector/h whatever its bound
+                    // length: Biddle's speed term v(v + k8)/(1 + k8) gives X 0.6 (EXPOSE.boundAlone) at v ~ 0.76 (A.11-A.12, p. 213).
+                    // A covered pair beats the speed-exposure trade-off because the overwatch suppresses (p. 31).
+  exploit: 2.0,     // NOTIONAL: free speed behind the objective line after a Breakthrough (A.19, p. 214)
+};
+
+// Fire model (SPEC §3.2): loss_u = c x sum_j[F_j G S_ju] x X_u x (1 - D_u) x Leth(era, X_u).
+export const FIRE = {
+  c: 0.0857,        // CALIBRATED: scripts/calibrate.mjs, Waves+Rush vs a frontal MG lane loses ~15% an hour (anchor table, SPEC §3.2)
+  sigma: 0.30,      // NOTIONAL: lognormal noise on each unit's hourly loss (Fog of Command's rule)
+  quality: 0.2,     // NOTIONAL: lognormal spread of hidden unit quality q
+  Lmod: { w: 1, m: 2.5 }, // CALIBRATED: Leth = 1 + (L - 1) min(1, X); Modern 3.0 (spec start 3.5) keeps the anchors (row 5 >= 35%, gap grows >= 1.5x) and brings scripted play nearer even
+                          // (Biddle pp. 53-54: lethal area > 7x vs exposed, < 1.5x vs covered; p. 234)
+  ENF: { waves: 3.0, column: 2.5, trench: 2.5, groups: 2.9, none: 1.0 }, // NOTIONAL, calibrated against the anchors (SPEC §3.4)
+  laneGraze: true,  // NOTIONAL (W3): an MG lane's grazing fire beats every lane cell in full instead of being shared out over all its targets
+  enfHalf: true,    // NOTIONAL (W1-A): fire at 45 deg to the long axis gets half the enfilade bonus; along the axis full
+  deadDecay: 0.35,  // NOTIONAL: D = g0 x max(0, 1 - 0.35 (dirs - 1)) x use x scout (Biddle p. 44 interlocking fields)
+  deadUse: { bound: 1.0, overwatch: 1.0, infil: 1.0, rush: 0.3, withdraw: 0.3, hold: 0.5, stalled: 0.5, pinned: 0.5, consolidate: 0.5, static: 0 },
+  unscouted: 0.5,   // NOTIONAL: scout(i) = 0.5 until scouted (usable dead ground needs careful scouting, Biddle p. 38)
+  droneDead: 0.5,   // NOTIONAL: drones watching a sector halve dead ground (D-26)
+  sameSectorCover: 0.5, // NOTIONAL: close-quarter fire inside a sector gets half the directional cover
+  cohFire: [0.5, 0.5],  // NOTIONAL: attacker fire x (0.5 + 0.5 cohesion)
+  armorSmall: 0.1,  // NOTIONAL: MG and rifle fire on armor
+  atgm: 4.0,        // NOTIONAL: Modern weapons company FP vs vehicles (range 2)
+  unsupported: 3,   // NOTIONAL: AT losses x3 on tanks with no friendly infantry in the sector (Biddle pp. 61, 129-130)
+  fieldVsTank: 0.25,// NOTIONAL: field batteries within 2 sectors hit tanks for 25% an hour (direct fire)
+  night: 0.7,       // NOTIONAL: fire at night or in morning fog
+  bigHit: 0.25,     // NOTIONAL: an enfilade hit of >= 25% of a unit in an hour is reported
+};
+
+// Assault: the stall test (Biddle A.6, A.16; SPEC §3.5). f_e by holder position, NOTIONAL values whose
+// direction follows Biddle's f_e (p. 210) and Fig. A.3 (p. 221).
+export const ASSAULT = {
+  fe: { trenchFwdKnown: 0.5, trenchRevKnown: 0.3, trenchUnknown: 0.2, strong: 0.1, dispersed: 0, dispersedUntrained: 0.3, open: 0.5, lodgFresh: 0.5, lodgCons: 0.2 },
+  untrainedYieldBreak: 0.5,   // NOTIONAL (W3; was 0.2 in code): campaign, an Elastic yield without card ED2 breaks the unit at p = 0.5
+  ed1: 0.2,         // NOTIONAL: card ED1 lowers f_e by 0.2 for reverse-slope / dispersed positions
+  overrun: 0.4,     // NOTIONAL: a Hold unit overrun loses 40% of current strength
+  disengage: 0.5,   // NOTIONAL: half an hour of the enemy's fire at G = 1 (Fog of Command's rule)
+  gaugeMax: 3,      // display clamp 0-300%
+};
+
+// Go to ground and pinning (SPEC §3.6). NOTIONAL values; the failure mode is Biddle p. 31, Hunzeker p. 57.
+export const GROUND = { untrained: 0.3, trained: 0.1, add: 0.2, lossTrigger: 0.10, boundUntrained: 0.25, boundTrained: 0.05,
+  alone: 1.0,      // W3 NOTIONAL: a bounder (or a detected line infiltrator) with no working overwatch, in contact, is pinned with
+                   // p = 1.0 x the unsuppressed share of the fire on it (Biddle p. 31: suppression lets infantry move)
+};
+
+// Leapfrog overwatch suppression s_ow = min(cap, 0.5 str_ow / max(1, believed defender strength)). NOTIONAL.
+export const OVERWATCH = { k: 1.5, cap: { rifle: 0.6, mg: 0.7, storm: 0.7 }, at3: 0.1 };   // NOTIONAL (W3: k 0.5 -> 1.5) so one company can suppress about its own strength of defenders (the base of fire is the point of leapfrog)
+
+// Infiltration detection (SPEC §3.6). NOTIONAL.
+export const DETECT = { same: 0.9, adjacent: 0.25, adjBoost: 1.5, lane: 0.35, drone: 0.6, fog: 0.5, visibleHours: 2, cohOutside: 0.10,
+  line: 2,     // W3 NOTIONAL: AT2-trained line companies (not storm / raid) face the detection rolls twice
+};
+
+// Cohesion, attackers only (Biddle p. 47 "entropic effect of depth"; Hunzeker p. 61). NOTIONAL rates.
+export const COHESION = { start: 1, floor: 0.3, perRow: 0.06, outsideGuns: 0.10, contact: 0.04, recover: 0.10, untrainedGroups: 0.2 };
+
+// Counterattacks (SPEC §3.7). CA_mult = 1 + coh x (1 - c) + outside x [beyond guns] - cons x [consolidated], clamped. NOTIONAL.
+export const COUNTER = {
+  noAuthorityHours: 2,  // W3 NOTIONAL: a counterstroke formation without card ED3 waits 2 hours more for orders from above (campaign)
+  coh: 1.0, outside: 0.5, cons: 0.5, min: 0.6, max: 2.5,
+  window: 1.6,      // green badge: CA_mult >= 1.6 and h_cap <= 3
+  windowHours: 3,
+  consHours: 2,     // a lodgment is consolidated after 2 h static
+  noAuthority: 0.75,// riposte without authority: normal order delay and CA_mult x 0.75 (Hunzeker pp. 80, 82)
+};
+
+// Breaks (Fog of Command / Mearsheimer same-threshold rule; value NOTIONAL).
+export const BREAK = { frac: 0.5 };
+
+// Obstacles: wire (1917-18) and mines (Modern), one mechanic (D-22; SPEC §3.9). NOTIONAL.
+export const OBSTACLE = { mineInf: 0.025, mineVeh: 0.10, breachHours: 2, tankCrush: 1, scoutHours: 1 };
+
+// Gas, 1917-18 only, abstracted (SPEC §3.9; Hunzeker pp. 54, 130). NOTIONAL.
+export const GAS = { hours: 3, fire: 0.6, move: 0.5, supp: 0.3, firstLoss: 0.02, mask: 0.5 };
+
+// Tanks (SPEC §3.9). NOTIONAL; anchored by Hunzeker pp. 110-111 (18 of 50 broke down), Biddle p. 35.
+export const TANK = { breakdown: 0.12, fatigueHours: 8, fatigue: 0.5, assaultSupp: 0.5, untrained: 0.4 };   // untrained: W3, share of assaultSupp without card CA3 (1917-18)
+
+// Modern systems (SPEC §3.10). NOTIONAL. Drone strike follows the shape of Biddle's A.22 (pp. 215-216).
+export const DRONE = { recon: 2, strike: 2, Pk: 0.03, vehicle: 2, locate: 0.2, range: 12, block: 1 };   // NOTIONAL
+export const EW = { radius: 2, abort: 0.6, locate: 0.5, delay: 1, msgLoss: 0.25 };          // NOTIONAL (SPEC §3.10)
+export const PRECISION = { exposed: 0.25, covered: 0.08, asset: 0.15, perBattle: 8, xCut: 0.5 }; // NOTIONAL (SPEC §3.8)
+
+// Counter-battery (SPEC §3.8). NOTIONAL; sound ranging and air spotting (Hunzeker p. 112).
+export const CB = { locate: { w: 0.15, m: 0.5 }, air: 0.15, drone: 0.2, neutral: 0.6, kill: { w: 0.25, m: 0.5 } };
+
+// Creeping barrage coordination (SPEC §3.8; D-21; Biddle p. 31; Hunzeker p. 52). NOTIONAL.
+export const BARRAGE = { early: 0.3, earlyCA2: 0.5, fratricide: 0.06, perBattery: 1 };   // NOTIONAL; a barrage of rate > 1 row/h suppresses each row x 1/rate (dwell)
+
+// Preparation fire (SPEC §3.8). NOTIONAL.
+export const PREP = { stun: 0.5, partialWarn: 0.5, methodicalLoss: 0.15, methodicalCost: 15, sectorsPerGroup: 3, groupSize: 4, preOrders: 3, c2Delay: 1 };
+
+// Order delay per side per hour, by era (one roll per side per hour, Fog's rule). NOTIONAL weights.
+export const ORDERS = {
+  delay: { w: [[0, 0.45], [1, 0.40], [2, 0.15]], m: [[0, 0.75], [1, 0.25]] },
+  maxRun: 3,        // NOTIONAL: after 3 delayed hours in a row orders start at once
+  runner: { delay: 2, loss: 0.2 }, phone: 0.5,   // 1917-18 barrage-plan changes (Hunzeker p. 52)
+  callFire: { w: 1, m: 0 },                      // calls for fire: 1 h in 1917-18 unless Direct support
+};
+
+// Movement survival under observation P = T^(-k2' v) (SPEC §3.11, from A.5 p. 212).
+export const RACE = { minPace: 0.25, paceHours: 3 };   // NOTIONAL: race-clock pace floor (rows/h) and look-back window
+
+// Fog of war (SPEC §3.12; Fog of Command's three rules). NOTIONAL.
+export const VISION = { adjacent: 0.9, concealed: 0.3, flash: 0.7, night: 0.5, memory: 2, farDelay: 1, farRange: 3, airSorties: 1, dummyHours: 2, moveEst: 8 };
+
+// Offense-defense slider (D-30; W3): H x step^(5 - od) for the attacking army's assaults (the inverse for the defender's
+// counterattacks), and direct-fire losses on the attacking army x step^((5 - od) x fire) (the inverse on the defender).
+// Exactly 1 at od = 5. step is per scale, CALIBRATED with scripts/offdef.mjs to about 1.5 points of attacker win share
+// per step (the larger scales have more assaults, so the same factor moves them more).
+export const OFFDEF = { min: 0, max: 10, standard: 5, step: { d: 1.03, c: 1.02, a: 1.013 }, fire: 0.5 };
+
+// Stacking (SPEC §2.6). NOTIONAL.
+export const STACK = { max: 4 };
+
+// Clock and light. NOTIONAL: night from 21:00 to 05:00.
+export const CLOCK = { start: 5, nightFrom: 21, nightTo: 5 };
+
+// Doctrine cards (Hunzeker domains). Single battles give both sides all nine true cards (D-25).
+export const CARDS = ['AT1', 'AT2', 'AT3', 'CA1', 'CA2', 'CA3', 'ED1', 'ED2', 'ED3'];
+
+// AI profiles (SPEC §5.2): difficulty changes doctrine and reaction latency only (D-16). W2-AI reads these.
+export const AI = {
+  profiles: {
+    e: { latency: 2, att: 'easyAssault', def: 'easyDefense', shiftEvery: 4 },   // W3: bad layout, Standard reactions (DECISIONS W3)
+    s: { latency: 1, att: 'modernSystem', def: 'elasticDepth', shiftEvery: 4 },
+    h: { latency: 0, att: 'modernSystemPlus', def: 'elasticDepthPlus', shiftEvery: 2 },
+  },
+};
+
+// Rules version: bump whenever a balance-changing constant changes (share links carry it, SPEC §9.6).
+export const RULES = { version: 3, link: 1 };   // W3: r2 (balance and mechanics changes, DECISIONS W3); r3: MG lanes are lost on a move (DECISIONS)

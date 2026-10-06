@@ -1,4 +1,249 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1);
-export const CHECKED = __m.CHECKED;
-export const TIMELINE = __m.TIMELINE;
+// GENERATED by scripts/build_timeline.py on 2026-10-02. Do not edit by hand.
+// origin 'red-sea-hormuz': copied from tools/red-sea-hormuz/data/events.js; origin 'hormuz-mcm': this tool.
+// Every source URL returned HTTP 200 on 2026-10-02.
+export const CHECKED = '2026-10-02';
+export const TIMELINE = [
+ {
+  "id": "lcs-mcm",
+  "date": "2025-03-15",
+  "approx": "March 2025",
+  "cat": "force",
+  "title": "LCS mine countermeasures packages deploy",
+  "desc": "The Navy declared the Littoral Combat Ship mine countermeasures mission package operational and deployed it aboard USS Santa Barbara and USS Canberra, according to Connell and Walberg.",
+  "src": {
+   "name": "Connell and Walberg, Center for Maritime Strategy, 31 July 2026",
+   "url": "https://centerformaritimestrategy.org/publications/its-time-to-bring-back-minewarcom/"
+  },
+  "origin": "hormuz-mcm"
+ },
+ {
+  "id": "mh53-out",
+  "date": "2025-08-01",
+  "approx": "August 2025",
+  "cat": "force",
+  "title": "MH-53E minesweeping helicopters leave the Gulf",
+  "desc": "The Navy shut down its MH-53E Sea Dragon detachment in the Gulf. Eyer writes that the Navy \"no longer maintains a dedicated airborne MCM capability.\"",
+  "src": {
+   "name": "Kevin Eyer, \"The Crisis in Mine Countermeasures,\" Proceedings, April 2026 (archived)",
+   "url": "https://web.archive.org/web/2026/https://www.usni.org/magazines/proceedings/2026/april/crisis-mine-countermeasures"
+  },
+  "origin": "hormuz-mcm"
+ },
+ {
+  "id": "avengers-out",
+  "date": "2025-09-25",
+  "cat": "force",
+  "title": "Last Avenger minehunters in Bahrain decommissioned",
+  "desc": "The Navy retired USS Devastator, Sentry, Dextrous and Gladiator at a ceremony in Bahrain. Eyer writes that the U.S. options were then \"limited to three Independence-variant littoral combat ships.\"",
+  "src": {
+   "name": "Kevin Eyer, Proceedings, April 2026 (archived)",
+   "url": "https://web.archive.org/web/2026/https://www.usni.org/magazines/proceedings/2026/april/crisis-mine-countermeasures"
+  },
+  "origin": "hormuz-mcm"
+ },
+ {
+  "id": "dote-fy25",
+  "date": "2025-09-30",
+  "approx": "Fiscal 2025",
+  "cat": "force",
+  "title": "Pentagon tester: no operational tests in fiscal 2025",
+  "desc": "The Director of Operational Test and Evaluation reported that the Navy ran no operational tests of the LCS mine countermeasures package in fiscal 2025 and that it could not determine the package's operational effectiveness. It also notes that in June 2025 the Navy Secretary certified the package, with expeditionary MCM forces, to replace the Avenger ships and MH-53E helicopters in the Central Command area.",
+  "src": {
+   "name": "DOT&E FY2025 Annual Report, Littoral Combat Ship (archived)",
+   "url": "https://web.archive.org/web/2026/https://www.dote.osd.mil/Portals/97/pub/reports/FY2025/navy/2025lcs.pdf"
+  },
+  "origin": "hormuz-mcm"
+ },
+ {
+  "id": "war-2026",
+  "date": "2026-02-28",
+  "cat": "hormuz",
+  "title": "U.S.–Israeli war on Iran; Hormuz closes",
+  "desc": "The EIA dates the closure of the Strait of Hormuz to 28 February 2026 and reports that no laden LNG vessel is known to have crossed between 1 March and 24 April, according to Kpler data.",
+  "src": {
+   "name": "EIA, Today in Energy, 28 Apr 2026",
+   "url": "https://www.eia.gov/todayinenergy/detail.php?id=67604"
+  },
+  "origin": "red-sea-hormuz"
+ },
+ {
+  "id": "mining-2026",
+  "date": "2026-03-10",
+  "cat": "hormuz",
+  "title": "U.S. intelligence: Iran is mining Hormuz",
+  "desc": "CNN reported that a few dozen mines had been laid in recent days, and CENTCOM said it had destroyed 16 minelayers. Sources differ on when mining began: Connell and Walberg write that Iran \"reportedly began deploying mines\" in late February; Task & Purpose says \"In early April, Iran began laying sea mines in the strait.\"",
+  "src": {
+   "name": "CNN, 10 Mar 2026",
+   "url": "https://www.cnn.com/2026/03/10/politics/iran-begins-laying-mines-in-strait-of-hormuz"
+  },
+  "origin": "red-sea-hormuz"
+ },
+ {
+  "id": "imo-council",
+  "date": "2026-03-19",
+  "cat": "hormuz",
+  "title": "IMO Council calls for a safe-passage framework",
+  "desc": "An extraordinary IMO Council session condemned attacks on ships and the purported closure of the strait.",
+  "src": {
+   "name": "IMO press briefing, Mar 2026",
+   "url": "https://www.imo.org/en/mediacentre/pressbriefings/pages/imo-calls-for-safe-passage-framework-in-strait-of-hormuz.aspx"
+  },
+  "origin": "red-sea-hormuz"
+ },
+ {
+  "id": "mines-types",
+  "date": "2026-03-23",
+  "cat": "hormuz",
+  "title": "Moored and bottom mines reported in the strait",
+  "desc": "U.S. intelligence reportedly detected at least a dozen advanced mines of two types in the waterway.",
+  "src": {
+   "name": "The Maritime Executive, Mar 2026",
+   "url": "https://maritime-executive.com/article/report-floating-and-bottom-mines-detected-in-strait-of-hormuz"
+  },
+  "origin": "red-sea-hormuz"
+ },
+ {
+  "id": "truce-apr",
+  "date": "2026-04-08",
+  "cat": "hormuz",
+  "title": "Two-week U.S.–Iran ceasefire",
+  "desc": "A two-week truce began, and Iran said it would allow shipping through Hormuz to resume during it.",
+  "src": {
+   "name": "Al Jazeera, 8 Apr 2026",
+   "url": "https://www.aljazeera.com/news/2026/4/8/us-iran-ceasefire-deal-what-are-the-terms-and-whats-next"
+  },
+  "origin": "red-sea-hormuz"
+ },
+ {
+  "id": "mcm-start",
+  "date": "2026-04-11",
+  "cat": "hormuz",
+  "title": "U.S. destroyers enter the strait to begin mine clearance",
+  "desc": "Two days after Iran issued a mine warning, the United States said two destroyers were transiting the strait to start clearing mines.",
+  "src": {
+   "name": "Task & Purpose, Aug 2026",
+   "url": "https://taskandpurpose.com/news/navy-clears-mines-strait-of-hormuz-centcom/"
+  },
+  "origin": "red-sea-hormuz"
+ },
+ {
+  "id": "blockade",
+  "date": "2026-04-13",
+  "cat": "hormuz",
+  "title": "U.S. naval blockade of Iranian ports begins",
+  "desc": "After talks in Islamabad collapsed, CENTCOM began a blockade of Iranian ports; it said ships not using those ports would not be stopped.",
+  "src": {
+   "name": "NPR, 12 Apr 2026",
+   "url": "https://www.npr.org/2026/04/12/nx-s1-5782538/u-s-iran-peace-talks-islamabad-collapse"
+  },
+  "origin": "red-sea-hormuz"
+ },
+ {
+  "id": "imo-nosafe",
+  "date": "2026-04-24",
+  "cat": "hormuz",
+  "title": "IMO: \"no safe transit anywhere in the Strait\"",
+  "desc": "The IMO Secretary-General urged maximum caution because of potential mines throughout the strait.",
+  "src": {
+   "name": "IMO press briefing, 24 Apr 2026",
+   "url": "https://www.imo.org/en/mediacentre/pressbriefings/pages/no-safe-transit-through-hormuz-imo-secretary-general.aspx"
+  },
+  "origin": "red-sea-hormuz"
+ },
+ {
+  "id": "mou",
+  "date": "2026-06-17",
+  "cat": "hormuz",
+  "title": "U.S.–Iran memorandum of understanding",
+  "desc": "The United States and Iran signed a memorandum that sought, among other things, to resume traffic through the strait.",
+  "src": {
+   "name": "EIA, Today in Energy, 15 Jul 2026",
+   "url": "https://www.eia.gov/todayinenergy/detail.php?id=67865"
+  },
+  "origin": "red-sea-hormuz"
+ },
+ {
+  "id": "reclosed",
+  "date": "2026-06-20",
+  "cat": "hormuz",
+  "title": "Revolutionary Guard declares the strait shut again",
+  "desc": "The IRGC declared Hormuz closed; CENTCOM denied that Iran had closed the strait.",
+  "src": {
+   "name": "Al Jazeera, 22 Jun 2026",
+   "url": "https://www.aljazeera.com/economy/2026/6/22/shipping-stalls-in-strait-of-hormuz-after-iran-declares-key-waterway-shut"
+  },
+  "origin": "red-sea-hormuz"
+ },
+ {
+  "id": "truce-over",
+  "date": "2026-07-08",
+  "cat": "hormuz",
+  "title": "Ceasefire collapses",
+  "desc": "After Iran and the United States exchanged attacks, President Trump said the ceasefire with Iran was over.",
+  "src": {
+   "name": "Al Jazeera, 8 Jul 2026",
+   "url": "https://www.aljazeera.com/news/2026/7/8/trump-says-ceasefire-over-after-us-iran-trade-attacks"
+  },
+  "origin": "red-sea-hormuz"
+ },
+ {
+  "id": "cleared",
+  "date": "2026-08-27",
+  "cat": "hormuz",
+  "title": "CENTCOM: Hormuz shipping lanes cleared of mines",
+  "desc": "Adm. Brad Cooper said U.S. forces had cleared the internationally recognized shipping lanes of mines laid by Iran and helped nearly 1,500 ships transit. The National dates the remarks to Thursday 27 August; Task & Purpose to Friday 28 August.",
+  "src": {
+   "name": "The National, 28 Aug 2026",
+   "url": "https://www.thenationalnews.com/news/us/2026/08/28/hormuz-iran-shipping-lanes-military/"
+  },
+  "origin": "red-sea-hormuz"
+ },
+ {
+  "id": "imo-6months",
+  "date": "2026-08-28",
+  "cat": "hormuz",
+  "title": "IMO: six months of crisis, 70 attacks",
+  "desc": "The IMO had verified at least 70 attacks on international shipping, with 19 seafarers killed.",
+  "src": {
+   "name": "IMO statement, Aug 2026",
+   "url": "https://www.imo.org/en/MediaCentre/PressBriefings/pages/Statement-on-the-ongoing-crisis-in-the-Strait-of-Hormuz.aspx"
+  },
+  "origin": "red-sea-hormuz"
+ },
+ {
+  "id": "larak",
+  "date": "2026-08-30",
+  "cat": "hormuz",
+  "title": "U.S. strikes Larak Island",
+  "desc": "U.S. strikes on Larak Island broke a one-month lull; officials said the aim was to stop Iran using rockets to lay sea mines.",
+  "src": {
+   "name": "Al Jazeera, 31 Aug 2026",
+   "url": "https://www.aljazeera.com/news/2026/8/31/can-iran-use-rockets-to-mine-the-strait-of-hormuz-as-us-claims"
+  },
+  "origin": "red-sea-hormuz"
+ },
+ {
+  "id": "imo-80",
+  "date": "2026-09-16",
+  "cat": "hormuz",
+  "title": "IMO: 80 verified attacks around Hormuz",
+  "desc": "The IMO had verified 80 attacks on merchant ships in and around the strait, with at least 22 seafarers killed.",
+  "src": {
+   "name": "IMO press briefing, Sep 2026",
+   "url": "https://www.imo.org/en/mediacentre/pressbriefings/pages/stop-attacking-ships-and-seafarers-imo-secretary-general.aspx"
+  },
+  "origin": "red-sea-hormuz"
+ },
+ {
+  "id": "kingfish-claim",
+  "date": "2026-09-27",
+  "cat": "hormuz",
+  "title": "IRGC claims it seized a U.S. underwater drone; CENTCOM denies it",
+  "desc": "The IRGC Navy said it had captured a U.S. autonomous underwater vehicle in the strait, its \"second catch\", first identified as a REMUS 600 and then as a Mk 18 Mod 2 Kingfish. CENTCOM spokesman Capt. Tim Hawkins said the United States maintains \"positive control of all of our operational drone assets\" and called the claim \"clearly desperate\".",
+  "src": {
+   "name": "The Tribune (ANI), 28 September 2026",
+   "url": "https://www.tribuneindia.com/news/usa-news/clearly-desperate-us-military-refutes-irans-claim-of-seizing-underwater-drone-in-strait-of-hormuz/"
+  },
+  "origin": "hormuz-mcm"
+ }
+];

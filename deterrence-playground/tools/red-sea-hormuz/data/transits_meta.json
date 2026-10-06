@@ -1,1 +1,46 @@
-TSMVAULT2:p6iQd3PqexllBwwEp+v8uF/zA2GitVXg1risNBjFXmqGjyeKePqPXpSV4brprx0iw0awtSI8jQv1ZrtbCKKZWLlwvMZAkJB1M/kgFiJyMNG30WN9a9AcxQObdI/NUJcA6WglVmRrBBOl44ph2+eaUNQ34BNXgkCCtKxNRZALgzU1VpvS6ykADsfU6gjqsacid2HO6/kdRm//IFSIgR3QSwU7ab/WvewmfpXIiT+CvU9W8bGpKiLNaien3hsNJZXCXQBpVoYOQeKF9RN75o0jdOi3ZObD8Zz6RKeGpBo8iMQmeAfEzV7WWl11C1lLbZs+7JJH15vJXV9jwbbgUW1/V96kkGWtk32r6eZHZ2gGMIJ8jBSGQdLVOL1fqKvi8cXDWBHgIn1Eaku4vsF4+jsNCmL/oJmfZlV4UxJbaIu/dszTJh89nPYkqQ42dg2vdTE4bdQ8wtTmxN/Lkr5iALGTkmcZlebbCXIZDjI7k7GWwrp1Sb/h1yTJChehCY00YOrt3I0zgo2kdZAVqVS+rtTvxAE=
+{
+  "retrieved": "2026-10-02",
+  "source": "https://services9.arcgis.com/weJ1QsnbMYJlCHdG/arcgis/rest/services/Daily_Chokepoints_Data/FeatureServer/0/query",
+  "info": {
+    "bab": {
+      "portid": "chokepoint4",
+      "name": "Bab el-Mandeb Strait",
+      "lat": 12.789,
+      "lon": 43.35,
+      "start": "2019-01-01",
+      "end": "2026-09-27",
+      "days": 2827,
+      "missing": 0
+    },
+    "suez": {
+      "portid": "chokepoint1",
+      "name": "Suez Canal",
+      "lat": 30.593,
+      "lon": 32.437,
+      "start": "2019-01-01",
+      "end": "2026-09-27",
+      "days": 2827,
+      "missing": 0
+    },
+    "hormuz": {
+      "portid": "chokepoint6",
+      "name": "Strait of Hormuz",
+      "lat": 26.297,
+      "lon": 56.86,
+      "start": "2019-01-01",
+      "end": "2026-09-27",
+      "days": 2827,
+      "missing": 0
+    },
+    "cape": {
+      "portid": "chokepoint7",
+      "name": "Cape of Good Hope",
+      "lat": -34.927,
+      "lon": 20.883,
+      "start": "2019-01-01",
+      "end": "2026-09-27",
+      "days": 2827,
+      "missing": 0
+    }
+  }
+}

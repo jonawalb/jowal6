@@ -1,11 +1,41 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "6i9Lx78xrW0NTqLo3kVSWsJCCVCFNRwhhXs+9k95YyzjPlZ5Wc/5iRiDrRDPZMXGzfKkrTmBF5N3lP59ULSGNlDVZAqF0D+VonEhkuPu8vb0+mktOYSgEbIeXmA9KTK1lZvKr9G7YJ+cnXjL1DmFSdywE5jbrZfEBNlQi8ziaOXbINl/Pck4pmKMg4MRVbwwucdTwgvX4hpRwHtsapIByc1j6rsbRVrsy8bXKuK4FBjP5CvFDqxNqd90h6XGEZtb5CIHQw48F8y+CRJ5BTfMUJJ4lS9s4CbCSBjdQnW9WSnJktFSulLKt4EsDx9E+9Vo5dkbA39ASCLTVTH+/tJDMdvgZj0bw0WRmyNaGJ7woKawd3ky/Kfr1qia5vC3ykIlHGD8Na+ZIkOEhKy8aT/j3ZOP4vYJri4WsZdhKVzkc4lIHPwyuX0/GyEXPt8pesklRU/9tBsCBpaQeLjgJp41vpMaquXjACumHv0QkkLLeH+SzVZNal+i+LmSvfCC+oSveWWCWdCv46U4c/tibTCqoPCvK8QqiLAD00LotSLwBvqSJMtaP6YqpToi/ZlOE5wLTY5D7qE6nMPt9ZaL5xc3RtAjYiRJKsqiXml45JokCv269ZouWOChCWs3FCQWcJH9UH/AR07S13XmVPo6yJUN3p/Mock+CVoUgwchzKtIrjZuvuEd3flkEFtJS3Wp2+TdtAYPE453xfTiA1S0jOZSJYlCndpj+9YOO00OWRAT9DrnBNx2GaP0uVJaEsD4f318B2MNgNyHzZu+5H3sSFeD1/R6qvkDKA9DwnWRieBba6tTQl/7hG9VNVD9U07SBVdpWMBnXinac/Qcr9QdQRzxDRB2xJzKtiiSizuKdqZiAdhqnHpIwAOnWE3+kssiGW8/InKcvNoLyEQCFRqX6DzFdhOpgcqrC1GL/onqIxd/e7YuaYP6PP1QtJ0naJy50gDAiKb5TYtEaa3s/RwdyL3o1Is97Rz03K46nGIgHg3zfxG3PMWf7ucKPdgv4Dca+taObnK25sqeHUSdE4C3GyGe6siY5NFwXhwhzIBjs5a0CVfLrWERPR8uExnvgo7g/jT0uh2Ycad1c34RPYpcDWFz391Cs9drVGdn1yAXPZhIzW8k9MHsSrMgKCUNYNlRTELKKR9Hcsbqf7j5JJf3a3I1WYVQMJTYMBihNRm9W/B7HCjOVI+F3Ig+RLRbf0WOxxKO/SGXc4PShLJfyh8LS0gRuApzZevcaH+fJH3svsAR48dWvTPlqygLwPxeQgROsGxYCh8kwYtMAQYY4IPNvBDqF16QnvNeSY2EO1ey8ARId/+0B2xG2K9qhMJ1M+z/+lTLJiPGrVYbMBPd3ZZ/As4erbmr1fb9JqHyJwaOXM8hrg636S9isCY/MwyhpXAagQYICDFgMTq4xwxAfcuEGhejYc1ymt2Fcf+ErHuNusT1YxM5SnkoBTh3CJhLOI0mIYVxKiOZ3/EiTiIMAZqhcrpQM6hr+0h2VYPvRt2OrQj5weLHnoSaJbBINQI+C1h08wIfWw==", 1);
-export const AIRSTRIP = __m.AIRSTRIP;
-export const BOX = __m.BOX;
-export const INSET_BOX = __m.INSET_BOX;
-export const KHARG_CENTER = __m.KHARG_CENTER;
-export const KHARKU_CENTER = __m.KHARKU_CENTER;
-export const MEASURED = __m.MEASURED;
-export const PLACES = __m.PLACES;
-export const SECTOR_GEO = __m.SECTOR_GEO;
-export const ZONES = __m.ZONES;
+// Places and notional zones for the Kharg Island map.
+// Public, base-level places only: towns as a whole and the island's published airport coordinates.
+// Coordinates are the ones Wikipedia publishes for each place (checked 29 September 2026); keys match data/sources.js.
+// Nothing on this map marks oil-terminal components, and every force position is a notional zone.
+
+export const BOX = { lon0: 50.0, lon1: 51.0, lat0: 28.85, lat1: 29.72, width: 1000 };
+/** Island detail inset: Kharg and Kharku at large scale. */
+export const INSET_BOX = { lon0: 50.268, lon1: 50.372, lat0: 29.198, lat1: 29.35, width: 250 };
+
+export const PLACES = [
+  { k: 'genaveh', t: 'Bandar Ganaveh', ll: [50.5172, 29.5808], src: 'wikiGanaveh', side: 'end' },
+  { k: 'rig', t: 'Bandar Rig', ll: [50.6308, 29.4872], src: 'wikiRig', side: 'start' },
+  { k: 'bushehr', t: 'Bushehr', ll: [50.8514, 28.9264], src: 'wikiBushehr', side: 'end' },
+];
+/** Kharg Airport, published coordinates 29°15′34″N 50°19′24″E (Wikipedia). Shown only in the inset. */
+export const AIRSTRIP = { t: 'Kharg airstrip', ll: [50.3233, 29.2594], src: 'wikiAirport' };
+export const KHARG_CENTER = [50.312, 29.243]; // centroid of the OpenStreetMap outline
+export const KHARKU_CENTER = [50.345, 29.321];
+
+/** Measured from the OpenStreetMap coastline (scripts/build_land.py, unsimplified outline). */
+export const MEASURED = {
+  areaKm2: 21.5, lengthKm: 7.5, widthKm: 5.3, mainlandKm: 30.5, kharkuKm: 3.5,
+  genavehKm: 42.5, bushehrKm: 63.2,
+  nearestShore: [[50.3345, 29.2155], [50.6435, 29.1678]],
+};
+
+/**
+ * Notional approach sides for the island inset: a path from open water, across the shore, to the airstrip
+ * and on to the island as a whole. They are broad halves of the island, not beach assessments.
+ */
+export const SECTOR_GEO = {
+  W: { from: [50.272, 29.232], path: [[50.272, 29.232], [50.292, 29.236], [50.3233, 29.2594], [50.312, 29.238], [50.316, 29.222]] },
+  E: { from: [50.368, 29.268], path: [[50.368, 29.268], [50.338, 29.262], [50.3233, 29.2594], [50.312, 29.235]] },
+};
+
+/** Notional areas on the main map. None is a real position. */
+export const ZONES = {
+  usSea: { center: [50.14, 29.08], label: 'U.S. force at sea' },
+  blockadeKm: 18,
+  reinforce: [[50.62, 29.26], [50.345, 29.245]],
+};

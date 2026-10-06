@@ -1,3 +1,152 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1);
-export const FINLAND = __m.FINLAND;
+// Finland profile for the Defense Budget Allocator.
+// SOURCED (all opened 2026-10-02; defmin.fi and valtioneuvosto.fi pages that showed a bot check were read through WebFetch):
+//   Budgets
+//   MoD, "Budget for 2026" (composition of the defence budget, EUR million):
+//     https://defmin.fi/documents/236553176/249313883/Budget%20for%202026.pdf/df530b24-c4bc-bc8f-715b-f09f5a252c99?t=1768994377721
+//     (procurement of materiel excl. F-35 and Squadron 2020: 1,240; F-35 Fighter Program: 1,355; Squadron 2020: 213;
+//      materiel maintenance 560; payroll 911; real estate 367; upkeep of conscripts 231; other military 563; military
+//      total 5,440; crisis management 66; VAT 736; other 155; total expenditure of the defence administration 6,397)
+//   MoD press release, 2025-09-25: https://defmin.fi/en/-/finnish-defence-forces-to-launch-army-materiel-procurement-projects-for-2030s-
+//     (2026 proposal EUR 6.3bn, 2.5% of forecast GDP; about EUR 1.5bn materiel and EUR 1.4bn multi-role fighters; two new
+//      procurement authorities, EUR 4bn materiel (largest element: army mobility) and EUR 2bn joint weapons systems (ammunition);
+//      payments mainly 2029-2036)
+//   Government, 2021-12-10: https://valtioneuvosto.fi/en/-/236553176/the-lockheed-martin-f-35a-lightning-ii-is-finland-s-next-multi-role-fighter
+//     (64 F-35A Block 4, about EUR 8.378bn; aircraft EUR 4.703bn; AMRAAM and Sidewinder EUR 754.6m; HX programme EUR 10bn)
+//   Government, 2026-06-02: https://valtioneuvosto.fi/en/-/236553176/parliamentary-working-group-on-defence-submits-final-report-to-minister-of-defence-hakkanen
+//     ("Russia poses a long-term and unpredictable threat to the security of Finland and NATO.")
+//   SIPRI Milex database v1.2 (2026): https://www.sipri.org/sites/default/files/SIPRI-Milex-data-1949-2025_v1.2.xlsx
+//     (2025: EUR 7.164bn = US$8.08bn, 2.57% of GDP; implied 0.8865 EUR/USD used for conversions, an estimate)
+//   Unit costs: see `src` on each category below.
+// NOTIONAL: every baseline (base), scale (k), reach, weight (w), the approach geometry and the preset mixes. No sourced unit
+//   cost was found for mines (the Defence Forces say a cost estimate will come as planning advances) or for sensors and
+//   networks, so those two rows are notional.
+// NOTE FOR THE INTEGRATOR: euro budgets are small numbers, so several scales k are below 1. js/params.js clamps edited k to
+//   a minimum of 1 with step 1; that editor field needs a lower minimum (e.g. 0.01, step "any") for this profile.
+
+const fmtBn = v => v >= 1000 ? Math.round(v).toLocaleString('en-US') : v >= 10 ? v.toFixed(1) : v.toFixed(2);
+const eur = bn => bn >= 1 ? `€${fmtBn(bn)}bn` : bn >= 0.01 ? `€${Math.round(bn * 1000)}m` : `€${(bn * 1000).toFixed(1)}m`;
+const USD = 0.8865;
+const BUD = 'https://defmin.fi/documents/236553176/249313883/Budget%20for%202026.pdf/df530b24-c4bc-bc8f-715b-f09f5a252c99?t=1768994377721';
+const PR26 = 'https://defmin.fi/en/-/finnish-defence-forces-to-launch-army-materiel-procurement-projects-for-2030s-';
+const HX = 'https://valtioneuvosto.fi/en/-/236553176/the-lockheed-martin-f-35a-lightning-ii-is-finland-s-next-multi-role-fighter';
+const a = (u, t) => `<a href="${u}" target="_blank" rel="noopener">${t}</a>`;
+
+export const FINLAND = {
+  k: 'fi', name: 'Finland', sub: '€ · eastern border', cur: '€',
+  money: eur,
+  budgets: [
+    { k: 'mat', bn: 1.24, t: 'Materiel procurement, 2026', s: '€1.24bn · excl. F-35 and Squadron 2020',
+      note: 'The 2026 line for new defense materiel, leaving out the F-35 and the Squadron 2020 corvettes, which have their own lines.' },
+    { k: 'f35', bn: 1.355, t: 'F-35 programme, 2026', s: '€1.355bn · one year of the HX programme',
+      note: 'What Finland budgets in 2026 for the 64 F-35A fighters it ordered in 2021. Here you may spend it on anything.' },
+    { k: 'auth', bn: 6, t: 'New procurement authorities, 2026', s: '€6bn · €4bn materiel + €2bn ammunition',
+      note: 'Two authorities in the 2026 budget let the Defence Forces sign €6bn of new contracts this year: €4bn for materiel, led by army mobility, and €2bn for joint weapons systems, used for ammunition. The payments fall mainly in 2029-2036.' },
+    { k: 'mod26', bn: 6.397, t: 'All defence spending, 2026', s: '€6.40bn · about 2.5% of GDP in the proposal',
+      note: 'Total expenditure of the defence administration in 2026. In reality most of it pays for people, upkeep, VAT and contracts already signed.' },
+  ],
+  cats: [
+    { id: 'ascm', t: 'Howitzers', col: '--c3', k: 0.3, base: 0.5, reach: 40, w: 0.55, cls: 'mobile',
+      unit: 'K9 howitzer with spares', cost: 0.5468 / 112, s: 'K9 Thunder howitzers firing on the column as it closes.',
+      src: 'https://defmin.fi/en/-/finland-procures-more-155-mm-k9-self-propelled-howitzers-from-the-republic-of-korea', srcName: 'Ministry of Defence, Apr. 9, 2026', est: true,
+      basis: 'About €546.8m for 112 K9 howitzers with spare parts, special tools and test equipment, per howitzer.' },
+    { id: 'drones', t: 'Drones', col: '--c2', k: 0.12, base: 0.1, reach: 25, w: 0.4, cls: 'mobile',
+      unit: 'FPV drone contract with options', cost: 0.014, s: 'Reconnaissance and first-person-view attack drones.',
+      src: 'https://puolustusvoimat.fi/en/-/procurement-of-domestically-produced-fpv-drones-from-insta-group-oy', srcName: 'Defence Forces, Aug. 25, 2026',
+      basis: '€14m including options, with training, spare parts and maintenance; number of drones not published.' },
+    { id: 'mines', t: 'Mines and obstacles', col: '--c5', k: 0.15, base: 0.15, reach: 10, w: 0.35, cls: 'mines',
+      unit: 'lot of 10,000 mines', cost: 0.02, s: 'Minefields and barriers on the approaches. Finland left the anti-personnel mine treaty in January 2026.' },
+    { id: 'strike', t: 'Rocket artillery', col: '--c4', k: 0.45, base: 0.2, reach: 80, w: 0.3, cls: 'mobile',
+      unit: '10 GMLRS rocket pods', cost: 535e-3 / 400 * 10 * USD, s: 'GMLRS rockets striking deep into the column and its supply routes.',
+      src: 'https://www.federalregister.gov/d/2024-17596', srcName: 'Federal Register, Aug. 8, 2024 (DSCA 22-61)', est: true,
+      basis: 'US$535m approval for 150 alternative-warhead and 250 unitary GMLRS pods, per 10 pods, converted at 0.8865 EUR/USD. An approval, not a contract.' },
+    { id: 'airdef', t: 'Air and missile defense', col: '--c1', k: 1.2, base: 0.3, reach: 0, w: 0, cls: 'fixed',
+      unit: 'David\'s Sling initial buy', cost: 0.316, s: 'Long-range air defense and shorter-range systems protecting forces and bases.',
+      src: 'https://defmin.fi/en/-/new-long-range-air-defence-system-for-the-finnish-defence-forces', srcName: 'Ministry of Defence, Apr. 5, 2023',
+      basis: 'About €213m main contract plus €103m immediate options, excluding VAT; quantities not published. A further €213m of options needs separate approval.' },
+    { id: 'c4isr', t: 'Sensors, networks and dispersal', col: '--c6', k: 0.2, base: 0.35, reach: 0, w: 0, cls: 'mobile',
+      unit: 'resilience package', cost: 0.05, s: 'Surveillance, backup networks, shelters, decoys and dispersal.' },
+    { id: 'ammo', t: 'Artillery ammunition', col: '--c7', k: 0.4, base: 0.35, reach: 0, w: 0, cls: 'fixed',
+      unit: '155 mm full-charge order', cost: 0.079, s: 'Shells, charges and rockets to keep firing after the first days.',
+      src: 'https://defmin.fi/en/-/finnish-defence-forces-places-order-with-nammo-lapua-for-full-charges-for-artillery-1', srcName: 'Ministry of Defence, Mar. 20, 2025',
+      basis: '€79m order with Nammo Lapua for 155 mm full propelling charges for the K9 and towed guns; quantity not published.' },
+    { id: 'platforms', t: 'F-35 fighters', col: '--c8', k: 3.5, base: 0.4, reach: 150, w: 0.4, cls: 'platform',
+      unit: 'F-35A, share of HX procurement', cost: 8.378 / 64, s: 'F-35A fighters striking the column and its air cover.',
+      src: HX, srcName: 'Finnish Government, Dec. 10, 2021', est: true,
+      basis: 'About €8.378bn for 64 F-35A with missiles, spares, training and sustainment to 2030, per aircraft. The aircraft alone were €4.703bn.' },
+    { id: 'other', t: 'Not modeled', col: '--faint', k: 1, base: 0, reach: 0, w: 0, cls: 'none',
+      unit: '', cost: 0, s: 'Personnel, upkeep, VAT, the navy and programs outside the scenario.' },
+  ],
+  presets: {
+    porcupine: { t: 'Fires and obstacles', s: 'Artillery, rockets, drones, mines and shells',
+      mix: { ascm: 0.2, drones: 0.14, mines: 0.1, strike: 0.18, airdef: 0.1, c4isr: 0.1, ammo: 0.16, platforms: 0.02, other: 0 } },
+    legacy: { t: 'Air power first', s: 'F-35 fighters and long-range air defense',
+      mix: { ascm: 0.04, drones: 0.02, mines: 0.02, strike: 0.04, airdef: 0.25, c4isr: 0.03, ammo: 0.05, platforms: 0.55, other: 0 } },
+    even: { t: 'Even split', s: 'The same amount to each modeled category',
+      mix: { ascm: 0.125, drones: 0.125, mines: 0.125, strike: 0.125, airdef: 0.125, c4isr: 0.125, ammo: 0.125, platforms: 0.125, other: 0 } },
+  },
+  defaults: { b: 'mat', preset: 'porcupine', supp: 0.45, warn: 7 },
+  geo: { km: 150, speed: 8, unit: 'km/h' },
+  geoLabel: 'Approach depth',
+  refText: {
+    f35: ['What the line pays for', 'Payments on the 64 F-35A ordered in December 2021. There is no split onto these categories, so there is no reference mix.'],
+    auth: ['What the authorities are for', 'The €4bn materiel authority is led by the army mobility programme and the €2bn joint weapons authority buys ammunition. No further split was published, so there is no reference mix.'],
+    mod26: ['How the budget splits', 'Of €6,397m: F-35 €1,355m, other materiel €1,240m, payroll €911m, maintenance €560m, other operations €563m, VAT €736m, real estate €367m, conscripts €231m, Squadron 2020 €213m, and the rest. Most lines are not capabilities, so there is no reference mix.'],
+  },
+  strip: { left: 'Border', right: 'Defended line', zero: 'line', noun: 'vehicles', play: 'Play the attack', exportTitle: 'Notional attack across the eastern border',
+    land: true, vehicle: true,
+    eyebrow: 'Notional attack across the eastern border <span class="notional">Notional model, not a prediction</span>',
+    note: 'Bands show how far each layer reaches forward of the defended line; darker means stronger after the attacker\'s opening missile and air strikes. Triangles on the right are Finland\'s guns, launchers and drone teams and rectangles its fighters; faded ones did not survive the opening strikes. No real terrain, border crossing or unit is shown.',
+    aria: 'Stylized attack across Finland\'s eastern border. An attacking force moves from the border on the left toward a defended line on the right, through bands showing how far each Finnish layer reaches and how strong it is. Vehicles marked with an X are engaged.' },
+  text: {
+    verdict: {
+      good: ['Costly attack', 'A large share of the attacking force comes under effective fire before it reaches the line.'],
+      warn: ['Contested attack', 'Finland engages part of the force, but most of it reaches the line intact.'],
+      bad: ['Attack largely unopposed', 'Too little of Finland\'s firepower survives the opening strikes, sees the column or reaches it.'],
+    },
+    explain: {
+      mobile: n => `Only ${n}% of guns, launchers and drone teams survive the opening strikes; air defense and dispersal spending protect them.`,
+      platform: n => `Fighters are few and their bases are known, so only ${n}% remain after the opening strikes.`,
+      track: 'Weak sensors and networks leave the guns without good targets.',
+      mines: n => `With short warning only ${n}% of the minefields and barriers are in place in time.`,
+    },
+    tiles: { engaged: 'of the attacking force comes under effective fire', hours: h => `of a ${h} h advance`, shooters: 'after the opening strikes' },
+    supp: ['Opening missile and air strikes', 'Share of Finland\'s unprotected forces the attacker\'s opening strikes would destroy.'],
+    warn: ['Warning before the attack', 'Days Finland has to mobilize reserves, lay mines and close barriers before the attack.'],
+  },
+  doc: {
+    terms: { attacker: 'The attacker', c4: 'C4ISR', platforms: 'F-35 fighters', edge: 'the defended line' },
+    howto: [
+      'Pick a budget, then divide it across eight kinds of capability. The model sends a notional attacking force across Finland\'s eastern border toward a defended line and reports four things: the share of the force that comes under effective fire, how many hours of the advance are spent inside at least one working layer of Finland\'s fires, the share of Finland\'s shooters that survive the opening missile and air strikes, and a resilience score.',
+      'The comparison table sets your plan beside three mixes. <b>Fires and obstacles</b> buys guns, rockets, drones, mines and shells, the traditional core of Finland\'s land defense. <b>Air power first</b> buys F-35 fighters and long-range air defense. No published breakdown maps Finland\'s budget onto these categories, so there is no official reference mix.',
+    ],
+    scenario: 'An attacking force crosses Finland\'s long eastern border and pushes a notional 150 km at 8 km/h toward a defended line, after opening missile and air strikes on Finland\'s forces and bases. A parliamentary working group reported in June 2026 that Russia poses a long-term and unpredictable threat to Finland and NATO. The model is abstract: it includes no terrain, roads, crossing points, units or positions, and the attacker is not modeled in any detail. It shows how the order of spending changes what happens to a force that has to cross Finland\'s layers.',
+    leavesOut: 'What the model leaves out matters: NATO allies, the reserve army Finland mobilizes in wartime, forests, lakes and winter, the attacker\'s engineers, artillery and electronic warfare, the air war over Finland itself, fighters operating from dispersed bases, training, maintenance and delivery schedules. A system that does poorly here can still be the right buy for those jobs.',
+    real: {
+      cols: ['Budget line', '€ bn', 'Notes'],
+      rows: [
+        ['Total expenditure of the defence administration, 2026', '6.40', `About 2.5% of GDP in the September 2025 proposal. ${a(BUD, 'MoD, Budget for 2026')}`],
+        ['of which F-35 Fighter Program', '1.355', a(BUD, 'MoD, Budget for 2026')],
+        ['of which procurement of materiel (excl. F-35 and Squadron 2020)', '1.24', a(BUD, 'MoD, Budget for 2026')],
+        ['of which Squadron 2020 corvettes', '0.213', a(BUD, 'MoD, Budget for 2026')],
+        ['New procurement authorities, 2026', '6.0', `€4bn materiel + €2bn ammunition; payments mainly 2029-2036. ${a(PR26, 'MoD, Sept. 25, 2025')}`],
+        ['HX fighter programme, total', '10.0', `64 F-35A ordered for about €8.378bn. ${a(HX, 'Finnish Government, Dec. 10, 2021')}`],
+      ],
+      note: 'The 2026 lines come from the ministry\'s budget breakdown. Procurement authorities are permission to sign contracts, not money spent in 2026, so they overlap with future years\' budgets.',
+    },
+    menuNote: 'No sourced unit cost was found for mines, which Finland plans to develop with domestic industry from 2026, or for sensors and networks, so those rows are notional. The GMLRS row is a U.S. approval, not a signed contract.',
+    related: [
+      { b: 'SIPRI, 2025.', t: '€7.164bn, about US$8.08bn, 2.57% of GDP.', url: 'https://www.sipri.org/sites/default/files/SIPRI-Milex-data-1949-2025_v1.2.xlsx', src: 'SIPRI Military Expenditure Database, 2026 (xlsx)' },
+      { b: 'Ammunition authority.', t: 'The 2026 budget\'s €2bn joint weapons authority is used to procure ammunition.', url: PR26, src: 'MoD, Sept. 25, 2025' },
+      { b: 'Anti-personnel mines.', t: 'Finland\'s withdrawal from the Ottawa Convention took effect on Jan. 10, 2026; first new mines are expected in 2027 and a cost estimate will follow as planning advances.', url: 'https://maavoimat.fi/en/-/the-defence-forces-starts-measures-for-acquiring-anti-personnel-landmines-and-launching-training', src: 'Finnish Army, Jan. 14, 2026' },
+      { b: 'F-35 missiles.', t: 'AMRAAM and Sidewinder air-to-air missiles, €754.6m within the HX procurement.', url: HX, src: 'Finnish Government, Dec. 10, 2021' },
+    ],
+    sources: [
+      { src: 'Ministry of Defence, Budget for 2026 (composition of the defence budget)', url: BUD, d: '2026', n: 'All 2026 budget lines.' },
+      { src: 'Ministry of Defence, Finnish Defence Forces to launch army materiel procurement projects for 2030s', url: PR26, d: 'September 25, 2025', n: 'The 2026 proposal, its share of GDP and the new procurement authorities.' },
+      { src: 'Finnish Government, Parliamentary working group on defence submits final report', url: 'https://valtioneuvosto.fi/en/-/236553176/parliamentary-working-group-on-defence-submits-final-report-to-minister-of-defence-hakkanen', d: 'June 2, 2026', n: 'The threat assessment quoted in the scenario.' },
+      { src: 'SIPRI Military Expenditure Database', url: 'https://www.sipri.org/sites/default/files/SIPRI-Milex-data-1949-2025_v1.2.xlsx', d: '2026', n: 'Also the basis of the 0.8865 EUR/USD rate used for the GMLRS conversion (€7.164bn = US$8.08bn).' },
+      { src: 'Unit-cost sources are linked in the spending menu table.' },
+    ],
+    missing: 'Unit costs for mines and for sensors and networks, signed contract values for GMLRS (only the U.S. approval is public), quantities in the David\'s Sling and drone contracts, and any published split of the 2026 materiel line.',
+  },
+};

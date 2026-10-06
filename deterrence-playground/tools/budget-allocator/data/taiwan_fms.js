@@ -1,6 +1,41 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1);
-export const BACKLOG_URL = __m.BACKLOG_URL;
-export const NTD_PER_USD = __m.NTD_PER_USD;
-export const REF_CASES = __m.REF_CASES;
-export const WAIT_ASOF = __m.WAIT_ASOF;
+// Taiwan reference cases for the "What it buys" view: real U.S. Foreign Military Sales (FMS) notifications,
+// their notified program values and quantities, and how long each has taken to reach Taiwan.
+// All figures are copied from TSM's Arms Sales Backlog tool (tools/arms-backlog/data/cases.js, data date Aug. 31, 2026),
+// which carries the DSCA/Federal Register notice and the milestone source for every row. Copied 2026-10-03.
+//   Backlog source: TSM, Taiwan Arms Sale Backlog, August 2026 update: https://tsm.schar.gmu.edu/taiwan-arms-sale-backlog-august-2026-update/
+// Exchange rate: Focus Taiwan, Sept. 3, 2026 gives the supplementary budget as NT$607.6bn = US$19.12bn,
+//   i.e. NT$31.78 per US$: https://focustaiwan.tw/politics/202609030018
+// Notified values are ceilings for the whole program (equipment, support, training, spares), so a cost per unit
+// derived from them is a program cost per unit, not a flyaway price.
+
+export const NTD_PER_USD = 607.6 / 19.12;
+export const WAIT_ASOF = '2026-08-31';
+export const BACKLOG_URL = 'https://tsm.schar.gmu.edu/taiwan-arms-sale-backlog-august-2026-update/';
+
+// One reference case per model category. first = first delivery reported (null = none yet); done = case complete.
+export const REF_CASES = {
+  ascm: { name: 'Harpoon Coastal Defense System', notified: '2020-10-26', first: '2024-09', done: null,
+    note: 'First equipment arrived in Sept. 2024; the missile contract runs to March 2029.',
+    src: 'https://def.ltn.com.tw/article/breakingnews/4814390' },
+  drones: { name: 'ALTIUS-600M-V loitering munitions (2024)', notified: '2024-06-18', first: '2025-08', done: '2026-03',
+    note: 'One of the fastest cases in the backlog: first drones in Aug. 2025, complete in March 2026.',
+    src: 'https://tsm.schar.gmu.edu/taiwan-arms-sale-backlog-march-2026-update-abrams-and-altius-delivered-but-further-delays-emerge/' },
+  mines: { name: 'Volcano anti-tank mining system', notified: '2022-12-28', first: null, done: null,
+    note: 'No deliveries reported by Aug. 2026; MND expects all 14 systems in 2026 and related equipment through 2029.',
+    src: 'https://def.ltn.com.tw/article/breakingnews/5169628' },
+  strike: { name: 'HIMARS (December 2022 case)', notified: '2022-12-05', first: null, done: null,
+    note: 'No deliveries reported by Aug. 2026; MND expected the 18 launchers before the fourth quarter of 2026.',
+    src: 'https://www.taipeitimes.com/News/taiwan/archives/2026/02/09/2003852027' },
+  airdef: { name: 'NASAMS', notified: '2024-10-25', first: null, done: null,
+    note: 'No deliveries reported by Aug. 2026; the U.S. contract for the three fire units runs to spring 2031.',
+    src: 'https://tsm.schar.gmu.edu/taiwan-arms-sale-backlog-november-2025-update/' },
+  c4isr: { name: 'Field Information Communications System', notified: '2020-12-07', first: '2026-02', done: null,
+    note: 'Army units began fielding it in Feb. 2026; unclear whether all of it has been delivered.',
+    src: BACKLOG_URL },
+  ammo: { name: '30mm ammunition', notified: '2023-06-29', first: null, done: '2025-01',
+    note: 'Left TSM\'s backlog in Jan. 2025.',
+    src: 'https://tsm.schar.gmu.edu/taiwan-arms-sale-backlog-january-2025-update-f-16-delays-and-new-contracts/' },
+  platforms: { name: 'F-16C/D Block 70', notified: '2019-08-20', first: null, done: null,
+    note: 'No jet had reached Taiwan by Aug. 2026; the first two were still in Hawaii in late Sept. Press reports put the rest in 2027 and 2028.',
+    src: 'https://www.taipeitimes.com/News/taiwan/archives/2026/09/07/2003863842' },
+};

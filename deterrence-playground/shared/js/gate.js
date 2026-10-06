@@ -4,7 +4,7 @@
 // In local development (serving the source tree) this file is not loaded and data is plaintext.
 (function () {
   'use strict';
-  var CFG = {"id": "3d314fe2f5", "salt": "Y4WWLNuKMQNV9IJIKHdnMA==", "iter": 600000, "check": "tjkjLw74yJV6+mditJ1VR8hDkJT5Hm3Ucw4HZSJ8PZRGXg==", "remember": false, "t2": {"id": "24323fd3b3", "salt": "1h8efphNDcDulPgKOV6WkA==", "check": "4ufCwV4H5vsTzWw8SsppYG8CYEFPkH2wYaZh4xmBJCzThQ==", "slugs": ["crossing-windows", "joint-sword", "penghu-gambit", "strait-landing", "strait-layers", "transit-response", "wargame-explorer", "warning-board"], "name": "Indo-Pacific"}, "t3": {"id": "1561121461", "salt": "MVNotf4TEPtaytW5XYSB0A==", "check": "9pi+x9N+EpXYMdBBG8XYpFM4Aoxc+i2ZQWbUvA2rxnLp3w==", "slugs": ["dissertation-games", "will-to-fight"], "name": "Jon Dissertation Games"}, "t4": {"id": "9de41c846d", "salt": "oqIHHudpJmpc+aW0a7OJag==", "check": "7kATO5IQxdNDiRoSs6Fw3ra6oVcd73LR7qgc2bz5FHguHg==", "slugs": ["arms-race", "bayesian-attack", "berlin-airlift", "brinkmanship", "coercion-resilience", "conceal-reveal", "correction-lab", "cost-ratio", "cry-wolf", "drone-threat-matrix", "enforcement-ops", "exercise-or-invasion", "extended-deterrence", "hub-and-spokes", "humiliation-motivation", "iran-israel-salvos", "magazine-depth", "markets-vs-analysts", "minerals-twin", "misinfo-cascade", "narrative-contagion", "nuclear-signals", "prebunking-game", "qre-explorer", "salami", "sanctions-architect", "sanctions-explorer", "say-do-global", "sea-control", "situation-room", "supply-shock", "uplift-line", "verification-game", "weapons-regimes"], "name": "Coming Soon"}, "t5": {"id": "1239aebe04", "salt": "DyDPl80nJR4dOfQcwckpzg==", "check": "XgKzGokjX1q2HMqt52womJcQD9J5iLWRiTtsLJrry1HmXQ==", "slugs": [], "name": "Rhetoric Search"}, "master": {"salt": "vde/ATuxVfD/g0e6EHJAMQ==", "check": "TU+yFg3h69kpOPVjlXBcWXt7p1z0XnU5t6ltqTRR6sgbOw==", "wraps": {"1": "9gyn2jRjunqdvq9vUMVwud+AKBk3t79jEoHAatR/EoILdDKq7sF0e3M77n76o2cw/GAAMBQWTfAqhhLq", "2": "5Th/33JAPx8KWMqD43i6P91a2DKbZ3HDcZcvD43QqaD5rL/LM7NeBE4ov65JNIDXTPbtaEoJp0nEGPds", "3": "w8KJHOr9ZHgikRb1wtLTmEYuF+GKokTn1HNRZzG1+ut+vFxvili54txS31IeuXkjU2QX4+Ozl+xzzxSA", "4": "U2Yjlsoc2VbhfQEaI/RwxIZXaTIVjc/4laieK6d2Sj9DrJSR76g/Rj6vjU30Y945OFmFU7opod30k/bM", "5": "ICCnmjpr/3L6ZxX5H92owjaiQXo+8YKDK50FZkbWh1OYwpmUUUErkVL7PIt0yIfhMiruaZ7hcBqni1RO"}}};
+  var CFG = {"id": "1a4156241b", "open": true, "iter": 600000, "remember": false, "t2": {"id": "24323fd3b3", "salt": "1h8efphNDcDulPgKOV6WkA==", "check": "4ufCwV4H5vsTzWw8SsppYG8CYEFPkH2wYaZh4xmBJCzThQ==", "slugs": ["crossing-windows", "four-capitals", "joint-sword", "penghu-gambit", "strait-landing", "strait-layers", "transit-response", "wargame-explorer", "warning-board"], "name": "Indo-Pacific"}, "t3": {"id": "1561121461", "salt": "MVNotf4TEPtaytW5XYSB0A==", "check": "9pi+x9N+EpXYMdBBG8XYpFM4Aoxc+i2ZQWbUvA2rxnLp3w==", "slugs": ["dissertation-games", "will-to-fight"], "name": "Jon Dissertation Games"}, "t4": {"id": "9de41c846d", "salt": "oqIHHudpJmpc+aW0a7OJag==", "check": "7kATO5IQxdNDiRoSs6Fw3ra6oVcd73LR7qgc2bz5FHguHg==", "slugs": ["arms-race", "bayesian-attack", "berlin-airlift", "brinkmanship", "coercion-resilience", "conceal-reveal", "correction-lab", "cost-ratio", "cry-wolf", "drone-threat-matrix", "enforcement-ops", "exercise-or-invasion", "extended-deterrence", "hub-and-spokes", "humiliation-motivation", "iran-israel-salvos", "magazine-depth", "markets-vs-analysts", "minerals-twin", "misinfo-cascade", "narrative-contagion", "nuclear-signals", "prebunking-game", "qre-explorer", "salami", "sanctions-architect", "sanctions-explorer", "say-do-global", "sea-control", "situation-room", "supply-shock", "uplift-line", "verification-game", "weapons-regimes"], "name": "Coming Soon"}, "t5": {"id": "1239aebe04", "salt": "DyDPl80nJR4dOfQcwckpzg==", "check": "XgKzGokjX1q2HMqt52womJcQD9J5iLWRiTtsLJrry1HmXQ==", "slugs": [], "name": "Rhetoric Search"}, "master": {"salt": "vde/ATuxVfD/g0e6EHJAMQ==", "check": "TU+yFg3h69kpOPVjlXBcWXt7p1z0XnU5t6ltqTRR6sgbOw==", "wraps": {"2": "5Th/33JAPx8KWMqD43i6P91a2DKbZ3HDcZcvD43QqaD5rL/LM7NeBE4ov65JNIDXTPbtaEoJp0nEGPds", "3": "w8KJHOr9ZHgikRb1wtLTmEYuF+GKokTn1HNRZzG1+ut+vFxvili54txS31IeuXkjU2QX4+Ozl+xzzxSA", "4": "U2Yjlsoc2VbhfQEaI/RwxIZXaTIVjc/4laieK6d2Sj9DrJSR76g/Rj6vjU30Y945OFmFU7opod30k/bM", "5": "ICCnmjpr/3L6ZxX5H92owjaiQXo+8YKDK50FZkbWh1OYwpmUUUErkVL7PIt0yIfhMiruaZ7hcBqni1RO"}}};
   var KEYNAME = 'tsm-vault-key-' + (CFG ? CFG.id : 'dev');
   var MAGIC = 'TSMVAULT2:';
   // Optional extra tiers: tools listed in CFG.t2.slugs (or CFG.t3.slugs) have their data sealed with a
@@ -54,6 +54,9 @@
       return crypto.subtle.deriveBits({ name: 'PBKDF2', salt: b64d(salt), iterations: CFG.iter, hash: 'SHA-256' }, base, 256);
     }).then(function (bits) { return new Uint8Array(bits); });
   }
+  /** Open tiers (CFG.tN.raw): the build published the tier's key, so its pages unlock without asking. */
+  function openTier(tier) { return !!(TIERS[tier] && TIERS[tier].raw); }
+  function openKey(tier) { return tryRaw(b64d(TIERS[tier].raw), tier); }
   /** Resolves to a CryptoKey if raw key bytes decrypt the check token, else rejects. */
   function tryRaw(raw, tier) {
     var check = tier > 1 ? TIERS[tier].check : CFG.check;
@@ -68,6 +71,7 @@
    *  After the master password, every tier's key is available in this tab. */
   function key2Now(tier) {
     if (tier === PAGE_TIER) return key2Ready;
+    if (openTier(tier)) return openKey(tier);
     return MASTER && MASTER[tier] ? Promise.resolve(MASTER[tier]) : Promise.reject();
   }
   function deriveMaster(pw) {
@@ -148,6 +152,8 @@
         .then(function (k) { return open(k, b64d(b64), true); })
         .then(function (bytes) { return new TextDecoder().decode(bytes); });
     },
+    /** True when `slug` is in a tier whose key is published (no password needed). */
+    isOpen: function (slug) { return [2, 3, 4, 5].some(function (t) { return openTier(t) && TIERS[t].slugs.indexOf(slug) >= 0; }); },
     /** Attributes for a password box that browsers will not offer to save (used by the hub's section form too). */
     inputAttrs: function () { return NOSAVE; },
     /** Decrypt a sealed blob with the key this page was unlocked with (only on pages of that tier). */
@@ -213,6 +219,7 @@
     resolveKey(key);
     if (!LOCKED_PAGE) { reveal(); return; }
     if (MASTER && MASTER[PAGE_TIER]) { unlock2(MASTER[PAGE_TIER]); return; }
+    if (openTier(PAGE_TIER)) { openKey(PAGE_TIER).then(unlock2); return; }
     var g = document.getElementById('tsm-gate'); if (g) g.remove();
     if (document.body) showGate(PAGE_TIER); else document.addEventListener('DOMContentLoaded', function () { showGate(PAGE_TIER); });
   }

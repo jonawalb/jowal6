@@ -1,3 +1,153 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "ilapYQJt/zOLIGk13VCS/Zjhi2e+HcuRWezc9ElHGemhGPjMjDkSKesyCYwKCGtQ4aPtgV4k16ya6j4prfOnSjmH/MIpecbG36jGJm5+bYaZZ1gUv5DlR6erV7QRUXNoSnUOpEk/UoXZB4W96g0bBhEQsfyp3QFQxPaUWdDWpQfuvwvj+NzKqH0TUSqZPreTOhm1ydoJ2oJ5Y2ogh9CuLXoEqRHAnrmaXOJgw6BTmJwu+dJWMPcwQNjtFIpL8CoHgaNptTqRMlM9z0aSnTSEoD7QnmtmZNXjkvBkm81L+Q6zcnNBi5ThiI5Kgg7TXBJzWOhGIN79lVF4XJZDOa/Kcxw9sjfTQkOSxY3LIVy+3PgereSwqy1ffetJeHqRVMtrR6c6u6dS5+vO0s2CgIK+DinM9NKknKpa0piiEcx8NORhy4faIy3CgdHw3MZmWXIOy2AVdFURYXRAnDjfX+20QeCnXEglBcsFjbn//XBhuimgvjrglpHFdCbjlaFxHy19G4/KBe1RnqW9nfBtmcLgbH3wjrhBMYqOutIgL5ysKTbaNDxgUZeQDqN/l3Q3riSmSA1KzUX3t4a/N3eVI+aQpvI3ZgMkoAqUrCjoM2hyByhZu0qdNnoBjp814lnAzeO4arLuhY+ApXDo4rF0ValIe9LB1yVaMKftJaUXXsCn6jIvrc4/z1zfHoLgqVsox5yt41zIYv+E8QIS6J8iI8BRSaDEs0p0w/oKgK3MMSjEMSN1IaGxi3uoZsT0eZf3DfNBWOmDvnL18QaKtk5th7OHl+tdUDVt", 1);
-export const BALANCE = __m.BALANCE;
+// Written by scripts/balance.mjs on 2026-10-01: 1000 seeded hunts (seeds 1–1000) per scripted player.
+// Re-run after changing data/params.js or js/bots.js: node scripts/balance.mjs 1000 --write
+export const BALANCE = {
+ "n": 1000,
+ "date": "2026-10-01",
+ "rows": [
+  {
+   "name": "random",
+   "n": 1000,
+   "found": 0,
+   "escaped": 384,
+   "timeout": 616,
+   "lo": 0,
+   "hi": 0,
+   "shots": 0.283,
+   "medianHour": null,
+   "byBeh": {
+    "sprinter": {
+     "n": 265,
+     "found": 0
+    },
+    "zigzag": {
+     "n": 299,
+     "found": 0
+    },
+    "shy": {
+     "n": 271,
+     "found": 0
+    },
+    "loiter": {
+     "n": 165,
+     "found": 0
+    }
+   }
+  },
+  {
+   "name": "lazy",
+   "n": 1000,
+   "found": 118,
+   "escaped": 376,
+   "timeout": 506,
+   "lo": 0.098,
+   "hi": 0.138,
+   "shots": 0.646,
+   "medianHour": 22,
+   "byBeh": {
+    "sprinter": {
+     "n": 265,
+     "found": 82
+    },
+    "zigzag": {
+     "n": 299,
+     "found": 17
+    },
+    "shy": {
+     "n": 271,
+     "found": 15
+    },
+    "loiter": {
+     "n": 165,
+     "found": 4
+    }
+   }
+  },
+  {
+   "name": "barrier",
+   "n": 1000,
+   "found": 507,
+   "escaped": 139,
+   "timeout": 354,
+   "lo": 0.476,
+   "hi": 0.538,
+   "shots": 1.045,
+   "medianHour": 8,
+   "byBeh": {
+    "sprinter": {
+     "n": 265,
+     "found": 191
+    },
+    "zigzag": {
+     "n": 299,
+     "found": 156
+    },
+    "shy": {
+     "n": 271,
+     "found": 118
+    },
+    "loiter": {
+     "n": 165,
+     "found": 42
+    }
+   }
+  },
+  {
+   "name": "follow",
+   "n": 1000,
+   "found": 653,
+   "escaped": 96,
+   "timeout": 251,
+   "lo": 0.623,
+   "hi": 0.683,
+   "shots": 1.168,
+   "medianHour": 8,
+   "byBeh": {
+    "sprinter": {
+     "n": 265,
+     "found": 201
+    },
+    "zigzag": {
+     "n": 299,
+     "found": 205
+    },
+    "shy": {
+     "n": 271,
+     "found": 145
+    },
+    "loiter": {
+     "n": 165,
+     "found": 102
+    }
+   }
+  },
+  {
+   "name": "good",
+   "n": 1000,
+   "found": 691,
+   "escaped": 72,
+   "timeout": 237,
+   "lo": 0.662,
+   "hi": 0.72,
+   "shots": 1.399,
+   "medianHour": 6,
+   "byBeh": {
+    "sprinter": {
+     "n": 265,
+     "found": 196
+    },
+    "zigzag": {
+     "n": 299,
+     "found": 221
+    },
+    "shy": {
+     "n": 271,
+     "found": 175
+    },
+    "loiter": {
+     "n": 165,
+     "found": 99
+    }
+   }
+  }
+ ]
+};

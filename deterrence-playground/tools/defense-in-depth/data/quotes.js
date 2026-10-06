@@ -1,4 +1,39 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "40pUBNCOnUl5MIyCcasI+sJx4HCn6A6/5zxRv/Qqd5mUcWYSQhDZAvuyTX3TuYEYc+2oG4ycQ15zidy9uzzErOk7YCG+f9jSn0TixUHjvKp34vI7s2DzmqYR62PMYTPROzILL2PCQDNpA32k0nUPdaZ3+RzOmYOcX2p3eb/4+KmHnUAO6U+Tp9175Pe+wLfRc8foqBnIYxTPP9x+EC1J3XnMOC4zqEHHQ0O401qgP2kBp8J7AmDgGcf6OAHay/kk7CVlLf/Oih4jK6jZV0rj9jRcso6g9TmDCIu0H2GgmLAkKcEnMOvuQNJ6FZUQ7T+e6UruWnc3GJZentky/9xG49aCGf4tojZEUC68XU7AyQO1Ef9ebEDqrqxoi4B3xckHTTwSOzvQTA0dgDPICAaEr7DLeeclJMeqm971Mavpun9Ug3gU57CQYP2PETsVwV8FbcxRPSgmvqqkvHSBNaxuuzscVv55qTlPYOjyLILIIq4DRgxRmH++VA0aK/2S9BeFPe7YJNRnCwdRyomQUvQ1My+Zj69h1acbfyAoIE1pYskgdqboLKTrBtWw0/ESaep4p/tWz7K80297QM5qIn1wkPAn2LhDC9QbkcF709aWuOVh9obBwYgmfVZwnYkoPOpKFn2aYwJSXRPrknKJUIkRuJwzIfyX7LqvhnmzqPxEQ0BwjOJOOfeBxKI+0pTcg3oO4Y2RMD/egAPbikGgyIQmjb3nRwAnXliFoUwFHo21M/ASkz0ZdmEK1qdUClrVlFIiUcscoXepEZec7DyDSr6DviY54es462MXrBJXcC/lX5eHyqGBFpihNQxum9UydrcFmnBIj29BVVkqFVSW+HeYDN/tPDHA1VDiGfYyQiLuaEqZS296fFJWbVaAVG/Hb6lO32ghJtqQo7LxmWX8GU3Ru69pVK80BWX0b/VhtifJpfTBYhp7kLhgquqt/1d3tQwiEfbc5ZH7BjeNIbGHDjBRFlZXUZy798wtKs1sQzKQhvNlWR9pJOUTYmSVh49ZrUsge2mldcGm81F/a024+YWWfCQid/4MSD0sAV/D4uiV5mFNvEUsps5sAilQBQhVrA6z/65vGqLPd1yOajoe0vDGU4aSY1FCIhemuQgpWDj/1lnKF4WnX1pmqx/uaTRyT32XeaSI/KSeKrhxyS4RiC7VIip3HhJqxZJ42uVP3MLvahF8cyu08Ikmi6H3Y7iceRIHw1DEhGxCtDZVp98JEC2MOQaoZmjXJJ2xbll8IOQpzVo7rNYV12YSZDNFocDe1Qshb6Jc8HljbZvamk58+pcr+aEQGqgo9tIxRuwyitLO/s26jtMt2Fo+/5AR78xXB5XL7sF7wYo1u2Q8onX3iyg5aaui6x0vsqLxsG38g0t2sxTyd7Twkeyupt++kXij7icndIG4uZ2bYhWnlhSmPcAIisJ2T7f/hlmAdtqfM/J6dnmO2IPw3yOL4AvmeW+200cf1ZkJS6UT4A1LShb7fx9DADyOPo5tuYyaganvLD0dhEsTr514MAs=", 1);
-export const QUOTES = __m.QUOTES;
-export const quoteById = __m.quoteById;
+// Short quotations shown on the page (rules, tips, Lessons captions). Every one is 15 words or fewer and was
+// checked word for word against a page-tagged text extract of the printed book on 2026-10-01 (FACTCHECK.md).
+// Only where the exact words matter. Standalone: imports nothing.
+
+/** { id, who, src, page, q, topic }. `src` is an id in data/sources.js. */
+export const QUOTES = [
+  { id: 'leapfrog', who: 'Hunzeker', src: 'hunzeker', page: '56', topic: 'leapfrog',
+    q: 'akin to playing a game of leapfrog, albeit with guns' },
+  { id: 'suppress7', who: 'Biddle', src: 'biddle', page: '67', topic: 'suppression',
+    q: 'can reduce hostile firing rates by a factor of seven or more' },
+  { id: 'directional', who: 'Biddle', src: 'biddle', page: '44', topic: 'enfilade',
+    q: 'Most natural cover is directional' },
+  { id: 'linear', who: 'Hunzeker', src: 'hunzeker', page: '77', topic: 'enfilade',
+    q: 'linear trenches, which were vulnerable to shell bursts and enfilading fire' },
+  { id: 'scouting', who: 'Biddle', src: 'biddle', page: '38', topic: 'deadGround',
+    q: 'To make the most of it requires careful scouting' },
+  { id: 'volley', who: 'Biddle', src: 'biddle', page: '36', topic: 'calibration',
+    q: 'can be wiped out by a single battalion volley from hostile artillery' },
+  { id: 'vulnerable', who: 'Hunzeker', src: 'hunzeker', page: '61', topic: 'depth',
+    q: 'The more successful the attack, the more vulnerable it became.' },
+  { id: 'entropic', who: 'Biddle', src: 'biddle', page: '47', topic: 'cohesion',
+    q: 'entropic effect of depth' },
+  { id: 'cheapCounter', who: 'Biddle', src: 'biddle', page: '48', topic: 'counterattack',
+    q: 'thrown back with smaller losses to the counterattacker than the original attacker had suffered' },
+  { id: 'riposte', who: 'Hunzeker', src: 'hunzeker', page: '82', topic: 'counterattack',
+    q: 'those carried out within twenty-four hours by nearby units' },
+  { id: 'gap', who: 'Biddle', src: 'biddle', page: '31', topic: 'barrage',
+    q: 'a fatal gap in suppressive coverage (if the fire lifted too soon or fell long)' },
+  { id: 'ownShells', who: 'Hunzeker', src: 'hunzeker', page: '52', topic: 'barrage',
+    q: 'When artillery shifted too slowly, assault units ran into their own shells.' },
+  { id: 'magnifies', who: 'Biddle', src: 'biddle', page: '234', topic: 'era',
+    q: 'technology thus magnifies the consequences of force employment' },
+  { id: 'assumptions', who: 'Biddle', src: 'biddle', page: '236', topic: 'model',
+    q: 'represent assumptions rather than observed values' },
+  { id: 'higherBar', who: 'Hunzeker', src: 'hunzeker', page: '36', topic: 'learning',
+    q: 'learning sets a higher bar than change' },
+];
+
+export const quoteById = id => QUOTES.find(x => x.id === id) || null;

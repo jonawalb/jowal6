@@ -1,14 +1,31 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "U6SMAouCxNOjv7UFOVkReqAZwsMMXVeGsSwbY8gTTsGMZ+8f5XEtYI1BYHjmik4C1FwgQzZKRCTiPv4Ar3MKOFtlCGodU+aGZh1wcAAo95uq459OzuHKIldCgrhp1I2DjRGqhZcCDYwzeVr7RBYLkdKAji7y6mUbK8oWlg9nCKz2c6bGwJNX26Qe85TUul+SzvYH/Y8lE4+14WfmfPupNTOGRUVYFO0Xg8Z1KGiLNWdKcIEKtBvS+ZwahfYt1mqE9aHxPZCJHVrDwPojaxTGLoNv00e/d0BxmMA8Ryn80i78eRQjXGnVjwjMkSXEttxkK+O8IrlHKEcKTehQKwge3eAik0sm00MW6mhkPuEP30s2UpQoCwCl5DPjWPWbdoo0WS/UijkubtgFTggtNvzUoWKP6MbsvSWyFlvbfQ3Ivi3VdwD5BRKX0SnukNbOWlwjo6KcFDwyermbr0eKqgRm6aC3g9Cs4uByaeQoHDKVy9P0ytiOfjCBtkQuM2l+16EYgXmUc1MVIab8eVSlOAOIrjDrKtgF8e80U7lwaYDpN1RdF+aowBlhR2c8ChfeywmBziKWm4h8okgPGiuu6uJAj1yo7DyMJkd6fZZPpFghxmeQtP02Q3d42ijEnhrj0+flmRKha3KjpjkZjsAq++2DNCHjWrC2a+HuPfXOQbLSWT9uETMXFFvZP6oL0wKo633fuu95KczmRIlTancMsPIF0F8fN6sjBpX9vTktaduuaebYp+UZiz79OsPPToqKaBSlWOd4/7Mz76LIR+HMjpnlD0Qeu7iVH0/VHhXI9L0c+EoIDEFRAGCpFVdYiwJWPo/4s6pPhP+oyi+m3qY+y5gFTfwweVh60fnnA+iK5UqJnXPQldkwzyjGVI0ZMJ+qzybuUv+EPRi+Q08q4xsO7+Y31j/tqWUN5RWIKzXgOf3AY/tiVAhV8uNhHPu19UbPbWl14ppIMApn2758JjEgg17gEaCzSi2om+wzannBVO7KijEceFF/BquZWlyAvsdDS8e426DQkvBRbpYz8t8Z+T0v1AxrAjozHEG0HDjf4inFdsyS40id/lmQaRaK0tUf9aeNIaMU4uM1epliJ0iX5MQO3eVhDL3aOG14seD5v2HYLftqogIgs8OySEytd22yg9kpSUcL8Kh1P6Y1dIiZxYXlpr3Zpm+BQJhjAXeaE1VJYW2Comm7pPwLWJWNZhrsk2nRnZVoK+S8Cxn8bu1wvXDZ/nEshXcvYUjmxO3/n1XyloIr31gVpSBiHV11jmVWdGy6i2H1LmUiJRRAI131D2ZBf4tLzrwg4VHJc9YUlBa++5Ftu8FsZ3YRnW9dg+avb454Y1svpEro0CpegWkg/4D2lugQzeHlzcURM1clKfGfnqCdJuV1xwNxyxBytf6x/enVA58CKX0tGZbUPNUKfEs2Qck26JyPhXYbpxxgFQ==", 1);
-export const ATT_REGIMENTS = __m.ATT_REGIMENTS;
-export const BIRDS = __m.BIRDS;
-export const COMPANY_LETTERS = __m.COMPANY_LETTERS;
-export const DEF_REGIMENTS = __m.DEF_REGIMENTS;
-export const FRONT = __m.FRONT;
-export const RIDGES = __m.RIDGES;
-export const STATES = __m.STATES;
-export const STREAMS = __m.STREAMS;
-export const VILLAGES = __m.VILLAGES;
-export const WOODS = __m.WOODS;
-export const ordinal = __m.ordinal;
-export const roman = __m.roman;
+// Defense in Depth: invented names (D-05, D-07). Every place, state, formation and person is fictional.
+// Generic English-sounding toponyms may coincide with tiny real hamlets; none is a real country, capital
+// or demonym (scripts/names.test.mjs). Data only: imports nothing.
+
+export const STATES = {
+  def: { name: 'the Sorrel Republic', adj: 'Sorrelian', short: 'Sorrel' },
+  att: { name: 'the Orvane Crown', adj: 'Orvanese', short: 'Orvane' },
+};
+export const FRONT = 'the Merrow front';
+
+export const VILLAGES = [
+  'Wendrel', 'Corran', 'Pellow', 'Drummet', 'Felwick', 'Larrow', 'Tobbin', 'Quellin', 'Saddock', 'Vantry',
+  'Ulleth', 'Hessel', 'Garrow Mill', 'Brisk Farm', 'Ostby', 'Marrick', 'Tilsey', 'Fennick', 'Caddow', 'Rumley',
+  'Escott', 'Wyndle', 'Pashby', 'Holloway Farm', 'Kettering Cross', 'Daunt', 'Selby Mill', 'Arkle', 'Bratton', 'Cobble End',
+  'Dunmere', 'Ellery', 'Fallow', 'Gilsey', 'Hobb', 'Inchley', 'Jessop Farm', 'Kibble',
+];
+export const WOODS = ['Tamsin Copse', 'Callow Wood', 'Rennet Wood', 'Brack Wood', 'Hazel Spinney', 'Mott Copse', 'Linnet Wood', 'Sallow Wood', 'Teal Copse', 'Withy Wood', 'Ash Hanger', 'Pye Copse'];
+export const RIDGES = ['Brannoch Ridge', 'Hask Rise', 'Corrie Rise', 'Dunlin Ridge'];
+export const STREAMS = ['the Merrow Beck', 'the Sile', 'the Tarn Water'];
+
+// Formation names. Bird names for counterstroke formations (D-08).
+export const BIRDS = ['Kestrel', 'Merlin', 'Harrier', 'Osprey', 'Goshawk', 'Hobby', 'Peregrine', 'Buzzard'];
+export const DEF_REGIMENTS = ['Fen Rifles', 'Moor Rifles', 'Vale Fusiliers', 'Marsh Rifles', 'Holt Rifles', 'Weald Fusiliers', 'Brook Rifles', 'Heath Fusiliers'];
+export const ATT_REGIMENTS = ['Grenadier Regiment', 'Fusilier Regiment', 'Rifle Regiment'];
+export const COMPANY_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S'];
+
+export const ordinal = n => {
+  const s = ['th', 'st', 'nd', 'rd'], v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+};
+export const roman = n => ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'][n] || String(n);

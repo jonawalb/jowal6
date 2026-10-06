@@ -19,6 +19,7 @@
 [data-s="disputed"] { background: repeating-linear-gradient(135deg, var(--bad) 0 3px, transparent 3px 6px); border-color: var(--bad) !important; }
 [data-s="revoked"] { background: var(--c4); }
 [data-s="withdrawn"] { background: var(--bad); }
+[data-s="renounced"] { background: repeating-linear-gradient(135deg, var(--c4) 0 3px, transparent 3px 6px); border-color: var(--c4) !important; }
 [data-s="ended"] { background: color-mix(in srgb, var(--faint) 55%, var(--panel)); }
 [data-s="none"] { background: transparent; border-color: var(--rule) !important; }
 
@@ -119,3 +120,26 @@ details summary { cursor: pointer; font-size: 13px; font-weight: 500; }
 @media (prefers-reduced-motion: no-preference) {
   .tt-c { transition: background-color .35s ease, border-color .35s ease; }
 }
+
+/* Treaty explainers: a small "i" disclosure beside each treaty name. */
+.tt-named { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; min-width: 0; }
+.tt-named > span { min-width: 0; overflow-wrap: anywhere; }
+.tt-info { flex: none; width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--rule); background: var(--panel); color: var(--muted);
+  font: italic 600 12px/1 var(--display); cursor: pointer; padding: 0; display: inline-grid; place-items: center; }
+.tt-info:hover { color: var(--ink); border-color: var(--ink); }
+.tt-info[aria-expanded="true"] { background: var(--ink); color: var(--panel); border-color: var(--ink); }
+.tt-info:focus-visible { outline: 2px solid var(--focus, var(--blue)); outline-offset: 2px; }
+.tt-ex { margin: 6px 0 4px; padding: 6px 10px; border-left: 3px solid var(--accent); background: var(--chip); border-radius: 0 3px 3px 0; font-size: 13px; line-height: 1.45; color: var(--ink); white-space: normal; overflow-wrap: anywhere; }
+.tt-ex[hidden], .tt-exrow[hidden] { display: none; }
+.tt-ex p { margin: 0 0 4px; }
+.tt-ex p:last-child { margin: 0; }
+.tt-ex a { color: var(--blue); }
+.tt-dh.tt-named { display: flex; flex-wrap: nowrap; align-items: flex-start; }
+.tt-dh.tt-named .tt-info { margin-top: 2px; }
+.tt-exrow td { padding: 0 4px 6px; }
+.tt-grp { margin-bottom: 6px; }
+.tt-tlist { margin: -2px 0 8px 46px; font-size: 12.5px; }
+.tt-tlist summary { color: var(--muted); font-size: 12px; font-weight: 500; }
+.tt-tlist ul { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.tt-tlist li .tt-named { display: flex; justify-content: space-between; flex-wrap: nowrap; align-items: flex-start; }
+@media (max-width: 520px) { .tt-tlist { margin-left: 0; } }

@@ -6,6 +6,7 @@ import { cellHTML, treatyHTML } from './panel.js';
 import { createTimeline, eventCard, KINDS } from './timeline.js';
 import { fillSelects, renderCompare } from './compare.js';
 import { createTour } from './tour.js';
+import { infoBtn, explainHTML } from './explain.js';
 import { num, rise, pulse, flash, reveal, wipeIn, fadeUp, drawPath, flipPrep, onFirstView } from './fx.js';
 
 // Motion bookkeeping (presentation only): what changed since the last render.
@@ -13,7 +14,8 @@ const mv = { year: null, sel: null, tsel: null, ev: null, cmp: null, rows: null,
 const texts = (root, sel) => [...root.querySelectorAll(sel)].map(e => e.textContent);
 
 const ALL_G = GROUPS.map(g => g.id), ALL_K = KINDS.map(k => k.id);
-const DEF = { year: Y1, groups: ALL_G, preset: 'all', q: '', sort: 'name', sel: 'ctbt.RUS', tsel: 'ctbt', cmp: ['USA', 'RUS'], ev: null, kinds: ALL_K };
+const DEF_G = ALL_G.filter(g => g !== 'ccw'); // the seven CCW protocol columns start hidden
+const DEF = { year: Y1, groups: DEF_G, preset: 'all', q: '', sort: 'name', sel: 'ctbt.RUS', tsel: 'ctbt', cmp: ['USA', 'RUS'], ev: null, kinds: ALL_K };
 const fresh = () => ({ ...DEF, groups: new Set(DEF.groups), kinds: new Set(DEF.kinds), cmp: [...DEF.cmp] });
 const state = fresh();
 const PRESETS = ['all', 'nuclear', 'changed', 'cfe'];
@@ -42,7 +44,7 @@ function writeHash() {
   hashTimer = setTimeout(() => {
     const h = new URLSearchParams();
     if (state.year !== Y1) h.set('y', state.year);
-    if (state.groups.size !== ALL_G.length) h.set('g', [...state.groups].join(','));
+    if (state.groups.size !== DEF_G.length || DEF_G.some(g => !state.groups.has(g))) h.set('g', [...state.groups].join(','));
     if (state.kinds.size !== ALL_K.length) h.set('k', [...state.kinds].join(','));
     if (state.preset !== 'all') h.set('p', state.preset);
     if (state.q) h.set('q', state.q);
@@ -57,7 +59,12 @@ function writeHash() {
 
 // ---- DOM
 const $ = id => document.getElementById(id);
-$('f-groups').innerHTML = GROUPS.map(g => `<label class="tg"><input type="checkbox" data-g="${g.id}" checked><span class="sw"></span><span class="t">${esc(g.name)}<small>${esc(g.help)}</small></span></label>`).join('');
+$('f-groups').innerHTML = GROUPS.map(g => {
+  const ts = TREATIES.filter(t => t.group === g.id);
+  return `<div class="tt-grp"><label class="tg"><input type="checkbox" data-g="${g.id}" checked><span class="sw"></span><span class="t">${esc(g.name)}<small>${esc(g.help)}</small></span></label>
+    <details class="tt-tlist"><summary>The ${ts.length} treaties in this group</summary><ul>${ts.map(t =>
+      `<li><span class="tt-named"><span>${esc(t.name)}</span>${infoBtn(t.id, 'list-' + t.id)}</span>${explainHTML(t.id, 'list-' + t.id)}</li>`).join('')}</ul></details></div>`;
+}).join('');
 $('legend').innerHTML = STATUS.map(s => `<span><span class="tt-sw" data-s="${s.id}"></span>${esc(s.name)}</span>`).join('');
 $('tl-kinds').innerHTML = KINDS.map(k => `<button type="button" class="btn tt-kind" data-k="${k.id}" aria-pressed="true"><span class="tt-dot" style="background:${k.color}"></span>${esc(k.name)}</button>`).join('');
 const range = $('year');
@@ -152,7 +159,7 @@ $('play').addEventListener('click', () => {
 
 const tour = createTour(s => {
   stopPlay();
-  Object.assign(state, fresh(), s, { groups: new Set(s.groups || ALL_G), kinds: new Set(ALL_K), cmp: s.cmp || [...DEF.cmp] });
+  Object.assign(state, fresh(), s, { groups: new Set(s.groups || DEF_G), kinds: new Set(ALL_K), cmp: s.cmp || [...DEF.cmp] });
   render();
   $(s.scroll || 'matrix-card').scrollIntoView({ block: 'start', behavior: reduceMotion() ? 'auto' : 'smooth' });
 });

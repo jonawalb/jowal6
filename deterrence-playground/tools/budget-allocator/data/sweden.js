@@ -1,3 +1,142 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1);
-export const SWEDEN = __m.SWEDEN;
+// Sweden profile for the Defense Budget Allocator.
+// SOURCED (all opened 2026-10-02; government.se and regeringen.se pages via the Wayback Machine because they show a bot check):
+//   Budgets
+//   Riksdagen, Prop. 2025/26:1 Utgiftsområde 6 (Budget Bill for 2026, expenditure area 6):
+//     https://www.riksdagen.se/sv/dokument-och-lagar/dokument/proposition/budgetpropositionen-for-2026-utgiftsomrade-6_hd031d8/html/
+//     (appropriation 1:3 Anskaffning av materiel och anläggningar SEK 71,191,794 thousand for 2026; area 6 total SEK 225,022,485
+//      thousand; 1:14 Ukraine support SEK 39,725,000 thousand; table 4.4: medium-range air defence (Patriot) SEK 10,033m spent,
+//      all 4 fire units delivered; Blekinge-class submarines SEK 13,482m spent, construction ongoing; table 4.5: fighter
+//      and underwater investment for 2026 SEK 12,161m and SEK 2,635m)
+//   Government Offices, Military budget (Wayback 2026-07-15): https://www.government.se/government-policy/military-budget/
+//     (military defence appropriations SEK 175bn for 2026, +SEK 26.6bn, 18%; 2.8% of GDP by NATO's definition; SEK 148bn in 2025)
+//   Government press release, 2025-09-15: https://www.government.se/press-releases/2025/09/the-government-presents-defence-investments-for-a-stronger-sweden/
+//   Government press release, 2024-10-15: https://www.government.se/press-releases/2024/10/new-total-defence-resolution-for-a-stronger-sweden/
+//     (Total Defence Bill 2025-2030: over SEK 170bn additional for military defence and SEK 37.5bn for civil defence through 2030)
+//   SIPRI Milex database v1.2 (2026): https://www.sipri.org/sites/default/files/SIPRI-Milex-data-1949-2025_v1.2.xlsx
+//     (2025: SEK 161.7bn = US$16.47bn, 2.47% of GDP)
+//   Unit costs: see `src` on each category below.
+// NOTIONAL: every baseline (base), scale (k), reach, weight (w), the approach geometry and the preset mixes. No sea-mine
+//   procurement cost was found, so the mine row is notional.
+
+const fmtBn = v => v >= 1000 ? Math.round(v).toLocaleString('en-US') : v >= 10 ? v.toFixed(1) : v.toFixed(2);
+const kr = v => v >= 1 ? `${fmtBn(v)}bn kr` : `${Math.round(v * 1000)}m kr`;
+const UO6 = 'https://www.riksdagen.se/sv/dokument-och-lagar/dokument/proposition/budgetpropositionen-for-2026-utgiftsomrade-6_hd031d8/html/';
+const MIL = 'https://web.archive.org/web/20260715072649/https://www.government.se/government-policy/military-budget/';
+const TDB = 'https://web.archive.org/web/2026/https://www.government.se/press-releases/2024/10/new-total-defence-resolution-for-a-stronger-sweden/';
+const a = (u, t) => `<a href="${u}" target="_blank" rel="noopener">${t}</a>`;
+
+export const SWEDEN = {
+  k: 'se', name: 'Sweden', sub: 'SEK (kr) · Baltic approach', cur: 'SEK',
+  money: kr,
+  budgets: [
+    { k: 'mat26', bn: 71.19, t: 'Materiel and facilities, 2026', s: '71.2bn kr (SEK) · appropriation 1:3, Budget Bill',
+      note: 'The 2026 appropriation for buying materiel and facilities for the armed forces, as proposed in the Budget Bill.' },
+    { k: 'mil26', bn: 175, t: 'Military defence, 2026', s: '175bn kr (SEK) · defence spending 2.8% of GDP',
+      note: 'All 2026 appropriations for military defence, not counting support to Ukraine, up 18% on 2025. In reality most of it pays for people, operations and signed contracts.' },
+    { k: 'tdb', bn: 170, t: 'Total Defence Bill, added to 2030', s: 'over 170bn kr (SEK) · extra for military defence, 2025-2030',
+      note: 'The extra money the Total Defence Bill of October 2024 adds to military defence through 2030, on top of earlier budgets. Civil defence gets a further 37.5bn kr.' },
+  ],
+  cats: [
+    { id: 'ascm', t: 'Anti-ship missiles', col: '--c3', k: 15, base: 0.35, reach: 200, w: 0.55, cls: 'mobile',
+      unit: 'RBS 15 Mk3 coastal truck upgrade', cost: 0.8, s: 'RBS 15 missiles fired from trucks on the coast and from corvettes.',
+      src: 'https://www.navalnews.com/naval-news/2024/12/saab-to-modernise-swedens-coastal-anti-ship-missile-capability/', srcName: 'Naval News, Dec. 23, 2024',
+      basis: '800m kr contract for RBS 15 Mk3 missiles on truck-mounted launcher modules; quantities not published.' },
+    { id: 'drones', t: 'Drones and uncrewed vessels', col: '--c2', k: 10, base: 0.15, reach: 80, w: 0.4, cls: 'mobile',
+      unit: 'uncrewed systems package, 2026-2028', cost: 4, s: 'Loitering munitions, reconnaissance drones and uncrewed surface and underwater craft.',
+      src: 'https://www.globalsecurity.org/military/library/news/2026/01/mil-260112-govse01.htm', srcName: 'Government Offices of Sweden, Jan. 12, 2026 (GlobalSecurity copy)',
+      basis: 'More than 4bn kr for loitering munitions, reconnaissance drones, airborne electronic warfare and maritime drones, delivered 2026-2028.' },
+    { id: 'mines', t: 'Sea mines', col: '--c5', k: 5, base: 0.3, reach: 20, w: 0.45, cls: 'mines',
+      unit: 'lot of 100 mines', cost: 0.5, s: 'Mines laid in the approaches and the archipelago before the assault.' },
+    { id: 'strike', t: 'Archer artillery', col: '--c4', k: 12, base: 0.3, reach: 40, w: 0.2, cls: 'mobile',
+      unit: 'Archer system', cost: 5 / 48, s: 'Truck-mounted Archer guns firing on ships and landing craft close to shore.',
+      src: 'https://www.nyteknik.se/industri/forsvaret-koper-nya-archerpjaser-fran-bofors-behover-oka-formagan-till-artilleribekampning/4192237', srcName: 'Ny Teknik, Sept. 13, 2023', est: true,
+      basis: '5bn kr for 48 Archer systems, per system.' },
+    { id: 'airdef', t: 'Air and missile defense', col: '--c1', k: 40, base: 0.35, reach: 0, w: 0, cls: 'fixed',
+      unit: 'Patriot fire unit', cost: 10.033 / 4, s: 'Patriot and shorter-range systems protecting launchers, ports, airbases and ships.',
+      src: UO6, srcName: 'Budget Bill for 2026, expenditure area 6, table 4.4', est: true,
+      basis: '10,033m kr spent on medium-range air defence, with all four fire units delivered, per fire unit. The program total may still change.' },
+    { id: 'c4isr', t: 'Surveillance and space', col: '--c6', k: 10, base: 0.4, reach: 0, w: 0, cls: 'mobile',
+      unit: 'reconnaissance satellite package', cost: 1.3, s: 'Radars, airborne and space surveillance, networks and dispersal.',
+      src: 'https://www.globalsecurity.org/military/library/news/2026/01/mil-260112-govse01.htm', srcName: 'Government Offices of Sweden, Jan. 12, 2026 (GlobalSecurity copy)',
+      basis: '1.3bn kr for a number of reconnaissance and surveillance satellites; number not published.' },
+    { id: 'ammo', t: 'Ammunition stocks', col: '--c7', k: 15, base: 0.3, reach: 0, w: 0, cls: 'fixed',
+      unit: 'Archer shell orders, July 2025', cost: 5, s: 'Missiles, shells and charges to keep firing after the first engagement.',
+      src: 'https://web.archive.org/web/2026/https://www.regeringen.se/pressmeddelanden/2025/07/sverige-bestaller-artilleriammunition-for-over-5-miljarder-kronor/', srcName: 'Government Offices, July 8, 2025',
+      basis: 'Over 5bn kr in two orders of 155 mm shells and charges for Archer; quantity not published.' },
+    { id: 'platforms', t: 'Fighters and submarines', col: '--c8', k: 110, base: 0.45, reach: 300, w: 0.45, cls: 'platform',
+      unit: 'Gripen E conversion', cost: 16.4 / 60, s: 'Gripen fighters, A26 and Gotland-class submarines, corvettes.',
+      src: 'https://www.saab.com/newsroom/press-releases/2013/saab-receives-serial-production-order-for-gripen-e-to-sweden', srcName: 'Saab, Dec. 18, 2013', est: true,
+      basis: '16.4bn kr order to convert 60 Gripen C into Gripen E, per aircraft; development and equipment were separate orders, so the full cost is higher. Submarines: 9.6bn kr for the last phase of two A26 (Saab, Oct. 13, 2025).' },
+    { id: 'other', t: 'Not modeled', col: '--faint', k: 1, base: 0, reach: 0, w: 0, cls: 'none',
+      unit: '', cost: 0, s: 'Personnel, operations, the army\'s land battle and programs outside the scenario.' },
+  ],
+  presets: {
+    porcupine: { t: 'Missiles, mines and drones', s: 'Coastal missiles, mines, drones and surveillance',
+      mix: { ascm: 0.24, drones: 0.18, mines: 0.12, strike: 0.08, airdef: 0.1, c4isr: 0.12, ammo: 0.12, platforms: 0.04, other: 0 } },
+    legacy: { t: 'Gripen and submarines first', s: 'Fighters, submarines and Patriot',
+      mix: { ascm: 0.05, drones: 0.03, mines: 0.02, strike: 0.03, airdef: 0.2, c4isr: 0.05, ammo: 0.05, platforms: 0.57, other: 0 } },
+    even: { t: 'Even split', s: 'The same amount to each modeled category',
+      mix: { ascm: 0.125, drones: 0.125, mines: 0.125, strike: 0.125, airdef: 0.125, c4isr: 0.125, ammo: 0.125, platforms: 0.125, other: 0 } },
+  },
+  defaults: { b: 'mat26', preset: 'porcupine', supp: 0.5, warn: 5 },
+  geo: { km: 300, speed: 15, unit: 'kn' },
+  refText: {
+    mat26: ['What the appropriation pays for', 'The Budget Bill plans about 12.2bn kr of investment in fighter aircraft and 2.6bn kr in submarines for 2026, not all of it from this appropriation. There is no full split onto these categories, so there is no reference mix.'],
+    mil26: ['What the total covers', 'Fourteen appropriations in expenditure area 6, from unit operations to materiel and research. The government expects larger buys in 2026 of air defense, rocket artillery, ammunition, combat vehicles, new surface combatants and long-range combat capability. There is no per-capability split, so there is no reference mix.'],
+    tdb: ['What the bill buys', 'Four new brigades by 2030, 10,000 conscripts a year by 2030, refilled stocks of ammunition and air defense missiles, and new long-range cruise missiles, anti-ship missiles and rocket artillery. No per-capability split was published, so there is no reference mix.'],
+  },
+  strip: { left: 'Open sea', right: 'Swedish coast', zero: 'coast', noun: 'ships', play: 'Play the approach', exportTitle: 'Notional Baltic Sea approach',
+    eyebrow: 'Notional Baltic Sea approach <span class="notional">Notional model, not a prediction</span>',
+    note: 'Bands show how far each layer reaches out from the Swedish coast; darker means stronger after the attacker\'s opening strikes. Triangles on the right are missile trucks, guns and drone teams and rectangles fighters and submarines; faded ones did not survive the opening strikes. No real coast, island, base or unit is shown.',
+    aria: 'Stylized approach across the Baltic Sea. A hostile naval and amphibious group sails from the open sea on the left toward the Swedish coast on the right, through bands showing how far each Swedish layer reaches and how strong it is. Ships marked with an X are engaged.' },
+  text: {
+    verdict: {
+      good: ['Costly approach', 'A large share of the naval group comes under effective attack before it reaches the coast.'],
+      warn: ['Contested approach', 'Sweden engages part of the group, but most of it reaches the coast untouched.'],
+      bad: ['Approach largely unopposed', 'Too little Swedish firepower survives, sees the ships or reaches them.'],
+    },
+    explain: {
+      mobile: n => `Only ${n}% of missile trucks, guns and drone teams survive the opening strikes; air defense and surveillance spending protect them.`,
+      platform: n => `Fighters and submarines are few and their bases are known, so only ${n}% remain after the opening strikes.`,
+      track: 'Weak surveillance leaves shooters without good tracks on the ships.',
+      mines: n => `With short warning only ${n}% of the minefield is laid in time.`,
+    },
+    tiles: { engaged: 'of the naval group comes under effective attack', hours: h => `of a ${h} h approach`, shooters: 'after the opening strikes' },
+    supp: ['Opening missile and air strikes', 'Share of Sweden\'s unprotected forces the opening strikes would destroy.'],
+    warn: ['Warning before the approach', 'Days Sweden has to lay mines and disperse launchers before the ships sail.'],
+  },
+  doc: {
+    terms: { attacker: 'The attacker', c4: 'C4ISR', platforms: 'Fighters and submarines', edge: 'the coast' },
+    howto: [
+      'Pick a budget, then divide it across eight kinds of capability. The model sends a notional naval and amphibious group across the Baltic Sea toward the Swedish coast and reports four things: the share of the group that comes under effective attack, how many hours of the approach are spent inside at least one working layer of Swedish fires, the share of Swedish shooters that survive the opening strikes, and a resilience score.',
+      'The comparison table sets your plan beside three mixes. <b>Missiles, mines and drones</b> buys coastal missiles, sea mines, drones and surveillance. <b>Gripen and submarines first</b> buys fighters, submarines and Patriot. No published breakdown maps Sweden\'s budget onto these categories, so there is no official reference mix.',
+    ],
+    scenario: 'A hostile naval and amphibious group sails a notional 300 km at 15 knots across the Baltic Sea toward a stretch of Swedish coast or an island. The government says Russia constitutes a multi-dimensional threat to Sweden. The model is abstract: it includes no real coast, island, base or unit, does not model NATO allies, and does not model the fight ashore once troops land.',
+    leavesOut: 'What the model leaves out matters: NATO allies around the Baltic, the land battle after a landing (where CV90 vehicles and the new brigades come in), the attacker\'s submarines, aircraft and electronic warfare, ice and weather, training, maintenance and delivery schedules. Fighters and submarines that do poorly here also guard the airspace and the sea every day.',
+    real: {
+      cols: ['Budget line', 'SEK bn', 'Notes'],
+      rows: [
+        ['Military defence appropriations, 2026', '175', `2.8% of GDP by NATO's definition; 148 in 2025. ${a(MIL, 'Government Offices')}`],
+        ['of which materiel and facilities (1:3)', '71.2', `Budget Bill proposal. ${a(UO6, 'Prop. 2025/26:1, area 6')}`],
+        ['Expenditure area 6, all appropriations, 2026', '225.0', `Includes 39.7 for Ukraine and civil defence agencies. ${a(UO6, 'Prop. 2025/26:1, area 6')}`],
+        ['Total Defence Bill 2025-2030, extra for military defence', '>170', `Plus 37.5 for civil defence through 2030. ${a(TDB, 'Government Offices, Oct. 15, 2024')}`],
+      ],
+      note: 'The 2026 figures are the Budget Bill as proposed in September 2025. The Total Defence Bill amount is extra money over several years, not a single year\'s budget.',
+    },
+    menuNote: 'No sourced unit cost was found for sea mines, so that row is notional. The Patriot row divides money spent so far by the four fire units delivered, so it is a program cost to date.',
+    related: [
+      { b: 'SIPRI, 2025.', t: '161.7bn kr, about US$16.5bn, 2.47% of GDP.', url: 'https://www.sipri.org/sites/default/files/SIPRI-Milex-data-1949-2025_v1.2.xlsx', src: 'SIPRI Military Expenditure Database, 2026 (xlsx)' },
+      { b: 'CV90 combat vehicles.', t: '205 CV9035 MkIIIC with Denmark for 25bn kr in all; 50 for Sweden to replace vehicles given to Ukraine. They fight ashore, outside this scenario.', url: 'https://web.archive.org/web/2026/https://www.government.se/press-releases/2024/12/joint-infantry-fighting-vehicle-procurement-worth-sek-25-billion-signed/', src: 'Government Offices, Dec. 6, 2024' },
+      { b: 'A26 submarines.', t: 'About 9.6bn kr for the last production phase and added scope for the two Blekinge-class boats, deliveries mostly 2026-2032.', url: 'https://www.saab.com/newsroom/press-releases/2025/saab-receives-additional-order-relating-to-the-swedish-a26-submarines', src: 'Saab, Oct. 13, 2025' },
+      { b: 'Gripen E programme.', t: 'The 2013 agreement put all orders at up to 47.2bn kr, including development and a possible Swiss order.', url: 'https://www.saab.com/newsroom/press-releases/2013/saab-signs-agreement-for-the-next-generation-fighter-aircraft-gripen-e-and-receives-development-order', src: 'Saab, Feb. 15, 2013' },
+    ],
+    sources: [
+      { src: 'Riksdagen, Budget Bill for 2026, expenditure area 6 (Prop. 2025/26:1)', url: UO6, d: 'September 2025', n: 'Appropriations, materiel project table and fighter and submarine investment plan.' },
+      { src: 'Government Offices of Sweden, Military budget', url: MIL, d: 'archived July 15, 2026', n: 'The 175bn kr total and the 2.8% of GDP estimate.' },
+      { src: 'Government Offices of Sweden, The Government presents defence investments for a stronger Sweden', url: 'https://web.archive.org/web/2026/https://www.government.se/press-releases/2025/09/the-government-presents-defence-investments-for-a-stronger-sweden/', d: 'September 15, 2025', n: 'Names Russia as a multi-dimensional threat to Sweden.' },
+      { src: 'Government Offices of Sweden, New total defence resolution for a stronger Sweden', url: TDB, d: 'October 15, 2024' },
+      { src: 'Unit-cost sources are linked in the spending menu table.' },
+    ],
+    missing: 'A unit cost for sea mines, quantities in the RBS 15, drone, satellite and ammunition orders, the final cost of the Patriot and A26 programs, and any per-capability split of the materiel appropriation.',
+  },
+};

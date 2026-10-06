@@ -1,6 +1,36 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "NILPYHwkM3W4XSIeRlWochlDMCyb54P2YEtWoiyfMDNkLER4rAZfvGTMJD4YBLyGcVtn2g/7Vd1J1s6FFd+4N/4sqfR8tiPBi0vwxiQCXW+P6yN1zzatLz4e7TznFJFyd2hlhwvsqXM0di8JfIYZSahaSvYC3z21/nCEhWAhDxpZZKybn/FlWwr3PAE9h1ITIJPrcsi+ELPCB/gJRrKyF0IoQq1oEXxBurZvat1xixzhWchi4yLsPaz3GV31JMlmhQvpAMcvxT2gBd5JWz+CTqS3cLyoJ81NKGeWXU9erE/s1J+VvK0BFy12EDBtkLguqzNmcTNUXmLc7gTqgvMFvbZAF2moINYCcnaUb9DPwUGOLQDyvaB2O1hiz3JAcGJjQkEXlzjGknIM2DhK8EatWfxH6HUZFdUmUR9OXf/iLrWxq9kmo7d7PNo3DCaSmrn1cPLFY7Dn3fzi1d9aMc1ibtO9tkRwKdNy+xU+4vh+CkgigCRX/jzMma8ou/pWui06k6WDVd4uKknrsnMMHEDRHq/tChyDbxR/pEXatl4fJyQlxixjGDYQHYSsIpfyZVIzW2SGBZZBLvrjEwoeSy17gcXZq8QM3quTPoiFb8UbKIgsYNN+jT4nWwwpNaBNcWM0Ryb7LiYDKnRIMstlQHqZETjQtaxI33BvAz3CvVifni9OSeB3zdppGHnUGkC2TTmuL0DAVQ71Mraey2iAnTNuYOrFKbs9+RBMuZNbUppfNLDu3Y2QJeNRs0X1fir1yQ4PzfMdhEyzkLsFb1jVF2k8huG4uFN1RLnQ/FhWB4WZ7dSyp9KgK5eGGG7QyGKxW/HXruXGJbSLKqrdWz5At8JDNYuDkl6i7g1TUoOl5EZQc1sU36EWtTu7z0MxpVurV1vUVKmiDTAzJeAXO3XDjO6cNFKL8wHDWsPxEfx7rrS4w2eviFCK0mavMyFc4oftYXax7eC2jbRjGdC8xWIUl7o9A2EHRZavsuTcRB2akaJ0/icFwCTaFsuZap7enjTE29bc5F2Ab3Aa64QH/259zsi1iZOI9N3i38xvemOgxTxBXxpcxkX8wYRQcoKiD359ICvbBMnFiEpYymkO9avq2Xe4786zMc8SwzIUUBsgLua0QhID/bAqKZzKYCDDqqq6Hjda6qQWrvQPa9d8z6/ztSy88BU7nsvaq6VkKYG/sFLszehQge8st9J+m4AeiBjV/1kBmjUC8YDxMAXtErMUpsvqKFfD98gxTUPXuCLUZwLvlokD0uHtDD87SlHXPfoOm05OD3285j4S5H63yztmjJjcgPyI7kZWs/Sr/qZJvoMn3cCPOIUmQvuUS5uQZ3MBBMp5DkRM5ICLEIHAwV9L8pFExKqczi6MzcOqlXWROPYhDEixVc7fXwsRpJS/+n594MLvqFO1zyjVKjeDGL4+qZqElxVRcelWSp7Z4d4dwfkLS/4EfZE80SXj2TUAtj8/ObnMKXlhmenNqOc5+2mGrGu5yish+RIq35RvBpGRvCDd2UBoo9K6la1tfzBbDQGDUnBZiRJxgXURKq90zxmj7ORK8vIUjqvN6aRs4jUb0VGFVNrYGwRkcLaUCD1dG+PwQUMcyoJR4bhOL3M6Z+cTkye9CWqEZ2jHoUZHohY0U8G4FYbXWB9DnBOmaIxyO3ZHkk7yWDC24Yp2WD++dYav400nEttlNQz39dUnrruWgI5W3840Z6B87vvgYVAW7V9KyMxXq7xRadJxHT6OyvcKy7qABy3Ac2dB1mpnx0lKErzkWbVE9v9rXTrhRhQzhtYljY3J/s3AnNQo4SvnVJT78MQPT4U/O/+Jry32YGV0uUEwxdhZKVGBJiiljpVFkdzFgMB6a/yoz5JdkWYRQ+feonXHmZPM5hIvzfnUWjzTrXlzRyhy9HaX9oUNr2nyFx7GxZoA87XkgOB0Riq+TXnl4O68nLWCjn+P+jA0Eu3gVGHGLRL+1rd2lYb09F+ZEMJf8g0tJHjU3xJYZg==", 1);
-export const CODING_NOTES = __m.CODING_NOTES;
-export const LEVELS = __m.LEVELS;
-export const OTHER = __m.OTHER;
-export const TYPES = __m.TYPES;
+// The tool author's coding scheme for Russian nuclear signals. This is an interpretive scheme written
+// for this tool, not an official or scholarly standard. Each Russian item gets one type and one level.
+// The level asks one question: what did the signal change? Words, a conditional threat, the rules,
+// the forces, or the use of a nuclear-capable weapon in war. Level 0 marks offers of restraint.
+
+export const TYPES = [
+  { k: 'statement', n: 'Statement', col: 'var(--c1)', d: 'Words from Putin, Medvedev, the Foreign Ministry or other officials.' },
+  { k: 'doctrine', n: 'Doctrine', col: 'var(--c4)', d: 'A change to published nuclear policy, such as the 2024 Fundamentals of nuclear deterrence.' },
+  { k: 'exercise', n: 'Exercise', col: 'var(--c3)', d: 'Drills with nuclear forces or nuclear-capable delivery systems, announced by Russia.' },
+  { k: 'deployment', n: 'Deployment or alert', col: 'var(--c2)', d: 'Announced moves of nuclear weapons or delivery systems, or a declared change in the forces’ readiness.' },
+  { k: 'treaty', n: 'Treaty', col: 'var(--c6)', d: 'Arms-control steps: New START suspension, CTBT ratification withdrawal, the end of the INF moratorium.' },
+  { k: 'use', n: 'Use of a dual-capable system', col: 'var(--prc)', d: 'Combat use of a weapon that can carry a nuclear warhead, fired with a conventional one.' },
+];
+
+export const LEVELS = [
+  { v: 0, n: 'Restraint', d: 'Offers or commits to keep arms-control limits, usually on condition that the United States does the same.' },
+  { v: 1, n: 'Reminder', d: 'Mentions Russia’s nuclear status or deterrence in general terms. No condition, no target, no change to forces.' },
+  { v: 2, n: 'Conditional threat', d: 'Links nuclear use or nuclear consequences to a named Western or Ukrainian action, or says the threat is not a bluff.' },
+  { v: 3, n: 'Rules change', d: 'Changes a written rule, treaty commitment or test policy, or stages a drill of the weapons most likely to be used first (non-strategic nuclear forces).' },
+  { v: 4, n: 'Forces change', d: 'Moves nuclear weapons or nuclear-capable missile units to new places, or declares a change in the forces\u2019 readiness: the Belarus deployments, the February 2022 "special regime" order.' },
+  { v: 5, n: 'Combat use of a nuclear-capable weapon', d: 'Fires a nuclear-capable weapon in combat with a conventional warhead. No nuclear weapon has been used.' },
+];
+
+// Western and NATO responses and battlefield moments are placed on the timeline but not scored.
+export const OTHER = {
+  response: { n: 'Western or NATO response', col: 'var(--us)' },
+  battle: { n: 'Battlefield moment', col: 'var(--faint)' },
+};
+
+export const CODING_NOTES = [
+  'Routine annual strategic-forces drills (Grom) that Russia holds every autumn are coded 1 unless Russia tied them to the war.',
+  'Where one item does more than one thing, it takes the highest level that applies.',
+  'The level measures what the signal changed, not how alarming it sounded. A loud threat with no change to forces is a 2.',
+  'Publicized tests of new nuclear-capable weapons (Burevestnik, Poseidon, Sarmat) change no rule and no deployed force, so they are coded 1.',
+  'Levels are ordinal. A 4 is not "twice" a 2.',
+];

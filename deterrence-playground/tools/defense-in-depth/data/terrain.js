@@ -1,7 +1,33 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "t9ikmpjzj1XBHy7ny7cMR7oIM03F21dhSOj9n88wJbKI7RyA6GN7ALMhpwhkiQJJidtt+4T3v7+/qufL6eCZJ8mOLd/7HUpsEFKuytXzmtBrK5pDqjNr4P2DmmBQynuKHX6Eyz33fhnNBXkHnlVBcBAoHswYHi1h5I9JxQnMXQ0Xwpd+q754yZOodp3ry/k2I8OoNVF17HYx6pByuk3v+nXia8E8LFpnAlVm/R7zFTR1mipaAYq0nSUwuc4xwcf1VVItaoml6ZjlfZAf6g7c+txtmXN5byqhYbz5ZZHI72OkBlAtsaQ/VNxwlhJGDo4Ng7E5odVjvtepBruuUYe++qZnVlQ6M8rI6tjUmntTqQUZSwJ2171BuqJLDQREYWU7fv2kUahzMAFFH/p7AHIb7tsvPgE/rfp6tvrLYVBRzF3WXkqOTiQ+C4SrbjypSAqIKyzVMFeR6rqYBMrJjsWrksLXF4tppjyMU7nQjrEs9wHkv4cBJ9hxm5pRrzmV1rI32pATuU/8cu9Uco90fo8wjR0jWakAwc6e+bJwavVjM9HQMbt1K1PIQbxZVG9tsJbrtolpp8AE9ewQroeytlmVKPxJgE8Tvu/dnhwQfPqQGjsfiWaSR6ba3H6UZl1iZEwncxW5hfOJlU2lusMkCVSyafYtvRN7pW2CoIBc06dURvCv3COgfGN6TNZYf9zyVma6ehKgmQ2TCU7ILpOpgHcm7k+qRdyjrBFEBJgG4pb0rPNKyzEC+AAxV0K1NM2bf4V8SRQFtUdMa3eP02MPyr/3Ce7imoL8oEOGwYOM3i7fo7bUNTxNr4HZi3kFaT5et9H520W7n66VAYH6Ep2xD+9zr44fvZEfyRnCp6zAxHH1+17cbXb0RMZ4tX/R5iMS5VaJzW6No//F9pqBQZAu9R1K9PsN0lgK8Rf3G0vTCgAE3Kuj3gPbd878hT64E3bDEB/+iugN48iQOsFroBDgbSdLEhTvC0fyXTPvAi0/k5tzNtyo8Ni40NwH15RQ6ro61JvTjkLcvxaVhCIrs157AKgqgjpqsmAhfNE9SAlxZ9ba/7vbOqLYHbC3/ueYlrU/un5VGmnoSdpabhJidyixJRA0v5iGpk0+oZO96i4EK4+ORND0/JIRJHpMYxQsPm5M5dUtDIunHiolwpnlzQA+YV/y3bWkd3o1Kgiss0JxohuehIQZPqY0BG/SGjIPS4bP1PozvhHV7lTFvxJtddw+xrpQU5f8BKhPptd1Uwqpt3ONzSRShH7qsaf8OwKJkTlPs3P+FIg7YoGRPUeCN1C2kzXQ0IzaJLYAZFI4GJi797mROx0e30UGU3g+GoHCvR8ItKPaKdoLmhKNDEricpCPP/gvXPPMPcBYFeLeznuuxY6gV7AtNcG3ehb8B5NaRajZt1OgCsSgsPgbxGInxOLNXRc07fBdngd+Xghfyxm5MkHQnmlAR/cULX2Agfc52eE+4Ri3pCeH0FcYKRBN0gxFVB04XfvJMI7y0M7nIg==", 1);
-export const CHURN = __m.CHURN;
-export const T = __m.T;
-export const TERRAIN = __m.TERRAIN;
-export const WORKS = __m.WORKS;
-export const WORK_KEYS = __m.WORK_KEYS;
+// Defense in Depth: terrain and field works (SPEC §2.3, §1.2). All values NOTIONAL. The dead-ground
+// figures g0 are shaped by Biddle's "more than 65% ... more than 85%" of ground within 1,000 m invisible to a
+// typical position (p. 36); per-sector values are lower because a sector is only 500 m. Directional cover
+// follows Biddle: "most natural cover is directional" (p. 44). Data only: imports nothing.
+
+// id: index stored in the sector array. front = directional (frontal) cover, all = all-round cover,
+// g0 = dead ground, move = movement cost, sig = signature multiplier.
+export const TERRAIN = [
+  { id: 0, key: 'open',    label: 'Open',              front: 0,    all: 0,    g0: 0.25, move: 1.0, sig: 1.0 },
+  { id: 1, key: 'broken',  label: 'Broken / cratered', front: 0.30, all: 0,    g0: 0.50, move: 1.3, sig: 0.8 },
+  { id: 2, key: 'woods',   label: 'Woods',             front: 0,    all: 0.35, g0: 0.40, move: 1.4, sig: 0.6 },
+  { id: 3, key: 'village', label: 'Village',           front: 0,    all: 0.45, g0: 0.45, move: 1.2, sig: 0.7 },
+  { id: 4, key: 'crest',   label: 'Crest',             front: 0.15, all: 0,    g0: 0.15, move: 1.0, sig: 1.2 },
+  { id: 5, key: 'reverse', label: 'Reverse slope',     front: 0.20, all: 0,    g0: 0.35, move: 1.0, sig: 1.0, sigBeyond: 0.6 },
+  { id: 6, key: 'valley',  label: 'Stream valley',     front: 0,    all: 0,    g0: 0.35, move: 1.3, sig: 0.9 },
+];
+export const T = Object.fromEntries(TERRAIN.map(t => [t.key, t.id]));
+
+// Field works built by the defender (SPEC §1.2). wp = work points. NOTIONAL.
+export const WORKS = {
+  trench:   { wp: 2, label: 'Trench', cover: 0.6 },                 // frontal cover 0.6, axis across the front
+  comm:     { wp: 1, label: 'Communication trench' },              // covered N-S movement
+  obst:     { wp: 2, label: 'Wire / minefield (surface)' },
+  obstC:    { wp: 4, label: 'Wire / minefield (concealed)' },
+  strong:   { wp: 6, label: 'Strongpoint', cover: 0.75 },          // all-round cover 0.75
+  concrete: { wp: 4, label: 'Concrete (strongpoint)' },            // halves artillery losses; needs a strongpoint
+  dugout:   { wp: 3, label: 'Dugouts' },                           // artillery losses -60% for units not moving
+  dummy:    { wp: 1, label: 'Dummy position' },                    // looks like a strongpoint to the enemy
+};
+export const WORK_KEYS = Object.keys(WORKS);
+
+// Churned ground after Destroy fire: movement cost +0.3 (Hunzeker pp. 52-53). NOTIONAL.
+export const CHURN = { move: 0.3 };

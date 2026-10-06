@@ -1,3 +1,25 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1);
-export const SOURCES = __m.SOURCES;
+// Sources for Fog of Command. Each was opened and checked on 2026-09-30 (see FACTCHECK.md).
+export const SOURCES = [
+  { id: 'clausewitz', text: 'Carl von Clausewitz, On War, trans. J. J. Graham (1873), Book I, ch. VI ("Information in War") and ch. VII ("Friction in War"). Project Gutenberg eBook #1946.',
+    url: 'https://www.gutenberg.org/ebooks/1946' },
+  { id: 'boyd', text: 'John R. Boyd, "The Essence of Winning and Losing" (briefing dated 28 June 1995; 2010 edition by Chet Richards and Chuck Spinney), p. 3: the OODA "loop" sketch (observe, orient, decide, act).',
+    url: 'https://www.coljohnboyd.com/documents/1995-06-28__Boyd_John_R__The_Essence_of_Winning_and_Losing__PPT-PDF.pdf' },
+  { id: 'lanchester', text: 'F. W. Lanchester, Aircraft in Warfare: The Dawn of the Fourth Arm (London: Constable, 1916), ch. V, §§ 26–27, p. 48: the N-square law.',
+    url: 'https://archive.org/details/aircraftinwarfar00lancrich' },
+  { id: 'fm50', text: 'U.S. Army, FM 5-0 The Operations Process, Change 1 (18 March 2011), para. B-93 and Table B-1, "Historical minimum planning ratios."',
+    url: 'https://www.globalsecurity.org/military/library/policy/army/fm/5-0/fm5-0_c1_2011.pdf' },
+  { id: 'fm390', text: 'U.S. Army, FM 3-90 Tactics (4 July 2001): ch. 3, paras. 3-29 and 3-31 (envelopment; fixing and enveloping forces); ch. 5, para. 5-160 (demonstrations and feints); ch. 10 introduction (the mobile defense); ch. 11, para. 11-5 (the delay).',
+    url: 'https://www.globalsecurity.org/military/library/policy/army/fm/3-90/index.html' },
+  { id: 'mearsheimer', text: 'John J. Mearsheimer, "Assessing the Conventional Balance: The 3:1 Rule and Its Critics," International Security 13, no. 4 (1989), pp. 54 and 57–59. doi:10.2307/2538780.',
+    url: 'https://www.mearsheimer.com/wp-content/uploads/2019/07/A0013.pdf' },
+  { id: 'epstein', text: 'Joshua M. Epstein, "The 3:1 Rule, the Adaptive Dynamic Model, and the Future of Security Studies," International Security 13, no. 4 (1989), p. 90 (reply to Mearsheimer). Record checked in Crossref.',
+    url: 'https://doi.org/10.2307/2538781' },
+  { id: 'dupuy', text: 'T. N. Dupuy, "Combat Data and the 3:1 Rule," International Security 14, no. 1 (1989), p. 195 (letter). Record and opening text checked in Crossref and OpenAlex.',
+    url: 'https://doi.org/10.2307/2538771' },
+  { id: 'lucas', text: 'Thomas W. Lucas and Turker Turkes, "Fitting Lanchester Equations to the Battles of Kursk and Ardennes," Naval Research Logistics 51, no. 1 (2004), pp. 95–116 (abstract). doi:10.1002/nav.10101.',
+    url: 'https://doi.org/10.1002/nav.10101' },
+  { id: 'lucasd', text: 'Thomas W. Lucas and John A. Dinges, "The Effect of Battle Circumstances on Fitting Lanchester Equations to the Battle of Kursk," Military Operations Research 9, no. 2 (2004), pp. 17–30 (abstract). doi:10.5711/morj.9.2.17.',
+    url: 'https://doi.org/10.5711/morj.9.2.17' },
+  { id: 'howard', text: 'Ronald A. Howard, "Information Value Theory," IEEE Transactions on Systems Science and Cybernetics 2, no. 1 (1966), pp. 22–26 (abstract). doi:10.1109/TSSC.1966.300074.',
+    url: 'https://doi.org/10.1109/TSSC.1966.300074' },
+];

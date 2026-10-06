@@ -1,5 +1,6 @@
 // Compare two states treaty by treaty at the chosen year, with the date behind each status.
 import { TREATIES, STATES } from '../data/treaties.js';
+import { infoBtn, explainHTML } from './explain.js';
 import { when, statusAt, statusName, esc, dateText, stateName, BOUND } from './common.js';
 
 export function fillSelects(a, b) {
@@ -20,8 +21,8 @@ export function renderCompare(host, state) {
     if (sa === sb) same++;
     if (BOUND.has(sa)) boundA++;
     if (BOUND.has(sb)) boundB++;
-    return `<tr class="${sa === sb ? '' : 'diff'}"><th scope="row"><button type="button" class="linkish" data-t="${t.id}">${esc(t.short)}</button></th>
-      <td data-label="${esc(stateName(A))}">${cell(t.id, A)}</td><td data-label="${esc(stateName(B))}">${cell(t.id, B)}</td></tr>`;
+    return `<tr class="${sa === sb ? '' : 'diff'}"><th scope="row"><span class="tt-named"><button type="button" class="linkish" data-t="${t.id}">${esc(t.short)}</button>${infoBtn(t.id, 'cmp-' + t.id)}</span></th>
+      <td data-label="${esc(stateName(A))}">${cell(t.id, A)}</td><td data-label="${esc(stateName(B))}">${cell(t.id, B)}</td></tr>${explainHTML(t.id, 'cmp-' + t.id, 'tr', 3)}`;
   }).join('');
   host.innerHTML = `<p class="fine">${when(year).replace(/^./, c => c.toUpperCase())}, ${esc(stateName(A))} was bound by ${boundA} and ${esc(stateName(B))} by ${boundB} of the ${ts.length} treaties shown. They differ on ${ts.length - same}; differing rows are marked.</p>
     <div class="tablewrap"><table class="tt-cmp"><thead><tr><th scope="col">Treaty</th><th scope="col">${esc(stateName(A))}</th><th scope="col">${esc(stateName(B))}</th></tr></thead><tbody>${rows}</tbody></table></div>`;

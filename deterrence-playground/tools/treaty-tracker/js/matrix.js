@@ -11,7 +11,7 @@ export function visibleStates(state) {
   const q = state.q.trim().toLowerCase();
   let list = STATES;
   if (state.preset === 'nuclear') list = list.filter(s => NUCLEAR_ARMED.includes(s.iso));
-  if (state.preset === 'changed') list = list.filter(s => TREATIES.some(t => ['withdrawn', 'suspended', 'susppart', 'revoked', 'disputed'].includes(statusAt(t.id, s.iso, state.year).s)));
+  if (state.preset === 'changed') list = list.filter(s => TREATIES.some(t => ['withdrawn', 'suspended', 'susppart', 'revoked', 'disputed', 'renounced'].includes(statusAt(t.id, s.iso, state.year).s)));
   if (state.preset === 'cfe') list = list.filter(s => statusAt('cfe', s.iso, 2026).s !== 'none' || statusAt('osk', s.iso, 2026).s !== 'none');
   if (q) list = list.filter(s => s.name.toLowerCase().includes(q) || s.iso.toLowerCase() === q);
   if (state.sort !== 'name' && T[state.sort]) {

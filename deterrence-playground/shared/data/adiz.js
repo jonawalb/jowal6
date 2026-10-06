@@ -1,3 +1,3 @@
 // Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "b5At7f+HpdVTHqWRozqatM6H0CvCx5A14PzC8BYhhwiG13M0Q15XmWeX8hmQCUV63eAjL6CfKzIkhekf7zlMe9tjDP4m6Dg+/upE9iD6RNuxHQpBA01EzmvTsvbwcvTFP7IpjMlWnqQPRL7c086V9ETREze2/izpsbRi4ckvq/hbV+ialWNESUj3DoLBj0BaVqme77wnJJxDxjQFbU3yD/qnuWVN26TpeuhNLX6BDYKbvcfWyRl1vH1iXGBVnZgBbXaj5RrZl4zf4bnbDzE=", 1);
+const __m = await window.TSMVault.module(import.meta.url, "zHZpU1HyckZzfeV2eXnZEm95ZieX7kZqIKPHC1Kj13o92z8MCkbD1A9vzJlpqmPYFjD9UsDxK75pTmIHuXnIzKR20m43vOz3aLDPszuWCarmuldh6d7sOfwH1xHfkH9Wvr0wJ4yzfVziKtcJhKWJLht1TryPE70f+/Y+aHppyaTHpfS1IODejbz7/6s9P40D6INS1/qYDmkS4Fxv0CyP32inuxuARNR/PJbYIvopYy4VAdEzVXluReYJKOtc3wflavPwU+eeTCqnNEoXMWA=", 1, 2);
 export const ADIZ = __m.ADIZ;

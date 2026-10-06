@@ -1,3 +1,19 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "yMtIejIG60pu1kTAuPssGQ2ummdefX+Cb3RoUVC3DNJVumQOHQMryfHcYq6SuTK3gClSPL3ooPeQazBJxfIhGwoeF0KOXf4pOA6JF0/3xBhXa3v0nUbXoTUNu2k41xDdHsjtHaf/tJf17uID/t23IuvIcTADHbv95wBu+GWJvTkltuzbyJnuVw6q+Y2PNZl8A61Jt1/heCG/tG2QP+gTh1m4ALIfcv94wEATnVNj5QANSfQ0tw9KxAVfwHSijBpPrC2x3kgzlndJOmeds9boH5tNbaZU0CL2fLt49qVfPK1hd8WFe4gUEJZ4M/ZHJpO3VheirZnyd/7XuaQC95rkrBM2zX8Ukh+vpyxbkO9AgjXtbYNvgtXnnUIHFmTMrIigwlurSmHTbobs7UIhCXgo2A2oEbu0Mj8FuzI5TakuvWLtAb5g/8mTr6LEExL6PtQG0AhrzBfTZUcrCzGd6eZ45JwEH1rqNWBGpU+LzGDUR1e1I2PirGuy31jQDYXZXBAJFwR8p+NmtNet1ZZQpnuxE8FR674r7NGxwd6XQUSxpqcei84AJHgqinrLOBUVQcuBHuEMRP2yzNk/AYvov0wwC5koKCxtafL9AbCyhhaI8+t3HTXKwGv8pamtPWVdWib4wVZ6FbNHqH27nZYCBQm1VW7avw/ZhLJKGcSPRU4avAJVjuiMsgxm7QpGw1xD/7FcZeI7k2tumy8mN9xWLDxpV8nIRD/4+Dqi97z8YfmaPpe5XdydY4z4zO6z7psuVVbwDCRwWvHcnSNvbo1HE+LxTywJIy8Xyb8lqDyPRp3HmvyatVGMkDSMWxJxeCkm1XN0nU9/f/2zWS1TCm1+ome1BTsZsZGhFtCXlDsGBygOzzKuEJsgUxUALMxWyjUN6PcAWYpQ0xzj3wWug5gC9AgnyNEOwb1haHjiV/Zo5ejXD9YTKc1of59evMLwJ3HfrkhrUTGL63f57m6reUncSgko4hBzcFOfXSQ7387alw75JwH0HNmD6LhQhomeK+M/KLj8MySFu3aDahqgEZ45Cig4jiJb760egiv7lNXrUZxuQnWYqBASSG/x2EJ/6PK2JqUYPcKOUfQwL2sil0l1+tLbcgS5CXNbArUhxPDHfxWnc0X8XjPqcUPpkDuBCVwWm+xEddizJxqhYtFeMyVSFO08XBC8RikqGS+UT/1zBb5TcYLuLbE=", 1);
-export const GROUP_INFO = __m.GROUP_INFO;
+// Weapon groups used by the tool. The grouping is the tool author's, built on the model names and the
+// `category` column of missiles_and_uavs.csv in Petro Ivaniuk's "Massive Missile Attacks on Ukraine"
+// (see scripts/build_data.py for the exact rules). Keys match GROUPS in attacks.js.
+export const GROUP_INFO = {
+  shahed: { n: 'Shahed-type drones', short: 'Shahed', col: 'var(--c2)',
+    d: 'Rows the dataset labels Shahed-136/131, the Iranian-designed one-way attack drone that Russia builds as the Geran-2.' },
+  drone: { n: 'Other drones', short: 'Other UAV', col: 'var(--c5)',
+    d: 'Reconnaissance drones (Orlan, ZALA, Supercam and others), Lancet, and rows the dataset labels \"Unknown UAV\".' },
+  cruise: { n: 'Cruise missiles', short: 'Cruise', col: 'var(--c1)',
+    d: 'Kh-101/Kh-555, Kalibr, Iskander-K, Kh-59/69, Kh-22/32, Oniks, Zircon and other air-, sea- and ground-launched cruise missiles.' },
+  ballistic: { n: 'Ballistic missiles', short: 'Ballistic', col: 'var(--prc)',
+    d: 'Iskander-M, North Korean KN-23, Kh-47 Kinzhal, and reports that lump S-300/S-400 missiles with Iskander-M. Includes the three launches from Kapustin Yar that the dataset labels intercontinental: the Oreshnik strikes of November 2024, January 2026 and May 2026.' },
+  sam: { n: 'S-300/S-400 at ground targets', short: 'S-300/400', col: 'var(--c6)',
+    d: 'Air-defense missiles fired at ground targets, when reported on their own.' },
+  mixed: { n: 'Mixed missile reports', short: 'Mixed', col: 'var(--c7)',
+    d: 'Reports that give one total for ballistic and cruise missiles together.' },
+  other: { n: 'Guided bombs', short: 'Bombs', col: 'var(--c8)',
+    d: 'The few guided aerial bombs the Air Force reported in these posts.' },
+};

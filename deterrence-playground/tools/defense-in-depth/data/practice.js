@@ -1,7 +1,64 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1);
-export const PRACTICE_FMNS = __m.PRACTICE_FMNS;
-export const PRACTICE_GROUND = __m.PRACTICE_GROUND;
-export const PRACTICE_SCALE = __m.PRACTICE_SCALE;
-export const eraTypes = __m.eraTypes;
-export const practiceRoster = __m.practiceRoster;
+// Defense in Depth: the Practice field (an explainer before the first game). A 3-row by 4-column board with no
+// enemy, no combat and no losing, where a new player practises moving troops with the real game's map, popover
+// and orders. Two MG companies, two rifle companies and one of every other unit type of the chosen era.
+// Everything here is NOTIONAL and fictional. Data only: imports data/ files, never js/.
+import { TYPE_KEYS } from './units.js';
+import { ERAS } from './eras.js';
+
+/** The practice scale (registered as SCALES.p by js/practice.js; never offered on the start screen or in links). */
+export const PRACTICE_SCALE = {
+  id: 'p', label: 'Practice field', note: '', cols: 4, rows: 3, turns: 99,
+  obj: { row: -1, name: 'no objective', need: 1 },
+  // No zones on the practice field: every band sits off the board, so every box reads as one open area.
+  bands: { assembly: [-9, -9], nml: [-9, -9], outpost: [-9, -9], battle: [-9, -9], switch: null, second: null, rear: [0, 2] },
+  freeTrench: [], commEvery: 99, commRows: [0, -1],
+  wp: 0, csPlan: 2,
+  ammo: { w: { att: 999, def: 999 }, m: { att: 999, def: 999 } },
+  units: {}, divs: 1, colGroups: 1,
+};
+
+/** Terrain of the practice boxes by [row, col] (defender's view; the attacker's board is the same ground). */
+export const PRACTICE_GROUND = {
+  woods: { at: [1, 2], name: 'Callow Wood' },
+  village: { at: [0, 3], name: 'Wendrel' },
+};
+
+/** Unit types that exist in an era (the real orders of battle use these; Modern heavy batteries are rockets). */
+export function eraTypes(era) {
+  const E = ERAS[era];
+  return TYPE_KEYS.filter(t => (t === 'drone' ? E.drones : t === 'ew' ? E.ew : t === 'rocket' ? E.precision : t === 'heavy' ? !E.precision : true));
+}
+
+// Fictional practice names. {n} is the era's word for the type (data/eras.js names).
+const NAME = {
+  rifle: ['A Coy', 'B Coy'], mg: ['1st MG Coy', '2nd MG Coy'], storm: ['Storm Coy'], mortar: ['Mortar Coy'], pioneer: ['Pioneer Coy'],
+  tank: ['Tank Section'], field: ['1st Field Bty'], heavy: ['Heavy Bty'], rocket: ['Rocket Bty'], drone: ['Drone Team'], ew: ['EW Team'],
+};
+const NAME_M = { rifle: ['A Coy', 'B Coy'], mg: ['1st Weapons Coy', '2nd Weapons Coy'], storm: ['Raid Coy'], pioneer: ['Engineer Coy'], tank: ['Tank Coy'], field: ['1st Tube Bty'] };
+
+// Where each unit starts, [row, col] in the defender's view (row 0 faces the enemy). The attacker's start is the
+// mirror image (row 2 - r), so on both sides the units start on the edge nearest the player.
+const START = {
+  rifle: [[2, 0], [2, 1]], mg: [[2, 0], [2, 1]], storm: [[2, 2]], mortar: [[2, 2]], pioneer: [[2, 3]], tank: [[2, 3]],
+  field: [[2, 2]], heavy: [[2, 3]], rocket: [[2, 3]], drone: [[2, 1]], ew: [[2, 0]],
+};
+
+/** The rifle and MG companies form one battalion (the formation drill); everything else is the support group. */
+export const PRACTICE_FMNS = { bn: '1st Battalion', support: 'Support Group', top: 'Practice Detachment' };
+
+/**
+ * The practice roster for an era: [{ type, name, typeName, at: [row, col], fmn: 'bn' | 'support' }], two MG and two
+ * rifle companies and exactly one of every other type of the era.
+ */
+export function practiceRoster(era) {
+  const E = ERAS[era], out = [];
+  for (const type of eraTypes(era)) {
+    const n = type === 'mg' || type === 'rifle' ? 2 : 1;
+    const names = (era === 'm' && NAME_M[type]) || NAME[type];
+    for (let i = 0; i < n; i++) {
+      const typeName = E.names[type] || (type === 'rocket' ? ERAS.m.names.heavy : type);
+      out.push({ type, name: names[i], typeName, at: START[type][i], fmn: type === 'mg' || type === 'rifle' ? 'bn' : 'support' });
+    }
+  }
+  return out;
+}

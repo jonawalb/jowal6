@@ -1,3 +1,89 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1);
-export const NOTES_B = __m.NOTES_B;
+// Text for the second group of models (Jervis 1978, Kydd 2000, Slantchev 2003, Rubinstein 1982).
+// Sources and page conventions as in notes.js; every page cited was opened for this tool.
+
+export const NOTES_B = {
+  jervis78: {
+    kicker: 'Jervis 1978 · World Politics',
+    title: 'Cooperation under the security dilemma',
+    cite: 'Robert Jervis, “Cooperation under the Security Dilemma,” <i>World Politics</i> 30, no. 2 (1978): 167-214.',
+    setup: {
+      game: 'Two status-quo states each choose to cooperate (for example, stay lightly armed) or defect (arm). In Rousseau’s Stag Hunt both most prefer mutual cooperation; in the Prisoner’s Dilemma each most prefers to exploit the other (pp. 167, 171). Jervis names three levers for cooperation: the payoffs to cooperating, the payoffs to defecting, and each side’s expectation that the other will cooperate (p. 171).',
+      worlds: 'Jervis then asks when one state’s security must cost another’s. Two variables decide it: whether the offense or the defense has the advantage, and whether offensive postures can be told apart from defensive ones. Together they make four worlds (pp. 186-187, 211).',
+    },
+    insight: 'The security dilemma is sharpest when the offense has the advantage and offensive and defensive postures look alike: then status-quo states must behave like aggressors. When the defense dominates and postures differ, states can make themselves secure without threatening anyone (pp. 187, 211-214).',
+    tries: [
+      { t: 'A Stag Hunt, ranked as Jervis ranks it, with low trust (q = 0.3).', q: 'Both want CC, yet defecting pays.', set: { v: 'game', cc: 4, dc: 3, dd: 2, cd: 1, q: 0.3, seq: 0, rep: 0 } },
+      { t: 'Make being exploited cheap: CD = 1.9.', q: 'Jervis: this cost “most strongly drives the security dilemma” (p. 172).', set: { v: 'game', cc: 4, dc: 3, dd: 2, cd: 1.9, q: 0.3, seq: 0, rep: 0 } },
+      { t: 'Let the state wait and see what the other does.', set: { v: 'game', cc: 4, dc: 3, dd: 2, cd: 1, q: 0.3, seq: 1, rep: 0 } },
+      { t: 'A one-shot Prisoner’s Dilemma, even with high trust (q = 0.9).', set: { v: 'game', cc: 3, dc: 4, dd: 2, cd: 1, q: 0.9, seq: 0, rep: 0 } },
+      { t: 'The same Prisoner’s Dilemma, repeated with δ = 0.6.', set: { v: 'game', cc: 3, dc: 4, dd: 2, cd: 1, q: 0.9, seq: 0, rep: 1, dl: 0.6 } },
+      { t: 'Offense advantage, postures indistinguishable.', q: 'Jervis sees Europe before 1914 here.', set: { v: 'worlds', od: 'off', dist: 0 } },
+      { t: 'Defense advantage, postures distinguishable.', set: { v: 'worlds', od: 'def', dist: 1 } },
+    ],
+    illus: [
+      { t: 'Railways toward Seistan, 1903', text: 'A British army memo ranked building a railway while Russia stayed idle as a defensive gain, and Russia building one while Britain stayed idle as an offensive gain for Russia; it never considered neither side building.', src: 'pp. 167-168, n. 1' },
+      { t: 'Britain and Austria after 1815', text: 'Britain’s isolation let it take a relaxed view of disturbances on the Continent; Austria, surrounded by strong powers, had to threaten or harm others to protect itself.', src: 'pp. 173-174' },
+      { t: 'Europe before 1914', text: 'Decision makers thought the offense had a big advantage and saw little difference between offensive and defensive postures. Jervis sees the period as resembling the first, doubly dangerous world.', src: 'pp. 211-212' },
+    ],
+  },
+
+  kydd00: {
+    kicker: 'Kydd 2000 · International Organization',
+    title: 'Trust, reassurance and cooperation',
+    cite: 'Andrew Kydd, “Trust, Reassurance, and Cooperation,” <i>International Organization</i> 54, no. 2 (2000): 325-357.',
+    setup: 'Each player is “nice” (Stag Hunt preferences: it reciprocates cooperation) or “mean” (Prisoner’s Dilemma preferences: it exploits it), and each knows only the odds on the other (pp. 331-332). In the one-round trust game, player 1 must cooperate blind. In the reassurance game, player 1 first picks how much of the relationship to stake in a first round, α, and cooperates there; then player 2 moves first in the second round, worth 1 − α (pp. 333-335). A gesture that only a nice type would make can build trust.',
+    insight: 'Mistrust need not end in conflict. A trustworthy state can reassure with a costly gesture that an untrustworthy state would not fake and that the trustworthy state itself will risk. The more fearful the state making the gesture is of the other, the smaller that first gesture has to be, which lends support to Osgood’s GRIT (pp. 338-340).',
+    tries: [
+      { t: 'Kydd’s example payoffs with deep mistrust (p<sub>2</sub> = 0.1) and a matching gesture.', q: 'The one-round game fails; reassurance works.', set: { p2: 0.1, a: 0.73, RN: 2, SN: 1, TM: 2, RM: 1, SM: 1 } },
+      { t: 'A gesture too cheap to mean anything (α = 0.3).', set: { p2: 0.25, a: 0.3, RN: 2, SN: 1, TM: 2, RM: 1, SM: 1 } },
+      { t: 'Enough trust that even a mean type would make the gesture (p<sub>2</sub> = 0.6).', set: { p2: 0.6, a: 0.9, RN: 2, SN: 1, TM: 2, RM: 1, SM: 1 } },
+      { t: 'Let the mean type value cooperation almost as much as exploitation (R<sub>1M</sub> = 1.9).', q: 'The band of reassuring gestures nearly closes (p. 339).', set: { p2: 0.25, a: 0.88, RN: 2, SN: 1, TM: 2, RM: 1.9, SM: 1 } },
+      { t: 'Make the nice type fear being the sucker (S<sub>1N</sub> = 3).', q: 'Now p<sub>2</sub>*<sup>N</sup> > p<sub>2</sub>*<sup>M</sup> and Kydd’s condition fails.', set: { p2: 0.25, a: 0.85, RN: 2, SN: 3, TM: 2, RM: 1, SM: 1 } },
+    ],
+    illus: [
+      { t: 'Gorbachev and the INF issue, 1987', text: 'Gorbachev accepted the U.S. position on intermediate-range nuclear forces, a significant concession that left the larger strategic nuclear agenda open: in the model, cooperation in a first round worth α.', src: 'p. 335' },
+      { t: 'France and German rearmament', text: 'After being invaded by Germany three times in seventy years, France distrusted Germany in the early postwar years and opposed German rearmament: a low prior level of trust.', src: 'p. 331' },
+    ],
+  },
+
+  slantchev03: {
+    kicker: 'Slantchev 2003 · American Political Science Review',
+    title: 'The principle of convergence in wartime negotiations',
+    cite: 'Branislav L. Slantchev, “The Principle of Convergence in Wartime Negotiations,” <i>American Political Science Review</i> 97, no. 4 (2003): 621-632.',
+    setup: {
+      complete: 'Two players alternate offers over a flow of benefits, as in Rubinstein’s protocol. Every rejected offer is followed by a battle that moves the front one step: k counts player 1’s net wins, and reaching 0 or N ends the war in total defeat. Fighting pays each side b<sub>i</sub> per period, less than peace (pp. 622-623). Here player 1 knows its odds p of winning each battle.',
+      incomplete: 'Now player 2 is weak, moderate or strong, and only player 2 knows which: player 1 wins battles with probability p<sub>H</sub>, p<sub>M</sub> or p<sub>L</sub> (p. 624). Player 1 learns from two sources: player 2’s offers and refusals, which player 2 can manipulate, and battle results, which it cannot. Proposition 2 describes the equilibrium for patient players (p. 626).',
+    },
+    insight: 'Wars end when fighting stops revealing information, not when one side is sure it will lose. States need not agree on who would win, only on the odds; and a weak state can profit from fighting a little and then settling if its opponent thinks it may be strong (pp. 627-628).',
+    tries: [
+      { t: 'Complete information, starting near victory for player 1 (k<sub>0</sub> = 5 of 6).', set: { v: 'complete', N: 6, k0: 5 } },
+      { t: 'Strong player 2; player 1 wins the first battle.', set: { v: 'incomplete', t2: 's', I0: 1, I1: 1, dl2: 0.99 } },
+      { t: 'Moderate player 2 after a player-1 defeat.', set: { v: 'incomplete', t2: 'm', I0: 0, dl2: 0.99 } },
+      { t: 'Less patient players (δ = 0.95).', q: 'The strong type no longer signals after a defeat.', set: { v: 'incomplete', dl2: 0.95 } },
+      { t: 'Weak player 2: it settles at once, on terms better than it would get if its type were known.', set: { v: 'incomplete', t2: 'w', dl2: 0.99 } },
+    ],
+    illus: [
+      { t: 'Germany and Czechoslovakia, 1937-38', text: 'Slantchev’s example of a change in the starting military position: the surrender of the Sudetenland and its fortifications made German victory more likely after Munich than in 1937.', src: 'p. 623, n. 5' },
+      { t: 'The Second World War', text: 'Fear that anything short of Germany’s unconditional surrender might split the alliance with the Soviets helped prolong the war until Berlin fell: a war fought to the end, which the model treats as rare.', src: 'p. 629, n. 18' },
+    ],
+  },
+
+  rubinstein82: {
+    kicker: 'Rubinstein 1982 · Econometrica',
+    title: 'Alternating offers',
+    cite: 'Ariel Rubinstein, “Perfect Equilibrium in a Bargaining Model,” <i>Econometrica</i> 50, no. 1 (1982): 97-109.',
+    setup: {
+      disc: 'Two players divide a pie of size 1. Player 1 proposes; player 2 accepts or rejects and counter-proposes next period; and so on without limit (p. 100). Delay is costly: a player with discount factor δ values a share one period later at δ times its value now (p. 99).',
+      cost: 'The same game, but delay costs each player a fixed amount c<sub>i</sub> per period instead of discounting (p. 99).',
+    },
+    insight: 'Alternating offers with costly delay give a single answer: agreement at once, with the first mover getting (1 − δ<sub>2</sub>)/(1 − δ<sub>1</sub>δ<sub>2</sub>). Patience is bargaining power, and moving first helps less the more patient both sides are (p. 108).',
+    tries: [
+      { t: 'Equal patience, δ = 0.5.', q: 'Player 1 gets 1/(1 + δ) = 0.67 (p. 108).', set: { v: 'disc', d1: 0.5, d2: 0.5 } },
+      { t: 'A very patient responder: δ<sub>1</sub> = 0.5, δ<sub>2</sub> = 0.99.', set: { v: 'disc', d1: 0.5, d2: 0.99 } },
+      { t: 'A responder with no future (δ<sub>2</sub> = 0).', q: 'Player 2 has no threat, so player 1 takes the pie (p. 108).', set: { v: 'disc', d1: 0.5, d2: 0 } },
+      { t: 'Fixed costs, player 1’s cheaper: c<sub>1</sub> = 0.05, c<sub>2</sub> = 0.1.', set: { v: 'cost', c1: 0.05, c2: 0.1 } },
+      { t: 'Fixed costs, player 1’s dearer: c<sub>1</sub> = 0.2, c<sub>2</sub> = 0.1.', set: { v: 'cost', c1: 0.2, c2: 0.1 } },
+    ],
+    illus: [],
+  },
+};

@@ -1,6 +1,56 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1);
-export const BRANCH = __m.BRANCH;
-export const MOVES = __m.MOVES;
-export const MOVE_NAMES = __m.MOVE_NAMES;
-export const RESP_NAMES = __m.RESP_NAMES;
+// Wording for the model-generated branch that starts when a player leaves the historical record.
+// None of this is history. The four moves are generic (de-escalate / hold / escalate one step / major escalation);
+// the labels only name actors and instruments that existed at the time, so the choice reads in period.
+// Where a label repeats an alternative that a source records as considered, `src` cites it (sources.js) and the
+// page shows the source; that makes the option sourced, never the model's result.
+export const MOVES = ['d', 'h', 'e', 'm'];
+export const MOVE_NAMES = { d: 'De-escalate or negotiate', h: 'Hold and signal', e: 'Escalate one step', m: 'Major escalation' };
+export const RESP_NAMES = { bd: 'backs down', hold: 'holds its position', match: 'matches the move', esc: 'escalates' };
+
+export const BRANCH = {
+  cuba: { opp: 'Moscow', opts: {
+    d: { label: 'Offer a settlement through the UN and pause the quarantine' },
+    h: { label: 'Tighten the quarantine and keep low-level reconnaissance flights' },
+    e: { label: 'Strike the air-defense sites that fire on U.S. aircraft' },
+    m: { label: 'Air strike on the missiles, then invasion', src: ['oh1962'] } } },
+  sino1969: { opp: 'Moscow', opts: {
+    d: { label: 'Offer quiet good offices to both sides' },
+    h: { label: 'Repeat that Washington will not collude, and watch', src: ['nsa49'] },
+    e: { label: 'Warn Moscow privately against a strike on China' },
+    m: { label: 'Move Pacific forces as a visible signal' } } },
+  lance: { opp: 'Moscow and Hanoi', opts: {
+    d: { label: 'Stand the alert down and return to the Paris talks' },
+    h: { label: 'Keep the readiness measures in place' },
+    e: { label: 'Add naval moves and more bomber alerts' },
+    m: { label: 'Launch Duck Hook', src: ['nsa195'] } } },
+  defcon73: { opp: 'Moscow', opts: {
+    d: { label: 'Accept a joint U.S.-Soviet force', src: ['nsa98'] },
+    h: { label: 'Hold at DEFCON III and press Israel on the ceasefire' },
+    e: { label: 'Move to DEFCON II' },
+    m: { label: 'Let Israel hit the Egyptian Third Army', src: ['frus269'] } } },
+  able83: { opp: 'Moscow', opts: {
+    d: { label: 'End the exercise early and reassure Moscow directly' },
+    h: { label: 'Finish the exercise on schedule with no new alerts' },
+    e: { label: 'Raise Western alert in response', src: ['nsa533'] },
+    m: { label: 'Move real forces forward in Europe' } } },
+  kargil: { opp: 'Pakistan', opts: {
+    d: { label: 'Pause the offensive and accept outside mediation' },
+    h: { label: 'Keep evicting the intruders on your side of the LOC', src: ['rand1450'] },
+    e: { label: 'Strike positions across the LOC' },
+    m: { label: 'Escalate horizontally across the LOC or border', src: ['rand1450'] } } },
+  korea2017: { opp: 'Pyongyang', opts: {
+    d: { label: 'Negotiate a freeze', src: ['crs44994'] },
+    h: { label: 'Maximum pressure: more sanctions and bomber flights', src: ['crs44994', 'acadprk'] },
+    e: { label: 'Enhanced containment, including tactical nuclear weapons in the South', src: ['crs44994'] },
+    m: { label: 'Limited strike on ICBM sites', src: ['crs44994'] } } },
+  balakot: { opp: 'Pakistan', opts: {
+    d: { label: 'Isolate Pakistan diplomatically and economically', src: ['mukherjee'] },
+    h: { label: 'Hold forces at readiness along the LOC' },
+    e: { label: 'Another air strike on camps inside Pakistan' },
+    m: { label: 'Cold Start: seize a strip of Pakistani territory', src: ['mukherjee'] } } },
+  russia2022: { opp: 'Moscow', opts: {
+    d: { label: 'Press Kyiv and Moscow toward a ceasefire' },
+    h: { label: 'Keep arming Ukraine at the current level' },
+    e: { label: 'Lift the remaining limits on long-range strikes' },
+    m: { label: 'Impose a no-fly zone', src: ['lrt0317', 'nato0304'] } } },
+};

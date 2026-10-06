@@ -1,6 +1,7 @@
 // Side panel: the selected cell's dated record and sources, and a summary of the selected treaty with a
 // chart of how many states were bound by it each year.
 import { STATES, UNTC } from '../data/treaties.js';
+import { infoBtn, explainHTML } from './explain.js';
 import { T, Y0, Y1, STATUS, when, statusAt, statusName, recordLines, eventsFor, esc, dateText, stateName, counts, BOUND } from './common.js';
 
 const src = (url, title) => `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(title)}</a>`;
@@ -53,7 +54,7 @@ export function treatyHTML(tid, year) {
     t.unodaParties != null && ['Parties now (UNODA)', t.unodaParties],
   ].filter(Boolean);
   const untc = UNTC[tid] ? `<p class="fine">Cross-checked against the <a href="${esc(UNTC[tid].url)}" target="_blank" rel="noopener">UN Treaty Collection</a> (${UNTC[tid].deposits} deposits listed).</p>` : '';
-  return `<p class="eyebrow">Selected treaty</p><h3 class="tt-dh">${esc(t.name)}</h3>
+  return `<p class="eyebrow">Selected treaty</p><h3 class="tt-dh tt-named"><span>${esc(t.name)}</span>${infoBtn(tid, 'panel-' + tid)}</h3>${explainHTML(tid, 'panel-' + tid)}
     <dl class="readout">${facts.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl>
     <p class="fine">States with an instrument deposited and not withdrawn, each year:</p>${sp.svg(year)}
     <ul class="tt-counts">${shown.map(s => `<li><span class="tt-sw" data-s="${s.id}"></span>${esc(s.name)} <b class="num">${c[s.id]}</b></li>`).join('')}</ul>

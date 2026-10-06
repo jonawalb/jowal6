@@ -1,3 +1,30 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "c+YrcIMSQgFytqOIck5032H7SrYs/KkIsnQSCPIVziGrJUeRszAHwjOPoxUEc1g9KKpQslvBbZ6761OU5Biv3+hSEXmUjx8Mj2Yg8m3Jt6FYTq2lYjlJNHiHqFx/Hja1HIvTSAZqCw9Y6vjASGXSaxn1Jz/6h+YWt/aT/R4Ms6sASLTERtthnX5Ve33FjPS2o3ZHtODuqOb0PIg7wY5MxkUPDRPNnfYwUGtZN/WuWff4Sp8q4lZvKWKBLLf54W0AVmd1E2gk1KLTi1QCF0galAJu9ZsHmSfOAx9YbTMVXG29WKmUia2B1kLLWf920zSMJcu6yAKSGfYBAWBwfWibfWrxjzcfEWM0NtsRYZfmmoQWh/oAHeyjfccQKRw4PyXcIbSdvR9ibFg3pK8yUd9JW4t7xuVeaG+H8ai/W30rENrmPXPrnRWcE0vNX6gwGut+oya0zfvVY0CSe0R6lwUuQ54CPWTs66Q6OOfcftpcu53lGw/TjB7Cvhw8QH+bcHT2rw8saNFClpJJL7Fs0mHadoflNBAd/z2kmbBfwIkbHfDSpto6JxYmn5I9m2iW2319V1JtjYSnBPsCRCTX5oOo8PajyyV6KoK5JpAGoprpJdzlHtS2j357WIQCTF1uDnFc+uCgnHTLf/fe0abjphon/3kKcFEAHvkewWfdgZwRbY5prDOBS8+gm15jyJImOGiTvUSyu3McgjqWq9lig66FpjKEd3S4lz/n72Q7WUdLuLI/hjIW5YCjycIHFzj5rUyTaz34AzeQW5fY/jWOVr13odJuemUsNMPONUPaxf3KyHv2HtjOnTORH3LaYvyInX0FalIkGA8GX0/Oa5VgrB+f9fkxhf+6RDr+vyxfHy/pX1SP1MEejaGzGTqgPeLluaEATttUJjejmBJipShZLD6mhWcqcCYscZdYH5FV6TgBjAswq8owqO0P//QvkXrJdL1ZwoOgIXUmUGjNqHd11zAP+D7j5f2b4ulVjLESfWW/mNeyvvzX6f88f/ueGD/CamBDSMj7xK7undvICfuHH+jO5cFay9nKBCK6t7qbU88fc1lhsFA/3OfHBZ9kXM2/xZLbIKXTf+Hhw8w6ejF/nR7DL9VdBPH0461jtur21A2cqJAA3i2N6XJQ4u9VF01jOlmWWrbKTZrJUHPGP6XmFf7oBxnxe/p9M+bDLG8WALN4EDX/9S6sTW74BTk3EjN8Q+/0wEA97Xbm3s0i9n6oaoyrjIvyZa1D9tdASEBn1e4Eif3tUEajzbsyTlqddwS6rIWbGvFsGhFwlFO0ZzsJhkbyhSsBNFXYvYUpW12bdrM/IoA77GeA8FvV0O5u4VpZu5Q7LhIK4W1FgirVoPyfk2uvFbnHt3l+dEK7AORpd6yukcZ+SoAXqg==", 1);
-export const RAIDS = __m.RAIDS;
+// Raid mixes for the three waves. Launch counts are public reports of real raids; the game scales each
+// mix down to a playable number of tracks and keeps the proportions (see scaleMix in js/sim.js).
+// Ukraine: Petro Ivaniuk, "Massive Missile Attacks on Ukraine", Kaggle v212, rows for the attack start
+//   dates below: only the rows sourced to the Air Force Command post for that attack (source column
+//   kpszsu/...). Rows from Air Command South's separate daily tallies (PvKPivden/..., "Unknown UAV" and
+//   "Reconnaissance UAV") are excluded because they are not part of the attack report. Re-checked against
+//   Kaggle v212 on 30 Sep 2026. Grouping into drone / cruise / ballistic follows tools/ukraine-air-war.
+//   These are Ukrainian claims, not independently verified.
+// Iran, April 2024: IDF counts reported by CNN and AP ("around 170 drones, more than 30 cruise missiles and
+//   more than 120 ballistic missiles"); the game uses the stated floor values.
+export const RAIDS = [
+  {
+    k: 'ua-sep25', short: 'Ukraine, Sept 2025', name: 'the attack on Ukraine that began 6 September 2025',
+    mix: { drone: 810, cruise: 9, ballistic: 4 },
+    detail: '810 Shahed-type strike drones and decoy drones, 9 Iskander-K cruise missiles and 4 Iskander-M/KN-23 ballistic missiles, per the Ukrainian Air Force Command.',
+    src: ['kaggle', 'uafSep25'],
+  },
+  {
+    k: 'ua-feb26', short: 'Ukraine, Feb 2026', name: 'the attack on Ukraine that began 2 February 2026',
+    mix: { drone: 450, cruise: 39, ballistic: 32 },
+    detail: '450 strike drones (Shahed, Gerbera, Italmas and other types; the Air Force said about 300 were Shaheds); 39 cruise missiles (Kh-101/Kh-555, Iskander-K, Kh-22/Kh-32, Zircon); 32 missiles the Air Force reported as Iskander-M together with S-300.',
+    src: ['kaggle', 'uafFeb26'],
+  },
+  {
+    k: 'ir-apr24', short: 'Iran, April 2024', name: 'Iran\'s attack on Israel of 13–14 April 2024',
+    mix: { drone: 170, cruise: 30, ballistic: 120 },
+    detail: 'About 170 drones, more than 30 cruise missiles and more than 120 ballistic missiles, per the IDF.',
+    src: ['cnnA', 'apA'],
+  },
+];

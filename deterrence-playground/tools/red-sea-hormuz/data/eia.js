@@ -1,3 +1,20 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "dQXM+vlSJimX5NxmciDu5QIKRlGGfW7sQUJyf4vAFDgh14DOuChRewXeB29VkXIkO/w4fbcIAKjQ769QhB9LybMazk4FfPIJJ0vDhBHItpO5tIZWqPyoxuRDeUDSkt2s/rERd4rjPGqIaqKLpoKCRdLtvuTBaNvoBVM04HdrtUIq4k+4t5S2rIZL+ydKWsg77bfspgxYq6R4cv4riyDobW1DyScdO9oGmdaVx/sGTCaAfEt8q+D+cU9EoE+ckJoWp9DbExQMwM9hOXOiJwMZ+aXFwfgz3Xa958v7XS6LYrh4dND3Vf2O4R30BBTufRBljuXtQLpDgWzd55kFibgtcM8vOjgOP7I3nuwiR8KDvf7KavlF4VE59XIoFg2CRWmCzd5I1jd6RGvlPlCWzgCHsSEsgTKdeK7lN8ofgKDlTdVHbVwQC166y5nbvVcHpcaA3nzWgfdpGx4wnIJTv8El1ofPhiG7Qpd2jQRh2F8Kehc02VHBnL6mzDp6mrovFxplTKr7WXuZPKEivuFwc7JKcXugu2g6A/rV6WZ6lh6ebe6XIn+GzGMXowI97BWFOEM+WFfF/bHbueocqfpI64+6QiPXI0S3awy//kZmeHvRcq9ouPUwwR7nTlGyrREGrxNPctdopQVQuB/sA+fZYv+UAajweWEiYvqaCXZMs6xDRzJRCCyk8YsUTOh4nVzLFCQcFHSLxuDF/V5kmKIUuJ/BHbMbf5YXmI4mYQJuqdkd8Thhec1NaYdU14OP9/nklt+LXmdo7BaoX7p2kN1NDyfmB9etBqY0/2QyuHQ58gIPNDwwja40Zhyff13sXjrmvXp5HZGakglsZWzN+HMyqq6VeR99tap7W7d8btQxe2vWSeFlLgYc74eIQGYnEVB1D17rRBfGG59MIkpHu8NDbhtVTf1LItLVDmrjpWLkKPYUbXL6rwmNW1Gw6RgOTUE8WeDUQGL/DT6CFyc7r8v+TAupju5B9DlQ2R4/UCQMeYb5ezXDltf2/trfn0Yv5mnf1L5g4NAh/SHdzbnxcyGdwcnyZoAN+3RGufhYxypk8bJCcwahJPbl5QYAG9e1Fs/YYHLZ340Au90npZRGmc+jc5IHAIPGBWmxGUti8f0DGMnmuQA3bvrotUFEDrjeFudfwV6nZzKEP790+0o7qIrmp4LQGqLLjv2kjLokUFuAvlfj68L7BoM+PVcbTyP7lj9cPld4dQVLFEgeIrmcfm9Rnx6EElT0INr1HmoxrL5P6ZwcIBuqPOj2xihXb7lSbnsMLecdGnBHoz5mw/16/ape6Tjc9zNnZChSU0dNtEkYGXzzD/HTGeMUWJOfFro=", 1);
-export const EIA = __m.EIA;
+// Oil flows through the chokepoints, million barrels per day, from the U.S. Energy Information Administration.
+// World Oil Transit Chokepoints (last updated 3 March 2026), Table 1 (all bars, including the Cape of Good Hope).
+// Both pages checked 29 September 2026. EIA's figures stop at the first half of 2025, before the 2026 closure.
+const WOTC = 'https://www.eia.gov/international/analysis/special-topics/World_Oil_Transit_Chokepoints';
+const a = (u, t) => `<a href="${u}" target="_blank" rel="noopener">${t}</a>`;
+
+export const EIA = {
+  bars: [
+    { label: 'Hormuz, 2023', v: 21.8, note: 'crude and products' },
+    { label: 'Hormuz, 1H 2025', v: 20.9, note: 'about 20% of world liquids use' },
+    { label: 'Bab el-Mandeb, 2023', v: 9.3, note: 'before the attacks' },
+    { label: 'Bab el-Mandeb, 2024', v: 4.1, note: 'less than half of 2023' },
+    { label: 'Suez + SUMED, 2023', v: 8.8, note: 'canal and pipeline' },
+    { label: 'Suez + SUMED, 2024', v: 4.8, note: '' },
+    { label: 'Cape, 2023', v: 6.2, note: 'around southern Africa' },
+    { label: 'Cape, 2024', v: 9.3, note: 'rerouted oil' },
+  ],
+  note: `Million barrels a day. ${a(WOTC, 'EIA, World Oil Transit Chokepoints')} (updated 3 March 2026): Hormuz carried about one-quarter of seaborne oil trade and, in 1H 2025, 11.4 billion cubic feet a day of LNG, over 20 percent of world LNG trade. Saudi and UAE pipelines could bypass about 4.7 million barrels a day. LNG through Bab el-Mandeb was near zero in 2024. Cape figures are from the same table; ${a('https://www.eia.gov/todayinenergy/detail.php?id=62263', 'EIA, Today in Energy, 11 June 2024')} describes the early-2024 rerouting. EIA has not yet published annual flows for 2026; it reports that ${a('https://www.eia.gov/todayinenergy/detail.php?id=67604', 'no laden LNG vessel is known to have crossed Hormuz between 1 March and 24 April 2026, according to Kpler data')}.`,
+  url: WOTC,
+};

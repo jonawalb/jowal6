@@ -1,3 +1,1357 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1);
-export const EVENTS = __m.EVENTS;
+// Generated by scripts/build_events.py on 2026-10-02 from scripts/events_source.json.
+// Do not edit by hand. Russian nuclear signals, Western and NATO responses and battlefield moments,
+// February 2022 to October 2026. Every source URL was opened and checked (2026-09-29, 2026-09-30, 2026-10-02); the verbatim supporting passages are kept in events_source.json.
+// level and why are the tool author's coding (see data/coding.js), not a finding of any source.
+export const EVENTS = [
+{
+"id": "2022-02-russia-launches-full-scale-i",
+"date": "2022-02-24",
+"group": "battle",
+"type": "battle",
+"actor": "Russia",
+"title": "Russia launches full-scale invasion of Ukraine",
+"summary": "Putin announced a 'special military operation' and Russian forces invaded Ukraine by land, air and sea.",
+"src": [
+[
+"Al Jazeera",
+"https://www.aljazeera.com/news/2022/2/24/putin-orders-military-operations-in-eastern-ukraine-as-un-meets"
+]
+]
+},
+{
+"id": "2022-02-putin-warns-of-consequences",
+"date": "2022-02-24",
+"group": "russia",
+"type": "statement",
+"actor": "Putin",
+"title": "Putin warns of consequences 'such as you have never seen'",
+"summary": "In his address announcing the 'special military operation', Putin warned any country that tried to interfere that Russia would respond immediately.",
+"quote": "the consequences will be such as you have never seen in your entire history",
+"level": 2,
+"why": "The threat is tied to outside interference in the war. Nuclear weapons are not named, but the wording was widely read as a nuclear warning.",
+"src": [
+[
+"Kremlin (via Wayback)",
+"https://web.archive.org/web/2026/http://en.kremlin.ru/events/president/news/67843"
+],
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2022-03/news/putin-orders-russian-nuclear-weapons-higher-alert"
+]
+]
+},
+{
+"id": "2022-02-putin-orders-deterrence-forc",
+"date": "2022-02-27",
+"group": "russia",
+"type": "deployment",
+"actor": "Putin",
+"title": "Putin orders deterrence forces to 'special regime of combat duty'",
+"summary": "At a meeting with Defence Minister Shoigu and Chief of General Staff Gerasimov, Putin ordered Russia's deterrence forces moved to a special mode of combat duty, citing Western sanctions and statements.",
+"quote": "I order the Defence Minister and Chief of the General Staff to put Russian Army’s deterrence forces on high combat alert.",
+"level": 4,
+"why": "A declared change in the readiness of the deterrence forces. The U.S. and NATO did not mirror the move.",
+"src": [
+[
+"Kremlin (via Wayback)",
+"https://web.archive.org/web/2026/http://en.kremlin.ru/events/president/news/67876"
+],
+[
+"The Guardian",
+"https://www.theguardian.com/world/2022/feb/27/vladimir-putin-puts-russia-nuclear-deterrence-forces-on-high-alert-ukraine"
+],
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2022-03/news/putin-orders-russian-nuclear-weapons-higher-alert"
+]
+]
+},
+{
+"id": "2022-02-white-house-putin-manufactur",
+"date": "2022-02-27",
+"group": "west",
+"type": "response",
+"actor": "US",
+"title": "White House: Putin 'manufacturing threats'",
+"summary": "Press Secretary Jen Psaki said the alert order fit a pattern of Putin manufacturing threats; NATO's Stoltenberg called it dangerous rhetoric. US forces did not mirror the move.",
+"src": [
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2022-03/news/putin-orders-russian-nuclear-weapons-higher-alert"
+]
+]
+},
+{
+"id": "2022-04-ukraine-says-it-has-retaken",
+"date": "2022-04-02",
+"group": "battle",
+"type": "battle",
+"actor": "Ukraine",
+"title": "Ukraine says it has retaken the whole Kyiv region",
+"summary": "Ukraine's defence ministry said its forces had regained control of the Kyiv region after Russian troops pulled back from the north.",
+"src": [
+[
+"Al Jazeera",
+"https://www.aljazeera.com/news/2022/4/3/ukraine-retakes-whole-kyiv-region-as-russian-troops-pull-back"
+]
+]
+},
+{
+"id": "2022-09-kharkiv-counteroffensive-bre",
+"date": "2022-09-09",
+"group": "battle",
+"type": "battle",
+"actor": "Ukraine",
+"title": "Kharkiv counteroffensive breakthrough",
+"summary": "President Zelenskyy said Ukrainian troops had retaken more than 1,000 sq km in the east and south in a week as the Kharkiv-region counteroffensive advanced.",
+"src": [
+[
+"Al Jazeera",
+"https://www.aljazeera.com/news/2022/9/9/zelenskyy-announces-breakthrough-in-ukraines-east-and-south"
+],
+[
+"The Guardian",
+"https://www.theguardian.com/world/2022/sep/13/ukraine-reclaim-control-of-kharkiv-and-towns-seized-at-onset-of-russian-invasion"
+]
+]
+},
+{
+"id": "2022-09-mobilisation-speech-this-is",
+"date": "2022-09-21",
+"group": "russia",
+"type": "statement",
+"actor": "Putin",
+"title": "Mobilisation speech: 'This is not a bluff'",
+"summary": "Announcing partial mobilisation, Putin said Russia would use all weapon systems available to defend its territorial integrity and stressed he was not bluffing.",
+"quote": "This is not a bluff.",
+"level": 2,
+"why": "Links the use of \"all weapon systems\" to the defense of Russian territory, as annexation was about to redraw it, and says it is not a bluff.",
+"src": [
+[
+"Kremlin (via Wayback)",
+"https://web.archive.org/web/2026/http://en.kremlin.ru/events/president/news/69390"
+],
+[
+"The Guardian",
+"https://www.theguardian.com/world/2022/sep/21/putin-announces-partial-mobilisation-in-russia-in-escalation-of-ukraine-war"
+]
+]
+},
+{
+"id": "2022-09-medvedev-strategic-nuclear-w",
+"date": "2022-09-22",
+"group": "russia",
+"type": "statement",
+"actor": "Medvedev",
+"title": "Medvedev: strategic nuclear weapons could defend annexed regions",
+"summary": "Medvedev said any weapons in Russia's arsenal, including strategic nuclear weapons, could be used to defend Ukrainian territories being incorporated into Russia.",
+"level": 2,
+"why": "Names strategic nuclear weapons as usable to defend the regions being annexed.",
+"src": [
+[
+"Reuters (via Wayback)",
+"https://web.archive.org/web/20251005080619/https://www.reuters.com/world/europe/russias-medvedev-strategic-nuclear-weapons-can-be-used-defend-new-regions-2022-09-22/"
+]
+]
+},
+{
+"id": "2022-09-medvedev-says-nuclear-threat",
+"date": "2022-09-27",
+"group": "russia",
+"type": "statement",
+"actor": "Medvedev",
+"title": "Medvedev says nuclear threat is 'certainly not a bluff'",
+"summary": "In a Telegram post Medvedev said Russia had the right to defend itself with nuclear weapons if pushed beyond its limits and outlined a scenario of nuclear use against Ukraine.",
+"quote": "certainly not a bluff",
+"level": 2,
+"why": "Conditional threat, stated as not a bluff.",
+"src": [
+[
+"Reuters (via Wayback)",
+"https://web.archive.org/web/20250327141744/https://www.reuters.com/world/europe/russias-medvedev-warns-west-that-nuclear-threat-is-not-bluff-2022-09-27/"
+]
+]
+},
+{
+"id": "2022-09-annexation-speech-invokes-hi",
+"date": "2022-09-30",
+"group": "russia",
+"type": "statement",
+"actor": "Putin",
+"title": "Annexation speech invokes Hiroshima 'precedent'",
+"summary": "At the ceremony annexing four Ukrainian regions, Putin said the United States was the only country to have used nuclear weapons and had 'created a precedent'.",
+"quote": "And they created a precedent.",
+"level": 1,
+"why": "Points to the U.S. use of nuclear weapons in 1945. No condition or target is attached.",
+"src": [
+[
+"Kremlin (via Wayback)",
+"https://web.archive.org/web/2026/http://en.kremlin.ru/events/president/news/69465"
+]
+]
+},
+{
+"id": "2022-10-biden-world-faces-prospect-o",
+"date": "2022-10-06",
+"group": "west",
+"type": "statement",
+"actor": "US",
+"title": "Biden: world faces prospect of 'Armageddon'",
+"summary": "At a fundraiser Biden said the world had not faced the prospect of Armageddon since the Cuban Missile Crisis and doubted a tactical nuclear weapon could be used without escalation.",
+"quote": "We have not faced the prospect of Armageddon since Kennedy and the Cuban Missile Crisis.",
+"src": [
+[
+"White House (archived)",
+"https://bidenwhitehouse.archives.gov/briefing-room/speeches-remarks/2022/10/06/remarks-by-president-biden-at-democratic-senatorial-campaign-committee-reception/"
+]
+]
+},
+{
+"id": "2022-10-steadfast-noon-2022-goes-ahe",
+"date": "2022-10-17",
+"group": "west",
+"type": "exercise",
+"actor": "NATO",
+"title": "Steadfast Noon 2022 goes ahead",
+"summary": "NATO's annual nuclear deterrence exercise began, with 14 allies and up to 60 aircraft; Stoltenberg had rejected calls to cancel it.",
+"src": [
+[
+"NATO",
+"https://www.nato.int/cps/en/natohq/news_208399.htm"
+],
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2022-11/news/nato-russia-conduct-simultaneous-nuclear-exercises"
+]
+]
+},
+{
+"id": "2022-10-shoigu-alleges-ukraine-prepa",
+"date": "2022-10-23",
+"group": "russia",
+"type": "statement",
+"actor": "Russian MoD",
+"title": "Shoigu alleges Ukraine preparing a 'dirty bomb'",
+"summary": "Defence Minister Sergei Shoigu claimed in calls with Western counterparts that Ukraine was preparing to use a radiological 'dirty bomb'; Ukraine and Western governments rejected the claim.",
+"level": 1,
+"why": "An allegation about a radiological weapon, not a threat of Russian nuclear use. Coded as a reminder-level signal because it raised the nuclear subject without a condition.",
+"src": [
+[
+"Bulletin of the Atomic Scientists",
+"https://thebulletin.org/2022/10/russia-says-ukraine-is-preparing-a-dirty-bomb-is-it-true-and-what-does-it-mean/"
+]
+]
+},
+{
+"id": "2022-10-annual-grom-strategic-nuclea",
+"date": "2022-10-26",
+"group": "russia",
+"type": "exercise",
+"actor": "Russian MoD",
+"title": "Annual Grom strategic nuclear exercise",
+"summary": "Russia began its annual Grom (Thunder) strategic nuclear forces exercise about a week after NATO's Steadfast Noon began.",
+"level": 1,
+"why": "Annual autumn strategic forces drill. Coded 1 under the routine-drill rule.",
+"src": [
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2022-11/news/nato-russia-conduct-simultaneous-nuclear-exercises"
+]
+]
+},
+{
+"id": "2022-10-uk-at-un-rejects-russian-dir",
+"date": "2022-10-27",
+"group": "west",
+"type": "response",
+"actor": "UK",
+"title": "UK at UN rejects Russian 'dirty bomb' claims",
+"summary": "At the UN Security Council the UK said Russia had repeatedly spread disinformation, including claims about dirty bombs.",
+"src": [
+[
+"UK Government",
+"https://www.gov.uk/government/speeches/how-much-more-of-russias-nonsense-do-we-have-to-endure-uk-statement-at-the-security-council"
+]
+]
+},
+{
+"id": "2022-11-russia-completes-withdrawal",
+"date": "2022-11-11",
+"group": "battle",
+"type": "battle",
+"actor": "Russian MoD",
+"title": "Russia completes withdrawal from Kherson city",
+"summary": "Russia's defence ministry said its units had completed the move to the left bank of the Dnipro; Ukrainian troops entered Kherson city the same day.",
+"src": [
+[
+"CNN",
+"https://www.cnn.com/2022/11/11/europe/russian-troops-leave-kherson-region-intl/index.html"
+],
+[
+"The Guardian",
+"https://www.theguardian.com/world/2022/nov/11/reports-of-wounded-soldiers-being-abandoned-as-russia-retreats-from-kherson-city"
+]
+]
+},
+{
+"id": "2023-01-medvedev-defeat-of-a-nuclear",
+"date": "2023-01-19",
+"group": "russia",
+"type": "statement",
+"actor": "Medvedev",
+"title": "Medvedev: defeat of a nuclear power may trigger nuclear war",
+"summary": "Medvedev warned on Telegram, ahead of a Western meeting on arms for Ukraine, that Russia's defeat in a conventional war could trigger a nuclear war.",
+"quote": "The defeat of a nuclear power in a conventional war may trigger a nuclear war",
+"level": 2,
+"why": "Links Russian defeat in a conventional war to nuclear war.",
+"src": [
+[
+"Al Jazeera",
+"https://www.aljazeera.com/news/2023/1/19/medvedev-warns-of-nuclear-war-if-russia-defeated-in-ukraine"
+]
+]
+},
+{
+"id": "2023-02-putin-suspends-russian-parti",
+"date": "2023-02-21",
+"group": "russia",
+"type": "treaty",
+"actor": "Putin",
+"title": "Putin suspends Russian participation in New START",
+"summary": "In his address to the Federal Assembly Putin announced Russia was suspending, not withdrawing from, the New START treaty.",
+"quote": "Russia is suspending its membership in the New START Treaty",
+"level": 3,
+"why": "Suspends a treaty commitment. Russia then stopped the treaty's data exchanges and notifications.",
+"src": [
+[
+"Kremlin (via Wayback)",
+"https://web.archive.org/web/2026/http://en.kremlin.ru/events/president/news/70565"
+],
+[
+"The Guardian",
+"https://www.theguardian.com/world/2023/feb/21/putin-russia-halt-participation-new-start-nuclear-arms-treaty"
+]
+]
+},
+{
+"id": "2023-02-blinken-calls-new-start-susp",
+"date": "2023-02-21",
+"group": "west",
+"type": "response",
+"actor": "US",
+"title": "Blinken calls New START suspension 'irresponsible'",
+"summary": "Secretary of State Blinken called the suspension deeply unfortunate and irresponsible but said the US remained ready to talk; NATO's Stoltenberg said the arms control architecture had been dismantled.",
+"src": [
+[
+"The Guardian",
+"https://www.theguardian.com/world/2023/feb/21/putin-russia-halt-participation-new-start-nuclear-arms-treaty"
+],
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2023-04/news/world-faults-russias-new-start-suspension"
+]
+]
+},
+{
+"id": "2023-02-biden-new-start-suspension-a",
+"date": "2023-02-22",
+"group": "west",
+"type": "response",
+"actor": "US",
+"title": "Biden: New START suspension 'a big mistake'",
+"summary": "Biden described Russia's suspension as a big mistake; the US later confirmed Moscow had stopped data exchanges and said it would withhold disaggregated data in response.",
+"src": [
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2023-04/news/world-faults-russias-new-start-suspension"
+]
+]
+},
+{
+"id": "2023-02-law-formalising-new-start-su",
+"date": "2023-02-28",
+"group": "russia",
+"type": "treaty",
+"actor": "Putin",
+"title": "Law formalising New START suspension signed",
+"summary": "Russian legislation formalising the suspension was signed into law; it gives the president sole authority to decide on a return to the treaty.",
+"level": 3,
+"why": "Writes the suspension into law.",
+"src": [
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2023-04/news/world-faults-russias-new-start-suspension"
+]
+]
+},
+{
+"id": "2023-03-putin-announces-tactical-nuc",
+"date": "2023-03-25",
+"group": "russia",
+"type": "deployment",
+"actor": "Putin",
+"title": "Putin announces tactical nuclear weapons for Belarus",
+"summary": "In a state TV interview Putin said Russia would station tactical nuclear weapons in Belarus, finish a storage facility by early July and had converted 10 Belarusian aircraft.",
+"level": 4,
+"why": "Announces the stationing of Russian nuclear weapons in Belarus, which had held none since the early 1990s, with a storage site and converted aircraft.",
+"src": [
+[
+"CNN",
+"https://www.cnn.com/2023/03/25/world/russia-putin-nuclear-weapons-belarus-intl-hnk/index.html"
+],
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2023-05/news/russia-prepares-belarus-host-nuclear-weapons"
+]
+]
+},
+{
+"id": "2023-03-yars-icbm-exercises",
+"date": "2023-03-29",
+"group": "russia",
+"type": "exercise",
+"actor": "Russian MoD",
+"title": "Yars ICBM exercises",
+"summary": "Russia's defence ministry said more than 3,000 personnel and about 300 pieces of equipment were involved in exercises with Yars mobile ICBM systems.",
+"level": 1,
+"why": "Strategic missile drill. Russia did not link it to the war in the cited reporting.",
+"src": [
+[
+"Al Jazeera",
+"https://www.aljazeera.com/news/2023/3/29/russia-starts-yars-intercontinental-ballistic-missiles-drills"
+]
+]
+},
+{
+"id": "2023-03-uk-at-un-security-council-on",
+"date": "2023-03-31",
+"group": "west",
+"type": "response",
+"actor": "UK",
+"title": "UK at UN Security Council on Belarus basing plan",
+"summary": "At a Council meeting on Putin's announcement of basing nuclear weapons in Belarus, the UK said no other country had raised the prospect of nuclear use and urged Lukashenko to stop enabling Russia.",
+"src": [
+[
+"UK Government",
+"https://www.gov.uk/government/speeches/no-other-country-has-raised-the-prospect-of-nuclear-use-no-one-is-threatening-russias-sovereignty-uk-statement-at-the-security-council"
+]
+]
+},
+{
+"id": "2023-05-g7-hiroshima-vision-condemns",
+"date": "2023-05-19",
+"group": "west",
+"type": "statement",
+"actor": "G7",
+"title": "G7 Hiroshima Vision condemns Russian nuclear rhetoric",
+"summary": "G7 leaders meeting in Hiroshima issued a statement calling Russia's nuclear rhetoric and stated intent to deploy nuclear weapons in Belarus dangerous and unacceptable.",
+"src": [
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2023-06/news/g-7-leaders-confront-human-cost-nuclear-war"
+]
+]
+},
+{
+"id": "2023-05-wagner-claims-capture-of-bak",
+"date": "2023-05-20",
+"group": "battle",
+"type": "battle",
+"actor": "Wagner Group",
+"title": "Wagner claims capture of Bakhmut",
+"summary": "Wagner chief Yevgeny Prigozhin claimed full control of Bakhmut; Kyiv rejected the claim at the time and said fighting continued.",
+"src": [
+[
+"Al Jazeera",
+"https://www.aljazeera.com/news/2023/5/20/russias-prigozhin-claims-complete-capture-of-bakhmut"
+]
+]
+},
+{
+"id": "2023-06-us-announces-new-start-count",
+"date": "2023-06-01",
+"group": "west",
+"type": "treaty",
+"actor": "US",
+"title": "US announces New START countermeasures",
+"summary": "A State Department fact sheet called Russia's suspension invalid and said the US had taken lawful, reversible countermeasures.",
+"src": [
+[
+"US State Department (archived)",
+"https://2021-2025.state.gov/russian-noncompliance-with-and-invalid-suspension-of-the-new-start-treaty/"
+]
+]
+},
+{
+"id": "2023-06-ukraine-s-2023-counteroffens",
+"date": "2023-06-04",
+"group": "battle",
+"type": "battle",
+"actor": "Ukraine",
+"title": "Ukraine's 2023 counteroffensive begins in the south",
+"summary": "Russia's defence ministry said Ukraine launched a large-scale offensive in the South Donetsk direction on 4 June, widely treated as the start of Ukraine's 2023 counteroffensive.",
+"src": [
+[
+"Al Jazeera",
+"https://www.aljazeera.com/news/2023/6/5/russia-claims-to-have-thwarted-major-ukraine-attack"
+]
+]
+},
+{
+"id": "2023-06-lukashenko-says-belarus-has",
+"date": "2023-06-14",
+"group": "russia",
+"type": "deployment",
+"actor": "Belarus",
+"title": "Lukashenko says Belarus has begun receiving Russian nuclear weapons",
+"summary": "Belarusian President Lukashenko said his country had started taking delivery of Russian tactical nuclear weapons.",
+"level": 4,
+"why": "Reported delivery of nuclear weapons to Belarus.",
+"src": [
+[
+"Reuters (via Wayback)",
+"https://web.archive.org/web/20250215003433/https://www.reuters.com/world/europe/belarus-has-started-taking-delivery-russian-tactical-nuclear-weapons-president-2023-06-14/"
+]
+]
+},
+{
+"id": "2023-06-putin-first-nuclear-warheads",
+"date": "2023-06-16",
+"group": "russia",
+"type": "deployment",
+"actor": "Putin",
+"title": "Putin: first nuclear warheads delivered to Belarus",
+"summary": "At the St Petersburg International Economic Forum Putin said the first batch of nuclear warheads had been delivered to Belarus, with the work to be completed by year's end.",
+"quote": "The first nuclear warheads have been delivered to Belarus, but only the first batch.",
+"level": 4,
+"why": "Putin confirms delivery of the first warheads to Belarus.",
+"src": [
+[
+"Kremlin (via Wayback)",
+"https://web.archive.org/web/2026/http://en.kremlin.ru/events/president/news/71445"
+]
+]
+},
+{
+"id": "2023-06-wagner-mutiny-putin-calls-it",
+"date": "2023-06-24",
+"group": "battle",
+"type": "battle",
+"actor": "Wagner Group",
+"title": "Wagner mutiny; Putin calls it treason",
+"summary": "Wagner forces seized Rostov-on-Don and advanced toward Moscow before Prigozhin halted the march the same day; Putin called the uprising treason.",
+"src": [
+[
+"The Guardian",
+"https://www.theguardian.com/world/2023/jun/24/vladimir-putin-accuses-wagner-chief-treason-vows-neutralise-uprising"
+],
+[
+"Kremlin (via Wayback)",
+"https://web.archive.org/web/2026/http://en.kremlin.ru/events/president/news/71528"
+]
+]
+},
+{
+"id": "2023-10-valdai-putin-raises-ctbt-tit",
+"date": "2023-10-05",
+"group": "russia",
+"type": "statement",
+"actor": "Putin",
+"title": "Valdai: Putin raises CTBT 'tit-for-tat' and Burevestnik test",
+"summary": "At the Valdai Club Putin said Russia could mirror the US by revoking CTBT ratification and reported a successful Burevestnik test launch.",
+"quote": "we can offer a tit-for-tat response in our relations with the United States",
+"level": 2,
+"why": "Signals a treaty change conditioned on U.S. behavior and reports a test of a nuclear-powered missile. Nothing had changed yet.",
+"src": [
+[
+"Kremlin (via Wayback)",
+"https://web.archive.org/web/2026/http://en.kremlin.ru/events/president/news/72444"
+],
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2023-11/news/russian-parliament-deratifies-nuclear-test-ban-treaty"
+]
+]
+},
+{
+"id": "2023-10-us-ctbt-de-ratification-need",
+"date": "2023-10-06",
+"group": "west",
+"type": "response",
+"actor": "US",
+"title": "US: CTBT de-ratification 'needlessly endangers' test norm",
+"summary": "A State Department spokesperson said Russia's move endangered the global norm against nuclear explosive testing and that the US would keep its testing moratorium.",
+"src": [
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2023-11/news/russian-parliament-deratifies-nuclear-test-ban-treaty"
+]
+]
+},
+{
+"id": "2023-10-duma-votes-to-revoke-ctbt-ra",
+"date": "2023-10-17",
+"group": "russia",
+"type": "treaty",
+"actor": "Russian Duma",
+"title": "Duma votes to revoke CTBT ratification",
+"summary": "The State Duma approved the bill revoking Russia's CTBT ratification in its first reading, 412 votes to none; after the remaining readings the upper house approved it the following week.",
+"level": 3,
+"why": "Parliament revokes treaty ratification.",
+"src": [
+[
+"Reuters (via Wayback)",
+"https://web.archive.org/web/20231023103559/https://www.reuters.com/world/europe/russian-lawmakers-approve-revoking-ratification-nuclear-test-ban-treaty-first-2023-10-17/"
+],
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2023-11/news/russian-parliament-deratifies-nuclear-test-ban-treaty"
+],
+[
+"The Hill",
+"https://thehill.com/policy/international/4274998-russia-simulates-nuclear-strike-after-lawmakers-remind-test-ban-treaty-ratification/"
+]
+]
+},
+{
+"id": "2023-11-putin-signs-law-revoking-ctb",
+"date": "2023-11-02",
+"group": "russia",
+"type": "treaty",
+"actor": "Putin",
+"title": "Putin signs law revoking CTBT ratification",
+"summary": "Putin signed the law de-ratifying the Comprehensive Nuclear-Test-Ban Treaty; Russia remains a signatory and officials said it would not test unless the US did.",
+"level": 3,
+"why": "Law revoking CTBT ratification takes effect. Russia stays a signatory.",
+"src": [
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2023-11/news/russian-parliament-deratifies-nuclear-test-ban-treaty"
+]
+]
+},
+{
+"id": "2024-02-ukraine-withdraws-from-avdii",
+"date": "2024-02-17",
+"group": "battle",
+"type": "battle",
+"actor": "Russian MoD",
+"title": "Ukraine withdraws from Avdiivka",
+"summary": "Ukraine withdrew from the frontline city of Avdiivka and Russia claimed its capture; Putin hailed it as an important victory.",
+"src": [
+[
+"Al Jazeera",
+"https://www.aljazeera.com/news/2024/2/17/ukraine-troops-withdraw-from-frontline-city-of-avdiivka-army-chief-says"
+]
+]
+},
+{
+"id": "2024-05-russia-announces-non-strateg",
+"date": "2024-05-06",
+"group": "russia",
+"type": "exercise",
+"actor": "Russian MFA",
+"title": "Russia announces non-strategic nuclear exercises",
+"summary": "Russia announced drills with non-strategic nuclear weapons, which the Foreign Ministry called a 'sobering signal to the West'; the first phase was announced 21 May and Belarus joined later phases.",
+"quote": "sobering signal to the West",
+"level": 3,
+"why": "A drill of non-strategic nuclear forces, which Russia tied directly to Western statements.",
+"src": [
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2024-06/news/russia-links-nonstrategic-nuclear-exercises-threats"
+]
+]
+},
+{
+"id": "2024-05-pentagon-calls-exercise-anno",
+"date": "2024-05-06",
+"group": "west",
+"type": "response",
+"actor": "US",
+"title": "Pentagon calls exercise announcement 'irresponsible rhetoric'",
+"summary": "A US Defense Department spokesperson called Russia's announcement of non-strategic nuclear drills irresponsible rhetoric and said no change in Russian strategic posture had been seen.",
+"src": [
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2024-06/news/russia-links-nonstrategic-nuclear-exercises-threats"
+]
+]
+},
+{
+"id": "2024-05-medvedev-warns-of-a-special",
+"date": "2024-05-10",
+"group": "russia",
+"type": "statement",
+"actor": "Medvedev",
+"title": "Medvedev warns of 'a special kind of arms'",
+"summary": "Medvedev wrote that under certain circumstances Russia's response to strikes on its territory might not be limited to Ukraine and could involve 'a special kind of arms'.",
+"level": 2,
+"why": "Conditional threat tied to strikes on Russian territory.",
+"src": [
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2024-06/news/russia-links-nonstrategic-nuclear-exercises-threats"
+]
+]
+},
+{
+"id": "2024-05-first-phase-of-non-strategic",
+"date": "2024-05-21",
+"group": "russia",
+"type": "exercise",
+"actor": "Russian MoD",
+"title": "First phase of non-strategic nuclear drills",
+"summary": "The defence ministry announced the first phase of the non-strategic nuclear exercise involving Iskander-equipped units; Belarus confirmed its forces would take part.",
+"level": 3,
+"why": "Non-strategic nuclear drill under way, with Belarus.",
+"src": [
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2024-06/news/russia-links-nonstrategic-nuclear-exercises-threats"
+]
+]
+},
+{
+"id": "2024-08-ukrainian-cross-border-incur",
+"date": "2024-08-06",
+"group": "battle",
+"type": "battle",
+"actor": "Ukraine",
+"title": "Ukrainian cross-border incursion into Kursk region",
+"summary": "Ukrainian forces launched a cross-border attack into Russia's Kursk region, the first large ground incursion into Russian territory in the war.",
+"src": [
+[
+"The Guardian",
+"https://www.theguardian.com/world/article/2024/aug/06/moscow-says-ukraine-has-launched-cross-border-attack-into-russia"
+]
+]
+},
+{
+"id": "2024-09-putin-previews-nuclear-doctr",
+"date": "2024-09-25",
+"group": "russia",
+"type": "doctrine",
+"actor": "Putin",
+"title": "Putin previews nuclear doctrine changes at Security Council",
+"summary": "Putin said aggression by a non-nuclear state supported by a nuclear state would be treated as a joint attack and that a massive air and space attack could trigger nuclear use.",
+"level": 2,
+"why": "Announces the conditions a new doctrine will set. The rules change itself comes on 19 November.",
+"src": [
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2024-11/news/putin-previews-changes-nuclear-policy"
+],
+[
+"Al Jazeera",
+"https://www.aljazeera.com/news/2024/9/26/putin-outlines-new-rules-for-russian-use-of-vast-nuclear-arsenal"
+]
+]
+},
+{
+"id": "2024-10-steadfast-noon-2024",
+"date": "2024-10-14",
+"group": "west",
+"type": "exercise",
+"actor": "NATO",
+"title": "Steadfast Noon 2024",
+"summary": "NATO Secretary General Mark Rutte announced the annual nuclear deterrence exercise would begin on Monday 14 October.",
+"src": [
+[
+"Der Spiegel (German)",
+"https://www.spiegel.de/ausland/steadfast-noon-nato-kuendigt-verteidigungsuebung-mit-atomwaffen-an-a-84bc3642-ea6d-4628-8169-c40135308698"
+]
+]
+},
+{
+"id": "2024-10-north-korean-troops-filmed-b",
+"date": "2024-10-19",
+"group": "battle",
+"type": "battle",
+"actor": "North Korea",
+"title": "North Korean troops filmed being equipped in Russia",
+"summary": "Footage appeared to confirm South Korean intelligence reports that North Korean soldiers had been sent to Russia for training ahead of deployment; by mid-November the US said about 11,000 were in Russia's Kursk region.",
+"src": [
+[
+"CNN",
+"https://edition.cnn.com/2024/10/19/asia/north-korea-ukraine-russia-troops-uniform-intl/index.html"
+],
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2024-12/news/ukraine-russia-exchange-missile-fire-after-us-shift"
+]
+]
+},
+{
+"id": "2024-10-strategic-deterrence-forces",
+"date": "2024-10-29",
+"group": "russia",
+"type": "exercise",
+"actor": "Russian MoD",
+"title": "Strategic deterrence forces exercise",
+"summary": "The Kremlin published Putin's comments at the start of the annual strategic nuclear forces exercise, calling nuclear use an extreme, exceptional measure.",
+"level": 1,
+"why": "Annual strategic forces drill. Coded 1 under the routine-drill rule.",
+"src": [
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2024-11/news/putin-previews-changes-nuclear-policy"
+]
+]
+},
+{
+"id": "2024-11-us-lets-ukraine-strike-deepe",
+"date": "2024-11-17",
+"group": "west",
+"type": "response",
+"actor": "US",
+"title": "US lets Ukraine strike deeper into Russia with ATACMS",
+"summary": "US media reported, citing officials, that the Biden administration had lifted limits on Ukraine using US-made missiles deep inside Russia; the White House confirmed the change on 25 November.",
+"src": [
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2024-12/news/ukraine-russia-exchange-missile-fire-after-us-shift"
+]
+]
+},
+{
+"id": "2024-11-first-reported-atacms-strike",
+"date": "2024-11-19",
+"group": "battle",
+"type": "battle",
+"actor": "Ukraine",
+"title": "First reported ATACMS strike inside Russia",
+"summary": "Moscow said Ukraine struck deep inside Russia with US-made ATACMS, days after reports that the Biden administration had allowed such strikes; Putin approved the new nuclear doctrine the same day.",
+"src": [
+[
+"Reuters (via Wayback)",
+"https://web.archive.org/web/20250124015544/https://www.reuters.com/world/europe/putin-issues-warning-us-with-new-nuclear-doctrine-2024-11-19/"
+]
+]
+},
+{
+"id": "2024-11-putin-approves-revised-nucle",
+"date": "2024-11-19",
+"group": "russia",
+"type": "doctrine",
+"actor": "Putin",
+"title": "Putin approves revised nuclear doctrine",
+"summary": "Putin signed a decree updating the 'Fundamentals of State Policy on Nuclear Deterrence', allowing nuclear use in response to conventional aggression creating a critical threat to Russia or Belarus.",
+"level": 3,
+"why": "Changes published nuclear policy: conventional aggression that creates a critical threat can now justify nuclear use.",
+"src": [
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2024-12/news/russia-revises-nuclear-use-doctrine"
+],
+[
+"Reuters (via Wayback)",
+"https://web.archive.org/web/20250124015544/https://www.reuters.com/world/europe/putin-issues-warning-us-with-new-nuclear-doctrine-2024-11-19/"
+]
+]
+},
+{
+"id": "2024-11-oreshnik-missile-fired-at-dn",
+"date": "2024-11-21",
+"group": "russia",
+"type": "use",
+"actor": "Putin",
+"title": "Oreshnik missile fired at Dnipro",
+"summary": "Russia fired a new intermediate-range ballistic missile at Dnipro; in a televised statement Putin named it Oreshnik, said it carried a non-nuclear payload and called it a response to NATO actions.",
+"level": 5,
+"why": "First combat use of the Oreshnik, a nuclear-capable intermediate-range missile, with a conventional payload.",
+"src": [
+[
+"Kremlin (via Wayback)",
+"https://web.archive.org/web/2026/http://en.kremlin.ru/events/president/news/75614"
+],
+[
+"The Guardian",
+"https://www.theguardian.com/world/2024/nov/21/putin-says-russia-fired-experimental-ballistic-missile-into-ukraine"
+],
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2024-12/news/ukraine-russia-exchange-missile-fire-after-us-shift"
+]
+]
+},
+{
+"id": "2024-11-pentagon-oreshnik-is-an-inte",
+"date": "2024-11-21",
+"group": "west",
+"type": "response",
+"actor": "US",
+"title": "Pentagon: Oreshnik is an intermediate-range missile",
+"summary": "A US Defense Department spokesperson said the Oreshnik was an intermediate-range ballistic missile derived from the RS-26 ICBM.",
+"src": [
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2024-12/news/ukraine-russia-exchange-missile-fire-after-us-shift"
+]
+]
+},
+{
+"id": "2025-06-operation-spiderweb-hits-rus",
+"date": "2025-06-01",
+"group": "battle",
+"type": "battle",
+"actor": "Ukraine",
+"title": "Operation Spiderweb hits Russian strategic bomber bases",
+"summary": "Ukraine's SBU used drones smuggled into Russia in trucks to strike four airbases hosting strategic bombers, including nuclear-capable Tu-95s; Ukrainian sources initially claimed 41 aircraft were hit; later assessments put the likely losses at about a dozen.",
+"src": [
+[
+"BBC",
+"https://www.bbc.com/news/articles/c1ld7ppre9vo"
+],
+[
+"Al Jazeera",
+"https://www.aljazeera.com/news/2025/6/1/ukrainian-drones-target-russian-airbases-in-unprecedented-operation"
+],
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2025-07/news/russian-strategic-forces-suffer-twin-setbacks"
+]
+]
+},
+{
+"id": "2025-07-medvedev-invokes-soviet-era",
+"date": "2025-07-31",
+"group": "russia",
+"type": "statement",
+"actor": "Medvedev",
+"title": "Medvedev invokes Soviet-era 'last resort' nuclear capabilities",
+"summary": "Responding to Trump, Medvedev said Trump should remember Moscow possessed Soviet-era nuclear strike capabilities of last resort.",
+"level": 2,
+"why": "A reply to a named U.S. ultimatum, pointing to last-resort nuclear retaliation capabilities.",
+"src": [
+[
+"Reuters (via Wayback)",
+"https://web.archive.org/web/20251115143535/https://www.reuters.com/world/trump-orders-nuclear-submarines-moved-after-russian-provocative-statements-2025-08-02/"
+]
+]
+},
+{
+"id": "2025-08-putin-oreshnik-in-service-to",
+"date": "2025-08-01",
+"group": "russia",
+"type": "deployment",
+"actor": "Putin",
+"title": "Putin: Oreshnik in service, to be deployed in Belarus",
+"summary": "Putin said the first serial Oreshnik systems had entered service and that preparations for deployment in Belarus would likely be completed before year's end.",
+"level": 4,
+"why": "Announces a nuclear-capable missile in service and its coming deployment in Belarus.",
+"src": [
+[
+"CNN (AP)",
+"https://edition.cnn.com/2025/08/01/europe/russia-oreshnik-hypersonic-missile-belarus-latam-intl"
+]
+]
+},
+{
+"id": "2025-08-trump-orders-two-nuclear-sub",
+"date": "2025-08-01",
+"group": "west",
+"type": "deployment",
+"actor": "US",
+"title": "Trump orders two nuclear submarines repositioned",
+"summary": "Trump said he had ordered two nuclear submarines positioned 'in the appropriate regions' in response to Medvedev's statements.",
+"quote": "I have ordered two Nuclear Submarines to be positioned in the appropriate regions, just in case these foolish and inflammatory statements are more than just that",
+"src": [
+[
+"Reuters (via Wayback)",
+"https://web.archive.org/web/20251115143535/https://www.reuters.com/world/trump-orders-nuclear-submarines-moved-after-russian-provocative-statements-2025-08-02/"
+]
+]
+},
+{
+"id": "2025-08-russia-ends-self-imposed-mor",
+"date": "2025-08-04",
+"group": "russia",
+"type": "treaty",
+"actor": "Russian MFA",
+"title": "Russia ends self-imposed moratorium on intermediate-range missiles",
+"summary": "The Foreign Ministry said conditions for its unilateral moratorium on deploying INF-range missiles no longer existed.",
+"level": 3,
+"why": "Ends a self-imposed limit on deploying intermediate-range missiles.",
+"src": [
+[
+"New York Times (via Wayback)",
+"https://web.archive.org/web/20251027233103/https://www.nytimes.com/2025/08/04/world/europe/russia-missile-treaty.html"
+]
+]
+},
+{
+"id": "2025-09-zapad-2025-includes-nuclear",
+"date": "2025-09-16",
+"group": "russia",
+"type": "exercise",
+"actor": "Belarus",
+"title": "Zapad-2025 includes nuclear planning and Oreshnik drills",
+"summary": "Lukashenko confirmed Belarusian forces practised tactical nuclear weapon use with Russia during Zapad-2025 (12-16 Sept); Belarus said drills covered non-strategic nuclear planning and Oreshnik deployment.",
+"level": 3,
+"why": "Allied drill that practised non-strategic nuclear use and Oreshnik deployment.",
+"src": [
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2025-10/news/belarus-russia-practice-nuclear-operations"
+],
+[
+"BelTA",
+"https://eng.belta.by/society/view/zapad-2025-oreshnik-missiles-response-to-threats-in-defense-ministers-report-to-belarus-president-170456-2025/"
+]
+]
+},
+{
+"id": "2025-09-putin-offers-to-observe-new",
+"date": "2025-09-22",
+"group": "russia",
+"type": "treaty",
+"actor": "Putin",
+"title": "Putin offers to observe New START limits for one year",
+"summary": "At a Security Council meeting Putin said Russia would keep observing New START's central limits for a year after expiry if the US did likewise.",
+"level": 0,
+"why": "Offers to keep treaty limits after expiry, if the U.S. does the same.",
+"src": [
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2025-10/news/russia-proposes-one-year-new-start-extension"
+]
+]
+},
+{
+"id": "2025-10-steadfast-noon-2025",
+"date": "2025-10-13",
+"group": "west",
+"type": "exercise",
+"actor": "NATO",
+"title": "Steadfast Noon 2025",
+"summary": "NATO began its annual nuclear deterrence exercise (13-24 Oct) with 14 allies and about 70 aircraft; Finland and Sweden took part for the first time.",
+"src": [
+[
+"NATO (via Wayback)",
+"https://web.archive.org/web/20251016195327/https://www.nato.int/cps/en/natohq/news_238367.htm"
+],
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2025-11/news/nato-russia-conduct-nuclear-exercises-amid-rising-tensions"
+]
+]
+},
+{
+"id": "2025-10-grom-strategic-nuclear-exerc",
+"date": "2025-10-22",
+"group": "russia",
+"type": "exercise",
+"actor": "Russian MoD",
+"title": "Grom strategic nuclear exercise",
+"summary": "Russia held its annual Grom strategic nuclear exercise with land, sea and air components; Gerasimov said it would practise procedures for authorising nuclear use.",
+"level": 1,
+"why": "Annual strategic forces drill. Coded 1 under the routine-drill rule, although Gerasimov described practising nuclear-release procedures.",
+"src": [
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2025-11/news/nato-russia-conduct-nuclear-exercises-amid-rising-tensions"
+]
+]
+},
+{
+"id": "2025-10-burevestnik-nuclear-powered",
+"date": "2025-10-26",
+"group": "russia",
+"type": "statement",
+"actor": "Russian MoD",
+"title": "Burevestnik nuclear-powered cruise missile test announced",
+"summary": "Gerasimov told Putin the Burevestnik had flown 14,000 km over 15 hours in an Oct. 21 test.",
+"level": 1,
+"why": "A publicized test of a nuclear-capable weapon. It changes no rule and no deployed force, so it is coded as a reminder.",
+"src": [
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2025-11/news-briefs/russia-tests-nuclear-powered-cruise-missile-torpedo"
+]
+]
+},
+{
+"id": "2025-10-putin-announces-poseidon-und",
+"date": "2025-10-29",
+"group": "russia",
+"type": "statement",
+"actor": "Putin",
+"title": "Putin announces Poseidon underwater vehicle test",
+"summary": "Putin said the nuclear-powered Poseidon had been launched from a submarine and its reactor started for the first time.",
+"level": 1,
+"why": "A publicized test of a nuclear-capable weapon, coded as a reminder for the same reason.",
+"src": [
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2025-11/news-briefs/russia-tests-nuclear-powered-cruise-missile-torpedo"
+]
+]
+},
+{
+"id": "2025-10-trump-says-us-will-resume-nu",
+"date": "2025-10-30",
+"group": "west",
+"type": "statement",
+"actor": "US",
+"title": "Trump says US will resume nuclear testing",
+"summary": "Trump said the US would resume testing 'with others doing testing'; on 2 Nov the Energy Secretary said planned tests were non-nuclear 'system tests'.",
+"src": [
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2025-11/news-briefs/trump-says-us-will-resume-nuclear-testing"
+]
+]
+},
+{
+"id": "2025-12-oreshnik-unit-enters-duty-in",
+"date": "2025-12-30",
+"group": "russia",
+"type": "deployment",
+"actor": "Russian MoD",
+"title": "Oreshnik unit enters duty in Belarus",
+"summary": "According to a Russian defence ministry video, an Oreshnik-equipped strategic rocket forces unit assumed duties in Belarus.",
+"level": 4,
+"why": "A nuclear-capable missile unit takes up duty outside Russia.",
+"src": [
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2026-01/news/europe-seeks-medium-range-missile-response"
+]
+]
+},
+{
+"id": "2026-01-second-oreshnik-strike-in-lv",
+"date": "2026-01-08",
+"group": "russia",
+"type": "use",
+"actor": "Russian MoD",
+"title": "Second Oreshnik strike, in Lviv region",
+"summary": "In an overnight barrage on the night of 8 January Russia fired a second Oreshnik at western Ukraine's Lviv region near the Polish border; Moscow called it retaliation for an alleged drone attack on a Putin residence.",
+"level": 5,
+"why": "Second combat use of the Oreshnik, with a conventional payload.",
+"src": [
+[
+"The War Zone",
+"https://www.twz.com/land/russias-oreshnik-intermediate-range-ballistic-missile-used-in-large-scale-attack-on-ukraine"
+],
+[
+"UK Government",
+"https://www.gov.uk/government/speeches/russias-use-of-oreshnik-hypersonic-missile-should-be-universally-condemned-uk-statement-at-the-un-security-council--2"
+]
+]
+},
+{
+"id": "2026-01-trump-on-new-start-if-it-exp",
+"date": "2026-01-08",
+"group": "west",
+"type": "statement",
+"actor": "US",
+"title": "Trump on New START: 'If it expires, it expires'",
+"summary": "In a New York Times interview published 8 January, Trump signalled he would let New START lapse and seek a better agreement.",
+"quote": "If it expires, it expires. We’ll just do a better agreement",
+"src": [
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2026-01/news-briefs/trump-new-start-if-it-expires-it-expires"
+]
+]
+},
+{
+"id": "2026-01-uk-at-un-condemns-oreshnik-s",
+"date": "2026-01-12",
+"group": "west",
+"type": "response",
+"actor": "UK",
+"title": "UK at UN condemns Oreshnik strike",
+"summary": "The UK told the Security Council Russia's use of the Oreshnik in the 8 January barrage should be universally condemned.",
+"src": [
+[
+"UK Government",
+"https://www.gov.uk/government/speeches/russias-use-of-oreshnik-hypersonic-missile-should-be-universally-condemned-uk-statement-at-the-un-security-council--2"
+]
+]
+},
+{
+"id": "2026-02-new-start-expires",
+"date": "2026-02-05",
+"group": "west",
+"type": "treaty",
+"actor": "US",
+"title": "New START expires",
+"summary": "New START expired with no US response to Russia's one-year offer; Trump called for a 'new, improved, and modernized' treaty and the UN Secretary-General urged a quick new deal.",
+"src": [
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2026-03/news/new-start-expires-us-urges-modernized-treaty"
+],
+[
+"The Guardian",
+"https://www.theguardian.com/world/2026/feb/05/russia-us-nuclear-new-start-treaty-expires-un-warning"
+]
+]
+},
+{
+"id": "2026-02-lavrov-russia-keeps-new-star",
+"date": "2026-02-11",
+"group": "russia",
+"type": "treaty",
+"actor": "Russian MFA",
+"title": "Lavrov: Russia keeps New START limits after expiry, conditionally",
+"summary": "After New START expired on 5 Feb, Lavrov told parliament Russia would observe the central limits only as long as the US did not exceed them.",
+"level": 0,
+"why": "Keeps treaty limits after expiry, on condition the U.S. does too.",
+"src": [
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2026-03/news/new-start-expires-us-urges-modernized-treaty"
+]
+]
+},
+{
+"id": "2026-02-new-claims-that-uk-and-franc",
+"date": "2026-02-24",
+"group": "russia",
+"type": "statement",
+"actor": "Russian MFA",
+"title": "New claims that UK and France may arm Ukraine with nuclear weapons",
+"summary": "Russian intelligence accused France and the UK of considering transferring nuclear weapons to Ukraine; Zakharova spoke of a possible 'dirty bomb'. France, the UK and Ukraine rejected the claims.",
+"level": 1,
+"why": "An allegation about Western nuclear transfers, raising the nuclear subject without a Russian threat.",
+"src": [
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2026-04/news-briefs/russia-concocts-fresh-ukrainian-bomb-claims"
+]
+]
+},
+{
+"id": "2026-05-second-successful-sarmat-icb",
+"date": "2026-05-12",
+"group": "russia",
+"type": "statement",
+"actor": "Russian MoD",
+"title": "Second successful Sarmat ICBM test",
+"summary": "The Kremlin announced a second successful test of the RS-28 Sarmat heavy ICBM and aimed to put the first regiment on combat duty by year-end.",
+"level": 1,
+"why": "A publicized missile test, coded as a reminder.",
+"src": [
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2026-06/news/russia-tests-new-heavy-missile"
+]
+]
+},
+{
+"id": "2026-05-uk-at-osce-condemns-sarmat-s",
+"date": "2026-05-20",
+"group": "west",
+"type": "response",
+"actor": "UK",
+"title": "UK at OSCE condemns Sarmat signalling",
+"summary": "The UK told the OSCE that Russia had repeatedly employed irresponsible nuclear rhetoric and coercive signalling, citing the 12 May Sarmat test.",
+"src": [
+[
+"UK Government",
+"https://www.gov.uk/government/speeches/uk-condemns-russias-destabilising-nuclear-rhetoric-and-rs-28-sarmat-missile-signalling-uk-statement-to-the-osce"
+]
+]
+},
+{
+"id": "2026-05-strategic-forces-and-belarus",
+"date": "2026-05-21",
+"group": "russia",
+"type": "exercise",
+"actor": "Russian MoD",
+"title": "Strategic forces and Belarus tactical nuclear exercises",
+"summary": "Russia held large-scale strategic forces exercises; Gerasimov said troops practised delivering nuclear munitions to Russian and Belarusian units.",
+"level": 3,
+"why": "Drill that practised delivering nuclear munitions to Russian and Belarusian units.",
+"src": [
+[
+"Arms Control Today",
+"https://www.armscontrol.org/act/2026-06/news/russia-tests-new-heavy-missile"
+]
+]
+},
+{
+"id": "2026-05-oreshnik-used-again-in-massi",
+"date": "2026-05-24",
+"group": "russia",
+"type": "use",
+"actor": "Russian MoD",
+"title": "Oreshnik used again in massive strike on Ukraine",
+"summary": "Russian news agencies reported Oreshnik, Iskander, Kinzhal and Zircon missiles were used in a large overnight attack; the defence ministry said military command sites, air bases and defence industry were targeted. Zelenskyy said an Oreshnik struck Bila Tserkva in the Kyiv region. The Ukrainian Air Force reported one ballistic missile launched from Kapustin Yar, the Oreshnik launch site, without confirming the type.",
+"level": 5,
+"why": "Reported third combat use of the Oreshnik.",
+"src": [
+[
+"Times of India",
+"https://timesofindia.indiatimes.com/world/europe/russia-launches-hypersonic-oreshnik-iskander-kinzhal-zircon-missiles-in-massive-attack-on-ukraine/articleshow/131290715.cms"
+]
+]
+},
+{
+"id": "2026-09-kaliningrad-warning-to-nato",
+"date": "2026-09-28",
+"group": "russia",
+"type": "statement",
+"actor": "Russian Foreign Ministry",
+"title": "Russia warns NATO over a Kaliningrad blockade",
+"summary": "Russian embassies in Europe and a written message to NATO said Moscow had information that NATO was preparing an air and naval blockade of Kaliningrad, and that Russia would use its entire arsenal to defend the region if NATO tried to isolate it. The embassy in Belgium, which handles contacts with NATO, issued its statement on 28 September; the embassy in Ireland's statement of 29 September named nuclear weapons.",
+"quote": "There should be no mistake — Russia would be ready to use all its arsenal, including nuclear weapons, to defend its territory if NATO countries try to isolate (the) Kaliningrad region from the rest of the country",
+"level": 2,
+"why": "Ties nuclear use to a named NATO action, a blockade of Kaliningrad. No change to forces.",
+"src": [
+[
+"TASS",
+"https://tass.com/politics/2194225"
+],
+[
+"NBC News (AP)",
+"https://www.nbcnews.com/world/russia/putin-says-russia-will-use-weapons-arsenal-territory-attacked-rcna601034"
+]
+]
+},
+{
+"id": "2026-09-nato-denounces-kaliningrad-warning",
+"date": "2026-09-30",
+"group": "west",
+"type": "response",
+"actor": "NATO",
+"title": "NATO denounces Russia's Kaliningrad warning",
+"summary": "NATO spokesperson Allison Hart confirmed Russia had sent a written message and said NATO had replied that it is a defensive alliance whose activities pose no risk to any part of Russia. Secretary General Rutte told Russia to stop the nuclear threats.",
+"src": [
+[
+"NBC News (AP)",
+"https://www.nbcnews.com/world/russia/putin-says-russia-will-use-weapons-arsenal-territory-attacked-rcna601034"
+],
+[
+"Al Jazeera (Reuters)",
+"https://www.aljazeera.com/news/2026/9/30/russia-warns-nato-of-possible-nuclear-response-if-kaliningrad-is-cut-off"
+]
+]
+},
+{
+"id": "2026-10-putin-at-valdai-all-weapons-for-kal",
+"date": "2026-10-01",
+"group": "russia",
+"type": "statement",
+"actor": "Putin",
+"title": "Putin at Valdai: 'all the weapons' if Kaliningrad is attacked",
+"summary": "At the Valdai Discussion Club, Putin called the Foreign Ministry's statement and letters on Kaliningrad entirely justified and said a direct attack on Kaliningrad or other Russian territory would raise the use of all Russia's weapons. He added that neither the letter nor the ministry's statement mentioned nuclear weapons, and that Russia would decide for itself how it would respond.",
+"quote": "If it comes to a direct attack on the Russian Federation – in this case, Kaliningrad, although it could potentially involve other territories as well – the question of Russia using all the weapons at its disposal would inevitably and immediately arise.",
+"level": 2,
+"why": "Conditional threat tied to a named action, an attack on Kaliningrad. No change to forces.",
+"src": [
+[
+"Kremlin",
+"https://web.archive.org/web/20261002164427/http://en.kremlin.ru/events/president/news/80910"
+],
+[
+"Al Jazeera",
+"https://www.aljazeera.com/news/2026/10/1/russias-putin-rules-out-ceasefire-with-ukraine-during-speech-in-moscow"
+]
+]
+}
+];

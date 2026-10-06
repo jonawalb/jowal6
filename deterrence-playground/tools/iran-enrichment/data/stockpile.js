@@ -1,5 +1,795 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1);
-export const LIMIT_KG_U = __m.LIMIT_KG_U;
-export const REPORTS = __m.REPORTS;
-export const RETRIEVED = __m.RETRIEVED;
+// GENERATED by scripts/build_stockpile.py on 2026-09-30. Do not edit by hand.
+// Source: IAEA Director General reports to the Board of Governors on Iran (GOV/ series), derestricted and
+// published at iaea.org. Each figure was checked against the quoted phrase in the report text; `via` marks
+// a PDF taken from the Wayback Machine because iaea.org refused the scripted request; `sha` is the first
+// 12 hex digits of the PDF's SHA-256. Units: kg of uranium (U mass).
+export const RETRIEVED = '2026-09-30';
+export const LIMIT_KG_U = 202.8;
+export const REPORTS = [
+ {
+  "id": "GOV/2016/8",
+  "date": "2016-02-26",
+  "asof": "2016-02-26",
+  "basis": "limit",
+  "url": "https://www.iaea.org/sites/default/files/24/05/gov2016-8.pdf",
+  "sha": "661b10c5b1c0",
+  "note": "has not exceeded 300 kg since Implementation Day",
+  "quotes": []
+ },
+ {
+  "id": "GOV/2016/23",
+  "date": "2016-05-27",
+  "asof": "2016-05-27",
+  "basis": "limit",
+  "url": "https://www.iaea.org/sites/default/files/16/06/gov2016-23.pdf",
+  "sha": "96acfc87d790",
+  "note": "did not exceed 300 kg of UF6 enriched up to 3.67% U-235",
+  "quotes": []
+ },
+ {
+  "id": "GOV/2016/46",
+  "date": "2016-09-08",
+  "asof": "2016-09-08",
+  "basis": "limit",
+  "url": "https://www.iaea.org/sites/default/files/16/09/gov2016-46.pdf",
+  "sha": "c9a7b3fb1f95",
+  "note": "did not exceed 300 kg of UF6 enriched up to 3.67% U-235",
+  "quotes": []
+ },
+ {
+  "id": "GOV/2016/55",
+  "date": "2016-11-09",
+  "asof": "2016-11-09",
+  "basis": "limit",
+  "url": "https://www.iaea.org/sites/default/files/16/11/gov2016-55.pdf",
+  "sha": "ce006cd75645",
+  "note": "did not exceed 300 kg of UF6 enriched up to 3.67% U-235",
+  "quotes": []
+ },
+ {
+  "id": "GOV/2017/10",
+  "date": "2017-02-24",
+  "asof": "2017-02-24",
+  "basis": "limit",
+  "url": "https://www.iaea.org/sites/default/files/gov2017-10.pdf",
+  "sha": "e4ddf6f3a14b",
+  "via": "https://web.archive.org/web/20231008144219id_/https://www.iaea.org/sites/default/files/gov2017-10.pdf",
+  "note": "has not exceeded 300 kg of UF6 enriched up to 3.67% U-235",
+  "quotes": []
+ },
+ {
+  "id": "GOV/2017/35",
+  "date": "2017-08-31",
+  "asof": "2017-08-31",
+  "basis": "limit",
+  "url": "https://www.iaea.org/sites/default/files/gov2017-35.pdf",
+  "sha": "4b352dfa47ac",
+  "via": "https://web.archive.org/web/20240314054023id_/https://www.iaea.org/sites/default/files/gov2017-35.pdf",
+  "note": "has not exceeded 300 kg of UF6 enriched up to 3.67% U-235",
+  "quotes": []
+ },
+ {
+  "id": "GOV/2017/48",
+  "date": "2017-11-13",
+  "asof": "2017-11-13",
+  "basis": "limit",
+  "url": "https://www.iaea.org/sites/default/files/17/11/gov2017-48.pdf",
+  "sha": "eb69edfeec9c",
+  "via": "https://web.archive.org/web/20231008144259id_/https://www.iaea.org/sites/default/files/17/11/gov2017-48.pdf",
+  "note": "has not exceeded 300 kg of UF6 enriched up to 3.67% U-235",
+  "quotes": []
+ },
+ {
+  "id": "GOV/2018/7",
+  "date": "2018-02-22",
+  "asof": "2018-02-12",
+  "basis": "verified",
+  "url": "https://www.iaea.org/sites/default/files/18/03/gov-2018-7-derestricted.pdf",
+  "sha": "733b40f68663",
+  "via": "https://web.archive.org/web/20231008144312id_/https://www.iaea.org/sites/default/files/18/03/gov-2018-7-derestricted.pdf",
+  "lv": {
+   "le367": 109.5
+  },
+  "quotes": [
+   "enriched up to 3.67% U-235 was 109.5 kg"
+  ]
+ },
+ {
+  "id": "GOV/2018/24",
+  "date": "2018-05-24",
+  "asof": "2018-05-14",
+  "basis": "verified",
+  "url": "https://www.iaea.org/sites/default/files/18/06/gov2018-24.pdf",
+  "sha": "8a719762c82e",
+  "lv": {
+   "le367": 123.9
+  },
+  "quotes": [
+   "enriched up to 3.67% U-235 was 123.9 kg"
+  ]
+ },
+ {
+  "id": "GOV/2018/33",
+  "date": "2018-08-30",
+  "asof": "2018-08-18",
+  "basis": "verified",
+  "url": "https://www.iaea.org/sites/default/files/18/09/gov2018-33.pdf",
+  "sha": "a418e1c43c49",
+  "lv": {
+   "le367": 139.4
+  },
+  "quotes": [
+   "enriched up to 3.67% U-235 was 139.4 kg"
+  ]
+ },
+ {
+  "id": "GOV/2018/47",
+  "date": "2018-11-12",
+  "asof": "2018-11-04",
+  "basis": "verified",
+  "url": "https://www.iaea.org/sites/default/files/18/11/gov2018-47.pdf",
+  "sha": "c2f5841d4fda",
+  "lv": {
+   "le367": 149.4
+  },
+  "quotes": [
+   "enriched up to 3.67% U-235 was 149.4 kg"
+  ]
+ },
+ {
+  "id": "GOV/2019/10",
+  "date": "2019-02-22",
+  "asof": "2019-02-16",
+  "basis": "verified",
+  "url": "https://www.iaea.org/sites/default/files/19/03/gov2019-10.pdf",
+  "sha": "885d61c8db83",
+  "lv": {
+   "le367": 163.8
+  },
+  "quotes": [
+   "enriched up to 3.67% U-235 was 163.8 kg"
+  ]
+ },
+ {
+  "id": "GOV/2019/21",
+  "date": "2019-05-31",
+  "asof": "2019-05-20",
+  "basis": "verified",
+  "url": "https://www.iaea.org/sites/default/files/19/06/gov2019-21.pdf",
+  "sha": "eef5098dd126",
+  "lv": {
+   "le367": 174.1
+  },
+  "quotes": [
+   "enriched up to 3.67% U-235 was 174.1 kg"
+  ]
+ },
+ {
+  "id": "GOV/2019/32",
+  "date": "2019-08-30",
+  "asof": "2019-08-19",
+  "basis": "verified",
+  "url": "https://www.iaea.org/sites/default/files/19/09/gov2019-32.pdf",
+  "sha": "52052a2b2b6a",
+  "via": "https://web.archive.org/web/20220522003720id_/https://www.iaea.org/sites/default/files/19/09/gov2019-32.pdf",
+  "total": 241.6,
+  "lv": {
+   "le367": 216.5,
+   "le45": 25.1
+  },
+  "quotes": [
+   "total enriched uranium stockpile was 241.6 kg",
+   "216.5 kg of uranium enriched up to 3.67% U-235",
+   "25.1 kg of uranium enriched up to 4.5% U-235"
+  ]
+ },
+ {
+  "id": "GOV/2019/55",
+  "date": "2019-11-11",
+  "asof": "2019-11-03",
+  "basis": "verified",
+  "url": "https://www.iaea.org/sites/default/files/19/11/gov2019-55.pdf",
+  "sha": "ceb3a356dd28",
+  "via": "https://web.archive.org/web/20240224200004id_/https://www.iaea.org/sites/default/files/19/11/gov2019-55.pdf",
+  "total": 372.3,
+  "lv": {
+   "le367": 212.6,
+   "le45": 159.7
+  },
+  "quotes": [
+   "total enriched uranium stockpile was 372.3 kg",
+   "212.6 kg of uranium enriched up to 3.67% U-235",
+   "159.7 kg of uranium enriched up to 4.5% U-235"
+  ]
+ },
+ {
+  "id": "GOV/2020/5",
+  "date": "2020-03-03",
+  "asof": "2020-02-19",
+  "basis": "verified",
+  "url": "https://www.iaea.org/sites/default/files/20/03/gov2020-5.pdf",
+  "sha": "59363b167360",
+  "via": "https://web.archive.org/web/20230303193006id_/https://www.iaea.org/sites/default/files/20/03/gov2020-5.pdf",
+  "total": 1020.9,
+  "uf6": 996.5,
+  "lv": {
+   "le367": 214.6,
+   "le45": 806.3,
+   "le2of45": 268.5
+  },
+  "quotes": [
+   "was 1020.9 kg",
+   "996.5 kg of uranium in the form of UF6",
+   "comprises 214.6 kg",
+   "806.3 kg of uranium enriched up to 4.5% U-235",
+   "includes 268.5 kg of uranium enriched up to 2% U-235"
+  ]
+ },
+ {
+  "id": "GOV/2020/26",
+  "date": "2020-06-05",
+  "asof": "2020-05-20",
+  "basis": "verified",
+  "url": "https://www.iaea.org/sites/default/files/20/06/gov2020-26.pdf",
+  "sha": "553050131462",
+  "via": "https://web.archive.org/web/20230303180535id_/https://www.iaea.org/sites/default/files/20/06/gov2020-26.pdf",
+  "total": 1571.6,
+  "uf6": 1546.7,
+  "lv": {
+   "le367": 215.1,
+   "le45": 1356.5,
+   "le2of45": 483.1
+  },
+  "quotes": [
+   "was 1571.6 kg",
+   "1546.7 kg of uranium in the form of UF6",
+   "comprises 215.1 kg of uranium enriched up to 3.67%",
+   "1356.5 kg of uranium enriched up to 4.5% U-235",
+   "includes 483.1 kg of uranium enriched up to 2% U-235"
+  ]
+ },
+ {
+  "id": "GOV/2020/41",
+  "date": "2020-09-04",
+  "asof": "2020-08-25",
+  "basis": "verified",
+  "url": "https://www.iaea.org/sites/default/files/20/11/gov2020-41.pdf",
+  "sha": "a775069a77b5",
+  "total": 2105.4,
+  "uf6": 2073.8,
+  "lv": {
+   "le367": 215.1,
+   "le45": 1890.3,
+   "le2of45": 638.8
+  },
+  "quotes": [
+   "was 2105.4 kg",
+   "2073.8 kg of uranium in the form of UF6",
+   "comprises 215.1 kg of uranium enriched up to 3.67%",
+   "1890.3 kg of uranium enriched up to 4.5% U-235",
+   "includes 638.8 kg of uranium enriched up to 2% U-235"
+  ]
+ },
+ {
+  "id": "GOV/2020/51",
+  "date": "2020-11-11",
+  "asof": "2020-11-02",
+  "basis": "verified",
+  "url": "https://www.iaea.org/sites/default/files/20/11/gov2020-51.pdf",
+  "sha": "210a6519df1a",
+  "via": "https://web.archive.org/web/20240311111720id_/https://www.iaea.org/sites/default/files/20/11/gov2020-51.pdf",
+  "total": 2442.9,
+  "uf6": 2408.5,
+  "lv": {
+   "le367": 215.1,
+   "le45": 2227.8,
+   "le2of45": 692.7
+  },
+  "quotes": [
+   "was 2442.9 kg",
+   "2408.5 kg of uranium in the form of UF6",
+   "comprises 215.1 kg of uranium enriched up to 3.67%",
+   "2227.8 kg of uranium enriched up to 4.5% U-235",
+   "includes 692.7 kg of uranium enriched up to 2% U-235"
+  ]
+ },
+ {
+  "id": "GOV/2021/10",
+  "date": "2021-02-23",
+  "asof": "2021-02-16",
+  "basis": "verified",
+  "url": "https://www.iaea.org/sites/default/files/21/03/gov2021-10.pdf",
+  "sha": "de395f003037",
+  "total": 2967.8,
+  "uf6": 2933.1,
+  "lv": {
+   "le2": 1025.5,
+   "le5": 1890.0,
+   "le20": 17.6
+  },
+  "quotes": [
+   "was 2967.8 kg",
+   "2933.1 kg of uranium in the form of UF6",
+   "1025.5kg of uranium enriched up to 2% U-235",
+   "1890.0 kg of uranium enriched between 2% and 5% U-235",
+   "17.6 kg of uranium enriched up to 20% U-235"
+  ]
+ },
+ {
+  "id": "GOV/2021/28",
+  "date": "2021-05-31",
+  "asof": "2021-05-22",
+  "basis": "estimated",
+  "url": "https://www.iaea.org/sites/default/files/21/06/gov2021-28.pdf",
+  "sha": "7e140f1d0cc3",
+  "via": "https://web.archive.org/web/20221027204635id_/https://www.iaea.org/sites/default/files/21/06/gov2021-28.pdf",
+  "total": 3241.0,
+  "uf6": 3206.3,
+  "lv": {
+   "le2": 1367.9,
+   "le5": 1773.2,
+   "le20": 62.8,
+   "le60": 2.4
+  },
+  "quotes": [
+   "uranium stockpile was 3241.0 kg",
+   "in the form of UF6 of 3206.3 kg",
+   "1367.9 kg of uranium enriched up to 2% U-235",
+   "1773.2 kg of uranium enriched up to 5% U-235",
+   "62.8 kg of uranium enriched up to 20% U-235",
+   "2.4 kg of uranium enriched up to 60% U-235"
+  ]
+ },
+ {
+  "id": "GOV/2021/39",
+  "date": "2021-09-07",
+  "asof": "2021-08-30",
+  "basis": "estimated",
+  "url": "https://www.iaea.org/sites/default/files/documents/gov2021-39.pdf",
+  "sha": "cb5ef512e4dd",
+  "total": 2441.3,
+  "uf6": 2372.9,
+  "lv": {
+   "le2": 503.8,
+   "le5": 1774.8,
+   "le20": 84.3,
+   "le60": 10.0
+  },
+  "quotes": [
+   "stockpile was 2441.3 kg",
+   "in the form of UF6 of 2372.9 kg",
+   "503.8 kg of uranium enriched up to 2% U-235",
+   "1774.8 kg of uranium enriched up to 5% U-235",
+   "(+1.6 kg); 84.3 kg",
+   "10.0 kg of uranium enriched up to 60% U-235"
+  ]
+ },
+ {
+  "id": "GOV/2021/51",
+  "date": "2021-11-17",
+  "asof": "2021-11-06",
+  "basis": "estimated",
+  "url": "https://www.iaea.org/sites/default/files/documents/gov2021-51.pdf",
+  "sha": "b9dff0cbc298",
+  "total": 2489.7,
+  "uf6": 2313.4,
+  "lv": {
+   "le2": 559.6,
+   "le5": 1622.3,
+   "le20": 113.8,
+   "le60": 17.7
+  },
+  "quotes": [
+   "stockpile was 2489.7 kg",
+   "in the form of UF6 of 2313.4 kg",
+   "559.6 kg of uranium enriched up to 2% U-235",
+   "1622.3 kg of uranium enriched up to 5% U-235",
+   "113.8 kg of uranium enriched up to 20% U-235",
+   "17.7 kg of uranium enriched up to 60% U-235"
+  ]
+ },
+ {
+  "id": "GOV/2022/4",
+  "date": "2022-03-03",
+  "asof": "2022-02-19",
+  "basis": "estimated",
+  "url": "https://www.iaea.org/sites/default/files/22/03/gov2022-4.pdf",
+  "sha": "693e27cb1419",
+  "via": "https://web.archive.org/web/20240224200004id_/https://www.iaea.org/sites/default/files/22/03/gov2022-4.pdf",
+  "total": 3197.1,
+  "uf6": 2883.2,
+  "lv": {
+   "le2": 1390,
+   "le5": 1277.9,
+   "le20": 182.1,
+   "le60": 33.2
+  },
+  "quotes": [
+   "stockpile was 3197.1 kg",
+   "in the form of UF6 of 2883.2 kg",
+   "1390 kg of uranium enriched up to 2% U-235",
+   "1277.9 kg of uranium enriched up to 5% U-235",
+   "182.1 kg of uranium enriched up to 20% U-235",
+   "33.2 kg of uranium enriched up to 60% U-235"
+  ]
+ },
+ {
+  "id": "GOV/2022/24",
+  "date": "2022-05-30",
+  "asof": "2022-05-15",
+  "basis": "estimated",
+  "url": "https://www.iaea.org/sites/default/files/22/06/gov2022-24.pdf",
+  "sha": "6e546d29c5b5",
+  "total": 3809.3,
+  "uf6": 3491.8,
+  "lv": {
+   "le2": 2154.4,
+   "le5": 1055.9,
+   "le20": 238.4,
+   "le60": 43.1
+  },
+  "quotes": [
+   "stockpile was 3809.3 kg",
+   "in the form of UF6 of 3491.8 kg",
+   "2154.4 kg of uranium enriched up to 2% U-235",
+   "1055.9 kg of uranium enriched up to 5% U-235",
+   "238.4 kg of uranium enriched up to 20% U-235",
+   "43.1 kg of uranium enriched up to 60% U-235"
+  ]
+ },
+ {
+  "id": "GOV/2022/39",
+  "date": "2022-09-07",
+  "asof": "2022-08-21",
+  "basis": "estimated",
+  "url": "https://www.iaea.org/sites/default/files/documents/gov2022-39.pdf",
+  "sha": "ca68d9c2a3d0",
+  "total": 3940.9,
+  "uf6": 3621.3,
+  "lv": {
+   "le2": 2519.9,
+   "le5": 713.9,
+   "le20": 331.9,
+   "le60": 55.6
+  },
+  "quotes": [
+   "stockpile was 3940.9 kg",
+   "in the form of UF6 of 3621.3 kg",
+   "2519.9 kg of uranium enriched up to 2% U-235",
+   "713.9 kg of uranium enriched up to 5% U-235",
+   "331.9 kg of uranium enriched up to 20% U-235",
+   "55.6 kg of uranium enriched up to 60% U-235"
+  ]
+ },
+ {
+  "id": "GOV/2022/62",
+  "date": "2022-11-10",
+  "asof": "2022-10-22",
+  "basis": "estimated",
+  "url": "https://www.iaea.org/sites/default/files/documents/gov2022-62.pdf",
+  "sha": "475e3bb1ac16",
+  "total": 3673.7,
+  "uf6": 3323.1,
+  "lv": {
+   "le2": 1844.5,
+   "le5": 1029.9,
+   "le20": 386.4,
+   "le60": 62.3
+  },
+  "quotes": [
+   "stockpile was 3673.7 kg",
+   "in the form of UF6 of 3323.1 kg",
+   "1844.5 kg of uranium enriched up to 2% U-235",
+   "1029.9 kg of uranium enriched up to 5% U-235",
+   "386.4 kg of uranium enriched up to 20% U-235",
+   "62.3 kg of uranium enriched up to 60% U-235"
+  ]
+ },
+ {
+  "id": "GOV/2023/8",
+  "date": "2023-02-28",
+  "asof": "2023-02-12",
+  "basis": "estimated",
+  "url": "https://www.iaea.org/sites/default/files/gov2023-8.pdf",
+  "sha": "98984b6754d6",
+  "total": 3760.8,
+  "uf6": 3402.0,
+  "lv": {
+   "le2": 1555.3,
+   "le5": 1324.5,
+   "le20": 434.7,
+   "le60": 87.5
+  },
+  "quotes": [
+   "stockpile was 3760.8 kg",
+   "in the form of UF6 of 3402.0 kg",
+   "1555.3 kg of uranium enriched up to 2% U-235",
+   "1324.5 kg of uranium enriched up to 5% U-235",
+   "434.7 kg of uranium enriched up to 20% U-235",
+   "87.5 kg of uranium enriched up to 60% U-235"
+  ]
+ },
+ {
+  "id": "GOV/2023/24",
+  "date": "2023-05-31",
+  "asof": "2023-05-13",
+  "basis": "estimated",
+  "url": "https://www.iaea.org/sites/default/files/23/06/gov2023-24.pdf",
+  "sha": "d34af3150857",
+  "via": "https://web.archive.org/web/20240226200033id_/https://www.iaea.org/sites/default/files/23/06/gov2023-24.pdf",
+  "total": 4744.5,
+  "uf6": 4384.8,
+  "lv": {
+   "le2": 2459.6,
+   "le5": 1340.2,
+   "le20": 470.9,
+   "le60": 114.1
+  },
+  "quotes": [
+   "stockpile was 4744.5 kg",
+   "in the form of UF6 of 4384.8 kg",
+   "2459.6 kg of uranium enriched up to 2% U-235",
+   "1340.2 kg of uranium enriched up to 5% U-235",
+   "470.9 kg of uranium enriched up to 20% U-235",
+   "114.1 kg of uranium enriched up to 60% U-235"
+  ]
+ },
+ {
+  "id": "GOV/2023/39",
+  "date": "2023-09-04",
+  "asof": "2023-08-19",
+  "basis": "estimated",
+  "url": "https://www.iaea.org/sites/default/files/documents/gov2023-39.pdf",
+  "sha": "8fd87e64717d",
+  "total": 3795.5,
+  "uf6": 3441.3,
+  "lv": {
+   "le2": 833.0,
+   "le5": 1950.9,
+   "le20": 535.8,
+   "le60": 121.6
+  },
+  "quotes": [
+   "was 3795.5 kg",
+   "in the form of UF6 of 3441.3 kg",
+   "833.0 kg of uranium enriched up to 2% U-235",
+   "1950.9 kg of uranium enriched up to 5% U-235",
+   "535.8 kg of uranium enriched up to 20% U-235",
+   "121.6 kg of uranium enriched up to 60% U-235"
+  ]
+ },
+ {
+  "id": "GOV/2023/57",
+  "date": "2023-11-15",
+  "asof": "2023-10-28",
+  "basis": "estimated",
+  "url": "https://www.iaea.org/sites/default/files/documents/gov2023-57.pdf",
+  "sha": "de742112a703",
+  "total": 4486.8,
+  "uf6": 4130.7,
+  "lv": {
+   "le2": 1217.2,
+   "le5": 2218.1,
+   "le20": 567.1,
+   "le60": 128.3
+  },
+  "quotes": [
+   "stockpile was 4486.8 kg",
+   "in the form of UF6 of 4130.7kg",
+   "1217.2 kg of uranium enriched up to 2% U-235",
+   "2218.1 kg of uranium enriched up to 5% U-235",
+   "567.1 kg of uranium enriched up to 20% U-235",
+   "128.3 kg of uranium enriched up to 60% U-235"
+  ]
+ },
+ {
+  "id": "GOV/2024/7",
+  "date": "2024-02-26",
+  "asof": "2024-02-10",
+  "basis": "estimated",
+  "url": "https://www.iaea.org/sites/default/files/24/03/gov2024-7.pdf",
+  "sha": "f97ef5b4b960",
+  "via": "https://web.archive.org/web/20240406144124id_/https://www.iaea.org/sites/default/files/24/03/gov2024-7.pdf",
+  "total": 5525.5,
+  "uf6": 5164.5,
+  "lv": {
+   "le2": 1934.0,
+   "le5": 2396.8,
+   "le20": 712.2,
+   "le60": 121.5
+  },
+  "quotes": [
+   "stockpile was 5525.5 kg",
+   "in the form of UF6 of 5164.5 kg",
+   "1934.0 kg of uranium enriched up to 2% U-235",
+   "2396.8 kg of uranium enriched up to 5% U-235",
+   "712.2 kg of uranium enriched up to 20% U-235",
+   "121.5 kg of uranium enriched up to 60% U-235"
+  ]
+ },
+ {
+  "id": "GOV/2024/26",
+  "date": "2024-05-27",
+  "asof": "2024-05-11",
+  "basis": "estimated",
+  "url": "https://www.iaea.org/sites/default/files/24/06/gov2024-26.pdf",
+  "sha": "51d1c3ce662b",
+  "total": 6201.3,
+  "uf6": 5841.3,
+  "lv": {
+   "le2": 2571.0,
+   "le5": 2376.9,
+   "le20": 751.3,
+   "le60": 142.1
+  },
+  "quotes": [
+   "stockpile was 6201.3 kg",
+   "in the form of UF6 of 5841.3 kg",
+   "2571.0 kg of uranium enriched up to 2% U-235",
+   "2376.9 kg of uranium enriched up to 5% U-235",
+   "751.3 kg of uranium enriched up to 20% U-235",
+   "142.1 kg of uranium enriched up to 60% U-235"
+  ]
+ },
+ {
+  "id": "GOV/2024/41",
+  "date": "2024-08-29",
+  "asof": "2024-08-17",
+  "basis": "estimated",
+  "url": "https://www.iaea.org/sites/default/files/documents/gov2024-41.pdf",
+  "sha": "65acda77a299",
+  "total": 5751.8,
+  "uf6": 4951.1,
+  "lv": {
+   "le2": 1651.0,
+   "le5": 2321.5,
+   "le20": 813.9,
+   "le60": 164.7
+  },
+  "quotes": [
+   "stockpile was 5751.8 kg",
+   "form of UF6 of 4951.1 kg",
+   "1651.0 kg of uranium enriched up to 2% U-235",
+   "2321.5 kg of uranium enriched up to 5% U-235",
+   "813.9 kg of uranium enriched up to 20% U-235",
+   "164.7 kg of uranium enriched up to 60% U-235"
+  ]
+ },
+ {
+  "id": "GOV/2024/61",
+  "date": "2024-11-19",
+  "asof": "2024-10-26",
+  "basis": "estimated",
+  "url": "https://www.iaea.org/sites/default/files/24/11/gov2024-61.pdf",
+  "sha": "f96fbfe1e9e6",
+  "total": 6604.4,
+  "uf6": 5807.2,
+  "lv": {
+   "le2": 2190.9,
+   "le5": 2594.8,
+   "le20": 839.2,
+   "le60": 182.3
+  },
+  "quotes": [
+   "stockpile was 6604.4 kg",
+   "form of UF6 of 5807.2 kg",
+   "2190.9 kg of uranium enriched up to 2% U-235",
+   "2594.8 kg of uranium enriched up to 5% U-235",
+   "839.2 kg of uranium enriched up to 20% U-235",
+   "182.3 kg of uranium enriched up to 60% U-235"
+  ]
+ },
+ {
+  "id": "GOV/2025/8",
+  "date": "2025-02-26",
+  "asof": "2025-02-08",
+  "basis": "estimated",
+  "url": "https://www.iaea.org/sites/default/files/25/03/gov2025-8.pdf",
+  "sha": "29c5be5b34b3",
+  "total": 8294.4,
+  "uf6": 7464.0,
+  "lv": {
+   "le2": 2927.0,
+   "le5": 3655.4,
+   "le20": 606.8,
+   "le60": 274.8
+  },
+  "quotes": [
+   "stockpile was 8294.4 kg",
+   "form of UF6 of 7464.0 kg",
+   "2927.0 kg of uranium enriched up to 2% U-235",
+   "3655.4 kg of uranium enriched up to 5% U-235",
+   "606.8 kg of uranium enriched up to 20% U-235",
+   "274.8 kg of uranium enriched up to 60% U-235"
+  ]
+ },
+ {
+  "id": "GOV/2025/24",
+  "date": "2025-05-31",
+  "asof": "2025-05-17",
+  "basis": "estimated",
+  "url": "https://www.iaea.org/sites/default/files/25/06/gov2025-24.pdf",
+  "sha": "b2b158439b3e",
+  "total": 9247.6,
+  "uf6": 8413.3,
+  "lv": {
+   "le2": 2221.4,
+   "le5": 5508.8,
+   "le20": 274.5,
+   "le60": 408.6
+  },
+  "quotes": [
+   "stockpile was 9247.6 kg",
+   "of UF6 of 8413.3 kg",
+   "2221.4 kg of uranium enriched up to 2% U-235",
+   "5508.8 kg of uranium enriched up to 5% U-235",
+   "274.5 kg of uranium enriched up to 20% U-235",
+   "408.6 kg of uranium enriched up to 60% U-235"
+  ]
+ },
+ {
+  "id": "GOV/2025/50",
+  "date": "2025-09-03",
+  "asof": "2025-06-13",
+  "basis": "estimated",
+  "url": "https://www.iaea.org/sites/default/files/documents/gov2025-50.pdf",
+  "sha": "4a1278aeb1ad",
+  "total": 9874.9,
+  "uf6": 9040.5,
+  "lv": {
+   "le2": 2391.1,
+   "le5": 6024.4,
+   "le20": 184.1,
+   "le60": 440.9
+  },
+  "note": "not in a position to quantify Iran's enriched uranium stockpile with the same confidence and accuracy as before or to determine its whereabouts",
+  "quotes": [
+   "stockpile was 9874.9 kg",
+   "of UF6 of 9040.5 kg",
+   "2391.1 kg of uranium enriched up to 2% U-235",
+   "6024.4 kg of uranium enriched up to 5% U-235",
+   "184.1 kg of uranium enriched up to 20% U-235",
+   "440.9 kg of uranium enriched up to 60% U-235"
+  ]
+ },
+ {
+  "id": "GOV/2025/65",
+  "date": "2025-11-12",
+  "asof": "2025-11-12",
+  "basis": "unknown",
+  "url": "https://www.iaea.org/sites/default/files/gov2025-65.pdf",
+  "sha": "ceda8490352a",
+  "note": "has lost continuity of knowledge in relation to the previously declared inventories of nuclear material in Iran at the affected facilities, including LEU and HEU",
+  "quotes": []
+ },
+ {
+  "id": "GOV/2026/8",
+  "date": "2026-02-27",
+  "asof": "2026-02-27",
+  "basis": "unknown",
+  "url": "https://www.iaea.org/sites/default/files/gov2026-8.pdf",
+  "sha": "3ea371d7b86e",
+  "note": "cannot provide any information on the current size, composition or whereabouts of the stockpile of enriched uranium in Iran",
+  "quotes": []
+ },
+ {
+  "id": "GOV/2026/33",
+  "date": "2026-06-04",
+  "asof": "2026-06-04",
+  "basis": "unknown",
+  "url": "https://www.iaea.org/sites/default/files/gov2026-33.pdf",
+  "sha": "d07baba36bf8",
+  "note": "cannot provide any information on the current size, composition or whereabouts of the stockpile of enriched uranium in Iran",
+  "quotes": []
+ },
+ {
+  "id": "GOV/2026/50",
+  "date": "2026-09-01",
+  "asof": "2026-09-01",
+  "basis": "unknown",
+  "url": "https://www.iaea.org/sites/default/files/gov2026-50.pdf",
+  "sha": "325127e81d4f",
+  "note": "cannot provide any information on the current size, composition or whereabouts of the stockpile of enriched uranium in Iran",
+  "quotes": []
+ }
+];

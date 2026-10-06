@@ -1,3 +1,27 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "5O37GJE08uSK1CR7BDNYOmoSP+Gvzq62rVCGBu9YhqB5nB6nSJmiDMwrFsAWCU91jyydD6a7rI+0tBi3z3i1uHmNrpDzbXuK6VcQ5yyj6Yyo1MlQ7R151x1bqrL7am8NXr6Fy8LA9Gu/OFsClHxzfNSmnxjokSB3r6T9EOQV42wm09tZycOtq0HIl6nnqbfPGNNZzx+V2BTCYRrHtPn2EQxQPsfaLzmOweMMj5Hfllqi/aod3Eh7RaMY0s3HzUVb9U10yX04AsNQjm9D5DFUJ4roAM7QGLFKPk8XA5oFmogwVKkIFqAgKSQaoNtkJU4Ybr2HLdclz3zZ6ghXffKoR71lQbeHTfZheoLgQg2tevK6/BWO6zVjhsei3H2JKZEBr30Sb9CyczhVWbphfA/qO2qMXms2EloMse9AhFPGlUwCN+Ur5+BN/ckTnDTvuz7li/MkQAaE0byaOn4SnHvVBI3SapvFMrRobQgdAYWi1dkvf0S7l0jUBrrOSimtpwPNM/aR6upr1HW+mhvVFNJqb3LSZiTZnEqZyawk4FXpMmSzA6TpPueCPyjRw0Z7KfysHLQe2rTFIgl1AITaqtZJk4EnqFbUJbWh44GPMldOAqwt/IAmaO595Jd5NZkVG0tcIjc6lUhyT9ijwZa+3tcWyObKqkrXd5M2PG0ysti19OaXkMAsWstuZlrdKMNSc0Iy6CK/k51/ccMhxECbFmtpopI8Rfhk5aFzqQBcgxxy3maBu8q3lyKAX7gBRkHgOpXac5F1ixfykRBxHAriBfzOnsjXPvwVQXwQt27Hb302sg0+jS5j6Uv2pDjZq5RvztAaetM9NhSmz3nTyWVlM3BnT8vIV2IrecAua71ihdKDcxOXkJf2rvw+ZevhDxOIPESlTsCJMOzOn9Si1eKY20oeYHeu2j7+GcGCh4lRBbelVu6gPsIUr40DynGmncKD0237iIKM+KCrZPjTqfI2I3qZ1aLRQ5CXdVqDm0y648iyLVrKgqLY8rcE7qMOL9nAt2l8xv8sN0iH453Oa/OK+KYKSjHBmOQwG349TR1WekwQNr1SLFLr7U0wBzgkHYtz5E5JZ3ofVeVNol0XvVVH8W6pvOB0Lnd1Y9GXl8Vb0ZNLIr/611n7k5SCMznHLVh0h9BvJS+uxeJ3XJe/E/4cEIQTO4bSKnUWTmJK5B4923OtJPm/cq43xbN2G14cxzLwCED6Lu90EixUw+arC+Lt4QZrg2NldCC5dS2hnnm1USzpVVgnzVMQ8QBr9PFgAWd7yhsK63TbJbOEtvgjW+8j7MYVLEtHmsyzC4WLHS9wNz66EVP4G2GTMpufKCZgUHwcS1UXSbYhMZyD+O/SLHnKPSfr8g5/HLD7bq5wnAK1rW7QaascB9SvCCHw1dN9glSxm0jUXdq4uFqNyqB/DiQdGnT9VBmIT/XUck7yFS2dBWWQXEQnPAoLrNdNEcG44l9iYyXgYpnm4IBirCUP3LtG0qQZKCl9pANQh1rHcyfvCOf0sobHsr4W7KkZPoQk7RSPsyQWz5WnX10dfkjCW7do0Gq8I5Eia+f07TC409UUnFxQIzrEI5gV0nNCC/sR28/NYvgLg+WFq0SRJMge+USlY+TvdegFrimkEFRMG4qFuzKuVKF1yjWUhb5jCV/KI58w7G0kfp+MMjBDqyFR6HFX0fkHOXUfA2frTXWzfZ06+cYkkTqsSwbrY5SoFSjZxf5AzdQkWAKTiHkd9rC2gacFViferGmr3uAJlfkPWmQoihwSaeqfPjMT4bRcfT/jLbl6FGrO1+m52L/SpDIRoQS5ASlNsh82ppL9y3AXOP/fNKrvvpwgz4n2gxIoue4ZVkQD", 1);
-export const LEARN_TERMS = __m.LEARN_TERMS;
+// The glossary terms shown on each model's "Words you need" learn page: the ones a reader needs for that
+// model's sliders and figures. Names must match `term` in data/primers-a.js / primers-b.js exactly; the
+// remaining terms stay available behind the page's "More terms" toggle. Order on the page follows the primer.
+
+export const LEARN_TERMS = {
+  fearon95: ['The issue, 0 to 1', 'p', 'Cost of war, c<sub>A</sub> and c<sub>B</sub>', 'Bargaining range', 'r',
+    'Take-it-or-leave-it demand, x*', 'c̄ (c-bar)', 'First-strike advantage, p<sub>f</sub> and p<sub>s</sub>',
+    'Preventive war, p<sub>1</sub> and p<sub>2</sub>', 'Indivisible issue, k steps, lottery'],
+  powell06: ['Flow of benefits, the pie', 'Discount factor, δ', 'p', 'Δ (delta)', 'd', 'Condition (1)',
+    'f, first-strike advantage', 'x̄, p(x̄), J', 'x<sub>t</sub> − x̄ and c<sub>2</sub>', 'Faction, r, r′, λ'],
+  brink: ['Stand firm / submit', 'Payoffs, c and s', 'Mixed strategy', 'Critical risk', 'f, each escalation step',
+    'Resolve, R', 'Type, irresolute II and resolute II′', 'p (hidden-resolve part)', 'b*', 'q<sub>I</sub>'],
+  fearon94: ['Time t', 'Prize, v', 'Audience costs', 'Audience-cost rate, a<sub>1</sub> and a<sub>2</sub>',
+    'Value for war, w<sub>i</sub>, and “resolve”', 'W<sub>1</sub> and W<sub>2</sub>', 'Locked in', 'Horizon, t*', 'k/v'],
+  jervis78: ['CC, DC, DD, CD', 'Stag Hunt', 'Prisoner’s Dilemma', 'q (your estimate that the other cooperates)',
+    'Expected value of C and of D', 'Trust needed, q*', 'Wait and see (moving second)', 'Repeated play and δ',
+    'Offense-defense balance', 'Offense-defense differentiation (distinguishable postures)'],
+  kydd00: ['Type: nice or mean', 'R (reward)', 'T (temptation)', 'S (sucker’s payoff)', 'Trust (p<sub>2</sub>)',
+    'p* (trust-game threshold)', 'Gesture size (α)', 'Lower bound: mean type won’t fake it',
+    'Upper bound: nice type will risk it', 'p<sub>2</sub>*<sup>M</sup> (upper bound on trust)'],
+  slantchev03: ['Military position (k)', 'N (military objectives)', 'Starting position (k<sub>0</sub>)', 'p (battle odds)',
+    'δ (discount factor)', 'b<sub>1</sub>, b<sub>2</sub> (payoff while fighting)', 'Fight to the finish',
+    'Offer x<sub>k</sub> and 1 − y<sub>k</sub>', 'Type: weak, moderate, strong', 'q<sub>w</sub>, q<sub>s</sub> (prior)'],
+  rubinstein82: ['Pie', 'Alternating offers', 'Discount factor (δ<sub>1</sub>, δ<sub>2</sub>)',
+    'Fixed bargaining cost (c<sub>1</sub>, c<sub>2</sub>)', 'M (player 1’s share)', '2’s offer if 2 moved first',
+    'First-mover advantage', 'Indeterminate (many equilibria)'],
+};

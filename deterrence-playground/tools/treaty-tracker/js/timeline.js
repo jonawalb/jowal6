@@ -12,6 +12,7 @@ export const KINDS = [
   { id: 'notice', name: 'Notice, extension or statement', color: 'var(--c1)' },
 ];
 const MAX_LANES = 6;
+const NARROW = { ccm: 'CCM' }; // row labels that do not fit the narrow left margin
 const kindOf = k => (['extension', 'statement', 'notice'].includes(k) ? 'notice' : k);
 const NS = 'http://www.w3.org/2000/svg';
 const mk = (tag, attrs = {}, parent) => {
@@ -73,7 +74,7 @@ export function createTimeline(host, { onYear, onEvent }) {
     rows.forEach(rw => {
       const base = top + rw.h - 10;
       mk('line', { class: 'row', x1: m.l, x2: m.l + pw, y1: base, y2: base }, svg);
-      mk('text', { class: 'rl', x: m.l - 8, y: base + 4, 'text-anchor': 'end' }, svg).textContent = T[rw.tid].short;
+      mk('text', { class: 'rl', x: m.l - 8, y: base + 4, 'text-anchor': 'end' }, svg).textContent = narrow && T[rw.tid].short.length > 10 ? (NARROW[rw.tid] || T[rw.tid].short.slice(0, 9) + '.') : T[rw.tid].short;
       rw.items.forEach(({ e, cx, lane }) => {
         const who = e.state ? stateName(e.state) : 'All parties';
         const g = mk('g', { class: 'ev' + (state.ev === e.id ? ' on' : ''), tabindex: 0, role: 'button', 'aria-label': `${dateText(e.date)}, ${T[e.treaty].short}: ${e.title}`, 'data-id': e.id }, svg);

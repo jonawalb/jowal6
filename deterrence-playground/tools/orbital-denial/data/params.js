@@ -1,18 +1,88 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1);
-export const ACTIONS_PER_TURN = __m.ACTIONS_PER_TURN;
-export const ANCHORS = __m.ANCHORS;
-export const BACKGROUND = __m.BACKGROUND;
-export const BG_MASS = __m.BG_MASS;
-export const CRISIS_TURNS = __m.CRISIS_TURNS;
-export const DEBRIS0 = __m.DEBRIS0;
-export const DT = __m.DT;
-export const MISSIONS = __m.MISSIONS;
-export const MISSION_KEYS = __m.MISSION_KEYS;
-export const P = __m.P;
-export const PDEF = __m.PDEF;
-export const R_EARTH = __m.R_EARTH;
-export const SHELLS = __m.SHELLS;
-export const SHELL_KEYS = __m.SHELL_KEYS;
-export const STOCKS = __m.STOCKS;
-export const TURNS = __m.TURNS;
+// Orbital Denial: every model parameter. `src` names a key in sources.js; no `src` means NOTIONAL.
+// Sourced values: NASA standard breakup model (Johnson et al. 2001, as printed in ODQN 15-4), the 45% catastrophic
+// share (Kessler et al. 2010), shell lifetimes fitted to the Cosmos 1408 (ODQN 28-2) and Fengyun-1C (ODQN 26-4)
+// clouds, and the 10 km/s typical LEO impact speed (Kessler et al. 2010). Everything else is notional.
+
+export const TURNS = 10;          // one turn = one month
+export const CRISIS_TURNS = 3;    // months 1-3 crisis, 4-10 war
+export const DT = 1 / 12;         // years per turn
+export const ACTIONS_PER_TURN = 2;
+
+// Orbital shells. Altitudes are the two historical anchors; MEO and GEO are drawn schematically.
+export const SHELLS = {
+  low:  { name: 'Low LEO', alt: 450, tau: 0.83, v: 10, band: 100 },
+  high: { name: 'High LEO', alt: 850, tau: 70, v: 10, band: 100 },
+  meo:  { name: 'MEO', alt: 20000, tau: Infinity, v: 1, band: 100 },
+  geo:  { name: 'GEO', alt: 35786, tau: Infinity, v: 0.5, band: 100 },
+};
+export const SHELL_KEYS = ['low', 'high', 'meo', 'geo'];
+export const R_EARTH = 6378;
+
+// Missions: each side flies one constellation per mission, in one shell.
+export const MISSIONS = {
+  isr: { name: 'Reconnaissance (ISR)', short: 'ISR', shell: 'low', n0: 6, need: 6, mass: 2000, w: 0.35 },
+  com: { name: 'Communications', short: 'Comms', shell: 'high', n0: 24, need: 16, mass: 500, w: 0.30 },
+  nav: { name: 'Navigation', short: 'Nav', shell: 'meo', n0: 24, need: 18, mass: 1500, w: 0.25 },
+  ew:  { name: 'Early warning and nuclear command', short: 'Warning/NC3', shell: 'geo', n0: 4, need: 3, mass: 3000, w: 0.10, entangled: true },
+};
+export const MISSION_KEYS = ['isr', 'com', 'nav', 'ew'];
+
+// Everyone else's satellites (commercial, civil, other states) and the pre-war fragment population, per shell.
+export const BACKGROUND = { low: 1500, high: 1000, meo: 60, geo: 300 };
+export const BG_MASS = 300;
+export const DEBRIS0 = { low: 1000, high: 3000, meo: 50, geo: 100 };
+
+// Each side's stocks for the whole game.
+export const STOCKS = { asat: 6, coorb: 3, maneuver: 4, reconst: 3, prolif: 2 };
+
+// All tunable coefficients, listed on the page.
+export const P = [
+  { k: 'sbmA', v: 0.1, t: 'Breakup model: fragments ≥ Lc = A · M^0.75 · Lc^−1.71, coefficient A', u: '', src: 'krisko2011' },
+  { k: 'sbmB', v: 0.75, t: 'Breakup model: mass exponent', u: '', src: 'krisko2011' },
+  { k: 'sbmC', v: 1.71, t: 'Breakup model: size exponent', u: '', src: 'krisko2011' },
+  { k: 'lcTrack', v: 0.10, t: 'Size of a "trackable" fragment (Lc)', u: 'm', note: '10 cm, the usual catalog threshold; the ODQN counts FY-1C "large debris (most larger than 10 cm)"', src: 'odqn12_1' },
+  { k: 'kvMass', v: 20, t: 'Interceptor mass added to the target in the breakup model', u: 'kg', note: 'the model sums target and projectile mass' },
+  { k: 'fragMult', v: 1, t: 'Fragment multiplier on the breakup model', u: '×', note: '1 matches Cosmos 1408; about 4 matches Fengyun-1C (see calibration)' },
+  { k: 'coorbFrac', v: 0.05, t: 'Co-orbital kill: share of a full breakup', u: '', note: 'a low-debris kill such as a grapple or close-range disable' },
+  { k: 'stayShare', v: 0.75, t: 'Share of fragments staying in the target\'s shell', u: '', note: 'the rest scatter to the other LEO shell or out of the model' },
+  { k: 'pCat', v: 0.45, t: 'Share of debris strikes that are catastrophic', u: '', src: 'kessler2010', note: 'LEGEND: 45% catastrophic, 55% non-catastrophic' },
+  { k: 'sigma', v: 10, t: 'Satellite cross-section', u: 'm²' },
+  { k: 'smallRatio', v: 51.3, t: 'Fragments ≥1 cm per fragment ≥10 cm', u: '×', src: 'krisko2011', note: '10^1.71 from the breakup model; FY-1C gives about 58 (150,000 / 2,600, ODQN 12-1)' },
+  { k: 'pSmallKill', v: 0.2, t: 'Chance a 1–10 cm strike ends a satellite\'s mission', u: '' },
+  { k: 'freshK', v: 3, t: 'Extra hazard from a fresh, still-concentrated cloud', u: '×', note: 'ODQN 11-2: the cloud starts as a disk and disperses within the year' },
+  { k: 'freshTau', v: 0.33, t: 'Time for a fresh cloud to disperse', u: 'yr' },
+  { k: 'pAsat', v: 0.8, t: 'Direct-ascent intercept succeeds', u: '' },
+  { k: 'pCoorb', v: 0.7, t: 'Co-orbital attack succeeds', u: '' },
+  { k: 'ssaDep', v: 0.5, t: 'Share of attack accuracy that depends on the attacker\'s own reconnaissance', u: '', note: 'CSIS 2025: many counterspace weapons depend on space awareness and intelligence to find targets', src: 'csis2025' },
+  { k: 'manFactor', v: 0.5, t: 'Maneuvering multiplies hit chance and debris hazard by', u: '×' },
+  { k: 'jamLo', v: 0.25, t: 'Jamming: lowest effect on a mission this month', u: '' },
+  { k: 'jamHi', v: 0.5, t: 'Jamming: highest effect', u: '' },
+  { k: 'dazLo', v: 0.3, t: 'Dazzling: lowest effect on reconnaissance', u: '' },
+  { k: 'dazHi', v: 0.55, t: 'Dazzling: highest effect', u: '' },
+  { k: 'dazDamage', v: 0.1, t: 'Dazzling permanently damages one satellite', u: '', note: 'CSIS: dazzlers "may also unintentionally damage" a satellite', src: 'csis2025' },
+  { k: 'pCyber', v: 0.5, t: 'Cyber attack succeeds', u: '' },
+  { k: 'cyberEff', v: 0.5, t: 'Cyber: effect for this month and next', u: '' },
+  { k: 'hardFactor', v: 0.5, t: 'Backups multiply reversible effects by', u: '×' },
+  { k: 'h0Crisis', v: 0.002, t: 'Escalation hazard per crisis month, before any action', u: '' },
+  { k: 'h0War', v: 0.004, t: 'Escalation hazard per war month, before any action', u: '' },
+  { k: 'wRev', v: 0.0008, t: 'Hazard per jamming or dazzling action', u: '' },
+  { k: 'wCyber', v: 0.0012, t: 'Hazard per cyber action', u: '' },
+  { k: 'wAsat', v: 0.012, t: 'Hazard per direct-ascent shot', u: '' },
+  { k: 'wCoorb', v: 0.010, t: 'Hazard per co-orbital attack', u: '' },
+  { k: 'entangle', v: 6, t: 'Multiplier when the target is early warning or nuclear command', u: '×', note: 'Acton 2018 names the mechanism; the size is notional' },
+  { k: 'phi', v: 1.5, t: 'Fog: hazard × (1 + φ · the target side\'s lost warning and ISR)', u: '', note: 'same form as the Nuclear Entanglement tool' },
+  { k: 'firstKill', v: 2, t: 'Multiplier on the first destructive attack of the game', u: '×' },
+  { k: 'theta', v: 0.5, t: 'Advantage needed to call the war for one side', u: '' },
+  { k: 'crisisW', v: 0.2, t: 'Weight of a crisis month in the advantage tally', u: '' },
+];
+export const PDEF = Object.fromEntries(P.map(p => [p.k, p.v]));
+
+// Sourced calibration anchors (see sources.js and METHOD.md).
+export const ANCHORS = {
+  fy1c: { name: 'Fengyun-1C (2007)', mass: 960, alt: '845 × 865 km', src: 'odqn11_2',
+    counts: [[0.17, 1200, 'odqn11_2'], [0.97, 2317, 'odqn12_1'], [3.7, 3037, 'odqn14_4'], [15.3, 3532, 'odqn26_4']],
+    onOrbit: [[15.3, 2837, 'odqn26_4']] },
+  c1408: { name: 'Cosmos 1408 (2021)', mass: 1750, alt: '490 × 465 km', src: 'odqn26_1',
+    counts: [[0, 1500, 'usspacecom2021'], [0.31, 1604, 'odqn26_1'], [0.46, 1760, 'odqn26_4'], [2.2, 1805, 'odqn28_2']],
+    onOrbit: [[0.46, 990, 'odqn26_4']] },
+};

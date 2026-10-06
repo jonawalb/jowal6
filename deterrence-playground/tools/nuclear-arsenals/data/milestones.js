@@ -1,3 +1,60 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1);
-export const MILESTONES = __m.MILESTONES;
+// Arms-control milestones overlaid on the timeline. Every URL was opened on 2026-09-29 and says what the text claims.
+// Primary sources first (treaty depositary / State Department / Office of the Historian / Kremlin / White House
+// archive / CTBTO). Arms Control Association fact sheets are secondary and labelled "ACA".
+// Some state.gov archive pages refuse bare bot user agents; they load normally in a browser.
+export const MILESTONES = [
+  { id: 'npt', year: 1970, short: 'NPT', label: 'Nuclear Non-Proliferation Treaty',
+    when: 'Signed July 1, 1968 · in force March 5, 1970',
+    text: 'Opened for signature in Washington, London and Moscow in 1968 and in force from March 5, 1970. It was extended indefinitely on May 11, 1995. UNODA counts 191 states parties, including the five nuclear-weapon states.',
+    src: [
+      { t: 'State Dept. treaty record', url: 'https://2009-2017.state.gov/t/isn/trty/16281.htm' },
+      { t: 'UNODA: NPT', url: 'https://www.un.org/disarmament/wmd/nuclear/npt/' },
+    ] },
+  { id: 'salt1', year: 1972, short: 'SALT I', label: 'SALT I and the ABM Treaty',
+    when: 'Signed May 26, 1972, Moscow',
+    text: 'Nixon and Brezhnev signed the ABM Treaty and the Interim Agreement on strategic offensive arms. The Office of the Historian calls it the first time in the Cold War the two sides "agreed to limit the number of nuclear missiles in their arsenals." Warhead totals were left for later talks. In the chart the Soviet stockpile kept growing until 1986, while the U.S. stockpile, already past its 1967 peak, stayed between about 24,000 and 28,500 through the rest of the 1970s.',
+    src: [{ t: 'Office of the Historian: SALT', url: 'https://history.state.gov/milestones/1969-1976/salt' }] },
+  { id: 'inf', year: 1987, short: 'INF', label: 'Intermediate-Range Nuclear Forces Treaty',
+    when: 'Signed December 8, 1987 · in force June 1, 1988',
+    text: 'Reagan and Gorbachev signed the treaty at a Washington summit. It required both sides to destroy their ground-launched ballistic and cruise missiles with ranges between 500 and 5,500 kilometers. It came one year after the global warhead peak in the data.',
+    src: [{ t: 'State Dept. treaty record', url: 'https://2009-2017.state.gov/t/avc/trty/102360.htm' }] },
+  { id: 'start1', year: 1991, short: 'START I', label: 'START I',
+    when: 'Signed July 31, 1991 · in force Dec. 5, 1994 · expired Dec. 5, 2009',
+    text: 'The Arms Control Association calls it "the first treaty that required U.S. and Soviet/Russian reductions of strategic nuclear weapons." The biggest fall in the curve comes in the 1990s, after START I and the end of the Soviet Union. The in-force and expiry dates come from the Arms Control Association; the 2009 joint statement marks the expiry.',
+    src: [
+      { t: 'State Dept. treaty text', url: 'https://2009-2017.state.gov/t/avc/trty/146007.htm' },
+      { t: 'U.S.-Russia joint statement on expiry, Dec. 4, 2009', url: 'https://obamawhitehouse.archives.gov/the-press-office/joint-statement-president-united-states-america-and-president-russian-federation-ex' },
+      { t: 'ACA: START I at a glance', url: 'https://www.armscontrol.org/factsheets/start-i-glance' },
+    ] },
+  { id: 'ctbt', year: 1996, short: 'CTBT', label: 'Comprehensive Nuclear-Test-Ban Treaty',
+    when: 'Opened for signature Sept. 24, 1996 · not in force',
+    text: 'The treaty has never entered into force. The CTBTO status table (captured Sept. 26, 2026) lists 188 signatures and 179 ratifications. Russia signed in 1996 and revoked its ratification by law on November 2, 2023.',
+    src: [
+      { t: 'State Dept. treaty record', url: 'https://2009-2017.state.gov/t/avc/trty/16411.htm' },
+      { t: 'CTBTO: the Treaty (archived)', url: 'https://web.archive.org/web/2026/https://www.ctbto.org/our-mission/the-treaty' },
+      { t: 'CTBTO status table (archived Sept. 26, 2026)', url: 'https://web.archive.org/web/20260926024444/https://www.ctbto.org/our-mission/states-signatories' },
+      { t: 'Kremlin: law revoking ratification', url: 'http://en.kremlin.ru/acts/news/72635' },
+    ] },
+  { id: 'infend', year: 2019, short: 'INF ends', label: 'U.S. withdraws from the INF Treaty',
+    when: 'Notice Feb. 2, 2019 · effective Aug. 2, 2019',
+    text: 'The United States gave six months\' notice under Article XV on February 2, 2019, and its withdrawal took effect on August 2, 2019, ending the treaty.',
+    src: [{ t: 'State Dept. press statement, Aug. 2, 2019 (archived)', url: 'https://web.archive.org/web/20241205153022/https://2017-2021.state.gov/u-s-withdrawal-from-the-inf-treaty-on-august-2-2019/' }] },
+  { id: 'newstart', year: 2011, short: 'New START', label: 'New START',
+    when: 'Signed April 8, 2010 · in force Feb. 5, 2011 · extended to Feb. 5, 2026',
+    text: 'Signed in Prague, in force February 5, 2011, and extended in February 2021 for five years to February 5, 2026. Russia announced on February 21, 2023 that it was suspending its participation while not withdrawing.',
+    src: [
+      { t: 'State Dept. New START page', url: 'https://www.state.gov/new-start-treaty' },
+      { t: 'State Dept. on the 2021 extension', url: 'https://2021-2025.state.gov/on-the-extension-of-the-new-start-treaty-with-the-russian-federation/' },
+      { t: 'Kremlin: suspension, Feb. 21, 2023', url: 'http://en.kremlin.ru/events/president/news/70565' },
+    ] },
+  { id: 'nsexpiry', year: 2026, short: 'Expiry', label: 'New START expires',
+    when: 'Expired Feb. 5, 2026 · status checked Sept. 29, 2026',
+    text: 'On September 22, 2025, Putin offered to keep observing the treaty\'s central limits for one year after February 5, 2026 if the United States did the same. On February 4, 2026, the Kremlin said there had been "no official response from the United States." The Arms Control Association reports that the United States did not respond and the treaty expired after fifteen years in force. On February 11, 2026, Foreign Minister Lavrov told the Russian parliament that Russia was observing the central limits "only as long as the United States does not exceed" them (as reported by the Arms Control Association). No source found by this tool records a mutual U.S.–Russian commitment to keep the limits. As of this check, no treaty limits U.S. and Russian strategic forces.',
+    src: [
+      { t: 'Kremlin: offer, Sept. 22, 2025', url: 'http://en.kremlin.ru/events/president/news/78051' },
+      { t: 'Kremlin: Feb. 4, 2026', url: 'http://en.kremlin.ru/events/president/news/79101' },
+      { t: 'ACA: New START at a glance', url: 'https://www.armscontrol.org/factsheets/new-start-glance' },
+      { t: 'ACA, Arms Control Today, March 2026 (Lavrov, Feb. 11)', url: 'https://www.armscontrol.org/act/2026-03/news/new-start-expires-us-urges-modernized-treaty' },
+      { t: 'ACA statement, Feb. 4, 2026', url: 'https://www.armscontrol.org/pressroom/2026-02/statement-end-new-start-requires-more-coherent-approach-trump-administration' },
+    ] },
+].sort((a, b) => a.year - b.year);

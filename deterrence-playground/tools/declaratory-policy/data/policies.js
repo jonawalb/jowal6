@@ -1,7 +1,1423 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1);
-export const ELEMENTS = __m.ELEMENTS;
-export const EVENTS = __m.EVENTS;
-export const GAPS = __m.GAPS;
-export const QUOTES = __m.QUOTES;
-export const STATES = __m.STATES;
+// Generated by tools/declaratory-policy/scripts/build_data.py on 2026-09-30. Do not edit by hand.
+// Quotes: verified word for word against the saved text of each source on 2026-09-29 (see scripts/verified/).
+// tag/kind are this tool's short finding-aid labels; the quote is the evidence. supp = shown in a cell's history only.
+export const STATES = [{"id": "USA", "name": "United States", "short": "U.S.", "npt": true, "status": "NPT nuclear-weapon state"}, {"id": "RUS", "name": "Russia", "short": "Russia", "npt": true, "status": "NPT nuclear-weapon state"}, {"id": "GBR", "name": "United Kingdom", "short": "UK", "npt": true, "status": "NPT nuclear-weapon state"}, {"id": "FRA", "name": "France", "short": "France", "npt": true, "status": "NPT nuclear-weapon state"}, {"id": "CHN", "name": "China", "short": "China", "npt": true, "status": "NPT nuclear-weapon state"}, {"id": "IND", "name": "India", "short": "India", "npt": false, "status": "Outside the NPT"}, {"id": "PAK", "name": "Pakistan", "short": "Pakistan", "npt": false, "status": "Outside the NPT"}, {"id": "ISR", "name": "Israel", "short": "Israel", "npt": false, "status": "Outside the NPT"}, {"id": "PRK", "name": "North Korea", "short": "DPRK", "npt": false, "status": "Outside the NPT"}];
+export const ELEMENTS = [{"id": "nfu", "name": "No first use", "help": "A pledge never to be the first to use nuclear weapons, or an explicit refusal to make one."}, {"id": "nsa", "name": "Negative security assurance", "help": "A promise not to use nuclear weapons against states that do not have them."}, {"id": "role", "name": "Role: sole purpose, fundamental role", "help": "What the state says its nuclear weapons are for."}, {"id": "conditions", "name": "Conditions for use", "help": "Circumstances in which the state says it could use nuclear weapons."}, {"id": "alert", "name": "Alert posture", "help": "Official statements about readiness or alert levels."}];
+export const QUOTES = [
+{
+"state": "CHN",
+"el": "alert",
+"date": "2019-07-24",
+"doc": "China's National Defense in the New Era (white paper)",
+"short": "2019 white paper",
+"issuer": "State Council Information Office of the PRC",
+"url": "http://english.www.gov.cn/archive/whitepaper/201907/24/content_WS5d3941ddc6d08408f502283d.html",
+"archive": null,
+"parts": [
+"China’s armed forces strengthen the safety management of nuclear weapons and facilities, maintain the appropriate level of readiness and enhance strategic deterrence capability"
+],
+"tag": "“Appropriate level of readiness”",
+"kind": "stmt",
+"supp": false,
+"note": "The 2025 white paper contains no statement on China's own nuclear readiness/alert level.",
+"quote": "China’s armed forces strengthen the safety management of nuclear weapons and facilities, maintain the appropriate level of readiness and enhance strategic deterrence capability"
+},
+{
+"state": "CHN",
+"el": "nfu",
+"date": "2019-07-24",
+"doc": "China's National Defense in the New Era (white paper)",
+"short": "2019 white paper",
+"issuer": "State Council Information Office of the PRC",
+"url": "http://english.www.gov.cn/archive/whitepaper/201907/24/content_WS5d3941ddc6d08408f502283d.html",
+"archive": null,
+"parts": [
+"China is always committed to a nuclear policy of no first use of nuclear weapons at any time and under any circumstances"
+],
+"tag": "Pledge: any time, any circumstances",
+"kind": "pledge",
+"supp": false,
+"note": "",
+"quote": "China is always committed to a nuclear policy of no first use of nuclear weapons at any time and under any circumstances"
+},
+{
+"state": "CHN",
+"el": "nfu",
+"date": "2025-11-27",
+"doc": "China's Arms Control, Disarmament, and Nonproliferation in the New Era (white paper)",
+"short": "2025 white paper",
+"issuer": "State Council Information Office of the PRC (published by MFA)",
+"url": "https://www.fmprc.gov.cn/eng/zy/wjzc/202511/t20251127_11761656.html",
+"archive": null,
+"parts": [
+"China has always remained committed to the principle of no-first-use of nuclear weapons at any time and under any circumstances"
+],
+"tag": "Pledge: any time, any circumstances",
+"kind": "pledge",
+"supp": false,
+"note": "Official English text.",
+"quote": "China has always remained committed to the principle of no-first-use of nuclear weapons at any time and under any circumstances"
+},
+{
+"state": "CHN",
+"el": "nsa",
+"date": "2019-07-24",
+"doc": "China's National Defense in the New Era (white paper)",
+"short": "2019 white paper",
+"issuer": "State Council Information Office of the PRC",
+"url": "http://english.www.gov.cn/archive/whitepaper/201907/24/content_WS5d3941ddc6d08408f502283d.html",
+"archive": null,
+"parts": [
+"not using or threatening to use nuclear weapons against non-nuclear-weapon states or nuclear-weapon-free zones unconditionally."
+],
+"tag": "Unconditional",
+"kind": "pledge",
+"supp": false,
+"note": "",
+"quote": "not using or threatening to use nuclear weapons against non-nuclear-weapon states or nuclear-weapon-free zones unconditionally."
+},
+{
+"state": "CHN",
+"el": "nsa",
+"date": "2025-11-27",
+"doc": "China's Arms Control, Disarmament, and Nonproliferation in the New Era (white paper)",
+"short": "2025 white paper",
+"issuer": "State Council Information Office of the PRC (published by MFA)",
+"url": "https://www.fmprc.gov.cn/eng/zy/wjzc/202511/t20251127_11761656.html",
+"archive": null,
+"parts": [
+"unconditionally undertakes not to use or threaten to use nuclear weapons against non-nuclear-weapon states or nuclear-weapon-free zones."
+],
+"tag": "Unconditional",
+"kind": "pledge",
+"supp": false,
+"note": "",
+"quote": "unconditionally undertakes not to use or threaten to use nuclear weapons against non-nuclear-weapon states or nuclear-weapon-free zones."
+},
+{
+"state": "CHN",
+"el": "role",
+"date": "2019-07-24",
+"doc": "China's National Defense in the New Era (white paper)",
+"short": "2019 white paper",
+"issuer": "State Council Information Office of the PRC",
+"url": "http://english.www.gov.cn/archive/whitepaper/201907/24/content_WS5d3941ddc6d08408f502283d.html",
+"archive": null,
+"parts": [
+"China pursues a nuclear strategy of self-defense, the goal of which is to maintain national strategic security by deterring other countries from using or threatening to use nuclear weapons against China."
+],
+"tag": "Self-defense nuclear strategy",
+"kind": "stmt",
+"supp": false,
+"note": "",
+"quote": "China pursues a nuclear strategy of self-defense, the goal of which is to maintain national strategic security by deterring other countries from using or threatening to use nuclear weapons against China."
+},
+{
+"state": "CHN",
+"el": "role",
+"date": "2025-11-27",
+"doc": "China's Arms Control, Disarmament, and Nonproliferation in the New Era (white paper)",
+"short": "2025 white paper",
+"issuer": "State Council Information Office of the PRC (published by MFA)",
+"url": "https://www.fmprc.gov.cn/eng/zy/wjzc/202511/t20251127_11761656.html",
+"archive": null,
+"parts": [
+"China’s nuclear weapons are not intended to threaten other countries, but for defense and self-protection.",
+"Keeping China’s nuclear capabilities at the minimum level required for national security."
+],
+"tag": "Defense and self-protection; minimum level",
+"kind": "stmt",
+"supp": false,
+"note": "",
+"quote": "China’s nuclear weapons are not intended to threaten other countries, but for defense and self-protection. … Keeping China’s nuclear capabilities at the minimum level required for national security."
+},
+{
+"state": "FRA",
+"el": "alert",
+"date": "2020-02-07",
+"doc": "Speech of the President of the Republic on the Defense and Deterrence Strategy (Ecole de Guerre)",
+"short": "Macron speech",
+"issuer": "Emmanuel Macron, President of France (official English version, elysee.fr)",
+"url": "https://www.elysee.fr/en/emmanuel-macron/2020/02/07/speech-of-the-president-of-the-republic-on-the-defense-and-deterrence-strategy",
+"archive": null,
+"parts": [
+"as part of the permanent deterrence posture, the silent watch by our nuclear-powered ballistic missile submarine (SSBN) crews and strategic air forces provides daily protection to our territory and population, and beyond that, our vital interests."
+],
+"tag": "Permanent deterrence posture",
+"kind": "stmt",
+"supp": false,
+"note": "",
+"quote": "as part of the permanent deterrence posture, the silent watch by our nuclear-powered ballistic missile submarine (SSBN) crews and strategic air forces provides daily protection to our territory and population, and beyond that, our vital interests."
+},
+{
+"state": "FRA",
+"el": "alert",
+"date": "2026-03-02",
+"doc": "Visit to the Ile Longue Operational Base: speech on nuclear deterrence (\"forward deterrence\")",
+"short": "Macron, Île Longue",
+"issuer": "Emmanuel Macron, President of France (official English version, elysee.fr)",
+"url": "https://www.elysee.fr/en/emmanuel-macron/2026/03/02/visit-to-the-ile-longue-operational-base",
+"archive": null,
+"parts": [
+"Those who have steadfastly ensured a permanent presence at sea since 1972 will therefore see a third generation take to the waters, right here, at Île Longue.",
+"In the same way that our strategic submarines dilute naturally in the oceans, guaranteeing a permanent-strike capability, our strategic air forces will also be able to be spread deep into the European continent."
+],
+"tag": "Permanent presence at sea; air forces can disperse in Europe",
+"kind": "stmt",
+"supp": false,
+"note": "Dispersal of strategic air forces under 'forward deterrence'.",
+"quote": "Those who have steadfastly ensured a permanent presence at sea since 1972 will therefore see a third generation take to the waters, right here, at Île Longue. … In the same way that our strategic submarines dilute naturally in the oceans, guaranteeing a permanent-strike capability, our strategic air forces will also be able to be spread deep into the European continent."
+},
+{
+"state": "FRA",
+"el": "conditions",
+"date": "2020-02-07",
+"doc": "Speech of the President of the Republic on the Defense and Deterrence Strategy (Ecole de Guerre)",
+"short": "Macron speech",
+"issuer": "Emmanuel Macron, President of France (official English version, elysee.fr)",
+"url": "https://www.elysee.fr/en/emmanuel-macron/2020/02/07/speech-of-the-president-of-the-republic-on-the-defense-and-deterrence-strategy",
+"archive": null,
+"parts": [
+"Should the leader of any State underestimate France’s deep-rooted attachment to its freedom and consider threatening our vital interests, whatever they may be, that leader must realize that our nuclear forces are capable of inflicting absolutely unacceptable damages upon that State’s centres of power",
+"Should there be any misunderstanding about France’s determination to protect its vital interests, a unique and one-time-only nuclear warning could be issued to the aggressor State to clearly demonstrate that the nature of the conflict has changed and to re-establish deterrence.",
+"Let’s be clear: France’s vital interests now have a European dimension."
+],
+"tag": "Vital interests, with a European dimension; one-time warning",
+"kind": "qualified",
+"supp": false,
+"note": "Nuclear warning shot.",
+"quote": "Should the leader of any State underestimate France’s deep-rooted attachment to its freedom and consider threatening our vital interests, whatever they may be, that leader must realize that our nuclear forces are capable of inflicting absolutely unacceptable damages upon that State’s centres of power … Should there be any misunderstanding about France’s determination to protect its vital interests, a unique and one-time-only nuclear warning could be issued to the aggressor State to clearly demonstrate that the nature of the conflict has changed and to re-establish deterrence. … Let’s be clear: France’s vital interests now have a European dimension."
+},
+{
+"state": "FRA",
+"el": "conditions",
+"date": "2026-03-02",
+"doc": "Visit to the Ile Longue Operational Base: speech on nuclear deterrence (\"forward deterrence\")",
+"short": "Macron, Île Longue",
+"issuer": "Emmanuel Macron, President of France (official English version, elysee.fr)",
+"url": "https://www.elysee.fr/en/emmanuel-macron/2026/03/02/visit-to-the-ile-longue-operational-base",
+"archive": null,
+"parts": [
+"French nuclear deterrence is intended to deter any State from encroaching on our vital interests. And what are they? We have never laid them out specifically. We have never laid them out, deliberately. Our red lines are not clear. They cannot be.",
+"there will be no sharing of the ultimate decision, nor of its planification, nor of its conduct. Under our Constitution, the decision to employ nuclear weapons rests solely with the President of the Republic",
+"The same holds true for the opportunity of a nuclear warning shot, unique and non-renewable: it will always be decided at France’s sole discretion"
+],
+"tag": "Vital interests left undefined; warning shot; no shared decision",
+"kind": "qualified",
+"supp": false,
+"note": "Official English version on elysee.fr. 'Forward deterrence' announcement.",
+"quote": "French nuclear deterrence is intended to deter any State from encroaching on our vital interests. And what are they? We have never laid them out specifically. We have never laid them out, deliberately. Our red lines are not clear. They cannot be. … there will be no sharing of the ultimate decision, nor of its planification, nor of its conduct. Under our Constitution, the decision to employ nuclear weapons rests solely with the President of the Republic … The same holds true for the opportunity of a nuclear warning shot, unique and non-renewable: it will always be decided at France’s sole discretion"
+},
+{
+"state": "FRA",
+"el": "role",
+"date": "2020-02-07",
+"doc": "Speech of the President of the Republic on the Defense and Deterrence Strategy (Ecole de Guerre)",
+"short": "Macron speech",
+"issuer": "Emmanuel Macron, President of France (official English version, elysee.fr)",
+"url": "https://www.elysee.fr/en/emmanuel-macron/2020/02/07/speech-of-the-president-of-the-republic-on-the-defense-and-deterrence-strategy",
+"archive": null,
+"parts": [
+"our nuclear deterrence force remains, as a last resort, the key to our security and the guardian of our vital interests.",
+"France has always refused that nuclear weapons be considered as a battlefield weapons. I hereby reaffirm that France will never engage into a nuclear battle or any forms of graduated response."
+],
+"tag": "Last resort for vital interests; no nuclear battle",
+"kind": "stmt",
+"supp": false,
+"note": "Official English version on elysee.fr (speech delivered in French).",
+"quote": "our nuclear deterrence force remains, as a last resort, the key to our security and the guardian of our vital interests. … France has always refused that nuclear weapons be considered as a battlefield weapons. I hereby reaffirm that France will never engage into a nuclear battle or any forms of graduated response."
+},
+{
+"state": "FRA",
+"el": "role",
+"date": "2026-03-02",
+"doc": "Visit to the Ile Longue Operational Base: speech on nuclear deterrence (\"forward deterrence\")",
+"short": "Macron, Île Longue",
+"issuer": "Emmanuel Macron, President of France (official English version, elysee.fr)",
+"url": "https://www.elysee.fr/en/emmanuel-macron/2026/03/02/visit-to-the-ile-longue-operational-base",
+"archive": null,
+"parts": [
+"With forward deterrence, our doctrine will retain its original foundations: its strictly defensive character, the refusal of any nuclear battle, and the total and deliberate distinction between conventional and nuclear realms."
+],
+"tag": "“Strictly defensive character”",
+"kind": "stmt",
+"supp": false,
+"note": "",
+"quote": "With forward deterrence, our doctrine will retain its original foundations: its strictly defensive character, the refusal of any nuclear battle, and the total and deliberate distinction between conventional and nuclear realms."
+},
+{
+"state": "GBR",
+"el": "alert",
+"date": "2021-03-16",
+"doc": "Global Britain in a Competitive Age: the Integrated Review of Security, Defence, Development and Foreign Policy",
+"short": "Integrated Review",
+"issuer": "HM Government (Cabinet Office)",
+"url": "https://www.gov.uk/government/publications/global-britain-in-a-competitive-age-the-integrated-review-of-security-defence-development-and-foreign-policy/global-britain-in-a-competitive-age-the-integrated-review-of-security-defence-development-and-foreign-policy",
+"archive": null,
+"parts": [
+"Our submarines on patrol are at several days’ notice to fire and, since 1994, we do not target our missiles at any state."
+],
+"tag": "Several days’ notice to fire",
+"kind": "stmt",
+"supp": false,
+"note": "IR2021; readiness ('several days' notice to fire') not restated in SDR 2025.",
+"quote": "Our submarines on patrol are at several days’ notice to fire and, since 1994, we do not target our missiles at any state."
+},
+{
+"state": "GBR",
+"el": "alert",
+"date": "2025-06-02",
+"doc": "The Strategic Defence Review 2025: Making Britain Safer (Box 10: UK nuclear policy)",
+"short": "SDR 2025",
+"issuer": "UK Ministry of Defence",
+"url": "https://assets.publishing.service.gov.uk/media/683d89f181deb72cce2680a5/The_Strategic_Defence_Review_2025_-_Making_Britain_Safer_-_secure_at_home__strong_abroad.pdf",
+"archive": null,
+"parts": [
+"the UK maintains four Ballistic Missile Submarines (SSBN, Ship Submersible Ballistic Nuclear) so that at least one will always be on a Continuous At Sea Deterrent patrol."
+],
+"tag": "Continuous at-sea deterrent",
+"kind": "stmt",
+"supp": false,
+"note": "SDR 2025, Box 10.",
+"quote": "the UK maintains four Ballistic Missile Submarines (SSBN, Ship Submersible Ballistic Nuclear) so that at least one will always be on a Continuous At Sea Deterrent patrol."
+},
+{
+"state": "GBR",
+"el": "conditions",
+"date": "2021-03-16",
+"doc": "Global Britain in a Competitive Age: the Integrated Review of Security, Defence, Development and Foreign Policy",
+"short": "Integrated Review",
+"issuer": "HM Government (Cabinet Office)",
+"url": "https://www.gov.uk/government/publications/global-britain-in-a-competitive-age-the-integrated-review-of-security-defence-development-and-foreign-policy/global-britain-in-a-competitive-age-the-integrated-review-of-security-defence-development-and-foreign-policy",
+"archive": null,
+"parts": [
+"We would consider using our nuclear weapons only in extreme circumstances of self-defence, including the defence of our NATO Allies."
+],
+"tag": "Extreme self-defence, incl. NATO allies",
+"kind": "qualified",
+"supp": false,
+"note": "IR2021.",
+"quote": "We would consider using our nuclear weapons only in extreme circumstances of self-defence, including the defence of our NATO Allies."
+},
+{
+"state": "GBR",
+"el": "conditions",
+"date": "2023-03-13",
+"doc": "Integrated Review Refresh 2023: Responding to a more contested and volatile world",
+"short": "IR Refresh",
+"issuer": "HM Government (Cabinet Office)",
+"url": "https://www.gov.uk/government/publications/integrated-review-refresh-2023-responding-to-a-more-contested-and-volatile-world/integrated-review-refresh-2023-responding-to-a-more-contested-and-volatile-world",
+"archive": null,
+"parts": [
+"We would consider using our nuclear weapons only in extreme circumstances of self-defence, including the defence of our NATO allies."
+],
+"tag": "Extreme self-defence, incl. NATO allies",
+"kind": "qualified",
+"supp": false,
+"note": "IRR2023.",
+"quote": "We would consider using our nuclear weapons only in extreme circumstances of self-defence, including the defence of our NATO allies."
+},
+{
+"state": "GBR",
+"el": "conditions",
+"date": "2025-06-02",
+"doc": "The Strategic Defence Review 2025: Making Britain Safer (Box 10: UK nuclear policy)",
+"short": "SDR 2025",
+"issuer": "UK Ministry of Defence",
+"url": "https://assets.publishing.service.gov.uk/media/683d89f181deb72cce2680a5/The_Strategic_Defence_Review_2025_-_Making_Britain_Safer_-_secure_at_home__strong_abroad.pdf",
+"archive": null,
+"parts": [
+"The UK would consider using nuclear weapons only in extreme circumstances of self-defence, including the defence of its NATO Allies.",
+"The UK is deliberately ambiguous about precisely when, how, and at what scale it would contemplate the use of nuclear weapons."
+],
+"tag": "Extreme self-defence incl. NATO; deliberate ambiguity",
+"kind": "qualified",
+"supp": false,
+"note": "SDR 2025, Box 10.",
+"quote": "The UK would consider using nuclear weapons only in extreme circumstances of self-defence, including the defence of its NATO Allies. … The UK is deliberately ambiguous about precisely when, how, and at what scale it would contemplate the use of nuclear weapons."
+},
+{
+"state": "GBR",
+"el": "nsa",
+"date": "2021-03-16",
+"doc": "Global Britain in a Competitive Age: the Integrated Review of Security, Defence, Development and Foreign Policy",
+"short": "Integrated Review",
+"issuer": "HM Government (Cabinet Office)",
+"url": "https://www.gov.uk/government/publications/global-britain-in-a-competitive-age-the-integrated-review-of-security-defence-development-and-foreign-policy/global-britain-in-a-competitive-age-the-integrated-review-of-security-defence-development-and-foreign-policy",
+"archive": null,
+"parts": [
+"The UK will not use, or threaten to use, nuclear weapons against any non-nuclear weapon state party to the Treaty on the Non-Proliferation of Nuclear Weapons 1968 (NPT). This assurance does not apply to any state in material breach of those non-proliferation obligations. However, we reserve the right to review this assurance"
+],
+"tag": "Assurance, with a right to review it",
+"kind": "qualified",
+"supp": false,
+"note": "IR2021; sentence continues 'if the future threat of weapons of mass destruction ... makes it necessary.'",
+"quote": "The UK will not use, or threaten to use, nuclear weapons against any non-nuclear weapon state party to the Treaty on the Non-Proliferation of Nuclear Weapons 1968 (NPT). This assurance does not apply to any state in material breach of those non-proliferation obligations. However, we reserve the right to review this assurance"
+},
+{
+"state": "GBR",
+"el": "nsa",
+"date": "2023-03-13",
+"doc": "Integrated Review Refresh 2023: Responding to a more contested and volatile world",
+"short": "IR Refresh",
+"issuer": "HM Government (Cabinet Office)",
+"url": "https://www.gov.uk/government/publications/integrated-review-refresh-2023-responding-to-a-more-contested-and-volatile-world/integrated-review-refresh-2023-responding-to-a-more-contested-and-volatile-world",
+"archive": null,
+"parts": [
+"The UK’s negative security assurance remains unchanged."
+],
+"tag": "Assurance “unchanged”",
+"kind": "pledge",
+"supp": false,
+"note": "IRR2023.",
+"quote": "The UK’s negative security assurance remains unchanged."
+},
+{
+"state": "GBR",
+"el": "nsa",
+"date": "2025-06-02",
+"doc": "The Strategic Defence Review 2025: Making Britain Safer (Box 10: UK nuclear policy)",
+"short": "SDR 2025",
+"issuer": "UK Ministry of Defence",
+"url": "https://assets.publishing.service.gov.uk/media/683d89f181deb72cce2680a5/The_Strategic_Defence_Review_2025_-_Making_Britain_Safer_-_secure_at_home__strong_abroad.pdf",
+"archive": null,
+"parts": [
+"The UK will not use, or threaten to use, nuclear weapons against any non‑nuclear weapon state party to the Treaty on the Non-Proliferation of Nuclear Weapons. This assurance does not apply to any state in material breach of those non‑proliferation obligations."
+],
+"tag": "Assurance, except states in material breach",
+"kind": "pledge",
+"supp": false,
+"note": "SDR 2025, Box 10. Text continues: UK reserves the right to review the assurance re: future WMD/emerging-technology threats.",
+"quote": "The UK will not use, or threaten to use, nuclear weapons against any non‑nuclear weapon state party to the Treaty on the Non-Proliferation of Nuclear Weapons. This assurance does not apply to any state in material breach of those non‑proliferation obligations."
+},
+{
+"state": "GBR",
+"el": "role",
+"date": "2021-03-16",
+"doc": "Global Britain in a Competitive Age: the Integrated Review of Security, Defence, Development and Foreign Policy",
+"short": "Integrated Review",
+"issuer": "HM Government (Cabinet Office)",
+"url": "https://www.gov.uk/government/publications/global-britain-in-a-competitive-age-the-integrated-review-of-security-defence-development-and-foreign-policy/global-britain-in-a-competitive-age-the-integrated-review-of-security-defence-development-and-foreign-policy",
+"archive": null,
+"parts": [
+"The fundamental purpose of our nuclear weapons is to preserve peace, prevent coercion and deter aggression."
+],
+"tag": "Preserve peace, prevent coercion, deter aggression",
+"kind": "stmt",
+"supp": false,
+"note": "IR2021.",
+"quote": "The fundamental purpose of our nuclear weapons is to preserve peace, prevent coercion and deter aggression."
+},
+{
+"state": "GBR",
+"el": "role",
+"date": "2025-06-02",
+"doc": "The Strategic Defence Review 2025: Making Britain Safer (Box 10: UK nuclear policy)",
+"short": "SDR 2025",
+"issuer": "UK Ministry of Defence",
+"url": "https://assets.publishing.service.gov.uk/media/683d89f181deb72cce2680a5/The_Strategic_Defence_Review_2025_-_Making_Britain_Safer_-_secure_at_home__strong_abroad.pdf",
+"archive": null,
+"parts": [
+"The purpose of the UK’s nuclear weapons is to preserve peace, prevent coercion, and deter aggression."
+],
+"tag": "Preserve peace, prevent coercion, deter aggression",
+"kind": "stmt",
+"supp": false,
+"note": "SDR 2025, Box 10 (states 'UK nuclear policy remains unchanged').",
+"quote": "The purpose of the UK’s nuclear weapons is to preserve peace, prevent coercion, and deter aggression."
+},
+{
+"state": "IND",
+"el": "alert",
+"date": "2003-01-04",
+"doc": "CCS press release 'The Cabinet Committee on Security Reviews perationalization of India's Nuclear Doctrine'",
+"short": "CCS statement",
+"issuer": "Government of India, Cabinet Committee on Security (released by Ministry of External Affairs)",
+"url": "https://www.mea.gov.in/press-releases.htm?dtl/20131/The+Cabinet+Committee+on+Security+Reviews+perationalization+of+Indias+Nuclear+Doctrine",
+"archive": "https://web.archive.org/web/20200110033429/https://www.mea.gov.in/press-releases.htm?dtl/20131/The+Cabinet+Committee+on+Security+Reviews+perationalization+of+Indias+Nuclear+Doctrine",
+"parts": [
+"The CCS reviewed the existing command and control structures, the state of readiness, the targetting strategy for a retaliatory attack, and operating procedures for various stages of alert and launch. The Committee expressed satisfaction with the overall preparedness."
+],
+"tag": "Readiness reviewed; no level stated",
+"kind": "stmt",
+"supp": false,
+"note": "No declared alert level; only states that readiness/alert procedures were reviewed. 1999 NSAB draft (not adopted) speaks of \"assured capability to shift from peacetime deployment to fully employable forces in the shortest possible time\".",
+"quote": "The CCS reviewed the existing command and control structures, the state of readiness, the targetting strategy for a retaliatory attack, and operating procedures for various stages of alert and launch. The Committee expressed satisfaction with the overall preparedness."
+},
+{
+"state": "IND",
+"el": "conditions",
+"date": "2003-01-04",
+"doc": "CCS press release 'The Cabinet Committee on Security Reviews perationalization of India's Nuclear Doctrine'",
+"short": "CCS statement",
+"issuer": "Government of India, Cabinet Committee on Security (released by Ministry of External Affairs)",
+"url": "https://www.mea.gov.in/press-releases.htm?dtl/20131/The+Cabinet+Committee+on+Security+Reviews+perationalization+of+Indias+Nuclear+Doctrine",
+"archive": "https://web.archive.org/web/20200110033429/https://www.mea.gov.in/press-releases.htm?dtl/20131/The+Cabinet+Committee+on+Security+Reviews+perationalization+of+Indias+Nuclear+Doctrine",
+"parts": [
+"Nuclear retaliation to a first strike will be massive and designed to inflict unacceptable damage.",
+"However, in the event of a major attack against India, or Indian forces anywhere, by biological or chemical weapons, India will retain the option of retaliating with nuclear weapons;"
+],
+"tag": "Massive retaliation; option vs. chemical or biological attack",
+"kind": "qualified",
+"supp": false,
+"note": "Biological/chemical-weapons exception to NFU/NSA.",
+"quote": "Nuclear retaliation to a first strike will be massive and designed to inflict unacceptable damage. … However, in the event of a major attack against India, or Indian forces anywhere, by biological or chemical weapons, India will retain the option of retaliating with nuclear weapons;"
+},
+{
+"state": "IND",
+"el": "nfu",
+"date": "2003-01-04",
+"doc": "CCS press release 'The Cabinet Committee on Security Reviews perationalization of India's Nuclear Doctrine'",
+"short": "CCS statement",
+"issuer": "Government of India, Cabinet Committee on Security (released by Ministry of External Affairs)",
+"url": "https://www.mea.gov.in/press-releases.htm?dtl/20131/The+Cabinet+Committee+on+Security+Reviews+perationalization+of+Indias+Nuclear+Doctrine",
+"archive": "https://web.archive.org/web/20200110033429/https://www.mea.gov.in/press-releases.htm?dtl/20131/The+Cabinet+Committee+on+Security+Reviews+perationalization+of+Indias+Nuclear+Doctrine",
+"parts": [
+"A posture of \"No First Use\": nuclear weapons will only be used in retaliation against a nuclear attack on Indian territory or on Indian forces anywhere;"
+],
+"tag": "Pledge: retaliation only",
+"kind": "pledge",
+"supp": false,
+"note": "Authoritative official summary of doctrine (2003).",
+"quote": "A posture of \"No First Use\": nuclear weapons will only be used in retaliation against a nuclear attack on Indian territory or on Indian forces anywhere;"
+},
+{
+"state": "IND",
+"el": "nfu",
+"date": "2019-08-16",
+"doc": "PIB release 'Raksha Mantri Shri Rajnath Singh pays homage to former Prime Minister Atal Bihari Vajpayee in Pokhran on his first death anniversary' (Release ID 1582158)",
+"short": "Defence Minister",
+"issuer": "Ministry of Defence (Raksha Mantri Rajnath Singh), via Press Information Bureau",
+"url": "https://pib.gov.in/PressReleasePage.aspx?PRID=1582158",
+"archive": null,
+"parts": [
+"Pokhran is the area which witnessed Atal ji’s firm resolve to make India a nuclear power and yet remain firmly committed to the doctrine of ‘No First Use’. India has strictly adhered to this doctrine. What happens in future depends on the circumstances."
+],
+"tag": "Defence Minister: future “depends on the circumstances”",
+"kind": "qualified",
+"supp": true,
+"note": "Defence Minister Rajnath Singh at Pokhran, as reported by the Press Information Bureau. The 2003 doctrine was not formally revised.",
+"quote": "Pokhran is the area which witnessed Atal ji’s firm resolve to make India a nuclear power and yet remain firmly committed to the doctrine of ‘No First Use’. India has strictly adhered to this doctrine. What happens in future depends on the circumstances."
+},
+{
+"state": "IND",
+"el": "nsa",
+"date": "1999-08-17",
+"doc": "Draft Report of National Security Advisory Board on Indian Nuclear Doctrine",
+"short": "NSAB draft",
+"issuer": "National Security Advisory Board (draft; released by NSA Brajesh Mishra, not government-approved)",
+"url": "https://mea.gov.in/in-focus-article.htm?18916/Draft+Report+of+National+Security+Advisory+Board+on+Indian+Nuclear+Doctrine",
+"archive": "https://web.archive.org/web/20200107144129/https://mea.gov.in/in-focus-article.htm?18916/Draft+Report+of+National+Security+Advisory+Board+on+Indian+Nuclear+Doctrine",
+"parts": [
+"India will not resort to the use or threat of use of nuclear weapons against States which do not possess nuclear weapons, or are not aligned with nuclear weapon powers."
+],
+"tag": "Draft: non-use against states not aligned with nuclear powers",
+"kind": "qualified",
+"supp": false,
+"note": "Draft doctrine (1999).",
+"quote": "India will not resort to the use or threat of use of nuclear weapons against States which do not possess nuclear weapons, or are not aligned with nuclear weapon powers."
+},
+{
+"state": "IND",
+"el": "nsa",
+"date": "2003-01-04",
+"doc": "CCS press release 'The Cabinet Committee on Security Reviews perationalization of India's Nuclear Doctrine'",
+"short": "CCS statement",
+"issuer": "Government of India, Cabinet Committee on Security (released by Ministry of External Affairs)",
+"url": "https://www.mea.gov.in/press-releases.htm?dtl/20131/The+Cabinet+Committee+on+Security+Reviews+perationalization+of+Indias+Nuclear+Doctrine",
+"archive": "https://web.archive.org/web/20200110033429/https://www.mea.gov.in/press-releases.htm?dtl/20131/The+Cabinet+Committee+on+Security+Reviews+perationalization+of+Indias+Nuclear+Doctrine",
+"parts": [
+"Non-use of nuclear weapons against non-nuclear weapon states;"
+],
+"tag": "Non-use against non-nuclear states",
+"kind": "pledge",
+"supp": false,
+"note": "Read together with the CBW carve-out recorded under conditions.",
+"quote": "Non-use of nuclear weapons against non-nuclear weapon states;"
+},
+{
+"state": "IND",
+"el": "role",
+"date": "1999-08-17",
+"doc": "Draft Report of National Security Advisory Board on Indian Nuclear Doctrine",
+"short": "NSAB draft",
+"issuer": "National Security Advisory Board (draft; released by NSA Brajesh Mishra, not government-approved)",
+"url": "https://mea.gov.in/in-focus-article.htm?18916/Draft+Report+of+National+Security+Advisory+Board+on+Indian+Nuclear+Doctrine",
+"archive": "https://web.archive.org/web/20200107144129/https://mea.gov.in/in-focus-article.htm?18916/Draft+Report+of+National+Security+Advisory+Board+on+Indian+Nuclear+Doctrine",
+"parts": [
+"India shall pursue a doctrine of credible minimum nuclear deterrence. In this policy of \"retaliation only\", the survivability of our arsenal is critical."
+],
+"tag": "Draft: credible minimum deterrence, retaliation only",
+"kind": "stmt",
+"supp": false,
+"note": "Draft doctrine (1999); superseded by 2003 CCS summary.",
+"quote": "India shall pursue a doctrine of credible minimum nuclear deterrence. In this policy of \"retaliation only\", the survivability of our arsenal is critical."
+},
+{
+"state": "IND",
+"el": "role",
+"date": "2003-01-04",
+"doc": "CCS press release 'The Cabinet Committee on Security Reviews perationalization of India's Nuclear Doctrine'",
+"short": "CCS statement",
+"issuer": "Government of India, Cabinet Committee on Security (released by Ministry of External Affairs)",
+"url": "https://www.mea.gov.in/press-releases.htm?dtl/20131/The+Cabinet+Committee+on+Security+Reviews+perationalization+of+Indias+Nuclear+Doctrine",
+"archive": "https://web.archive.org/web/20200110033429/https://www.mea.gov.in/press-releases.htm?dtl/20131/The+Cabinet+Committee+on+Security+Reviews+perationalization+of+Indias+Nuclear+Doctrine",
+"parts": [
+"Building and maintaining a credible minimum deterrent;"
+],
+"tag": "Credible minimum deterrent",
+"kind": "stmt",
+"supp": false,
+"note": "",
+"quote": "Building and maintaining a credible minimum deterrent;"
+},
+{
+"state": "ISR",
+"el": "nfu",
+"date": "1965-03-11",
+"doc": "FRUS 1964-1968, Vol. XVIII, Document 185: Telegram 1152 from Embassy in Israel to Department of State transmitting text of signed U.S.-Israel Memorandum of Understanding",
+"short": "FRUS, 1965 MOU",
+"issuer": "U.S.-Israel Memorandum of Understanding (Eshkol government), recorded in U.S. State Dept. FRUS",
+"url": "https://history.state.gov/historicaldocuments/frus1964-68v18/d185",
+"archive": null,
+"parts": [
+"II. The Government of Israel has reaffirmed that Israel will not be the first to introduce nuclear weapons into the Arab-Israel area."
+],
+"tag": "“Not the first to introduce” (not an NFU pledge)",
+"kind": "qualified",
+"supp": false,
+"note": "U.S.–Israel memorandum of understanding, as transmitted in a U.S. embassy telegram. Israel publishes no nuclear doctrine and has not confirmed that it has nuclear weapons.",
+"quote": "II. The Government of Israel has reaffirmed that Israel will not be the first to introduce nuclear weapons into the Arab-Israel area."
+},
+{
+"state": "ISR",
+"el": "nfu",
+"date": "1968-11-08",
+"doc": "FRUS 1964-1968, Vol. XX, Document 309: Memorandum of Conversation (Rabin-Warnke), Washington",
+"short": "FRUS, 1968",
+"issuer": "Ambassador Yitzhak Rabin (reading prepared talking paper), recorded by U.S. DoD in FRUS",
+"url": "https://history.state.gov/historicaldocuments/frus1964-68v20/d309",
+"archive": null,
+"parts": [
+"I am also authorized to reaffirm, in this connection, that it is Israel’s long-standing policy not to be the first to introduce nuclear weapons into the Middle East."
+],
+"tag": "“Not the first to introduce” (not an NFU pledge)",
+"kind": "qualified",
+"supp": false,
+"note": "Formula stated by Israeli official; FRUS Vol. XX Doc. 317 (Nov 12, 1968) records that, asked whether \"introduction\" meant no physical presence, Rabin answered \"I suppose so.\"",
+"quote": "I am also authorized to reaffirm, in this connection, that it is Israel’s long-standing policy not to be the first to introduce nuclear weapons into the Middle East."
+},
+{
+"state": "PAK",
+"el": "nfu",
+"date": "2019-08-16",
+"doc": "MOFA press release: Spokesperson response to a question on the statement made by the Indian Defence Minister",
+"short": "Foreign Office",
+"issuer": "Ministry of Foreign Affairs of Pakistan (Spokesperson)",
+"url": "https://mofa.gov.pk/press-releases/in-response-to-a-question-on-the-statement-made-by-the-indian-defence-minister-the-spokesperson-stated-the-following",
+"archive": null,
+"parts": [
+"It further exposes the pretense of their No First Use policy, to which we have never accorded any credence. No First use pledge is non-verifiable and cannot be taken at face value, especially when development of offensive capabilities and force postures belie such claims."
+],
+"tag": "No pledge; calls NFU pledges “non-verifiable”",
+"kind": "reject",
+"supp": false,
+"note": "Foreign Office response to India's Defence Minister. No official Pakistani text found states Pakistan's own first-use policy.",
+"quote": "It further exposes the pretense of their No First Use policy, to which we have never accorded any credence. No First use pledge is non-verifiable and cannot be taken at face value, especially when development of offensive capabilities and force postures belie such claims."
+},
+{
+"state": "PAK",
+"el": "nsa",
+"date": "2016-05-17",
+"doc": "Statement by Special Assistant to the PM on Foreign Affairs Tariq Fatemi at the Conference on Disarmament plenary, Geneva",
+"short": "Statement at the CD",
+"issuer": "Government of Pakistan (SAPM Foreign Affairs), via MOFA",
+"url": "https://mofa.gov.pk/press-releases/statement-by-special-assistant-to-the-prime-minister-on-foreign-affairs-mr-tariq-fatemi-at-the-conference-on-disarmament-plenary-meeting-geneva-17-may-2016",
+"archive": null,
+"parts": [
+"Pakistan is ready to join negotiations in the CD to conclude an international treaty to assure the non-nuclear-weapon States against the use or threat of use of nuclear weapons."
+],
+"tag": "Backs an NSA treaty; no unilateral pledge found",
+"kind": "qualified",
+"supp": false,
+"note": "Support for a legally binding assurance treaty, not a unilateral Pakistani assurance. No unilateral assurance was found in Foreign Office releases or UN First Committee statements, 2018–2024.",
+"quote": "Pakistan is ready to join negotiations in the CD to conclude an international treaty to assure the non-nuclear-weapon States against the use or threat of use of nuclear weapons."
+},
+{
+"state": "PAK",
+"el": "role",
+"date": "2015-10-07",
+"doc": "MOFA press release: Response to David Ignatius article in Washington Post",
+"short": "Foreign Office",
+"issuer": "Ministry of Foreign Affairs of Pakistan (Spokesperson)",
+"url": "https://mofa.gov.pk/press-releases/response-to-david-ignatius-article-in-washington-post-06-october-2015",
+"archive": null,
+"parts": [
+"Pakistan’s nuclear policy is shaped by evolving security dynamics of South Asia, growing conventional asymmetry, provocative doctrines and aggressive posturing by India, which obliges us to take all necessary measures to maintain a full spectrum deterrence capability in order to safeguard our national security, maintain strategic stability and deter any kind of aggression from India."
+],
+"tag": "Full spectrum deterrence",
+"kind": "stmt",
+"supp": false,
+"note": "",
+"quote": "Pakistan’s nuclear policy is shaped by evolving security dynamics of South Asia, growing conventional asymmetry, provocative doctrines and aggressive posturing by India, which obliges us to take all necessary measures to maintain a full spectrum deterrence capability in order to safeguard our national security, maintain strategic stability and deter any kind of aggression from India."
+},
+{
+"state": "PAK",
+"el": "role",
+"date": "2019-04-10",
+"doc": "MOFA: Foreign Minister's remarks 'Strategic Stability in South Asia: Emerging Challenges' (CISS)",
+"short": "Foreign Office",
+"issuer": "Foreign Minister of Pakistan (Shah Mahmood Qureshi), via MOFA",
+"url": "https://mofa.gov.pk/press-releases/foreign-ministers-remarks-strategic-stability-in-south-asia-emerging-challenges-10th-april-2019",
+"archive": null,
+"parts": [
+"Our conduct as a nuclear weapon state will continue to be defined by restraint and responsibility. As we seek to ensure our national security, credible minimum deterrence remains our guiding principle."
+],
+"tag": "Credible minimum deterrence",
+"kind": "stmt",
+"supp": false,
+"note": "",
+"quote": "Our conduct as a nuclear weapon state will continue to be defined by restraint and responsibility. As we seek to ensure our national security, credible minimum deterrence remains our guiding principle."
+},
+{
+"state": "PRK",
+"el": "alert",
+"date": "2022-09-08",
+"doc": "Law of the SPA 'On the State Policy on the Nuclear Forces' (KCNA English: 'Law on DPRK's Policy on Nuclear Forces Promulgated')",
+"short": "2022 nuclear forces law",
+"issuer": "DPRK Supreme People's Assembly (via KCNA)",
+"url": "http://www.kcna.co.jp/item/2022/202209/news09/20220909-02ee.html",
+"archive": null,
+"parts": [
+"The nuclear forces of the DPRK shall be regularly ready for action so that if an order to use nuclear weapons is issued, it can immediately execute it in any conditions and circumstances."
+],
+"tag": "Regularly ready to execute immediately",
+"kind": "stmt",
+"supp": false,
+"note": "Article 7 \"Regular readiness of nuclear forces\"; Art. 4: \"The nuclear forces of the DPRK shall immediately execute an order of using nuclear weapons.\"",
+"quote": "The nuclear forces of the DPRK shall be regularly ready for action so that if an order to use nuclear weapons is issued, it can immediately execute it in any conditions and circumstances."
+},
+{
+"state": "PRK",
+"el": "conditions",
+"date": "2013-04-01",
+"doc": "SPA ordinance/law on consolidating the position of nuclear weapons state for self-defence (KCNA: 'Law on Consolidating Position of Nuclear Weapons State Adopted')",
+"short": "2013 law",
+"issuer": "DPRK Supreme People's Assembly (via KCNA)",
+"url": "http://www.kcna.co.jp/item/2013/201304/news01/20130401-25ee.html",
+"archive": null,
+"parts": [
+"4. The nuclear weapons of the DPRK can be used only by a final order of the Supreme Commander of the Korean People's Army to repel invasion or attack from a hostile nuclear weapons state and make retaliatory strikes."
+],
+"tag": "Repel or retaliate against a nuclear-armed attacker",
+"kind": "qualified",
+"supp": false,
+"note": "2013 law (invalidated 2022).",
+"quote": "4. The nuclear weapons of the DPRK can be used only by a final order of the Supreme Commander of the Korean People's Army to repel invasion or attack from a hostile nuclear weapons state and make retaliatory strikes."
+},
+{
+"state": "PRK",
+"el": "conditions",
+"date": "2022-09-08",
+"doc": "Law of the SPA 'On the State Policy on the Nuclear Forces' (KCNA English: 'Law on DPRK's Policy on Nuclear Forces Promulgated')",
+"short": "2022 nuclear forces law",
+"issuer": "DPRK Supreme People's Assembly (via KCNA)",
+"url": "http://www.kcna.co.jp/item/2022/202209/news09/20220909-02ee.html",
+"archive": null,
+"parts": [
+"The DPRK can use nuclear weapons in the following cases: 1) In case an attack by nuclear weapons or other weapons of mass destruction was launched or drew near is judged 2) In case a nuclear or non-nuclear attack by hostile forces on the state leadership and the command organization of the state's nuclear forces was launched or drew near is judged",
+"3) In case a fatal military attack against important strategic objects of the state was launched or drew near is judged 4) In case the need for operation for preventing the expansion and protraction of a war and taking the initiative in the war in contingency is inevitably raised.",
+"5) In other case an inevitable situation in which it is compelled to correspond with catastrophic crisis to the existence of the state and safety of the people by only nuclear weapons is created.",
+"3) In case the command and control system over the state nuclear forces is placed in danger owing to an attack by hostile forces, a nuclear strike shall be launched automatically and immediately to destroy the hostile forces including the starting point of provocation and the command according to the operation plan decided in advance."
+],
+"tag": "Five conditions, incl. imminent attack; automatic strike",
+"kind": "qualified",
+"supp": false,
+"note": "Article 6 lists five cases in which the DPRK \"can use\" nuclear weapons; Article 3(3) adds an automatic strike if nuclear command and control is attacked. KCNA English text.",
+"quote": "The DPRK can use nuclear weapons in the following cases: 1) In case an attack by nuclear weapons or other weapons of mass destruction was launched or drew near is judged 2) In case a nuclear or non-nuclear attack by hostile forces on the state leadership and the command organization of the state's nuclear forces was launched or drew near is judged … 3) In case a fatal military attack against important strategic objects of the state was launched or drew near is judged 4) In case the need for operation for preventing the expansion and protraction of a war and taking the initiative in the war in contingency is inevitably raised. … 5) In other case an inevitable situation in which it is compelled to correspond with catastrophic crisis to the existence of the state and safety of the people by only nuclear weapons is created. … 3) In case the command and control system over the state nuclear forces is placed in danger owing to an attack by hostile forces, a nuclear strike shall be launched automatically and immediately to destroy the hostile forces including the starting point of provocation and the command according to the operation plan decided in advance."
+},
+{
+"state": "PRK",
+"el": "nfu",
+"date": "2016-05-08",
+"doc": "Decision of the Seventh Congress of the WPK 'On the review of the work of the Central Committee of the WPK' (KCNA)",
+"short": "WPK congress",
+"issuer": "Workers' Party of Korea, 7th Congress (via KCNA)",
+"url": "http://www.kcna.co.jp/item/2016/201605/news08/20160508-14ee.html",
+"archive": null,
+"parts": [
+"As a responsible nuclear weapons state, the DPRK will not use a nuclear weapon first unless its sovereignty is encroached upon by hostile aggression forces with nukes, as it had already declared"
+],
+"tag": "Conditional no first use (2016)",
+"kind": "qualified",
+"supp": false,
+"note": "Party congress decision. The 2022 law's Article 6 (see Conditions for use) allows use in response to non-nuclear attacks and attacks judged to be imminent; no text found explicitly repeals the 2016 wording.",
+"quote": "As a responsible nuclear weapons state, the DPRK will not use a nuclear weapon first unless its sovereignty is encroached upon by hostile aggression forces with nukes, as it had already declared"
+},
+{
+"state": "PRK",
+"el": "nsa",
+"date": "2013-04-01",
+"doc": "SPA ordinance/law on consolidating the position of nuclear weapons state for self-defence (KCNA: 'Law on Consolidating Position of Nuclear Weapons State Adopted')",
+"short": "2013 law",
+"issuer": "DPRK Supreme People's Assembly (via KCNA)",
+"url": "http://www.kcna.co.jp/item/2013/201304/news01/20130401-25ee.html",
+"archive": null,
+"parts": [
+"5. The DPRK shall neither use nukes against the non-nuclear states nor threaten them with those weapons unless they join a hostile nuclear weapons state in its invasion and attack on the DPRK."
+],
+"tag": "Assurance unless a state joins an attack",
+"kind": "qualified",
+"supp": false,
+"note": "2013 law, item 5; law invalidated by 2022 law Art. 11(1).",
+"quote": "5. The DPRK shall neither use nukes against the non-nuclear states nor threaten them with those weapons unless they join a hostile nuclear weapons state in its invasion and attack on the DPRK."
+},
+{
+"state": "PRK",
+"el": "nsa",
+"date": "2022-09-08",
+"doc": "Law of the SPA 'On the State Policy on the Nuclear Forces' (KCNA English: 'Law on DPRK's Policy on Nuclear Forces Promulgated')",
+"short": "2022 nuclear forces law",
+"issuer": "DPRK Supreme People's Assembly (via KCNA)",
+"url": "http://www.kcna.co.jp/item/2022/202209/news09/20220909-02ee.html",
+"archive": null,
+"parts": [
+"2) The DPRK shall neither threaten non-nuclear weapons states with its nuclear weapons nor use nuclear weapons against them unless they join aggression or attack against the DPRK in collusion with other nuclear weapons states."
+],
+"tag": "Assurance unless a state joins an attack",
+"kind": "qualified",
+"supp": false,
+"note": "Article 5(2).",
+"quote": "2) The DPRK shall neither threaten non-nuclear weapons states with its nuclear weapons nor use nuclear weapons against them unless they join aggression or attack against the DPRK in collusion with other nuclear weapons states."
+},
+{
+"state": "PRK",
+"el": "role",
+"date": "2022-09-08",
+"doc": "Law of the SPA 'On the State Policy on the Nuclear Forces' (KCNA English: 'Law on DPRK's Policy on Nuclear Forces Promulgated')",
+"short": "2022 nuclear forces law",
+"issuer": "DPRK Supreme People's Assembly (via KCNA)",
+"url": "http://www.kcna.co.jp/item/2022/202209/news09/20220909-02ee.html",
+"archive": null,
+"parts": [
+"1) The nuclear forces of the DPRK shall regard it as their main mission to deter a war by making hostile forces have a clear understanding the fact that the military confrontation with the DPRK brings about ruin and give up attempts at aggression and attack.",
+"1) The DPRK shall regard it as its main principle to use nuclear weapons as the last means in order to cope with outside aggression and attack seriously threatening the security of the country and the people."
+],
+"tag": "Deter war; use as the “last means”",
+"kind": "stmt",
+"supp": false,
+"note": "Article 1(1); Art. 1(2) adds an operational mission \"for repulsing hostile forces' aggression and attack and achieving decisive victory of war in case its deterrence fails.\" Article 5(1).",
+"quote": "1) The nuclear forces of the DPRK shall regard it as their main mission to deter a war by making hostile forces have a clear understanding the fact that the military confrontation with the DPRK brings about ruin and give up attempts at aggression and attack. … 1) The DPRK shall regard it as its main principle to use nuclear weapons as the last means in order to cope with outside aggression and attack seriously threatening the security of the country and the people."
+},
+{
+"state": "PRK",
+"el": "role",
+"date": "2023-09-27",
+"doc": "KCNA: 'Respected Comrade Kim Jong Un Makes Speech at 9th Session of 14th SPA'",
+"short": "Kim Jong Un speech",
+"issuer": "Kim Jong Un, President of State Affairs (via KCNA)",
+"url": "http://www.kcna.co.jp/item/2023/202309/news28/20230928-01ee.html",
+"archive": null,
+"parts": [
+"we have adopted the decision with unanimous approval to supplement Article 58 of Chapter 4 of the Socialist Constitution of the Democratic People’s Republic of Korea with new contents - to ensure the country's right to existence and development, deter war and protect regional and global peace by rapidly developing nuclear weapons to a higher level"
+],
+"tag": "Nuclear build-up written into the constitution",
+"kind": "stmt",
+"supp": true,
+"note": "KCNA dated Sept 28, 2023 reporting Sept 26-27 session. KCNA did not publish the amended Article 58 text itself; this is Kim's description of it.",
+"quote": "we have adopted the decision with unanimous approval to supplement Article 58 of Chapter 4 of the Socialist Constitution of the Democratic People’s Republic of Korea with new contents - to ensure the country's right to existence and development, deter war and protect regional and global peace by rapidly developing nuclear weapons to a higher level"
+},
+{
+"state": "RUS",
+"el": "alert",
+"date": "2020-06-02",
+"doc": "Basic Principles of State Policy of the Russian Federation on Nuclear Deterrence (Executive Order No. 355)",
+"short": "2020 Basic Principles",
+"issuer": "President of the Russian Federation; English text published by MFA of Russia",
+"url": "https://www.mid.ru/en/foreign_policy/international_safety/1434131/",
+"archive": "https://web.archive.org/web/20231126221306/https://www.mid.ru/en/foreign_policy/international_safety/1434131/",
+"parts": [
+"maintaining permanent readiness of a designated fraction of nuclear deterrence forces and means for combat use."
+],
+"tag": "Permanent readiness of a designated fraction",
+"kind": "stmt",
+"supp": false,
+"note": "Superseded Nov 2024.",
+"quote": "maintaining permanent readiness of a designated fraction of nuclear deterrence forces and means for combat use."
+},
+{
+"state": "RUS",
+"el": "alert",
+"date": "2024-11-19",
+"doc": "Fundamentals of State Policy of the Russian Federation on Nuclear Deterrence (Executive Order No. 991)",
+"short": "2024 Fundamentals",
+"issuer": "President of the Russian Federation; official English text published by MFA of Russia (3 Dec 2024)",
+"url": "https://mid.ru/en/foreign_policy/international_safety/1434131/",
+"archive": null,
+"parts": [
+"maintaining constant readiness of a designated part of nuclear deterrence forces and means for combat employment"
+],
+"tag": "Constant readiness of a designated part",
+"kind": "stmt",
+"supp": false,
+"note": "Para 16(f), listed among principles of nuclear deterrence.",
+"quote": "maintaining constant readiness of a designated part of nuclear deterrence forces and means for combat employment"
+},
+{
+"state": "RUS",
+"el": "conditions",
+"date": "2020-06-02",
+"doc": "Basic Principles of State Policy of the Russian Federation on Nuclear Deterrence (Executive Order No. 355)",
+"short": "2020 Basic Principles",
+"issuer": "President of the Russian Federation; English text published by MFA of Russia",
+"url": "https://www.mid.ru/en/foreign_policy/international_safety/1434131/",
+"archive": "https://web.archive.org/web/20231126221306/https://www.mid.ru/en/foreign_policy/international_safety/1434131/",
+"parts": [
+"The Russian Federation reserves the right to use nuclear weapons in response to the use of nuclear and other types of weapons of mass destruction against it and/or its allies, as well as in the event of aggression against the Russian Federation with the use of conventional weapons when the very existence of the state is in jeopardy."
+],
+"tag": "WMD attack, or the state’s existence in jeopardy",
+"kind": "qualified",
+"supp": false,
+"note": "Para 17. Superseded Nov 2024.",
+"quote": "The Russian Federation reserves the right to use nuclear weapons in response to the use of nuclear and other types of weapons of mass destruction against it and/or its allies, as well as in the event of aggression against the Russian Federation with the use of conventional weapons when the very existence of the state is in jeopardy."
+},
+{
+"state": "RUS",
+"el": "conditions",
+"date": "2024-11-19",
+"doc": "Fundamentals of State Policy of the Russian Federation on Nuclear Deterrence (Executive Order No. 991)",
+"short": "2024 Fundamentals",
+"issuer": "President of the Russian Federation; official English text published by MFA of Russia (3 Dec 2024)",
+"url": "https://mid.ru/en/foreign_policy/international_safety/1434131/",
+"archive": null,
+"parts": [
+"The Russian Federation reserves the right to employ nuclear weapons in response to the employment of nuclear and (or) other types of weapons of mass destruction against itself and (or) its allies, as well as in the event of aggression against the Russian Federation and (or) the Republic of Belarus as participants in the Union State with the employment of conventional weapons, which creates a critical threat to their sovereignty and (or) territorial integrity.",
+"receipt of reliable data on the massive launch (take-off) of air and space attack means (strategic and tactical aircraft, cruise missiles, unmanned, hypersonic and other aerial vehicles) and their crossing of the state border of the Russian Federation.",
+"Aggression by any state from a military coalition (bloc, alliance) against the Russian Federation and (or) its allies is considered as the aggression by this coalition (bloc, alliance) as a whole.",
+"Aggression against the Russian Federation and (or) its allies by any non-nuclear state with the participation or support of a nuclear state is considered as their joint attack."
+],
+"tag": "WMD attack; conventional “critical threat”; Belarus covered",
+"kind": "qualified",
+"supp": false,
+"note": "Paragraphs 18, 19(e) and 10 of the 2024 Fundamentals, and paragraph 11 on joint attack. Official MFA English translation; checked against the Russian original of Decree No. 991 on kremlin.ru (acts/bank/51312).",
+"quote": "The Russian Federation reserves the right to employ nuclear weapons in response to the employment of nuclear and (or) other types of weapons of mass destruction against itself and (or) its allies, as well as in the event of aggression against the Russian Federation and (or) the Republic of Belarus as participants in the Union State with the employment of conventional weapons, which creates a critical threat to their sovereignty and (or) territorial integrity. … receipt of reliable data on the massive launch (take-off) of air and space attack means (strategic and tactical aircraft, cruise missiles, unmanned, hypersonic and other aerial vehicles) and their crossing of the state border of the Russian Federation. … Aggression by any state from a military coalition (bloc, alliance) against the Russian Federation and (or) its allies is considered as the aggression by this coalition (bloc, alliance) as a whole. … Aggression against the Russian Federation and (or) its allies by any non-nuclear state with the participation or support of a nuclear state is considered as their joint attack."
+},
+{
+"state": "RUS",
+"el": "role",
+"date": "2020-06-02",
+"doc": "Basic Principles of State Policy of the Russian Federation on Nuclear Deterrence (Executive Order No. 355)",
+"short": "2020 Basic Principles",
+"issuer": "President of the Russian Federation; English text published by MFA of Russia",
+"url": "https://www.mid.ru/en/foreign_policy/international_safety/1434131/",
+"archive": "https://web.archive.org/web/20231126221306/https://www.mid.ru/en/foreign_policy/international_safety/1434131/",
+"parts": [
+"The Russian Federation considers nuclear weapons exclusively as a means of deterrence, their use being an extreme and compelled measure"
+],
+"tag": "“Exclusively” deterrence",
+"kind": "stmt",
+"supp": false,
+"note": "Superseded Nov 2024. The mid.ru URL now serves the 2024 text; 2020 text verified from Wayback capture.",
+"quote": "The Russian Federation considers nuclear weapons exclusively as a means of deterrence, their use being an extreme and compelled measure"
+},
+{
+"state": "RUS",
+"el": "role",
+"date": "2024-11-19",
+"doc": "Fundamentals of State Policy of the Russian Federation on Nuclear Deterrence (Executive Order No. 991)",
+"short": "2024 Fundamentals",
+"issuer": "President of the Russian Federation; official English text published by MFA of Russia (3 Dec 2024)",
+"url": "https://mid.ru/en/foreign_policy/international_safety/1434131/",
+"archive": null,
+"parts": [
+"The Russian Federation considers nuclear weapons as a means of deterrence, the employment of which is an extreme and compelled measure"
+],
+"tag": "Deterrence; use “extreme and compelled”",
+"kind": "stmt",
+"supp": false,
+"note": "Official MFA English translation. 2020 text said 'exclusively as a means of deterrence'; 'exclusively' dropped in 2024.",
+"quote": "The Russian Federation considers nuclear weapons as a means of deterrence, the employment of which is an extreme and compelled measure"
+},
+{
+"state": "USA",
+"el": "alert",
+"date": "2018-02-02",
+"doc": "2018 Nuclear Posture Review",
+"short": "2018 NPR",
+"issuer": "U.S. Department of Defense (Office of the Secretary of Defense)",
+"url": "https://media.defense.gov/2018/Feb/02/2001872886/-1/-1/1/2018-NUCLEAR-POSTURE-REVIEW-FINAL-REPORT.PDF",
+"archive": "http://web.archive.org/web/20250306123228/https://media.defense.gov/2018/Feb/02/2001872886/-1/-1/1/2018-nuclear-posture-review-final-report.pdf",
+"parts": [
+"the United States will maintain a portion of its nuclear forces on alert day-to-day, and retain the option of launching those forces promptly."
+],
+"tag": "A portion on alert day-to-day",
+"kind": "stmt",
+"supp": false,
+"note": "Superseded by 2022 NPR. Source PDF text breaks 'day-to-/day' across a line; verified hyphenation-insensitively.",
+"quote": "the United States will maintain a portion of its nuclear forces on alert day-to-day, and retain the option of launching those forces promptly."
+},
+{
+"state": "USA",
+"el": "alert",
+"date": "2022-10-27",
+"doc": "2022 Nuclear Posture Review (in 2022 National Defense Strategy, incl. NPR and MDR)",
+"short": "2022 NPR",
+"issuer": "U.S. Department of Defense",
+"url": "https://media.defense.gov/2022/Oct/27/2003103845/-1/-1/1/2022-NATIONAL-DEFENSE-STRATEGY-NPR-MDR.PDF",
+"archive": "https://web.archive.org/web/2026/https://media.defense.gov/2022/Oct/27/2003103845/-1/-1/1/2022-NATIONAL-DEFENSE-STRATEGY-NPR-MDR.PDF",
+"parts": [
+"U.S. intercontinental ballistic missiles (ICBMs) are not on “hair trigger” alert. These forces are on day-to-day alert, a posture that contributes to strategic stability.",
+"while the United States maintains the capability to launch nuclear forces under conditions of an ongoing nuclear attack, it does not rely on a launch-under-attack policy to ensure a credible response."
+],
+"tag": "Day-to-day alert; no reliance on launch under attack",
+"kind": "stmt",
+"supp": false,
+"note": "",
+"quote": "U.S. intercontinental ballistic missiles (ICBMs) are not on “hair trigger” alert. These forces are on day-to-day alert, a posture that contributes to strategic stability. … while the United States maintains the capability to launch nuclear forces under conditions of an ongoing nuclear attack, it does not rely on a launch-under-attack policy to ensure a credible response."
+},
+{
+"state": "USA",
+"el": "conditions",
+"date": "2018-02-02",
+"doc": "2018 Nuclear Posture Review",
+"short": "2018 NPR",
+"issuer": "U.S. Department of Defense (Office of the Secretary of Defense)",
+"url": "https://media.defense.gov/2018/Feb/02/2001872886/-1/-1/1/2018-NUCLEAR-POSTURE-REVIEW-FINAL-REPORT.PDF",
+"archive": "http://web.archive.org/web/20250306123228/https://media.defense.gov/2018/Feb/02/2001872886/-1/-1/1/2018-nuclear-posture-review-final-report.pdf",
+"parts": [
+"The United States would only consider the employment of nuclear weapons in extreme circumstances to defend the vital interests of the United States, its allies, and partners. Extreme circumstances could include significant non-nuclear strategic attacks."
+],
+"tag": "Extreme circumstances, incl. non-nuclear strategic attack",
+"kind": "qualified",
+"supp": false,
+"note": "Superseded by 2022 NPR.",
+"quote": "The United States would only consider the employment of nuclear weapons in extreme circumstances to defend the vital interests of the United States, its allies, and partners. Extreme circumstances could include significant non-nuclear strategic attacks."
+},
+{
+"state": "USA",
+"el": "conditions",
+"date": "2022-10-27",
+"doc": "2022 Nuclear Posture Review (in 2022 National Defense Strategy, incl. NPR and MDR)",
+"short": "2022 NPR",
+"issuer": "U.S. Department of Defense",
+"url": "https://media.defense.gov/2022/Oct/27/2003103845/-1/-1/1/2022-NATIONAL-DEFENSE-STRATEGY-NPR-MDR.PDF",
+"archive": "https://web.archive.org/web/2026/https://media.defense.gov/2022/Oct/27/2003103845/-1/-1/1/2022-NATIONAL-DEFENSE-STRATEGY-NPR-MDR.PDF",
+"parts": [
+"The United States would only consider the use of nuclear weapons in extreme circumstances to defend the vital interests of the United States or its Allies and partners.",
+"For all other states, there remains a narrow range of contingencies in which U.S. nuclear weapons may still play a role in deterring attacks that have strategic effect against the United States or its Allies and partners."
+],
+"tag": "Extreme circumstances, vital interests",
+"kind": "qualified",
+"supp": false,
+"note": "Applies to states not covered by the NSA.",
+"quote": "The United States would only consider the use of nuclear weapons in extreme circumstances to defend the vital interests of the United States or its Allies and partners. … For all other states, there remains a narrow range of contingencies in which U.S. nuclear weapons may still play a role in deterring attacks that have strategic effect against the United States or its Allies and partners."
+},
+{
+"state": "USA",
+"el": "nfu",
+"date": "2018-02-02",
+"doc": "2018 Nuclear Posture Review",
+"short": "2018 NPR",
+"issuer": "U.S. Department of Defense (Office of the Secretary of Defense)",
+"url": "https://media.defense.gov/2018/Feb/02/2001872886/-1/-1/1/2018-NUCLEAR-POSTURE-REVIEW-FINAL-REPORT.PDF",
+"archive": "http://web.archive.org/web/20250306123228/https://media.defense.gov/2018/Feb/02/2001872886/-1/-1/1/2018-nuclear-posture-review-final-report.pdf",
+"parts": [
+"the United States has never adopted a “no first use” policy and, given the contemporary threat environment, such a policy is not justified today."
+],
+"tag": "Never adopted, “not justified today”",
+"kind": "reject",
+"supp": false,
+"note": "Superseded by 2022 NPR.",
+"quote": "the United States has never adopted a “no first use” policy and, given the contemporary threat environment, such a policy is not justified today."
+},
+{
+"state": "USA",
+"el": "nfu",
+"date": "2022-10-27",
+"doc": "2022 Nuclear Posture Review (in 2022 National Defense Strategy, incl. NPR and MDR)",
+"short": "2022 NPR",
+"issuer": "U.S. Department of Defense",
+"url": "https://media.defense.gov/2022/Oct/27/2003103845/-1/-1/1/2022-NATIONAL-DEFENSE-STRATEGY-NPR-MDR.PDF",
+"archive": "https://web.archive.org/web/2026/https://media.defense.gov/2022/Oct/27/2003103845/-1/-1/1/2022-NATIONAL-DEFENSE-STRATEGY-NPR-MDR.PDF",
+"parts": [
+"We conducted a thorough review of a broad range of options for nuclear declaratory policy – including both No First Use and Sole Purpose policies – and concluded that those approaches would result in an unacceptable level of risk"
+],
+"tag": "Rejected, with sole purpose",
+"kind": "reject",
+"supp": false,
+"note": "Explicit rejection of NFU and sole purpose; current formal U.S. declaratory policy.",
+"quote": "We conducted a thorough review of a broad range of options for nuclear declaratory policy – including both No First Use and Sole Purpose policies – and concluded that those approaches would result in an unacceptable level of risk"
+},
+{
+"state": "USA",
+"el": "nsa",
+"date": "2018-02-02",
+"doc": "2018 Nuclear Posture Review",
+"short": "2018 NPR",
+"issuer": "U.S. Department of Defense (Office of the Secretary of Defense)",
+"url": "https://media.defense.gov/2018/Feb/02/2001872886/-1/-1/1/2018-NUCLEAR-POSTURE-REVIEW-FINAL-REPORT.PDF",
+"archive": "http://web.archive.org/web/20250306123228/https://media.defense.gov/2018/Feb/02/2001872886/-1/-1/1/2018-nuclear-posture-review-final-report.pdf",
+"parts": [
+"The United States will not use or threaten to use nuclear weapons against non-nuclear weapons states that are party to the NPT and in compliance with their nuclear non-proliferation obligations. ... the United States reserves the right to make any adjustment in the assurance that may be warranted by the evolution and proliferation of non-nuclear strategic attack technologies"
+],
+"tag": "Assurance, with a right to adjust it",
+"kind": "qualified",
+"supp": false,
+"note": "Superseded by 2022 NPR.",
+"quote": "The United States will not use or threaten to use nuclear weapons against non-nuclear weapons states that are party to the NPT and in compliance with their nuclear non-proliferation obligations. ... the United States reserves the right to make any adjustment in the assurance that may be warranted by the evolution and proliferation of non-nuclear strategic attack technologies"
+},
+{
+"state": "USA",
+"el": "nsa",
+"date": "2022-10-27",
+"doc": "2022 Nuclear Posture Review (in 2022 National Defense Strategy, incl. NPR and MDR)",
+"short": "2022 NPR",
+"issuer": "U.S. Department of Defense",
+"url": "https://media.defense.gov/2022/Oct/27/2003103845/-1/-1/1/2022-NATIONAL-DEFENSE-STRATEGY-NPR-MDR.PDF",
+"archive": "https://web.archive.org/web/2026/https://media.defense.gov/2022/Oct/27/2003103845/-1/-1/1/2022-NATIONAL-DEFENSE-STRATEGY-NPR-MDR.PDF",
+"parts": [
+"The United States will not use or threaten to use nuclear weapons against non-nuclear weapon states that are party to the NPT and in compliance with their nuclear non-proliferation obligations."
+],
+"tag": "Assurance to NPT states in compliance",
+"kind": "pledge",
+"supp": false,
+"note": "Same wording as the 2018 NPR, without its reservation.",
+"quote": "The United States will not use or threaten to use nuclear weapons against non-nuclear weapon states that are party to the NPT and in compliance with their nuclear non-proliferation obligations."
+},
+{
+"state": "USA",
+"el": "role",
+"date": "2018-02-02",
+"doc": "2018 Nuclear Posture Review",
+"short": "2018 NPR",
+"issuer": "U.S. Department of Defense (Office of the Secretary of Defense)",
+"url": "https://media.defense.gov/2018/Feb/02/2001872886/-1/-1/1/2018-NUCLEAR-POSTURE-REVIEW-FINAL-REPORT.PDF",
+"archive": "http://web.archive.org/web/20250306123228/https://media.defense.gov/2018/Feb/02/2001872886/-1/-1/1/2018-nuclear-posture-review-final-report.pdf",
+"parts": [
+"The highest U.S. nuclear policy and strategy priority is to deter potential adversaries from nuclear attack of any scale. However, deterring nuclear attack is not the sole purpose of nuclear weapons."
+],
+"tag": "Not the sole purpose",
+"kind": "stmt",
+"supp": false,
+"note": "Superseded by 2022 NPR.",
+"quote": "The highest U.S. nuclear policy and strategy priority is to deter potential adversaries from nuclear attack of any scale. However, deterring nuclear attack is not the sole purpose of nuclear weapons."
+},
+{
+"state": "USA",
+"el": "role",
+"date": "2022-10-27",
+"doc": "2022 Nuclear Posture Review (in 2022 National Defense Strategy, incl. NPR and MDR)",
+"short": "2022 NPR",
+"issuer": "U.S. Department of Defense",
+"url": "https://media.defense.gov/2022/Oct/27/2003103845/-1/-1/1/2022-NATIONAL-DEFENSE-STRATEGY-NPR-MDR.PDF",
+"archive": "https://web.archive.org/web/2026/https://media.defense.gov/2022/Oct/27/2003103845/-1/-1/1/2022-NATIONAL-DEFENSE-STRATEGY-NPR-MDR.PDF",
+"parts": [
+"As long as nuclear weapons exist, the fundamental role of nuclear weapons is to deter nuclear attack on the United States, our Allies, and partners.",
+"We retain the goal of moving toward a sole purpose declaration and we will work with our Allies and partners to identify concrete steps that would allow us to do so."
+],
+"tag": "Fundamental role; sole purpose a goal",
+"kind": "stmt",
+"supp": false,
+"note": "'Fundamental role' (not 'sole purpose'). Stated aspiration, not current policy.",
+"quote": "As long as nuclear weapons exist, the fundamental role of nuclear weapons is to deter nuclear attack on the United States, our Allies, and partners. … We retain the goal of moving toward a sole purpose declaration and we will work with our Allies and partners to identify concrete steps that would allow us to do so."
+}
+];
+export const GAPS = [{"state": "RUS", "el": "nfu", "note": "Neither the 2020 Basic Principles nor the 2024 Fundamentals says anything about first use. Their conditions include response to conventional aggression."}, {"state": "RUS", "el": "nsa", "note": "Neither the 2020 nor the 2024 document contains an assurance to non-nuclear states. The 2024 text treats an attack by a non-nuclear state with a nuclear state's support as a joint attack (see Conditions for use)."}, {"state": "CHN", "el": "conditions", "note": "The 2019 and 2025 white papers state no conditions for use beyond the no-first-use pledge."}, {"state": "GBR", "el": "nfu", "note": "The 2021 Integrated Review, the 2023 Refresh and the 2025 Strategic Defence Review contain no no-first-use statement. They say the UK is deliberately ambiguous about when it would use nuclear weapons."}, {"state": "FRA", "el": "nfu", "note": "Neither Macron's 2020 speech nor his 2026 speech contains a no-first-use statement."}, {"state": "FRA", "el": "nsa", "note": "Not in the 2020 or 2026 presidential speeches used here. France has given assurances in other instruments, such as its 1995 declarations, which this tool has not quoted."}, {"state": "PAK", "el": "conditions", "note": "Pakistan has published no doctrine. No official statement of conditions for use was found in Foreign Office releases or its UN First Committee statements, 2018–2024. Military (ISPR) releases could not be reached."}, {"state": "PAK", "el": "alert", "note": "No official statement on alert or readiness levels was found in the same sources."}, {"state": "ISR", "el": "nsa", "note": "Israel has never confirmed that it has nuclear weapons and publishes no doctrine."}, {"state": "ISR", "el": "role", "note": "Israel has never confirmed that it has nuclear weapons and publishes no doctrine."}, {"state": "ISR", "el": "conditions", "note": "Israel has never confirmed that it has nuclear weapons and publishes no doctrine."}, {"state": "ISR", "el": "alert", "note": "Israel has never confirmed that it has nuclear weapons and publishes no doctrine."}];
+export const EVENTS = [
+{
+"id": "isr-1965-03-10-31",
+"state": "ISR",
+"date": "1965-03-10",
+"title": "U.S.-Israel MOU: \"not the first to introduce\"",
+"text": "The U.S.-Israel Memorandum of Understanding, signed on 10 March 1965 (FRUS 1964-68 vol. XVIII, doc. 184, note 2), records that Israel \"will not be the first to introduce nuclear weapons into the Arab-Israel area\" (text in doc. 185).",
+"url": "https://history.state.gov/historicaldocuments/frus1964-68v18/d185"
+},
+{
+"id": "isr-1968-11-08-32",
+"state": "ISR",
+"date": "1968-11-08",
+"title": "Rabin reaffirms non-introduction formula",
+"text": "In F-4 Phantom negotiations, Ambassador Rabin reaffirmed Israel's \"long-standing policy not to be the first to introduce nuclear weapons into the Middle East\" (FRUS 1964-68 vol. XX, doc. 309); on Nov 12, asked whether non-introduction meant no physical presence, he replied \"I suppose so\" (doc. 317).",
+"url": "https://history.state.gov/historicaldocuments/frus1964-68v20/d309"
+},
+{
+"id": "chn-1994-01-8",
+"state": "CHN",
+"date": "1994-01",
+"title": "China proposes treaty on mutual no-first-use",
+"text": "Per the 2025 white paper, in January 1994 China submitted a draft treaty on mutual no-first-use of nuclear weapons to the other four nuclear-weapon states.",
+"url": "https://www.fmprc.gov.cn/eng/zy/wjzc/202511/t20251127_11761656.html"
+},
+{
+"id": "chn-1995-04-9",
+"state": "CHN",
+"date": "1995-04",
+"title": "China statement on unconditional negative security assurances",
+"text": "Per the 2025 white paper, in April 1995 China issued a statement reiterating its unconditional NSA to all non-nuclear-weapon states.",
+"url": "https://www.fmprc.gov.cn/eng/zy/wjzc/202511/t20251127_11761656.html"
+},
+{
+"id": "ind-1998-05-11-24",
+"state": "IND",
+"date": "1998-05-11",
+"title": "Pokhran-II nuclear tests",
+"text": "India conducted nuclear tests at Pokhran in May 1998 (11 and 13 May) under PM Vajpayee; the 2003 CCS summary later commits to \"continued observance of the moratorium on nuclear tests\".",
+"url": "https://pib.gov.in/PressReleasePage.aspx?PRID=1582158"
+},
+{
+"id": "pak-1998-05-28-28",
+"state": "PAK",
+"date": "1998-05-28",
+"title": "Pakistan nuclear tests",
+"text": "Pakistan conducted nuclear tests on 28 May 1998, described by MOFA as a self-defence response to India's tests.",
+"url": "https://mofa.gov.pk/press-releases/twenty-years-of-resolve-restraint-and-responsibility"
+},
+{
+"id": "ind-1999-08-17-25",
+"state": "IND",
+"date": "1999-08-17",
+"title": "NSAB draft nuclear doctrine released",
+"text": "National Security Adviser Brajesh Mishra released the National Security Advisory Board draft doctrine (credible minimum deterrence, no first use, NSA to non-nuclear states); explicitly not yet government-approved.",
+"url": "https://mea.gov.in/in-focus-article.htm?18916/Draft+Report+of+National+Security+Advisory+Board+on+Indian+Nuclear+Doctrine"
+},
+{
+"id": "ind-2003-01-04-26",
+"state": "IND",
+"date": "2003-01-04",
+"title": "CCS operationalizes nuclear doctrine",
+"text": "Cabinet Committee on Security published doctrine summary: credible minimum deterrent, NFU with chemical/biological exception, non-use against non-nuclear states, Nuclear Command Authority, C-in-C Strategic Forces Command.",
+"url": "https://www.mea.gov.in/press-releases.htm?dtl/20131/The+Cabinet+Committee+on+Security+Reviews+perationalization+of+Indias+Nuclear+Doctrine"
+},
+{
+"id": "rus-2010-02-05-4",
+"state": "RUS",
+"date": "2010-02-05",
+"title": "Military Doctrine of the Russian Federation (Decree No. 146)",
+"text": "Reserved the right to use nuclear weapons in response to WMD use and to conventional aggression 'when the very existence of the state is in jeopardy' (Russian original, para 22).",
+"url": "http://kremlin.ru/acts/bank/30593"
+},
+{
+"id": "usa-2010-04-06-0",
+"state": "USA",
+"date": "2010-04-06",
+"title": "2010 Nuclear Posture Review",
+"text": "Adopted the 'fundamental role' formulation, strengthened the NSA to NPT-compliant non-nuclear-weapon states, declined to adopt 'sole purpose' 'at the present time', and set the 'extreme circumstances ... vital interests' standard.",
+"url": "http://web.archive.org/web/20250308232010/https://dod.defense.gov/Portals/1/features/defenseReviews/NPR/2010_Nuclear_Posture_Review_Report.pdf"
+},
+{
+"id": "prk-2013-04-01-33",
+"state": "PRK",
+"date": "2013-04-01",
+"title": "Law on consolidating nuclear weapons state position",
+"text": "SPA adopted law declaring the DPRK a nuclear weapons state; use only by Supreme Commander order to repel attack by a hostile nuclear state; NSA to non-nuclear states not joining such attacks.",
+"url": "http://www.kcna.co.jp/item/2013/201304/news01/20130401-25ee.html"
+},
+{
+"id": "rus-2014-12-25-5",
+"state": "RUS",
+"date": "2014-12-25",
+"title": "2010 Military Doctrine repealed (Decree No. 815)",
+"text": "Decree No. 815 of 25 Dec 2014 repealed Decree No. 146, which had approved the 2010 Military Doctrine. The 2014 doctrine text was not opened for this tool.",
+"url": "http://kremlin.ru/acts/bank/39211"
+},
+{
+"id": "pak-2015-10-07-29",
+"state": "PAK",
+"date": "2015-10-07",
+"title": "MOFA states \"full spectrum deterrence\"",
+"text": "Foreign Office spokesperson said Pakistan must maintain a \"full spectrum deterrence capability\", citing reiteration of policy by the National Command Authority on 9 September 2015.",
+"url": "https://mofa.gov.pk/press-releases/response-to-david-ignatius-article-in-washington-post-06-october-2015"
+},
+{
+"id": "prk-2016-05-08-34",
+"state": "PRK",
+"date": "2016-05-08",
+"title": "7th WPK Congress: conditional no-first-use",
+"text": "Party congress decision stated the DPRK \"will not use a nuclear weapon first unless its sovereignty is encroached upon by hostile aggression forces with nukes\".",
+"url": "http://www.kcna.co.jp/item/2016/201605/news08/20160508-14ee.html"
+},
+{
+"id": "usa-2018-02-02-1",
+"state": "USA",
+"date": "2018-02-02",
+"title": "2018 Nuclear Posture Review",
+"text": "Stated that deterring nuclear attack 'is not the sole purpose of nuclear weapons', that 'extreme circumstances' could include significant non-nuclear strategic attacks, and that a no-first-use policy 'is not justified today'.",
+"url": "https://media.defense.gov/2018/Feb/02/2001872886/-1/-1/1/2018-NUCLEAR-POSTURE-REVIEW-FINAL-REPORT.PDF"
+},
+{
+"id": "chn-2019-07-24-10",
+"state": "CHN",
+"date": "2019-07-24",
+"title": "White paper: China's National Defense in the New Era",
+"text": "Restated no first use 'at any time and under any circumstances', unconditional NSA, a 'nuclear strategy of self-defense', minimum-level capabilities, and maintaining 'the appropriate level of readiness'.",
+"url": "http://english.www.gov.cn/archive/whitepaper/201907/24/content_WS5d3941ddc6d08408f502283d.html"
+},
+{
+"id": "ind-2019-08-16-27",
+"state": "IND",
+"date": "2019-08-16",
+"title": "Defence Minister qualifies NFU",
+"text": "At Pokhran, Defence Minister Rajnath Singh said India has strictly adhered to No First Use but \"What happens in future depends on the circumstances.\"",
+"url": "https://pib.gov.in/PressReleasePage.aspx?PRID=1582158"
+},
+{
+"id": "pak-2019-08-16-30",
+"state": "PAK",
+"date": "2019-08-16",
+"title": "Pakistan dismisses NFU pledges",
+"text": "Responding to India's Defence Minister, the Foreign Office said NFU pledges are non-verifiable and that Pakistan will continue to maintain a credible minimum deterrence posture.",
+"url": "https://mofa.gov.pk/press-releases/in-response-to-a-question-on-the-statement-made-by-the-indian-defence-minister-the-spokesperson-stated-the-following"
+},
+{
+"id": "fra-2020-02-07-21",
+"state": "FRA",
+"date": "2020-02-07",
+"title": "Macron speech on defence and deterrence strategy (Ecole de Guerre)",
+"text": "Restated a 'strictly defensive' doctrine centred on vital interests with a 'European dimension', the one-time nuclear warning, refusal of nuclear battle, and an arsenal 'under 300 nuclear weapons'.",
+"url": "https://www.elysee.fr/en/emmanuel-macron/2020/02/07/speech-of-the-president-of-the-republic-on-the-defense-and-deterrence-strategy"
+},
+{
+"id": "rus-2020-06-02-6",
+"state": "RUS",
+"date": "2020-06-02",
+"title": "Basic Principles of State Policy on Nuclear Deterrence (Executive Order No. 355)",
+"text": "First public Russian nuclear-deterrence policy document; listed four conditions for nuclear use, including conventional aggression 'when the very existence of the state is in jeopardy'.",
+"url": "https://web.archive.org/web/20231126221306/https://www.mid.ru/en/foreign_policy/international_safety/1434131/"
+},
+{
+"id": "gbr-2021-03-16-17",
+"state": "GBR",
+"date": "2021-03-16",
+"title": "Integrated Review 2021",
+"text": "Raised the stockpile ceiling to no more than 260 warheads (from the 2010 goal of no more than 180), ended publication of operational stockpile, deployed-warhead and deployed-missile figures, and restated the NSA with a WMD/emerging-technology review caveat.",
+"url": "https://www.gov.uk/government/publications/global-britain-in-a-competitive-age-the-integrated-review-of-security-defence-development-and-foreign-policy/global-britain-in-a-competitive-age-the-integrated-review-of-security-defence-development-and-foreign-policy"
+},
+{
+"id": "chn-2022-01-03-16",
+"state": "CHN",
+"date": "2022-01-03",
+"title": "P5 Joint Statement on Preventing Nuclear War and Avoiding Arms Races",
+"text": "Leaders of China, France, Russia, the UK and the US affirmed that 'a nuclear war cannot be won and must never be fought' and reaffirmed de-targeting.",
+"url": "https://bidenwhitehouse.archives.gov/briefing-room/statements-releases/2022/01/03/p5-statement-on-preventing-nuclear-war-and-avoiding-arms-races/"
+},
+{
+"id": "fra-2022-01-03-15",
+"state": "FRA",
+"date": "2022-01-03",
+"title": "P5 Joint Statement on Preventing Nuclear War and Avoiding Arms Races",
+"text": "Leaders of China, France, Russia, the UK and the US affirmed that 'a nuclear war cannot be won and must never be fought' and reaffirmed de-targeting.",
+"url": "https://bidenwhitehouse.archives.gov/briefing-room/statements-releases/2022/01/03/p5-statement-on-preventing-nuclear-war-and-avoiding-arms-races/"
+},
+{
+"id": "gbr-2022-01-03-14",
+"state": "GBR",
+"date": "2022-01-03",
+"title": "P5 Joint Statement on Preventing Nuclear War and Avoiding Arms Races",
+"text": "Leaders of China, France, Russia, the UK and the US affirmed that 'a nuclear war cannot be won and must never be fought' and reaffirmed de-targeting.",
+"url": "https://bidenwhitehouse.archives.gov/briefing-room/statements-releases/2022/01/03/p5-statement-on-preventing-nuclear-war-and-avoiding-arms-races/"
+},
+{
+"id": "rus-2022-01-03-13",
+"state": "RUS",
+"date": "2022-01-03",
+"title": "P5 Joint Statement on Preventing Nuclear War and Avoiding Arms Races",
+"text": "Leaders of China, France, Russia, the UK and the US affirmed that 'a nuclear war cannot be won and must never be fought' and reaffirmed de-targeting.",
+"url": "https://bidenwhitehouse.archives.gov/briefing-room/statements-releases/2022/01/03/p5-statement-on-preventing-nuclear-war-and-avoiding-arms-races/"
+},
+{
+"id": "usa-2022-01-03-12",
+"state": "USA",
+"date": "2022-01-03",
+"title": "P5 Joint Statement on Preventing Nuclear War and Avoiding Arms Races",
+"text": "Leaders of China, France, Russia, the UK and the US affirmed that 'a nuclear war cannot be won and must never be fought' and reaffirmed de-targeting.",
+"url": "https://bidenwhitehouse.archives.gov/briefing-room/statements-releases/2022/01/03/p5-statement-on-preventing-nuclear-war-and-avoiding-arms-races/"
+},
+{
+"id": "prk-2022-09-08-35",
+"state": "PRK",
+"date": "2022-09-08",
+"title": "Law on State Policy on the Nuclear Forces",
+"text": "SPA law sets five conditions for nuclear use including pre-emptive and non-nuclear-attack cases, an automatic strike if command and control is attacked, and constant readiness; repeals 2013 law.",
+"url": "http://www.kcna.co.jp/item/2022/202209/news09/20220909-02ee.html"
+},
+{
+"id": "usa-2022-10-27-2",
+"state": "USA",
+"date": "2022-10-27",
+"title": "2022 Nuclear Posture Review (released with 2022 NDS)",
+"text": "Restored the 'fundamental role' language, retained the NSA and 'extreme circumstances' standard, and rejected No First Use and Sole Purpose after review while retaining the goal of moving toward a sole purpose declaration.",
+"url": "https://media.defense.gov/2022/Oct/27/2003103845/-1/-1/1/2022-NATIONAL-DEFENSE-STRATEGY-NPR-MDR.PDF"
+},
+{
+"id": "gbr-2023-03-13-18",
+"state": "GBR",
+"date": "2023-03-13",
+"title": "Integrated Review Refresh 2023",
+"text": "Restated 'extreme circumstances of self-defence, including the defence of our NATO allies' and that the UK negative security assurance 'remains unchanged'.",
+"url": "https://www.gov.uk/government/publications/integrated-review-refresh-2023-responding-to-a-more-contested-and-volatile-world/integrated-review-refresh-2023-responding-to-a-more-contested-and-volatile-world"
+},
+{
+"id": "prk-2023-09-27-36",
+"state": "PRK",
+"date": "2023-09-27",
+"title": "Nuclear force-building written into Constitution",
+"text": "SPA amended Article 58 of the Socialist Constitution to mandate rapidly developing nuclear weapons to a higher level (session held Sept 26-27; KCNA reported Sept 28).",
+"url": "http://www.kcna.co.jp/item/2023/202309/news28/20230928-01ee.html"
+},
+{
+"id": "rus-2024-11-19-7",
+"state": "RUS",
+"date": "2024-11-19",
+"title": "Fundamentals of State Policy on Nuclear Deterrence (Executive Order No. 991)",
+"text": "Replaced the 2020 document: extended coverage to Belarus, lowered the conventional-aggression threshold to a 'critical threat' to sovereignty and/or territorial integrity, treated attack by a non-nuclear state with nuclear-state support as a joint attack, and added a massive air/space attack launch as a condition.",
+"url": "https://mid.ru/en/foreign_policy/international_safety/1434131/"
+},
+{
+"id": "gbr-2025-06-02-19",
+"state": "GBR",
+"date": "2025-06-02",
+"title": "Strategic Defence Review 2025",
+"text": "States 'UK nuclear policy remains unchanged' and restates declaratory policy in Box 10 (purpose, extreme circumstances, deliberate ambiguity, NSA, CASD).",
+"url": "https://assets.publishing.service.gov.uk/media/683d89f181deb72cce2680a5/The_Strategic_Defence_Review_2025_-_Making_Britain_Safer_-_secure_at_home__strong_abroad.pdf"
+},
+{
+"id": "fra-2025-07-10-22",
+"state": "FRA",
+"date": "2025-07-10",
+"title": "France-UK declaration on nuclear policy and cooperation (Northwood)",
+"text": "France and the UK declared their nuclear forces independent but able to be coordinated, and created a Franco-British nuclear steering group (French text on elysee.fr).",
+"url": "https://www.elysee.fr/emmanuel-macron/2025/07/10/declaration-de-la-republique-francaise-et-du-royaume-uni-de-grande-bretagne-et-dirlande-du-nord-sur-la-politique-et-la-cooperation-nucleaire"
+},
+{
+"id": "gbr-2025-07-10-20",
+"state": "GBR",
+"date": "2025-07-10",
+"title": "France-UK declaration on nuclear policy and cooperation (Northwood)",
+"text": "France and the UK declared their nuclear forces independent but able to be coordinated, and created a Franco-British nuclear steering group (French text on elysee.fr).",
+"url": "https://www.elysee.fr/emmanuel-macron/2025/07/10/declaration-de-la-republique-francaise-et-du-royaume-uni-de-grande-bretagne-et-dirlande-du-nord-sur-la-politique-et-la-cooperation-nucleaire"
+},
+{
+"id": "chn-2025-11-27-11",
+"state": "CHN",
+"date": "2025-11-27",
+"title": "White paper: China's Arms Control, Disarmament, and Nonproliferation in the New Era",
+"text": "Reaffirmed NFU and unconditional NSA, self-defense nuclear strategy and minimum-level capabilities; called on nuclear-weapon states to conclude a mutual NFU treaty or political statement.",
+"url": "https://www.fmprc.gov.cn/eng/zy/wjzc/202511/t20251127_11761656.html"
+},
+{
+"id": "usa-2026-01-23-3",
+"state": "USA",
+"date": "2026-01-23",
+"title": "2026 National Defense Strategy",
+"text": "Calls to 'modernize and adapt' U.S. nuclear forces with attention to deterrence and escalation management; contains no declaratory-policy statement (no revision of the 2022 NPR declaratory language found).",
+"url": "http://web.archive.org/web/20260124023540/https://media.defense.gov/2026/Jan/23/2003864773/-1/-1/0/2026-NATIONAL-DEFENSE-STRATEGY.PDF"
+},
+{
+"id": "fra-2026-03-02-23",
+"state": "FRA",
+"date": "2026-03-02",
+"title": "Macron speech at Ile Longue: 'forward deterrence'",
+"text": "Announced 'forward deterrence' (dispersal of strategic air forces in European partner countries, no sharing of decision), an increase in the number of warheads, and an end to publishing arsenal figures.",
+"url": "https://www.elysee.fr/en/emmanuel-macron/2026/03/02/visit-to-the-ile-longue-operational-base"
+}
+];

@@ -1,7 +1,37 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1);
-export const AS_OF = __m.AS_OF;
-export const BREAKOUT = __m.BREAKOUT;
-export const LAST_ESTIMATE = __m.LAST_ESTIMATE;
-export const TIMELINESS = __m.TIMELINESS;
-export const YARDSTICK = __m.YARDSTICK;
+// Breakout estimates, quoted from named sources. "Breakout" here means the time to produce enough
+// weapon-grade uranium (WGU) for one weapon; it is not the time to build a weapon. This tool does not
+// compute breakout. Each page was opened on 29 September 2026 and contains the quoted words.
+export const BREAKOUT = [
+  { date: '2016-01-16', who: 'Obama White House', short: '2–3 months before the deal; 12 months or more under it',
+    quote: 'Before this agreement, Iran\'s breakout time -- or the time it would have taken for Iran to gather enough fissile material to build a weapon -- was only two to three months. Today, because of the Iran deal, it would take Iran 12 months or more.',
+    src: { name: 'White House, "The Historic Deal that Will Prevent Iran from Acquiring a Nuclear Weapon" (archived site, after Implementation Day)', url: 'https://obamawhitehouse.archives.gov/node/328996/' } },
+  { date: '2022-06-01', who: 'Institute for Science and International Security', short: 'Breakout timeline "at zero"',
+    quote: 'Iran has crossed a new, dangerous threshold; Iran\'s breakout timeline is now at zero. It has enough 60 percent enriched uranium or highly enriched uranium (HEU) to be assured it could fashion a nuclear explosive.',
+    src: { name: 'Albright and Burkhard, "Iranian Breakout Timeline Now at Zero," 1 June 2022', url: 'https://isis-online.org/isis-reports/iranian-breakout-timeline-now-at-zero' } },
+  { date: '2024-07-19', who: 'Secretary of State Antony Blinken', short: '"probably one or two weeks"',
+    quote: 'Iran\'s breakout time – the amount of time needed to produce enough weapons grade material for a nuclear weapon – "is now probably one or two weeks"',
+    src: { name: 'CNN, 19 July 2024 (Aspen Security Forum remarks)', url: 'https://www.cnn.com/2024/07/19/politics/blinken-nuclear-weapon-breakout-time/index.html' } },
+  { date: '2025-06-09', who: 'Institute for Science and International Security', short: 'First weapon\'s worth in 2–3 days at Fordow',
+    quote: 'Iran can convert its current stock of 60 percent enriched uranium into 233 kg of WGU in three weeks at the Fordow Fuel Enrichment Plant (FFEP), enough for 9 nuclear weapons, taken as 25 kg of weapon-grade uranium (WGU) per weapon. Iran could produce its first quantity of 25 kg of WGU in Fordow in as little as two to three days.',
+    src: { name: 'Albright, Burkhard and Faragasso, analysis of the May 2025 IAEA report, 9 June 2025', url: 'https://isis-online.org/isis-reports/analysis-of-iaea-iran-verification-and-monitoring-report-may-2025' } },
+  { date: '2026-06-09', who: 'Institute for Science and International Security', short: 'No estimate: no identifiable route to WGU',
+    quote: 'With the massive destruction of its gas centrifuge program and installed centrifuge cascades, for the first time in 20 years, Iran has no identifiable route to produce weapon-grade uranium (WGU) in its centrifuge enrichment plants. [...] no breakout estimate to WGU is included in the Institute\'s analysis of the IAEA report, since to do so would require unsubstantiated speculation',
+    src: { name: 'Institute analysis of the June 2026 IAEA reports, 9 June 2026', url: 'https://isis-online.org/isis-reports/analysis-of-iaea-iran-verification-and-monitoring-and-npt-safeguards-reports-june-2026' } },
+];
+
+// The one yardstick used for labelled arithmetic in the panel.
+export const YARDSTICK = {
+  kg: 40,
+  quote: 'Practically, 40 kg are sufficient for an implosion-type nuclear weapon and double that amount, or 80 kg, is sufficient for a gun-type nuclear explosive device.',
+  context: 'of 60 percent enriched uranium, which "can also be used directly in a nuclear explosive"; the same analysis says the strikes severely degraded Iran\'s ability to make a weapon',
+  src: { name: 'Institute for Science and International Security, June 2026', url: 'https://isis-online.org/isis-reports/analysis-of-iaea-iran-verification-and-monitoring-and-npt-safeguards-reports-june-2026' },
+};
+
+// IAEA timeliness goal for verifying HEU, used for the "clock" readout.
+export const TIMELINESS = {
+  days: 30,
+  quote: 'the Agency\'s timeliness goal for the detection of the diversion of one significant quantity (SQ) of HEU is one month',
+  src: { name: 'IAEA, GOV/2025/65, para. 6', url: 'https://www.iaea.org/sites/default/files/gov2025-65.pdf' },
+};
+export const LAST_ESTIMATE = '2025-06-13';
+export const AS_OF = '2026-10-02';

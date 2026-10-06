@@ -1,14 +1,50 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "dGEkockguDgq/jiXKpvcWdgY96cqzN/w0prC7okqzhxYSQi2+HdB6NvaEAU8iLkN1MSHjcnNHwADyzXuCVj+ID7Pms2xtntOgilLziTASHdc6wswM/WDaeR59CjNAfen9SGfI0WNzG/CdFQ2Y+FcqOsztCzrGmQNyR1QHIwOBgJGL+YdpGeksBrPUTFuhQ3B9U3yelfaWuRqUUKdG28Hk+7/2aItr/XF1wr3gYNxvx9eML1xh3j4v5jUjfozn4MB9DbsQca9c/hYS0d17PYO3UIWZ5siJ19rsq33dHNcF0i4GjIjhXGX9+oeMDZT7TDwEhYIT0thuMsSbjf/N6nC7448DhjEFDgrRr66ieFUV8daoys8NMW/eN6VA9TE5uIOpZEeuF/YPndeLDe70ve+YgDxKEherBPjo6G1MIu8pdFpLIHzoF/+PkHqp3Zc7N7Dt3dHEI+uYWhea1/BPWlIIrGaHtkgdyqeL7wJVfzyFqp7fEspX6LIU5ejDZdFoJXRmZ1TEM9v6AznUndjzgnOg0Zq2rUUkfvzOF50wA65cMMoD46qBzz6aYEpofYL98UOZCC9/fj9vxlGaNM5nXd+mlTD1V651ucF1V2vS430ktHRin93jFoMgdElIRRvC6WrdA3wboQZ+iE8QWdvfUB1gzbOjzno2oBucWdj06kEYRONKrktSHzV+D1RGRY+0fI5Zn8C1nJKUMaN/jnoqnFQK196yphiq77wjHjV7aiXmC+2cLi7MFoW/mFAkjcfhVaE7j/+StwNDVYReXVZ+tN9wkW2sX5wzBOfeqqcWl958Mr5e8rtkMvu6qRKWWsh9+hnBagJ2Zu8bI+bH9MkDgSf8ZYpLiRBjw/JKLPRPva55nvzA2/4dVhAov5rl4Q36m9BddmKLozvXeintdlDX5b8Nvl+Sh0Rv3E2w/+0zxAbbPQxD5mt2tZLf3SIzY36volofkWf/hfxCFDsb8sdt+28CoSZmcqxG6+XU1U6o/e6yhmDIDTSTzhTCxoZaT5HafSW+07jkrUfi2lziY0O5byWVH4Iw+pBP25b5DM3IqQDYNxDsbHsPWEwygm7MAMIwAnoxO32vWq53YDkfBbI2jMGhlxPJG1SIUQ3vQgzLkS3azVuZzc5ltW1HV8J23MAKzlprZiIuA8ATlr6hJh7OWBvoAoh5EKKJa4mrnRGchTnvM02IrsXFirkFYKHkAKB6wW3euFcRyalVZ1Nze5ZXRE0uOp9kcYdnk63JzC3zAo/0osOFCzQdJKzNnk57YvTxs6nwaD1zY3FMit34mruppipaQ9YkR08dMDszdjGfz/VmsMmUHdy6I3hkjbAFfVPJJWpxRD+McRyfl/tRUI2AZpnPikMNYP2SnaXq7DClW454F/siFg9sZaQxB/b/VW25YwPGZ12BhmM3O3bI3iEm9B7rDPquw9WFM1+rT78o/tNETqJruszexaW0qyFLyauurFZzatQy1fC1qA8I7zfrZyX2eUecy3CYQ6uSm5oLuPe7zETi7hFlfxFdqgJCxUW6OmmAhidzifBw8E3oNXMjFK72cJxhlom", 1);
-export const COLS = __m.COLS;
-export const EDGES = __m.EDGES;
-export const FORWARD = __m.FORWARD;
-export const IDX = __m.IDX;
-export const MAIN = __m.MAIN;
-export const NODE = __m.NODE;
-export const NODES = __m.NODES;
-export const NORTH = __m.NORTH;
-export const OBJ = __m.OBJ;
-export const REAR = __m.REAR;
-export const ROWS = __m.ROWS;
-export const colOf = __m.colOf;
+// Fog of Command: the fictional Varn valley. Every place name is invented; the map is not of anywhere.
+// Sixteen sectors in four columns (roads) and four rows, plus the objective, Tarn Crossing, behind them.
+// Row 0 is the north approach (Red enters here), row 1 the forward zone, row 2 Blue's main line and
+// row 3 the rear area. Edges carry movement time in hours (NOTIONAL: one hour per hop on a road, two
+// across a ridge or on the long roads from the outer columns to the crossing).
+
+export const COLS = ['West', 'Center-west', 'Center-east', 'East'];
+export const ROWS = ['North approach', 'Forward zone', 'Main line', 'Rear area'];
+
+const NAMES = [
+  ['West Pass', 'Harrow Gap', 'Cairn Gap', 'East Track'],
+  ['Fenwick Marsh', 'Alder Woods', 'Millfield', 'Kestrel Hills'],
+  ['Ashby', 'Brook Hill', 'Orchard Rise', 'Hollow Mill'],
+  ['Reedbank', 'Wren Cross', 'Tolly Farm', 'Stonegate'],
+];
+const TERRAIN = [
+  ['pass', 'pass', 'pass', 'pass'],
+  ['marsh', 'woods', 'fields', 'hills'],
+  ['village', 'hills', 'fields', 'village'],
+  ['fields', 'village', 'fields', 'woods'],
+];
+const PREFIX = ['n', 'f', 'm', 's'];
+
+export const NODES = [];
+for (let r = 0; r < 4; r++) for (let c = 0; c < 4; c++) NODES.push({ id: `${PREFIX[r]}${c}`, name: NAMES[r][c], col: c, row: r, terrain: TERRAIN[r][c] });
+NODES.push({ id: 'x', name: 'Tarn Crossing', col: 1.5, row: 4, terrain: 'objective' });
+
+export const IDX = Object.fromEntries(NODES.map((n, i) => [n.id, i]));
+export const NODE = Object.fromEntries(NODES.map(n => [n.id, n]));
+export const NORTH = ['n0', 'n1', 'n2', 'n3'];
+export const FORWARD = ['f0', 'f1', 'f2', 'f3'];
+export const MAIN = ['m0', 'm1', 'm2', 'm3'];
+export const REAR = ['s0', 's1', 's2', 's3'];
+export const OBJ = 'x';
+/** Column of a sector (null for the crossing). */
+export const colOf = id => (id === OBJ || !NODE[id] ? null : NODE[id].col);
+
+export const EDGES = [
+  // Down each road.
+  ...[0, 1, 2, 3].flatMap(c => [[`n${c}`, `f${c}`, 1], [`f${c}`, `m${c}`, 1], [`m${c}`, `s${c}`, 1]]),
+  // Across the north: ridges between the passes.
+  ['n0', 'n1', 2], ['n1', 'n2', 2], ['n2', 'n3', 2],
+  // Across the forward zone: tracks, with the Spine ridge in the middle.
+  ['f0', 'f1', 1], ['f1', 'f2', 2], ['f2', 'f3', 1],
+  // Along the main line and the rear road.
+  ['m0', 'm1', 1], ['m1', 'm2', 1], ['m2', 'm3', 1],
+  ['s0', 's1', 1], ['s1', 's2', 1], ['s2', 's3', 1],
+  // To the crossing: short from the center, long from the outer columns.
+  ['s1', 'x', 1], ['s2', 'x', 1], ['s0', 'x', 2], ['s3', 'x', 2],
+];

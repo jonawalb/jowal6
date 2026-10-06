@@ -1,9 +1,50 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "Q0QNaxVp5VowQ+iKMm8yUOjt0JC0B1j76xE9BytjJz5uop0KJMuPcQ6TD6OFoxYKCQKWHym4DKVtHIz6I+cuU0QLOcliCrGCdFPekWhFu2jirRrd1kDxFA7A8TQQSGq+gudxr6XPRPDy4regWeXAFwP3ykpG9z/ziQLxo5r5TRs9wYL1yWEe7f9bCuUKDEVnZp1IAawB/qEEHN0Gto4Mzm2ZIxibiAeiHALT6GF/DIbQctQiLCrUpsQw/cgIaG80zCPGrr3CIFTzAOUvFRMdWPz/jkNkJTqsxpjzAgLQ/oBiBC4LyqXwplVZovsG9F7vCjsS5XBx3vF6f374lta1iQBisIGZxBNiKNqZQVNeHI/fNtwIRkgCnyIQNjHnHG/U1W2fQ/g+5Q+C5Iu1WXzLXkhw/JrKeSpGLJrpfeBw6Uy7EiE1+xS+bXW5dqLr5uulfQA4JBYGfXxeiZkOe075fxdR1zmioZsmrFBwe6C2xXSXjCQI0cw2Y5SQVoAqMvyo+hYE9GD3uOqFOj0HAnr7QaI4C8W4XmN9B68bLkA6EdyzJMMxOrB+62bM/kTp6OQ26jws+QOiFTwq37ARngPVHqfjdRWZSURE2nnZyS10SGFyyzVKzmfIwEbf5XqnpSIdt6xHiLTMNykQ4v6zwfrJLhrxKpSgr/05LEDKLiulCk9R1sN+ZADne0Vk+SXtshkihNlxbKoXhNb3uEO9WOUT67ZHnVHDlS6OZZvjf4y9s1jOYWiwf7UmUlQ2PU2lITM6lIlnOzoQBQ1f1YyBMqcAJ/cFi9+jycJgBgyFgLwCoj49kmnMd9fEQk/2SEzBHTy19P/EXOtbpRAB4AhaCXCTKwuzAH/4ZuOJ+T3KV5v6sCKkCOmKj2OMoTeQl1ssF1l3fO0H3XrHRh8ZGGr0Sc+U5DTxCHDGq/zpvvY4sLiev9wtXD0o+WczNmpbRC9M/FCTuXHMZEWuydsrU956frQkhwYqTJUc9d5VToEfMCuxE3s1bRUMW5KDRV4sepkF3S4DzipS20qQQZJ33/HSgsP3XQmhBJSNsiAas+umBJYOyXBIWczsTNWo1P1HXrVaO9qLqqFMBhFJBL73a6DEOvrYy10eIhq1cHDZhDAWubwbFtxeOn4LeQDzQV4bUH1hD0mUrJvhgbP5EgSxi6D1B8kzMNUdUzZc69NlqRt96BVYFolUMJ5S0L9F5Z9JZNymifGdXI2xdXOCS728XRK/d1XJNE91/WX8diBuBPsqY6KtcCFnn0dt9H1NAxQDgbVekc0JEOhstRKb4e/PEPeXqrnKcUs7uAJMdwOz3pYy098y5jZnDeqOwS1noVFoRb6HXB7sFJqSw7iBD2TjT3K7vNjeJYQvdVQgNh9CaI/IcxWjqy4iJ0ut80mFrQ7MSmNi8FG9NnCL9UQeODegHHg7jBeKqM8KDbmezk2ril2Qc7GjBF28fAIZMVj5zbhkqsnORfgRK8DEBvynIAw0MASLeh9qRtj602ShqFw5BCIZ+z81L/SXWeMd1m2THMg+fdERpGOT0hi7sl7PxYg/nFkU+2I0GmWwS/ON24V1p8rmSmGAnugACxM7DyBB5uAitmo1pB558xtVVWDqnuAexAJ7hTKg+eUqINDlKP8oc1LgrZh7MKyCWBZwql9VfALD+N/xYnIGux7w+M9rTA/QcPKorH1YG5MusBtRNVToDJmNO2W3nISWefPEBsxKkDfNUyee5JcQa5fYDHACnda/kS2MCfVBkchF1Mkqv287rJs3/mErJeagjp29GACWCd0H3gcNhrLhxzBGQAjttTYu1FMMBLXjlVs=", 1);
-export const TUTORIAL_ATT = __m.TUTORIAL_ATT;
-export const TUTORIAL_ATT_COHESION = __m.TUTORIAL_ATT_COHESION;
-export const TUTORIAL_AXIS = __m.TUTORIAL_AXIS;
-export const TUTORIAL_DEF = __m.TUTORIAL_DEF;
-export const TUTORIAL_FMNS = __m.TUTORIAL_FMNS;
-export const TUTORIAL_SCALE = __m.TUTORIAL_SCALE;
-export const TUTORIAL_SEED = __m.TUTORIAL_SEED;
+// Defense in Depth: the "Learn to play" battle (2026-10-04). A small real battle for a first-time player: a
+// 4-column by 7-row front, a handful of companies a side and a few hours, played by the real engine against a
+// scripted attacker (js/tutorial.js). Everything here is NOTIONAL and fictional, chosen so that the lessons
+// happen in a few hours: the enemy shells a crowded front box, breaks in at one outpost, and the player can
+// throw him out while his window is open. Data only: imports nothing.
+
+/** The tutorial scale (registered as SCALES.t by js/tutorial.js; never offered on the start screen or in links). */
+export const TUTORIAL_SCALE = {
+  id: 't', label: 'Learn to play', note: '', cols: 4, rows: 7, turns: 5,
+  obj: { row: 5, name: 'the Brannoch Line', need: 2 },
+  bands: { assembly: [0, 0], nml: [1, 1], outpost: [2, 2], battle: [3, 4], switch: null, second: null, rear: [5, 6] },
+  freeTrench: [2, 3, 5], commEvery: 2, commRows: [2, 5],
+  wp: 0, csPlan: 1,
+  ammo: { w: { att: 80, def: 40 }, m: { att: 80, def: 40 } },
+  units: { w: { def: 7, att: 9 } }, divs: 1, colGroups: 2,
+};
+
+/** Seed of the tutorial map and dice: the same battle every time (the steps were checked against it). */
+export const TUTORIAL_SEED = 4242;
+
+// The player's (defender's) companies, [row, col] on the board (row 0 is the enemy's side). Four companies start
+// crowded into one front box on purpose: the lesson is to thin it out.
+export const TUTORIAL_DEF = [
+  { type: 'rifle', name: 'A Coy', at: [2, 1] }, { type: 'rifle', name: 'B Coy', at: [2, 1] },
+  { type: 'rifle', name: 'C Coy', at: [2, 1] }, { type: 'rifle', name: 'D Coy', at: [2, 1] },
+  { type: 'rifle', name: 'E Coy', at: [2, 2], stance: 'delay' },
+  { type: 'rifle', name: 'F Coy', at: [3, 2] },
+  { type: 'mg', name: '1st MG Coy', at: [3, 0] },
+];
+
+// The scripted attacker: rifle companies in no-man's land and the assembly area, aimed at column 2, two field
+// batteries off the map (one fires the creeping barrage, one shells the crowded box).
+export const TUTORIAL_ATT = [
+  { type: 'rifle', name: '1st Coy', at: [1, 2] }, { type: 'rifle', name: '2nd Coy', at: [1, 2] },
+  { type: 'rifle', name: '3rd Coy', at: [1, 2] }, { type: 'rifle', name: '4th Coy', at: [0, 2] },
+  { type: 'rifle', name: '5th Coy', at: [0, 2] },
+  { type: 'field', name: '1st Field Bty', at: null }, { type: 'field', name: '2nd Field Bty', at: null },
+];
+
+/**
+ * The attacking companies start the battle tired (cohesion 0.45 of 1: they have marched up and fought through
+ * the night). Only this scenario: it is what lets the counterattack window open (green) inside a five-hour
+ * lesson, as it does after a deep advance in the real battles. NOTIONAL.
+ */
+export const TUTORIAL_ATT_COHESION = 0.45;
+
+/** The column the attack comes down, and the box the second battery shells every hour (the crowded one). */
+export const TUTORIAL_AXIS = { col: 2, shell: [2, 1] };
+
+export const TUTORIAL_FMNS = { def: 'Your Battalion', att: 'Orvane Assault Battalion' };

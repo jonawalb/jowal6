@@ -1,4 +1,23 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "U0MDlvk/4lAwtZFtIj5CHHww0qMsKIjbG0KObzYc9FVIsnN3FuUaKFb7fmK/JzNLLXkxHiKboR1XNdwODy7q3wiXxhdBaHPizKZCwqYCejIkpFmlbfseNv1jpioU316TrzuqjuenAN7uhrWEUr4f/UCKmKWd6/+2My0fC5MqA5oAv2VCyhes8WDA0iV4iL/ERFMYKt+Sb5Q9vRNW+x49jVlyeah6makB/wlWCQQ2T4H3vEM8IGBewRaPFxEKTo+EdChMsY8yScLVK6SlZXYzBIi8sY77m+lr5Fe3BXXTcPlTIke9/UVYtaEPOBzfvMqadTe/0bKnLCPPELXweonAAwFsUajWWmsq8WzRg5xTmj1HwKaT7uN2mMfuSphxT/M+yzLv9WIPzurvz92qvRCdJn7ctb+TBUN9+mjMJJLedLZecTVP5AO2xJiMifrMIDMrPrg/4XGEFP56b/l08dbkYPeznILh6AwWe4uwu9B9Nt5BgRy0FpN31FRa0N06eOPBJafvAKfm4snjOV7htFBB5jm/mRPrS9ZzMeg2cTeVKN0jkHJKuoXnSkPLIRAwIHutAyjSBR3St6GAeiMuH9j5edFCMO1qw+7DCcJZdnikmYR1i2RV8TelJddIIKncx4w9fMy84BTRGZbJ9mAXdwLWu20VuHhF+sex6G+SaRWo5OPTB6gvWeOqUdE=", 1);
-export const COUNTRIES = __m.COUNTRIES;
-export const REGIONS = __m.REGIONS;
+// Country profiles offered by the selector. Taiwan comes first and is the default; Interactive Deterrence shows only Taiwan.
+import { TAIWAN } from './taiwan.js';
+import { JAPAN } from './japan.js';
+import { KOREA } from './korea.js';
+import { PHILIPPINES } from './philippines.js';
+import { AUSTRALIA } from './australia.js';
+import { SINGAPORE } from './singapore.js';
+import { POLAND } from './poland.js';
+import { GERMANY } from './germany.js';
+import { LITHUANIA } from './lithuania.js';
+import { FINLAND } from './finland.js';
+import { SWEDEN } from './sweden.js';
+import { NORWAY } from './norway.js';
+import { ROMANIA } from './romania.js';
+
+export const COUNTRIES = [TAIWAN, JAPAN, KOREA, PHILIPPINES, AUSTRALIA, SINGAPORE,
+  POLAND, GERMANY, LITHUANIA, FINLAND, SWEDEN, NORWAY, ROMANIA];
+
+// Headings for the country selector, in display order.
+export const REGIONS = [
+  { t: 'Indo-Pacific', ks: ['tw', 'jp', 'kr', 'ph', 'au', 'sg'] },
+  { t: 'Europe', ks: ['pl', 'de', 'lt', 'fi', 'se', 'no', 'ro'] },
+];

@@ -1,8 +1,82 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1);
-export const BIDDLE = __m.BIDDLE;
-export const GAME = __m.GAME;
-export const HUNZEKER = __m.HUNZEKER;
-export const LESSONS = __m.LESSONS;
-export const captionFor = __m.captionFor;
-export const lessonById = __m.lessonById;
+// Lessons panel metadata: one entry per diagram (SPEC §7.6). Standalone data module: imports nothing.
+// js/diagrams/index.js mounts them; js/ui/lessons-ui.js places them. Captions cite figure and printed page.
+// kind 'redrawn'   -> "Redrawn and expanded from …" (a source figure exists)
+// kind 'schematic' -> "Schematic after descriptions in …" (text only; no source figure)
+
+export const BIDDLE = 'Biddle, Military Power (2004)';
+export const HUNZEKER = 'Hunzeker, Dying to Learn (2021)';
+
+export const LESSONS = Object.freeze([
+  { id: 'L1', pri: 1, file: 'dg-enfilade', title: 'Enfilade: fire along the line, not into it',
+    lesson: 'A machine gun firing from the flank hits many more men per burst than one firing from the front.',
+    kind: 'schematic', cite: `${BIDDLE}, p. 44 (directional cover), p. 120; ${HUNZEKER}, p. 77` },
+  { id: 'L2', pri: 1, file: 'dg-coverage', title: 'Interlocking fields and dead ground',
+    lesson: 'Sectors covered from two or more directions leave the attacker almost no usable dead ground.',
+    kind: 'schematic', cite: `${BIDDLE}, p. 44 (fire across each other’s fronts) and p. 36 (invisible ground)` },
+  { id: 'L3', pri: 1, file: 'dg-zones', title: 'Elastic defense in depth',
+    lesson: 'Thin forward, strong in depth, and strike back on time.',
+    kind: 'schematic', cite: `${HUNZEKER}, pp. 81–82 (zones, counterattacks) and p. 117 (the copy that kept the form)` },
+  { id: 'L4', pri: 2, file: 'dg-slope', title: 'Reverse slope: let the crest hide you',
+    lesson: 'A main line behind the crest is invisible to ground observers and hard for their guns to register.',
+    kind: 'schematic', cite: `${HUNZEKER}, pp. 78–79; ${BIDDLE}, pp. 96–97` },
+  { id: 'L5', pri: 1, file: 'dg-barrage', title: 'The barrage and the infantry',
+    lesson: 'Lift too early and the defenders man the parapet; lift too late and you shell your own men.',
+    kind: 'schematic', cite: `${HUNZEKER}, p. 110 (rates, 100 yd ahead), p. 147 (100 m every 4 min), p. 52; ${BIDDLE}, pp. 31, 38` },
+  { id: 'L6', pri: 2, file: 'dg-fireplan', title: 'A four-phase fire plan',
+    lesson: 'Blind the enemy, then silence his guns, then walk the fire in front of your infantry.',
+    kind: 'schematic', cite: `${HUNZEKER}, pp. 76–77` },
+  { id: 'L7', pri: 1, file: 'dg-leapfrog', title: 'Leapfrog',
+    lesson: 'One element fires while the other bounds; then they swap.',
+    kind: 'schematic', cite: `${HUNZEKER}, p. 56 and p. 70 (50–100-yd bounds); ${BIDDLE}, pp. 31, 37–38` },
+  { id: 'L8', pri: 1, file: 'dg-infil', title: 'Infiltration and mop-up',
+    lesson: 'Storm squads slip past strongpoints; an outpost zone with overlapping watch catches them.',
+    kind: 'schematic', cite: `${HUNZEKER}, pp. 71–72, 58; ${BIDDLE}, pp. 33, 55` },
+  { id: 'L9', pri: 1, file: 'dg-counter', title: 'The counterattack window',
+    lesson: 'Strike a fresh lodgment before it consolidates and while it is beyond its guns.',
+    kind: 'schematic', cite: `${HUNZEKER}, pp. 79, 82; ${BIDDLE}, pp. 47–48` },
+  { id: 'L10', pri: 1, file: 'dg-race', title: 'The race: penetration against reserves',
+    lesson: 'The attack halts when the defender’s reserves arrive before the attacker gets through the depth.',
+    kind: 'redrawn', cite: `${BIDDLE}, Fig. A.1, p. 211 (equations A.14–A.19, p. 214)` },
+  { id: 'L11', pri: 1, file: 'dg-curves', title: 'Depth, reserves and breakthrough',
+    lesson: 'Shallow defenses or tiny reserves break; depth and reserves are weak substitutes for each other.',
+    kind: 'redrawn', cite: `${BIDDLE}, Fig. A.2, p. 220, and Fig. A.3, p. 221` },
+  { id: 'L12', pri: 1, file: 'dg-curves', title: 'How fast should an assault go?',
+    lesson: 'Gain peaks at a moderate speed, and the best speed falls as weapons grow more lethal.',
+    kind: 'redrawn', cite: `${BIDDLE}, Fig. A.8, p. 226, and Fig. A.14, p. 234` },
+  { id: 'L13', pri: 1, file: 'dg-curves', title: 'How fast should reserves move?',
+    lesson: 'Too slow and they never arrive; too fast and they die on the road. Lethality moves the best speed down.',
+    kind: 'redrawn', cite: `${BIDDLE}, Fig. A.13, p. 233` },
+  { id: 'L14', pri: 2, file: 'dg-curves', title: 'Modern system against non-modern',
+    lesson: 'Breakthrough needs a defender who fights exposed; a modern defense contains even a modern attack.',
+    kind: 'redrawn', cite: `${BIDDLE}, Table 4.1, p. 74, and Table A.3, p. 235` },
+  { id: 'L15', pri: 1, file: 'dg-learning', title: 'How armies learn',
+    lesson: 'Explore, select, act, master: the army that filters and trains best learns fastest.',
+    kind: 'redrawn', cite: `${HUNZEKER}, Figs. 1a–3c, p. 46 (codings pp. 37, 45)` },
+  { id: 'L16', pri: 2, file: 'dg-dilemma', title: 'The attacker’s dilemmas',
+    lesson: 'Go deep and outrun your guns, or stay shallow; go narrow and be shot from three sides.',
+    kind: 'schematic', cite: `${HUNZEKER}, pp. 53–54; ${BIDDLE}, pp. 42–44, 120` },
+]);
+
+export const lessonById = id => LESSONS.find(l => l.id === id);
+export const captionFor = l => (l.kind === 'redrawn' ? 'Redrawn and expanded from ' : 'Schematic after descriptions in ') + l.cite + '.';
+
+/**
+ * Game constants the diagrams show. They mirror SPEC §3.2-§3.7 so the readouts use the game's own numbers.
+ * data/params.js (W1-A) is authoritative; keep these equal (scripts/diagrams.test.mjs compares them when it can).
+ */
+export const GAME = Object.freeze({
+  ENF: { waves: 3.0, column: 2.5, trench: 2.5, groups: 2.9, none: 1.0 },    // §3.4, NOTIONAL
+  coverDirFront: 0.5,   // illustrative directional cover of a fold or parapet at θ = 0 (§3.3; NOTIONAL)
+  X: { rush: 1.0, bound: 0.27, boundShort: 0.19, overwatch: 0.15, noPartner: 0.60, hold: 0.20 },   // §3.6
+  shortBound: { x: 0.7, progress: 0.75 },
+  owCap: { rifle: 0.6, mg: 0.7 },
+  deadGround: { perDir: 0.35, use: { leapfrog: 1.0, infiltrate: 1.0, rush: 0.3 }, unscouted: 0.5 },   // §3.4
+  detect: { same: 0.9, adjacent: 0.25, overlap: 1.5, lane: 0.35, fog: 0.5 },   // §3.6
+  cohesion: { consolidate: 0.10, floor: 0.3 },   // §3.7
+  ca: { cohW: 1.0, beyondArty: 0.5, consolidated: -0.5, min: 0.6, max: 2.5, window: 1.6, consolidateH: 2, noAuthority: 0.75 },
+  fe: { unconsolidated: 0.5, consolidated: 0.2, trench: 0.5, reverse: 0.3, strongpoint: 0.1, dispersed: 0 },
+  k1: 2.5,              // SOURCED, Biddle p. 218
+  suppMax: 0.86,        // SOURCED, "factor of seven or more", Biddle p. 67
+  residual: { early1: 0.3, early1Card: 0.5 }, lateLoss: 0.06,   // §3.8
+  planningH: { division: 2, corps: 3, army: 4 },
+});

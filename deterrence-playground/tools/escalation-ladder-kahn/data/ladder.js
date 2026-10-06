@@ -1,8 +1,76 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1);
-export const BOTTOM = __m.BOTTOM;
-export const GROUPS = __m.GROUPS;
-export const KAHN_SRC = __m.KAHN_SRC;
-export const RUNGS = __m.RUNGS;
-export const TOP = __m.TOP;
-export const groupOf = __m.groupOf;
+// Herman Kahn's 44-rung escalation ladder, On Escalation: Metaphors and Scenarios (1965), p. 39, as RAND R-3235 cites it ("Kahn (1965:39)").
+// R-3235's bibliography lists "(rev. ed.), Penguin Books, Baltimore, 1965", but Open Library dates the Penguin Baltimore edition 1968
+// (the first edition is Praeger, New York, 1965), so the page cites no edition.
+// Rung names, group names and threshold names are transcribed exactly (spelling, quotation marks and dashes) from the
+// reproduction of Kahn's figure in Paul K. Davis and Peter Stan, "Concepts and Models of Escalation",
+// RAND R-3235, 1984, Fig. 2 ("Kahn's 44-step escalation ladder for generalized or abstract scenario"; source line
+// "Kahn (1965:39)"), p. 6 of the report. Landing page: https://www.rand.org/pubs/reports/R3235.html (opened 2026-09-29).
+// Only the capitalization of the first word follows the RAND figure; nothing is paraphrased.
+export const KAHN_SRC = {
+  cite: 'Herman Kahn, On Escalation: Metaphors and Scenarios (1965), p. 39, as reproduced in Paul K. Davis and Peter Stan, Concepts and Models of Escalation, RAND R-3235, 1984, Fig. 2.',
+  url: 'https://www.rand.org/pubs/reports/R3235.html',
+};
+
+export const BOTTOM = 'Disagreement—Cold War';
+export const TOP = 'Aftermaths';
+
+// Groups from the bottom up. `after` is the threshold printed above the group's highest rung.
+export const GROUPS = [
+  { id: 'sub', name: 'Subcrisis Maneuvering', from: 1, to: 3, after: "Don't Rock the Boat Threshold" },
+  { id: 'trad', name: 'Traditional Crises', from: 4, to: 9, after: 'Nuclear War Is Unthinkable Threshold' },
+  { id: 'intense', name: 'Intense Crises', from: 10, to: 20, after: 'No Nuclear Use Threshold' },
+  { id: 'bizarre', name: 'Bizarre Crises', from: 21, to: 25, after: 'Central Sanctuary Threshold' },
+  { id: 'exemplary', name: 'Exemplary Central Attacks', from: 26, to: 31, after: 'Central War Threshold' },
+  { id: 'military', name: 'Military Central Wars', from: 32, to: 38, after: 'City Targeting Threshold' },
+  { id: 'civilian', name: 'Civilian Central Wars', from: 39, to: 44, after: null },
+];
+
+export const RUNGS = [
+  null,
+  'Ostensible crisis',
+  'Political, economic, and diplomatic gestures',
+  'Solemn and formal declarations',
+  'Hardening of positions—confrontation of wills',
+  'Show of force',
+  'Significant mobilization',
+  '“Legal” harassment—retortions',
+  'Harassing acts of violence',
+  'Dramatic military confrontations',
+  'Provocative breaking off of diplomatic relations',
+  'Super-ready status',
+  'Large conventional war (or actions)',
+  'Large compound escalation',
+  'Declaration of limited conventional war',
+  'Barely nuclear war',
+  'Nuclear “ultimatums”',
+  'Limited evacuation (approximately 20 percent)',
+  'Spectacular show or demonstration of force',
+  '“Justifiable” counterforce attack',
+  '“Peaceful” worldwide embargo or blockade',
+  'Local nuclear war—exemplary',
+  'Declaration of limited nuclear war',
+  'Local nuclear war—military',
+  'Unusual, provocative, and significant countermeasures',
+  'Evacuation (approximately 70 percent)',
+  'Demonstration attack on zone of interior',
+  'Exemplary attack on military',
+  'Exemplary attacks against property',
+  'Exemplary attacks on population',
+  'Complete evacuation (approximately 95 percent)',
+  'Reciprocal reprisals',
+  'Formal declaration of “general” war',
+  'Slow-motion counter-“property” war',
+  'Slow-motion counterforce war',
+  'Constrained force-reduction salvo',
+  'Constrained disarming attack',
+  'Counterforce-with-avoidance attack',
+  'Unmodified counterforce attack',
+  'Slow-motion countercity war',
+  'Countervalue salvo',
+  'Augmented disarming attack',
+  'Civilian devastation attack',
+  'Some other kinds of controlled general war',
+  'Spasm or insensate war',
+];
+
+export const groupOf = n => GROUPS.find(g => n >= g.from && n <= g.to);

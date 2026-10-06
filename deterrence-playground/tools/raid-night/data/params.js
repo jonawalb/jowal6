@@ -1,16 +1,68 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1);
-export const ALL_SITES = __m.ALL_SITES;
-export const BATTERIES = __m.BATTERIES;
-export const CITIES = __m.CITIES;
-export const FIELD = __m.FIELD;
-export const MODES = __m.MODES;
-export const MODE_NAME = __m.MODE_NAME;
-export const RESUPPLY = __m.RESUPPLY;
-export const SPAWN = __m.SPAWN;
-export const SPEED = __m.SPEED;
-export const THREATS = __m.THREATS;
-export const THREAT_ORDER = __m.THREAT_ORDER;
-export const WAVE_TRACKS = __m.WAVE_TRACKS;
-export const WEAPONS = __m.WEAPONS;
-export const WEAPON_ORDER = __m.WEAPON_ORDER;
+// Notional game parameters. None of these describe a real weapon system: ranges, speeds, reload times,
+// magazine sizes, kill probabilities and damage points are invented for play and marked "notional" on the page.
+// Units: the field is 1000 x 720 game units; times are game seconds.
+import { COST } from './costs.js';
+
+export const FIELD = { W: 1000, H: 720, coastY: 548 };
+
+export const CITIES = [
+  { k: 'A', name: 'City A', x: 140, y: 632 },
+  { k: 'B', name: 'City B', x: 380, y: 612 },
+  { k: 'C', name: 'City C', x: 620, y: 612 },
+  { k: 'D', name: 'City D', x: 860, y: 632 },
+];
+
+export const WEAPON_ORDER = ['gun', 'sri', 'lri'];
+export const WEAPONS = {
+  gun: { name: 'Guns and EW', short: 'Guns / EW', lc: 'guns and EW', key: '1', mag: 170, reload: 0.45, range: 105, speed: 700,
+    pk: { drone: 0.55, cruise: 0.25, ballistic: 0 },
+    sites: [{ x: 140, y: 606 }, { x: 380, y: 586 }, { x: 620, y: 586 }, { x: 860, y: 606 }] },
+  sri: { name: 'Short-range interceptor', short: 'Short-range', lc: 'short-range interceptors', key: '2', mag: 46, reload: 1.1, range: 270, speed: 260,
+    pk: { drone: 0.85, cruise: 0.75, ballistic: 0.2 },
+    sites: [{ x: 262, y: 598 }, { x: 740, y: 598 }] },
+  lri: { name: 'Long-range interceptor', short: 'Long-range', lc: 'long-range interceptors', key: '3', mag: 22, reload: 1.5, range: 600, speed: 340,
+    pk: { drone: 0.9, cruise: 0.85, ballistic: 0.8 },
+    sites: [{ x: 430, y: 690 }, { x: 570, y: 690 }] },
+};
+
+export const THREAT_ORDER = ['drone', 'cruise', 'ballistic'];
+export const THREATS = {
+  drone: { name: 'One-way attack drone', short: 'Drone', speed: 15, dmg: 1, weave: 12 },
+  cruise: { name: 'Cruise missile', short: 'Cruise', speed: 32, dmg: 3, weave: 0 },
+  ballistic: { name: 'Ballistic missile', short: 'Ballistic', speed: 72, dmg: 6, weave: 0 },
+};
+
+// Tracks per wave (the real raid mix is scaled to these totals) and spawn windows in game seconds.
+export const WAVE_TRACKS = [30, 36, 40];
+export const SPAWN = {
+  drone: [0, 26],
+  cruise: [10, 30],
+  ballistic: [27, 40], // arrives in salvos of 2–5
+};
+export const SPEED = { normal: 1, reduced: 0.55 };
+
+// Modes: Easy and Normal share one defense and the same controls; Hard splits it into two batteries.
+export const MODES = ['easy', 'normal', 'hard'];
+export const MODE_NAME = { easy: 'Easy', normal: 'Normal', hard: 'Hard' };
+
+// Resupply between waves (NOTIONAL game mechanic). Before waves 2 and 3 the defender gets `budget[mode]` points
+// to buy reloads; unspent points are lost and no weapon can be filled past its dusk magazine.
+// Interceptor prices are scaled to the midpoint of the sourced unit-cost range in data/costs.js at one point
+// per `usdPerPoint` million dollars, rounded, minimum 1 (short-range ~$70,000 -> 1 point, long-range $2.5m ->
+// 25 points). Guns and EW have no sourced cost, so their price is purely notional.
+const scaled = w => Math.max(1, Math.round((COST[w].lo + COST[w].hi) / 2 / 0.1));
+export const RESUPPLY = {
+  budget: { easy: 200, normal: 100, hard: 100 }, // points per break by mode, notional (Easy is 2x Normal)
+  usdPerPoint: 0.1,   // $ millions per point, used only to scale interceptor prices
+  gun: { per: 10, pts: 1 },            // 10 bursts per point: notional, no sourced cost
+  sri: { per: 1, pts: scaled('sri') }, // scaled from the Iron Dome-like cost range
+  lri: { per: 1, pts: scaled('lri') }, // scaled from the Arrow-like cost range
+};
+
+// Hard mode (NOTIONAL game mechanic): the defense splits into two batteries at the middle of the map.
+// Site indices refer to WEAPONS[w].sites. Both batteries draw on the same magazines.
+export const BATTERIES = {
+  L: { name: 'Left battery', short: 'Left', cities: ['A', 'B'], sites: { gun: [0, 1], sri: [0], lri: [0] } },
+  R: { name: 'Right battery', short: 'Right', cities: ['C', 'D'], sites: { gun: [2, 3], sri: [1], lri: [1] } },
+};
+export const ALL_SITES = Object.fromEntries(WEAPON_ORDER.map(w => [w, WEAPONS[w].sites.map((_, i) => i)]));

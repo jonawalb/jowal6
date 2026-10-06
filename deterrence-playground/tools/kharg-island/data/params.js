@@ -1,18 +1,147 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1);
-export const BUDGET = __m.BUDGET;
-export const CRT = __m.CRT;
-export const CRT_COLS = __m.CRT_COLS;
-export const ESC_EVENTS = __m.ESC_EVENTS;
-export const IRAN_FIELDS = __m.IRAN_FIELDS;
-export const MAJOR_INDEX = __m.MAJOR_INDEX;
-export const MENU = __m.MENU;
-export const MINE_LEVELS = __m.MINE_LEVELS;
-export const OBJECTIVES = __m.OBJECTIVES;
-export const POSTURES = __m.POSTURES;
-export const PROB = __m.PROB;
-export const PROB_DEF = __m.PROB_DEF;
-export const RESULTS = __m.RESULTS;
-export const SECTORS = __m.SECTORS;
-export const TOGGLES = __m.TOGGLES;
-export const TURN_HOURS = __m.TURN_HOURS;
+// Model parameters for Kharg Island.
+// Each entry names a source key (see data/sources.js) or is notional (src: null). Notional values are
+// modelling assumptions that no open source gives; every one of them can be edited on the page.
+// Strength points are notional: one point is about 1,000 troops.
+
+export const TURN_HOURS = 12;
+export const BUDGET = 100; // notional
+
+/** U.S. objectives. */
+export const OBJECTIVES = {
+  seize: { t: 'Seize and hold', s: 'Take the island and keep it as leverage over exports' },
+  raid: { t: 'Raid and withdraw', s: 'Land, take the airstrip area, pull out' },
+  blockade: { t: 'Blockade, no landing', s: 'Stop tankers loading at Kharg from offshore' },
+};
+
+/** U.S. force menu. cost = notional budget points. */
+export const MENU = [
+  { k: 'meu', one: 'ARG/MEU', t: 'Amphibious ready group with a Marine expeditionary unit', s: 'Three or four ships, about 2,200 Marines', cost: 24, max: 2, def: 1, src: 'meu' },
+  { k: 'abn', one: 'airborne battalion', t: 'Airborne or air assault battalions', s: 'Parachute or helicopter lift onto the island', cost: 10, max: 2, def: 1, src: 'ab82' },
+  { k: 'cvw', one: 'carrier air wing', t: 'Carrier air wings', s: 'Suppression strikes and close air support', cost: 18, max: 2, def: 1, src: 'twzBlockade' },
+  { k: 'ddg', one: 'escort destroyer', t: 'Escort destroyers', s: 'Air and missile defense; blockade stations', cost: 6, max: 5, def: 3, src: 'twzBlockade' },
+  { k: 'mcm', one: 'MCM group', t: 'Mine countermeasures groups', s: 'Clear the approaches each turn', cost: 6, max: 2, def: 1, src: 'usniMcm' },
+  { k: 'helo', one: 'attack helicopter detachment', t: 'Attack helicopter detachments', s: 'Break up fast-attack-craft swarms', cost: 5, max: 3, def: 1, src: null },
+];
+export const TOGGLES = [
+  { k: 'sof', t: 'Special operations raid force', s: 'Seizes the airstrip area ahead of the main landing', cost: 8, def: true, src: null },
+  { k: 'bases', t: 'Fly from Gulf partner bases', s: 'More strike sorties, but hosts become targets', cost: 0, def: false, src: 'fp' },
+];
+
+/** Iranian forces the player can set, and the presets. mines: 0 none, 1 light, 2 heavy. */
+export const IRAN_FIELDS = [
+  { k: 'ascm', t: 'Coastal anti-ship missile batteries', s: 'Mobile launchers ashore, two salvos each', min: 0, max: 6, one: 'battery', src: 'dia' },
+  { k: 'drones', t: 'Drone launch teams', s: 'One-way attack drones vs ships and troops', min: 0, max: 6, one: 'drone team', src: 'csisMissiles' },
+  { k: 'fac', t: 'Fast attack craft squadrons', s: 'IRGC Navy swarm tactics', min: 0, max: 6, one: 'FAC squadron', src: 'dia' },
+  { k: 'garrison', t: 'Island garrison', s: 'Strength points; up to about 1,000 personnel in 1979', min: 0.5, max: 4, step: 0.5, one: 'garrison point', src: 'frus8' },
+  { k: 'reinf', t: 'Mainland reinforcement', s: 'Points Iran tries to ferry across each turn', min: 0, max: 2, step: 0.25, one: 'reinforcement point', src: null },
+  { k: 'srbm', t: 'Ballistic missile salvos for regional strikes', s: 'Used for strikes on Gulf states and bases', min: 0, max: 8, one: 'missile salvo', src: 'csisMissiles' },
+];
+export const MINE_LEVELS = { 0: 'None', 1: 'Light', 2: 'Heavy' };
+export const POSTURES = {
+  deny: { t: 'Full denial', s: 'Defend the island and the approaches hard', v: { ascm: 4, drones: 4, fac: 4, garrison: 1.5, reinf: 0.75, srbm: 4, mines: 2, escal: 1 } },
+  limited: { t: 'Limited response', s: 'Defend, avoid widening the war', v: { ascm: 2, drones: 2, fac: 2, garrison: 1.5, reinf: 0.5, srbm: 2, mines: 1, escal: 0.5 } },
+  widen: { t: 'Widen the war', s: 'Hit shipping and Gulf states instead', v: { ascm: 3, drones: 3, fac: 3, garrison: 1.5, reinf: 0.5, srbm: 8, mines: 2, escal: 1.8 } },
+};
+
+/** Notional approach sectors. steps = objectives from the beach to the whole island; the airstrip is objective 1. */
+export const SECTORS = {
+  W: { t: 'Seaward side', s: 'Away from the mainland; longer to secure', steps: 3, expo: 0.85 },
+  E: { t: 'Landward side', s: 'Faces the mainland; shorter, more exposed', steps: 2, expo: 1.25 },
+};
+
+/**
+ * Probabilities and rates. g = group in the assumptions editor. Sourced entries name their source and
+ * carry a note; everything else is notional.
+ */
+export const PROB = [
+  // Forces
+  { k: 'meuPts', t: 'Marine strength per MEU', v: 2.2, min: 1, max: 3, step: 0.1, u: 'pts', g: 'U.S. forces', src: 'meu', note: 'About 2,200 Marines per MEU; 1 point per 1,000 troops is the model\'s conversion.' },
+  { k: 'abnPts', t: 'Strength per airborne battalion', v: 0.8, min: 0.3, max: 1.5, step: 0.1, u: 'pts', g: 'U.S. forces', src: null },
+  { k: 'abnEff', t: 'Airborne effectiveness after the drop', v: 0.7, min: 0.3, max: 1, step: 0.05, u: '×', g: 'U.S. forces', src: null },
+  { k: 'sofPts', t: 'Special operations force strength', v: 0.3, min: 0.1, max: 1, step: 0.05, u: 'pts', g: 'U.S. forces', src: null },
+  { k: 'sofEff', t: 'Special operations combat multiplier', v: 2.5, min: 1, max: 4, step: 0.25, u: '×', g: 'U.S. forces', src: null },
+  { k: 'airBonus', t: 'Troops flown in via a working airstrip', v: 0.4, min: 0, max: 1.5, step: 0.1, u: 'pts/turn', g: 'U.S. forces', src: null },
+  { k: 'baseSorties', t: 'Partner-base strike weight', v: 0.6, min: 0, max: 1.5, step: 0.1, u: 'air wings', g: 'U.S. forces', src: null },
+  // Suppression
+  { k: 'pStrikeAscm', t: 'Air wing kills a missile battery', v: 0.18, min: 0, max: 0.6, step: 0.01, u: 'per turn', g: 'Suppression strikes', src: null, note: 'Mobile launchers are hard to find; the 1991 Scud hunt is the usual cautionary case.' },
+  { k: 'pStrikeDrone', t: 'Air wing kills a drone team', v: 0.12, min: 0, max: 0.6, step: 0.01, u: 'per turn', g: 'Suppression strikes', src: null },
+  { k: 'pStrikeFac', t: 'Air wing kills a FAC squadron', v: 0.25, min: 0, max: 0.8, step: 0.01, u: 'per turn', g: 'Suppression strikes', src: null },
+  { k: 'pStrikeIsland', t: 'Prep strikes reduce the garrison', v: 0.08, min: 0, max: 0.3, step: 0.01, u: 'share/wing', g: 'Suppression strikes', src: null },
+  // Iranian fire at sea
+  { k: 'pAscm', t: 'Missile salvo leaks through to a ship', v: 0.35, min: 0, max: 1, step: 0.01, u: 'before defense', g: 'Salvos and swarms', src: null },
+  { k: 'pDroneShip', t: 'Drone wave leaks through to a ship', v: 0.25, min: 0, max: 1, step: 0.01, u: 'before defense', g: 'Salvos and swarms', src: null },
+  { k: 'pIntercept', t: 'Each destroyer stops a leaking salvo', v: 0.3, min: 0, max: 0.8, step: 0.01, u: 'per salvo', g: 'Salvos and swarms', src: null },
+  { k: 'pShipHit', t: 'A leaking salvo damages a ship', v: 0.5, min: 0, max: 1, step: 0.05, u: '', g: 'Salvos and swarms', src: null },
+  { k: 'pFacStop', t: 'Each helicopter detachment breaks a swarm', v: 0.35, min: 0, max: 0.9, step: 0.01, u: 'per squadron', g: 'Salvos and swarms', src: null },
+  { k: 'pFacDdg', t: 'Each destroyer breaks a swarm', v: 0.1, min: 0, max: 0.5, step: 0.01, u: 'per squadron', g: 'Salvos and swarms', src: null },
+  { k: 'pFacHit', t: 'A swarm that gets through damages a ship', v: 0.2, min: 0, max: 0.8, step: 0.01, u: '', g: 'Salvos and swarms', src: null, note: 'Swarm doctrine relies on numbers to saturate defenses (open descriptions of IRGC Navy doctrine).' },
+  // Mines
+  { k: 'pMine', t: 'Heavy mine threat stops a landing group', v: 0.12, min: 0, max: 0.5, step: 0.01, u: 'per crossing', g: 'Mines', src: null, note: 'Light mining is half this. Iran holds more than 5,000 mines (DIA); in 1988 one mine nearly sank USS Samuel B. Roberts.' },
+  { k: 'mcmRate', t: 'Mine threat cleared per MCM group per turn', v: 0.25, min: 0, max: 0.6, step: 0.05, u: 'share', g: 'Mines', src: null },
+  { k: 'blockMine', t: 'Mine risk to ships on blockade station', v: 0.2, min: 0, max: 1, step: 0.05, u: '× landing risk', g: 'Mines', src: null },
+  // Landing and ground
+  { k: 'pIslandAd', t: 'Island air defense downs an air lift', v: 0.12, min: 0, max: 0.5, step: 0.01, u: 'per lift', g: 'Landing and ground combat', src: null },
+  { k: 'defMult', t: 'Defender terrain and fortification', v: 1.5, min: 1, max: 3, step: 0.1, u: '×', g: 'Landing and ground combat', src: null },
+  { k: 'cas', t: 'Close air support shift per air wing', v: 0.25, min: 0, max: 1, step: 0.05, u: '× ratio', g: 'Landing and ground combat', src: null },
+  { k: 'pCrater', t: 'Iran wrecks the airstrip as it falls', v: 0.5, min: 0, max: 1, step: 0.05, u: '', g: 'Landing and ground combat', src: null },
+  // Mainland pressure
+  { k: 'pDroneShore', t: 'Drone team hits troops ashore', v: 0.35, min: 0, max: 0.9, step: 0.05, u: 'per turn', g: 'Mainland counterattack', src: null, note: 'The nearest mainland shore is about 30 km away (measured on the map).' },
+  { k: 'droneDmg', t: 'Strength lost per drone hit', v: 0.12, min: 0, max: 0.5, step: 0.01, u: 'pts', g: 'Mainland counterattack', src: null },
+  { k: 'pReinf', t: 'Reinforcements get across', v: 0.6, min: 0, max: 1, step: 0.05, u: 'before interdiction', g: 'Mainland counterattack', src: null },
+  { k: 'interdict', t: 'Interdiction per air wing or helicopter detachment', v: 0.2, min: 0, max: 0.5, step: 0.01, u: 'share', g: 'Mainland counterattack', src: null },
+  { k: 'pExtract', t: 'Withdrawal under fire goes badly', v: 0.2, min: 0, max: 0.8, step: 0.01, u: 'base chance', g: 'Mainland counterattack', src: null, note: 'Rises by a fifth for each Iranian drone team and FAC squadron still in action.' },
+  { k: 'extractLoss', t: 'Share of the raid force lost in a bad withdrawal', v: 0.4, min: 0, max: 1, step: 0.05, u: 'share', g: 'Mainland counterattack', src: null },
+  // Blockade
+  { k: 'pStation', t: 'Each ship on station stops a tanker attempt', v: 0.25, min: 0, max: 0.9, step: 0.01, u: 'per attempt', g: 'Blockade', src: null },
+  { k: 'warRisk', t: 'Loadings that stop while fighting is nearby', v: 0.3, min: 0, max: 1, step: 0.05, u: 'share', g: 'Blockade', src: null, note: 'Tanker owners and insurers pull back from a war zone even without a blockade.' },
+  { k: 'tankers', t: 'Tanker attempts per turn', v: 3, min: 1, max: 6, step: 1, u: 'per 12 h', g: 'Blockade', src: null, note: 'Each attempt stands for a third of a normal half-day of Kharg loadings.' },
+  // Escalation
+  { k: 'pHormuz', t: 'Iran attempts to close Hormuz', v: 0.08, min: 0, max: 0.5, step: 0.01, u: 'per turn', g: 'Escalation and politics', src: null, note: 'Base chance before posture, U.S. action and the escalation level scale it.' },
+  { k: 'pGulf', t: 'Iran strikes Gulf energy infrastructure', v: 0.05, min: 0, max: 0.5, step: 0.01, u: 'per turn', g: 'Escalation and politics', src: null },
+  { k: 'pRegional', t: 'Iran fires missiles at U.S. bases in the region', v: 0.07, min: 0, max: 0.5, step: 0.01, u: 'per turn', g: 'Escalation and politics', src: null },
+  { k: 'basesEsc', t: 'Extra Gulf-strike risk when partner bases are used', v: 1.6, min: 1, max: 3, step: 0.1, u: '×', g: 'Escalation and politics', src: null },
+  { k: 'costShip', t: 'Domestic and allied cost per ship damaged', v: 6, min: 0, max: 20, step: 1, u: 'index pts', g: 'Escalation and politics', src: null },
+  { k: 'costPt', t: 'Cost per strength point lost', v: 8, min: 0, max: 25, step: 1, u: 'index pts', g: 'Escalation and politics', src: null },
+  { k: 'costBases', t: 'Allied cost per turn of flying from partner bases', v: 1.5, min: 0, max: 10, step: 0.5, u: 'index pts', g: 'Escalation and politics', src: null },
+  { k: 'costOil', t: 'Cost per $1 rise in the oil price', v: 0.6, min: 0, max: 3, step: 0.1, u: 'index pts', g: 'Escalation and politics', src: null },
+  // Oil
+  { k: 'brent', t: 'Brent baseline', v: 71, min: 30, max: 150, step: 1, u: '$/bbl', g: 'Oil', src: 'eiaBrent', note: 'EIA Brent spot on 27 February 2026, the last trading day before the war: $71.32. It was $114.89 on 22 September 2026.' },
+  { k: 'iranExp', t: 'Iran\'s crude exports before the fight', v: 1.6, min: 0.3, max: 3, step: 0.1, u: 'mb/d', g: 'Oil', src: 'kpler', note: 'Kpler: about 1.61 million b/d over the 12 months to March 2026.' },
+  { k: 'khargShare', t: 'Share of those exports loaded at Kharg', v: 0.94, min: 0.5, max: 1, step: 0.01, u: 'share', g: 'Oil', src: 'kpler', note: 'Kpler measured about 94%; CRS and most outlets say about 90%.' },
+  { k: 'elast', t: 'Price rise per 1 mb/d taken off the market', v: 5, min: 0, max: 20, step: 0.5, u: '$/bbl', g: 'Oil', src: null, note: 'No source isolates Kharg\'s effect; 2026 prices moved with Hormuz, not Kharg alone.' },
+  { k: 'premHormuz', t: 'Price premium after a Hormuz closure attempt', v: 12, min: 0, max: 50, step: 1, u: '$/bbl', g: 'Oil', src: null },
+  { k: 'premGulf', t: 'Price premium after a Gulf infrastructure strike', v: 8, min: 0, max: 40, step: 1, u: '$/bbl', g: 'Oil', src: null, note: 'The 2019 Abqaiq attack brought the largest one-day Brent rise in a decade (EIA); the size here is notional.' },
+];
+export const PROB_DEF = Object.fromEntries(PROB.map(p => [p.k, p.v]));
+
+/**
+ * Combat results table (notional, in the style of classic board wargames). Columns: U.S. strength ashore
+ * divided by effective Iranian strength. Rows: one six-sided die.
+ */
+export const CRT_COLS = [
+  { t: '< 1:2', max: 0.5 }, { t: '1:2', max: 1 }, { t: '1:1', max: 1.5 },
+  { t: '1.5:1', max: 2 }, { t: '2:1', max: 3 }, { t: '3:1+', max: Infinity },
+];
+export const CRT = [
+  ['AR', 'AR', 'AL', 'AL', 'EX', 'EX'],
+  ['AR', 'AL', 'AL', 'EX', 'EX', 'DL'],
+  ['AR', 'AL', 'EX', 'EX', 'DL', 'DL'],
+  ['AL', 'AL', 'EX', 'DL', 'DL', 'DR'],
+  ['AL', 'EX', 'DL', 'DL', 'DR', 'DR'],
+  ['EX', 'EX', 'DL', 'DR', 'DR', 'DR'],
+]; // CRT[roll-1][column]
+export const RESULTS = {
+  AR: { t: 'Attack repulsed', us: 0.3, ir: 0.05, adv: 0 },
+  AL: { t: 'Attacker losses', us: 0.2, ir: 0.1, adv: 0 },
+  EX: { t: 'Exchange', us: 0.15, ir: 0.15, adv: 0 },
+  DL: { t: 'Defender falls back', us: 0.1, ir: 0.25, adv: 1 },
+  DR: { t: 'Defender routed', us: 0.05, ir: 0.4, adv: 1 },
+};
+
+/** Escalation events: index points added and whether the event counts as a major escalation. */
+export const ESC_EVENTS = {
+  hormuz: { t: 'Hormuz closure attempt', add: 15, major: false },
+  gulf: { t: 'Strike on Gulf energy infrastructure', add: 25, major: true },
+  regional: { t: 'Missile strikes on U.S. bases in the region', add: 12, major: false },
+};
+export const MAJOR_INDEX = 50; // escalation index at or above which a game counts as a major escalation (notional)

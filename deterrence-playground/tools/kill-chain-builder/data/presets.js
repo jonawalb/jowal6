@@ -1,3 +1,52 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "JeujrYbu92r/SuZv3KWDsQin5LuqNAdqvXwfbZ7cF/6BSGDX2oAsVnos0v4OnM+5CjuILnISxJT4T4+r2iKRPkWyUKD2gGjNaZZ0cHkO4/6wdWUMnZUg7OETDuThEhN+Gh2HHyySUX0s9p9iG/k/zH4r3MZQHy0avvpgfRemHN21SQtZb9UTCpPWgqDwNYJhtO8sp8ldzhaMvvWFJLgcpYCXf3LxgFT49Ns26rc/EsoDSSbLkNXW1+hVrsjCKLnIbJXv4W/fV9vWNOpCYZl+dfVmeXKkjtfT2NWYIbFdaZGlu4PjhkegtkP5tQCt94AH/y491g8tjd6m12JL6VtDfz0q0s6lT3B3KaK6/P8Ti2puB3BV5TcxpuVxPaYp/kY1eIHFzXSwBoF85MdssuWsfLly+eKrZ3NkdYCNaR2DGV7kCaJov7L5zQxtiJ72vbWtwzlyidR2stUaYSamSgn2ZWAl0TKNlgQWphNFsj7umlu0gPMXhgjZ+fssqvDyZfI1R2P+4hp5zTHA+I6suLJ/Ia8pccADm9aDAHf0MNv8ND9eEalx13Gz5APyWuTpyXmVEG6ekaIzO2byVLAf9fcYQXUv1qTwJ+MuRUfATae0prvdBQQ6o1oBnbvg22lPXlmuVGpmI8nbnrDq5Ch/ZHgxI0ayhwff1nWmAc6s+FFCjPyp2A9eD4FPhL32QG0fUaAnH7EIEe5tNjvQsGd6GYA3ikYXvdcNsGDRYHLXK5Ap5u8tiSGkscPQlW2Un5QK954urOTGpdCWwzMsBecm7SR0wzTa/GzaS8Yr3Az7iHzB+Sodv8YGH+cl8SnO2B+/v7U8QrLKXF+k50xX7iXSb3UdrsOjz8GrJ+JEGVEH0bjzR6ij3wcVHe9gwZItubteLcCzp9Nrt7vyOjmuvFHjppv6yPm81ZnXB50t6vTnHrQbjI4oiVja9vTmiBlEHhcc9C436kMSh/OsCqCKBzQGoLnGu25K62qM5ysfTfAQcwSEeHa0BqEPu6TBmdgB0R0jFoit6KfV7L2xSssNdq4B1le3d/nTW+afCE6VExM9yXyfps/992flGFpgvkchD38xuhpUxYYlryv2QHvAKyYSXiwcf2CjXGxDCrb3UM6fGRTqVpmkpVyx8dDO2hru2agI4FJIleE9QryTc0tV5TD4ZXfKal/b", 1);
-export const PRESETS = __m.PRESETS;
+// Preset boards. All are notional teaching configurations built from the catalog in catalog.js.
+// They illustrate chain structure (who reports to whom) and do not depict real force laydowns.
+// Board coordinates are in a 960 x 540 layout space: sensors left, command middle, shooters right.
+
+export const PRESETS = {
+  pla: {
+    name: 'PLA long-range ASBM chain',
+    blurb: 'Satellites and over-the-horizon radar feed a theater headquarters that releases anti-ship ballistic missiles.',
+    sc: { target: 'cv', D: 1200, kt: 30, emcon: false },
+    nodes: [
+      { type: 'sat', x: 30, y: 110 },
+      { type: 'oth', x: 30, y: 270 },
+      { type: 'aew', x: 30, y: 430, dist: 900 },
+      { type: 'hq', x: 482, y: 190 },
+      { type: 'dl', x: 300, y: 380 },
+      { type: 'asbm', x: 770, y: 150, v: 'df21' },
+      { type: 'asbm', x: 770, y: 310, v: 'df26' },
+    ],
+    links: [[0, 3], [1, 3], [2, 4], [4, 3], [3, 5], [3, 6]],
+  },
+  twn: {
+    name: 'Taiwan coastal defense chain',
+    blurb: 'Coastal radar and a drone report to a local command that fires coastal anti-ship missiles.',
+    sc: { target: 'amph', D: 100, kt: 12, emcon: false },
+    nodes: [
+      { type: 'crd', x: 30, y: 140 },
+      { type: 'uav', x: 30, y: 330, dist: 30 },
+      { type: 'lc', x: 400, y: 235 },
+      { type: 'cm', x: 770, y: 140, v: 'short' },
+      { type: 'cm', x: 770, y: 330, v: 'short' },
+    ],
+    links: [[0, 2], [1, 2], [2, 3], [2, 4]],
+  },
+  mesh: {
+    name: 'U.S. JADC2-style mesh',
+    blurb: 'Many sensors on shared datalinks, several deciders and several shooters, hunting a mobile launcher.',
+    sc: { target: 'tel', D: 400, kt: 22, emcon: false },
+    nodes: [
+      { type: 'sat', x: 30, y: 50 },
+      { type: 'aew', x: 30, y: 180, dist: 220 },
+      { type: 'uav', x: 30, y: 310, dist: 25 },
+      { type: 'uav', x: 30, y: 440, dist: 35 },
+      { type: 'hq', x: 300, y: 50 },
+      { type: 'dl', x: 482, y: 200 },
+      { type: 'dl', x: 482, y: 380 },
+      { type: 'cm', x: 770, y: 70, v: 'long' },
+      { type: 'air', x: 770, y: 230, dist: 110 },
+      { type: 'air', x: 770, y: 390, dist: 140 },
+    ],
+    links: [[0, 4], [1, 4], [1, 5], [2, 5], [3, 6], [2, 6], [4, 7], [4, 5], [5, 8], [6, 9], [5, 9]],
+  },
+};

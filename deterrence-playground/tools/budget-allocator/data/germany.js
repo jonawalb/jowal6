@@ -1,3 +1,151 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1);
-export const GERMANY = __m.GERMANY;
+// Germany profile for the Defense Budget Allocator.
+// SOURCED (all opened 2026-10-02):
+//   Budgets
+//   Bundestag, text archive, 2025-11 (week 48), "Deutlicher Anstieg bei den Verteidigungsausgaben":
+//     https://www.bundestag.de/dokumente/textarchiv/2025/kw48-de-verteidigung-1126048
+//     (Einzelplan 14 EUR 82.69bn; Sondervermögen EUR 25.51bn; total EUR 108.2bn; military procurement EUR 47.88bn =
+//      22.37 Einzelplan 14 + 25.51 Sondervermögen; personnel EUR 24.71bn; commitment authorizations EUR 300bn through 2041)
+//   BMVg, 2025-11-26: https://www.bmvg.de/de/aktuelles/deutschland-investiert-in-verteidigung-und-staerkt-das-buendnis-6045046
+//     (82.69 + 25.51; about EUR 152bn in 2029; NATO target of 3.5% of GDP in 2029)
+//   NATO, Defence Investment of NATO Countries (2014-2026), cut-off 2026-07-03:
+//     https://www.nato.int/content/dam/nato/webready/documents/finance/def-exp-2026-en.pdf (image PDF, read by OCR)
+//     (Germany core defence expenditure 2026e EUR 124,660m; 2.69% of GDP; 2025e 2.22%)
+//   Tagesspiegel, 2026-07-07: https://www.tagesspiegel.de/politik/fast-125-milliarden-euro-deutschland-meldet-nato-verteidigungsausgaben-in-rekordhohe-15814766.html
+//     (EUR 124.7bn reported to NATO for 2026, 2.69% of GDP)
+//   bundeswehr-journal, 2026-08-06: https://www.bundeswehr-journal.de/2026/ueber-das-sondervermoegen-fuer-die-bundeswehr/
+//     (Sondervermögen: about EUR 50.7bn paid out by 2026-06-30, per BMVg written answer of 2026-07-09)
+//   Handelsblatt, 2024-03-20: https://www.handelsblatt.com/politik/deutschland/bundeswehr-80-prozent-des-sondervermoegens-sind-laut-pistorius-bereits-gebunden/100026066.html
+//     (about 80% of the EUR 100bn contractually bound)
+//   SIPRI Milex database v1.2 (2026): https://www.sipri.org/sites/default/files/SIPRI-Milex-data-1949-2025_v1.2.xlsx
+//     (Germany 2025: EUR 100.7bn = US$113.6bn, 2.27% of GDP)
+//   Scenario: Bundeswehr, 2025-05-22: https://www.bundeswehr.de/en/news/lithuania-45-armoured-brigade-activated-5948796
+//     (45 Armoured Brigade activated in Vilnius; 4,800 service members and 200 civilians when complete)
+//   Unit costs: see `src` on each category below. All in euros, so no currency conversion is needed.
+// NOTIONAL: every baseline (base), scale (k), reach, weight (w), the approach geometry and the preset mixes. No sourced unit
+//   cost was found for anti-tank missiles, mines and barriers, or C4ISR, so those three are notional.
+
+const fmtBn = v => v >= 1000 ? Math.round(v).toLocaleString('en-US') : v >= 10 ? v.toFixed(1) : v.toFixed(2);
+const BT = 'https://www.bundestag.de/dokumente/textarchiv/2025/kw48-de-verteidigung-1126048';
+const NATO26 = 'https://www.nato.int/content/dam/nato/webready/documents/finance/def-exp-2026-en.pdf';
+
+export const GERMANY = {
+  k: 'de', name: 'Germany', sub: '€ · eastern-flank reinforcement', cur: '€',
+  money: bn => bn >= 1 ? `€${fmtBn(bn)}bn` : bn >= 0.01 ? `€${Math.round(bn * 1000)}m` : `€${(bn * 1000).toFixed(1)}m`,
+  budgets: [
+    { k: 'sv26', bn: 25.51, t: 'Special fund, 2026', s: '€25.51bn · Sondervermögen Bundeswehr',
+      note: 'The 2026 draw on the €100bn special fund created in 2022. All of it goes to military procurement.' },
+    { k: 'proc26', bn: 47.88, t: 'Military procurement, 2026', s: '€47.88bn · budget passed Nov. 2025',
+      note: 'All 2026 money for military procurement: €22.37bn from the regular defense budget plus €25.51bn from the special fund.' },
+    { k: 'ep14', bn: 82.69, t: 'Defense budget, 2026', s: '€82.69bn · Einzelplan 14',
+      note: 'The regular 2026 defense budget, without the special fund. In reality most of it pays for people, operations and bases.' },
+    { k: 'nato26', bn: 124.66, t: 'Defense spending as reported to NATO, 2026', s: '€124.7bn · 2.69% of GDP (NATO estimate)',
+      note: 'What Germany reported to NATO for 2026. It counts more than the defense ministry budget, by NATO\'s definitions, so it is the widest measure here.' },
+  ],
+  cats: [
+    { id: 'ascm', t: 'Anti-tank missiles', col: '--c3', k: 6, base: 0.3, reach: 5, w: 0.5, cls: 'mobile',
+      unit: '100 anti-tank missiles with launchers', cost: 0.03, s: 'Infantry and vehicle-mounted anti-tank missiles.' },
+    { id: 'drones', t: 'Drones and loitering munitions', col: '--c2', k: 4, base: 0.1, reach: 40, w: 0.45, cls: 'mobile',
+      unit: '1,000 HX-2 loitering munitions', cost: 0.27 / 4.3, s: 'Reconnaissance drones and loitering munitions for the brigade.',
+      src: 'https://esut.de/2026/02/meldungen/68450/loitering-munition-beschaffung-von-mehr-als-6-000-kampfdrohnen-gebilligt/', srcName: 'ESUT, Feb. 2026', est: true,
+      basis: 'About €270m for 4,300 Helsing HX-2, per 1,000. A second order buys 2,200 Stark Virtus for a similar sum.' },
+    { id: 'mines', t: 'Barriers and anti-tank mines', col: '--c5', k: 2, base: 0.1, reach: 10, w: 0.4, cls: 'mines',
+      unit: 'lot of 10,000 anti-tank mines', cost: 0.1, s: 'Obstacles and minefields on the approaches, built with the host nation.' },
+    { id: 'strike', t: 'Rocket artillery', col: '--c4', k: 20, base: 0.15, reach: 80, w: 0.35, cls: 'mobile',
+      unit: 'PULS launcher, launcher only (rockets cost extra, so real buys get far fewer)', cost: 0.055 / 5, s: 'PULS launchers striking the column in depth.',
+      src: 'https://soldat-und-technik.de/2025/02/bewaffnung/42191/bundeswehr-europuls/', srcName: 'Soldat & Technik, Feb. 10, 2025', est: true,
+      basis: 'About €55m for five launchers, per launcher. Rockets are not stated as included.' },
+    { id: 'airdef', t: 'Air and missile defense', col: '--c1', k: 40, base: 0.25, reach: 0, w: 0, cls: 'fixed',
+      unit: 'IRIS-T SLM fire unit with missiles', cost: 0.95 / 6, s: 'IRIS-T SLM, Patriot and Arrow 3: protects forces and bases from the opening strikes.',
+      src: 'https://www.bundeswehr-journal.de/2023/sechs-waffensysteme-iris-t-slm-fuer-die-deutsche-luftwaffe/', srcName: 'bundeswehr-journal, June 22, 2023', est: true,
+      basis: 'Up to €950m for six fire units with missiles, per fire unit. Patriot: about €1.4bn for four systems (BMVg, July 2024).' },
+    { id: 'c4isr', t: 'C4ISR and resilience', col: '--c6', k: 5, base: 0.3, reach: 0, w: 0, cls: 'mobile',
+      unit: 'resilience package', cost: 0.1, s: 'Sensors, networks, shelters, decoys and dispersal.' },
+    { id: 'ammo', t: 'Artillery ammunition', col: '--c7', k: 12, base: 0.2, reach: 0, w: 0, cls: 'fixed',
+      unit: 'first 155 mm call-off, Rheinmetall framework', cost: 0.88, s: 'Shells and rockets to keep firing after the first days.',
+      src: 'https://www.rheinmetall.com/en/media/news-watch/news/2024/06/2024-06-20-rheinmetall-receives-framework-contract-for-155mm-ammunition', srcName: 'Rheinmetall, June 20, 2024',
+      basis: 'About €880m for the first call-off under a framework of up to €8.5bn gross. The number of rounds was not published.' },
+    { id: 'platforms', t: 'Tanks, IFVs and combat jets', col: '--c8', k: 80, base: 0.3, reach: 40, w: 0.45, cls: 'platform',
+      unit: 'Leopard 2A8 tank, share of contract', cost: 2.9 / 105, s: 'Leopard 2A8 tanks, Puma infantry fighting vehicles, F-35A jets.',
+      src: 'https://www.bmvg.de/de/aktuelles/leopard-2-a8-neue-kampfpanzer-fuer-die-brigade-litauen-5810986', srcName: 'BMVg, July 11, 2024', est: true,
+      basis: 'About €2.9bn for 105 tanks with extra services and an availability guarantee, per tank. Puma: €4.2bn for 200 (2025). F-35A: about €8.3bn for 35 with weapons and support (2022).' },
+    { id: 'other', t: 'Not modeled', col: '--faint', k: 1, base: 0, reach: 0, w: 0, cls: 'none',
+      unit: '', cost: 0, s: 'Personnel, pay, operations, bases, nuclear sharing and programs outside the scenario.' },
+  ],
+  presets: {
+    porcupine: { t: 'Depth and attrition', s: 'Drones, rockets, mines and anti-tank missiles',
+      mix: { ascm: 0.14, drones: 0.18, mines: 0.08, strike: 0.2, airdef: 0.14, c4isr: 0.1, ammo: 0.12, platforms: 0.04, other: 0 } },
+    legacy: { t: 'Heavy forces first', s: 'Tanks, IFVs, jets and Patriot',
+      mix: { ascm: 0.03, drones: 0.02, mines: 0.02, strike: 0.05, airdef: 0.24, c4isr: 0.04, ammo: 0.06, platforms: 0.54, other: 0 } },
+    even: { t: 'Even split', s: 'The same amount to each modeled category',
+      mix: { ascm: 0.125, drones: 0.125, mines: 0.125, strike: 0.125, airdef: 0.125, c4isr: 0.125, ammo: 0.125, platforms: 0.125, other: 0 } },
+  },
+  defaults: { b: 'proc26', preset: 'porcupine', supp: 0.5, warn: 4 },
+  geo: { km: 100, speed: 10, unit: 'km/h' },
+  geoLabel: 'Approach depth',
+  refText: {
+    sv26: ['What the fund pays for', 'The special fund pays for large programs such as the F-35A. By June 30, 2026 about €50.7bn of the €100bn had been paid out, and most of the rest is tied to signed contracts. There is no per-capability split, so there is no reference mix.'],
+    proc26: ['What the line covers', 'Military procurement from the regular budget and the special fund. During the budget talks the committee cut planned ammunition spending by €3.72bn. There is no per-capability split, so there is no reference mix.'],
+    ep14: ['How the budget splits', 'Of the €82.69bn, €24.71bn pays for personnel, €22.37bn for procurement and €11.31bn for barracks and other facilities. Those are budget headings, not capabilities, so there is no reference mix.'],
+    nato26: ['What the figure covers', 'NATO counts defense spending across the federal budget, not only the defense ministry. There is no per-capability split, so there is no reference mix.'],
+  },
+  strip: { left: 'Start line', right: 'Defended line', zero: 'line', noun: 'vehicles', play: 'Play the advance', exportTitle: 'Notional armored advance',
+    land: true, vehicle: true,
+    eyebrow: 'Notional armored advance <span class="notional">Notional model, not a prediction</span>',
+    note: 'Bands show how far each German layer reaches forward of an allied defended line; darker means stronger after the attacker\'s opening strikes. Triangles on the right are mobile launchers and teams and rectangles tanks, IFVs and jets; faded ones did not survive the opening strikes. No real terrain, country or unit is shown.',
+    aria: 'Stylized armored advance. An attacking armored column moves from its start line on the left toward a defended line held with German forces on the right, through bands showing how far each German layer reaches and how strong it is. Vehicles marked with an X are engaged.' },
+  text: {
+    verdict: {
+      good: ['Costly advance', 'A large share of the attacking force comes under effective attack before it reaches the line.'],
+      warn: ['Contested advance', 'German forces engage part of the column, but most of it reaches the line intact.'],
+      bad: ['Advance largely unopposed', 'Too little German firepower survives, sees the column or reaches it.'],
+    },
+    explain: {
+      mobile: n => `Only ${n}% of mobile launchers and teams survive the opening strikes; air defense and resilience spending protect them.`,
+      platform: n => `Tanks, IFVs and jets gather at known bases and depots, so only ${n}% remain after the opening strikes.`,
+      track: 'Weak sensors and networks leave shooters without good tracks on the column.',
+      mines: n => `With short warning only ${n}% of the obstacle belt is in place in time.`,
+    },
+    tiles: { engaged: 'of the attacking force comes under effective attack', hours: h => `of a ${h} h advance`, shooters: 'after the opening strikes' },
+    supp: ['Opening missile and air strikes', 'Share of the unprotected German force the attacker\'s opening strikes would destroy.'],
+    warn: ['Warning before the attack', 'Days to deploy forward, lay mines and close barriers before the column moves.'],
+  },
+  doc: {
+    terms: { attacker: 'The attacker', c4: 'C4ISR', platforms: 'Tanks, IFVs and combat jets', edge: 'the defended line' },
+    howto: [
+      'Pick a budget, then divide it across eight kinds of capability. The model sends a notional armored column toward a defended line held with German forces and reports four things: the share of the force that comes under effective attack, how many hours of the advance are spent inside at least one working layer of German fires, the share of German shooters that survive the attacker\'s opening strikes, and a resilience score.',
+      'The comparison table sets your plan beside three mixes. <b>Depth and attrition</b> buys many small, dispersed systems. <b>Heavy forces first</b> buys tanks, infantry fighting vehicles, jets and Patriot. No published breakdown maps Germany\'s budget onto these categories, so there is no official reference mix.',
+    ],
+    scenario: 'German forces help hold a defended line on NATO\'s eastern flank while an attacking armored force advances a notional 100 km at 10 km/h. Germany activated its 45 Armoured Brigade in Lithuania in May 2025, its first formation permanently based abroad since the Second World War, planned at 4,800 troops. The model is generic: it shows no real terrain, border, units or positions, and the attacker is not modeled in any detail. It is there to show how the order of spending changes what happens to a force that has to cross the defender\'s layers.',
+    leavesOut: 'What the model leaves out matters: the host nation\'s own forces and other NATO allies, the time and transport needed to move German units east, air power beyond the jets counted here, the attacker\'s engineers, electronic warfare and air defense, terrain, weather, training, maintenance, delivery schedules and peacetime deterrence. A system that does poorly here can still be the right buy for those jobs.',
+    real: {
+      cols: ['Budget line', '€bn', 'Notes'],
+      rows: [
+        ['Defense budget (Einzelplan 14), 2026', '82.69', `Passed Nov. 2025. <a href="${BT}" target="_blank" rel="noopener">Bundestag</a>`],
+        ['Special fund (Sondervermögen), 2026', '25.51', `All for procurement. <a href="${BT}" target="_blank" rel="noopener">Bundestag</a>`],
+        ['Total, 2026', '108.2', 'Budget plus special fund. <a href="https://www.bmvg.de/de/aktuelles/deutschland-investiert-in-verteidigung-und-staerkt-das-buendnis-6045046" target="_blank" rel="noopener">BMVg, Nov. 26, 2025</a>'],
+        ['of which military procurement', '47.88', `22.37 from the budget, 25.51 from the fund. <a href="${BT}" target="_blank" rel="noopener">Bundestag</a>`],
+        ['Reported to NATO, 2026', '124.66', `2.69% of GDP, NATO estimate (2.22% in 2025). <a href="${NATO26}" target="_blank" rel="noopener">NATO, July 2026</a>`],
+        ['Special fund paid out by June 30, 2026', '~50.7', 'Of €100bn. <a href="https://www.bundeswehr-journal.de/2026/ueber-das-sondervermoegen-fuer-die-bundeswehr/" target="_blank" rel="noopener">bundeswehr-journal, Aug. 6, 2026</a>'],
+      ],
+      note: 'The defense budget and the NATO figure are different bases: NATO counts defense-related spending outside the defense ministry too. About 80% of the special fund was already under contract by March 2024, so little of it is free for new choices.',
+    },
+    menuNote: 'No sourced unit cost was found for anti-tank missiles, mines and barriers, or C4ISR, so those rows are notional. The PULS price covers launchers only.',
+    related: [
+      { b: 'Special fund commitments.', t: 'About 80% of the €100bn under contract by March 2024.', url: 'https://www.handelsblatt.com/politik/deutschland/bundeswehr-80-prozent-des-sondervermoegens-sind-laut-pistorius-bereits-gebunden/100026066.html', src: 'Handelsblatt, Mar. 20, 2024' },
+      { b: 'Spending path.', t: 'About €152bn for the defense ministry in 2029, to meet NATO\'s 3.5% of GDP target that year.', url: 'https://www.bmvg.de/de/aktuelles/deutschland-investiert-in-verteidigung-und-staerkt-das-buendnis-6045046', src: 'BMVg, Nov. 26, 2025' },
+      { b: 'SIPRI, 2025.', t: '€100.7bn, about US$113.6bn, 2.3% of GDP.', url: 'https://www.sipri.org/sites/default/files/SIPRI-Milex-data-1949-2025_v1.2.xlsx', src: 'SIPRI Military Expenditure Database, 2026 (xlsx)' },
+      { b: 'Patriot.', t: 'Four more systems for about €1.4bn, deliveries through 2030.', url: 'https://www.bmvg.de/de/aktuelles/beschaffung-patriot-systemen-lenkflugkoerpern-5811004', src: 'BMVg, July 11, 2024' },
+      { b: 'Arrow 3.', t: '€3.6bn for launchers, missiles and radars; three sites, full capability planned by 2030.', url: 'https://www.bmvg.de/de/aktuelles/bundeswehr-beschafft-arrow-3-luftverteidigungssystem-5709582', src: 'BMVg' },
+      { b: 'F-35A.', t: '35 jets for about €8.3bn with engines, weapons, spares and training, paid from the special fund.', url: 'https://www.bmvg.de/de/aktuelles/bundeswehr-kann-35-f-35a-fuer-rund-8-3-milliarden-euro-kaufen-5540934', src: 'BMVg, Dec. 14, 2022' },
+      { b: 'Puma.', t: '200 more infantry fighting vehicles, €4.2bn approved Dec. 17, 2025.', url: 'https://www.hartpunkt.de/bundeswehr-darf-unter-massgabe-200-weitere-schuetzenpanzer-puma-bestellen/', src: 'hartpunkt, Dec. 2025' },
+      { b: 'Taurus Neo.', t: 'A reported plan for about 600 cruise missiles for about €2.1bn, first deliveries around 2029; not a signed contract.', url: 'https://suv.report/bundeswehr-will-600-neue-marschflugkoerper-beschaffen/', src: 'Sicherheit & Verteidigung, Oct. 25, 2024, citing Spiegel' },
+    ],
+    sources: [
+      { src: 'German Bundestag, debate on the 2026 defense budget', url: BT, d: 'November 2025', n: 'Einzelplan 14, special fund and procurement totals.' },
+      { src: 'NATO, Defence Investment of NATO Countries (2014-2026)', url: NATO26, d: 'July 2026', n: 'Germany 2026 estimate: €124,660m, 2.69% of GDP.' },
+      { src: 'Bundeswehr, 45 Armoured Brigade activated in Lithuania', url: 'https://www.bundeswehr.de/en/news/lithuania-45-armoured-brigade-activated-5948796', d: 'May 22, 2025' },
+      { src: 'Unit-cost sources are linked in the spending menu table.' },
+    ],
+    missing: 'A per-capability split of the 2026 budget, an official list of what remains uncontracted in the special fund, signed values for Taurus Neo, and published unit costs for anti-tank missiles, mines and C4ISR.',
+  },
+};

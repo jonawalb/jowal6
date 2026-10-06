@@ -1,3 +1,33 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1);
-export const CRITIQUES = __m.CRITIQUES;
+// Critiques of the ladder. Quotations are copied from the documents named in `cite`, which were opened on 2026-09-29.
+// RAND R-3235 pp. 4-5 was read from the scanned PDF (OCR checked against the page image); RAND MG-614 p. 18
+// from the PDF text. The Walberg entry quotes his working paper draft (escalation_ladders.tex), cited as
+// "Walberg, working paper".
+export const CRITIQUES = [
+  { title: 'A line where escalation branches',
+    quote: ['it offers a linear model of a phenomenon that is actually far more complex and ambiguous'],
+    gloss: 'Morgan and colleagues note that a conflict can escalate in many directions, and it is not always clear whether an opponent or a third party will see one step as more or less extreme than another when the steps are unlike each other.',
+    cite: 'Forrest E. Morgan, Karl P. Mueller, Evan S. Medeiros, Kevin L. Pollpeter and Roger Cliff, Dangerous Thresholds: Managing Escalation in the 21st Century, RAND MG-614-AF, 2008, p. 18.',
+    src: ['rand614'] },
+  { title: 'You cannot fall up a ladder',
+    quote: ['you cannot fall up a ladder'],
+    gloss: 'The same RAND study says climbing a ladder takes purposeful effort, while escalation can happen unintentionally and is usually easier than de-escalation. It proposes a treacherous ravine face or mountainside as the better image.',
+    cite: 'Morgan et al., Dangerous Thresholds, RAND MG-614-AF, 2008, p. 18.',
+    src: ['rand614'] },
+  { title: 'One dimension, and a Western one',
+    quote: ['encourage an image of incremental up-and-down movement that can stop at any rung',
+      'They describe conflict in only the one dimension of violence level'],
+    gloss: 'Davis and Stan argue the ladders carry a Western bargaining-and-signaling view of escalation that is alien to Soviet thinking, and quote Kahn himself admitting that he had attributed to the Soviets behavior "that may in fact be appropriate only to U.S. analysts."',
+    cite: 'Paul K. Davis and Peter Stan, Concepts and Models of Escalation, RAND R-3235, 1984, pp. 4–5 (quoting Kahn, 1962, p. 218).',
+    src: ['rand3235'] },
+  { title: 'Wormholes, not rungs',
+    quote: ['Herman Kahn’s 44-rung “escalation ladder,” which describes a continuous, linear escalation path between low-level crisis and all-out strategic conflict, was built on potentially problematic expectations of proportionality and universally shared conceptions of deterrence'],
+    gloss: 'Hersman argues that blurred lines between sub-conventional, conventional and strategic conflict, and more actors, make sudden jumps likely. She proposes "wormhole" escalation: holes that open and let a crisis skip rungs.',
+    cite: 'Rebecca Hersman, "Wormhole Escalation in the New Nuclear Age," Texas National Security Review 3, no. 3 (Summer 2020).',
+    src: ['hersman'] },
+  { title: 'Escalation on several dimensions at once',
+    quote: ["Kahn's framework treats escalation as at its core linear: states move up or down a single dimension of intensity.",
+      'An exercise can represent escalation along one dimension (deploying coast guard vessels for the first time) while de-escalating along another (using fewer aircraft). A unidimensional ladder cannot capture this pattern.'],
+    gloss: 'Walberg builds a five-dimension index (military scale, geographic proximity, domain integration, temporal characteristics, narrative integration) for PLA exercises around Taiwan since 2022, and treats Taiwan\'s twelve-nautical-mile territorial waters as the "ceiling" of the current ladder, a threshold approached but never crossed.',
+    cite: 'Jonathan Walberg, "Exercise Escalation Ladders: Measuring the Evolution of PLA Coercive Exercises Against Taiwan, 2022–2026," working paper.',
+    src: ['walberg'] },
+];

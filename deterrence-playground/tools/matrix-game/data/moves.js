@@ -1,3 +1,151 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1);
-export const MOVES = __m.MOVES;
+// Argument building blocks for the Baltic Matrix Game. All FICTIONAL and NOTIONAL: scripted options written for
+// a teaching exercise, not predictions or descriptions of any real plan. Reasons marked `src` lean on a sourced
+// background fact (data/sources.js); the claim inside a reason is still the actor's argument, not the site's.
+//
+// action: { id, text, result, tags, diff (base modifier), win/lose (board effects), }
+// reason: { text, tags (what kind of action it can support), cond (when it holds), src? }
+// counter: { text, vs (tags it can argue against), cond }
+// cond: { k: track, op: 'ge'|'le', v } | { inject: tag } | null (always holds)
+
+export const MOVES = {
+  estonia: {
+    actions: [
+      { id: 'E1', text: 'Replace the buoys and step up Police and Border Guard patrols on the river', result: 'The river line is marked again and patrolled.', tags: ['border', 'law'], diff: 0, win: { coh: 1, att: 1 }, lose: { esc: 1 } },
+      { id: 'E2', text: 'Request NATO consultations under Article 4', result: 'Allies meet and back Estonia in public.', tags: ['diplo', 'deter'], diff: -1, win: { coh: 1, att: 2, esc: 1 }, lose: { coh: -1 } },
+      { id: 'E3', text: 'Run a Russian-language public information drive in Ida-Viru County', result: 'Residents hear the state\'s account in their own language.', tags: ['info', 'local'], diff: 0, win: { loc: 2 }, lose: { loc: -1 } },
+      { id: 'E4', text: 'Fund an emergency jobs and heating package for Narva', result: 'Visible help reaches households within weeks.', tags: ['local', 'econ'], diff: 0, win: { loc: 2, esc: -1 }, lose: { loc: -1 } },
+      { id: 'E5', text: 'Ask the EU for a sanctions response', result: 'The EU agrees new restrictive measures.', tags: ['econ', 'diplo', 'law'], diff: -1, win: { coh: 1, att: 1 }, lose: { coh: -1 } },
+      { id: 'E6', text: 'Propose a joint border commission meeting with Russia', result: 'Border officials meet and agree a hotline for river incidents.', tags: ['talks', 'law'], diff: -1, win: { esc: -2 }, lose: { coh: -1 } },
+    ],
+    reasons: [
+      { text: 'Estonian law applies on Estonia\'s side of the river.', tags: ['law', 'border'], cond: null },
+      { text: 'Allies are united behind us.', tags: ['diplo', 'deter'], cond: { k: 'coh', op: 'ge', v: 6 } },
+      { text: 'A NATO battlegroup is already stationed in Estonia.', tags: ['deter'], cond: null, src: 'natoEfp' },
+      { text: 'Russian is the mother tongue of almost all of Narva, so outreach must be in Russian.', tags: ['info'], cond: null, src: 'statLang' },
+      { text: 'Residents are frustrated and need visible help now.', tags: ['local', 'econ'], cond: { k: 'loc', op: 'le', v: 5 } },
+      { text: 'The world is watching this border.', tags: ['law', 'info'], cond: { k: 'att', op: 'ge', v: 5 } },
+      { text: 'Tension is still low enough to talk.', tags: ['talks'], cond: { k: 'esc', op: 'le', v: 4 } },
+      { text: 'Estonia has handled border incidents like this before, in 2014 and 2024.', tags: ['border'], cond: { inject: 'border' }, src: 'bbcBuoys' },
+    ],
+    counters: [
+      { text: 'Estonian law applies on our side of the river.', vs: ['border', 'law'], cond: null },
+      { text: 'Residents already have Estonian services, courts and schools.', vs: ['local', 'info'], cond: { k: 'loc', op: 'ge', v: 5 } },
+      { text: 'The claims are false and we can document it.', vs: ['info'], cond: { k: 'att', op: 'ge', v: 5 } },
+      { text: 'Our allies stand with us.', vs: ['talks', 'deter', 'escal'], cond: { k: 'coh', op: 'ge', v: 7 } },
+      { text: 'We will not negotiate under pressure.', vs: ['talks'], cond: { k: 'esc', op: 'ge', v: 6 } },
+      { text: 'Border delays hurt Russia\'s own traders as much as ours.', vs: ['econ'], cond: { k: 'att', op: 'ge', v: 4 } },
+    ],
+  },
+  russia: {
+    actions: [
+      { id: 'R1', text: 'Dispute the river boundary in a formal diplomatic note', result: 'Other governments start to call the line "contested".', tags: ['law', 'border'], diff: 0, win: { att: 1, coh: -1 }, lose: { coh: 1 } },
+      { id: 'R2', text: 'Run a state-media campaign alleging discrimination in Narva', result: 'The story spreads among Narva residents.', tags: ['info'], diff: 0, win: { loc: -2 }, lose: { loc: 1, coh: 1 } },
+      { id: 'R3', text: 'Extend the exercise near the border by two weeks', result: 'Allies argue over how to respond.', tags: ['deter', 'escal'], diff: 0, win: { esc: 2, coh: -1 }, lose: { coh: 2 } },
+      { id: 'R4', text: 'Slow the Narva–Ivangorod crossing with extended inspections', result: 'Queues grow and Narva businesses lose trade.', tags: ['border', 'econ', 'escal'], diff: 0, win: { loc: -1, esc: 1 }, lose: { loc: 1 } },
+      { id: 'R5', text: 'Advertise consular services and passports to Narva residents', result: 'Queues form at the consulate and it makes the news.', tags: ['local', 'law'], diff: -1, win: { loc: -1, att: 1, coh: -1 }, lose: { loc: 1, coh: 1 } },
+      { id: 'R6', text: 'Offer talks with Tallinn alone, without NATO or the EU', result: 'Some allies ask whether Estonia should take the offer.', tags: ['talks', 'diplo'], diff: -1, win: { coh: -2, esc: -1 }, lose: { coh: 1 } },
+    ],
+    reasons: [
+      { text: 'The river line is disputed on paper.', tags: ['law', 'border'], cond: { inject: 'border' } },
+      { text: 'The allies are already divided.', tags: ['talks', 'escal'], cond: { k: 'coh', op: 'le', v: 5 } },
+      { text: 'Residents feel ignored by Tallinn.', tags: ['info', 'local'], cond: { k: 'loc', op: 'le', v: 5 } },
+      { text: 'A third of Narva holds Russian citizenship.', tags: ['local', 'law'], cond: null, src: 'statCit' },
+      { text: 'Exercises on our own territory are routine and lawful.', tags: ['deter'], cond: null },
+      { text: 'Pressure works best while few are watching.', tags: ['border', 'econ', 'info', 'escal'], cond: { k: 'att', op: 'le', v: 4 } },
+      { text: 'An offer of talks looks reasonable when tension is high.', tags: ['talks'], cond: { k: 'esc', op: 'ge', v: 5 } },
+      { text: 'Most of Narva speaks Russian, so Russian-language media reach it.', tags: ['info'], cond: null, src: 'statLang' },
+    ],
+    counters: [
+      { text: 'This is a provocation against Russia\'s security.', vs: ['deter', 'border'], cond: { k: 'esc', op: 'ge', v: 5 } },
+      { text: 'The markers were in Russian waters.', vs: ['border', 'law'], cond: { inject: 'border' } },
+      { text: 'Tallinn\'s outreach is propaganda and residents know it.', vs: ['info', 'local'], cond: { k: 'loc', op: 'le', v: 5 } },
+      { text: 'Sanctions will hurt Europe more than Russia.', vs: ['econ'], cond: { k: 'coh', op: 'le', v: 6 } },
+      { text: 'The allies will not risk a war over Narva.', vs: ['deter', 'diplo'], cond: { k: 'coh', op: 'le', v: 5 } },
+      { text: 'Talks first require dropping preconditions.', vs: ['talks'], cond: { k: 'esc', op: 'ge', v: 6 } },
+    ],
+  },
+  nato: {
+    actions: [
+      { id: 'N1', text: 'Reinforce the forward land forces in Estonia toward brigade size', result: 'More allied troops arrive in Estonia.', tags: ['deter'], diff: -1, win: { coh: 1, esc: 1, att: 1 }, lose: { coh: -1 } },
+      { id: 'N2', text: 'Increase Baltic air policing and maritime patrols', result: 'Patrols become more frequent and visible.', tags: ['deter', 'border'], diff: 0, win: { coh: 1, att: 1 }, lose: { esc: 1 } },
+      { id: 'N3', text: 'Convene the North Atlantic Council and issue a unity statement', result: 'All Allies sign one clear statement.', tags: ['diplo'], diff: 0, win: { coh: 2 }, lose: { coh: -1 } },
+      { id: 'N4', text: 'Open a military deconfliction line with Russia', result: 'Both sides agree to notify exercises near the border.', tags: ['talks'], diff: -1, win: { esc: -2 }, lose: { coh: -1 } },
+      { id: 'N5', text: 'Publish imagery of the buildup across the river', result: 'Media and governments see what is happening.', tags: ['info'], diff: 0, win: { att: 2, coh: 1 }, lose: { att: 1, esc: 1 } },
+      { id: 'N6', text: 'Hold a large allied exercise in the Baltic region', result: 'Allies show they can reinforce quickly.', tags: ['deter', 'escal'], diff: 0, win: { coh: 1, esc: 1 }, lose: { esc: 1, coh: -1 } },
+    ],
+    reasons: [
+      { text: 'Forward presence has been agreed Alliance policy since 2016.', tags: ['deter', 'diplo'], cond: null, src: 'natoEfp' },
+      { text: 'Allies agreed in 2022 to scale up to brigades where and when required.', tags: ['deter'], cond: null, src: 'natoEfp' },
+      { text: 'Allies are cohesive right now.', tags: ['diplo', 'deter'], cond: { k: 'coh', op: 'ge', v: 7 } },
+      { text: 'Restraint keeps escalation in check when tension is high.', tags: ['talks'], cond: { k: 'esc', op: 'ge', v: 6 } },
+      { text: 'Estonia is under pressure on its border.', tags: ['diplo', 'border'], cond: { inject: 'border' } },
+      { text: 'Air and sea patrols are routine and predictable.', tags: ['border'], cond: null },
+      { text: 'The evidence is already in public view.', tags: ['info'], cond: { k: 'att', op: 'ge', v: 5 } },
+      { text: 'A buildup across the river needs a visible answer.', tags: ['deter', 'info'], cond: { inject: 'escal' } },
+    ],
+    counters: [
+      { text: 'The Alliance will respond as one.', vs: ['deter', 'escal'], cond: { k: 'coh', op: 'ge', v: 7 } },
+      { text: 'Surveillance already shows the buildup.', vs: ['deter'], cond: { k: 'att', op: 'ge', v: 5 } },
+      { text: 'Allied patrols make border harassment costly.', vs: ['border'], cond: { k: 'att', op: 'ge', v: 5 } },
+      { text: 'Side deals with one Ally cannot split the Alliance.', vs: ['talks'], cond: { k: 'coh', op: 'ge', v: 5 } },
+      { text: 'Every move now draws attention and cost.', vs: ['escal', 'deter'], cond: { k: 'att', op: 'ge', v: 5 } },
+      { text: 'Restraint: do not overreact.', vs: ['deter', 'escal'], cond: { k: 'esc', op: 'ge', v: 7 } },
+    ],
+  },
+  eu: {
+    actions: [
+      { id: 'U1', text: 'Adopt a targeted sanctions package', result: 'New restrictive measures enter into force.', tags: ['econ', 'law'], diff: -1, win: { coh: 1, att: 1 }, lose: { coh: -2 } },
+      { id: 'U2', text: 'Fast-track regional and transition funds for Ida-Viru County', result: 'Money for jobs and heating reaches Narva.', tags: ['local'], diff: 0, win: { loc: 2 }, lose: { loc: -1 } },
+      { id: 'U3', text: 'Send an EU border-management support team', result: 'EU officers help run the crossing and log incidents.', tags: ['border', 'law'], diff: 0, win: { coh: 1, att: 1 }, lose: { esc: 1 } },
+      { id: 'U4', text: 'Issue a joint statement condemning border provocations', result: 'All 27 member states sign.', tags: ['diplo', 'law'], diff: 0, win: { coh: 1, att: 1 }, lose: { coh: -1 } },
+      { id: 'U5', text: 'Fund independent Russian-language local media', result: 'Local outlets gain reach and credibility.', tags: ['info', 'local'], diff: 0, win: { loc: 1, att: 1 }, lose: { loc: -1 } },
+      { id: 'U6', text: 'Offer mediation through the OSCE', result: 'Both sides accept a neutral forum.', tags: ['talks'], diff: -1, win: { esc: -2 }, lose: { coh: -1 } },
+    ],
+    reasons: [
+      { text: 'Border regions are an EU funding priority.', tags: ['local'], cond: null },
+      { text: 'Member states are aligned.', tags: ['econ', 'diplo'], cond: { k: 'coh', op: 'ge', v: 7 } },
+      { text: 'Narva\'s economy is under visible strain.', tags: ['local'], cond: { k: 'loc', op: 'le', v: 5 } },
+      { text: 'The river is part of the EU\'s external border.', tags: ['border'], cond: null },
+      { text: 'Economic pressure is the Union\'s strongest lever.', tags: ['econ'], cond: null },
+      { text: 'The public is paying attention.', tags: ['info', 'diplo'], cond: { k: 'att', op: 'ge', v: 5 } },
+      { text: 'A neutral venue can lower the temperature.', tags: ['talks'], cond: { k: 'esc', op: 'ge', v: 5 } },
+      { text: 'Disinformation is spreading in the region.', tags: ['info'], cond: { inject: 'info' } },
+    ],
+    counters: [
+      { text: 'Any border violation will bring sanctions.', vs: ['border', 'escal'], cond: { k: 'coh', op: 'ge', v: 7 } },
+      { text: 'EU funds answer the local grievances directly.', vs: ['local'], cond: { k: 'loc', op: 'ge', v: 5 } },
+      { text: 'The external border is EU business, not a bilateral matter.', vs: ['talks', 'law'], cond: null },
+      { text: 'Unity statements blunt divide-and-rule.', vs: ['diplo'], cond: { k: 'coh', op: 'ge', v: 6 } },
+      { text: 'Fact-checking networks are already active.', vs: ['info'], cond: { k: 'att', op: 'ge', v: 5 } },
+      { text: 'Escalation hurts trade for everyone.', vs: ['deter', 'escal'], cond: { k: 'esc', op: 'ge', v: 6 } },
+    ],
+  },
+  community: {
+    actions: [
+      { id: 'C1', text: 'City council convenes a public forum with national officials', result: 'Residents put questions to ministers face to face.', tags: ['local', 'diplo'], diff: 0, win: { loc: 2, esc: -1 }, lose: { loc: -1 } },
+      { id: 'C2', text: 'Civic associations hold a peaceful rally for language-transition support', result: 'The demand is heard in Tallinn and in foreign media.', tags: ['local', 'info'], diff: -1, win: { loc: 1, att: 1 }, lose: { loc: -1, esc: 1 } },
+      { id: 'C3', text: 'Local employers petition for EU transition funds', result: 'The petition wins a hearing in Brussels.', tags: ['econ', 'local'], diff: 0, win: { loc: 2 }, lose: { loc: -1 } },
+      { id: 'C4', text: 'Community organisations issue a joint call for calm', result: 'Rumours lose steam and street tension drops.', tags: ['info', 'local'], diff: 0, win: { esc: -1, loc: 1 }, lose: { loc: -1 } },
+      { id: 'C5', text: 'Local media fact-check viral claims in Russian', result: 'The most-shared false claims are corrected.', tags: ['info'], diff: 0, win: { loc: 1, att: 1 }, lose: { loc: -1 } },
+      { id: 'C6', text: 'Invite international observers to the city', result: 'Observers arrive and report on the border and the city.', tags: ['diplo', 'law'], diff: -1, win: { att: 2, esc: -1 }, lose: { att: 1 } },
+    ],
+    reasons: [
+      { text: 'Narva is overwhelmingly Russian-speaking, and it is our city.', tags: ['local'], cond: null, src: 'statLang' },
+      { text: 'Half of residents are Estonian citizens.', tags: ['diplo', 'law'], cond: null, src: 'statCit' },
+      { text: 'Families need jobs and heating more than slogans.', tags: ['econ'], cond: { k: 'loc', op: 'le', v: 5 } },
+      { text: 'Calm is in everyone\'s interest when tension is high.', tags: ['info', 'talks'], cond: { k: 'esc', op: 'ge', v: 5 } },
+      { text: 'Outside observers keep all sides honest.', tags: ['law'], cond: { k: 'att', op: 'ge', v: 4 } },
+      { text: 'Local voices are trusted more than national ones.', tags: ['info'], cond: { k: 'loc', op: 'ge', v: 4 } },
+      { text: 'The EU has funds meant for regions like ours.', tags: ['econ'], cond: null },
+      { text: 'The border crossing is our livelihood.', tags: ['econ'], cond: { inject: 'border' } },
+    ],
+    counters: [
+      { text: 'We are not anyone\'s pawns.', vs: ['info', 'law'], cond: { k: 'loc', op: 'ge', v: 5 } },
+      { text: 'Outsiders do not speak for Narva.', vs: ['info', 'local'], cond: { k: 'loc', op: 'ge', v: 6 } },
+      { text: 'Troops do not fix the heating.', vs: ['deter'], cond: { k: 'loc', op: 'le', v: 5 } },
+      { text: 'The crossing is our livelihood.', vs: ['border', 'econ'], cond: null },
+      { text: 'Calm down: we live here.', vs: ['escal', 'deter'], cond: { k: 'esc', op: 'ge', v: 6 } },
+      { text: 'Promises need follow-through.', vs: ['econ', 'local'], cond: { k: 'loc', op: 'le', v: 4 } },
+    ],
+  },
+};

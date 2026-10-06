@@ -1,10 +1,73 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1);
-export const ACTORS = __m.ACTORS;
-export const ACTOR_ORDER = __m.ACTOR_ORDER;
-export const AI_SCHEDULE = __m.AI_SCHEDULE;
-export const FACTS = __m.FACTS;
-export const FICTION_NOTE = __m.FICTION_NOTE;
-export const INJECTS = __m.INJECTS;
-export const TAGS = __m.TAGS;
-export const TRACKS = __m.TRACKS;
+// Scenario data for the Baltic Matrix Game.
+// FACTS are real and sourced (see data/sources.js; census numbers from Statistics Estonia's 2021 census, Narva city).
+// Everything else here (the crisis, its injects, the starting board, goal weights) is a FICTIONAL exercise scenario
+// with notional values chosen by the designer for teaching. No real individuals appear; every actor is an institution.
+
+export const TAGS = {
+  law: 'Law and sovereignty', border: 'Border', deter: 'Military posture', info: 'Information',
+  local: 'Local life', econ: 'Economic', diplo: 'Diplomacy', talks: 'Negotiation', escal: 'Coercion',
+};
+
+// Crisis-state board. Each track runs 0 to 10. Starting values are notional.
+export const TRACKS = [
+  { k: 'esc', name: 'Escalation', lo: 'calm', hi: 'armed clash', start: 3,
+    help: 'How close the crisis is to military confrontation. At 10 the exercise stops.' },
+  { k: 'coh', name: 'Allied cohesion', lo: 'split', hi: 'united', start: 6,
+    help: 'How united NATO allies and EU member states are in their response.' },
+  { k: 'loc', name: 'Local sentiment', lo: 'alienated', hi: 'confident', start: 5,
+    help: 'How confident Narva residents are that their concerns are heard by Tallinn and Brussels.' },
+  { k: 'att', name: 'International attention', lo: 'ignored', hi: 'headline', start: 3,
+    help: 'How closely governments, media and international bodies are watching.' },
+];
+
+// Actors are institutions. `goals` are notional weights on the change in each track, used for the debrief score.
+export const ACTORS = {
+  estonia: { name: 'Estonia', long: 'Government of Estonia', color: 'var(--c3)',
+    brief: 'Keep the border quiet, keep allies close and keep Narva confident in the Estonian state.',
+    goals: { esc: -1, coh: 1, loc: 1.5, att: 0.5 } },
+  russia: { name: 'Russia', long: 'Government of the Russian Federation', color: 'var(--red)',
+    brief: 'Test the border, divide the allies and weaken Narva\'s confidence in Tallinn without triggering a war.',
+    goals: { esc: 0.3, coh: -1.5, loc: -1, att: -0.5 } },
+  nato: { name: 'NATO', long: 'NATO Allies (North Atlantic Council and commands)', color: 'var(--blue)',
+    brief: 'Deter without provoking, and keep all Allies behind one line.',
+    goals: { esc: -1, coh: 1.5, loc: 0.5, att: 0.5 } },
+  eu: { name: 'EU', long: 'European Union institutions', color: 'var(--c6)',
+    brief: 'Use economic and legal tools, support the border region and keep member states aligned.',
+    goals: { esc: -1, coh: 1, loc: 1, att: 0.5 } },
+  community: { name: 'Narva community', long: 'Narva civic institutions: city council, civic associations, local employers and media', color: 'var(--c5)',
+    brief: 'Russian-speaking residents acting through local institutions: keep the city calm, keep livelihoods and get a hearing.',
+    goals: { esc: -1.5, coh: 0, loc: 1.5, att: 0.5 } },
+};
+export const ACTOR_ORDER = ['estonia', 'russia', 'nato', 'eu', 'community'];
+
+// Which AI actor makes the second argument each turn (skipping the player's own actor). Notional.
+export const AI_SCHEDULE = ['russia', 'community', 'russia', 'nato', 'russia', 'eu'];
+
+// Real background, each with its source key.
+export const FACTS = [
+  { src: 'natoEfp', text: 'At the 2016 Warsaw Summit, NATO Allies decided to establish an enhanced Forward Presence in the northeast. By August 2017 multinational battlegroups were operational in Estonia, Latvia, Lithuania and Poland. In Estonia the United Kingdom is the framework nation.' },
+  { src: 'natoEfp', text: 'At the 2022 Madrid Summit, Allies agreed to scale up beyond battalion-size battlegroups to brigade-size units "where and when required".' },
+  { src: 'statLang', text: 'Narva had 53,955 residents at the 2021 census. 51,560 of them (95.6%) gave Russian as their mother tongue and 1,222 (2.3%) Estonian.' },
+  { src: 'statEthnic', text: 'By ethnic nationality, 46,937 Narva residents (87.0%) were Russian and 3,107 (5.8%) Estonian in 2021.' },
+  { src: 'statCit', text: 'By citizenship, 27,133 (50.3%) held Estonian citizenship, 18,695 (34.6%) Russian citizenship and 7,099 (13.2%) had undetermined citizenship.' },
+  { src: 'bbcKohver', text: 'In September 2014 an officer of Estonia\'s Internal Security Service was taken near the Luhamaa border checkpoint. Estonia said it happened inside Estonia; Russia\'s FSB said it detained him on Russian territory.' },
+  { src: 'bbcBuoys', text: 'On 23 May 2024, Russia removed 24 of the 50 buoys Estonia had placed to mark sailing routes on the Narva River. Russia had disputed the locations of about half of 250 planned buoys. The EU called the removal unacceptable and Estonia summoned Russia\'s charge d\'affaires.' },
+];
+
+// Six fictional injects, one per turn. `nudge` shifts the board when the turn opens (notional).
+export const INJECTS = [
+  { title: 'Markers gone again', tags: ['border', 'law'], nudge: { att: 1 },
+    text: 'Overnight, several of Estonia\'s navigation buoys on the Narva River disappear. The Russian border service says they sat in Russian waters. Estonia\'s border guard publishes photos of the empty moorings.' },
+  { title: 'Cold week in Narva', tags: ['local', 'info'], nudge: { loc: -1 },
+    text: 'A fault at a district heating plant leaves parts of Narva without heat for three days. Russian-language social media accounts blame Tallinn\'s neglect of the east.' },
+  { title: 'Drill across the river', tags: ['deter', 'escal'], nudge: { esc: 1 },
+    text: 'Russia announces an unscheduled exercise in its border region across the river from Narva. Allied intelligence services report more vehicles than the announcement describes.' },
+  { title: 'Brussels splits', tags: ['econ', 'diplo'], nudge: { coh: -1 },
+    text: 'EU ministers disagree over a new sanctions package and over extra money for border regions. Two member states ask to delay the decision.' },
+  { title: 'Official held at the crossing', tags: ['border', 'law', 'escal'], nudge: { esc: 1, att: 1 },
+    text: 'An Estonian customs official is detained at the Narva–Ivangorod crossing. Each side gives a different account of which side of the line it happened on.' },
+  { title: 'Ballot season', tags: ['local', 'info'], nudge: { att: 1 },
+    text: 'Narva holds a city council by-election. Language policy, citizenship and the border crossing dominate the campaign.' },
+];
+
+export const FICTION_NOTE = 'Fictional exercise scenario. The injects, arguments and outcomes are invented for teaching and describe no real event, plan or statement.';

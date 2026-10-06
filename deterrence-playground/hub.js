@@ -10,9 +10,6 @@ const $ = id => document.getElementById(id);
 const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 // Tools in the Coming Soon section (registry `dev: true`) are left out of every site-wide count.
 const COUNTED = TOOLS.filter(t => t.cat !== 'dev');
-const live = COUNTED.filter(t => t.status === 'live').length;
-const soon = COUNTED.length - live;
-$('hub-count').textContent = `${live} live · ${soon ? soon + ' coming soon' : 'More to come'}`;
 
 // Last change per tool, from the repository's commit log (commit date and subject). Update when a tool changes.
 const UPDATED = {
@@ -160,6 +157,14 @@ function subTile(c, s, ts) {
     <span class="go">Open →</span></button>`;
 }
 
+// While a site has a single tool, search adds nothing: hide the box and its hint.
+if (COUNTED.length <= 1) {
+  document.querySelector('.search')?.style.setProperty('display', 'none');
+  $('q-hint')?.style.setProperty('display', 'none');
+  const intro = document.querySelector('.hero-text p');
+  if (intro) intro.textContent = intro.textContent.replace(', or search for a tool.', '.');
+}
+
 function render() {
   catBtns.forEach(b => b.setAttribute('aria-pressed', b.dataset.cat === cat));
   const q = $('q').value.trim().toLowerCase();
@@ -199,7 +204,7 @@ function render() {
     return;
   }
   const featured = liveNow.length ? `<section class="cat-sec live-now"><div class="cat-h"><h2>${q ? 'Matches' : 'Live now'}</h2>
-      <p>${liveNow.length} ready to use.${q ? '' : ' More are added as they finish.'}</p></div>
+      </div>
       <div class="tools featured">${liveNow.map(card).join('')}</div></section>` : '';
   const html = featured + cats.map(c => {
     const list = TOOLS.filter(t => inCat(t, c.id) && match(t) && !(liveNow.includes(t)));

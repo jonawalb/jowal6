@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Where's the Uplift Line? | Jonathan Walberg</title>
+<meta name="description" content="A triage trainer for conventional-weapons content decisions: 40 abstracted cases, a five-factor rubric, and a calibration view.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="../../shared/css/deterrence-site.css">
+</head>
+<body>
+<header class="topbar">
+  <a href="../../">&larr; All tools</a>
+  <a href="/">jwalberg.com</a>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <h1>Where's the Uplift Line?</h1>
+    <p class="lede">A triage trainer for conventional-weapons content decisions. Read an abstracted request, make a call, then compare it with a reference call and the reasoning behind it.</p>
+    <p class="notice"><strong>Training exercise.</strong> Reference calls are one analyst's judgment, written for practice. They are not any company's policy. Scenarios describe requests at category level only and contain no operational detail.</p>
+  </section>
+
+  <nav class="tabs" role="tablist" aria-label="Views">
+    <button role="tab" id="tab-practice" aria-controls="view-practice" aria-selected="true">Practice</button>
+    <button role="tab" id="tab-calibration" aria-controls="view-calibration" aria-selected="false" tabindex="-1">Calibration</button>
+    <button role="tab" id="tab-rubric" aria-controls="view-rubric" aria-selected="false" tabindex="-1">Rubric</button>
+    <button role="tab" id="tab-method" aria-controls="view-method" aria-selected="false" tabindex="-1">Method &amp; sources</button>
+  </nav>
+
+  <!-- PRACTICE -->
+  <section id="view-practice" role="tabpanel" aria-labelledby="tab-practice">
+    <div class="toolbar">
+      <label>Domain
+        <select id="f-domain"><option value="">All domains</option></select>
+      </label>
+      <label>Type
+        <select id="f-type">
+          <option value="">All types</option>
+          <option value="answer">Should answer</option>
+          <option value="gray">Gray zone</option>
+          <option value="violation">Violation</option>
+          <option value="trajectory">Multi-turn trajectory</option>
+          <option value="context-shift">Context shift pair</option>
+        </select>
+      </label>
+      <div class="toolbar-btns">
+        <button type="button" id="btn-shuffle" class="btn ghost">Shuffle</button>
+        <button type="button" id="btn-reset" class="btn ghost">Reset answers</button>
+      </div>
+    </div>
+    <div class="confirm" id="reset-confirm" hidden>
+      <span>Clear all your answers?</span>
+      <button type="button" class="btn danger" id="reset-yes">Clear</button>
+      <button type="button" class="btn ghost" id="reset-no">Cancel</button>
+    </div>
+
+    <div class="status" aria-live="polite">
+      <span id="progress"></span>
+      <span id="score"></span>
+    </div>
+
+    <article class="card case" id="case" aria-live="polite"></article>
+  </section>
+
+  <!-- CALIBRATION -->
+  <section id="view-calibration" role="tabpanel" aria-labelledby="tab-calibration" hidden>
+    <div id="calib"></div>
+  </section>
+
+  <!-- RUBRIC -->
+  <section id="view-rubric" role="tabpanel" aria-labelledby="tab-rubric" hidden>
+    <div class="card prose">
+      <h2>The rubric</h2>
+      <p>The question is not "is this about weapons?" but "would answering this give someone a meaningful step toward causing harm that they could not easily take otherwise?" Score each factor from 0 (no concern) to 4 (high concern). No single factor decides a case; a high intent score can override low scores elsewhere, and public availability does not excuse a response that assembles scattered pieces into a working procedure.</p>
+      <div id="rubric-factors" class="rubric-grid"></div>
+      <h3>Aggregation across turns</h3>
+      <p>Judge the conversation, not the last message. A sequence of individually harmless turns can add up to a procedure, and a stated purpose early in a conversation carries forward. Ask: if all the answers in this thread were printed on one page, what would that page let someone do? The reverse also holds: alarming keywords across turns are not aggregation if the turns add up to a novel, a lesson plan or a policy paper.</p>
+      <h3>The five calls</h3>
+      <dl class="calls">
+        <dt>Answer fully</dt><dd>Legitimate request, no meaningful uplift. Refusing is an over-refusal.</dd>
+        <dt>Answer with safety framing</dt><dd>Answer, and make safety, law or harm reduction part of the content. Not a lecture bolted on.</dd>
+        <dt>Answer general level only, decline specifics</dt><dd>The topic is legitimate but part of the request crosses from principle into procedure. Give the principle and say what you are leaving out.</dd>
+        <dt>Decline</dt><dd>The core of the request is uplift or the intent is harmful. Offer a safe adjacent answer where one exists.</dd>
+        <dt>Escalate to specialist</dt><dd>Decline and route to a threat or specialist review process: a specific target, credible threat, or a case outside the reviewer's competence.</dd>
+      </dl>
+      <h3>Scoring in this trainer</h3>
+      <p>The calls are ordered from least to most restrictive. An exact match earns 2 points and a call one step away earns 1. An <strong>over-refusal</strong> (false positive) is a Decline or Escalate where the reference answers in some form. An <strong>under-refusal</strong> (false negative) is Answer fully or Answer with safety framing where the reference declines or escalates. The calibration view shows which way you lean.</p>
+    </div>
+  </section>
+
+  <!-- METHOD -->
+  <section id="view-method" role="tabpanel" aria-labelledby="tab-method" hidden>
+    <div class="card prose">
+      <h2>Method &amp; sources</h2>
+      <h3>What the data is</h3>
+      <p>Forty hand-written, abstracted scenarios in <code>data/scenarios.json</code>. Each describes a request to an AI assistant at category level, never the dangerous content itself and never a plausible answer. About 55% are requests that should be answered in some form, because over-refusal is the more common failure in practice and the harder one to train out. The rest are gray-zone cases and clear violations, including multi-turn trajectories and pairs where the same question arrives with a different stated purpose.</p>
+      <h3>How it was built</h3>
+      <p>Each reference call, its factor scores and its rationale are set against the five-factor rubric. Where a rationale cites law, it links to the primary text, and each citation was checked against that text. <code>scripts/validate.py</code> checks the file for missing fields, bad scores and broken source links. Your answers stay in this browser.</p>
+      <h3>Limits</h3>
+      <ul>
+        <li>Reference calls are one analyst's judgment for training. Reasonable reviewers will disagree on gray-zone cases, and that disagreement is part of the exercise.</li>
+        <li>Legal references are U.S. federal and summarized for context. They are not legal advice, and state law varies.</li>
+        <li>Abstracted scenarios remove the wording cues that make real cases hard. Real review also weighs platform, account history and prior turns that a one-paragraph scenario cannot carry.</li>
+      </ul>
+      <h3>How to cite</h3>
+      <p class="cite">Walberg, Jonathan. 2026. "Where's the Uplift Line? A Triage Trainer for Conventional-Weapons Content Decisions." Interactive tool, jwalberg.com/safeguards/uplift-line/.</p>
+      <h3>Sources cited in rationales</h3>
+      <ol id="source-list" class="sources"></ol>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>Training exercise. Reference calls are one analyst's judgment, not any company's policy.</p>
+</footer>
+
+<noscript><p class="wrap">This trainer needs JavaScript.</p></noscript>
+<script src="js/app.js"></script>
+</body>
+</html>

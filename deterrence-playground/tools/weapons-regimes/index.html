@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conventional Weapons Regime Explorer | Jonathan Walberg</title>
+<meta name="description" content="Which US, multilateral and EU legal frameworks govern a given conventional-weapons item, technology or piece of information. Sourced to primary texts, verified 6 October 2026.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="../../shared/css/deterrence-site.css">
+</head>
+<body>
+<nav class="topbar" aria-label="Site">
+  <a href="../../">&larr; All tools</a>
+  <a href="/">jwalberg.com</a>
+</nav>
+
+<div class="wrap">
+  <header class="intro">
+    <h1>Conventional Weapons Regime Explorer</h1>
+    <p>Which legal and regulatory frameworks govern a conventional-weapons item, technology or piece of information: US export and firearms law, multilateral regimes and treaties, and EU rules. Every entry links to the primary text.</p>
+    <p class="notice"><strong>Not legal advice.</strong> A research and teaching aid. Classification of a real item turns on its exact specifications and the facts of a transaction. Texts verified 6 October 2026.</p>
+  </header>
+
+  <div class="tabs" role="tablist" aria-label="Views">
+    <button role="tab" id="tab-finder" aria-controls="view-finder" aria-selected="true">Item finder</button>
+    <button role="tab" id="tab-info" aria-controls="view-info" aria-selected="false" tabindex="-1">Information, not hardware</button>
+    <button role="tab" id="tab-map" aria-controls="view-map" aria-selected="false" tabindex="-1">Regime map</button>
+    <button role="tab" id="tab-method" aria-controls="view-method" aria-selected="false" tabindex="-1">Method &amp; sources</button>
+  </div>
+
+  <!-- 1. Item finder -->
+  <section class="panel" id="view-finder" role="tabpanel" aria-labelledby="tab-finder">
+    <p class="lede">Pick an item or technology type. The list shows each regime that reaches it, the controlling provision, a one-line reading, and a link to the text.</p>
+    <div class="finder">
+      <div class="card item-list" id="item-list" role="group" aria-label="Item types"></div>
+      <div>
+        <label class="sr-only" for="item-select">Item type</label>
+        <select class="item-select" id="item-select"></select>
+        <div class="result-head">
+          <h2 id="item-title">&nbsp;</h2>
+          <span class="count" id="item-count"></span>
+        </div>
+        <div class="legend">
+          <span><span class="badge direct">Direct</span> names the item or a class that plainly includes it</span>
+          <span><span class="badge conditional">Conditional</span> depends on specs, use, party or threshold</span>
+        </div>
+        <div class="hits" id="hits" aria-live="polite"></div>
+        <p class="absent" id="absent"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Information, not hardware -->
+  <section class="panel" id="view-info" role="tabpanel" aria-labelledby="tab-info" hidden>
+    <p class="lede">Export controls reach information as well as hardware. Whether a document or file is controlled depends on what it enables and on how it has been made available.</p>
+    <div class="info-grid">
+      <div class="card info-wide">
+        <h3>Two US tests side by side</h3>
+        <table class="compare">
+          <thead><tr><th>Question</th><th>ITAR (State)</th><th>EAR (Commerce)</th></tr></thead>
+          <tbody>
+            <tr><td>What is controlled</td>
+              <td data-label="ITAR">"Technical data": information required for the design, development, production, manufacture, assembly, operation, repair, testing, maintenance or modification of defense articles, incl. blueprints, drawings, plans and instructions. <a class="cite" href="https://www.ecfr.gov/current/title-22/section-120.33">22 CFR 120.33(a)</a></td>
+              <td data-label="EAR">"Technology" and "software" for items on the Commerce Control List, e.g. ECCN 0E501 technology for firearms. <a class="cite" href="https://www.ecfr.gov/current/title-15/part-774">15 CFR part 774</a></td></tr>
+            <tr><td>Main carve-out</td>
+              <td data-label="ITAR">"Public domain": published and generally accessible through listed channels such as bookstores, libraries, open conferences, patents, government-approved public release, or fundamental research. <a class="cite" href="https://www.ecfr.gov/current/title-22/section-120.34">22 CFR 120.34</a></td>
+              <td data-label="EAR">"Published": made available to the public without restrictions on further dissemination, incl. posting on public internet sites. <a class="cite" href="https://www.ecfr.gov/current/title-15/section-734.7">15 CFR 734.7(a)</a></td></tr>
+            <tr><td>Other exclusions</td>
+              <td data-label="ITAR">General scientific, mathematical or engineering principles commonly taught in schools; basic marketing information; general system descriptions. <a class="cite" href="https://www.ecfr.gov/current/title-22/section-120.33">22 CFR 120.33(b)</a></td>
+              <td data-label="EAR">Exception to the exclusion: firearm production files posted online in a machine-ready format (e.g. AMF, G-code) stay subject to the EAR. <a class="cite" href="https://www.ecfr.gov/current/title-15/section-734.7">15 CFR 734.7(c)</a></td></tr>
+            <tr><td>Assistance, not documents</td>
+              <td data-label="ITAR">"Defense service": furnishing assistance, incl. training, to foreign persons in the design, production, operation, repair or use of defense articles. <a class="cite" href="https://www.ecfr.gov/current/title-22/section-120.32">22 CFR 120.32</a></td>
+              <td data-label="EAR">No direct equivalent in this comparison.</td></tr>
+          </tbody>
+        </table>
+        <p class="cite">Numbering note: the 2022 reorganization moved "technical data" from 22 CFR 120.10 to 120.33 and "defense service" from 120.9 to 120.32 (<a href="https://www.federalregister.gov/documents/2022/03/23/2022-05629/international-traffic-in-arms-regulations-consolidation-and-restructuring-of-purposes-and">87 FR 16396</a>, effective 6 Sep 2022). The Wassenaar Munitions List also excludes technology "in the public domain", defined as made available without restrictions on further dissemination (<a href="https://www.wassenaar.org/app/uploads/2026/01/Stand-alone-Munitions-List-2025-Corr.pdf">ML22 and definitions</a>).</p>
+      </div>
+
+      <div class="card">
+        <h3>The 3D-printed gun file litigation</h3>
+        <ol class="steps">
+          <li><time>20 Sep 2016</time>Fifth Circuit affirms denial of a preliminary injunction sought by Defense Distributed against State Department control of its files, finding no abuse of discretion in weighing national security. <a class="cite" href="https://www.ca5.uscourts.gov/opinions/pub/15/15-50759-CV0.pdf">Opinion, No. 15-50759</a></li>
+          <li><time>2018</time>Settlement: State agrees to a temporary USML modification and a letter authorizing online publication of certain files. <a class="cite" href="https://firearmslaw.duke.edu/2019/11/litigation-highlight-state-of-washington-v-united-states-department-of-state">Duke Center for Firearms Law</a></li>
+          <li><time>12 Nov 2019</time>W.D. Wash. (Judge Lasnik) holds the modification and letter unlawful under the APA, incl. failure to give Congress 30 days' notice, and sets them aside. <a class="cite" href="https://www.kut.org/crime-justice/2019-11-12/judge-blocks-rule-change-that-allowed-austin-based-company-to-publish-3d-printed-gun-plans">KUT</a></li>
+          <li><time>23 Jan 2020</time>State and Commerce publish final rules moving most non-automatic and semi-automatic firearms and their technology to the EAR, with the new 734.7(c) rule for machine-ready files; effective 9 Mar 2020. <a class="cite" href="https://www.federalregister.gov/documents/2020/01/23/2020-00573/control-of-firearms-guns-ammunition-and-related-articles-the-president-determines-no-longer-warrant">85 FR 4136</a></li>
+          <li><time>27 Apr 2021</time>Ninth Circuit vacates the district court's injunction against the State rule, holding that 22 U.S.C. 2778(h) bars judicial review of designating or removing defense articles. <a class="cite" href="https://cdn.ca9.uscourts.gov/datastore/opinions/2021/04/27/20-35391.pdf">Washington v. Dep't of State, No. 20-35391</a></li>
+        </ol>
+      </div>
+
+      <div class="card analysis">
+        <span class="tag">Analysis, not legal advice</span>
+        <h3>What this implies for AI-generated text</h3>
+        <p>No court ruling on whether model outputs are "technical data" or "published" information is cited here, and none was found in the sources reviewed. The points below are a reading of the definitions, not settled law.</p>
+        <ul>
+          <li><strong>The tests are about content and release, not authorship.</strong> The ITAR and EAR definitions turn on what information enables and how it is made available. Nothing in them exempts text because software wrote it.</li>
+          <li><strong>A tailored answer is not obviously "public domain".</strong> 22 CFR 120.34 lists specific channels of publication. A response generated for one user does not clearly pass through any of them, even if each fact in it appears somewhere public.</li>
+          <li><strong>Machine-ready output gets special treatment.</strong> 734.7(c) keeps firearm production files under the EAR even when posted publicly. Regulators have already drawn a line at executable files, separate from descriptive text.</li>
+          <li><strong>Interaction can look like assistance.</strong> The "defense service" definition covers assistance and training to foreign persons. Whether interactive help from a model could ever fit is untested.</li>
+          <li><strong>The legal floor is not the policy line.</strong> Export law sets minimums for transfers. A content policy can, and usually does, decline operational help that would be lawful to publish.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Regime map -->
+  <section class="panel" id="view-map" role="tabpanel" aria-labelledby="tab-map" hidden>
+    <p class="lede">Regimes across the top, item types down the side. Select a cell to see the provision. Coverage is judged from the text of each instrument; "none" means no entry was found, not that the item is unregulated everywhere.</p>
+    <div class="map-controls">
+      <span class="verified">Show:</span>
+      <div class="seg" id="jur-filter" role="group" aria-label="Filter regimes by jurisdiction">
+        <button data-jur="all" aria-pressed="true">All</button>
+        <button data-jur="US" aria-pressed="false">US</button>
+        <button data-jur="Multilateral" aria-pressed="false">Multilateral</button>
+        <button data-jur="EU" aria-pressed="false">EU</button>
+      </div>
+      <div class="legend" style="margin:0 0 0 8px">
+        <span><span class="dot direct" aria-hidden="true"></span> Direct</span>
+        <span><span class="dot conditional" aria-hidden="true"></span> Conditional</span>
+        <span><span class="dot none" aria-hidden="true"></span> None found</span>
+      </div>
+    </div>
+    <div class="scroll-x"><table class="matrix" id="matrix"></table></div>
+    <div class="card cell-info" id="cell-info" aria-live="polite">Select a cell.</div>
+
+    <div class="timeline">
+      <h2>Key dates</h2>
+      <p class="lede">Treaty milestones, rule changes and court decisions, oldest first. Recent changes since 2025 are included where verified.</p>
+      <div id="timeline"></div>
+    </div>
+  </section>
+
+  <!-- 4. Method -->
+  <section class="panel method" id="view-method" role="tabpanel" aria-labelledby="tab-method" hidden>
+    <div class="card">
+      <h3>What this is</h3>
+      <p>A structured index of 20 legal and policy instruments and 16 item types. Each link between an item and a regime records the controlling provision, a one-line plain reading, a coverage level, and a URL to the text it rests on. No data here is synthetic.</p>
+      <h3>How it was built</h3>
+      <ul>
+        <li>US regulations were read from the eCFR (text current through 2 Oct 2026), statutes from the US Code via Cornell LII (uscode.house.gov was down for maintenance on 6 Oct 2026), and rule histories from the Federal Register API.</li>
+        <li>Treaty dates, party counts and withdrawals come from the UN Treaty Collection status pages as at 6 Oct 2026; Wassenaar and MTCR entries from their official sites.</li>
+        <li>Court holdings were read from the opinions where available (Supreme Court, Fifth and Ninth Circuits). One 2026 district court ruling is cited from a secondary source and flagged as such.</li>
+        <li>EUR-Lex was not fully available on 6 Oct 2026. EU entries were checked through European Commission pages, a Council document and the legislation.gov.uk archive of EU instruments.</li>
+        <li>DoD Directive 3000.09 blocks automated retrieval; its content was checked through the Congressional Research Service primer IF11150 (updated 26 Mar 2026).</li>
+        <li>Claims that could not be verified were left out. The data files are <a href="data/regimes.json">regimes.json</a>, <a href="data/items.json">items.json</a> and <a href="data/timeline.json">timeline.json</a>.</li>
+      </ul>
+      <h3>Limits</h3>
+      <ul>
+        <li>Coverage levels are judgments about how a class of item maps to an instrument. They are not commodity jurisdiction or classification determinations.</li>
+        <li>Item types are generic. The tool does not classify any real product and gives no technical parameters beyond those printed in the cited texts.</li>
+        <li>National implementation of multilateral regimes varies. State law, sanctions and embargo regimes are out of scope.</li>
+        <li>Rules change. Each regime shows the date it was last checked.</li>
+      </ul>
+      <h3>How to cite</h3>
+      <p>Walberg, Jonathan. "Conventional Weapons Regime Explorer." jwalberg.com, data verified 6 October 2026. Cite the primary texts linked in each entry for any legal point.</p>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h3 style="margin-top:0">Sources and last-verified dates</h3>
+      <div class="scroll-x" style="border:0"><table class="src-table" id="src-table"></table></div>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">Conventional Weapons Regime Explorer. Not legal advice. Data verified 6 October 2026. <a href="../../">All tools</a></div>
+</footer>
+
+<script src="js/app.js"></script>
+</body>
+</html>

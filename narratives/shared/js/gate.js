@@ -4,7 +4,7 @@
 // In local development (serving the source tree) this file is not loaded and data is plaintext.
 (function () {
   'use strict';
-  var CFG = {"id": "1093097715", "open": true, "iter": 600000, "t5": {"id": "1239aebe04", "salt": "DyDPl80nJR4dOfQcwckpzg==", "check": "XgKzGokjX1q2HMqt52womJcQD9J5iLWRiTtsLJrry1HmXQ==", "slugs": ["rhetoric-search"], "name": "Rhetoric Search"}, "master": {"salt": "vde/ATuxVfD/g0e6EHJAMQ==", "check": "TU+yFg3h69kpOPVjlXBcWXt7p1z0XnU5t6ltqTRR6sgbOw==", "wraps": {"5": "ICCnmjpr/3L6ZxX5H92owjaiQXo+8YKDK50FZkbWh1OYwpmUUUErkVL7PIt0yIfhMiruaZ7hcBqni1RO"}}};
+  var CFG = {"id": "1093097715", "open": true, "iter": 600000, "t5": {"id": "1239aebe04", "salt": "DyDPl80nJR4dOfQcwckpzg==", "check": "XgKzGokjX1q2HMqt52womJcQD9J5iLWRiTtsLJrry1HmXQ==", "slugs": ["rhetoric-search"], "name": "Rhetoric Search", "raw": "YfjE5WJvTxsBqKr0cM0R0IzwnnPa0Wc47a0R2VNmCp8="}, "master": {"salt": "vde/ATuxVfD/g0e6EHJAMQ==", "check": "TU+yFg3h69kpOPVjlXBcWXt7p1z0XnU5t6ltqTRR6sgbOw==", "wraps": {"5": "ICCnmjpr/3L6ZxX5H92owjaiQXo+8YKDK50FZkbWh1OYwpmUUUErkVL7PIt0yIfhMiruaZ7hcBqni1RO"}}};
   var KEYNAME = 'tsm-vault-key-' + (CFG ? CFG.id : 'dev');
   var MAGIC = 'TSMVAULT2:';
   // Optional extra tiers: tools listed in CFG.t2.slugs (or CFG.t3.slugs) have their data sealed with a
@@ -54,6 +54,9 @@
       return crypto.subtle.deriveBits({ name: 'PBKDF2', salt: b64d(salt), iterations: CFG.iter, hash: 'SHA-256' }, base, 256);
     }).then(function (bits) { return new Uint8Array(bits); });
   }
+  /** Open tiers (CFG.tN.raw): the build published the tier's key, so its pages unlock without asking. */
+  function openTier(tier) { return !!(TIERS[tier] && TIERS[tier].raw); }
+  function openKey(tier) { return tryRaw(b64d(TIERS[tier].raw), tier); }
   /** Resolves to a CryptoKey if raw key bytes decrypt the check token, else rejects. */
   function tryRaw(raw, tier) {
     var check = tier > 1 ? TIERS[tier].check : CFG.check;
@@ -68,6 +71,7 @@
    *  After the master password, every tier's key is available in this tab. */
   function key2Now(tier) {
     if (tier === PAGE_TIER) return key2Ready;
+    if (openTier(tier)) return openKey(tier);
     return MASTER && MASTER[tier] ? Promise.resolve(MASTER[tier]) : Promise.reject();
   }
   function deriveMaster(pw) {
@@ -148,6 +152,8 @@
         .then(function (k) { return open(k, b64d(b64), true); })
         .then(function (bytes) { return new TextDecoder().decode(bytes); });
     },
+    /** True when `slug` is in a tier whose key is published (no password needed). */
+    isOpen: function (slug) { return [2, 3, 4, 5].some(function (t) { return openTier(t) && TIERS[t].slugs.indexOf(slug) >= 0; }); },
     /** Attributes for a password box that browsers will not offer to save (used by the hub's section form too). */
     inputAttrs: function () { return NOSAVE; },
     /** Decrypt a sealed blob with the key this page was unlocked with (only on pages of that tier). */
@@ -213,6 +219,7 @@
     resolveKey(key);
     if (!LOCKED_PAGE) { reveal(); return; }
     if (MASTER && MASTER[PAGE_TIER]) { unlock2(MASTER[PAGE_TIER]); return; }
+    if (openTier(PAGE_TIER)) { openKey(PAGE_TIER).then(unlock2); return; }
     var g = document.getElementById('tsm-gate'); if (g) g.remove();
     if (document.body) showGate(PAGE_TIER); else document.addEventListener('DOMContentLoaded', function () { showGate(PAGE_TIER); });
   }

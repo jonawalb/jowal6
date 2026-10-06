@@ -158,6 +158,8 @@
         ['nuclear-tests', 'Every Nuclear Test', 'All 2,056 nuclear tests since Trinity, by country, yield and site, on one timeline.', 1],
         ['iran-enrichment', "Iran's Enrichment Clock", "Iran's enriched uranium from every IAEA report since 2016, against the deal's limits and quoted breakout estimates.", 1],
     ];
+    // A new random order on every page load (Fisher–Yates); each tool still plays once per cycle.
+    for (let k = SHOWS.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [SHOWS[k], SHOWS[j]] = [SHOWS[j], SHOWS[k]]; }
     const IMG_MS = 6000, TRAILER_MS = 16000;
     const $ = id => document.getElementById(id);
     const stage = $('shows-stage'), dots = document.querySelector('.shows-dots'), prog = $('shows-prog');

@@ -1,1 +1,255 @@
-TSMVAULT5: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
+{
+ "actors": [
+  {
+   "id": "isis",
+   "name": "Islamic State (Iraq and Syria)",
+   "short": "Islamic State",
+   "type": "Armed group",
+   "region": "Iraq and Syria; online",
+   "state_backed": false,
+   "summary": "The Islamic State ran the most extensive non-state drone programme of 2014-2017. It moved from aerial reconnaissance and propaganda filming in Syria in 2014 to a managed drone unit under its military manufacturing committee, then to armed commercial quadcopters used at scale around Mosul. Use peaked in spring 2017 and fell as the group lost territory; since 2024 supporter networks have circulated drone guidance online.",
+   "sources": [
+    {
+     "publisher": "Combating Terrorism Center at West Point",
+     "title": "The Islamic State and Drones: Supply, Scale, and Future Threats",
+     "url": "https://ctc.westpoint.edu/islamic-state-drones-supply-scale-future-threats/"
+    },
+    {
+     "publisher": "Combating Terrorism Center at West Point",
+     "title": "The Islamic State's Drone Documents: Management, Acquisitions, and DIY Tradecraft",
+     "url": "https://ctc.westpoint.edu/ctc-perspectives-the-islamic-states-drone-documents-management-acquisitions-and-diy-tradecraft"
+    }
+   ]
+  },
+  {
+   "id": "hamas",
+   "name": "Hamas (Izz ad-Din al-Qassam Brigades)",
+   "short": "Hamas",
+   "type": "Armed group",
+   "region": "Gaza and Israel",
+   "state_backed": false,
+   "summary": "Hamas's armed wing has run an in-house drone programme for years, which it credits to engineer Mohamed Zouari, killed in 2016. It showed reconnaissance drones in 2014 and one-way attack drones in 2021. On 7 October 2023 it used small drones at the opening of a combined assault, which researchers describe as a watershed in non-state drone use.",
+   "state_note": "Hamas receives Iranian support, but the cases here concern drones it says it produced itself; it is not flagged as state-backed in the filters.",
+   "sources": [
+    {
+     "publisher": "ICCT / Perspectives on Terrorism",
+     "title": "Drones and the Hamas-led Attack of 7 October 2023: Innovation and Implications",
+     "url": "https://pt.icct.nl/article/drones-and-hamas-led-attack-7-october-2023-innovation-and-implications"
+    },
+    {
+     "publisher": "Al Majalla",
+     "title": "Mohamed Zouari: The Tunisian engineer behind Hamas drones",
+     "url": "https://en.majalla.com/node/301776"
+    }
+   ]
+  },
+  {
+   "id": "houthis",
+   "name": "Houthis (Ansar Allah)",
+   "short": "Houthis",
+   "type": "Armed movement (state-backed)",
+   "region": "Yemen, Gulf, Red Sea, Israel",
+   "state_backed": true,
+   "summary": "Ansar Allah controls much of northern Yemen and has used one-way attack drones against Yemeni government leaders, Saudi and Emirati infrastructure and airports, Red Sea shipping and Israel. Its claims are sometimes contested: UN monitors rejected its claim to the 2019 Abqaiq attack.",
+   "state_note": "The UN Panel of Experts on Yemen documents Iranian-supplied drone systems and technology combined with commercially sourced parts. Its capabilities are not representative of unsupported groups.",
+   "sources": [
+    {
+     "publisher": "Washington Institute for Near East Policy",
+     "title": "The UN Exposes Houthi Reliance on Iranian Weapons",
+     "url": "https://www.washingtoninstitute.org/policy-analysis/un-exposes-houthi-reliance-iranian-weapons"
+    },
+    {
+     "publisher": "Bellingcat",
+     "title": "Houthis Use Armed Drone to Target Yemeni Army Top Brass",
+     "url": "https://www.bellingcat.com/news/mena/2019/01/10/houthis-use-armed-drone-to-target-yemeni-army-top-brass"
+    }
+   ]
+  },
+  {
+   "id": "hezbollah",
+   "name": "Hezbollah",
+   "short": "Hezbollah",
+   "type": "Armed group (state-backed)",
+   "region": "Lebanon and Israel",
+   "state_backed": true,
+   "summary": "Hezbollah has flown drones into Israeli airspace since 2004. In the 2024 war its attack drones killed four soldiers at a training base near Binyamina and hit the prime minister's private home in Caesarea.",
+   "state_note": "Researchers describe its drones as supplied by Iran. Included for comparison; its capabilities sit closer to a state military than to most groups here.",
+   "sources": [
+    {
+     "publisher": "Federation of American Scientists",
+     "title": "Hezbollah and the Use of Drones as a Weapon of Terrorism",
+     "url": "https://fas.org/publication/hezbollah-use-drones-weapon-terrorism/"
+    }
+   ]
+  },
+  {
+   "id": "mexico_cartels",
+   "name": "Mexican cartels",
+   "short": "Mexican cartels",
+   "type": "Criminal organisations",
+   "region": "Mexico and US border",
+   "state_backed": false,
+   "summary": "Mexican criminal groups have used drones to move drugs across the US border since at least 2015. Armed use appeared in 2017-18 and grew quickly from 2020, led by the CJNG, which fields a dedicated drone unit; CSIS cites 5 attacks in 2020 rising to 260 in the first half of 2023. La Nueva Familia Michoacana, Los Viagras and warring Sinaloa factions have since adopted the tactic, mostly against rivals, self-defence groups and rural communities.",
+   "sources": [
+    {
+     "publisher": "CSIS",
+     "title": "Illicit Innovation: Latin America Is Not Prepared to Fight Criminal Drones",
+     "url": "https://www.csis.org/analysis/illicit-innovation-latin-america-not-prepared-fight-criminal-drones"
+    },
+    {
+     "publisher": "Cronkite News",
+     "title": "Senators told of alarming level of drone incursions at southern border",
+     "url": "https://cronkitenews.azpbs.org/2024/03/28/senators-told-of-alarming-level-of-drone-incursions-at-southern-border/"
+    }
+   ]
+  },
+  {
+   "id": "colombia_groups",
+   "name": "Colombian armed groups (FARC dissidents, ELN)",
+   "short": "Colombian armed groups",
+   "type": "Armed groups",
+   "region": "Colombia",
+   "state_backed": false,
+   "summary": "FARC dissident fronts, especially those of the EMC under Iván Mordisco, led drone attacks in Colombia; the ELN and Clan del Golfo followed. Most attacks target military and police in Cauca, Catatumbo and Antioquia, but civilian casualties are rising. ACLED counts rose from 1 attack in 2023 to 38 in 2024 and 149 in 2025; Ministry of Defence counts are higher.",
+   "sources": [
+    {
+     "publisher": "Al Jazeera",
+     "title": "'I always hear them before I see them': Drones strike fear in Colombia",
+     "url": "https://www.aljazeera.com/news/longform/2026/5/22/i-always-hear-them-before-i-see-them-drones-strike-fear-in-colombia"
+    },
+    {
+     "publisher": "ACLED",
+     "title": "Drones reshape war in Colombia as deaths and injuries mount (The Guardian, media citation)",
+     "url": "https://acleddata.com/media-citation/drones-reshape-war-colombia-deaths-and-injuries-mount-guardian"
+    }
+   ]
+  },
+  {
+   "id": "sahel_jihadists",
+   "name": "Sahel and Lake Chad jihadist groups (JNIM, IS Sahel, ISWAP)",
+   "short": "Sahel / Lake Chad jihadists",
+   "type": "Armed groups",
+   "region": "West Africa",
+   "state_backed": false,
+   "summary": "The al-Qaeda affiliate JNIM began armed drone use in Mali in September 2023 and has since extended it to Burkina Faso and Togo. Islamic State affiliates followed: ISWAP in north-east Nigeria from December 2024 and Islamic State Sahel in Niger in 2025. Reporting describes reliance on commercial quadcopters.",
+   "sources": [
+    {
+     "publisher": "ACLED",
+     "title": "Africa Overview: April 2025",
+     "url": "https://acleddata.com/2025/04/04/africa-overview-april-2025"
+    },
+    {
+     "publisher": "Lawfare",
+     "title": "African Non-State Actors Put Drones on the Attack",
+     "url": "https://www.lawfaremedia.org/article/african-non-state-actors-put-drones-on-the-attack"
+    }
+   ]
+  },
+  {
+   "id": "somalia_jihadists",
+   "name": "Somali jihadist groups (al-Shabaab, IS Somalia)",
+   "short": "Somali jihadists",
+   "type": "Armed groups",
+   "region": "East Africa",
+   "state_backed": false,
+   "summary": "Al-Shabaab has mainly used drones for propaganda and surveillance, and UN monitors report it sought weapons and training from the Houthis in 2024. Islamic State Somalia carried out its first recorded drone strikes in January 2025 against Puntland forces.",
+   "sources": [
+    {
+     "publisher": "ISS Africa",
+     "title": "Houthis in Somalia: friends with technological benefits",
+     "url": "https://issafrica.org/iss-today/houthis-in-somalia-friends-with-technological-benefits"
+    }
+   ]
+  },
+  {
+   "id": "myanmar_resistance",
+   "name": "Myanmar resistance forces (PDFs, ethnic armed organisations)",
+   "short": "Myanmar resistance",
+   "type": "Armed groups",
+   "region": "Myanmar",
+   "state_backed": false,
+   "summary": "After the 2021 coup, People's Defence Forces under the National Unity Government and allied ethnic armed organisations built drone units from commercial and locally made aircraft, in effect their only air force. ACLED records more than 2,100 resistance drone strike events since December 2021.",
+   "sources": [
+    {
+     "publisher": "ACLED",
+     "title": "War in the sky: How drone warfare is shaping the conflict in Myanmar",
+     "url": "https://acleddata.com/report/war-sky-how-drone-warfare-shaping-conflict-myanmar"
+    },
+    {
+     "publisher": "Myanmar Now",
+     "title": "Myanmar's resistance 'air force' flies high in fight against regime",
+     "url": "https://myanmar-now.org/en/news/myanmars-resistance-air-force-flies-high-in-fight-against-regime"
+    }
+   ]
+  },
+  {
+   "id": "other_nonstate",
+   "name": "Other non-state actors (Venezuela plot, PKK, Punjab smugglers)",
+   "short": "Other non-state",
+   "type": "Mixed",
+   "region": "Various",
+   "state_backed": false,
+   "summary": "Single well-sourced cases from outside the main theatres: the unattributed 2018 drone attack at a Caracas military parade, the PKK's use of commercial drones against Turkish forces, and cross-border drone drug drops into Indian Punjab. Each case notes its attribution limits.",
+   "sources": [
+    {
+     "publisher": "Bellingcat",
+     "title": "Did Drones Attack Maduro in Caracas?",
+     "url": "https://www.bellingcat.com/news/2018/08/07/drones-attack-maduro-caracas/"
+    }
+   ]
+  },
+  {
+   "id": "prison_contraband",
+   "name": "Prison contraband networks",
+   "short": "Prison contraband",
+   "type": "Criminal networks (non-violent misuse)",
+   "region": "UK, US, Canada, Brazil",
+   "state_backed": false,
+   "summary": "Organised crime groups, often working with inmates who coordinate by smuggled phone, use commercial drones to deliver drugs, phones and weapons into prisons. UK government data recorded 1,712 prison drone incidents in England and Wales in 2024-25, and the Chief Inspector of Prisons called the problem a national security threat.",
+   "sources": [
+    {
+     "publisher": "UK Ministry of Justice",
+     "title": "Counter-drone efforts rise as prison sightings revealed",
+     "url": "https://www.gov.uk/government/news/counter-drone-efforts-rise-as-prison-sightings-revealed"
+    },
+    {
+     "publisher": "HM Inspectorate of Prisons",
+     "title": "Drones dropping drugs and weapons into high security prisons are a threat to national security",
+     "url": "https://hmiprisons.justiceinspectorates.gov.uk/news/drones-dropping-drugs-and-weapons-into-high-security-prisons-are-a-threat-to-national-security"
+    }
+   ]
+  },
+  {
+   "id": "airport_disruption",
+   "name": "Airport disruption (unidentified operators)",
+   "short": "Airport disruption",
+   "type": "Unidentified operators (non-violent misuse)",
+   "region": "Europe, US, Gulf",
+   "state_backed": false,
+   "summary": "Reported drone sightings near runways have suspended flights at major hubs, including Gatwick in 2018, Heathrow, Newark and Dubai in 2019 and Frankfurt in 2020. Operators are rarely identified: the Gatwick investigation closed without charges, and many sightings are never confirmed.",
+   "sources": [
+    {
+     "publisher": "LBC",
+     "title": "Gatwick drone investigation closed by police",
+     "url": "https://www.lbc.co.uk/article/gatwick-drone-investigation-closed-by-police-DWyg8Z_2/"
+    }
+   ]
+  },
+  {
+   "id": "protest_individuals",
+   "name": "Activists, individuals and unattributed overflights",
+   "short": "Activists / individuals",
+   "type": "Individuals (non-violent misuse)",
+   "region": "Europe, Japan, US",
+   "state_backed": false,
+   "summary": "Activists have used small drones as protest tools near leaders and sensitive sites, as in Dresden in 2013, Tokyo in 2015 and at Heathrow in 2019. The cluster also holds unattributed overflights of French nuclear plants and Paris landmarks in 2014-15, and one accidental crash at the White House for contrast. Each case is labelled deliberate, unattributed or accidental.",
+   "sources": [
+    {
+     "publisher": "Center for the Study of the Drone, Bard College",
+     "title": "A Pirate Drone in Germany",
+     "url": "https://dronecenter.bard.edu/pirate-drone-germany"
+    }
+   ]
+  }
+ ]
+}

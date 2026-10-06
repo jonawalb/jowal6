@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+  <rect width="640" height="400" fill="#f2f2ee"/>
+  <rect x="24" y="24" width="592" height="352" rx="8" fill="#fbfbf8" stroke="#d3d6cd"/>
+  <g font-family="Georgia, serif" font-weight="700" font-size="17" fill="#14201a">
+    <text x="190" y="70">Recon</text><text x="290" y="70">Attack</text><text x="400" y="70">Smuggling</text><text x="520" y="70">Propaganda</text>
+    <text x="50" y="118">IS</text><text x="50" y="168">Houthis</text><text x="50" y="218">Hezbollah</text><text x="50" y="268">Cartels</text><text x="50" y="318">JNIM</text>
+  </g>
+  <g fill="#d3d6cd">
+    <rect x="190" y="98" width="70" height="28" rx="3"/><rect x="290" y="98" width="70" height="28" rx="3"/><rect x="400" y="98" width="70" height="28" rx="3"/><rect x="520" y="98" width="70" height="28" rx="3"/>
+    <rect x="190" y="148" width="70" height="28" rx="3"/><rect x="290" y="148" width="70" height="28" rx="3"/><rect x="400" y="148" width="70" height="28" rx="3"/><rect x="520" y="148" width="70" height="28" rx="3"/>
+    <rect x="190" y="198" width="70" height="28" rx="3"/><rect x="290" y="198" width="70" height="28" rx="3"/><rect x="400" y="198" width="70" height="28" rx="3"/><rect x="520" y="198" width="70" height="28" rx="3"/>
+    <rect x="190" y="248" width="70" height="28" rx="3"/><rect x="290" y="248" width="70" height="28" rx="3"/><rect x="400" y="248" width="70" height="28" rx="3"/><rect x="520" y="248" width="70" height="28" rx="3"/>
+    <rect x="190" y="298" width="70" height="28" rx="3"/><rect x="290" y="298" width="70" height="28" rx="3"/><rect x="400" y="298" width="70" height="28" rx="3"/><rect x="520" y="298" width="70" height="28" rx="3"/>
+  </g>
+  <g>
+    <rect x="190" y="98" width="70" height="28" rx="3" fill="#2c7a4b"/><rect x="290" y="98" width="70" height="28" rx="3" fill="#b3261e"/><rect x="520" y="98" width="70" height="28" rx="3" fill="#e8753a"/>
+    <rect x="190" y="148" width="70" height="28" rx="3" fill="#2c7a4b"/><rect x="290" y="148" width="70" height="28" rx="3" fill="#b3261e"/>
+    <rect x="190" y="198" width="70" height="28" rx="3" fill="#2c7a4b"/><rect x="290" y="198" width="70" height="28" rx="3" fill="#b3261e"/>
+    <rect x="290" y="248" width="70" height="28" rx="3" fill="#b3261e"/><rect x="400" y="248" width="70" height="28" rx="3" fill="#a1487a"/>
+    <rect x="190" y="298" width="70" height="28" rx="3" fill="#2c7a4b"/><rect x="290" y="298" width="70" height="28" rx="3" fill="#b3261e"/>
+  </g>
+</svg>

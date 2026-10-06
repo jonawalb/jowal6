@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+  <rect width="640" height="400" fill="#f2f2ee"/>
+  <rect x="24" y="24" width="592" height="352" rx="8" fill="#fbfbf8" stroke="#d3d6cd"/>
+  <g font-family="Georgia, serif" font-weight="700" font-size="19" fill="#14201a">
+    <text x="60" y="78">ITAR</text><text x="60" y="138">EAR</text><text x="60" y="198">Wassenaar</text><text x="60" y="258">Arms Trade Treaty</text><text x="60" y="318">CCW · Ottawa · CCM</text>
+  </g>
+  <g fill="#d3d6cd"><rect x="300" y="62" width="280" height="20" rx="3"/><rect x="300" y="122" width="280" height="20" rx="3"/><rect x="300" y="182" width="280" height="20" rx="3"/><rect x="300" y="242" width="280" height="20" rx="3"/><rect x="300" y="302" width="280" height="20" rx="3"/></g>
+  <g><rect x="300" y="62" width="210" height="20" rx="3" fill="#2c7a4b"/><rect x="300" y="122" width="160" height="20" rx="3" fill="#a1487a"/><rect x="300" y="182" width="240" height="20" rx="3" fill="#e8753a"/><rect x="300" y="242" width="120" height="20" rx="3" fill="#b3261e"/><rect x="300" y="302" width="190" height="20" rx="3" fill="#9aa19b"/></g>
+</svg>

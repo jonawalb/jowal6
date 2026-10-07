@@ -6,11 +6,11 @@ export const SOURCE_NAMES = { MFA: 'Foreign Ministry', MND: 'Defense Ministry', 
 export const TR_LABEL = ['Taiwan Security Monitor translation', 'Official English', 'Machine translation (Google)', 'Chinese only (no official English)',
   'Machine translation (Claude)'];
 export const FIRST_WEEK = '2022-06-27';
-export const LAST_DAY = '2026-09-30';
+export const LAST_DAY = '2026-10-07';
 export const RANGES = {
-  all: { label: 'Jul 2022 – Sep 2026', from: '2022-06-27', to: LAST_DAY },
-  y25: { label: '2025 – Sep 2026', from: '2024-12-30', to: LAST_DAY },
-  y26: { label: 'Jan – Sep 2026', from: '2025-12-29', to: LAST_DAY },
+  all: { label: 'Jul 2022 – Oct 2026', from: '2022-06-27', to: LAST_DAY },
+  y25: { label: '2025 – Oct 2026', from: '2024-12-30', to: LAST_DAY },
+  y26: { label: 'Jan – Oct 2026', from: '2025-12-29', to: LAST_DAY },
 };
 
 const DAY = 864e5;

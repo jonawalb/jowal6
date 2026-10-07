@@ -109,7 +109,7 @@ function render() {
   SOURCES.forEach(s => { $('n-' + s).textContent = `${inRange.filter(r => r.s === s).length.toLocaleString()} statements in range`; });
   $('phrase-count').textContent = S.matcher
     ? `${agg.nMatch.toLocaleString()} statement${agg.nMatch === 1 ? '' : 's'} contain “${S.matcher.phrase}” (${S.matcher.zh ? 'searched in Chinese text, which TSM holds only for 2026 items' : 'searched in the English answers'}).`
-    : `${recs.length.toLocaleString()} Taiwan-related statements, July 2022 to September 2026.`;
+    : `${recs.length.toLocaleString()} Taiwan-related statements, July 2022 to October 2026.`;
   renderDetail($('detail'), S, agg, recs);
   renderProfile($('profile'), S, agg, recs);
   animate();

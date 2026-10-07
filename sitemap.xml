@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Public pages and open tools only (locked tools are left out). -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://jwalberg.com/</loc></url>
+  <url><loc>https://jwalberg.com/about/</loc></url>
+  <url><loc>https://jwalberg.com/research/</loc></url>
+  <url><loc>https://jwalberg.com/experience/</loc></url>
+  <url><loc>https://jwalberg.com/teaching/</loc></url>
+  <url><loc>https://jwalberg.com/service/</loc></url>
+  <url><loc>https://jwalberg.com/interactive/</loc></url>
+  <url><loc>https://jwalberg.com/narratives/</loc></url>
+  <url><loc>https://jwalberg.com/deterrence-playground/</loc></url>
+  <url><loc>https://jwalberg.com/deterrence-playground/tools/budget-allocator/</loc></url>
+  <url><loc>https://jwalberg.com/deterrence-playground/tools/crisis-stability/</loc></url>
+  <url><loc>https://jwalberg.com/deterrence-playground/tools/declaratory-policy/</loc></url>
+  <url><loc>https://jwalberg.com/deterrence-playground/tools/defense-in-depth/</loc></url>
+  <url><loc>https://jwalberg.com/deterrence-playground/tools/deterrence-lab-general/</loc></url>
+  <url><loc>https://jwalberg.com/deterrence-playground/tools/drone-threat-matrix/</loc></url>
+  <url><loc>https://jwalberg.com/deterrence-playground/tools/entanglement/</loc></url>
+  <url><loc>https://jwalberg.com/deterrence-playground/tools/escalation-ladder-kahn/</loc></url>
+  <url><loc>https://jwalberg.com/deterrence-playground/tools/fog-of-command/</loc></url>
+  <url><loc>https://jwalberg.com/deterrence-playground/tools/game-theory-gallery/</loc></url>
+  <url><loc>https://jwalberg.com/deterrence-playground/tools/hormuz-mcm/</loc></url>
+  <url><loc>https://jwalberg.com/deterrence-playground/tools/interceptor-burndown/</loc></url>
+  <url><loc>https://jwalberg.com/deterrence-playground/tools/iran-enrichment/</loc></url>
+  <url><loc>https://jwalberg.com/deterrence-playground/tools/kharg-island/</loc></url>
+  <url><loc>https://jwalberg.com/deterrence-playground/tools/kill-chain-builder/</loc></url>
+  <url><loc>https://jwalberg.com/deterrence-playground/tools/matrix-game/</loc></url>
+  <url><loc>https://jwalberg.com/deterrence-playground/tools/nuclear-arsenals/</loc></url>
+  <url><loc>https://jwalberg.com/deterrence-playground/tools/nuclear-tests/</loc></url>
+  <url><loc>https://jwalberg.com/deterrence-playground/tools/orbital-denial/</loc></url>
+  <url><loc>https://jwalberg.com/deterrence-playground/tools/proliferation-paths/</loc></url>
+  <url><loc>https://jwalberg.com/deterrence-playground/tools/raid-night/</loc></url>
+  <url><loc>https://jwalberg.com/deterrence-playground/tools/red-sea-hormuz/</loc></url>
+  <url><loc>https://jwalberg.com/deterrence-playground/tools/russia-nuclear-signals/</loc></url>
+  <url><loc>https://jwalberg.com/deterrence-playground/tools/sub-hunt/</loc></url>
+  <url><loc>https://jwalberg.com/deterrence-playground/tools/treaty-tracker/</loc></url>
+  <url><loc>https://jwalberg.com/deterrence-playground/tools/ukraine-air-war/</loc></url>
+  <url><loc>https://jwalberg.com/deterrence-playground/tools/ukraine-support/</loc></url>
+  <url><loc>https://jwalberg.com/deterrence-playground/tools/war-markets/</loc></url>
+  <url><loc>https://jwalberg.com/deterrence-playground/tools/warhead-ambiguity/</loc></url>
+  <url><loc>https://jwalberg.com/deterrence-playground/tools/weapons-regimes/</loc></url>
+  <url><loc>https://jwalberg.com/narratives/tools/rhetoric-heatmap/</loc></url>
+  <url><loc>https://jwalberg.com/narratives/tools/rhetoric-global/</loc></url>
+  <url><loc>https://jwalberg.com/narratives/tools/rhetoric-search/</loc></url>
+</urlset>

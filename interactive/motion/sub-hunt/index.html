@@ -17,7 +17,7 @@
   .act { font: 400 15px var(--mono); letter-spacing: .1em; text-transform: uppercase; }
 </style>
 </head><body>
-<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of The Hunt: a probability cloud of possible submarine positions tightens as sonobuoys and a search box come up empty, a sprinting submarine gives a bearing, and its true track is revealed."><title>The Hunt</title></svg></div>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of The Hunt: a probability cloud of possible submarine positions tightens as sonobuoys and a search box come up empty, a sprinting submarine gives away its position, and its true track is revealed."><title>The Hunt</title></svg></div>
 <script type="module">
 import { run, seg, ease, lerp, el, bg, captions, endCard, clamp } from '../kit/kit.js';
 const svg = document.querySelector('svg');
@@ -128,7 +128,6 @@ const pingG = el('g', {}, cam);
 const pings = [0, .28, .56].map(() => el('circle', { r: 1, fill: 'none', stroke: 'var(--red)', 'stroke-width': 2.5, opacity: 0 }, pingG));
 const flash = el('circle', { r: 7, fill: '#ffb7a4', opacity: 0, filter: 'url(#kit-glow)' }, pingG);
 const bearing = el('line', { stroke: 'var(--amber)', 'stroke-width': 2.2, 'stroke-dasharray': '14 7', opacity: 0, filter: 'url(#kit-glow)' }, pingG);
-const bLab = el('text', { class: 'tag', fill: 'var(--amber)', opacity: 0 }, pingG); bLab.textContent = 'Bearing';
 const loudLab = el('text', { class: 'tag', fill: 'var(--red)', opacity: 0, 'text-anchor': 'end' }, pingG); loudLab.textContent = 'Sprinting · loud';
 
 // Payoff: true track, sub, attack mark
@@ -171,7 +170,7 @@ hook.innerHTML = 'Every empty search is a <tspan class="hot">clue.</tspan>';
 const cap = captions(svg, [
   [3.4, 5.6, 'An old report. Each dot is a place the sub could be.'],
   [5.7, 8.4, 'Drop buoys. Fly a box. Empty water is a clue too.'],
-  [8.5, 10.7, 'It sprints loud. A buoy hears it and takes a bearing.'],
+  [8.5, 10.7, 'It sprints loud. A buoy hears it and fixes its position.'],
   [10.8, 13.0, 'The cloud collapses. Its true track, revealed.'],
 ]);
 const end = endCard(svg, { kicker: 'Interactive Deterrence', title: 'The Hunt', line: 'Find the sub before it slips into the Atlantic.' });
@@ -272,9 +271,6 @@ run({ duration: 16, poster: 9.7, frame: t => {
   const bE = [H[0] + bu[0] * 330 * bu3, H[1] + bu[1] * 330 * bu3];
   bearing.setAttribute('x1', H[0]); bearing.setAttribute('y1', H[1]); bearing.setAttribute('x2', bE[0]); bearing.setAttribute('y2', bE[1]);
   bearing.setAttribute('opacity', (bu3 > 0) * (1 - seg(t, 11, 11.8)));
-  bLab.setAttribute('x', H[0] + bu[0] * 320 - 14); bLab.setAttribute('y', H[1] + bu[1] * 320 - 4);
-  bLab.setAttribute('text-anchor', 'end');
-  bLab.setAttribute('opacity', ease.out(seg(t, 9.1, 9.5)) * (1 - seg(t, 10.8, 11.4)));
   loudLab.setAttribute('x', S3[0] + 30); loudLab.setAttribute('y', S3[1] - 26); loudLab.setAttribute('text-anchor', 'start');
   loudLab.setAttribute('opacity', seg(t, 8.65, 8.9) * (1 - seg(t, 9.8, 10.3)));
 

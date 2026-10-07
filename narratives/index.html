@@ -7,7 +7,7 @@
     <meta name="description" content="Narrative Tracking: what governments say, week by week. Rhetoric heatmaps for China, Russia and Iran, and a search across official statements and state media, by Jonathan Walberg.">
     <meta property="og:title" content="Narrative Tracking | Jonathan Walberg">
     <meta property="og:description" content="What governments say, week by week, with every count traced to its source.">
-    <meta property="og:image" content="https://jwalberg.com/img/thumbnail.jpg">
+    <meta property="og:image" content="https://jwalberg.com/img/og-image.jpg">
     <meta property="og:url" content="https://jwalberg.com/narratives/">
     <meta property="og:type" content="website">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -163,7 +163,7 @@
     // in tsm-strait-layers) and its trailer at motion/<slug>/ (kit in motion/kit), then add a line here.
     // [slug, title, tagline, tags, locked]
     const TRACKERS = [
-        ['rhetoric-heatmap', 'PRC Rhetoric Heatmap', 'Foreign Ministry, Defense Ministry and Taiwan Affairs Office language on Taiwan, week by week, with every statement one click away.', ['China'], 0],
+        ['rhetoric-heatmap', 'PRC Rhetoric Heatmap', 'Foreign Ministry, Defense Ministry and Taiwan Affairs Office language on Taiwan, week by week, with a source link for every statement.', ['China'], 0],
         ['rhetoric-global', 'Rhetoric Heatmap: Russia and Beyond', 'The phrases the Kremlin and Iran’s Foreign Ministry keep repeating, week by week since 2021, each quote linked to its source.', ['Russia', 'Iran'], 0],
         ['rhetoric-search', 'Rhetoric Search', 'Search official statements and state media from Russia, China, Iran and more: official sentences quoted, media listed by headline, with a Trends view of tone and topics over time.', ['Multi-country', 'Search'], 0],
     ];
@@ -172,12 +172,13 @@
     const href = slug => 'tools/' + slug + '/';
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-    // Document count of Rhetoric Search: plaintext counts the nightly data build publishes next to its sealed data.
+    // Collected-document count: plaintext data/stats.json next to the sealed search data (currently the repository counts
+    // at the v1.0.0 snapshot). Rhetoric Search's own "What is searched" panel shows the smaller searchable index.
     fetch('https://huggingface.co/datasets/wallabee1/rhetoric-search-data/resolve/main/data/stats.json', { cache: 'no-cache' })
         .then(r => r.ok ? r.json() : Promise.reject())
         .then(s => {
             const n = x => Number(x).toLocaleString('en-US');
-            $('ix-count').textContent = `Repository holds ${n(s.documents)} documents: ${n(s.official_docs)} official statements and ${n(s.media_docs)} media articles, updated ${s.built.slice(0, 10)}.`;
+            $('ix-count').textContent = `Collected so far: ${n(s.documents)} documents, ${n(s.official_docs)} official statements and ${n(s.media_docs)} media articles (as of ${s.built.slice(0, 10)}). Rhetoric Search lists how many of them it can search under “What is searched”.`;
         })
         .catch(() => {});
 

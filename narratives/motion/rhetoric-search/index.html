@@ -37,7 +37,10 @@ bg(svg);
 // ---- Real data (~/Projects/rhetoric-corpus/index/corpus.sqlite, opened read-only) ---------------------------------
 // Run 2026-10-03 against the index built 2026-10-03 17:59:12 (meta table). Query: FTS5 table fts_words (title + text,
 // unicode61, so the token "sovereignty" exactly; "sovereign" is not counted), MATCH 'sovereignty', joined to docs on
-// rowid. Countries are the eight in the Rhetoric Search registry blurb (RU CN IR KP BY US PK IN); KP has no documents.
+// rowid. Countries are the eight in the Rhetoric Search registry blurb at the time (RU CN IR KP BY US PK IN); KP had no
+// documents in that index (KCNA and Rodong Sinmun were added later), so seven countries have bars. The live search now
+// covers 13 countries (BY CN CU IN IR KP PK RU SY TR TW US VE; country chips checked on jwalberg.com 2026-10-06);
+// the bars below are this 2026-10-03 run and were not re-queried.
 // c = matching documents per country: [official (docs.outlet = 'official'), state media (outlet = 'state_media')].
 // The match is on the stored text, which for these items is the source's own English-language edition (the India item
 // is MEA's published English translation of the PM's statement); nothing here is our translation.
@@ -152,7 +155,7 @@ el('path', { d: 'M0 0l0 30l8 -7l6 13l6 -3l-6 -12l11 0z', fill: 'var(--paper)', s
 // hook
 const hook = el('g', {}, svg);
 const h1 = el('text', { x: 800, y: 430, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:64px' }, hook);
-h1.innerHTML = 'Seven governments say <tspan class="hot">“sovereignty”</tspan>.';
+h1.innerHTML = 'Governments say <tspan class="hot">“sovereignty”</tspan>.';
 const h2 = el('text', { x: 800, y: 515, class: 't-hook', 'text-anchor': 'middle', style: 'font-size:64px' }, hook);
 h2.textContent = 'Read exactly how, in one search.';
 const h3 = el('text', { x: 800, y: 600, class: 't-label', 'text-anchor': 'middle' }, hook);
@@ -198,7 +201,7 @@ const cap = captions(svg, [
   [8.7, 12.3, 'Official sentences quoted. State media: headline and link only'],
   [12.6, 15.0, 'Russia: 13% of its official English texts in 2021, 28% in 2022'],
 ]);
-const end = endCard(svg, { kicker: 'Narrative Tracking', title: 'Rhetoric Search', line: 'Seven governments and their state media, searchable sentence by sentence.' });
+const end = endCard(svg, { kicker: 'Narrative Tracking', title: 'Rhetoric Search', line: 'Thirteen governments: official statements, plus state and other media.' });
 
 // ---- Timeline -----------------------------------------------------------------------------------------------------
 const D = 17.5;

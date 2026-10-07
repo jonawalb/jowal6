@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Tools | Jonathan Walberg</title>
+    <title>Interactive Deterrence | Jonathan Walberg</title>
     <meta name="description" content="Interactive Deterrence: maps, models and explainers on deterrence, nuclear weapons, war and information warfare by Jonathan Walberg.">
     <meta property="og:title" content="Interactive Deterrence | Jonathan Walberg">
     <meta property="og:description" content="Maps, models and explainers on deterrence, nuclear weapons, war and information warfare.">
-    <meta property="og:image" content="https://jwalberg.com/img/thumbnail.jpg">
+    <meta property="og:image" content="https://jwalberg.com/img/og-image.jpg">
     <meta property="og:url" content="https://jwalberg.com/interactive/">
     <meta property="og:type" content="website">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -52,6 +52,8 @@
         .shows-dots { display: flex; gap: 7px; justify-content: center; margin-top: 12px; }
         .shows-dots button { width: 8px; height: 8px; padding: 0; border-radius: 50%; border: 0; background: var(--border); cursor: pointer; }
         .shows-dots button[aria-current="true"] { background: var(--green-600); width: 22px; border-radius: 4px; }
+        .shows-count { display: none; margin: 12px 0 0; text-align: center; color: var(--text-muted); font-size: .9rem; font-variant-numeric: tabular-nums; }
+        @media (max-width: 599px) { .shows-dots { display: none; } .shows-count { display: block; } }
         @media (max-width: 999px) {
             #interactive.section { min-height: 0; padding-top: calc(var(--nav-h) + 24px); }
             .ix { grid-template-columns: minmax(0, 1fr); gap: 28px; }
@@ -106,6 +108,7 @@
                 <a id="shows-open" href="/deterrence-playground/">Open →</a>
             </figcaption>
             <div class="shows-dots" role="tablist" aria-label="Choose a tool"></div>
+            <p class="shows-count" id="shows-count"></p>
         </figure>
     </div>
 </section>
@@ -149,7 +152,7 @@
         ["wargame-explorer", "Wargame Results Explorer", "Published Taiwan wargames side by side: what they assumed, what happened, and which assumptions drive the result.", 1],
         ["matrix-game", "Baltic Matrix Game", "Argue your moves in a fictional Baltic crisis, face the counter-arguments, and let the dice decide.", 1],
         ["ukraine-air-war", "Ukraine's Air War", "Every Russian missile and drone wave since September 2022, and how much of each Ukraine reported shooting down.", 1],
-        ["russia-nuclear-signals", "Russia's Nuclear Signals", "Every major Russian nuclear signal since 2022, and what, if anything, each one changed.", 1],
+        ["russia-nuclear-signals", "Russia's Nuclear Signals", "Major Russian nuclear signals since 2022, and what, if anything, each one changed.", 1],
         ["ukraine-support", "Who Supports Ukraine", "Who pledged aid to Ukraine and how much each donor has allocated, donor by donor.", 1],
         ['red-sea-hormuz', 'Red Sea & Hormuz Pulse', 'Watch daily ship traffic through the Red Sea and Hormuz set against every attack, strike and pause.', 1],
         // Berlin Airlift is in Coming Soon (2026-10-02); restore this line when it is published:
@@ -193,6 +196,7 @@
         $('shows-open').href = href; $('shows-open').setAttribute('aria-label', 'Open ' + title);
         $('shows-title').textContent = title; $('shows-line').textContent = line;
         dots.querySelectorAll('button').forEach((b, k) => b.setAttribute('aria-current', String(k === i)));
+        $('shows-count').textContent = (i + 1) + ' / ' + SHOWS.length;
         schedule(motion ? TRAILER_MS : IMG_MS);
     }
     // A trailer reports its loop length when it starts; advance when it ends.

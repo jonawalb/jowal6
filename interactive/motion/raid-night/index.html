@@ -184,7 +184,7 @@ const valueT = el('text', { x: 1526, y: 933, 'text-anchor': 'end', class: 't-num
 const hook = el('g', {}, svg);
 const hookLines = ['Four cities.', 'Three waves.', null].map((s, i) => {
   const t = el('text', { x: 800, y: 420 + i * 76, 'text-anchor': 'middle', class: 't-hook' }, hook);
-  if (s) t.textContent = s; else { const h = el('tspan', { class: 'hot' }, t); h.textContent = '22 long-range shots.'; }
+  if (s) t.textContent = s; else { const h = el('tspan', { class: 'hot' }, t); h.textContent = '22 long-range shots at dusk.'; }
   return t;
 });
 const pay = el('g', { opacity: 0 }, svg);

@@ -30,7 +30,7 @@ export const EVENTS = {
       src: [['Kremlin: meeting, 25 Sep 2024', 'http://en.kremlin.ru/events/president/transcripts/75182']] },
     { date: '2024-11-21', short: 'Oreshnik', name: 'Putin statement on the Oreshnik missile strike on Dnipro ("Dnepropetrovsk" in the Kremlin text)',
       src: [['Kremlin: statement, 21 Nov 2024', 'http://en.kremlin.ru/events/president/transcripts/75614']] },
-    { date: '2025-05-19', short: 'Trump call', name: 'Putin statement after a telephone call with President Trump',
+    { date: '2025-05-19', short: 'Trump call (19 May)', name: 'Putin statement after a telephone call with President Trump',
       src: [['Kremlin: statement, 19 May 2025', 'http://en.kremlin.ru/events/president/transcripts/76953']] },
     { date: '2025-08-15', end: '2025-08-16', short: 'Alaska summit', name: 'Russia–U.S. summit in Anchorage, Alaska',
       src: [['Kremlin: joint news conference', 'http://en.kremlin.ru/events/president/transcripts/77793']] },

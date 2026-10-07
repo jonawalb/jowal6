@@ -4,7 +4,7 @@
 // data from data/trends/*.json.gz, aggregates only). Keep the copies identical.
 //
 // mount(root, cfg): cfg = { mode: 'private'|'public', get(name) -> Promise<json>, evidence?(params) -> Promise<{docs,note,evidence}>,
-//                           searchUrl?({country, from, to, q}) -> url }
+//                           searchUrl?({country, from, to, q}) -> url, streamName?(id) -> label, sourceName?(id) -> label }
 import { esc, fmt, fmtN, signed, pRange, timeChart, zChart } from './trends-charts.js';
 import { heatmapView, topicsView, echoesView, coverageView, methodView } from './trends-more.js';
 
@@ -23,9 +23,13 @@ const TABS = [['alerts', 'Alerts'], ['country', 'Country tone'], ['heatmap', 'St
 export const L = {
   country: (c) => COUNTRY[c] || c, metric: (m) => METRIC[m] || m, target: (t) => TARGET[t] || t,
   outlet: (o) => OUTLET[o] || o || '', COUNTRY, METRIC, TARGET,
+  stream: (s) => s, source: (s) => s,
 };
+const LANG_NAME = { en: 'English', ru: 'Russian', zh: 'Chinese', fa: 'Persian', tr: 'Turkish', ar: 'Arabic', es: 'Spanish', ur: 'Urdu', ko: 'Korean' };
 
 export function mount(root, cfg) {
+  if (cfg.streamName) L.stream = cfg.streamName;
+  if (cfg.sourceName) L.source = cfg.sourceName;
   const cache = new Map();
   const S = Object.fromEntries(new URLSearchParams(location.hash.slice(1)));
   const ctx = {
@@ -71,7 +75,7 @@ export function evidenceList(items) {
   if (!items || !items.length) return '<p class="fine">No evidence sentences for this period.</p>';
   return `<ol class="ev">${items.map((e) => {
     const withheld = e.text == null || e.text_withheld;
-    const meta = `<div class="m"><b>${esc(e.date)}</b><span>${esc(L.country(e.country))} · ${esc(e.source)}</span><span class="o-${esc(e.outlet)}">${esc(L.outlet(e.outlet))}</span>${e.score != null ? `<span>${esc(e.metric || '')} ${esc(e.score)}</span>` : ''}${e.max_sim != null ? `<span>sim ${esc(e.max_sim)}</span>` : ''}</div>`;
+    const meta = `<div class="m"><b>${esc(e.date)}</b><span>${esc(L.country(e.country))} · ${esc(L.source(e.source))}</span><span class="o-${esc(e.outlet)}">${esc(L.outlet(e.outlet))}</span>${e.score != null ? `<span>${esc(e.metric || '')} ${esc(e.score)}</span>` : ''}${e.max_sim != null ? `<span>sim ${esc(e.max_sim)}</span>` : ''}</div>`;
     if (withheld) return `<li class="withheld">${meta}<p class="mt"><a href="${esc(e.url)}" target="_blank" rel="noopener">${esc(e.title || e.url)}</a></p><p class="fine">Media article: text not shown here; headline and link only.</p></li>`;
     return `<li>${meta}<p class="s">“${esc(e.text)}”</p><div class="t">${e.title ? esc(e.title) + ' · ' : ''}<a href="${esc(e.url)}" target="_blank" rel="noopener">Source</a></div></li>`;
   }).join('')}</ol>`;
@@ -90,12 +94,17 @@ async function showEvidence(ctx, box, params, fallback) {
 
 // ---- Alerts -----------------------------------------------------------------------------------------------------
 export function alertHead(a) {
-  const who = a.level === 'country' ? `<b>${esc(L.country(a.country))}</b> (all streams combined)` : `<b>${esc(L.country(a.country))}</b> · <code>${esc(a.stream)}</code> <span class="o-${esc(a.stream_outlet)}">${esc(L.outlet(a.stream_outlet))}</span>`;
+  const who = a.level === 'country' ? `<b>${esc(L.country(a.country))}</b> (all streams combined)` : `<b>${esc(L.country(a.country))}</b> · ${esc(L.stream(a.stream))} <span class="o-${esc(a.stream_outlet)}">${esc(L.outlet(a.stream_outlet))}</span>`;
   let what;
   if (a.kind === 'tone') what = esc(L.metric(a.metric));
   else if (a.kind === 'stance') what = `${esc(L.metric(a.metric))} in sentences mentioning ${esc(L.target(a.target))}`;
   else if (a.kind === 'salience') what = `share of documents mentioning ${esc(L.target(a.target))}`;
-  else what = `share of documents in topic ${esc(a.topic)}${a.topic_label ? ` (${esc(a.topic_label)})` : ''}`;
+  else {
+    const tt = a.topic_terms;
+    const label = tt ? `${tt.lang === 'en' ? '' : `top ${esc(LANG_NAME[tt.lang] || tt.lang)} terms: `}<bdi lang="${esc(tt.lang)}">${esc(tt.terms.join(tt.lang === 'fa' || tt.lang === 'ar' ? '، ' : ', '))}</bdi>`
+      : a.topic_label ? esc(a.topic_label) : '';
+    what = `share of documents in topic ${esc(a.topic)}${label ? ` (${label})` : ''}`;
+  }
   const nums = a.base == null
     ? `level ${fmt(a.mean)} in the ${a.period_type} of ${esc(a.period)}; change vs each stream's own baseline ${signed(a.delta)} (combined z = ${fmt(a.z, 1)}; n = ${fmtN(a.n)} docs)`
     : `${fmt(a.mean)} in the ${a.period_type} of ${esc(a.period)} vs baseline ${fmt(a.base)} (${signed(a.delta)}; z = ${fmt(a.z, 1)}; n = ${fmtN(a.n)} docs)`;
@@ -116,6 +125,16 @@ async function alertsView(ctx, host) {
   const S = ctx.S;
   const data = await ctx.get('alerts');
   const A = data.alerts, meta = data.meta;
+  // Topic alerts: label the topic by its top terms in the stream's own language (the stored label mixes languages).
+  const topics = A.some((a) => a.kind === 'topic_share') ? await ctx.get('topics').catch(() => null) : null;
+  if (topics) {
+    const T = new Map(topics.topics.map((t) => [t.topic, t.terms || {}]));
+    for (const a of A) {
+      const lang = a.kind === 'topic_share' && a.stream ? a.stream.split('|')[1] : null;
+      const terms = lang && T.get(a.topic)?.[lang];
+      if (terms && terms.length) a.topic_terms = { lang, terms: terms.slice(0, 3) };
+    }
+  }
   const uniq = (k) => [...new Set(A.map((a) => a[k]).filter((v) => v != null))].sort();
   const opt = (k, label, vals, name = (v) => v) => `<label class="pick"><span>${label}</span><select data-f="${k}"><option value="">All</option>${vals.map((v) => `<option value="${esc(v)}">${esc(name(v))}</option>`).join('')}</select></label>`;
   const tiers = meta.tiers_shown;
@@ -124,8 +143,8 @@ async function alertsView(ctx, host) {
       <div class="seg" role="group" aria-label="Tier">${tiers.map((t) => `<label class="chk"><input type="checkbox" data-tier="${t}" checked> ${t}${t === 'weak' ? ' (lead only)' : ''}</label>`).join('')}</div>
       ${opt('country', 'Country', uniq('country'), L.country)}${opt('kind', 'Kind', uniq('kind'))}${opt('target', 'Target', uniq('target'), L.target)}${opt('metric', 'Dimension', uniq('metric'), L.metric)}
       <label class="chk"><input type="checkbox" data-recent> last 12 weeks only</label></div>
-    <p class="fine">${fmtN(meta.n_tests)} period tests. Periods beyond |z|: ${Object.entries(tc).map(([k, v]) => `${esc(k.replace('|z|>=', ''))}: ${fmtN(v.observed_periods)} observed vs ${fmt(v.expected_if_normal, 1)} by chance`).join(' · ')}.
-      Tiers: ${esc(meta.tiers)}.${tiers.includes('weak') ? ' Weak alerts are about as frequent as chance and are leads only.' : ' Weak alerts (about as frequent as chance) are not shown here.'}</p>
+    <p class="fine">${fmtN(meta.n_tests)} period tests. Periods at or beyond each |z| level, observed and (in brackets) the number chance alone would give if every z were standard normal: ${Object.entries(tc).map(([k, v]) => `${esc(k.replace('|z|>=', '|z| ≥ '))}: ${fmtN(v.observed_periods)} (${fmtN(Math.round(v.expected_if_normal))})`).join(' · ')}. The chance figures are counted before the minimum-change filter and before consecutive periods are merged, so they are a rough reference, not a false-discovery rate.
+      Tiers: ${esc(meta.tiers)}.${tiers.includes('weak') ? ' Weak alerts are leads only: below |z| = 3.5 the screen finds no more periods than chance alone would.' : ' Weak alerts are not shown: below |z| = 3.5 the screen finds no more periods than chance alone would.'}</p>
     <p id="al-count" class="count"></p><ol class="alerts" id="al-list"></ol><button type="button" class="btn" id="al-more" hidden>Show more</button>`;
   for (const sel of host.querySelectorAll('select[data-f]')) sel.value = S['a_' + sel.dataset.f] || '';
   for (const c of host.querySelectorAll('[data-tier]')) c.checked = !(S.a_tiers && !S.a_tiers.split(',').includes(c.dataset.tier));
@@ -224,20 +243,20 @@ async function countryView(ctx, host, ov) {
     const s = d.streams[info.stream]?.[S.pt]?.[S.m];
     if (!s) continue;
     const k = s.period.map((p, i) => (p >= cut ? i : -1)).filter((i) => i >= 0);
-    if (k.length < 3) { few.push(`${info.stream} (${k.length})`); continue; }
+    if (k.length < 3) { few.push(`${L.stream(info.stream)} (${k.length})`); continue; }
     const g = (arr) => k.map((i) => arr[i]);
     const sp = g(s.period), sm = g(s.mean), sse = g(s.se), sb = g(s.base), sz = g(s.z), sn = g(s.n), sd = g(s.delta);
     const box = document.createElement('div');
     box.className = 'small card';
-    box.innerHTML = `<p class="sh"><code>${esc(info.stream)}</code> <span class="o-${esc(info.outlet)}">${esc(L.outlet(info.outlet))}</span> <span class="fine">${fmtN(info.n_docs)} docs, ${esc(info.first)} to ${esc(info.last)}</span></p><div class="chart"></div>`;
+    box.innerHTML = `<p class="sh">${esc(L.stream(info.stream))} <span class="o-${esc(info.outlet)}">${esc(L.outlet(info.outlet))}</span> <span class="fine">${fmtN(info.n_docs)} docs, ${esc(info.first)} to ${esc(info.last)}</span></p><div class="chart"></div>`;
     smalls.appendChild(box);
-    timeChart(box.querySelector('.chart'), { periods: sp, height: 140, aria: info.stream,
+    timeChart(box.querySelector('.chart'), { periods: sp, height: 140, aria: L.stream(info.stream),
       series: [{ y: sm, lo: sm.map((v, i) => (sse[i] == null ? null : v - 1.96 * sse[i])), hi: sm.map((v, i) => (sse[i] == null ? null : v + 1.96 * sse[i])), dots: sz.map((z, i) => (z != null && Math.abs(z) >= 3 ? i : -1)).filter((i) => i >= 0) },
         { y: sb, dash: true, color: 'var(--muted)' }],
       bars: { y: sn, label: 'docs' }, yFmt: (v) => v.toFixed(2),
       tip: (i) => `<b>${esc(sp[i])}</b><span class="tt-d">mean ${fmt(sm[i])} ± ${fmt(sse[i] != null ? 1.96 * sse[i] : null)}<br>baseline ${fmt(sb[i])} · change ${signed(sd[i])} · z ${fmt(sz[i], 2)}<br>${fmtN(sn[i])} docs</span>`,
       onPick: (i) => {
-        const head = `<h3><code>${esc(info.stream)}</code>, ${esc(L.metric(S.m))}, ${S.pt} of ${esc(sp[i])}</h3><p class="num">mean ${fmt(sm[i])} · baseline ${fmt(sb[i])} · change ${signed(sd[i])} · z ${fmt(sz[i], 2)} · ${fmtN(sn[i])} docs</p>${ctx.searchLink(S.c, sp[i])}`;
+        const head = `<h3>${esc(L.stream(info.stream))}, ${esc(L.metric(S.m))}, ${S.pt} of ${esc(sp[i])}</h3><p class="num">mean ${fmt(sm[i])} · baseline ${fmt(sb[i])} · change ${signed(sd[i])} · z ${fmt(sz[i], 2)} · ${fmtN(sn[i])} docs</p>${ctx.searchLink(S.c, sp[i])}`;
         ctx.showEvidence(ev, { kind: 'tone', country: S.c, stream: info.stream, period: sp[i], metric: S.m, dir: (sd[i] ?? 0) >= 0 ? 'up' : 'down' }, head);
         ev.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
       } });

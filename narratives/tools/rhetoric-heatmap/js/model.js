@@ -3,7 +3,7 @@ import { THEMES } from '../data/themes.js';
 
 export const SOURCES = ['MFA', 'MND', 'TAO'];
 export const SOURCE_NAMES = { MFA: 'Foreign Ministry', MND: 'Defense Ministry', TAO: 'Taiwan Affairs Office' };
-export const TR_LABEL = ['TSM translation', 'Official English', 'Machine translation (Google)', 'Chinese only (no official English)',
+export const TR_LABEL = ['Taiwan Security Monitor translation', 'Official English', 'Machine translation (Google)', 'Chinese only (no official English)',
   'Machine translation (Claude)'];
 export const FIRST_WEEK = '2022-06-27';
 export const LAST_DAY = '2026-09-30';

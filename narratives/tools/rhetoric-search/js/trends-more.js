@@ -109,7 +109,7 @@ export async function topicsView(ctx, host) {
     <div class="tp-detail"><div class="card tr-card"><h3>Topic ${cur.topic}: ${esc(cur.label)}</h3>
       <p class="fine">${fmtN(cur.n_docs)} documents. Languages: ${Object.entries(cur.langs || {}).map(([k, v]) => `${esc(k)} ${fmtN(v)}`).join(', ')}. Countries: ${Object.entries(cur.countries || {}).map(([k, v]) => `${esc(k)} ${fmtN(v)}`).join(', ')}.</p>
       <div class="tablewrap"><table><thead><tr><th>Language</th><th>Top terms (c-TF-IDF)</th></tr></thead><tbody>${Object.entries(cur.terms || {}).map(([lg, ws]) => `<tr><td>${esc(lg)}</td><td>${esc(ws.join(', '))}</td></tr>`).join('')}</tbody></table></div>
-      <h4>Exemplar documents</h4><ol class="ev">${(cur.exemplars || []).map((e) => `<li><div class="m"><b>${esc(e.date)}</b><span>${esc(L.country(e.country))} · ${esc(e.source)} · ${esc(e.lang)}</span></div><p class="mt"><a href="${esc(e.url)}" target="_blank" rel="noopener">${esc(e.title || e.url)}</a></p></li>`).join('')}</ol></div>
+      <h4>Exemplar documents</h4><ol class="ev">${(cur.exemplars || []).map((e) => `<li><div class="m"><b>${esc(e.date)}</b><span>${esc(L.country(e.country))} · ${esc(L.source(e.source))} · ${esc(e.lang)}</span></div><p class="mt"><a href="${esc(e.url)}" target="_blank" rel="noopener">${esc(e.title || e.url)}</a></p></li>`).join('')}</ol></div>
     <div class="card tr-card"><h3>Balanced share by country and month</h3><p class="fine">Fixed-weight mean of within-stream shares. Hover for document counts.</p><div id="tp-legend"></div><div class="hgrid-wrap"><div class="hgrid" id="tp-grid"></div></div></div></div></div>`;
   host.querySelector('.tp-list').addEventListener('click', (e) => { const b = e.target.closest('[data-tp]'); if (b) { S.tp = b.dataset.tp; ctx.go('topics'); } });
   const months = [...new Set(countries.flatMap((c) => t.prevalence[c].months))].sort().filter((m) => m >= '2021-01');
@@ -168,10 +168,10 @@ function clusterCard(ctx, c) {
   const d0 = Date.parse(c.members[0].date), d1 = Math.max(d0 + 864e5, Date.parse(c.last_date));
   const rowsC = c.countries_in_order;
   const W = 300, H = 14 * rowsC.length + 16;
-  const dots = c.members.map((m) => `<circle cx="${50 + (W - 60) * (Date.parse(m.date) - d0) / (d1 - d0)}" cy="${10 + 14 * rowsC.indexOf(m.country)}" r="4" class="${m.outlet === 'official' ? 'off' : 'med'}"><title>${esc(`${m.date} ${m.country} ${m.source} (${m.outlet})`)}</title></circle>`).join('');
+  const dots = c.members.map((m) => `<circle cx="${50 + (W - 60) * (Date.parse(m.date) - d0) / (d1 - d0)}" cy="${10 + 14 * rowsC.indexOf(m.country)}" r="4" class="${m.outlet === 'official' ? 'off' : 'med'}"><title>${esc(`${m.date} ${m.country} ${L.source(m.source)} (${m.outlet})`)}</title></circle>`).join('');
   const labels = rowsC.map((cc, i) => `<text class="tsm-axis" x="0" y="${14 + 14 * i}">${esc(cc)}</text>`).join('');
   const svg = `<svg class="etl" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Member dates by country">${labels}${dots}<text class="tsm-axis" x="50" y="${H - 1}">${esc(c.members[0].date)}</text><text class="tsm-axis" x="${W - 10}" y="${H - 1}" text-anchor="end">${esc(c.last_date)}</text></svg>`;
-  return `<li class="cluster card"><p class="hd"><b>${rowsC.map((x) => esc(L.country(x))).join(' → ')}</b> <span class="pill">${esc(c.type)}</span> ${fmtN(c.n_members)} passages, first seen ${esc(L.country(c.first_seen.country))} (${esc(c.first_seen.source)}) ${esc(c.first_seen.date)}, span ${c.span_days} days. <span class="fine">Official members from: ${esc((c.official_countries || []).join(', ') || 'none')}.</span></p>
+  return `<li class="cluster card"><p class="hd"><b>${rowsC.map((x) => esc(L.country(x))).join(' → ')}</b> <span class="pill">${esc(c.type)}</span> ${fmtN(c.n_members)} passages, first seen ${esc(L.country(c.first_seen.country))} (${esc(L.source(c.first_seen.source))}) ${esc(c.first_seen.date)}, span ${c.span_days} days. <span class="fine">Official members from: ${esc((c.official_countries || []).join(', ') || 'none')}.</span></p>
     ${svg}<p class="fine">Filled dots: official outlets; open dots: media.</p><details><summary>Passages (${c.members.length}${c.n_members > c.members.length ? ` of ${c.n_members}` : ''})</summary>${ctx.evidenceList(c.members)}</details></li>`;
 }
 
@@ -198,8 +198,8 @@ export async function coverageView(ctx, host, ov) {
   const flags = cov.flags.filter((f) => f.country === S.c);
   timeChart(host.querySelector('#v-chart'), { periods: P, height: 170, aria: 'documents per month', series: [{ y: tot, color: 'var(--c7)' }],
     markers: flags.map((f) => ({ period: f.period, label: f.detail })), yFmt: (v) => fmtN(v),
-    tip: (i) => `<b>${esc(P[i])}${P[i] === cov.partial_month ? ' (partial)' : ''}</b><span class="tt-d">${fmtN(tot[i])} documents<br>${Object.entries(m.streams).filter(([, a]) => a[first + i]).map(([s, a]) => `${esc(s)}: ${fmtN(a[first + i])}`).join('<br>')}</span>` });
-  host.querySelector('#v-streams').innerHTML = ov.streams.filter((s) => s.country === S.c).map((s) => `<tr><td><code>${esc(s.stream)}</code></td><td>${esc(L.outlet(s.outlet))}</td><td class="num">${fmtN(s.n_docs)}</td><td>${esc(s.first)}</td><td>${esc(s.last)}</td><td class="num">${fmt(s.weight, 1)}</td></tr>`).join('');
+    tip: (i) => `<b>${esc(P[i])}${P[i] === cov.partial_month ? ' (partial)' : ''}</b><span class="tt-d">${fmtN(tot[i])} documents<br>${Object.entries(m.streams).filter(([, a]) => a[first + i]).map(([s, a]) => `${esc(L.stream(s))}: ${fmtN(a[first + i])}`).join('<br>')}</span>` });
+  host.querySelector('#v-streams').innerHTML = ov.streams.filter((s) => s.country === S.c).map((s) => `<tr><td>${esc(L.stream(s.stream))}</td><td>${esc(L.outlet(s.outlet))}</td><td class="num">${fmtN(s.n_docs)}</td><td>${esc(s.first)}</td><td>${esc(s.last)}</td><td class="num">${fmt(s.weight, 1)}</td></tr>`).join('');
   host.querySelector('#v-flags').innerHTML = flags.length ? flags.map((f) => `<li><b>${esc(f.period)}</b> ${esc(f.kind.replace('_', ' '))}: ${esc(f.detail)}</li>`).join('') : '<li>No coverage flags.</li>';
 }
 
@@ -223,7 +223,7 @@ export async function methodView(ctx, host, ov) {
     ${human ? `<h3>Human coding</h3><pre class="fine">${esc(JSON.stringify(v.human, null, 1))}</pre>` : ''}
     <h3>Alert screen</h3><p class="fine">${fmtN(am.n_tests)} period tests; thresholds ${esc(JSON.stringify(am.z_threshold))}, minimum change ${esc(am.min_effect)}. ${esc(am.expected_note || '')}</p>
     <div class="tablewrap"><table><thead><tr><th>Threshold</th><th class="num">Observed periods</th><th class="num">Expected if N(0,1)</th><th class="num">Ratio</th></tr></thead><tbody>
-    ${Object.entries(am.tail_check || {}).map(([k, x]) => `<tr><td>${esc(k)}</td><td class="num">${fmtN(x.observed_periods)}</td><td class="num">${fmt(x.expected_if_normal, 1)}</td><td class="num">${fmt(x.observed_periods / x.expected_if_normal, 1)}×</td></tr>`).join('')}</tbody></table></div>
+    ${Object.entries(am.tail_check || {}).map(([k, x]) => `<tr><td>${esc(k)}</td><td class="num">${fmtN(x.observed_periods)}</td><td class="num">${fmtN(Math.round(x.expected_if_normal))}</td><td class="num">${fmt(x.observed_periods / x.expected_if_normal, 1)}×</td></tr>`).join('')}</tbody></table></div>
     <h3>Versions</h3><p class="fine num">${Object.entries(ov.versions || {}).map(([k, x]) => `${esc(k)}: ${esc(typeof x === 'object' ? JSON.stringify(x) : x)}`).join(' · ')}</p>`;
 }
 

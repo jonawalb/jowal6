@@ -9,6 +9,21 @@ const narrow = () => matchMedia('(max-width: 600px)').matches;
 let LABW = 196;
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
+// Row label as one line, or two shorter lines (split at the " / " or space nearest the middle) when it is too
+// long for the label column; a line that still does not fit is cut with an ellipsis.
+function wrapLabel(label, small) {
+  const one = small ? 18 : 30, two = small ? 23 : 33;
+  if (label.length <= one) return [label];
+  const cuts = [];
+  for (let i = label.indexOf(' / '); i >= 0; i = label.indexOf(' / ', i + 1)) cuts.push([i + 2, i + 3]);
+  if (!cuts.length) for (let i = label.indexOf(' '); i >= 0; i = label.indexOf(' ', i + 1)) cuts.push([i, i + 1]);
+  if (!cuts.length) return [label.slice(0, one - 1) + '…'];
+  const mid = label.length / 2;
+  const [a, b] = cuts.reduce((best, c) => (Math.abs(c[0] - mid) < Math.abs(best[0] - mid) ? c : best));
+  const fit = (s) => (s.length > two ? s.slice(0, two - 1) + '…' : s);
+  return [fit(label.slice(0, a)), fit(label.slice(b))];
+}
+
 export function createGrid({ labelSvg, svg, scroller, tip, onSelect, onEvent }) {
   let G = null;
 
@@ -50,15 +65,17 @@ export function createGrid({ labelSvg, svg, scroller, tip, onSelect, onEvent }) 
       const xa = x(a), xb = x(b) + cw;
       el('rect', { x: xa, y: EVH - 3, width: Math.max(2, xb - xa), height: gridBottom - EVH + 6, class: 'ev-band' }, svg);
       const tw = ev.short.length * 6.3 + 10;
-      const lane = lanes.findIndex(l => l <= xa);
+      // A label that would run past the right edge is drawn to the left of its stem instead.
+      const flip = xa + tw > W && xa - tw >= 0;
+      const lane = lanes.findIndex(l => l <= (flip ? xa - tw : xa));
       if (lane < 0) { // no free lane: keep the band, drop the label (its name stays in the list below)
         el('path', { d: `M${xa + 0.5} ${EVH - 10}V${EVH - 3}`, class: 'ev-stem' }, svg).appendChild(el('title', {}, null, ev.name));
         continue;
       }
-      lanes[lane] = xa + tw;
+      lanes[lane] = flip ? xa + 4 : xa + tw;
       const ly = 11 + lane * 12;
       el('path', { d: `M${xa + 0.5} ${ly + 2}V${EVH - 3}`, class: 'ev-stem' }, svg);
-      const t = el('text', { x: xa + 3, y: ly, class: 'ev-label', tabindex: -1 }, svg, ev.short);
+      const t = el('text', { x: flip ? xa - 3 : xa + 3, y: ly, class: 'ev-label' + (flip ? ' flip' : ''), tabindex: -1 }, svg, ev.short);
       t.appendChild(el('title', {}, null, `${ev.name} (${ev.date}${ev.end ? ' to ' + ev.end : ''})`));
       t.addEventListener('click', () => onEvent?.(ev));
     }
@@ -120,8 +137,10 @@ export function createGrid({ labelSvg, svg, scroller, tip, onSelect, onEvent }) 
     for (const r of rows) {
       if (r.kind === 'cat') { el('text', { x: 4, y: r.y + 14, class: 'lab-cat' }, labelSvg, r.label); continue; }
       const sel = S.sel && S.sel.k === r.k;
-      const t = el('text', { x: LABW - 8, y: r.y + 14, class: 'lab-row' + (sel ? ' on' : ''), 'data-k': r.k }, labelSvg,
-        r.p.label.length > (narrow() ? 18 : 30) ? r.p.label.slice(0, narrow() ? 17 : 29) + '…' : r.p.label);
+      const lines = wrapLabel(r.p.label, narrow());
+      const t = el('text', { x: LABW - 8, y: r.y + 14, class: 'lab-row' + (lines.length > 1 ? ' two' : '') + (sel ? ' on' : ''), 'data-k': r.k }, labelSvg,
+        lines.length > 1 ? null : lines[0]);
+      if (lines.length > 1) lines.forEach((ln, i) => el('tspan', { x: LABW - 8, y: r.y + 9 + i * 9.5 }, t, ln));
       t.appendChild(el('title', {}, null, `${r.p.label}: ${r.p.note} Click to jump to its peak week.`));
     }
     el('text', { x: LABW - 8, y: yCov + 12, class: 'lab-small' }, labelSvg, narrow() ? 'Words held' : 'Words held per week');

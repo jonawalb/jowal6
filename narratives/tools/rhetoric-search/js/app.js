@@ -1,15 +1,11 @@
 // Rhetoric Search: controls, URL hash, progressive search over shards, results and month chart.
 import { Engine, parseQuery, fold } from './engine.js';
+import { sourceName as srcName, STOPPED } from './sources.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const fmt = (n) => n.toLocaleString('en-US');
 const COUNTRY = { RU: 'Russia', IR: 'Iran', CN: 'China', KP: 'North Korea', BY: 'Belarus', US: 'United States', PK: 'Pakistan', IN: 'India', TR: 'Türkiye', SY: 'Syria', VE: 'Venezuela', CU: 'Cuba', TW: 'Taiwan' };
-const SOURCE = {
-  kremlin_en: 'Kremlin transcripts (Putin)', iran_mfa_en: 'Iran Foreign Ministry', mfa_cn: 'PRC Foreign Ministry',
-  mnd_cn: 'PRC Defense Ministry', tao_cn: 'Taiwan Affairs Office', prc_statemedia: 'PRC state media',
-  prc_statemedia_headlines: 'PRC state media (headlines)',
-};
 const LANG = { en: 'English', ru: 'Russian', zh: 'Chinese', fa: 'Persian', ko: 'Korean', be: 'Belarusian', ur: 'Urdu', hi: 'Hindi', tr: 'Turkish', ar: 'Arabic', es: 'Spanish' };
 const PAGE = 50;
 const CONCURRENCY = 4;
@@ -21,8 +17,6 @@ let hits = [];          // {sh, doc, sent, spans, date}
 let shown = 0;
 let gen = 0;            // repaint generation: a list render from an older paint is dropped
 let alts = [];          // parsed query of the current search (the reader highlights it)
-
-const srcName = (id) => SOURCE[id] || id.replace(/_/g, ' ');
 
 // ---- URL hash -------------------------------------------------------------------------------------------
 function readHash() {
@@ -74,9 +68,12 @@ function idleText() {
 }
 
 function corpusCard(meta) {
-  const rows = meta.sources.filter((s) => s.docs).map((s) => [s, s]);
+  const cn = (s) => COUNTRY[s.country] || s.country;
+  const rows = meta.sources.filter((s) => s.docs).map((s) => [s, s])
+    .sort(([a], [b]) => cn(a).localeCompare(cn(b)) || srcName(a.id).localeCompare(srcName(b.id)));
   $('corpus').innerHTML = `<p class="fine">${fmt(meta.totals.sentences)} sentences from ${fmt(meta.totals.docs)} official documents, and ${fmt(meta.totals.media_docs || 0)} media articles (headline and link only). Built ${esc(meta.built.slice(0, 10))}.</p>
-    <table><tbody>${rows.map(([s, p]) => `<tr><td>${esc(COUNTRY[s.country] || s.country)}</td><td>${esc(srcName(s.id))}</td><td class="num">${esc(p.from.slice(0, 7))} to ${esc(p.to.slice(0, 7))}<br>${fmt(p.docs)} docs</td></tr>`).join('')}</tbody></table>`;
+    <table><tbody>${rows.map(([s, p]) => `<tr><td>${esc(COUNTRY[s.country] || s.country)}</td><td>${esc(srcName(s.id))}${STOPPED[s.id] ? `<br><span class="stopped">${esc(STOPPED[s.id])}</span>` : ''}</td><td class="num">${esc(p.from.slice(0, 7))} to ${esc(p.to.slice(0, 7))}<br>${fmt(p.docs)} docs</td></tr>`).join('')}</tbody></table>
+    ${rows.some(([s]) => s.id === 'ir_mfa_en') ? '<p class="fine">The two Iran Foreign Ministry streams do not overlap. The Statements feed is the ministry\'s English “Statements” list, read from the live site or archived copies. “Other pages” are further en.mfa.ir items (spokesman press conferences, news, articles) read from Wayback Machine copies; any item already in the Statements feed is skipped.</p>' : ''}`;
 }
 
 // ---- Search ---------------------------------------------------------------------------------------------

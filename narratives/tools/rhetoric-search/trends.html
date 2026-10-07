@@ -28,7 +28,7 @@
   <div class="col">
     <h2>What this page shows and withholds</h2>
     <ul class="src">
-      <li>Only aggregates, strong and moderate alerts, and evidence. Weak alerts, which occur about as often as chance predicts, are not shown.</li>
+      <li>Only aggregates, strong and moderate alerts, and evidence. Weak alerts are not shown: below |z| = 3.5 the alert screen flags no more periods than chance alone would.</li>
       <li>Evidence sentences are quoted only from official sources, at most 300 characters each, with a link. State-media and other media evidence is listed by headline and link only.</li>
       <li>Echo clusters show near-identical passages across countries; "first seen" means first in this collection, not the origin of a line.</li>
       <li>Search links open Rhetoric Search for the country and dates; they use the English name of a target and miss other languages.</li>
@@ -43,6 +43,7 @@
 <script type="module">
   import { mount } from './js/trends.js';
   import { trendsRoot } from './js/config.js';
+  import { streamName, sourceName } from './js/sources.js';
   const DATA = await trendsRoot(new URL('./data/trends/', import.meta.url));
   async function getGz(name) {
     const r = await fetch(new URL(`${name}.json.gz`, DATA));
@@ -57,6 +58,8 @@
   mount(document.getElementById('app'), {
     mode: 'public',
     get: getGz,
+    streamName,
+    sourceName,
     searchUrl: ({ country, from, to, q }) => 'index.html#' + new URLSearchParams(Object.entries({ q, c: country, from, to }).filter(([, v]) => v)),
   });
 </script>

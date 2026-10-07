@@ -15,7 +15,7 @@ code { font-family: var(--mono); font-size: 11.5px; }
 .cat-pick select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 
 .hm { position: relative; display: grid; grid-template-columns: 196px minmax(0, 1fr); padding: 6px 8px 6px 0; }
-.hm-labels { display: block; }
+.hm-labels { display: block; overflow: visible; position: relative; z-index: 1; }
 .hm-scroll { overflow-x: auto; overflow-y: hidden; scrollbar-width: thin; }
 .hm-scroll svg { display: block; }
 #hm-svg { cursor: crosshair; }
@@ -33,6 +33,7 @@ body.loading .loading-note { position: absolute; inset: 0; display: grid; place-
 .ev-stem { stroke: var(--muted); stroke-width: 1; }
 .ev-label { font: 600 10.5px var(--body); fill: var(--ink); cursor: pointer; }
 .ev-label:hover { fill: var(--accent); }
+.ev-label.flip { text-anchor: end; }
 .ax-tick { stroke: var(--faint); }
 .ax-tick.yr { stroke: var(--ink); }
 .ax-label { font: var(--axis-font); fill: var(--axis-ink); }
@@ -41,6 +42,7 @@ body.loading .loading-note { position: absolute; inset: 0; display: grid; place-
 .lab-row { font: 500 12px var(--body); fill: var(--ink); text-anchor: end; cursor: pointer; }
 .lab-row:hover { fill: var(--accent); }
 .lab-row.on { font-weight: 700; fill: var(--heat); }
+.lab-row.two { font-size: 10.5px; }
 .lab-cat { font: 600 10.5px var(--mono); fill: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
 .lab-ev { font: 600 11px var(--body); fill: var(--muted); text-anchor: end; }
 .lab-small { font: 10px var(--mono); fill: var(--muted); text-anchor: end; }
@@ -128,6 +130,7 @@ body.loading .loading-note { position: absolute; inset: 0; display: grid; place-
   .acts { margin-left: 0; }
   .hm { grid-template-columns: 124px minmax(0, 1fr); }
   .lab-row { font-size: 10.5px; }
+  .lab-row.two { font-size: 9px; }
   .lab-cat { font-size: 8.5px; letter-spacing: 0; }
   .tour { position: static; width: auto; margin: 4px 0; box-shadow: none; order: -1; }
   .cmp-grid { grid-template-columns: minmax(0, 1fr); }

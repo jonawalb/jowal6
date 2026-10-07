@@ -122,7 +122,10 @@ export function runLesson(steps, { slug, title = 'Learn to play', onExit, onFini
         if (phone) scrollTo({ top: scrollY + r.top - 64, behavior: smooth ? 'smooth' : 'auto' });
         else t.scrollIntoView({ block: 'center', behavior: smooth ? 'smooth' : 'auto' });
         // Hide the ring while a smooth scroll runs, so it never sits on the wrong element; place it when it settles.
-        if (smooth) { scrolling = true; ring.hidden = true; settling = () => scrolling; setTimeout(() => { scrolling = false; place(); }, 450); }
+        // A step's start() can switch tabs and move the layout under a running scroll; re-check once it settles.
+        const recheck = () => { const r2 = t.getBoundingClientRect(); if (phone && (r2.top < 56 || r2.top > low)) scrollTo({ top: scrollY + r2.top - 64, behavior: 'auto' }); };
+        if (smooth) { scrolling = true; ring.hidden = true; settling = () => scrolling; setTimeout(() => { recheck(); scrolling = false; place(); }, 450); }
+        else requestAnimationFrame(() => { recheck(); place(); });
       }
     }
     const doing = !!(s.do && s.done);

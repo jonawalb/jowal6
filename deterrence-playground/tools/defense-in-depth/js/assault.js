@@ -2,13 +2,15 @@
 // (SPEC §3.5). A_s = sum(str x q x cohesion) of the side that entered most recently; D_s = sum(str x q x
 // (1 - supp)) of the holders; H_s = k1 (1 - f_e) x step^(5 - od) / CA_mult. The assault prevails if
 // A_s > H_s x D_s: holders yield (Elastic / Delay) or are overrun (Hold); otherwise it stalls.
-import { BIDDLE, ASSAULT, OFFDEF, STACK, COUNTER } from '../data/params.js';
+import { BIDDLE, ASSAULT, OFFDEF, STACK, COUNTER, TANK, BARRAGE } from '../data/params.js';
+import { TYPES } from '../data/units.js';
 import { TERRAIN } from '../data/terrain.js';
 import { SCALES } from '../data/scales.js';
 import { gridFor } from './grid.js';
 import { fighting, inSec, other, companies, isCompany, isBattery, knows, alive } from './forces.js';
 import { caMult, newLodgment, riposteAuthority, lodgCohesion } from './counter.js';
 import { disengage } from './fire.js';
+import { barrageCase } from './arty.js';
 
 /** The slider's factor on H: step^(5 - od), exactly 1 at 5; low settings favour defense (D-30). */
 export const tilt = (od = OFFDEF.standard, scale = 'd') => (OFFDEF.step[scale] ?? OFFDEF.step.d) ** (OFFDEF.standard - od);
@@ -42,7 +44,10 @@ function counterOf(g, sec, by, units) {
  */
 export function stallTerms(g, sec, by, opts = {}) {
   const att = opts.units || inSec(g, sec, by), hold = inSec(g, sec, other(by));
-  const A = att.reduce((s, u) => s + u.str * (u.q || 1) * (u.side === 'att' ? (u.coh ?? 1) : 1), 0);
+  // 2026-10-07: a tank with no friendly infantry in the sector counts TANK.alone (0): tanks take ground only with
+  // infantry (Biddle p. 61; SPEC §3.9).
+  const withInf = att.some(u => TYPES[u.type].line);
+  const A = att.reduce((s, u) => s + u.str * (u.q || 1) * (u.side === 'att' ? (u.coh ?? 1) : 1) * (TYPES[u.type].cat === 'veh' && !withInf ? TANK.alone : 1), 0);
   let D, fe, supp;
   if (opts.belief != null) {
     D = opts.belief; supp = 0;
@@ -112,7 +117,9 @@ export function resolveAssaults(g, rng) {
       continue;
     }
     for (const u of hold) {
-      const elastic = u.stance === 'elastic' || u.stance === 'delay' || u.side === 'att';
+      // Option (BARRAGE.caught): holders assaulted while the barrage is still on them are caught in their shelters.
+      const caught = BARRAGE.caught && by === 'att' && barrageCase(g, sec) === 'on';
+      const elastic = !caught && (u.stance === 'elastic' || u.stance === 'delay' || u.side === 'att');
       const to = fallback(g, u, sec);
       if (elastic && to >= 0) {
         if (u.side === 'def' && g.mode === 'c' && u.stance === 'elastic' && !knows(u, 'ED2') && rng.u() < ASSAULT.untrainedYieldBreak) {
@@ -159,7 +166,9 @@ export function updateCtrl(g) {
   const G = gridFor(g.scale), S = SCALES[g.scale], first = S.bands.outpost[0];
   for (let s = 0; s < G.n; s++) {
     let d = false, a = false;
-    for (const u of g.occ[s]) if (fighting(u)) { if (u.side === 'def') d = true; else a = true; }
+    // 2026-10-07: ground is taken and held by infantry; attacking tanks alone do not make a sector the attacker's
+    // (TANK.alone; Biddle p. 61).
+    for (const u of g.occ[s]) if (fighting(u)) { if (u.side === 'def') d = true; else if (TYPES[u.type].cat !== 'veh' || TANK.alone > 0) a = true; }
     if (d && a) continue;
     const prev = g.ctrl[s], now = d ? 1 : a ? 2 : prev;
     if (now === prev) continue;

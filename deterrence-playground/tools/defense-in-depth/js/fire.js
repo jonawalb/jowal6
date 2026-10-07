@@ -143,7 +143,7 @@ function firepower(g, j, u, inLane, k) {
   if (isVehicle(u)) {
     if (j.type === 'mg' && g.era === 'm') return T.atgm * (unsupported(g, u) ? FIRE.unsupported : 1);
     if (j.type === 'tank') return fpBase * (unsupported(g, u) ? FIRE.unsupported : 1);
-    return (inLane ? T.lane : fpBase) * FIRE.armorSmall;
+    return (inLane ? T.lane : fpBase) * FIRE.armorSmall * (TANK.closeDefense && unsupported(g, u) ? FIRE.unsupported : 1);   // 2026-10-07
   }
   if (k > 1 && !inLane && !T.indirect) return 0;
   return inLane ? T.lane : fpBase;

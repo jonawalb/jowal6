@@ -63,7 +63,10 @@ export const ATT_DIVISION = {
       { era: 'm', n: 6, type: 'field', name: '{o} Tube Bty', role: 'arty' }, { era: 'm', n: 2, type: 'rocket', name: '{o} Rocket Bty', role: 'arty' },
     ] },
     { kind: 'grp', name: 'Tank Group {tank}', role: 'tank', units: [
-      { era: 'w', n: 1, type: 'tank', name: 'Tank Section {tank}', role: 'tank' }, { era: 'm', n: 2, type: 'tank', name: '{o} Tank Coy', role: 'tank' },
+      // 2026-10-07: one tank unit per first-wave battalion (3; was 1 section / 2 companies). Conservative against the
+      // record: about 437 tanks for six assaulting divisions at Cambrai (1917) and 414 for seven at Amiens (1918; Biddle
+      // p. 35); a modern armored brigade fields roughly as many tank companies as infantry companies. FACTCHECK.md.
+      { era: 'w', n: 3, type: 'tank', name: '{o} Tank Section', role: 'tank' }, { era: 'm', n: 3, type: 'tank', name: '{o} Tank Coy', role: 'tank' },
       { era: 'm', n: 2, type: 'drone', name: '{o} Drone Team', role: 'team' }, { era: 'm', n: 1, type: 'ew', name: 'EW Team', role: 'team' },
     ] },
   ],

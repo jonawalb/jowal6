@@ -49,7 +49,7 @@ export function tutorialResult(g, opts) {
       <li><b>Keep the front thin</b>: shells fall on the front boxes first.</li>
       <li><b>Strike while the window is open</b>: ${retook ? 'you took a lost box back while his men were still disorganized.' : 'a box he has just taken is easiest to retake in its first two hours.'}</li>
     </ul>
-    <p class="fine">The real battles use the same rules on a bigger front: about 26 units against 36, 15 or 16 hours, and you draw up your own plan first. <i>Simple</i> view (top of the page) hides the finer numbers.</p>
+    <p class="fine">The real battles use the same rules on a bigger front: about 26 units against 38, 14 or 15 hours, and you draw up your own plan first. <i>Simple</i> view (top of the page) hides the finer numbers.</p>
     <div class="dd-gobar dd-learn-go"><button type="button" class="btn solid" data-lr="def">Play a real battle: defend</button><button type="button" class="btn" data-lr="att">Attack instead</button>
       <button type="button" class="btn" data-lr="again">Lesson again</button><button type="button" class="btn" data-lr="sheet">How to play (one screen)</button></div>`;
   el.querySelectorAll('[data-lr]').forEach(b => { b.onclick = () => { const k = b.dataset.lr; if (k === 'again') opts.onAgain(); else if (k === 'sheet') opts.onSheet(); else opts.onReal(k); }; });

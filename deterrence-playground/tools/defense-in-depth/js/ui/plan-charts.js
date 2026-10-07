@@ -2,6 +2,7 @@
 // battalion's predicted arrival, with early (gap) and late (own fire) arrivals highlighted before you commit.
 // The mini Fig. A.2 (SPEC §1.2): Biddle's containment boundary (BOOK constants) with your f_r and depth on it.
 import { containBoundary, range } from '../biddle.js';
+import { BARRAGE } from '../../data/params.js';
 import { esc } from './store.js';
 
 // Predicted pace in rows per hour by default posture (NOTIONAL: Rush 1, Leapfrog short bounds 0.75, Infiltrate 1).
@@ -10,7 +11,7 @@ export const PACE = { rush: 1, leapfrog: 0.75, bound: 0.75, infil: 1 };
 /** Rows the barrage stands on at hour h (the plan's timetable; same rule as js/arty.js barrageRows). */
 export function rowsAt(b, h) {
   const r = b.r0 + Math.floor(b.rate * h), rp = h > 0 ? b.r0 + Math.floor(b.rate * (h - 1)) : r - 1, stop = b.stop ?? 99;
-  if (r > stop) return [];
+  if (r > stop) return BARRAGE.protect && b.stop != null ? [stop] : [];   // 2026-10-07: stands on its last row (protective barrage)
   const out = [];
   for (let x = b.rate > 1 ? rp + 1 : r; x <= r; x++) if (x <= stop) out.push(x);
   return out;

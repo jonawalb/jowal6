@@ -176,6 +176,7 @@ export function deliver(g) {
     if (!u || !alive(u)) continue;
     g.events.push({ t: g.t, kind: 'order', side: u.side, unit: u.id, sent: o.t, vis: [u.side] });
     if (a.kind === 'move') {
+      u.escort = null;   // 2026-10-07: an explicit move detaches a tank from its infantry
       if (a.mode) u.mode = a.mode;
       if (a.prefer) u.prefer = a.prefer;
       routeUnit(g, u, a.to);

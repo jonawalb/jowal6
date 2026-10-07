@@ -82,7 +82,7 @@ export function mountNav() {
       <input id="tsm-q" type="search" placeholder="Find a tool" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="tsm-q-list" aria-autocomplete="list">
       <ul id="tsm-q-list" class="tsm-q-list" role="listbox" aria-label="Matching tools" hidden></ul>
     </div>
-    ${cur ? `<div class="tsm-bar-step" role="group" aria-label="More in ${esc(catName)}">
+    ${cur && inCat.length > 1 ? `<div class="tsm-bar-step" role="group" aria-label="More in ${esc(catName)}">
       ${prev ? `<a href="${href(prev)}" rel="prev" title="Previous in ${esc(catName)}: ${esc(prev.title)}"><span aria-hidden="true">‹</span> <span class="tsm-step-t">${esc(prev.title)}</span></a>` : ''}
       <span class="tsm-step-n">${esc(catName)} ${i + 1}/${inCat.length}</span>
       ${next ? `<a href="${href(next)}" rel="next" title="Next in ${esc(catName)}: ${esc(next.title)}"><span class="tsm-step-t">${esc(next.title)}</span> <span aria-hidden="true">›</span></a>` : ''}

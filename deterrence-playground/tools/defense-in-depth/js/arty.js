@@ -31,7 +31,9 @@ const suppOf = k => Math.min(SUPP.max, 1 - (1 - SUPP.one) ** k);
 export function artyLoss(g, u, frac, kind = 'ar') {
   if (!alive(u) || !isCompany(u) && u.type !== 'drone' && u.type !== 'ew') return 0;
   const f = g.sectors.feat, s = u.sec;
-  let k = frac * (1 + SUPP.crowd * Math.max(0, companies(g, s, u.side) - 2));
+  // 2026-10-07: an attached tank rides with its company and does not add to the crowding (as for stacking).
+  const n = g.occ[s].reduce((m, v) => m + (v.side === u.side && isCompany(v) && v.escort == null ? 1 : 0), 0);
+  let k = frac * (1 + SUPP.crowd * Math.max(0, n - 2));
   if (!moving(u) && u.side === 'def' && f.dugout[s]) k *= 1 - SUPP.dugout;
   if (!moving(u) && u.side === 'def' && f.strong[s] === 2) k *= SUPP.concrete;
   if (u.pinned > g.t) k *= SUPP.pinnedArty;
@@ -51,7 +53,7 @@ export function barrageRows(g, t = g.t) {
   const b = g.barrage;
   if (!b || !b.cols || !b.cols.length || t < b.h0) return [];
   const h = t - b.h0, r = b.r0 + Math.floor(b.rate * h), rp = h > 0 ? b.r0 + Math.floor(b.rate * (h - 1)) : r - 1;
-  if (r > b.stop) return [];
+  if (r > b.stop) return BARRAGE.protect && b.protect !== false ? [b.stop] : [];
   const rows = [];
   for (let x = b.rate > 1 ? rp + 1 : r; x <= r; x++) if (x <= b.stop) rows.push(x);
   return rows;
@@ -78,10 +80,20 @@ export function barrageCase(g, sec, t = g.t) {
   return 'gap';
 }
 
+/** Is the barrage past its timetable and standing on its last row (BARRAGE.protect)? */
+export function barrageStanding(g, t = g.t) {
+  const b = g.barrage;
+  if (!b || !b.cols || !BARRAGE.protect || b.protect === false || t < b.h0) return false;
+  return b.r0 + Math.floor(b.rate * (t - b.h0)) > b.stop;
+}
+
 function fireBarrage(g) {
   const b = g.barrage, rows = barrageRows(g);
   if (!rows.length) return;
   const G = gridFor(g.scale);
+  // 2026-10-07: past its timetable the creeper becomes a standing protective barrage on its last row. Its guns stay on
+  // the fire plan; they fire only once the infantry are up to protect (at least on the row before it).
+  if (barrageStanding(g) && !g.units.some(u => u.side === 'att' && isCompany(u) && !isVehicle(u) && u.str > 0 && u.sec >= 0 && b.cols.includes(G.col[u.sec]) && G.row[u.sec] >= b.stop - 1)) return;
   const bats = (b.bats || []).map(id => g.units[g.ix[id]]).filter(u => u && ready(g, u) && !u.mission);
   const secs = [];
   for (const r of rows) for (const c of b.cols) { const s = G.idx(r, c); if (s >= 0) secs.push(s); }

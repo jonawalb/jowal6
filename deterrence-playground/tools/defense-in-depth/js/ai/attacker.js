@@ -44,7 +44,7 @@ export function attackerPolicy(g, P) {
   const prog = new Array(G.cols).fill(-1), str = new Array(G.cols).fill(0);
   let lead = B.assembly[1];
   for (const u of coys) {
-    if (mem.roles[u.id] === 'fix') continue;
+    if (mem.roles[u.id] === 'fix' || u.type === 'tank') continue;   // 2026-10-07: ground gained is measured by the infantry, not by tanks
     const r = G.row[u.sec], c = G.col[u.sec];
     if (r > prog[c]) prog[c] = r;
     if (r >= B.outpost[0]) str[c] += u.str;
@@ -176,7 +176,7 @@ export function attackerPolicy(g, P) {
   if (P.flankGuards) guards(g, P, mem, free, inf, lead, order, recent);
   // 6. Tanks move with the infantry (unsupported armor dies, Biddle p. 61).
   for (const u of free) {
-    if (mem.roles[u.id] !== 'tank' || recent(u.id) || g.t < 1) continue;
+    if (mem.roles[u.id] !== 'tank' || recent(u.id) || g.t < 1 || u.escort != null) continue;   // attached tanks follow their company
     let best = -1, bs = 0;
     for (const v of coys) {
       if (v.type === 'tank' || mem.roles[v.id] === 'fix' || G.row[v.sec] < B.nml[0] || G.row[v.sec] >= objRow) continue;

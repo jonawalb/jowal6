@@ -63,6 +63,11 @@ function unitFacts(g, u) {
     const v = u.mode === 'road' ? 3 : 1, T = ERAS[g.era].T, p = Math.pow(T, -BIDDLE.k2 * v);
     out.push(`${det}Survives each observed hour on the move ${pctTip(pct(p), 'survival', { p, T, v, k2: BIDDLE.k2, mode: u.mode })}</li>`);
   }
+  if (u.type === 'tank' && u.side === 'att' && u.side === S.me) {   // 2026-10-07: tanks fight with infantry (DECISIONS "Q68 redesign")
+    const e = u.escort != null ? g.units[g.ix[u.escort]] : null;
+    out.push(e ? `<li>With ${esc(e.name)}: moves with it. A move order detaches it.</li>`
+      : '<li class="dd-warnl">On its own: it cannot take, pin or hold ground, and anti-tank fire on it is tripled. Keep it with infantry.</li>');
+  }
   if (u.type === 'tank' && ERAS[g.era].tankBreakdown) out.push(`${det}Breakdown ${pctTip('12% an hour', 'breakdown', { p: 0.12 })}</li>`);
   if (u.type === 'mg') {   // DECISIONS "MG lanes are lost on a move"
     if (u.laneWant != null) out.push('<li>Lane: laid when it stops moving.</li>');

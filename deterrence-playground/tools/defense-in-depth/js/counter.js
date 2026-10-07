@@ -5,6 +5,7 @@
 // the Counterstroke formation after planning time (2 / 3 / 4 h by scale).
 import { COUNTER, RACE, SPEED, STACK } from '../data/params.js';
 import { SCALES } from '../data/scales.js';
+import { TYPES } from '../data/units.js';
 import { gridFor } from './grid.js';
 import { alive, fighting, inSec, other, companies } from './forces.js';
 import { underGuns, ready as ready_, inRange, addSupp } from './arty.js';
@@ -164,6 +165,8 @@ export function fixedBy(g, u, k3) {
   const G = gridFor(g.scale);
   if (u.side !== 'def' || G.zone[u.sec] === 'rear') return false;
   let s = 0;
-  for (const c of [u.sec, ...G.nbrs[u.sec]]) for (const v of g.occ[c]) if (v.side === other(u.side) && fighting(v)) s += v.str;
+  // 2026-10-07: tanks pin only with infantry beside them (alone they cannot assault; TANK.alone, Biddle p. 61).
+  const inf = c => g.occ[c].some(w => w.side !== u.side && fighting(w) && TYPES[w.type].line);
+  for (const c of [u.sec, ...G.nbrs[u.sec]]) for (const v of g.occ[c]) if (v.side === other(u.side) && fighting(v) && (TYPES[v.type].cat !== 'veh' || inf(c))) s += v.str;
   return s >= k3 * u.str && alive(u);
 }

@@ -9,6 +9,7 @@ import { gridFor } from '../grid.js';
 import { TYPES } from '../../data/units.js';
 import { isBattery } from '../forces.js';
 import { findPath } from '../move.js';
+import { attachTanks } from '../plan-att.js';
 import { resolve } from './profiles.js';
 
 /** Width of the main effort by scale (2 / 3 / 4 columns; SPEC §5.2). */
@@ -128,6 +129,7 @@ export function planAtt(g, profile, rng) {
     // Waves: every first-wave company rushes straight up its own column (broad front: spread over every column).
     wave1.forEach((u, i) => { const c = P.front === 'broad' ? all[i % all.length] : G.col[plan.place[u.id]]; plan.posture[u.id] = 'rush'; plan.orders.push({ unit: u.id, to: G.idx(objRow, c) }); });
   }
+  if (P.tanks === 'support') attachTanks(g, plan, load);   // tanks with the infantry (SPEC §1.2 step 7; Biddle p. 61)
   // Batteries: about half on the creeping barrage, the rest on call (Direct support to the first-wave battalions
   // so 1917-18 calls near them land the same hour; Hunzeker pp. 76-77).
   const bats = g.units.filter(u => u.side === 'att' && isBattery(u));

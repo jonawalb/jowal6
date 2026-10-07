@@ -7,7 +7,7 @@ import { SCALES } from '../../data/scales.js';
 import { STACK, PREP } from '../../data/params.js';
 import { gridFor } from '../grid.js';
 import { isBattery, isCompany, knows } from '../forces.js';
-import { prepCost } from '../plan-att.js';
+import { prepCost, attachTanks } from '../plan-att.js';
 import { S, esc, unitOf } from './store.js';
 import { timetable } from './plan-charts.js';
 
@@ -55,7 +55,6 @@ export function rebuildAtt(g, plan) {
     }
     put(u, 0, c);
     if (u.role === 'mortar') plan.orders.push({ unit: u.id, to: G.idx(B.nml[0], c) });
-    if (u.type === 'tank') plan.orders.push({ unit: u.id, to: G.idx(obj, c) });
   }
   let k = 0;
   for (const [bn, list] of byBn) {
@@ -66,6 +65,7 @@ export function rebuildAtt(g, plan) {
       if (ord.length % 2) plan.orders.push({ unit: ord[ord.length - 1].id, to: G.idx(obj, main[k++ % main.length]) });
     } else for (const u of ord) { plan.posture[u.id] = 'rush'; plan.orders.push({ unit: u.id, to: G.idx(obj, main[k++ % main.length]) }); }
   }
+  attachTanks(g, plan, load);   // 2026-10-07: tanks start with, and move with, first-wave rifle companies
   if (plan.barrage && plan.barrageOnMain !== false) plan.barrage.cols = main.slice();
   return plan;
 }
@@ -138,7 +138,7 @@ export function attStep(g, plan, id) {
     const echelon = Object.values(g.fmns).filter(f => f.side === 'att' && f.role === 'echelon2');
     const hh = h => `H+${h} (${String(5 + h).padStart(2, '0')}:00)`;
     return `${echelon.map(f => { const r = plan.reserves[f.id] || { mode: 'assembly' }; return `<label class="dd-lab" title="H-hour (H+0) is 05:00, when the attack starts; H+4 is four hours later">${esc(f.name)} <select data-res="${f.id}">${opt('assembly', r.mode === 'assembly' ? 'assembly' : '', 'Wait in assembly')}${[2, 3, 4, 5, 6, 8].map(h => opt(h, r.mode === 'follow' ? r.hour : '', `Follow success at ${hh(h)}`)).join('')}</select></label>`; }).join('') || '<p class="fine">Second-wave battalions left in assembly are your reserve: send them in during the battle.</p>'}
-    <p class="fine">Engineers clear wire or mines in 2 hours: pick a pioneer company, press Breach target, tap the obstacle. ${g.era === 'w' ? 'Your tank section follows the main effort; it crushes wire but breaks down often.' : 'Tank companies follow the main effort; keep infantry with them.'}</p>
+    <p class="fine">Engineers clear wire or mines in 2 hours: pick a pioneer company, press Breach target, tap the obstacle. ${g.era === 'w' ? 'Each tank section starts with a first-wave rifle company and moves with it; it crushes wire but breaks down often.' : 'Each tank company starts with a first-wave rifle company and moves with it.'} A move order to a tank detaches it; alone, a tank cannot take ground and anti-tank fire on it triples.</p>
     <div class="dd-tools">${tbtn('breach', 'Breach target')}${g.era === 'm' ? tbtn('ew', 'EW position') : ''}</div>
     <label class="dd-lab">Objective <select data-obj>${opt('breakthrough', plan.objective.type, 'Breakthrough (keep going)')}${opt('bite', plan.objective.type, 'Bite and hold (dig in on a row)')}</select></label>
     ${plan.objective.type === 'bite' ? `<label class="dd-lab">Limit row <select data-objrow>${Array.from({ length: Sc.obj.row - Sc.bands.outpost[0] + 1 }, (_, i) => Sc.bands.outpost[0] + i).map(r => opt(r, plan.objective.row, `row ${r + 1}${r === Sc.obj.row ? ' (the objective line)' : ''}`)).join('')}</select></label>` : ''}`;

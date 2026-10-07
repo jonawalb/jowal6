@@ -115,7 +115,7 @@ export const CARDS = [
     text: 'Hurricane preparation without the registration warning.', seen: 'their bombardment came without registration fire' },
   { id: 'CA2', domain: 'CA', name: 'Artillery–infantry liaison', sides: 'ad', tech: true, effect: 0.40,
     metric: 'Early/late lifts and their losses', page: 'Hunzeker pp. 52, 110',
-    text: 'Calls for fire −1 h; early-lift residual 0.5; gas discipline.', seen: 'their fire answered calls faster' },
+    text: 'Calls for fire −1 h; gas discipline.', seen: 'their fire answered calls faster' },
   { id: 'CA3', domain: 'CA', name: 'Tank–infantry cooperation', modernName: 'Drone–fires link', sides: 'a', modernSides: 'ad', tech: true, effect: 0.20,
     metric: 'Tank losses supported vs unsupported', page: 'Hunzeker pp. 110–111; Biddle pp. 129–130',
     text: 'Unsupported-armor penalty halved; tanks suppress at full effect only beside trained infantry (1917–18); a Suppress mission on a drone-watched sector lands as one battery more (modern).', seen: 'their tanks kept infantry close' },

@@ -136,7 +136,11 @@ export const OBSTACLE = { mineInf: 0.025, mineVeh: 0.10, breachHours: 2, tankCru
 export const GAS = { hours: 3, fire: 0.6, move: 0.5, supp: 0.3, firstLoss: 0.02, mask: 0.5 };
 
 // Tanks (SPEC §3.9). NOTIONAL; anchored by Hunzeker pp. 110-111 (18 of 50 broke down), Biddle p. 35.
-export const TANK = { breakdown: 0.12, fatigueHours: 8, fatigue: 0.5, assaultSupp: 0.5, untrained: 0.4 };   // untrained: W3, share of assaultSupp without card CA3 (1917-18)
+export const TANK = { breakdown: 0.12, fatigueHours: 8, fatigue: 0.5, assaultSupp: 0.5, untrained: 0.4,   // untrained: W3, share of assaultSupp without card CA3 (1917-18)
+  alone: 0,         // 2026-10-07 NOTIONAL: weight of a tank in the halt condition with no friendly infantry in the sector (tanks take
+                    // ground only with infantry; Biddle p. 61); assault suppression likewise needs infantry (SPEC §3.9)
+  closeDefense: true, // 2026-10-07: the unsupported-armor factor FIRE.unsupported also applies to infantry and MG fire on armor
+};
 
 // Modern systems (SPEC §3.10). NOTIONAL. Drone strike follows the shape of Biddle's A.22 (pp. 215-216).
 export const DRONE = { recon: 2, strike: 2, Pk: 0.03, vehicle: 2, locate: 0.2, range: 12, block: 1 };   // NOTIONAL
@@ -147,7 +151,13 @@ export const PRECISION = { exposed: 0.25, covered: 0.08, asset: 0.15, perBattle:
 export const CB = { locate: { w: 0.15, m: 0.5 }, air: 0.15, drone: 0.2, neutral: 0.6, kill: { w: 0.25, m: 0.5 } };
 
 // Creeping barrage coordination (SPEC §3.8; D-21; Biddle p. 31; Hunzeker p. 52). NOTIONAL.
-export const BARRAGE = { early: 0.3, earlyCA2: 0.5, fratricide: 0.06, perBattery: 1 };   // NOTIONAL; a barrage of rate > 1 row/h suppresses each row x 1/rate (dwell)
+// 2026-10-07 (DECISIONS "Q68 redesign"): an early lift leaves no residual (was 0.3, 0.5 with CA2): the defenders "climb
+// out of their shelters" (Hunzeker p. 52; Biddle p. 31's "fatal gap"). caught: defenders assaulted while the creeper is
+// still on them are caught in their shelters and overrun, not allowed to fall back. protect: at the end of its timetable
+// the creeper stands on its last row as a protective barrage; its guns stay on the fire plan and fire once the infantry
+// are up to it (the 1917-18 practice of a standing barrage beyond the objective while the infantry consolidate).
+// A barrage of rate > 1 row/h suppresses each row x 1/rate (dwell). All NOTIONAL.
+export const BARRAGE = { early: 0, earlyCA2: 0, fratricide: 0.06, perBattery: 1, caught: true, protect: true };
 
 // Preparation fire (SPEC §3.8). NOTIONAL.
 export const PREP = { stun: 0.5, partialWarn: 0.5, methodicalLoss: 0.15, methodicalCost: 15, sectorsPerGroup: 3, groupSize: 4, preOrders: 3, c2Delay: 1 };
@@ -157,7 +167,7 @@ export const ORDERS = {
   delay: { w: [[0, 0.45], [1, 0.40], [2, 0.15]], m: [[0, 0.75], [1, 0.25]] },
   maxRun: 3,        // NOTIONAL: after 3 delayed hours in a row orders start at once
   runner: { delay: 2, loss: 0.2 }, phone: 0.5,   // 1917-18 barrage-plan changes (Hunzeker p. 52)
-  callFire: { w: 1, m: 0 },                      // calls for fire: 1 h in 1917-18 unless Direct support
+  callFire: { w: 1, m: 0 },                      // calls for fire: 1 h in 1917-18 unless Direct support (2026-10-07: a modern 2 h / 1 h with CA2 was tried and rejected, DECISIONS)
 };
 
 // Movement survival under observation P = T^(-k2' v) (SPEC §3.11, from A.5 p. 212).

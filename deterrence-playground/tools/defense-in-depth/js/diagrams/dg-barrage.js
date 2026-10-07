@@ -125,7 +125,7 @@ export function mount(el, lesson, opts = {}) {
       txt(svg, cx, cy + 1, { on: '✓', early: '1', gap: '!', late: '×' }[k], { anchor: 'middle', size: 10, weight: 700, fill: 'var(--panel)', on: true });
     }
     txt(svg, gx, H - 26, '■ barrage   ✓ on time   1 lifted 1 h early   ! gap   × late (own fire)', { cls: 'dg-small dg-mute' });
-    f.readout.innerHTML = `${tt ? 'Your last battle: ' : ''}<b>${counts.on}</b> on time, <b>${counts.early}</b> one hour early (defenders keep ${fmt.pct(1 - GAME.residual.early1)} of their fire), <b>${counts.gap}</b> gaps (no suppression), <b>${counts.late}</b> late (the infantry take about ${fmt.pct(GAME.lateLoss)} friendly-fire losses). ` +
+    f.readout.innerHTML = `${tt ? 'Your last battle: ' : ''}<b>${counts.on}</b> on time, <b>${counts.early}</b> one hour early (the defenders were back at their posts), <b>${counts.gap}</b> gaps (no suppression), <b>${counts.late}</b> late (the infantry take about ${fmt.pct(GAME.lateLoss)} friendly-fire losses). ` +
       'In the game the barrage steps a row per hour at its lift rate; changing it after zero hour needs a runner (1917–18) or the radio.';
   }
 

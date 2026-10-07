@@ -77,6 +77,6 @@ export const GAME = Object.freeze({
   fe: { unconsolidated: 0.5, consolidated: 0.2, trench: 0.5, reverse: 0.3, strongpoint: 0.1, dispersed: 0 },
   k1: 2.5,              // SOURCED, Biddle p. 218
   suppMax: 0.86,        // SOURCED, "factor of seven or more", Biddle p. 67
-  residual: { early1: 0.3, early1Card: 0.5 }, lateLoss: 0.06,   // §3.8
+  residual: { early1: 0, early1Card: 0 }, lateLoss: 0.06,   // §3.8 (2026-10-07: no residual after an early lift)
   planningH: { division: 2, corps: 3, army: 4 },
 });

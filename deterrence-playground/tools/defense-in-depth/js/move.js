@@ -163,7 +163,14 @@ export function moveAll(g, rng) {
   const G = gridFor(g.scale), f = g.sectors.feat, foeOf = other;
   leapfrogRoles(g);
   const order = g.units.filter(u => fighting(u) || (alive(u) && (u.type === 'drone' || u.type === 'ew')));
+  // 2026-10-07: attached tanks move after the infantry they are with and follow it (SPEC §1.2 step 7; Biddle p. 61).
+  order.sort((a, b) => (a.escort != null) - (b.escort != null));
   for (const u of order) {
+    if (u.escort != null) {
+      let e = g.units[g.ix[u.escort]];
+      if (!e || !fighting(e) || e.sec < 0) e = reattach(g, u);
+      if (e && e.sec !== u.sec) routeUnit(g, u, e.sec); else if (e && u.path.length) u.path = [];
+    }
     if (!u.path.length || u.ow || u.pinned > g.t || u.down) continue;
     if (g.contest[u.sec] && u.posture !== 'withdraw' && !u.yielding) continue;  // assaulting or holding: no leaving
     if (u.cs && !u.csGo && u.path.length === 1) continue;                       // counterstroke units wait next to the target
@@ -174,7 +181,7 @@ export function moveAll(g, rng) {
       const nx = u.path[0], diag = G.row[nx] !== G.row[u.sec] && G.col[nx] !== G.col[u.sec];
       const cost = moveCost(g, nx) * (diag ? SPEED.diagonal : 1);
       if (u.prog < cost) break;
-      if (isCompany(u) && companies(g, nx, u.side) >= STACK.max) { u.prog = Math.min(u.prog, cost); break; }   // W3: no banking progress in a jam
+      if (isCompany(u) && u.escort == null && stacked(g, nx, u.side) >= STACK.max) { u.prog = Math.min(u.prog, cost); break; }   // W3: no banking progress in a jam
       const hostile = enemyHeld(g, nx, u.side);
       if (hostile && u.posture === 'infil' && nx !== u.dest) { routeUnit(g, u, u.dest); break; }
       if (hostile && u.cs && !u.csGo) break;
@@ -207,6 +214,18 @@ export function moveAll(g, rng) {
   observedMoves(g);
 }
 
+/** Companies counted against the stacking limit: an attached tank rides with its company and is not counted. */
+const stacked = (g, s, side) => g.occ[s].reduce((n, v) => n + (v.side === side && isCompany(v) && v.escort == null ? 1 : 0), 0);
+
+/** A tank whose company is gone joins the deepest fighting rifle or storm company in or next to its sector, else goes free. */
+function reattach(g, u) {
+  const G = gridFor(g.scale), taken = new Set(g.units.filter(t => t !== u && t.escort != null).map(t => t.escort));
+  const e = g.units.filter(v => v.side === u.side && fighting(v) && TYPES[v.type].line && v.sec >= 0 && G.dist(v.sec, u.sec) <= 1 && !taken.has(v.id))
+    .sort((a, b) => (u.side === 'att' ? G.row[b.sec] - G.row[a.sec] : G.row[a.sec] - G.row[b.sec]) || (a.id < b.id ? -1 : 1))[0];
+  u.escort = e ? e.id : null;
+  return e || null;
+}
+
 /** The barrage coordination check for attackers entering or assaulting enemy-held sectors (SPEC §3.8). */
 function barrageCheck(g, rng) {
   if (!g.barrage) return;
@@ -232,6 +251,7 @@ function tankSupport(g) {
     const sec = +s, c = g.contest[sec];
     const tanks = g.occ[sec].filter(u => u.side === c.by && u.type === 'tank' && !u.down);
     if (!tanks.length) continue;
+    if (!g.occ[sec].some(v => v.side === c.by && TYPES[v.type].line && fighting(v))) continue;   // 2026-10-07: only with infantry (SPEC §3.9)
     // W3: tanks suppress at full effect only with infantry trained to work with them (card CA3, 1917-18 name).
     const coop = g.era === 'm' || g.occ[sec].some(v => v.side === c.by && TYPES[v.type].line && knows(v, 'CA3'));
     for (const v of g.occ[sec]) if (v.side !== c.by) addSupp(v, TANK.assaultSupp * (coop ? 1 : TANK.untrained));

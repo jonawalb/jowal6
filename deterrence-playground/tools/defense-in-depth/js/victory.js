@@ -4,6 +4,7 @@
 // The game ends early only if the attacker has no unbroken unit on the map and none still to arrive.
 import { SCALES } from '../data/scales.js';
 import { gridFor } from './grid.js';
+import { TYPES } from '../data/units.js';
 import { fighting, isCompany } from './forces.js';
 
 export const HALF_COMPANY = 5;
@@ -17,7 +18,7 @@ export function objectiveStatus(g) {
     let a = 0, d = false;
     for (const u of g.units) {
       if (u.sec !== s || !fighting(u) || !isCompany(u)) continue;
-      if (u.side === 'att') a += u.str; else d = true;
+      if (u.side === 'att') { if (TYPES[u.type].cat !== 'veh') a += u.str; } else d = true;   // 2026-10-07: tanks alone do not hold ground
     }
     held.push(a >= HALF_COMPANY && !d);
   }

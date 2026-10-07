@@ -39,7 +39,7 @@ export function checkAtt(g, plan) {
     if (u.side !== 'att' || isBattery(u)) continue;
     const s = plan.place && plan.place[u.id] != null ? plan.place[u.id] : u.sec;
     if (!(s >= 0 && s < G.n) || G.row[s] > S.bands.assembly[1]) { placed = false; continue; }
-    if (isCompany(u)) load.set(s, (load.get(s) || 0) + 1);
+    if (isCompany(u) && !(plan.attach && plan.attach[u.id] != null)) load.set(s, (load.get(s) || 0) + 1);
   }
   const over = [...load.values()].some(n => n > STACK.max);
   out.push({ id: 'placed', level: 'required', ok: placed && !over, text: over ? `At most ${STACK.max} companies per sector` : 'Every unit is in the assembly trenches' });
@@ -51,6 +51,30 @@ export function checkAtt(g, plan) {
   return out;
 }
 
+/**
+ * Tanks with the infantry (SPEC §1.2 step 7: each tank attached to an infantry unit; §3.9; Biddle p. 61: tanks must
+ * move with dismounted infantry). Each attacking tank starts in the sector of a first-wave rifle company (main effort
+ * first, one tank to a company, spread over different sectors where possible) and moves with it (js/move.js).
+ * Writes plan.attach { tankId: companyId } and plan.place; load: the planner's sector occupancy map.
+ */
+export function attachTanks(g, plan, load) {
+  const G = gridFor(g.scale), main = plan.mainCols || [];
+  plan.attach = {};
+  const at = u => plan.place[u.id];
+  const inf = g.units.filter(u => u.side === 'att' && u.role === 'wave1' && u.type === 'rifle' && at(u) != null && at(u) >= 0)
+    .sort((a, b) => (main.includes(G.col[at(b)]) - main.includes(G.col[at(a)])) || at(a) - at(b));
+  // An attached tank rides with its company: it does not count toward the stacking limit (STACK.max).
+  const used = new Set(), secs = new Set();
+  for (const t of g.units.filter(u => u.side === 'att' && u.type === 'tank')) {
+    const e = inf.find(u => !used.has(u.id) && !secs.has(at(u))) || inf.find(u => !used.has(u.id));
+    if (!e) break;
+    used.add(e.id); secs.add(at(e)); plan.attach[t.id] = e.id;
+    if (at(t) != null && load) load.set(at(t), Math.max(0, (load.get(at(t)) || 1) - 1));
+    plan.place[t.id] = at(e);
+    plan.orders = (plan.orders || []).filter(o => o.unit !== t.id);
+  }
+}
+
 /** Apply an attacker plan: placement, formations and postures, batteries, barrage, objective. */
 export function applyAttPlan(g, plan) {
   const G = gridFor(g.scale), S = SCALES[g.scale];
@@ -58,8 +82,9 @@ export function applyAttPlan(g, plan) {
   for (const u of g.units) {
     if (u.side !== 'att') continue;
     const s = plan.place ? plan.place[u.id] : undefined;
-    if (!isBattery(u) && s != null && s >= 0 && s < G.n && G.row[s] <= S.bands.assembly[1] && (!isCompany(u) || (load.get(s) || 0) < STACK.max)) u.sec = s;
-    if (isCompany(u) && u.sec >= 0) load.set(u.sec, (load.get(u.sec) || 0) + 1);
+    const rides = plan.attach && plan.attach[u.id] != null;   // an attached tank rides with its company (not stacked)
+    if (!isBattery(u) && s != null && s >= 0 && s < G.n && G.row[s] <= S.bands.assembly[1] && (!isCompany(u) || rides || (load.get(s) || 0) < STACK.max)) u.sec = s;
+    if (isCompany(u) && u.sec >= 0 && !rides) load.set(u.sec, (load.get(u.sec) || 0) + 1);
     const bn = plan.bn && plan.bn[u.fmn[u.fmn.length - 1]];
     if (bn && bn.form) u.formation = bn.form;
     if (bn && bn.posture && bn.posture !== 'leapfrog') u.posture = bn.posture;
@@ -68,6 +93,10 @@ export function applyAttPlan(g, plan) {
     if (u.posture === 'infil') u.stealth = !!(TYPES[u.type].stealth || (u.trained && u.trained.AT2 >= 0.5));
     if (isBattery(u)) { u.role2 = plan.bats ? plan.bats[u.id] || 'call' : 'call'; if (plan.ds && plan.ds[u.id]) u.ds = plan.ds[u.id]; }
     if (u.type === 'ew' && plan.ew && plan.ew[u.id] != null) u.jam = plan.ew[u.id];
+  }
+  for (const [tid, eid] of Object.entries(plan.attach || {})) {
+    const t = g.units[g.ix[tid]], e = g.units[g.ix[eid]];
+    if (t && e && t.side === 'att' && e.side === 'att' && t.sec === e.sec) t.escort = e.id;
   }
   const b = plan.barrage;
   if (b && b.cols && b.cols.length) {
@@ -142,6 +171,7 @@ export function defaultAttPlan(g) {
     }
     if (ord.length % 2) plan.orders.push({ unit: ord[ord.length - 1].id, to: G.idx(objRow, mainCols[k++ % mainCols.length]) });
   }
+  attachTanks(g, plan, load);
   const bats = g.units.filter(u => u.side === 'att' && isBattery(u));
   const nb = Math.max(1, Math.ceil(bats.length / 2));
   bats.forEach((b, i) => { plan.bats[b.id] = i < nb ? 'barrage' : 'call'; });

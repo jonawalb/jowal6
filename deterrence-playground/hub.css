@@ -204,6 +204,3 @@ a.tool:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; tr
 .sealed-form label { font-weight: 600; }
 .sealed-form input { flex: 1 1 180px; font: inherit; padding: 6px 8px; border: 1px solid var(--rule); border-radius: 3px; background: var(--bg); color: var(--ink); }
 .sealed-msg { flex-basis: 100%; font-size: 13px; color: var(--muted); }
-
-/* Link tiles (Narrative Tracking on jwalberg.com) look like the section tiles. */
-a.sec-tile { text-decoration: none; color: var(--ink); }

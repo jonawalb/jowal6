@@ -169,11 +169,6 @@ if (COUNTED.length <= 1) {
 // With tools in only one section, the section chips (Everything / that section) add nothing either.
 if (CATEGORIES.filter(c => counts[c.id]).length <= 1) $('cats').style.setProperty('display', 'none');
 
-// The narrative trackers live on their own jwalberg.com site; the deterrence hub points to them.
-const NARR_TILE = SITE === 'deterrence' ? `<a class="sec-tile" href="/narratives/">
-    <span class="sec-tile-n">jwalberg.com/narratives</span><b>Narrative Tracking</b>
-    <span class="sec-tile-b">Information warfare on the record: what governments say, week by week, and every mention searchable.</span>
-    <span class="sec-tile-l">PRC Rhetoric Heatmap · Russia and Beyond · Rhetoric Search</span><span class="go">Open Narrative Tracking →</span></a>` : '';
 const NARR_WORDS = /disinfo|rhetoric|narrative|propaganda|information|statement|china|russia/;
 
 function render() {
@@ -192,7 +187,7 @@ function render() {
     // Overview: one tile per section (TSM last). A section: its tools, with a way back.
     if (cat === 'all') {
       $('sections').innerHTML = `<section class="cat-sec overview"><div class="cat-h"><h2>Pick a section</h2>
-        <p>${COUNTED.length} tools in ${CATEGORIES.filter(c => c.id !== 'dev').length} sections.</p></div><div class="sec-tiles">${CATEGORIES.filter(c => c.id !== 'dev').map(tile).join('')}${NARR_TILE}${CATEGORIES.filter(c => c.id === 'dev').map(tile).join('')}</div></section>`;
+        <p>${COUNTED.length} tools in ${CATEGORIES.filter(c => c.id !== 'dev').length} sections.</p></div><div class="sec-tiles">${CATEGORIES.map(tile).join('')}</div></section>`;
     } else {
       const c = CATEGORIES.find(x => x.id === cat), list = TOOLS.filter(t => inCat(t, cat));
       if (sealedNow(c)) { sealedForm(c); $('q-status').textContent = ''; return; }

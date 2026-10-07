@@ -7,7 +7,7 @@
 //   `vis` (optional) lists the sides that saw it. Without `vis`, only `side` saw it (the safe default).
 //   objective    side = attacker; held, prevHeld, need (contiguous objective sectors held)
 //   breakthrough side = attacker; sec
-//   lodgment     side = side that took the sector; sec
+//   lodgment     side = side that took the sector; sec; empty = true if it walked in unopposed
 //   retaken      side = side that took it back; sec; by = 'riposte' | 'counterstroke' | 'assault'
 //   overrun      side = side of the unit overrun; unit, sec
 //   counter      side = counterattacking side; how = 'riposte' | 'counterstroke'; sec; won; ca; window = [t0, t1] | null
@@ -62,7 +62,7 @@ const CLAUSE = {
     return up ? `the enemy now holds ${n} he needs to beat you` : `you pushed the enemy back to ${n} he needs`;
   },
   breakthrough: (g, e, me) => (mine(e, me) ? `you broke through at ${place(g, e.sec)}` : `the enemy broke through your line at ${place(g, e.sec)}`),
-  lodgment: (g, e, me) => (mine(e, me) ? `you took ${place(g, e.sec)}` : `the enemy took ${place(g, e.sec)} from you`),
+  lodgment: (g, e, me) => (mine(e, me) ? `you took ${place(g, e.sec)}` : e.empty ? `the enemy occupied empty ${place(g, e.sec)}` : `the enemy took ${place(g, e.sec)} from you`),
   retaken: (g, e, me) => {
     const by = e.by && e.by !== 'assault' ? e.by : 'counterattack';
     return mine(e, me) ? `your ${by} retook ${place(g, e.sec)}` : `an enemy ${by} retook ${place(g, e.sec)} from you`;
@@ -104,11 +104,12 @@ export function newsOf(g, me, t) {
 /** One sentence (at most two clauses) about hour t for the player on side `me`. */
 export function tldr(g, me, t) {
   const news = newsOf(g, me, t), facts = [], parts = [];
-  for (const e of news) {
+  for (let e of news) {
     if (parts.length >= 2) break;
     // Same kind twice: say how many instead of listing them.
     if (facts.some(f => f.kind === e.kind && f.side === e.side)) continue;
     const same = news.filter(x => x.kind === e.kind && x.side === e.side);
+    if (e.empty && same.some(x => !x.empty)) e = same.find(x => !x.empty);   // a fought-for box leads the sentence
     let c = CLAUSE[e.kind](g, e, me);
     if (same.length > 1 && (e.kind === 'lodgment' || e.kind === 'stall' || e.kind === 'overrun')) {
       const more = ` and ${same.length - 1} more sector${same.length > 2 ? 's' : ''}`;

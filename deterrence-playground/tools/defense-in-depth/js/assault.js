@@ -168,7 +168,8 @@ export function updateCtrl(g) {
     if (now === 2 && G.row[s] >= first) {
       const bh = g.biteRow != null && G.row[s] >= g.biteRow;
       newLodgment(g, s, bh);
-      g.events.push({ t: g.t, kind: 'lodgment', side: 'att', sec: s, vis: ['def', 'att'] });
+      // empty: walked in unopposed (no defender held the sector when the attacker entered, so no assault was fought).
+      g.events.push({ t: g.t, kind: 'lodgment', side: 'att', sec: s, vis: ['def', 'att'], ...(g.taken[s] ? {} : { empty: true }) });
       g.telemetry.events.push({ t: g.t, kind: 'lodgment', s: 'att', side: 'att', sec: s });
     } else if (now === 1 && prev === 2) {
       g.events.push({ t: g.t, kind: 'retaken', side: 'def', sec: s, by: how === 'assault' ? 'assault' : how, vis: ['def', 'att'] });

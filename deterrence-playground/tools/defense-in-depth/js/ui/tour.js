@@ -24,9 +24,11 @@ export function createTour(card, api) {
   const skipped = k => { const s = steps()[k]; try { return !!(s && s.skip && s.skip()); } catch { return false; } };
   // Step numbers as the player sees them: steps skipped so far are not counted (later skips are not guessed,
   // so the count only ever shrinks when a step is actually passed over).
+  // Learn to play keeps a steady count instead (2026-10-06 audit: "step 13 of 17" became "step 14 of 15"): N is the
+  // lesson's full length and a skipped step is passed over in the numbering, so N never changes mid-lesson.
   let gone = 0;
-  const shown = () => steps().length - gone;
-  const nth = () => i + 1 - gone;
+  const shown = () => (track === 'learn' ? steps().length : steps().length - gone);
+  const nth = () => (track === 'learn' ? i + 1 : i + 1 - gone);
 
   function place(target) {
     const W = innerWidth, H = innerHeight, m = 12;

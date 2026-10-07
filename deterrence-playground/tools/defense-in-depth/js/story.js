@@ -18,7 +18,8 @@ export function windowWord(e) {
 
 const BUILD = {
   contact: (g, e, me) => ({ tone: '', text: `Your first contact with the enemy, at ${place(g, e.sec)}.` }),
-  lodgment: (g, e, me) => (e.side === me ? { tone: 'good', text: `You took ${place(g, e.sec)}.` } : { tone: 'bad', text: `The enemy took ${place(g, e.sec)} from you.` }),
+  lodgment: (g, e, me) => (e.side === me ? { tone: 'good', text: `You took ${place(g, e.sec)}.` }
+    : e.empty ? { tone: '', text: `The enemy occupied empty ${place(g, e.sec)}.` } : { tone: 'bad', text: `The enemy took ${place(g, e.sec)} from you.` }),
   overrun: (g, e, me) => (e.side === me
     ? { tone: 'bad', text: `Your ${unitLabel(g, e.unit, me)} was overrun at ${place(g, e.sec)}.` }
     : { tone: 'good', text: `You overran ${unitLabel(g, e.unit, me)} at ${place(g, e.sec)}.` }),

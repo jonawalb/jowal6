@@ -29,9 +29,9 @@ export function renderBelow() {
   if (b && !b.childElementCount) b.innerHTML = balanceHTML();
   const o = $('dd-od-table');
   if (o && !o.childElementCount) o.innerHTML = odHTML();
-  const short = id => (SOURCES.find(s => s.id === id) || {}).short || id;
+  const title = id => (SOURCES.find(s => s.id === id) || {}).title || id;
   const q = $('dd-quotes');
-  if (q) q.innerHTML = QUOTES.map(x => `<li><q>${esc(x.q)}</q> <span class="muted">— ${esc(x.who)}, <a href="#src-${x.src}">${esc(short(x.src))}</a>, p. ${esc(x.page)}</span></li>`).join('');
+  if (q) q.innerHTML = QUOTES.map(x => `<li><q>${esc(x.q)}</q> <span class="muted">— ${esc(x.who)}, <a href="#src-${x.src}"><i>${esc(title(x.src))}</i></a>, p. ${esc(x.page)}</span></li>`).join('');
   const s = $('dd-sources');
   if (s) s.innerHTML = SOURCES.map(x => `<li id="src-${x.id}">${esc(x.text)} <a href="${esc(x.url)}" rel="noopener" target="_blank">Publisher page</a>
     <details><summary>Claims the game uses (${CITES.filter(c => c.src === x.id).length})</summary><ul class="dd-cites">${CITES.filter(c => c.src === x.id).map(c => `<li>${esc(c.claim)} <span class="muted">(p${/[–,;]/.test(c.pages) ? 'p' : ''}. ${esc(c.pages)}; ${esc(c.use)})</span></li>`).join('')}</ul></details></li>`).join('');

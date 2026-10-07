@@ -71,7 +71,7 @@ export function setGame(m, g, me) {
     const nm = g.sectors.name[s];
     if (!nm) continue;
     const [x, y] = cellXY(m, s);
-    el('text', { x: x + CELL / 2, y: y + CELL - 5, class: 'dd-name', 'text-anchor': 'middle' }, m.base, nm);
+    nameLabel(m.base, x, y, nm);
   }
   for (let s = 0; s < G.n; s++) {
     const [x, y] = cellXY(m, s);
@@ -80,6 +80,29 @@ export function setGame(m, g, me) {
   }
   m.secs = [...m.hit.children];
   m.mv.setWorld(W, H, m.flip ? 'bottom' : 'top');
+}
+
+// 2026-10-06 audit: place names ran into the next box ("HAZEL SPINNEYWILLOW WOOD" on phones) and were cut off at
+// the board's edges. A name now stays inside its own box: two lines when it is two words and too wide for one,
+// and a line still too wide is squeezed to fit. Widths are estimated per character (the Trailer graphics' capitals
+// are the wider case), so the fit does not depend on fonts having loaded.
+const NAME_MAX = CELL - 6, NAME_CH = 6.8, NAME_LH = 11;
+function nameLabel(parent, x, y, nm) {
+  const w = t => t.length * NAME_CH, words = nm.split(' ');
+  let lines = [nm];
+  if (words.length > 1 && w(nm) > NAME_MAX) {
+    let best = null;
+    for (let k = 1; k < words.length; k++) {
+      const a = words.slice(0, k).join(' '), b = words.slice(k).join(' ');
+      if (!best || Math.max(w(a), w(b)) < Math.max(w(best[0]), w(best[1]))) best = [a, b];
+    }
+    lines = best;
+  }
+  lines.forEach((ln, i) => {
+    const at = { x: x + CELL / 2, y: y + CELL - 5 - (lines.length - 1 - i) * NAME_LH, class: 'dd-name', 'text-anchor': 'middle' };
+    if (w(ln) > NAME_MAX) Object.assign(at, { textLength: NAME_MAX, lengthAdjust: 'spacingAndGlyphs' });
+    el('text', at, parent, ln);
+  });
 }
 
 const COLN = i => (i < 26 ? String.fromCharCode(65 + i) : 'A' + String.fromCharCode(39 + i));
@@ -111,13 +134,15 @@ function drawZones(m, v, on) {
   const L = m.L.zones; L.replaceChildren();
   if (!on) return;
   const G = m.G, S = G.S, W = G.cols * CELL;
+  const oy = v.obj ? objY(m, v.obj.row) : null;
   for (const z of ['assembly', 'nml', 'outpost', 'battle', 'switch', 'second', 'rear']) {
     const b = S.bands[z];
     if (!b) continue;
     const r0 = m.flip ? G.rows - 1 - b[1] : b[0], h = (b[1] - b[0] + 1) * CELL;
     el('rect', { x: 0, y: r0 * CELL, width: W, height: h, class: `dd-zone dd-z-${z}` }, L);
     el('path', { d: `M0 ${r0 * CELL}H${W}`, class: 'dd-zline' }, L);
-    el('text', { x: 6, y: r0 * CELL + 15, class: 'dd-zlab' }, L, ZONE_LABEL[z]);
+    // The objective's name sits just below its line, at the left: a zone label starting on that line goes under it.
+    el('text', { x: 6, y: r0 * CELL + 15 + (r0 * CELL === oy ? 16 : 0), class: 'dd-zlab' }, L, ZONE_LABEL[z]);
   }
 }
 
@@ -184,15 +209,20 @@ function drawObj(m, v) {
   const L = m.L.obj; L.replaceChildren();
   const o = v.obj;
   if (!o) return;
-  const G = m.G, y = (m.flip ? G.rows - 1 - o.row : o.row) * CELL + (m.flip ? CELL : 0);
+  const G = m.G, y = objY(m, o.row);
   el('path', { d: `M0 ${y}H${G.cols * CELL}`, class: 'dd-objline' }, L);
-  el('text', { x: G.cols * CELL - 6, y: y + (m.flip ? -6 : 16), class: 'dd-objname', 'text-anchor': 'end' }, L, `Objective: ${o.name}`);
+  // 2026-10-06 audit: at the left edge, below the line (clear of the zoom buttons at the top right of the map and of
+  // the place names along the bottom of the boxes above the line); the zone label that starts here moves down a line.
+  el('text', { x: 6, y: y + 16, class: 'dd-objname' }, L, `Objective: ${o.name}`);
   (o.held || []).forEach((h, c) => {
     if (!h) return;
     const [x, yy] = cellXY(m, G.idx(o.row, c));
     el('rect', { x: x + 2, y: yy + 2, width: CELL - 4, height: CELL - 4, class: 'dd-objheld' }, L);
   });
 }
+
+/** Screen y of the objective line: the enemy-facing edge of the objective row (it turns with the board). */
+const objY = (m, row) => (m.flip ? m.G.rows - 1 - row : row) * CELL + (m.flip ? CELL : 0);
 
 function pathLine(m, L, path, cls) {
   if (!path || path.length < 2) return null;
@@ -287,8 +317,9 @@ function drawBadges(m, v, wins, race) {
   if (wins) for (const b of v.lodg || []) {
     const [x, y] = cellXY(m, b.sec);
     const g = el('g', { class: `dd-win ${b.badge}` }, L);
-    el('circle', { cx: x + CELL - 10, cy: y + CELL - 10, r: 8 }, g);
-    el('path', { d: `M${x + CELL - 10} ${y + CELL - 15}v5l3.5 2.5`, class: 'dd-hand' }, g);
+    // Top-right corner (2026-10-06: at the bottom right it covered the place name).
+    el('circle', { cx: x + CELL - 10, cy: y + 10, r: 8 }, g);
+    el('path', { d: `M${x + CELL - 10} ${y + 5}v5l3.5 2.5`, class: 'dd-hand' }, g);
     el('title', {}, g, b.title);
   }
   if (race && v.race) {

@@ -4,11 +4,11 @@
 // historical cases behind them are named in METHOD.md and FACTCHECK.md only. Standalone: imports nothing.
 
 export const SOURCES = [
-  { id: 'biddle', short: 'Biddle', text: 'Stephen Biddle, Military Power: Explaining Victory and Defeat in Modern Battle (Princeton, NJ: Princeton University Press, 2004; paperback 2006). Chapter 3 and the Appendix (the formal model, pp. 209–239).',
+  { id: 'biddle', short: 'Biddle', title: 'Military Power', text: 'Stephen Biddle, Military Power: Explaining Victory and Defeat in Modern Battle (Princeton, NJ: Princeton University Press, 2004; paperback 2006). Chapter 3 and the Appendix (the formal model, pp. 209–239).',
     url: 'https://press.princeton.edu/books/paperback/9780691128023/military-power' },
-  { id: 'hunzeker', short: 'Hunzeker', text: 'Michael A. Hunzeker, Dying to Learn: Wartime Lessons from the Western Front (Ithaca, NY: Cornell University Press, 2021).',
+  { id: 'hunzeker', short: 'Hunzeker', title: 'Dying to Learn', text: 'Michael A. Hunzeker, Dying to Learn: Wartime Lessons from the Western Front (Ithaca, NY: Cornell University Press, 2021).',
     url: 'https://www.cornellpress.cornell.edu/book/9781501758454/dying-to-learn/' },
-  { id: 'lh', short: 'Lanoszka and Hunzeker', text: 'Alexander Lanoszka and Michael A. Hunzeker, Conventional Deterrence and Landpower in Northeastern Europe (Carlisle, PA: Strategic Studies Institute and Army War College Press, 2019).',
+  { id: 'lh', short: 'Lanoszka and Hunzeker', title: 'Conventional Deterrence and Landpower', text: 'Alexander Lanoszka and Michael A. Hunzeker, Conventional Deterrence and Landpower in Northeastern Europe (Carlisle, PA: Strategic Studies Institute and Army War College Press, 2019).',
     url: 'https://press.armywarcollege.edu/monographs/381/' },
 ];
 

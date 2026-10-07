@@ -1,6 +1,64 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "6XSneeJXCzC8Oy5FQF55tAKRtMXGZW+6B1lwEcsZ/jcouCCtY4noxQ9CYqkSxhRUfU1VSCO6UDvfAPnz/FmumOX4ap/BlIouRda/el2iaPJK7+NxqqJ9XDaen/ieYyn4FwYWKRu0ZX2p8Jf9pa3GLcU34KSsk9G2YaTpW+SdcZ6+2iCNbT0jM0yHUQapRG5hqL/UUNXlTGXljp2VJF0zO/O7ZbV/YxfTSeV/GdIRUSa+yQZZUM9bnbpu42G0pK+ziXZ000bMlRDh9pZ1mdVKCRcjsZuTcK1NghdDntkUAFZFpIoWED5WPR+b8Umio18G6Dh/shb8qJ9gC5buKueNJ2UvqF4IloLLJwgTw9tolU/Yh++CbRinXfomaSzm3wlcxb+Yz95jlU7s3Pls0p8f8veVD6n4mCjnZYbGhtpS/dtr1nnDEi2dGuP4puEQfcXKVt5QXBRCQQjUKLwwDrtYi9/nLFsDq+5Js2quDlo5baRYo9Yq7EiDeBCv6yUr1oXPuasaxZz12pxvoNS3yrhcKqu38SfDAyT4R7aHEBk+FDJdBVEK+lH/2mU6mh0sFtvX3P4D1fk6Sy7swWS5iE9SbHBvbPLsGIHAuM/JTygPTaw2hPgyR1MOMPfgsEMKDOIx3CdzoHjUT6CKk6Cumb1kCzXb+RCwXAI6htgf6ZVE0go+WYo6l6NOpQipdQVvvfWeYhpUr4ElbiHeMRB2z+3ju2THuVRmuPxFM8KpdzPW5d2Na3hTl2vufmEvZEfMB+a6LCHQXzha4SGksugEWaA+OsvPakdVsYuPHf+dnsToSvwC0J1vOqCm+n0ZM+aRxJHralo6faxaiZ3F/kRdMjoRJpHHFPaKbfCeqgecK95kpDGLUwud2mcmlddZT4dABW5neTYRX9KblL4XTgizeya9kw38iQjrfsv07jjiH1dMjjoZ3j3CHhlsXl58UVbilaOZYyOutMdm+IsBL2JWk3lD0lOK2m+rFXaWv6m5BnBkKeBV/zHwtDROFBCdIvR/hUgPjaC8nN6ZSiXrN8i3MxOAx6zBT/yowTOxPwCVR3h8C2F+tlREGERzAt9+Sus7Ww4RreQtC3Z45WBKKsBL7tqcqFpsiyRvv20oUXgTwAYPMU90QIGQ6L+qtKYYCm7Xqg+NwvDsJsH1DVKXgrymcdY29MOQFGH14Ffo0Gt3a8VnG+L0d241AfG25G0TYRQIkq8ZuQtgxLly3SQwT+IMWcgjggiKLAz9aqJQ6Zg96VUW47htodRDkSv8Xwuoheexo8bseNxo0xjSRkHHuNRAL8PQ6Kn2khqiM+OBvJpZD2WGq2mQzOyf51gh6tAa5uGwpeTlVNgGDQvqCidHfsUB8NRc442Sy8c6xFMKKGLeygpyaVlWW90lCtAQVngrtr62TkDT1tpJM9UPTe547FOdcoZ8J6C9VW0qd4wPmHdxCChDSIwOJC0DkDOqwGUe0S0yFfUTNsgDlQ1jnGKQZId1+ONuDkAuuK2pWMFXobxlxS5srrCMSB4oDbIbUfw3tvyqe30uJZw9q77nq/TO37i9qPHYXYjzEgPZKOJTpqJElVr5sNCOPIpDToOihtBMmkIMbHAeR5vIFTA9EEVxWbow1+sAxSb9lvvAGImtv31eJZkoVXMtEbhY/OCyYSKz0DsoaQkDNgaP3XsruGMYyyHe", 1, 2);
-export const COUNTRIES = __m.COUNTRIES;
-export const IDS = __m.IDS;
-export const START = __m.START;
-export const defaultWeights = __m.defaultWeights;
+// The four capitals: objectives the player weights (and how each is measured at the end), type priors,
+// default weights for the computer, and starting indices. All indices are illustrative 0–100 scales.
+const war = s => 100 - 25 * Math.max(0, s.maxRung - 2);
+const noNuke = s => s.nuclearUsed ? 0 : Math.round(100 - 0.6 * s.nukePeak);
+
+export const IDS = ['us', 'tw', 'cn', 'jp'];
+
+export const COUNTRIES = {
+  us: {
+    id: 'us', name: 'United States', short: 'U.S.', capital: 'Washington', color: 'var(--us)',
+    prior: { resolute: 0.34, cautious: 0.33, opportunist: 0.33 },
+    start: { support: 55, economy: 70, military: 70 },
+    objectives: [
+      { id: 'tw_free', label: "Taiwan keeps its self-government", measure: s => s.tw, w: 4 },
+      { id: 'alliance', label: 'Alliances hold together', measure: s => s.coal, w: 4 },
+      { id: 'economy', label: 'Limit damage to the U.S. economy', measure: s => s.c.us.economy, w: 3 },
+      { id: 'avoid_war', label: 'Avoid a major war', measure: war, w: 4 },
+      { id: 'no_nuke', label: 'No nuclear use', measure: noNuke, w: 5 },
+      { id: 'forces', label: 'U.S. forces not struck', measure: s => 100 - 30 * Math.min(3, s.struck.us), w: 3 },
+    ],
+  },
+  tw: {
+    id: 'tw', name: 'Taiwan', short: 'Taiwan', capital: 'Taipei', color: 'var(--roc)',
+    prior: { resolute: 0.4, cautious: 0.35, opportunist: 0.25 },
+    start: { support: 60, economy: 65, military: 50 },
+    objectives: [
+      { id: 'sovereignty', label: 'Keep self-government', measure: s => s.tw, w: 5 },
+      { id: 'partners', label: 'Partners stand with Taiwan', measure: s => s.coal, w: 4 },
+      { id: 'economy', label: "Protect Taiwan's economy", measure: s => s.c.tw.economy, w: 3 },
+      { id: 'society', label: 'Society stays united', measure: s => s.c.tw.support, w: 3 },
+      { id: 'avoid_war', label: 'Avoid a major war', measure: war, w: 4 },
+      { id: 'no_nuke', label: 'No nuclear use', measure: noNuke, w: 4 },
+    ],
+  },
+  cn: {
+    id: 'cn', name: 'China', short: 'China', capital: 'Beijing', color: 'var(--prc)',
+    prior: { resolute: 0.4, cautious: 0.3, opportunist: 0.3 },
+    start: { support: 65, economy: 62, military: 75 },
+    objectives: [
+      { id: 'unification', label: 'Progress toward unification', measure: s => Math.min(100, 100 - s.tw + (s.settled ? 10 : 0)), w: 5 },
+      { id: 'regime', label: 'Party standing at home', measure: s => s.c.cn.support, w: 5 },
+      { id: 'economy', label: "Protect China's economy", measure: s => s.c.cn.economy, w: 3 },
+      { id: 'avoid_us', label: 'Avoid fighting the United States', measure: s => 100 - 30 * Math.min(3, s.struck.us + s.struck.mainland), w: 3 },
+      { id: 'split', label: 'Split the coalition', measure: s => 100 - s.coal, w: 3 },
+      { id: 'no_nuke', label: 'No nuclear use', measure: noNuke, w: 4 },
+    ],
+  },
+  jp: {
+    id: 'jp', name: 'Japan', short: 'Japan', capital: 'Tokyo', color: 'var(--jp)',
+    prior: { resolute: 0.3, cautious: 0.45, opportunist: 0.25 },
+    start: { support: 55, economy: 60, military: 55 },
+    objectives: [
+      { id: 'alliance', label: 'Alliance with the U.S. stays credible', measure: s => s.coal, w: 4 },
+      { id: 'homeland', label: 'Japan is not struck', measure: s => 100 - 35 * Math.min(3, s.struck.jp), w: 5 },
+      { id: 'economy', label: "Protect Japan's economy", measure: s => s.c.jp.economy, w: 3 },
+      { id: 'tw_survives', label: 'Taiwan stays out of Beijing’s control', measure: s => s.tw, w: 3 },
+      { id: 'no_nuke', label: 'No nuclear use', measure: noNuke, w: 5 },
+      { id: 'stay_clear', label: 'Stay out of the fighting', measure: s => 100 - 30 * Math.min(3, s.jpCombat), w: 3 },
+    ],
+  },
+};
+
+export const START = { tw: 72, coal: 62, shock: 8, nuke: 5 };
+export const defaultWeights = id => Object.fromEntries(COUNTRIES[id].objectives.map(o => [o.id, o.w]));

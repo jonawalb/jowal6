@@ -1,4 +1,21 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "rtidQYmROBx1mjkKNPTxKsQ6Lp/RqJqabeQBQKr/eip2oapd4NrN0KVvcMD8c3gTDlCSm/mModxGfLI93iVd6hXYGWO2aZBB16DMeIQmGiB4hgSObLxSb4duVW4xBxrtKligOE8iSiAebCouHlYArjyoynIJJqEcohDtmk/PhiwOgvDSvsY+H0BKGTRGmWi1f/O78+icRjDBTgqRpx9qMwoUE/OxfnUIGwH1pO8YHJBpGiG7juSCG8/GY8I2acw7IN0/GdU+egJorp92rGM3/yq1oKzsK8xqD1aEKbWK8awEGDEpaSC/13L8kamx0tdiOOurmkIcIlUCML6S4eAn8ENXPxelW+d6i6xZkaIVPVqpPUC+C8i53zVep15LJpi5+rx3+Y8wrXPPz6bJEOf8UzSorOsmwUuy4LE6KP893hcWEWgp8LvoTW+7R68nboR66Mlt1F20SC/gvtQeYc9o3hfZcDfhuSvf/C9GNs9gVgnqBLhYS+z6bxJiJYVlEs1nAMH1vZmxKZSB54apyHKMLidCRcNeNoq2lK5sUr9EnoZbv0ArdcyT9/wILOc5YSZTIALgTCGgTvWG9B8OcxxdfPD/j9dyrlMus0XXCJI2XlWdQtMN1nC3iwB0laS3kldodyX6NPGm2xN2odVDUM6wCIG0zJSqey4Vtn7lvwW+3sS8OEDxrt2qgHrN42CGTlcWG1opBala6rd8whawClERFuknJXZu51LNvpSt03NgKlsTTaUOO/sy7Odz2DiDfTm2Wc9gYHiEbfmi7UFXOk/CvdKysq3x3x8BgUywIzeRIE/It9e6pU5ktTpwbWYR4OclGwCIE0eTlfrcGFzDD77Sacybh9R1buzv98BGK5fW2QZXQ8U9ymMLmdBeh94Tqvviw16N01kOEDlLtpN89W37lnr19y2S9loHKQsUg7iT9ny57KyMn5IAV0k67R3iHoXv4629JBfY9QjCcbc8emQi+DNljxCkPA7aMYlaoSrZ6nqKFPQ6Kdk7MFOVp7wFwB3cFNvNysOGZeGozC+V5fvh7nj/3QEIl+TLNcWW0SoTwwlPrx2uiKoTlv7FKMEOLJmCbDkyvnHZmOhj+vxIiEvDsWfCj0RVjSZ34l3nyZNElSbC9MIUOst8chVTVSdyWY40zIQdjwzxRKEG7CZGJQ9QqVQLwPpAeWgjQv5+Z2HzERZKlUJwyX2BV2MU0L2lKJIxvkYxcvNSu+1bH7DN7U9zqgnqt9UN3jdY4vw2mI1uMuy9G2Yf60nYfVqZK3os+SU=", 1, 2);
-export const FORUM = __m.FORUM;
-export const setForumAi = __m.setForumAi;
+// The peace forum move (Batch B): one per capital, on the menu only in the month after its offer of talks succeeded,
+// once a game. Its % is the caller's estimate that the rival accepts; the engine settles it (js/forum.js).
+import { q } from '../ops.js';
+
+// js/forum.js registers the AI's scoring here once it loads. Importing it directly would make a cycle
+// (js/forum.js → js/politics.js → data/actions.js → this file) that breaks loading this module on its own.
+let forumAi = () => 0;
+export const setForumAi = f => { forumAi = f; };
+
+const NAME = { us: 'Beijing', tw: 'Beijing', jp: 'Beijing' };
+const make = (who, to) => ({
+  id: `${who}_forum`, line: 'D', to, label: 'Call for a peace forum to end the conflict', tags: ['talks', 'soft'], base: 0.5,
+  forum: true, once: true, opp: true,
+  avail: s => s.forumOpen?.[who] === s.turn,
+  oppWhy: () => 'your offer of talks landed last month (the opening lasts one month)',
+  explain: `Invite ${who === 'cn' ? 'a rival' : NAME[who]} to a forum to end the conflict. The % is your estimate that they accept. Accepted: a ceasefire next month (escalatory moves cost more at home, and breaking it costs credibility), the ladder steps down a rung, and if the ceasefire holds the crisis ends in a settlement. Declined: a small loss of credibility.`,
+  ...(who === 'cn' ? { follow: [q('to', 'Addressed to?', [['us', 'Washington', 'End it with the United States; Taipei follows.'], ['tw', 'Taipei', 'Talk to Taiwan directly, cutting Washington out.']])] } : {}),
+  ai: (s, w) => forumAi(s, w),
+  fx: () => {},                 // settled in the engine (js/forum.js settleForum)
+});
+export const FORUM = { us: make('us', 'cn'), tw: make('tw', 'cn'), cn: make('cn', 'us'), jp: make('jp', 'cn') };

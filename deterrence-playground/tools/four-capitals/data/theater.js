@@ -1,20 +1,66 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1, 2);
-export const AREAS = __m.AREAS;
-export const AREA_LABEL = __m.AREA_LABEL;
-export const AREA_SHORT = __m.AREA_SHORT;
-export const AREA_TEXT = __m.AREA_TEXT;
-export const COAST = __m.COAST;
-export const ISLAND = __m.ISLAND;
-export const SEA = __m.SEA;
-export const SECTOR_SEA = __m.SECTOR_SEA;
-export const SECTOR_VALUE = __m.SECTOR_VALUE;
-export const SIDE = __m.SIDE;
-export const STANCES = __m.STANCES;
-export const STANCE_LABEL = __m.STANCE_LABEL;
-export const STANCE_TEXT = __m.STANCE_TEXT;
-export const START_EMPH = __m.START_EMPH;
-export const START_STANCE = __m.START_STANCE;
-export const WAR = __m.WAR;
-export const adjacent = __m.adjacent;
-export const moveCost = __m.moveCost;
+// The theater board: four sea areas plus each side's rear, and Taiwan's coast in four landing sectors plus an
+// inland reserve. Region level only (no beaches, no coordinates). Strengths are notional, not orders of battle.
+export const SEA = ['north', 'strait', 'south', 'east'];
+export const AREAS = [...SEA, 'rear'];
+export const COAST = ['nw', 'cw', 'sw', 'ec'];
+export const ISLAND = [...COAST, 'res'];
+export const AREA_LABEL = {
+  north: 'North', strait: 'Strait', south: 'South', east: 'East', rear: 'Rear', transit: 'In transit',
+  nw: 'Northwest coast', cw: 'Central-west coast', sw: 'Southwest coast', ec: 'East coast', res: 'Inland reserve',
+};
+export const AREA_SHORT = { nw: 'NW', cw: 'CW', sw: 'SW', ec: 'E', res: 'Res' };
+export const AREA_TEXT = {
+  north: 'East China Sea and Japan’s southwest islands',
+  strait: 'The Taiwan Strait',
+  south: 'The Luzon Strait and the approaches south of Taiwan',
+  east: 'The Philippine Sea east of Taiwan',
+  rear: 'Home waters, bases and staging areas, out of the fight',
+  nw: 'Taoyuan–Hsinchu region, the approach to the capital',
+  cw: 'The Taichung region',
+  sw: 'The Tainan–Kaohsiung region and the southern ports',
+  ec: 'The Hualien–Taitung region on the Pacific side',
+  res: 'Inland reserve that can reach any coast',
+};
+const ADJ = {
+  north: ['strait', 'east'], strait: ['north', 'south'], south: ['strait', 'east'], east: ['north', 'south'],
+  nw: ['cw', 'ec', 'res'], cw: ['nw', 'sw', 'res'], sw: ['cw', 'ec', 'res'], ec: ['nw', 'sw', 'res'], res: ['nw', 'cw', 'sw', 'ec'],
+};
+export const adjacent = (a, b) => !!ADJ[a]?.includes(b);
+
+/** Base route cost from a to b (before the formation's type multiplier), or null if not a route. */
+export function moveCost(a, b) {
+  if (a === b) return null;
+  if (ISLAND.includes(a) !== ISLAND.includes(b)) return null;
+  if (a === 'rear' || b === 'rear') return 2;
+  return adjacent(a, b) ? 1 : null;
+}
+
+// Landing sectors: which sea area gives access (China must hold one, with amphibious forces in it), and how
+// much a successful landing there costs Taiwan's position (the northwest is tied to the capital).
+export const SECTOR_SEA = { nw: ['strait', 'north'], cw: ['strait'], sw: ['strait', 'south'], ec: ['east'] };
+export const SECTOR_VALUE = { nw: 38, cw: 30, sw: 30, ec: 22 };
+
+export const STANCES = ['defend', 'contest', 'attack'];
+export const STANCE_LABEL = { defend: 'Defend', contest: 'Contest', attack: 'Attack' };
+export const STANCE_TEXT = {
+  defend: 'Hold what you have: 1.5× defence, but you cannot take the area. No fuel upkeep.',
+  contest: 'Deny the area to the other side. ½ fuel per formation a month.',
+  attack: 'Try to take the area: heavier losses on both sides, a higher nuclear shadow, 1 fuel per formation a month.',
+};
+export const START_STANCE = { cn: 'contest', us: 'contest', jp: 'defend', tw: 'defend' };
+export const SIDE = { cn: 'red', us: 'blue', jp: 'blue', tw: 'blue' };
+export const START_EMPH = { cn: 'nw', tw: 'nw', us: 'nw' };
+
+export const WAR = {
+  peaceHold: 2,       // ratio to hold an area below Limited strikes
+  warHold: 1.5,       // ratio to hold once fighting
+  k: 0.22,            // losses per month = k x enemy strength x multipliers x roll(0.7–1.3)
+  defend: { taken: 0.67, dealt: 0.8 },
+  attack: { taken: 1.15, dealt: 1.25 },
+  twLand: 0.25,       // share of Taiwan's island ground forces that counts in the Strait (coastal defences)
+  twAir: 0.5,         // share of Taiwan's air force that counts in the Strait
+  support: 0.5,       // air formations add this share to neighbouring sea areas once the shooting starts
+  strikeTaken: 0.3,   // strike formations fire from far away and take a fraction of the losses
+  noMun: 0.4,         // floor on damage dealt when a capital runs out of munitions
+  massing: 3,         // strength moved into one sea area in a month that reads as an escalatory act
+};

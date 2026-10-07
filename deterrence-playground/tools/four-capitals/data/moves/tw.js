@@ -1,3 +1,83 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1, 2);
-export const TW = __m.TW;
+// Taiwan's moves. Illustrative game design; see cn.js for the conventions.
+import { T, chose, at, q } from '../ops.js';
+
+const COAST = q('coast', 'Where?', [['res', 'Inland reserve', 'Can reach any coast.'], ['nw', 'Northwest coast', 'Taoyuan–Hsinchu, the approach to the capital.'], ['cw', 'Central-west coast', 'The Taichung region.'], ['sw', 'Southwest coast', 'Tainan–Kaohsiung and the southern ports.'], ['ec', 'East coast', 'Hualien–Taitung.']]);
+export const TW = [
+  // Diplomatic
+  { id: 'tw_talks', line: 'D', to: 'cn', label: 'Signal openness to talks', tags: ['talks', 'soft'], base: 0.7,
+    explain: 'Offer dialogue without preconditions. Counts toward a settlement if Beijing talks too.',
+    f: s => [s.tw < 40 && ['Talking from weakness', -10]],
+    fx: (s, m) => { T(s, 'nuke', -3 * m); T(s, 'coal', 2 * m); } },
+  { id: 'tw_lobby', line: 'D', to: 'us', label: 'Lobby partner capitals', tags: [], base: 0.6,
+    explain: 'Make Taiwan’s case abroad.',
+    follow: [q('where', 'Where?', [['us', 'Washington', 'Congress and the White House.'], ['jp', 'Tokyo', 'The Diet and the ruling party: Japan’s support at home.']])],
+    f: s => [s.pressed && ['Washington is pressing Taipei to talk', -15]],
+    fx: (s, m, o) => { T(s, 'coal', 7 * m); if (o.where === 'jp') T(s, 'jp.support', 3 * m); else T(s, 'us.support', 3 * m); } },
+  { id: 'tw_status', line: 'D', to: 'cn', label: 'Reaffirm the status quo', tags: ['soft'], base: 0.8,
+    explain: 'Promise no moves toward formal independence. Takes away a pretext and reassures partners.',
+    fx: (s, m) => { T(s, 'coal', 4 * m); T(s, 'nuke', -3 * m); T(s, 'cn.support', -2 * m); } },
+  // Information
+  { id: 'tw_resil', line: 'I', to: 'tw', label: 'Counter disinformation and steady the public', tags: [], base: 0.7,
+    explain: 'Rapid rebuttals, trusted messengers and regular public briefings.',
+    fx: (s, m) => { T(s, 'tw.support', 7 * m); } },
+  { id: 'tw_expose', line: 'I', to: 'us', label: 'Publicize PLA actions with evidence', tags: [], base: 0.7,
+    explain: 'Show the world what is happening around the island.',
+    fx: (s, m) => { T(s, 'coal', 5 * m); T(s, 'cn.support', -1 * m); } },
+  { id: 'tw_drills', line: 'I', to: 'tw', label: 'Civil defense drills', tags: [], base: 0.8,
+    explain: 'Shelters, first aid, supply points. Builds confidence and cuts losses if strikes come.',
+    fx: (s, m) => { T(s, 'tw.support', 4 * m); } },
+  // Intelligence
+  { id: 'tw_ci', line: 'N', to: 'cn', label: 'Root out infiltration and intrusions', tags: [], base: 0.7,
+    explain: 'Counter-intelligence sweep: blunts Beijing’s cyber and influence moves this month.',
+    fx: (s, m) => { T(s, 'tw.support', 3 * m); } },
+  { id: 'tw_warn', line: 'N', to: 'us', label: 'Share early-warning data with partners', tags: [], base: 0.75,
+    explain: 'Next month you see China’s forces exactly, everywhere and through any deception; partners trust you more.', ai: s => (s.rung >= 1 ? 1 : 0.5),
+    fx: (s, m) => { T(s, 'coal', 4 * m); if (m >= 0.5) s.sharpNext.tw = true; } },
+  // Law enforcement
+  { id: 'tw_cgescort', line: 'L', to: 'tw', label: 'Coast guard escorts for supply ships', tags: [], base: 0.65, cost: { fuel: 1 }, req: at(1, 'Nothing to escort through yet'),
+    explain: 'Use coast guard ships, not the navy, to shepherd cargo past “inspections”.',
+    fx: (s, m) => { T(s, 'tw', 3 * m); T(s, 'tw.economy', 2 * m); } },
+  { id: 'tw_cgexpel', line: 'L', to: 'cn', label: 'Coast guard shadows and expels Chinese vessels', tags: [], base: 0.7, cost: { fuel: 0.5 },
+    explain: 'Meet China’s coast guard, militia and “fishing boats” ship for ship. Blunts gray-zone pressure this month (patrols −20, militia −15, cable cutters −10).',
+    fx: (s, m) => { T(s, 'tw.support', 3 * m); T(s, 'coal', 1 * m); } },
+  { id: 'tw_outlying', line: 'L', to: 'tw', label: 'Reinforce the outlying islands', tags: [], base: 0.75, cost: { lift: 1 }, budget: true,
+    explain: 'More coast guard and supplies for Kinmen, Matsu and Pratas.',
+    fx: (s, m) => { T(s, 'tw.support', 3 * m); T(s, 'tw', 1 * m); } },
+  // Financial
+  { id: 'tw_markets', line: 'F', to: 'tw', label: 'Stabilize markets and the currency', tags: [], base: 0.7, opp: true,
+    avail: s => s.shock >= 18 || s.c.tw.economy < 50, oppWhy: s => `the global economic shock is 18 or more, or Taiwan’s economy is below 50 (now ${Math.round(s.shock)} and ${Math.round(s.c.tw.economy)})`, explain: 'Opportunity: markets are falling. Use reserves and controls to steady them.',
+    fx: (s, m) => { T(s, 'tw.economy', 6 * m); T(s, 'shock', -2 * m); } },
+  { id: 'tw_buy', line: 'F', to: 'us', label: 'Fund emergency arms purchases', tags: ['esc'], base: 0.7, budget: true,
+    explain: 'Spend now for weapons that can be in Taiwan quickly: on success +1 strength in the inland reserve and +2 munitions.',
+    fx: (s, m, o, c) => { T(s, 'tw.economy', -4); if (m >= 0.5) { c.add('tw', 'res', 1); s.res.tw.mun += 2; } } },
+  // Economic
+  { id: 'tw_ration', line: 'E', to: 'tw', label: 'Ration energy and draw down reserves', tags: [], base: 0.8,
+    explain: 'Stretch fuel and power to ride out a quarantine or blockade: +1.5 fuel on success.',
+    fx: (s, m) => { T(s, 'tw.economy', (s.blockade || s.rung >= 1 ? 6 : 2) * m); T(s, 'tw.support', -2); s.res.tw.fuel += 1.5 * m; } },
+  { id: 'tw_chips', line: 'E', to: 'us', label: 'Use chip supply as leverage', tags: [], base: 0.6,
+    explain: 'Remind the world what Taiwan makes. Pulls partners in, and rattles markets.',
+    fx: (s, m) => { T(s, 'coal', 6 * m); T(s, 'shock', 3 * m); }, ai: () => 1 },
+  { id: 'tw_cablefix', line: 'E', to: 'tw', label: 'Repair cables and switch to backup links', tags: [], base: 0.8, opp: true, cost: { lift: 1 },
+    avail: s => s.cables > 0, oppWhy: s => `Taiwan’s undersea cables are cut (${s.cables} more month${s.cables === 1 ? '' : 's'} to repair otherwise)`,
+    explain: 'Opportunity: cables are down. Send repair ships and switch traffic to satellite and microwave backups.',
+    fx: (s, m) => { s.cables = Math.floor((s.cables || 0) * (1 - m)); T(s, 'tw.support', 2 * m); T(s, 'tw.economy', 2 * m); } },
+  { id: 'tw_trade', line: 'E', to: 'jp', label: 'Shift trade to friendly markets', tags: [], base: 0.65,
+    explain: 'Redirect exports and finance away from the mainland.',
+    fx: (s, m) => { T(s, 'tw.economy', 4 * m); T(s, 'cn.economy', -1 * m); } },
+  // Military
+  { id: 'tw_mobilize', line: 'M', to: 'tw', label: 'Call up reserves', tags: ['esc'], base: 0.75, grant: { lift: 1, ready: 10 }, once: true, budget: true,
+    explain: 'Fill out units for defense: +2 strength where you send them, +10 readiness everywhere and +1 Lift. Costs the economy. The reserves stay called up.',
+    follow: [COAST],
+    fx: (s, m, o, c) => { if (m > 0) c.add('tw', o.coast || 'res', 2 * m); T(s, 'tw.economy', -4); } },
+  { id: 'tw_disperse', line: 'M', to: 'tw', label: 'Disperse and harden forces', tags: [], base: 0.75, cost: { lift: 1 }, once: true,
+    explain: 'Scatter aircraft, launchers and stocks so strikes find less, from now on: China’s missile strikes −20 for the rest of the game.',
+    ai: s => (s.twDispersed ? 0 : s.rung >= 2 ? 5 : s.rung >= 1 ? 2 : 0.5),
+    fx: (s, m) => { if (m >= 0.5) s.twDispersed = true; } },
+  { id: 'tw_decoy', line: 'M', to: 'cn', label: 'Decoys and camouflage', tags: [], base: 0.75, cost: { lift: 1 },
+    explain: 'Dummy launchers, fake radar sites and hidden units. China’s missile strikes this month −10; next month China, without surveillance, sees your forces as larger than they are.',
+    ai: s => (s.rung >= 2 ? 1 : 0.3),
+    fx: (s, m) => { if (m > 0) s.deceiveNext.tw = { mode: 'inflate', m }; } },
+  { id: 'tw_counter', line: 'M', to: 'cn', label: 'Strike invasion staging areas', tags: ['esc'], base: 0.5, rung: 4, unlock: 3, cost: { mun: 2 },
+    explain: 'Hit ports and assembly areas across the Strait. Slows an invasion; raises the nuclear shadow.',
+    fx: (s, m, o, c) => { c.hit('cn', 'strait', 1.5 * m); T(s, 'nuke', 9); T(s, 'cn.support', 4); if (m >= 0.5) s.struck.mainland++; } },
+];

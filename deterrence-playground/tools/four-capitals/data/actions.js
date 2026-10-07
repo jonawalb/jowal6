@@ -1,18 +1,50 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1, 2);
-export const ACTIONS = __m.ACTIONS;
-export const BY_ID = __m.BY_ID;
-export const LINES = __m.LINES;
-export const LINE_SHORT = __m.LINE_SHORT;
-export const MAX_MOVES = __m.MAX_MOVES;
-export const OWNER = __m.OWNER;
-export const POSTURES = __m.POSTURES;
-export const T = __m.T;
-export const TO = __m.TO;
-export const answers = __m.answers;
-export const escRoom = __m.escRoom;
-export const isEsc = __m.isEsc;
-export const menu = __m.menu;
-export const onMenu = __m.onMenu;
-export const posturesFor = __m.posturesFor;
-export const usedUp = __m.usedUp;
+// Postures and the strategic move menus (per country in data/moves/). Every number is illustrative game design.
+// A move: { id, line, to, label, explain, tags, base, rung?, unlock?, maxRung?, opp?, avail?, oppWhy?, once?, cost?, grant?, fast?, follow?, req?, f?, fx, budget?, forum? }.
+// budget: a Taiwanese budget-type move the legislature votes on (js/politics.js); forum: the peace-forum call (js/forum.js).
+// opp: an opportunity move, on the menu only while avail(s) holds; oppWhy(s) says the condition in words.
+// once: the move's effect lasts the game, so it can be carried out once (engine-enforced; see blockedWhy).
+// tags: 'esc' escalatory, 'soft' accommodating, 'gray' gray-zone pressure below military action, 'talks'.
+// fx(s, m, o, ctx) is linear in m (1 success, 0.5 partial, 0 failure) so the computer can plan with m = p.
+// req(s, o, moves) and f(s, moves, who, o, final): `final` is true when the month resolves (hidden choices known).
+// cost { lift, fuel, mun, ready } (or a function of the follow-up answers) is paid when chosen; grant adds resources.
+import { CN } from './moves/cn.js';
+import { US } from './moves/us.js';
+import { TW } from './moves/tw.js';
+import { JP } from './moves/jp.js';
+import { FORUM } from './moves/forum.js';
+export { T } from './ops.js';
+
+export const POSTURES = [
+  { id: 'stand', label: 'Stand down', level: -2, maxEsc: 0, explain: 'Pull back forces and rhetoric. Reads as weakness or as good faith. No escalatory (▲) moves.' },
+  { id: 'deesc', label: 'De-escalate', level: -1, maxEsc: 1, explain: 'Lower the temperature while keeping your options. At most one escalatory (▲) move.' },
+  { id: 'hold', label: 'Hold', level: 0, explain: 'Keep your current stance.' },
+  { id: 'esc', label: 'Escalate', level: 1, explain: 'Raise readiness and harden your public line. Your military moves get +5.' },
+  { id: 'nuke', label: 'Nuclear signal', level: 2, only: ['us', 'cn'], minRung: 2, explain: 'Put nuclear forces on visible alert. A loud signal that also raises the nuclear shadow for everyone.' },
+];
+
+export const ACTIONS = { cn: [...CN, FORUM.cn], us: [...US, FORUM.us], tw: [...TW, FORUM.tw], jp: [...JP, FORUM.jp] };
+export const BY_ID = Object.fromEntries(Object.values(ACTIONS).flat().map(a => [a.id, a]));
+export const TO = Object.fromEntries(Object.values(BY_ID).map(a => [a.id, a.to]));
+/** Which capital a move belongs to. */
+export const OWNER = Object.fromEntries(Object.entries(ACTIONS).flatMap(([w, l]) => l.map(a => [a.id, w])));
+/** Has this once-a-game move already been carried out? */
+export const usedUp = (s, id) => !!BY_ID[id].once && !!s.used?.[OWNER[id]]?.includes(id);
+export const LINES = { D: 'Diplomatic', I: 'Information', M: 'Military', E: 'Economic', F: 'Financial', N: 'Intelligence', L: 'Law enforcement' };
+export const LINE_SHORT = { D: 'Dip', I: 'Info', M: 'Mil', E: 'Econ', F: 'Fin', N: 'Intel', L: 'Law' };
+/** Strategic moves a capital may choose each month. */
+export const MAX_MOVES = 4;
+
+/** How many escalatory moves a posture allows (Infinity if no limit). */
+export const escRoom = posture => { const p = POSTURES.find(x => x.id === posture); return p && p.maxEsc != null ? p.maxEsc : Infinity; };
+export const isEsc = id => BY_ID[id].tags.includes('esc');
+/** Postures open to a capital (only the nuclear-armed can signal, and only from Blockade up). */
+export const posturesFor = (who, s) => POSTURES.filter(p => (!p.only || p.only.includes(who)) && (!s || !p.minRung || s.rung >= p.minRung));
+/** Is a move on the menu this month (rung unlocks, opportunity conditions)? */
+export const onMenu = (s, a) => (a.unlock == null || s.rung >= a.unlock) && (a.maxRung == null || s.rung <= a.maxRung) && (!a.avail || a.avail(s));
+export const menu = (s, who) => ACTIONS[who].filter(a => onMenu(s, a));
+/** Follow-up answers with defaults (first option) filled in. */
+export function answers(id, given = {}) {
+  const a = BY_ID[id], o = {};
+  for (const fq of a.follow || []) o[fq.id] = fq.opts.some(x => x.id === given[fq.id]) ? given[fq.id] : fq.opts[0].id;
+  return o;
+}

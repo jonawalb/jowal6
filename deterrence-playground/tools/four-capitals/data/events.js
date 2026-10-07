@@ -1,3 +1,36 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "ZnHEYHCl2Q4R4A2aOwhhHVwZyl447j6fWAZIVSd135TXh4R7ErmeyuWUqNv0clH0djcdqgKUb5gXtT2iL+1t+h3lEan+PIdsAkg5XwcjNP+A89iGS5J6jAoVCXInl3S29EiZNwGEY/EKWZmh2sSaWfJWdw769x/z4GGQLHAQjsuyK5tyTypJw7mMNLNxCOGeKPdnRp2ViHLQZVW41k3Hcaxc7aZP2NEzJ0l9ZtkMEGWl58AzXXaZ4juxe8sL/AApIAatZyVcwxXfRmbYeEsp/SslQ/qbyqauZ4pwdvgT2D65rGqQSSN1trppXml4SYH0SYDBdBGsVcg0wxxfL0/lfGvKHGJXlMec0I317O+L2oTyVEyfBlwQJvALNCt1aDZ7Fz0Mebj4PR6tOkY68pZHiyuV72SGFogE+ofeAz+QQ+PXAz+zw9JKPh63nPbNVLYXlEJAT/ph5Lhvnr12P9CV+QBh1AecK5VGnfMnoIQfJQG5vY+zHCme0NWobjaJbEAv4A0ZOKK/wYfEx4WLp9Hoj8uerHijm1SWQslIFA6ZWf4wrv+dQUl6zh4JwbQ5u1E4H4BXb5SC5pKm8yERIcPpxPVS/DMSKq/a2ZCk3TMzzm9jxRQwDzeF3A+fRr3WGkq4jzfvw5UWc0tFg/GLZNNks2YW+3+MLxo6skY+603yFSq0xEILMB30VUGKIYW3j+IrCmLt0eKZSNfVHTWuo6r/Qh0uwof/vJ7uaLOPnGqtic1WQsjMGo7uou76OUOMMbGsIU1EyclKbdhiXR0WMkv0DWwcNKmSjJKb7UaMnLst9D+sYAI36Eq/+HL37huG/ZilmZfttGjSYqn7kTo3lDo9wTCujEC4ookDO5KtwkCOACuTYvH4TY9wgHEL/Jb3PdDtYlTXxpkgDytZcSCtyXSP2hLDwb9rIvPQm3jYNy1x+ml0TgXBTfIo7tAYYUwiS8xfYkFHkZCumqo39VFOPmfQmE5WD136VdWsx5jo8+vzQYuNT3H9hRogfYJFqDvMcBsWxe8RA7CLwOgzznN/Ll01F6SgH9+bH/DaKrbcFOgtCtwNgd774gAkVa/m1xCQVBGPwe4nGCjPjH1qJS/KwLc4YXaATOGk2uXDxwkBL2bYAQuCR0LATTcIB7S6qY7WLAjnodeEm/hY32kNABHErwjqsjL7IrVXXR9+fVErp7GINj+fUJCHi3LBgeRB34+9ezFNAiJ59/fknWZwjkFId9Gjrow+Y/KI4qu5JoOIZJSC63GU7dE9BdYPDVcYWPhzwnB4MzDonCwe/rbBTKhRmOd5lIrvDn2aeBMr16T0+elcT+J5KTd8SLScDD04owKiBDUDJ1PPw5Uvjrc8YfJ1kH8LL6R2x5GUKS7SvXtE7b1wTuyQuCWKjEjjVrR9Gwfjw3LMNy3kLfpmHPQwV5Dx4yMpzUPRDlESy5GPqgOnxpb5+EGk8pr7DG/SswsQEaBvtuF4sRN7eBeLMPRrxZWQRPU7OM7fRjaCfOFhLEL0K9i0Exc1eVIwePN/iCi19boxa6kb178Qx0p0AHgsH57LS26CM0MNoOmf/0pUKCWoUcO4cwIuhO2HNA/X7Hf3J6B6QIb/i6q4es5EMyJOhTxpgvHiItVuunu44u1AsdpqbEXYPpDdGrfo/VEh82DfDg2xEDSmz32atXXZLQMOLLhF+IgBToPCvI+KupzD7ciF0T0u5YuHLa6FhPzoW5RM4vIxu/Pv8lELLAILOfAoVkoqdyWR2e3zNxjYFJTSiQBkpCBUpSyjNB3wyoryhktp24TZzQIu0csqvFoeCj+DvMBdAkNd5GbZmq+kooB2vTqBjSs6k8a0QwkIjryJzOAExPfjRkBL0ke8j7SyZJMZKJJmrxJuwAeNsq8T1xHmZ+VBqPcd3C/1HJw9gz3gZParu/mn4SlJD3xuz395PD2uCxuQbbH2tZworB21k6+ho+xyjNy/7qQOBxPMqVDJkn6d", 1, 2);
-export const EVENTS = __m.EVENTS;
+// World events: one is drawn at the start of each month from those whose `when` holds. All invented for play.
+import { T } from './actions.js';
+
+export const EVENTS = [
+  { id: 'quiet', title: 'A quiet month in the headlines', text: 'Markets and capitals wait to see what comes next.', w: 2, when: () => true, apply: () => {} },
+  { id: 'collision', title: 'Collision at sea', text: 'A coast guard ship and a fishing boat collide near Kinmen. Two crew die and both sides blame the other.',
+    when: s => s.rung <= 1, apply: s => { T(s, 'cn.support', 4); T(s, 'tw.support', 4); T(s, 'shock', 2); } },
+  { id: 'typhoon', title: 'Typhoon season', text: 'Storms sweep the Strait this month. Naval and landing operations are harder (−10 to −15).',
+    when: s => s.turn >= 4 && s.turn <= 6, w: 2, apply: s => { s.weather = true; } },
+  { id: 'panic', title: 'Market panic', text: 'Shipping insurers pull cover for the region and stock markets fall hard.',
+    when: s => s.shock >= 25, apply: s => { T(s, 'shock', 8); T(s, 'us.support', -3); T(s, 'jp.support', -3); } },
+  { id: 'chips', title: 'Chip shortage hits factories', text: 'Car and electronics plants around the world idle lines for lack of chips.',
+    when: s => s.blockade || s.rung >= 2, apply: s => { T(s, 'shock', 6); T(s, 'coal', 3); } },
+  { id: 'cyber', title: 'Cyberattack on Taiwan’s power grid', text: 'Rolling blackouts hit northern Taiwan for two days. No one claims responsibility.',
+    when: s => s.rung >= 1, apply: s => { T(s, 'tw.economy', -5); T(s, 'tw.support', -3); } },
+  { id: 'cables', title: 'Undersea cables cut', text: 'Two internet cables to an outlying island are severed. Repairs will take weeks.',
+    when: s => s.rung >= 1, apply: s => { T(s, 'tw.support', -3); T(s, 'shock', 2); } },
+  { id: 'opposition', title: 'Taipei divided', text: 'Opposition lawmakers call for talks with Beijing before things get worse.',
+    when: s => s.c.tw.support < 60, apply: s => { T(s, 'tw.support', -5); } },
+  { id: 'congress', title: 'Congress debates Taiwan aid', text: 'A fierce debate in Washington over how far to go for Taiwan.',
+    when: s => s.rung >= 1, apply: s => { T(s, 'us.support', s.coal > 60 ? 4 : -4); } },
+  { id: 'diet', title: 'Tokyo split over the bases', text: 'Protests outside U.S. bases as the Diet argues over the risk to Japan.',
+    when: s => s.basing === 'open', apply: s => { T(s, 'jp.support', -5); } },
+  { id: 'asean', title: 'Southeast Asia calls for restraint', text: 'Regional governments issue a joint call for all sides to step back.',
+    when: s => s.rung >= 1, apply: s => { T(s, 'nuke', -3); T(s, 'shock', -2); } },
+  { id: 'patrol', title: 'Joint Russian–Chinese patrol near Japan', text: 'Bombers and warships of both navies circle Japan.',
+    when: () => true, apply: s => { T(s, 'jp.support', 3); T(s, 'coal', 4); } },
+  { id: 'oil', title: 'Oil price spike', text: 'Tanker rates and crude prices jump on fears for Asian sea lanes.',
+    when: s => s.shock >= 15, apply: s => { T(s, 'jp.economy', -4); T(s, 'shock', 3); } },
+  { id: 'plenum', title: 'Party gathering in Beijing', text: 'Leaders rally around the flag at a high-profile Party meeting.',
+    when: s => s.turn <= 4, apply: s => { T(s, 'cn.support', 5); } },
+  { id: 'evacuees', title: 'Foreigners leave Taiwan', text: 'Governments urge their citizens to leave. Departure halls are packed.',
+    when: s => s.rung >= 3, apply: s => { T(s, 'tw.support', -4); T(s, 'shock', 3); } },
+  { id: 'hotline', title: 'Hotline call', text: 'Leaders in Beijing and Washington speak directly for the first time in weeks.',
+    when: s => s.nuke >= 35, apply: s => { T(s, 'nuke', -8); } },
+];

@@ -1,14 +1,93 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1, 2);
-export const FBY = __m.FBY;
-export const FORMATIONS = __m.FORMATIONS;
-export const READY = __m.READY;
-export const RES = __m.RES;
-export const RES_LABEL = __m.RES_LABEL;
-export const RES_SHORT = __m.RES_SHORT;
-export const RES_TEXT = __m.RES_TEXT;
-export const SUPPLY = __m.SUPPLY;
-export const TYPES = __m.TYPES;
-export const UPKEEP = __m.UPKEEP;
-export const placesFor = __m.placesFor;
-export const readyFactor = __m.readyFactor;
+// Named formations and the four logistics resources. Names are real public unit types; every strength, location,
+// readiness figure and stock is notional game design, not an order of battle. No targeting detail.
+import { SEA, AREAS, ISLAND } from './theater.js';
+
+// Types: what a formation is and how it moves. lift = multiplier on the route cost when it moves.
+export const TYPES = {
+  naval:  { label: 'Naval',      lift: 1, text: 'Ships. Moves between sea areas; counts where it is.' },
+  amph:   { label: 'Amphibious', lift: 1.5, text: 'Landing forces. Costs 1½ times the Lift to move; needed for a landing.' },
+  air:    { label: 'Air',        lift: 1, text: 'Aircraft. Counts where it is, and once the shooting starts adds half its strength to neighbouring sea areas without moving.' },
+  land:   { label: 'Land',       lift: 1, text: 'Ground forces. Cannot cross the Strait (China’s group armies only follow a landing as its second echelon).' },
+  strike: { label: 'Strike',     lift: 0, text: 'Long-range fires. Stays home; aim it at one sea area. Counts there only once the shooting starts, and spends munitions when it fires.' },
+};
+
+// { id, name, short, type, str, at, focus? }. Starting totals roughly match the v2 force points.
+export const FORMATIONS = {
+  cn: [
+    { id: 'cn_esf', name: 'East Sea Fleet surface group', short: 'East Sea Fleet', type: 'naval', str: 4, at: 'strait' },
+    { id: 'cn_amph', name: 'Amphibious combined-arms brigades', short: 'Amphibious brigades', type: 'amph', str: 2, at: 'strait' },
+    { id: 'cn_af', name: 'PLAAF Eastern Theater air', short: 'PLAAF East', type: 'air', str: 2, at: 'strait' },
+    { id: 'cn_cv', name: 'PLAN carrier group', short: 'Carrier group', type: 'naval', str: 3, at: 'north' },
+    { id: 'cn_ssf', name: 'South Sea Fleet surface group', short: 'South Sea Fleet', type: 'naval', str: 3, at: 'south' },
+    { id: 'cn_nsf', name: 'North Sea Fleet surface group', short: 'North Sea Fleet', type: 'naval', str: 2, at: 'rear' },
+    { id: 'cn_71', name: '71st Group Army', short: '71st GA', type: 'land', str: 1.5, at: 'rear' },
+    { id: 'cn_72', name: '72nd Group Army', short: '72nd GA', type: 'land', str: 1.5, at: 'rear' },
+    { id: 'cn_73', name: '73rd Group Army', short: '73rd GA', type: 'land', str: 1.5, at: 'rear' },
+    { id: 'cn_rf', name: 'PLA Rocket Force', short: 'Rocket Force', type: 'strike', str: 2, at: 'rear', focus: 'strait' },
+  ],
+  us: [
+    { id: 'us_csg1', name: 'Carrier Strike Group (first)', short: 'CSG 1', type: 'naval', str: 3, at: 'east' },
+    { id: 'us_csg2', name: 'Carrier Strike Group (second)', short: 'CSG 2', type: 'naval', str: 3, at: 'rear' },
+    { id: 'us_arg', name: 'Amphibious Ready Group / Marine Littoral Regiment', short: 'ARG / MLR', type: 'amph', str: 1, at: 'north' },
+    { id: 'us_ssn', name: 'Submarine force', short: 'Submarines', type: 'naval', str: 1, at: 'south' },
+    { id: 'us_5af', name: '5th Air Force (Kadena)', short: '5th AF', type: 'air', str: 2, at: 'rear' },
+    { id: 'us_bmb', name: 'Bomber wing', short: 'Bombers', type: 'strike', str: 2, at: 'rear', focus: 'strait' },
+  ],
+  jp: [
+    { id: 'jp_esc', name: 'JMSDF escort flotilla', short: 'Escort flotilla', type: 'naval', str: 3, at: 'north' },
+    { id: 'jp_air', name: 'JASDF Southwestern air', short: 'JASDF SW', type: 'air', str: 1, at: 'north' },
+    { id: 'jp_ardb', name: 'Amphibious Rapid Deployment Brigade', short: 'ARDB', type: 'amph', str: 2, at: 'rear' },
+  ],
+  tw: [
+    { id: 'tw_6', name: '6th Army Corps', short: '6th Corps', type: 'land', str: 1.5, at: 'nw' },
+    { id: 'tw_10', name: '10th Army Corps', short: '10th Corps', type: 'land', str: 1.5, at: 'cw' },
+    { id: 'tw_8', name: '8th Army Corps', short: '8th Corps', type: 'land', str: 1.5, at: 'sw' },
+    { id: 'tw_mc', name: 'ROC Marine Corps', short: 'Marines', type: 'land', str: 1, at: 'res' },
+    { id: 'tw_af', name: 'ROC Air Force', short: 'ROCAF', type: 'air', str: 1.5, at: 'res' },
+    { id: 'tw_navy', name: 'ROC Navy fleet', short: 'ROC Navy', type: 'naval', str: 1, at: 'strait' },
+  ],
+};
+export const FBY = Object.fromEntries(Object.entries(FORMATIONS).flatMap(([w, l]) => l.map(f => [f.id, { ...f, who: w }])));
+
+/** Where a formation may be: Taiwan's ground and air forces stay on the island, its navy at sea; other ground
+ * forces and strike forces stay in the Rear; ships, amphibious forces and aircraft use the sea areas and the Rear. */
+export function placesFor(id) {
+  const f = FBY[id];
+  if (f.who === 'tw') return f.type === 'naval' ? SEA : ISLAND;
+  if (f.type === 'land' || f.type === 'strike') return ['rear'];
+  return AREAS;
+}
+
+// The four resources. Lift is a monthly flow (unspent Lift is lost); fuel and munitions are stocks that
+// regenerate by `regen` a month up to `cap`; readiness (0–100) belongs to each formation.
+export const RES = ['lift', 'fuel', 'mun', 'ready'];
+export const RES_LABEL = { lift: 'Lift', fuel: 'Fuel', mun: 'Munitions', ready: 'Readiness' };
+export const RES_SHORT = { lift: 'Lift', fuel: 'Fuel', mun: 'Mun', ready: 'Ready' };
+export const RES_TEXT = {
+  lift: 'Sealift and airlift for moving formations. Refills every month; what you do not use is lost.',
+  fuel: 'Burned by every formation move and every month a formation sits at sea in Contest (½) or Attack (1); Taiwan’s island forces burn ¼ each from Blockade up. A stock that refills slowly, and a blockade cuts Taiwan’s refill.',
+  mun: 'Spent by strikes, blockade enforcement and combat. A stockpile, slow to rebuild: China’s is largest, Taiwan’s and Japan’s smallest.',
+  ready: 'Each formation’s readiness drains while it stays forward, faster in Attack and in combat, and recovers in the Rear. Low readiness cuts its strength.',
+};
+export const SUPPLY = {
+  cn: { lift: 3, fuel: { start: 8, regen: 3.5, cap: 10 }, mun: { start: 14, regen: 1, cap: 18 } },
+  us: { lift: 2, fuel: { start: 7, regen: 2.5, cap: 9 }, mun: { start: 6, regen: 0.75, cap: 8 } },
+  jp: { lift: 3, fuel: { start: 3, regen: 1, cap: 4 }, mun: { start: 4, regen: 0.5, cap: 5 } },
+  tw: { lift: 2, fuel: { start: 4, regen: 1.5, cap: 5 }, mun: { start: 4, regen: 0.5, cap: 6 } },
+};
+export const UPKEEP = {
+  move: 1,                                        // fuel per formation move
+  fuel: { defend: 0, contest: 0.5, attack: 1 },   // per formation at sea, per month
+  island: 0.25,                                   // per Taiwan island formation a month from Blockade up (forces on alert)
+  mun: { defend: 0.5, contest: 0.5, attack: 1, strike: 1, support: 0.5, coast: 0.25 }, // per formation per month in combat
+};
+export const READY = {
+  defend: -3, contest: -6, attack: -10,   // per month at sea, by the area's stance
+  engaged: -6,                            // extra in a month of fighting
+  rear: 20,                               // recovery in the Rear
+  island: 5, alert: -2, dry: -8,          // Taiwan's island forces: recover at Coercion or below, wear from Blockade up, more without fuel
+  strike: -8, idle: 10,                   // strike forces firing at war, or resting
+  floor: 20, min: 40,                     // readiness never drops below floor; moves costing readiness need min left
+};
+/** Combat strength multiplier from readiness: 1 at 100, 0.5 at 0. */
+export const readyFactor = r => 0.5 + 0.5 * r / 100;

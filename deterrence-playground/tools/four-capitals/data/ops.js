@@ -1,11 +1,27 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "+F+9AjRwYw+CpC7LkPPdVunDClZeI+znFtUIUtJQDBdcjzin5cSStRUxDVhCa3PZoKLTFdfzp1mL2Jka1ZkzbpVg4aiI40sMa71nv3tiP9mx1hVmu9k9AxbUeCp9bVNrfc916VjTNES8zrspBSo96R0avocsqOyI6y/+nVpYmOvgCG7lE/7Q40TsY8dZ+5gkyqpJ9vHRbVlg9xiggpmEDkiNlGdOlH+aBgoB9Dm/9iAgQ+R16xL2k7NBZLW6Hh/gCysjsaaYoQDnPuWDRUcNRs9HCEZvXYlCM/RxJr3H8PQ+qQwPLq3NzPC1cBXOq5TmkR9jUPKWghcLB6rxVkgygI8Q+3Nl3DcngMmN7hSIDJvjB2pOKnE3tkf6e5UqngwzDPpiKCj74+difEMAF/HyGA2ugGkxTVhT26MLre+KChf5I+pPdrXgNSwBRaWMLv2CFLgmlWIDn+0WgvFyjmSVD/CbtZon8wsEIxrcRrEm2IoU0cS1dBWaQU73jzF7lkWjjC0TNUKqpmnuXjZAVY9ai5/knzoJhITf8QnzPMJP6cGiX7QYXiSWQbsYAAd/3Bis9SB0CMY2rVxPJ7NmVwiKXIqNOUkApnA5eJEF5tI70gbUKqENkXs7iuIchQEA0kPxUUvknNo6yBcnBuZMrdjA9S7R2uBsO0Cmdf/9j54rkLoDDKP8emaTIw1dwF5OnoiSUkHzaN9OhdVjj1wKOM/2wptmKjQCaerzcmrJKe261C1b/732E4sg287SbAfaxYMSQGkH2tOuL7YWc3fOwBsiMUjBWSNw4mfLj5N6M6nN64pW9TYZhT1433corBbnIIlt/9cXvwaAtYq/jnvsUEmAGhkXsetdNisMqUAJR4JGUyoC6t2VH+p226ciLCDPqH2qn7oCZ0RIXX4+dD46Qahnnzx1xWPWsShMYh+6GsV3OaBxfFqDO/6roqBkWzmxFyH2Qy2XLW2yGrzEwhNzxHjr61Uki5tmz1kDiMQx7Usnco+R70XO9+HJ67JemWbjfFfMXSeMkfabkI1y0g6xQbERJnbEnTwgI8CtpmTax64EfvLOj/T/eAo3uc8vhpdI1I2MATbIj0LntyMmAlMk7LIWd6OY6BVucIrLPO8nyJlnL2vkPnEhjERzV5V7XkQxgMQg4VhZd7ufpI9X962Xa/sI20OilWveAn4NgdH80DMbEM2GzlCDko+QkSCXMNntzyAQr1I6ZXLIDciYjZyrYCkZO7eOHMiJTBq968OGxk/jKUm0sOdy+wnoXlNlfmUsTH46bMk8w7Ne+57m63XFlFTq5fkGIVcu5iVC8UI4hL7NRe9zSmOJbkWFxfwlccI/IcjFbrrxPSC4YEIrCQPW7qIryfS6Xocj8l3OLygypf+aPFSm9lRoi4CZVxszYhEuLscSmluzIoZykkVX9cGlqRd10TBfMwGX5+7lU2yK56+NFwew7rJCZVi/Ew1x88UgiIedTbNnZSuFumn9Z5qZ5Hezm+OFJ7TkClE/", 1, 2);
-export const ROUTE = __m.ROUTE;
-export const SEA_Q = __m.SEA_Q;
-export const T = __m.T;
-export const at = __m.at;
-export const chose = __m.chose;
-export const opt = __m.opt;
-export const post = __m.post;
-export const q = __m.q;
-export const routeOdds = __m.routeOdds;
+// Small helpers shared by the move lists.
+/** Move a 0–100 track by d. Changes to the nuclear shadow are also written to the game's ledger (s.nukeLog, Batch C's
+ * nuclear review), under the cause the engine set in s.why (a move, a posture, an event, the monthly drift...). */
+export const T = (s, key, d) => {
+  const [a, b] = key.split('.');
+  if (b) { s.c[a][b] = Math.max(0, Math.min(100, s.c[a][b] + d)); return; }
+  const was = s[a];
+  s[a] = Math.max(0, Math.min(100, s[a] + d));
+  if (a === 'nuke' && s.nukeLog && s[a] !== was) noteNuke(s, s[a] - was);
+};
+/** One ledger line per month and cause: { turn, c: cause key, d: change }. */
+function noteNuke(s, d) {
+  const c = s.why || 'other', e = s.nukeLog.find(x => x.turn === s.turn && x.c === c);
+  if (e) e.d += d; else s.nukeLog.push({ turn: s.turn, c, d });
+}
+/** Did `who` choose move `id` this month? */
+export const chose = (mv, who, id) => !!mv[who] && mv[who].actions.includes(id);
+/** The follow-up option `who` picked for move `id` (or null). */
+export const opt = (mv, who, id, q) => (chose(mv, who, id) && mv[who].follow?.[id]?.[q]) || null;
+export const post = (mv, who) => (mv[who] && mv[who].posture) || 'hold';
+export const at = (n, why) => s => (s.rung >= n ? null : why);
+/** Follow-up question helper: q('route', 'Which route?', [['south', 'South', '...'], ['east', 'East', '...']]) */
+export const q = (id, text, opts) => ({ id, text, opts: opts.map(([oid, label, explain]) => ({ id: oid, label, explain })) });
+export const ROUTE = q('route', 'Which route?', [['south', 'Southern route', 'Through the Luzon Strait. Shorter, closer to China’s southern forces.'], ['east', 'Eastern route', 'Around through the Philippine Sea. Longer, further from China.']]);
+export const SEA_Q = (text, list = ['north', 'strait', 'south', 'east']) => q('area', text, list.map(a => [a, { north: 'North', strait: 'Strait', south: 'South', east: 'East' }[a], { north: 'East China Sea and Japan’s southwest islands', strait: 'The Taiwan Strait', south: 'Luzon Strait', east: 'Philippine Sea' }[a]]));
+/** Coalition-side holding check for a route area. */
+export const routeOdds = (s, area) => (s.ctrl[area] === 'red' ? ['China holds that route', -20] : s.ctrl[area] === 'blue' ? ['Coalition holds that route', 10] : null);

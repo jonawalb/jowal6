@@ -1,3 +1,71 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1, 2);
-export const JP = __m.JP;
+// Japan's moves. Illustrative game design; see cn.js for the conventions.
+import { T, chose, at, q, ROUTE, routeOdds } from '../ops.js';
+import { P } from '../params.js';
+
+export const JP = [
+  // Diplomatic
+  { id: 'jp_basing', line: 'D', to: 'us', label: 'Open bases to U.S. combat operations', tags: ['esc'], base: 0.75,
+    explain: 'Let U.S. forces fight from Japan. Strengthens the alliance and makes Japan a target. Tokyo still consents to each use, but readily.',
+    f: s => [s.c.jp.support < 40 && ['Weak support at home', -15]],
+    fx: (s, m) => { if (m >= 0.5) s.basing = 'open'; T(s, 'coal', 10 * m); T(s, 'nuke', 2); } },
+  { id: 'jp_limit', line: 'D', to: 'us', label: 'Limit base use to defense', tags: ['soft'], base: 0.8,
+    explain: 'Allow defensive operations only: Tokyo will rarely consent to U.S. strikes from its bases, and never on the mainland. Keeps Japan safer and strains the alliance.',
+    fx: (s, m) => { if (m >= 0.5) s.basing = 'limited'; T(s, 'coal', -9 * m); } },
+  { id: 'jp_mediate', line: 'D', to: 'cn', label: 'Offer to mediate', tags: ['talks', 'soft'], base: 0.55,
+    explain: 'Host or broker talks between Beijing and Washington.',
+    fx: (s, m) => { T(s, 'nuke', -4 * m); T(s, 'shock', -2 * m); } },
+  // Information
+  { id: 'jp_survival', line: 'I', to: 'cn', label: 'Declare a threat to Japan’s survival', tags: ['esc'], base: 0.7, once: 'success',
+    explain: 'Declare a survival-threatening situation, opening the door to collective self-defense: until you do, from Limited strikes up your forces hold to Defend and cannot escort under fire, and Tokyo is slower to let U.S. forces fight from its bases. A declaration stands once made (if the Diet does not back it, you can try again).',
+    f: s => [s.rung >= 2 && ['The crisis has reached Blockade', 10], s.struck.jp > 0 && ['Japan has been struck', 20]],
+    fx: (s, m) => { T(s, 'coal', 7 * m); T(s, 'nuke', 2); if (m >= 0.5) s.jpDeclared = true; } },
+  { id: 'jp_quiet', line: 'I', to: 'cn', label: 'Quiet assurances to Beijing', tags: ['soft'], base: 0.7,
+    explain: 'Signal privately that Japan does not want a fight.',
+    fx: (s, m) => { T(s, 'coal', -6 * m); T(s, 'nuke', -2 * m); } },
+  { id: 'jp_evac', line: 'I', to: 'jp', label: 'Evacuate the southwest islands', tags: [], base: 0.8, unlock: 1, cost: { lift: 1 }, once: true,
+    explain: 'Move residents of the islands nearest Taiwan to safety. Once they are out, they stay out.',
+    fx: (s, m) => { T(s, 'jp.support', 3 * m); T(s, 'jp.economy', -2); } },
+  // Intelligence
+  { id: 'jp_share', line: 'N', to: 'us', label: 'Share intelligence with Washington and Taipei', tags: [], base: 0.75,
+    explain: 'Pool what Japan sees. Steadier coalition.',
+    fx: (s, m) => { T(s, 'coal', 4 * m); } },
+  { id: 'jp_watch', line: 'N', to: 'cn', label: 'Track PLA movements near the islands', tags: [], base: 0.8,
+    explain: 'Next month you see China’s forces exactly, everywhere and through any deception, and your military moves get +5.', ai: s => (s.rung >= 1 ? 1 : 0.5),
+    fx: (s, m) => { if (m >= 0.5) { s.sharpNext.jp = true; s.reconNext.jp = true; } } },
+  // Law enforcement
+  { id: 'jp_jcg', line: 'L', to: 'cn', label: 'Coast Guard surge in the East China Sea', tags: [], base: 0.75, cost: { fuel: 1 },
+    explain: 'Push back on Chinese coast guard patrols in Japanese-claimed waters.',
+    fx: (s, m) => { T(s, 'jp.support', 3 * m); } },
+  { id: 'jp_cables', line: 'L', to: 'cn', label: 'Patrol undersea cable routes', tags: [], base: 0.75, cost: { fuel: 0.5 },
+    explain: 'Coast guard and navy ships watch the cables that link Japan, Taiwan and the region: China’s cable cutting this month −20.',
+    fx: (s, m) => { T(s, 'coal', 2 * m); T(s, 'jp.support', 1 * m); } },
+  { id: 'jp_inspect', line: 'L', to: 'cn', label: 'Inspect China-bound cargo in Japanese ports', tags: ['esc'], base: 0.65, unlock: 1,
+    explain: 'Tighter export checks on dual-use goods heading to China.',
+    fx: (s, m) => { T(s, 'cn.economy', -3 * m); T(s, 'jp.economy', -1 * m); T(s, 'coal', 3 * m); } },
+  // Financial
+  { id: 'jp_sanction', line: 'F', to: 'cn', label: 'Join sanctions on China', tags: ['esc'], base: 0.65,
+    explain: 'Match U.S. financial measures.',
+    fx: (s, m) => { T(s, 'cn.economy', -5 * m); T(s, 'jp.economy', -4 * m); T(s, 'coal', 6 * m); T(s, 'shock', 2 * m); if (m >= 0.5) s.sanctions = P.econ.sanctionMonths; } },
+  { id: 'jp_yen', line: 'F', to: 'jp', label: 'Coordinate market support', tags: [], base: 0.7, opp: true,
+    avail: s => s.shock >= 18, oppWhy: s => `the global economic shock is 18 or more (now ${Math.round(s.shock)})`, explain: 'Opportunity: markets are falling. Coordinate with other central banks.',
+    fx: (s, m) => { T(s, 'shock', -4 * m); T(s, 'jp.economy', 3 * m); } },
+  // Economic
+  { id: 'jp_energy', line: 'E', to: 'jp', label: 'Release oil and gas reserves', tags: [], base: 0.85, grant: { fuel: 2 },
+    explain: 'Draw on stockpiles to cushion the shock: +2 fuel this month.',
+    fx: (s, m) => { T(s, 'jp.economy', 5 * m); T(s, 'shock', -3 * m); } },
+  { id: 'jp_hedge', line: 'E', to: 'cn', label: 'Keep trade with China open', tags: ['soft'], base: 0.75,
+    explain: 'Protect Japan’s economy at the cost of alliance unity.',
+    fx: (s, m) => { T(s, 'jp.economy', 5 * m); T(s, 'coal', -6 * m); } },
+  // Military
+  { id: 'jp_sdf', line: 'M', to: 'tw', label: 'Reinforce the southwest islands', tags: ['esc'], base: 0.8, grant: { lift: 2 }, cost: { fuel: 1 },
+    explain: 'Move Self-Defense Forces south: +2 Lift this month.',
+    fx: (s, m) => { T(s, 'coal', 5 * m); T(s, 'nuke', 2); } },
+  { id: 'jp_escort', line: 'M', to: 'tw', label: 'Escort and clear sea lanes', tags: ['esc'], base: 0.65, rung: 1, cost: { fuel: 1, mun: 1 }, req: at(1, 'Nothing to escort through yet'),
+    explain: 'Protect shipping and sweep for mines. Japanese forces may come under fire.',
+    follow: [ROUTE],
+    f: (s, mv, w, o) => [routeOdds(s, o.route || 'east')],
+    fx: (s, m) => { s.escort += 0.5 * m; T(s, 'shock', -4 * m); T(s, 'tw', 3 * m); if (s.rung >= 3 && m >= 0.5) s.jpCombat++; } },
+  { id: 'jp_missile', line: 'M', to: 'jp', label: 'Put missile defenses on alert', tags: [], base: 0.8,
+    explain: 'Ready air and missile defenses across Japan.',
+    fx: (s, m) => { T(s, 'jp.support', 2 * m); } },
+];

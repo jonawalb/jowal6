@@ -1,6 +1,7 @@
 // Event timeline for Red Sea & Hormuz Pulse. Every event was checked on 29 and again on 30 September 2026 against the linked page,
 // which returned HTTP 200 and states the date and fact given here (events dated after 16 September 2026 were added and checked
-// on 2 October 2026; the blockade, Perim and 4-5 October events were added and checked on 6 October 2026). Sites that block scripted requests
+// on 2 October 2026; the blockade, Perim and 4-5 October events were added and checked on 6 October 2026; the Dawn of Yemen, peak-week
+// and Dhubab events on 7 October 2026). Sites that block scripted requests
 // (defense.gov, apnews.com) are linked through archive.org copies. cp = chokepoints the event bears on.
 // Dates are the day of the event as the source gives it; when sources differ, `desc` says so.
 export const CATS = {
@@ -160,4 +161,13 @@ export const EVENTS = [
   { id: 'on-peace', date: '2026-10-05', cat: 'hormuz', cp: ['hormuz'], title: 'Twelve seafarers injured on the tanker On Peace',
     desc: 'India said 12 seafarers were injured when the tanker On Peace was struck by a projectile in the strait on 5 October. UKMTO warnings 156-26 and 157-26 reported two more tankers hit that day, one with an engine-room fire. Neither India nor UKMTO named an attacker.',
     src: { name: 'gCaptain, 6 Oct 2026', url: 'https://gcaptain.com/a-dozen-seafarers-injured-in-strait-of-hormuz-tanker-attack-india-says' } },
+  { id: 'dawn-of-yemen', date: '2026-10-05', cat: 'other', cp: ['bab'], title: 'Yemeni government claims Bab el-Mandeb and Dhubab; Houthis deny it',
+    desc: 'On 5 October Yemen\'s government launched Operation Dawn of Yemen with Saudi-led coalition air support. A military spokesman, Lt. Col. Majed al-Nuzaili, said on X that pro-government forces "successfully took control of Bab el-Mandeb" and had seized Dhubab airport and cut the road between Dhubab and Mokha. The Houthis called the reports "baseless," and the claims could not be independently verified.',
+    src: { name: 'Türkiye Today, 5 Oct 2026', url: 'https://www.turkiyetoday.com/region/yemeni-forces-claim-bab-el-mandeb-dhubab-under-dawn-of-yemen-push-3229663' } },
+  { id: 'hormuz-peak-week', date: '2026-10-05', cat: 'hormuz', cp: ['hormuz'], title: 'Worst week for tanker attacks in Hormuz since the war began',
+    desc: 'Three maritime security sources counted at least 12 attacks on oil, LNG and LPG tankers around the strait in the week of 28 September to 5 October, the most in any week since the war began on 28 February. The IMO recorded nine incidents in the same week; it takes longer to verify incidents. Counts differ by source.',
+    src: { name: 'Reuters via gCaptain, 7 Oct 2026', url: 'https://gcaptain.com/attacks-on-tankers-in-hormuz-hit-highest-of-any-week-since-start-of-iran-war-sources-say/' } },
+  { id: 'dhubab-fighting', date: '2026-10-07', cat: 'other', cp: ['bab'], title: 'Fighting centers on Dhubab; Houthis strike Aden airport',
+    desc: 'Reuters reported on 7 October that fighting on the western front "remains concentrated in the Dhubab district overlooking Bab el-Mandeb," with government forces trying to advance into the hills to the east, and that it was unclear whether their advance would hold. A government claim on 5 October to have reached Mocha "had been premature," according to Yemeni military officials and analysts. The same day the Houthis attacked Aden\'s airport with ballistic missiles and drones; one missile landed near the runway.',
+    src: { name: 'Reuters via gCaptain, 7 Oct 2026', url: 'https://gcaptain.com/houthis-attack-aden-airport-as-fighting-intensifies-in-yemen/' } },
 ];

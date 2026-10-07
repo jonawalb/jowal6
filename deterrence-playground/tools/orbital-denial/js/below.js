@@ -7,7 +7,7 @@ import { STRATEGIES, monteCarlo } from './plans.js';
 const fmt = n => Math.round(n).toLocaleString('en-US');
 const SHORT = { kessler1978: 'Kessler & Cour-Palais 1978', kessler2010: 'Kessler et al. 2010', krisko2011: 'ODQN 15-4', odqn11_2: 'ODQN 11-2',
   odqn12_1: 'ODQN 12-1', odqn14_4: 'ODQN 14-4', odqn26_1: 'ODQN 26-1', odqn26_4: 'ODQN 26-4', odqn28_2: 'ODQN 28-2',
-  usspacecom2021: 'USSPACECOM 2021', swf2026: 'SWF 2026', csis2025: 'CSIS 2025', acton2018: 'Acton 2018', acton2019: 'Acton 2019' };
+  usspacecom2021: 'USSPACECOM 2021', swf2026: 'SWF 2026', esa2025: 'ESA 2025', csis2025: 'CSIS 2025', acton2018: 'Acton 2018', acton2019: 'Acton 2019' };
 const cite = k => `<a href="#src-${k}">${SHORT[k]}</a>`;
 const NOT = '<span class="notional">notional</span>';
 
@@ -31,7 +31,7 @@ export function renderBelow(root, getP) {
     <p><b>Three costs.</b> Destructive attacks are permanent, so they free your later orders; reversible ones must be repeated. But destructive attacks raise the escalation risk more, and missile kills leave debris that hits your satellites as well as Red's. The review weighs all three against a reversible-only version of your own game.</p>
 
     <h2 class="mt">Method</h2>
-    <p>The game couples three published modeling ideas. The equations and every parameter are in <a href="METHOD.md">METHOD.md</a>.</p>
+    <p>The game couples three published modeling ideas. The equations, every parameter and the balance and sensitivity runs are on the <a href="METHOD.html">method page</a>.</p>
     <h3>1. How many fragments a kill makes</h3>
     <p>The NASA standard breakup model gives the number of fragments of size L<sub>c</sub> or larger from a catastrophic collision of total mass M (target plus projectile) ${cite('krisko2011')}:</p>
     <p class="eq">N(≥L<sub>c</sub>) = 0.1 · M<sup>0.75</sup> · L<sub>c</sub><sup>−1.71</sup>   (M in kg, L<sub>c</sub> in m)</p>
@@ -41,19 +41,19 @@ export function renderBelow(root, getP) {
     <p class="eq">λ<sub>10</sub> = (D / V) · v · σ     per satellite per year<br>λ = λ<sub>10</sub> · [p<sub>cat</sub> + (1 − p<sub>cat</sub>) + (r − 1) · p<sub>small</sub>]</p>
     <p>D is trackable fragments in the shell, V its volume (a ${SHELLS.high.band} km band ${NOT}), v = ${SHELLS.high.v} km/s in LEO ${cite('kessler2010')}, σ = ${PDEF.sigma} m² ${NOT}. Of strikes by trackable fragments, p<sub>cat</sub> = ${PDEF.pCat} are catastrophic ${cite('kessler2010')} and make a new breakup cloud: this is the cascade. The rest, and a share p<sub>small</sub> = ${PDEF.pSmallKill} ${NOT} of strikes by the r = ${PDEF.smallRatio} times more numerous 1–10 cm fragments, end a satellite's mission without a new cloud. A fresh cloud counts ${PDEF.freshK}× for about ${Math.round(PDEF.freshTau * 12)} months while it is still concentrated near its parent's orbit ${NOT} ${cite('odqn11_2')}.</p>
     <h3>3. How long debris stays</h3>
-    <p>Fragments decay as D(t) = D<sub>0</sub> e<sup>−t/τ</sup>, with τ fitted to the two real clouds: low LEO τ = ${SHELLS.low.tau} yr, because about 9% of modeled Cosmos 1408 fragments of 1 cm or more remained after two years ${cite('odqn28_2')}; high LEO τ = ${SHELLS.high.tau} yr, because 2,837 of 3,532 cataloged Fengyun-1C fragments were still in orbit 15.3 years after the test ${cite('odqn26_4')}. MEO and GEO have no drag in the model. After the war both sides rebuild to full strength and the projection runs on, as in the critical-density analysis Kessler and colleagues describe ${cite('kessler2010')}.</p>
+    <p>Fragments decay as D(t) = D<sub>0</sub> e<sup>−t/τ</sup>, with τ fitted to the two real clouds: low LEO τ = ${SHELLS.low.tau} yr, because about 9% of modeled Cosmos 1408 fragments of 1 cm or more remained after two years ${cite('odqn28_2')}; high LEO τ = ${SHELLS.high.tau} yr, because 2,837 of 3,532 cataloged Fengyun-1C fragments were still in orbit 15.3 years after the test ${cite('odqn26_4')}. MEO and GEO have no drag in the model. A constant background source ${NOT} puts back what drag removes from the pre-war fragments, so with no war each shell holds its pre-war count; the real environment would grow even without launches ${cite('esa2025')}. After the war both sides rebuild to full strength and the projection runs on, as in the critical-density analysis Kessler and colleagues describe ${cite('kessler2010')}.</p>
     <h3>4. Escalation</h3>
     <p>Each month's hazard is h = h<sub>0</sub> + Σ w<sub>a</sub> · e · (1 + φF), and the chance of crossing the nuclear threshold that month is 1 − e<sup>−h</sup>, the same form as the <a href="../entanglement/">Nuclear Entanglement</a> tool. w<sub>a</sub> is larger for destructive attacks; e = ${PDEF.entangle} when the target is early warning and nuclear command, the entanglement mechanism James Acton describes ${cite('acton2018')}, ${cite('acton2019')}; F is how much of its warning and reconnaissance the target side has lost, so a blinded side reads attacks as worse. The first destructive attack of the game counts ${PDEF.firstKill}×. All of these weights are ${NOT}: no data exist to estimate them.</p>
     <h3>Calibration</h3>
     ${calibration()}
     <p class="fine">The model reproduces Cosmos 1408 within about a third. Fengyun-1C broke into about four times as many cataloged pieces as the model predicts, which NASA noted at the time ("considerably exceed model predictions") ${cite('odqn12_1')}. The Advanced setting "×4" plays with Fengyun-1C-like clouds. The ratio of 1 cm to 10 cm fragments, ${PDEF.smallRatio}, matches Fengyun-1C's estimated 150,000 fragments of 1 cm or more against about 2,600 large ones (about 58) ${cite('odqn12_1')}. The fitted lifetimes give 57% of Cosmos 1408's cataloged fragments left after 5.5 months; the ODQN count was 990 of 1,760, or 56% ${cite('odqn26_4')}.</p>
     <h3>Sensitivity and what is left out</h3>
-    <p>Results move most with the fragment multiplier, the cross-section σ and the band thickness (all scale the debris hazard in proportion), the entanglement multiplier and the Red posture. The ×4 setting roughly quadruples the debris legacy without changing who wins the war, because debris kills few satellites within ten months. The advantage threshold and the reversible effect sizes decide how often wars end in stalemate. METHOD.md lists the runs.</p>
+    <p>Results move most with the fragment multiplier, the cross-section σ and the band thickness (all scale the debris hazard in proportion), the entanglement multiplier and the Red posture. The ×4 setting roughly quadruples the debris legacy without changing who wins the war, because debris kills few satellites within ten months. The advantage threshold and the reversible effect sizes decide how often wars end in stalemate. The <a href="METHOD.html">method page</a> lists the runs.</p>
     <p>Left out: orbital mechanics beyond shell averages (planes, inclinations, conjunction screening), collisions between fragments, the ground segment except as a cyber target, nuclear detonations in space, spoofing, rendezvous without attack, launch capacity limits, third parties' reactions, and any bargaining or war termination. Numbers of satellites, their masses and missions, the two powers and their doctrines are all ${NOT}.</p>
   </div>
   <div class="col">
     <h2>Balance check</h2>
-    <p>Six scripted strategies, 300 seeded games each, Red's posture drawn from each seed. No strategy should win every time, and doing nothing or going all-out kinetic should do badly.</p>
+    <p>Six scripted strategies, 300 seeded games each (seed 2026, with the default settings these are the same runs as the tables on the <a href="METHOD.html">method page</a>), Red's posture drawn from each seed. No strategy should win every time, and doing nothing or going all-out kinetic should do badly.</p>
     <div class="od-go" style="justify-content:flex-start"><button type="button" class="btn" id="bal-run">Run 1,800 games</button> <span class="fine num" id="bal-prog"></span></div>
     <div class="tablewrap"><table id="bal"><tbody><tr><td class="fine">Press the button to run it in your browser.</td></tr></tbody></table></div>
 

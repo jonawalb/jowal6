@@ -51,7 +51,14 @@ export default {
       SN: `Being the sucker hurts the nice type ${up ? 'more' : 'less'}, so reassurance gets ${up ? 'harder' : 'easier'} (p. 339).`,
       RM: `The mean type likes cooperation ${up ? 'more' : 'less'}, so it is ${up ? 'more' : 'less'} tempted to mimic: reassurance gets ${up ? 'harder' : 'easier'} (p. 339).`,
       SM: `Being the sucker hurts the mean type ${up ? 'more' : 'less'}, which makes faking a gesture ${up ? 'riskier' : 'cheaper'} and reassurance ${up ? 'easier' : 'harder'} (p. 339).`,
-      TM: `The mean type’s temptation sets the lower bound: a bigger prize from fooling player 2 needs a ${up ? 'bigger' : 'smaller'} gesture to deter it.`,
+      TM: (() => {
+        // α_low = T/(T + X) with X = (1 − p₂)S − p₂R: it rises with T only when X > 0, i.e. while p₂ < p₂*ᴹ.
+        const X = (1 - P.p2) * P.SM - P.p2 * P.RM;
+        if (Math.abs(X) < 1e-9) return 'Here the lower bound sits at 1 whatever the mean type’s temptation.';
+        return X > 0
+          ? `The mean type’s temptation sets the lower bound: a ${up ? 'bigger' : 'smaller'} prize from fooling player 2 needs a ${up ? 'bigger' : 'smaller'} gesture to deter it.`
+          : `Past p<sub>2</sub>*<sup>M</sup> the lower bound moves the other way: a ${up ? 'bigger' : 'smaller'} temptation ${up ? 'lowers' : 'raises'} it, but no gesture separates the types here anyway.`;
+      })(),
     };
     return T[k] || '';
   },

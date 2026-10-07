@@ -101,7 +101,7 @@ function update() {
   $('rate-empty').hidden = lines.length > 0;
   drawRate($('rate'), lines.length ? lines : [{ g: 'shahed', pts: [] }], S, tip);
   $('rate-legend').innerHTML = lines.map(l => `<li><i class="sw" style="background:${GROUP_INFO[l.g].col}"></i>${GROUP_INFO[l.g].n}</li>`).join('');
-  renderSalvos($('salvos'), salvos(S), d => { S.sel = periodKey(d, S.res); update(); document.getElementById('tl').scrollIntoView({ block: 'nearest', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); });
+  renderSalvos($('salvos'), salvos(S), d => { S.sel = periodKey(d, S.res); update(); document.getElementById('tl').scrollIntoView({ block: 'nearest', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); }, S.lost);
   renderClock($('clock'), clockGrid(S), $('clock-note'));
   renderStatus(totals(S));
   renderDetail($('detail'), S, S.sel);

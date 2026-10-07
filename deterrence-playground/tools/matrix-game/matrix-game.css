@@ -44,6 +44,8 @@
 .mg-cells i.cur { background: var(--tc); border-color: var(--tc); }
 .mg-tf { display: flex; align-items: center; gap: 6px; font: 11px var(--mono); color: var(--muted); }
 .mg-tf svg { flex: 1; height: 22px; min-width: 40px; }
+/* Phones: the two-column board leaves no room for the sparkline beside the end labels. */
+@media (max-width: 420px) { .mg-tf svg { display: none; } .mg-tf { justify-content: space-between; } }
 .mg-tf polyline { fill: none; stroke: var(--tc); stroke-width: 1.6; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
 .mg-track .fine { font-size: 11.5px; }
 

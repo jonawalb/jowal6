@@ -39,9 +39,17 @@ export function outlookHtml(g, L, P, D0) {
     return `<dt>${SHELLS[s].name}</dt><dd>${fmt(g.debris[s])} fragments · risk ×${(z.total / z0.total).toFixed(1)} · ${(z.total * 1000).toFixed(1)} per 1,000 satellites a year</dd>`;
   };
   return `${row('low')}${row('high')}
-    <dt>Next 25 years</dt><dd>${L.extra.B >= 0.5 || L.extra.R >= 0.5 || L.extra.O >= 0.5
-      ? `about ${fmt(L.extra.B)} of your satellites, ${fmt(L.extra.R)} of Red's and ${fmt(L.extra.O)} of everyone else's lost to this war's debris`
-      : 'no extra losses expected from this war\'s debris so far'}</dd>`;
+    <dt>Next 25 years</dt><dd>${lossText(L.extra)}</dd>`;
+}
+
+/** "about 2 of your satellites and 23 of everyone else's lost …", leaving out anyone who loses none
+ *  ("about 23 of everyone else's satellites lost …"). */
+function lossText(x) {
+  const parts = [[x.B, 'of your satellites'], [x.R, 'of Red\'s'], [x.O, 'of everyone else\'s']].filter(p => Math.round(p[0]) > 0);
+  if (!parts.length) return 'no extra losses expected from this war\'s debris so far';
+  if (parts[0][1] !== 'of your satellites') parts[parts.length - 1][1] += ' satellites';
+  const t = parts.map(p => `${fmt(p[0])} ${p[1]}`);
+  return `about ${t.length > 1 ? t.slice(0, -1).join(', ') + ' and ' + t[t.length - 1] : t[0]} lost to this war's debris`;
 }
 
 export function verdicts(g, alt, L, Lalt) {

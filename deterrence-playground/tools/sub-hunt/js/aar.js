@@ -73,7 +73,8 @@ export function nearMisses(g) {
       }
     }
   });
-  g.attacks.filter(a => !a.hit).forEach(a => {
+  // Only attacks that came close (under 15 nm) count as near misses; wide misses are not "nearly had it".
+  g.attacks.filter(a => !a.hit && a.d < 15).forEach(a => {
     const t = tr[a.h];
     out.push(`Your attack at hour ${a.h} missed by ${a.d.toFixed(0)} nm; the sub was to the ${dirOf(bearing(a.p, t.p))}. Your map gave that ring ${pct(a.pBelief)}.`);
   });

@@ -124,7 +124,7 @@ export function run(S) {
     // Conventional effect: value of damage done, minus the nuclear-serving share spared by exclusions.
     let mil = 0;
     for (const c of cats) mil += c.v * D[c.id] * (mit.excl ? 1 - 0.7 * nEff(c) : 1);
-    const pressure = Math.min(1, X.ci * mult * (1.5 - P.surv) / 2.2);
+    const pressure = Math.min(1, X.ci * mult * (1.5 - P.surv) / 2.2 * P.kci / DEFAULTS.kci);  // scaled with the use-or-lose channel
     phases.push({ t, D: { ...D }, fog, mult, X, h, H, p, pCum: 1 - surviveAll, mil, pressure });
   }
   const last = phases[PHASES - 1];

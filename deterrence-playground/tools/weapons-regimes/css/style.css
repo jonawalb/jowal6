@@ -101,7 +101,10 @@
 .scroll-x { overflow-x: auto; border: 1px solid var(--wr-line); border-radius: 4px; background: var(--panel); }
 table.matrix { border-collapse: collapse; font-size: 13px; min-width: 100%; }
 .matrix th, .matrix td { border-bottom: 1px dotted var(--wr-line); padding: 0; text-align: center; }
-.matrix thead th { font: 600 11.5px var(--body); color: var(--muted); padding: 8px 4px; vertical-align: bottom; min-width: 64px; line-height: 1.2; border-bottom: 1px solid var(--wr-line); }
+.matrix thead th { font: 600 11.5px var(--body); color: var(--muted); padding: 8px 2px; vertical-align: bottom; width: 40px; min-width: 40px; line-height: 1.2; border-bottom: 1px solid var(--wr-line); }
+.matrix thead th .vh { display: inline-block; writing-mode: vertical-rl; text-orientation: sideways; transform: rotate(180deg); white-space: nowrap; text-align: left; }
+.matrix thead th .vh .jur { margin: 0 0 0 2px; }
+.scroll-hint { margin: 0 0 6px; font-size: 12.5px; color: var(--muted); text-align: right; }
 .matrix tbody th { text-align: left; font-weight: 500; padding: 8px 12px; white-space: nowrap; position: sticky; left: 0; background: var(--panel); z-index: 1; border-right: 1px solid var(--wr-line); }
 .matrix .jur { display: block; font: 400 10px var(--mono); letter-spacing: .05em; text-transform: uppercase; color: var(--faint); margin-top: 2px; }
 .cellbtn { width: 100%; min-height: 36px; background: none; border: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; }

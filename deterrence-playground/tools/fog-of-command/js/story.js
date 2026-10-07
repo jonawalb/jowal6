@@ -29,7 +29,7 @@ export function moments(g, me) {
     if (e.kind !== 'decision') continue;
     if (e.side === 'red' && e.what === 'second' && me === 'blue') {
       const fooled = e.truth - e.believed;
-      out.push({ t: e.t, tone: fooled >= 8 ? 'good' : fooled <= -8 ? 'bad' : '', text: `Red sent its second echelon (${shortList(e.units)}) down the <b>${COLS[e.col]}</b> road, where it saw ${e.believed} of your strength. You had ${e.truth} there${fooled >= 8 ? ': it took the bait' : ''}.` });
+      out.push({ t: e.t, tone: fooled >= 8 ? 'good' : fooled <= -8 ? 'bad' : '', text: `Red sent its second echelon (${shortList(e.units)}) down the <b>${COLS[e.col]}</b> road, where it saw ${e.believed} of your strength. You had ${e.truth} there${fooled >= 8 ? ': it walked into a position it had not seen' : ''}.` });
     }
     if (e.side === 'red' && e.what === 'chase' && me === 'blue') {
       const x = after(g, e.node, e.t);

@@ -1,6 +1,6 @@
 // Small SVG line charts for the after-action review. x values are already scaled to 0..1.
 const NS = 'http://www.w3.org/2000/svg';
-const W = 640, H = 230, L = 68, R = 26, T = 14, B = 34;
+const W = 640, R = 26;
 const el = (tag, attrs, parent, text) => {
   const e = document.createElementNS(NS, tag);
   for (const [k, v] of Object.entries(attrs || {})) e.setAttribute(k, v);
@@ -14,6 +14,10 @@ const el = (tag, attrs, parent, text) => {
  * hover(x0to1) returns text for the readout line under the chart.
  */
 export function lineChart(svg, { series, xticks, ymax, yfmt = v => v, marks = [], ylabel = '', hover, out }) {
+  // On phones the chart text is enlarged by CSS (about 19 units), so the margins grow, the axis label moves
+  // above the plot and the vertical-marker labels are dropped (the month tick under each marker names it).
+  const narrow = typeof matchMedia === 'function' && matchMedia('(max-width: 600px)').matches;
+  const H = narrow ? 290 : 230, L = narrow ? 84 : 68, T = narrow ? 40 : 14, B = narrow ? 44 : 34;
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
   svg.textContent = '';
   const X = x => L + x * (W - L - R), Y = y => T + (1 - y / ymax) * (H - T - B);
@@ -23,11 +27,11 @@ export function lineChart(svg, { series, xticks, ymax, yfmt = v => v, marks = []
     el('line', { x1: L, x2: W - R, y1: Y(v), y2: Y(v), class: 'od-grid' }, ax);
     el('text', { x: L - 6, y: Y(v) + 4, 'text-anchor': 'end' }, ax, yfmt(v));
   }
-  for (const [x, t] of xticks) el('text', { x: X(x), y: H - B + 16, 'text-anchor': 'middle' }, ax, t);
-  if (ylabel) el('text', { x: L, y: T - 3 }, ax, ylabel);
+  for (const [x, t] of xticks) el('text', { x: X(x), y: H - B + (narrow ? 26 : 16), 'text-anchor': 'middle' }, ax, t);
+  if (ylabel) el('text', narrow ? { x: 0, y: 20 } : { x: L, y: T - 3 }, ax, ylabel);
   for (const [x, t] of marks) {
     el('line', { x1: X(x), x2: X(x), y1: T, y2: H - B, class: 'od-mark' }, svg);
-    el('text', { x: X(x) + 4, y: T + 10, class: 'od-mark-t' }, svg, t);
+    if (!narrow) el('text', { x: X(x) + 4, y: T + 10, class: 'od-mark-t' }, svg, t);
   }
   for (const s of series) {
     if (!s.pts.length) continue;

@@ -3,7 +3,7 @@
 //   import { mountChrome } from '../../shared/js/chrome.js';
 //   mountChrome({ title: 'CCG Gray-Zone Map', sub: 'One-sentence description.', category: 'Live trackers' });
 // Pages with their own header (strait-layers) call mountNav() alone: it prepends the site bar to <body>.
-import { CATEGORIES, TOOLS, ALL_TOOLS, DEV_SEALED, addTools } from './registry.js';
+import { CATEGORIES, ALL_CATEGORIES, TOOLS, ALL_TOOLS, DEV_SEALED, addTools, onSite } from './registry.js';
 import { NAV_CSS } from './nav-css.js';
 import { initSkin } from './skin.js';
 
@@ -53,7 +53,10 @@ export function mountNav() {
   const live = TOOLS.filter(t => t.status === 'live');
   const slug = currentSlug();
   const cur = live.find(t => t.slug === slug);
-  const inCat = cur ? live.filter(t => t.cat === cur.cat) : [];
+  // Prev/next and the menu flag tools behind a password; from an open tool, prev/next skip them.
+  const lockedCats = new Set(ALL_CATEGORIES.filter(c => c.locked && onSite(c)).map(c => c.id));
+  const isLocked = t => (lockedCats.has(t.cat) || !!t.locked || !!t.vault) && !window.TSMVault?.isOpen?.(t.slug);
+  const inCat = cur ? live.filter(t => t.cat === cur.cat && (t === cur || isLocked(cur) || !isLocked(t))) : [];
   const i = cur ? inCat.indexOf(cur) : -1;
   const prev = i > 0 ? inCat[i - 1] : null, next = i >= 0 && i < inCat.length - 1 ? inCat[i + 1] : null;
   const catName = cur ? CATEGORIES.find(c => c.id === cur.cat)?.name : '';
@@ -63,7 +66,7 @@ export function mountNav() {
     const ts = live.filter(t => t.cat === c.id);
     if (!ts.length) return '';
     return `<div class="tsm-menu-g"><p>${esc(c.name)}</p><ul>${ts.map(t =>
-      `<li><a href="${href(t)}"${t.slug === slug ? ' aria-current="page"' : ''}>${esc(t.title)}</a></li>`).join('')}</ul></div>`;
+      `<li><a href="${href(t)}"${t.slug === slug ? ' aria-current="page"' : ''}>${esc(t.title)}${isLocked(t) ? ' <span title="Password protected" aria-label="password protected">🔒</span>' : ''}</a></li>`).join('')}</ul></div>`;
   }).join('');
 
   const bar = document.createElement('nav');

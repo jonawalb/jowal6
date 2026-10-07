@@ -32,5 +32,5 @@ export const HISTORY = [
   { when: 'Cold War', text: 'SOSUS, later IUSS, stays highly classified, with sites across the Atlantic and Pacific. The gap between Greenland, Iceland and the UK is a gateway from the Kola Peninsula bases into the Atlantic.', src: 'nhhc-ofp', src2: 'stevens' },
   { when: '1968', text: 'USS Scorpion is lost in the Atlantic. Analysts build a Bayesian map of where she could be, and in late October the search ship Mizar finds the hull about 400 miles southwest of the Azores.', src: 'nhhc-scorpion', src2: 'stone' },
   { when: '2011', text: 'The same Bayesian method, updated for two years of failed searches, points to the Air France 447 wreck, found after about a week of undersea search.', src: 'stone' },
-  { when: 'Today', text: 'A CRS report quotes the Navy calling the Greenland, Iceland, UK-Norway gap a strategic corridor for naval operations in the high north.', src: 'crs' },
+  { when: '2019', text: 'A CRS report quotes the Navy calling the Greenland, Iceland, UK-Norway gap a strategic corridor for naval operations in the high north.', src: 'crs' },
 ];

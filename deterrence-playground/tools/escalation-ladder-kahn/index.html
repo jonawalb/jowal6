@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Kahn's Escalation Ladder | Interactive Deterrence</title>
-<meta name="description" content="Herman Kahn's 44-rung escalation ladder with nuclear crises from Cuba 1962 to Russia 2022 stepped rung by rung, compared, and critiqued.">
+<meta name="description" content="Herman Kahn's 44-rung escalation ladder with nuclear crises from Cuba 1962 to India–Pakistan 2025 stepped rung by rung, compared, and critiqued.">
 <meta property="og:title" content="Kahn's Escalation Ladder | Interactive Deterrence">
 <meta property="og:description" content="Step through real nuclear crises on Herman Kahn's 44-rung ladder, compare them, and read why the ladder misleads.">
 <link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
@@ -15,6 +15,10 @@
 <link rel="stylesheet" href="../../shared/css/tsm.css">
 <link rel="stylesheet" href="../../shared/css/deterrence-site.css">
 <link rel="stylesheet" href="escalation-ladder-kahn.css">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jwalberg.com/deterrence-playground/tools/escalation-ladder-kahn/">
+<meta property="og:image" content="https://jwalberg.com/deterrence-playground/tools/escalation-ladder-kahn/thumb.png">
+<meta name="twitter:card" content="summary_large_image">
 </head>
 <body>
 <header id="tsm-head"></header>
@@ -90,7 +94,7 @@
       <li><b>Dice.</b> The generator is Mulberry32 with the seed shown on the page (default 163). The hash carries the historical choices, the branch moves and the seed, so a shared link replays the same rolls. "New dice" draws a new seed.</li>
       <li><b>1,000 futures.</b> Replays the branch 1,000 times from the moment you left the record, with your departure fixed and a new seed for each run derived from the page seed. Later rounds follow a policy: your own choices in order (repeating the last), always de-escalate, always hold, tit-for-tat (answer a back-down with de-escalation, a hold with a hold, a match or escalation with one step up), or always escalate one step. The key-drivers table changes one notional number at a time and replays the same seeds, so a difference comes from the lever, not the dice. Because a war that locks in ends the branch, the model does not follow a war upward; raising the lock-in chance can lower the nuclear share. That is a limit of this model, not a finding.</li>
       <li><b>Default branch numbers</b> <span class="notional">notional</span>, all editable under "Edit the model":<div class="tablewrap"><table class="kl-table" id="cf-resp-table"></table></div><span id="cf-br-params"></span></li>
-      <li><b>Outcomes.</b> Four ways the crisis could end: negotiated settlement, frozen standoff (it ends or fades without agreement), limited conventional war (fighting that widens beyond the crisis, defined per crisis under "Why this side?"), and nuclear use. They follow Kahn's two main thresholds: the move from confrontation into large conventional war, and the No Nuclear Use Threshold.</li>
+      <li><b>Outcomes.</b> Four ways the crisis could end: negotiated settlement, frozen standoff (it ends or fades without agreement), limited conventional war (fighting that widens beyond the crisis, defined per crisis under "Why this side?"), and nuclear use. They follow two breaks on Kahn's ladder: the move into large conventional war (rung 12), and the No Nuclear Use Threshold.</li>
       <li><b>The model</b> <span class="notional">notional</span>. It starts from a distribution over the four outcomes. Each round of the crisis, a historical step or a choice, sits on a rung. The rung's Kahn group sets a chance of sliding one outcome up (settlement → standoff → war) and one down; a war slides into nuclear use at a set share of the slide-up. Climbing several rungs in one move adds risk per rung; stepping down adds relief per rung. An option that is itself a deal pulls some standoff toward settlement; one that leaves the dispute in place pulls some settlement toward standoff. The arithmetic is exact, with no random draws, so the same choices always give the same numbers.</li>
       <li><b>Grounding.</b> The structure, not the numbers, follows the literature this tool already cites. Hazards change at Kahn's group boundaries because Kahn put his thresholds there. The slide-up grows faster than the slide-down higher on the ladder because Dangerous Thresholds (RAND, 2008) holds that escalation is usually easier than de-escalation. Large single jumps cost extra because Hersman's "wormhole" escalation stresses sudden skips. No source gives any of the numbers. Every one is a placeholder, and you can change it under "Edit the model."</li>
       <li><b>Kennedy's estimate.</b> On the Cuba run, a hatched band marks Kennedy's own estimate that the chance of escalation to war was "between 1 in 3 and even," as reported by Graham Allison (Foreign Affairs, 2012). The page uses Allison's wording; it did not open an earlier source for the estimate. The band is a reference point. The model was not fitted to it, and at the default numbers it runs lower.</li>

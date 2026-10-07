@@ -16,7 +16,6 @@ const UPDATED = {
   'strait-layers': ['2026-09-28', 'Header links back to the hub'],
   'energy-blockade': ['2026-09-28', 'First release'],
   'mine-warfare': ['2026-09-28', 'First release'],
-  'budget-allocator': ['2026-09-28', 'Audited fixes'],
   'arms-backlog': ['2026-09-28', 'Audited fixes'],
   'undersea-cables': ['2026-09-28', 'Audited fixes'],
   'history-time-machine': ['2026-09-28', 'Audited fixes'],
@@ -60,6 +59,9 @@ let [cat, sub = ''] = location.hash.slice(1).split('/');
 if (!CATEGORIES.some(c => c.id === cat)) { cat = 'all'; sub = ''; }
 // Includes hidden sections (e.g. the Indo-Pacific tools listed under Regions) so their cards still get a label.
 const catName = Object.fromEntries(ALL_CATEGORIES.filter(c => onSite(c)).map(c => [c.id, c.name]));
+// Subsection names a tool is filed under (sub: { regions: 'mideast' } → "Middle East"), for search.
+const subName = Object.fromEntries(ALL_CATEGORIES.flatMap(c => (c.subs || []).map(s => [`${c.id}:${s.id}`, s.name])));
+const subNames = t => Object.entries(t.sub || {}).flatMap(([c, ids]) => [].concat(ids).map(id => subName[`${c}:${id}`] || '')).join(' ');
 const counts = Object.fromEntries(CATEGORIES.map(c => [c.id, TOOLS.filter(t => inCat(t, c.id)).length]));
 // A sealed section (Coming Soon) lists nothing, not even names, until its password is entered.
 let devOpen = !DEV_SEALED;
@@ -167,11 +169,19 @@ if (COUNTED.length <= 1) {
 // With tools in only one section, the section chips (Everything / that section) add nothing either.
 if (CATEGORIES.filter(c => counts[c.id]).length <= 1) $('cats').style.setProperty('display', 'none');
 
+// The narrative trackers live on their own jwalberg.com site; the deterrence hub points to them.
+const NARR_TILE = SITE === 'deterrence' ? `<a class="sec-tile" href="/narratives/">
+    <span class="sec-tile-n">jwalberg.com/narratives</span><b>Narrative Tracking</b>
+    <span class="sec-tile-b">Information warfare on the record: what governments say, week by week, and every mention searchable.</span>
+    <span class="sec-tile-l">PRC Rhetoric Heatmap · Russia and Beyond · Rhetoric Search</span><span class="go">Open Narrative Tracking →</span></a>` : '';
+const NARR_WORDS = /disinfo|rhetoric|narrative|propaganda|information|statement|china|russia/;
+
 function render() {
   catBtns.forEach(b => b.setAttribute('aria-pressed', b.dataset.cat === cat));
   const q = $('q').value.trim().toLowerCase();
   const terms = q.split(/\s+/).filter(Boolean);
-  const hay = t => `${t.title} ${t.blurb} ${t.slug.replace(/-/g, ' ')} ${catName[t.cat] || ''}`.toLowerCase();
+  // Search also covers every section and subsection a tool is listed under (e.g. "Middle East").
+  const hay = t => `${t.title} ${t.blurb} ${t.slug.replace(/-/g, ' ')} ${(t.cats || [t.cat]).map(c => catName[c] || '').join(' ')} ${subNames(t)}`.toLowerCase();
   const match = t => terms.every(w => hay(t).includes(w));
   const cats = CATEGORIES.filter(c => cat === 'all' || c.id === cat);
   const liveNow = TOOLS.filter(t => t.status === 'live' && (cat === 'all' ? t.cat !== 'dev' : inCat(t, cat)) && match(t));
@@ -182,7 +192,7 @@ function render() {
     // Overview: one tile per section (TSM last). A section: its tools, with a way back.
     if (cat === 'all') {
       $('sections').innerHTML = `<section class="cat-sec overview"><div class="cat-h"><h2>Pick a section</h2>
-        <p>${COUNTED.length} tools in ${CATEGORIES.filter(c => c.id !== 'dev').length} sections.</p></div><div class="sec-tiles">${CATEGORIES.map(tile).join('')}</div></section>`;
+        <p>${COUNTED.length} tools in ${CATEGORIES.filter(c => c.id !== 'dev').length} sections.</p></div><div class="sec-tiles">${CATEGORIES.filter(c => c.id !== 'dev').map(tile).join('')}${NARR_TILE}${CATEGORIES.filter(c => c.id === 'dev').map(tile).join('')}</div></section>`;
     } else {
       const c = CATEGORIES.find(x => x.id === cat), list = TOOLS.filter(t => inCat(t, cat));
       if (sealedNow(c)) { sealedForm(c); $('q-status').textContent = ''; return; }
@@ -214,7 +224,8 @@ function render() {
     return `<section class="cat-sec" id="sec-${c.id}"><div class="cat-h"><h2>${c.name}${c.locked ? LOCK : ''}</h2><p>${c.blurb}</p></div>
       <div class="tools">${list.map(card).join('')}</div></section>`;
   }).join('');
-  $('sections').innerHTML = html || `<p class="empty">No tools match “${esc(q)}”. Try a section name, such as “nuclear” or “Middle East”.</p>`;
+  const narr = SITE === 'deterrence' && NARR_WORDS.test(q) ? ` For state rhetoric and information warfare, see <a href="/narratives/">Narrative Tracking</a>.` : '';
+  $('sections').innerHTML = html || `<p class="empty">No tools match “${esc(q)}”. Try a section name, such as “nuclear” or “Middle East”.${narr}</p>`;
   $('q-status').textContent = q ? `${liveNow.length} tool${liveNow.length === 1 ? '' : 's'} match` : '';
 }
 // Landing extras on section-tile sites: a Game Theory Gallery card beside the headline, and a rotating

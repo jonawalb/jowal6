@@ -49,8 +49,13 @@ export const SOURCES = {
   },
   natoEfp: {
     label: 'NATO, "Strengthening NATO\'s eastern flank" (topic page)',
-    url: 'https://www.nato.int/cps/en/natohq/topics_136388.htm',
-    note: 'Warsaw Summit 2016 decision on enhanced Forward Presence; battlegroups operational in Estonia, Latvia, Lithuania and Poland by August 2017; Estonia host, United Kingdom framework nation; Madrid 2022 agreement to scale up to brigade-size units where and when required.',
+    url: 'https://www.nato.int/en/what-we-do/deterrence-and-defence/strengthening-natos-eastern-flank',
+    note: 'Page updated 29 September 2026. Warsaw Summit 2016 decision on enhanced Forward Presence; four battlegroups operational in Estonia, Latvia, Lithuania and Poland by August 2017; Estonia host, United Kingdom framework nation, France contributing; Forward Land Forces now nine battlegroups (Finland with framework nation Sweden); 2022 agreement to scale up the battlegroups to brigade-size units, "when and where required".',
+  },
+  politseiNarva: {
+    label: 'Estonian Police and Border Guard Board, "Working arrangements at the Narva border crossing point"',
+    url: 'https://www.politsei.ee/en/working-arrangements-at-the-narva-border-crossing-point',
+    note: 'As of 1 February 2024 the crossing point is closed to vehicles; as of 1 May 2024 it is closed during night hours; pedestrians may cross in the daytime.',
   },
   statLang: {
     label: 'Statistics Estonia, 2021 census table RL21434: population by mother tongue and place of residence (Narva city)',
@@ -70,8 +75,8 @@ export const SOURCES = {
     note: 'An Internal Security Service officer was taken near the Luhamaa checkpoint; Estonia says inside Estonia, Russia\'s FSB says on Russian territory.',
   },
   bbcBuoys: {
-    label: 'BBC News, "Russia\'s removal of border markers \'unacceptable\' - EU," 24 May 2024',
+    label: 'BBC News, "Russia\'s removal of Estonian border markers \'unacceptable\' - EU," 24 May 2024',
     url: 'https://www.bbc.com/news/articles/c899844ypj2o',
-    note: '24 of 50 buoys marking Narva River sailing routes removed; Russia disputed about half of 250 planned buoy locations; EU called it unacceptable; Estonia summoned Russia\'s charge d\'affaires.',
+    note: '24 of 50 buoys marking Narva River sailing routes removed; Russia disputed about half of 250 planned buoy locations; EU called it unacceptable; Estonia summoned Russia\'s chargé d\'affaires.',
   },
 };

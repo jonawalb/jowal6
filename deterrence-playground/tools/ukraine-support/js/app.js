@@ -20,7 +20,7 @@ function writeHash() {
   const q = new URLSearchParams({ m: S.measure, s: S.scale, p: S.period, tl: S.tl });
   if (S.types.length !== 3) q.set('t', S.types.join('.'));
   if (S.groups.length !== GROUPS.length) q.set('g', S.groups.join('.'));
-  if (S.donor !== null) q.set('d', slug(DONORS[S.donor].n));
+  if (S.donor !== null) q.set('d', slug(DONORS[S.donor].key || DONORS[S.donor].n));
   if (S.month !== null) q.set('mo', MONTHS[S.month]);
   if (S.euc) q.set('euc', '1');
   if (S.all) q.set('n', 'all');

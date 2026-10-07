@@ -85,7 +85,7 @@ export const ACTIONS = {
   dash: { key: '6', cost: 1, name: 'Ship sprint',
     help: `Up to ${SENSORS.ship.sprint * GAME.turnHours} nm, but the ship hears nothing this turn.` },
   attack: { key: '7', cost: 3, stock: 'torps', name: 'Attack',
-    help: `${GAME.prosR} nm ring, strikes before the sub moves. Hit wins; a miss makes it bolt.` },
+    help: `${GAME.prosR} nm ring, strikes before the sub moves. Hit wins; a near miss (within ${GAME.alertR} nm) makes it bolt.` },
 };
 
 // Rows for the method table on the page.
@@ -99,7 +99,7 @@ export const PARAM_ROWS = [
   ['Sprint and drift', `${SUB.sprinter.sprint} kt for 1 h, then ${SUB.sprinter.drift} kt for ${SUB.sprinter.cycle - 1} h`],
   ['Zig-zag', `${SUB.zigzag.speed} kt, legs of ${SUB.zigzag.leg} h at ±${SUB.zigzag.angle}° off the base course`],
   ['Shy', `${SUB.shy.speed} kt; within ${SUB.shy.hearR} nm of the ship or a dip it hides for ${SUB.shy.hours} h: ${SUB.shy.quiet} kt, heading away, every detection chance × ${SUB.shy.hush}`],
-  ['Loiter', `${SUB.loiter.speed} kt on a circle ${SUB.loiter.orbitR[0]}–${SUB.loiter.orbitR[1]} nm round P1 or P2`],
+  ['Loiter', `${SUB.loiter.transit} kt to the patrol point, then ${SUB.loiter.speed} kt on a circle ${SUB.loiter.orbitR[0]}–${SUB.loiter.orbitR[1]} nm round P1 or P2`],
   ['Route choice (transiting subs)', ROUTES.map(r => `${r.name} ${Math.round(r.w * 100)}%`).join(', ')],
   ['Buoy line', `${SENSORS.line.n} buoys over ${SENSORS.line.len} nm, ${SENSORS.line.life} h; detection radius ${SENSORS.line.rDet.quiet} / ${SENSORS.line.rDet.sprint} nm (quiet / sprint)`],
   ['Buoy circle', `${SENSORS.circle.n} buoys in a ${SENSORS.circle.r} nm circle, ${SENSORS.circle.life} h; detection radius ${SENSORS.circle.rDet.quiet} / ${SENSORS.circle.rDet.sprint} nm`],

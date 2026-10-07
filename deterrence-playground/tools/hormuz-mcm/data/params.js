@@ -40,7 +40,7 @@ export const ENV_NOTE = 'The Thales paper\'s example: "assume a multi-aspect tow
 // Only the USV figure comes from a source; the others are notional ratios to it.
 export const FORCES = [
   { k: 'usv', label: 'Uncrewed boats with towed sonar', short: 'USVs', v: 2, max: 24, acr: 0.93, src: 'thales', note: 'Search rate from the Thales example.' },
-  { k: 'ship', label: 'Crewed MCM ships or LCS', short: 'Ships', v: 1, max: 12, acr: 0.5, notional: true, note: 'Hull-mounted or variable-depth sonar. Eyer writes that U.S. options were limited to three Independence-variant LCS.' },
+  { k: 'ship', label: 'Crewed MCM ships or LCS', short: 'Ships', v: 1, max: 12, acr: 0.5, notional: true, note: 'Hull-mounted or variable-depth sonar. Eyer (April 2026) writes that U.S. options in the Gulf were limited to three Independence-variant LCS; two Sasebo-based Avengers left Singapore toward the Gulf in April 2026 (Stars and Stripes).' },
   { k: 'helo', label: 'MCM helicopters', short: 'Helicopters', v: 0, max: 12, acr: 1.5, notional: true, note: 'Towed sweep: fast but does not find every mine type. The U.S. retired its MH-53E detachment in August 2025 (Eyer).' },
   { k: 'eod', label: 'EOD and diver teams', short: 'Teams', v: 4, max: 30, idPerDay: 2, notional: true, note: 'Identify and neutralize contacts; they do not search. Cooper said divers and SEALs led the 2026 clearance (Task & Purpose).' },
 ];

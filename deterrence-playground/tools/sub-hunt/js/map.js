@@ -73,7 +73,7 @@ export function createMap(svg) {
   const heatImg = el('image', { x: 0, y: 0, width: proj.W, height: proj.H, preserveAspectRatio: 'none', class: 'sh-heat' });
   root.insertBefore(heatImg, root.querySelector('.tsm-land'));
   const names = el('g', { class: 'sh-names' }, root);
-  [['Iceland', -17.2, 64.95, 'sh-mid sh-gw'], ['Faroes', -6.9, 62.5, 'sh-mid'], ['Shetland', -1.3, 60.95, 'sh-mid']]
+  [['Iceland', -17.2, 64.95, 'sh-mid sh-gw'], ['Faroes', -6.9, 62.5, 'sh-mid'], ['Shetland', -0.7, 60.95, 'sh-end']]
     .forEach(([t, lon, lat, c]) => el('text', { x: P([lon, lat])[0], y: P([lon, lat])[1], class: `t-place ${c}` }, names, t));
   [['Norwegian Sea', -3.6, 66.45], ['North Atlantic', -11.5, 61.0]].forEach(([t, lon, lat]) =>
     el('text', { x: P([lon, lat])[0], y: P([lon, lat])[1], class: 't-sea sh-mid' }, names, t));

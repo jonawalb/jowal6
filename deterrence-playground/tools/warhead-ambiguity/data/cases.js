@@ -17,7 +17,7 @@ export const CASES = [
   { id: 'norad80', year: '1980', who: 'United States', kind: 'False alarm',
     title: 'The 46-cent chip',
     text: 'On 3 and 6 June 1980 NORAD computers again warned of Soviet launches, and routine alert actions followed. The failure was attributed to a 46-cent integrated circuit, though Defense Secretary Brown told President Carter that NORAD could not make the suspected chip fail again in tests. The Archive notes that alert actions were suspended because missile attack warning systems showed nothing unusual.',
-    reading: 'Same structure as 1979. A second, independent sensor that disagrees is what keeps the posterior low.',
+    reading: 'Same structure as 1979. With no second sensor confirming the launch, the low peacetime prior keeps the posterior low.',
     preset: { ctx: 'peace', pReal: 0.02, pNuc: 0.7, site: 'nuc', traj: 'unclear', corr: 0, surv: 0.5, lowCap: 1 },
     sources: [{ t: 'National Security Archive EBB 371 (as above)', u: 'https://nsarchive2.gwu.edu/nukevault/ebb371/' }, NOVA] },
   { id: 'petrov', year: '1983', who: 'Soviet Union', kind: 'False alarm',

@@ -28,7 +28,7 @@ const FACTORS = [
   { k: 'pkc', n: 'Kill chance vs cruise', lo: S => { S.pk.c *= 1 - F; }, hi: S => { S.pk.c = Math.min(0.99, S.pk.c * (1 + F)); }, ll: pct(1 - F), hl: pct(1 + F) },
   { k: 'docb', n: 'Shots per ballistic missile', lo: docStep('b', -1), hi: docStep('b', 1), ll: docLabel('b', -1), hl: docLabel('b', 1) },
   { k: 'nk', n: 'Drones stopped without missiles', lo: S => { S.nk *= 1 - F; }, hi: S => { S.nk = Math.min(1, S.nk * (1 + F)); }, ll: pct(1 - F), hl: pct(1 + F) },
-  { k: 'prod', n: 'Tien Kung III production', lo: S => { S.prod = 0; }, hi: S => { S.prod = S.prod * 2 || 96; }, ll: 'stops', hl: 'doubles' },
+  { k: 'prod', n: 'Tien Kung III production', lo: S => { S.prod = 0; }, hi: S => { S.prod = S.prod * 2 || 96; }, ll: 'stops', hl: S => (S.prod > 0 ? 'doubles' : '96/yr') },
 ];
 
 export const METRICS = [

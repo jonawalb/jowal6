@@ -153,9 +153,20 @@
 .panel.done .sec:not(:first-child), .panel.done .od-slots, .panel.done .od-go, .panel.done .sec > .eyebrow { display: none; }
 .od-mc tbody th { text-transform: none; font-family: var(--body); letter-spacing: 0; font-weight: 500; font-size: 12.5px; color: var(--ink); white-space: normal; min-width: 120px; }
 .od-mc td, .od-mc thead th { white-space: nowrap; }
-@media (max-width: 560px) {
+@media (max-width: 600px) {
   .od-chart text { font-size: 19px !important; }
-  .od-mc td, .od-mc th { padding: 6px 6px; }
+  .od-mc td, .od-mc th { padding: 6px 5px; }
+  .od-mc thead th { white-space: normal; }
+  .od-mc tbody th { min-width: 0; }
+}
+.od-mc .sh, .od-shell-note { display: none; }
+/* Phones: the orbit view drops its shell names and fragment counts (the note under the legend lists them) and
+   enlarges the constellation labels; the replays table uses short row labels. */
+@media (max-width: 600px) {
+  .od-shell-t, .od-deb-t { display: none; }
+  .od-grp-t { font-size: 21px; }
+  .od-shell-note { display: block; }
+  .od-mc .lg { display: none; } .od-mc .sh { display: inline; }
 }
 
 /* Trailer look (Interactive Deterrence "Graphics: Trailer"; the attribute is only ever set there).

@@ -107,3 +107,10 @@ mark { background: var(--blue-soft); color: inherit; padding: 0 1px; }
   .dp-card { padding: 10px; }
 }
 .dp-part { display: block; margin-bottom: 4px; }
+
+/* Desktop: the side panel is never taller than the main column (or the window) and scrolls inside itself, so it no
+   longer runs below the chart and leaves an empty band beside it; it stays in view while a long main column scrolls.
+   Same rule in nuclear-arsenals, nuclear-tests, declaratory-policy and proliferation-paths. */
+@media (min-width: 1021px) {
+  .layout > .panel { position: sticky; top: 12px; height: 0; min-height: min(100%, calc(100vh - 24px)); overflow-y: auto; overscroll-behavior: contain; }
+}

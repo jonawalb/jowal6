@@ -34,4 +34,4 @@ export const TIMELINESS = {
   src: { name: 'IAEA, GOV/2025/65, para. 6', url: 'https://www.iaea.org/sites/default/files/gov2025-65.pdf' },
 };
 export const LAST_ESTIMATE = '2025-06-13';
-export const AS_OF = '2026-10-02';
+export const AS_OF = '2026-10-06';

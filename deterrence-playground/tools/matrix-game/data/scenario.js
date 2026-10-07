@@ -45,13 +45,14 @@ export const AI_SCHEDULE = ['russia', 'community', 'russia', 'nato', 'russia', '
 
 // Real background, each with its source key.
 export const FACTS = [
-  { src: 'natoEfp', text: 'At the 2016 Warsaw Summit, NATO Allies decided to establish an enhanced Forward Presence in the northeast. By August 2017 multinational battlegroups were operational in Estonia, Latvia, Lithuania and Poland. In Estonia the United Kingdom is the framework nation.' },
-  { src: 'natoEfp', text: 'At the 2022 Madrid Summit, Allies agreed to scale up beyond battalion-size battlegroups to brigade-size units "where and when required".' },
+  { src: 'natoEfp', text: 'At the 2016 Warsaw Summit, NATO Allies decided to establish an enhanced Forward Presence in the northeast. By August 2017 multinational battlegroups were operational in Estonia, Latvia, Lithuania and Poland. In Estonia the United Kingdom is the framework nation, with France contributing. NATO now calls the force Forward Land Forces: nine battlegroups, including one in Finland led by Sweden.' },
+  { src: 'natoEfp', text: 'In 2022 Allies agreed to deploy additional troops and scale up the battlegroups to brigade-size units, "when and where required".' },
+  { src: 'politseiNarva', text: 'The real Narva–Ivangorod crossing has been closed to vehicles since 1 February 2024, leaving it open to pedestrians only, and closed at night since 1 May 2024.' },
   { src: 'statLang', text: 'Narva had 53,955 residents at the 2021 census. 51,560 of them (95.6%) gave Russian as their mother tongue and 1,222 (2.3%) Estonian.' },
   { src: 'statEthnic', text: 'By ethnic nationality, 46,937 Narva residents (87.0%) were Russian and 3,107 (5.8%) Estonian in 2021.' },
   { src: 'statCit', text: 'By citizenship, 27,133 (50.3%) held Estonian citizenship, 18,695 (34.6%) Russian citizenship and 7,099 (13.2%) had undetermined citizenship.' },
   { src: 'bbcKohver', text: 'In September 2014 an officer of Estonia\'s Internal Security Service was taken near the Luhamaa border checkpoint. Estonia said it happened inside Estonia; Russia\'s FSB said it detained him on Russian territory.' },
-  { src: 'bbcBuoys', text: 'On 23 May 2024, Russia removed 24 of the 50 buoys Estonia had placed to mark sailing routes on the Narva River. Russia had disputed the locations of about half of 250 planned buoys. The EU called the removal unacceptable and Estonia summoned Russia\'s charge d\'affaires.' },
+  { src: 'bbcBuoys', text: 'On 23 May 2024, Russia removed 24 of the 50 buoys Estonia had placed to mark sailing routes on the Narva River. Russia had disputed the locations of about half of 250 planned buoys. The EU called the removal unacceptable and Estonia summoned Russia\'s chargé d\'affaires.' },
 ];
 
 // Six fictional injects, one per turn. `nudge` shifts the board when the turn opens (notional).

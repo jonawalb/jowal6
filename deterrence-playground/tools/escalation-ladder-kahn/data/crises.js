@@ -18,7 +18,7 @@ export const CRISES = [
         text: 'Proclamation 3504 ordered U.S. forces, from 14:00 GMT on October 24, to interdict the delivery of offensive weapons to Cuba. The Office of the Historian notes the word "quarantine" legally distinguished the action from a blockade.',
         why: 'U.S. warships stopping ships bound for Cuba is a direct test of nerve: "Dramatic military confrontations."', coding: 'author', src: ['proc3504', 'oh1962'] },
       { date: 'Oct. 24, 1962', rung: 11, title: 'DEFCON 2',
-        text: 'U.S. forces went to DEFCON 2, "meaning war involving the Strategic Air Command was imminent." Hersman dates it October 24 and calls it the first, and so far only, time in U.S. history.',
+        text: 'U.S. forces went to DEFCON 2 (Strategic Air Command), "meaning war involving the Strategic Air Command was imminent." Hersman dates it October 24 and calls it the first, and so far only, time in U.S. history.',
         why: 'The highest U.S. readiness ever ordered: "Super-ready status," just above the Nuclear War Is Unthinkable threshold.', coding: 'author', src: ['oh1962', 'hersman'] },
       { date: 'Oct. 27, 1962', rung: 8, title: 'A U-2 is shot down over Cuba',
         text: 'A U.S. U-2 reconnaissance aircraft was shot down over Cuba the same day Khrushchev sent another message saying any deal must include removing U.S. Jupiter missiles from Turkey.',

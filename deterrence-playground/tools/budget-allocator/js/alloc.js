@@ -1,6 +1,7 @@
 // Allocation controls: a draggable stacked bar and one slider per category, locked to the total.
 import { ctx } from './ctx.js';
 import { ON as MOTION } from './fx.js';
+import { units } from './buys.js';
 
 export const fmtBn = v => v >= 1000 ? Math.round(v).toLocaleString('en-US') : v >= 10 ? v.toFixed(1) : v.toFixed(2);
 /** Money in the active country's currency, e.g. "NT$145.7bn". */
@@ -122,7 +123,7 @@ export function mountSliders(el, get, onShare, onLock) {
       const bn = shares[c.id] * total;
       el.querySelector('#al-' + c.id).value = Math.round(shares[c.id] * 1000);
       el.querySelector('#ao-' + c.id).textContent = `${money(bn)} · ${Math.round(shares[c.id] * 100)}%`;
-      el.querySelector('#au-' + c.id).innerHTML = c.cost ? `≈ ${c.src && bn / c.cost < 1 ? (bn / c.cost).toFixed(2) : Math.floor(bn / c.cost).toLocaleString('en-US')} × ${c.unit} ${c.src ? `<span class="cited" title="Unit cost from a cited source; see the menu table below">${c.est ? 'cited, est.' : 'cited'}</span>` : '<span class="notional">notional</span>'}` : 'no effect in the model';
+      el.querySelector('#au-' + c.id).innerHTML = c.cost ? `≈ ${units(c, bn)} ${c.src ? `<span class="cited" title="Unit cost from a cited source; see the menu table below">${c.est ? 'cited, est.' : 'cited'}</span>` : '<span class="notional">notional</span>'}` : 'no effect in the model';
       const lb = el.querySelector(`.lock[data-id="${c.id}"]`);
       lb.setAttribute('aria-pressed', !!locks[c.id]);
       lb.textContent = locks[c.id] ? 'locked' : 'lock';

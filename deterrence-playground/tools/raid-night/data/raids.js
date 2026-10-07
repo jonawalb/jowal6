@@ -13,13 +13,13 @@ export const RAIDS = [
     k: 'ua-sep25', short: 'Ukraine, Sept 2025', name: 'the attack on Ukraine that began 6 September 2025',
     mix: { drone: 810, cruise: 9, ballistic: 4 },
     detail: '810 Shahed-type strike drones and decoy drones, 9 Iskander-K cruise missiles and 4 Iskander-M/KN-23 ballistic missiles, per the Ukrainian Air Force Command.',
-    src: ['kaggle', 'uafSep25'],
+    src: ['kaggle', 'uafSep25', 'upSep25'],
   },
   {
     k: 'ua-feb26', short: 'Ukraine, Feb 2026', name: 'the attack on Ukraine that began 2 February 2026',
     mix: { drone: 450, cruise: 39, ballistic: 32 },
     detail: '450 strike drones (Shahed, Gerbera, Italmas and other types; the Air Force said about 300 were Shaheds); 39 cruise missiles (Kh-101/Kh-555, Iskander-K, Kh-22/Kh-32, Zircon); 32 missiles the Air Force reported as Iskander-M together with S-300.',
-    src: ['kaggle', 'uafFeb26'],
+    src: ['kaggle', 'uafFeb26', 'emFeb26'],
   },
   {
     k: 'ir-apr24', short: 'Iran, April 2024', name: 'Iran\'s attack on Israel of 13–14 April 2024',

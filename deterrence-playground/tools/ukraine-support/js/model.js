@@ -3,6 +3,10 @@
 import { META, MONTHS, DONORS, ROWS } from '../data/aid.js';
 
 export { META, MONTHS, DONORS };
+// Kiel's Country Summary row "EU (Commission and Council)" includes the EIB; this tool lists the EIB as its own donor,
+// so the label says so. `key` keeps the original name for URL slugs.
+const EUI = DONORS.find(d => d.n === 'EU (Commission and Council)');
+if (EUI) { EUI.key = EUI.n; EUI.n = 'EU Commission and Council (excl. EIB)'; EUI.short = 'EU (excl. EIB)'; }
 export const TYPES = [
   { k: 'mil', n: 'Military', col: 'var(--c2)' },
   { k: 'hum', n: 'Humanitarian', col: 'var(--c3)' },
@@ -101,10 +105,12 @@ export function cumulative(series) {
 /** Summary numbers for the panel. */
 export function summary(S) {
   const rows = donorTotals(S);
+  // Per-GDP views rank only donors with a GDP, so the totals leave out the others too.
+  const inView = S.scale === 'gdp' ? rows.filter(o => o.d.gdp) : rows;
   const pick = S.donor !== null ? rows.find(o => o.i === S.donor) || donorTotals({ ...S, groups: GROUPS.map(g => g.k) }).find(o => o.i === S.donor) : null;
-  const sum = k => rows.reduce((s, o) => s + o[k], 0);
-  const byType = k => [0, 1, 2].map(t => rows.reduce((s, o) => s + o[k][t], 0));
-  const all = { A: sum('A'), C: sum('C'), a: byType('a'), c: byType('c'), n: rows.filter(o => o.A > 0.05 || o.C > 0.05).length };
+  const sum = k => inView.reduce((s, o) => s + o[k], 0);
+  const byType = k => [0, 1, 2].map(t => inView.reduce((s, o) => s + o[k][t], 0));
+  const all = { A: sum('A'), C: sum('C'), a: byType('a'), c: byType('c'), n: inView.filter(o => o.A > 0.05 || o.C > 0.05).length };
   let rank = null;
   if (pick) {
     const r = ranking(S);
@@ -126,4 +132,4 @@ export function eur(mn) {
 }
 export const pctGdp = p => p === null ? 'n/a' : p >= 0.1 ? `${p.toFixed(2)}%` : p > 0 ? `${p.toFixed(3)}%` : '0%';
 export const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-export const donorBySlug = s => DONORS.findIndex(d => slug(d.n) === s);
+export const donorBySlug = s => DONORS.findIndex(d => slug(d.key || d.n) === s);

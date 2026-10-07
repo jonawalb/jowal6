@@ -3,7 +3,7 @@ import { el, svgPoint, fmt } from '../../../shared/js/mapkit.js';
 import { TYPES, CATS } from '../data/catalog.js';
 import { distOf, reachOf } from './model.js';
 
-export const BW = 960, BH = 540, NW = 176, NH = 58;
+export const BW = 960, BH = 540, NW = 190, NH = 58;
 export const LANE_X = { sensor: 30, c2: 392, shooter: 770 };
 const LANES = [['sensor', 0, 290], ['c2', 290, 670], ['shooter', 670, 960]];
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -13,7 +13,7 @@ function subText(n, r, sc) {
   if (t.cat === 'sensor') {
     const d = r.det.get(n.id);
     if (d.skip) return `skip zone · ${fmt(d.d)} km`;
-    return d.ok ? `sees it · ${fmt(d.d)} km` : `too far · ${fmt(d.range)}<${fmt(d.d)} km`;
+    return d.ok ? `sees it · ${fmt(d.d)} km` : `${fmt(d.range)} km, needs ${fmt(d.d)}`;
   }
   if (t.cat === 'c2') return t.authority ? `decides in ${t.decide} min` : `relays in ${t.relay} min`;
   const dw = distOf(n, sc), reach = reachOf(n);

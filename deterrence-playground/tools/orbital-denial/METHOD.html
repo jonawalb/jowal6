@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Orbital Denial method | Interactive Deterrence</title>
+<meta name="description" content="Orbital Denial's method: model equations, every parameter and its basis, calibration against the Fengyun-1C and Cosmos 1408 tests, the Monte Carlo balance check and sensitivity runs.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&family=Spline+Sans+Mono:wght@400;500;600&family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<style>
+  .od-method { max-width: 920px; margin: 18px auto 0; }
+  .od-method .back { display: inline-block; margin-bottom: 6px; font-size: 13.5px; }
+  .od-method h1 { display: none; }
+  .od-method h2 { font-weight: 700; font-size: 24px; margin: 28px 0 8px; }
+  .od-method h3 { font-size: 17px; margin: 18px 0 6px; }
+  .od-method p, .od-method li { max-width: 72ch; font-size: 15px; line-height: 1.6; }
+  .od-method pre { font: 13px/1.5 var(--mono); background: var(--chip); border-radius: 3px; padding: 8px 10px; overflow-x: auto; }
+  .od-method code { font-family: var(--mono); font-size: .92em; }
+  .od-method .tablewrap { margin: 8px 0 14px; }
+  .od-method td { font-size: 13px; }
+</style>
+</head>
+<body>
+<header id="tsm-head"></header>
+<main class="od-method">
+<p class="back"><a href="./">&larr; Back to the game</a></p>
+<h1>Orbital Denial: method</h1>
+<p>A ten-month space-conflict wargame between two notional powers, Blue (the player) and Red (scripted). Each month both sides give two orders at once. Everything about the powers, their constellations, doctrines and numbers is notional except the debris physics anchors listed below. Code: <code>js/model.js</code> (turn resolution), <code>js/debris.js</code> (physics), <code>js/red.js</code> (opponent), <code>js/plans.js</code> (strategies, replays), <code>data/params.js</code> (every parameter).</p>
+<h2>1. Model equations</h2>
+<h3>1.1 Fragments from a kill (NASA standard breakup model)</h3>
+<p>For a catastrophic collision of total mass M = M_target + M_projectile (kg), the number of fragments with characteristic length ≥ L_c (m) is</p>
+<pre><code>N(≥L_c) = 0.1 · M^0.75 · L_c^−1.71
+</code></pre>
+<p>(Johnson et al. 2001, as printed in Krisko, ODQN 15-4, Oct 2011, eq. 2.) The game counts trackable fragments at L_c = 0.10 m, so N_10 = 5.13 · M^0.75, times a fragment multiplier <code>fragMult</code> (default 1; Advanced "×4" for Fengyun-1C-like clouds). The interceptor adds a notional 20 kg. A co-orbital kill is a low-debris disable at 5% of a full breakup (notional). Fragments stay in the target's shell (75%), and the rest scatter to the other LEO shell or leave the model (notional split).</p>
+<h3>1.2 Debris strikes (Kessler &amp; Cour-Palais 1978, kinetic form)</h3>
+<p>Per satellite per year in shell s, with D trackable fragments in shell volume V (a 100 km band at the shell altitude), relative speed v and cross-section σ:</p>
+<pre><code>λ10 = (D_eff / V) · v · σ,        D_eff = D + (K − 1) · D_fresh
+λ_cat  = p_cat · λ10                                  (catastrophic: satellite destroyed, new breakup cloud)
+λ_mk   = (1 − p_cat) · λ10 + (r − 1) · p_small · λ10  (mission kill, no new trackable cloud)
+</code></pre>
+<p>p_cat = 0.45 (LEGEND share of catastrophic collisions, Kessler et al. 2010). r = 10^1.71 = 51.3 fragments ≥1 cm per fragment ≥10 cm (same power law). Fresh fragments (from the last few months) count K = 3 times while the cloud is still concentrated, and disperse with τ_disp = 0.33 yr (notional; ODQN 11-2 describes the Fengyun-1C cloud as starting as a disk and encircling the globe within the year). In-game losses are drawn per satellite with p = 1 − exp(−λ·Δt), Δt = 1/12 yr; maneuvering halves the hazard for that month. Catastrophic strikes feed new breakups (N_10 of the struck satellite's mass): this is the cascade.</p>
+<h3>1.3 Decay</h3>
+<pre><code>D(t + Δt) = D(t) · exp(−Δt / τ_s) + b · D0_s · (1 − exp(−Δt / τ_s))
+</code></pre>
+<p>τ_low = 0.83 yr: ODQN 28-2 reports about 9% of modeled Cosmos 1408 fragments ≥1 cm left after two years with observed solar flux, so τ = 2 / ln(1/0.09).
+τ_high = 70 yr: ODQN 26-4 reports 2,837 of 3,532 cataloged Fengyun-1C fragments on orbit on 1 May 2022, 15.3 years after the test, so τ = 15.3 / ln(3532/2837).
+MEO and GEO: no drag (τ = ∞; Kessler et al. 2010 note a sink is "virtually non-existent" at GEO).</p>
+<p>The second term is a constant background source (launches, old breakups and everything else outside the war) that replaces exactly what drag removes from the pre-war population D0_s, so with no attacks and no collisions each shell stays at its pre-war count (b = <code>bgSource</code> = 1, notional). It adds the same amount in the war game and in the no-war baseline, so the debris legacy, which is a difference against that same-model baseline, barely moves (Sensitivity, last row). Without it, low-LEO background debris would fall from 1,000 to about 350 within ten months of peace, which the real environment does not do (ESA's Space Environment Report 2025 says debris would keep growing even without new launches). In the post-war projection, collisions among background satellites still add fragments, so the no-war world slowly gets worse (high LEO about 3,000 → 3,470 fragments in 25 years).</p>
+<h3>1.4 Post-war projection</h3>
+<p>After month 10 the model runs deterministically in quarter-year steps for 25, 50 or 100 years. Both sides are held at full strength (losses replaced), as in the critical-density framing of Kessler et al. (2010), where the intact population is maintained. The reported legacy is satellites lost minus those lost in a no-war world over the same years.</p>
+<h3>1.5 Capability and the war</h3>
+<p>Each mission m has alive satellites a_m and a notional requirement need_m. Capability c_m = min(1, a_m / need_m) · (1 − d_m), where d_m combines this month's reversible effects multiplicatively. Space support S = Σ w_m c_m, weights ISR 0.35, comms 0.30, nav 0.25, warning 0.10 (notional). Advantage A = Σ_months k_t (S_Blue − S_Red), k = 0.2 in crisis months 1–3 and 1 in war months 4–10. After month 10, A ≥ 0.5 is a Blue edge, A ≤ −0.5 a Red edge, otherwise stalemate.</p>
+<p>Actions: jamming 25–50% (x0.4 against early warning), dazzling ISR 30–55% with a 10% chance of permanent damage to one satellite, cyber 50% success for a 50% cut this month and next; backups halve all three against that mission for the rest of the game. Missile (direct-ascent) kills in LEO with p = 0.8, co-orbital anywhere with p = 0.7; both halved if the target maneuvers and scaled by the attacker's reconnaissance, p × (1 − 0.5(1 − c_ISR)) (CSIS 2025: counterspace weapons depend on space awareness and intelligence). Relaunch adds three satellites next month; proliferation adds 12 small comms satellites. Stocks: 6 missiles, 3 co-orbital, 4 maneuvers, 3 relaunches, 2 proliferation batches per side.</p>
+<h3>1.6 Escalation (entanglement)</h3>
+<pre><code>h_t = h0 + Σ_actions w_a · e_a · (1 + φ F_target) · f_first
+P(threshold crossed in month t) = 1 − exp(−h_t)
+</code></pre>
+<p>h0 = 0.002 (crisis) or 0.004 (war); w = 0.0008 jam/dazzle, 0.0012 cyber, 0.012 missile, 0.010 co-orbital; e = 6 against early warning and nuclear command (Acton 2018's entanglement mechanism; magnitude notional); F = 1 − (0.5 c_warning + 0.5 c_ISR) of the target side, φ = 1.5; f_first = 2 for the first destructive attack of the game. This is the same functional form as <code>tools/entanglement</code> (its per-phase hazard 1 − exp(−(h0 + Σh)) with a fog multiplier 1 + φF); this game does not reproduce that tool's channels, it uses a single aggregate hazard. Both sides' actions add to h. A seeded draw each month decides whether the threshold is crossed, which ends the game.</p>
+<h3>1.7 Opponent</h3>
+<p>Red answers Blue's previous month (orders are simultaneous) under a hidden posture drawn from the seed: restrained (reversible only until Blue destroys two satellites or touches its warning satellites), reciprocal (mirrors Blue's attacks in kind and target), aggressive (one missile a month at Blue ISR from month 4, co-orbital attacks on navigation once missiles run out, and co-orbital attacks on Blue's warning satellites once Blue has attacked Red's). All postures relaunch a mission that falls below need (counting satellites already launched and due next month), add backups against a mission Blue jammed (50%), and sometimes maneuver after being shot at. These are notional doctrines.</p>
+<h3>1.8 Randomness and same-seed comparison</h3>
+<p>Every roll comes from a generator keyed by (seed, stream, month), so two plans on one seed see the same dice for the same event (common random numbers). The after-action review plays (a) the player's orders, (b) the same orders with each destructive attack replaced by the reversible means for that target (ISR → dazzle, comms and nav → jam, warning → cyber), and (c) the same orders with attacks removed and defenses kept, first on the game's seed and then on 1,000 new seeds. A game that ended early is finished with the reversible-only script.</p>
+<h2>2. Parameters</h2>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Value</th>
+<th>Basis</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Breakup law N = 0.1 M^0.75 L_c^−1.71</td>
+<td>0.1, 0.75, 1.71</td>
+<td>Krisko 2011 (ODQN 15-4), Johnson et al. 2001</td>
+</tr>
+<tr>
+<td>Trackable size L_c</td>
+<td>0.10 m</td>
+<td>ODQN 12-1 counts large FY-1C debris as "most larger than 10 cm"</td>
+</tr>
+<tr>
+<td>Catastrophic share of strikes p_cat</td>
+<td>0.45</td>
+<td>Kessler et al. 2010 (LEGEND)</td>
+</tr>
+<tr>
+<td>Impact speed, LEO</td>
+<td>10 km/s</td>
+<td>Kessler et al. 2010 (example impact velocity)</td>
+</tr>
+<tr>
+<td>Decay time, low LEO / high LEO</td>
+<td>0.83 / 70 yr</td>
+<td>fitted to ODQN 28-2 / ODQN 26-4</td>
+</tr>
+<tr>
+<td>Ratio ≥1 cm : ≥10 cm</td>
+<td>51.3</td>
+<td>breakup law; FY-1C check ≈58 (ODQN 12-1)</td>
+</tr>
+<tr>
+<td>Shell altitudes 450 / 850 km</td>
+<td></td>
+<td>chosen near the Cosmos 1408 (490 × 465 km) and Fengyun-1C (845 × 865 km) orbits</td>
+</tr>
+<tr>
+<td>Interceptor mass</td>
+<td>20 kg</td>
+<td>NOTIONAL: no public figure used</td>
+</tr>
+<tr>
+<td>Fragment multiplier</td>
+<td>1</td>
+<td>NOTIONAL setting; 1 ≈ Cosmos 1408, 4 ≈ Fengyun-1C</td>
+</tr>
+<tr>
+<td>Co-orbital debris share</td>
+<td>0.05</td>
+<td>NOTIONAL: low-debris kill; CSIS lists orbital ASAT effects as mode-dependent</td>
+</tr>
+<tr>
+<td>Stay share</td>
+<td>0.75</td>
+<td>NOTIONAL</td>
+</tr>
+<tr>
+<td>Cross-section σ</td>
+<td>10 m²</td>
+<td>NOTIONAL</td>
+</tr>
+<tr>
+<td>Shell band</td>
+<td>100 km</td>
+<td>NOTIONAL</td>
+</tr>
+<tr>
+<td>Relative speed MEO / GEO</td>
+<td>1 / 0.5 km/s</td>
+<td>NOTIONAL (only matters for co-orbital debris)</td>
+</tr>
+<tr>
+<td>Small-fragment kill share</td>
+<td>0.2</td>
+<td>NOTIONAL</td>
+</tr>
+<tr>
+<td>Fresh-cloud factor, dispersal time</td>
+<td>3, 0.33 yr</td>
+<td>NOTIONAL (qualitative basis ODQN 11-2)</td>
+</tr>
+<tr>
+<td>Background fragment source b</td>
+<td>1 (holds pre-war counts against decay)</td>
+<td>NOTIONAL (direction: ESA Space Environment Report 2025)</td>
+</tr>
+<tr>
+<td>Hit chances, missile / co-orbital</td>
+<td>0.8 / 0.7</td>
+<td>NOTIONAL</td>
+</tr>
+<tr>
+<td>Maneuver factor</td>
+<td>0.5</td>
+<td>NOTIONAL</td>
+</tr>
+<tr>
+<td>Reconnaissance dependence of aim</td>
+<td>0.5</td>
+<td>NOTIONAL (concept: CSIS 2025)</td>
+</tr>
+<tr>
+<td>Jam, dazzle, cyber effects; backups</td>
+<td>see §1.5</td>
+<td>NOTIONAL (dazzle damage concept: CSIS 2025)</td>
+</tr>
+<tr>
+<td>Escalation weights, h0, e, φ, first-use</td>
+<td>see §1.6</td>
+<td>NOTIONAL (entanglement concept: Acton 2018, 2019)</td>
+</tr>
+<tr>
+<td>Constellations, needs, masses, weights</td>
+<td>ISR 6/6/2,000 kg; comms 24/16/500 kg; nav 24/18/1,500 kg; warning 4/3/3,000 kg</td>
+<td>NOTIONAL</td>
+</tr>
+<tr>
+<td>Background satellites; pre-war fragments</td>
+<td>1,500 / 1,000 / 60 / 300; 1,000 / 3,000 / 50 / 100</td>
+<td>NOTIONAL</td>
+</tr>
+<tr>
+<td>Stocks</td>
+<td>6 / 3 / 4 / 3 / 2</td>
+<td>NOTIONAL</td>
+</tr>
+<tr>
+<td>Advantage threshold; crisis weight</td>
+<td>0.5; 0.2</td>
+<td>NOTIONAL</td>
+</tr>
+</tbody>
+</table></div>
+<p>No data set exists from which the escalation weights, doctrines or military values could be estimated. They are set so the ordering matches the literature (destructive &gt; reversible; entangled targets much worse), not fitted.</p>
+<h2>3. Calibration</h2>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Mass, orbit</th>
+<th>Model N_10 (M + 20 kg)</th>
+<th>Observed</th>
+<th>Observed / model</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fengyun-1C, 11 Jan 2007</td>
+<td>960 kg, 845 × 865 km (ODQN 11-2)</td>
+<td>902</td>
+<td>&gt;1,200 cataloged at 2 months (ODQN 11-2); 2,317 by end-2007 (ODQN 12-1); 3,037 by Sept 2010 (ODQN 14-4); 3,532 by 1 May 2022 (ODQN 26-4)</td>
+<td>3.9</td>
+</tr>
+<tr>
+<td>Cosmos 1408, 15 Nov 2021</td>
+<td>1,750 kg, 490 × 465 km (ODQN 26-1)</td>
+<td>1,400</td>
+<td>&gt;1,500 trackable (USSPACECOM; ODQN 26-1); 1,604 by 7 Mar 2022 (ODQN 26-1); 1,760 by 1 May 2022 (ODQN 26-4); 1,805 by 3 Feb 2024 (ODQN 28-2)</td>
+<td>1.3</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li>The breakup law reproduces Cosmos 1408 within about 30% and underpredicts Fengyun-1C about fourfold. NASA reported the FY-1C cloud "considerably exceed[s] model predictions" (ODQN 12-1); ODQN 28-2 says the model "matched radar measurements very well" for Cosmos 1408. Hence the ×4 setting.</li>
+<li>Small/large ratio: model 51.3; FY-1C ≥1 cm "at least 150,000" vs nearly 2,600 large (ODQN 12-1) ≈ 58.</li>
+<li>Decay: with τ_low = 0.83 yr the model leaves 57% of a low-LEO cloud after 0.46 yr; ODQN 26-4 had 990 of 1,760 Cosmos 1408 fragments on orbit (56%). τ_high = 70 yr leaves 95% at 3.7 yr (ODQN 14-4 reported 97% of cataloged FY-1C debris still in orbit in Sept 2010) and 80% at 15.3 yr (fit point).</li>
+<li>Context: SWF (2026) counts 6,904 cataloged debris from counterspace tests by four countries, 2,773 still on orbit.</li>
+</ul>
+<h2>4. Monte Carlo balance check</h2>
+<p><code>node tools/orbital-denial/scripts/balance.mjs</code> (300 seeded games per cell, seed 2026: the same n and seed as the "Balance check" button on the page, so the "drawn" rows below are exactly what the page shows). Win = Blue edge without crossing the threshold. Rerun 6 October 2026 after two model changes: Red no longer relaunches a mission whose replacements are already on the way, and background debris has a source term (§1.3).</p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>Strategy</th>
+<th>Red posture</th>
+<th>Blue edge</th>
+<th>Stalemate</th>
+<th>Red edge</th>
+<th>Threshold crossed</th>
+<th>Extra satellites lost, 25 y (all owners)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Do nothing</td>
+<td>drawn</td>
+<td>0%</td>
+<td>0%</td>
+<td>91%</td>
+<td>9%</td>
+<td>5</td>
+</tr>
+<tr>
+<td>All-out kinetic (missiles at ISR, co-orbital at warning, then comms and nav)</td>
+<td>drawn</td>
+<td>12%</td>
+<td>8%</td>
+<td>26%</td>
+<td>54%</td>
+<td>20</td>
+</tr>
+<tr>
+<td>Reversible only (backups in crisis, then dazzle ISR + jam comms)</td>
+<td>drawn</td>
+<td>31%</td>
+<td>58%</td>
+<td>2%</td>
+<td>9%</td>
+<td>4</td>
+</tr>
+<tr>
+<td>Kinetic on reconnaissance only</td>
+<td>drawn</td>
+<td>27%</td>
+<td>46%</td>
+<td>2%</td>
+<td>25%</td>
+<td>21</td>
+</tr>
+<tr>
+<td>Reversible, one two-missile strike at war's start</td>
+<td>drawn</td>
+<td>38%</td>
+<td>45%</td>
+<td>1%</td>
+<td>16%</td>
+<td>11</td>
+</tr>
+<tr>
+<td>Defend and relaunch</td>
+<td>drawn</td>
+<td>0%</td>
+<td>85%</td>
+<td>7%</td>
+<td>8%</td>
+<td>4</td>
+</tr>
+<tr>
+<td>Reversible, answer kinetic in kind</td>
+<td>drawn</td>
+<td>25%</td>
+<td>59%</td>
+<td>5%</td>
+<td>11%</td>
+<td>6</td>
+</tr>
+</tbody>
+</table></div>
+<p>By posture (Blue edge, 300 games against each fixed posture): reversible only 9% / 43% / 38% (restrained / reciprocal / aggressive); one strike at war's start 30% / 37% / 49%; answer in kind 1% / 54% / 14%; all-out 0% / 1% / 35%. No strategy wins more than 54% against any posture or more than 38% overall; the best choice depends on Red's hidden posture; the naive strategies (do nothing, all-out kinetic) do worst, and all-out kinetic crosses the threshold in more than half of games. The kinetic opening that wins most often also roughly triples the debris legacy (11 extra satellites lost against 4) and crosses the threshold in 16% of games against 9% for reversible only.</p>
+<h2>5. Sensitivity</h2>
+<p><code>node tools/orbital-denial/scripts/sensitivity.mjs</code> (300 games per strategy, posture drawn, seed 2026; the baseline row matches §4). Cells: Blue edge % / threshold % / extra satellites lost in 25 y.</p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>Change</th>
+<th>Do nothing</th>
+<th>All-out</th>
+<th>Reversible</th>
+<th>One strike</th>
+<th>Defend</th>
+<th>Answer in kind</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Baseline</td>
+<td>0/9/5</td>
+<td>12/54/20</td>
+<td>31/9/4</td>
+<td>38/16/11</td>
+<td>0/8/4</td>
+<td>25/11/6</td>
+</tr>
+<tr>
+<td>Fragments ×4</td>
+<td>0/9/23</td>
+<td>12/54/104</td>
+<td>31/9/18</td>
+<td>38/16/59</td>
+<td>0/8/18</td>
+<td>25/11/28</td>
+</tr>
+<tr>
+<td>σ = 20 m²</td>
+<td>0/9/10</td>
+<td>12/54/44</td>
+<td>31/9/8</td>
+<td>38/16/25</td>
+<td>0/8/10</td>
+<td>25/11/13</td>
+</tr>
+<tr>
+<td>No fresh-cloud boost</td>
+<td>0/9/4</td>
+<td>12/54/19</td>
+<td>31/9/3</td>
+<td>38/16/11</td>
+<td>0/8/4</td>
+<td>25/11/5</td>
+</tr>
+<tr>
+<td>Entanglement ×3</td>
+<td>0/9/5</td>
+<td>15/40/20</td>
+<td>31/9/4</td>
+<td>38/16/11</td>
+<td>0/8/4</td>
+<td>25/11/6</td>
+</tr>
+<tr>
+<td>Entanglement ×10</td>
+<td>0/9/5</td>
+<td>9/66/20</td>
+<td>31/9/4</td>
+<td>38/16/11</td>
+<td>0/8/4</td>
+<td>25/11/6</td>
+</tr>
+<tr>
+<td>Threshold 0.3</td>
+<td>0/9/5</td>
+<td>14/54/20</td>
+<td>50/9/4</td>
+<td>57/16/11</td>
+<td>0/8/4</td>
+<td>40/11/6</td>
+</tr>
+<tr>
+<td>Threshold 0.8</td>
+<td>0/9/5</td>
+<td>10/54/20</td>
+<td>7/9/4</td>
+<td>16/16/11</td>
+<td>0/8/4</td>
+<td>6/11/6</td>
+</tr>
+<tr>
+<td>Backups ×0.3</td>
+<td>0/9/5</td>
+<td>12/54/20</td>
+<td>40/9/4</td>
+<td>43/16/12</td>
+<td>0/8/4</td>
+<td>41/10/6</td>
+</tr>
+<tr>
+<td>Missile p = 0.6</td>
+<td>0/9/3</td>
+<td>7/52/16</td>
+<td>36/9/3</td>
+<td>39/15/8</td>
+<td>0/8/3</td>
+<td>24/11/4</td>
+</tr>
+<tr>
+<td>Missile hazard halved</td>
+<td>0/8/5</td>
+<td>14/47/21</td>
+<td>31/8/4</td>
+<td>40/12/12</td>
+<td>0/8/4</td>
+<td>26/9/6</td>
+</tr>
+<tr>
+<td>Aim independent of ISR</td>
+<td>0/9/5</td>
+<td>7/54/24</td>
+<td>26/9/5</td>
+<td>29/16/14</td>
+<td>0/8/4</td>
+<td>25/11/7</td>
+</tr>
+<tr>
+<td>No background source (b = 0)</td>
+<td>0/9/5</td>
+<td>12/54/21</td>
+<td>31/9/4</td>
+<td>38/16/12</td>
+<td>0/8/4</td>
+<td>25/11/6</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li>Debris legacy scales roughly linearly with the fragment multiplier, σ and 1/band; none of these change who wins, because debris kills few satellites within ten months. That is itself a finding consistent with Kessler et al. (2010): cascading is slow.</li>
+<li>The advantage threshold sets how often wars end in stalemate but not the ranking.</li>
+<li>The entanglement multiplier mainly moves strategies that strike warning satellites.</li>
+<li>The ranking "one strike at war's start" ≥ "reversible" depends on the reconnaissance-aim link; without it the two converge.</li>
+<li>The background source term changes no outcome and moves the legacy by at most one satellite, because the legacy is measured against a no-war world with the same source.</li>
+</ul>
+<h2>6. What the model leaves out</h2>
+<p>Orbital mechanics beyond shell averages (planes, inclinations, eccentric orbits, conjunction screening and warnings); collisions among fragments; solar-cycle variation in drag (ODQN 28-2 shows it matters for Cosmos 1408); any growth in background launches or debris beyond the constant source that holds pre-war counts steady; the ground segment except as a cyber target; spoofing; nuclear detonations in space; rendezvous without attack; launch capacity and cost; allies and third parties' reactions; commercial constellations' real sizes; attribution problems beyond fixed weights; learning by either side; and any bargaining or war termination. The escalation model is an aggregate hazard, not Acton's channel-by-channel argument; for that, see <code>tools/entanglement</code>.</p>
+</main>
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Orbital Denial: method', sub: 'Equations, parameters, calibration, balance check and sensitivity runs for the space-conflict wargame.', category: 'Force & wargame models' });
+  document.title = 'Orbital Denial method | Interactive Deterrence';
+</script>
+</body>
+</html>

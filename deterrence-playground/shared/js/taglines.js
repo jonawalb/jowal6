@@ -16,7 +16,7 @@ export const TAGLINES = {
   'iran-enrichment': "Iran's enriched uranium from every IAEA report since 2016, against the deal's limits and quoted breakout estimates.",
   'deterrence-lab-general': 'Move the costs and beliefs in three classic deterrence models and test what they predict against real crises.',
   'ukraine-air-war': 'Every Russian missile and drone wave since September 2022, and how much of each Ukraine reported shooting down.',
-  'russia-nuclear-signals': 'Every major Russian nuclear signal since 2022, and what, if anything, each one changed.',
+  'russia-nuclear-signals': 'Major Russian nuclear signals since 2022, and what, if anything, each one changed.',
   'ukraine-support': 'Who pledged aid to Ukraine and how much each donor has allocated, donor by donor.',
   'red-sea-hormuz': 'Watch daily ship traffic through the Red Sea and Hormuz set against every attack, strike and pause.',
   'kharg-island': "Seize, raid or blockade Iran's oil export hub in a dice-driven wargame, then see how 1,000 replays turn out.",

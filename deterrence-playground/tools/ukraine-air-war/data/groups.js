@@ -5,7 +5,7 @@ export const GROUP_INFO = {
   shahed: { n: 'Shahed-type drones', short: 'Shahed', col: 'var(--c2)',
     d: 'Rows the dataset labels Shahed-136/131, the Iranian-designed one-way attack drone that Russia builds as the Geran-2.' },
   drone: { n: 'Other drones', short: 'Other UAV', col: 'var(--c5)',
-    d: 'Reconnaissance drones (Orlan, ZALA, Supercam and others), Lancet, and rows the dataset labels \"Unknown UAV\".' },
+    d: 'Reconnaissance drones (Orlan, ZALA, Supercam and others), Lancet, the jet-powered Geran-5, and rows the dataset labels \"Unknown UAV\".' },
   cruise: { n: 'Cruise missiles', short: 'Cruise', col: 'var(--c1)',
     d: 'Kh-101/Kh-555, Kalibr, Iskander-K, Kh-59/69, Kh-22/32, Oniks, Zircon and other air-, sea- and ground-launched cruise missiles.' },
   ballistic: { n: 'Ballistic missiles', short: 'Ballistic', col: 'var(--prc)',

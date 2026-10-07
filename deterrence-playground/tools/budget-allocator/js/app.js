@@ -126,10 +126,14 @@ function renderRange(total) {
   const g = ranges(S.shares, total);
   $('ranges').innerHTML = METRICS.map(m => {
     const r = g[m.id], u = m.id === 'res' ? '' : '%';
-    return `<div class="rg"><div class="rg-h"><b>${m.t}</b><span class="num">${pct(r.lo)}–${pct(r.hi)}${u}</span></div>
-      <div class="rg-track" role="img" aria-label="${m.t}: middle 80% of runs between ${pct(r.lo)} and ${pct(r.hi)}${u}; full spread ${pct(r.min)} to ${pct(r.max)}${u}">
-        <i class="w" style="left:${r.min * 100}%;width:${(r.max - r.min) * 100}%"></i><i class="b" style="left:${r.lo * 100}%;width:${Math.max(0.6, (r.hi - r.lo) * 100)}%"></i></div>
-      <small>${m.s}. Full spread ${pct(r.min)}–${pct(r.max)}${u}.</small></div>`;
+    // A band of zero width (the middle 80% of runs all give one value) is not drawn; the value is shown instead.
+    const flat = pct(r.lo) === pct(r.hi), none = pct(r.min) === pct(r.max);
+    if (none) return `<div class="rg"><div class="rg-h"><b>${m.t}</b><span class="num">${pct(r.min)}${u}</span></div>
+      <small>${m.s}. Every run gives ${pct(r.min)}${u}, so there is no spread to show.</small></div>`;
+    return `<div class="rg"><div class="rg-h"><b>${m.t}</b><span class="num">${flat ? pct(r.lo) : `${pct(r.lo)}–${pct(r.hi)}`}${u}</span></div>
+      <div class="rg-track" role="img" aria-label="${m.t}: middle 80% of runs ${flat ? `all at ${pct(r.lo)}` : `between ${pct(r.lo)} and ${pct(r.hi)}`}${u}; full spread ${pct(r.min)} to ${pct(r.max)}${u}">
+        <i class="w" style="left:${r.min * 100}%;width:${(r.max - r.min) * 100}%"></i>${flat ? '' : `<i class="b" style="left:${r.lo * 100}%;width:${Math.max(0.6, (r.hi - r.lo) * 100)}%"></i>`}</div>
+      <small>${m.s}.${flat ? ` The middle 80% of runs all give ${pct(r.lo)}${u}.` : ''} Full spread ${pct(r.min)}–${pct(r.max)}${u}.</small></div>`;
   }).join('');
   const d = drivers(S.shares, total), top = Math.max(...d.map(x => x.swing), 1e-9);
   $('drivers').innerHTML = d.map(x => `<li><span>${x.t}</span><span class="lbar"><i style="width:${Math.round(x.swing / top * 100)}%"></i></span><span class="num">${pct(x.swing)} pts</span></li>`).join('');

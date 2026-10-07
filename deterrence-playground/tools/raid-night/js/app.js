@@ -69,6 +69,9 @@ function reset(newSeed = seed) {
   writeHash(); syncMode(); showReady(); hud(); syncPause();
 }
 
+// A restart, new raids, a new seed or a replay chosen by the player ends any running lesson and frees the clock.
+function resetByPlayer(newSeed) { lesson?.stop(); hold = false; reset(newSeed); }
+
 // ---- overlays ----
 const mixLine = w => {
   const r = RAIDS[w], c = S.waves[w].counts;
@@ -257,10 +260,10 @@ document.addEventListener('visibilitychange', () => { if (document.hidden && sta
 // ---- settings ----
 $('seed').addEventListener('change', () => {
   const v = parseInt($('seed').value, 10);
-  if (v >= 1 && v <= 999999) reset(v); else $('seed').value = seed;
+  if (v >= 1 && v <= 999999) resetByPlayer(v); else $('seed').value = seed;
 });
-$('new-seed').onclick = () => reset(randomSeed());
-$('restart').onclick = () => reset(seed);
+$('new-seed').onclick = () => resetByPlayer(randomSeed());
+$('restart').onclick = () => resetByPlayer(seed);
 $('reduced').checked = reduced;
 initFx({ isReduced: () => reduced });
 $('reduced').addEventListener('change', () => { reduced = $('reduced').checked; writeHash(); });
@@ -272,8 +275,8 @@ async function copy(text, btn) {
 }
 $('copy-link').onclick = e => copy(location.href, e.currentTarget);
 $('aar-copy').onclick = e => copy(resultText(summary(S), seed, location.href, mode), e.currentTarget);
-$('aar-again').onclick = () => { reset(seed); $('fieldbox').scrollIntoView({ block: 'center' }); };
-$('aar-new').onclick = () => { reset(randomSeed()); $('fieldbox').scrollIntoView({ block: 'center' }); };
+$('aar-again').onclick = () => { resetByPlayer(seed); $('fieldbox').scrollIntoView({ block: 'center' }); };
+$('aar-new').onclick = () => { resetByPlayer(randomSeed()); $('fieldbox').scrollIntoView({ block: 'center' }); };
 
 // ---- tutorial: Easy mode, fixed seed ----
 const lessonApi = {

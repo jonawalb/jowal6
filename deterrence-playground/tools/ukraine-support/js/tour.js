@@ -7,7 +7,7 @@ const STEPS = [
     body: 'Kiel counts commitments (pledges and agreements announcing future aid) and allocations (aid delivered or set aside for a specific purpose). The filled bar is allocations, the outline is commitments. Across all donors, Kiel records €374 billion allocated and €549 billion committed from January 2022 to June 2026.',
     set: {} },
   { title: 'The United States allocated the most',
-    body: 'Kiel records €115 billion allocated by the United States, most of it military. EU institutions follow with €95 billion allocated, mostly financial aid, against €191 billion committed.',
+    body: 'Kiel records €115 billion allocated by the United States, most of it military. EU institutions follow: the Commission and Council have allocated €92 billion, mostly financial aid, against €188 billion committed (€95 billion and €191 billion with the European Investment Bank, which this tool lists separately).',
     set: { donor: 'United States' } },
   { title: 'US allocations stop in early 2025',
     body: 'The timeline shows US aid by month. The last new US allocation in this release is dated January 2025, and the last US commitment November 2024.',

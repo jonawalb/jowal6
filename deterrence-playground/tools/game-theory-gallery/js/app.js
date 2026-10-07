@@ -176,12 +176,14 @@ addEventListener('popstate', route);
 
 // ---- Sources ----------------------------------------------------------------------------------
 document.getElementById('sources').innerHTML = SOURCES.map(s =>
-  `<li>${esc(s.t)}${s.u ? ` <a href="${s.u}" target="_blank" rel="noopener">${esc(s.u.replace('https://', ''))}</a>` : ' (book; no stable link)'}</li>`).join('');
+  `<li>${esc(s.t)}${s.u ? ` <a href="${s.u}" target="_blank" rel="noopener">${esc(s.u.replace('https://', ''))}</a>` : ' (book; no stable link)'}${s.u2 ? ` (<a href="${s.u2}" target="_blank" rel="noopener">published version on the author’s site</a>)` : ''}</li>`).join('');
 
 // ---- Walkthrough and buttons ------------------------------------------------------------------
 const tour = createTour(document.getElementById('tour-root'), step => {
   S.m = step.m; showModel();
   current.apply({ ...MODELS[step.m].defaults, ...step.set }, 'try', step.title);
+  // Bring the changed figure and the Equilibrium box to the top, clear of the walkthrough card.
+  stage.scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
 });
 document.getElementById('start-tour').addEventListener('click', () => tour.start());
 document.querySelectorAll('[data-goto]').forEach(a => a.addEventListener('click', ev => {
@@ -206,5 +208,5 @@ if (!renderMath()) window.addEventListener('load', renderMath, { once: true });
 let lastW = innerWidth, rt = 0;
 addEventListener('resize', () => {
   clearTimeout(rt);
-  rt = setTimeout(() => { if (Math.abs(innerWidth - lastW) > 40) { lastW = innerWidth; current.render(); } }, 150);
+  rt = setTimeout(() => { if (Math.abs(innerWidth - lastW) > 40) { lastW = innerWidth; current?.render(); } }, 150);
 });

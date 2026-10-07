@@ -31,7 +31,7 @@ export const COMBAT = {
 // `step` for every step below 5 and divided by it for every step above, k x step^(5 - value). At 5 the factor is
 // exactly 1, so k = 9 and 6.25 as above. Meeting engagements and flank attacks (k = 1) are not changed, and
 // neither is anything else (sight, orders, artillery, the scripted commanders' rules). NOTIONAL: `step` is
-// CALIBRATED with scripts/offdef.mjs so the game's standard matchup moves by about 15-20 points at either end
+// CALIBRATED with scripts/offdef.mjs so the game's standard matchup moves by about 15 points at either end
 // and stays inside 20-80% for both sides (METHOD.md section 15).
 export const OFFDEF = { min: 0, max: 10, standard: 5, step: 1.1 };
 

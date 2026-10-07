@@ -53,6 +53,8 @@ const cpick = document.getElementById('cpick');
 cpick.innerHTML = COUNTRIES.map(c => `<button type="button" data-iso="${c.iso}" aria-pressed="false"><span class="sw-dot" style="background:${COLOR[c.iso]}"></span>${esc(c.name)}</button>`).join('');
 document.getElementById('legend').innerHTML = COUNTRIES.map(c => `<span><span class="sw-dot" style="background:${COLOR[c.iso]}"></span>${esc(c.name)}</span>`).join('')
   + '<span><span class="sw-dash"></span>Global total incl. retired</span>';
+// On narrow screens (chart under 560 px, as in chart.js) the markers are numbered; this line is their key.
+document.getElementById('ms-key').textContent = 'Milestones: ' + MILESTONES.map((m, k) => `${k + 1} ${m.short}`).join(' · ');
 
 const chart = createChart(document.getElementById('chart'), {
   onYear: y => { state.msId = null; set({ year: y }); },
@@ -68,8 +70,10 @@ const act = {
 };
 wirePanel(panel, act);
 
+function msKey() { document.getElementById('ms-key').hidden = !state.ms || document.getElementById('chart').clientWidth >= 560; }
 function render() {
   chart.draw(state);
+  msKey();
   renderPanel(panel, state, act);
   range.value = state.year;
   document.getElementById('year-out').textContent = state.year;
@@ -116,7 +120,7 @@ document.getElementById('copy-link').addEventListener('click', async e => {
 });
 
 let rw = 0;
-new ResizeObserver(() => { const w = document.getElementById('chart').clientWidth; if (Math.abs(w - rw) > 4) { rw = w; chart.draw(state); } })
+new ResizeObserver(() => { const w = document.getElementById('chart').clientWidth; if (Math.abs(w - rw) > 4) { rw = w; chart.draw(state); msKey(); } })
   .observe(document.getElementById('chart'));
 addEventListener('hashchange', () => { readHash(); render(); });
 readHash();

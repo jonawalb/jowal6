@@ -11,6 +11,12 @@ export function createMap(svg, tip, { onSector }) {
   const proj = createProjection(BOX);
   const P = ll => proj.project(ll);
   const { root } = drawBasemap(svg, proj, LAND_KHARG, { gratStep: 0.25 });
+  // Latitude labels sit at the left edge, where the island inset covers them: move any covered one to the inset's right.
+  { const ib = createProjection(INSET_BOX);
+    root.querySelectorAll('.tsm-grat text').forEach(t => {
+      const y = +t.getAttribute('y');
+      if (t.textContent.endsWith('N') && y > INSET_AT.y && y < INSET_AT.y + ib.H + 14) t.setAttribute('x', INSET_AT.x + ib.W + 4);
+    }); }
   svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
   const full = svg.getAttribute('viewBox');
   // Phones: crop to the island, the inset and the approaches from the mainland.

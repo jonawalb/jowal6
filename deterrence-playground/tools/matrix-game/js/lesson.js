@@ -73,7 +73,7 @@ export function lessonSteps() {
       target: () => $('#mg-panel [data-next="ai"]') || $('#mg-counters') || $('#mg-panel'),
       done: () => !!$('#mg-adj [data-roll]') && !$('#mg-counters') && !$('#mg-panel [data-next="ai"]') },
     { title: 'Roll for Russia',
-      body: 'Check the adjudicator above: your counter shows as “(you)” with its −1 or 0. Then roll their dice.',
+      body: 'Check the adjudicator panel: your counter shows as “(you)” with its −1 or 0. Then roll their dice.',
       do: 'Click “Roll 2d6”.',
       target: () => $('#mg-adj .mg-rollrow'),
       done: () => !!$('#mg-panel [data-next="turn"], #mg-panel [data-next="debrief"]') },

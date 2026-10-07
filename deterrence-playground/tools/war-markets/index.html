@@ -13,6 +13,12 @@
 <link rel="stylesheet" href="../../shared/css/tsm.css">
 <link rel="stylesheet" href="../../shared/css/deterrence-site.css">
 <link rel="stylesheet" href="war-markets.css">
+<meta property="og:title" content="War Markets | Interactive Deterrence">
+<meta property="og:description" content="What prediction markets priced for strikes on Iran, ceasefires and a Russia–NATO clash in 2026, set against how each contract resolved.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jwalberg.com/deterrence-playground/tools/war-markets/">
+<meta property="og:image" content="https://jwalberg.com/deterrence-playground/tools/war-markets/thumb.png">
+<meta name="twitter:card" content="summary_large_image">
 </head>
 <body>
 <header id="tsm-head"></header>
@@ -85,16 +91,16 @@
     <h2>Method</h2>
     <ul class="src">
       <li>Prices and trades come from Walberg’s conflict-market-data collector, which archives Polymarket’s geopolitical contracts hourly because Polymarket stops serving price history once a contract resolves. Daily price: the last hourly bar of the UTC day where the archive has hourly bars; otherwise the size-weighted median of that day’s fills, with a “No” fill at price q counted as a “Yes” price of 1 − q. Days with no trades stay empty.</li>
-      <li>Outcome of a closed contract: the final-price rule used in the working paper. If the last 20 archived trades average 95¢ or more for Yes, it resolved Yes; 5¢ or less, No. This is not Polymarket’s official resolution notice, which the build machine could not reach. A check against Polymarket’s public market API on 30 September 2026 found that the 22 contracts resolved by then resolved the same way officially. The September 30 blockade contract, which closed afterwards, has not been checked against the official notice.</li>
+      <li>Outcome of a closed contract: the final-price rule used in the working paper. If the last 20 archived trades average 95¢ or more for Yes, it resolved Yes; 5¢ or less, No. This is not Polymarket’s official resolution notice. A check against Polymarket’s public API on 6 October 2026 found all 23 resolved contracts resolved the same way.</li>
       <li>“Settled” day: the first day from which every later daily price stays at 95¢ or more (Yes) or 5¢ or less (No). “A week before” is the last price on or before seven days before the outcome was decided: the settled day for a Yes, the deadline for a No. If the archive starts later, the first archived price is used and marked with an asterisk.</li>
-      <li>Brier score: the mean of (price − outcome)², with price as a share of $1 and outcome 1 or 0. Always quoting 50¢ scores 0.25.</li>
+      <li>Brier score: (price − outcome)², with price as a share of $1 and outcome 1 or 0. Always quoting 50¢ scores 0.25. The panel’s “Mean Brier” averages the score of every archived daily price before the day the outcome was decided, for the focused contract. The scorecard’s “Mean Brier score a week out” scores one price per contract, the price a week before, and averages across the resolved contracts.</li>
       <li>Deadlines are read from each contract’s question. Market IDs are Polymarket’s. Resolution rules are quoted from archived copies of each contract’s page on polymarket.com, linked in the panel.</li>
       <li>Events are the tier-1 dated events from Walberg’s Betting on War replication files (2026 only) for the Iran/Israel and Russia/Ukraine theaters, each with the one source URL the list records. Two fact-checks in September 2026 opened every source and rewrote the descriptions that went beyond what their sources say, moved one event to the date its source gives (19 February, not 20 February) and dropped one event whose source did not support it.</li>
       <li>Scripts: <code>scripts/fetch_rules.py</code> retrieves the rules; <code>scripts/build.py</code> reads the collector database and writes <code>data/markets.js</code>. No value on this page is notional.</li>
     </ul>
     <h2 class="mt">Sources</h2>
     <ul class="src">
-      <li>Market data: Polymarket, via <a href="https://github.com/jonawalb/conflict-market-data" target="_blank" rel="noopener">github.com/jonawalb/conflict-market-data</a> (hourly bars and trade tape, rebuilt from the repository’s increments on 2 October 2026).</li>
+      <li>Market data: Polymarket, via <a href="https://github.com/jonawalb/conflict-market-data" target="_blank" rel="noopener">github.com/jonawalb/conflict-market-data</a> (hourly bars and trade tape; the archive for these 28 contracts was topped up from Polymarket’s public API on 7 October 2026, UTC).</li>
       <li>Resolution rules: archived Polymarket pages on the <a href="https://web.archive.org/" target="_blank" rel="noopener">Internet Archive Wayback Machine</a>, one link per contract in the panel.</li>
       <li>Events: Walberg, Betting on War replication data (<code>events_iran_israel_v5.csv</code>, <code>events_russia_ukraine_v5.csv</code>), with the source listed for each event in the chart tooltip data.</li>
       <li>Jonathan Walberg, “Anonymous Costly Signals: A Third Mechanism in Crisis Bargaining,” working paper.</li>

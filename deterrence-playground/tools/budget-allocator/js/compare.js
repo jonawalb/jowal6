@@ -8,7 +8,9 @@ import { ranges, METRICS } from './range.js';
 const pct = v => Math.round(v * 100);
 
 function bandHtml(r) {
-  return `<span class="mband" aria-hidden="true"><i class="w" style="left:${r.min * 100}%;width:${(r.max - r.min) * 100}%"></i><i class="b" style="left:${r.lo * 100}%;width:${Math.max(1, (r.hi - r.lo) * 100)}%"></i></span>`;
+  if (pct(r.min) === pct(r.max)) return ''; // no spread: no band
+  const b = pct(r.lo) === pct(r.hi) ? '' : `<i class="b" style="left:${r.lo * 100}%;width:${Math.max(1, (r.hi - r.lo) * 100)}%"></i>`; // zero-width band: not drawn
+  return `<span class="mband" aria-hidden="true"><i class="w" style="left:${r.min * 100}%;width:${(r.max - r.min) * 100}%"></i>${b}</span>`;
 }
 
 export function renderCompare(rows, total, mode) {
@@ -16,7 +18,7 @@ export function renderCompare(rows, total, mode) {
     const res = rows.map(r => ({ ...r, g: ranges(r.shares, total) }));
     return `<table class="cmp"><thead><tr><th>Plan</th><th class="cmp-bar">Mix</th>${METRICS.map(m => `<th>${m.t}</th>`).join('')}</tr></thead><tbody>
       ${res.map(r => `<tr${r.you ? ' class="you"' : ''}><td><b>${r.t}</b>${r.s ? `<small>${r.s}</small>` : ''}</td><td class="cmp-bar" data-l="Mix">${barHtml(r.shares)}</td>
-        ${METRICS.map(m => `<td data-l="${m.t}" class="num">${pct(r.g[m.id].lo)}–${pct(r.g[m.id].hi)}${m.id === 'res' ? '' : '%'}${bandHtml(r.g[m.id])}</td>`).join('')}</tr>`).join('')}
+        ${METRICS.map(m => `<td data-l="${m.t}" class="num">${pct(r.g[m.id].lo) === pct(r.g[m.id].hi) ? pct(r.g[m.id].lo) : `${pct(r.g[m.id].lo)}–${pct(r.g[m.id].hi)}`}${m.id === 'res' ? '' : '%'}${bandHtml(r.g[m.id])}</td>`).join('')}</tr>`).join('')}
     </tbody></table>`;
   }
   // What it buys: the three biggest lines in each plan, with what they pay for.

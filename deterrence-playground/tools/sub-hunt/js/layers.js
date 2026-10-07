@@ -57,11 +57,28 @@ export function render(m, g, view, color) {
   setHeat(m, view.snap.heat, color);
   el('path', { d: ring(g.datum, GAME.datumR), class: 'sh-datum' }, L.datum);
   const [dx, dy] = P(step(g.datum, 0, GAME.datumR));
-  if (h === 0 || view.reveal) el('text', { x: dx, y: dy - 5 * u, class: 'sh-lab sh-mid' }, L.datum, `Report, ${GAME.reportAge} h before hour 0`);
+  const rep = (h === 0 || view.reveal) ? el('text', { x: dx, y: dy - 5 * u, class: 'sh-lab sh-mid' }, L.datum, `Report, ${GAME.reportAge} h before hour 0`) : null;
   PATROL.forEach(pt => {
     const [x, y] = P(pt.p), k = 7 * u;
     el('path', { d: `M${x - k} ${y}H${x + k}M${x} ${y - k}V${y + k}`, class: 'sh-patrol' }, L.datum);
-    el('text', { x: x + 1.3 * k, y: y - k, class: 'sh-exitlab' }, L.datum, pt.k);
+    // A patrol point inside the opening ring gets its label just outside the ring, clear of the dashes and the report
+    // label at the top, with a thin leader back to the cross.
+    const [cx, cy] = P(g.datum), rp = Math.abs(dy - cy);
+    if (Math.hypot(x - cx, y - cy) < rp + 12 * u) {
+      let a = Math.atan2(y - cy, x - cx || 1e-6);
+      const up = -Math.PI / 2, off = a - up;
+      if (Math.abs(off) < 0.7) a = up + (off < 0 ? -0.7 : 0.7);
+      const lx = cx + Math.cos(a) * (rp + 8 * u), ly = cy + Math.sin(a) * (rp + 8 * u);
+      el('path', { d: `M${x} ${y}L${lx} ${ly}`, class: 'sh-patrol sh-leader' }, L.datum);
+      el('text', { x: lx + (Math.cos(a) >= 0 ? 3 : -3) * u, y: ly + 4 * u, class: `sh-exitlab ${Math.cos(a) >= 0 ? '' : 'sh-end'}` }, L.datum, pt.k);
+    } else {
+      const t = el('text', { x: x + 1.3 * k, y: y - k, class: 'sh-exitlab' }, L.datum, pt.k);
+      // Outside the ring the label can still run into the report label above it: drop it below the cross instead.
+      if (rep) {
+        const a = t.getBBox(), b = rep.getBBox();
+        if (a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height) t.setAttribute('y', y + 2.4 * k);
+      }
+    }
   });
 
   const nowH = g.turn * GAME.turnHours;

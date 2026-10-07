@@ -1,13 +1,13 @@
 // Largest salvos list, weekday/hour grid, and the selected-period detail panel.
 import { fmt, escapeHtml as esc } from '../../../shared/js/mapkit.js';
-import { GROUPS, reportUrl, periodLabel, periodRows, passed } from './model.js';
+import { GROUPS, reportUrl, periodLabel, periodRows, passed, modelName } from './model.js';
 import { GROUP_INFO } from '../data/groups.js';
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const fdate = d => new Date(d + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
 const pct = (a, b) => (b ? Math.round((a / b) * 100) + '%' : 'n/a');
 
-export function renderSalvos(host, list, onPick) {
+export function renderSalvos(host, list, onPick, lost) {
   if (!list.length) { host.innerHTML = '<li class="none">No attacks match the filters.</li>'; return; }
   const max = list[0].l;
   host.innerHTML = list.map((a, i) => {
@@ -16,7 +16,7 @@ export function renderSalvos(host, list, onPick) {
     return `<li><button type="button" class="sv" data-d="${a.d}" aria-label="Show ${fdate(a.d)} in the timeline">
       <span class="sv-r num">${i + 1}</span><span class="sv-d">${fdate(a.d)}${a.tm ? ` <small>from ${a.tm}</small>` : ''}</span>
       <span class="sv-bar">${segs}</span><span class="sv-n num">${fmt(a.l)}</span></button>
-      <span class="sv-m">${pct(a.x, a.l)} reported stopped${a.nr ? `, ${fmt(a.nr)} more lost` : ''}${url ? ` · <a href="${url}" target="_blank" rel="noopener">Air Force report</a>` : ''}</span></li>`;
+      <span class="sv-m">${lost ? `${pct(Math.min(a.l, a.x + a.nr), a.l)} reported stopped${a.nr ? `, including ${fmt(a.nr)} lost` : ''}` : `${pct(a.x, a.l)} reported stopped${a.nr ? `, ${fmt(a.nr)} more lost` : ''}`}${url ? ` · <a href="${url}" target="_blank" rel="noopener">Air Force report</a>` : ''}</span></li>`;
   }).join('');
   host.querySelectorAll('.sv').forEach(b => { b.onclick = () => onPick(b.dataset.d); });
 }
@@ -53,7 +53,7 @@ export function renderDetail(host, S, key) {
   const L = pub.reduce((s, r) => s + (r.l || 0), 0), X = pub.reduce((s, r) => s + (r.x || 0), 0);
   const reps = [...new Set(pub.map(r => r.rep))].map(i => [i, reportUrl(i)]).filter(([, u]) => u);
   const mrows = [...byModel].sort((a, b) => b[1].l - a[1].l).map(([m, v]) =>
-    `<tr><td><i class="key" style="background:${GROUP_INFO[v.g].col}"></i>${esc(m)}</td><td class="num">${fmt(v.l)}</td><td class="num">${fmt(v.x)}</td><td class="num">${v.nr ? fmt(v.nr) : ''}</td></tr>`).join('');
+    `<tr><td><i class="key" style="background:${GROUP_INFO[v.g].col}"></i>${esc(modelName(m))}</td><td class="num">${fmt(v.l)}</td><td class="num">${fmt(v.x)}</td><td class="num">${v.nr ? fmt(v.nr) : ''}</td></tr>`).join('');
   host.innerHTML = `<p class="eyebrow">Selected ${S.res}</p>
     <h3 class="d-h">${periodLabel(key, S.res)}</h3>
     <dl class="readout"><dt>Launched</dt><dd>${fmt(L)}</dd><dt>Reported stopped</dt><dd>${fmt(X)} (${pct(X, L)})</dd>

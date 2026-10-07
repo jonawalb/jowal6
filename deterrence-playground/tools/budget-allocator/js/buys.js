@@ -25,6 +25,7 @@ export function waitText(ref, asof) {
   if (!ref) return '';
   const n = `Notified ${fmtYM(ref.notified)}`;
   if (ref.done) return `${n}; complete ${fmtYM(ref.done)} (<b>${yrs(years(ref.notified, ref.done))}</b>)`;
+  if (ref.left) return `${n}; left TSM's backlog ${fmtYM(ref.left)} with no delivery reported`;
   if (ref.first) return `${n}; first delivery ${fmtYM(ref.first)} (<b>${yrs(years(ref.notified, ref.first))}</b>); not complete`;
   return `${n}; no deliveries by ${fmtYM(asof)} (<b>${yrs(years(ref.notified, asof))}</b> and counting)`;
 }

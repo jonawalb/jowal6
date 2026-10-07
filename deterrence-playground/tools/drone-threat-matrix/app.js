@@ -88,8 +88,9 @@
     var t = TECH[tid];
     var scope = state.actor === 'all' ? 'all actors' : ACTOR[state.actor].name;
     var sorted = list.slice().sort(function (a, b) { return String(a.date).localeCompare(String(b.date)); });
+    var none = !CASES.some(function (c) { return c.techniques.indexOf(tid) !== -1; });
     var body = sorted.length ? sorted.map(function (c) { return caseHTML(c, true); }).join('') :
-      '<p style="color:var(--muted)">No cases in the dataset for this technique under the current filters. Absence here reflects this curated sample and its sources, not evidence that the behaviour has not occurred.</p>';
+      '<p style="color:var(--muted)">' + (none ? 'No case in the dataset is tagged with this technique yet.' : 'No cases in the dataset for this technique under the current filters.') + ' Absence here reflects this curated sample and its sources, not evidence that the behaviour has not occurred.</p>';
     openDialog(tid + ' ' + t.name, esc(t.tactic.name) + ' &middot; ' + sorted.length + ' case' + (sorted.length === 1 ? '' : 's') + ' &middot; ' + esc(scope), body);
   }
   function showCase(c) {
@@ -122,9 +123,11 @@
       col.appendChild(h);
       t.techniques.forEach(function (x) {
         var list = data.filter(function (c) { return c.techniques.indexOf(x.id) !== -1; });
+        var none = !CASES.some(function (c) { return c.techniques.indexOf(x.id) !== -1; });
         var b = el('button', { 'class': 'cell', type: 'button', 'data-h': String(heat(list.length)),
-          'aria-label': x.id + ' ' + x.name + ': ' + list.length + ' case' + (list.length === 1 ? '' : 's') },
-          '<span>' + esc(x.name) + '</span><span><span class="tid">' + esc(x.id) + '</span> <span class="n">' + (list.length ? '&middot; ' + list.length : '') + '</span></span>');
+          'aria-label': x.id + ' ' + x.name + ': ' + (none ? '0 cases yet' : list.length + ' case' + (list.length === 1 ? '' : 's')) },
+          '<span>' + esc(x.name) + '</span><span><span class="tid">' + esc(x.id) + '</span> ' +
+          (none ? '<span class="n none">&middot; 0 cases yet</span>' : '<span class="n">&middot; ' + list.length + '</span>') + '</span>');
         b.addEventListener('click', function () { showTechnique(x.id, list); });
         col.appendChild(b);
       });

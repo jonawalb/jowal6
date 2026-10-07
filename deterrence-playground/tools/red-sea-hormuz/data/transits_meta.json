@@ -1,5 +1,5 @@
 {
-  "retrieved": "2026-10-02",
+  "retrieved": "2026-10-06",
   "source": "https://services9.arcgis.com/weJ1QsnbMYJlCHdG/arcgis/rest/services/Daily_Chokepoints_Data/FeatureServer/0/query",
   "info": {
     "bab": {
@@ -8,8 +8,8 @@
       "lat": 12.789,
       "lon": 43.35,
       "start": "2019-01-01",
-      "end": "2026-09-27",
-      "days": 2827,
+      "end": "2026-10-04",
+      "days": 2834,
       "missing": 0
     },
     "suez": {
@@ -18,8 +18,8 @@
       "lat": 30.593,
       "lon": 32.437,
       "start": "2019-01-01",
-      "end": "2026-09-27",
-      "days": 2827,
+      "end": "2026-10-04",
+      "days": 2834,
       "missing": 0
     },
     "hormuz": {
@@ -28,8 +28,8 @@
       "lat": 26.297,
       "lon": 56.86,
       "start": "2019-01-01",
-      "end": "2026-09-27",
-      "days": 2827,
+      "end": "2026-10-04",
+      "days": 2834,
       "missing": 0
     },
     "cape": {
@@ -38,8 +38,8 @@
       "lat": -34.927,
       "lon": 20.883,
       "start": "2019-01-01",
-      "end": "2026-09-27",
-      "days": 2827,
+      "end": "2026-10-04",
+      "days": 2834,
       "missing": 0
     }
   }

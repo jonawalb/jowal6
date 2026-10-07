@@ -43,12 +43,16 @@ export function solveFirst(P) {
 /** Bargaining over objects that are sources of power, with a jump J in p at xbar (eq. 3, pp. 186-187). */
 export function solveTerritory(P) {
   const { xb, pb, J, e, c2, dl } = P;
-  const xt = Math.min(1, xb + e);                          // the smallest concession past the jump
+  // The smallest concession past the jump. With no jump (J = 0) p stays continuous, and state 1 asks only for what
+  // state 2 will accept, x_t <= p(x̄) + (1 - δ)c₂ (Fearon's no-war result, p. 186), so the cap applies.
+  const xe = Math.min(1, xb + e), xMax = pb + (1 - dl) * c2;
+  const capped = J <= EPS && xe > xMax;
+  const xt = capped ? xMax : xe;
   const pt = Math.min(1, pb + J);                          // p(x_t) just past the jump
   const fightNow = (1 - pb) / (1 - dl) - c2;
   const concede = 1 - xt + dl * ((1 - pt) / (1 - dl) - c2);
   const lhs = dl * pt - pb, rhs = (1 - dl) ** 2 * c2 - (1 - dl) * xt;
-  return { xt, pt, fightNow, concede, war: fightNow > concede + EPS, lhs, rhs };
+  return { xt, pt, capped, fightNow, concede, war: fightNow > concede + EPS, lhs, rhs };
 }
 
 /** Shifting power between domestic factions (pp. 189-190). */

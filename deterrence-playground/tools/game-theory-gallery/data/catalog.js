@@ -25,7 +25,7 @@ export const SOURCES = [
   { k: 'fearon94', t: 'Fearon, James D. 1994. “Domestic Political Audiences and the Escalation of International Disputes.” American Political Science Review 88 (3): 577-592.', u: 'https://doi.org/10.2307/2944796' },
   { k: 'jervis78', t: 'Jervis, Robert. 1978. “Cooperation under the Security Dilemma.” World Politics 30 (2): 167-214.', u: 'https://doi.org/10.2307/2009958' },
   { k: 'kydd00', t: 'Kydd, Andrew. 2000. “Trust, Reassurance, and Cooperation.” International Organization 54 (2): 325-357.', u: 'https://doi.org/10.1162/002081800551190' },
-  { k: 'slantchev03', t: 'Slantchev, Branislav L. 2003. “The Principle of Convergence in Wartime Negotiations.” American Political Science Review 97 (4): 621-632. Published version on the author’s site.', u: 'http://slantchev.ucsd.edu/published/pdf/Convergence-O006.pdf' },
+  { k: 'slantchev03', t: 'Slantchev, Branislav L. 2003. “The Principle of Convergence in Wartime Negotiations.” American Political Science Review 97 (4): 621-632.', u: 'https://doi.org/10.1017/S0003055403000911', u2: 'https://slantchev.ucsd.edu/published/pdf/Convergence-O006.pdf' },
   { k: 'rubinstein82', t: 'Rubinstein, Ariel. 1982. “Perfect Equilibrium in a Bargaining Model.” Econometrica 50 (1): 97-109. Copy on the author’s site.', u: 'https://arielrubinstein.tau.ac.il/papers/11.pdf' },
   { k: 'fearon97', t: 'Fearon, James D. 1997. “Signaling Foreign Policy Interests: Tying Hands versus Sinking Costs.” Journal of Conflict Resolution 41 (1): 68-90. Covered by the Deterrence Lab.', u: 'https://doi.org/10.1177/0022002797041001004' },
 ];

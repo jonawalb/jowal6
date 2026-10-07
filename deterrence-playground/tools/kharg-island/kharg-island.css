@@ -131,7 +131,7 @@ table.oilparts td.num { text-align: right; white-space: nowrap; }
 .seg.mixed, .sw.mixed { background: color-mix(in srgb, var(--warn) 55%, var(--panel)); }
 .mc-leg { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 13px; }
 .mc-leg li { display: inline-flex; align-items: center; gap: 6px; }
-.sw { width: 12px; height: 12px; border-radius: 2px; display: inline-block; }
+.sw:not(.orig):not(.trl) { width: 12px; height: 12px; border-radius: 2px; display: inline-block; }
 .mc-cols { display: grid; grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.25fr); gap: 16px; margin-top: 4px; }
 .eb { display: grid; grid-template-columns: minmax(0, 1fr) 70px 38px; gap: 6px; align-items: center; font-size: 12px; padding: 3px 0; border-bottom: 1px dotted var(--rule); }
 .eb-bar { height: 8px; background: var(--chip); border-radius: 4px; overflow: hidden; }

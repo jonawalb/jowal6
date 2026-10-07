@@ -41,7 +41,7 @@ export const MOVES = {
       { id: 'R1', text: 'Dispute the river boundary in a formal diplomatic note', result: 'Other governments start to call the line "contested".', tags: ['law', 'border'], diff: 0, win: { att: 1, coh: -1 }, lose: { coh: 1 } },
       { id: 'R2', text: 'Run a state-media campaign alleging discrimination in Narva', result: 'The story spreads among Narva residents.', tags: ['info'], diff: 0, win: { loc: -2 }, lose: { loc: 1, coh: 1 } },
       { id: 'R3', text: 'Extend the exercise near the border by two weeks', result: 'Allies argue over how to respond.', tags: ['deter', 'escal'], diff: 0, win: { esc: 2, coh: -1 }, lose: { coh: 2 } },
-      { id: 'R4', text: 'Slow the Narva–Ivangorod crossing with extended inspections', result: 'Queues grow and Narva businesses lose trade.', tags: ['border', 'econ', 'escal'], diff: 0, win: { loc: -1, esc: 1 }, lose: { loc: 1 } },
+      { id: 'R4', text: 'Slow the Narva–Ivangorod pedestrian crossing with extended inspections', result: 'Queues grow, and Narva people who cross for work and family lose hours.', tags: ['border', 'econ', 'escal'], diff: 0, win: { loc: -1, esc: 1 }, lose: { loc: 1 } },
       { id: 'R5', text: 'Advertise consular services and passports to Narva residents', result: 'Queues form at the consulate and it makes the news.', tags: ['local', 'law'], diff: -1, win: { loc: -1, att: 1, coh: -1 }, lose: { loc: 1, coh: 1 } },
       { id: 'R6', text: 'Offer talks with Tallinn alone, without NATO or the EU', result: 'Some allies ask whether Estonia should take the offer.', tags: ['talks', 'diplo'], diff: -1, win: { coh: -2, esc: -1 }, lose: { coh: 1 } },
     ],
@@ -53,7 +53,7 @@ export const MOVES = {
       { text: 'Exercises on our own territory are routine and lawful.', tags: ['deter'], cond: null },
       { text: 'Pressure works best while few are watching.', tags: ['border', 'econ', 'info', 'escal'], cond: { k: 'att', op: 'le', v: 4 } },
       { text: 'An offer of talks looks reasonable when tension is high.', tags: ['talks'], cond: { k: 'esc', op: 'ge', v: 5 } },
-      { text: 'Most of Narva speaks Russian, so Russian-language media reach it.', tags: ['info'], cond: null, src: 'statLang' },
+      { text: 'Russian is the mother tongue of most of Narva, so Russian-language media reach it.', tags: ['info'], cond: null, src: 'statLang' },
     ],
     counters: [
       { text: 'This is a provocation against Russia\'s security.', vs: ['deter', 'border'], cond: { k: 'esc', op: 'ge', v: 5 } },

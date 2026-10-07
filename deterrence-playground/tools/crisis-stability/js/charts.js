@@ -113,18 +113,21 @@ export function drawDomain(svg, S, R, onHover) {
 
 /** Probability domain (Fig. 12): box A, where both sides see an advantage in waiting, has area = index. */
 export function drawProb(svg, R) {
-  const W = 220, H = 220, P = 24, s = W - 2 * P;
+  // Left and bottom margins leave room for the ratio labels and axis captions outside the frame.
+  const s = 180, PL = 50, PT = 10, PR = 10, PB = 34, W = PL + s + PR, H = PT + s + PB;
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
   svg.replaceChildren();
   const g = el('g', {}, svg);
-  const x = P + R.rA * s, y = H - P - R.rB * s;
-  el('rect', { x: P, y: P, width: s, height: s, class: 'pd-all' }, g);
-  el('rect', { x: P, y, width: R.rA * s, height: R.rB * s, class: 'pd-a' }, g);
-  el('line', { x1: x, x2: x, y1: P, y2: H - P, class: 'pd-la' }, g);
-  el('line', { x1: P, x2: W - P, y1: y, y2: y, class: 'pd-lb' }, g);
-  el('text', { x: P + R.rA * s / 2, y: y + R.rB * s / 2 + 5, class: 'pd-t', 'text-anchor': 'middle' }, g, R.index >= 0.12 ? 'Both wait' : '');
-  el('text', { x, y: H - 6, class: 'pd-ax pd-ax-a', 'text-anchor': 'middle' }, g, R.rA.toFixed(2));
-  el('text', { x: 4, y: y + 4, class: 'pd-ax pd-ax-b' }, g, R.rB.toFixed(2));
+  const x = PL + R.rA * s, y = PT + s - R.rB * s;
+  el('rect', { x: PL, y: PT, width: s, height: s, class: 'pd-all' }, g);
+  el('rect', { x: PL, y, width: R.rA * s, height: R.rB * s, class: 'pd-a' }, g);
+  el('line', { x1: x, x2: x, y1: PT, y2: PT + s, class: 'pd-la' }, g);
+  el('line', { x1: PL, x2: PL + s, y1: y, y2: y, class: 'pd-lb' }, g);
+  el('text', { x: PL + R.rA * s / 2, y: y + R.rB * s / 2 + 5, class: 'pd-t', 'text-anchor': 'middle' }, g, R.index >= 0.12 ? 'Both wait' : '');
+  el('text', { x, y: PT + s + 14, class: 'pd-ax pd-ax-a', 'text-anchor': 'middle' }, g, R.rA.toFixed(2));
+  el('text', { x: PL - 5, y: y + 4, class: 'pd-ax pd-ax-b', 'text-anchor': 'end' }, g, R.rB.toFixed(2));
+  el('text', { x: PL + s / 2, y: H - 3, class: 'pd-cap', 'text-anchor': 'middle' }, g, "A's ratio →");
+  el('text', { x: 10, y: PT + s / 2, class: 'pd-cap', 'text-anchor': 'middle', transform: `rotate(-90 10 ${PT + s / 2})` }, g, "B's ratio →");
 }
 
 /** Sweep chart: index against one input, three lines (A only, B only, both). */

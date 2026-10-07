@@ -8,7 +8,7 @@
 const side = o => ({ nf: 400, mf: 1, ns: 70, ms: 16, alert: 0.6, de: 0.8, w80: 900, hold: 0, ...o });
 
 export const PRESETS = [
-  { k: 'mixed', n: 'Survivable vs MIRVed silos', s: 'Default. A single-warhead silos and a large survivable leg; B puts most warheads in six-warhead silos.',
+  { k: 'mixed', n: 'Survivable vs MIRVed silos', s: 'Default. A has single-warhead silos and a large survivable leg; B puts most warheads in six-warhead silos.',
     A: side({}), B: side({ nf: 150, mf: 6, ns: 40, alert: 0.4 }), prl: false, wpt: 2 },
   { k: 'surv', n: 'Both mostly survivable', s: 'About 1,600 warheads each, two-thirds on survivable launchers kept 70% on alert.',
     A: side({ nf: 500, alert: 0.7 }), B: side({ nf: 500, alert: 0.7 }), prl: false, wpt: 2 },

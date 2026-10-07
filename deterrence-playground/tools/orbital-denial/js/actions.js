@@ -6,7 +6,7 @@ export const ACTS = {
   jam:      { t: 'Jam', kind: 'rev', on: 'enemy', ms: ['com', 'nav', 'ew'], d: 'Blocks their signals this month. Reversible.' },
   dazzle:   { t: 'Dazzle', kind: 'rev', on: 'enemy', ms: ['isr'], d: 'Blinds their imaging satellites this month with a laser. Reversible, rarely damages.' },
   cyber:    { t: 'Cyber', kind: 'rev', on: 'enemy', ms: ['isr', 'com', 'nav', 'ew'], d: 'Hits their ground network. Half the time it works, for two months.' },
-  asat:     { t: 'Missile (ASAT)', kind: 'kin', on: 'enemy', ms: ['isr', 'com'], stock: 'asat', d: 'Direct-ascent missile. Destroys one satellite in low orbit and makes a debris cloud.' },
+  asat:     { t: 'Missile (ASAT)', kind: 'kin', on: 'enemy', ms: ['isr', 'com'], stock: 'asat', d: 'Direct-ascent missile. Destroys one satellite in LEO (up to about 900 km) and makes a debris cloud.' },
   coorb:    { t: 'Co-orbital', kind: 'kin', on: 'enemy', ms: ['isr', 'com', 'nav', 'ew'], stock: 'coorb', d: 'A killer satellite. Disables one satellite in any orbit, with little debris.' },
   maneuver: { t: 'Maneuver', kind: 'def', on: 'own', ms: MISSION_KEYS, stock: 'maneuver', d: 'Your satellites in that orbit dodge this month: half the hit chance and half the debris risk.' },
   harden:   { t: 'Backups', kind: 'def', on: 'own', ms: MISSION_KEYS, d: 'Ground and airborne backups for one mission. Halves jamming, dazzling and cyber for the rest of the game.' },

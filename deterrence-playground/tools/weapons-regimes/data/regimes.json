@@ -323,7 +323,7 @@
         },
         {
           "date": "2026-06-05",
-          "text": "NSPM-11, 'Artificial Intelligence in the National Security Enterprise', directs DoD to update 3000.09 within 90 days and review it annually. No revised directive verified as of 6 Oct 2026.",
+          "text": "NSPM-11, 'Artificial Intelligence in the National Security Enterprise', directs DoD to update 3000.09 within 90 days and review it annually. No revised directive verified as of 6 Oct 2026 (deadline passed ~3 Sep 2026).",
           "url": "https://defensescoop.com/2026/06/15/lawmaker-questions-pentagons-plan-to-revise-autonomous-weapons-policy/"
         }
       ],
@@ -553,7 +553,7 @@
       "key_provisions": [
         {
           "cite": "Art. 10",
-          "text": "Import, export and transit licensing. The EU implements Art. 10 through Regulation (EU) No 258/2012.",
+          "text": "Import, export and transit licensing. The EU implements Art. 10 through Regulation (EU) No 258/2012, replaced by Regulation (EU) 2025/41 from 12 Feb 2029.",
           "url": "https://home-affairs.ec.europa.eu/policies/internal-security/organised-crime/trafficking-firearms_en"
         }
       ],
@@ -644,7 +644,7 @@
           "url": "https://digitallibrary.un.org/record/4095989?ln=en"
         },
         {
-          "label": "Stop Killer Robots on First Committee vote (6 Nov 2025)",
+          "label": "Stop Killer Robots: First Committee vote, 6 Nov 2025 (156-5-8)",
           "url": "https://stopkillerrobots.org/news/156-states-support-unga-resolution"
         }
       ],
@@ -684,11 +684,15 @@
           "url": "https://treaties.un.org/Pages/ViewDetails.aspx?src=TREATY&mtdsg_no=XXVI-5&chapter=26&clang=_en"
         }
       ],
-      "notes": "UN Treaty Collection status (6 Oct 2026): 162 parties. The status page does not record a withdrawal by Ukraine.",
+      "notes": "UN Treaty Collection status (6 Oct 2026): 162 parties. Ukraine notified a suspension of the Convention from 17 July 2025 (UNODA record); UNTC records no withdrawal.",
       "sources": [
         {
           "label": "UN Treaty Collection, Ottawa Convention status and notes",
           "url": "https://treaties.un.org/Pages/ViewDetails.aspx?src=TREATY&mtdsg_no=XXVI-5&chapter=26&clang=_en"
+        },
+        {
+          "label": "UNODA Treaties Database, Mine Ban Convention (Ukraine suspension note)",
+          "url": "https://treaties.unoda.org/t/mine_ban"
         }
       ],
       "last_verified": "2026-10-06"
@@ -804,11 +808,11 @@
     {
       "id": "eu_firearms",
       "short": "EU Firearms Directive",
-      "name": "Firearms Directive (EU) 2021/555 and Firearms Regulation (EU) No 258/2012",
+      "name": "Firearms Directive (EU) 2021/555 and Firearms Regulation (EU) No 258/2012 (recast as Regulation (EU) 2025/41)",
       "jurisdiction": "EU",
       "kind": "Directive + Regulation",
       "force": "Binding (Directive via national law; Regulation directly applicable)",
-      "cite": "Directive (EU) 2021/555; Regulation (EU) No 258/2012",
+      "cite": "Directive (EU) 2021/555; Regulation (EU) No 258/2012; Regulation (EU) 2025/41",
       "administrator": "European Commission and national authorities",
       "summary": "The Directive sets minimum common rules on acquisition and possession of civilian firearms and intra-EU transfers. The Regulation governs export, import and transit of civilian firearms, parts and ammunition and does not apply to firearms for military or police use.",
       "key_provisions": [
@@ -821,13 +825,18 @@
           "cite": "Regulation (EU) No 258/2012",
           "text": "Export, import and transit of civilian firearms; implements Art. 10 of the UN Firearms Protocol.",
           "url": "https://home-affairs.ec.europa.eu/policies/internal-security/organised-crime/trafficking-firearms_en"
+        },
+        {
+          "cite": "Regulation (EU) 2025/41, Arts. 45-46",
+          "text": "Recast of 258/2012: repeals it and applies from 12 Feb 2029; some provisions apply from 11 Feb 2025.",
+          "url": "https://eur-lex.europa.eu/eli/reg/2025/41/oj/eng"
         }
       ],
       "changes": [
         {
-          "date": "2022-10-27",
-          "text": "Commission proposed a recast of the Firearms Regulation (status not checked here).",
-          "url": "https://home-affairs.ec.europa.eu/policies/internal-security/organised-crime/trafficking-firearms_en"
+          "date": "2024-12-19",
+          "text": "Regulation (EU) 2025/41 adopted 19 Dec 2024, in force 11 Feb 2025; replaces 258/2012 from 12 Feb 2029.",
+          "url": "https://eur-lex.europa.eu/eli/reg/2025/41/oj/eng"
         }
       ],
       "notes": "",
@@ -835,6 +844,10 @@
         {
           "label": "European Commission, Trafficking in firearms",
           "url": "https://home-affairs.ec.europa.eu/policies/internal-security/organised-crime/trafficking-firearms_en"
+        },
+        {
+          "label": "EUR-Lex, Regulation (EU) 2025/41 (OJ L, 22 Jan 2025)",
+          "url": "https://eur-lex.europa.eu/eli/reg/2025/41/oj/eng"
         }
       ],
       "last_verified": "2026-10-06"

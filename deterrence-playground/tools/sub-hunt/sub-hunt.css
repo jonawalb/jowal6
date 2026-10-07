@@ -203,6 +203,7 @@ body.sh-over .sh-console { display: none; }
 
 /* Map marks added for the effort-per-turn version */
 .sh-patrol { stroke: var(--c6); stroke-width: 2; fill: none; stroke-dasharray: none; }
+.sh-leader { stroke-width: 1; opacity: .6; }
 .sh-range { fill: none; stroke: var(--blue); stroke-width: 1.2; stroke-dasharray: 3 5; opacity: .8; pointer-events: none; }
 .sh-cur.bad { stroke: var(--bad); fill: color-mix(in srgb, var(--bad) 8%, transparent); }
 .sh-cur.line, .sh-cur.move { fill: none; stroke-width: 3; }

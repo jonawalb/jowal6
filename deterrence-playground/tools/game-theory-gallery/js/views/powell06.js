@@ -77,7 +77,7 @@ export default {
   why(P, e) {
     if (P.v === 'shift') return `To keep state 2 from fighting now, state 1 must promise it at least what fighting brings. But once stronger, 1 can only credibly promise 2 the pie minus what 1 could then lock in, x* = (p + Δ)(1 − d) = ${f2(e.xStar)} per period. Per period, the shift in power is ${f2(e.shift)} and the surplus from not fighting is d = ${f2(e.surplus)}. ${e.war ? 'The shift is larger, so bargaining breaks down (condition 1, p. 182).' : 'The surplus is larger, so a peaceful path exists.'} As δ → 1 the test becomes Δ(1 − d) > d (p. 183).`;
     if (P.v === 'first') return `De facto range: state 1 needs x ≥ (p + f)(1 − d) = ${f2(e.lo)}; state 2 needs x ≤ (p − f)(1 − d) + d = ${f2(e.hi)}. ${e.empty ? `It is empty because 2f(1 − d) = ${f2(e.gap)} > d.` : 'It is not empty.'} Powell reads this as a shift in power: choosing to bargain rather than attack hands the adversary the first strike. Condition (1): [(1 + δ)f − (1 − δ)p](1 − d) = ${f2(e.shift)} ${e.war ? '>' : '≤'} d (p. 185).`;
-    if (P.v === 'territory') return `If state 2 concedes x<sub>t</sub> = ${f2(e.xt)}, state 1’s chance of winning jumps to ${f2(e.pt)} and 1 will press for more next round. Fighting now is worth ${f2(e.fightNow * (1 - P.dl))} to 2 per period; conceding and then being held to indifference is worth ${f2(e.concede * (1 - P.dl))}. Equation (3) (p. 187): δp(x<sub>t</sub>) − p(x̄) = ${f2(e.lhs)} ${e.war ? '>' : '≤'} ${f2(e.rhs)}. With a continuous p (J = 0), Fearon shows states never fight in this game (p. 186).`;
+    if (P.v === 'territory') return `If state 2 concedes x<sub>t</sub> = ${f2(e.xt)}, ${P.J > 0 ? `state 1’s chance of winning jumps to ${f2(e.pt)} and 1 will press for more next round.` : `state 1’s chance of winning stays at ${f2(e.pt)}: with J = 0 nothing jumps.${e.capped ? ` State 1 asks only for what state 2 will accept, so the concession stops at p(x̄) + (1 − δ)c<sub>2</sub> = ${f2(e.xt)} rather than x̄ + e.` : ''}`} Fighting now is worth ${f2(e.fightNow * (1 - P.dl))} to 2 per period; conceding and then being held to indifference is worth ${f2(e.concede * (1 - P.dl))}. Equation (3) (p. 187): δp(x<sub>t</sub>) − p(x̄) = ${f2(e.lhs)} ${e.war ? '>' : '≤'} ${f2(e.rhs)}. With a continuous p (J = 0), Fearon shows states never fight in this game (p. 186).`;
     return `As a unitary state, 1 would accept any x between ${f2(e.unitary[0])} and ${f2(e.unitary[1])}. Faction a, though, keeps power with probability ${f2(P.r)} if it settles and ${f2(P.rp)} if it fights and wins, so it needs x ≥ ${f2(e.lo)}. State 2 gives at most ${f2(e.hi)}. ${e.war ? 'No division works: the faction prefers a larger share of a smaller pie (p. 189).' : 'A division still exists.'}`;
   },
 
@@ -170,7 +170,7 @@ export default {
     }
     if (P.v === 'territory') {
       const a = figCard(host, 'p06-px', 'State 1’s chance of winning, by the territory it holds', 'Step plot of p(x) with a jump just past the current line x̄.', 'Powell’s Figure 3 (p. 187), with our straight-line p away from the jump.');
-      const b = figCard(host, 'p06-cmp', 'State 2’s choice when asked to concede past x̄ (per period)', 'Bars comparing state 2’s value of fighting now and of conceding.');
+      const b = figCard(host, 'p06-cmp', 'State 2’s choice when asked to concede past <span class="nocase">x̄</span> (per period)', 'Bars comparing state 2’s value of fighting now and of conceding.');
       return {
         draw(P, e) {
           const F = frame(a.svg, { W: 760, H: 250, m: { l: 52, r: 16, t: 14, b: 42 }, x: [0, 1], y: [0, 1] });

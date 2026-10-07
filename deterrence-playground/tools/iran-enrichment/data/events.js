@@ -90,7 +90,7 @@ export const EVENTS = [
     src: { name: 'IAEA, GOV/2026/61; Al Jazeera, 9 September 2026', url: IAEA + 'documents/gov2026-61.pdf',
       also: { name: 'Al Jazeera, 9 September 2026', url: 'https://www.aljazeera.com/news/2026/9/9/iaea-board-resolves-to-report-iran-to-security-council-over-nuclear-program' } } },
   { id: 'pezeshkian', date: '2026-09-25', cat: 'deal', short: 'Offer', title: 'Pezeshkian: Iran could give up its 60 percent uranium',
-    desc: 'Iran\'s president told Fox News that Tehran was willing to give up uranium enriched to 60 percent within the NPT framework. No agreement had been announced by 2 October 2026.',
+    desc: 'Iran\'s president told Fox News that Tehran was willing to give up uranium enriched to 60 percent within the NPT framework. No agreement had been announced by 6 October 2026.',
     quote: 'Iranian President Masoud Pezeshkian said Tehran was willing to give up uranium enriched to 60% within the framework of international law and its obligations under the Nuclear Non-Proliferation Treaty.',
     src: { name: 'Iran International, 25 September 2026', url: 'https://www.iranintl.com/en/202609257671' } },
 ];

@@ -13,6 +13,12 @@
 <link rel="stylesheet" href="../../shared/css/tsm.css">
 <link rel="stylesheet" href="../../shared/css/deterrence-site.css">
 <link rel="stylesheet" href="entanglement.css">
+<meta property="og:title" content="Nuclear Entanglement | Interactive Deterrence">
+<meta property="og:description" content="Plan a conventional campaign against satellites, command links, launchers and bases that also serve nuclear forces, and watch use-or-lose pressure, misread warning and the fog of war push a notional escalation risk up, then test the fixes the literature proposes.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jwalberg.com/deterrence-playground/tools/entanglement/">
+<meta property="og:image" content="https://jwalberg.com/deterrence-playground/tools/entanglement/thumb.png">
+<meta name="twitter:card" content="summary_large_image">
 </head>
 <body>
 <header id="tsm-head"></header>
@@ -60,7 +66,7 @@
     <h2>Method · The campaign</h2>
     <p>Each category <i>c</i> has a nuclear role <i>n<sub>c</sub></i> (share serving nuclear forces), damage per phase struck <i>d<sub>c</sub></i> and a conventional value <i>v<sub>c</sub></i>. Damage accumulates: after a phase with a strike, <i>D<sub>c</sub></i> ← 1 − (1 − <i>D<sub>c</sub></i>)(1 − <i>d<sub>c</sub></i>); after a phase without one, a share of it is repaired. Damage to the nuclear-serving share is <i>n<sub>c</sub>D<sub>c</sub></i>.</p>
     <p>Each channel <i>k</i> sums weighted nuclear damage across categories, <i>X<sub>k</sub></i> = Σ<sub>c</sub> <i>w<sub>kc</sub> n<sub>c</sub> D<sub>c</sub></i>. The weights encode which categories feed which mechanism: early warning and command links drive misinterpreted warning; launchers and co-located bases drive use-or-lose pressure and ambiguity; surveillance drives the damage-limitation window.</p>
-    <p><b>Fog.</b> Degraded warning, command and surveillance add up to a fog level <i>F</i> between 0 and 1. The target fills the gap with worst-case assumptions: every perception-driven channel is multiplied by 1 + φ<i>F</i>.</p>
+    <p><b>Fog.</b> Degraded warning, command and surveillance add up to a fog level <i>F</i> between 0 and 1. The target fills the gap with worst-case assumptions: the use-or-lose, warning and ambiguity channels are multiplied by 1 + φ<i>F</i>.</p>
   </div>
   <div class="col">
     <h2>Method · From pressure to probability</h2>

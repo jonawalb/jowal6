@@ -27,11 +27,11 @@ export function lessonSteps(api) {
     { title: 'Effort is your budget', target: () => q('#meter-effort'), start: top(() => q('#controls')),
       body: `Each turn you get ${GAME.effort} <b>effort points</b> to spend on actions; unspent points carry over, up to ${GAME.bank}. Buoys (${GAME.buoyLoads} patterns) and attacks (${GAME.torpedoes}) must last the whole hunt.` },
     { title: 'Drop a buoy circle', target: () => q('#box'), start: top(() => q('#box')),
-      do: 'With <b>Buoy circle</b> chosen (key 2), click inside the brightest part of the glow.',
+      do: () => `With <b>Buoy circle</b> chosen${narrow() ? '' : ' (key 2)'}, click inside the brightest part of the glow.`,
       done: () => queued('c'),
       body: `A buoy circle (${A.circle.cost} points) is a ring of listening buoys. It covers a small area but pins a sub inside it to within a few miles.` },
     { title: 'Now try a wide sensor', target: () => q('#tools [data-tool="air"]'),
-      do: 'Choose <b>Aircraft box</b> (key 3), then click the map just south of the glow, where the sub is heading.',
+      do: () => `Choose <b>Aircraft box</b>${narrow() ? '' : ' (key 3)'}, then click the map just south of the glow, where the sub is heading.`,
       // On a phone the actions sit below the map: once the aircraft is chosen, bring the map back into view.
       start: () => { picked = false; top(() => q('#tools'))(); },
       done: () => {
@@ -47,7 +47,7 @@ export function lessonSteps(api) {
     { title: 'Learn its habit', target: () => q('#beh-card'), start: top(() => q('#beh-card')),
       body: 'The sub follows one of four habits: it sprints and drifts, zig-zags to a gap, hides from your ship and helicopter, or circles a patrol point. These bars are the map\'s odds on each habit; they sharpen as contacts come in. Sprints are loud, so every sensor hears a sprinting sub far better.' },
     { title: 'The idea that wins: save up, then pounce', target: () => q('#meter'), start: top(() => q('#meter')),
-      body: `<b>Best attack odds</b> is the chance that the sub is inside the single best ${GAME.prosR} nm ring on your map. Squeeze the glow with sharp sensors, save effort for a big turn, and when the odds are high choose <b>Attack</b> (key 7) and click the bright spot (key B jumps there). A miss rules that ring out, but a sub nearby hears it and bolts.` },
+      body: () => `<b>Best attack odds</b> is the chance that the sub is inside the single best ${GAME.prosR} nm ring on your map. Squeeze the glow with sharp sensors, save effort for a big turn, and when the odds are high choose <b>Attack</b>${narrow() ? ' and tap the bright spot.' : ' (key 7) and click the bright spot (key B jumps there).'} A miss rules that ring out, but a sub nearby hears it and bolts.` },
     { title: 'How it ends', target: () => q('#end'), start: top(() => q('#controls')),
       body: 'An attack strikes when you end the turn, before the sub moves. A hit wins at once. When the hunt is over, a review below the map names the sub\'s habit, draws its true track against your searches and replays the hunt hour by hour. Good hunting.' },
   ];
@@ -58,7 +58,7 @@ export const SHEET = {
   title: 'The Hunt: the rules on one screen',
   goal: `Hit the hidden submarine with an attack (within ${GAME.prosR} nm) before it slips out through a gap into the Atlantic or ${GAME.turns} turns of ${GAME.turnHours} hours run out.`,
   controls: [
-    ...Object.values(ACTIONS).map(a => [`${a.key} · ${a.name}`, `${a.cost ? `${a.cost} pt` : 'Free'}. ${a.help}`]),
+    ...Object.values(ACTIONS).map(a => [`${a.key} · ${a.name}`, `${a.cost ? `${a.cost} pt. ` : a.help.startsWith('Free') ? '' : 'Free. '}${a.help}`]),
     ['Click the map', 'Queue the chosen action there (queue as many as your effort covers)'],
     ['R / Shift+R', 'Turn a buoy line 22.5° (also the ⟳ buttons or the mouse wheel)'],
     ['B', 'Jump the crosshair to the brightest spot; arrows move it, Enter acts'],

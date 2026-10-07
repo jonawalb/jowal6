@@ -48,6 +48,9 @@ export function createOrbit(svg, { onPick }) {
       el('text', { x: 0, y: 0, class: 'od-deb-t', transform: `translate(${CX + r + 23},${CY - 4}) rotate(-90)` }, root, `${fmt(D)} frag.`);
     }
     el('text', { x: W - 6, y: 18, class: 'od-note end' }, root, 'Schematic, not to scale');
+    // Phones hide the shell names and fragment counts inside the drawing; this note carries them instead.
+    const note = svg.ownerDocument.getElementById('shell-note');
+    if (note) note.textContent = `Shells, from the Earth out: ${SHELL_KEYS.map(s => `${SHELLS[s].name} (${fmt(v.debris[s])} fragments)`).join(', ')}.`;
   }
 
   function drawSide(v, s, m, r, side) {

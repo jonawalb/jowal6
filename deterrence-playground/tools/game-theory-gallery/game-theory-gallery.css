@@ -296,3 +296,4 @@ body.picking main.layout { display: none; }
   body.picking .picker { display: grid; grid-template-columns: minmax(0, 1fr); overflow: visible; }
   body.picking .mcard { flex: none; }
 }
+.fig-h .eyebrow .nocase { text-transform: none; margin-right: 0.15em; }

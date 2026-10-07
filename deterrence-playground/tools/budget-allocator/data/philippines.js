@@ -16,6 +16,8 @@
 //     (defense ₱452.4B vs ₱423.7B, +6.8%; DND ₱310.0B -> ₱328.8B; land ₱131.3B, air ₱62.5B, naval ₱64.3B)
 //   Manila Times, 2026-10-02: https://www.manilatimes.net/2026/10/02/news/detailed-report-on-budget-amendments-pushed/2437347
 //     (House aims for third reading by Oct. 9)
+//   RMN, 2026-09-26 (opened 2026-10-06): https://rmn.ph/plenary-deliberations-sa-proposed-2027-national-budget-tinapos-na-ng-kamara/
+//     (plenary deliberations Sept. 15-25; second reading targeted Oct. 6, third reading Oct. 9; still pending as of Oct. 6)
 //   Unit costs: see `src` on each category below.
 // NOTIONAL: every baseline (base), scale (k), reach, weight (w), the approach geometry and the preset mixes. No sourced
 //   unit cost was found for drones, sea mines, air defense or ammunition, so those four are notional.
@@ -31,7 +33,7 @@ export const PHILIPPINES = {
     { k: 'afp26', bn: 40, t: 'AFP modernization, 2026', s: '₱40.0bn · Revised AFP Modernization Program, enacted',
       note: 'The 2026 appropriation for the Revised AFP Modernization Program, the line that pays for new equipment. In 2025 Congress gave it ₱35bn.' },
     { k: 'afp27', bn: 50, t: 'AFP modernization, 2027 proposal', s: '₱50.0bn · National Expenditure Program, Aug. 2026',
-      note: 'The President\'s 2027 request for the Revised AFP Modernization Program, up from ₱40.0bn in 2026. It is a proposal: as of October 2, 2026 the House aimed to pass the budget bill on third reading by October 9.' },
+      note: 'The President\'s 2027 request for the Revised AFP Modernization Program, up from ₱40.0bn in 2026. It is a proposal: the House finished plenary debate on Sept. 25, 2026 and scheduled second reading for Oct. 6 and third reading for Oct. 9; the Senate and the President still have to act.' },
     { k: 'dnd26', bn: 310, t: 'Department of National Defense, 2026', s: '₱310.0bn · enacted (₱299.3bn proposed)',
       note: 'The department\'s whole 2026 budget as enacted. Most of it pays for people, pensions and operations.' },
     { k: 'sec26', bn: 423.7, t: 'Defense sector, 2026', s: '₱423.7bn · 6.2% of the national budget',

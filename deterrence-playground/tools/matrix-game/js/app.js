@@ -22,7 +22,8 @@ function readHash() {
   const q = new URLSearchParams(h);
   const actor = ACTORS[q.get('a')] ? q.get('a') : 'estonia';
   const s = parseInt(q.get('s'), 10);
-  return { actor, seed: Number.isFinite(s) && s > 0 && s < 1e6 ? s : 2031, moves: q.get('m') || '' };
+  // No link and no saved game: a fresh random seed (the trailer's replay link carries s=2031 explicitly).
+  return { actor, seed: Number.isFinite(s) && s > 0 && s < 1e6 ? s : 1 + Math.floor(Math.random() * 999998), moves: q.get('m') || '' };
 }
 function writeHash() {
   const q = new URLSearchParams({ a: g.actor, s: g.seed });

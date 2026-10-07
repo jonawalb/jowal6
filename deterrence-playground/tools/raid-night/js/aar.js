@@ -5,7 +5,9 @@ import { COST } from '../data/costs.js';
 import { range, ratio, esc } from './fmt.js';
 import { orderInfo } from './targeting.js';
 
-const RUNS = [['you', 'Your night'], ['heuristic', 'Cheapest-capable rule'], ['premium', 'Best-weapon-first rule']];
+const RUNS = [['you', 'Your night', 'You'], ['heuristic', 'Cheapest-capable rule', 'Cheapest rule'], ['premium', 'Best-weapon-first rule', 'Best-first rule']];
+// Long label on wide screens, short one on phones (the CSS picks).
+const lab = (long, short) => short ? `<span class="lab-l">${long}</span><span class="lab-s">${short}</span>` : long;
 
 const bought = (r, w) => r.resupplied.reduce((a, x) => a + x.added[w], 0);
 
@@ -14,21 +16,21 @@ export function renderAAR(you, seed, { mode = 'normal', batFired = null, lock = 
   const R = { you, heuristic: replay(seed, 'heuristic', budget), premium: replay(seed, 'premium', budget) };
   const cell = f => RUNS.map(([k]) => `<td class="num">${f(R[k])}</td>`).join('');
   const rows = [
-    ['Leakers (drone / cruise / ballistic)', r => `${r.leakTotal} <span class="muted">(${THREAT_ORDER.map(t => r.leaks[t]).join(' / ')})</span>`],
+    ['Leakers (drone / cruise / ballistic)', r => `${r.leakTotal} <span class="muted">(${THREAT_ORDER.map(t => r.leaks[t]).join(' / ')})</span>`, 'Leakers (D / C / B)'],
     ['Damage points', r => r.dmgTotal],
     ['Defense spent', r => range(r.spent.lo, r.spent.hi)],
-    ['Threats destroyed, priced', r => range(r.value.lo, r.value.hi)],
-    ['Exchange: $ spent per $ destroyed, low estimates', r => ratio(r.ratio.lo)],
-    ['Exchange: $ spent per $ destroyed, high estimates', r => ratio(r.ratio.hi)],
-    ['Long-range fired (at drone / cruise / ballistic)', r => `${r.fired.lri} <span class="muted">(${THREAT_ORDER.map(t => r.use.lri[t]).join(' / ')})</span>`],
+    ['Threats destroyed, priced', r => range(r.value.lo, r.value.hi), 'Threats destroyed'],
+    ['Exchange: $ spent per $ destroyed, low estimates', r => ratio(r.ratio.lo), '$ per $ destroyed, low'],
+    ['Exchange: $ spent per $ destroyed, high estimates', r => ratio(r.ratio.hi), '$ per $ destroyed, high'],
+    ['Long-range fired (at drone / cruise / ballistic)', r => `${r.fired.lri} <span class="muted">(${THREAT_ORDER.map(t => r.use.lri[t]).join(' / ')})</span>`, 'Long-range fired (D / C / B)'],
     ['Short-range fired', r => r.fired.sri],
     ['Gun and EW bursts', r => r.fired.gun],
-    ['Shots at tracks already down', r => WEAPON_ORDER.reduce((a, w) => a + r.wasted[w], 0)],
-    ['Rounds resupplied (guns / short / long)', r => WEAPON_ORDER.map(w => bought(r, w)).join(' / ')],
-    ['Resupply points used', r => `${r.resupplied.reduce((a, x) => a + x.pts, 0)} of ${r.budget * 2}`],
+    ['Shots at tracks already down', r => WEAPON_ORDER.reduce((a, w) => a + r.wasted[w], 0), 'Wasted shots'],
+    ['Rounds resupplied (guns / short / long)', r => WEAPON_ORDER.map(w => bought(r, w)).join(' / '), 'Resupplied (G / S / L)'],
+    ['Resupply points used', r => `${r.resupplied.reduce((a, x) => a + x.pts, 0)} of ${r.budget * 2}`, 'Points used'],
   ];
-  document.getElementById('aar-table').innerHTML = `<thead><tr><th scope="col">Seed ${seed}</th>${RUNS.map(([, n]) => `<th scope="col">${n}</th>`).join('')}</tr></thead><tbody>`
-    + rows.map(([n, f]) => `<tr><th scope="row">${n}</th>${cell(f)}</tr>`).join('') + '</tbody>';
+  document.getElementById('aar-table').innerHTML = `<thead><tr><th scope="col">Seed ${seed}</th>${RUNS.map(([, n, sh]) => `<th scope="col">${lab(n, sh)}</th>`).join('')}</tr></thead><tbody>`
+    + rows.map(([n, f, sh]) => `<tr><th scope="row">${lab(n, sh)}</th>${cell(f)}</tr>`).join('') + '</tbody>';
 
   document.getElementById('aar-mags').innerHTML = WEAPON_ORDER.map(w => {
     const mag = WEAPONS[w].mag;
@@ -56,7 +58,7 @@ export function renderAAR(you, seed, { mode = 'normal', batFired = null, lock = 
   if (you.ammo.lri === 0 && you.leaks.ballistic) parts.push('Your long-range magazine ran dry, and ballistic missiles leaked.');
   const p = R.premium;
   parts.push(`Firing the best weapon first at everything spent ${range(p.spent.lo, p.spent.hi)}`
-    + (p.ammo.lri === 0 ? `, ran the long-range magazine dry and leaked ${p.leaks.ballistic} ballistic missile${p.leaks.ballistic === 1 ? '' : 's'}.` : ` and leaked ${p.leakTotal} tracks.`));
+    + (p.ammo.lri === 0 && p.leaks.ballistic > 0 ? `, ran the long-range magazine dry and leaked ${p.leaks.ballistic} ballistic missile${p.leaks.ballistic === 1 ? '' : 's'}.` : ` and leaked ${p.leakTotal} tracks.`));
   document.getElementById('aar-lede').innerHTML = esc(parts.join(' '));
   return R;
 }

@@ -7,7 +7,7 @@ export const f2 = v => (Math.round(v * 100) / 100).toString();
 const OUT = {
   seize: { win: 'U.S. holds Kharg', mixed: 'Island still contested', fail: 'U.S. landing defeated' },
   raid: { win: 'Raid succeeds, clean withdrawal', mixed: 'Raid succeeds, costly withdrawal', fail: 'Raid fails' },
-  blockade: { win: 'Kharg exports cut below 25%', mixed: 'Exports partly cut', fail: 'Exports mostly flow' },
+  blockade: { win: 'Kharg loadings cut to 25% or less', mixed: 'Exports partly cut', fail: 'Exports mostly flow' },
 };
 export const outcomeText = (obj, k) => OUT[obj][k];
 
@@ -44,7 +44,7 @@ function endWhy(game, cfg) {
       : `The force took the airstrip area and pulled out with ${f2(s.ashore)} points.`;
   }
   return game.outcome === 'win' ? `U.S. forces hold the island with ${f2(s.ashore)} points ashore.`
-    : game.outcome === 'fail' ? (s.ashore < 0.3 ? 'The landing force was destroyed or never got ashore.' : 'The landing force is pinned and outnumbered more than two to one.')
+    : game.outcome === 'fail' ? (s.ashore < 0.3 ? 'The landing force was destroyed or never got ashore.' : 'The landing force is pinned and outnumbered more than two to one after the defender\'s terrain bonus.')
       : `U.S. forces hold a lodgment (${f2(s.ashore)} points, objective ${s.progress} of ${steps}) against ${f2(s.garrison)} Iranian points.`;
 }
 

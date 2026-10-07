@@ -105,7 +105,7 @@ export const PROB = [
   { k: 'costBases', t: 'Allied cost per turn of flying from partner bases', v: 1.5, min: 0, max: 10, step: 0.5, u: 'index pts', g: 'Escalation and politics', src: null },
   { k: 'costOil', t: 'Cost per $1 rise in the oil price', v: 0.6, min: 0, max: 3, step: 0.1, u: 'index pts', g: 'Escalation and politics', src: null },
   // Oil
-  { k: 'brent', t: 'Brent baseline', v: 71, min: 30, max: 150, step: 1, u: '$/bbl', g: 'Oil', src: 'eiaBrent', note: 'EIA Brent spot on 27 February 2026, the last trading day before the war: $71.32. It was $114.89 on 22 September 2026.' },
+  { k: 'brent', t: 'Brent baseline', v: 71, min: 30, max: 150, step: 1, u: '$/bbl', g: 'Oil', src: 'eiaBrent', note: 'EIA Brent spot on 27 February 2026, the last trading day before the war: $71.32. It was $113.96 on 29 September 2026.' },
   { k: 'iranExp', t: 'Iran\'s crude exports before the fight', v: 1.6, min: 0.3, max: 3, step: 0.1, u: 'mb/d', g: 'Oil', src: 'kpler', note: 'Kpler: about 1.61 million b/d over the 12 months to March 2026.' },
   { k: 'khargShare', t: 'Share of those exports loaded at Kharg', v: 0.94, min: 0.5, max: 1, step: 0.01, u: 'share', g: 'Oil', src: 'kpler', note: 'Kpler measured about 94%; CRS and most outlets say about 90%.' },
   { k: 'elast', t: 'Price rise per 1 mb/d taken off the market', v: 5, min: 0, max: 20, step: 0.5, u: '$/bbl', g: 'Oil', src: null, note: 'No source isolates Kharg\'s effect; 2026 prices moved with Hormuz, not Kharg alone.' },

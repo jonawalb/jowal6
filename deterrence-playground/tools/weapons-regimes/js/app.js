@@ -41,6 +41,7 @@
       document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
     });
     if (focus) tab.focus();
+    if (tab.id === 'tab-map' && document.getElementById('matrix').rows.length) updateMatrixHint();
   }
   tabs.forEach(function (t, i) {
     t.addEventListener('click', function () {
@@ -156,7 +157,7 @@
 
     var used = it.applies.map(function (a) { return a.regime; });
     var none = state.regimes.filter(function (r) { return used.indexOf(r.id) < 0; }).map(function (r) { return r.short; });
-    document.getElementById('absent').textContent = none.length ? 'Reviewed, no entry found: ' + none.join(', ') + '.' : '';
+    document.getElementById('absent').textContent = none.length ? 'Reviewed, no entry found: ' + none.join(', ').replace(/\.?$/, '.') : '';
     if (!fromHash) setHash('finder/' + id);
   }
 
@@ -172,7 +173,7 @@
     var thead = el('thead');
     var hr = el('tr', null, [el('th', { scope: 'col' }, [el('span', { class: 'sr-only', text: 'Item type' })])]);
     regs.forEach(function (r) {
-      hr.appendChild(el('th', { scope: 'col', title: r.name }, [r.short, el('span', { class: 'jur', text: r.jurisdiction })]));
+      hr.appendChild(el('th', { scope: 'col', title: r.name }, [el('span', { class: 'vh' }, [r.short, el('span', { class: 'jur', text: r.jurisdiction })])]));
     });
     thead.appendChild(hr);
     t.appendChild(thead);
@@ -194,6 +195,12 @@
       tb.appendChild(tr);
     });
     t.appendChild(tb);
+    updateMatrixHint();
+  }
+
+  function updateMatrixHint() {
+    var wrap = document.getElementById('matrix-wrap');
+    document.getElementById('matrix-hint').hidden = !wrap.offsetWidth || wrap.scrollWidth <= wrap.clientWidth + 1;
   }
 
   function showCell(it, r, hits) {
@@ -294,6 +301,7 @@
       showItem(state.items[0].id, true);
       routeFromHash();
       window.addEventListener('hashchange', routeFromHash);
+      window.addEventListener('resize', updateMatrixHint);
     })
     .catch(function (err) {
       document.getElementById('hits').textContent = 'Data failed to load. ' + err.message;

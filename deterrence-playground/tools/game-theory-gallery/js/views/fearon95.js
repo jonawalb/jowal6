@@ -1,6 +1,6 @@
 // Fearon (1995) view: bargaining range, private information, first-strike advantages, preventive war.
 import { F95_DEFAULTS, solveRange, solveInfo, solvePreempt, solvePrevent, eUA } from '../models/fearon95.js';
-import { el, frame, axes, line, dragPlot, legend, figCard, f2, pct, clamp, stext } from '../ui.js';
+import { el, frame, axes, line, dragPlot, legend, figCard, f2, f3, pct, clamp, stext } from '../ui.js';
 import { issueBar, valueBars, region, mark } from './common.js';
 
 const R = (key, label, math, min, max, step, help, extra = {}) => ({ type: 'range', key, label, math, min, max, step, help, ...extra });
@@ -89,7 +89,8 @@ export default {
     if (P.v === 'range') {
       if (e.cls === 'optimism') return `A expects war to be worth at least ${f2(e.lo)} to it; B, expecting to win with ${f2(e.rB)}, will not give more than ${f2(e.hi)}. Their expectations sum to ${f2(e.sumBeliefs)} > 1 + c<sub>A</sub> + c<sub>B</sub>. Fearon’s point (p. 392): rational states can only disagree like this if they hold private information, so the real puzzle is why they don’t share it.`;
       if (e.cls === 'indivisible') return `The range (${f2(e.lo)}, ${f2(e.hi)}) is not empty, but no feasible division falls inside it. Fearon (pp. 389-390) treats this as coherent but rare: side payments, linkage or a lottery usually create intermediate deals. Try allowing a lottery.`;
-      return `War costs A ${f2(P.ca)} and B ${f2(P.cb)}, so every x between ${f2(e.lo)} and ${f2(e.hi)} beats a war for both (p. 387). The range is exactly c<sub>A</sub> + c<sub>B</sub> wide${P.opt ? ' minus the optimism gap' : ''}: costlier wars make room for more deals.`;
+      const a0 = Math.max(0, e.lo), b0 = Math.min(1, e.hi), cut = a0 > e.lo || b0 < e.hi;
+      return `War costs A ${f2(P.ca)} and B ${f2(P.cb)}, so every x between ${f2(a0)} and ${f2(b0)} beats a war for both (p. 387). The range is exactly c<sub>A</sub> + c<sub>B</sub> wide${P.opt ? ' minus the optimism gap' : ''}${cut ? `; here it runs from ${f2(e.lo)} to ${f2(e.hi)}, and the part outside the issue space [0, 1] is cut off` : ''}: costlier wars make room for more deals.`;
     }
     if (P.v === 'info') {
       const cut = e.xs - P.p;
@@ -100,7 +101,7 @@ export default {
       return `A stays at peace only if x ≥ p<sub>f</sub> − c<sub>A</sub> = ${f2(e.lo)}; B only if x ≤ p<sub>s</sub> + c<sub>B</sub> = ${f2(e.hi)}. The de facto range is ${f2(Math.max(0, e.width))} wide versus ${f2(P.ca + P.cb)} without first-strike advantages. Fearon argues such advantages usually narrow the range and make other causes of war more dangerous, rather than cause war alone (p. 404).`;
     }
     return e.war
-      ? `Once stronger, A will demand ${f2(e.x2)} every period (p. 405). Even if A offered B everything now, B would get ${f2(e.perAcq)} per period on average, less than the ${f2(e.perWar)} it gets by fighting while still strong. ${e.clipped ? '' : `In Fearon’s terms, δp<sub>2</sub> − p<sub>1</sub> = ${f2(e.lhs)} exceeds c<sub>B</sub>(1 − δ)<sup>2</sup> = ${f2(e.rhs)} (p. 406).`} A cannot promise to go easy later, so B attacks.`
+      ? `Once stronger, A will demand ${f2(e.x2)} every period (p. 405). Even if A offered B everything now, B would get ${f2(e.perAcq)} per period on average, less than the ${f2(e.perWar)} it gets by fighting while still strong. ${e.clipped ? '' : `In Fearon’s terms, δp<sub>2</sub> − p<sub>1</sub> = ${f2(e.lhs)} exceeds c<sub>B</sub>(1 − δ)<sup>2</sup> = ${f3(e.rhs)} (p. 406).`} A cannot promise to go easy later, so B attacks.`
       : `B’s decline is small relative to its cost of war: fighting is worth ${f2(e.perWar)} per period, peace up to ${f2(e.perAcq)}. A can buy B off now by demanding x<sub>1</sub> = ${f2(e.x1)} in the first period, then ${f2(e.x2)} forever.`;
   },
 
@@ -111,7 +112,7 @@ export default {
       ca: `A higher cost of war for A ${up ? 'lowers' : 'raises'} what A needs from a deal, ${up ? 'widening' : 'narrowing'} the range from A’s side.`,
       cb: `B’s cost of war moves B’s reservation level. Costlier war for B ${up ? 'lets A ask for more before B would rather fight' : 'makes B quicker to fight'}.`,
       p: 'Shifting the balance of power moves the whole range: the deals both accept track the expected outcome of war.',
-      r: `B ${up ? 'grows more' : 'grows less'} optimistic about its own chances, ${up ? 'pulling B’s reservation level down past A’s' : 'reopening room for a deal'}.`,
+      r: `B ${up ? 'grows more' : 'grows less'} optimistic about its own chances, ${up ? (e.cls === 'optimism' ? 'pulling B’s reservation level down past A’s' : 'pulling B’s reservation level down toward A’s') : (e.cls === 'optimism' ? 'moving B’s reservation level back toward A’s' : 'widening the room for a deal')}.`,
       cmax: `More uncertainty about B’s resolve ${up ? 'tempts A to gamble on a higher demand' : 'lets A tailor its demand more safely'}; the equilibrium chance of war is (c̄ − c<sub>A</sub>)/2c̄ when interior.`,
       cbt: 'B’s actual cost does not change A’s demand, because A cannot observe it. It only decides whether this crisis ends in war.',
       pf: 'A larger payoff to striking first means A must be given more to stay at peace.',
@@ -154,7 +155,7 @@ export default {
       { k: 'B: fight now (per period)', n: e.perWar, track: true },
       { k: 'B: best peace (per period)', n: e.perAcq, track: true },
       { k: 'δp<sub>2</sub> − p<sub>1</sub>', n: e.lhs },
-      { k: 'c<sub>B</sub>(1 − δ)<sup>2</sup>', n: e.rhs },
+      { k: 'c<sub>B</sub>(1 − δ)<sup>2</sup>', n: e.rhs, f: 'raw', s: f3(e.rhs) },
     ];
   },
 

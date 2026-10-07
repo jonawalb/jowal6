@@ -17,7 +17,7 @@
         {"regime": "att", "level": "direct", "provision": "Art. 2(1)(h)", "plain": "Small arms are one of the eight covered categories for States Parties.", "url": "https://treaties.un.org/doc/Treaties/2013/04/20130410%2012-01%20PM/Ch_XXVI_08.pdf"},
         {"regime": "firearms_protocol", "level": "direct", "provision": "Art. 10", "plain": "Import, export and transit licensing duties for States Parties.", "url": "https://treaties.un.org/Pages/ViewDetails.aspx?src=TREATY&mtdsg_no=XVIII-12-c&chapter=18&clang=_en"},
         {"regime": "un_salw", "level": "direct", "provision": "UN PoA / ITI", "plain": "Political commitments on SALW controls, marking and tracing.", "url": "https://www.sipri.org/sites/default/files/SIPRIYB19c09sIII.pdf"},
-        {"regime": "eu_firearms", "level": "direct", "provision": "Directive 2021/555; Reg. 258/2012", "plain": "In the EU: acquisition and possession rules, and civilian export/import licensing.", "url": "https://home-affairs.ec.europa.eu/policies/internal-security/organised-crime/trafficking-firearms_en"}
+        {"regime": "eu_firearms", "level": "direct", "provision": "Directive 2021/555; Reg. 258/2012 (Reg. 2025/41 from 12 Feb 2029)", "plain": "In the EU: acquisition and possession rules, and civilian export/import licensing.", "url": "https://home-affairs.ec.europa.eu/policies/internal-security/organised-crime/trafficking-firearms_en"}
       ]
     },
     {
@@ -45,7 +45,7 @@
         {"regime": "wassenaar", "level": "direct", "provision": "ML3", "plain": "Ammunition is on the Munitions List.", "url": "https://www.wassenaar.org/app/uploads/2026/01/Stand-alone-Munitions-List-2025-Corr.pdf"},
         {"regime": "att", "level": "direct", "provision": "Art. 3", "plain": "Parties must control exports of ammunition fired by covered arms.", "url": "https://treaties.un.org/doc/Treaties/2013/04/20130410%2012-01%20PM/Ch_XXVI_08.pdf"},
         {"regime": "firearms_protocol", "level": "direct", "provision": "Protocol title and Art. 10", "plain": "Covers ammunition alongside firearms and parts.", "url": "https://treaties.un.org/Pages/ViewDetails.aspx?src=TREATY&mtdsg_no=XVIII-12-c&chapter=18&clang=_en"},
-        {"regime": "eu_firearms", "level": "conditional", "provision": "Reg. 258/2012", "plain": "Civilian ammunition export and import in the EU.", "url": "https://home-affairs.ec.europa.eu/policies/internal-security/organised-crime/trafficking-firearms_en"}
+        {"regime": "eu_firearms", "level": "conditional", "provision": "Reg. 258/2012 (Reg. 2025/41 from 12 Feb 2029)", "plain": "Civilian ammunition export and import in the EU.", "url": "https://home-affairs.ec.europa.eu/policies/internal-security/organised-crime/trafficking-firearms_en"}
       ]
     },
     {
@@ -146,7 +146,7 @@
       "label": "Landmine",
       "group": "Munitions",
       "applies": [
-        {"regime": "ottawa", "level": "direct", "provision": "Convention as a whole", "plain": "Anti-personnel mines banned for parties; five states left in 2025-26.", "url": "https://treaties.un.org/Pages/ViewDetails.aspx?src=TREATY&mtdsg_no=XXVI-5&chapter=26&clang=_en"},
+        {"regime": "ottawa", "level": "direct", "provision": "Convention as a whole", "plain": "Anti-personnel mines banned for parties; five states left in 2025-26, and Ukraine notified a suspension from 17 Jul 2025 (UNODA record; UNTC records no withdrawal).", "url": "https://treaties.un.org/Pages/ViewDetails.aspx?src=TREATY&mtdsg_no=XXVI-5&chapter=26&clang=_en"},
         {"regime": "ccw", "level": "direct", "provision": "Amended Protocol II", "plain": "Use restrictions on mines, booby-traps and other devices.", "url": "https://treaties.un.org/Pages/Treaties.aspx?id=26&subid=A&clang=_en"},
         {"regime": "itar", "level": "direct", "provision": "USML Cat. IV(a)(9)", "plain": "Anti-personnel, anti-vehicle and anti-armor land mines.", "url": "https://www.ecfr.gov/current/title-22/section-121.1"},
         {"regime": "wassenaar", "level": "direct", "provision": "ML4", "plain": "Explosive devices.", "url": "https://www.wassenaar.org/app/uploads/2026/01/Stand-alone-Munitions-List-2025-Corr.pdf"},

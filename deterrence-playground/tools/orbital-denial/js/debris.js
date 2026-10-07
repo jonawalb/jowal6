@@ -32,12 +32,16 @@ export function scatter(s, N, P) {
   return out;
 }
 
-/** Decay one step of dt years. Fresh fragments disperse into the general population. */
+/**
+ * Decay one step of dt years. Fresh fragments disperse into the general population. A constant background
+ * source (everything outside the war: launches, old breakups) replaces what drag removes from the pre-war
+ * population, so with no attacks each shell stays at DEBRIS0: D' = D·k + bgSource·DEBRIS0·(1 − k).
+ */
 export function decay(st, dt, P) {
   for (const s of SHELL_KEYS) {
     const k = Number.isFinite(SHELLS[s].tau) ? Math.exp(-dt / SHELLS[s].tau) : 1;
     const f = st.fresh[s] * Math.exp(-dt / P.freshTau);
-    st.debris[s] *= k;
+    st.debris[s] = st.debris[s] * k + (P.bgSource ?? 1) * DEBRIS0[s] * (1 - k);
     st.fresh[s] = f * k;
   }
 }

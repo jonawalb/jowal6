@@ -31,7 +31,7 @@ export function lessonSteps(api) {
       target: () => $('fieldbox') },
     { title: 'Three weapons',
       start: () => { api.hold(true); },
-      body: `<b>Guns and EW</b> (electronic warfare, i.e. jamming) are almost free but reach only the area around each city, and cannot stop a ballistic missile. <b>Short-range</b> interceptors cost tens of thousands of dollars and handle drones and cruise missiles well. <b>Long-range</b> interceptors reach almost the whole map and are the only good answer to ballistic missiles, but each costs millions and you have only ${WEAPONS.lri.mag} for the night. The dashed circles on the map show where the chosen weapon can reach.`,
+      body: `<b>Guns and EW</b> (electronic warfare, i.e. jamming) are almost free but reach only the area around each city, and cannot stop a ballistic missile. <b>Short-range</b> interceptors cost tens of thousands of dollars and handle drones and cruise missiles well. <b>Long-range</b> interceptors reach almost the whole map and are the only good answer to ballistic missiles, but each costs millions and you have only ${WEAPONS.lri.mag} at dusk, plus any reloads you buy. The dashed circles on the map show where the chosen weapon can reach.`,
       target: () => $('weapons') },
     { title: 'Fire your first shot',
       start: () => { fieldUp(); api.hold(false); return shots(api.S); },
@@ -51,7 +51,12 @@ export function lessonSteps(api) {
       target: () => $('field'),
       done: () => api.inReach('ballistic', 'lri') || ballisticDone(api.S) },
     { title: 'The idea that wins',
-      start: () => { api.hold(true); fieldUp(); return api.S.use.lri.ballistic; },
+      start: () => {
+        api.hold(true); fieldUp();
+        // If the last step was skipped before the ballistic missile showed up, run the frozen wave forward to it.
+        if (!ballisticDone(api.S)) api.advanceUntil(S => api.inReach('ballistic', 'lri') || ballisticDone(S), 90);
+        return api.S.use.lri.ballistic;
+      },
       body: () => (ballisticDone(api.S) && !api.S.threats.some(t => t.alive && t.type === 'ballistic')
         ? 'The ballistic missile is already gone. Remember the rule anyway: use the cheapest weapon that can do the job, and save long-range interceptors for ballistic missiles.'
         : 'Use the cheapest weapon that can do the job, and save long-range interceptors for this: a ballistic missile, the circle with the long trail. Only long-range stops it reliably; guns cannot touch it. The clock is frozen.'),
@@ -89,7 +94,7 @@ export const SHEET = {
   ],
   ideas: [
     'Use the cheapest weapon that can do the job: guns at drones near a city, short-range at drones and cruise missiles, long-range at ballistic missiles.',
-    `Save long-range interceptors. You have ${WEAPONS.lri.mag} for the night, and wave 3 is heavy with ballistic missiles.`,
+    `Save long-range interceptors. You have ${WEAPONS.lri.mag} at dusk, plus any reloads you buy, and wave 3 is heavy with ballistic missiles.`,
     'Do not double up: a thin ring marks a track that already has a shot flying at it. Fire again only after a miss.',
     'Spend the resupply. Unspent points are lost, and long-range reloads are what you will miss in wave 3.',
   ],

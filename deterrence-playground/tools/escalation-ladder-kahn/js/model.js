@@ -135,11 +135,19 @@ export function mountEditor(root, onChange) {
   draw();
   root.addEventListener('input', e => {
     const el = e.target.closest('[data-p]'); if (!el) return;
-    const v = Number(el.value); if (!Number.isFinite(v)) return;
+    const raw = Number(el.value); if (el.value === '' || !Number.isFinite(raw)) return;
+    const v = Math.min(Math.max(raw, Number(el.min)), Number(el.max));
     const path = el.dataset.p.split('.'), key = path.pop();
     const obj = path.reduce((o, k) => o[k], params);
     obj[key] = v;
     onChange();
+  });
+  // Show the clamped value once the reader leaves the field.
+  root.addEventListener('change', e => {
+    const el = e.target.closest('[data-p]'); if (!el) return;
+    const raw = Number(el.value); if (el.value === '' || !Number.isFinite(raw)) return;
+    const v = Math.min(Math.max(raw, Number(el.min)), Number(el.max));
+    if (v !== raw) el.value = v;
   });
   root.addEventListener('click', e => { if (e.target.closest('[data-reset]')) { resetParams(); draw(); onChange(); } });
 }

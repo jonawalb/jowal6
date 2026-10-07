@@ -63,7 +63,10 @@ export function createChart(svg, tip, wrap, { onFocus }) {
         if (kd >= a && kd <= b) {
           const g2 = el('g', { class: 'settle' }, g);
           el('circle', { cx: x(kd + 0.5), cy: y(m.res === 'yes' ? 100 : 0), r: focus ? 6 : 4.5, style: `fill:${col}` }, g2);
-          if (focus) el('text', { x: x(kd + 0.5), y: y(m.res === 'yes' ? 100 : 0) - 9, 'text-anchor': 'middle', class: 'settle-t' }, g2, m.res === 'yes' ? 'Yes' : 'No');
+          // "Yes" sits left of its dot so it stays clear of the event-dot row just above 100¢.
+          if (focus) el('text', m.res === 'yes'
+            ? { x: x(kd + 0.5) - 9, y: y(100) + 4, 'text-anchor': 'end', class: 'settle-t' }
+            : { x: x(kd + 0.5), y: y(0) - 9, 'text-anchor': 'middle', class: 'settle-t' }, g2, m.res === 'yes' ? 'Yes' : 'No');
         }
       }
     }

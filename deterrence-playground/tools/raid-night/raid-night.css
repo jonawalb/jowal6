@@ -97,6 +97,13 @@
 }
 #aar-table td { white-space: nowrap; }
 #aar-table th[scope="row"] { min-width: 130px; }
+#aar-table .lab-s { display: none; }
+@media (max-width: 600px) {
+  #aar-table .lab-l { display: none; }
+  #aar-table .lab-s { display: inline; }
+  #aar-table th[scope="row"] { min-width: 0; }
+  #aar-table td { white-space: normal; }
+}
 
 /* ---- modes, lock order, batteries, resupply ---- */
 kbd { font-family: var(--mono); font-size: 11px; border: 1px solid var(--rule); border-bottom-width: 2px; border-radius: 3px; padding: 0 4px; background: var(--panel); color: var(--ink); }

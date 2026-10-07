@@ -37,7 +37,7 @@ export function cardHTML(id) {
   return `<p class="eyebrow">State card</p>
     <h3 class="pp-ch">${esc(s.name)}</h3>
     <p class="pp-badges">${hi === 'none' ? '<span class="pill">Not coded by any dataset</span>' : `<span class="pill pp-pill" style="--pc:${STAGE_COLOR[hi]}">Highest stage coded: ${esc(STAGE_LABEL[hi].toLowerCase())}</span>`}${everReversed(id) ? '<span class="pill">Reversed course</span>' : ''}</p>
-    ${hi === 'none' ? '' : `<div class="tablewrap"><table class="pp-mini"><caption class="fine">First year coded at each stage or higher, and first year back at no activity</caption>
+    ${hi === 'none' ? '' : `<p class="fine pp-minicap">First year coded at each stage or higher, and first year back at no activity</p><div class="tablewrap"><table class="pp-mini">
       <thead><tr><th></th>${COLS.map(([, l]) => `<th scope="col">${l}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div>
       ${big.length ? `<p class="fine pp-warn">The datasets disagree by three years or more on ${big.join(', ')}.</p>` : ''}
       <details><summary>Episodes as each dataset prints them</summary>${DATASETS.map(ds => `<p class="pp-eps"><b>${esc(DS_SHORT[ds])}</b> ${episodeText(ds, id)}</p>`).join('')}

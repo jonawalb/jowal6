@@ -1,6 +1,6 @@
 // Event timeline for Red Sea & Hormuz Pulse. Every event was checked on 29 and again on 30 September 2026 against the linked page,
 // which returned HTTP 200 and states the date and fact given here (events dated after 16 September 2026 were added and checked
-// on 2 October 2026). Sites that block scripted requests
+// on 2 October 2026; the blockade, Perim and 4-5 October events were added and checked on 6 October 2026). Sites that block scripted requests
 // (defense.gov, apnews.com) are linked through archive.org copies. cp = chokepoints the event bears on.
 // Dates are the day of the event as the source gives it; when sources differ, `desc` says so.
 export const CATS = {
@@ -106,6 +106,9 @@ export const EVENTS = [
   { id: 'mou', date: '2026-06-17', cat: 'ceasefire', cp: ['hormuz'], title: 'U.S.–Iran memorandum of understanding',
     desc: 'The United States and Iran signed a memorandum that sought, among other things, to resume traffic through the strait.',
     src: { name: 'EIA, Today in Energy, 15 Jul 2026', url: 'https://www.eia.gov/todayinenergy/detail.php?id=67865' } },
+  { id: 'blockade-off', date: '2026-06-18', cat: 'hormuz', cp: ['hormuz'], title: 'U.S. blockade of Iranian ports lifted',
+    desc: 'The first phase of the U.S. blockade of Iranian ports ran from 13 April to 18 June, according to CENTCOM figures reported when it was re-imposed.',
+    src: { name: 'JNS, 14 Jul 2026', url: 'https://www.jns.org/news/u-s-news/centcom-us-naval-blockade-on-iranian-ports-to-resume-on-tuesday' } },
   { id: 'reclosed', date: '2026-06-20', cat: 'hormuz', cp: ['hormuz'], title: 'Revolutionary Guard declares the strait shut again',
     desc: 'The IRGC declared Hormuz closed; CENTCOM denied that Iran had closed the strait.',
     src: { name: `${AJ}, 22 Jun 2026`, url: 'https://www.aljazeera.com/economy/2026/6/22/shipping-stalls-in-strait-of-hormuz-after-iran-declares-key-waterway-shut' } },
@@ -115,6 +118,9 @@ export const EVENTS = [
   { id: 'truce-over', date: '2026-07-08', cat: 'strike', cp: ['hormuz'], title: 'Ceasefire collapses',
     desc: 'After Iran and the United States exchanged attacks, President Trump said the ceasefire with Iran was over.',
     src: { name: `${AJ}, 8 Jul 2026`, url: 'https://www.aljazeera.com/news/2026/7/8/trump-says-ceasefire-over-after-us-iran-trade-attacks' } },
+  { id: 'blockade-on', date: '2026-07-14', cat: 'hormuz', cp: ['hormuz'], title: 'U.S. blockade of Iranian ports re-imposed',
+    desc: 'CENTCOM said the blockade of all maritime traffic entering and leaving Iranian ports would resume at 4 p.m. Eastern on Tuesday 14 July.',
+    src: { name: 'JNS, 14 Jul 2026', url: 'https://www.jns.org/news/u-s-news/centcom-us-naval-blockade-on-iranian-ports-to-resume-on-tuesday' } },
   { id: 'houthi-2026', date: '2026-07-23', cat: 'attack', cp: ['bab', 'suez'], title: 'IMO condemns renewed attacks on Red Sea shipping',
     desc: 'The IMO Secretary-General called renewed attacks on shipping in the region "indefensible".',
     src: { name: 'IMO statement, Jul 2026', url: 'https://www.imo.org/en/MediaCentre/PressBriefings/pages/Statement-on-recent-attacks-in-the-Red-Sea.aspx' } },
@@ -133,6 +139,9 @@ export const EVENTS = [
   { id: 'mocha', date: '2026-09-10', cat: 'other', cp: ['bab'], title: 'Houthis seize Mocha',
     desc: 'Houthi forces took the Red Sea city of Mocha, extending their control over the Bab el-Mandeb Strait.',
     src: { name: `${AJ}, 10 Sep 2026`, url: 'https://www.aljazeera.com/news/2026/9/10/yemens-houthis-seize-strategic-red-sea-city-of-mocha' } },
+  { id: 'perim', date: '2026-09-11', cat: 'other', cp: ['bab'], title: 'Houthis take Perim Island in Bab el-Mandeb',
+    desc: 'A day after Mocha fell, Houthi fighters reached Perim Island, which divides Bab el-Mandeb into two shipping lanes, after government forces withdrew. Euronews reported that this completed the group\'s takeover of the strait.',
+    src: { name: 'Euronews, 11 Sep 2026', url: 'https://www.euronews.com/video/2026/09/12/houthis-seize-yemeni-island-in-bab-el-mandeb-taking-control-of-the-strait' } },
   { id: 'imo-80', date: '2026-09-16', cat: 'other', cp: ['hormuz'], title: 'IMO: 80 verified attacks around Hormuz',
     desc: 'The IMO had verified 80 attacks on merchant ships in and around the strait, with at least 22 seafarers killed.',
     src: { name: 'IMO press briefing, Sep 2026', url: 'https://www.imo.org/en/mediacentre/pressbriefings/pages/stop-attacking-ships-and-seafarers-imo-secretary-general.aspx' } },
@@ -145,4 +154,10 @@ export const EVENTS = [
   { id: 'ukmto-1002', date: '2026-10-02', cat: 'hormuz', cp: ['hormuz'], title: 'Outbound tanker hit in Hormuz',
     desc: 'UKMTO said a tanker leaving the strait was struck by an unknown projectile, causing a small fire and a blackout on board. The fire was put out, and no casualties or environmental damage were reported.',
     src: { name: 'SABC News, 2 Oct 2026', url: 'https://www.sabcnews.com/sabcnews/tanker-hit-by-projectile-in-strait-of-hormuz-ukmto/' } },
+  { id: 'ukmto-1004', date: '2026-10-04', cat: 'hormuz', cp: ['hormuz'], title: 'More tankers hit in Hormuz',
+    desc: 'UKMTO issued time-late warnings on 5 October for an LPG tanker and a crude tanker struck by unknown projectiles on 4 October and a crude tanker struck on 3 October. A tanker hailed by Iranian forces about 11 nautical miles north of Khasab turned back. gCaptain notes that late reporting makes the number of separate incidents hard to establish.',
+    src: { name: 'gCaptain, 5 Oct 2026', url: 'https://gcaptain.com/more-tankers-hit-in-hormuz-as-irgc-orders-ship-to-turn-back/' } },
+  { id: 'on-peace', date: '2026-10-05', cat: 'hormuz', cp: ['hormuz'], title: 'Twelve seafarers injured on the tanker On Peace',
+    desc: 'India said 12 seafarers were injured when the tanker On Peace was struck by a projectile in the strait on 5 October. UKMTO warnings 156-26 and 157-26 reported two more tankers hit that day, one with an engine-room fire. Neither India nor UKMTO named an attacker.',
+    src: { name: 'gCaptain, 6 Oct 2026', url: 'https://gcaptain.com/a-dozen-seafarers-injured-in-strait-of-hormuz-tanker-attack-india-says' } },
 ];

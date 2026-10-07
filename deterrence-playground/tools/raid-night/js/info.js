@@ -26,7 +26,7 @@ export function renderInfo() {
   const rows = [
     ...WEAPON_ORDER.map(w => {
       const W = WEAPONS[w];
-      return [`${W.name}`, `${W.sites.length} sites, magazine ${W.mag} for the night, ${W.reload} s reload per site, range ${W.range} units; kill chance ${pk(w)}`];
+      return [`${W.name}`, `${W.sites.length} sites, magazine ${W.mag} at dusk, plus any reloads you buy, ${W.reload} s reload per site, range ${W.range} units; kill chance ${pk(w)}`];
     }),
     ...THREAT_ORDER.map(t => [THREATS[t].name, `speed ${THREATS[t].speed} units/s, ${THREATS[t].dmg} damage point${THREATS[t].dmg > 1 ? 's' : ''} if it leaks`]),
     ['Field', '1,000 × 720 game units; one wave is compressed into about a minute'],

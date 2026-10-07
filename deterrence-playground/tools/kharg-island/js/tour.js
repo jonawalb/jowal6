@@ -31,7 +31,7 @@ export function lessonSteps({ showTab }) {
       start: () => showTab('play'), target: () => $('next'),
       done: turnShown },
     { title: 'Read the dice',
-      body: 'Each row is one event. <b>Chance</b> is how likely it is; <b>Dice</b> are random numbers from 0 to 1. A roll below the chance (highlighted) means the event happens. On turn 1 the carrier aircraft strike Iran\'s launchers, drone teams and boats while the ships wait out of range, and Iran shoots back at the fleet.',
+      body: 'Each row is one event. <b>Chance</b> is how likely it is; <b>Dice</b> are random numbers from 0 to 1. A roll below the chance (highlighted) means the event happens. On turn 1 the carrier aircraft strike Iran\'s launchers, drone teams and boats while the ships wait out of range. Iran can only reinforce the island and roll to widen the war; its missiles, drones and boats go after the fleet from turn 2.',
       start: () => showTab('play'), target: () => $('log') },
     { title: 'Land the troops',
       body: 'From turn 2 the landing groups cross the mined approaches, paratroopers drop and the special operations force goes for the airstrip.',

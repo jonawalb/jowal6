@@ -22,8 +22,9 @@ export function redChoose(g, P, r) {
   const t = g.turn, war = t > CRISIS_TURNS, R = g.sides.R, B = g.sides.B, last = g.lastActs.B || [];
   const u = r();
   const want = [];
-  // Housekeeping for every posture: relaunch a mission that has fallen below what it needs.
-  for (const m of ['isr', 'com', 'ew', 'nav']) if (R.alive[m] < MISSIONS[m].need && R.stock.reconst > 0) { want.push({ a: 'reconst', m }); break; }
+  // Housekeeping for every posture: relaunch a mission that has fallen below what it needs
+  // (counting satellites already launched and due next month).
+  for (const m of ['isr', 'com', 'ew', 'nav']) if (R.alive[m] + (R.pending[m] || 0) < MISSIONS[m].need && R.stock.reconst > 0) { want.push({ a: 'reconst', m }); break; }
   // Dodge after being shot at, some of the time.
   const jammed = last.find(x => ACTS[x.a] && ACTS[x.a].kind === 'rev' && !R.hard[x.m]);
   if (jammed && r() < 0.5) want.push({ a: 'harden', m: jammed.m });

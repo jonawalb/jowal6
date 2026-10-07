@@ -48,7 +48,7 @@ export const MILESTONES = [
       { t: 'Kremlin: suspension, Feb. 21, 2023', url: 'http://en.kremlin.ru/events/president/news/70565' },
     ] },
   { id: 'nsexpiry', year: 2026, short: 'Expiry', label: 'New START expires',
-    when: 'Expired Feb. 5, 2026 · status checked Sept. 29, 2026',
+    when: 'Expired Feb. 5, 2026 · status checked Oct. 6, 2026',
     text: 'On September 22, 2025, Putin offered to keep observing the treaty\'s central limits for one year after February 5, 2026 if the United States did the same. On February 4, 2026, the Kremlin said there had been "no official response from the United States." The Arms Control Association reports that the United States did not respond and the treaty expired after fifteen years in force. On February 11, 2026, Foreign Minister Lavrov told the Russian parliament that Russia was observing the central limits "only as long as the United States does not exceed" them (as reported by the Arms Control Association). No source found by this tool records a mutual U.S.–Russian commitment to keep the limits. As of this check, no treaty limits U.S. and Russian strategic forces.',
     src: [
       { t: 'Kremlin: offer, Sept. 22, 2025', url: 'http://en.kremlin.ru/events/president/news/78051' },

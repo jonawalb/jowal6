@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Game Theory Gallery | Interactive Deterrence</title>
-<meta name="description" content="Eight classic game-theory models of war, crisis and cooperation, from Fearon's bargaining range to Schelling's brinkmanship, built as interactives you can move. Change a cost, a belief or a balance of power and watch the equilibrium respond, with every result tied to the page of the original article.">
+<meta name="description" content="Eight classic game-theory models of war, crisis and cooperation, from Fearon's bargaining range to Schelling's brinkmanship as formalized by Powell, built as interactives you can move. Change a cost, a belief or a balance of power and watch the equilibrium respond, with every result tied to the page of the original article.">
 <link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,6 +16,12 @@
 <link rel="stylesheet" href="game-theory-gallery.css">
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" crossorigin="anonymous"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<meta property="og:title" content="Game Theory Gallery | Interactive Deterrence">
+<meta property="og:description" content="Move the costs, beliefs and balance of power in eight classic game-theory models of war and cooperation, from Fearon's bargaining range to Schelling's brinkmanship as formalized by Powell, and watch the equilibrium change, with every result cited to its source.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jwalberg.com/deterrence-playground/tools/game-theory-gallery/">
+<meta property="og:image" content="https://jwalberg.com/deterrence-playground/tools/game-theory-gallery/thumb.png">
+<meta name="twitter:card" content="summary_large_image">
 </head>
 <body>
 <header id="tsm-head"></header>
@@ -73,7 +79,7 @@
     $$\delta M_1(t+1)-M_1(t)\;>\;B-[M_1(t)+M_2(t)]\qquad\text{(p. 182)}.$$
     <p>For a shift from \(p\) to \(p+\Delta\) with destruction \(d\) this is \((1-d)[\delta(p+\Delta)-p]>d\) (p. 183); for first-strike advantage \(f\), \([(1+\delta)f-(1-\delta)p](1-d)>d\), with the de facto range empty iff \(2f(1-d)>d\) (pp. 184-185); for territory, equation (3) on p. 187; for factions, \(d[r(1-\lambda)+(1-r)\lambda]\lt p(1-d)(r'-r)(1-2\lambda)\) (p. 190).</p>
     <p><b>Brinkmanship (Powell 1987).</b> Chicken critical risk \(r=(w-c)/[(w-c)+(s-d)]\); resolve \(R=(w-s)/(w-d)\) (pp. 721, 725). Bids alternate at risks \(f,2f,3f,\dots\) and the first state whose bid would exceed its resolve loses (Proposition 1). With one-sided uncertainty (Proposition 2, p. 728):</p>
-    $$b^*=\frac{[1-(1-2f)(1-3f)](1-R_I)}{(1-2f)[(1-3f)R_I+3f]},\quad e_I(1)=\frac{R_{II}-f}{(1-f)[(1-2f)R_{II}+2f]},\quad e_{II}(1)=\frac{b^*(1-p)}{p(1-b^*)}.$$
+    $$\begin{aligned}b^*&=\frac{[1-(1-2f)(1-3f)](1-R_I)}{(1-2f)[(1-3f)R_I+3f]},\\ e_I(1)&=\frac{R_{II}-f}{(1-f)[(1-2f)R_{II}+2f]},\\ e_{II}(1)&=\frac{b^*(1-p)}{p(1-b^*)}.\end{aligned}$$
     <p><b>Fearon 1994.</b> With \(a_i(t)=a_it\) and \(w_i\sim U[-W_i,0]\), \(u_i(t)=F_j(-a_jt)v-[1-F_j(-a_jt)]a_it\) and \(t^*=\min_i t_i^*\) where \(u_i(t_i^*)=0\) (p. 584). Labeling so that \(t^*=t_2^*\): \(Q_1(t)=\tfrac{a_2t}{v+a_2t}\), \(Q_2(t)=\tfrac{k_1+a_1t}{v+a_1t}\), \(k_1=u_1(t^*)\).</p>
     <p><b>Jervis 1978.</b> Cooperate iff \(qCC+(1-q)CD\ge qDC+(1-q)DD\), i.e. \(q\ge q^*=\tfrac{DD-CD}{(CC-DC)+(DD-CD)}\).</p>
     <p><b>Kydd 2000.</b> Trust-game threshold \(p^*=S/(R+S)\) (p. 332). A gesture \(\alpha^*\) separates iff (p. 354)</p>

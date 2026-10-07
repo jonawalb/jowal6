@@ -74,6 +74,7 @@
 .nt-big { margin-top: 6px; }
 .nt-recon table td.num, .nt-recon table th.num { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; }
 .nt-recon .tablewrap { margin-top: 8px; }
+.nt-recon .nt-scrollhint { margin: 8px 0 -2px; text-align: right; }
 .nt-recon tr.hl td { background: var(--chip); font-weight: 600; }
 .nt-recon ul { margin: 8px 0 0; padding-left: 1.1em; font-size: 13px; display: flex; flex-direction: column; gap: 5px; }
 .nt-steward { max-width: 1400px; margin: 16px auto 0; padding: 14px 16px; }
@@ -101,3 +102,10 @@
 .nt-recon td.diff { color: var(--warn); font-weight: 600; }
 .nt-recon table td:first-child { min-width: 220px; }
 .nt-steward p { margin: 0 0 8px; font-size: 13.5px; }
+
+/* Desktop: the side panel is never taller than the main column (or the window) and scrolls inside itself, so it no
+   longer runs below the chart and leaves an empty band beside it; it stays in view while a long main column scrolls.
+   Same rule in nuclear-arsenals, nuclear-tests, declaratory-policy and proliferation-paths. */
+@media (min-width: 1021px) {
+  .layout > .panel { position: sticky; top: 12px; height: 0; min-height: min(100%, calc(100vh - 24px)); overflow-y: auto; overscroll-behavior: contain; }
+}

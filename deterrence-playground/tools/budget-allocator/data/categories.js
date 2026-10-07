@@ -14,7 +14,6 @@
 import { NTD_PER_USD } from './taiwan_fms.js';
 
 const ntd = usdM => usdM * NTD_PER_USD / 1000;
-const FMS = 'https://tsm.schar.gmu.edu/taiwan-arms-sale-backlog-august-2026-update/';
 
 export const CATS = [
   { id: 'ascm', t: 'Coastal anti-ship missiles', col: '--c3', k: 70, base: 0.30, reach: 150, w: 0.6, cls: 'mobile',
@@ -29,7 +28,7 @@ export const CATS = [
     unit: 'lot of 100 mines', cost: 0.4, s: 'Mines laid off the landing areas before the assault.' },
   { id: 'strike', t: 'HIMARS and long-range strike', col: '--c4', k: 90, base: 0.15, reach: 200, w: 0.3, cls: 'mobile',
     unit: 'HIMARS launcher with its share of rockets and missiles', cost: ntd(4050 / 82), s: 'Rocket and missile fires on embarkation ports and the fleet.',
-    src: FMS, srcName: 'TSM backlog (DSCA 26-01)', est: true,
+    src: 'https://web.archive.org/web/20260521192519/https://www.dsca.mil/Press-Media/Major-Arms-Sales/Article-Display/Article/4363081/taipei-economic-and-cultural-representative-office-in-the-united-states-high-mo', srcName: 'DSCA 26-01', est: true,
     basis: 'HIMARS case notified Dec. 17, 2025: 82 launchers, 420 ATACMS and 1,203 GMLRS pods for US$4.05bn.' },
   { id: 'airdef', t: 'Air and missile defense', col: '--c1', k: 140, base: 0.30, reach: 0, w: 0, cls: 'fixed',
     unit: 'NASAMS fire unit with its share of missiles', cost: ntd(1160 / 3), s: 'Protects launchers, sensors and bases from the opening strikes.',

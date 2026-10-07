@@ -13,6 +13,12 @@
 <link rel="stylesheet" href="../../shared/css/tsm.css">
 <link rel="stylesheet" href="../../shared/css/deterrence-site.css">
 <link rel="stylesheet" href="css/style.css">
+<meta property="og:title" content="Conventional Weapons Regime Explorer | Interactive Deterrence">
+<meta property="og:description" content="Which rules govern a weapon, technology or piece of technical information, from ITAR and the EAR to the Arms Trade Treaty, linked to primary text.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jwalberg.com/deterrence-playground/tools/weapons-regimes/">
+<meta property="og:image" content="https://jwalberg.com/deterrence-playground/tools/weapons-regimes/thumb.png">
+<meta name="twitter:card" content="summary_large_image">
 </head>
 <body>
 <header id="tsm-head"></header>
@@ -118,7 +124,8 @@
         <span><span class="dot none" aria-hidden="true"></span> None found</span>
       </div>
     </div>
-    <div class="scroll-x"><table class="matrix" id="matrix"></table></div>
+    <p class="scroll-hint" id="matrix-hint" hidden>Scroll sideways to see all regimes &rarr;</p>
+    <div class="scroll-x" id="matrix-wrap"><table class="matrix" id="matrix"></table></div>
     <div class="card cell-info" id="cell-info" aria-live="polite">Select a cell.</div>
 
     <div class="timeline">

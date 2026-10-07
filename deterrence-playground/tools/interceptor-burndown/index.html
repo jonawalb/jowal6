@@ -13,6 +13,12 @@
 <link rel="stylesheet" href="../../shared/css/tsm.css">
 <link rel="stylesheet" href="../../shared/css/deterrence-site.css">
 <link rel="stylesheet" href="interceptor-burndown.css">
+<meta property="og:title" content="Interceptor Burn-down | Interactive Deterrence">
+<meta property="og:description" content="Set a daily PRC missile and drone salvo against open-source estimates of Taiwan's Patriot and Tien Kung stocks and see the day each runs dry, how many threats get through, and which assumption matters most.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jwalberg.com/deterrence-playground/tools/interceptor-burndown/">
+<meta property="og:image" content="https://jwalberg.com/deterrence-playground/tools/interceptor-burndown/thumb.png">
+<meta name="twitter:card" content="summary_large_image">
 </head>
 <body>
 <header id="tsm-head"></header>
@@ -111,7 +117,7 @@
     <p>The last chart answers "what matters most?" It moves one input at a time, 25 percent down and up, and ranks the inputs by how far they move the dry day, or the number of leakers in the first 30 days. Inputs at the top deserve the most scrutiny.</p>
 
     <h2 class="mt">How the model works</h2>
-    <p>Each day the salvo arrives: ballistic missiles first, then cruise missiles, then drones. A share of drones is stopped by guns, jamming and fighters before any missile fires. Each remaining threat draws interceptors from the systems allowed to engage it, in a fixed order that spends cheaper and older rounds first. The firing doctrine sets how many interceptors each threat costs and the chance of a kill. Shoot fires one. Shoot-shoot fires two at once. Shoot-look-shoot fires a second only after a miss, and only when there is time to see the result. When a system is empty the next one takes over; when all are empty, everything gets through. Production and deliveries arrive at the end of each day.</p>
+    <p>Each day the salvo arrives: ballistic missiles first, then cruise missiles, then drones. A share of drones is stopped by guns, jamming and fighters before any missile fires. Each remaining threat draws interceptors from the systems allowed to engage it, in a fixed, notional order: for ballistic missiles the most capable interceptors first; for cruise missiles and drones, cheaper rounds first. The firing doctrine sets how many interceptors each threat costs and the chance of a kill. Shoot fires one. Shoot-shoot fires two at once. Shoot-look-shoot fires a second only after a miss, and only when there is time to see the result. When a system is empty the next one takes over; when all are empty, everything gets through. Production and deliveries arrive at the end of each day.</p>
     <p>All results are expected values, so a day can show fractions of a missile. Patriot PAC-2 and Tien Kung III get a lower kill chance against ballistic missiles (60 percent of the value you set), and Tien Kung II and NASAMS do not engage them at all, following the open-source descriptions of their roles.</p>
     <p><b>What is sourced:</b> PRC ballistic and cruise missile inventories (DoD 2024), the interceptor estimates and order figures in the table, Tien Kung III production capacity, and the sizes of the Iranian and Russian salvos used as analogs. <b>What is <span class="notional">notional</span>:</b> kill chances, firing doctrine, the share of stock able to fire, the drone rate, the share of drones stopped without missiles, the opening surge, wartime production and U.S. deliveries, the firing order, and the choice to repeat a one-night salvo every day. None of these has a public figure for Taiwan.</p>
     <p><b>What the model leaves out:</b> launcher and radar losses, the number of launchers that can fire at once, reload time, coverage gaps (for example east of the Central Mountains), targets the PLA chooses, decoys, rocket artillery such as the PCH-191, air-launched missiles, the PLA's 1,300 medium-range ballistic missiles, U.S. and allied defenses, fighters with air-to-air missiles, Stinger and other short-range systems, and interceptors already spent in live-fire drills. It gives national totals only and says nothing about where any unit is based.</p>

@@ -54,9 +54,11 @@
 .pp-badges { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; }
 .pp-pill { border-left: 4px solid var(--pc); }
 .pp-mini { width: 100%; border-collapse: collapse; font-size: 12.5px; }
-.pp-mini caption { text-align: left; margin-bottom: 4px; }
-.pp-mini th, .pp-mini td { padding: 4px 5px; border-bottom: 1px solid var(--rule); text-align: left; }
+.pp-minicap { margin: 0 0 4px; }
+.pp-mini th, .pp-mini td { padding: 4px 4px; border-bottom: 1px solid var(--rule); text-align: left; }
 .pp-mini thead th { font-weight: 600; color: var(--muted); font-size: 11.5px; }
+/* Column heads in sentence case so the four stages fit the 360px panel (the site themes set uppercase, spaced heads). */
+.panel .tablewrap .pp-mini thead th { letter-spacing: 0; text-transform: none; white-space: normal; }
 .pp-mini td.gap, .pp-rec td.gap { background: var(--red-soft); }
 .pp-nc { color: var(--faint); font-style: italic; }
 .pp-eps { margin: 6px 0; font-size: 12.5px; }
@@ -130,4 +132,11 @@
   .pp-land { transition: fill .35s ease; }
   .pp-dot circle { transition: r .15s, fill .35s ease; }
   .pp-dot { transition: opacity .3s ease; }
+}
+
+/* Desktop: the side panel is never taller than the main column (or the window) and scrolls inside itself, so it no
+   longer runs below the chart and leaves an empty band beside it; it stays in view while a long main column scrolls.
+   Same rule in nuclear-arsenals, nuclear-tests, declaratory-policy and proliferation-paths. */
+@media (min-width: 1021px) {
+  .layout > .panel { position: sticky; top: 12px; height: 0; min-height: min(100%, calc(100vh - 24px)); overflow-y: auto; overscroll-behavior: contain; }
 }

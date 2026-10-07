@@ -110,7 +110,12 @@ function showTab(t) {
   if (lay.dataset.tab === t) return;
   lay.dataset.tab = t;
   document.querySelectorAll('.kh-tabs [data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === t));
-  if (phone.matches) document.querySelector('.kh-tabs').scrollIntoView({ block: 'start', behavior: reduced.matches ? 'auto' : 'smooth' });
+  // The tabs are sticky, so scrolling them into view does nothing once the page is scrolled: go to the top of the layout instead.
+  if (phone.matches) {
+    const tabs = document.querySelector('.kh-tabs');
+    const y = lay.getBoundingClientRect().top + scrollY - tabs.offsetHeight - 4;
+    if (scrollY > y) scrollTo({ top: Math.max(0, y), behavior: reduced.matches ? 'auto' : 'smooth' });
+  }
 }
 document.querySelectorAll('.kh-tabs [data-tab], [data-go]').forEach(b => b.onclick = () => showTab(b.dataset.tab || b.dataset.go));
 $('copy-link').onclick = async () => {

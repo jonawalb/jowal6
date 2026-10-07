@@ -137,7 +137,8 @@ export function createRenderer(canvas, { onEvent } = {}) {
       const w = px(5);
       [[-2, 12], [-1, 18], [0, 24], [1, 15], [2, 10]].forEach(([o, h]) => ctx.fillRect(cx + o * w * 1.3 - w / 2, c.y - px(h), w, px(h)));
       ctx.fillStyle = C.ink; ctx.fillText(c.name, cx, c.y + px(16));
-      if (d) { ctx.fillStyle = C.ballistic; ctx.fillText(`damage ${d}`, cx, c.y + px(30)); }
+      // On a phone the text is large next to the site markers below the cities, so the damage label goes above the skyline.
+      if (d) { ctx.fillStyle = C.ballistic; ctx.fillText(`damage ${d}`, cx, scale > 0.6 ? c.y + px(30) : c.y - px(32)); }
     }
     // defense sites
     for (const w of WEAPON_ORDER) WEAPONS[w].sites.forEach((s, i) => site(w, s, i, S, view.bats.some(b => b.weapon === w && b.sites.includes(i))));

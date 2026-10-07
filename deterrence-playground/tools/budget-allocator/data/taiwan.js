@@ -8,7 +8,7 @@ import { REF_CASES, WAIT_ASOF } from './taiwan_fms.js';
 const fmtBn = v => v >= 1000 ? Math.round(v).toLocaleString('en-US') : v >= 10 ? v.toFixed(1) : v.toFixed(2);
 
 export const TAIWAN = {
-  k: 'tw', name: 'Taiwan', sub: 'NT$ · crossing',
+  k: 'tw', name: 'Taiwan', sub: 'NT$ · Strait crossing model',
   money: bn => `NT$${fmtBn(bn)}bn`,
   budgets: BUDGETS,
   cats: CATS,

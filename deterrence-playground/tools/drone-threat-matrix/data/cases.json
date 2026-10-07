@@ -1423,9 +1423,10 @@
    "date": "2022-10-01",
    "place": "Kayin (Karen) State, Myanmar",
    "title": "Federal Wings claims dozens of drone strikes",
-   "description": "The NUG-linked drone unit Federal Wings claimed 89 drone strikes on regime forces in three Karen State townships; PDF drone units reported hundreds of attacks in 2022.",
+   "description": "The NUG-linked drone unit Federal Wings claimed 89 drone strikes on regime forces in three Karen State townships; PDF drone units reported hundreds of attacks in 2022, and some groups modified commercial drones to carry 80mm munitions or more than one explosive.",
    "techniques": [
     "T02.1",
+    "T02.3",
     "T04.1"
    ],
    "confidence": "reported",
@@ -1682,8 +1683,8 @@
    "actor_id": "prison_contraband",
    "date": "2022",
    "place": "Kingston, Ontario, Canada",
-   "title": "Drone drops surge at Canadian federal prisons",
-   "description": "Correctional Service Canada data show about 100 drone contraband drops at Collins Bay in 2022 and over 1,000 drone incidents nationally in 2024-25.",
+   "title": "Drone drops at Canadian federal prisons",
+   "description": "Correctional Service Canada data show about 100 drone contraband drops at Collins Bay in 2022, and 839 drone incidents at federal prisons in 2025-26, down from 1,064 in 2024-25.",
    "techniques": [
     "T04.4"
    ],
@@ -1709,7 +1710,7 @@
    "date": "2024-03-28",
    "place": "Georgia, USA",
    "title": "Operation Skyhawk targets Georgia prison drone network",
-   "description": "A multi-state network of civilians, inmates and corrupt staff used drones to deliver drugs, phones and weapons into Georgia state prisons; the investigation led to about 150 arrests.",
+   "description": "Officials described a \"sophisticated, multi-state criminal enterprise\" of civilians, inmates and staff that used drones to bring contraband into Georgia state prisons; the investigation led to 150 arrests, including eight corrections employees, and seizures of phones, weapons and drugs (officials said other states may have been affected).",
    "techniques": [
     "T01.1",
     "T04.4"

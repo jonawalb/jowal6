@@ -114,12 +114,13 @@ function runReplays(plan, P, seed, posture, setting) {
       });
     }
     if (i < REPLAYS) { $('mc').innerHTML = `<tbody><tr><td>Running… ${i} of ${REPLAYS}</td></tr></tbody>`; setTimeout(slice, 0); return; }
-    const row = (lab, f) => `<tr><th scope="row">${lab}</th>${acc.map(a => `<td class="num">${f(a)}</td>`).join('')}</tr>`;
+    // Row labels carry a short form that replaces the long one on phones (CSS), so the table fits 390 px.
+    const row = (lab, f, sh) => `<tr><th scope="row"><span class="lg">${lab}</span><span class="sh" aria-hidden="true">${sh}</span></th>${acc.map(a => `<td class="num">${f(a)}</td>`).join('')}</tr>`;
     $('mc').innerHTML = `<thead><tr><th scope="col"></th>${plans.map(p => `<th scope="col" class="r">${p[0]}</th>`).join('')}</tr></thead><tbody>
-      ${row('You held the edge', a => pct(a.blue / REPLAYS))}${row('Stalemate', a => pct(a.draw / REPLAYS))}
-      ${row('Red held the edge', a => pct(a.red / REPLAYS))}${row('Nuclear threshold crossed', a => pct(a.escalation / REPLAYS))}
-      ${row('Mean escalation risk', a => pct(a.cumP / REPLAYS))}${row('High LEO fragments at war\'s end', a => fmt(a.high / REPLAYS))}
-      ${row('Extra satellites lost, 25 years', a => fmt(a.extra / REPLAYS))}</tbody>`;
+      ${row('You held the edge', a => pct(a.blue / REPLAYS), 'Your edge')}${row('Stalemate', a => pct(a.draw / REPLAYS), 'Stalemate')}
+      ${row('Red held the edge', a => pct(a.red / REPLAYS), 'Red\'s edge')}${row('Nuclear threshold crossed', a => pct(a.escalation / REPLAYS), 'Threshold crossed')}
+      ${row('Mean escalation risk', a => pct(a.cumP / REPLAYS), 'Mean risk')}${row('High LEO fragments at war\'s end', a => fmt(a.high / REPLAYS), 'High LEO fragments at end')}
+      ${row('Extra satellites lost, 25 years', a => fmt(a.extra / REPLAYS), 'Extra losses, 25 y')}</tbody>`;
     $('mc-note').textContent = `Your ${plan.length} months of orders${plan.length < TURNS ? ' (finished with reversible-only moves)' : ''} replayed on 1,000 new sets of dice ${setting === 'unknown' ? `with Red's posture drawn each time (in this game it was ${posture})` : `against a ${setting} Red`}, next to the same orders with every destructive attack swapped for the reversible means against that target, and with attacks removed but defenses kept. Orders that become impossible in a replay are held.`;
   };
   setTimeout(slice, 30);

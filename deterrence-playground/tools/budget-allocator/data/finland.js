@@ -16,6 +16,10 @@
 //     ("Russia poses a long-term and unpredictable threat to the security of Finland and NATO.")
 //   SIPRI Milex database v1.2 (2026): https://www.sipri.org/sites/default/files/SIPRI-Milex-data-1949-2025_v1.2.xlsx
 //     (2025: EUR 7.164bn = US$8.08bn, 2.57% of GDP; implied 0.8865 EUR/USD used for conversions, an estimate)
+//   MoD press release (Finnish), 2026-09-04 (opened 2026-10-06): https://valtioneuvosto.fi/-/236553176/puolustusministeri-hakkanen-puolustusbudjetti-vahvistaa-maanpuolustusta-ja-huoltovarmuutta
+//     (2027 proposal for the MoD branch EUR 7.0bn, about EUR 600m more than 2026; defence 2.6% of forecast 2027 GDP;
+//      materiel procurement about EUR 1.8bn and multi-role fighters EUR 1.4bn; Defence Forces operating costs EUR 2.7bn;
+//      new EUR 1.3bn procurement authority, largest item domestic explosives production; EUR 200m for Ukraine)
 //   Unit costs: see `src` on each category below.
 // NOTIONAL: every baseline (base), scale (k), reach, weight (w), the approach geometry and the preset mixes. No sourced unit
 //   cost was found for mines (the Defence Forces say a cost estimate will come as planning advances) or for sensors and
@@ -29,6 +33,7 @@ const USD = 0.8865;
 const BUD = 'https://defmin.fi/documents/236553176/249313883/Budget%20for%202026.pdf/df530b24-c4bc-bc8f-715b-f09f5a252c99?t=1768994377721';
 const PR26 = 'https://defmin.fi/en/-/finnish-defence-forces-to-launch-army-materiel-procurement-projects-for-2030s-';
 const HX = 'https://valtioneuvosto.fi/en/-/236553176/the-lockheed-martin-f-35a-lightning-ii-is-finland-s-next-multi-role-fighter';
+const PR27 = 'https://valtioneuvosto.fi/-/236553176/puolustusministeri-hakkanen-puolustusbudjetti-vahvistaa-maanpuolustusta-ja-huoltovarmuutta';
 const a = (u, t) => `<a href="${u}" target="_blank" rel="noopener">${t}</a>`;
 
 export const FINLAND = {
@@ -43,6 +48,8 @@ export const FINLAND = {
       note: 'Two authorities in the 2026 budget let the Defence Forces sign €6bn of new contracts this year: €4bn for materiel, led by army mobility, and €2bn for joint weapons systems, used for ammunition. The payments fall mainly in 2029-2036.' },
     { k: 'mod26', bn: 6.397, t: 'All defence spending, 2026', s: '€6.40bn · about 2.5% of GDP in the proposal',
       note: 'Total expenditure of the defence administration in 2026. In reality most of it pays for people, upkeep, VAT and contracts already signed.' },
+    { k: 'mod27', bn: 7.0, t: 'All defence spending, 2027 proposal', s: '€7.0bn · about 2.6% of GDP',
+      note: 'The ministry\'s 2027 budget proposal, about €600m more than in 2026. Parliament still has to pass it. Most of it pays for people, upkeep and contracts already signed.' },
   ],
   cats: [
     { id: 'ascm', t: 'Howitzers', col: '--c3', k: 0.3, base: 0.5, reach: 40, w: 0.55, cls: 'mobile',
@@ -90,6 +97,7 @@ export const FINLAND = {
   refText: {
     f35: ['What the line pays for', 'Payments on the 64 F-35A ordered in December 2021. There is no split onto these categories, so there is no reference mix.'],
     auth: ['What the authorities are for', 'The €4bn materiel authority is led by the army mobility programme and the €2bn joint weapons authority buys ammunition. No further split was published, so there is no reference mix.'],
+    mod27: ['How the proposal splits', 'Of about €7.0bn: about €1.8bn for materiel, €1.4bn for the F-35 fighters and €2.7bn for the Defence Forces\' operating costs. It also carries a new €1.3bn procurement authority, mostly for domestic explosives production. No split onto these categories was published, so there is no reference mix.'],
     mod26: ['How the budget splits', 'Of €6,397m: F-35 €1,355m, other materiel €1,240m, payroll €911m, maintenance €560m, other operations €563m, VAT €736m, real estate €367m, conscripts €231m, Squadron 2020 €213m, and the rest. Most lines are not capabilities, so there is no reference mix.'],
   },
   strip: { left: 'Border', right: 'Defended line', zero: 'line', noun: 'vehicles', play: 'Play the attack', exportTitle: 'Notional attack across the eastern border',
@@ -129,6 +137,7 @@ export const FINLAND = {
         ['of which procurement of materiel (excl. F-35 and Squadron 2020)', '1.24', a(BUD, 'MoD, Budget for 2026')],
         ['of which Squadron 2020 corvettes', '0.213', a(BUD, 'MoD, Budget for 2026')],
         ['New procurement authorities, 2026', '6.0', `€4bn materiel + €2bn ammunition; payments mainly 2029-2036. ${a(PR26, 'MoD, Sept. 25, 2025')}`],
+        ['Ministry of Defence branch, 2027 proposal', '7.0', `About 2.6% of forecast GDP; materiel about 1.8, F-35 1.4; new €1.3bn procurement authority. ${a(PR27, 'MoD, Sept. 4, 2026 (Finnish)')}`],
         ['HX fighter programme, total', '10.0', `64 F-35A ordered for about €8.378bn. ${a(HX, 'Finnish Government, Dec. 10, 2021')}`],
       ],
       note: 'The 2026 lines come from the ministry\'s budget breakdown. Procurement authorities are permission to sign contracts, not money spent in 2026, so they overlap with future years\' budgets.',
@@ -143,6 +152,7 @@ export const FINLAND = {
     sources: [
       { src: 'Ministry of Defence, Budget for 2026 (composition of the defence budget)', url: BUD, d: '2026', n: 'All 2026 budget lines.' },
       { src: 'Ministry of Defence, Finnish Defence Forces to launch army materiel procurement projects for 2030s', url: PR26, d: 'September 25, 2025', n: 'The 2026 proposal, its share of GDP and the new procurement authorities.' },
+      { src: 'Ministry of Defence, Puolustusministeri Häkkänen: Puolustusbudjetti vahvistaa maanpuolustusta ja huoltovarmuutta', url: PR27, d: 'September 4, 2026', n: 'The 2027 proposal: €7.0bn, 2.6% of GDP, and its main lines (in Finnish).' },
       { src: 'Finnish Government, Parliamentary working group on defence submits final report', url: 'https://valtioneuvosto.fi/en/-/236553176/parliamentary-working-group-on-defence-submits-final-report-to-minister-of-defence-hakkanen', d: 'June 2, 2026', n: 'The threat assessment quoted in the scenario.' },
       { src: 'SIPRI Military Expenditure Database', url: 'https://www.sipri.org/sites/default/files/SIPRI-Milex-data-1949-2025_v1.2.xlsx', d: '2026', n: 'Also the basis of the 0.8865 EUR/USD rate used for the GMLRS conversion (€7.164bn = US$8.08bn).' },
       { src: 'Unit-cost sources are linked in the spending menu table.' },

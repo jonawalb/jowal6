@@ -20,13 +20,21 @@
 //     (Germany 2025: EUR 100.7bn = US$113.6bn, 2.27% of GDP)
 //   Scenario: Bundeswehr, 2025-05-22: https://www.bundeswehr.de/en/news/lithuania-45-armoured-brigade-activated-5948796
 //     (45 Armoured Brigade activated in Vilnius; 4,800 service members and 200 civilians when complete)
-//   Unit costs: see `src` on each category below. All in euros, so no currency conversion is needed.
+//   Bundestag, hib 553/2026, 2026-07-06 (opened 2026-10-06): https://www.bundestag.de/presse/hib/kurzmeldungen-1193844
+//     (2027 government draft approved by the cabinet that day: Einzelplan 14 EUR 109.7bn, 2026 EUR 82.7bn;
+//      EUR 30bn from the Sondervermögen Bundeswehr in 2027)
+//   Bundestag, text archive, 2026 (week 37), first reading of the 2027 defense budget, 2026-09-09 (opened 2026-10-06):
+//     https://www.bundestag.de/dokumente/textarchiv/2026/kw37-de-a-1194766 (EUR 109.7bn; EUR 29.9bn from the special fund)
+//   Unit costs: see `src` on each category below. All in euros except PULS, converted from US$ at SIPRI's implied 2025
+//   rate (EUR 100.7bn = US$113.6bn, i.e. 0.886 EUR per US$), an estimate.
 // NOTIONAL: every baseline (base), scale (k), reach, weight (w), the approach geometry and the preset mixes. No sourced unit
 //   cost was found for anti-tank missiles, mines and barriers, or C4ISR, so those three are notional.
 
 const fmtBn = v => v >= 1000 ? Math.round(v).toLocaleString('en-US') : v >= 10 ? v.toFixed(1) : v.toFixed(2);
 const BT = 'https://www.bundestag.de/dokumente/textarchiv/2025/kw48-de-verteidigung-1126048';
 const NATO26 = 'https://www.nato.int/content/dam/nato/webready/documents/finance/def-exp-2026-en.pdf';
+const HIB27 = 'https://www.bundestag.de/presse/hib/kurzmeldungen-1193844';
+const BT27 = 'https://www.bundestag.de/dokumente/textarchiv/2026/kw37-de-a-1194766';
 
 export const GERMANY = {
   k: 'de', name: 'Germany', sub: '€ · eastern-flank reinforcement', cur: '€',
@@ -40,6 +48,10 @@ export const GERMANY = {
       note: 'The regular 2026 defense budget, without the special fund. In reality most of it pays for people, operations and bases.' },
     { k: 'nato26', bn: 124.66, t: 'Defense spending as reported to NATO, 2026', s: '€124.7bn · 2.69% of GDP (NATO estimate)',
       note: 'What Germany reported to NATO for 2026. It counts more than the defense ministry budget, by NATO\'s definitions, so it is the widest measure here.' },
+    { k: 'ep27', bn: 109.7, t: 'Defense budget, 2027 draft', s: '€109.7bn · Einzelplan 14, cabinet draft July 2026',
+      note: 'The government\'s draft of the regular 2027 defense budget, up from €82.7bn in 2026, without the special fund. The Bundestag held the first reading on Sept. 9, 2026 and can still change it.' },
+    { k: 'sv27', bn: 30, t: 'Special fund, 2027 draft', s: 'about €30bn · Sondervermögen Bundeswehr',
+      note: 'The draft 2027 draw on the special fund, on top of the regular defense budget. It is a draft, not yet passed.' },
   ],
   cats: [
     { id: 'ascm', t: 'Anti-tank missiles', col: '--c3', k: 6, base: 0.3, reach: 5, w: 0.5, cls: 'mobile',
@@ -51,9 +63,9 @@ export const GERMANY = {
     { id: 'mines', t: 'Barriers and anti-tank mines', col: '--c5', k: 2, base: 0.1, reach: 10, w: 0.4, cls: 'mines',
       unit: 'lot of 10,000 anti-tank mines', cost: 0.1, s: 'Obstacles and minefields on the approaches, built with the host nation.' },
     { id: 'strike', t: 'Rocket artillery', col: '--c4', k: 20, base: 0.15, reach: 80, w: 0.35, cls: 'mobile',
-      unit: 'PULS launcher, launcher only (rockets cost extra, so real buys get far fewer)', cost: 0.055 / 5, s: 'PULS launchers striking the column in depth.',
-      src: 'https://soldat-und-technik.de/2025/02/bewaffnung/42191/bundeswehr-europuls/', srcName: 'Soldat & Technik, Feb. 10, 2025', est: true,
-      basis: 'About €55m for five launchers, per launcher. Rockets are not stated as included.' },
+      unit: 'PULS launcher with its share of rockets and missiles', cost: 0.305 / 20 * (100.7 / 113.6), s: 'PULS launchers striking the column in depth.',
+      src: 'https://elbitsystems.com/news/elbit-systems-awarded-305-million-contract-supply-puls-rocket-artillery-systems-royal', srcName: 'Elbit, May 18, 2023 (Dutch order)', est: true,
+      basis: 'US$305m for 20 PULS launchers with rockets and missiles of various ranges, training and support (Netherlands), per launcher, at about €0.89 per US$. Germany\'s own first order, about €55m for five launchers, did not state rockets as included (Soldat & Technik, Feb. 10, 2025).' },
     { id: 'airdef', t: 'Air and missile defense', col: '--c1', k: 40, base: 0.25, reach: 0, w: 0, cls: 'fixed',
       unit: 'IRIS-T SLM fire unit with missiles', cost: 0.95 / 6, s: 'IRIS-T SLM, Patriot and Arrow 3: protects forces and bases from the opening strikes.',
       src: 'https://www.bundeswehr-journal.de/2023/sechs-waffensysteme-iris-t-slm-fuer-die-deutsche-luftwaffe/', srcName: 'bundeswehr-journal, June 22, 2023', est: true,
@@ -86,6 +98,8 @@ export const GERMANY = {
     sv26: ['What the fund pays for', 'The special fund pays for large programs such as the F-35A. By June 30, 2026 about €50.7bn of the €100bn had been paid out, and most of the rest is tied to signed contracts. There is no per-capability split, so there is no reference mix.'],
     proc26: ['What the line covers', 'Military procurement from the regular budget and the special fund. During the budget talks the committee cut planned ammunition spending by €3.72bn. There is no per-capability split, so there is no reference mix.'],
     ep14: ['How the budget splits', 'Of the €82.69bn, €24.71bn pays for personnel, €22.37bn for procurement and €11.31bn for barracks and other facilities. Those are budget headings, not capabilities, so there is no reference mix.'],
+    ep27: ['How the draft splits', 'The draft raises the regular defense budget by €27bn. Together with the special fund, military procurement would get more than €60bn in 2027. That is a budget heading, not a capability split, so there is no reference mix.'],
+    sv27: ['What the fund pays for', 'The special fund pays for large programs such as the F-35A. There is no per-capability split of the 2027 draw, so there is no reference mix.'],
     nato26: ['What the figure covers', 'NATO counts defense spending across the federal budget, not only the defense ministry. There is no per-capability split, so there is no reference mix.'],
   },
   strip: { left: 'Start line', right: 'Defended line', zero: 'line', noun: 'vehicles', play: 'Play the advance', exportTitle: 'Notional armored advance',
@@ -125,11 +139,13 @@ export const GERMANY = {
         ['Total, 2026', '108.2', 'Budget plus special fund. <a href="https://www.bmvg.de/de/aktuelles/deutschland-investiert-in-verteidigung-und-staerkt-das-buendnis-6045046" target="_blank" rel="noopener">BMVg, Nov. 26, 2025</a>'],
         ['of which military procurement', '47.88', `22.37 from the budget, 25.51 from the fund. <a href="${BT}" target="_blank" rel="noopener">Bundestag</a>`],
         ['Reported to NATO, 2026', '124.66', `2.69% of GDP, NATO estimate (2.22% in 2025). <a href="${NATO26}" target="_blank" rel="noopener">NATO, July 2026</a>`],
+        ['Defense budget (Einzelplan 14), 2027 draft', '109.7', `Cabinet draft, July 6, 2026; first reading Sept. 9, 2026. <a href="${HIB27}" target="_blank" rel="noopener">Bundestag (hib)</a>`],
+        ['Special fund (Sondervermögen), 2027 draft', '~30', `29.9 in the first-reading summary. <a href="${BT27}" target="_blank" rel="noopener">Bundestag</a>`],
         ['Special fund paid out by June 30, 2026', '~50.7', 'Of €100bn. <a href="https://www.bundeswehr-journal.de/2026/ueber-das-sondervermoegen-fuer-die-bundeswehr/" target="_blank" rel="noopener">bundeswehr-journal, Aug. 6, 2026</a>'],
       ],
       note: 'The defense budget and the NATO figure are different bases: NATO counts defense-related spending outside the defense ministry too. About 80% of the special fund was already under contract by March 2024, so little of it is free for new choices.',
     },
-    menuNote: 'No sourced unit cost was found for anti-tank missiles, mines and barriers, or C4ISR, so those rows are notional. The PULS price covers launchers only.',
+    menuNote: 'No sourced unit cost was found for anti-tank missiles, mines and barriers, or C4ISR, so those rows are notional. The PULS price comes from the Netherlands\' order of launchers with rockets, converted from dollars.',
     related: [
       { b: 'Special fund commitments.', t: 'About 80% of the €100bn under contract by March 2024.', url: 'https://www.handelsblatt.com/politik/deutschland/bundeswehr-80-prozent-des-sondervermoegens-sind-laut-pistorius-bereits-gebunden/100026066.html', src: 'Handelsblatt, Mar. 20, 2024' },
       { b: 'Spending path.', t: 'About €152bn for the defense ministry in 2029, to meet NATO\'s 3.5% of GDP target that year.', url: 'https://www.bmvg.de/de/aktuelles/deutschland-investiert-in-verteidigung-und-staerkt-das-buendnis-6045046', src: 'BMVg, Nov. 26, 2025' },
@@ -142,6 +158,7 @@ export const GERMANY = {
     ],
     sources: [
       { src: 'German Bundestag, debate on the 2026 defense budget', url: BT, d: 'November 2025', n: 'Einzelplan 14, special fund and procurement totals.' },
+      { src: 'German Bundestag, hib 553/2026: 2027 budget draft', url: HIB27, d: 'July 6, 2026', n: 'Draft Einzelplan 14 of €109.7bn and €30bn from the special fund in 2027.' },
       { src: 'NATO, Defence Investment of NATO Countries (2014-2026)', url: NATO26, d: 'July 2026', n: 'Germany 2026 estimate: €124,660m, 2.69% of GDP.' },
       { src: 'Bundeswehr, 45 Armoured Brigade activated in Lithuania', url: 'https://www.bundeswehr.de/en/news/lithuania-45-armoured-brigade-activated-5948796', d: 'May 22, 2025' },
       { src: 'Unit-cost sources are linked in the spending menu table.' },

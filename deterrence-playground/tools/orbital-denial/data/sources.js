@@ -52,6 +52,10 @@ export const SOURCES = {
     t: 'Clayton Swope, Kari A. Bingen, Makena Young and Kendra LaFave, Space Threat Assessment 2025 (CSIS Aerospace Security Project, April 2025)',
     url: 'https://aerospace.csis.org/wp-content/uploads/2025/10/250425_Swope_Space_Threat.pdf',
     used: 'kinetic, non-kinetic, electronic and cyber categories; kinetic effects permanent, jamming and spoofing not; dazzlers meant to blind temporarily but may damage; cyber can be temporary or permanent' },
+  esa2025: {
+    t: 'European Space Agency, "ESA Space Environment Report 2025," 1 April 2025',
+    url: 'https://www.esa.int/Space_Safety/Space_Debris/ESA_Space_Environment_Report_2025',
+    used: '"Even without any additional launches, the number of space debris would keep growing, because fragmentation events add new debris objects faster than debris can naturally re-enter the atmosphere" (the reason the model keeps a background source of fragments)' },
   acton2018: {
     t: 'James M. Acton, "Escalation through Entanglement: How the Vulnerability of Command-and-Control Systems Raises the Risks of an Inadvertent Nuclear War," International Security 43, no. 1 (2018): 56–99',
     url: 'https://doi.org/10.1162/isec_a_00320',

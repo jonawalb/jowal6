@@ -153,14 +153,24 @@ export function createChart(host, { onReport, onEvent }) {
     // Events along the top
     if (state.events) {
       const evg = mk('g', {}, svg);
+      // On narrow screens, smaller markers staggered over three rows so nearby events do not overlap.
+      const lanes = [-Infinity, -Infinity, -Infinity];
       EVENTS.forEach((e, k) => {
         const ex = x(t(e.date));
+        let cy, rd = 5;
+        if (narrow) {
+          rd = 4;
+          let lane = lanes.findIndex(lx => ex - lx >= 10);
+          if (lane < 0) lane = lanes.indexOf(Math.min(...lanes));
+          lanes[lane] = ex;
+          cy = m.t - 23 + lane * 7;
+        } else cy = m.t - 14 + (k % 2) * 6;
         const g = mk('g', { class: 'ie-ev' + (state.ev === e.id ? ' on' : ''), tabindex: 0, role: 'button', 'aria-label': `${e.title}, ${niceDate(e.date)}` }, evg);
-        mk('line', { x1: ex, x2: ex, y1: m.t - 8, y2: m.t + ph }, g);
-        const cy = m.t - 14 + (k % 2) * 6;
-        const d = mk('path', { d: `M${ex},${cy - 5}L${ex + 5},${cy}L${ex},${cy + 5}L${ex - 5},${cy}Z` }, g);
+        mk('line', { x1: ex, x2: ex, y1: narrow ? cy + rd : m.t - 8, y2: m.t + ph }, g);
+        const d = mk('path', { d: `M${ex},${cy - rd}L${ex + rd},${cy}L${ex},${cy + rd}L${ex - rd},${cy}Z` }, g);
         d.style.fill = CAT_COLOR[e.cat];
-        mk('rect', { x: ex - 9, y: cy - 9, width: 18, height: 18, class: 'hit' }, g);
+        const hs = narrow ? 12 : 18;
+        mk('rect', { x: ex - hs / 2, y: cy - hs / 2, width: hs, height: hs, class: 'hit' }, g);
         mk('title', {}, g).textContent = `${niceDate(e.date)}: ${e.title} (${CATS[e.cat]})`;
         g.addEventListener('click', () => onEvent(e.id));
         g.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); onEvent(e.id); } });

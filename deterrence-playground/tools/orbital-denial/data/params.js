@@ -50,6 +50,7 @@ export const P = [
   { k: 'smallRatio', v: 51.3, t: 'Fragments ≥1 cm per fragment ≥10 cm', u: '×', src: 'krisko2011', note: '10^1.71 from the breakup model; FY-1C gives about 58 (150,000 / 2,600, ODQN 12-1)' },
   { k: 'pSmallKill', v: 0.2, t: 'Chance a 1–10 cm strike ends a satellite\'s mission', u: '' },
   { k: 'freshK', v: 3, t: 'Extra hazard from a fresh, still-concentrated cloud', u: '×', note: 'ODQN 11-2: the cloud starts as a disk and disperses within the year' },
+  { k: 'bgSource', v: 1, t: 'Background fragment source, as a share of what holds the pre-war count steady against decay', u: '×', src: 'esa2025', note: 'ESA: debris keeps growing even without new launches; 1 holds each shell at its pre-war count with no attacks, the size is notional' },
   { k: 'freshTau', v: 0.33, t: 'Time for a fresh cloud to disperse', u: 'yr' },
   { k: 'pAsat', v: 0.8, t: 'Direct-ascent intercept succeeds', u: '' },
   { k: 'pCoorb', v: 0.7, t: 'Co-orbital attack succeeds', u: '' },

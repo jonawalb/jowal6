@@ -9,7 +9,7 @@
   --heat0: var(--chip);
   --heat1: color-mix(in srgb, var(--brand-ink) 14%, var(--panel));
   --heat2: color-mix(in srgb, var(--brand-ink) 30%, var(--panel));
-  --heat3: color-mix(in srgb, var(--brand-ink) 52%, var(--panel));
+  --heat3: color-mix(in srgb, var(--brand-ink) 44%, var(--panel));
   --heat4: color-mix(in srgb, var(--brand-ink) 78%, var(--panel));
   --heat5: var(--brand-ink);
 }
@@ -62,7 +62,9 @@
 .cell[data-h="4"] { background: var(--heat4); color: var(--panel); }
 .cell[data-h="5"] { background: var(--heat5); color: var(--panel); }
 .cell[data-h="4"] .tid, .cell[data-h="5"] .tid { color: inherit; opacity: .8; }
+.cell[data-h="2"] .tid, .cell[data-h="3"] .tid { color: var(--ink); }
 .cell[data-h="0"] { color: var(--muted); }
+.cell .n.none { font-weight: 400; font-style: italic; }
 .cell:hover { border-color: var(--accent); }
 .signals-btn { font: 12px var(--body); background: none; border: 1px dashed var(--dtm-line); border-radius: 4px; padding: 6px; color: var(--muted); cursor: pointer; }
 .signals-btn:hover { color: var(--ink); border-color: var(--accent); }

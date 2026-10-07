@@ -24,7 +24,7 @@ export function renderRanking(host, list, S, { onPick, limit }) {
       ? `${fmtV(o.va, S)}<small> of ${fmtV(o.vc, S)}</small>` : fmtV(o.v, S);
     const label = `${o.d.n}: ${S.measure === 'b' ? `allocated ${fmtV(o.va, S)}, committed ${fmtV(o.vc, S)}` : fmtV(o.v, S)}`;
     return `<li><button type="button" class="rk${o.i === S.donor ? ' on' : ''}" data-i="${o.i}" aria-pressed="${o.i === S.donor}" aria-label="${escapeHtml(label)}">
-      <span class="rk-n">${n + 1}</span><span class="rk-d">${escapeHtml(o.d.n)}</span>
+      <span class="rk-n">${n + 1}</span><span class="rk-d" title="${escapeHtml(o.d.n)}">${escapeHtml(o.d.short || o.d.n)}</span>
       <span class="rk-bar">${segs}${outline}</span><span class="rk-v num">${val}</span></button></li>`;
   }).join('') || '<li class="none">No donor in view. Switch on more groups or aid types.</li>';
   host.querySelectorAll('.rk').forEach(b => { b.onclick = () => onPick(+b.dataset.i); });

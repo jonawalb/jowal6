@@ -1,6 +1,6 @@
 // SVG charts: stacked timeline and monthly interception rate.
 import { el, fmt } from '../../../shared/js/mapkit.js';
-import { GROUPS, HIDE_FROM, periodLabel, periodStart, periodEnd } from './model.js';
+import { GROUPS, HIDE_FROM, WITHHELD_GROUPS, periodLabel, periodStart, periodEnd } from './model.js';
 import { GROUP_INFO } from '../data/groups.js';
 
 const niceMax = v => { if (v <= 0) return 1; const p = 10 ** Math.floor(Math.log10(v)); const f = v / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p; };
@@ -10,7 +10,8 @@ const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct
 function xTicks(g, keys, res, x, bw, H, narrow) {
   let lastY = null, lastM = null, lastX = -99, lastMonth = null;
   keys.forEach((k, i) => {
-    const d = periodStart(k, res), y = d.slice(0, 4), m = +d.slice(5, 7);
+    // A first week that starts in late December is labelled with the year it ends in.
+    const d = periodStart(k, res), y = (i === 0 && res === 'week' ? periodEnd(k, res) : d).slice(0, 4), m = +d.slice(5, 7);
     const px = x(i);
     const yearTick = y !== lastY, monthTick = m !== lastM;
     lastM = m;
@@ -107,6 +108,12 @@ export function drawRate(svg, lines, S, tip) {
   });
   const ax = el('g', { transform: `translate(0,${T})` }, svg);
   el('line', { x1: L, x2: W - R, y1: H, y2: H, class: 'ax' }, ax);
+  // Cruise and ballistic counts withheld from August 2026: shade those months and leave the lines blank there.
+  const wi = lines.some(l => WITHHELD_GROUPS.includes(l.g)) ? keys.findIndex(k => k >= HIDE_FROM.slice(0, 7)) : -1;
+  if (wi >= 0) {
+    el('rect', { x: L + wi * bw, y: T, width: W - R - (L + wi * bw), height: H, class: 'hideband' }, g);
+    if (W - R - (L + wi * bw) > 70) el('text', { x: W - R - 4, y: T + 12, class: 'band-t', 'text-anchor': 'end' }, g, 'Missile counts withheld');
+  }
   xTicks(ax, keys, 'month', i => L + i * bw, bw, H, narrow);
   const vmax = Math.max(1, ...lines.flatMap(l => l.pts.map(p => p.l)));
   for (const ln of lines) {

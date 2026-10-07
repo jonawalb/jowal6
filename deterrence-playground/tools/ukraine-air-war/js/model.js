@@ -3,6 +3,13 @@ import { META, GROUPS, MODELS, MODEL_GROUP, REPORTS, ROWS } from '../data/attack
 
 export { META, GROUPS };
 export const HIDE_FROM = '2026-08-10';   // Air Force stopped publishing some missile counts (dataset note)
+// Missile groups whose counts are withheld from HIDE_FROM; their monthly rates are blanked from that month on.
+export const WITHHELD_GROUPS = ['cruise', 'ballistic'];
+const WITHHELD_MONTH = HIDE_FROM.slice(0, 7);
+
+/** Display name for a dataset model string: Latin transliterations (Kh-101, S-300, Molniya) for Cyrillic-style names. */
+const CYR = { 'Молнія': 'Molniya', 'Фенікс': 'Feniks', 'Картограф': 'Kartograf', 'Привет-82': 'Privet-82', 'X-35Y': 'Kh-35U' };
+export const modelName = m => m.split(' and ').map(p => CYR[p] || p.replace(/(^|\/)X-(?=\d)/g, '$1Kh-').replace(/(^|\/)C-(?=[34]00)/g, '$1S-')).join(' and ');
 
 /** One object per dataset row. */
 export const RECS = ROWS.map(([d, h, m, l, x, nr, hid, rep, tm]) => ({
@@ -99,7 +106,8 @@ export function rateSeries(S, g, minN = 5) {
     if (!b) continue;
     b.l += r.l; b.s += Math.min(r.l, r.x + (S.lost ? (r.nr || 0) : 0));
   }
-  return keys.map(k => { const b = m.get(k); return { k, l: b.l, rate: b.l >= minN ? b.s / b.l : null }; });
+  const cut = WITHHELD_GROUPS.includes(g);
+  return keys.map(k => { const b = m.get(k); return { k, l: b.l, rate: b.l >= minN && !(cut && k >= WITHHELD_MONTH) ? b.s / b.l : null }; });
 }
 
 /** Attack reports (one Air Force post) ranked by total launched. */

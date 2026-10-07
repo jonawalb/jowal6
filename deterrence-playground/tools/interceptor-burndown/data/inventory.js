@@ -40,10 +40,11 @@ export const SYSTEMS = [
     basis: '123 AMRAAM-ER notified October 2024; fire units due by spring 2031, so zero today', src: 'dsca', tag: 'order' },
   { k: 'tk4', n: 'Tien Kung IV', long: 'Tien Kung IV (Chiang Kung program)', col: 'var(--c2)',
     roles: ['b', 'c', 'd'], limB: false, max: 500,
-    basis: '128 missiles planned under T-Dome; zero today. The special act passed in May 2026 left the Strong Bow (Chiang Kung) system out; the cabinet moved it into the FY2027 budget and the 2026 supplementary request, which the legislature had not passed by 2 October 2026 (Liberty Times, 3 Sept. 2026)', src: 'tt2026', tag: 'planned' },
+    basis: '128 missiles planned under T-Dome; zero today. The special act passed in May 2026 left the Strong Bow (Chiang Kung) system out; the cabinet moved it into the FY2027 budget and the 2026 supplementary request, which the legislature had not passed by 6 October 2026 (Liberty Times, 3 Sept. 2026)', src: 'tt2026', tag: 'planned' },
 ];
 
-// Which systems each threat class draws on, in firing order (cheapest adequate interceptor first).
+// Which systems each threat class draws on, in firing order: for ballistic missiles the most capable interceptors
+// first; for cruise missiles and drones, cheaper rounds first.
 // The ordering is a modelling choice, not published doctrine: older PAC-3 CRI rounds fire before the newer MSE.
 export const ORDER = {
   b: ['tk4', 'cri', 'mse', 'tk3', 'gem'],
@@ -61,7 +62,7 @@ export const INV_PRESETS = [
     note: 'ONN puts the MSE count at possibly 50 to 100 by end of 2026. Other systems as in the open estimate.' },
   { k: 'planned', n: 'With planned orders', s: 'T-Dome and NASAMS added',
     v: { mse: 102, cri: 380, gem: 200, tk3: 630, tk2: 430, nasams: 123, tk4: 128 },
-    note: 'Adds 230 Tien Kung III and 128 Tien Kung IV (T-Dome plan, Taipei Times, Jan. 2026) and 123 AMRAAM-ER for NASAMS (due by 2031). The planned PAC-3 battalion is left out because its missile count is not public.' },
+    note: 'Adds 230 Tien Kung III and 128 Tien Kung IV (T-Dome plan, Taipei Times, Jan. 2026) and 123 AMRAAM-ER for NASAMS (due by 2031). Funding for the Tien Kung III is unconfirmed: the extra missiles were requested in 2025, but the special act passed in May 2026 covered U.S. purchases only and left out domestic programs, and Tien Kung III is not among the dropped items the cabinet moved into the 2026 supplementary request (Liberty Times, 3 Sept. 2026). The planned PAC-3 battalion is left out because its missile count is not public.' },
 ];
 
 // Sourced production and delivery facts used for the resupply controls.

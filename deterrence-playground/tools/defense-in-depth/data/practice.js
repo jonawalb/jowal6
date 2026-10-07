@@ -1,64 +1,7 @@
-// Defense in Depth: the Practice field (an explainer before the first game). A 3-row by 4-column board with no
-// enemy, no combat and no losing, where a new player practises moving troops with the real game's map, popover
-// and orders. Two MG companies, two rifle companies and one of every other unit type of the chosen era.
-// Everything here is NOTIONAL and fictional. Data only: imports data/ files, never js/.
-import { TYPE_KEYS } from './units.js';
-import { ERAS } from './eras.js';
-
-/** The practice scale (registered as SCALES.p by js/practice.js; never offered on the start screen or in links). */
-export const PRACTICE_SCALE = {
-  id: 'p', label: 'Practice field', note: '', cols: 4, rows: 3, turns: 99,
-  obj: { row: -1, name: 'no objective', need: 1 },
-  // No zones on the practice field: every band sits off the board, so every box reads as one open area.
-  bands: { assembly: [-9, -9], nml: [-9, -9], outpost: [-9, -9], battle: [-9, -9], switch: null, second: null, rear: [0, 2] },
-  freeTrench: [], commEvery: 99, commRows: [0, -1],
-  wp: 0, csPlan: 2,
-  ammo: { w: { att: 999, def: 999 }, m: { att: 999, def: 999 } },
-  units: {}, divs: 1, colGroups: 1,
-};
-
-/** Terrain of the practice boxes by [row, col] (defender's view; the attacker's board is the same ground). */
-export const PRACTICE_GROUND = {
-  woods: { at: [1, 2], name: 'Callow Wood' },
-  village: { at: [0, 3], name: 'Wendrel' },
-};
-
-/** Unit types that exist in an era (the real orders of battle use these; Modern heavy batteries are rockets). */
-export function eraTypes(era) {
-  const E = ERAS[era];
-  return TYPE_KEYS.filter(t => (t === 'drone' ? E.drones : t === 'ew' ? E.ew : t === 'rocket' ? E.precision : t === 'heavy' ? !E.precision : true));
-}
-
-// Fictional practice names. {n} is the era's word for the type (data/eras.js names).
-const NAME = {
-  rifle: ['A Coy', 'B Coy'], mg: ['1st MG Coy', '2nd MG Coy'], storm: ['Storm Coy'], mortar: ['Mortar Coy'], pioneer: ['Pioneer Coy'],
-  tank: ['Tank Section'], field: ['1st Field Bty'], heavy: ['Heavy Bty'], rocket: ['Rocket Bty'], drone: ['Drone Team'], ew: ['EW Team'],
-};
-const NAME_M = { rifle: ['A Coy', 'B Coy'], mg: ['1st Weapons Coy', '2nd Weapons Coy'], storm: ['Raid Coy'], pioneer: ['Engineer Coy'], tank: ['Tank Coy'], field: ['1st Tube Bty'] };
-
-// Where each unit starts, [row, col] in the defender's view (row 0 faces the enemy). The attacker's start is the
-// mirror image (row 2 - r), so on both sides the units start on the edge nearest the player.
-const START = {
-  rifle: [[2, 0], [2, 1]], mg: [[2, 0], [2, 1]], storm: [[2, 2]], mortar: [[2, 2]], pioneer: [[2, 3]], tank: [[2, 3]],
-  field: [[2, 2]], heavy: [[2, 3]], rocket: [[2, 3]], drone: [[2, 1]], ew: [[2, 0]],
-};
-
-/** The rifle and MG companies form one battalion (the formation drill); everything else is the support group. */
-export const PRACTICE_FMNS = { bn: '1st Battalion', support: 'Support Group', top: 'Practice Detachment' };
-
-/**
- * The practice roster for an era: [{ type, name, typeName, at: [row, col], fmn: 'bn' | 'support' }], two MG and two
- * rifle companies and exactly one of every other type of the era.
- */
-export function practiceRoster(era) {
-  const E = ERAS[era], out = [];
-  for (const type of eraTypes(era)) {
-    const n = type === 'mg' || type === 'rifle' ? 2 : 1;
-    const names = (era === 'm' && NAME_M[type]) || NAME[type];
-    for (let i = 0; i < n; i++) {
-      const typeName = E.names[type] || (type === 'rocket' ? ERAS.m.names.heavy : type);
-      out.push({ type, name: names[i], typeName, at: START[type][i], fmn: type === 'mg' || type === 'rifle' ? 'bn' : 'support' });
-    }
-  }
-  return out;
-}
+// Encrypted TSM data. Unlocked in the browser with the site password.
+const __m = await window.TSMVault.module(import.meta.url, "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", 1, 6);
+export const PRACTICE_FMNS = __m.PRACTICE_FMNS;
+export const PRACTICE_GROUND = __m.PRACTICE_GROUND;
+export const PRACTICE_SCALE = __m.PRACTICE_SCALE;
+export const eraTypes = __m.eraTypes;
+export const practiceRoster = __m.practiceRoster;

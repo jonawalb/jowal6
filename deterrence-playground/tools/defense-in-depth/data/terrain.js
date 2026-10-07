@@ -1,33 +1,7 @@
-// Defense in Depth: terrain and field works (SPEC §2.3, §1.2). All values NOTIONAL. The dead-ground
-// figures g0 are shaped by Biddle's "more than 65% ... more than 85%" of ground within 1,000 m invisible to a
-// typical position (p. 36); per-sector values are lower because a sector is only 500 m. Directional cover
-// follows Biddle: "most natural cover is directional" (p. 44). Data only: imports nothing.
-
-// id: index stored in the sector array. front = directional (frontal) cover, all = all-round cover,
-// g0 = dead ground, move = movement cost, sig = signature multiplier.
-export const TERRAIN = [
-  { id: 0, key: 'open',    label: 'Open',              front: 0,    all: 0,    g0: 0.25, move: 1.0, sig: 1.0 },
-  { id: 1, key: 'broken',  label: 'Broken / cratered', front: 0.30, all: 0,    g0: 0.50, move: 1.3, sig: 0.8 },
-  { id: 2, key: 'woods',   label: 'Woods',             front: 0,    all: 0.35, g0: 0.40, move: 1.4, sig: 0.6 },
-  { id: 3, key: 'village', label: 'Village',           front: 0,    all: 0.45, g0: 0.45, move: 1.2, sig: 0.7 },
-  { id: 4, key: 'crest',   label: 'Crest',             front: 0.15, all: 0,    g0: 0.15, move: 1.0, sig: 1.2 },
-  { id: 5, key: 'reverse', label: 'Reverse slope',     front: 0.20, all: 0,    g0: 0.35, move: 1.0, sig: 1.0, sigBeyond: 0.6 },
-  { id: 6, key: 'valley',  label: 'Stream valley',     front: 0,    all: 0,    g0: 0.35, move: 1.3, sig: 0.9 },
-];
-export const T = Object.fromEntries(TERRAIN.map(t => [t.key, t.id]));
-
-// Field works built by the defender (SPEC §1.2). wp = work points. NOTIONAL.
-export const WORKS = {
-  trench:   { wp: 2, label: 'Trench', cover: 0.6 },                 // frontal cover 0.6, axis across the front
-  comm:     { wp: 1, label: 'Communication trench' },              // covered N-S movement
-  obst:     { wp: 2, label: 'Wire / minefield (surface)' },
-  obstC:    { wp: 4, label: 'Wire / minefield (concealed)' },
-  strong:   { wp: 6, label: 'Strongpoint', cover: 0.75 },          // all-round cover 0.75
-  concrete: { wp: 4, label: 'Concrete (strongpoint)' },            // halves artillery losses; needs a strongpoint
-  dugout:   { wp: 3, label: 'Dugouts' },                           // artillery losses -60% for units not moving
-  dummy:    { wp: 1, label: 'Dummy position' },                    // looks like a strongpoint to the enemy
-};
-export const WORK_KEYS = Object.keys(WORKS);
-
-// Churned ground after Destroy fire: movement cost +0.3 (Hunzeker pp. 52-53). NOTIONAL.
-export const CHURN = { move: 0.3 };
+// Encrypted TSM data. Unlocked in the browser with the site password.
+const __m = await window.TSMVault.module(import.meta.url, "hJl34UBFIrro43O62+pMSGyFSX6eyHnJL+vlTOUH/4ggB2tjZ4LpbqOIhNNZhrkv4Vhjkx27oG+JWyOT4Weu+O86UHrgIsXouHC4Ad2FvYoLBf3AGQdxqN5gmbYFIMgauLisJIiF2isHD3n+C8FotIj+F23z6mhMIBr5pvx5Oadr/E83fI6QDug1UmmulGwV7SgV5ZYjPGG4bBnY39j5JmuKdO9N24HCCqINwtCurrfrRs0p+QhNhA9GGXLC8nrtYXj3SqEGKRAD3A+mhM5Kjy2t2hQN6DXDmD2qKb7Bq40MhFQOUGk/K41y1on4h6pktxPMGJ3HtZgBDYaR75iiQwEY7Ftx+TzTSgf2b/lnKUXZJxEihXZgu3XIJzxbJVZzQuOZb7ZXrp+dxK8CP26XL7M5lCVK7A+0L4dRn2n5GvYsWfPIbmu3fgB3MGWNZHioYy3gonvccfMPE7odLrlMriP60qm8j8uE7RkHre6pG6oIh7bwy6nUI4r8vX2pfjkJvui/6TeciknVS2vNY5ral+7JcNWH94KHv8dRH3KtiFFjhPekS0vlUXYZKZA5Cb0Gkp+0BLZGnf9vBxLgNk/4NhnKksftXnOEeK/yNTnOJl3NN4PUCJTqNtvgMv/F6XJxh8HxCTFrLYVk3z+7CGIEolydinVsavdmvis38nNBYCYyKarrICu0iry5zvzRxU+o35rcaOLKlJPZFmJd5lYEJ1kuYdMTlEBkxcXNuKQnJbBXynmCqpE/+OWkYrJMXKTIwI4PkPi7No48oLDdBCuuH7YXWV9qqnyoRYNWJmO4u5BeS9kdJQ5d6phQgh85qoPRRD2PK3ESUDrshl9s3dZcbbefM9vY8f2Av64RaKnMGyeJ/cZbCAfzSSR+jAD+mCA4/WcysEPBXyjCbGRyhcwCT4dkwbvQCYCRefc+Y+xKuwbOwRWmrP9b3r8xF4n9S0V3qKx2GC2oxPj26w6lAwB6zX9otR3PJcCa0/bW0CxJgYsM8sXBuZXaNFH+6gMavgku78aBIAWYfhBV+b+IaZ8cU98wjcvF26lG/mJ5PBRd51QSIxjVJr+KuNAfIK2ISH+XRlz+E1NGsRB1tcbvX5k5Y61ydd4eeCoG011PFzxHRMw1Bbex0DHJJhVJOTOrkle6lq+WpXmWFDg23p6B7ij3GZf7t2z4zNjD8kWQv2+gtKJmdaFi4CBM6wIX1eMncNNmwfs7BVa2PjY9WqEGZs6CZ7AkEtw9GPONoRAsaqDONew/LjDj75J1a1TDDk2wFvhf6wTVfhZPQu/SNk4t1H7K7n7AYbJIDGei324iwJJnB9XPY901UrDKdYR+bo4ue5Is/RqI9oKemSGfdjqEO2hQgGaPhB1UXHIO+VBeRF5d4HUHFvqsy9gCyEEDruZIL9XR1TD05AoIGb5duzcG9p37FP6P1+YuklVvXuNIgW3bDw+Co5zJ0Sz6TtMl0fa+/bJ6GrDcXmjdoFgvcbw7GoBpGCvYBDoKP/J2lg==", 1, 6);
+export const CHURN = __m.CHURN;
+export const T = __m.T;
+export const TERRAIN = __m.TERRAIN;
+export const WORKS = __m.WORKS;
+export const WORK_KEYS = __m.WORK_KEYS;

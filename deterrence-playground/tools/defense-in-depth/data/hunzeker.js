@@ -1,113 +1,19 @@
-// Hunzeker, Dying to Learn (2021): the learning-phase codings (Figs. 1a-3c, p. 46) and the dimensions behind the
-// schematic Lessons diagrams. Standalone data module: imports nothing.
-// Real army names stay out of this file and the UI (DECISIONS D-07, D-20): the three cases are the archetypes
-// Staff, Regimental and Republican (SPEC §6.2).
-
-/** The 18 seasons of Figs. 1a-3c (p. 46), Summer '14 to Fall '18. Index i spans [i, i + 1). */
-export const SEASONS = Object.freeze(['Summer ’14', 'Fall ’14', 'Winter ’15', 'Spring ’15', 'Summer ’15', 'Fall ’15',
-  'Winter ’16', 'Spring ’16', 'Summer ’16', 'Fall ’16', 'Winter ’17', 'Spring ’17', 'Summer ’17', 'Fall ’17',
-  'Winter ’18', 'Spring ’18', 'Summer ’18', 'Fall ’18']);
-export const SEASONS_SHORT = Object.freeze(['Su14', 'F14', 'W15', 'Sp15', 'Su15', 'F15', 'W16', 'Sp16', 'Su16', 'F16',
-  'W17', 'Sp17', 'Su17', 'F17', 'W18', 'Sp18', 'Su18', 'F18']);
-
-/** Learning phases (pp. 7-10, 22-33); mastery = a majority of frontline units fight the new way (pp. 36-37). */
-export const PHASES = Object.freeze({
-  E: { name: 'Exploration', short: 'E', what: 'Units try new methods and report what they see.' },
-  S: { name: 'Selection', short: 'S', what: 'Someone judges which experiments worked and writes them down.' },
-  SA: { name: 'Selection/Action', short: 'S/A', what: 'Selection and dissemination ran together.' },
-  A: { name: 'Action', short: 'A', what: 'The chosen method is codified and trained across the army.' },
-  M: { name: 'Mastery', short: 'M', what: 'A majority of frontline units can fight the new way (p. 37).' },
-});
-
-export const DOMAINS = Object.freeze([
-  { id: 'AT', name: 'Assault tactics', fig: '1' },
-  { id: 'CA', name: 'Combined arms', fig: '2' },
-  { id: 'ED', name: 'Elastic defense in depth', fig: '3' },
-]);
-
-export const ARCHETYPES = Object.freeze([
-  { id: 'staff', name: 'Staff model', fig: 'a', line: 'Explored later, then selected and spread fastest; copied freely.' },
-  { id: 'regimental', name: 'Regimental model', fig: 'b', line: 'Many pamphlets, no filter at first; the technical arms learned best.' },
-  { id: 'republican', name: 'Republican model', fig: 'c', line: 'Explored first and most; doctrinal whiplash; elasticity barred.' },
-]);
-
-/**
- * Reference spans, in season units (0 = start of Summer '14), read from the 220-dpi render of p. 46 (±½ season;
- * Hunzeker brief §0.1). Where the text codes a transition differently the text governs; `pages` lists the text.
- */
-export const REFERENCE = Object.freeze({
-  staff: {
-    AT: { spans: [['E', 2.5, 5], ['S', 5, 13.3], ['A', 13.3, 15], ['M', 15, 17]], pages: '71–74' },
-    CA: { spans: [['E', 4, 7], ['S', 7, 13], ['A', 13, 15], ['M', 15, 17]], pages: '75–77' },
-    ED: { spans: [['E', 4, 8.5], ['SA', 8.5, 11], ['M', 11, 17]], pages: '79–82' },
-  },
-  regimental: {
-    AT: { spans: [['E', 1, 3], ['E', 8, 10], ['S', 10, 14], ['A', 14, 17]], pages: '102–107', note: 'Exploration stopped in Spring ’15 and restarted in Summer ’16; no mastery.' },
-    CA: { spans: [['E', 2.5, 10], ['S', 10, 13], ['A', 13, 16], ['M', 16, 17.5]], pages: '110–113' },
-    ED: { spans: [['E', 2, 15.5], ['SA', 15.5, 17]], pages: '115–118', note: 'Mastery untested.' },
-  },
-  republican: {
-    AT: { spans: [['E', 0, 11], ['S', 11, 12.5], ['A', 12.5, 17]], pages: '142–149', note: 'No mastery (p. 149).' },
-    CA: { spans: [['E', 0, 11], ['S', 11, 12.5], ['A', 12.5, 16], ['M', 16, 18]], pages: '151–156' },
-    ED: { spans: [['E', 1, 17]], pages: '157–159', note: 'Never left exploration.' },
-  },
-});
-
-/** Elastic defense in depth, 1917 doctrine (pp. 81-82), and the copy that kept the form only (p. 117). km from the front. */
-export const ZONES = Object.freeze([
-  { id: 'outpost', name: 'Outpost zone', from: 0, to: 1, depth: '600 m – 1 km', pages: '81–82',
-    garrison: 'Scattered sentry groups and light posts.',
-    role: 'Warn, delay and break up infiltrators; fall back under pressure rather than die in place.' },
-  { id: 'battle', name: 'Battle zone', from: 1, to: 3.5, depth: '1.5 – 3 km', pages: '81–82',
-    garrison: 'Trench series at its front; strongpoints, machine-gun nests and obstacles; a larger force in trenches at its rear.',
-    role: 'Hold against raids; against a big attack, shift or yield within limits, then strike back.' },
-  { id: 'rear', name: 'Rear zone', from: 3.5, to: 7, depth: 'about 3 km more', pages: '81–82',
-    garrison: 'Storm battalions and reserve units; behind them the Counterstroke divisions.',
-    role: 'Feed the battle and mount the deliberate counterattack.' },
-]);
-export const ZONE_TOTAL_KM = 10;   // "up to ~10 km" deep (pp. 81-82); 8 km already in the 1915 reorganization (p. 79)
-
-export const COUNTERATTACKS = Object.freeze({
-  riposte: { name: 'Riposte', when: 'within 24 h', who: 'nearby units; leaders down to squad level may launch it without asking', page: 82 },
-  counterstroke: { name: 'Counterstroke', when: 'when a riposte is not feasible', who: 'assault divisions from the rear', page: 82 },
-  timing: { text: 'Strike after the attacker starts to consolidate and before he finishes; beyond his artillery.', pages: '61–62, 79' },
-  orderDelay: { text: 'Counterattack orders took 8 hours or more to arrive.', page: 80 },
-});
-
-/** The copy that kept the form but not the rules (p. 117). */
-export const FORM_NOT_RULES = Object.freeze({
-  page: 117, battleZoneStartKm: 4,
-  faults: ['Too many men in the outpost zone', 'Hold at all costs', 'Slow, deliberate counterattack only', 'Rear zone existed only on maps'],
-});
-
-/** Creeping barrage (p. 110; p. 148). Yards per minute. */
-export const BARRAGE = Object.freeze({
-  aheadYd: 100, page: 110,
-  rates: [
-    { id: 'rough', ydMin: 15, label: '15 yd/min (rough ground)', page: 110 },
-    { id: 'fast', ydMin: 109.36 / 4, label: '100 m / 4 min (too fast for the ground)', page: 148 },
-    { id: 'good', ydMin: 75, label: '75 yd/min (good ground)', page: 110 },
-  ],
-  early: 'Shift too early and the defenders man the parapet; too late and you shell your own infantry (p. 52).',
-});
-
-/** Leapfrog (p. 56; bounds p. 70). */
-export const LEAPFROG = Object.freeze({ quote: 'akin to playing a game of leapfrog, albeit with guns', quotePage: 56, boundYd: [50, 100], boundPage: 70, groundPage: 57 });
-
-/** Storm-squad attack (pp. 71-72). */
-export const INFIL = Object.freeze({ squadSize: 8, pages: '71–72', mopUp: 'Mop-up units follow close behind to clear the bypassed strongpoints.' });
-
-/** Four-phase fire plan (p. 76) and the direct-support battery (pp. 76-77). */
-export const FIREPLAN = Object.freeze([
-  { id: 1, name: 'Target reconnaissance', what: 'List command posts, depots and communications.', control: 'Senior artillery commander' },
-  { id: 2, name: 'Hurricane on those targets', what: 'Short, intense predicted fire; no registration needed.', control: 'Senior artillery commander' },
-  { id: 3, name: 'Counter-battery', what: 'Mass on the enemy batteries.', control: 'Senior artillery commander' },
-  { id: 4, name: 'Creeping barrage', what: 'Walk the fire ahead of the infantry.', control: 'Divisions (control handed down)' },
-]);
-export const FIREPLAN_PAGE = 76;
-
-/** Attacker's dilemmas (pp. 53-54). */
-export const DILEMMA = Object.freeze({ pages: '53–54', depth: 'Go deep and outrun your guns, or bite and hold within their reach.', breadth: 'A narrow front makes a salient the defender can fire into from three sides.' });
-
-/** Three-layer position, 1915 (pp. 78-79). Metres behind the forward edge. */
-export const SLOPE = Object.freeze({ mlrBehindCrestM: 200, secondZoneBehindMlrKm: 1, reservesBehindKm: [2, 4], pages: '78–79' });
+// Encrypted TSM data. Unlocked in the browser with the site password.
+const __m = await window.TSMVault.module(import.meta.url, "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", 1, 6);
+export const ARCHETYPES = __m.ARCHETYPES;
+export const BARRAGE = __m.BARRAGE;
+export const COUNTERATTACKS = __m.COUNTERATTACKS;
+export const DILEMMA = __m.DILEMMA;
+export const DOMAINS = __m.DOMAINS;
+export const FIREPLAN = __m.FIREPLAN;
+export const FIREPLAN_PAGE = __m.FIREPLAN_PAGE;
+export const FORM_NOT_RULES = __m.FORM_NOT_RULES;
+export const INFIL = __m.INFIL;
+export const LEAPFROG = __m.LEAPFROG;
+export const PHASES = __m.PHASES;
+export const REFERENCE = __m.REFERENCE;
+export const SEASONS = __m.SEASONS;
+export const SEASONS_SHORT = __m.SEASONS_SHORT;
+export const SLOPE = __m.SLOPE;
+export const ZONES = __m.ZONES;
+export const ZONE_TOTAL_KM = __m.ZONE_TOTAL_KM;

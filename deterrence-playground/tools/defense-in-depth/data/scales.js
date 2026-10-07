@@ -1,64 +1,8 @@
-// Defense in Depth: the three map scales (SPEC §2.2). Every sector is 500 m x 500 m at every scale (D-10);
-// only the grid, the zone bands, the turn count and the forces change. Row 0 is the attacker's rear edge.
-// No other module may contain a literal grid size: js/grid.js builds all geometry from this table.
-// All values NOTIONAL design unless a page is given. Data only: imports nothing.
-
-export const SECTOR_M = 500;
-
-// Zone bands are inclusive [first row, last row]. Outpost and battle zones follow Hunzeker pp. 81-82
-// (outpost 600 m-1 km, battle zone 1.5-3 km, rear ~3 km+); the Division map holds ~9 km of defense
-// (REVISIONS 3, D-09), cf. Lossberg's 8 km (Hunzeker p. 79).
-export const SCALES = {
-  d: {
-    id: 'd', label: 'Division sector', note: 'Recommended', cols: 8, rows: 21, turns: 14, turnsByEra: { m: 15 },   // 2026-10-07 (Q68 redesign): 14 h (1917-18), 15 h (Modern); W3 had 15 / 16
-    obj: { row: 11, name: 'the Brannoch Line', need: 2 },
-    bands: { assembly: [0, 1], nml: [2, 2], outpost: [3, 4], battle: [5, 10], switch: null, second: null, rear: [11, 20] },
-    freeTrench: [3, 5, 11],          // inherited trench rows: outpost line, first battle-zone row, objective line
-    commEvery: 2, commRows: [3, 13], // inherited communication trenches: every second column, these rows
-    wp: 100, csPlan: 2,
-    ammo: { w: { att: 260, def: 140 }, m: { att: 220, def: 130 } },
-    units: { w: { def: 26, att: 38 }, m: { def: 28, att: 39 } },   // 2026-10-07: 3 tank units an attacking division (was 1 / 2)
-    divs: 1, colGroups: 4,
-  },
-  c: {
-    id: 'c', label: 'Corps sector', note: '2x', cols: 12, rows: 29, turns: 21, turnsByEra: { w: 19 },   // W3: was 20; 2026-10-02: 1917-18 20 h; 2026-10-07 (Q68 redesign): 19 h
-    obj: { row: 13, name: 'the Second Position', need: 3 },
-    bands: { assembly: [0, 1], nml: [2, 2], outpost: [3, 4], battle: [5, 10], switch: [11, 12], second: [13, 17], rear: [18, 28] },
-    freeTrench: [3, 5, 11, 13, 18],
-    commEvery: 2, commRows: [3, 19],
-    wp: 210, csPlan: 3,
-    ammo: { w: { att: 600, def: 330 }, m: { att: 510, def: 300 } },
-    units: { w: { def: 68, att: 87 } },
-    divs: 2, colGroups: 6,
-  },
-  a: {
-    id: 'a', label: 'Army sector', note: '4x', cols: 18, rows: 37, turns: 25, turnsByEra: { w: 25 },   // W3: was 24 h to row 16; then 25 h (Modern) / 27 h (1917-18) to row 13; 2026-10-07 (Q68 redesign): 25 h both
-    obj: { row: 13, name: 'the Second Position', need: 4 },   // W3: was row 16 (the Army Line); see DECISIONS W3
-    bands: { assembly: [0, 1], nml: [2, 2], outpost: [3, 4], battle: [5, 10], switch: [11, 12], second: [13, 15], rear: [16, 36] },
-    freeTrench: [3, 5, 11, 13, 16, 22, 23],   // incl. the third position at rows 22-23
-    commEvery: 2, commRows: [3, 24],
-    reserveRows: [26, 34],                    // army reserve assembly
-    wp: 420, csPlan: 4,
-    ammo: { w: { att: 1200, def: 660 }, m: { att: 1020, def: 600 } },
-    units: { w: { def: 147, att: 174 } },
-    divs: 4, colGroups: 6,
-  },
-};
-
-export const SCALE_IDS = ['d', 'c', 'a'];
-
-/** Hours in a battle at a scale and era (W3: the Modern Division battle is an hour longer, DECISIONS W3). */
-export const turnsFor = (s, era) => (s.turnsByEra && s.turnsByEra[era]) || s.turns;
-
-// The ridge crest sits inside the first battle zone: row round(5 + 0.45 x 6) (SPEC §2.3). Forward slope
-// before it (visible to the attacker), reverse slope after (Biddle pp. 96-97; Hunzeker pp. 78-79).
-export const crestRow = s => Math.round(s.bands.battle[0] + 0.45 * (s.bands.battle[1] - s.bands.battle[0] + 1));
-
-/** Zone name of a row at a scale: assembly, nml, outpost, battle, switch, second or rear. */
-export function zoneOf(s, row) {
-  for (const z of ['assembly', 'nml', 'outpost', 'battle', 'switch', 'second']) {
-    const b = s.bands[z];
-    if (b && row >= b[0] && row <= b[1]) return z;
-  }
-  return 'rear';
-}
+// Encrypted TSM data. Unlocked in the browser with the site password.
+const __m = await window.TSMVault.module(import.meta.url, "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", 1, 6);
+export const SCALES = __m.SCALES;
+export const SCALE_IDS = __m.SCALE_IDS;
+export const SECTOR_M = __m.SECTOR_M;
+export const crestRow = __m.crestRow;
+export const turnsFor = __m.turnsFor;
+export const zoneOf = __m.zoneOf;

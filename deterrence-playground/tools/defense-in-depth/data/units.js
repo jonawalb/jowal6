@@ -1,105 +1,11 @@
-// Defense in Depth: unit types and order-of-battle templates (SPEC §2.5; D-11, D-12). All strengths and
-// firepower are NOTIONAL points ("FP" = firepower per strength point vs. infantry). No real order of battle.
-// Data only: imports nothing. js/forces.js expands the templates into units with buildForces(scale, era, side).
-
-// cat: inf (counts for stacking, holds ground) | veh | bat (battery, 4 gun points) | team (drone, EW).
-export const TYPES = {
-  rifle:   { str: 10, fp: 1.0, cat: 'inf', letter: 'R', line: true },
-  storm:   { str: 8,  fp: 1.3, cat: 'inf', letter: 'S', line: true, stealth: true },          // full Infiltrate; scarce (Biddle p. 89)
-  mg:      { str: 6,  fp: 1.5, lane: 3.0, cat: 'inf', letter: 'M', lanes: true, atgm: 4.0 }, // ONLY type that lays fire lanes
-  mortar:  { str: 4,  fp: 1.5, cat: 'inf', letter: 'T', indirect: true },                      // range from data/eras.js; ignores directional cover
-  pioneer: { str: 6,  fp: 0.6, cat: 'inf', letter: 'P', engineer: true },
-  tank:    { str: 6,  fp: 2.0, cat: 'veh', letter: 'K', armor: true, strM: 14, fpM: 2.5 },   // 1918 section / modern company
-  field:   { str: 0,  guns: 4, cat: 'bat', letter: 'F', arty: 'field' },
-  heavy:   { str: 0,  guns: 4, cat: 'bat', letter: 'H', arty: 'heavy' },
-  rocket:  { str: 0,  guns: 4, cat: 'bat', letter: 'X', arty: 'rocket', precision: true },
-  drone:   { str: 2,  fp: 0, cat: 'team', letter: 'D' },
-  ew:      { str: 2,  fp: 0, cat: 'team', letter: 'E' },
-};
-export const TYPE_KEYS = Object.keys(TYPES);
-
-// Modern substitutions keep the same tree (SPEC §2.5): rifle -> infantry company, MG -> weapons company,
-// storm -> raid company (names in data/eras.js). Battery mixes and extra teams are set per template below.
-
-// Template grammar: a formation { kind, name, role, cs?, kids: [formation], units: [unit] }, where a unit is
-// [type, name, role?] or { n, type, name, role } for n repeats ({i} = 1-based index, {L} = next company letter,
-// {o} = ordinal of i). {div}, {rgt}, {bird}, {art} are filled by js/forces.js. era: 'w' | 'm' limits an entry.
-// role drives the default deployment (js/plan-def.js, js/plan-att.js).
-
-const coys = (n, role) => ({ n, type: 'rifle', name: '{L} Coy', role });
-
-export const DEF_DIVISION = {
-  kind: 'div', name: '{div} Division', kids: [
-    { kind: 'rgt', name: '{rgt}', kids: [
-      { kind: 'bn', name: 'I Bn', role: 'outpost', units: [coys(3, 'outpost'), ['mg', 'I MG Coy', 'outpost']] },
-      { kind: 'bn', name: 'II Bn', role: 'front', units: [coys(3, 'front'), ['mg', 'II MG Coy', 'front']] },
-      { kind: 'bn', name: 'III Bn', role: 'depth', units: [coys(3, 'depth'), ['mg', 'III MG Coy', 'depth']] },
-    ] },
-    { kind: 'grp', name: '{div0} Strongpoint MG', role: 'strong', units: [['mg', '1st Strongpoint MG Coy', 'strong'], ['mg', '2nd Strongpoint MG Coy', 'strong']] },
-    { kind: 'grp', name: 'Counterstroke Group {bird}', role: 'cs', cs: true, kids: [
-      { kind: 'bn', name: 'IV Bn', role: 'cs', units: [coys(3, 'cs'), { era: 'w', ...coys(1, 'cs') }, { era: 'm', n: 1, type: 'tank', name: '{L} Tank Coy', role: 'cs' }] },
-    ], units: [['mg', 'IV MG Coy', 'cs'], ['pioneer', '{div0} Pioneer Coy', 'cs']] },
-    { kind: 'grp', name: '{div0} Artillery Group', role: 'arty', units: [
-      { era: 'w', n: 4, type: 'field', name: '{o} Field Bty', role: 'arty' }, { era: 'w', n: 1, type: 'heavy', name: '5th Heavy Bty', role: 'arty' },
-      { era: 'm', n: 3, type: 'field', name: '{o} Tube Bty', role: 'arty' }, { era: 'm', n: 1, type: 'rocket', name: '4th Rocket Bty', role: 'arty' },
-    ] },
-    { kind: 'grp', name: '{div0} Support', role: 'mortar', units: [['mortar', '{div0} Trench Mortar Coy', 'mortar'],
-      { era: 'm', n: 2, type: 'drone', name: '{o} Drone Team', role: 'team' }, { era: 'm', n: 1, type: 'ew', name: 'EW Team', role: 'team' }] },
-  ],
-};
-
-export const ATT_DIVISION = {
-  kind: 'div', name: '{div} Division', kids: [
-    { kind: 'bn', name: 'Storm Battalion {divn}', role: 'storm', units: [{ n: 2, type: 'storm', name: '{o} Storm Coy', role: 'storm' }] },
-    { kind: 'rgt', name: '{rgtA}', role: 'wave1', kids: [1, 2, 3].map(b => (
-      { kind: 'bn', name: `${['', 'I', 'II', 'III'][b]} Bn`, role: 'wave1', units: [{ n: 3, type: 'rifle', name: '{o} Coy', role: 'wave1' }, ['mg', `${['', 'I', 'II', 'III'][b]} MG Coy`, 'wave1']] })) },
-    { kind: 'rgt', name: '{rgtB}', role: 'wave2', kids: [1, 2].map(b => (
-      { kind: 'bn', name: `${['', 'I', 'II'][b]} Bn`, role: 'wave2', units: [{ n: 3, type: 'rifle', name: '{o} Coy', role: 'wave2' }] })),
-    units: [['mg', 'Regimental MG Coy', 'wave2']] },
-    { kind: 'bn', name: '{divn} Pioneer Bn', role: 'pioneer', units: [{ n: 2, type: 'pioneer', name: '{o} Pioneer Coy', role: 'pioneer' }] },
-    { kind: 'grp', name: '{divn} Mortar Group', role: 'mortar', units: [{ n: 2, type: 'mortar', name: '{o} Mortar Coy', role: 'mortar' }] },
-    { kind: 'grp', name: 'Artillery Group {divn}', role: 'arty', units: [
-      { era: 'w', n: 8, type: 'field', name: '{o} Field Bty', role: 'arty' }, { era: 'w', n: 2, type: 'heavy', name: '{o} Heavy Bty', role: 'arty' },
-      { era: 'm', n: 6, type: 'field', name: '{o} Tube Bty', role: 'arty' }, { era: 'm', n: 2, type: 'rocket', name: '{o} Rocket Bty', role: 'arty' },
-    ] },
-    { kind: 'grp', name: 'Tank Group {tank}', role: 'tank', units: [
-      // 2026-10-07: one tank unit per first-wave battalion (3; was 1 section / 2 companies). Conservative against the
-      // record: about 437 tanks for six assaulting divisions at Cambrai (1917) and 414 for seven at Amiens (1918; Biddle
-      // p. 35); a modern armored brigade fields roughly as many tank companies as infantry companies. FACTCHECK.md.
-      { era: 'w', n: 3, type: 'tank', name: '{o} Tank Section', role: 'tank' }, { era: 'm', n: 3, type: 'tank', name: '{o} Tank Coy', role: 'tank' },
-      { era: 'm', n: 2, type: 'drone', name: '{o} Drone Team', role: 'team' }, { era: 'm', n: 1, type: 'ew', name: 'EW Team', role: 'team' },
-    ] },
-  ],
-};
-
-// Corps/army-level formations (SPEC §2.5). At Army, corps artillery is pooled into the army artillery group
-// so the counts match the SPEC §2.2 table (W1-A decision, docs/DECISIONS.md).
-export const DEF_CS_DIVISION = {
-  kind: 'div', name: 'Counterstroke Division {bird}', role: 'corpsCs', cs: true, kids: [
-    { kind: 'bn', name: 'I Bn', role: 'corpsCs', units: [coys(4, 'corpsCs')] },
-    { kind: 'bn', name: 'II Bn', role: 'corpsCs', units: [coys(3, 'corpsCs'), { era: 'w', ...coys(1, 'corpsCs') }, { era: 'm', n: 1, type: 'tank', name: '{L} Tank Coy', role: 'corpsCs' }] },
-  ], units: [{ n: 2, type: 'mg', name: '{o} MG Coy', role: 'corpsCs' }, ['pioneer', 'Pioneer Coy', 'corpsCs'],
-    { n: 2, type: 'field', name: '{o} Field Bty', role: 'arty' }],
-};
-export const DEF_ARMY_RESERVE = { ...DEF_CS_DIVISION, name: 'Army Reserve Division {bird}', role: 'armyRes' };
-export const ATT_ECHELON2 = {
-  kind: 'rgt', name: '{rgtC}', role: 'echelon2', kids: [1, 2].map(b => (
-    { kind: 'bn', name: `${['', 'I', 'II'][b]} Bn`, role: 'echelon2', units: [{ n: 3, type: 'rifle', name: '{o} Coy', role: 'echelon2' }] })),
-  units: [['mg', 'Regimental MG Coy', 'echelon2']],
-};
-export const ATT_STORM_ARMY = { kind: 'bn', name: 'Storm Battalion 40', role: 'storm', units: [{ n: 2, type: 'storm', name: '{o} Storm Coy', role: 'storm' }] };
-
-// Scale assembly: how many division templates side by side and which higher troops (counts in SPEC §2.2).
-export const ORBAT = {
-  d: { def: { divs: [9], top: null }, att: { divs: [31], top: null } },
-  c: {
-    def: { divs: [9, 11], top: { kind: 'corps', name: 'I Corps', troops: [{ t: 'DEF_CS_DIVISION' }, { heavy: 3, name: 'Corps Heavy Artillery' }] } },
-    att: { divs: [31, 33], top: { kind: 'corps', name: 'IV Corps', troops: [{ t: 'ATT_ECHELON2' }, { heavy: 4, name: 'Corps Artillery' }] } },
-  },
-  a: {
-    def: { divs: [9, 11, 14, 16], top: { kind: 'army', name: 'Second Army', corps: ['I Corps', 'III Corps'], corpsTroops: [{ t: 'DEF_CS_DIVISION' }],
-      troops: [{ t: 'DEF_ARMY_RESERVE' }, { heavy: 4, name: 'Army Heavy Artillery' }] } },
-    att: { divs: [31, 33, 35, 37], top: { kind: 'army', name: 'Sixth Army', corps: ['IV Corps', 'VII Corps'], corpsTroops: [{ t: 'ATT_ECHELON2' }],
-      troops: [{ t: 'ATT_STORM_ARMY' }, { heavy: 6, name: 'Army Heavy Artillery' }] } },
-  },
-};
+// Encrypted TSM data. Unlocked in the browser with the site password.
+const __m = await window.TSMVault.module(import.meta.url, "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", 1, 6);
+export const ATT_DIVISION = __m.ATT_DIVISION;
+export const ATT_ECHELON2 = __m.ATT_ECHELON2;
+export const ATT_STORM_ARMY = __m.ATT_STORM_ARMY;
+export const DEF_ARMY_RESERVE = __m.DEF_ARMY_RESERVE;
+export const DEF_CS_DIVISION = __m.DEF_CS_DIVISION;
+export const DEF_DIVISION = __m.DEF_DIVISION;
+export const ORBAT = __m.ORBAT;
+export const TYPES = __m.TYPES;
+export const TYPE_KEYS = __m.TYPE_KEYS;

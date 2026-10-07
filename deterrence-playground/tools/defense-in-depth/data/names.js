@@ -1,31 +1,14 @@
-// Defense in Depth: invented names (D-05, D-07). Every place, state, formation and person is fictional.
-// Generic English-sounding toponyms may coincide with tiny real hamlets; none is a real country, capital
-// or demonym (scripts/names.test.mjs). Data only: imports nothing.
-
-export const STATES = {
-  def: { name: 'the Sorrel Republic', adj: 'Sorrelian', short: 'Sorrel' },
-  att: { name: 'the Orvane Crown', adj: 'Orvanese', short: 'Orvane' },
-};
-export const FRONT = 'the Merrow front';
-
-export const VILLAGES = [
-  'Wendrel', 'Corran', 'Pellow', 'Drummet', 'Felwick', 'Larrow', 'Tobbin', 'Quellin', 'Saddock', 'Vantry',
-  'Ulleth', 'Hessel', 'Garrow Mill', 'Brisk Farm', 'Ostby', 'Marrick', 'Tilsey', 'Fennick', 'Caddow', 'Rumley',
-  'Escott', 'Wyndle', 'Pashby', 'Holloway Farm', 'Kettering Cross', 'Daunt', 'Selby Mill', 'Arkle', 'Bratton', 'Cobble End',
-  'Dunmere', 'Ellery', 'Fallow', 'Gilsey', 'Hobb', 'Inchley', 'Jessop Farm', 'Kibble',
-];
-export const WOODS = ['Tamsin Copse', 'Callow Wood', 'Rennet Wood', 'Brack Wood', 'Hazel Spinney', 'Mott Copse', 'Linnet Wood', 'Sallow Wood', 'Teal Copse', 'Withy Wood', 'Ash Hanger', 'Pye Copse'];
-export const RIDGES = ['Brannoch Ridge', 'Hask Rise', 'Corrie Rise', 'Dunlin Ridge'];
-export const STREAMS = ['the Merrow Beck', 'the Sile', 'the Tarn Water'];
-
-// Formation names. Bird names for counterstroke formations (D-08).
-export const BIRDS = ['Kestrel', 'Merlin', 'Harrier', 'Osprey', 'Goshawk', 'Hobby', 'Peregrine', 'Buzzard'];
-export const DEF_REGIMENTS = ['Fen Rifles', 'Moor Rifles', 'Vale Fusiliers', 'Marsh Rifles', 'Holt Rifles', 'Weald Fusiliers', 'Brook Rifles', 'Heath Fusiliers'];
-export const ATT_REGIMENTS = ['Grenadier Regiment', 'Fusilier Regiment', 'Rifle Regiment'];
-export const COMPANY_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S'];
-
-export const ordinal = n => {
-  const s = ['th', 'st', 'nd', 'rd'], v = n % 100;
-  return n + (s[(v - 20) % 10] || s[v] || s[0]);
-};
-export const roman = n => ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'][n] || String(n);
+// Encrypted TSM data. Unlocked in the browser with the site password.
+const __m = await window.TSMVault.module(import.meta.url, "ipEu1/uGOBtFYmed6/ar2lVR35TgEgsUNVsz2goKHRo4nMb1Gt/JJqdi7m2o4xeMXwNMBJrzNo0AYOIjMZfG7r/d6Ro5/X3Hpz3HLCw7uHfCcUiNlS/1xF5gAMSnssn7YWbiKtpCU0IbMbl+r6xHwWVQtprV8o/XMS3w7NPXgg7/NcECOK2Ar8etx1m+8SnLassHQju1vsFXqePXUUg93nvmYqpGpShiFVDjY3zwyVR4yMC7mPD5e6987EM9uvGYNJIuhNNt6vf5ZbUTVAvB67eAHdUca0Cn+TzijaCzmfuvd5ILIRa6SL7x5+S72K2c2MY6R7ZGOEn3goCZesQKUctvTCfEuYRC7LU9uKVG0AiV8MefcDLIaqiUZ+6EMTKLL87Ne8b2GDpnVPQGuKwvG8co7johg+MCItQaiD3YCukGUaKeMjrHrFpWxS4tvvwmNS8u8fiwVJIBTayp2xicaAIa4VtlKx26DwMg1eJMo2IO6hUvW3is32zHLF/p4UU0rfmQHnKUw5rW2LOcwqT07o8T1HgsyCNwXbtX5CeJ1UyclKNe93GVlAibE+Zy8i5oeaNsLB0TB800pgz5Rstbp+GVKs+cmZzK9+nNDnD639OYBmpJN322zBfpXLQGCquy5c9auu4PrxEbv9vELECY9R6bve7nOSnhlIBDm3b24VgUWaWydIUwwIAXknQeg8ymOKH98nrok1fqragRWPrqQ00P2Z8RBr/1Gun4BOZQeyL1NsglNveQET4eZHXertUzJl41sXpJM6nLvWgn0r5Ev2VjvdO2psMJtJ2pArs9wJXikMDQOLqIhBH+q+2FIvZ+/lMB6+AIbs/f3F/EXM8Savr7jBvsjGlEH0Y2TKwtSIqKi1wnwCBR6XXfeQeA3h3NGHzCPSCcv7mNDE/08MFj59ds4u/IKVEyhuhPU7v1/4ibvmx9i7JkCHnc6Rw8BfhvORBDOgOWuwvLzy1TyYHM4SEFxvfZ+unHHqjuDOgSRUAwybh4MxVvB1JBuH6PdNg5pBKX5faSLECYw2F/88IBSCfsRMiFiIMCJ/QPKVBfujly6i832lGmIqY0Dl1EFI7unYoAvaEq27WqDhbfgHu1hP0ayo9djiiknZfw/eyJwTKWdi8b3Hp0TmhBMTEeocVkpwyOFmvzFTWdgMkwVV7T8yzyEyPZKMv9atauyx/eaQqYNnBnVqsV7mFuw2OpMHnqKX6GjppIFaF2VYlUYpnq0HLUrvR64JaLVaty0Cx+HgRUU8vKKAjq/DBuhOeulqSGieTQ5q3xTVKL6PTYS6IwJgqll1zvZZirb9e6J+x/TPOa5F0c3OEfviq86rlMQuouUhYBccIDTrh2lffehPIcycGg0DrY67cvS+oBgC8ifaTHALgguZ9ffOLwwsSy+rTj1Lta71LNQ5bwA5BvPQm3BGayMwdA4lwsoYGUEw==", 1, 6);
+export const ATT_REGIMENTS = __m.ATT_REGIMENTS;
+export const BIRDS = __m.BIRDS;
+export const COMPANY_LETTERS = __m.COMPANY_LETTERS;
+export const DEF_REGIMENTS = __m.DEF_REGIMENTS;
+export const FRONT = __m.FRONT;
+export const RIDGES = __m.RIDGES;
+export const STATES = __m.STATES;
+export const STREAMS = __m.STREAMS;
+export const VILLAGES = __m.VILLAGES;
+export const WOODS = __m.WOODS;
+export const ordinal = __m.ordinal;
+export const roman = __m.roman;

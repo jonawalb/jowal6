@@ -1,42 +1,4 @@
-// Defense in Depth: the two eras (SPEC §0). Same front, same rules, same code paths; only this data changes.
-// Values NOTIONAL unless a page is given. Data only: imports nothing.
-
-export const ERAS = {
-  w: {
-    id: 'w', label: '1917–18', short: '1917–18',
-    blurb: 'Barrages, machine guns, gas, early tanks, air spotting, runners and telephone.',
-    T: 1.8,                         // SOURCED: A.1 p. 211, tau = 1918
-    Lmod: 1,                        // lethality multiplier on exposed targets (data/params.js FIRE.Lmod)
-    ranges: { field: 14, heavy: 20, rocket: 20, mortar: 2 },  // NOTIONAL range rings in sectors (SPEC §3.8)
-    gunLine: { field: 3, heavy: 6 },// NOTIONAL: attacker gun line, sectors behind row 0 (SPEC §2.7)
-    displaceHours: 2,               // NOTIONAL: "Displace forward" costs 2 h without firing
-    comms: 'runner',                // runners and telephone (Biddle p. 62)
-    obstacle: 'wire',               // D-22
-    gas: true, drones: false, ew: false, precision: false, air: true,
-    tankBreakdown: true,
-    names: {
-      rifle: 'Rifle company', storm: 'Storm company', mg: 'MG company', mortar: 'Trench-mortar company',
-      pioneer: 'Pioneer company', tank: 'Tank section', field: 'Field battery', heavy: 'Heavy battery',
-    },
-  },
-  m: {
-    id: 'm', label: 'Modern', short: 'Modern',
-    blurb: 'Drones, ATGMs, mines, precision fires, counter-battery, EW and radio.',
-    T: 12,                          // SOURCED: A.1 p. 211, tau = 2020, the model's upper bound
-    Lmod: 3.0,                      // CALIBRATED (data/params.js FIRE.Lmod)
-    ranges: { field: 40, heavy: 80, rocket: 80, mortar: 4 },  // NOTIONAL; the fire-swept zone grows with range (Biddle p. 59)
-    gunLine: { field: 3, heavy: 6 },
-    displaceHours: 1,
-    comms: 'radio',
-    obstacle: 'mines',
-    gas: false, drones: true, ew: true, precision: true, air: false,
-    tankBreakdown: false,
-    names: {
-      rifle: 'Infantry company', storm: 'Raid company', mg: 'Weapons company', mortar: 'Mortar company',
-      pioneer: 'Engineer company', tank: 'Tank company', field: 'Tube battery', heavy: 'Rocket battery',
-      drone: 'Drone team', ew: 'EW team',
-    },
-  },
-};
-
-export const ERA_IDS = ['w', 'm'];
+// Encrypted TSM data. Unlocked in the browser with the site password.
+const __m = await window.TSMVault.module(import.meta.url, "gXTqjLIHQXgeYxzLZUmdOiIHyUdM6caGFsqg2HdkK7+wI4wu0bnatxaGFRm0BFsL3AVomwHK+5oVZLfWcZ9TZlGq/iK4a6aw+zmBrbGoPKi4oT8z7y/5TxgHLqiOZNY9KPwv775i6vuZ8hAAqvrwVwX2+iDVwjIRTk3pXfAPUmIFuIqoWdCxoKCEapeavmRgwWiug2O492ZU8U0h/6Tvy4x0XMeFrTTwMcVjsro9AM6f1kf1fgz8ug7mKPw96quVWWlqIdfD+y2rtXgXaS56HqTA+YRtUwRdeeATMsSJN4IlX+lJY1Om4GLunJODHWJyASVnS8KUF/lYjcMaS7sEmYwa4xr/qHTYB/uy6zU7/61+3lkvWYU+7KRTaBBPt0iJL4X10tNQFCXAsMe0gus8ZAlKlK+f2bzuBEYQPh/a6YunHIrL7AMKrhLJX/Xz1eozt9UU4kPgi9WnGeYj2ih91EZVLAFr1j5sZqCTPOg8hFPKlFW8luxIDlV+l5deJ4mcv7qYP6ClDNE2Dt2EE1vL8jM2akFJX2uFyLpDcYZCRIIJNbvl59emy2FWxopFBaEJJyPU0d6ZiIRIwpQ3XpYIw53SdeWG0l6IxJJJZwqdUU1ADmA36FWBYNI08Zy6RKAdhRXkBaKd3CSdN6Jil+c4vGIzNm/JjqLxi67vp9hsgJRfttUAo2SVS1jYGr8t5KPt3DnG2flyZnmiyLn3/bOKhx+iQaNLeJpsgnvogvkuFpxDPVlP5BcfJx/9evh2A93TTcTtXRaAttbHkXYdxT+KG9GGe+62EhQWaholB8ZZRxLhNwtecIbeireWFrt0RUqs73FJXoDnBbdGODy/DSu7RcWBDIPtD2aX2X8U+r6eomKthWBJZoU6OBysZAI/Gw/TFOA6iuGxYhIW1A0hGP3+K992EqFn2ytu8dyGylPSZChjPXB6a+yeVWDFXvRcgLLy3NddLlmt1WboRwFQfBDAYxxoP7EKGDqWng7B5hu50HgSKJwyqJQzXwR2LvOMVC/CFVM+v1VzUk89s9XcgviojwZezYKwf9qYYONNfgqLKu9aI4Py0zA6xjl5T28aA3tIPw+QwuGygkKh73vg+mPccoVOs5WBlX67EMGxIm17yAu7fq/do/BH2MYchfYat40nefKqYS3oQCBspi1pPWymHhxzCvWIEf6YX7MuHIbytiAdHoTeyIH0hfRGFxhnTP6y2ZfUjpR2DtqNwCSFmEnnlA9xT4GlpIdAVGDq6ngTWOXuKkMfIOxfWeWIP7z9VODad+kxRk3XqNFhNNulRT+t5aFdtKeN38ziFRWj+gn2Pq2W2Jlj+G4/IKEkZKZzr/auEFE9MYE=", 1, 6);
+export const ERAS = __m.ERAS;
+export const ERA_IDS = __m.ERA_IDS;

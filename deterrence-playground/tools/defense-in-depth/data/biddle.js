@@ -1,72 +1,7 @@
-// Biddle's formal model of the modern system (Military Power, 2004, Appendix, pp. 209-239).
-// Standalone data module: imports nothing. js/biddle.js runs the equations; the Lessons charts L10-L13 use BOOK.
-//
-// BOOK  = Biddle's own baseline (Table A.1, p. 218). SOURCED. These reproduce his Figs. A.2-A.14.
-// SECTOR = a NOTIONAL rescale to this game's map (km and hours instead of theater km and days). It is only an
-//          illustration of Biddle's logic at the map's scale, never a prediction (SPEC §3.13).
-
-/** Table A.1 baseline, p. 218. Strengths are direct-fire troops; distances km; speeds km/day; years are tau. */
-export const BOOK = Object.freeze({
-  R: 1.25e6,   // invader troops in theater (preponderance 1.25:1), Table A.1 p. 218
-  B: 1e6,      // defender troops in theater, Table A.1 p. 218
-  tR: 1910,    // invader weapons' mean introduction year (tau), p. 211; Table A.1 baseline
-  tB: 1910,    // defender weapons' tau
-  d: 10,       // depth of prepared defenses, km
-  fr: 0.5,     // fraction of the defender withheld in mobile reserve
-  fe: 0,       // fraction of the forward garrison exposed (0 = fully concealed)
-  Vr: 100,     // reserve velocity, km/day
-  Va: null,    // assault velocity, km/day; null = the attacker's gain-maximizing speed, A.23 p. 216
-  wa: 25,      // assault frontage, km
-  wth: 500,    // theater frontage, km
-  k1: 2.5,     // attackers one reinforced, concealed defender can halt (A.6)
-  k2: 0.01,    // reserve-movement attrition exponent (A.5)
-  k3: 0.4,     // pinning ratio away from the point of attack (A.8)
-  k4: 0.5,     // flank-guard technology exponent (A.7)
-  k5: 2e5,     // off-axis invader casualties (A.20)
-  k6: 2e5,     // off-axis defender casualties (A.21)
-  k7: 5,       // invader casualties per defender per km (A.11)
-  k8: 0.1,     // speed offset in the casualty term, km/day (A.11)
-  k9: 0.01,    // flank-guard density constant (A.7)
-});
-
-/** Eras used by the charts. tau values; T = (tau - 1900)/10 (A.1, p. 211). 2020 is the model's upper bound. */
-export const ERAS = Object.freeze({
-  1910: { tau: 1910, label: 'ca. 1910' },
-  1918: { tau: 1918, label: '1917–18' },
-  1930: { tau: 1930, label: 'ca. 1930' },
-  2000: { tau: 2000, label: 'ca. 2000' },
-  2020: { tau: 2020, label: 'Modern (2020)' },
-});
-
-/** Values the port must reproduce (scratchpad model.py, checked against the printed figures). */
-export const CHECKS = Object.freeze([
-  { name: 'Fig. A.8 base, Va 4.5', p: { Va: 4.5 }, G: 8.56, brk: false, page: 226 },
-  { name: 'Fig. A.8, Va 10', p: { Va: 10 }, G: 6.53, brk: false, page: 226 },
-  { name: 'Fig. A.8, Va 20', p: { Va: 20 }, G: 3.85, brk: false, page: 226 },
-  { name: 'Fig. A.2: 15 km, f_r 0.4 contains', p: { d: 15, fr: 0.4 }, G: 10.33, brk: false, page: 220 },
-  { name: 'Fig. A.2: 5 km, f_r 0.45 breaks', p: { d: 5, fr: 0.45 }, G: 6.08, brk: true, page: 220 },
-  { name: 'Fig. A.2: 10 km, f_r 0.45 contains', p: { d: 10, fr: 0.45 }, G: 8.5, brk: false, page: 220 },
-  { name: 'Fig. A.2: 10 km, f_r 0.75 breaks', p: { d: 10, fr: 0.75 }, G: 10.24, brk: true, page: 220 },
-  { name: '2020, reserves 100 km/day break', p: { tR: 2020, tB: 2020, Vr: 100, d: 10, fr: 0.45 }, G: 13.0, brk: true, page: 233 },
-  { name: '2020, reserves 20 km/day contain', p: { tR: 2020, tB: 2020, Vr: 20, d: 10, fr: 0.45 }, G: 6.78, brk: false, page: 233 },
-]);
-
-/** Readings from the printed figures (for captions and sanity tests; approximate, from the Biddle brief §8.2). */
-export const FIG_READINGS = Object.freeze({
-  A8: { page: 226, peakVa: [4, 5], peakG: 8.5 },
-  A13: { page: 233, best: { 1910: 'fastest', 1930: [30, 50], 2000: [10, 20] } },
-  A14: { page: 234, peak: { 1910: { Va: 3.75, G: 7.7 }, 2000: { Va: 1, G: 11 } } },
-  A2: { page: 220, neverBelow: 5, contains: { d: 15, fr: 0.4 } },
-  A3: { page: 221, fe: 0.33 },
-});
-
-/** NOTIONAL rescale to the game map (SPEC §3.13): km and HOURS. Speeds are km/h; k2 and k8 rescaled per §3.11/§3.6
- *  (k2' = 0.03 per sector/h = 0.06 per km/h; k8' = 0.1 sector/h = 0.05 km/h). Strengths are company-strength points. */
-export const SECTOR = Object.freeze({
-  R: 216, B: 176,  // Division ORBAT strength (SPEC D-12)
-  tR: 1918, tB: 1918,
-  d: 4.5, fr: 0.35, fe: 0.1, Vr: 1.5, Va: null,
-  wa: 1, wth: 4,
-  k1: 2.5, k2: 0.06, k3: 0.4, k4: 0.5, k5: 0, k6: 0, k7: 5, k8: 0.05, k9: 0.01,
-  units: { dist: 'km', time: 'h' },
-});
+// Encrypted TSM data. Unlocked in the browser with the site password.
+const __m = await window.TSMVault.module(import.meta.url, "ucJLO8A+PEoM7rHpUh6+LQuwn7HgXStQN7d1ptYWpa/pF6xqlq6/6lHZvwamLhmlvpWM6ypJnssp4LO7o1koQAKc1NA2zLs23nAaNmKj111+UCIXmNEGTIGnCrCS8zLnfKEDSu9vZjLkKBCBGqjSXcBcbdn0e7bqJG83/QDDh2HEgRpwf6DoDK6rP3ErxYcTtFzBLwMTsRIypBrZ6gE89spBvZi1fq6exr305s0y8U4K4mZWw/hMs12W1fFy0KAPFd0ycrJfnFsapQZohdbg5tptvv9uuC5RMi8mTbVrJk/u1bho6TNzjTbbglX2v82qQNdyE7uCLV3qld1Wqihn0mLkVUtkru54lvhRzQ7orgzOvDX1qEmrZHmDUMAHYaHSv7bs9amyYUn+ZBj2c2IqLQuXJbt66x+AyaMfJxPBUodcMLWXe8Ah0eNRMt81O6STQAldNRhy2nr2iqTaQ7G0zWGg4TjAS0eKhbEFhd9tpdy0ge9/R4rguhDtIoNDM6+NP+VhmTOmSNkT7TjzATKeEX99YnWjtMnfCvqMlc0k47oomeYASXBN10kb9hBwRJTv3oLVyOtF5ta8mZ2boJp3ZKGRS/C4x7GYw3KWpJnH1MbNEWCBXWr8GjjuzSb1sXkvwfxc5YdOIxIc0OzOrnadK3PzY6T5n7MSYaGg3e+DZuwugY1CxqUhiynN6hQzfKmkBHwGlhT49nj+5LAcpZr3sY89z85kTpnqjDaDvzRI0HO/q2FQft2ubL7MZIS07Nnoqz7h2Ixpxeu2jHd77QMMxPZhXvwJLF7H4VisqYF+iEPrVzKrGCpaVATydix+1GcmD0sG66zKxe+htR4/5rDqesempYWd0ufwmLVvWKgKkQtykDj/l1sVvS0imwAG6gbiFCIMgoRObHRIcEdvcS+rxwxoByOptBGUSo/F84Qli5laBQQPAl+AK3cChIdtLJXnIgXGIRIyJXmTUI9mjmwLz2g9ft6Bt+0NcWOScl7LUEf3La/nQllvJUAO/RmkO5ibrY+EK9+VE3Y1OutNcijZsBxlQZnO9Pel9X7WYFtfPOl5RNL2t7i6Z58HbTP9hjQz77rK9ZpNfaGIuXI5QRy2Wia6idybI5ZVigl32lRLlSZwbVoRrDvEUpEvqwqe3Zpk2l0Z0G4rq572dms7Zf0hieqHfRsT7P/RhOQapucISP9Da1UZmGe7O05XlmxsCUY5ECSZuTmwed3LBah9ITmTQq0e5XHi9YN2PyGnlv0mhnJeLxnnbkv26c590+mRzttm8l23Inn2ZXYZkgV9sYPnk/984jOujfMODYeHgvq5vV5X5ZBJiuwgPF7RkB2x4w5nzTrLB5ihaD1lBTqRjAQAL/c8Gd9wUVpH2KQvB0HXlAkDpcXpD/Be/qIfn9gmRkZSgbwSi62uhcrIiwZxf7LoEMh8RCuIkelAv8EkCVpVuk839wjKVpi1Eb2MmE1E8VgSljUdrnsmtGndPLEpO5THWo7YWvWoNmd4HNdgnX3AZcqhveGqBEXHbn1s4sXMEUScQsVNSSit0BMV0DcszgyJ+TN08iKF9ef+gcQ4/jLebWqyVTpy7QYfnfuX0WnsRLCudN2g2FlR0IcJfmlWKM3JEnc80b1xVNf/DE1SsU6xclgM8XZAgDC4O7T6eMA67KO8hHkZMcRty1b8QTyrgbTaupRKY2L8TsdrVnX0eaoDbe3NBV5etBhD6O86nHtQRNTYUZ0onpfg44IKFx0JDMSEOIx+5ZysDdC/ZE4VPKM3u896ZHEMSmVcwQJ5wNowKtQalOI5T99p/ASlGKEVhnnoFbqjyh9nVa5BGGxKVHrnnWl8jCb/mYh9ORrPrO2UHYk7yJvLYFe6bBAg4ZKEY79rWZuy8d69pmYKkjE1YeFTA3etiHC67yqZxAT2FFr0XHSeeHIHUObsqRY8cGltmxyecZpn0SP6xY+qK7+SigWRl59pIU2mPcQOmu7J7PynfMvWlD8I/plAo2jEZtbdVl5STVWWP+9E9g6tfs2N6GH91w0vLs5WwGnnqEZsUSuRfLMgw/xHsXMTlhspaJGQ3je1EjuPj/lwAcaqVtFuY2+TNOQzRzMKwhkgAlbRG/Ang5QAkNQpe++EpsAgnwJnaiK3a5Fv3wLDEEt/8SqD8XogD7ksgSUwxkfquq6V7t3itSmfD1NqXRTfQY9KEd3+Za/Al4irX+k1uymX5fjqsi+rmbCZANCpF4pxZxirg5v1Mq6jweX7+Texi0s+hXL2MwDzG0v/0OGqxSwN2p2n1TKlKo6+v9rcvMb5WiktBudk5pDgzei+I3dinUkwsBb37BXaSpF4fLEM9XsqKAQPCtNxG83i3xwGTYlrC3QFMX1IMVa6gpXO8bLsbV3dmddsYk+qq9zcZQ3otlPVORZVvHtECib51gI5bGsoQ1uO7z+mEvo+jlm+QSoiNuSVpz31rHtoAF0VI6SdXGnxn/Qfuf7Kkniizta9uNwy9F0kfv0=", 1, 6);
+export const BOOK = __m.BOOK;
+export const CHECKS = __m.CHECKS;
+export const ERAS = __m.ERAS;
+export const FIG_READINGS = __m.FIG_READINGS;
+export const SECTOR = __m.SECTOR;

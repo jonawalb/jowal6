@@ -1,39 +1,4 @@
-// Short quotations shown on the page (rules, tips, Lessons captions). Every one is 15 words or fewer and was
-// checked word for word against a page-tagged text extract of the printed book on 2026-10-01 (FACTCHECK.md).
-// Only where the exact words matter. Standalone: imports nothing.
-
-/** { id, who, src, page, q, topic }. `src` is an id in data/sources.js. */
-export const QUOTES = [
-  { id: 'leapfrog', who: 'Hunzeker', src: 'hunzeker', page: '56', topic: 'leapfrog',
-    q: 'akin to playing a game of leapfrog, albeit with guns' },
-  { id: 'suppress7', who: 'Biddle', src: 'biddle', page: '67', topic: 'suppression',
-    q: 'can reduce hostile firing rates by a factor of seven or more' },
-  { id: 'directional', who: 'Biddle', src: 'biddle', page: '44', topic: 'enfilade',
-    q: 'Most natural cover is directional' },
-  { id: 'linear', who: 'Hunzeker', src: 'hunzeker', page: '77', topic: 'enfilade',
-    q: 'linear trenches, which were vulnerable to shell bursts and enfilading fire' },
-  { id: 'scouting', who: 'Biddle', src: 'biddle', page: '38', topic: 'deadGround',
-    q: 'To make the most of it requires careful scouting' },
-  { id: 'volley', who: 'Biddle', src: 'biddle', page: '36', topic: 'calibration',
-    q: 'can be wiped out by a single battalion volley from hostile artillery' },
-  { id: 'vulnerable', who: 'Hunzeker', src: 'hunzeker', page: '61', topic: 'depth',
-    q: 'The more successful the attack, the more vulnerable it became.' },
-  { id: 'entropic', who: 'Biddle', src: 'biddle', page: '47', topic: 'cohesion',
-    q: 'entropic effect of depth' },
-  { id: 'cheapCounter', who: 'Biddle', src: 'biddle', page: '48', topic: 'counterattack',
-    q: 'thrown back with smaller losses to the counterattacker than the original attacker had suffered' },
-  { id: 'riposte', who: 'Hunzeker', src: 'hunzeker', page: '82', topic: 'counterattack',
-    q: 'those carried out within twenty-four hours by nearby units' },
-  { id: 'gap', who: 'Biddle', src: 'biddle', page: '31', topic: 'barrage',
-    q: 'a fatal gap in suppressive coverage (if the fire lifted too soon or fell long)' },
-  { id: 'ownShells', who: 'Hunzeker', src: 'hunzeker', page: '52', topic: 'barrage',
-    q: 'When artillery shifted too slowly, assault units ran into their own shells.' },
-  { id: 'magnifies', who: 'Biddle', src: 'biddle', page: '234', topic: 'era',
-    q: 'technology thus magnifies the consequences of force employment' },
-  { id: 'assumptions', who: 'Biddle', src: 'biddle', page: '236', topic: 'model',
-    q: 'represent assumptions rather than observed values' },
-  { id: 'higherBar', who: 'Hunzeker', src: 'hunzeker', page: '36', topic: 'learning',
-    q: 'learning sets a higher bar than change' },
-];
-
-export const quoteById = id => QUOTES.find(x => x.id === id) || null;
+// Encrypted TSM data. Unlocked in the browser with the site password.
+const __m = await window.TSMVault.module(import.meta.url, "WPsxiXkQO22HGSoGBhba9e0Jz4RdIBqZ09C8QhTAZBVhT+gyShYRsg81U0NeI6inbnRn6uh3PgrcovU6/hfmXZoBCTZAP2KDwUZKdCmaxXer2Bv8Mj8y5qB7RL8Iu7dqjLHOIpPxBWFtUl4nv2mco7E6/3myRmIG4pFioUJEPU2Jr6MPd/jbhnY15ko+4DJdTsSmwjcU7d92ov9Ifppa7xR9RrPAaRaDHHbHXTMicmEQ8iUBkw2WA65Ee28FLmikYGe8hHKc9Kdkv7QieWRfYXFu5C6aAUKWfqNNIE9arh1e09riUEl1FFXx0L/WcOqQO8QexXTYwcoKyqcuk14riyUenDvmhR76k+2COSA3dcZ10QU0r4JbQWBA2F6WpD39/1Fi66OQPwqPZ0CJqC2ScdWa7eMTTyQMQLf9/cC3WdwpfhXO/GHnTePGD6YhYRLZHR2LNxzjEAhlDwbaS7WgqNSpYc0rtJsT/TkjROfTSjNr5SL9aZuIUCd5QDBgI9RBwx7l9oFW8ywXws/T8DMps2RlhaOfY7eB0bjXVUlTgjj9KBdiYgAOk5icnnjgHvB9Y8Hkd+kzT0ENvpK1WfZzIo1/cMYP3pi+ON5PFOHEqCARY5z4RG1AjeBA+U6VQNpPam32Hcp+4UJyfEy5NRjIZOsYahjTgHxNYJupHOzyhWs2Wft6jGRZRUeycLkXmFLT7ON3yzm/8lwsHY7hJ/BNvpJOWmHKzazft3ZT/5jW4VfqDofPgd3DWoDMgBU4AFe7A5ZsRksQFjLGpDsFLGUbtf+leRJpXzjeHvkkFaccjueW+BIvTN7szBBHw44VaVgX3hwXuJtzhPNJGCm8mlEI9m1xjeR11Kk5FldxsvBxHpUAAv2r8N2iZCdgmT+WrFod86HGpV8jxQctvFeNRhvZwn+6mmosCJmAszrM8RML/tFtkpEYr2sXfGAXSilwkHbIIEy85AB0usMeOA7J9erlooUapeldDhja3ZsGJWliSA5fR4daX8K1ZEcuf+cQG3P9QDow4XwvQd4JChKjCsmlln+4Mzus/oAufLv9wXjNgyMKsRho4qfDXjG1L3Visa4RCNKbqn7kVuE7Ra+6NMmvsfOa9qXmpyNU7e/HpmzbFhRU12MZUjReqgzl9WWeqgy7iNrV35CsDR5WYjttkXhNIkXjWU5+QsVmVRMLPq3dLiDeOuY8O1ZD5C5wHOMAHNB+1lTFgQsUI61L0onCMXnVQ15BLWLQs9RgrDjOvpVo7Koj5LZ3JHaKjcEFCps8W+iCDJFFKt3CeRORkKpeHdTuPKmLBjNI2/et8+irlnQoOTlyFt0n0kcOsajpf1YFdmjpAGr4nJq98D4uIGu5sbcvDELnNiJVgCM+kdlW6FH73w4wlrxxCA/VeKXN1ErjiBsFrzoA6CUib7qzuAMUq6kPUgGG1rUlHdfot7ExrTMEdRmyxmp0IBzXJL6q1g8g51BSFZxnAh6S2dKUV2+h0/LSDRIKmgHwnnleu1QqjkcMUo3lAltLDmU=", 1, 6);
+export const QUOTES = __m.QUOTES;
+export const quoteById = __m.quoteById;

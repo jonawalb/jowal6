@@ -12,8 +12,11 @@ const CATEGORY_LIST = [
   { id: 'models', name: 'Force & wargame models', siteName: { deterrence: 'War Games and Simulations' },
     siteBlurb: { deterrence: 'Wargames to play, from Kharg Island to the trenches, and models of kill chains and budgets.' },
     blurb: 'Hands-on models of kill chains, blockades, mines and defense budgets.',
-    subs: [{ id: 'wargames', name: 'Wargames', blurb: 'Play a side: raids, island assaults, submarine hunts, trench defense and matrix games.' },
-      { id: 'budget', name: 'Budget and Logistics', blurb: 'Budgets, kill chains, interceptor stocks and mine clearance.' }] },
+    // first/last: slugs listed at the top and bottom of the subsection; the rest keep registry order.
+    subs: [{ id: 'wargames', name: 'Wargames', blurb: 'Play a side: raids, island assaults, submarine hunts, trench defense and matrix games.',
+        first: ['four-capitals', 'raid-night', 'fog-of-command', 'orbital-denial', 'kharg-island', 'sub-hunt', 'matrix-game'],
+        last: ['penghu-gambit', 'strait-landing'] },
+      { id: 'budget', name: 'Budget and Logistics', blurb: 'Budgets, kill chains, interceptor stocks, mine clearance and sanctions.' }] },
   { id: 'narrative', name: 'Narrative & rhetoric', blurb: 'What Beijing says and how it spreads through state media.' },
   { id: 'classroom', name: 'Classroom', blurb: 'Teaching tools for courses on deterrence, strategy and cross-Strait history.' },
   { id: 'public', name: 'Public explainers', blurb: 'Short, shareable pieces for a general audience.' },
@@ -142,7 +145,10 @@ export const ALL_TOOLS = [
     blurb: 'Type a city and see how far it is from Taiwan and from China, with the Taiwan Strait for scale.' },
   { slug: 'conceal-reveal', dev: true, cat: 'gametheory', sites: ['deterrence'], title: 'Conceal or Reveal?', status: 'live',
     blurb: "Why do states with similar weapons make opposite choices about showing them? Move the costs and beliefs in Walberg's signaling model and watch coercive states reveal while operational states conceal." },
-  { slug: 'dissertation-games', cat: 'gametheory', sites: ['deterrence'], vault: 'dissertation', title: 'Jon Dissertation Games', status: 'live',
+  // My Projects: one password (tier 3) opens it and the two projects it links to, which are unlisted.
+  { slug: 'my-projects', cat: 'gametheory', sites: ['deterrence'], vault: 'dissertation', title: 'My Projects', status: 'live',
+    blurb: 'Working models and game trees from ideas too foolish to be shared' },
+  { slug: 'dissertation-games', unlisted: true, cat: 'gametheory', sites: ['deterrence'], vault: 'dissertation', title: 'Jon Dissertation Games', status: 'live',
     blurb: "Working game trees from Jonathan Walberg's dissertation." },
   { slug: 'extended-deterrence', dev: true, cat: 'gametheory', sites: ['deterrence'], title: 'Extended Deterrence', status: 'live',
     blurb: 'Would a patron trade Boston for Bonn? Stack treaties, pledges, a tripwire force and nuclear sharing, see what each does to credibility and entrapment, then check the real U.S. commitments.' },
@@ -186,7 +192,7 @@ export const ALL_TOOLS = [
     blurb: 'Who pledged aid to Ukraine and how much each donor has allocated: military, financial and humanitarian support by donor since 2022, in euros or as a share of GDP, from the Kiel Institute.' },
   { slug: 'prebunking-game', game: true, sub: { narratives: 'disinfo' }, dev: true, cat: 'narratives', sites: ['deterrence'], title: 'Borrowed Feelings', status: 'live',
     blurb: 'Judge invented reports while a soundtrack, a crowd or your own body pulls at you. See the weight you gave each report, then practice naming a feeling and tracing its source before you weigh the evidence.' },
-  { slug: 'sanctions-explorer', dev: true, cat: 'coercion', sites: ['deterrence'], title: 'Sanctions Explorer', status: 'live',
+  { slug: 'sanctions-explorer', cat: 'models', sub: { models: 'budget' }, sites: ['deterrence'], title: 'Sanctions Explorer', status: 'live',
     blurb: 'Sixty years of sanctions threats and impositions from the TIES dataset: filter by sender, target, objective and type, see how often the target gave in, and set that beside what the Global Sanctions Data Base authors report.' },
   { slug: 'cost-ratio', dev: true, cat: 'gametheory', sites: ['deterrence'], title: 'Cost Ratio Bargaining', status: 'live',
     blurb: 'Hold the total cost of war fixed, shift who pays it, and watch the peaceful settlement move toward the side whose cost of fighting fell.' },
@@ -262,7 +268,7 @@ export const ALL_TOOLS = [
     blurb: 'Build munitions lines that take years to grow, then find out how long they last when the war comes.' },
   { slug: 'brinkmanship', dev: true, game: true, sub: { dev: 'games' }, cat: 'gametheory', sites: ['deterrence'], title: 'Brinkmanship', status: 'live',
     blurb: 'Raise the shared risk of disaster or back down, against an opponent whose resolve you can only guess.' },
-  { slug: 'will-to-fight', cat: 'gametheory', sites: ['deterrence'], vault: 'dissertation', title: 'Will to Fight', status: 'live',
+  { slug: 'will-to-fight', unlisted: true, cat: 'gametheory', sites: ['deterrence'], vault: 'dissertation', title: 'Will to Fight', status: 'live',
     blurb: 'An attacker strikes, fighters decide whether to stand, and the government fights on or concedes: a simple game of resolve, with a calculator and what to measure.' },
 ];
 

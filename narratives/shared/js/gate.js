@@ -16,6 +16,10 @@
   var KEYNAME4 = TIERS[4] ? 'tsm-vault-key-' + TIERS[4].id : '';
   var KEYNAME5 = TIERS[5] ? 'tsm-vault-key-' + TIERS[5].id : '';
   var KEYNAME6 = TIERS[6] ? 'tsm-vault-key-' + TIERS[6].id : '';
+  var KEYNAMES = { 2: KEYNAME2, 3: KEYNAME3, 4: KEYNAME4, 5: KEYNAME5, 6: KEYNAME6 };
+  // A tier built with `session` (My Projects) keeps its key in sessionStorage once unlocked, so one password opens
+  // every page of that tier for this tab; other extra tiers ask on every page.
+  var sessionTier = function (t) { return !!(TIERS[t] && TIERS[t].session); };
   var MAGIC2 = 'TSMVAULT3:';
   var MAGIC3 = 'TSMVAULT4:';
   var MAGIC4 = 'TSMVAULT5:';
@@ -69,8 +73,8 @@
     try { v = localStorage.getItem(name) || sessionStorage.getItem(name); } catch (e) { /* storage blocked */ }
     return v ? tryRaw(b64d(v), tier) : Promise.reject();
   }
-  /** Extra-tier key: asked for on every visit to a locked tool page and never stored, so nothing else can use it.
-   *  After the master password, every tier's key is available in this tab. */
+  /** Extra-tier key: asked for on every visit to a locked tool page and never stored, so nothing else can use it
+   *  (session tiers: kept for this tab). After the master password, every tier's key is available in this tab. */
   function key2Now(tier) {
     if (tier === PAGE_TIER) return key2Ready;
     if (openTier(tier)) return openKey(tier);
@@ -127,8 +131,8 @@
     }
   }
   if (MKEY) { try { localStorage.removeItem(MKEY); } catch (e) { /* storage blocked */ } }
-  // Drop any second-tier key saved by an earlier version of this gate.
-  [KEYNAME2, KEYNAME3, KEYNAME4, KEYNAME5, KEYNAME6].forEach(function (n) { if (n) { try { localStorage.removeItem(n); sessionStorage.removeItem(n); } catch (e) { /* storage blocked */ } } });
+  // Drop any second-tier key saved by an earlier version of this gate (a session tier keeps its tab copy).
+  [2, 3, 4, 5, 6].forEach(function (t) { var n = KEYNAMES[t]; if (n) { try { localStorage.removeItem(n); if (!sessionTier(t)) sessionStorage.removeItem(n); } catch (e) { /* storage blocked */ } } });
 
   function startsWithMagic(buf, magic) {
     if (buf.length < magic.length) return false;
@@ -223,7 +227,8 @@
     if (MASTER && MASTER[PAGE_TIER]) { unlock2(MASTER[PAGE_TIER]); return; }
     if (openTier(PAGE_TIER)) { openKey(PAGE_TIER).then(unlock2); return; }
     var g = document.getElementById('tsm-gate'); if (g) g.remove();
-    if (document.body) showGate(PAGE_TIER); else document.addEventListener('DOMContentLoaded', function () { showGate(PAGE_TIER); });
+    var ask2 = function () { if (document.body) showGate(PAGE_TIER); else document.addEventListener('DOMContentLoaded', function () { showGate(PAGE_TIER); }); };
+    if (sessionTier(PAGE_TIER)) storedKey(KEYNAMES[PAGE_TIER], PAGE_TIER).then(unlock2, ask2); else ask2();
   }
 
   function showGate(tier) {
@@ -250,6 +255,7 @@
       derive(typed, tier).then(function (raw) {
         return tryRaw(raw, tier).then(function (k) {
           if (tier === 1) { try { (REMEMBER && g.querySelector('#g-rem').checked ? localStorage : sessionStorage).setItem(KEYNAME, b64e(raw)); } catch (e2) { /* storage blocked */ } }
+          if (sessionTier(tier)) { try { sessionStorage.setItem(KEYNAMES[tier], b64e(raw)); } catch (e2) { /* storage blocked: this page only */ } }
           (tier > 1 ? unlock2 : unlock)(k);
         });
       }).catch(function () {

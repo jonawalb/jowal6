@@ -112,7 +112,8 @@ function unlinkMissingTools() {
     let u; try { u = new URL(a.getAttribute('href'), location.href); } catch { return; }
     if (u.origin !== location.origin || !u.pathname.startsWith(toolsRoot)) return;
     const m = u.pathname.slice(toolsRoot.length).match(/^([a-z0-9-]+)\/(index\.html)?$/);
-    if (!m || TOOLS.some(t => t.slug === m[1] && t.status === 'live')) return;
+    // Unlisted tools are still published (My Projects links to two), so check every live tool on this site.
+    if (!m || ALL_TOOLS.some(t => t.slug === m[1] && t.status === 'live' && onSite(t))) return;
     a.replaceWith(document.createTextNode(a.textContent));
   });
   check(document);

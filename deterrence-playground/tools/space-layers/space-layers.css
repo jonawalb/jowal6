@@ -161,3 +161,5 @@
 .sl-access svg, .sl-tl svg { max-width: 820px; }
 .sl-fact { margin: 0 0 8px; font-size: 13.5px; } .sl-fact ul { margin: 2px 0 0; padding-left: 1.1em; }
 .sl-noglobe { position: absolute; inset: 40% 10% auto; text-align: center; color: var(--sp-ink); margin: 0; }
+.sl-debris { grid-template-columns: 82px 1fr 92px; row-gap: 8px; } .sl-debris small { display: block; color: var(--muted); font-size: 11.5px; margin-top: 2px; }
+.sl-debris .sl-bar { display: block; }

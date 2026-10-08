@@ -7,14 +7,14 @@ import { renderLayerCard } from './layercard.js';
 import { renderBelow } from './below.js';
 
 const load = async (p, k, d) => { try { return (await import(p))[k] ?? d; } catch (e) { console.warn('missing', p, e.message); return d; } };
-const [ASSETS, WEAPONS, TESTS, COUNTS, LAYERS_FACTS, LAUNCH] = await Promise.all([
+const [ASSETS, WEAPONS, TESTS, COUNTS, LAYERS_FACTS, LAUNCH, DEBRIS] = await Promise.all([
   load('../data/assets.js', 'ASSETS', []), load('../data/weapons.js', 'WEAPONS', []), load('../data/tests.js', 'TESTS', []),
   load('../data/counts.js', 'COUNTS', null), load('../data/layers.js', 'LAYERS_FACTS', {}),
-  import('../data/launch.js').catch(() => ({})),
+  import('../data/launch.js').catch(() => ({})), load('../data/debris.js', 'DEBRIS', null),
 ]);
 const ALL = [...WEAPONS, ...ASSETS].filter(it => it && it.id);
 const BY_ID = Object.fromEntries(ALL.map(it => [it.id, it]));
-const data = { ALL, BY_ID, TESTS, COUNTS, LAYERS_FACTS, LAUNCH };
+const data = { ALL, BY_ID, TESTS, COUNTS, LAYERS_FACTS, LAUNCH, DEBRIS };
 
 const typesPresent = [...new Set(ALL.map(it => it.type))].filter(Boolean).sort((a, b) => (TYPES[a] || a).localeCompare(TYPES[b] || b));
 const statusPresent = Object.keys(STATUS).filter(s => ALL.some(it => it.status === s));

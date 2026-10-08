@@ -32,13 +32,14 @@ export function renderLayerCard(host, L, data, { threats, vulnOn }) {
   if (L === 'all') {
     host.innerHTML = `<p class="eyebrow">All layers</p><h2>From the ground to the Moon</h2>
       <p class="muted">Pick a layer above the globe to zoom in on it. The table compares them; every figure links to its source in the sections below.</p>
-      <div class="tablewrap"><table class="sl-heat"><thead><tr><th>Layer</th><th>Altitude</th><th class="num">Active satellites</th><th class="num">Tracked debris</th><th>Launch cost to reach</th><th>Time to get there</th></tr></thead><tbody>
+      <div class="tablewrap"><table class="sl-heat"><thead><tr><th>Layer</th><th>Altitude</th><th class="num">Active satellites</th><th class="num">Tracked debris and rocket bodies</th><th>Launch cost to reach</th><th>Time to get there</th></tr></thead><tbody>
       ${LAYERS.filter(l => ORBIT_LAYERS.includes(l.id)).map(l => `<tr><td><a href="#" data-layer="${l.id}">${esc(l.name)}</a></td>
         <td class="num">${esc(F[l.id]?.altitude || (l.id === 'geo' ? '35,786 km' : `${n(l.lo)}–${n(l.hi)} km`))}</td>
         <td class="num">${n(activeIn(C, l.id))}</td><td class="num">${n(C?.debrisByLayer?.[l.id])}</td>
         <td>${esc(perKg(A[l.id]))}</td><td>${esc(A[l.id]?.transfer_time || '—')}</td></tr>`).join('')}
       </tbody></table></div>
-      <p class="fine" style="margin-top:6px">Counts: CelesTrak SATCAT, ${esc(C?.asof || '')}; layer assigned by mean altitude, apogee minus perigee over 10,000 km counted as HEO. Debris = catalogued fragments only; tens of thousands of untracked pieces are smaller than about 10 cm.</p>
+      <p class="fine" style="margin-top:6px">Counts: CelesTrak SATCAT, ${esc(C?.asof || '')}; layer assigned by mean altitude, apogee minus perigee over 10,000 km counted as HEO. Debris counts fragments, spent rocket bodies and unidentified objects, as the Space-Track box score does; a few hundred objects without usable orbit data are left out of the layers.</p>
+      ${debrisPanel(data.DEBRIS)}
       <h3 style="margin:16px 0 6px;font-size:17px">Who has the most satellites up</h3>${countryBars(C, null)}`;
   } else {
     const l = LAYER[L], f = F[L] || {}, a = A[L] || {};
@@ -46,7 +47,7 @@ export function renderLayerCard(host, L, data, { threats, vulnOn }) {
       ['Altitude', f.alt_km ? (Array.isArray(f.alt_km) ? `${n(f.alt_km[0])}–${n(f.alt_km[1])} km` : `${n(f.alt_km)} km`) : (L === 'ground' || L === 'spectrum' ? 'Surface' : L === 'geo' ? '35,786 km' : `${n(l.lo)}–${n(l.hi)} km`)],
       f.period && ['One orbit takes', f.period],
       ORBIT_LAYERS.includes(L) && ['Active satellites', n(activeIn(C, L))],
-      ORBIT_LAYERS.includes(L) && C?.debrisByLayer && ['Tracked debris pieces', n(C.debrisByLayer[L])],
+      ORBIT_LAYERS.includes(L) && C?.debrisByLayer && ['Tracked debris and rocket bodies', n(C.debrisByLayer[L])],
       a.usd_per_kg && ['Launch cost to reach', perKg(a)],
       a.transfer_time && ['Time to get there', a.transfer_time],
     ].filter(Boolean);
@@ -70,4 +71,22 @@ function spectrumList(data) {
   if (!ws.length) return '';
   const by = {}; ws.forEach(w => (by[w.country] ??= []).push(w));
   return `<ul class="sl-reach">${Object.entries(by).map(([c, a]) => `<li><b>${esc(COUNTRY[c]?.name || c)}</b>: ${a.map(w => esc(w.name)).join('; ')}</li>`).join('')}</ul>`;
+}
+
+// What is tracked against what models say is up there.
+function debrisPanel(D) {
+  if (!D) return '';
+  const e = D.esa, p = D.public;
+  const rows = [
+    [p.debris, 'debris and rocket bodies in the public catalog', 'Tracked', p.src],
+    [e.tracked, 'objects of all kinds tracked by surveillance networks, including ones kept out of the public catalog', 'Tracked', e.src],
+    [e.over10cm, 'objects larger than 10 cm, about ' + n(e.activeIn10cm) + ' of them working satellites', 'Estimated', e.src],
+    [e.cm1to10, 'pieces 1 to 10 cm: too small to track, big enough to destroy a satellite', 'Estimated', e.src],
+    [e.mm1to10, 'pieces 1 mm to 1 cm', 'Estimated', e.src],
+  ];
+  const max = Math.log10(e.mm1to10);
+  const big = v => v >= 1e6 ? (v / 1e6).toLocaleString('en-US') + ' million' : n(v);
+  return `<h3 style="margin:16px 0 6px;font-size:17px">Most debris is never tracked</h3>
+    <div class="sl-countbars sl-debris">${rows.map(([v, l, k]) => `<span class="pill" style="color:${k === 'Tracked' ? 'var(--blue)' : 'var(--warn)'}">${k}</span><span><span class="sl-bar"><i style="width:${(Math.log10(v) / max * 100).toFixed(1)}%;background:${k === 'Tracked' ? 'var(--blue)' : 'var(--warn)'}"></i></span><small>${esc(l)}</small></span><span class="num">${big(v)}</span>`).join('')}</div>
+    <p class="fine">Log scale. Tracked: <a href="${esc(p.src.u)}" target="_blank" rel="noopener">${esc(p.src.t)}</a>; <a href="${esc(e.src.u)}" target="_blank" rel="noopener">${esc(e.src.t)}</a>. Estimates come from ESA's MASTER-8 statistical model. ESA counts more than ${n(e.fragmentations)} break-ups, explosions and collisions so far, and more than ${n(e.tonnes)} tonnes of material in orbit.</p>`;
 }

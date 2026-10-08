@@ -1,4 +1,5 @@
-// Active payloads on orbit by owner and layer, tracked debris and all tracked objects by layer.
+// Active payloads on orbit by owner and layer, tracked debris (fragments, rocket bodies and unknown objects,
+// as in the Space-Track/CelesTrak box score) and all tracked objects by layer.
 // Source: CelesTrak SATCAT (https://celestrak.org/pub/satcat.csv), built by scripts/satcat_counts.py.
 // Active = status +, P, B, S or X. Layer by mean altitude; apogee-perigee > 10,000 km = HEO.
 // Starlink, OneWeb and Kuiper are counted as 'com'; other payloads go by the SATCAT owner code.
@@ -107,12 +108,12 @@ export const COUNTS = {
   "Kuiper": 391
  },
  "debrisByLayer": {
-  "leo": 10076,
-  "meo": 378,
-  "vleo": 61,
-  "cislunar": 5,
-  "heo": 1668,
-  "geo": 165
+  "leo": 11092,
+  "meo": 561,
+  "vleo": 123,
+  "cislunar": 34,
+  "heo": 2410,
+  "geo": 450
  },
  "trackedByLayer": {
   "meo": 1002,

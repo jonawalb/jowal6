@@ -135,6 +135,7 @@ function allSources(data) {
   Object.values(L.LAYER_ACCESS || {}).forEach(a => (a.sources || []).forEach(add));
   (L.RESPONSIVE || []).forEach(r => (r.sources || []).forEach(add));
   Object.values(data.LAYERS_FACTS || {}).forEach(f => (f.sources || []).forEach(add));
+  if (data.DEBRIS) { add(data.DEBRIS.public.src); add(data.DEBRIS.esa.src); }
   if (data.COUNTS) add({ t: `CelesTrak SATCAT, retrieved ${data.COUNTS.asof}`, u: 'https://celestrak.org/satcat/search.php' });
   return [...seen].sort((a, b) => a[1].localeCompare(b[1])).map(([u, t]) => `<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a></li>`).join('');
 }

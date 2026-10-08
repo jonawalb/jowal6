@@ -51,7 +51,7 @@
     <div class="card sl-listcard">
       <div class="sl-list-h">
         <p class="eyebrow" id="list-t">Systems</p>
-        <label class="fine">Sort <select id="sort"><option value="cost">Cost, high to low</option><option value="costasc">Cost, low to high</option><option value="name">Name</option><option value="country">Country</option><option value="vuln">Most exposed first</option></select></label>
+        <label class="fine">Sort <select id="sort"><option value="cost">Cost, high to low</option><option value="costasc">Cost, low to high</option><option value="name">Name</option><option value="country">Country</option><option value="vuln">Most vulnerable first</option></select></label>
       </div>
       <ul class="sl-list" id="list"></ul>
     </div>
@@ -61,13 +61,13 @@
     <div class="sec">
       <p class="eyebrow">Color dots by</p>
       <div class="seg sl-seg" role="group" aria-label="Color dots by" id="colorby">
-        <button type="button" data-v="kind">Category</button><button type="button" data-v="country">Country</button><button type="button" data-v="cost">Cost</button><button type="button" data-v="vuln">Exposure</button>
+        <button type="button" data-v="kind">Category</button><button type="button" data-v="country">Country</button><button type="button" data-v="cost">Cost</button><button type="button" data-v="vuln">Vulnerability</button>
       </div>
-    </div>
-    <div class="sec">
-      <label class="tg"><input type="checkbox" id="vuln-on"><span class="sw"></span><span class="t">Show vulnerability<small>Color each satellite system by how exposed it is, and light up the layers the selected countries' weapons can reach.</small></span></label>
+      <div id="vuln-box" hidden>
+      <p class="fine">Each satellite system is colored by how vulnerable it is to the threat picked below, and the layers that the selected countries' weapons can reach glow red.</p>
       <div class="seg sl-seg" role="group" aria-label="Threat" id="threat">
         <button type="button" data-v="any">Worst case</button><button type="button" data-v="kinetic">Kinetic</button><button type="button" data-v="dew">Laser</button><button type="button" data-v="jamming">Jamming</button><button type="button" data-v="cyber">Cyber</button>
+      </div>
       </div>
     </div>
     <div class="sec">

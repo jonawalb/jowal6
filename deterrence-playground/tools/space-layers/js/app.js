@@ -20,7 +20,7 @@ const typesPresent = [...new Set(ALL.map(it => it.type))].filter(Boolean).sort((
 const statusPresent = Object.keys(STATUS).filter(s => ALL.some(it => it.status === s));
 const countriesPresent = COUNTRIES.filter(c => ALL.some(it => it.country === c.id));
 
-const DEFAULT = () => ({ layer: 'all', colorBy: 'kind', vuln: false, threat: 'any', scale: 'compressed', sort: 'cost', sel: null,
+const DEFAULT = () => ({ layer: 'all', colorBy: 'kind', threat: 'any', scale: 'compressed', sort: 'cost', sel: null,
   kinds: new Set(KINDS.map(k => k.id)), types: new Set(typesPresent), countries: new Set(countriesPresent.map(c => c.id)),
   costs: new Set([...COST_BANDS.map(b => b.id), 'none']), statuses: new Set(statusPresent.filter(s => s !== 'retired')) });
 let S = DEFAULT();
@@ -29,7 +29,6 @@ let S = DEFAULT();
 function writeHash() {
   const d = DEFAULT(), p = new URLSearchParams();
   for (const k of ['layer', 'colorBy', 'threat', 'scale', 'sort', 'sel']) if (S[k] !== d[k] && S[k] != null) p.set(k, S[k]);
-  if (S.vuln) p.set('vuln', '1');
   for (const k of ['kinds', 'types', 'countries', 'costs', 'statuses']) {
     const a = [...S[k]].sort().join('.'), b = [...d[k]].sort().join('.');
     if (a !== b) p.set(k, a || '-');
@@ -39,7 +38,7 @@ function writeHash() {
 function readHash() {
   const p = new URLSearchParams(location.hash.slice(1));
   for (const k of ['layer', 'colorBy', 'threat', 'scale', 'sort', 'sel']) if (p.has(k)) S[k] = p.get(k);
-  if (p.get('vuln') === '1') S.vuln = true;
+  if (p.get('vuln') === '1') S.colorBy = 'vuln';   // older links
   for (const k of ['kinds', 'types', 'countries', 'costs', 'statuses']) if (p.has(k)) S[k] = new Set(p.get(k) === '-' ? [] : p.get(k).split('.'));
   if (!LAYER[S.layer] && S.layer !== 'all') S.layer = 'all';
   if (S.sel && !BY_ID[S.sel]) S.sel = null;
@@ -90,11 +89,10 @@ function renderPanel() {
   chips($('countries'), countriesPresent.map(c => [c.id, c.name, '--k-' + c.id, count(it => it.country === c.id)]), 'countries');
   chips($('costs'), [...COST_BANDS.map(b => [b.id, b.name, '--cb-' + b.id]), ['none', 'No public figure', '--cb-none']], 'costs');
   chips($('statuses'), statusPresent.map(s => [s, STATUS[s], null, count(it => it.status === s)]), 'statuses');
-  seg($('colorby'), 'colorBy', () => { if (S.colorBy === 'vuln') S.vuln = true; });
-  seg($('threat'), 'threat', () => { S.vuln = true; S.colorBy = 'vuln'; });
+  seg($('colorby'), 'colorBy');
+  seg($('threat'), 'threat');
   seg($('scale'), 'scale', () => globe.setScale(S.scale));
-  $('vuln-on').checked = S.vuln;
-  $('threat').style.opacity = S.vuln ? 1 : .55;
+  $('vuln-box').hidden = S.colorBy !== 'vuln';
   $('sort').value = S.sort;
   $('layerbar').innerHTML = [['all', 'All layers', ''], ...LAYERS.map(l => [l.id, l.short, l.id === 'geo' ? '35,786 km' : ''])]
     .map(([id, name, alt]) => `<button type="button" data-v="${id}" aria-pressed="${S.layer === id}">${esc(name)}${alt ? `<span class="alt">${alt}</span>` : ''}</button>`).join('');
@@ -152,7 +150,7 @@ function makeGlobe() { return createGlobe(globeEl, {
 }); }
 
 function threatLayers(vis) {
-  if (!S.vuln) return new Set();
+  if (S.colorBy !== 'vuln') return new Set();
   const set = new Set();
   for (const w of ALL) {
     if (w.kind !== 'offensive' || !S.countries.has(w.country) || !S.statuses.has(w.status)) continue;
@@ -165,7 +163,6 @@ function threatLayers(vis) {
 
 let lastLayer = null;
 function update() {
-  if (S.vuln && S.colorBy !== 'vuln') S.colorBy = 'vuln';
   renderPanel();
   const vis = ALL.filter(passes);
   globe.setItems(vis, it => colorOf(it, globeEl));
@@ -173,13 +170,12 @@ function update() {
   if (S.layer !== lastLayer) { globe.focusLayer(S.layer); lastLayer = S.layer; }
   $('legend').innerHTML = legendItems().map(([n, c]) => `<span><i style="background:${cssVar(c, globeEl)}"></i>${esc(n)}</span>`).join('');
   renderList(vis);
-  renderLayerCard($('layercard'), S.layer, data, { vis, threats: threatLayers(vis), vulnOn: S.vuln });
+  renderLayerCard($('layercard'), S.layer, data, { vis, threats: threatLayers(vis), vulnOn: S.colorBy === 'vuln' });
   if (S.sel && !vis.some(it => it.id === S.sel)) select(null); else if (S.sel) select(S.sel);
   writeHash();
 }
 
 $('layerbar').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; S.layer = b.dataset.v; update(); });
-$('vuln-on').addEventListener('change', e => { S.vuln = e.target.checked; S.colorBy = S.vuln ? 'vuln' : 'kind'; update(); });
 $('sort').addEventListener('change', e => { S.sort = e.target.value; update(); });
 $('list').addEventListener('click', e => { const b = e.target.closest('button[data-id]'); if (!b) return; select(b.dataset.id); writeHash();
   if (matchMedia('(max-width: 760px)').matches) $('detail').scrollIntoView({ behavior: 'smooth', block: 'start' }); });

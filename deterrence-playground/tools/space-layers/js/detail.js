@@ -35,7 +35,7 @@ export function renderDetail(box, it, data, { colorOf, onClose, onPick }) {
       `<span class="${it.reach.includes(l) ? 'on' : ''} ${homeLayers(it).includes(l) ? 'home' : ''}">${esc(LAYER[l].name)}${it.reach.includes(l) ? ' · in reach' : ''}</span>`).join('')}</div>
       <p class="fine">Red rows: layers this weapon can attack. Dashed: where it is based.</p>`;
   } else if (it.vuln) {
-    exposure = `<h4>Exposure by threat ${it.vulnNotional !== false ? '<span class="notional">judgment</span>' : ''}</h4><div class="sl-bars">${THREATS.map(t => {
+    exposure = `<h4>Vulnerability by threat ${it.vulnNotional !== false ? '<span class="notional">judgment</span>' : ''}</h4><div class="sl-bars">${THREATS.map(t => {
       const v = it.vuln[t.id] ?? 0;
       return `<span>${t.name}</span><span class="sl-bar"><i style="width:${(v / 3 * 100).toFixed(0)}%;background:var(--v${v})"></i></span><span class="num">${v}/3</span>`;
     }).join('')}</div>${it.vuln.note ? `<p class="fine" style="margin-top:6px">${esc(it.vuln.note)}</p>` : ''}`;

@@ -133,7 +133,14 @@ const globeEl = $('globe');
 const narrow = matchMedia('(max-width: 760px)');
 const placeDetail = () => (narrow.matches ? document.querySelector('.sl-globecard').after($('detail')) : globeEl.appendChild($('detail')));
 narrow.addEventListener('change', placeDetail); placeDetail();
-const globe = createGlobe(globeEl, {
+const noGlobe = () => {
+  globeEl.insertAdjacentHTML('afterbegin', '<p class="sl-noglobe">This browser cannot draw the 3D globe (WebGL is off or unavailable). The filters, list, details and sections below still work.</p>');
+  const nop = () => {};
+  return { setItems: nop, recolor: nop, setScale: nop, focusLayer: nop, setThreatLayers: nop, select: nop };
+};
+let globe;
+try { globe = makeGlobe(); } catch (e) { console.warn('globe unavailable:', e.message); globe = noGlobe(); }
+function makeGlobe() { return createGlobe(globeEl, {
   onPick: it => { select(it ? it.id : null); writeHash(); },
   onHover: (it, e) => {
     const tip = $('tip');
@@ -142,7 +149,7 @@ const globe = createGlobe(globeEl, {
     tip.innerHTML = `${esc(it.name)}<small>${esc(COUNTRY[it.country]?.name || '')} · ${esc(TYPES[it.type] || it.type)}</small>`;
     tip.style.left = Math.min(e.clientX - r.left + 12, r.width - 200) + 'px'; tip.style.top = (e.clientY - r.top + 12) + 'px'; tip.hidden = false;
   },
-});
+}); }
 
 function threatLayers(vis) {
   if (!S.vuln) return new Set();

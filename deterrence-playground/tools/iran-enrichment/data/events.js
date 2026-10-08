@@ -93,4 +93,8 @@ export const EVENTS = [
     desc: 'Iran\'s president told Fox News that Tehran was willing to give up uranium enriched to 60 percent within the NPT framework. No agreement had been announced by 6 October 2026.',
     quote: 'Iranian President Masoud Pezeshkian said Tehran was willing to give up uranium enriched to 60% within the framework of international law and its obligations under the Nuclear Non-Proliferation Treaty.',
     src: { name: 'Iran International, 25 September 2026', url: 'https://www.iranintl.com/en/202609257671' } },
+  { id: 'dilution-report', date: '2026-10-03', cat: 'deal', short: 'Reported', title: 'Reported: Iran offers to dilute its 60 percent uranium and ship it out',
+    desc: 'The National, citing unnamed "sources in Tehran", reported that Iran had proposed a phased process: dilute the 60 percent stock, then transfer it to a third party. No official confirmed it on the record, and no agreement had been announced by 6 October 2026. The report said Iran had not yet answered a U.S. counterproposal.',
+    quote: 'The proposal envisages a phased process in which the stockpile would first be diluted before being transferred out of Iran',
+    src: { name: 'The National, 3 October 2026 (updated 4 October), unnamed sources', url: 'https://www.thenationalnews.com/news/mena/2026/10/03/iran-gearing-up-for-major-round-of-fighting-with-us-source-says/' } },
 ];

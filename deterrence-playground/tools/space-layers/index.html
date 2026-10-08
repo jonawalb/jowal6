@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Layers of Space | Interactive Deterrence</title>
+<meta name="description" content="Every orbital layer from very low Earth orbit to the Moon around a 3D globe: which countries operate what in each layer, which weapons can reach it, what it costs to get there, and how a space force keeps working through a war.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&family=Spline+Sans+Mono:wght@400;500;600&family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="../../shared/css/deterrence-site.css">
+<link rel="stylesheet" href="space-layers.css">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<meta property="og:title" content="Layers of Space | Interactive Deterrence">
+<meta property="og:description" content="Every orbit from low Earth to the Moon around a live globe: who has what in each layer, what can reach it, what it costs to get there, and how a space force survives a war.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jwalberg.com/deterrence-playground/tools/space-layers/">
+<meta property="og:image" content="https://jwalberg.com/deterrence-playground/tools/space-layers/thumb.png">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<main class="layout sl-layout">
+  <div class="stage">
+    <div class="card sl-globecard">
+      <div class="sl-layerbar" role="group" aria-label="Zoom to a layer" id="layerbar"></div>
+      <div class="sl-globe" id="globe">
+        <div class="sl-scale seg" role="group" aria-label="Distance scale" id="scale">
+          <button type="button" data-v="compressed" aria-pressed="true">Readable scale</button><button type="button" data-v="true" aria-pressed="false">True scale</button>
+        </div>
+        <p class="sl-hint" id="hint">Drag to turn, scroll or pinch to zoom, click a dot for details.</p>
+        <div class="sl-legend" id="legend"></div>
+        <div class="sl-tip" id="tip" hidden></div>
+        <aside class="sl-detail card" id="detail" hidden aria-live="polite"></aside>
+      </div>
+    </div>
+
+    <div class="card sl-layercard" id="layercard"></div>
+
+    <div class="card sl-listcard">
+      <div class="sl-list-h">
+        <p class="eyebrow" id="list-t">Systems</p>
+        <label class="fine">Sort <select id="sort"><option value="cost">Cost, high to low</option><option value="costasc">Cost, low to high</option><option value="name">Name</option><option value="country">Country</option><option value="vuln">Most exposed first</option></select></label>
+      </div>
+      <ul class="sl-list" id="list"></ul>
+    </div>
+  </div>
+
+  <aside class="panel" id="panel">
+    <div class="sec">
+      <p class="eyebrow">Color dots by</p>
+      <div class="seg sl-seg" role="group" aria-label="Color dots by" id="colorby">
+        <button type="button" data-v="kind">Category</button><button type="button" data-v="country">Country</button><button type="button" data-v="cost">Cost</button><button type="button" data-v="vuln">Exposure</button>
+      </div>
+    </div>
+    <div class="sec">
+      <label class="tg"><input type="checkbox" id="vuln-on"><span class="sw"></span><span class="t">Show vulnerability<small>Color each satellite system by how exposed it is, and light up the layers the selected countries' weapons can reach.</small></span></label>
+      <div class="seg sl-seg" role="group" aria-label="Threat" id="threat">
+        <button type="button" data-v="any">Worst case</button><button type="button" data-v="kinetic">Kinetic</button><button type="button" data-v="dew">Laser</button><button type="button" data-v="jamming">Jamming</button><button type="button" data-v="cyber">Cyber</button>
+      </div>
+    </div>
+    <div class="sec">
+      <p class="eyebrow">Category</p>
+      <div class="sl-chips" id="kinds"></div>
+      <p class="eyebrow sl-sub">Type</p>
+      <div class="sl-chips" id="types"></div>
+    </div>
+    <div class="sec">
+      <p class="eyebrow">Country <button type="button" class="sl-link" id="all-countries">all</button> <button type="button" class="sl-link" id="no-countries">none</button></p>
+      <div class="sl-chips" id="countries"></div>
+    </div>
+    <div class="sec">
+      <p class="eyebrow">Cost</p>
+      <div class="sl-chips" id="costs"></div>
+      <p class="fine">Per unit or per program, as each source gives it. Systems with no public cost show only when "No public figure" is on.</p>
+    </div>
+    <div class="sec">
+      <p class="eyebrow">Status</p>
+      <div class="sl-chips" id="statuses"></div>
+    </div>
+    <div class="sec">
+      <button type="button" class="btn" id="reset">Reset filters</button> <button type="button" class="btn" id="copy-link">Copy link</button>
+    </div>
+  </aside>
+</main>
+
+<section class="below" id="below"></section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Layers of Space',
+    sub: 'Every orbit from low Earth to the Moon: who operates what in each layer, which weapons can reach it, what it costs to get there, and how a space force keeps working through a war.',
+    category: 'Nuclear weapons & arms control' });
+  document.title = 'Layers of Space | Interactive Deterrence';
+  const cta = document.createElement('p'); cta.className = 'sl-cta';
+  cta.innerHTML = 'Want to see how you’d fare fighting in the space domain? <a href="../orbital-denial/">Play Orbital Denial</a>';
+  document.getElementById('tsm-head').appendChild(cta);
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

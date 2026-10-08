@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+  <rect width="640" height="400" fill="#05080d"/>
+  <g fill="#8a96a8"><circle cx="40" cy="40" r="1.4"/><circle cx="600" cy="60" r="1.2"/><circle cx="560" cy="350" r="1.4"/><circle cx="90" cy="330" r="1.2"/><circle cx="300" cy="24" r="1"/><circle cx="470" cy="30" r="1.2"/><circle cx="20" cy="210" r="1"/></g>
+  <g fill="none" transform="translate(320 205)">
+    <ellipse rx="300" ry="96" stroke="#c9d1dc" stroke-opacity=".45" stroke-width="2"/>
+    <ellipse rx="236" ry="76" stroke="#ffd27a" stroke-width="3"/>
+    <ellipse rx="214" ry="68" stroke="#9fc3ff" stroke-opacity=".45" stroke-width="2"/>
+    <ellipse rx="150" ry="48" fill="#6fa8ff" fill-opacity=".14" stroke="#9fc3ff" stroke-opacity=".6" stroke-width="2"/>
+    <ellipse rx="112" ry="36" fill="#6fa8ff" fill-opacity=".2"/>
+    <ellipse rx="70" ry="210" stroke="#d99cff" stroke-opacity=".7" stroke-width="2" transform="rotate(18)"/>
+  </g>
+  <circle cx="320" cy="205" r="86" fill="#1b4f8a"/>
+  <path d="M262 160c22-18 50-22 70-10 10 8 4 24-10 26-16 2-20 14-8 24 14 10 4 30-18 30-20 0-34-18-40-36-4-14-2-26 6-34zM352 196c18-6 36 2 40 18 4 18-10 40-28 44-12 2-18-10-14-22 4-12-10-14-10-24 0-8 4-14 12-16z" fill="#2c7a4b"/>
+  <circle cx="320" cy="205" r="86" fill="none" stroke="#9fc3ff" stroke-opacity=".5" stroke-width="3"/>
+  <circle cx="20" cy="205" r="12" fill="#b9bcc2"/>
+  <g stroke="#000" stroke-opacity=".5" stroke-width="2">
+    <circle cx="430" cy="225" r="8" fill="#4fbf7d"/><circle cx="200" cy="232" r="8" fill="#4fbf7d"/><circle cx="470" cy="178" r="8" fill="#72a0ff"/>
+    <circle cx="556" cy="205" r="8" fill="#4fbf7d"/><circle cx="96" cy="190" r="8" fill="#4fbf7d"/><circle cx="352" cy="58" r="8" fill="#4fbf7d"/>
+    <circle cx="300" cy="160" r="8" fill="#ff5f56"/>
+  </g>
+  <path d="M300 160 Q 330 70 452 120" fill="none" stroke="#ff5f56" stroke-width="4" stroke-dasharray="10 6"/>
+</svg>

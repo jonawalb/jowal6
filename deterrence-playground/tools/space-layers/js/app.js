@@ -17,7 +17,7 @@ const ALL = [...WEAPONS, ...ASSETS].filter(it => it && it.id);
 const BY_ID = Object.fromEntries(ALL.map(it => [it.id, it]));
 const data = { ALL, BY_ID, TESTS, COUNTS, LAYERS_FACTS, LAUNCH, DEBRIS };
 
-const typesPresent = [...new Set(ALL.map(it => it.type))].filter(Boolean).sort((a, b) => (TYPES[a] || a).localeCompare(TYPES[b] || b));
+const typesPresent = [...new Set([...ALL.map(it => it.type), ...(POPM?.POP_MISSIONS || [])])].filter(Boolean).sort((a, b) => (TYPES[a] || a).localeCompare(TYPES[b] || b));
 const statusPresent = Object.keys(STATUS).filter(s => ALL.some(it => it.status === s));
 const countriesPresent = COUNTRIES.filter(c => ALL.some(it => it.country === c.id));
 
@@ -75,8 +75,9 @@ function legendItems() {
 // ---- Panel controls ----
 const $ = id => document.getElementById(id);
 function chips(host, entries, key) {
-  host.innerHTML = entries.map(([id, label, sw, n]) =>
-    `<button type="button" data-id="${esc(id)}" aria-pressed="${S[key].has(id)}"${n === 0 ? ' class="zero"' : ''}>${sw ? `<i style="background:var(${sw})"></i>` : ''}${esc(label)}${n != null ? ` <small>${n}</small>` : ''}</button>`).join('');
+  const k = v => v >= 1000 ? (v / 1000).toFixed(v >= 10000 ? 0 : 1).replace(/\.0$/, '') + 'k' : v;
+  host.innerHTML = entries.map(([id, label, sw, n, sats]) =>
+    `<button type="button" data-id="${esc(id)}" aria-pressed="${S[key].has(id)}"${!n && !sats ? ' class="zero"' : ''} title="${n ?? 0} systems${sats != null ? `, ${sats.toLocaleString('en-US')} satellites` : ''}">${sw ? `<i style="background:var(${sw})"></i>` : ''}${esc(label)}${n != null ? ` <small>${n}</small>` : ''}${sats ? ` <small class="sats">${k(sats)} sats</small>` : ''}</button>`).join('');
   host.onclick = e => {
     const b = e.target.closest('button'); if (!b) return;
     const id = b.dataset.id; S[key].has(id) ? S[key].delete(id) : S[key].add(id); update();
@@ -88,9 +89,11 @@ function seg(host, key, after) {
 }
 const count = (key, v) => ALL.filter(it => FACETS[key](it) === v && passes(it, key)).length;
 function renderPanel() {
-  chips($('kinds'), KINDS.map(k => [k.id, k.name, '--k-' + k.id, count('kinds', k.id)]), 'kinds');
-  chips($('types'), typesPresent.map(t => [t, TYPES[t] || t, null, count('types', t)]), 'types');
-  chips($('countries'), countriesPresent.map(c => [c.id, c.name, '--k-' + c.id, count('countries', c.id)]), 'countries');
+  const sc = satCounts(), withSats = S.pop && POPM;
+  chips($('kinds'), KINDS.map(k => [k.id, k.name, '--k-' + k.id, count('kinds', k.id), withSats && k.id === 'enabler' ? sc.enabler : null]), 'kinds');
+  chips($('types'), typesPresent.map(t => [t, TYPES[t] || t, null, count('types', t), withSats ? sc.types[t] || 0 : null]), 'types');
+  chips($('countries'), countriesPresent.map(c => [c.id, c.name, '--k-' + c.id, count('countries', c.id), withSats ? sc.countries[c.id] || 0 : null]), 'countries');
+  updatePopulation(sc);
   chips($('costs'), [...COST_BANDS.map(b => [b.id, b.name, '--cb-' + b.id, count('costs', b.id)]), ['none', 'No public figure', '--cb-none', count('costs', 'none')]], 'costs');
   chips($('statuses'), statusPresent.map(s => [s, STATUS[s], null, count('statuses', s)]), 'statuses');
   $('pop-on').checked = S.pop; $('deb-on').checked = S.deb;
@@ -166,29 +169,43 @@ function threatLayers(vis) {
   return set;
 }
 
-// Background population: every active satellite (by country) and, optionally, tracked debris.
-const POP_C = POPM?.POP_COUNTRIES || [];
+// Background population: every active satellite (by country and mission) and, optionally, tracked debris.
+// Missions come from CelesTrak purpose groups and public programme names; see the method notes.
+const POP_C = POPM?.POP_COUNTRIES || [], POP_M = POPM?.POP_MISSIONS || [];
 if (POPM) globe.setPopulation(POPM.POP);
 let popKey = '';
 const popLayer = (pe, ap) => { const m = (pe + ap) / 2; return ap - pe > 10000 ? 'heo' : m < 450 ? 'vleo' : m < 2000 ? 'leo' : m < 34000 ? 'meo' : m < 38500 ? 'geo' : 'far'; };
-function updatePopulation() {
-  if (!POPM) { $('pop-n').textContent = $('deb-n').textContent = ''; return; }
-  // Orbit layers filter the population; ground, links and all layers show everything; cislunar shows none.
-  const L = ['vleo', 'leo', 'meo', 'geo', 'heo'].includes(S.layer) ? S.layer : S.layer === 'cislunar' ? 'none' : null;
-  const countryOk = c => S.countries.has(POP_C[c]) || POP_C[c] === 'other';
-  let nA = 0, nD = 0;
-  const P = POPM.POP;
-  for (let i = 0; i < P.length; i += 4) {
+const popLayerNow = () => ['vleo', 'leo', 'meo', 'geo', 'heo'].includes(S.layer) ? S.layer : S.layer === 'cislunar' ? 'none' : null;
+const popCountryOk = c => S.countries.has(POP_C[c]) || POP_C[c] === 'other';
+// Satellites count as "space services": public data cannot say which ones carry weapons.
+const popKindOk = () => S.kinds.has('enabler');
+// Satellite counts for the chips, faceted like the system counts (skip = the facet being counted).
+function satCounts() {
+  const out = { types: {}, countries: {}, enabler: 0, act: 0, deb: 0 };
+  if (!POPM) return out;
+  const P = POPM.POP, L = popLayerNow();
+  for (let i = 0; i < P.length; i += 5) {
     if (L && popLayer(P[i], P[i + 1]) !== L) continue;
-    if (P[i + 3] < 0) nD++; else if (countryOk(P[i + 3])) nA++;
+    const c = P[i + 3], m = POP_M[P[i + 4]];
+    if (c < 0) { out.deb++; continue; }
+    const cOk = popCountryOk(c), tOk = S.types.has(m), kOk = popKindOk();
+    if (cOk && kOk) out.types[m] = (out.types[m] || 0) + 1;
+    if (tOk && kOk) out.countries[POP_C[c]] = (out.countries[POP_C[c]] || 0) + 1;
+    if (cOk && tOk) out.enabler++;
+    if (cOk && tOk && kOk) out.act++;
   }
-  $('pop-n').textContent = '(' + nA.toLocaleString('en-US') + ')';
-  $('deb-n').textContent = '(' + nD.toLocaleString('en-US') + ')';
-  const key = [S.pop, S.deb, L, [...S.countries].sort().join(), S.colorBy, matchMedia('(prefers-color-scheme: dark)').matches].join('|');
+  return out;
+}
+function updatePopulation(sc) {
+  if (!POPM) { $('pop-n').textContent = $('deb-n').textContent = ''; return; }
+  const L = popLayerNow();
+  $('pop-n').textContent = '(' + sc.act.toLocaleString('en-US') + ')';
+  $('deb-n').textContent = '(' + sc.deb.toLocaleString('en-US') + ')';
+  const key = [S.pop, S.deb, L, [...S.countries].sort().join(), [...S.types].sort().join(), popKindOk(), S.colorBy, matchMedia('(prefers-color-scheme: dark)').matches].join('|');
   if (key === popKey) return; popKey = key;
   const v = n => cssVar(n, globeEl);
-  globe.filterPopulation((i, c, lay) => (c < 0 ? S.deb : S.pop && countryOk(c)) && (!L || lay === L),
-    c => c < 0 ? '#8c7b6b' : S.colorBy === 'country' ? (v('--k-' + POP_C[c]) || v('--k-com')) : '#a9c7f0');
+  globe.filterPopulation((i, c, lay, m) => (c < 0 ? S.deb : S.pop && popKindOk() && popCountryOk(c) && S.types.has(POP_M[m])) && (!L || lay === L),
+    c => c < 0 ? '#8c7b6b' : S.colorBy === 'country' ? (v('--k-' + POP_C[c]) || v('--k-com')) : '#86a8d6');
 }
 
 let lastLayer = null;
@@ -197,7 +214,6 @@ function update() {
   const vis = ALL.filter(it => passes(it));
   globe.setItems(vis, it => colorOf(it, globeEl));
   globe.setThreatLayers(threatLayers(vis));
-  updatePopulation();
   if (S.layer !== lastLayer) { globe.focusLayer(S.layer); lastLayer = S.layer; }
   $('legend').innerHTML = legendItems().map(([n, c]) => `<span><i style="background:${cssVar(c, globeEl)}"></i>${esc(n)}</span>`).join('');
   renderList(vis);

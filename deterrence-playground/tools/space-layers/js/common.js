@@ -55,6 +55,7 @@ export const TYPES = {
   'interceptor-msl': 'Missile-defense interceptor', ssa: 'Space tracking (SOSI)', isr: 'Imaging and surveillance',
   pnt: 'Navigation and timing', satcom: 'Communications', 'missile-warning': 'Missile warning and tracking',
   weather: 'Weather', launch: 'Launch', other: 'Other',
+  mil: 'Military, purpose not public', tech: 'Science and technology', unknown: 'Mission not identified',
 };
 
 export const EFFECTS = { destructive: 'Destructive (permanent, can make debris)', disruptive: 'Disruptive (temporary, reversible)', degrading: 'Degrading' };

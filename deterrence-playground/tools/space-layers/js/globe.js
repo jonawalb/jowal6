@@ -124,20 +124,16 @@ export function createGlobe(host, { onPick, onHover }) {
 
     // Distance labels on the right of the view, layer names on the left.
     const dist = [[450, 'vleo'], [2000, 'leo'], [20200, 'meo', 'GPS · 20,200 km'], [35786, 'geo'], [384400, 'cislunar', 'Moon · 384,400 km']];
-    dist.forEach(([km, id, txt], i) => labelEls.push(mkLabel('d', id, radius(km, scale), txt || fmtKm(km), 1, 12 + i * 16)));
-    for (const [id, km] of [['vleo', 300], ['leo', 1150], ['meo', 9000], ['geo', 35786]])
-      labelEls.push(mkLabel('n', id, radius(km, scale), LAYER[id].short, -1));
-    labelEls.push({ el: mkEl('n', 'HEO'), id: 'heo', pos: () => molniyaPoint(Math.PI) });
+    // Labels sit at fixed points on their rings, so they turn with the globe: names on one side, distances on the other.
+    dist.forEach(([km, id, txt], i) => labelEls.push(mkLabel('d', id, radius(km, scale), txt || fmtKm(km), -20 + i * 9)));
+    for (const [id, km, a] of [['vleo', 300, 122], ['leo', 1150, 140], ['meo', 9000, 160], ['geo', 35786, 178]])
+      labelEls.push(mkLabel('n ln-' + id, id, radius(km, scale), LAYER[id].short, a));
+    labelEls.push({ el: mkEl('n ln-heo', 'HEO'), id: 'heo', pos: () => molniyaPoint(Math.PI) });
   }
-  function mkEl(cls, txt) { const el = document.createElement('span'); el.className = 'sl-lab sl-lab-' + cls; el.textContent = txt; labels.appendChild(el); return el; }
-  function mkLabel(cls, id, r, txt, side, swing = 0) {
-    // Placed on the circle to the camera's right (side 1) or left (-1), swung `swing` degrees toward the viewer.
-    return { el: mkEl(cls, txt), id, pos: () => {
-      const d = new THREE.Vector3(); camera.getWorldDirection(d); d.y = 0; d.normalize();
-      const right = new THREE.Vector3(-d.z, 0, d.x).multiplyScalar(side);
-      const a = swing * deg;
-      return right.multiplyScalar(Math.cos(a)).addScaledVector(d, -Math.sin(a)).normalize().multiplyScalar(r);
-    } };
+  function mkEl(cls, txt) { const el = document.createElement('span'); el.className = 'sl-lab ' + cls.split(' ').map((c, i) => i ? c : 'sl-lab-' + c).join(' '); el.textContent = txt; labels.appendChild(el); return el; }
+  function mkLabel(cls, id, r, txt, angleDeg) {
+    const p = new THREE.Vector3(r * Math.cos(angleDeg * deg), 0, r * Math.sin(angleDeg * deg));
+    return { el: mkEl(cls, txt), id, pos: () => p };
   }
 
   // One dot per satellite group; ground systems sit at their country's centroid (country level only).
@@ -187,32 +183,32 @@ export function createGlobe(host, { onPick, onHover }) {
   // Orbit shape and tilt come from the catalog; orientation and position along the orbit are random.
   let pop = null, popPts = null, popVis = [];
   function setPopulation(P) {
-    const n = P.length / 4, r = rng('population');
+    const S5 = 5, n = P.length / S5, r = rng('population');
     pop = { n, peri: new Float32Array(n), apo: new Float32Array(n), e: new Float32Array(n), a: new Float32Array(n),
       ci: new Float32Array(n), si: new Float32Array(n), co: new Float32Array(n), so: new Float32Array(n),
-      w: new Float32Array(n), m0: new Float32Array(n), per: new Float32Array(n), c: new Int8Array(n), layer: [] };
+      w: new Float32Array(n), m0: new Float32Array(n), per: new Float32Array(n), c: new Int8Array(n), m: new Int8Array(n), layer: [] };
     for (let i = 0; i < n; i++) {
-      const pe = P[i * 4], ap = P[i * 4 + 1], inc = P[i * 4 + 2] / 10 * deg, raan = r() * Math.PI * 2;
+      const pe = P[i * S5], ap = P[i * S5 + 1], inc = P[i * S5 + 2] / 10 * deg, raan = r() * Math.PI * 2;
       const a = 6371 + (pe + ap) / 2;
       pop.peri[i] = pe; pop.apo[i] = ap; pop.a[i] = a; pop.e[i] = (ap - pe) / (ap + pe + 2 * 6371);
       pop.ci[i] = Math.cos(inc); pop.si[i] = Math.sin(inc); pop.co[i] = Math.cos(raan); pop.so[i] = Math.sin(raan);
       pop.w[i] = r() * Math.PI * 2; pop.m0[i] = r() * Math.PI * 2; pop.per[i] = LEO_SECONDS * Math.pow(a / 6871, 1.5);
-      pop.c[i] = P[i * 4 + 3];
+      pop.c[i] = P[i * S5 + 3]; pop.m[i] = P[i * S5 + 4];
       const mean = (pe + ap) / 2;
       pop.layer.push(ap - pe > 10000 ? 'heo' : mean < 450 ? 'vleo' : mean < 2000 ? 'leo' : mean < 34000 ? 'meo' : mean < 38500 ? 'geo' : 'far');
     }
   }
-  // keep(i) decides which objects show; color(i) gives a CSS color string.
+  // keep(i, country, layer, mission) decides which objects show; color(i) gives a CSS color string.
   function filterPopulation(keep, color) {
     if (!pop) return;
-    popVis = []; for (let i = 0; i < pop.n; i++) if (keep(i, pop.c[i], pop.layer[i])) popVis.push(i);
+    popVis = []; for (let i = 0; i < pop.n; i++) if (keep(i, pop.c[i], pop.layer[i], pop.m[i])) popVis.push(i);
     if (popPts) { scene.remove(popPts); popPts.geometry.dispose(); }
     const g = new THREE.BufferGeometry();
     g.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(popVis.length * 3), 3));
     const col = new Float32Array(popVis.length * 3), c = new THREE.Color(), cache = {};
     popVis.forEach((i, k) => { const key = pop.c[i]; c.set(cache[key] ??= color(key)); col[k * 3] = c.r; col[k * 3 + 1] = c.g; col[k * 3 + 2] = c.b; });
     g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
-    popPts = new THREE.Points(g, new THREE.PointsMaterial({ size: 2.2 * renderer.getPixelRatio(), sizeAttenuation: false, vertexColors: true, transparent: true, opacity: 0.7, depthWrite: false }));
+    popPts = new THREE.Points(g, new THREE.PointsMaterial({ size: 2.2 * renderer.getPixelRatio(), sizeAttenuation: false, vertexColors: true, transparent: true, opacity: 0.5, depthWrite: false }));
     popPts.renderOrder = -2; scene.add(popPts);
     placePop(simT); render();
   }
@@ -320,9 +316,9 @@ export function createGlobe(host, { onPick, onHover }) {
 
   function updateLabels() {
     for (const l of labelEls) {
-      const s = project(l.pos());
+      const wp = l.pos(), s = project(wp);
       l.el.style.transform = `translate(${s.x.toFixed(1)}px, ${s.y.toFixed(1)}px)`;
-      l.el.style.visibility = s.front && s.x > -40 && s.x < W() + 40 && s.y > -20 && s.y < H() + 20 ? 'visible' : 'hidden';
+      l.el.style.visibility = s.front && !occluded(wp) && s.x > -40 && s.x < W() + 40 && s.y > -20 && s.y < H() + 20 ? 'visible' : 'hidden';
     }
   }
 

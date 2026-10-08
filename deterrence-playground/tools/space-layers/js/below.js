@@ -136,6 +136,7 @@ function allSources(data) {
   (L.RESPONSIVE || []).forEach(r => (r.sources || []).forEach(add));
   Object.values(data.LAYERS_FACTS || {}).forEach(f => (f.sources || []).forEach(add));
   if (data.DEBRIS) { add(data.DEBRIS.public.src); add(data.DEBRIS.esa.src); }
+  add({ t: 'CelesTrak, satellites by purpose (GP element groups), retrieved 8 Oct 2026', u: 'https://celestrak.org/NORAD/elements/' });
   if (data.COUNTS) add({ t: `CelesTrak SATCAT, retrieved ${data.COUNTS.asof}`, u: 'https://celestrak.org/satcat/search.php' });
   return [...seen].sort((a, b) => a[1].localeCompare(b[1])).map(([u, t]) => `<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a></li>`).join('');
 }
@@ -158,6 +159,7 @@ export function renderBelow(host, data, { focus }) {
       <p>Click a dot or a list entry for its capability, cost, technical specs and sources. Weapons show the layers they can reach; satellite systems show how exposed they are to each kind of attack.</p></section>
     <section><h2>Method and limits</h2>
       <p>Weapons, systems, tests and costs come from the sources listed with each entry, mainly the Secure World Foundation's <i>Global Counterspace Capabilities</i>, CSIS's <i>Space Threat Assessment</i>, government budget documents and operators' own pages. Satellite and debris counts come from CelesTrak's public catalog. Where no public cost exists the system shows "no public cost figure".</p>
+      <p>Individual satellites get a mission from CelesTrak's public "satellites by purpose" lists first, then from public programme names (for example Yaogan and Gaofen as imaging, NAVSTAR as navigation, WGS and AEHF as communications). On the build date that covered 83% of active satellites from the lists and 10% from names; the remaining 7% are "Mission not identified". U.S. "USA" payloads, Russian Kosmos satellites, China's TJS series and SDA satellites are grouped as "Military, purpose not public", so the missile-warning count for single satellites is far below the real number. Satellites that are classified and missing from the public catalog do not appear at all. Where each satellite sits along its orbit is drawn at random; height and tilt are real.</p>
       <p>The exposure scores (0 to 3 per threat) are the author's judgment from each system's orbit, numbers and design, and are marked <span class="notional">judgment</span>. The space-support model is notional throughout. Public sources understate classified programs, so absence from this page is not absence from orbit.</p></section>
     <section><h2>Sources</h2><ol class="src">${allSources(data)}</ol></section>`;
   mountSustain(host.querySelector('#sustain'));

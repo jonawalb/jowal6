@@ -107,6 +107,62 @@ export const COUNTS = {
   "Starlink": 11132,
   "Kuiper": 391
  },
+ "byMission": {
+  "tech": {
+   "leo": 615,
+   "meo": 10,
+   "heo": 10,
+   "geo": 16,
+   "vleo": 117
+  },
+  "unknown": {
+   "meo": 7,
+   "leo": 911,
+   "geo": 134,
+   "cislunar": 26,
+   "heo": 18,
+   "vleo": 124
+  },
+  "satcom": {
+   "geo": 309,
+   "leo": 11900,
+   "vleo": 1104,
+   "heo": 8,
+   "meo": 35
+  },
+  "isr": {
+   "leo": 749,
+   "vleo": 104,
+   "geo": 6,
+   "meo": 2
+  },
+  "mil": {
+   "geo": 95,
+   "leo": 374,
+   "heo": 16,
+   "vleo": 141,
+   "meo": 2
+  },
+  "pnt": {
+   "meo": 134,
+   "geo": 46,
+   "leo": 29
+  },
+  "weather": {
+   "leo": 63,
+   "geo": 26,
+   "vleo": 12,
+   "heo": 1
+  },
+  "missile-warning": {
+   "geo": 6
+  }
+ },
+ "missionSource": {
+  "group": 14243,
+  "name": 1687,
+  "none": 1220
+ },
  "debrisByLayer": {
   "leo": 11092,
   "meo": 561,

@@ -1,7 +1,51 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1, 4);
-export const ALIGN = __m.ALIGN;
-export const GSDB_BY_OBJECTIVE = __m.GSDB_BY_OBJECTIVE;
-export const GSDB_CODING = __m.GSDB_CODING;
-export const GSDB_FIGURES = __m.GSDB_FIGURES;
-export const GSDB_SOURCES = __m.GSDB_SOURCES;
+// What the Global Sanctions Data Base (GSDB) authors publish about objectives and success.
+// No GSDB case data is used: the GSDB is sent by e-mail on request, and its site asks users
+// "Please do not pass the data on to others" (https://www.globalsanctionsdatabase.com/data, read 2026-09-29).
+// Quotes are copied exactly from the working-paper versions listed in SOURCES (opened 2026-09-29).
+
+export const GSDB_SOURCES = {
+  v1: { cite: 'Felbermayr, Kirilakha, Syropoulos, Yalcin & Yotov, "The Global Sanctions Data Base", Drexel School of Economics Working Paper 2020-02; published in European Economic Review 129 (2020) 103561',
+    url: 'https://EconPapers.repec.org/RePEc:ris:drxlwp:2020_002', doi: 'https://doi.org/10.1016/j.euroecorev.2020.103561',
+    copy: 'https://drive.google.com/file/d/11djwEIr96SFt6YpMzo9gaB6ZJrOer8AX/view', cover: '1950 to 2016, 729 cases' },
+  v2: { cite: 'Kirilakha, Felbermayr, Syropoulos, Yalcin & Yotov, "The Global Sanctions Data Base: An Update that Includes the Years of the Trump Presidency", Drexel Economics Working Paper 2021-10',
+    url: 'https://ideas.repec.org/p/ris/drxlwp/2021_010.html', doi: 'https://doi.org/10.4337/9781839102721.00010',
+    copy: 'https://drive.google.com/file/d/1ERc5uNcTumu8gyjOhzDtRNIWgkpk03T8/view', cover: '1950 to 2019, 1,101 cases' },
+  r4: { cite: 'Yalcin, Felbermayr, Kariem, Kirilakha, Kwon, Syropoulos & Yotov, "The Global Sanctions Data Base – Release 4: The Heterogeneous Effects of the Sanctions on Russia", WIFO Working Paper 681/2024; published in The World Economy (2025)',
+    url: 'https://www.econstor.eu/bitstream/10419/301174/1/1894532740.pdf', doi: 'https://doi.org/10.1111/twec.13732', cover: '1950 to 2023, 1,547 cases' },
+  site: { cite: 'GSDB website, data page (lists Release 5: 1,794 cases, 1949 to 2025)', url: 'https://www.globalsanctionsdatabase.com/data' },
+};
+
+// How the GSDB codes objectives and success (Release 4, section 2.1).
+export const GSDB_CODING = {
+  objectives: ['Policy change', 'Destabilize regime', 'Territorial conflict', 'Prevent war', 'End war', 'Terrorism', 'Human rights', 'Democracy', 'Other'],
+  success: ['Total success', 'Partial success', 'Negotiation settlement', 'Failure', 'Ongoing'],
+  quote: 'the GSDB defines nine political objectives (policy change, regime destabilization, ending territorial conflict, war prevention, ending war, terrorism, human rights violation, restoration of democracy, and other objectives that do not fit into any of the aforementioned categories) and five objective-specific success score categories (total success, partial success, negotiation settlement, failure, and ongoing for cases that have not been repealed) for each sanction objective.',
+  quoteSrc: 'r4',
+  threats: 'The GSDB excludes sanction threats.',
+  basis: 'The GSDB relies on official government statements or indirect confirmations in international press announcements to document whether sanction objectives have been achieved once a sanction was imposed.',
+  basisSrc: 'v1',
+};
+
+// Published aggregate success figures. `pct` is the figure as the authors state it.
+export const GSDB_FIGURES = [
+  { src: 'v1', pct: 34, label: 'Average success rate across policy objectives, 1950 to 2016',
+    quote: 'Overall, the average success rate of around 34% across different policy objectives is very much in line with the effectiveness rate of 34% that is reported in the analysis of Hufbauer et al. (2007) and falls in the middle of the success rates ranging between 27% and 37% form [sic] Threat and Imposition of Economic Sanctions (TIES) database of Morgan et al. (2014).' },
+  { src: 'v2', pct: 42, label: 'Fully successful, 1950 to 2019, ongoing cases left out',
+    quote: 'Overall, the average success rate of all identified sanction cases that have been classified as fully successful over the 1950-2019 period is around 42%, while sanctions with partial success account for about 16%. These percentages are calculated without taking into account ongoing sanction cases.' },
+  { src: 'v2', pct: 30, label: 'At least partial success, 1950 to 2019, ongoing cases counted',
+    quote: 'If the latter were taken into account then the sanctions with at least partial success would account for about 30%, which is very much in line with the effectiveness rate of 34% reported in Hufbauer et al. (2007).' },
+];
+
+// The GSDB authors' own comment on success by objective (v1, section 2.3). No numbers are given per objective.
+export const GSDB_BY_OBJECTIVE = 'Interestingly, except for terrorism related policy objectives, where the success rate is very low, around one third of the listed aims are assessed as successful. A significantly stronger positive assessment is observed for policy objectives related to democracy issues.';
+
+// The tool's rough alignment of TIES issues with GSDB objectives (not from either dataset).
+export const ALIGN = [
+  { ties: [3], gsdb: 'Destabilize regime' },
+  { ties: [5], gsdb: 'Territorial conflict' },
+  { ties: [2], gsdb: 'Prevent war / End war' },
+  { ties: [10], gsdb: 'Terrorism (TIES also counts support for civil-war factions)' },
+  { ties: [8], gsdb: 'Human rights' },
+  { ties: [], gsdb: 'Democracy (no TIES category)' },
+  { ties: [1, 4, 6, 7, 9, 11, 12, 13, 14, 15], gsdb: 'Policy change or Other' },
+];

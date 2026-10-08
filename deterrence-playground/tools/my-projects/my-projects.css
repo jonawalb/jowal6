@@ -1,0 +1,9 @@
+/* My Projects. Built on shared/css/tsm.css tokens only. */
+.mp { max-width: 1400px; margin: 16px auto 32px; padding: 0 16px; }
+.mp-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 14px; }
+.mp-list a { display: flex; flex-direction: column; gap: 6px; height: 100%; box-sizing: border-box; padding: 16px 18px; border: 1px solid var(--rule); border-radius: 6px; background: var(--panel); color: var(--ink); text-decoration: none; }
+.mp-list a:hover, .mp-list a:focus-visible { border-color: var(--accent, currentColor); }
+.mp-list h2 { margin: 0; font: 700 21px/1.15 var(--display); }
+.mp-list p { margin: 0; }
+.mp-meta { font-size: 13px; color: var(--muted); }
+.mp-note { color: var(--muted); }

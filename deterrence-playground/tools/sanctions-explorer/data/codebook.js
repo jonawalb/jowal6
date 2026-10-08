@@ -1,6 +1,64 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1, 4);
-export const CLASSES = __m.CLASSES;
-export const ISSUES = __m.ISSUES;
-export const OUTCOMES = __m.OUTCOMES;
-export const TYPE_INFO = __m.TYPE_INFO;
+// Codebook labels for the TIES variables used by the tool.
+// Source: Morgan, Bapat & Kobayashi, "Threat and Imposition of Sanctions (TIES) Data 4.0 Users' Manual,
+//   Case Level Data", updated June 2013,
+//   https://sanctions.web.unc.edu/wp-content/uploads/sites/18834/2021/04/tiesusersmanualv4.pdf
+// Labels are the manual's category names; `d` paraphrases the manual's definition.
+
+// Variable 12, Issue (up to three per case). Keys are the TIES codes.
+export const ISSUES = {
+  1: { n: 'Contain political influence', d: 'Stop the target exercising non-military power over a third state or an institution.' },
+  2: { n: 'Contain military behavior', d: 'Prevent military action by the target, or respond to it.' },
+  3: { n: 'Destabilize regime', d: 'Overthrow the regime in power.' },
+  4: { n: 'Release citizens, property or material', d: 'Respond to the target seizing citizens, property or material.' },
+  5: { n: 'Solve territorial dispute', d: 'Resolve a territorial conflict with the sender or a third party.' },
+  6: { n: 'Deny strategic materials', d: 'Keep the target from acquiring goods such as uranium, advanced weapons or rocket technology.' },
+  7: { n: 'Retaliate for alliance or alignment choice', d: 'Respond to the target joining, or possibly joining, an alliance or alignment.' },
+  8: { n: 'Improve human rights', d: 'End repressive laws, policies or actions.' },
+  9: { n: 'End weapons or materials proliferation', d: 'Stop the target supplying weapons or materials to a third party.' },
+  10: { n: 'End support of non-state actors', d: 'Stop support for terrorist groups or a faction in a civil war.' },
+  11: { n: 'Deter or punish drug trafficking', d: 'Change the target’s drug policies or enforcement.' },
+  12: { n: 'Improve environmental policies', d: 'Adopt stricter environmental controls.' },
+  13: { n: 'Trade practices', d: 'Change a trade practice, such as tariffs, protection or devaluation.' },
+  14: { n: 'Implement economic reform', d: 'Enact specific economic reforms.' },
+  15: { n: 'Other', d: 'Any other issue; the dataset’s note field describes it.' },
+};
+
+// Unified sanction types (see scripts/build_data.py): the manual codes imposed types (var. 30) and
+// threatened types (var. 16) with different numbers for the same measures.
+export const TYPE_INFO = {
+  total: { n: 'Total embargo', d: 'All economic exchange with the target stopped.' },
+  partial: { n: 'Partial embargo', d: 'Trade in certain goods or services stopped both ways.' },
+  import: { n: 'Import restriction', d: 'Goods from the target barred, limited or charged extra duties.' },
+  export: { n: 'Export restriction', d: 'Goods or services barred from going to the target.' },
+  blockade: { n: 'Blockade', d: 'All states prevented from trading with the target, physically or by threat.' },
+  asset: { n: 'Asset freeze', d: 'Target assets under the sender’s jurisdiction frozen or seized.' },
+  aid: { n: 'Aid cut', d: 'Foreign aid or loans reduced or ended.' },
+  travel: { n: 'Travel ban', d: 'People from the target barred from entering the sender.' },
+  agreement: { n: 'Agreement suspended', d: 'Economic agreements or contracts with the target cancelled.' },
+  other: { n: 'Other (imposed)', d: 'An imposed measure outside the listed types.' },
+  unspecific: { n: 'Unspecified (threat)', d: 'Sanctions threatened without naming a type.' },
+};
+
+// Variable 39, Final Outcome. `cls` is the tool's grouping (see the method notes on the page).
+export const OUTCOMES = {
+  1: { n: 'Partial acquiescence by target to threat', cls: 'part', stage: 'threat' },
+  2: { n: 'Complete acquiescence by target to threat', cls: 'full', stage: 'threat' },
+  3: { n: 'Capitulation by sender in threat stage', cls: 'none', stage: 'threat' },
+  4: { n: 'Stalemate in threat stage', cls: 'none', stage: 'threat' },
+  5: { n: 'Negotiated settlement (threat stage)', cls: 'nego', stage: 'threat' },
+  6: { n: 'Partial acquiescence by target after imposition', cls: 'part', stage: 'imposed' },
+  7: { n: 'Total acquiescence by target after imposition', cls: 'full', stage: 'imposed' },
+  8: { n: 'Capitulation by sender after imposition', cls: 'none', stage: 'imposed' },
+  9: { n: 'Stalemate after imposition', cls: 'none', stage: 'imposed' },
+  10: { n: 'Negotiated settlement after imposition', cls: 'nego', stage: 'imposed' },
+  0: { n: 'No final outcome coded', cls: 'open', stage: '' },
+};
+
+// Outcome classes in chart stacking order. col = token for the colour.
+export const CLASSES = [
+  { k: 'full', n: 'Target gave in fully', col: 'var(--good)' },
+  { k: 'part', n: 'Target gave in partly', col: 'var(--c3)' },
+  { k: 'nego', n: 'Negotiated settlement', col: 'var(--c5)' },
+  { k: 'none', n: 'Sender backed down or stalemate', col: 'var(--bad)' },
+  { k: 'open', n: 'No outcome coded', col: 'var(--faint)' },
+];

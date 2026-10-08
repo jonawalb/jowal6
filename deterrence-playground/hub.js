@@ -148,7 +148,13 @@ const inSub = (t, c, id) => [].concat(t.sub?.[c.id] ?? []).includes(id);
 function subGroups(c, list) {
   return [...c.subs.map(s => [s, list.filter(t => inSub(t, c, s.id))]),
     [{ id: 'more', name: 'More', blurb: 'Other tools in this section.' }, list.filter(t => !c.subs.some(s => inSub(t, c, s.id)))]]
-    .filter(([, ts]) => ts.length);
+    .filter(([, ts]) => ts.length).map(([s, ts]) => [s, subOrder(s, ts)]);
+}
+/** A subsection's `first` slugs lead and its `last` slugs trail; the others keep registry order. */
+function subOrder(s, ts) {
+  const pos = t => { const f = (s.first || []).indexOf(t.slug), l = (s.last || []).indexOf(t.slug);
+    return f >= 0 ? f - 1000 : l >= 0 ? 1000 + l : 0; };
+  return ts.map((t, i) => [t, i]).sort(([a, i], [b, j]) => pos(a) - pos(b) || i - j).map(([t]) => t);
 }
 /** Tile for one subsection, opened like a section tile. */
 function subTile(c, s, ts) {

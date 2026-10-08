@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>My Projects | Interactive Deterrence</title>
+<meta name="description" content="Working models and game trees from ideas too foolish to be shared.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&family=Spline+Sans+Mono:wght@400;500;600&family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="../../shared/css/deterrence-site.css">
+<link rel="stylesheet" href="my-projects.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<main class="mp">
+  <ul class="mp-list" id="mp-list" aria-label="Projects"><li class="mp-note">Loading…</li></ul>
+</main>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'My Projects', sub: 'Working models and game trees from ideas too foolish to be shared.', category: 'Game theory' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

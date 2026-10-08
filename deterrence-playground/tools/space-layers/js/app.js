@@ -7,10 +7,11 @@ import { renderLayerCard } from './layercard.js';
 import { renderBelow } from './below.js';
 
 const load = async (p, k, d) => { try { return (await import(p))[k] ?? d; } catch (e) { console.warn('missing', p, e.message); return d; } };
-const [ASSETS, WEAPONS, TESTS, COUNTS, LAYERS_FACTS, LAUNCH, DEBRIS] = await Promise.all([
+const [ASSETS, WEAPONS, TESTS, COUNTS, LAYERS_FACTS, LAUNCH, DEBRIS, POPM] = await Promise.all([
   load('../data/assets.js', 'ASSETS', []), load('../data/weapons.js', 'WEAPONS', []), load('../data/tests.js', 'TESTS', []),
   load('../data/counts.js', 'COUNTS', null), load('../data/layers.js', 'LAYERS_FACTS', {}),
   import('../data/launch.js').catch(() => ({})), load('../data/debris.js', 'DEBRIS', null),
+  import('../data/population.js').catch(() => null),
 ]);
 const ALL = [...WEAPONS, ...ASSETS].filter(it => it && it.id);
 const BY_ID = Object.fromEntries(ALL.map(it => [it.id, it]));
@@ -20,7 +21,7 @@ const typesPresent = [...new Set(ALL.map(it => it.type))].filter(Boolean).sort((
 const statusPresent = Object.keys(STATUS).filter(s => ALL.some(it => it.status === s));
 const countriesPresent = COUNTRIES.filter(c => ALL.some(it => it.country === c.id));
 
-const DEFAULT = () => ({ layer: 'all', colorBy: 'kind', threat: 'any', scale: 'compressed', sort: 'cost', sel: null,
+const DEFAULT = () => ({ layer: 'all', colorBy: 'kind', pop: true, deb: false, threat: 'any', scale: 'compressed', sort: 'cost', sel: null,
   kinds: new Set(KINDS.map(k => k.id)), types: new Set(typesPresent), countries: new Set(countriesPresent.map(c => c.id)),
   costs: new Set([...COST_BANDS.map(b => b.id), 'none']), statuses: new Set(statusPresent.filter(s => s !== 'retired')) });
 let S = DEFAULT();
@@ -29,6 +30,7 @@ let S = DEFAULT();
 function writeHash() {
   const d = DEFAULT(), p = new URLSearchParams();
   for (const k of ['layer', 'colorBy', 'threat', 'scale', 'sort', 'sel']) if (S[k] !== d[k] && S[k] != null) p.set(k, S[k]);
+  if (!S.pop) p.set('pop', '0'); if (S.deb) p.set('deb', '1');
   for (const k of ['kinds', 'types', 'countries', 'costs', 'statuses']) {
     const a = [...S[k]].sort().join('.'), b = [...d[k]].sort().join('.');
     if (a !== b) p.set(k, a || '-');
@@ -38,6 +40,7 @@ function writeHash() {
 function readHash() {
   const p = new URLSearchParams(location.hash.slice(1));
   for (const k of ['layer', 'colorBy', 'threat', 'scale', 'sort', 'sel']) if (p.has(k)) S[k] = p.get(k);
+  if (p.get('pop') === '0') S.pop = false; if (p.get('deb') === '1') S.deb = true;
   if (p.get('vuln') === '1') S.colorBy = 'vuln';   // older links
   for (const k of ['kinds', 'types', 'countries', 'costs', 'statuses']) if (p.has(k)) S[k] = new Set(p.get(k) === '-' ? [] : p.get(k).split('.'));
   if (!LAYER[S.layer] && S.layer !== 'all') S.layer = 'all';
@@ -48,9 +51,10 @@ function readHash() {
 const isWeapon = it => it.kind === 'offensive' || it.kind === 'defensive';
 const inLayer = (it, L) => L === 'all' || homeLayers(it).includes(L) || (it.reach || []).includes(L)
   || (L === 'spectrum' && (it.type === 'jammer' || it.type === 'cyber'));
-function passes(it) {
-  return S.kinds.has(it.kind) && S.types.has(it.type) && S.countries.has(it.country) && S.statuses.has(it.status)
-    && S.costs.has(bandOf(it) ?? 'none') && inLayer(it, S.layer);
+const FACETS = { kinds: it => it.kind, types: it => it.type, countries: it => it.country, statuses: it => it.status, costs: it => bandOf(it) ?? 'none' };
+// Passes every filter except `skip`, so each facet's counts reflect the layer and all the other filters.
+function passes(it, skip) {
+  return inLayer(it, S.layer) && Object.entries(FACETS).every(([k, f]) => k === skip || S[k].has(f(it)));
 }
 
 // ---- Colors ----
@@ -72,7 +76,7 @@ function legendItems() {
 const $ = id => document.getElementById(id);
 function chips(host, entries, key) {
   host.innerHTML = entries.map(([id, label, sw, n]) =>
-    `<button type="button" data-id="${esc(id)}" aria-pressed="${S[key].has(id)}">${sw ? `<i style="background:var(${sw})"></i>` : ''}${esc(label)}${n != null ? ` <small>${n}</small>` : ''}</button>`).join('');
+    `<button type="button" data-id="${esc(id)}" aria-pressed="${S[key].has(id)}"${n === 0 ? ' class="zero"' : ''}>${sw ? `<i style="background:var(${sw})"></i>` : ''}${esc(label)}${n != null ? ` <small>${n}</small>` : ''}</button>`).join('');
   host.onclick = e => {
     const b = e.target.closest('button'); if (!b) return;
     const id = b.dataset.id; S[key].has(id) ? S[key].delete(id) : S[key].add(id); update();
@@ -82,13 +86,14 @@ function seg(host, key, after) {
   host.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(S[key] === b.dataset.v)));
   host.onclick = e => { const b = e.target.closest('button'); if (!b) return; S[key] = b.dataset.v; after?.(); update(); };
 }
-const count = f => ALL.filter(f).length;
+const count = (key, v) => ALL.filter(it => FACETS[key](it) === v && passes(it, key)).length;
 function renderPanel() {
-  chips($('kinds'), KINDS.map(k => [k.id, k.name, '--k-' + k.id, count(it => it.kind === k.id)]), 'kinds');
-  chips($('types'), typesPresent.map(t => [t, TYPES[t] || t, null, count(it => it.type === t)]), 'types');
-  chips($('countries'), countriesPresent.map(c => [c.id, c.name, '--k-' + c.id, count(it => it.country === c.id)]), 'countries');
-  chips($('costs'), [...COST_BANDS.map(b => [b.id, b.name, '--cb-' + b.id]), ['none', 'No public figure', '--cb-none']], 'costs');
-  chips($('statuses'), statusPresent.map(s => [s, STATUS[s], null, count(it => it.status === s)]), 'statuses');
+  chips($('kinds'), KINDS.map(k => [k.id, k.name, '--k-' + k.id, count('kinds', k.id)]), 'kinds');
+  chips($('types'), typesPresent.map(t => [t, TYPES[t] || t, null, count('types', t)]), 'types');
+  chips($('countries'), countriesPresent.map(c => [c.id, c.name, '--k-' + c.id, count('countries', c.id)]), 'countries');
+  chips($('costs'), [...COST_BANDS.map(b => [b.id, b.name, '--cb-' + b.id, count('costs', b.id)]), ['none', 'No public figure', '--cb-none', count('costs', 'none')]], 'costs');
+  chips($('statuses'), statusPresent.map(s => [s, STATUS[s], null, count('statuses', s)]), 'statuses');
+  $('pop-on').checked = S.pop; $('deb-on').checked = S.deb;
   seg($('colorby'), 'colorBy');
   seg($('threat'), 'threat');
   seg($('scale'), 'scale', () => globe.setScale(S.scale));
@@ -134,7 +139,7 @@ narrow.addEventListener('change', placeDetail); placeDetail();
 const noGlobe = () => {
   globeEl.insertAdjacentHTML('afterbegin', '<p class="sl-noglobe">This browser cannot draw the 3D globe (WebGL is off or unavailable). The filters, list, details and sections below still work.</p>');
   const nop = () => {};
-  return { setItems: nop, recolor: nop, setScale: nop, focusLayer: nop, setThreatLayers: nop, select: nop };
+  return { setPopulation: nop, filterPopulation: nop, setItems: nop, recolor: nop, setScale: nop, focusLayer: nop, setThreatLayers: nop, select: nop };
 };
 let globe;
 try { globe = makeGlobe(); } catch (e) { console.warn('globe unavailable:', e.message); globe = noGlobe(); }
@@ -161,12 +166,38 @@ function threatLayers(vis) {
   return set;
 }
 
+// Background population: every active satellite (by country) and, optionally, tracked debris.
+const POP_C = POPM?.POP_COUNTRIES || [];
+if (POPM) globe.setPopulation(POPM.POP);
+let popKey = '';
+const popLayer = (pe, ap) => { const m = (pe + ap) / 2; return ap - pe > 10000 ? 'heo' : m < 450 ? 'vleo' : m < 2000 ? 'leo' : m < 34000 ? 'meo' : m < 38500 ? 'geo' : 'far'; };
+function updatePopulation() {
+  if (!POPM) { $('pop-n').textContent = $('deb-n').textContent = ''; return; }
+  // Orbit layers filter the population; ground, links and all layers show everything; cislunar shows none.
+  const L = ['vleo', 'leo', 'meo', 'geo', 'heo'].includes(S.layer) ? S.layer : S.layer === 'cislunar' ? 'none' : null;
+  const countryOk = c => S.countries.has(POP_C[c]) || POP_C[c] === 'other';
+  let nA = 0, nD = 0;
+  const P = POPM.POP;
+  for (let i = 0; i < P.length; i += 4) {
+    if (L && popLayer(P[i], P[i + 1]) !== L) continue;
+    if (P[i + 3] < 0) nD++; else if (countryOk(P[i + 3])) nA++;
+  }
+  $('pop-n').textContent = '(' + nA.toLocaleString('en-US') + ')';
+  $('deb-n').textContent = '(' + nD.toLocaleString('en-US') + ')';
+  const key = [S.pop, S.deb, L, [...S.countries].sort().join(), S.colorBy, matchMedia('(prefers-color-scheme: dark)').matches].join('|');
+  if (key === popKey) return; popKey = key;
+  const v = n => cssVar(n, globeEl);
+  globe.filterPopulation((i, c, lay) => (c < 0 ? S.deb : S.pop && countryOk(c)) && (!L || lay === L),
+    c => c < 0 ? '#8c7b6b' : S.colorBy === 'country' ? (v('--k-' + POP_C[c]) || v('--k-com')) : '#a9c7f0');
+}
+
 let lastLayer = null;
 function update() {
   renderPanel();
-  const vis = ALL.filter(passes);
+  const vis = ALL.filter(it => passes(it));
   globe.setItems(vis, it => colorOf(it, globeEl));
   globe.setThreatLayers(threatLayers(vis));
+  updatePopulation();
   if (S.layer !== lastLayer) { globe.focusLayer(S.layer); lastLayer = S.layer; }
   $('legend').innerHTML = legendItems().map(([n, c]) => `<span><i style="background:${cssVar(c, globeEl)}"></i>${esc(n)}</span>`).join('');
   renderList(vis);
@@ -176,6 +207,8 @@ function update() {
 }
 
 $('layerbar').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; S.layer = b.dataset.v; update(); });
+$('pop-on').addEventListener('change', e => { S.pop = e.target.checked; update(); });
+$('deb-on').addEventListener('change', e => { S.deb = e.target.checked; update(); });
 $('sort').addEventListener('change', e => { S.sort = e.target.value; update(); });
 $('list').addEventListener('click', e => { const b = e.target.closest('button[data-id]'); if (!b) return; select(b.dataset.id); writeHash();
   if (matchMedia('(max-width: 760px)').matches) $('detail').scrollIntoView({ behavior: 'smooth', block: 'start' }); });

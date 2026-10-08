@@ -183,6 +183,56 @@ export function createGlobe(host, { onPick, onHover }) {
     paint(); place(0);
   }
 
+  // ---- Background population: every catalogued satellite / debris object, drawn small. ----
+  // Orbit shape and tilt come from the catalog; orientation and position along the orbit are random.
+  let pop = null, popPts = null, popVis = [];
+  function setPopulation(P) {
+    const n = P.length / 4, r = rng('population');
+    pop = { n, peri: new Float32Array(n), apo: new Float32Array(n), e: new Float32Array(n), a: new Float32Array(n),
+      ci: new Float32Array(n), si: new Float32Array(n), co: new Float32Array(n), so: new Float32Array(n),
+      w: new Float32Array(n), m0: new Float32Array(n), per: new Float32Array(n), c: new Int8Array(n), layer: [] };
+    for (let i = 0; i < n; i++) {
+      const pe = P[i * 4], ap = P[i * 4 + 1], inc = P[i * 4 + 2] / 10 * deg, raan = r() * Math.PI * 2;
+      const a = 6371 + (pe + ap) / 2;
+      pop.peri[i] = pe; pop.apo[i] = ap; pop.a[i] = a; pop.e[i] = (ap - pe) / (ap + pe + 2 * 6371);
+      pop.ci[i] = Math.cos(inc); pop.si[i] = Math.sin(inc); pop.co[i] = Math.cos(raan); pop.so[i] = Math.sin(raan);
+      pop.w[i] = r() * Math.PI * 2; pop.m0[i] = r() * Math.PI * 2; pop.per[i] = LEO_SECONDS * Math.pow(a / 6871, 1.5);
+      pop.c[i] = P[i * 4 + 3];
+      const mean = (pe + ap) / 2;
+      pop.layer.push(ap - pe > 10000 ? 'heo' : mean < 450 ? 'vleo' : mean < 2000 ? 'leo' : mean < 34000 ? 'meo' : mean < 38500 ? 'geo' : 'far');
+    }
+  }
+  // keep(i) decides which objects show; color(i) gives a CSS color string.
+  function filterPopulation(keep, color) {
+    if (!pop) return;
+    popVis = []; for (let i = 0; i < pop.n; i++) if (keep(i, pop.c[i], pop.layer[i])) popVis.push(i);
+    if (popPts) { scene.remove(popPts); popPts.geometry.dispose(); }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(popVis.length * 3), 3));
+    const col = new Float32Array(popVis.length * 3), c = new THREE.Color(), cache = {};
+    popVis.forEach((i, k) => { const key = pop.c[i]; c.set(cache[key] ??= color(key)); col[k * 3] = c.r; col[k * 3 + 1] = c.g; col[k * 3 + 2] = c.b; });
+    g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+    popPts = new THREE.Points(g, new THREE.PointsMaterial({ size: 2.2 * renderer.getPixelRatio(), sizeAttenuation: false, vertexColors: true, transparent: true, opacity: 0.7, depthWrite: false }));
+    popPts.renderOrder = -2; scene.add(popPts);
+    placePop(simT); render();
+  }
+  function placePop(t) {
+    if (!popPts) return;
+    const pos = popPts.geometry.attributes.position.array;
+    for (let k = 0; k < popVis.length; k++) {
+      const i = popVis[k], e = pop.e[i], M = pop.m0[i] + t / pop.per[i] * 2 * Math.PI;
+      let nu, rk;
+      if (e < 0.01) { nu = M; rk = pop.a[i]; }
+      else { let E = M; for (let j = 0; j < 5; j++) E = M + e * Math.sin(E);
+        rk = pop.a[i] * (1 - e * Math.cos(E)); nu = 2 * Math.atan2(Math.sqrt(1 + e) * Math.sin(E / 2), Math.sqrt(1 - e) * Math.cos(E / 2)); }
+      const R = radius(rk - 6371, scale), u = pop.w[i] + nu;
+      const x0 = R * Math.cos(u), z0 = R * Math.sin(u), y1 = -z0 * pop.si[i], z1 = z0 * pop.ci[i];
+      pos[k * 3] = x0 * pop.co[i] + z1 * pop.so[i]; pos[k * 3 + 1] = y1; pos[k * 3 + 2] = -x0 * pop.so[i] + z1 * pop.co[i];
+    }
+    popPts.geometry.attributes.position.needsUpdate = true;
+    popPts.geometry.computeBoundingSphere();
+  }
+
   function paint() {
     if (!pts) return;
     const col = pts.geometry.attributes.color, c = new THREE.Color();
@@ -308,7 +358,7 @@ export function createGlobe(host, { onPick, onHover }) {
       camera.position.lerpVectors(camTween.from, camTween.to, e); if (k >= 1) camTween = null; needs = true;
     }
     if (!needs) return;
-    controls.update(); place(simT); if (selected?.reach) drawReach(); updateLabels();
+    controls.update(); place(simT); placePop(simT); if (selected?.reach) drawReach(); updateLabels();
     renderer.render(scene, camera); needs = false;
   }
   new ResizeObserver(() => { camera.aspect = W() / H(); camera.updateProjectionMatrix(); renderer.setSize(W(), H()); render(); }).observe(host);
@@ -316,6 +366,7 @@ export function createGlobe(host, { onPick, onHover }) {
   buildShells(); fit('all', true); requestAnimationFrame(frame);
 
   return {
+    setPopulation, filterPopulation,
     setItems(next, colorFn) { list = next; colorOf = colorFn; buildDots(); render(); },
     recolor(colorFn) { colorOf = colorFn; paint(); render(); },
     setScale(s) { scale = s; buildShells(); shellStyle(); fit(focus, false); render(); },

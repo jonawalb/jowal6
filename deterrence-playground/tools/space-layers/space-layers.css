@@ -163,3 +163,5 @@
 .sl-noglobe { position: absolute; inset: 40% 10% auto; text-align: center; color: var(--sp-ink); margin: 0; }
 .sl-debris { grid-template-columns: 82px 1fr 92px; row-gap: 8px; } .sl-debris small { display: block; color: var(--muted); font-size: 11.5px; margin-top: 2px; }
 .sl-debris .sl-bar { display: block; }
+.sl-chips button.zero { opacity: .45; }
+.sl-chips button.zero small { color: var(--faint); }

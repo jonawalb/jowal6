@@ -8,7 +8,8 @@ export const SOURCE = {
   mid_en: 'Russian Foreign Ministry (English)', mid_ru: 'Russian Foreign Ministry (Russian)', scrf_ru: 'Russian Security Council',
   mil_ru: 'Russian Defence Ministry (mil.ru)', government_ru: 'Russian Government', government_archive_ru: 'Russian Government (archive site)',
   premier_archive_ru: 'Prime Minister\'s site, 2008–2012 (archive)', duma_ru: 'State Duma', council_ru: 'Federation Council',
-  telegram_ru: 'Telegram: Zakharova, Medvedev and government channels', telegram_media_ru: 'Telegram: RIA Novosti and TASS channels',
+  telegram_ru: 'Telegram: verified official channels (Foreign and Defence Ministries, Government, Zakharova, Medvedev, Volodin)',
+  telegram_unofficial_ru: 'Telegram: forwarded posts and unverified channels (not official)', telegram_media_ru: 'Telegram: RIA Novosti and TASS channels',
   ria_ru: 'RIA Novosti', tass_com: 'TASS (English)', tass_ru: 'TASS (Russian)', rt_com: 'RT (English)', rt_ru: 'RT (Russian)',
   sputnik_en: 'Sputnik (English)', rg_ru: 'Rossiyskaya Gazeta', vesti_ru: 'Vesti (VGTRK)', '1tv_ru': 'Channel One',
   tvzvezda_ru: 'TV Zvezda (Defence Ministry TV)', redstar_ru: 'Krasnaya Zvezda (Defence Ministry daily)',
@@ -47,7 +48,7 @@ export const SOURCE = {
   granma_en: 'Granma (English)', tw_mofa_en: 'Taiwan Foreign Ministry (English)', tw_mofa_zh: 'Taiwan Foreign Ministry (Chinese)',
   tw_ey_en: 'Taiwan Executive Yuan (English)', tw_ey_zh: 'Taiwan Executive Yuan (Chinese)', tw_mac_zh: 'Taiwan Mainland Affairs Council',
   tw_president_en: 'Taiwan President (English)', tw_president_zh: 'Taiwan President (Chinese)', tw_cna: 'Central News Agency (Chinese)',
-  tw_focustaiwan: 'Focus Taiwan (CNA English)', tw_taipeitimes: 'Taipei Times',
+  tw_focustaiwan: 'Focus Taiwan (CNA English)', tw_taipeitimes: 'Taipei Times (privately owned)',
 };
 
 // Streams whose collection has stopped, and why (rhetoric-corpus SOURCES.md, checked 2026-10-06).

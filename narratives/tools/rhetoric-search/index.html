@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Rhetoric Search | Narrative Tracking</title>
-<meta name="description" content="Search official statements sentence by sentence, and find state-media articles by headline and link, with every match dated and sourced.">
+<meta name="description" content="Search official statements sentence by sentence, and find media articles by headline and link, with every match dated and sourced.">
 <link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -72,7 +72,7 @@
   <div class="col">
     <h2>How it works</h2>
     <p>Every official document is split into sentences of at most 300 characters. A search finds the sentences that contain your words and shows each one with its date, source, speaker and a link to the original page. Official counts are of matching sentences; one long speech can contribute several. Media counts are of articles, with the number of mentions in each.</p>
-    <p><b>Official texts</b> (presidential transcripts, foreign and defence ministry briefings, the Taiwan Affairs Office and other government statements) are public records, so each matching sentence is shown with your words highlighted, and <b>Read document</b> opens the full text with links to the original page and its Wayback Machine copy. <b>State media and commentary</b> (Xinhua, People's Daily, CGTN, TASS, RIA, RT and others) are copyrighted journalism, so the site keeps no text from them at all: a matching article is listed by headline, outlet, date and link, with the number of times your words occur in it. Read the article at the source or its Wayback Machine copy.</p>
+    <p><b>Official texts</b> (presidential transcripts, foreign and defence ministry briefings, the Taiwan Affairs Office and other government statements) are public records, so each matching sentence is shown with your words highlighted, and <b>Read document</b> opens the full text with links to the original page and its Wayback Machine copy. <b>State and other media and commentary</b> (state outlets such as Xinhua, People's Daily, CGTN, TASS, RIA and RT; privately owned outlets such as the Taipei Times; and Telegram posts that are forwards or come from channels not verified as official) are not official statements, so the site keeps no text from them at all: a matching article is listed by headline, outlet, date and link, with the number of times your words occur in it. Read the article at the source or its Wayback Machine copy.</p>
     <p>The search runs in your browser. The site keeps a word list that says which parts of the collection hold each word, so a search for a rare term downloads only the few parts that contain it. Common words touch many parts, so the count keeps rising for a few seconds while they load; the bar above the results shows progress.</p>
     <p>Matching ignores capitals and accents, treats ё as е and the Arabic and Persian forms of ی and ک as one letter. It does not know grammar: use a stem with * for languages with many word endings.</p>
   </div>
@@ -100,7 +100,7 @@
 <footer id="tsm-foot"></footer>
 <script type="module">
   import { mountChrome } from '../../shared/js/chrome.js';
-  mountChrome({ title: 'Rhetoric Search', sub: 'Search the official statements and state media behind the rhetoric heatmaps. Official sentences are quoted; media articles are listed by headline and link.', category: 'State rhetoric' });
+  mountChrome({ title: 'Rhetoric Search', sub: 'Search the official statements and state and other media behind the rhetoric heatmaps. Official sentences are quoted; media articles are listed by headline and link.', category: 'State rhetoric' });
 </script>
 <script>
   // A different set of example searches on each visit, across the collection's languages.

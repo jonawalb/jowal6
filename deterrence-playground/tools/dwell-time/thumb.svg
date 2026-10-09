@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+  <rect width="640" height="400" fill="#f1efe6"/>
+  <text x="40" y="70" font-family="IBM Plex Mono, monospace" font-size="15" fill="#6f7a73">ATTACKER (HIDDEN)</text>
+  <line x1="40" y1="110" x2="600" y2="110" stroke="#cfcbbb" stroke-width="3"/>
+  <g stroke="#f1efe6" stroke-width="3">
+    <circle cx="80" cy="110" r="13" fill="#2c7a4b"/><circle cx="150" cy="110" r="13" fill="#2c7a4b"/>
+    <circle cx="225" cy="110" r="13" fill="#c8352b"/><circle cx="300" cy="110" r="13" fill="#2c7a4b"/>
+    <circle cx="370" cy="110" r="13" fill="#c8352b"/><circle cx="445" cy="110" r="13" fill="#c8352b"/>
+    <circle cx="520" cy="110" r="13" fill="#dedbcd"/><circle cx="580" cy="110" r="13" fill="#dedbcd"/>
+  </g>
+  <text x="40" y="190" font-family="IBM Plex Mono, monospace" font-size="15" fill="#6f7a73">YOUR TEAM</text>
+  <g>
+    <rect x="40" y="205" width="110" height="26" rx="3" fill="#1b4fd4" opacity=".85"/><rect x="160" y="205" width="70" height="26" rx="3" fill="#1b4fd4" opacity=".55"/>
+    <rect x="40" y="240" width="60" height="26" rx="3" fill="#a1487a" opacity=".8"/><rect x="110" y="240" width="150" height="26" rx="3" fill="#0c8474" opacity=".8"/>
+    <rect x="270" y="205" width="90" height="26" rx="3" fill="#e8753a"/><rect x="370" y="240" width="130" height="26" rx="3" fill="#1b4fd4" opacity=".85"/>
+    <rect x="300" y="275" width="200" height="26" rx="3" fill="#033303"/>
+  </g>
+  <rect x="40" y="325" width="560" height="38" rx="4" fill="#fbfbf8" stroke="#cfcbbb"/>
+  <text x="56" y="350" font-family="IBM Plex Mono, monospace" font-size="16" fill="#14201a">Mon 02:40 · Day 1</text>
+  <rect x="300" y="333" width="140" height="22" rx="11" fill="none" stroke="#8f5d0f"/>
+  <text x="314" y="349" font-family="IBM Plex Sans, sans-serif" font-size="13" fill="#8f5d0f">8-K: 3 days left</text>
+  <rect x="452" y="333" width="132" height="22" rx="11" fill="none" stroke="#b3261e"/>
+  <text x="466" y="349" font-family="IBM Plex Sans, sans-serif" font-size="13" fill="#b3261e">36-hr: 9 h left</text>
+</svg>

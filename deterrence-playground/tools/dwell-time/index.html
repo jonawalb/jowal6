@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dwell Time | Interactive Deterrence</title>
+<meta name="description" content="A cyber incident-response exercise for executives and security teams. Play the CEO, CISO, IT, legal and communications seats against a hidden attacker, alone or as a facilitated tabletop, then get an after-action report mapped to NIST CSF 2.0.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&family=Spline+Sans+Mono:wght@400;500;600&family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="../../shared/css/deterrence-site.css">
+<link rel="stylesheet" href="dwell-time.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+<p class="dt-flag"><b>Fictional organizations and attackers.</b> The attackers' steps follow public government reporting and MITRE ATT&amp;CK; the reporting clocks follow real US and EU rules as of October 2026. Probabilities and costs are illustrative game design. This is not legal advice.</p>
+
+<main class="dt-main">
+  <!-- ======================= Setup ======================= -->
+  <section class="card dt-setup" id="setup" aria-labelledby="setup-t">
+    <h2 id="setup-t" class="dt-h">Set up the exercise</h2>
+
+    <fieldset class="dt-step">
+      <legend><span class="dt-n">1</span> Who is playing?</legend>
+      <div class="dt-cards two" id="modes" role="radiogroup" aria-label="Mode"></div>
+    </fieldset>
+
+    <fieldset class="dt-step">
+      <legend><span class="dt-n">2</span> Scenario</legend>
+      <div class="dt-cards" id="scens" role="radiogroup" aria-label="Scenario"></div>
+    </fieldset>
+
+    <fieldset class="dt-step">
+      <legend><span class="dt-n">3</span> Organization</legend>
+      <div class="dt-cards" id="sectors" role="radiogroup" aria-label="Organization"></div>
+      <p class="fine" id="sector-clocks"></p>
+    </fieldset>
+
+    <fieldset class="dt-step">
+      <legend><span class="dt-n">4</span> Security posture before the incident</legend>
+      <div class="dt-seg" id="presets" role="radiogroup" aria-label="Posture preset"></div>
+      <details class="dt-ctl">
+        <summary>Adjust individual controls</summary>
+        <div class="dt-ctl-grid" id="controls"></div>
+      </details>
+    </fieldset>
+
+    <div class="dt-go">
+      <label class="dt-seed">Exercise code <input id="seed" inputmode="numeric" size="7" aria-describedby="seed-x"></label>
+      <p class="fine" id="seed-x">Same code, same choices, same attacker. Use it to rerun an exercise with another team.</p>
+      <button type="button" class="btn solid dt-big" id="begin">Start the exercise</button>
+    </div>
+  </section>
+
+  <!-- ======================= Play ======================= -->
+  <section class="dt-play" id="play" hidden>
+    <div class="card dt-bar" id="bar">
+      <div class="dt-when"><p class="eyebrow" id="turn-k"></p><p class="dt-clock num" id="clock"></p><p class="fine" id="next-in"></p></div>
+      <div class="dt-meters" id="meters"></div>
+      <div class="dt-clocks" id="clocks" aria-label="Reporting clocks"></div>
+    </div>
+
+    <div class="card dt-fac" id="fac" hidden>
+      <div class="dt-fac-row">
+        <p class="eyebrow">Facilitator</p>
+        <div class="dt-timer"><span class="num" id="timer">10:00</span>
+          <button type="button" class="btn" id="timer-go">Start timer</button>
+          <button type="button" class="btn" id="timer-reset">Reset</button></div>
+        <button type="button" class="btn" id="peek" aria-pressed="false">Peek at the attacker</button>
+      </div>
+      <div id="peek-box" class="dt-peek" hidden></div>
+      <label class="dt-note">Notes for the after-action report (this turn)
+        <textarea id="note" rows="2" placeholder="What the room argued about, who decided, what was missing…"></textarea></label>
+    </div>
+
+    <div class="dt-grid">
+      <section class="dt-left" aria-labelledby="feed-t">
+        <div class="card">
+          <h2 id="feed-t" class="dt-h2">What you know</h2>
+          <div id="feed" class="dt-feed" aria-live="polite"></div>
+          <details class="dt-earlier" id="earlier-box"><summary>Earlier turns</summary><div id="earlier" class="dt-feed"></div></details>
+        </div>
+        <div class="card">
+          <h2 class="dt-h2">Alert board</h2>
+          <p class="fine">Every alert you have seen. Triage tells real from false. Containment acts on every open alert of its kind, real or not.</p>
+          <div id="board" class="dt-board"></div>
+        </div>
+      </section>
+
+      <section class="dt-right card" aria-labelledby="dec-t">
+        <div class="dt-dec-head">
+          <h2 id="dec-t" class="dt-h2">Decisions this turn</h2>
+          <p class="fine" id="slots-x">Each seat has a few actions a turn. Declaring a major incident and bringing in responders add more.</p>
+          <button type="button" class="btn" id="details" aria-pressed="false" hidden>Show details</button>
+        </div>
+        <div class="dt-tabs" id="tabs" role="tablist" aria-label="Seats"></div>
+        <div id="seats" class="dt-seats"></div>
+        <div class="dt-endturn">
+          <p class="fine" id="chosen"></p>
+          <button type="button" class="btn solid dt-big" id="end-turn">End turn</button>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <!-- ======================= After-action report ======================= -->
+  <section class="card dt-end" id="end" hidden aria-labelledby="end-t" tabindex="-1">
+    <div class="dt-end-head">
+      <div>
+        <p class="eyebrow" id="end-k">After-action report</p>
+        <h2 id="end-t" class="dt-h"></h2>
+        <p id="end-x" class="dt-lede"></p>
+      </div>
+      <div class="dt-score"><p class="dt-bignum num" id="total"></p><p class="fine">of 100</p></div>
+    </div>
+    <div class="dt-export noprint">
+      <button type="button" class="btn" id="print">Print or save as PDF</button>
+      <button type="button" class="btn" id="json">Download JSON</button>
+      <button type="button" class="btn" id="csv">Download CSV</button>
+      <button type="button" class="btn" id="again-same">Rerun this exercise</button>
+      <button type="button" class="btn solid" id="again">New exercise</button>
+    </div>
+    <div class="dt-endgrid">
+      <div><h3>Score</h3><div id="parts" class="dt-parts"></div></div>
+      <div><h3>Cost</h3><div id="money"></div><h3>Against the textbook responder</h3><p id="bench" class="fine"></p></div>
+    </div>
+    <h3>Findings</h3>
+    <ol id="findings" class="dt-findings"></ol>
+    <h3>What really happened</h3>
+    <p class="fine">Left: everything the attacker did, with MITRE ATT&amp;CK technique IDs, and whether your telemetry saw it. Right: what each seat decided.</p>
+    <div class="dt-tlwrap"><table id="timeline" class="dt-tl"></table></div>
+    <h3>Reporting clocks</h3>
+    <div class="dt-tlwrap"><table id="clocktable" class="dt-tl"></table></div>
+    <h3>NIST CSF 2.0 coverage</h3>
+    <p class="fine">Categories your team exercised through its decisions (solid) or had in place as controls (light). Blank categories were not exercised in this incident.</p>
+    <div id="csf" class="dt-csf"></div>
+  </section>
+
+  <section class="card dt-about noprint">
+    <details>
+      <summary><b>How the exercise works</b></summary>
+      <ul>
+        <li><b>The attacker</b> follows a sequence of steps drawn from public reporting on its type of group. Each turn it tries its next step or two. Your controls change its odds; your telemetry decides whether you see it. You see alerts, not the attacker.</li>
+        <li><b>Footholds.</b> Each successful step can leave access behind: an account, a host, privileged credentials, persistence, cloud tokens, a mailbox rule. Remove some while others survive and the attacker notices (a "tip-off"): some groups speed up, some dig in, insiders grab what they can.</li>
+        <li><b>Alerts</b> include false positives. Triage tells them apart. Containment hits every open alert of its kind, so acting before triage locks out innocent employees.</li>
+        <li><b>Seats.</b> CEO, CISO, IT/SecOps, Legal and Comms each get a few actions a turn. Business-disrupting containment needs the CEO's authorization. Declaring a major incident gives every seat more capacity; outside responders add hands to IT.</li>
+        <li><b>Clocks</b> start when the rule says they do (awareness, a materiality determination, operational disruption, a confirmed data breach, a ransom payment) and run in real hours against the game clock.</li>
+        <li><b>Score</b>: attacker denied 35%, operations 20%, cost net of insurance 15%, obligations met 15%, reputation 10%, evidence 5%.</li>
+      </ul>
+    </details>
+    <details>
+      <summary><b>Running it as a tabletop</b></summary>
+      <ul>
+        <li>Project the screen. Seat at least one person per role: CEO, CISO, IT/SecOps, Legal, Comms. Add HR, finance or operations as observers if you like.</li>
+        <li>Each turn: read the new information aloud, give each seat its question, set the timer (8–10 minutes), let each seat choose its actions, then end the turn. Six to eight turns take 60–90 minutes.</li>
+        <li>The facilitator can peek at the attacker's real position to steer the discussion. Do not show the room.</li>
+        <li>Type the room's arguments into the notes box; they go into the after-action report. Finish with a hotwash, then export the report.</li>
+      </ul>
+    </details>
+    <details>
+      <summary><b>Sources</b></summary>
+      <ul class="fine" id="sources"></ul>
+    </details>
+  </section>
+</main>
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Dwell Time', sub: 'A cyber incident-response exercise: run the CEO, CISO, IT, legal and communications seats against a hidden attacker, then get the after-action report.', category: 'Force & wargame models' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

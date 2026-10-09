@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trailer: Dwell Time</title>
+<link rel="stylesheet" href="../kit/kit.css">
+<style>
+  .edge { stroke: var(--paper); stroke-opacity: .14; stroke-width: 2; }
+  .node rect { fill: #11231b; stroke: var(--paper); stroke-opacity: .55; stroke-width: 1.8; }
+  .node text { font: 400 13px var(--mono); letter-spacing: .1em; text-transform: uppercase; fill: var(--paper); }
+  .path { fill: none; stroke: var(--red); stroke-width: 4; stroke-linecap: round; }
+  .ping { fill: none; stroke: var(--amber); stroke-width: 3; }
+  .cut { stroke: var(--amber); stroke-width: 6; stroke-linecap: round; }
+  .chip rect { fill: none; stroke-width: 2; }
+  .chip text { font: 400 16px var(--mono); letter-spacing: .06em; }
+  .seat { font: 400 14px var(--mono); letter-spacing: .18em; text-transform: uppercase; fill: var(--muted); }
+</style>
+</head><body>
+<div class="stage"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated preview of Dwell Time: a network map where a hidden attacker moves from a help-desk account to the hypervisors, the defenders see only scattered alerts, a partial containment makes the attacker reroute, and a coordinated eviction clears it while reporting clocks count down."><title>Dwell Time</title></svg></div>
+<script type="module">
+import { run, seg, ease, lerp, el, bg, captions, endCard, clamp } from '../kit/kit.js';
+const svg = document.querySelector('svg');
+bg(svg);
+
+// ---- The network: a fictional organization, left (internet) to right (crown jewels).
+const N = {
+  web:  [220, 470, 'Help desk'],  id:   [470, 330, 'Identity'],   jump: [470, 620, 'Jump server'],
+  dc:   [760, 470, 'Domain ctrl'], mail: [760, 230, 'Mail + chat'], vc:  [1050, 360, 'vCenter'],
+  bak:  [1050, 650, 'Backups'],    crown: [1330, 470, 'Customer data'],
+};
+const E = [['web', 'id'], ['web', 'jump'], ['id', 'dc'], ['jump', 'dc'], ['id', 'mail'], ['dc', 'mail'], ['dc', 'vc'], ['dc', 'bak'], ['vc', 'crown'], ['bak', 'crown']];
+const world = el('g', {}, svg);
+for (const [a, b] of E) el('line', { x1: N[a][0], y1: N[a][1], x2: N[b][0], y2: N[b][1], class: 'edge' }, world);
+const nodes = {};
+for (const [k, [x, y, lab]] of Object.entries(N)) {
+  const g = el('g', { class: 'node', transform: `translate(${x} ${y})` }, world);
+  const r = el('rect', { x: -78, y: -28, width: 156, height: 56, rx: 6 }, g);
+  el('text', { x: 0, y: 5, 'text-anchor': 'middle' }, g).textContent = lab;
+  nodes[k] = { g, r };
+}
+// The attacker's real route (hidden from the players), and the detour it takes when tipped off.
+const P = (...ks) => ks.map((k, i) => `${i ? 'L' : 'M'}${N[k][0]} ${N[k][1]}`).join(' ');
+const route = el('path', { d: P('web', 'id', 'dc', 'vc', 'crown'), class: 'path', filter: 'url(#kit-glow)' }, world);
+const detour = el('path', { d: P('dc', 'mail'), class: 'path', 'stroke-dasharray': '10 12' }, world);
+const detour2 = el('path', { d: P('jump', 'dc', 'bak'), class: 'path', filter: 'url(#kit-glow)' }, world);
+for (const p of [route, detour, detour2]) { const L = p.getTotalLength(); p.dataset.L = L; p.style.strokeDasharray = `${L} ${L}`; }
+detour.style.strokeDasharray = '10 12';
+const draw = (p, u) => { const L = +p.dataset.L; p.style.strokeDashoffset = L * (1 - u); p.setAttribute('opacity', u > 0 ? 1 : 0); };
+
+// Alerts the defenders actually see: amber pings on some nodes, not all.
+const pings = ['id', 'jump', 'bak'].map((k, i) => ({ k, c: el('circle', { cx: N[k][0], cy: N[k][1], r: 0, class: 'ping' }, world), t0: [3.6, 4.6, 5.4][i] }));
+const fog = el('rect', { x: 140, y: 170, width: 1300, height: 560, fill: '#070f0b', opacity: 0 }, world);
+svg.appendChild(route); // keep the hidden route above the fog when we reveal it
+
+// The cut that tips it off, and the coordinated eviction.
+const cut = el('g', { opacity: 0 }, svg);
+// The X sits on the node's corner so the label stays readable.
+el('line', { x1: 548 - 16, y1: 302 - 16, x2: 548 + 16, y2: 302 + 16, class: 'cut' }, cut);
+el('line', { x1: 548 + 16, y1: 302 - 16, x2: 548 - 16, y2: 302 + 16, class: 'cut' }, cut);
+const sweep = el('g', { opacity: 0 }, svg);
+for (const k of ['id', 'jump', 'dc', 'mail', 'vc', 'bak']) el('rect', { x: N[k][0] - 84, y: N[k][1] - 34, width: 168, height: 68, rx: 8, fill: 'none', stroke: 'var(--amber)', 'stroke-width': 4 }, sweep);
+
+// Seats and clocks.
+const seats = el('g', { opacity: 0 }, svg);
+['CEO', 'CISO', 'IT / SecOps', 'Legal', 'Comms'].forEach((s, i) => { el('text', { x: 220 + i * 250, y: 120, class: 'seat' }, seats).textContent = s; });
+const chips = el('g', { opacity: 0 }, svg);
+const chipData = [['SEC 8-K', 96], ['Bank 36 h', 36], ['NYDFS 72 h', 72]];
+const chipTx = chipData.map(([lab], i) => {
+  const g = el('g', { class: 'chip', transform: `translate(${300 + i * 345} 800)` }, chips);
+  const r = el('rect', { x: 0, y: -26, width: 315, height: 40, rx: 20, stroke: 'var(--amber)' }, g);
+  const t = el('text', { x: 157, y: 0, 'text-anchor': 'middle', fill: 'var(--amber)' }, g);
+  return { r, t, lab };
+});
+
+// Opening hook.
+const hook = el('text', { x: 800, y: 500, 'text-anchor': 'middle', class: 't-hook', opacity: 0 }, svg);
+hook.innerHTML = 'The attacker is <tspan class="hot">already inside.</tspan>';
+
+const cap = captions(svg, [
+  [2.6, 6.4, 'You see alerts. You never see the attacker.'],
+  [6.4, 9.4, 'Remove part of its access, and it notices.'],
+  [9.4, 13.0, 'Scope first. Then evict everything at once, and file before the clocks run out.'],
+]);
+const end = endCard(svg, { kicker: 'Cyber incident response', title: 'Dwell Time', line: 'CEO, CISO, IT, legal and comms against a hidden attacker.', cta: 'Play it' });
+
+run({ duration: 16, poster: 11.6, frame: t => {
+  hook.setAttribute('opacity', ease.out(seg(t, .2, .9)) * (1 - seg(t, 2.1, 2.6)));
+  world.setAttribute('opacity', ease.out(seg(t, 2.2, 3)));
+  seats.setAttribute('opacity', ease.out(seg(t, 2.6, 3.3)) * (1 - seg(t, 12.6, 13)));
+
+  // The hidden route draws itself; the fog shows what the defenders can't see, then lifts at the end.
+  draw(route, ease.inOut(seg(t, 2.8, 6.2)) * (1 - seg(t, 10.6, 11.2)));
+  fog.setAttribute('opacity', .45 * seg(t, 2.8, 3.4) * (1 - seg(t, 9.6, 10.2)));
+  route.setAttribute('stroke-opacity', .35 + .65 * seg(t, 9.6, 10.2));
+  for (const p of pings) {
+    const u = (t - p.t0) % 2.2, on = t > p.t0 && t < 12.6;
+    p.c.setAttribute('r', on ? 30 + 70 * ease.out(clamp(u / 1.4)) : 0);
+    p.c.setAttribute('opacity', on ? 1 - clamp(u / 1.4) : 0);
+    nodes[p.k].r.setAttribute('stroke', t > p.t0 && t < 12.6 ? 'var(--amber)' : 'var(--paper)');
+  }
+
+  // Partial containment: one account cut, the attacker detours through the jump server and grabs the backups.
+  cut.setAttribute('opacity', ease.out(seg(t, 6.6, 7.0)) * (1 - seg(t, 12.4, 12.8)));
+  draw(detour2, ease.inOut(seg(t, 7.2, 8.6)) * (1 - seg(t, 10.6, 11.2)));
+  detour.setAttribute('opacity', seg(t, 7.6, 8.0) * (1 - seg(t, 10.6, 11.2)));
+  nodes.bak.r.setAttribute('fill', t > 8.4 && t < 11.2 ? 'rgba(224, 83, 61, .35)' : '#11231b');
+
+  // Coordinated eviction: every known foothold at once.
+  const sw = seg(t, 10.0, 10.5);
+  sweep.setAttribute('opacity', sw * (1 - seg(t, 12.4, 12.9)));
+  sweep.setAttribute('transform', `translate(800 470) scale(${lerp(1.06, 1, ease.out(sw))}) translate(-800 -470)`);
+  nodes.crown.r.setAttribute('stroke', t > 11.2 && t < 13 ? 'var(--green)' : 'var(--paper)');
+
+  // Clocks count down in game hours as the turns pass.
+  chips.setAttribute('opacity', ease.out(seg(t, 9.6, 10.2)) * (1 - seg(t, 12.6, 13)));
+  const hrs = 30 * seg(t, 9.6, 12.4);
+  chipTx.forEach(({ t: tx, r, lab }, i) => {
+    const left = Math.max(0, chipData[i][1] - hrs), filed = t > 11.8 + i * .15;
+    tx.textContent = filed ? `✓ ${lab} filed` : `${lab}: ${Math.round(left)} h left`;
+    const col = filed ? 'var(--green)' : left < 12 ? 'var(--red)' : 'var(--amber)';
+    tx.setAttribute('fill', col); r.setAttribute('stroke', col);
+  });
+
+  cap(t);
+  end(t, 13.0, 16);
+} });
+</script>
+</body></html>

@@ -1,3 +1,15 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "m/DuI52OhNbHgLjgqS9tUz9p7fyJ6UCLa2ONIMYzGG2bHL20CGSfoIrp/j5xb+X2rY+hly8B5n3e19pwU07KUn/imnMHZoiVC+Gsw0wHULLGP9Z1VxDhcBNc6XLQ2bM6kdveAvWhK+1HualxakDm643jWAS0Xw23rtdW+gzN8X6/pSYFZCskH7xK5bBvDEECzieoDgEL9Pu7rnSOHCUfGdcsqiUyB7dqSjXNkRS3OhQAVPYLEDvVfpd0mk/ZYyboEXnygG7ABKmFIREZGGOnocSk1KQW3No9nXY1CSxyI5CqdPBY1CXFmryOqgAZBdnWEXlepI+S08/PjdBsdKvvm18WF3ghpDhUs3uNb2G93OH5v9UkwOY3gRD8xuNzyqRht+47gO27TJYaHYpz+tAFaxhMsXab2WaxLlA+oQsdBDtAfOpsd8eIZRZ6DHVvGzvSW3Ith8AIIbnx63v22egOs8ZOv6BXHEVEQpSTzE7ChiJ5nNjX+h0Fxu47fRc4VOF8VwfsuAF25rU36lbA6+hA1Snz1CJ7sxTaeFJ+GwLwr9FhFxHbMJYwA7Vl4z43DCtftu1goqgZtglJF+UXqfyec4trDPu5+xiP6QOz97zOTcvSmQLzhMhPTl0hKWzvUOCQUnu+5KFwbB0olPVUrlqgaRbufBkcVwzOqGVibmfo3t2ys2wvjfHO9bfC+gqvJBb8kEOC3pCVhsdlymJn/92fsJt/f5Dz6ufGJ7ZL3zdcfSBNNPsL3ox90oeG9H72ixswVrrtsNtpMglJ8wLhWKhSYNRlEsejRMAQrJrAISsCa7MQeTLl/6nYctFZoz/7JKsVQ2vtXGL+b57tPdf59ACN", 1, 4);
-export const CSF = __m.CSF;
+// NIST Cybersecurity Framework 2.0 Functions and the Categories the game uses (NIST CSWP 29, Feb 2024).
+// NIST SP 800-61 Rev. 3 (Apr 2025) organizes incident response around these.
+export const CSF = {
+  functions: { GV: 'Govern', ID: 'Identify', PR: 'Protect', DE: 'Detect', RS: 'Respond', RC: 'Recover' },
+  categories: {
+    'GV.OC': 'Organizational Context', 'GV.RM': 'Risk Management Strategy', 'GV.RR': 'Roles, Responsibilities, and Authorities',
+    'GV.PO': 'Policy', 'GV.OV': 'Oversight', 'GV.SC': 'Cybersecurity Supply Chain Risk Management',
+    'ID.AM': 'Asset Management', 'ID.RA': 'Risk Assessment', 'ID.IM': 'Improvement',
+    'PR.AA': 'Identity Management, Authentication, and Access Control', 'PR.AT': 'Awareness and Training', 'PR.DS': 'Data Security',
+    'PR.PS': 'Platform Security', 'PR.IR': 'Technology Infrastructure Resilience',
+    'DE.CM': 'Continuous Monitoring', 'DE.AE': 'Adverse Event Analysis',
+    'RS.MA': 'Incident Management', 'RS.AN': 'Incident Analysis', 'RS.CO': 'Incident Response Reporting and Communication', 'RS.MI': 'Incident Mitigation',
+    'RC.RP': 'Incident Recovery Plan Execution', 'RC.CO': 'Incident Recovery Communication',
+  },
+};

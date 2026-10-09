@@ -1,4 +1,82 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1, 4);
-export const SECTORS = __m.SECTORS;
-export const sectorById = __m.sectorById;
+// The five fictional organizations a team can defend. Money is in thousands of US dollars.
+// revPerHour: what an hour at zero operations costs (revenue lost plus extra operating cost). Notional.
+// offlineHit / encryptHit / otHit: operations points lost while core IT is off the internet, while systems are
+//   encrypted, or while operational technology is disrupted. continuity (downtime procedures) softens each by 25%.
+// clocks: reporting duties. trigger:
+//   aware    the organization knows (or should know) it has a real intrusion: incident declared, or a confirmed
+//            malicious foothold has been on the board for a turn
+//   material the disclosure committee has determined the incident is material (public companies)
+//   disrupt  the incident has seriously disrupted operations (operations below 60)
+//   breach   personal or controlled data is known to have left the network
+//   paid     a ransom or extortion payment was made
+//   ot       operational technology was disrupted
+//   encrypt  ransomware encrypted systems holding the data (HHS presumes encryption of patient data is a breach)
+//   A clock with a list of triggers starts at the first of them.
+// hours, or bdays (business days, ending 17:30 on the last day, as for an SEC filing). via: 'file' (regulator) or
+// 'people' (the individuals or customers affected). `src` keys point into data/sources.js.
+export const SECTORS = [
+  {
+    id: 'hospital', label: 'Regional hospital system', org: 'Harbor Valley Health',
+    blurb: 'Three hospitals and 40 clinics, 9,000 staff, a nonprofit. Lives depend on the electronic health record staying up.',
+    crown: 'the electronic health record (EHR)', data: 'patient records', ot: 'building-automation and medical-device networks',
+    people: 'patients', revPerHour: 270, offlineHit: 45, encryptHit: 70, otHit: 25, costScale: 9000, public: false,
+    safety: 'Ambulances are diverted and procedures postponed while clinical systems are down.',
+    clocks: [
+      { id: 'hipaa-ind', label: 'HIPAA notice to affected patients', who: 'Patients', trigger: ['breach', 'encrypt'], hours: 60 * 24, via: 'people', src: 'hipaa' },
+      { id: 'hipaa-hhs', label: 'HIPAA notice to HHS (500 or more people)', who: 'HHS Office for Civil Rights', trigger: ['breach', 'encrypt'], hours: 60 * 24, via: 'file', src: 'hipaa' },
+      { id: 'hipaa-media', label: 'HIPAA media notice (more than 500 residents of a state)', who: 'Prominent media outlets', trigger: ['breach', 'encrypt'], hours: 60 * 24, via: 'people', src: 'hipaa' },
+    ],
+  },
+  {
+    id: 'water', label: 'Regional water utility', org: 'Tri-County Water Authority',
+    blurb: 'A public authority serving 420,000 people. Its treatment plants run on SCADA that touches the business network.',
+    crown: 'the SCADA system that runs treatment and pumping', data: 'customer billing records', ot: 'treatment-plant SCADA and pump-station controllers',
+    people: 'customers', revPerHour: 25, offlineHit: 30, encryptHit: 50, otHit: 60, costScale: 3000, public: false,
+    safety: 'Operators run the plants by hand. Losing control of treatment means a boil-water notice.',
+    clocks: [
+      { id: 'state-ops', label: 'State cyber-incident report (operations affected)', who: 'State IT office (modeled on Indiana SEA 459, which reports to the Indiana Office of Technology)', trigger: 'disrupt', hours: 24, via: 'file', src: 'indiana' },
+      { id: 'state-cyber', label: 'State cyber-incident report', who: 'State IT office (modeled on Indiana SEA 459, which reports to the Indiana Office of Technology)', trigger: 'aware', bdays: 2, via: 'file', src: 'indiana' },
+      { id: 'state-breach', label: 'State breach notice to customers (Indiana: 45 days)', who: 'Customers', trigger: 'breach', hours: 45 * 24, via: 'people', src: 'statebreach' },
+    ],
+  },
+  {
+    id: 'dib', label: 'Defense manufacturer', org: 'Kestrel Precision Components',
+    blurb: 'A private, 1,800-person maker of guidance-system parts for the Department of Defense. Its engineering files are controlled unclassified information (CUI).',
+    crown: 'the engineering vault of CUI drawings', data: 'CUI engineering drawings', ot: 'plant-floor CNC and test-stand controllers',
+    people: 'employees', revPerHour: 70, offlineHit: 40, encryptHit: 65, otHit: 35, costScale: 5000, public: false,
+    safety: 'Deliveries on defense contracts slip, with penalties and a hard conversation with the program office.',
+    clocks: [
+      { id: 'dfars', label: 'DFARS 7012 report to DoD (DIBNet)', who: 'DoD, via DIBNet (dibnet.dod.mil)', trigger: 'aware', hours: 72, via: 'file', src: 'dfars' },
+      { id: 'state-breach', label: 'State breach notice to employees', who: 'Employees', trigger: 'breach', hours: 30 * 24, via: 'people', src: 'statebreach' },
+    ],
+  },
+  {
+    id: 'bank', label: 'Listed regional bank', org: 'Ashford Bancorp',
+    blurb: 'A New York-chartered, publicly traded bank with $28 billion in assets, 120 branches and an online-banking platform.',
+    crown: 'the core banking and payments platform', data: 'customer account records', ot: 'branch, ATM and payment-switch networks',
+    people: 'customers', revPerHour: 130, offlineHit: 40, encryptHit: 70, otHit: 30, costScale: 12000, public: true,
+    safety: 'Customers cannot reach their money. Regulators ask hourly.',
+    clocks: [
+      { id: 'bank36', label: '36-hour notice to the primary federal regulator', who: 'Primary federal regulator (Federal Reserve or FDIC)', trigger: 'disrupt', hours: 36, via: 'file', src: 'bank36' },
+      { id: 'nydfs72', label: 'NYDFS Part 500 cybersecurity-incident notice', who: 'NY Department of Financial Services', trigger: 'aware', hours: 72, via: 'file', src: 'nydfs' },
+      { id: 'nydfs-pay', label: 'NYDFS notice of an extortion payment', who: 'NY Department of Financial Services', trigger: 'paid', hours: 24, via: 'file', src: 'nydfs' },
+      { id: 'sec8k', label: 'SEC Form 8-K, Item 1.05', who: 'Investors, via SEC EDGAR', trigger: 'material', bdays: 4, via: 'file', src: 'sec' },
+      { id: 'cust', label: 'Customer notice (NY GBL 899-aa: 30 days)', who: 'Customers', trigger: 'breach', hours: 30 * 24, via: 'people', src: 'nybreach' },
+    ],
+  },
+  {
+    id: 'saas', label: 'Listed software company', org: 'Brightline Software',
+    blurb: 'A publicly traded SaaS firm with 2,600 business customers in the US and EU. Its customers\' data lives in its cloud.',
+    crown: 'the production cloud and customer tenant databases', data: 'customer tenant data, including EU personal data', ot: 'the production cloud control plane',
+    people: 'customers', revPerHour: 105, offlineHit: 55, encryptHit: 75, otHit: 45, costScale: 10000, public: true,
+    safety: 'Every customer is down with you, and their contracts have notice clauses.',
+    clocks: [
+      { id: 'sec8k', label: 'SEC Form 8-K, Item 1.05', who: 'Investors, via SEC EDGAR', trigger: 'material', bdays: 4, via: 'file', src: 'sec' },
+      // For customer tenant data the SaaS firm is a GDPR processor: it must tell its customers (the controllers) without
+      // undue delay, and they notify the authority within 72 hours. 48 hours stands in for "without undue delay".
+      { id: 'gdpr', label: 'GDPR Art. 33(2) notice to customers as data controllers', who: 'Business customers (data controllers)', trigger: 'breach', hours: 48, via: 'people', src: 'gdpr' },
+    ],
+  },
+];
+
+export const sectorById = id => SECTORS.find(s => s.id === id) || SECTORS[0];

@@ -1,5 +1,44 @@
-// Encrypted TSM data. Unlocked in the browser with the site password.
-const __m = await window.TSMVault.module(import.meta.url, "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", 1, 4);
-export const CONTROLS = __m.CONTROLS;
-export const PRESETS = __m.PRESETS;
-export const presetPosture = __m.presetPosture;
+// Security posture: the controls an organization already has when the incident starts.
+// Each control changes the odds of specific attacker steps (see each scenario's `ctl`) or what the defenders can do.
+export const CONTROLS = [
+  { id: 'fido', label: 'Phishing-resistant MFA for admins', short: 'FIDO2 MFA',
+    text: 'Administrators sign in with hardware security keys or passkeys, not push prompts or SMS codes.', csf: 'PR.AA' },
+  { id: 'helpdesk', label: 'Help-desk identity checks', short: 'Help-desk checks',
+    text: 'Password and MFA resets for privileged accounts need a video check or a manager call-back to a number on file.', csf: 'PR.AA' },
+  { id: 'edr', label: 'EDR on nearly every endpoint and server', short: 'EDR coverage',
+    text: 'Endpoint detection and response covers about 98% of machines, including servers and hypervisor management hosts.', csf: 'DE.CM' },
+  { id: 'logs', label: 'Central logging, 12 months kept', short: 'Logging',
+    text: 'Identity, endpoint, network and cloud logs flow to one place and are kept for a year.', csf: 'DE.CM' },
+  { id: 'pam', label: 'Tiered privileged access', short: 'Privileged access',
+    text: 'Domain and cloud admin rights are vaulted, time-limited and used only from dedicated admin workstations.', csf: 'PR.AA' },
+  { id: 'seg', label: 'Segmented networks (IT/OT and internal zones)', short: 'Segmentation',
+    text: 'Operational technology sits behind a monitored boundary, and internal zones limit lateral movement.', csf: 'PR.IR' },
+  { id: 'immut', label: 'Immutable, tested backups', short: 'Immutable backups',
+    text: 'Backups are offline or immutable, kept apart from the main domain, and restores are rehearsed.', csf: 'PR.DS' },
+  { id: 'retainer', label: 'Incident-response retainer', short: 'IR retainer',
+    text: 'A contract with an IR firm that commits responders within hours.', csf: 'RS.MA' },
+  { id: 'insured', label: 'Cyber insurance', short: 'Insurance',
+    text: 'A cyber policy with a panel of approved responders and lawyers. It covers much of the cost if you notify the insurer promptly and get consent before paying any ransom.', csf: 'GV.RM' },
+  { id: 'plan', label: 'Tested incident-response plan', short: 'Tested plan',
+    text: 'Roles, decision rights and call trees are written down and were rehearsed in an exercise within the last year.', csf: 'GV.RR' },
+  { id: 'oob', label: 'Out-of-band channel ready', short: 'Out-of-band',
+    text: 'A separate, pre-arranged messaging and conference channel that does not depend on corporate email, chat or identity.', csf: 'RS.CO' },
+  { id: 'vendor', label: 'Software inventory and vendor-risk program', short: 'Vendor risk',
+    text: 'You know which third-party agents run where, with what privileges, and vendors must tell you quickly about a compromise.', csf: 'GV.SC' },
+  { id: 'hire', label: 'Remote-hire identity verification', short: 'Hiring checks',
+    text: 'Remote hires pass a live identity check, and laptops ship only to a verified home address.', csf: 'GV.SC' },
+];
+
+export const PRESETS = [
+  { id: 'low', label: 'Under-resourced', text: 'Insurance and partial EDR. No retainer, no tested plan.',
+    on: ['insured'] },
+  { id: 'typical', label: 'Typical', text: 'EDR, logging, insurance and a plan exercised once. The usual gaps in identity and backups.',
+    on: ['edr', 'logs', 'insured', 'plan'] },
+  { id: 'mature', label: 'Mature', text: 'Every control on the list. Still breachable, and still the response that decides how bad it gets.',
+    on: CONTROLS.map(c => c.id) },
+];
+
+export const presetPosture = id => {
+  const p = PRESETS.find(x => x.id === id) || PRESETS[1];
+  return Object.fromEntries(CONTROLS.map(c => [c.id, p.on.includes(c.id)]));
+};

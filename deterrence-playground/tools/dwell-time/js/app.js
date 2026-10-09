@@ -278,7 +278,7 @@ function boot() {
   const m = location.hash.match(/^#g=(.+)$/);
   if (m) {
     const d = decode(decodeURIComponent(m[1]));
-    if (d && SCENARIOS.some(x => x.id === d.setup.scen)) {
+    if (d && SCENARIOS.some(x => x.id === d.setup.scen) && SECTORS.some(x => x.id === d.setup.sector)) {
       Object.assign(setup, d.setup, { preset: 'custom' });
       paintSetup(); start(d.history); return;
     }

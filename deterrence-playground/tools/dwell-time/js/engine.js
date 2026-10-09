@@ -163,6 +163,8 @@ function nextStage(s, sc) {
     if (s.adv.fh.some(f => f.on && st.need.includes(f.kind))) return null;
     const j = sc.stages.findIndex(x => (x.adds || []).some(a => st.need.includes(a.kind)));
     if (j < 0 || j >= i) return null;
+    // Steps taken before the game began (a hire, a backdoored update, an old web shell) cannot be redone mid-incident.
+    if ((sc.pre || []).includes(sc.stages[j].id)) return null;
     i = j;
   }
   return null;
@@ -193,8 +195,12 @@ function attackerTurn(s, sc, rng, ctx) {
     if (s.adv.done.includes(st.id) && sc.stages.indexOf(st) === sc.stages.length - 1) break;
     if (st.after != null && s.t < st.after) break;
     const idx = sc.stages.indexOf(st);
+    // Going back to the very first step is a fresh break-in: it needs the door still open and is rarer.
+    const reentry = idx === 0 && s.adv.done.includes(st.id);
+    if (reentry && (s.d.vectorClosed || !sc.reentry || rng.u() >= sc.reentry)) break;
     if (rng.u() < stageP(s, st)) {
       const added = succeed(s, st, sc, ctx);
+      if (reentry) { ctx.adv[ctx.adv.length - 1].reentry = true; s.adv.reentries++; }
       maybeDetect(s, st, sc, rng, ctx, added);
       if (idx >= s.adv.stage) s.adv.stage = Math.min(sc.stages.length, idx + 1);
       if (s.adv.stage >= sc.stages.length) { s.adv.stage = sc.stages.length - 1; s.adv.finished = true; }
@@ -309,6 +315,7 @@ export function step(s0, moves = {}) {
   let tip = 0;
   if (ctx.removed.length && stillIn) tip = 0.65;
   if (ctx.noisy && s.adv.comms && !s.d.oob && stillIn) tip = Math.max(tip, 0.45);
+  if (ctx.blockTip && stillIn) tip = Math.max(tip, 0.3);
   if (tip && !s.adv.tipped && rng.u() < tip) {
     s.adv.tipped = s.t + 1;
     ctx.tipped = true;
@@ -393,12 +400,14 @@ function ransomTick(s, sc, sec, rng) {
 }
 
 export function updateClocks(s, sc, sec) {
-  const startH = { aware: s.d.aware, material: s.d.materialT, disrupt: s.d.disruptT, breach: s.d.breachT, paid: s.d.paidT, ot: s.d.otT };
+  const startH = { aware: s.d.aware, material: s.d.materialT, disrupt: s.d.disruptT, breach: s.d.breachT, paid: s.d.paidT, ot: s.d.otT, encrypt: s.adv.impactT };
   for (const c of sec.clocks) {
     if (s.clocks.some(x => x.id === c.id)) continue;
-    const t0 = startH[c.trigger];
-    if (t0 == null) continue;
-    const h0 = sc.turns[t0].h + (c.trigger === 'material' || c.trigger === 'paid' ? 0 : turnHours(sc, t0));
+    // A clock may have several triggers (any of them starts it); it starts at the earliest.
+    const trig = [].concat(c.trigger).filter(k => startH[k] != null).sort((a, b) => startH[a] - startH[b])[0];
+    if (!trig) continue;
+    const t0 = startH[trig];
+    const h0 = sc.turns[t0].h + (trig === 'material' || trig === 'paid' ? 0 : turnHours(sc, t0));
     const due = c.bdays ? businessDeadline(sc, h0, c.bdays) : h0 + c.hours;
     s.clocks.push({ id: c.id, label: c.label, who: c.who, via: c.via, src: c.src, startH: h0, dueH: due, filedH: null, t0 });
   }
@@ -429,13 +438,15 @@ function finalize(s, sc, sec) {
 export function encode(s, history) {
   const p = Object.entries(s.posture).filter(([, v]) => v).map(([k]) => k).join('.');
   const h = history.map(m => (m.acts || []).join('.')).join('~');
-  return [1, s.seed, s.scen, s.sector, s.mode, p, h].join('|');
+  const notes = history.map(m => m.note || '');
+  return [1, s.seed, s.scen, s.sector, s.mode, p, h, notes.some(Boolean) ? encodeURIComponent(JSON.stringify(notes)) : ''].join('|');
 }
 export function decode(str) {
-  const [v, seed, scen, sector, mode, p, h] = String(str).split('|');
-  if (v !== '1') return null;
+  const [v, seed, scen, sector, mode, p, h, n] = String(str).split('|');
+  if (v !== '1' || !(+seed > 0)) return null;
   const posture = {}; for (const k of (p || '').split('.').filter(Boolean)) posture[k] = true;
-  const history = h ? h.split('~').map(x => ({ acts: x ? x.split('.') : [] })) : [];
+  let notes = []; try { notes = n ? JSON.parse(decodeURIComponent(n)) : []; } catch { notes = []; }
+  const history = h ? h.split('~').map((x, i) => ({ acts: x ? x.split('.') : [], note: typeof notes[i] === 'string' ? notes[i] : '' })) : [];
   return { setup: { seed: +seed, scen, sector, mode, posture }, history };
 }
 export function replay(setup, history) {

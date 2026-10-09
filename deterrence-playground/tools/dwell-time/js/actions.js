@@ -51,7 +51,7 @@ export const ACTIONS = [
     apply(s, c) { s.ransom.negotiated = true; s.ransom.demand = Math.round(s.ransom.demand * 0.55); s.ransom.deadline += 1; c.notes.push(`Negotiations bought a day and brought the demand to $${(s.ransom.demand / 1000).toFixed(1)}M.`); } },
   { id: 'pay', role: 'ceo', order: 21, csf: 'RS.MI', once: true, done: s => s.ransom?.paid != null,
     label: 'Pay the ransom',
-    text: 'Pay for a decryptor and a promise to delete stolen data. Decryptors are slow and imperfect, the promise is unenforceable, and paying a sanctioned group is illegal.',
+    text: 'Pay for a decryptor and a promise to delete stolen data. Decryptors are slow and imperfect, the promise is unenforceable, and paying a sanctioned group can violate US sanctions even if you did not know (OFAC applies strict liability).',
     req: s => (!s.ransom ? 'No demand has been made.' : null),
     apply(s, c, rng) {
       const r = s.ransom; r.paid = s.t; r.consent = s.d.insurer != null; s.d.paidT = s.t;
@@ -137,7 +137,7 @@ export const ACTIONS = [
     } },
   { id: 'monitor', role: 'it', order: 12, csf: 'DE.CM',
     label: 'Watch quietly',
-    text: 'Raise logging and watch the attacker\'s known access without touching it. Better odds of seeing their next move this turn, and nothing tips them off.',
+    text: 'Raise logging and watch the attacker\'s known access without touching it. Better odds of seeing their next move this turn, and it is unlikely to tip them off.',
     apply(s, c) { s.d.monitor = true; c.notes.push('Extra monitoring on known attacker access this turn.'); } },
   { id: 'image', role: 'it', order: 13, csf: 'RS.AN',
     label: 'Capture forensic images and memory',
@@ -165,7 +165,7 @@ export const ACTIONS = [
     } },
   { id: 'resetall', role: 'it', order: 33, csf: 'RS.MI', slots: { it: 2 },
     label: 'Enterprise-wide credential reset',
-    text: 'Reset every user, admin and service-account password and the domain\'s Kerberos key (twice). Removes stolen credentials you have not found, at a heavy cost to the business for a turn.',
+    text: 'Reset every user, admin and service-account password and the domain\'s Kerberos (krbtgt) key twice, letting the first reset replicate before the second. Removes stolen credentials you have not found, at a heavy cost to the business for a turn.',
     req: (s, sc, ch) => (!authed(s, ch) ? NEED_AUTH : null),
     apply(s, c) {
       for (const f of s.adv.fh) if (f.on && ['account', 'priv', 'comms'].includes(f.kind)) { f.on = false; f.offT = s.t; c.removed.push(f); }
@@ -183,9 +183,9 @@ export const ACTIONS = [
     } },
   { id: 'block', role: 'it', order: 35, csf: 'RS.MI',
     label: 'Block known attacker infrastructure',
-    text: 'Block the domains, IP addresses and file hashes you have confirmed. Slows command-and-control and theft if you have real indicators.',
+    text: 'Block the domains, IP addresses and file hashes you have confirmed. Slows command-and-control and theft, but blocking before you have scoped can warn the attacker and cost you visibility (CISA AA20-245A).',
     req: (s, sc, ch) => (!s.flags.some(x => x.st === 'confirmed' || x.st === 'done') && !(ch.includes('triage') && s.flags.some(x => x.st === 'new')) ? 'No confirmed indicators yet.' : null),
-    apply(s, c) { s.adv.quiet = Math.max(s.adv.quiet, 1); c.notes.push('Known attacker infrastructure is blocked at the edge.'); } },
+    apply(s, c) { s.adv.quiet = Math.max(s.adv.quiet, 1); c.blockTip = true; c.notes.push('Known attacker infrastructure is blocked at the edge.'); } },
   { id: 'egress', role: 'it', order: 36, csf: 'RS.MI', once: true, done: s => s.d.egress,
     label: 'Restrict internet egress',
     text: 'Allow outbound traffic only to approved destinations. Throttles data theft sharply, and breaks some business tools.',
@@ -249,7 +249,7 @@ export const ACTIONS = [
     apply(s, c) { s.d.counsel = s.t; pay(s, 150); c.notes.push('Outside breach counsel retained.'); } },
   { id: 'insurer', role: 'legal', order: 3, csf: 'GV.RM', once: true, done: s => s.d.insurer != null,
     label: 'Notify the cyber insurer',
-    text: 'Policies require prompt notice and consent before paying vendors or any ransom. Late notice can cost you the coverage.',
+    text: 'Most policies require prompt notice, and the insurer\'s consent before hiring vendors outside its panel or paying any ransom. Late notice can cost you the coverage.',
     req: s => (!s.posture.insured ? 'No cyber policy.' : null),
     apply(s, c) { s.d.insurer = s.t; c.notes.push('The insurer has been notified and assigned a claims handler.'); } },
   { id: 'hold', role: 'legal', order: 4, csf: 'RS.AN', once: true, done: s => s.d.hold,

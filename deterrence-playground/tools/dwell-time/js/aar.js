@@ -27,7 +27,7 @@ export function timeline(s) {
   };
   for (const l of s.log) {
     const adv = [...(l.t === 0 ? s.prelog || [] : []), ...l.adv].map(advText).filter(Boolean);
-    if (l.tipped) adv.unshift({ text: 'Saw the response coming (partial containment, or planning on channels it could read).', tech: '', ok: true, seen: false, tip: true });
+    if (l.tipped && !adv.some(a => a.tip)) adv.unshift({ text: 'Saw the response coming (partial containment, or planning on channels it could read).', tech: '', ok: true, seen: false, tip: true });
     rows.push({ t: l.t, clock: clockText(sc, l.h), h: l.h, acts: l.acts.map(id => ({ id, role: actionById(id).role, label: fill(actionById(id).label, s) })),
       adv, ops: l.ops, exfil: l.exfil, enc: l.enc, note: l.note });
   }
@@ -46,7 +46,7 @@ export function findings(s) {
   const missed = sc.stages.filter(st => s.hits[st.id] && s.hits[st.id].seen === 0 && st.det < 1);
   if (missed.length) add('high', 'DE.CM', `${missed.length} attacker step${missed.length > 1 ? 's' : ''} never detected`,
     missed.map(st => `${st.tactic}: ${fill(st.act, s)} (${st.tech.map(t => t[0]).join(', ')})`).join(' '),
-    missed.map(st => `To catch "${st.tactic.toLowerCase()}": ${st.catch}`).join(' '));
+    missed.map(st => `To catch "${st.tactic.toLowerCase()}": ${fill(st.catch, s)}`).join(' '));
   // Remaining access.
   if (s.remaining?.length) add('high', 'RS.MI', 'The attacker still had access when the exercise ended',
     `Still in place: ${s.remaining.map(f => `${f.label} (${KINDS[f.kind]})`).join('; ')}.`,

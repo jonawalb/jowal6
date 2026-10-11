@@ -2,7 +2,7 @@
 // hidden or delayed, and it is all off under reduced motion and while the window is being resized.
 import { reduced, flash } from '../../../shared/js/motion.js';
 
-const EASE = 'cubic-bezier(.2,.8,.2,1)';
+const EASE = 'cubic-bezier(0.16, 1, 0.3, 1)';   // --ease-enter (shared/css/motion.css)
 let hold = 0;
 addEventListener('resize', () => { hold = performance.now() + 700; });
 export const live = () => !reduced() && performance.now() > hold && typeof Element.prototype.animate === 'function';
@@ -40,7 +40,7 @@ export function chart(host, fn, { gap = 260 } = {}) {
 export function grow(nodes, { first = true, axis = 'y', origin, ms, stagger, stack = false, baseY = null } = {}) {
   const els = list(nodes);
   if (!els.length) return;
-  const dur = ms ?? (first ? 560 : 340), spread = stagger ?? (first ? 240 : 90);
+  const dur = ms ?? (first ? 750 : 400), spread = stagger ?? (first ? 240 : 90);
   let org = origin || (axis === 'y' ? '50% 100%' : '0% 50%');
   if (stack || baseY != null) {
     const base = baseY ?? Math.max(...els.map(e => +e.getAttribute('y') + +e.getAttribute('height')));
@@ -69,7 +69,7 @@ export function grow(nodes, { first = true, axis = 'y', origin, ms, stagger, sta
 
 /** Lines stroke in from their start. Dashed lines fade in instead, so their dash pattern is never lost. */
 export function stroke(nodes, { first = true, ms, delay = 0 } = {}) {
-  const dur = ms ?? (first ? 700 : 420);
+  const dur = ms ?? (first ? 750 : 400);
   list(nodes).forEach(p => {
     let len = 0;
     try { len = p.getTotalLength(); } catch { len = 0; }
@@ -80,18 +80,16 @@ export function stroke(nodes, { first = true, ms, delay = 0 } = {}) {
   });
 }
 
-/** Fade (and optionally lift) elements in, with a short stagger capped so the last one lands inside ~700 ms. */
-export function fade(nodes, { first = true, ms, delay = 0, lift = 0, stagger = 22, max = 60 } = {}) {
-  const els = list(nodes), dur = ms ?? (first ? 420 : 260);
+/** Fade elements in, with a short stagger capped so the last one lands inside ~700 ms. */
+export function fade(nodes, { first = true, ms, delay = 0, stagger = 22, max = 60 } = {}) {
+  const els = list(nodes), dur = ms ?? (first ? 400 : 240);
   const step = els.length > 1 ? Math.min(stagger, 280 / (Math.min(els.length, max) - 1 || 1)) : 0;
-  els.slice(0, max).forEach((el, i) => anim(el, lift
-    ? [{ opacity: 0, transform: `translateY(${lift}px)` }, { opacity: op(el), transform: 'none' }]
-    : [{ opacity: 0 }, { opacity: op(el) }], { duration: dur, delay: delay + i * step }));
+  els.slice(0, max).forEach((el, i) => anim(el, [{ opacity: 0 }, { opacity: op(el) }], { duration: dur, delay: delay + i * step }));
   if (els.length > max) els.slice(max).forEach(el => anim(el, [{ opacity: 0 }, { opacity: op(el) }], { duration: dur, delay: delay + 280 }));
 }
 
-/** HTML rows or cards rising in with a stagger. */
-export const rise = (nodes, o = {}) => fade(nodes, { lift: 6, ...o });
+/** HTML rows or cards arriving with a stagger: a fade only, no lift (fade-and-slide-up is a banned default, docs/MOTION_RULES.md). */
+export const rise = (nodes, o = {}) => fade(nodes, o);
 
 // Numbers: the first number in an element's text counts from its previous value to the new one, and the
 // element flashes when the value changed. The last frame writes back the exact text the tool rendered.
@@ -102,7 +100,7 @@ function firstNumberNode(el) {
   for (let n = w.nextNode(); n; n = w.nextNode()) if (NUM.test(n.nodeValue)) return n;
   return null;
 }
-export function count(el, key, { ms = 600, flashOn = true, still = false } = {}) {
+export function count(el, key, { ms = 400, flashOn = true, still = false } = {}) {
   if (!el) return;
   key = key ?? el.id;
   const node = firstNumberNode(el);
@@ -151,7 +149,7 @@ export function onChange(slot, key, fn) {
 
 /** Marks pop in from their centre (dots, symbols), spread across `spread` ms in document order. */
 export function pop(nodes, { first = true, ms, delay = 0, spread } = {}) {
-  const els = list(nodes), dur = ms ?? (first ? 380 : 260), sp = spread ?? (first ? 320 : 140);
+  const els = list(nodes), dur = ms ?? (first ? 400 : 240), sp = spread ?? (first ? 320 : 140);
   els.forEach((el, i) => {
     const d = delay + (els.length > 1 ? (i / (els.length - 1)) * sp : 0);
     const o = op(el);
@@ -163,13 +161,13 @@ export function pop(nodes, { first = true, ms, delay = 0, spread } = {}) {
 
 /** Left-to-right reveal of a whole element (a heatmap's cell group, a bar track), with a light fade. */
 export function wipe(nodes, { first = true, ms } = {}) {
-  const dur = ms ?? (first ? 650 : 380);
-  list(nodes).forEach(el => anim(el, [{ clipPath: 'inset(0 100% 0 0)', opacity: 0.2 }, { clipPath: 'inset(0 0% 0 0)', opacity: op(el) }], { duration: dur, easing: 'cubic-bezier(.45,.05,.25,1)' }));
+  const dur = ms ?? (first ? 750 : 400);
+  list(nodes).forEach(el => anim(el, [{ clipPath: 'inset(0 100% 0 0)', opacity: 0.2 }, { clipPath: 'inset(0 0% 0 0)', opacity: op(el) }], { duration: dur, easing: 'cubic-bezier(0.76, 0, 0.24, 1)' }));   // --ease-move
 }
 
 /** Expanding ring in an SVG at (x, y), e.g. on a newly selected mark or cell. (Like motion.js ping, but its
  *  progress is clamped at 0: a rAF timestamp can be earlier than the start time, which gave ping a negative r.) */
-export function ring(svg, x, y, { color, r = 24, ms = 650, width = 2 } = {}) {
+export function ring(svg, x, y, { color, r = 24, ms = 750, width = 2 } = {}) {
   if (!svg || !live()) return;
   const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
   const col = color || getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || 'currentColor';

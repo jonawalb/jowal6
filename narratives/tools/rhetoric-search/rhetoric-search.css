@@ -14,7 +14,7 @@ code { font-family: var(--mono); font-size: 11.5px; background: var(--chip); pad
 .count { margin: 0; font: 600 21px/1.2 var(--display); }
 .count .num { font-family: var(--display); }
 .progress { height: 4px; background: var(--chip); border-radius: 2px; overflow: hidden; }
-.progress i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .2s; }
+.progress i { display: block; height: 100%; width: 0; background: var(--accent); transition: width var(--dur-feedback) linear; }
 .chart { padding: 10px 12px 6px; position: relative; }
 .chart-head { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; justify-content: space-between; }
 .chart h2 { margin: 0; font-size: 16px; }

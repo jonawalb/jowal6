@@ -10,15 +10,15 @@ function styles() {
   if (css) return; css = true;
   const s = document.createElement('style');
   s.textContent = `
-  .m-rise { opacity: 0; transform: translateY(10px); transition: opacity .5s ease, transform .5s cubic-bezier(.2,.8,.2,1); }
-  .m-rise.m-in { opacity: 1; transform: none; }
+  .m-rise { opacity: 0; transition: opacity var(--dur-move, 400ms) var(--ease-enter, cubic-bezier(.16,1,.3,1)); }
+  .m-rise.m-in { opacity: 1; }
   @keyframes m-pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent); } 100% { box-shadow: 0 0 0 14px transparent; } }
   .m-pulse { animation: m-pulse .7s ease-out; }
   @keyframes m-shake { 10%, 90% { transform: translateX(-1px); } 20%, 80% { transform: translateX(2px); } 30%, 50%, 70% { transform: translateX(-3px); } 40%, 60% { transform: translateX(3px); } }
   .m-shake { animation: m-shake .4s both; }
   @keyframes m-flash { from { background: color-mix(in srgb, var(--accent) 30%, transparent); } to { background: transparent; } }
   .m-flash { animation: m-flash .9s ease-out; }
-  @media (prefers-reduced-motion: reduce) { .m-rise { opacity: 1; transform: none; transition: none; } .m-pulse, .m-shake, .m-flash { animation: none; } }`;
+  @media (prefers-reduced-motion: reduce) { .m-rise { opacity: 1; transition: none; } .m-pulse, .m-shake, .m-flash { animation: none; } }`;
   document.head.appendChild(s);
 }
 
@@ -33,7 +33,7 @@ export function countUp(el, to, { from, ms = 700, fmt = n => Math.round(n).toLoc
   requestAnimationFrame(step);
 }
 
-/** Staggered rise-in as elements enter the viewport. */
+/** Staggered fade-in as elements enter the viewport (no slide: fade-and-slide-up on everything is a banned default). */
 export function reveal(els, { stagger = 60 } = {}) {
   styles();
   const list = [...(typeof els === 'string' ? document.querySelectorAll(els) : els)];

@@ -9,7 +9,7 @@ import { createTour } from './tour.js';
 import { renderRules } from './rules.js';
 import { renderProfile } from './profile.js';
 import { addExportBar } from '../../../shared/js/export.js';
-import { chart, wipe, fade, grow, rise, count, onChange, ring } from './fx.js';
+import { chart, wipe, fade, grow, count, onChange, ring } from './fx.js';
 
 const $ = id => document.getElementById(id);
 const S = { rangeKey: 'all', range: RANGES.all, metric: 'count', sources: [...SOURCES], phrase: '', matcher: null,
@@ -136,7 +136,7 @@ function selMotion() {
     if (first || !S.sel) return;
     const r = $('hm-svg').querySelector('.sel');
     if (r) ring($('hm-svg'), +r.getAttribute('x') + +r.getAttribute('width') / 2, +r.getAttribute('y') + +r.getAttribute('height') / 2, { r: 22 });
-    rise($('detail').children, { stagger: 35, max: 12 });
+    fade($('detail').children, { stagger: 35, max: 12 });   // a staggered fade, no lift (fade-and-slide-up is banned)
   });
 }
 

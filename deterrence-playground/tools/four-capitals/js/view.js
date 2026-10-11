@@ -4,7 +4,7 @@ import { P } from '../data/params.js';
 import { COUNTRIES, IDS } from '../data/countries.js';
 import { BY_ID, TO } from '../data/actions.js';
 import { ISLAND, AREA_SHORT, AREA_LABEL } from '../data/theater.js';
-import { tracer, burst, ping } from '../../../shared/js/motion.js';
+import { tracer, burst, ping, countUp } from '../../../shared/js/motion.js';
 import { infoBtn } from './tips.js';
 import { SHOCK_TIP, shockLine } from './economy.js';
 
@@ -106,28 +106,37 @@ export async function animateMoves(who, actions, log) {
   }
 }
 
-export function paintLadder(ol, s) {
+export function paintLadder(ol, s, prev) {
   // A horizontal strip, Pressure to Nuclear use. Rungs 0–1 are the gray zone: coercion below military action.
-  ol.innerHTML = P.ladder.map((l, i) => `<li class="${i === s.rung ? 'on' : i <= s.maxRung ? 'past' : ''}${i <= 1 ? ' gz' : ''}" style="--r:${i}"${i === s.rung ? ' aria-current="step"' : ''}><i>${i}</i><span>${i === 0 ? 'Pressure' : l}</span>${i <= 1 ? '<small class="k4-gz">gray zone</small>' : ''}</li>`).join('');
+  // With `prev` (turn results), a rung that just changed arrives instead of appearing.
+  const moved = prev && prev.rung !== s.rung;
+  ol.innerHTML = P.ladder.map((l, i) => `<li class="${i === s.rung ? 'on' + (moved ? ' arrive' : '') : i <= s.maxRung ? 'past' : ''}${i <= 1 ? ' gz' : ''}" style="--r:${i}"${i === s.rung ? ' aria-current="step"' : ''}><i>${i}</i><span>${i === 0 ? 'Pressure' : l}</span>${i <= 1 ? '<small class="k4-gz">gray zone</small>' : ''}</li>`).join('');
 }
 
 const TRACKS = [
   ['tw', 'Taiwan’s position', 'var(--k-tw)'], ['coal', 'Coalition cohesion', 'var(--k-us)'],
   ['shock', 'Economic shock', 'var(--warn)'], ['nuke', 'Nuclear shadow', 'var(--bad)'],
 ];
-export function paintTracks(div, s, prev) {
-  div.innerHTML = TRACKS.map(([k, label, c]) => {
+export function paintTracks(div, s, prev, grow = false) {
+  // grow: bars start at last month's value and grow to this month's, one row after another (turn results only).
+  div.innerHTML = TRACKS.map(([k, label, c], i) => {
     const v = Math.round(s[k]), d = prev ? v - Math.round(prev[k]) : 0;
     const shock = k === 'shock';   // the market and shipping-insurance meter: its tooltip and one-line explanation (js/economy.js)
-    return `<div class="k4-track" style="--tc:${c}"><div><span>${label}${shock ? ' ' + infoBtn(SHOCK_TIP, 'Economic shock: what drives it and what it costs') : ''}</span><span class="num">${v}${d ? ` <small class="muted">${d > 0 ? '+' : ''}${d}</small>` : ''}</span></div><div class="bar"><span style="width:${v}%"></span></div>${shock ? `<p class="k4-shockx">${shockLine(s)}</p>` : ''}</div>`;
+    return `<div class="k4-track" style="--tc:${c};--i:${i}"><div><span>${label}${shock ? ' ' + infoBtn(SHOCK_TIP, 'Economic shock: what drives it and what it costs') : ''}</span><span class="num">${v}${d ? ` <small class="muted">${d > 0 ? '+' : ''}${d}</small>` : ''}</span></div><div class="bar"><span style="width:${grow && prev ? Math.round(prev[k]) : v}%" data-w="${v}"></span></div>${shock ? `<p class="k4-shockx">${shockLine(s)}</p>` : ''}</div>`;
   }).join('');
+  if (grow && prev) { void div.offsetWidth; div.querySelectorAll('.bar span').forEach(b => { b.style.width = b.dataset.w + '%'; }); }
 }
 
-export function paintCaps(table, s, player) {
+export function paintCaps(table, s, player, prev) {
   table.innerHTML = `<tr><th></th><th>Home</th><th>Econ</th><th>Mil</th></tr>` + IDS.map(id => {
     const c = s.c[id];
     return `<tr><td style="--c:${COL[id]}"><b>${COUNTRIES[id].short}</b>${id === player ? ' (you)' : ''}</td><td class="num">${Math.round(c.support)}</td><td class="num">${Math.round(c.economy)}</td><td class="num">${Math.round(c.military)}</td></tr>`;
   }).join('');
+  // With `prev` (turn results), changed numbers count over from last month's, row by row.
+  if (prev) IDS.forEach((id, r) => ['support', 'economy', 'military'].forEach((k, j) => {
+    const from = Math.round(prev.c[id][k]), to = Math.round(s.c[id][k]);
+    if (from !== to) countUp(table.rows[r + 1].cells[j + 1], to, { from, ms: 400 });
+  }));
 }
 
 const stack = v => P.types.map(t => `<span class="${t}" style="width:${(v[t] * 100).toFixed(1)}%" title="${P.typeLabel[t]} ${Math.round(v[t] * 100)}%"></span>`).join('');

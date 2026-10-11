@@ -110,7 +110,7 @@ function unlinkMissingTools() {
   const toolsRoot = location.pathname.replace(/\/tools\/[^/]+\/.*$/, '/tools/');
   const check = root => root.querySelectorAll?.('a[href]').forEach(a => {
     let u; try { u = new URL(a.getAttribute('href'), location.href); } catch { return; }
-    if (u.origin !== location.origin || !u.pathname.startsWith(toolsRoot)) return;
+    if (u.origin !== location.origin || !u.pathname.startsWith(toolsRoot) || u.pathname === location.pathname) return;   // same-page anchors stay links
     const m = u.pathname.slice(toolsRoot.length).match(/^([a-z0-9-]+)\/(index\.html)?$/);
     // Unlisted tools are still published (My Projects links to two), so check every live tool on this site.
     if (!m || ALL_TOOLS.some(t => t.slug === m[1] && t.status === 'live' && onSite(t))) return;

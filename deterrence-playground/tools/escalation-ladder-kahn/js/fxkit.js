@@ -50,14 +50,17 @@ export function replay(el, cls, delayMs = 0) {
   el.addEventListener('animationend', function done(e) { if (e.target === el) { el.classList.remove(cls); el.removeEventListener('animationend', done); } });
 }
 
-/** Dice tumble: flicker random two-decimal rolls for ms, then settle on the element's real text. */
+/** Dice roll: count the two-decimal roll up from 0 over ms, then settle on the element's real text.
+ *  (It used to flicker random digits about 20 times a second, past the 3-flashes-a-second limit.) */
 export function tumble(el, ms = 450) {
   if (!el || reduced()) return;
-  const real = el.textContent, t0 = performance.now();
+  const real = el.textContent, v = num(real), t0 = performance.now();
+  if (!Number.isFinite(v)) return;
   const step = now => {
-    if (now - t0 >= ms || !el.isConnected) { el.textContent = real; el.classList.remove('fx-tumbling'); return; }
-    el.textContent = Math.random().toFixed(2);
-    setTimeout(() => requestAnimationFrame(step), 45);
+    const u = Math.min(1, (now - t0) / ms);
+    if (u >= 1 || !el.isConnected) { el.textContent = real; el.classList.remove('fx-tumbling'); return; }
+    el.textContent = (v * (1 - Math.pow(1 - u, 3))).toFixed(2);
+    requestAnimationFrame(step);
   };
   el.classList.add('fx-tumbling');
   requestAnimationFrame(step);

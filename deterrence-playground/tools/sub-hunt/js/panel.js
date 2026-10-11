@@ -84,10 +84,14 @@ export function renderStatus(g) {
 
 /** Bars for the map's odds on each behaviour; after the hunt, the true one is marked. */
 function renderBeh(o, g) {
-  $('beh-odds').innerHTML = BEHS.map(k => {
+  // The bars start at the widths they last showed and move to the new ones (a rebuild alone would snap them).
+  const box = $('beh-odds'), was = [...box.querySelectorAll('.sh-bo-bar i')].map(i => i.style.width), keep = was.length === BEHS.length;
+  box.innerHTML = BEHS.map((k, j) => {
     const truth = g.over && g.sub.beh === k ? ' <span class="pill sh-real">this one</span>' : '';
-    return `<div class="sh-bo"><span>${BEHAVIOURS[k].short}${truth}</span><b class="num">${pct(o[k])}</b><span class="sh-bo-bar"><i style="width:${Math.round(o[k] * 100)}%"></i></span></div>`;
+    const w = `${Math.round(o[k] * 100)}%`;
+    return `<div class="sh-bo"><span>${BEHAVIOURS[k].short}${truth}</span><b class="num">${pct(o[k])}</b><span class="sh-bo-bar"><i style="width:${keep ? was[j] : w};--i:${j}" data-w="${w}"></i></span></div>`;
   }).join('');
+  if (keep) { void box.offsetWidth; box.querySelectorAll('.sh-bo-bar i').forEach(i => { i.style.width = i.dataset.w; }); }
 }
 
 /** The turn-by-turn log, newest first. hour limits it during the replay. */

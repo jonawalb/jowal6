@@ -19,7 +19,7 @@ export function createChart(host, { onYear, onMilestone }) {
   tip.className = 'tooltip'; tip.hidden = true;
   host.appendChild(tip);
   let st = null, geo = null, dragging = false, mat = null;
-  const motion = chartMotion(700, 'y');
+  const motion = chartMotion(750, 'y');
 
   const yearAt = ev => {
     const r = svg.getBoundingClientRect();

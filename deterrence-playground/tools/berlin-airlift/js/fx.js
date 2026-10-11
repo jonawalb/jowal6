@@ -11,7 +11,7 @@ const trailer = () => document.documentElement.dataset.skin === 'trailer';
 const FIELD_AT = { teg: [520, 112], gat: [468, 176], thf: [566, 204] }; // js/map.js FIELDS
 
 /** Roll a number from what is on screen to its new value; ends on the exact text the page rendered. */
-function roll(el, to, ms = 450) {
+function roll(el, to, ms = 400) {
   if (!el || reduced()) return;
   const final = el.textContent;
   const from = el._shown ?? to;
@@ -41,8 +41,8 @@ export function afterRender(g, { cursor, avg }) {
   if (!reduced()) {
     // Tonnage counters roll up as the days are flown.
     if (!fresh && n > prev.n) {
-      roll($('k-cum'), g.cum, n - prev.n > 1 ? 300 : 650);
-      if (avg != null) roll($('k-week'), avg, n - prev.n > 1 ? 300 : 650);
+      roll($('k-cum'), g.cum, n - prev.n > 1 ? 240 : 400);
+      if (avg != null) roll($('k-week'), avg, n - prev.n > 1 ? 240 : 400);
       if (prev.cum < 1e6 && g.cum >= 1e6) { pulse($('k-cum').parentElement); flash($('k-cum').parentElement); }
       if (acc > prev.acc) { shake($('k-acc').parentElement); flash($('k-acc').parentElement); }
       if (fatal > prev.fatal) shake($('statcard'));
@@ -53,7 +53,7 @@ export function afterRender(g, { cursor, avg }) {
     if (now.over && !(prev && prev.over)) {
       rise($('debrief'));
       const b = $('debrief').querySelector('.db-grade b');
-      if (b) { b._shown = 0; roll(b, g.rec[n - 1].cum, trailer() ? 1400 : 1000); }
+      if (b) { b._shown = 0; roll(b, g.rec[n - 1].cum, 750); }
     }
   }
   if (!drew && !reduced() && 'IntersectionObserver' in window) {
@@ -72,10 +72,10 @@ function arrivals(g) {
   const rich = trailer(), r = g.rec[g.rec.length - 1], map = $('map');
   for (const [k, [x, y]] of Object.entries(FIELD_AT)) {
     const land = r.land[k] || 0;
-    if (land > 0) ping(map, x, y, { color: 'var(--you)', r: (rich ? 16 : 11) + Math.min(14, land / 40), ms: 700, width: rich ? 2 : 1.5 });
+    if (land > 0) ping(map, x, y, { color: 'var(--you)', r: (rich ? 16 : 11) + Math.min(14, land / 40), ms: 750, width: rich ? 2 : 1.5 });
   }
   const bars = $('chart').querySelectorAll('rect.you'), bar = bars[bars.length - 1];
-  if (bar) ping($('chart'), +bar.getAttribute('x') + +bar.getAttribute('width') / 2, +bar.getAttribute('y'), { color: 'var(--you)', r: rich ? 14 : 10, ms: 600 });
+  if (bar) ping($('chart'), +bar.getAttribute('x') + +bar.getAttribute('width') / 2, +bar.getAttribute('y'), { color: 'var(--you)', r: rich ? 14 : 10, ms: 750 });
 }
 
 function rise(el) {
@@ -88,7 +88,7 @@ function drawIn(svg) {
   if (reduced()) return;
   svg.querySelectorAll('.hist-l, .req-l, .anc').forEach((p, i) => {
     p.animate([{ clipPath: 'inset(-10px 100% -10px -10px)' }, { clipPath: 'inset(-10px -10px -10px -10px)' }],
-      { duration: trailer() ? 1000 : 700, delay: p.classList.contains('anc') ? 500 : i * 80, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'backwards' });
+      { duration: 750, delay: p.classList.contains('anc') ? 400 : i * 60, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'backwards' });   // --dur-hero, --stagger-item, --ease-enter
   });
 }
 

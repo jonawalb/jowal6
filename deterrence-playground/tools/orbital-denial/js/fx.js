@@ -84,77 +84,97 @@ async function strike(fx, X, x) {
   const res = x.res || '';
   if (x.a === 'jam') {
     const [sx, sy] = ground(X);
-    tracer(fx, sx, sy, tx, ty, { color: col, ms: 380, width: 1.2 });
-    for (let k = 0; k < (big ? 4 : 3); k++) later(300 + k * 160, () => ping(fx, tx, ty, { color: 'var(--warn)', r: 30, ms: 800, width: 1.6 }));
+    tracer(fx, sx, sy, tx, ty, { color: col, ms: 400, width: 1.2 });
+    for (let k = 0; k < (big ? 4 : 3); k++) later(300 + k * 160, () => ping(fx, tx, ty, { color: 'var(--warn)', r: 30, ms: 750, width: 1.6 }));
   } else if (x.a === 'dazzle') {
     const [sx, sy] = ground(X);
-    await tracer(fx, sx, sy, tx, ty, { color: col, ms: 260, width: big ? 3.4 : 2.6 });
-    ping(fx, tx, ty, { color: 'var(--ink)', r: 16, ms: 500 });
+    await tracer(fx, sx, sy, tx, ty, { color: col, ms: 240, width: big ? 3.4 : 2.6 });
+    ping(fx, tx, ty, { color: 'var(--ink)', r: 16, ms: 400 });
     if (/damaged/.test(res)) burst(fx, tx, ty, { color: col, n: 8, r: 14 });
   } else if (x.a === 'cyber') {
     const [sx, sy] = ground(Y);
-    for (let k = 0; k < 3; k++) later(k * 110, () => ping(fx, sx, sy, { color: col, r: 14 + k * 6, ms: 500, width: 1.4 }));
-    if (!/failed/.test(res)) later(330, () => ping(fx, tx, ty, { color: 'var(--warn)', r: 22, ms: 700 }));
+    for (let k = 0; k < 3; k++) later(k * 110, () => ping(fx, sx, sy, { color: col, r: 14 + k * 6, ms: 400, width: 1.4 }));
+    if (!/failed/.test(res)) later(330, () => ping(fx, tx, ty, { color: 'var(--warn)', r: 22, ms: 750 }));
   } else if (x.a === 'asat' || x.a === 'coorb') {
     const [sx, sy] = x.a === 'asat' ? ground(X) : spot(X, x.m);
-    await tracer(fx, sx, sy, tx, ty, { color: col, ms: x.a === 'asat' ? 520 : 700, width: 2.4 });
+    await tracer(fx, sx, sy, tx, ty, { color: col, ms: x.a === 'asat' ? 400 : 750, width: 2.4 });
     if (/^hit/.test(res)) {
-      burst(fx, tx, ty, { color: col, n: big ? 20 : 14, r: 30, ms: 800 });
-      ping(fx, tx, ty, { color: col, r: 44, ms: 900 });
+      burst(fx, tx, ty, { color: col, n: big ? 20 : 14, r: 30, ms: 750 });
+      ping(fx, tx, ty, { color: col, r: 44, ms: 750 });
       if (x.a === 'asat') debrisCloud(fx, Y, x.m, big ? 60 : 36);
       else debrisCloud(fx, Y, x.m, big ? 12 : 8);
-    } else ping(fx, tx, ty, { color: 'var(--muted)', r: 16, ms: 500 });
+    } else ping(fx, tx, ty, { color: 'var(--muted)', r: 16, ms: 400 });
   }
 }
 
-/** Play the month that just resolved. `card` shakes when you lost satellites. */
+// When each attack lands (ms after it starts): the readouts wait for the last one.
+const LAND = { jam: 400, dazzle: 240, cyber: 330, asat: 400, coorb: 750 };
+/** Play the month that just resolved. `card` shakes when you lost satellites. Returns when the last attack
+ *  lands (ms, at most 1200): the attacks on the orbit view are the hero of the month, the readouts follow. */
 export function monthFx(fx, hm, before, { card, endBtn }) {
   pulse(endBtn);
-  if (!hm || reduced()) return;
-  let i = 0;
+  if (!hm || reduced()) return 0;
+  let i = 0, end = 0;
   for (const X of ['B', 'R']) for (const x of hm.acts[X]) {
     if (!['jam', 'dazzle', 'cyber', 'asat', 'coorb'].includes(x.a)) continue;
-    later(i++ * 260 + (X === 'R' ? 120 : 0), () => strike(fx, X, x));
+    const t = i++ * 260 + (X === 'R' ? 120 : 0);
+    later(t, () => strike(fx, X, x));
+    end = Math.max(end, t + LAND[x.a]);
   }
   const lostB = before && Object.keys(hm.alive.B).some(m => hm.alive.B[m] < before[m]);
   if (lostB) later(Math.max(500, i * 260), () => shake(card));
+  return Math.min(end, 1200);
 }
 
-/** Readouts: count from the value shown before the month to the real new value. */
-export function countTo(el, from, to, fmt) {
+/** Readouts: show the value from before the month, then after `wait` ms count to the real new value. */
+export function countTo(el, from, to, fmt, wait = 0) {
   if (!el || from == null || from === to || reduced()) return;
   const text = el.textContent; // what render wrote: the real value, restored exactly when the count ends
-  countUp(el, to, { from, ms: 600, fmt: v => (v === to ? text : fmt(v)) });
-  setTimeout(() => { if (+el.dataset.mv === to) el.textContent = text; }, 680);
-  flash(el);
+  const old = fmt(from);
+  el.textContent = old;
+  later(wait, () => {
+    if (el.textContent !== old) return;   // a newer month already rendered over it
+    countUp(el, to, { from, ms: 400, fmt: v => (v === to ? text : fmt(v)) });
+    setTimeout(() => { if (+el.dataset.mv === to) el.textContent = text; }, 480);
+    flash(el);
+  });
 }
 
-/** Fragment totals on the orbit view count up after a kill. */
-export function countFrags(svg, before, after, fmt) {
+/** Fragment totals on the orbit view count up after a kill, after `wait` ms. */
+export function countFrags(svg, before, after, fmt, wait = 0) {
   if (reduced() || !before) return;
   svg.querySelectorAll('.od-deb-t').forEach((t, i) => {
     const s = SHELL_KEYS[i];
     if (!s || before[s] === after[s]) return;
     const text = t.textContent;
-    countUp(t, after[s], { from: before[s], ms: 800, fmt: n => `${fmt(n)} frag.` });
-    setTimeout(() => { if (t.isConnected) t.textContent = text; }, 880);
+    t.textContent = `${fmt(before[s])} frag.`;
+    later(wait, () => {
+      if (!t.isConnected) return;
+      countUp(t, after[s], { from: before[s], ms: 400, fmt: n => `${fmt(n)} frag.` });
+      setTimeout(() => { if (t.isConnected) t.textContent = text; }, 480);
+    });
   });
 }
 
-/** The newest log entry rises in. */
-export const logFx = li => { if (li) reveal([li]); };
+/** The newest log entry rises in, after `wait` ms. */
+export const logFx = (li, wait = 0) => {
+  if (!li) return;
+  if (!wait || reduced()) { reveal([li]); return; }
+  li.style.opacity = '0';
+  later(wait, () => { li.style.opacity = ''; reveal([li]); });
+};
 
 /** The review: cards rise in and the solid chart lines draw on (dashed ones fade up). */
 export function aarFx(box) {
   const parts = [...box.children];
   parts.forEach(e => e.classList.remove('m-in'));
-  reveal(parts, { stagger: 50 });
+  reveal(parts, { stagger: 60 });
   if (reduced()) return;
   box.querySelectorAll('.od-chart .od-line').forEach((p, i) => {
-    if (p.classList.contains('dash')) { p.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 700, delay: 200 + i * 60, fill: 'backwards' }); return; }
+    if (p.classList.contains('dash')) { p.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 750, delay: 200 + i * 60, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'backwards' }); return; }
     const L = p.getTotalLength();
     if (!L) return;
     p.animate([{ strokeDasharray: `${L} ${L}`, strokeDashoffset: L }, { strokeDasharray: `${L} ${L}`, strokeDashoffset: 0 }],
-      { duration: 900, delay: 150 + i * 60, easing: 'cubic-bezier(.3,.7,.2,1)', fill: 'backwards' });
+      { duration: 750, delay: 150 + i * 60, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'backwards' });   // --dur-hero, --ease-enter
   });
 }

@@ -47,7 +47,7 @@
 .cites { display: inline-flex; flex-wrap: wrap; gap: 3px 4px; margin-top: 3px; vertical-align: baseline; }
 .cite { font-family: var(--mono); font-size: 10.5px; text-decoration: none; border: 1px solid var(--rule); border-radius: 9px; padding: 0 6px; color: var(--muted); white-space: nowrap; }
 .cite:hover { color: var(--blue); border-color: var(--blue); }
-.matrix tr.row { transition: background .2s; }
+.matrix tr.row { transition: background var(--dur-feedback) var(--ease-enter); }
 .matrix tr.focus { background: var(--blue-soft); }
 .matrix tr.focus > th:first-child { box-shadow: inset 4px 0 0 var(--accent); }
 .matrix .empty { color: var(--muted); padding: 18px 10px; }
@@ -71,7 +71,7 @@
 .fh { margin: 0 0 8px; font-size: 17px; padding-bottom: 4px; border-bottom: 2px solid var(--rule); }
 .fh.agree { border-color: var(--good); } .fh.disagree { border-color: var(--accent); }
 .plist { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
-.plist li { font-size: 13px; transition: opacity .2s; }
+.plist li { font-size: 13px; transition: opacity var(--dur-move) var(--ease-enter); }
 .plist li.dim { opacity: .42; }
 .plist b { font-family: var(--display); font-size: 15px; }
 .plist p { margin: 2px 0; }

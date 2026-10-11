@@ -25,18 +25,23 @@ document.addEventListener('keydown', e => {
 });
 
 /* ---------- Paint the live crisis ---------- */
-function paint() {
+function paint(prev) {   // prev (after a move): last round's risk, reads and tally, so the result animates from them
   const c = s.cur || s.done[s.done.length - 1], cr = CRISES[c.i];
   $('crisis-k').textContent = `Crisis ${c.i + 1} of ${CRISES.length}`;
   $('crisis-t').textContent = cr.name;
   $('crisis-x').textContent = cr.text;
   paintDots($('dots'), s);
   const t = tally(s);
-  $('tally').innerHTML = `You <b>${pts(t.you)}</b> pts · Rival <b>${pts(t.rival)}</b> pts<br><span class="muted">Crises won ${t.wins}–${t.losses}</span>`;
-  const m = paintMeter($('meter'), c.risk);
+  const t0 = prev?.t || t;
+  $('tally').innerHTML = `You <b>${pts(t0.you)}</b> pts · Rival <b>${pts(t0.rival)}</b> pts<br><span class="muted">Crises won ${t.wins}–${t.losses}</span>`;
+  if (prev) {   // the tally follows the meter
+    const [bY, bR] = $('tally').querySelectorAll('b');
+    setTimeout(() => { if (t0.you !== t.you) countUp(bY, t.you, { from: t0.you, ms: 400, fmt: pts }); if (t0.rival !== t.rival) countUp(bR, t.rival, { from: t0.rival, ms: 400, fmt: pts }); }, reduced() ? 0 : 750);
+  }
+  const m = paintMeter($('meter'), c.risk, prev?.risk);
   $('meter-x').innerHTML = c.over ? 'Crisis over.' : `If both hold, the risk rolled this round is <b>${pct(m.hold)}</b> (dashed line). Each Raise adds ${pct(P.raise)}; if both raise, <b>${pct(m.both)}</b> (shaded).`;
   paintStake($('stake'), c);
-  paintReads($('reads'), c);
+  paintReads($('reads'), c, prev?.bel);
   $('round').textContent = c.round;
   $('decide').hidden = !!c.over;
   $('log').innerHTML = c.log.map((l, k) => { const x = logLine(l, k === c.log.length - 1 ? c.over : null); return `<li class="${x.cls}">${x.html}</li>`; }).join('') || '<li>The crisis begins. Make your first move.</li>';
@@ -45,17 +50,18 @@ function paint() {
 
 function choose(a) {
   if (!s?.cur) return;
-  const before = s.cur;
+  const before = s.cur, tBefore = tally(s);
   s = playRound(s, a);
   const c = s.cur || s.done[s.done.length - 1];
   const l = c.log[c.log.length - 1];
   const line = logLine(l, c.over);
-  paint();
+  // The risk meter is the hero of the round; the reads and the tally follow it.
+  paint({ risk: before.risk, bel: before.bel, t: tBefore });
   $('say').textContent = line.html.replace(/<[^>]+>/g, '');
   if (c.over?.kind === 'disaster') shake($('meter'));
   else if (c.over?.kind === 'win') pulse($('tally'));
   else if (c.risk > before.risk + P.drift + 1e-9) flash($('meter'));
-  if (c.over) setTimeout(afterCrisis, reduced() ? 0 : 450);
+  if (c.over) setTimeout(afterCrisis, reduced() ? 0 : 750);
 }
 
 /* ---------- After each crisis: reveal and the equilibrium overlay ---------- */

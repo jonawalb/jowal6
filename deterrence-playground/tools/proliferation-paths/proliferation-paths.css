@@ -19,7 +19,7 @@
 .pp-land.dis { stroke: var(--ink); stroke-width: 1.4; stroke-dasharray: 4 2.5; }
 .pp-land.inh { stroke: var(--ink); stroke-width: 1.1; stroke-dasharray: 1.5 2.5; }
 .pp-dot { cursor: pointer; outline: none; }
-.pp-dot circle { fill: var(--panel); stroke: var(--muted); stroke-width: 1.5; transition: r .15s; }
+.pp-dot circle { fill: var(--panel); stroke: var(--muted); stroke-width: 1.5; transition: r var(--dur-feedback) var(--ease-enter); }
 .pp-dot[data-st="explore"] circle { fill: var(--pp-explore); stroke: var(--panel); }
 .pp-dot[data-st="pursue"] circle { fill: var(--pp-pursue); stroke: var(--panel); }
 .pp-dot[data-st="acquire"] circle { fill: var(--pp-acquire); stroke: var(--panel); }
@@ -129,9 +129,9 @@
 
 /* Motion: stage colours ease between years instead of jumping; filtered-out dots fade. */
 @media (prefers-reduced-motion: no-preference) {
-  .pp-land { transition: fill .35s ease; }
-  .pp-dot circle { transition: r .15s, fill .35s ease; }
-  .pp-dot { transition: opacity .3s ease; }
+  .pp-land { transition: fill var(--dur-move) var(--ease-enter); }
+  .pp-dot circle { transition: r var(--dur-feedback) var(--ease-enter), fill var(--dur-move) var(--ease-enter); }
+  .pp-dot { transition: opacity var(--dur-move) var(--ease-enter); }
 }
 
 /* Desktop: the side panel is never taller than the main column (or the window) and scrolls inside itself, so it no

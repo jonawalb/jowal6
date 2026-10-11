@@ -17,7 +17,7 @@ export function widths(root, sel, keyOf) {
     const was = prevW.get(next[i][0]);
     if (was === undefined || was === next[i][1]) return;
     e.style.transition = 'none'; e.style.width = was;
-    requestAnimationFrame(() => { e.style.transition = 'width .35s cubic-bezier(.2,.8,.2,1)'; e.style.width = next[i][1]; });
+    requestAnimationFrame(() => { e.style.transition = 'width var(--dur-move) var(--ease-enter)'; e.style.width = next[i][1]; });
   });
   next.forEach(([k, w]) => prevW.set(k, w));
 }

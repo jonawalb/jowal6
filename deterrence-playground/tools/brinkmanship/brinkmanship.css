@@ -41,6 +41,7 @@ kbd { font: 500 11.5px var(--mono); border: 1px solid var(--rule); border-bottom
 .bk-meter { margin: 10px 0 6px; }
 .bk-meter svg { display: block; width: 100%; height: auto; }
 .bk-meter .pct { font: 700 40px var(--display); fill: var(--bad); }
+.bk-meter .bk-rbar { transition: width var(--dur-hero) var(--ease-enter); }
 .bk-mx { margin: 0; font-size: 13px; }
 .bk-stake { margin-top: 12px; border-top: 1px solid var(--rule); padding-top: 10px; font-size: 13.5px; }
 .bk-stake dl { display: grid; grid-template-columns: auto auto; gap: 2px 12px; margin: 0; }
@@ -63,7 +64,7 @@ kbd { font: 500 11.5px var(--mono); border: 1px solid var(--rule); border-bottom
 .bk-read + .bk-read { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--rule); }
 .bk-belief { display: grid; grid-template-columns: 4.6em minmax(0, 1fr) 3em; gap: 4px 8px; align-items: center; font-size: 13px; }
 .bk-belief .bar { height: 12px; background: var(--chip); border-radius: 3px; overflow: hidden; }
-.bk-belief .bar span { display: block; height: 100%; background: var(--c); transition: width .5s ease; }
+.bk-belief .bar span { display: block; height: 100%; background: var(--c); transition: width var(--dur-move) var(--ease-enter) calc(var(--i, 0) * var(--stagger-item)); }
 .bk-belief .num { text-align: right; }
 @media (prefers-reduced-motion: reduce) { .bk-belief .bar span { transition: none; } }
 

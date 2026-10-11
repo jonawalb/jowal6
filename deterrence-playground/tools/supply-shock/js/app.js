@@ -58,7 +58,7 @@ $('end-year').addEventListener('click', () => {
   const yr = yearOf(g.s.t);
   const { state, log } = resolveYear(g.s, g.plan);
   g.s = state; g.plan = []; g.draft = { m: g.draft.m, site: g.draft.site };
-  const h = state.history[state.history.length - 1];
+  const h = state.history[state.history.length - 1], was = state.history[state.history.length - 2];
   $('res-t').textContent = `${yr}: what happened`;
   $('moves').innerHTML = h.moves.length ? h.moves.map(mv => `<li class="${mv.to === 'open' && !mv.dump ? 'good' : 'bad'}">${moveText(mv)}</li>`).join('')
     : `<li>${h.t < P.graceYears ? 'The Supplier watches and signals displeasure, but changes nothing this year.' : 'The Supplier changes nothing this year.'}</li>`;
@@ -68,7 +68,9 @@ $('end-year').addEventListener('click', () => {
   $('news').innerHTML = log.map(l => `<li class="${l.kind}">${l.text}</li>`).join('') || '<li class="muted">No actions this year.</li>';
   $('next').textContent = state.over ? 'See the debrief' : `Plan ${yr + 1}`;
   $('results').hidden = false; $('decide').hidden = true; $('end-year').disabled = true;
-  paintDashboard($('dash'), state, []); paintRead($('read'), state);
+  // The year's outcome is the hero: output counts over from last year's; the dashboard and the read follow it.
+  if (was) countUp($('outv'), h.output, { from: was.output, ms: 750, fmt: v => v.toFixed(1) });
+  paintDashboard($('dash'), state, [], true); paintRead($('read'), state, true);
   $('announce').textContent = `${yr}: ${h.moves.length ? h.moves.map(moveText).join(' ') : 'No Supplier moves.'} Output ${h.output.toFixed(1)}.${short.length ? ` Shortfalls in ${short.map(r => BY[r.m].name).join(', ')}.` : ''}`;
   $('results').scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'start' });
   $('results').focus({ preventScroll: true });

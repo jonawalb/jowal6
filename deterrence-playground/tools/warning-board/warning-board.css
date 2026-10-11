@@ -9,7 +9,7 @@
 .gauge p { margin: 2px 0 0; text-align: center; display: flex; flex-direction: column; font-size: 12.5px; line-height: 1.25; }
 .gauge p span { color: var(--muted); font-size: 11.5px; }
 .g-bg { fill: none; stroke: var(--chip); stroke-width: 12; }
-.g-fg { fill: none; stroke-width: 12; transition: d .3s; }
+.g-fg { fill: none; stroke-width: 12; transition: d var(--dur-move) var(--ease-enter); }
 .g-tick { stroke: var(--ink); stroke-width: 1.5; }
 .g-val { font: 600 20px var(--mono); fill: var(--ink); }
 
@@ -24,7 +24,7 @@
 .overlap { margin-top: 10px; display: flex; flex-direction: column; gap: 3px; border-radius: 4px; padding: 4px; }
 .ov-h { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; }
 .ov-bar { height: 10px; border-radius: 5px; background: var(--chip); overflow: hidden; }
-.ov-bar i { display: block; height: 100%; background: var(--muted); transition: width .3s; }
+.ov-bar i { display: block; height: 100%; background: var(--muted); transition: width var(--dur-move) var(--ease-enter); }
 .overlap small { color: var(--muted); font-size: 11.5px; }
 .focus-ring { outline: 3px solid var(--accent); outline-offset: 3px; }
 
@@ -36,7 +36,7 @@
 .dom h3 { margin: 0 0 8px; font-size: 17px; display: flex; align-items: center; gap: 8px; }
 .dom h3 .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--dc); }
 .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px; }
-.ind { border: 1px solid var(--rule); border-radius: 4px; padding: 8px 9px; display: flex; flex-direction: column; gap: 6px; background: var(--bg); transition: border-color .15s, background .15s; }
+.ind { border: 1px solid var(--rule); border-radius: 4px; padding: 8px 9px; display: flex; flex-direction: column; gap: 6px; background: var(--bg); transition: border-color var(--dur-feedback) var(--ease-enter), background var(--dur-feedback) var(--ease-enter); }
 .ind.s1 { border-color: var(--warn); }
 .ind.s2 { border-color: var(--dc); background: var(--panel); box-shadow: inset 4px 0 0 var(--dc); }
 .ind.sel { outline: 2px solid var(--ink); outline-offset: -1px; }

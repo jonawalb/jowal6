@@ -1,15 +1,15 @@
 // Tool-local motion for this data interactive, on top of shared/js/motion.js. Presentation only: nothing here
-// changes a value, every animation is at most 700 ms, and every helper is a no-op under prefers-reduced-motion.
+// changes a value, every animation is at most 750 ms, and every helper is a no-op under prefers-reduced-motion.
 import { reduced, reveal, flash, pulse } from '../../../shared/js/motion.js';
 export { reduced, reveal, flash, pulse };
 
-const EASE = 'cubic-bezier(.2,.8,.2,1)';
+const EASE = 'cubic-bezier(.16,1,.3,1)', MOVE = 'cubic-bezier(.76,0,.24,1)'; // --ease-enter, --ease-move (shared/css/motion.css)
 const runs = new WeakMap();
 const intFmt = v => Math.round(v).toLocaleString('en-US');
 
 /** Show a number, counting from the value shown before (or from 0 on first show with intro) and
  *  cancelling any count already running on the element. Returns true when the value changed. */
-export function num(el, to, { fmt = intFmt, ms = 450, intro = false, flashIt = false } = {}) {
+export function num(el, to, { fmt = intFmt, ms = 400, intro = false, flashIt = false } = {}) {
   if (!el) return false;
   const had = el.dataset.fx != null;
   const from = had ? Number(el.dataset.fx) : (intro ? 0 : to);
@@ -32,7 +32,7 @@ export function num(el, to, { fmt = intFmt, ms = 450, intro = false, flashIt = f
 }
 
 /** Wipe an SVG group (or element) in from the left (lines and areas "draw" along the time axis) or up. */
-export function wipeIn(el, ms = 700, elapsed = 0, dir = 'x') {
+export function wipeIn(el, ms = 750, elapsed = 0, dir = 'x') {
   if (!el || reduced() || !el.animate || elapsed >= ms) return;
   const from = dir === 'y' ? 'inset(100% 0 0 0)' : 'inset(0 100% 0 0)'; // 'y': bars rise from the baseline
   const a = el.animate([{ clipPath: from }, { clipPath: 'inset(0 0 0 0)' }], { duration: ms, easing: EASE });
@@ -40,8 +40,8 @@ export function wipeIn(el, ms = 700, elapsed = 0, dir = 'x') {
 }
 
 /** Intro/transition bookkeeping for charts that rebuild their SVG on every draw: wipe on the first draw
- *  (continuing across redraws in the first 700 ms), cross-fade when the signature (view, filters) changes. */
-export function chartMotion(ms = 700, dir = 'x') {
+ *  (continuing across redraws in the first 750 ms), cross-fade when the signature (view, filters) changes. */
+export function chartMotion(ms = 750, dir = 'x') {
   let t0 = 0, last = null;
   return (el, sig) => {
     const now = performance.now();
@@ -53,7 +53,7 @@ export function chartMotion(ms = 700, dir = 'x') {
 }
 
 /** Stroke a single SVG path in along its length (solid strokes only). */
-export function drawPath(path, ms = 650) {
+export function drawPath(path, ms = 750) {
   if (!path || reduced() || !path.getTotalLength) return;
   const L = path.getTotalLength();
   if (!L) return;
@@ -62,20 +62,20 @@ export function drawPath(path, ms = 650) {
 }
 
 /** Fade an element up (quick cross-fade after a redraw so a view change does not jump). */
-export function fadeUp(el, { ms = 300, from = 0.15 } = {}) {
+export function fadeUp(el, { ms = 400, from = 0.15 } = {}) {
   if (!el || reduced() || !el.animate) return;
-  el.animate([{ opacity: from }, { opacity: 1 }], { duration: ms, easing: 'ease-out' });
+  el.animate([{ opacity: from }, { opacity: 1 }], { duration: ms, easing: EASE });
 }
 
 /** Rise a freshly rendered card in. */
-export function rise(el, { ms = 360, delay = 0, dy = 8 } = {}) {
+export function rise(el, { ms = 400, delay = 0, dy = 8 } = {}) {
   if (!el || reduced() || !el.animate) return;
   el.animate([{ opacity: 0, transform: `translateY(${dy}px)` }, { opacity: 1, transform: 'none' }],
     { duration: ms, delay, easing: EASE, fill: 'backwards' });
 }
 
 /** Grow bars from zero along an axis ('x', 'y', or 'xy' for dots), with a small stagger. */
-export function grow(els, { axis = 'x', ms = 520, stagger = 30, origin } = {}) {
+export function grow(els, { axis = 'x', ms = 400, stagger = 30, origin } = {}) {
   if (reduced()) return;
   [...els].forEach((e, i) => {
     if (!e.animate) return;
@@ -95,14 +95,14 @@ export function flipPrep(root, sel, key) {
     const moves = [...root.querySelectorAll(sel)].map(e => [e, before.get(key(e)), e.getBoundingClientRect().top]);
     for (const [e, b, a] of moves) {
       if (b == null || Math.abs(b - a) < 1) continue;
-      e.animate([{ transform: `translateY(${b - a}px)` }, { transform: 'none' }], { duration: 280, easing: EASE });
+      e.animate([{ transform: `translateY(${b - a}px)` }, { transform: 'none' }], { duration: 400, easing: MOVE });
     }
   };
 }
 
 /** Before a re-render: remember an inline style value (e.g. a bar's width) per key. The returned function
  *  tweens each matching element from its old value to its new one. */
-export function tweenPrep(root, sel, key, prop = 'width', ms = 260) {
+export function tweenPrep(root, sel, key, prop = 'width', ms = 400) {
   if (!root || reduced()) return () => {};
   const before = new Map([...root.querySelectorAll(sel)].map(e => [key(e), e.style[prop]]));
   return () => root.querySelectorAll(sel).forEach(e => {

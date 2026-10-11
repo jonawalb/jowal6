@@ -27,7 +27,7 @@ function sweepGauges(a) {
     let last = gaugeArc(f0); path.setAttribute('d', last);
     const step = t => {
       if (!path.isConnected || path.getAttribute('d') !== last) return;
-      const u = Math.min(1, (t - t0) / 520), e = 1 - Math.pow(1 - u, 3);
+      const u = Math.min(1, (t - t0) / 400), e = 1 - Math.pow(1 - u, 3);
       last = u < 1 ? gaugeArc(f0 + (f1 - f0) * e) : final;
       path.setAttribute('d', last);
       if (u < 1) requestAnimationFrame(step);
@@ -116,7 +116,7 @@ $('board').addEventListener('click', e => {
     S.selected = S.selected === n.dataset.info ? null : n.dataset.info;
     render();
     document.querySelector(`[data-info="${n.dataset.info}"]`)?.focus();
-    if (S.selected && window.matchMedia('(max-width: 1020px)').matches) $('detail').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    if (S.selected && window.matchMedia('(max-width: 1020px)').matches) $('detail').scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'nearest' });
   }
 });
 // Arrow keys move within a radio group
@@ -154,7 +154,7 @@ const tour = createTour((set, focus) => {
   S.selected = null;
   render();
   if (focus === 'overlap') document.querySelector('.overlap')?.classList.add('focus-ring');
-  if (focus === 'exercises') { $('exercises-box').classList.add('focus-ring'); $('exercises-box').scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+  if (focus === 'exercises') { $('exercises-box').classList.add('focus-ring'); $('exercises-box').scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'center' }); }
   else window.scrollTo({ top: $('main').offsetTop - 10, behavior: 'smooth' });
 });
 $('start-tour').addEventListener('click', () => tour.start());

@@ -51,15 +51,15 @@ export async function animateMonth(h) {
   if (!svg) return;
   const sea = ['civ', 'cg', 'press', 'patron'].includes(h.c.method);
   const [x2, y2] = [SHOAL[0] - 30, SHOAL[1] + 10];
-  if (h.c.method === 'air') await tracer(svg, PORT[0], PORT[1] - 60, x2, y2 - 20, { color: COL.c, ms: 500 });
+  if (h.c.method === 'air') await tracer(svg, PORT[0], PORT[1] - 60, x2, y2 - 20, { color: COL.c, ms: 750 });
   else if (sea) {
     const k = h.delivered > 0 ? 1 : 0.62;
-    await tracer(svg, PORT[0], PORT[1], PORT[0] + (x2 - PORT[0]) * k, PORT[1] + (y2 - PORT[1]) * k, { color: COL.c, ms: 600 });
+    await tracer(svg, PORT[0], PORT[1], PORT[0] + (x2 - PORT[0]) * k, PORT[1] + (y2 - PORT[1]) * k, { color: COL.c, ms: 750 });
   }
   if (h.injury || h.seized) burst(svg, x2 - 20, y2, { color: 'var(--bad)' });
   if (h.p.level >= 2 && h.enc) ping(svg, SHOAL[0], SHOAL[1], { color: COL.p, r: 60 });
   if (h.resp === 'warning' || h.resp === 'intervene') {
-    await tracer(svg, PATRON[0], PATRON[1], SHOAL[0] + 50, SHOAL[1] + 30, { color: COL.a, ms: 500 });
+    await tracer(svg, PATRON[0], PATRON[1], SHOAL[0] + 50, SHOAL[1] + 30, { color: COL.a, ms: 400 });
     ping(svg, SHOAL[0], SHOAL[1], { color: COL.a, r: h.resp === 'intervene' ? 110 : 70, width: 3 });
   }
 }
@@ -72,12 +72,15 @@ const TRACKS = [
   ['domC', 'Home pressure: Coastal State', COL.c],
   ['domP', 'Home pressure: Power', COL.p],
 ];
-export function paintTracks(div, s, prev) {
-  div.innerHTML = TRACKS.map(([k, label, c, pct, fmt]) => {
+export function paintTracks(div, s, prev, grow = false) {
+  // grow: bars start at last month's value and grow to this month's, one row after another (month results only).
+  div.innerHTML = TRACKS.map(([k, label, c, pct, fmt], i) => {
     const v = s[k], d = prev ? v - prev[k] : 0, w = pct ? pct(s) : v;
     const dd = Math.abs(d) >= (k === 'supplies' ? 0.05 : 0.5) ? ` <small class="muted">${d > 0 ? '+' : ''}${k === 'supplies' ? d.toFixed(1) : Math.round(d)}</small>` : '';
-    return `<div class="sl-track" style="--tc:${c}"><div><span>${label}</span><span class="num">${fmt ? fmt(s) : Math.round(v)}${dd}</span></div><div class="bar"><span style="width:${Math.max(0, Math.min(100, w))}%"></span></div></div>`;
+    const w0 = grow && prev ? (pct ? pct(prev) : prev[k]) : w, clamp = x => Math.max(0, Math.min(100, x));
+    return `<div class="sl-track" style="--tc:${c};--i:${i}"><div><span>${label}</span><span class="num">${fmt ? fmt(s) : Math.round(v)}${dd}</span></div><div class="bar"><span style="width:${clamp(w0)}%" data-w="${clamp(w)}"></span></div></div>`;
   }).join('');
+  if (grow && prev) { void div.offsetWidth; div.querySelectorAll('.bar span').forEach(b => { b.style.width = b.dataset.w + '%'; }); }
 }
 
 /**

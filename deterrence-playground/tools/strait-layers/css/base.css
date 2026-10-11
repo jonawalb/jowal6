@@ -110,7 +110,7 @@ body[data-mode="crossing"] .routes button[aria-pressed="true"] { border-color: v
 .notes li::before { content: "› "; color: var(--faint); }
 .chain { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; }
 .chain li { display: flex; flex-direction: column; gap: 4px; }
-.chain .bar { height: 6px; border-radius: 1px; background: var(--rule); transition: background .2s; }
+.chain .bar { height: 6px; border-radius: 1px; background: var(--rule); transition: background var(--dur-move) var(--ease-enter); }
 .chain .nm { font-family: var(--display); font-weight: 600; font-size: 13px; }
 .chain li[data-s="ok"] .bar { background: var(--bad); }
 .chain li[data-s="ok"] .nm { color: var(--bad); }
@@ -121,8 +121,8 @@ body[data-mode="crossing"] .routes button[aria-pressed="true"] { border-color: v
 .tg { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: start; padding: 6px 4px; border-radius: 3px; cursor: pointer; position: relative; }
 .tg:hover { background: var(--chip); }
 .tg input { position: absolute; opacity: 0; pointer-events: none; }
-.sw { width: 30px; height: 17px; border-radius: 9px; background: var(--rule); position: relative; margin-top: 2px; transition: background .15s; }
-.sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 13px; height: 13px; border-radius: 50%; background: var(--panel); transition: transform .15s; }
+.sw { width: 30px; height: 17px; border-radius: 9px; background: var(--rule); position: relative; margin-top: 2px; transition: background var(--dur-feedback) var(--ease-enter); }
+.sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 13px; height: 13px; border-radius: 50%; background: var(--panel); transition: transform var(--dur-feedback) var(--ease-enter); }
 .tg input:checked + .sw { background: var(--brand-ink); }
 body[data-mode="crossing"] .tg input:checked + .sw { background: var(--brand-ink); }
 .tg input:checked + .sw::after { transform: translateX(13px); }
@@ -162,7 +162,7 @@ table.mini td { padding: 3px 4px; border-bottom: 1px solid var(--rule); }
 .wave-dots { line-height: 0; }
 .salvo-type { display: inline; margin-right: 6px; }
 .mag { height: 6px; background: var(--rule); border-radius: 3px; overflow: hidden; }
-.mag span { display: block; height: 100%; background: var(--blue); transition: width .2s; }
+.mag span { display: block; height: 100%; background: var(--blue); transition: width var(--dur-move) var(--ease-enter); }
 
 /* Activity */
 .range { margin: 0; font-weight: 600; } .range span { font-weight: 400; color: var(--muted); font-size: 12px; }

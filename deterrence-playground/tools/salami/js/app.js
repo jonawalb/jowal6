@@ -88,10 +88,12 @@ $('end-turn').addEventListener('click', async () => {
   lines.push(`<li class="note">${beliefLine(b.bR, state.bR, R_VALUES, levelLabel, 'The Patron’s line')}</li>`);
   if (g.side === 'c') lines.push(`<li class="note">${beliefLine(b.bT, state.bT, T_VALUES, String, 'The Power’s threshold')}</li>`);
   $('log').innerHTML = lines.join('');
-  paintTracks($('tracks'), g.s, b); paintShoal(g.s, h.p.level); paintNormal($('normal'), g.s, counters(g.s), baseline(g.s));
+  paintShoal(g.s, h.p.level);
   $('next').disabled = true;
   $('resolve').focus();
+  // The encounter at the shoal is the hero of the month; the tracks and the normal follow it.
   await Promise.race([animateMonth(h), new Promise(r => setTimeout(r, 2500))]);
+  paintTracks($('tracks'), g.s, b, true); paintNormal($('normal'), g.s, counters(g.s), baseline(g.s));
   $('next').disabled = false; $('next').focus();
 });
 $('next').addEventListener('click', () => {

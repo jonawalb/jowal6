@@ -55,7 +55,7 @@
 .wf-bar { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px; align-items: center; font: 12px var(--mono); color: var(--muted); }
 .wf-track { position: relative; height: 12px; border-radius: 6px; background: linear-gradient(90deg, color-mix(in srgb, var(--bad) 45%, var(--chip)), var(--chip) 50%, color-mix(in srgb, var(--good) 45%, var(--chip))); }
 .wf-track::after { content: ""; position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--ink); }
-.wf-track i { position: absolute; top: 50%; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; background: var(--panel); border: 3px solid var(--ink); transition: left .35s cubic-bezier(.2, .8, .2, 1); }
+.wf-track i { position: absolute; top: 50%; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; background: var(--panel); border: 3px solid var(--ink); transition: left var(--dur-move) var(--ease-move); }
 @media (prefers-reduced-motion: reduce) { .wf-track i { transition: none; } }
 .readout b { color: var(--ink); }
 

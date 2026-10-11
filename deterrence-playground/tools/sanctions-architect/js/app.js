@@ -64,11 +64,15 @@ $('end-turn').addEventListener('click', () => {
   $('res-t').textContent = `${q}: what happened`;
   $('log').innerHTML = logHTML(log);
   $('resolve').hidden = false; $('decide').hidden = true; $('end-turn').disabled = true;
-  paintTracks($('tracks'), metrics(g.s), g.before);
+  // The pressure scale is the hero of the quarter: it moves from last quarter's pressure first, then the tracks follow.
+  const f0 = $('drivers').querySelector('.sa-scale .fill')?.style.width;
+  paintTracks($('tracks'), metrics(g.s), g.before, null, true);
   paintPartners($('partners'), g.s, log);
   paintDrivers($('drivers'), g.s, log);
+  const fill = $('drivers').querySelector('.sa-scale .fill');
+  if (fill && f0 && f0 !== fill.style.width) { const w = fill.style.width; fill.style.width = f0; void fill.offsetWidth; fill.style.width = w; }
   $('feed').innerHTML = feedHTML(g.s);
-  document.querySelectorAll('#tracks .sa-track').forEach(t => { if (t.querySelector('small')) flash(t); });
+  document.querySelectorAll('#tracks .sa-track').forEach((t, i) => { if (t.querySelector('small')) setTimeout(() => flash(t), reducedMotion() ? 0 : 750 + i * 60); });
   history.replaceState(null, '', '#g=' + encode(g.s));
   $('resolve').scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth', block: 'nearest' });
   $('res-t').focus();

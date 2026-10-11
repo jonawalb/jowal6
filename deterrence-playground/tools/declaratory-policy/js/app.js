@@ -79,24 +79,24 @@ function render() {
   for (const s of state.states) for (const e of state.els) if (inForce(s, e, state.asOf)) declared++;
   $('asof-out').textContent = state.asOf;
   range.value = state.asOf;
-  num($('k-decl'), declared, { fmt: v => `${Math.round(v)} / ${cells}`, ms: 320 });
+  num($('k-decl'), declared, { fmt: v => `${Math.round(v)} / ${cells}`, ms: 400 });
   $('k-note').textContent = state.q ? `${shown} statement${shown === 1 ? ' mentions' : 's mention'} “${state.q}”.` : `Cells with a quoted statement dated ${state.asOf} or earlier.`;
   $('detail').innerHTML = detailHTML(state.sel, state.asOf, state.q.trim());
-  if (mv.sel !== null && mv.sel !== state.sel) rise($('detail'), { ms: 300, dy: 6 });
+  if (mv.sel !== null && mv.sel !== state.sel) rise($('detail'));
   document.querySelectorAll('#f-states [data-st]').forEach(b => b.setAttribute('aria-pressed', state.states.has(b.dataset.st)));
   document.querySelectorAll('#f-els [data-el]').forEach(i => { i.checked = state.els.has(i.dataset.el); });
   if ($('q').value !== state.q) $('q').value = state.q;
   $('full').checked = state.full;
   timeline.draw(state);
   $('ev-card').innerHTML = eventCard(state.ev);
-  if (mv.ev !== state.ev && state.ev) rise($('ev-card'), { ms: 300, dy: 6 });
+  if (mv.ev !== state.ev && state.ev) rise($('ev-card'));
   const stKey = [...state.states].join();
   if (mv.tl && mv.st !== stKey) fadeUp($('timeline').querySelector('svg'));
   $('cmp-a').value = state.cmp[0]; $('cmp-b').value = state.cmp[1];
   $('cmp-year').textContent = state.asOf;
   renderCompare($('compare'), state);
   const cmpKey = state.cmp.join() + '|' + [...state.els].join();
-  if (mv.cmp !== null && mv.cmp !== cmpKey) $('compare').querySelectorAll('.dp-cmp-h, .dp-cmp-r').forEach((r, i) => rise(r, { delay: i * 40 }));
+  if (mv.cmp !== null && mv.cmp !== cmpKey) $('compare').querySelectorAll('.dp-cmp-h, .dp-cmp-r').forEach((r, i) => rise(r, { delay: i * 60 }));
   else if (yearMoved) flashChanged($('compare'), '.dp-cmp-r > div', cKey, cBefore);
   if (keepSel) $('matrix').querySelector(`[data-sel="${keepSel}"]`)?.focus({ preventScroll: true });
   if (keepEv) $('timeline').querySelector(`[data-ev="${keepEv}"]`)?.focus({ preventScroll: true });
@@ -139,7 +139,7 @@ const tour = createTour(() => $('start-tour').focus({ preventScroll: true }), s 
 });
 $('start-tour').addEventListener('click', () => tour.start());
 
-onFirstView($('timeline'), () => { mv.tl = true; wipeIn($('timeline').querySelector('svg'), 700); });
+onFirstView($('timeline'), () => { mv.tl = true; wipeIn($('timeline').querySelector('svg'), 750); });
 let rw = 0;
 new ResizeObserver(() => { const w = $('timeline').clientWidth; if (Math.abs(w - rw) > 4) { rw = w; timeline.draw(state); } }).observe($('timeline'));
 addEventListener('hashchange', () => { readHash(); render(); });

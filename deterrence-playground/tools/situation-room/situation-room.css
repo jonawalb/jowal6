@@ -53,7 +53,7 @@ code { font-family: var(--mono); font-size: 11.5px; overflow-wrap: anywhere; }
 .seat { cursor: pointer; }
 .seat:focus { outline: none; }
 .seat:focus-visible .chair { stroke: var(--focus) !important; stroke-width: 4; }
-.chair { stroke-width: 3; transition: fill .25s; }
+.chair { stroke-width: 3; transition: fill var(--dur-move) var(--ease-enter); }
 .chair.na { stroke-dasharray: 4 3; }
 .moved { fill: none; stroke: var(--ink); stroke-width: 1.5; }
 .halo { fill: none; stroke: var(--accent); stroke-width: 3; opacity: .85; }

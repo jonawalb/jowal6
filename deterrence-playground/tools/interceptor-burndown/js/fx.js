@@ -10,7 +10,7 @@ const NS = 'http://www.w3.org/2000/svg';
 
 /** Tween a number in an element's text, cancelling any tween already running on it. */
 const runs = new WeakMap();
-export function tween(el, to, fmt, ms = 450) {
+export function tween(el, to, fmt, ms = 400) {
   const from = el.dataset.v == null ? null : +el.dataset.v;
   el.dataset.v = to;
   cancelAnimationFrame(runs.get(el));
@@ -48,7 +48,7 @@ export function growBars(svg) {
   svg.querySelectorAll('.tbar').forEach((r, i) => {
     const x = +r.getAttribute('x');
     r.style.transformOrigin = x + 0.5 >= bx ? 'left center' : 'right center';
-    r.style.animationDelay = `${Math.floor(i / 2) * 40}ms`;
+    r.style.animationDelay = `calc(${Math.floor(i / 2)} * var(--stagger-item))`;
     r.classList.add('ib-grow');
   });
 }
@@ -75,6 +75,6 @@ export function dryBurst(svg) {
   const m = svg.querySelector('.drymark');
   if (!m) return;
   const o = layer(svg), x = +m.getAttribute('x1'), y = +m.getAttribute('y1');
-  burst(o, x, y, { color: 'var(--bad)', n: 14, r: 34, ms: 700 });
-  ping(o, x, y, { color: 'var(--bad)', r: 46, ms: 800 });
+  burst(o, x, y, { color: 'var(--bad)', n: 14, r: 34, ms: 750 });
+  ping(o, x, y, { color: 'var(--bad)', r: 46, ms: 750 });
 }

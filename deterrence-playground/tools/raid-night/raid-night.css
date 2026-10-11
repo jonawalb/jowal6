@@ -180,9 +180,9 @@ body[data-game-mode="hard"] .hud .pill { color: var(--accent); }
 }
 
 /* ---- motion (both looks; off under reduced motion) ---- */
-.mag-bar i { transition: width .25s ease-out; }
+.mag-bar i { transition: width var(--dur-move) var(--ease-enter); }
 @keyframes rn-rise { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: none; } }
-.ov-card.rn-in { animation: rn-rise .42s cubic-bezier(.2, .8, .2, 1) both; }
+.ov-card.rn-in { animation: rn-rise var(--dur-move) var(--ease-enter) both; }
 @media (prefers-reduced-motion: reduce) { .mag-bar i { transition: none; } .ov-card.rn-in { animation: none; } }
 
 /* ---- Trailer look: the night plotting table (only when the player picks it; see shared/js/skin.js) ----
@@ -200,19 +200,18 @@ body[data-game-mode="hard"] .hud .pill { color: var(--accent); }
 :root[data-skin="trailer"] .mapbox.fieldbox { background: var(--sea); box-shadow: inset 0 0 0 1px var(--rule), inset 0 0 60px -20px #000; }
 :root[data-skin="trailer"] .game { overflow: hidden; }
 :root[data-skin="trailer"] .hud-wave b { font-style: italic; font-weight: 500; font-size: 19px; }
-:root[data-skin="trailer"] .hud-clock { font-family: var(--mono); color: var(--accent); letter-spacing: .06em; text-shadow: 0 0 12px rgba(240, 169, 59, .35); }
+:root[data-skin="trailer"] .hud-clock { font-family: var(--mono); color: var(--accent); letter-spacing: .06em; }
 :root[data-skin="trailer"] .overlay { background: color-mix(in srgb, #050c09 62%, transparent); }
 :root[data-skin="trailer"] .ov-card { background: color-mix(in srgb, var(--panel) 94%, transparent); box-shadow: 0 22px 50px -24px #000, 0 0 0 1px rgba(240, 169, 59, .12); border-top-color: var(--accent); }
 :root[data-skin="trailer"] .ov-card h2 { font-size: 34px; }
 :root[data-skin="trailer"] .mode b { font-style: italic; font-weight: 500; }
-:root[data-skin="trailer"] .mode.on { border-color: var(--accent); box-shadow: var(--glow); }
+:root[data-skin="trailer"] .mode.on { border-color: var(--accent); }
 :root[data-skin="trailer"] .mode:hover { border-color: var(--accent); }
 :root[data-skin="trailer"] .wbtn { color: var(--ink); }
 :root[data-skin="trailer"] .wbtn[aria-pressed="true"], :root[data-skin="trailer"] .bbtn[aria-pressed="true"],
-:root[data-skin="trailer"] .lock button[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent), 0 0 18px -6px rgba(240, 169, 59, .6); background: color-mix(in srgb, var(--accent) 10%, var(--chip)); }
+:root[data-skin="trailer"] .lock button[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--chip)); }
 :root[data-skin="trailer"] .wbtn .wa, :root[data-skin="trailer"] .mag .num { color: var(--ink); }
 :root[data-skin="trailer"] .mag-bar, :root[data-skin="trailer"] .mbar { background: #0a1510; }
-:root[data-skin="trailer"] .mag-bar i, :root[data-skin="trailer"] .mbar i { box-shadow: 0 0 10px -2px currentColor; }
 :root[data-skin="trailer"] .xg b { font-family: var(--mono); font-size: 17px; color: var(--accent); }
 :root[data-skin="trailer"] .toast { color: var(--accent); font-family: var(--mono); font-size: 11.5px; letter-spacing: .03em; }
 :root[data-skin="trailer"] .seedrow input { background: #0a1510; }

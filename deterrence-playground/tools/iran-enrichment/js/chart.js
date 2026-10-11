@@ -183,7 +183,7 @@ export function createChart(host, { onReport, onEvent }) {
       mk('line', { class: 'ie-cursor', x1: cx, x2: cx, y1: m.t, y2: m.t + ph }, svg);
     }
     // Motion: a ping on the selected report's dot when the report changes.
-    if (onDot && lastReport !== null && lastReport !== state.report) ping(svg, onDot[0], onDot[1], { color: 'var(--ink)', r: 18, ms: 600, width: 1.5 });
+    if (onDot && lastReport !== null && lastReport !== state.report) ping(svg, onDot[0], onDot[1], { color: 'var(--ink)', r: 18, ms: 750, width: 1.5 });
     lastReport = state.report;
   }
   return { draw };

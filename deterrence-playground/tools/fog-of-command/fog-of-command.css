@@ -165,7 +165,7 @@ body.fc-over #again { display: inline-block; }
 body.fc-armed #map, body.fc-armed #map .fc-sec, body.fc-armed #map .fc-unit[data-pick], body.fc-armed #map .fc-ghost { cursor: crosshair; }
 body.fc-armed .fc-sec:hover rect { fill: color-mix(in srgb, var(--c3) 14%, transparent); stroke: var(--c3); stroke-dasharray: 5 3; }
 .fc-sec { cursor: pointer; outline: none; }
-.fc-sec rect { fill: transparent; stroke: transparent; stroke-width: 1.2; transition: fill .12s; }
+.fc-sec rect { fill: transparent; stroke: transparent; stroke-width: 1.2; transition: fill var(--dur-feedback) var(--ease-enter); }
 .fc-bound { fill: none; stroke: var(--bound); stroke-width: 1.5; stroke-dasharray: 6 4; pointer-events: none; }
 .fc-bound.row { stroke-width: 2; opacity: 1; }
 .fc-bound.col { opacity: .8; }
@@ -298,14 +298,14 @@ body.fc-armed .fc-sec:hover rect { fill: color-mix(in srgb, var(--c3) 14%, trans
 
 /* Motion (js/fx.js). The pop and light-up animate the marker's shape, never its position. */
 @keyframes fc-pop { from { opacity: 0; transform: scale(.35); } to { opacity: 1; transform: none; } }
-.fc-trk.fc-pop > * { transform-box: fill-box; transform-origin: center; animation: fc-pop .45s cubic-bezier(.2, .9, .3, 1.2) var(--d, 0ms) both; }
-@keyframes fc-lit { 0% { stroke-width: 2; } 30% { stroke-width: 5; filter: drop-shadow(0 0 6px var(--foe)); } 100% { stroke-width: 2; } }
-.fc-trk.fc-lit path { animation: fc-lit .9s ease-out; }
+.fc-trk.fc-pop > * { transform-box: fill-box; transform-origin: center; animation: fc-pop var(--dur-move) var(--ease-enter) var(--d, 0ms) both; }
+@keyframes fc-lit { 0% { stroke-width: 2; } 30% { stroke-width: 5; } 100% { stroke-width: 2; } }
+.fc-trk.fc-lit path { animation: fc-lit var(--dur-hero) var(--ease-enter); }
 @media (prefers-reduced-motion: reduce) { .fc-trk.fc-pop > *, .fc-trk.fc-lit path { animation: none; } }
 
 /* Trailer look (Interactive Deterrence games, when the player picks it). The shared tokens are remapped by
    shared/css/trailer.css; these are the tool's own: the dark-mode data palette whatever the OS setting, the
-   orange sector lines, mono plotting labels, and glow on the moments that matter. */
+   orange sector lines, mono plotting labels. */
 :root[data-skin="trailer"] { --c1: #72a0ff; --c2: #ff8a3d; --c3: #2cc2ac; --c4: #d77ab0; --c5: #efc12f; --c6: #a68ef0; --c7: #63b3d6; --c8: #c8b48a; }
 :root[data-skin="trailer"] body { --bound: color-mix(in srgb, #e29a52 72%, var(--muted)); }
 :root[data-skin="trailer"] .fc-mapbox { background: var(--land); box-shadow: 0 24px 60px -30px #000, inset 0 0 0 1px var(--rule); }
@@ -318,20 +318,16 @@ body.fc-armed .fc-sec:hover rect { fill: color-mix(in srgb, var(--c3) 14%, trans
 :root[data-skin="trailer"] .fc-zone { font: italic 15px var(--display); fill: var(--muted); }
 :root[data-skin="trailer"] .fc-ulab, :root[data-skin="trailer"] .fc-trk-n { stroke: #0e1f17; }
 :root[data-skin="trailer"] .fc-ulab { font: 500 9.5px var(--mono); }
-:root[data-skin="trailer"] .fc-unit.sel .fc-ubox, :root[data-skin="trailer"] .fc-bat:focus-visible .fc-ubox { filter: drop-shadow(0 0 5px var(--focus)); }
-:root[data-skin="trailer"] .fc-fight, :root[data-skin="trailer"] .fc-target { filter: drop-shadow(0 0 5px var(--accent)); }
 :root[data-skin="trailer"] .fc-target circle, :root[data-skin="trailer"] .fc-target path { stroke: var(--accent); }
 :root[data-skin="trailer"] .lg-target { border-color: var(--accent); }
-:root[data-skin="trailer"] .fc-trk.truth path { filter: drop-shadow(0 0 4px var(--foe)); }
-:root[data-skin="trailer"] .fc-fx > * { filter: drop-shadow(0 0 4px rgba(240, 169, 59, .55)); }
 :root[data-skin="trailer"] .fc-say { background: color-mix(in srgb, var(--bg) 70%, transparent); }
-:root[data-skin="trailer"] .fc-clock b { color: var(--accent); text-shadow: 0 0 18px rgba(240, 169, 59, .35); }
+:root[data-skin="trailer"] .fc-clock b { color: var(--accent); }
 :root[data-skin="trailer"] .fc-start { border-left-color: var(--accent); }
 :root[data-skin="trailer"] .fc-side { background: color-mix(in srgb, var(--chip) 80%, transparent); }
 :root[data-skin="trailer"] .fc-side b { font: italic 500 26px var(--display); }
 :root[data-skin="trailer"] .fc-od { background: color-mix(in srgb, var(--chip) 80%, transparent); }
 :root[data-skin="trailer"] .fc-od input[type="range"] { accent-color: var(--accent); }
-:root[data-skin="trailer"] .fc-fogbar i { background: var(--good); box-shadow: 0 0 10px -2px var(--good); }
+:root[data-skin="trailer"] .fc-fogbar i { background: var(--good); }
 :root[data-skin="trailer"] .fc-fogn b { font: 600 16px var(--mono); }
 :root[data-skin="trailer"] .fc-fh:first-child li { background: color-mix(in srgb, var(--accent) 6%, transparent); }
 :root[data-skin="trailer"] #aar-arty dd { white-space: nowrap; }

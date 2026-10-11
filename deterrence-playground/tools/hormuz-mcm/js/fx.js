@@ -13,7 +13,7 @@ let prevNums = null;
 addEventListener('click', e => { if (e.target.closest('button')) clickAt = performance.now(); }, true);
 
 /** Tween the number inside an element's text, ending on the exact text the page rendered. */
-function tween(el, from, to, fmt, ms = 650) {
+function tween(el, from, to, fmt, ms = 400) {
   if (!el || reduced() || !Number.isFinite(from) || from === to) return;
   const final = el.textContent, t0 = performance.now();
   const step = now => {
@@ -35,7 +35,7 @@ function drawIn(chart) {
   path.style.transition = 'none';
   path.style.strokeDasharray = `${L} ${L}`; path.style.strokeDashoffset = L;
   void path.getBoundingClientRect();
-  path.style.transition = `stroke-dashoffset ${trailer() ? 900 : 700}ms cubic-bezier(.4,0,.2,1)`;
+  path.style.transition = 'stroke-dashoffset var(--dur-hero) var(--ease-enter)';
   path.style.strokeDashoffset = 0;
   path.addEventListener('transitionend', () => { path.style.strokeDasharray = ''; path.style.strokeDashoffset = ''; path.style.transition = ''; }, { once: true });
   const fin = chart.querySelectorAll('.hm-fin, .hm-fin-t, .hm-dot');
@@ -62,8 +62,8 @@ export function afterRender({ strip, chart, S, R, day }) {
         if (!was || was === node.getAttribute('class') || n >= 14) continue;
         const cls = node.getAttribute('class');
         const x = +(node.getAttribute('cx') ?? node.dataset.x), y = +(node.getAttribute('cy') ?? node.dataset.y);
-        if (cls.includes('found') && was.includes('live')) { ping(strip, x, y, { color: 'var(--accent)', r: rich ? 20 : 14, ms: 800 }); n++; }
-        else if (cls.includes('done')) { burst(strip, x, y, { color: 'var(--good)', n: rich ? 10 : 8, r: rich ? 16 : 12, ms: 550 }); n++; }
+        if (cls.includes('found') && was.includes('live')) { ping(strip, x, y, { color: 'var(--accent)', r: rich ? 20 : 14, ms: 750 }); n++; }
+        else if (cls.includes('done')) { burst(strip, x, y, { color: 'var(--good)', n: rich ? 10 : 8, r: rich ? 16 : 12, ms: 400 }); n++; }
       }
       // Sonar rings off the search front, a few times a second at most.
       const t = performance.now();
@@ -71,7 +71,7 @@ export function afterRender({ strip, chart, S, R, day }) {
         lastSonar = t;
         strip.querySelectorAll('.hm-front').forEach(f => {
           const x = +f.getAttribute('x1'), y = (+f.getAttribute('y1') + +f.getAttribute('y2')) / 2;
-          ping(strip, x, y, { color: 'var(--blue)', r: rich ? 30 : 20, ms: 900, width: 1.5 });
+          ping(strip, x, y, { color: 'var(--blue)', r: rich ? 30 : 20, ms: 750, width: 1.5 });
         });
       }
       // The day the routes are declared clear.
@@ -104,8 +104,8 @@ function declared(chart, rich) {
   const fin = chart.querySelector('.hm-fin');
   if (fin) {
     const x = +fin.getAttribute('x1'), y = +fin.getAttribute('y2');
-    ping(chart, x, y, { color: 'var(--good)', r: rich ? 46 : 32, ms: 1000, width: 2.5 });
-    if (rich) setTimeout(() => ping(chart, x, y, { color: 'var(--good)', r: 70, ms: 1100, width: 1.5 }), 180);
+    ping(chart, x, y, { color: 'var(--good)', r: rich ? 46 : 32, ms: 750, width: 2.5 });
+    if (rich) setTimeout(() => ping(chart, x, y, { color: 'var(--good)', r: 70, ms: 750, width: 1.5 }), 180);
   }
   const st = document.getElementById('hm-status');
   pulse(st);

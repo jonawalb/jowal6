@@ -34,7 +34,7 @@ export function createMap(host, listHost, { onSite }) {
 
   // Motion: sites pop in on first view; when the year steps, each site with a test that year sends a ping.
   let lastYear = null, seen = false;
-  onFirstView(host, () => { seen = true; grow(layer.querySelectorAll('.dot'), { axis: 'xy', ms: 480, stagger: 18 }); });
+  onFirstView(host, () => { seen = true; grow(layer.querySelectorAll('.dot'), { axis: 'xy', ms: 400, stagger: 18 }); });
 
   function draw(state, rows) {
     const stats = siteStats(rows, state.year);
@@ -53,7 +53,7 @@ export function createMap(host, listHost, { onSite }) {
       if (o.now) el('circle', { cx: px, cy: py, r: r + 5, class: 'ring' }, g);
       const c = el('circle', { cx: px, cy: py, r, class: 'dot' }, g);
       c.style.fill = STATE_COLOR[main];
-      if (stepped && o.now) ping(svg, px, py, { color: STATE_COLOR[main], r: r + 16, ms: 700, width: 1.5 });
+      if (stepped && o.now) ping(svg, px, py, { color: STATE_COLOR[main], r: r + 16, ms: 750, width: 1.5 });
       if (o.n >= 40 || state.site === s.id) {
         const left = px > proj.W - 160;
         el('text', { x: left ? px - r - 3 : px + r + 3, y: py + 4, class: 'lab', 'text-anchor': left ? 'end' : 'start' }, g, s.name.split(' (')[0].split(',')[0]);

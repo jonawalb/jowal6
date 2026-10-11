@@ -71,9 +71,9 @@ function strokeIn(p, delay) {
   const L = p.getTotalLength();
   if (!L) return;
   const dashed = getComputedStyle(p).strokeDasharray !== 'none';
-  if (dashed) { p.style.clipPath = 'inset(0 100% 0 0)'; p.style.transition = `clip-path .7s ease-out ${delay}ms`; requestAnimationFrame(() => requestAnimationFrame(() => { p.style.clipPath = 'inset(0 0 0 0)'; })); return; }
+  if (dashed) { p.style.clipPath = 'inset(0 100% 0 0)'; p.style.transition = `clip-path var(--dur-hero) var(--ease-enter) ${delay}ms`; requestAnimationFrame(() => requestAnimationFrame(() => { p.style.clipPath = 'inset(0 0 0 0)'; })); return; }
   p.style.strokeDasharray = `${L} ${L}`; p.style.strokeDashoffset = L;
-  p.style.transition = `stroke-dashoffset .7s ease-out ${delay}ms`;
+  p.style.transition = `stroke-dashoffset var(--dur-hero) var(--ease-enter) ${delay}ms`;
   requestAnimationFrame(() => requestAnimationFrame(() => { p.style.strokeDashoffset = 0; }));
   p.addEventListener('transitionend', () => { p.style.strokeDasharray = ''; p.style.strokeDashoffset = ''; p.style.transition = ''; }, { once: true });
 }
@@ -87,7 +87,7 @@ function countAll(root) {
     const span = document.createElement('span');
     n.textContent = ''; n.append(pre, span, post);
     span.textContent = (0).toFixed(dec);
-    countUp(span, +m[2], { from: 0, ms: 650, fmt: v => v.toFixed(dec) });
+    countUp(span, +m[2], { from: 0, ms: 400, fmt: v => v.toFixed(dec) });
   });
 }
 
@@ -114,7 +114,7 @@ function fogView(rows, me) {
     <div class="fc-fogn num"><b>${pct(r.p)}</b><small>won</small></div></div>`).join('');
   if (!reduced()) {
     const bars = [...$('aar-fog').querySelectorAll('.fc-fogbar i')], w = bars.map(b => b.style.width);
-    bars.forEach(b => { b.style.width = '0%'; b.style.transition = 'width .65s cubic-bezier(.2,.8,.2,1)'; });
+    bars.forEach(b => { b.style.width = '0%'; b.style.transition = 'width var(--dur-move) var(--ease-enter)'; });
     requestAnimationFrame(() => requestAnimationFrame(() => bars.forEach((b, i) => { b.style.width = w[i]; })));
     countAll($('aar-fog'));
   }

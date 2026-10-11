@@ -12,12 +12,15 @@ const newSeed = () => 1 + Math.floor(Math.random() * 999998);
 const show = (...ids) => ['start', 'peace', 'warstart', 'war', 'end'].forEach(id => { $(id).hidden = !ids.includes(id); });
 
 let g = null;   // { s, d, fire, initial, lastLog }
+let prevWar = null;   // last painted week's stocks and days left, so the next week's readouts can follow the hold bar
+const HERO_MS = 750, ITEM_MS = 60;   // --dur-hero, --stagger-item (shared/css/motion.css)
 
 function begin(seed) {
   const s = newGame({ seed });
   const d = emptyDecision();
   for (const id of IDS) d.buy[id] = maxBuy(s, id);
   g = { s, d: fit(s, d), fire: {}, initial: stockNow(s, 0), lastLog: [] };
+  prevWar = null;
 }
 const save = () => history.replaceState(null, '', '#g=' + encode(g.s));
 ['legend1', 'legend2', 'legend3'].forEach(id => { $(id).innerHTML = legendHTML(); });
@@ -103,15 +106,23 @@ function paintWar() {
   const hv = Math.max(0, war.hold);
   $('hold-b').style.width = `${hv}%`; $('hold-b').className = hv < 50 ? 'bad' : hv < 75 ? 'warn' : '';
   $('hold-m').setAttribute('aria-valuenow', Math.round(hv)); $('hold-m').setAttribute('aria-valuetext', `${Math.round(hv)} of 100; critical below ${P.hold.critical}`);
-  countUp($('hold-v'), Math.round(hv));
+  countUp($('hold-v'), Math.round(hv), { ms: HERO_MS });
   const eff = effStock(war.stock, war.effL), dl = daysLeft(s, g.fire), { out } = weeklyOutput(s);
+  // A new week: the hold bar is the hero; stocks and days left start at last week's values and follow it, row by row.
+  const prev = prevWar && prevWar.week < w && !reduced() ? prevWar : null;
+  prevWar = { week: w, eff, dl };
   $('wtable').innerHTML = `<thead><tr><th>Class</th><th class="num">Stock</th><th class="num">Need/wk</th><th class="num">Make/wk</th><th class="num">Days left</th><th>Fire</th></tr></thead><tbody>${IDS.map(id => {
     const f = g.fire[id] || 0, dry = war.dry[id] !== null;
     return `<tr style="--c:${COL[id]}" class="${dry ? 'dry' : ''}"><th scope="row"><b>${BY[id].short}</b></th>
-      <td class="num">${qty(id, eff[id])}</td><td class="num">${qty(id, demandAt(s, id, w))}</td><td class="num">${qty(id, out[id].own + out[id].partner * s.rel)}</td>
-      <td class="num ${dl[id] < 21 ? 'bad' : ''}">${dl[id] === Infinity ? '∞' : dl[id]}<span class="md-m"> days left</span></td>
+      <td class="num">${qty(id, prev ? prev.eff[id] : eff[id])}</td><td class="num">${qty(id, demandAt(s, id, w))}</td><td class="num">${qty(id, out[id].own + out[id].partner * s.rel)}</td>
+      <td class="num ${dl[id] < 21 ? 'bad' : ''}"><span>${dl[id] === Infinity ? '∞' : prev && prev.dl[id] !== Infinity ? prev.dl[id] : dl[id]}</span><span class="md-m"> days left</span></td>
       <td><div class="md-seg" role="radiogroup" aria-label="Fire for ${BY[id].label}">${P.fireLabel.map((l, i) => `<button type="button" role="radio" aria-checked="${f === i}" tabindex="${f === i ? 0 : -1}" data-fire="${id}" data-lv="${i}">${l}</button>`).join('')}</div></td></tr>`;
   }).join('')}</tbody>`;
+  if (prev) [...$('wtable').tBodies[0].rows].forEach((tr, i) => setTimeout(() => {
+    const id = IDS[i];
+    countUp(tr.cells[1], eff[id], { from: prev.eff[id], ms: 400, fmt: v => qty(id, v) });
+    if (dl[id] !== Infinity && prev.dl[id] !== Infinity) countUp(tr.cells[4].firstChild, dl[id], { from: prev.dl[id], ms: 400, fmt: v => String(Math.round(v)) });
+  }, HERO_MS + i * ITEM_MS));
   chartWar($('warchart'), war);
   $('wlog').innerHTML = `<h3>Dispatches</h3>${war.log.length ? `<ul>${war.log.slice(-8).reverse().map(l => `<li class="${l.kind}">${l.kind === 'dry' ? `Day ${war.dry[l.id]}: ` : ''}${l.text}</li>`).join('')}</ul>` : '<p class="fine">The opening weeks burn the most. Nothing has run out yet.</p>'}`;
 }
@@ -131,7 +142,8 @@ function weeks(n) {
   for (let i = 0; i < n && !g.s.war.done; i++) g.s = warWeek(g.s, g.fire).state;
   save();
   if (g.s.war.done) return finish();
-  paintWar(); flash($('wlog'));
+  paintWar();
+  if (reduced()) flash($('wlog')); else setTimeout(() => flash($('wlog')), HERO_MS);   // the dispatches follow the hold bar
 }
 $('next-week').addEventListener('click', () => weeks(1));
 $('run4').addEventListener('click', () => weeks(4));

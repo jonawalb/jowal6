@@ -1,8 +1,8 @@
 // Motion for the Deterrence Lab. Every view redraws from scratch on each change; this layer remembers what was on
 // screen a moment ago and moves it to the new picture: model curves bend into their new shape, the current
 // point and the "now" line glide, equilibrium-path edges thicken or thin, and readout numbers count to their new
-// values. The new picture is always drawn first with the true values; the motion only covers the last ~quarter
-// second. While you drag on a plot the point follows your pointer with no delay. Off under prefers-reduced-motion.
+// values. The new picture is always drawn first with the true values; the motion only covers the last ~0.4
+// second (--dur-move). While you drag on a plot the point follows your pointer with no delay. Off under prefers-reduced-motion.
 import { countUp, flash, pulse, reduced } from '../../../shared/js/motion.js';
 
 const ease = u => 1 - Math.pow(1 - u, 3);
@@ -36,7 +36,7 @@ function tween(ms, frame) {
 /** Move from the old picture (a snap taken before render) to the one on screen now. */
 export function morph(root, before) {
   if (!before || reduced()) return;
-  const ms = rich() ? 320 : 260, jobs = [];
+  const ms = 400, jobs = [];
   root.querySelectorAll('svg[id]').forEach(svg => {
     svg.querySelectorAll('path.ln').forEach((p, i) => {
       const a = before.d.get(`${svg.id}:ln${i}`), b = p.getAttribute('d');
@@ -87,12 +87,12 @@ export function drawIn(root) {
     const L = p.getTotalLength?.();
     if (!L) return;
     p.style.strokeDasharray = `${L} ${L}`; p.style.strokeDashoffset = L;
-    p.style.transition = `stroke-dashoffset .6s cubic-bezier(.3,.7,.2,1) ${Math.min(i * 40, 300)}ms`;
+    p.style.transition = `stroke-dashoffset var(--dur-hero) var(--ease-enter) ${Math.min(i * 60, 300)}ms`;
     requestAnimationFrame(() => requestAnimationFrame(() => { p.style.strokeDashoffset = 0; }));
     const clear = () => { p.style.strokeDasharray = p.style.strokeDashoffset = p.style.transition = ''; };
     p.addEventListener('transitionend', clear, { once: true });
     setTimeout(clear, 1200);
   });
-  root.querySelectorAll('.raster').forEach(r => r.animate?.([{ opacity: 0 }, { opacity: r.getAttribute('opacity') || 1 }], { duration: 450, easing: 'ease-out' }));
-  root.querySelectorAll('.strip li').forEach((li, i) => li.animate?.([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 300, delay: Math.min(i * 25, 400), easing: 'ease-out', fill: 'backwards' }));
+  root.querySelectorAll('.raster').forEach(r => r.animate?.([{ opacity: 0 }, { opacity: r.getAttribute('opacity') || 1 }], { duration: 400, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' }));
+  root.querySelectorAll('.strip li').forEach((li, i) => li.animate?.([{ opacity: 0 }, { opacity: 1 }], { duration: 400, delay: Math.min(i * 60, 400), easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'backwards' }));
 }

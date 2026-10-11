@@ -29,13 +29,9 @@ function ping(svg, x, y, { color = 'var(--accent)', r = 40, ms = 900, width = 2 
 const burst = (...a) => requestAnimationFrame(() => burst0(...a));
 const tracer = (...a) => new Promise(res => requestAnimationFrame(() => tracer0(...a).then(res)));
 
-/** A top layer for effects, plus a glow filter the trailer look applies to it (CSS, sub-hunt.css). */
+/** A top layer for effects. */
 export function fxLayer(map) {
   const root = map.layers.cursor.parentNode;
-  let defs = map.svg.querySelector('defs');
-  if (!defs) { defs = document.createElementNS(NS, 'defs'); map.svg.prepend(defs); }
-  defs.insertAdjacentHTML('beforeend', `<filter id="sh-glow" x="-50%" y="-50%" width="200%" height="200%">
-    <feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>`);
   const g = document.createElementNS(NS, 'g');
   g.setAttribute('class', 'sh-fx');
   g.setAttribute('aria-hidden', 'true');
@@ -67,7 +63,7 @@ export function heatFade(map, oldHref) {
   const ghost = map.heatImg.cloneNode();
   ghost.setAttribute('href', oldHref);
   map.heatImg.after(ghost);
-  ghost.animate([{ opacity: 1 }, { opacity: 0 }], { duration: rich() ? 900 : 650, easing: 'ease-out' }).onfinish = () => ghost.remove();
+  ghost.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 750, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' })   // --dur-hero, --ease-enter.onfinish = () => ghost.remove();
 }
 
 /** A turn resolved: attacks streak from the ship and burst, then every contact pings where it was heard. */
@@ -101,18 +97,21 @@ export function replayFx(fx, map, g, h) {
   g.contacts.filter(c => c.h === h && c.p).forEach(c => ping(fx, ...P(c.p), { color: 'var(--ink)', r: 20 * (map.u || 1), ms: 700 }));
 }
 
-/** Count a readout from its last value to its new one. The final text is always the real number. */
-export function tick(el, v, fmt) {
+/** Count a readout from its last value to its new one, after `delay` ms (a turn's readouts follow the map).
+ *  The final text is always the real number. */
+export function tick(el, v, fmt, delay = 0) {
   if (!el) return;
   const prev = el.dataset.fxv;
   el.dataset.fxv = v;
   if (prev === undefined || +prev === v) return;
-  countUp(el, v, { from: +prev, ms: 520, fmt });
+  if (!delay || reduced()) { countUp(el, v, { from: +prev, ms: 400, fmt }); return; }
+  el.textContent = fmt(+prev);
+  setTimeout(() => countUp(el, v, { from: +prev, ms: 400, fmt }), delay);
 }
 
 /** The review card and its parts rise in. */
 export function revealFx(box) {
   const parts = [...box.children];
   parts.forEach(e => e.classList.remove('m-in'));
-  reveal(parts, { stagger: 70 });
+  reveal(parts, { stagger: 60 });
 }

@@ -16,7 +16,7 @@
   --display: "Newsreader", Georgia, serif;
   --body: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
   --mono: "Martian Mono", ui-monospace, Menlo, monospace;
-  --glow: 0 0 0 1px rgba(240, 169, 59, .35), 0 0 22px -4px rgba(240, 169, 59, .45);
+  --glow: 0 0 0 1px rgba(240, 169, 59, .45);   /* a ring, not a halo (docs/MOTION_RULES.md) */
 }
 
 /* The table: vignette, faint plotting grid and grain. */
@@ -47,8 +47,8 @@
 :root[data-skin="trailer"] .tsm-head { border-bottom: 1px solid var(--rule); }
 
 /* Buttons: amber is the player's action. */
-:root[data-skin="trailer"] .btn { border-radius: 999px; border-color: var(--rule); background: var(--chip); color: var(--ink); transition: box-shadow .2s, transform .12s, background .2s; }
-:root[data-skin="trailer"] .btn:hover { box-shadow: var(--glow); }
+:root[data-skin="trailer"] .btn { border-radius: 999px; border-color: var(--rule); background: var(--chip); color: var(--ink); transition: border-color var(--dur-feedback, 150ms) var(--ease-enter, ease-out), transform var(--dur-feedback, 150ms) var(--ease-enter, ease-out), background var(--dur-feedback, 150ms) var(--ease-enter, ease-out); }
+:root[data-skin="trailer"] .btn:hover { border-color: rgba(240, 169, 59, .6); }   /* a border, not a glow (docs/MOTION_RULES.md) */
 :root[data-skin="trailer"] .btn:active { transform: translateY(1px); }
 :root[data-skin="trailer"] .btn.solid, :root[data-skin="trailer"] .btn.primary, :root[data-skin="trailer"] .btn[aria-pressed="true"] {
   background: var(--accent); border-color: var(--accent); color: #111; font-weight: 600;

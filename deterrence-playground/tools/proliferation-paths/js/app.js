@@ -86,7 +86,7 @@ function render() {
   $('readout').querySelectorAll('dd.num').forEach(d => {
     const p = prevN.get(d.previousElementSibling.textContent);
     if (p != null) d.dataset.fx = p;
-    num(d, Number(d.textContent), { ms: 300, flashIt: true });
+    num(d, Number(d.textContent), { ms: 400, flashIt: true });
   });
   document.querySelectorAll('[data-ds]').forEach(b => b.setAttribute('aria-pressed', b.dataset.ds === state.ds));
   document.querySelectorAll('[data-f]').forEach(b => b.setAttribute('aria-pressed', b.dataset.f === state.f));
@@ -99,9 +99,9 @@ function render() {
   const tlKey = [state.ds, state.f, state.sort].join('|');
   if (mv.tl && mv.tlKey !== tlKey) fadeUp($('timeline').querySelector('svg'));
   $('card').innerHTML = cardHTML(state.sel);
-  if (mv.sel !== null && mv.sel !== state.sel) rise($('card'), { ms: 300, dy: 6 });
+  if (mv.sel !== null && mv.sel !== state.sel) rise($('card'), { ms: 400 });
   $('rec').innerHTML = reconcileHTML(state.gaps);
-  if (mv.gaps !== null && mv.gaps !== state.gaps) $('rec').querySelectorAll('tbody tr').forEach((r, i) => rise(r, { ms: 300, delay: Math.min(i, 12) * 25 }));
+  if (mv.gaps !== null && mv.gaps !== state.gaps) $('rec').querySelectorAll('tbody tr').forEach((r, i) => rise(r, { ms: 400, delay: Math.min(i, 12) * 60 }));
   if (keepLab) $('timeline').querySelector(`.lab[data-id="${keepLab}"]`)?.focus({ preventScroll: true });
   Object.assign(mv, { sel: state.sel, gaps: state.gaps, tlKey });
   writeHash();
@@ -157,4 +157,4 @@ render();
   const box = $('rec').getBoundingClientRect().bottom;
   reveal([...$('rec').querySelectorAll('tbody tr')].filter(r => r.getBoundingClientRect().bottom <= box));
 }
-onFirstView($('timeline'), () => { mv.tl = true; wipeIn($('timeline').querySelector('svg'), 700); });
+onFirstView($('timeline'), () => { mv.tl = true; wipeIn($('timeline').querySelector('svg'), 750); });

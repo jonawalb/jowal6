@@ -34,7 +34,7 @@ export function snap(m) {
 }
 
 /** Slide markers from where they were (before) to where render() just put them. forward: the clock moved on. */
-export function slide(m, before, { ms = 480, forward = true } = {}) {
+export function slide(m, before, { ms = 400, forward = true } = {}) {
   if (!before || reduced()) return;
   const fx = fxLayer(m), dur = rich() ? ms * 1.15 : ms;
   const moves = [];
@@ -84,11 +84,11 @@ export function shell(m, node, { foe = false, color, from = null } = {}) {
     const p = mk('path', { d: `M${x1} ${y1}Q${qx} ${qy} ${x2} ${y2}`, fill: 'none', stroke: col, 'stroke-width': rich() ? 2.6 : 2.2, 'stroke-linecap': 'round' }, fx);
     const L = p.getTotalLength(), seg = Math.max(30, L * .22);
     p.setAttribute('stroke-dasharray', `${seg} ${L + seg}`);
-    if (from) ping(fx, from.x, from.y, { color: col, r: 26 * G.k, ms: 500 });
-    frames(rich() ? 620 : 480, u => { p.setAttribute('stroke-dashoffset', String(seg - (L + seg) * ease(u))); }, () => {
+    if (from) ping(fx, from.x, from.y, { color: col, r: 26 * G.k, ms: 400 });
+    frames(rich() ? 750 : 400, u => { p.setAttribute('stroke-dashoffset', String(seg - (L + seg) * ease(u))); }, () => {
       p.remove();
       burst(fx, x2, y2, { color: col, n: rich() ? 18 : 12, r: rich() ? 38 : 28 });
-      if (rich()) ping(fx, x2, y2, { color: col, r: 60, ms: 800 });
+      if (rich()) ping(fx, x2, y2, { color: col, r: 60, ms: 750 });
       res();
     });
   });
@@ -101,7 +101,7 @@ export function spot(m, spotterId, node) {
   const sg = m.svg.querySelector(`[data-unit="${spotterId}"]`), sp = sg && parse(sg.getAttribute('transform'));
   if (sp && c) {
     const l = mk('line', { x1: sp.x, y1: sp.y, x2: c.cx, y2: c.cy, stroke: 'var(--mine)', 'stroke-width': 1.6, 'stroke-dasharray': '2 5', opacity: 0 }, fx);
-    frames(900, u => l.setAttribute('opacity', String(u < .25 ? u * 4 : 1 - (u - .25) / .75)), () => l.remove());
+    frames(750, u => l.setAttribute('opacity', String(u < .25 ? u * 4 : 1 - (u - .25) / .75)), () => l.remove());
     ping(fx, sp.x, sp.y, { color: 'var(--mine)', r: 26 });
   }
   if (!c) return;
@@ -142,7 +142,7 @@ export function lift(m, clearing = true) {
   }
   const H = G.Hv || G.H;
   const r = mk('rect', { x: 0, y: 0, width: G.W, height: H * 1.6, fill: `url(#${id})` }, fx);
-  const ms = clearing ? (rich() ? 900 : 700) : 450;
+  const ms = clearing ? 750 : 400;
   frames(ms, u => {
     const e = ease(u);
     // Clearing: the fog bank rolls off the far edge. Returning: a thin veil that fades.

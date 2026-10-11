@@ -77,7 +77,7 @@ function render() {
   const card = document.getElementById('site-card'), prevSite = card.dataset.site;
   card.innerHTML = siteCard(state.site, rows, state.year);
   card.dataset.site = state.site;
-  if (prevSite && prevSite !== state.site) rise(card, { ms: 300, dy: 6 });
+  if (prevSite && prevSite !== state.site) rise(card, { ms: 400, dy: 6 });
   document.getElementById('map-year').textContent = state.year;
   range.value = state.year;
   document.getElementById('year-out').textContent = state.year;

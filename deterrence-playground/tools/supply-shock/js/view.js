@@ -2,19 +2,32 @@
 import { P, yearOf } from '../data/params.js';
 import { MINERALS, IDS, BY, SOURCES } from '../data/minerals.js';
 import { parts } from './market.js';
+import { countUp, reduced } from '../../../shared/js/motion.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 const el = (tag, a, parent) => { const n = document.createElementNS(NS, tag); for (const k in a) n.setAttribute(k, a[k]); if (parent) parent.appendChild(n); return n; };
 export const MCOL = { li: 'var(--blue)', gr: 'var(--warn)', re: 'var(--bad)', ga: 'var(--roc)', ge: 'var(--jp)', co: 'var(--ally)' };
 export const CTRL = { open: 'Open', lic: 'Licensing', ban: 'Ban' };
 const pct = x => `${Math.round(x * 100)}%`;
+// Turn results: bars rebuilt by innerHTML start at last year's width and move to this year's (their CSS transition
+// waits for the year's outcome, the hero, then runs row by row).
+const widths = (div, sel) => [...div.querySelectorAll(sel)].map(b => b.style.width);
+function regrow(div, sel, old) {
+  const bars = [...div.querySelectorAll(sel)];
+  if (!old || old.length !== bars.length) return;
+  const w = bars.map(b => b.style.width);
+  bars.forEach((b, i) => { b.style.width = old[i]; });
+  void div.offsetWidth;
+  bars.forEach((b, i) => { b.style.width = w[i]; });
+}
 const real = (v, note) => v == null ? `<span class="muted" title="${note || 'No verified figure'}">n/a</span>` : `<span title="${note}">${v}%</span>`;
 
 /** One row per mineral: real concentration, your reliance, pipeline, stockpile, controls. */
-export function paintDashboard(div, s, plan = []) {
+export function paintDashboard(div, s, plan = [], grow = false) {
   const last = s.history[s.history.length - 1];
+  const oldW = grow && widths(div, '.ss-sbar b'), oldStock = grow && [...div.querySelectorAll('.ss-stock b')].map(b => b.textContent);
   div.innerHTML = `<div class="ss-row ss-head" aria-hidden="true"><span>Mineral</span><span>China’s real share of world output<br><small>mining · refining</small></span><span>Your supply (${yearOf(s.t)})</span><span>Projects in the pipeline</span><span>Stock</span></div>`
-    + MINERALS.map(({ id, name, use, real: r }) => {
+    + MINERALS.map(({ id, name, use, real: r }, row) => {
       const p = parts(s, id), sec = p.secure / p.D, ctrl = s.ctrl[id], x = s.m[id];
       const lastMet = last ? last.rows.find(w => w.m === id).met : null;
       const builds = s.projects.filter(q => q.m === id && q.status === 'build');
@@ -30,7 +43,7 @@ export function paintDashboard(div, s, plan = []) {
         + (x.thriftOn ? `<li class="ss-online">R&amp;D${x.thrift > 0 ? ` −${Math.round(x.thrift * 100)}% demand` : s.t - x.thriftAt >= P.thrift.lag && !x.thriftOk ? ' failed' : ' pending'}</li>` : '')
         + planned.map(a => `<li class="ss-plan">planned: ${a.id === 'stock' ? 'stockpile' : a.id}</li>`).join('');
       const idle = p.oreIdle > 0.5 ? `<small class="ss-idle" title="Ore you can reach outside the Supplier but cannot refine">${Math.round(p.oreIdle)} ore idle: no refining</small>` : '';
-      return `<div class="ss-row" style="--mc:${MCOL[id]}">
+      return `<div class="ss-row" style="--mc:${MCOL[id]};--i:${row}">
         <span class="ss-name"><b>${name}</b><small>${use}</small></span>
         <span class="ss-real num">${real(r.mine, r.mineNote)} · ${real(r.refine, r.refineNote)}</span>
         <span class="ss-supply">
@@ -42,10 +55,20 @@ export function paintDashboard(div, s, plan = []) {
         <span class="ss-stock num"><b>${Math.round(x.stock)}</b> mo</span>
       </div>`;
     }).join('');
+  if (!grow) return;
+  regrow(div, '.ss-sbar b', oldW);
+  // Stock months count over from last year's, on the same row-by-row beat as the bars.
+  div.querySelectorAll('.ss-stock b').forEach((b, i) => {
+    const from = oldStock[i] == null ? null : +oldStock[i], to = +b.textContent;
+    if (from == null || from === to || reduced()) return;
+    b.textContent = from;
+    setTimeout(() => countUp(b, to, { from, ms: 400 }), 750 + i * 60);
+  });
 }
 
 /** The read of the Supplier's type, tension and the buyers' coalition. */
-export function paintRead(div, s) {
+export function paintRead(div, s, grow = false) {
+  const oldW = grow && widths(div, '.ss-stack span');
   const b = s.belief, best = P.types.reduce((a, t) => (b[t] > b[a] ? t : a));
   div.innerHTML = `<h3>Reading the Supplier</h3>
     <p class="fine">It looks most like <b>${P.typeLabel[best].toLowerCase()}</b> (${pct(b[best])}). The read updates by Bayes’ rule from what it does.</p>
@@ -53,6 +76,7 @@ export function paintRead(div, s) {
     <p class="ss-key">${P.types.map(t => `<span><i class="${t}"></i>${P.typeLabel[t]} ${pct(b[t])}</span>`).join('')}</p>
     <div class="ss-meter"><span>Tension</span><span class="bar"><b style="width:${Math.round(s.tension)}%"></b></span><span class="num">${Math.round(s.tension)}</span></div>
     <div class="ss-meter"><span>Buyers’ coalition</span><span class="dots">${Array.from({ length: P.diplo.max }, (_, i) => `<i class="${i < s.coalition ? 'on' : ''}"></i>`).join('')}</span><span class="num">${s.coalition}/${P.diplo.max}</span></div>`;
+  if (grow) regrow(div, '.ss-stack span', oldW);
 }
 
 /** This year's supply, mineral by mineral. */

@@ -350,7 +350,7 @@ export function createGlobe(host, { onPick, onHover }) {
     requestAnimationFrame(frame);
     if (!REDUCED) { simT += clock.getDelta(); needs = true; }
     if (camTween) {
-      const k = Math.min(1, (now - camTween.t0) / 900), e = k < .5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2;
+      const k = Math.min(1, (now - camTween.t0) / 750), e = k < .5 ? 8 * k ** 4 : 1 - (-2 * k + 2) ** 4 / 2;   // --dur-hero, --ease-move (in-out quart)
       camera.position.lerpVectors(camTween.from, camTween.to, e); if (k >= 1) camTween = null; needs = true;
     }
     if (!needs) return;

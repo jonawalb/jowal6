@@ -94,8 +94,8 @@ function animate() {
   count(document.querySelector('#rs-status b'), 'status', { still: rapid });
   onChange('ev', S.ev, () => {
     if (!S.ev || card.hidden) return;
-    rise(card.children, { stagger: 40 });
-    svgs.forEach(svg => pop(svg.querySelectorAll('.rs-ev.on .ev-d'), { ms: 420 }));
+    rise(card.children);
+    svgs.forEach(svg => pop(svg.querySelectorAll('.rs-ev.on .ev-d'), { ms: 400 }));
   });
 }
 chart(document.getElementById('rs-eia'), () => grow(document.querySelectorAll('#rs-eia .tr > span'), { axis: 'x', stagger: 160 }));

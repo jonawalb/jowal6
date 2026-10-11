@@ -12,6 +12,7 @@ import { reveal, flash, reduced } from '../../../shared/js/motion.js';
 export const ON = true; // Same motion on both sites (owner, 2026-09-30).
 const live = () => ON && !reduced();
 const easeOut = u => 1 - Math.pow(1 - u, 3);
+const ENTER = 'cubic-bezier(0.16, 1, 0.3, 1)'; // --ease-enter (shared/css/motion.css)
 const MAX_ELS = 1400;
 const ATTRS = { rect: ['x', 'y', 'width', 'height'], circle: ['cx', 'cy', 'r'], ellipse: ['cx', 'cy', 'rx', 'ry'],
   line: ['x1', 'y1', 'x2', 'y2'], text: ['x', 'y'], path: ['d'], polyline: ['points'], polygon: ['points'] };
@@ -46,7 +47,7 @@ function lerpStr(a, b) {
 
 function fadeIn(n, opt) {
   const to = getComputedStyle(n).opacity;
-  n.animate([{ opacity: 0 }, { opacity: to }], { easing: 'ease-out', fill: 'backwards', ...opt });
+  n.animate([{ opacity: 0 }, { opacity: to }], { easing: ENTER, fill: 'backwards', ...opt });
 }
 
 function morph(svg, snap) {
@@ -59,7 +60,7 @@ function morph(svg, snap) {
     list.forEach((n, i) => {
       if (++count > MAX_ELS) return;
       const o = old[i];
-      if (!o) { fadeIn(n, { duration: 320 }); return; }
+      if (!o) { fadeIn(n, { duration: 400 }); return; }
       ATTRS[n.tagName].forEach((a, j) => {
         const to = n.getAttribute(a), f = lerpStr(o[j], to);
         if (!f) return;
@@ -69,7 +70,7 @@ function morph(svg, snap) {
     });
   }
   if (!jobs.length) return;
-  const t0 = performance.now(), ms = 420;
+  const t0 = performance.now(), ms = 400;
   const step = t => {
     const u = Math.max(0, Math.min(1, (t - t0) / ms)), e = easeOut(u);
     for (const j of jobs) {
@@ -87,20 +88,20 @@ function morph(svg, snap) {
 function drawIn(svg) {
   const els = marks(svg);
   if (!els.length) return;
-  if (els.length > MAX_ELS) { svg.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 500, easing: 'ease-out' }); return; }
+  if (els.length > MAX_ELS) { svg.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 400, easing: ENTER }); return; }
   const vb = svg.viewBox?.baseVal;
   const W = (vb && vb.width) || svg.clientWidth || 1, H = (vb && vb.height) || svg.clientHeight || 1, X0 = (vb && vb.x) || 0;
   for (const n of els) {
     let bb; try { bb = n.getBBox(); } catch { continue; }
     const tag = n.tagName, cs = getComputedStyle(n);
     if (cs.display === 'none') continue;
-    const opt = { duration: 520, delay: Math.max(0, Math.min(1, (bb.x - X0) / W)) * 220, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'backwards' };
+    const opt = { duration: 400, delay: Math.max(0, Math.min(1, (bb.x - X0) / W)) * 240, easing: ENTER, fill: 'backwards' };
     const own = n.hasAttribute('transform') || cs.transform !== 'none';
     if ((tag === 'line' || tag === 'polyline' || (tag === 'path' && cs.fill === 'none')) && cs.stroke !== 'none' && !/\d/.test(cs.strokeDasharray)) {
       let L = 0; try { L = n.getTotalLength(); } catch { /* not measurable */ }
       if (L > 0 && L < 2e5) {
         n.animate([{ strokeDasharray: `${L} ${L}`, strokeDashoffset: L }, { strokeDasharray: `${L} ${L}`, strokeDashoffset: 0 }],
-          { ...opt, duration: 680, delay: tag === 'line' ? opt.delay : 0 });
+          { ...opt, duration: 750, delay: tag === 'line' ? opt.delay : 0 });
         continue;
       }
     }
@@ -111,7 +112,7 @@ function drawIn(svg) {
     }
     if (!own && (tag === 'circle' || tag === 'ellipse')) {
       n.style.transformBox = 'fill-box'; n.style.transformOrigin = '50% 50%';
-      n.animate([{ transform: 'scale(0)', opacity: 0 }, { transform: 'scale(1)', opacity: cs.opacity }], { ...opt, easing: 'cubic-bezier(.3,1.4,.5,1)' });
+      n.animate([{ transform: 'scale(0)', opacity: 0 }, { transform: 'scale(1)', opacity: cs.opacity }], opt);
       continue;
     }
     fadeIn(n, opt);
@@ -165,7 +166,7 @@ export function count(root, sel) {
 }
 
 function tick(e, from, to, fmt, final) {
-  const t0 = performance.now(), ms = 600;
+  const t0 = performance.now(), ms = 400;
   let last = fmt(from); e.textContent = last;
   const step = t => {
     if (!e.isConnected || e.textContent !== last) return;                    // the tool rewrote it: leave it alone
@@ -182,7 +183,7 @@ function tick(e, from, to, fmt, final) {
 export function stagger(root, sel) {
   if (!ON || !root || root.__fxR) return;
   root.__fxR = true;
-  reveal(root.querySelectorAll(sel), { stagger: 45 });
+  reveal(root.querySelectorAll(sel), { stagger: 60 });
 }
 
 /** Flash el if its text changed since the last call. */

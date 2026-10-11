@@ -65,8 +65,8 @@ function animate() {
     rise(document.querySelectorAll('#mk-list .mk-row'), { first });
   });
   onChange('focus', S.case + '|' + S.focus, first => {
-    if (!first && !caseMoved) stroke(c.querySelector('.price.focus'), { ms: 420 });
-    if (!first) rise($('focus').children, { stagger: 40 });
+    if (!first && !caseMoved) stroke(c.querySelector('.price.focus'), { ms: 400 });
+    if (!first) rise($('focus').children, { stagger: 60 });
     const d = sc.querySelector('.sc-dot.focus circle');
     if (!first && d) ring(sc, +d.getAttribute('cx'), +d.getAttribute('cy'), { r: 20 });
   });

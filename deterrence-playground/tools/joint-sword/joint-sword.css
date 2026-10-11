@@ -40,7 +40,7 @@
 #map .t-sea { font-size: 15px; }
 #map .tsm-grat text { font-size: 11px; }
 .t-big { font: 600 15px var(--display); letter-spacing: .18em; fill: var(--faint); }
-.zone { fill: none; stroke: var(--faint); stroke-width: 1.5; transition: fill .3s, stroke .3s; }
+.zone { fill: none; stroke: var(--faint); stroke-width: 1.5; transition: fill var(--dur-move) var(--ease-enter), stroke var(--dur-move) var(--ease-enter); }
 .zone.pending { stroke: var(--prc); stroke-dasharray: 5 4; }
 .zone.on { fill: color-mix(in srgb, var(--prc) 28%, transparent); stroke: var(--prc); stroke-width: 2; }
 .zlab { font: 600 16px var(--mono); fill: var(--faint); paint-order: stroke; stroke: var(--sea); stroke-width: 3px; }

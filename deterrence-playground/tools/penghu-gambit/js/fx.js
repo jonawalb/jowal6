@@ -73,7 +73,7 @@ export function turn({ svg, log, crt, readout, prevReadout, prev, st, cfg, view,
   if (!forward || reduced()) return;
   tumble(log, g);
   rollCrt(crt, g);
-  counts(readout, prevReadout);
+  counts(readout, prevReadout, g);   // after the strikes land on the map (the hero of the turn)
   const rich = trailer(), fx = layer(svg);
   const vb = svg.viewBox.baseVal;
   const n = rich ? 16 : 11;
@@ -87,10 +87,10 @@ export function turn({ svg, log, crt, readout, prevReadout, prev, st, cfg, view,
   lost.forEach((t, i) => {
     const c = centre(t); if (!c) return;
     const x0 = vb.x + 12 + i * 10, y0 = vb.y + 12;
-    wait(i * 90).then(() => g === gen && tracer(fx, x0, y0, c[0], c[1], { color: 'var(--prc)', ms: 420 }))
+    wait(i * 90).then(() => g === gen && tracer(fx, x0, y0, c[0], c[1], { color: 'var(--prc)', ms: 400 }))
       .then(() => { if (g !== gen) return; burst(fx, c[0], c[1], { color: 'var(--prc)', n, r: 20 }); });
   });
-  if (lost.length) { const z = svg.querySelector('.pg-zone'); if (z?.getClientRects().length) wait(420).then(() => g === gen && shake(z)); }
+  if (lost.length) { const z = svg.querySelector('.pg-zone'); if (z?.getClientRects().length) wait(400).then(() => g === gen && shake(z)); }
 
   // Anti-ship salvos: tracers from Taiwan's side to the landing force; bursts on the groups sunk.
   const fired = Math.max(0, (prev.salvos ?? 0) - (st.salvos ?? 0));
@@ -100,13 +100,13 @@ export function turn({ svg, log, crt, readout, prevReadout, prev, st, cfg, view,
     const from = centre(svg.querySelector('.pg-zone rect')) || [vb.x + vb.width - 10, vb.y + vb.height * 0.6];
     for (let i = 0; i < Math.min(fired, 8); i++) {
       const jx = (i % 3 - 1) * 14, jy = (i % 2) * 10 - 5;
-      wait(i * 70).then(() => g === gen && tracer(fx, from[0], from[1] + (i % 4 - 1.5) * 8, fleetC[0] + jx, fleetC[1] + jy, { color: 'var(--roc)', ms: 480 }));
+      wait(i * 70).then(() => g === gen && tracer(fx, from[0], from[1] + (i % 4 - 1.5) * 8, fleetC[0] + jx, fleetC[1] + jy, { color: 'var(--roc)', ms: 400 }));
     }
   }
   const sunk = ships.slice(st.fleet, prev.fleet);
   sunk.forEach((s, i) => {
     const c = centre(s); if (!c) return;
-    wait(420 + i * 80).then(() => { if (g !== gen) return; burst(fx, c[0], c[1], { color: 'var(--warn)', n, r: 18 }); });
+    wait(400 + i * 80).then(() => { if (g !== gen) return; burst(fx, c[0], c[1], { color: 'var(--warn)', n, r: 18 }); });
   });
   if (sunk.length) { const fl = svg.querySelector('.pg-fleet'); wait(460).then(() => g === gen && fl?.isConnected && shake(fl)); }
 
@@ -123,19 +123,25 @@ export function turn({ svg, log, crt, readout, prevReadout, prev, st, cfg, view,
   }
   if (game.outcome === 'pla' && game.wonAt === view) {
     const t = centre(svg.querySelector('.pg-town'));
-    if (t) wait(350).then(() => { if (g !== gen) return; burst(fx, t[0], t[1], { color: 'var(--prc)', n: n + 6, r: 34, ms: 800 }); ping(fx, t[0], t[1], { color: 'var(--accent)', r: 60, width: 3, ms: 1100 }); });
+    if (t) wait(350).then(() => { if (g !== gen) return; burst(fx, t[0], t[1], { color: 'var(--prc)', n: n + 6, r: 34, ms: 750 }); ping(fx, t[0], t[1], { color: 'var(--accent)', r: 60, width: 3, ms: 750 }); });
   }
 }
 
-/** Readout values that changed count to their new value (numbers with a unit) or flash (everything else). */
-function counts(readout, before) {
+/** Readout values that changed count to their new value (numbers with a unit) or flash (everything else).
+ *  They hold last turn's value while the map plays, then follow it row by row. */
+function counts(readout, before, g) {
   const dds = [...readout.querySelectorAll('dd')];
+  let k = 0;
   dds.forEach((dd, i) => {
     const was = before[i], now = dd.textContent;
     if (was == null || was === now) return;
     const m = now.match(/^(-?[\d.]+) (pts|days)$/), w = was.match(/^(-?[\d.]+) (pts|days)$/);
-    if (m && w) countUp(dd, +m[1], { from: +w[1], ms: 600, fmt: v => `${f2(v)} ${m[2]}` });
-    flash(dd);
+    if (m && w) dd.textContent = was;
+    wait(400 + 60 * k++).then(() => {
+      if (g !== gen || !dd.isConnected) return;
+      if (m && w) countUp(dd, +m[1], { from: +w[1], ms: 400, fmt: v => `${f2(v)} ${m[2]}` });
+      flash(dd);
+    });
   });
 }
 
@@ -147,7 +153,7 @@ export function mc(card) {
   grow.push(...[...card.querySelectorAll('td.dbar span')].map(s => [s, 'width', s.style.width]));
   grow.forEach(([s, p]) => { s.classList.add('pg-grow'); s.style[p] = '0%'; });
   requestAnimationFrame(() => requestAnimationFrame(() => grow.forEach(([s, p, v]) => { s.style[p] = v; })));
-  card.querySelectorAll('.mc-leg b.num').forEach(b => { const v = parseFloat(b.textContent); countUp(b, v, { from: 0, ms: 600, fmt: x => `${Math.round(x)}%` }); });
+  card.querySelectorAll('.mc-leg b.num').forEach(b => { const v = parseFloat(b.textContent); countUp(b, v, { from: 0, ms: 400, fmt: x => `${Math.round(x)}%` }); });
 }
 
 /** A short flash on the status box when the headline changes. */

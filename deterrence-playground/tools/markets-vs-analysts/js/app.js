@@ -91,7 +91,7 @@ function animateMain() {
     stroke(c.querySelectorAll('.air-line, .price'), { first, delay: first ? 80 : 0 });
     fade(c.querySelectorAll('.jcrp, .deadline'), { first, delay: first ? 350 : 120, max: 200 });
   });
-  onChange('focus', S.focus, first => { if (!first) rise($('focus-card').children, { stagger: 40 }); });
+  onChange('focus', S.focus, first => { if (!first) rise($('focus-card').children, { stagger: 60 }); });
 }
 
 function renderSide() {

@@ -103,7 +103,7 @@ table.crt td.hit { outline: 2px solid var(--accent); outline-offset: -2px; font-
 .lbl { margin: 0 0 6px; font-size: 12.5px; }
 .lbl small { color: var(--muted); font-weight: 400; }
 .meter { display: block; position: relative; height: 10px; background: var(--chip); border-radius: 5px; overflow: visible; }
-.meter > span { display: block; height: 100%; border-radius: 5px; transition: width .3s; }
+.meter > span { display: block; height: 100%; border-radius: 5px; transition: width var(--dur-move) var(--ease-enter); }
 .meter.esc > span { background: var(--red); } .meter.cost > span { background: var(--warn); }
 .meter i { position: absolute; top: -3px; bottom: -3px; border-left: 2px solid var(--ink); }
 .chips { list-style: none; margin: 4px 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
@@ -123,9 +123,9 @@ table.oilparts td { padding: 3px 4px; border-bottom: 1px dotted var(--rule); }
 table.oilparts td.num { text-align: right; white-space: nowrap; }
 
 /* Monte Carlo */
-.mc.busy { opacity: .5; transition: opacity .2s; }
+.mc.busy { opacity: .5; transition: opacity var(--dur-feedback) var(--ease-enter); }
 .mc-bar { display: flex; height: 22px; border-radius: 3px; overflow: hidden; border: 1px solid var(--rule); }
-.seg { display: block; height: 100%; transition: width .3s; }
+.seg { display: block; height: 100%; transition: width var(--dur-move) var(--ease-enter); }
 .seg.win, .sw.win { background: var(--us); }
 .seg.fail, .sw.fail { background: var(--red); }
 .seg.mixed, .sw.mixed { background: color-mix(in srgb, var(--warn) 55%, var(--panel)); }
@@ -156,8 +156,8 @@ td.dbar .up { background: var(--us); } td.dbar .down { background: var(--muted);
 .choices.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .budget { display: flex; flex-direction: column; gap: 4px; }
 .budget .bar { height: 8px; background: var(--chip); border-radius: 4px; overflow: hidden; }
-.budget .bar span { display: block; height: 100%; background: var(--us); transition: width .2s; }
-.budget .flash { color: var(--bad); animation: khflash .6s 2; }
+.budget .bar span { display: block; height: 100%; background: var(--us); transition: width var(--dur-feedback) var(--ease-enter); }
+.budget .flash { color: var(--bad); animation: khflash var(--dur-hero) 2; }
 @keyframes khflash { 50% { opacity: .3; } }
 .menu { display: flex; flex-direction: column; gap: 6px; }
 .stepper { display: flex; align-items: center; justify-content: space-between; gap: 8px; border-bottom: 1px dotted var(--rule); padding-bottom: 5px; }
@@ -253,25 +253,25 @@ details[open] summary { margin-bottom: 8px; }
   @keyframes kh-row { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: none; } }
   @keyframes kh-tumble { 0% { opacity: 0; transform: translateY(-9px) rotate(-220deg) scale(.5); } 70% { opacity: 1; transform: translateY(1px) rotate(12deg) scale(1.08); } 100% { transform: none; } }
   @keyframes kh-hitglow { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 70%, transparent); } 100% { box-shadow: 0 0 0 7px transparent; } }
-  #log.kh-anim tbody tr { animation: kh-row .32s cubic-bezier(.2,.8,.2,1) both; }
-  #log.kh-anim .roll { animation: kh-tumble .42s cubic-bezier(.2,.8,.2,1) both; }
-  #log.kh-anim .roll.hit { animation: kh-tumble .42s cubic-bezier(.2,.8,.2,1) both, kh-hitglow .6s ease-out; }
+  #log.kh-anim tbody tr { animation: kh-row var(--dur-move) var(--ease-enter) both; }
+  #log.kh-anim .roll { animation: kh-tumble var(--dur-move) var(--ease-enter) both; }
+  #log.kh-anim .roll.hit { animation: kh-tumble var(--dur-move) var(--ease-enter) both, kh-hitglow var(--dur-hero) var(--ease-enter); }
   @keyframes kh-col { 0% { background: color-mix(in srgb, var(--accent) 45%, transparent); } 100% { background: color-mix(in srgb, var(--accent) 8%, transparent); } }
   @keyframes kh-cell { 0%, 55% { transform: scale(1); } 75% { transform: scale(1.35); } 100% { transform: scale(1); } }
-  #crt.kh-anim td.col { animation: kh-col .5s ease-out both; }
-  #crt.kh-anim td.hit { animation: kh-cell .9s cubic-bezier(.2,.8,.2,1) both; position: relative; z-index: 1; }
+  #crt.kh-anim td.col { animation: kh-col var(--dur-move) var(--ease-enter) both; }
+  #crt.kh-anim td.hit { animation: kh-cell var(--dur-hero) var(--ease-enter) both; position: relative; z-index: 1; }
   @keyframes kh-dieroll { 0% { transform: translate(-26px, -10px) rotate(-540deg) scale(.6); opacity: 0; } 60% { transform: translate(2px, 1px) rotate(12deg) scale(1.05); opacity: 1; } 100% { transform: none; } }
-  #crt-note.kh-anim .kh-die { animation: kh-dieroll .65s cubic-bezier(.2,.8,.2,1) both; }
+  #crt-note.kh-anim .kh-die { animation: kh-dieroll var(--dur-hero) var(--ease-enter) both; }
   @keyframes kh-endin { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-  .endline.kh-end { animation: kh-endin .5s cubic-bezier(.2,.8,.2,1) both; }
+  .endline.kh-end { animation: kh-endin var(--dur-move) var(--ease-enter) both; }
   @keyframes kh-alarm { 0% { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--red) 70%, transparent); } 100% { box-shadow: inset 0 0 0 1px transparent; } }
-  .kh-alarm { animation: kh-alarm 1s ease-out; }
+  .kh-alarm { animation: kh-alarm var(--dur-hero) var(--ease-enter); }
   @keyframes kh-grow { from { transform: scaleX(0); } to { transform: none; } }
-  #mc.kh-anim .eb-bar span { transform-origin: left; animation: kh-grow .6s cubic-bezier(.2,.8,.2,1) both; }
-  #mc.kh-anim td.dbar span { transform-origin: left; animation: kh-grow .5s cubic-bezier(.2,.8,.2,1) both; }
+  #mc.kh-anim .eb-bar span { transform-origin: left; animation: kh-grow var(--dur-move) var(--ease-enter) both; }
+  #mc.kh-anim td.dbar span { transform-origin: left; animation: kh-grow var(--dur-move) var(--ease-enter) both; }
   #mc.kh-anim td.dbar span.down { transform-origin: right; }
   @keyframes kh-done { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 60%, transparent); } 100% { box-shadow: 0 0 0 8px transparent; } }
-  .mc-bar.kh-done { animation: kh-done .7s ease-out; }
+  .mc-bar.kh-done { animation: kh-done var(--dur-hero) var(--ease-enter); }
   .kh-filling .mc-bar { background: repeating-linear-gradient(90deg, var(--chip) 0 6px, transparent 6px 10px); }
 }
 
@@ -283,23 +283,17 @@ details[open] summary { margin-bottom: 8px; }
 :root[data-skin="trailer"] .kh-die i { display: block; width: 4px; height: 4px; border-radius: 50%; }
 :root[data-skin="trailer"] .kh-die i.p { background: #0b1712; }
 :root[data-skin="trailer"] .roll { font-family: var(--mono); border: 1px solid var(--rule); border-radius: 4px; padding: 0 4px; margin: 1px 0; background: var(--chip); }
-:root[data-skin="trailer"] .roll.hit { border-color: var(--accent); color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, var(--chip)); box-shadow: 0 0 10px -3px var(--accent); }
+:root[data-skin="trailer"] .roll.hit { border-color: var(--accent); color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, var(--chip)); }
 :root[data-skin="trailer"] table.crt td.hit { box-shadow: var(--glow); color: #111; background: var(--accent); }
 :root[data-skin="trailer"] table.crt th.on { color: var(--accent); }
 :root[data-skin="trailer"] .endline { background: color-mix(in srgb, var(--panel) 70%, transparent); font-family: var(--body); }
 :root[data-skin="trailer"] .endline.win { box-shadow: -8px 0 22px -14px var(--us); }
 :root[data-skin="trailer"] .endline.fail { box-shadow: -8px 0 22px -14px var(--red); }
-:root[data-skin="trailer"] .kh-mine { filter: drop-shadow(0 0 2px var(--red)); }
-:root[data-skin="trailer"] .kh-lodge circle { filter: drop-shadow(0 0 5px var(--us)); }
-:root[data-skin="trailer"] .kh-garr rect { filter: drop-shadow(0 0 4px var(--red)); }
-:root[data-skin="trailer"] .kh-sector.on .kh-route, :root[data-skin="trailer"] .kh-adv { filter: drop-shadow(0 0 4px var(--us)); }
 :root[data-skin="trailer"] .kh-inbox { fill: color-mix(in srgb, var(--sea) 80%, #000); stroke: var(--coast); }
 :root[data-skin="trailer"] .kh-zone rect { fill: color-mix(in srgb, var(--panel) 92%, transparent); }
 :root[data-skin="trailer"] .kh-big { font-style: italic; font-weight: 500; letter-spacing: .12em; fill: color-mix(in srgb, var(--muted) 70%, transparent); }
 :root[data-skin="trailer"] .kh-ztitle, :root[data-skin="trailer"] .kh-ilabel, :root[data-skin="trailer"] .kh-plabel, :root[data-skin="trailer"] .kh-slabel { font-style: italic; font-weight: 500; }
-:root[data-skin="trailer"] .mc-bar { border-color: var(--rule); box-shadow: 0 0 24px -12px var(--accent); }
-:root[data-skin="trailer"] .meter.esc > span { box-shadow: 0 0 10px -2px var(--red); }
-:root[data-skin="trailer"] .meter.cost > span { box-shadow: 0 0 10px -2px var(--accent); }
+:root[data-skin="trailer"] .mc-bar { border-color: var(--rule); }
 :root[data-skin="trailer"] .kh-flag { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 6%, transparent); }
 :root[data-skin="trailer"] .kh-tabs { background: #08120d; }
 :root[data-skin="trailer"] .kh-tabs button[aria-selected="true"] { color: #111; }

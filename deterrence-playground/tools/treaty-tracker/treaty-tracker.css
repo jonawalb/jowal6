@@ -119,7 +119,7 @@ details summary { cursor: pointer; font-size: 13px; font-weight: 500; }
 
 /* Motion: matrix cells ease to their new status colour when the year moves. */
 @media (prefers-reduced-motion: no-preference) {
-  .tt-c { transition: background-color .35s ease, border-color .35s ease; }
+  .tt-c { transition: background-color var(--dur-move) var(--ease-enter), border-color var(--dur-move) var(--ease-enter); }
 }
 
 /* Treaty explainers: a small "i" disclosure beside each treaty name. */

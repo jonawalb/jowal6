@@ -3,6 +3,7 @@ import { P } from '../data/params.js';
 import { PARTNERS, BY_PARTNER } from '../data/partners.js';
 import { BY_MEASURE, LEVEL_LABEL, ENF_LABEL } from '../data/measures.js';
 import { cohesion, threshold, pExpected, credibility } from './model.js';
+import { countUp, reduced } from '../../../shared/js/motion.js';
 
 const pct = x => `${Math.round(x * 100)}%`;
 const r0 = x => Math.round(x);
@@ -27,14 +28,27 @@ const TRACKS = [
   { id: 'p', label: 'Concession odds this quarter', max: 0.5, fmt: pct, good: 'up', tip: 'Your estimate, from your belief about the Target' },
 ];
 
-export function paintTracks(div, now, prev, preview) {
-  div.innerHTML = TRACKS.map(t => {
+export function paintTracks(div, now, prev, preview, grow = false) {
+  // grow (quarter results): bars and numbers start at last quarter's values and move to this quarter's, one row
+  // after another, once the pressure scale (the hero) has moved; the CSS transition delay matches the 750 ms here.
+  const from = grow && prev;
+  div.innerHTML = TRACKS.map((t, i) => {
     const v = now[t.id], w = Math.max(0, Math.min(100, 100 * v / t.max));
     const d = prev ? v - prev[t.id] : 0;
     const delta = prev && Math.abs(t.max === 1 || t.max === 0.5 ? d * 100 : d) >= 1 ? ` <small class="${(d > 0) === (t.good === 'up') ? 'up' : 'dn'}">${sgn(t.max <= 1 ? Math.round(d * 100) : Math.round(d))}</small>` : '';
     const pv = preview ? ` <span class="sa-pv" title="If you end the quarter with these measures">→ ${t.fmt(preview[t.id])}</span>` : '';
-    return `<div class="sa-track" title="${t.tip}"><div><span>${t.label}</span><b class="num">${t.fmt(v)}${delta}${pv}</b></div><div class="bar"><span style="width:${w}%"></span></div></div>`;
+    const w0 = from ? Math.max(0, Math.min(100, 100 * prev[t.id] / t.max)) : w;
+    return `<div class="sa-track" title="${t.tip}" style="--i:${i}"><div><span>${t.label}</span><b class="num"><span class="v">${t.fmt(from ? prev[t.id] : v)}</span>${delta}${pv}</b></div><div class="bar"><span style="width:${w0}%" data-w="${w}"></span></div></div>`;
   }).join('');
+  if (from) {
+    void div.offsetWidth;
+    div.querySelectorAll('.bar span').forEach(b => { b.style.width = b.dataset.w + '%'; });
+    TRACKS.forEach((t, i) => {
+      if (prev[t.id] === now[t.id]) return;
+      const el = div.children[i].querySelector('.v');
+      setTimeout(() => countUp(el, now[t.id], { from: prev[t.id], ms: 400, fmt: t.fmt }), reduced() ? 0 : 750 + i * 60);
+    });
+  }
 }
 
 export function paintPartners(table, s, rec) {

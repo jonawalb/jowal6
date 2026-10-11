@@ -8,7 +8,7 @@
 
 /* Allocation bar */
 .dragbar { position: relative; display: flex; height: 40px; border-radius: 3px; overflow: hidden; border: 1px solid var(--rule); cursor: ew-resize; touch-action: none; user-select: none; -webkit-user-select: none; }
-.dragbar .seg { display: flex; align-items: center; justify-content: center; font: 500 11.5px var(--mono); color: var(--panel); min-width: 0; overflow: hidden; white-space: nowrap; transition: flex .12s; }
+.dragbar .seg { display: flex; align-items: center; justify-content: center; font: 500 11.5px var(--mono); color: var(--panel); min-width: 0; overflow: hidden; white-space: nowrap; transition: flex var(--dur-feedback) var(--ease-enter); }
 .dragbar.dragging .seg { transition: none; }
 .dragbar .grip { position: absolute; top: 0; bottom: 0; width: 0; border-left: 2px solid var(--panel); pointer-events: none; }
 .sbar { display: flex; height: 16px; border-radius: 2px; overflow: hidden; background: var(--chip); min-width: 90px; }
@@ -84,8 +84,8 @@
 .panel > .sec[hidden] { display: none; }
 
 /* Motion on Interactive Deterrence only (js/fx.js adds .ba-motion there, never on Interactive Deterrence). */
-.ba-motion .dragbar .seg { transition: flex .35s cubic-bezier(.2, .8, .2, 1); }
-.ba-motion .dragbar .grip { transition: left .35s cubic-bezier(.2, .8, .2, 1); }
+.ba-motion .dragbar .seg { transition: flex var(--dur-move) var(--ease-enter); }
+.ba-motion .dragbar .grip { transition: left var(--dur-move) var(--ease-enter); }
 .ba-motion .dragbar.dragging .seg, .ba-motion .dragbar.dragging .grip { transition: none; }
 @media (prefers-reduced-motion: reduce) { .ba-motion .dragbar .seg, .ba-motion .dragbar .grip { transition: none; } }
 

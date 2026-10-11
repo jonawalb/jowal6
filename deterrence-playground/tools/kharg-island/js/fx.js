@@ -19,26 +19,30 @@ function centre(node) {
   return [b.x + b.width / 2, b.y + b.height / 2];
 }
 
-/** Tween a number in an element from `from` to `to`, ending on the exact text the page rendered. */
-function tweenText(el, from, to, fmt, ms = 650) {
+/** Tween a number in an element from `from` to `to`, ending on the exact text the page rendered. It shows
+ *  `from` at once and starts counting after `wait` ms (readouts follow the map). */
+function tweenText(el, from, to, fmt, ms = 400, wait = 0) {
   if (!el || reduced() || from === to || !Number.isFinite(from)) return;
-  const final = el.textContent, t0 = performance.now();
-  const step = now => {
-    const u = Math.min(1, (now - t0) / ms), e = 1 - Math.pow(1 - u, 3);
-    el.textContent = u < 1 ? fmt(from + (to - from) * e) : final;
-    if (u < 1) requestAnimationFrame(step);
-  };
+  const final = el.textContent;
   el.textContent = fmt(from);
-  requestAnimationFrame(step);
+  later(wait, () => {
+    const t0 = performance.now();
+    const step = now => {
+      const u = Math.min(1, Math.max(0, (now - t0) / ms)), e = 1 - Math.pow(1 - u, 3);
+      el.textContent = u < 1 ? fmt(from + (to - from) * e) : final;
+      if (u < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  });
 }
 
-/** A meter bar that slides from its old width to the one just rendered. */
-function slide(span, fromPct) {
+/** A meter bar that shows its old width at once and slides to the one just rendered after `wait` ms. */
+function slide(span, fromPct, wait = 0) {
   if (!span || reduced()) return;
   const to = span.style.width;
   span.style.transition = 'none'; span.style.width = fromPct + '%';
   void span.offsetWidth;
-  span.style.transition = 'width .6s cubic-bezier(.2,.8,.2,1)'; span.style.width = to;
+  later(wait, () => { span.style.transition = 'width var(--dur-move) var(--ease-enter)'; span.style.width = to; });
 }
 
 /** The die face for the combat roll (shown in the trailer look; tumbles in on a new turn). */
@@ -62,25 +66,30 @@ export function turnFx({ svg, T, prev, st, cfg, last, outcome, was = [] }) {
 
   // Combat results table: the column lights top to bottom, the die lands, the result cell pops.
   if (T.crt) {
-    document.querySelectorAll('#crt td.col').forEach((c, i) => { c.style.animationDelay = i * 55 + 'ms'; });
+    document.querySelectorAll('#crt td.col').forEach((c, i) => { c.style.animationDelay = i * 60 + 'ms'; });
     replay($('crt'), 'kh-anim');
     replay($('crt-note'), 'kh-anim');
   }
 
+  // The shots on the map are the hero of the turn; the readouts follow them. They wait at most 500 ms so that
+  // Play all (a turn every 1.1 s) still lands every readout on its own turn's values.
+  const heroMs = mapFx(svg, T, prev, st, cfg, rich), w0 = Math.min(heroMs, 500), gap = 60;   // gap = --stagger-item
+
   // State readout: values that moved get a brief highlight.
-  document.querySelectorAll('#readout dd').forEach((dd, i) => { if (was[i] != null && was[i] !== dd.textContent) flash(dd); });
+  later(w0, () => document.querySelectorAll('#readout dd').forEach((dd, i) => { if (dd.isConnected && was[i] != null && was[i] !== dd.textContent) flash(dd); }));
 
-  // Escalation, cost and oil price count to their new values; meters slide.
+  // Escalation, cost and oil price count from last turn's values to the new ones; meters slide, one after another.
   const escB = document.querySelector('#esc .lbl b.num'), costB = document.querySelectorAll('#esc .lbl b.num')[1];
-  tweenText(escB, prev.esc, st.esc, n => String(Math.round(n)));
-  tweenText(costB, prev.cost, st.cost, n => String(Math.round(n)));
-  tweenText(document.querySelector('#oil .lbl b.num'), prev.price, st.price, n => `$${Math.round(n)}`);
   const meters = document.querySelectorAll('#esc .meter > span');
-  slide(meters[0], Math.min(100, prev.esc)); slide(meters[1], Math.min(100, prev.cost));
-  if (st.esc > prev.esc) { replay(document.querySelector('#esc'), 'kh-alarm'); }
-  Object.keys(st.ev).forEach((k, i) => { if (st.ev[k] > prev.ev[k]) flash(document.querySelectorAll('#esc .chips li')[i]); });
-
-  mapFx(svg, T, prev, st, cfg, rich);
+  tweenText(escB, prev.esc, st.esc, n => String(Math.round(n)), 400, w0 + gap); slide(meters[0], Math.min(100, prev.esc), w0 + gap);
+  tweenText(costB, prev.cost, st.cost, n => String(Math.round(n)), 400, w0 + 2 * gap); slide(meters[1], Math.min(100, prev.cost), w0 + 2 * gap);
+  tweenText(document.querySelector('#oil .lbl b.num'), prev.price, st.price, n => `$${Math.round(n)}`, 400, w0 + 3 * gap);
+  const esc = document.querySelector('#esc'), chips = document.querySelectorAll('#esc .chips li');
+  later(w0 + gap, () => {
+    if (meters[0] && !meters[0].isConnected) return;   // a newer turn replaced the panel
+    if (st.esc > prev.esc) replay(esc, 'kh-alarm');
+    Object.keys(st.ev).forEach((k, i) => { if (st.ev[k] > prev.ev[k]) flash(chips[i]); });
+  });
 
   // Last turn: the result line rises in; a bad end shakes the table.
   if (last) {
@@ -97,10 +106,12 @@ function mapFx(svg, T, prev, st, cfg, rich) {
   const toks = [...svg.querySelectorAll('.kh-zone .kh-tok')];
   const ships = [...svg.querySelectorAll('.kh-uszone .kh-ship')];
   const nA = cfg.ir.ascm, nD = cfg.ir.drones, amph = cfg.us.meu * 3;
-  let delay = 0;
+  let delay = 0, end = 0;   // end: when the last shot lands (ms), returned so the readouts can follow
   const shot = (from, to, color, onHit, gap = 110) => {
     if (!from || !to) return;
-    later(delay, () => tracer(svg, from[0], from[1], to[0], to[1], { color, ms: rich ? 520 : 420, width: rich ? 2.6 : 2 }).then(onHit));
+    const ms = rich ? 520 : 400;
+    later(delay, () => tracer(svg, from[0], from[1], to[0], to[1], { color, ms, width: rich ? 2.6 : 2 }).then(onHit));
+    end = Math.max(end, delay + ms);
     delay += gap;
   };
 
@@ -150,6 +161,7 @@ function mapFx(svg, T, prev, st, cfg, rich) {
   const garr = centre(svg.querySelector('.kh-garr rect'));
   if (garr && st.garrison < prev.garrison - 0.01) later(delay + 160, () => burst(svg, garr[0], garr[1], { color: 'var(--accent)', n: 10, r: 18 }));
   if (lodge && st.ashore < prev.ashore - 0.01) later(delay + 160, () => burst(svg, lodge[0], lodge[1], { color: 'var(--red)', n: 10, r: 18 }));
+  return end;
 }
 
 /** A pulse on the button that moved the game on. */
@@ -172,7 +184,7 @@ export function mcFx(box, mc, prevShares) {
     if (prevShares) box.querySelectorAll('.mc-bar .seg').forEach((s, i) => {
       const to = s.style.width;
       s.style.transition = 'none'; s.style.width = prevShares[i] + '%'; void s.offsetWidth;
-      s.style.transition = 'width .45s cubic-bezier(.2,.8,.2,1)'; s.style.width = to;
+      s.style.transition = 'width var(--dur-move) var(--ease-enter)'; s.style.width = to;
     });
     return;
   }

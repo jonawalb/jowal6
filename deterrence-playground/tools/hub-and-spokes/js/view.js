@@ -47,25 +47,31 @@ export function drawHub(svg, s, I) {
   }
 }
 
-/** Light motion on the diagram after a year resolves. */
+/** Light motion on the diagram after a year resolves: the hero of the year. Resolves when the support line
+ *  reaches the ally (the war burst follows it), so the tracks can follow the diagram. */
 export function animateYear(svg, s, log) {
   for (const id of Object.keys(s.probes || {})) ping(svg, AT[id][0], AT[id][1], { color: 'var(--prc)', r: 40 });
   const c = log.find(l => l.kind === 'outcome');
-  if (c) {
-    const [ax, ay] = AT[c.ally];
-    if (c.resp !== 'out') tracer(svg, HUB[0], HUB[1], ax, ay, { color: 'var(--brand-ink)', ms: 500 });
-    if (c.war) burst(svg, ax, ay, { color: 'var(--bad)', n: 16, r: 34 });
-  }
+  if (!c) return Promise.resolve();
+  const [ax, ay] = AT[c.ally];
+  const sent = c.resp !== 'out' ? tracer(svg, HUB[0], HUB[1], ax, ay, { color: 'var(--brand-ink)', ms: 400 }) : Promise.resolve();
+  return sent.then(() => { if (c.war) burst(svg, ax, ay, { color: 'var(--bad)', n: 16, r: 34 }); });
 }
 
-const bar = (label, v, col, note = '', d = 0) => `<div class="hs-track" style="--tc:${col}"><div><span>${label}</span><span class="num">${note}${Math.round(v)}${d ? ` <small class="muted">${d > 0 ? '+' : ''}${d}</small>` : ''}</span></div><div class="bar"><span style="width:${Math.max(0, Math.min(100, v))}%"></span></div></div>`;
+const pc = v => Math.max(0, Math.min(100, v));
+// `from` (turn results): the bar is drawn at last year's value and grows to `v` (see growTracks); `i` staggers it.
+const bar = (label, v, col, note = '', d = 0, from = v, i = 0) => `<div class="hs-track" style="--tc:${col}${i ? `;--i:${i}` : ''}"><div><span>${label}</span><span class="num">${note}${Math.round(v)}${d ? ` <small class="muted">${d > 0 ? '+' : ''}${d}</small>` : ''}</span></div><div class="bar"><span style="width:${pc(from)}%"${from !== v ? ` data-w="${pc(v)}"` : ''}></span></div></div>`;
 
-export function paintHubTracks(div, s, budget, prev) {
+/** Grow the bars drawn at last year's values to this year's, one row after another. */
+export function growTracks(div) { void div.offsetWidth; div.querySelectorAll('.bar span[data-w]').forEach(b => { b.style.width = b.dataset.w + '%'; }); }
+
+export function paintHubTracks(div, s, budget, prev, grow = false) {
   const d = k => (prev ? Math.round(s[k]) - Math.round(prev[k]) : 0);
+  const f = k => (grow && prev ? prev[k] : s[k]);
   div.innerHTML = `<div class="hs-track"><div><span>Political capital this year</span><span class="num">${budget}</span></div></div>`
-    + bar('Hub credibility', s.cred, 'var(--good)', '', d('cred'))
-    + bar('War risk', s.war, 'var(--bad)', '', d('war'))
-    + bar('Budget strain', s.strain, 'var(--warn)', '', d('strain'))
+    + bar('Hub credibility', s.cred, 'var(--good)', '', d('cred'), f('cred'), 0)
+    + bar('War risk', s.war, 'var(--bad)', '', d('war'), f('war'), 1)
+    + bar('Budget strain', s.strain, 'var(--warn)', '', d('strain'), f('strain'), 2)
     + `<p class="fine">Wars so far: <b class="num">${s.wars.length}</b>. Strain above 25 costs a point of capital per 25.</p>`;
 }
 

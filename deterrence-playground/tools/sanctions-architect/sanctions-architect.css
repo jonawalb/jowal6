@@ -40,7 +40,7 @@
 .sa-track small.up { color: var(--good); } .sa-track small.dn { color: var(--bad); }
 .sa-pv { font: 500 11.5px var(--mono); color: var(--accent); margin-left: 4px; }
 .sa-track .bar { height: 6px; background: var(--chip); border-radius: 3px; overflow: hidden; margin-top: 2px; }
-.sa-track .bar span { display: block; height: 100%; background: var(--accent); transition: width .5s ease; }
+.sa-track .bar span { display: block; height: 100%; background: var(--accent); transition: width var(--dur-move) var(--ease-enter) calc(var(--dur-hero) + var(--i, 0) * var(--stagger-item)); }
 .sa-inforce { margin: 4px 0 0; padding-left: 18px; font-size: 13px; }
 
 .sa-partners { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -59,7 +59,7 @@
 .sa-drv li { display: flex; justify-content: space-between; gap: 8px; padding: 2px 0; }
 .sa-drv li.tot { border-top: 1px solid var(--rule); font-weight: 600; margin-top: 2px; padding-top: 4px; }
 .sa-scale { position: relative; height: 16px; background: var(--chip); border-radius: 3px; margin: 18px 0 8px; }
-.sa-scale .fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); border-radius: 3px; transition: width .5s ease; }
+.sa-scale .fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); border-radius: 3px; transition: width var(--dur-hero) var(--ease-enter); }
 .sa-scale i { position: absolute; top: -6px; bottom: -6px; width: 2px; background: var(--ink); }
 .sa-scale i em { position: absolute; top: -15px; left: -4px; font: 600 11px var(--mono); font-style: normal; }
 .sa-feed ul { margin: 0; padding-left: 18px; font-size: 13px; }

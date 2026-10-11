@@ -95,13 +95,13 @@ function render() {
   slide();
   $('m-note').textContent = state.sort !== 'name' ? `Rows sorted by ${T[state.sort].short} status. Click the column again to sort by name.` : 'Click a column heading to sort states by that treaty.';
   $('detail').innerHTML = cellHTML(state.sel, state.year);
-  if (mv.sel !== null && mv.sel !== state.sel) rise($('detail'), { ms: 300, dy: 6 });
+  if (mv.sel !== null && mv.sel !== state.sel) rise($('detail'), { ms: 400 });
   $('treaty').innerHTML = treatyHTML(state.tsel, state.year);
-  if (mv.tsel !== null && mv.tsel !== state.tsel) { rise($('treaty'), { ms: 300, dy: 6 }); drawPath($('treaty').querySelector('.tt-spark path'), 650); }
+  if (mv.tsel !== null && mv.tsel !== state.tsel) { rise($('treaty'), { ms: 400 }); drawPath($('treaty').querySelector('.tt-spark path'), 750); }
   else $('treaty').querySelectorAll('.tt-counts li').forEach(l => {
     const p = prevCounts.get(l.querySelector('[data-s]').dataset.s), b = l.querySelector('b');
     if (p != null) b.dataset.fx = p;
-    num(b, Number(b.textContent), { ms: 300, flashIt: true });
+    num(b, Number(b.textContent), { ms: 400, flashIt: true });
   });
   document.querySelectorAll('#f-groups [data-g]').forEach(i => { i.checked = state.groups.has(i.dataset.g); });
   document.querySelectorAll('[data-preset]').forEach(b => b.setAttribute('aria-pressed', state.preset === b.dataset.preset));
@@ -111,12 +111,12 @@ function render() {
   const kindsKey = [...state.kinds].join();
   if (mv.tl && mv.kinds !== kindsKey) fadeUp($('timeline').querySelector('svg'));
   $('ev-card').innerHTML = eventCard(state.ev);
-  if (state.ev && mv.ev !== state.ev) rise($('ev-card'), { ms: 300, dy: 6 });
+  if (state.ev && mv.ev !== state.ev) rise($('ev-card'), { ms: 400 });
   $('cmp-a').value = state.cmp[0]; $('cmp-b').value = state.cmp[1];
   $('cmp-year').textContent = when(state.year);
   renderCompare($('compare'), state);
   const cmpKey = state.cmp.join() + '|' + [...state.groups].join();
-  if (mv.cmp !== null && mv.cmp !== cmpKey) $('compare').querySelectorAll('tbody tr').forEach((r, i) => rise(r, { ms: 300, delay: Math.min(i, 12) * 30 }));
+  if (mv.cmp !== null && mv.cmp !== cmpKey) $('compare').querySelectorAll('tbody tr').forEach((r, i) => rise(r, { ms: 400, delay: Math.min(i, 12) * 60 }));
   else if (yearMoved) $('compare').querySelectorAll('tbody td').forEach((td, i) => { if (prevCmp[i] != null && prevCmp[i] !== td.textContent) flash(td); });
   Object.assign(mv, { year: state.year, sel: state.sel, tsel: state.tsel, ev: state.ev, cmp: cmpKey, rows: rowsKey, kinds: kindsKey });
   writeHash();
@@ -174,5 +174,5 @@ render();
   const box = $('matrix').getBoundingClientRect().bottom;
   reveal([...$('matrix').querySelectorAll('tbody tr')].filter(r => r.getBoundingClientRect().bottom <= box));
 }
-onFirstView($('timeline'), () => { mv.tl = true; wipeIn($('timeline').querySelector('svg'), 700); });
+onFirstView($('timeline'), () => { mv.tl = true; wipeIn($('timeline').querySelector('svg'), 750); });
 $('k-total').textContent = `${TREATIES.length} treaties`;

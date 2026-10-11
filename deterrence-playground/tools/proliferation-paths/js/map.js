@@ -73,7 +73,7 @@ export function createMap(host, { onSelect }) {
   }
   let cur = null, seen = false, last = null;
   // Motion: dots pop in on first view; a dot whose stage changes when the year moves sends a ping.
-  onFirstView(host, () => { seen = true; grow(dots.querySelectorAll('circle'), { axis: 'xy', ms: 420, stagger: 14 }); });
+  onFirstView(host, () => { seen = true; grow(dots.querySelectorAll('circle'), { axis: 'xy', ms: 400, stagger: 14 }); });
   const show = (id, ev) => {
     const s = coded.get(id);
     const st = stageAt(cur.ds, id, cur.year);
@@ -106,7 +106,7 @@ export function createMap(host, { onSelect }) {
       if (!d) continue;
       if (stepped && vis && d.dataset.st !== st) {
         const [, tx, ty] = d.getAttribute('transform').match(/translate\(([-\d.]+) ([-\d.]+)\)/) || [];
-        if (tx != null) ping(svg, +tx, +ty, { color: STAGE_COLOR[st] || 'var(--muted)', r: 26, ms: 700, width: 1.8 });
+        if (tx != null) ping(svg, +tx, +ty, { color: STAGE_COLOR[st] || 'var(--muted)', r: 26, ms: 750, width: 1.8 });
       }
       d.dataset.st = st;
       d.classList.toggle('dim', !vis);

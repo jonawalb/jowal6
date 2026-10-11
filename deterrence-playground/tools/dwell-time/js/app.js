@@ -11,7 +11,7 @@ import { curveballById } from './curveballs.js';
 import { playPolicy } from './ai.js';
 import { learnButton, runLesson, showSheet } from '../../../shared/js/learn.js';
 import { lessonSteps, LESSON, SHEET } from './lesson.js';
-import { pulse, countUp } from '../../../shared/js/motion.js';
+import { pulse, countUp, reduced } from '../../../shared/js/motion.js';
 import { escapeHtml as esc } from '../../../shared/js/mapkit.js';
 
 const $ = id => document.getElementById(id);
@@ -94,22 +94,31 @@ function start(history = []) {
 
 /* ======================= Play ======================= */
 function nowH() { const sc = scenarioById(g.s.scen); return sc.turns[g.s.t].h; }
-function paintBar() {
+function meterRows(s) {
+  const gross = Object.values(s.biz.cost).reduce((a, b) => a + b, 0), n = v => String(Math.round(v));
+  return [
+    ['Operations', s.biz.ops, v => `${Math.round(v)}%`, s.biz.ops, s.biz.ops > 75 ? 'var(--good)' : s.biz.ops > 45 ? 'var(--warn)' : 'var(--bad)'],
+    ['Reputation', Math.round(s.biz.rep), n, s.biz.rep, 'var(--c1)'],
+    ['Evidence', Math.round(s.ev), n, s.ev, 'var(--c3)'],
+    ['Spent so far', gross, money, null],
+    ['Open alerts', openFlags(s).length, n, null],
+  ];
+}
+function paintBar(prev) {
   const s = g.s, sc = scenarioById(s.scen), sec = sectorById(s.sector);
   const c = clockAt(sc, nowH());
   $('turn-k').textContent = `Turn ${s.t + 1} of ${sc.turns.length} · ${sec.org}`;
   $('clock').textContent = `${c.dow} ${c.hm} · Day ${c.day}`;
   const H = turnHours(sc, s.t);
   $('next-in').textContent = `This turn covers the next ${H < 48 ? `${H} hours` : `${Math.round(H / 24)} days`}.`;
-  const gross = Object.values(s.biz.cost).reduce((a, b) => a + b, 0);
-  const m = [
-    ['Operations', `${s.biz.ops}%`, s.biz.ops, s.biz.ops > 75 ? 'var(--good)' : s.biz.ops > 45 ? 'var(--warn)' : 'var(--bad)'],
-    ['Reputation', Math.round(s.biz.rep), s.biz.rep, 'var(--c1)'],
-    ['Evidence', Math.round(s.ev), s.ev, 'var(--c3)'],
-    ['Spent so far', money(gross), null],
-    ['Open alerts', openFlags(s).length, null],
-  ];
-  $('meters').innerHTML = m.map(([l, v, bar, col]) => `<div class="dt-m"><span>${l}</span><b class="num">${v}</b>${bar != null ? `<span class="bar" aria-hidden="true"><i style="width:${bar}%;background:${col}"></i></span>` : ''}</div>`).join('');
+  // With `prev` (turn results), the meters start at last turn's values and move to this turn's after the feed (the hero), row by row.
+  const m = meterRows(s), pm = prev && meterRows(prev);
+  $('meters').innerHTML = m.map(([l, v, fmt, bar, col], i) => `<div class="dt-m"><span>${l}</span><b class="num">${fmt(pm ? pm[i][1] : v)}</b>${bar != null ? `<span class="bar" aria-hidden="true"><i style="width:${pm ? pm[i][3] : bar}%;background:${col}"></i></span>` : ''}</div>`).join('');
+  if (pm) [...$('meters').children].forEach((el, i) => setTimeout(() => {
+    const [, v, fmt, bar] = m[i], b = el.querySelector('.bar i');
+    countUp(el.querySelector('b'), v, { from: pm[i][1], ms: 400, fmt });
+    if (b) b.style.width = bar + '%';
+  }, reduced() ? 0 : 400 + i * 60));
   const h = nowH();
   $('clocks').innerHTML = s.clocks.length ? s.clocks.map(k => {
     if (k.filedH != null) return `<span class="dt-chip ok" title="${esc(k.who)}">✓ ${esc(k.label)}</span>`;
@@ -275,10 +284,11 @@ function paint() {
 $('end-turn').addEventListener('click', () => {
   if (!g || g.s.over) return;
   const move = { acts: [...g.picks], note: g.s.mode === 'team' ? $('note').value.trim() : '', ...(g.fx ? { fx: g.fx } : {}) };
+  const prev = g.base;
   g.s = g.base = step(g.base, move).state; g.history.push(move); g.picks = []; g.fx = null; g.revealed = false;
   if (g.timer) stopTimer();
   if (g.s.over) { saveHash(); g.edits = loadEdits(g.s); endScreen(); return; }
-  paint();
+  paint(); paintBar(prev);
   $('feed-t').scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   pulse($('clock'));
 });

@@ -12,7 +12,7 @@ import { readHash, writeHash } from './hash.js';
 import { pWithin } from './filter.js';
 import { covers, lineEnds, AXIS_STEP } from './sensors.js';
 import { isLand, step, BOX } from './geo.js';
-import { pulse } from '../../../shared/js/motion.js';
+import { pulse, reduced } from '../../../shared/js/motion.js';
 import { fxLayer, dropFx, heatFade, turnFx, replayFx, tick, revealFx } from './fx.js';
 
 const $ = id => document.getElementById(id);
@@ -22,7 +22,7 @@ const map = createMap($('map'));
 const fx = fxLayer(map);
 const phone = matchMedia('(max-width: 720px)'); // matches the CSS that moves the map above the controls
 let color = tokenColor('--c2', document.body);
-let g, tool = 'circle', cursor = null, ang = 90, coached = false, turned = false, lesson = null;
+let g, tool = 'circle', cursor = null, ang = 90, coached = false, turned = false, lesson = null, follow = 0;
 
 $('tools').innerHTML = Object.entries(ACTIONS).map(([k, a]) =>
   `<button type="button" data-tool="${k}" aria-pressed="false" aria-keyshortcuts="${a.key}" class="${k === 'attack' ? 'sh-prosbtn' : ''}">
@@ -112,8 +112,8 @@ function coach() {
 /** Readouts count to their new values (the text renderStatus wrote is the real number; this only animates it). */
 function countStatus() {
   const n = id => parseInt($(id).textContent, 10);
-  tick($('odds'), n('odds'), v => `${Math.round(v)}%`);
-  ['effort', 'buoys', 'torps'].forEach(id => { if (!Number.isNaN(n(id))) tick($(id), n(id), v => `${Math.round(v)}`); });
+  tick($('odds'), n('odds'), v => `${Math.round(v)}%`, follow);
+  ['effort', 'buoys', 'torps'].forEach(id => { if (!Number.isNaN(n(id))) tick($(id), n(id), v => `${Math.round(v)}`, follow); });
 }
 
 const say = html => { $('say').innerHTML = html; };
@@ -142,7 +142,13 @@ function end() {
   const ev = endTurn(g);
   say(turnText(g, ev));
   writeHash(g);
+  // The map is the hero of a turn (the cloud eases into its new shape, attacks streak and burst); the odds,
+  // counters and behaviour bars follow it (--follow delays the bar transitions in sub-hunt.css).
+  follow = reduced() ? 0 : 750;
+  document.body.style.setProperty('--follow', `${follow}ms`);
   if (g.over) finish(true); else draw();
+  follow = 0;
+  setTimeout(() => document.body.style.removeProperty('--follow'), 100);
   heatFade(map, oldHeat);
   turnFx(fx, map, g, ev, g.over ? $('rv-status') : $('status'));
   pulse($('end'));

@@ -31,7 +31,7 @@ function convoy(fx, from, to, amph, ferry, g) {
     const off = (i % 4 - 1.5) * 6, s = i < nA
       ? mk('circle', { r: 3.2, class: 'sl-fx-ship' }, fx)
       : mk('rect', { width: 6.4, height: 6.4, class: 'sl-fx-ferry' }, fx);
-    const t0 = performance.now() + i * 55, ms = 820;
+    const t0 = performance.now() + i * 60, ms = 750;
     const step = now => {
       if (g !== gen || !s.isConnected) { s.remove(); return; }
       const u = Math.max(0, Math.min(1, (now - t0) / ms)), e = easeInOut(u);
@@ -57,9 +57,10 @@ export function turn({ pre, G, rows, geom, svg }) {
   const log = document.getElementById('log').firstElementChild;
   if (log) { log.classList.add('sl-fx-new'); log.querySelectorAll('li').forEach((li, i) => li.style.setProperty('--i', Math.min(i, 14))); }
   pulse(document.getElementById('resolve'));
+  // The map is the hero of the turn; the status, log and race chart follow it (their delays are in the CSS and here).
   const st = document.getElementById('status');
-  flash(st);
-  if (G.stats.lostAmph + G.stats.lostFerry > pre.lost || G.launchers.filter(L => L.alive).length < pre.launchers) wait(500).then(() => g === gen && shake(st));
+  wait(750).then(() => g === gen && flash(st));
+  if (G.stats.lostAmph + G.stats.lostFerry > pre.lost || G.launchers.filter(L => L.alive).length < pre.launchers) wait(1150).then(() => g === gen && shake(st));
   race(document.getElementById('race'));
   if (reduced()) return;
   const fx = layer(svg), rich = trailer(), n = rich ? 16 : 11;
@@ -81,7 +82,7 @@ export function turn({ pre, G, rows, geom, svg }) {
       salvoAt += 220;
       for (let i = 0; i < streaks; i++) {
         const j = (i % 4 - 1.5) * 7, k = (i % 3 - 1) * 8;
-        wait(d0 + i * 60).then(() => g === gen && tracer(fx, A.inland[0] - A.uy * j, A.inland[1] + A.ux * j, A.fleet[0] + k, A.fleet[1] - k * .6, { color: 'var(--roc)', ms: 420 }));
+        wait(d0 + i * 60).then(() => g === gen && tracer(fx, A.inland[0] - A.uy * j, A.inland[1] + A.ux * j, A.fleet[0] + k, A.fleet[1] - k * .6, { color: 'var(--roc)', ms: 400 }));
       }
       for (let i = 0; i < hits; i++) {
         const a = i * 2.4, rr = 6 + (i % 3) * 5;
@@ -117,7 +118,7 @@ function race(svg) {
     const [a, b] = pts.slice(-2), seg = Math.hypot(b[0] - a[0], b[1] - a[1]), L = pl.getTotalLength();
     pl.style.strokeDasharray = `${L} ${L}`; pl.style.strokeDashoffset = seg;
     pl.getBoundingClientRect();
-    pl.style.transition = 'stroke-dashoffset .6s cubic-bezier(.2,.8,.2,1)'; pl.style.strokeDashoffset = 0;
+    pl.style.transition = 'stroke-dashoffset var(--dur-move) var(--ease-enter) var(--dur-hero)'; pl.style.strokeDashoffset = 0;
   }
   const dotsA = svg.querySelectorAll('.sl-dotA'), dotsD = svg.querySelectorAll('.sl-dotD');
   for (const d of [dotsA[dotsA.length - 1], dotsD[dotsD.length - 1]]) d?.classList.add('sl-fx-pop');

@@ -42,6 +42,8 @@
   var draft = { decision: null, factors: null };
 
   function $(id) { return document.getElementById(id); }
+  // Smooth scrolling only when the viewer has not asked for reduced motion.
+  function scrollMode() { return window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'; }
   function esc(s) {
     return String(s).replace(/[&<>"']/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
@@ -260,7 +262,7 @@
       save();
       renderCase();
       var rv = $('case').querySelector('.reveal');
-      if (rv) rv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      if (rv) rv.scrollIntoView({ behavior: scrollMode(), block: 'nearest' });
     });
     var clear = $('btn-clear');
     if (clear) clear.addEventListener('click', function () {
@@ -281,7 +283,7 @@
     draft = { decision: null, factors: null };
     save();
     renderCase();
-    $('case').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    $('case').scrollIntoView({ behavior: scrollMode(), block: 'start' });
   }
 
   function gotoCase(id) {
@@ -296,7 +298,7 @@
     save();
     selectTab('tab-practice');
     renderCase();
-    $('case').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    $('case').scrollIntoView({ behavior: scrollMode(), block: 'start' });
   }
 
   /* ---------- Calibration view ---------- */

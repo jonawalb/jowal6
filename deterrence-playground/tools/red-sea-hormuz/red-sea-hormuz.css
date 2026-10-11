@@ -19,13 +19,13 @@
 .rs-mark { cursor: pointer; }
 .rs-mark:focus-visible { outline: none; }
 .rs-mark:focus-visible .rs-dot { stroke: var(--ink); stroke-width: 3; }
-.rs-ghost { fill: none; stroke: var(--ink); stroke-width: 1.2; stroke-dasharray: 3 3; opacity: .55; transition: r .25s; }
-.rs-dot { fill: color-mix(in srgb, var(--blue) 30%, transparent); stroke: var(--blue); stroke-width: 2; transition: r .25s; }
+.rs-ghost { fill: none; stroke: var(--ink); stroke-width: 1.2; stroke-dasharray: 3 3; opacity: .55; transition: r var(--dur-move) var(--ease-enter); }
+.rs-dot { fill: color-mix(in srgb, var(--blue) 30%, transparent); stroke: var(--blue); stroke-width: 2; transition: r var(--dur-move) var(--ease-enter); }
 .rs-mark[data-tone="warn"] .rs-dot { fill: color-mix(in srgb, var(--warn) 28%, transparent); stroke: var(--warn); }
 .rs-mark[data-tone="bad"] .rs-dot { fill: color-mix(in srgb, var(--bad) 22%, transparent); stroke: var(--bad); }
 .rs-core { fill: var(--ink); }
 .rs-pulse { fill: none; stroke: var(--accent); stroke-width: 2.5; opacity: 0; }
-.rs-mark[data-ev="1"] .rs-pulse { opacity: 1; animation: rs-pulse 1.6s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+.rs-mark[data-ev="1"] .rs-pulse { opacity: 1; animation: rs-pulse calc(var(--dur-hero) * 2) var(--ease-enter) infinite; transform-box: fill-box; transform-origin: center; }
 @keyframes rs-pulse { from { transform: scale(.7); opacity: 1; } to { transform: scale(2.4); opacity: 0; } }
 .rs-mark-t { font: 700 14px var(--display); fill: var(--ink); paint-order: stroke; stroke: var(--sea); stroke-width: 4px; stroke-linejoin: round; }
 .rs-mark-v { font: 500 12px var(--mono); fill: var(--ink); paint-order: stroke; stroke: var(--sea); stroke-width: 4px; stroke-linejoin: round; }

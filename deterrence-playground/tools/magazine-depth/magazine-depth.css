@@ -64,7 +64,7 @@
 .md-comp small { font-size: 12px; }
 .md-bar2 { position: relative; }
 .md-cbar { height: 8px; background: var(--chip); border-radius: 3px; overflow: hidden; margin: 4px 0; }
-.md-cbar span { display: block; height: 100%; background: var(--good); transition: width .4s ease; }
+.md-cbar span { display: block; height: 100%; background: var(--good); transition: width var(--dur-move) var(--ease-enter); }
 .md-comp.over .md-cbar span { background: var(--bad); }
 .md-cbar.unknown { background: repeating-linear-gradient(45deg, var(--chip) 0 6px, transparent 6px 12px); border: 1px dashed var(--rule); }
 .md-chartc { padding: 10px 12px; }
@@ -75,7 +75,7 @@
 /* War */
 .md-hold { display: flex; align-items: center; gap: 8px; flex: 1 1 260px; font-size: 13px; font-weight: 600; }
 .md-bar2 { flex: 1; height: 14px; background: var(--chip); border-radius: 3px; overflow: hidden; }
-.md-bar2 span { display: block; height: 100%; background: var(--good); transition: width .5s ease; }
+.md-bar2 span { display: block; height: 100%; background: var(--good); transition: width var(--dur-hero) var(--ease-enter); }
 .md-bar2 span.warn { background: var(--warn); } .md-bar2 span.bad { background: var(--bad); }
 .md-bar2 i { position: absolute; top: 0; bottom: 0; border-left: 2px dashed var(--bad); }
 .md-runs { display: flex; gap: 6px; flex-wrap: wrap; }

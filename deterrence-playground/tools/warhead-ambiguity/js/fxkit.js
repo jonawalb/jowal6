@@ -8,17 +8,18 @@ export const trailer = () => skin() === 'trailer';
 export const ease = u => 1 - Math.pow(1 - u, 3);
 const runs = new WeakMap();
 
-/** Count el's text from `from` to `to`, formatting each frame with fmt. A newer call on the same element wins. */
-export function count(el, from, to, fmt, ms = 600) {
+/** Count el's text from `from` to `to`, formatting each frame with fmt. A newer call on the same element wins.
+    delay: ms to hold `from` first. */
+export function count(el, from, to, fmt, ms = 400, delay = 0) {
   if (!el) return;
   const tok = {};
   runs.set(el, tok);
   if (reduced() || from == null || !Number.isFinite(from) || !Number.isFinite(to) || from === to) { el.textContent = fmt(to); return; }
-  const t0 = performance.now();
+  const t0 = performance.now() + delay;
   el.textContent = fmt(from);
   const step = now => {
     if (runs.get(el) !== tok) return;
-    const u = Math.min(1, (now - t0) / ms);
+    const u = Math.max(0, Math.min(1, (now - t0) / ms));
     el.textContent = fmt(u < 1 ? from + (to - from) * ease(u) : to);
     if (u < 1) requestAnimationFrame(step);
   };

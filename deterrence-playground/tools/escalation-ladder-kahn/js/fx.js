@@ -46,14 +46,15 @@ function drawIn(svg) {
   if (line) {
     const L = line.getTotalLength();
     line.animate([{ strokeDasharray: `${L} ${L}`, strokeDashoffset: L }, { strokeDasharray: `${L} ${L}`, strokeDashoffset: 0 }],
-      { duration: 650, easing: 'cubic-bezier(.2,.8,.2,1)' });
+      { duration: 750, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' });   // --dur-hero, --ease-enter
   }
   svg.querySelectorAll('.pc-dot.a').forEach((d, i, all) => d.animate([{ opacity: 0 }, { opacity: 1 }],
-    { duration: 220, delay: (i / Math.max(1, all.length - 1)) * 600, fill: 'backwards' }));
+    { duration: 150, delay: (i / Math.max(1, all.length - 1)) * 600, fill: 'backwards' }));
 }
 
-function slideBars(root, prev) {
+function slideBars(root, prev, lag = 0) {
   const bars = [...root.querySelectorAll('.cf-bar')].map(b => [...b.querySelectorAll(':scope > span')]);
+  const widths = bars.map(sp => sp.map(s => s.style.width));
   bars.forEach((spans, bi) => {
     const old = prev?.[bi];
     spans.forEach((s, i) => {
@@ -61,10 +62,11 @@ function slideBars(root, prev) {
       if (reduced() || from === to) return;
       s.style.transition = 'none'; s.style.width = from;
       void s.offsetWidth;
-      s.style.transition = ''; s.style.width = to;
+      s.style.transition = '';
+      if (lag) setTimeout(() => { s.style.width = to; }, lag); else s.style.width = to;
     });
   });
-  return bars.map(sp => sp.map(s => s.style.width));
+  return widths;
 }
 
 export function afterRender(state) {
@@ -75,8 +77,11 @@ export function afterRender(state) {
   const T = trailer(), rose = !first && cur > last.cur;
 
   // Ladder: light the rungs between the last position and this one.
+  // The climb is the hero of a step: the peak readouts and outcome bars follow it.
+  let lag = 0;
   if (first || cur !== last.cur) {
-    climb(ladder, first ? 0 : last.cur, cur, first);
+    const ms = climb(ladder, first ? 0 : last.cur, cur, first);
+    if (!first) lag = Math.min(750, ms);
   }
 
   // Path chart: draw the line in for a new crisis; ping the current step when it moves.
@@ -87,7 +92,7 @@ export function afterRender(state) {
     setTimeout(() => {
       ping(svg, x, y, { color: 'var(--blue)', r: T ? 30 : 18, width: T ? 2.4 : 1.6 });
       if (T && rose) burst(svg, x, y, { color: 'var(--accent)', n: 10, r: 18 });
-    }, first ? 600 : 0);
+    }, first ? 750 : 0);
   }
 
   // Step buttons: pulse the one that moved the story.
@@ -99,17 +104,19 @@ export function afterRender(state) {
   document.querySelectorAll('.kl-peak').forEach(p => {
     const cls = p.classList.contains('b') ? 'b' : 'a', b = p.querySelector('b'), to = num(b.textContent);
     peaks[cls] = to;
-    count(b, last?.peaks?.[cls] ?? 1, to, v => String(Math.round(v)), 650);
+    const from = last?.peaks?.[cls] ?? 1, fmt = v => String(Math.round(v));
+    if (lag && !reduced() && from !== to) { b.textContent = fmt(from); setTimeout(() => count(b, from, to, fmt, 400), lag); }
+    else count(b, from, to, fmt, 400);
   });
 
   // Retry mode.
   let bars = null, legend = [], logN = 0, body = '';
   const play = $('#play');
   if (state.m === 'play' && !play.hidden) {
-    bars = slideBars(play, first ? null : last.bars);
+    bars = slideBars(play, first ? null : last.bars, lag);
     play.querySelectorAll('.cf-dist .cf-leg b').forEach((b, i) => {
       const txt = b.textContent; legend.push(txt);
-      if (/^\d+%$/.test(txt) && last?.legend?.[i] && /^\d+%$/.test(last.legend[i]) && txt !== last.legend[i]) count(b, num(last.legend[i]), num(txt), pctFmt, 500);
+      if (/^\d+%$/.test(txt) && last?.legend?.[i] && /^\d+%$/.test(last.legend[i]) && txt !== last.legend[i]) count(b, num(last.legend[i]), num(txt), pctFmt, 400);
     });
     const log = [...play.querySelectorAll('.cf-log li')];
     logN = log.length;
@@ -125,7 +132,7 @@ export function afterRender(state) {
       if (blk && !blk.classList.contains('cf-brwrap')) replay(blk, 'fx-rise');
       pulse(play.querySelector('.cf-olist li.me'));
       const end = play.querySelector('.cf-end h3');
-      if (end) { replay(end, 'fx-glow'); if (cur >= 21) setTimeout(() => shake(play.querySelector('.cf-end')), 300); }
+      if (end) { replay(end, 'fx-hl'); if (cur >= 21) setTimeout(() => shake(play.querySelector('.cf-end')), 300); }
     }
     const mc = play.querySelector('.cf-mc [aria-live] .cf-bar');
     if (mc && !last?.mcShown) replay(play.querySelector('.cf-mc [aria-live]'), 'fx-rise');

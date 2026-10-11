@@ -159,7 +159,7 @@ function massGame() {
 function changed() { stopPlay(); compute(); renderPanel(); renderFrame(); writeHash(); }
 
 mountCascade9($('c9'));
-const tour = createTour($('tour-root'), set => { Object.assign(S, set); changed(); document.querySelector('.layout').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+const tour = createTour($('tour-root'), set => { Object.assign(S, set); changed(); document.querySelector('.layout').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); });
 $('start-tour').addEventListener('click', () => tour.start());
 $('reset').addEventListener('click', () => { Object.assign(S, DEFAULTS); changed(); });
 

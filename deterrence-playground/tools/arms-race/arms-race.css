@@ -46,7 +46,7 @@ body:not(.ov) .ov-only { display: none; }
 .chart .nc { stroke-width: 2; fill: none; }
 .chart .nc-a { stroke: var(--c1); } .chart .nc-b { stroke: var(--c2); stroke-dasharray: 7 4; }
 .chart .sep { stroke: var(--muted); stroke-width: 2; stroke-dasharray: 3 4; fill: none; }
-.chart .traj { fill: none; stroke: var(--ink); stroke-width: 1.6; opacity: .55; stroke-linejoin: round; transition: stroke-dashoffset 1.3s ease-out; }
+.chart .traj { fill: none; stroke: var(--ink); stroke-width: 1.6; opacity: .55; stroke-linejoin: round; transition: stroke-dashoffset var(--dur-hero) var(--ease-enter); }
 .chart .traj.last { stroke: var(--accent); stroke-width: 2.6; opacity: 1; }
 .chart .traj-s { fill: var(--ink); opacity: .6; } .chart .traj-s.last { fill: var(--accent); opacity: 1; }
 .chart .eq { stroke-width: 3; }

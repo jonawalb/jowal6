@@ -96,11 +96,11 @@ function animate() {
   count($('count'));
   onChange('sel', S.sel, () => {
     if (!S.sel) return;
-    stroke(tl.querySelector('.selline'), { ms: 360 });
+    stroke(tl.querySelector('.selline'), { ms: 400 });
     const m = tl.querySelector('.mk.sel');
-    if (m) { const b = m.getBBox(); ring(tl, b.x + b.width / 2, b.y + b.height / 2, { color: getComputedStyle(m).fill, r: 26, ms: 700 }); }
-    rise($('detail').children, { stagger: 35 });
-    grow($('detail').querySelectorAll('.lvbar i.on'), { axis: 'x', stagger: 200, ms: 260 });
+    if (m) { const b = m.getBBox(); ring(tl, b.x + b.width / 2, b.y + b.height / 2, { color: getComputedStyle(m).fill, r: 26, ms: 750 }); }
+    rise($('detail').children, { stagger: 60 });
+    grow($('detail').querySelectorAll('.lvbar i.on'), { axis: 'x', stagger: 200, ms: 400 });
   });
 }
 function pick(id) {

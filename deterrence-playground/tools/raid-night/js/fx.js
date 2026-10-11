@@ -49,7 +49,7 @@ export function magTick(row, before, after) {
 export function cardIn(card, { count = false } = {}) {
   if (!card || calm()) return;
   card.classList.remove('rn-in'); void card.offsetWidth; card.classList.add('rn-in');
-  if (count) card.querySelectorAll('p > b').forEach(b => { const v = +b.textContent; if (Number.isFinite(v)) countUp(b, v, { from: 0, ms: 650 }); });
+  if (count) card.querySelectorAll('p > b').forEach(b => { const v = +b.textContent; if (Number.isFinite(v)) countUp(b, v, { from: 0, ms: 750 }); });
 }
 
 /** After-action review: cards rise in with a stagger. */

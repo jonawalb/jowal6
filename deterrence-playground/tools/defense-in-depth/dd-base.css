@@ -116,7 +116,7 @@ body.dd-planning #undo, body.dd-planning #end { display: none; }
 .dd-tips-x { position: absolute; top: 0; right: 0; width: 40px; height: 40px; border: 0; background: none; font-size: 22px; line-height: 1; cursor: pointer; color: var(--muted); }
 
 /* Walkthrough and key help */
-.dd-tour, .dd-keyhelp { position: fixed; z-index: 50; right: 16px; bottom: 16px; width: min(380px, calc(100vw - 32px)); background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-top: 4px solid var(--accent); border-radius: 4px; padding: 12px 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, .25); transition: left .2s, top .2s; }
+.dd-tour, .dd-keyhelp { position: fixed; z-index: 50; right: 16px; bottom: 16px; width: min(380px, calc(100vw - 32px)); background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-top: 4px solid var(--accent); border-radius: 4px; padding: 12px 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, .25); transition: left var(--dur-move) var(--ease-move), top var(--dur-move) var(--ease-move); }
 .dd-keyhelp { left: auto; top: auto; max-height: 80vh; overflow-y: auto; }
 .tour-h { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--muted); }
 .tour-h .x { border: 0; background: transparent; font-size: 22px; cursor: pointer; color: var(--muted); min-width: 40px; min-height: 40px; }
@@ -159,10 +159,10 @@ body.dd-planning #undo, body.dd-planning #end { display: none; }
 /* Trailer skin (Interactive Deterrence): the night plotting table. */
 :root[data-skin="trailer"] { --c1: #72a0ff; --c2: #ff8a3d; --c3: #2cc2ac; --c4: #d77ab0; --c5: #efc12f; --c6: #a68ef0; --c7: #63b3d6; --c8: #c8b48a; }
 :root[data-skin="trailer"] body { --hp: #4fbf6d; --hp-lost: #ff6b5e; }
-:root[data-skin="trailer"] .dd-clock b { color: var(--accent); text-shadow: 0 0 18px rgba(240, 169, 59, .35); }
+:root[data-skin="trailer"] .dd-clock b { color: var(--accent); }
 :root[data-skin="trailer"] .dd-side, :root[data-skin="trailer"] .dd-od { background: color-mix(in srgb, var(--chip) 80%, transparent); }
 :root[data-skin="trailer"] .dd-side b { font: italic 500 26px var(--display); }
-:root[data-skin="trailer"] .dd-tour { box-shadow: 0 20px 50px -20px #000, var(--glow, none); }
+:root[data-skin="trailer"] .dd-tour { box-shadow: 0 20px 50px -20px #000; }
 :root[data-skin="trailer"] .dd-say { background: color-mix(in srgb, var(--bg) 70%, transparent); }
 /* QA fix: the sticky order bar must be opaque in Trailer (the skin makes cards 88% opaque, so text showed through). */
 :root[data-skin="trailer"] .dd-obar.card { background: var(--panel); }

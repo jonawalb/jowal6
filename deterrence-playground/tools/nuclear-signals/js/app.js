@@ -81,7 +81,7 @@ const tip = tooltip(tipEl);
 let current = [];
 function pick(id, scroll) {
   S.sel = id; update();
-  if (scroll && window.matchMedia('(max-width: 1020px)').matches) $('detail').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (scroll && window.matchMedia('(max-width: 1020px)').matches) $('detail').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
 }
 function step(d) {
   const list = current.length ? current : ITEMS;

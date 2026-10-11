@@ -6,7 +6,7 @@ import { redAI, blueCollectAI, blueDecideAI } from './ai.js';
 import { score, outcome, benchmark, percentile } from './score.js';
 import { paintRed, paintCollect, paintDecide, paintStatus, readingsHistory } from './panels.js';
 import { paintCalendar, paintTimeline, legendHTML, pct } from './view.js';
-import { pulse, flash, countUp } from '../../../shared/js/motion.js';
+import { pulse, flash, countUp, reduced } from '../../../shared/js/motion.js';
 
 const $ = id => document.getElementById(id);
 const newSeed = () => 1 + Math.floor(Math.random() * 999998);
@@ -90,11 +90,25 @@ function endBlueWeek() {
 function afterWeek() {
   history.replaceState(null, '', '#g=' + encode(g.s));
   if (g.s.over) return finish();
+  const prev = meterState();
   startWeek();
   if (g.s.over) return finish();
   paint();
+  settleMeters(prev);
   flash($('status'));
   $('dec-t').focus();
+}
+// The situation meters move from last week's values to this week's, one row after another.
+const meterState = () => new Map([...$('status').querySelectorAll('.eo-meter')].map(m => [m.querySelector('div > span').textContent, { w: m.querySelector('.bar span').style.width, v: +m.querySelector('b.num').textContent }]));
+function settleMeters(prev) {
+  [...$('status').querySelectorAll('.eo-meter')].forEach((m, i) => {
+    const o = prev.get(m.querySelector('div > span').textContent);
+    if (!o) return;
+    const bar = m.querySelector('.bar span'), b = m.querySelector('b.num'), w = bar.style.width, to = +b.textContent;
+    bar.style.transitionDelay = `calc(${i} * var(--stagger-item))`;
+    bar.style.width = o.w; void bar.offsetWidth; bar.style.width = w;
+    if (o.v !== to) setTimeout(() => countUp(b, to, { from: o.v, ms: 400 }), reduced() ? 0 : i * 60);
+  });
 }
 
 /* ---------- Paint ---------- */

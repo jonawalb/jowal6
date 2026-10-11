@@ -5,7 +5,7 @@ import { BY_ID } from '../data/actions.js';
 import { newGame, brief, act, respond, warOdds, budgetOf, encode, decode, replay } from './engine.js';
 import { intel, benchmark } from './ai.js';
 import { score, peaks, percentile } from './score.js';
-import { drawHub, animateYear, paintHubTracks, paintAllyCards, paintSeries } from './view.js';
+import { drawHub, animateYear, paintHubTracks, growTracks, paintAllyCards, paintSeries } from './view.js';
 import { paintDecide, wireDecide } from './decide.js';
 import { pulse, flash, reduced } from '../../../shared/js/motion.js';
 
@@ -103,10 +103,16 @@ function showResolve() {
   $('res-t').textContent = `Year ${g.year + 1}: what happened`;
   $('log').innerHTML = yearLines(g.yearLog, s);
   const view = { ...s, probes: g.before.probes };
-  drawHub($('hub'), view, intel(s)); animateYear($('hub'), view, g.yearLog);
-  paintHubTracks($('tracks'), s, budgetOf(s), g.prev);
+  // The diagram is the hero of the year; the tracks wait at last year's values and then follow it.
+  drawHub($('hub'), view, intel(s));
+  paintHubTracks($('tracks'), s, budgetOf(s), g.prev, true);
+  const first = $('tracks').firstElementChild;
+  animateYear($('hub'), view, g.yearLog).then(() => {
+    if (!first.isConnected) return;   // the next year was already painted
+    growTracks($('tracks'));
+    document.querySelectorAll('#tracks .hs-track').forEach(t => { if (t.querySelector('small')) flash(t); });
+  });
   paintAllyCards($('allies'), s, intel(s), []);
-  document.querySelectorAll('#tracks .hs-track').forEach(t => { if (t.querySelector('small')) flash(t); });
   $('resolve').scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'start' });
   $('resolve').focus();
   say($('log').textContent);

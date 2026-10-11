@@ -57,8 +57,8 @@ export function renderPanel(root, state, rows) {
   const y = state.year;
   const now = rows.filter(t => yearOf(t) === y), cum = rows.filter(t => yearOf(t) <= y);
   root.querySelector('#p-year').textContent = y;
-  num(root.querySelector('#p-now'), now.length, { fmt, ms: 320 });
-  num(root.querySelector('#p-cum'), cum.length, { fmt, ms: 320 });
+  num(root.querySelector('#p-now'), now.length, { fmt, ms: 400 });
+  num(root.querySelector('#p-cum'), cum.length, { fmt, ms: 400 });
   const allCum = TESTS.filter(t => yearOf(t) <= y).length;
   root.querySelector('#p-note').textContent = rows.length === TESTS.length
     ? `${fmt(allCum)} of the ${fmt(TESTS.length)} tests in the record had happened by the end of ${y}.`
@@ -84,7 +84,7 @@ export function renderPanel(root, state, rows) {
   const first = box.dataset.k == null;
   box.dataset.k = msKey;
   box.innerHTML = ms ? `<p class="eyebrow">${state.ms ? 'Milestone' : 'Nearest milestone'}</p>${milestoneCard(ms)}` : '';
-  if (!first) rise(box.querySelector('.nt-ms-card'), { ms: 300, dy: 6 });
+  if (!first) rise(box.querySelector('.nt-ms-card'), { ms: 400, dy: 6 });
 }
 
 export function nearestMilestone(y) {

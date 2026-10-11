@@ -146,7 +146,4 @@ circle.dd-tree { fill: color-mix(in srgb, var(--good) 35%, var(--land)); stroke:
 :root[data-skin="trailer"] .dd-name { font: 500 10px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
 :root[data-skin="trailer"] .dd-objname { fill: var(--accent); font-style: italic; }
 :root[data-skin="trailer"] .dd-objline { stroke: var(--accent); }
-:root[data-skin="trailer"] .dd-unit.sel .dd-ubox { filter: drop-shadow(0 0 5px var(--focus)); }
-:root[data-skin="trailer"] .dd-bar.now { filter: drop-shadow(0 0 6px var(--accent)); }
-:root[data-skin="trailer"] .dd-lane.enf { filter: drop-shadow(0 0 4px var(--c2)); }
 :root[data-skin="trailer"] .dd-mapbox { box-shadow: 0 24px 60px -30px #000, inset 0 0 0 1px var(--rule); }

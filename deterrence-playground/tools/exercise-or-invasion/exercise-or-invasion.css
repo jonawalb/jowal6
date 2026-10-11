@@ -84,7 +84,7 @@
 .eo-meter { margin: 8px 0 10px; font-size: 13px; }
 .eo-meter > div:first-child { display: flex; justify-content: space-between; gap: 6px; }
 .eo-meter .bar { position: relative; height: 8px; background: var(--chip); border-radius: 4px; overflow: visible; margin-top: 3px; }
-.eo-meter .bar span { display: block; height: 100%; border-radius: 4px; background: var(--mc); transition: width .5s ease; }
+.eo-meter .bar span { display: block; height: 100%; border-radius: 4px; background: var(--mc); transition: width var(--dur-move) var(--ease-enter); }
 .eo-meter .bar i { position: absolute; top: -3px; width: 2px; height: 14px; background: var(--ink); }
 .eo-meter small { color: var(--muted); font-size: 12px; display: block; margin-top: 2px; }
 .eo-chk { display: flex; gap: 6px; align-items: center; font-size: 13px; margin-top: 6px; }

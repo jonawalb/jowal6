@@ -101,7 +101,7 @@ export function renderPanel(host, state) {
   host.querySelector('#ie-rep').innerHTML = repHTML(r);
   const moved = mv.report !== null && mv.report !== r.id;
   const tot = host.querySelector('#ie-rep tr.tot td');
-  if (tot && r.total != null) { if (moved && mv.total != null) tot.dataset.fx = mv.total; num(tot, r.total, { fmt: fmtKg, ms: 380, flashIt: moved && mv.total != null }); }
+  if (tot && r.total != null) { if (moved && mv.total != null) tot.dataset.fx = mv.total; num(tot, r.total, { fmt: fmtKg, ms: 400, flashIt: moved && mv.total != null }); }
   const sb = host.querySelector('#ie-rep .status b');
   if (moved && sb && sb.textContent !== mv.status) flash(sb.parentElement);
   // The clock does not depend on the selection: build it once, counting its figures up on first show.
@@ -110,8 +110,8 @@ export function renderPanel(host, state) {
     clock.innerHTML = clockHTML();
     clock.dataset.built = '1';
     const [days, mult] = clock.querySelectorAll('.ie-big b');
-    num(days, Number(days.textContent), { intro: true, ms: 700, fmt: v => String(Math.round(v)) });
-    num(mult, parseInt(mult.textContent, 10), { intro: true, ms: 700, fmt: v => Math.round(v) + '×' });
+    num(days, Number(days.textContent), { intro: true, ms: 750, fmt: v => String(Math.round(v)) });
+    num(mult, parseInt(mult.textContent, 10), { intro: true, ms: 750, fmt: v => Math.round(v) + '×' });
   }
   // Breakout: highlight the latest estimate published on or before the selected report's date.
   const cur = [...BREAKOUT].reverse().find(b => b.date <= r.date);
@@ -129,8 +129,8 @@ export function renderPanel(host, state) {
     </div>` : '<p class="fine">Click a diamond above the chart, or pick an event below.</p>';
   host.querySelector('#ie-evlist').innerHTML = EVENTS.map(x => `
     <li><button type="button" data-ev="${x.id}" aria-pressed="${x.id === state.ev}"><i style="background:${CAT_COLOR[x.cat]}"></i><span class="d">${x.approx || niceDate(x.date)}</span> ${esc(x.title)}</button></li>`).join('');
-  if (mv.ev !== null && mv.ev !== state.ev) rise(host.querySelector('#ie-evcard > *'), { ms: 300, dy: 6 });
-  if (mv.report === null) reveal(host.querySelectorAll('#ie-evlist li'), { stagger: 40 });
+  if (mv.ev !== null && mv.ev !== state.ev) rise(host.querySelector('#ie-evcard > *'));
+  if (mv.report === null) reveal(host.querySelectorAll('#ie-evlist li'), { stagger: 60 });
   Object.assign(mv, { report: r.id, total: r.total ?? null, status: sb?.textContent ?? null, ev: state.ev, bo: cur ?? false });
 }
 export { LIMIT_KG_U };

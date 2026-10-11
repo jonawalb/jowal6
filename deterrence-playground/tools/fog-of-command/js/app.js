@@ -376,8 +376,8 @@ function hourFx(t0, before, was, str0) {
   const hurt = () => mineUnits().filter(u => str0.has(u.id) && u.str < str0.get(u.id) - 1e-9)
     .forEach(u => { const b = $('units').querySelector(`[data-u="${u.id}"]`); shake(b); flash(b); });
   const hits = liveView().hits;
-  setTimeout(() => { if (m === map) contacts(m, g.fights.filter(f => f.t === t0).map(f => f.node)); }, 380);
-  Promise.all(hits.map((n, i) => new Promise(r => setTimeout(r, i * 140)).then(() => shell(m, n, { foe: true })))).then(hurt);
+  setTimeout(() => { if (m === map) contacts(m, g.fights.filter(f => f.t === t0).map(f => f.node)); }, 400);
+  Promise.all(hits.map((n, i) => new Promise(r => setTimeout(r, i * 150)).then(() => shell(m, n, { foe: true })))).then(hurt);
 }
 
 function finish(scroll, note = '') {
@@ -402,7 +402,7 @@ function reviewAt(h) {
     me, units, pic: view === 'truth' ? truthPic : beliefAt(g, me, h), mode: view, routes: [], selected: null,
     target: g.fire[me][h] || null, hits: [], fights: g.fights.filter(f => f.t === h - 1).map(f => f.node),
   });
-  if (before && prev !== h) slide(map, before, { ms: 420, forward: h === prev + 1 });
+  if (before && prev !== h) slide(map, before, { ms: 400, forward: h === prev + 1 });
 }
 
 function setView(v) {

@@ -113,16 +113,16 @@
   --c1: #7fb6d9; --c2: #ff8a3d; --c3: #2cc2ac; --c4: #d77ab0; --c5: #efc12f; --c6: #a68ef0; --c7: #63b3d6; --c8: #c8b48a;
 }
 :root[data-skin="trailer"] .pl-c { background: rgba(8, 18, 13, .6); }
-:root[data-skin="trailer"] .pl-c[aria-pressed="true"] { border-color: var(--accent); background: rgba(240, 169, 59, .1); box-shadow: inset 0 0 18px -8px var(--accent); }
+:root[data-skin="trailer"] .pl-c[aria-pressed="true"] { border-color: var(--accent); background: rgba(240, 169, 59, .1); }
 :root[data-skin="trailer"] .pl-c[aria-pressed="true"] .pl-strike { color: var(--accent); font-family: var(--mono); font-weight: 400; letter-spacing: .1em; text-transform: uppercase; font-size: 10.5px; }
-:root[data-skin="trailer"] .pl-bar { background: var(--red); box-shadow: 0 0 8px var(--red); }
+:root[data-skin="trailer"] .pl-bar { background: var(--red); }
 :root[data-skin="trailer"] .ch, :root[data-skin="trailer"] .ccard { background: rgba(8, 18, 13, .5); }
 :root[data-skin="trailer"] .ch-v, :root[data-skin="trailer"] .ccard h3 { font-family: var(--display); font-style: italic; font-weight: 500; }
-:root[data-skin="trailer"] .cum { stroke: var(--accent); filter: drop-shadow(0 0 4px rgba(240, 169, 59, .6)); }
+:root[data-skin="trailer"] .cum { stroke: var(--accent); }
 :root[data-skin="trailer"] .cumdot { stroke: var(--accent); }
 :root[data-skin="trailer"] .status b { font-family: var(--mono); font-weight: 400; }
 :root[data-skin="trailer"] .status[data-s="good"] { border-color: var(--good); }
-:root[data-skin="trailer"] .status[data-s="bad"] { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 10%, var(--panel)); box-shadow: 0 0 24px -10px var(--bad); }
+:root[data-skin="trailer"] .status[data-s="bad"] { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 10%, var(--panel)); }
 /* Martian Mono runs wider than Plex Mono: keep readouts and lever deltas on their lines. */
 :root[data-skin="trailer"] .readout dd, :root[data-skin="trailer"] .mit .t em { font-size: 11px; letter-spacing: 0; white-space: normal; }
 :root[data-skin="trailer"] .mit .t em { display: inline-block; margin-left: 0; }
@@ -137,12 +137,12 @@
 @keyframes fx-lift { from { opacity: .45; } }
 @keyframes fx-feed { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--chc) 70%, transparent); transform: translateY(-2px); } 100% { box-shadow: 0 0 0 10px transparent; } }
 @keyframes fx-flash { from { background: color-mix(in srgb, var(--accent) 24%, transparent); } }
-.fx-hit { animation: fx-hit .7s ease-out var(--fx-d, 0ms); }
-.fx-carry { animation: fx-carry .6s ease-out var(--fx-d, 0ms); }
-.fx-lift { animation: fx-lift .5s ease-out; }
-.fx-feed { animation: fx-feed .8s ease-out var(--fx-d, 0ms); }
-.fx-flash { animation: fx-flash .9s ease-out; }
-:root[data-skin="trailer"] .fx-feed { animation-duration: 1s; }
+.fx-hit { animation: fx-hit var(--dur-hero) var(--ease-enter) var(--fx-d, 0ms); }
+.fx-carry { animation: fx-carry var(--dur-move) var(--ease-enter) var(--fx-d, 0ms); }
+.fx-lift { animation: fx-lift var(--dur-exit) var(--ease-exit); }
+.fx-feed { animation: fx-feed var(--dur-move) var(--ease-enter) var(--fx-d, 0ms); }
+.fx-flash { animation: fx-flash var(--dur-move) var(--ease-enter) var(--fx-d, 0ms); }
+:root[data-skin="trailer"] .fx-feed { animation-duration: var(--dur-hero); }
 @media (prefers-reduced-motion: reduce) { .fx-hit, .fx-carry, .fx-lift, .fx-feed, .fx-flash { animation: none; } }
 :root[data-skin="trailer"] .readout dt { font-size: 11px; letter-spacing: 0; }
 :root[data-skin="trailer"] .readout dd { white-space: nowrap; }

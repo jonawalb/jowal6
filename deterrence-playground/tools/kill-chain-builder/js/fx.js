@@ -3,7 +3,7 @@
 // on layers laid over the board and the timeline, never change a number, and are off under reduced motion.
 //   before()        call at the start of an update, to remember what the readouts said
 //   after(r, spof)  call once the board, panel and timeline have been redrawn
-import { pulse, flash, shake, burst, ping, reduced } from '../../../shared/js/motion.js';
+import { pulse, flash, shake, burst, ping, countUp, reduced } from '../../../shared/js/motion.js';
 import { NW, NH } from './board.js';
 
 export const MOTION = true; // Same motion on both sites (owner, 2026-09-30).
@@ -74,9 +74,15 @@ export function after(r) {
   const box = $('kc-status');
   if (!first && was.closes && !closes && S.dead.size > was.dead.size) shake(box);
   if (!first && was.closes !== closes) flash(box);
-  // Readouts whose value changed.
-  const dds = document.querySelectorAll('#kc-read dd');
-  if (dds.length === was.read.length) dds.forEach((d, i) => { if (d.textContent !== was.read[i]) flash(d); });
+  // Readouts whose value changed follow the hero (the strike or the closing run), one row after another;
+  // a plain count runs over from its old value.
+  const dds = document.querySelectorAll('#kc-read dd'), int = t => /^\d+$/.test(t);
+  if (dds.length === was.read.length) dds.forEach((d, i) => {
+    const old = was.read[i], now = d.textContent;
+    if (now === old) return;
+    if (int(old) && int(now)) d.textContent = old;
+    setTimeout(() => { flash(d); if (int(old) && int(now)) countUp(d, +now, { from: +old, ms: 400 }); }, 400 + i * 60);
+  });
 
   // A closing path (new, or a different one): run a tracer from the sensor through command to the shooter,
   // then race the clock along the timeline.
@@ -91,12 +97,11 @@ async function chainRun(board, fx, p, byId) {
     const edge = board.querySelector(`.edge[data-a="${p[i - 1]}"][data-b="${p[i]}"]`);
     if (!edge) continue;
     const d = edge.getAttribute('d'), L = edge.getTotalLength();
-    const glow = mk('path', { d, class: 'kc-trace-glow', 'stroke-dasharray': L, 'stroke-dashoffset': L }, g);
     const line = mk('path', { d, class: 'kc-trace', 'stroke-dasharray': L, 'stroke-dashoffset': L }, g);
     const head = mk('circle', { r: 4.5, class: 'kc-head' }, g);
-    await anim(260, u => {
+    await anim(240, u => {
       const e = ease(u), off = L * (1 - e), pt = edge.isConnected ? edge.getPointAtLength(L * e) : null;
-      line.setAttribute('stroke-dashoffset', off); glow.setAttribute('stroke-dashoffset', off);
+      line.setAttribute('stroke-dashoffset', off);
       if (pt) { head.setAttribute('cx', pt.x); head.setAttribute('cy', pt.y); }
     });
     head.remove();
@@ -107,7 +112,7 @@ async function chainRun(board, fx, p, byId) {
     pulse($('kc-status'));
     raceClock();
   }
-  await anim(500, u => g.setAttribute('opacity', 1 - u));
+  await anim(240, u => g.setAttribute('opacity', 1 - u));
   g.remove();
 }
 
@@ -119,8 +124,8 @@ async function raceClock() {
   const g = mk('g', {}, fx);
   const band = mk('rect', { x: x0, y: 22, width: 0, height: 26, class: 'kc-sweep-band' }, g);
   const hand = mk('line', { x1: x0, x2: x0, y1: 18, y2: 190, class: 'kc-sweep' }, g);
-  await anim(700, u => { const x = x0 + (x1 - x0) * ease(u); hand.setAttribute('x1', x); hand.setAttribute('x2', x); band.setAttribute('width', x - x0); });
+  await anim(750, u => { const x = x0 + (x1 - x0) * ease(u); hand.setAttribute('x1', x); hand.setAttribute('x2', x); band.setAttribute('width', x - x0); });
   ping(fx, x1, y, { color: ok ? 'var(--good)' : 'var(--bad)', r: 30, ms: 700 });
-  await anim(350, u => g.setAttribute('opacity', 1 - u));
+  await anim(240, u => g.setAttribute('opacity', 1 - u));
   g.remove();
 }

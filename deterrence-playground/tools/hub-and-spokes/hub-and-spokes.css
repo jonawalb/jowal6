@@ -35,7 +35,7 @@
 .hs-track { margin: 6px 0; font-size: 12.5px; }
 .hs-track > div { display: flex; justify-content: space-between; gap: 6px; }
 .hs-track .bar { height: 6px; background: var(--chip); border-radius: 3px; overflow: hidden; margin-top: 2px; }
-.hs-track .bar span { display: block; height: 100%; background: var(--tc, var(--accent)); transition: width .5s ease; }
+.hs-track .bar span { display: block; height: 100%; background: var(--tc, var(--accent)); transition: width var(--dur-move) var(--ease-enter) calc(var(--i, 0) * var(--stagger-item)); }
 .hs-allies { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .hs-ally { padding: 8px 10px; border: 1px solid var(--rule); border-top: 5px solid var(--c); border-radius: 4px; background: var(--panel); min-width: 0; }
 .hs-ally h3 { margin: 0 0 2px; font: 700 16px var(--display); color: var(--c); }

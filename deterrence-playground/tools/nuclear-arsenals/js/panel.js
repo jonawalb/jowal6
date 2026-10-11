@@ -48,8 +48,8 @@ export function panelHTML() {
 export function renderPanel(root, state, act) {
   const y = state.year;
   root.querySelector('#p-year').textContent = y;
-  num(root.querySelector('#p-sum'), sumOn(state.on, y), { fmt, ms: 320 });
-  num(root.querySelector('#p-world'), WORLD[y - Y0], { fmt, ms: 320 });
+  num(root.querySelector('#p-sum'), sumOn(state.on, y), { fmt, ms: 400 });
+  num(root.querySelector('#p-world'), WORLD[y - Y0], { fmt, ms: 400 });
   const w = WORLD[y - Y0], pk = WORLD[PEAK_YEAR - Y0];
   root.querySelector('#p-peak').textContent = y === PEAK_YEAR
     ? `${PEAK_YEAR} is the peak of the global series: ${fmt(pk)} warheads.`
@@ -84,7 +84,7 @@ export function renderPanel(root, state, act) {
   const first = box.dataset.k == null;
   box.dataset.k = msKey;
   box.innerHTML = ms ? `<p class="eyebrow">${state.msId ? 'Milestone' : 'Nearest milestone'}</p>${milestoneCard(ms)}` : '';
-  if (!first) rise(box.querySelector('.na-ms-card'), { ms: 300, dy: 6 });
+  if (!first) rise(box.querySelector('.na-ms-card'), { ms: 400 });
 }
 
 export function nearestMilestone(y) {
@@ -132,7 +132,7 @@ function compareMotion(root) {
     if (cmpPrev === null) reveal(root.querySelectorAll('.na-card'));
     if (cmpPrev === null) onFirstView(root, () => {
       cmpSeen = true;
-      root.querySelectorAll('b[data-v]').forEach(b => { delete b.dataset.fx; num(b, +b.dataset.v, { fmt, intro: true, ms: 650 }); });
+      root.querySelectorAll('b[data-v]').forEach(b => { delete b.dataset.fx; num(b, +b.dataset.v, { fmt, intro: true, ms: 750 }); });
     });
     cmpPrev = bs.map(b => +b.dataset.v);
     return;
@@ -190,10 +190,10 @@ export function renderCountry(root, iso) {
 let ctySeen = false, ctyLast = null;
 function countryMotion(root, iso) {
   const play = () => {
-    drawPath(root.querySelector('.sp-line'), 650);
-    wipeIn(root.querySelector('.sp-area'), 650);
+    drawPath(root.querySelector('.sp-line'), 750);
+    wipeIn(root.querySelector('.sp-area'), 750);
     grow(root.querySelectorAll('.na-statbar i'), { stagger: 60 });
-    root.querySelectorAll('.na-statleg .n').forEach(n => { if (n.children.length) return; const v = Number(n.textContent.replace(/[^0-9]/g, '')); if (n.textContent.trim() && Number.isFinite(v)) { delete n.dataset.fx; num(n, v, { fmt, intro: true, ms: 550 }); } });
+    root.querySelectorAll('.na-statleg .n').forEach(n => { if (n.children.length) return; const v = Number(n.textContent.replace(/[^0-9]/g, '')); if (n.textContent.trim() && Number.isFinite(v)) { delete n.dataset.fx; num(n, v, { fmt, intro: true, ms: 750 }); } });
   };
   if (ctyLast === null) onFirstView(root, () => { ctySeen = true; play(); });
   else if (ctySeen && iso !== ctyLast) play();

@@ -119,15 +119,14 @@ table.mini td.num { font-family: var(--mono); }
 
 /* Trailer look (Interactive Deterrence games, when the player picks it). Shared tokens are remapped by
    shared/css/trailer.css; here: the dark-mode model palette whatever the OS setting, amber for the point you set
-   and the path of play, a glow on the equilibrium, and mono readouts. */
+   and the path of play, and mono readouts. */
 :root[data-skin="trailer"] { --c1: #72a0ff; --c2: #ff8a3d; --c3: #2cc2ac; --c4: #d77ab0; --c5: #efc12f; --c6: #a68ef0; --c7: #63b3d6; --c8: #c8b48a; }
 :root[data-skin="trailer"] .tabs button { background: color-mix(in srgb, var(--panel) 88%, transparent); }
 :root[data-skin="trailer"] .tabs button b, :root[data-skin="trailer"] .case-tabs button b { font-style: italic; font-weight: 500; }
-:root[data-skin="trailer"] .tabs button[aria-selected="true"] { border-color: var(--accent); box-shadow: var(--glow); background: var(--chip); }
-:root[data-skin="trailer"] .tree .edge.on { filter: drop-shadow(0 0 4px rgba(240, 169, 59, .6)); }
+:root[data-skin="trailer"] .tabs button[aria-selected="true"] { border-color: var(--accent); background: var(--chip); }
 :root[data-skin="trailer"] .tree .nd { fill: var(--chip); }
 :root[data-skin="trailer"] .tree .nl { font-family: var(--mono); font-size: 11px; }
-:root[data-skin="trailer"] .mark { fill: var(--accent); stroke: var(--bg); stroke-width: 2.5; filter: drop-shadow(0 0 6px rgba(240, 169, 59, .75)); }
+:root[data-skin="trailer"] .mark { fill: var(--accent); stroke: var(--bg); stroke-width: 2.5; }
 :root[data-skin="trailer"] .now { stroke: var(--accent); }
 :root[data-skin="trailer"] .ln { filter: drop-shadow(0 0 3px rgba(0, 0, 0, .6)); }
 :root[data-skin="trailer"] .bound { stroke: var(--ink); opacity: .55; }

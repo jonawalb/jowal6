@@ -18,7 +18,7 @@ function growTallies(root) {
     if (!e.isIntersecting) return;
     io.unobserve(e.target);
     e.target.animate([{ transform: 'scaleX(0)', transformOrigin: '0 50%' }, { transform: 'scaleX(1)', transformOrigin: '0 50%' }],
-      { duration: 560, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'backwards' });
+      { duration: 750, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'backwards' });   // --ease-enter
   }), { threshold: 0.1 });
   root.querySelectorAll('.tbar').forEach(b => io.observe(b));
 }
@@ -28,7 +28,7 @@ function settle(el, key) {
   const prev = shown.get(el);
   shown.set(el, key);
   if (prev == null || prev === key || !fx.ON || reduced()) return;
-  el.animate([{ opacity: 0.35 }, { opacity: 1 }], { duration: 260, easing: 'ease-out' });
+  el.animate([{ opacity: 0.35 }, { opacity: 1 }], { duration: 400, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' });
 }
 let firstRender = true;
 

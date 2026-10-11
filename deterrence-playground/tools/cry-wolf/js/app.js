@@ -6,7 +6,7 @@ import { analystGame, analystRuns } from './ai.js';
 import { posteriorPath } from './bayes.js';
 import { score, percentile } from './score.js';
 import { paintReports, paintGrid, paintChart, indicatorTable, LEVEL_COL } from './view.js';
-import { pulse, flash, countUp } from '../../../shared/js/motion.js';
+import { pulse, flash, countUp, reduced } from '../../../shared/js/motion.js';
 
 const $ = id => document.getElementById(id);
 const newSeed = () => 1 + Math.floor(Math.random() * 999998);
@@ -28,24 +28,32 @@ function paintStart() {
 $('begin').addEventListener('click', () => { show('play'); paint(); $('prob').focus(); });
 
 /* ---------- The week ---------- */
-function paintMeters() {
-  const s = g.s;
+function paintMeters(prev) {
+  // With `prev` (the week just ended), the meters start at last week's values and move to this week's, one after another.
+  const s = g.s, o = prev || s;
   const m = [
-    ['Trust', Math.round(s.trust), s.trust, 'var(--good)'],
-    ['Readiness', Math.round(s.ready), s.ready, 'var(--accent)'],
-    ['Costs so far', Math.round(s.cost), null],
-    ['False alarms', s.falseAlarms, null],
+    ['Trust', Math.round(s.trust), s.trust, 'var(--good)', Math.round(o.trust), o.trust],
+    ['Readiness', Math.round(s.ready), s.ready, 'var(--accent)', Math.round(o.ready), o.ready],
+    ['Costs so far', Math.round(s.cost), null, null, Math.round(o.cost)],
+    ['False alarms', s.falseAlarms, null, null, o.falseAlarms],
   ];
-  $('meters').innerHTML = m.map(([l, v, bar, c]) => `<div class="cw-m"><span>${l}</span><b class="num" data-m="${l}">${v}</b>${bar != null ? `<span class="bar" aria-hidden="true"><i style="width:${bar}%;background:${c}"></i></span>` : ''}</div>`).join('');
+  $('meters').innerHTML = m.map(([l, v, bar, c, v0, bar0], i) => `<div class="cw-m"${prev ? ` style="--i:${i}"` : ''}><span>${l}</span><b class="num" data-m="${l}">${v0}</b>${bar != null ? `<span class="bar" aria-hidden="true"><i style="width:${bar0}%;background:${c}"></i></span>` : ''}</div>`).join('');
+  if (!prev) return;
+  const box = $('meters'); void box.offsetWidth;
+  m.forEach(([, v, bar, , v0], i) => {
+    const row = box.children[i];
+    if (bar != null) row.querySelector('.bar i').style.width = bar + '%';
+    if (v !== v0) setTimeout(() => countUp(row.querySelector('b'), v, { from: v0, ms: 400 }), reduced() ? 0 : i * 60);   // 60 = --stagger-item
+  });
 }
 function paintLevels() {
   $('levels').innerHTML = P.levels.map((l, i) => `<button type="button" role="radio" aria-checked="${g.level === i}" tabindex="${g.level === i ? 0 : -1}" data-level="${i}" style="--lc:${LEVEL_COL[i]}">${l.label}</button>`).join('');
   $('lvx').textContent = P.levels[g.level].text;
 }
-function paint() {
+function paint(prev) {
   const s = g.s, wk = thisWeek(s);
   $('week').textContent = `Week ${s.week}`;
-  paintMeters();
+  paintMeters(prev);
   $('exnote').textContent = wk.ex ? 'The Neighbor has announced a large exercise this week. Expect more reports of every kind.' : 'No exercise announced this week.';
   paintReports($('reports'), wk, g.look, s.budget > 0);
   $('looks').textContent = s.budget - (g.look >= 0 ? 1 : 0);
@@ -82,7 +90,8 @@ $('end-week').addEventListener('click', () => {
   const { state, events } = step(g.s, { p: g.p, level: g.level, look: g.look });
   g.s = state; g.look = -1;
   if (state.over) return finish();
-  paint();
+  // The new week (its number, the chart and the grid) arrives first; the meters follow from last week's values.
+  paint(before);
   $('feed').textContent = eventText(events, state, before);
   if (events.some(e => e.kind === 'false-alarm')) flash($('meters'));
   pulse($('week'));

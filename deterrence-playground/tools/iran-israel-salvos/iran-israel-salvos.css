@@ -45,7 +45,7 @@
 .ii-fs .lb { font-size: 12.5px; font-weight: 600; line-height: 1.2; }
 .ii-fs .lb small { display: block; font-weight: 400; color: var(--muted); font-size: 11px; }
 .ii-fbar { position: relative; height: 30px; display: flex; justify-content: center; }
-.ii-fbar span { height: 100%; background: color-mix(in srgb, var(--blue) 70%, transparent); border-radius: 2px; display: flex; align-items: center; justify-content: center; font: 600 13px var(--mono); color: var(--bg); min-width: 76px; white-space: nowrap; padding: 0 4px; transition: width .3s; }
+.ii-fbar span { height: 100%; background: color-mix(in srgb, var(--blue) 70%, transparent); border-radius: 2px; display: flex; align-items: center; justify-content: center; font: 600 13px var(--mono); color: var(--bg); min-width: 76px; white-space: nowrap; padding: 0 4px; transition: width var(--dur-move) var(--ease-enter); }
 .ii-fs[data-k="through"] .ii-fbar span { background: var(--bad); }
 .ii-fs[data-k="failed"] .ii-fbar span { background: color-mix(in srgb, var(--faint) 80%, transparent); }
 .ii-fs[data-k="intercepted"] .ii-fbar span { background: var(--good); }

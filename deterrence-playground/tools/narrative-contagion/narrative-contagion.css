@@ -25,7 +25,7 @@ button:focus-visible, select:focus-visible, a:focus-visible, [tabindex]:focus-vi
 .nc-loading { position: absolute; inset: 40% 0 auto; text-align: center; }
 body:not(.loading) .nc-loading { display: none; }
 
-.nc-link { fill: none; stroke: var(--muted); stroke-opacity: .45; cursor: pointer; transition: stroke-opacity .15s; }
+.nc-link { fill: none; stroke: var(--muted); stroke-opacity: .45; cursor: pointer; transition: stroke-opacity var(--dur-feedback) var(--ease-enter); }
 .nc-link.even { stroke-opacity: .22; }
 [hidden] { display: none !important; }
 .nc-node circle.inner { stroke: none; opacity: .75; pointer-events: none; }

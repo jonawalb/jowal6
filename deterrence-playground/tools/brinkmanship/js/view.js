@@ -1,40 +1,55 @@
 // Drawing: the risk meter, belief bars, series dots, round log and the overlay / debrief tables. DOM only, no rules.
 import { P, TYPES, TYPE, ACTIONS, ACT, CRISES, value } from '../data/params.js';
 import { nextRisk } from './ai.js';
+import { countUp, reduced } from '../../../shared/js/motion.js';
 
 const pct = (x, d = 0) => `${(x * 100).toFixed(d)}%`;
 const pts = x => (Math.round(x * 10) / 10).toLocaleString('en-US');
 const sgn = x => (x > 0 ? '+' : x < 0 ? '−' : '') + pts(Math.abs(x));
 export { pct, pts, sgn };
 
-/** The risk meter: a 0–60% gauge with the current risk, and a marker for next round if both hold. */
-export function paintMeter(el, risk) {
+/** The risk meter: a 0–60% gauge with the current risk, and a marker for next round if both hold.
+ *  With `from` (the risk before this round), the bar and the number travel from it: the hero of the round. */
+export function paintMeter(el, risk, from) {
   const W = 320, H = 96, x0 = 10, x1 = 310, y = 62, max = P.riskCap;
   const X = r => x0 + (x1 - x0) * Math.min(1, r / max);
   const hold = nextRisk(risk, 0), both = nextRisk(risk, 2);
+  const grow = from !== undefined && from !== risk;
   let ticks = '';
   for (let r = 0; r <= max + 1e-9; r += 0.1) ticks += `<line x1="${X(r)}" x2="${X(r)}" y1="${y + 12}" y2="${y + 17}" stroke="var(--muted)"/><text x="${X(r)}" y="${y + 30}" font-size="10" text-anchor="middle" fill="var(--muted)" font-family="var(--mono)">${Math.round(r * 100)}</text>`;
   el.innerHTML = `<svg viewBox="0 0 ${W} ${H + 8}" aria-hidden="true">
-    <text class="pct" x="${x0}" y="40">${pct(risk)}</text>
+    <text class="pct" x="${x0}" y="40">${pct(grow ? from : risk)}</text>
     <text x="${x1}" y="40" text-anchor="end" font-size="11.5" fill="var(--muted)">chance of disaster</text>
     <rect x="${x0}" y="${y - 8}" width="${x1 - x0}" height="18" rx="3" fill="var(--chip)"/>
     <rect x="${x0}" y="${y - 8}" width="${X(both) - x0}" height="18" rx="3" fill="color-mix(in srgb, var(--bad) 14%, transparent)"/>
-    <rect x="${x0}" y="${y - 8}" width="${X(risk) - x0}" height="18" rx="3" fill="var(--bad)"/>
+    <rect class="bk-rbar" x="${x0}" y="${y - 8}" width="${X(risk) - x0}" height="18" rx="3" fill="var(--bad)"${grow ? ` style="width:${X(from) - x0}px"` : ''}/>
     <line x1="${X(hold)}" x2="${X(hold)}" y1="${y - 12}" y2="${y + 14}" stroke="var(--ink)" stroke-dasharray="3 2"/>
     ${ticks}</svg>`;
   el.setAttribute('aria-valuenow', Math.round(risk * 100));
   el.setAttribute('aria-valuetext', `${pct(risk)} chance of disaster`);
+  if (grow) {
+    const r = el.querySelector('.bk-rbar'); void r.getBoundingClientRect(); r.style.width = `${X(risk) - x0}px`;
+    countUp(el.querySelector('.pct'), risk, { from, ms: 750, fmt: pct });
+  }
   return { hold, both };
 }
 
-/** Belief bars: a probability for each resolve type. */
-export function beliefHTML(b, color) {
-  return TYPES.map(t => `<div class="bk-belief" style="--c:${color}"><span>${TYPE[t].short}</span><span class="bar"><span style="width:${(b[t] * 100).toFixed(1)}%"></span></span><span class="num">${pct(b[t])}</span></div>`).join('');
+/** Belief bars: a probability for each resolve type. With `from`, bars and numbers start at the previous read. */
+export function beliefHTML(b, color, from, i0 = 0) {
+  const v = from || b;
+  return TYPES.map((t, i) => `<div class="bk-belief" style="--c:${color};--i:${i0 + i}"><span>${TYPE[t].short}</span><span class="bar"><span style="width:${(v[t] * 100).toFixed(1)}%" data-w="${(b[t] * 100).toFixed(1)}"></span></span><span class="num" data-to="${b[t]}" data-from="${v[t]}">${pct(v[t])}</span></div>`).join('');
 }
 
-export function paintReads(el, c) {
-  el.innerHTML = `<div class="bk-read"><h3>Your read of the Rival</h3><p class="fine">How likely each resolve is, from its moves so far (Bayes' rule).</p>${beliefHTML(c.bel.you, 'var(--riv)')}</div>
-    <div class="bk-read"><h3>The Rival's read of you</h3><p class="fine">It is reading your moves the same way. Raising makes you look resolved.</p>${beliefHTML(c.bel.rival, 'var(--you)')}</div>`;
+/** With `from` (last round's beliefs), the reads follow the meter: they move from old to new after the hero, row by row. */
+export function paintReads(el, c, from) {
+  el.innerHTML = `<div class="bk-read"><h3>Your read of the Rival</h3><p class="fine">How likely each resolve is, from its moves so far (Bayes' rule).</p>${beliefHTML(c.bel.you, 'var(--riv)', from?.you)}</div>
+    <div class="bk-read"><h3>The Rival's read of you</h3><p class="fine">It is reading your moves the same way. Raising makes you look resolved.</p>${beliefHTML(c.bel.rival, 'var(--you)', from?.rival, TYPES.length)}</div>`;
+  if (!from) return;
+  const bars = [...el.querySelectorAll('.bar span')], nums = [...el.querySelectorAll('.num')];
+  setTimeout(() => {
+    bars.forEach(s => { s.style.width = s.dataset.w + '%'; });
+    nums.forEach((n, i) => { const a = +n.dataset.from, b = +n.dataset.to; if (a !== b) setTimeout(() => countUp(n, b, { from: a, ms: 400, fmt: pct }), reduced() ? 0 : i * 60); });
+  }, reduced() ? 0 : 750);
 }
 
 export function paintStake(el, c) {

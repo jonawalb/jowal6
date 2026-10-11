@@ -53,13 +53,11 @@
 /* Harness page (docs/diagrams.html) */
 .dg-list { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; max-width: 980px; margin: 0 auto 40px; }
 
-/* Trailer skin: italic serif titles, mono labels, a little glow on the live elements. */
+/* Trailer skin: italic serif titles, mono labels. */
 :root[data-skin="trailer"] .dg { background: color-mix(in srgb, var(--panel) 88%, transparent); box-shadow: 0 18px 40px -28px #000; }
 :root[data-skin="trailer"] .dg-title { font: italic 500 21px var(--display); }
 :root[data-skin="trailer"] .dg-t { stroke: #0e1f17; }
 :root[data-skin="trailer"] .dg-t.dg-tick, :root[data-skin="trailer"] .dg-sl output { font-family: var(--mono); letter-spacing: .02em; }
-:root[data-skin="trailer"] .dg-live { filter: drop-shadow(0 0 4px var(--accent)); }
-:root[data-skin="trailer"] .dg-btn[aria-pressed="true"] { box-shadow: var(--glow); }
 :root[data-skin="trailer"] .dg-ground { fill: #0e1f17; }
 
 @media (max-width: 520px) {

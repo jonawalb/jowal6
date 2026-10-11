@@ -49,10 +49,11 @@ $('end').onclick = () => {
   play(pending); pending = []; sel = null;
   render();
   const hm = g.hist[g.hist.length - 1];
-  monthFx(fx, hm, alive0, { card: document.querySelector('.od-orbitcard'), endBtn: $('end') });
-  if (!g.over) countFrags($('orbit'), deb0, g.debris, n => Math.round(n).toLocaleString('en-US'));
-  countBar(was);
-  logFx($('log').firstElementChild);
+  // The attacks on the orbit view play first; the fragment counts, the bar's numbers and the log follow them.
+  const hero = monthFx(fx, hm, alive0, { card: document.querySelector('.od-orbitcard'), endBtn: $('end') });
+  if (!g.over) countFrags($('orbit'), deb0, g.debris, n => Math.round(n).toLocaleString('en-US'), hero);
+  countBar(was, hero);
+  logFx($('log').firstElementChild, hero);
   if (g.over) aarFx($('aar'));
   if (g.over) $('aar').scrollIntoView({ behavior: reduced.matches ? 'auto' : 'smooth', block: 'start' });
 };
@@ -148,12 +149,12 @@ function shown() {
   const last = g.hist[g.hist.length - 1];
   return { sb: last ? Math.round(last.S.B * 100) : 100, sr: last ? Math.round(last.S.R * 100) : 100, adv: g.adv, esc: 1 - Math.exp(-g.cumH) };
 }
-function countBar(was) {
-  const now = shown(), ed = now.esc < 0.1 ? 1 : 0;
-  countTo($('k-sb'), was.sb, now.sb, v => `${Math.round(v)}`);
-  countTo($('k-sr'), was.sr, now.sr, v => `${Math.round(v)}`);
-  countTo($('k-adv'), +was.adv.toFixed(2), +now.adv.toFixed(2), v => `${v >= 0 ? '+' : ''}${v.toFixed(2)}`);
-  countTo($('k-esc'), was.esc, now.esc, v => pct(v, ed));
+function countBar(was, wait = 0) {
+  const now = shown(), ed = now.esc < 0.1 ? 1 : 0, gap = 60;   // gap = --stagger-item: one number after another
+  countTo($('k-sb'), was.sb, now.sb, v => `${Math.round(v)}`, wait);
+  countTo($('k-sr'), was.sr, now.sr, v => `${Math.round(v)}`, wait + gap);
+  countTo($('k-adv'), +was.adv.toFixed(2), +now.adv.toFixed(2), v => `${v >= 0 ? '+' : ''}${v.toFixed(2)}`, wait + 2 * gap);
+  countTo($('k-esc'), was.esc, now.esc, v => pct(v, ed), wait + 3 * gap);
 }
 function render() {
   renderBar();

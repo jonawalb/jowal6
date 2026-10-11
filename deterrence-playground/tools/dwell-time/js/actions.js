@@ -14,7 +14,10 @@ export const ROLES = [
 
 export function slotsFor(s) {
   const dec = s.d.declared != null, ir = s.d.irOn != null && s.d.irOn <= s.t;
-  return { ceo: 1, ciso: 1 + (dec ? 1 : 0), it: 2 + (dec ? 1 : 0) + (ir ? 2 : 0) + (s.posture.plan ? 1 : 0), legal: 1 + (dec ? 1 : 0), comms: 1 };
+  const out = { ceo: 1, ciso: 1 + (dec ? 1 : 0), it: 2 + (dec ? 1 : 0) + (ir ? 2 : 0) + (s.posture.plan ? 1 : 0), legal: 1 + (dec ? 1 : 0), comms: 1 };
+  // A curveball can take someone away for a turn.
+  for (const a of s.d.away || []) if (a.t === s.t) out[a.role] = Math.max(0, out[a.role] - a.n);
+  return out;
 }
 export const cost = a => a.slots || { [a.role]: 1 };
 
@@ -37,7 +40,7 @@ export const ACTIONS = [
     apply(s, c) { s.d.continuity = s.t; c.notes.push('Business continuity procedures are active.'); } },
   { id: 'board', role: 'ceo', order: 3, csf: 'GV.OV', once: true, done: s => s.d.board != null,
     label: 'Brief the board',
-    text: 'Tell the board what you know, what you do not, and the decisions coming. Boards that hear late tend to overrule.',
+    text: 'Tell the board what you know, what you do not, and the decisions coming.', hint: 'Boards that hear late tend to overrule.',
     apply(s, c) { s.d.board = s.t; c.notes.push('The board has been briefed.'); } },
   { id: 'materiality', role: 'ceo', order: 4, csf: 'GV.OC', once: true, done: s => s.d.materialT != null,
     label: 'Convene the disclosure committee: determine materiality',
@@ -51,7 +54,8 @@ export const ACTIONS = [
     apply(s, c) { s.ransom.negotiated = true; s.ransom.demand = Math.round(s.ransom.demand * 0.55); s.ransom.deadline += 1; c.notes.push(`Negotiations bought a day and brought the demand to $${(s.ransom.demand / 1000).toFixed(1)}M.`); } },
   { id: 'pay', role: 'ceo', order: 21, csf: 'RS.MI', once: true, done: s => s.ransom?.paid != null,
     label: 'Pay the ransom',
-    text: 'Pay for a decryptor and a promise to delete stolen data. Decryptors are slow and imperfect, the promise is unenforceable, and paying a sanctioned group can violate US sanctions even if you did not know (OFAC applies strict liability).',
+    text: 'Pay for a decryptor and a promise to delete stolen data. Paying a sanctioned group can violate US sanctions even if you did not know (OFAC applies strict liability).',
+    hint: 'Decryptors are slow and imperfect, and the promise to delete is unenforceable.',
     req: s => (!s.ransom ? 'No demand has been made.' : null),
     apply(s, c, rng) {
       const r = s.ransom; r.paid = s.t; r.consent = s.d.insurer != null; s.d.paidT = s.t;
@@ -80,7 +84,7 @@ export const ACTIONS = [
     } },
   { id: 'oob', role: 'ciso', order: 3, csf: 'RS.CO', once: true, done: s => s.d.oob,
     label: 'Move response communications out of band',
-    text: 'Run the response on phones and a separate, clean chat and bridge, not corporate email or chat. Attackers who read your mail watch you plan.',
+    text: 'Run the response on phones and a separate, clean chat and bridge, not corporate email or chat.', hint: 'Attackers who read your mail watch you plan.',
     apply(s, c) { s.d.oob = true; pay(s, 10); c.notes.push('The response team moved to an out-of-band channel.'); } },
   { id: 'le', role: 'ciso', order: 4, csf: 'RS.CO', once: true, done: s => s.d.le != null,
     label: 'Contact the FBI and CISA',
@@ -93,7 +97,7 @@ export const ACTIONS = [
     apply(s, c) { s.d.intel = 2; c.notes.push(`Threat intel: ${fill(c.sc.intelHint || 'expect the attacker to move toward your most valuable systems next.', s)}`); } },
   { id: 'evict', role: 'ciso', order: 40, csf: 'RS.MI', slots: { ciso: 1, it: 2 },
     label: 'Execute a coordinated eviction',
-    text: 'All at once, in one window: disable every flagged account, isolate every flagged host, rotate cloud credentials, block known indicators and reset privileged credentials. It only works if you have found all of their access.',
+    text: 'All at once, in one window: disable every flagged account, isolate every flagged host, rotate cloud credentials, block known indicators and reset privileged credentials.', hint: 'It only works if you have found all of their access.',
     req: (s, sc, ch) => (!declared(s, ch) ? 'Declare a major incident first.' : !authed(s, ch) ? NEED_AUTH : !s.flags.length ? 'Nothing found to evict yet.' : null),
     apply(s, c) {
       const r = contain(s, null, c, 'evict');
@@ -137,7 +141,7 @@ export const ACTIONS = [
     } },
   { id: 'monitor', role: 'it', order: 12, csf: 'DE.CM',
     label: 'Watch quietly',
-    text: 'Raise logging and watch the attacker\'s known access without touching it. Better odds of seeing their next move this turn, and it is unlikely to tip them off.',
+    text: 'Raise logging and watch the attacker\'s known access without touching it. Better odds of seeing their next move this turn.', hint: 'Unlikely to tip them off.',
     apply(s, c) { s.d.monitor = true; c.notes.push('Extra monitoring on known attacker access this turn.'); } },
   { id: 'image', role: 'it', order: 13, csf: 'RS.AN',
     label: 'Capture forensic images and memory',
@@ -146,7 +150,7 @@ export const ACTIONS = [
     apply(s, c) { s.ev = Math.min(100, s.ev + 20); s.d.imaged = s.t + 1; pay(s, 15); c.notes.push('Forensic images and memory captured.'); } },
   { id: 'disable', role: 'it', order: 30, csf: 'RS.MI',
     label: 'Disable flagged accounts and revoke their sessions',
-    text: 'Lock every flagged account and kill its sessions and tokens. Fast, but anything you have not found is still in.',
+    text: 'Lock every flagged account and kill its sessions and tokens.', hint: 'Fast, but anything you have not found is still in.',
     req: s => (!kindsOpen(s, REMOVES.disable) ? 'No flagged accounts.' : null),
     apply(s, c) { const r = contain(s, REMOVES.disable, c, 'disable'); c.notes.push(`Disabled ${r.real + r.fp} flagged account${r.real + r.fp === 1 ? '' : 's'}${r.fp ? ` (${r.fp} belonged to real employees doing nothing wrong)` : ''}.`); } },
   { id: 'isolate', role: 'it', order: 31, csf: 'RS.MI',
@@ -174,7 +178,7 @@ export const ACTIONS = [
     } },
   { id: 'reimage', role: 'it', order: 34, csf: 'RS.MI',
     label: 'Wipe and rebuild flagged hosts',
-    text: 'Reinstall flagged machines from known-good images. Removes persistence on them for good, and destroys their evidence unless you imaged first.',
+    text: 'Reinstall flagged machines from known-good images. Removes persistence on them for good.', hint: 'Destroys their evidence unless you imaged first.',
     req: s => (!kindsOpen(s, REMOVES.reimage) ? 'No flagged hosts.' : null),
     apply(s, c) {
       const r = contain(s, REMOVES.reimage, c, 'reimage');
@@ -183,7 +187,7 @@ export const ACTIONS = [
     } },
   { id: 'block', role: 'it', order: 35, csf: 'RS.MI',
     label: 'Block known attacker infrastructure',
-    text: 'Block the domains, IP addresses and file hashes you have confirmed. Slows command-and-control and theft, but blocking before you have scoped can warn the attacker and cost you visibility (CISA AA20-245A).',
+    text: 'Block the domains, IP addresses and file hashes you have confirmed. Slows command-and-control and theft.', hint: 'Blocking before you have scoped can warn the attacker and cost you visibility (CISA AA20-245A).',
     req: (s, sc, ch) => (!s.flags.some(x => x.st === 'confirmed' || x.st === 'done') && !(ch.includes('triage') && s.flags.some(x => x.st === 'new')) ? 'No confirmed indicators yet.' : null),
     apply(s, c) { s.adv.quiet = Math.max(s.adv.quiet, 1); c.blockTip = true; c.notes.push('Known attacker infrastructure is blocked at the edge.'); } },
   { id: 'egress', role: 'it', order: 36, csf: 'RS.MI', once: true, done: s => s.d.egress,
@@ -219,7 +223,7 @@ export const ACTIONS = [
     } },
   { id: 'restore', role: 'it', order: 50, csf: 'RC.RP',
     label: 'Restore systems from backup',
-    text: 'Bring encrypted systems back, priority systems first. Restoring while the attacker is still inside invites a second round.',
+    text: 'Bring encrypted systems back, priority systems first.', hint: 'Restoring while the attacker is still inside invites a second round.',
     req: s => (s.adv.enc <= 0 ? 'Nothing is encrypted.' : null),
     apply(s, c) {
       const ok = !s.adv.backupsHit;
@@ -285,16 +289,16 @@ export const ACTIONS = [
 
   /* ---------- Comms ---------- */
   { id: 'holding', role: 'comms', order: 5, csf: 'RS.CO', once: true, done: s => s.d.statements.length > 0,
-    label: 'Issue a careful holding statement',
-    text: '"We are investigating a cybersecurity incident, have engaged outside experts and notified law enforcement. We will share more as we confirm it." Says only what is known.',
+    label: 'Issue a statement: "we are investigating"',
+    text: '"We are investigating a cybersecurity incident, have engaged outside experts and notified law enforcement. We will share more as we confirm it."', hint: 'Says only what is known.',
     apply(s, c) { s.d.statements.push({ t: s.t, kind: 'holding' }); s.biz.rep += s.d.publicT != null ? 4 : 2; c.notes.push('A holding statement went out.'); } },
   { id: 'reassure', role: 'comms', order: 6, csf: 'RS.CO', once: true, done: s => s.d.statements.length > 0,
-    label: 'Issue a reassuring statement',
-    text: '"We have no evidence that customer data was accessed." Calms customers today. If it turns out to be wrong, it is the line reporters will quote back.',
+    label: 'Issue a statement: "no evidence data was accessed"',
+    text: '"We are investigating a cybersecurity incident. We have no evidence that customer data was accessed."', hint: 'Calms customers today. If it turns out to be wrong, it is the line reporters will quote back.',
     apply(s, c) { s.d.statements.push({ t: s.t, kind: 'reassure' }); s.d.claimSafe = s.t; s.biz.rep += 7; c.notes.push('A reassuring statement went out.'); } },
   { id: 'staff', role: 'comms', order: 7, csf: 'PR.AT', once: true, done: s => s.d.staff,
     label: 'Brief all staff (and warn about impostor calls)',
-    text: 'Tell employees what is happening, what not to say publicly, and to expect impostors posing as IT or executives. Makes social-engineering re-entry much harder.',
+    text: 'Tell employees what is happening, what not to say publicly, and to expect impostors posing as IT or executives.', hint: 'Makes social-engineering re-entry much harder.',
     apply(s, c) { s.d.staff = true; c.notes.push('All staff were briefed and warned about impostor calls.'); } },
   { id: 'customers', role: 'comms', order: 8, csf: 'RC.CO', once: true, done: s => s.d.customers != null,
     label: 'Brief key customers and partners directly',

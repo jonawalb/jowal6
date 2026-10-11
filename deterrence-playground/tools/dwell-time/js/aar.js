@@ -7,6 +7,7 @@ import { sectorById } from '../data/sectors.js';
 import { CONTROLS } from '../data/posture.js';
 import { CSF } from '../data/csf.js';
 import { score, PART_LABEL, WEIGHTS } from './score.js';
+import { curveballById } from './curveballs.js';
 
 const stageOf = (sc, id) => sc.stages.find(x => x.id === id);
 const roleLabel = id => ROLES.find(r => r.id === id)?.label || id;
@@ -29,16 +30,21 @@ export function timeline(s) {
     const adv = [...(l.t === 0 ? s.prelog || [] : []), ...l.adv].map(advText).filter(Boolean);
     if (l.tipped && !adv.some(a => a.tip)) adv.unshift({ text: 'Saw the response coming (partial containment, or planning on channels it could read).', tech: '', ok: true, seen: false, tip: true });
     rows.push({ t: l.t, clock: clockText(sc, l.h), h: l.h, acts: l.acts.map(id => ({ id, role: actionById(id).role, label: fill(actionById(id).label, s) })),
-      adv, ops: l.ops, exfil: l.exfil, enc: l.enc, note: l.note });
+      adv, ops: l.ops, exfil: l.exfil, enc: l.enc, note: l.note, fx: l.fx ? curveballEntry(s, l) : null });
   }
   return rows;
+}
+
+function curveballEntry(s, l) {
+  const cb = curveballById(l.fx), x = s.fx.find(f => f.t === l.t);
+  return { id: l.fx, title: fill(cb.title, s), out: x?.out || '' };
 }
 
 /** Findings: what went wrong, what went right, and what to fix, each tied to a CSF 2.0 category. */
 export function findings(s) {
   const sc = scenarioById(s.scen), sec = sectorById(s.sector);
   const F = [];
-  const add = (sev, csf, title, text, rec) => F.push({ sev, csf, title, text, rec });
+  const add = (sev, csf, title, text, rec, owner) => F.push({ sev, csf, title, text, rec, owner: owner || ownerFor(csf) });
   const tl = timeline(s);
   const firstFlagT = s.flags.find(x => x.real)?.t;
 
@@ -63,7 +69,7 @@ export function findings(s) {
   if (s.d.aware != null && (s.d.declared == null || s.d.declared > s.d.aware + 1))
     add('med', 'RS.MA', s.d.declared == null ? 'The incident was never formally declared' : 'The incident was declared late',
       `The organization was on notice from turn ${s.d.aware + 1}${s.d.declared != null ? ` but declared in turn ${s.d.declared + 1}` : ''}.`,
-      'Write declaration criteria into the plan so the on-call lead can declare without waiting for executives.');
+      'Write declaration criteria into the plan so the on-call lead can declare without waiting for executives.', 'ciso');
   if (s.d.ir == null && s.d.aware != null) add('med', 'RS.MA', 'No outside responders were engaged',
     'The internal team handled the incident alone.', 'Keep an IR retainer with committed response times; most insurers have panel firms.');
   else if (s.d.ir != null && s.d.aware != null && s.d.ir > s.d.aware + 1) add('low', 'RS.MA', 'Outside responders were brought in late', `Engaged in turn ${s.d.ir + 1}.`, 'Engage on suspicion, not on confirmation; a retainer makes this cheap.');
@@ -77,10 +83,10 @@ export function findings(s) {
       `Due ${clockText(sc, c.dueH)} (day ${Math.floor(c.dueH / 24) + 1}).${c.filedH != null ? ` Filed ${clockText(sc, c.filedH)}.` : ''}`, 'Map every reporting clock in advance: trigger, deadline, who files, and what a first notice must contain.');
   }
   const materialMiss = sec.public && s.d.materialT == null && (s.adv.encMax > 0.3 || s.adv.exfil > 0.2 || s.biz.opsHist.some(x => x.ops < 60));
-  if (materialMiss) add('high', 'GV.OC', 'No materiality determination', 'A public company with this much impact must determine materiality without unreasonable delay; the 8-K clock starts at that determination.', 'Pre-agree who sits on the disclosure committee and what facts it needs.');
+  if (materialMiss) add('high', 'GV.OC', 'No materiality determination', 'A public company with this much impact must determine materiality without unreasonable delay; the 8-K clock starts at that determination.', 'Pre-agree who sits on the disclosure committee and what facts it needs.', 'ceo');
   // Statements.
-  if (s.claimBroken) add('high', 'RS.CO', 'The reassuring statement was proved wrong', 'You said there was no evidence data was accessed; data was stolen.', 'Say only what you know; "we are investigating" ages well.');
-  if (s.d.publicT != null && (!s.d.statements.length || s.d.statements[0].t > s.d.publicT + 1)) add('med', 'RS.CO', 'Silence after the incident went public', 'The outage or leak was visible before you said anything.', 'Have holding statements drafted for the likely scenarios.');
+  if (s.claimBroken) add('high', 'RS.CO', 'The "no evidence" statement was proved wrong', 'You said there was no evidence data was accessed; data was stolen.', 'Say only what you know; "we are investigating" ages well.', 'comms');
+  if (s.d.publicT != null && (!s.d.statements.length || s.d.statements[0].t > s.d.publicT + 1)) add('med', 'RS.CO', 'Silence after the incident went public', 'The outage or leak was visible before you said anything.', 'Have holding statements drafted for the likely scenarios.', 'comms');
   // Insurance and payment.
   if (s.posture.insured && (s.d.insurer == null || (s.d.aware != null && s.d.insurer > s.d.aware + 2))) add('med', 'GV.RM', 'The insurer was notified late or not at all', 'Late notice put coverage at risk.', 'Notify the carrier on suspicion; use its panel responders and counsel.');
   if (s.ransom?.paid != null) add(s.sanctionsRisk ? 'high' : 'med', 'GV.OC', 'A ransom was paid',
@@ -107,6 +113,87 @@ export function findings(s) {
   return F.sort((a, b) => order[a.sev] - order[b.sev]);
 }
 
+// Who usually owns the fix, by CSF category (the facilitator can change it in the improvement plan).
+const OWNER = { GV: 'ciso', 'GV.OC': 'legal', 'GV.RM': 'legal', 'GV.RR': 'ceo', 'GV.OV': 'ceo', ID: 'ciso', PR: 'ciso', 'PR.DS': 'it', DE: 'it', RS: 'ciso', 'RS.AN': 'it', 'RS.CO': 'legal', RC: 'it', 'RC.CO': 'comms' };
+export const ownerFor = csf => OWNER[csf] || OWNER[csf.slice(0, 2)] || 'ciso';
+
+/* ---------- Exercise objectives (HSEEP-style ratings) ---------- */
+// P: performed without challenges. S: performed with some challenges. M: performed with major challenges.
+// U: unable to be performed. Each rating is a suggestion from what happened; the facilitator can change it.
+export const RATINGS = { P: 'Performed without challenges', S: 'Performed with some challenges', M: 'Performed with major challenges', U: 'Unable to be performed' };
+export const OBJECTIVES = [
+  { id: 'detect', title: 'Detect and scope the intrusion', csf: 'DE.AE' },
+  { id: 'contain', title: 'Contain and evict the attacker without warning it', csf: 'RS.MI' },
+  { id: 'decide', title: 'Make executive decisions on time (declaration, authority, board, materiality)', csf: 'GV.RR' },
+  { id: 'comply', title: 'Meet reporting, insurance and sanctions obligations', csf: 'GV.OC' },
+  { id: 'communicate', title: 'Communicate with staff, customers and the public', csf: 'RS.CO' },
+  { id: 'evidence', title: 'Preserve evidence', csf: 'RS.AN' },
+  { id: 'recover', title: 'Keep operations running and restore safely', csf: 'RC.RP' },
+];
+const byIssues = n => (n === 0 ? 'P' : n === 1 ? 'S' : n === 2 ? 'M' : 'U');
+export function objectives(s) {
+  const sc = scenarioById(s.scen), sec = sectorById(s.sector);
+  const all = s.adv.fh, found = all.filter(f => s.flags.some(x => x.fid === f.id)).length;
+  const missed = sc.stages.filter(st => s.hits[st.id] && s.hits[st.id].seen === 0 && st.det < 1).length;
+  const tips = s.log.filter(l => l.tipped).length, left = s.remaining?.length || 0;
+  const out = {};
+  {
+    const r = all.length ? found / all.length : 1;
+    out.detect = { rating: s.d.aware == null ? 'U' : r >= 0.85 && missed <= 1 ? 'P' : r >= 0.6 ? 'S' : r >= 0.3 ? 'M' : 'U',
+      evidence: s.d.aware == null ? 'The team never confirmed the intrusion.' : `Found ${found} of ${all.length} pieces of attacker access; ${missed} attacker step${missed === 1 ? '' : 's'} never detected.` };
+  }
+  out.contain = { rating: !left && !tips ? 'P' : (!left && tips) || (left === 1 && !tips) ? 'S' : left <= 2 ? 'M' : 'U',
+    evidence: `${left ? `${left} piece${left === 1 ? '' : 's'} of access left at the end` : 'Fully evicted'}; ${tips ? `the attacker was tipped off in ${tips} turn${tips === 1 ? '' : 's'}` : 'never tipped off'}.` };
+  {
+    const iss = [];
+    if (s.d.aware == null) iss.push('never confirmed the intrusion', 'no declaration');
+    else {
+      if (s.d.declared == null || s.d.declared > s.d.aware + 1) iss.push(s.d.declared == null ? 'never declared' : `declared in turn ${s.d.declared + 1}, two or more turns after awareness`);
+      if (s.d.board == null) iss.push('board never briefed');
+      if (sec.public && s.d.materialT == null && (s.adv.encMax > 0.3 || s.adv.exfil > 0.2 || s.biz.opsHist.some(x => x.ops < 60))) iss.push('no materiality determination');
+      if (s.d.auth == null && s.adv.fh.length) iss.push('disruptive containment never authorized');
+    }
+    out.decide = { rating: byIssues(iss.length), evidence: iss.length ? `Issues: ${iss.join('; ')}.` : 'Declared promptly, authority delegated, board briefed.' };
+  }
+  {
+    const iss = [];
+    const bad = s.clocks.filter(c => c.status === 'late' || c.status === 'missed');
+    if (bad.length) iss.push(...bad.map(c => `${c.label} ${c.status}`));
+    if (s.posture.insured && (s.d.insurer == null || (s.d.aware != null && s.d.insurer > s.d.aware + 2))) iss.push('insurer notified late or not at all');
+    if (s.sanctionsRisk) iss.push('paid without a sanctions screen');
+    out.comply = { rating: byIssues(iss.length), evidence: iss.length ? `Issues: ${iss.join('; ')}.` : s.clocks.length ? `All ${s.clocks.length} reporting clock${s.clocks.length === 1 ? '' : 's'} met or still open.` : 'No reporting clock was triggered.' };
+  }
+  {
+    const iss = [];
+    if (s.d.publicT != null && (!s.d.statements.length || s.d.statements[0].t > s.d.publicT + 1)) iss.push('silent after the incident went public');
+    if (s.claimBroken) iss.push('the "no evidence" statement was proved wrong');
+    if (!s.d.staff && s.d.aware != null) iss.push('staff never briefed');
+    if (s.adv.everComms && !s.d.oob) iss.push('planned on channels the attacker could read');
+    out.communicate = { rating: byIssues(iss.length), evidence: iss.length ? `Issues: ${iss.join('; ')}.` : 'Staff, customers and the public heard what was known, in time.' };
+  }
+  out.evidence = { rating: s.ev >= 80 ? 'P' : s.ev >= 60 ? 'S' : s.ev >= 40 ? 'M' : 'U',
+    evidence: `Evidence ${Math.round(s.ev)} of 100${s.d.wipedUnimaged ? '; hosts wiped before imaging' : ''}${s.d.hold ? '; legal hold in place' : ''}.` };
+  {
+    const hrs = s.biz.opsHist.reduce((a, x) => a + x.h, 0) || 1, avg = s.biz.opsHist.reduce((a, x) => a + x.ops * x.h, 0) / hrs;
+    let r = avg >= 85 ? 'P' : avg >= 70 ? 'S' : avg >= 50 ? 'M' : 'U';
+    const re = s.log.some(l => l.reencrypted);
+    if (re) r = { P: 'S', S: 'M', M: 'U', U: 'U' }[r];
+    out.recover = { rating: r, evidence: `Operations averaged ${Math.round(avg)}%${s.adv.encMax ? `; ${Math.round(s.adv.encMax * 100)}% of systems encrypted at the peak` : ''}${re ? '; restored systems were encrypted again' : ''}.` };
+  }
+  return OBJECTIVES.map(o => ({ ...o, ...out[o.id] }));
+}
+
+/** The improvement plan: one corrective action per finding that needs one, with an owner and a due date. */
+export function improvementPlan(s, startDate) {
+  const days = { high: 30, med: 60, low: 90 };
+  const d0 = startDate ? new Date(`${startDate}T12:00:00`) : null;
+  return findings(s).filter(f => f.sev !== 'good' && f.rec).map((f, i) => {
+    let due = '';
+    if (d0 && !Number.isNaN(+d0)) { const d = new Date(d0); d.setDate(d.getDate() + days[f.sev]); due = d.toISOString().slice(0, 10); }
+    return { n: i + 1, sev: f.sev, issue: f.title, action: f.rec, csf: f.csf, owner: f.owner, due };
+  });
+}
+
 /** Which CSF 2.0 categories the team exercised, and which the incident tested but the team did not. */
 export function csfCoverage(s) {
   const used = {};
@@ -116,23 +203,39 @@ export function csfCoverage(s) {
   return fns.map(fn => ({ fn, name: CSF.functions[fn], cats: Object.entries(CSF.categories).filter(([id]) => id.startsWith(fn)).map(([id, name]) => ({ id, name, n: used[id] || 0 })) }));
 }
 
-export function report(s) {
+/** The full report. `meta` holds the exercise details (name, date, facilitator, participants, objectives in
+ * scope, the facilitator's own objective); `edits` holds the facilitator's ratings and improvement-plan changes. */
+export function report(s, meta = {}, edits = {}) {
   const sc = scenarioById(s.scen), sec = sectorById(s.sector);
-  return { scenario: sc.title, sector: sec.label, org: sec.org, seed: s.seed, mode: s.mode,
-    posture: CONTROLS.filter(c => s.posture[c.id]).map(c => c.label), score: score(s), money: s.money, clocks: s.clocks,
-    timeline: timeline(s), findings: findings(s), weights: WEIGHTS, labels: PART_LABEL };
+  const inScope = Array.isArray(meta.objectives) ? meta.objectives : OBJECTIVES.map(o => o.id);
+  const objs = objectives(s).filter(o => inScope.includes(o.id)).map(o => ({ ...o, suggested: o.rating, rating: edits.ratings?.[o.id] || o.rating }));
+  if (meta.ownObjective) objs.push({ id: 'own', title: meta.ownObjective, csf: '', suggested: '', rating: edits.ratings?.own || '', evidence: 'Rated by the facilitator.' });
+  const people = meta.people || {};
+  const ip = improvementPlan(s, meta.date).map(r => { const e = { ...r, ...(edits.ip?.[r.n] || {}) }; return { ...e, ownerName: e.ownerName ?? people[e.owner] ?? '' }; });
+  return {
+    exercise: { name: meta.name || `Dwell Time: ${sc.title}`, date: meta.date || '', facilitator: meta.facilitator || '', mode: s.mode,
+      participants: Object.fromEntries(Object.entries(meta.people || {}).filter(([, v]) => v)), scope: 'Response and recovery (tabletop)',
+      scenario: sc.title, threat: sc.actor, org: fill('{org}', s), sector: sec.label, seed: s.seed },
+    posture: CONTROLS.filter(c => s.posture[c.id]).map(c => c.label),
+    objectives: objs, improvementPlan: ip,
+    score: score(s), money: s.money, clocks: s.clocks, curveballs: s.fx.map(x => ({ turn: x.t + 1, title: fill(curveballById(x.id).title, s), outcome: x.out || '' })),
+    timeline: timeline(s), findings: findings(s), weights: WEIGHTS, labels: PART_LABEL,
+  };
 }
 
 const csvCell = v => { const x = v == null ? '' : String(v); return /[",\n]/.test(x) ? `"${x.replace(/"/g, '""')}"` : x; };
-export function toCsv(s) {
-  const r = report(s);
+export function toCsv(s, meta = {}, edits = {}) {
+  const r = report(s, meta, edits);
   const lines = [['section', 'turn', 'clock', 'who', 'item', 'detail', 'reference'].join(',')];
   for (const row of r.timeline) {
     for (const a of row.adv) lines.push(['timeline', row.t + 1, row.clock, 'Attacker', a.text, a.ok ? (a.seen ? 'detected' : 'not detected') : 'blocked', a.tech].map(csvCell).join(','));
     for (const a of row.acts) lines.push(['timeline', row.t + 1, row.clock, roleLabel(a.role), a.label, '', actionById(a.id).csf].map(csvCell).join(','));
+    if (row.fx) lines.push(['timeline', row.t + 1, row.clock, 'Facilitator curveball', row.fx.title, row.fx.out, ''].map(csvCell).join(','));
     if (row.note) lines.push(['timeline', row.t + 1, row.clock, 'Facilitator note', row.note, '', ''].map(csvCell).join(','));
   }
   for (const f of r.findings) lines.push(['finding', '', '', f.sev, f.title, `${f.text} ${f.rec}`.trim(), f.csf].map(csvCell).join(','));
   for (const c of r.clocks) lines.push(['clock', '', '', c.who, c.label, c.status, c.src].map(csvCell).join(','));
+  for (const o of r.objectives) lines.push(['objective', '', '', o.rating, o.title, o.evidence, o.csf].map(csvCell).join(','));
+  for (const x of r.improvementPlan) lines.push(['improvement', x.n, x.due, x.ownerName || roleLabel(x.owner), x.issue, x.action, x.csf].map(csvCell).join(','));
   return lines.join('\n');
 }

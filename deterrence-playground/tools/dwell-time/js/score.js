@@ -48,7 +48,7 @@ export function score(s) {
   const parts = {
     denial: clamp(d), continuity: clamp(cont), cost: clamp(cost), compliance: clamp(comp), trust: clamp(s.biz.rep), forensics: clamp(s.ev),
   };
-  why.trust = `reputation ${Math.round(s.biz.rep)} of 100${s.claimBroken ? '; the reassuring statement was proved wrong' : ''}`;
+  why.trust = `reputation ${Math.round(s.biz.rep)} of 100${s.claimBroken ? '; the "no evidence" statement was proved wrong' : ''}`;
   why.forensics = `evidence ${Math.round(s.ev)} of 100${s.d.wipedUnimaged ? '; hosts wiped before imaging' : ''}`;
   const total = Math.round(Object.entries(WEIGHTS).reduce((a, [k, w]) => a + w * parts[k], 0));
   return { total, parts, why, verdict: verdict(total) };

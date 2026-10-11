@@ -9,6 +9,7 @@ import { makeRng } from './rng.js';
 import { ACTIONS, actionById, slotsFor } from './actions.js';
 import { sectorById } from '../data/sectors.js';
 import { scenarioById } from '../data/scenarios/index.js';
+import { CURVEBALLS, curveballById } from './curveballs.js';
 
 export const KINDS = {
   account: 'Account', priv: 'Privileged access', host: 'Host', persist: 'Persistence', cloud: 'Cloud identity',
@@ -25,8 +26,8 @@ const DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 /* ---------- Text ---------- */
 export function fill(text, s) {
   if (typeof text !== 'string') return text;
-  const sec = sectorById(s.sector);
-  return text.replace(/\{(\w+)\}/g, (m, k) => (k in sec ? sec[k] : (s.vars && k in s.vars ? s.vars[k] : m)));
+  const sec = sectorById(s.sector), prof = s.profile || {};
+  return text.replace(/\{(\w+)\}/g, (m, k) => (k === 'org' && prof.org ? prof.org : k in sec ? sec[k] : (s.vars && k in s.vars ? s.vars[k] : m)));
 }
 
 /* ---------- Clock ---------- */
@@ -46,11 +47,24 @@ export function businessDeadline(scen, h, n) {
 }
 export const turnHours = (scen, t) => (t + 1 < scen.turns.length ? scen.turns[t + 1].h : scen.endH) - scen.turns[t].h;
 
+/* ---------- Your own organization ---------- */
+// A team can rename the organization and add one reporting duty of its own (a contract, a state rule, a
+// regulator the five sectors do not cover). Both travel in the exercise link, so a rerun is the same game.
+export const CLOCK_TRIGGERS = { aware: 'the team confirms an intrusion', breach: 'data is known to have been stolen', disrupt: 'operations are seriously disrupted', material: 'the incident is judged material', paid: 'a ransom is paid' };
+export function cleanProfile(p) {
+  if (!p || typeof p !== 'object') return null;
+  const org = typeof p.org === 'string' ? p.org.trim().slice(0, 60) : '';
+  const c = p.clock, hours = c ? Math.round(+c.hours) : 0;
+  const clock = c && typeof c.label === 'string' && c.label.trim() && hours >= 1 && hours <= 24 * 90 && CLOCK_TRIGGERS[c.trigger]
+    ? { label: c.label.trim().slice(0, 80), hours, trigger: c.trigger, who: (typeof c.who === 'string' && c.who.trim().slice(0, 80)) || 'Your regulator or contract counterparty' } : null;
+  return org || clock ? { org, clock } : null;
+}
+
 /* ---------- Setup ---------- */
-export function newGame({ seed = 1, scen = 'helpdesk', sector = 'hospital', posture, mode = 'solo' } = {}) {
+export function newGame({ seed = 1, scen = 'helpdesk', sector = 'hospital', posture, mode = 'solo', profile = null } = {}) {
   const sc = scenarioById(scen), sec = sectorById(sector);
   const s = {
-    v: 1, seed, scen: sc.id, sector: sec.id, mode, posture: { ...posture }, t: 0, over: false,
+    v: 1, seed, scen: sc.id, sector: sec.id, mode, posture: { ...posture }, t: 0, over: false, profile: cleanProfile(profile),
     vars: { ...(sc.vars || {}) },
     adv: { stage: 0, fh: [], comms: false, exfil: 0, backupsHit: false, enc: 0, otHit: false, tipped: 0, quiet: 0,
       done: [], evictedT: null, reentries: 0, extorted: false },
@@ -61,9 +75,9 @@ export function newGame({ seed = 1, scen = 'helpdesk', sector = 'hospital', post
       statements: [], customers: null, board: null, notified: false, restoreTries: 0, aware: null, publicT: null,
       claimSafe: null, disruptT: null, breachT: null, otT: null, paidT: null },
     ransom: null,
-    biz: { ops: 100, rep: 70, cost: { response: 0, recovery: 0, downtime: 0, ransom: 0, notice: 0, fines: 0 }, opsHist: [] },
+    biz: { ops: 100, rep: 70, cost: { response: 0, recovery: 0, downtime: 0, ransom: 0, notice: 0, fines: 0, fraud: 0 }, opsHist: [] },
     ev: 30 + (posture.logs ? 20 : 0),
-    clocks: [], feed: [], log: [], hits: {},
+    clocks: [], feed: [], log: [], hits: {}, fx: [],
   };
   // What the attacker did before the game starts (already inside, unseen).
   for (const id of sc.pre || []) { const st = sc.stages.find(x => x.id === id); succeed(s, st, sc, null, true); }
@@ -298,8 +312,9 @@ export function available(s) {
 
 /** Play one turn. moves = { acts: [actionId...], note }. Returns { state, events }. Never mutates its input. */
 export function step(s0, moves = {}) {
-  const s = structuredClone(s0);
+  let s = structuredClone(s0);
   if (s.over) return { state: s, events: [] };
+  if (moves.fx && curveballOk(s, moves.fx)) s = applyCurveball(s, moves.fx);
   const sc = scenarioById(s.scen), sec = sectorById(s.sector);
   const rng = makeRng(s.seed, 100 + s.t, 0), nrng = makeRng(s.seed, 200 + s.t, 0), irng = makeRng(s.seed, 300 + s.t, 0);
   const ctx = { removed: [], opsHit: 0, adv: [], feed: [], notes: [], noisy: false, cost: 0, sc, sec };
@@ -310,12 +325,16 @@ export function step(s0, moves = {}) {
   const chosen = [];
   for (const a of acts) { a.apply(s, ctx, rng); chosen.push(a.id); }
   syncComms(s);
+  // A facilitator's curveball that resolves on what the team did this turn.
+  const fxNow = s.fx.find(x => x.t === s.t);
+  if (fxNow) { const cb = curveballById(fxNow.id); if (cb.late) { const n = cb.late(s, ctx); if (n) { fxNow.out = fill(n, s); ctx.notes.push(fxNow.out); } } }
   // A partial eviction warns an attacker that still has a way in. Planning on a channel it reads does too.
   const stillIn = s.adv.fh.some(f => f.on);
   let tip = 0;
   if (ctx.removed.length && stillIn) tip = 0.65;
   if (ctx.noisy && s.adv.comms && !s.d.oob && stillIn) tip = Math.max(tip, 0.45);
   if (ctx.blockTip && stillIn) tip = Math.max(tip, 0.3);
+  if (ctx.fxTip && stillIn) tip = Math.max(tip, ctx.fxTip);
   if (tip && !s.adv.tipped && rng.u() < tip) {
     s.adv.tipped = s.t + 1;
     ctx.tipped = true;
@@ -367,7 +386,7 @@ export function step(s0, moves = {}) {
   updateClocks(s, sc, sec);
   // Close the turn.
   s.log.push({ t: s.t, h: sc.turns[s.t].h, acts: chosen, adv: ctx.adv, removed: ctx.removed.map(f => f.id), tipped: !!ctx.tipped,
-    note: moves.note || '', ops: s.biz.ops, exfil: +s.adv.exfil.toFixed(3), enc: +s.adv.enc.toFixed(2), reencrypted: !!ctx.reencrypted });
+    note: moves.note || '', fx: fxNow ? fxNow.id : null, ops: s.biz.ops, exfil: +s.adv.exfil.toFixed(3), enc: +s.adv.enc.toFixed(2), reencrypted: !!ctx.reencrypted });
   for (const x of ctx.feed) { x.t = s.t; s.feed.push(x); }
   if (ctx.tipped) s.feed.push({ kind: 'hidden', t: s.t, title: 'The attacker noticed' });
   s.t++;
@@ -375,9 +394,29 @@ export function step(s0, moves = {}) {
   else {
     ransomTick(s, sc, sec, irng);
     injects(s, sc, irng);
+    // An inject can start an extortion (data-only crews demand money whether or not they are still inside).
+    if (!s.ransom) ransomTick(s, sc, sec, irng);
     s.feed.push({ kind: 'result', t: s.t - 1, title: 'Turn report', text: ctx.notes.join(' ') });
   }
   return { state: s, events: ctx };
+}
+
+/* ---------- Facilitator curveballs ---------- */
+/** Can the facilitator throw this curveball now? One a turn, each once a game, and only where it makes sense. */
+export function curveballOk(s, id) {
+  const cb = curveballById(id);
+  if (!cb || s.over) return false;
+  if (s.fx.some(x => x.id === id || x.t === s.t)) return false;
+  return !cb.when || !!cb.when(s, scenarioById(s.scen), sectorById(s.sector));
+}
+export const curveballsNow = s => CURVEBALLS.filter(cb => curveballOk(s, cb.id));
+/** Apply a curveball at the start of the turn. Returns a new state; the room sees it before deciding. */
+export function applyCurveball(s0, id) {
+  const s = structuredClone(s0), cb = curveballById(id);
+  s.fx.push({ id, t: s.t });
+  if (cb.apply) cb.apply(s, scenarioById(s.scen), sectorById(s.sector));
+  s.feed.push({ kind: 'inject', fx: id, role: cb.role || 'all', t: s.t, title: fill(cb.title, s), text: fill(cb.text, s) });
+  return s;
 }
 
 /** Stolen data is published: reputation falls, the breach is known and the incident is public. */
@@ -401,7 +440,8 @@ function ransomTick(s, sc, sec, rng) {
 
 export function updateClocks(s, sc, sec) {
   const startH = { aware: s.d.aware, material: s.d.materialT, disrupt: s.d.disruptT, breach: s.d.breachT, paid: s.d.paidT, ot: s.d.otT, encrypt: s.adv.impactT };
-  for (const c of sec.clocks) {
+  const own = s.profile?.clock ? [{ id: 'own', label: s.profile.clock.label, who: s.profile.clock.who, trigger: s.profile.clock.trigger, hours: s.profile.clock.hours, via: 'file', src: '' }] : [];
+  for (const c of [...sec.clocks, ...own]) {
     if (s.clocks.some(x => x.id === c.id)) continue;
     // A clock may have several triggers (any of them starts it); it starts at the earliest.
     const trig = [].concat(c.trigger).filter(k => startH[k] != null).sort((a, b) => startH[a] - startH[b])[0];
@@ -422,7 +462,7 @@ function finalize(s, sc, sec) {
   // Notification and litigation follow a breach whether or not the game saw it.
   if (s.adv.exfil > 0.05) s.biz.cost.notice += Math.round((sec.notifyCost || 500) * Math.min(1, s.adv.exfil * 1.5));
   s.biz.cost.litigation = Math.round((sec.litigation || 3000) * s.adv.exfil * (s.d.counsel != null ? 0.75 : 1));
-  const c = s.biz.cost, gross = c.response + c.recovery + c.downtime + c.ransom + c.notice + c.fines + c.litigation;
+  const c = s.biz.cost, gross = c.response + c.recovery + c.downtime + c.ransom + c.notice + c.fines + c.litigation + (c.fraud || 0);
   let covered = 0;
   if (s.posture.insured) {
     const ontime = s.d.insurer != null && (s.d.aware == null || s.d.insurer <= s.d.aware + 2);
@@ -435,19 +475,28 @@ function finalize(s, sc, sec) {
 }
 
 /* ---------- Encoding (URL hash) ---------- */
-export function encode(s, history) {
+// Fields: version, seed, scenario, sector, mode, posture, moves (a curveball rides in a turn's moves as !id),
+// notes, and the exercise details (names, objectives, the organization profile) as JSON.
+export function encode(s, history, meta = null) {
   const p = Object.entries(s.posture).filter(([, v]) => v).map(([k]) => k).join('.');
-  const h = history.map(m => (m.acts || []).join('.')).join('~');
+  const h = history.map(m => [...(m.acts || []), ...(m.fx ? [`!${m.fx}`] : [])].join('.')).join('~');
   const notes = history.map(m => m.note || '');
-  return [1, s.seed, s.scen, s.sector, s.mode, p, h, notes.some(Boolean) ? encodeURIComponent(JSON.stringify(notes)) : ''].join('|');
+  const m = { ...(meta || {}) }; if (s.profile) m.profile = s.profile; else delete m.profile;
+  return [1, s.seed, s.scen, s.sector, s.mode, p, h, notes.some(Boolean) ? encodeURIComponent(JSON.stringify(notes)) : '',
+    Object.keys(m).length ? encodeURIComponent(JSON.stringify(m)) : ''].join('|');
 }
 export function decode(str) {
-  const [v, seed, scen, sector, mode, p, h, n] = String(str).split('|');
+  const [v, seed, scen, sector, mode, p, h, n, mt] = String(str).split('|');
   if (v !== '1' || !(+seed > 0)) return null;
   const posture = {}; for (const k of (p || '').split('.').filter(Boolean)) posture[k] = true;
   let notes = []; try { notes = n ? JSON.parse(decodeURIComponent(n)) : []; } catch { notes = []; }
-  const history = h ? h.split('~').map((x, i) => ({ acts: x ? x.split('.') : [], note: typeof notes[i] === 'string' ? notes[i] : '' })) : [];
-  return { setup: { seed: +seed, scen, sector, mode, posture }, history };
+  let meta = {}; try { meta = mt ? JSON.parse(decodeURIComponent(mt)) : {}; } catch { meta = {}; }
+  if (!meta || typeof meta !== 'object' || Array.isArray(meta)) meta = {};
+  const history = h ? h.split('~').map((x, i) => {
+    const parts = x ? x.split('.') : [], fx = parts.find(a => a.startsWith('!'));
+    return { acts: parts.filter(a => !a.startsWith('!')), note: typeof notes[i] === 'string' ? notes[i] : '', ...(fx ? { fx: fx.slice(1) } : {}) };
+  }) : [];
+  return { setup: { seed: +seed, scen, sector, mode, posture, profile: cleanProfile(meta.profile) }, history, meta };
 }
 export function replay(setup, history) {
   let s = newGame(setup);

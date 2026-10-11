@@ -1,12 +1,13 @@
 // Dwell Time: setup, the turn loop (solo or facilitated), and the after-action report.
-import { newGame, step, blocked, encode, decode, replay, clockText, clockAt, turnHours, fill, KINDS, openFlags } from './engine.js';
+import { newGame, step, blocked, encode, decode, replay, clockText, clockAt, turnHours, fill, KINDS, openFlags, CLOCK_TRIGGERS, cleanProfile, curveballsNow, applyCurveball } from './engine.js';
 import { ACTIONS, ROLES, slotsFor, cost } from './actions.js';
 import { SCENARIOS, scenarioById } from '../data/scenarios/index.js';
 import { SECTORS, sectorById } from '../data/sectors.js';
 import { CONTROLS, PRESETS, presetPosture } from '../data/posture.js';
 import { SOURCES } from '../data/sources.js';
 import { score, PART_LABEL, WEIGHTS } from './score.js';
-import { timeline, findings, csfCoverage, report, toCsv } from './aar.js';
+import { timeline, findings, csfCoverage, report, toCsv, OBJECTIVES, RATINGS } from './aar.js';
+import { curveballById } from './curveballs.js';
 import { playPolicy } from './ai.js';
 import { learnButton, runLesson, showSheet } from '../../../shared/js/learn.js';
 import { lessonSteps, LESSON, SHEET } from './lesson.js';
@@ -19,7 +20,12 @@ const show = id => ['setup', 'play', 'end'].forEach(x => { $(x).hidden = x !== i
 const money = k => (Math.abs(k) >= 1000 ? `$${(k / 1000).toFixed(1)}M` : `$${Math.round(k)}k`);
 
 const setup = { mode: 'solo', scen: SCENARIOS[0].id, sector: 'hospital', preset: 'typical', posture: presetPosture('typical'), seed: newSeed() };
-let g = null;   // { s, history: [{acts, note}], picks: [], tab }
+// Exercise details and options. They travel in the exercise link with the game. `hints`/`discuss` left
+// undefined follow the mode (hints on alone, off for a room; discussion first only for a room).
+const meta = { name: '', date: new Date().toLocaleDateString('en-CA'), facilitator: '', people: {}, objectives: OBJECTIVES.map(o => o.id), ownObjective: '', profile: null };
+const hintsOn = () => meta.hints ?? setup.mode === 'solo';
+const discussOn = () => setup.mode === 'team' && (meta.discuss ?? true);
+let g = null;   // { base, s, fx, history: [{acts, note, fx}], picks: [], tab, revealed }
 
 /* ======================= Setup ======================= */
 const MODES = [
@@ -44,14 +50,44 @@ function paintSetup() {
   $('controls').innerHTML = CONTROLS.map(c => `<label><input type="checkbox" data-c="${c.id}" ${setup.posture[c.id] ? 'checked' : ''}><b>${c.label}</b><span>${c.text}</span></label>`).join('');
   $('controls').onchange = e => { const c = e.target.dataset.c; if (!c) return; setup.posture[c] = e.target.checked; setup.preset = 'custom'; paintSetup(); };
   $('seed').value = setup.seed;
+  paintOptions();
 }
+const PEOPLE = [...ROLES.map(r => [r.id, r.long]), ['obs', 'Observers']];
+function paintOptions() {
+  $('opt-hints').checked = hintsOn();
+  $('opt-discuss').checked = discussOn();
+  $('opt-discuss-row').hidden = setup.mode !== 'team';
+  const p = meta.profile || {};
+  $('own-org').value = p.org || '';
+  $('own-trigger').innerHTML = Object.entries(CLOCK_TRIGGERS).map(([k, v]) => `<option value="${k}" ${p.clock?.trigger === k ? 'selected' : ''}>${esc(v)}</option>`).join('');
+  $('own-clock').value = p.clock?.label || ''; $('own-who').value = p.clock?.who || ''; $('own-hours').value = p.clock?.hours || '';
+  $('m-name').value = meta.name; $('m-date').value = meta.date; $('m-fac').value = meta.facilitator; $('m-own').value = meta.ownObjective;
+  $('m-people').innerHTML = PEOPLE.map(([id, l]) => `<label>${esc(l)} <input data-person="${id}" maxlength="120" value="${esc(meta.people[id] || '')}"></label>`).join('');
+  $('m-objs').innerHTML = OBJECTIVES.map(o => `<label><input type="checkbox" data-obj="${o.id}" ${meta.objectives.includes(o.id) ? 'checked' : ''}> ${esc(o.title)}</label>`).join('');
+}
+function readProfile() {
+  const hours = parseInt($('own-hours').value, 10);
+  meta.profile = cleanProfile({ org: $('own-org').value, clock: { label: $('own-clock').value, who: $('own-who').value, hours, trigger: $('own-trigger').value } });
+}
+$('opt-hints').addEventListener('change', e => { meta.hints = e.target.checked; });
+$('opt-discuss').addEventListener('change', e => { meta.discuss = e.target.checked; });
+$('own-box').addEventListener('change', readProfile);
+$('meta-box').addEventListener('input', e => {
+  const t = e.target;
+  if (t.id === 'm-name') meta.name = t.value; else if (t.id === 'm-date') meta.date = t.value; else if (t.id === 'm-fac') meta.facilitator = t.value;
+  else if (t.id === 'm-own') meta.ownObjective = t.value.trim();
+  else if (t.dataset.person) meta.people[t.dataset.person] = t.value;
+  else if (t.dataset.obj) meta.objectives = [...$('m-objs').querySelectorAll('[data-obj]:checked')].map(x => x.dataset.obj);
+});
 $('seed').addEventListener('change', e => { const v = parseInt(e.target.value, 10); setup.seed = v > 0 ? v : newSeed(); e.target.value = setup.seed; });
 $('begin').addEventListener('click', () => start());
 
 function start(history = []) {
-  const s0 = newGame({ seed: setup.seed, scen: setup.scen, sector: setup.sector, posture: setup.posture, mode: setup.mode });
+  readProfile();
+  const s0 = newGame({ seed: setup.seed, scen: setup.scen, sector: setup.sector, posture: setup.posture, mode: setup.mode, profile: meta.profile });
   let s = s0; for (const m of history) if (!s.over) s = step(s, m).state;
-  g = { s, history: [...history], picks: [], tab: 'ciso', timer: null, left: 600 };
+  g = { base: s, s, fx: null, history: [...history], picks: [], tab: 'ciso', timer: null, left: 600, revealed: false, edits: {} };
+  g.edits = loadEdits(s);
   if (s.over) { endScreen(); return; }
   show('play'); paint(); scrollTo({ top: 0 });
 }
@@ -128,10 +164,12 @@ function seatHtml(role, team) {
     const extra = Object.entries(cost(a)).filter(([r]) => r !== role.id).map(([r, n]) => `+${n} ${ROLES.find(x => x.id === r).label}`).join(' ');
     const html = `<button type="button" class="dt-act" title="${esc(fill(a.text, s))}" data-act="${a.id}" aria-pressed="${picked}" ${why || full ? 'disabled' : ''}>
       <span class="box" aria-hidden="true">${picked ? '✓' : ''}</span><b>${esc(fill(a.label, s))}${cost(a)[role.id] > 1 ? `<span class="tag">${cost(a)[role.id]} actions</span>` : ''}${extra ? `<span class="tag">uses ${extra}</span>` : ''}</b>
-      <span class="x">${esc(fill(a.text, s))}</span>${why ? `<span class="why">${esc(why)}</span>` : full ? '<span class="why">No actions left for this seat this turn.</span>' : ''}</button>`;
+      <span class="x">${esc(fill(a.text, s))}${hintsOn() && a.hint ? ` <i>${esc(fill(a.hint, s))}</i>` : ''}</span>${why ? `<span class="why">${esc(why)}</span>` : full ? '<span class="why">No actions left for this seat this turn.</span>' : ''}</button>`;
     if (why) { later.push(html); return ''; }
     return html;
   }).join('');
+  if (team && discussOn() && !g.revealed) return `<div class="dt-seat" data-seat="${role.id}"><h3><span>${role.long}</span><span class="num">${sl[role.id]} action${sl[role.id] === 1 ? '' : 's'}</span></h3>
+    ${q ? `<p class="dt-q">${esc(q)}</p>` : ''}<p class="dt-hidden-opts">Options hidden while the room discusses.</p></div>`;
   return `<div class="dt-seat" data-seat="${role.id}"><h3><span>${team ? role.long : role.label}</span><span class="num">${u[role.id] || 0} of ${sl[role.id]} used</span></h3>
     ${q ? `<p class="dt-q">${esc(q)}</p>` : ''}<div class="dt-acts">${rows || '<p class="fine">Nothing this seat can do right now.</p>'}</div>
     ${later.length ? `<details class="dt-more"><summary>${later.length} not available yet</summary><div class="dt-acts">${later.join('')}</div></details>` : ''}</div>`;
@@ -140,7 +178,8 @@ function paintSeats() {
   const team = g.s.mode === 'team';
   const sl = slotsFor(g.s), u = usedSlots(g.picks);
   $('tabs').hidden = team;
-  $('details').hidden = !team;
+  $('details').hidden = !team || (discussOn() && !g.revealed);
+  $('reveal').hidden = !(team && discussOn() && !g.revealed);
   $('seats').classList.toggle('terse', team && $('details').getAttribute('aria-pressed') !== 'true');
   $('seats').classList.toggle('team', team);
   if (!team) {
@@ -154,6 +193,7 @@ function paintSeats() {
   const names = g.picks.map(id => fill(ACTIONS.find(a => a.id === id).label, g.s));
   $('chosen').textContent = names.length ? `Chosen: ${names.join(' · ')}` : 'No actions chosen. Ending the turn without acting is allowed, and the attacker will not wait.';
 }
+$('reveal').addEventListener('click', () => { g.revealed = true; paintSeats(); });
 $('details').addEventListener('click', () => { const b = $('details'), on = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', String(on)); b.textContent = on ? 'Hide details' : 'Show details'; paintSeats(); });
 $('tabs').addEventListener('click', e => { const b = e.target.closest('[data-tab]'); if (!b) return; g.tab = b.dataset.tab; paintSeats(); $(`tab-${g.tab}`).focus(); });
 $('tabs').addEventListener('keydown', e => {
@@ -175,8 +215,24 @@ function paintFac() {
   $('fac').hidden = !team;
   if (!team) return;
   $('note').value = '';
+  paintFx();
   paintPeek();
 }
+function paintFx() {
+  const opts = curveballsNow(g.base);
+  $('fx').innerHTML = `<option value="">None this turn</option>${opts.map(c => `<option value="${c.id}" ${g.fx === c.id ? 'selected' : ''}>${esc(c.label)}</option>`).join('')}`;
+  $('fx').disabled = !opts.length && !g.fx;
+}
+$('fx').addEventListener('change', e => {
+  g.fx = e.target.value || null;
+  g.s = g.fx ? applyCurveball(g.base, g.fx) : g.base;
+  // A curveball can take a seat's action away; drop picks that no longer fit.
+  const keep = [];
+  for (const id of g.picks) { keep.push(id); if (blocked(g.s, ACTIONS.find(a => a.id === id), keep.filter(x => x !== id)) || !fits(keep)) keep.pop(); }
+  g.picks = keep;
+  paintBar(); paintFeed(); paintBoard(); paintSeats(); paintPeek(); saveHash();
+});
+function fits(picks) { const sl = slotsFor(g.s), u = usedSlots(picks); return Object.entries(u).every(([r, n]) => n <= sl[r]); }
 function paintPeek() {
   const s = g.s, sc = scenarioById(s.scen), on = $('peek').getAttribute('aria-pressed') === 'true';
   $('peek-box').hidden = !on;
@@ -201,16 +257,27 @@ function stopTimer() { clearInterval(g.timer); g.timer = null; $('timer-go').tex
 $('timer-go').addEventListener('click', () => { if (g.timer) { stopTimer(); return; } g.timer = setInterval(tick, 1000); $('timer-go').textContent = 'Pause'; });
 $('timer-reset').addEventListener('click', () => { stopTimer(); g.left = 600; $('timer').textContent = '10:00'; $('timer').classList.remove('out'); });
 
+function saveHash() {
+  // The pending curveball is part of the link too, so a reload in the middle of a turn keeps it.
+  try { history.replaceState(null, '', '#g=' + encodeURIComponent(encode(g.base, g.history, linkMeta()))); } catch { /* sandboxed */ }
+}
+function linkMeta() {
+  const m = { ...meta }; if (g?.fx && !g.s.over) m.pendingFx = g.fx;
+  for (const k of Object.keys(m)) if (m[k] === '' || m[k] == null) delete m[k];
+  if (m.people && !Object.values(m.people).some(Boolean)) delete m.people;
+  if (m.objectives?.length === OBJECTIVES.length) delete m.objectives;
+  return m;
+}
 function paint() {
   paintBar(); paintFac(); paintFeed(); paintBoard(); paintSeats();
-  try { history.replaceState(null, '', '#g=' + encodeURIComponent(encode(g.s, g.history))); } catch { /* sandboxed */ }
+  saveHash();
 }
 $('end-turn').addEventListener('click', () => {
   if (!g || g.s.over) return;
-  const move = { acts: [...g.picks], note: g.s.mode === 'team' ? $('note').value.trim() : '' };
-  g.s = step(g.s, move).state; g.history.push(move); g.picks = [];
+  const move = { acts: [...g.picks], note: g.s.mode === 'team' ? $('note').value.trim() : '', ...(g.fx ? { fx: g.fx } : {}) };
+  g.s = g.base = step(g.base, move).state; g.history.push(move); g.picks = []; g.fx = null; g.revealed = false;
   if (g.timer) stopTimer();
-  if (g.s.over) { try { history.replaceState(null, '', '#g=' + encodeURIComponent(encode(g.s, g.history))); } catch { /* */ } endScreen(); return; }
+  if (g.s.over) { saveHash(); g.edits = loadEdits(g.s); endScreen(); return; }
   paint();
   $('feed-t').scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   pulse($('clock'));
@@ -229,20 +296,21 @@ function endScreen() {
     <span class="bar" aria-hidden="true"><i style="width:${Math.round(r.parts[k])}%"></i></span><b class="num">${Math.round(r.parts[k])}</b><span class="w">${esc(r.why[k])}</span></div>`).join('');
   const c = s.biz.cost;
   const rows = [['Response (IR firm, counsel, tools)', c.response], ['Recovery and rebuild', c.recovery], ['Downtime', c.downtime], ['Ransom', c.ransom],
-    ['Notification', c.notice], ['Litigation reserve', c.litigation], ['Late-filing penalties (notional)', c.fines]].filter(x => x[1] > 0);
+    ['Notification', c.notice], ['Litigation reserve', c.litigation], ['Late-filing penalties (notional)', c.fines], ['Lost to fraud', c.fraud || 0]].filter(x => x[1] > 0);
   $('money').innerHTML = `<table class="dt-money">${rows.map(([l, v]) => `<tr><td>${l}</td><td>${money(v)}</td></tr>`).join('')}
     <tr><td>Gross</td><td>${money(s.money.gross)}</td></tr><tr><td>Covered by insurance</td><td>−${money(s.money.covered)}</td></tr>
     <tr class="tot"><td>Net cost</td><td>${money(s.money.net)}</td></tr></table>`;
   const setupNow = { seed: s.seed, scen: s.scen, sector: s.sector, posture: s.posture, mode: s.mode };
   const b = score(playPolicy(setupNow, 'textbook'));
   $('bench').textContent = `A computer responder following the textbook (declare early, scope before evicting, move out of band, file on time, never pay) scored ${b.total} on this exact exercise. It sees only what you saw.`;
+  paintReportEdits();
   const F = findings(s);
   $('findings').innerHTML = F.map(f => `<li class="${f.sev}"><b>${esc(f.title)}<span class="csf">${f.csf}</span></b>${f.text ? `<span>${esc(f.text)}</span>` : ''}${f.rec ? `<div class="rec">${esc(f.rec)}</div>` : ''}</li>`).join('');
   const T = timeline(s);
   $('timeline').innerHTML = `<thead><tr><th>Turn</th><th>The attacker (hidden during play)</th><th>Your team</th></tr></thead><tbody>${T.map(row => `<tr>
     <td class="when">${row.t + 1}<br>${esc(row.clock)}</td>
     <td>${row.adv.length ? `<ul>${row.adv.map(a => `<li class="${a.tip ? 'tip' : ''}">${esc(a.text)} ${a.tech ? `<span class="tech">${esc(a.tech)}</span>` : ''} ${a.ok === false ? '<span class="blk">blocked</span>' : a.seen ? '<span class="seen">seen</span>' : a.seen === false ? '<span class="miss">missed</span>' : ''}</li>`).join('')}</ul>` : '<span class="fine">Quiet.</span>'}</td>
-    <td>${row.acts.length ? `<ul>${row.acts.map(a => `<li><b>${ROLES.find(x => x.id === a.role).label}:</b> ${esc(a.label)}</li>`).join('')}</ul>` : '<span class="fine">No action.</span>'}${row.note ? `<p class="fine"><i>Notes: ${esc(row.note)}</i></p>` : ''}</td></tr>`).join('')}</tbody>`;
+    <td>${row.fx ? `<p class="fx"><b>Curveball:</b> ${esc(row.fx.title)}${row.fx.out ? `. ${esc(row.fx.out)}` : ''}</p>` : ''}${row.acts.length ? `<ul>${row.acts.map(a => `<li><b>${ROLES.find(x => x.id === a.role).label}:</b> ${esc(a.label)}</li>`).join('')}</ul>` : '<span class="fine">No action.</span>'}${row.note ? `<p class="fine"><i>Notes: ${esc(row.note)}</i></p>` : ''}</td></tr>`).join('')}</tbody>`;
   $('clocktable').innerHTML = s.clocks.length ? `<thead><tr><th>Obligation</th><th>Started</th><th>Due</th><th>Filed</th><th>Status</th></tr></thead><tbody>${s.clocks.map(k => `<tr>
     <td>${esc(k.label)}<br><span class="fine">${esc(k.who)}</span></td><td class="when">${esc(clockText(sc, k.startH))}, day ${Math.floor(k.startH / 24) + 1}</td>
     <td class="when">${esc(clockText(sc, k.dueH))}, day ${Math.floor(k.dueH / 24) + 1}</td><td class="when">${k.filedH != null ? `${esc(clockText(sc, k.filedH))}, day ${Math.floor(k.filedH / 24) + 1}` : '—'}</td>
@@ -250,14 +318,44 @@ function endScreen() {
   $('csf').innerHTML = csfCoverage(s).map(fn => `<div class="fn"><h4>${fn.name} (${fn.fn})</h4>${fn.cats.map(c => `<div class="cat ${c.n >= 1 ? 'on' : c.n > 0 ? 'part' : ''}"><code>${c.id}</code>${esc(c.name)}</div>`).join('')}</div>`).join('');
   $('end').focus({ preventScroll: true }); scrollTo({ top: 0 });
 }
+/* Exercise overview, objective ratings and the improvement plan. The facilitator's edits are kept in this
+   browser for this exercise (they also go into every download) and survive a reload. */
+const editsKey = s => `dwell-time:aar:${s.seed}:${s.scen}:${s.sector}:${encode(s, g?.history || []).split('|')[6]}`;
+function loadEdits(s) { try { return JSON.parse(localStorage.getItem(editsKey(s))) || {}; } catch { return {}; } }
+function saveEdits() { try { localStorage.setItem(editsKey(g.s), JSON.stringify(g.edits)); } catch { /* storage blocked */ } }
+function paintReportEdits() {
+  const s = g.s, r = report(s, meta, g.edits), x = r.exercise;
+  const people = PEOPLE.filter(([id]) => x.participants[id]).map(([id, l]) => `${esc(l)}: ${esc(x.participants[id])}`).join('<br>');
+  const rows = [['Exercise', x.name], ['Date', x.date], ['Facilitator', x.facilitator], ['Mode', s.mode === 'team' ? 'Facilitated tabletop' : 'Solo'],
+    ['Scope', x.scope], ['Scenario', `${x.scenario} (${x.threat})`], ['Organization', `${x.org}, ${x.sector.toLowerCase()}`],
+    ['Controls in place', r.posture.join(', ') || 'None'], ['Exercise code', String(x.seed)]].filter(([, v]) => v);
+  $('overview').innerHTML = `<tbody>${rows.map(([k, v]) => `<tr><th scope="row">${k}</th><td>${esc(v)}</td></tr>`).join('')}${people ? `<tr><th scope="row">Participants</th><td>${people}</td></tr>` : ''}</tbody>`;
+  const sel = (o) => `<select class="dt-objs-sel" data-rate="${o.id}" aria-label="Rating for ${esc(o.title)}">${o.id === 'own' ? '<option value="">Not rated</option>' : ''}${Object.entries(RATINGS).map(([k, v]) => `<option value="${k}" ${o.rating === k ? 'selected' : ''}>${k}: ${v}</option>`).join('')}</select>`;
+  $('objs').innerHTML = r.objectives.length ? `<thead><tr><th>Objective</th><th>What happened</th><th>Rating</th></tr></thead><tbody>${r.objectives.map(o => `<tr>
+    <td>${esc(o.title)}${o.csf ? ` <span class="tech">${o.csf}</span>` : ''}</td><td>${esc(o.evidence)}${o.suggested && o.suggested !== o.rating ? ` <span class="fine">(suggested ${o.suggested})</span>` : ''}</td>
+    <td><span class="dt-rate ${o.rating}">${sel(o)}</span></td></tr>`).join('')}</tbody>` : '<tbody><tr><td>No objectives in scope.</td></tr></tbody>';
+  const roleOpts = cur => ROLES.map(ro => `<option value="${ro.id}" ${cur === ro.id ? 'selected' : ''}>${ro.label}</option>`).join('');
+  $('ip').innerHTML = r.improvementPlan.length ? `<thead><tr><th>#</th><th>Issue</th><th>Corrective action</th><th>CSF</th><th>Owner</th><th>Name</th><th>Due</th></tr></thead><tbody>${r.improvementPlan.map(i => `<tr>
+    <td class="when">${i.n}<br><span class="sev ${i.sev}">${i.sev === 'med' ? 'medium' : i.sev}</span></td><td>${esc(i.issue)}</td><td>${esc(i.action)}</td><td class="when">${i.csf}</td>
+    <td><select data-ip="${i.n}" data-f="owner" aria-label="Owner for item ${i.n}">${roleOpts(i.owner)}</select></td>
+    <td><input data-ip="${i.n}" data-f="ownerName" maxlength="80" value="${esc(i.ownerName || x.participants[i.owner] || '')}" aria-label="Owner name for item ${i.n}"></td>
+    <td><input type="date" data-ip="${i.n}" data-f="due" value="${esc(i.due || '')}" aria-label="Due date for item ${i.n}"></td></tr>`).join('')}</tbody>` : '<tbody><tr><td>No corrective actions needed.</td></tr></tbody>';
+}
+$('objs').addEventListener('change', e => { const id = e.target.dataset.rate; if (!id) return; g.edits.ratings = { ...(g.edits.ratings || {}), [id]: e.target.value }; saveEdits(); paintReportEdits(); });
+$('ip').addEventListener('change', e => {
+  const n = e.target.dataset.ip, f = e.target.dataset.f; if (!n) return;
+  g.edits.ip = { ...(g.edits.ip || {}) }; g.edits.ip[n] = { ...(g.edits.ip[n] || {}), [f]: e.target.value };
+  if (f === 'owner') delete g.edits.ip[n].ownerName;
+  saveEdits(); paintReportEdits();
+});
 function download(name, text, type) {
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type })); a.download = name;
   document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
 }
 const fileBase = () => `dwell-time_${g.s.scen}_${g.s.sector}_${g.s.seed}`;
 $('print').addEventListener('click', () => print());
-$('json').addEventListener('click', () => download(`${fileBase()}.json`, JSON.stringify(report(g.s), null, 2), 'application/json'));
-$('csv').addEventListener('click', () => download(`${fileBase()}.csv`, toCsv(g.s), 'text/csv'));
+$('json').addEventListener('click', () => download(`${fileBase()}.json`, JSON.stringify(report(g.s, meta, g.edits), null, 2), 'application/json'));
+$('csv').addEventListener('click', () => download(`${fileBase()}.csv`, toCsv(g.s, meta, g.edits), 'text/csv'));
 $('again').addEventListener('click', () => { setup.seed = newSeed(); paintSetup(); show('setup'); try { history.replaceState(null, '', location.pathname); } catch { /* */ } scrollTo({ top: 0 }); });
 $('again-same').addEventListener('click', () => start());
 
@@ -279,8 +377,18 @@ function boot() {
   if (m) {
     const d = decode(decodeURIComponent(m[1]));
     if (d && SCENARIOS.some(x => x.id === d.setup.scen) && SECTORS.some(x => x.id === d.setup.sector)) {
-      Object.assign(setup, d.setup, { preset: 'custom' });
-      paintSetup(); start(d.history); return;
+      const { profile, ...rest } = d.setup;
+      Object.assign(setup, rest, { preset: 'custom' });
+      const { pendingFx, ...m } = d.meta;
+      for (const k of ['name', 'date', 'facilitator', 'ownObjective']) if (typeof m[k] === 'string') meta[k] = m[k];
+      if (m.people && typeof m.people === 'object') meta.people = Object.fromEntries(Object.entries(m.people).filter(([, v]) => typeof v === 'string'));
+      if (Array.isArray(m.objectives)) meta.objectives = m.objectives.filter(id => OBJECTIVES.some(o => o.id === id));
+      if (typeof m.hints === 'boolean') meta.hints = m.hints;
+      if (typeof m.discuss === 'boolean') meta.discuss = m.discuss;
+      meta.profile = profile;
+      paintSetup(); start(d.history);
+      if (pendingFx && g && !g.s.over && curveballsNow(g.base).some(c => c.id === pendingFx)) { $('fx').value = pendingFx; $('fx').dispatchEvent(new Event('change')); }
+      return;
     }
   }
   paintSetup();

@@ -3,6 +3,8 @@
 export const CONTROLS = [
   { id: 'fido', label: 'Phishing-resistant MFA for admins', short: 'FIDO2 MFA',
     text: 'Administrators sign in with hardware security keys or passkeys, not push prompts or SMS codes.', csf: 'PR.AA' },
+  { id: 'mfaall', label: 'MFA and network allow-lists on every cloud login', short: 'MFA everywhere',
+    text: 'Every login to SaaS and cloud data platforms, including contractors and service accounts, needs MFA or key-based sign-in, and is allowed only from known networks.', csf: 'PR.AA' },
   { id: 'helpdesk', label: 'Help-desk identity checks', short: 'Help-desk checks',
     text: 'Password and MFA resets for privileged accounts need a video check or a manager call-back to a number on file.', csf: 'PR.AA' },
   { id: 'edr', label: 'EDR on nearly every endpoint and server', short: 'EDR coverage',

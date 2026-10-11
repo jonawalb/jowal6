@@ -55,6 +55,38 @@
       </details>
     </fieldset>
 
+    <fieldset class="dt-step">
+      <legend><span class="dt-n">5</span> Run it your way <span class="fine">(optional)</span></legend>
+      <div class="dt-toggles">
+        <label><input type="checkbox" id="opt-hints"> <b>Coaching hints</b> <span>Show the tips under each action ("unlikely to tip them off"). Useful when learning; off makes the room work it out.</span></label>
+        <label id="opt-discuss-row"><input type="checkbox" id="opt-discuss"> <b>Discussion first</b> <span>Facilitated mode: each turn shows only the seats' questions until the facilitator reveals the options.</span></label>
+      </div>
+      <details class="dt-ctl" id="own-box">
+        <summary>Make it your organization</summary>
+        <div class="dt-form">
+          <label>Organization name <input id="own-org" maxlength="60" placeholder="Keeps the sector's fictional name if blank"></label>
+          <p class="fine dt-wide">Add one reporting duty of your own: a contract term, a state rule or a regulator the sector does not cover. It runs like the others.</p>
+          <label>Duty <input id="own-clock" maxlength="80" placeholder="e.g. Notice to our largest customer (contract §9.2)"></label>
+          <label>Owed to <input id="own-who" maxlength="80" placeholder="e.g. Acme Corp. security office"></label>
+          <label>Hours <input id="own-hours" type="number" min="1" max="2160" placeholder="72"></label>
+          <label>Starts when <select id="own-trigger"></select></label>
+        </div>
+      </details>
+      <details class="dt-ctl" id="meta-box">
+        <summary>Exercise details for the after-action report</summary>
+        <div class="dt-form">
+          <label>Exercise name <input id="m-name" maxlength="100" placeholder="e.g. Q4 executive tabletop"></label>
+          <label>Date <input id="m-date" type="date"></label>
+          <label>Facilitator <input id="m-fac" maxlength="80"></label>
+          <p class="fine dt-wide">Participants, by seat (names appear only in your report and in this exercise's link).</p>
+          <div class="dt-wide dt-people" id="m-people"></div>
+          <p class="fine dt-wide">Objectives in scope. Each is rated in the report (performed without challenges, with some, with major, or unable), and you can change the rating.</p>
+          <div class="dt-wide dt-objs" id="m-objs"></div>
+          <label class="dt-wide">An objective of your own <input id="m-own" maxlength="140" placeholder="e.g. Test the decision to shut down the patient portal"></label>
+        </div>
+      </details>
+    </fieldset>
+
     <div class="dt-go">
       <label class="dt-seed">Exercise code <input id="seed" inputmode="numeric" size="7" aria-describedby="seed-x"></label>
       <p class="fine" id="seed-x">Same code, same choices, same attacker. Use it to rerun an exercise with another team.</p>
@@ -77,7 +109,9 @@
           <button type="button" class="btn" id="timer-go">Start timer</button>
           <button type="button" class="btn" id="timer-reset">Reset</button></div>
         <button type="button" class="btn" id="peek" aria-pressed="false">Peek at the attacker</button>
+        <label class="dt-fx">Curveball <select id="fx"></select></label>
       </div>
+      <p class="fine" id="fx-x">Optional: one curveball a turn, each once a game. The room sees it before deciding, and the outcome depends on what they do.</p>
       <div id="peek-box" class="dt-peek" hidden></div>
       <label class="dt-note">Notes for the after-action report (this turn)
         <textarea id="note" rows="2" placeholder="What the room argued about, who decided, what was missing…"></textarea></label>
@@ -102,6 +136,7 @@
           <h2 id="dec-t" class="dt-h2">Decisions this turn</h2>
           <p class="fine" id="slots-x">Each seat has a few actions a turn. Declaring a major incident and bringing in responders add more.</p>
           <button type="button" class="btn" id="details" aria-pressed="false" hidden>Show details</button>
+          <button type="button" class="btn solid" id="reveal" hidden>Show the options</button>
         </div>
         <div class="dt-tabs" id="tabs" role="tablist" aria-label="Seats"></div>
         <div id="seats" class="dt-seats"></div>
@@ -121,7 +156,7 @@
         <h2 id="end-t" class="dt-h"></h2>
         <p id="end-x" class="dt-lede"></p>
       </div>
-      <div class="dt-score"><p class="dt-bignum num" id="total"></p><p class="fine">of 100</p></div>
+      <div class="dt-score"><p class="dt-bignum num" id="total"></p><p class="fine">points of 100<br>The odds and costs behind them are illustrative.</p></div>
     </div>
     <div class="dt-export noprint">
       <button type="button" class="btn" id="print">Print or save as PDF</button>
@@ -130,12 +165,20 @@
       <button type="button" class="btn" id="again-same">Rerun this exercise</button>
       <button type="button" class="btn solid" id="again">New exercise</button>
     </div>
+    <h3>Exercise overview</h3>
+    <div class="dt-tlwrap"><table id="overview" class="dt-tl dt-kv"></table></div>
+    <h3>Objectives</h3>
+    <p class="fine">Suggested ratings come from what happened in the exercise. The facilitator can change any of them before printing.</p>
+    <div class="dt-tlwrap"><table id="objs" class="dt-tl"></table></div>
     <div class="dt-endgrid">
       <div><h3>Score</h3><div id="parts" class="dt-parts"></div></div>
       <div><h3>Cost</h3><div id="money"></div><h3>Against the textbook responder</h3><p id="bench" class="fine"></p></div>
     </div>
     <h3>Findings</h3>
     <ol id="findings" class="dt-findings"></ol>
+    <h3>Improvement plan</h3>
+    <p class="fine">One corrective action per finding. Owners and due dates are suggestions (30, 60 or 90 days by severity from the exercise date); edit them here, then print or download.</p>
+    <div class="dt-tlwrap"><table id="ip" class="dt-tl dt-ip"></table></div>
     <h3>What really happened</h3>
     <p class="fine">Left: everything the attacker did, with MITRE ATT&amp;CK technique IDs, and whether your telemetry saw it. Right: what each seat decided.</p>
     <div class="dt-tlwrap"><table id="timeline" class="dt-tl"></table></div>
@@ -164,7 +207,9 @@
         <li>Project the screen. Seat at least one person per role: CEO, CISO, IT/SecOps, Legal, Comms. Add HR, finance or operations as observers if you like.</li>
         <li>Each turn: read the new information aloud, give each seat its question, set the timer (8–10 minutes), let each seat choose its actions, then end the turn. Six to eight turns take 60–90 minutes.</li>
         <li>The facilitator can peek at the attacker's real position to steer the discussion. Do not show the room.</li>
-        <li>Type the room's arguments into the notes box; they go into the after-action report. Finish with a hotwash, then export the report.</li>
+        <li>Turn on <b>Discussion first</b> so the room argues before it sees the menu, and <b>Coaching hints</b> off so the options do not give the answers away.</li>
+        <li>Throw a <b>curveball</b> when the room gets comfortable: the CEO on a plane, a reporter with the story, a deepfake call to Finance. Each resolves on what the room does that turn.</li>
+        <li>Type the room's arguments into the notes box; they go into the after-action report. Finish with a hotwash, rate the objectives, assign owners and dates in the improvement plan, then export the report.</li>
       </ul>
     </details>
     <details>

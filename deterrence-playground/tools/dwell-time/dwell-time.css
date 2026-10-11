@@ -146,6 +146,27 @@
 .dt-about summary { cursor: pointer; } .dt-about ul { margin: 6px 0 4px; padding-left: 18px; } .dt-about li { margin: 3px 0; }
 .dt-about details + details { margin-top: 8px; }
 
+/* Setup: options, profile, exercise details */
+.dt-toggles { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+.dt-toggles label { font-size: 13.5px; } .dt-toggles span { color: var(--muted); font-size: 12.5px; }
+.dt-form { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px 14px; margin-top: 8px; }
+.dt-form label { display: flex; flex-direction: column; gap: 3px; font-size: 13px; }
+.dt-form .dt-wide { grid-column: 1 / -1; margin: 4px 0 0; }
+.dt-form input, .dt-form select, .dt-ip input, .dt-ip select, .dt-objs-sel, #fx { font: 13.5px var(--body); padding: 5px 7px; border: 1px solid var(--rule); border-radius: 3px; background: var(--panel); color: var(--ink); min-width: 0; }
+.dt-people { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 6px 14px; }
+.dt-objs { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 4px 14px; font-size: 13px; }
+.dt-objs label { flex-direction: row; align-items: flex-start; gap: 6px; }
+.dt-fx { display: flex; gap: 6px; align-items: center; font-size: 13px; } #fx { max-width: 260px; }
+.dt-hidden-opts { font-size: 12.5px; color: var(--muted); padding: 6px 0; }
+/* Report: overview, objectives, improvement plan */
+.dt-kv th { width: 180px; text-transform: none; font: 600 12.5px var(--body); color: var(--ink); }
+.dt-rate { font: 600 11.5px var(--mono); }
+.dt-rate.P { color: var(--good); } .dt-rate.S { color: var(--c7); } .dt-rate.M { color: var(--warn); } .dt-rate.U { color: var(--bad); }
+.dt-ip td input, .dt-ip td select { width: 100%; font-size: 12.5px; padding: 3px 5px; }
+.dt-ip .sev { font: 600 11px var(--mono); text-transform: uppercase; }
+.dt-ip .sev.high { color: var(--bad); } .dt-ip .sev.med { color: var(--warn); } .dt-ip .sev.low { color: var(--c7); }
+.dt-tl .fx { color: var(--c6); }
+
 /* Print: the after-action report only. */
 @media print {
   body { background: #fff; color: #000; padding: 0; }
@@ -155,6 +176,7 @@
   .dt-tl { min-width: 0; font-size: 10.5px; }
   .dt-findings li, .dt-tl tr { break-inside: avoid; }
   .dt-part .bar i, .dt-csf .cat.on { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .dt-ip input, .dt-ip select, .dt-objs-sel { border: 0; padding: 0; background: none; appearance: none; -webkit-appearance: none; font-size: 10.5px; color: #000; }
 }
 @media (max-width: 520px) {
   .dt-flagrow { grid-template-columns: 1fr auto; } .dt-flagrow .k { grid-column: 1 / -1; }
@@ -165,3 +187,6 @@
 /* Team mode on a projector: labels only until the facilitator asks for details. */
 .dt-seats.terse .dt-act .x { display: none; }
 .dt-seats.terse .dt-act { padding: 6px 9px; }
+.dt-ip { min-width: 900px; }
+.dt-ip td:nth-child(5) select { min-width: 110px; } .dt-ip td:nth-child(6) input { min-width: 130px; } .dt-ip td:nth-child(7) input { min-width: 140px; }
+@media print { .dt-ip { min-width: 0; } .dt-ip td select, .dt-ip td input { min-width: 0 !important; } }

@@ -100,7 +100,8 @@ body { --k-us: var(--us, #2f6db3); --k-tw: var(--roc, #17917f); --k-cn: var(--pr
 .k4-info.k4-used { font: 700 11px var(--mono); letter-spacing: .06em; background: var(--ink); color: var(--panel); }
 .k4-ieg { display: inline-grid; place-items: center; width: 17px; height: 17px; border: 1px solid var(--rule); border-radius: 50%; font: 700 10px var(--mono); vertical-align: 1px; }
 .k4-info i { font-style: normal; opacity: .75; }
-.k4-info:hover, .k4-info[aria-expanded="true"] { border-color: var(--accent); outline: 1px solid var(--accent); }
+.k4-info[aria-expanded="true"] { border-color: var(--accent); outline: 1px solid var(--accent); }
+@media (hover: hover) { .k4-info:hover { border-color: var(--accent); outline: 1px solid var(--accent); } }
 .k4-info:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
 .k4-tip { position: fixed; z-index: 70; background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-top: 3px solid var(--accent); border-radius: 5px; padding: 8px 11px; font-size: 12.5px; line-height: 1.4; box-shadow: 0 6px 22px rgba(0, 0, 0, .25); }
 .k4-tip[hidden] { display: none; }
@@ -292,7 +293,8 @@ body { --k-us: var(--us, #2f6db3); --k-tw: var(--roc, #17917f); --k-cn: var(--pr
 .k4-h { margin: 0 0 10px; font: 700 18px var(--display); }
 .k4-sub { margin: 0 0 4px; font: 600 10.5px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
 .k4-info.k4-how { width: auto; height: auto; border: 0; border-radius: 3px; background: transparent; padding: 1px 2px; font: 500 12px var(--body); color: var(--muted); text-decoration: underline dotted; text-underline-offset: 3px; text-transform: none; letter-spacing: 0; }
-.k4-info.k4-how:hover, .k4-info.k4-how[aria-expanded="true"] { color: var(--ink); outline: 0; }
+.k4-info.k4-how[aria-expanded="true"] { color: var(--ink); outline: 0; }
+@media (hover: hover) { .k4-info.k4-how:hover { color: var(--ink); outline: 0; } }
 
 /* Bar: the view switch */
 .k4-viewsw { display: flex; align-items: center; gap: 6px; font-size: 12.5px; }
@@ -342,7 +344,8 @@ body { --k-us: var(--us, #2f6db3); --k-tw: var(--roc, #17917f); --k-cn: var(--pr
 .k4-mapwrap svg { border-radius: 4px 4px 0 0; }
 .k4-zone { cursor: pointer; outline: none; }
 .k4-zone .k4-zring { transition: stroke-width var(--dur-feedback) var(--ease-enter); }
-.k4-zone:hover .k4-zring, .k4-zone[aria-expanded="true"] .k4-zring { stroke: var(--mine); stroke-width: 2.5; stroke-dasharray: none; stroke-opacity: 1; }
+.k4-zone[aria-expanded="true"] .k4-zring { stroke: var(--mine); stroke-width: 2.5; stroke-dasharray: none; stroke-opacity: 1; }
+@media (hover: hover) { .k4-zone:hover .k4-zring { stroke: var(--mine); stroke-width: 2.5; stroke-dasharray: none; stroke-opacity: 1; } }
 .k4-zone:focus-visible .k4-zhit { stroke: var(--focus); stroke-width: 2.5; }
 .k4-pop { position: absolute; z-index: 15; background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-top: 3px solid var(--mine); border-radius: 6px; padding: 6px 10px 10px; box-shadow: 0 8px 24px rgba(0, 0, 0, .25); font-size: 13px; }
 .k4-poph { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
@@ -410,7 +413,7 @@ body { --k-us: var(--us, #2f6db3); --k-tw: var(--roc, #17917f); --k-cn: var(--pr
 .k4-stchip { display: flex; flex-direction: column; align-items: flex-start; padding: 5px 6px; min-height: 44px; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel); color: var(--ink); cursor: pointer; font: 600 12.5px var(--body); text-align: left; }
 .k4-stchip b { font: 600 10.5px var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
 .k4-stchip small { font: 400 11px var(--mono); color: var(--muted); white-space: nowrap; }
-.k4-stchip:hover { border-color: var(--mine); }
+@media (hover: hover) { .k4-stchip:hover { border-color: var(--mine); } }
 .k4-feed ul { padding-left: 16px; }
 
 /* Simple view: hides the belief bars, the fog detail and the logistics breakdown. The game runs the same. */
@@ -471,3 +474,17 @@ body.k4-nostaff #advise, body.k4-nostaff #advice, body.k4-nostaff .k4-fhint { di
 .k4-edge { margin: 8px 0 0; }
 .k4-sign { display: inline-block; margin: 2px 6px 0 0; color: var(--muted); }
 .k4-sign.on { color: var(--ink); font-weight: 600; }
+
+/* better-ui pass (2026-10-12): press feedback, contained scroll, no double tap flash. Hover styles above sit behind
+   @media (hover: hover) so a tapped zone or chip does not stay lit on touch screens. */
+.k4-seat, .k4-scen, .k4-postures button, .k4-tabs button, .k4-steps [role="tab"], .k4-ptabs button, .k4-stchip, .k4-zone,
+.k4-actions .btn, .k4-main .btn, .k4-dialog .btn { -webkit-tap-highlight-color: transparent; }
+@media (prefers-reduced-motion: no-preference) {
+  .k4-seat, .k4-scen, .k4-postures button, .k4-stchip, .k4-actions .btn, .k4-main .btn, .k4-dialog .btn {
+    transition-property: scale, background-color, border-color, color; transition-duration: 150ms; transition-timing-function: ease-out;
+  }
+  .k4-seat:not(:disabled):active, .k4-scen:not(:disabled):active, .k4-postures button:not(:disabled):active, .k4-stchip:not(:disabled):active,
+  .k4-actions .btn:not(:disabled):active, .k4-main .btn:not(:disabled):active, .k4-dialog .btn:not(:disabled):active { scale: 0.96; }
+}
+.k4-dialog { overscroll-behavior: contain; }
+.k4-scroll { overscroll-behavior-x: contain; }

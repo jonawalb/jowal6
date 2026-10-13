@@ -159,10 +159,10 @@ function countBar(was, wait = 0) {
 function render() {
   renderBar();
   renderPanel();
-  if (g.over) return writeHash(st);
-  drawOrbit(g);
   $('outlook').innerHTML = outlookHtml(g, legacy(g, P, 25, g.turn), P, DEBRIS0);
   $('outlook-note').textContent = 'Risk is the chance per year that debris ends a satellite\'s mission, against the pre-war level. Losses assume both sides rebuild to full strength after the war.';
+  if (g.over) return writeHash(st);
+  drawOrbit(g);
   writeHash(st);
 }
 
@@ -174,6 +174,8 @@ $('restart').onclick = () => { const v = Math.round(+$('seed').value); if (v >= 
 $('new-game').onclick = () => { st.seed = 1 + Math.floor(Math.random() * 999998); restart(); window.scrollTo({ top: 0, behavior: reduced.matches ? 'auto' : 'smooth' }); };
 $('again').onclick = () => { restart(); window.scrollTo({ top: 0, behavior: reduced.matches ? 'auto' : 'smooth' }); };
 $('again-new').onclick = () => $('new-game').click();
+$('again-side').onclick = () => $('again').click();
+$('again-new-side').onclick = () => $('new-game').click();
 $('copy-link').onclick = async () => {
   try { await navigator.clipboard.writeText(location.href); $('copy-link').textContent = 'Link copied'; }
   catch { $('copy-link').textContent = 'Copy the address bar'; }

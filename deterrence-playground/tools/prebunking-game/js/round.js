@@ -127,7 +127,7 @@ export function renderRound(root, r, st, onSubmit) {
     ${ch.after || ''}
     ${needCheck ? checkHtml(r, st) : ''}
     <div class="answer" id="answer">
-      <div class="sl-h"><label for="belief">How likely is it, now that you have seen the report?</label><output id="bel-out" class="num">move the slider</output></div>
+      <div class="sl-h"><label for="belief">How likely is it, now that you have seen the report?</label><output id="bel-out" class="num idle">move the slider</output></div>
       <input type="range" id="belief" min="0" max="100" step="1" value="50" ${needCheck ? 'disabled' : ''}>
       <div class="ticks" aria-hidden="true"><span>0%</span><span>50%</span><span>100%</span></div>
       <div class="ans-row"><button type="button" class="btn solid" id="submit" disabled>Lock in</button>
@@ -137,7 +137,7 @@ export function renderRound(root, r, st, onSubmit) {
 
   const slider = root.querySelector('#belief'), out = root.querySelector('#bel-out'), submit = root.querySelector('#submit');
   let touched = false;
-  slider.addEventListener('input', () => { touched = true; out.textContent = `${slider.value}%`; submit.disabled = slider.disabled; });
+  slider.addEventListener('input', () => { touched = true; out.classList.remove('idle'); out.textContent = `${slider.value}%`; submit.disabled = slider.disabled; });
 
   // Channel behaviour
   if (r.channel === 'sound') {

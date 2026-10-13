@@ -93,7 +93,7 @@
 .dt-tabs .ct { font: 500 11px var(--mono); margin-left: 4px; }
 .dt-seats.team { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
 .dt-seat h3 { margin: 4px 0 2px !important; font-size: 16px !important; display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
-.dt-seat h3 .num { font-size: 12.5px; color: var(--muted); font-weight: 500; }
+.dt-seat h3 .num { font-size: 12.5px; color: var(--muted); font-weight: 500; white-space: nowrap; }
 .dt-q { margin: 0 0 6px; font-size: 13px; font-style: italic; color: var(--ink); padding: 4px 8px; border-left: 3px solid var(--c6); background: color-mix(in srgb, var(--c6) 6%, transparent); }
 .dt-acts { display: flex; flex-direction: column; gap: 5px; }
 .dt-act { text-align: left; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel); padding: 7px 9px; cursor: pointer; display: grid; grid-template-columns: 18px 1fr; gap: 0 8px; align-items: start; }
@@ -104,7 +104,7 @@
 .dt-act b { font-size: 13.5px; }
 .dt-act .x { grid-column: 2; font-size: 12px; color: var(--muted); }
 .dt-act .why { grid-column: 2; font-size: 11.5px; color: var(--warn); }
-.dt-act .tag { font: 500 10.5px var(--mono); color: var(--muted); margin-left: 6px; }
+.dt-act .tag { font: 500 10.5px var(--mono); color: var(--muted); margin-left: 6px; display: inline-block; white-space: nowrap; }
 .dt-act:disabled { cursor: default; opacity: .55; }
 .dt-more { margin-top: 6px; } .dt-more summary { cursor: pointer; font-size: 12.5px; color: var(--muted); padding: 2px 0; } .dt-more .dt-acts { margin-top: 5px; }
 .dt-endturn { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; border-top: 1px solid var(--rule); margin-top: 12px; padding-top: 10px; }

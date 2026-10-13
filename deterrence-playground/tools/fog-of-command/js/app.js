@@ -173,7 +173,7 @@ function selPanel() {
     return;
   }
   const info = `<b>${u.name}</b> · ${TYPES[u.type].label.toLowerCase()} · ${u.str0 ? `strength ${u.str.toFixed(1)} of ${u.str0}` : 'no combat strength'}`;
-  const where_ = u.node === 'off' ? `Enters at <b>${NAME[u.entry]}</b> at ${hhmm(u.arrive)}. Click a sector on your entry edge to change where.` : `At ${NAME[where(u)] || 'the front'}. Click a sector to send it there.`;
+  const where_ = u.node === 'off' ? `Enters at <b>${NAME[u.entry]}</b> at ${hhmm(u.arrive)}. Click a sector on your entry edge to change where.` : `At ${placeOf(u) || 'the front'}. Click a sector to send it there.`;
   const recon = u.type === 'recon' && u.stance === 'give' ? ' <span class="muted">Recon troops start set to give ground, so they fall back from a stronger enemy instead of being destroyed. Choose Hold to make one stand.</span>' : '';
   const stance = u.type === 'decoy' ? '<span class="muted">The decoy cannot fight; enemy units next door see it as a tank battalion until they share its sector or watch it under fire, and enemy recon two sectors away hear it as one at once. Keep it two sectors from Blue\'s recon: heard, never watched.</span>'
     : `<span class="fc-stance" role="group" aria-label="Standing order (key G)"><button type="button" class="btn" data-stance="hold" aria-pressed="${u.stance !== 'give'}">Hold</button><button type="button" class="btn" data-stance="give" aria-pressed="${u.stance === 'give'}">Give ground</button></span>`;
@@ -198,7 +198,7 @@ function liveView() {
   return {
     me, units: g.units, pic: beliefAt(g, me, g.t), mode: 'belief', live: true, routes: routes(), selected: sel,
     target: g.fire[me][g.t] || null, fireTag: f ? fireTag(g, f) : null,
-    hits: g.fires.filter(x => x.t === g.t && x.side === foe && x.hits.some(h => DEF[h.unit].side === me)).map(x => x.node),
+    hits: g.fires.filter(x => x.t === g.t && x.side === foe && x.hits.length).map(x => x.node),
     fights: g.fights.filter(x => x.t === g.t - 1).map(x => x.node),
     late: lateIds(), idle: Object.fromEntries(mineUnits().map(u => [u.id, idleReason(u)]).filter(([, r]) => r)),
   };
@@ -238,7 +238,7 @@ function select(id, quiet = false) {
   sel = sel === id && !quiet ? null : id;
   if (sel && !quiet) {
     say(u.node === 'off' ? `<b>${u.short}</b> picked. It enters at ${NAME[u.entry]} at ${hhmm(u.arrive)}: click a sector on your entry edge to change where.`
-      : `<b>${u.short}</b> picked, at ${NAME[where(u)] || 'the front'}. Click the sector where it should go.`);
+      : `<b>${u.short}</b> picked, at ${placeOf(u) || 'the front'}. Click the sector where it should go.`);
     if (narrowQ.matches && tab === 'units') setTab('map');
   }
   draw();

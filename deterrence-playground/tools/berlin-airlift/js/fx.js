@@ -8,7 +8,6 @@ import { fmt } from './util.js';
 const ping = (...a) => requestAnimationFrame(() => ping0(...a));
 const $ = id => document.getElementById(id);
 const trailer = () => document.documentElement.dataset.skin === 'trailer';
-const FIELD_AT = { teg: [520, 112], gat: [468, 176], thf: [566, 204] }; // js/map.js FIELDS
 
 /** Roll a number from what is on screen to its new value; ends on the exact text the page rendered. */
 function roll(el, to, ms = 400) {
@@ -70,8 +69,8 @@ function arrivals(g) {
   if (t - lastPing < (trailer() ? 200 : 320)) return;
   lastPing = t;
   const rich = trailer(), r = g.rec[g.rec.length - 1], map = $('map');
-  for (const [k, [x, y]] of Object.entries(FIELD_AT)) {
-    const land = r.land[k] || 0;
+  for (const c of map.querySelectorAll('circle[data-field]')) {
+    const land = r.land[c.dataset.field] || 0, x = +c.getAttribute('cx'), y = +c.getAttribute('cy');
     if (land > 0) ping(map, x, y, { color: 'var(--you)', r: (rich ? 16 : 11) + Math.min(14, land / 40), ms: 750, width: rich ? 2 : 1.5 });
   }
   const bars = $('chart').querySelectorAll('rect.you'), bar = bars[bars.length - 1];

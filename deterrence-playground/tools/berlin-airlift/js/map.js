@@ -23,6 +23,8 @@ const FIELDS = [
   { k: 'gat', name: 'Gatow', sector: 'British sector', x: 468, y: 176, ly: 40 },
   { k: 'thf', name: 'Tempelhof', sector: 'U.S. sector', x: 566, y: 204, ly: 40 },
 ];
+// On a desktop the slot bars and counts are drawn too, so Gatow and Tempelhof sit further inside the circle.
+const WIDE_AT = { gat: [470, 168], thf: [550, 182] };
 const WX = ['Good', 'Cloud', 'Fog'];
 
 export function drawMap(svg, view) {
@@ -54,13 +56,14 @@ export function drawMap(svg, view) {
   // Berlin
   el('circle', { cx: 518, cy: 165, r: 92, class: 'mp-berlin' }, svg);
   el('text', { x: 518, y: 62, class: 'mp-zt', 'text-anchor': 'middle' }, svg, 'Berlin');
-  for (const f of FIELDS) {
+  for (const f0 of FIELDS) {
+    const f = !nar && WIDE_AT[f0.k] ? { ...f0, x: WIDE_AT[f0.k][0], y: WIDE_AT[f0.k][1] } : f0;
     const land = view.land[f.k] || 0, slots = view.slots[f.k] || 0;
-    el('circle', { cx: f.x, cy: f.y, r: 7, class: 'mp-base' }, svg);
+    el('circle', { cx: f.x, cy: f.y, r: 7, class: 'mp-base', 'data-field': f.k }, svg);
     const ty = f.y + (f.ly < 0 ? f.ly : 20);
     el('text', { x: f.x, y: ty, class: 'mp-ft', 'text-anchor': 'middle' }, svg, f.name);
     if (!view.open[f.k]) { el('text', { x: f.x, y: f.ly < 0 ? f.y + 22 : ty + 13, class: 'mp-closed', 'text-anchor': 'middle' }, svg, view.openNote[f.k]); continue; }
-    const bw = 64, bx = f.x - bw / 2, by = f.ly < 0 ? f.y + 11 : ty + 5;
+    const bw = nar ? 64 : 56, bx = f.x - bw / 2, by = f.ly < 0 ? f.y + 11 : ty + 5;
     el('rect', { x: bx, y: by, width: bw, height: 6, rx: 3, class: 'mp-slot' }, svg);
     const u = slots > 0 ? Math.min(1, land / slots) : 0;
     el('rect', { x: bx, y: by, width: bw * u, height: 6, rx: 3, class: 'mp-use' + (u > 0.97 ? ' full' : '') }, svg);

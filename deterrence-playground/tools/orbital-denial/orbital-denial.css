@@ -151,7 +151,11 @@
   .od-kpis { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .od-kpi:last-child { grid-column: 1 / -1; }
 }
-.panel.done .sec:not(:first-child), .panel.done .od-slots, .panel.done .od-go, .panel.done .sec > .eyebrow { display: none; }
+.panel.done .sec:not(:first-child):not(.od-adv), .panel.done .od-slots, .panel.done .od-go, .panel.done .sec > .eyebrow { display: none; }
+/* Game over: the short panel (result and settings) stays beside the long review instead of leaving an empty column. */
+@media (min-width: 1001px) { .panel.done { position: sticky; top: 16px; } }
+.od-again { display: none; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.panel.done .od-again { display: flex; }
 .od-mc tbody th { text-transform: none; font-family: var(--body); letter-spacing: 0; font-weight: 500; font-size: 12.5px; color: var(--ink); white-space: normal; min-width: 120px; }
 .od-mc td, .od-mc thead th { white-space: nowrap; }
 @media (max-width: 600px) {

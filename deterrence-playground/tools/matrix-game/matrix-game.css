@@ -111,8 +111,9 @@
 
 /* Debrief and log */
 .mg-debrief h2 { margin: 4px 0 10px; font-size: 24px; }
-.mg-debrief-top { display: grid; grid-template-columns: minmax(0, 240px) minmax(0, 1fr); gap: 16px; margin-bottom: 12px; }
-@media (max-width: 640px) { .mg-debrief-top { grid-template-columns: minmax(0, 1fr); } }
+.mg-debrief-top { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; margin-bottom: 12px; }
+.mg-debrief-top .status span { font-size: 13.5px; line-height: 1.5; }
+.mg-debrief-top .status span b.num { font-size: 1.15em; }
 .mg-lessons { margin: 4px 0 12px; padding-left: 1.1em; display: flex; flex-direction: column; gap: 4px; }
 .mg-debrief tr.me td { background: var(--chip); }
 .mg-btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }

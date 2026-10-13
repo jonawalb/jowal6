@@ -70,6 +70,7 @@
 .answer { display: flex; flex-direction: column; gap: 5px; border-top: 1px solid var(--rule); padding-top: 12px; }
 .answer .sl-h { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; font-size: 14px; font-weight: 500; }
 .answer output { font: 600 20px var(--mono); color: var(--brand-ink); white-space: nowrap; }
+.answer output.idle { font: 400 13px var(--mono); color: var(--muted); }
 .answer input { width: 100%; accent-color: var(--brand-ink); height: 28px; }
 .answer input:disabled { opacity: .35; }
 .ticks { display: flex; justify-content: space-between; font: 11px var(--mono); color: var(--muted); }
@@ -139,7 +140,7 @@
 }
 @media (max-width: 640px) {
   .q { font-size: 22px; }
-  .answer output { font-size: 16px; }
+  .answer output:not(.idle) { font-size: 16px; }
   .answer .sl-h { font-size: 13.5px; }
   .rcard { padding: 12px 12px 14px; }
   .evidence, .twostat { grid-template-columns: minmax(0, 1fr); }
@@ -147,6 +148,7 @@
   .snd { grid-template-columns: 70px minmax(0, 1fr); }
   .snd .btn { grid-column: 1 / -1; justify-self: start; }
   .dr { grid-template-columns: 92px minmax(0, 1fr); gap: 6px; }
+  .dr-l small { display: block; margin-left: 0; }   /* "Body and clock new" does not fit 92px on one line */
   .cmp-r { grid-template-columns: minmax(0, 1fr); gap: 3px; }
   .cmp-h { display: none; }
   .cmp-r > span::before { content: attr(data-l) ': '; font: 500 11px var(--mono); color: var(--muted); }

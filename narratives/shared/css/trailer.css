@@ -48,12 +48,12 @@
 
 /* Buttons: amber is the player's action. */
 :root[data-skin="trailer"] .btn { border-radius: 999px; border-color: var(--rule); background: var(--chip); color: var(--ink); transition: border-color var(--dur-feedback, 150ms) var(--ease-enter, ease-out), transform var(--dur-feedback, 150ms) var(--ease-enter, ease-out), background var(--dur-feedback, 150ms) var(--ease-enter, ease-out); }
-:root[data-skin="trailer"] .btn:hover { border-color: rgba(240, 169, 59, .6); }   /* a border, not a glow (docs/MOTION_RULES.md) */
+@media (hover: hover) { :root[data-skin="trailer"] .btn:hover { border-color: rgba(240, 169, 59, .6); } }   /* a border, not a glow (docs/MOTION_RULES.md) */
 :root[data-skin="trailer"] .btn:active { transform: translateY(1px); }
 :root[data-skin="trailer"] .btn.solid, :root[data-skin="trailer"] .btn.primary, :root[data-skin="trailer"] .btn[aria-pressed="true"] {
   background: var(--accent); border-color: var(--accent); color: #111; font-weight: 600;
 }
-:root[data-skin="trailer"] .btn.solid:hover { background: #f6bb5c; }
+@media (hover: hover) { :root[data-skin="trailer"] .btn.solid:hover { background: #f6bb5c; } }
 :root[data-skin="trailer"] input[type="range"] { accent-color: var(--accent); }
 :root[data-skin="trailer"] .status { background: var(--panel); }
 :root[data-skin="trailer"] a { color: var(--accent); }
@@ -68,12 +68,13 @@
 .skin-chooser { position: fixed; inset: 0; z-index: 10000; display: grid; place-items: end; padding: 16px; background: transparent; pointer-events: none; }   /* non-modal: the page behind stays live (D-28) */
 .skin-chooser .box { pointer-events: auto; }
 .skin-chooser[hidden] { display: none; }
-.skin-chooser .box { width: min(520px, 100%); max-height: calc(100vh - 32px); overflow-y: auto; background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-radius: 10px; padding: 22px; box-shadow: 0 30px 80px -30px #000; }
+.skin-chooser .box { width: min(520px, 100%); max-height: calc(100vh - 32px); overflow-y: auto; overscroll-behavior: contain; background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-radius: 10px; padding: 22px; box-shadow: 0 30px 80px -30px #000; }
 .skin-chooser h2 { margin: 0 0 4px; font-size: 1.35rem; }
 .skin-chooser p { margin: 0 0 16px; color: var(--muted); }
 .skin-chooser .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .skin-chooser .opt { text-align: left; border: 1px solid var(--rule); border-radius: 8px; padding: 0; overflow: hidden; background: var(--chip); color: var(--ink); cursor: pointer; font: inherit; }
-.skin-chooser .opt:hover, .skin-chooser .opt:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+.skin-chooser .opt:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+@media (hover: hover) { .skin-chooser .opt:hover { outline: 2px solid var(--focus); outline-offset: 1px; } }
 .skin-chooser .sw { height: 92px; display: block; }
 .skin-chooser .sw.orig { background: linear-gradient(135deg, #f4f5f6 0 58%, #0c1f3a 58% 62%, #f4f5f6 62%); }
 .skin-chooser .sw.trl { background:

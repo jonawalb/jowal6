@@ -32,7 +32,7 @@ body.loading .loading-note { position: absolute; inset: 0; display: grid; place-
 .ev-band { fill: var(--muted); opacity: .1; pointer-events: none; }
 .ev-stem { stroke: var(--muted); stroke-width: 1; }
 .ev-label { font: 600 10.5px var(--body); fill: var(--ink); cursor: pointer; }
-.ev-label:hover { fill: var(--accent); }
+@media (hover: hover) { .ev-label:hover { fill: var(--accent); } }
 .ev-label.flip { text-anchor: end; }
 .ax-tick { stroke: var(--faint); }
 .ax-tick.yr { stroke: var(--ink); }
@@ -40,7 +40,7 @@ body.loading .loading-note { position: absolute; inset: 0; display: grid; place-
 .ax-label.yr { fill: var(--ink); font-weight: 500; }
 .cov { fill: var(--faint); }
 .lab-row { font: 500 12px var(--body); fill: var(--ink); text-anchor: end; cursor: pointer; }
-.lab-row:hover { fill: var(--accent); }
+@media (hover: hover) { .lab-row:hover { fill: var(--accent); } }
 .lab-row.on { font-weight: 700; fill: var(--heat); }
 .lab-row.two { font-size: 10.5px; }
 .lab-cat { font: 600 10.5px var(--mono); fill: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
@@ -77,7 +77,7 @@ body.loading .loading-note { position: absolute; inset: 0; display: grid; place-
 .quote mark, .dict mark { background: color-mix(in oklab, var(--accent) 30%, transparent); color: inherit; padding: 0 1px; border-radius: 2px; }
 .detail .more summary { cursor: pointer; font-size: 13px; color: var(--muted); }
 .detail .more ul { margin: 6px 0 0; padding-left: 18px; font-size: 12.5px; }
-@media (min-width: 1021px) { .panel { position: sticky; top: 10px; max-height: calc(100vh - 20px); overflow-y: auto; } }
+@media (min-width: 1021px) { .panel { position: sticky; top: 10px; max-height: calc(100vh - 20px); overflow-y: auto; overscroll-behavior: contain; } }
 
 /* Compare */
 .compare { padding: 14px; display: flex; flex-direction: column; gap: 12px; }
@@ -105,7 +105,8 @@ body.loading .loading-note { position: absolute; inset: 0; display: grid; place-
 .events { list-style: none; padding: 0; }
 .events li { margin: 0 0 8px; }
 .ev-go { background: none; border: 0; padding: 0; text-align: left; font: inherit; color: var(--ink); cursor: pointer; }
-.ev-go:hover b, .ev-go:focus-visible b { color: var(--accent); text-decoration: underline; }
+.ev-go:focus-visible b { color: var(--accent); text-decoration: underline; }
+@media (hover: hover) { .ev-go:hover b { color: var(--accent); text-decoration: underline; } }
 .ev-go:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .ev-src { display: block; font-size: 12px; }
 .dict-wrap { grid-template-columns: minmax(0, 1fr) !important; }

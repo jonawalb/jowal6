@@ -22,7 +22,8 @@ code { font-family: var(--mono); font-size: 11.5px; background: var(--chip); pad
 #hist .col { cursor: pointer; }
 #hist .bar { fill: var(--c7); }
 #hist .bar.med { fill: var(--c5); }
-#hist .col:hover .bar, #hist .col.on .bar { fill: var(--accent); }
+#hist .col.on .bar { fill: var(--accent); }
+@media (hover: hover) { #hist .col:hover .bar { fill: var(--accent); } }
 .legend { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; font-size: 12px; color: var(--muted); }
 .legend .key { display: inline-flex; gap: 5px; align-items: center; }
 .legend i { display: inline-block; width: 12px; height: 10px; border-radius: 2px; }

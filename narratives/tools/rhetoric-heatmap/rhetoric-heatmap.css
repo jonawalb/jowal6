@@ -14,7 +14,7 @@ code { font-family: var(--mono); font-size: 11.5px; }
 .search input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .examples { margin: 0; font-size: 12.5px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
 .examples button { border: 1px solid var(--rule); background: transparent; border-radius: 12px; padding: 2px 9px; font-size: 12px; cursor: pointer; }
-.examples button:hover { border-color: var(--muted); }
+@media (hover: hover) { .examples button:hover { border-color: var(--muted); } }
 
 .hm { position: relative; display: grid; grid-template-columns: 150px minmax(0, 1fr); padding: 6px 8px 6px 0; }
 .hm-labels { display: block; }
@@ -86,7 +86,7 @@ body.loading .loading-note { display: block; position: absolute; inset: 0; displ
 .tour p { margin: 0; font-size: 13px; }
 .tour-nav { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
 @media (max-width: 1020px) { .panel .detail { max-height: none; } }
-@media (min-width: 1021px) { .panel { position: sticky; top: 10px; max-height: calc(100vh - 20px); overflow-y: auto; } }
+@media (min-width: 1021px) { .panel { position: sticky; top: 10px; max-height: calc(100vh - 20px); overflow-y: auto; overscroll-behavior: contain; } }
 @media (max-width: 600px) {
   body { padding-inline: 12px; }
   .acts { margin-left: 0; }

@@ -8,6 +8,8 @@ export const money = m => {
 export const range = (lo, hi) => (lo === hi ? money(lo) : `${money(lo)}–${money(hi)}`);
 export const ratio = r => (r == null ? 'n/a' : r >= 10 ? Math.round(r) + ' : 1' : r.toFixed(1) + ' : 1');
 export const clock = t => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
+/** A count with its noun: 1 leaker, 2 leakers. */
+export const count = (n, one, many = one + 's') => `<b>${n}</b> ${n === 1 ? one : many}`;
 export const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 /** Status class for a pair of cost-exchange ratios (spent per dollar destroyed). */

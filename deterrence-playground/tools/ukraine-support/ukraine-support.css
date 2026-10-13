@@ -20,7 +20,7 @@ code { font-family: var(--mono); font-size: 11.5px; overflow-wrap: anywhere; }
 .gchip i { width: 11px; height: 11px; border-radius: 2px; opacity: .35; }
 .gchip[aria-pressed="true"] { color: var(--ink); border-color: var(--muted); background: var(--chip); }
 .gchip[aria-pressed="true"] i { opacity: 1; }
-.gchip:hover { border-color: var(--ink); }
+@media (hover: hover) { .gchip:hover { border-color: var(--ink); } }
 .gchip:focus-visible, .rk:focus-visible, .lnk:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
 .tg.compact { padding: 2px 4px; max-width: 520px; }
 #euc-note:empty { display: none; }
@@ -46,7 +46,7 @@ code { font-family: var(--mono); font-size: 11.5px; overflow-wrap: anywhere; }
 .rank li.none { color: var(--muted); font-size: 13px; padding: 8px 0; }
 .rk { width: 100%; display: grid; grid-template-columns: 22px minmax(0, 170px) minmax(0, 1fr) 156px; gap: 8px; align-items: center; background: transparent;
   border: 1px solid transparent; border-radius: 3px; padding: 3px 4px; cursor: pointer; text-align: left; font: 13px var(--body); color: var(--ink); }
-.rk:hover { border-color: var(--rule); background: var(--chip); }
+@media (hover: hover) { .rk:hover { border-color: var(--rule); background: var(--chip); } }
 .rk.on { border-color: var(--ink); background: var(--chip); }
 .rk-n { font: 11px var(--mono); color: var(--muted); text-align: right; }
 .rk-d { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -83,7 +83,7 @@ code { font-family: var(--mono); font-size: 11.5px; overflow-wrap: anywhere; }
 /* Panel */
 .readout dd small { color: var(--muted); font-size: 11.5px; display: block; }
 #split { margin-top: 4px; }
-@media (min-width: 1021px) { .panel { position: sticky; top: 10px; max-height: calc(100vh - 20px); overflow-y: auto; } }
+@media (min-width: 1021px) { .panel { position: sticky; top: 10px; max-height: calc(100vh - 20px); overflow-y: auto; overscroll-behavior: contain; } }
 
 /* Walkthrough */
 .tour { position: absolute; right: 12px; top: 150px; width: min(360px, calc(100% - 24px)); background: var(--panel); border: 1px solid var(--rule); border-top: 3px solid var(--accent); border-radius: 4px; padding: 12px 14px; box-shadow: 0 8px 28px rgba(0, 0, 0, .18); display: flex; flex-direction: column; gap: 6px; z-index: 6; }

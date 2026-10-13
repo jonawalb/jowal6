@@ -84,7 +84,7 @@
 .ss-planlist li { margin: 2px 0; } .ss-planlist li > span { display: inline; }
 .ss-planlist li.muted { list-style: none; margin-left: -20px; font-size: 12.5px; }
 .ss-x { border: 0; background: transparent; color: var(--muted); cursor: pointer; font-size: 16px; padding: 0 6px; }
-.ss-x:hover { color: var(--bad); }
+@media (hover: hover) { .ss-x:hover { color: var(--bad); } }
 
 .ss-read h3 { margin: 0 0 4px; font-size: 15px; }
 .ss-stack { display: flex; height: 12px; border-radius: 3px; overflow: hidden; margin: 6px 0 4px; background: var(--chip); }

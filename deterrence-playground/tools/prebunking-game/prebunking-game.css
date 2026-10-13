@@ -54,14 +54,14 @@
 .agrid { display: grid; grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(5, 1fr); gap: 2px; width: 150px; height: 150px;
   background: linear-gradient(to right, var(--red-soft), var(--panel) 50%, var(--blue-soft)); border: 1px solid var(--rule); padding: 2px; box-sizing: border-box; }
 .gc { border: 1px solid var(--rule); background: transparent; border-radius: 2px; cursor: pointer; padding: 0; }
-.gc:hover { border-color: var(--muted); }
+@media (hover: hover) { .gc:hover { border-color: var(--muted); } }
 .gc[aria-pressed="true"] { background: var(--ink); }
 .ax-y { display: flex; flex-direction: column; justify-content: space-between; font: 11px var(--mono); color: var(--muted); }
 .ax-y span { writing-mode: vertical-rl; transform: rotate(180deg); }
 .ax-x { grid-column: 2; display: flex; justify-content: space-between; font: 11px var(--mono); color: var(--muted); }
 .words { display: flex; flex-wrap: wrap; gap: 5px; }
 .words button { border: 1px solid var(--rule); background: transparent; border-radius: 12px; padding: 4px 10px; font-size: 12.5px; cursor: pointer; }
-.words button:hover { border-color: var(--muted); }
+@media (hover: hover) { .words button:hover { border-color: var(--muted); } }
 .words button[aria-pressed="true"] { border-color: var(--blue); background: var(--blue-soft); }
 .words button:disabled, .gc:disabled { cursor: default; }
 #ck-done { align-self: flex-start; margin-top: 4px; }

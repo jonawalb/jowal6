@@ -35,7 +35,7 @@ export function choose(g, ev, i) {
 /** What the "Ask Washington" button would do now, or null if nothing is available. */
 export function requestOption(g) {
   const d = dateOf(g.day);
-  if (d < '1948-07-22') return null;
+  if (d < '1948-07-22' || dueEvent(g)) return null;   // the NSC and Truman cards ask the same question while open
   if (g.flags.july !== true) return { key: 'july', label: 'Ask for the summer C-54 build-up', cost: 3 };
   if (d >= '1948-10-01' && g.flags.oct !== true) return { key: 'oct', label: 'Ask for the winter C-54 build-up', cost: 3 };
   if (d >= '1948-10-22' && g.extra < 40) return { key: 'extra', label: 'Ask for 20 more C-54s', cost: 4 };

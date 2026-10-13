@@ -44,7 +44,7 @@
 .evcard .ev-src { font-size: 11.5px; color: var(--muted); }
 .ev-ch { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 6px; }
 .ev-ch button { text-align: left; padding: 8px 10px; border: 1px solid var(--rule); border-radius: 3px; background: transparent; cursor: pointer; font-size: 13px; line-height: 1.3; }
-.ev-ch button:hover { border-color: var(--muted); }
+@media (hover: hover) { .ev-ch button:hover { border-color: var(--muted); } }
 .ev-ch button b { display: block; font-weight: 600; }
 .ev-ch button small { display: block; color: var(--muted); font-size: 11.5px; margin-top: 2px; }
 .ev-ch button.hist b::after { content: " (historical)"; font-weight: 400; color: var(--muted); font-size: 11.5px; }
@@ -101,7 +101,7 @@
 .legend .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
 .seg { display: flex; flex-wrap: wrap; gap: 4px; }
 .seg button { font-size: 12px; padding: 6px 9px; border: 1px solid var(--rule); background: transparent; border-radius: 3px; cursor: pointer; font-weight: 500; }
-.seg button:hover { border-color: var(--muted); }
+@media (hover: hover) { .seg button:hover { border-color: var(--muted); } }
 .seg button[aria-pressed="true"] { border-color: var(--blue); background: var(--blue-soft); }
 .hover { margin: 0; font-size: 12.5px; color: var(--muted); min-height: 2.8em; }
 .hover b { color: var(--ink); font-weight: 600; }
@@ -119,6 +119,7 @@
 /* Panel */
 .fore table { font-size: 12.5px; }
 .fore td.num { text-align: right; }
+.fore th { white-space: nowrap; }
 .readout { font-size: 11.5px; }
 .readout .bad { color: var(--bad); font-weight: 600; }
 .readout .warn { color: var(--warn); }
@@ -156,8 +157,8 @@
   .st-btns .btn.solid { flex: 1; }
 }
 @media (max-width: 560px) {
-  .mp-zt { font-size: 17px; } .mp-ct { font-size: 18px; } .mp-bt { font-size: 18px; stroke-width: 4px; }
-  .mp-ft { font-size: 19px; } .mp-fs { font-size: 16px; } .mp-wx { font-size: 16px; } .mp-closed { font-size: 16px; }
+  .mp-zt { font-size: 20px; } .mp-ct { font-size: 21px; } .mp-bt { font-size: 21px; stroke-width: 4px; }
+  .mp-ft { font-size: 23px; } .mp-fs { font-size: 16px; } .mp-wx { font-size: 20px; } .mp-closed { font-size: 19px; }
 }
 @media (max-width: 420px) {
   .card { padding: 10px; }
@@ -180,7 +181,7 @@
 :root[data-skin="trailer"] #k-cum { color: var(--accent); }
 :root[data-skin="trailer"] .evcard { box-shadow: 0 18px 40px -26px #000; }
 :root[data-skin="trailer"] .ev-ch button, :root[data-skin="trailer"] :is(.panel, .chartcard) .seg button { color: var(--ink); background: var(--chip); }
-:root[data-skin="trailer"] .ev-ch button:hover { border-color: var(--accent); }
+@media (hover: hover) { :root[data-skin="trailer"] .ev-ch button:hover { border-color: var(--accent); } }
 :root[data-skin="trailer"] :is(.panel, .chartcard) .seg button[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 18%, var(--chip)); }
 :root[data-skin="trailer"] .debrief { border-top-color: var(--accent); }
 :root[data-skin="trailer"] .debrief .db-grade b { color: var(--accent); font-family: var(--mono); }
@@ -203,4 +204,4 @@
 :root[data-skin="trailer"] .chart .anc-t { stroke: #0b1712; }
 :root[data-skin="trailer"] .coefwrap input { background: var(--bg); }
 :root[data-skin="trailer"] :is(.mp-ct, .mp-wx, .mp-fs) { font-size: 9.5px; letter-spacing: -.03em; }
-@media (max-width: 560px) { :root[data-skin="trailer"] .mp-ct { font-size: 17px; } :root[data-skin="trailer"] :is(.mp-wx, .mp-fs) { font-size: 15.5px; } :root[data-skin="trailer"] .mp-zt { font-size: 16px; letter-spacing: .06em; } :root[data-skin="trailer"] .mp-ft { font-size: 19px; } }
+@media (max-width: 560px) { :root[data-skin="trailer"] .mp-ct { font-size: 21px; } :root[data-skin="trailer"] :is(.mp-wx, .mp-fs) { font-size: 20px; } :root[data-skin="trailer"] .mp-zt { font-size: 19px; letter-spacing: .06em; } :root[data-skin="trailer"] .mp-ft { font-size: 23px; } }

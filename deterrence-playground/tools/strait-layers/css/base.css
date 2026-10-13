@@ -45,7 +45,7 @@ a { color: var(--blue); }
 /* Header */
 header.site { max-width: 1400px; margin: 0 auto; padding-block: 18px 14px; display: grid; grid-template-columns: auto 1fr auto; gap: 8px 28px; align-items: center; border-bottom: 3px solid var(--accent); }
 .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
-.brand:hover h1 { color: var(--brand-ink); }
+@media (hover: hover) { .brand:hover h1 { color: var(--brand-ink); } }
 .brand img { width: 56px; height: 56px; }
 .org { margin: 0; font-family: var(--display); font-weight: 600; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--brand-ink); }
 h1 { margin: 0; font-family: var(--display); font-weight: 700; font-size: clamp(28px, 3.6vw, 40px); line-height: 1; color: var(--ink); letter-spacing: .005em; }
@@ -53,10 +53,10 @@ h1 { margin: 0; font-family: var(--display); font-weight: 700; font-size: clamp(
 .head-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .solid, .ghost { border-radius: 3px; padding: 8px 14px; cursor: pointer; font-weight: 600; font-size: 13px; }
 .solid { background: var(--brand); color: #f2f2ee; border: 1px solid var(--brand); }
-.solid:hover { background: #0b4a17; }
+@media (hover: hover) { .solid:hover { background: #0b4a17; } }
 .ghost { background: transparent; border: 1px solid var(--rule); }
 .hub-link { text-decoration: none; color: var(--muted); font-weight: 500; }
-.ghost:hover { border-color: var(--muted); }
+@media (hover: hover) { .ghost:hover { border-color: var(--muted); } }
 .ghost:disabled { opacity: .4; cursor: default; }
 @media (max-width: 900px) { header.site { grid-template-columns: 1fr; } }
 
@@ -65,7 +65,7 @@ h1 { margin: 0; font-family: var(--display); font-weight: 700; font-size: clamp(
 .tabs button { text-align: left; background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 9px 12px; cursor: pointer; display: flex; flex-direction: column; gap: 1px; border-bottom-width: 3px; }
 .tabs button b { font-family: var(--display); font-size: 17px; font-weight: 700; }
 .tabs button span { font-size: 12px; color: var(--muted); }
-.tabs button:hover { border-color: var(--muted); }
+@media (hover: hover) { .tabs button:hover { border-color: var(--muted); } }
 .tabs button[aria-selected="true"] { border-color: var(--brand-ink); border-bottom-color: var(--accent); background: color-mix(in srgb, var(--brand-ink) 7%, var(--panel)); }
 @media (max-width: 700px) { .tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); } .tabs button span { display: none; } }
 
@@ -89,7 +89,7 @@ body[data-mode="activity"] .under-profile { display: none; }
 .sec:last-child { border-bottom: 0; }
 .routes, .presets { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .routes button, .presets button { text-align: left; padding: 7px 9px; border: 1px solid var(--rule); background: transparent; border-radius: 3px; cursor: pointer; line-height: 1.25; font-size: 12.5px; }
-.routes button:hover, .presets button:hover { border-color: var(--muted); }
+@media (hover: hover) { .routes button:hover, .presets button:hover { border-color: var(--muted); } }
 .routes button[aria-pressed="true"], .presets button[aria-pressed="true"] { border-color: var(--blue); background: var(--blue-soft); }
 body[data-mode="crossing"] .routes button[aria-pressed="true"] { border-color: var(--red); background: color-mix(in srgb, var(--red) 10%, transparent); }
 .scrub { display: flex; align-items: center; gap: 10px; }
@@ -119,7 +119,7 @@ body[data-mode="crossing"] .routes button[aria-pressed="true"] { border-color: v
 .why b { color: var(--ink); font-weight: 600; }
 .toggles { display: flex; flex-direction: column; gap: 2px; }
 .tg { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: start; padding: 6px 4px; border-radius: 3px; cursor: pointer; position: relative; }
-.tg:hover { background: var(--chip); }
+@media (hover: hover) { .tg:hover { background: var(--chip); } }
 .tg input { position: absolute; opacity: 0; pointer-events: none; }
 .sw { width: 30px; height: 17px; border-radius: 9px; background: var(--rule); position: relative; margin-top: 2px; transition: background var(--dur-feedback) var(--ease-enter); }
 .sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 13px; height: 13px; border-radius: 50%; background: var(--panel); transition: transform var(--dur-feedback) var(--ease-enter); }
@@ -197,9 +197,9 @@ footer.site p { margin: 0; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 /* Cross-tool links and export bar (shared/js/links.js, export.js); this page does not load shared/css/tsm.css. */
 .xlink { display: inline-block; font-size: 12px; font-weight: 600; color: var(--blue); text-decoration: none; white-space: nowrap; }
-.xlink:hover, .xlink-inline:hover { text-decoration: underline; }
+@media (hover: hover) { .xlink:hover, .xlink-inline:hover { text-decoration: underline; } }
 .xlink-inline { color: var(--blue); text-decoration: none; }
 .xlinks { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
 .tsm-export { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; margin-top: 6px; }
 .tsm-export button { font: 600 12px var(--body); color: var(--muted); background: transparent; border: 1px solid var(--rule); border-radius: 3px; padding: 5px 10px; cursor: pointer; }
-.tsm-export button:hover { color: var(--ink); border-color: var(--muted); }
+@media (hover: hover) { .tsm-export button:hover { color: var(--ink); border-color: var(--muted); } }

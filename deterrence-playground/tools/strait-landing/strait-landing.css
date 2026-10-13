@@ -21,7 +21,8 @@ body:not([data-phase="setup"]) .sl-learn { display: none; }
 .sl-zone-line { fill: none; stroke: var(--c5); stroke-width: 7; stroke-linecap: round; opacity: .55; }
 .sl-zone[data-role="main"] .sl-zone-line { stroke: var(--prc); opacity: .95; }
 .sl-zone[data-role="second"] .sl-zone-line { stroke: var(--prc); opacity: .55; }
-.sl-zone:hover .sl-zone-line, .sl-zone:focus-visible .sl-zone-line { opacity: 1; stroke-width: 10; }
+.sl-zone:focus-visible .sl-zone-line { opacity: 1; stroke-width: 10; }
+@media (hover: hover) { .sl-zone:hover .sl-zone-line { opacity: 1; stroke-width: 10; } }
 .sl-zone:focus-visible .sl-zname { text-decoration: underline; }
 .sl-zname { font: 600 15px var(--display); fill: var(--ink); paint-order: stroke; stroke: var(--sea); stroke-width: 4px; }
 .sl-zarea, .sl-zsea { font: 12px var(--mono); fill: var(--muted); paint-order: stroke; stroke: var(--sea); stroke-width: 3px; }

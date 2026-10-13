@@ -6,7 +6,7 @@
 /* Picker */
 .picker { max-width: 1400px; margin: 12px auto 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(212px, 1fr)); gap: 8px; }
 .mcard { display: flex; gap: 10px; align-items: flex-start; text-align: left; padding: 10px 11px; border: 1px solid var(--rule); border-bottom: 3px solid transparent; border-radius: 4px; background: var(--panel); color: var(--ink); cursor: pointer; font: inherit; text-decoration: none; min-width: 0; }
-.mcard:hover { border-color: var(--muted); }
+@media (hover: hover) { .mcard:hover { border-color: var(--muted); } }
 .mcard[aria-pressed="true"] { border-color: var(--brand-ink); border-bottom-color: var(--accent); background: var(--chip); }
 .mcard.ext { border-style: dashed; }
 .mc-t { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
@@ -137,7 +137,7 @@ ol.path .q, .checks .q { color: var(--muted); font-size: 12px; }
 .insight p:last-child { margin: 0; font-size: 14px; line-height: 1.55; }
 .tries ol { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 6px; font-size: 13.5px; }
 .linkbtn { display: block; border: 0; background: none; padding: 0; color: var(--blue); cursor: pointer; text-align: left; font: inherit; text-decoration: underline; text-underline-offset: 2px; }
-.linkbtn:hover { text-decoration-thickness: 2px; }
+@media (hover: hover) { .linkbtn:hover { text-decoration-thickness: 2px; } }
 .tries .q { display: block; color: var(--muted); font-size: 12.5px; }
 .illus ul { margin: 0; padding-left: 1.1em; display: flex; flex-direction: column; gap: 6px; font-size: 13.5px; }
 .illus .pg { font: 11.5px var(--mono); color: var(--muted); white-space: nowrap; }
@@ -210,7 +210,7 @@ ol.path .q, .checks .q { color: var(--muted); font-size: 12px; }
 .ch-btns .btn { font-size: 15px; padding: 11px 14px; text-align: center; color: var(--ink); }
 .ch-btns .btn.solid { color: #f2f2ee; }
 .ch-x { position: absolute; top: 10px; right: 10px; width: 36px; height: 36px; border: 0; border-radius: 4px; background: transparent; color: var(--muted); font-size: 24px; line-height: 1; cursor: pointer; }
-.ch-x:hover { color: var(--ink); background: var(--chip); }
+@media (hover: hover) { .ch-x:hover { color: var(--ink); background: var(--chip); } }
 .ch-skip { display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 13px; color: var(--muted); cursor: pointer; align-self: flex-start; }
 .ch-skip input { width: 16px; height: 16px; accent-color: var(--brand-ink); margin: 0; }
 @media (max-width: 520px) { .ch-in { padding: 18px 16px 16px; } .ch-in h2 { font-size: 22px; } .ch-q { font-size: 15px; } }

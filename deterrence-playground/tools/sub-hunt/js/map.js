@@ -73,10 +73,11 @@ export function createMap(svg) {
   const heatImg = el('image', { x: 0, y: 0, width: proj.W, height: proj.H, preserveAspectRatio: 'none', class: 'sh-heat' });
   root.insertBefore(heatImg, root.querySelector('.tsm-land'));
   const names = el('g', { class: 'sh-names' }, root);
-  [['Iceland', -17.2, 64.95, 'sh-mid sh-gw'], ['Faroes', -6.9, 62.5, 'sh-mid'], ['Shetland', -0.7, 60.95, 'sh-end']]
+  // Phones: Shetland drops below the Faroes–Shetland exit label and North Atlantic rises off the 61°N label.
+  [['Iceland', -17.2, 64.95, 'sh-mid sh-gw'], ['Faroes', -6.9, 62.5, 'sh-mid'], ['Shetland', -0.7, 60.95, 'sh-end sh-gw'], ['Shetland', -0.7, 60.45, 'sh-end sh-narrow']]
     .forEach(([t, lon, lat, c]) => el('text', { x: P([lon, lat])[0], y: P([lon, lat])[1], class: `t-place ${c}` }, names, t));
-  [['Norwegian Sea', -3.6, 66.45], ['North Atlantic', -11.5, 61.0]].forEach(([t, lon, lat]) =>
-    el('text', { x: P([lon, lat])[0], y: P([lon, lat])[1], class: 't-sea sh-mid' }, names, t));
+  [['Norwegian Sea', -3.6, 66.45, ''], ['North Atlantic', -11.5, 61.0, ' sh-gw'], ['North Atlantic', -10.8, 61.5, ' sh-narrow']].forEach(([t, lon, lat, c]) =>
+    el('text', { x: P([lon, lat])[0], y: P([lon, lat])[1], class: 't-sea sh-mid' + c }, names, t));
   const routes = el('g', { class: 'sh-routes' }, root);
   ROUTES.forEach(r => {
     const last = r.pts[r.pts.length - 1];

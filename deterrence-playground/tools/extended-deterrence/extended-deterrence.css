@@ -29,7 +29,8 @@
 .bl { font: 11px var(--mono); fill: var(--ink); paint-order: stroke; stroke: var(--panel); stroke-width: 3px; }
 .front { fill: none; stroke: var(--c3); stroke-width: 2; stroke-dasharray: 6 4; }
 .pk { fill: var(--c1); fill-opacity: .35; stroke: var(--c1); stroke-width: 1.4; cursor: pointer; }
-.pk:hover, .pk:focus { fill-opacity: .6; outline: none; stroke-width: 2.5; }
+.pk:focus { fill-opacity: .6; outline: none; stroke-width: 2.5; }
+@media (hover: hover) { .pk:hover { fill-opacity: .6; outline: none; stroke-width: 2.5; } }
 .pk.on { fill: var(--accent); fill-opacity: .55; stroke: var(--ink); stroke-width: 2.5; }
 .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--muted); }
 .lg { display: inline-flex; align-items: center; gap: 6px; }
@@ -55,7 +56,8 @@
 .world-wrap svg .tl { stroke: var(--muted); stroke-width: 1.2; }
 .world-wrap svg .span { fill: var(--c4); opacity: .25; }
 .world-wrap svg .tdot circle { stroke: var(--panel); stroke-width: 2; cursor: pointer; }
-.world-wrap svg .tdot:focus circle, .world-wrap svg .tdot:hover circle { stroke: var(--ink); }
+.world-wrap svg .tdot:focus circle { stroke: var(--ink); }
+@media (hover: hover) { .world-wrap svg .tdot:hover circle { stroke: var(--ink); } }
 .wgrid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 10px; align-items: start; }
 @media (max-width: 1020px) { .wgrid { grid-template-columns: minmax(0, 1fr); } }
 .wlist { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }

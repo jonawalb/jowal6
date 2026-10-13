@@ -11,7 +11,7 @@
 .ii-eps button { text-align: left; padding: 7px 10px; border: 1px solid var(--rule); border-top: 4px solid var(--rule); background: transparent; border-radius: 3px; cursor: pointer; font-size: 12.5px; line-height: 1.25; }
 .ii-eps button b { display: block; font-family: var(--display); font-size: 16px; }
 .ii-eps button small { color: var(--muted); }
-.ii-eps button:hover { border-color: var(--muted); }
+@media (hover: hover) { .ii-eps button:hover { border-color: var(--muted); } }
 .ii-eps button[aria-pressed="true"] { border-color: var(--blue); border-top-color: var(--accent); background: var(--blue-soft); }
 .chartcard { display: flex; flex-direction: column; gap: 8px; }
 .chart-h { display: flex; flex-wrap: wrap; gap: 6px 16px; justify-content: space-between; align-items: center; }
@@ -24,7 +24,7 @@
 /* Composition bars */
 .ii-comp { display: flex; flex-direction: column; gap: 10px; }
 .ii-crow { display: grid; grid-template-columns: 130px minmax(0, 1fr); gap: 4px 10px; align-items: center; cursor: pointer; border-radius: 3px; padding: 4px; border: 1px solid transparent; background: transparent; text-align: left; font: inherit; color: inherit; }
-.ii-crow:hover { background: var(--chip); }
+@media (hover: hover) { .ii-crow:hover { background: var(--chip); } }
 .ii-crow[aria-pressed="true"] { border-color: var(--rule); background: var(--blue-soft); }
 .ii-crow .nm { font-weight: 600; font-size: 13px; line-height: 1.2; }
 .ii-crow .nm small { display: block; font-weight: 400; color: var(--muted); font-size: 11.5px; }
@@ -110,7 +110,7 @@
 .ii-mix { display: flex; flex-direction: column; gap: 8px; }
 .seg { display: flex; flex-wrap: wrap; gap: 4px; }
 .seg button { font-size: 12px; padding: 5px 8px; border: 1px solid var(--rule); background: transparent; border-radius: 3px; cursor: pointer; }
-.seg button:hover { border-color: var(--muted); }
+@media (hover: hover) { .seg button:hover { border-color: var(--muted); } }
 .seg button[aria-pressed="true"] { border-color: var(--blue); background: var(--blue-soft); }
 button:focus-visible, input:focus-visible, a:focus-visible, .ii-crow:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .readout dd { text-align: right; }

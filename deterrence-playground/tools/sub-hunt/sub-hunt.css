@@ -181,7 +181,7 @@ body.sh-over .sh-legend .rv { display: inline-flex; }
 #map path, #map line, #map circle { vector-effect: non-scaling-stroke; }
 /* Desktop: the controls sit in the side panel, which stays in view beside the map. */
 @media (min-width: 1021px) {
-  .layout > .panel { position: sticky; top: 8px; max-height: calc(100vh - 16px); overflow-y: auto; }
+  .layout > .panel { position: sticky; top: 8px; max-height: calc(100vh - 16px); overflow-y: auto; overscroll-behavior: contain; }
   .sh-console .sh-tools { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 /* Phones and tablets: the map comes first, then its legend and the turn summary, then the controls. */
@@ -189,7 +189,7 @@ body.sh-over .sh-legend .rv { display: inline-flex; }
   .stage > .mapbox { order: 2; } .stage > .sh-legend { order: 3; margin-top: 0; }
   .stage > .sh-say { order: 4; } .stage > .sh-reveal { order: 5; }
 }
-body.sh-over .sh-console { display: none; }
+body.sh-over :is(.sh-console, .learn-banner) { display: none; }
 @media (max-width: 720px) { .sh-tools { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 520px) {
   .sh-hour b { font-size: 22px; }

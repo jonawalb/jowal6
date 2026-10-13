@@ -10,7 +10,7 @@ import { createView } from './mapview.js';
 export const CELL = 60;
 const LOD_PX = 28;
 const ZONE_LABEL = { assembly: 'Assembly', nml: 'No-man’s land', outpost: 'Outpost zone', battle: 'Battle zone', switch: 'Switch line', second: 'Second position', rear: 'Rear zone' };
-const LAYERS = ['zones', 'cover', 'guns', 'works', 'barrage', 'plan', 'obj', 'lanes', 'routes', 'hint', 'units', 'enemy', 'badges', 'fx'];
+const LAYERS = ['zones', 'cover', 'guns', 'works', 'barrage', 'plan', 'obj', 'lanes', 'routes', 'hint', 'units', 'enemy', 'labels', 'badges', 'fx'];
 
 /** handlers: { onSector(sec, e), onUnit(id, e), onKey(e, sec), onZoom() } */
 export function createMap(svg, handlers) {
@@ -66,7 +66,7 @@ export function setGame(m, g, me) {
   // Ridge crest line along the crest row's enemy-facing edge, and the reverse slope behind it.
   const cy = m.flip ? (G.rows - 1 - G.crest) * CELL + CELL : G.crest * CELL;
   el('path', { d: `M0 ${cy}H${W}`, class: 'dd-ridge' }, m.base);
-  el('text', { x: W - 6, y: cy + (m.flip ? 14 : -5), class: 'dd-ridge-l', 'text-anchor': 'end' }, m.base, g.sectors.ridge || 'the ridge');
+  ridgeLabel(m, g, cy, g.sectors.ridge || 'the ridge');
   for (let s = 0; s < G.n; s++) {
     const nm = g.sectors.name[s];
     if (!nm) continue;
@@ -105,6 +105,20 @@ function nameLabel(parent, x, y, nm) {
   });
 }
 
+// The ridge's name runs along its line: above it (in the bottom of the boxes where place names sit) or, when you
+// attack, below it. It ends at the right edge of the rightmost column but one (the zoom buttons sit over the last
+// column) whose boxes on that side of the line carry no place name, so it never overprints one ("Callow Wood").
+function ridgeLabel(m, g, cy, nm) {
+  const G = m.G, w = nm.length * NAME_CH + 6, span = Math.ceil(w / CELL);
+  const sr = m.flip ? cy / CELL : cy / CELL - 1;            // screen row the label sits in
+  const named = new Set();
+  if (!m.flip) for (let s = 0; s < G.n; s++) if (g.sectors.name[s]) { const [x, y] = cellXY(m, s); if (y / CELL === sr) named.add(x / CELL); }
+  let c = G.cols - 2;
+  while (c >= span - 1 && Array.from({ length: span }, (_, i) => c - i).some(k => named.has(k))) c--;
+  const x = c >= span - 1 ? (c + 1) * CELL - 6 : G.cols * CELL - 6;
+  el('text', { x, y: cy + (m.flip ? 14 : -5), class: 'dd-ridge-l', 'text-anchor': 'end' }, m.base, nm);
+}
+
 const COLN = i => (i < 26 ? String.fromCharCode(65 + i) : 'A' + String.fromCharCode(39 + i));
 export function secLabel(g, s) {
   const G = gridFor(g.scale), nm = g.sectors.name[s];
@@ -131,7 +145,7 @@ export function render(m, v) {
 }
 
 function drawZones(m, v, on) {
-  const L = m.L.zones; L.replaceChildren();
+  const L = m.L.zones, T = m.L.labels; L.replaceChildren(); T.replaceChildren();
   if (!on) return;
   const G = m.G, S = G.S, W = G.cols * CELL;
   const oy = v.obj ? objY(m, v.obj.row) : null;
@@ -141,8 +155,10 @@ function drawZones(m, v, on) {
     const r0 = m.flip ? G.rows - 1 - b[1] : b[0], h = (b[1] - b[0] + 1) * CELL;
     el('rect', { x: 0, y: r0 * CELL, width: W, height: h, class: `dd-zone dd-z-${z}` }, L);
     el('path', { d: `M0 ${r0 * CELL}H${W}`, class: 'dd-zline' }, L);
-    // The objective's name sits just below its line, at the left: a zone label starting on that line goes under it.
-    el('text', { x: 6, y: r0 * CELL + 15 + (r0 * CELL === oy ? 16 : 0), class: 'dd-zlab' }, L, ZONE_LABEL[z]);
+    // The label sits just under its line, in the gap above the unit chips' letters, on a layer over the wire,
+    // trenches and units so none of them hides it. The objective's name sits just below its line, at the left: a
+    // zone label starting on that line goes under it.
+    el('text', { x: 6, y: r0 * CELL + (r0 * CELL === oy ? 32 : 10), class: 'dd-zlab' }, T, ZONE_LABEL[z]);
   }
 }
 

@@ -91,7 +91,7 @@
 .spikes { list-style: none; margin: 0; padding: 0; max-height: 460px; overflow-y: auto; border: 1px solid var(--rule); border-radius: 3px; }
 .spikes > li + li { border-top: 1px solid var(--rule); }
 .spikes button { width: 100%; text-align: left; background: transparent; border: 0; padding: 7px 9px; cursor: pointer; display: flex; flex-wrap: wrap; gap: 2px 8px; align-items: baseline; font: inherit; font-size: 13px; color: var(--ink); }
-.spikes button:hover { background: var(--chip); }
+@media (hover: hover) { .spikes button:hover { background: var(--chip); } }
 .spikes button:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
 .spikes .open > button { background: var(--blue-soft); box-shadow: inset 3px 0 0 var(--blue); }
 .spikes .d { font-weight: 600; }
@@ -108,7 +108,7 @@
 .fam p { margin: 0; font-size: 13.5px; }
 .famlist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; max-height: 300px; overflow-y: auto; }
 .famlist button { width: 100%; text-align: left; border: 1px solid var(--rule); background: var(--panel); border-radius: 3px; padding: 6px 8px; cursor: pointer; font: inherit; font-size: 12.5px; color: var(--ink); display: flex; flex-direction: column; gap: 1px; }
-.famlist button:hover { background: var(--chip); }
+@media (hover: hover) { .famlist button:hover { background: var(--chip); } }
 .famlist button span { font-family: var(--mono); font-size: 11px; color: var(--muted); }
 
 .below .mt { margin-top: 22px; }

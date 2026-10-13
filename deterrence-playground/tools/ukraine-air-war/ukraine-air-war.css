@@ -19,7 +19,7 @@ code { font-family: var(--mono); font-size: 11.5px; }
 .gchip i { width: 11px; height: 11px; border-radius: 2px; opacity: .35; }
 .gchip[aria-pressed="true"] { color: var(--ink); border-color: var(--muted); }
 .gchip[aria-pressed="true"] i { opacity: 1; }
-.gchip:hover { border-color: var(--ink); }
+@media (hover: hover) { .gchip:hover { border-color: var(--ink); } }
 
 /* Charts */
 .chartcard { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
@@ -54,7 +54,7 @@ code { font-family: var(--mono); font-size: 11.5px; }
 .salvos li { display: flex; flex-direction: column; gap: 1px; }
 .salvos li.none { color: var(--muted); font-size: 12.5px; }
 .sv { display: grid; grid-template-columns: 20px 158px minmax(0, 1fr) 44px; gap: 8px; align-items: center; background: transparent; border: 1px solid transparent; border-radius: 3px; padding: 2px 4px; cursor: pointer; text-align: left; font-size: 12.5px; }
-.sv:hover { border-color: var(--rule); background: var(--chip); }
+@media (hover: hover) { .sv:hover { border-color: var(--rule); background: var(--chip); } }
 .sv-r { color: var(--muted); font-size: 11px; }
 .sv-d small { color: var(--muted); font-family: var(--mono); font-size: 10.5px; }
 .sv-bar { display: flex; height: 12px; background: var(--chip); border-radius: 2px; overflow: hidden; }
@@ -80,7 +80,7 @@ code { font-family: var(--mono); font-size: 11.5px; }
 .d-h { margin: 0; font-size: 20px; line-height: 1.15; }
 .mt-tbl td, .mt-tbl th { font-size: 12px; padding: 5px 8px; }
 .mt-tbl td.num { text-align: right; }
-@media (min-width: 1021px) { .panel { position: sticky; top: 10px; max-height: calc(100vh - 20px); overflow-y: auto; } }
+@media (min-width: 1021px) { .panel { position: sticky; top: 10px; max-height: calc(100vh - 20px); overflow-y: auto; overscroll-behavior: contain; } }
 
 /* Walkthrough */
 .tour { position: absolute; right: 12px; top: 120px; width: min(360px, calc(100% - 24px)); background: var(--panel); border: 1px solid var(--rule); border-top: 3px solid var(--accent); border-radius: 4px; padding: 12px 14px; box-shadow: 0 8px 28px rgba(0, 0, 0, .18); display: flex; flex-direction: column; gap: 6px; z-index: 6; }

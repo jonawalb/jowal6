@@ -20,9 +20,11 @@ body.dd-home #side { display: none; }
 .dd-recap { margin: 0; font-size: 14px; }
 .dd-start .dd-go { margin-top: 2px; }
 
-/* The order bar: one row on desktop (≤ ~64 px). */
+/* The order bar: one row on desktop (≤ ~64 px) when it fits. When it does not (the Trailer's wider type), Undo and
+   End hour move together to a second row at the right instead of Undo stacking above End hour. */
 .dd-obar { padding: 6px 12px; gap: 4px; }
-.dd-bar-top { flex-wrap: nowrap; gap: 6px 14px; min-height: 44px; }
+.dd-bar-top { flex-wrap: wrap; gap: 6px 14px; min-height: 44px; }
+.dd-gobar { flex: none; flex-wrap: nowrap; }
 .dd-clock { white-space: nowrap; display: inline-flex; align-items: center; gap: 2px; }
 .dd-objtrack { flex: 0 1 auto; white-space: nowrap; font-weight: 500; }
 .dd-objt b { font-weight: 700; }
@@ -50,7 +52,7 @@ body.dd-home #side { display: none; }
 .dd-ctip-b { display: flex; gap: 2px; align-items: center; flex: none; }
 .dd-ctip-b .btn { min-height: 36px; padding: 4px 10px; font-size: 12px; }
 .dd-ctip .dd-tips-x { position: static; width: 36px; height: 36px; border: 0; background: none; font-size: 20px; cursor: pointer; color: var(--muted); }
-@media (max-width: 640px) { .dd-ctip { font-size: 12.5px; max-height: 30vh; overflow-y: auto; } }
+@media (max-width: 640px) { .dd-ctip { font-size: 12.5px; max-height: 30vh; overflow-y: auto; overscroll-behavior: contain; } }
 
 /* Layer chips and the "More layers" menu. */
 .dd-more { position: relative; display: inline-flex; flex-wrap: wrap; gap: 4px; }

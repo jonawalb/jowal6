@@ -75,7 +75,7 @@
 .hs-crisis { border-left: 4px solid var(--bad); }
 .hs-resp { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
 .hs-rbtn { display: flex; flex-direction: column; gap: 4px; text-align: left; padding: 10px 12px; border: 2px solid var(--rule); border-radius: 4px; background: var(--panel); color: var(--ink); font: inherit; cursor: pointer; }
-.hs-rbtn:hover { border-color: var(--accent); }
+@media (hover: hover) { .hs-rbtn:hover { border-color: var(--accent); } }
 .hs-rbtn b { font: 700 16px var(--display); }
 .hs-rbtn span { font-size: 13px; color: var(--muted); }
 .hs-rbtn .num { color: var(--ink); font-size: 12.5px; }

@@ -34,7 +34,7 @@
 .tt-g .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; padding: 0; }
 .tt-th { padding: 0 1px 4px; vertical-align: bottom; height: 96px; }
 .tt-th button { writing-mode: vertical-rl; transform: rotate(180deg); border: 0; background: transparent; color: var(--ink); font: 600 11.5px var(--body); cursor: pointer; padding: 4px 2px; border-radius: 3px; white-space: nowrap; }
-.tt-th button:hover { background: var(--chip); }
+@media (hover: hover) { .tt-th button:hover { background: var(--chip); } }
 .tt-th button[aria-pressed="true"] { background: var(--blue-soft); color: var(--blue); }
 .tt-corner { left: 0; z-index: 3 !important; text-align: left; vertical-align: bottom; padding: 4px 8px; font: 600 12px var(--display); letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
 .tt-corner small { font: 11px var(--mono); text-transform: none; }
@@ -42,9 +42,9 @@
 .tt-rh { position: sticky; left: 0; background: var(--panel); z-index: 1; text-align: left; font-weight: 500; padding: 1px 8px 1px 6px; white-space: nowrap; max-width: 170px; overflow: hidden; text-overflow: ellipsis; border-right: 1px solid var(--rule); }
 .tt-matrix td { padding: 1px; }
 .tt-c { display: block; width: 100%; min-width: 20px; height: 18px; border: 1px solid transparent; border-radius: 2px; cursor: pointer; padding: 0; }
-.tt-c:hover { outline: 2px solid var(--ink); outline-offset: 0; }
+@media (hover: hover) { .tt-c:hover { outline: 2px solid var(--ink); outline-offset: 0; } }
 .tt-c[aria-pressed="true"] { outline: 2px solid var(--ink); outline-offset: 1px; box-shadow: 0 0 0 3px var(--panel); }
-.tt-matrix tbody tr:hover .tt-rh { color: var(--blue); }
+@media (hover: hover) { .tt-matrix tbody tr:hover .tt-rh { color: var(--blue); } }
 .tt-empty { padding: 16px; }
 
 /* Panel */
@@ -127,7 +127,7 @@ details summary { cursor: pointer; font-size: 13px; font-weight: 500; }
 .tt-named > span { min-width: 0; overflow-wrap: anywhere; }
 .tt-info { flex: none; width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--rule); background: var(--panel); color: var(--muted);
   font: italic 600 12px/1 var(--display); cursor: pointer; padding: 0; display: inline-grid; place-items: center; }
-.tt-info:hover { color: var(--ink); border-color: var(--ink); }
+@media (hover: hover) { .tt-info:hover { color: var(--ink); border-color: var(--ink); } }
 .tt-info[aria-expanded="true"] { background: var(--ink); color: var(--panel); border-color: var(--ink); }
 .tt-info:focus-visible { outline: 2px solid var(--focus, var(--blue)); outline-offset: 2px; }
 .tt-ex { margin: 6px 0 4px; padding: 6px 10px; border-left: 3px solid var(--accent); background: var(--chip); border-radius: 0 3px 3px 0; font-size: 13px; line-height: 1.45; color: var(--ink); white-space: normal; overflow-wrap: anywhere; }

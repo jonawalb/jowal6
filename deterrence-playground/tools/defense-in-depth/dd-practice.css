@@ -32,7 +32,7 @@ body.dd-practice .layout { grid-template-columns: minmax(0, 1fr); }
 body.dd-practice #side, body.dd-practice #ctip, body.dd-practice #layerbar, body.dd-practice #viewbar,
 body.dd-practice #objtrack, body.dd-practice #hourof, body.dd-practice #barrage-wrap, body.dd-practice #ammo,
 body.dd-practice .dd-tabs [data-tab="plan"], body.dd-practice .dd-tabs [data-tab="reports"],
-body.dd-practice .dd-l-zones, body.dd-practice .dd-l-obj, body.dd-practice .dd-ridge, body.dd-practice .dd-ridge-l { display: none !important; }
+body.dd-practice .dd-l-zones, body.dd-practice .dd-zlab, body.dd-practice .dd-l-obj, body.dd-practice .dd-ridge, body.dd-practice .dd-ridge-l { display: none !important; }
 body.dd-practice .dd-mapbox { height: auto; aspect-ratio: 4 / 3.15; max-height: 56vh; min-height: 0; }   /* a little taller than the board: it always fits, never pans */
 body.dd-practice #practice-btn { border-color: var(--accent); }
 

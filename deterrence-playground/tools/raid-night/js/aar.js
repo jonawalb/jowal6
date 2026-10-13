@@ -58,13 +58,13 @@ export function renderAAR(you, seed, { mode = 'normal', batFired = null, lock = 
   if (you.ammo.lri === 0 && you.leaks.ballistic) parts.push('Your long-range magazine ran dry, and ballistic missiles leaked.');
   const p = R.premium;
   parts.push(`Firing the best weapon first at everything spent ${range(p.spent.lo, p.spent.hi)}`
-    + (p.ammo.lri === 0 && p.leaks.ballistic > 0 ? `, ran the long-range magazine dry and leaked ${p.leaks.ballistic} ballistic missile${p.leaks.ballistic === 1 ? '' : 's'}.` : ` and leaked ${p.leakTotal} tracks.`));
+    + (p.ammo.lri === 0 && p.leaks.ballistic > 0 ? `, ran the long-range magazine dry and leaked ${p.leaks.ballistic} ballistic missile${p.leaks.ballistic === 1 ? '' : 's'}.` : ` and leaked ${p.leakTotal} track${p.leakTotal === 1 ? '' : 's'}.`));
   document.getElementById('aar-lede').innerHTML = esc(parts.join(' '));
   return R;
 }
 
 /** Plain-text result for sharing. */
 export function resultText(you, seed, url, mode = 'normal') {
-  return `Raid Night, seed ${seed}, ${(MODE_NAME[mode] || 'Normal').toLowerCase()} mode: ${you.leakTotal} leakers, ${you.dmgTotal} damage points, spent ${range(you.spent.lo, you.spent.hi)}, `
+  return `Raid Night, seed ${seed}, ${(MODE_NAME[mode] || 'Normal').toLowerCase()} mode: ${you.leakTotal} leaker${you.leakTotal === 1 ? '' : 's'}, ${you.dmgTotal} damage point${you.dmgTotal === 1 ? '' : 's'}, spent ${range(you.spent.lo, you.spent.hi)}, `
     + `exchange ${ratio(you.ratio.lo)} to ${ratio(you.ratio.hi)} (notional model). Same raids: ${url}`;
 }

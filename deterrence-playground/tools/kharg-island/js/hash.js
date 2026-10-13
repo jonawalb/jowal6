@@ -1,6 +1,6 @@
 // Shareable state in the URL hash.
 // #o=seize&m=1&a=1&c=1&d=3&x=1&h=1&sf=1&b=0&sc=W&st=1&po=deny&ia=4&id=4&if=4&ig=1.5&ir=0.75&is=4&im=2&ie=1&t=8&seed=1987&p.pMine=0.2
-import { MENU, IRAN_FIELDS, OBJECTIVES, SECTORS, POSTURES, PROB } from '../data/params.js';
+import { MENU, TOGGLES, BUDGET, IRAN_FIELDS, OBJECTIVES, SECTORS, POSTURES, PROB } from '../data/params.js';
 
 const US = { meu: 'm', abn: 'a', cvw: 'c', ddg: 'd', mcm: 'x', helo: 'h' };
 const IR = { ascm: 'ia', drones: 'id', fac: 'if', garrison: 'ig', reinf: 'ir', srbm: 'is' };
@@ -21,6 +21,13 @@ export function writeHash(cfg, P, seed, view) {
   history.replaceState(null, '', '#' + q.toString());
 }
 
+/** Keep a linked force package within the budget as the panel would: buy items top to bottom and leave out what no longer fits. */
+function fitBudget(us) {
+  let left = BUDGET;
+  for (const m of MENU) { us[m.k] = Math.min(us[m.k], Math.floor(left / m.cost)); left -= us[m.k] * m.cost; }
+  for (const t of TOGGLES) if (us[t.k]) { if (left >= t.cost) left -= t.cost; else us[t.k] = false; }
+}
+
 /** Apply a hash onto defaults. Returns { cfg, P, seed, view } with every value clamped. */
 export function readHash(cfg, P, seed) {
   const q = new URLSearchParams(location.hash.slice(1));
@@ -30,6 +37,7 @@ export function readHash(cfg, P, seed) {
   for (const m of MENU) cfg.us[m.k] = Math.round(num(US[m.k], 0, m.max, cfg.us[m.k]));
   if (q.has('sf')) cfg.us.sof = q.get('sf') === '1';
   if (q.has('b')) cfg.us.bases = q.get('b') === '1';
+  fitBudget(cfg.us);
   if (SECTORS[q.get('sc')]) cfg.us.sector = q.get('sc');
   cfg.us.strikes = Math.round(num('st', 0, 3, cfg.us.strikes));
   if (POSTURES[q.get('po')] || q.get('po') === 'custom') cfg.ir.posture = q.get('po');

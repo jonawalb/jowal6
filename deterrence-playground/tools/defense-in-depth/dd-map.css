@@ -28,7 +28,7 @@ circle.dd-tree { fill: color-mix(in srgb, var(--good) 35%, var(--land)); stroke:
 .dd-z-switch, .dd-z-second { fill: color-mix(in srgb, var(--blue) 7%, transparent); }
 .dd-z-rear { fill: color-mix(in srgb, var(--good) 6%, transparent); }
 .dd-zline { stroke: var(--faint); stroke-width: 1.2; stroke-dasharray: 6 4; }
-.dd-zlab { font: italic 12px var(--body); fill: var(--muted); paint-order: stroke; stroke: var(--land); stroke-width: 3px; pointer-events: none; }
+.dd-zlab { font: italic 12px var(--body); fill: var(--muted); paint-order: stroke; stroke: var(--land); stroke-width: 5px; stroke-linejoin: round; pointer-events: none; }   /* wide halo: the label sits over wire and unit chips */
 .dd-cov { pointer-events: none; }
 .dd-cov.c1 { fill: color-mix(in srgb, var(--c3) 12%, transparent); }
 .dd-cov.c2 { fill: color-mix(in srgb, var(--c3) 26%, transparent); }
@@ -71,7 +71,7 @@ circle.dd-tree { fill: color-mix(in srgb, var(--good) 35%, var(--land)); stroke:
 .dd-route.cs { stroke: var(--good); stroke-width: 3; }
 .dd-sec { cursor: pointer; outline: none; }
 .dd-sec rect { fill: transparent; stroke: transparent; }
-.dd-sec:hover rect { fill: color-mix(in srgb, var(--mine) 7%, transparent); stroke: color-mix(in srgb, var(--mine) 50%, transparent); }
+@media (hover: hover) { .dd-sec:hover rect { fill: color-mix(in srgb, var(--mine) 7%, transparent); stroke: color-mix(in srgb, var(--mine) 50%, transparent); } }
 .dd-sec:focus-visible rect { stroke: var(--focus); stroke-width: 3.5; }
 .dd-hintc { fill: color-mix(in srgb, var(--accent) 12%, transparent); stroke: var(--accent); stroke-width: 1.4; stroke-dasharray: 4 3; pointer-events: none; }
 .dd-hl { fill: none; stroke: var(--accent); stroke-width: 4; pointer-events: none; }
@@ -81,7 +81,7 @@ circle.dd-tree { fill: color-mix(in srgb, var(--good) 35%, var(--land)); stroke:
 .dd-unit.sel .dd-ubox { stroke: var(--focus); stroke-width: 3.4; }
 .dd-unit.idle .dd-ubox { stroke: var(--warn); }
 .dd-unit.dim { opacity: .3; }
-.dd-unit:hover .dd-ubox { stroke-width: 2.8; }
+@media (hover: hover) { .dd-unit:hover .dd-ubox { stroke-width: 2.8; } }
 .dd-glyph { font: 700 13px var(--mono); fill: var(--mine); pointer-events: none; }
 .dd-umark { font: 700 9px var(--body); fill: var(--ink); pointer-events: none; }
 .dd-late { fill: var(--warn); stroke: var(--panel); stroke-width: 1; }

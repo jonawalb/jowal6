@@ -34,7 +34,7 @@
 .sl-globecard { overflow: hidden; }
 .sl-layerbar { display: flex; flex-wrap: wrap; gap: 4px; padding: 10px 12px; border-bottom: 1px solid var(--rule); }
 .sl-layerbar button { border: 1px solid var(--rule); background: transparent; border-radius: 3px; padding: 5px 10px; font-size: 12.5px; cursor: pointer; }
-.sl-layerbar button:hover { border-color: var(--muted); }
+@media (hover: hover) { .sl-layerbar button:hover { border-color: var(--muted); } }
 .sl-layerbar button[aria-pressed="true"] { border-color: var(--blue); background: var(--blue-soft); font-weight: 600; }
 .sl-layerbar .alt { font-family: var(--mono); font-size: 10.5px; color: var(--muted); margin-left: 4px; }
 
@@ -124,7 +124,7 @@
 .sl-list-h { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
 .sl-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 6px; max-height: 560px; overflow-y: auto; }
 .sl-list button { width: 100%; text-align: left; border: 1px solid var(--rule); background: transparent; border-radius: 3px; padding: 7px 9px; cursor: pointer; display: grid; grid-template-columns: 10px 1fr auto; gap: 2px 8px; align-items: baseline; }
-.sl-list button:hover { border-color: var(--muted); }
+@media (hover: hover) { .sl-list button:hover { border-color: var(--muted); } }
 .sl-list button[aria-current="true"] { border-color: var(--accent); background: var(--chip); }
 .sl-list i { width: 9px; height: 9px; border-radius: 50%; align-self: center; }
 .sl-list b { font-weight: 600; font-size: 13px; }

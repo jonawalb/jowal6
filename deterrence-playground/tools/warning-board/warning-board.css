@@ -42,12 +42,12 @@
 .ind.sel { outline: 2px solid var(--ink); outline-offset: -1px; }
 .ind.hx { background-image: repeating-linear-gradient(135deg, transparent 0 7px, var(--chip) 7px 9px); }
 .ind-name { all: unset; cursor: pointer; font-weight: 600; font-size: 13px; line-height: 1.25; }
-.ind-name:hover { text-decoration: underline; }
+@media (hover: hover) { .ind-name:hover { text-decoration: underline; } }
 .ind-name:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .seg { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--rule); border-radius: 3px; overflow: hidden; }
 .seg button { border: 0; background: transparent; padding: 4px 2px; font-size: 11px; cursor: pointer; color: var(--muted); border-right: 1px solid var(--rule); }
 .seg button:last-child { border-right: 0; }
-.seg button:hover { background: var(--chip); color: var(--ink); }
+@media (hover: hover) { .seg button:hover { background: var(--chip); color: var(--ink); } }
 .seg button[aria-checked="true"].v0 { background: var(--chip); color: var(--ink); font-weight: 600; }
 .seg button[aria-checked="true"].v1 { background: var(--warn); color: var(--panel); font-weight: 600; }
 .seg button[aria-checked="true"].v2 { background: var(--dc); color: var(--panel); font-weight: 600; }
@@ -87,7 +87,8 @@
 .ex-ax { font: var(--axis-font); fill: var(--axis-ink); }
 .ex-name { font: 12px var(--body); fill: var(--ink); }
 .ex-bar { fill: var(--prc); }
-.exercises a:hover .ex-name, .exercises a:focus .ex-name { fill: var(--blue); text-decoration: underline; }
+.exercises a:focus .ex-name { fill: var(--blue); text-decoration: underline; }
+@media (hover: hover) { .exercises a:hover .ex-name { fill: var(--blue); text-decoration: underline; } }
 .below ol.src { padding-left: 1.4em; }
 
 .msum { display: none; }

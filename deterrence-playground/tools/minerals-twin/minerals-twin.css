@@ -71,7 +71,7 @@ details.sec > summary { cursor: pointer; list-style: revert; }
 #heat td.c { font-family: var(--mono); font-size: 11.5px; text-align: right; }
 #heat th.c { text-align: right; }
 #heat tbody tr { cursor: pointer; }
-#heat tbody tr:hover td { outline: 1px solid var(--rule); }
+@media (hover: hover) { #heat tbody tr:hover td { outline: 1px solid var(--rule); } }
 #heat tbody tr[aria-selected="true"] td:first-child { box-shadow: inset 3px 0 0 var(--blue); }
 #heat tbody tr:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
 #heat .mn { font-weight: 600; }

@@ -74,7 +74,7 @@
 /* Segmented buttons and tabs */
 .seg { display: flex; flex-wrap: wrap; gap: 4px; }
 .seg button { font-size: 12px; padding: 5px 9px; border: 1px solid var(--rule); background: transparent; border-radius: 3px; cursor: pointer; font-weight: 500; }
-.seg button:hover { border-color: var(--muted); }
+@media (hover: hover) { .seg button:hover { border-color: var(--muted); } }
 .seg button[aria-pressed="true"] { border-color: var(--blue); background: var(--blue-soft); }
 .tabs button { flex: 1; font-size: 13px; font-weight: 600; padding: 7px 9px; }
 .tabs .ta[aria-pressed="true"] { border-color: var(--sa); background: color-mix(in srgb, var(--sa) 14%, transparent); color: var(--ink); }

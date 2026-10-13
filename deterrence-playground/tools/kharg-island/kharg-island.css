@@ -55,7 +55,7 @@
 .kh-sector:focus-visible .kh-route { stroke: var(--accent); stroke-width: 4; }
 .kh-route { fill: none; stroke: var(--muted); stroke-width: 2; stroke-dasharray: 4 4; }
 .kh-sector.on .kh-route { stroke: var(--us); stroke-dasharray: none; stroke-width: 3; }
-.kh-sector:hover .kh-route { stroke: var(--ink); }
+@media (hover: hover) { .kh-sector:hover .kh-route { stroke: var(--ink); } }
 .kh-slabel { font: 600 13px var(--display); fill: var(--ink); paint-order: stroke; stroke: var(--sea); stroke-width: 4px; }
 .kh-slabel.start { text-anchor: start; } .kh-slabel.end { text-anchor: end; }
 .kh-sector.on .kh-slabel { fill: var(--us); }
@@ -166,7 +166,7 @@ td.dbar .up { background: var(--us); } td.dbar .down { background: var(--muted);
 .st-c { display: flex; align-items: center; gap: 6px; flex: none; }
 .st-c output { min-width: 26px; text-align: center; font-size: 14px; }
 .st-b { width: 30px; height: 30px; border: 1px solid var(--rule); background: transparent; border-radius: 3px; font-size: 17px; line-height: 1; cursor: pointer; color: var(--ink); }
-.st-b:hover:not(:disabled) { border-color: var(--muted); }
+@media (hover: hover) { .st-b:hover:not(:disabled) { border-color: var(--muted); } }
 .st-b:disabled { opacity: .35; cursor: default; }
 .sub { display: flex; flex-direction: column; gap: 10px; }
 .sub[hidden] { display: none; }

@@ -3,7 +3,8 @@
 /* "i" buttons: a small visible circle with a 40 px invisible hit area. */
 .dd-info { position: relative; font: 700 11px var(--mono); color: var(--ink); border: 1px solid var(--rule); background: var(--panel); border-radius: 50%; width: 22px; height: 22px; padding: 0; cursor: help; line-height: 1; vertical-align: middle; flex: none; margin-left: 4px; }
 .dd-info::before { content: ''; position: absolute; inset: -9px; }
-.dd-info:hover, .dd-info[aria-expanded="true"] { border-color: var(--accent); outline: 1px solid var(--accent); }
+.dd-info[aria-expanded="true"] { border-color: var(--accent); outline: 1px solid var(--accent); }
+@media (hover: hover) { .dd-info:hover { border-color: var(--accent); outline: 1px solid var(--accent); } }
 .dd-tip { position: fixed; z-index: 70; background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-top: 3px solid var(--accent); border-radius: 5px; padding: 8px 11px; font-size: 12.5px; line-height: 1.4; box-shadow: 0 6px 22px rgba(0, 0, 0, .25); }
 .dd-tip b { display: block; margin-bottom: 3px; font-size: 13px; }
 .dd-tip ul { margin: 0 0 5px; padding-left: 16px; }

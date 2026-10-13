@@ -147,7 +147,7 @@ function finish() {
   setOverlay(overHTML(you, mode));
   cardIn(overlay.querySelector('.ov-card'), { count: true });
   aarIn();
-  announce(`Night over. ${you.leakTotal} leakers. After-action review below.`);
+  announce(`Night over. ${you.leakTotal} leaker${you.leakTotal === 1 ? '' : 's'}. After-action review below.`);
   syncPause();
   $('aar').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
   $('aar-h').setAttribute('tabindex', '-1'); $('aar-h').focus({ preventScroll: true });

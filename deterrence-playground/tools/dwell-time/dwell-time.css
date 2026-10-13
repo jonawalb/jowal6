@@ -17,7 +17,7 @@
 .dt-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px; }
 .dt-cards.two { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
 .dt-card { text-align: left; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel); padding: 10px 12px; cursor: pointer; display: flex; flex-direction: column; gap: 3px; }
-.dt-card:hover { border-color: var(--muted); }
+@media (hover: hover) { .dt-card:hover { border-color: var(--muted); } }
 .dt-card[aria-checked="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); background: color-mix(in srgb, var(--accent) 7%, var(--panel)); }
 .dt-card b { font: 600 15px var(--display); }
 .dt-card .k { font: 500 11px var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
@@ -97,7 +97,7 @@
 .dt-q { margin: 0 0 6px; font-size: 13px; font-style: italic; color: var(--ink); padding: 4px 8px; border-left: 3px solid var(--c6); background: color-mix(in srgb, var(--c6) 6%, transparent); }
 .dt-acts { display: flex; flex-direction: column; gap: 5px; }
 .dt-act { text-align: left; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel); padding: 7px 9px; cursor: pointer; display: grid; grid-template-columns: 18px 1fr; gap: 0 8px; align-items: start; }
-.dt-act:hover:not(:disabled) { border-color: var(--muted); }
+@media (hover: hover) { .dt-act:hover:not(:disabled) { border-color: var(--muted); } }
 .dt-act .box { width: 16px; height: 16px; border: 1.5px solid var(--muted); border-radius: 3px; margin-top: 2px; display: grid; place-items: center; font-size: 12px; line-height: 1; }
 .dt-act[aria-pressed="true"] { border-color: var(--blue); background: var(--blue-soft); }
 .dt-act[aria-pressed="true"] .box { background: var(--blue); border-color: var(--blue); color: #fff; }

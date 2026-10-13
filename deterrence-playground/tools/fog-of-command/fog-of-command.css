@@ -20,8 +20,8 @@ body[data-side="red"] { --mine: var(--red); --foe: var(--blue); }
 .fc-side span { font-weight: 600; }
 .fc-side small { color: var(--muted); font-size: 12.5px; line-height: 1.35; }
 .fc-side.blue b { color: var(--blue); } .fc-side.red b { color: var(--red); }
-.fc-side.blue:hover { border-color: var(--blue); background: var(--blue-soft); }
-.fc-side.red:hover { border-color: var(--red); background: var(--red-soft); }
+@media (hover: hover) { .fc-side.blue:hover { border-color: var(--blue); background: var(--blue-soft); } }
+@media (hover: hover) { .fc-side.red:hover { border-color: var(--red); background: var(--red-soft); } }
 .fc-rules { margin: 0; font-size: 14.5px; max-width: 90ch; }
 /* Offense-defense slider (start screen) */
 .fc-od { display: flex; flex-direction: column; gap: 4px; max-width: 560px; padding: 8px 12px; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel); }
@@ -67,7 +67,7 @@ body.fc-over #again { display: inline-block; }
 .fc-mcol { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .fc-units { display: grid; grid-template-columns: minmax(0, 1fr); gap: 3px; }
 .fc-units button { text-align: left; display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 6px; align-items: center; padding: 3px 7px 4px; min-height: 36px; border: 1px solid var(--rule); border-left: 3px solid var(--mine); border-radius: 3px; background: var(--panel); color: var(--ink); cursor: pointer; font-size: 12.5px; line-height: 1.2; position: relative; }
-.fc-units button:hover { border-color: var(--muted); border-left-color: var(--mine); }
+@media (hover: hover) { .fc-units button:hover { border-color: var(--muted); border-left-color: var(--mine); } }
 .fc-units button[aria-pressed="true"] { background: color-mix(in srgb, var(--mine) 14%, var(--panel)); border-color: var(--mine); outline: 2px solid var(--mine); outline-offset: -1px; }
 .fc-units button:disabled { opacity: .4; cursor: default; }
 .fc-units button.fc-arty { border-left-color: var(--c3); }
@@ -150,7 +150,7 @@ body.fc-over #again { display: inline-block; }
 .fc-ghost rect { fill: color-mix(in srgb, var(--mine) 10%, var(--panel)); stroke: var(--mine); stroke-width: 1.4; stroke-dasharray: 4 3; }
 .fc-ghost text { font: 600 11px var(--mono); fill: var(--mine); }
 .fc-ghost.sel rect { stroke: var(--focus); stroke-width: 2.6; stroke-dasharray: none; }
-.fc-ghost:hover rect { stroke-width: 2.2; }
+@media (hover: hover) { .fc-ghost:hover rect { stroke-width: 2.2; } }
 .fc-ghost rect.fc-ghit { fill: transparent; stroke: none; }   /* the larger, invisible tap area */
 .fc-clk circle { fill: var(--panel); stroke: var(--warn); stroke-width: 1.8; }
 .fc-clk path { fill: none; stroke: var(--warn); stroke-width: 1.6; stroke-linecap: round; }
@@ -158,20 +158,20 @@ body.fc-over #again { display: inline-block; }
 .fc-idle text { font: 700 10px var(--body); fill: var(--panel); }
 .fc-unit.idle .fc-ubox { stroke: var(--warn); }
 .fc-unit[data-pick] { cursor: pointer; }
-.fc-unit[data-pick]:hover .fc-ubox { stroke-width: 3; }
+@media (hover: hover) { .fc-unit[data-pick]:hover .fc-ubox { stroke-width: 3; } }
 .fc-firetag rect { fill: var(--panel); stroke: var(--c3); stroke-width: 1.4; opacity: .96; }
 .fc-ft1 { font: 700 11.5px var(--body); fill: var(--ink); }
 .fc-ft2 { font: 500 10.5px var(--body); fill: var(--muted); }
 body.fc-armed #map, body.fc-armed #map .fc-sec, body.fc-armed #map .fc-unit[data-pick], body.fc-armed #map .fc-ghost { cursor: crosshair; }
-body.fc-armed .fc-sec:hover rect { fill: color-mix(in srgb, var(--c3) 14%, transparent); stroke: var(--c3); stroke-dasharray: 5 3; }
+@media (hover: hover) { body.fc-armed .fc-sec:hover rect { fill: color-mix(in srgb, var(--c3) 14%, transparent); stroke: var(--c3); stroke-dasharray: 5 3; } }
 .fc-sec { cursor: pointer; outline: none; }
 .fc-sec rect { fill: transparent; stroke: transparent; stroke-width: 1.2; transition: fill var(--dur-feedback) var(--ease-enter); }
 .fc-bound { fill: none; stroke: var(--bound); stroke-width: 1.5; stroke-dasharray: 6 4; pointer-events: none; }
 .fc-bound.row { stroke-width: 2; opacity: 1; }
 .fc-bound.col { opacity: .8; }
 .fc-bound.edge { stroke-width: 1.5; opacity: .8; }
-.fc-sec:hover rect { fill: color-mix(in srgb, var(--mine) 6%, transparent); }
-.fc-sec.sel-can:hover rect { fill: color-mix(in srgb, var(--mine) 12%, transparent); stroke: var(--mine); }
+@media (hover: hover) { .fc-sec:hover rect { fill: color-mix(in srgb, var(--mine) 6%, transparent); } }
+@media (hover: hover) { .fc-sec.sel-can:hover rect { fill: color-mix(in srgb, var(--mine) 12%, transparent); stroke: var(--mine); } }
 .fc-sec:focus { outline: none; }
 .fc-sec:focus-visible rect { stroke: var(--focus); stroke-width: 3.5; }
 .fc-obj rect { stroke: var(--ink); stroke-width: 2; fill: color-mix(in srgb, var(--panel) 55%, transparent); }
@@ -213,7 +213,7 @@ body.fc-armed .fc-sec:hover rect { fill: color-mix(in srgb, var(--c3) 14%, trans
 #map text { user-select: none; -webkit-user-select: none; }
 .fc-viewbar { display: flex; justify-content: center; }
 .fc-views { display: flex; gap: 4px; background: var(--panel); padding: 4px; border-radius: 4px; border: 1px solid var(--rule); pointer-events: auto; }
-@media (max-width: 640px) { .fc-name { font-size: 16px; } .fc-obj .fc-name { font-size: 18px; } .fc-zone { font-size: 15px; } .fc-ulab { font-size: 12.5px; } .fc-ukey { font-size: 12.5px; } .fc-trk-n { font-size: 12px; } .fc-trk-l { font-size: 13px; } .fc-ghost text { font-size: 11.5px; } .fc-trayh, .fc-trayt { font-size: 15px; } .fc-ft1 { font-size: 14px; } .fc-ft2 { font-size: 13px; } }
+@media (max-width: 640px) { .fc-name { font-size: 16px; } .fc-obj .fc-name { font-size: 18px; } .fc-zone { font-size: 15px; } .fc-ulab { font-size: 11.5px; } .fc-ukey { font-size: 12.5px; } .fc-trk-n { font-size: 12px; } .fc-trk-l { font-size: 13px; } .fc-ghost text { font-size: 11.5px; } .fc-trayh, .fc-trayt { font-size: 15px; } .fc-ft1 { font-size: 14px; } .fc-ft2 { font-size: 13px; } }
 .fc-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; padding: 0 2px; color: var(--muted); }
 .fc-legend span { display: inline-flex; align-items: center; gap: 6px; }
 .fc-legend i { display: inline-block; width: 14px; height: 10px; flex: none; }
@@ -293,7 +293,7 @@ body.fc-armed .fc-sec:hover rect { fill: color-mix(in srgb, var(--c3) 14%, trans
 .fc-bat .fc-batdot { fill: var(--mine); stroke: none; }
 .fc-bat.fired { opacity: .7; }
 .fc-bat:focus-visible .fc-ubox { stroke: var(--focus); stroke-width: 3.5; }
-.fc-bat:hover .fc-ubox { stroke-width: 3; }
+@media (hover: hover) { .fc-bat:hover .fc-ubox { stroke-width: 3; } }
 .lg-bat { border: 2px solid var(--mine); background: radial-gradient(circle, var(--mine) 0 2.5px, transparent 3px); }
 
 /* Motion (js/fx.js). The pop and light-up animate the marker's shape, never its position. */
@@ -331,7 +331,7 @@ body.fc-armed .fc-sec:hover rect { fill: color-mix(in srgb, var(--c3) 14%, trans
 :root[data-skin="trailer"] .fc-fogn b { font: 600 16px var(--mono); }
 :root[data-skin="trailer"] .fc-fh:first-child li { background: color-mix(in srgb, var(--accent) 6%, transparent); }
 :root[data-skin="trailer"] #aar-arty dd { white-space: nowrap; }
-@media (max-width: 640px) { :root[data-skin="trailer"] .fc-name { font-size: 16px; letter-spacing: .02em; } :root[data-skin="trailer"] .fc-obj .fc-name { font-size: 21px; } :root[data-skin="trailer"] .fc-zone { font-size: 16px; } :root[data-skin="trailer"] .fc-ulab { font-size: 12.5px; } }
+@media (max-width: 640px) { :root[data-skin="trailer"] .fc-name { font-size: 16px; letter-spacing: .02em; } :root[data-skin="trailer"] .fc-obj .fc-name { font-size: 21px; } :root[data-skin="trailer"] .fc-zone { font-size: 16px; } :root[data-skin="trailer"] .fc-ulab { font-size: 11px; } }
 
 /* The decoy note at the start of a game: Red's how-to, or Blue's warning. */
 .fc-decoy { position: relative; margin: 0 0 8px; padding: 8px 36px 8px 10px; font-size: 13px; line-height: 1.4; border: 1px solid var(--warn); border-left-width: 5px; border-radius: 3px; background: color-mix(in srgb, var(--warn) 10%, var(--panel)); }

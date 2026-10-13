@@ -11,7 +11,7 @@
 .seg { display: flex; flex-wrap: wrap; gap: 4px; }
 .seg button { font-size: 13px; font-weight: 600; padding: 7px 12px; border: 1px solid var(--rule); background: transparent; border-radius: 3px; cursor: pointer; color: var(--ink); }
 .seg button small { font-weight: 400; color: var(--muted); }
-.seg button:hover { border-color: var(--muted); }
+@media (hover: hover) { .seg button:hover { border-color: var(--muted); } }
 .seg button[aria-pressed="true"] { border-color: var(--blue); background: var(--blue-soft); }
 
 /* Headline */

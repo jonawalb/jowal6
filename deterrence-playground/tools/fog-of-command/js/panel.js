@@ -12,6 +12,8 @@ export const NAME = Object.fromEntries(NODES.map(n => [n.id, n.name]));
 export const SIDE = { blue: 'Blue', red: 'Red' };
 export const foeOf = s => (s === 'blue' ? 'red' : 'blue');
 export const DEF = Object.fromEntries([...FORCES.blue, ...FORCES.red].map(d => [d.id, d]));
+/** Where a unit is, as the engine has it: its sector, or the road it is on (the map draws it at the sector it left). */
+export const placeOf = u => (NAME[u.node] ? NAME[u.node] : u.seg ? `${NAME[u.seg.from]}, on the road to ${NAME[u.seg.to]}` : null);
 export const hhmm = x => { const m = Math.round((GAME.startClock + x) * 60); return `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`; };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const n1 = x => (Math.round(x * 10) / 10).toFixed(1);

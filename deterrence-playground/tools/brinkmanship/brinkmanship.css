@@ -52,7 +52,7 @@ kbd { font: 500 11.5px var(--mono); border: 1px solid var(--rule); border-bottom
 .bk-decide h2 { margin: 0 0 8px; font-size: 19px; }
 .bk-choices { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
 .bk-choice { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 10px; text-align: left; padding: 10px 12px; border: 2px solid var(--rule); border-radius: 5px; background: var(--panel); color: var(--ink); cursor: pointer; }
-.bk-choice:hover { border-color: var(--c); background: color-mix(in srgb, var(--c) 7%, var(--panel)); }
+@media (hover: hover) { .bk-choice:hover { border-color: var(--c); background: color-mix(in srgb, var(--c) 7%, var(--panel)); } }
 .bk-choice b { font: 700 17px var(--display); color: var(--c); grid-column: 2; }
 .bk-choice kbd { grid-row: span 2; align-self: center; }
 .bk-choice small { grid-column: 2; color: var(--muted); font-size: 12.5px; line-height: 1.35; }

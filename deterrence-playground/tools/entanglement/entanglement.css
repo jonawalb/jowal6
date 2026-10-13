@@ -23,7 +23,7 @@
 .pl-r.hi .pl-n { box-shadow: -3px 0 0 var(--accent); padding-left: 6px; }
 .pl-r.hi .pl-c { outline: 2px solid var(--accent); outline-offset: 1px; }
 .pl-c { position: relative; border: 1px solid var(--rule); background: var(--bg); border-radius: 3px; min-height: 58px; cursor: pointer; padding: 6px 6px 16px; text-align: left; overflow: hidden; color: var(--ink); }
-.pl-c:hover { border-color: var(--muted); }
+@media (hover: hover) { .pl-c:hover { border-color: var(--muted); } }
 .pl-c[aria-pressed="true"] { border-color: var(--bad); background: var(--red-soft); }
 .pl-strike { font: 600 12px var(--body); color: var(--faint); }
 .pl-c[aria-pressed="true"] .pl-strike { color: var(--bad); }

@@ -1,6 +1,6 @@
 // Shareable state in the URL hash.
 // #a=2&s=2&m=1&r=2&k=1&d=1&mn=E&dm=1&hd=0&pl=assault&st=1&sc=E&lf=4&v=heli&of=0&t=8&seed=1683&v.pMine=0.2
-import { MENU, SECTORS, VERTICAL, PROB } from '../data/params.js';
+import { MENU, TOGGLES, MINE_COST, BUDGET, SECTORS, VERTICAL, PROB } from '../data/params.js';
 
 const KEYS = { ashm: 'a', shorad: 's', marines: 'm', reserves: 'r', stocks: 'k', drones: 'd' };
 
@@ -17,6 +17,14 @@ export function writeHash(cfg, P, seed, view) {
   history.replaceState(null, '', '#' + q.toString());
 }
 
+/** Keep a linked posture within the budget as the panel would: buy items top to bottom and leave out what no longer fits. */
+function fitBudget(roc) {
+  let left = BUDGET;
+  for (const m of MENU) { roc[m.k] = Math.min(roc[m.k], Math.floor(left / m.cost)); left -= roc[m.k] * m.cost; }
+  for (const k of Object.keys(roc.mines)) if (roc.mines[k]) { if (left >= MINE_COST) left -= MINE_COST; else roc.mines[k] = false; }
+  for (const t of TOGGLES) if (roc[t.k]) { if (left >= t.cost) left -= t.cost; else roc[t.k] = false; }
+}
+
 /** Apply a hash onto defaults. Returns { cfg, P, seed, view } with every value clamped. */
 export function readHash(cfg, P, seed) {
   const q = new URLSearchParams(location.hash.slice(1));
@@ -26,6 +34,7 @@ export function readHash(cfg, P, seed) {
   if (q.has('mn')) for (const k of Object.keys(SECTORS)) cfg.roc.mines[k] = (q.get('mn') || '').includes(k);
   if (q.has('dm')) cfg.roc.demo = q.get('dm') === '1';
   if (q.has('hd')) cfg.roc.harden = q.get('hd') === '1';
+  fitBudget(cfg.roc);
   if (['assault', 'blockade'].includes(q.get('pl'))) cfg.pla.plan = q.get('pl');
   cfg.pla.strikes = Math.round(num('st', 0, 3, cfg.pla.strikes));
   if (SECTORS[q.get('sc')]) cfg.pla.sector = q.get('sc');

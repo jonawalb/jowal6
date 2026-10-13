@@ -224,15 +224,24 @@ export function render(m, v) {
     const need = Math.ceil(own.length / per) * 42 * K;
     const s2 = own.length && need > room ? Math.max(0.5, room / need) : 1;
     const s3 = Math.min(s2, (c.w - 8) / per / (50 * K));
-    slots(own.length, per, c.x, y0 + 14 * K * s3, c.w, Math.min(56 * K * s3, (c.w - 6) / per), 42 * K * s3)
-      .forEach((p, i) => unitBox(L.mine, p, own[i], v, K * s3, s3 > 0.75 && own.length <= (narrow ? 2 : 3), n.id));
-    if (v.fights && v.fights.includes(n.id)) {
-      const g = el('g', { class: 'fc-fight', 'data-node': n.id, transform: `translate(${c.x + c.w - 16 * K} ${c.y + 16 * K}) scale(${K})` }, L.top);
+    const dxU = Math.min(56 * K * s3, (c.w - 6) / per), lab = s3 > 0.75 && own.length <= (narrow ? 2 : 3);
+    // A unit's name label keeps to its own slot and inside the sector (room in the icon's own units).
+    slots(own.length, per, c.x, y0 + 14 * K * s3, c.w, dxU, 42 * K * s3)
+      .forEach((p, i) => unitBox(L.mine, p, own[i], v, K * s3, lab && Math.min(dxU, 2 * (p[0] - c.x), 2 * (c.x + c.w - p[0])) / (K * s3) - 4, n.id));
+    const fightHere = v.fights && v.fights.includes(n.id), hitHere = v.hits && v.hits.includes(n.id);
+    // Fight and hit markers sit at the top right, level with the sector name. On a phone the sector is too
+    // narrow for both side by side with the name, so the hit star rides under the fight marker as a badge
+    // and the name is narrowed (textLength) to end clear of the marker, or of the sector edge.
+    const mk = narrow ? 1.1 : K, mx = c.x + c.w - (narrow ? 4 + 10 * mk : 16 * K), my = narrow ? c.y + 18 : c.y + 16 * K;
+    if (narrow && n.id !== 'x') fitName(m.nodes[n.id], fightHere || hitHere ? mx - 10 * mk - 4 : c.x + c.w - 5);
+    if (fightHere) {
+      const g = el('g', { class: 'fc-fight', 'data-node': n.id, transform: `translate(${mx} ${my}) scale(${mk})` }, L.top);
       el('circle', { r: 10 }, g); el('path', { d: 'M-5 -5L5 5M5 -5L-5 5' }, g);
       el('title', {}, g, `Fighting in ${n.name}`);
     }
-    if (v.hits && v.hits.includes(n.id)) {
-      const g = el('g', { class: 'fc-hit', transform: `translate(${c.x + c.w - (v.fights?.includes(n.id) ? 40 : 16) * K} ${c.y + 16 * K}) scale(${K})` }, L.top);
+    if (hitHere) {
+      const [hx, hy, hk] = !fightHere ? [mx, my, mk] : narrow ? [mx, my + 13 * mk, 0.75] : [c.x + c.w - 40 * K, my, K];
+      const g = el('g', { class: 'fc-hit', transform: `translate(${hx} ${hy}) scale(${hk})` }, L.top);
       el('path', { d: 'M0 -10L3 -3L10 -3L4 2L6 10L0 5L-6 10L-4 2L-10 -3L-3 -3Z' }, g);
       el('title', {}, g, `Enemy artillery hit ${n.name} this hour`);
     }
@@ -248,6 +257,22 @@ export function render(m, v) {
     el('title', {}, g, `Your artillery fired on ${NODE[v.target].name} this hour`);
     if (v.fireTag && v.fireTag.node === v.target) fireTag(L.top, v.fireTag.lines, tx, ty, c, K, v.target === 'x');
   }
+}
+
+/** Narrow a sector name (phone layout) so it ends before x. */
+function fitName(sec, x) {
+  const t = sec.querySelector('.fc-name');
+  fitText(t, x - +t.getAttribute('x'), 16);
+}
+
+/** Squeeze a label (textLength) into `room` if it is wider; px estimates the width while the map is hidden. */
+function fitText(t, room, px) {
+  t.removeAttribute('textLength'); t.removeAttribute('lengthAdjust');
+  // Both measures are 0 while the map is hidden (phone Units tab): estimate from the font size then.
+  let w = t.getComputedTextLength();
+  try { w = Math.max(w, t.getBBox().width); } catch { /* not rendered */ }
+  if (!w) w = s2w(t.textContent, px) * 0.92;
+  if (w > room) { t.setAttribute('textLength', room.toFixed(1)); t.setAttribute('lengthAdjust', 'spacingAndGlyphs'); }
 }
 
 /** A floating tag next to your fire mission's target: the damage report and what a spotter saw. */
@@ -320,7 +345,7 @@ function unitBox(parent, [x, y], u, v, k, labels, node) {
   if (u.key) { const kk = el('text', { x: 18, y: 10, class: 'fc-ukey' }, g, u.key.toUpperCase()); kk.setAttribute('text-anchor', 'end'); }
   if (late) clock(g, -21, -13);
   if (idle) { const b = el('g', { class: 'fc-idle', transform: 'translate(21 -13)' }, g); el('circle', { r: 6.5 }, b); const t = el('text', { y: 3.6 }, b, '!'); t.setAttribute('text-anchor', 'middle'); }
-  if (labels) { const l = el('text', { y: 26, class: 'fc-ulab' }, g, u.short); l.setAttribute('text-anchor', 'middle'); }
+  if (labels) { const l = el('text', { y: 26, class: 'fc-ulab' }, g, u.short); l.setAttribute('text-anchor', 'middle'); fitText(l, labels, 12.5); }
   el('title', {}, g, `${u.name}: strength ${u.str.toFixed(1)} of ${u.str0}${u.stance === 'give' ? ', gives ground' : ''}${moving ? ', on the move' : ''}${late ? ', order starts next hour' : ''}${idle ? `, ${idle}` : ''}${v.live ? '. Click to select.' : ''}`);
 }
 

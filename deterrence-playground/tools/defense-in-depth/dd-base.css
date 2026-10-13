@@ -32,7 +32,7 @@ body { --mine: var(--blue); --foe: var(--red); --hp: #2f9e44; --hp-lost: #d63a3a
 .dd-side span { font-weight: 600; }
 .dd-side small { color: var(--muted); font-size: 12.5px; line-height: 1.35; }
 .dd-side[aria-pressed="true"] { border-color: var(--blue); background: var(--blue-soft); }
-.dd-side:hover { border-color: var(--blue); }
+@media (hover: hover) { .dd-side:hover { border-color: var(--blue); } }
 .dd-odfx { font-style: normal; font-size: 12.5px; font-weight: 600; color: var(--muted); }
 .dd-odfx[data-e="easier"] { color: var(--good); } .dd-odfx[data-e="harder"] { color: var(--warn); }
 .dd-exp { color: var(--warn); }
@@ -81,7 +81,7 @@ body.dd-planning #undo, body.dd-planning #end { display: none; }
 .dd-say { margin: 0; padding: 6px 10px; font-size: 13.5px; line-height: 1.45; border-left: 3px solid var(--mine); background: var(--panel); border-radius: 0 3px 3px 0; min-height: 2.2em; }
 .dd-keys { margin: 4px 0 0; font-size: 11.5px; }
 @media (min-width: 1021px) and (max-width: 1500px) { .layout { grid-template-columns: minmax(0, 1fr) 320px; } }
-@media (min-width: 1021px) { .dd-side-panel { position: sticky; top: 8px; max-height: calc(100vh - 16px); overflow-y: auto; } }
+@media (min-width: 1021px) { .dd-side-panel { position: sticky; top: 8px; max-height: calc(100vh - 16px); overflow-y: auto; overscroll-behavior: contain; } }
 @media (max-width: 1020px) { .dd-board { grid-template-columns: 250px minmax(0, 1fr); } }
 @media (max-width: 760px) { .dd-board { grid-template-columns: minmax(0, 1fr); } }
 /* Phone: the bar stays on top; tabs show one pane at a time (planning: Map | Plan | Units; battle: Map | Units | Reports). */
@@ -105,11 +105,15 @@ body.dd-planning #undo, body.dd-planning #end { display: none; }
   body.dd-live[data-tab="plan"] .dd-board, body.dd-live[data-tab="reports"] .dd-board { display: none !important; }
   body.dd-live:not([data-tab="plan"]):not([data-tab="reports"]) .dd-side-panel { display: none !important; }
   body.dd-live[data-tab="units"] .dd-mcol > .dd-tips { display: none; }
+  /* Battle over: the same tabs, Map (the map, then the review) | Units, so the review is not below the unit tree. */
+  body.dd-over .dd-tabs { display: grid; grid-template-columns: repeat(2, 1fr); }
+  body.dd-over .dd-tabs [data-tab="reports"] { display: none; }
+  body.dd-over[data-tab="map"] .dd-ucol, body.dd-over[data-tab="units"] .dd-mcol, body.dd-over[data-tab="units"] .dd-aar { display: none !important; }
   .dd-say { font-size: 13px; min-height: 0; }
 }
 
 /* Start tips: the decoy-note pattern (units column on desktop, top of the Map tab on phones). */
-.dd-tips { position: relative; margin: 0; padding: 8px 40px 8px 10px; font-size: 13px; line-height: 1.4; border: 1px solid var(--warn); border-left-width: 5px; border-radius: 3px; background: color-mix(in srgb, var(--warn) 9%, var(--panel)); max-height: 46vh; overflow-y: auto; }
+.dd-tips { position: relative; margin: 0; padding: 8px 40px 8px 10px; font-size: 13px; line-height: 1.4; border: 1px solid var(--warn); border-left-width: 5px; border-radius: 3px; background: color-mix(in srgb, var(--warn) 9%, var(--panel)); max-height: 46vh; overflow-y: auto; overscroll-behavior: contain; }
 .dd-tips ul { margin: 4px 0; padding-left: 16px; display: flex; flex-direction: column; gap: 3px; }
 .dd-tips-h { margin: 0; }
 .dd-tips-h b { color: var(--warn); }

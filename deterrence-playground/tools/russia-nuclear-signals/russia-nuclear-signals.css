@@ -20,7 +20,7 @@ code { font-family: var(--mono); font-size: 11.5px; }
 .gchip .num { font-size: 10.5px; color: var(--faint); }
 .gchip[aria-pressed="true"] { color: var(--ink); border-color: var(--muted); }
 .gchip[aria-pressed="true"] i { opacity: 1; }
-.gchip:hover { border-color: var(--ink); }
+@media (hover: hover) { .gchip:hover { border-color: var(--ink); } }
 .lvrow { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; font-size: 12.5px; }
 .lvrow .lab { font-weight: 600; }
 .search { flex: 1 1 200px; min-width: 0; font: 14px var(--body); padding: 6px 9px; border: 1px solid var(--rule); border-radius: 3px; background: var(--panel); color: var(--ink); }
@@ -41,7 +41,7 @@ code { font-family: var(--mono); font-size: 11.5px; }
 .chart .ax-t.yr { fill: var(--ink); font-weight: 500; }
 .chart .mk { stroke: var(--panel); stroke-width: 1.2; cursor: pointer; }
 .chart .mk-b { opacity: .85; }
-.chart .mk:hover { stroke: var(--ink); }
+@media (hover: hover) { .chart .mk:hover { stroke: var(--ink); } }
 .chart .mk.sel { stroke: var(--ink); stroke-width: 2.2; }
 .chart .selline { stroke: var(--ink); stroke-width: 1; stroke-dasharray: 3 3; opacity: .6; }
 .chart-f { display: flex; flex-wrap: wrap; gap: 6px 14px; justify-content: space-between; align-items: center; }
@@ -54,7 +54,7 @@ code { font-family: var(--mono); font-size: 11.5px; }
 .list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
 .list li.none { color: var(--muted); font-size: 12.5px; padding: 6px 0; }
 .it button { width: 100%; display: grid; grid-template-columns: 130px 170px minmax(0, 1fr) 140px; gap: 10px; align-items: baseline; text-align: left; background: transparent; border: 0; border-bottom: 1px solid var(--rule); padding: 7px 4px; cursor: pointer; font-size: 13px; }
-.it button:hover { background: var(--chip); }
+@media (hover: hover) { .it button:hover { background: var(--chip); } }
 .it.on button { background: var(--blue-soft); }
 .it-d { font-size: 11.5px; color: var(--muted); }
 .it-k { font-size: 12px; color: var(--muted); display: inline-flex; gap: 6px; align-items: center; }
@@ -88,7 +88,7 @@ code { font-family: var(--mono); font-size: 11.5px; }
 .lvd-b { height: 8px; background: var(--chip); border-radius: 2px; overflow: hidden; }
 .lvd-b i { display: block; height: 100%; background: var(--prc); }
 .lvdist .num { text-align: right; }
-@media (min-width: 1021px) { .panel { position: sticky; top: 10px; max-height: calc(100vh - 20px); overflow-y: auto; } }
+@media (min-width: 1021px) { .panel { position: sticky; top: 10px; max-height: calc(100vh - 20px); overflow-y: auto; overscroll-behavior: contain; } }
 
 .codetbl td:first-child { font-weight: 600; min-width: 110px; }
 

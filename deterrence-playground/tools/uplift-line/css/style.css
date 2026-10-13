@@ -61,7 +61,7 @@ code { font-size: .9em; background: var(--surface-2); padding: 0 .3em; border-ra
   font-size: .9rem;
 }
 .topbar a { text-decoration: none; font-weight: 500; }
-.topbar a:hover { text-decoration: underline; }
+@media (hover: hover) { .topbar a:hover { text-decoration: underline; } }
 
 .wrap { max-width: 860px; margin: 0 auto; padding: 1.25rem 1rem 2rem; }
 .intro h1 { font-size: clamp(1.6rem, 4vw, 2.2rem); margin: .5rem 0 .4rem; }
@@ -78,7 +78,7 @@ code { font-size: .9em; background: var(--surface-2); padding: 0 .3em; border-ra
   padding: .55rem .75rem; cursor: pointer; margin-bottom: -1px;
 }
 .tabs button[aria-selected="true"] { color: var(--g700); border-bottom-color: var(--g700); }
-.tabs button:hover { color: var(--text); }
+@media (hover: hover) { .tabs button:hover { color: var(--text); } }
 
 .card {
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
@@ -101,10 +101,10 @@ select {
   background: var(--g700); color: #fff;
 }
 @media (prefers-color-scheme: dark) { .btn { color: #0b1712; } }
-.btn:hover:not(:disabled) { filter: brightness(1.08); }
+@media (hover: hover) { .btn:hover:not(:disabled) { filter: brightness(1.08); } }
 .btn:disabled { opacity: .45; cursor: not-allowed; }
 .btn.ghost { background: transparent; color: var(--g700); border-color: var(--border); }
-.btn.ghost:hover { border-color: var(--g600); }
+@media (hover: hover) { .btn.ghost:hover { border-color: var(--g600); } }
 .btn.danger { background: var(--loose); border-color: var(--loose); }
 .confirm {
   display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin-bottom: .75rem;

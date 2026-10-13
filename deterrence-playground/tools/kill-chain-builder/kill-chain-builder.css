@@ -11,7 +11,7 @@
 .pal-g { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
 .pal-h { font-family: var(--display); font-weight: 600; font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-right: 2px; width: 100%; }
 .pal { font-size: 12.5px; padding: 5px 9px; border: 1px solid var(--rule); border-left: 4px solid var(--cat); border-radius: 3px; background: var(--panel); cursor: grab; touch-action: none; }
-.pal:hover { border-color: var(--muted); border-left-color: var(--cat); }
+@media (hover: hover) { .pal:hover { border-color: var(--muted); border-left-color: var(--cat); } }
 .kc-actions { display: flex; gap: 6px; flex-wrap: wrap; }
 .ghost-node { position: fixed; z-index: 20; pointer-events: none; padding: 8px 12px; background: var(--panel); border: 1px solid var(--rule); border-left: 5px solid var(--cat); border-radius: 4px; font-weight: 600; box-shadow: 0 6px 20px rgba(0, 0, 0, .18); }
 
@@ -36,13 +36,13 @@
 .node .st { font: 11.5px var(--mono); fill: var(--muted); }
 .node .st.ok { fill: var(--good); }
 .node .st.no { fill: var(--warn); }
-.node:hover .body { stroke: var(--muted); }
+@media (hover: hover) { .node:hover .body { stroke: var(--muted); } }
 .node.sel .body { stroke: var(--blue); stroke-width: 2.4; }
 .node.onbest .body { stroke: var(--bad); stroke-width: 2; }
 .node.sel.onbest .body { stroke: var(--blue); }
 .node:focus-visible .body { stroke: var(--accent); stroke-width: 3; }
 .node .port { fill: var(--panel); stroke: var(--cat); stroke-width: 2.4; cursor: crosshair; }
-.node .port:hover { fill: var(--cat); }
+@media (hover: hover) { .node .port:hover { fill: var(--cat); } }
 .node .inport { fill: var(--cat); }
 .node .spof { fill: none; stroke: var(--accent); stroke-width: 2; stroke-dasharray: 5 4; }
 .node .spof-t { font: 600 10.5px var(--mono); fill: var(--accent); }
@@ -104,7 +104,7 @@
 .props td { font-family: var(--mono); padding: 3px 0; }
 .links { list-style: none; margin: 0; padding: 0; font-size: 12.5px; display: flex; flex-direction: column; gap: 2px; }
 .links .x { border: 0; background: none; cursor: pointer; color: var(--muted); font-size: 16px; line-height: 1; padding: 0 6px; }
-.links .x:hover { color: var(--bad); }
+@media (hover: hover) { .links .x:hover { color: var(--bad); } }
 
 /* Walkthrough */
 .stage { position: relative; }

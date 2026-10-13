@@ -33,7 +33,7 @@
 .pg-beach { fill: color-mix(in srgb, var(--muted) 10%, transparent); stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 5 4; }
 .pg-sector.on .pg-beach { fill: color-mix(in srgb, var(--prc) 16%, transparent); stroke: var(--prc); stroke-dasharray: none; stroke-width: 2; }
 .pg-sector.on .pg-route { stroke: var(--prc); opacity: .6; }
-.pg-sector:hover .pg-beach { stroke: var(--ink); }
+@media (hover: hover) { .pg-sector:hover .pg-beach { stroke: var(--ink); } }
 .pg-slabel { font: 600 15px var(--display); fill: var(--ink); text-anchor: middle; paint-order: stroke; stroke: var(--sea); stroke-width: 4px; }
 .pg-sector .pg-note { paint-order: stroke; stroke: var(--sea); stroke-width: 3px; }
 .pg-mine { fill: var(--roc); }
@@ -129,7 +129,7 @@ td.dbar .up { background: var(--prc); } td.dbar .down { background: var(--roc); 
 .st-c { display: flex; align-items: center; gap: 6px; flex: none; }
 .st-c output { min-width: 16px; text-align: center; font-size: 14px; }
 .st-b { width: 30px; height: 30px; border: 1px solid var(--rule); background: transparent; border-radius: 3px; font-size: 17px; line-height: 1; cursor: pointer; color: var(--ink); }
-.st-b:hover:not(:disabled) { border-color: var(--muted); }
+@media (hover: hover) { .st-b:hover:not(:disabled) { border-color: var(--muted); } }
 .st-b:disabled { opacity: .35; cursor: default; }
 .mines { display: flex; flex-direction: column; }
 .sub { display: flex; flex-direction: column; gap: 10px; }

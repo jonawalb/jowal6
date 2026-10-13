@@ -48,7 +48,7 @@ body[data-mode="quota"] .a-only, body[data-mode="alarm"] .q-only { display: none
 
 .seg { display: flex; flex-wrap: wrap; gap: 4px; }
 .seg > button { font-size: 12px; padding: 5px 9px; border: 1px solid var(--rule); background: transparent; border-radius: 3px; cursor: pointer; font-weight: 500; }
-.seg > button:hover { border-color: var(--muted); }
+@media (hover: hover) { .seg > button:hover { border-color: var(--muted); } }
 .seg > button[aria-pressed="true"] { border-color: var(--blue); background: var(--blue-soft); }
 .sls { display: flex; flex-direction: column; gap: 10px; }
 .sym { font-family: var(--mono); font-style: italic; color: var(--muted); font-size: 12px; }

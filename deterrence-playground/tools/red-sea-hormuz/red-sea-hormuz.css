@@ -80,7 +80,7 @@
 .rs-ev .ev-d { stroke: var(--panel); stroke-width: 1.2; }
 .rs-ev .ev-hit { fill: transparent; }
 .rs-ev.on .ev-l { opacity: 1; stroke-width: 1.6; }
-.rs-ev:hover .ev-l { opacity: .9; }
+@media (hover: hover) { .rs-ev:hover .ev-l { opacity: .9; } }
 .rs-chartcard { display: flex; flex-direction: column; gap: 8px; }
 .chart-h { display: flex; flex-wrap: wrap; gap: 6px 16px; justify-content: space-between; align-items: center; }
 .legend { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 11.5px; color: var(--muted); }
@@ -93,7 +93,7 @@
 /* Segmented buttons */
 .seg { display: flex; flex-wrap: wrap; gap: 4px; }
 .seg button { font-size: 12px; padding: 5px 8px; border: 1px solid var(--rule); background: transparent; border-radius: 3px; cursor: pointer; }
-.seg button:hover { border-color: var(--muted); }
+@media (hover: hover) { .seg button:hover { border-color: var(--muted); } }
 .seg button[aria-pressed="true"] { border-color: var(--blue); background: var(--blue-soft); }
 button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
@@ -114,7 +114,7 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .rs-evlist { position: relative; list-style: none; margin: 0; padding: 0; max-height: 330px; overflow: auto; border: 1px solid var(--rule); border-radius: 3px; }
 .rs-evlist li + li { border-top: 1px solid var(--rule); }
 .rs-evlist button { display: grid; grid-template-columns: 10px 76px minmax(0, 1fr); gap: 7px; align-items: baseline; width: 100%; text-align: left; background: transparent; border: 0; padding: 6px 8px; cursor: pointer; font-size: 12.5px; line-height: 1.3; }
-.rs-evlist button:hover { background: var(--chip); }
+@media (hover: hover) { .rs-evlist button:hover { background: var(--chip); } }
 .rs-evlist button[aria-pressed="true"] { background: var(--blue-soft); }
 .rs-evlist .dot { width: 9px; height: 9px; border-radius: 50%; margin-top: 3px; }
 .rs-evlist .dd { font: 11px var(--mono); color: var(--muted); }

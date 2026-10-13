@@ -29,7 +29,7 @@
 .strip .edot { cursor: pointer; stroke-width: 1.5; }
 .strip .edot.off { stroke-width: 1.3; }
 .strip .edot.sel { stroke: var(--ink) !important; stroke-width: 2.5; }
-.strip .edot:hover { stroke: var(--ink); }
+@media (hover: hover) { .strip .edot:hover { stroke: var(--ink); } }
 .gridl { stroke: var(--rule); stroke-width: 1; }
 .axis { stroke: var(--muted); stroke-width: 1; }
 .ax { font: var(--axis-font); fill: var(--axis-ink); }
@@ -49,13 +49,14 @@
 .jmark { font: 600 11px var(--mono); fill: var(--prc); }
 .tmark { fill: var(--ally); }
 .hov { fill: transparent; }
-.hov:hover { fill: color-mix(in srgb, var(--ink) 5%, transparent); }
+@media (hover: hover) { .hov:hover { fill: color-mix(in srgb, var(--ink) 5%, transparent); } }
 .evline { fill: none; stroke-width: 1; opacity: .22; }
 .ciband { opacity: .16; }
 .meanline { fill: none; stroke-width: 2.5; }
 .cibar { stroke-width: 3; stroke-linecap: round; opacity: .55; }
 .sdot { cursor: pointer; stroke: var(--panel); stroke-width: 1.2; opacity: .85; }
-.sdot:hover, .sdot:focus-visible { stroke: var(--ink); stroke-width: 2; opacity: 1; }
+.sdot:focus-visible { stroke: var(--ink); stroke-width: 2; opacity: 1; }
+@media (hover: hover) { .sdot:hover { stroke: var(--ink); stroke-width: 2; opacity: 1; } }
 .glab { font: 600 12px var(--body); }
 .chart-wrap { position: relative; }
 .chart-msg { padding: 40px 16px; text-align: center; color: var(--muted); border: 1px dashed var(--rule); border-radius: 4px; }
@@ -69,7 +70,7 @@
 .evlist { list-style: none; margin: 0; padding: 0; max-height: 280px; overflow-y: auto; border: 1px solid var(--rule); border-radius: 3px; }
 .evlist li + li { border-top: 1px solid var(--rule); }
 .evlist button { width: 100%; text-align: left; background: transparent; border: 0; padding: 6px 8px; cursor: pointer; display: grid; grid-template-columns: auto 1fr; gap: 0 8px; font-size: 12.5px; }
-.evlist button:hover { background: var(--chip); }
+@media (hover: hover) { .evlist button:hover { background: var(--chip); } }
 .evlist button[aria-pressed="true"] { background: var(--blue-soft); box-shadow: inset 3px 0 0 var(--blue); }
 .evlist .d { font-size: 11.5px; }
 .evlist .c { text-align: right; }

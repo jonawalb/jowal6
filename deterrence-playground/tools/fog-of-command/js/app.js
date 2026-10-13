@@ -6,7 +6,7 @@ import { beliefAt } from './vision.js';
 import { redAI, blueAI } from './ai.js';
 import { path, travelHours } from './graph.js';
 import { createMap, render } from './map.js';
-import { feedHTML, status, fireText, fireTag, renderBelow, hhmm, NAME, DEF, foeOf, waveText, endTime, secondPick, odWords, odFor } from './panel.js';
+import { feedHTML, status, fireText, fireTag, renderBelow, hhmm, NAME, placeOf, DEF, foeOf, waveText, endTime, secondPick, odWords, odFor } from './panel.js';
 import { tilt } from './combat.js';
 import { createAAR } from './aar.js';
 import { lessonSteps, LESSON_SEED, SHEET } from './lesson.js';
@@ -140,7 +140,7 @@ function idleReason(u) {
 const unitStatus = u => {
   if (u.broken || u.node === 'gone') return 'broken';
   if (u.type === 'arty') return g.over ? 'fixed' : g.fire[me][g.t] ? `fired on ${NAME[g.fire[me][g.t]]}` : armed() ? 'armed: click a sector' : 'ready to fire';
-  if (g.over) return NAME[where(u)] || 'on the move';
+  if (g.over) return placeOf(u) || 'on the move';
   if (u.node === 'off') return `enters ${NAME[u.entry]} at ${hhmm(u.arrive)}`;
   const o = pending(u);
   if (o) return o.due > g.t ? `to ${NAME[o.dest]} · ordered ${hhmm(o.t)}, starts ${hhmm(o.due)}` : `to ${NAME[o.dest]}, starts now`;
@@ -416,10 +416,16 @@ function setView(v) {
   }
 }
 
-/** The decoy note heads the unit list; on a phone, where the Map tab hides that list, it sits above the map. */
+/** The decoy note heads the unit list; on a phone it sits above the map, except on the Units tab, where it heads the list. */
 function placeDecoyTip() {
   const tip = $('decoytip');
-  if (narrowQ.matches) $('box').before(tip); else $('ucol').prepend(tip);
+  if (narrowQ.matches && tab !== 'units') $('box').before(tip); else $('ucol').prepend(tip);
+}
+
+/** Draw the map again as it stands (live, or the review hour), e.g. after its labels' fonts load. */
+function redrawMap() {
+  if (g && !g.over) render(map, liveView());
+  else if (g && aarHour !== null) reviewAt(aarHour);
 }
 
 /** Phone tabs: Map, Units, Reports (CSS shows one at a time while a game is on). */
@@ -427,6 +433,8 @@ function setTab(t) {
   tab = t;
   document.body.dataset.tab = t;
   document.querySelectorAll('.fc-tabs [data-tab]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === t)));
+  placeDecoyTip();
+  if (narrowQ.matches && t === 'map') redrawMap();   // labels measured while the map was hidden were estimates
   // On a phone each tab starts at the top of the play area, under the order bar.
   if (narrowQ.matches && g && !g.over && $('play').getBoundingClientRect().top < 0) $('play').scrollIntoView({ block: 'start', behavior: 'auto' });
 }
@@ -500,6 +508,8 @@ narrowQ.addEventListener('change', () => {
   if (!g) render(map, { me: 'blue', units: [], pic: { tracks: [], marks: [] }, mode: 'belief' });
   else if (g.over && aarHour !== null) reviewAt(aarHour); else draw();
 });
+// Phone labels are fitted to their sectors by measuring them: measure again once web fonts arrive.
+document.fonts?.addEventListener('loadingdone', redrawMap);
 $('quotes').addEventListener('click', e => {
   const a = e.target.closest('a[href^="#src-"]');
   if (!a) return;

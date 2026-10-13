@@ -479,7 +479,8 @@ function finalize(s, sc, sec) {
 // notes, and the exercise details (names, objectives, the organization profile) as JSON.
 export function encode(s, history, meta = null) {
   const p = Object.entries(s.posture).filter(([, v]) => v).map(([k]) => k).join('.');
-  const h = history.map(m => [...(m.acts || []), ...(m.fx ? [`!${m.fx}`] : [])].join('.')).join('~');
+  // One turn with no moves would join to '' (read back as no turns), so it is written as '-'.
+  const h = history.map(m => [...(m.acts || []), ...(m.fx ? [`!${m.fx}`] : [])].join('.')).join('~') || (history.length ? '-' : '');
   const notes = history.map(m => m.note || '');
   const m = { ...(meta || {}) }; if (s.profile) m.profile = s.profile; else delete m.profile;
   return [1, s.seed, s.scen, s.sector, s.mode, p, h, notes.some(Boolean) ? encodeURIComponent(JSON.stringify(notes)) : '',
@@ -493,7 +494,7 @@ export function decode(str) {
   let meta = {}; try { meta = mt ? JSON.parse(decodeURIComponent(mt)) : {}; } catch { meta = {}; }
   if (!meta || typeof meta !== 'object' || Array.isArray(meta)) meta = {};
   const history = h ? h.split('~').map((x, i) => {
-    const parts = x ? x.split('.') : [], fx = parts.find(a => a.startsWith('!'));
+    const parts = x && x !== '-' ? x.split('.') : [], fx = parts.find(a => a.startsWith('!'));
     return { acts: parts.filter(a => !a.startsWith('!')), note: typeof notes[i] === 'string' ? notes[i] : '', ...(fx ? { fx: fx.slice(1) } : {}) };
   }) : [];
   return { setup: { seed: +seed, scen, sector, mode, posture, profile: cleanProfile(meta.profile) }, history, meta };

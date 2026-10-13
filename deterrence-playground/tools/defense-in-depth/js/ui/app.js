@@ -105,6 +105,7 @@ function finish(scroll) {
   const g = S.g;
   if (g.tutorial) { finishTutorial(scroll); return; }
   document.body.classList.remove('dd-live', 'dd-armed');
+  setTab('map');   // phones: the over view leads with the map and the review (Map | Units tabs)
   $('viewbar').hidden = false; $('feedsec').hidden = true; closeUnitPop(false);
   S.aarHour = g.snaps.length - 1; S.sel = []; S.tool = null;
   let cont = null, onCont = null;
@@ -237,6 +238,7 @@ function tutorial() {
 function finishTutorial(scroll) {
   const g = S.g;
   document.body.classList.remove('dd-live', 'dd-armed');
+  setTab('map');   // phones: the result is on the Map tab, under the map
   $('feedsec').hidden = true; closeUnitPop(false);
   S.sel = []; S.tool = null;
   say(`${g.over.winner === S.me ? 'You won.' : 'You lost.'} The result is below the map.`);

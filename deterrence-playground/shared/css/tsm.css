@@ -58,22 +58,22 @@ h1, h2, h3 { font-family: var(--display); text-wrap: balance; }
 .tsm-sub { margin: 4px 0 0; color: var(--muted); max-width: 70ch; }
 .tsm-crumbs { font-size: 12.5px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 .tsm-crumbs a { color: var(--muted); text-decoration: none; border: 1px solid var(--rule); border-radius: 3px; padding: 6px 10px; }
-.tsm-crumbs a:hover { border-color: var(--muted); color: var(--ink); }
+@media (hover: hover) { .tsm-crumbs a:hover { border-color: var(--muted); color: var(--ink); } }
 .tsm-foot { max-width: 1400px; margin: 36px auto 0; padding-block: 16px 28px; border-top: 1px solid var(--rule); display: flex; gap: 12px; align-items: center; font-size: 12.5px; color: var(--muted); }
 .tsm-foot img { width: 34px; height: 34px; }
 .tsm-foot p { margin: 0; }
 
 /* Buttons */
 .btn { border-radius: 3px; padding: 7px 13px; cursor: pointer; font-weight: 600; font-size: 13px; border: 1px solid var(--rule); background: transparent; }
-.btn:hover { border-color: var(--muted); }
+@media (hover: hover) { .btn:hover { border-color: var(--muted); } }
 .btn.solid { background: var(--brand); color: #f2f2ee; border-color: var(--brand); }
-.btn.solid:hover { background: #0b4a17; }
+@media (hover: hover) { .btn.solid:hover { background: #0b4a17; } }
 @media (prefers-color-scheme: dark) { .btn.solid { border-color: var(--brand-ink); } }
 .btn[aria-pressed="true"] { border-color: var(--blue); background: var(--blue-soft); }
 .btn:disabled { opacity: .4; cursor: default; }
 .choices { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; }
 .choices button { text-align: left; padding: 7px 9px; border: 1px solid var(--rule); background: transparent; border-radius: 3px; cursor: pointer; font-size: 12.5px; line-height: 1.25; }
-.choices button:hover { border-color: var(--muted); }
+@media (hover: hover) { .choices button:hover { border-color: var(--muted); } }
 .choices button[aria-pressed="true"] { border-color: var(--blue); background: var(--blue-soft); }
 
 /* Layout */
@@ -97,7 +97,7 @@ h1, h2, h3 { font-family: var(--display); text-wrap: balance; }
 
 /* Toggles and sliders */
 .tg { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: start; padding: 6px 4px; border-radius: 3px; cursor: pointer; position: relative; }
-.tg:hover { background: var(--chip); }
+@media (hover: hover) { .tg:hover { background: var(--chip); } }
 .tg input { position: absolute; opacity: 0; pointer-events: none; }
 .tg .sw { width: 30px; height: 17px; border-radius: 9px; background: var(--rule); position: relative; margin-top: 2px; transition: background .15s; }
 .tg .sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 13px; height: 13px; border-radius: 50%; background: var(--panel); transition: transform .15s; }
@@ -129,7 +129,7 @@ h1, h2, h3 { font-family: var(--display); text-wrap: balance; }
 .tooltip .tt-d, .tooltip small { display: block; font-family: var(--mono); font-size: 11px; color: var(--muted); }
 .tooltip.pinned, .tooltip .xlink { pointer-events: auto; }
 .xlink { display: inline-block; font-size: 12px; font-weight: 600; color: var(--blue); text-decoration: none; margin-top: 4px; white-space: nowrap; }
-.xlink:hover { text-decoration: underline; }
+@media (hover: hover) { .xlink:hover { text-decoration: underline; } }
 .xlinks { display: flex; flex-wrap: wrap; gap: 4px 12px; }
 /* Chart axes: shared type and ink. Tools add class="tsm-axis" to an axis <g>, or use the tokens. */
 .tsm-axis text, svg text.tsm-axis { font: var(--axis-font); fill: var(--axis-ink); }
@@ -137,7 +137,7 @@ h1, h2, h3 { font-family: var(--display); text-wrap: balance; }
 /* Export bar (shared/js/export.js) */
 .tsm-export { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
 .tsm-export .btn { font-size: 12px; padding: 5px 10px; font-weight: 600; color: var(--muted); }
-.tsm-export .btn:hover { color: var(--ink); }
+@media (hover: hover) { .tsm-export .btn:hover { color: var(--ink); } }
 
 /* Tables and pills */
 .tablewrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel); }
@@ -154,5 +154,14 @@ h1, h2, h3 { font-family: var(--display); text-wrap: balance; }
 .below p { margin: 0 0 10px; max-width: 68ch; }
 .src { font-size: 12.5px; color: var(--muted); padding-left: 1.1em; margin: 0; display: flex; flex-direction: column; gap: 6px; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+/* better-ui (2026-10-12): buttons answer a press, controls skip the default tap flash, wide tables keep side swipes.
+   The Trailer skin keeps its own 1px press (trailer.css). Gated: no movement under reduced motion. */
+.btn, .choices button, .tg { -webkit-tap-highlight-color: transparent; }
+.tablewrap { overscroll-behavior-x: contain; }
+@media (prefers-reduced-motion: no-preference) {
+  :root:not([data-skin="trailer"]) .btn { transition-property: scale, background-color, border-color, color; transition-duration: 150ms; transition-timing-function: ease-out; }
+  :root:not([data-skin="trailer"]) .btn:not(:disabled):active { scale: 0.96; }
+}
 
 /* Interactive Deterrence: the site theme is shared/css/deterrence-site.css (linked after this file). */

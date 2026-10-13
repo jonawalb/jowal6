@@ -47,7 +47,7 @@ export function drawMap(svg, view) {
   // Bases
   const base = (x, y, lines2, anchor = 'start') => {
     el('circle', { cx: x, cy: y, r: 6, class: 'mp-base' }, svg);
-    lines2.forEach((t, i) => el('text', { x: anchor === 'start' ? x + 10 : x - 10, y: y + 4 + i * (view.narrow ? 18 : 13) - (view.narrow ? 12 : 0), class: 'mp-bt', 'text-anchor': anchor }, svg, t));
+    lines2.forEach((t, i) => el('text', { x: anchor === 'start' ? x + 10 : x - 10, y: y + 4 + i * (view.narrow ? 22 : 13) - (view.narrow ? 14 : 0), class: 'mp-bt', 'text-anchor': anchor }, svg, t));
   };
   base(150, 78, view.northBases, 'end');
   base(142, 262, ['Rhein-Main', 'Wiesbaden'], 'end');
@@ -64,7 +64,7 @@ export function drawMap(svg, view) {
     el('rect', { x: bx, y: by, width: bw, height: 6, rx: 3, class: 'mp-slot' }, svg);
     const u = slots > 0 ? Math.min(1, land / slots) : 0;
     el('rect', { x: bx, y: by, width: bw * u, height: 6, rx: 3, class: 'mp-use' + (u > 0.97 ? ' full' : '') }, svg);
-    el('text', { x: f.x, y: by + 17, class: 'mp-fs', 'text-anchor': 'middle' }, svg, `${fmt(land)} / ${fmt(slots)}`);
+    if (!nar) el('text', { x: f.x, y: by + 17, class: 'mp-fs', 'text-anchor': 'middle' }, svg, `${fmt(land)} / ${fmt(slots)}`);   // narrow: the line under the map gives them
   }
   // Weather tags
   const wx = (x, y, w, lbl) => el('text', { x, y, class: `mp-wx w${w}` }, svg, `${lbl}: ${WX[w]}`);

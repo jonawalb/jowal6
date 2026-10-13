@@ -12,7 +12,7 @@
 .kl-gname { margin: 4px 0; font-size: 13.5px; line-height: 1.2; color: var(--muted); font-weight: 600; }
 .kl-rungs { list-style: none; margin: 0; padding: 0; }
 .kl-rung button { width: 100%; display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: 8px; align-items: center; text-align: left; background: transparent; border: 0; border-radius: 3px; padding: 2px 6px; cursor: pointer; font-size: 13px; line-height: 1.3; min-height: 24px; }
-.kl-rung button:hover { background: var(--chip); }
+@media (hover: hover) { .kl-rung button:hover { background: var(--chip); } }
 .kl-n { font: 500 11.5px var(--mono); color: var(--faint); text-align: right; }
 .kl-rung.hit-a .kl-name { font-weight: 600; }
 .kl-rung.hit-a button { background: var(--blue-soft); }
@@ -84,7 +84,7 @@
 .below h3 { font-family: var(--display); font-size: 17px; margin: 14px 0 4px; }
 .below .src li { overflow-wrap: anywhere; }
 .kl-more { display: none; grid-column: 2; text-align: left; background: transparent; border: 1px dashed var(--rule); border-radius: 3px; padding: 4px 8px; font-size: 12.5px; color: var(--muted); cursor: pointer; margin: 4px 0; }
-.kl-more:hover { border-color: var(--muted); color: var(--ink); }
+@media (hover: hover) { .kl-more:hover { border-color: var(--muted); color: var(--ink); } }
 .kl-ladder:not(.expanded) .kl-group.collapsed .kl-rungs { display: none; }
 .kl-ladder:not(.expanded) .kl-group.collapsed .kl-more { display: block; }
 .kl-less { margin: 0 0 6px; font-size: 12px; }
@@ -99,7 +99,8 @@ body.kl-picking .layout, body.kl-picking .below { display: none; }
 .kl-pick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
 .kl-pick-card { display: flex; flex-direction: column; gap: 6px; text-align: left; font: inherit; color: var(--ink); cursor: pointer;
   background: var(--panel); border: 2px solid var(--rule); border-left: 6px solid var(--accent); border-radius: 6px; padding: 14px 16px; min-height: 44px; }
-.kl-pick-card:hover, .kl-pick-card:focus-visible { border-color: var(--brand); border-left-color: var(--accent); background: var(--chip); }
+.kl-pick-card:focus-visible { border-color: var(--brand); border-left-color: var(--accent); background: var(--chip); }
+@media (hover: hover) { .kl-pick-card:hover { border-color: var(--brand); border-left-color: var(--accent); background: var(--chip); } }
 .kl-pick-card b { font: 700 19px/1.2 var(--display); }
 .kl-pick-card span { color: var(--muted); font-size: 13.5px; line-height: 1.45; }
 .kl-pick-card .kl-pick-y { font: 600 12px var(--mono); color: var(--accent); letter-spacing: .06em; }
@@ -110,7 +111,7 @@ body.kl-picking .layout, body.kl-picking .below { display: none; }
 
 /* Retry from the allied side */
 .cf-entry { width: 100%; margin-top: 10px; min-height: 48px; font-size: 15px; font-weight: 700; border: 2px solid var(--brand-ink); color: var(--brand-ink); background: var(--chip); }
-.cf-entry:hover:not(:disabled) { background: var(--brand); color: #f2f2ee; }
+@media (hover: hover) { .cf-entry:hover:not(:disabled) { background: var(--brand); color: #f2f2ee; } }
 .cf-prompt { margin-top: 8px; border: 2px solid var(--accent); border-radius: 6px; padding: 12px 14px; background: color-mix(in srgb, var(--accent) 8%, var(--panel)); }
 .cf-prompt.off { border-color: var(--rule); background: transparent; }
 .cf-prompt p { margin: 0 0 8px; font-size: 13.5px; }
@@ -149,7 +150,8 @@ body.kl-picking .layout, body.kl-picking .below { display: none; }
 .cf-ask { font: 700 15px var(--body); }
 .cf-opts { display: flex; flex-direction: column; gap: 8px; }
 .cf-opt { text-align: left; font: 700 15px/1.3 var(--body); color: var(--ink); background: var(--panel); border: 2px solid var(--brand-ink); border-radius: 6px; padding: 12px 14px; min-height: 52px; cursor: pointer; }
-.cf-opt:hover, .cf-opt:focus-visible { background: var(--brand); color: #f2f2ee; }
+.cf-opt:focus-visible { background: var(--brand); color: #f2f2ee; }
+@media (hover: hover) { .cf-opt:hover { background: var(--brand); color: #f2f2ee; } }
 .cf-off { border-left: 3px solid var(--accent); padding-left: 8px; }
 .cf-oh { font: 700 14px var(--display); margin-top: 4px !important; }
 .cf-olist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
@@ -193,9 +195,11 @@ body.kl-picking .layout, body.kl-picking .below { display: none; }
 .cf-fin { font-size: 14px !important; border-top: 1px solid var(--rule); padding-top: 4px; }
 .cf-branch h3 { color: var(--c6); }
 .cf-opt.gen { border: 2px dashed var(--c6); }
-.cf-opt.gen:hover, .cf-opt.gen:focus-visible { background: var(--c6); color: var(--panel); border-style: solid; }
+.cf-opt.gen:focus-visible { background: var(--c6); color: var(--panel); border-style: solid; }
+@media (hover: hover) { .cf-opt.gen:hover { background: var(--c6); color: var(--panel); border-style: solid; } }
 .cf-opt small { display: block; font: 600 11px var(--mono); color: var(--c6); letter-spacing: .03em; text-transform: uppercase; margin-bottom: 2px; }
-.cf-opt.gen:hover small, .cf-opt.gen:focus-visible small { color: var(--panel); }
+.cf-opt.gen:focus-visible small { color: var(--panel); }
+@media (hover: hover) { .cf-opt.gen:hover small { color: var(--panel); } }
 .cf-srcs { margin: 0; padding-left: 16px; font-size: 12px; color: var(--muted); }
 .cf-tree li.g b { color: var(--c6); }
 .cf-seed { margin: 0; }
@@ -212,9 +216,8 @@ body.kl-picking .layout, body.kl-picking .below { display: none; }
 :root[data-skin="trailer"] {
   --c1: #7fb6d9; --c2: #ff8a3d; --c3: #2cc2ac; --c4: #d77ab0; --c5: #efc12f; --c6: #a68ef0; --c7: #63b3d6; --c8: #c8b48a;
 }
-:root[data-skin="trailer"] .kl-crises button[aria-pressed="true"],
-:root[data-skin="trailer"] .cf-entry:hover:not(:disabled),
-:root[data-skin="trailer"] .cf-opt:not(.gen):hover, :root[data-skin="trailer"] .cf-opt:not(.gen):focus-visible { color: #111; }
+:root[data-skin="trailer"] .kl-crises button[aria-pressed="true"], :root[data-skin="trailer"] .cf-opt:not(.gen):focus-visible { color: #111; }
+@media (hover: hover) { :root[data-skin="trailer"] .cf-entry:hover:not(:disabled), :root[data-skin="trailer"] .cf-opt:not(.gen):hover { color: #111; } }
 :root[data-skin="trailer"] .kl-crises button[aria-pressed="true"] small { color: #3a2a0c; }
 :root[data-skin="trailer"] .kl-cap { font-family: var(--mono); letter-spacing: .2em; border-color: var(--rule); }
 :root[data-skin="trailer"] .kl-gname { font-family: var(--display); font-style: italic; font-weight: 500; font-size: 15px; }

@@ -8,7 +8,7 @@
 .dg-seg { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
 .dg-seg-l { font-size: 12px; color: var(--muted); margin-right: 2px; width: 100%; }
 .dg-btn { min-height: 40px; min-width: 40px; padding: 6px 11px; border: 1px solid var(--rule); border-radius: 3px; background: transparent; color: var(--ink); cursor: pointer; font: 600 13px var(--body); }
-.dg-btn:hover { border-color: var(--muted); }
+@media (hover: hover) { .dg-btn:hover { border-color: var(--muted); } }
 .dg-btn[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); }
 .dg-btn:disabled { opacity: .45; cursor: default; }
 .dg-sl { display: flex; flex-direction: column; gap: 2px; font-size: 12.5px; min-width: 170px; flex: 1 1 170px; max-width: 280px; }
@@ -43,7 +43,7 @@
 .dg-hit { cursor: pointer; outline: none; }
 .dg-hit:focus-visible > .dg-focus, .dg-hit.sel > .dg-focus { stroke: var(--focus); stroke-width: 3; fill: none; }
 .dg-hit > .dg-focus { stroke: transparent; fill: none; }
-.dg-hit:hover > .dg-focus { stroke: var(--muted); stroke-width: 1.5; }
+@media (hover: hover) { .dg-hit:hover > .dg-focus { stroke: var(--muted); stroke-width: 1.5; } }
 .dg-info { padding: 8px 10px; border: 1px solid var(--rule); border-left: 4px solid var(--accent); border-radius: 3px; background: color-mix(in srgb, var(--chip) 50%, var(--panel)); }
 .dg-info h4 { margin: 0 0 2px; font-size: 14px; }
 .dg-info p { margin: 0; }

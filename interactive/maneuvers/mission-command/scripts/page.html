@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mission Command | Jonathan Walberg</title>
+<meta name="description" content="Mission command as a working bench model: an engine that holds its own speed with a flyball governor beside one steered by hand from headquarters, and what happens when the link is cut. Quotes U.S. Army ADP 6-0 (2019); the engine model is notional.">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Mission Command | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/mission-command/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/mission-command/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.mc-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.mc-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.mc-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.mc-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.mc-text p,.mc-text li{line-height:1.65}
+.mc-text .fine{font-size:.88rem;color:var(--text-muted)}
+.mc-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.mc-figure{background:transparent}
+.mc-figure .iso-figure{margin:0}
+.mc-figure .iso-plate{background:var(--anatomy-card)}
+.mc-stage{outline:none;cursor:crosshair;touch-action:manipulation}
+.mc-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.mc-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.mc-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.mc-figure .iso-plate-corners{z-index:2}
+.mc-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.mc-figure[data-view="field"] .mc-svg{visibility:hidden}
+.mc-figure[data-view="field"] .mc-legend-machine{display:none}
+.mc-figure:not([data-view="field"]) .mc-field,.mc-figure:not([data-view="field"]) .mc-legend-field{display:none}
+.mc-legend{display:grid;gap:8px}
+/* the radio links: faint signal arcs from the headquarters mast */
+.mc-sig{fill:none;stroke:var(--tr-chalk);stroke-width:1;stroke-linecap:round}
+/* a new run: the troops, the fire and the links fade out and back in */
+.mc-field [data-dyn],.mc-field .tr-fire,.mc-field [data-part="link"]{transition:opacity .4s}
+.mc-field.mc-reset [data-dyn],.mc-field.mc-reset .tr-fire,.mc-field.mc-reset [data-part="link"]{opacity:0}
+/* casualties: greyed and still (side fc = friendly, hc = enemy), no colour beyond a faint tint */
+.mc-figure .tr-s[data-side="fc"] path,.mc-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.mc-figure .tr-s[data-side="fc"] .tr-t,.mc-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.mc-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.mc-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.mc-figure .tr-s[data-side="fc"] .tr-d,.mc-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.mc-figure .tr-s[data-side="fc"] .tr-g,.mc-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.mc-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.mc-controls .btn{cursor:pointer}
+.mc-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.mc-controls input[type=range]{flex:1;min-width:120px}
+.mc-text h2{margin-top:28px}
+.mc-text ol{padding-left:1.2em}
+.mc-text li{margin:6px 0}
+@media (max-width:520px){.mc-figure .iso-plate-corner[data-corner="hint"]{display:none}.mc-stage{overflow:hidden}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="mc-main">
+  <a class="mc-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Mission Command</h1>
+  <p class="lede">The U.S. Army calls its approach to command and control mission command: subordinates decide and act within their commander’s intent, at a level of decentralization that suits the situation. This bench model sets an engine that keeps its own speed beside one steered by hand from headquarters, and lets you cut the link between them.</p>
+
+  <div class="iso mc-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="mc-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="mc-jam" aria-pressed="false">Jam the link</button>
+      <label>Load (the situation) <input type="range" id="mc-load" min="50" max="100" step="1" value="70" aria-label="Load on both engines, percent"></label>
+    </div>
+  </div>
+
+  <section class="mc-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>Two engines carry the same load.</b> The load bar at the front presses a brake shoe on each flywheel. Move it with the slider, the arrow keys or the pointer: that is the situation changing.</li>
+      <li><b>The left engine is governed.</b> Its flyball governor (the lit weights) spins with the flywheel, reads the engine’s own speed and moves its throttle on the spot, toward a set point the commander chose. The set point stands for the commander’s intent.</li>
+      <li><b>The right engine is cranked.</b> Its throttle is moved only by the rod from the headquarters handwheel. Headquarters learns of a load change through reports that lag, so its corrections arrive late.</li>
+      <li><b>Jam the link</b> and both couplings open. The cranked throttle freezes where it was and its speed drifts as the load moves. The governed engine keeps working toward the last set point it was given. The gauges read each engine’s speed as a share of the set point.</li>
+    </ol>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model drives both, and the readout adds the casualty count. Here the two engines are two rifle platoons of one company, each with a stone bridge to seize over a stream; blue is friendly and red is the enemy. Each platoon is drawn with two of its rifle squads, each “two fire teams and a squad leader” (ATP 3-21.8, para. 1-9), each team a team leader, an automatic rifleman, a grenadier and a rifleman (para. 1-11), plus the platoon leader and his radio operator (the platoon sergeant, the third member of the headquarters section in para. 1-20, is not drawn). They move in squad column, “the squad’s main formation for movement unless preparing for an assault” (para. 3-53), with the teams in wedges, “the basic formation of the fire team” (para. 3-46), and at the bridge they form squad line, “used to assault or as a pre-assault formation” (para. 3-54). Company headquarters stands at the bottom centre: a radio mast, the company commander, his radio operator and one more soldier of the headquarters. The faint arcs rippling from the mast to each platoon’s radio operator are the radio links; jam the link and they vanish. The load is the enemy situation: at 80% or more an enemy machine gun moves up from the hamlet to a nest beside each road, its sector shown as a red fan on the ground; at 55% or less the enemy at the bridges pulls back. The lit platoon on the left stands for the governed engine: it reads the situation itself and works to the commander’s intent, to take the bridge, so when the gun covers the road it shifts behind the hedge and keeps going. The platoon on the right stands for the cranked engine: it moves only on orders, so it halts and waits whenever its orders no longer fit the situation, whether because the link is jammed or because headquarters’ orders arrive late; caught on the open road, it goes to ground under the machine gun’s fire. As in the machine, the lit platoon is not out of control: the intent it works to is the commander’s, given over the link before it was jammed. Success is not free: greyed figures lying still are men down on both sides, with a medic kneeling by the first man down in each platoon. Each run ends a few seconds after the lit platoon holds its bridge, and a new one starts from the line of departure. Soldiers are drawn larger than scale (about one and a half times) so they read; unit sizes, distances, timings, the enemy’s strength and the casualty counts are notional.</p>
+
+    <h2>What doctrine says</h2>
+    <p>U.S. Army <i>ADP 6-0, Mission Command: Command and Control of Army Forces</i> (31 July 2019) defines mission command as “the Army’s approach to command and control that empowers subordinate decision making and decentralized execution appropriate to the situation” (para. 1-14). It names seven principles that enable it: competence, mutual trust, shared understanding, commander’s intent, mission orders, disciplined initiative and risk acceptance (para. 1-26).</p>
+    <p>The commander’s intent “defines the limits within which subordinates may exercise initiative,” and subordinates can, on their own responsibility, act “when communication with higher echelons is intermittent or decisions must be made immediately” (para. 1-62). In the model, that is the set point on the governor. Mission command is not the absence of control: “Using mission orders does not mean commanders do not supervise subordinates during operations,” and commanders remain responsible for checking on subordinates and providing direction and guidance as required to focus their activities (para. 1-58). In the model, the set point is headquarters’ choice, delivered over the same link: jamming the link stops changes to it but does not erase it.</p>
+
+    <h2>What is notional</h2>
+    <p>Every number on the gauges comes from a teaching model, not from data. Engine speed is 100% × throttle ÷ load, reached with a 1.2-second lag. The governor sets throttle = 0.7 + 8 × (1 − speed ÷ 100%), so in this model it holds 100% at the starting load of 70%, 97% at full load and 102% at half load (a simple governor of this kind settles near its set point, not exactly on it). Headquarters steers the cranked engine from reports that lag the load by about 2 seconds and can crank its throttle by at most 0.25 a second. With the link cut and the throttle frozen at 0.7, the cranked engine runs at 70% under full load and 140% under half load. The mapping from engines to units is an analogy: real subordinates do far more than hold a set point, and real links degrade in many ways short of a clean cut.</p>
+    <p>The Battlefield view adds its own teaching values. In this model a platoon advances only while its engine runs within 12% of the set point, at a pace that would carry it from the line of departure to its seize line beyond the bridge in about 11 seconds at a perfect fit (at 97% the governed platoon goes at three-quarters of that pace); outside that band it halts. The enemy machine guns move up at a load of 80% or more, and the enemy at the bridges pulls back at 55% or less. The casualty counts are notional too, set so that success is never free: a platoon on the open road under a machine gun loses 0.8 men a second while halted and 0.25 while it keeps moving, up to 4 in one run, and taking a defended bridge costs 1 man against 2. With the link up and the starting situation, both platoons take their bridges: 2 against 4. Jam the link and make the situation heavy while both are on the road, and the lit platoon takes its bridge while the waiting platoon, halted in the open, loses 4: 5 against 2. These are teaching values, not loss rates from data or doctrine.</p>
+    <p class="fine">Source: Headquarters, Department of the Army, ADP 6-0, <i>Mission Command: Command and Control of Army Forces</i>, 31 July 2019, paras. 1-14, 1-26, 1-58 and 1-62 (<a href="https://web.archive.org/web/20240114083324/https://irp.fas.org/doddir/army/adp6_0.pdf">archived copy</a> of the FAS mirror, irp.fas.org/doddir/army/adp6_0.pdf). Battlefield view: Headquarters, Department of the Army, <a href="https://web.archive.org/web/20250807233618id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a> (archived copy of the official PDF), 11 January 2024, incorporating Change 1 (June 2025), paras. 1-9, 1-11, 3-46, 3-53 and 3-54. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

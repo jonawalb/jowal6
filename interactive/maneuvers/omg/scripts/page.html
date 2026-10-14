@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Operational Maneuver Group | Jonathan Walberg</title>
+<meta name="description" content="The Soviet operational maneuver group (OMG) as the U.S. Army described it in 1984, as a bench model: a spring-loaded shuttle held behind the line and fired through a breach to raid the enemy rear. Built from U.S. Army FM 100-2-1 (1984).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Operational Maneuver Group | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/omg/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/omg/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.omg-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.omg-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.omg-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.omg-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.omg-text p,.omg-text li{line-height:1.65}
+.omg-text .fine{font-size:.88rem;color:var(--text-muted)}
+.omg-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.omg-figure{background:transparent}
+.omg-figure .iso-figure{margin:0}
+.omg-figure .iso-plate{background:var(--anatomy-card)}
+.omg-stage{outline:none;cursor:crosshair;touch-action:manipulation}
+.omg-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.omg-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.omg-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.omg-figure .iso-plate-corners{z-index:2}
+.omg-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.omg-figure[data-view="field"] .omg-svg{visibility:hidden}
+.omg-figure[data-view="field"] .omg-legend-machine{display:none}
+.omg-figure:not([data-view="field"]) .omg-field,.omg-figure:not([data-view="field"]) .omg-legend-field{display:none}
+.omg-legend{display:grid;gap:8px}
+/* Knocked-out vehicles and raided targets in the Battlefield view: greyed, with a trace of their side's colour */
+.omg-figure{--omg-fx-ink:#5f6a80;--omg-fx-t:#d9dce2;--omg-fx-l:#bfc4ce;--omg-fx-d:#a7adb9;--omg-fx-g:#7c8392;--omg-hx-ink:#7a6563;--omg-hx-t:#e0d8d7;--omg-hx-l:#c9bebd;--omg-hx-d:#b2a6a5;--omg-hx-g:#8a7d7c}
+.tr-s[data-side="fx"] path{stroke:var(--omg-fx-ink)}.tr-s[data-side="hx"] path{stroke:var(--omg-hx-ink)}
+.tr-s[data-side="fx"] .tr-t{fill:var(--omg-fx-t)}.tr-s[data-side="fx"] .tr-l{fill:var(--omg-fx-l)}.tr-s[data-side="fx"] .tr-d{fill:var(--omg-fx-d)}.tr-s[data-side="fx"] .tr-g{fill:var(--omg-fx-g)}
+.tr-s[data-side="hx"] .tr-t{fill:var(--omg-hx-t)}.tr-s[data-side="hx"] .tr-l{fill:var(--omg-hx-l)}.tr-s[data-side="hx"] .tr-d{fill:var(--omg-hx-d)}.tr-s[data-side="hx"] .tr-g{fill:var(--omg-hx-g)}
+.tr-s[data-side="fx"] .tr-veh{--anatomy-top:var(--omg-fx-t);--anatomy-paper:var(--omg-fx-l)}.tr-s[data-side="hx"] .tr-veh{--anatomy-top:var(--omg-hx-t);--anatomy-paper:var(--omg-hx-l)}
+.iso .tr-s[data-side="fx"] .tr-veh>.iso-shade{fill:var(--omg-fx-d)}.iso .tr-s[data-side="hx"] .tr-veh>.iso-shade{fill:var(--omg-hx-d)}
+.iso .tr-s[data-side="fx"] .tr-veh>.iso-shade[data-shade="3"],.iso .tr-s[data-side="fx"] .tr-veh>.iso-shade[data-shade="2"]{fill:var(--omg-fx-l)}.iso .tr-s[data-side="hx"] .tr-veh>.iso-shade[data-shade="3"],.iso .tr-s[data-side="hx"] .tr-veh>.iso-shade[data-shade="2"]{fill:var(--omg-hx-l)}
+.tr-s .tr-bag .tr-t{fill:var(--tr-bag)}.tr-s .tr-bag .tr-l{fill:var(--tr-bag)}.tr-s .tr-bag .tr-d{fill:var(--tr-bag-dk)}
+.omg-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.omg-controls .btn{cursor:pointer}
+.omg-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.omg-controls input[type=range]{flex:1;min-width:120px}
+.omg-text h2{margin-top:28px}
+.omg-text ol{padding-left:1.2em}
+.omg-text li{margin:6px 0}
+@media (max-width:520px){.omg-figure .iso-plate-corner[data-corner="hint"]{display:none}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="omg-main">
+  <a class="omg-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Operational Maneuver Group</h1>
+  <p class="lede">The U.S. Army reported in 1984 that, since the late 1970s, it had observed a significant Soviet operational change, which it called an updated version of an older concept: a tailored, high-speed group that follows the first echelon and is sent deep into the enemy’s rear, normally before the second echelon is committed. This bench model shows the idea, and one of the conditions under which the manual says it was most likely to be used.</p>
+
+  <div class="iso omg-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="omg-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="omg-res" aria-pressed="false">Shallow defense, no large reserve</button>
+      <button type="button" class="btn btn-outline" id="omg-play">Replay</button>
+      <label>Release day <input type="range" id="omg-release" min="0.5" max="2" step="0.1" value="0.5" aria-label="Day the OMG is released"></label>
+    </div>
+  </div>
+
+  <section class="omg-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>The wall</b> is the enemy’s defended line, and its gate is the breach. Two wedge carriages, the first echelon, drive into the wall either side of the gate, and the gate drops into its slot.</li>
+      <li><b>The lit shuttle</b> is the OMG. It waits behind the line, cocked against two coil springs and held by a latch pin. On the release day the pin lifts and the springs fire it through the breach. The slider sets the release day; the earliest is the moment the gate is down.</li>
+      <li><b>In the rear</b>, a finger on the shuttle knocks down four drop targets as it passes; in this model they stand for an air-defense site, a command post, a missile launcher and a supply depot. The ruler reads kilometres past the line, and the track ends 104 km past it.</li>
+      <li><b>The block on the cross rails</b> is the enemy’s operational reserve. Switch it on and it starts moving on day 0.8 and reaches the lane on day 1.4. If the OMG’s nose is not past the reserve’s lane by then, the shuttle is stopped there; if it is, the reserve closes the lane behind it.</li>
+      <li><b>The carriage parked on the siding</b> is the second echelon. It stays put: the OMG goes first. The dial counts days, 0 to 4.</li>
+    </ol>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model, slider and reserve switch drive both. The scale is operational: each small vehicle stands for a battalion, Soviet forces in red and NATO forces in blue, and the lit vehicles are the OMG. A road runs left to right, as the bench’s lane does. Two Soviet first-echelon divisions close on the NATO forward defense either side of the road behind a smoke screen; as the breach opens, the two NATO battalions astride the road are knocked out and the attackers push in to hold its shoulders. The OMG waits behind the line: the manual says an army OMG “probably would be as large as a reinforced division” (p. 4-9), drawn here as twelve battalions of tanks and BMPs, which the same manual calls “a fast, highly maneuverable, infantry fighting vehicle” (p. 2-8); the mix is notional. On release it forms a march column and drives through the breach and over a river bridge into the NATO rear, while the second echelon stays parked. The manual says the OMG could attack targets en route “with its entire force or more likely with units detached for this purpose” (p. 4-9), so at each of the four targets (an air-defense site, a command post, a missile launcher and a supply depot, as on the bench) the battalion at the head of the column turns off to raid it. With the reserve switched on, two NATO brigades drive down from the north: if the column is late it meets them across the road and is stopped in a fight, the decisive engagement the manual says the OMG tries to avoid; if it is early it gets past, and the reserve closes the road once the column’s tail has cleared it. The bench itself leaves out losses; this view adds them. Knocked-out vehicles and raided targets turn grey and smoke, an ambulance runs back from the breach, and the readout adds losses as “N vs M down”, Soviet first, in armored vehicles knocked out. They are notional teaching values: in this model opening the breach costs 40 vs 22, each raided target 3 vs 6 and a blocking fight 34 vs 14, so a deep raid ends at 52 vs 46 and a blocked one at 77 vs 42. Vehicles are drawn far larger than scale so they read, and the 104 km run is compressed onto one map; unit sizes, distances, routes and timings are notional.</p>
+
+    <h2>What the 1984 manual says</h2>
+    <p>U.S. Army <i>FM 100-2-1, The Soviet Army: Operations and Tactics</i> (1984) reports that “since the late 1970s” the most significant operational change observed in Soviet ground forces was “the concept of employing a tailored high-speed exploitation force at army and probably front level.” This operational maneuver group was “designed to move deep into the enemy rear area and to seize critical objectives, normally before second echelon Soviet formations are committed to combat” (p. 4-5). The manual calls it “an updated version of an older concept infused with new technology,” whose predecessor was the army and front “mobile group” of World War II (p. 4-5). Figure 25, <a href="/interactive/maneuvers/deep-battle/">Deep Battle and Echelons</a>, shows the earlier Soviet theory of the 1930s.</p>
+    <p>Its mission was “to help the first echelon penetrate the enemy defenses, if required, and then to raid deep into the enemy rear as early in the offensive as possible,” destroying “enemy nuclear weapons, air defenses, communications, command and control,” seizing airfields or disrupting lines of communication, and helping the main forces by seizing bridgeheads and road junctions (p. 4-6). An army OMG, “if employed, could be committed as early as the first day of an operation” (p. 4-7). At army level it “probably would be as large as a reinforced division” and “could operate 100 kilometers or more beyond other army forces.” “Unlike the second echelon, the OMG acts as a large operational raiding force,” disrupting, capturing or seizing other objectives along the way “while attempting to avoid a decisive engagement with large enemy forces” (p. 4-9).</p>
+    <p>The manual did not expect one everywhere. “An OMG may not always be formed,” the manual says, and it “is most likely to be used when the enemy defense system is seen to be at a low state of readiness or when enemy defenses are relatively shallow and not supported by large reserves” (p. 4-6). The bench’s reserve switch shows only the second of those conditions.</p>
+
+    <h2>What is notional</h2>
+    <p>Every speed, distance and day on the bench is a teaching setting, not a Soviet norm. In this model the gate is down by day 0.5; the OMG runs at 80 km a day once clear of the springs; the drop targets stand 24, 48, 70 and 92 km past the line; and a large reserve starts across the lane, 36 km past the line, on day 1.4. With those settings, a release on day 0.6 or earlier beats the reserve, and a release on day 0.7 or later is stopped after one target. The 104 km track loosely echoes the manual’s “100 kilometers or more” (which it measures beyond other army forces, not from the line); nothing else here comes from it. The model leaves out air support, airborne and heliborne linkups, resupply and losses, and it treats a reserve in the lane as a full stop, which is a bench simplification: in the manual the OMG tries to avoid a decisive fight with large forces rather than meet one head-on.</p>
+    <p class="fine">Source: Headquarters, Department of the Army, <a href="https://web.archive.org/web/2024/https://irp.fas.org/doddir/army/fm100-2-1.pdf">FM 100-2-1, The Soviet Army: Operations and Tactics</a>, 16 July 1984, pp. 4-5 to 4-7 and 4-9 (archived copy of the FAS file). Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lines of Operation and Effort | Jonathan Walberg</title>
+<meta name="description" content="Lines of operation and lines of effort as a working bench model: physical tracks through decisive points beside logical bars of tasks, all serving one purpose. Built from joint doctrine (JP 5-0, 2020).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Lines of Operation and Effort | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/lines-of-operation/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/lines-of-operation/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.lo-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.lo-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.lo-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.lo-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.lo-text p,.lo-text li{line-height:1.65}
+.lo-text .fine{font-size:.88rem;color:var(--text-muted)}
+.lo-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.lo-figure{background:transparent}
+.lo-figure .iso-figure{margin:0}
+.lo-figure .iso-plate{background:var(--anatomy-card)}
+.lo-stage{outline:none;cursor:crosshair;touch-action:manipulation}
+.lo-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.lo-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.lo-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.lo-figure .iso-plate-corners{z-index:2}
+.lo-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.lo-figure[data-view="field"] .lo-svg{visibility:hidden}
+.lo-figure[data-view="field"] .lo-legend-machine{display:none}
+.lo-figure:not([data-view="field"]) .lo-field,.lo-figure:not([data-view="field"]) .lo-legend-field{display:none}
+.lo-legend{display:grid;gap:8px}
+/* Battlefield figures beyond blue and red: villagers and props (c), local police (p), stopped vehicles (fx, hx), men down (fc, hc) */
+.lo-figure{--lo-c-ink:#7d7666;--lo-c-t:#ece6d6;--lo-c-l:#d9d0bb;--lo-c-d:#c4b9a0;--lo-p-ink:#3f4a2c;--lo-p-t:#c9d0a8;--lo-p-l:#a9b282;--lo-p-d:#8d9767;--lo-p-g:#5d6741;
+  --lo-fx-ink:#5f6a80;--lo-fx-t:#d9dce2;--lo-fx-l:#bfc4ce;--lo-fx-d:#a7adb9;--lo-fx-g:#7c8392;--lo-hx-ink:#7a6563;--lo-hx-t:#e0d8d7;--lo-hx-l:#c9bebd;--lo-hx-d:#b2a6a5;--lo-hx-g:#8a7d7c}
+.lo-figure .tr-s[data-side="c"] path{stroke:var(--lo-c-ink)}.lo-figure .tr-s[data-side="c"] .tr-t{fill:var(--lo-c-t)}.lo-figure .tr-s[data-side="c"] .tr-l{fill:var(--lo-c-l)}.lo-figure .tr-s[data-side="c"] .tr-d{fill:var(--lo-c-d)}
+.lo-figure .tr-s[data-side="c"] .tr-bag path{stroke:var(--tr-bag-ink)}.lo-figure .tr-s[data-side="c"] .tr-bag .tr-t,.lo-figure .tr-s[data-side="c"] .tr-bag .tr-l{fill:var(--tr-bag)}.lo-figure .tr-s[data-side="c"] .tr-bag .tr-d{fill:var(--tr-bag-dk)}
+.lo-figure .tr-s[data-side="p"] path{stroke:var(--lo-p-ink)}.lo-figure .tr-s[data-side="p"] .tr-t{fill:var(--lo-p-t)}.lo-figure .tr-s[data-side="p"] .tr-l{fill:var(--lo-p-l)}.lo-figure .tr-s[data-side="p"] .tr-d{fill:var(--lo-p-d)}.lo-figure .tr-s[data-side="p"] .tr-g{fill:var(--lo-p-g)}
+.lo-figure .tr-s[data-side="fx"] path,.lo-figure .tr-s[data-side="fc"] path{stroke:var(--lo-fx-ink)}.lo-figure .tr-s[data-side="hx"] path,.lo-figure .tr-s[data-side="hc"] path{stroke:var(--lo-hx-ink)}
+.lo-figure .tr-s[data-side="fx"] .tr-t,.lo-figure .tr-s[data-side="fc"] .tr-t{fill:var(--lo-fx-t)}.lo-figure .tr-s[data-side="fx"] .tr-l,.lo-figure .tr-s[data-side="fc"] .tr-l{fill:var(--lo-fx-l)}.lo-figure .tr-s[data-side="fx"] .tr-d,.lo-figure .tr-s[data-side="fc"] .tr-d{fill:var(--lo-fx-d)}.lo-figure .tr-s[data-side="fx"] .tr-g,.lo-figure .tr-s[data-side="fc"] .tr-g{fill:var(--lo-fx-g)}
+.lo-figure .tr-s[data-side="hx"] .tr-t,.lo-figure .tr-s[data-side="hc"] .tr-t{fill:var(--lo-hx-t)}.lo-figure .tr-s[data-side="hx"] .tr-l,.lo-figure .tr-s[data-side="hc"] .tr-l{fill:var(--lo-hx-l)}.lo-figure .tr-s[data-side="hx"] .tr-d,.lo-figure .tr-s[data-side="hc"] .tr-d{fill:var(--lo-hx-d)}.lo-figure .tr-s[data-side="hx"] .tr-g,.lo-figure .tr-s[data-side="hc"] .tr-g{fill:var(--lo-hx-g)}
+.lo-figure .tr-s[data-side="fx"] .tr-veh{--anatomy-top:var(--lo-fx-t);--anatomy-paper:var(--lo-fx-l)}.lo-figure .tr-s[data-side="hx"] .tr-veh{--anatomy-top:var(--lo-hx-t);--anatomy-paper:var(--lo-hx-l)}
+.iso.lo-figure .tr-s[data-side="fx"] .tr-veh>.iso-shade{fill:var(--lo-fx-d)}.iso.lo-figure .tr-s[data-side="hx"] .tr-veh>.iso-shade{fill:var(--lo-hx-d)}
+.iso.lo-figure .tr-s[data-side="fx"] .tr-veh>.iso-shade[data-shade="3"],.iso.lo-figure .tr-s[data-side="fx"] .tr-veh>.iso-shade[data-shade="2"]{fill:var(--lo-fx-l)}.iso.lo-figure .tr-s[data-side="hx"] .tr-veh>.iso-shade[data-shade="3"],.iso.lo-figure .tr-s[data-side="hx"] .tr-veh>.iso-shade[data-shade="2"]{fill:var(--lo-hx-l)}
+.lo-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.lo-controls .btn{cursor:pointer}
+.lo-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.lo-controls input[type=range]{flex:1;min-width:120px}
+.lo-text h2{margin-top:28px}
+.lo-text ol{padding-left:1.2em}
+.lo-text li{margin:6px 0}
+@media (max-width:520px){.lo-figure .iso-plate-corner[data-corner="hint"]{display:none}.lo-stage{overflow:hidden}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="lo-main">
+  <a class="lo-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Lines of Operation and Effort</h1>
+  <p class="lede">Joint planners connect what a force does to the end state it is after along lines. Some run through decisive points toward a geographic or force-oriented objective; others link tasks by purpose toward conditions where position matters little. This bench puts both kinds side by side and, in this model, ends them on one terminal.</p>
+
+  <div class="iso lo-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="lo-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="lo-stall" aria-pressed="false">Stall line of effort 3</button>
+      <label>Campaign time <input type="range" id="lo-time" min="0" max="100" step="1" value="50" aria-label="Campaign time, percent"></label>
+    </div>
+  </div>
+
+  <section class="lo-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>The tracks</b> in front are lines of operation. Each carriage runs on rails across the bench and pauses at gates, the decisive points, generally in sequence. The ruler strip measures ground distance; only these lines use it.</li>
+      <li><b>The bars</b> behind are lines of effort. Each slider steps from detent to detent, one detent per task, to the stop at the end of its bar: the condition that line sets. In this model the bars are parallel and the same length, because what orders them is cause and effect, not distance.</li>
+      <li><b>The terminal</b> on the right carries one lock pin per line. A line that arrives raises its pin. In this model the lit block, the end state, rises only when all five pins are up.</li>
+      <li><b>Controls:</b> scrub campaign time with the pointer, the slider or the arrow keys. <i>Stall</i> stops line of effort 3 after its third task: the two tracks and the other bars still arrive, but the end state never sets.</li>
+    </ol>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model drives both, and in this view the readout ends with the casualty count, blue against red. The scale is operational: each small vehicle stands for a company, blue friendly and red enemy. The two lines of operation are columns of six vehicles that leave the walled base on the left by two roads for the town on the right, the objective, ringed in chalk on pegs. Their decisive points are ground the enemy holds with dug-in vehicles, each with its fire sector marked on the ground: a bridge over the stream, a village and a hill on the near road; a second bridge and a pass between two hills on the middle road. Each pause of a carriage at a gate on the bench is a fight here: the column halts short of the point, its lead vehicles deploy and fire, and the defenders are knocked out and left greyed with thin smoke. Success is not free: each road also loses one vehicle, greyed and smoking where it was hit, and an ambulance shuttles casualties back to the base. Behind the front, the three lines of effort are civil-military work in five villages on the district road, which also ends at the town: line of effort 1 is an aid convoy that leaves supplies and draws a villager to them, line 2 a patrol that sets a checkpoint, line 3 a training team that posts a local police officer (olive). Each task on a bar is that line’s work in the next village. When every line is in, the lit flag rises over the town: the end state. Stall line of effort 3 and the police never reach the last two villages; in this model insurgents come back there, fire on the checkpoints and both sides take losses, while the flag stays down. Figures and vehicles are drawn far larger than scale so they read; unit sizes, distances, routes, timings, the enemy’s strength and the casualty counts are notional.</p>
+
+    <h2>What doctrine says</h2>
+    <p>Joint doctrine names lines of operation (LOOs) and lines of effort (LOEs) as “the two primary methods” of organizing an operation to achieve its objective (JP 5-0, ch. IV, para. 6.a).</p>
+    <p>LOOs “describe and connect a series of decisive actions that lead to control of a geographic or force-oriented objective.” Operations built on them “generally consist of a series of actions executed according to a well-defined sequence, although multiple LOOs can exist at the same time (parallel operations),” and “[c]ombat operations are typically planned using LOOs” (para. 6.a.(1)(a)).</p>
+    <p>An LOE “links multiple tasks and missions using the logic of purpose—cause and effect—to focus efforts toward establishing operational-level objectives that can lead to strategic objectives.” LOEs help “when positional references to an adversary or enemy have little relevance, such as in counterinsurgency operations or stability activities,” and in operations with many nonmilitary factors, LOEs and mission areas “may be the only way to link tasks, effects, conditions, and the desired end state” (para. 6.a.(2)(a)).</p>
+    <p>The two may be used together: “Commanders may use both LOOs and LOEs to connect objectives to a central, unifying purpose” (para. 6.a.(3)). The bench’s single terminal stands for that purpose.</p>
+
+    <h2>What is notional</h2>
+    <p>Every schedule is a teaching shape, not a plan or data. Campaign time is a percentage, not days. Track A pauses at three decisive points and arrives at T+66%; track B pauses at two and arrives at T+72%. Each bar has five tasks; the bars set their conditions at T+78%, T+88% and T+97%, so in this model the end state sets at T+97%. With line of effort 3 stalled it never does. Doctrine does not say that lines must all finish together or that a single lagging line blocks the end state; the lock pins are this bench’s way of showing that the lines serve one purpose. Real lines also interact: JP 5-0 notes that the lines in a full array “typically produce effects across multiple LOEs” (para. 6.a.(2)(c)), which this bench does not model.</p>
+    <p>The casualty counts in the Battlefield view are notional too, set so that no decisive point is free. Taking each point costs the line that takes it a set number of men down on each side, accrued over its fight: on the near road 4 against 9 at the bridge, 7 against 12 at the village and 5 against 8 at the hill; on the middle road 4 against 8 at the bridge and 6 against 11 at the pass, 26 against 48 in all. The lines of effort cost nothing while every line advances. With line of effort 3 stalled, the insurgents’ raids at T+72%, T+82% and T+92% add 3 blue and 2 red, for 29 against 50 at T+100%. These are teaching values, not loss rates from data or doctrine.</p>
+    <p class="fine">Source: Joint Chiefs of Staff, <a href="https://www.jcs.mil/Portals/36/Documents/Doctrine/pubs/jp5_0.pdf">JP 5-0, Joint Planning</a>, 1 December 2020, ch. IV, para. 6.a (pp. IV-29 to IV-32), and glossary, “line of effort” and “line of operation” (p. GL-11) (<a href="https://web.archive.org/web/20220715183645/https://www.jcs.mil/Portals/36/Documents/Doctrine/pubs/jp5_0.pdf">archived copy</a>). Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

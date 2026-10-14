@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Retrograde and Delay | Jonathan Walberg</title>
+<meta name="description" content="How a delay trades ground for time, as a working bench model: a block pushed back along a track holds at each ratchet tooth and gives ground slowly through a dashpot. Built from U.S. Army doctrine (FM 3-90, 2023).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Retrograde and Delay | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/retrograde/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/retrograde/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.rg-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.rg-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.rg-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.rg-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.rg-text p,.rg-text li{line-height:1.65}
+.rg-text .fine{font-size:.88rem;color:var(--text-muted)}
+.rg-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.rg-figure{background:transparent}
+.rg-figure .iso-figure{margin:0}
+.rg-figure .iso-plate{background:var(--anatomy-card)}
+.rg-stage{outline:none;cursor:ew-resize;touch-action:manipulation}
+.rg-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.rg-svg{display:block;width:100%;height:auto}
+.rg-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.rg-controls .btn{cursor:pointer}
+.rg-modes{display:inline-flex;border:1px solid var(--anatomy-lo);border-radius:8px;overflow:hidden}
+.rg-modes button{font:inherit;font-size:14px;padding:7px 12px;border:0;background:transparent;color:var(--anatomy-text);cursor:pointer}
+.rg-modes button+button{border-left:1px solid var(--anatomy-lo)}
+.rg-modes button[aria-pressed="true"]{background:var(--anatomy-text);color:var(--anatomy-card)}
+.rg-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.rg-controls input[type=range]{flex:1;min-width:110px}
+.rg-ratio-val{min-width:3.2em;font-variant-numeric:tabular-nums}
+.rg-text h2{margin-top:28px}
+.rg-text ol{padding-left:1.2em}
+.rg-text li{margin:6px 0}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.rg-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.rg-figure .iso-plate-corners{z-index:2}
+.rg-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.rg-figure[data-view="field"] .rg-svg{visibility:hidden}
+.rg-figure[data-view="field"] .rg-legend-machine{display:none}
+.rg-figure:not([data-view="field"]) .rg-field,.rg-figure:not([data-view="field"]) .rg-legend-field{display:none}
+.rg-legend{display:grid;gap:8px}
+/* vehicles lost: greyed and still (side fc = friendly, hc = enemy); the ambulance: white */
+.rg-figure .tr-s[data-side="fc"] path,.rg-figure .tr-s[data-side="hc"] path{stroke:#94938c}.rg-figure .tr-s[data-side="m"] path{stroke:#55524c}
+.rg-figure .tr-s[data-side="fc"] .tr-t,.rg-figure .tr-s[data-side="hc"] .tr-t{fill:#e0dfd8}
+.rg-figure .tr-s[data-side="fc"] .tr-l{fill:#cfd2d8}.rg-figure .tr-s[data-side="hc"] .tr-l{fill:#d8cfce}
+.rg-figure .tr-s[data-side="fc"] .tr-d,.rg-figure .tr-s[data-side="hc"] .tr-d{fill:#c4c3bc}
+.rg-figure .tr-s[data-side="fc"] .tr-g,.rg-figure .tr-s[data-side="hc"] .tr-g{fill:#aeada5}
+.rg-figure .tr-s[data-side="fc"] .tr-veh{--anatomy-top:#e0dfd8;--anatomy-paper:#cfd2d8}.rg-figure .tr-s[data-side="hc"] .tr-veh{--anatomy-top:#e0dfd8;--anatomy-paper:#d8cfce}
+.rg-figure .tr-s[data-side="fc"] .tr-veh>.iso-shade,.rg-figure .tr-s[data-side="hc"] .tr-veh>.iso-shade{fill:#c4c3bc}
+.rg-figure .tr-s[data-side="fc"] .tr-veh>.iso-shade[data-shade="2"],.rg-figure .tr-s[data-side="fc"] .tr-veh>.iso-shade[data-shade="3"]{fill:#cfd2d8}
+.rg-figure .tr-s[data-side="hc"] .tr-veh>.iso-shade[data-shade="2"],.rg-figure .tr-s[data-side="hc"] .tr-veh>.iso-shade[data-shade="3"]{fill:#d8cfce}
+.rg-figure .tr-s[data-side="m"] .tr-t{fill:#fbfaf7}.rg-figure .tr-s[data-side="m"] .tr-l{fill:#ecebe6}.rg-figure .tr-s[data-side="m"] .tr-d{fill:#d9d7d0}.rg-figure .tr-s[data-side="m"] .tr-g{fill:#9a978f}
+@media (max-width:520px){.rg-figure .iso-plate-corner[data-corner="hint"]{display:none}.rg-stage{overflow:hidden}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="rg-main">
+  <a class="rg-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Retrograde and Delay</h1>
+  <p class="lede">Not every defense holds its ground. A force without enough strength to attack or defend, or one that needs to buy time for others, can fall back on purpose, giving up ground slowly and and, in this model, making the enemy pay in hours for every kilometre. Army doctrine calls this a delay, one of three kinds of retrograde. This bench model shows how ground turns into time.</p>
+
+  <div class="iso rg-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="rg-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <div class="rg-modes" role="group" aria-label="Kind of retrograde">
+        <button type="button" data-mode="delay" aria-pressed="true">Delay</button>
+        <button type="button" data-mode="withdraw" aria-pressed="false">Withdrawal</button>
+        <button type="button" data-mode="retire" aria-pressed="false">Retirement</button>
+      </div>
+      <div class="rg-modes" role="group" aria-label="Delay technique">
+        <button type="button" data-tech="subsequent" aria-pressed="true">Subsequent positions</button>
+        <button type="button" data-tech="alternating" aria-pressed="false">Alternating positions</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="rg-replay">Replay</button>
+      <label>Enemy combat power <input type="range" id="rg-ratio" min="2" max="6" step="0.5" value="3" aria-label="Enemy to delaying force combat-power ratio"> <span class="rg-ratio-val" id="rg-ratio-val">3 : 1</span></label>
+    </div>
+  </div>
+
+  <section class="rg-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>The lit blocks</b> are the delaying force, split into two elements side by side, each on its own lane of a straight track. They can only move back, toward the stop at the rear of the bench, which stands for the rear of its assigned area.</li>
+      <li><b>The carriage</b> on the same track is the enemy. Its ram spring presses whichever block is in front; the more the spring is squeezed, the more of its strength the enemy has brought to bear.</li>
+      <li><b>The ratchet teeth</b> on the near side are the delay positions, one every 6 km on the scale in front. At each one a block’s pawl catches (each block has its own rack; the far one runs between the track and the dashpot) and the block holds while the spring compresses. Before the squeeze reaches the point of a decisive engagement, the pawl lifts and the block slips back to the next tooth.</li>
+      <li><b>The dashpot</b>, the long cylinder on the far side, is tied to the far block by a rod. Between teeth it lets the blocks give ground only at a slow, steady rate. The clock reads the hours since contact, and the readout gives the hours the enemy has spent for each kilometre it has taken.</li>
+      <li><b>Subsequent or alternating positions.</b> The second set of buttons (or the T key) chooses how the delay is run. With subsequent positions a coupler bar locks the two blocks together: the whole force holds each tooth and falls back to the next as one. With alternating positions the coupler swings clear, the bypass lever opens and the far block starts one tooth back: one block holds while the other waits on the next tooth, then the first runs back past it, pawl up, to the tooth after, while the carriage closes on the second. These are the manual’s two techniques, described under “What doctrine says.”</li>
+      <li><b>Withdrawal and retirement.</b> Choose Withdrawal and the pawls stay up and the dashpot’s bypass lever opens: the blocks run for the rear together and the carriage follows without closing. Choose Retirement and, in this model, the carriage never touches the blocks at all. Hover over the bench (or use the arrow keys) to move through the hours of a run; the slider sets the enemy’s combat-power ratio, which sets how long each tooth holds.</li>
+    </ol>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model and readout drive both. Here the scale is one company; blue is friendly, red the enemy. The delaying company is drawn as eight small tracked vehicles, two platoons of four, holding four battle positions marked across a valley with chalk outlines on pegs, 6 km apart; a chalk phase line marks the rear of its area. The enemy comes down the valley road from the right, drawn with eight vehicles for each unit of the combat-power ratio (24 at 3 : 1): its lead platoon is always deployed, and the rest come out of column into line as the pressure on a position builds (the bench’s spring). With subsequent positions the whole company holds each position and fires down the valley, then falls back to the next behind a smoke screen; its platoons stagger their moves, as the manual says units do “so that elements are not moving at the same time” (para. 11-20), so one covers while the other moves. With alternating positions one platoon holds, lit, while the other waits on the next position; the first then drives back between the second’s vehicles to the position after, out of contact, and the lit outline passes to the platoon now in contact. In a withdrawal the company breaks contact under fire, forms a column on the road and drives to the rear, the enemy following without closing; in a retirement the column leaves with no enemy in sight. Success is not free: vehicles hit on either side stay greyed where they were hit, the latest ones smoking, and a white ambulance drives up to the latest friendly loss, where a medic kneels. Vehicles are drawn larger than scale so they read; unit sizes, distances, timings and losses are notional.</p>
+
+    <h2>What doctrine says</h2>
+    <p>U.S. Army <i>FM 3-90, Tactics</i> (May 2023) defines a retrograde as “organized movement away from the enemy” and names three variations: delay, withdrawal and retirement (para. 11-1). In a delay, “a force under pressure trades space for time by slowing down the enemy’s momentum and inflicting maximum damage on enemy forces without becoming decisively engaged”; “normally in a delay, inflicting casualties on enemy forces is secondary to gaining time” (para. 11-13).</p>
+    <p>The ratchet stands for the method the manual describes: a delay “succeeds by causing enemy forces to fight through a series of defensive positions,” and delaying forces “displace to subsequent positions before enemy forces are able to concentrate sufficient resources to decisively engage and defeat delaying forces in their current position.” How long a force can stay in one position “is primarily a function of relative combat power and the mission variables, such as terrain and weather” (para. 11-16). The bench models only the first of those; terrain and weather are left out.</p>
+    <p>The other two variations differ by contact. To withdraw is “to disengage from an enemy force and move in a direction away from the enemy,” and a withdrawal may or may not take place under enemy pressure (para. 11-71); the bench shows one under pressure. A retirement “is when a force out of contact moves away from the enemy” (para. 11-94).</p>
+    <p>One simplification. The bench shows a delay within an assigned area, where the force avoids decisive engagement; under the manual’s other method, a delay forward of a specified line for a specified time, the force may have to hold a position until ordered to displace, accepting a decisive engagement if need be (paras. 11-13, 11-28, 11-35).</p>
+    <p>The technique toggle follows the manual’s two ways of moving between positions. With subsequent positions (the coupled blocks), all delaying units are committed to each position; the technique is used when the area is too wide for more than one tier (para. 11-20). With alternating positions (the blocks working apart), two or more units occupy positions in depth; the first disengages and passes around or through the second, which has taken the next position (para. 11-19). The manual weighs them: a delay from subsequent positions “masses fires of all available combat elements,” while one from alternating positions “engages only part of the force at one time” (table 11-1) but “offers greater security,” though it “requires more forces and continuous maneuver coordination” (para. 11-19).</p>
+
+    <h2>What is notional</h2>
+    <p>Every rate on the bench is a teaching number, not data. Each position holds for 6 hours divided by the enemy’s combat-power ratio (2 hours at 3 : 1). Between positions, ground is given at 4 km per hour. The four positions are 6 km apart in a 24 km area. At 3 : 1 the delay lasts 14 hours, or 0.58 hours per kilometre; at 2 : 1 it lasts 18 hours (0.75 h/km), and at 6 : 1, 10 hours (0.42 h/km). In the withdrawal the block runs at 12 km per hour and the enemy follows at 8, taking the same 24 km in 3 hours (0.13 h/km). The retiring block moves at 10 km per hour. On screen, 1 second is 1.6 hours. In this model the delay buys more than four times the time of the withdrawal for the same ground; real figures depend on terrain, obstacles, fires and the forces involved.</p>
+    <p>Those figures are for subsequent positions. With alternating positions each block, or platoon, has half the force’s combat power, so in this model it holds each position half as long (1 hour at 3 : 1); the element passing back moves at 12 km per hour, out of contact, and the enemy closes on the next position at 4. At 3 : 1 that delay lasts 10 hours (0.42 h/km); at 2 : 1, 12 hours (0.50 h/km); at 6 : 1, 8 hours (0.33 h/km).</p>
+    <p>The casualty figure in the readout (“N vs M down”: vehicles lost, friendly against enemy) is notional too, and accrues by the hour in contact. Holding a position costs the holder 0.06 vehicles an hour times the ratio and costs the enemy 0.6 an hour, or 0.3 when only half the force is firing; falling back in contact costs 0.3 an hour on each side; with alternating positions the enemy closing on the set element loses 0.3 an hour and the set element 0.03 times the ratio, while the element passing back loses nothing. A withdrawal costs 1 vs 1 while it breaks contact, a retirement nothing. With those values, in this model, at 3 : 1 the delay from subsequent positions ends 3 vs 7 down and the delay from alternating positions 1 vs 3: fewer hours bought, and fewer vehicles lost.</p>
+    <p class="fine">Source: Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">FM 3-90, Tactics</a> (<a href="https://web.archive.org/web/2024/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">archived copy</a>), 1 May 2023, paras. 11-1, 11-13, 11-14, 11-16, 11-19, 11-20, 11-28, 11-35, 11-71 and 11-94, and table 11-1. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

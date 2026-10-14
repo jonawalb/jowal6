@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Double Envelopment | Jonathan Walberg</title>
+<meta name="description" content="How a double envelopment works, as a working bench vise: a ram fixes the enemy's front while two curved jaws close round both flanks. Built from U.S. Army doctrine (FM 3-90, 2023).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Double Envelopment | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/double-envelopment/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/double-envelopment/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.de-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.de-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.de-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.de-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.de-text p,.de-text li{line-height:1.65}
+.de-text .fine{font-size:.88rem;color:var(--text-muted)}
+.de-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.de-figure{background:transparent}
+.de-figure .iso-figure{margin:0}
+.de-figure .iso-plate{background:var(--anatomy-card)}
+.de-stage{outline:none;cursor:crosshair;touch-action:manipulation}
+.de-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.de-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.de-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.de-figure .iso-plate-corners{z-index:2}
+.de-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.de-figure[data-view="field"] .de-svg{visibility:hidden}
+.de-figure[data-view="field"] .de-legend-machine{display:none}
+.de-figure:not([data-view="field"]) .de-field,.de-figure:not([data-view="field"]) .de-legend-field{display:none}
+.de-legend{display:grid;gap:8px}
+/* casualties: greyed and still (side fc = friendly, hc = enemy), no colour beyond a faint tint */
+.de-figure .tr-s[data-side="fc"] path,.de-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.de-figure .tr-s[data-side="fc"] .tr-t,.de-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.de-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.de-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.de-figure .tr-s[data-side="fc"] .tr-d,.de-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.de-figure .tr-s[data-side="fc"] .tr-g,.de-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.de-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.de-controls .btn{cursor:pointer}
+.de-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.de-controls input[type=range]{flex:1;min-width:120px}
+.de-text h2{margin-top:28px}
+.de-text ol{padding-left:1.2em}
+.de-text li{margin:6px 0}
+@media (max-width:520px){.de-figure .iso-plate-corner[data-corner="hint"]{display:none}.de-stage{overflow:hidden}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="de-main">
+  <a class="de-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Double Envelopment</h1>
+  <p class="lede">A double envelopment holds the enemy in place from the front while two forces close round both flanks and meet behind. This bench vise shows the part that is easy to miss: the jaws only close round the block while the ram holds it.</p>
+
+  <div class="iso de-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="de-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="de-fix" aria-pressed="true">Release the front</button>
+      <label><span id="de-close-text">Jaw closure</span> <input type="range" id="de-close" min="0" max="100" step="1" value="0" aria-label="Jaw closure, percent"></label>
+    </div>
+  </div>
+
+  <section class="de-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>The block</b> in the middle is the enemy force. It sits on a pallet that can slide forward and back in a slot. The ticks round its rim mark its perimeter.</li>
+      <li><b>The ram</b> on the straight rail is the fixing force. Its curved pad presses the block’s front and holds it home.</li>
+      <li><b>The two jaws</b> are the enveloping forces. Each pivots on one of the block’s flanks and swings shut round its side and rear; the tail rollers run on the arc slides with their scales. Close them with the slider, the arrow keys or by moving the pointer across the figure.</li>
+      <li><b>The gauge</b> reads the share of the block’s rim under attack: rim that a jaw or the pad touches. Held, with the jaws shut, it reads 78%. Release the front (button, click or F) and the pad lifts off but stays on its rail. Close the jaws again: with nothing holding it, the block slips out the back through the gap between the jaw tails before they meet, and the gauge drops to 0%.</li>
+    </ol>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model and readout drive both. Here the scale is a platoon attack, blue is friendly and red is the enemy. The Army’s platoon manual says that at platoon and company level “the enveloping force’s main effort is focused on the enemy’s flank while the supporting effort of the envelopment usually engages the enemy’s front by fire” (ATP 3-21.8, para. 4-15). On the rise, an enemy platoon holds two-man fighting positions all round the summit, with a machine-gun nest and a belt of wire on its front; the red fan on the ground is the machine gun’s sector. On the right, behind a stone wall and inside the dashed support-by-fire position, a rifle squad and a machine-gun team fix the enemy with fire on its front: the blue tracers, strikes and drifting smoke. The enveloping forces are two rifle squads, each “two fire teams and a squad leader” (para. 1-9); the near one, with the platoon leader and his radio operator, is lit as the main effort. The jaw slider moves them round both flanks in squad column with their teams in wedges, “the squad’s main formation for movement unless preparing for an assault” (para. 3-53), until they turn in and close on the flanks and rear in squad line, a formation “used to assault or as a pre-assault formation” (para. 3-54). While the front is held, the enemy stays in its holes under fire. Release the front and the support-by-fire element ceases fire but stays in position; as the squads close, the unfixed enemy leaves its positions by a sunken lane out the back and gathers beyond it, and the squads close on empty holes (the readout’s 0%). Losses are notional: greyed figures lying still are men down on both sides, the blue ones carried back to a collection point behind the support-by-fire position where a medic kneels, and the readout counts them, friendly vs enemy, the enemy losing more the more of its rim is under attack and the squads losing more when the front is not held. Soldiers are drawn larger than scale (about one and a half times) so they read; sizes, ranges, timings, the enemy’s strength and its way out are notional.</p>
+
+    <h2>What doctrine and history say</h2>
+    <p>U.S. Army <i>FM 3-90, Tactics</i> (May 2023) treats the double envelopment as a variation of the envelopment “where forces simultaneously attack along both flanks of an enemy force.” A unit performs one “by conducting a frontal attack to fix enemy forces in place while enveloping both of the enemy force’s flanks” (para. 2-60).</p>
+    <p>The fixing force “normally conducts a frontal attack to fix enemy forces in their current positions to prevent their escape and reduce their capability to react against the enveloping force,” and the only organizational difference from a single envelopment “is that a double envelopment consists of two enveloping forces” (para. 2-62). That is the ram’s job in the model: without it, the block slips out.</p>
+    <p>The classic case is Cannae (August 216 BCE), which, <i>Encyclopaedia Britannica</i> notes, military historians regard as “a classic example of a victorious double envelopment.” In Polybius’s account, the Roman legions pressed into Hannibal’s centre until they had his African infantry on both flanks, and were “caught between the two divisions of the enemy” (<i>Histories</i> 3.115).</p>
+
+    <h2>What is notional</h2>
+    <p>The geometry is computed, not drawn by hand: a rim point counts as under attack when a jaw face or the pad face lies within 1 unit of it, checked at every degree. With the jaws open the pad alone covers 24% of the rim; shut, the jaws add their share for 78% in all. The mapping is a teaching device, and so is the escape rule: an unheld block slides 57 units out the back once the jaws close past 50° open, and the jaws cannot close through it (a real enemy might fall back, break out or counterattack instead). No percentage here describes a real battle.</p>
+    <p class="fine">Sources: Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">FM 3-90, Tactics</a>, 1 May 2023, paras. 2-60 and 2-62; Patrick Hunt, “<a href="https://www.britannica.com/event/Battle-of-Cannae">Battle of Cannae</a>,” <i>Encyclopaedia Britannica</i>; Polybius, <a href="https://penelope.uchicago.edu/Thayer/E/Roman/Texts/Polybius/3*.html"><i>The Histories</i></a> 3.115, trans. W. R. Paton, Loeb Classical Library vol. II (1922). Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a>, 11 January 2024 with Change 1 (<a href="https://web.archive.org/web/20250807233618id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">archived copy</a>), paras. 1-9, 3-53, 3-54 and 4-15. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

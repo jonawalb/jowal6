@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Decisive Points | Jonathan Walberg</title>
+<meta name="description" content="What a decisive point is, as a working bench model: a stone arch held up by pinned props, where pulling the right pins overloads the keystone. Built from joint doctrine (JP 5-0, 2020).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Decisive Points | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/decisive-points/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/decisive-points/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.dp-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.dp-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.dp-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.dp-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.dp-text p,.dp-text li{line-height:1.65}
+.dp-text .fine{font-size:.88rem;color:var(--text-muted)}
+.dp-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.dp-figure{background:transparent}
+.dp-figure .iso-figure{margin:0}
+.dp-figure .iso-plate{background:var(--anatomy-card)}
+.dp-stage{outline:none;cursor:crosshair;touch-action:manipulation}
+.dp-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.dp-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.dp-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.dp-figure .iso-plate-corners{z-index:2}
+.dp-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.dp-figure[data-view="field"] .dp-svg{visibility:hidden}
+.dp-figure[data-view="field"] .dp-legend-machine{display:none}
+.dp-figure:not([data-view="field"]) .dp-field,.dp-figure:not([data-view="field"]) .dp-legend-field{display:none}
+.dp-legend{display:grid;gap:8px}
+/* Stopped vehicles in the Battlefield view: greyed, with a trace of their side's colour */
+.dp-figure{--dp-fx-ink:#5f6a80;--dp-fx-t:#d9dce2;--dp-fx-l:#bfc4ce;--dp-fx-d:#a7adb9;--dp-fx-g:#7c8392;--dp-hx-ink:#7a6563;--dp-hx-t:#e0d8d7;--dp-hx-l:#c9bebd;--dp-hx-d:#b2a6a5;--dp-hx-g:#8a7d7c}
+.tr-s[data-side="fx"] path{stroke:var(--dp-fx-ink)}.tr-s[data-side="hx"] path{stroke:var(--dp-hx-ink)}
+.tr-s[data-side="fx"] .tr-t{fill:var(--dp-fx-t)}.tr-s[data-side="fx"] .tr-l{fill:var(--dp-fx-l)}.tr-s[data-side="fx"] .tr-d{fill:var(--dp-fx-d)}.tr-s[data-side="fx"] .tr-g{fill:var(--dp-fx-g)}
+.tr-s[data-side="hx"] .tr-t{fill:var(--dp-hx-t)}.tr-s[data-side="hx"] .tr-l{fill:var(--dp-hx-l)}.tr-s[data-side="hx"] .tr-d{fill:var(--dp-hx-d)}.tr-s[data-side="hx"] .tr-g{fill:var(--dp-hx-g)}
+.tr-s[data-side="fx"] .tr-veh{--anatomy-top:var(--dp-fx-t);--anatomy-paper:var(--dp-fx-l)}.tr-s[data-side="hx"] .tr-veh{--anatomy-top:var(--dp-hx-t);--anatomy-paper:var(--dp-hx-l)}
+.iso .tr-s[data-side="fx"] .tr-veh>.iso-shade{fill:var(--dp-fx-d)}.iso .tr-s[data-side="hx"] .tr-veh>.iso-shade{fill:var(--dp-hx-d)}
+.iso .tr-s[data-side="fx"] .tr-veh>.iso-shade[data-shade="3"],.iso .tr-s[data-side="fx"] .tr-veh>.iso-shade[data-shade="2"]{fill:var(--dp-fx-l)}.iso .tr-s[data-side="hx"] .tr-veh>.iso-shade[data-shade="3"],.iso .tr-s[data-side="hx"] .tr-veh>.iso-shade[data-shade="2"]{fill:var(--dp-hx-l)}
+.dp-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.dp-controls .btn{cursor:pointer}
+.dp-pins{display:flex;flex-wrap:wrap;gap:8px}
+.dp-controls .btn[aria-pressed=true]{background:var(--green-900);color:#fff}
+.dp-text h2{margin-top:28px}
+.dp-text ol{padding-left:1.2em}
+.dp-text li{margin:6px 0}
+@media (max-width:520px){.dp-figure .iso-plate-corner[data-corner="hint"]{display:none}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="dp-main">
+  <a class="dp-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Decisive Points</h1>
+  <p class="lede">Joint doctrine says commanders usually choose an indirect approach to an enemy’s center of gravity, and it calls decisive points “the keys to attacking or protecting” it. Here the arch from <a href="/interactive/maneuvers/center-of-gravity/">Figure 7</a> stands on four pinned props: pull the right pins and the load they carried ends up on the keystone.</p>
+
+  <div class="iso dp-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="dp-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <div class="dp-pins" role="group" aria-label="Pull or reset a pin">
+        <button type="button" class="btn btn-outline" data-pin="0" aria-pressed="false">1 · Left outer</button>
+        <button type="button" class="btn btn-outline" data-pin="1" aria-pressed="false">2 · Left inner</button>
+        <button type="button" class="btn btn-outline" data-pin="2" aria-pressed="false">3 · Right inner</button>
+        <button type="button" class="btn btn-outline" data-pin="3" aria-pressed="false">4 · Right outer</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="dp-reset">Reset the props</button>
+    </div>
+  </div>
+
+  <section class="dp-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>The arch</b> is the same nine stones as in Figure 7, with the lit keystone at the crown. Here it does not carry itself alone: four steel props under it take part of the load.</li>
+      <li><b>Each prop</b> is held at full height by a pin through its collar. Click a prop, press 1 to 4, or use the buttons, and its pin slides out and drops into the tray. The prop’s head falls 8 mm clear of the stone, and the load it carried goes into the ring and through the keystone.</li>
+      <li><b>The dial</b> on the stand rests on the keystone and reads its load as a share of what it can bear. The arc on the dial marks 100% to 150%.</li>
+      <li><b>The props are not equal.</b> In this model each inner prop carries 35% of the keystone’s capacity and each outer prop 15%. Pull both outer pins and the left inner one and the keystone holds at 95%. Pull both inner pins and it reaches 100%, drops onto the pad, and any half that has lost its outer prop sags in. <b>Reset</b> puts it back.</li>
+    </ol>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model drives both, and keys 1 to 4 or a click on a point seize it. The scale is operational: each small vehicle stands for a platoon and each group of three for a company, blue friendly and red enemy, as in Figure 7. The enemy is the same kind of force: three mechanized battalions dug in on an arc of companies, with a tank battalion in reserve at the crossroads behind them. Four of the arc’s companies hold four decisive points, left to right in the same order as the props, each with its fire sector marked on the ground: a hill, the bridge that carries the enemy’s road over the river, a village on the southern road, and an airfield. JP 5-0 itself names “a hill” and “an air base” among its examples (para. 6.b.(1), p. IV-32); the bridge and the village are this model’s picks of key terrain, and as on the bench they carry the most load, because the enemy’s roads to the front run through them. The lit reserve stands for the center of gravity and the keystone. JP 5-0’s own drawing of the direct and indirect approaches labels its center of gravity an “Armored Corps” (Figure IV-12, p. IV-34); this reserve is a notional battalion. Seizing a point sends a blue team of two companies forward from behind its line of departure, marked in chalk on pegs, with fire both ways; the red company pulls back to the crossroads, and the reserve’s companies leave their laager to block the lost point, thinner as the load grows. The enemy’s supply trucks stop running to a lost bridge or village. When the load reaches 100%, here when the bridge and the village are both lost, the reserve and every company still in place pull back off the map, leaving vehicles behind: in this model, the center of gravity gives. Success is not free: each attack leaves one blue platoon stopped short of its point and one red platoon stopped at it (both greyed, with thin smoke), and an ambulance then shuttles the attacker’s casualties back to the line of departure. In the Battlefield view the readout adds the casualties so far, “N vs M down” (blue vs red). They are notional teaching values: in this model a point costs the attacker 14 (hill), 18 (bridge), 18 (village) or 10 (airfield) and the defender 12, 16, 16 or 9, and the defender loses 30 more when the center of gravity gives. So the three-point route that leaves the reserve standing (both outer points and the bridge) costs the attacker 42, while the bridge and the village together cost 36 and bring it down. Vehicles are drawn far larger than scale so they read; unit sizes, distances, routes and timings are notional.</p>
+
+    <h2>What doctrine says</h2>
+    <p>The Joint Chiefs of Staff’s <i>JP 5-0, Joint Planning</i> (December 2020) defines a decisive point as “key terrain, key event, critical factor, or function that, when acted upon, enables commanders to gain a marked advantage over an enemy or contribute materially to achieving success” (glossary, p. GL-7). Its examples range from “a constricted sea lane, a hill, or a geosynchronous orbit” to key events such as “achievement of air, space, or maritime superiority” (ch. IV, para. 6.b.(1), p. IV-32).</p>
+    <p>On how they relate to a center of gravity, JP 5-0 says: “Although decisive points usually are not COGs, they are the keys to attacking or protecting them.” Where a joint force commander’s combat power and other capabilities are insufficient to affect the enemy’s centers of gravity “rapidly with a single action,” which it says may often be the case, the commander “must selectively focus a series of actions against the enemy’s or adversary’s critical vulnerabilities until the cumulative effects of these actions lead to mission success” (ch. IV, para. 6.b.(3), p. IV-33).</p>
+    <p>The bench is an analogy, not doctrine. Its props are fixed places with fixed shares of the load. Real decisive points also include events and functions.</p>
+
+    <h2>What is notional</h2>
+    <p>All the numbers are made up for teaching. With every prop pinned the keystone carries 30% of its capacity. Each inner prop carries a further 35% and each outer prop 15%, so pulling all four would put 130% on the keystone. It fails at 100%. In this model only the four combinations that include both inner pins bring it down. The 8 mm drop, the dial’s 150% full scale, the fall onto the pad and the way the halves sag are teaching choices, not a model of real masonry.</p>
+    <p class="fine">Source: Joint Chiefs of Staff, <a href="https://www.jcs.mil/Portals/36/Documents/Doctrine/pubs/jp5_0.pdf">JP 5-0, Joint Planning</a>, 1 December 2020, pp. IV-32, IV-33, IV-34 and GL-7 (<a href="https://web.archive.org/web/20220715183645/https://www.jcs.mil/Portals/36/Documents/Doctrine/pubs/jp5_0.pdf">archived copy</a>). Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

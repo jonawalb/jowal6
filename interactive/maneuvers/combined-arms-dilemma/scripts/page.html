@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Combined Arms Dilemma | Jonathan Walberg</title>
+<meta name="description" content="Combined arms as a working bench model: a lock with two keys and one guard. Whichever key the defender covers, the other opens it. Built from MCDP 1 Warfighting (1997).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Combined Arms Dilemma | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/combined-arms-dilemma/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/combined-arms-dilemma/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.ca-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.ca-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.ca-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.ca-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.ca-text p,.ca-text li{line-height:1.65}
+.ca-text .fine{font-size:.88rem;color:var(--text-muted)}
+.ca-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.ca-figure{background:transparent}
+.ca-figure .iso-figure{margin:0}
+.ca-figure .iso-plate{background:var(--anatomy-card)}
+.ca-stage{outline:none;cursor:crosshair;touch-action:manipulation}
+.ca-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.ca-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.ca-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.ca-figure .iso-plate-corners{z-index:2}
+.ca-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.ca-figure[data-view="field"] .ca-svg{visibility:hidden}
+.ca-figure[data-view="field"] .ca-legend-machine{display:none}
+.ca-figure:not([data-view="field"]) .ca-field,.ca-figure:not([data-view="field"]) .ca-legend-field{display:none}
+.ca-legend{display:grid;gap:8px}
+/* the grenade's trajectory: a faint dotted arc, not a drawn edge */
+.ca-arc{fill:none;stroke:var(--tr-f-fire);stroke-width:.6;stroke-dasharray:.6 2.2;stroke-linecap:round;opacity:.5;pointer-events:none}
+/* casualties: greyed and still (side fc = friendly, hc = enemy), no colour beyond a faint tint */
+.ca-figure .tr-s[data-side="fc"] path,.ca-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.ca-figure .tr-s[data-side="fc"] .tr-t,.ca-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.ca-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.ca-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.ca-figure .tr-s[data-side="fc"] .tr-d,.ca-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.ca-figure .tr-s[data-side="fc"] .tr-g,.ca-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.ca-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.ca-controls .btn{cursor:pointer}
+.ca-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.ca-controls input[type=range]{flex:1;min-width:120px}
+.ca-text h2{margin-top:28px}
+.ca-text ol{padding-left:1.2em}
+.ca-text li{margin:6px 0}
+@media (max-width:520px){.ca-figure .iso-plate-corner[data-corner="hint"]{display:none}.ca-stage{overflow:hidden}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="ca-main">
+  <a class="ca-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Combined Arms Dilemma</h1>
+  <p class="lede">In Marine Corps doctrine, combined arms means fitting different arms together so that to counteract one, the enemy must become more vulnerable to another. This bench model makes that idea a lock with two keys and a single guard.</p>
+
+  <div class="iso ca-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="ca-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="ca-arms" aria-pressed="false">Use both arms (insert key B)</button>
+      <label>Defender’s guard <input type="range" id="ca-guard" min="-100" max="100" step="1" value="-100" aria-label="Defender's guard: left presses plug A, right presses plug B"></label>
+    </div>
+  </div>
+
+  <section class="ca-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>The lock</b> has two key plugs, A and B. Either key, turned, draws the lit bolt back out of its keeper, and the lock is open.</li>
+      <li><b>The guard</b> is the pawl pivoted between the plugs: the defender’s shield. Its pad can press one plug and stop that key from turning. The pad is narrower than the gap between the plugs, so it can press only one at a time. Swing it with the pointer, the slider or the arrow keys.</li>
+      <li><b>One arm.</b> With only key A in the lock, the guard covers it and the lock holds.</li>
+      <li><b>Two arms.</b> Insert key B and the guard has no safe place. Press A and B turns; press B and A turns; stop between them and both turn.</li>
+      <li><b>The dial</b> reads how far the bolt is drawn.</li>
+    </ol>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model and readout drive both. It draws MCDP 1’s own example at fire-team scale; blue is friendly and red is the enemy. At the top, an enemy rifleman pair holds a two-man fighting position behind a low stone wall, with open ground and a wood behind it. At the bottom, the lit blue fire team lies behind a hedgerow: a team leader, an automatic rifleman, a grenadier and a rifleman, as the Army’s platoon manual lists them (ATP 3-21.8, para. 1-11; MCDP 1 names only the two weapons). The automatic rifleman, prone, is key A: the manual says he delivers “sustained suppressive small arms fire on area targets” (para. 1-11), and his tracers strike the wall while the enemy stays down. The grenadier is key B: his 40-mm launcher gives the team “a high trajectory and an HE capability” and “covers dead space” (para. 1-29), so his rounds arc over the wall into the hole. The blue fan on the ground is the automatic rifle’s sector over the wall and the open ground behind it; the small blue sector round the hole is where the grenades land. The guard is what the enemy pair does. Guarding against the automatic rifle (guard on A), it stays down in the hole, where the grenades reach it. Swung toward the middle, it rises to fire back over the wall. Guarding against the grenades (guard on B), it leaves the hole and runs back across the open, where the automatic rifle hits it. With one arm the grenadier is held back behind the hedge, and the enemy simply stays down and waits. Success is not free: greyed figures lying still are men down on both sides. The rifleman is down behind the hedge from the first exchange; if the lock holds, the fight drags on and the team leader goes down too; once a key turns, one of the enemy pair lies at the back of the hole. The readout ends with the count, blue against red. Soldiers are drawn larger than scale (about one and a half times) so they read; sizes, ranges, timings and the casualty counts are notional.</p>
+
+    <h2>What doctrine says</h2>
+    <p>The Marine Corps’ <i>MCDP 1, Warfighting</i> (20 June 1997) defines combined arms as “the full integration of arms in such a way that to counteract one, the enemy must become more vulnerable to another. We pose the enemy not just with a problem, but with a dilemma—a no-win situation” (p. 94).</p>
+    <p>Its example comes from the fire team: “We pin an enemy down with the high-volume, direct fire of the automatic weapon, making him a vulnerable target for the grenade launcher. If he moves to escape the impact of the grenades, we engage him with the automatic weapon” (pp. 94–95). On the bench, key A can stand for the automatic weapon and key B for the grenade launcher: the guard on A is the enemy staying down, and the guard on B is the enemy moving.</p>
+    <p>The manual then scales the idea up to the Marine air-ground task force, combining assault support aircraft, artillery, close air support, deep air support and an infantry penetration, and ends: “We have put him in a dilemma” (p. 95). Army doctrine states a parallel idea. <i>ADP 3-0, Operations</i> (July 2019) says that “used destructively, combined arms integrates different capabilities so that counteracting one makes the enemy vulnerable to another,” and that “used constructively,” it “uses all assets available to multiply the effectiveness and efficiency of Army capabilities used in stability or DSCA” (para. 3-52).</p>
+
+    <h2>What is notional</h2>
+    <p>The lock is a teaching device, not a model of combat. In this model the guard holds a plug only in the last fifth of its travel toward it, a free key turns at up to 180° per second, and the guard needs about 1.4 seconds to cross from one plug to the other. That no guard position holds both keys is a fact about this bench’s geometry, not a measured result. A real enemy has more than two choices, may find cover that defeats both arms at once, and suffers partial effects, where the lock is simply open or shut.</p>
+    <p>The casualty counts in the readout and the Battlefield view are notional too, set so that success is never free. The fire team has lost one man in every state. If the lock holds with one key, it loses a second; once either key turns (the bolt at least half drawn), the enemy loses one of its pair. So one arm against a guard that covers it reads “2 vs 0 down”, and every other settled state reads “1 vs 1 down”. These are teaching values, not loss rates from data or doctrine.</p>
+    <p class="fine">Sources: U.S. Marine Corps, <a href="https://www.marines.mil/Portals/1/Publications/MCDP%201%20Warfighting.pdf">MCDP 1, Warfighting</a>, 20 June 1997, pp. 94–95 (<a href="https://web.archive.org/web/2024id_/https://www.marines.mil/Portals/1/Publications/MCDP%201%20Warfighting.pdf">archived copy</a>). Headquarters, Department of the Army, <a href="https://web.archive.org/web/2023/https://irp.fas.org/doddir/army/adp3_0.pdf">ADP 3-0, Operations</a>, 31 July 2019, para. 3-52 (archived FAS copy). Headquarters, Department of the Army, <a href="https://web.archive.org/web/20250807233618id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a> (archived copy of the official PDF), 11 January 2024, incorporating Change 1 (June 2025), paras. 1-11 and 1-29. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

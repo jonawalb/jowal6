@@ -1,0 +1,39 @@
+# Retrograde and Delay: fact check
+
+**VERIFIED 2026-10-13 by an independent fact-checker (FM 3-90, 1 May 2023, ch. 11). All quotes confirmed. Fixed after the check: the lede uses 11-14’s "not enough forces to attack or defend" and marks the hours-per-km idea as the model; "out of contact" became "without closing"; retirement’s no-contact is marked as the model; the alternating and subsequent positions are described exactly per 11-19 and 11-20..** Claims below were read by the builder from the archived official PDF on 2026-10-13; none has been independently verified.
+
+Source for every claim: Headquarters, Department of the Army, FM 3-90, *Tactics*, 1 May 2023.
+Official URL: https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf
+Copy read (Wayback): https://web.archive.org/web/2024id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf
+
+| # | Claim on the page (where) | Para | Page | Source text as read |
+|---|---|---|---|---|
+| 1 | A retrograde is "organized movement away from the enemy" (doctrine section) | 11-1 | 11-1 | "A retrograde is organized movement away from the enemy." |
+| 2 | It has three variations: delay, withdrawal and retirement (lede, doctrine section) | 11-1 (also 11-12, 8-11) | 11-1, 11-2 | "The three variations of the retrograde are delay, withdrawal, and retirement." |
+| 3 | Delay: "a force under pressure trades space for time by slowing down the enemy's momentum and inflicting maximum damage on enemy forces without becoming decisively engaged" (doctrine section; "trades space for time" also in the card caption) | 11-13 | 11-3 | Exact; the manual cites ADP 3-90 for the definition. |
+| 4 | "normally in a delay, inflicting casualties on enemy forces is secondary to gaining time" (doctrine section) | 11-13 | 11-3 | "Normally in a delay, inflicting casualties on enemy forces is secondary to gaining time." (capital N in the source) |
+| 5 | Lede: a force that is outmatched, or that needs to buy time for others, can delay | 11-13, 11-14 | 11-3 | 11-13: a delay "buys time to establish an effective defense"; 11-14: "A delay operation can occur when units do not have enough forces to attack or defend." |
+| 6 | A delay "succeeds by causing enemy forces to fight through a series of defensive positions" | 11-16 | 11-3 | Exact substring. |
+| 7 | Delaying forces "displace to subsequent positions before enemy forces are able to concentrate sufficient resources to decisively engage and defeat delaying forces in their current position" | 11-16 | 11-3 | Exact substring. |
+| 8 | Time in a position "is primarily a function of relative combat power and the mission variables, such as terrain and weather" | 11-16 | 11-3 | "The length of time a force can remain in a position without facing the danger of decisive engagement is primarily a function of relative combat power and the mission variables, such as terrain and weather." |
+| 9 | To withdraw is "to disengage from an enemy force and move in a direction away from the enemy"; a withdrawal may or may not take place under enemy pressure | 11-71 | 11-13 | "A withdraw is to disengage from an enemy force and move in a direction away from the enemy (ADP 3-90). Commanders may or may not conduct a withdrawal under enemy pressure." |
+| 10 | A retirement "is when a force out of contact moves away from the enemy" | 11-94 | 11-17 | Exact substring. |
+| 11 | Delay within an assigned area: the force avoids decisive engagement | 11-35 | 11-7 | "In this case, the delaying force delays enemy forces as long as possible while avoiding decisive engagement." |
+| 12 | Delay forward of a specified line for a specified time: the force may have to hold a position until ordered to displace, accepting a decisive engagement if need be | 11-13, 11-28, 11-35 | 11-3, 11-6, 11-7 | 11-35: "If commanders establish delay lines, mission accomplishment outweighs preservation of the force's integrity. It may require that delaying force hold a given position until ordered to displace." 11-28: the delaying unit does everything in its power, "including becoming decisively engaged," to hold the delay line. 11-13: a delaying force "normally avoids a decisive engagement except when preventing enemy penetration of a phase line for a specific duration." |
+| 13 | Delay from subsequent positions vs alternating positions, where two or more units occupy positions in depth and each in turn disengages and passes around or through the next | 11-19, 11-20 | 11-4, 11-5 | 11-19: "two or more units in a single assigned area occupy delaying positions in depth... The first force disengages and passes around or through the second force." 11-20 describes the delay using subsequent positions. |
+
+## Added 2026-10-13 with the technique toggle and the Battlefield view (UNVERIFIED: pending independent check)
+
+Read by the builder from the same FM 3-90 text (archived copy above). Row 13's wording is unchanged in substance; it moved out of the "simplifications" paragraph into its own paragraph, because the bench now shows both techniques (toggle).
+
+| # | Claim on the page (where) | Para | Page | Source text as read | Status |
+|---|---|---|---|---|---|
+| 14 | A delay from subsequent positions "masses fires of all available combat elements" (doctrine section) | Table 11-1 | 11-4 | Table 11-1, Delay from subsequent positions, Advantages: "Masses fires of all available combat elements." (capital M in the source) | UNVERIFIED: pending independent check |
+| 15 | A delay from alternating positions "engages only part of the force at one time" (doctrine section) | Table 11-1 | 11-4 | Table 11-1, Delay from alternating positions, Disadvantages: "Engages only part of the force at one time." (capital E in the source) | UNVERIFIED: pending independent check |
+| 16 | ...but "offers greater security" (doctrine section) | 11-19 | 11-4 | "A delay using alternating bounds is particularly useful on the most dangerous avenues of approach because it offers greater security than a delay using subsequent bounds." | UNVERIFIED: pending independent check |
+| 17 | In a delay from subsequent positions units stagger their moves "so that elements are not moving at the same time" (Battlefield view paragraph) | 11-20 | 11-5 | "Units stagger the movement of delaying elements so that elements are not moving at the same time." | UNVERIFIED: pending independent check |
+| 18 | Model assumption (not quoted on the page): with alternating positions each element has half the force's combat power, so it holds half as long | 11-22 | 11-5 | "They divide the main body into two parts, roughly equal in combat power, to occupy each set of positions when conducting a delay using alternating bounds." The halved hold time is the model's rule and is marked "in this model". | UNVERIFIED: pending independent check |
+
+Not doctrinal claims: every rate, distance, time and casualty figure on the bench, the battlefield and in the readout (alternating hold = 6 h ÷ (2 × ratio); casualty rates 0.06 × ratio, 0.6, 0.3, 0.03 × ratio vehicles per hour, 1 vs 1 to break contact; the battlefield's eight friendly vehicles, eight enemy vehicles per unit of ratio, 6 km between battle positions), and the statement that alternating positions buy fewer hours for fewer losses, are notional and marked so on the page ("in this model"), as are the original bench numbers (hold = 6 h ÷ ratio, 4 km/h in contact, 12 and 8 km/h in the withdrawal, 10 km/h in the retirement, 6 km between positions, 24 km depth, 1 s = 1.6 h), labeled so on the page and in METHOD.md. The statement that the delay buys more than four times the time of the withdrawal is marked "in this model".
+
+Rows 14–18: VERIFIED 2026-10-13 by an independent fact-checker (FM 3-90 2023, table 11-1 p. 11-4; 11-19, 11-20, 11-22). The page now also gives 11-19's cost of alternating positions ('requires more forces and continuous maneuver coordination').

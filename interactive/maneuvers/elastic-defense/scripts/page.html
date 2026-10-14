@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Elastic Defense in Depth | Jonathan Walberg</title>
+<meta name="description" content="The German elastic defense in depth of 1917 as a working bench model and a battlefield: an attack drives into a defense in depth and is thrown back by a counterattack into its flank, beside a rigid wall that shatters. Built from Lupfer's Leavenworth Paper No. 4 and FM 3-90 (2023).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Elastic Defense in Depth | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/elastic-defense/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/elastic-defense/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.ed-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.ed-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.ed-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.ed-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.ed-text p,.ed-text li{line-height:1.65}
+.ed-text .fine{font-size:.88rem;color:var(--text-muted)}
+.ed-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.ed-figure{background:transparent}
+.ed-figure .iso-figure{margin:0}
+.ed-figure .iso-plate{background:var(--anatomy-card)}
+.ed-stage{outline:none;cursor:crosshair;touch-action:manipulation}
+.ed-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.ed-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.ed-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.ed-figure .iso-plate-corners{z-index:2}
+.ed-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.ed-figure[data-view="field"] .ed-svg{visibility:hidden}
+.ed-figure[data-view="field"] .ed-legend-machine{display:none}
+.ed-figure:not([data-view="field"]) .ed-field,.ed-figure:not([data-view="field"]) .ed-legend-field{display:none}
+/* casualties: greyed and still; torn ground and trench spoil */
+.ed-figure .tr-s[data-side="fc"] path,.ed-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.ed-figure .tr-s[data-side="fc"] .tr-t,.ed-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.ed-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.ed-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.ed-figure .tr-s[data-side="fc"] .tr-d,.ed-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.ed-figure .tr-s[data-side="fc"] .tr-g,.ed-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.ed-crater{fill:var(--tr-slope-0);opacity:.5;stroke:none}
+.ed-spoil{fill:var(--tr-bag);stroke:var(--tr-bag-ink);stroke-width:.35;opacity:.8}
+.ed-legend{display:grid;gap:8px}
+.ed-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.ed-controls .btn{cursor:pointer}
+.ed-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.ed-controls input[type=range]{flex:1;min-width:120px}
+.ed-text h2{margin-top:28px}
+.ed-text ol{padding-left:1.2em}
+.ed-text li{margin:6px 0}
+@media (max-width:520px){.ed-figure .iso-plate-corner[data-corner="hint"]{display:none}.ed-stage{overflow:hidden}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="ed-main">
+  <a class="ed-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Elastic Defense in Depth</h1>
+  <p class="lede">By late 1916 the German Army had learned on the Somme that strengthening its front line put its troops where Allied artillery hit hardest. Its answer, used from 1917, was to hold the front lightly, let an attack wear itself out in a deep battle zone, and then counterattack. This bench model compares that defense with the same strength massed in one forward wall.</p>
+
+  <div class="iso ed-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="ed-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <button type="button" class="btn btn-primary" id="ed-fire">Attack</button>
+      <button type="button" class="btn btn-outline" id="ed-mode" aria-pressed="false">Switch to rigid wall</button>
+      <label>Attack weight <input type="range" id="ed-weight" min="60" max="160" step="5" value="100" aria-label="Attack weight, percent"> <output id="ed-weight-out">100%</output></label>
+    </div>
+  </div>
+
+  <section class="ed-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>The ram</b> (lit) is the attack. A long drive spring pushes it, and like any spring it loses force as it stretches: the further the ram gets from its launcher, the weaker its push. That stands for an attack outrunning its artillery.</li>
+      <li><b>The three plates</b> are the defense. The light front plate is the outpost zone, the second is the main line of resistance (MLR) and the third stands in the battle zone. The springs between them get stiffer with depth, so the defense pushes back harder the deeper the ram goes. The engraved bands and the ruler mark the zones on a notional kilometre scale.</li>
+      <li><b>The flank carriage</b> beside the track is the counterattack. A latch pin holds it cocked at the side against a heavy spring. When the ram stalls, the pin lifts and the carriage drives in from the flank: its wedge-shaped blade catches a roller on the ram’s outrigger and throws the ram back along the rails until the MLR plate is home again. The fixed block at the back is the rear stop the last spring bears on.</li>
+      <li><b>The gauge</b> compares the ram’s push (lit needle) with what the defense pushes back with (short needle).</li>
+      <li><b>Switch to the rigid wall</b> and the same three plates are bolted together at the front line, and the flank carriage is drawn back and stays latched: everything is in the wall. The ram now meets it at full strength. The bolted wall breaks when the push that reaches it is above 70%. The ram’s push has already fallen to 82% of the attack weight by the time it reaches the front line, so in this model any attack weight above about 85% on the slider (70 ÷ 82) shatters the wall and runs through to the rear; at 85% or below the wall holds. In the elastic stack every weight on the slider stalls in the battle zone, between 0.9 and 1.6 km deep.</li>
+    </ol>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model, controls and readout drive both. It shows a German sector of 1917 laid out in depth, blue for the attacker and red for the defender, with the attack moving the same way as the ram and the counterattack coming from the same side as the flank carriage. From the lower right, three waves of attacking infantry (lit) leave their jump-off trench. The German front trench, behind wire, is lightly held, and a few men hold shell-hole outposts in front of the main line of resistance. Behind the MLR the battle zone holds machine-gun strongpoints of the kind Lupfer describes: positions “for squads or machine gun sections,” placed “mostly in the battle zone,” which engaged the attackers “whenever possible, with devastating enfilade fire” and “would remain fighting even if cut off” (p. 15). Their fire sectors are marked on the ground. The trench across the top is the artillery protective line, the battle zone’s rear edge. In Lupfer’s sketch of the ideal battle the attackers’ barrage “has crept forward without them” and the Germans “concentrate their artillery fire behind the Allied advanced units” (p. 15); the shell bursts show both. A red counterattack force waits beside a wood at the rear of the battle zone on the far flank. A forward division expecting a major attack “would often have an entire counterattack division positioned behind it in the rearward zone” (p. 16); one small force stands for these reserves here. When the waves stall, it moves round and strikes their flank and drives them back out of the battle zone. Switched to the rigid wall, every defender, the counterattack force included, is packed into the front trench; above the breaking weight the waves break through, the men nearest the breach go down and the rest fall back. Greyed figures lying still are men down on both sides, with a stretcher-bearer kneeling beside the first attacker carried back; the readout ends with the count, attacker against defender. Soldiers are drawn larger than scale (about one and a half times) so they read. One figure stands for many men, and the numbers, distances, timings and casualty counts are notional.</p>
+
+    <h2>What the history says</h2>
+    <p>Timothy Lupfer’s study of German tactical doctrine traces the change to <i>The Principles of Command in the Defensive Battle in Position Warfare</i>, published by the German high command (OHL) on 1 December 1916. OHL “officially rejected the principle of holding the forward line at all cost.” Lupfer explains the logic: “As the Allied attack advanced, its relative power would deteriorate as the distance from its artillery support increased,” while the Germans “positioned their forces in tiers or echelons which became stronger as the distance from the front line increased” (p. 12).</p>
+    <p>The defense “now consisted of three successive zones: the outpost zone, the battle zone, and the rearward zone.” The main line of resistance was the forward edge of the battle zone, which extended back, “depending on terrain, fifteen hundred to three thousand meters”; the regulation recommended dimensions but emphasized adapting the defense to the terrain (p. 13). The German regulations did not name the defense. “Elastic defense-in-depth” is Lupfer’s description: “The echeloning of forces provided the depth, the reliance on counterattack (instead of fixed positions) provided the elasticity” (p. 13, note). The defense “was aptly called elastic, for it was to resist, bend, and snap back,” though forward troops were not free to fall back at will: the regulation stressed tenacity, and their room to move was to shift out of the artillery fire (p. 15).</p>
+    <p>Current U.S. Army doctrine keeps the idea. <i>FM 3-90, Tactics</i> (2023) says units “normally prefer to perform a defense in depth,” in which forces “absorb the momentum of enemy attacks by making enemy forces attack repeatedly through a series of mutually supporting positions” (para. 9-30). Its alternative, the forward defense, commits most combat power early near the front, but “the defending force’s lack of depth may allow enemy forces to exploit success if they penetrate the friendly force’s main defensive positions” (para. 9-34). FM 3-90 treats the two as methods to choose between, and a unit can use both at once (para. 9-29).</p>
+    <p>For large units, such as divisions or corps, FM 3-90 adds that a defense in depth lets forward security forces control how deep the enemy penetrates and gives the defender time to take offensive steps, “such as conducting counterattacks into the flanks of advancing enemy forces” (para. 9-33). Both views here take the attack in the flank for that reason. Lupfer describes the German counterattack battalion as “striking from the rear of the battle zone” (p. 16); the figure keeps that starting point and follows FM 3-90 for the direction of the blow.</p>
+
+    <h2>What is notional</h2>
+    <p>Only the zone names, their order and the sketch depths come from the source. The rest is a teaching shape. The ram’s push falls in a straight line from 100% at its start (0.7 km before the outpost line) to zero at 3.2 km. The stack’s resistance rises in three stages from 5% at the outpost line to 25%, 65% and 120% as each spring bottoms out. The bolted wall breaks when the push reaching it is above 70%, which is an attack weight above about 85%. The ram moves at a speed proportional to the net push. The flank carriage’s wedge first meets the ram’s roller at 1.75 km, deeper than any stall, and once it bears it pushes with a margin of 25% over the ram. None of these numbers is drawn from data, and real attacks did not move like a spring. Any conclusion the bench draws, such as where the ram stalls, holds only in this model.</p>
+    <p>The casualty counts in the readout and the Battlefield view are notional too, set so that neither side’s success is free. They count men in the drawn force, 24 attackers and 33 defenders. Against the elastic defense the attacker loses 22% of its men for every notional kilometre it gets into the defense and 15% more as the counterattack throws it back; the defender loses 6% per kilometre and 10% more in the counterattack (10 against 6 at 100% weight). Against the rigid wall the defender, packed into one trench, loses 15% to the barrage as the attack closes. If the wall holds, the attacker loses 30% (7 against 5); if it breaks, the defender loses up to 40% more as the trench is overrun and the attacker about 18% (4 against 18). These are teaching values, not loss rates from data or history.</p>
+    <p class="fine">Sources: Timothy T. Lupfer, <a href="https://www.armyupress.army.mil/Portals/7/combat-studies-institute/csi-books/lupfer.pdf"><i>The Dynamics of Doctrine: The Changes in German Tactical Doctrine During the First World War</i></a>, Leavenworth Paper No. 4 (Fort Leavenworth: Combat Studies Institute, July 1981), pp. 12–16 (<a href="https://web.archive.org/web/2015id_/http://usacac.army.mil/cac2/cgsc/carl/download/csipubs/lupfer.pdf">archived copy</a>). Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">FM 3-90, Tactics</a>, 1 May 2023, paras. 9-29, 9-30, 9-33 and 9-34. Figure drawn with the open-source Anatomy isometric kit (MIT). For a playable version of the idea, see the <a href="/deterrence-playground/tools/defense-in-depth/">Defense in Depth</a> wargame.</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

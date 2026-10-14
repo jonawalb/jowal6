@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Operational Reach | Jonathan Walberg</title>
+<meta name="description" content="How operational reach works, as a working bench model: a telescoping arm tips once it reaches too far from its base, and a forward support lets it reach farther. Built from joint doctrine (JP 5-0, 2020).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Operational Reach | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/operational-reach/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/operational-reach/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.or-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.or-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.or-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.or-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.or-text p,.or-text li{line-height:1.65}
+.or-text .fine{font-size:.88rem;color:var(--text-muted)}
+.or-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.or-figure{background:transparent}
+.or-figure .iso-figure{margin:0}
+.or-figure .iso-plate{background:var(--anatomy-card)}
+.or-stage{outline:none;cursor:crosshair;touch-action:manipulation}
+.or-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.or-svg{display:block;width:100%;height:auto}
+.or-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.or-controls .btn{cursor:pointer}
+.or-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.or-controls input[type=range]{flex:1;min-width:120px}
+.or-text h2{margin-top:28px}
+.or-text ol{padding-left:1.2em}
+.or-text li{margin:6px 0}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.or-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.or-figure .iso-plate-corners{z-index:2}
+.or-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.or-figure[data-view="field"] .or-svg{visibility:hidden}
+.or-figure[data-view="field"] .or-legend-machine{display:none}
+.or-figure:not([data-view="field"]) .or-field,.or-figure:not([data-view="field"]) .or-legend-field{display:none}
+.or-legend{display:grid;gap:8px}
+.or-ring .tr-chalk{stroke-width:1.1}
+/* knocked-out vehicles: stopped and greyed (no filter, so nothing repaints per frame); the casualty evacuation truck has a white roof */
+.or-field .or-out .tr-t,.or-field .or-out .tr-l{fill:#cfccc4!important}.or-field .or-out .tr-d,.or-field .or-out .tr-g,.or-field .or-out .iso-shade{fill:#aeaba3!important}
+.or-field .or-out .tr-veh{--anatomy-top:#cfccc4;--anatomy-paper:#c2bfb7}.or-field .or-out path{stroke:#7a776f!important}
+.or-field .or-out .tr-gun{stroke:#7a776f!important}
+.or-field .or-medevac .tr-t{fill:#fbfbf8!important}
+.or-losses{margin:2px 0 0;font-size:13px;color:var(--anatomy-text)}
+@media (max-width:520px){.or-figure .iso-plate-corner[data-corner="hint"]{display:none}.or-stage{overflow:hidden}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="or-main">
+  <a class="or-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Operational Reach</h1>
+  <p class="lede">Joint doctrine holds that, for any given operation, there is a finite range beyond which the main body of a force cannot prudently operate. It calls the distance and duration a force can work across operational reach, and says locating forces, bases and logistics forward extends it. This bench model makes the limit physical: an arm that reaches out from its base tips over once it reaches too far, unless a forward support takes the load.</p>
+
+  <div class="iso or-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="or-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="or-base" aria-pressed="false">Set the forward base</button>
+      <label>Reach <input type="range" id="or-reach" min="92" max="182" step="1" value="92" aria-label="Reach of the arm, bench units from the knife edge"></label>
+    </div>
+    <p class="or-losses" id="or-losses" aria-live="polite">Notional losses at the objective: 0 friendly, 0 enemy vehicles knocked out</p>
+  </div>
+
+  <section class="or-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>The pedestal</b> in the middle is the home base. The arm is not pinned to it: a knife edge under the arm rests in a V-block, and counterweight plates on the arm&rsquo;s rear end hold it down on a rear rest.</li>
+      <li><b>The arm</b> telescopes in two stages. It carries <b>the lit load head</b>, the force the base supports, out along the ruler. Extend it with the pointer, the slider or the arrow keys.</li>
+      <li><b>The gauge</b> reads the moment of everything ahead of the support divided by the moment of everything behind it. As the arm extends, the head and stages move out and the ratio climbs. Past 1.0 (the raised mark) the arm tips forward about the knife edge and lands on a stop pad.</li>
+      <li><b>The roller stand</b> farther down the bench is a forward base. Set it with a click, the button or the B key and its jack lifts a roller under the arm. Once the roller carries the arm, the arm tips about the roller instead, and the head can go to full length with the gauge near zero. Remove it while the arm is out and the arm tips again.</li>
+    </ol>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model and readout drive both. The battlefield is drawn at operational scale: each small vehicle stands for a company and each cluster of three for a battalion, blue friendly and red enemy. The depot on the left, with its sheds and supply stacks, is the home base. The supply road runs from it over a stream to a town held by an enemy battalion dug in on its western edge; the red fan is its fire sector and the flag behind it the objective. A friendly brigade of three battalions pushes out along the road as the arm extends: the lit lead battalion is the load head, and the other two ride where the arm&rsquo;s two stages sit. The dashed chalk ring round the depot marks how far the home base can support the brigade in this model, the reach at which the gauge reaches 1.0. Supply trucks shuttle out to the brigade, but only inside the ring. Push the lead battalion past it and it disperses and stops firing, and the trucks turn back at the ring&rsquo;s edge: the machine&rsquo;s arm tipping. Set the forward base and a convoy drives up to the site staked out beside the road and opens a logistics node there. A second ring grows from it out past the town, the trucks run from the node, and the lead battalion can fight at the objective. Success is not free: the line under the card counts notional losses at the objective, and knocked-out vehicles stop, grey out and smoke while a casualty evacuation truck (white roof) runs back to the supporting base. Supported by the forward node, the lead battalion loses one company vehicle and knocks out two; overreached, it loses two and knocks out one. Vehicles are drawn far larger than scale so they read; unit sizes, distances, the rings and timings are notional.</p>
+
+    <h2>What doctrine says</h2>
+    <p>Joint doctrine defines the term in <i>JP 5-0, Joint Planning</i> (December 2020): &ldquo;Operational reach is the distance and duration across which a joint force can successfully employ military capabilities.&rdquo; Reach may be extended, among other ways, &ldquo;through forward positioning of capabilities and resources&rdquo; (ch. IV, para. 6.d(1)).</p>
+    <p>The next paragraph ties reach to bases and lines of communications. &ldquo;Locating forces, reserves, bases, pre-positioned equipment sets, and logistics forward extends operational reach,&rdquo; and reach &ldquo;is also affected by&rdquo; improving &ldquo;transportation availability and the effectiveness of lines of communications and throughput capability.&rdquo; But &ldquo;for any given campaign or major operation, there is a finite range beyond which predominant elements of the joint force cannot prudently operate or maintain effective operations&rdquo; (para. 6.d(2)). Basing, the manual adds, &ldquo;is an indispensable part of operational art, since it is tied to the construct of LOOs [lines of operation] and directly affects operational reach&rdquo; (para. 6.d(3)).</p>
+    <p>Figure 9, <a href="/interactive/maneuvers/culminating-point/">Culminating Point</a>, follows the Army&rsquo;s account of what happens at that limit. This figure shows the limit and how a forward base moves it.</p>
+
+    <h2>What is notional</h2>
+    <p>The physics is real: a rigid arm resting on supports tips over the front-most support it rests on when the moment of the loads ahead of that support exceeds the moment of the loads behind it. The numbers are bench units. The counterweight weighs 65 units, 46 behind the knife edge; the sleeve, the two stages and the head weigh 30, 16, 11.2 and 10. On the knife edge alone the ratio is 0.59 with the arm retracted (reach 92), reaches 1.0 at a reach of about 141, and would be 1.35 at full length (182). With the roller stand at 124 carrying the arm, the ratio at full length is 0.04. The mapping is notional too: in this model the arm&rsquo;s length stands for distance from the base and the counterweight for what the base can support. Real reach also depends on duration, threats, geography and the range of weapons, which the bench leaves out.</p>
+    <p class="fine">Source: Joint Chiefs of Staff, <a href="https://www.jcs.mil/Portals/36/Documents/Doctrine/pubs/jp5_0.pdf">JP 5-0, Joint Planning</a>, 1 December 2020, ch. IV, para. 6.d(1)&ndash;(3), pp. IV-34 to IV-35 (<a href="https://web.archive.org/web/2023/https://irp.fas.org/doddir/dod/jp5_0.pdf">archived copy</a>). Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

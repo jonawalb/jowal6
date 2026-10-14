@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Interior vs Exterior Lines | Jonathan Walberg</title>
+<meta name="description" content="Interior and exterior lines as a working bench model: a shuttle on spokes from a central hub against carriages on a rim track, timed on two counters. Definitions and doctrine from JP 5-0 (2020), ADP 3-0 (2019) and Jomini.">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Interior vs Exterior Lines | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/interior-lines/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/interior-lines/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.il-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.il-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.il-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.il-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.il-text p,.il-text li{line-height:1.65}
+.il-text .fine{font-size:.88rem;color:var(--text-muted)}
+.il-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.il-figure{background:transparent}
+.il-figure .iso-figure{margin:0}
+.il-figure .iso-plate{background:var(--anatomy-card)}
+.il-stage{outline:none;cursor:crosshair;touch-action:manipulation}
+.il-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.il-svg{display:block;width:100%;height:auto}
+.il-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.il-controls .btn{cursor:pointer}
+.il-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.il-controls input[type=range]{flex:1;min-width:120px}
+.il-text h2{margin-top:28px}
+.il-text ol{padding-left:1.2em}
+.il-text li{margin:6px 0}
+@media (max-width:520px){.il-figure .iso-plate-corner[data-corner="hint"]{display:none}.il-stage{overflow:hidden}}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.il-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.il-figure .iso-plate-corners{z-index:2}
+.il-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.il-figure[data-view="field"] .il-svg{visibility:hidden}
+.il-figure[data-view="field"] .il-legend-machine{display:none}
+.il-figure:not([data-view="field"]) .il-field,.il-figure:not([data-view="field"]) .il-legend-field{display:none}
+.il-legend{display:grid;gap:8px}
+/* knocked-out vehicles: stopped and greyed (no filter, so nothing repaints per frame); the casualty evacuation truck has a white roof */
+.il-field .il-out .tr-t,.il-field .il-out .tr-l{fill:#cfccc4!important}.il-field .il-out .tr-d,.il-field .il-out .tr-g,.il-field .il-out .iso-shade{fill:#aeaba3!important}
+.il-field .il-out .tr-veh{--anatomy-top:#cfccc4;--anatomy-paper:#c2bfb7}.il-field .il-out path{stroke:#7a776f!important}
+.il-field .il-out .tr-gun{stroke:#7a776f!important}
+.il-field .il-medevac .tr-t{fill:#fbfbf8!important}
+.il-losses{margin:2px 0 0;font-size:13px;color:var(--anatomy-text)}
+.il-seg{display:inline-flex;gap:6px;align-items:center;color:var(--anatomy-text);font-size:14px}
+.il-seg .btn[aria-pressed="true"]{background:var(--green-900,#1f3d2b);color:#fff}
+.il-out{min-width:2.6em;font-variant-numeric:tabular-nums}
+.il-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="il-main">
+  <a class="il-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Interior vs Exterior Lines</h1>
+  <p class="lede">A force between several enemies can shift its weight from one to another along short lines. In this model, forces round the rim go the long way round; in doctrine, forces on exterior lines converge on the enemy from several directions. This bench times both kinds of move.</p>
+
+  <div class="iso il-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="il-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <span class="il-seg" role="group" aria-label="Number of rim carriages">Rim carriages
+        <button type="button" class="btn btn-outline" data-lugs="1" aria-pressed="true">1</button>
+        <button type="button" class="btn btn-outline" data-lugs="2" aria-pressed="false">2</button>
+        <button type="button" class="btn btn-outline" data-lugs="3" aria-pressed="false">3</button>
+      </span>
+      <label>Rim speed <input type="range" id="il-speed" min="0.5" max="2" step="0.1" value="1" aria-label="Rim speed, times the hub shuttle's speed"><span class="il-out" id="il-speed-out">×1.0</span></label>
+      <button type="button" class="btn btn-outline" id="il-next">Call the rim's farthest station</button>
+    </div>
+    <p class="il-losses" id="il-losses" aria-live="polite">Notional losses at the called station: none yet</p>
+    <p class="il-sr" id="il-status" aria-live="polite"></p>
+  </div>
+
+  <section class="il-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>The hub shuttle</b> (lit) sits on a turntable in the middle of the table. When a station is called, the turntable turns to that spoke and the shuttle runs straight out to it. Its moves spread out from a central point: it is on interior lines. After each trip it runs back to the hub.</li>
+      <li><b>The rim carriages</b> ride a circular track, clamped to a link belt that the motor at the back turns the shorter way round. They close on a station from outside: they are on exterior lines. The buttons set one, two or three carriages, spaced evenly round the belt.</li>
+      <li><b>The six station posts</b> stand round the edge. Click near one, or use the arrow keys, to call it; its lamp rises.</li>
+      <li><b>The two counters</b> time each side’s trip to the called station in bench seconds: the left one the hub shuttle, the right one the rim. The readout gives both and says who got there first. The knob on the speed box at the back shows the rim speed.</li>
+    </ol>
+    <p>In this model, with one carriage the rim may have to go halfway round, 4.49 s, while the hub shuttle reaches any station from the hub in 1.14 to 1.64 s. Two or three carriages, starting from stations, cut the rim’s longest trip to a sixth of the way round, 1.50 s, close to the hub’s time; double the rim speed as well and the rim gets there first, in 0.75 s. A station at a waiting carriage is always quicker from the rim.</p>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model, counters and readout drive both, and every town sits on the bearing of its station post. The battlefield is drawn at operational scale: each small vehicle stands for a company and each cluster of three for a battalion, blue friendly and red enemy. Six radial roads run out from a road hub in the middle to six towns on a ring road; the roads stand for the bench&rsquo;s tracks. The lit blue battalion at the hub, beside its brigade&rsquo;s command post and supply trucks, is the hub shuttle: on interior lines, it reaches any town by one road. The red battalions on the ring road are the rim carriages: one, two or three, spaced evenly round the ring, moving round it together and the shorter way, as the belt does. Calling a station puts a chalk outline round its town, and both sides race for it. In this model, whoever arrives first holds the town and fires on the other side, which halts short of it and attacks; after the clash the blue battalion drives back to the hub, as the shuttle does, and a red battalion halted outside then moves into the town. Success is not free: the line under the card counts notional losses at the called town, one vehicle per company. The holder always loses one; the side that arrives second loses two if the holder had at least 0.5 bench seconds to deploy, otherwise one; a level race costs each side one. Knocked-out vehicles stop, grey out and smoke, and a casualty evacuation truck (white roof) runs blue casualties back to the hub. Vehicles are drawn far larger than scale so they read; unit sizes, distances, timings and losses are notional.</p>
+
+    <h2>What doctrine says</h2>
+    <p>U.S. Army <i>ADP 3-0, Operations</i> (July 2019) defines <b>interior lines</b> as lines on which a force operates “when its operations diverge from a central point,” and <b>exterior lines</b> as lines on which it operates “when its operations converge on the enemy.” Interior lines “allow commanders to move quickly against enemy forces along shorter lines of operation”; exterior lines “allow commanders to concentrate forces against multiple positions on the ground, thus presenting multiple dilemmas to the enemy” (para. 2-36).</p>
+    <p>Joint doctrine, <i>JP 5-0, Joint Planning</i> (December 2020), gives each side its price. With interior lines, “friendly forces are closer to separate enemy forces than the enemy forces are to one another,” and “interior lines enable an isolated force to mass combat power against a specific portion of an enemy force by shifting capabilities more rapidly than the enemy can react.” Operations on exterior lines “offer opportunities to encircle and annihilate an enemy force,” but “typically require a force stronger or more mobile than the enemy.” And an enemy’s interior-lines advantage “disappears if the friendly force is more agile and operates at a higher tempo” (ch. IV, para. 6.a.(1)(b)–(d), pp. IV-29–IV-30). On the bench, the carriage buttons and the speed knob loosely stand in for being stronger or more mobile; they are not a model of either. JP 5-0 also gives the counterpoint: a smaller force between larger, less agile forces can defeat them in detail.</p>
+    <p>The idea goes back to Jomini, whose <i>Art of War</i> describes interior lines as having “such a direction that the general can concentrate the masses and maneuver with his whole force in a shorter period of time than it would require for the enemy to oppose to them a greater force,” while exterior lines “lead to the opposite result.” He also warned that two armies on interior lines, sustaining each other reciprocally and opposing two armies superior in numbers, “should not allow themselves to be crowded into a too contracted space, where the whole might be overwhelmed at once,” as happened to Napoleon at Leipzig (ch. III, art. XXI and its maxim 9).</p>
+
+    <h2>What is notional</h2>
+    <p>The distances come from the bench’s geometry: each spoke is 80 units from the hub to the shuttle’s stop, and the rim track’s centre line has a radius of 100 units, so half a turn is 314 units. Everything else is a bench setting, not data: both sides travel at 70 units per second at rim speed ×1, the hub turntable turns at 360° per second, and the hub shuttle goes back to the hub after every trip. The losses in the Battlefield view are a notional rule, not data. The counters measure travel time only, so the bench cannot show what exterior lines buy: encirclement and multiple dilemmas for the enemy. They also leave out Jomini’s warning that a force in the middle can be crowded and overwhelmed at once, and they ignore that real lines run over roads, rivers and supply routes, not tracks on a table.</p>
+    <p class="fine">Sources: Joint Chiefs of Staff, <a href="https://www.jcs.mil/Portals/36/Documents/Doctrine/pubs/jp5_0.pdf">JP 5-0, Joint Planning</a>, 1 December 2020, ch. IV, pp. IV-29–IV-30 (<a href="https://web.archive.org/web/20220715183645/https://www.jcs.mil/Portals/36/Documents/Doctrine/pubs/jp5_0.pdf">archived copy</a>); Headquarters, Department of the Army, <a href="https://web.archive.org/web/2023/https://irp.fas.org/doddir/army/adp3_0.pdf">ADP 3-0, Operations</a>, 31 July 2019, para. 2-36 (archived copy of the FAS mirror); Baron de Jomini, <a href="https://www.gutenberg.org/ebooks/13549">The Art of War</a>, trans. G. H. Mendell and W. P. Craighill (1862; Project Gutenberg edition), ch. III, art. XXI. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

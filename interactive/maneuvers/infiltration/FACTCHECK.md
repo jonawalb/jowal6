@@ -1,0 +1,37 @@
+# Infiltration: fact check
+
+**VERIFIED 2026-10-13 by an independent fact-checker (FM 3-90, 1 May 2023; paras 2-24 with Table 2-1, 2-82, 2-86, 2-103). All quotes are exact. Fixed after the check: the lede, meta description and caption now give the 2-85/2-86 trade-off in full (larger elements are better able to react), the split-finer point is marked "in this model", "Built from" became "Illustrates one point from", and the one-at-a-time gap rule is labeled notional.**
+
+Source opened this session (2026-10-13): Headquarters, Department of the Army, FM 3-90, *Tactics*, 1 May 2023 (supersedes FM 3-90-1 and FM 3-90-2, 22 March 2013). The armypubs.army.mil link did not resolve from the build machine, so the text was read from the Internet Archive copy of the same PDF, which the page links:
+https://web.archive.org/web/20231214002622/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf
+(original: https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf)
+
+| # | Claim on the page | Where on the page | Source, paragraph, page |
+|---|---|---|---|
+| 1 | FM 3-90 (May 2023) lists infiltration as one of five forms of maneuver, with frontal attack, penetration, envelopment and turning movement | "What doctrine says", para 1 | FM 3-90 (2023), para 2-24, p. 2-12 ("Table 2-1 lists and illustrates the symbols for the five forms of maneuver"); Table 2-1 |
+| 2 | Infiltration is "a form of maneuver in which an attacking force" … "conducts undetected movement through or into an area occupied by enemy forces" | Lede (paraphrase), card caption, "What doctrine says" para 1 | Para 2-82, p. 2-24 |
+| 3 | Success "requires the infiltrating force to avoid detection and engagement by enemy forces" | "What doctrine says", para 1 | Para 2-82, p. 2-24 ("A successful infiltration requires the infiltrating force to avoid detection and engagement by enemy forces.") |
+| 4 | Smaller infiltrating elements "are not as easy to detect as larger elements and can get through smaller defensive gaps" | Lede (paraphrase), card caption, "What doctrine says" para 2 | Para 2-86, p. 2-26 |
+| 5 | Larger elements, "if compromised are better equipped to react"; many smaller elements need more time and more linkup points and are harder to control | "What doctrine says", para 2; "What is notional" | Para 2-86, p. 2-26 ("A unit with many smaller infiltrating elements requires more time to complete the infiltration and needs more linkup points…"; "Many smaller infiltrating elements are also harder to control than fewer, larger elements.") |
+| 6 | Once through, elements move to an assembly area or objective rally point "to consolidate and reorganize their combat power" | "What doctrine says", para 2 | Para 2-103, p. 2-28 |
+
+Not doctrinal claims (notional, labeled on the page and in METHOD.md): the gap widths, the element sizes, the 1-unit clearance rule, the one-at-a-time passage, and all timings. The page does not claim doctrine prescribes splitting a force into 4, 9 or 16 elements, nor that a large element is always stopped.
+
+## Added 2026-10-13 with the Battlefield view (terrain, night, small-unit scale)
+
+**VERIFIED 2026-10-13 by an independent fact-checker (rows 7–14).** Rows 8, 11 and 14 confirmed as written. Fixed after the check: row 7 now says the scene is "shown at night" and that FM 3-90 lists limited visibility (it does not say night); row 9 presents squads of nine and teams of four as a count from the roles listed, not as a doctrinal size; row 10 keeps "unless preparing for an assault"; row 12 says the manual describes modifying the wedge toward a file when poor visibility or rough terrain makes control difficult, drawn here near the line (not that doctrine closes elements into file to pass a gap); row 13 adds the control cost of each option. Covered routes (hedgerows, stream bed) were added to the drawing at the owner's request; they are notional and make no doctrinal claim. Both sources were opened this session (2026-10-13) as Internet Archive copies:
+- FM 3-90, *Tactics*, 1 May 2023: https://web.archive.org/web/20231214002622id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf
+- ATP 3-21.8, *Infantry Rifle Platoon and Squad*, 11 January 2024 incl. Change 1: https://web.archive.org/web/20250807233618id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf (official: https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf)
+
+| # | Claim on the page | Where on the page | Source, paragraph, page |
+|---|---|---|---|
+| 7 | Shown at night; FM 3-90 lists the "use of limited visibility and rough terrain to mask movement and reduce possible detection" among the things an infiltration plan addresses | "How to read it", Battlefield view paragraph | FM 3-90 (2023), para 2-96, p. 2-27 (bullet: "Use of limited visibility and rough terrain to mask movement and reduce possible detection.") |
+| 8 | A squad is "two fire teams and a squad leader" | Battlefield view paragraph | ATP 3-21.8 (2024 C1), para 1-9, p. 1-4 ("The squad is comprised of two fire teams and a squad leader.") |
+| 9 | Fire team roles: a team leader, an automatic rifleman, a grenadier and a rifleman (the page counts these as four; the manual gives no size) | Battlefield view paragraph | ATP 3-21.8, para 1-11, p. 1-4 (names the automatic rifleman, rifleman, grenadier and team leader) |
+| 10 | The squad column is "the squad's main formation for movement unless preparing for an assault" | Battlefield view paragraph | ATP 3-21.8, para 3-53, p. 3-15 (sentence continues "unless preparing for an assault") |
+| 11 | The wedge is "the basic formation of the fire team" | Battlefield view paragraph | ATP 3-21.8, para 3-46, p. 3-12 |
+| 12 | The manual describes teams and squads modifying the wedge toward a file when poor visibility or rough terrain makes control difficult; drawn here near the line | Battlefield view paragraph (paraphrase) | ATP 3-21.8, para 3-46, p. 3-12 (teams modify the wedge for "rough terrain, poor visibility, or other factors"; "the wedge resembles a single file"); para 3-53, p. 3-15 (modified column wedge: "poor visibility, and other factors require the squad to modify the wedge into a file for control") |
+| 13 | A single infiltration lane "requires the existence or creation of only one gap"; and "facilitates navigation, control, and reassembly"; multiple lanes "require the existence or creation of more gaps," "reduce the possibility of compromising the entire force" and "increase difficulty with maintaining control" | Battlefield view paragraph | FM 3-90, paras 2-93 and 2-94, p. 2-27 |
+| 14 | Infiltrating units generally organize into a security force and a main body (the drawing leaves the security force out) | Battlefield view paragraph | FM 3-90, para 2-85, p. 2-26 ("Infiltrating units generally organize into a security force and a main body.") |
+
+Describes the drawing or is notional, not a factual claim: 36 soldiers; the splits into 4 squads, 9 fire teams, or 16 pairs and threes; seven two-man outposts and their sectors; the gap widths and sector ranges; the slower battlefield clock; the big group being spotted and fired on; figures drawn larger than scale. The objective rally point is already sourced (row 6, para 2-103).

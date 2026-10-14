@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Phasing and Transitions | Jonathan Walberg</title>
+<meta name="description" content="The six-phase joint operation model (Shape to Enable Civil Authority) as a working gearbox, with what each edition of joint doctrine says about it, including when it was retired.">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Phasing and Transitions | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/phasing/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/phasing/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.ph-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.ph-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.ph-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.ph-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.ph-text p,.ph-text li{line-height:1.65}
+.ph-text .fine{font-size:.88rem;color:var(--text-muted)}
+.ph-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.ph-figure{background:transparent}
+.ph-figure .iso-figure{margin:0}
+.ph-figure .iso-plate{background:var(--anatomy-card)}
+.ph-stage{outline:none;cursor:crosshair;touch-action:manipulation}
+.ph-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.ph-svg{display:block;width:100%;height:auto}
+.ph-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.ph-controls .btn{cursor:pointer}
+.ph-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.ph-controls input[type=range]{flex:1;min-width:120px}
+.ph-text h2{margin-top:28px}
+.ph-text ol,.ph-text ul{padding-left:1.2em}
+.ph-text li{margin:6px 0}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.ph-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.ph-figure .iso-plate-corners{z-index:2}
+.ph-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.ph-figure[data-view="field"] .ph-svg{visibility:hidden}
+.ph-figure[data-view="field"] .ph-legend-machine{display:none}
+.ph-figure:not([data-view="field"]) .ph-field,.ph-figure:not([data-view="field"]) .ph-legend-field{display:none}
+.ph-legend{display:grid;gap:8px}
+/* knocked out (grey), ambulance (white), aid trucks (sand), local police (charcoal), townspeople (brown) */
+.tr-s[data-side="fk"] path,.tr-s[data-side="hk"] path{stroke:#8f8b84}.tr-s[data-side="m"] path{stroke:#55524c}.tr-s[data-side="a"] path{stroke:#6f6047}.tr-s[data-side="p"] path{stroke:#26282b}.tr-s[data-side="c"] path{stroke:#5e4a33}
+.tr-s[data-side="fk"] .tr-t{fill:#cfccc6}.tr-s[data-side="fk"] .tr-l{fill:#b9b6b0}.tr-s[data-side="fk"] .tr-d{fill:#a8a59f}.tr-s[data-side="fk"] .tr-g{fill:#8f8b84}
+.tr-s[data-side="hk"] .tr-t{fill:#d3cbc8}.tr-s[data-side="hk"] .tr-l{fill:#bfb5b2}.tr-s[data-side="hk"] .tr-d{fill:#ada3a0}.tr-s[data-side="hk"] .tr-g{fill:#938986}
+.tr-s[data-side="m"] .tr-t{fill:#fbfaf7}.tr-s[data-side="m"] .tr-l{fill:#ecebe6}.tr-s[data-side="m"] .tr-d{fill:#d9d7d0}.tr-s[data-side="m"] .tr-g{fill:#9a978f}
+.tr-s[data-side="a"] .tr-t{fill:#f3ead3}.tr-s[data-side="a"] .tr-l{fill:#e2d4b2}.tr-s[data-side="a"] .tr-d{fill:#cdbd97}.tr-s[data-side="a"] .tr-g{fill:#9a8a68}
+.tr-s[data-side="p"] .tr-t{fill:#9a9ea3}.tr-s[data-side="p"] .tr-l{fill:#7c8086}.tr-s[data-side="p"] .tr-d{fill:#62666c}.tr-s[data-side="p"] .tr-g{fill:#3a3d42}
+.tr-s[data-side="c"] .tr-t{fill:#e9d6b5}.tr-s[data-side="c"] .tr-l{fill:#d4b98e}.tr-s[data-side="c"] .tr-d{fill:#bb9d72}.tr-s[data-side="c"] .tr-g{fill:#8a6c4a}
+.tr-s[data-side="fk"] .tr-veh{--anatomy-top:#cfccc6;--anatomy-paper:#b9b6b0}.tr-s[data-side="hk"] .tr-veh{--anatomy-top:#d3cbc8;--anatomy-paper:#bfb5b2}
+.iso .tr-s[data-side="fk"] .tr-veh>.iso-shade{fill:#a8a59f}.iso .tr-s[data-side="hk"] .tr-veh>.iso-shade{fill:#ada3a0}
+.iso .tr-s[data-side="fk"] .tr-veh>.iso-shade[data-shade="3"],.iso .tr-s[data-side="fk"] .tr-veh>.iso-shade[data-shade="2"]{fill:#b9b6b0}.iso .tr-s[data-side="hk"] .tr-veh>.iso-shade[data-shade="3"],.iso .tr-s[data-side="hk"] .tr-veh>.iso-shade[data-shade="2"]{fill:#bfb5b2}
+@media (max-width:520px){.ph-figure .iso-plate-corner[data-corner="hint"]{display:none}.ph-stage{overflow:hidden}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="ph-main">
+  <a class="ph-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Phasing and Transitions</h1>
+  <p class="lede">U.S. joint doctrine once drew a large operation as six phases, from shaping before a crisis to handing back to civil authority. This bench model runs that sequence as a gearbox: each phase is a gear, and every transition takes a clutch cycle. The six-phase model has since been dropped from joint planning doctrine, and the section below says which edition says what.</p>
+
+  <div class="iso ph-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="ph-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="ph-prev">&larr; Previous phase</button>
+      <button type="button" class="btn btn-outline" id="ph-next">Next phase &rarr;</button>
+      <label>Phase <input type="range" id="ph-phase" min="0" max="5" step="1" value="0" aria-label="Phase, 0 Shape to V Enable civil authority"></label>
+    </div>
+  </div>
+
+  <section class="ph-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>The shift lever</b> (lit knob) sits in one of six notches in the gate. Left to right they are Phase 0 Shape, I Deter, II Seize initiative, III Dominate, IV Stabilize and V Enable civil authority, the labels in JP 3-0 (2017, Change 1 2018), Figure V-7.</li>
+      <li><b>The clutch</b> on the right lifts for every shift, and the drive stops while the lever moves. On the bench, transitions are planned shifts between phases; in doctrine they can also lead into a branch or sequel, and some are unplanned. Doctrine says a transition “marks a change between phases or between the ongoing operations and execution of a branch or sequel,” and this “shift in focus by the joint force often is accompanied by changes in command or support relationships and priorities of effort” (JP 3-0, 2018, para. V-6.d(1)).</li>
+      <li><b>The gear stack</b> on the left has one gear per phase, and the index pointer on its post marks the gear in use. A bigger gear means more effort in this model. The dial reads the same level of effort.</li>
+      <li>Shift with the buttons, the slider, the arrow keys, a click on the figure, or by hovering over the gate.</li>
+    </ol>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same phase, transitions and readout drive both. Here the scale is operational: blue is friendly, red is the enemy, each small vehicle stands for a platoon and each group of six for a battalion, so most of each battalion’s vehicles are left out. The ground stays the same in every phase: a friendly base on the left, a phase line marked in chalk on pegs, an enemy-held ridge and a town at a crossroads on the right. In Shape, one friendly company trains at the base while supply trucks bring stocks in. In Deter, the lit battalion (the main effort) deploys along the phase line and a second battalion arrives, which matches JP 3-0’s note that deterrent actions “may include mobilization, tailoring of forces, and other predeployment activities; initial deployment into a theater” (para. V-5.b(2), p. V-9); the enemy moves onto the ridge, and the fire sectors on the ground face each other. In Seize initiative, the second battalion takes the ridge and the lit battalion crosses the phase line. In Dominate, the lit battalion assaults the town while the second battalion supports by fire from the ridge, then stops firing and holds its position as the assault closes; the surviving enemy withdraws. In Stabilize, whose activities JP 3-0 says are “typically characterized by a shift in focus from sustained combat operations to stability activities,” including “humanitarian relief” (para. V-5.b(5), p. V-10), the force breaks down into checkpoints, aid trucks (sand) reach a distribution point, townspeople (brown) queue there, and local police (charcoal) join the checkpoints, while two snipers fire on one of them. In Enable civil authority, whose purpose JP 3-0 gives as helping “the civil authority regain its ability to govern” (para. V-5.b(6), p. V-10), the police hold the checkpoints alone and the battalions pull back. Each shift of the gear shows on the ground as units turning and moving into their next posture, and no one fires until they are in place. Success is not free: knocked-out vehicles stay where they were hit, greyed and smoking, a soldier and both snipers go down, and an ambulance (white) runs casualties back to the base. The readout’s last figure is men down, friendly vs enemy, a notional count explained below. Which units do what in each phase is this figure’s own illustration, not a doctrinal template. Vehicles and figures are drawn far larger than scale so they read; unit sizes, distances, positions and timings are notional.</p>
+    <p>The bench always steps through the phases in order, and the tour shifts on a timer. JP 3-0 (2018) is looser on both counts. Phases “may be conducted sequentially, but some activities from a phase may begin in a previous phase and continue into subsequent phases,” and the move to a new phase “is usually driven by events rather than time” (JP 3-0, 2018, para. V-6.b and V-6.d).</p>
+
+    <h2>What doctrine says, edition by edition</h2>
+    <ul>
+      <li><b>JP 5-0, <i>Joint Operation Planning</i> (11 August 2011)</b> set out a “Phasing Model” (Figure III-17) with the six phases, Shape (Phase 0) through Enable Civil Authority (Phase V). Even then it warned that “the six-phase model is not intended to be a universally prescriptive template for all conceivable joint operations” (ch. III, para. 10.b, p. III-41).</li>
+      <li><b>JP 5-0, <i>Joint Planning</i> (16 June 2017)</b> dropped it. Its summary of changes says the revision “removes the six-phase phasing model, but does not change the definition of phases or the use of phasing as a planning tool” (p. iii).</li>
+      <li><b>JP 3-0, <i>Joint Operations</i> (17 January 2017, Change 1 of 22 October 2018)</b> kept the six groups as notional phases: they “provide a convenient basis for thinking about a joint operation in notional phases,” and “actual phases of an operation will vary (e.g., compressed, expanded, or omitted entirely)” (para. V-6.a–b, pp. V-12 to V-13).</li>
+      <li><b>JP 5-0, <i>Joint Planning</i> (1 December 2020)</b> no longer presents the six-phase model: “The phases are unique for each operation or campaign,” and “commanders determine the number and purpose of phases used during a campaign or operation” (ch. IV, para. 7.a.(2)(a), pp. IV-37 to IV-38).</li>
+    </ul>
+    <p>So the gearbox shows a retired template. Phasing as a planning tool is still doctrine; the fixed six-phase sequence is not. The current JP 3-0, <i>Joint Campaigns and Operations</i> (18 June 2022), was not available at the Joint Chiefs of Staff address checked, and this page makes no claim about what it says.</p>
+
+    <h2>What is notional</h2>
+    <p>The level-of-effort numbers are a teaching shape, not doctrine or data: 15% in Shape, 30% in Deter, 60% in Seize initiative, 100% in Dominate, 55% in Stabilize and 25% in Enable civil authority. Each gear’s radius is 7 + 12 × effort bench units. They copy only the general form of the JP 3-0 (2018) figure, where effort peaks in the Dominate phase. The clutch and lever timings are set for legibility.</p>
+    <p>The Battlefield view’s casualty figure (“N vs M down”, friendly vs enemy) is notional too: losses come only where there is fighting, 6 vs 14 in Seize initiative, 15 vs 38 in Dominate and 3 vs 4 in Stabilize, so the campaign drawn here has cost 21 vs 52 by the end of Dominate and 24 vs 56 by its end. Each phase’s losses mount while its fighting runs. The count is what the drawn campaign has cost by the phase shown, so shifting back shows the lower figure, and Shape starts again at zero. Real losses depend on far more than the phase.</p>
+    <p class="fine">Sources: Joint Chiefs of Staff, <a href="https://www.jcs.mil/Portals/36/Documents/Doctrine/pubs/jp5_0.pdf">JP 5-0, Joint Planning</a>, 1 December 2020 (<a href="https://web.archive.org/web/20220715183645/https://www.jcs.mil/Portals/36/Documents/Doctrine/pubs/jp5_0.pdf">archived copy</a>); JP 5-0, Joint Planning, 16 June 2017 (<a href="https://web.archive.org/web/20180219022348/http://www.jcs.mil/Portals/36/Documents/Doctrine/pubs/jp5_0_20171606.pdf">archived copy</a>); JP 3-0, Joint Operations, 17 January 2017, Incorporating Change 1, 22 October 2018 (<a href="https://web.archive.org/web/20200113010443/https://www.jcs.mil/Portals/36/Documents/Doctrine/pubs/jp3_0ch1.pdf">archived copy</a>); JP 5-0, Joint Operation Planning, 11 August 2011 (<a href="https://web.archive.org/web/20120308030857/http://www.dtic.mil/doctrine/new_pubs/jp5_0.pdf">archived copy</a>). Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

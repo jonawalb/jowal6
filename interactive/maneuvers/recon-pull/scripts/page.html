@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Reconnaissance Pull | Jonathan Walberg</title>
+<meta name="description" content="Reconnaissance pull versus reconnaissance push, as a working marble-run bench: scouts find the gaps and pull the main body through, or scouts confirm a plan the commander has already committed to. Built from U.S. Army doctrine (FM 3-90, 2023).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Reconnaissance Pull | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/recon-pull/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/recon-pull/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.rp-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.rp-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.rp-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.rp-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.rp-text p,.rp-text li{line-height:1.65}
+.rp-text .fine{font-size:.88rem;color:var(--text-muted)}
+.rp-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.rp-figure{background:transparent}
+.rp-figure .iso-figure{margin:0}
+.rp-figure .iso-plate{background:var(--anatomy-card)}
+.rp-stage{outline:none;cursor:crosshair;touch-action:manipulation}
+.rp-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.rp-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.rp-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.rp-figure .iso-plate-corners{z-index:2}
+.rp-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.rp-figure[data-view="field"] .rp-svg{visibility:hidden}
+.rp-figure[data-view="field"] .rp-legend-machine{display:none}
+.rp-figure:not([data-view="field"]) .rp-field,.rp-figure:not([data-view="field"]) .rp-legend-field{display:none}
+.rp-legend{display:grid;gap:8px}
+/* casualties: greyed and still (side fc = friendly, hc = enemy), no colour beyond a faint tint */
+.rp-figure .tr-s[data-side="fc"] path,.rp-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.rp-figure .tr-s[data-side="fc"] .tr-t,.rp-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.rp-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.rp-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.rp-figure .tr-s[data-side="fc"] .tr-d,.rp-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.rp-figure .tr-s[data-side="fc"] .tr-g,.rp-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.rp-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.rp-controls .btn{cursor:pointer}
+.rp-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.rp-controls input[type=range]{flex:1;min-width:120px}
+.rp-text h2{margin-top:28px}
+.rp-text ol{padding-left:1.2em}
+.rp-text li{margin:6px 0}
+.rp-groove{fill:var(--anatomy-shade-1);stroke:var(--anatomy-lo);stroke-width:var(--anatomy-weight);stroke-linejoin:round}
+.rp-ball .rp-shadow{fill:var(--anatomy-halo);opacity:.5;stroke:none;filter:blur(.6px)}
+.rp-ball .rp-body{fill:var(--anatomy-shade-1);stroke:none}
+.rp-ball .rp-shine{fill:var(--anatomy-top);stroke:none;opacity:.95}
+.rp-ball .rp-rim{fill:none;stroke:var(--anatomy-hi);stroke-width:var(--anatomy-weight)}
+.rp-controls .btn[aria-pressed="true"]{background:var(--green-700,#2f5d3a);color:#fff;border-color:var(--green-700,#2f5d3a)}
+.rp-seg{display:inline-flex;gap:6px}
+@media (max-width:520px){.rp-figure .iso-plate-corner[data-corner="hint"]{display:none}.rp-stage{overflow:hidden}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="rp-main">
+  <a class="rp-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Reconnaissance Pull</h1>
+  <p class="lede">Before a main body moves, someone has to find out where the enemy is strong and where the gaps are. Army doctrine names two ways to use that reconnaissance: let the scouts’ findings pull the main body toward the gaps, or commit to a plan and push scouts out to confirm it. This bench runs both against the same wall.</p>
+
+  <div class="iso rp-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="rp-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <span class="rp-seg" role="group" aria-label="Reconnaissance technique">
+        <button type="button" class="btn btn-outline" id="rp-pull" aria-pressed="false">Recon pull</button>
+        <button type="button" class="btn btn-outline" id="rp-push" aria-pressed="true">Recon push</button>
+      </span>
+      <button type="button" class="btn btn-outline" id="rp-layout">New enemy layout</button>
+      <button type="button" class="btn btn-outline" id="rp-again">Run again</button>
+      <label>Planned lane <input type="range" id="rp-plan" min="1" max="5" step="1" value="3" aria-label="Planned lane for recon push, 1 to 5"></label>
+    </div>
+  </div>
+
+  <section class="rp-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>The wall</b> has five gates. A raised shutter is a gate the enemy holds; a sunk shutter is a gap. Click a gate, or press 1 to 5, to change it, or step through set layouts with <i>New enemy layout</i>.</li>
+      <li><b>The marbles</b> waiting in the magazine at front left are the main body. They roll along the feeder and turn into whichever lane the <b>diverter</b> (the carriage on the front rail) blocks off.</li>
+      <li><b>The lit scout carriage</b> rides the wall top and drops a feeler at each gate it checks.</li>
+      <li><b>Recon pull:</b> the scout works along the wall first. When it finds a gap, the diverter follows it there and the main body is released into that lane.</li>
+      <li><b>Recon push:</b> the plan peg locks the diverter to the planned lane (set it with the slider or the arrow keys) and the main body goes at once; the scout runs to that gate only to check it.</li>
+      <li><b>The stopwatch</b> reads the seconds until the first marble is through a gate. If the planned gate is held, the marbles stack up against its shutter and the watch keeps running.</li>
+    </ol>
+    <p>The idle tour runs three cases: push into a planned gate that is open (fastest), push into a planned gate that is held (stalled), and pull against that same wall (slower to start, but it gets through).</p>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model, controls and readout drive both. Blue is friendly and red is the enemy. Across the middle, a belt of woods screens the enemy side, and five farm tracks (the lanes) run up through it. At the near end of each track is a fighting position: a red enemy team in it is a held gate, with its fire sector marked on the ground; an empty one is a gap. The lit blue figures are the scouts, a team of four. They move along the front of the woods in file and, at each crossing they check, turn and go forward: at a held one they draw fire, go to ground, fire back and pull back; at a gap they go through and wait on the far side. The main body is a rifle company, drawn as seven groups of five figures (each figure stands for part of the unit, not one soldier); it comes up the road at the bottom of the card, moves along the lateral road in file and turns up one track, and on the far side of the woods it spreads out round the objective flag. The chalk line with an arrowhead is the chosen route: under recon push it is drawn from the start, because the plan has fixed it; under recon pull it appears only when the scouts have found the gap. Under push, if the planned crossing is held, the company stops in front of it, the leading groups prone and firing and the rest kneeling in column behind. Success is not free here either: greyed figures lying still are men down on both sides, and a medic runs from the company headquarters group to the first friendly casualty. The readout ends with the count, friendly against enemy. Soldiers are drawn larger than scale (about one and a half times) so they read; sizes, distances, timings, the enemy’s strength and the casualty counts are notional.</p>
+
+    <h2>What doctrine says</h2>
+    <p>U.S. Army <i>FM 3-90, Tactics</i> (May 2023) names “two reconnaissance techniques commanders employ to answer information requirements: reconnaissance push and reconnaissance pull” (para. 12-76). Reconnaissance pull “determines which routes are suitable for maneuver, where the enemy is strong and weak, and where gaps exist, thus pulling the main body toward and along the path of least resistance.” The manual adds that it “knowingly emphasizes opportunity at the expense of a detailed, well-rehearsed plan, and unity of effort” (para. 12-77).</p>
+    <p>Reconnaissance push “refines the common operational picture, enabling the commander to finalize the plan and support main and supporting efforts.” It “is normally used once the commander commits to a scheme of maneuver or COA [course of action],” and commanders push reconnaissance assets out “to confirm, deny, and validate planning assumptions” (para. 12-78). Push “emphasizes detailed, well-rehearsed planning”; pull trades that rehearsal and unity of effort for opportunity. In this page’s reading, neither is the wrong answer. In choosing, the commander weighs how well the enemy is understood, the time available, the leadership ability of subordinate commanders, and the proficiency of subordinate units to plan and react rapidly to uncertain situations (para. 12-76), and “the primary reason for using one method instead of the other is the time available” (para. 12-79).</p>
+
+    <h2>What is notional</h2>
+    <p>Every speed and time on the bench is a teaching value, not data. The scout travels 70 units a second and spends 0.6 s checking each held gate; the diverter travels 120 units a second; marbles roll at 60 units a second, released 0.26 s apart; under push the plan releases them 0.4 s after the start. With those values, in this model, a push into an open planned gate (lane 3) gets its first marble through in 2.5 s; pull against the same wall takes 4.0 s, because the scout must first find lane 2; and a push into a held lane 3 never gets through. In the bench, the push run keeps to its plan even when the scout finds the gate held; doctrine expects commanders to plan branches and decision points (para. 12-77), so read that run as the risk of a plan built on a wrong assumption, not as what a real unit would do.</p>
+    <p>The casualty counts in the readout and the Battlefield view are notional too. Losses follow contact: at the first, third and fifth held gate the scouts check, one scout and one enemy go down; a main body going through a gap loses one man for each held gate beside it, and each of those gates loses one; a main body stalled at a held gate loses five more men and the gate one more. With planned lane 3, that gives 1 vs 1 down for push into the open lane 3 (lane 4 is held beside it), 6 vs 2 for push into a held lane 3, and 3 vs 3 for pull against that same wall. These are teaching values, not loss rates from data or doctrine.</p>
+    <p class="fine">Source: Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">FM 3-90, Tactics</a>, 1 May 2023, paras. 12-76 to 12-79, p. 12-18 (<a href="https://web.archive.org/web/2024id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">archived copy</a>). Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

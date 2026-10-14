@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mobile Defense | Jonathan Walberg</title>
+<meta name="description" content="How a mobile defense works, as a sprung trap on a bench: a fixing force lets the enemy in and holds it, and a striking force with most of the power hits it. Built from U.S. Army doctrine (FM 3-90, 2023).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Mobile Defense | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/mobile-defense/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/mobile-defense/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.md-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.md-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.md-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.md-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.md-text p,.md-text li{line-height:1.65}
+.md-text .fine{font-size:.88rem;color:var(--text-muted)}
+.md-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.md-figure{background:transparent}
+.md-figure .iso-figure{margin:0}
+.md-figure .iso-plate{background:var(--anatomy-card)}
+.md-stage{outline:none;cursor:pointer;touch-action:manipulation}
+.md-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.md-svg{display:block;width:100%;height:auto}
+.md-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.md-controls .btn{cursor:pointer}
+.md-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.md-controls input[type=range]{flex:1;min-width:120px}
+.md-text h2{margin-top:28px}
+.md-text ol{padding-left:1.2em}
+.md-text li{margin:6px 0}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.md-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.md-figure .iso-plate-corners{z-index:2}
+.md-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.md-figure[data-view="field"] .md-svg{visibility:hidden}
+.md-figure[data-view="field"] .md-legend-machine{display:none}
+.md-figure:not([data-view="field"]) .md-field,.md-figure:not([data-view="field"]) .md-legend-field{display:none}
+.md-legend{display:grid;gap:8px}
+/* knocked-out vehicles: greyed and still (side fc = friendly, hc = enemy); the ambulance: white */
+.md-figure .tr-s[data-side="fc"] path,.md-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}.md-figure .tr-s[data-side="m"] path{stroke:#55524c}
+.md-figure .tr-s[data-side="fc"] .tr-t,.md-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.md-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.md-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.md-figure .tr-s[data-side="fc"] .tr-d,.md-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.md-figure .tr-s[data-side="fc"] .tr-g,.md-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.md-figure .tr-s[data-side="fc"] .tr-veh{--anatomy-top:#e4e3dd;--anatomy-paper:#d3d6dc}.md-figure .tr-s[data-side="hc"] .tr-veh{--anatomy-top:#e6e1df;--anatomy-paper:#dcd3d2}
+.iso.md-figure .tr-s[data-side="fc"] .tr-veh>.iso-shade,.iso.md-figure .tr-s[data-side="hc"] .tr-veh>.iso-shade{fill:#c9c8c1}
+.md-figure .tr-s[data-side="m"] .tr-t{fill:#fbfaf7}.md-figure .tr-s[data-side="m"] .tr-l{fill:#ecebe6}.md-figure .tr-s[data-side="m"] .tr-d{fill:#d9d7d0}.md-figure .tr-s[data-side="m"] .tr-g{fill:#9a978f}
+@media (max-width:520px){.md-figure .iso-plate-corner[data-corner="hint"]{display:none}.md-stage{overflow:hidden}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="md-main">
+  <a class="md-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Mobile Defense</h1>
+  <p class="lede">A mobile defense does not try to stop the enemy at the line. It lets the attacker into a planned penetration, holds it there with a fixing force of minimum combat power, and then hits it with a striking force that carries most of the defender’s power. This bench model works like a sprung trap: the split between the two forces decides whether it closes.</p>
+
+  <div class="iso md-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="md-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="md-run">Run the attack</button>
+      <label>Striking force share <input type="range" id="md-split" min="30" max="80" step="1" value="58" aria-label="Striking force share of the defender's combat power, percent"></label>
+    </div>
+  </div>
+
+  <section class="md-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>The enemy</b> is the carriage on the track. It enters between two converging guide walls and runs into the open pocket beyond them.</li>
+      <li><b>The fixing force</b> is the guide walls, which channel the carriage into the pocket, and the sprung stop that rises between the rails at the far end. The knob beside the stop shows how much power it has.</li>
+      <li><b>The striking force</b> is the lit arm on its spring pivot, held cocked by a latch. When the carriage is held and the arm is the stronger, the latch opens and the arm swings across behind the carriage. Striking the rear is this model’s choice; FM 3-90 says only that the striking force destroys the fixed enemy in the penetration.</li>
+      <li><b>The slider</b> at the front sets the striking force’s share of the defender’s power; the rest goes to the fixing force. <b>The dial</b> reads the striking force over the enemy power it would meet, with the top mark at 1. The enemy loses power to fire as it moves deeper, so the needle climbs during the run.</li>
+      <li>Run it at different splits. Too little in the striking force and the arm stays latched. Too little in the fixing force and the carriage pushes the stop down and runs out of the pocket, leaving the arm nothing to close on.</li>
+    </ol>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model and readout drive both. Blue is friendly and red the enemy, and one vehicle is drawn for every 5 units of the model’s combat power, so the defender has 20 and the slider moves vehicles between the two forces. The carriage becomes a red armored column of 14 vehicles driving in along a valley road. The guide walls become the fixing force on the shoulders of the gap where the road enters the valley: rifle and machine-gun teams in fighting positions on the two hills, vehicles at their foot, and wire along both sides of the pocket. Among the fixing force’s uses the manual lists “canalizing attacking enemy forces into engagement areas” (para. 10-7). The sprung stop becomes a blocking position of fixing-force vehicles across the far end of the road, outlined in chalk as a battle position. The lit striking force, a tank-heavy battalion, waits in a wood beside the pocket behind a chalk line of departure; the manual’s control measures for a mobile defense include battle positions and, for the striking force, a line of departure or a line of contact (para. 10-11), and it says units “may take advantage of terrain or obscurants to hide a striking force until the enemy force's forward elements pass the striking force” (para. 10-14). When the blocking position holds the column and the striking force is the stronger, it swings out through a gap in the wire and in astride the road behind the column, and fires into its rear; as on the bench, the rear is this model’s choice. Too weak a striking force stays in the wood. Too thin a fixing force and the column breaks through the blocking position and drives on out of the pocket, while the blocking position’s survivors cease fire and stay where they are. Knocked-out vehicles on both sides stand greyed and smoking, and an ambulance drives up behind the blocking position once a vehicle there is hit. Soldiers and vehicles are drawn larger than scale so they read; unit sizes, distances, ranges, timings and losses are notional.</p>
+
+    <h2>What doctrine says</h2>
+    <p>U.S. Army <i>FM 3-90, Tactics</i> (May 2023) defines the mobile defense as “a type of defensive operation that concentrates on the destruction or defeat of the enemy through a decisive attack by a striking force” (para. 8-9). It sets it against the area defense: the mobile defense focuses on “defeating or destroying enemy forces by allowing them to advance to a point where the striking force can conduct a decisive counterattack,” while the area defense “focuses on retaining terrain by absorbing an attacking force into an interlocked series of positions where units destroy the attacking force largely by fires” (para. 10-1).</p>
+    <p>Units organize the main body into two principal groups, the fixing force and the striking force; reconnaissance and security, reserve, and sustaining forces do the same tasks as in an area defense (para. 10-6). The fixing force is “organized with the minimum combat power needed to accomplish its mission” (para. 10-7). The striking force is “a dedicated counterattack force in a mobile defense constituted with the bulk of available combat power” (para. 10-8), and “typically” it “may consist of one-half to two-thirds of the defender’s combat power” (para. 10-2).</p>
+    <p>The sequence: the enemy is generally allowed to penetrate in at least one place, “the fixing force isolates and fixes the enemy penetration,” and once it is fixed the striking force counterattacks (para. 10-15). The commander launches it “when its offensive power is greater than the targeted attacking enemy force” (para. 10-34); if the opportunity does not come, the unit repositions instead (para. 10-9).</p>
+
+    <h2>What is notional</h2>
+    <p>Every number on the bench is a teaching choice, not doctrine or data. The defender has 100 units of combat power, split between the two forces by the slider. The enemy enters the pocket with 70, and fires strip 30% of that by the time it reaches the stop, leaving 49. In this model the stop holds if the fixing force has at least 0.7 units per unit of enemy power there (34.3), and the arm is released only if the striking force is greater than 49, following para. 10-34. In this model the trap closes for striking shares of 50% to 65%.</p>
+    <p>The numbers were chosen so that band lands near the manual’s typical one-half to two-thirds; the bench does not derive that figure. The reserve, the security force and the sustaining forces are left off the bench. The run always goes in the same order, while the manual says the striking force “may be committed at a different time and area than anticipated.”</p>
+    <p>The losses in the readout (“N vs M down”, friendly against enemy, counted in vehicles knocked out) are notional too. Fires knock out 4 of the enemy’s 14 vehicles on the way in, and its lead is lost at the stop. The fixing force loses 2 vehicles times the fix needed over the fix it has, rounded, and 1 more if it is overrun. A strike that goes in knocks out 6 enemy vehicles times the striking force over the enemy at the stop, and loses 3 times the enemy over the striking force. With those values, in this model, the tour’s splits end at 5 vs 12 down (58%, trapped), 1 vs 5 (40%, held) and 4 vs 5 (74%, overrun). The trap costs the defender more vehicles than holding without striking, but destroys most of the column; the overrun costs the fixing force most of its vehicles and leaves the column free. Real losses depend on far more than this split.</p>
+    <p class="fine">Source: Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">FM 3-90, Tactics</a>, 1 May 2023 (<a href="https://web.archive.org/web/2024id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">archived copy</a>), paras. 8-9, 10-1, 10-2, 10-6 to 10-9, 10-15 and 10-34. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

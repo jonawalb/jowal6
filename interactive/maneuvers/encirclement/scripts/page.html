@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Encirclement and Pocket | Jonathan Walberg</title>
+<meta name="description" content="How an encirclement works, as a working bench model: two arms close a ring round an enemy force, the enemy tries to break out through the gaps, and the pocket is squeezed. Built from U.S. Army doctrine (FM 3-90, 2023).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Encirclement and Pocket | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/encirclement/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/encirclement/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.ec-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.ec-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.ec-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.ec-text h2{font-family:var(--font-serif);color:var(--green-900);margin-top:28px}
+.ec-text p,.ec-text li{line-height:1.65}
+.ec-text .fine{font-size:.88rem;color:var(--text-muted)}
+.ec-text ol{padding-left:1.2em}
+.ec-text li{margin:6px 0}
+.ec-text blockquote{margin:12px 0;padding:2px 0 2px 16px;border-left:3px solid var(--green-700);color:var(--text-muted)}
+.ec-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.ec-figure{background:transparent}
+.ec-figure .iso-figure{margin:0}
+.ec-figure .iso-plate{background:var(--anatomy-card)}
+.ec-stage{outline:none;cursor:pointer;touch-action:manipulation}
+.ec-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.ec-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.ec-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.ec-figure .iso-plate-corners{z-index:2}
+.ec-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.ec-figure[data-view="field"] .ec-svg{visibility:hidden}
+.ec-figure[data-view="field"] .ec-legend-machine{display:none}
+.ec-figure:not([data-view="field"]) .ec-field,.ec-figure:not([data-view="field"]) .ec-legend-field{display:none}
+.ec-legend{display:grid;gap:8px}
+.ec-figure .ec-flag{fill:#fbfaf6;stroke:#8d8c86;stroke-width:.4;stroke-linejoin:round}
+/* casualties: greyed and still (side fc = friendly, hc = enemy), no colour beyond a faint tint */
+.ec-figure .tr-s[data-side="fc"] path,.ec-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.ec-figure .tr-s[data-side="fc"] .tr-t,.ec-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.ec-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.ec-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.ec-figure .tr-s[data-side="fc"] .tr-d,.ec-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.ec-figure .tr-s[data-side="fc"] .tr-g,.ec-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.ec-figure .tr-s[data-side="fc"] .tr-veh{--anatomy-top:#e4e3dd;--anatomy-paper:#d3d6dc}.ec-figure .tr-s[data-side="hc"] .tr-veh{--anatomy-top:#e4e3dd;--anatomy-paper:#dcd3d2}
+.iso .ec-figure .tr-s[data-side="fc"] .tr-veh>.iso-shade,.iso.ec-figure .tr-s[data-side="fc"] .tr-veh>.iso-shade,.iso.ec-figure .tr-s[data-side="hc"] .tr-veh>.iso-shade{fill:#c9c8c1}
+.ec-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.ec-controls .btn{cursor:pointer}
+.ec-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.ec-controls input[type=range]{flex:1;min-width:120px}
+.ec-controls output{font-variant-numeric:tabular-nums;min-width:4.2em;text-align:right}
+@media (max-width:520px){.ec-figure .iso-plate-corner[data-corner="hint"]{display:none}.ec-stage{overflow:hidden}.ec-figure .ec-svg{width:124%;margin:0 -12%}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="ec-main">
+  <a class="ec-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Encirclement and Pocket</h1>
+  <p class="lede">An encirclement cuts an enemy force off from every ground route in or out. Usually two arms close round it and link up behind it; then the pocket has to be reduced. This bench model shows both phases, and what happens in this model when the ring has too few companies for the ground it has to hold: the enemy finds a gap and part of it gets out.</p>
+
+  <div class="iso ec-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="ec-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="ec-run">Close the ring</button>
+      <label for="ec-n"><span>Companies in the ring</span> <input type="range" id="ec-n" min="4" max="10" step="1" value="8"> <output id="ec-n-out" for="ec-n">8</output></label>
+    </div>
+  </div>
+
+  <section class="ec-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>The block</b> on the round hub in the middle is the enemy force. Behind it, a breakout block sits on a slide that runs out over the housing to a tray: the enemy’s way out.</li>
+      <li><b>The leaves</b> round it, on radial slides like the leaves of an iris diaphragm, are the companies of the ring. A leaf’s length stands for the stretch of perimeter one company can cover. The one or two leaves in front start in contact: in doctrine’s terms the direct pressure force. The rest are the two encircling arms. They slide in from the rim in order, from the front round both sides, until the two lit lead leaves close behind the block: the linkup.</li>
+      <li><b>The breakout.</b> Soon after the linkup the breakout block runs out through the seam between the two lit leaves. The dial reads the widest gap between leaves; the mark on it is the gap a breakout needs. With few leaves the gaps are wide and the block gets through onto the tray; with enough leaves it stops against them and falls back.</li>
+      <li><b>The squeeze.</b> The crank turns the lead screw at the front, which turns the scroll ring under the leaves and pulls every leaf in toward the hub together. As the ring gets smaller the gaps close and the leaves start to overlap, stacked like iris leaves.</li>
+      <li><b>The control.</b> The slider (or the arrow keys) sets how many companies are in the ring, from 4 to 10. Then click the bench, press Enter or use the button.</li>
+    </ol>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model, slider and readout drive both. Here the scale is a brigade’s companies round an enemy battalion; blue is friendly and red is the enemy. The enemy, three companies of armored vehicles and a headquarters, holds a village on a low rise where two roads cross. Each blue company is drawn as three vehicles, one per platoon. One or two companies in front are in contact from the start; the rest come round both sides in two columns, each company stepping in to its place on the ring, until the two lit lead companies meet behind the village at a chalk-marked contact point. The thin wedges on the ground are each company’s sector of fire, about as wide as the frontage the model gives it, so the gaps between them are the ring’s thin places. The enemy’s lead company then drives out along the road behind the village, through the seam: with too few companies it gets away, losing a vehicle at the gap; otherwise it is stopped at the ring and the survivor falls back. Then the ring closes in on the village, firing as it goes, until the enemy that is left stops firing and surrenders under a white flag. Success is not free: greyed vehicles, some of them smoking, with greyed crewmen lying beside them, are losses on both sides, and a casualty evacuation vehicle drives back to the rear. The readout ends with the count, blue against red. Vehicles and soldiers are drawn far larger than scale so they read, and distances are compressed; unit sizes, distances, timings and casualty counts are notional.</p>
+
+    <h2>What doctrine says</h2>
+    <p>U.S. Army <i>FM 3-90, Tactics</i> (May 2023) treats encirclements in its Appendix C. The unit organizes its encircling forces into “a direct pressure force and one or more encircling arms” (para. C-3), and encirclements “usually result from the linkup of two encircling arms conducting a double envelopment” (para. C-2). On closing the ring:</p>
+    <blockquote>“The encircling force completes the encirclement when it cuts all enemy ground LOCs. This generally occurs when the two arms of a double envelopment complete their linkup.” (para. C-14)</blockquote>
+    <p>A ring can have holes. “An encircled enemy force attempts to discover intervals and take advantage of them as it tries to escape or breakout of the encirclement,” so once the linkup is made the force “must close these intervals as quickly as possible” (para. C-15). The bench’s thin ring is that case.</p>
+    <p>For destroying the pocket by maneuver, FM 3-90 lists “four techniques for reducing an encircled enemy”: squeeze, hammer and anvil, wedge and escape route (para. C-21). The screw shows the squeeze, in which “[u]nits use fire and movement together in a controlled contraction of the encirclement”; it “is effective against battalion-size or smaller groups of encircled enemy forces,” and as the perimeter contracts, commanders take units out of the inner perimeter and add them to the reserve, depending on the terrain and other mission variables (para. C-22). The bench leaves every company on the ring instead. Hammer and anvil has its own figure (<a href="/interactive/maneuvers/hammer-and-anvil/">Fig 30</a>); the wedge splits the pocket (para. C-25); and the escape route technique does on purpose what the thin ring does by accident, “leaving one or more gaps in the inner encircling arm to entice enemy forces to attempt a breakout,” because an enemy that is moving and no longer sheltered in its positions is more vulnerable (para. C-26).</p>
+    <p>Reducing the pocket is one choice among several: FM 3-90 also has units fix or contain an encircled force instead of destroying it (para. C-6). And the end the bench shows is the one doctrine hopes for: “Ideally, an encirclement results in the surrender of the encircled force. This minimizes friendly force losses and resource expenditures” (para. C-2).</p>
+
+    <h2>What is notional</h2>
+    <p>Every distance and time here is a teaching value, not data. The pocket’s radius is 1.8 km at the linkup (11.3 km of perimeter) and 0.85 km after the squeeze. One company covers 0.75 km of perimeter, and a breakout needs a gap of 0.7 km, so in this model a ring of 7 companies or fewer is thin (gaps of 0.87 km or more at the linkup) and a ring of 8 or more holds (0.66 km with 8). The arms take 3.2 s to link up, the breakout comes 0.4 s later, and the squeeze starts 2.4 s after the linkup and takes 3.6 s. The fixed order of events is the model’s, not doctrine’s.</p>
+    <p>The casualty counts in the readout and the Battlefield view are notional too, counted in vehicles knocked out, and set so that success is never free. The enemy battalion has 10 vehicles. Contact while the ring closes costs each side 1. A breakout through a gap costs the two blue companies at the seam 1 each and the breakout 1, and 2 enemy vehicles get away; a breakout against a closed seam loses 2 and costs blue 1. The squeeze costs blue 1 and the enemy 1 for each of its companies still in the pocket; the rest surrender. So a thin ring of 5 companies ends 4 against 4, with 2 enemy vehicles away and 4 surrendering; a ring of 8 ends 3 against 6, with 4 surrendering. These are teaching values, not loss rates from data or doctrine.</p>
+    <p class="fine">Sources: Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">FM 3-90, Tactics</a>, 1 May 2023, Appendix C, paras. C-2, C-3 and C-6 (pp. C-1 to C-2), C-14 and C-15 (p. C-4), C-21 and C-22 (p. C-5), C-25 and C-26 (pp. C-6 to C-7) (<a href="https://web.archive.org/web/2024id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">archived copy</a>). Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

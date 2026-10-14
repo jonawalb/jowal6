@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Crossing the T | Jonathan Walberg</title>
+<meta name="description" content="Why a line of warships across the head of an enemy column out-guns it, as a working bench model that counts the guns that can bear. Tsushima, 1905, as the example.">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Crossing the T | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/crossing-the-t/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/crossing-the-t/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.ct-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.ct-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.ct-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.ct-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.ct-text p,.ct-text li{line-height:1.65}
+.ct-text .fine{font-size:.88rem;color:var(--text-muted)}
+.ct-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.ct-figure{background:transparent}
+.ct-figure .iso-figure{margin:0}
+.ct-figure .iso-plate{background:var(--anatomy-card)}
+.ct-stage{outline:none;cursor:crosshair;touch-action:manipulation}
+.ct-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.ct-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed sea over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.ct-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.ct-figure .iso-plate-corners{z-index:2}
+.ct-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.ct-figure[data-view="field"] .ct-svg{visibility:hidden}
+.ct-figure[data-view="field"] .ct-legend-machine{display:none}
+.ct-figure:not([data-view="field"]) .ct-field,.ct-figure:not([data-view="field"]) .ct-legend-field{display:none}
+.ct-legend{display:grid;gap:8px}
+.ct-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.ct-controls .btn{cursor:pointer}
+.ct-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.ct-controls input[type=range]{flex:1;min-width:120px}
+.ct-text h2{margin-top:28px}
+.ct-text ol{padding-left:1.2em}
+.ct-text li{margin:6px 0}
+@media (max-width:520px){.ct-figure .iso-plate-corner[data-corner="hint"]{display:none}.ct-stage{overflow:hidden}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="ct-main">
+  <a class="ct-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Crossing the T</h1>
+  <p class="lede">A warship’s guns can fire only where its arcs reach and where no friendly ship stands in the way. Swing a line of ships square across the head of an enemy column and every turret in the line can bear on the column’s leader, while the ships behind that leader have it in their way. This bench counts the guns on each side.</p>
+
+  <div class="iso ct-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="ct-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="ct-jump">End-on / across</button>
+      <label><span>Crossing line heading</span> <input type="range" id="ct-angle" min="0" max="90" step="1" value="90" aria-label="Crossing line heading, degrees off the column's course"></label>
+    </div>
+  </div>
+
+  <section class="ct-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>The column</b> is the four carriages on the straight beam at the left, all heading for the turntable. The lit carriage is its leader.</li>
+      <li><b>The crossing line</b> is the four carriages on the bar over the turntable. At 0° the bar lies end-on, in line ahead of the column on the same course; at 90° it lies square across the column’s head. Swing it with the pointer, the slider or the arrow keys; the button or Enter jumps between the two.</li>
+      <li><b>The turrets.</b> Each carriage carries two twin turrets. The forward one covers from dead ahead to 135° either side, the after one from 45° off the bow round to dead astern. A turret bears only when an enemy carriage lies in its arc and its line of fire passes clear of every friendly carriage. A turret that bears turns lighter and swings its barrels onto the nearest enemy carriage it can reach; one that cannot bear trains fore and aft.</li>
+      <li><b>The gauges</b> read guns bearing, out of sixteen: the front one for the column, the back one for the crossing line. End-on, each side has two. Square across, the line has all sixteen and the column still has two: only its leader’s forward turret can reply.</li>
+      <li><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model, crossing angle and readout drive both. Here the bench becomes a sea scene: the column is four red battleships steaming from the left, its lit leader at the head, and the crossing line is four blue battleships lying on the crossing angle ahead of it. The ships are generic turret-era battleships, not models of any real ship: two funnels trailing smoke, two masts and a twin-gun turret fore and aft, placed exactly where the bench puts its carriages, with the same arcs and masking. A turret that bears trains on its target and fires: a flash at the muzzles, a puff of smoke, then splashes round the target or a burst on its deck. The ships hold their places and the sea runs past them in their wakes, so the gun counts stay the bench’s. Damage is shown on both sides as fires and smoke. The readout’s last figure is notional hits taken, crossing line vs column, in an exchange in which every turret that bears lands one hit on the ship it is trained on. In this model, square across, each blue turret’s nearest reachable target is the column’s leader, so all eight hits fall on it, a concentration on the leader like the one Koda describes below as Combined Fleet doctrine, though here it falls out of the geometry, not from any rule to aim at the leader, while its one forward turret puts a single hit on a blue ship; end-on, it is one hit a side. Ships are drawn larger than scale against their spacing; ranges, timings, the rate of hits and which salvos the animation shows hitting are notional.</li>
+    </ol>
+
+    <h2>Tsushima, 1905</h2>
+    <p>Japan’s fleet under Admiral Togo Heihachiro destroyed the Russian Baltic Fleet “in the Tsushima Strait on 27-28 May 1905” (Andidora, p. 52). Combined Fleet doctrine held that the battleship force “was to concentrate its fire on the leading ship, presumably the flagship, of the enemy’s main force at the very outset of an engagement” (Koda, p. 34).</p>
+    <p>Andidora describes the risk of Togo’s opening turn, made in succession toward the Russians: “each Japanese ship would have her own guns masked by the preceding ships until she completed her turn” (p. 60), a similar masking effect to the one the bench counts. Later, he writes, the Japanese battle line was “twice able to cross the Russian ‘T,’ delivering the full weight of its broadside to enemy ships which could only respond with guns facing forward” (pp. 60–61).</p>
+    <p>The phrase “cross the Russian ‘T’” is Andidora’s. The bench shows the idealized geometry, held still; this page does not claim that the Russian column was ever caught as cleanly across its head as the bench holds it.</p>
+
+    <h2>What is notional</h2>
+    <p>Everything on the bench is a teaching model, not a reconstruction of either fleet. Each side has four ships with two twin main turrets each, so sixteen guns at most; secondary guns are left out. The arcs (135° forward, 45° to astern), the masking rule (a line of fire passing within 0.45 ship spacings of a friendly ship’s centre is blocked) and the turntable 2.7 spacings ahead of the column’s leader are chosen values. With them, in this model, the crossing line has 2 guns bearing end-on, 6 at 30°, 12 at 45° and all 16 from 60° on, while the column has 2 throughout. The column is held on its course; a real column could turn.</p>
+    <p class="fine">Sources: Ronald Andidora, “<a href="https://digital-commons.usnwc.edu/nwc-review/vol44/iss2/5">Admiral Togo: An Adaptable Strategist</a>,” <i>Naval War College Review</i> 44, no. 2 (Spring 1991), pp. 52–61 (<a href="https://web.archive.org/web/2024id_/https://digital-commons.usnwc.edu/cgi/viewcontent.cgi?article=3663&amp;context=nwc-review">archived copy</a>). Yoji Koda, “<a href="https://digital-commons.usnwc.edu/nwc-review/vol58/iss2/3">The Russo-Japanese War: Primary Causes of Japanese Success</a>,” <i>Naval War College Review</i> 58, no. 2 (Spring 2005), p. 34 (<a href="https://web.archive.org/web/2024id_/https://digital-commons.usnwc.edu/cgi/viewcontent.cgi?article=2201&amp;context=nwc-review">archived copy of the issue</a>). Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

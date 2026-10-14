@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Frontal Attack | Jonathan Walberg</title>
+<meta name="description" content="How a frontal attack works, as a working bench model: a press drives one broad platen into a spring-backed wall. Definitions from U.S. Army doctrine (FM 3-90, 2023); the ratio thresholds are notional.">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Frontal Attack | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/frontal-attack/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/frontal-attack/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.fa-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.fa-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.fa-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.fa-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.fa-text p,.fa-text li{line-height:1.65}
+.fa-text .fine{font-size:.88rem;color:var(--text-muted)}
+.fa-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.fa-figure{background:transparent}
+.fa-figure .iso-figure{margin:0}
+.fa-figure .iso-plate{background:var(--anatomy-card)}
+.fa-stage{outline:none;cursor:ew-resize;touch-action:manipulation}
+.fa-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.fa-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.fa-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.fa-figure .iso-plate-corners{z-index:2}
+.fa-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.fa-figure[data-view="field"] .fa-svg{visibility:hidden}
+.fa-figure[data-view="field"] .fa-legend-machine{display:none}
+.fa-figure:not([data-view="field"]) .fa-field,.fa-figure:not([data-view="field"]) .fa-legend-field{display:none}
+.fa-legend{display:grid;gap:8px}
+/* casualties: greyed and still (side fc = friendly, hc = enemy), no colour beyond a faint tint */
+.fa-figure .tr-s[data-side="fc"] path,.fa-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.fa-figure .tr-s[data-side="fc"] .tr-t,.fa-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.fa-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.fa-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.fa-figure .tr-s[data-side="fc"] .tr-d,.fa-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.fa-figure .tr-s[data-side="fc"] .tr-g,.fa-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.fa-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.fa-controls .btn{cursor:pointer}
+.fa-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.fa-controls input[type=range]{flex:1;min-width:120px}
+.fa-text h2{margin-top:28px}
+.fa-text ol{padding-left:1.2em}
+.fa-text li{margin:6px 0}
+@media (max-width:520px){.fa-figure .iso-plate-corner[data-corner="hint"]{display:none}.fa-stage{overflow:hidden}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="fa-main">
+  <a class="fa-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Frontal Attack</h1>
+  <p class="lede">A frontal attack hits the enemy across its whole front at once. U.S. Army doctrine says units rarely choose it without overwhelming combat power, unless fixing the enemy in place is vital to a larger operation. This bench model shows how a broad push spreads its force, and what the ratio of strength changes.</p>
+
+  <div class="iso fa-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="fa-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <label>Attacker : defender ratio <input type="range" id="fa-ratio" min="0.5" max="6" step="0.1" value="0.8" aria-label="Attacker to defender ratio"></label>
+      <button type="button" class="btn btn-outline" id="fa-tour" aria-pressed="true">Play tour</button>
+    </div>
+  </div>
+
+  <section class="fa-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>The press</b> on the left is the attacker. The knob on its head sets its force as a ratio of the defender’s strength. Set it with the pointer (move across the figure), the slider or the arrow keys.</li>
+      <li><b>The platen</b>, lit, is one broad plate. It meets all six blocks at once, so the press force is shared across the whole front: each block takes a sixth of it.</li>
+      <li><b>The wall</b> is six blocks, each held by a preloaded spring against the backstop. The preload is the defender’s holding strength.</li>
+      <li><b>Below 1:1</b> the springs do not give. The wall does not move, but it is held under load. <b>Above 1:1</b> the whole wall is pushed back along the ruler. <b>At 4.5:1</b> one block gives way and a gap opens in the line.</li>
+      <li><b>The gauge</b> reads the pressure the press is spending, with engraved marks at 1:1 and at the breach.</li>
+    </ol>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model and readout drive both. Here the scale is a platoon attack, blue is friendly and red is the enemy. Across the top, an enemy rifle squad and machine-gun team hold a line of two-man fighting positions with sandbagged rims behind a belt of wire, with a hedgerow and a second line of positions behind them; a stream covers one flank and a wood the other, so there is no open flank to go round. The red fan on the ground is the enemy machine gun’s sector. The lit assault line attacks the whole front at once across open, ploughed ground: rifle squads, each “two fire teams and a squad leader” (ATP 3-21.8, para. 1-9), each team built around a team leader, an automatic rifleman, a grenadier and a rifleman (para. 1-11), in squad line, a formation “used to assault or as a pre-assault formation” (para. 3-54), with the platoon leader and his radio operator behind. Machine-gun teams, each “a gunner and an assistant gunner” (para. 1-13), fire from behind stone walls on the line of departure, the chalk line on pegs; the flag marks the objective. The ratio sets how many blue elements are in the attack: one rifle squad at the low end, then a machine-gun team at 1:1, a second squad at 1.5:1, a second machine-gun team at 2.5:1 and a third squad at 3:1; above that, the higher ratio shows only as weaker enemy fire. At or below 1:1 the assault goes to ground short of the wire and trades fire, pinned. Above it the enemy falls back toward its second line and the assault follows, firing while it is down and moving while it advances. At 4.5:1 the enemy pair in one position runs and the centre squad goes through the gap in squad column. Success is not free: greyed figures lying still are men down on both sides, the blue ones where the line was hit and the first at a collection point behind the line of departure with a medic kneeling beside him; the red ones by their positions. The readout ends with the count, blue against red. The platoon manual calls the frontal attack “usually the least desirable form of maneuver because it exposes the majority of the offensive force to the concentrated fires of the defender” (para. 4-14). Soldiers are drawn larger than scale (about one and a half times) so they read; sizes, ranges, timings, the enemy’s strength, the ratios at which each element joins and the casualty counts are notional.</p>
+
+    <h2>What doctrine says</h2>
+    <p>U.S. Army <i>FM 3-90, Tactics</i> (May 2023) names the frontal attack first of its five forms of maneuver (para. 2-24). It defines it as “a form of maneuver in which an attacking force seeks to destroy a weaker enemy force or fix a larger enemy force in place over a broad front” (para. 2-27).</p>
+    <p>“A frontal attack is necessary when assailable flanks do not exist.” It keeps “continuous pressure along the entire front until a breach occurs or the attacking forces succeed in pushing the enemy forces back,” and so units “rarely conduct frontal attack when they lack overwhelming combat power unless fixing the enemy is vital to a larger operation’s success” (para. 2-28). The manual adds that it “is seldom possible for a unit to exert sufficient pressure to overwhelm an enemy force using a frontal attack, since it strikes the enemy force along a significant portion of the enemy’s front” (para. 2-31).</p>
+
+    <h2>What is notional</h2>
+    <p>Every number in the figure is a teaching value, not data or doctrine. The ratio runs from 0.5:1 to 6:1. The wall holds up to 1:1; between 1:1 and 4.5:1 it is pushed back in a straight line, as a spring obeys Hooke’s law (29% of its travel at 2:1, 57% at 3:1); at 4.5:1 one block, always the same one, gives way. FM 3-90 gives no numeric ratio thresholds, for a frontal attack or anywhere else. Real defenders are not springs, and the model leaves out reserves and counterattacks.</p>
+    <p>The casualty counts in the readout and the Battlefield view are notional too, set so that success is never free. The attacker loses 30% of the men it has committed at 1:1 or below, falling by 4 points per unit of ratio to 10% at 6:1, so a weak attack costs a larger share and a strong one more men in all at middling ratios (6 of 24 at 2.6:1). The defender loses 5% of its 11 men plus 25% times the share its line has been pushed back, plus 10% at the breach (1 at 0.8:1, 4 at 6:1). These are teaching values, not loss rates from data or doctrine.</p>
+    <p class="fine">Source: Headquarters, Department of the Army, <a href="https://web.archive.org/web/20250224155209/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">FM 3-90, Tactics</a> (archived copy of the official PDF), 1 May 2023, paras. 2-24, 2-27, 2-28 and 2-31; Headquarters, Department of the Army, <a href="https://web.archive.org/web/20250807233618id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a> (archived copy of the official PDF), 11 January 2024, incorporating Change 1 (June 2025), paras. 1-9, 1-11, 1-13, 3-54 and 4-14. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

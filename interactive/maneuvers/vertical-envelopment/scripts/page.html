@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vertical Envelopment | Jonathan Walberg</title>
+<meta name="description" content="How a vertical envelopment works, as a working bench model: a force is lifted over the enemy's defense line, set down behind it to cut its supply line, and must be linked up with in time. Built from U.S. Army doctrine (FM 3-90, 2023; FM 3-99, 2015).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Vertical Envelopment | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/vertical-envelopment/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/vertical-envelopment/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.ve-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.ve-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.ve-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.ve-text h2{font-family:var(--font-serif);color:var(--green-900);margin-top:28px}
+.ve-text p,.ve-text li{line-height:1.65}
+.ve-text .fine{font-size:.88rem;color:var(--text-muted)}
+.ve-text ol{padding-left:1.2em}
+.ve-text li{margin:6px 0}
+.ve-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.ve-figure{background:transparent}
+.ve-figure .iso-figure{margin:0}
+.ve-figure .iso-plate{background:var(--anatomy-card)}
+.ve-stage{outline:none;cursor:ew-resize;touch-action:manipulation}
+.ve-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.ve-svg{display:block;width:100%;height:auto}
+.ve-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.ve-controls .btn{cursor:pointer}
+.ve-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 240px;font-size:14px}
+.ve-controls input[type=range]{flex:1;min-width:110px}
+.ve-controls output{min-width:5.5em;font-variant-numeric:tabular-nums;color:var(--anatomy-text);font-size:14px}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.ve-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.ve-figure .iso-plate-corners{z-index:2}
+.ve-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.ve-figure[data-view="field"] .ve-svg{visibility:hidden}
+.ve-figure[data-view="field"] .ve-legend-machine{display:none}
+.ve-figure:not([data-view="field"]) .ve-field,.ve-figure:not([data-view="field"]) .ve-legend-field{display:none}
+.ve-legend{display:grid;gap:8px}
+/* casualties: greyed and still (side fc = friendly, hc = enemy); the ambulance: white; helicopter rotors; supply crates */
+.ve-figure .tr-s[data-side="fc"] path,.ve-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}.ve-figure .tr-s[data-side="m"] path{stroke:#55524c}
+.ve-figure .tr-s[data-side="fc"] .tr-t,.ve-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.ve-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.ve-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.ve-figure .tr-s[data-side="fc"] .tr-d,.ve-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.ve-figure .tr-s[data-side="fc"] .tr-g,.ve-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.ve-figure .tr-s[data-side="fc"] .tr-veh{--anatomy-top:#e4e3dd;--anatomy-paper:#d3d6dc}
+.iso.ve-figure .tr-s[data-side="fc"] .tr-veh>.iso-shade{fill:#c9c8c1}
+.ve-figure .tr-s[data-side="m"] .tr-t{fill:#fbfaf7}.ve-figure .tr-s[data-side="m"] .tr-l{fill:#ecebe6}.ve-figure .tr-s[data-side="m"] .tr-d{fill:#d9d7d0}.ve-figure .tr-s[data-side="m"] .tr-g{fill:#9a978f}
+.ve-figure .tr-s .ve-rotor{fill:var(--tr-f-t);fill-opacity:.22;stroke:var(--tr-f-ink);stroke-opacity:.35;stroke-width:.35}
+.ve-figure .tr-s .ve-blade{fill:var(--tr-f-ink);stroke:none;opacity:.8}
+.ve-figure .tr-s .ve-disc-shadow{opacity:.06}
+.ve-figure .ve-crate .tr-t,.ve-figure .ve-crate .tr-l{fill:var(--tr-bag)}.ve-figure .ve-crate .tr-d{fill:var(--tr-bag-dk)}.ve-figure .ve-crate path{stroke:var(--tr-bag-ink)}
+@media (max-width:520px){.ve-figure .iso-plate-corner[data-corner="hint"]{display:none}.ve-stage{overflow:hidden}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="ve-main">
+  <a class="ve-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Vertical Envelopment</h1>
+  <p class="lede">Instead of attacking a defense line from the front, where enemy fires are generally greatest, a force can be flown over it and set down behind it. This bench model shows the move and its catch: once on the ground, an airborne force has limited tactical mobility and depends on resupply by air, and doctrine plans for linkup or withdrawal in time.</p>
+
+  <div class="iso ve-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="ve-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="ve-play" aria-pressed="true">Pause tour</button>
+      <label>Hours since H-hour <input type="range" id="ve-time" min="0" max="1000" step="1" value="0" aria-label="Time since H-hour (the first part of the slider is the two-hour air move)"></label>
+      <label>Linkup speed <input type="range" id="ve-speed" min="0.5" max="1.5" step="0.05" value="1.2" aria-label="Linkup force speed, km per hour (notional)"><output id="ve-speed-val" for="ve-speed">1.20 km/h</output></label>
+    </div>
+  </div>
+
+  <section class="ve-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>The wall</b> across the middle of the plate is the enemy’s defense line. A gate in it lets the ground rail through.</li>
+      <li><b>The gantry crane</b> is the air move. It lifts the lit block, the air-landed force, off the pad on the friendly side, carries it over the wall and sets it down behind the line on the enemy’s rail line, the objective. While the block sits on the track, the enemy’s supply cart cannot get past it. (The crane’s legs run past the ends of the wall only to hold up the beam: read the beam, not the legs.)</li>
+      <li><b>The gauge</b> reads the landed force’s supply from the moment it lands. In this model it lasts 72 hours.</li>
+      <li><b>The carriage</b> on the ground rail is the linkup force, coming from the friendly side through the gate. Set its speed with the slider or the up and down arrow keys, and move the clock with the pointer, the time slider or the left and right keys. If the carriage reaches the block before the supply runs out, the two link up and the gauge refills. If it does not, in this model the crane lifts the block back out (a withdrawal) and the enemy’s cart runs again.</li>
+    </ol>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model, clock and readout drive both. Here the move is shown as one small air assault, a vignette inside the larger operation doctrine has in mind; blue is friendly and red the enemy. On the left, in a pickup zone outlined in chalk, three utility helicopters take on a rifle platoon (lit): three squads, each “two fire teams and a squad leader” (ATP 3-21.8, para. 1-9), each team a team leader, an automatic rifleman, a grenadier and a rifleman (para. 1-11), with the platoon leader, his radio operator and a medic. The lift flies over the enemy’s defense line, a row of two-man fighting positions and a machine-gun position behind wire, which fires on it as it crosses while a door gunner fires back. It lands the platoon beside the bridge where the enemy’s supply road crosses a stream: that road is the bench’s rail line. The platoon knocks out the bridge guard and holds the bridge and the road junction, one squad facing across the bridge, one down the road south and one west toward the defense line, their sectors marked on the ground; the enemy’s supply trucks halt short of it. The pile of crates by the platoon leader is the gauge: it shrinks as the supply runs down. From the left a mechanized company column, the linkup force, drives up the road at the slider’s speed and fights through the defense line, losing one vehicle there, then links up at the junction and the crates are restocked. If it would arrive too late, the helicopters fly back in and lift the platoon out, as the crane does, and the column arrives late. Success is not free: men who go down on either side lie greyed where they fell, and the readout counts them (friendly vs enemy). In this model, a linkup at 1.2 km/h costs 5 friendly and 12 enemy casualties; at 0.7 km/h the longer hold and the extraction cost 7 friendly and 14 enemy. The casualty counts are a separate notional tally and do not change the supply or the timings. Soldiers, vehicles and helicopters are drawn larger than scale so they read; unit sizes, distances, ranges, flight times and casualty counts are notional.</p>
+
+    <h2>What doctrine says</h2>
+    <p>U.S. Army <i>FM 3-90, Tactics</i> (May 2023) names three variations of the envelopment: single, double and vertical (para. 2-58). “A vertical envelopment is a variation of envelopment where air-dropped or airlanded troops attack an enemy forces’ rear, flank, or both,” by airborne assault or air assault, and it lets the commander “overcome distances quickly, overfly barriers, and bypass enemy defenses.” Because of the forces it takes, “normally only divisions and larger organizations” can conduct double and vertical envelopments (para. 2-61).</p>
+    <p><i>FM 3-99, Airborne and Air Assault Operations</i> (March 2015) gives the joint definition, citing JP 3-18: troops that are “air-dropped, air-landed, or inserted via air assault, attack the rear and flanks of a force, in effect cutting off or encircling the force” (para. 1-114). The block on the enemy’s rail line stands for that cutting off.</p>
+    <p>The same manual lists the catch among the limitations of airborne forces: “after the initial airdrop, the sustained combat power of airborne forces depends on resupply by air,” and “once on the ground, the airborne force has limited tactical mobility” (para. 2-24). In planning, “the amount of time before linkup or withdrawal drives sustainment planning” (para. 4-18). The bench shows both branches: linkup, and withdrawal when linkup comes too late.</p>
+
+    <h2>What is notional</h2>
+    <p>Every number on the bench is a teaching assumption, not data. The air move takes two hours. From landing, the supply runs down evenly over 72 hours, so it is gone at H+74 h. The linkup force must cover 60 km at 0.5 to 1.5 km/h, so in this model it arrives in time only if it averages more than about 0.81 km/h. At 1.2 km/h it links up at H+50 h with 33% of the supply left, and the supply then refills at 10% an hour. At 0.7 km/h it would arrive at about H+86 h, 12 hours after the supply runs out, and in this model the force is lifted out at H+74 h to H+76 h. The model leaves out resupply by air, which FM 3-99 lists among airborne forces’ needs, and enemy action against the landed force; the gauge stands for however long the force can hold.</p>
+    <p class="fine">Sources: Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">FM 3-90, Tactics</a>, 1 May 2023 (<a href="https://web.archive.org/web/2024id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">archived copy</a>), paras. 2-58 and 2-61. Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/pdf/web/fm3_99.pdf">FM 3-99, Airborne and Air Assault Operations</a>, 6 March 2015 (<a href="https://web.archive.org/web/20241105000004id_/https://armypubs.army.mil./epubs/DR_pubs/DR_a/pdf/web/fm3_99.pdf">archived copy</a>), paras. 1-114, 2-24 and 4-18. Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a>, 11 January 2024, incorporating Change 1, June 2025 (<a href="https://web.archive.org/web/20250807233618id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">archived copy</a>), paras. 1-9 and 1-11. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

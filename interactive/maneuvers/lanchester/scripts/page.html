@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lanchester Square Law | Jonathan Walberg</title>
+<meta name="description" content="Lanchester's square law as a working bench model and a small battle: under aimed fire a force's strength goes with the square of its numbers, which is why concentration pays. From F. W. Lanchester, Aircraft in Warfare (1916).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Lanchester Square Law | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/lanchester/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/lanchester/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.lc-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.lc-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.lc-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.lc-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.lc-text p,.lc-text li{line-height:1.65}
+.lc-text .fine{font-size:.88rem;color:var(--text-muted)}
+.lc-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.lc-figure{background:transparent}
+.lc-figure .iso-figure{margin:0}
+.lc-figure .iso-plate{background:var(--anatomy-card)}
+.lc-stage{outline:none;cursor:ew-resize;touch-action:manipulation}
+.lc-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.lc-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.lc-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.lc-figure .iso-plate-corners{z-index:2}
+.lc-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.lc-figure[data-view="field"] .lc-svg{visibility:hidden}
+.lc-figure[data-view="field"] .lc-legend-machine{display:none}
+.lc-figure:not([data-view="field"]) .lc-field,.lc-figure:not([data-view="field"]) .lc-legend-field{display:none}
+.lc-legend{display:grid;gap:8px}
+/* casualties: greyed and still (side fc = friendly, hc = enemy), no colour beyond a faint tint */
+.lc-figure .tr-s[data-side="fc"] path,.lc-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.lc-figure .tr-s[data-side="fc"] .tr-t,.lc-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.lc-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.lc-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.lc-figure .tr-s[data-side="fc"] .tr-d,.lc-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.lc-figure .tr-s[data-side="fc"] .tr-g,.lc-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.lc-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.lc-controls .btn{cursor:pointer}
+.lc-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.lc-controls input[type=range]{flex:1;min-width:120px}
+.lc-text h2{margin-top:28px}
+.lc-text ol{padding-left:1.2em}
+.lc-text li{margin:6px 0}
+@media (max-width:520px){.lc-figure .iso-plate-corner[data-corner="hint"]{display:none}.lc-stage{overflow:hidden}}
+/* discs: blue and red stand for the two sides; men down are grey */
+.lc-figure .lc-b{--anatomy-paper:#edf1fb;--anatomy-top:#e3eafb;--anatomy-shade-0:#a9bbe6;--anatomy-shade-1:#b9c8ec;--anatomy-shade-2:#c9d5f1;--anatomy-shade-3:#d8e1f6;--anatomy-mid:#3f5fae;--anatomy-faint:#93a8dc}
+.lc-figure .lc-r{--anatomy-paper:#fbefee;--anatomy-top:#fbe5e3;--anatomy-shade-0:#e3aaa5;--anatomy-shade-1:#eabbb7;--anatomy-shade-2:#f0cbc8;--anatomy-shade-3:#f5dad8;--anatomy-mid:#a8443e;--anatomy-faint:#dba19c}
+.lc-figure .lc-d{--anatomy-paper:#f1f1ee;--anatomy-top:#f4f4f1;--anatomy-shade-0:#d4d4cf;--anatomy-shade-1:#dbdbd6;--anatomy-shade-2:#e2e2dd;--anatomy-shade-3:#e9e9e4;--anatomy-mid:#9a9a92;--anatomy-faint:#c6c6c0}
+.lc-text .eq{font-family:var(--font-serif);font-style:italic;text-align:center;margin:10px 0}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="lc-main">
+  <a class="lc-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Lanchester Square Law</h1>
+  <p class="lede">In 1914 the engineer F. W. Lanchester argued that under modern, aimed fire each side’s losses depend on how many enemy weapons are firing at it, so a force’s fighting strength grows with the square of its numbers. This bench model and a small battle show what that implies: a force that meets the enemy one part at a time can beat a larger force that it could not beat all at once.</p>
+
+  <div class="iso lc-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="lc-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="lc-plan" aria-pressed="true">Concentrating on one group</button>
+      <button type="button" class="btn btn-outline" id="lc-law" aria-pressed="true">Square law (aimed fire)</button>
+      <button type="button" class="btn btn-outline" id="lc-play" aria-pressed="false">Play</button>
+      <label><span>Step</span> <input type="range" id="lc-step" min="0" max="46" step="1" value="0" aria-label="Step of the battle"></label>
+    </div>
+  </div>
+
+  <section class="lc-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>One disc is one man.</b> Blue’s 16 discs hang on the left of the beam. Red’s 20 are in two groups of 10: group A on the right-hand pan, and group B either on the pan too or waiting on the shelf behind the beam, out of the fight.</li>
+      <li><b>The riders are the square law.</b> Under the square law each rider slides out along the beam one scale mark per man on its pan, so a side with twice the men hangs twice the weight twice as far out: four times the turning force. The lit beam tips toward the stronger side by that measure, not by the plain count.</li>
+      <li><b>Step through the battle</b> with the slider, the arrow keys, Play, or the pointer across the card. Each step removes discs from both pans: under the square law each side loses men in proportion to the number of enemy men firing at it. Men down drop into the trays at the front, and the dial counts the steps.</li>
+      <li><b>Watch the beam while discs come off.</b> Under the square law it hardly moves during a fight, because Lanchester’s result is that the difference of the squares stays the same as both sides lose men. The side the beam leans to at the start is the side left standing at the end.</li>
+      <li><b>Concentrating on one group</b> (the default) puts only red’s group A on the pan. Blue, with 16 against 10, wins that fight; group B then joins, against a smaller blue force. <b>Fighting both at once</b> puts all 20 red discs on the pan from the start, and the beam tips the other way.</li>
+      <li><b>The law knob</b> switches to the linear law. The riders lock at one mark, so turning force goes with the plain count. In this model the linear law is unaimed area fire: each side’s losses grow with the numbers on both sides. Under it, concentrating no longer changes who wins.</li>
+    </ol>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model and readout drive both. Here the idea becomes a small fight in open pasture, blue friendly and red the enemy, both sides on equal terms as to cover, as Lanchester assumes, here lying prone in the open. Sixteen blue riflemen (lit) face twenty red riflemen in two groups of ten, with a wood between the red groups so that neither can fire across to help the other. Concentrating, blue takes up a firing line where the wood screens group B and fights group A alone; when group A is down, blue gets up, moves round behind the wood’s tail and fights group B. Fighting both at once, blue lies in the open in front of the wood and takes fire from both groups. Tracers run from muzzle to impact; the faint fans on the ground show who is engaging whom. Under the linear law the fire is unaimed: rounds go into the smoke over the enemy’s ground rather than at men. Success is not free: greyed figures lying still are men down on both sides, counted by the model, the blue ones where they were hit and the first at a collection point behind the start line with a medic kneeling beside him (the medic is not one of the sixteen). Soldiers are drawn larger than scale (about one and a half times) so they read; the force sizes, distances, rates of fire and the pace of the fight are notional.</p>
+
+    <h2>What Lanchester wrote</h2>
+    <p>Lanchester published the argument as articles in 1914 and collected them in <i>Aircraft in Warfare: The Dawn of the Fourth Arm</i> (1916). Under modern conditions, he wrote, “each man will in a given time score, on an average, a certain number of hits that are effective; consequently, the number of men knocked out per unit time will be directly proportional to the numerical strength of the opposing force.” With <i>b</i> the strength of the Blue force and <i>r</i> that of the Red:</p>
+    <p class="eq">db/dt = − r × c &nbsp;&nbsp;(1) &nbsp;&nbsp;&nbsp;&nbsp; dr/dt = − b × k &nbsp;&nbsp;(2)</p>
+    <p>“in which <i>t</i> is time and <i>c</i> and <i>k</i> are constants (<i>c</i> = <i>k</i> if the fighting values of the individual units of the force are equal)” (ch. V, sec. 21, p. 42). From these he drew what he called the n-square law: “the fighting strength of a force may be broadly defined as proportional to the square of its numerical strength multiplied by the fighting value of its individual units” (sec. 27, p. 48). His own example is a Blue force of 1,000 meeting half of a Red force of 1,000: Red’s 500 are wiped out “with a loss of only about 134 men” of the Blue force, and Blue then beats the other 500, “having annihilated the whole ‘Red’ force of equal total strength with a loss of only 293 men” (sec. 21, pp. 42–43). He contrasted this with fighting “when weapon directly answered weapon,” where “one man would ordinarily find himself opposed to one man” and concentration gains little (sec. 20, pp. 40–42).</p>
+    <p>He also used a balance himself. To accept the counting of forces but refuse the fuller mathematics, he wrote, “is as illogical and unintelligent as to accept broadly and indiscriminately the balance and the weighing-machine as instruments of precision, but to decline to permit in the latter case any allowance for the known inequality of leverage” (sec. 24, pp. 46–47). He did not claim the law decides battles alone: “Superior morale or better tactics or a hundred and one other extraneous causes may intervene in practice to modify the issue” (sec. 28, p. 50).</p>
+    <p><b>Contested in practice.</b> How well the law fits real battles is disputed. Fitting Lanchester models to detailed daily data on the battles of Kursk and the Ardennes, Thomas Lucas and Turker Turkes found that “none of the basic Lanchester laws (i.e., square, linear, and logarithmic) fit the data particularly well or consistently perform better than the others” (<i>Naval Research Logistics</i>, 2004). The equations here are Lanchester’s; the battles on this page are not historical.</p>
+
+    <h2>What is notional</h2>
+    <p>The forces (16 blue against 20 red in two groups of 10), the rates and the step are teaching values. Under the square law each man scores 0.06 effective hits per step on the enemy; under the linear law each side loses 0.02 × <i>b</i> × <i>r</i> men per step. Blue needs 4 steps, without firing, to shift from group A to group B. A group with less than half a man left is out of the fight. The battles are fought to the end, as in Lanchester’s examples; real units usually break or withdraw long before.</p>
+    <p>With those values: concentrating under the square law, blue beats group A by step 12 with 3 men down, then beats group B, and ends with 8 of its 16 standing (8 vs 20 down). Fighting both groups at once, blue is wiped out and 12 red men are left (16 vs 8 down), as the squares predict: 20² − 16² = 12². Under the linear law blue loses either way and 4 red men are left (16 vs 16 down), because there the plain counts decide: 20 − 16 = 4. The casualty counts in the readout and on the battlefield are these model numbers, not loss rates from data.</p>
+    <p>On the balance the riders stop short of the pivot when a pan holds fewer than six discs (the drawing only), and the tilt is the model’s turning-force difference squeezed into a few degrees.</p>
+    <p class="fine">Sources: F. W. Lanchester, <a href="https://archive.org/details/aircraftinwarfar00lancrich"><i>Aircraft in Warfare: The Dawn of the Fourth Arm</i></a> (London: Constable and Company, 1916), ch. V, secs. 20, 21, 24, 27 and 28, pp. 40–50 (public domain; scan at the Internet Archive). Thomas W. Lucas and Turker Turkes, “Fitting Lanchester Equations to the Battles of Kursk and Ardennes,” <i>Naval Research Logistics</i> 51, no. 1 (2004): 95–116, <a href="https://doi.org/10.1002/nav.10101">doi:10.1002/nav.10101</a> (abstract). Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Infiltration | Jonathan Walberg</title>
+<meta name="description" content="Infiltration as a working bench model: how the size of infiltrating elements trades stealth and small gaps against time and control. Illustrates one point from U.S. Army doctrine (FM 3-90, 2023).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Infiltration | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/infiltration/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/infiltration/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.inf-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.inf-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.inf-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.inf-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.inf-text p,.inf-text li{line-height:1.65}
+.inf-text .fine{font-size:.88rem;color:var(--text-muted)}
+.inf-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.inf-figure{background:transparent}
+.inf-figure .iso-figure{margin:0}
+.inf-figure .iso-plate{background:var(--anatomy-card)}
+.inf-stage{outline:none;cursor:crosshair;touch-action:manipulation}
+.inf-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.inf-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed night ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.inf-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect;
+  --tr-ground:#a2a9a8;--tr-meadow:#9ba49f;--tr-field-a:#a6a69e;--tr-field-b:#a0a39e;--tr-road:#acaca5;--tr-wood:#98a29b;--tr-canopy:#92a093;--tr-canopy-dk:#7f8e80;--tr-canopy-ink:#55625a;
+  --tr-water:#8ea2ad;--tr-high:#a9a99c;--tr-slope-0:#878b83;--tr-slope-1:#92968d;--tr-slope-2:#9a9e96;--tr-slope-3:#9fa39b;--tr-stone:#a8a8a1;--tr-stone-dk:#8e8f88;--tr-roof:#9b9893;
+  --tr-bag:#b2ab99;--tr-bag-dk:#9a927f;--tr-pit:#45413b;--tr-shadow:#1f241e;--tr-chalk:#e3ebfb;--tr-h-fire:#e8331f}
+.inf-field [data-dyn]{opacity:var(--inf-fade,1)}
+.inf-figure .iso-plate-corners{z-index:2}
+.inf-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.inf-figure[data-view="field"] .inf-svg{visibility:hidden}
+.inf-figure[data-view="field"] .inf-legend-machine{display:none}
+.inf-figure:not([data-view="field"]) .inf-field,.inf-figure:not([data-view="field"]) .inf-legend-field{display:none}
+.inf-legend{display:grid;gap:8px}
+/* casualties: greyed and still (side fc = friendly, hc = enemy), no colour beyond a faint tint */
+.inf-figure .tr-s[data-side="fc"] path,.inf-figure .tr-s[data-side="hc"] path{stroke:#6f6f69}
+.inf-figure .tr-s[data-side="fc"] .tr-t,.inf-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.inf-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.inf-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.inf-figure .tr-s[data-side="fc"] .tr-d,.inf-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.inf-figure .tr-s[data-side="fc"] .tr-g,.inf-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.inf-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.inf-controls .btn{cursor:pointer}
+.inf-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.inf-controls input[type=range]{flex:1;min-width:120px}
+.inf-text h2{margin-top:28px}
+.inf-text ol{padding-left:1.2em}
+.inf-text li{margin:6px 0}
+@media (max-width:520px){.inf-figure .iso-plate-corner[data-corner="hint"]{display:none}.inf-stage{overflow:hidden}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="inf-main">
+  <a class="inf-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Infiltration</h1>
+  <p class="lede">An infiltrating force tries to move through ground the enemy holds without being detected. Army doctrine treats element size as a trade-off: smaller elements are harder to detect and can get through smaller gaps, but cost time, linkup points and control, while larger ones are easier to detect but better able to react. This bench model shows the first half of that trade: in this model, split the force finer and more of the line’s gaps open to it.</p>
+
+  <div class="iso inf-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="inf-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="inf-run">Run again</button>
+      <label>Split the force into <input type="range" id="inf-split" min="0" max="3" step="1" value="0" aria-label="How many elements the force is split into: 1, 4, 9 or 16"> <output id="inf-split-out">1 (whole force)</output></label>
+    </div>
+  </div>
+
+  <section class="inf-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>The screen</b> of bars across the shaker tray stands for a defended line. The spaces between the bars are its gaps: six of them, of different widths.</li>
+      <li><b>The lit elements</b> are the infiltrating force. The knob on the control box, the slider, a click on the figure or the arrow keys set how many equal elements it splits into: 1, 4, 9 or 16.</li>
+      <li><b>The motor</b> spins an eccentric weight that shakes the tray, and the elements work toward the screen. An element that fits a gap passes through it, one at a time per gap (a notional rule). An element that fits no gap is stopped at the screen.</li>
+      <li><b>The collecting tray</b> behind the screen is where the elements regroup, on a square mark the size of the original block. <b>The gauge</b> reads the share of the force that has regrouped.</li>
+    </ol>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model, the same run and the same readout drive both, played more slowly here so the soldiers walk. The scene is a small infantry force, shown at night; FM 3-90 lists the “use of limited visibility and rough terrain to mask movement and reduce possible detection” among the things an infiltration plan addresses (para. 2-96). Blue is friendly and red the enemy. The seven bars of the screen become an enemy outpost line, seven two-man fighting positions with their observed sectors marked on the ground, and the six gaps become the ground between them. Through the gaps the elements use runs cover: hedgerows either side of each lane and a stream bed through the widest gap, so the small elements slip through along it. The lit force is the same 36 soldiers in every split: one group; four squads of nine, a squad being “two fire teams and a squad leader” (ATP 3-21.8, para. 1-9); nine fire teams of four, counting the four roles the manual lists, a team leader, an automatic rifleman, a grenadier and a rifleman (para. 1-11); or sixteen pairs and threes. Squads move in squad column, which ATP 3-21.8 calls “the squad’s main formation for movement unless preparing for an assault” (para. 3-53), and teams in wedges, “the basic formation of the fire team” (para. 3-46). The manual describes teams and squads modifying the wedge toward a file when poor visibility or rough terrain makes control difficult (paras. 3-46, 3-53); here that is drawn near the line. Elements pass one at a time per gap and kneel at the objective rally point, the chalk outline on pegs behind the line. The single big group fits no gap and crosses open ground: it is spotted short of the line, fired on and goes to ground. In doctrine a single infiltration lane “requires the existence or creation of only one gap” and “facilitates navigation, control, and reassembly,” while multiple lanes “require the existence or creation of more gaps,” “reduce the possibility of compromising the entire force” and “increase difficulty with maintaining control” (FM 3-90, paras. 2-93, 2-94); the four-squad split here uses one gap, the finer splits three and five. The drawing leaves out the security force that infiltrating units generally organize besides the main body (para. 2-85). Losses are notional: greyed figures lying still are men down on both sides, the big group’s where it went to ground and a split force’s carried to the rally point with a man kneeling by them, plus a sentry silenced at one outpost, and the readout counts them, friendly vs enemy, the big group paying most and squads more than teams or pairs. Soldiers are drawn larger than scale so they read; the force’s size, the gaps, the cover, the sectors’ ranges and all timings are notional.</p>
+
+    <h2>What doctrine says</h2>
+    <p>U.S. Army <i>FM 3-90, Tactics</i> (May 2023) lists infiltration as one of five forms of maneuver, with frontal attack, penetration, envelopment and turning movement (para. 2-24, Table 2-1). It defines infiltration as a form of maneuver in which an attacking force “conducts undetected movement through or into an area occupied by enemy forces,” and adds that success “requires the infiltrating force to avoid detection and engagement by enemy forces” (para. 2-82).</p>
+    <p>On size, the manual says smaller infiltrating elements “are not as easy to detect as larger elements and can get through smaller defensive gaps.” It also names the costs: larger elements, “if compromised are better equipped to react,” while many smaller elements need more time and more linkup points and are harder to control (para. 2-86). Once through, the elements move to an assembly area or objective rally point “to consolidate and reorganize their combat power” (para. 2-103).</p>
+
+    <h2>What is notional</h2>
+    <p>The layout is a teaching device, not data. So is the one-element-at-a-time rule at each gap. The gaps are 4.5, 5.6, 6, 7.6, 8 and 12 units wide, and an element fits a gap when its width plus 1 unit of clearance is no more than the gap. The whole force is a 22-unit block; split into 4, 9 or 16 it becomes elements 9.8, 6.1 or 4.3 units wide, which fit 1, 3 or 5 of the six gaps. The block fits none. The timings are set for the picture. The model shows only whether an element fits a gap. It does not show the costs the manual names: time, linkup points, control, or how much harder a large element is to spot.</p>
+    <p class="fine">Source: Headquarters, Department of the Army, <a href="https://web.archive.org/web/20231214002622/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">FM 3-90, Tactics</a>, 1 May 2023 (Internet Archive copy of the armypubs.army.mil PDF), paras. 2-24, 2-82, 2-85, 2-86, 2-93, 2-94, 2-96 and 2-103. Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a>, 11 January 2024 with Change 1 (<a href="https://web.archive.org/web/20250807233618id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">archived copy</a>), paras. 1-9, 1-11, 3-46 and 3-53. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

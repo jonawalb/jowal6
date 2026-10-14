@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Oblique Order | Jonathan Walberg</title>
+<meta name="description" content="Frederick the Great's oblique order as a working bench model: mass strength on one wing, refuse the other, and meet the enemy line only where you outweigh it. With a Battlefield view after Leuthen, 1757.">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Oblique Order | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/oblique-order/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/oblique-order/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.ob-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.ob-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.ob-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.ob-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.ob-text p,.ob-text li{line-height:1.65}
+.ob-text .fine{font-size:.88rem;color:var(--text-muted)}
+.ob-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.ob-figure{background:transparent}
+.ob-figure .iso-figure{margin:0}
+.ob-figure .iso-plate{background:var(--anatomy-card)}
+.ob-stage{outline:none;cursor:crosshair;touch-action:manipulation}
+.ob-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.ob-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.ob-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.ob-figure .iso-plate-corners{z-index:2}
+.ob-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.ob-figure[data-view="field"] .ob-svg{visibility:hidden}
+.ob-figure[data-view="field"] .ob-legend-machine{display:none}
+.ob-figure:not([data-view="field"]) .ob-field,.ob-figure:not([data-view="field"]) .ob-legend-field{display:none}
+/* colours carried by the colour bearers, in each side's tint */
+.ob-figure .tr-s[data-side="f"] .ob-flag{fill:var(--tr-f-l);stroke:var(--tr-f-ink);stroke-width:.35}.ob-figure .tr-s[data-side="h"] .ob-flag{fill:var(--tr-h-l);stroke:var(--tr-h-ink);stroke-width:.35}
+/* the fallen: greyed and still (side fc = Prussian, hc = Austrian) */
+.ob-figure .tr-s[data-side="fc"] path,.ob-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.ob-figure .tr-s[data-side="fc"] .tr-t,.ob-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.ob-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.ob-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.ob-figure .tr-s[data-side="fc"] .tr-d,.ob-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.ob-figure .tr-s[data-side="fc"] .tr-g,.ob-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+/* musket volleys: flashes, then powder smoke (no tracers) */
+.ob-fire circle{pointer-events:none}
+/* ground shadows as fill-opacity, not opacity: hundreds of figures, and opacity costs a layer each */
+.ob-field .tr-shadow,.ob-field .tr-s path.tr-shadow{opacity:1;fill-opacity:.13;stroke:none}
+.ob-smoke{fill:#c4c2b9}
+.ob-flash[data-side="f"]{fill:var(--tr-f-fire)}.ob-flash[data-side="h"]{fill:var(--tr-h-fire)}
+.ob-legend{display:grid;gap:8px}
+.ob-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.ob-controls .btn{cursor:pointer}
+.ob-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.ob-controls input[type=range]{flex:1;min-width:120px}
+.ob-text h2{margin-top:28px}
+.ob-text ol{padding-left:1.2em}
+.ob-text li{margin:6px 0}
+@media (max-width:520px){.ob-figure .iso-plate-corner[data-corner="hint"]{display:none}.ob-stage{overflow:hidden}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="ob-main">
+  <a class="ob-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Oblique Order</h1>
+  <p class="lede">Facing a longer enemy line head-on, an army spreads its strength thin everywhere it touches. Frederick the Great’s oblique order put his strength against one end of the enemy’s line and held the rest of his own line back. This bench model shows why both halves of that idea matter.</p>
+
+  <div class="iso ob-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="ob-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="ob-mass" aria-pressed="false">Mass the weights</button>
+      <label><span id="ob-angle-text">Beam angle</span> <input type="range" id="ob-angle" min="0" max="16" step="1" value="0" aria-label="Angle of the attacking line to the enemy line, degrees"></label>
+    </div>
+  </div>
+
+  <section class="ob-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>The enemy line</b> is the row of twelve blocks at the back, on sprung slides, in four sectors of three.</li>
+      <li><b>The attacking line</b> is the long beam. It pivots on a carriage at its right-hand end, and the carriage slides so that the beam’s leading pad always touches the enemy line. Swing it with the pointer, the slider or the arrow keys.</li>
+      <li><b>The weights</b> are the attacker’s strength: eight of them on four pegs, one peg per sector. The button, a click on the figure or the M key moves four of them onto the leading peg (the lit pad’s sector), or spreads them back.</li>
+      <li><b>The pads</b> reach out to touch the enemy line only where the beam is close enough. In this model, a sector in contact goes to whichever side has more weight there: the winner pushes the other back. The dial reads the best force ratio anywhere the lines touch.</li>
+    </ol>
+    <p>Spread and parallel, every sector touches at two weights against three blocks (0.7:1) and every sector is pushed back. Massed but still parallel, the leading sector wins at six against three (2.0:1), but the other three sectors still touch and lose. Massed and swung past about 4.8°, only the leading sector touches: it wins, and the rest of the beam is held clear, which is what “refusing” a wing means here.</p>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model and readout drive both. The ground is loosely after Leuthen. Carlyle describes the country as “a bare wide-waving champaign, with slight bumps on it,” dotted with hamlets and with “patches of scraggy fir” (p. 274), so here it is open and nearly flat, with low knolls, fir copses and hamlets. The twelve red battalions are the Austrian line, three to each of the bench’s sectors; a hamlet with a flag marks the angle of their left at Sagschütz, the objective, and a village with a church tower behind their centre stands for Leuthen. The eight blue battalions are the Prussians, on a line that wheels on its near, refused end as the beam pivots on its carriage; the lit battalion leads the strong wing. Each battalion is drawn as a short line of musketeers a few ranks deep, with its colour in the centre and an officer in front, and the horse as squadrons of two ranks. The two blue squadrons on the knoll off the Austrian right are cavalry that, in Carlyle’s account, were “twinkling about in an enigmatic way” on the knolls, until Lucchesi’s alarm drew the Austrian reserve horse to that wing: the three red squadrons behind the Austrian line ride off toward it as the Prussians mass (the timing is this view’s, not a timeline). When the line masses, four Prussian battalions march back in column, along a road behind a chain of low knolls, and form up behind the leading battalions against the Austrian left. Where the lines touch, both sides fire volleys, drawn as flashes and powder smoke; the outweighed side gives ground, and men fall on both sides, greyed where they lie, while two soldiers carry the Prussian wounded back to a farm. The readout’s last figure counts the fallen, Prussian vs Austrian. Red and blue mark the sides, not uniforms, and the figures are drawn larger than scale (about one and a half times) so they read. The number of battalions, their size and spacing, the ranges, the march and the casualties are notional; the real armies were far larger.</p>
+
+    <h2>What Frederick wrote, and Leuthen</h2>
+    <p>In his instructions to his generals, Frederick wrote that “my oblique order of battle may be employed to advantage, for you refuse one wing to the enemy, whilst you strengthen that which ought to make the attack. By this means you turn all your force on that wing of the enemy which you wish to take in flank” (<i>Military Instruction</i>, 1818 translation, pp. 108–109).</p>
+    <p>Thomas Carlyle’s account of Leuthen (5 December 1757) follows that pattern. Seeing the Austrian line drawn up from Nypern to Sagschütz, Frederick resolved to “attempt their left wing; try our ‘Oblique Order’ upon that” (vol. VII, p. 271). In Carlyle’s account, Prussian cavalry on the knolls by Borne persuaded the Austrian commander on the right, Lucchesi, that he was about to be attacked, and Daun led “all the reserve of Horse, and a great many from the left wing” away to support him (p. 275).</p>
+    <p>Meanwhile the Prussian columns marched south “on their western or invisible side of those Knolls,” then formed in oblique order, and the leading brigades fell on the angle of the Austrian left at Sagschütz “at an angle of forty-five degrees” (pp. 275–277). The Prussian left wing “had stood ‘refused’” near Radaxdorf until the fight for the Austrians’ second position, at Leuthen village (p. 280). Carlyle, writing in the 1860s, gives “80,000 against 30,000” (p. 285); these are his figures, not modern estimates, and cites a staff figure of 89,200 for the Austrian strength before the battle.</p>
+
+    <h2>What is notional</h2>
+    <p>The bench is a teaching model, not a reconstruction. The counts (eight weights against twelve blocks, four sectors), the rule that the heavier side wins a sector in contact, the pads’ 4-unit reach and the block travel are chosen to make the idea visible. With pads 48 units apart, the second sector leaves contact at about 4.8°, the third at 2.4° and the fourth at 1.6°; at 14° the last pad is about 35 units clear. Carlyle’s 45° is a historical description; the bench stops at 16° because of the table, not the history. Real battles turn on fire, terrain, timing and morale that the bench leaves out.</p>
+    <p>The casualty figure at the end of the readout is notional too. In a sector where the lines touch and both sides have battalions, the side that wins loses one figure for each opposing battalion, the side that loses three, and an even fight costs each side two; refused sectors lose nobody. Spread and parallel, that is 36 Prussian figures down against 8 Austrian; massed and swung, 3 against 18. These are the model’s numbers, not Leuthen’s losses.</p>
+    <p class="fine">Sources: Frederick II, <a href="https://archive.org/details/militaryinstruc00prusgoog"><i>Military Instruction from the Late King of Prussia to His Generals</i></a>, trans. Lt-Col. Foster, 5th ed. (Sherborne: J. Cruttwell, 1818), pp. 108–109. Thomas Carlyle, <a href="https://archive.org/details/frederickgreat0004unse"><i>History of Friedrich II. of Prussia, Called Frederick the Great</i></a>, Copyright Edition (London: Chapman &amp; Hall, 1894), vol. VII, Book XVIII, ch. X, pp. 271–285; also <a href="https://www.gutenberg.org/ebooks/2118">Project Gutenberg eBook #2118</a>. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

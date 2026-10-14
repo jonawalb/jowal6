@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Culminating Point | Jonathan Walberg</title>
+<meta name="description" content="Why an attack runs out of steam, as a working bench model: a carriage tethered to its supply base loses power with every kilometre until it stalls at its culminating point. Built from U.S. Army doctrine (ADP 3-0, 2019).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Culminating Point | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/culminating-point/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/culminating-point/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.cp-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.cp-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.cp-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.cp-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.cp-text p,.cp-text li{line-height:1.65}
+.cp-text .fine{font-size:.88rem;color:var(--text-muted)}
+.cp-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.cp-figure{background:transparent}
+.cp-figure .iso-figure{margin:0}
+.cp-figure .iso-plate{background:var(--anatomy-card)}
+.cp-stage{outline:none;cursor:crosshair;touch-action:manipulation}
+.cp-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.cp-svg{display:block;width:100%;height:auto}
+.cp-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.cp-controls .btn{cursor:pointer}
+.cp-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.cp-controls input[type=range]{flex:1;min-width:120px}
+.cp-text h2{margin-top:28px}
+.cp-text ol{padding-left:1.2em}
+.cp-text li{margin:6px 0}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.cp-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.cp-figure .iso-plate-corners{z-index:2}
+.cp-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.cp-figure[data-view="field"] .cp-svg{visibility:hidden}
+.cp-figure[data-view="field"] .cp-legend-machine{display:none}
+.cp-figure:not([data-view="field"]) .cp-field,.cp-figure:not([data-view="field"]) .cp-legend-field{display:none}
+.cp-legend{display:grid;gap:8px}
+/* knocked-out vehicles: greyed and stopped; the ambulance: white */
+.tr-s[data-side="fk"] path,.tr-s[data-side="hk"] path{stroke:#8f8b84}.tr-s[data-side="m"] path{stroke:#55524c}
+.tr-s[data-side="fk"] .tr-t{fill:#cfccc6}.tr-s[data-side="fk"] .tr-l{fill:#b9b6b0}.tr-s[data-side="fk"] .tr-d{fill:#a8a59f}.tr-s[data-side="fk"] .tr-g{fill:#8f8b84}
+.tr-s[data-side="hk"] .tr-t{fill:#d3cbc8}.tr-s[data-side="hk"] .tr-l{fill:#bfb5b2}.tr-s[data-side="hk"] .tr-d{fill:#ada3a0}.tr-s[data-side="hk"] .tr-g{fill:#938986}
+.tr-s[data-side="m"] .tr-t{fill:#fbfaf7}.tr-s[data-side="m"] .tr-l{fill:#ecebe6}.tr-s[data-side="m"] .tr-d{fill:#d9d7d0}.tr-s[data-side="m"] .tr-g{fill:#9a978f}
+.tr-s[data-side="fk"] .tr-veh{--anatomy-top:#cfccc6;--anatomy-paper:#b9b6b0}.tr-s[data-side="hk"] .tr-veh{--anatomy-top:#d3cbc8;--anatomy-paper:#bfb5b2}
+.iso .tr-s[data-side="fk"] .tr-veh>.iso-shade{fill:#a8a59f}.iso .tr-s[data-side="hk"] .tr-veh>.iso-shade{fill:#ada3a0}
+.iso .tr-s[data-side="fk"] .tr-veh>.iso-shade[data-shade="3"],.iso .tr-s[data-side="fk"] .tr-veh>.iso-shade[data-shade="2"]{fill:#b9b6b0}.iso .tr-s[data-side="hk"] .tr-veh>.iso-shade[data-shade="3"],.iso .tr-s[data-side="hk"] .tr-veh>.iso-shade[data-shade="2"]{fill:#bfb5b2}
+@media (max-width:520px){.cp-figure .iso-plate-corner[data-corner="hint"]{display:none}.cp-stage{overflow:hidden}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="cp-main">
+  <a class="cp-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Culminating Point</h1>
+  <p class="lede">Every attack draws on a base behind it, and every kilometre it gains stretches that link. Somewhere short of the objective, unless something changes, the attacker no longer has the power to go on. Doctrine calls that point culmination. This bench model shows where it comes from.</p>
+
+  <div class="iso cp-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="cp-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="cp-base" aria-pressed="false">Move the base forward</button>
+      <label><span id="cp-push-text">Ordered advance</span> <input type="range" id="cp-push" min="0" max="167" step="1" value="167" aria-label="Ordered advance, km from the start line"></label>
+    </div>
+  </div>
+
+  <section class="cp-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>The carriage</b> with the lit prow is the attacking force. It drives along the track toward the blockhouse at the far end, the objective.</li>
+      <li><b>The spring</b> tethers it to <b>the supply sled</b> at the depot, its base. The farther the carriage goes, the more the spring stretches and the harder it pulls back.</li>
+      <li><b>The gauge</b> reads the carriage’s combat power as a ratio of what it needs to keep advancing against this defense. The raised mark at the top is 1.0, the defender’s line. The carriage slows as the needle falls toward it and stalls when it gets there: the culminating point.</li>
+      <li><b>Order the advance</b> with the pointer, the slider or the arrow keys, and <b>move the base forward</b> with a click, the button or the B key. A base brought forward shortens the tether, the needle climbs, and the carriage can reach the objective.</li>
+    </ol>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model and readout drive both. Here the scale is one attacking battalion, blue is friendly and red is the enemy. Each small vehicle stands for a platoon and each group of three for a company, so the lit battalion, the main effort, is drawn as three companies and leaves out most of a real battalion’s vehicles. It starts from an assembly area by the rear depot (sheds, crate stacks and four parked supply trucks: the base), crosses a start line marked in chalk on pegs and advances in march column along the road, over a bridge and past a wood, toward the flag: a village and a hill where enemy vehicles are dug in, their fire sector marked on the ground. An enemy covering force falls back ahead of the column and trades fire with its lead. Four supply trucks shuttle between the base and the column’s tail; the farther the column gets, the longer each round trip and the farther the trucks fall behind. The column slows as its margin of combat power runs down, and where the model says it culminates it halts and its lead company takes up a defensive posture (drawn here as a hasty defense), one of the two outcomes the manual gives for an attack that cannot go on (the other is an operational pause). Move the base forward and its trucks drive up the road to the chalk outline, the round trips shorten, and the column can reach the objective; the defenders then fall back off the hill. Success is not free: vehicles knocked out on both sides stay where they were hit, greyed, and an ambulance (white) carries casualties back to the base. The readout’s last figure is casualties, attacker vs defender, a notional count explained below. Vehicles are drawn far larger than scale so they read; unit sizes, distances, ranges and timings are notional, and the road distance stands for the model’s kilometres at a fixed notional scale.</p>
+
+    <h2>What doctrine says</h2>
+    <p>U.S. Army <i>ADP 3-0, Operations</i> (July 2019) takes its definition from joint doctrine: the culminating point is “a point at which a force no longer has the capability to continue its form of operations, offense or defense (JP 5-0).” It adds that culmination “represents a crucial shift in relative combat power,” and that in the offense it comes “when a force cannot continue the attack and must assume a defensive posture or execute an operational pause” (para. 2-52).</p>
+    <p>The same chapter ties culmination to operational reach, which depends on sustainment and endurance. “Operational reach is a tether; it is a function of intelligence, protection, sustainment, endurance, and combat power relative to enemy forces. The limit of a unit’s operational reach is its culminating point,” and “commanders seek to extend the operational reach far enough to accomplish their objectives before culmination” (para. 2-54). The forward base on the bench stands in for that; the manual notes that “the use of basing can sustain operational reach in time and space” (para. 2-58).</p>
+
+    <h2>What is notional</h2>
+    <p>The numbers are a teaching shape, not a measured result. The carriage starts at twice the power the advance needs (2.0 : 1) and loses 0.1 of that ratio for every 12 km from its base, a straight line, so it culminates 120 km out. The objective is 167 km from the rear depot. Moving the base 69 km forward puts the objective 98 km away, where the carriage still has 1.18 : 1. Real forces lose power unevenly: to combat losses, fatigue, worn equipment, longer supply lines and an enemy who falls back onto its own bases. One straight line stands in for all of that.</p>
+    <p>The casualty figure in the readout (“N vs M down”, attacker vs defender) is notional too. The attacker loses 0.12 casualties per kilometre advanced with its full 2.0 : 1 margin, rising in a straight line to 0.62 per kilometre at the defender’s line, taken at the power halfway through its advance. Pushed to culmination from the rear base it has lost 44 by the time it stalls; with the base forward it reaches the objective for 54, more because it goes farther, but it gets there. The defender loses 0.15 per kilometre the attacker gains and 18 more when the objective falls: 18 and 43 in the two cases. In the Battlefield view each 12 attacker casualties (10 for the defender) is drawn as one knocked-out vehicle. Real losses depend on far more than distance and margin.</p>
+    <p class="fine">Source: Headquarters, Department of the Army, <a href="https://web.archive.org/web/2023/https://irp.fas.org/doddir/army/adp3_0.pdf">ADP 3-0, Operations</a>, 31 July 2019, p. 2-10, paras. 2-52, 2-54 and 2-58 (the definition there is quoted from JP 5-0, <i>Joint Planning</i>). Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

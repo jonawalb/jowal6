@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bypassing Strongpoints | Jonathan Walberg</title>
+<meta name="description" content="Bypassing strongpoints as a working bench model: go round an enemy force to keep moving, or stop and deal with it, and see what each choice costs. Inspired by U.S. Army doctrine (FM 3-90, 2023); the flume is notional.">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Bypassing Strongpoints | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/bypass/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/bypass/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.bp-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.bp-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.bp-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.bp-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.bp-text p,.bp-text li{line-height:1.65}
+.bp-text .fine{font-size:.88rem;color:var(--text-muted)}
+.bp-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.bp-figure{background:transparent}
+.bp-figure .iso-figure{margin:0}
+.bp-figure .iso-plate{background:var(--anatomy-card)}
+.bp-stage{outline:none;cursor:pointer;touch-action:manipulation}
+.bp-figure .bp-water{fill:#e7edf0;stroke:none}
+.bp-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.bp-svg{display:block;width:100%;height:auto}
+.bp-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.bp-controls .btn{cursor:pointer}
+.bp-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.bp-controls input[type=range]{flex:1;min-width:120px}
+.bp-text h2{margin-top:28px}
+.bp-text ol{padding-left:1.2em}
+.bp-text li{margin:6px 0}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.bp-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.bp-figure .iso-plate-corners{z-index:2}
+.bp-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.bp-figure[data-view="field"] .bp-svg{visibility:hidden}
+.bp-figure[data-view="field"] .bp-legend-machine{display:none}
+.bp-figure:not([data-view="field"]) .bp-field,.bp-figure:not([data-view="field"]) .bp-legend-field{display:none}
+.bp-legend{display:grid;gap:8px}
+/* casualties: greyed and still (side fc = friendly, hc = enemy); the ambulance: white */
+.bp-figure .tr-s[data-side="fc"] path,.bp-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}.bp-figure .tr-s[data-side="m"] path{stroke:#55524c}
+.bp-figure .tr-s[data-side="fc"] .tr-t,.bp-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.bp-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.bp-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.bp-figure .tr-s[data-side="fc"] .tr-d,.bp-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.bp-figure .tr-s[data-side="fc"] .tr-g,.bp-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.bp-figure .tr-s[data-side="m"] .tr-t{fill:#fbfaf7}.bp-figure .tr-s[data-side="m"] .tr-l{fill:#ecebe6}.bp-figure .tr-s[data-side="m"] .tr-d{fill:#d9d7d0}.bp-figure .tr-s[data-side="m"] .tr-g{fill:#9a978f}
+@media (max-width:520px){.bp-figure .iso-plate-corner[data-corner="hint"]{display:none}.bp-stage{overflow:hidden}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="bp-main">
+  <a class="bp-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Bypassing Strongpoints</h1>
+  <p class="lede">An advancing force that meets an enemy strongpoint can stop and reduce it or go round it. Army doctrine calls going round a bypass. The force keeps moving, but the strongpoint is still there. This bench model shows both sides of that trade.</p>
+
+  <div class="iso bp-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="bp-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="bp-mode" aria-pressed="false">Reduce every strongpoint</button>
+      <label>Bypass criteria <input type="range" id="bp-criteria" min="0" max="3" step="1" value="2" aria-label="Bypass criteria: 0 reduce every rock, 1 bypass small rocks, 2 bypass small and medium, 3 bypass all"></label>
+      <button type="button" class="btn btn-outline" id="bp-rerun">Run again</button>
+    </div>
+  </div>
+
+  <section class="bp-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>The floats</b> (lit) are the attacking force. Twelve of them leave the header tank and run down the flume toward the collecting pool.</li>
+      <li><b>The rocks</b> are enemy strongpoints, in three sizes: medium, then large, then small.</li>
+      <li><b>The knob</b> (or the slider, or the arrow keys) sets the bypass criteria: which sizes the convoy may go round. The vane at each divider swings to send the convoy into the open lane past a rock it may bypass.</li>
+      <li><b>A rock it may not bypass</b> stops the convoy. The lead float waits while the rock is cut down to rubble, and every float behind it waits too.</li>
+      <li><b>A rock it bypasses</b> costs no time, but it still costs floats. In this model the lead floats peel off and stay with the rock to watch it, and they never reach the pool; in doctrine the bypassed force is kept under observation until relieved.</li>
+      <li><b>The dials</b> behind the outlet show the result: the left one counts floats across the meter line, the right one is a clock from 0 to 10 seconds. Click the figure, or use the button, to switch between reducing every rock and bypassing by the criteria.</li>
+    </ol>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model and readout drive both. Here the scale is one attacking company; blue is friendly, red the enemy. Each float becomes a vehicle, so the lit company column is drawn as twelve small tracked vehicles, three platoons of four, driving up a valley road. Each rock becomes an enemy strongpoint astride the road, its fire sector marked down the road toward the column: the medium one has three two-man fighting positions and a machine-gun position, the large one five fighting positions, two machine guns and wire on its flanks, the small one two fighting positions. A dirt side track loops round each. A strongpoint the criteria let the column bypass is passed on its side track, while the vehicles the model holds back halt on the road short of it, put out a two-soldier observation post and fire on it to keep it in place (the manual’s fixing technique, para. B-12). A strongpoint above the criteria stops the column: the lead vehicles fire on it, and a rifle squad, “two fire teams and a squad leader” (ATP 3-21.8, para. 1-9), dismounts, forms a squad line on its near flank, a formation “used to assault or as a pre-assault formation” (para. 3-54), and closes by fire and movement (para. 1-9), one team moving while the other lies down and fires. As the strongpoint is reduced its defenders go down or withdraw into the wood behind it, the squad remounts, and only then does the column drive on. Success is not free: soldiers who go down on either side lie greyed where they fell, and a white ambulance trails the column and halts by the latest friendly casualty, where a medic kneels. Past a chalk phase line the vehicles that got through park in a chalk-outlined assembly area: the readout’s count. Soldiers and vehicles are drawn larger than scale so they read; unit sizes, distances, ranges and timings are notional.</p>
+
+    <h2>What doctrine says</h2>
+    <p>U.S. Army <i>FM 3-90, Tactics</i> (May 2023) lists bypass as a tactical mission task “in which a unit deliberately avoids contact with an obstacle or an enemy force.” A commander orders one “to maintain momentum while deliberately avoiding combat with an enemy force” (para. B-9). The manual bases the decision on the requirement to maintain momentum and aggressive action; knowledge of the enemy force’s strength, intent or mission; “the degree to which the bypassed enemy force can interfere with the advance”; the general state of the enemy force, since “if enemy resistance is crumbling, the friendly force can take greater risks”; and any bypass criteria set by a higher echelon headquarters (para. B-10).</p>
+    <p>Bypass criteria are “measures established by higher echelon headquarters that specify the conditions and size under which enemy units and contact may be avoided” (para. 12-27). Commanders set them “to limit the size of enemy forces that subordinates can bypass without their approval” (para. B-11). The knob plays that part. On the bench, a rock above the setting is always reduced; doctrine sets criteria only for what subordinates may bypass “without their approval,” which leaves room for the commander to approve more.</p>
+    <p>Bypassing has a cost. The bypassing force “immediately reports any bypassed obstacles and enemy forces to its higher echelon headquarters” and “normally keeps the bypassed enemy force under observation until relieved by another force unless it is part of a raid” (para. B-11). The manual gives two techniques: avoiding the enemy force totally, or fixing it in place with fires and then conducting the bypass (para. B-12). If the enemy force cannot be avoided, part of the force fixes it and the balance goes round, and “generally, a commander will not attempt to bypass an enemy force if more than a third of the unit’s combat power is required to fix the enemy force” (para. B-13). The bench shows only the fixing technique: the floats held back at each bypassed rock.</p>
+
+    <h2>What is notional</h2>
+    <p>Every number on the bench is a teaching value, not data. Twelve floats move at 80 units a second, 10.5 units apart. Reducing a rock takes 1.0 s (medium), 2.0 s (large) or 0.5 s (small), and holding a bypassed rock takes 1, 2 or 1 floats. With those values, in this model: reducing every rock brings 12 of 12 floats through in 8.3 s; bypassing the small rock, 11 in 7.8 s; bypassing small and medium, 10 in 6.8 s; bypassing all three, 8 in 4.8 s. Bypassing all three holds back 4 of 12 floats, a third of the force, which is the edge of the manual’s one-third guideline. Real strongpoints differ in how long they take to reduce and how much force it takes to watch them, and a bypassed force can still strike the units behind.</p>
+    <p>The casualty figure in the readout (“N vs M down”, friendly against enemy) is notional too. Reducing a strongpoint costs 1 vs 3 (small), 2 vs 6 (medium) or 3 vs 11 (large), accruing as the reduction goes on; bypassing one still costs 0 vs 1, 1 vs 1 or 1 vs 2, taken as the column passes it under fire and the vehicles left behind fire back. With those values, in this model: reducing every strongpoint ends at 6 vs 20 down; bypassing the small one, 5 vs 18; bypassing small and medium, 4 vs 13; bypassing all three, 2 vs 4. Bypassing costs fewer casualties on both sides here because it avoids the fight, and leaves the strongpoints in place, with most of their defenders. Real losses depend on far more than strongpoint size.</p>
+    <p class="fine">Source: Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">FM 3-90, Tactics</a>, 1 May 2023 (<a href="https://web.archive.org/web/2024id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">archived copy</a>), paras. B-9 to B-13 and 12-27. Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a>, 11 January 2024, incorporating Change 1, June 2025 (<a href="https://web.archive.org/web/20250807233618id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">archived copy</a>), paras. 1-9 and 3-54. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

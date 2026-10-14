@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Surfaces and Gaps | Jonathan Walberg</title>
+<meta name="description" content="Surfaces and gaps as a working bench model: feeler blades stop on hard spots and slip into soft ones, and the main effort shifts to the gap. Built from Marine Corps doctrine (MCDP 1, Warfighting, 1997).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Surfaces and Gaps | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/surfaces-and-gaps/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/surfaces-and-gaps/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.sg-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.sg-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.sg-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.sg-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.sg-text p,.sg-text li{line-height:1.65}
+.sg-text .fine{font-size:.88rem;color:var(--text-muted)}
+.sg-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.sg-figure{background:transparent}
+.sg-figure .iso-figure{margin:0}
+.sg-figure .iso-plate{background:var(--anatomy-card)}
+.sg-stage{outline:none;cursor:crosshair;touch-action:manipulation}
+.sg-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.sg-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.sg-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.sg-figure .iso-plate-corners{z-index:2}
+.sg-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.sg-figure[data-view="field"] .sg-svg{visibility:hidden}
+.sg-figure[data-view="field"] .sg-legend-machine{display:none}
+.sg-figure:not([data-view="field"]) .sg-field,.sg-figure:not([data-view="field"]) .sg-legend-field{display:none}
+.sg-legend{display:grid;gap:8px}
+/* casualties: greyed and still (side fc = friendly, hc = enemy), no colour beyond a faint tint */
+.sg-figure .tr-s[data-side="fc"] path,.sg-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.sg-figure .tr-s[data-side="fc"] .tr-t,.sg-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.sg-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.sg-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.sg-figure .tr-s[data-side="fc"] .tr-d,.sg-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.sg-figure .tr-s[data-side="fc"] .tr-g,.sg-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.sg-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.sg-controls .btn{cursor:pointer}
+.sg-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.sg-controls input[type=range]{flex:1;min-width:120px}
+.sg-text h2{margin-top:28px}
+.sg-text ol{padding-left:1.2em}
+.sg-text li{margin:6px 0}
+@media (max-width:520px){.sg-figure .iso-plate-corner[data-corner="hint"]{display:none}.sg-stage{overflow:hidden}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="sg-main">
+  <a class="sg-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Surfaces and Gaps</h1>
+  <p class="lede">Marine Corps doctrine tells its forces to avoid enemy strengths, which it calls surfaces, and to focus on enemy weaknesses, which it calls gaps. Gaps have to be sought out, they rarely last, and the main effort may shift to the unit that found one. This bench model shows that search and that shift.</p>
+
+  <div class="iso sg-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="sg-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="sg-probe">Probe the face</button>
+      <button type="button" class="btn btn-outline" id="sg-shuffle">Shift the face</button>
+      <label>Planned lane <input type="range" id="sg-lane" min="1" max="5" step="1" value="2" aria-label="Lane planned for the main effort, 1 to 5"></label>
+    </div>
+  </div>
+
+  <section class="sg-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>The wall face</b> on the left has five lanes. In each lane a key either sits flush with the face (a surface, a hard spot) or is set back into the wall (a gap, a soft spot).</li>
+      <li><b>The feeler blades</b> sit on five carriages, each pushed by its own spring from one bar. Push the bar and every blade moves forward together. A blade that meets a surface stops and its spring compresses; a blade over a gap slips in until it reaches its full stroke.</li>
+      <li><b>The lit ram</b> rides a saddle on the bar. It stands for the main effort. Choose the lane it is planned to strike with the pointer, the slider or the arrow keys, then press <i>Probe the face</i>.</li>
+      <li>If the planned lane is a surface, the ram strikes it and stops. It then withdraws, slides across to the lane whose blade went deepest, and drives through that gap.</li>
+      <li><i>Shift the face</i> resets the keys. In the idle tour the face shifts after every probe, so the gap the ram just used is usually closed the next time round.</li>
+    </ol>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model and readout drive both. The scale is a rifle platoon; blue is friendly and red is the enemy. Across the top, the enemy holds five lanes, each with a rifle pair (in the centre lane a machine-gun team, whose sector is the red fan on the ground). Each enemy element sits either in its forward fighting position, a surface, or back in a position in depth, which leaves the ground in front of it unwatched: a gap. The farther a bench key is set back, the farther back that lane’s element sits. Wire runs between the lanes. From the line of departure, the chalk line on pegs, five fire teams probe the five lanes together, each built around a team leader, an automatic rifleman, a grenadier and a rifleman (ATP 3-21.8, para. 1-11) and moving in the wedge, “the basic formation of the fire team” (para. 3-46). In a movement to contact, the platoon manual says, the lead element that meets a stationary enemy “tries to identify any crew-served weapon or antitank (AT) weapon positions, the enemy’s flanks, and gaps in positions” (para. 4-67). A team that reaches a surface goes to ground under fire and trades fire with the position; a team in a gap slips in. The lit main effort is the planned lane’s team and the platoon’s follow-on element behind it: a fire team with its squad leader, the platoon leader and his radio operator. If the planned lane is a surface, the follow-on element strikes it and is stopped, falls back, moves across behind the line and follows the team that went deepest through its gap; the main effort shifts to that team, and once through it fires into the flanks of the positions beside the gap. The teams held on surfaces stay down and keep those positions busy. After each probe the enemy elements run to new positions, so the gaps move. Success is not free: greyed figures lying still are men down on both sides. In the model, the platoon medic goes to the first blue casualty, and the platoon sergeant kneels at the casualty collection point behind the line of departure; the manual says the platoon sergeant traditionally establishes and operates that point, which includes “directing the platoon combat medic and aid/litter teams in moving casualties” (para. 1-22). The readout ends with the count, blue against red. Soldiers are drawn larger than scale (about one and a half times) so they read; the enemy’s strength and positions, sizes, ranges, timings and the casualty counts are notional.</p>
+
+    <h2>What doctrine says</h2>
+    <p>The Marine Corps manual <i>MCDP 1, Warfighting</i> (1997) puts it simply: “surfaces are hard spots—enemy strengths—and gaps are soft spots—enemy weaknesses.” Marines “avoid enemy strength and focus our efforts against enemy weakness,” and “Whenever possible, we exploit existing gaps. Failing that, we create gaps” (p. 92). A gap need not be a hole in a line. It may be “any weakness in time, space, or capability,” such as “a boundary between two units” (pp. 92–93).</p>
+    <p>The manual adds that judging them takes care: “What is a surface in one case may be a gap in another,” and Marines should expect an enemy to disguise his dispositions “to lure us against a surface that appears to be a gap.” Gaps “will rarely be permanent and will usually be fleeting,” and the manual says forces must “actively seek out gaps by continuous and aggressive reconnaissance.” And “if our main effort has struck a surface but another unit has located a gap, we designate the second unit as the main effort and redirect our combat power in support of it” (p. 93).</p>
+    <p>The bench shows only the simplest case: gaps that already exist, in space, found by probing. It does not create gaps, and its blades cannot be fooled by a disguised surface.</p>
+
+    <h2>What is notional</h2>
+    <p>Every number on the bench is a teaching value, not data. A key set back 6 mm or more counts as a gap; less is a surface. A blade can reach 16 mm past the face and the ram 24 mm, so the readout reports the blade’s depth up to 16 mm and the ram’s up to 24 mm. The four faces the tour steps through are invented: each has one deep gap, and one face also has a shallow 9 mm gap that loses to the deep one. The rule that the ram goes to the deepest blade is the bench’s stand-in for “the unit that located a gap”; in this model a deeper probe means a better gap, which real gaps need not follow.</p>
+    <p>The casualty counts in the readout and the Battlefield view are notional too, set so that success is never free. Once a probe makes contact, blue loses one man for every two teams stopped on a key (rounded up) and red one for every two (rounded down); every face in the tour stops four teams, so 2 against 2. If the main effort first strikes a surface, blue loses two more; when it goes through the gap, red loses one more. Planning the main effort on the gap therefore ends 2 against 3, and planning it on a surface 4 against 3. The counts start again with each probe. These are teaching values, not loss rates from data or doctrine.</p>
+    <p class="fine">Source: U.S. Marine Corps, <a href="https://www.marines.mil/Portals/1/Publications/MCDP%201%20Warfighting.pdf">MCDP 1, Warfighting</a>, 20 June 1997, pp. 92–93 (<a href="https://web.archive.org/web/2024id_/https://www.marines.mil/Portals/1/Publications/MCDP%201%20Warfighting.pdf">archived copy</a>); Headquarters, Department of the Army, <a href="https://web.archive.org/web/20250807233618id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a> (archived copy of the official PDF), 11 January 2024, incorporating Change 1 (June 2025), paras. 1-11, 1-22, 3-46 and 4-67. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

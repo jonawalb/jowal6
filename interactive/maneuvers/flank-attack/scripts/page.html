@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fix and Flank | Jonathan Walberg</title>
+<meta name="description" content="How a flank attack works, as a working bench model: one force fixes the enemy's front, the other swings round to its weak side. Built from U.S. Army doctrine (FM 3-90, 2023).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Fix and Flank | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/flank-attack/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/flank-attack/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.fl-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.fl-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.fl-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.fl-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.fl-text p,.fl-text li{line-height:1.65}
+.fl-text .fine{font-size:.88rem;color:var(--text-muted)}
+.fl-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.fl-figure{background:transparent}
+.fl-figure .iso-figure{margin:0}
+.fl-figure .iso-plate{background:var(--anatomy-card)}
+.fl-stage{outline:none;cursor:crosshair;touch-action:manipulation}
+.fl-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.fl-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.fl-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.fl-figure .iso-plate-corners{z-index:2}
+.fl-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.fl-figure[data-view="field"] .fl-svg{visibility:hidden}
+.fl-figure[data-view="field"] .fl-legend-machine{display:none}
+.fl-figure:not([data-view="field"]) .fl-field,.fl-figure:not([data-view="field"]) .fl-legend-field{display:none}
+.fl-legend{display:grid;gap:8px}
+/* casualties: greyed and still (side fc = friendly, hc = enemy), no colour beyond a faint tint */
+.fl-figure .tr-s[data-side="fc"] path,.fl-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.fl-figure .tr-s[data-side="fc"] .tr-t,.fl-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.fl-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.fl-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.fl-figure .tr-s[data-side="fc"] .tr-d,.fl-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.fl-figure .tr-s[data-side="fc"] .tr-g,.fl-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.fl-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.fl-controls .btn{cursor:pointer}
+.fl-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.fl-controls input[type=range]{flex:1;min-width:120px}
+.fl-text h2{margin-top:28px}
+.fl-text ol{padding-left:1.2em}
+.fl-text li{margin:6px 0}
+@media (max-width:520px){.fl-figure .iso-plate-corner[data-corner="hint"]{display:none}.fl-stage{overflow:hidden}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="fl-main">
+  <a class="fl-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Fix and Flank</h1>
+  <p class="lede">An attacker that hits a defended position head-on meets every gun sited to cover that front. Doctrine’s answer is to pin the enemy in place with one force and send another round to a weaker side. This bench model shows why the pinning matters.</p>
+
+  <div class="iso fl-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="fl-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="fl-fix" aria-pressed="true">Release the front</button>
+      <label><span id="fl-angle-text">Spearhead position</span> <input type="range" id="fl-angle" min="26" max="162" step="1" value="30" aria-label="Spearhead position, degrees off the fort's front"></label>
+    </div>
+  </div>
+
+  <section class="fl-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>The fort</b> sits on a turntable. Its front wall is thick and carries the guns; its side and rear walls are thin. The engraved arc on the turntable marks the sector its guns mainly cover.</li>
+      <li><b>The fixing force</b> is the ram on the straight rail. When it presses the front wall, a brake clamps the turntable, and the fort is held facing that way.</li>
+      <li><b>The maneuver force</b> is the lit spearhead on the curved rail. Move it round the ring with the pointer, the slider or the arrow keys.</li>
+      <li><b>The gauge</b> reads the share of the fort’s fire that can reach the spearhead. While the fort is fixed, moving the spearhead to the flank drives it down. Release the front and the fort turns to face the threat, and the gauge climbs back.</li>
+    </ol>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model and readout drive both. Here the scale is a platoon attack, blue is friendly and red is the enemy. On the rise, an enemy rifle squad and machine-gun team hold two-man fighting positions with sandbagged rims behind a belt of wire; the red fan on the ground is the machine gun’s sector. On the right, behind a stone wall, the support-by-fire element (a rifle squad and two machine-gun teams) fixes the enemy with fire on its front (blue tracers, strikes and drifting smoke). Support by fire is “a tactical mission task in which a unit engages the enemy by direct fire in support of another maneuvering force” (ATP 3-21.8, para. 3-56). The lit assault element is two rifle squads, each “two fire teams and a squad leader” (para. 1-9), each team being a team leader, an automatic rifleman, a grenadier and a rifleman (para. 1-11), with the platoon leader and his radio operator. The squads move in squad column with their teams in wedges, the wedge being “the basic formation of the fire team” (para. 3-46), along a track through the wood, past a phase line and an assault position marked in chalk on pegs, then turn in and assault in squad line, a formation “used to assault or as a pre-assault formation” (para. 3-54). The flag marks the objective and the dashed outline at the wall the support-by-fire position. Release the front and the enemy shifts round its positions to face the assault and turns its fire on it, and the support-by-fire element ceases fire but holds its position; the assault then uses fire and movement (para. 1-9), one squad firing while the other moves. Losses are notional: greyed figures lying still are men down on both sides, the blue ones carried back to a collection point behind the support-by-fire position where a medic kneels, and the readout counts them, friendly vs enemy, the attacker losing more and the defender fewer the more of the enemy’s fire can bear. Soldiers are drawn larger than scale (about one and a half times) so they read; sizes, ranges, timings and the spacing of the positions are notional.</p>
+
+    <h2>What doctrine says</h2>
+    <p>U.S. Army <i>FM 3-90, Tactics</i> (May 2023) lists five forms of maneuver: frontal attack, penetration, envelopment, turning movement and infiltration. Earlier doctrine also named the flank attack as its own form; the 2023 manual folds it into the envelopment, in which “an attacking force avoids an enemy’s principal defense by attacking along an assailable flank” (para. 2-58).</p>
+    <p>The same paragraph explains why: an envelopment avoids “the enemy’s front—where the effects of enemy fires and obstacles are generally the greatest,” and units prefer it “because generally the flanks of the defending forces are weaker.” Its odds improve when there are “supporting efforts that fix the bulk of the enemy’s forces in their current positions” (para. 2-68). To fix is to prevent “the enemy from moving from a specific location for a specific period,” and it is “always a supporting effort” (para. B-35).</p>
+
+    <h2>What is notional</h2>
+    <p>The gauge’s curve is a teaching shape, not a measured result: the share of fire that bears is 15% + 85% × ((1 + cos θ) / 2)³, where θ is the spearhead’s angle off the fort’s front. That gives 100% head-on, 68% at 45°, 26% at the flank and 15% from behind. A released fort re-faces at 40° per second. Real defenses are dug in for all-round protection and keep reserves, which is why the curve never reaches zero.</p>
+    <p class="fine">Source: Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">FM 3-90, Tactics</a>, 1 May 2023, paras. 2-24, 2-58, 2-60, 2-68 and B-35. Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a>, 11 January 2024, incorporating Change 1, June 2025 (<a href="https://web.archive.org/web/20250807233618id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">archived copy</a>), paras. 1-9, 1-11, 3-46, 3-54 and 3-56. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

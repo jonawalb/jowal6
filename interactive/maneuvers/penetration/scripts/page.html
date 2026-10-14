@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Penetration and Exploitation | Jonathan Walberg</title>
+<meta name="description" content="How a penetration works, as a working bench model: a wedge breaks a defended line on a narrow front, rollers widen the gap, pins hold its shoulders, and the force runs on through. Built from U.S. Army doctrine (FM 3-90, 2023).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Penetration and Exploitation | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/penetration/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/penetration/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.pn-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.pn-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.pn-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.pn-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.pn-text p,.pn-text li{line-height:1.65}
+.pn-text .fine{font-size:.88rem;color:var(--text-muted)}
+.pn-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.pn-figure{background:transparent}
+.pn-figure .iso-figure{margin:0}
+.pn-figure .iso-plate{background:var(--anatomy-card)}
+.pn-stage{outline:none;cursor:crosshair;touch-action:manipulation}
+.pn-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.pn-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.pn-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.pn-figure .iso-plate-corners{z-index:2}
+.pn-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.pn-figure[data-view="field"] .pn-svg{visibility:hidden}
+.pn-figure[data-view="field"] .pn-legend-machine{display:none}
+.pn-figure:not([data-view="field"]) .pn-field,.pn-figure:not([data-view="field"]) .pn-legend-field{display:none}
+.pn-legend{display:grid;gap:8px}
+/* casualties: greyed and still (side fc = friendly, hc = enemy), no colour beyond a faint tint */
+.pn-figure .tr-s[data-side="fc"] path,.pn-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.pn-figure .tr-s[data-side="fc"] .tr-t,.pn-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.pn-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.pn-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.pn-figure .tr-s[data-side="fc"] .tr-d,.pn-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.pn-figure .tr-s[data-side="fc"] .tr-g,.pn-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.pn-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.pn-controls .btn{cursor:pointer}
+.pn-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.pn-controls input[type=range]{flex:1;min-width:120px}
+.pn-text h2{margin-top:28px}
+.pn-text ol{padding-left:1.2em}
+.pn-text li{margin:6px 0}
+@media (max-width:520px){.pn-figure .iso-plate-corner[data-corner="hint"]{display:none}.pn-stage{overflow:hidden}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="pn-main">
+  <a class="pn-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Penetration and Exploitation</h1>
+  <p class="lede">When a defense offers no flank to envelop, or has a weak spot, an attacker can break straight through it: attack on one narrow front, rupture the line, force the gap wide, hold its sides, and push through to what lies behind. This bench model runs the three phases doctrine normally plans for, in one order, and shows why the gap has to be held.</p>
+
+  <div class="iso pn-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="pn-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="pn-hold" aria-pressed="true">Drop the shoulder pins</button>
+      <label>Operation <input type="range" id="pn-progress" min="0" max="100" step="1" value="0" aria-label="Progress of the operation, from the first hammer blow to the carriage at the stop"></label>
+    </div>
+  </div>
+
+  <section class="pn-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>The line</b> is a row of six blocks standing across the bench, pressed together by springs at both ends. The springs push the blocks back together whenever nothing holds them apart.</li>
+      <li><b>The breach.</b> A pendulum drop hammer drives the lit wedge into the boundary between the two middle blocks, one blow at a time, until its nose has cut through the line's full depth. The readout counts the blows and how far through the wedge has gone.</li>
+      <li><b>Widening.</b> The hammer swings up out of the way. A carriage runs in behind the wedge, and its two side rollers force the gap from about 6 mm to 30 mm. The ruler in front of the line reads the gap.</li>
+      <li><b>Holding the shoulders and exploiting.</b> (Doctrine calls these the penetration’s flanks.) Behind the rollers, two shoulder pins rise from the bench and hold the blocks apart, so the carriage can run on to the stop behind the line with the gap still open. Drop the pins and the springs shut the gap behind the carriage, cutting it off.</li>
+    </ol>
+    <p>Move the pointer across the figure, drag the slider or use the arrow keys to run the operation; click the figure, press H or use the button to raise or drop the pins.</p>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model and readout drive both. Here the scale is a rifle company, blue is friendly and red is the enemy. The Army’s manual for the rifle platoon says penetrations are “normally only conducted at battalion echelon and above” (ATP 3-21.8, para. 4-22), so read this as one company’s part at the point of a larger penetration. An infantry rifle company has, among other elements, “three rifle platoons” (para. 1-15); here each is drawn as three groups of four soldiers standing for its squads, so the drawing shows fewer soldiers than a real company has. Across the middle, two enemy platoon positions, each drawn as four two-man fighting positions and a machine-gun nest, hold a line on two low hills, with wire in front; the saddle between them is the boundary, and the red fans on the ground are the machine guns’ sectors, crossing in front of it. From the chalk line of departure, the breach platoon (the bench’s wedge) rushes through the boundary in a column of squads, one rush per hammer blow, firing from the ground between rushes, then secures the far side. The follow-on platoon (the rollers and pins on the bench) forces the gap wide, driving the enemy pairs nearest the boundary back to alternate positions, and turns its squads out to hold both shoulders; the blue fans are their sectors. The lit platoon (the carriage), the main effort, passes through the gap to the objective flag and shakes out into a line. Drop the pins and the follow-on squads go on with it instead; the enemy walks back into its holes and the gap closes behind them. Losses are notional: greyed figures lying still are men down on both sides, the first blue one at a collection point behind the line of departure where a medic kneels and the rest where they fell, and the readout counts them, friendly vs enemy, the attacker paying most if the shoulders are let go and its platoon in depth is cut off. Soldiers are drawn larger than scale so they read; unit sizes, the width of the gap, ranges and timings are notional.</p>
+
+    <h2>What doctrine says</h2>
+    <p>U.S. Army <i>FM 3-90, Tactics</i> (May 2023) defines a penetration as “a form of maneuver in which a force attacks on a narrow front” (para. 2-36). Plans for one “normally have three phases”: breaching the enemy force’s main defensive positions, “widening the gap created to secure the penetration’s flanks,” and “seizing an objective and subsequently exploiting the success of the penetration” (para. 2-47).</p>
+    <p>The manual explains why the width of the gap matters: “A wider gap allows friendly forces to pass through more quickly and in large-sized formations, making it more difficult for enemy forces to close the gap” (para. 2-45).</p>
+
+    <h2>What is notional</h2>
+    <p>Everything the readout shows is bench geometry, not data. The hammer takes four blows to drive the wedge 22 mm, 2 mm past the back of the 20 mm deep line. The wedge is 10 mm thick at its back over 36 mm, so it holds the gap at about 6 mm when the breach is done. The rollers force it to 30 mm, and the carriage body alone keeps it at 18 mm while the body is still in the line. Without the pins, the springs close the gap to zero once the carriage has passed. The timings are chosen so the tour is easy to follow. The pins stand for holding the shoulders of the breach. Doctrine names the task but does not describe any such mechanism.</p>
+    <p class="fine">Source: Headquarters, Department of the Army, <a href="https://web.archive.org/web/20250224155209/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">FM 3-90, Tactics</a>, 1 May 2023 (archived copy of the official PDF), paras. 2-36, 2-45 and 2-47. Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a>, 11 January 2024 with Change 1 (<a href="https://web.archive.org/web/20250807233618id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">archived copy</a>), paras. 1-15 and 4-22. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

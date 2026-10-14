@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Friction | Jonathan Walberg</title>
+<meta name="description" content="Clausewitz's friction as a working bench model: a block winched up a slope, where surface friction and random grit make a simple job harder than it looks on paper.">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Friction | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/friction/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/friction/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.fr-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.fr-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.fr-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.fr-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.fr-text p,.fr-text li{line-height:1.65}
+.fr-text .fine{font-size:.88rem;color:var(--text-muted)}
+.fr-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.fr-figure{background:transparent}
+.fr-figure .iso-figure{margin:0}
+.fr-figure .iso-plate{background:var(--anatomy-card)}
+.fr-stage{outline:none;cursor:crosshair;touch-action:manipulation}
+.fr-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.fr-svg{display:block;width:100%;height:auto}
+.fr-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.fr-controls .btn{cursor:pointer}
+.fr-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.fr-controls output{font-variant-numeric:tabular-nums;min-width:2.6em}
+.fr-controls input[type=range]{flex:1;min-width:120px}
+.fr-text h2{margin-top:28px}
+.fr-text ol{padding-left:1.2em}
+.fr-text li{margin:6px 0}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.fr-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.fr-figure .iso-plate-corners{z-index:2}
+.fr-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.fr-figure[data-view="field"] .fr-svg{visibility:hidden}
+.fr-figure[data-view="field"] .fr-legend-machine{display:none}
+.fr-figure:not([data-view="field"]) .fr-field,.fr-figure:not([data-view="field"]) .fr-legend-field{display:none}
+.fr-legend{display:grid;gap:8px}
+/* the plan's ghost vehicle: pale; casualties: greyed and still; the medic: white */
+.tr-s[data-side="g"]{opacity:.5}
+.tr-s[data-side="g"] path{stroke:#7f93b8}.tr-s[data-side="g"] .tr-t{fill:#f4f6fa}.tr-s[data-side="g"] .tr-l{fill:#e6ebf3}.tr-s[data-side="g"] .tr-d{fill:#d5dce9}.tr-s[data-side="g"] .tr-g{fill:#b9c4d8}
+.tr-s[data-side="g"] .tr-veh{--anatomy-top:#f4f6fa;--anatomy-paper:#e6ebf3}.iso .tr-s[data-side="g"] .tr-veh>.iso-shade{fill:#d5dce9}
+.iso .tr-s[data-side="g"] .tr-veh>.iso-shade[data-shade="3"],.iso .tr-s[data-side="g"] .tr-veh>.iso-shade[data-shade="2"]{fill:#e6ebf3}
+.tr-s[data-side="fk"] path,.tr-s[data-side="hk"] path{stroke:#8f8b84}.tr-s[data-side="m"] path{stroke:#55524c}
+.tr-s[data-side="fk"] .tr-t{fill:#cfccc6}.tr-s[data-side="fk"] .tr-l{fill:#b9b6b0}.tr-s[data-side="fk"] .tr-d{fill:#a8a59f}.tr-s[data-side="fk"] .tr-g{fill:#8f8b84}
+.tr-s[data-side="hk"] .tr-t{fill:#d3cbc8}.tr-s[data-side="hk"] .tr-l{fill:#bfb5b2}.tr-s[data-side="hk"] .tr-d{fill:#ada3a0}.tr-s[data-side="hk"] .tr-g{fill:#938986}
+.tr-s[data-side="m"] .tr-t{fill:#fbfaf7}.tr-s[data-side="m"] .tr-l{fill:#ecebe6}.tr-s[data-side="m"] .tr-d{fill:#d9d7d0}.tr-s[data-side="m"] .tr-g{fill:#9a978f}
+.fr-mud{fill:#b9a98a;opacity:.55;stroke:none}.fr-bog{opacity:.8}
+.fr-field .tr-water{opacity:.9}
+.fr-fog{fill:#fbfbf8;stroke:none}
+.fr-field [data-dyn]{transition:opacity .25s}.fr-field[data-reset] [data-dyn]{opacity:0}
+@media (max-width:520px){.fr-figure .iso-plate-corner[data-corner="hint"]{display:none}.fr-stage{overflow:hidden}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="fr-main">
+  <a class="fr-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Friction</h1>
+  <p class="lede">On paper, moving a block up a slope takes one known pull. On the bench it takes more, and every so often a grain of grit stops it dead until the pull builds enough to break it free. Clausewitz used the word friction for this gap between war as planned and war as it happens. This model makes the gap something you can watch.</p>
+
+  <div class="iso fr-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="fr-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="fr-grit" aria-pressed="true">Grit: on</button>
+      <button type="button" class="btn btn-outline" id="fr-restart">Restart run</button>
+      <label>Friction μ <input type="range" id="fr-mu" min="0" max="0.6" step="0.01" value="0.3" aria-label="Friction coefficient of the surface"> <output id="fr-mu-out">0.30</output></label>
+    </div>
+  </div>
+
+  <section class="fr-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>The block</b> (lit) is the task: a 1 kg load to be moved up a 20° slope. A cord runs from its eye up the slope, over the pulley at the crest and level to the winch drum.</li>
+      <li><b>The winch</b> sits on a carriage that slides on rails. A spring behind it holds it back, so the harder the cord pulls, the further the carriage slides and the more the spring stretches. The pointer on the carriage reads that pull on the scale, at 2 cm per newton.</li>
+      <li><b>The bright mark</b> on the scale is the pull on paper: what the slope alone would need with no friction at all, 3.4 N.</li>
+      <li><b>The friction control</b> sets the surface’s coefficient μ. The steady pull is <i>mg</i>(sin 20° + μ cos 20°): 3.4 N at μ = 0, 6.1 N at 0.3 and 8.9 N at 0.6. The dots on the strip get denser as μ rises.</li>
+      <li><b>Grit</b> grains turn up at random places on each run. When the block reaches one it stops, and the winch has to stretch the spring until the pull breaks it free, so the block jerks forward. The readout gives the pull and, at the top, the time taken against the paper run.</li>
+    </ol>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same run, the same friction setting and the same grit drive both, played at half speed here so the incidents can be followed. The scene is a small-unit vignette: a mounted platoon (lit), drawn as four vehicles, marches along a farm track from a start point on the left to a release point under the flag. The plan is war on paper: a chalk route on pegs beside the track, with a peg for every ten planned minutes, and a pale ghost vehicle that keeps the plan’s timetable, which is the machine’s paper run. The block’s travel becomes the platoon’s progress; the friction control becomes the mud and puddles on the track, which slow every stretch of it; and each grit grain becomes an incident at the same random point. A vehicle bogs in mud and its crew dig it out while the next vehicle closes up; the lead takes a wrong turn down a side track and comes back; the radio fails and a runner goes down the column; fog rolls in and a ground guide walks ahead; or a small enemy outpost opens fire, a fire team dismounts to return it, and both sides take casualties, greyed where they fell, with a medic coming up. The readout gives the time against the plan in minutes and, on arrival, the casualties, friendly against enemy. Clausewitz’s own examples run the same way: “the rain prevents a battalion from arriving at the right time, because instead of for three it had to march perhaps eight hours,” and the cavalry from charging “because it is stuck fast in heavy ground” (Book I, ch. 7, para. 4). In MCDP 1’s terms the mud and the fog stand for terrain and weather and the outpost for enemy action, while the wrong turn and the dead radio stand for self-induced friction or, as MCDP 1 lists under external friction, mere chance. The incidents are a simplification, like the grit: Clausewitz says real friction “is not concentrated… at a few points” but is everywhere. Vehicles and soldiers are drawn larger than scale so they read; the platoon’s make-up, the distances, timings, incident kinds and casualties are notional.</p>
+
+    <h2>What Clausewitz and doctrine say</h2>
+    <p>Clausewitz gives friction its own chapter in <i>On War</i> (Book I, ch. 7). In J. J. Graham’s translation: “Everything is very simple in War, but the simplest thing is difficult. These difficulties accumulate and produce a friction which no man can imagine exactly who has not seen War.” He calls friction “the only conception which in a general way corresponds to that which distinguishes real War from War on paper.”</p>
+    <p>He also warns that the image has limits: this friction “is not concentrated, as in mechanics, at a few points,” and “is therefore everywhere brought into contact with chance.” The bench cannot honour that: its drag is a single mechanical coefficient, and its grit lands at a few discrete points, which is exactly what Clausewitz says real friction is not. Read the grit as a stand-in for chance, and the whole bench as a metaphor.</p>
+    <p>U.S. Marine Corps doctrine keeps the idea. <i>MCDP 1, Warfighting</i> (1997) says: “Friction is the force that resists all action and saps energy. It makes the simple difficult and the difficult seemingly impossible” (p. 5). It may be mental or physical, external (“imposed by enemy action, the terrain, weather, or mere chance”) or self-induced, from causes such as unclear plans or poor coordination (pp. 5–6). The manual’s answer is will: “One essential means to overcome friction is the will” (p. 6).</p>
+
+    <h2>What is notional</h2>
+    <p>The physics is real: a 1 kg block (<i>g</i> = 9.81 m/s²) on a 20° slope with Coulomb friction, so the pull figures above follow from the formula. In this model the static coefficient is the kinetic one plus 0.08, each grit grain adds a breakaway force of 2.5–5 N, the winch winds at 16 cm/s with no load and slows in a straight line to a stall at 18 N, and a dashpot beside the spring (6 N·s/m) keeps the motion calm enough to follow. Those numbers are chosen for teaching, not measured. The “paper” run is the same rig with no friction and no grit: it reaches the top in about 9.1 s. The mapping from block and grit to armies is a metaphor, and Clausewitz himself says war’s friction is spread everywhere rather than sitting at a few points.</p>
+    <p>In the Battlefield view one second of the bench run is five minutes of the march, so the paper run’s 9.1 s becomes a 45-minute plan. That rate, the five incident kinds and the way they are dealt out to the grit grains of each run are notional. So are the casualties: each contact costs the platoon one casualty, two if its grit grain needs more than 3.75 N to break, and costs the outpost one.</p>
+    <p class="fine">Sources: Carl von Clausewitz, <a href="https://www.gutenberg.org/ebooks/1946"><i>On War</i></a>, trans. J. J. Graham, new and revised edition with notes by F. N. Maude (Project Gutenberg eBook #1946), Book I, ch. 7, paras. 2–4. Headquarters, U.S. Marine Corps, <a href="https://www.marines.mil/Portals/1/Publications/MCDP%201%20Warfighting.pdf">MCDP 1, Warfighting</a>, 20 June 1997, pp. 5–6 (<a href="https://web.archive.org/web/2024/https://www.marines.mil/Portals/1/Publications/MCDP%201%20Warfighting.pdf">archived copy</a>). Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

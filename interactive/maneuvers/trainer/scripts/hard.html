@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Maneuver Trainer: Hard | Jonathan Walberg</title>
+<meta name="description" content="Command a small unit in real time on an isometric map: select a unit, give it an order and a place, and fight against an enemy you only see once you spot it. Twelve fictional scenarios at fire team, platoon and company level, scored with an after-action review.">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Maneuver Trainer: Hard | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/trainer/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/trainer/hard/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by trainer/scripts/build.mjs from scripts/hard.html and scripts/hard.mjs. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+/*COMMON_CSS*/
+/* Hard only: order bar, pending-order tags, help overlay */
+.mt-main kbd{font:600 .78em var(--font-sans);padding:0 5px;border:1px solid var(--border);border-bottom-width:2px;border-radius:4px;background:var(--surface);color:var(--green-900)}
+.mh-orders{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
+.mh-orders:empty{display:none}
+.mh-sel{flex:1 0 100%;display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;font-size:.86rem;color:var(--text-muted);min-height:24px}
+.mh-sel b{color:var(--green-900)}
+.mh-ord{font:inherit;font-size:.84rem;font-weight:600;min-height:38px;padding:6px 11px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--green-900);cursor:pointer;touch-action:manipulation}
+.mh-ord kbd{margin-left:5px;font-size:.72em;opacity:.75}
+.mh-ord[aria-pressed="true"]{background:var(--green-800);border-color:var(--green-800);color:#fff}
+.mh-ord[aria-pressed="true"] kbd{background:transparent;color:#fff;border-color:rgba(255,255,255,.5)}
+.mh-ord[disabled]{opacity:.38;cursor:not-allowed}
+.mh-opts{flex:1 0 100%;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:.8rem;color:var(--text-muted)}
+.mh-opts label{display:inline-flex;align-items:center;gap:5px}
+.mh-opts select{font:inherit;font-size:.8rem;padding:5px 6px;border:1px solid var(--border);border-radius:6px;background:#fff;color:var(--text);max-width:190px}
+.mh-wp[aria-pressed="true"]{background:var(--green-100);border-color:var(--green-600)}
+.mh-stop.is-armed{background:#b5533f;border-color:#b5533f;color:#fff}
+.mt-clock.is-late #mt-clock{color:#a6402f}
+.mh-prompt{font-size:.86rem;color:var(--green-800);font-weight:600}
+.mh-kb{flex-basis:100%;font-size:.84rem;color:var(--green-800)}
+.mt-map-svg .mt-route.mh-pend{stroke:#3b5bab;stroke-dasharray:2 2.5;opacity:.95}
+.mt-map-svg .mt-route-dot.mh-pend,.mt-map-svg .mt-route-head.mh-pend{fill:#3b5bab;stroke:#3b5bab}
+.mt-map-svg .mt-route.mh-draft{stroke:#1d1d1b;stroke-dasharray:1.5 2.5}
+.mt-map-svg .mt-route-dot.mh-draft,.mt-map-svg .mt-route-head.mh-draft{fill:#1d1d1b;stroke:#1d1d1b}
+.mt-map-svg .mh-tag{font:600 10px var(--font-sans);fill:#26408a;paint-order:stroke;stroke:var(--anatomy-card,#f6f4ee);stroke-width:3px;stroke-linejoin:round;pointer-events:none}
+.mt-map-svg .mh-tag.mh-tgt{fill:#a6402f}
+.mt-map-svg .mh-ring{fill:none;stroke:#1d1d1b;stroke-width:1.2;stroke-dasharray:2 2;pointer-events:none}
+.mh-help{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;padding:14px;background:rgba(246,244,238,.82);backdrop-filter:blur(2px)}
+.mt-mapwrap .tr-s[data-lit]{filter:drop-shadow(0 0 1.6px #f2c230) drop-shadow(0 0 .8px #f2c230)} /* QA: the selected unit glows so it reads at phone size */
+.mh-help[hidden]{display:none}
+.mh-help-box{max-width:520px;max-height:100%;overflow:auto;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;box-shadow:0 6px 24px rgba(0,0,0,.12);font-size:.88rem;line-height:1.5}
+.mh-help-box h3{margin:.2em 0 .5em}
+.mh-help-box ul{padding-left:1.1em;margin:.4em 0 .8em}
+.mh-help-box li{margin:.2em 0}
+.mh-rec{border:1px solid var(--green-200);background:var(--green-50);border-radius:10px;padding:4px 14px 10px;margin:0 0 16px}
+.mh-rec ul{font-size:.9rem}
+@media (max-width:560px){.mh-orders{gap:5px}.mh-ord{font-size:.76rem;padding:4px 8px;min-height:34px}.mh-ord kbd{display:none}.mh-help-box{font-size:.82rem;padding:10px 12px}.mh-help{position:fixed;z-index:1000;padding:16px}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="mt-main">
+  <a class="mt-back" href="/interactive/maneuvers/trainer/">&larr; Maneuver Trainer</a>
+  <h1>Maneuver Trainer: Hard</h1>
+  <p class="lede">Real time. Read the briefing, start the clock, and command: select a unit, give it an order and tap the ground or the enemy. The clock does not stop. At company level your orders go by radio and take a little while to reach the platoons, so order early.</p>
+
+  <section id="mt-pick">
+    <h2>Pick a scenario</h2>
+    <div id="mt-picker"></div>
+  </section>
+
+  <section id="mt-game" hidden>
+    <div class="mt-bar">
+      <button type="button" class="mt-link" id="mt-to-picker">&larr; Scenarios</button>
+      <h2 id="mt-title"></h2>
+      <ol class="mt-steps" id="mt-steps" aria-label="Steps"></ol>
+    </div>
+    <div class="mt-grid">
+      <div class="mt-mapwrap">
+        <div class="iso" data-theme="light" id="mt-card">
+          <figure class="iso-figure"><div class="iso-plate mt-plate">
+            <div class="iso-plate-corners" aria-hidden="true"><span class="iso-plate-corner" data-corner="fig"></span><span class="iso-plate-corner" data-corner="title"></span><span class="iso-plate-corner" data-corner="hint"></span><span class="iso-plate-corner" data-corner="readout" data-readout></span></div>
+            <div class="mt-map-host"></div>
+            <div class="mh-help" id="mh-help" hidden></div>
+          </div></figure>
+        </div>
+        <div class="mh-orders" id="mh-orders"></div>
+        <div class="mt-controls" id="mt-controls"></div>
+      </div>
+      <aside class="mt-panel" id="mt-panel" aria-live="polite"></aside>
+    </div>
+    <section class="mt-aar" id="mt-aar" hidden></section>
+  </section>
+
+  <section class="mt-text">
+    <h2>How to play</h2>
+    <ol>
+      <li><b>Briefing.</b> Mission, enemy, terrain, troops and time. Your troops are blue; the enemy appears in red only once one of your soldiers has seen it, and a faint red chalk ring marks where it was last seen.</li>
+      <li><b>Start the clock.</b> It runs at real time and cannot be paused. “Stop exercise” ends the run and goes to the review.</li>
+      <li><b>Select a unit.</b> Tap it on the map or in the roster, or press its number key.</li>
+      <li><b>Give an order.</b> Pick it from the order bar or with its key: <kbd>M</kbd> move, <kbd>S</kbd> support by fire, <kbd>A</kbd> assault, <kbd>H</kbd> hold / defend, <kbd>Y</kbd> bypass, <kbd>K</kbd> smoke, <kbd>F</kbd> call for fire, <kbd>X</kbd> breach, <kbd>B</kbd> break contact, <kbd>R</kbd> reserve, <kbd>O</kbd> observe / reconnoiter, <kbd>C</kbd> counterattack, <kbd>L</kbd> lift fire, <kbd>T</kbd> shift fire. Then tap the place or the enemy. Tapping open ground with a unit selected and no order picked is a move.</li>
+      <li><b>Routes.</b> Turn on Waypoints (or hold Shift) to lay a route of several points; tap the last point again, press Enter or Send to give it. For an assault or support by fire, taps on open ground are waypoints and the tap on the enemy sends the order; tap the same spot twice to fire on an area.</li>
+      <li><b>Radio delay.</b> At company level an order reaches a platoon after a notional 10 to 20 seconds (radio, then the platoon leader issuing it). A chalk route and a countdown show the order on its way.</li>
+      <li><b>Review.</b> The score ranks the objective first, then your losses, then time. The after-action review says what happened, why, and what to sustain or improve, with links to the figures. “Show the recommended plan” draws one good answer on the map.</li>
+    </ol>
+    <h2>What is notional</h2>
+    <p>The scenarios, places and enemy are fictional. Every number (ranges, rates of fire, suppression, casualties, the radio delay) is a notional teaching value chosen so the lesson of each scenario shows, not data and not a model of real weapons. Casualties fall on both sides even when a plan works; soldiers who are down are shown greyed and still, and are carried back to a casualty collection point. Soldiers, trees and positions are drawn larger than scale so they read. This is not a US Army training aid.</p>
+    <p class="mt-fine">Terms follow Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a> (11 January 2024, incorporating Change 1, June 2025): the fire team (team leader, automatic rifleman, grenadier, rifleman, para. 1-11), the squad as two fire teams and a squad leader (para. 1-9), fire and movement in contact (para. 1-9), support by fire (para. 3-56); and <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">FM 3-90, Tactics</a> (1 May 2023) for the forms of maneuver (para. 2-24). Map drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">
+const DATA = /*DATA*/;
+/*BUNDLE*/
+</script>
+</body>
+</html>

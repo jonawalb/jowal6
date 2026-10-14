@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Maneuver Trainer | Jonathan Walberg</title>
+<meta name="description" content="A game about small-unit maneuver: twelve fictional scenarios at fire team, platoon and company level. Plan and watch, give orders turn by turn, or command in real time, then read the after-action review.">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Maneuver Trainer | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/trainer/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/trainer/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by trainer/scripts/build.mjs from scripts/hub.html. Edit that, not this file. -->
+<style>
+/*COMMON_CSS*/
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="mt-main">
+  <a class="mt-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Maneuver Trainer</h1>
+  <p class="lede">The figures in this section explain the ideas. The trainer asks you to use them. Each scenario gives you an objective, a piece of ground and a force, and you decide how to maneuver: who fixes the enemy, who moves, by which route and when. Then the enemy shoots back.</p>
+  <h2>Three games, one set of scenarios</h2>
+  <div class="mt-games"><!--GAMES--></div>
+  <p class="mt-muted">Every game uses the same twelve scenarios and the same simulation, and scores the same way: the objective first, then your losses, then time, followed by an after-action review that names the concepts you used, the traps you avoided and the ideas you missed, each linked to its figure.</p>
+  <h2>The twelve scenarios</h2>
+  <!--SCENARIOS-->
+  <section class="mt-text">
+    <h2>What this is, and is not</h2>
+    <p>The scenarios, place names and enemy are fictional, and every number in the simulation (ranges, rates of fire, suppression, casualties, times) is a notional teaching value, not data. Casualties fall on both sides even when a plan works, shown greyed and still, never graphic. This is a teaching game, not a US Army training aid.</p>
+    <p class="mt-fine">Doctrine terms follow Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a> (11 January 2024, incorporating Change 1, June 2025), paras. 1-9, 1-11 and 3-56, and <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">FM 3-90, Tactics</a> (1 May 2023), para. 2-24.</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script>
+(function(){var D=/*DATA*/,b={};try{b=JSON.parse(localStorage.getItem("maneuverTrainer.best")||"{}")||{}}catch(e){}
+document.querySelectorAll("[data-best]").forEach(function(el){var id=el.getAttribute("data-best"),parts=[];D.modes.forEach(function(m){var r=b[m+":"+id];if(r)parts.push(m.charAt(0).toUpperCase()+m.slice(1)+": "+r.grade+" · "+r.line)});el.textContent=parts.length?"Best · "+parts.join(" · "):"Not played yet"});})();
+</script>
+</body>
+</html>

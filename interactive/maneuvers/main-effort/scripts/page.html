@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Main Effort and Economy of Force | Jonathan Walberg</title>
+<meta name="description" content="Why commanders weight one effort and hold the rest with the minimum, as a working bench model: twelve weights, four gates, one breach. Built from U.S. Army doctrine (ADP 3-0, 2019; FM 3-0, 2022).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Main Effort and Economy of Force | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/main-effort/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/main-effort/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.me-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.me-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.me-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.me-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.me-text p,.me-text li{line-height:1.65}
+.me-text .fine{font-size:.88rem;color:var(--text-muted)}
+.me-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.me-figure{background:transparent}
+.me-figure .iso-figure{margin:0}
+.me-figure .iso-plate{background:var(--anatomy-card)}
+.me-stage{outline:none;cursor:crosshair;touch-action:manipulation}
+.me-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.me-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.me-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.me-figure .iso-plate-corners{z-index:2}
+.me-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.me-figure[data-view="field"] .me-svg{visibility:hidden}
+.me-figure[data-view="field"] .me-legend-machine{display:none}
+.me-figure:not([data-view="field"]) .me-field,.me-figure:not([data-view="field"]) .me-legend-field{display:none}
+.me-legend{display:grid;gap:8px}
+/* casualties: greyed and still (side fc = friendly, hc = enemy), no colour beyond a faint tint */
+.me-figure .tr-s[data-side="fc"] path,.me-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.me-figure .tr-s[data-side="fc"] .tr-t,.me-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.me-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.me-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.me-figure .tr-s[data-side="fc"] .tr-d,.me-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.me-figure .tr-s[data-side="fc"] .tr-g,.me-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.me-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.me-controls .btn{cursor:pointer}
+.me-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.me-controls input[type=range]{flex:1;min-width:120px}
+.me-text h2{margin-top:28px}
+.me-text ol{padding-left:1.2em}
+.me-text li{margin:6px 0}
+@media (max-width:520px){.me-figure .iso-plate-corner[data-corner="hint"]{display:none}.me-stage{overflow:hidden}}
+.me-controls .me-mains{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--anatomy-text)}
+.me-controls .me-mains .btn{min-width:40px;padding-left:10px;padding-right:10px}
+.me-controls .me-mains .btn[aria-pressed="true"]{background:var(--green-700,#2f5d3a);color:#fff}
+.me-controls output{min-width:1ch;font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="me-main">
+  <a class="me-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Main Effort and Economy of Force</h1>
+  <p class="lede">A commander seldom has enough combat power to enjoy a favorable correlation of forces everywhere (FM 3-0). Army doctrine’s answer (ADP 3-0) is to name one main effort, usually weight it with the preponderance of combat power, and resource the rest with the minimum necessary. This bench model shows the trade.</p>
+
+  <div class="iso me-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="me-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <div class="me-mains" role="group" aria-label="Main effort">Main effort
+        <button type="button" class="btn btn-outline" data-main="0" aria-pressed="false">A</button>
+        <button type="button" class="btn btn-outline" data-main="1" aria-pressed="false">B</button>
+        <button type="button" class="btn btn-outline" data-main="2" aria-pressed="true">C</button>
+        <button type="button" class="btn btn-outline" data-main="3" aria-pressed="false">D</button>
+      </div>
+      <label>Discs left on each supporting gate <input type="range" id="me-each" min="0" max="3" step="1" value="3" aria-label="Discs left on each supporting gate"> <output id="me-each-out">3</output></label>
+      <button type="button" class="btn btn-outline" id="me-even">Spread evenly</button>
+    </div>
+  </div>
+
+  <section class="me-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>The wall</b> has four sectors, A to D (one to four pips on the tags in front). Each sector is a gate held up by springs and two shear pins, with a stack of weight discs pressing down on it.</li>
+      <li><b>The discs</b> are the force’s combat power: twelve in all, never more. The loader on the overhead beam carries them from gate to gate, up to four at a time.</li>
+      <li><b>In this model</b>, a gate with six or more discs shears its pins and drops through the wall: a breach. A gate with one to five discs stays held. A gate with none is pushed back up by its springs: an exposed sector.</li>
+      <li><b>The lit gate</b> is the main effort. Pick it by clicking a gate, with the buttons or with the left and right arrow keys. The slider (or the up and down keys) sets how many discs each supporting gate keeps.</li>
+    </ol>
+    <p>Try three settings. Spread evenly, three discs each: every sector holds and nothing breaks. One disc on each supporting gate, nine on the main effort: the main effort breaks through and the rest still hold. None on the supporting gates: the breach comes, but three sectors are left exposed.</p>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model and readout drive both, and you can click a sector of the ground to make it the main effort. Here the scale is a rifle company attacking on a front of four platoon sectors, A to D from left to right, blue friendly and red enemy. Across the top, the enemy holds two-man fighting positions, two in each sector, with a wood at its back. Each disc on the bench is one blue element on the ground: a rifle squad, “two fire teams and a squad leader” (ATP 3-21.8, para. 1-9), each team built around a team leader, an automatic rifleman, a grenadier and a rifleman (para. 1-11); a machine-gun team, “a gunner and an assistant gunner” (para. 1-13); or an attached tank. Each sector starts with a squad, a machine-gun team and a tank, and gives up its tank and machine-gun team before its squad. The lit sector is the main effort. Weighted with six or more elements, its tanks drive through the enemy line and its squads follow in squad column, while the thinly held sectors stay on their line, down and firing; machine-gun teams stay where they are, and stop firing once no enemy is left in front of them. Spread three to a sector, every sector stalls in squad line, a formation “used to assault or as a pre-assault formation” (para. 3-54), trading fire at the same distance. A sector left with nothing is empty, and the enemy there comes out of its positions into the open ground; its red fan marks the empty ground its fire now covers, beside the open flank of the next sector. Elements shifted between sectors (the bench’s loader) travel along the road behind the line of departure, the chalk line on pegs, with chalk boundaries between the sectors; the flag marks the company’s objective. Success is not free: greyed figures lying still are men down on both sides, the first blue one at a collection point by the road with a medic kneeling beside him; the readout ends with the count, blue against red. Soldiers and tanks are drawn larger than scale (about one and a half times) so they read; sizes, ranges, timings, the enemy’s strength, the mix of elements and the casualty counts are notional.</p>
+
+    <h2>What doctrine says</h2>
+    <p>U.S. Army <i>ADP 3-0, Operations</i> (31 July 2019) defines the main effort as “a designated subordinate unit whose mission at a given point in time is most critical to overall mission success. It is usually weighted with the preponderance of combat power. Typically, commanders shift the main effort one or more times during execution” (para. 4-38). The loader stands for that shift: the tour moves the main effort from C to B. A supporting effort is “a designated subordinate unit with a mission that supports the success of the main effort,” and commanders, the manual says, “resource supporting efforts with the minimum assets necessary to accomplish the mission” (para. 4-39).</p>
+    <p><i>FM 3-0, Operations</i> (1 October 2022) lists economy of force among the nine principles of war: “Expend minimum-essential combat power on secondary efforts to allocate the maximum possible combat power on the main effort.” The same table defines mass: “Concentrate the effects of combat power at the most advantageous place and time to produce decisive results” (table 1-1). The manual calls economy of force “a reciprocal of mass” that “requires deliberately accepting risk in selected areas to achieve relative superiority—or overwhelming effects—in others” (para. A-10). Joint doctrine uses nearly the same words, with “primary efforts” in place of “the main effort” (JP 3-0, appendix A, para. 2e).</p>
+
+    <h2>What is notional</h2>
+    <p>Every number on the bench is a teaching value, not data: twelve discs, a breach at six discs on one gate, at least one disc to hold a sector, a held gate that sinks up to 2 units on its springs and an exposed one that rises 6. With these values, spreading the discs evenly never breaks through and weighting one gate does; that is true in this model because the thresholds were set that way. Real combat power does not add up like weights, sectors differ in strength, and doctrine’s “minimum” depends on the mission and the enemy, not on a fixed count.</p>
+    <p>The casualty counts in the readout and the Battlefield view are notional too, set so that success is never free and spreading out is not safe. A held sector loses one man for every two elements in it (rounded up), so a sector that commits more to an attack that stalls loses more; a breaching sector loses 2; each exposed sector costs 2 more in the nearest occupied sector, from fire into its open flank. The enemy loses 3 of the 4 men in a breached sector and 1 in a held sector with three or more elements against it. Spread evenly, that is 8 down against 4 with no breach; nine on the main effort and one on each other sector, 5 against 3 with a breach; everything on one sector, 8 against 3 with a breach and three sectors exposed. These are teaching values, not loss rates from data or doctrine.</p>
+    <p class="fine">Sources: Headquarters, Department of the Army, <a href="https://web.archive.org/web/2023/https://irp.fas.org/doddir/army/adp3_0.pdf">ADP 3-0, Operations</a>, 31 July 2019, paras. 4-38 and 4-39 (archived copy of the FAS mirror); <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN36290-FM_3-0-000-WEB-2.pdf">FM 3-0, Operations</a>, 1 October 2022, table 1-1 and para. A-10 (<a href="https://web.archive.org/web/20250204001405/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN36290-FM_3-0-000-WEB-2.pdf">archived copy</a>). Joint Chiefs of Staff, <a href="https://www.jcs.mil/Portals/36/Documents/Doctrine/pubs/jp3_0ch1.pdf">JP 3-0, Joint Operations</a>, 17 January 2017, incorporating Change 1, 22 October 2018, appendix A (<a href="https://web.archive.org/web/20220401082720/https://www.jcs.mil/Portals/36/Documents/Doctrine/pubs/jp3_0ch1.pdf">archived copy</a>). Headquarters, Department of the Army, <a href="https://web.archive.org/web/20250807233618id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a> (archived copy of the official PDF), 11 January 2024, incorporating Change 1 (June 2025), paras. 1-9, 1-11, 1-13 and 3-54. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

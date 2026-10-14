@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Deep Battle and Echelons | Jonathan Walberg</title>
+<meta name="description" content="Soviet deep battle and deep operations, as a notional bench model: a first echelon breaks the defended zone and a second is fed through to depth, racing a defender's reserve (a race the bench invents).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Deep Battle and Echelons | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/deep-battle/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/deep-battle/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.db-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.db-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.db-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.db-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.db-text p,.db-text li{line-height:1.65}
+.db-text .fine{font-size:.88rem;color:var(--text-muted)}
+.db-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.db-figure{background:transparent}
+.db-figure .iso-figure{margin:0}
+.db-figure .iso-plate{background:var(--anatomy-card)}
+.db-stage{outline:none;cursor:crosshair;touch-action:manipulation}
+.db-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.db-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.db-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.db-figure .iso-plate-corners{z-index:2}
+.db-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.db-figure[data-view="field"] .db-svg{visibility:hidden}
+.db-figure[data-view="field"] .db-legend-machine{display:none}
+.db-figure:not([data-view="field"]) .db-field,.db-figure:not([data-view="field"]) .db-legend-field,.db-figure:not([data-view="field"]) .db-labels{display:none}
+.db-legend{display:grid;gap:8px}
+/* Cluster and place labels over the battlefield (HTML, so they stay legible on a phone) */
+.db-labels{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:1}
+.db-label{position:absolute;left:0;top:0;white-space:nowrap;font:600 11px/1.2 var(--font-sans, Inter, system-ui, sans-serif);color:#24396a;margin:0;translate:-50% -100%;text-shadow:0 0 2px var(--anatomy-card),0 0 4px var(--anatomy-card),0 0 6px var(--anatomy-card)}
+.db-label[data-anchor="r"]{translate:0 -50%}.db-label[data-anchor="l"]{translate:-100% -50%}.db-label[data-anchor="below"]{translate:-50% 0}
+.db-label-lit{color:#000;font-weight:700}
+.db-label[data-side="h"]{color:#8f3a35}.db-label-place{color:#6b5f4c;font-weight:500;font-size:10px;letter-spacing:.02em}
+/* Figures and vehicles that are down: greyed, with a trace of their side's colour */
+.db-figure{--db-fx-ink:#5f6a80;--db-fx-t:#d9dce2;--db-fx-l:#bfc4ce;--db-fx-d:#a7adb9;--db-fx-g:#7c8392;--db-hx-ink:#7a6563;--db-hx-t:#e0d8d7;--db-hx-l:#c9bebd;--db-hx-d:#b2a6a5;--db-hx-g:#8a7d7c}
+.tr-s[data-side="fx"] path{stroke:var(--db-fx-ink)}.tr-s[data-side="hx"] path{stroke:var(--db-hx-ink)}
+.tr-s[data-side="fx"] .tr-t{fill:var(--db-fx-t)}.tr-s[data-side="fx"] .tr-l{fill:var(--db-fx-l)}.tr-s[data-side="fx"] .tr-d{fill:var(--db-fx-d)}.tr-s[data-side="fx"] .tr-g{fill:var(--db-fx-g)}
+.tr-s[data-side="hx"] .tr-t{fill:var(--db-hx-t)}.tr-s[data-side="hx"] .tr-l{fill:var(--db-hx-l)}.tr-s[data-side="hx"] .tr-d{fill:var(--db-hx-d)}.tr-s[data-side="hx"] .tr-g{fill:var(--db-hx-g)}
+.db-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.db-controls .btn{cursor:pointer}
+.db-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.db-controls input[type=range]{flex:1;min-width:120px}
+.db-text h2{margin-top:28px}
+.db-text ol{padding-left:1.2em}
+.db-text li{margin:6px 0}
+@media (max-width:520px){.db-figure .iso-plate-corner[data-corner="hint"]{display:none}.db-stage{overflow:hidden}.db-label{font-size:10px}.db-label-place{display:none}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="db-main">
+  <a class="db-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Deep Battle and Echelons</h1>
+  <p class="lede">Soviet theorists of the late 1920s and 1930s worked on how an attack could break through a defended zone and carry on into the depth behind it. Part of their answer was to attack in echelons: one force to break in, and a second to pass through the breach and carry the attack on. This bench model shows why the timing of that second echelon matters when it races a defender’s reserve.</p>
+
+  <div class="iso db-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="db-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="db-replay">Replay</button>
+      <label><span id="db-commit-text">Commit the second echelon on</span> <input type="range" id="db-commit" min="0" max="4" step="0.1" value="1" aria-label="Day the second echelon is committed"> <output id="db-commit-out">day 1.0</output></label>
+    </div>
+  </div>
+
+  <section class="db-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>The lane</b> runs from the start line on the left into the defender’s depth on the right. The ruler along the front has a tick every 5 km; the dark ticks mark the start line, 28 km and 70 km. The two inlaid plates beside the lane span the tactical zone and the operational depth beyond it.</li>
+      <li><b>The two gates</b> mark the front and rear of the defender’s tactical zone, and the pins between them are its obstacles.</li>
+      <li><b>The first echelon</b> is the gantry. Its plough knocks the pins flat and it lifts each gate as it reaches it. When its front reaches 28 km the breach is complete: it raises its plough, rolls on through the rear gate and halts.</li>
+      <li><b>The second echelon</b> is the lit carriage. It waits in a cradle 12 km behind the start line. The timer drum beside the cradle turns with the clock, and when its peg (the commitment day you set) reaches the lever, a push rod swings the latch open. The carriage cannot pass the gantry until the breach is complete; then it runs under the gantry and on to the buffer at 70 km.</li>
+      <li><b>The reserve shuttle</b> sets off on day 0 and reaches the rear gate on day 3 (the dark mark on the day clock). If the lit carriage has not reached that gate by then, the gate drops and the attack is stopped inside the tactical zone.</li>
+    </ol>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model, slider and clock drive both. The scale is one army’s slice, laid out left to right along the axis of attack as on the bench, blue attacking and red defending. On the left, behind a chalk start line, the lit mobile group (the second echelon: light tanks, lorried infantry and a cavalry squadron, drawn as 1930s-pattern types) waits in its assembly area until the day you commit it. Ahead of it, the first echelon is three rifle divisions abreast, each a cluster of riflemen with a support tank. Glantz describes the army attack echelon as “rifle corps reinforced by tanks and artillery” (p. 15) and the immediate infantry support tanks as having “attacked in advance of and with the infantry” (p. 16). The defender holds a first belt of trenches, wire and machine-gun posts at the forward edge, strongpoints in depth (the bench’s pins), and a second belt at the rear of the 28 km zone, where the axis road crosses a lateral road at a hamlet (the bench’s rear gate). The red fans are the belts’ fire over the breach sector. The divisions advance by fire and movement, some riflemen firing while the rest move; once both belts are broken, the outer divisions turn outward to hold the shoulders of the breach and the centre one steps off the road, which is this view’s reading of the bench’s gantry rolling clear. Committed, the mobile group drives in column through the breach toward the town 70 km deep under the flag. Glantz says the mobile group either “completed the penetration of the enemy’s tactical defense or attacked after penetration of the enemy’s second defense belt” (p. 15); like the bench, this view shows only the second case. Down the lateral road from the top, the defender’s reserve (tanks and lorried infantry) races to close the crossroads. If it gets there first, the mobile group’s head deploys short of it and both sides lose tanks; if it is late, it closes the crossroads behind the mobile group, fights the first echelon at the shoulders, and the mobile group overruns the rear services in the town. Success is not free on either path: riflemen and defenders go down as the belts are broken (greyed, lying still), knocked-out vehicles stand greyed with thin smoke, and an ambulance shuttles casualties back to the start line. In the Battlefield view the readout gives notional casualties in thousands, attacker vs defender, “N vs M down.” In this model breaking the 28 km zone costs the attacker 4.0 and the defender 3.0; a mobile group stopped at a sealed crossroads costs the attacker 2.5 more and the defender 1.0; one that gets through costs the attacker 0.6 and the defender 2.0 on the run to 70 km, and the late reserve’s fight at the shoulders adds 0.4 and 0.6. So committing on day 1 ends at 5.0 vs 5.6 down with the town taken, and committing on day 2.5 ends at 6.5 vs 4.0 down with the attack stopped. Figures and vehicles are drawn far larger than scale so they read; unit sizes, distances, routes, timings and casualties are notional, and the aviation, artillery and air assault forces are left out, as on the bench.</p>
+
+    <h2>Deep battle and deep operations</h2>
+    <p>David Glantz, writing for the U.S. Army’s Soviet Army Studies Office, says that between 1929 and 1936 Soviet theorists worked out “first, a tactical concept of deep battle and, then, an operational concept of deep operations” (p. 3). Deep battle had been formulated at the end of the 1920s by Tukhachevsky, Triandafillov, A. I. Egorov and others (p. 12). The 1936 Field Regulations made both “established tenets of Soviet military art”: “deep battle embraced the tactical level; that is combat by forces within an army, deep operations focused on operational-level combat involving fronts and armies alike” (p. 13).</p>
+    <p>In Glantz’s translation, the 1936 regulations described a deep operation as “simultaneous assault on enemy defenses by aviation and artillery to the depths of the defense, penetration of the tactical zone of the defense by attacking units with widespread use of tank forces, and violent development of tactical success into operational success with the aim of the complete encirclement and destruction of the enemy” (p. 13). Its operational formation had five parts: “an attack echelon; an echelon to develop success (a mobile group); reserves; aviation forces; and air assault forces” (p. 13). Within an army, the attack echelon was to penetrate the enemy’s tactical defenses to a depth of 25 to 30 km, and the exploitation echelon, a mobile group of several mechanized or cavalry corps, was to carry success into the operational depths, 70 to 100 km (p. 15). For front operations, planners assumed an average advance of 10 to 15 km a day for infantry and 40 to 50 km a day for mobile forces (p. 14).</p>
+    <p>Echeloned attack predates the tank forces. Jacob Kipp writes that Triandafillov’s <i>The Nature of the Operations of Modern Armies</i> “laid out in detail the military context of the theory of successive, deep operations” (p. 20), and that Triandafillov “drew upon Frunze’s use of shock armies for the breakthrough and the use of echeloned forces to facilitate exploitation and pursuit” (p. 21).</p>
+
+    <h2>What is notional</h2>
+    <p>The bench shows one army-sized slice and leaves out the aviation, artillery and air assault forces that the theory used to strike the whole depth at once. Its depths (28 km and 70 km) and speeds (12 km a day for the first echelon, 45 for the second) sit inside the ranges Glantz gives, but Glantz gives the speeds as what front operations would achieve “in theory,” and the depths for armies; the bench uses them as rough scale only. Everything else is a choice made for the bench: the second echelon’s start 12 km back, the lengths of the carriages, the rule that it cannot pass the first echelon until the breach is complete, and above all the reserve’s arrival on day 3. In this model the breach is complete on day 2.3, the second echelon reaches the rear gate on day 2.5 at the earliest, and committing it any later than day 2.1 lets the reserve seal the gate. Committed earlier, it only waits behind the first echelon; the bench does not count any cost of crowding the breach.</p>
+    <p class="fine">Sources: David M. Glantz, <a href="https://apps.dtic.mil/sti/tr/pdf/ADA232954.pdf">“Soviet Operational Art and Tactics in the 1930s”</a> (Fort Leavenworth, KS: Soviet Army Studies Office, 1990; prepared for the American Military Institute conference, 30–31 March 1990), pp. 3, 12–16, DTIC AD-A232954 (<a href="https://web.archive.org/web/2024id_/https://apps.dtic.mil/sti/tr/pdf/ADA232954.pdf">archived copy</a>). Jacob W. Kipp, <a href="https://apps.dtic.mil/sti/pdfs/ADA195053.pdf">“Mass, Mobility, and the Red Army’s Road to Operational Art, 1918–1936”</a> (Fort Leavenworth, KS: Soviet Army Studies Office, n.d.), pp. 20–21, DTIC AD-A195053 (<a href="https://web.archive.org/web/2024id_/https://apps.dtic.mil/sti/pdfs/ADA195053.pdf">archived copy</a>). Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

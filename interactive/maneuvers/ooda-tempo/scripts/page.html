@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OODA Loop and Tempo | Jonathan Walberg</title>
+<meta name="description" content="John Boyd's observe–orient–decide–act loop and the idea of tempo, as a working bench model: two geared loops, one faster, and a tally of when the slower side acts on a stale picture. Sources: Boyd's briefings and MCDP 1 Warfighting (1997).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="OODA Loop and Tempo | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/ooda-tempo/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/ooda-tempo/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.oo-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.oo-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.oo-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.oo-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.oo-text p,.oo-text li{line-height:1.65}
+.oo-text .fine{font-size:.88rem;color:var(--text-muted)}
+.oo-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.oo-figure{background:transparent}
+.oo-figure .iso-figure{margin:0}
+.oo-figure .iso-plate{background:var(--anatomy-card)}
+.oo-stage{outline:none;cursor:crosshair;touch-action:manipulation}
+.oo-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.oo-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.oo-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.oo-figure .iso-plate-corners{z-index:2}
+.oo-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.oo-figure[data-view="field"] .oo-svg{visibility:hidden}
+.oo-figure[data-view="field"] .oo-legend-machine{display:none}
+.oo-figure:not([data-view="field"]) .oo-field,.oo-figure:not([data-view="field"]) .oo-legend-field{display:none}
+.oo-legend{display:grid;gap:8px}
+/* casualties: greyed and still (side fc = friendly, hc = enemy), no colour beyond a faint tint */
+.oo-figure .tr-s[data-side="fc"] path,.oo-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.oo-figure .tr-s[data-side="fc"] .tr-t,.oo-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.oo-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.oo-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.oo-figure .tr-s[data-side="fc"] .tr-d,.oo-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.oo-figure .tr-s[data-side="fc"] .tr-g,.oo-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.oo-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.oo-controls .btn{cursor:pointer}
+.oo-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.oo-controls input[type=range]{flex:1;min-width:120px}
+.oo-controls output{min-width:3.2em;font-variant-numeric:tabular-nums;color:var(--anatomy-strong)}
+.oo-text h2{margin-top:28px}
+.oo-text ol{padding-left:1.2em}
+.oo-text li{margin:6px 0}
+@media (max-width:520px){.oo-figure .iso-plate-corner[data-corner="hint"]{display:none}.oo-stage{overflow:hidden}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="oo-main">
+  <a class="oo-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>OODA Loop and Tempo</h1>
+  <p class="lede">John Boyd argued for operating at a faster tempo than an opponent and, better yet, getting “inside” its cycle of observing, orienting, deciding and acting. This bench runs two such loops side by side and counts how often, in a notional model, the slower side acts on a situation the faster side has already changed.</p>
+
+  <div class="iso oo-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="oo-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <label>Blue’s cycle <input type="range" id="oo-blue" min="2" max="10" step="0.5" value="4" aria-label="Blue's cycle time, notional hours"><output id="oo-blue-v">4 h</output></label>
+      <label>Red’s cycle <input type="range" id="oo-red" min="2" max="10" step="0.5" value="6" aria-label="Red's cycle time, notional hours"><output id="oo-red-v">6 h</output></label>
+      <button type="button" class="btn btn-outline" id="oo-reset">Clear the tallies</button>
+    </div>
+  </div>
+
+  <section class="oo-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>Each wheel is one side’s loop</b>, Blue on the left and Red on the right. One turn of the wheel is one cycle. The scale under it is split into four quarters, observe, orient, decide and act, and each cycle starts at the bright zero mark.</li>
+      <li><b>The rider</b>, a cam block on the wheel, trips each station as it passes: the periscope swings (observe), the compass card turns (orient), the slide switch is thrown (decide), and the hammer rises through the act quarter and drops as the cycle ends. The drop is the action landing. Blue’s rider is the lit one.</li>
+      <li><b>The tempo levers</b> set each side’s cycle time; a motor drives each wheel through a pinion and an idler. Use the sliders, the arrow keys (left and right for Blue, up and down for Red), or move the pointer across the bench to set Blue’s.</li>
+      <li><b>The dial</b> on the differential between the two trains counts laps. Its long hand turns once each time Blue gains a full cycle on Red (backwards if Red is faster); the short hand turns once per eight laps.</li>
+      <li><b>The pin racks</b> hold each side’s last eight actions, newest nearest the middle. A pin rises when that action was stale: in this model, the other side ran one whole loop, observing after this loop began and acting before this loop’s action landed.</li>
+    </ol>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same loops, levers and tally drive both. Here the scale is two platoons, the lit blue one on the left and a red one on the right, in broken farmland of hedgerows, copses and low rises. Each is drawn as three rifle squads, each “two fire teams and a squad leader” (ATP 3-21.8, para. 1-9), each team built around a team leader, an automatic rifleman, a grenadier and a rifleman (para. 1-11), with the platoon leader and his radio operator. Each platoon works round three positions in turn. In this drawing a side halts at a position for the observe quarter of its loop, its squads in line and its leader standing to look; then it moves to its next position while it orients and decides, its squads in squad column, “the squad’s main formation for movement unless preparing for an assault” (para. 3-53), with the teams in wedges, “the basic formation of the fire team” (para. 3-46); and as its action lands it opens fire with its automatic riflemen. The faster platoon moves and fires more often. Each side’s fan on the ground is its fire sector, laid on the position where it last saw the other side. When an action is fresh, the fire falls on the enemy platoon, which goes to ground if it is halted. When it is stale (in this model, the other side has run a whole loop since this side looked), the fan already points at empty ground: the fire falls on the position the enemy has left, and one fire team rushes toward it and finds nobody there. The tally in the readout counts these stale actions for the slower side, as on the bench. Success is not free for the faster side either: greyed figures lying still are men down, Blue’s and Red’s, at each side’s casualty collection point with a medic kneeling by them, and the readout ends with the count, Blue against Red. The battlefield runs the same loops at half the bench’s speed so the moves can be followed; the stale shares do not change with speed. Soldiers are drawn larger than scale (about one and a half times) so they read; sizes, ranges, timings, the three positions, the halt-and-move schedule and the casualty counts are notional.</p>
+
+    <h2>What Boyd and doctrine say</h2>
+    <p>In <i>Patterns of Conflict</i>, Boyd presented as an implication of fast transients that “in order to win, we should operate at a faster tempo or rhythm than our adversaries—or, better yet, get inside adversary’s Observation–Orientation–Decision–Action time cycle or loop.” Such activity, he argued, “will make us appear ambiguous (unpredictable) thereby generate confusion and disorder among our adversaries” (p. 22 of the 2018 Air University Press edition, which reproduces the August 1987 briefing).</p>
+    <p>The circle on this bench is the popular, simplified loop, not Boyd’s drawing. His final sketch, from his 28 June 1995 summation “The Essence of Winning and Losing,” runs from left to right: observations feed forward into orientation, orientation into decision (marked “hypothesis”) and decision into action (“test”). Feedback runs back to observation from both decision and action, and orientation also sends “implicit guidance and control” straight to observation and to action, bypassing the decision box (edition cited, p. 384). Boyd called orientation “the most important part of the OODA loop since it shapes the way we observe, the way we decide, the way we act” (p. 243). The bench gives it one quarter, like the other stages.</p>
+    <p>Marine Corps doctrine treats tempo as speed over time: “Speed over time is tempo—the consistent ability to operate quickly,” and “In war, it is relative speed that matters rather than absolute speed” (<i>MCDP 1, Warfighting</i>, 1997, p. 40). Its note on tempo ties the idea to Boyd: “the party who consistently completes the cycle faster gains an advantage that increases with each cycle” (note 18, pp. 102–103).</p>
+
+    <h2>What is notional</h2>
+    <p>Cycle times are notional hours (2 to 10), run at 0.6 seconds of animation per hour, and the four stages are given equal length, a choice of this model. The stale rule is this model’s, not Boyd’s or the Marine Corps’. With steady tempos it gives a long-run share of the slower side’s actions that are stale of slow ÷ fast − 1, kept between 0 and 100%: 0% at equal tempo, 50% when the faster loop is 1.5 times quicker (Blue 4 h against Red 6 h, where Blue also gains a lap every 12 hours), and 100% at twice as quick or more. The live tally counts actual events, so it wanders around that share. The 48-, 20- and 12-tooth gears are bench details; the motor speed set by the lever, not the tooth counts, sets the tempo. Real loops are not clockwork, and the bench leaves out orientation, which Boyd called “the most important part of the OODA loop,” and the ambiguity and disorder he wanted a faster tempo to create in the opponent.</p>
+    <p>The casualty counts in the Battlefield view are notional too: men down in a notional day of this fight (24 hours). Each side loses half a man for every fresh action the other side lands, while a stale action falls on an empty position and costs nothing, plus 0.15 of a man for every move it makes itself, since moving exposes it. So at Blue 4 h against Red 6 h it is 2 Blue against 4 Red; at equal 6-hour tempos 3 against 3; at Blue 3 h against Red 6 h, where every Red action is stale, still 1 against 5; and two fast 2-hour sides lose 8 each. These are teaching values, not loss rates from data or doctrine.</p>
+    <p class="fine">Sources: John R. Boyd, <i>A Discourse on Winning and Losing</i>, ed. Grant T. Hammond (Maxwell AFB, AL: <a href="https://www.airuniversity.af.edu/Portals/10/AUPress/Books/B_0151_Boyd_Discourse_Winning_Losing.PDF">Air University Press, 2018</a>; <a href="https://web.archive.org/web/2024/https://www.airuniversity.af.edu/Portals/10/AUPress/Books/B_0151_Boyd_Discourse_Winning_Losing.PDF">archived copy</a>), pp. 22, 243, 384. U.S. Marine Corps, <a href="https://www.marines.mil/Portals/1/Publications/MCDP%201%20Warfighting.pdf">MCDP 1, Warfighting</a>, 20 June 1997 (<a href="https://web.archive.org/web/2024/https://www.marines.mil/Portals/1/Publications/MCDP%201%20Warfighting.pdf">archived copy</a>), pp. 40, 102–103. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+    <p class="fine">Battlefield view: Headquarters, Department of the Army, <a href="https://web.archive.org/web/20250807233618id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a> (archived copy of the official PDF), 11 January 2024, incorporating Change 1 (June 2025), paras. 1-9, 1-11, 3-46 and 3-53.</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

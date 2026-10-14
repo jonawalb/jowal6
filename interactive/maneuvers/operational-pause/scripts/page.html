@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Operational Pause | Jonathan Walberg</title>
+<meta name="description" content="What an operational pause is, as a notional bench model: rams that halt while their tanks refill, and what the halt costs, with quotes from joint doctrine (JP 5-0, 2020).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Operational Pause | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/operational-pause/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/operational-pause/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.op-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.op-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.op-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.op-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.op-text p,.op-text li{line-height:1.65}
+.op-text .fine{font-size:.88rem;color:var(--text-muted)}
+.op-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.op-figure{background:transparent}
+.op-figure .iso-figure{margin:0}
+.op-figure .iso-plate{background:var(--anatomy-card)}
+.op-stage{outline:none;cursor:crosshair;touch-action:manipulation}
+.op-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.op-svg{display:block;width:100%;height:auto}
+.op-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.op-controls .btn{cursor:pointer}
+.op-controls .op-modes{display:flex;gap:8px;flex-wrap:wrap}
+.op-controls .btn[aria-pressed="true"]{background:var(--green-700,#2f5d46);color:#fff}
+.op-controls output{min-width:6.5em;font-variant-numeric:tabular-nums}
+.op-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.op-controls input[type=range]{flex:1;min-width:120px}
+.op-text h2{margin-top:28px}
+.op-text ol{padding-left:1.2em}
+.op-text li{margin:6px 0}
+.op-figure .iso-solid.op-fuel>.iso-fill,.op-figure .iso-solid.op-fuel>.iso-shade{fill:#a9a9a4}
+.op-figure .iso-solid.op-fuel>.iso-top{fill:#cfcfca}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.op-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.op-figure .iso-plate-corners{z-index:2}
+.op-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.op-figure[data-view="field"] .op-svg{visibility:hidden}
+.op-figure[data-view="field"] .op-legend-machine{display:none}
+.op-figure:not([data-view="field"]) .op-field,.op-figure:not([data-view="field"]) .op-legend-field{display:none}
+.op-legend{display:grid;gap:8px}
+/* knocked-out vehicles: stopped and greyed (no filter, so nothing repaints per frame); the casualty evacuation truck has a white roof */
+.op-field .op-out .tr-t,.op-field .op-out .tr-l{fill:#cfccc4!important}.op-field .op-out .tr-d,.op-field .op-out .tr-g,.op-field .op-out .iso-shade{fill:#aeaba3!important}
+.op-field .op-out .tr-veh{--anatomy-top:#cfccc4;--anatomy-paper:#c2bfb7}.op-field .op-out path{stroke:#7a776f!important}
+.op-field .op-out .tr-gun{stroke:#7a776f!important}
+.op-field .op-medevac .tr-t{fill:#fbfbf8!important}
+.op-losses{margin:2px 0 0;font-size:13px;color:var(--anatomy-text)}
+@media (max-width:520px){.op-figure .iso-plate-corner[data-corner="hint"]{display:none}.op-stage{overflow:hidden}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="op-main">
+  <a class="op-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Operational Pause</h1>
+  <p class="lede">A force can only keep pushing while it has the fuel, ammunition and fresh units to do it. Joint doctrine calls a temporary halt in operations an operational pause, and normally plans one to regenerate combat power or augment sustainment. This bench model shows a pause doing its job, and what it can cost.</p>
+
+  <div class="iso op-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="op-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <div class="op-modes" role="group" aria-label="Pause plan">
+        <button type="button" class="btn btn-outline" id="op-together" aria-pressed="true">Pause together</button>
+        <button type="button" class="btn btn-outline" id="op-alternate" aria-pressed="false">Alternate pauses</button>
+      </div>
+      <label>Pump rate <input type="range" id="op-pump" min="0.1" max="0.6" step="0.01" value="0.45" aria-label="Pump rate, tank-fulls per second"> <output id="op-pump-out">0.45 tank/s</output></label>
+    </div>
+    <p class="op-losses" id="op-losses" aria-live="polite">Notional losses in the first minute of this plan: 4 friendly, 4 enemy vehicles</p>
+  </div>
+
+  <section class="op-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>Two rams</b> stand for two components of one force: ram A is the far one, ram B the near one. Each strikes the anvil (the enemy) on a steady stroke.</li>
+      <li><b>The tank</b> above each ram holds four strokes of fuel. The lit column in its sight glass shows what is left. A ram only begins a stroke its tank can pay for, so when the tank runs dry the ram halts at home: its pause.</li>
+      <li><b>One pump</b> refills every halted tank, sharing its rate between them. A valve lever turns toward the viewer on the tank being filled. A ram restarts when its tank is full.</li>
+      <li><b>The dial</b> reads the enemy’s combat power. Each strike takes a little off; while no ram is pushing, it climbs back.</li>
+      <li><b>Pause together</b> runs both rams until both run dry, so the whole force halts at once and the dial climbs. <b>Alternate pauses</b> lets one ram refill while the other keeps striking. In this model, slow the pump below about 0.28 tank/s and the alternating plan breaks down: the refilling ram is not ready in time, and gaps open.</li>
+    </ol>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model, controls and readout drive both. The battlefield is drawn at operational scale: each small vehicle stands for a platoon, each group of three for a company and each cluster of nine for a battalion, blue friendly and red enemy. Two friendly battalions, A to the north (far) and B to the south (near), are the two rams. They attack an enemy battalion dug in along the edge of a village; the red fan is its fire sector and the flag in the village the objective. Behind each battalion a fuel and ammo point is staked out with tanker trucks and ammunition stacks. One supply road from the depot on the left feeds both, and its supply trucks are the shared pump: they run to whichever point is refuelling, faster as you raise the rate. A battalion attacks (lit) while it has fuel and ammunition; when it runs low it breaks contact behind a smoke screen and pulls back to its fuel and ammo point to refuel: its pause. Paused together, both battalions leave the line at once, nobody is firing, and the enemy&rsquo;s supply trucks and replacement vehicles drive up the road from the village: it reconstitutes, as the dial climbs. Alternating, one battalion holds the enemy under fire while the other refuels, then moves up to a ready position and waits its turn. Success is not free: the line under the card counts notional losses in the first minute of each plan, and knocked-out vehicles stop, grey out and smoke while an ambulance (white roof) runs casualties back. The enemy&rsquo;s knocked-out vehicles follow the dial (nine times the share of combat power it has lost) and are replaced as it recovers. Vehicles are drawn far larger than scale so they read; unit sizes, distances, rates, timings and losses are notional, and the time is compressed.</p>
+
+    <h2>What doctrine says</h2>
+    <p>The Joint Chiefs of Staff’s <i>JP 5-0, Joint Planning</i> (December 2020) defines an operational pause as “a temporary halt in operations” (Glossary, p. GL-11). It lists pauses, with phases, branches and sequels, among the tools that help planners “arrange, manage, and execute complex operations” (ch. IV, para. 7.a.(2), p. IV-37), and says they “may be required when a major operation is reaching the end of its sustainability.” “Normally,” it adds, “operational pauses are planned to regenerate combat power or augment sustainment and forces for the next phase” (ch. IV, para. 7.a.(2)(c), p. IV-39).</p>
+    <p>A pause is not free. “The primary drawback to operational pauses is the risk of forfeiting strategic or operational initiative,” so the commander should “plan for as few operational pauses as possible.” If pauses are needed, the commander “can alternate pauses among components to ensure continuous pressure on the enemy or adversary through offensive actions by some components while other components pause” (same paragraph). Where pauses fall between phases, doctrine warns that the commander “must understand this may provide the enemy an opportunity to reconstitute as well” (ch. IV, para. 7.a.(2)(a), p. IV-38).</p>
+    <p>Paragraph 7.a.(2)(c) also gives the other side: “When an operational pause is properly executed, the enemy or adversary will lack sufficient combat power to threaten the joint force or regain the initiative during the pause.” In this model, whether a pause hands the enemy time depends on how much it can recover in that time. The model shows only the case where it can.</p>
+
+    <h2>What is notional</h2>
+    <p>Every rate is a teaching number, not data. A stroke takes 0.9 s; a full tank pays for four strokes; the pump delivers 0.45 tank-fulls per second by default, split between the tanks it is filling. Each strike removes 3.5% of the enemy’s remaining combat power, and while no ram pushes it recovers toward 100% at 15% of the gap per second. In this model, pausing together gives 3.6 s of pushing and then about 4.4 s of halt, and after a minute the dial swings between roughly 60% and 80%; alternating keeps one ram pushing all the time and the dial keeps falling (to about 9% after a minute). Real forces are not two rams, and real enemies recover at their own pace.</p>
+    <p>The battlefield&rsquo;s losses are notional too, counted in vehicles over the first minute of a plan. Friendly losses are 0.1 vehicle for every second a battalion attacks an enemy at full strength, scaled by the enemy&rsquo;s remaining combat power; enemy losses are its lost combat power at the end of the minute, out of nine vehicles. At the default pump rate, in this model, pausing together costs 4 friendly and 4 enemy vehicles; alternating costs 2 friendly and 8 enemy vehicles.</p>
+    <p class="fine">Source: Joint Chiefs of Staff, <a href="https://www.jcs.mil/Portals/36/Documents/Doctrine/pubs/jp5_0.pdf">JP 5-0, Joint Planning</a>, 1 December 2020 (<a href="https://web.archive.org/web/20220715183645/https://www.jcs.mil/Portals/36/Documents/Doctrine/pubs/jp5_0.pdf">archived copy</a>), ch. IV, para. 7.a.(2), pp. IV-36 to IV-39, and Glossary, p. GL-11. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

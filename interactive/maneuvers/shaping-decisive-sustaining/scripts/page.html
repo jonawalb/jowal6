@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shaping, Decisive and Sustaining | Jonathan Walberg</title>
+<meta name="description" content="Decisive, shaping and sustaining operations as a working bench model: a three-stage press line where stopping any stage stops the good parts. Built from U.S. Army doctrine (ADP 3-0, 2019), and how FM 3-0 (2022) frames operations differently.">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Shaping, Decisive and Sustaining | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/shaping-decisive-sustaining/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/shaping-decisive-sustaining/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.sds-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.sds-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.sds-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.sds-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.sds-text p,.sds-text li{line-height:1.65}
+.sds-text .fine{font-size:.88rem;color:var(--text-muted)}
+.sds-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.sds-figure{background:transparent}
+.sds-figure .iso-figure{margin:0}
+.sds-figure .iso-plate{background:var(--anatomy-card)}
+.sds-stage{outline:none;cursor:crosshair;touch-action:manipulation}
+.sds-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.sds-svg{display:block;width:100%;height:auto}
+.sds-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.sds-controls .btn{cursor:pointer}
+.sds-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.sds-controls input[type=range]{flex:1;min-width:120px}
+.sds-text h2{margin-top:28px}
+.sds-text ol{padding-left:1.2em}
+.sds-text li{margin:6px 0}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.sds-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.sds-figure .iso-plate-corners{z-index:2}
+.sds-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.sds-figure[data-view="field"] .sds-svg{visibility:hidden}
+.sds-figure[data-view="field"] .sds-legend-machine{display:none}
+.sds-figure:not([data-view="field"]) .sds-field,.sds-figure:not([data-view="field"]) .sds-legend-field{display:none}
+.sds-legend{display:grid;gap:8px}
+/* knocked-out vehicles: greyed and stopped; the ambulance: white */
+.tr-s[data-side="fk"] path,.tr-s[data-side="hk"] path{stroke:#8f8b84}.tr-s[data-side="m"] path{stroke:#55524c}
+.tr-s[data-side="fk"] .tr-t{fill:#cfccc6}.tr-s[data-side="fk"] .tr-l{fill:#b9b6b0}.tr-s[data-side="fk"] .tr-d{fill:#a8a59f}.tr-s[data-side="fk"] .tr-g{fill:#8f8b84}
+.tr-s[data-side="hk"] .tr-t{fill:#d3cbc8}.tr-s[data-side="hk"] .tr-l{fill:#bfb5b2}.tr-s[data-side="hk"] .tr-d{fill:#ada3a0}.tr-s[data-side="hk"] .tr-g{fill:#938986}
+.tr-s[data-side="m"] .tr-t{fill:#fbfaf7}.tr-s[data-side="m"] .tr-l{fill:#ecebe6}.tr-s[data-side="m"] .tr-d{fill:#d9d7d0}.tr-s[data-side="m"] .tr-g{fill:#9a978f}
+.tr-s[data-side="fk"] .tr-veh{--anatomy-top:#cfccc6;--anatomy-paper:#b9b6b0}.tr-s[data-side="hk"] .tr-veh{--anatomy-top:#d3cbc8;--anatomy-paper:#bfb5b2}
+.iso .tr-s[data-side="fk"] .tr-veh>.iso-shade{fill:#a8a59f}.iso .tr-s[data-side="hk"] .tr-veh>.iso-shade{fill:#ada3a0}
+.iso .tr-s[data-side="fk"] .tr-veh>.iso-shade[data-shade="3"],.iso .tr-s[data-side="fk"] .tr-veh>.iso-shade[data-shade="2"]{fill:#b9b6b0}.iso .tr-s[data-side="hk"] .tr-veh>.iso-shade[data-shade="3"],.iso .tr-s[data-side="hk"] .tr-veh>.iso-shade[data-shade="2"]{fill:#bfb5b2}
+@media (max-width:520px){.sds-figure .iso-plate-corner[data-corner="hint"]{display:none}.sds-stage{overflow:hidden}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="sds-main">
+  <a class="sds-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Shaping, Decisive and Sustaining</h1>
+  <p class="lede">Army doctrine (ADP 3-0, 2019) sorts the parts of an operation by purpose: one decisive operation that accomplishes the mission, shaping operations that set it up, and sustaining operations that keep the force going. This bench model is a press line built the same way. Stop any stage and the good parts stop.</p>
+
+  <div class="iso sds-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="sds-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="sds-feed" data-name="feeder" aria-pressed="false">Stop feeder</button>
+      <button type="button" class="btn btn-outline" id="sds-shape" data-name="shaping press" aria-pressed="false">Stop shaping press</button>
+      <button type="button" class="btn btn-outline" id="sds-decide" data-name="decisive press" aria-pressed="false">Stop decisive press</button>
+      <button type="button" class="btn btn-outline" id="sds-all">Run all three</button>
+    </div>
+  </div>
+
+  <section class="sds-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>The feeder</b> on the left (the sustaining stage) pushes flat sheets out of a magazine onto the roller conveyor, one every 1.8 seconds.</li>
+      <li><b>The shaping press</b> in the middle pre-bends each sheet to 45°.</li>
+      <li><b>The decisive press</b>, with the lit punch, makes the final bend to 90°. Good parts drop into the back of the bin, scrap into the front.</li>
+      <li><b>The meter</b> reads good parts per minute: about 33 with all three stages running. Stop a stage with its button, by clicking the figure near it, or with keys 1, 2 and 3 (R restarts all three). Without the shaping press, sheets reach the final die flat and leave at 45°, which is scrap. Without the decisive press, they never get past 45°. Without the feeder, nothing arrives at all. In every case the meter runs down to zero.</li>
+    </ol>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same three switches drive both, and the buttons, keys 1, 2 and 3, R and a click on a force work the same way. Here the press line becomes a brigade-sized attack, drawn as this model’s own picture rather than as a doctrinal example: blue is friendly and red is the enemy, and each small vehicle stands for a platoon (or a gun section, or a supply section) and each group of three for a company. On the right a red mechanized company is dug in on a low hill, the objective (the flag), its fire sector marked on the ground. The shaping stage is a battery of four self-propelled guns, whose shells fall on the enemy positions, and two scout vehicles on a rise that watch the objective and call the fire (their sector is the blue fan); once the attack reaches the hill the guns shift their fire to the enemy’s rear. The decisive stage is the lit mechanized battalion, which attacks from its attack position (the chalk outline on pegs) across the line of departure (the chalk line) onto the hill. The sustaining stage is the supply trucks that run from the brigade’s support area (sheds, crate stacks and parked trucks, far left) along the main road to the rear of the attack and along a track to the guns. With all three running, the guns keep the enemy’s heads down, the attack takes the hill and the enemy’s survivors fall back. Stop the guns and scouts and the unsuppressed enemy stops the attack less than halfway, at a heavy cost. Stop the decisive attack and the guns shell the hill but nobody takes it. Stop the trucks and they halt on the road; the guns run short of ammunition and fall silent, and the attack stalls short of the hill for lack of fuel and ammunition. Each change replays the attack from its attack position. Success is not free: vehicles knocked out on both sides stop where they were hit, greyed and smoking, and an ambulance (white) carries casualties to the rear. The readout gives the losses as “N vs M down”, friendly vs enemy, counted in vehicles. Vehicles are drawn far larger than scale so they read; unit sizes, distances, ranges, timings and losses are notional.</p>
+
+    <h2>What doctrine says, and which edition says it</h2>
+    <p>The framework comes from U.S. Army <i>ADP 3-0, Operations</i> (July 2019). Its operational framework has four components, and the third is that “within these areas commanders conduct decisive, shaping, and sustaining operations to articulate an operation in terms of purpose” (para. 4-15).</p>
+    <p>The decisive operation “is the operation that directly accomplishes the mission” (para. 4-26). A shaping operation “creates and preserves conditions for success of the decisive operation through effects on the enemy, other actors, and the terrain” (para. 4-27). A sustaining operation “enables the decisive operation or shaping operations by generating and maintaining combat power,” and “Failure to sustain results in mission failure” (paras. 4-28, 4-29).</p>
+    <p><i>FM 3-0, Operations</i> (October 2022) organizes the framework differently. It names three models “commonly used to build an operational framework”: assigned areas; deep, close, and rear operations; and main effort, supporting effort, and reserve (para. 3-127). A text search of FM 3-0 (2022) finds no use of the terms decisive, shaping or sustaining operation. ADP 3-0 (2019) had used deep, close, support and consolidation areas alongside them (para. 4-15).</p>
+    <p>The bench simplifies in three ways. It has one shaping stage, but doctrine says commanders “may designate more than one shaping operation” (para. 4-27). It runs the stages in a fixed order, but shaping operations “may occur throughout the area of operations” (para. 4-27). And it puts the feeder at one end, but sustaining operations “occur throughout the area of operations, not just within a support area” (para. 4-29).</p>
+
+    <h2>What is notional</h2>
+    <p>Every number on the line is a teaching value, not data. In this model a sheet leaves the feeder every 1.8 seconds, which gives about 33 good parts a minute; each die can add at most 45° of bend in one stroke; and a part is good only within 1° of 90°. That per-stroke limit is what makes the shaping stage necessary here. It is a property of this model, not a claim about real presses or real operations. The meter smooths the count over about ten seconds, which is why it falls gradually after a stage stops.</p>
+    <p>The Battlefield view’s outcomes and losses are notional too, set in the same model file. In this model the attack reaches the hill only with all three running; unshaped it gets 42% of the way, unsustained 55%, and without the decisive stage it never leaves its attack position. Losses are counted in knocked-out vehicles for one replay: with all three running, 3 friendly (one scout vehicle and two of the attack’s) against 6 enemy; with shaping stopped, 5 against 1; with the decisive attack stopped, 1 against 3; with sustaining stopped, 4 against 3. They are teaching values, not estimates of real losses.</p>
+    <p class="fine">Sources: Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN18010-ADP_3-0-000-WEB-2.pdf">ADP 3-0, Operations</a>, 31 July 2019, paras. 4-15 and 4-26 to 4-29 (<a href="https://web.archive.org/web/2023/https://irp.fas.org/doddir/army/adp3_0.pdf">archived copy</a>); <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN36290-FM_3-0-000-WEB-2.pdf">FM 3-0, Operations</a>, 1 October 2022, para. 3-127 (<a href="https://web.archive.org/web/2024/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN36290-FM_3-0-000-WEB-2.pdf">archived copy</a>). Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Maneuver Trainer: Easy | Jonathan Walberg</title>
+<meta name="description" content="Plan a small-unit attack or defense on an isometric map, then watch it play out: twelve fictional scenarios at fire team, platoon and company level, scored with an after-action review.">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Maneuver Trainer: Easy | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/trainer/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/trainer/easy/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by trainer/scripts/build.mjs from scripts/easy.html and scripts/easy.mjs. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+/*COMMON_CSS*/
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="mt-main">
+  <a class="mt-back" href="/interactive/maneuvers/trainer/">&larr; Maneuver Trainer</a>
+  <h1>Maneuver Trainer: Easy</h1>
+  <p class="lede">Plan, then watch. Read the briefing, choose a scheme of maneuver, give each element its task, route and trigger, and press Execute. Then see what your plan does against an enemy that shoots back, and read the after-action review.</p>
+
+  <section id="mt-pick">
+    <h2>Pick a scenario</h2>
+    <div id="mt-picker"></div>
+  </section>
+
+  <section id="mt-game" hidden>
+    <div class="mt-bar">
+      <button type="button" class="mt-link" id="mt-to-picker">&larr; Scenarios</button>
+      <h2 id="mt-title"></h2>
+      <ol class="mt-steps" id="mt-steps" aria-label="Steps"></ol>
+    </div>
+    <div class="mt-grid">
+      <div class="mt-mapwrap">
+        <div class="iso" data-theme="light" id="mt-card">
+          <figure class="iso-figure"><div class="iso-plate mt-plate">
+            <div class="iso-plate-corners" aria-hidden="true"><span class="iso-plate-corner" data-corner="fig"></span><span class="iso-plate-corner" data-corner="title"></span><span class="iso-plate-corner" data-corner="hint"></span><span class="iso-plate-corner" data-corner="readout" data-readout></span></div>
+            <div class="mt-map-host"></div>
+          </div></figure>
+        </div>
+        <div class="mt-controls" id="mt-controls"></div>
+      </div>
+      <aside class="mt-panel" id="mt-panel" aria-live="polite"></aside>
+    </div>
+    <section class="mt-aar" id="mt-aar" hidden></section>
+  </section>
+
+  <section class="mt-text">
+    <h2>How to play</h2>
+    <ol>
+      <li><b>Briefing.</b> Mission, enemy, terrain, troops and time, as an order would give them. The map shows your troops in blue; the enemy appears in red only once one of your soldiers has seen it, and a faint red chalk ring marks where it was last seen.</li>
+      <li><b>Plan.</b> Pick one of the offered schemes of maneuver. Each element then shows its task, its route (chalk arrows on the ground; the main effort in black, a support-by-fire position as a dashed box) and the trigger that starts or lifts it. Change any of them from the lists or by tapping a route on the map.</li>
+      <li><b>Execute.</b> Watch at 1×, 2× or 4×; you can pause but not give new orders. The roster shows each element’s strength, how suppressed it is and what it is doing; the log keeps the events.</li>
+      <li><b>Review.</b> The score ranks the objective first, then your losses, then time (“Objective secured · 2 vs 6 down · 4:35”). The after-action review says what was planned, what happened (drag the replay), why, and what to sustain or improve, with links to the figures that explain each concept. Retry replays the same run; Run again rolls new chances, so you can see that a plan gives a spread of outcomes, not a script.</li>
+    </ol>
+    <h2>What is notional</h2>
+    <p>The scenarios, places and enemy are fictional. Every number (ranges, rates of fire, suppression, casualties, times) is a notional teaching value chosen so the lesson of each scenario shows, not data and not a model of real weapons. Casualties fall on both sides even when a plan works; soldiers who are down are shown greyed and still, and are carried back to a casualty collection point. Soldiers, trees and positions are drawn larger than scale so they read. This is not a US Army training aid.</p>
+    <p class="mt-fine">Terms follow Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a> (11 January 2024, incorporating Change 1, June 2025): the fire team (team leader, automatic rifleman, grenadier, rifleman, para. 1-11), the squad as two fire teams and a squad leader (para. 1-9), fire and movement in contact (para. 1-9), support by fire (para. 3-56); and <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">FM 3-90, Tactics</a> (1 May 2023) for the forms of maneuver (para. 2-24). Map drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">
+const DATA = /*DATA*/;
+/*BUNDLE*/
+</script>
+</body>
+</html>

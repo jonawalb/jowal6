@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hammer and Anvil | Jonathan Walberg</title>
+<meta name="description" content="How the hammer and anvil works, as a working bench model: a fixed force blocks the enemy, a mobile force drives it onto the block, and the timing decides the result. Built from U.S. Army doctrine (FM 3-90, 2023) and Arrian.">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Hammer and Anvil | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/hammer-and-anvil/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/hammer-and-anvil/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.ha-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.ha-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.ha-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.ha-text h2{font-family:var(--font-serif);color:var(--green-900);margin-top:28px}
+.ha-text p,.ha-text li{line-height:1.65}
+.ha-text .fine{font-size:.88rem;color:var(--text-muted)}
+.ha-text ol{padding-left:1.2em}
+.ha-text li{margin:6px 0}
+.ha-text blockquote{margin:12px 0;padding:2px 0 2px 16px;border-left:3px solid var(--green-700);color:var(--text-muted)}
+.ha-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.ha-figure{background:transparent}
+.ha-figure .iso-figure{margin:0}
+.ha-figure .iso-plate{background:var(--anatomy-card)}
+.ha-stage{outline:none;cursor:pointer;touch-action:manipulation}
+.ha-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.ha-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.ha-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.ha-figure .iso-plate-corners{z-index:2}
+.ha-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.ha-figure[data-view="field"] .ha-svg{visibility:hidden}
+.ha-figure[data-view="field"] .ha-legend-machine{display:none}
+.ha-figure:not([data-view="field"]) .ha-field,.ha-figure:not([data-view="field"]) .ha-legend-field{display:none}
+.ha-legend{display:grid;gap:8px}
+/* casualties: greyed and still (side fc = friendly, hc = enemy), no colour beyond a faint tint */
+.ha-figure .tr-s[data-side="fc"] path,.ha-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.ha-figure .tr-s[data-side="fc"] .tr-t,.ha-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.ha-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.ha-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.ha-figure .tr-s[data-side="fc"] .tr-d,.ha-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.ha-figure .tr-s[data-side="fc"] .tr-g,.ha-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.ha-figure .tr-s[data-side="fc"] .tr-veh{--anatomy-top:#e4e3dd;--anatomy-paper:#d3d6dc}.ha-figure .tr-s[data-side="hc"] .tr-veh{--anatomy-top:#e4e3dd;--anatomy-paper:#dcd3d2}
+.iso .ha-figure .tr-s[data-side="fc"] .tr-veh>.iso-shade,.iso.ha-figure .tr-s[data-side="fc"] .tr-veh>.iso-shade,.iso.ha-figure .tr-s[data-side="hc"] .tr-veh>.iso-shade{fill:#c9c8c1}
+.ha-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.ha-controls .btn{cursor:pointer}
+.ha-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.ha-controls input[type=range]{flex:1;min-width:120px}
+.ha-controls output{font-variant-numeric:tabular-nums;min-width:4.2em;text-align:right}
+@media (max-width:520px){.ha-figure .iso-plate-corner[data-corner="hint"]{display:none}.ha-stage{overflow:hidden}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="ha-main">
+  <a class="ha-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Hammer and Anvil</h1>
+  <p class="lede">A hammer and anvil pairs a force that stays put with a force that moves. The anvil blocks the enemy’s way out; the hammer attacks and drives the enemy onto it. This bench model shows why the timing matters: in this model the hammer has to land while the anvil is in place and still holding.</p>
+
+  <div class="iso ha-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="ha-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="ha-run">Swing the hammer</button>
+      <label for="ha-delta"><span>Hammer lands, relative to the anvil being set</span> <input type="range" id="ha-delta" min="-2" max="5" step="0.1" value="1"> <output id="ha-delta-out" for="ha-delta">+1.0 s</output></label>
+    </div>
+  </div>
+
+  <section class="ha-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>The block</b> on its pallet is the enemy force. It sits on a straight lane that leads past the anvil to a bumper at the far end, its way out.</li>
+      <li><b>The anvil</b> rises out of a pit in the bench and stands across the lane: the stationary blocking force. Once it is up it does not move. The dial reads how long it can still hold on its own; when the dial reaches zero the anvil gives way and sinks back into its pit.</li>
+      <li><b>The hammer</b> is the lit head on the swing arm: the mobile striking force. Released from its latch post, it swings round its pivot, strikes the block and drives it down the lane until the arm meets the buffer post.</li>
+      <li><b>The timing.</b> The slider (or the arrow keys) sets when the hammer lands, counted from the moment the anvil is fully up. Then click the bench, press Enter or use the button. Land it too early and the block slides past the half-raised anvil into the bumper. Land it too late and the anvil has already sunk back, so the block escapes the same way. Land it in between and the block is caught between hammer and anvil.</li>
+    </ol>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model, timing slider and readout drive both. Here the scale is a company team, blue is friendly and red is the enemy. A river runs down the right of the ground with a stone bridge carrying the road over it: the enemy’s way out. The anvil is two rifle squads, each “two fire teams and a squad leader” (ATP 3-21.8, para. 1-9), and a machine-gun team, “a gunner and an assistant gunner” (para. 1-13). It waits in the edge of the wood on the far bank and moves forward into a line of prepared two-Soldier fighting positions behind the river (the chalk outline), facing back across it, its machine gun covering the bridge (the blue fan, which fades as its hold runs down). The enemy, a platoon with two vehicles, sits in a hasty perimeter in the pocket west of the river, with fire teams of the encircling force on the low rises either side. The lit hammer, a platoon of four tracked vehicles, starts from the chalk line of departure on the left, drives in, strikes the enemy and drives it toward the river. Land it on time and the enemy is pinned on the near bank, between the hammer and the anvil’s fire. Land it early and the enemy funnels over the bridge and runs through the anvil while it is still moving up; land it late and the anvil, its hold spent, has pulled back into the wood, so the enemy crosses unopposed. Success is not free: greyed figures lying still are men down on both sides, an anvil casualty at a collection point behind the positions with a medic kneeling beside him, and a stopped, smoking vehicle in each force that loses one. The readout ends with the count, blue against red. The map is the bench’s lane made into ground; in FM 3-90’s use the enemy would already be encircled, as the fire teams on the rises suggest. Soldiers and vehicles are drawn larger than scale (about one and a half times) so they read; unit sizes, distances, timings and casualty counts are notional.</p>
+    <p><b>How it differs from a double envelopment</b> (<a href="/interactive/maneuvers/double-envelopment/">Fig 2</a>). There, a frontal attack holds the enemy while two forces close round both of its flanks. Here only one force moves. The other is a fixed stop, and the result turns on the order of events: the anvil has to be in place before the hammer arrives, and the hammer has to arrive before the anvil is worn out.</p>
+
+    <h2>What doctrine and history say</h2>
+    <p>U.S. Army <i>FM 3-90, Tactics</i> (May 2023) names hammer and anvil as one of “the four techniques for reducing an encircled enemy,” alongside squeeze, wedge and escape route (para. C-21). In that use it is a way to finish off an enemy force that has already been encircled:</p>
+    <blockquote>“The hammer and anvil technique employs a stationary blocking force as an anvil on one or more sides of the inner perimeter, while other elements of the encircling force use offensive action as a hammer to force the encircled enemy force against the blocking force. Either the anvil or the hammer can destroy the enemy force. Usually the hammer, as the attacking element, accomplishes this task.” (para. C-24)</blockquote>
+    <p>The same paragraph says the technique “is most effective when the blocking force is located on or to the rear of a natural terrain obstacle,” and that on favorable terrain an airborne or air assault force can serve as the anvil. The bench shows the pairing on its own, in a straight lane, without the surrounding encirclement.</p>
+    <p>Ancient accounts show the same dependence on timing. Arrian, writing of Alexander’s battle with Porus at the Hydaspes (326 BC), does not use the phrase, but his account turns on timing. Alexander ordered the commanders of his infantry phalanx “not to engage in the action until they observed the enemy’s cavalry and phalanx of infantry thrown into disorder by the cavalry under his own command” (<i>Anabasis</i> V.16). When the Indian cavalry had to turn to face a second Macedonian cavalry force in its rear, Alexander charged “at the very moment the cavalry was wheeling round,” and drove it back onto its own elephants “as to a friendly wall” (V.17). Reading this as hammer and anvil is this page’s interpretation, not Arrian’s.</p>
+
+    <h2>What is notional</h2>
+    <p>Every time on the bench is a teaching value, not data: the anvil takes 1.4 s to rise, holds for 3.0 s once it is up, and sinks back over 0.8 s; the hammer takes 1.2 s from release to landing. In this model the block is caught only if the anvil is fully up when the hammer lands, so the window runs from 0 to 3.0 s after the anvil is set. How long a real blocking force can hold, and how much warning the hammer has, depend on the forces, the terrain and the enemy.</p>
+    <p>The casualty counts in the readout and the Battlefield view are notional too, set so that success is never free. The anvil loses men while it holds under the enemy’s fire, up to 3 over its full 3.0 s hold (in proportion to how much of the hold is used up while the enemy is still in the pocket), plus 1 when the enemy is driven onto it, or 2 more if the enemy runs through it before it is set. The hammer loses 1 at contact. The enemy loses 2 to the hammer’s drive and, if caught, 6 more, 2 fewer when the anvil is worn out and its fire has thinned. So an on-time hammer landing 1.0 s after the anvil sets costs 3 against 7; an early one 3 against 2; a late one 4 against 2. These are teaching values, not loss rates from data or doctrine.</p>
+    <p class="fine">Sources: Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">FM 3-90, Tactics</a>, 1 May 2023, paras. C-21 (p. C-5) and C-24 (p. C-6). Arrian, <a href="https://www.gutenberg.org/ebooks/46976"><i>The Anabasis of Alexander</i></a>, trans. E. J. Chinnock (London: Hodder and Stoughton, 1884; Project Gutenberg), Book V, chs. 16, 17 and 19. Headquarters, Department of the Army, <a href="https://web.archive.org/web/20250807233618/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a>, 11 January 2024, incorporating Change 1 (June 2025), paras. 1-9 and 1-13 (archived copy; <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">official</a>). Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

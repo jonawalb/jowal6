@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Center of Gravity | Jonathan Walberg</title>
+<meta name="description" content="What a center of gravity is, as a working bench model: a stone arch that stands only while its keystone holds. Built from joint doctrine (JP 5-0, 2020) and Clausewitz.">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Center of Gravity | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/center-of-gravity/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/center-of-gravity/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.cg-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.cg-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.cg-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.cg-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.cg-text p,.cg-text li{line-height:1.65}
+.cg-text .fine{font-size:.88rem;color:var(--text-muted)}
+.cg-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.cg-figure{background:transparent}
+.cg-figure .iso-figure{margin:0}
+.cg-figure .iso-plate{background:var(--anatomy-card)}
+.cg-stage{outline:none;cursor:crosshair;touch-action:manipulation}
+.cg-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.cg-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.cg-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.cg-figure .iso-plate-corners{z-index:2}
+.cg-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.cg-figure[data-view="field"] .cg-svg{visibility:hidden}
+.cg-figure[data-view="field"] .cg-legend-machine{display:none}
+.cg-figure:not([data-view="field"]) .cg-field,.cg-figure:not([data-view="field"]) .cg-legend-field{display:none}
+.cg-legend{display:grid;gap:8px}
+/* stopped (knocked-out) vehicles: greyed, keeping a trace of their side's tint */
+.tr-s[data-side="kh"] path{stroke:#7a6460}.tr-s[data-side="kf"] path{stroke:#5f6676}
+.tr-s[data-side="kh"] .tr-t{fill:#ddd3cf}.tr-s[data-side="kh"] .tr-l{fill:#c4b6b1}.tr-s[data-side="kh"] .tr-d{fill:#a89894}.tr-s[data-side="kh"] .tr-g{fill:#8a7c78}
+.tr-s[data-side="kf"] .tr-t{fill:#d3d6dd}.tr-s[data-side="kf"] .tr-l{fill:#b6bbc6}.tr-s[data-side="kf"] .tr-d{fill:#9aa0ad}.tr-s[data-side="kf"] .tr-g{fill:#7d8391}
+.tr-s[data-side="kh"] .tr-veh{--anatomy-top:#ddd3cf;--anatomy-paper:#c4b6b1}.tr-s[data-side="kf"] .tr-veh{--anatomy-top:#d3d6dd;--anatomy-paper:#b6bbc6}
+.iso .tr-s[data-side="kh"] .tr-veh>.iso-shade{fill:#a89894}.iso .tr-s[data-side="kh"] .tr-veh>.iso-shade[data-shade="3"],.iso .tr-s[data-side="kh"] .tr-veh>.iso-shade[data-shade="2"]{fill:#c4b6b1}
+.iso .tr-s[data-side="kf"] .tr-veh>.iso-shade{fill:#9aa0ad}.iso .tr-s[data-side="kf"] .tr-veh>.iso-shade[data-shade="3"],.iso .tr-s[data-side="kf"] .tr-veh>.iso-shade[data-shade="2"]{fill:#b6bbc6}
+.cg-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.cg-controls .btn{cursor:pointer}
+.cg-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.cg-controls input[type=range]{flex:1;min-width:120px}
+.cg-text h2{margin-top:28px}
+.cg-text ol{padding-left:1.2em}
+.cg-text li{margin:6px 0}
+@media (max-width:520px){.cg-figure .iso-plate-corner[data-corner="hint"]{display:none}.cg-stage{overflow:hidden}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="cg-main">
+  <a class="cg-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Center of Gravity</h1>
+  <p class="lede">Planners look for what an enemy’s strength rests on, because in this analogy taking it away brings down far more than itself. A stone arch makes the idea physical: every stone carries load, but only while the keystone holds.</p>
+
+  <div class="iso cg-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="cg-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
+        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+      </div>
+      <label><span id="cg-lift-text">Keystone lift</span> <input type="range" id="cg-lift" min="0" max="18" step="0.5" value="0" aria-label="Keystone lift, millimetres"></label>
+      <button type="button" class="btn btn-outline" id="cg-rebuild">Rebuild the arch</button>
+    </div>
+  </div>
+
+  <section class="cg-text">
+    <h2>How to read it</h2>
+    <ol>
+      <li><b>The arch</b> is nine wedge-shaped stones on two piers. The lit stone at the crown is the keystone; the others are voussoirs.</li>
+      <li><b>The puller</b> hangs from a beam on two posts. Its screw is fixed to the keystone. Turn the hand wheel (drag up on the figure, use the slider or the arrow keys) and the keystone rises, 2 mm per turn.</li>
+      <li><b>The columns</b> in front show the load through each stone, in the same left-to-right order as the arch. Seated, the load rises from the crown to the springing, because each stone passes on the weight of everything above it as well as the crown’s thrust.</li>
+      <li><b>Pull the keystone</b> and every column falls together, not just the middle one, and the two halves lean in. When it clears its seat at 12 mm, nothing holds the halves apart: they fall in and the crown stones drop into the tray. <b>Rebuild</b> resets it.</li>
+    </ol>
+    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model and readout drive both. The mapping is an analogy, not doctrine. JP 5-0 says that at the operational level a center of gravity “is often associated with the threat’s military capabilities such as a powerful element of the armed forces” but, it adds, “could include other capabilities in the OE” (ch. IV, para. 4.c.(1)(a), p. IV-22), so here the keystone is the enemy’s armored reserve: a tank battalion, lit, parked at the crossroads village behind its centre, with tracks out to every part of its line. The voussoirs are the three mechanized battalions holding the forward arc in dug-in positions; in this model they hold only because the reserve can reach any of them. Each small vehicle stands for a platoon and each cluster of three for a company; red is the enemy and blue friendly, and the red fan is the enemy centre’s fire sector. On the right a friendly mechanized battalion fixes the enemy’s front with fire. Pulling the keystone is the strike: a friendly armored battalion that has worked round the southern flank fires on the reserve from an attack-by-fire position marked in chalk on pegs, and the flag marks the reserve as its objective. The share of the reserve’s tanks still fighting is the machine’s ring load; the rest are knocked out, stop and smoke, greyed. When the last one goes, the forward battalions lose cohesion and fall back, the centre first, to the rear, and the flanks toward the river and the woods, as the arch’s crown drops and its haunches fall back onto the piers. In this view the Rebuild button reads “Reset the battle.” Success is not free: the reserve fires back, so strike-force vehicles are hit too, a fixing-force vehicle is hit once the reserve is down by half, and an evacuation vehicle shuttles casualties back along the road to the rear; the forward battalions leave stopped vehicles behind when they fall back. The readout here gives the reserve’s fighting share and the losses so far in vehicles (one per platoon). Those counts are notional teaching values from the model: at full strike 9 reserve tanks plus 3 abandoned forward vehicles on the red side, and 3 strike-force vehicles plus 1 fixing-force vehicle on the blue side, each falling in step with the reserve’s fighting share (at 6 mm, 5 red and 3 blue). Vehicles are drawn far larger than scale so they read; unit sizes, distances, routes, timings and the collapse are notional, and a real force could react, for example by moving the reserve or committing another.</p>
+
+    <h2>What doctrine says</h2>
+    <p>The Joint Staff’s <i>JP 5-0, Joint Planning</i> (December 2020) defines a center of gravity as “the source of power that provides moral or physical strength, freedom of action, or will to act” (glossary, p. GL-6). In its discussion of operational design it adds that “success requires protecting the friendly COG while defeating the enemy COG” (ch. IV, para. 4.c.(1), p. IV-22).</p>
+    <p>The image is Carl von Clausewitz’s. In Book 8, chapter 4 of <i>On War</i>, in J. J. Graham’s translation, he writes that out of the relations between the two sides “a certain centre of gravity, a centre of power and movement, will form itself, on which everything depends; and against this centre of gravity of the enemy, the concentrated blow of all the forces must be directed.”</p>
+    <p>The arch is an analogy, not doctrine. An arch has one keystone. A real enemy is different: JP 5-0 says “COGs can exist at different levels” and “may change in time.”</p>
+
+    <h2>What is notional</h2>
+    <p>The columns use real statics with made-up numbers. Cut half the arch free at the crown and the force on each joint is the crown’s horizontal thrust added, as a vector, to the weight of the stones between that joint and the crown. With every stone weighing 1 unit (W) and a notional crown thrust of 2 W, the loads are 2.1 W at the keystone, then 2.5, 3.2, 4.0 and 4.9 W at the springing. The share the keystone still carries falls in a straight line from 100% when seated to 0% at 12 mm of lift (50% at 6 mm). That line, the 12 mm failure point, the lean (drawn to stay just clear of the keystone) and the way the stones fall are teaching choices, not a model of real masonry.</p>
+    <p class="fine">Sources: Joint Chiefs of Staff, <a href="https://www.jcs.mil/Portals/36/Documents/Doctrine/pubs/jp5_0.pdf">JP 5-0, Joint Planning</a>, 1 December 2020, p. IV-22 and p. GL-6. Carl von Clausewitz, <a href="https://web.archive.org/web/20210417084038/https://www.clausewitz.com/readings/OnWar1873/BK8ch04.html"><i>On War</i>, Book 8, ch. 4</a>, trans. J. J. Graham (1873). Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

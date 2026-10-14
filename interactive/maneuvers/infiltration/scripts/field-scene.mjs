@@ -1,4 +1,4 @@
-// The Battlefield view of Infiltration, at small-unit scale and at night, drawn with the terrain kit
+// The Battlefield view of Infiltration, at small-unit scale, drawn with the terrain kit
 // (../../kit/terrain.mjs). The same model plan and clock as the machine drive it:
 //   p = plan(n)   the force split into n elements (1, 4, 9 or 16), each with its lane, queue place,
 //                 timing and regroup place (model.mjs)

@@ -33,11 +33,8 @@
 .inf-stage{outline:none;cursor:crosshair;touch-action:manipulation}
 .inf-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
 .inf-svg{display:block;width:100%;height:auto}
-/* Battlefield: full-bleed night ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
-.inf-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect;
-  --tr-ground:#a2a9a8;--tr-meadow:#9ba49f;--tr-field-a:#a6a69e;--tr-field-b:#a0a39e;--tr-road:#acaca5;--tr-wood:#98a29b;--tr-canopy:#92a093;--tr-canopy-dk:#7f8e80;--tr-canopy-ink:#55625a;
-  --tr-water:#8ea2ad;--tr-high:#a9a99c;--tr-slope-0:#878b83;--tr-slope-1:#92968d;--tr-slope-2:#9a9e96;--tr-slope-3:#9fa39b;--tr-stone:#a8a8a1;--tr-stone-dk:#8e8f88;--tr-roof:#9b9893;
-  --tr-bag:#b2ab99;--tr-bag-dk:#9a927f;--tr-pit:#45413b;--tr-shadow:#1f241e;--tr-chalk:#e3ebfb;--tr-h-fire:#e8331f}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.inf-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
 .inf-field [data-dyn]{opacity:var(--inf-fade,1)}
 .inf-figure .iso-plate-corners{z-index:2}
 .inf-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
@@ -130,7 +127,7 @@
     </div>
     <div class="ex-view ex-field">
     <h2>How to read it: the battlefield</h2>
-    <p>The scene is a small infantry force, shown at night; FM 3-90 lists the “use of limited visibility and rough terrain to mask movement and reduce possible detection” among the things an infiltration plan addresses (para. 2-96). Blue is friendly and red the enemy. The run is played more slowly here so the soldiers walk.</p>
+    <p>The scene is a small infantry force. FM 3-90 lists the “use of limited visibility and rough terrain to mask movement and reduce possible detection” among the things an infiltration plan addresses (para. 2-96). The drawing is lit as daylight so it reads; picture it under limited visibility. Blue is friendly and red the enemy. The run is played more slowly here so the soldiers walk.</p>
     <h3>What is on the ground</h3>
     <ol>
       <li><b>The outpost line.</b> The seven bars of the screen become an enemy outpost line, seven two-man fighting positions with their observed sectors marked on the ground, and the six gaps become the ground between them.</li>

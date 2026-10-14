@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/combined-arms-dilemma/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
@@ -58,6 +58,7 @@
 .ca-text li{margin:6px 0}
 @media (max-width:520px){.ca-figure .iso-plate-corner[data-corner="hint"]{display:none}.ca-stage{overflow:hidden}}
 </style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
 <body>
 <nav class="navbar" id="navbar">
@@ -86,24 +87,52 @@
     <!--FIGURE-->
     <div class="ca-controls">
       <div class="fd-views" role="group" aria-label="View">
-        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
-        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
       </div>
       <button type="button" class="btn btn-outline" id="ca-arms" aria-pressed="false">Use both arms (insert key B)</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
       <label>Defender’s guard <input type="range" id="ca-guard" min="-100" max="100" step="1" value="-100" aria-label="Defender's guard: left presses plug A, right presses plug B"></label>
     </div>
   </div>
 
   <section class="ca-text">
-    <h2>How to read it</h2>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model and readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
     <ol>
       <li><b>The lock</b> has two key plugs, A and B. Either key, turned, draws the lit bolt back out of its keeper, and the lock is open.</li>
-      <li><b>The guard</b> is the pawl pivoted between the plugs: the defender’s shield. Its pad can press one plug and stop that key from turning. The pad is narrower than the gap between the plugs, so it can press only one at a time. Swing it with the pointer, the slider or the arrow keys.</li>
-      <li><b>One arm.</b> With only key A in the lock, the guard covers it and the lock holds.</li>
-      <li><b>Two arms.</b> Insert key B and the guard has no safe place. Press A and B turns; press B and A turns; stop between them and both turn.</li>
+      <li><b>The guard</b> is the pawl pivoted between the plugs: the defender’s shield. Its pad can press one plug and stop that key from turning. The pad is narrower than the gap between the plugs, so it can press only one at a time.</li>
       <li><b>The dial</b> reads how far the bolt is drawn.</li>
     </ol>
-    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model and readout drive both. It draws MCDP 1’s own example at fire-team scale; blue is friendly and red is the enemy. At the top, an enemy rifleman pair holds a two-man fighting position behind a low stone wall, with open ground and a wood behind it. At the bottom, the lit blue fire team lies behind a hedgerow: a team leader, an automatic rifleman, a grenadier and a rifleman, as the Army’s platoon manual lists them (ATP 3-21.8, para. 1-11; MCDP 1 names only the two weapons). The automatic rifleman, prone, is key A: the manual says he delivers “sustained suppressive small arms fire on area targets” (para. 1-11), and his tracers strike the wall while the enemy stays down. The grenadier is key B: his 40-mm launcher gives the team “a high trajectory and an HE capability” and “covers dead space” (para. 1-29), so his rounds arc over the wall into the hole. The blue fan on the ground is the automatic rifle’s sector over the wall and the open ground behind it; the small blue sector round the hole is where the grenades land. The guard is what the enemy pair does. Guarding against the automatic rifle (guard on A), it stays down in the hole, where the grenades reach it. Swung toward the middle, it rises to fire back over the wall. Guarding against the grenades (guard on B), it leaves the hole and runs back across the open, where the automatic rifle hits it. With one arm the grenadier is held back behind the hedge, and the enemy simply stays down and waits. Success is not free: greyed figures lying still are men down on both sides. The rifleman is down behind the hedge from the first exchange; if the lock holds, the fight drags on and the team leader goes down too; once a key turns, one of the enemy pair lies at the back of the hole. The readout ends with the count, blue against red. Soldiers are drawn larger than scale (about one and a half times) so they read; sizes, ranges, timings and the casualty counts are notional.</p>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The guard.</b> Swing it with the pointer, the slider or the arrow keys.</li>
+      <li><b>One arm.</b> With only key A in the lock, the guard covers it and the lock holds.</li>
+      <li><b>Two arms.</b> Insert key B and the guard has no safe place. Press A and B turns; press B and A turns; stop between them and both turn.</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>It draws MCDP 1’s own example at fire-team scale; blue is friendly and red is the enemy.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The enemy.</b> At the top, an enemy rifleman pair holds a two-man fighting position behind a low stone wall, with open ground and a wood behind it.</li>
+      <li><b>The fire team.</b> At the bottom, the lit blue fire team lies behind a hedgerow: a team leader, an automatic rifleman, a grenadier and a rifleman, as the Army’s platoon manual lists them (ATP 3-21.8, para. 1-11; MCDP 1 names only the two weapons).</li>
+      <li><b>Key A.</b> The automatic rifleman, prone, is key A: the manual says he delivers “sustained suppressive small arms fire on area targets” (para. 1-11), and his tracers strike the wall while the enemy stays down.</li>
+      <li><b>Key B.</b> The grenadier is key B: his 40-mm launcher gives the team “a high trajectory and an HE capability” and “covers dead space” (para. 1-29), so his rounds arc over the wall into the hole.</li>
+      <li><b>The sectors.</b> The blue fan on the ground is the automatic rifle’s sector over the wall and the open ground behind it; the small blue sector round the hole is where the grenades land.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The controls.</b> Swing the guard with the pointer, the slider or the arrow keys. The button, a click on the figure or the K key brings the grenadier in or holds him back.</li>
+      <li><b>The guard</b> is what the enemy pair does. Guarding against the automatic rifle (guard on A), it stays down in the hole, where the grenades reach it. Swung toward the middle, it rises to fire back over the wall. Guarding against the grenades (guard on B), it leaves the hole and runs back across the open, where the automatic rifle hits it.</li>
+      <li><b>One arm.</b> With one arm the grenadier is held back behind the hedge, and the enemy simply stays down and waits.</li>
+      <li><b>Losses.</b> Success is not free: greyed figures lying still are men down on both sides. The rifleman is down behind the hedge from the first exchange; if the lock holds, the fight drags on and the team leader goes down too; once a key turns, one of the enemy pair lies at the back of the hole. The readout ends with the count, blue against red.</li>
+    </ol>
+    <p class="fine">Soldiers are drawn larger than scale (about one and a half times) so they read; sizes, ranges, timings and the casualty counts are notional.</p>
+    </div>
 
     <h2>What doctrine says</h2>
     <p>The Marine Corps’ <i>MCDP 1, Warfighting</i> (20 June 1997) defines combined arms as “the full integration of arms in such a way that to counteract one, the enemy must become more vulnerable to another. We pose the enemy not just with a problem, but with a dilemma—a no-win situation” (p. 94).</p>

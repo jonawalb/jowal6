@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/interior-lines/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
@@ -60,6 +60,7 @@
 .il-out{min-width:2.6em;font-variant-numeric:tabular-nums}
 .il-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 </style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
 <body>
 <nav class="navbar" id="navbar">
@@ -88,8 +89,8 @@
     <!--FIGURE-->
     <div class="il-controls">
       <div class="fd-views" role="group" aria-label="View">
-        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
-        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
       </div>
       <span class="il-seg" role="group" aria-label="Number of rim carriages">Rim carriages
         <button type="button" class="btn btn-outline" data-lugs="1" aria-pressed="true">1</button>
@@ -98,21 +99,49 @@
       </span>
       <label>Rim speed <input type="range" id="il-speed" min="0.5" max="2" step="0.1" value="1" aria-label="Rim speed, times the hub shuttle's speed"><span class="il-out" id="il-speed-out">×1.0</span></label>
       <button type="button" class="btn btn-outline" id="il-next">Call the rim's farthest station</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
     </div>
     <p class="il-losses" id="il-losses" aria-live="polite">Notional losses at the called station: none yet</p>
     <p class="il-sr" id="il-status" aria-live="polite"></p>
   </div>
 
   <section class="il-text">
-    <h2>How to read it</h2>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model, counters and readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
     <ol>
-      <li><b>The hub shuttle</b> (lit) sits on a turntable in the middle of the table. When a station is called, the turntable turns to that spoke and the shuttle runs straight out to it. Its moves spread out from a central point: it is on interior lines. After each trip it runs back to the hub.</li>
-      <li><b>The rim carriages</b> ride a circular track, clamped to a link belt that the motor at the back turns the shorter way round. They close on a station from outside: they are on exterior lines. The buttons set one, two or three carriages, spaced evenly round the belt.</li>
-      <li><b>The six station posts</b> stand round the edge. Click near one, or use the arrow keys, to call it; its lamp rises.</li>
+      <li><b>The hub shuttle</b> (lit) sits on a turntable in the middle of the table. Its moves spread out from a central point: it is on interior lines.</li>
+      <li><b>The rim carriages</b> ride a circular track, clamped to a link belt that the motor at the back turns the shorter way round. They close on a station from outside: they are on exterior lines.</li>
+      <li><b>The six station posts</b> stand round the edge.</li>
       <li><b>The two counters</b> time each side’s trip to the called station in bench seconds: the left one the hub shuttle, the right one the rim. The readout gives both and says who got there first. The knob on the speed box at the back shows the rim speed.</li>
     </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Calling a station.</b> Click near one, or use the arrow keys, to call it; its lamp rises.</li>
+      <li><b>The hub shuttle.</b> When a station is called, the turntable turns to that spoke and the shuttle runs straight out to it. After each trip it runs back to the hub.</li>
+      <li><b>The rim carriages.</b> The buttons set one, two or three carriages, spaced evenly round the belt.</li>
+    </ol>
     <p>In this model, with one carriage the rim may have to go halfway round, 4.49 s, while the hub shuttle reaches any station from the hub in 1.14 to 1.64 s. Two or three carriages, starting from stations, cut the rim’s longest trip to a sixth of the way round, 1.50 s, close to the hub’s time; double the rim speed as well and the rim gets there first, in 0.75 s. A station at a waiting carriage is always quicker from the rim.</p>
-    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model, counters and readout drive both, and every town sits on the bearing of its station post. The battlefield is drawn at operational scale: each small vehicle stands for a company and each cluster of three for a battalion, blue friendly and red enemy. Six radial roads run out from a road hub in the middle to six towns on a ring road; the roads stand for the bench&rsquo;s tracks. The lit blue battalion at the hub, beside its brigade&rsquo;s command post and supply trucks, is the hub shuttle: on interior lines, it reaches any town by one road. The red battalions on the ring road are the rim carriages: one, two or three, spaced evenly round the ring, moving round it together and the shorter way, as the belt does. Calling a station puts a chalk outline round its town, and both sides race for it. In this model, whoever arrives first holds the town and fires on the other side, which halts short of it and attacks; after the clash the blue battalion drives back to the hub, as the shuttle does, and a red battalion halted outside then moves into the town. Success is not free: the line under the card counts notional losses at the called town, one vehicle per company. The holder always loses one; the side that arrives second loses two if the holder had at least 0.5 bench seconds to deploy, otherwise one; a level race costs each side one. Knocked-out vehicles stop, grey out and smoke, and a casualty evacuation truck (white roof) runs blue casualties back to the hub. Vehicles are drawn far larger than scale so they read; unit sizes, distances, timings and losses are notional.</p>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>The battlefield is drawn at operational scale: each small vehicle stands for a company and each cluster of three for a battalion, blue friendly and red enemy.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The roads.</b> Six radial roads run out from a road hub in the middle to six towns on a ring road; the roads stand for the bench&rsquo;s tracks. Every town sits on the bearing of its station post.</li>
+      <li><b>The lit blue battalion</b> at the hub, beside its brigade&rsquo;s command post and supply trucks, is the hub shuttle: on interior lines, it reaches any town by one road.</li>
+      <li><b>The red battalions</b> on the ring road are the rim carriages: one, two or three, spaced evenly round the ring, moving round it together and the shorter way, as the belt does.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Calling a town.</b> Click a town or use the arrow keys to call it; the button under the card calls the town farthest round the ring from the red battalions. Calling a station puts a chalk outline round its town, and both sides race for it.</li>
+      <li><b>The red side.</b> The 1, 2 and 3 buttons set how many red battalions are on the ring road, and the Rim speed slider sets how fast they move.</li>
+      <li><b>The clash.</b> In this model, whoever arrives first holds the town and fires on the other side, which halts short of it and attacks; after the clash the blue battalion drives back to the hub, as the shuttle does, and a red battalion halted outside then moves into the town.</li>
+      <li><b>Losses.</b> Success is not free: the line under the card counts notional losses at the called town, one vehicle per company. The holder always loses one; the side that arrives second loses two if the holder had at least 0.5 bench seconds to deploy, otherwise one; a level race costs each side one. Knocked-out vehicles stop, grey out and smoke, and a casualty evacuation truck (white roof) runs blue casualties back to the hub.</li>
+    </ol>
+    <p class="fine">Vehicles are drawn far larger than scale so they read; unit sizes, distances, timings and losses are notional.</p>
+    </div>
 
     <h2>What doctrine says</h2>
     <p>U.S. Army <i>ADP 3-0, Operations</i> (July 2019) defines <b>interior lines</b> as lines on which a force operates “when its operations diverge from a central point,” and <b>exterior lines</b> as lines on which it operates “when its operations converge on the enemy.” Interior lines “allow commanders to move quickly against enemy forces along shorter lines of operation”; exterior lines “allow commanders to concentrate forces against multiple positions on the ground, thus presenting multiple dilemmas to the enemy” (para. 2-36).</p>

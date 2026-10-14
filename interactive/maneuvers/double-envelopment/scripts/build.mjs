@@ -241,10 +241,10 @@ const FM = { vc: 0, t: 0, esc: undefined };
 let stageF = null, fire = null, marksSig = "";
 const sliderText = root.querySelector("#de-close-text");
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
+const VIEW_KEY = "maneuvers.view.v2";
 const SLIDER_TEXT = { machine: "Jaw closure", field: "Envelopment" };
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const layer = svg.querySelector('[data-part="live"]');
 const gaugeEl = svg.querySelector('[data-part="gauge"]');
 const readout = root.querySelector("[data-readout]");
@@ -386,12 +386,24 @@ stage.addEventListener("keydown", (event) => {
   event.preventDefault();
 });
 fixBtn.addEventListener("click", toggle);
+// Reset: back to the state the page opened in (model, controls and idle tour); the view is kept.
+const resetBtn = root.querySelector(".fd-reset");
+function reset() {
+  clearTimeout(idle);
+  Object.assign(S, START, { c: 0, target: 0, f: engaged(START).share });
+  Object.assign(FM, { vc: 0, t: 0, esc: undefined });
+  setFixed(S.fixed);
+  slider.value = "0";
+  touring = !still.matches; clock = 0;
+  draw(); run();
+}
+resetBtn.addEventListener("click", reset);
 viewBtns.forEach((b) => b.addEventListener("click", () => setView(b.dataset.view, true)));
 slider.addEventListener("input", () => steer(Number(slider.value) / 100));
 new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) run(); }, { rootMargin: "120px 0px" }).observe(stage);
 setFixed(S.fixed);
 setView(view, false);
-window.__doubleEnvelopment = { S, setFixed, steer, setView, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
+window.__doubleEnvelopment = { S, setFixed, steer, setView, reset, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
 `;
 
 const PAGE = readFileSync(join(HERE, "page.html"), "utf8")

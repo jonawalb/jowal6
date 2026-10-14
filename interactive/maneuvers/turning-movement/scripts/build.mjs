@@ -249,11 +249,11 @@ let stageF = null, fire = null, marksSig = "";
 const hintEl = root.querySelector('[data-corner="hint"]');
 const sliderText = root.querySelector("#tm-route-text");
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
+const VIEW_KEY = "maneuvers.view.v2";
 const HINTS = { machine: "Hover the rail · click: hold", field: "Hover the road · click: hold" };
 const SLIDER_TEXT = { machine: "Turning force position", field: "Turning force position" };
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const still = matchMedia("(prefers-reduced-motion: reduce)");
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 const S = { ...START, target: 0, react: true, speed: MODEL.maxSpeed };
@@ -394,12 +394,25 @@ stage.addEventListener("keydown", (event) => {
   event.preventDefault();
 });
 btn.addEventListener("click", toggle);
+// Reset: back to the state the page opened in (model, controls, battle clocks and idle tour); the view is kept.
+const resetBtn = root.querySelector(".fd-reset");
+function reset() {
+  clearTimeout(idle);
+  Object.assign(S, START, { target: 0, react: true, speed: MODEL.maxSpeed });
+  Object.assign(FM, { t: 0, gdir: 1, cut: 0 });
+  marksSig = "";
+  setReact(S.react);
+  slider.value = "0";
+  touring = !still.matches; clock = 0;
+  draw(); run();
+}
+resetBtn.addEventListener("click", reset);
 viewBtns.forEach((b) => b.addEventListener("click", () => setView(b.dataset.view, true)));
 slider.addEventListener("input", () => steer((Number(slider.value) / 100) * S_END));
 new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) run(); }, { rootMargin: "120px 0px" }).observe(stage);
 setReact(S.react);
 setView(view, false);
-window.__turningMovement = { S, setReact, steer, setView, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
+window.__turningMovement = { S, setReact, steer, setView, reset, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
 `;
 
 const PAGE = readFileSync(join(HERE, "page.html"), "utf8")

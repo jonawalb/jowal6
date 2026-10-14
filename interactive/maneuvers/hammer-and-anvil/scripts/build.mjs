@@ -268,9 +268,9 @@ const LOOKS = new Map();
 const FM = { t: 0, dt: 1 / 60 };
 let stageF = null, fire = null, marksSig = "";
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+const VIEW_KEY = "maneuvers.view.v2";
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const statics = [];
 for (const el of svg.querySelectorAll('[data-static]')) { statics.push({ key: Number(el.dataset.key), svg: el.outerHTML }); el.remove(); }
 const GAUGE = { key: depthOf([DIAL.x, DIAL.y, 0], P), svg: gaugeEl.outerHTML };
@@ -399,11 +399,26 @@ function setView(next, save) {
   run();
 }
 slider.addEventListener("input", () => steer(Number(slider.value)));
+// Reset: back to the state the page opened in (timing, run clock, bench and idle tour); the view is kept.
+const resetBtn = root.querySelector(".fd-reset");
+function reset() {
+  clearTimeout(idle);
+  setDelta(START_DELTA);
+  slider.value = String(delta);
+  t = -10; running = false; resetting = 0; runDelta = delta;
+  touring = !still.matches; tourStep = 0; wait = 1.2;
+  shown = stateAt(-10, delta);
+  fieldHold = null;
+  for (const key of Object.keys(FM)) delete FM[key];
+  Object.assign(FM, { t: 0, dt: 1 / 60 });
+  draw(shown); run();
+}
+resetBtn.addEventListener("click", reset);
 new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) run(); }, { rootMargin: "120px 0px" }).observe(stage);
 setDelta(delta);
 setView(view, false);
 window.__hammerAndAnvil = {
-  setDelta: steer, swing, setView, view: () => view,
+  setDelta: steer, swing, setView, reset, view: () => view,
   pose: (d, time) => { touring = false; running = false; resetting = 0; fieldHold = null; clearTimeout(idle); setDelta(d); runDelta = delta; t = time; shown = stateAt(time, delta); FM.ue = undefined; draw(shown); },
   state: () => ({ delta, t, running, shown }),
   stop: () => { touring = false; clearTimeout(idle); },

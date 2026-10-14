@@ -230,10 +230,10 @@ const marksEl = fieldSvgEl.querySelector('[data-part="marks"]');
 const fireEl = fieldSvgEl.querySelector('[data-part="fire"]');
 const hintEl = root.querySelector('[data-corner="hint"]');
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
+const VIEW_KEY = "maneuvers.view.v2";
 const HINTS = { machine: "Click to split finer", field: "Click to split finer" };
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const TF = fieldTerrain();
 const LOOKS = new Map();
 let stageF = null, fire = null, marksSig = "", fieldT = 0, fadeSig = "";
@@ -353,11 +353,23 @@ function setView(next, save) {
 }
 viewBtns.forEach((b) => b.addEventListener("click", () => setView(b.dataset.view, true)));
 runBtn.addEventListener("click", () => choose(R.want));
+// Reset: back to the state the page opened in (split, run, shaker and idle tour); the view is kept.
+const resetBtn = root.querySelector(".fd-reset");
+function reset() {
+  clearTimeout(idle);
+  delete R.next;
+  Object.assign(R, { i: START.i, want: START.i, p: plan(SPLITS[START.i]), t: 0, fade: 1, out: null, phi: 0, amp: 0, f: 0 });
+  begin(START.i);
+  R.fade = 1;
+  tourAt = 0; touring = !still.matches; fieldT = 0;
+  draw(); run();
+}
+resetBtn.addEventListener("click", reset);
 new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) run(); }, { rootMargin: "120px 0px" }).observe(stage);
 begin(START.i);
 R.fade = 1;
 setView(view, false);
-window.__infiltration = { R, choose, setView, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
+window.__infiltration = { R, choose, setView, reset, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
 `;
 
 const PAGE = readFileSync(join(HERE, "page.html"), "utf8")

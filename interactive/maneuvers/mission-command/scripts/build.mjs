@@ -146,9 +146,9 @@ const marksEl = fieldSvgEl.querySelector('[data-part="marks"]');
 const linkEl = fieldSvgEl.querySelector('[data-part="link"]');
 const fireEl = fieldSvgEl.querySelector('[data-part="fire"]');
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+const VIEW_KEY = "maneuvers.view.v2";
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const still = matchMedia("(prefers-reduced-motion: reduce)");
 const STATICS = statics(K, P);
 const M = initial();
@@ -158,7 +158,7 @@ const TF = fieldTerrain();
 const LOOKS = new Map();
 let F = fieldInitial();
 const FM = { t: 0, fell: {}, rout: { g: 0, c: 0 }, held: 0, resetting: 0 };
-let stageF = null, fire = null, marksSig = "";
+let stageF = null, fire = null, marksSig = "", runTimer = 0;
 let touring = !still.matches, clock = 0, last = 0, frame = 0, visible = false, idle = 0;
 // [time s, link up, load]
 const TOUR = [[0, true, 0.7], [1, true, 1.0], [5, true, 0.7], [7.5, false, 0.7], [8.5, false, 1.0], [11, false, 0.6], [14.5, true, 0.6], [15.2, true, 0.7]];
@@ -179,7 +179,7 @@ function newRun() {
   if (FM.resetting) return;
   FM.resetting = 1;
   fieldSvgEl.classList.add("mc-reset");
-  setTimeout(() => {
+  runTimer = setTimeout(() => {
     const gun = F.gun, back = F.back;
     F = fieldInitial(); F.gun = gun; F.back = back;
     FM.fell = {}; FM.rout = { g: 0, c: 0 }; FM.held = 0;
@@ -295,12 +295,29 @@ stage.addEventListener("keydown", (event) => {
 });
 jamBtn.addEventListener("click", toggle);
 slider.addEventListener("input", () => steer(Number(slider.value) / 100));
+// Reset: back to the state the page opened in (engines, battlefield, controls and idle tour); the view is kept.
+const resetBtn = root.querySelector(".fd-reset");
+function reset() {
+  clearTimeout(idle);
+  clearTimeout(runTimer);
+  fieldSvgEl.classList.remove("mc-reset");
+  Object.assign(M, initial());
+  Object.assign(S, START, { linked: true, target: MODEL.load0 });
+  F = fieldInitial();
+  Object.assign(FM, { t: 0, fell: {}, rout: { g: 0, c: 0 }, held: 0, resetting: 0 });
+  marksSig = "";
+  setLinked(true);
+  slider.value = String(Math.round(MODEL.load0 * 100));
+  touring = !still.matches; clock = 0;
+  draw(); run();
+}
+resetBtn.addEventListener("click", reset);
 viewBtns.forEach((b) => b.addEventListener("click", () => setView(b.dataset.view, true)));
 new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) run(); }, { rootMargin: "120px 0px" }).observe(stage);
 still.addEventListener?.("change", run);
 setLinked(true);
 setView(view, false);
-window.__missionCommand = { S, M, F: () => F, setLinked, steer, setView, view: () => view, newRun, stop: () => { touring = false; clearTimeout(idle); } };
+window.__missionCommand = { S, M, F: () => F, setLinked, steer, setView, reset, view: () => view, newRun, stop: () => { touring = false; clearTimeout(idle); } };
 `;
 
 const PAGE = readFileSync(join(HERE, "page.html"), "utf8")

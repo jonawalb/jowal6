@@ -234,14 +234,14 @@ const marksEl = fieldSvgEl.querySelector('[data-part="marks"]');
 const fireEl = fieldSvgEl.querySelector('[data-part="fire"]');
 const hintEl = root.querySelector('[data-corner="hint"]');
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
+const VIEW_KEY = "maneuvers.view.v2";
 const HINTS = { machine: "Click a tool · keys 1–4", field: "Click a force · keys 1–4" };
 const T = fieldTerrain();
 const LOOKS = new Map();
 const FM = { t: 0 };
 let stageF = null, fire = null, marksSig = "", lastPose = null;
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const layer = svg.querySelector('[data-part="live"]');
 const gaugeEl = svg.querySelector('[data-part="gauge"]');
 const readout = root.querySelector("[data-readout]");
@@ -367,6 +367,18 @@ stage.addEventListener("keydown", (event) => {
 });
 buttons.forEach((b, i) => b.addEventListener("click", () => toggle(i)));
 root.querySelector("#dm-clear").addEventListener("click", () => { on.forEach((_, j) => set(j, false)); hold(); });
+// Reset: back to the state the page opened in (tools, model, supply cart and trucks, idle tour); the view is kept.
+const resetBtn = root.querySelector(".fd-reset");
+function reset() {
+  clearTimeout(idle);
+  on.forEach((_, j) => set(j, false));
+  Object.assign(S, START, { f: 1 });
+  delete FM.tc; delete FM.trucks; FM.t = 0;
+  cartClock = 0; lastPose = null;
+  touring = !still.matches; clock = 0;
+  draw(); run();
+}
+resetBtn.addEventListener("click", reset);
 function setView(next, save) {
   view = next === "field" ? "field" : "machine";
   root.setAttribute("data-view", view);
@@ -380,7 +392,7 @@ function setView(next, save) {
 viewBtns.forEach((b) => b.addEventListener("click", () => setView(b.dataset.view, true)));
 new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) run(); }, { rootMargin: "120px 0px" }).observe(stage);
 setView(view, false);
-window.__defeatMechanisms = { S, on, set, toggle, setView, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
+window.__defeatMechanisms = { S, on, set, toggle, setView, reset, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
 `;
 
 const PAGE = readFileSync(join(HERE, "page.html"), "utf8")

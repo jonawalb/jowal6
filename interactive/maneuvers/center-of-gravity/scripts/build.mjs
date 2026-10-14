@@ -177,15 +177,16 @@ let stageF = null, fire = null, marksSig = "";
 const hintEl = root.querySelector('[data-corner="hint"]');
 const sliderText = root.querySelector("#cg-lift-text");
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
+const VIEW_KEY = "maneuvers.view.v2";
 const HINTS = { machine: "Drag up to pull the keystone", field: "Drag up to strike the reserve" };
 const SLIDER_TEXT = { machine: "Keystone lift", field: "Strike on the reserve" };
 const REBUILD_TEXT = { machine: "Rebuild the arch", field: "Reset the battle" };
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const still = matchMedia("(prefers-reduced-motion: reduce)");
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
-const S = { e: 0, target: 0, c: 0, collapsing: false, rebuilding: false, heights: LOADS.map((n) => GEO.PER_W * n) };
+const S0 = () => ({ e: 0, target: 0, c: 0, collapsing: false, rebuilding: false, heights: LOADS.map((n) => GEO.PER_W * n) });
+const S = S0();
 let touring = !still.matches, clock = 0, last = 0, frame = 0, visible = false, idle = 0, phase = "";
 const TOUR = [[0, 0], [2, 11], [8, 13.5], [11.6, "rebuild"]];
 const TOUR_LEN = 16.5;
@@ -339,11 +340,23 @@ function setView(next, save) {
   draw();
   run();
 }
+// Reset: back to the state the page opened in (arch, battle, slider and idle tour); the view is kept.
+const resetBtn = root.querySelector(".fd-reset");
+function reset() {
+  clearTimeout(idle);
+  Object.assign(S, S0());
+  Object.assign(FM, { t: 0, k: 0, kdir: 1 });
+  drag = null; phase = ""; tourStep = -1;
+  slider.value = "0";
+  touring = !still.matches; clock = 0;
+  draw(); run();
+}
+resetBtn.addEventListener("click", reset);
 viewBtns.forEach((b) => b.addEventListener("click", () => setView(b.dataset.view, true)));
 slider.addEventListener("input", () => setLift(Number(slider.value)));
 new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) run(); }, { rootMargin: "120px 0px" }).observe(stage);
 setView(view, false);
-window.__centerOfGravity = { S, setLift, rebuild, setView, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
+window.__centerOfGravity = { S, FM, setLift, rebuild, setView, reset, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
 `;
 
 const PAGE = readFileSync(join(HERE, "page.html"), "utf8")

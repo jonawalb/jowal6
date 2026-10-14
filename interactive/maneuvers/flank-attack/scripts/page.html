@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/flank-attack/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
@@ -56,6 +56,7 @@
 .fl-text li{margin:6px 0}
 @media (max-width:520px){.fl-figure .iso-plate-corner[data-corner="hint"]{display:none}.fl-stage{overflow:hidden}}
 </style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
 <body>
 <nav class="navbar" id="navbar">
@@ -84,23 +85,51 @@
     <!--FIGURE-->
     <div class="fl-controls">
       <div class="fd-views" role="group" aria-label="View">
-        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
-        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
       </div>
       <button type="button" class="btn btn-outline" id="fl-fix" aria-pressed="true">Release the front</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
       <label><span id="fl-angle-text">Spearhead position</span> <input type="range" id="fl-angle" min="26" max="162" step="1" value="30" aria-label="Spearhead position, degrees off the fort's front"></label>
     </div>
   </div>
 
   <section class="fl-text">
-    <h2>How to read it</h2>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model and readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
     <ol>
       <li><b>The fort</b> sits on a turntable. Its front wall is thick and carries the guns; its side and rear walls are thin. The engraved arc on the turntable marks the sector its guns mainly cover.</li>
       <li><b>The fixing force</b> is the ram on the straight rail. When it presses the front wall, a brake clamps the turntable, and the fort is held facing that way.</li>
-      <li><b>The maneuver force</b> is the lit spearhead on the curved rail. Move it round the ring with the pointer, the slider or the arrow keys.</li>
-      <li><b>The gauge</b> reads the share of the fort’s fire that can reach the spearhead. While the fort is fixed, moving the spearhead to the flank drives it down. Release the front and the fort turns to face the threat, and the gauge climbs back.</li>
+      <li><b>The maneuver force</b> is the lit spearhead on the curved rail.</li>
+      <li><b>The gauge</b> reads the share of the fort’s fire that can reach the spearhead.</li>
     </ol>
-    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model and readout drive both. Here the scale is a platoon attack, blue is friendly and red is the enemy. On the rise, an enemy rifle squad and machine-gun team hold two-man fighting positions with sandbagged rims behind a belt of wire; the red fan on the ground is the machine gun’s sector. On the right, behind a stone wall, the support-by-fire element (a rifle squad and two machine-gun teams) fixes the enemy with fire on its front (blue tracers, strikes and drifting smoke). Support by fire is “a tactical mission task in which a unit engages the enemy by direct fire in support of another maneuvering force” (ATP 3-21.8, para. 3-56). The lit assault element is two rifle squads, each “two fire teams and a squad leader” (para. 1-9), each team being a team leader, an automatic rifleman, a grenadier and a rifleman (para. 1-11), with the platoon leader and his radio operator. The squads move in squad column with their teams in wedges, the wedge being “the basic formation of the fire team” (para. 3-46), along a track through the wood, past a phase line and an assault position marked in chalk on pegs, then turn in and assault in squad line, a formation “used to assault or as a pre-assault formation” (para. 3-54). The flag marks the objective and the dashed outline at the wall the support-by-fire position. Release the front and the enemy shifts round its positions to face the assault and turns its fire on it, and the support-by-fire element ceases fire but holds its position; the assault then uses fire and movement (para. 1-9), one squad firing while the other moves. Losses are notional: greyed figures lying still are men down on both sides, the blue ones carried back to a collection point behind the support-by-fire position where a medic kneels, and the readout counts them, friendly vs enemy, the attacker losing more and the defender fewer the more of the enemy’s fire can bear. Soldiers are drawn larger than scale (about one and a half times) so they read; sizes, ranges, timings and the spacing of the positions are notional.</p>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The spearhead.</b> Move it round the ring with the pointer, the slider or the arrow keys. While the fort is fixed, moving the spearhead to the flank drives the gauge down.</li>
+      <li><b>Release the front</b> and the fort turns to face the threat, and the gauge climbs back.</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the scale is a platoon attack, blue is friendly and red is the enemy.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The enemy</b> is on the rise: a rifle squad and a machine-gun team in two-man fighting positions with sandbagged rims behind a belt of wire. The red fan on the ground is the machine gun’s sector. The flag marks the objective.</li>
+      <li><b>The support-by-fire element</b> (a rifle squad and two machine-gun teams) is on the right, behind a stone wall; the dashed outline at the wall is its position. Support by fire is “a tactical mission task in which a unit engages the enemy by direct fire in support of another maneuvering force” (ATP 3-21.8, para. 3-56).</li>
+      <li><b>The lit assault element</b> is two rifle squads, each “two fire teams and a squad leader” (para. 1-9), each team being a team leader, an automatic rifleman, a grenadier and a rifleman (para. 1-11), with the platoon leader and his radio operator.</li>
+      <li><b>The route</b> runs along a track through the wood, past a phase line and an assault position marked in chalk on pegs.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The fix.</b> The support-by-fire element fixes the enemy with fire on its front: blue tracers, strikes and drifting smoke.</li>
+      <li><b>The assault.</b> Move the assault element with the pointer, the slider or the arrow keys. The squads move in squad column with their teams in wedges, the wedge being “the basic formation of the fire team” (para. 3-46), then turn in and assault in squad line, a formation “used to assault or as a pre-assault formation” (para. 3-54).</li>
+      <li><b>Release the front</b> and the enemy shifts round its positions to face the assault and turns its fire on it, and the support-by-fire element ceases fire but holds its position; the assault then uses fire and movement (para. 1-9), one squad firing while the other moves.</li>
+      <li><b>Losses</b> are notional: greyed figures lying still are men down on both sides, the blue ones carried back to a collection point behind the support-by-fire position where a medic kneels. The readout counts them, friendly vs enemy, the attacker losing more and the defender fewer the more of the enemy’s fire can bear.</li>
+    </ol>
+    <p class="fine">Soldiers are drawn larger than scale (about one and a half times) so they read; sizes, ranges, timings and the spacing of the positions are notional.</p>
+    </div>
 
     <h2>What doctrine says</h2>
     <p>U.S. Army <i>FM 3-90, Tactics</i> (May 2023) lists five forms of maneuver: frontal attack, penetration, envelopment, turning movement and infiltration. Earlier doctrine also named the flank attack as its own form; the 2023 manual folds it into the envelopment, in which “an attacking force avoids an enemy’s principal defense by attacking along an assailable flank” (para. 2-58).</p>

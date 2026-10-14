@@ -319,11 +319,11 @@ const marksEl = fieldSvgEl.querySelector('[data-part="marks"]');
 const fireEl = fieldSvgEl.querySelector('[data-part="fire"]');
 const hintEl = root.querySelector('[data-corner="hint"]');
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
+const VIEW_KEY = "maneuvers.view.v2";
 const HINTS = { machine: "Click a stage to stop it", field: "Click a force to stop it" };
 const NAMES = { machine: { feed: "feeder", shape: "shaping press", decide: "decisive press" }, field: { feed: "supply trucks", shape: "guns and scouts", decide: "decisive attack" } };
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const T = fieldTerrain();
 const LOOKS = new Map();
 // What the Battlefield view measures between frames (see field-scene.mjs): the attack's progress p,
@@ -481,6 +481,21 @@ stage.addEventListener("keydown", (event) => {
 });
 for (const key of STAGES) buttons[key].addEventListener("click", () => toggle(key));
 resetBtn.addEventListener("click", restart);
+// Reset: back to the state the page opened in (switches, line, battle clocks and idle tour); the view is kept.
+const fullResetBtn = root.querySelector(".fd-reset");
+function reset() {
+  clearTimeout(idle);
+  for (const key of STAGES) on[key] = true;
+  line = newLine();
+  shown = line.rate;
+  Object.assign(FM, { t: 0, p: 0, b: 0, back: false, lossOn: { feed: true, shape: true, decide: true }, sh: 1, shDir: 1, sup: 1, lap: 0 });
+  marksSig = "";
+  touring = !still.matches; clock = 0;
+  sync();
+  if (still.matches) settle(); else { for (let i = 0; i < 420; i++) stepLine(line, on, 1 / 60); line.good = 0; line.scrap = 0; draw(); }
+  run();
+}
+fullResetBtn.addEventListener("click", reset);
 still.addEventListener("change", () => { touring = !still.matches; if (still.matches) settle(); else run(); });
 new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) run(); }, { rootMargin: "120px 0px" }).observe(stage);
 function setView(next, save) {
@@ -500,7 +515,7 @@ root.setAttribute("data-view", view);
 sync();
 if (still.matches) settle(); else { for (let i = 0; i < 420; i++) stepLine(line, on, 1 / 60); line.good = 0; line.scrap = 0; }
 setView(view, false);
-window.__shapingDecisiveSustaining = { on, line: () => line, field: FM, setStages, toggle, restart, setView, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
+window.__shapingDecisiveSustaining = { on, line: () => line, field: FM, setStages, toggle, restart, reset, setView, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
 `;
 
 const PAGE = readFileSync(join(HERE, "page.html"), "utf8")

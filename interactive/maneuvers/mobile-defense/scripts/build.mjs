@@ -197,15 +197,15 @@ const fieldLayer = fieldSvgEl.querySelector('[data-part="field-live"]');
 const marksEl = fieldSvgEl.querySelector('[data-part="marks"]');
 const fireEl = fieldSvgEl.querySelector('[data-part="fire"]');
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
+const VIEW_KEY = "maneuvers.view.v2";
 const still = matchMedia("(prefers-reduced-motion: reduce)");
 const FIX = fixtures(K, P);
 const S = { ...START, needle: 0.5, rt: 0 };
 const TF = fieldTerrain();
 const LOOKS = new Map();
 let stageF = null, fire = null, marksSig = "", fadeNow = -1, fieldT = 0;
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 // idle tour: one run each at a working split, a split too weak to strike, one too thin to fix
 const TOUR = [0.58, 0.40, 0.74];
 const STILL_T = DATA.MODEL.T.advance + DATA.MODEL.T.settle + DATA.MODEL.T.strike + 0.01;
@@ -333,11 +333,25 @@ stage.addEventListener("keydown", (event) => {
 });
 runBtn.addEventListener("click", fireRun);
 slider.addEventListener("input", () => setSplit(Number(slider.value)));
+// Reset: back to the state the page opened in (split, run, needle, battlefield clock and idle tour); the view is kept.
+const resetBtn = root.querySelector(".fd-reset");
+function reset() {
+  clearTimeout(idle);
+  posed = false; running = false; runT = 0;
+  Object.assign(S, START, { needle: 0.5, rt: 0 });
+  st = runAt(0, S.s);
+  if (still.matches) { S.rt = STILL_T; st = runAt(STILL_T, S.s); }
+  fieldT = 0; marksSig = ""; fadeNow = -1;
+  slider.value = String(Math.round(S.s * 100));
+  touring = !still.matches; clock = 0; tourIx = 0;
+  draw(st); run();
+}
+resetBtn.addEventListener("click", reset);
 viewBtns.forEach((b) => b.addEventListener("click", () => setView(b.dataset.view, true)));
 new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) run(); }, { rootMargin: "120px 0px" }).observe(stage);
 if (still.matches) { S.rt = STILL_T; st = runAt(STILL_T, S.s); }
 setView(view, false);
-window.__mobileDefense = { S, setSplit, fire: fireRun, runAt, setView, view: () => view, stop: () => { touring = false; running = false; clearTimeout(idle); },
+window.__mobileDefense = { S, setSplit, fire: fireRun, runAt, setView, reset, view: () => view, stop: () => { touring = false; running = false; clearTimeout(idle); },
   pose: (t, s) => { posed = true; touring = false; running = false; clearTimeout(idle); S.s = s; S.rt = t; st = runAt(t, s); S.needle = clamp(ratioAt(st.p, s) / 2, 0, 1); draw(st); } };
 `;
 

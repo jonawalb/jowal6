@@ -204,9 +204,9 @@ const FM = { t: 0, assign: null, pos: null };
 let stageF = null, fire = null, marksSig = "";
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
 const hintEl = root.querySelector('.iso-plate-corner[data-corner="hint"]');
-const VIEW_KEY = "maneuvers.view";
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+const VIEW_KEY = "maneuvers.view.v2";
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const still = matchMedia("(prefers-reduced-motion: reduce)");
 const S = { ...START, stacks: [...START.stacks], drops: [...START.drops], states: [...START.states], statics: DATA.STATICS, piers: DATA.PIER_ITEMS };
 let target = allocate(S.main, S.each);
@@ -364,6 +364,19 @@ stage.addEventListener("keydown", (event) => {
 mainBtns.forEach((b, i) => b.addEventListener("click", () => choose(i)));
 evenBtn.addEventListener("click", () => choose(S.main, 3));
 slider.addEventListener("input", () => choose(S.main, Number(slider.value)));
+// Reset: back to the state the page opened in (model, loader, controls and idle tour); the view is kept.
+const resetBtn = root.querySelector(".fd-reset");
+function reset() {
+  clearTimeout(idle);
+  Object.assign(S, START, { stacks: [...START.stacks], drops: [...START.drops], states: [...START.states] });
+  job = null;
+  Object.assign(FM, { t: 0, assign: null, pos: null });
+  marksSig = "";
+  setPlan(START.main, START.each);
+  touring = !still.matches; clock = 0;
+  draw(); run();
+}
+resetBtn.addEventListener("click", reset);
 new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) run(); }, { rootMargin: "120px 0px" }).observe(stage);
 viewBtns.forEach((b) => b.addEventListener("click", () => setView(b.dataset.view, true)));
 function setView(next, save) {
@@ -378,7 +391,7 @@ function setView(next, save) {
 }
 setPlan(S.main, S.each);
 setView(view, false);
-window.__mainEffort = { S, FM, setPlan, choose, finishNow, setView, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
+window.__mainEffort = { S, FM, setPlan, choose, finishNow, setView, reset, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
 `;
 
 const PAGE = readFileSync(join(HERE, "page.html"), "utf8")

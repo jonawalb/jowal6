@@ -247,15 +247,15 @@ const fireEl = fieldSvgEl.querySelector('[data-part="fire"]');
 const labelsEl = stage.querySelector(".db-labels");
 const hintEl = root.querySelector('[data-corner="hint"]');
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
+const VIEW_KEY = "maneuvers.view.v2";
 const COMMIT_TEXT = { machine: "Commit the second echelon on", field: "Commit the mobile group on" };
 const TF = fieldTerrain();
 const LOOKS = new Map();
 const PLACES = fieldPlaces();
 let stageF = null, fire = null, marksSig = "", ft = 0;
 const labelNodes = new Map();
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const still = matchMedia("(prefers-reduced-motion: reduce)");
 const DIAL_ITEM = { key: depthOf([GEO.DIAL.x, GEO.DIAL.y, 0], P), svg: dialEl.outerHTML };
 dialEl.remove();
@@ -397,12 +397,23 @@ stage.addEventListener("keydown", (event) => {
   event.preventDefault();
 });
 replayBtn.addEventListener("click", replay);
+// Reset: back to the state the page opened in (clock, commit day, run and idle tour); the view is kept.
+const resetBtn = root.querySelector(".fd-reset");
+function reset() {
+  clearTimeout(idle);
+  Object.assign(V, { t: 0, commit: COMMIT, mode: "play", hold: 0 });
+  touring = !still.matches; leg = 0; ft = 0;
+  slider.value = String(COMMIT);
+  drawn = "";
+  draw(); run();
+}
+resetBtn.addEventListener("click", reset);
 viewBtns.forEach((b) => b.addEventListener("click", () => setView(b.dataset.view, true)));
 slider.addEventListener("input", () => { setCommit(Number(slider.value)); replay(); });
 addEventListener("resize", () => { labelMap = null; if (view === "field") draw(); });
 new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) run(); }, { rootMargin: "120px 0px" }).observe(stage);
 setView(view, false);
-window.__deepBattle = { V, setCommit, replay, setView, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
+window.__deepBattle = { V, setCommit, replay, setView, reset, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
 `;
 
 const PAGE = readFileSync(join(HERE, "page.html"), "utf8")

@@ -188,10 +188,10 @@ const FM = { t: 0, g: undefined, hw: undefined, dhw: 0, vp: 0 };
 let stageF = null, fire = null, marksSig = "";
 const hintEl = root.querySelector('[data-corner="hint"]');
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
+const VIEW_KEY = "maneuvers.view.v2";
 const HINTS = { machine: "Hover to run · click holds", field: "Hover to run · click holds" };
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const still = matchMedia("(prefers-reduced-motion: reduce)");
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 const S = { p: START.p, target: START.p, hold: START.hold, gap: 0, pin: 0 };
@@ -309,9 +309,22 @@ slider.addEventListener("input", () => steer(Number(slider.value) / 100));
 new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) run(); }, { rootMargin: "120px 0px" }).observe(stage);
 if (still.matches) { S.p = S.target = 1; touring = false; }
 { const s = stateAt(S.p, S.hold); S.pin = s.pinsUp ? 1 : 0; S.gap = s.gap; }
+// Reset: back to the state the page opened in (model, field motion, controls and idle tour); the view is kept.
+function reset() {
+  clearTimeout(idle);
+  Object.assign(S, { p: START.p, target: START.p, hold: START.hold, gap: 0, pin: 0 });
+  Object.assign(FM, { t: 0, g: undefined, hw: undefined, dhw: 0, vp: 0 });
+  touring = !still.matches; clock = 0;
+  if (still.matches) { S.p = S.target = 1; touring = false; }
+  { const s = stateAt(S.p, S.hold); S.pin = s.pinsUp ? 1 : 0; S.gap = s.gap; }
+  setHold(S.hold);
+  if (document.activeElement === slider) slider.blur();
+  draw(); run();
+}
+root.querySelector(".fd-reset").addEventListener("click", reset);
 setHold(S.hold);
 setView(view, false);
-window.__penetration = { S, setHold, steer, setView, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
+window.__penetration = { S, setHold, steer, setView, reset, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
 `;
 
 const PAGE = readFileSync(join(HERE, "page.html"), "utf8")

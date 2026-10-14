@@ -263,9 +263,9 @@ const fieldLayer = fieldSvgEl.querySelector('[data-part="field-live"]');
 const marksEl = fieldSvgEl.querySelector('[data-part="marks"]');
 const fireEl = fieldSvgEl.querySelector('[data-part="fire"]');
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+const VIEW_KEY = "maneuvers.view.v2";
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const TF = fieldTerrain();
 const LOOKS = new Map();
 const FM = { t: 0 };
@@ -372,6 +372,22 @@ stage.addEventListener("keydown", (event) => {
 });
 fireBtn.addEventListener("click", attack);
 modeBtn.addEventListener("click", toggle);
+// Reset: back to the state the page opened in (model, gauge needles, controls, opening attack and
+// idle tour); the view is kept.
+const resetBtn = root.querySelector(".fd-reset");
+function reset() {
+  clearTimeout(idle);
+  for (const key of Object.keys(ST)) delete ST[key];
+  Object.assign(ST, initial("elastic", 1));
+  gP = push(ST.d, ST.a); gR = resist(ST);
+  dwell = 0; FM.t = 0;
+  if (!still.matches) fire(ST);
+  slider.value = String(Math.round(ST.a * 100));
+  syncControls();
+  touring = !still.matches;
+  draw(); run();
+}
+resetBtn.addEventListener("click", reset);
 viewBtns.forEach((b) => b.addEventListener("click", () => setView(b.dataset.view, true)));
 slider.addEventListener("change", () => weigh(Number(slider.value) / 100));
 slider.addEventListener("input", () => { sliderOut.textContent = slider.value + "%"; });
@@ -379,7 +395,7 @@ new IntersectionObserver((entries) => { visible = entries[entries.length - 1].is
 if (!still.matches) fire(ST);
 syncControls();
 setView(view, false);
-window.__elasticDefense = { ST, fire: attack, toggle, weigh, step, setView, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
+window.__elasticDefense = { ST, fire: attack, toggle, weigh, step, setView, reset, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
 `;
 
 const PAGE = readFileSync(join(HERE, "page.html"), "utf8")

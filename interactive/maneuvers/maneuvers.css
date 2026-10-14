@@ -1,0 +1,66 @@
+/* Field Manual style for the Maneuvers section (owner pick, 2026-10-14). Loaded after /style.css on
+   every Maneuvers page only: cool gray paper, IBM Plex Sans + Plex Mono, olive drab, signal red,
+   square corners, hairline borders, no soft shadows. Revert point: git tag site-pre-fieldmanual. */
+:root {
+    --bg: #ECEEF0;
+    --bg-alt: #E2E5E8;
+    --surface: #F8F9FA;
+    --border: #A9B0B7;
+    --text: #16191C;
+    --text-muted: #4A5158;
+    --green-900: #16191C;
+    --green-800: #2F3514;
+    --green-700: #4B5320;
+    --green-600: #5A6427;
+    --green-500: #6B7633;
+    --green-400: #8E9862;
+    --green-300: #B0B78E;
+    --green-200: #D2D6BC;
+    --green-100: #E3E6D6;
+    --green-50: #EFF1E7;
+    --accent: #4B5320;
+    --accent-dim: rgba(75, 83, 32, 0.08);
+    --accent-glow: rgba(75, 83, 32, 0.12);
+    --signal: #B3261E;
+    --font-sans: 'IBM Plex Sans', -apple-system, sans-serif;
+    --font-serif: 'IBM Plex Sans', -apple-system, sans-serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+}
+
+::selection { background: var(--green-700); }
+
+/* Nav: flat gray bar, ink rule, mono links, red for the current section */
+.navbar, .navbar.scrolled { background: rgba(236, 238, 240, 0.96); border-bottom: 1px solid var(--text); box-shadow: none; }
+.nav-logo { text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.95rem; font-weight: 700; }
+.nav-links a { font-family: var(--font-mono); font-size: 0.8rem; font-weight: 400; }
+.nav-links a.active, .nav-links a:hover { color: var(--signal); }
+
+/* Type: Plex Sans headings set tight and heavy instead of a serif */
+.mv-main h1, .mt-main h1, .fl-main h1 { font-weight: 700; letter-spacing: -0.02em; }
+.mv-main h3, .mt-main h2, .mt-main h3, .fl-text h2, .mt-card b { font-weight: 600; letter-spacing: -0.01em; }
+.mv-back, .mt-back { font-family: var(--font-mono); font-weight: 400; font-size: 0.8rem; color: var(--green-700); }
+
+/* Figure numbers and small labels in mono, signal red */
+.mv-n, .mt-card-n { font-family: var(--font-mono); color: var(--signal); letter-spacing: 0.02em; text-transform: none; }
+
+/* Square corners and hairline borders; no soft shadows */
+.mv-card, .mt-card, .mt-panel, .mt-plate, .mt-scheme, .mt-el, .mt-el select, .mt-seek,
+.mt-tabs button, .mt-speed, .mt-steps li, .mt-badge, .mt-tags span, .btn, .mt-game, .fd-views { border-radius: 2px; }
+.mt-game { border-color: var(--border); }
+.mt-game:hover, .mt-game:focus-visible { box-shadow: none; border-color: var(--text); }
+.mt-game-tag { font-family: var(--font-mono); color: var(--signal); }
+.fl-back { font-family: var(--font-mono); font-weight: 400; font-size: 0.8rem; }
+.mv-card, .mt-card, .mt-panel { border-color: var(--border); }
+.mv-card:hover, .mv-card:focus-visible, .mt-card:hover, .mt-card:focus-visible { box-shadow: none; border-color: var(--text); }
+.mv-card img { border-bottom-color: var(--border); }
+
+/* Footer: ink instead of forest green */
+.footer { background: #16191C; color: #A9B0B7; }
+.footer-links a { font-family: var(--font-mono); font-size: 0.8rem; }
+
+/* "How to read it" follows the figure's view: machine text in Machine view, battlefield text in Battlefield view */
+body:has(.iso[data-view="field"]) .ex-machine,
+body:not(:has(.iso[data-view="field"])) .ex-field { display: none; }
+.ex-switch { font-size: 0.88rem; color: var(--text-muted); margin-top: 28px; }
+.ex-view h2 { margin-top: 10px; }
+.ex-view h3 { font-family: var(--font-mono); font-size: 0.8rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: var(--green-700); margin: 18px 0 4px; }

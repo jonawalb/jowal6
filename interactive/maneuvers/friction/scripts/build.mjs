@@ -319,10 +319,10 @@ const fogEl = fieldSvgEl.querySelector('[data-part="fog"]');
 const fireEl = fieldSvgEl.querySelector('[data-part="fire"]');
 const hintEl = root.querySelector('[data-corner="hint"]');
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
+const VIEW_KEY = "maneuvers.view.v2";
 const HINTS = { machine: "Click: grit · ←→ friction", field: "Click: incidents · ←→ friction" };
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const TF = fieldTerrain();
 const LOOKS = new Map();
 let stageF = null, fire = null, marksSig = "", fogSig = "", fieldT = 0;
@@ -472,6 +472,23 @@ function setView(next, save) {
 }
 viewBtns.forEach((b) => b.addEventListener("click", () => setView(b.dataset.view, true)));
 restartBtn.addEventListener("click", restart);
+// Reset: back to the state the page opened in (first run and its seed, grit, friction, drum and
+// idle tour); the view is kept. Restart run is kept as it is: it only starts a fresh run.
+const resetBtn = root.querySelector(".fd-reset");
+function reset() {
+  clearTimeout(idle);
+  // stop the running frame: reduced motion opens on a still frame with no clock running
+  cancelAnimationFrame(frame); frame = 0;
+  touring = !still.matches;
+  seed = 1; run = startRun(seed); phase = "run"; hold = 0; turn = 0; fieldT = 0;
+  S.b = 0; S.d = 0;
+  setGrit(true);
+  setMu(touring ? 0.1 : 0.3);
+  slider.value = String(mu);
+  gritKey = ""; shownMu = -1; marksSig = ""; fogSig = "";
+  if (still.matches) stillFrame(); else { draw(); go(); }
+}
+resetBtn.addEventListener("click", reset);
 slider.addEventListener("input", () => { setMu(Number(slider.value)); poke(); });
 function stillFrame() {
   // reduced motion: one still frame, a run stopped on its first grit grain
@@ -490,7 +507,7 @@ setGrit(true);
 setMu(touring ? 0.1 : 0.3);
 if (still.matches) stillFrame(); else draw();
 setView(view, false);
-window.__friction = { S, get run() { return run; }, setMu, setGrit, restart, setView, view: () => view,
+window.__friction = { S, get run() { return run; }, setMu, setGrit, restart, setView, reset, view: () => view,
   stop: () => { touring = false; clearTimeout(idle); },
   poseAt: (sd, m, t) => { touring = false; clearTimeout(idle); seed = sd; setMu(m); setGrit(true); run = startRun(seed); while (run.t < t && !run.done) step(run, 1 / 60, mu, gritOn); S.b = run.x; S.d = tension(run) * GEO.PER_N; phase = "posed"; gritKey = ""; draw(); return document.querySelector("[data-readout]").textContent; },
   pose: (x, m, grit) => { touring = false; clearTimeout(idle); setMu(m); setGrit(grit); run = startRun(seed); while (run.x < x && !run.done) step(run, 1 / 60, mu, gritOn); S.b = run.x; S.d = tension(run) * GEO.PER_N; phase = "posed"; draw(); return document.querySelector("[data-readout]").textContent; } };

@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/elastic-defense/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
@@ -58,6 +58,7 @@
 .ed-text li{margin:6px 0}
 @media (max-width:520px){.ed-figure .iso-plate-corner[data-corner="hint"]{display:none}.ed-stage{overflow:hidden}}
 </style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
 <body>
 <nav class="navbar" id="navbar">
@@ -86,25 +87,53 @@
     <!--FIGURE-->
     <div class="ed-controls">
       <div class="fd-views" role="group" aria-label="View">
-        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
-        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
       </div>
       <button type="button" class="btn btn-primary" id="ed-fire">Attack</button>
       <button type="button" class="btn btn-outline" id="ed-mode" aria-pressed="false">Switch to rigid wall</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
       <label>Attack weight <input type="range" id="ed-weight" min="60" max="160" step="5" value="100" aria-label="Attack weight, percent"> <output id="ed-weight-out">100%</output></label>
     </div>
   </div>
 
   <section class="ed-text">
-    <h2>How to read it</h2>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model, controls and readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
     <ol>
       <li><b>The ram</b> (lit) is the attack. A long drive spring pushes it, and like any spring it loses force as it stretches: the further the ram gets from its launcher, the weaker its push. That stands for an attack outrunning its artillery.</li>
       <li><b>The three plates</b> are the defense. The light front plate is the outpost zone, the second is the main line of resistance (MLR) and the third stands in the battle zone. The springs between them get stiffer with depth, so the defense pushes back harder the deeper the ram goes. The engraved bands and the ruler mark the zones on a notional kilometre scale.</li>
-      <li><b>The flank carriage</b> beside the track is the counterattack. A latch pin holds it cocked at the side against a heavy spring. When the ram stalls, the pin lifts and the carriage drives in from the flank: its wedge-shaped blade catches a roller on the ram’s outrigger and throws the ram back along the rails until the MLR plate is home again. The fixed block at the back is the rear stop the last spring bears on.</li>
+      <li><b>The flank carriage</b> beside the track is the counterattack. A latch pin holds it cocked at the side against a heavy spring. The fixed block at the back is the rear stop the last spring bears on.</li>
       <li><b>The gauge</b> compares the ram’s push (lit needle) with what the defense pushes back with (short needle).</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The counterattack.</b> When the ram stalls, the pin lifts and the carriage drives in from the flank: its wedge-shaped blade catches a roller on the ram’s outrigger and throws the ram back along the rails until the MLR plate is home again.</li>
       <li><b>Switch to the rigid wall</b> and the same three plates are bolted together at the front line, and the flank carriage is drawn back and stays latched: everything is in the wall. The ram now meets it at full strength. The bolted wall breaks when the push that reaches it is above 70%. The ram’s push has already fallen to 82% of the attack weight by the time it reaches the front line, so in this model any attack weight above about 85% on the slider (70 ÷ 82) shatters the wall and runs through to the rear; at 85% or below the wall holds. In the elastic stack every weight on the slider stalls in the battle zone, between 0.9 and 1.6 km deep.</li>
     </ol>
-    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model, controls and readout drive both. It shows a German sector of 1917 laid out in depth, blue for the attacker and red for the defender, with the attack moving the same way as the ram and the counterattack coming from the same side as the flank carriage. From the lower right, three waves of attacking infantry (lit) leave their jump-off trench. The German front trench, behind wire, is lightly held, and a few men hold shell-hole outposts in front of the main line of resistance. Behind the MLR the battle zone holds machine-gun strongpoints of the kind Lupfer describes: positions “for squads or machine gun sections,” placed “mostly in the battle zone,” which engaged the attackers “whenever possible, with devastating enfilade fire” and “would remain fighting even if cut off” (p. 15). Their fire sectors are marked on the ground. The trench across the top is the artillery protective line, the battle zone’s rear edge. In Lupfer’s sketch of the ideal battle the attackers’ barrage “has crept forward without them” and the Germans “concentrate their artillery fire behind the Allied advanced units” (p. 15); the shell bursts show both. A red counterattack force waits beside a wood at the rear of the battle zone on the far flank. A forward division expecting a major attack “would often have an entire counterattack division positioned behind it in the rearward zone” (p. 16); one small force stands for these reserves here. When the waves stall, it moves round and strikes their flank and drives them back out of the battle zone. Switched to the rigid wall, every defender, the counterattack force included, is packed into the front trench; above the breaking weight the waves break through, the men nearest the breach go down and the rest fall back. Greyed figures lying still are men down on both sides, with a stretcher-bearer kneeling beside the first attacker carried back; the readout ends with the count, attacker against defender. Soldiers are drawn larger than scale (about one and a half times) so they read. One figure stands for many men, and the numbers, distances, timings and casualty counts are notional.</p>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>This view shows a German sector of 1917 laid out in depth, blue for the attacker and red for the defender, with the attack moving the same way as the ram and the counterattack coming from the same side as the flank carriage.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The front trench.</b> The German front trench, behind wire, is lightly held, and a few men hold shell-hole outposts in front of the main line of resistance.</li>
+      <li><b>The battle zone.</b> Behind the MLR the battle zone holds machine-gun strongpoints of the kind Lupfer describes: positions “for squads or machine gun sections,” placed “mostly in the battle zone,” which engaged the attackers “whenever possible, with devastating enfilade fire” and “would remain fighting even if cut off” (p. 15). Their fire sectors are marked on the ground. The trench across the top is the artillery protective line, the battle zone’s rear edge.</li>
+      <li><b>The counterattack force.</b> A red counterattack force waits beside a wood at the rear of the battle zone on the far flank. A forward division expecting a major attack “would often have an entire counterattack division positioned behind it in the rearward zone” (p. 16); one small force stands for these reserves here.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The controls.</b> Attack with the Attack button, a click on the figure or Enter. Set the attack’s weight with the Attack weight slider or the arrow keys. Switch between elastic depth and a rigid front trench with the button beside Attack or M.</li>
+      <li><b>The attack.</b> From the lower right, three waves of attacking infantry (lit) leave their jump-off trench.</li>
+      <li><b>The artillery.</b> In Lupfer’s sketch of the ideal battle the attackers’ barrage “has crept forward without them” and the Germans “concentrate their artillery fire behind the Allied advanced units” (p. 15); the shell bursts show both.</li>
+      <li><b>The counterattack.</b> When the waves stall, the counterattack force moves round and strikes their flank and drives them back out of the battle zone.</li>
+      <li><b>The rigid wall.</b> Switched to the rigid wall, every defender, the counterattack force included, is packed into the front trench; above the breaking weight the waves break through, the men nearest the breach go down and the rest fall back.</li>
+      <li><b>Losses.</b> Greyed figures lying still are men down on both sides, with a stretcher-bearer kneeling beside the first attacker carried back; the readout ends with the count, attacker against defender.</li>
+    </ol>
+    <p class="fine">Soldiers are drawn larger than scale (about one and a half times) so they read. One figure stands for many men, and the numbers, distances, timings and casualty counts are notional.</p>
+    </div>
 
     <h2>What the history says</h2>
     <p>Timothy Lupfer’s study of German tactical doctrine traces the change to <i>The Principles of Command in the Defensive Battle in Position Warfare</i>, published by the German high command (OHL) on 1 December 1916. OHL “officially rejected the principle of holding the forward line at all cost.” Lupfer explains the logic: “As the Allied attack advanced, its relative power would deteriorate as the distance from its artillery support increased,” while the Germans “positioned their forces in tiers or echelons which became stronger as the distance from the front line increased” (p. 12).</p>

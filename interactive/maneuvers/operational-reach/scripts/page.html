@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/operational-reach/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
@@ -57,6 +57,7 @@
 .or-losses{margin:2px 0 0;font-size:13px;color:var(--anatomy-text)}
 @media (max-width:520px){.or-figure .iso-plate-corner[data-corner="hint"]{display:none}.or-stage{overflow:hidden}}
 </style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
 <body>
 <nav class="navbar" id="navbar">
@@ -85,25 +86,51 @@
     <!--FIGURE-->
     <div class="or-controls">
       <div class="fd-views" role="group" aria-label="View">
-        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
-        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
       </div>
       <button type="button" class="btn btn-outline" id="or-base" aria-pressed="false">Set the forward base</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
       <label>Reach <input type="range" id="or-reach" min="92" max="182" step="1" value="92" aria-label="Reach of the arm, bench units from the knife edge"></label>
     </div>
     <p class="or-losses" id="or-losses" aria-live="polite">Notional losses at the objective: 0 friendly, 0 enemy vehicles knocked out</p>
   </div>
 
   <section class="or-text">
-    <h2>How to read it</h2>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model and readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
     <ol>
       <li><b>The pedestal</b> in the middle is the home base. The arm is not pinned to it: a knife edge under the arm rests in a V-block, and counterweight plates on the arm&rsquo;s rear end hold it down on a rear rest.</li>
-      <li><b>The arm</b> telescopes in two stages. It carries <b>the lit load head</b>, the force the base supports, out along the ruler. Extend it with the pointer, the slider or the arrow keys.</li>
-      <li><b>The gauge</b> reads the moment of everything ahead of the support divided by the moment of everything behind it. As the arm extends, the head and stages move out and the ratio climbs. Past 1.0 (the raised mark) the arm tips forward about the knife edge and lands on a stop pad.</li>
-      <li><b>The roller stand</b> farther down the bench is a forward base. Set it with a click, the button or the B key and its jack lifts a roller under the arm. Once the roller carries the arm, the arm tips about the roller instead, and the head can go to full length with the gauge near zero. Remove it while the arm is out and the arm tips again.</li>
+      <li><b>The arm</b> telescopes in two stages. It carries <b>the lit load head</b>, the force the base supports, out along the ruler.</li>
+      <li><b>The gauge</b> reads the moment of everything ahead of the support divided by the moment of everything behind it.</li>
+      <li><b>The roller stand</b> farther down the bench is a forward base.</li>
     </ol>
-    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model and readout drive both. The battlefield is drawn at operational scale: each small vehicle stands for a company and each cluster of three for a battalion, blue friendly and red enemy. The depot on the left, with its sheds and supply stacks, is the home base. The supply road runs from it over a stream to a town held by an enemy battalion dug in on its western edge; the red fan is its fire sector and the flag behind it the objective. A friendly brigade of three battalions pushes out along the road as the arm extends: the lit lead battalion is the load head, and the other two ride where the arm&rsquo;s two stages sit. The dashed chalk ring round the depot marks how far the home base can support the brigade in this model, the reach at which the gauge reaches 1.0. Supply trucks shuttle out to the brigade, but only inside the ring. Push the lead battalion past it and it disperses and stops firing, and the trucks turn back at the ring&rsquo;s edge: the machine&rsquo;s arm tipping. Set the forward base and a convoy drives up to the site staked out beside the road and opens a logistics node there. A second ring grows from it out past the town, the trucks run from the node, and the lead battalion can fight at the objective. Success is not free: the line under the card counts notional losses at the objective, and knocked-out vehicles stop, grey out and smoke while a casualty evacuation truck (white roof) runs back to the supporting base. Supported by the forward node, the lead battalion loses one company vehicle and knocks out two; overreached, it loses two and knocks out one. Vehicles are drawn far larger than scale so they read; unit sizes, distances, the rings and timings are notional.</p>
-
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The arm.</b> Extend it with the pointer, the slider or the arrow keys. As the arm extends, the head and stages move out and the ratio climbs. Past 1.0 (the raised mark) the arm tips forward about the knife edge and lands on a stop pad.</li>
+      <li><b>The roller stand.</b> Set it with a click, the button or the B key and its jack lifts a roller under the arm. Once the roller carries the arm, the arm tips about the roller instead, and the head can go to full length with the gauge near zero. Remove it while the arm is out and the arm tips again.</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>The battlefield is drawn at operational scale: each small vehicle stands for a company and each cluster of three for a battalion, blue friendly and red enemy.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The depot</b> on the left, with its sheds and supply stacks, is the home base.</li>
+      <li><b>The supply road</b> runs from it over a stream to a town held by an enemy battalion dug in on its western edge; the red fan is its fire sector and the flag behind it the objective.</li>
+      <li><b>A friendly brigade</b> of three battalions pushes out along the road as the arm extends: the lit lead battalion is the load head, and the other two ride where the arm&rsquo;s two stages sit.</li>
+      <li><b>The ring.</b> The dashed chalk ring round the depot marks how far the home base can support the brigade in this model, the reach at which the gauge reaches 1.0.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The brigade.</b> Move it along the road with the pointer over the road, the slider or the arrow keys. Supply trucks shuttle out to the brigade, but only inside the ring. Push the lead battalion past it and it disperses and stops firing, and the trucks turn back at the ring&rsquo;s edge: the machine&rsquo;s arm tipping.</li>
+      <li><b>Set the forward base</b> and a convoy drives up to the site staked out beside the road and opens a logistics node there. A second ring grows from it out past the town, the trucks run from the node, and the lead battalion can fight at the objective. A click, the button or the B key sets the base or removes it.</li>
+      <li><b>Losses.</b> Success is not free: the line under the card counts notional losses at the objective, and knocked-out vehicles stop, grey out and smoke while a casualty evacuation truck (white roof) runs back to the supporting base. Supported by the forward node, the lead battalion loses one company vehicle and knocks out two; overreached, it loses two and knocks out one.</li>
+    </ol>
+    <p class="fine">Vehicles are drawn far larger than scale so they read; unit sizes, distances, the rings and timings are notional.</p>
+    </div>
     <h2>What doctrine says</h2>
     <p>Joint doctrine defines the term in <i>JP 5-0, Joint Planning</i> (December 2020): &ldquo;Operational reach is the distance and duration across which a joint force can successfully employ military capabilities.&rdquo; Reach may be extended, among other ways, &ldquo;through forward positioning of capabilities and resources&rdquo; (ch. IV, para. 6.d(1)).</p>
     <p>The next paragraph ties reach to bases and lines of communications. &ldquo;Locating forces, reserves, bases, pre-positioned equipment sets, and logistics forward extends operational reach,&rdquo; and reach &ldquo;is also affected by&rdquo; improving &ldquo;transportation availability and the effectiveness of lines of communications and throughput capability.&rdquo; But &ldquo;for any given campaign or major operation, there is a finite range beyond which predominant elements of the joint force cannot prudently operate or maintain effective operations&rdquo; (para. 6.d(2)). Basing, the manual adds, &ldquo;is an indispensable part of operational art, since it is tied to the construct of LOOs [lines of operation] and directly affects operational reach&rdquo; (para. 6.d(3)).</p>

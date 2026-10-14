@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/bypass/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
@@ -58,6 +58,7 @@
 .bp-figure .tr-s[data-side="m"] .tr-t{fill:#fbfaf7}.bp-figure .tr-s[data-side="m"] .tr-l{fill:#ecebe6}.bp-figure .tr-s[data-side="m"] .tr-d{fill:#d9d7d0}.bp-figure .tr-s[data-side="m"] .tr-g{fill:#9a978f}
 @media (max-width:520px){.bp-figure .iso-plate-corner[data-corner="hint"]{display:none}.bp-stage{overflow:hidden}}
 </style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
 <body>
 <nav class="navbar" id="navbar">
@@ -86,26 +87,52 @@
     <!--FIGURE-->
     <div class="bp-controls">
       <div class="fd-views" role="group" aria-label="View">
-        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
-        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
       </div>
       <button type="button" class="btn btn-outline" id="bp-mode" aria-pressed="false">Reduce every strongpoint</button>
       <label>Bypass criteria <input type="range" id="bp-criteria" min="0" max="3" step="1" value="2" aria-label="Bypass criteria: 0 reduce every rock, 1 bypass small rocks, 2 bypass small and medium, 3 bypass all"></label>
       <button type="button" class="btn btn-outline" id="bp-rerun">Run again</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
     </div>
   </div>
 
   <section class="bp-text">
-    <h2>How to read it</h2>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model and readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
     <ol>
       <li><b>The floats</b> (lit) are the attacking force. Twelve of them leave the header tank and run down the flume toward the collecting pool.</li>
       <li><b>The rocks</b> are enemy strongpoints, in three sizes: medium, then large, then small.</li>
+      <li><b>The dials</b> behind the outlet show the result: the left one counts floats across the meter line, the right one is a clock from 0 to 10 seconds.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
       <li><b>The knob</b> (or the slider, or the arrow keys) sets the bypass criteria: which sizes the convoy may go round. The vane at each divider swings to send the convoy into the open lane past a rock it may bypass.</li>
       <li><b>A rock it may not bypass</b> stops the convoy. The lead float waits while the rock is cut down to rubble, and every float behind it waits too.</li>
       <li><b>A rock it bypasses</b> costs no time, but it still costs floats. In this model the lead floats peel off and stay with the rock to watch it, and they never reach the pool; in doctrine the bypassed force is kept under observation until relieved.</li>
-      <li><b>The dials</b> behind the outlet show the result: the left one counts floats across the meter line, the right one is a clock from 0 to 10 seconds. Click the figure, or use the button, to switch between reducing every rock and bypassing by the criteria.</li>
+      <li><b>The mode.</b> Click the figure, or use the button, to switch between reducing every rock and bypassing by the criteria.</li>
     </ol>
-    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model and readout drive both. Here the scale is one attacking company; blue is friendly, red the enemy. Each float becomes a vehicle, so the lit company column is drawn as twelve small tracked vehicles, three platoons of four, driving up a valley road. Each rock becomes an enemy strongpoint astride the road, its fire sector marked down the road toward the column: the medium one has three two-man fighting positions and a machine-gun position, the large one five fighting positions, two machine guns and wire on its flanks, the small one two fighting positions. A dirt side track loops round each. A strongpoint the criteria let the column bypass is passed on its side track, while the vehicles the model holds back halt on the road short of it, put out a two-soldier observation post and fire on it to keep it in place (the manual’s fixing technique, para. B-12). A strongpoint above the criteria stops the column: the lead vehicles fire on it, and a rifle squad, “two fire teams and a squad leader” (ATP 3-21.8, para. 1-9), dismounts, forms a squad line on its near flank, a formation “used to assault or as a pre-assault formation” (para. 3-54), and closes by fire and movement (para. 1-9), one team moving while the other lies down and fires. As the strongpoint is reduced its defenders go down or withdraw into the wood behind it, the squad remounts, and only then does the column drive on. Success is not free: soldiers who go down on either side lie greyed where they fell, and a white ambulance trails the column and halts by the latest friendly casualty, where a medic kneels. Past a chalk phase line the vehicles that got through park in a chalk-outlined assembly area: the readout’s count. Soldiers and vehicles are drawn larger than scale so they read; unit sizes, distances, ranges and timings are notional.</p>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the scale is one attacking company; blue is friendly, red the enemy.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The column.</b> Each float becomes a vehicle, so the lit company column is drawn as twelve small tracked vehicles, three platoons of four, driving up a valley road.</li>
+      <li><b>The strongpoints.</b> Each rock becomes an enemy strongpoint astride the road, its fire sector marked down the road toward the column: the medium one has three two-man fighting positions and a machine-gun position, the large one five fighting positions, two machine guns and wire on its flanks, the small one two fighting positions. A dirt side track loops round each.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The controls.</b> Set the bypass criteria with the slider or the arrow keys. Click the figure, use the button, or press Space or Enter to switch between reducing every strongpoint and bypassing by the criteria; Run again or the R key sends the column off again.</li>
+      <li><b>A bypassed strongpoint.</b> A strongpoint the criteria let the column bypass is passed on its side track, while the vehicles the model holds back halt on the road short of it, put out a two-soldier observation post and fire on it to keep it in place (the manual’s fixing technique, para. B-12).</li>
+      <li><b>A reduced strongpoint.</b> A strongpoint above the criteria stops the column: the lead vehicles fire on it, and a rifle squad, “two fire teams and a squad leader” (ATP 3-21.8, para. 1-9), dismounts, forms a squad line on its near flank, a formation “used to assault or as a pre-assault formation” (para. 3-54), and closes by fire and movement (para. 1-9), one team moving while the other lies down and fires. As the strongpoint is reduced its defenders go down or withdraw into the wood behind it, the squad remounts, and only then does the column drive on.</li>
+      <li><b>Losses.</b> Success is not free: soldiers who go down on either side lie greyed where they fell, and a white ambulance trails the column and halts by the latest friendly casualty, where a medic kneels.</li>
+      <li><b>The count.</b> Past a chalk phase line the vehicles that got through park in a chalk-outlined assembly area: the readout’s count.</li>
+    </ol>
+    <p class="fine">Soldiers and vehicles are drawn larger than scale so they read; unit sizes, distances, ranges and timings are notional.</p>
+    </div>
 
     <h2>What doctrine says</h2>
     <p>U.S. Army <i>FM 3-90, Tactics</i> (May 2023) lists bypass as a tactical mission task “in which a unit deliberately avoids contact with an obstacle or an enemy force.” A commander orders one “to maintain momentum while deliberately avoiding combat with an enemy force” (para. B-9). The manual bases the decision on the requirement to maintain momentum and aggressive action; knowledge of the enemy force’s strength, intent or mission; “the degree to which the bypassed enemy force can interfere with the advance”; the general state of the enemy force, since “if enemy resistance is crumbling, the friendly force can take greater risks”; and any bypass criteria set by a higher echelon headquarters (para. B-10).</p>

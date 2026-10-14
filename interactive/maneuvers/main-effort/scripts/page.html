@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/main-effort/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
@@ -60,6 +60,7 @@
 .me-controls .me-mains .btn[aria-pressed="true"]{background:var(--green-700,#2f5d3a);color:#fff}
 .me-controls output{min-width:1ch;font-variant-numeric:tabular-nums}
 </style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
 <body>
 <nav class="navbar" id="navbar">
@@ -88,8 +89,8 @@
     <!--FIGURE-->
     <div class="me-controls">
       <div class="fd-views" role="group" aria-label="View">
-        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
-        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
       </div>
       <div class="me-mains" role="group" aria-label="Main effort">Main effort
         <button type="button" class="btn btn-outline" data-main="0" aria-pressed="false">A</button>
@@ -99,19 +100,48 @@
       </div>
       <label>Discs left on each supporting gate <input type="range" id="me-each" min="0" max="3" step="1" value="3" aria-label="Discs left on each supporting gate"> <output id="me-each-out">3</output></label>
       <button type="button" class="btn btn-outline" id="me-even">Spread evenly</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
     </div>
   </div>
 
   <section class="me-text">
-    <h2>How to read it</h2>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model and readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
     <ol>
       <li><b>The wall</b> has four sectors, A to D (one to four pips on the tags in front). Each sector is a gate held up by springs and two shear pins, with a stack of weight discs pressing down on it.</li>
       <li><b>The discs</b> are the force’s combat power: twelve in all, never more. The loader on the overhead beam carries them from gate to gate, up to four at a time.</li>
+      <li><b>The lit gate</b> is the main effort.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The main effort.</b> Pick it by clicking a gate, with the buttons or with the left and right arrow keys. The slider (or the up and down keys) sets how many discs each supporting gate keeps.</li>
       <li><b>In this model</b>, a gate with six or more discs shears its pins and drops through the wall: a breach. A gate with one to five discs stays held. A gate with none is pushed back up by its springs: an exposed sector.</li>
-      <li><b>The lit gate</b> is the main effort. Pick it by clicking a gate, with the buttons or with the left and right arrow keys. The slider (or the up and down keys) sets how many discs each supporting gate keeps.</li>
     </ol>
     <p>Try three settings. Spread evenly, three discs each: every sector holds and nothing breaks. One disc on each supporting gate, nine on the main effort: the main effort breaks through and the rest still hold. None on the supporting gates: the breach comes, but three sectors are left exposed.</p>
-    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model and readout drive both, and you can click a sector of the ground to make it the main effort. Here the scale is a rifle company attacking on a front of four platoon sectors, A to D from left to right, blue friendly and red enemy. Across the top, the enemy holds two-man fighting positions, two in each sector, with a wood at its back. Each disc on the bench is one blue element on the ground: a rifle squad, “two fire teams and a squad leader” (ATP 3-21.8, para. 1-9), each team built around a team leader, an automatic rifleman, a grenadier and a rifleman (para. 1-11); a machine-gun team, “a gunner and an assistant gunner” (para. 1-13); or an attached tank. Each sector starts with a squad, a machine-gun team and a tank, and gives up its tank and machine-gun team before its squad. The lit sector is the main effort. Weighted with six or more elements, its tanks drive through the enemy line and its squads follow in squad column, while the thinly held sectors stay on their line, down and firing; machine-gun teams stay where they are, and stop firing once no enemy is left in front of them. Spread three to a sector, every sector stalls in squad line, a formation “used to assault or as a pre-assault formation” (para. 3-54), trading fire at the same distance. A sector left with nothing is empty, and the enemy there comes out of its positions into the open ground; its red fan marks the empty ground its fire now covers, beside the open flank of the next sector. Elements shifted between sectors (the bench’s loader) travel along the road behind the line of departure, the chalk line on pegs, with chalk boundaries between the sectors; the flag marks the company’s objective. Success is not free: greyed figures lying still are men down on both sides, the first blue one at a collection point by the road with a medic kneeling beside him; the readout ends with the count, blue against red. Soldiers and tanks are drawn larger than scale (about one and a half times) so they read; sizes, ranges, timings, the enemy’s strength, the mix of elements and the casualty counts are notional.</p>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the scale is a rifle company attacking on a front of four platoon sectors, A to D from left to right, blue friendly and red enemy.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The enemy.</b> Across the top, the enemy holds two-man fighting positions, two in each sector, with a wood at its back.</li>
+      <li><b>The blue elements.</b> Each disc on the bench is one blue element on the ground: a rifle squad, “two fire teams and a squad leader” (ATP 3-21.8, para. 1-9), each team built around a team leader, an automatic rifleman, a grenadier and a rifleman (para. 1-11); a machine-gun team, “a gunner and an assistant gunner” (para. 1-13); or an attached tank. Each sector starts with a squad, a machine-gun team and a tank, and gives up its tank and machine-gun team before its squad.</li>
+      <li><b>The lit sector</b> is the main effort.</li>
+      <li><b>The markings.</b> The line of departure is the chalk line on pegs, with chalk boundaries between the sectors; the flag marks the company’s objective.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The main effort.</b> You can click a sector of the ground to make it the main effort, or use the A to D buttons or the left and right arrow keys. The slider (or the up and down keys) sets how many elements each supporting sector keeps.</li>
+      <li><b>Weighted</b> with six or more elements, its tanks drive through the enemy line and its squads follow in squad column, while the thinly held sectors stay on their line, down and firing; machine-gun teams stay where they are, and stop firing once no enemy is left in front of them.</li>
+      <li><b>Spread</b> three to a sector, every sector stalls in squad line, a formation “used to assault or as a pre-assault formation” (para. 3-54), trading fire at the same distance.</li>
+      <li><b>Empty.</b> A sector left with nothing is empty, and the enemy there comes out of its positions into the open ground; its red fan marks the empty ground its fire now covers, beside the open flank of the next sector.</li>
+      <li><b>Shifting.</b> Elements shifted between sectors (the bench’s loader) travel along the road behind the line of departure.</li>
+      <li><b>Losses.</b> Success is not free: greyed figures lying still are men down on both sides, the first blue one at a collection point by the road with a medic kneeling beside him; the readout ends with the count, blue against red.</li>
+    </ol>
+    <p class="fine">Soldiers and tanks are drawn larger than scale (about one and a half times) so they read; sizes, ranges, timings, the enemy’s strength, the mix of elements and the casualty counts are notional.</p>
+    </div>
 
     <h2>What doctrine says</h2>
     <p>U.S. Army <i>ADP 3-0, Operations</i> (31 July 2019) defines the main effort as “a designated subordinate unit whose mission at a given point in time is most critical to overall mission success. It is usually weighted with the preponderance of combat power. Typically, commanders shift the main effort one or more times during execution” (para. 4-38). The loader stands for that shift: the tour moves the main effort from C to B. A supporting effort is “a designated subordinate unit with a mission that supports the success of the main effort,” and commanders, the manual says, “resource supporting efforts with the minimum assets necessary to accomplish the mission” (para. 4-39).</p>

@@ -182,10 +182,10 @@ const FM = { t: 0, pb: undefined };
 let stageF = null, fire = null, marksSig = "";
 const hintEl = root.querySelector('[data-corner="hint"]');
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
+const VIEW_KEY = "maneuvers.view.v2";
 const HINTS = { machine: "Hover to step · click: plan", field: "Hover to step · click: plan" };
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const still = matchMedia("(prefers-reduced-motion: reduce)");
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 const S = { law: START.law, plan: START.plan, t: 0, target: 0, playing: false, phi: 0, db: 0, dr: 0 };
@@ -307,12 +307,27 @@ stage.addEventListener("keydown", (event) => {
 planBtn.addEventListener("click", togglePlan);
 lawBtn.addEventListener("click", toggleLaw);
 playBtn.addEventListener("click", play);
+// Reset: back to the state the page opened in (law, plan, step, playback and idle tour); the view is kept.
+const resetBtn = root.querySelector(".fd-reset");
+function reset() {
+  clearTimeout(idle);
+  setPlaying(false);
+  setScenario(START.law, START.plan, false);
+  S.t = 0; S.target = 0;
+  { const b0 = bench(S.law, S.plan, 0); S.phi = b0.phi; S.db = b0.db; S.dr = b0.dr; }
+  FM.t = 0; FM.pb = undefined;
+  lastSig = ""; marksSig = "";
+  slider.value = "0";
+  touring = !still.matches; clock = 0;
+  draw(); run();
+}
+resetBtn.addEventListener("click", reset);
 viewBtns.forEach((b) => b.addEventListener("click", () => setView(b.dataset.view, true)));
 slider.addEventListener("input", () => stepTo(Number(slider.value)));
 new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) run(); }, { rootMargin: "120px 0px" }).observe(stage);
 setScenario(S.law, S.plan, false);
 setView(view, false);
-window.__lanchester = { S, setScenario: (law, plan) => { setScenario(law, plan, true); hold(); }, stepTo, setView, view: () => view, stop: () => { touring = false; setPlaying(false); clearTimeout(idle); } };
+window.__lanchester = { S, setScenario: (law, plan) => { setScenario(law, plan, true); hold(); }, stepTo, setView, reset, view: () => view, stop: () => { touring = false; setPlaying(false); clearTimeout(idle); } };
 `;
 
 const PAGE = readFileSync(join(HERE, "page.html"), "utf8")

@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/center-of-gravity/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
@@ -57,6 +57,7 @@
 .cg-text li{margin:6px 0}
 @media (max-width:520px){.cg-figure .iso-plate-corner[data-corner="hint"]{display:none}.cg-stage{overflow:hidden}}
 </style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
 <body>
 <nav class="navbar" id="navbar">
@@ -85,23 +86,49 @@
     <!--FIGURE-->
     <div class="cg-controls">
       <div class="fd-views" role="group" aria-label="View">
-        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
-        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
       </div>
       <label><span id="cg-lift-text">Keystone lift</span> <input type="range" id="cg-lift" min="0" max="18" step="0.5" value="0" aria-label="Keystone lift, millimetres"></label>
       <button type="button" class="btn btn-outline" id="cg-rebuild">Rebuild the arch</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
     </div>
   </div>
 
   <section class="cg-text">
-    <h2>How to read it</h2>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model and readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
     <ol>
       <li><b>The arch</b> is nine wedge-shaped stones on two piers. The lit stone at the crown is the keystone; the others are voussoirs.</li>
-      <li><b>The puller</b> hangs from a beam on two posts. Its screw is fixed to the keystone. Turn the hand wheel (drag up on the figure, use the slider or the arrow keys) and the keystone rises, 2 mm per turn.</li>
+      <li><b>The puller</b> hangs from a beam on two posts. Its screw is fixed to the keystone.</li>
       <li><b>The columns</b> in front show the load through each stone, in the same left-to-right order as the arch. Seated, the load rises from the crown to the springing, because each stone passes on the weight of everything above it as well as the crown’s thrust.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The hand wheel.</b> Turn the hand wheel (drag up on the figure, use the slider or the arrow keys) and the keystone rises, 2 mm per turn.</li>
       <li><b>Pull the keystone</b> and every column falls together, not just the middle one, and the two halves lean in. When it clears its seat at 12 mm, nothing holds the halves apart: they fall in and the crown stones drop into the tray. <b>Rebuild</b> resets it.</li>
     </ol>
-    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model and readout drive both. The mapping is an analogy, not doctrine. JP 5-0 says that at the operational level a center of gravity “is often associated with the threat’s military capabilities such as a powerful element of the armed forces” but, it adds, “could include other capabilities in the OE” (ch. IV, para. 4.c.(1)(a), p. IV-22), so here the keystone is the enemy’s armored reserve: a tank battalion, lit, parked at the crossroads village behind its centre, with tracks out to every part of its line. The voussoirs are the three mechanized battalions holding the forward arc in dug-in positions; in this model they hold only because the reserve can reach any of them. Each small vehicle stands for a platoon and each cluster of three for a company; red is the enemy and blue friendly, and the red fan is the enemy centre’s fire sector. On the right a friendly mechanized battalion fixes the enemy’s front with fire. Pulling the keystone is the strike: a friendly armored battalion that has worked round the southern flank fires on the reserve from an attack-by-fire position marked in chalk on pegs, and the flag marks the reserve as its objective. The share of the reserve’s tanks still fighting is the machine’s ring load; the rest are knocked out, stop and smoke, greyed. When the last one goes, the forward battalions lose cohesion and fall back, the centre first, to the rear, and the flanks toward the river and the woods, as the arch’s crown drops and its haunches fall back onto the piers. In this view the Rebuild button reads “Reset the battle.” Success is not free: the reserve fires back, so strike-force vehicles are hit too, a fixing-force vehicle is hit once the reserve is down by half, and an evacuation vehicle shuttles casualties back along the road to the rear; the forward battalions leave stopped vehicles behind when they fall back. The readout here gives the reserve’s fighting share and the losses so far in vehicles (one per platoon). Those counts are notional teaching values from the model: at full strike 9 reserve tanks plus 3 abandoned forward vehicles on the red side, and 3 strike-force vehicles plus 1 fixing-force vehicle on the blue side, each falling in step with the reserve’s fighting share (at 6 mm, 5 red and 3 blue). Vehicles are drawn far larger than scale so they read; unit sizes, distances, routes, timings and the collapse are notional, and a real force could react, for example by moving the reserve or committing another.</p>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>The mapping is an analogy, not doctrine. Each small vehicle stands for a platoon and each cluster of three for a company; red is the enemy and blue friendly, and the red fan is the enemy centre’s fire sector.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The reserve.</b> JP 5-0 says that at the operational level a center of gravity “is often associated with the threat’s military capabilities such as a powerful element of the armed forces” but, it adds, “could include other capabilities in the OE” (ch. IV, para. 4.c.(1)(a), p. IV-22), so here the keystone is the enemy’s armored reserve: a tank battalion, lit, parked at the crossroads village behind its centre, with tracks out to every part of its line.</li>
+      <li><b>The forward arc.</b> The voussoirs are the three mechanized battalions holding the forward arc in dug-in positions; in this model they hold only because the reserve can reach any of them.</li>
+      <li><b>The fixing force.</b> On the right a friendly mechanized battalion fixes the enemy’s front with fire.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The strike.</b> Drag up on the figure, use the slider (here “Strike on the reserve”) or the arrow keys. Pulling the keystone is the strike: a friendly armored battalion that has worked round the southern flank fires on the reserve from an attack-by-fire position marked in chalk on pegs, and the flag marks the reserve as its objective. The share of the reserve’s tanks still fighting is the machine’s ring load; the rest are knocked out, stop and smoke, greyed.</li>
+      <li><b>The collapse.</b> When the last one goes, the forward battalions lose cohesion and fall back, the centre first, to the rear, and the flanks toward the river and the woods, as the arch’s crown drops and its haunches fall back onto the piers.</li>
+      <li><b>Reset.</b> In this view the Rebuild button reads “Reset the battle.” The R key does the same.</li>
+      <li><b>Losses.</b> Success is not free: the reserve fires back, so strike-force vehicles are hit too, a fixing-force vehicle is hit once the reserve is down by half, and an evacuation vehicle shuttles casualties back along the road to the rear; the forward battalions leave stopped vehicles behind when they fall back. The readout here gives the reserve’s fighting share and the losses so far in vehicles (one per platoon). Those counts are notional teaching values from the model: at full strike 9 reserve tanks plus 3 abandoned forward vehicles on the red side, and 3 strike-force vehicles plus 1 fixing-force vehicle on the blue side, each falling in step with the reserve’s fighting share (at 6 mm, 5 red and 3 blue).</li>
+    </ol>
+    <p class="fine">Vehicles are drawn far larger than scale so they read; unit sizes, distances, routes, timings and the collapse are notional, and a real force could react, for example by moving the reserve or committing another.</p>
+    </div>
 
     <h2>What doctrine says</h2>
     <p>The Joint Staff’s <i>JP 5-0, Joint Planning</i> (December 2020) defines a center of gravity as “the source of power that provides moral or physical strength, freedom of action, or will to act” (glossary, p. GL-6). In its discussion of operational design it adds that “success requires protecting the friendly COG while defeating the enemy COG” (ch. IV, para. 4.c.(1), p. IV-22).</p>

@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/penetration/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
@@ -56,6 +56,7 @@
 .pn-text li{margin:6px 0}
 @media (max-width:520px){.pn-figure .iso-plate-corner[data-corner="hint"]{display:none}.pn-stage{overflow:hidden}}
 </style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
 <body>
 <nav class="navbar" id="navbar">
@@ -84,25 +85,53 @@
     <!--FIGURE-->
     <div class="pn-controls">
       <div class="fd-views" role="group" aria-label="View">
-        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
-        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
       </div>
       <button type="button" class="btn btn-outline" id="pn-hold" aria-pressed="true">Drop the shoulder pins</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
       <label>Operation <input type="range" id="pn-progress" min="0" max="100" step="1" value="0" aria-label="Progress of the operation, from the first hammer blow to the carriage at the stop"></label>
     </div>
   </div>
 
   <section class="pn-text">
-    <h2>How to read it</h2>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model and readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
     <ol>
-      <li><b>The line</b> is a row of six blocks standing across the bench, pressed together by springs at both ends. The springs push the blocks back together whenever nothing holds them apart.</li>
-      <li><b>The breach.</b> A pendulum drop hammer drives the lit wedge into the boundary between the two middle blocks, one blow at a time, until its nose has cut through the line's full depth. The readout counts the blows and how far through the wedge has gone.</li>
-      <li><b>Widening.</b> The hammer swings up out of the way. A carriage runs in behind the wedge, and its two side rollers force the gap from about 6 mm to 30 mm. The ruler in front of the line reads the gap.</li>
+      <li><b>The line</b> is a row of six blocks standing across the bench, pressed together by springs at both ends.</li>
+      <li><b>The readout</b> counts the blows and how far through the wedge has gone.</li>
+      <li><b>The ruler</b> in front of the line reads the gap.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The controls.</b> Move the pointer across the figure, drag the slider or use the arrow keys to run the operation; click the figure, press H or use the button to raise or drop the pins.</li>
+      <li><b>The springs</b> push the blocks back together whenever nothing holds them apart.</li>
+      <li><b>The breach.</b> A pendulum drop hammer drives the lit wedge into the boundary between the two middle blocks, one blow at a time, until its nose has cut through the line's full depth.</li>
+      <li><b>Widening.</b> The hammer swings up out of the way. A carriage runs in behind the wedge, and its two side rollers force the gap from about 6 mm to 30 mm.</li>
       <li><b>Holding the shoulders and exploiting.</b> (Doctrine calls these the penetration’s flanks.) Behind the rollers, two shoulder pins rise from the bench and hold the blocks apart, so the carriage can run on to the stop behind the line with the gap still open. Drop the pins and the springs shut the gap behind the carriage, cutting it off.</li>
     </ol>
-    <p>Move the pointer across the figure, drag the slider or use the arrow keys to run the operation; click the figure, press H or use the button to raise or drop the pins.</p>
-    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model and readout drive both. Here the scale is a rifle company, blue is friendly and red is the enemy. The Army’s manual for the rifle platoon says penetrations are “normally only conducted at battalion echelon and above” (ATP 3-21.8, para. 4-22), so read this as one company’s part at the point of a larger penetration. An infantry rifle company has, among other elements, “three rifle platoons” (para. 1-15); here each is drawn as three groups of four soldiers standing for its squads, so the drawing shows fewer soldiers than a real company has. Across the middle, two enemy platoon positions, each drawn as four two-man fighting positions and a machine-gun nest, hold a line on two low hills, with wire in front; the saddle between them is the boundary, and the red fans on the ground are the machine guns’ sectors, crossing in front of it. From the chalk line of departure, the breach platoon (the bench’s wedge) rushes through the boundary in a column of squads, one rush per hammer blow, firing from the ground between rushes, then secures the far side. The follow-on platoon (the rollers and pins on the bench) forces the gap wide, driving the enemy pairs nearest the boundary back to alternate positions, and turns its squads out to hold both shoulders; the blue fans are their sectors. The lit platoon (the carriage), the main effort, passes through the gap to the objective flag and shakes out into a line. Drop the pins and the follow-on squads go on with it instead; the enemy walks back into its holes and the gap closes behind them. Losses are notional: greyed figures lying still are men down on both sides, the first blue one at a collection point behind the line of departure where a medic kneels and the rest where they fell, and the readout counts them, friendly vs enemy, the attacker paying most if the shoulders are let go and its platoon in depth is cut off. Soldiers are drawn larger than scale so they read; unit sizes, the width of the gap, ranges and timings are notional.</p>
-
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the scale is a rifle company, blue is friendly and red is the enemy. The Army’s manual for the rifle platoon says penetrations are “normally only conducted at battalion echelon and above” (ATP 3-21.8, para. 4-22), so read this as one company’s part at the point of a larger penetration.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The company.</b> An infantry rifle company has, among other elements, “three rifle platoons” (para. 1-15); here each is drawn as three groups of four soldiers standing for its squads, so the drawing shows fewer soldiers than a real company has.</li>
+      <li><b>The enemy.</b> Across the middle, two enemy platoon positions, each drawn as four two-man fighting positions and a machine-gun nest, hold a line on two low hills, with wire in front; the saddle between them is the boundary, and the red fans on the ground are the machine guns’ sectors, crossing in front of it.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The controls.</b> Move the pointer across the figure, drag the slider or use the arrow keys to run the operation; click the figure, press H or use the <i>Drop the shoulder pins</i> / <i>Raise the shoulder pins</i> button to hold the shoulders or let them go.</li>
+      <li><b>The breach.</b> From the chalk line of departure, the breach platoon (the bench’s wedge) rushes through the boundary in a column of squads, one rush per hammer blow, firing from the ground between rushes, then secures the far side.</li>
+      <li><b>Widening and holding the shoulders.</b> The follow-on platoon (the rollers and pins on the bench) forces the gap wide, driving the enemy pairs nearest the boundary back to alternate positions, and turns its squads out to hold both shoulders; the blue fans are their sectors.</li>
+      <li><b>Exploiting.</b> The lit platoon (the carriage), the main effort, passes through the gap to the objective flag and shakes out into a line.</li>
+      <li><b>Drop the pins</b> and the follow-on squads go on with it instead; the enemy walks back into its holes and the gap closes behind them.</li>
+      <li><b>Losses</b> are notional: greyed figures lying still are men down on both sides, the first blue one at a collection point behind the line of departure where a medic kneels and the rest where they fell, and the readout counts them, friendly vs enemy, the attacker paying most if the shoulders are let go and its platoon in depth is cut off.</li>
+    </ol>
+    <p class="fine">Soldiers are drawn larger than scale so they read; unit sizes, the width of the gap, ranges and timings are notional.</p>
+    </div>
     <h2>What doctrine says</h2>
     <p>U.S. Army <i>FM 3-90, Tactics</i> (May 2023) defines a penetration as “a form of maneuver in which a force attacks on a narrow front” (para. 2-36). Plans for one “normally have three phases”: breaching the enemy force’s main defensive positions, “widening the gap created to secure the penetration’s flanks,” and “seizing an objective and subsequently exploiting the success of the penetration” (para. 2-47).</p>
     <p>The manual explains why the width of the gap matters: “A wider gap allows friendly forces to pass through more quickly and in large-sized formations, making it more difficult for enemy forces to close the gap” (para. 2-45).</p>

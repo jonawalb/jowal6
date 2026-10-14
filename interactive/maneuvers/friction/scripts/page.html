@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/friction/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
@@ -64,6 +64,7 @@
 .fr-field [data-dyn]{transition:opacity .25s}.fr-field[data-reset] [data-dyn]{opacity:0}
 @media (max-width:520px){.fr-figure .iso-plate-corner[data-corner="hint"]{display:none}.fr-stage{overflow:hidden}}
 </style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
 <body>
 <nav class="navbar" id="navbar">
@@ -92,25 +93,49 @@
     <!--FIGURE-->
     <div class="fr-controls">
       <div class="fd-views" role="group" aria-label="View">
-        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
-        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
       </div>
       <button type="button" class="btn btn-outline" id="fr-grit" aria-pressed="true">Grit: on</button>
       <button type="button" class="btn btn-outline" id="fr-restart">Restart run</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
       <label>Friction μ <input type="range" id="fr-mu" min="0" max="0.6" step="0.01" value="0.3" aria-label="Friction coefficient of the surface"> <output id="fr-mu-out">0.30</output></label>
     </div>
   </div>
 
   <section class="fr-text">
-    <h2>How to read it</h2>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same run, the same friction setting and the same grit drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
     <ol>
       <li><b>The block</b> (lit) is the task: a 1 kg load to be moved up a 20° slope. A cord runs from its eye up the slope, over the pulley at the crest and level to the winch drum.</li>
       <li><b>The winch</b> sits on a carriage that slides on rails. A spring behind it holds it back, so the harder the cord pulls, the further the carriage slides and the more the spring stretches. The pointer on the carriage reads that pull on the scale, at 2 cm per newton.</li>
       <li><b>The bright mark</b> on the scale is the pull on paper: what the slope alone would need with no friction at all, 3.4 N.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
       <li><b>The friction control</b> sets the surface’s coefficient μ. The steady pull is <i>mg</i>(sin 20° + μ cos 20°): 3.4 N at μ = 0, 6.1 N at 0.3 and 8.9 N at 0.6. The dots on the strip get denser as μ rises.</li>
       <li><b>Grit</b> grains turn up at random places on each run. When the block reaches one it stops, and the winch has to stretch the spring until the pull breaks it free, so the block jerks forward. The readout gives the pull and, at the top, the time taken against the paper run.</li>
     </ol>
-    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same run, the same friction setting and the same grit drive both, played at half speed here so the incidents can be followed. The scene is a small-unit vignette: a mounted platoon (lit), drawn as four vehicles, marches along a farm track from a start point on the left to a release point under the flag. The plan is war on paper: a chalk route on pegs beside the track, with a peg for every ten planned minutes, and a pale ghost vehicle that keeps the plan’s timetable, which is the machine’s paper run. The block’s travel becomes the platoon’s progress; the friction control becomes the mud and puddles on the track, which slow every stretch of it; and each grit grain becomes an incident at the same random point. A vehicle bogs in mud and its crew dig it out while the next vehicle closes up; the lead takes a wrong turn down a side track and comes back; the radio fails and a runner goes down the column; fog rolls in and a ground guide walks ahead; or a small enemy outpost opens fire, a fire team dismounts to return it, and both sides take casualties, greyed where they fell, with a medic coming up. The readout gives the time against the plan in minutes and, on arrival, the casualties, friendly against enemy. Clausewitz’s own examples run the same way: “the rain prevents a battalion from arriving at the right time, because instead of for three it had to march perhaps eight hours,” and the cavalry from charging “because it is stuck fast in heavy ground” (Book I, ch. 7, para. 4). In MCDP 1’s terms the mud and the fog stand for terrain and weather and the outpost for enemy action, while the wrong turn and the dead radio stand for self-induced friction or, as MCDP 1 lists under external friction, mere chance. The incidents are a simplification, like the grit: Clausewitz says real friction “is not concentrated… at a few points” but is everywhere. Vehicles and soldiers are drawn larger than scale so they read; the platoon’s make-up, the distances, timings, incident kinds and casualties are notional.</p>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>The scene is a small-unit vignette: a mounted platoon (lit), drawn as four vehicles, marches along a farm track from a start point on the left to a release point under the flag.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The plan</b> is war on paper: a chalk route on pegs beside the track, with a peg for every ten planned minutes, and a pale ghost vehicle that keeps the plan’s timetable, which is the machine’s paper run.</li>
+      <li><b>From the bench.</b> The block’s travel becomes the platoon’s progress; the friction control becomes the mud and puddles on the track, which slow every stretch of it; and each grit grain becomes an incident at the same random point.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The controls.</b> Set the friction with the Friction μ slider or the arrow keys. Turn the incidents on or off with the Incidents button, a click on the figure or G, and start the march again with Restart run or R. The march is played at half speed here so the incidents can be followed.</li>
+      <li><b>Incidents.</b> A vehicle bogs in mud and its crew dig it out while the next vehicle closes up; the lead takes a wrong turn down a side track and comes back; the radio fails and a runner goes down the column; fog rolls in and a ground guide walks ahead; or a small enemy outpost opens fire, a fire team dismounts to return it, and both sides take casualties, greyed where they fell, with a medic coming up.</li>
+      <li><b>The readout</b> gives the time against the plan in minutes and, on arrival, the casualties, friendly against enemy.</li>
+      <li><b>In the sources.</b> Clausewitz’s own examples run the same way: “the rain prevents a battalion from arriving at the right time, because instead of for three it had to march perhaps eight hours,” and the cavalry from charging “because it is stuck fast in heavy ground” (Book I, ch. 7, para. 4). In MCDP 1’s terms the mud and the fog stand for terrain and weather and the outpost for enemy action, while the wrong turn and the dead radio stand for self-induced friction or, as MCDP 1 lists under external friction, mere chance. The incidents are a simplification, like the grit: Clausewitz says real friction “is not concentrated… at a few points” but is everywhere.</li>
+    </ol>
+    <p class="fine">Vehicles and soldiers are drawn larger than scale so they read; the platoon’s make-up, the distances, timings, incident kinds and casualties are notional.</p>
+    </div>
 
     <h2>What Clausewitz and doctrine say</h2>
     <p>Clausewitz gives friction its own chapter in <i>On War</i> (Book I, ch. 7). In J. J. Graham’s translation: “Everything is very simple in War, but the simplest thing is difficult. These difficulties accumulate and produce a friction which no man can imagine exactly who has not seen War.” He calls friction “the only conception which in a general way corresponds to that which distinguishes real War from War on paper.”</p>

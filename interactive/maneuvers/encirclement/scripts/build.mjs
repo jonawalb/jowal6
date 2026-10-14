@@ -205,9 +205,9 @@ const LOOKS = new Map();
 const FM = { t: 0 };
 let stageF = null, fire = null, marksSig = "";
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+const VIEW_KEY = "maneuvers.view.v2";
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 const NR = DATA.MODEL.N;
 let N = START_N, runN = N;
@@ -294,6 +294,19 @@ stage.addEventListener("keydown", (event) => {
   event.preventDefault();
 });
 runBtn.addEventListener("click", go);
+// Reset: back to the state the page opened in (ring size, run stopped at its opening frame, idle
+// tour); the view is kept.
+const resetBtn = root.querySelector(".fd-reset");
+function reset() {
+  clearTimeout(idle);
+  running = false; resetting = 0; t = -1; fieldHold = null; FM.t = 0;
+  slider.value = String(START_N);
+  setN(START_N); runN = N;
+  shown = stateAt(-1, N);
+  touring = !still.matches; tourStep = 0; wait = 1.2;
+  draw(shown); run();
+}
+resetBtn.addEventListener("click", reset);
 viewBtns.forEach((b) => b.addEventListener("click", () => setView(b.dataset.view, true)));
 function setView(next, save) {
   view = next === "field" ? "field" : "machine";
@@ -309,7 +322,7 @@ new IntersectionObserver((entries) => { visible = entries[entries.length - 1].is
 setN(N);
 setView(view, false);
 window.__encirclement = {
-  setN: steer, run: go, setView, view: () => view,
+  setN: steer, run: go, setView, reset, view: () => view,
   pose: (n, time) => { touring = false; running = false; resetting = 0; clearTimeout(idle); setN(n); runN = N; t = time; shown = stateAt(time, N); draw(shown); },
   state: () => ({ N, t, running, shown }),
   stop: () => { touring = false; clearTimeout(idle); },

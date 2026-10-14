@@ -264,12 +264,12 @@ function drawField() {
 const hintEl = root.querySelector('[data-corner="hint"]');
 const sliderText = root.querySelector("#ob-angle-text");
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
+const VIEW_KEY = "maneuvers.view.v2";
 const HINTS = { machine: "Hover to swing · click to mass", field: "Hover to wheel · click to mass" };
 const SLIDER_TEXT = { machine: "Beam angle", field: "Angle of the line" };
 const MASS_TEXT = { machine: ["Mass the weights", "Spread the weights"], field: ["Mass the right wing", "Spread along the line"] };
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const still = matchMedia("(prefers-reduced-motion: reduce)");
 const GAUGE = { key: 2e5, svg: gaugeEl.outerHTML };
 gaugeEl.remove();
@@ -411,10 +411,22 @@ stage.addEventListener("keydown", (event) => {
 massBtn.addEventListener("click", () => { setMassed(!S.massed); hold(); });
 viewBtns.forEach((b) => b.addEventListener("click", () => setView(b.dataset.view, true)));
 slider.addEventListener("input", () => steer(Number(slider.value)));
+// Reset: back to the state the page opened in (beam, weights, battlefield memory, controls and idle tour); the view is kept.
+const resetBtn = root.querySelector(".fd-reset");
+function reset() {
+  clearTimeout(idle);
+  Object.assign(S, START, { push: [...START.push], reach: [...START.reach], fire: [...START.fire], res: [...START.res], angT: 0, massed: false, f: 2 / 3 });
+  Object.assign(FM, { t: 0, cas: null, horse: undefined, horseV: 0, trav: {} });
+  setMassed(false);
+  slider.value = "0";
+  touring = !still.matches; clock = 0;
+  draw(); run();
+}
+resetBtn.addEventListener("click", reset);
 new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) run(); }, { rootMargin: "120px 0px" }).observe(stage);
 setMassed(S.massed);
 setView(view, false);
-window.__obliqueOrder = { S, setMassed: (on) => { setMassed(on); run(); }, steer: (deg) => { S.angT = clamp(deg, 0, DATA.MODEL.maxAngle); run(); }, setView, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
+window.__obliqueOrder = { S, setMassed: (on) => { setMassed(on); run(); }, steer: (deg) => { S.angT = clamp(deg, 0, DATA.MODEL.maxAngle); run(); }, setView, reset, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
 `;
 
 const PAGE = readFileSync(join(HERE, "page.html"), "utf8")

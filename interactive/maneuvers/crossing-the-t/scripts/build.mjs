@@ -256,9 +256,9 @@ const H0 = hitsAt(START, DATA.MODEL);
 const FM = { t: 0, hits: { line: H0.line.slice(), column: H0.column.slice() } };
 let stageF = null, fire = null, marksSig = "";
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+const VIEW_KEY = "maneuvers.view.v2";
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 // Pull the static items (gauges, beam stops) out of the live layer once, keyed by depth.
 const statics = [...layer.children].filter((g) => g.matches('[data-part^="gauge"]')).map((g) => {
   const D = DIALS.find((d) => g.dataset.part === "gauge-" + d.side);
@@ -268,8 +268,9 @@ const STOPS = ${JSON.stringify(STOPS)};
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 const wrapDeg = (a) => ((((a + 180) % 360) + 360) % 360) - 180;
 const M0 = stateAt(START, DATA.MODEL);
-const S = { phi: START, target: START, aims: { line: M0.lineTurrets.map((t) => t.bearing), column: M0.columnTurrets.map((t) => t.bearing) },
-  f: { line: M0.lineGuns / M0.maxGuns, column: M0.columnGuns / M0.maxGuns } };
+const S0 = () => ({ phi: START, target: START, aims: { line: M0.lineTurrets.map((t) => t.bearing), column: M0.columnTurrets.map((t) => t.bearing) },
+  f: { line: M0.lineGuns / M0.maxGuns, column: M0.columnGuns / M0.maxGuns } });
+const S = S0();
 let touring = !still.matches, clock = 0, last = 0, frame = 0, visible = false, idle = 0;
 // Tour: square across, swing slowly to end-on, hold, swing back, hold (15 s).
 const TOUR = [[0, 90], [1.5, 0], [8.5, 90], [15, 90]];
@@ -405,8 +406,19 @@ jumpBtn.addEventListener("click", jump);
 viewBtns.forEach((b) => b.addEventListener("click", () => setView(b.dataset.view, true)));
 slider.addEventListener("input", () => steer(Number(slider.value)));
 new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) run(); }, { rootMargin: "120px 0px" }).observe(stage);
+// Reset: back to the state the page opened in (crossing angle, turrets, fires and idle tour); the view is kept.
+const resetBtn = root.querySelector(".fd-reset");
+function reset() {
+  clearTimeout(idle);
+  Object.assign(S, S0());
+  Object.assign(FM, { t: 0, hits: { line: H0.line.slice(), column: H0.column.slice() } });
+  slider.value = String(START);
+  touring = !still.matches; clock = 0;
+  draw(); run();
+}
+resetBtn.addEventListener("click", reset);
 setView(view, false);
-window.__crossingTheT = { S, steer, jump, setView, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
+window.__crossingTheT = { S, FM, steer, jump, setView, reset, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
 `;
 
 const PAGE = readFileSync(join(HERE, "page.html"), "utf8")

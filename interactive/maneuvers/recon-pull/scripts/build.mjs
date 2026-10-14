@@ -289,10 +289,10 @@ const TF = fieldTerrain();
 const LOOKS = new Map();
 const FM = { t: 0 };
 let stageF = null, fire = null, marksSig = "";
-const VIEW_KEY = "maneuvers.view";
+const VIEW_KEY = "maneuvers.view.v2";
 const HINTS = { machine: "Click gates · space: mode", field: "Click crossings · space: mode" };
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const still = matchMedia("(prefers-reduced-motion: reduce)");
 const GAUGE = { key: depthOf([DIAL.x, DIAL.y, 0], P), svg: gaugeEl.outerHTML };
 gaugeEl.remove();
@@ -468,9 +468,26 @@ function setView(next, save) {
 viewBtns.forEach((b) => b.addEventListener("click", () => setView(b.dataset.view, true)));
 new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) run(); }, { rootMargin: "120px 0px" }).observe(stage);
 if (still.matches) { S.run = { mode: "pull", open: [...LAYOUTS[1]], planned: PLANNED }; S.layout = 1; p = plan(S.run); S.shut = S.run.open.map((o) => (o ? 0 : 1)); S.pegX = GEO.PEG_PARK; S.t = doneAt(); }
+// Reset: back to the state the page opened in (run, layout, controls and idle tour); the view is kept.
+function reset() {
+  clearTimeout(idle);
+  Object.assign(S, {
+    run: { mode: TOUR[0].mode, open: [...LAYOUTS[TOUR[0].layout]], planned: PLANNED },
+    layout: TOUR[0].layout, t: 0, shut: LAYOUTS[TOUR[0].layout].map((o) => (o ? 0 : 1)),
+    pegX: M.lanes[PLANNED], pegLift: 0, pawl: 0, alpha: 1, prev: [], prevAlpha: 0,
+  });
+  p = plan(S.run);
+  FM.t = 0;
+  touring = !still.matches; tourAt = 0; tourClock = 0;
+  if (still.matches) { S.run = { mode: "pull", open: [...LAYOUTS[1]], planned: PLANNED }; S.layout = 1; p = plan(S.run); S.shut = S.run.open.map((o) => (o ? 0 : 1)); S.pegX = GEO.PEG_PARK; S.t = doneAt(); }
+  if (document.activeElement === slider) slider.blur();
+  syncControls();
+  draw(); run();
+}
+root.querySelector(".fd-reset").addEventListener("click", reset);
 syncControls();
 setView(view, false);
-window.__reconPull = { S, setMode, toggleGate, setPlanned, nextLayout, setView, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
+window.__reconPull = { S, setMode, toggleGate, setPlanned, nextLayout, setView, reset, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
 `;
 
 const PAGE = readFileSync(join(HERE, "page.html"), "utf8")

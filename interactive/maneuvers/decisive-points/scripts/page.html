@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/decisive-points/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
@@ -58,6 +58,7 @@
 .dp-text li{margin:6px 0}
 @media (max-width:520px){.dp-figure .iso-plate-corner[data-corner="hint"]{display:none}}
 </style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
 <body>
 <nav class="navbar" id="navbar">
@@ -86,8 +87,8 @@
     <!--FIGURE-->
     <div class="dp-controls">
       <div class="fd-views" role="group" aria-label="View">
-        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
-        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
       </div>
       <div class="dp-pins" role="group" aria-label="Pull or reset a pin">
         <button type="button" class="btn btn-outline" data-pin="0" aria-pressed="false">1 · Left outer</button>
@@ -96,18 +97,45 @@
         <button type="button" class="btn btn-outline" data-pin="3" aria-pressed="false">4 · Right outer</button>
       </div>
       <button type="button" class="btn btn-outline" id="dp-reset">Reset the props</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
     </div>
   </div>
 
   <section class="dp-text">
-    <h2>How to read it</h2>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model drives both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
     <ol>
       <li><b>The arch</b> is the same nine stones as in Figure 7, with the lit keystone at the crown. Here it does not carry itself alone: four steel props under it take part of the load.</li>
-      <li><b>Each prop</b> is held at full height by a pin through its collar. Click a prop, press 1 to 4, or use the buttons, and its pin slides out and drops into the tray. The prop’s head falls 8 mm clear of the stone, and the load it carried goes into the ring and through the keystone.</li>
+      <li><b>Each prop</b> is held at full height by a pin through its collar.</li>
       <li><b>The dial</b> on the stand rests on the keystone and reads its load as a share of what it can bear. The arc on the dial marks 100% to 150%.</li>
-      <li><b>The props are not equal.</b> In this model each inner prop carries 35% of the keystone’s capacity and each outer prop 15%. Pull both outer pins and the left inner one and the keystone holds at 95%. Pull both inner pins and it reaches 100%, drops onto the pad, and any half that has lost its outer prop sags in. <b>Reset</b> puts it back.</li>
+      <li><b>The props are not equal.</b> In this model each inner prop carries 35% of the keystone’s capacity and each outer prop 15%.</li>
     </ol>
-    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model drives both, and keys 1 to 4 or a click on a point seize it. The scale is operational: each small vehicle stands for a platoon and each group of three for a company, blue friendly and red enemy, as in Figure 7. The enemy is the same kind of force: three mechanized battalions dug in on an arc of companies, with a tank battalion in reserve at the crossroads behind them. Four of the arc’s companies hold four decisive points, left to right in the same order as the props, each with its fire sector marked on the ground: a hill, the bridge that carries the enemy’s road over the river, a village on the southern road, and an airfield. JP 5-0 itself names “a hill” and “an air base” among its examples (para. 6.b.(1), p. IV-32); the bridge and the village are this model’s picks of key terrain, and as on the bench they carry the most load, because the enemy’s roads to the front run through them. The lit reserve stands for the center of gravity and the keystone. JP 5-0’s own drawing of the direct and indirect approaches labels its center of gravity an “Armored Corps” (Figure IV-12, p. IV-34); this reserve is a notional battalion. Seizing a point sends a blue team of two companies forward from behind its line of departure, marked in chalk on pegs, with fire both ways; the red company pulls back to the crossroads, and the reserve’s companies leave their laager to block the lost point, thinner as the load grows. The enemy’s supply trucks stop running to a lost bridge or village. When the load reaches 100%, here when the bridge and the village are both lost, the reserve and every company still in place pull back off the map, leaving vehicles behind: in this model, the center of gravity gives. Success is not free: each attack leaves one blue platoon stopped short of its point and one red platoon stopped at it (both greyed, with thin smoke), and an ambulance then shuttles the attacker’s casualties back to the line of departure. In the Battlefield view the readout adds the casualties so far, “N vs M down” (blue vs red). They are notional teaching values: in this model a point costs the attacker 14 (hill), 18 (bridge), 18 (village) or 10 (airfield) and the defender 12, 16, 16 or 9, and the defender loses 30 more when the center of gravity gives. So the three-point route that leaves the reserve standing (both outer points and the bridge) costs the attacker 42, while the bridge and the village together cost 36 and bring it down. Vehicles are drawn far larger than scale so they read; unit sizes, distances, routes and timings are notional.</p>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The pins.</b> Click a prop, press 1 to 4, or use the buttons, and its pin slides out and drops into the tray. The prop’s head falls 8 mm clear of the stone, and the load it carried goes into the ring and through the keystone.</li>
+      <li><b>The load.</b> Pull both outer pins and the left inner one and the keystone holds at 95%. Pull both inner pins and it reaches 100%, drops onto the pad, and any half that has lost its outer prop sags in. <b>Reset</b> puts it back.</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>The scale is operational: each small vehicle stands for a platoon and each group of three for a company, blue friendly and red enemy, as in Figure 7.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The enemy</b> is the same kind of force: three mechanized battalions dug in on an arc of companies, with a tank battalion in reserve at the crossroads behind them.</li>
+      <li><b>The decisive points.</b> Four of the arc’s companies hold four decisive points, left to right in the same order as the props, each with its fire sector marked on the ground: a hill, the bridge that carries the enemy’s road over the river, a village on the southern road, and an airfield. JP 5-0 itself names “a hill” and “an air base” among its examples (para. 6.b.(1), p. IV-32); the bridge and the village are this model’s picks of key terrain, and as on the bench they carry the most load, because the enemy’s roads to the front run through them.</li>
+      <li><b>The reserve.</b> The lit reserve stands for the center of gravity and the keystone. JP 5-0’s own drawing of the direct and indirect approaches labels its center of gravity an “Armored Corps” (Figure IV-12, p. IV-34); this reserve is a notional battalion.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The controls.</b> Keys 1 to 4 or a click on a point seize it; the buttons, here named Hill, Bridge, Village and Airfield, do the same. Reset the points, or the R key, puts them back.</li>
+      <li><b>Seizing a point</b> sends a blue team of two companies forward from behind its line of departure, marked in chalk on pegs, with fire both ways; the red company pulls back to the crossroads, and the reserve’s companies leave their laager to block the lost point, thinner as the load grows. The enemy’s supply trucks stop running to a lost bridge or village.</li>
+      <li><b>The collapse.</b> When the load reaches 100%, here when the bridge and the village are both lost, the reserve and every company still in place pull back off the map, leaving vehicles behind: in this model, the center of gravity gives.</li>
+      <li><b>Losses.</b> Success is not free: each attack leaves one blue platoon stopped short of its point and one red platoon stopped at it (both greyed, with thin smoke), and an ambulance then shuttles the attacker’s casualties back to the line of departure. In the Battlefield view the readout adds the casualties so far, “N vs M down” (blue vs red). They are notional teaching values: in this model a point costs the attacker 14 (hill), 18 (bridge), 18 (village) or 10 (airfield) and the defender 12, 16, 16 or 9, and the defender loses 30 more when the center of gravity gives. So the three-point route that leaves the reserve standing (both outer points and the bridge) costs the attacker 42, while the bridge and the village together cost 36 and bring it down.</li>
+    </ol>
+    <p class="fine">Vehicles are drawn far larger than scale so they read; unit sizes, distances, routes and timings are notional.</p>
+    </div>
 
     <h2>What doctrine says</h2>
     <p>The Joint Chiefs of Staff’s <i>JP 5-0, Joint Planning</i> (December 2020) defines a decisive point as “key terrain, key event, critical factor, or function that, when acted upon, enables commanders to gain a marked advantage over an enemy or contribute materially to achieving success” (glossary, p. GL-7). Its examples range from “a constricted sea lane, a hill, or a geosynchronous orbit” to key events such as “achievement of air, space, or maritime superiority” (ch. IV, para. 6.b.(1), p. IV-32).</p>

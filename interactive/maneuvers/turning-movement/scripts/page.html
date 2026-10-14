@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/turning-movement/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
@@ -57,6 +57,7 @@
 .tm-text li{margin:6px 0}
 @media (max-width:520px){.tm-figure .iso-plate-corner[data-corner="hint"]{display:none}.tm-stage{overflow:hidden}}
 </style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
 <body>
 <nav class="navbar" id="navbar">
@@ -85,24 +86,51 @@
     <!--FIGURE-->
     <div class="tm-controls">
       <div class="fd-views" role="group" aria-label="View">
-        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
-        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
       </div>
       <button type="button" class="btn btn-outline" id="tm-policy" aria-pressed="false">Make the defender hold</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
       <label><span id="tm-route-text">Turning force position</span> <input type="range" id="tm-route" min="0" max="100" step="1" value="0" aria-label="Turning carriage position along the bypass rail, percent"></label>
     </div>
   </div>
 
   <section class="tm-text">
-    <h2>How to read it</h2>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model and readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
     <ol>
       <li><b>The lock</b> is the enemy's position. Its bolt is thrown into the keeper at the front, and the <b>guard block</b> stands in front of the keeper, where the defense is strongest.</li>
       <li><b>The diversion carriage</b> on the short front rail presses the guard, keeping its attention on the front.</li>
-      <li><b>The turning force</b> is the lit carriage on the long bypass rail. It never touches the guard. It runs down the near side and round to the <b>release lever</b> behind the lock, which is linked by a crank and rod to the bolt. Move it with the pointer, the slider or the arrow keys.</li>
+      <li><b>The turning force</b> is the lit carriage on the long bypass rail. It never touches the guard.</li>
       <li><b>The dial</b> in front of the lock reads how far the guard has been pulled off its front, from 0° to 180°.</li>
-      <li>Once the carriage is 40% of the way round, a defender that reacts sends the guard back round its ring track to brace the lever. The lever holds, but the guard has left the front, and the diversion carriage rolls into the space it left. Make the defender hold instead, and the carriage throws the lever and the bolt pulls out of the keeper. Either way, in this model, the position no longer holds where it was built to hold. Drive the carriage fast enough and it reaches the lever before the guard does.</li>
     </ol>
-    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model and readout drive both. FM 3-90 says “only divisions and above can execute a turning movement” (para. 2-71), so this view is drawn at division scale: each small vehicle stands for a company and each cluster of three for a battalion, blue friendly and red enemy. On the ridge in the middle, an enemy brigade of three battalions is dug in facing right; the red fan is its fire sector. On the right, the diversion force (two battalions) attacks the ridge’s front with fire. The lit turning force, a brigade of three battalions and the main effort, drives in march column from its assembly area along the road round the enemy’s southern flank, behind the wood and past a phase line marked in chalk on pegs, to the flag: a crossroads village on the enemy’s supply road, short of the bridge. It stands for the “terrain-oriented objective” whose selection the manual calls “of major importance” (para. 2-75). The reserve waits near the turning force’s assembly area, “positioned to support the turning force” (para. 2-73), and two security vehicles screen its flank, completing the four elements the manual lists (para. 2-72). If the enemy reacts, its battalions pull out of their positions, drive back along the supply road and block south of the crossroads, and the diversion force rolls onto the empty ridge. If it holds, the turning force seizes the crossroads, deploys round it and cuts the supply road, and the enemy’s supply trucks halt at the bridge. Losses are notional, counted in vehicles (one per company): knocked-out vehicles stop, grey and smoke on both sides, an evacuation vehicle shuttles casualties from the diversion force to the rear, and the readout counts them, friendly vs enemy, the turning force paying more if the enemy blocks the crossroads first and the enemy more if it is caught on the road. Vehicles are drawn far larger than scale so they read; unit sizes, distances, routes and timings are notional.</p>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The carriage.</b> It runs down the near side and round to the <b>release lever</b> behind the lock, which is linked by a crank and rod to the bolt. Move it with the pointer, the slider or the arrow keys.</li>
+      <li><b>The defender.</b> Once the carriage is 40% of the way round, a defender that reacts sends the guard back round its ring track to brace the lever. The lever holds, but the guard has left the front, and the diversion carriage rolls into the space it left. Make the defender hold instead, and the carriage throws the lever and the bolt pulls out of the keeper. Either way, in this model, the position no longer holds where it was built to hold. Drive the carriage fast enough and it reaches the lever before the guard does.</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>FM 3-90 says “only divisions and above can execute a turning movement” (para. 2-71), so this view is drawn at division scale: each small vehicle stands for a company and each cluster of three for a battalion, blue friendly and red enemy.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The enemy.</b> On the ridge in the middle, an enemy brigade of three battalions is dug in facing right; the red fan is its fire sector.</li>
+      <li><b>The diversion force.</b> On the right, the diversion force (two battalions) attacks the ridge’s front with fire.</li>
+      <li><b>The turning force.</b> The lit turning force, a brigade of three battalions and the main effort, drives in march column from its assembly area along the road round the enemy’s southern flank, behind the wood and past a phase line marked in chalk on pegs, to the flag: a crossroads village on the enemy’s supply road, short of the bridge. It stands for the “terrain-oriented objective” whose selection the manual calls “of major importance” (para. 2-75).</li>
+      <li><b>The reserve.</b> The reserve waits near the turning force’s assembly area, “positioned to support the turning force” (para. 2-73), and two security vehicles screen its flank, completing the four elements the manual lists (para. 2-72).</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The controls.</b> Move the turning force along its road with the pointer, the Turning force position slider or the arrow keys. The button under the card, a click or the H key switches the enemy between reacting and holding its ridge.</li>
+      <li><b>The enemy reacts.</b> If the enemy reacts, its battalions pull out of their positions, drive back along the supply road and block south of the crossroads, and the diversion force rolls onto the empty ridge.</li>
+      <li><b>The enemy holds.</b> If it holds, the turning force seizes the crossroads, deploys round it and cuts the supply road, and the enemy’s supply trucks halt at the bridge.</li>
+      <li><b>Losses</b> are notional, counted in vehicles (one per company): knocked-out vehicles stop, grey and smoke on both sides, an evacuation vehicle shuttles casualties from the diversion force to the rear, and the readout counts them, friendly vs enemy, the turning force paying more if the enemy blocks the crossroads first and the enemy more if it is caught on the road.</li>
+    </ol>
+    <p class="fine">Vehicles are drawn far larger than scale so they read; unit sizes, distances, routes and timings are notional.</p>
+    </div>
 
     <h2>What doctrine says</h2>
     <p>U.S. Army <i>FM 3-90, Tactics</i> (May 2023) defines a turning movement as a form of maneuver “in which the attacking force seeks to avoid the enemy’s principal defensive positions by attacking to the rear of their current positions forcing them to move or divert forces to meet the threat” (para. 2-71). It differs from an envelopment because the turning force “seeks to make enemy forces displace from their current locations, whereas an enveloping force seeks to engage enemy forces in their current locations from an unexpected direction” (para. 2-71).</p>

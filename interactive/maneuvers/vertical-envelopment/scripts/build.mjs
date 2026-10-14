@@ -265,13 +265,13 @@ const fieldLayer = fieldSvgEl.querySelector('[data-part="field-live"]');
 const marksEl = fieldSvgEl.querySelector('[data-part="marks"]');
 const fireEl = fieldSvgEl.querySelector('[data-part="fire"]');
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
+const VIEW_KEY = "maneuvers.view.v2";
 const TT = fieldTerrain();
 const LOOKS = new Map();
 const FM = { t: 0, dt: 0, trucks: null };
 let stageF = null, fire = null, marksSig = "";
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 const M = DATA.MODEL;
 const S = { t: DATA.T0, target: DATA.T0, v: DATA.V0, f: 1, cartY: 30 };
@@ -411,6 +411,20 @@ playBtn.addEventListener("click", () => {
 });
 timeIn.addEventListener("input", () => scrubTo(hoursAt(Number(timeIn.value) / 1000, M)));
 speedIn.addEventListener("input", () => setSpeed(Number(speedIn.value)));
+// Reset: back to the state the page opened in (time, speed, battle clocks, sliders and tour); the view is kept.
+const resetBtn = root.querySelector(".fd-reset");
+function reset() {
+  clearTimeout(idle);
+  Object.assign(S, { t: DATA.T0, target: DATA.T0, v: DATA.V0, f: 1, cartY: 30 });
+  Object.assign(FM, { t: 0, dt: 0, trucks: null });
+  marksSig = "";
+  touring = !still.matches; clock = 0;
+  setPlaying(touring);
+  timeIn.value = String(Math.round(sliderAt(S.target, M) * 1000));
+  speedIn.value = String(S.v);
+  draw(); run();
+}
+resetBtn.addEventListener("click", reset);
 new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) run(); }, { rootMargin: "120px 0px" }).observe(stage);
 function setView(next, save) {
   view = next === "field" ? "field" : "machine";
@@ -424,7 +438,7 @@ function setView(next, save) {
 viewBtns.forEach((b) => b.addEventListener("click", () => setView(b.dataset.view, true)));
 setPlaying(touring);
 setView(view, false);
-window.__verticalEnvelopment = { S, FM, scrubTo, setSpeed, setView, view: () => view, stop: () => { touring = false; setPlaying(false); clearTimeout(idle); } };
+window.__verticalEnvelopment = { S, FM, scrubTo, setSpeed, setView, reset, view: () => view, stop: () => { touring = false; setPlaying(false); clearTimeout(idle); } };
 `;
 
 const PAGE = readFileSync(join(HERE, "page.html"), "utf8")

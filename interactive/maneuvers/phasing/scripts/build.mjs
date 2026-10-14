@@ -258,10 +258,10 @@ const marksEl = fieldSvgEl.querySelector('[data-part="marks"]');
 const fireEl = fieldSvgEl.querySelector('[data-part="fire"]');
 const hintEl = root.querySelector('[data-corner="hint"]');
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
+const VIEW_KEY = "maneuvers.view.v2";
 const HINTS = { machine: "Hover the gate · click to shift", field: "Click or arrow keys to shift" };
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const TT = fieldTerrain();
 const LOOKS = new Map();
 const FM = { t: 0, lap: 0, d: 0, fire: 1, moving: 0 };
@@ -403,9 +403,23 @@ function setView(next, save) {
 }
 viewBtns.forEach((b) => b.addEventListener("click", () => setView(b.dataset.view, true)));
 new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) run(); }, { rootMargin: "120px 0px" }).observe(stage);
+// Reset: back to the state the page opened in (gearbox, field motion, controls and idle tour); the view is kept.
+function reset() {
+  clearTimeout(idle);
+  for (const k of Object.keys(S)) delete S[k];
+  Object.assign(S, START, { cur: 0, from: 0, target: 0, mode: "idle", e: effortOf(0) });
+  for (const k of Object.keys(FM)) delete FM[k];
+  Object.assign(FM, { t: 0, lap: 0, d: 0, fire: 1, moving: 0 });
+  touring = !still.matches; tourStep = 0; dwell = 0;
+  if (document.activeElement === slider) slider.blur();
+  fieldStep(FM, FS(), 0, true);
+  if (view === "field") { FM.d = 1; fieldStep(FM, FS(), 0, true); }
+  draw(); run();
+}
+root.querySelector(".fd-reset").addEventListener("click", reset);
 fieldStep(FM, FS(), 0, true);
 setView(view, false);
-window.__phasing = { S, FM, go, setView, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
+window.__phasing = { S, FM, go, setView, reset, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
 `;
 
 const PAGE = readFileSync(join(HERE, "page.html"), "utf8")

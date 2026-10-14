@@ -233,11 +233,11 @@ let stageF = null, fire = null, marksSig = "";
 const hintEl = root.querySelector('[data-corner="hint"]');
 const sliderText = root.querySelector("#fl-angle-text");
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
+const VIEW_KEY = "maneuvers.view.v2";
 const HINTS = { machine: "Hover the ring · click to fix", field: "Hover the field · click to fix" };
 const SLIDER_TEXT = { machine: "Spearhead position", field: "Assault element position" };
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const still = matchMedia("(prefers-reduced-motion: reduce)");
 const GAUGE = { key: depthOf([DIAL.x, DIAL.y, 0], P), svg: gaugeEl.outerHTML };
 gaugeEl.remove();
@@ -368,12 +368,24 @@ stage.addEventListener("keydown", (event) => {
   event.preventDefault();
 });
 fixBtn.addEventListener("click", () => { setFixed(!S.fixed); hold(); });
+// Reset: back to the state the page opened in (model, controls and idle tour); the view is kept.
+const resetBtn = root.querySelector(".fd-reset");
+function reset() {
+  clearTimeout(idle);
+  Object.assign(S, START, { target: START.theta, f: 1 });
+  Object.assign(FM, { vt: 0, t: 0, ps: undefined });
+  setFixed(START.fixed);
+  slider.value = String(START.theta);
+  touring = !still.matches; clock = 0;
+  draw(); run();
+}
+resetBtn.addEventListener("click", reset);
 viewBtns.forEach((b) => b.addEventListener("click", () => setView(b.dataset.view, true)));
 slider.addEventListener("input", () => steer(Number(slider.value)));
 new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) run(); }, { rootMargin: "120px 0px" }).observe(stage);
 setFixed(S.fixed);
 setView(view, false);
-window.__flank = { S, setFixed, steer, setView, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
+window.__flank = { S, setFixed, steer, setView, reset, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
 `;
 
 const PAGE = readFileSync(join(HERE, "page.html"), "utf8")

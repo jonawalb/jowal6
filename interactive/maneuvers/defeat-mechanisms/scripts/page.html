@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/defeat-mechanisms/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
@@ -53,6 +53,7 @@
 .iso .tr-s[data-side="kh"] .tr-veh>.iso-shade,.iso .tr-s[data-side="kf"] .tr-veh>.iso-shade{fill:#aaa59c}
 @media (max-width:520px){.dm-figure .iso-plate-corner[data-corner="hint"]{display:none}.dm-controls .btn{flex:1 1 40%}}
 </style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
 <body>
 <nav class="navbar" id="navbar">
@@ -81,28 +82,55 @@
     <!--FIGURE-->
     <div class="dm-controls" role="group" aria-label="Defeat mechanisms">
       <div class="fd-views" role="group" aria-label="View">
-        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
-        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
       </div>
       <button type="button" class="btn btn-outline" data-mech="0" aria-pressed="false">1 Destroy</button>
       <button type="button" class="btn btn-outline" data-mech="1" aria-pressed="false">2 Dislocate</button>
       <button type="button" class="btn btn-outline" data-mech="2" aria-pressed="false">3 Disintegrate</button>
       <button type="button" class="btn btn-outline" data-mech="3" aria-pressed="false">4 Isolate</button>
       <button type="button" class="btn btn-outline" id="dm-clear">Lift all</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
     </div>
   </div>
 
   <section class="dm-text">
-    <h2>How to read it</h2>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model and readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
     <ol>
       <li><b>The target</b> is the lit block on the slide table: an enemy force in its prepared position. It is built as two halves held together by a link plate on its end face, which stands for its command and control. A supply cart shuttles to it from a bin at the back.</li>
+      <li><b>The gauge</b> reads the target’s capability left.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The tools.</b> Switch on one tool, then add others with the buttons, keys 1–4 or a click on the tool.</li>
       <li><b>Destroy:</b> the screw press brings its platen down and crushes the block.</li>
       <li><b>Dislocate:</b> the lever drives a push rod that slides the block off its engraved seat. The block is whole, but it no longer sits where its position and its supply line were laid out.</li>
       <li><b>Disintegrate:</b> the saw cuts the link plate, and the two halves come apart. Neither half is touched; what fails is what held them together.</li>
       <li><b>Isolate:</b> the clamp ring rises out of its groove round the seat, and the supply cart can no longer reach the block.</li>
-      <li><b>The gauge</b> reads the target’s capability left. Switch on one tool, then add others with the buttons, keys 1–4 or a click on the tool.</li>
     </ol>
-    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model and readout drive both, and the buttons, keys 1–4 or a click on a friendly force switch a mechanism on or off. The scale is operational: each small vehicle stands for a platoon and each cluster of three for a company, red the enemy and blue friendly. The target, lit, is an enemy mechanized battalion: three companies dug in facing right, with their fire sector marked on the ground, a command post of two command vehicles and two antenna masts behind its centre, and supply trucks shuttling to it along the road from the left. Each mechanism is one friendly element. <i>Destroy:</i> an artillery battery at the lower right and a company in an attack-by-fire position (the chalk outline on the rise) knock out enemy vehicles, which stop and smoke. FM 3-90 (2023) defines attack by fire as a task “using direct and indirect fires to engage an enemy from a distance” and says attack by fire positions “are rarely applicable to units larger than company size” (para. B-3, pp. B-1 and B-2). <i>Dislocate:</i> an armored company works round the northern flank to the enemy’s rear. The enemy’s positions and fire sector still face the other way, so they are worth less; its vehicles back out of them to turn, and one is caught doing so. <i>Disintegrate:</i> the battery strikes the command post. Its masts fall, and the companies, no longer coordinated, drift out of their positions and fire raggedly. <i>Isolate:</i> a company comes up a farm track to a blocking position astride the supply road (the second chalk outline); the trucks halt and the lead one is hit. FM 3-90 defines block as a task that “denies the enemy access to an area or an avenue of approach” (para. B-5, p. B-2). Success is not free: the enemy fires back, so blue vehicles are hit too and greyed (a gun of the battery can be hit by counter-battery fire), and an evacuation vehicle shuttles casualties to the rear. The readout adds the losses so far as “blue vs red down”, in vehicles. These are notional teaching values from the model. At full effort, destroy costs the enemy 5 of its 9 company vehicles, dislocate 1, disintegrate its 2 command vehicles and isolate its lead truck. Blue losses (applied alone: 2 for destroy, 1 each for dislocate, disintegrate and isolate) shrink as the enemy’s capability left falls, so in this model all four together cost 2 blue vehicles against 9 red, where the four applied one at a time would cost 5. Vehicles are drawn far larger than scale so they read; unit sizes, distances, routes, timings and losses are notional, and giving each mechanism its own element is this figure’s simplification.</p>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>The scale is operational: each small vehicle stands for a platoon and each cluster of three for a company, red the enemy and blue friendly.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The target</b>, lit, is an enemy mechanized battalion: three companies dug in facing right, with their fire sector marked on the ground, a command post of two command vehicles and two antenna masts behind its centre, and supply trucks shuttling to it along the road from the left.</li>
+      <li><b>Each mechanism</b> is one friendly element.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The controls.</b> The buttons, keys 1–4 or a click on a friendly force switch a mechanism on or off.</li>
+      <li><b>Destroy:</b> an artillery battery at the lower right and a company in an attack-by-fire position (the chalk outline on the rise) knock out enemy vehicles, which stop and smoke. FM 3-90 (2023) defines attack by fire as a task “using direct and indirect fires to engage an enemy from a distance” and says attack by fire positions “are rarely applicable to units larger than company size” (para. B-3, pp. B-1 and B-2).</li>
+      <li><b>Dislocate:</b> an armored company works round the northern flank to the enemy’s rear. The enemy’s positions and fire sector still face the other way, so they are worth less; its vehicles back out of them to turn, and one is caught doing so.</li>
+      <li><b>Disintegrate:</b> the battery strikes the command post. Its masts fall, and the companies, no longer coordinated, drift out of their positions and fire raggedly.</li>
+      <li><b>Isolate:</b> a company comes up a farm track to a blocking position astride the supply road (the second chalk outline); the trucks halt and the lead one is hit. FM 3-90 defines block as a task that “denies the enemy access to an area or an avenue of approach” (para. B-5, p. B-2).</li>
+      <li><b>Losses.</b> Success is not free: the enemy fires back, so blue vehicles are hit too and greyed (a gun of the battery can be hit by counter-battery fire), and an evacuation vehicle shuttles casualties to the rear. The readout adds the losses so far as “blue vs red down”, in vehicles. These are notional teaching values from the model. At full effort, destroy costs the enemy 5 of its 9 company vehicles, dislocate 1, disintegrate its 2 command vehicles and isolate its lead truck. Blue losses (applied alone: 2 for destroy, 1 each for dislocate, disintegrate and isolate) shrink as the enemy’s capability left falls, so in this model all four together cost 2 blue vehicles against 9 red, where the four applied one at a time would cost 5.</li>
+    </ol>
+    <p class="fine">Vehicles are drawn far larger than scale so they read; unit sizes, distances, routes, timings and losses are notional, and giving each mechanism its own element is this figure’s simplification.</p>
+    </div>
 
     <h2>What doctrine says</h2>
     <p>U.S. Army <i>ADP 3-0, Operations</i> (31 July 2019) defines a defeat mechanism as “a method through which friendly forces accomplish their mission against enemy opposition.” It says “Army forces at all echelons use combinations of four defeat mechanisms: destroy, dislocate, disintegrate, and isolate,” and that “Applying more than one defeat mechanism simultaneously produces complementary and reinforcing effects not attainable with a single mechanism” (para. 2-11). Its definitions, which the tools follow:</p>

@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/operational-pause/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
@@ -61,6 +61,7 @@
 .op-losses{margin:2px 0 0;font-size:13px;color:var(--anatomy-text)}
 @media (max-width:520px){.op-figure .iso-plate-corner[data-corner="hint"]{display:none}.op-stage{overflow:hidden}}
 </style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
 <body>
 <nav class="navbar" id="navbar">
@@ -89,29 +90,58 @@
     <!--FIGURE-->
     <div class="op-controls">
       <div class="fd-views" role="group" aria-label="View">
-        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
-        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
       </div>
       <div class="op-modes" role="group" aria-label="Pause plan">
         <button type="button" class="btn btn-outline" id="op-together" aria-pressed="true">Pause together</button>
         <button type="button" class="btn btn-outline" id="op-alternate" aria-pressed="false">Alternate pauses</button>
       </div>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
       <label>Pump rate <input type="range" id="op-pump" min="0.1" max="0.6" step="0.01" value="0.45" aria-label="Pump rate, tank-fulls per second"> <output id="op-pump-out">0.45 tank/s</output></label>
     </div>
     <p class="op-losses" id="op-losses" aria-live="polite">Notional losses in the first minute of this plan: 4 friendly, 4 enemy vehicles</p>
   </div>
 
   <section class="op-text">
-    <h2>How to read it</h2>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model and readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
     <ol>
       <li><b>Two rams</b> stand for two components of one force: ram A is the far one, ram B the near one. Each strikes the anvil (the enemy) on a steady stroke.</li>
-      <li><b>The tank</b> above each ram holds four strokes of fuel. The lit column in its sight glass shows what is left. A ram only begins a stroke its tank can pay for, so when the tank runs dry the ram halts at home: its pause.</li>
-      <li><b>One pump</b> refills every halted tank, sharing its rate between them. A valve lever turns toward the viewer on the tank being filled. A ram restarts when its tank is full.</li>
-      <li><b>The dial</b> reads the enemy’s combat power. Each strike takes a little off; while no ram is pushing, it climbs back.</li>
+      <li><b>The tank</b> above each ram holds four strokes of fuel. The lit column in its sight glass shows what is left.</li>
+      <li><b>One pump</b> refills every halted tank, sharing its rate between them.</li>
+      <li><b>The dial</b> reads the enemy’s combat power.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The rams.</b> A ram only begins a stroke its tank can pay for, so when the tank runs dry the ram halts at home: its pause.</li>
+      <li><b>The pump.</b> A valve lever turns toward the viewer on the tank being filled. A ram restarts when its tank is full.</li>
+      <li><b>The dial.</b> Each strike takes a little off; while no ram is pushing, it climbs back.</li>
       <li><b>Pause together</b> runs both rams until both run dry, so the whole force halts at once and the dial climbs. <b>Alternate pauses</b> lets one ram refill while the other keeps striking. In this model, slow the pump below about 0.28 tank/s and the alternating plan breaks down: the refilling ram is not ready in time, and gaps open.</li>
     </ol>
-    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model, controls and readout drive both. The battlefield is drawn at operational scale: each small vehicle stands for a platoon, each group of three for a company and each cluster of nine for a battalion, blue friendly and red enemy. Two friendly battalions, A to the north (far) and B to the south (near), are the two rams. They attack an enemy battalion dug in along the edge of a village; the red fan is its fire sector and the flag in the village the objective. Behind each battalion a fuel and ammo point is staked out with tanker trucks and ammunition stacks. One supply road from the depot on the left feeds both, and its supply trucks are the shared pump: they run to whichever point is refuelling, faster as you raise the rate. A battalion attacks (lit) while it has fuel and ammunition; when it runs low it breaks contact behind a smoke screen and pulls back to its fuel and ammo point to refuel: its pause. Paused together, both battalions leave the line at once, nobody is firing, and the enemy&rsquo;s supply trucks and replacement vehicles drive up the road from the village: it reconstitutes, as the dial climbs. Alternating, one battalion holds the enemy under fire while the other refuels, then moves up to a ready position and waits its turn. Success is not free: the line under the card counts notional losses in the first minute of each plan, and knocked-out vehicles stop, grey out and smoke while an ambulance (white roof) runs casualties back. The enemy&rsquo;s knocked-out vehicles follow the dial (nine times the share of combat power it has lost) and are replaced as it recovers. Vehicles are drawn far larger than scale so they read; unit sizes, distances, rates, timings and losses are notional, and the time is compressed.</p>
-
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>The battlefield is drawn at operational scale: each small vehicle stands for a platoon, each group of three for a company and each cluster of nine for a battalion, blue friendly and red enemy.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>Two friendly battalions</b>, A to the north (far) and B to the south (near), are the two rams.</li>
+      <li><b>The enemy.</b> They attack an enemy battalion dug in along the edge of a village; the red fan is its fire sector and the flag in the village the objective.</li>
+      <li><b>Fuel and ammo points.</b> Behind each battalion a fuel and ammo point is staked out with tanker trucks and ammunition stacks.</li>
+      <li><b>The supply road.</b> One supply road from the depot on the left feeds both, and its supply trucks are the shared pump: they run to whichever point is refuelling, faster as you raise the rate.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The controls.</b> Choose a plan with the Pause together and Alternate pauses buttons, a click on the card, or the T and A keys; set the rate with the Pump rate slider or the arrow keys.</li>
+      <li><b>The battalions.</b> A battalion attacks (lit) while it has fuel and ammunition; when it runs low it breaks contact behind a smoke screen and pulls back to its fuel and ammo point to refuel: its pause.</li>
+      <li><b>Paused together</b>, both battalions leave the line at once, nobody is firing, and the enemy&rsquo;s supply trucks and replacement vehicles drive up the road from the village: it reconstitutes, as the dial climbs.</li>
+      <li><b>Alternating</b>, one battalion holds the enemy under fire while the other refuels, then moves up to a ready position and waits its turn.</li>
+      <li><b>Losses.</b> Success is not free: the line under the card counts notional losses in the first minute of each plan, and knocked-out vehicles stop, grey out and smoke while an ambulance (white roof) runs casualties back. The enemy&rsquo;s knocked-out vehicles follow the dial (nine times the share of combat power it has lost) and are replaced as it recovers.</li>
+    </ol>
+    <p class="fine">Vehicles are drawn far larger than scale so they read; unit sizes, distances, rates, timings and losses are notional, and the time is compressed.</p>
+    </div>
     <h2>What doctrine says</h2>
     <p>The Joint Chiefs of Staff’s <i>JP 5-0, Joint Planning</i> (December 2020) defines an operational pause as “a temporary halt in operations” (Glossary, p. GL-11). It lists pauses, with phases, branches and sequels, among the tools that help planners “arrange, manage, and execute complex operations” (ch. IV, para. 7.a.(2), p. IV-37), and says they “may be required when a major operation is reaching the end of its sustainability.” “Normally,” it adds, “operational pauses are planned to regenerate combat power or augment sustainment and forces for the next phase” (ch. IV, para. 7.a.(2)(c), p. IV-39).</p>
     <p>A pause is not free. “The primary drawback to operational pauses is the risk of forfeiting strategic or operational initiative,” so the commander should “plan for as few operational pauses as possible.” If pauses are needed, the commander “can alternate pauses among components to ensure continuous pressure on the enemy or adversary through offensive actions by some components while other components pause” (same paragraph). Where pauses fall between phases, doctrine warns that the commander “must understand this may provide the enemy an opportunity to reconstitute as well” (ch. IV, para. 7.a.(2)(a), p. IV-38).</p>

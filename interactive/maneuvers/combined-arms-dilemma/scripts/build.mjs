@@ -231,9 +231,9 @@ const LOOKS = new Map();
 const FM = { t: 0, dt: 1 / 60, vr: 0, vg: 0 };
 let stageF = null, fire = null, marksSig = "", lastPose = null;
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+const VIEW_KEY = "maneuvers.view.v2";
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const still = matchMedia("(prefers-reduced-motion: reduce)");
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 const S = { ...START, gT: START.g, kbT: 1, f: 0 };
@@ -359,9 +359,23 @@ function setView(next, save) {
   draw();
   run();
 }
+// Reset: back to the state the page opened in (keys, guard, bolt, field motion and idle tour); the view is kept.
+const resetBtn = root.querySelector(".fd-reset");
+function reset() {
+  clearTimeout(idle);
+  Object.assign(S, START, { gT: START.g, kbT: 1, f: 0 });
+  Object.assign(FM, { t: 0, dt: 1 / 60, vr: 0, vg: 0 });
+  delete FM.kb0;
+  lastPose = null;
+  setArms(false);
+  slider.value = String(Math.round(START.g * 100));
+  touring = !still.matches; clock = 0;
+  draw(); run();
+}
+resetBtn.addEventListener("click", reset);
 setArms(false);
 setView(view, false);
-window.__combinedArmsDilemma = { S, setArms, steer, setView, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
+window.__combinedArmsDilemma = { S, FM, setArms, steer, setView, reset, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
 `;
 
 const PAGE = readFileSync(join(HERE, "page.html"), "utf8")

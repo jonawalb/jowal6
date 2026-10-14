@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/omg/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
@@ -59,6 +59,7 @@
 .omg-text li{margin:6px 0}
 @media (max-width:520px){.omg-figure .iso-plate-corner[data-corner="hint"]{display:none}}
 </style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
 <body>
 <nav class="navbar" id="navbar">
@@ -87,25 +88,58 @@
     <!--FIGURE-->
     <div class="omg-controls">
       <div class="fd-views" role="group" aria-label="View">
-        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
-        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
       </div>
       <button type="button" class="btn btn-outline" id="omg-res" aria-pressed="false">Shallow defense, no large reserve</button>
       <button type="button" class="btn btn-outline" id="omg-play">Replay</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
       <label>Release day <input type="range" id="omg-release" min="0.5" max="2" step="0.1" value="0.5" aria-label="Day the OMG is released"></label>
     </div>
   </div>
 
   <section class="omg-text">
-    <h2>How to read it</h2>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model and readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
     <ol>
-      <li><b>The wall</b> is the enemy’s defended line, and its gate is the breach. Two wedge carriages, the first echelon, drive into the wall either side of the gate, and the gate drops into its slot.</li>
-      <li><b>The lit shuttle</b> is the OMG. It waits behind the line, cocked against two coil springs and held by a latch pin. On the release day the pin lifts and the springs fire it through the breach. The slider sets the release day; the earliest is the moment the gate is down.</li>
-      <li><b>In the rear</b>, a finger on the shuttle knocks down four drop targets as it passes; in this model they stand for an air-defense site, a command post, a missile launcher and a supply depot. The ruler reads kilometres past the line, and the track ends 104 km past it.</li>
-      <li><b>The block on the cross rails</b> is the enemy’s operational reserve. Switch it on and it starts moving on day 0.8 and reaches the lane on day 1.4. If the OMG’s nose is not past the reserve’s lane by then, the shuttle is stopped there; if it is, the reserve closes the lane behind it.</li>
-      <li><b>The carriage parked on the siding</b> is the second echelon. It stays put: the OMG goes first. The dial counts days, 0 to 4.</li>
+      <li><b>The wall</b> is the enemy’s defended line, and its gate is the breach.</li>
+      <li><b>The lit shuttle</b> is the OMG. It waits behind the line, cocked against two coil springs and held by a latch pin.</li>
+      <li><b>In the rear</b> are four drop targets; in this model they stand for an air-defense site, a command post, a missile launcher and a supply depot. The ruler reads kilometres past the line, and the track ends 104 km past it.</li>
+      <li><b>The block on the cross rails</b> is the enemy’s operational reserve.</li>
+      <li><b>The carriage parked on the siding</b> is the second echelon. The dial counts days, 0 to 4.</li>
     </ol>
-    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model, slider and reserve switch drive both. The scale is operational: each small vehicle stands for a battalion, Soviet forces in red and NATO forces in blue, and the lit vehicles are the OMG. A road runs left to right, as the bench’s lane does. Two Soviet first-echelon divisions close on the NATO forward defense either side of the road behind a smoke screen; as the breach opens, the two NATO battalions astride the road are knocked out and the attackers push in to hold its shoulders. The OMG waits behind the line: the manual says an army OMG “probably would be as large as a reinforced division” (p. 4-9), drawn here as twelve battalions of tanks and BMPs, which the same manual calls “a fast, highly maneuverable, infantry fighting vehicle” (p. 2-8); the mix is notional. On release it forms a march column and drives through the breach and over a river bridge into the NATO rear, while the second echelon stays parked. The manual says the OMG could attack targets en route “with its entire force or more likely with units detached for this purpose” (p. 4-9), so at each of the four targets (an air-defense site, a command post, a missile launcher and a supply depot, as on the bench) the battalion at the head of the column turns off to raid it. With the reserve switched on, two NATO brigades drive down from the north: if the column is late it meets them across the road and is stopped in a fight, the decisive engagement the manual says the OMG tries to avoid; if it is early it gets past, and the reserve closes the road once the column’s tail has cleared it. The bench itself leaves out losses; this view adds them. Knocked-out vehicles and raided targets turn grey and smoke, an ambulance runs back from the breach, and the readout adds losses as “N vs M down”, Soviet first, in armored vehicles knocked out. They are notional teaching values: in this model opening the breach costs 40 vs 22, each raided target 3 vs 6 and a blocking fight 34 vs 14, so a deep raid ends at 52 vs 46 and a blocked one at 77 vs 42. Vehicles are drawn far larger than scale so they read, and the 104 km run is compressed onto one map; unit sizes, distances, routes and timings are notional.</p>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The breach.</b> Two wedge carriages, the first echelon, drive into the wall either side of the gate, and the gate drops into its slot.</li>
+      <li><b>The release.</b> On the release day the pin lifts and the springs fire it through the breach. The slider sets the release day; the earliest is the moment the gate is down.</li>
+      <li><b>The targets.</b> A finger on the shuttle knocks down the four drop targets as it passes.</li>
+      <li><b>The reserve.</b> Switch it on and it starts moving on day 0.8 and reaches the lane on day 1.4. If the OMG’s nose is not past the reserve’s lane by then, the shuttle is stopped there; if it is, the reserve closes the lane behind it.</li>
+      <li><b>The second echelon</b> stays put: the OMG goes first.</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>The scale is operational: each small vehicle stands for a battalion, Soviet forces in red and NATO forces in blue, and the lit vehicles are the OMG.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The road</b> runs left to right, as the bench’s lane does.</li>
+      <li><b>The first echelon.</b> Two Soviet first-echelon divisions close on the NATO forward defense either side of the road behind a smoke screen.</li>
+      <li><b>The OMG</b> waits behind the line: the manual says an army OMG “probably would be as large as a reinforced division” (p. 4-9), drawn here as twelve battalions of tanks and BMPs, which the same manual calls “a fast, highly maneuverable, infantry fighting vehicle” (p. 2-8); the mix is notional.</li>
+      <li><b>The targets</b> are an air-defense site, a command post, a missile launcher and a supply depot, as on the bench.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The controls.</b> The same slider and reserve switch drive both views. Set the release day with the slider or the left and right arrow keys; switch the NATO reserve on or off with its button or the R key. Hovering over the figure scrubs through the run; a click, Enter or Replay plays it again.</li>
+      <li><b>The breach.</b> As the breach opens, the two NATO battalions astride the road are knocked out and the attackers push in to hold its shoulders.</li>
+      <li><b>The release.</b> On release the OMG forms a march column and drives through the breach and over a river bridge into the NATO rear, while the second echelon stays parked.</li>
+      <li><b>The raids.</b> The manual says the OMG could attack targets en route “with its entire force or more likely with units detached for this purpose” (p. 4-9), so at each of the four targets the battalion at the head of the column turns off to raid it.</li>
+      <li><b>The reserve.</b> With the reserve switched on, two NATO brigades drive down from the north: if the column is late it meets them across the road and is stopped in a fight, the decisive engagement the manual says the OMG tries to avoid; if it is early it gets past, and the reserve closes the road once the column’s tail has cleared it.</li>
+      <li><b>Losses.</b> The bench itself leaves out losses; this view adds them. Knocked-out vehicles and raided targets turn grey and smoke, an ambulance runs back from the breach, and the readout adds losses as “N vs M down”, Soviet first, in armored vehicles knocked out. They are notional teaching values: in this model opening the breach costs 40 vs 22, each raided target 3 vs 6 and a blocking fight 34 vs 14, so a deep raid ends at 52 vs 46 and a blocked one at 77 vs 42.</li>
+    </ol>
+    <p class="fine">Vehicles are drawn far larger than scale so they read, and the 104 km run is compressed onto one map; unit sizes, distances, routes and timings are notional.</p>
+    </div>
 
     <h2>What the 1984 manual says</h2>
     <p>U.S. Army <i>FM 100-2-1, The Soviet Army: Operations and Tactics</i> (1984) reports that “since the late 1970s” the most significant operational change observed in Soviet ground forces was “the concept of employing a tailored high-speed exploitation force at army and probably front level.” This operational maneuver group was “designed to move deep into the enemy rear area and to seize critical objectives, normally before second echelon Soviet formations are committed to combat” (p. 4-5). The manual calls it “an updated version of an older concept infused with new technology,” whose predecessor was the army and front “mobile group” of World War II (p. 4-5). Figure 25, <a href="/interactive/maneuvers/deep-battle/">Deep Battle and Echelons</a>, shows the earlier Soviet theory of the 1930s.</p>

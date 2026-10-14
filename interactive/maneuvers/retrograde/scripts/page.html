@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/retrograde/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
@@ -66,6 +66,7 @@
 .rg-figure .tr-s[data-side="m"] .tr-t{fill:#fbfaf7}.rg-figure .tr-s[data-side="m"] .tr-l{fill:#ecebe6}.rg-figure .tr-s[data-side="m"] .tr-d{fill:#d9d7d0}.rg-figure .tr-s[data-side="m"] .tr-g{fill:#9a978f}
 @media (max-width:520px){.rg-figure .iso-plate-corner[data-corner="hint"]{display:none}.rg-stage{overflow:hidden}}
 </style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
 <body>
 <nav class="navbar" id="navbar">
@@ -94,8 +95,8 @@
     <!--FIGURE-->
     <div class="rg-controls">
       <div class="fd-views" role="group" aria-label="View">
-        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
-        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
       </div>
       <div class="rg-modes" role="group" aria-label="Kind of retrograde">
         <button type="button" data-mode="delay" aria-pressed="true">Delay</button>
@@ -107,22 +108,50 @@
         <button type="button" data-tech="alternating" aria-pressed="false">Alternating positions</button>
       </div>
       <button type="button" class="btn btn-outline" id="rg-replay">Replay</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
       <label>Enemy combat power <input type="range" id="rg-ratio" min="2" max="6" step="0.5" value="3" aria-label="Enemy to delaying force combat-power ratio"> <span class="rg-ratio-val" id="rg-ratio-val">3 : 1</span></label>
     </div>
   </div>
 
   <section class="rg-text">
-    <h2>How to read it</h2>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model and readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
     <ol>
       <li><b>The lit blocks</b> are the delaying force, split into two elements side by side, each on its own lane of a straight track. They can only move back, toward the stop at the rear of the bench, which stands for the rear of its assigned area.</li>
-      <li><b>The carriage</b> on the same track is the enemy. Its ram spring presses whichever block is in front; the more the spring is squeezed, the more of its strength the enemy has brought to bear.</li>
-      <li><b>The ratchet teeth</b> on the near side are the delay positions, one every 6 km on the scale in front. At each one a block’s pawl catches (each block has its own rack; the far one runs between the track and the dashpot) and the block holds while the spring compresses. Before the squeeze reaches the point of a decisive engagement, the pawl lifts and the block slips back to the next tooth.</li>
-      <li><b>The dashpot</b>, the long cylinder on the far side, is tied to the far block by a rod. Between teeth it lets the blocks give ground only at a slow, steady rate. The clock reads the hours since contact, and the readout gives the hours the enemy has spent for each kilometre it has taken.</li>
+      <li><b>The carriage</b> on the same track is the enemy.</li>
+      <li><b>The ratchet teeth</b> on the near side are the delay positions, one every 6 km on the scale in front.</li>
+      <li><b>The dashpot</b>, the long cylinder on the far side, is tied to the far block by a rod.</li>
+      <li><b>The clock</b> reads the hours since contact, and the readout gives the hours the enemy has spent for each kilometre it has taken.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The carriage.</b> Its ram spring presses whichever block is in front; the more the spring is squeezed, the more of its strength the enemy has brought to bear.</li>
+      <li><b>The teeth.</b> At each one a block’s pawl catches (each block has its own rack; the far one runs between the track and the dashpot) and the block holds while the spring compresses. Before the squeeze reaches the point of a decisive engagement, the pawl lifts and the block slips back to the next tooth.</li>
+      <li><b>The dashpot.</b> Between teeth it lets the blocks give ground only at a slow, steady rate.</li>
       <li><b>Subsequent or alternating positions.</b> The second set of buttons (or the T key) chooses how the delay is run. With subsequent positions a coupler bar locks the two blocks together: the whole force holds each tooth and falls back to the next as one. With alternating positions the coupler swings clear, the bypass lever opens and the far block starts one tooth back: one block holds while the other waits on the next tooth, then the first runs back past it, pawl up, to the tooth after, while the carriage closes on the second. These are the manual’s two techniques, described under “What doctrine says.”</li>
       <li><b>Withdrawal and retirement.</b> Choose Withdrawal and the pawls stay up and the dashpot’s bypass lever opens: the blocks run for the rear together and the carriage follows without closing. Choose Retirement and, in this model, the carriage never touches the blocks at all. Hover over the bench (or use the arrow keys) to move through the hours of a run; the slider sets the enemy’s combat-power ratio, which sets how long each tooth holds.</li>
     </ol>
-    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model and readout drive both. Here the scale is one company; blue is friendly, red the enemy. The delaying company is drawn as eight small tracked vehicles, two platoons of four, holding four battle positions marked across a valley with chalk outlines on pegs, 6 km apart; a chalk phase line marks the rear of its area. The enemy comes down the valley road from the right, drawn with eight vehicles for each unit of the combat-power ratio (24 at 3 : 1): its lead platoon is always deployed, and the rest come out of column into line as the pressure on a position builds (the bench’s spring). With subsequent positions the whole company holds each position and fires down the valley, then falls back to the next behind a smoke screen; its platoons stagger their moves, as the manual says units do “so that elements are not moving at the same time” (para. 11-20), so one covers while the other moves. With alternating positions one platoon holds, lit, while the other waits on the next position; the first then drives back between the second’s vehicles to the position after, out of contact, and the lit outline passes to the platoon now in contact. In a withdrawal the company breaks contact under fire, forms a column on the road and drives to the rear, the enemy following without closing; in a retirement the column leaves with no enemy in sight. Success is not free: vehicles hit on either side stay greyed where they were hit, the latest ones smoking, and a white ambulance drives up to the latest friendly loss, where a medic kneels. Vehicles are drawn larger than scale so they read; unit sizes, distances, timings and losses are notional.</p>
-
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the scale is one company; blue is friendly, red the enemy.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The delaying company</b> is drawn as eight small tracked vehicles, two platoons of four, holding four battle positions marked across a valley with chalk outlines on pegs, 6 km apart; a chalk phase line marks the rear of its area.</li>
+      <li><b>The enemy</b> comes down the valley road from the right, drawn with eight vehicles for each unit of the combat-power ratio (24 at 3 : 1): its lead platoon is always deployed, and the rest come out of column into line as the pressure on a position builds (the bench’s spring).</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The controls.</b> Choose Delay, Withdrawal or Retirement with the first set of buttons (or the 1 to 3 keys), and the technique with the second set (or the T key). Move the pointer across the ground from right to left (or use the left and right arrow keys) to move through the hours of a run; the slider sets the enemy’s combat-power ratio. A click on the card or <i>Replay</i> runs it again.</li>
+      <li><b>Subsequent positions.</b> With subsequent positions the whole company holds each position and fires down the valley, then falls back to the next behind a smoke screen; its platoons stagger their moves, as the manual says units do “so that elements are not moving at the same time” (para. 11-20), so one covers while the other moves.</li>
+      <li><b>Alternating positions.</b> With alternating positions one platoon holds, lit, while the other waits on the next position; the first then drives back between the second’s vehicles to the position after, out of contact, and the lit outline passes to the platoon now in contact.</li>
+      <li><b>Withdrawal and retirement.</b> In a withdrawal the company breaks contact under fire, forms a column on the road and drives to the rear, the enemy following without closing; in a retirement the column leaves with no enemy in sight.</li>
+      <li><b>Losses.</b> Success is not free: vehicles hit on either side stay greyed where they were hit, the latest ones smoking, and a white ambulance drives up to the latest friendly loss, where a medic kneels.</li>
+    </ol>
+    <p class="fine">Vehicles are drawn larger than scale so they read; unit sizes, distances, timings and losses are notional.</p>
+    </div>
     <h2>What doctrine says</h2>
     <p>U.S. Army <i>FM 3-90, Tactics</i> (May 2023) defines a retrograde as “organized movement away from the enemy” and names three variations: delay, withdrawal and retirement (para. 11-1). In a delay, “a force under pressure trades space for time by slowing down the enemy’s momentum and inflicting maximum damage on enemy forces without becoming decisively engaged”; “normally in a delay, inflicting casualties on enemy forces is secondary to gaining time” (para. 11-13).</p>
     <p>The ratchet stands for the method the manual describes: a delay “succeeds by causing enemy forces to fight through a series of defensive positions,” and delaying forces “displace to subsequent positions before enemy forces are able to concentrate sufficient resources to decisively engage and defeat delaying forces in their current position.” How long a force can stay in one position “is primarily a function of relative combat power and the mission variables, such as terrain and weather” (para. 11-16). The bench models only the first of those; terrain and weather are left out.</p>

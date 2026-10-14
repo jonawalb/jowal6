@@ -310,10 +310,10 @@ const FM = { t: 0 };
 let stageF = null, fire = null, marksSig = "";
 const hintEl = root.querySelector('[data-corner="hint"]');
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
+const VIEW_KEY = "maneuvers.view.v2";
 const HINTS = { machine: "Hover scrubs · click replays", field: "Hover scrubs · click replays" };
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const GAUGE = { key: keyOf(K, P, D.x, D.y), svg: gaugeEl.outerHTML };
 gaugeEl.remove();
 const ALL = [...STATICS, GAUGE];
@@ -439,11 +439,25 @@ viewBtns.forEach((b) => b.addEventListener("click", () => setView(b.dataset.view
 resBtn.addEventListener("click", () => { setReserves(!S.reserves); replay(); });
 playBtn.addEventListener("click", replay);
 slider.addEventListener("input", () => setRelease(Number(slider.value)));
+// Reset: back to the state the page opened in (run clock, release day, reserve, controls and idle tour); the view is kept.
+const resetBtn = root.querySelector(".fd-reset");
+function reset() {
+  clearTimeout(idle);
+  scrub = false; frozen = false;
+  Object.assign(S, { t: 0, shown: 0, r: START.r, reserves: START.reserves });
+  if (still.matches) S.t = S.shown = runEnd();
+  FM.t = 0; marksSig = "";
+  setReserves(START.reserves);
+  slider.value = START.r.toFixed(1);
+  touring = !still.matches; clock = 0;
+  draw(); run();
+}
+resetBtn.addEventListener("click", reset);
 new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) run(); }, { rootMargin: "120px 0px" }).observe(stage);
 setReserves(S.reserves);
 if (still.matches) S.t = S.shown = runEnd();
 setView(view, false);
-window.__omg = { S, setReserves, setRelease, replay, setView, view: () => view, at: (t) => { touring = false; scrub = false; frozen = true; clearTimeout(idle); S.t = S.shown = t; draw(); }, stop: () => { touring = false; clearTimeout(idle); } };
+window.__omg = { S, setReserves, setRelease, replay, setView, reset, view: () => view, at: (t) => { touring = false; scrub = false; frozen = true; clearTimeout(idle); S.t = S.shown = t; draw(); }, stop: () => { touring = false; clearTimeout(idle); } };
 `;
 
 const PAGE = readFileSync(join(HERE, "page.html"), "utf8")

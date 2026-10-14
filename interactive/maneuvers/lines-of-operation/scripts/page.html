@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/lines-of-operation/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
@@ -62,6 +62,7 @@
 .lo-text li{margin:6px 0}
 @media (max-width:520px){.lo-figure .iso-plate-corner[data-corner="hint"]{display:none}.lo-stage{overflow:hidden}}
 </style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
 <body>
 <nav class="navbar" id="navbar">
@@ -90,23 +91,52 @@
     <!--FIGURE-->
     <div class="lo-controls">
       <div class="fd-views" role="group" aria-label="View">
-        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
-        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
       </div>
       <button type="button" class="btn btn-outline" id="lo-stall" aria-pressed="false">Stall line of effort 3</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
       <label>Campaign time <input type="range" id="lo-time" min="0" max="100" step="1" value="50" aria-label="Campaign time, percent"></label>
     </div>
   </div>
 
   <section class="lo-text">
-    <h2>How to read it</h2>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model drives both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
     <ol>
-      <li><b>The tracks</b> in front are lines of operation. Each carriage runs on rails across the bench and pauses at gates, the decisive points, generally in sequence. The ruler strip measures ground distance; only these lines use it.</li>
-      <li><b>The bars</b> behind are lines of effort. Each slider steps from detent to detent, one detent per task, to the stop at the end of its bar: the condition that line sets. In this model the bars are parallel and the same length, because what orders them is cause and effect, not distance.</li>
-      <li><b>The terminal</b> on the right carries one lock pin per line. A line that arrives raises its pin. In this model the lit block, the end state, rises only when all five pins are up.</li>
-      <li><b>Controls:</b> scrub campaign time with the pointer, the slider or the arrow keys. <i>Stall</i> stops line of effort 3 after its third task: the two tracks and the other bars still arrive, but the end state never sets.</li>
+      <li><b>The tracks</b> in front are lines of operation. The ruler strip measures ground distance; only these lines use it.</li>
+      <li><b>The bars</b> behind are lines of effort. In this model the bars are parallel and the same length, because what orders them is cause and effect, not distance.</li>
+      <li><b>The terminal</b> on the right carries one lock pin per line.</li>
     </ol>
-    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model drives both, and in this view the readout ends with the casualty count, blue against red. The scale is operational: each small vehicle stands for a company, blue friendly and red enemy. The two lines of operation are columns of six vehicles that leave the walled base on the left by two roads for the town on the right, the objective, ringed in chalk on pegs. Their decisive points are ground the enemy holds with dug-in vehicles, each with its fire sector marked on the ground: a bridge over the stream, a village and a hill on the near road; a second bridge and a pass between two hills on the middle road. Each pause of a carriage at a gate on the bench is a fight here: the column halts short of the point, its lead vehicles deploy and fire, and the defenders are knocked out and left greyed with thin smoke. Success is not free: each road also loses one vehicle, greyed and smoking where it was hit, and an ambulance shuttles casualties back to the base. Behind the front, the three lines of effort are civil-military work in five villages on the district road, which also ends at the town: line of effort 1 is an aid convoy that leaves supplies and draws a villager to them, line 2 a patrol that sets a checkpoint, line 3 a training team that posts a local police officer (olive). Each task on a bar is that line’s work in the next village. When every line is in, the lit flag rises over the town: the end state. Stall line of effort 3 and the police never reach the last two villages; in this model insurgents come back there, fire on the checkpoints and both sides take losses, while the flag stays down. Figures and vehicles are drawn far larger than scale so they read; unit sizes, distances, routes, timings, the enemy’s strength and the casualty counts are notional.</p>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Controls:</b> scrub campaign time with the pointer, the slider or the arrow keys. <i>Stall</i> stops line of effort 3 after its third task: the two tracks and the other bars still arrive, but the end state never sets.</li>
+      <li><b>The carriages.</b> Each carriage runs on rails across the bench and pauses at gates, the decisive points, generally in sequence.</li>
+      <li><b>The sliders.</b> Each slider steps from detent to detent, one detent per task, to the stop at the end of its bar: the condition that line sets.</li>
+      <li><b>The pins.</b> A line that arrives raises its pin. In this model the lit block, the end state, rises only when all five pins are up.</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>The scale is operational: each small vehicle stands for a company, blue friendly and red enemy.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The two lines of operation</b> are columns of six vehicles that leave the walled base on the left by two roads for the town on the right, the objective, ringed in chalk on pegs.</li>
+      <li><b>Their decisive points</b> are ground the enemy holds with dug-in vehicles, each with its fire sector marked on the ground: a bridge over the stream, a village and a hill on the near road; a second bridge and a pass between two hills on the middle road.</li>
+      <li><b>Behind the front</b>, the three lines of effort are civil-military work in five villages on the district road, which also ends at the town: line of effort 1 is an aid convoy that leaves supplies and draws a villager to them, line 2 a patrol that sets a checkpoint, line 3 a training team that posts a local police officer (olive).</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Controls:</b> scrub campaign time with the pointer, the slider or the arrow keys. Click the figure or use the Stall line of effort 3 button to stall that line, and again to free it.</li>
+      <li><b>The fights.</b> Each pause of a carriage at a gate on the bench is a fight here: the column halts short of the point, its lead vehicles deploy and fire, and the defenders are knocked out and left greyed with thin smoke.</li>
+      <li><b>The lines of effort.</b> Each task on a bar is that line’s work in the next village. When every line is in, the lit flag rises over the town: the end state.</li>
+      <li><b>Stall</b> line of effort 3 and the police never reach the last two villages; in this model insurgents come back there, fire on the checkpoints and both sides take losses, while the flag stays down.</li>
+      <li><b>Losses.</b> Success is not free: each road also loses one vehicle, greyed and smoking where it was hit, and an ambulance shuttles casualties back to the base. In this view the readout ends with the casualty count, blue against red.</li>
+    </ol>
+    <p class="fine">Figures and vehicles are drawn far larger than scale so they read; unit sizes, distances, routes, timings, the enemy’s strength and the casualty counts are notional.</p>
+    </div>
 
     <h2>What doctrine says</h2>
     <p>Joint doctrine names lines of operation (LOOs) and lines of effort (LOEs) as “the two primary methods” of organizing an operation to achieve its objective (JP 5-0, ch. IV, para. 6.a).</p>

@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/frontal-attack/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
@@ -56,6 +56,7 @@
 .fa-text li{margin:6px 0}
 @media (max-width:520px){.fa-figure .iso-plate-corner[data-corner="hint"]{display:none}.fa-stage{overflow:hidden}}
 </style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
 <body>
 <nav class="navbar" id="navbar">
@@ -84,24 +85,50 @@
     <!--FIGURE-->
     <div class="fa-controls">
       <div class="fd-views" role="group" aria-label="View">
-        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
-        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
       </div>
       <label>Attacker : defender ratio <input type="range" id="fa-ratio" min="0.5" max="6" step="0.1" value="0.8" aria-label="Attacker to defender ratio"></label>
       <button type="button" class="btn btn-outline" id="fa-tour" aria-pressed="true">Play tour</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
     </div>
   </div>
 
   <section class="fa-text">
-    <h2>How to read it</h2>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model and readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
     <ol>
-      <li><b>The press</b> on the left is the attacker. The knob on its head sets its force as a ratio of the defender’s strength. Set it with the pointer (move across the figure), the slider or the arrow keys.</li>
+      <li><b>The press</b> on the left is the attacker. The knob on its head sets its force as a ratio of the defender’s strength.</li>
       <li><b>The platen</b>, lit, is one broad plate. It meets all six blocks at once, so the press force is shared across the whole front: each block takes a sixth of it.</li>
       <li><b>The wall</b> is six blocks, each held by a preloaded spring against the backstop. The preload is the defender’s holding strength.</li>
-      <li><b>Below 1:1</b> the springs do not give. The wall does not move, but it is held under load. <b>Above 1:1</b> the whole wall is pushed back along the ruler. <b>At 4.5:1</b> one block gives way and a gap opens in the line.</li>
       <li><b>The gauge</b> reads the pressure the press is spending, with engraved marks at 1:1 and at the breach.</li>
     </ol>
-    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model and readout drive both. Here the scale is a platoon attack, blue is friendly and red is the enemy. Across the top, an enemy rifle squad and machine-gun team hold a line of two-man fighting positions with sandbagged rims behind a belt of wire, with a hedgerow and a second line of positions behind them; a stream covers one flank and a wood the other, so there is no open flank to go round. The red fan on the ground is the enemy machine gun’s sector. The lit assault line attacks the whole front at once across open, ploughed ground: rifle squads, each “two fire teams and a squad leader” (ATP 3-21.8, para. 1-9), each team built around a team leader, an automatic rifleman, a grenadier and a rifleman (para. 1-11), in squad line, a formation “used to assault or as a pre-assault formation” (para. 3-54), with the platoon leader and his radio operator behind. Machine-gun teams, each “a gunner and an assistant gunner” (para. 1-13), fire from behind stone walls on the line of departure, the chalk line on pegs; the flag marks the objective. The ratio sets how many blue elements are in the attack: one rifle squad at the low end, then a machine-gun team at 1:1, a second squad at 1.5:1, a second machine-gun team at 2.5:1 and a third squad at 3:1; above that, the higher ratio shows only as weaker enemy fire. At or below 1:1 the assault goes to ground short of the wire and trades fire, pinned. Above it the enemy falls back toward its second line and the assault follows, firing while it is down and moving while it advances. At 4.5:1 the enemy pair in one position runs and the centre squad goes through the gap in squad column. Success is not free: greyed figures lying still are men down on both sides, the blue ones where the line was hit and the first at a collection point behind the line of departure with a medic kneeling beside him; the red ones by their positions. The readout ends with the count, blue against red. The platoon manual calls the frontal attack “usually the least desirable form of maneuver because it exposes the majority of the offensive force to the concentrated fires of the defender” (para. 4-14). Soldiers are drawn larger than scale (about one and a half times) so they read; sizes, ranges, timings, the enemy’s strength, the ratios at which each element joins and the casualty counts are notional.</p>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The knob.</b> Set it with the pointer (move across the figure), the slider or the arrow keys.</li>
+      <li><b>Below 1:1</b> the springs do not give. The wall does not move, but it is held under load. <b>Above 1:1</b> the whole wall is pushed back along the ruler. <b>At 4.5:1</b> one block gives way and a gap opens in the line.</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the scale is a platoon attack, blue is friendly and red is the enemy.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The enemy.</b> Across the top, an enemy rifle squad and machine-gun team hold a line of two-man fighting positions with sandbagged rims behind a belt of wire, with a hedgerow and a second line of positions behind them; a stream covers one flank and a wood the other, so there is no open flank to go round. The red fan on the ground is the enemy machine gun’s sector.</li>
+      <li><b>The lit assault line</b> attacks the whole front at once across open, ploughed ground: rifle squads, each “two fire teams and a squad leader” (ATP 3-21.8, para. 1-9), each team built around a team leader, an automatic rifleman, a grenadier and a rifleman (para. 1-11), in squad line, a formation “used to assault or as a pre-assault formation” (para. 3-54), with the platoon leader and his radio operator behind.</li>
+      <li><b>Machine-gun teams</b>, each “a gunner and an assistant gunner” (para. 1-13), fire from behind stone walls on the line of departure, the chalk line on pegs; the flag marks the objective.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The ratio</b> sets how many blue elements are in the attack: one rifle squad at the low end, then a machine-gun team at 1:1, a second squad at 1.5:1, a second machine-gun team at 2.5:1 and a third squad at 3:1; above that, the higher ratio shows only as weaker enemy fire. Set it with the pointer (move across the figure), the slider or the arrow keys.</li>
+      <li><b>At or below 1:1</b> the assault goes to ground short of the wire and trades fire, pinned. <b>Above it</b> the enemy falls back toward its second line and the assault follows, firing while it is down and moving while it advances. <b>At 4.5:1</b> the enemy pair in one position runs and the centre squad goes through the gap in squad column.</li>
+      <li><b>Losses.</b> Success is not free: greyed figures lying still are men down on both sides, the blue ones where the line was hit and the first at a collection point behind the line of departure with a medic kneeling beside him; the red ones by their positions. The readout ends with the count, blue against red.</li>
+    </ol>
+    <p>The platoon manual calls the frontal attack “usually the least desirable form of maneuver because it exposes the majority of the offensive force to the concentrated fires of the defender” (para. 4-14).</p>
+    <p class="fine">Soldiers are drawn larger than scale (about one and a half times) so they read; sizes, ranges, timings, the enemy’s strength, the ratios at which each element joins and the casualty counts are notional.</p>
+    </div>
 
     <h2>What doctrine says</h2>
     <p>U.S. Army <i>FM 3-90, Tactics</i> (May 2023) names the frontal attack first of its five forms of maneuver (para. 2-24). It defines it as “a form of maneuver in which an attacking force seeks to destroy a weaker enemy force or fix a larger enemy force in place over a broad front” (para. 2-27).</p>

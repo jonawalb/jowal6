@@ -246,9 +246,9 @@ const LOOKS = new Map();
 const FM = { t: 0 };
 let stageF = null, fire = null, marksSig = "";
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+const VIEW_KEY = "maneuvers.view.v2";
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const still = matchMedia("(prefers-reduced-motion: reduce)");
 const TERMINAL = { key: 1e4 - 1, svg: termEl.outerHTML };
 termEl.remove();
@@ -356,6 +356,19 @@ stage.addEventListener("keydown", (event) => {
   event.preventDefault();
 });
 stallBtn.addEventListener("click", () => { setStall(!S.stalled); hold(); });
+// Reset: back to the state the page opened in (campaign time, stall, pins and idle tour); the view is kept.
+const resetBtn = root.querySelector(".fd-reset");
+function reset() {
+  clearTimeout(idle);
+  S.t = START.t; S.target = START.t;
+  setStall(false);
+  { const s0 = state(S.t, false); S.pins = s0.home.map((h) => (h ? 1 : 0)); S.es = s0.end ? 1 : 0; }
+  FM.t = 0; marksSig = "";
+  slider.value = String(Math.round(START.t * 100));
+  touring = !still.matches; clock = 0;
+  draw(); run();
+}
+resetBtn.addEventListener("click", reset);
 function setView(next, save) {
   view = next === "field" ? "field" : "machine";
   root.setAttribute("data-view", view);
@@ -371,7 +384,7 @@ new IntersectionObserver((entries) => { visible = entries[entries.length - 1].is
 setStall(false);
 { const s0 = state(S.t, false); S.pins = s0.home.map((h) => (h ? 1 : 0)); S.es = s0.end ? 1 : 0; }
 setView(view, false);
-window.__linesOfOperation = { S, setStall, steer, setView, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
+window.__linesOfOperation = { S, setStall, steer, setView, reset, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
 `;
 
 const PAGE = readFileSync(join(HERE, "page.html"), "utf8")

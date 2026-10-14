@@ -213,10 +213,10 @@ const FM = { t: 0, rc: 0, dir: 1, race: null };
 let stageF = null, fire = null, marksSig = "";
 const hintEl = root.querySelector('[data-corner="hint"]');
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
+const VIEW_KEY = "maneuvers.view.v2";
 const HINTS = { machine: "Click a station to call it", field: "Click a town to call it" };
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const still = matchMedia("(prefers-reduced-motion: reduce)");
 const STATICS = statics(K, P, ST);
 const S = { ...START, lift: [...START.lift] };
@@ -379,12 +379,27 @@ stage.addEventListener("keydown", (event) => {
 lugBtns.forEach((b) => b.addEventListener("click", () => { hold(); setLugs(Number(b.dataset.lugs)); }));
 speed.addEventListener("input", () => { hold(); setSpeed(Number(speed.value)); });
 nextBtn.addEventListener("click", () => { hold(); call(farthest()); });
+// Reset: back to the state the page opened in (hub, rim, race, controls and idle tour); the view is kept.
+const resetBtn = root.querySelector(".fd-reset");
+function reset() {
+  clearTimeout(idle);
+  Object.assign(S, START, { lift: [...START.lift] });
+  race = null; back = false;
+  Object.assign(FM, { t: 0, rc: 0, dir: 1, race: null });
+  marksSig = "";
+  touring = !still.matches; clock = 0; step = -1;
+  setLugs(S.n); setSpeed(S.k);
+  readout.textContent = "Hub and rim at station 1";
+  status.textContent = "";
+  draw(); run();
+}
+resetBtn.addEventListener("click", reset);
 viewBtns.forEach((b) => b.addEventListener("click", (event) => { event.stopPropagation(); setView(b.dataset.view, true); }));
 new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) run(); }, { rootMargin: "120px 0px" }).observe(stage);
 setLugs(S.n); setSpeed(S.k);
 readout.textContent = "Hub and rim at station 1";
 setView(view, false);
-window.__interiorLines = { S, call, setLugs, setSpeed, farthest, setView, view: () => view, get race() { return race; }, stop: () => { touring = false; clearTimeout(idle); } };
+window.__interiorLines = { S, call, setLugs, setSpeed, farthest, setView, reset, view: () => view, get race() { return race; }, stop: () => { touring = false; clearTimeout(idle); } };
 `;
 
 const PAGE = readFileSync(join(HERE, "page.html"), "utf8")

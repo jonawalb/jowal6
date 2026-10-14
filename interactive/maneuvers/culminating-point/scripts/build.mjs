@@ -264,10 +264,10 @@ let stageF = null, fire = null, marksSig = "";
 const hintEl = root.querySelector('[data-corner="hint"]');
 const sliderText = root.querySelector("#cp-push-text");
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
+const VIEW_KEY = "maneuvers.view.v2";
 const HINTS = { machine: "Hover to push · click: base", field: "Hover the road · click: base" };
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const still = matchMedia("(prefers-reduced-motion: reduce)");
 // the static items rendered by the build, kept as markup and re-sorted with the moving parts each frame
 const STATICS = [...layer.querySelectorAll("[data-static]")].map((el) => ({ key: DATA.STATIC_KEYS[Number(el.dataset.static)], svg: el.outerHTML }));
@@ -414,9 +414,21 @@ baseBtn.addEventListener("click", toggle);
 viewBtns.forEach((b) => b.addEventListener("click", () => setView(b.dataset.view, true)));
 slider.addEventListener("input", () => order(T.start + Number(slider.value)));
 new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) run(); }, { rootMargin: "120px 0px" }).observe(stage);
+// Reset: back to the state the page opened in (column, base, losses, field clocks and idle tour); the view is kept.
+const resetBtn = root.querySelector(".fd-reset");
+function reset() {
+  clearTimeout(idle);
+  Object.assign(S, { x: START.x, sled: START.sled, target: T.objective, forward: false, p: MODEL.p0 });
+  Object.assign(FM, { t: 0, lap: 0, halt: 0, move: 0, lostB: 0, lostR: 0 });
+  setBase(false);
+  slider.value = String(Math.round(T.objective - T.start));
+  touring = !still.matches; clock = 0;
+  draw(); run();
+}
+resetBtn.addEventListener("click", reset);
 setBase(S.forward);
 setView(view, false);
-window.__culminatingPoint = { S, FM, setBase, order, setView, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
+window.__culminatingPoint = { S, FM, setBase, order, setView, reset, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
 `;
 
 const PAGE = readFileSync(join(HERE, "page.html"), "utf8")

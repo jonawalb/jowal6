@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/oblique-order/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
@@ -64,6 +64,7 @@
 .ob-text li{margin:6px 0}
 @media (max-width:520px){.ob-figure .iso-plate-corner[data-corner="hint"]{display:none}.ob-stage{overflow:hidden}}
 </style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
 <body>
 <nav class="navbar" id="navbar">
@@ -92,24 +93,53 @@
     <!--FIGURE-->
     <div class="ob-controls">
       <div class="fd-views" role="group" aria-label="View">
-        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
-        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
       </div>
       <button type="button" class="btn btn-outline" id="ob-mass" aria-pressed="false">Mass the weights</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
       <label><span id="ob-angle-text">Beam angle</span> <input type="range" id="ob-angle" min="0" max="16" step="1" value="0" aria-label="Angle of the attacking line to the enemy line, degrees"></label>
     </div>
   </div>
 
   <section class="ob-text">
-    <h2>How to read it</h2>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model and readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
     <ol>
       <li><b>The enemy line</b> is the row of twelve blocks at the back, on sprung slides, in four sectors of three.</li>
-      <li><b>The attacking line</b> is the long beam. It pivots on a carriage at its right-hand end, and the carriage slides so that the beam’s leading pad always touches the enemy line. Swing it with the pointer, the slider or the arrow keys.</li>
-      <li><b>The weights</b> are the attacker’s strength: eight of them on four pegs, one peg per sector. The button, a click on the figure or the M key moves four of them onto the leading peg (the lit pad’s sector), or spreads them back.</li>
-      <li><b>The pads</b> reach out to touch the enemy line only where the beam is close enough. In this model, a sector in contact goes to whichever side has more weight there: the winner pushes the other back. The dial reads the best force ratio anywhere the lines touch.</li>
+      <li><b>The attacking line</b> is the long beam. It pivots on a carriage at its right-hand end, and the carriage slides so that the beam’s leading pad always touches the enemy line.</li>
+      <li><b>The weights</b> are the attacker’s strength: eight of them on four pegs, one peg per sector.</li>
+      <li><b>The dial</b> reads the best force ratio anywhere the lines touch.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The beam.</b> Swing it with the pointer, the slider or the arrow keys.</li>
+      <li><b>The weights.</b> The button, a click on the figure or the M key moves four of them onto the leading peg (the lit pad’s sector), or spreads them back.</li>
+      <li><b>The pads</b> reach out to touch the enemy line only where the beam is close enough. In this model, a sector in contact goes to whichever side has more weight there: the winner pushes the other back.</li>
     </ol>
     <p>Spread and parallel, every sector touches at two weights against three blocks (0.7:1) and every sector is pushed back. Massed but still parallel, the leading sector wins at six against three (2.0:1), but the other three sectors still touch and lose. Massed and swung past about 4.8°, only the leading sector touches: it wins, and the rest of the beam is held clear, which is what “refusing” a wing means here.</p>
-    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model and readout drive both. The ground is loosely after Leuthen. Carlyle describes the country as “a bare wide-waving champaign, with slight bumps on it,” dotted with hamlets and with “patches of scraggy fir” (p. 274), so here it is open and nearly flat, with low knolls, fir copses and hamlets. The twelve red battalions are the Austrian line, three to each of the bench’s sectors; a hamlet with a flag marks the angle of their left at Sagschütz, the objective, and a village with a church tower behind their centre stands for Leuthen. The eight blue battalions are the Prussians, on a line that wheels on its near, refused end as the beam pivots on its carriage; the lit battalion leads the strong wing. Each battalion is drawn as a short line of musketeers a few ranks deep, with its colour in the centre and an officer in front, and the horse as squadrons of two ranks. The two blue squadrons on the knoll off the Austrian right are cavalry that, in Carlyle’s account, were “twinkling about in an enigmatic way” on the knolls, until Lucchesi’s alarm drew the Austrian reserve horse to that wing: the three red squadrons behind the Austrian line ride off toward it as the Prussians mass (the timing is this view’s, not a timeline). When the line masses, four Prussian battalions march back in column, along a road behind a chain of low knolls, and form up behind the leading battalions against the Austrian left. Where the lines touch, both sides fire volleys, drawn as flashes and powder smoke; the outweighed side gives ground, and men fall on both sides, greyed where they lie, while two soldiers carry the Prussian wounded back to a farm. The readout’s last figure counts the fallen, Prussian vs Austrian. Red and blue mark the sides, not uniforms, and the figures are drawn larger than scale (about one and a half times) so they read. The number of battalions, their size and spacing, the ranges, the march and the casualties are notional; the real armies were far larger.</p>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>The ground is loosely after Leuthen. Red and blue mark the sides, not uniforms.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The country.</b> Carlyle describes the country as “a bare wide-waving champaign, with slight bumps on it,” dotted with hamlets and with “patches of scraggy fir” (p. 274), so here it is open and nearly flat, with low knolls, fir copses and hamlets.</li>
+      <li><b>The Austrians.</b> The twelve red battalions are the Austrian line, three to each of the bench’s sectors; a hamlet with a flag marks the angle of their left at Sagschütz, the objective, and a village with a church tower behind their centre stands for Leuthen.</li>
+      <li><b>The Prussians.</b> The eight blue battalions are the Prussians, on a line that wheels on its near, refused end as the beam pivots on its carriage; the lit battalion leads the strong wing.</li>
+      <li><b>The figures.</b> Each battalion is drawn as a short line of musketeers a few ranks deep, with its colour in the centre and an officer in front, and the horse as squadrons of two ranks.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The controls.</b> Wheel the line with the pointer, the Angle of the line slider or the arrow keys. The Mass the right wing button, a click on the figure or the M key masses the battalions on the right wing; pressed again, the button (now Spread along the line) spreads them back.</li>
+      <li><b>The cavalry.</b> The two blue squadrons on the knoll off the Austrian right are cavalry that, in Carlyle’s account, were “twinkling about in an enigmatic way” on the knolls, until Lucchesi’s alarm drew the Austrian reserve horse to that wing: the three red squadrons behind the Austrian line ride off toward it as the Prussians mass (the timing is this view’s, not a timeline).</li>
+      <li><b>The march.</b> When the line masses, four Prussian battalions march back in column, along a road behind a chain of low knolls, and form up behind the leading battalions against the Austrian left.</li>
+      <li><b>The fight.</b> Where the lines touch, both sides fire volleys, drawn as flashes and powder smoke; the outweighed side gives ground, and men fall on both sides, greyed where they lie, while two soldiers carry the Prussian wounded back to a farm. The readout’s last figure counts the fallen, Prussian vs Austrian.</li>
+    </ol>
+    <p class="fine">The figures are drawn larger than scale (about one and a half times) so they read. The number of battalions, their size and spacing, the ranges, the march and the casualties are notional; the real armies were far larger.</p>
+    </div>
 
     <h2>What Frederick wrote, and Leuthen</h2>
     <p>In his instructions to his generals, Frederick wrote that “my oblique order of battle may be employed to advantage, for you refuse one wing to the enemy, whilst you strengthen that which ought to make the attack. By this means you turn all your force on that wing of the enemy which you wish to take in flank” (<i>Military Instruction</i>, 1818 translation, pp. 108–109).</p>

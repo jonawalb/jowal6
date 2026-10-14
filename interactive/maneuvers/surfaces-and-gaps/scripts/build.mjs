@@ -187,9 +187,9 @@ const LOOKS = new Map();
 const FM = { t: 0, vbar: 0, vd: [0, 0, 0, 0, 0], vr: 0, vv: 0, med: undefined };
 let stageF = null, fire = null, marksSig = "", prevF = null;
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+const VIEW_KEY = "maneuvers.view.v2";
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const layer = svg.querySelector('[data-part="live"]');
 const readoutEl = root.querySelector("[data-readout]");
 const probeBtn = root.querySelector("#sg-probe");
@@ -350,12 +350,28 @@ stage.addEventListener("keydown", (event) => {
 });
 probeBtn.addEventListener("click", probe);
 shuffleBtn.addEventListener("click", shuffle);
+// Reset: back to the state the page opened in (cycle, face pattern, planned lane, battle clocks and
+// idle tour); the view is kept.
+const resetBtn = root.querySelector(".fd-reset");
+function reset() {
+  clearTimeout(idle);
+  Object.assign(st, { mode: still.matches ? "probe" : "tour", t: still.matches ? HOLD : 0, planned: START_PLANNED, pat: 0, next: 1 });
+  Object.assign(shown, { xb: MODEL.barHome, ramY: laneY(START_PLANNED), ramTip: MODEL.barHome - MODEL.ramOff, depths: MODEL.patterns[0].slice() });
+  shown.tips = shown.depths.map((d) => Math.max(shown.xb - MODEL.bladeOff, MODEL.face - d));
+  Object.assign(FM, { t: 0, vbar: 0, vd: [0, 0, 0, 0, 0], vr: 0, vv: 0, med: undefined });
+  prevF = null; marksSig = "";
+  slider.value = String(START_PLANNED + 1);
+  const { p, depths } = target();
+  draw(p, depths);
+  run();
+}
+resetBtn.addEventListener("click", reset);
 viewBtns.forEach((b) => b.addEventListener("click", () => setView(b.dataset.view, true)));
 slider.addEventListener("input", () => plan(Number(slider.value) - 1));
 new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) run(); }, { rootMargin: "120px 0px" }).observe(stage);
 if (still.matches) { st.mode = "probe"; st.t = HOLD; }
 setView(view, false);
-window.__surfacesAndGaps = { st, shown, probe, shuffle, plan, setView, view: () => view, stop: () => { clearTimeout(idle); settleNow(); run(); } };
+window.__surfacesAndGaps = { st, shown, probe, shuffle, plan, reset, setView, view: () => view, stop: () => { clearTimeout(idle); settleNow(); run(); } };
 `;
 
 const PAGE = readFileSync(join(HERE, "page.html"), "utf8")

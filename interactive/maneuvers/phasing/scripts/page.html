@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/phasing/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
@@ -61,6 +61,7 @@
 .iso .tr-s[data-side="fk"] .tr-veh>.iso-shade[data-shade="3"],.iso .tr-s[data-side="fk"] .tr-veh>.iso-shade[data-shade="2"]{fill:#b9b6b0}.iso .tr-s[data-side="hk"] .tr-veh>.iso-shade[data-shade="3"],.iso .tr-s[data-side="hk"] .tr-veh>.iso-shade[data-shade="2"]{fill:#bfb5b2}
 @media (max-width:520px){.ph-figure .iso-plate-corner[data-corner="hint"]{display:none}.ph-stage{overflow:hidden}}
 </style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
 <body>
 <nav class="navbar" id="navbar">
@@ -89,26 +90,53 @@
     <!--FIGURE-->
     <div class="ph-controls">
       <div class="fd-views" role="group" aria-label="View">
-        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
-        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
       </div>
       <button type="button" class="btn btn-outline" id="ph-prev">&larr; Previous phase</button>
       <button type="button" class="btn btn-outline" id="ph-next">Next phase &rarr;</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
       <label>Phase <input type="range" id="ph-phase" min="0" max="5" step="1" value="0" aria-label="Phase, 0 Shape to V Enable civil authority"></label>
     </div>
   </div>
 
   <section class="ph-text">
-    <h2>How to read it</h2>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same phase, transitions and readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
     <ol>
       <li><b>The shift lever</b> (lit knob) sits in one of six notches in the gate. Left to right they are Phase 0 Shape, I Deter, II Seize initiative, III Dominate, IV Stabilize and V Enable civil authority, the labels in JP 3-0 (2017, Change 1 2018), Figure V-7.</li>
-      <li><b>The clutch</b> on the right lifts for every shift, and the drive stops while the lever moves. On the bench, transitions are planned shifts between phases; in doctrine they can also lead into a branch or sequel, and some are unplanned. Doctrine says a transition “marks a change between phases or between the ongoing operations and execution of a branch or sequel,” and this “shift in focus by the joint force often is accompanied by changes in command or support relationships and priorities of effort” (JP 3-0, 2018, para. V-6.d(1)).</li>
       <li><b>The gear stack</b> on the left has one gear per phase, and the index pointer on its post marks the gear in use. A bigger gear means more effort in this model. The dial reads the same level of effort.</li>
-      <li>Shift with the buttons, the slider, the arrow keys, a click on the figure, or by hovering over the gate.</li>
     </ol>
-    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same phase, transitions and readout drive both. Here the scale is operational: blue is friendly, red is the enemy, each small vehicle stands for a platoon and each group of six for a battalion, so most of each battalion’s vehicles are left out. The ground stays the same in every phase: a friendly base on the left, a phase line marked in chalk on pegs, an enemy-held ridge and a town at a crossroads on the right. In Shape, one friendly company trains at the base while supply trucks bring stocks in. In Deter, the lit battalion (the main effort) deploys along the phase line and a second battalion arrives, which matches JP 3-0’s note that deterrent actions “may include mobilization, tailoring of forces, and other predeployment activities; initial deployment into a theater” (para. V-5.b(2), p. V-9); the enemy moves onto the ridge, and the fire sectors on the ground face each other. In Seize initiative, the second battalion takes the ridge and the lit battalion crosses the phase line. In Dominate, the lit battalion assaults the town while the second battalion supports by fire from the ridge, then stops firing and holds its position as the assault closes; the surviving enemy withdraws. In Stabilize, whose activities JP 3-0 says are “typically characterized by a shift in focus from sustained combat operations to stability activities,” including “humanitarian relief” (para. V-5.b(5), p. V-10), the force breaks down into checkpoints, aid trucks (sand) reach a distribution point, townspeople (brown) queue there, and local police (charcoal) join the checkpoints, while two snipers fire on one of them. In Enable civil authority, whose purpose JP 3-0 gives as helping “the civil authority regain its ability to govern” (para. V-5.b(6), p. V-10), the police hold the checkpoints alone and the battalions pull back. Each shift of the gear shows on the ground as units turning and moving into their next posture, and no one fires until they are in place. Success is not free: knocked-out vehicles stay where they were hit, greyed and smoking, a soldier and both snipers go down, and an ambulance (white) runs casualties back to the base. The readout’s last figure is men down, friendly vs enemy, a notional count explained below. Which units do what in each phase is this figure’s own illustration, not a doctrinal template. Vehicles and figures are drawn far larger than scale so they read; unit sizes, distances, positions and timings are notional.</p>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The lever.</b> Shift with the buttons, the slider, the arrow keys, a click on the figure, or by hovering over the gate.</li>
+      <li><b>The clutch</b> on the right lifts for every shift, and the drive stops while the lever moves. On the bench, transitions are planned shifts between phases; in doctrine they can also lead into a branch or sequel, and some are unplanned. Doctrine says a transition “marks a change between phases or between the ongoing operations and execution of a branch or sequel,” and this “shift in focus by the joint force often is accompanied by changes in command or support relationships and priorities of effort” (JP 3-0, 2018, para. V-6.d(1)).</li>
+    </ol>
     <p>The bench always steps through the phases in order, and the tour shifts on a timer. JP 3-0 (2018) is looser on both counts. Phases “may be conducted sequentially, but some activities from a phase may begin in a previous phase and continue into subsequent phases,” and the move to a new phase “is usually driven by events rather than time” (JP 3-0, 2018, para. V-6.b and V-6.d).</p>
-
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the scale is operational: blue is friendly, red is the enemy, each small vehicle stands for a platoon and each group of six for a battalion, so most of each battalion’s vehicles are left out.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The ground</b> stays the same in every phase: a friendly base on the left, a phase line marked in chalk on pegs, an enemy-held ridge and a town at a crossroads on the right.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The controls.</b> Shift with the buttons, the slider, the arrow keys or a click on the figure.</li>
+      <li>In <b>Shape</b>, one friendly company trains at the base while supply trucks bring stocks in.</li>
+      <li>In <b>Deter</b>, the lit battalion (the main effort) deploys along the phase line and a second battalion arrives, which matches JP 3-0’s note that deterrent actions “may include mobilization, tailoring of forces, and other predeployment activities; initial deployment into a theater” (para. V-5.b(2), p. V-9); the enemy moves onto the ridge, and the fire sectors on the ground face each other.</li>
+      <li>In <b>Seize initiative</b>, the second battalion takes the ridge and the lit battalion crosses the phase line.</li>
+      <li>In <b>Dominate</b>, the lit battalion assaults the town while the second battalion supports by fire from the ridge, then stops firing and holds its position as the assault closes; the surviving enemy withdraws.</li>
+      <li>In <b>Stabilize</b>, whose activities JP 3-0 says are “typically characterized by a shift in focus from sustained combat operations to stability activities,” including “humanitarian relief” (para. V-5.b(5), p. V-10), the force breaks down into checkpoints, aid trucks (sand) reach a distribution point, townspeople (brown) queue there, and local police (charcoal) join the checkpoints, while two snipers fire on one of them.</li>
+      <li>In <b>Enable civil authority</b>, whose purpose JP 3-0 gives as helping “the civil authority regain its ability to govern” (para. V-5.b(6), p. V-10), the police hold the checkpoints alone and the battalions pull back.</li>
+      <li><b>Transitions.</b> Each shift of the gear shows on the ground as units turning and moving into their next posture, and no one fires until they are in place.</li>
+      <li><b>Losses.</b> Success is not free: knocked-out vehicles stay where they were hit, greyed and smoking, a soldier and both snipers go down, and an ambulance (white) runs casualties back to the base. The readout’s last figure is men down, friendly vs enemy, a notional count explained below.</li>
+    </ol>
+    <p class="fine">Which units do what in each phase is this figure’s own illustration, not a doctrinal template. Vehicles and figures are drawn far larger than scale so they read; unit sizes, distances, positions and timings are notional.</p>
+    </div>
     <h2>What doctrine says, edition by edition</h2>
     <ul>
       <li><b>JP 5-0, <i>Joint Operation Planning</i> (11 August 2011)</b> set out a “Phasing Model” (Figure III-17) with the six phases, Shape (Phase 0) through Enable Civil Authority (Phase V). Even then it warned that “the six-phase model is not intended to be a universally prescriptive template for all conceivable joint operations” (ch. III, para. 10.b, p. III-41).</li>

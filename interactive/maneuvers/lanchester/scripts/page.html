@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/lanchester/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
@@ -61,6 +61,7 @@
 .lc-figure .lc-d{--anatomy-paper:#f1f1ee;--anatomy-top:#f4f4f1;--anatomy-shade-0:#d4d4cf;--anatomy-shade-1:#dbdbd6;--anatomy-shade-2:#e2e2dd;--anatomy-shade-3:#e9e9e4;--anatomy-mid:#9a9a92;--anatomy-faint:#c6c6c0}
 .lc-text .eq{font-family:var(--font-serif);font-style:italic;text-align:center;margin:10px 0}
 </style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
 <body>
 <nav class="navbar" id="navbar">
@@ -89,27 +90,51 @@
     <!--FIGURE-->
     <div class="lc-controls">
       <div class="fd-views" role="group" aria-label="View">
-        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
-        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
       </div>
       <button type="button" class="btn btn-outline" id="lc-plan" aria-pressed="true">Concentrating on one group</button>
       <button type="button" class="btn btn-outline" id="lc-law" aria-pressed="true">Square law (aimed fire)</button>
       <button type="button" class="btn btn-outline" id="lc-play" aria-pressed="false">Play</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
       <label><span>Step</span> <input type="range" id="lc-step" min="0" max="46" step="1" value="0" aria-label="Step of the battle"></label>
     </div>
   </div>
 
   <section class="lc-text">
-    <h2>How to read it</h2>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model and readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
     <ol>
       <li><b>One disc is one man.</b> Blue’s 16 discs hang on the left of the beam. Red’s 20 are in two groups of 10: group A on the right-hand pan, and group B either on the pan too or waiting on the shelf behind the beam, out of the fight.</li>
       <li><b>The riders are the square law.</b> Under the square law each rider slides out along the beam one scale mark per man on its pan, so a side with twice the men hangs twice the weight twice as far out: four times the turning force. The lit beam tips toward the stronger side by that measure, not by the plain count.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
       <li><b>Step through the battle</b> with the slider, the arrow keys, Play, or the pointer across the card. Each step removes discs from both pans: under the square law each side loses men in proportion to the number of enemy men firing at it. Men down drop into the trays at the front, and the dial counts the steps.</li>
       <li><b>Watch the beam while discs come off.</b> Under the square law it hardly moves during a fight, because Lanchester’s result is that the difference of the squares stays the same as both sides lose men. The side the beam leans to at the start is the side left standing at the end.</li>
       <li><b>Concentrating on one group</b> (the default) puts only red’s group A on the pan. Blue, with 16 against 10, wins that fight; group B then joins, against a smaller blue force. <b>Fighting both at once</b> puts all 20 red discs on the pan from the start, and the beam tips the other way.</li>
       <li><b>The law knob</b> switches to the linear law. The riders lock at one mark, so turning force goes with the plain count. In this model the linear law is unaimed area fire: each side’s losses grow with the numbers on both sides. Under it, concentrating no longer changes who wins.</li>
     </ol>
-    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model and readout drive both. Here the idea becomes a small fight in open pasture, blue friendly and red the enemy, both sides on equal terms as to cover, as Lanchester assumes, here lying prone in the open. Sixteen blue riflemen (lit) face twenty red riflemen in two groups of ten, with a wood between the red groups so that neither can fire across to help the other. Concentrating, blue takes up a firing line where the wood screens group B and fights group A alone; when group A is down, blue gets up, moves round behind the wood’s tail and fights group B. Fighting both at once, blue lies in the open in front of the wood and takes fire from both groups. Tracers run from muzzle to impact; the faint fans on the ground show who is engaging whom. Under the linear law the fire is unaimed: rounds go into the smoke over the enemy’s ground rather than at men. Success is not free: greyed figures lying still are men down on both sides, counted by the model, the blue ones where they were hit and the first at a collection point behind the start line with a medic kneeling beside him (the medic is not one of the sixteen). Soldiers are drawn larger than scale (about one and a half times) so they read; the force sizes, distances, rates of fire and the pace of the fight are notional.</p>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the idea becomes a small fight in open pasture, blue friendly and red the enemy, both sides on equal terms as to cover, as Lanchester assumes, here lying prone in the open.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>Sixteen blue riflemen</b> (lit) face twenty red riflemen in two groups of ten, with a wood between the red groups so that neither can fire across to help the other.</li>
+      <li><b>The fire.</b> Tracers run from muzzle to impact; the faint fans on the ground show who is engaging whom.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Step through the battle</b> with the slider, the arrow keys, Play, or the pointer across the card. Click the figure or use the plan button to switch between the two plans; the law button switches the law.</li>
+      <li><b>Concentrating</b>, blue takes up a firing line where the wood screens group B and fights group A alone; when group A is down, blue gets up, moves round behind the wood’s tail and fights group B. <b>Fighting both at once</b>, blue lies in the open in front of the wood and takes fire from both groups.</li>
+      <li><b>Under the linear law</b> the fire is unaimed: rounds go into the smoke over the enemy’s ground rather than at men.</li>
+      <li><b>Losses.</b> Success is not free: greyed figures lying still are men down on both sides, counted by the model, the blue ones where they were hit and the first at a collection point behind the start line with a medic kneeling beside him (the medic is not one of the sixteen).</li>
+    </ol>
+    <p class="fine">Soldiers are drawn larger than scale (about one and a half times) so they read; the force sizes, distances, rates of fire and the pace of the fight are notional.</p>
+    </div>
 
     <h2>What Lanchester wrote</h2>
     <p>Lanchester published the argument as articles in 1914 and collected them in <i>Aircraft in Warfare: The Dawn of the Fourth Arm</i> (1916). Under modern conditions, he wrote, “each man will in a given time score, on an average, a certain number of hits that are effective; consequently, the number of men knocked out per unit time will be directly proportional to the numerical strength of the opposing force.” With <i>b</i> the strength of the Blue force and <i>r</i> that of the Red:</p>

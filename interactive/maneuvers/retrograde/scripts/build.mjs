@@ -286,7 +286,7 @@ const fieldLayer = fieldSvgEl.querySelector('[data-part="field-live"]');
 const marksEl = fieldSvgEl.querySelector('[data-part="marks"]');
 const fireEl = fieldSvgEl.querySelector('[data-part="fire"]');
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
+const VIEW_KEY = "maneuvers.view.v2";
 const still = matchMedia("(prefers-reduced-motion: reduce)");
 const grab = (name) => layer.querySelector('[data-keep="' + name + '"]').outerHTML;
 const KEEP = { far: grab("far"), cyl: grab("cyl"), mid: [grab("mid")], front: [grab("front")], statics: [{ key: DATA.STOP_KEY, svg: grab("stop") }] };
@@ -296,8 +296,8 @@ const TT = fieldTerrain();
 const LOOKS = new Map();
 const FM = { t: 0, dt: 0, amb: null };
 let stageF = null, fire = null, marksSig = "";
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 // run state (model) and shown state (eased)
 const S = { mode: "delay", tech: "subsequent", r: R.start, t: 0, playing: true };
 const V = { dA: 0, dB: 0, a: 0, pressure: 0, liftA: 0, liftB: 0, couple: 1, bypass: 0, t: 0 };
@@ -444,6 +444,21 @@ viewBtns.forEach((b) => b.addEventListener("click", () => setView(b.dataset.view
 replayBtn.addEventListener("click", replay);
 slider.addEventListener("input", () => { setRatio(Number(slider.value)); replay(); });
 new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) run(); }, { rootMargin: "120px 0px" }).observe(stage);
+// Reset: back to the state the page opened in (run, shown state, controls and idle tour); the view is kept.
+function reset() {
+  clearTimeout(idle);
+  Object.assign(S, { mode: "delay", tech: "subsequent", r: R.start, t: 0, playing: true });
+  Object.assign(V, { dA: 0, dB: 0, a: 0, pressure: 0, liftA: 0, liftB: 0, couple: 1, bypass: 0, t: 0 });
+  Object.assign(FM, { t: 0, dt: 0, amb: null });
+  touring = !still.matches; clock = 0;
+  if (document.activeElement === slider) slider.blur();
+  setMode(S.mode); setTech(S.tech); setRatio(S.r);
+  if (still.matches) { touring = false; S.playing = false; S.t = duration(S.mode, S.r, S.tech) * 0.45; }
+  cur = runAt(S.mode, S.r, S.t, S.tech);
+  if (still.matches) { V.dA = cur.A.d; V.dB = cur.B.d; V.a = cur.a; V.pressure = cur.pressure; V.t = cur.t; }
+  draw(cur); run();
+}
+root.querySelector(".fd-reset").addEventListener("click", reset);
 setMode(S.mode);
 setTech(S.tech);
 setRatio(S.r);
@@ -451,7 +466,7 @@ if (still.matches) { touring = false; S.playing = false; S.t = duration(S.mode, 
 cur = runAt(S.mode, S.r, S.t, S.tech);
 if (still.matches) { V.dA = cur.A.d; V.dB = cur.B.d; V.a = cur.a; V.pressure = cur.pressure; V.t = cur.t; }
 setView(view, false);
-window.__retrograde = { S, V, FM, setMode, setTech, setRatio, scrub, replay, chooseTech, setView, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
+window.__retrograde = { S, V, FM, setMode, setTech, setRatio, scrub, replay, chooseTech, setView, reset, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
 `;
 
 const PAGE = readFileSync(join(HERE, "page.html"), "utf8")

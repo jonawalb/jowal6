@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/recon-pull/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
@@ -63,6 +63,7 @@
 .rp-seg{display:inline-flex;gap:6px}
 @media (max-width:520px){.rp-figure .iso-plate-corner[data-corner="hint"]{display:none}.rp-stage{overflow:hidden}}
 </style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
 <body>
 <nav class="navbar" id="navbar">
@@ -91,8 +92,8 @@
     <!--FIGURE-->
     <div class="rp-controls">
       <div class="fd-views" role="group" aria-label="View">
-        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
-        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
       </div>
       <span class="rp-seg" role="group" aria-label="Reconnaissance technique">
         <button type="button" class="btn btn-outline" id="rp-pull" aria-pressed="false">Recon pull</button>
@@ -100,23 +101,53 @@
       </span>
       <button type="button" class="btn btn-outline" id="rp-layout">New enemy layout</button>
       <button type="button" class="btn btn-outline" id="rp-again">Run again</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
       <label>Planned lane <input type="range" id="rp-plan" min="1" max="5" step="1" value="3" aria-label="Planned lane for recon push, 1 to 5"></label>
     </div>
   </div>
 
   <section class="rp-text">
-    <h2>How to read it</h2>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model and readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
     <ol>
-      <li><b>The wall</b> has five gates. A raised shutter is a gate the enemy holds; a sunk shutter is a gap. Click a gate, or press 1 to 5, to change it, or step through set layouts with <i>New enemy layout</i>.</li>
-      <li><b>The marbles</b> waiting in the magazine at front left are the main body. They roll along the feeder and turn into whichever lane the <b>diverter</b> (the carriage on the front rail) blocks off.</li>
+      <li><b>The wall</b> has five gates. A raised shutter is a gate the enemy holds; a sunk shutter is a gap.</li>
+      <li><b>The marbles</b> waiting in the magazine at front left are the main body.</li>
       <li><b>The lit scout carriage</b> rides the wall top and drops a feeler at each gate it checks.</li>
+      <li><b>The stopwatch</b> reads the seconds until the first marble is through a gate.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The gates.</b> Click a gate, or press 1 to 5, to change it, or step through set layouts with <i>New enemy layout</i>.</li>
+      <li><b>The marbles.</b> They roll along the feeder and turn into whichever lane the <b>diverter</b> (the carriage on the front rail) blocks off.</li>
       <li><b>Recon pull:</b> the scout works along the wall first. When it finds a gap, the diverter follows it there and the main body is released into that lane.</li>
       <li><b>Recon push:</b> the plan peg locks the diverter to the planned lane (set it with the slider or the arrow keys) and the main body goes at once; the scout runs to that gate only to check it.</li>
-      <li><b>The stopwatch</b> reads the seconds until the first marble is through a gate. If the planned gate is held, the marbles stack up against its shutter and the watch keeps running.</li>
+      <li><b>A held gate.</b> If the planned gate is held, the marbles stack up against its shutter and the watch keeps running.</li>
     </ol>
     <p>The idle tour runs three cases: push into a planned gate that is open (fastest), push into a planned gate that is held (stalled), and pull against that same wall (slower to start, but it gets through).</p>
-    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model, controls and readout drive both. Blue is friendly and red is the enemy. Across the middle, a belt of woods screens the enemy side, and five farm tracks (the lanes) run up through it. At the near end of each track is a fighting position: a red enemy team in it is a held gate, with its fire sector marked on the ground; an empty one is a gap. The lit blue figures are the scouts, a team of four. They move along the front of the woods in file and, at each crossing they check, turn and go forward: at a held one they draw fire, go to ground, fire back and pull back; at a gap they go through and wait on the far side. The main body is a rifle company, drawn as seven groups of five figures (each figure stands for part of the unit, not one soldier); it comes up the road at the bottom of the card, moves along the lateral road in file and turns up one track, and on the far side of the woods it spreads out round the objective flag. The chalk line with an arrowhead is the chosen route: under recon push it is drawn from the start, because the plan has fixed it; under recon pull it appears only when the scouts have found the gap. Under push, if the planned crossing is held, the company stops in front of it, the leading groups prone and firing and the rest kneeling in column behind. Success is not free here either: greyed figures lying still are men down on both sides, and a medic runs from the company headquarters group to the first friendly casualty. The readout ends with the count, friendly against enemy. Soldiers are drawn larger than scale (about one and a half times) so they read; sizes, distances, timings, the enemy’s strength and the casualty counts are notional.</p>
-
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Blue is friendly and red is the enemy.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The woods.</b> Across the middle, a belt of woods screens the enemy side, and five farm tracks (the lanes) run up through it.</li>
+      <li><b>The enemy.</b> At the near end of each track is a fighting position: a red enemy team in it is a held gate, with its fire sector marked on the ground; an empty one is a gap.</li>
+      <li><b>The scouts.</b> The lit blue figures are the scouts, a team of four.</li>
+      <li><b>The main body</b> is a rifle company, drawn as seven groups of five figures (each figure stands for part of the unit, not one soldier).</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The controls.</b> Click a crossing, or press 1 to 5, to set it held or open, or step through set layouts with <i>New enemy layout</i>. Choose <i>Recon pull</i> or <i>Recon push</i> with the buttons, the space bar or a click away from the crossings; set the planned track with the slider or the arrow keys, and <i>Run again</i> restarts the run.</li>
+      <li><b>The scouts</b> move along the front of the woods in file and, at each crossing they check, turn and go forward: at a held one they draw fire, go to ground, fire back and pull back; at a gap they go through and wait on the far side.</li>
+      <li><b>The company</b> comes up the road at the bottom of the card, moves along the lateral road in file and turns up one track, and on the far side of the woods it spreads out round the objective flag.</li>
+      <li><b>The route.</b> The chalk line with an arrowhead is the chosen route: under recon push it is drawn from the start, because the plan has fixed it; under recon pull it appears only when the scouts have found the gap.</li>
+      <li><b>A held crossing.</b> Under push, if the planned crossing is held, the company stops in front of it, the leading groups prone and firing and the rest kneeling in column behind.</li>
+      <li><b>Losses.</b> Success is not free here either: greyed figures lying still are men down on both sides, and a medic runs from the company headquarters group to the first friendly casualty. The readout ends with the count, friendly against enemy.</li>
+    </ol>
+    <p class="fine">Soldiers are drawn larger than scale (about one and a half times) so they read; sizes, distances, timings, the enemy’s strength and the casualty counts are notional.</p>
+    </div>
     <h2>What doctrine says</h2>
     <p>U.S. Army <i>FM 3-90, Tactics</i> (May 2023) names “two reconnaissance techniques commanders employ to answer information requirements: reconnaissance push and reconnaissance pull” (para. 12-76). Reconnaissance pull “determines which routes are suitable for maneuver, where the enemy is strong and weak, and where gaps exist, thus pulling the main body toward and along the path of least resistance.” The manual adds that it “knowingly emphasizes opportunity at the expense of a detailed, well-rehearsed plan, and unity of effort” (para. 12-77).</p>
     <p>Reconnaissance push “refines the common operational picture, enabling the commander to finalize the plan and support main and supporting efforts.” It “is normally used once the commander commits to a scheme of maneuver or COA [course of action],” and commanders push reconnaissance assets out “to confirm, deny, and validate planning assumptions” (para. 12-78). Push “emphasizes detailed, well-rehearsed planning”; pull trades that rehearsal and unity of effort for opportunity. In this page’s reading, neither is the wrong answer. In choosing, the commander weighs how well the enemy is understood, the time available, the leadership ability of subordinate commanders, and the proficiency of subordinate units to plan and react rapidly to uncertain situations (para. 12-76), and “the primary reason for using one method instead of the other is the time available” (para. 12-79).</p>

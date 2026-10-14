@@ -171,13 +171,13 @@ const fireEl = fieldSvgEl.querySelector('[data-part="fire"]');
 const lossEl = root.querySelector("#op-losses");
 const hintEl = root.querySelector('[data-corner="hint"]');
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
+const VIEW_KEY = "maneuvers.view.v2";
 const HINTS = { machine: "Click to switch pause plan", field: "Click to switch pause plan" };
 const T = fieldTerrain();
 const LOOKS = new Map();
 const FM = { t: 0, pull: S.units.map(fieldPullTarget), vel: [0, 0], sup: 0, trip: [0, 1, 2].map((i) => ({ k: -1, tgt: i % 2 })), fill: Array(9).fill(1), regen: 0, blue: 0 };
-let view = "machine", stageF = null, fire = null, lossKey = "", outPrev = null;
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+let view = "field", stageF = null, fire = null, lossKey = "", outPrev = null;
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const V = { ram: [0, 0], fuel: [1, 1], open: [false, false], bob: 0, give: 0, enemy: 1 };
 let frozen = false, touring = !still.matches, clock = 0, last = 0, frame = 0, visible = false, idle = 0, wall = 0, give = 0;
 const TOUR = [[0, "together"], [8.1, "alternate"]];
@@ -320,8 +320,25 @@ new IntersectionObserver((entries) => {
   visible = entries[entries.length - 1].isIntersecting;
   if (visible) run(); else if (frame) { cancelAnimationFrame(frame); frame = 0; }
 }, { rootMargin: "120px 0px" }).observe(stage);
+// Reset: back to the state the page opened in (model, controls, field motion and idle tour); the view is kept.
+function reset() {
+  clearTimeout(idle);
+  if (frame) { cancelAnimationFrame(frame); frame = 0; }
+  const s0 = initial("together");
+  for (const k of Object.keys(S)) delete S[k];
+  Object.assign(S, s0);
+  Object.assign(M, DATA.MODEL);
+  Object.assign(FM, { t: 0, pull: S.units.map(fieldPullTarget), vel: [0, 0], sup: 0, trip: [0, 1, 2].map((i) => ({ k: -1, tgt: i % 2 })), fill: Array(9).fill(1), regen: 0, blue: 0 });
+  Object.assign(V, { ram: [0, 0], fuel: [1, 1], open: [false, false], bob: 0, give: 0, enemy: 1 });
+  outPrev = null; lossKey = ""; wall = 0; give = 0; last = 0; frozen = false;
+  touring = !still.matches; clock = 0;
+  if (document.activeElement === slider) slider.blur();
+  showMode(); showPump();
+  draw(); run();
+}
+root.querySelector(".fd-reset").addEventListener("click", reset);
 showMode(); showPump(); setView(view, false);
-window.__operationalPause = { S, M, FM, pick, pump, setView, draw, view: () => view, stop: () => { touring = false; frozen = true; clearTimeout(idle); if (frame) cancelAnimationFrame(frame); frame = 0; } };
+window.__operationalPause = { S, M, FM, pick, pump, setView, draw, reset, view: () => view, stop: () => { touring = false; frozen = true; clearTimeout(idle); if (frame) cancelAnimationFrame(frame); frame = 0; } };
 `;
 
 const PAGE = readFileSync(join(HERE, "page.html"), "utf8")

@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/deep-battle/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
@@ -61,6 +61,7 @@
 .db-text li{margin:6px 0}
 @media (max-width:520px){.db-figure .iso-plate-corner[data-corner="hint"]{display:none}.db-stage{overflow:hidden}.db-label{font-size:10px}.db-label-place{display:none}}
 </style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
 <body>
 <nav class="navbar" id="navbar">
@@ -89,24 +90,52 @@
     <!--FIGURE-->
     <div class="db-controls">
       <div class="fd-views" role="group" aria-label="View">
-        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
-        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
       </div>
       <button type="button" class="btn btn-outline" id="db-replay">Replay</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
       <label><span id="db-commit-text">Commit the second echelon on</span> <input type="range" id="db-commit" min="0" max="4" step="0.1" value="1" aria-label="Day the second echelon is committed"> <output id="db-commit-out">day 1.0</output></label>
     </div>
   </div>
 
   <section class="db-text">
-    <h2>How to read it</h2>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model, slider and clock drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
     <ol>
       <li><b>The lane</b> runs from the start line on the left into the defender’s depth on the right. The ruler along the front has a tick every 5 km; the dark ticks mark the start line, 28 km and 70 km. The two inlaid plates beside the lane span the tactical zone and the operational depth beyond it.</li>
       <li><b>The two gates</b> mark the front and rear of the defender’s tactical zone, and the pins between them are its obstacles.</li>
-      <li><b>The first echelon</b> is the gantry. Its plough knocks the pins flat and it lifts each gate as it reaches it. When its front reaches 28 km the breach is complete: it raises its plough, rolls on through the rear gate and halts.</li>
-      <li><b>The second echelon</b> is the lit carriage. It waits in a cradle 12 km behind the start line. The timer drum beside the cradle turns with the clock, and when its peg (the commitment day you set) reaches the lever, a push rod swings the latch open. The carriage cannot pass the gantry until the breach is complete; then it runs under the gantry and on to the buffer at 70 km.</li>
+      <li><b>The first echelon</b> is the gantry.</li>
+      <li><b>The second echelon</b> is the lit carriage. It waits in a cradle 12 km behind the start line.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The gantry.</b> Its plough knocks the pins flat and it lifts each gate as it reaches it. When its front reaches 28 km the breach is complete: it raises its plough, rolls on through the rear gate and halts.</li>
+      <li><b>The lit carriage.</b> The timer drum beside the cradle turns with the clock, and when its peg (the commitment day you set) reaches the lever, a push rod swings the latch open. The carriage cannot pass the gantry until the breach is complete; then it runs under the gantry and on to the buffer at 70 km.</li>
       <li><b>The reserve shuttle</b> sets off on day 0 and reaches the rear gate on day 3 (the dark mark on the day clock). If the lit carriage has not reached that gate by then, the gate drops and the attack is stopped inside the tactical zone.</li>
     </ol>
-    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model, slider and clock drive both. The scale is one army’s slice, laid out left to right along the axis of attack as on the bench, blue attacking and red defending. On the left, behind a chalk start line, the lit mobile group (the second echelon: light tanks, lorried infantry and a cavalry squadron, drawn as 1930s-pattern types) waits in its assembly area until the day you commit it. Ahead of it, the first echelon is three rifle divisions abreast, each a cluster of riflemen with a support tank. Glantz describes the army attack echelon as “rifle corps reinforced by tanks and artillery” (p. 15) and the immediate infantry support tanks as having “attacked in advance of and with the infantry” (p. 16). The defender holds a first belt of trenches, wire and machine-gun posts at the forward edge, strongpoints in depth (the bench’s pins), and a second belt at the rear of the 28 km zone, where the axis road crosses a lateral road at a hamlet (the bench’s rear gate). The red fans are the belts’ fire over the breach sector. The divisions advance by fire and movement, some riflemen firing while the rest move; once both belts are broken, the outer divisions turn outward to hold the shoulders of the breach and the centre one steps off the road, which is this view’s reading of the bench’s gantry rolling clear. Committed, the mobile group drives in column through the breach toward the town 70 km deep under the flag. Glantz says the mobile group either “completed the penetration of the enemy’s tactical defense or attacked after penetration of the enemy’s second defense belt” (p. 15); like the bench, this view shows only the second case. Down the lateral road from the top, the defender’s reserve (tanks and lorried infantry) races to close the crossroads. If it gets there first, the mobile group’s head deploys short of it and both sides lose tanks; if it is late, it closes the crossroads behind the mobile group, fights the first echelon at the shoulders, and the mobile group overruns the rear services in the town. Success is not free on either path: riflemen and defenders go down as the belts are broken (greyed, lying still), knocked-out vehicles stand greyed with thin smoke, and an ambulance shuttles casualties back to the start line. In the Battlefield view the readout gives notional casualties in thousands, attacker vs defender, “N vs M down.” In this model breaking the 28 km zone costs the attacker 4.0 and the defender 3.0; a mobile group stopped at a sealed crossroads costs the attacker 2.5 more and the defender 1.0; one that gets through costs the attacker 0.6 and the defender 2.0 on the run to 70 km, and the late reserve’s fight at the shoulders adds 0.4 and 0.6. So committing on day 1 ends at 5.0 vs 5.6 down with the town taken, and committing on day 2.5 ends at 6.5 vs 4.0 down with the attack stopped. Figures and vehicles are drawn far larger than scale so they read; unit sizes, distances, routes, timings and casualties are notional, and the aviation, artillery and air assault forces are left out, as on the bench.</p>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>The scale is one army’s slice, laid out left to right along the axis of attack as on the bench, blue attacking and red defending.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The lit mobile group</b> (the second echelon: light tanks, lorried infantry and a cavalry squadron, drawn as 1930s-pattern types) waits on the left, behind a chalk start line, in its assembly area until the day you commit it.</li>
+      <li><b>The first echelon</b>, ahead of it, is three rifle divisions abreast, each a cluster of riflemen with a support tank. Glantz describes the army attack echelon as “rifle corps reinforced by tanks and artillery” (p. 15) and the immediate infantry support tanks as having “attacked in advance of and with the infantry” (p. 16).</li>
+      <li><b>The defender</b> holds a first belt of trenches, wire and machine-gun posts at the forward edge, strongpoints in depth (the bench’s pins), and a second belt at the rear of the 28 km zone, where the axis road crosses a lateral road at a hamlet (the bench’s rear gate). The red fans are the belts’ fire over the breach sector.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The controls.</b> Set the day the mobile group is committed with the slider or the arrow keys. Hover over the figure to scrub through the run; click it, press Enter or Space, or use Replay to run it again.</li>
+      <li><b>The breach.</b> The divisions advance by fire and movement, some riflemen firing while the rest move; once both belts are broken, the outer divisions turn outward to hold the shoulders of the breach and the centre one steps off the road, which is this view’s reading of the bench’s gantry rolling clear.</li>
+      <li><b>The mobile group.</b> Committed, the mobile group drives in column through the breach toward the town 70 km deep under the flag. Glantz says the mobile group either “completed the penetration of the enemy’s tactical defense or attacked after penetration of the enemy’s second defense belt” (p. 15); like the bench, this view shows only the second case.</li>
+      <li><b>The reserve.</b> Down the lateral road from the top, the defender’s reserve (tanks and lorried infantry) races to close the crossroads. If it gets there first, the mobile group’s head deploys short of it and both sides lose tanks; if it is late, it closes the crossroads behind the mobile group, fights the first echelon at the shoulders, and the mobile group overruns the rear services in the town.</li>
+      <li><b>Losses.</b> Success is not free on either path: riflemen and defenders go down as the belts are broken (greyed, lying still), knocked-out vehicles stand greyed with thin smoke, and an ambulance shuttles casualties back to the start line. In the Battlefield view the readout gives notional casualties in thousands, attacker vs defender, “N vs M down.” In this model breaking the 28 km zone costs the attacker 4.0 and the defender 3.0; a mobile group stopped at a sealed crossroads costs the attacker 2.5 more and the defender 1.0; one that gets through costs the attacker 0.6 and the defender 2.0 on the run to 70 km, and the late reserve’s fight at the shoulders adds 0.4 and 0.6. So committing on day 1 ends at 5.0 vs 5.6 down with the town taken, and committing on day 2.5 ends at 6.5 vs 4.0 down with the attack stopped.</li>
+    </ol>
+    <p class="fine">Figures and vehicles are drawn far larger than scale so they read; unit sizes, distances, routes, timings and casualties are notional, and the aviation, artillery and air assault forces are left out, as on the bench.</p>
+    </div>
 
     <h2>Deep battle and deep operations</h2>
     <p>David Glantz, writing for the U.S. Army’s Soviet Army Studies Office, says that between 1929 and 1936 Soviet theorists worked out “first, a tactical concept of deep battle and, then, an operational concept of deep operations” (p. 3). Deep battle had been formulated at the end of the 1920s by Tukhachevsky, Triandafillov, A. I. Egorov and others (p. 12). The 1936 Field Regulations made both “established tenets of Soviet military art”: “deep battle embraced the tactical level; that is combat by forces within an army, deep operations focused on operational-level combat involving fronts and armies alike” (p. 13).</p>

@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/hammer-and-anvil/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
@@ -59,6 +59,7 @@
 .ha-controls output{font-variant-numeric:tabular-nums;min-width:4.2em;text-align:right}
 @media (max-width:520px){.ha-figure .iso-plate-corner[data-corner="hint"]{display:none}.ha-stage{overflow:hidden}}
 </style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
 <body>
 <nav class="navbar" id="navbar">
@@ -87,23 +88,51 @@
     <!--FIGURE-->
     <div class="ha-controls">
       <div class="fd-views" role="group" aria-label="View">
-        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
-        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
       </div>
       <button type="button" class="btn btn-outline" id="ha-run">Swing the hammer</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
       <label for="ha-delta"><span>Hammer lands, relative to the anvil being set</span> <input type="range" id="ha-delta" min="-2" max="5" step="0.1" value="1"> <output id="ha-delta-out" for="ha-delta">+1.0 s</output></label>
     </div>
   </div>
 
   <section class="ha-text">
-    <h2>How to read it</h2>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model, timing slider and readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
     <ol>
       <li><b>The block</b> on its pallet is the enemy force. It sits on a straight lane that leads past the anvil to a bumper at the far end, its way out.</li>
-      <li><b>The anvil</b> rises out of a pit in the bench and stands across the lane: the stationary blocking force. Once it is up it does not move. The dial reads how long it can still hold on its own; when the dial reaches zero the anvil gives way and sinks back into its pit.</li>
-      <li><b>The hammer</b> is the lit head on the swing arm: the mobile striking force. Released from its latch post, it swings round its pivot, strikes the block and drives it down the lane until the arm meets the buffer post.</li>
+      <li><b>The anvil</b> rises out of a pit in the bench and stands across the lane: the stationary blocking force. The dial reads how long it can still hold on its own.</li>
+      <li><b>The hammer</b> is the lit head on the swing arm: the mobile striking force.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The anvil.</b> Once it is up it does not move. When the dial reaches zero the anvil gives way and sinks back into its pit.</li>
+      <li><b>The hammer.</b> Released from its latch post, it swings round its pivot, strikes the block and drives it down the lane until the arm meets the buffer post.</li>
       <li><b>The timing.</b> The slider (or the arrow keys) sets when the hammer lands, counted from the moment the anvil is fully up. Then click the bench, press Enter or use the button. Land it too early and the block slides past the half-raised anvil into the bumper. Land it too late and the anvil has already sunk back, so the block escapes the same way. Land it in between and the block is caught between hammer and anvil.</li>
     </ol>
-    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model, timing slider and readout drive both. Here the scale is a company team, blue is friendly and red is the enemy. A river runs down the right of the ground with a stone bridge carrying the road over it: the enemy’s way out. The anvil is two rifle squads, each “two fire teams and a squad leader” (ATP 3-21.8, para. 1-9), and a machine-gun team, “a gunner and an assistant gunner” (para. 1-13). It waits in the edge of the wood on the far bank and moves forward into a line of prepared two-Soldier fighting positions behind the river (the chalk outline), facing back across it, its machine gun covering the bridge (the blue fan, which fades as its hold runs down). The enemy, a platoon with two vehicles, sits in a hasty perimeter in the pocket west of the river, with fire teams of the encircling force on the low rises either side. The lit hammer, a platoon of four tracked vehicles, starts from the chalk line of departure on the left, drives in, strikes the enemy and drives it toward the river. Land it on time and the enemy is pinned on the near bank, between the hammer and the anvil’s fire. Land it early and the enemy funnels over the bridge and runs through the anvil while it is still moving up; land it late and the anvil, its hold spent, has pulled back into the wood, so the enemy crosses unopposed. Success is not free: greyed figures lying still are men down on both sides, an anvil casualty at a collection point behind the positions with a medic kneeling beside him, and a stopped, smoking vehicle in each force that loses one. The readout ends with the count, blue against red. The map is the bench’s lane made into ground; in FM 3-90’s use the enemy would already be encircled, as the fire teams on the rises suggest. Soldiers and vehicles are drawn larger than scale (about one and a half times) so they read; unit sizes, distances, timings and casualty counts are notional.</p>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the scale is a company team, blue is friendly and red is the enemy.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The river.</b> A river runs down the right of the ground with a stone bridge carrying the road over it: the enemy’s way out.</li>
+      <li><b>The anvil</b> is two rifle squads, each “two fire teams and a squad leader” (ATP 3-21.8, para. 1-9), and a machine-gun team, “a gunner and an assistant gunner” (para. 1-13). It waits in the edge of the wood on the far bank and moves forward into a line of prepared two-Soldier fighting positions behind the river (the chalk outline), facing back across it, its machine gun covering the bridge (the blue fan, which fades as its hold runs down).</li>
+      <li><b>The enemy</b>, a platoon with two vehicles, sits in a hasty perimeter in the pocket west of the river, with fire teams of the encircling force on the low rises either side.</li>
+      <li><b>The lit hammer</b>, a platoon of four tracked vehicles, starts from the chalk line of departure on the left.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The timing.</b> The slider (or the arrow keys) sets when the hammer lands, counted from the moment the anvil is fully up. Then click the ground, press Enter or use the Swing the hammer button.</li>
+      <li><b>The hammer</b> drives in, strikes the enemy and drives it toward the river. Land it on time and the enemy is pinned on the near bank, between the hammer and the anvil’s fire. Land it early and the enemy funnels over the bridge and runs through the anvil while it is still moving up; land it late and the anvil, its hold spent, has pulled back into the wood, so the enemy crosses unopposed.</li>
+      <li><b>Losses.</b> Success is not free: greyed figures lying still are men down on both sides, an anvil casualty at a collection point behind the positions with a medic kneeling beside him, and a stopped, smoking vehicle in each force that loses one. The readout ends with the count, blue against red.</li>
+    </ol>
+    <p>The map is the bench’s lane made into ground; in FM 3-90’s use the enemy would already be encircled, as the fire teams on the rises suggest.</p>
+    <p class="fine">Soldiers and vehicles are drawn larger than scale (about one and a half times) so they read; unit sizes, distances, timings and casualty counts are notional.</p>
+    </div>
     <p><b>How it differs from a double envelopment</b> (<a href="/interactive/maneuvers/double-envelopment/">Fig 2</a>). There, a frontal attack holds the enemy while two forces close round both of its flanks. Here only one force moves. The other is a fixed stop, and the result turns on the order of events: the anvil has to be in place before the hammer arrives, and the hammer has to arrive before the anvil is worn out.</p>
 
     <h2>What doctrine and history say</h2>

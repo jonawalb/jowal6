@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/infiltration/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
@@ -60,6 +60,7 @@
 .inf-text li{margin:6px 0}
 @media (max-width:520px){.inf-figure .iso-plate-corner[data-corner="hint"]{display:none}.inf-stage{overflow:hidden}}
 </style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
 <body>
 <nav class="navbar" id="navbar">
@@ -88,23 +89,52 @@
     <!--FIGURE-->
     <div class="inf-controls">
       <div class="fd-views" role="group" aria-label="View">
-        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
-        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
       </div>
       <button type="button" class="btn btn-outline" id="inf-run">Run again</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
       <label>Split the force into <input type="range" id="inf-split" min="0" max="3" step="1" value="0" aria-label="How many elements the force is split into: 1, 4, 9 or 16"> <output id="inf-split-out">1 (whole force)</output></label>
     </div>
   </div>
 
   <section class="inf-text">
-    <h2>How to read it</h2>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model and readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
     <ol>
       <li><b>The screen</b> of bars across the shaker tray stands for a defended line. The spaces between the bars are its gaps: six of them, of different widths.</li>
-      <li><b>The lit elements</b> are the infiltrating force. The knob on the control box, the slider, a click on the figure or the arrow keys set how many equal elements it splits into: 1, 4, 9 or 16.</li>
-      <li><b>The motor</b> spins an eccentric weight that shakes the tray, and the elements work toward the screen. An element that fits a gap passes through it, one at a time per gap (a notional rule). An element that fits no gap is stopped at the screen.</li>
-      <li><b>The collecting tray</b> behind the screen is where the elements regroup, on a square mark the size of the original block. <b>The gauge</b> reads the share of the force that has regrouped.</li>
+      <li><b>The lit elements</b> are the infiltrating force.</li>
+      <li><b>The motor</b> spins an eccentric weight that shakes the tray.</li>
+      <li><b>The collecting tray</b> behind the screen is where the elements regroup, on a square mark the size of the original block.</li>
+      <li><b>The gauge</b> reads the share of the force that has regrouped.</li>
     </ol>
-    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model, the same run and the same readout drive both, played more slowly here so the soldiers walk. The scene is a small infantry force, shown at night; FM 3-90 lists the “use of limited visibility and rough terrain to mask movement and reduce possible detection” among the things an infiltration plan addresses (para. 2-96). Blue is friendly and red the enemy. The seven bars of the screen become an enemy outpost line, seven two-man fighting positions with their observed sectors marked on the ground, and the six gaps become the ground between them. Through the gaps the elements use runs cover: hedgerows either side of each lane and a stream bed through the widest gap, so the small elements slip through along it. The lit force is the same 36 soldiers in every split: one group; four squads of nine, a squad being “two fire teams and a squad leader” (ATP 3-21.8, para. 1-9); nine fire teams of four, counting the four roles the manual lists, a team leader, an automatic rifleman, a grenadier and a rifleman (para. 1-11); or sixteen pairs and threes. Squads move in squad column, which ATP 3-21.8 calls “the squad’s main formation for movement unless preparing for an assault” (para. 3-53), and teams in wedges, “the basic formation of the fire team” (para. 3-46). The manual describes teams and squads modifying the wedge toward a file when poor visibility or rough terrain makes control difficult (paras. 3-46, 3-53); here that is drawn near the line. Elements pass one at a time per gap and kneel at the objective rally point, the chalk outline on pegs behind the line. The single big group fits no gap and crosses open ground: it is spotted short of the line, fired on and goes to ground. In doctrine a single infiltration lane “requires the existence or creation of only one gap” and “facilitates navigation, control, and reassembly,” while multiple lanes “require the existence or creation of more gaps,” “reduce the possibility of compromising the entire force” and “increase difficulty with maintaining control” (FM 3-90, paras. 2-93, 2-94); the four-squad split here uses one gap, the finer splits three and five. The drawing leaves out the security force that infiltrating units generally organize besides the main body (para. 2-85). Losses are notional: greyed figures lying still are men down on both sides, the big group’s where it went to ground and a split force’s carried to the rally point with a man kneeling by them, plus a sentry silenced at one outpost, and the readout counts them, friendly vs enemy, the big group paying most and squads more than teams or pairs. Soldiers are drawn larger than scale so they read; the force’s size, the gaps, the cover, the sectors’ ranges and all timings are notional.</p>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The split.</b> The knob on the control box, the slider, a click on the figure or the arrow keys set how many equal elements it splits into: 1, 4, 9 or 16.</li>
+      <li><b>The shaking.</b> The elements work toward the screen. An element that fits a gap passes through it, one at a time per gap (a notional rule). An element that fits no gap is stopped at the screen.</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>The scene is a small infantry force, shown at night; FM 3-90 lists the “use of limited visibility and rough terrain to mask movement and reduce possible detection” among the things an infiltration plan addresses (para. 2-96). Blue is friendly and red the enemy. The run is played more slowly here so the soldiers walk.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The outpost line.</b> The seven bars of the screen become an enemy outpost line, seven two-man fighting positions with their observed sectors marked on the ground, and the six gaps become the ground between them.</li>
+      <li><b>The cover.</b> Through the gaps the elements use runs cover: hedgerows either side of each lane and a stream bed through the widest gap, so the small elements slip through along it.</li>
+      <li><b>The lit force</b> is the same 36 soldiers in every split: one group; four squads of nine, a squad being “two fire teams and a squad leader” (ATP 3-21.8, para. 1-9); nine fire teams of four, counting the four roles the manual lists, a team leader, an automatic rifleman, a grenadier and a rifleman (para. 1-11); or sixteen pairs and threes.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The split.</b> The slider, a click on the figure or the arrow keys set how many elements the force splits into; Run again (or Enter) runs the same split again.</li>
+      <li><b>The formations.</b> Squads move in squad column, which ATP 3-21.8 calls “the squad’s main formation for movement unless preparing for an assault” (para. 3-53), and teams in wedges, “the basic formation of the fire team” (para. 3-46). The manual describes teams and squads modifying the wedge toward a file when poor visibility or rough terrain makes control difficult (paras. 3-46, 3-53); here that is drawn near the line.</li>
+      <li><b>The crossing.</b> Elements pass one at a time per gap and kneel at the objective rally point, the chalk outline on pegs behind the line. The single big group fits no gap and crosses open ground: it is spotted short of the line, fired on and goes to ground.</li>
+      <li><b>Losses</b> are notional: greyed figures lying still are men down on both sides, the big group’s where it went to ground and a split force’s carried to the rally point with a man kneeling by them, plus a sentry silenced at one outpost, and the readout counts them, friendly vs enemy, the big group paying most and squads more than teams or pairs.</li>
+    </ol>
+    <p>In doctrine a single infiltration lane “requires the existence or creation of only one gap” and “facilitates navigation, control, and reassembly,” while multiple lanes “require the existence or creation of more gaps,” “reduce the possibility of compromising the entire force” and “increase difficulty with maintaining control” (FM 3-90, paras. 2-93, 2-94); the four-squad split here uses one gap, the finer splits three and five. The drawing leaves out the security force that infiltrating units generally organize besides the main body (para. 2-85).</p>
+    <p class="fine">Soldiers are drawn larger than scale so they read; the force’s size, the gaps, the cover, the sectors’ ranges and all timings are notional.</p>
+    </div>
 
     <h2>What doctrine says</h2>
     <p>U.S. Army <i>FM 3-90, Tactics</i> (May 2023) lists infiltration as one of five forms of maneuver, with frontal attack, penetration, envelopment and turning movement (para. 2-24, Table 2-1). It defines infiltration as a form of maneuver in which an attacking force “conducts undetected movement through or into an area occupied by enemy forces,” and adds that success “requires the infiltrating force to avoid detection and engagement by enemy forces” (para. 2-82).</p>

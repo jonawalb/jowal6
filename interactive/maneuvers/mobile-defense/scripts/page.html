@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/mobile-defense/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
@@ -59,6 +59,7 @@
 .md-figure .tr-s[data-side="m"] .tr-t{fill:#fbfaf7}.md-figure .tr-s[data-side="m"] .tr-l{fill:#ecebe6}.md-figure .tr-s[data-side="m"] .tr-d{fill:#d9d7d0}.md-figure .tr-s[data-side="m"] .tr-g{fill:#9a978f}
 @media (max-width:520px){.md-figure .iso-plate-corner[data-corner="hint"]{display:none}.md-stage{overflow:hidden}}
 </style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
 <body>
 <nav class="navbar" id="navbar">
@@ -87,24 +88,54 @@
     <!--FIGURE-->
     <div class="md-controls">
       <div class="fd-views" role="group" aria-label="View">
-        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
-        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
       </div>
       <button type="button" class="btn btn-outline" id="md-run">Run the attack</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
       <label>Striking force share <input type="range" id="md-split" min="30" max="80" step="1" value="58" aria-label="Striking force share of the defender's combat power, percent"></label>
     </div>
   </div>
 
   <section class="md-text">
-    <h2>How to read it</h2>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model and readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
     <ol>
-      <li><b>The enemy</b> is the carriage on the track. It enters between two converging guide walls and runs into the open pocket beyond them.</li>
+      <li><b>The enemy</b> is the carriage on the track.</li>
       <li><b>The fixing force</b> is the guide walls, which channel the carriage into the pocket, and the sprung stop that rises between the rails at the far end. The knob beside the stop shows how much power it has.</li>
-      <li><b>The striking force</b> is the lit arm on its spring pivot, held cocked by a latch. When the carriage is held and the arm is the stronger, the latch opens and the arm swings across behind the carriage. Striking the rear is this model’s choice; FM 3-90 says only that the striking force destroys the fixed enemy in the penetration.</li>
-      <li><b>The slider</b> at the front sets the striking force’s share of the defender’s power; the rest goes to the fixing force. <b>The dial</b> reads the striking force over the enemy power it would meet, with the top mark at 1. The enemy loses power to fire as it moves deeper, so the needle climbs during the run.</li>
+      <li><b>The striking force</b> is the lit arm on its spring pivot, held cocked by a latch.</li>
+      <li><b>The dial</b> reads the striking force over the enemy power it would meet, with the top mark at 1.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The slider</b> at the front sets the striking force’s share of the defender’s power; the rest goes to the fixing force.</li>
+      <li><b>The carriage</b> enters between two converging guide walls and runs into the open pocket beyond them. The enemy loses power to fire as it moves deeper, so the needle climbs during the run.</li>
+      <li><b>The arm.</b> When the carriage is held and the arm is the stronger, the latch opens and the arm swings across behind the carriage. Striking the rear is this model’s choice; FM 3-90 says only that the striking force destroys the fixed enemy in the penetration.</li>
       <li>Run it at different splits. Too little in the striking force and the arm stays latched. Too little in the fixing force and the carriage pushes the stop down and runs out of the pocket, leaving the arm nothing to close on.</li>
     </ol>
-    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model and readout drive both. Blue is friendly and red the enemy, and one vehicle is drawn for every 5 units of the model’s combat power, so the defender has 20 and the slider moves vehicles between the two forces. The carriage becomes a red armored column of 14 vehicles driving in along a valley road. The guide walls become the fixing force on the shoulders of the gap where the road enters the valley: rifle and machine-gun teams in fighting positions on the two hills, vehicles at their foot, and wire along both sides of the pocket. Among the fixing force’s uses the manual lists “canalizing attacking enemy forces into engagement areas” (para. 10-7). The sprung stop becomes a blocking position of fixing-force vehicles across the far end of the road, outlined in chalk as a battle position. The lit striking force, a tank-heavy battalion, waits in a wood beside the pocket behind a chalk line of departure; the manual’s control measures for a mobile defense include battle positions and, for the striking force, a line of departure or a line of contact (para. 10-11), and it says units “may take advantage of terrain or obscurants to hide a striking force until the enemy force's forward elements pass the striking force” (para. 10-14). When the blocking position holds the column and the striking force is the stronger, it swings out through a gap in the wire and in astride the road behind the column, and fires into its rear; as on the bench, the rear is this model’s choice. Too weak a striking force stays in the wood. Too thin a fixing force and the column breaks through the blocking position and drives on out of the pocket, while the blocking position’s survivors cease fire and stay where they are. Knocked-out vehicles on both sides stand greyed and smoking, and an ambulance drives up behind the blocking position once a vehicle there is hit. Soldiers and vehicles are drawn larger than scale so they read; unit sizes, distances, ranges, timings and losses are notional.</p>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Blue is friendly and red the enemy, and one vehicle is drawn for every 5 units of the model’s combat power, so the defender has 20 and the slider moves vehicles between the two forces.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The enemy.</b> The carriage becomes a red armored column of 14 vehicles driving in along a valley road.</li>
+      <li><b>The fixing force.</b> The guide walls become the fixing force on the shoulders of the gap where the road enters the valley: rifle and machine-gun teams in fighting positions on the two hills, vehicles at their foot, and wire along both sides of the pocket. Among the fixing force’s uses the manual lists “canalizing attacking enemy forces into engagement areas” (para. 10-7).</li>
+      <li><b>The blocking position.</b> The sprung stop becomes a blocking position of fixing-force vehicles across the far end of the road, outlined in chalk as a battle position.</li>
+      <li><b>The lit striking force</b>, a tank-heavy battalion, waits in a wood beside the pocket behind a chalk line of departure; the manual’s control measures for a mobile defense include battle positions and, for the striking force, a line of departure or a line of contact (para. 10-11), and it says units “may take advantage of terrain or obscurants to hide a striking force until the enemy force's forward elements pass the striking force” (para. 10-14).</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The split.</b> Set it with the slider or the left and right arrow keys; start a run with Run the attack, a click on the ground, or Enter or Space.</li>
+      <li><b>The strike.</b> When the blocking position holds the column and the striking force is the stronger, it swings out through a gap in the wire and in astride the road behind the column, and fires into its rear; as on the bench, the rear is this model’s choice.</li>
+      <li><b>Too weak</b> a striking force stays in the wood.</li>
+      <li><b>Too thin</b> a fixing force and the column breaks through the blocking position and drives on out of the pocket, while the blocking position’s survivors cease fire and stay where they are.</li>
+      <li><b>Losses.</b> Knocked-out vehicles on both sides stand greyed and smoking, and an ambulance drives up behind the blocking position once a vehicle there is hit.</li>
+    </ol>
+    <p class="fine">Soldiers and vehicles are drawn larger than scale so they read; unit sizes, distances, ranges, timings and losses are notional.</p>
+    </div>
 
     <h2>What doctrine says</h2>
     <p>U.S. Army <i>FM 3-90, Tactics</i> (May 2023) defines the mobile defense as “a type of defensive operation that concentrates on the destruction or defeat of the enemy through a decisive attack by a striking force” (para. 8-9). It sets it against the area defense: the mobile defense focuses on “defeating or destroying enemy forces by allowing them to advance to a point where the striking force can conduct a decisive counterattack,” while the area defense “focuses on retaining terrain by absorbing an attacking force into an interlocked series of positions where units destroy the attacking force largely by fires” (para. 10-1).</p>

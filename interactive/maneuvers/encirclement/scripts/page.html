@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/encirclement/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
@@ -60,6 +60,7 @@
 .ec-controls output{font-variant-numeric:tabular-nums;min-width:4.2em;text-align:right}
 @media (max-width:520px){.ec-figure .iso-plate-corner[data-corner="hint"]{display:none}.ec-stage{overflow:hidden}.ec-figure .ec-svg{width:124%;margin:0 -12%}}
 </style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
 <body>
 <nav class="navbar" id="navbar">
@@ -88,24 +89,52 @@
     <!--FIGURE-->
     <div class="ec-controls">
       <div class="fd-views" role="group" aria-label="View">
-        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
-        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
       </div>
       <button type="button" class="btn btn-outline" id="ec-run">Close the ring</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
       <label for="ec-n"><span>Companies in the ring</span> <input type="range" id="ec-n" min="4" max="10" step="1" value="8"> <output id="ec-n-out" for="ec-n">8</output></label>
     </div>
   </div>
 
   <section class="ec-text">
-    <h2>How to read it</h2>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model, slider and readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
     <ol>
       <li><b>The block</b> on the round hub in the middle is the enemy force. Behind it, a breakout block sits on a slide that runs out over the housing to a tray: the enemy’s way out.</li>
-      <li><b>The leaves</b> round it, on radial slides like the leaves of an iris diaphragm, are the companies of the ring. A leaf’s length stands for the stretch of perimeter one company can cover. The one or two leaves in front start in contact: in doctrine’s terms the direct pressure force. The rest are the two encircling arms. They slide in from the rim in order, from the front round both sides, until the two lit lead leaves close behind the block: the linkup.</li>
-      <li><b>The breakout.</b> Soon after the linkup the breakout block runs out through the seam between the two lit leaves. The dial reads the widest gap between leaves; the mark on it is the gap a breakout needs. With few leaves the gaps are wide and the block gets through onto the tray; with enough leaves it stops against them and falls back.</li>
-      <li><b>The squeeze.</b> The crank turns the lead screw at the front, which turns the scroll ring under the leaves and pulls every leaf in toward the hub together. As the ring gets smaller the gaps close and the leaves start to overlap, stacked like iris leaves.</li>
-      <li><b>The control.</b> The slider (or the arrow keys) sets how many companies are in the ring, from 4 to 10. Then click the bench, press Enter or use the button.</li>
+      <li><b>The leaves</b> round it, on radial slides like the leaves of an iris diaphragm, are the companies of the ring. A leaf’s length stands for the stretch of perimeter one company can cover. The one or two leaves in front start in contact: in doctrine’s terms the direct pressure force. The rest are the two encircling arms.</li>
+      <li><b>The dial</b> reads the widest gap between leaves; the mark on it is the gap a breakout needs.</li>
     </ol>
-    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model, slider and readout drive both. Here the scale is a brigade’s companies round an enemy battalion; blue is friendly and red is the enemy. The enemy, three companies of armored vehicles and a headquarters, holds a village on a low rise where two roads cross. Each blue company is drawn as three vehicles, one per platoon. One or two companies in front are in contact from the start; the rest come round both sides in two columns, each company stepping in to its place on the ring, until the two lit lead companies meet behind the village at a chalk-marked contact point. The thin wedges on the ground are each company’s sector of fire, about as wide as the frontage the model gives it, so the gaps between them are the ring’s thin places. The enemy’s lead company then drives out along the road behind the village, through the seam: with too few companies it gets away, losing a vehicle at the gap; otherwise it is stopped at the ring and the survivor falls back. Then the ring closes in on the village, firing as it goes, until the enemy that is left stops firing and surrenders under a white flag. Success is not free: greyed vehicles, some of them smoking, with greyed crewmen lying beside them, are losses on both sides, and a casualty evacuation vehicle drives back to the rear. The readout ends with the count, blue against red. Vehicles and soldiers are drawn far larger than scale so they read, and distances are compressed; unit sizes, distances, timings and casualty counts are notional.</p>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The control.</b> The slider (or the arrow keys) sets how many companies are in the ring, from 4 to 10. Then click the bench, press Enter or use the button.</li>
+      <li><b>The encircling arms.</b> They slide in from the rim in order, from the front round both sides, until the two lit lead leaves close behind the block: the linkup.</li>
+      <li><b>The breakout.</b> Soon after the linkup the breakout block runs out through the seam between the two lit leaves. With few leaves the gaps are wide and the block gets through onto the tray; with enough leaves it stops against them and falls back.</li>
+      <li><b>The squeeze.</b> The crank turns the lead screw at the front, which turns the scroll ring under the leaves and pulls every leaf in toward the hub together. As the ring gets smaller the gaps close and the leaves start to overlap, stacked like iris leaves.</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the scale is a brigade’s companies round an enemy battalion; blue is friendly and red is the enemy.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The enemy</b>, three companies of armored vehicles and a headquarters, holds a village on a low rise where two roads cross.</li>
+      <li><b>Each blue company</b> is drawn as three vehicles, one per platoon.</li>
+      <li><b>The thin wedges</b> on the ground are each company’s sector of fire, about as wide as the frontage the model gives it, so the gaps between them are the ring’s thin places.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The controls.</b> Set how many companies are in the ring, from 4 to 10, with the Companies in the ring slider or the arrow keys. Then click the figure, press Enter or use Close the ring to run it.</li>
+      <li><b>The ring forms.</b> One or two companies in front are in contact from the start; the rest come round both sides in two columns, each company stepping in to its place on the ring, until the two lit lead companies meet behind the village at a chalk-marked contact point.</li>
+      <li><b>The breakout.</b> The enemy’s lead company then drives out along the road behind the village, through the seam: with too few companies it gets away, losing a vehicle at the gap; otherwise it is stopped at the ring and the survivor falls back.</li>
+      <li><b>The squeeze.</b> Then the ring closes in on the village, firing as it goes, until the enemy that is left stops firing and surrenders under a white flag.</li>
+      <li><b>Losses.</b> Success is not free: greyed vehicles, some of them smoking, with greyed crewmen lying beside them, are losses on both sides, and a casualty evacuation vehicle drives back to the rear. The readout ends with the count, blue against red.</li>
+    </ol>
+    <p class="fine">Vehicles and soldiers are drawn far larger than scale so they read, and distances are compressed; unit sizes, distances, timings and casualty counts are notional.</p>
+    </div>
 
     <h2>What doctrine says</h2>
     <p>U.S. Army <i>FM 3-90, Tactics</i> (May 2023) treats encirclements in its Appendix C. The unit organizes its encircling forces into “a direct pressure force and one or more encircling arms” (para. C-3), and encirclements “usually result from the linkup of two encircling arms conducting a double envelopment” (para. C-2). On closing the ring:</p>

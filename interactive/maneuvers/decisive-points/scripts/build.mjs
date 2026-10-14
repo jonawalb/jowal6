@@ -182,13 +182,14 @@ const FM = { t: 0, col: 0, dir: [1, 1, 1, 1] };
 let stageF = null, fire = null, marksSig = "";
 const hintEl = root.querySelector('[data-corner="hint"]');
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
+const VIEW_KEY = "maneuvers.view.v2";
 const HINTS = { machine: "Click a prop to pull its pin", field: "Click a point to seize it" };
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const still = matchMedia("(prefers-reduced-motion: reduce)");
 const T_FALL = Math.sqrt(2 * D_KEY / GEO.G);
-const S = { props: [0, 0, 0, 0], target: [0, 0, 0, 0], c: 0, failed: false, resetting: false, needle: DATA.START.needle };
+const S0 = () => ({ props: [0, 0, 0, 0], target: [0, 0, 0, 0], c: 0, failed: false, resetting: false, needle: DATA.START.needle });
+const S = S0();
 let touring = !still.matches, clock = 0, last = 0, frame = 0, visible = false, idle = 0;
 const TOUR = [[0, "reset"], [1.5, 0], [3.5, 3], [5.5, 1], [9, 2], [13.5, "reset"]];
 const TOUR_LEN = 17.5;
@@ -330,8 +331,20 @@ pinBtns.forEach((b) => b.addEventListener("click", () => { toggle(Number(b.datas
 resetBtn.addEventListener("click", () => { reset(); hold(); });
 viewBtns.forEach((b) => b.addEventListener("click", () => setView(b.dataset.view, true)));
 new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) run(); }, { rootMargin: "120px 0px" }).observe(stage);
+// Full reset (the Reset button): back to the state the page opened in, at once, with the idle tour
+// restarted; the view is kept. reset() above stays the figure's animated "reset the props".
+const fullResetBtn = root.querySelector(".fd-reset");
+function fullReset() {
+  clearTimeout(idle);
+  Object.assign(S, S0());
+  Object.assign(FM, { t: 0, col: 0, dir: [1, 1, 1, 1] });
+  tourStep = -1;
+  touring = !still.matches; clock = 0;
+  draw(); run();
+}
+fullResetBtn.addEventListener("click", fullReset);
 setView(view, false);
-window.__decisivePoints = { S, toggle, reset, setView, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
+window.__decisivePoints = { S, FM, toggle, reset, fullReset, setView, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
 `;
 
 const PAGE = readFileSync(join(HERE, "page.html"), "utf8")

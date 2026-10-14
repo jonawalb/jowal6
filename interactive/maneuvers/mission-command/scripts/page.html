@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/mission-command/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
@@ -61,6 +61,7 @@
 .mc-text li{margin:6px 0}
 @media (max-width:520px){.mc-figure .iso-plate-corner[data-corner="hint"]{display:none}.mc-stage{overflow:hidden}}
 </style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
 <body>
 <nav class="navbar" id="navbar">
@@ -89,23 +90,53 @@
     <!--FIGURE-->
     <div class="mc-controls">
       <div class="fd-views" role="group" aria-label="View">
-        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
-        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
       </div>
       <button type="button" class="btn btn-outline" id="mc-jam" aria-pressed="false">Jam the link</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
       <label>Load (the situation) <input type="range" id="mc-load" min="50" max="100" step="1" value="70" aria-label="Load on both engines, percent"></label>
     </div>
   </div>
 
   <section class="mc-text">
-    <h2>How to read it</h2>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model drives both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
     <ol>
-      <li><b>Two engines carry the same load.</b> The load bar at the front presses a brake shoe on each flywheel. Move it with the slider, the arrow keys or the pointer: that is the situation changing.</li>
+      <li><b>Two engines carry the same load.</b> The load bar at the front presses a brake shoe on each flywheel.</li>
       <li><b>The left engine is governed.</b> Its flyball governor (the lit weights) spins with the flywheel, reads the engine’s own speed and moves its throttle on the spot, toward a set point the commander chose. The set point stands for the commander’s intent.</li>
       <li><b>The right engine is cranked.</b> Its throttle is moved only by the rod from the headquarters handwheel. Headquarters learns of a load change through reports that lag, so its corrections arrive late.</li>
-      <li><b>Jam the link</b> and both couplings open. The cranked throttle freezes where it was and its speed drifts as the load moves. The governed engine keeps working toward the last set point it was given. The gauges read each engine’s speed as a share of the set point.</li>
+      <li><b>The gauges</b> read each engine’s speed as a share of the set point.</li>
     </ol>
-    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model drives both, and the readout adds the casualty count. Here the two engines are two rifle platoons of one company, each with a stone bridge to seize over a stream; blue is friendly and red is the enemy. Each platoon is drawn with two of its rifle squads, each “two fire teams and a squad leader” (ATP 3-21.8, para. 1-9), each team a team leader, an automatic rifleman, a grenadier and a rifleman (para. 1-11), plus the platoon leader and his radio operator (the platoon sergeant, the third member of the headquarters section in para. 1-20, is not drawn). They move in squad column, “the squad’s main formation for movement unless preparing for an assault” (para. 3-53), with the teams in wedges, “the basic formation of the fire team” (para. 3-46), and at the bridge they form squad line, “used to assault or as a pre-assault formation” (para. 3-54). Company headquarters stands at the bottom centre: a radio mast, the company commander, his radio operator and one more soldier of the headquarters. The faint arcs rippling from the mast to each platoon’s radio operator are the radio links; jam the link and they vanish. The load is the enemy situation: at 80% or more an enemy machine gun moves up from the hamlet to a nest beside each road, its sector shown as a red fan on the ground; at 55% or less the enemy at the bridges pulls back. The lit platoon on the left stands for the governed engine: it reads the situation itself and works to the commander’s intent, to take the bridge, so when the gun covers the road it shifts behind the hedge and keeps going. The platoon on the right stands for the cranked engine: it moves only on orders, so it halts and waits whenever its orders no longer fit the situation, whether because the link is jammed or because headquarters’ orders arrive late; caught on the open road, it goes to ground under the machine gun’s fire. As in the machine, the lit platoon is not out of control: the intent it works to is the commander’s, given over the link before it was jammed. Success is not free: greyed figures lying still are men down on both sides, with a medic kneeling by the first man down in each platoon. Each run ends a few seconds after the lit platoon holds its bridge, and a new one starts from the line of departure. Soldiers are drawn larger than scale (about one and a half times) so they read; unit sizes, distances, timings, the enemy’s strength and the casualty counts are notional.</p>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The load.</b> Move it with the slider, the arrow keys or the pointer: that is the situation changing.</li>
+      <li><b>Jam the link</b> and both couplings open. The cranked throttle freezes where it was and its speed drifts as the load moves. The governed engine keeps working toward the last set point it was given.</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the two engines are two rifle platoons of one company, each with a stone bridge to seize over a stream; blue is friendly and red is the enemy. The readout adds the casualty count.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The platoons.</b> Each platoon is drawn with two of its rifle squads, each “two fire teams and a squad leader” (ATP 3-21.8, para. 1-9), each team a team leader, an automatic rifleman, a grenadier and a rifleman (para. 1-11), plus the platoon leader and his radio operator (the platoon sergeant, the third member of the headquarters section in para. 1-20, is not drawn).</li>
+      <li><b>Company headquarters</b> stands at the bottom centre: a radio mast, the company commander, his radio operator and one more soldier of the headquarters. The faint arcs rippling from the mast to each platoon’s radio operator are the radio links.</li>
+      <li><b>The lit platoon</b> on the left stands for the governed engine; the platoon on the right stands for the cranked engine.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The load</b> is the enemy situation. Move it with the slider, the arrow keys or the pointer: at 80% or more an enemy machine gun moves up from the hamlet to a nest beside each road, its sector shown as a red fan on the ground; at 55% or less the enemy at the bridges pulls back.</li>
+      <li><b>The march.</b> They move in squad column, “the squad’s main formation for movement unless preparing for an assault” (para. 3-53), with the teams in wedges, “the basic formation of the fire team” (para. 3-46), and at the bridge they form squad line, “used to assault or as a pre-assault formation” (para. 3-54).</li>
+      <li><b>The lit platoon</b> reads the situation itself and works to the commander’s intent, to take the bridge, so when the gun covers the road it shifts behind the hedge and keeps going.</li>
+      <li><b>The platoon on the right</b> moves only on orders, so it halts and waits whenever its orders no longer fit the situation, whether because the link is jammed or because headquarters’ orders arrive late; caught on the open road, it goes to ground under the machine gun’s fire.</li>
+      <li><b>Jam the link</b> with the button, a click on the ground or the J key, and the radio arcs vanish. As in the machine, the lit platoon is not out of control: the intent it works to is the commander’s, given over the link before it was jammed.</li>
+      <li><b>Losses.</b> Success is not free: greyed figures lying still are men down on both sides, with a medic kneeling by the first man down in each platoon.</li>
+      <li><b>Each run</b> ends a few seconds after the lit platoon holds its bridge, and a new one starts from the line of departure.</li>
+    </ol>
+    <p class="fine">Soldiers are drawn larger than scale (about one and a half times) so they read; unit sizes, distances, timings, the enemy’s strength and the casualty counts are notional.</p>
+    </div>
 
     <h2>What doctrine says</h2>
     <p>U.S. Army <i>ADP 6-0, Mission Command: Command and Control of Army Forces</i> (31 July 2019) defines mission command as “the Army’s approach to command and control that empowers subordinate decision making and decentralized execution appropriate to the situation” (para. 1-14). It names seven principles that enable it: competence, mutual trust, shared understanding, commander’s intent, mission orders, disciplined initiative and risk acceptance (para. 1-26).</p>

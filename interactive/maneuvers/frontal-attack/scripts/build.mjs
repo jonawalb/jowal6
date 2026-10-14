@@ -270,9 +270,9 @@ const LOOKS = new Map();
 const FM = { t: 0, dt: 1 / 60, va: 0, ve: 0, vb: 0 };
 let stageF = null, fire = null, marksSig = "", lastPose = null;
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+const VIEW_KEY = "maneuvers.view.v2";
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const still = matchMedia("(prefers-reduced-motion: reduce)");
 const BACKSTOP = { key: 1e6, svg: layer.lastElementChild ? "" : "" };
 const S = { ...START, target: START.r, p: START.r };
@@ -381,9 +381,23 @@ function setView(next, save) {
   run();
 }
 tourBtn.addEventListener("click", () => { if (touring) hold(); else startTour(); });
+// Reset: back to the state the page opened in (model, controls and idle tour); the view is kept.
+const resetBtn = root.querySelector(".fd-reset");
+function reset() {
+  clearTimeout(idle);
+  Object.assign(S, START, { target: START.r, p: START.r });
+  for (const key of Object.keys(FM)) delete FM[key];
+  Object.assign(FM, { t: 0, dt: 1 / 60, va: 0, ve: 0, vb: 0 });
+  lastPose = null;
+  touring = !still.matches; clock = 0;
+  tourBtn.setAttribute("aria-pressed", "true");
+  slider.value = START.r.toFixed(1);
+  draw(); run();
+}
+resetBtn.addEventListener("click", reset);
 new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) run(); }, { rootMargin: "120px 0px" }).observe(stage);
 setView(view, false);
-window.__frontalAttack = { S, steer, setView, view: () => view, stop: () => { touring = false; clearTimeout(idle); tourBtn.setAttribute("aria-pressed", "false"); } };
+window.__frontalAttack = { S, steer, setView, reset, view: () => view, stop: () => { touring = false; clearTimeout(idle); tourBtn.setAttribute("aria-pressed", "false"); } };
 `.replace("const BACKSTOP = { key: 1e6, svg: layer.lastElementChild ? \"\" : \"\" };", `const STATIC_BACK = { key: 1e6, svg: ${JSON.stringify(BACKSTOP.svg)} };`);
 
 const PAGE = readFileSync(join(HERE, "page.html"), "utf8")

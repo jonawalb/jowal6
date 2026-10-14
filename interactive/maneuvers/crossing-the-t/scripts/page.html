@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/crossing-the-t/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
@@ -50,6 +50,7 @@
 .ct-text li{margin:6px 0}
 @media (max-width:520px){.ct-figure .iso-plate-corner[data-corner="hint"]{display:none}.ct-stage{overflow:hidden}}
 </style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
 <body>
 <nav class="navbar" id="navbar">
@@ -78,23 +79,47 @@
     <!--FIGURE-->
     <div class="ct-controls">
       <div class="fd-views" role="group" aria-label="View">
-        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
-        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
       </div>
       <button type="button" class="btn btn-outline" id="ct-jump">End-on / across</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
       <label><span>Crossing line heading</span> <input type="range" id="ct-angle" min="0" max="90" step="1" value="90" aria-label="Crossing line heading, degrees off the column's course"></label>
     </div>
   </div>
 
   <section class="ct-text">
-    <h2>How to read it</h2>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model, crossing angle and readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
     <ol>
       <li><b>The column</b> is the four carriages on the straight beam at the left, all heading for the turntable. The lit carriage is its leader.</li>
-      <li><b>The crossing line</b> is the four carriages on the bar over the turntable. At 0° the bar lies end-on, in line ahead of the column on the same course; at 90° it lies square across the column’s head. Swing it with the pointer, the slider or the arrow keys; the button or Enter jumps between the two.</li>
-      <li><b>The turrets.</b> Each carriage carries two twin turrets. The forward one covers from dead ahead to 135° either side, the after one from 45° off the bow round to dead astern. A turret bears only when an enemy carriage lies in its arc and its line of fire passes clear of every friendly carriage. A turret that bears turns lighter and swings its barrels onto the nearest enemy carriage it can reach; one that cannot bear trains fore and aft.</li>
+      <li><b>The crossing line</b> is the four carriages on the bar over the turntable. At 0° the bar lies end-on, in line ahead of the column on the same course; at 90° it lies square across the column’s head.</li>
+      <li><b>The turrets.</b> Each carriage carries two twin turrets. The forward one covers from dead ahead to 135° either side, the after one from 45° off the bow round to dead astern. A turret bears only when an enemy carriage lies in its arc and its line of fire passes clear of every friendly carriage.</li>
       <li><b>The gauges</b> read guns bearing, out of sixteen: the front one for the column, the back one for the crossing line. End-on, each side has two. Square across, the line has all sixteen and the column still has two: only its leader’s forward turret can reply.</li>
-      <li><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model, crossing angle and readout drive both. Here the bench becomes a sea scene: the column is four red battleships steaming from the left, its lit leader at the head, and the crossing line is four blue battleships lying on the crossing angle ahead of it. The ships are generic turret-era battleships, not models of any real ship: two funnels trailing smoke, two masts and a twin-gun turret fore and aft, placed exactly where the bench puts its carriages, with the same arcs and masking. A turret that bears trains on its target and fires: a flash at the muzzles, a puff of smoke, then splashes round the target or a burst on its deck. The ships hold their places and the sea runs past them in their wakes, so the gun counts stay the bench’s. Damage is shown on both sides as fires and smoke. The readout’s last figure is notional hits taken, crossing line vs column, in an exchange in which every turret that bears lands one hit on the ship it is trained on. In this model, square across, each blue turret’s nearest reachable target is the column’s leader, so all eight hits fall on it, a concentration on the leader like the one Koda describes below as Combined Fleet doctrine, though here it falls out of the geometry, not from any rule to aim at the leader, while its one forward turret puts a single hit on a blue ship; end-on, it is one hit a side. Ships are drawn larger than scale against their spacing; ranges, timings, the rate of hits and which salvos the animation shows hitting are notional.</li>
     </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The crossing line.</b> Swing it with the pointer, the slider or the arrow keys; the button or Enter jumps between the two.</li>
+      <li><b>The turrets.</b> A turret that bears turns lighter and swings its barrels onto the nearest enemy carriage it can reach; one that cannot bear trains fore and aft.</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the bench becomes a sea scene: the column is four red battleships steaming from the left, its lit leader at the head, and the crossing line is four blue battleships lying on the crossing angle ahead of it.</p>
+    <h3>What is on the water</h3>
+    <ol>
+      <li><b>The ships.</b> The ships are generic turret-era battleships, not models of any real ship: two funnels trailing smoke, two masts and a twin-gun turret fore and aft, placed exactly where the bench puts its carriages, with the same arcs and masking.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The crossing line.</b> Swing it with the pointer, the slider or the arrow keys; the button, a click on the figure or Enter jumps between end-on and square across.</li>
+      <li><b>The guns.</b> A turret that bears trains on its target and fires: a flash at the muzzles, a puff of smoke, then splashes round the target or a burst on its deck. The ships hold their places and the sea runs past them in their wakes, so the gun counts stay the bench’s.</li>
+      <li><b>Damage.</b> Damage is shown on both sides as fires and smoke. The readout’s last figure is notional hits taken, crossing line vs column, in an exchange in which every turret that bears lands one hit on the ship it is trained on. In this model, square across, each blue turret’s nearest reachable target is the column’s leader, so all eight hits fall on it, a concentration on the leader like the one Koda describes below as Combined Fleet doctrine, though here it falls out of the geometry, not from any rule to aim at the leader, while its one forward turret puts a single hit on a blue ship; end-on, it is one hit a side.</li>
+    </ol>
+    <p class="fine">Ships are drawn larger than scale against their spacing; ranges, timings, the rate of hits and which salvos the animation shows hitting are notional.</p>
+    </div>
 
     <h2>Tsushima, 1905</h2>
     <p>Japan’s fleet under Admiral Togo Heihachiro destroyed the Russian Baltic Fleet “in the Tsushima Strait on 27-28 May 1905” (Andidora, p. 52). Combined Fleet doctrine held that the battleship force “was to concentrate its fire on the leading ship, presumably the flagship, of the enemy’s main force at the very outset of an engagement” (Koda, p. 34).</p>

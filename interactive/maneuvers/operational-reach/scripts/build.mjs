@@ -253,10 +253,10 @@ const FM = { t: 0 };
 let stageF = null, fire = null, marksSig = "";
 const hintEl = root.querySelector('[data-corner="hint"]');
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
+const VIEW_KEY = "maneuvers.view.v2";
 const HINTS = { machine: "Hover to extend · click: base", field: "Hover the road · click: base" };
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const still = matchMedia("(prefers-reduced-motion: reduce)");
 const GAUGE = { key: 1e7, svg: gaugeEl.outerHTML };
 gaugeEl.remove();
@@ -402,9 +402,21 @@ baseBtn.addEventListener("click", (event) => { event.stopPropagation(); toggle()
 slider.addEventListener("input", () => reachTo(Number(slider.value)));
 viewBtns.forEach((b) => b.addEventListener("click", (event) => { event.stopPropagation(); setView(b.dataset.view, true); }));
 new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) run(); }, { rootMargin: "120px 0px" }).observe(stage);
+// Reset: back to the state the page opened in (model, controls and idle tour); the view is kept.
+function reset() {
+  clearTimeout(idle);
+  Object.assign(S, START, { target: 0, base: false, q: moments(0, M.pivot, M).ratio });
+  FM.t = 0;
+  setBase(false);
+  if (document.activeElement === slider) slider.blur();
+  slider.value = String(Math.round(tipOf(0, M)));
+  touring = !still.matches; clock = 0;
+  draw(settle()); run();
+}
+root.querySelector(".fd-reset").addEventListener("click", reset);
 setBase(S.base);
 setView(view, false);
-window.__operationalReach = { S, setBase, reachTo, setView, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
+window.__operationalReach = { S, setBase, reachTo, setView, reset, view: () => view, stop: () => { touring = false; clearTimeout(idle); } };
 `;
 
 const PAGE = readFileSync(join(HERE, "page.html"), "utf8")

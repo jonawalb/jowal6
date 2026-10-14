@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/double-envelopment/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
@@ -56,6 +56,7 @@
 .de-text li{margin:6px 0}
 @media (max-width:520px){.de-figure .iso-plate-corner[data-corner="hint"]{display:none}.de-stage{overflow:hidden}}
 </style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
 <body>
 <nav class="navbar" id="navbar">
@@ -84,23 +85,52 @@
     <!--FIGURE-->
     <div class="de-controls">
       <div class="fd-views" role="group" aria-label="View">
-        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
-        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
       </div>
       <button type="button" class="btn btn-outline" id="de-fix" aria-pressed="true">Release the front</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
       <label><span id="de-close-text">Jaw closure</span> <input type="range" id="de-close" min="0" max="100" step="1" value="0" aria-label="Jaw closure, percent"></label>
     </div>
   </div>
 
   <section class="de-text">
-    <h2>How to read it</h2>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model and readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
     <ol>
       <li><b>The block</b> in the middle is the enemy force. It sits on a pallet that can slide forward and back in a slot. The ticks round its rim mark its perimeter.</li>
       <li><b>The ram</b> on the straight rail is the fixing force. Its curved pad presses the block’s front and holds it home.</li>
-      <li><b>The two jaws</b> are the enveloping forces. Each pivots on one of the block’s flanks and swings shut round its side and rear; the tail rollers run on the arc slides with their scales. Close them with the slider, the arrow keys or by moving the pointer across the figure.</li>
-      <li><b>The gauge</b> reads the share of the block’s rim under attack: rim that a jaw or the pad touches. Held, with the jaws shut, it reads 78%. Release the front (button, click or F) and the pad lifts off but stays on its rail. Close the jaws again: with nothing holding it, the block slips out the back through the gap between the jaw tails before they meet, and the gauge drops to 0%.</li>
+      <li><b>The two jaws</b> are the enveloping forces. Each pivots on one of the block’s flanks and swings shut round its side and rear; the tail rollers run on the arc slides with their scales.</li>
+      <li><b>The gauge</b> reads the share of the block’s rim under attack: rim that a jaw or the pad touches.</li>
     </ol>
-    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model and readout drive both. Here the scale is a platoon attack, blue is friendly and red is the enemy. The Army’s platoon manual says that at platoon and company level “the enveloping force’s main effort is focused on the enemy’s flank while the supporting effort of the envelopment usually engages the enemy’s front by fire” (ATP 3-21.8, para. 4-15). On the rise, an enemy platoon holds two-man fighting positions all round the summit, with a machine-gun nest and a belt of wire on its front; the red fan on the ground is the machine gun’s sector. On the right, behind a stone wall and inside the dashed support-by-fire position, a rifle squad and a machine-gun team fix the enemy with fire on its front: the blue tracers, strikes and drifting smoke. The enveloping forces are two rifle squads, each “two fire teams and a squad leader” (para. 1-9); the near one, with the platoon leader and his radio operator, is lit as the main effort. The jaw slider moves them round both flanks in squad column with their teams in wedges, “the squad’s main formation for movement unless preparing for an assault” (para. 3-53), until they turn in and close on the flanks and rear in squad line, a formation “used to assault or as a pre-assault formation” (para. 3-54). While the front is held, the enemy stays in its holes under fire. Release the front and the support-by-fire element ceases fire but stays in position; as the squads close, the unfixed enemy leaves its positions by a sunken lane out the back and gathers beyond it, and the squads close on empty holes (the readout’s 0%). Losses are notional: greyed figures lying still are men down on both sides, the blue ones carried back to a collection point behind the support-by-fire position where a medic kneels, and the readout counts them, friendly vs enemy, the enemy losing more the more of its rim is under attack and the squads losing more when the front is not held. Soldiers are drawn larger than scale (about one and a half times) so they read; sizes, ranges, timings, the enemy’s strength and its way out are notional.</p>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The jaws.</b> Close them with the slider, the arrow keys or by moving the pointer across the figure.</li>
+      <li><b>The gauge.</b> Held, with the jaws shut, it reads 78%.</li>
+      <li><b>Release the front</b> (button, click or F) and the pad lifts off but stays on its rail. Close the jaws again: with nothing holding it, the block slips out the back through the gap between the jaw tails before they meet, and the gauge drops to 0%.</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the scale is a platoon attack, blue is friendly and red is the enemy. The Army’s platoon manual says that at platoon and company level “the enveloping force’s main effort is focused on the enemy’s flank while the supporting effort of the envelopment usually engages the enemy’s front by fire” (ATP 3-21.8, para. 4-15).</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The enemy.</b> On the rise, an enemy platoon holds two-man fighting positions all round the summit, with a machine-gun nest and a belt of wire on its front; the red fan on the ground is the machine gun’s sector.</li>
+      <li><b>The support-by-fire element.</b> On the right, behind a stone wall and inside the dashed support-by-fire position, a rifle squad and a machine-gun team fix the enemy with fire on its front: the blue tracers, strikes and drifting smoke.</li>
+      <li><b>The enveloping forces</b> are two rifle squads, each “two fire teams and a squad leader” (para. 1-9); the near one, with the platoon leader and his radio operator, is lit as the main effort.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The controls.</b> Move the enveloping squads round the flanks with the Envelopment slider, the arrow keys or by moving the pointer across the figure. Release the front, or fix it again, with the button, a click on the figure or F.</li>
+      <li><b>The envelopment.</b> The jaw slider moves them round both flanks in squad column with their teams in wedges, “the squad’s main formation for movement unless preparing for an assault” (para. 3-53), until they turn in and close on the flanks and rear in squad line, a formation “used to assault or as a pre-assault formation” (para. 3-54).</li>
+      <li><b>The front held.</b> While the front is held, the enemy stays in its holes under fire.</li>
+      <li><b>Release the front</b> and the support-by-fire element ceases fire but stays in position; as the squads close, the unfixed enemy leaves its positions by a sunken lane out the back and gathers beyond it, and the squads close on empty holes (the readout’s 0%).</li>
+      <li><b>Losses</b> are notional: greyed figures lying still are men down on both sides, the blue ones carried back to a collection point behind the support-by-fire position where a medic kneels, and the readout counts them, friendly vs enemy, the enemy losing more the more of its rim is under attack and the squads losing more when the front is not held.</li>
+    </ol>
+    <p class="fine">Soldiers are drawn larger than scale (about one and a half times) so they read; sizes, ranges, timings, the enemy’s strength and its way out are notional.</p>
+    </div>
 
     <h2>What doctrine and history say</h2>
     <p>U.S. Army <i>FM 3-90, Tactics</i> (May 2023) treats the double envelopment as a variation of the envelopment “where forces simultaneously attack along both flanks of an enemy force.” A unit performs one “by conducting a frontal attack to fix enemy forces in place while enveloping both of the enemy force’s flanks” (para. 2-60).</p>

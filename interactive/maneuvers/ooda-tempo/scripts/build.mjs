@@ -145,9 +145,9 @@ const LOOKS = new Map();
 const FM = { t: 0, strikes: [], seen: { ...DATA.SEEN0 }, T: null };
 let stageF = null, fire = null, marksSig = "";
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+const VIEW_KEY = "maneuvers.view.v2";
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const [LO, HI] = DATA.MODEL.range;
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 const snap = (v) => clamp(Math.round(v * 2) / 2, LO, HI);
@@ -284,6 +284,20 @@ stage.addEventListener("keydown", (event) => {
 blueIn.addEventListener("input", () => setTempo("blue", Number(blueIn.value)));
 redIn.addEventListener("input", () => setTempo("red", Number(redIn.value)));
 resetBtn.addEventListener("click", reset);
+// Reset: back to the state the page opened in (cycles, wheels, tallies, battlefield memory and idle tour); the view is kept.
+// (reset() above only clears the tallies and keeps the wheels where they are.)
+const fullResetBtn = root.querySelector(".fd-reset");
+function fullReset() {
+  clearTimeout(idle);
+  sim = makeSim(DATA.MODEL);
+  Object.assign(target, DATA.MODEL.start);
+  Object.assign(S, JSON.parse(JSON.stringify(START)));
+  Object.assign(FM, { t: 0, strikes: [], seen: { ...DATA.SEEN0 }, T: null });
+  marksSig = "";
+  touring = !still.matches; clock = 0;
+  draw(); run();
+}
+fullResetBtn.addEventListener("click", fullReset);
 viewBtns.forEach((b) => b.addEventListener("click", () => setView(b.dataset.view, true)));
 function setView(next, save) {
   view = next === "field" ? "field" : "machine";
@@ -297,7 +311,7 @@ function setView(next, save) {
 still.addEventListener("change", () => { touring = !still.matches; run(); });
 new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) run(); }, { rootMargin: "120px 0px" }).observe(stage);
 setView(view, false);
-window.__oodaTempo = { S, sim: () => sim, target, setTempo, reset, setView, view: () => view, FM, stop: () => { touring = false; clearTimeout(idle); } };
+window.__oodaTempo = { S, sim: () => sim, target, setTempo, reset: fullReset, clear: reset, setView, view: () => view, FM, stop: () => { touring = false; clearTimeout(idle); } };
 `;
 
 const PAGE = readFileSync(join(HERE, "page.html"), "utf8")

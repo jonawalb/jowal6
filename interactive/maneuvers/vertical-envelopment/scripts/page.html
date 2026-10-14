@@ -13,7 +13,7 @@
 <meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/vertical-envelopment/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
@@ -63,6 +63,7 @@
 .ve-figure .ve-crate .tr-t,.ve-figure .ve-crate .tr-l{fill:var(--tr-bag)}.ve-figure .ve-crate .tr-d{fill:var(--tr-bag-dk)}.ve-figure .ve-crate path{stroke:var(--tr-bag-ink)}
 @media (max-width:520px){.ve-figure .iso-plate-corner[data-corner="hint"]{display:none}.ve-stage{overflow:hidden}}
 </style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
 <body>
 <nav class="navbar" id="navbar">
@@ -91,24 +92,51 @@
     <!--FIGURE-->
     <div class="ve-controls">
       <div class="fd-views" role="group" aria-label="View">
-        <button type="button" data-view="machine" aria-pressed="true">Machine</button>
-        <button type="button" data-view="field" aria-pressed="false">Battlefield</button>
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
       </div>
       <button type="button" class="btn btn-outline" id="ve-play" aria-pressed="true">Pause tour</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
       <label>Hours since H-hour <input type="range" id="ve-time" min="0" max="1000" step="1" value="0" aria-label="Time since H-hour (the first part of the slider is the two-hour air move)"></label>
       <label>Linkup speed <input type="range" id="ve-speed" min="0.5" max="1.5" step="0.05" value="1.2" aria-label="Linkup force speed, km per hour (notional)"><output id="ve-speed-val" for="ve-speed">1.20 km/h</output></label>
     </div>
   </div>
 
   <section class="ve-text">
-    <h2>How to read it</h2>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model, clock and readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
     <ol>
       <li><b>The wall</b> across the middle of the plate is the enemy’s defense line. A gate in it lets the ground rail through.</li>
-      <li><b>The gantry crane</b> is the air move. It lifts the lit block, the air-landed force, off the pad on the friendly side, carries it over the wall and sets it down behind the line on the enemy’s rail line, the objective. While the block sits on the track, the enemy’s supply cart cannot get past it. (The crane’s legs run past the ends of the wall only to hold up the beam: read the beam, not the legs.)</li>
+      <li><b>The gantry crane</b> is the air move. (The crane’s legs run past the ends of the wall only to hold up the beam: read the beam, not the legs.)</li>
       <li><b>The gauge</b> reads the landed force’s supply from the moment it lands. In this model it lasts 72 hours.</li>
-      <li><b>The carriage</b> on the ground rail is the linkup force, coming from the friendly side through the gate. Set its speed with the slider or the up and down arrow keys, and move the clock with the pointer, the time slider or the left and right keys. If the carriage reaches the block before the supply runs out, the two link up and the gauge refills. If it does not, in this model the crane lifts the block back out (a withdrawal) and the enemy’s cart runs again.</li>
+      <li><b>The carriage</b> on the ground rail is the linkup force, coming from the friendly side through the gate.</li>
     </ol>
-    <p><b>Battlefield view.</b> Switch views with the buttons under the card or the V key; the same model, clock and readout drive both. Here the move is shown as one small air assault, a vignette inside the larger operation doctrine has in mind; blue is friendly and red the enemy. On the left, in a pickup zone outlined in chalk, three utility helicopters take on a rifle platoon (lit): three squads, each “two fire teams and a squad leader” (ATP 3-21.8, para. 1-9), each team a team leader, an automatic rifleman, a grenadier and a rifleman (para. 1-11), with the platoon leader, his radio operator and a medic. The lift flies over the enemy’s defense line, a row of two-man fighting positions and a machine-gun position behind wire, which fires on it as it crosses while a door gunner fires back. It lands the platoon beside the bridge where the enemy’s supply road crosses a stream: that road is the bench’s rail line. The platoon knocks out the bridge guard and holds the bridge and the road junction, one squad facing across the bridge, one down the road south and one west toward the defense line, their sectors marked on the ground; the enemy’s supply trucks halt short of it. The pile of crates by the platoon leader is the gauge: it shrinks as the supply runs down. From the left a mechanized company column, the linkup force, drives up the road at the slider’s speed and fights through the defense line, losing one vehicle there, then links up at the junction and the crates are restocked. If it would arrive too late, the helicopters fly back in and lift the platoon out, as the crane does, and the column arrives late. Success is not free: men who go down on either side lie greyed where they fell, and the readout counts them (friendly vs enemy). In this model, a linkup at 1.2 km/h costs 5 friendly and 12 enemy casualties; at 0.7 km/h the longer hold and the extraction cost 7 friendly and 14 enemy. The casualty counts are a separate notional tally and do not change the supply or the timings. Soldiers, vehicles and helicopters are drawn larger than scale so they read; unit sizes, distances, ranges, flight times and casualty counts are notional.</p>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The crane.</b> It lifts the lit block, the air-landed force, off the pad on the friendly side, carries it over the wall and sets it down behind the line on the enemy’s rail line, the objective. While the block sits on the track, the enemy’s supply cart cannot get past it.</li>
+      <li><b>The carriage.</b> Set its speed with the slider or the up and down arrow keys, and move the clock with the pointer, the time slider or the left and right keys. If the carriage reaches the block before the supply runs out, the two link up and the gauge refills. If it does not, in this model the crane lifts the block back out (a withdrawal) and the enemy’s cart runs again.</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the move is shown as one small air assault, a vignette inside the larger operation doctrine has in mind; blue is friendly and red the enemy.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The air assault force.</b> On the left, in a pickup zone outlined in chalk, three utility helicopters take on a rifle platoon (lit): three squads, each “two fire teams and a squad leader” (ATP 3-21.8, para. 1-9), each team a team leader, an automatic rifleman, a grenadier and a rifleman (para. 1-11), with the platoon leader, his radio operator and a medic.</li>
+      <li><b>The crates.</b> The pile of crates by the platoon leader is the gauge: it shrinks as the supply runs down.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The controls.</b> Move the clock with the pointer, the Hours since H-hour slider or the left and right keys, and set the linkup force’s speed with the Linkup speed slider or the up and down keys. <i>Pause tour</i>, a click or the space bar stops the tour, and the same again (the button then reads <i>Play tour</i>) starts it.</li>
+      <li><b>The lift.</b> The lift flies over the enemy’s defense line, a row of two-man fighting positions and a machine-gun position behind wire, which fires on it as it crosses while a door gunner fires back. It lands the platoon beside the bridge where the enemy’s supply road crosses a stream: that road is the bench’s rail line.</li>
+      <li><b>The hold.</b> The platoon knocks out the bridge guard and holds the bridge and the road junction, one squad facing across the bridge, one down the road south and one west toward the defense line, their sectors marked on the ground; the enemy’s supply trucks halt short of it.</li>
+      <li><b>The linkup.</b> From the left a mechanized company column, the linkup force, drives up the road at the slider’s speed and fights through the defense line, losing one vehicle there, then links up at the junction and the crates are restocked. If it would arrive too late, the helicopters fly back in and lift the platoon out, as the crane does, and the column arrives late.</li>
+      <li><b>Losses.</b> Success is not free: men who go down on either side lie greyed where they fell, and the readout counts them (friendly vs enemy). In this model, a linkup at 1.2 km/h costs 5 friendly and 12 enemy casualties; at 0.7 km/h the longer hold and the extraction cost 7 friendly and 14 enemy. The casualty counts are a separate notional tally and do not change the supply or the timings.</li>
+    </ol>
+    <p class="fine">Soldiers, vehicles and helicopters are drawn larger than scale so they read; unit sizes, distances, ranges, flight times and casualty counts are notional.</p>
+    </div>
 
     <h2>What doctrine says</h2>
     <p>U.S. Army <i>FM 3-90, Tactics</i> (May 2023) names three variations of the envelopment: single, double and vertical (para. 2-58). “A vertical envelopment is a variation of envelopment where air-dropped or airlanded troops attack an enemy forces’ rear, flank, or both,” by airborne assault or air assault, and it lets the commander “overcome distances quickly, overfly barriers, and bypass enemy defenses.” Because of the forces it takes, “normally only divisions and larger organizations” can conduct double and vertical envelopments (para. 2-61).</p>

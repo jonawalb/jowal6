@@ -274,17 +274,18 @@ const marksEl = fieldSvgEl.querySelector('[data-part="marks"]');
 const fireEl = fieldSvgEl.querySelector('[data-part="fire"]');
 const hintEl = root.querySelector('[data-corner="hint"]');
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
-const VIEW_KEY = "maneuvers.view";
+const VIEW_KEY = "maneuvers.view.v2";
 const HINTS = { machine: "Click: reduce / bypass", field: "Click: reduce / bypass" };
 const TT = fieldTerrain();
 const LOOKS = new Map();
 const FM = { t: 0, dt: 0, ambS: null };
 let stageF = null, fire = null, marksSig = "";
-let view = "machine";
-try { if (localStorage.getItem(VIEW_KEY) === "field") view = "field"; } catch (e) {}
+let view = "field";
+try { if (localStorage.getItem(VIEW_KEY) === "machine") view = "machine"; } catch (e) {}
 const still = matchMedia("(prefers-reduced-motion: reduce)");
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
-const S = { c: DATA.START_C, lastBypass: DATA.START_C || 2, t: 0, knob: DATA.START_C, count: 0, clock: 0, vanes: MODEL.rocks.map((r) => (r.rank <= DATA.START_C ? -DATA.VANE : DATA.VANE)) };
+const S0 = () => ({ c: DATA.START_C, lastBypass: DATA.START_C || 2, t: 0, knob: DATA.START_C, count: 0, clock: 0, vanes: MODEL.rocks.map((r) => (r.rank <= DATA.START_C ? -DATA.VANE : DATA.VANE)) });
+const S = S0();
 let touring = !still.matches, clock = 0, last = 0, frame = 0, visible = false, idle = 0, sim = simulate(S.c, 0);
 // tour: reduce every rock, then bypass by criteria (small and medium may be bypassed)
 const FIN = [0, 1, 2, 3].map((c) => outcome(c).finish ?? 10);
@@ -410,10 +411,24 @@ slider.addEventListener("input", () => choose(Number(slider.value)));
 rerun.addEventListener("click", () => { S.t = 0; hold(); });
 viewBtns.forEach((b) => b.addEventListener("click", () => setView(b.dataset.view, true)));
 new IntersectionObserver((entries) => { visible = entries[entries.length - 1].isIntersecting; if (visible) run(); }, { rootMargin: "120px 0px" }).observe(stage);
-if (still.matches) { S.t = 30; sim = simulate(S.c, 30); S.count = sim.through / MODEL.n; S.clock = Math.min(sim.finish, 10) / 10; }
+const calmStart = () => { if (still.matches) { S.t = 30; sim = simulate(S.c, 30); S.count = sim.through / MODEL.n; S.clock = Math.min(sim.finish, 10) / 10; } };
+// Reset: back to the state the page opened in (criteria, run, dials and idle tour); the view is kept.
+const resetBtn = root.querySelector(".fd-reset");
+function reset() {
+  clearTimeout(idle);
+  Object.assign(S, S0());
+  Object.assign(FM, { t: 0, dt: 0, ambS: null });
+  sim = simulate(S.c, 0);
+  calmStart();
+  slider.value = String(S.c);
+  touring = !still.matches; clock = 0;
+  describe(); draw(); run();
+}
+resetBtn.addEventListener("click", reset);
+calmStart();
 describe();
 setView(view, false);
-window.__bypass = { S, FM, choose, toggle, setView, view: () => view, sim: () => sim, stop: () => { touring = false; clearTimeout(idle); } };
+window.__bypass = { S, FM, choose, toggle, setView, reset, view: () => view, sim: () => sim, stop: () => { touring = false; clearTimeout(idle); } };
 `;
 
 const PAGE = readFileSync(join(HERE, "page.html"), "utf8")

@@ -16,7 +16,27 @@ export const GEO = {
   MOTOR: { x: -111, y: 0, r: 9.5, z0: 17, z1: 35 },
   SHELF: { x: -124, y: -13, w: 25, d: 26, r: 1.5 },
   SHAKE: 0.7,             // stroke of the deck, world units each way
+  BEAM_Y: 28.6,           // the beam housings' inner faces (either side of the tray)
+  HOUSE_H: 8,             // the housings' height above the deck
 };
+
+// A beam housing on the inside of a side wall (side -1: the emitter on the far wall; +1: the
+// receiver on the near wall). The emitter's lens faces the reader; the receiver's is on its far face.
+function housing(K, P, M, side) {
+  const G = GEO, ZF = G.ZF, y0 = side < 0 ? -G.BEAM_Y - 2.4 : G.BEAM_Y;
+  const H = { x: M.beamX - 2, y: y0, w: 4, d: 2.4, r: 0.4 };
+  let out = K.solidSvg(K.slabOf(H, ZF + 2.2, G.HOUSE_H - 2.2, P, 2, 0.3), { tone: "mid", inner: K.lineSvg(K.sideSeam(H, ZF + G.HOUSE_H - 1.4, P, 2), { tone: "faint" }) });
+  // the two bolts into the wall
+  out += K.dotsSvg([[H.x + 0.9, H.y + 1.2], [H.x + H.w - 0.9, H.y + 1.2]].map(([x, y]) => K.iso([x, y, ZF + G.HOUSE_H], P)), { size: 0.36 });
+  if (side < 0) {
+    // the lens: a ring and its centre on the face toward the reader
+    const yl = -G.BEAM_Y, zl = ZF + M.beamH;
+    const ring = [];
+    for (let a = 0; a <= 360; a += 30) ring.push(K.iso([M.beamX + 0.9 * Math.cos(a * SC_RAD), yl, zl + 0.9 * Math.sin(a * SC_RAD)], P));
+    out += K.lineSvg(K.pathOf(ring), { tone: "lo" });
+  }
+  return out;
+}
 
 const SC_RAD = Math.PI / 180;
 
@@ -56,6 +76,8 @@ export function trayParts(K, P, M, lay) {
   const FW = { x: O.x, y: O.y + 3, w: 3, d: O.d - 6, r: 0.6 };
   back += solid(K.slabOf(FW, ZF, G.WALL_BACK, P, 3, 0.4), { tone: "mid" });
   back += dots([-20, 0, 20].map((y) => [O.x + 1.5, y]), ZF + G.WALL_BACK);
+  // the beam's emitter, bolted to the inside of the far wall in front of the screen
+  back += housing(K, P, M, -1);
 
   // things flat on the deck: the load mark, the collecting tray floor and its regroup mark
   let floor = "";
@@ -71,6 +93,11 @@ export function trayParts(K, P, M, lay) {
   floor += solid(K.slabOf(T, ZF, M.trayLift, P, 3, 0.3), { tone: "lo", crease: "faint" });
   const MARK = { x: M.collectX - side / 2, y: -side / 2, w: side, d: side, r: 1 };
   floor += line(K.planOutline(MARK, TZ, P, 3), { tone: "lo" });
+  // the target carriage's slot track, flush in the tray floor; its far end is the carriage's stop
+  const Tg = M.target;
+  const SLOT = { x: Tg.x - Tg.half - Tg.travel + 1.2, y: Tg.y - 0.8, w: 2 * Tg.half - 2.4 + Tg.travel, d: 1.6, r: 0.8 };
+  floor += K.solidSvg(K.slabOf(SLOT, TZ - 0.02, 0.04, P, 3), { tone: "lo", flat: true, className: "inf-slot" });
+  floor += dots([[SLOT.x - 1.4, Tg.y], [SLOT.x + SLOT.w + 1.4, Tg.y]], TZ, 0.36);
 
   // the contents that sort with the elements: bars, top-rail segments, tray rims
   const items = [];
@@ -106,10 +133,13 @@ export function trayParts(K, P, M, lay) {
 
   // near walls (drawn after the contents)
   const NW = { x: O.x, y: O.y + O.d - 3, w: O.w, d: 3, r: 1 };
-  let front = solid(K.slabOf(NW, ZF, G.WALL_NEAR, P, 3, 0.4), { tone: "mid", inner: line(K.sideSeam(NW, ZF + 3.5, P, 3), { tone: "faint" }) });
+  const receiver = housing(K, P, M, 1);
+  let front = receiver + solid(K.slabOf(NW, ZF, G.WALL_NEAR, P, 3, 0.4), { tone: "mid", inner: line(K.sideSeam(NW, ZF + 3.5, P, 3), { tone: "faint" }) });
   front += dots([-80, -40, 0, 40, 80].map((x) => [x, NW.y + 1.5]), ZF + G.WALL_NEAR);
   const EW = { x: O.x + O.w - 3, y: O.y + 3, w: 3, d: O.d - 6, r: 0.6 };
   front = solid(K.slabOf(EW, ZF, G.WALL_NEAR, P, 3, 0.4), { tone: "mid" }) + dots([-20, 0, 20].map((y) => [EW.x + 1.5, y]), ZF + G.WALL_NEAR) + front;
+  // the lamp's socket on the receiver's top
+  front += solid(K.cylinder(M.beamX, G.BEAM_Y + 1.2, 1.5, ZF + G.HOUSE_H, 0.6, P, 24, 0.2), { tone: "mid" });
   front += bracket(O.y + O.d - 3, G.WALL_NEAR);
   return { motor, back, floor, items, front };
 }
@@ -128,6 +158,67 @@ export function weight(K, P, phi) {
   return out;
 }
 
+// The beam across the tray at the shaker floor's beam height, as depth-sorted pieces. cut: the y
+// at which an element breaks it (the beam stops on that element's far face), or null.
+export function beamItems(K, P, M, cut) {
+  const G = GEO, z = G.ZF + M.beamH, y0 = -G.BEAM_Y, y1 = cut === null ? G.BEAM_Y : cut;
+  const items = [];
+  const n = Math.max(1, Math.ceil((y1 - y0) / 6));
+  for (let i = 0; i < n; i++) {
+    const a = y0 + ((y1 - y0) * i) / n, b = y0 + ((y1 - y0) * (i + 1)) / n;
+    items.push({ key: K.depthOf([M.beamX, (a + b) / 2, z], P), svg: `<path class="iso-line inf-beam" data-tone="mid" d="${K.pathOf([K.iso([M.beamX, a, z], P), K.iso([M.beamX, b, z], P)])}"/>` });
+  }
+  items.push({ key: K.depthOf([M.beamX, y0 + 0.5, z], P), svg: K.dotsSvg([K.iso([M.beamX, y0, z], P)], { size: 0.5 }) });
+  return items;
+}
+
+// The alarm lamp on the receiver: lit once the beam has been broken.
+export function lamp(K, P, M, on) {
+  const G = GEO, x = M.beamX, y = G.BEAM_Y + 1.2, z = G.ZF + G.HOUSE_H + 0.6;
+  let out = on ? `<ellipse class="inf-glow" cx="${K.iso([x, y, z + 1.2], P)[0].toFixed(2)}" cy="${K.iso([x, y, z + 1.2], P)[1].toFixed(2)}" rx="${(6 * K.cameraOf(P).k).toFixed(2)}" ry="${(4.6 * K.cameraOf(P).k).toFixed(2)}"/>` : "";
+  out += K.solidSvg(K.cylinder(x, y, 1.05, z, 1.7, P, 24, 0.3), { tone: "mid", className: on ? "inf-lamp inf-lamp-on" : "inf-lamp" });
+  return out;
+}
+
+// The target: a gun turret on a turntable, on a carriage that rides the slot track. Its gun faces
+// the screen (the front); turn 0..1 swings it to face the collecting tray and lowers the brake shoe
+// at the carriage's front onto the track; push moves the carriage toward the screen. Returns
+// depth-sorted items.
+export function targetItems(K, P, M, push, turn) {
+  const G = GEO, T = M.target, TZ = G.ZF + M.trayLift;
+  const cx = T.x - push, cy = T.y;
+  const items = [];
+  const C = { x: cx - T.half, y: cy - T.side, w: 2 * T.half, d: 2 * T.side, r: 0.6 };
+  let car = K.solidSvg(K.slabOf(C, TZ, 1.2, P, 2, 0.3), { tone: "mid", inner: K.lineSvg(K.sideSeam(C, TZ + 0.5, P, 2), { tone: "faint" }) });
+  car += K.dotsSvg(K.corners(C, 0.9).map(([x, y]) => K.iso([x, y, TZ + 1.2], P)), { size: 0.34 });
+  // the brake: a bracket on the carriage's front end and a shoe that drops onto the track
+  const BR = { x: cx - T.half - 1.4, y: cy - 1.3, w: 1.4, d: 2.6, r: 0.3 };
+  const drop = 0.9 * turn;
+  let brake = K.solidSvg(K.slabOf({ ...BR, x: BR.x + 0.3, w: 1.1 }, TZ + 1.0 - drop, 0.9, P, 2, 0.2), { tone: "lo" });
+  brake += K.solidSvg(K.slabOf(BR, TZ + 1.9, 0.5, P, 2, 0.2), { tone: "mid" });
+  items.push({ key: K.depthOf([cx, cy, TZ + 0.6], P) - 3, svg: brake + car });
+  // turntable with its index ring
+  items.push({ key: K.depthOf([cx, cy, TZ + 1.5], P) - 2, svg: K.solidSvg(K.cylinder(cx, cy, 2.5, TZ + 1.2, 0.6, P, 28, 0.2), { tone: "mid", inner: "" }) + K.lineSvg(K.ring(cx, cy, 2.0, TZ + 1.8, P, 28), { tone: "faint" }) });
+  const ang = (180 - 180 * turn) * SC_RAD;      // the gun's direction: -x at rest, +x when turned
+  const dir = [Math.cos(ang), Math.sin(ang)];   // swings through +y (toward the reader)
+  const rot = (u, v) => [cx + u * dir[0] - v * dir[1], cy + u * dir[1] + v * dir[0]];
+  const b = T.block, z0 = TZ + 1.8, z1 = TZ + T.tall;
+  let tower = K.solidSvg(K.extrude([rot(-b, -b), rot(b, -b), rot(b, b), rot(-b, b)], z0, z1 - z0, P, { bevel: 0.3 }), { tone: "hi", crease: "lo" });
+  // the hatch on top and its hinge line, rivets at the corners
+  tower += K.lineSvg(K.pathOf([rot(-b + 0.9, -b + 0.7), rot(-b + 0.9, b - 0.7)].map(([x, y]) => K.iso([x, y, z1], P))), { tone: "lo", free: true });
+  tower += K.dotsSvg([rot(-b + 0.5, -b + 0.5), rot(-b + 0.5, b - 0.5), rot(b - 0.5, -b + 0.5), rot(b - 0.5, b - 0.5)].map(([x, y]) => K.iso([x, y, z1], P)), { size: 0.32 });
+  // the gun: a square barrel from the tower's front face, above the tallest element, with a collar
+  const gz = TZ + T.gunZ;
+  const barrel = K.solidSvg(K.extrude([rot(b, -0.5), rot(b + T.gun, -0.5), rot(b + T.gun, 0.5), rot(b, 0.5)], gz, 1, P, { bevel: 0.12 }), { tone: "mid" });
+  const collar = K.solidSvg(K.extrude([rot(b, -0.95), rot(b + 0.8, -0.95), rot(b + 0.8, 0.95), rot(b, 0.95)], gz - 0.45, 1.9, P, { bevel: 0.12 }), { tone: "mid" });
+  // the barrel only overlaps other parts near its muzzle (it passes above the tallest element), so it
+  // sorts at the muzzle; the tower and collar sort at the tower's centre
+  const towards = K.depthOf([dir[0], dir[1], 0], P) - K.depthOf([0, 0, 0], P);
+  items.push({ key: K.depthOf([cx, cy, TZ + 5], P), svg: towards > 0 ? tower + collar : collar + tower });
+  items.push({ key: K.depthOf([...rot(b + T.gun, 0), gz + 0.5], P), svg: barrel });
+  return items;
+}
+
 // One element (a block or a pellet) at deck point (x, y).
 export function element(K, P, M, p, x, y, z) {
   const w = p.w, h = p.h;
@@ -142,13 +233,14 @@ export function element(K, P, M, p, x, y, z) {
 // { p (plan), pos (element positions), fade, dx (deck offset), phi (weight angle) }.
 export function scene(K, P, M, parts, S, floorAt) {
   const items = parts.items.slice();
+  items.push(...beamItems(K, P, M, S.cut ?? null), ...targetItems(K, P, M, S.push || 0, S.turn || 0));
   S.pos.forEach(([x, y]) => {
     const z = GEO.ZF + floorAt(x, M);
     items.push({ key: K.depthOf([x, y, z + S.p.h / 2], P), svg: `<g opacity="${S.fade.toFixed(3)}">${element(K, P, M, S.p, x, y, z)}</g>` });
   });
   items.sort((a, b) => a.key - b.key);
   const shake = K.translateAlong(P, [S.dx, 0, 0]);
-  return `<g transform="${shake}">${parts.motor}${weight(K, P, S.phi)}${parts.back}${parts.floor}${items.map((i) => i.svg).join("")}${parts.front}</g>`;
+  return `<g transform="${shake}">${parts.motor}${weight(K, P, S.phi)}${parts.back}${parts.floor}${items.map((i) => i.svg).join("")}${parts.front}${lamp(K, P, M, !!S.lit)}</g>`;
 }
 
 // The motor cable: from the gland on the control box to the motor's terminal box,

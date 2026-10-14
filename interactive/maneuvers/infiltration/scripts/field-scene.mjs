@@ -10,10 +10,14 @@
 // whatever the split: one group of 36, four squads of 9, nine fire teams of 4, or sixteen pairs and
 // threes. An element that fits no gap (the single big group) is spotted short of the line, fired on
 // and stopped, as the machine's block is stopped at the bars.
+// The back end: behind the line an enemy mortar section faces the front. A force that is detected
+// on the way (model detection(): the big group, or the four squads) sends up a flare, turns the
+// sentries and the mortar crew; after the regroup the force attacks the section from its rear by
+// fire and movement, and the model's outcome (follow()) decides whether it takes it or stalls.
 // build.mjs inlines this file with `import` and `export` lines stripped, after field.mjs and terrain.mjs.
 import { fdBlob, fdFrame } from "../../kit/field.mjs";
-import { losses } from "./model.mjs";
-import { trTerrain, trGroundPlane, trRelief, trBehind, trField, trPatch, trRoad, trStream, trWood, trScatter, trHedge, trHouse, trHole, trFan, trChalk, trSoldier, trFaceStep, trFireTeam, trSquad, trMorph, trPlace, trMuzzle, trAimPoint } from "../../kit/terrain.mjs";
+import { losses, follow } from "./model.mjs";
+import { trTerrain, trGroundPlane, trRelief, trBehind, trField, trPatch, trRoad, trStream, trWood, trScatter, trHedge, trHouse, trHole, trNest, trPrism, trFan, trChalk, trSoldier, trFaceStep, trFireTeam, trSquad, trMorph, trPlace, trMuzzle, trAimPoint, trBound } from "../../kit/terrain.mjs";
 
 export const FG = {
   world: { x: -340, y: -320, w: 680, d: 640 },
@@ -23,7 +27,6 @@ export const FG = {
   SLOW: 0.4,          // the battlefield runs the model's clock at this rate, so the men walk
   MEN: 36,            // friendly soldiers, the same men in every split
   FAN: [5, 30, 22],   // each outpost's observed sector: inner and outer radius, half-angle (degrees)
-  SPOT: 0.72,         // share of its approach after which the big group is spotted
   ORP_PAD: [6, 6],    // the rally point's chalk outline beyond the regroup places (x, y)
   // casualties (counts from model.mjs losses()): the enemy men who can go down (outpost index, side
   // offset), drawn per frame instead of with the static outposts; which men of the single group go
@@ -33,6 +36,17 @@ export const FG = {
   DOWN_GROUP: [2, 9, 15, 22, 30],
   DOWN_ORP: [[85, -7], [85, 1]],
   MEDIC_ORP: [82, -3],
+  // the back end (notional layout, line frame u, v): the enemy mortar section behind the outpost line
+  // (two pits facing the front, clear of every route), the assault position behind it, the
+  // support-by-fire line on its flank, and how far the assault gets
+  TGT: { u: 30, v: -70, pits: [[0, 4.6], [0, -4.6]], r: 4.2 },
+  AP: { back: 18, groups: 8, rank: 3, file: 2.8 },
+  SBF: { u: 28, v: -46, file: 2.6, rank: 3 },
+  BOUND: 5,           // length of one rush in the assault (units)
+  HELD_TO: 8,         // the assault ends this far behind the pits when it takes the position
+  LOST_TO: 15,        // ... and here when it stalls
+  LIVE_POSTS: [3, 4], // outposts drawn per frame (their men turn or go down)
+  REACT: 0.6,         // model seconds from the alarm to the mortar crew turning to face the rear
 };
 FG.TERRAIN = {
   rises: [
@@ -101,6 +115,7 @@ export function fieldStatic(K, P, T, M, lay, planFn) {
     if (u > -100 - pad && u < -40 + pad && Math.abs(v) < 50 + pad) return true;                  // the start
     if (Math.abs(u) < 14 + pad * 0.3 && Math.abs(v) < 92) return true;                              // the line
     if (Math.abs(u - orpU) < 24 + pad * 0.5 && Math.abs(v) < 44 + pad * 0.5) return true;            // the rally point
+    if (u > G.TGT.u - 14 - pad * 0.5 && u < G.TGT.u + G.AP.back + 12 + pad * 0.5 && v > G.TGT.v - 26 - pad * 0.5 && v < G.SBF.v + 8 + pad * 0.5) return true;   // the attack
     return onRoute(u, v, pad);
   };
   const blob = (u, v, r, seed, sq = 1, wob = 0.13) => fsWr(fdBlob(u, v, r, seed, wob, 40, sq));
@@ -179,10 +194,18 @@ export function fieldStatic(K, P, T, M, lay, planFn) {
     items.push(...trHole(K, P, p.x, p.y, z, face));
     const F = fdFrame(p.x, p.y, face);
     for (const [dv, role] of [[1.1, "ar"], [-1.1, "r"]]) {
-      if (G.DOWN_H.some(([i, d]) => i === p.i && d === dv)) continue;   // drawn per frame (they can go down)
+      if (G.LIVE_POSTS.includes(p.i)) continue;   // drawn per frame (they turn, or go down)
       const [x, y] = F(0, dv);
       items.push({ key: K.depthOf([x, y, 0], P), svg: `<g class="tr-s" data-side="h" transform="translate(${K.iso([x, y, z], P).map((c) => c.toFixed(2)).join(" ")})">${trSoldier(K, P, { face: trFaceStep(face), pose: "hole", role })}</g>` });
     }
+  }
+
+  // the enemy mortar section behind the line: two horseshoe pits open to the rear, each with its
+  // mortar laid on the front (the crews are drawn per frame)
+  for (const pit of mortarPits()) {
+    const z = T.height(pit.x, pit.y);
+    items.push(...trNest(K, P, pit.x, pit.y, z, pit.face, { r: G.TGT.r }));
+    items.push({ key: K.depthOf([pit.x, pit.y, 0], P), svg: `<g class="tr-s" data-side="h">${mortarSvg(K, P, pit, z)}</g>` });
   }
 
   // control measure: the objective rally point behind the line, a chalk outline on pegs
@@ -225,9 +248,48 @@ export function fieldSizes(n) {
   return Array.from({ length: 16 }, (_, i) => (i % 4 === 0 ? 3 : 2));
 }
 
-// Where every friendly soldier stands and who fires at whom, for the plan p at model time t.
-// Returns { men, streams, spotted, open } (open: indices of the gaps in use, for the marks).
-export function fieldPose(p, t, M, lay, T, posAt) {
+// The mortar pits (ground coordinates) and the crew places in each (pit frame: u forward, toward
+// the front).
+const FRONT = 180 + FG.ROT;
+export function mortarPits() {
+  return FG.TGT.pits.map(([du, dv], i) => { const [x, y] = fsW([FG.TGT.u + du, FG.TGT.v + dv]); return { i, x, y, face: FRONT }; });
+}
+const CREW = [[-0.7, 1.5, "r"], [-0.7, -1.5, "r"], [-5.6, 0.9, "r"]];   // gunner, assistant, ammo bearer
+// A mortar on its baseplate: the tube laid toward the front at about 60 degrees, on a bipod.
+function mortarSvg(K, P, pit, z) {
+  const P0 = { ...P, origin: [0, 0] };
+  const F = fdFrame(0, 0, pit.face);
+  const at = (u, v, h) => K.iso([...F(u, v), h], P0);
+  const plate = [F(-0.2, -0.9), F(1.2, -0.9), F(1.2, 0.9), F(-0.2, 0.9)];
+  let out = trPrism(K, P0, plate, 0.02, 0.32, true);
+  out += `<path class="tr-wire" d="${K.pathOf([at(2.1, -0.95, 0), at(1.85, 0, 2.1), at(2.1, 0.95, 0)])}"/>`;
+  out += `<path class="tr-gun" data-heavy="" d="${K.pathOf([at(0.5, 0, 0.32), at(2.4, 0, 3.6)])}"/>`;
+  const [sx, sy] = K.iso([pit.x, pit.y, z], P);
+  return `<g transform="translate(${sx.toFixed(2)} ${sy.toFixed(2)})">${out}</g>`;
+}
+
+const lf = ([u, v]) => fsW([u, v]);
+const angTo = (a, b) => Math.atan2(b[1] - a[1], b[0] - a[0]) / FS_RAD;   // world degrees
+
+// When each man goes down (model seconds), from the model's loss counts: the k-th friendly and
+// enemy loss of the run, found by a scan. Cached per plan.
+const DOWNS = new WeakMap();
+function downTimes(p, M, f) {
+  if (DOWNS.has(p)) return DOWNS.get(p);
+  const blue = [], red = [];
+  for (let t = 0; t <= f.end + 0.01; t += 0.005) {
+    const L = losses(p, t, M, f);
+    while (blue.length < L.blue) blue.push(t);
+    while (red.length < L.red) red.push(t);
+  }
+  const d = { blue, red };
+  DOWNS.set(p, d);
+  return d;
+}
+
+// The crossing: where every friendly soldier of the plan stands at model time t (before the attack,
+// or kneeling at the rally point after it has regrouped). Returns men with el (element index).
+function crossing(p, t, M, T, posAt, f) {
   const G = FG, A = M.approach, PS = M.pass, RG = M.regroup;
   const WX = (q) => fieldXY(q, M);
   const sizes = fieldSizes(p.n);
@@ -235,91 +297,238 @@ export function fieldPose(p, t, M, lay, T, posAt) {
   let spotted = 0, bigAt = null;
   p.els.forEach((e, ei) => {
     const size = sizes[ei];
-    const F = forms(p.n, size);
+    const Fm = forms(p.n, size);
     const here = WX(posAt(e, t, M));
     let mix, form0, form1, face, pose = "stand", dist = 0, moving = true;
     const ang = (a, b) => Math.atan2(b[1] - a[1], b[0] - a[0]) / FS_RAD - FG.ROT;   // in the line frame
     const len = (a, b) => Math.hypot(b[0] - a[0], b[1] - a[1]);
     if (e.blocked) {
-      const f = Math.min(1, t / A);
-      face = 0; form0 = F.move; form1 = F.move; mix = 0;
+      const fr = Math.min(1, t / A);
+      face = 0; form0 = Fm.move; form1 = Fm.move; mix = 0;
       dist = len(WX(e.feed), here);
-      const sp = smooth01(G.SPOT, G.SPOT + 0.2, f);
+      const sp = f.at === null ? 0 : smooth01(0, 0.2 * A, t - f.at);
       spotted = Math.max(spotted, sp);
       if (sp > 0.5) { pose = "prone"; moving = false; }
-      else if (f <= 0) { pose = "kneel"; moving = false; }
+      else if (fr <= 0) { pose = "kneel"; moving = false; }
       bigAt = here;
     } else {
       const s = t - e.start;
       const feed = WX(e.feed), pre = WX(e.pre), post = WX(e.post), slot = WX(e.slot);
-      if (s <= 0) { form0 = form1 = F.hud; mix = 0; face = 0; pose = "kneel"; moving = false; }
-      else if (s < A * 0.4) { form0 = F.hud; form1 = F.move; mix = smooth01(0, 0.4, s / A); face = ang(feed, pre); dist = len(feed, here); }
-      else if (s < A) { form0 = F.move; form1 = F.file; mix = smooth01(0.5, 0.95, s / A); face = ang(feed, pre); dist = len(feed, here); }
-      else if (s < A + PS) { form0 = form1 = F.file; mix = 0; face = ang(pre, post); dist = len(feed, pre) + len(pre, here); }
+      if (s <= 0) { form0 = form1 = Fm.hud; mix = 0; face = 0; pose = "kneel"; moving = false; }
+      else if (s < A * 0.4) { form0 = Fm.hud; form1 = Fm.move; mix = smooth01(0, 0.4, s / A); face = ang(feed, pre); dist = len(feed, here); }
+      else if (s < A) { form0 = Fm.move; form1 = Fm.file; mix = smooth01(0.5, 0.95, s / A); face = ang(feed, pre); dist = len(feed, here); }
+      else if (s < A + PS) { form0 = form1 = Fm.file; mix = 0; face = ang(pre, post); dist = len(feed, pre) + len(pre, here); }
       else if (s < A + PS + RG) {
         const u = (s - A - PS) / RG;
-        form0 = F.file; form1 = F.hud; mix = smooth01(0.45, 1, u);
+        form0 = Fm.file; form1 = Fm.hud; mix = smooth01(0.45, 1, u);
         face = u < 0.85 ? ang(post, slot) : 0; dist = len(feed, pre) + len(pre, post) + len(post, here);
-      } else { form0 = form1 = F.hud; mix = 0; face = 0; pose = "kneel"; moving = false; }
+      } else { form0 = form1 = Fm.hud; mix = 0; face = 0; pose = "kneel"; moving = false; }
     }
     face += FG.ROT;
     const placed = trPlace(trMorph(form0, form1, mix), { x: here[0], y: here[1], face });
     placed.forEach((m, i) => men.push({ id: `f-${men.length}`, side: "f", lit: true, el: ei, role: (form0[i] && form0[i].role) || m.role || "r", pose, face,
       stride: moving ? strideAt(dist + i * 0.9) : 0, x: m.x, y: m.y, z: T.height(m.x, m.y) }));
   });
-
-  // --- casualties (notional; the model's counts): greyed and still ---
-  const LS = losses(p, t, M);
-  if (!p.through) {
-    // the single group: its men down lie where it went to ground; the man beside the first tends him
-    G.DOWN_GROUP.slice(0, LS.blue).forEach((k) => Object.assign(men[k], { side: "fc", lit: false, pose: "prone", stride: 0 }));
-    if (LS.blue > 0) Object.assign(men[G.DOWN_GROUP[0] + 1], { pose: "kneel", stride: 0 });
-  } else if (LS.blue > 0) {
-    // a split force: its men down are carried to the rally point, where a man of the largest element
-    // that has regrouped kneels by them
-    const done = p.els.map((e, ei) => ({ e, ei })).filter(({ e }) => t >= e.end).sort((a, b) => a.e.end - b.e.end || a.ei - b.ei);
-    const take = (ei) => { for (let i = men.length - 1; i >= 0; i--) if (men[i].el === ei) return men.splice(i, 1)[0]; return null; };
-    const toW = ([u, v]) => fsW([u, v]);
-    done.slice(0, LS.blue).forEach(({ ei }, k) => {
-      const m = take(ei);
-      if (!m) return;
-      const [x, y] = toW(G.DOWN_ORP[k]);
-      Object.assign(m, { id: `c-f${k}`, el: -1, side: "fc", lit: false, pose: "prone", stride: 0, face: FG.ROT + 75 + 30 * k, x, y, z: T.height(x, y) });
-      men.push(m);
-    });
-    const big = [...done].sort((a, b) => sizes[b.ei] - sizes[a.ei])[0];
-    const med = big && take(big.ei);
-    if (med) { const [x, y] = toW(G.MEDIC_ORP); Object.assign(med, { id: "c-med", pose: "kneel", stride: 0, face: FG.ROT + 10, x, y, z: T.height(x, y) }); men.push(med); }
-  }
-  // the outpost men who can go down: in their hole, or greyed and lying just behind it
-  G.DOWN_H.forEach(([i, dv], k) => {
-    const po = fieldPosts(M, lay)[i], face = 180 + FG.ROT, F = fdFrame(po.x, po.y, face);
-    const down = k < LS.red;
-    const [x, y] = down ? F(-4, dv * 2.2) : F(0, dv);
-    men.push({ id: `e-${i}${k}`, side: down ? "hc" : "h", role: dv > 0 ? "ar" : "r", pose: down ? "prone" : "hole", stride: 0, face: down ? face + 60 * (k ? -1 : 1) : face, x, y, z: T.height(po.x, po.y) });
-  });
-
-  // fire: once the big group is spotted, the outposts in front of it open fire on it
-  const streams = [];
-  if (bigAt && spotted > 0.02) {
-    const targets = men.filter((m) => m.side === "f").map((m) => trAimPoint(m, m.x, m.y, m.z));
-    const bigV = fsWi(bigAt)[1];
-    fieldPosts(M, lay).forEach((po, i) => {
-      if (G.DOWN_H.some(([j, d], k) => j === i && d > 0 && k < LS.red)) return;   // its gunner is down
-      if (Math.abs(fsWi([po.x, po.y])[1] - bigV) > 52) return;
-      const F = fdFrame(po.x, po.y, 180 + FG.ROT);
-      const [x, y] = F(0, 1.1), z = T.height(x, y);
-      const spec = { face: trFaceStep(180 + FG.ROT), pose: "hole", role: "ar" };
-      streams.push({ id: `p${i}`, side: "h", heavy: true, from: trMuzzle(spec, x, y, z), to: targets, period: 1.3 + i * 0.17, burst: 3, gap: 0.1, flight: 0.34, phase: i * 0.61, on: spotted, scatter: 4 });
-    });
-  }
-  return { men, streams, spotted, open: p.open, LS };
+  return { men, spotted, bigAt };
 }
 
-// Per-state ground marks: each outpost's observed sector (red), brighter while it has spotted the
-// big group.
+// The attack: each attacker's place at model time t (t >= f.move0). Attackers are split into a
+// support-by-fire line on the target's flank (a third) and two assault groups that bound in turn
+// from the assault position behind the target (fire and movement): the group not moving lies down
+// and fires. When surprise held they reach the position; when it was lost they stall short of it.
+function attackPlaces(list, f, M, t) {
+  const G = FG, n = list.length, nS = Math.round(n / 3), rest = n - nS;
+  const AP = { u: G.TGT.u + G.AP.back, v: G.TGT.v };
+  const out = [];
+  const mv = smooth01(f.move0, f.strike0, t);
+  const a = Math.max(0, Math.min(1, (t - f.strike0) / M.assault));
+  const goal = f.detected ? G.LOST_TO : G.HELD_TO;
+  const S = Math.max(0, G.AP.back - goal);
+  const sAt = S * smooth01(0, f.detected ? 0.45 : 0.8, a);
+  const bound = trBound(sAt, G.BOUND, sAt >= S - 1e-6 ? 0 : 1);
+  const done = sAt >= S - 1e-6;
+  list.forEach((m, k) => {
+    let target, face, pose, moving = false;
+    if (k < nS) {
+      // support by fire: two ranks on the flank, facing the target
+      const cols = Math.ceil(nS / 2), j = (k % cols) - (cols - 1) / 2, r = Math.floor(k / cols);
+      const to = [G.SBF.u + j * G.SBF.file, G.SBF.v + r * G.SBF.rank + Math.abs(j) * 0.4];
+      target = to;
+      face = Math.atan2(G.TGT.v - to[1], G.TGT.u - to[0]) / FS_RAD;
+      pose = mv < 1 ? "stand" : "prone";
+    } else {
+      const q = k - nS, g = q % 2, j = Math.floor(q / 2), per = Math.ceil(rest / 2);
+      const cols = Math.ceil(per / 2), r = j % 2, c = Math.floor(j / 2);
+      const gv = AP.v + (g ? G.AP.groups : -G.AP.groups);
+      const s = t < f.strike0 ? 0 : g ? bound.b : bound.a;
+      target = [AP.u + r * G.AP.rank - s, gv + (c - (cols - 1) / 2) * G.AP.file];
+      face = 180;
+      const rushing = t >= f.strike0 && !done && bound.moving === (g ? "b" : "a");
+      pose = t < f.strike0 ? (mv < 1 ? "stand" : "kneel") : rushing ? "stand" : done && !f.detected ? "kneel" : "prone";
+      moving = rushing;
+      m.group = g;
+    }
+    out.push({ m, k, support: k < nS, target, face, pose, moving });
+  });
+  return { out, mv, done, a };
+}
+
+// Where every soldier stands and who fires at whom, for the plan p at model time t.
+// Returns { men, streams, alert, flare, LS }.
+export function fieldPose(p, t, M, lay, T, posAt, f = follow(p, M)) {
+  const G = FG;
+  const { men, spotted, bigAt } = crossing(p, t, M, T, posAt, f);
+  const LS = losses(p, t, M, f);
+  const D = downTimes(p, M, f);
+  const o = f.out;
+  const grey = (m, x, y) => Object.assign(m, { side: "fc", lit: false, pose: "prone", stride: 0, x, y, z: T.height(x, y) });
+
+  // --- crossing casualties (notional; the model's counts): greyed and still ---
+  if (!p.through) {
+    G.DOWN_GROUP.slice(0, LS.blue).forEach((k) => Object.assign(men[k], { side: "fc", lit: false, pose: "prone", stride: 0 }));
+    if (LS.blue > 0) Object.assign(men[G.DOWN_GROUP[0] + 1], { pose: "kneel", stride: 0 });
+  }
+  const atORP = [];
+  if (p.through && f.detected && t >= D.blue[0]) {
+    // one man of the squad that was seen is hit in the gap; once his squad has regrouped he lies at
+    // the rally point with a man of his squad kneeling by him
+    const e = p.els[f.el];
+    const mine = men.filter((m) => m.el === f.el);
+    const hit = mine[mine.length - 1], medic = mine[mine.length - 2];
+    if (t < e.end) {
+      const at = crossing(p, D.blue[0], M, T, posAt, f).men.find((m) => m.id === hit.id);
+      grey(hit, at.x, at.y);
+    } else {
+      const [x, y] = lf(G.DOWN_ORP[0]);
+      grey(hit, x, y); hit.face = FG.ROT + 75;
+      const [mx, my] = lf(G.MEDIC_ORP);
+      Object.assign(medic, { pose: "kneel", stride: 0, face: FG.ROT + 10, x: mx, y: my, z: T.height(mx, my) });
+    }
+    atORP.push(hit.id, medic.id);
+  }
+
+  // --- the attack ---
+  let att = null;
+  if (p.through && t >= f.move0) {
+    const list = men.filter((m) => !atORP.includes(m.id));
+    att = attackPlaces(list, f, M, t);
+    const start = new Map(crossing(p, f.reorg0 + 0.001, M, T, posAt, f).men.map((m) => [m.id, m]));
+    att.out.forEach((A) => {
+      const s0 = start.get(A.m.id), [tx, ty] = lf(A.target);
+      const x = s0.x + (tx - s0.x) * att.mv, y = s0.y + (ty - s0.y) * att.mv;
+      const travelling = att.mv > 0 && att.mv < 1;
+      const face = travelling ? angTo([s0.x, s0.y], [tx, ty]) : A.face + FG.ROT;
+      const dist = Math.hypot(x - s0.x, y - s0.y) + (A.moving ? (t - f.strike0) * 30 : 0);
+      Object.assign(A.m, { x, y, z: T.height(x, y), face, pose: travelling ? "stand" : A.pose, stride: travelling || A.moving ? strideAt(dist + A.k * 0.9) : 0 });
+    });
+    // the attack's own losses: assault men, taken in turn from the two groups
+    const assault = att.out.filter((A) => !A.support);
+    D.blue.forEach((td, k) => {
+      if (k < o.crossBlue || t < td) return;
+      const A = assault[((k - o.crossBlue) * 5 + 2) % assault.length];
+      if (!A) return;
+      const then = attackPlaces(list.map((m) => ({ ...m })), f, M, td).out[A.k];
+      const s0 = start.get(A.m.id), [tx, ty] = lf(then.target), mv = smooth01(f.move0, f.strike0, td);
+      grey(A.m, s0.x + (tx - s0.x) * mv, s0.y + (ty - s0.y) * mv);
+      A.down = true;
+    });
+  }
+
+  // --- the enemy: the live outposts, and the mortar crew ---
+  const alertAt = f.detected ? f.at : null;
+  const alert = alertAt === null ? 0 : smooth01(alertAt, alertAt + 0.3, t);
+  const posts = fieldPosts(M, lay);
+  const seenEl = f.detected && p.through ? f.el : -1;
+  const enemy = [];
+  G.LIVE_POSTS.forEach((i) => {
+    const po = posts[i], F = fdFrame(po.x, po.y, FRONT);
+    [[1.1, "ar"], [-1.1, "r"]].forEach(([dv, role]) => {
+      const kDown = G.DOWN_H.findIndex(([j, d]) => j === i && d === dv);
+      const down = kDown >= 0 && kDown < (p.through ? 0 : LS.red);
+      let face = FRONT;
+      // a sentry who has seen a squad slip through his gap turns to follow it
+      if (seenEl >= 0 && t > alertAt + 0.15) {
+        const el = men.filter((m) => m.el === seenEl && m.side === "f");
+        const c = el.length ? [el.reduce((s, m) => s + m.x, 0) / el.length, el.reduce((s, m) => s + m.y, 0) / el.length] : lf([60, 0]);
+        face = angTo([po.x, po.y], c);
+      }
+      const [x, y] = down ? F(-4, dv * 2.2) : F(0, dv);
+      enemy.push({ id: `e-${i}${dv > 0 ? "a" : "b"}`, side: down ? "hc" : "h", role, pose: down ? "prone" : "hole", stride: 0, face: down ? FRONT + 60 * (dv > 0 ? 1 : -1) : face, x, y, z: T.height(po.x, po.y) });
+    });
+  });
+  // the crew: at their mortars facing the front; alerted (seen on the way in) they turn to face the
+  // rear after REACT; caught by surprise they turn only once the assault is under way
+  const pits = mortarPits();
+  const rear = FG.ROT;                     // facing +u, toward the rally point and the assault
+  const turnAt = !p.through ? Infinity : f.detected ? f.at + G.REACT : f.strike0 + 0.3 * M.assault;
+  const crew = [];
+  pits.forEach((pit) => CREW.forEach(([du, dv, role], c) => {
+    const F = fdFrame(pit.x, pit.y, pit.face);
+    const k = crew.length;
+    const down = p.through && D.red[o.crossRed + k] !== undefined && t >= D.red[o.crossRed + k];
+    const turned = t >= turnAt;
+    const [x, y] = down ? F(du - 1.2, dv * 1.6) : turned && c === 2 ? F(-3.4, 0.9) : F(du, dv);
+    const m = { id: `e-m${pit.i}${c}`, side: down ? "hc" : "h", role, pose: down ? "prone" : "kneel", stride: 0, face: down ? rear + 90 : turned ? rear : pit.face, x, y, z: T.height(x, y) };
+    crew.push(m);
+  }));
+  const all = [...men, ...enemy, ...crew];
+
+  // --- fire ---
+  const streams = [];
+  if (bigAt && spotted > 0.02) {
+    // the big group, spotted short of the line: the outposts in front of it open fire on it
+    const targets = men.filter((m) => m.side === "f").map((m) => trAimPoint(m, m.x, m.y, m.z));
+    const bigV = fsWi(bigAt)[1];
+    posts.forEach((po, i) => {
+      if (G.DOWN_H.some(([j, d], k) => j === i && d > 0 && k < LS.red)) return;   // its gunner is down
+      if (Math.abs(fsWi([po.x, po.y])[1] - bigV) > 52) return;
+      const F = fdFrame(po.x, po.y, FRONT);
+      const [x, y] = F(0, 1.1), z = T.height(x, y);
+      streams.push({ id: `p${i}`, side: "h", heavy: true, from: trMuzzle({ face: trFaceStep(FRONT), pose: "hole", role: "ar" }, x, y, z), to: targets, period: 1.3 + i * 0.17, burst: 3, gap: 0.1, flight: 0.34, phase: i * 0.61, on: spotted, scatter: 4 });
+    });
+  }
+  if (seenEl >= 0) {
+    // the squad seen in the gap draws a short burst of fire from the outposts either side of it
+    const on = smooth01(alertAt, alertAt + 0.1, t) * (1 - smooth01(alertAt + 0.9, alertAt + 1.2, t));
+    const targets = men.filter((m) => m.el === seenEl && m.side === "f").map((m) => trAimPoint(m, m.x, m.y, m.z));
+    if (on > 0.01 && targets.length) enemy.filter((m) => m.role === "ar" && m.side === "h").forEach((m, i) => streams.push({ id: `g${i}`, side: "h", heavy: true, from: trMuzzle(m, m.x, m.y, m.z), to: targets, period: 0.9 + i * 0.2, burst: 3, gap: 0.1, flight: 0.3, phase: i * 0.37, on, scatter: 3 }));
+  }
+  if (att && t >= f.strike0) {
+    const liveCrew = crew.filter((m) => m.side === "h");
+    const crewAims = liveCrew.map((m) => trAimPoint(m, m.x, m.y, m.z));
+    const firing = att.out.filter((A) => !A.down && A.pose === "prone" && (A.support || !A.moving));
+    if (crewAims.length) firing.forEach((A, i) => {
+      if (i % 3) return;
+      streams.push({ id: `b${A.k}`, side: "f", from: trMuzzle(A.m, A.m.x, A.m.y, A.m.z), to: crewAims, period: 1.0 + (i % 5) * 0.13, burst: 3, gap: 0.09, flight: 0.3, phase: i * 0.29, on: 1, scatter: 2.4 });
+    });
+    // the crew fires back only once it has turned; caught by surprise, little and late
+    const blueAims = att.out.filter((A) => !A.down).map((A) => trAimPoint(A.m, A.m.x, A.m.y, A.m.z));
+    if (t >= turnAt) liveCrew.forEach((m, i) => streams.push({ id: `r${i}`, side: "h", from: trMuzzle(m, m.x, m.y, m.z), to: blueAims, period: 1.1 + i * 0.15, burst: 2, gap: 0.12, flight: 0.3, phase: i * 0.41, on: f.detected ? 1 : 0.35, scatter: 3 }));
+  }
+
+  // --- the illumination flare, sent up from the outpost line when the force is detected ---
+  let flare = null;
+  if (f.detected && t >= f.at) {
+    const age = t - f.at, life = M.flare;
+    const from = posts[3];
+    const over = p.through ? lf([2, (lay.gaps[p.open[0]].centre) * G.KY]) : [bigAt[0], bigAt[1]];
+    const rise = smooth01(0, 0.35, age);
+    const hx = from.x + (over[0] - from.x) * rise + 1.2 * age, hy = from.y + (over[1] - from.y) * rise;
+    const hz = 44 * Math.sin(Math.min(1, age / 0.35) * Math.PI / 2) - 4 * Math.max(0, age - 0.35);
+    const b = age < 0.35 ? 0.15 : smooth01(0.35, 0.6, age) * (1 - smooth01(life - 1.2, life, age));
+    const trail = [];
+    for (let i = 0; i <= 12; i++) {
+      const a2 = (Math.min(age, 0.35) * i) / 12, r2 = smooth01(0, 0.35, a2);
+      trail.push([from.x + (over[0] - from.x) * r2 + 1.2 * a2, from.y + (over[1] - from.y) * r2, T.height(from.x, from.y) + 44 * Math.sin(Math.min(1, a2 / 0.35) * Math.PI / 2)]);
+    }
+    flare = { head: [hx, hy, hz + T.height(hx, hy)], ground: [hx, hy, T.height(hx, hy)], b, trail, trailA: 0.55 * (1 - smooth01(0.4, 1.6, age)) };
+  }
+  return { men: all, streams, alert: Math.max(alert, spotted), flare, LS };
+}
+
+// Per-state ground marks: each outpost's observed sector (red), brighter once the line is alerted.
 export function fieldMarks(K, P, T, M, lay, pose) {
   const [r0, r1, half] = FG.FAN;
   const a = 180 + FG.ROT, [ox, oy] = fsW([-1.5, 0]);
-  return fieldPosts(M, lay).map((po) => trFan(K, P, T, po.x + ox, po.y + oy, r0, r1, a - half, a + half, { side: "h", arcs: 1, alpha: 0.45 + 0.4 * pose.spotted })).join("");
+  return fieldPosts(M, lay).map((po) => trFan(K, P, T, po.x + ox, po.y + oy, r0, r1, a - half, a + half, { side: "h", arcs: 1, alpha: 0.45 + 0.4 * pose.alert })).join("");
 }

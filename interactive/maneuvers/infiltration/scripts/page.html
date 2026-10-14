@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Infiltration | Jonathan Walberg</title>
-<meta name="description" content="Infiltration as a working bench model: how the size of infiltrating elements trades stealth and small gaps against time and control. Illustrates one point from U.S. Army doctrine (FM 3-90, 2023).">
+<meta name="description" content="Infiltration as a working bench model: a force slips through the enemy line undetected, regroups, and attacks a position from the rear, and the attack turns on whether surprise held. Illustrates points from U.S. Army doctrine (FM 3-90, 2023).">
 <!-- Google Analytics 4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
@@ -51,6 +51,14 @@
 .inf-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.inf-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
 .inf-figure .tr-s[data-side="fc"] .tr-d,.inf-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
 .inf-figure .tr-s[data-side="fc"] .tr-g,.inf-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.inf-figure .inf-beam{stroke:#d23a2e;stroke-width:.7;opacity:.75}
+.inf-figure .inf-lamp-on>.iso-fill,.inf-figure .inf-lamp-on>.iso-top,.inf-figure .inf-lamp-on>.iso-shade{fill:#e8331f}
+.inf-figure .inf-lamp-on>.iso-shade[data-shade="0"],.inf-figure .inf-lamp-on>.iso-shade[data-shade="1"]{fill:#c42a1a}
+.inf-figure .inf-glow{fill:#e8331f;opacity:.16;pointer-events:none}
+.inf-figure .inf-pool{fill:url(#inf-pool-g);stroke:none;pointer-events:none}
+.inf-figure .inf-flare{fill:#fffdf2;stroke:#c7a33e;stroke-width:.35}
+.inf-figure .inf-flare-glow{fill:url(#inf-glow-g);pointer-events:none}
+.inf-figure .inf-flare-trail{fill:none;stroke:#b9b29c;stroke-width:.9;stroke-linecap:round}
 .inf-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
 .inf-controls .btn{cursor:pointer}
 .inf-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
@@ -83,7 +91,7 @@
 <main class="inf-main">
   <a class="inf-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
   <h1>Infiltration</h1>
-  <p class="lede">An infiltrating force tries to move through ground the enemy holds without being detected. Army doctrine treats element size as a trade-off: smaller elements are harder to detect and can get through smaller gaps, but cost time, linkup points and control, while larger ones are easier to detect but better able to react. This bench model shows the first half of that trade: in this model, split the force finer and more of the line’s gaps open to it.</p>
+  <p class="lede">An infiltrating force moves through or into ground the enemy holds without being detected, so that it can act from a position of advantage before the enemy knows it is there. The infiltration sets up a second action: Army doctrine notes that infiltrated forces alone can rarely defeat an enemy force, and once the elements have regrouped the unit goes on to its mission, such as an attack, raid or ambush. Here that action is an attack on an enemy position from its rear. Splitting the force into smaller elements is one way to stay unseen. In this model, a force that gets through unseen catches the enemy facing the wrong way and takes the position cheaply. A force seen on the way finds the enemy alerted and turned to meet it, and its attack stalls.</p>
 
   <div class="iso inf-figure" data-theme="light">
     <!--FIGURE-->
@@ -99,7 +107,7 @@
   </div>
 
   <section class="inf-text">
-    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model and readout drive both. Reset puts the figure back where it started.</p>
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model, the same run and the same readout drive both, from the crossing through the follow-on attack. Reset puts the figure back where it started.</p>
     <div class="ex-view ex-machine">
     <h2>How to read it: the machine</h2>
     <h3>What is on the bench</h3>
@@ -107,13 +115,17 @@
       <li><b>The screen</b> of bars across the shaker tray stands for a defended line. The spaces between the bars are its gaps: six of them, of different widths.</li>
       <li><b>The lit elements</b> are the infiltrating force.</li>
       <li><b>The motor</b> spins an eccentric weight that shakes the tray.</li>
+      <li><b>The beam</b> runs across the tray just in front of the screen, from an emitter on the far wall to a receiver on the near wall. It stands for the enemy’s chance of spotting the force. An element taller than the beam breaks it, and the lamp on the receiver lights: the force has been detected.</li>
       <li><b>The collecting tray</b> behind the screen is where the elements regroup, on a square mark the size of the original block.</li>
+      <li><b>The target</b> is a small turret on a turntable, standing on a carriage in a slot track beside the regroup mark. It stands for an enemy position behind the line, and its gun faces the screen, the front.</li>
       <li><b>The gauge</b> reads the share of the force that has regrouped.</li>
     </ol>
     <h3>How it moves</h3>
     <ol>
       <li><b>The split.</b> The knob on the control box, the slider, a click on the figure or the arrow keys set how many equal elements it splits into: 1, 4, 9 or 16.</li>
       <li><b>The shaking.</b> The elements work toward the screen. An element that fits a gap passes through it, one at a time per gap (a notional rule). An element that fits no gap is stopped at the screen.</li>
+      <li><b>The beam.</b> The whole block and the four-way split are taller than the beam and break it; the 9- and 16-way splits pass under it unseen. Once the lamp is lit, the turret turns on its turntable to face the collecting tray and drops a brake shoe onto its track.</li>
+      <li><b>The strike.</b> When every element has regrouped, the formation slides across the tray to line up behind the target and strikes it from behind. Unseen, it finds the gun still facing the screen and pushes the carriage the full length of its track. Seen, it meets a braced turret facing it, and the same strike pushes it less than a third as far. The readout reports whether surprise was kept and the strike’s yield.</li>
     </ol>
     </div>
     <div class="ex-view ex-field">
@@ -123,6 +135,7 @@
     <ol>
       <li><b>The outpost line.</b> The seven bars of the screen become an enemy outpost line, seven two-man fighting positions with their observed sectors marked on the ground, and the six gaps become the ground between them.</li>
       <li><b>The cover.</b> Through the gaps the elements use runs cover: hedgerows either side of each lane and a stream bed through the widest gap, so the small elements slip through along it.</li>
+      <li><b>The mortar section.</b> Behind the line, at the top right, an enemy mortar section sits in two pits open to the rear, its mortars laid on the front. Its crew faces the same way. This is the infiltrators’ objective, a fire support element of the kind FM 3-90 names among the targets of infiltrating raids (para. 2-83).</li>
       <li><b>The lit force</b> is the same 36 soldiers in every split: one group; four squads of nine, a squad being “two fire teams and a squad leader” (ATP 3-21.8, para. 1-9); nine fire teams of four, counting the four roles the manual lists, a team leader, an automatic rifleman, a grenadier and a rifleman (para. 1-11); or sixteen pairs and threes.</li>
     </ol>
     <h3>How it moves</h3>
@@ -130,19 +143,24 @@
       <li><b>The split.</b> The slider, a click on the figure or the arrow keys set how many elements the force splits into; Run again (or Enter) runs the same split again.</li>
       <li><b>The formations.</b> Squads move in squad column, which ATP 3-21.8 calls “the squad’s main formation for movement unless preparing for an assault” (para. 3-53), and teams in wedges, “the basic formation of the fire team” (para. 3-46). The manual describes teams and squads modifying the wedge toward a file when poor visibility or rough terrain makes control difficult (paras. 3-46, 3-53); here that is drawn near the line.</li>
       <li><b>The crossing.</b> Elements pass one at a time per gap and kneel at the objective rally point, the chalk outline on pegs behind the line. The single big group fits no gap and crosses open ground: it is spotted short of the line, fired on and goes to ground.</li>
-      <li><b>Losses</b> are notional: greyed figures lying still are men down on both sides, the big group’s where it went to ground and a split force’s carried to the rally point with a man kneeling by them, plus a sentry silenced at one outpost, and the readout counts them, friendly vs enemy, the big group paying most and squads more than teams or pairs.</li>
+      <li><b>Detection.</b> When the force is seen, an illumination flare goes up over the line and lights the ground, and the outposts’ sectors brighten. The big group is always seen. The four squads get through the one wide gap but are seen on the way: the sentries either side turn to follow them and fire a burst, and the mortar crew turns to face the rear. The fire teams and the pairs slip through unseen, and nothing changes on the enemy side.</li>
+      <li><b>The attack.</b> From the rally point a third of the force moves to a support-by-fire line on the mortar section’s flank, and the rest to an assault position behind it. The assault goes in by fire and movement: two groups rush in turn while the other lies down and fires. If surprise held, the crew is caught facing the front and the attackers take the position. If it was lost, the crew has turned and fires back, and the attack stalls short of the pits.</li>
+      <li><b>Losses</b> are notional: greyed figures lying still are men down on both sides, and the readout counts them, friendly vs enemy. The big group, stopped at the line, loses 5 to 2. The squads lose a man in the gap and 3 more in a stalled attack, 4 to 2. The unseen teams or pairs lose 1 in the attack against all 6 of the crew. The readout also reports whether surprise held.</li>
     </ol>
     <p>In doctrine a single infiltration lane “requires the existence or creation of only one gap” and “facilitates navigation, control, and reassembly,” while multiple lanes “require the existence or creation of more gaps,” “reduce the possibility of compromising the entire force” and “increase difficulty with maintaining control” (FM 3-90, paras. 2-93, 2-94); the four-squad split here uses one gap, the finer splits three and five. The drawing leaves out the security force that infiltrating units generally organize besides the main body (para. 2-85).</p>
-    <p class="fine">Soldiers are drawn larger than scale so they read; the force’s size, the gaps, the cover, the sectors’ ranges and all timings are notional.</p>
+    <p class="fine">Soldiers are drawn larger than scale so they read; the force’s size, the gaps, the cover, the sectors’ ranges, the mortar section and its place, the attack’s layout, the flare and all timings are notional.</p>
     </div>
 
     <h2>What doctrine says</h2>
     <p>U.S. Army <i>FM 3-90, Tactics</i> (May 2023) lists infiltration as one of five forms of maneuver, with frontal attack, penetration, envelopment and turning movement (para. 2-24, Table 2-1). It defines infiltration as a form of maneuver in which an attacking force “conducts undetected movement through or into an area occupied by enemy forces,” and adds that success “requires the infiltrating force to avoid detection and engagement by enemy forces” (para. 2-82).</p>
-    <p>On size, the manual says smaller infiltrating elements “are not as easy to detect as larger elements and can get through smaller defensive gaps.” It also names the costs: larger elements, “if compromised are better equipped to react,” while many smaller elements need more time and more linkup points and are harder to control (para. 2-86). Once through, the elements move to an assembly area or objective rally point “to consolidate and reorganize their combat power” (para. 2-103).</p>
+    <p>Surprise is the point of the movement. The manual says: “Normally, to be successful, an infiltrating force must avoid detection until it reaches its objective rally point” (para. 2-85). Planning an infiltration “takes advantage of that unit’s ability to surprise enemy forces,” and avoiding the enemy force through careful planning, information collection, analysis and OPSEC “minimizes direct contact and maximizes surprise” (para. 2-90). Among the changes that may lead units to abort an infiltration, the manual lists “Detection of the infiltration by enemy forces” (para. 2-104).</p>
+    <p>Infiltration also sets up another action. Because avoiding detection limits the infiltrating force’s size and strength, “and infiltrated forces alone can rarely defeat an enemy force, units use infiltration in conjunction with and in support of other forms of offensive maneuver” (para. 2-82). Its purposes include to “attack enemy-held positions from an unexpected direction” and to conduct ambushes and raids that disrupt the enemy’s defensive structure “by attacking enemy reserves, fire support and air defense systems, communications nodes, and sustainment elements” (para. 2-83). The objectives “afford the infiltrating force positions of advantage over enemy forces (the objectives are not required to be to the rear of the enemy force)” (para. 2-91). The rear attack drawn here is one such case, not the only one.</p>
+    <p>On size, the manual says smaller infiltrating elements “are not as easy to detect as larger elements and can get through smaller defensive gaps.” Larger ones “are easier to detect, and their discovery is more apt to endanger the success of the mission” but “if compromised are better equipped to react,” while many smaller elements need more time and more linkup points and are harder to control (para. 2-86). Once through, the elements move to an assembly area or objective rally point “to consolidate and reorganize their combat power,” and the unit then “conducts those tasks needed to accomplish its mission, which could be an attack, raid, ambush, seizing key terrain, or information collection” (para. 2-103).</p>
 
     <h2>What is notional</h2>
-    <p>The layout is a teaching device, not data. So is the one-element-at-a-time rule at each gap. The gaps are 4.5, 5.6, 6, 7.6, 8 and 12 units wide, and an element fits a gap when its width plus 1 unit of clearance is no more than the gap. The whole force is a 22-unit block; split into 4, 9 or 16 it becomes elements 9.8, 6.1 or 4.3 units wide, which fit 1, 3 or 5 of the six gaps. The block fits none. The timings are set for the picture. The model shows only whether an element fits a gap. It does not show the costs the manual names: time, linkup points, control, or how much harder a large element is to spot.</p>
-    <p class="fine">Source: Headquarters, Department of the Army, <a href="https://web.archive.org/web/20231214002622/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">FM 3-90, Tactics</a>, 1 May 2023 (Internet Archive copy of the armypubs.army.mil PDF), paras. 2-24, 2-82, 2-85, 2-86, 2-93, 2-94, 2-96 and 2-103. Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a>, 11 January 2024 with Change 1 (<a href="https://web.archive.org/web/20250807233618id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">archived copy</a>), paras. 1-9, 1-11, 3-46 and 3-53. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+    <p>The layout is a teaching device, not data. So is the one-element-at-a-time rule at each gap. The gaps are 4.5, 5.6, 6, 7.6, 8 and 12 units wide, and an element fits a gap when its width plus 1 unit of clearance is no more than the gap. The whole force is a 22-unit block; split into 4, 9 or 16 it becomes elements 9.8, 6.1 or 4.3 units wide, which fit 1, 3 or 5 of the six gaps. The block fits none.</p>
+    <p>Detection is a rule of this model: the beam is 5.5 units high and the elements are 12, 7.1, 4.4 and 3.5 units tall, so the block and the four-way split are always detected and the finer splits never are. Doctrine says only that larger elements are easier to detect, not that any size is always seen or never seen. The attack’s outcome is a fixed function of whether the force got through and whether it was detected: stopped at the line (5 vs 2 down, no attack), through but seen (4 vs 2 down, the attack stalls, strike yield 30%), or through unseen (1 vs 6 down, the position is taken, strike yield 100%). These losses, the yields, the mortar section, the support and assault split, the flare, all timings and the battlefield’s slower clock are notional. The model leaves out the costs of splitting finer that the manual names: time, linkup points and control.</p>
+    <p class="fine">Source: Headquarters, Department of the Army, <a href="https://web.archive.org/web/20231214002622/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">FM 3-90, Tactics</a>, 1 May 2023 (Internet Archive copy of the armypubs.army.mil PDF), paras. 2-24, 2-82, 2-83, 2-85, 2-86, 2-90, 2-91, 2-93, 2-94, 2-96, 2-103 and 2-104. Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a>, 11 January 2024 with Change 1 (<a href="https://web.archive.org/web/20250807233618id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">archived copy</a>), paras. 1-9, 1-11, 3-46 and 3-53. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
   </section>
 </main>
 <footer class="footer">

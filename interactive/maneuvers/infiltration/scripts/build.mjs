@@ -4,7 +4,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import * as k from "../../kit/iso-kit.mjs";
-import { MODEL, plan, screenLayout, positionAt, floorAt, readoutText, fits, elementWidth, losses } from "./model.mjs";
+import { MODEL, plan, screenLayout, positionAt, floorAt, readoutText, fits, elementWidth, follow } from "./model.mjs";
 import { GEO, trayParts, scene, cable, needle, pointer, KNOB_ANGLES, KNOB_FACE } from "./scene.mjs";
 import { FIELD_CSS, fdStatic } from "../../kit/field.mjs";
 import { TERRAIN_CSS, trSoldier, trFaceStep } from "../../kit/terrain.mjs";
@@ -135,7 +135,7 @@ const svg = k.figureSvg({
   label: "A bench model of an infiltration. A shaker tray rides on rubber mounts, driven by a motor with a turning eccentric weight. Across the middle of the tray stands a screen of bars with six gaps of different widths, standing for a defended line. A knob sets how many elements the force is split into. A single large block is stopped at the screen; split into smaller pellets, the elements fit through the wider gaps one at a time and regroup in a collecting tray behind the screen, on a square mark the size of the original block. A dial gauge reads the share of the force regrouped.",
   body: [
     plate(), mounts(),
-    `<g data-part="live">${live({ p: P0, pos: P0.els.map((e) => positionAt(e, 0)), fade: 1, dx: 0, phi: 0 })}</g>`,
+    `<g data-part="live">${live({ p: P0, pos: P0.els.map((e) => positionAt(e, 0)), fade: 1, dx: 0, phi: 0, cut: null, lit: false, push: 0, turn: 0 })}</g>`,
     `<g data-part="cable">${cable(k, P, CABLE.from, CABLE.to, 0)}</g>`,
     controlBox(),
     `<path data-part="pointer" class="iso-line" data-tone="hi" d="${pointer(k, P, KNOB, START.i)}" style="stroke-width:1"/>`,
@@ -154,7 +154,7 @@ const FRAME = [[-108, -88], [104, -88], [104, 88], [-108, 88]].map((q) => [...fs
 const PF = k.fitProjection(FRAME, FW, FH, { pad: 0, azimuth: 55, elevation: 42 });
 const T = fieldTerrain();
 const FIELD = fieldStatic(k, PF, T, MODEL, LAY, plan);
-const POSE0 = fieldPose(P0, 0, MODEL, LAY, T, positionAt);
+const POSE0 = fieldPose(P0, 0, MODEL, LAY, T, positionAt, follow(P0));
 const menItems = POSE0.men.map((m) => {
   const [sx, sy] = k.iso([m.x, m.y, m.z], PF);
   return { key: k.depthOf([m.x, m.y, 0], PF), dyn: true, svg: `<g class="tr-s" data-side="${m.side}"${m.lit ? ' data-lit=""' : ""} transform="translate(${sx.toFixed(2)} ${sy.toFixed(2)})">${trSoldier(k, PF, { ...m, face: trFaceStep(m.face) })}</g>` };
@@ -163,11 +163,11 @@ const fieldSvg = k.figureSvg({
   width: FW,
   height: FH,
   className: "inf-field",
-  label: "The same idea on a battlefield at night. Across the middle runs a red enemy outpost line: seven two-man fighting positions, each with its observed sector marked on the ground, and gaps of different widths between them. On the left, at the edge of a wood, waits the lit blue infiltrating force of 36 soldiers. As one group it is spotted short of the line, fired on and stopped. Split into four squads, nine fire teams or sixteen pairs and threes, the elements file through the gaps they fit, one at a time, and regroup at an objective rally point marked in chalk behind the line. Sizes, ranges and timings are notional.",
-  body: [`<g data-part="ground">${FIELD.ground}</g><g data-part="marks">${fieldMarks(k, PF, T, MODEL, LAY, POSE0)}</g><g data-part="field-live">${fdStatic([...FIELD.items, ...menItems])}</g><g data-part="fire" class="tr-fire"></g>`],
+  label: "The same idea on a battlefield at night. Across the middle runs a red enemy outpost line: seven two-man fighting positions, each with its observed sector marked on the ground, and gaps of different widths between them. Behind the line an enemy mortar section sits in two pits, its mortars laid on the front. On the left, at the edge of a wood, waits the lit blue infiltrating force of 36 soldiers. As one group it is spotted short of the line: a flare goes up, it is fired on and stopped. Split into four squads it gets through the one wide gap but is seen on the way, so a flare goes up, the sentries turn and the mortar crew turns to face the rear; the attack from the rally point then stalls. Split into nine fire teams or sixteen pairs and threes, the elements slip through unseen, regroup at the objective rally point marked in chalk behind the line, and attack the mortar section from its rear with fire and movement, catching the crew facing the wrong way. Sizes, ranges, timings and losses are notional.",
+  body: [`<defs><radialGradient id="inf-pool-g"><stop offset="0" stop-color="#fbf6dc" stop-opacity="1"/><stop offset="0.55" stop-color="#f3edcc" stop-opacity="0.55"/><stop offset="1" stop-color="#f3edcc" stop-opacity="0"/></radialGradient><radialGradient id="inf-glow-g"><stop offset="0" stop-color="#fffbe8" stop-opacity="1"/><stop offset="0.35" stop-color="#fff1bd" stop-opacity="0.6"/><stop offset="1" stop-color="#fff1bd" stop-opacity="0"/></radialGradient></defs><g data-part="ground">${FIELD.ground}</g><g data-part="pool"><path class="inf-pool" visibility="hidden" d=""/></g><g data-part="marks">${fieldMarks(k, PF, T, MODEL, LAY, POSE0)}</g><g data-part="field-live">${fdStatic([...FIELD.items, ...menItems])}</g><g data-part="fire" class="tr-fire"></g><g data-part="flare" visibility="hidden"><path class="inf-flare-trail" d=""/><circle class="inf-flare-glow" r="0"/><circle class="inf-flare" r="0"/></g>`],
 }).replace('class="iso-svg inf-field"', 'class="iso-svg inf-field" preserveAspectRatio="xMidYMid slice"');
 
-const CAPTION = "FM 3-90 (2023) defines infiltration as a form of maneuver in which an attacking force “conducts undetected movement through or into an area occupied by enemy forces,” and notes that smaller infiltrating elements “can get through smaller defensive gaps,” though larger ones are “better equipped to react.” The gap widths, sizes and timings here are a notional teaching layout, not data.";
+const CAPTION = "FM 3-90 (2023) defines infiltration as a form of maneuver in which an attacking force “conducts undetected movement through or into an area occupied by enemy forces,” and says units use it “in conjunction with and in support of other forms of offensive maneuver.” Smaller elements “can get through smaller defensive gaps,” though larger ones are “better equipped to react.” The beam, the follow-on strike, the gap widths, sizes and timings here are a notional teaching layout, not data.";
 
 const LABELS = {
   machine: "Infiltration sieve. Left and right arrow keys change how many elements the force is split into; Enter runs it again; V switches to the Battlefield view.",
@@ -177,23 +177,26 @@ const card = k.plateHtml({
   fig: "Fig 5",
   title: "Infiltration",
   hint: "Click to split finer",
-  readout: readoutText(P0, 0),
+  readout: readoutText(P0, 0, 0),
   keys: [
     { mark: "lit", label: "Elements of the infiltrating force" },
     { mark: "raised", label: "Screen of bars: the defended line and its gaps" },
+    { mark: "edge", label: "Beam and lamp: lit once the force is detected" },
     { mark: "flat", label: "Collecting tray: where elements regroup" },
+    { mark: "raised", label: "Turret on its carriage: the enemy position the force strikes from behind" },
     { mark: "edge", label: "Gauge: share of the force regrouped" },
   ],
   caption: CAPTION,
   body: `<div class="iso-stage inf-stage" tabindex="0" role="slider" aria-label="${LABELS.machine}" aria-valuemin="1" aria-valuemax="16" aria-valuenow="${START.n}">${svg}${fieldSvg}</div>`,
 });
 // The legend and caption for each view; CSS shows the one that matches the card's data-view.
-const FIELD_CAPTION = CAPTION.replace("The gap widths, sizes and timings here are a notional teaching layout, not data.", "Unit sizes, gap widths, ranges and timings here are a notional teaching layout, not data.");
+const FIELD_CAPTION = CAPTION.replace("The beam, the follow-on strike, the gap widths, sizes and timings here are a notional teaching layout, not data.", "Unit sizes, gap widths, ranges, the rear attack, its losses and all timings here are a notional teaching layout, not data.");
 const legendOf = (html) => html.slice(html.indexOf('<figcaption class="iso-legend">') + 31, html.indexOf("</figcaption>"));
 const fieldLegend = legendOf(k.plateHtml({
   fig: "", keys: [
     { mark: "lit", label: "Infiltrating force: 36 soldiers, split into elements (lit)" },
     { mark: "red", label: "Enemy outposts: two-man positions and their sectors" },
+    { mark: "red", label: "Enemy mortar section behind the line: the objective of the attack" },
     { mark: "blue", label: "Chalk on pegs: the objective rally point" },
   ], caption: FIELD_CAPTION, body: "",
 }));
@@ -210,7 +213,7 @@ ${strip("../../kit/terrain.mjs")}
 ${strip("field-scene.mjs")}
 const { P, PF, DIAL, KNOB, CABLE, START, LABELS } = DATA;
 const GEO = DATA.GEO;
-const K = { depthOf, iso, solidSvg, lineSvg, dotsSvg, wireSvg, extrude, slabOf, cylinder, planOutline, insetPlan, corners, translateAlong, lineOnTop, knurl, sideArc, sideSeam, haloOf };
+const K = { depthOf, iso, solidSvg, lineSvg, dotsSvg, wireSvg, extrude, slabOf, cylinder, planOutline, insetPlan, corners, translateAlong, lineOnTop, knurl, sideArc, sideSeam, haloOf, pathOf, cameraOf, ring };
 const KF = { ...K, cameraOf, towardViewer, pathOf, onTop, fadeLineSvg };
 const root = document.querySelector(".inf-figure");
 const stage = root.querySelector(".inf-stage");
@@ -228,6 +231,10 @@ const fieldSvgEl = stage.querySelector(".inf-field");
 const fieldLayer = fieldSvgEl.querySelector('[data-part="field-live"]');
 const marksEl = fieldSvgEl.querySelector('[data-part="marks"]');
 const fireEl = fieldSvgEl.querySelector('[data-part="fire"]');
+const flareEl = fieldSvgEl.querySelector('[data-part="flare"]');
+const poolEl = fieldSvgEl.querySelector(".inf-pool");
+const [trailEl, glowEl, headEl] = ["inf-flare-trail", "inf-flare-glow", "inf-flare"].map((c) => flareEl.querySelector("." + c));
+const KPF = cameraOf(PF).k;
 const hintEl = root.querySelector('[data-corner="hint"]');
 const viewBtns = root.querySelectorAll(".fd-views [data-view]");
 const VIEW_KEY = "maneuvers.view.v2";
@@ -242,6 +249,7 @@ const PARTS = trayParts(K, P, MODEL, LAY);
 const SPLITS = MODEL.splits;
 // One run: fade the old elements out, load the new split, shake them through, hold.
 const R = { i: START.i, want: START.i, p: plan(SPLITS[START.i]), t: 0, fade: 1, out: null, phi: 0, amp: 0, f: 0 };
+R.fo = follow(R.p, MODEL);
 const TOUR = [0, 1, 3];
 let tourAt = 0, touring = !still.matches, last = 0, frame = 0, visible = false, idle = 0, hold = 0;
 function load(i) {
@@ -250,8 +258,8 @@ function load(i) {
   R.out = R.fade;
 }
 function begin(i) {
-  R.i = i; R.p = plan(SPLITS[i]); R.t = 0; R.out = null; R.fade = still.matches ? 1 : 0; hold = 0;
-  if (still.matches) R.t = R.p.duration;
+  R.i = i; R.p = plan(SPLITS[i]); R.fo = follow(R.p, MODEL); R.t = 0; R.out = null; R.fade = still.matches ? 1 : 0; hold = 0;
+  if (still.matches) R.t = R.fo.end;
   slider.value = String(i);
   sliderOut.textContent = SPLITS[i] === 1 ? "1 (whole force)" : SPLITS[i] + " elements";
   pointerEl.setAttribute("d", pointer(K, P, KNOB, i));
@@ -260,7 +268,7 @@ function begin(i) {
 // fire layer writes attributes only; the sectors redraw only when the spotting changes.
 function drawField() {
   if (!stageF) { stageF = trStage(fieldLayer); fire = trFire(fireEl, KF, PF); }
-  const pose = fieldPose(R.p, R.t, MODEL, LAY, TF, positionAt);
+  const pose = fieldPose(R.p, R.t, MODEL, LAY, TF, positionAt, R.fo);
   stageF.put(pose.men.map((m) => {
     const shape = trLook(m), look = m.side + "|" + shape;   // side in the look: a man who goes down re-tints
     return { id: m.id, key: depthOf([m.x, m.y, 0], PF), at: iso([m.x, m.y, m.z], PF), look, side: m.side, lit: m.lit,
@@ -269,27 +277,48 @@ function drawField() {
   // fade only at the ends of the fade (in or out), not every frame: the whole field repaints on it
   const fs = R.fade < 0.5 ? "0" : "1";
   if (fs !== fadeSig) { fieldLayer.style.setProperty("--inf-fade", fs); fadeSig = fs; }
-  const sig = pose.spotted.toFixed(2);
+  const sig = pose.alert.toFixed(2);
   if (sig !== marksSig) { marksEl.innerHTML = fieldMarks(KF, PF, TF, MODEL, LAY, pose); marksSig = sig; }
   fire.draw(trShots(pose.streams, still.matches ? 4.37 : fieldT));
+  drawFlare(pose.flare);
+}
+// The flare: a bright head with a glow, the smoke trail of its climb, and the pool of light it
+// throws on the ground beneath it. Attributes only.
+let flareOn = false;
+function drawFlare(F) {
+  const on = !!F && F.b > 0.01 && R.fade >= 0.5;
+  if (on !== flareOn) { flareEl.setAttribute("visibility", on ? "visible" : "hidden"); poolEl.setAttribute("visibility", on ? "visible" : "hidden"); flareOn = on; }
+  if (!on) return;
+  const [hx, hy] = iso(F.head, PF);
+  headEl.setAttribute("cx", hx.toFixed(1)); headEl.setAttribute("cy", hy.toFixed(1)); headEl.setAttribute("r", (0.9 * KPF).toFixed(2));
+  glowEl.setAttribute("cx", hx.toFixed(1)); glowEl.setAttribute("cy", hy.toFixed(1)); glowEl.setAttribute("r", (9 * KPF).toFixed(2)); glowEl.setAttribute("opacity", (0.9 * F.b).toFixed(2));
+  trailEl.setAttribute("d", pathOf(F.trail.map((q) => iso(q, PF)))); trailEl.setAttribute("opacity", F.trailA.toFixed(2));
+  const ring = [];
+  for (let i = 0; i < 28; i++) { const a = (i / 28) * Math.PI * 2; ring.push([F.ground[0] + 38 * Math.cos(a), F.ground[1] + 38 * Math.sin(a)]); }
+  poolEl.setAttribute("d", onTop(ring, F.ground[2] + 0.1, PF, true)); poolEl.setAttribute("opacity", (0.6 * F.b).toFixed(2));
+}
+// Where every element is at model time t: its run, then (machine) the formation's strike offset.
+function machineState() {
+  const st = strikeAt(R.p, R.fo, R.t, MODEL);
+  const pos = R.p.els.map((e) => { const [x, y] = positionAt(e, R.t, MODEL); return R.t >= (R.fo.reorg0 ?? Infinity) ? [x + st.dx, y + st.dy] : [x, y]; });
+  // the beam is cut where a tall element stands across it (it stops on that element's far face)
+  let cut = null;
+  if (R.p.h > MODEL.beamH) pos.forEach(([x, y]) => { if (Math.abs(x - MODEL.beamX) <= R.p.w / 2) cut = Math.min(cut ?? Infinity, y - R.p.w / 2); });
+  const lit = R.fo.detected && R.t >= R.fo.at;
+  return { pos, cut, lit, push: st.push, turn: st.turn };
 }
 function draw() {
-  const pos = R.p.els.map((e) => positionAt(e, R.t, MODEL));
-  const running = R.out === null && R.t < R.p.duration;
+  const running = R.out === null && R.t < R.fo.end;
   const dx = GEO.SHAKE * R.amp * Math.sin(R.phi * Math.PI / 180);
   if (view === "field") drawField();
   else {
-    layer.innerHTML = scene(K, P, MODEL, PARTS, { p: R.p, pos, fade: R.fade, dx, phi: R.phi }, floorAt);
+    const ms = machineState();
+    layer.innerHTML = scene(K, P, MODEL, PARTS, { p: R.p, pos: ms.pos, fade: R.fade, dx, phi: R.phi, cut: ms.cut, lit: ms.lit, push: ms.push, turn: ms.turn }, floorAt);
     cableEl.innerHTML = cable(K, P, CABLE.from, CABLE.to, dx);
     needleEl.setAttribute("d", needle(K, P, DIAL, R.f));
   }
   const count = regroupedAt(R.p, R.t);
-  // the battlefield adds the notional men down, friendly vs enemy, in shorter words to fit
-  let text = readoutText(R.p, count);
-  if (view === "field") {
-    const LS = losses(R.p, R.t, MODEL), down = " · " + LS.blue + " vs " + LS.red + " down";
-    text = (R.p.through ? R.p.n + " elements · " + count + "/" + R.p.n + " rallied" : "1 element · stopped at line") + down;
-  }
+  const text = view === "field" ? fieldText(R.p, count, R.t, R.fo) : readoutText(R.p, count, R.t, R.fo);
   if (readout.textContent !== text) readout.textContent = text;
   stage.setAttribute("aria-valuenow", String(R.p.n));
   stage.setAttribute("aria-valuetext", text);
@@ -304,23 +333,25 @@ function tick(now) {
     if (R.fade <= 0) begin(R.next);
   } else {
     if (R.fade < 1) R.fade = Math.min(1, R.fade + dt / 0.25);
-    else if (R.t < R.p.duration) R.t = Math.min(R.p.duration, R.t + dt * (view === "field" ? FG.SLOW : 1));
+    else if (R.t < R.fo.end) R.t = Math.min(R.fo.end, R.t + dt * (view === "field" ? FG.SLOW : 1));
     else hold += dt;
   }
   fieldT += dt;
-  const working = R.out === null && R.fade >= 1 && R.t < R.p.duration;
+  // the shaker runs while the elements cross and while the formation lines up and strikes
+  const working = R.out === null && R.fade >= 1 && R.t < R.fo.end;
   R.amp = calm ? 0 : R.amp + ((working ? 1 : 0) - R.amp) * (1 - Math.exp(-dt / 0.25));
   if (R.amp > 0.002) R.phi = (R.phi + 360 * 2.2 * dt) % 360;
   const share = regroupedAt(R.p, R.t) / R.p.n;
   R.f = calm ? share : R.f + (share - R.f) * (1 - Math.exp(-dt / 0.3));
   draw();
-  if (touring && R.out === null && R.t >= R.p.duration && hold > 1.2) {
+  if (touring && R.out === null && R.t >= R.fo.end && hold > 1.2) {
     tourAt = (tourAt + 1) % TOUR.length;
     load(TOUR[tourAt]);
   }
-  const settled = !touring && R.out === null && R.fade >= 1 && R.t >= R.p.duration && R.amp < 0.002 && Math.abs(R.f - share) < 0.001;
-  // the battlefield keeps running while the big group is under fire; otherwise both views stop once settled
-  const firing = view === "field" && !calm && R.p.through === 0;
+  const settled = !touring && R.out === null && R.fade >= 1 && R.t >= R.fo.end && R.amp < 0.002 && Math.abs(R.f - share) < 0.001;
+  // the battlefield keeps running while fire is exchanged (the big group pinned at the line, or a
+  // stalled attack); otherwise both views stop once settled
+  const firing = view === "field" && !calm && R.fo.kind !== "held";
   frame = visible && (!settled || firing) ? requestAnimationFrame(tick) : 0;
 }
 const run = () => { if (!frame && visible) { last = 0; frame = requestAnimationFrame(tick); } };
@@ -359,6 +390,7 @@ function reset() {
   clearTimeout(idle);
   delete R.next;
   Object.assign(R, { i: START.i, want: START.i, p: plan(SPLITS[START.i]), t: 0, fade: 1, out: null, phi: 0, amp: 0, f: 0 });
+  R.fo = follow(R.p, MODEL);
   begin(START.i);
   R.fade = 1;
   tourAt = 0; touring = !still.matches; fieldT = 0;

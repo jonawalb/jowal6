@@ -10,6 +10,15 @@
 // Doctrine (FM 3-90, 2023, para 2-86) says smaller infiltrating elements "can get
 // through smaller defensive gaps". The gap widths, sizes and timings below are a
 // notional teaching layout, not data, and the page says so.
+//
+// The back end (follow-on action). Infiltration is undetected movement (para 2-82); once the
+// elements have regrouped, the unit "conducts those tasks needed to accomplish its mission, which
+// could be an attack, raid, ambush ..." (para 2-103). Here that task is an attack on an enemy
+// position from its rear. A light beam across the tray in front of the screen stands for the
+// enemy's chance of detecting the force: an element taller than the beam breaks it (in this model,
+// the whole block and the four-way split do; doctrine says only that larger elements are easier to
+// detect). Whether the beam was broken (surprise lost) or not (surprise held) sets the attack's
+// outcome, a pure function of the split and the detection: outcome() and follow().
 
 export const MODEL = {
   force: 22,                          // side of the whole force as one block, world units
@@ -31,6 +40,18 @@ export const MODEL = {
   approach: 1.0,                      // seconds from the load position to the gap
   pass: 0.45,                         // seconds to pass through the gap
   regroup: 0.9,                       // seconds from the gap to the regroup position
+  beamX: -7,                          // the detection beam across the tray, in front of the screen
+  beamH: 5.5,                         // its height above the shaker floor: a taller element breaks it
+  // the follow-on attack (notional): seconds to reorganize at the rally point, to move to the
+  // assault place behind the target, and for the assault itself
+  reorg: 0.5,
+  move: 0.8,
+  assault: 1.6,
+  shiftY: -14.6,                      // the regrouped formation's move across the collecting tray
+  target: { x: 50, y: -22.4, half: 4, side: 2.6, block: 2.2, tall: 8, gun: 5, gunZ: 7.6, travel: 4.5 },  // the target (machine)
+  alertDelay: 0.25,                   // seconds from the beam breaking to the target turning
+  turn: 0.6,                          // seconds the target takes to turn
+  flare: 5,                           // seconds an illumination flare burns (battlefield)
 };
 
 // Width of one element when the force is split into n.
@@ -136,27 +157,119 @@ export function floorAt(x, m = MODEL) {
 // How many elements have regrouped t seconds into the run.
 export const regroupedAt = (p, t) => (p.through ? p.els.filter((e) => t >= e.end).length : 0);
 
-// The card's readout. Kept under 45 characters.
-export function readoutText(p, count) {
-  const name = p.n === 1 ? "1 element" : `${p.n} elements`;
-  const g = p.open.length;
-  if (!g) return `${name} · 0 gaps fit · stopped at line`;
-  return `${name} · ${g} gap${g === 1 ? "" : "s"} fit · ${count}/${p.n} regrouped`;
+// ---- Detection: the beam (machine) or the enemy's sentries (battlefield) ----
+
+// The x of an element's leading face t seconds into its run.
+const frontAt = (e, t, w, m) => positionAt(e, t, m)[0] + w / 2;
+
+// When the force is first detected, or null. Only an element taller than the beam can break it;
+// it does so when its leading face reaches the beam. Found by bisection on the element's (monotone)
+// approach, so the result is exact to a microsecond and the same in Node and the page.
+export function detection(p, m = MODEL) {
+  if (p.h <= m.beamH) return { detected: false, at: null, el: -1 };
+  let best = null, el = -1;
+  p.els.forEach((e, i) => {
+    const t0 = e.blocked ? 0 : e.start, t1 = e.blocked ? m.approach : e.start + m.approach + m.pass;
+    if (frontAt(e, t1, p.w, m) < m.beamX) return;
+    let a = t0, b = t1;
+    for (let k = 0; k < 40; k++) { const c = (a + b) / 2; if (frontAt(e, c, p.w, m) >= m.beamX) b = c; else a = c; }
+    if (best === null || b < best) { best = b; el = i; }
+  });
+  return best === null ? { detected: false, at: null, el: -1 } : { detected: true, at: best, el };
 }
 
-// Battlefield view only: notional losses, men down, t seconds into the run of a split. Losses grow
-// as the run goes on, so the start shows none. The whole force as one group (it fits no gap) is
-// spotted and fired on short of the line: it loses up to 5 men and its return fire up to 2 of the
-// enemy, both rising over the last 30% of its approach. A split force loses men in step with the share
-// of elements that have regrouped, more for wider elements (one man per 4.5 units of element width,
-// rounded: 2 for squads, 1 for teams or pairs), because a wider element is likelier to be seen in a
-// gap; the enemy loses one sentry, silenced once half the elements are through. Teaching values.
-export const LOSS = { spotAt: 0.7, group: 5, groupRed: 2, perWidth: 4.5 };
-export function losses(p, t, m = MODEL, l = LOSS) {
+// ---- The follow-on attack ----
+
+// Outcome of the follow-on attack, from the split's result and whether surprise held. Notional
+// teaching values: men down on each side over the whole run (crossing plus attack), and the
+// strike's yield on the machine (the share of its full travel the target is pushed).
+//   stopped: the force never got through (the whole force as one group); no attack.
+//   lost:    it got through but was detected on the way; the enemy is alerted and turns to face,
+//            so the attack costs more and stalls.
+//   held:    it got through undetected; the enemy is caught facing the wrong way.
+export const OUTCOME = {
+  stopped: { result: "stopped at line", blue: 5, red: 2, yield: 0, crossBlue: 5, crossRed: 2 },
+  lost: { result: "attack stalled", blue: 4, red: 2, yield: 0.3, crossBlue: 1, crossRed: 0 },
+  held: { result: "position taken", blue: 1, red: 6, yield: 1, crossBlue: 0, crossRed: 0 },
+};
+export const outcome = (through, detected) => (!through ? OUTCOME.stopped : detected ? OUTCOME.lost : OUTCOME.held);
+
+// The whole run's schedule and result for a plan: detection, outcome, and the attack's phases.
+//   reorg0  all regrouped; reorganize at the rally point
+//   move0   move to the assault place behind the target
+//   strike0 the assault (fire and movement on the battlefield, the strike on the machine)
+//   end     the run is over (for a force stopped at the line, when the flare burns out)
+export function follow(p, m = MODEL) {
+  const det = detection(p, m);
+  const out = outcome(p.through > 0, det.detected);
+  if (!p.through) return { ...det, out, kind: "stopped", reorg0: null, move0: null, strike0: null, end: Math.max(p.duration, det.at + m.flare) };
+  const reorg0 = p.duration, move0 = reorg0 + m.reorg, strike0 = move0 + m.move;
+  let end = strike0 + m.assault;
+  if (det.detected) end = Math.max(end, det.at + m.flare);
+  return { ...det, out, kind: det.detected ? "lost" : "held", reorg0, move0, strike0, end };
+}
+
+// Machine: the regrouped formation's offset [dx, dy] and the target's pose { push, turn } at t.
+// The formation slides across the collecting tray to line up behind the target, then strikes it
+// from behind; the target rides a carriage that the strike pushes yield x travel toward the
+// screen. If the beam was broken the target turns on its turntable to face the strike (turn 0..1)
+// and drops its brake shoe onto the track, so the same strike pushes it less. Its gun sits above
+// the tallest element, so the formation always meets the carriage's end.
+export function strikeAt(p, f, t, m = MODEL) {
+  const T = m.target;
+  const turn = f.detected ? smooth((t - f.at - m.alertDelay) / m.turn) : 0;
+  if (!p.through) return { dx: 0, dy: 0, push: 0, turn, hit: 0 };
+  const front = Math.min(...p.els.map((e) => e.slot[0])) - p.w / 2;
+  const face = T.x + T.half;
+  const gap = front - face;
+  const dy = m.shiftY * smooth((t - f.move0) / m.move);
+  const s = smooth((t - f.strike0) / (m.assault * 0.4));
+  const push = f.out.yield * T.travel;
+  const dx = -(gap + push) * s;
+  return { dx, dy, push: Math.max(0, -dx - gap), turn, hit: s };
+}
+
+// The card's readout on the machine. Kept under 45 characters.
+export function readoutText(p, count, t = 0, f = follow(p)) {
+  const seen = f.detected && t >= f.at;
+  if (!p.through) return seen ? "1 element · lamp lit · surprise lost" : "1 element · 0 gaps fit · lamp dark";
+  const surprise = f.detected ? "surprise lost" : "surprise kept";
+  if (t >= f.strike0 + m0.assault * 0.4) return `${surprise} · strike yield ${Math.round(f.out.yield * 100)}%`;
+  if (t >= f.reorg0) return `${surprise} · ${t >= f.strike0 ? "striking" : "lining up"}`;
+  return `${p.n} elements · ${count}/${p.n} regrouped · ${seen ? "lamp lit" : "lamp dark"}`;
+}
+const m0 = MODEL;
+
+// Battlefield: notional men down { blue, red } t seconds into the run. They grow over the run, so
+// the start shows none, and end at the outcome's totals.
+//   stopped: the single group is spotted short of the line and fired on: its losses and its return
+//            fire's rise from the moment it is seen until the end of its approach.
+//   lost:    one man is hit while his squad, seen, passes the gap; the rest fall in the assault.
+//   held:    nothing on the way (no one fires at what is not seen); all losses fall in the assault.
+// In the assault the enemy's losses come early when surprise held and the attackers' come early
+// when it was lost.
+export function losses(p, t, m = MODEL, f = follow(p, m)) {
+  const o = f.out;
   if (!p.through) {
-    const spot = Math.min(1, Math.max(0, (t / m.approach - l.spotAt) / (1 - l.spotAt)));
-    return { blue: Math.round(l.group * spot), red: Math.round(l.groupRed * spot) };
+    const s = f.at === null ? 0 : Math.min(1, Math.max(0, (t - f.at) / (m.approach - f.at)));
+    return { blue: Math.round(o.blue * s), red: Math.round(o.red * s) };
   }
-  const done = regroupedAt(p, t) / p.n;
-  return { blue: Math.round((done * p.w) / l.perWidth), red: Math.round(done) };
+  let blue = 0, red = 0;
+  if (f.detected) blue += t >= f.at + m.pass ? o.crossBlue : 0;
+  const a = Math.min(1, Math.max(0, (t - f.strike0) / m.assault));
+  const early = (x) => Math.min(1, x / 0.55), late = (x) => Math.min(1, Math.max(0, (x - 0.25) / 0.75));
+  blue += Math.round((o.blue - o.crossBlue) * (f.detected ? early(a) : late(a)));
+  red += Math.round((o.red - o.crossRed) * (f.detected ? late(a) : early(a)));
+  return { blue, red };
+}
+
+// The Battlefield readout. Kept under 46 characters.
+export function fieldText(p, count, t, f = follow(p)) {
+  const L = losses(p, t, MODEL, f), down = `${L.blue} vs ${L.red} down`;
+  const seen = f.detected && t >= f.at;
+  if (!p.through) return seen ? `surprise lost · stopped at line · ${down}` : `1 group · moving up · unseen · ${down}`;
+  if (t < f.reorg0) return `${count}/${p.n} rallied · ${seen ? "seen" : "unseen"} · ${down}`;
+  const surprise = f.detected ? "surprise lost" : "surprise held";
+  if (t >= f.end - 1e-9 || t >= f.strike0 + MODEL.assault) return `${surprise} · ${f.out.result} · ${down}`;
+  return `${surprise} · ${t >= f.strike0 ? "assaulting" : t >= f.move0 ? "closing in" : "reorganizing"} · ${down}`;
 }

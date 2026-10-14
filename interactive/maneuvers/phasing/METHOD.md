@@ -37,7 +37,7 @@ About 69 parts.
 - JP 5-0 (16 June 2017): summary of changes, "Removes the six-phase phasing model, but does not change the definition of phases or the use of phasing as a planning tool" (p. iii).
 - JP 3-0 (17 Jan 2017, Change 1 22 Oct 2018): keeps the six groups of activity as "notional phases" (para V-6.a, p. V-12, Fig. V-7); "Actual phases of an operation will vary (e.g., compressed, expanded, or omitted entirely)" (para V-6.b, p. V-13).
 - JP 5-0 (1 Dec 2020): "The phases are unique for each operation or campaign" (ch. IV, para 7.a.(2)(a), p. IV-37); "Commanders determine the number and purpose of phases" (same para, sub-para 6, p. IV-38). No six-phase model.
-- JP 3-0 (18 June 2022): not checked. jcs.mil's jp3_0.pdf has returned 404 in every Wayback capture since 2022, and the FAS and Marine Corps copies found are the 2018 edition. The page makes no claim about it. JP 3-0 (2011) was also not opened.
+- JP 3-0, Joint Campaigns and Operations (reissue reported as June 2022, unconfirmed): not opened. A 2026-10-10 Wayback capture of the Joint Staff page lists the title but gives no date or PDF (JEL+, CAC required); no 2022 PDF capture exists in the Wayback CDX. The page makes no claim about it. ADP 3-0 (21 Mar 2025) para 4-18 is cited for the phase definition.
 
 ## Checks run (2026-10-13)
 

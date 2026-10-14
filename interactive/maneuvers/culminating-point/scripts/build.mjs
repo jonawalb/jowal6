@@ -203,7 +203,7 @@ const fieldSvg = k.figureSvg({
   body: [`<g data-part="ground">${FIELD.ground}</g><g data-part="marks">${fieldMarks(k, PF, TT, POSE0)}</g><g data-part="field-live">${fdStatic([...FIELD.items, ...unitItems])}</g><g data-part="fire" class="tr-fire"></g>`],
 }).replace('class="iso-svg cp-field"', 'class="iso-svg cp-field" preserveAspectRatio="xMidYMid slice"');
 
-const CAPTION = "Army doctrine (ADP 3-0, 2019) calls operational reach “a tether” and says “the limit of a unit’s operational reach is its culminating point.” Here the tether is the spring to the supply sled. The power curve and the distances are a notional teaching shape, not data.";
+const CAPTION = "Army doctrine (ADP 3-0, 2025) calls operational reach “a tether” and says “the limit of a unit’s operational reach is its culminating point.” Here the tether is the spring to the supply sled. The power curve and the distances are a notional teaching shape, not data.";
 
 const LABELS = {
   machine: "Culmination bench. Left and right arrow keys order the carriage back or forward; B moves the supply base forward or back; V switches to the Battlefield view.",

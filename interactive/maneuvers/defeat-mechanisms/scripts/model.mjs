@@ -1,9 +1,9 @@
 // The defeat-mechanism model. Pure: no DOM, no kit. Inlined into the page by build.mjs,
 // so the figure, the readout and the tests all run this one file.
 //
-// Notional, not doctrine. Doctrine (ADP 3-0, 2019, para 2-11) says one mechanism used
+// Notional, not doctrine. Doctrine (ADP 3-0, 2025, para 4-38) says one mechanism used
 // alone "achieves results relative to how much effort is expended", and that combining
-// mechanisms "creates enemy dilemmas that magnify their effects significantly". The bench
+// mechanisms "creates multiple dilemmas for enemy forces that magnify their effects significantly". The bench
 // gives that a shape: each tool, fully applied, takes the same share off the target's
 // capability, and every tool beyond the first adds a dilemma factor. The numbers are a
 // teaching shape, stated as such on the page.

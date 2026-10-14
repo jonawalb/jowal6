@@ -1,28 +1,23 @@
 # Culminating Point: fact check
 
-VERIFIED 2026-10-13 by an independent fact-checker against the Wayback copy of the FAS PDF (ADP 3-0, 31 July 2019, p. 2-10). All six quotes are exact. Two paraphrases were tightened after the check ("distance and supply" became "operational reach, which depends on sustainment and endurance"; "one such extension" became "stands in for that"). The page now links the Wayback copy, because the FAS URL serves a bot challenge.
+VERIFIED: 2026-10-14, independent check (re-pinned to ADP 3-0 / FM 3-0 2025). Every row re-read against the official PDFs (ADP 3-0 paras 4-20, 4-21, 4-23 and pp. 35 to 36; FM 3-0 para 6-267, p. 168) and the 2019 ADP 3-0 (Wayback 20220309 capture, p. 2-9 to 2-10); the four 2019 quotes are gone from the page; the 2019 "crucial shift in relative combat power" statement is accurate; both Wayback links resolve and are byte-identical to the official PDFs. Note: the caption lowercases "The" in "the limit of a unit's operational reach" (harmless).
 
-Source opened this session (2026-10-13): Headquarters, Department of the Army, ADP 3-0, *Operations*, 31 July 2019, chapter 2, p. 2-10. Official copy: https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN18010-ADP_3-0-000-WEB-2.pdf (armypubs did not resolve from the build machine; the text was read from the FAS mirror of the same edition, https://irp.fas.org/doddir/army/adp3_0.pdf, PDF page 34, and checked against the page image).
+Sources opened 2026-10-14 (text extracted with pdftotext; paragraph numbers are in the text layer; printed page numbers read from the page footers):
+- ADP 3-0, *Operations*, 21 March 2025 (supersedes ADP 3-0 of 31 July 2019). Official: https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN43323-ADP_3-0-000-WEB-1.pdf ; archived copy: https://web.archive.org/web/20260812002342/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN43323-ADP_3-0-000-WEB-1.pdf
+- FM 3-0, *Operations*, 21 March 2025 (supersedes FM 3-0 of 1 October 2022). Official: https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN43326-FM_3-0-000-WEB-1.pdf ; archived copy: https://web.archive.org/web/20260810214801/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN43326-FM_3-0-000-WEB-1.pdf
 
-| Claim on the page | Source, edition | Para / page | URL |
-|---|---|---|---|
-| Culminating point: "a point at which a force no longer has the capability to continue its form of operations, offense or defense (JP 5-0)." | ADP 3-0, 31 July 2019 | Para 2-52, p. 2-10 | https://irp.fas.org/doddir/army/adp3_0.pdf |
-| Culmination "represents a crucial shift in relative combat power" | ADP 3-0, 2019 | Para 2-52, p. 2-10 | same |
-| In the offense it comes "when a force cannot continue the attack and must assume a defensive posture or execute an operational pause" | ADP 3-0, 2019 | Para 2-52, p. 2-10 | same |
-| "Operational reach is a tether; it is a function of intelligence, protection, sustainment, endurance, and combat power relative to enemy forces. The limit of a unit's operational reach is its culminating point." | ADP 3-0, 2019 | Para 2-54, p. 2-10 | same |
-| "commanders seek to extend the operational reach far enough to accomplish their objectives before culmination" (page lowercases the sentence's first word inside the quote) | ADP 3-0, 2019 | Para 2-54, p. 2-10 | same |
-| "the use of basing can sustain operational reach in time and space" (lowercased first word) | ADP 3-0, 2019 | Para 2-58, p. 2-10 | same |
-| The definition comes from JP 5-0, *Joint Planning* | ADP 3-0 cites "(JP 5-0)" in para 2-52 and the glossary | Para 2-52; Glossary | same. JP 5-0 itself (jcs.mil) returned 403 and was NOT opened. |
+| # | Claim on the page | Source, edition | Para / page | Exact text | Change from 2019 |
+|---|---|---|---|---|---|
+| 1 | Culmination "relates to the force's ability to generate and apply combat power" | ADP 3-0 (2025) | 4-20, p. 35 | "Culmination relates to the force's ability to generate and apply combat power." | New on the page |
+| 2 | "The culminating point is the point at which a force no longer has the capability to continue its form of operations, offense or defense (JP 5-0)." | ADP 3-0 (2025) | 4-20, p. 35 | same | Was 2-52, p. 2-10, "a point at which" |
+| 3 | "Typically, culmination is caused by direct combat actions or lack of support." | ADP 3-0 (2025) | 4-20, p. 35 | same | New on the page |
+| 4 | "Operational reach is a tether; it is a function of intelligence, protection, sustainment, endurance, and combat power relative to enemy forces. The limit of a unit's operational reach is its culminating point." | ADP 3-0 (2025) | 4-21, p. 36 (para begins p. 35) | same | Word for word; was 2-54, p. 2-10 |
+| 5 | "Commanders continually strive to extend operational reach"; commanders "anticipate culmination" and "plan operational pauses if necessary" | ADP 3-0 (2025) | 4-21, p. 36 | "Commanders continually strive to extend operational reach. They assess friendly and enemy force status and civil considerations, anticipate culmination, consolidate gains, and plan operational pauses if necessary." | Replaces 2019 "seek to extend the operational reach far enough to accomplish their objectives before culmination" (not in 2025 text) |
+| 6 | Basing "directly supports or determines" the force's "reach and endurance" | ADP 3-0 (2025) | 4-23, p. 36 | "Basing directly supports or determines the joint and multinational force's proximity to an operational area; the force's reach and endurance; ..." | Replaces 2019 "the use of basing can sustain operational reach in time and space" (not in 2025 text) |
+| 7 | When offensive operations culminate before the enemy is defeated, forces "rapidly transition to the defense" | FM 3-0 (2025) | 6-267, p. 168 | "When offensive operations culminate before enemy forces are defeated, friendly forces rapidly transition to the defense." | Replaces 2019 2-52 "defensive posture or ... operational pause" |
+| 8 | The 2019 edition called culmination "a crucial shift in relative combat power"; the 2025 edition does not use the phrase | ADP 3-0 (2019) / ADP 3-0 (2025) | 2019 para 2-52, p. 2-10 (verified 2026-10-13); 2025: phrase not found in a full-text search of ADP 3-0 or FM 3-0 | | Dropped the quote |
+| 9 | The definition comes from JP 5-0, *Joint Planning* | ADP 3-0 (2025) cites "(JP 5-0)" | 4-20, p. 35 | | JP 5-0 itself NOT opened (jcs.mil 403) |
 
-Not doctrinal claims: the power curve, distances, speeds and the 1.0 "defender's line" are notional and labeled so on the page and in METHOD.md.
+Dropped because the 2025 text does not support them: "represents a crucial shift in relative combat power"; "when a force cannot continue the attack and must assume a defensive posture or execute an operational pause"; "commanders seek to extend the operational reach far enough ... before culmination"; "the use of basing can sustain operational reach in time and space".
 
-## Battlefield view additions (2026-10-13) — UNVERIFIED: pending independent check
-
-| Claim on the page | Source | Para / page | Status |
-|---|---|---|---|
-| A halted attack's two outcomes: "assume a defensive posture or execute an operational pause" (Battlefield paragraph paraphrases: "one of the two outcomes the manual gives… the other is an operational pause") | ADP 3-0, 31 July 2019 | Para 2-52, p. 2-10 (same quote verified above) | UNVERIFIED: pending independent check (paraphrase only) |
-| Battalion drawn as three companies of three vehicles, one per platoon; "leaves out most of a real battalion's vehicles" | Drawing convention, no doctrinal claim | — | UNVERIFIED: pending independent check |
-| Casualty rates, counts (44, 54, 18, 43), 12/10 per knocked-out vehicle | Notional, from `model.mjs` `losses()`; labeled notional on the page | — | Not a factual claim; asserted in `model.test.mjs` |
-| Unit sizes, distances, ranges, timings, truck speeds, the enemy covering force and its fallback | Notional, labeled on the page | — | Not a factual claim |
-
-Battlefield rows: VERIFIED 2026-10-13 by an independent fact-checker (ADP 3-0 para 2-52 paraphrase within the source; the drawing convention is labeled the page's own). The hasty defense is now marked as the drawing's depiction of a 'defensive posture'.
+Not doctrinal claims: the power curve, distances, speeds and the 1.0 "defender's line" are notional and labeled so on the page and in METHOD.md. The hasty defense is the drawing's depiction of "transition to the defense", labeled the figure's own. Battalion drawn as three companies of three vehicles, casualty rates, counts (44, 54, 18, 43), unit sizes, ranges, timings, truck speeds and the enemy covering force are notional, labeled on the page, asserted in `model.test.mjs`.

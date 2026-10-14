@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Suppress, Neutralize, Destroy | Jonathan Walberg</title>
+<meta name="description" content="The three effects of indirect fire, as a working bench model and a platoon battlefield: suppression lasts only while the rounds keep landing; neutralization and destruction cost more rounds and last longer. Built from U.S. Army doctrine (FM 3-09, 2024).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Suppress, Neutralize, Destroy | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/fire-effects/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/fire-effects/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.fl-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.fl-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.fl-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.fl-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.fl-text p,.fl-text li{line-height:1.65}
+.fl-text .fine{font-size:.88rem;color:var(--text-muted)}
+.fl-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.fe-figure{background:transparent}
+.fe-figure .iso-figure{margin:0}
+.fe-figure .iso-plate{background:var(--anatomy-card)}
+.fe-stage{outline:none;cursor:pointer;touch-action:manipulation}
+.fe-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.fe-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.fe-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.fe-figure .iso-plate-corners{z-index:2}
+.fe-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.fe-figure[data-view="field"] .fe-svg{visibility:hidden}
+.fe-figure[data-view="field"] .fe-legend-machine{display:none}
+.fe-figure:not([data-view="field"]) .fe-field,.fe-figure:not([data-view="field"]) .fe-legend-field{display:none}
+.fe-legend{display:grid;gap:8px}
+/* mortar bursts: a short flash, a dust cloud and drifting smoke */
+.fe-bursts{pointer-events:none}
+
+
+
+/* casualties: greyed and still (side fc = friendly, hc = enemy), no colour beyond a faint tint */
+.fe-figure .tr-s[data-side="fc"] path,.fe-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.fe-figure .tr-s[data-side="fc"] .tr-t,.fe-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.fe-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.fe-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.fe-figure .tr-s[data-side="fc"] .tr-d,.fe-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.fe-figure .tr-s[data-side="fc"] .tr-g,.fe-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.fe-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.fe-controls .btn{cursor:pointer}
+.fe-levels{display:inline-flex;border:1px solid var(--border);border-radius:2px;overflow:hidden}
+.fe-levels button{font:inherit;font-size:14px;padding:6px 12px;border:0;background:transparent;color:var(--anatomy-text);cursor:pointer}
+.fe-levels button+button{border-left:1px solid var(--border)}
+.fe-levels button[aria-pressed="true"]{background:var(--text);color:var(--bg)}
+.fl-text h2{margin-top:28px}
+.fl-text ol{padding-left:1.2em}
+.fl-text li{margin:6px 0}
+.fe-table{width:100%;border-collapse:collapse;font-size:.92rem;margin:10px 0}
+.fe-table th,.fe-table td{border-bottom:1px solid var(--border);padding:6px 8px;text-align:left;vertical-align:top}
+.fe-table th{font-family:var(--font-mono);font-weight:500;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--green-700)}
+.fe-wrap{overflow-x:auto}
+@media (max-width:520px){.fe-figure .iso-plate-corner[data-corner="hint"]{display:none}.fe-stage{overflow:hidden}}
+</style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="fl-main">
+  <a class="fl-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Suppress, Neutralize, Destroy</h1>
+  <p class="lede">A call for fire is a standardized request for the fire needed on a target. Suppression keeps the enemy’s heads down only while the rounds keep coming; neutralization takes the target out of action for a short time; destruction takes it out for a long time or for good. In this model each step costs more rounds and more minutes. This figure shows the trade.</p>
+
+  <div class="iso fe-figure" data-theme="light" data-view="field">
+    <!--FIGURE-->
+    <div class="fe-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
+      </div>
+      <div class="fe-levels" role="group" aria-label="Effect wanted">
+        <button type="button" data-level="S" aria-pressed="true">Suppress</button>
+        <button type="button" data-level="N" aria-pressed="false">Neutralize</button>
+        <button type="button" data-level="D" aria-pressed="false">Destroy</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="fe-fire" aria-pressed="false">Fire for effect</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
+    </div>
+  </div>
+
+  <section class="fl-text">
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model, the same mission and the same readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
+    <ol>
+      <li><b>The target</b> is the lit block. It sits on a spring between four guide posts, so it pops back up whenever nothing holds it down.</li>
+      <li><b>The press</b> stands over it: two columns, a crown, a lead screw and a handwheel, and a ram with a pad that drives the block down. The handwheel turns while rounds are being fired.</li>
+      <li><b>The rack</b> beside the near column has three detent teeth, from the top: suppress, neutralize and destroy. The stop pin marks the detent chosen, and a pawl on the ram can lock into the rack.</li>
+      <li><b>The dials</b> count rounds fired (left) and minutes since the first round (right; the mission window is eight minutes).</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Pick the effect</b> with the three buttons or the keys 1, 2 and 3. That sets the stop pin.</li>
+      <li><b>Fire for effect</b> (the button, a click on the figure or F). The ram comes down onto the block at once and goes deeper as rounds add up, to the chosen detent. For neutralize and destroy the press stops there by itself: end of mission.</li>
+      <li><b>Suppress</b> works differently: once the ram reaches the first detent it keeps holding, and the round counter keeps climbing at a slower rate, for as long as you keep firing. Cease fire and the block springs straight back up.</li>
+      <li><b>Neutralize:</b> when the rounds stop, the pawl locks the ram for a short time, then lets go and the block comes back up. <b>Destroy:</b> the pawl stays locked and the block cracks; it does not come back.</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the scale is a platoon fight, blue is friendly and red is the enemy, and every round comes from the company’s mortar section, off the map to the rear.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The enemy</b> is a rifle platoon dug into two-man fighting positions on the rise, with a machine-gun nest at the center of its front and a belt of wire on the slope. The red fan on the ground is the machine gun’s sector; it fades as that fire dies away.</li>
+      <li><b>The lit friendly platoon</b> (two rifle squads, the platoon leader and his radio operator) waits at the edge of the wood on the left. Its job is to cross the open ground to the farm on the right, marked in chalk on pegs, and the crossing takes eight minutes. Each squad is “two fire teams and a squad leader” (ATP 3-21.8, para. 1-9), moving in squad column with its teams in wedges, the wedge being “the basic formation of the fire team” (para. 3-46).</li>
+      <li><b>The forward observer</b> and his radio operator kneel on the knoll to the right, where they can see the enemy position. Company fire support teams “enable effective artillery, mortar, and joint FS for the maneuver force” (FM 3-09, para. 2-40).</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Pick the effect</b> with the three buttons or the keys 1, 2 and 3, then <b>Fire for effect</b> (the button, a click on the field or F). Rounds burst on the enemy position and the platoon starts across.</li>
+      <li><b>While rounds land</b> the enemy keeps its heads down and fires little. The bursts drawn are a sample, not one per round.</li>
+      <li><b>Suppress</b> keeps the rounds coming, at a slower rate, until you cease fire or the platoon is across. Cease fire early and the enemy is straight back up, firing on the platoon in the open; the squads then bound, one firing from the ground while the other moves.</li>
+      <li><b>Neutralize</b> stops by itself once its rounds are fired; the enemy stays down for a short time, then comes back with fewer men. <b>Destroy</b> takes three times as many rounds again, and most of the platoon’s eight minutes, but the enemy does not come back.</li>
+      <li><b>Losses</b> are notional: greyed figures lying still are men down. The enemy’s lie behind their holes; the platoon’s are carried back to a collection point at the edge of the wood, where a medic kneels. The readout counts them, friendly vs enemy.</li>
+    </ol>
+    <p class="fine">Soldiers are drawn larger than scale (about one and a half times) so they read; sizes, ranges, rates of fire, timings, losses and the spacing of the positions are notional.</p>
+    </div>
+
+    <h2>What doctrine says</h2>
+    <p>U.S. Army <i>FM 3-09, Fire Support and Field Artillery Operations</i> (12 August 2024) defines the three effects “in the context of the computed effects of field artillery fires” (para. 3-66):</p>
+    <div class="fe-wrap"><table class="fe-table">
+      <thead><tr><th>Effect</th><th>FM 3-09, para. 3-66</th><th>Casualties or materiel damage</th><th>In this model (notional)</th></tr></thead>
+      <tbody>
+        <tr><td>Suppression</td><td>“renders a target ineffective for a short period of time”</td><td>“at least 3-percent”</td><td>6 rounds, 0.6 min, then 4 rounds a minute to keep it going</td></tr>
+        <tr><td>Neutralization</td><td>“renders a target ineffective for a short period of time”</td><td>“10-percent”</td><td>18 rounds, 1.8 min</td></tr>
+        <tr><td>Destruction</td><td>“renders a target out of action permanently, or ineffective for a long period of time”</td><td>“30-percent”</td><td>61 rounds, 6.1 min</td></tr>
+      </tbody>
+    </table></div>
+    <p>The same paragraph defines suppressive fire as “fires on or about a weapons system to degrade its performance below the level needed to fulfill its mission objectives during the conduct of the fires.” That last phrase is why the press must keep holding: suppression lasts while the fire lasts. For the mortars themselves, the manual describes them as “high-angle, relatively short-range, high rate-of-fire, area fire weapons,” organized as sections in infantry brigade combat team rifle companies (para. 2-88).</p>
+
+    <h2>What is notional</h2>
+    <p>Only the three percentages are doctrine. Everything else is a teaching value: the share of the enemy hit after n rounds fired for effect is 1 − e<sup>−n/170</sup>, which reaches 3% at 6 rounds, 10% at 18 and 30% at 61; the section fires 10 rounds a minute for effect and 4 a minute to sustain a suppression (sustaining rounds keep heads down but, in this model, add no casualties); a neutralized enemy stays down for 2 minutes; while rounds land, 15% of the enemy’s fire still comes back. The enemy platoon is 26 men and the crossing takes 8 minutes. The platoon’s men down are 0.6 per minute of the enemy’s full fire during the crossing, so in this model ceasing a suppression after 2 minutes costs about 4 men, holding it the whole way about 1 man for 35 rounds, neutralizing 2, and destroying 1 for 61 rounds.</p>
+    <p class="fine">Sources: Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN41659-FM_3-09-000-WEB-2.pdf">FM 3-09, Fire Support and Field Artillery Operations</a>, 12 August 2024, paras. 2-40, 2-88 and 3-66. Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a>, 11 January 2024, incorporating Change 1, June 2025 (<a href="https://web.archive.org/web/20250807233618id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">archived copy</a>), paras. 1-9 and 3-46. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

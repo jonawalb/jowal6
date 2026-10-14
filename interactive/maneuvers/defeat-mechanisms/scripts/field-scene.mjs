@@ -5,7 +5,7 @@
 //   target block   the enemy battalion: three mechanized companies dug in facing east (lit)
 //   link plate     its command post (two command vehicles and two antenna masts) behind the centre
 //   supply cart    its supply trucks shuttling along the road from the west
-// and each tool onto a friendly element that carries out one mechanism (ADP 3-0, 2019, 2-12 to 2-15):
+// and each tool onto a friendly element that carries out one mechanism (ADP 3-0, 2025, 4-39 to 4-42):
 //   press  (S.d)   destroy: an artillery battery and an attack-by-fire company knock out its vehicles
 //   lever  (S.l)   dislocate: an armored company works round the northern flank to its rear, so its
 //                  prepared positions face the wrong way; the vehicles try to turn out of them

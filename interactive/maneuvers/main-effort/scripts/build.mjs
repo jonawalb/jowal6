@@ -142,7 +142,7 @@ const fieldSvg = k.figureSvg({
   body: [`<g data-part="ground">${FIELD.ground}</g><g data-part="marks">${fieldMarks(k, PF, TF, POSE0)}</g><g data-part="field-live">${fdStatic([...FIELD.items, ...menItems])}</g><g data-part="fire" class="tr-fire"></g>`],
 }).replace('class="iso-svg me-field"', 'class="iso-svg me-field" preserveAspectRatio="xMidYMid slice"');
 
-const CAPTION = "U.S. Army doctrine defines the main effort as the unit whose mission “at a given point in time is most critical to overall mission success,” which “is usually weighted with the preponderance of combat power” (ADP 3-0, 2019). Economy of force is to “expend minimum-essential combat power on secondary efforts to allocate the maximum possible combat power on the main effort” (FM 3-0, 2022). The disc counts and break thresholds are notional.";
+const CAPTION = "U.S. Army doctrine defines the main effort as the unit whose mission “at a given point in time is most critical to overall mission success,” which “is usually weighted with additional combat power” (ADP 3-0, 2025). Economy of force is to “expend minimum-essential combat power on secondary efforts to allocate the maximum possible combat power on the main effort” (FM 3-0, 2025). The disc counts and break thresholds are notional.";
 
 const LABELS = {
   machine: "Weighting bench. Left and right arrow keys move the main effort; up and down arrow keys change the discs left on each supporting gate; V switches to the Battlefield view.",

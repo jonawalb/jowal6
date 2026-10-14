@@ -264,7 +264,7 @@ const LABELS = {
   field: "Battlefield. Keys 1, 2 and 3 stop or restart the sustaining supply trucks, the shaping guns and scouts, and the decisive attack; R restarts all three; V switches to the Machine view.",
 };
 
-const CAPTION = "U.S. Army ADP 3-0 (2019) sorts an operation by purpose into decisive, shaping and sustaining operations: the decisive operation “directly accomplishes the mission,” shaping operations create “conditions for success of the decisive operation,” and sustaining operations enable both “by generating and maintaining combat power.” FM 3-0 (2022) frames operations differently. The press rates and the 45° per stroke are notional.";
+const CAPTION = "The 2019 edition of U.S. Army ADP 3-0 sorted an operation by purpose into decisive, shaping and sustaining operations: the decisive operation “directly accomplishes the mission,” shaping operations create “conditions for success of the decisive operation,” and sustaining operations enable both “by generating and maintaining combat power.” The 2025 edition no longer defines those terms, so the three stages here are this figure’s own framing. The press rates and the 45° per stroke are notional.";
 
 const body = k.plateHtml({
   fig: "Fig 14",

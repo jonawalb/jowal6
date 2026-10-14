@@ -1,6 +1,6 @@
 # Shaping, Decisive and Sustaining: method
 
-An isometric bench model of the decisive, shaping and sustaining operations framework, drawn with the Anatomy kit (`../kit/iso-kit.mjs`, shared by all Maneuvers figures, MIT).
+An isometric bench model of the decisive, shaping and sustaining operations framework of ADP 3-0 (2019) (terms no longer defined in ADP 3-0, 21 March 2025; the page marks the three stages as the figure's own framing), drawn with the Anatomy kit (`../kit/iso-kit.mjs`, shared by all Maneuvers figures, MIT).
 
 ## Build
 

@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lifting and Shifting Fires | Jonathan Walberg</title>
+<meta name="description" content="When to lift or shift the fires that cover an assault, as a working bench model and a platoon battlefield: lift too soon and the enemy is back up; too late and the assault must stop short. Built from U.S. Army doctrine (FM 3-90, 2023; ATP 3-21.8, 2024).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Lifting and Shifting Fires | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/lift-shift-fires/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/lift-shift-fires/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.fl-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.fl-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.fl-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.fl-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.fl-text p,.fl-text li{line-height:1.65}
+.fl-text .fine{font-size:.88rem;color:var(--text-muted)}
+.fl-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.lsf-figure{background:transparent}
+.lsf-figure .iso-figure{margin:0}
+.lsf-figure .iso-plate{background:var(--anatomy-card)}
+.lsf-stage{outline:none;cursor:pointer;touch-action:manipulation}
+.lsf-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.lsf-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.lsf-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.lsf-figure .iso-plate-corners{z-index:2}
+.lsf-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.lsf-figure[data-view="field"] .lsf-svg{visibility:hidden}
+.lsf-figure[data-view="field"] .lsf-legend-machine{display:none}
+.lsf-figure:not([data-view="field"]) .lsf-field,.lsf-figure:not([data-view="field"]) .lsf-legend-field{display:none}
+.lsf-legend{display:grid;gap:8px}
+/* casualties: greyed and still (side fc = friendly, hc = enemy), no colour beyond a faint tint */
+.lsf-figure .tr-s[data-side="fc"] path,.lsf-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.lsf-figure .tr-s[data-side="fc"] .tr-t,.lsf-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.lsf-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.lsf-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.lsf-figure .tr-s[data-side="fc"] .tr-d,.lsf-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.lsf-figure .tr-s[data-side="fc"] .tr-g,.lsf-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+/* mortar bursts: grey-brown earth thrown up, then smoke */
+.lsf-figure [data-part="mortar"] .tr-dust{fill:#8f8676}.lsf-figure [data-part="mortar"] .tr-flash{fill:#f0d78c}
+.lsf-controls{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:center;margin:14px 0 4px}
+.lsf-controls .btn{cursor:pointer}
+.lsf-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.lsf-controls input[type=range]{flex:1;min-width:120px}
+.lsf-controls output{font-family:var(--font-mono);font-size:13px;min-width:4.2em;text-align:right}
+.fl-text h2{margin-top:28px}
+.fl-text ol{padding-left:1.2em}
+.fl-text li{margin:6px 0}
+@media (max-width:520px){.lsf-figure .iso-plate-corner[data-corner="hint"]{display:none}.lsf-stage{overflow:hidden}}
+</style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="fl-main">
+  <a class="fl-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Lifting and Shifting Fires</h1>
+  <p class="lede">An assault closes on a defended position under mortar and machine-gun fire that keeps the defenders’ heads down. Before the assault arrives, those fires have to stop or move, or they would fall on it. Lift them too soon and the enemy is back up and firing before the assault gets there; keep them on too long and the assault has to stop short. This model shows the timing.</p>
+
+  <div class="iso lsf-figure" data-theme="light" data-view="field">
+    <!--FIGURE-->
+    <div class="lsf-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
+      </div>
+      <div class="fd-views lsf-modes" role="group" aria-label="When the fires come off the objective">
+        <button type="button" data-mode="shift" aria-pressed="true">Shift</button>
+        <button type="button" data-mode="lift" aria-pressed="false">Lift</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="lsf-run">Run the assault</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
+      <label><span id="lsf-lift-text">Final coordination line (lift at)</span> <input type="range" id="lsf-lift" min="0" max="150" step="5" value="140" aria-label="Where the fires lift, metres from the objective"> <output id="lsf-lift-val" for="lsf-lift">140 m</output></label>
+    </div>
+  </div>
+
+  <section class="fl-text">
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same lift setting, model and readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
+    <ol>
+      <li><b>The pop-up target</b> on its hinge is the enemy position. Folded down, it is suppressed; standing, with its barrel out, it is firing.</li>
+      <li><b>The hopper</b> on the cantilever is the supporting fire (mortars and machine guns). While its shot falls on the target, the target stays down.</li>
+      <li><b>The lit carriage</b> is the assault element, running down the rail at the target. The ruler beside the rail reads its distance from 150 m to 0 (notional distances).</li>
+      <li><b>The trip dog</b> clamped to the bar on the far side sets where the fires lift. When the carriage’s striker folds its flag, the cam on the post turns a quarter, and the hopper’s gate closes (lift) or its chute swings onto the second target behind (shift). The second target is an enemy depth team.</li>
+      <li><b>The stop on the ruler</b> at a notional 50 m is the figure’s minimum safe line. If the carriage reaches it with shot still falling, the cam fires there anyway and the carriage’s brake drops for a moment.</li>
+      <li><b>The dials:</b> the big one reads the share of the enemy’s fire coming back at the assault; the small one reads the risk the plan puts on the assault.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Set and run.</b> Move the trip dog with the slider or the arrow keys, then run the carriage with the Run button, a click on the figure or Enter. Every change starts a new run.</li>
+      <li><b>Lift early</b> and the target rises while the carriage still has far to go; the big dial climbs.</li>
+      <li><b>Lift at the stop</b> and the target is still low when the carriage arrives.</li>
+      <li><b>Lift late</b> (inside the stop) and the brake holds the carriage at the stop, the small dial shows the risk, and the target rises while the carriage waits.</li>
+      <li><b>Shift or Lift.</b> With Shift, the chute swings onto the depth target and keeps it down; with Lift, the gate closes, and the depth target comes up and adds to the enemy’s fire.</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the scale is a platoon attacking an enemy squad, blue is friendly and red is the enemy.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The enemy</b> is a rifle squad in four two-man fighting positions on the low rise, facing the assault, with its squad leader behind. On the smaller rise behind it, a depth team sits in two more holes. The flag marks the objective.</li>
+      <li><b>The support-by-fire element</b> is behind a stone wall on the far side: two machine-gun teams prone at the wall and a rifle squad kneeling, firing across the assault’s front. Support by fire is “a tactical mission task in which a unit engages the enemy by direct fire in support of another maneuvering force” (ATP 3-21.8, para. 3-56). Mortar rounds from off the map burst on the enemy position.</li>
+      <li><b>The lit assault element</b> is two rifle squads, each “two fire teams and a squad leader” (para. 1-9), in squad line, a formation “used to assault or as a pre-assault formation” (para. 3-54), with the platoon leader and his radio operator behind.</li>
+      <li><b>The chalk line on pegs</b> is the final coordination line: “a phase line close to the enemy position used to coordinate the lifting or shifting of supporting fires with the final deployment of maneuver elements” (para. 4-147). The row of stakes nearer the enemy is the figure’s minimum safe line, at a notional 50 m.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Set and run.</b> The slider and the arrow keys move the final coordination line; the Run button, a click on the ground or Enter runs the assault. Every change starts a new run.</li>
+      <li><b>The fires.</b> While the mortars and the guns are on the position, the enemy keeps its heads down in its holes. The guns change their rate as the assault comes on: rapid at first, then sustained, then increased as it nears the line.</li>
+      <li><b>The lift.</b> When the assault crosses the line, the mortars and the guns come off the enemy’s holes. The guns walk their fire onto the rear of the objective until the assault arrives; that picture is the drawing’s own choice, since the sources say only “forward of the assault” (ATP 3-21.8, paras. C-121, A-29). The enemy’s men come back up one by one and fire; the readout’s enemy share counts them.</li>
+      <li><b>Shift or Lift.</b> Shift puts the mortars and, once the assault is on the objective, the guns onto the depth position, which keeps that team pinned. Lift stops them; the support-by-fire element stops firing but stays in position, and the depth team runs forward to join the fight.</li>
+      <li><b>Too late.</b> If the line is inside the stakes, the assault reaches the stakes with the fires still falling: the fires cease there (ATP 3-21.8, para. A-29: observers call for fires to “shift (or cease)”); the pause in the assault is the figure’s own device (readout “MSL hold (model)”).</li>
+      <li><b>Losses</b> are notional: greyed figures lying still are men down on both sides, the friendly ones where they fell. The readout counts them, friendly vs enemy; more enemy fire on arrival costs the assault more.</li>
+    </ol>
+    <p class="fine">Soldiers are drawn larger than scale (about one and a half times) so they read; sizes, ranges, distances, timings and losses are notional.</p>
+    </div>
+
+    <h2>What doctrine says</h2>
+    <p>Suppression lasts only while the fires do. U.S. Army <i>FM 3-90, Tactics</i> (May 2023) defines suppress as a task in which a unit “temporarily degrades a force or weapon system from accomplishing its mission,” and adds: “Unlike the neutralization task, the original target regains its effectiveness without needing to reconstitute once the effects of the systems involved in the suppression effort lift or shift to another target” (para. B-62).</p>
+    <p>So the fires should stay on as long as it is safe. The same manual asks for fire support coordination measures that, “accounting for danger close and other technical constraints—allow maneuver forces to get as close as possible to the objective before lifting fires,” and for “signals for lifting and shifting fires on the objective” (para. 5-27).</p>
+    <p>The platoon manual, <i>ATP 3-21.8</i> (2024), ties the moment to the final coordination line (para. 4-147) and gives the safety rule: “As the element approaches the minimum safe line, observers call for fires shift (or cease), allowing the friendly force to move safely in the danger area.” Shifted fires go “forward of the assault element as it moves across the objective or to the flanks of targets or areas” (para. A-29). They keep working: “The support element must not allow its suppressive fires to lapse. These fires isolate the objective and prevent the enemy from reinforcing or counterattacking” (para. 4-149).</p>
+    <p>For the support-by-fire machine guns it lists the rates of fire in order (para. C-121):</p>
+    <ol>
+      <li>“Initial heavy volume (rapid rate) to gain fire superiority.”</li>
+      <li>“Slower rate to conserve ammunition (sustained rate) while still preventing return fire as the assault moves forward.”</li>
+      <li>“Increased rate as the assault nears the objective.”</li>
+      <li>“Shift fires (commonly called walking fires) forward of the assault line.”</li>
+      <li>“Lift and/or shift to other targets or targets of opportunity.”</li>
+    </ol>
+    <p>The battlefield’s guns follow that order.</p>
+
+    <h2>What is notional</h2>
+    <p>Everything numeric is a teaching shape. After the fires lift, the enemy’s share of fire comes back as 10% + 90% × (1 − e<sup>−t/4</sup>), with t in figure seconds and the assault covering 32 m per figure second (time is compressed). The minimum safe line at 50 m is the figure’s own number, not a doctrinal distance: real distances depend on the weapon, and the platoon manual sends leaders to “risk estimate distance, surface danger zones, and minimum safe distance as per ATP 3-09.32” (ATP 3-21.8, para. B-10). A cease fire at the line halts the assault for 2.5 figure seconds. A depth team that is not pinned starts forward 0.8 s after the lift and adds up to 20 points.</p>
+    <p>With Shift, lifting at 140 m leaves 70% of the enemy’s fire on the assault when it arrives, at 100 m 59%, at 50 m 39%, and at 10 m (inside the line) 67%, because of the halt. The risk index is 0 when the fires lift at or before the line and grows with how far inside it they would still be falling: 80% at 10 m, 100% at 0 m. Losses: the assault element (20 men) loses 20 × (4% + 30% × the enemy’s share on arrival), the enemy squad (9 men) 9 × (15% + 50% × the rest), rounded, at least one each.</p>
+    <p class="fine">Sources: Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">FM 3-90, Tactics</a>, 1 May 2023 (<a href="https://web.archive.org/web/2024id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">archived copy</a>), paras. 5-27 and B-62. Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a>, 11 January 2024, incorporating Change 1, June 2025 (<a href="https://web.archive.org/web/20250807233618id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">archived copy</a>), paras. 1-9, 3-54, 3-56, 4-147, 4-149, A-29, B-10 and C-121. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

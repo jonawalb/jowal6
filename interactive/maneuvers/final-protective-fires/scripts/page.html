@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Final Protective Fires | Jonathan Walberg</title>
+<meta name="description" content="Final protective fires, as a bench model and a platoon defense: the mortar barrier in front of the wire, machine guns firing grazing fire along their final protective lines, and why the moment of the call matters. Built from ATP 3-21.8.">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Final Protective Fires | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/final-protective-fires/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/final-protective-fires/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.fl-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.fl-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.fl-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.fl-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.fl-text p,.fl-text li{line-height:1.65}
+.fl-text .fine{font-size:.88rem;color:var(--text-muted)}
+.fl-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.fp-figure{background:transparent}
+.fp-figure .iso-figure{margin:0}
+.fp-figure .iso-plate{background:var(--anatomy-card)}
+.fp-stage{outline:none;cursor:crosshair;touch-action:manipulation}
+.fp-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.fp-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.fp-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.fp-figure .iso-plate-corners{z-index:2}
+.fp-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.fp-figure[data-view="field"] .fp-svg{visibility:hidden}
+.fp-figure[data-view="field"] .fp-legend-machine{display:none}
+.fp-figure:not([data-view="field"]) .fp-field,.fp-figure:not([data-view="field"]) .fp-legend-field{display:none}
+.fp-legend{display:grid;gap:8px}
+/* casualties: greyed and still (side fc = friendly, hc = enemy), no colour beyond a faint tint */
+.fp-figure .tr-s[data-side="fc"] path,.fp-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.fp-figure .tr-s[data-side="fc"] .tr-t,.fp-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.fp-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.fp-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.fp-figure .tr-s[data-side="fc"] .tr-d,.fp-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.fp-figure .tr-s[data-side="fc"] .tr-g,.fp-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.fp-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.fp-controls .btn{cursor:pointer}
+.fp-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.fp-controls input[type=range]{flex:1;min-width:120px}
+.fp-controls output{font-family:var(--font-mono);font-size:13px;min-width:5.6em;color:var(--anatomy-text)}
+/* mortar bursts in the FPF box: a dark core, a dust cloud and drifting smoke (no colour beyond the ground's) */
+.fp-bursts circle{pointer-events:none}
+.fp-core{fill:#4d4a42}.fp-dust{fill:#a39d8c}.fp-smoke{fill:var(--tr-smoke)}
+.fl-text h2{margin-top:28px}
+.fl-text ol{padding-left:1.2em}
+.fl-text li{margin:6px 0}
+@media (max-width:520px){.fp-figure .iso-plate-corner[data-corner="hint"]{display:none}.fp-stage{overflow:hidden}}
+</style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="fl-main">
+  <a class="fl-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Final Protective Fires</h1>
+  <p class="lede">When an enemy assault reaches the wire of a defended position, the defenders call their final protective fires: the mortars fire a prearranged barrier in front of the wire and the machine guns lay grazing fire along their final protective lines. This figure shows where that fire goes and why the moment it is called matters.</p>
+
+  <div class="iso fp-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="fp-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="fp-call">Call FPF now</button>
+      <button type="button" class="btn btn-outline" id="fp-new">New assault</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
+      <label><span id="fp-trig-text">Call the FPF at</span> <input type="range" id="fp-trig" min="0" max="150" step="5" value="10" aria-label="Call the final protective fires when the assault is this many metres in front of the final protective line"> <output id="fp-trig-out">10 m out</output></label>
+    </div>
+  </div>
+
+  <section class="fl-text">
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same assault, the same trigger and the same readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
+    <ol>
+      <li><b>The assault carriage</b> runs down the rail toward <b>the parapet</b>, the defended position at the near end. The ruler between the rails reads its distance in front of the final protective line (FPL).</li>
+      <li><b>The wire belt</b> crosses the rail: pickets, coils and a gate the carriage has to push open, slowly.</li>
+      <li><b>The portcullis</b> is the mortars’ final protective fire (FPF): a gantry over the beaten zone engraved on the plate, holding the lit header bar and ten drop pins.</li>
+      <li><b>The two grazing bars</b> stand on posts at the ends of the FPL, the line engraved just in front of the wire. At rest each points out into its gun’s sector; tripped, each swings to lie along the FPL, low over the plate, beside the other.</li>
+      <li><b>The trip tab</b> between the rails is clamped at the distance set on the slider. The carriage knocks it flat, and the pawl on the right post lets the header fall.</li>
+      <li><b>The magazine</b> holds the FPF’s rounds, three to a disc. <b>The gauge</b> reads how far the FPF has checked the assault.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Set the trigger</b> with the slider or the arrow keys, from the FPL out to 150 m, or <b>call it by hand</b> with Call FPF now, a click on the card or the F key.</li>
+      <li><b>Once tripped,</b> the pins hammer at the maximum rate and the magazine empties; when it is empty the pins lift. A carriage caught under them crawls; if the gauge reaches full scale first, the carriage is thrown back.</li>
+      <li><b>Trip it too early</b> and the magazine is empty before the carriage arrives; too late and the carriage is already through the gate. New assault (or N) starts another run.</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the scale is a platoon defense seen from behind and above, blue is friendly and red is the enemy; the enemy attacks from the far treeline toward the viewer.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The defenders</b>: two rifle squads in two-man fighting positions along the line, the platoon leader and his radio operator behind them, and a medic at the casualty collection point.</li>
+      <li><b>Two machine guns</b> in nests at the ends of the wire. Each has a sector, the blue fan, whose inner edge is its FPL, marked in chalk across the front; doctrine says “the FPL is always the left or right limit of an assigned primary sector of fire” (ATP 3-21.8, para. C-69). The two FPLs cross in front of the wire.</li>
+      <li><b>The wire belt</b> runs along the front, and <b>the FPF</b> is the chalk box just in front of it: 60 by 30 m, the size ATP 3-21.8 lists for the FPF of two 60-mm mortars (table B-1). The mortars themselves are off the card.</li>
+      <li><b>The enemy</b>: an assault element of two rifle squads in line with their leader, and a support-by-fire team (a machine gun and riflemen) behind a wall on the right, firing on the positions until its assault nears the wire.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The assault</b> crosses the open ground under the defenders’ rifles and machine guns.</li>
+      <li><b>At the trigger distance</b> (the slider), or when you call it with the button, a click on the card or the F key, the FPF comes down: mortar bursts fill the box, and both machine guns switch from their sectors to grazing fire along their FPLs. In doctrine, “initiation of the FPFs is the signal for elements, crews, and individual Soldiers to shift fires to their assigned portion of the FPL” (para. A-51).</li>
+      <li><b>Caught in it,</b> the assault goes to ground at the wire, and in this model, if the fire lasts long enough it breaks and falls back. Called too early, the mortar rounds are spent before the assault arrives, though the machine guns stay on their FPLs (“sighted along it except when other targets are being engaged,” para. C-69); called too late, it is already in the wire and comes through into the positions. The window for calling it is the model’s own, not doctrine’s (see What is notional). New assault (or N) starts another run.</li>
+      <li><b>Losses</b> are notional: greyed figures lying still are men down, the enemy’s where they fell, the defenders’ carried back to the collection point. The readout counts them, friendly vs enemy.</li>
+    </ol>
+    <p class="fine">Soldiers are drawn larger than scale (about one and a half times) so they read. Apart from the size of the FPF box, the distances, speeds, timings, ammunition counts and losses are notional, and time is compressed.</p>
+    </div>
+
+    <h2>What doctrine says</h2>
+    <p>The Army’s platoon manual, <i>ATP 3-21.8</i>, defines the final protective line as “a line of fire selected where an enemy assault is to be checked by interlocking fire from all available weapons and obstacles,” and final protective fire as “an immediately available, prearranged barrier of fire designed to impede enemy movement across defensive lines or areas” (paras. B-18 and B-9). The FPF “takes precedence over all other fire targets,” and “fire is conducted at the maximum rate until the mortars are ordered to stop, or until ammunition is depleted” (para. B-18).</p>
+    <p>For the machine guns: “An FPL becomes the machine gun’s part of the unit’s FPFs. An FPL is fixed in direction and elevation” (para. C-69). Grazing fire is fire whose “center of the cone of fire does not rise more than 1 meter above the ground”; it “is only possible when the terrain is level or sloping uniformly,” which is why the ground in front of the wire is drawn flat, and “the unit plans indirect fires, including M320s, to cover dead space along the FPL” (para. C-23).</p>
+
+    <h2>What is notional</h2>
+    <p>The run is a teaching model, not data. The assault advances at a compressed 30 m per second of figure time and keeps a quarter of its speed in the wire. The FPF has 30 rounds fired at 7.5 a second, so it lasts 4 seconds. An assault caught in the beaten zone or the wire while the rounds fall keeps 8% of its speed and breaks after about 2.2 seconds of it. In this model the FPF stops the assault if it is called between the FPL and 80 m out; from 90 m out the rounds are spent before the assault arrives, and if it is never called the assault comes through. Doctrine gives no such window: it is the model’s. Losses are notional too: called at 10 m out, the default, the run ends with 1 friendly and 6 enemy down; called at 150 m, 5 and 2.</p>
+    <p class="fine">Source: Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a>, 11 January 2024, incorporating Change 1, June 2025 (<a href="https://web.archive.org/web/20250807233618id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">archived copy</a>), paras. A-51, B-9, B-18, C-23 and C-69, and table B-1. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

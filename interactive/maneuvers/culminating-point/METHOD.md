@@ -18,10 +18,10 @@ node interactive/maneuvers/culminating-point/scripts/model.test.mjs # checks eve
 | Lit carriage with a prow, on a straight track | The attacking force |
 | Blockhouse at the end of the track | The objective |
 | Supply sled with a lashed crate, depot cabinet and crates behind it | The base the force draws on |
-| Tension spring from the sled's hook plate to the carriage's | The tether of operational reach (ADP 3-0 para 2-54 calls reach "a tether") |
+| Tension spring from the sled's hook plate to the carriage's | The tether of operational reach (ADP 3-0, 2025, para 4-21 calls reach "a tether") |
 | Dial gauge, raised mark at 1.0, engraved stall zone below it | Combat power as a ratio of what the advance needs; 1.0 is the defender's line |
 | Ruler strip, tick every 5 km, major every 25 | Distance along the track from the start line |
-| Moving the sled forward | Basing that extends reach (ADP 3-0 para 2-58) |
+| Moving the sled forward | Basing, which "directly supports or determines" reach and endurance (ADP 3-0, 2025, para 4-23) |
 
 About 70 solids (plate, feet, 18 sleepers, rails, end stop, depot, crates, sled, carriage, objective, gauge) plus seams, ticks, knurls and screws.
 
@@ -53,7 +53,7 @@ None of these numbers come from data. The page says so in "What is notional".
 - **Scale (TERRAIN.md table, operational row):** one attacking battalion drawn as three companies of three vehicles, one vehicle per platoon (most of a real battalion is left out). Vehicles drawn far larger than scale.
 - **Mapping:** 1.6 field units per model km along the road. The column's lead sits at road distance `s0 + (x − start) × 1.6`; the base (four parked trucks) at `sDepot + (sled − sledRear) × 1.6`, so the forward base lands in the chalk outline 110 units up the road. Distance, ratio, limit and state all come from `model.mjs`.
 - **Supply trucks:** four shuttle between the base and the column's tail at 40 units/s (the column's top speed is 54), so each round trip lengthens as the column pulls away. Lap phase is integrated in the page (`FM.lap`).
-- **Culminated** (at the limit and ordered further): the column halts; the lead company deploys forward in a hasty defense (blue fan), the others pull off the road. ADP 3-0 para 2-52 gives defensive posture or operational pause; the view shows the first.
+- **Culminated** (at the limit and ordered further): the column halts; the lead company deploys forward in a hasty defense (blue fan), the others pull off the road. FM 3-0 (2025) para 6-267 says offensive operations that culminate before the enemy is defeated rapidly transition to the defense, and ADP 3-0 (2025) para 4-21 mentions operational pauses; the view shows the defense.
 - **Objective reached:** the battalion deploys round the hill and the defenders fall back east (rearward) along the road.
 - **Enemy:** a covering force of three vehicles waits 125 units past the start line and then falls back 46 units ahead of the lead; five vehicles dug in on the objective hill (red fan).
 - **Casualties (owner rule 2026-10-13, notional):** `losses(x, sled)` in `model.mjs`: attacker 0.12 per km at 2.0 : 1 rising linearly to 0.62 per km at 1.0 : 1, at the power halfway through the advance; defender 0.15 per km plus 18 when the objective falls. Culminated from the rear base 44 / 18; objective with the forward base 54 / 43. The page keeps the worst figure reached (resets at the start line) and uses the ordered base, so a base on the move adds nothing. Each 12 attacker casualties = one greyed knocked-out blue vehicle where it was hit; each 10 defender casualties = one greyed red vehicle (covering force first, then the hill). A white ambulance runs between the latest knocked-out vehicle and the base. The readout gained "· N cas" (attacker), and "km from base" was shortened to "km" to stay under 45 characters.

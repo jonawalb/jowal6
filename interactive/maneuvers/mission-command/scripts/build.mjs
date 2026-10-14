@@ -91,7 +91,7 @@ const fieldSvg = k.figureSvg({
   body: [`<g data-part="ground">${FIELDS.ground}</g><g data-part="marks">${fieldMarks(k, PF, TF, POSE0)}</g><g data-part="field-live">${fdStatic([...FIELDS.items, ...menItems])}</g><g data-part="link">${fieldLink(k, PF, POSE0, 0.3, 1)}</g><g data-part="fire" class="tr-fire"></g>`],
 }).replace('class="iso-svg mc-field"', 'class="iso-svg mc-field" preserveAspectRatio="xMidYMid slice"');
 
-const CAPTION = "Army doctrine (ADP 6-0, 2019) says the commander’s intent lets subordinates act “when communication with higher echelons is intermittent or decisions must be made immediately.” The governor acts on its own reading, toward a set point headquarters chose. Engine numbers are a notional teaching model, not data.";
+const CAPTION = "Army doctrine (ADP 6-0, 2026) says subordinates act on their own responsibility “when communication with higher echelons is intermittent or decisions must be made immediately.” The governor acts on its own reading, toward a set point headquarters chose. Engine numbers are a notional teaching model, not data.";
 
 const LABELS = {
   machine: "Mission command bench. Left and right arrow keys change the load; J jams or restores the link; V switches to the Battlefield view.",

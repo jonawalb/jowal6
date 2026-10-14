@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Breaching (SOSRA) | Jonathan Walberg</title>
+<meta name="description" content="The five breaching fundamentals, suppress, obscure, secure, reduce and assault, as a five-station lock and as a company breach of a wire and mine belt: support, breach and assault forces. Built from FM 3-90 and ATP 3-21.10.">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Breaching (SOSRA) | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/breach-sosra/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/breach-sosra/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.fl-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.fl-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.fl-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.fl-text h2{font-family:var(--font-serif);color:var(--green-900);margin-top:28px}
+.fl-text p,.fl-text li{line-height:1.65}
+.fl-text li{margin:6px 0}
+.fl-text ol{padding-left:1.2em}
+.fl-text .fine{font-size:.88rem;color:var(--text-muted)}
+.fl-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.br-figure{background:transparent}
+.br-figure .iso-figure{margin:0}
+.br-figure .iso-plate{background:var(--anatomy-card)}
+.br-stage{outline:none;cursor:pointer;touch-action:manipulation}
+.br-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.br-svg{display:block;width:100%;height:auto}
+.br-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.br-figure .iso-plate-corners{z-index:2}
+.br-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.br-figure[data-view="field"] .br-svg{visibility:hidden}
+.br-figure[data-view="field"] .br-legend-machine{display:none}
+.br-figure:not([data-view="field"]) .br-field,.br-figure:not([data-view="field"]) .br-legend-field{display:none}
+.br-legend{display:grid;gap:8px}
+/* the lane: wire and mines in it vanish as it is reduced; lane markers appear when it is complete */
+.br-field[data-l1="1"] .br-w1,.br-field[data-l1="1"] .br-mine{display:none}
+.br-field[data-l2="1"] .br-w2{display:none}
+.br-field .br-lm{opacity:0;transition:opacity .4s}
+.br-field[data-lm="1"] .br-lm{opacity:1}
+.br-lit{stroke:var(--tr-lit-ink)!important;stroke-width:1.1!important;opacity:1}
+.br-smoke circle{pointer-events:none;fill:var(--tr-smoke)}
+/* casualties: greyed and still (side fc = friendly, hc = enemy) */
+.br-figure .tr-s[data-side="fc"] path,.br-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.br-figure .tr-s[data-side="fc"] .tr-t,.br-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.br-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.br-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.br-figure .tr-s[data-side="fc"] .tr-d,.br-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.br-figure .tr-s[data-side="fc"] .tr-g,.br-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.br-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.br-controls .btn{cursor:pointer}
+.br-steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px 14px;margin:10px 0 0;padding:0;border:0;list-style:none}
+.br-step{display:flex;align-items:flex-start;gap:8px;font-size:14px;line-height:1.4;color:var(--anatomy-text);cursor:pointer}
+.br-step input{margin-top:3px;flex:none}
+.br-step b{font-family:var(--font-mono);font-weight:500;min-width:1em}
+@media (max-width:620px){.br-steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.br-figure .iso-plate-corner[data-corner="hint"]{display:none}.br-stage{overflow:hidden}}
+</style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="fl-main">
+  <a class="fl-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Breaching (SOSRA)</h1>
+  <p class="lede">An obstacle covered by fire is not crossed by courage alone. The manual gives five breaching fundamentals, in a set order, and three forces to carry them out. This figure sets them one after another, then sends the assault through the lane, and shows what stops when one is left out.</p>
+
+  <div class="iso br-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="br-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="br-next">Apply next fundamental</button>
+      <button type="button" class="btn btn-outline" id="br-go">Start the breach</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
+    </div>
+    <fieldset class="br-steps" aria-label="The five breaching fundamentals, in the manual&rsquo;s order">
+      <label class="br-step"><input type="checkbox" checked><b>1</b><span>Suppress</span></label>
+      <label class="br-step"><input type="checkbox" checked><b>2</b><span>Obscure</span></label>
+      <label class="br-step"><input type="checkbox" checked><b>3</b><span>Secure</span></label>
+      <label class="br-step"><input type="checkbox" checked><b>4</b><span>Reduce</span></label>
+      <label class="br-step"><input type="checkbox" checked><b>5</b><span>Assault</span></label>
+    </fieldset>
+  </div>
+
+  <section class="fl-text">
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same five fundamentals, the same run and the same readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
+    <ol>
+      <li><b>Five stations</b> stand in a row at the back, left to right in the manual&rsquo;s order, marked with one to five dots. Each has a <b>pin</b> that drops when its fundamental is set; a <b>bar</b> below grows along them as they set.</li>
+      <li><b>The belt of tines</b> across the front rail is the obstacle. <b>The assault carriage</b>, the lit part, waits on the rail behind it. <b>The sled</b> on the second rail is the breach force, with an arm that reaches into the belt.</li>
+      <li><b>The screen</b> beyond the belt is the smoke; <b>the target block</b> at the far end pops up unless <b>the press</b> above it, the support force&rsquo;s fire, holds it down.</li>
+      <li><b>The dial</b> reads how much of the lane is reduced. <b>The rack</b> shows men down: eight pegs for the breach force, six for the enemy.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Tick the fundamentals</b> in the list, press 1 to 5, or use Apply next fundamental (or a click on the card or N).</li>
+      <li><b>Start the breach</b> with the button or the space bar. The stations set in order, the sled goes to the belt, the lane tines retract, and the carriage runs through to the far side.</li>
+      <li><b>Leave one out</b> and the chain stops there: in this figure a station engages only after the one before it (the figure’s own device; the manual says reduction follows suppression, obscuration and security, ATP 3-21.10 para. F-27), the lane is not completed, and the carriage jams at the belt. The readout says which one is missing.</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the scale is a rifle company breaching an obstacle belt, seen from behind: blue is friendly, red is the enemy, and the attack goes up the picture from the road toward the far side. The lit chalk box is the reduction area.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The obstacle</b> is two rows of wire with mines between them, covered by an enemy position on the rise beyond: two machine-gun nests and four fighting positions.</li>
+      <li><b>The support force</b> is on the left on its own rise, in a chalk box: two machine guns with their assistants and two riflemen. <b>The breach force</b> is eight soldiers: four to reduce and mark the lane, four to secure it. <b>The assault force</b> is twelve in a column, its leaders at the front.</li>
+      <li><b>The smoke</b> builds in a line between the obstacle and the enemy.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Tick the fundamentals</b>, press 1 to 5, or use Apply next fundamental. <b>Start the breach</b> and the support force opens fire, the smoke builds, the breach force moves up and secures the point of breach, the wire and mines in the lane are cleared and two markers are set, and the assault force passes through and takes the far side.</li>
+      <li><b>Greyed figures lying still</b> are men down; a medic goes to the latest casualty. Success costs men on both sides.</li>
+      <li><b>Leave one out</b> and it shows. In this model, without suppression the enemy stays up and fires at the breach force, which is cut down at the wire (notional counts). Without smoke the enemy fires accurately; without security the breach force is exposed to fire it cannot answer; without reduction there is no lane; without the assault the lane stays under fire.</li>
+    </ol>
+    <p class="fine">Soldiers are drawn larger than scale (about one and a half times) so they read. A force is drawn as six, eight or twelve soldiers. Distances, timings, force sizes and losses are notional, and time is compressed.</p>
+    </div>
+
+    <h2>What doctrine says</h2>
+    <p>FM 3-90 (1 May 2023) lists the breaching fundamentals among the five breaching tenets (para. 18-22) and states them (para. 18-23, pp. 18-4 to 18-5): &ldquo;Breaching fundamentals are integrated into the planning process and applied when a defended obstacle must be reduced.&rdquo; &ldquo;The fundamentals are described by the memory aid SOSRA:&rdquo; suppress, obscure, secure, reduce, assault. ATP 3-21.10 (1 June 2026) says the same (para. F-23, p. 231): &ldquo;The breach fundamentals: suppress, obscure, secure, reduce, and assault (also called SOSRA).&rdquo;</p>
+    <ol>
+      <li><b>Suppress.</b> &ldquo;The mission of the support force is to suppress the enemy overwatching the obstacle,&rdquo; and &ldquo;successful suppression generally triggers the rest of the actions at the POB&rdquo; (ATP 3-21.10 para. F-24, p. 231; FM 3-90 para. 18-24, pp. 18-5 to 18-6).</li>
+      <li><b>Obscure.</b> &ldquo;Typically, the most effective placement of obscuration is between the obstacle and the overwatching enemy forces&rdquo; (ATP 3-21.10 para. F-25, p. 231; see also FM 3-90 para. 18-26, p. 18-6).</li>
+      <li><b>Secure.</b> &ldquo;The POB must be secured before reducing the obstacle&rdquo; (ATP 3-21.10 para. F-26, p. 232). FM 3-90 says the same in its words: &ldquo;The reduction area must be secured before attempting to reduce the obstacle&rdquo; (para. 18-27, p. 18-6).</li>
+      <li><b>Reduce.</b> &ldquo;Reduction cannot be accomplished until effective suppression and obscuration is achieved and the POB is secured&rdquo; (ATP 3-21.10 para. F-27, p. 232). FM 3-90: &ldquo;Reduction begins when effective suppression and obscuration have been established, the obstacle has been confirmed, and the reduction area is secure&rdquo; (para. 18-30, p. 18-6).</li>
+      <li><b>Assault.</b> &ldquo;The assault force&rsquo;s primary mission is to seize terrain on the far side of the obstacle to prevent the enemy from placing or observing direct and indirect fires on the reduction area&rdquo; (ATP 3-21.10 para. F-28, p. 232). FM 3-90 says a breach is complete when the attacking force &ldquo;has assaulted through the obstacle, seized the far side objective, eliminated enemy direct and observed indirect fires on the reduction area&rdquo; and, if planned, the battle handover has occurred (para. 18-31, p. 18-7).</li>
+    </ol>
+    <p>Units organize into three forces: &ldquo;Support. Breach. Assault.&rdquo; (FM 3-90 para. 18-32, p. 18-7). The support force suppresses &ldquo;an enemy capable of placing direct fires on the reduction area&rdquo;, fixes enemy forces to isolate the reduction area and controls obscuration; the breach force reduces, proofs and marks the lanes and provides local security on the near and far side; the assault force seizes the far side objective and destroys the enemy there that can fire on the reduction area (FM 3-90 table 18-2, p. 18-7; ATP 3-21.10 table F-1, pp. 232 to 233). FM 3-90 adds that an in-stride breach is &ldquo;generally not used below the company level since a platoon is unable to form effective support, breach, and assault forces with its squads&rdquo; (para. 18-20, p. 18-4), which is why this figure is a company.</p>
+    <p>The manual lists the fundamentals in this order. Whether every fundamental is set strictly one after another in a real breach is a matter for the plan: in this figure’s reading, suppression and obscuration are running while the breach force moves up (the manuals describe each fundamental but do not say how they overlap in time). The figure sets them one after another only to show each in turn.</p>
+
+    <h2>What is notional</h2>
+    <p>The run is a teaching model, not data. With every fundamental applied they are set at 1.5, 3.5, 5.5, 9.0 and 12.5 figure seconds; the enemy is six defenders and the breach force eight soldiers. Each fundamental left out stops the chain at that station and the breach is not completed. Results (friendly versus enemy down): all five 3 vs 6, without suppress 6 vs 0, without obscure 3 vs 2, without secure 3 vs 2, without reduce 1 vs 2, without assault 1 vs 2. Those numbers are the model&rsquo;s, not doctrine&rsquo;s.</p>
+    <p class="fine">Sources: Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">FM 3-90, Tactics</a>, 1 May 2023, paras. 18-20 to 18-32 and table 18-2; <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN46667-ATP_3-21.10-000-WEB-1.pdf">ATP 3-21.10, Infantry Rifle Company</a>, 1 June 2026 (supersedes the 14 May 2018 edition), Appendix F, paras. F-23 to F-32 and table F-1. Both cite ATP 3-90.4/MCTP 3-34A, <i>Combined Arms Mobility</i> (10 June 2022), which is not public and was not opened. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

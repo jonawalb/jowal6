@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fire Control and Distribution | Jonathan Walberg</title>
+<meta name="description" content="Fire control and distribution as a working bench model and a platoon battlefield: uncontrolled fire piles onto the first target while the rest of the enemy keeps shooting; controlled fire spreads by sectors and priorities. Built from U.S. Army doctrine (ATP 3-21.8, 2024).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Fire Control and Distribution | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/fire-control/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/fire-control/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.fl-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.fl-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.fl-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.fl-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.fl-text p,.fl-text li{line-height:1.65}
+.fl-text .fine{font-size:.88rem;color:var(--text-muted)}
+.fl-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.fc-figure{background:transparent}
+.fc-figure .iso-figure{margin:0}
+.fc-figure .iso-plate{background:var(--anatomy-card)}
+.fc-stage{outline:none;cursor:pointer;touch-action:manipulation}
+.fc-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.fc-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.fc-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.fc-figure .iso-plate-corners{z-index:2}
+.fc-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.fc-figure[data-view="field"] .fc-svg{visibility:hidden}
+.fc-figure[data-view="field"] .fc-legend-machine{display:none}
+.fc-figure:not([data-view="field"]) .fc-field,.fc-figure:not([data-view="field"]) .fc-legend-field{display:none}
+.fc-legend{display:grid;gap:8px}
+
+
+
+/* casualties: greyed and still (side fc = friendly, hc = enemy), no colour beyond a faint tint */
+.fc-figure .tr-s[data-side="fc"] path,.fc-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.fc-figure .tr-s[data-side="fc"] .tr-t,.fc-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.fc-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.fc-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.fc-figure .tr-s[data-side="fc"] .tr-d,.fc-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.fc-figure .tr-s[data-side="fc"] .tr-g,.fc-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.fc-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.fc-controls .btn{cursor:pointer}
+.fc-modes{display:inline-flex;border:1px solid var(--border);border-radius:2px;overflow:hidden}
+.fc-modes button{font:inherit;font-size:14px;padding:6px 12px;border:0;background:transparent;color:var(--anatomy-text);cursor:pointer}
+.fc-modes button+button{border-left:1px solid var(--border)}
+.fc-modes button[aria-pressed="true"]{background:var(--text);color:var(--bg)}
+.fl-text h2{margin-top:28px}
+.fl-text ol{padding-left:1.2em}
+.fl-text li{margin:6px 0}
+.fc-table{width:100%;border-collapse:collapse;font-size:.92rem;margin:10px 0}
+.fc-table th,.fc-table td{border-bottom:1px solid var(--border);padding:6px 8px;text-align:left;vertical-align:top}
+.fc-table th{font-family:var(--font-mono);font-weight:500;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--green-700)}
+.fc-wrap{overflow-x:auto}
+@media (max-width:520px){.fc-figure .iso-plate-corner[data-corner="hint"]{display:none}.fc-stage{overflow:hidden}}
+</style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="fl-main">
+  <a class="fl-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Fire Control and Distribution</h1>
+  <p class="lede">An Infantry platoon is expected to “focus, distribute, and shift” its direct fire “at critical locations and times” (ATP 3-21.8, para. A-1). In this model, left uncontrolled, every weapon fires at the first target it sees, the first target is overkilled, and the rest of the enemy keeps shooting; controlled, the leader spreads the weapons across the enemy with sectors, target reference points and priorities, and shifts them as targets go down. This figure shows the trade.</p>
+
+  <div class="iso fc-figure" data-theme="light" data-view="field">
+    <!--FIGURE-->
+    <div class="fc-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
+      </div>
+      <div class="fc-modes" role="group" aria-label="Fire control">
+        <button type="button" data-mode="U" aria-pressed="true">Uncontrolled</button>
+        <button type="button" data-mode="C" aria-pressed="false">Controlled</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="fc-engage">Engage</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
+    </div>
+  </div>
+
+  <section class="fl-text">
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model, the same engagement and the same readout drive both. The same fire teams, the same enemy and the same rules apply in both modes, so any difference is the control. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
+    <ol>
+      <li><b>The spray bar</b> carries six nozzle heads, one per fire team, that slide along it. Each running jet is one team firing.</li>
+      <li><b>The five target blocks</b> stand on plungers in sleeves. Each jet that lands presses its block down; a block pressed to its sleeve is out of action. The lit block in the middle is the greatest threat (the enemy machine-gun team): it takes more effect to put down and it does the most harm while it fires.</li>
+      <li><b>The overflow</b> is the point of the bench. In this model a block can use the jets of only two nozzles at once; any more run off the front into the tray (dark jets), and the gauge at the right end climbs with the share of fire wasted.</li>
+      <li><b>The lamps</b> behind the blocks are lit while that target is still firing. The panel of four lamps at the front lights in the order of the fire control process: one dot, identify; two, decide where and how to mass; three, orient; four, shift.</li>
+      <li><b>The selector</b> on the left end of the bar sets uncontrolled (left) or controlled (right).</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Pick the control</b> with the two buttons or the keys 1 and 2, then <b>Engage</b> (the button, a click on the figure, or F).</li>
+      <li><b>Uncontrolled:</b> all six nozzles slide over the first block and pile onto it. Two jets do the work and four overflow. When it is down they keep running on it for a moment, then all slide to the next first block. The lit block, third in line, is reached late.</li>
+      <li><b>Controlled:</b> the four lamps light in order, then the nozzles spread, one per block with two on the lit one, and every block is pressed at once. When the lit block is down its two nozzles shift to the blocks that need the most.</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the scale is a platoon in the defense, blue is friendly and red is the enemy. Six fire teams hold positions on a rise; five enemy elements of three men attack across the open ground in a line, the middle one with the machine gun.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The platoon</b> is six fire teams in two-man fighting positions behind a belt of wire, with the platoon leader and his radio operator behind them. The drawing groups the teams as three squads of two (a squad is “two fire teams and a squad leader,” ATP 3-21.8 para. 1-9); the weapons squad, the platoon’s “primary base of fire” (para. 1-12), is not drawn.</li>
+      <li><b>The lit red element</b> is the enemy machine-gun team, the greatest threat: “enemy vehicles or crew-served weapons are normally the most dangerous” (para. A-3).</li>
+      <li><b>Controlled fire plan</b>, drawn on the ground only when controlled: a bullseye at each <b>target reference point</b> (TRP), a recognizable point used “to orient friendly forces, and to focus, distribute, shift, or otherwise control direct fires” (para. A-41); a dashed chalk outline for the <b>engagement area</b>, where leaders “intend to mass the fires of available weapons” (para. A-42); and a fan for each team’s <b>sector of fire</b>, a “defined area being covered by direct fire” (para. A-43). Two fans cover the machine gun’s lane.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Pick the control</b> with the two buttons or the keys 1 and 2, then <b>Engage</b> (the button, a click on the field, or F). The enemy line is released and starts across.</li>
+      <li><b>Uncontrolled:</b> there is no plan on the ground. Every team fires at the first element. It goes down quickly and the teams turn on the next, while the machine gun, third in line, fires for most of the engagement.</li>
+      <li><b>Controlled:</b> the plan is marked in order, the steps of the fire control process, then the teams engage their own lanes with two on the machine gun. When one element goes down its teams shift to the elements that are still firing.</li>
+      <li><b>Losses</b> are notional: greyed figures lying still are men down. The platoon’s are carried back to a collection point behind the position, where a medic kneels. The readout counts them, friendly vs enemy.</li>
+    </ol>
+    <p class="fine">Soldiers are drawn larger than scale (about one and a half times) so they read; sizes, ranges, timings, losses and the spacing of positions are notional.</p>
+    </div>
+
+    <h2>What doctrine says</h2>
+    <p>ATP 3-21.8, <i>Infantry Rifle Platoon and Squad</i> (11 January 2024, incorporating Change 1, June 2025), appendix A, gives the principles of direct fire and the fire control process. Three of the principles are the ones this bench turns on:</p>
+    <ul>
+      <li><b>Destroy the greatest threat first.</b> A unit will, in almost all situations, “initially concentrate fires to destroy the greatest threat first and then distribute fires over the remainder of the enemy force” (para. A-3).</li>
+      <li><b>Mass the effects of direct fire.</b> “Massing entails focusing fires at critical points and distributing the effects.” Concentrating on a single target “may ensure its destruction or suppression,” but is unlikely to have a decisive effect on the enemy formation or position (para. A-4).</li>
+      <li><b>Avoid target overkill.</b> “Use only the amount of fire required to achieve necessary effects. Target overkill wastes ammunition and ties up weapons better employed acquiring and engaging other targets.” Two simple ways to minimize it are “sectors of fire, and … establishing fire patterns,” tempered by “the requirement to destroy the greatest threats first” (para. A-6).</li>
+    </ul>
+    <p>The fire control process, in the order the manual gives it (para. A-33), is what the four lamps and the plan on the ground follow:</p>
+    <div class="fc-wrap"><table class="fc-table">
+      <thead><tr><th>Step</th><th>ATP 3-21.8, para. A-33</th><th>On the bench and on the ground</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Identify probable enemy locations and determine the enemy scheme of maneuver</td><td>TRPs set in the lanes the enemy will use</td></tr>
+        <tr><td>2</td><td>Determine where and how to mass fires</td><td>Engagement area and a sector for each team; two teams on the greatest threat</td></tr>
+        <tr><td>3</td><td>Orient forces to speed target acquisition</td><td>Each team turns to its TRP</td></tr>
+        <tr><td>4</td><td>Shift fires to refocus or redistribute</td><td>A team whose target is down shifts to a target that is still firing</td></tr>
+      </tbody>
+    </table></div>
+    <p>Para. A-38 lists what dictates a shift, among them “extensive attrition of the enemy force being engaged, creating the possibility of target overkill” and the “appearance of an enemy force posing a greater threat than the one currently being engaged.” Para. A-28 names three useful means of distributing fires: “TRPs, engagement priorities, and target array.” The frontal, cross and depth fire patterns (paras. A-72 to A-75) distribute fires among similar targets; in frontal fires, “the left flank weapon engages the left-most target; the right flank weapon engages the right-most target.” As para. A-39 puts it, “no single measure is sufficient to control fires.”</p>
+
+    <h2>What is notional</h2>
+    <p>Only the doctrine quoted above is sourced; the rest is a teaching value. Six fire teams face five elements. An element needs 6 fire-team-seconds of effect to be put out of action, the machine-gun team 9; that team does three times the harm of another element while it fires. A block, or an element, can use the effect of at most two teams at once, so a third team on it is overkill. A team keeps firing at a target that is down for 0.6 s before it shifts, in either mode. The enemy reaches the wire after 16 s if any element is still up; the planning steps take 3 s before the enemy is released; friendly men down are 0.06 for every weight-second of enemy fire, and each enemy element is three men.</p>
+    <p>On those numbers uncontrolled fire puts four elements down, at 3.0, 6.6, 11.7 and 15.3 s, and the fifth reaches the wire; 72% of the 96 fire-team-seconds fired are wasted, and 5 of the platoon go down against 12 of the enemy. Controlled fire puts all five down by 6.0 s, with 8% wasted, for 2 of the platoon against 15 of the enemy. The bench shows an argument, not a measurement: the cap of two teams is what makes massing on one target pay little.</p>
+    <p class="fine">Sources: Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a>, 11 January 2024, incorporating Change 1, June 2025 (<a href="https://web.archive.org/web/20250807233618id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">archived copy</a>), paras. 1-9, 1-12, A-1 to A-6, A-28, A-33, A-38, A-39, A-41 to A-43 and A-72 to A-75. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

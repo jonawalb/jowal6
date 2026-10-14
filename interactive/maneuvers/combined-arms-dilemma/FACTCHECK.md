@@ -1,11 +1,14 @@
 # Combined Arms Dilemma: fact check
 
-VERIFIED 2026-10-13 by an independent fact-checker (MCDP 1, 20 June 1997, pp. 94–95; ADP 3-0, 31 July 2019, para 3-52, p. 3-9). All quotes exact; the key A/B mapping to automatic weapon and grenade launcher is a fair reading. Fixed after the check: the lede paraphrase now follows MCDP 1 wording, and "says much the same" became "states a parallel idea".
+VERIFIED: 2026-10-14, independent check (re-pinned). ADP 3-0 (21 Mar 2025) para 3-4 and 3-5, p. 25 exact (footer p. 25 follows); 2019 ADP 3-0 (Wayback 20201112013706) para 3-52 contains 'Used destructively... Used constructively...', absent from 2025 text (grep), page says so accurately. Wayback links resolve (HTTP 200).
+
+(Prior note) pending independent check (re-pinned 2026-10-14). MCDP 1 rows 1-4 were VERIFIED 2026-10-13 and are unchanged. ADP 3-0 rows 5a-5d re-pinned to the 21 March 2025 edition (the 2019 para 3-52 wording is gone). Earlier verification note: the key A/B mapping to automatic weapon and grenade launcher is a fair reading; "states a parallel idea".
 
 Sources opened 2026-10-13 (PDFs fetched from Wayback copies; text extracted with pdftotext):
 
 - **[M]** U.S. Marine Corps, MCDP 1, *Warfighting*, 20 June 1997. Official: https://www.marines.mil/Portals/1/Publications/MCDP%201%20Warfighting.pdf · archived copy read: https://web.archive.org/web/2024id_/https://www.marines.mil/Portals/1/Publications/MCDP%201%20Warfighting.pdf
-- **[A]** Headquarters, Department of the Army, ADP 3-0, *Operations*, 31 July 2019. Archived FAS copy read: https://web.archive.org/web/2023id_/https://irp.fas.org/doddir/army/adp3_0.pdf (linked on the page as https://web.archive.org/web/2023/https://irp.fas.org/doddir/army/adp3_0.pdf)
+- **[A2]** Headquarters, Department of the Army, ADP 3-0, *Operations*, 21 March 2025 (supersedes 31 July 2019). Official PDF read 2026-10-14: https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN43323-ADP_3-0-000-WEB-1.pdf · archived copy: https://web.archive.org/web/20260812002342id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN43323-ADP_3-0-000-WEB-1.pdf
+- (Superseded: ADP 3-0, 31 July 2019, formerly [A].)
 
 Page numbers are printed page numbers (PDF page in brackets).
 
@@ -15,12 +18,15 @@ Page numbers are printed page numbers (PDF page in brackets).
 | 2 | “We pose the enemy not just with a problem, but with a dilemma—a no-win situation.” (doctrine section; caption quotes from “not just”) | [M] same paragraph | 20 June 1997 | p. 94 [PDF 103] | as above |
 | 3 | The example is from the fire team: “We pin an enemy down with the high-volume, direct fire of the automatic weapon, making him a vulnerable target for the grenade launcher. If he moves to escape the impact of the grenades, we engage him with the automatic weapon.” (preceded in the source by “An example of the concept of combined arms at the very lowest level is the complementary use of the automatic weapon and grenade launcher within a fire team.”) | [M] same section | 20 June 1997 | pp. 94–95 [PDF 103–104] | as above |
 | 4 | The manual scales the idea up to the MAGTF (page: “Marine air-ground task force”), combining assault support aircraft, artillery, close air support, deep air support and an infantry penetration, and ends “We have put him in a dilemma.” | [M] same section, next paragraph | 20 June 1997 | p. 95 [PDF 104] | as above |
-| 5 | ADP 3-0: “used destructively, combined arms integrates different capabilities so that counteracting one makes the enemy vulnerable to another,” and “used constructively,” it “uses all assets available to multiply the effectiveness and efficiency of Army capabilities used in stability or DSCA” | [A] ch. 3, “Combined Arms” | 31 July 2019 | para. 3-52, p. 3-9 [PDF 45] | as above |
-| 6 | MCDP 1 is dated 20 June 1997; ADP 3-0 is dated July 2019 | [M] cover; [A] cover (“Washington, DC, 31 July 2019”) | | front matter | as above |
+| 5a | ADP 3-0 (2025): "Combined arms is the synchronized and simultaneous application of arms to achieve an effect greater than if each element was used separately or sequentially." | [A2] ch. 3, "Combined Arms" | 21 March 2025 | para. 3-4, p. 25 | official + archived copy above |
+| 5b | "leaders create new combinations of capabilities, methods, and effects to pose new dilemmas for adversaries" | [A2] same paragraph | 21 March 2025 | para. 3-4, p. 25 | as above |
+| 5c | "Ground maneuver can make enemy forces displace and become vulnerable to joint fires" (page lower-cases "ground" mid-sentence) | [A2] ch. 3 | 21 March 2025 | para. 3-5, p. 25 | as above |
+| 5d | The 2019 "used destructively" / "used constructively" sentences (2019 para 3-52) do not appear in the 2025 edition (full-text search of the PDF for "destructively" and "constructively" in the combined-arms section; para 3-4 to 3-7 read) | [A2] | 21 March 2025 | paras 3-4 to 3-7, pp. 25-26 | as above |
+| 6 | MCDP 1 is dated 20 June 1997; ADP 3-0 is dated 21 March 2025 (cover: "Washington, DC, 21 March 2025"; "supersedes ADP 3-0, dated 31 July 2019") | [M] cover; [A2] cover | | front matter | as above |
 
 Points for the checker:
 - Claim 3's mapping onto the bench (key A = automatic weapon, key B = grenade launcher, guard on A = the enemy staying down, guard on B = the enemy moving) is the page's own gloss, introduced with “On the bench … can stand for”. Check it is a fair reading of the passage.
-- Claim 5 quotes mid-sentence; the source capitalizes “Used destructively” and “Used constructively”.
+- Row 5c lower-cases "Ground" mid-sentence.
 - The brief mentioned a mortar example; the 1997 MCDP 1 uses the automatic weapon and grenade launcher, so the page uses that. No mortar claim is made.
 
 Not factual claims (notional, labeled on the page and in METHOD.md): the lock and its geometry, the guard's hold threshold (last fifth of its travel), key turn rate (180°/s), guard crossing time (about 1.4 s), and the statement that no guard position holds both keys (a fact about the bench's geometry).

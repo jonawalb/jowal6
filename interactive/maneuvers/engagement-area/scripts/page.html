@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Engagement Area Development | Jonathan Walberg</title>
+<meta name="description" content="Engagement area development as a sloped chute table and a company defense: the manual's seven steps, built in order, and what happens to the enemy column when a step is left out. Built from ATP 3-21.10, Infantry Rifle Company, 1 June 2026.">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Engagement Area Development | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/engagement-area/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/engagement-area/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.fl-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.fl-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.fl-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.fl-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.fl-text p,.fl-text li{line-height:1.65}
+.fl-text .fine{font-size:.88rem;color:var(--text-muted)}
+.fl-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.ea-figure{background:transparent}
+.ea-figure .iso-figure{margin:0}
+.ea-figure .iso-plate{background:var(--anatomy-card)}
+.ea-stage{outline:none;cursor:pointer;touch-action:manipulation}
+.ea-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.ea-svg{display:block;width:100%;height:auto}
+.ea-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.ea-figure .iso-plate-corners{z-index:2}
+.ea-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.ea-figure[data-view="field"] .ea-svg{visibility:hidden}
+.ea-figure[data-view="field"] .ea-legend-machine{display:none}
+.ea-figure:not([data-view="field"]) .ea-field,.ea-figure:not([data-view="field"]) .ea-legend-field{display:none}
+.ea-legend{display:grid;gap:8px}
+/* the steps' marks on the ground: each group is shown when its step is built, and only for the avenue the engagement area is on */
+.ea-field .ea-s{transition:opacity .5s}
+.ea-field[data-lane="A"] .ea-s[data-lane="B"],.ea-field[data-lane="B"] .ea-s[data-lane="A"]{display:none}
+.ea-field[data-b1="0"] .ea-s[data-s="1"]{opacity:0}
+.ea-field[data-b2="0"] .ea-s[data-s="2"]{opacity:0}
+.ea-field[data-b3="0"] .ea-s[data-s="3"]{opacity:0}
+.ea-field[data-b4="0"] .ea-s[data-s="4"]{opacity:0}
+.ea-field[data-b5="0"] .ea-s[data-s="5"]{opacity:0}
+.ea-field[data-b6="0"] .ea-s[data-s="6"]{opacity:0}
+.ea-field[data-b7="0"] .ea-s[data-s="7"]{opacity:0}
+.ea-ribbon{fill:var(--tr-f-t);opacity:.3;stroke:var(--tr-f-d);stroke-width:.7;stroke-dasharray:4 3}
+.ea-coa{fill:var(--tr-h-l);opacity:.75;stroke:var(--tr-h-ink);stroke-width:.8}
+.ea-lit{stroke:var(--tr-lit-ink)!important;stroke-width:1.1!important;opacity:1}
+/* machine: the chevron, the enemy balls, the fire from the blocks */
+.ea-coa-m{fill:var(--anatomy-top)}
+.ea-ball{fill:var(--anatomy-face);stroke:var(--anatomy-hi);stroke-width:.9}
+.ea-ball-hi{fill:var(--anatomy-top);stroke:none;opacity:.9}
+.ea-ball.ea-down{fill:var(--anatomy-shade-1);stroke:var(--anatomy-mid);stroke-width:.7}
+.ea-trace{fill:none;stroke:var(--anatomy-hi);stroke-width:.7;stroke-dasharray:2.5 3;stroke-linecap:round}
+/* casualties: greyed and still (side fc = friendly, hc = enemy) */
+.ea-figure .tr-s[data-side="fc"] path,.ea-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.ea-figure .tr-s[data-side="fc"] .tr-t,.ea-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.ea-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.ea-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.ea-figure .tr-s[data-side="fc"] .tr-d,.ea-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.ea-figure .tr-s[data-side="fc"] .tr-g,.ea-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.ea-figure .tr-s[data-side="hc"] .tr-veh,.ea-figure .tr-s[data-side="hc"] .tr-veh>.iso-shade{fill:#d6d3cc;--anatomy-top:#e4e3dd;--anatomy-paper:#d6d3cc}
+.ea-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.ea-controls .btn{cursor:pointer}
+.ea-steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 22px;margin:10px 0 0;padding:0;border:0;list-style:none}
+.ea-step{display:flex;align-items:flex-start;gap:8px;font-size:14px;line-height:1.4;color:var(--anatomy-text);cursor:pointer}
+.ea-step input{margin-top:3px;flex:none}
+.ea-step b{font-family:var(--font-mono);font-weight:500;min-width:1.2em}
+.ea-step i{font-style:normal;color:var(--anatomy-muted)}
+.ea-bursts circle{pointer-events:none}
+.ea-core{fill:#4d4a42}.ea-dust{fill:#a39d8c}.ea-smoke{fill:var(--tr-smoke)}
+.fl-text h2{margin-top:28px}
+.fl-text ol{padding-left:1.2em}
+.fl-text li{margin:6px 0}
+@media (max-width:620px){.ea-steps{grid-template-columns:1fr}}
+@media (max-width:520px){.ea-figure .iso-plate-corner[data-corner="hint"]{display:none}.ea-stage{overflow:hidden}}
+</style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="fl-main">
+  <a class="fl-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Engagement Area Development</h1>
+  <p class="lede">A defending commander does not simply wait for the enemy. The manual gives seven steps for building the ground the enemy will have to cross, from finding where it will come from to rehearsing the fight. This figure builds them in the manual&rsquo;s order, then releases an enemy column, and shows what a missing step costs.</p>
+
+  <div class="iso ea-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="ea-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="ea-next">Build next step</button>
+      <button type="button" class="btn btn-outline" id="ea-go">Release the enemy</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
+    </div>
+    <fieldset class="ea-steps" aria-label="The seven steps of engagement area development, in the manual&rsquo;s order">
+      <label class="ea-step"><input type="checkbox" checked><b>1</b><span>Identify likely enemy avenues of approach</span></label>
+      <label class="ea-step"><input type="checkbox" checked><b>2</b><span>Identify the most likely enemy COA</span></label>
+      <label class="ea-step"><input type="checkbox" checked><b>3</b><span>Determine where to kill the enemy</span></label>
+      <label class="ea-step"><input type="checkbox" checked><b>4</b><span>Position subordinate forces and weapons systems</span></label>
+      <label class="ea-step"><input type="checkbox" checked><b>5</b><span>Plan and integrate obstacles</span></label>
+      <label class="ea-step"><input type="checkbox" checked><b>6</b><span>Plan and integrate fires</span></label>
+      <label class="ea-step"><input type="checkbox" checked><b>7</b><span>Rehearse the execution of operations within the EA</span></label>
+    </fieldset>
+  </div>
+
+  <section class="fl-text">
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same seven steps, the same enemy column and the same readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
+    <ol>
+      <li><b>The chute table</b> is sloped, high at the hopper end and low at the defenders&rsquo; end, with a distance scale along its edge. Its <b>two lanes</b> are the avenues of approach.</li>
+      <li><b>Step 1</b> raises the rails of both lanes. <b>Step 2</b> inlays a chevron on the left lane, the one the enemy will take.</li>
+      <li><b>Step 3</b> lays the lit <b>kill zone</b> on a lane, with a trigger sill across its top and three stakes, the target reference points.</li>
+      <li><b>Step 4</b> places six <b>weapon blocks</b> beside the lane. <b>Step 5</b> sets rows of <b>pegs</b> across it. <b>Step 6</b> stands a <b>gantry</b> of pins over it: the indirect fires. <b>Step 7</b> adds a <b>sync bar</b> that links the blocks so they act together.</li>
+      <li><b>The enemy</b> is twelve balls in the hopper. <b>The dial</b> reads how many are down; <b>the rack</b> of twelve pegs shows the defenders lost.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Tick the steps</b> in the list, press 1 to 7, or use Build next step (or a click on the card or N) to add them in order.</li>
+      <li><b>Release the enemy</b> with the button or the space bar. The column rolls down the lane; the blocks fire when it crosses the trigger sill, the pegs slow it, the pins hammer, and every ball inside the kill zone is knocked down where it is.</li>
+      <li><b>Leave a step out</b> and its part is missing. These effects are this model&rsquo;s own and notional, not doctrine: without steps 1 or 2 the kill zone is built on the other lane and the column passes it. Without 3 the fire is not massed, without 4 only some blocks cover the zone, without 5 the column rolls through at speed, without 6 the pins are gone, and without 7 the blocks fire ragged.</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the scale is a company defense seen from behind and above: blue is friendly, red is the enemy, and the enemy comes down the valley from the far treeline toward the viewer. Lit chalk is the engagement area.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>Two avenues of approach</b> run down the valley either side of a wooded rise. Step 1 tints them; step 2 draws the red arrow of the enemy&rsquo;s most likely COA (course of action) down the left one.</li>
+      <li><b>The engagement area</b> is the lit chalk outline across an avenue, with the trigger line chalked across its top and three stakes in it, the target reference points (step 3).</li>
+      <li><b>Three platoons</b> move from an assembly area behind the position into their battle positions, with sectors of fire laid on the ground (step 4). <b>Two rows of wire</b> cross the avenue (step 5). <b>A mortar section and an observer</b> bring the fires (step 6). <b>One soldier</b> walks the avenue while the leaders watch (step 7; a drawing choice, not something the manual specifies).</li>
+      <li><b>The enemy column</b> is six vehicles and six dismounts, two abreast.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Tick the steps</b> in the list, press 1 to 7, or use Build next step, and the marks and units for each step appear in the manual&rsquo;s order.</li>
+      <li><b>Release the enemy</b> and it comes down the left avenue. Built and rehearsed, every weapon opens together at the trigger line and the column is destroyed in the engagement area, at some cost to the defenders. Greyed figures lying still are men down, the defenders carried back to a collection spot (a drawing choice, not from the manual).</li>
+      <li><b>Leave a step out</b> and it shows. These effects are this model&rsquo;s own and notional, not doctrine: without step 1 or 2 everything else is built on the right-hand avenue and the column goes down the left one. Without 3 there are no marks and the fire is scattered, without 4 the platoons are still in the assembly area, without 5 the column drives through the wire&rsquo;s place at speed, without 6 there are no mortars, and without 7 some weapons open early, at long range, and the rest late.</li>
+    </ol>
+    <p class="fine">Soldiers are drawn larger than scale (about one and a half times) so they read. A platoon is drawn as six soldiers and the column as twelve elements (six vehicles and six dismounts). Distances, speeds, timings, weapon counts and losses are notional, and time is compressed.</p>
+    </div>
+
+    <h2>What doctrine says</h2>
+    <p>This figure follows <i>ATP 3-21.10, Infantry Rifle Company</i>, 1 June 2026, which supersedes the 14 May 2018 edition. The manual defines an engagement area (EA) as &ldquo;an area where the commander masses effects to contain and destroy an enemy force (FM 3-90)&rdquo; (para. 3-55, p. 85). Its seven-step EA development process, &ldquo;used for discussion purposes, represents one way a rifle company builds an EA&rdquo;, runs in this order (para. 3-61, p. 86):</p>
+    <ol>
+      <li>Identify likely enemy avenues of approach.</li>
+      <li>Identify the most likely enemy COA.</li>
+      <li>Determine where to kill the enemy.</li>
+      <li>Position subordinate forces and weapons systems.</li>
+      <li>Plan and integrate obstacles.</li>
+      <li>Plan and integrate fires.</li>
+      <li>Rehearse the execution of operations within the EA.</li>
+    </ol>
+    <p>COA is course of action. The same paragraph says &ldquo;the key is the identification of the likely enemy avenues of approach and actions, and the placement of adequate friendly forces, obstacles, and fires to defeat the enemy&rdquo; (para. 3-61, p. 86). Elsewhere the manual says:</p>
+    <ul>
+      <li><b>Target reference points and the trigger line</b> (step 3): a target reference point is &ldquo;a predetermined point of reference, normally a permanent structure or terrain feature that can be used when describing a target location&rdquo; (para. 3-59, p. 85); a trigger line is &ldquo;a phase line located on identifiable terrain used to initiate and mass fires into an engagement area at a predetermined range&rdquo; (para. 3-60, p. 86).</li>
+      <li><b>Positions and sectors</b> (step 4): the commander &ldquo;arrays available forces and weapons systems in positions to concentrate overwhelming effects into these areas&rdquo; and &ldquo;assigns sector of fires to subordinates&rdquo; (para. 3-56, p. 85).</li>
+      <li><b>Obstacles</b> (step 5): &ldquo;Tactical obstacles produce one of the following effects: disrupt, turn, fix, or block&rdquo;, and &ldquo;obstacle effects occur because of the combined effects of fires and obstacles, rather than from obstacles alone&rdquo; (para. 3-78, p. 90). Fix is &ldquo;an obstacle effect that focuses fire planning and obstacle effort to slow an attacker&rsquo;s movement within a specified area, normally an engagement area&rdquo; (para. 3-23, p. 76).</li>
+      <li><b>Rehearsal</b> (step 7): defenders use available time to &ldquo;coordinate and rehearse actions on the ground, gaining intimate familiarity with the terrain&rdquo; (para. 3-8, p. 72), and the commander&rsquo;s priorities of work may include &ldquo;conducting EA rehearsals&rdquo; (para. 3-95, p. 94).</li>
+    </ul>
+    <p>The manual presents the seven steps as a list, one way to build an engagement area. The bench and the figure build them one after another only to show each in turn. How the steps interact, and what happens when one is missing, is this model&rsquo;s own teaching device and is not stated in the manual.</p>
+
+    <h2>What is notional</h2>
+    <p>The run is a teaching model, not data. The enemy column advances at a compressed 30 m per figure second, slows to 8 m per second in the obstacle belt if step 5 is built, and the trigger line is 290 m out with the engagement area ending 60 m from the position. With every step built the defenders kill 1.35 elements a second inside the area; each missing step multiplies that: 0.2 for a wrong avenue (step 1 or 2), 0.6 for no massing (3), 0.55 for no positioning (4), 0.6 for no rehearsal (7), with the fires planned (6) adding a factor of 1.5. Those factors, and the losses they produce, are the model&rsquo;s, not doctrine&rsquo;s. Unit sizes are drawn, not doctrinal: the enemy column is twelve elements (six vehicles and six dismounts in the Battlefield view), each defending platoon is drawn as six soldiers, three platoons and a mortar section are shown, and soldiers are drawn at about one and a half times scale. The step-by-step build is a display choice. With all seven steps the run ends 1 vs 12 down; with step 1 or 2 left out, 9 vs 3; step 3, 2 vs 10; step 4, 3 vs 9; step 5, 2 vs 11; step 6, 1 vs 11; step 7, 2 vs 10.</p>
+    <p class="fine">Source: Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN46667-ATP_3-21.10-000-WEB-1.pdf">ATP 3-21.10, Infantry Rifle Company</a>, 1 June 2026, paras. 3-8, 3-23, 3-55 to 3-61, 3-78 and 3-95. It supersedes ATP 3-21.10 of 14 May 2018. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

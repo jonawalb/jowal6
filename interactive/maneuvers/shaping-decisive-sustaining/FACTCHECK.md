@@ -1,28 +1,29 @@
 # Shaping, Decisive and Sustaining: fact check
 
-**VERIFIED 2026-10-13 by an independent fact-checker (ADP 3-0 2019 paras 4-15, 4-26 to 4-29; FM 3-0 2022 para 3-127, plus a full-text search confirming none of the three "operation" terms appear). All 11 claims confirmed. Fixed after the check: the lede names ADP 3-0 (2019); the meta says FM 3-0 "frames operations differently" rather than "changed". Note: the checker found a March 2025 FM 3-0 (supersedes 2022) only on a third-party mirror, which also has none of the terms; the page makes no claim about it..** The builder read both manuals this session (Wayback copies; text extracted with `pdftotext`). Nothing below has been verified by an independent checker.
+VERIFIED: 2026-10-14, independent check (re-pinned to ADP 3-0 / FM 3-0 2025). Findings applied: ADP 3-0 para 3-25 cited as p. 29; the earlier-edition paragraph now says the 2025 edition does not contain the 2019 definitions, noting that "generating and maintaining combat power" appears only in another context (2-26). The table in the 2025 introductory page (p. viii) lists decisive, shaping and sustaining operation as "no longer a defined term"; ADP 2-26 reference is a paragraph of ADP 3-0.
+Sources opened 2026-10-14 (text extracted with pdftotext; paragraph numbers are in the text layer; printed page numbers read from the page footers):
+- ADP 3-0, *Operations*, 21 March 2025. Official: https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN43323-ADP_3-0-000-WEB-1.pdf ; archived copy: https://web.archive.org/web/20260812002342/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN43323-ADP_3-0-000-WEB-1.pdf
+- FM 3-0, *Operations*, 21 March 2025. Official: https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN43326-FM_3-0-000-WEB-1.pdf ; archived copy: https://web.archive.org/web/20260810214801/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN43326-FM_3-0-000-WEB-1.pdf
+- Earlier edition (2019 wording only): ADP 3-0, 31 July 2019, https://web.archive.org/web/2023id_/https://irp.fas.org/doddir/army/adp3_0.pdf
 
-Sources:
-- ADP 3-0 = Headquarters, Department of the Army, ADP 3-0, *Operations*, 31 July 2019. Official: https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN18010-ADP_3-0-000-WEB-2.pdf · archived copy read: https://web.archive.org/web/2023id_/https://irp.fas.org/doddir/army/adp3_0.pdf (also https://web.archive.org/web/2024id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN18010-ADP_3-0-000-WEB-2.pdf)
-- FM 3-0 = Headquarters, Department of the Army, FM 3-0, *Operations*, 1 October 2022. Official: https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN36290-FM_3-0-000-WEB-2.pdf · archived copy read: https://web.archive.org/web/2024id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN36290-FM_3-0-000-WEB-2.pdf
+| # | Claim on the page | Source, edition | Para / page | Exact text |
+|---|---|---|---|---|
+| 1 | "decisive operation", "shaping operation" and "sustaining operation" are each "No longer a defined term" in ADP 3-0 (2025); "decisive action" and "consolidation area" are rescinded | ADP 3-0 (2025) | Introductory table "New, modified, and rescinded Army terms", p. viii | "decisive operation: No longer a defined term"; "shaping operation: No longer a defined term"; "sustaining operation: No longer a defined term."; "decisive action: ADP 3-0 rescinds term."; "consolidation area: ADP 3-0 rescinds term." |
+| 2 | A full-text search of ADP 3-0 (2025) and FM 3-0 (2025) finds the three terms only in that table | ADP 3-0 and FM 3-0 (2025), whole manuals | pdftotext + grep for "decisive operation", "shaping operation", "sustaining operation", "decisive, shaping": hits only in the ADP 3-0 table | |
+| 3 | "three models commonly used to build an operational framework": assigned areas; deep, close, and rear operations; main effort, supporting effort, and reserve | FM 3-0 (2025); ADP 3-0 (2025) | FM para 3-136, p. 71; ADP para 3-25, p. 29 | FM: "The three models commonly used to build an operational framework are—"; ADP: "Commonly used models to build an operational framework are—" |
+| 4 | Main effort is "a designated subordinate unit whose mission at a given point in time is most critical to overall mission success" | ADP 3-0 (2025) | 3-38, p. 31 | same |
+| 5 | Supporting efforts are resourced "with the minimum assets necessary to accomplish the mission" | ADP 3-0 (2025) | 3-39, p. 31 | "Commanders resource supporting efforts with the minimum assets necessary to accomplish the mission, accepting risk to weight the main effort." |
+| 6 | Commanders balance mass with "the need to employ, protect, and sustain the units that produce those effects" | ADP 3-0 (2025) | 2-26, p. 21 | "Commanders balance the ability to mass lethal and nonlethal effects with the need to employ, protect, and sustain the units that produce those effects." |
+| 7 | Reading the press line as main effort, supporting effort and sustainment is the figure's own mapping | none | n/a | Not a doctrinal claim; labeled on the page |
+| 8 | 2019 edition: operational framework had "decisive, shaping, and sustaining operations" to "articulate an operation in terms of purpose" | ADP 3-0 (2019) | 4-15, p. 4-3 | verified 2026-10-13 against the archived 2019 copy |
+| 9 | 2019 edition: decisive operation "is the operation that directly accomplishes the mission" | ADP 3-0 (2019) | 4-26, p. 4-5 | verified 2026-10-13 |
+| 10 | 2019 edition: shaping operation "creates and preserves conditions for success of the decisive operation through effects on the enemy, other actors, and the terrain"; commanders "may designate more than one shaping operation"; "may occur throughout the area of operations" | ADP 3-0 (2019) | 4-27, p. 4-5 | verified 2026-10-13 |
+| 11 | 2019 edition: sustaining operation "enables the decisive operation or shaping operations by generating and maintaining combat power"; "Failure to sustain results in mission failure"; "occur throughout the area of operations, not just within a support area" | ADP 3-0 (2019) | 4-28 and 4-29, p. 4-5 | verified 2026-10-13 |
+| 12 | "None of this wording appears in the 2025 edition" (rows 9 to 11) | ADP 3-0 (2025) | whole manual | grep for the quoted phrases: no hits |
 
-| # | Claim on the page | Source, edition | Para, page |
-|---|---|---|---|
-| 1 | The operational framework has four components; the third: "within these areas commanders conduct decisive, shaping, and sustaining operations to articulate an operation in terms of purpose" | ADP 3-0 (2019) | 4-15, p. 4-3 |
-| 2 | ADP 3-0 also uses "deep, close, support, and consolidation areas" in the same framework | ADP 3-0 (2019) | 4-15, p. 4-3 |
-| 3 | The decisive operation "is the operation that directly accomplishes the mission" | ADP 3-0 (2019) | 4-26, p. 4-5 |
-| 4 | A shaping operation "creates and preserves conditions for success of the decisive operation through effects on the enemy, other actors, and the terrain" | ADP 3-0 (2019) | 4-27, p. 4-5 |
-| 5 | Commanders "may designate more than one shaping operation"; shaping operations "may occur throughout the area of operations" | ADP 3-0 (2019) | 4-27, p. 4-5 |
-| 6 | A sustaining operation "enables the decisive operation or shaping operations by generating and maintaining combat power" | ADP 3-0 (2019) | 4-28, p. 4-5 |
-| 7 | "Failure to sustain results in mission failure"; sustaining operations "occur throughout the area of operations, not just within a support area" | ADP 3-0 (2019) | 4-29, p. 4-5 |
-| 8 | FM 3-0 (2022) names three models "commonly used to build an operational framework": assigned areas; deep, close, and rear operations; main effort, supporting effort, and reserve | FM 3-0 (2022) | 3-127, p. 3-23 |
-| 9 | A text search of FM 3-0 (2022) finds no use of the terms decisive, shaping or sustaining operation | FM 3-0 (2022), full text | whole manual (pdftotext search for "shaping operation", "decisive operation", "sustaining operation": 0 hits) |
-| 10 | Caption: ADP 3-0 (2019) sorts an operation by purpose into decisive, shaping and sustaining operations; FM 3-0 (2022) frames operations differently | ADP 3-0 4-15; FM 3-0 3-127 | as rows 1, 8 |
-| 11 | Lede: Army doctrine "has sorted" the parts of an operation by purpose (past tense, since the 2022 FM 3-0 does not use the framework) | as rows 1, 8, 9 | |
+Removed: the FM 3-0 (2022) para 3-127 claim and its full-text-search claim (the 2022 edition is superseded); the 2019 "deep, close, support and consolidation areas" remark (consolidation area is rescinded in 2025, row 1).
 
-Not doctrinal claims: every rate, angle and limit on the line (1.8 s per sheet, about 33 good parts per minute, 45° per stroke, 90° ± 1°, 10 s meter smoothing) is notional and labeled so on the page and in METHOD.md.
-
-Open question for the checker: a web search suggests the Army updated FM 3-0 in March 2025. The builder could not obtain that edition (no armypubs or Wayback copy found this session), so the page describes only ADP 3-0 (2019) and FM 3-0 (2022) and does not say which edition is current. If a 2025 FM 3-0 exists, check whether it restores or keeps out the decisive/shaping/sustaining terms.
+Not doctrinal claims: every rate, angle and limit on the line (1.8 s per sheet, about 33 good parts per minute, 45 degrees per stroke, 90 degrees plus or minus 1, 10 s meter smoothing) is notional and labeled so on the page and in METHOD.md.
 
 ## Battlefield view additions (2026-10-13) — UNVERIFIED: pending independent check
 

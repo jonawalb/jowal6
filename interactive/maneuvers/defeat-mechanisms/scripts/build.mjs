@@ -186,7 +186,7 @@ const LABELS = {
   field: "Battlefield. Keys 1 to 4 apply or lift destroy, dislocate, disintegrate and isolate against the enemy battalion; 0 lifts them all; V switches to the Machine view.",
 };
 
-const CAPTION = "Army doctrine (ADP 3-0, 2019) names four defeat mechanisms (destroy, dislocate, disintegrate and isolate) and says forces “use combinations” of them. Each tool here stands for one. The gauge’s numbers are a notional teaching shape, not data.";
+const CAPTION = "Army doctrine (ADP 3-0, 2025) names four defeat mechanisms (destroy, dislocate, disintegrate and isolate) and says forces “use combinations” of them. Each tool here stands for one. The gauge’s numbers are a notional teaching shape, not data.";
 
 const card = k.plateHtml({
   fig: "Fig 24",
@@ -202,7 +202,7 @@ const card = k.plateHtml({
   body: `<div class="iso-stage dm-stage" tabindex="0" role="group" aria-label="${LABELS.machine}">${svg}${fieldSvg}</div>`,
 });
 // The legend and caption for each view; CSS shows the one that matches the card's data-view.
-const FIELD_CAPTION = "Army doctrine (ADP 3-0, 2019) names four defeat mechanisms (destroy, dislocate, disintegrate and isolate) and says forces “use combinations” of them. Here each is one friendly element acting on the same enemy battalion. Unit sizes, distances, timings and losses are notional, not data.";
+const FIELD_CAPTION = "Army doctrine (ADP 3-0, 2025) names four defeat mechanisms (destroy, dislocate, disintegrate and isolate) and says forces “use combinations” of them. Here each is one friendly element acting on the same enemy battalion. Unit sizes, distances, timings and losses are notional, not data.";
 const legendOf = (html) => html.slice(html.indexOf('<figcaption class="iso-legend">') + 31, html.indexOf("</figcaption>"));
 const fieldLegend = legendOf(k.plateHtml({
   fig: "", keys: [

@@ -29,8 +29,8 @@ node interactive/maneuvers/defeat-mechanisms/scripts/model.test.mjs # checks eve
 
 - Each mechanism has an effort level aᵢ from 0 to 1. Capability left = Π(1 − 0.3·aᵢ) × (1 − 0.15·max(0, Σaᵢ − 1)).
 - With n tools fully applied: 0 → 100%, 1 → 70%, 2 → 42%, 3 → 24%, 4 → 13%. Without the dilemma term (the tools one after another): 49%, 34%, 24% for 2, 3, 4.
-- One tool alone scales with effort: half effort on one tool leaves 85%. This is the model's reading of ADP 3-0 para 2-11 ("results relative to how much effort is expended"); the dilemma term is its reading of "Using defeat mechanisms in combination creates enemy dilemmas that magnify their effects significantly" (same paragraph). The 0.3 and 0.15 are teaching values, not data.
-- All four mechanisms are weighted equally. That is a simplification, not a doctrinal ranking (FM 3-0, 2022, para 3-109, puts destruction "at the core of all the defeat mechanisms"; the page does not claim otherwise).
+- One tool alone scales with effort: half effort on one tool leaves 85%. This is the model's reading of ADP 3-0 (2025) para 4-38 ("results relative to how much effort is expended"); the dilemma term is its reading of "Using a combination of defeat mechanisms creates multiple dilemmas for enemy forces that magnify their effects significantly" (same paragraph). The 0.3 and 0.15 are teaching values, not data.
+- All four mechanisms are weighted equally. That is a simplification, not a doctrinal ranking (FM 3-0, 2025, para 3-117, puts destruction "at the core of all the defeat mechanisms"; the page does not claim otherwise).
 - Motion rates (press 0.7/s, rod 0.8/s, saw 0.55/s, ring 1.2/s, cart cycle 6 s) are for legibility only. The ring rises only once the cart is behind it (cart centre ≤ y −42), so the two never pass through each other.
 - The readout names the switched-on set and its settled value; the needle eases toward it.
 

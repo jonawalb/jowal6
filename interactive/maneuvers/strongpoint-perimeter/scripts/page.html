@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Strongpoint and Perimeter Defense | Jonathan Walberg</title>
+<meta name="description" content="Strongpoint and perimeter defense as a working bench model and a company battlefield: a line is strong on the front it faces and bare behind, a ring is the same everywhere and thin, and, in this model, a prepared strong point makes the ring hold. Built from U.S. Army doctrine (FM 3-90, 1 May 2023; ATP 3-21.10, 1 June 2026).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Strongpoint and Perimeter Defense | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/strongpoint-perimeter/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/strongpoint-perimeter/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.fl-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.fl-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.fl-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.fl-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.fl-text p,.fl-text li{line-height:1.65}
+.fl-text .fine{font-size:.88rem;color:var(--text-muted)}
+.fl-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.sp-figure{background:transparent}
+.sp-figure .iso-figure{margin:0}
+.sp-figure .iso-plate{background:var(--anatomy-card)}
+.sp-stage{outline:none;cursor:pointer;touch-action:manipulation}
+.sp-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.sp-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.sp-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.sp-figure .iso-plate-corners{z-index:2}
+.sp-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.sp-figure[data-view="field"] .sp-svg{visibility:hidden}
+.sp-figure[data-view="field"] .sp-legend-machine{display:none}
+.sp-figure:not([data-view="field"]) .sp-field,.sp-figure:not([data-view="field"]) .sp-legend-field{display:none}
+.sp-legend{display:grid;gap:8px}
+
+
+
+/* casualties: greyed and still (side fc = friendly, hc = enemy), no colour beyond a faint tint */
+.sp-figure .tr-s[data-side="fc"] path,.sp-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.sp-figure .tr-s[data-side="fc"] .tr-t,.sp-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.sp-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.sp-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.sp-figure .tr-s[data-side="fc"] .tr-d,.sp-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.sp-figure .tr-s[data-side="fc"] .tr-g,.sp-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.sp-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.sp-controls .btn{cursor:pointer}
+.sp-modes{display:inline-flex;border:1px solid var(--border);border-radius:2px;overflow:hidden}
+.sp-modes button{font:inherit;font-size:14px;padding:6px 12px;border:0;background:transparent;color:var(--anatomy-text);cursor:pointer}
+.sp-modes button+button{border-left:1px solid var(--border)}
+.sp-modes button[aria-pressed="true"]{background:var(--text);color:var(--bg)}
+.fl-text h2{margin-top:28px}
+.fl-text ol{padding-left:1.2em}
+.fl-text li{margin:6px 0}
+.sp-table{width:100%;border-collapse:collapse;font-size:.92rem;margin:10px 0}
+.sp-table th,.sp-table td{border-bottom:1px solid var(--border);padding:6px 8px;text-align:left;vertical-align:top}
+.sp-table th{font-family:var(--font-mono);font-weight:500;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--green-700)}
+.sp-wrap{overflow-x:auto}
+@media (max-width:520px){.sp-figure .iso-plate-corner[data-corner="hint"]{display:none}.sp-stage{overflow:hidden}}
+
+/* layout and preparation switch which static ground items show */
+.sp-figure:not([data-layout="P"]) .sp-P{display:none}
+.sp-figure[data-layout="P"] .sp-L{display:none}
+.sp-figure:not([data-fort="1"]) .sp-s{display:none}
+.sp-figure[data-fort="1"] .sp-h{display:none}
+.sp-controls label{display:inline-flex;gap:8px;align-items:center;font-size:14px;color:var(--anatomy-text)}
+.sp-controls input[type=range]{width:150px;accent-color:var(--text)}
+.sp-controls output{font-family:var(--font-mono);font-size:13px;min-width:5.2em}
+.sp-main[aria-pressed="true"]{background:var(--text);color:var(--bg)}
+</style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="fl-main">
+  <a class="fl-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Strongpoint and Perimeter Defense</h1>
+  <p class="lede">A perimeter defense is one “oriented in all directions” (ATP 3-21.10, para. 3-36), and a strong point is a battle position fortified enough to anchor a defense (FM 3-90, para. A-68). In this model, six positions drawn up as a line are strong on the front they face and bare behind; drawn up as a ring they cover every bearing but are thin everywhere; prepared as a strong point, with obstacles and fortified positions and a reserve in the middle, the ring holds. This figure shows the trade.</p>
+
+  <div class="iso sp-figure" data-theme="light" data-view="field" data-layout="L" data-fort="0">
+    <!--FIGURE-->
+    <div class="sp-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
+      </div>
+      <div class="sp-modes sp-layout" role="group" aria-label="Layout of the defense">
+        <button type="button" data-layout="L" aria-pressed="true">Line</button>
+        <button type="button" data-layout="P" aria-pressed="false">Perimeter</button>
+      </div>
+      <div class="sp-modes sp-prep" role="group" aria-label="Preparation">
+        <button type="button" data-fort="0" aria-pressed="true">Hasty</button>
+        <button type="button" data-fort="1" aria-pressed="false">Strong point</button>
+      </div>
+      <button type="button" class="btn btn-outline sp-main" id="sp-main" aria-pressed="false">Reinforce the likely avenue</button>
+      <label>Attack from <input type="range" id="sp-bearing" min="0" max="345" step="15" value="0" aria-label="Bearing the attack comes from, degrees"> <output id="sp-bearing-out" for="sp-bearing">0° N</output></label>
+      <button type="button" class="btn btn-outline" id="sp-engage">Attack</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
+    </div>
+  </div>
+
+  <section class="fl-text">
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model, the same attack and the same readout drive both. The same six positions, the same reserve and the same attacker apply in every setting, so any difference is the layout, the preparation or the direction. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
+    <ol>
+      <li><b>The six plates</b> each stand for one defending position. Each sits on a carriage with a spring tube and a pressure gauge behind it. The switch lays them as a straight wall across the likely avenue, north, or as a ring round the hub, tied edge to edge by bars.</li>
+      <li><b>The hub</b> is the company command post and reserve. Its lit arm is the reserve: it rests pointing south and swings to the bearing under attack once it is committed.</li>
+      <li><b>The rail round the rim</b> carries the attack: a dark carriage with a push rod and head that you aim by bearing. The engraved ring shows 5° ticks, with a wedge at north.</li>
+      <li><b>The pickets</b> are the obstacles: a ring of low posts that doubles in number and rises, and puts roofs on the plates, when the position is prepared as a strong point.</li>
+      <li><b>The gauges</b> on each plate read the pressure that plate takes; the hub's dial reads the share of the attack no plate faces. The two lamps at the front say held (left) or penetrated (right).</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Set it up.</b> Choose line or perimeter, hasty or strong point, whether the likely avenue (north) is reinforced, and the bearing the attack comes from with the slider or the arrow keys. Then <b>Attack</b> (the button, a click on the figure, or F).</li>
+      <li><b>As a line</b> every plate faces north. From north all six take the load and the attack is held; from east, south or west no plate faces it, the reserve fights alone and the rod drives through to the hub.</li>
+      <li><b>As a ring</b> the plates face every way, so the load on each bearing is the same, but only about two plates share it. Hasty, that is not enough against this attack; prepared as a strong point, with obstacles and fortified positions, it holds from every bearing.</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the scale is a rifle company on a rise, blue is friendly and red is the attacker. Each defending position is drawn as two fighting positions of two men, and each attacking element as three men, so the drawn soldiers stand for squads. The arrow at the edge of the picture points north.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The company</b> is six positions, two to each of three platoons (this figure’s own reading, not doctrine). In the line setting they stand side by side across the likely avenue behind a belt of wire; in the perimeter setting they ring the rise at equal spacing with wire all round. The dashed chalk line is the trace of the perimeter or the line of the defense; the fans are each position's sector of fire.</li>
+      <li><b>The reserve</b> is the lit fire team in the centre with the command post. It “normally” sits centrally “to react to a penetration of the perimeter at any point” (FM 3-90, para. 9-61) and moves to the threatened side.</li>
+      <li><b>The strong point</b> adds a second belt of wire, heavier sandbagged positions and machine-gun nests at the junctions between platoons. A strong point is “a heavily fortified battle position tied to a natural or reinforcing obstacle” (FM 3-90, para. A-68; ATP 3-21.10, para. 3-16). The stream on the south-west side is the natural obstacle a perimeter can tie into (FM 3-90, para. 9-62).</li>
+      <li><b>The attack</b> is five red elements in line abreast on the chosen bearing, outside the wire.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Pick the setup and the bearing</b> with the buttons and the slider (or L, S, M and the arrow keys), then <b>Attack</b>. The red line comes in; the positions that face it fire and the reserve is committed after a short delay.</li>
+      <li><b>Held:</b> the elements go down one by one at the wire and the lamps and readout say held. <b>Penetrated:</b> the defenders on that side go down and the attack drives in to the centre.</li>
+      <li><b>Losses</b> are notional: greyed figures lying still are men down. The company's are carried to a collection point by the command post, where a medic kneels. The readout counts notional men, friendly vs enemy, at nine to a squad.</li>
+    </ol>
+    <p class="fine">Soldiers are drawn larger than scale (about one and a half times) so they read; sizes, ranges, timings, strengths and losses are notional.</p>
+    </div>
+
+    <h2>What doctrine says</h2>
+    <p>On the strong point, FM 3-90, <i>Tactics</i> (1 May 2023), defines it as “a heavily fortified battle position tied to a natural or reinforcing obstacle to create an anchor for the defense or to deny the enemy decisive or key terrain (ADP 3-90)” (para. A-68, p. A-20; glossary, p. Glossary-21). “Commanders prepare a strong point for all around defense,” and strong points “require extensive engineer support to create obstacles and increase survivability efforts” (para. A-68). A “minimally effective strong point typically requires one day of effort from an engineer unit the same size as the unit defending the strong point,” companies and battalions normally occupy them, and units “do not normally establish strong points for units smaller than company size” (para. A-69, p. A-21). ATP 3-21.10, <i>Infantry Rifle Company</i> (June 2026), repeats the definition and adds that the mission “implies retention of terrain to stop or redirect enemy formations” and that a strong point “requires extensive time, engineer support, and Class IV resources to construct” (para. 3-16, p. 74).</p>
+    <p>On the perimeter, ATP 3-21.10: “A perimeter defense is a defense oriented in all directions. A perimeter defense by design has a secure inner area with most of the combat power located on the perimeter” (para. 3-36, p. 79), and “[n]ormally, if a reserve is identified by the company commander it is centrally located to react to any point of penetration along the company perimeter” (same paragraph). The part covering the most probable direction of attack “may be reinforced with additional resources” (same paragraph). FM 3-90 gives the purposes: a unit uses it “when the unit is required to orient on all directions” (para. 9-59, p. 9-13), “to accomplish a specific mission, such as protecting a firebase or providing immediate self-protection,” when a unit “must hold key terrain, such as a strong point,” or must defend itself in noncontiguous areas “where a unit cannot tie its defense in with adjacent units” (para. 9-60, p. 9-13). Units “prepare to defend against an enemy attack from any direction and designate the unit defending the most likely enemy avenue of approach the main effort” (para. 9-78, p. 9-18).</p>
+    <p>The cost is stated too: the need to hold terrain features, “as well as the inability to achieve depth, make a perimeter defense vulnerable to penetration by heavy enemy forces,” which units reduce by early warning, anti-armor systems on restrictive terrain, depth, and “constructing obstacles to fix or block enemy forces” (para. 9-68, p. 9-16). The reserve “forms a second line of defense behind the perimeter forces” (para. 9-71), and “if enemy forces penetrate the perimeter, the reserve blocks the penetration or counterattacks to restore the perimeter” (para. 9-82, p. 9-19).</p>
+
+    <h2>What is notional</h2>
+    <p>Only the doctrine quoted above is sourced; the rest is a teaching value. Each position is worth one unit of fire on the bearing it faces, falling to nothing 90° either side; as a ring the positions face every 60°, so any bearing meets 1.3 to 1.7 units, and as a line all six face north. The reserve adds one unit two seconds into the attack. Reinforcing the likely avenue adds 1.5 units there. The attacker is five units; preparing as a strong point multiplies the defender’s effect by 1.5 (the obstacles hold the enemy under fire) and halves the defender’s losses (fortified positions). Each side wears the other down in proportion to its strength, and the attack ends held or penetrated.</p>
+    <p>On those numbers the line, hasty, holds from the front and the 45° sectors beside it and is penetrated from east, south and west (9 men down, as the reserve alone is destroyed); the ring, hasty, is penetrated from every bearing; the ring prepared as a strong point holds from every bearing, with 9 to 12 men down; reinforcing the likely avenue helps only an attack that comes from there or from the sectors beside it. The bench shows an argument, not a measurement.</p>
+    <p class="fine">Sources: Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">FM 3-90, Tactics</a>, 1 May 2023, paras. 9-59 to 9-62, 9-68, 9-71, 9-78, 9-82, A-68 and A-69. Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN46667-ATP_3-21.10-000-WEB-1.pdf">ATP 3-21.10, Infantry Rifle Company</a>, 01 June 2026, paras. 3-16 and 3-36. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

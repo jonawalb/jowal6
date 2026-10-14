@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Reverse Slope Defense | Jonathan Walberg</title>
+<meta name="description" content="The reverse slope defense as a working bench model and a platoon battlefield: on the forward slope the enemy sees and fires first; behind the crest it sees nothing until it crests the hill at short range. Built from U.S. Army doctrine (FM 3-90, 2023; ATP 3-21.8, 2024).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Reverse Slope Defense | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/reverse-slope/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/reverse-slope/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.fl-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.fl-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.fl-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.fl-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.fl-text p,.fl-text li{line-height:1.65}
+.fl-text .fine{font-size:.88rem;color:var(--text-muted)}
+.fl-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.rs-figure{background:transparent}
+.rs-figure .iso-figure{margin:0}
+.rs-figure .iso-plate{background:var(--anatomy-card)}
+.rs-stage{outline:none;cursor:pointer;touch-action:manipulation}
+.rs-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.rs-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.rs-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.rs-figure .iso-plate-corners{z-index:2}
+.rs-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.rs-figure[data-view="field"] .rs-svg{visibility:hidden}
+.rs-figure[data-view="field"] .rs-legend-machine{display:none}
+.rs-figure:not([data-view="field"]) .rs-field,.rs-figure:not([data-view="field"]) .rs-legend-field{display:none}
+.rs-legend{display:grid;gap:8px}
+
+
+
+/* casualties: greyed and still (side fc = friendly, hc = enemy), no colour beyond a faint tint */
+.rs-figure .tr-s[data-side="fc"] path,.rs-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.rs-figure .tr-s[data-side="fc"] .tr-t,.rs-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.rs-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.rs-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.rs-figure .tr-s[data-side="fc"] .tr-d,.rs-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.rs-figure .tr-s[data-side="fc"] .tr-g,.rs-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.rs-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.rs-controls .btn{cursor:pointer}
+.rs-modes{display:inline-flex;border:1px solid var(--border);border-radius:2px;overflow:hidden}
+.rs-modes button{font:inherit;font-size:14px;padding:6px 12px;border:0;background:transparent;color:var(--anatomy-text);cursor:pointer}
+.rs-modes button+button{border-left:1px solid var(--border)}
+.rs-modes button[aria-pressed="true"]{background:var(--text);color:var(--bg)}
+.fl-text h2{margin-top:28px}
+.fl-text ol{padding-left:1.2em}
+.fl-text li{margin:6px 0}
+.rs-table{width:100%;border-collapse:collapse;font-size:.92rem;margin:10px 0}
+.rs-table th,.rs-table td{border-bottom:1px solid var(--border);padding:6px 8px;text-align:left;vertical-align:top}
+.rs-table th{font-family:var(--font-mono);font-weight:500;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--green-700)}
+.rs-wrap{overflow-x:auto}
+@media (max-width:520px){.rs-figure .iso-plate-corner[data-corner="hint"]{display:none}.rs-stage{overflow:hidden}}
+</style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="fl-main">
+  <a class="fl-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Reverse Slope Defense</h1>
+  <p class="lede">A defender who stands on the forward slope of a hill can be seen and hit from far away. FM 3-90 describes another way: organize the defense on a slope “with a topographical crest that masks the main defensive positions from enemy observation and direct fire” (para. 9-101). This figure puts the same platoon on both slopes and sends the same attack at it, so you can see what the crest buys and what it costs.</p>
+
+  <div class="iso rs-figure" data-theme="light" data-view="field">
+    <!--FIGURE-->
+    <div class="rs-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
+      </div>
+      <div class="rs-modes" role="group" aria-label="Platoon position">
+        <button type="button" data-mode="F" aria-pressed="false">Forward slope</button>
+        <button type="button" data-mode="R" aria-pressed="true">Reverse slope</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="rs-op" aria-pressed="true">Observation post: manned</button>
+      <button type="button" class="btn btn-outline" id="rs-go">Attack</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
+    </div>
+  </div>
+
+  <section class="fl-text">
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model, the same attack and the same readout drive both. The same platoon, the same attack and the same rules apply on both slopes, so any difference comes from where the platoon stands and whether an observation post warns it. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
+    <ol>
+      <li><b>The comb</b> is a row of slats cut to the height of the hill: flat ground on the enemy's side, a rise to the crest in the middle, and a drop behind it. The model uses the same steps to decide what can see what.</li>
+      <li><b>The lamp carriage</b> is the attack, riding the comb from the enemy's end. Its lamp is the enemy's eye and its weapons.</li>
+      <li><b>The lit block</b> is the platoon's line. It stands on the forward slope or behind the crest.</li>
+      <li><b>The sight line</b> runs from the lamp toward the block. It is light while the enemy cannot fire, dark when it can, and it ends on the ground that stands in its way. A second, lighter line is the platoon returning fire.</li>
+      <li><b>The lamp at the front</b> lights while the enemy can see the block. <b>The two gauges</b> rise with the men down: the platoon's, then the attack's.</li>
+      <li><b>The mast on the crest</b> is the observation post; it rises when manned. <b>The two rows of pegs and wire</b> are an obstacle belt on the forward slope and a protective belt just down from the crest. <b>The selector</b> at the left end sets the slope.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Pick the slope</b> with the buttons or the keys 1 and 2, and manned or not with the Observation post button or O. Then <b>Attack</b> (the button, a click on the figure, or A).</li>
+      <li><b>Forward slope:</b> the lamp sees the block from far out and fires first, while the platoon is still out of its own range. Both sides take losses until the attack arrives.</li>
+      <li><b>Reverse slope:</b> the sight line ends on the crest. The block is not seen until the lamp is over the top, at short range, and the whole line fires at once.</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the scale is a platoon in the defense, blue is friendly and red is the enemy, on one hill. The enemy comes from the far side of the screen up the forward slope; the reverse slope faces you.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The platoon</b> is twelve two-man fighting positions in one line, with the platoon leader and radio operator behind. On the reverse slope the line is below the crest; on the forward slope it is the same line on the enemy’s side of the hill.</li>
+      <li><b>The observation post</b> is two men lying at the crest. FM 3-90 places observation posts “near or forward of the topographical crest” (para. 9-107); ATP 3-21.8 puts them “on, or forward of the topographical crest” (para. 5-132).</li>
+      <li><b>The attack</b> is one rifle platoon in a vee. Two belts of wire stand in its way: one across the forward slope and one just down from the crest.</li>
+      <li><b>The dashed chalk</b> marks the final protective fire (FPF) box. In the reverse-slope setup it is on the crest (FM 3-90 para. 9-112: units “normally place FPFs along the topographical crest”); on the forward slope it is in front of the line.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Pick the slope</b> with the buttons or the keys 1 and 2, and manned or not with the Observation post button or O. Then <b>Attack</b> (the button, a click on the field, or A).</li>
+      <li><b>Forward slope:</b> the enemy sees the line from the foot of the hill, its tracers and incoming rounds reach it, and the platoon replies only when the attack comes within its own range.</li>
+      <li><b>Reverse slope:</b> the enemy climbs with nothing to shoot at. When it breaches the forward wire and crests the hill it meets massed fire at short range, and then the FPF and the protective belt.</li>
+      <li><b>Without the observation post</b> the platoon is warned only when the enemy is over the crest and loses a few seconds before it fires.</li>
+      <li><b>Losses</b> are notional: greyed figures lying still are men down. The platoon’s are carried back to a collection point behind the line, where a medic kneels. The readout counts them, friendly vs enemy.</li>
+    </ol>
+    <p class="fine">Soldiers are drawn larger than scale (about one and a half times) so they read; the hill, sizes, ranges, timings, losses and the spacing of positions are notional.</p>
+    </div>
+
+    <h2>What doctrine says</h2>
+    <p>FM 3-90, <i>Tactics</i> (1 May 2023), describes the reverse slope defense in paras. 9-101 to 9-114. Its own advantages and disadvantages are these, in the manual’s words:</p>
+    <div class="rs-wrap"><table class="rs-table">
+      <thead><tr><th>Advantages (FM 3-90, para. 9-104, p. 9-22)</th><th>Disadvantages (FM 3-90, para. 9-105, p. 9-22)</th></tr></thead>
+      <tbody>
+        <tr><td>“A reverse slope defense may deceive enemy forces regarding the true location and organization of its main defensive positions.”</td><td>“The effective range of direct fire weapons may be limited.”</td></tr>
+        <tr><td>It “protects the main defensive positions from preparation fires and causes enemy forces to deploy into assault formations prematurely.”</td><td>“Once security elements withdraw, enemy forces can advance largely unimpeded until attacking elements crest the high ground in front of the main defensive positions.”</td></tr>
+        <tr><td>“The forward crest of the main defensive positions limits the enemy force’s observation.” It “reduces the effectiveness of enemy indirect fires and close air support rendering the enemy force’s direct fire weapons ineffective.”</td><td>“The enemy force has the advantage of attacking downhill.”</td></tr>
+        <tr><td>“The defending force may surprise enemy forces as they crest the high ground, engaging them with massed fires.”</td><td>“Maintaining observation of the enemy force is difficult.”</td></tr>
+        <tr><td>“Units on the reverse slope have more freedom of movement until the crest is lost.” It “also removes any direct fire stand-off advantage the enemy may have.”</td><td>“In some cases, units can cover obstacles only from positions on the forward slope.”</td></tr>
+      </tbody>
+    </table></div>
+    <p>ATP 3-21.8, <i>Infantry Rifle Platoon and Squad</i> (11 January 2024, incorporating Change 1, June 2025), gives the platoon’s view. The platoon is “deployed on terrain that is masked from enemy direct fire and ground observation by the crest of a hill,” and the key is to “control the crest by direct fire” (para. 5-130, p. 5-42). The technique “allows subordinate units to concentrate direct fires into a relatively small area while being protected from the enemy’s direct observation and supporting fires” (para. 5-133, p. 5-44), and “moving to the reverse slope removes the attacker’s standoff advantage” (para. 5-133, p. 5-45). Its considerations for the platoon leader (para. 5-135, pp. 5-45 to 5-46) include that “observation of the enemy is more difficult,” “fields of fire are usually short,” “obstacles on the forward slope can be covered only with indirect fire or by units on the flanks of the platoon unless some weapon systems are placed forward initially,” and that “if the enemy gains the crest, they can assault downhill. This may give the enemy a psychological advantage.”</p>
+    <p>ATP 3-21.10, <i>Infantry Rifle Company</i> (1 June 2026), gives the company commander’s view. The company deploys “the majority of its forces on terrain that is masked from enemy direct fire and ground observation by a topographical crest,” and “the key to this defense is control of the crest by direct fire” (para. 3-41, p. 81). The commander may choose it when “moving to the reverse slope removes the attacker’s standoff advantage” or when the forward slope is untenable (para. 3-42, p. 82). Its considerations (para. 3-44, p. 83) are that “observation of the enemy is more difficult,” “egress from the position might be more difficult,” “fields of fire are usually short,” forward-slope obstacles “can be covered only with indirect fire or by units on the flanks of the company unless some weapons systems are initially placed forward,” and, if the enemy gains the crest, “they can assault downhill, which may give them a psychological advantage.” Para. 3-43 (p. 83) stresses “a fire support plan to prevent the enemy’s occupation and use of the crest of the hill.”</p>
+    <p>The same paragraphs tell the defender how to pay for it. FM 3-90 para. 9-102 (p. 9-21): “Although a defender may not occupy a crest in strength, controlling the crest by fire is essential for success.” Para. 9-107 (pp. 9-22 to 9-23) tasks a security force with observing the forward slope, and para. 9-112 (p. 9-23) says units “normally place FPFs along the topographical crest.” ATP 3-21.8 para. 5-132 (p. 5-44) adds protective obstacles “on the reverse slope—just down from the crest where it can be covered by fire.” Para. 9-113 (p. 9-23) is a caution: once this defense “successfully halts an enemy attack, it may have limited further value because the effect of surprise is difficult to attain.”</p>
+    <h3>What the figure shows, and what it leaves out</h3>
+    <p>The model shows the ground masking sight and fire (so the reverse slope is not seen until the crest), the enemy’s standoff advantage on the forward slope, the preparation fires that fall on a position the enemy can see, massed fires at the crest, the observation post’s warning, the FPF on the crest, the downhill rush and the protective belt below it. It leaves out deception, premature deployment into assault formations, close air support, the withdrawal of the security force and the counterattack to regain the crest (paras. 9-111 and 9-114).</p>
+
+    <h2>What is notional</h2>
+    <p>Only the doctrine quoted above is sourced; the rest is a teaching value. The hill is five contour steps, each 2.4 units high, 150 units across at its foot with a flat top 30 units across, and a unit is about a metre. The platoon is 30 men and the attack 30 men. The attack starts 150 units out, climbs at 5 units a second, runs downhill at 7, and needs 4 seconds to breach a belt. Its weapons reach 110 units and the platoon’s 70. The platoon holds a line 30 units behind the crest on the reverse slope or 30 units short of it on the forward slope. An enemy that sees the platoon loses it 0.55 men a second at full strength to direct fire, plus 0.30 from indirect fire; the platoon’s direct fire takes 1.2 men a second at full strength, 2.2 times that when massed at the crest, plus 1.0 from the FPF while the attack is in its box. A platoon not warned by the observation post waits 3 seconds after the enemy appears before it fires. The attack stops when 40% of it is left. The model speed is 2.4 times real time.</p>
+    <p>On those numbers the platoon on the reverse slope with its observation post stops the attack at the protective belt, at 39.3 s, for 3 of the platoon against 18 of the enemy (notional counts). The same platoon on the forward slope has the enemy at its line at 28.0 s, for 17 against 16. On the reverse slope without the observation post the enemy reaches the line at 42.3 s, for 6 against 13. These times and counts are the model’s, not data: the bench shows an argument, not a measurement.</p>
+    <p class="fine">Sources: Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">FM 3-90, Tactics</a>, 1 May 2023, paras. 9-101 to 9-114; and <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a>, 11 January 2024, incorporating Change 1, June 2025 (<a href="https://web.archive.org/web/20250807233618id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">archived copy</a>), paras. 5-130 to 5-135; and ATP 3-21.10, <i>Infantry Rifle Company</i>, 1 June 2026 (supersedes the 14 May 2018 edition), paras. 3-41 to 3-44. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

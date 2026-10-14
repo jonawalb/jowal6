@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Obstacles and Fires | Jonathan Walberg</title>
+<meta name="description" content="Obstacles produce their effect, disrupt, turn, fix or block, only together with fires. A working flow table and a company battlefield, built from U.S. Army doctrine (FM 3-90, 2023).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Obstacles and Fires | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/obstacle-effects/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/obstacle-effects/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.fl-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.fl-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.fl-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.fl-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.fl-text p,.fl-text li{line-height:1.65}
+.fl-text .fine{font-size:.88rem;color:var(--text-muted)}
+.fl-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.oe-figure{background:transparent}
+.oe-figure .iso-figure{margin:0}
+.oe-figure .iso-plate{background:var(--anatomy-card)}
+.oe-stage{outline:none;cursor:pointer;touch-action:manipulation}
+.oe-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.oe-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.oe-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.oe-figure .iso-plate-corners{z-index:2}
+.oe-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.oe-figure[data-view="field"] .oe-svg{visibility:hidden}
+.oe-figure[data-view="field"] .oe-legend-machine{display:none}
+.oe-figure:not([data-view="field"]) .oe-field,.oe-figure:not([data-view="field"]) .oe-legend-field{display:none}
+.oe-legend{display:grid;gap:8px}
+.oe-bursts,.oe-tags{pointer-events:none}
+.oe-tag{font:600 9px var(--anatomy-mono);letter-spacing:.04em;fill:var(--anatomy-strong);paint-order:stroke;stroke:var(--anatomy-card);stroke-width:3px;stroke-linejoin:round;text-transform:uppercase}
+.oe-tag[data-off]{fill:var(--anatomy-red)}
+.oe-floor>.iso-fill{fill:var(--anatomy-shade-0)}.oe-floor>.iso-top{fill:var(--anatomy-shade-1)}
+.oe-ditch>.iso-fill,path.oe-ditch{fill:var(--tr-pit);stroke:none;opacity:.8}.oe-ditch>.iso-edge{opacity:0}
+.oe-ball .oe-body{fill:var(--anatomy-face);stroke:none}
+.oe-ball .oe-shine{fill:var(--anatomy-top);stroke:none}
+.oe-ball .oe-rim{fill:none;stroke:var(--anatomy-lit);stroke-width:1.1}
+.oe-ball .oe-shadow{fill:var(--anatomy-halo);opacity:.45;stroke:none}
+.oe-spent .iso-top{fill:var(--anatomy-lo)}.oe-spent .iso-shade{fill:var(--anatomy-mid)}
+.tr-s[data-side="hc"] .tr-veh{--anatomy-top:#e4e3dd;--anatomy-paper:#d3d3cc}
+.iso .tr-s[data-side="hc"] .tr-veh>.iso-shade{fill:#c9c8c1!important}
+.tr-s[data-side="hc"] .tr-veh .iso-edge,.tr-s[data-side="hc"] .tr-gun{stroke:#9a9a92}
+
+
+/* casualties: greyed and still (side fc = friendly, hc = enemy), no colour beyond a faint tint */
+.oe-figure .tr-s[data-side="fc"] path,.oe-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.oe-figure .tr-s[data-side="fc"] .tr-t,.oe-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.oe-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.oe-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.oe-figure .tr-s[data-side="fc"] .tr-d,.oe-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.oe-figure .tr-s[data-side="fc"] .tr-g,.oe-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.oe-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.oe-controls .btn{cursor:pointer}
+.oe-groups{display:inline-flex;border:1px solid var(--border);border-radius:2px;overflow:hidden}
+.oe-groups button{font:inherit;font-size:14px;padding:6px 12px;border:0;background:transparent;color:var(--anatomy-text);cursor:pointer}
+.oe-groups button+button{border-left:1px solid var(--border)}
+.oe-groups button[aria-pressed="true"]{background:var(--text);color:var(--bg)}
+.fl-text h2{margin-top:28px}
+.fl-text ol{padding-left:1.2em}
+.fl-text li{margin:6px 0}
+.oe-table{width:100%;border-collapse:collapse;font-size:.92rem;margin:10px 0}
+.oe-table th,.oe-table td{border-bottom:1px solid var(--border);padding:6px 8px;text-align:left;vertical-align:top}
+.oe-table th{font-family:var(--font-mono);font-weight:500;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--green-700)}
+.oe-wrap{overflow-x:auto}
+@media (max-width:520px){.oe-figure .iso-plate-corner[data-corner="hint"]{display:none}.oe-stage{overflow:hidden}}
+</style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="fl-main">
+  <a class="fl-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Obstacles and Fires</h1>
+  <p class="lede">An obstacle on its own only costs the enemy time. FM 3-90 says the obstacle effect, whether block, disrupt, fix or turn, comes from the combined effects of fires and obstacles. This figure lets you switch the fires off a group and watch what the obstacle is worth without them.</p>
+
+  <div class="iso oe-figure" data-theme="light" data-view="field">
+    <!--FIGURE-->
+    <div class="oe-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
+      </div>
+      <div class="oe-groups" role="group" aria-label="Fires on each obstacle group">
+        <button type="button" data-k="D" aria-pressed="true">Disrupt</button>
+        <button type="button" data-k="T" aria-pressed="true">Turn</button>
+        <button type="button" data-k="F" aria-pressed="true">Fix</button>
+        <button type="button" data-k="B" aria-pressed="true">Block</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="oe-run">Send the column</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
+    </div>
+  </div>
+
+  <section class="fl-text">
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model, the same run and the same readout drive both. The four group buttons switch the fires covering that group (pressed means covered). Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
+    <ol>
+      <li><b>The column</b> is the eight lit balls, two abreast, fed from the hopper at the left. They roll down avenue A, the long channel, and the branch B that leaves it toward the viewer. Balls that get through collect in the trough at the end of a channel.</li>
+      <li><b>Disrupt</b> is a row of pins across the near half of avenue A only. <b>Turn</b> is a hinged vane across avenue A that sends the flow into branch B. <b>Fix</b> is a pocket of staggered lips in the branch. <b>Block</b> is a gate across the end of the branch.</li>
+      <li><b>Each baffle has a nozzle post</b> beside it. While its jet is on, the baffle stands in its working position. The little lever on the post shows the valve.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Send the column</b> (the button, a click on the figure or F) runs the balls down the table from the start.</li>
+      <li><b>Switch a jet</b> with the Disrupt, Turn, Fix and Block buttons or the keys 1 to 4. With its jet off, the baffle drops flat and the balls roll over or through it after a short delay.</li>
+      <li>With all four jets on, balls are pushed off the lane by the jets at each baffle and the rest stop at the gate. In this model, switch the turn jet off and the whole column rolls straight on along avenue A and never meets the fix or block baffles at all (the manual says only that the turning effect could be lost, para. 17-43).</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the scale is a company-sized fight on the ground, blue is friendly and red is the enemy. Soldiers and vehicles are drawn larger than scale so they read.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The enemy column</b> is eight lit red vehicles, two abreast, entering from the left on a broad avenue. Eight is a drawing choice, standing for a company-sized column.</li>
+      <li><b>Four obstacle groups</b> lie along its way, each tagged on the ground: wire and a minefield across the near half of the avenue (disrupt); a ditch, wire and mines in a diagonal line anchored on a wooded hill (turn); staggered wire belts and a minefield in the open engagement area (fix); and a ditch, dragon’s teeth and wire across the whole corridor at the end of the branch (block).</li>
+      <li><b>Friendly positions</b> on the hill and three rises overwatch the groups. The blue fan on the ground is the fire covering a group, and it is there only while that group’s fires are on. Mortar rounds, off the map, burst on the obstacles.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Send the column</b> (the button, a click on the field or F). Use the four group buttons or keys 1 to 4 to switch a group’s fires on or off; each change sends the column again.</li>
+      <li><b>Covered groups</b> work as the manual defines each effect (paras. 17-24 to 17-42), drawn here as follows: the disrupt group slows the half of the column that meets it and lets the rest drive on; the turn group pushes the column along the branch into the engagement area; the fix group slows it there; the block group stops it at the end, where its lead vehicles are put out of action.</li>
+      <li><b>Uncovered groups</b> are breached or bypassed after a short delay. In this model, if the turn group is uncovered the column breaches it and drives on along the avenue, so the fix and block groups are never met; the manual says only that “the turning effect could be lost” (para. 17-43).</li>
+      <li><b>Losses</b> are notional: vehicles put out of action stop, grey and smoke; friendly men down lie greyed at a collection point where a medic kneels. The readout counts them, friendly vs enemy.</li>
+    </ol>
+    <p class="fine">Vehicles and soldiers are drawn larger than scale; unit sizes, distances, speeds, delays, which vehicles are hit and all losses are notional.</p>
+    </div>
+
+    <h2>What doctrine says</h2>
+    <p>U.S. Army <i>FM 3-90, Tactics</i> (1 May 2023), chapter 17, says that “tactical obstacles and fires—direct and indirect—manipulate the enemy,” and that the obstacle effect “describes the effect that the commander wants the obstacles, combined with fires, to have on the enemy” (para. 17-20). It adds: “obstacle effects occur because of the combined effects of fires and obstacles, rather than from obstacles alone” (para. 17-21). Tactical obstacles produce one of four effects:</p>
+    <div class="oe-wrap"><p class="fine">FM 3-90 lists the four effects as block, disrupt, fix and turn (para. 17-21) and says where each goes depends on terrain and mission, not on a fixed sequence (para. 17-23). The order used here, disrupt, turn, fix, block along one run, is this figure’s own device so one column meets each in turn.</p>
+      <table class="oe-table">
+      <thead><tr><th>Effect</th><th>FM 3-90 (para. and Table 17-1)</th><th>In this figure</th></tr></thead>
+      <tbody>
+        <tr><td>Disrupt</td><td>“focuses fire planning and obstacle effort to cause the enemy to break up its formation and tempo, interrupt its timetable, commit breaching assets prematurely, and attack in a piecemeal effort” (17-29). Obstacles “must normally attack half of the targeted avenue of approach” (17-30), and the force must “allow part of the enemy force to advance unimpeded” (17-29).</td><td>Pins and wire across the near half of the avenue; the far half drives on.</td></tr>
+        <tr><td>Turn</td><td>“integrates fire planning and obstacle effort to divert an enemy formation from one avenue of approach to an adjacent avenue of approach or into an engagement area” (17-40). Units “normally anchor turn obstacle groups to restricted terrain or to a strong point” (17-42).</td><td>A vane or diagonal obstacle line anchored on the hill; the column is diverted onto the branch.</td></tr>
+        <tr><td>Fix</td><td>“focuses fire planning and obstacle effort to slow an attacker’s movement within a specified area, normally an engagement area” (17-35). Units “array obstacles in depth” (17-36).</td><td>Staggered lips, wire belts and a minefield in the engagement area.</td></tr>
+        <tr><td>Block</td><td>“integrates fire planning and obstacle effort to stop an attacker along a specific avenue of approach or to prevent the attacking force from passing through an engagement area” (17-24). Obstacles and fires must “prevent the enemy from bypassing or breaching the obstacles.”</td><td>A gate and a complex obstacle across the whole corridor at the end of the branch.</td></tr>
+      </tbody>
+    </table></div>
+    <p>An obstacle group is “one or more individual obstacles that provide a specific obstacle effect,” and units “integrate obstacle groups with their direct and indirect fire plans” (para. 17-64). In contact, “for obstacles covered by fire, the unit can either seek a bypass or conduct breaching operations as part of a hasty attack. For obstacles not covered by fire, the unit can either seek a bypass or create the required number of lanes” (para. 1-79).</p>
+
+    <h2>What is notional</h2>
+    <p>The doctrine above is quoted. Everything else is a teaching value: the column of eight vehicles and its spacing; a march speed of 30 map units a minute; the delays at each group (covered, uncovered): disrupt 2.0 and 0.4 minutes, turn 0.5 and 0.3, fix 3.0 and 0.6, block held and 1.5; which vehicles are put out of action (one at the disrupt group, one at the turn group, two in the fix group, two at the block, only while covered); and friendly losses of half a man for each covered group that engaged plus 0.6 for each vehicle that gets through. With all four groups covered, in this model, six vehicles are put out of action, two are held at the block and none gets through; with all four uncovered, all eight get through. The map, the route lengths and the positions are the drawing’s own.</p>
+    <p class="fine">Sources: Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">FM 3-90, Tactics</a>, 1 May 2023, paras. 1-79, 17-20 to 17-24, 17-29, 17-30, 17-35, 17-36, 17-40, 17-42, 17-64 and Table 17-1. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

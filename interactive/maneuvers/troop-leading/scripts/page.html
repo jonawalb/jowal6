@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Troop Leading Procedures | Jonathan Walberg</title>
+<meta name="description" content="How a small-unit leader splits the time before an attack, as a working bench model: the eight troop leading procedures steps and the one-third / two-thirds guide. Built from U.S. Army doctrine (ATP 3-21.8, 2024; FM 5-0, 2024).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Troop Leading Procedures | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/troop-leading/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/troop-leading/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.fl-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.fl-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.fl-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.fl-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.fl-text p,.fl-text li{line-height:1.65}
+.fl-text .fine{font-size:.88rem;color:var(--text-muted)}
+.fl-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.tl-figure{background:transparent}
+.tl-figure .iso-figure{margin:0}
+.tl-figure .iso-plate{background:var(--anatomy-card)}
+.fl-stage{outline:none;cursor:crosshair;touch-action:manipulation}
+.fl-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.fl-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.fl-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.tl-figure .iso-plate-corners{z-index:2}
+.tl-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.tl-figure[data-view="field"] .fl-svg{visibility:hidden}
+.tl-figure[data-view="field"] .fl-legend-machine{display:none}
+.tl-figure:not([data-view="field"]) .fl-field,.tl-figure:not([data-view="field"]) .fl-legend-field{display:none}
+.fl-legend{display:grid;gap:8px}
+/* the sand: warm for the leader's hours, cool for the squads' */
+.tl-sand-l>.iso-fill{fill:#e4d6b0}.tl-sand-l>.iso-top{fill:#efdfb0}.tl-sand-l>.iso-shade[data-shade="0"]{fill:#c9ba90}.tl-sand-l>.iso-shade[data-shade="1"]{fill:#d4c59d}.tl-sand-l>.iso-shade[data-shade="2"]{fill:#ddcfaa}.tl-sand-l>.iso-shade[data-shade="3"]{fill:#e6d9b5}
+.tl-sand-s>.iso-fill{fill:#c9d4e2}.tl-sand-s>.iso-top{fill:#d3dfec}.tl-sand-s>.iso-shade[data-shade="0"]{fill:#aebccd}.tl-sand-s>.iso-shade[data-shade="1"]{fill:#b9c6d6}.tl-sand-s>.iso-shade[data-shade="2"]{fill:#c3cfdd}.tl-sand-s>.iso-shade[data-shade="3"]{fill:#cdd8e5}
+/* casualties: greyed and still (side fc = friendly, hc = enemy), no colour beyond a faint tint */
+.tl-figure .tr-s[data-side="fc"] path,.tl-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.tl-figure .tr-s[data-side="fc"] .tr-t,.tl-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.tl-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.tl-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.tl-figure .tr-s[data-side="fc"] .tr-d,.tl-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.tl-figure .tr-s[data-side="fc"] .tr-g,.tl-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.fl-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.fl-controls .btn{cursor:pointer}
+.fl-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.fl-controls input[type=range]{flex:1;min-width:120px}
+/* the eight steps, in the manual's order; the lit one is the step being done now */
+.tl-steps{list-style:none;margin:10px 0 0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.tl-steps li{display:flex;align-items:center;gap:8px;padding:6px 8px;border:1px solid var(--anatomy-line, rgba(0,0,0,.18));border-radius:6px;font-size:13px;line-height:1.25;color:var(--anatomy-text);opacity:.55}
+.tl-steps li[data-state="done"]{opacity:.8}
+.tl-steps li[data-state="active"]{opacity:1;border-color:var(--anatomy-hi, #111);box-shadow:inset 0 0 0 1px var(--anatomy-hi, #111);font-weight:600}
+.tl-n{flex:none;width:20px;height:20px;border-radius:50%;border:1px solid currentColor;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-family:"IBM Plex Mono",monospace}
+.tl-steps-note{font-size:.88rem;color:var(--text-muted);margin:8px 0 0}
+.fl-text h2{margin-top:28px}
+.fl-text ol{padding-left:1.2em}
+.fl-text li{margin:6px 0}
+.fl-text ol.tl-steps{padding-left:0}
+@media (max-width:640px){.tl-steps{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:520px){.tl-figure .iso-plate-corner[data-corner="hint"]{display:none}.fl-stage{overflow:hidden}}
+</style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="fl-main">
+  <a class="fl-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Troop Leading Procedures</h1>
+  <p class="lede">Troop leading procedures are the framework a small-unit leader without a staff uses to plan and prepare for an operation. A platoon leader has one pool of time and two uses for it: the leader’s own planning and the squads’ preparation. The Army’s guide is for the leader to keep roughly one third and give the squads the rest. This bench model lets you move that split and see what the squads can finish before the line of departure.</p>
+
+  <div class="iso tl-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="fl-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="tl-run" aria-pressed="false">Run the clock</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
+      <label><span id="tl-split-text">Hours the leader keeps (notional; one third is 4 of 12)</span> <input type="range" id="tl-split" min="2" max="8" step="1" value="4" aria-label="Notional hours of the twelve that the leader keeps for planning; the squads get the rest"></label>
+    </div>
+    <ol class="tl-steps" aria-label="The eight troop leading procedures steps, in the order ATP 3-21.8 lists them">
+      <!--STEPS-->
+    </ol>
+    <p class="tl-steps-note">The steps light in the order the manual lists them. The manual calls that order a guide, not a rule (see below).</p>
+  </div>
+
+  <section class="fl-text">
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same clock, split and readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
+    <ol>
+      <li><b>The two chambers</b> hold the model’s twelve hours of sand. The left chamber is the time the leader keeps, the right the time given to the squads. A pipe joins them, and the slider moves sand through it.</li>
+      <li><b>The marks.</b> The bright collar on the left chamber is one third of the twelve hours. The ring below it is the three hours this model gives the leader to take steps 1 to 7 without abbreviating them. The rings on the right chamber at two, four and seven hours mark the squads’ three tasks in this model: plan, check, rehearse.</li>
+      <li><b>The eight lamps</b> on the rail at the back are the eight steps, numbered by dots, in the order ATP 3-21.8 lists them.</li>
+      <li><b>The carriage</b> on the front rail is the clock. The bright strip under it is the leader’s hours and the darker strip the squads’; the gate is the line of departure, with the assault drawn for two more notional hours beyond it.</li>
+      <li><b>The dial</b> reads how much of the squads’ three-task list the hours they are given cover.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The split.</b> Move the slider, or press the up and down arrow keys. At four hours the leader keeps one third.</li>
+      <li><b>The clock.</b> Run it with the button, a click or the space bar, or hover along the card to move it. The lamps light in order. Lamp 8 lights when the order has been issued and stays lit to the line of departure.</li>
+      <li><b>The squads’ list</b> is worked in order in the hours they are given. In this model, once the leader keeps more than five hours the sand no longer reaches the rehearsal ring, and at the gate the squads cross unrehearsed.</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the scale is a rifle platoon, blue is friendly and red is the enemy. The chalk rectangle at the top left is the terrain model, the chalk line is the line of departure, and the flag marks the objective: a rise held by three two-man positions.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The platoon leader</b> is the lit figure, with the radio operator, at the terrain model. ATP 3-21.8 says: “[w]henever possible, leaders must issue the order in person either on a terrain model or the actual terrain” (para. 2-111).</li>
+      <li><b>The three squads</b> are in their assembly area at the left, with the platoon sergeant. As drawn, each squad is a leader and two fire teams.</li>
+      <li><b>The objective</b> is the rise at the right, with three two-man positions.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Steps 1 to 3.</b> The leader works at the terrain model while the squads wait. Press Run, or hover along the card.</li>
+      <li><b>Steps 4 to 7.</b> The platoon sergeant moves up (this figure’s picture of “initiate movement”), the leader and radio operator walk out to a vantage point and back (reconnaissance), then the leader gathers the squad leaders and gives the order.</li>
+      <li><b>Step 8.</b> The leader walks the squads’ lines while they brief, line up for checks and walk the rehearsal lane. The slider sets how many hours they have. In this model a short block also shortens the leader’s reconnaissance.</li>
+      <li><b>The line of departure.</b> The squads cross and attack. In this model, a squad that did not finish its rehearsal crosses strung out and bunched, and more men go down. Greyed figures lying still are men down on both sides; the readout counts them, friendly vs enemy.</li>
+    </ol>
+    <p class="fine">Soldiers are drawn larger than scale (about one and a half times) so they read; unit sizes, spacing, distances, hours, the task list and the number of men who fall are notional.</p>
+    </div>
+
+    <h2>What doctrine says</h2>
+    <p><i>ATP 3-21.8, Infantry Rifle Platoon and Squad</i> (11 January 2024, incorporating Change 1, June 2025) defines troop leading procedures (TLP) as “a dynamic process used by small-unit leaders to analyze a mission, develop a plan, and prepare for an operation,” citing ADP 5-0, and lists the eight steps: receive the mission; issue a WARNORD (warning order); make a tentative plan; initiate movement; conduct reconnaissance; complete the plan; issue the order; supervise and refine (para. 2-16, p. 2-9). The lamps and the list under the card use those names in that order. <i>FM 5-0, Planning and Orders Production</i> (4 November 2024, incorporating Change 1, August 2025) gives the same eight steps (para. 7-3, p. 149).</p>
+<p>The order is a guide. FM 5-0 says: “The steps are not rigid. Some steps are done concurrently, while others may go on continuously throughout planning and preparation. For example, steps 1-3 are normally conducted in order, while steps 3 through 7 are sequenced as needed. The last step, supervise and refine, occurs throughout” (para. 7-3, p. 149). ATP 3-21.8 adds: “Some actions may be performed simultaneously or in an order different from those shown in the example outline in figure 2-1 on page 2-4,” and that initiating movement, issuing the WARNORD and conducting reconnaissance “may recur several times during the process” (para. 2-2, p. 2-3). This figure lights the steps one after another, and lamp 8 from the order to the line of departure, so that the list can be seen; that sequencing is the figure’s, not doctrine’s.</p>
+<p>On time, ATP 3-21.8 says: “There is no specific timeline allocated to mission analysis, but leaders should always adhere to the one-third/two-thirds rule, allocating roughly one-third of available planning and preparation time to themselves, and allowing their subordinates the remaining two-thirds” (para. 2-24, p. 2-12). FM 5-0 says: “Generally, leaders at all levels use no more than one-third of the available time for planning and issuing the OPORD. Leaders ensure the remaining two-thirds of time is available to subordinates” (para. 7-7, p. 150). ADP 5-0 (31 July 2019) calls the rule “a guide to allocate time available” (para. 2-128, p. 2-24). ATP 3-21.8 words it a little differently in its step 1 checklist: “Apply one third of available time to planning, leaving two thirds for preparation” (para. 2-19, p. 2-10). The bench follows the wording of para. 2-24 and FM 5-0: the leader keeps up to a third and the squads have the rest.</p>
+<p>The warning order is how the squads get their time early: “The WARNORD is the leader’s best tool to manage time” (para. 2-19, note, p. 2-10), and issuing it quickly lets subordinates “begin their own planning and preparation (parallel planning) while they begin to develop the OPORDs” (para. 2-20, p. 2-11). The last step is the leader’s check on that preparation: “Supervision is the primary responsibility of all leaders,” and the checks include “[c]onducting numerous backbriefs” and “[o]bserving rehearsals of subordinate units” (para. 2-114, p. 2-36).</p>
+
+    <h2>What is notional</h2>
+    <p>The manual gives no hour counts and no casualty rates, and it does not say what the squads’ preparation consists of in hours. In this model the leader and squads share twelve notional hours; the leader needs three of them to take steps 1 to 7 without abbreviating; and the squads’ list is plan (two hours), check (two) and rehearse (three), done in that order in whatever hours they are given. A squad whose rehearsal is not finished crosses “unrehearsed” in proportion to what is missing, and each missing share adds to friendly losses and takes from the enemy’s. Friendly men down are one, plus up to four for an unfinished rehearsal, plus up to two for a shortened plan; enemy men down are six, less up to three and up to one for the same causes. The hours the leader’s block takes up in each step, the figure’s picture of each step (the platoon sergeant’s move for step 4, for example), and who fires at whom are for illustration. The model ignores that a warning order lets the squads begin their own preparation while the leader plans (parallel planning, ATP 3-21.8 para. 2-20), so it is harsher on a leader who keeps time than a real platoon would be.</p>
+    <p class="fine">Source: Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a>, 11 January 2024, incorporating Change 1, June 2025 (<a href="https://web.archive.org/web/20250807233618id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">archived copy</a>), paras. 2-2, 2-16, 2-19, 2-20, 2-24, 2-111 and 2-114. Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44590-FM_5-0-001-WEB-3.pdf">FM 5-0, Planning and Orders Production</a>, 4 November 2024, incorporating Change 1, August 2025, paras. 7-3 and 7-7. Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN18126-ADP_5-0-000-WEB-3.pdf">ADP 5-0, The Operations Process</a>, 31 July 2019, para. 2-128. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

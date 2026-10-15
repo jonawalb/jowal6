@@ -1,0 +1,41 @@
+# Terrain Analysis (OAKOC) (Fig 53): fact check
+
+VERIFIED: 2026-10-14, independent fresh-context check against ATP 3-21.8 (C1), FM 3-90 (1 May 2023) and ATP 2-01.3 (C1, irp.fas.org mirror) PDFs. Claims 1-19 verified verbatim with paragraph and page. ATP 3-21.10 (claims 20-24) could not be opened by builder or checker: every sentence, button label and source entry that depended on it was removed, and the alternative order is labelled the model's own notional order. Open caveats: ATP 2-01.3 read from a mirror and its current-edition status unconfirmed; ATP 3-21.8 and FM 3-90 currency not confirmed against armypubs. Claim 12's paragraph is 4-12, p. 4-6 (page cites the group correctly).
+
+## Sources opened this session
+- ATP 3-21.8, Infantry Rifle Platoon and Squad, 11 January 2024, incorporating Change 1 (cover footer "ATP 3-21.8 (INCL C1)"). Archived official PDF: https://web.archive.org/web/20250807233618id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf
+- FM 3-90, Tactics, 1 May 2023. Archived official PDF: https://web.archive.org/web/20250224155209id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf
+- ATP 2-01.3, Intelligence Preparation of the Battlefield, 1 March 2019, with Change 1, 6 January 2021: mirror https://web.archive.org/web/2024id_/https://irp.fas.org/doddir/army/atp2-01-3.pdf (not armypubs; checker should confirm it is the official text and that this is the ACTIVE edition on armypubs).
+- NOT opened: ATP 3-21.10, Infantry Rifle Company, 1 June 2026 (https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN46667-ATP_3-21.10-000-WEB-1.pdf).
+- Edition currency not re-checked this session (handoff states ATP 3-21.8 C1 and FM 3-90 2023 current).
+
+## Claims
+| # | Claim on the page | Exact quote | Source, para, page |
+|---|---|---|---|
+| 1 | Leaders analyze terrain by the five categories | "Leaders analyze terrain using the categories of observation and fields of fire, avenues of approach, key terrain, obstacles, and cover and concealment (OAKOC)." | ATP 3-21.8 (C1) 2-62, p. 2-23 |
+| 2 | FM 3-90 lists the same five, "known as OAKOC" | "By studying the terrain, units try to determine the principal mounted and dismounted avenues of approach to their objectives. They also try to determine the most advantageous areas for the enemy's main defense, routes that enemy forces may use to conduct counterattacks, and other factors, such as observation and fields of fire, avenues of approach, key terrain, obstacles, and cover and concealment (known as OAKOC)." (page corrected: "enemy's", not "enemy force's") | FM 3-90 3-23, p. 3-5 |
+| 3 | ATP 2-01.3 names them "the five military aspects of terrain" | "...commanders and staffs analyze terrain using the five military aspects of terrain (observation and fields of fire, avenues of approach, key terrain, obstacles, and cover and concealment [OAKOC])..." (page: "the five military aspects of terrain") | ATP 2-01.3 (C1) 3-17, p. 3-6 (page corrected from p. 3-4) |
+| 4 | Platoon leader must go past general observations | "They must go beyond merely passing along the MCOO to their subordinate leaders and making general observations of the terrain such as "This is high ground," or "This is a stream."" | ATP 3-21.8 (C1) 2-67, p. 2-24 (para starts p. 2-23) |
+| 5 | GTAO "shows the critical military aspects of terrain" | "At company level and below, the commander and subordinate leaders develop a graphic terrain analysis overlay (known as GTAO). This product is similar to the MCOO in it shows the critical military aspects of terrain." | ATP 3-21.8 (C1) note after 2-66, p. 2-23 |
+| 6 | Conclusions terrain analysis should produce | Bullets: "Battle, support by fire, and/or attack by fire position"; "Engagement areas and ambush sites"; "Observation posts"; "Infiltration lanes" | ATP 3-21.8 (C1) 2-68, p. 2-24 |
+| 7 | Weather has five military aspects (left out of figure) | "The five military aspects of weather are visibility; winds; precipitation; cloud cover; temperature, humidity, and atmospheric pressure (see ATP 2-01.3)." | ATP 3-21.8 (C1) 2-69, p. 2-24 |
+| 8 | Mobility classifications left out | "These classifications are severely restricted, restricted, and unrestricted." | ATP 3-21.8 (C1) 2-63 to 2-66, p. 2-23 |
+| 9 | Observation defined | "Observation is the condition of weather and terrain that permits a force to see the friendly, enemy, and neutral personnel and systems, and key aspects of the environment." | ATP 2-01.3 (C1) 4-12, p. 4-6 |
+| 10 | Tools: intervisibility line and dead space | "intervisibility line and dead space" | ATP 2-01.3 (C1) 4-14, p. 4-6 |
+| 11 | Field of fire defined | "Field of fire is the area that a weapon or group of weapons may cover effectively from a given position." | ATP 2-01.3 (C1) 4-16, p. 4-7; ATP 3-21.8 glossary, p. Glossary-13 |
+| 12 | Highest terrain best observation | "The highest terrain normally provides the best observation." | ATP 2-01.3 (C1) 4-16, p. 4-7 |
+| 13 | Avenue of approach defined | "A path used by an attacking force leading to its objective or to key terrain. Avenues of approach exist in all domains." | ATP 2-01.3 4-21, p. 4-8; ATP 3-21.8 5-1 (citing ADP 3-90) as the page cites (checker to confirm 5-1, p. 5-1) |
+| 14 | Avenues consist of mobility corridors | "consist of a series of mobility corridors" | ATP 2-01.3 4-22, p. 4-8 |
+| 15 | Key terrain defined | "An identifiable characteristic whose seizure or retention affords a marked advantage to either combatant." | ATP 2-01.3 4-28, p. 4-10; ATP 3-21.8 glossary, p. Glossary-15 |
+| 16 | Key terrain evaluated with the other four | "using the evaluation of the other four military aspects of terrain." | ATP 2-01.3 4-30, p. 4-10 |
+| 17 | Decisive terrain; key is not necessarily decisive | "Decisive terrain is key terrain whose seizure and retention is mandatory for successful mission accomplishment"; "key terrain is not necessarily decisive terrain." | ATP 2-01.3 4-34, p. 4-11 |
+| 18 | Obstacle defined; mounted vs dismounted | "Any natural or man-made obstruction designed or employed to disrupt, fix, turn, or block the movement of an opposing force, and to impose additional losses in personnel, time, and equipment on the opposing force."; "may have a greater effect on mounted mobility than on dismounted mobility" | ATP 2-01.3 4-35, p. 4-11; 4-37, p. 4-12 |
+| 19 | Cover and concealment defined | "Cover is protection from the effects of fires." "Concealment is protection from observation or surveillance." "Cover does not necessarily provide concealment," "Concealment does not necessarily provide cover." | ATP 2-01.3 4-40, 4-41, p. 4-12; ATP 3-21.8 glossary pp. Glossary-9 (cover), Glossary-8 (concealment) |
+| 20 | UNCHECKED: ATP 3-21.10 "one technique" order | "analyze terrain by evaluating the five military aspects of terrain in a specific order: obstacles, avenues of approach, key terrain, observation and fields of fire, and cover and concealment." | ATP 3-21.10 (1 Jun 2026) B-47, p. 174 (builder could not open) |
+| 21 | UNCHECKED: sequence can vary | "are used to analyze the ground and the sequence can vary." | ATP 3-21.10 B-47 (not opened) |
+| 22 | UNCHECKED: fourth aspect written "obstacles and movement" | "obstacles and movement." | ATP 3-21.10 B-44, p. 173 (not opened) |
+| 23 | UNCHECKED: conclusions list | "Templating of enemy forces and essential weapons systems," "Positioning of own assets," "Echeloning and identifying enemy observation and indirect fires," "Selecting movement techniques and movement formations." | ATP 3-21.10 B-47, p. 174 (not opened) |
+| 24 | UNCHECKED: edition | ATP 3-21.10 dated 1 June 2026, supersedes 14 May 2018 | armypubs listing (not re-checked) |
+
+## Not doctrine (must read as notional on the page)
+Everything in the model: ground, distances, observer reach, route search, loss rate, "key terrain = candidate that sees the most of the avenues", overlays dropped one at a time. The page says so under "What the figure shows" and "What is notional"; the checker should confirm every model outcome (route length, exposed, down, stops at the stream) is labelled "in this model"/notional on the page, in the readout aria text, and in aria-valuetext.

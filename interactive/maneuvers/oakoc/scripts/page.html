@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Terrain Analysis (OAKOC) | Jonathan Walberg</title>
+<meta name="description" content="The five military aspects of terrain (observation and fields of fire, avenues of approach, key terrain, obstacles, and cover and concealment) as a bench of overlay plates and as a platoon walking the route they lead to. Built from U.S. Army doctrine (ATP 3-21.8, 2024; FM 3-90, 2023; ATP 2-01.3).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Terrain Analysis (OAKOC) | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/oakoc/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/oakoc/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.fl-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.fl-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.fl-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.fl-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.fl-text p,.fl-text li{line-height:1.65}
+.fl-text .fine{font-size:.88rem;color:var(--text-muted)}
+.fl-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.oa-figure{background:transparent;--oa-dead:#5d6f93;--oa-aa:#c58a1a;--oa-key:#b8860b;--oa-nogo:#a23a2c;--oa-slow:#c07a5c;--oa-cover:#2f7d4a;--oa-conceal:#6a9a4c}
+.oa-figure .iso-figure{margin:0}
+.oa-figure .iso-plate{background:var(--anatomy-card)}
+.oa-stage{outline:none;cursor:pointer;touch-action:manipulation}
+.oa-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.oa-svg{display:block;width:100%;height:auto}
+.oa-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.oa-figure .iso-plate-corners{z-index:2}
+.oa-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.oa-figure[data-view="field"] .oa-svg{visibility:hidden}
+.oa-figure[data-view="field"] .oa-legend-machine{display:none}
+.oa-figure:not([data-view="field"]) .oa-field,.oa-figure:not([data-view="field"]) .oa-legend-field{display:none}
+.oa-legend{display:grid;gap:8px}
+/* overlay marks: filled shapes on the ground and on the plates, one colour per aspect */
+.oa-dead{fill:var(--oa-dead);fill-opacity:.38;stroke:none}
+.oa-range{fill:var(--oa-dead);fill-opacity:.8;stroke:none}
+.oa-aa{fill:var(--oa-aa);fill-opacity:.34;stroke:none}
+.oa-axis{fill:var(--oa-aa);fill-opacity:.95;stroke:none}
+.oa-key{fill:var(--oa-key);fill-opacity:.62;stroke:none}
+.oa-nogo{fill:var(--oa-nogo);fill-opacity:.55;stroke:none}
+.oa-slow{fill:var(--oa-slow);fill-opacity:.32;stroke:none}
+.oa-cover{fill:var(--oa-cover);fill-opacity:.45;stroke:none}
+.oa-conceal{fill:var(--oa-conceal);fill-opacity:.3;stroke:none}
+.oa-route{fill:#1b1b18;fill-opacity:.9;stroke:none}
+.oa-halt{fill:var(--oa-nogo);fill-opacity:.9;stroke:none}
+.oa-svg path.oa-route{fill:none;stroke:#1b1b18;stroke-width:1.4;stroke-linejoin:round;stroke-linecap:round}
+.oa-svg path.oa-halt{fill-opacity:.9}
+.oa-figure .tr-s[data-side="fc"] path,.oa-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.oa-figure .tr-s[data-side="fc"] .tr-t,.oa-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.oa-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.oa-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.oa-figure .tr-s[data-side="fc"] .tr-d,.oa-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.oa-figure .tr-s[data-side="fc"] .tr-g,.oa-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.oa-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.oa-controls .btn{cursor:pointer}
+.oa-orders{display:inline-flex;border:1px solid var(--border);border-radius:2px;overflow:hidden}
+.oa-orders button{font:inherit;font-size:14px;padding:6px 12px;border:0;background:transparent;color:var(--anatomy-text);cursor:pointer}
+.oa-orders button+button{border-left:1px solid var(--border)}
+.oa-orders button[aria-pressed="true"]{background:var(--text);color:var(--bg)}
+.oa-range-wrap{display:inline-flex;align-items:center;gap:8px;font-size:14px}
+.oa-range-wrap input{width:150px}
+.oa-swatches{display:flex;flex-wrap:wrap;gap:6px 16px;margin:8px 0 0;padding:0;list-style:none;font-size:.88rem;color:var(--text-muted)}
+.oa-swatches li{display:inline-flex;align-items:center;gap:6px;margin:0}
+.oa-swatches i{display:inline-block;width:14px;height:14px;border-radius:2px;border:1px solid rgba(0,0,0,.25)}
+.fl-text h2{margin-top:28px}
+.fl-text ol{padding-left:1.2em}
+.fl-text li{margin:6px 0}
+.oa-table{width:100%;border-collapse:collapse;font-size:.92rem;margin:10px 0}
+.oa-table th,.oa-table td{border-bottom:1px solid var(--border);padding:6px 8px;text-align:left;vertical-align:top}
+.oa-table th{font-family:var(--font-mono);font-weight:500;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--green-700)}
+.oa-wrap{overflow-x:auto}
+@media (max-width:520px){.oa-figure .iso-plate-corner[data-corner="hint"]{display:none}.oa-stage{overflow:hidden}}
+</style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="fl-main">
+  <a class="fl-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Terrain Analysis (OAKOC)</h1>
+  <p class="lede">The Army’s manuals tell leaders to analyze terrain “using the categories of observation and fields of fire, avenues of approach, key terrain, obstacles, and cover and concealment (OAKOC)” (ATP 3-21.8, para. 2-62). This figure lays the five over one piece of ground, one overlay at a time, and shows the route a platoon would pick with one, two, three, four and all five of them in hand.</p>
+
+  <div class="iso oa-figure" data-theme="light" data-view="field">
+    <!--FIGURE-->
+    <div class="oa-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
+      </div>
+      <label class="oa-range-wrap" for="oa-n">Overlays applied <input type="range" id="oa-n" min="0" max="5" step="1" value="0" aria-describedby="oa-seq"><output id="oa-n-out" for="oa-n">0</output></label>
+      <div class="oa-orders" role="group" aria-label="Order of the overlays">
+        <button type="button" data-order="list" aria-pressed="true">As listed (ATP 3-21.8)</button>
+        <button type="button" data-order="tech" aria-pressed="false">Alternative order (notional)</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="oa-next">Apply next overlay</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
+    </div>
+    <p class="fine" id="oa-seq" style="margin:6px 0 0"></p>
+    <ul class="oa-swatches" aria-label="Overlay colours">
+      <li><i style="background:var(--oa-dead)"></i>Observation and fields of fire: dead space</li>
+      <li><i style="background:var(--oa-aa)"></i>Avenues of approach</li>
+      <li><i style="background:var(--oa-key)"></i>Key terrain</li>
+      <li><i style="background:var(--oa-nogo)"></i>Obstacles</li>
+      <li><i style="background:var(--oa-cover)"></i>Cover</li>
+      <li><i style="background:var(--oa-conceal)"></i>Concealment</li>
+    </ul>
+  </div>
+
+  <section class="fl-text">
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model, the same ground and the same readout drive both. The overlays, the order and the route are the figure’s own device for showing the five aspects; the manuals’ terms and definitions are quoted below. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
+    <ol>
+      <li><b>The block</b> is the ground: two hills and a low knoll as contour steps, a stream with a ford and a bridge, two woods, a village with a wall, and a belt of wire. An enemy observer’s mast stands on the northern hill.</li>
+      <li><b>The five plates</b> hang above it on four posts. Each is a transparent overlay for one aspect of terrain and drops onto the stack in the order shown under the controls.</li>
+      <li><b>The tiles on a plate</b> are the model’s answer for that aspect, in the colours of the key under the controls.</li>
+      <li><b>The pencil line and the lit bead</b> are the route the platoon would pick with the overlays applied so far, and the platoon walking it.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Set the overlays</b> with the slider, the keys 0 to 5, the Apply next overlay button or a click on the figure. Each applied plate drops onto the stack and the route is chosen again from what is now known.</li>
+      <li><b>Switch the order</b> with the buttons or O. The manuals’ list order and an alternative order take the same five aspects in a different sequence (the alternative is the model’s own, notional).</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the scale is a platoon on the move, blue is friendly and red is the enemy, on one piece of ground about 240 units across. The enemy’s hill is at the far side of the screen; the platoon starts at the near left.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The platoon</b> is one rifle platoon in column, its lead man lit. It walks the pencil line. Men down are greyed and lie still; a medic kneels by them.</li>
+      <li><b>The enemy</b> is an observation post on the far hill and a machine gun in a position at the ford. They fire only on a platoon that is in the observer’s view and in the open.</li>
+      <li><b>The overlays</b> are drawn on the ground as they are applied: dead space behind the hills inside the observer’s reach, the avenues, the key terrain ring, obstacles and slow ground, and cover and concealment.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Apply overlays</b> with the slider, the keys 0 to 5, the button or a click. The platoon goes back to the start and walks the route chosen with what is now applied. A halt ring marks where a route runs into an obstacle the planner did not yet know about.</li>
+      <li><b>Order</b> changes only the sequence, here; with all five applied the picture and the route are the same.</li>
+      <li><b>Losses</b> are notional and counted from how much of the route lies in the observer’s view in the open. The readout shows the men down.</li>
+    </ol>
+    <p class="fine">Soldiers are drawn larger than scale (about one and a half times) so they read; the ground, ranges, routes, losses and the spacing of everything on it are notional.</p>
+    </div>
+
+    <h2>What doctrine says</h2>
+    <p>The manuals name the same five aspects. ATP 3-21.8, <i>Infantry Rifle Platoon and Squad</i> (11 January 2024, incorporating Change 1, June 2025), para. 2-62 (p. 2-23): leaders “analyze terrain using the categories of observation and fields of fire, avenues of approach, key terrain, obstacles, and cover and concealment (OAKOC).” FM 3-90, <i>Tactics</i> (1 May 2023), para. 3-23 (p. 3-5), lists the same five and calls them “known as OAKOC.” ATP 2-01.3 (para. 3-17, p. 3-6) calls them “the five military aspects of terrain.”</p>
+    <p>ATP 3-21.8 (para. 2-67, p. 2-24) says leaders at company level and below must go past “general observations of the terrain such as ‘This is high ground,’ or ‘This is a stream’”; leaders develop a graphic terrain analysis overlay (known as GTAO), which “shows the critical military aspects of terrain” (note after para. 2-66, p. 2-23). Para. 2-68 (p. 2-24) lists what terrain analysis should produce, among them “Battle, support by fire, and/or attack by fire position,” “Engagement areas and ambush sites,” “Observation posts” and “Infiltration lanes.”</p>
+    <p><b>Order.</b> The three manuals above list the aspects in the order of the acronym. ATP 2-01.3 (para. 4-30, p. 4-10) offers a technique of its own: key terrain is evaluated by “using the evaluation of the other four military aspects of terrain”</p>
+    <h3>The five aspects, in the manuals’ words</h3>
+    <div class="oa-wrap"><table class="oa-table">
+      <thead><tr><th>Aspect</th><th>What the sources say</th></tr></thead>
+      <tbody>
+        <tr><td>Observation and fields of fire</td><td>“Observation is the condition of weather and terrain that permits a force to see the friendly, enemy, and neutral personnel and systems, and key aspects of the environment.” “Field of fire is the area that a weapon or group of weapons may cover effectively from a given position.” “The highest terrain normally provides the best observation.” (ATP 2-01.3, C1, paras. 4-12, 4-16, pp. 4-6, 4-7; the glossary of ATP 3-21.8 gives the field of fire definition, p. Glossary-13.) The same paragraphs name two tools: “intervisibility line and dead space” (para. 4-14, p. 4-6).</td></tr>
+        <tr><td>Avenues of approach</td><td>“A path used by an attacking force leading to its objective or to key terrain. Avenues of approach exist in all domains.” (ATP 3-21.8, para. 5-1, p. 5-1, citing ADP 3-90; ATP 2-01.3, para. 4-21, p. 4-8.) They “consist of a series of mobility corridors” (ATP 2-01.3, para. 4-22, p. 4-8).</td></tr>
+        <tr><td>Key terrain</td><td>“An identifiable characteristic whose seizure or retention affords a marked advantage to either combatant.” (ATP 3-21.8 glossary, p. Glossary-15; ATP 2-01.3, para. 4-28, p. 4-10.) “Decisive terrain is key terrain whose seizure and retention is mandatory for successful mission accomplishment” (ATP 2-01.3, para. 4-34, p. 4-11), and “key terrain is not necessarily decisive terrain.”</td></tr>
+        <tr><td>Obstacles</td><td>“Any natural or man-made obstruction designed or employed to disrupt, fix, turn, or block the movement of an opposing force, and to impose additional losses in personnel, time, and equipment on the opposing force.” (ATP 2-01.3, para. 4-35, p. 4-11, citing JP 3-15.) Obstacles such as rivers, lakes, swamps and dense forested areas “may have a greater effect on mounted mobility than on dismounted mobility” (para. 4-37, p. 4-12).</td></tr>
+        <tr><td>Cover and concealment</td><td>“Cover is protection from the effects of fires.” “Concealment is protection from observation or surveillance.” “Cover does not necessarily provide concealment,” and “Concealment does not necessarily provide cover.” (ATP 2-01.3, paras. 4-40, 4-41, p. 4-12; ATP 3-21.8 glossary, pp. Glossary-9 and Glossary-8.)</td></tr>
+      </tbody>
+    </table></div>
+    <p>FM 3-90 (para. 3-23, p. 3-5) puts the use of all this plainly: “By studying the terrain, units try to determine the principal mounted and dismounted avenues of approach to their objectives. They also try to determine the most advantageous areas for the enemy’s main defense, routes that enemy forces may use to conduct counterattacks, and other factors, such as observation and fields of fire, avenues of approach, key terrain, obstacles, and cover and concealment (known as OAKOC).”</p>
+    <h3>What the figure shows, and what it leaves out</h3>
+    <p>The figure shows each aspect as an overlay on one piece of ground and lets you see what a planner that has only some of them in hand would choose. It is a teaching device: the doctrine does not say a route is the cheapest path through a grid, that key terrain is the position that sees the most of the avenues, or that the aspects are applied by dropping plates. It leaves out weather (the “five military aspects of weather,” ATP 3-21.8 para. 2-69), the enemy’s courses of action, mobility classifications (unrestricted, restricted, severely restricted, ATP 3-21.8 paras. 2-64 to 2-66), time, and the other conclusions the manuals list.</p>
+
+    <h2>What is notional</h2>
+    <p>Only the doctrine quoted above is sourced; the rest is a teaching value. The ground is 240 by 180 units, a unit is about a metre, and it is cut into 4-unit cells. The three rises are contour steps 2.6, 2.6 and 3.2 units high. The stream is an obstacle except at a ford and a bridge, a belt of wire and two woods slow or stop movement, and a village, a wall and the stream’s banks give cover. One enemy observer on the northern hill, eye 2.1 units above the ground, sees a cell if the ground does not block the line and the cell is within 85 units; a platoon in a seen cell that is not in cover or concealment is “in the open.” The planner is a shortest-path search: a step costs its length, wood costs 2.2 times, a climb costs 2 per unit of height, and a step in the open in view costs 6 times (only when the overlays that tell it so are applied). Avenues are the cheapest ways in through the ford and through the bridge; a corridor is 9 units either side. In this model, key terrain is the candidate position that sees the most of the two avenues and the objective, and the platoon’s task is to reach it. A platoon of 30 loses a man for every 10.5 units of route walked in the open in the observer’s view (0.095 a unit). The platoon walks at 22 units a second on the page.</p>
+    <p id="oa-results" class="fine">RESULTS</p>
+    <p class="fine">Sources: Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a>, 11 January 2024, incorporating Change 1, June 2025 (<a href="https://web.archive.org/web/20250807233618id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">archived copy</a>), paras. 2-62 to 2-68, 5-1; <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">FM 3-90, Tactics</a>, 1 May 2023, para. 3-23; ATP 2-01.3, <i>Intelligence Preparation of the Battlefield</i>, 1 March 2019, with Change 1, 6 January 2021 (mirror copy; not compared with the armypubs original; <a href="https://web.archive.org/web/2024id_/https://irp.fas.org/doddir/army/atp2-01-3.pdf">archived copy</a>), paras. 3-16, 3-17 and 4-12 to 4-42. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

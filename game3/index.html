@@ -1,0 +1,1155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Carrier Gauntlet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;height:100%;background:#050b16;overflow:hidden;overscroll-behavior:none}
+canvas{display:block;touch-action:none;cursor:crosshair}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+(() => {
+'use strict';
+// ============================================================ core
+const W = 1600, H = 900, STEP = 1 / 60;
+const TAU = Math.PI * 2;
+const rnd = (a, b) => a + Math.random() * (b - a);
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+const dist = (ax, ay, bx, by) => Math.hypot(ax - bx, ay - by);
+const gs = () => (Math.random() + Math.random() + Math.random() - 1.5) * 2; // ~N(0,1)
+const MONO = '"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace';
+const SANS = 'Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif';
+const C = { cy: '#4fe3ff', red: '#ff4d4d', amb: '#ffb02e', txt: '#cfe3f5', dim: '#6f8aa8', ok: '#6dff9c' };
+
+const cv = document.getElementById('c');
+const ctx = cv.getContext('2d');
+let DPR = 1, scale = 1, offX = 0, offY = 0, vw = 0, vh = 0;
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  vw = window.innerWidth; vh = window.innerHeight;
+  cv.width = Math.floor(vw * DPR); cv.height = Math.floor(vh * DPR);
+  cv.style.width = vw + 'px'; cv.style.height = vh + 'px';
+  scale = Math.min(vw / W, vh / H);
+  offX = (vw - W * scale) / 2; offY = (vh - H * scale) / 2;
+}
+window.addEventListener('resize', resize); resize();
+
+const S = {
+  scene: 'title', mode: 'A', time: 0, shake: 0, msgs: [], banner: null,
+  mouse: { x: W / 2, y: H / 2 }, keys: {}, best: { A: 0, B: 0 }, over: null, newBest: false
+};
+const BEST_KEY = 'carrierGauntlet.best.v1';
+try { const b = JSON.parse(localStorage.getItem(BEST_KEY) || 'null'); if (b) { S.best.A = +b.A || 0; S.best.B = +b.B || 0; } } catch (e) { /* storage blocked */ }
+function saveBest() { try { localStorage.setItem(BEST_KEY, JSON.stringify(S.best)); } catch (e) { /* ignore */ } }
+
+// ============================================================ audio
+let AC = null, master = null, muted = false, noiseBuf = null;
+const lastSfx = {};
+function initAudio() {
+  if (AC) { if (AC.state === 'suspended') AC.resume(); return; }
+  try {
+    AC = new (window.AudioContext || window.webkitAudioContext)();
+    master = AC.createGain(); master.gain.value = 0.45; master.connect(AC.destination);
+    noiseBuf = AC.createBuffer(1, AC.sampleRate, AC.sampleRate);
+    const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  } catch (e) { AC = null; }
+}
+function tone(f0, f1, dur, type, vol, delay) {
+  if (!AC || muted) return;
+  const t = AC.currentTime + (delay || 0);
+  const o = AC.createOscillator(), g = AC.createGain();
+  o.type = type || 'sine';
+  o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(20, f1), t + dur);
+  g.gain.setValueAtTime(vol || .15, t); g.gain.exponentialRampToValueAtTime(.001, t + dur);
+  o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + .03);
+}
+function noise(dur, vol, fc, delay) {
+  if (!AC || muted) return;
+  const t = AC.currentTime + (delay || 0);
+  const s = AC.createBufferSource(); s.buffer = noiseBuf;
+  const f = AC.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = fc || 1000;
+  const g = AC.createGain(); g.gain.setValueAtTime(vol || .2, t); g.gain.exponentialRampToValueAtTime(.001, t + dur);
+  s.connect(f); f.connect(g); g.connect(master); s.start(t); s.stop(t + dur + .03);
+}
+const SFX = {
+  launch() { noise(.4, .13, 1400); tone(160, 60, .35, 'sawtooth', .06); },
+  boom() { noise(.7, .28, 600); tone(100, 28, .55, 'sine', .25); },
+  small() { noise(.25, .12, 1800); tone(220, 90, .15, 'triangle', .07); },
+  sam() { noise(.25, .09, 2600); tone(500, 1100, .22, 'sawtooth', .04); },
+  kill() { noise(.3, .14, 2400); tone(700, 200, .18, 'square', .06); },
+  ping() { tone(1400, 1400, .5, 'sine', .12); tone(2100, 2100, .4, 'sine', .05, .02); },
+  sat() { tone(600, 900, .25, 'sine', .07); },
+  alarm() { tone(900, 900, .12, 'square', .07); tone(900, 900, .12, 'square', .07, .2); },
+  hit() { noise(.9, .35, 380); tone(70, 25, .8, 'sawtooth', .22); },
+  gun() { noise(.06, .05, 4000); },
+  chaff() { noise(.8, .1, 5000); tone(300, 120, .6, 'triangle', .05); },
+  click() { tone(800, 600, .05, 'square', .05); },
+  deny() { tone(180, 140, .12, 'square', .07); },
+  clear() { tone(520, 520, .12, 'triangle', .1); tone(780, 780, .12, 'triangle', .1, .12); tone(1040, 1040, .25, 'triangle', .1, .24); },
+  over() { tone(300, 60, 1.2, 'sawtooth', .15); noise(1, .2, 500); }
+};
+function sfx(n) {
+  const now = performance.now();
+  if (lastSfx[n] && now - lastSfx[n] < 45) return;
+  lastSfx[n] = now; SFX[n]();
+}
+
+// ============================================================ particles / messages
+const parts = [];
+function burst(x, y, n, col, sp, life, size) {
+  for (let i = 0; i < n && parts.length < 1100; i++) {
+    const a = rnd(0, TAU), s = rnd(.15, 1) * sp;
+    parts.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, l: rnd(.5, 1) * life, m: life, s: size * rnd(.6, 1.3), c: col });
+  }
+}
+function updParts(dt) {
+  const k = Math.pow(.04, dt);
+  for (let i = parts.length - 1; i >= 0; i--) {
+    const p = parts[i]; p.l -= dt;
+    if (p.l <= 0) { parts[i] = parts[parts.length - 1]; parts.pop(); continue; }
+    p.x += p.vx * dt; p.y += p.vy * dt; p.vx *= k; p.vy *= k;
+  }
+}
+function msg(t, col) { S.msgs.push({ t, col: col || C.txt, l: 6 }); if (S.msgs.length > 5) S.msgs.shift(); }
+function banner(t, sub, col) { S.banner = { t, sub: sub || '', col: col || C.cy, l: 2.6 }; }
+function shake(v) { S.shake = Math.min(24, S.shake + v); }
+
+// ============================================================ drawing helpers
+function T(s, x, y, col, size, al, font, w) {
+  ctx.font = (w || '400') + ' ' + (size || 13) + 'px ' + (font || MONO);
+  ctx.fillStyle = col || C.txt; ctx.textAlign = al || 'left'; ctx.textBaseline = 'alphabetic';
+  ctx.fillText(s, x, y);
+}
+function panel(x, y, w, h) {
+  ctx.fillStyle = 'rgba(7,16,30,.8)'; ctx.fillRect(x, y, w, h);
+  ctx.strokeStyle = 'rgba(79,227,255,.3)'; ctx.lineWidth = 1; ctx.strokeRect(x + .5, y + .5, w, h);
+  ctx.fillStyle = C.cy; ctx.fillRect(x, y, 8, 2); ctx.fillRect(x, y, 2, 8);
+}
+function bar(x, y, w, h, f, col, bg) {
+  ctx.fillStyle = bg || 'rgba(255,255,255,.08)'; ctx.fillRect(x, y, w, h);
+  ctx.fillStyle = col; ctx.fillRect(x, y, w * clamp(f, 0, 1), h);
+}
+function circ(x, y, r, col, lw, dash) {
+  ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.strokeStyle = col; ctx.lineWidth = lw || 1;
+  if (dash) ctx.setLineDash(dash); ctx.stroke(); if (dash) ctx.setLineDash([]);
+}
+function drawTrail(tr, col) {
+  if (tr.length < 2) return;
+  ctx.lineWidth = 2;
+  for (let i = 1; i < tr.length; i++) {
+    ctx.globalAlpha = i / tr.length * .6; ctx.strokeStyle = col;
+    ctx.beginPath(); ctx.moveTo(tr[i - 1][0], tr[i - 1][1]); ctx.lineTo(tr[i][0], tr[i][1]); ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+}
+function pushTrail(tr, x, y, n) { tr.push([x, y]); if (tr.length > (n || 18)) tr.shift(); }
+
+function coastY(x) { return 78 + Math.sin(x * .011) * 16 + Math.sin(x * .037) * 8; }
+function drawBackdrop() {
+  const g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, '#0b1c30'); g.addColorStop(1, '#050c18');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = 'rgba(90,150,210,.09)'; ctx.lineWidth = 1; ctx.beginPath();
+  for (let x = 0; x <= W; x += 100) { ctx.moveTo(x + .5, 0); ctx.lineTo(x + .5, H); }
+  for (let y = 0; y <= H; y += 100) { ctx.moveTo(0, y + .5); ctx.lineTo(W, y + .5); }
+  ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(W, 0);
+  for (let x = W; x >= 0; x -= 20) ctx.lineTo(x, coastY(x));
+  ctx.closePath(); ctx.fillStyle = '#0e1b1d'; ctx.fill();
+  ctx.beginPath(); for (let x = 0; x <= W; x += 20) { const y = coastY(x); x ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+  ctx.strokeStyle = 'rgba(255,176,46,.4)'; ctx.lineWidth = 1.5; ctx.stroke();
+  ctx.fillStyle = 'rgba(111,138,168,.55)'; ctx.font = '400 11px ' + MONO; ctx.textAlign = 'left';
+  for (let i = 0; i < 16; i++) ctx.fillText(String.fromCharCode(65 + i), i * 100 + 4, H - 5);
+  for (let j = 1; j < 9; j++) ctx.fillText(String(j), W - 12, j * 100 - 4);
+}
+
+// ============================================================ MODE A : ATTACK
+let A = null;
+const WP = {
+  b: { n: 'ASBM', spd: 270, seek: 48, col: '#ff7a4d', dmg: 34, pk: .40 },
+  c: { n: 'CRUISE', spd: 125, seek: 85, col: C.amb, dmg: 24, pk: .55 },
+  d: { n: 'DECOY', spd: 190, seek: 0, col: '#9db4cc', dmg: 0, pk: .85 }
+};
+const FORM = [[0, 0], [-95, -45], [95, -45], [0, -125], [-105, 80], [105, 80]];
+const STRIKE_Y = 205;
+
+function startA() {
+  A = {
+    round: 0, score: 0, time: 0, phase: 'fight', clearT: 0, sel: 'b',
+    stock: { b: 7, c: 7, d: 8 }, drones: 2,
+    bat: { x: W / 2, y: 100, integ: 3, expo: 0, moving: false, dest: W / 2, cells: [0, 0, 0, 0, 0, 0], pingCd: 0 },
+    missiles: [], dronesL: [], strikes: [], fx: [], track: null, vis: 0,
+    sat: { t: 3, win: 0, fixT: 0 }, sunk: 0, group: null, hintT: 0, shots: 0, hitsLanded: 0
+  };
+  nextRoundA(true);
+}
+function nextRoundA(first) {
+  A.round++;
+  const r = A.round;
+  if (!first) {
+    A.stock.b = Math.min(10, A.stock.b + 5); A.stock.c = Math.min(10, A.stock.c + 5); A.stock.d = Math.min(12, A.stock.d + 6);
+    A.drones = Math.min(4, A.drones + 2); A.bat.integ = Math.min(3, A.bat.integ + 1);
+  }
+  A.bat.cells.fill(0); A.bat.expo = Math.min(A.bat.expo, 30);
+  const ships = [{ ox: 0, oy: 0, cv: true, alive: true, hp: 100 }];
+  const ne = Math.min(5, 1 + Math.floor((r - 1) / 2));
+  for (let i = 1; i <= ne; i++) ships.push({ ox: FORM[i][0], oy: FORM[i][1], cv: false, alive: true, hp: 2, ammo: 3 + Math.ceil(.8 * r), cd: rnd(0, .6) });
+  A.group = { x: rnd(450, 1150), y: 835, hd: 0, tgtHd: 0, turnT: 7, spd: Math.min(32, 11 + 1.2 * r), ships, hp: 100, trail: [] };
+  A.track = null; A.vis = 0; A.phase = 'fight'; A.missiles = []; A.dronesL = []; A.strikes = []; A.fx = [];
+  A.sat.t = 3; A.sat.win = 0;
+  banner('STAGE ' + r, ne + ' escort' + (ne > 1 ? 's' : '') + ' screening the carrier', C.amb);
+  msg('Stage ' + r + ': strike group at sea. Find it, cue the track, saturate the screen.', C.amb);
+}
+function shipPos(s) {
+  const g = A.group, c = Math.cos(g.hd), sn = Math.sin(g.hd);
+  return { x: g.x + s.ox * c - s.oy * sn, y: g.y + s.ox * sn + s.oy * c };
+}
+function trackPos(t) {
+  if (!A.track) return null;
+  const k = t - A.track.t;
+  return { x: A.track.x + A.track.vx * k, y: A.track.y + A.track.vy * k };
+}
+function fixA(sig, visT) {
+  const g = A.group;
+  A.track = {
+    x: g.x + gs() * sig, y: g.y + gs() * sig,
+    vx: Math.sin(g.hd) * g.spd * (1 + gs() * .08), vy: -Math.cos(g.hd) * g.spd * (1 + gs() * .08),
+    t: A.time, sig
+  };
+  A.vis = Math.max(A.vis, visT);
+}
+function freeCells() { return A.bat.cells.reduce((n, t) => n + (t <= 0 ? 1 : 0), 0); }
+function flightT(type, tx, ty) { const b = A.bat; return dist(b.x, b.y + 10, tx, ty) / WP[type].spd; }
+function launchA(type, ax, ay, delay, spread) {
+  const b = A.bat, ci = b.cells.findIndex(t => t <= 0);
+  if (ci < 0 || A.stock[type] <= 0) return false;
+  b.cells[ci] = Math.max(4.5, 7.5 - .15 * A.round);
+  A.stock[type]--;
+  ax += gs() * (spread || 0); ay += gs() * (spread || 0);
+  ay = clamp(ay, 140, H - 10); ax = clamp(ax, 5, W - 5);
+  const sx = b.x, sy = b.y + 10;
+  A.missiles.push({ type, sx, sy, x: sx, y: sy, ax, ay, T: dist(sx, sy, ax, ay) / WP[type].spd, t: -(delay || 0), trail: [], dead: false, pend: 0 });
+  A.shots++;
+  b.expo = Math.min(100, b.expo + 3.5);
+  return true;
+}
+function fireA() {
+  const b = A.bat, m = S.mouse;
+  if (b.moving) { sfx('deny'); msg('Launchers locked while relocating.', C.dim); return; }
+  if (A.sel === 'x') { fireSalvoA(m.x, m.y); return; }
+  if (launchA(A.sel, m.x, m.y, 0, A.sel === 'd' ? 28 : 5)) { sfx('launch'); }
+  else { sfx('deny'); msg(A.stock[A.sel] <= 0 ? 'Out of ' + WP[A.sel].n + '.' : 'No launcher cell ready.', C.dim); }
+}
+function fireSalvoA(ax, ay) {
+  const plan = ['b', 'c', 'b', 'c', 'd', 'd'], list = [];
+  const st = { b: A.stock.b, c: A.stock.c, d: A.stock.d };
+  let cells = freeCells();
+  for (const t of plan) { if (cells > 0 && st[t] > 0) { st[t]--; cells--; list.push(t); } }
+  if (!list.length) { sfx('deny'); msg('Nothing to launch.', C.dim); return; }
+  // time-on-target: delay faster rounds so the whole package lands together
+  const times = list.map(t => flightT(t, ax, ay)), tmax = Math.max.apply(null, times);
+  list.forEach((t, i) => launchA(t, ax, ay, tmax - times[i] + i * .12, t === 'd' ? 32 : 9));
+  sfx('launch'); msg('SALVO away: ' + list.length + ' rounds, time-on-target.', C.cy);
+}
+function relocateA(x) {
+  const b = A.bat;
+  if (b.moving) return;
+  let d = clamp(x, 100, W - 100);
+  if (Math.abs(d - b.x) < 160) d = clamp(b.x + (d >= b.x ? 1 : -1) * 220, 100, W - 100);
+  if (Math.abs(d - b.x) < 60) d = clamp(b.x < W / 2 ? b.x + 300 : b.x - 300, 100, W - 100);
+  b.dest = d; b.moving = true; sfx('click'); msg('Shoot-and-scoot: relocating.', C.cy);
+}
+function droneA() {
+  if (A.drones <= 0) { sfx('deny'); msg('No drones left this stage.', C.dim); return; }
+  A.drones--;
+  const m = S.mouse;
+  A.dronesL.push({ x: A.bat.x, y: A.bat.y + 15, tx: m.x, ty: clamp(m.y, 160, H - 20), life: 22, expo: 0, fixT: 0, a: 0, trail: [], dead: false });
+  sfx('launch'); msg('Drone sortie away.', C.cy);
+}
+function pingA() {
+  const b = A.bat;
+  if (b.pingCd > 0 || b.moving) { sfx('deny'); return; }
+  b.pingCd = 4; b.expo = Math.min(100, b.expo + 24);
+  fixA(6, 2.2); A.sat.fixT = 0; sfx('ping'); msg('Radar ping: precise fix, but you lit up.', C.amb);
+}
+function updA(dt) {
+  const a = A, b = a.bat, g = a.group;
+  a.time += dt; a.hintT += dt;
+  if (a.phase === 'clear') { a.clearT -= dt; if (a.clearT <= 0) nextRoundA(false); }
+  // --- group movement
+  if (a.phase === 'fight') {
+    g.turnT -= dt;
+    if (g.turnT <= 0) {
+      g.turnT = rnd(5, 9);
+      const mt = Math.min(.8, .15 + .06 * a.round);
+      g.tgtHd = rnd(-mt, mt);
+      if (g.x < 300) g.tgtHd = Math.abs(g.tgtHd);
+      if (g.x > 1300) g.tgtHd = -Math.abs(g.tgtHd);
+    }
+    g.hd += clamp(g.tgtHd - g.hd, -.3 * dt, .3 * dt);
+    g.x += Math.sin(g.hd) * g.spd * dt; g.y -= Math.cos(g.hd) * g.spd * dt;
+    g.x = clamp(g.x, 120, W - 120);
+    pushTrail(g.trail, g.x, g.y, 40);
+    if (g.y <= STRIKE_Y) return endA('STRIKE GROUP IN RANGE OF THE COAST');
+  }
+  // --- satellite pass cycle
+  const sat = a.sat;
+  if (sat.win > 0) {
+    sat.win -= dt; sat.fixT -= dt;
+    if (sat.fixT <= 0 && a.phase === 'fight') { sat.fixT = .6; fixA(32, .9); sfx('sat'); }
+  } else {
+    sat.t -= dt;
+    if (sat.t <= 0) { sat.win = 3; sat.fixT = 0; sat.t = Math.min(24, 15 + .5 * a.round); msg('Satellite pass overhead.', C.cy); }
+  }
+  a.vis = Math.max(0, a.vis - dt);
+  b.pingCd = Math.max(0, b.pingCd - dt);
+  // --- battery
+  for (let i = 0; i < b.cells.length; i++) b.cells[i] = Math.max(0, b.cells[i] - dt);
+  if (b.moving) {
+    const d = b.dest - b.x, s = 260 * dt;
+    if (Math.abs(d) <= s) { b.x = b.dest; b.moving = false; msg('Relocated. Ready.', C.ok); } else b.x += Math.sign(d) * s;
+    b.expo = Math.max(0, b.expo - 30 * dt);
+  } else {
+    b.expo = Math.min(100, b.expo + (1.5 + .12 * a.round) * dt);
+  }
+  if (b.expo >= 100) {
+    a.strikes.push({ x: b.x, y: b.y, t: 0, T: 5 }); b.expo = 25;
+    msg('COUNTER-FIRE INBOUND. Scoot now.', C.red); sfx('alarm');
+  }
+  for (let i = a.strikes.length - 1; i >= 0; i--) {
+    const s = a.strikes[i]; s.t += dt;
+    if (s.t >= s.T) {
+      a.strikes.splice(i, 1);
+      if (Math.abs(b.x - s.x) < 75) {
+        b.integ--; shake(18); sfx('hit'); burst(s.x, s.y, 50, C.red, 300, 1, 3);
+        msg('Battery hit. Integrity ' + b.integ + '/3.', C.red);
+        if (b.integ <= 0) return endA('BATTERY DESTROYED');
+      } else { burst(s.x, s.y, 20, C.amb, 160, .8, 2); sfx('small'); msg('Counter-fire landed on an empty site.', C.ok); }
+    }
+  }
+  // --- drones
+  for (let i = a.dronesL.length - 1; i >= 0; i--) {
+    const d = a.dronesL[i]; d.life -= dt;
+    const dx = d.tx - d.x, dy = d.ty - d.y, dd = Math.hypot(dx, dy);
+    if (dd > 8) { d.x += dx / dd * 150 * dt; d.y += dy / dd * 150 * dt; }
+    else { d.a += dt * 2; d.x = d.tx + Math.cos(d.a) * 3; d.y = d.ty + Math.sin(d.a) * 3; }
+    pushTrail(d.trail, d.x, d.y, 14);
+    d.fixT -= dt;
+    if (a.phase === 'fight' && d.fixT <= 0 && dist(d.x, d.y, g.x, g.y) < 150) { d.fixT = .8; fixA(12, 1.1); }
+    let near = false;
+    for (const s of g.ships) if (s.alive && !s.cv) { const p = shipPos(s); if (dist(d.x, d.y, p.x, p.y) < 300) near = true; }
+    if (near && a.phase === 'fight') d.expo += dt;
+    if (d.expo >= Math.max(2, 5 - .3 * a.round)) {
+      burst(d.x, d.y, 25, C.cy, 180, .7, 2); sfx('kill'); msg('Drone shot down.', C.amb); a.dronesL.splice(i, 1);
+    } else if (d.life <= 0) a.dronesL.splice(i, 1);
+  }
+  // --- missiles
+  for (let i = a.missiles.length - 1; i >= 0; i--) {
+    const m = a.missiles[i];
+    if (m.dead) { a.missiles.splice(i, 1); continue; }
+    m.t += dt;
+    if (m.t < 0) continue;
+    const u = Math.min(1, m.t / m.T);
+    m.x = m.sx + (m.ax - m.sx) * u; m.y = m.sy + (m.ay - m.sy) * u;
+    pushTrail(m.trail, m.x, m.y, m.type === 'b' ? 22 : 30);
+    if (u >= 1) { a.missiles.splice(i, 1); impactA(m); }
+  }
+  // --- escort defences
+  if (a.phase === 'fight') {
+    const idP = Math.min(.5, .05 * a.round);
+    for (const s of g.ships) {
+      if (!s.alive || s.cv) continue;
+      s.cd -= dt;
+      if (s.cd > 0 || s.ammo <= 0) continue;
+      const p = shipPos(s);
+      let best = null, bt = 1e9;
+      for (const m of a.missiles) {
+        if (m.t < 0 || m.dead || m.pend >= 2) continue;
+        if (dist(m.x, m.y, p.x, p.y) > 260) continue;
+        if (m.type === 'd') { if (m.ign === undefined) m.ign = Math.random() < idP; if (m.ign) continue; }
+        const rem = m.T - m.t; if (rem < bt) { bt = rem; best = m; }
+      }
+      if (best) {
+        s.ammo--; s.cd = Math.max(.55, 1.2 - .03 * a.round); best.pend++;
+        const pk = Math.min(.95, WP[best.type].pk + .01 * Math.min(10, a.round));
+        a.fx.push({ x: p.x, y: p.y, m: best, t: 0, ok: Math.random() < pk });
+        sfx('sam');
+      }
+    }
+  }
+  for (let i = a.fx.length - 1; i >= 0; i--) {
+    const f = a.fx[i]; f.t += dt;
+    if (f.t >= .3) {
+      a.fx.splice(i, 1);
+      if (f.ok && !f.m.dead) { f.m.dead = true; burst(f.m.x, f.m.y, 16, WP[f.m.type].col, 170, .7, 2); sfx('kill'); }
+    }
+  }
+}
+function impactA(m) {
+  const g = A.group, w = WP[m.type];
+  if (m.type === 'd' || A.phase !== 'fight') { burst(m.x, m.y, 8, '#9db4cc', 90, .5, 2); return; }
+  let best = null, bd = 1e9, bp = null;
+  for (const s of g.ships) {
+    if (!s.alive) continue;
+    const p = shipPos(s), d = dist(m.x, m.y, p.x, p.y);
+    if (d < w.seek && d < bd) { bd = d; best = s; bp = p; }
+  }
+  if (!best) { burst(m.x, m.y, 14, '#4a7aa8', 100, .8, 2); sfx('small'); msg('Seeker found nothing. Miss by ' + Math.round(dist(m.x, m.y, g.x, g.y)) + ' km-units.', C.dim); return; }
+  A.hitsLanded++;
+  burst(bp.x, bp.y, 40, C.amb, 260, 1, 3); shake(10); sfx('boom');
+  if (best.cv) {
+    g.hp -= w.dmg; A.score += w.dmg * 5;
+    msg('HIT on carrier. Integrity ' + Math.max(0, Math.round(g.hp)) + '%.', C.ok);
+    if (g.hp <= 0) clearA();
+  } else {
+    best.hp -= m.type === 'b' ? 2 : 1;
+    if (best.hp <= 0) { best.alive = false; A.sunk++; A.score += 250; msg('Escort sunk. Screen thinned. +250', C.ok); burst(bp.x, bp.y, 40, C.red, 220, 1.2, 3); }
+    else msg('Escort damaged.', C.amb);
+  }
+}
+function clearA() {
+  const g = A.group, a = A;
+  const bonus = 1000 + Math.round((g.y - STRIKE_Y) * 2) + (a.stock.b + a.stock.c + a.stock.d) * 15;
+  a.score += bonus; a.phase = 'clear'; a.clearT = 4;
+  for (const s of g.ships) { if (s.alive) { const p = shipPos(s); burst(p.x, p.y, 30, C.amb, 240, 1.4, 3); s.alive = false; } }
+  shake(20); sfx('clear'); banner('GROUP DESTROYED', '+' + bonus + ' stage bonus', C.ok);
+  msg('Carrier sunk. Resupply and next stage.', C.ok);
+}
+function endA(reason) { gameOver(reason, 'Stage ' + A.round + ' · ' + A.sunk + ' escorts sunk · ' + A.shots + ' rounds fired', A.score); }
+
+function clickA() {
+  fireA();
+}
+function drawGroupA() {
+  const a = A, g = a.group;
+  if (a.phase === 'clear') return;
+  // true group is only visible while a sensor currently sees it
+  if (a.vis > 0) {
+    ctx.globalAlpha = Math.min(1, a.vis * 2);
+    drawTrail(g.trail, 'rgba(255,77,77,.6)');
+    for (const s of g.ships) {
+      if (!s.alive) continue;
+      const p = shipPos(s);
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(g.hd);
+      ctx.fillStyle = 'rgba(255,77,77,.25)'; ctx.strokeStyle = C.red; ctx.lineWidth = 1.5;
+      if (s.cv) { ctx.beginPath(); ctx.rect(-12, -34, 24, 68); ctx.fill(); ctx.stroke(); ctx.fillRect(8, -8, 7, 18); }
+      else { ctx.beginPath(); ctx.moveTo(0, -13); ctx.lineTo(8, 11); ctx.lineTo(-8, 11); ctx.closePath(); ctx.fill(); ctx.stroke(); }
+      ctx.restore();
+    }
+    ctx.globalAlpha = 1;
+  }
+}
+function drawA() {
+  const a = A, b = a.bat, g = a.group, m = S.mouse;
+  // strike line
+  ctx.setLineDash([10, 8]); ctx.strokeStyle = 'rgba(255,77,77,.45)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, STRIKE_Y); ctx.lineTo(W, STRIKE_Y); ctx.stroke(); ctx.setLineDash([]);
+  T('STRIKE LINE: GROUP IN RANGE OF COAST = MISSION FAILED', 16, STRIKE_Y - 6, 'rgba(255,77,77,.7)', 11);
+  // satellite sweep
+  if (a.sat.win > 0) {
+    const sx = ((3 - a.sat.win) / 3) * W;
+    const gr = ctx.createLinearGradient(sx - 120, 0, sx, 0); gr.addColorStop(0, 'rgba(79,227,255,0)'); gr.addColorStop(1, 'rgba(79,227,255,.13)');
+    ctx.fillStyle = gr; ctx.fillRect(sx - 120, 0, 120, H);
+    ctx.fillStyle = 'rgba(79,227,255,.55)'; ctx.fillRect(sx, 0, 1.5, H);
+  }
+  // counter-fire markers
+  for (const s of a.strikes) {
+    const f = s.t / s.T;
+    circ(s.x, s.y, 75, 'rgba(255,77,77,.8)', 1.5, [6, 6]);
+    circ(s.x, s.y, 75 * (1 - f), 'rgba(255,77,77,.9)', 2);
+    T('IMPACT ' + (s.T - s.t).toFixed(1) + 's', s.x, s.y + 100, C.red, 12, 'center', MONO, '600');
+  }
+  // track estimate
+  if (a.track) {
+    const p = trackPos(a.time), age = a.time - a.track.t, r = a.track.sig + age * 6;
+    circ(p.x, p.y, r, 'rgba(255,176,46,.8)', 1.2, [5, 5]);
+    ctx.strokeStyle = C.amb; ctx.beginPath();
+    ctx.moveTo(p.x - 8, p.y); ctx.lineTo(p.x + 8, p.y); ctx.moveTo(p.x, p.y - 8); ctx.lineTo(p.x, p.y + 8); ctx.stroke();
+    T('TRK  AGE ' + age.toFixed(0) + 's  ±' + Math.round(r), p.x + r * .72 + 6, p.y - r * .72 - 4, C.amb, 11);
+    ctx.setLineDash([2, 6]); ctx.beginPath(); ctx.moveTo(p.x, p.y);
+    const q = trackPos(a.time + 12); ctx.lineTo(q.x, q.y); ctx.stroke(); ctx.setLineDash([]);
+  }
+  drawGroupA();
+  // drones
+  for (const d of a.dronesL) {
+    drawTrail(d.trail, 'rgba(79,227,255,.7)');
+    ctx.strokeStyle = C.cy; ctx.lineWidth = 1.5; ctx.beginPath();
+    ctx.moveTo(d.x - 7, d.y + 4); ctx.lineTo(d.x, d.y - 7); ctx.lineTo(d.x + 7, d.y + 4); ctx.closePath(); ctx.stroke();
+    circ(d.x, d.y, 150, 'rgba(79,227,255,.25)', 1, [3, 5]);
+    bar(d.x - 14, d.y + 12, 28, 3, d.life / 22, C.cy);
+    if (d.expo > 0) bar(d.x - 14, d.y + 17, 28, 3, d.expo / Math.max(2, 5 - .3 * a.round), C.red);
+  }
+  // interceptor beams
+  for (const f of a.fx) {
+    ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(f.x, f.y);
+    const k = f.t / .3; ctx.lineTo(f.x + (f.m.x - f.x) * k, f.y + (f.m.y - f.y) * k); ctx.stroke();
+  }
+  // missiles
+  for (const mm of a.missiles) {
+    if (mm.t < 0) continue;
+    const w = WP[mm.type];
+    drawTrail(mm.trail, w.col);
+    ctx.fillStyle = w.col;
+    if (mm.type === 'd') { ctx.globalAlpha = .8; ctx.strokeStyle = w.col; ctx.strokeRect(mm.x - 3, mm.y - 3, 6, 6); ctx.globalAlpha = 1; }
+    else { ctx.beginPath(); ctx.arc(mm.x, mm.y, mm.type === 'b' ? 3.5 : 3, 0, TAU); ctx.fill(); }
+    // aim point
+    ctx.strokeStyle = 'rgba(79,227,255,.35)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(mm.ax - 5, mm.ay); ctx.lineTo(mm.ax + 5, mm.ay); ctx.moveTo(mm.ax, mm.ay - 5); ctx.lineTo(mm.ax, mm.ay + 5); ctx.stroke();
+  }
+  // battery
+  ctx.save(); ctx.translate(b.x, b.y);
+  ctx.fillStyle = 'rgba(79,227,255,.25)'; ctx.strokeStyle = C.cy; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.rect(-14, -8, 28, 16); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = C.cy; ctx.fillRect(-3, -14, 6, 10);
+  ctx.restore();
+  if (b.moving) { circ(b.dest, b.y, 10, C.cy, 1, [3, 3]); }
+  // reticle
+  if (!b.moving && a.phase === 'fight') {
+    const type = a.sel === 'x' ? 'c' : a.sel;
+    const seek = WP[type].seek || 40;
+    circ(m.x, m.y, seek, 'rgba(79,227,255,.7)', 1, [4, 4]);
+    ctx.strokeStyle = C.cy; ctx.beginPath();
+    ctx.moveTo(m.x - 10, m.y); ctx.lineTo(m.x + 10, m.y); ctx.moveTo(m.x, m.y - 10); ctx.lineTo(m.x, m.y + 10); ctx.stroke();
+    const ft = flightT(type, m.x, m.y);
+    T('TOF ' + ft.toFixed(1) + 's', m.x + 12, m.y + 22, C.cy, 11);
+    // lead solution marker
+    if (a.track) {
+      let tt = ft, p = trackPos(a.time + tt);
+      for (let i = 0; i < 3; i++) { tt = flightT(type, p.x, p.y); p = trackPos(a.time + tt); }
+      circ(p.x, p.y, 7, C.ok, 1.5);
+      T('LEAD', p.x + 11, p.y - 9, C.ok, 10);
+    }
+  }
+  drawHudA();
+}
+function drawHudA() {
+  const a = A, b = a.bat, g = a.group;
+  panel(14, 14, 300, 196);
+  T('ATTACK // THE SALVO', 26, 36, C.cy, 13, 'left', MONO, '600');
+  T('STAGE ' + a.round, 26, 58, C.txt, 20, 'left', SANS, '800');
+  T('SCORE ' + a.score, 26, 80, C.amb, 13); T('BEST ' + Math.max(S.best.A, a.score), 170, 80, C.dim, 13);
+  T('BATTERY', 26, 102, C.dim, 11);
+  for (let i = 0; i < 3; i++) { ctx.fillStyle = i < b.integ ? C.cy : 'rgba(255,255,255,.12)'; ctx.fillRect(100 + i * 22, 93, 18, 9); }
+  T('EXPOSURE', 26, 124, C.dim, 11);
+  bar(100, 116, 196, 9, b.expo / 100, b.expo > 75 ? C.red : C.amb);
+  T('CELLS', 26, 146, C.dim, 11);
+  for (let i = 0; i < 6; i++) {
+    const t = b.cells[i], x = 100 + i * 32;
+    ctx.fillStyle = 'rgba(255,255,255,.1)'; ctx.fillRect(x, 137, 28, 10);
+    ctx.fillStyle = t <= 0 ? C.cy : C.amb; ctx.fillRect(x, 137, t <= 0 ? 28 : 28 * (1 - t / 7), 10);
+  }
+  T('SAT PASS', 26, 168, C.dim, 11);
+  T(a.sat.win > 0 ? 'OVERHEAD' : 'in ' + a.sat.t.toFixed(0) + 's', 100, 168, a.sat.win > 0 ? C.cy : C.txt, 12);
+  T('DRONES ' + a.drones, 190, 168, C.txt, 12);
+  T('RADAR ' + (b.pingCd > 0 ? b.pingCd.toFixed(0) + 's' : 'RDY'), 26, 192, C.dim, 11);
+  T('GROUP', 190, 192, C.dim, 11);
+  bar(240, 184, 60, 8, g.hp / 100, C.red);
+  // weapons
+  const defs = [['1', 'b', 'ASBM'], ['2', 'c', 'CRUISE'], ['3', 'd', 'DECOY'], ['4', 'x', 'SALVO']];
+  const x0 = W / 2 - 250;
+  defs.forEach((d, i) => {
+    const x = x0 + i * 128, sel = a.sel === d[1];
+    ctx.fillStyle = sel ? 'rgba(79,227,255,.18)' : 'rgba(7,16,30,.8)'; ctx.fillRect(x, H - 62, 118, 46);
+    ctx.strokeStyle = sel ? C.cy : 'rgba(79,227,255,.25)'; ctx.strokeRect(x + .5, H - 61.5, 118, 46);
+    T(d[0] + ' ' + d[2], x + 8, H - 42, sel ? C.cy : C.txt, 12, 'left', MONO, '600');
+    const n = d[1] === 'x' ? Math.min(6, a.stock.b + a.stock.c + a.stock.d) : a.stock[d[1]];
+    T(d[1] === 'x' ? '2B 2C 2D' : 'x' + n, x + 8, H - 24, d[1] === 'x' ? C.dim : (n > 0 ? C.txt : C.red), 13);
+  });
+  // controls hint
+  T('CLICK fire · S/RIGHT-CLICK scoot · D drone · SPACE radar ping · 1-4 weapon · P pause · M mute', W / 2, H - 70, C.dim, 11, 'center');
+  // context hint
+  let h = '';
+  if (a.round <= 2 && a.phase === 'fight') {
+    if (!a.track) h = 'No track yet. Wait for the satellite pass, or press D (drone) / SPACE (radar ping).';
+    else if (a.shots === 0) h = 'Put the cursor on the green LEAD marker, then click to fire. Missiles take time to fly.';
+    else if (a.sunk === 0 && a.group.hp >= 100) h = 'Escorts shoot missiles down: mix in decoys (3) or fire a time-on-target SALVO (4).';
+  }
+  if (h) T(h, W / 2, 130, C.amb, 13, 'center');
+  // messages
+  S.msgs.forEach((mm, i) => { ctx.globalAlpha = Math.min(1, mm.l); T(mm.t, 16, H - 100 - (S.msgs.length - 1 - i) * 18, mm.col, 12); }); ctx.globalAlpha = 1;
+  // group list top right
+  panel(W - 214, 14, 200, 66);
+  const alive = g.ships.filter(s => s.alive && !s.cv).length;
+  T('GROUP STATUS', W - 202, 34, C.dim, 11);
+  T('Carrier ' + Math.max(0, Math.round(g.hp)) + '%', W - 202, 54, C.red, 13);
+  T('Escorts ' + alive + '  Range ' + Math.max(0, Math.round(g.y - STRIKE_Y)), W - 202, 72, C.txt, 12);
+}
+
+// ============================================================ MODE B : DEFEND
+let B = null;
+const TH = {
+  c: { n: 'CRUISE', hp: 1, dmg: 12, pk: .85, sc: 15 },
+  b: { n: 'BALLISTIC', hp: 1.6, dmg: 20, pk: .7, sc: 30 },
+  h: { n: 'HYPERSONIC', hp: 3.5, dmg: 32, pk: .65, sc: 60 },
+  d: { n: 'DECOY', hp: .6, dmg: 0, pk: .9, sc: 5 }
+};
+function startB() {
+  B = {
+    wave: 0, score: 0, time: 0, phase: 'break', breakT: 2.2, queue: [], waveT: 0,
+    car: { x: 800, y: 650, hp: 100, dir: 1 },
+    esc: { x: 900, y: 520, vx: 0, vy: 0, hp: 100, mag: 12, magMax: 12, reload: 0, cd: 0, heat: 0, over: false, chaff: 3, chaffT: 0, aim: -Math.PI / 2, ang: -Math.PI / 2 },
+    aew: { alive: true, x: 800, y: 500, a: 0, respawn: 0 },
+    th: [], sams: [], clouds: [], fx: [], killed: 0, leaked: 0, seq: 0
+  };
+  banner('WAVE 1', 'Screen the carrier', C.cy);
+  msg('Move the escort, click tracks to fire SAMs, sweep the gun cone, SPACE for chaff.', C.cy);
+}
+function genWave(n) {
+  const cr = 2 + Math.ceil(n * .9), bl = n >= 3 ? Math.floor((n - 1) / 2) : 0, hy = n >= 5 ? Math.floor((n - 3) / 2.5) : 0, dc = n === 1 ? 2 : 2 + n;
+  const types = [];
+  for (let i = 0; i < cr; i++) types.push('c');
+  for (let i = 0; i < bl; i++) types.push('b');
+  for (let i = 0; i < hy; i++) types.push('h');
+  for (let i = 0; i < dc; i++) types.push('d');
+  for (let i = types.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [types[i], types[j]] = [types[j], types[i]]; }
+  const ns = Math.min(6, 1 + Math.ceil(n / 2)), gap = Math.max(3.2, 6.5 - .2 * n), per = Math.ceil(types.length / ns);
+  const q = [];
+  for (let s = 0; s < ns; s++) {
+    const bx = rnd(150, W - 150), side = Math.random() < .25 ? (Math.random() < .5 ? -1 : 1) : 0;
+    for (let k = 0; k < per; k++) {
+      const type = types[s * per + k]; if (!type) break;
+      let x = clamp(bx + rnd(-140, 140), 20, W - 20), y = -30;
+      if (side && type !== 'h') { x = side < 0 ? -30 : W + 30; y = rnd(40, 300); }
+      q.push({ t: 1.2 + s * gap + rnd(0, 1.4), type, x, y });
+    }
+  }
+  q.sort((a, b) => a.t - b.t);
+  return q;
+}
+function spawnTh(it) {
+  const decoy = it.type === 'd', look = decoy ? (Math.random() < .55 ? 'c' : 'b') : it.type;
+  const w = B.wave;
+  const spd = { c: 108 + w * 1.5, b: 205 + w * 3, h: 300 }[look];
+  let tg = 'car', r = Math.random();
+  if (r < Math.min(.3, .12 + .02 * w)) tg = 'esc';
+  else if (look === 'c' && B.aew.alive && r < .3 + .12) tg = 'aew';
+  const t = { id: ++B.seq, type: it.type, look, decoy, x: it.x, y: it.y, vx: 0, vy: 0, spd, tg, hp: TH[it.type].hp, q: 0, det: false, mis: Math.random() < .2, asg: 0, trail: [], dead: false, seen: {}, age: 0 };
+  B.th.push(t);
+  if (look === 'h' && !B.aew.alive) { msg('HYPERSONIC LAUNCH: no airborne cue, detection will be late!', C.red); sfx('alarm'); }
+}
+function thTarget(t) {
+  if (t.tg === 'esc') return B.esc;
+  if (t.tg === 'aew' && B.aew.alive) return B.aew;
+  if (t.tg === 'cloud') return t.cloud;
+  return B.car;
+}
+function detects(t) {
+  const e = B.esc, aew = B.aew, de = dist(t.x, t.y, e.x, e.y);
+  const cued = aew.alive && dist(t.x, t.y, aew.x, aew.y) < 950;
+  if (t.look === 'h') return cued || de < 190;
+  return cued || de < 380;
+}
+function readOf(t) { // what the operator sees
+  if (t.q < .35) return 'unk';
+  let r = t.decoy ? 'decoy' : 'warhead';
+  if (t.q < .75 && t.mis) r = r === 'decoy' ? 'warhead' : 'decoy';
+  return r;
+}
+function etaOf(t) { const tg = thTarget(t); return dist(t.x, t.y, tg.x, tg.y) / t.spd; }
+function fireSam(t) {
+  const e = B.esc;
+  if (e.mag <= 0) { sfx('deny'); msg('MAGAZINE EMPTY: reloading.', C.red); return false; }
+  if (e.cd > 0) return false;
+  if (dist(t.x, t.y, e.x, e.y) > 900) { sfx('deny'); return false; }
+  e.mag--; e.cd = .25; t.asg++;
+  B.sams.push({ x: e.x, y: e.y, vx: 0, vy: 0, ang: Math.atan2(t.y - e.y, t.x - e.x), t, life: 3.6, trail: [], spd: 520 });
+  sfx('sam'); return true;
+}
+function autoEngage() {
+  let best = null, bt = 1e9;
+  for (const t of B.th) {
+    if (t.dead || !t.det) continue;
+    const r = readOf(t); if (r === 'decoy' && t.q >= .75) continue;
+    if (t.asg >= (t.look === 'h' ? 2 : 1)) continue;
+    const eta = etaOf(t) + (r === 'decoy' ? 3 : 0);
+    if (eta < bt) { bt = eta; best = t; }
+  }
+  if (best) fireSam(best); else sfx('deny');
+}
+function chaffB() {
+  const e = B.esc;
+  if (e.chaff <= 0 || e.chaffT > 0) { sfx('deny'); return; }
+  e.chaff--; e.chaffT = 3;
+  B.clouds.push({ x: e.x, y: e.y, r: 105, l: 8, m: 8 });
+  sfx('chaff'); burst(e.x, e.y, 40, '#9db4cc', 90, 1.2, 2);
+}
+function impactB(t) {
+  const tg = thTarget(t), d = TH[t.type];
+  t.dead = true;
+  if (t.tg === 'cloud') { burst(t.x, t.y, 14, '#9db4cc', 100, .6, 2); sfx('small'); return; }
+  if (t.decoy) { burst(t.x, t.y, 10, C.amb, 90, .5, 2); sfx('small'); return; }
+  B.leaked++;
+  burst(t.x, t.y, 40, C.amb, 260, 1, 3); shake(t.look === 'h' ? 18 : 11); sfx('hit');
+  if (t.tg === 'aew') {
+    B.aew.alive = false; B.aew.respawn = 25; msg('AEW LOST. Hypersonic cueing gone for 25s.', C.red);
+  } else if (t.tg === 'esc') {
+    B.esc.hp -= d.dmg * .8; msg('Escort hit. Hull ' + Math.max(0, Math.round(B.esc.hp)) + '%.', C.red);
+    if (B.esc.hp <= 0) endB('ESCORT LOST');
+  } else {
+    B.car.hp -= d.dmg; msg('CARRIER HIT by ' + d.n + '. Integrity ' + Math.max(0, Math.round(B.car.hp)) + '%.', C.red);
+    if (B.car.hp <= 0) endB('CARRIER LOST');
+  }
+}
+function killTh(t, by) {
+  if (t.dead) return;
+  t.dead = true; B.killed++;
+  B.score += TH[t.type].sc;
+  burst(t.x, t.y, t.look === 'h' ? 30 : 18, t.decoy ? C.amb : C.red, 180, .8, 2.5);
+  sfx('kill'); if (t.look === 'h') shake(6);
+}
+function updB(dt) {
+  const b = B, e = b.esc, car = b.car;
+  b.time += dt;
+  // carrier drifts along the screen line
+  car.x += car.dir * 16 * dt; if (car.x > 1050) car.dir = -1; if (car.x < 550) car.dir = 1;
+  // escort movement (WASD / arrows)
+  const k = S.keys;
+  let ix = ((k.KeyD || k.ArrowRight) ? 1 : 0) - ((k.KeyA || k.ArrowLeft) ? 1 : 0);
+  let iy = ((k.KeyS || k.ArrowDown) ? 1 : 0) - ((k.KeyW || k.ArrowUp) ? 1 : 0);
+  const il = Math.hypot(ix, iy) || 1; ix /= il; iy /= il;
+  const ac = 1 - Math.pow(.001, dt);
+  e.vx += (ix * 175 - e.vx) * ac; e.vy += (iy * 175 - e.vy) * ac;
+  e.x = clamp(e.x + e.vx * dt, 40, W - 40); e.y = clamp(e.y + e.vy * dt, 130, H - 40);
+  e.cd = Math.max(0, e.cd - dt); e.chaffT = Math.max(0, e.chaffT - dt);
+  e.ang = Math.atan2(S.mouse.y - e.y, S.mouse.x - e.x);
+  // magazine reload
+  if (e.mag < e.magMax) { e.reload += dt; if (e.reload >= Math.max(2.2, 3.1 - .04 * b.wave)) { e.reload = 0; e.mag++; } } else e.reload = 0;
+  // AEW
+  const aew = b.aew;
+  if (aew.alive) { aew.a += .45 * dt; aew.x = car.x + Math.cos(aew.a) * 190; aew.y = car.y + Math.sin(aew.a) * 120 - 40; }
+  else { aew.respawn -= dt; if (aew.respawn <= 0) { aew.alive = true; msg('AEW back on station.', C.ok); } }
+  // gun
+  let firing = false;
+  const gunR = 175, gunHalf = .45;
+  for (const t of b.th) {
+    if (t.dead || e.over) continue;
+    const d = dist(t.x, t.y, e.x, e.y); if (d > gunR) continue;
+    let da = Math.atan2(t.y - e.y, t.x - e.x) - e.ang; da = Math.atan2(Math.sin(da), Math.cos(da));
+    if (Math.abs(da) > gunHalf) continue;
+    firing = true;
+    t.hp -= (t.look === 'h' ? 1.0 : 2.6) * dt;
+    if (Math.random() < .5) parts.push({ x: e.x + Math.cos(e.ang) * 20, y: e.y + Math.sin(e.ang) * 20, vx: (t.x - e.x) / d * 900, vy: (t.y - e.y) / d * 900, l: d / 900, m: d / 900, s: 1.5, c: '#fff6c0' });
+    if (t.hp <= 0) killTh(t, 'gun');
+  }
+  if (firing && !e.over) { e.heat = Math.min(1, e.heat + .5 * dt); sfx('gun'); if (e.heat >= 1) { e.over = true; msg('GUN OVERHEAT', C.amb); } }
+  else { e.heat = Math.max(0, e.heat - .45 * dt); if (e.over && e.heat < .35) e.over = false; }
+  if (e.chaff < 3) { e.chaffRegen = (e.chaffRegen || 0) + dt; if (e.chaffRegen > 20) { e.chaffRegen = 0; e.chaff++; } }
+  // clouds
+  for (let i = b.clouds.length - 1; i >= 0; i--) { b.clouds[i].l -= dt; if (b.clouds[i].l <= 0) b.clouds.splice(i, 1); }
+  // threats
+  for (const t of b.th) {
+    if (t.dead) continue;
+    t.age += dt;
+    const tg = thTarget(t), dx = tg.x - t.x, dy = tg.y - t.y, d = Math.hypot(dx, dy) || 1;
+    t.vx = dx / d * t.spd; t.vy = dy / d * t.spd;
+    t.x += t.vx * dt; t.y += t.vy * dt;
+    pushTrail(t.trail, t.x, t.y, t.look === 'h' ? 26 : 20);
+    // chaff seduction
+    if (t.tg !== 'cloud') for (const c of b.clouds) {
+      if (t.seen[c.l]) continue;
+      const inCl = dist(t.x, t.y, c.x, c.y) < c.r;
+      const tgIn = dist(tg.x, tg.y, c.x, c.y) < c.r + 30 && d < 230;
+      if (inCl || tgIn) {
+        t.seen[c.l] = 1;
+        if (Math.random() < { c: .7, b: .45, h: .2, d: 1 }[t.type]) { t.tg = 'cloud'; t.cloud = { x: c.x + rnd(-30, 30), y: c.y + rnd(-30, 30) }; burst(t.x, t.y, 6, '#9db4cc', 60, .5, 2); }
+      }
+    }
+    // detection + track quality
+    const det = detects(t);
+    if (det) {
+      if (!t.det) { t.det = true; if (t.look === 'h') { sfx('alarm'); } }
+      const de = dist(t.x, t.y, e.x, e.y);
+      const cued = aew.alive && dist(t.x, t.y, aew.x, aew.y) < 950;
+      t.q = Math.min(1, t.q + (.2 + (cued ? .3 : 0) + (de < 260 ? .35 : 0)) * dt);
+    } else t.det = false;
+    if (d < (t.tg === 'car' ? 30 : t.tg === 'cloud' ? 12 : 18)) impactB(t);
+  }
+  // interceptors
+  for (let i = b.sams.length - 1; i >= 0; i--) {
+    const s = b.sams[i]; s.life -= dt;
+    const t = s.t;
+    if (t && !t.dead) {
+      const rx = t.x - s.x, ry = t.y - s.y, vv = t.vx * t.vx + t.vy * t.vy - s.spd * s.spd;
+      const bb = 2 * (rx * t.vx + ry * t.vy), cc = rx * rx + ry * ry;
+      let tt = Math.sqrt(cc) / s.spd;
+      const disc = bb * bb - 4 * vv * cc;
+      if (disc >= 0 && Math.abs(vv) > 1e-3) {
+        const t1 = (-bb - Math.sqrt(disc)) / (2 * vv), t2 = (-bb + Math.sqrt(disc)) / (2 * vv);
+        const c = [t1, t2].filter(x => x > 0); if (c.length) tt = Math.min.apply(null, c);
+      }
+      tt = Math.min(tt, 3);
+      const want = Math.atan2(t.y + t.vy * tt - s.y, t.x + t.vx * tt - s.x);
+      let da = want - s.ang; da = Math.atan2(Math.sin(da), Math.cos(da));
+      s.ang += clamp(da, -6 * dt, 6 * dt);
+      if (dist(s.x, s.y, t.x, t.y) < 17) {
+        s.life = 0; t.asg = Math.max(0, t.asg - 1);
+        if (Math.random() < TH[t.type].pk) killTh(t, 'sam');
+        else { burst(s.x, s.y, 10, '#fff', 120, .4, 2); sfx('small'); }
+        b.sams.splice(i, 1); continue;
+      }
+    } else if (t && t.dead) s.t = null;
+    s.x += Math.cos(s.ang) * s.spd * dt; s.y += Math.sin(s.ang) * s.spd * dt;
+    pushTrail(s.trail, s.x, s.y, 14);
+    if (s.life <= 0 || s.x < -50 || s.x > W + 50 || s.y < -80 || s.y > H + 50) { if (s.t) s.t.asg = Math.max(0, s.t.asg - 1); b.sams.splice(i, 1); }
+  }
+  b.th = b.th.filter(t => !t.dead);
+  // wave logic
+  if (b.phase === 'break') {
+    b.breakT -= dt;
+    if (b.breakT <= 0) {
+      b.wave++; b.queue = genWave(b.wave); b.waveT = 0; b.phase = 'wave';
+      banner('WAVE ' + b.wave, b.queue.length + ' tracks expected', C.amb); msg('Wave ' + b.wave + ' inbound.', C.amb);
+    }
+  } else {
+    b.waveT += dt;
+    while (b.queue.length && b.queue[0].t <= b.waveT) spawnTh(b.queue.shift());
+    if (!b.queue.length && !b.th.length) {
+      const bonus = 200 * b.wave + Math.round(car.hp) * 3 + e.mag * 10;
+      b.score += bonus; b.phase = 'break'; b.breakT = 4.5;
+      car.hp = Math.min(100, car.hp + 10); e.hp = Math.min(100, e.hp + 10); e.mag = Math.min(e.magMax, e.mag + 5);
+      if (e.chaff < 3 && b.wave % 2 === 0) e.chaff++;
+      sfx('clear'); banner('WAVE ' + b.wave + ' CLEARED', '+' + bonus + ' · repairs and reload', C.ok);
+    }
+  }
+}
+function endB(reason) { gameOver(reason, 'Wave ' + B.wave + ' · ' + B.killed + ' tracks destroyed · ' + B.leaked + ' leakers', B.score); }
+
+function clickB() {
+  const m = S.mouse;
+  let best = null, bd = 48;
+  for (const t of B.th) { if (!t.det) continue; const d = dist(t.x, t.y, m.x, m.y); if (d < bd) { bd = d; best = t; } }
+  if (best) { if (fireSam(best)) { /* ok */ } } else sfx('deny');
+}
+function drawB() {
+  const b = B, e = b.esc, car = b.car, m = S.mouse;
+  // radar range
+  circ(e.x, e.y, 380, 'rgba(79,227,255,.12)', 1, [4, 8]);
+  // chaff clouds
+  for (const c of b.clouds) {
+    const f = c.l / c.m;
+    ctx.fillStyle = 'rgba(157,180,204,' + (.12 * f + .04) + ')'; ctx.beginPath(); ctx.arc(c.x, c.y, c.r, 0, TAU); ctx.fill();
+    circ(c.x, c.y, c.r, 'rgba(157,180,204,.4)', 1, [3, 5]);
+  }
+  // carrier
+  ctx.save(); ctx.translate(car.x, car.y);
+  ctx.fillStyle = 'rgba(79,227,255,.22)'; ctx.strokeStyle = C.cy; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.rect(-48, -13, 96, 26); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = C.cy; ctx.fillRect(14, -13, 10, 8);
+  ctx.restore();
+  bar(car.x - 40, car.y + 20, 80, 5, car.hp / 100, car.hp > 40 ? C.cy : C.red);
+  // AEW
+  if (b.aew.alive) {
+    const a = b.aew; ctx.strokeStyle = C.cy; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(a.x - 9, a.y); ctx.lineTo(a.x + 9, a.y); ctx.moveTo(a.x, a.y - 6); ctx.lineTo(a.x, a.y + 6); ctx.stroke();
+    circ(a.x, a.y, 11, C.cy, 1);
+    T('AEW', a.x + 14, a.y + 4, C.cy, 10);
+    circ(a.x, a.y, 950, 'rgba(79,227,255,.06)', 1, [2, 10]);
+  }
+  // escort + gun cone
+  ctx.fillStyle = e.over ? 'rgba(255,77,77,.12)' : 'rgba(79,227,255,.12)';
+  ctx.beginPath(); ctx.moveTo(e.x, e.y); ctx.arc(e.x, e.y, 175, e.ang - .45, e.ang + .45); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = e.over ? C.red : 'rgba(79,227,255,.5)'; ctx.stroke();
+  ctx.save(); ctx.translate(e.x, e.y); ctx.rotate(Math.atan2(e.vy, e.vx) + Math.PI / 2 * (Math.hypot(e.vx, e.vy) > 5 ? 1 : 0));
+  ctx.fillStyle = 'rgba(79,227,255,.35)'; ctx.strokeStyle = C.cy; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(0, -15); ctx.lineTo(9, 12); ctx.lineTo(-9, 12); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.restore();
+  bar(e.x - 18, e.y + 20, 36, 4, e.hp / 100, e.hp > 40 ? C.cy : C.red);
+  // interceptors
+  for (const s of b.sams) {
+    drawTrail(s.trail, '#bff4ff');
+    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(s.x, s.y, 2.5, 0, TAU); ctx.fill();
+  }
+  // threats
+  let hover = null, hd = 45;
+  for (const t of b.th) {
+    if (!t.det) continue;
+    const d = dist(t.x, t.y, m.x, m.y); if (d < hd) { hd = d; hover = t; }
+  }
+  for (const t of b.th) {
+    if (!t.det) { // undetected: only a faint wake
+      drawTrail(t.trail, 'rgba(255,77,77,.12)'); continue;
+    }
+    const r = readOf(t), hy = t.look === 'h';
+    const col = r === 'decoy' ? C.amb : r === 'warhead' ? C.red : '#ffd27a';
+    drawTrail(t.trail, col);
+    ctx.save(); ctx.translate(t.x, t.y);
+    ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = 2;
+    const sz = hy ? 11 : 8;
+    if (r === 'warhead') {
+      ctx.rotate(Math.atan2(t.vy, t.vx) + Math.PI / 2);
+      ctx.beginPath(); ctx.moveTo(0, -sz); ctx.lineTo(sz * .8, sz * .8); ctx.lineTo(-sz * .8, sz * .8); ctx.closePath(); ctx.fill();
+    } else if (r === 'decoy') {
+      ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.arc(0, 0, sz, 0, TAU); ctx.stroke(); ctx.setLineDash([]);
+      ctx.beginPath(); ctx.moveTo(-sz * .6, -sz * .6); ctx.lineTo(sz * .6, sz * .6); ctx.moveTo(sz * .6, -sz * .6); ctx.lineTo(-sz * .6, sz * .6); ctx.stroke();
+    } else {
+      ctx.beginPath(); ctx.moveTo(0, -sz); ctx.lineTo(sz, 0); ctx.lineTo(0, sz); ctx.lineTo(-sz, 0); ctx.closePath(); ctx.stroke();
+    }
+    ctx.restore();
+    if (hy) circ(t.x, t.y, 17, C.red, 1);
+    // quality arc
+    ctx.beginPath(); ctx.arc(t.x, t.y, sz + 7, -Math.PI / 2, -Math.PI / 2 + TAU * t.q); ctx.strokeStyle = t.q >= .75 ? C.ok : C.amb; ctx.lineWidth = 2; ctx.stroke();
+    const lab = (hy ? 'HYP ' : t.look === 'b' ? 'BAL ' : 'CRU ') + etaOf(t).toFixed(1) + 's';
+    T(lab, t.x + sz + 10, t.y + 4, col, 10);
+    if (t.asg > 0) circ(t.x, t.y, sz + 12, 'rgba(255,255,255,.7)', 1, [2, 3]);
+  }
+  if (hover) {
+    const t = hover;
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 1;
+    const x = t.x, y = t.y, s = 20;
+    ctx.beginPath();
+    ctx.moveTo(x - s, y - s + 6); ctx.lineTo(x - s, y - s); ctx.lineTo(x - s + 6, y - s);
+    ctx.moveTo(x + s - 6, y - s); ctx.lineTo(x + s, y - s); ctx.lineTo(x + s, y - s + 6);
+    ctx.moveTo(x + s, y + s - 6); ctx.lineTo(x + s, y + s); ctx.lineTo(x + s - 6, y + s);
+    ctx.moveTo(x - s + 6, y + s); ctx.lineTo(x - s, y + s); ctx.lineTo(x - s, y + s - 6);
+    ctx.stroke();
+  }
+  // cursor
+  ctx.strokeStyle = 'rgba(207,227,245,.8)'; ctx.lineWidth = 1; ctx.beginPath();
+  ctx.moveTo(m.x - 9, m.y); ctx.lineTo(m.x + 9, m.y); ctx.moveTo(m.x, m.y - 9); ctx.lineTo(m.x, m.y + 9); ctx.stroke();
+  drawHudB();
+}
+function drawHudB() {
+  const b = B, e = b.esc, car = b.car;
+  panel(14, 14, 300, 168);
+  T('DEFEND // THE SCREEN', 26, 36, C.cy, 13, 'left', MONO, '600');
+  T('WAVE ' + Math.max(1, b.wave), 26, 58, C.txt, 20, 'left', SANS, '800');
+  T('SCORE ' + b.score, 26, 80, C.amb, 13); T('BEST ' + Math.max(S.best.B, b.score), 170, 80, C.dim, 13);
+  T('CARRIER', 26, 102, C.dim, 11); bar(100, 94, 196, 9, car.hp / 100, car.hp > 40 ? C.cy : C.red);
+  T('ESCORT', 26, 122, C.dim, 11); bar(100, 114, 196, 9, e.hp / 100, e.hp > 40 ? C.cy : C.red);
+  T('MAGAZINE', 26, 144, C.dim, 11);
+  for (let i = 0; i < e.magMax; i++) { ctx.fillStyle = i < e.mag ? C.cy : 'rgba(255,255,255,.1)'; ctx.fillRect(100 + i * 16, 135, 12, 10); }
+  bar(100, 148, 192, 3, e.mag >= e.magMax ? 1 : e.reload / Math.max(2.2, 3.1 - .04 * b.wave), C.amb);
+  T('GUN', 26, 168, C.dim, 11); bar(100, 160, 90, 8, e.heat, e.over ? C.red : C.amb);
+  T('CHAFF ' + e.chaff + (e.chaffT > 0 ? ' ' + e.chaffT.toFixed(0) + 's' : ''), 204, 168, C.txt, 12);
+  // AEW status
+  const ok = b.aew.alive;
+  T(ok ? 'AEW CUE: ON STATION' : 'AEW DOWN, HYPERSONICS UNCUED (' + Math.ceil(b.aew.respawn) + 's)', W / 2, 30, ok ? C.cy : C.red, 12, 'center', MONO, '600');
+  // track table
+  const rows = b.th.filter(t => t.det).sort((x, y) => etaOf(x) - etaOf(y)).slice(0, 7);
+  panel(W - 254, 14, 240, 28 + rows.length * 18 + 8);
+  T('TRACK  CLASS     Q    ETA', W - 244, 34, C.dim, 10);
+  rows.forEach((t, i) => {
+    const r = readOf(t), y = 54 + i * 18;
+    T('#' + String(t.id).padStart(2, '0') + ' ' + (t.look === 'h' ? 'HYP' : t.look === 'b' ? 'BAL' : 'CRU'), W - 244, y, C.txt, 11);
+    T(r === 'unk' ? 'UNK' : r === 'decoy' ? 'DECOY' : 'WARHEAD', W - 180, y, r === 'decoy' ? C.amb : r === 'warhead' ? C.red : '#ffd27a', 11);
+    T(Math.round(t.q * 100) + '%', W - 108, y, t.q >= .75 ? C.ok : C.amb, 11);
+    T(etaOf(t).toFixed(1) + 's', W - 62, y, C.txt, 11);
+  });
+  T('WASD move · CLICK track = SAM · Q auto-engage · mouse sweeps gun cone · SPACE chaff · P pause · M mute', W / 2, H - 14, C.dim, 11, 'center');
+  if (b.wave <= 2) {
+    const h = b.wave === 0 ? '' : 'Click a red track to fire. UNK tracks sharpen into WARHEAD or DECOY as the quality ring fills.';
+    if (h) T(h, W / 2, 62, C.amb, 13, 'center');
+  } else if (b.wave >= 5 && b.wave <= 6) T('Hypersonics are only catchable when the AEW cues them early: keep it alive and your escort near it.', W / 2, 62, C.amb, 12, 'center');
+  S.msgs.forEach((mm, i) => { ctx.globalAlpha = Math.min(1, mm.l); T(mm.t, 16, H - 34 - (S.msgs.length - 1 - i) * 18, mm.col, 12); }); ctx.globalAlpha = 1;
+}
+
+// ============================================================ scenes
+function startMode(mode) {
+  S.mode = mode; S.scene = 'play'; S.msgs = []; S.banner = null; S.over = null; S.newBest = false; parts.length = 0;
+  if (mode === 'A') startA(); else startB();
+}
+function gameOver(reason, detail, score) {
+  if (S.scene === 'over') return;
+  S.scene = 'over';
+  S.newBest = score > S.best[S.mode];
+  if (S.newBest) { S.best[S.mode] = score; saveBest(); }
+  S.over = { reason, detail, score };
+  sfx('over'); shake(16);
+}
+function togglePause() {
+  if (S.scene === 'play') S.scene = 'paused'; else if (S.scene === 'paused') S.scene = 'play';
+}
+const CARDS = [
+  { mode: 'A', x: 120, y: 290, w: 650, h: 400, title: 'ATTACK: THE SALVO', key: 'A',
+    lines: ['Command a land-based missile battery and a scouting chain.',
+      '', 'FIND   satellite passes, drones (can be shot down) and radar',
+      '       pings (expose you) reveal the moving carrier group.',
+      'LEAD   click to place the intercept point. Missiles take time',
+      '       to fly and the group manoeuvres.',
+      'SATURATE  mix ASBMs, cruise missiles and decoys; use a',
+      '       time-on-target SALVO to overwhelm escort interceptors.',
+      'SCOOT  stay put or ping too long and counter-fire finds you.',
+      '', 'Sink the carrier before it reaches the coast. 10+ stages.'] },
+  { mode: 'B', x: 830, y: 290, w: 650, h: 400, title: 'DEFEND: THE SCREEN', key: 'B',
+    lines: ['Steer an escort cruiser screening the carrier.',
+      '', 'MOVE   WASD / arrows. The mouse sweeps your close-in gun cone.',
+      'SHOOT  click a track to fire an interceptor (they take time to',
+      '       fly). Q auto-engages the most urgent warhead.',
+      'READ   track quality ring: UNK becomes WARHEAD or DECOY.',
+      '       Do not waste a limited magazine on decoys.',
+      'CHAFF  SPACE drops a cloud that can seduce missiles.',
+      'CUE    hypersonics need the AEW sensor alive to be catchable.',
+      '', 'Keep the carrier alive. Waves escalate without end.'] }
+];
+function drawTitle() {
+  drawBackdrop();
+  T('CARRIER GAUNTLET', W / 2, 130, C.txt, 64, 'center', SANS, '800');
+  T('AN ASYMMETRIC MISSILE ARCADE GAME  ·  FICTIONAL SCENARIO, ALL NUMBERS ARE GAME TUNING', W / 2, 168, C.dim, 14, 'center');
+  T('Same ocean, two sides. Pick one.', W / 2, 220, C.amb, 18, 'center', SANS, '600');
+  const m = S.mouse;
+  for (const c of CARDS) {
+    const hov = m.x > c.x && m.x < c.x + c.w && m.y > c.y && m.y < c.y + c.h;
+    ctx.fillStyle = hov ? 'rgba(79,227,255,.12)' : 'rgba(7,16,30,.8)'; ctx.fillRect(c.x, c.y, c.w, c.h);
+    ctx.strokeStyle = hov ? C.cy : 'rgba(79,227,255,.35)'; ctx.lineWidth = hov ? 2 : 1; ctx.strokeRect(c.x + .5, c.y + .5, c.w, c.h);
+    T('[' + c.key + ']  ' + c.title, c.x + 24, c.y + 44, hov ? C.cy : C.txt, 24, 'left', SANS, '800');
+    c.lines.forEach((l, i) => T(l, c.x + 24, c.y + 84 + i * 24, C.txt, 13));
+    T('BEST ' + S.best[c.mode], c.x + c.w - 24, c.y + 44, C.amb, 14, 'right');
+    T('CLICK OR PRESS ' + c.key + ' TO START', c.x + 24, c.y + c.h - 22, hov ? C.cy : C.dim, 13, 'left', MONO, '600');
+  }
+  T('P / ESC pause   ·   M mute   ·   R / ENTER restart   ·   mouse + keyboard (touch: tap to fire)', W / 2, H - 70, C.dim, 13, 'center');
+}
+function drawOver() {
+  ctx.fillStyle = 'rgba(3,8,16,.78)'; ctx.fillRect(0, 0, W, H);
+  const o = S.over;
+  T('MISSION ENDED', W / 2, 270, C.red, 20, 'center', MONO, '600');
+  T(o.reason, W / 2, 340, C.txt, 48, 'center', SANS, '800');
+  T(o.detail, W / 2, 385, C.dim, 15, 'center');
+  T('SCORE ' + o.score, W / 2, 450, C.amb, 36, 'center', SANS, '800');
+  T(S.newBest ? 'NEW BEST FOR THIS MODE' : 'BEST ' + S.best[S.mode], W / 2, 485, S.newBest ? C.ok : C.dim, 15, 'center');
+  const btns = overButtons();
+  btns.forEach(b => {
+    const hov = S.mouse.x > b.x && S.mouse.x < b.x + b.w && S.mouse.y > b.y && S.mouse.y < b.y + b.h;
+    ctx.fillStyle = hov ? 'rgba(79,227,255,.2)' : 'rgba(7,16,30,.9)'; ctx.fillRect(b.x, b.y, b.w, b.h);
+    ctx.strokeStyle = hov ? C.cy : 'rgba(79,227,255,.4)'; ctx.strokeRect(b.x + .5, b.y + .5, b.w, b.h);
+    T(b.label, b.x + b.w / 2, b.y + 32, hov ? C.cy : C.txt, 14, 'center', MONO, '600');
+  });
+}
+function overButtons() {
+  return [
+    { x: W / 2 - 340, y: 540, w: 210, h: 50, label: 'RESTART (R / ENTER)', act: () => startMode(S.mode) },
+    { x: W / 2 - 105, y: 540, w: 210, h: 50, label: 'SWAP MODE (X)', act: () => startMode(S.mode === 'A' ? 'B' : 'A') },
+    { x: W / 2 + 130, y: 540, w: 210, h: 50, label: 'TITLE (T / ESC)', act: () => { S.scene = 'title'; } }
+  ];
+}
+
+// ============================================================ frame
+function tick(dt) {
+  S.time += dt;
+  S.shake = Math.max(0, S.shake - 40 * dt);
+  for (let i = S.msgs.length - 1; i >= 0; i--) { S.msgs[i].l -= dt; if (S.msgs[i].l <= 0) S.msgs.splice(i, 1); }
+  if (S.banner) { S.banner.l -= dt; if (S.banner.l <= 0) S.banner = null; }
+  if (S.scene === 'play') { if (S.mode === 'A') updA(dt); else updB(dt); }
+  if (S.scene !== 'paused') updParts(dt);
+}
+function draw() {
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  ctx.fillStyle = '#050b16'; ctx.fillRect(0, 0, vw, vh);
+  ctx.save();
+  const sh = S.shake;
+  ctx.translate(offX + (sh ? rnd(-sh, sh) : 0), offY + (sh ? rnd(-sh, sh) : 0)); ctx.scale(scale, scale);
+  ctx.beginPath(); ctx.rect(-30, -30, W + 60, H + 60); ctx.clip();
+  if (S.scene === 'title') drawTitle();
+  else {
+    drawBackdrop();
+    if (S.mode === 'A') drawA(); else drawB();
+    for (const p of parts) { ctx.globalAlpha = clamp(p.l / p.m, 0, 1); ctx.fillStyle = p.c; ctx.fillRect(p.x - p.s / 2, p.y - p.s / 2, p.s, p.s); }
+    ctx.globalAlpha = 1;
+    if (S.banner) {
+      const bn = S.banner, al = Math.min(1, bn.l * 2);
+      ctx.globalAlpha = al;
+      T(bn.t, W / 2, 400, bn.col, 56, 'center', SANS, '800'); T(bn.sub, W / 2, 436, C.txt, 16, 'center');
+      ctx.globalAlpha = 1;
+    }
+    if (S.scene === 'paused') {
+      ctx.fillStyle = 'rgba(3,8,16,.7)'; ctx.fillRect(0, 0, W, H);
+      T('PAUSED', W / 2, 410, C.cy, 56, 'center', SANS, '800');
+      T('P / ESC resume   ·   R restart   ·   T title   ·   M mute', W / 2, 450, C.dim, 15, 'center');
+    }
+    if (S.scene === 'over') drawOver();
+  }
+  ctx.restore();
+}
+let last = 0, acc = 0;
+function frame(ts) {
+  requestAnimationFrame(frame);
+  if (!last) last = ts;
+  const dt = Math.min(.1, (ts - last) / 1000); last = ts;
+  if (document.hidden) return;
+  acc += dt; let n = 0;
+  while (acc >= STEP && n < 6) { tick(STEP); acc -= STEP; n++; }
+  if (n >= 6) acc = 0;
+  draw();
+}
+
+// ============================================================ input
+const GAME_KEYS = new Set(['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Tab', 'Escape', 'Enter']);
+function toWorld(e) {
+  const r = cv.getBoundingClientRect();
+  S.mouse.x = (e.clientX - r.left - offX) / scale; S.mouse.y = (e.clientY - r.top - offY) / scale;
+}
+function onKey(code) {
+  if (S.scene === 'title') {
+    if (code === 'KeyA' || code === 'Digit1') startMode('A');
+    else if (code === 'KeyB' || code === 'Digit2') startMode('B');
+    return;
+  }
+  if (S.scene === 'over') {
+    if (code === 'KeyR' || code === 'Enter') startMode(S.mode);
+    else if (code === 'KeyX' || code === 'Tab') startMode(S.mode === 'A' ? 'B' : 'A');
+    else if (code === 'KeyT' || code === 'Escape') S.scene = 'title';
+    return;
+  }
+  if (code === 'KeyP' || code === 'Escape') { togglePause(); return; }
+  if (S.scene === 'paused') {
+    if (code === 'KeyR') startMode(S.mode); else if (code === 'KeyT') S.scene = 'title';
+    return;
+  }
+  if (code === 'KeyR') { startMode(S.mode); return; }
+  if (S.mode === 'A') {
+    if (code === 'Digit1') A.sel = 'b'; else if (code === 'Digit2') A.sel = 'c'; else if (code === 'Digit3') A.sel = 'd'; else if (code === 'Digit4') A.sel = 'x';
+    else if (code === 'KeyS') relocateA(S.mouse.x);
+    else if (code === 'KeyD') droneA();
+    else if (code === 'Space' || code === 'KeyE') pingA();
+    else if (code === 'Enter') fireA();
+  } else {
+    if (code === 'Space') chaffB(); else if (code === 'KeyQ') autoEngage();
+  }
+}
+window.addEventListener('keydown', e => {
+  initAudio();
+  if (GAME_KEYS.has(e.code)) e.preventDefault();
+  if (e.code === 'KeyM') { muted = !muted; if (!muted) { initAudio(); sfx('click'); } return; }
+  S.keys[e.code] = true;
+  if (!e.repeat) onKey(e.code);
+});
+window.addEventListener('keyup', e => { S.keys[e.code] = false; });
+cv.addEventListener('pointermove', e => toWorld(e));
+cv.addEventListener('contextmenu', e => e.preventDefault());
+cv.addEventListener('pointerdown', e => {
+  initAudio(); toWorld(e); e.preventDefault();
+  const m = S.mouse;
+  if (S.scene === 'title') {
+    for (const c of CARDS) if (m.x > c.x && m.x < c.x + c.w && m.y > c.y && m.y < c.y + c.h) startMode(c.mode);
+  } else if (S.scene === 'over') {
+    for (const b of overButtons()) if (m.x > b.x && m.x < b.x + b.w && m.y > b.y && m.y < b.y + b.h) { b.act(); break; }
+  } else if (S.scene === 'paused') {
+    togglePause();
+  } else if (S.scene === 'play') {
+    if (S.mode === 'A') { if (e.button === 2) relocateA(m.x); else clickA(); }
+    else clickB();
+  }
+});
+window.addEventListener('blur', () => { S.keys = {}; if (S.scene === 'play') S.scene = 'paused'; });
+document.addEventListener('visibilitychange', () => {
+  last = 0; acc = 0; S.keys = {};
+  if (document.hidden && S.scene === 'play') S.scene = 'paused';
+});
+
+// debug / test hook (used by the headless bot; harmless in play)
+window.__cg = {
+  S, tick, draw, startMode, onKey, click: clickA, clickB, fireA, relocateA, droneA, pingA, fireSam, autoEngage, chaffB,
+  get A() { return A; }, get B() { return B; }, WP, flightT, trackPos, readOf, etaOf, setMouse(x, y) { S.mouse.x = x; S.mouse.y = y; }
+};
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

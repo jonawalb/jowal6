@@ -1,0 +1,1689 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Dark Fleet - Strait Patrol</title>
+<style>
+  html,body{margin:0;padding:0;height:100%;background:#02060b;overflow:hidden}
+  canvas{display:block;position:fixed;left:0;top:0;width:100%;height:100%;touch-action:none;outline:none}
+</style>
+</head>
+<body>
+<canvas id="c" tabindex="0"></canvas>
+<script>
+(() => {
+'use strict';
+
+/* ===================== setup ===================== */
+const cvs = document.getElementById('c');
+const ctx = cvs.getContext('2d');
+let VW = 900, VH = 600, DPR = 1;
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  VW = window.innerWidth || 900; VH = window.innerHeight || 600;
+  cvs.width = Math.floor(VW * DPR); cvs.height = Math.floor(VH * DPR);
+}
+window.addEventListener('resize', resize); resize();
+
+const W = 2400, H = 1500;          // world size
+const COAST = 90;                   // coast band thickness (top/bottom)
+const TAU = Math.PI * 2;
+const MONO = 'ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace';
+const SANS = 'system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+const COL = {
+  green: '#6dff9a', greenDim: '#2f9a58', amber: '#ffb938', red: '#ff4d4d', white: '#e8f4ee',
+  cyan: '#6fd7ff', navy: '#04101c', grid: 'rgba(80,150,170,0.10)'
+};
+
+const rnd = (a, b) => a + Math.random() * (b - a);
+const rint = (a, b) => Math.floor(rnd(a, b + 1));
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+const wrapA = a => { while (a > Math.PI) a -= TAU; while (a < -Math.PI) a += TAU; return a; };
+const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+
+/* ===================== audio ===================== */
+const Snd = {
+  ac: null, master: null, muted: false, drone: null, droneGain: null,
+  init() {
+    if (this.ac) { if (this.ac.state === 'suspended') this.ac.resume(); return; }
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      this.ac = new AC();
+      this.master = this.ac.createGain(); this.master.gain.value = this.muted ? 0 : 0.5;
+      this.master.connect(this.ac.destination);
+      // low engine/sea drone
+      this.drone = this.ac.createOscillator(); this.drone.type = 'sawtooth'; this.drone.frequency.value = 42;
+      const f = this.ac.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 120;
+      this.droneGain = this.ac.createGain(); this.droneGain.gain.value = 0.0;
+      this.drone.connect(f); f.connect(this.droneGain); this.droneGain.connect(this.master);
+      this.drone.start();
+    } catch (e) { this.ac = null; }
+  },
+  setMute(m) { this.muted = m; if (this.master) this.master.gain.value = m ? 0 : 0.5; },
+  tone(freq, dur, type, vol, slide, delay) {
+    if (!this.ac || this.muted) return;
+    try {
+      const t = this.ac.currentTime + (delay || 0);
+      const o = this.ac.createOscillator(), g = this.ac.createGain();
+      o.type = type || 'sine'; o.frequency.setValueAtTime(freq, t);
+      if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(20, slide), t + dur);
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(vol || 0.2, t + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(g); g.connect(this.master); o.start(t); o.stop(t + dur + 0.02);
+    } catch (e) {}
+  },
+  noise(dur, vol, fc, delay) {
+    if (!this.ac || this.muted) return;
+    try {
+      const t = this.ac.currentTime + (delay || 0);
+      const n = Math.floor(this.ac.sampleRate * dur);
+      const buf = this.ac.createBuffer(1, n, this.ac.sampleRate), d = buf.getChannelData(0);
+      for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
+      const s = this.ac.createBufferSource(); s.buffer = buf;
+      const f = this.ac.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = fc || 1200;
+      const g = this.ac.createGain(); g.gain.value = vol || 0.3;
+      s.connect(f); f.connect(g); g.connect(this.master); s.start(t);
+    } catch (e) {}
+  },
+  ping() { this.tone(1400, 0.07, 'sine', 0.035); },
+  idTick(p) { this.tone(400 + p * 700, 0.05, 'square', 0.04); },
+  idStage() { this.tone(660, 0.09, 'triangle', 0.14); this.tone(880, 0.1, 'triangle', 0.14, 0, 0.09); },
+  idHostile() { this.tone(220, 0.18, 'sawtooth', 0.2); this.tone(165, 0.3, 'sawtooth', 0.2, 0, 0.18); },
+  idClear() { this.tone(523, 0.1, 'sine', 0.16); this.tone(784, 0.18, 'sine', 0.16, 0, 0.1); },
+  hail() { this.noise(0.25, 0.35, 2500); this.tone(900, 0.35, 'sine', 0.08, 300); },
+  cannon() { this.noise(0.35, 0.6, 700); this.tone(120, 0.25, 'sine', 0.35, 40); },
+  hit() { this.noise(0.3, 0.5, 1800); this.tone(180, 0.2, 'square', 0.12, 60); },
+  disable() { this.noise(0.6, 0.5, 600); this.tone(90, 0.7, 'sawtooth', 0.2, 30); },
+  incident() { for (let i = 0; i < 3; i++) { this.tone(740, 0.16, 'square', 0.16, 0, i * 0.32); this.tone(520, 0.16, 'square', 0.16, 0, i * 0.32 + 0.16); } },
+  alert() { this.tone(980, 0.12, 'square', 0.1); this.tone(980, 0.12, 'square', 0.1, 0, 0.2); },
+  blink() { this.tone(1800, 0.05, 'sine', 0.05); },
+  boardTick() { this.tone(300, 0.04, 'square', 0.05); },
+  seized() { [392, 523, 659, 784].forEach((f, i) => this.tone(f, 0.16, 'triangle', 0.16, 0, i * 0.08)); },
+  bad() { this.tone(200, 0.3, 'sawtooth', 0.2, 100); },
+  cutDone() { this.noise(0.8, 0.5, 400); this.tone(70, 0.9, 'sawtooth', 0.25, 30); },
+  shiftEnd() { [523, 659, 784, 1046].forEach((f, i) => this.tone(f, 0.22, 'sine', 0.14, 0, i * 0.12)); },
+  over() { [330, 262, 220, 165].forEach((f, i) => this.tone(f, 0.4, 'sawtooth', 0.14, 0, i * 0.22)); },
+  update(throttle, storm) {
+    if (!this.ac || !this.droneGain) return;
+    try {
+      const t = this.ac.currentTime;
+      this.droneGain.gain.setTargetAtTime(this.muted ? 0 : 0.05 + throttle * 0.06 + storm * 0.03, t, 0.2);
+      this.drone.frequency.setTargetAtTime(38 + throttle * 30, t, 0.3);
+    } catch (e) {}
+  }
+};
+
+/* ===================== data ===================== */
+const CABLES = [
+  { name: 'ALPHA', pts: [[300, 90], [450, 500], [380, 900], [520, 1410]] },
+  { name: 'BRAVO', pts: [[1100, 90], [1250, 600], [1150, 1000], [1300, 1410]] },
+  { name: 'CHARLIE', pts: [[1900, 90], [2000, 520], [1850, 950], [2050, 1410]] }
+];
+const CABLE_HP = 2;
+const FISH_GROUNDS = [{ x: 750, y: 330 }, { x: 1650, y: 1160 }, { x: 2150, y: 720 }, { x: 800, y: 1200 }];
+const NAMES = ['Pacific Dawn', 'Eastern Star', 'Corvina', 'Meridian', 'Halcyon', 'Orion Trader', 'Kestrel', 'Northern Light',
+  'Blue Heron', 'Calypso', 'Sea Lantern', 'Amber Wave', 'Iron Gull', 'Golden Reach', 'Tidewater', 'Harbor Queen', 'Lotus',
+  'Marlin', 'Sable', 'Westwind', 'Vanguard Pearl', 'Cobalt', 'Silver Fin', 'Cormorant', 'Aurora Bay', 'Santa Lucia', 'Nomad'];
+const FLAGS = ['VL', 'MR', 'KS', 'TN', 'OR', 'PE', 'DS', 'HB', 'NQ', 'ZA'];   // invented codes
+const CLS = {
+  cargo:   { label: 'CARGO',   len: 46, w: 7, speed: [34, 46] },
+  tanker:  { label: 'TANKER',  len: 54, w: 8, speed: [30, 42] },
+  ferry:   { label: 'FERRY',   len: 34, w: 6, speed: [38, 48] },
+  fishing: { label: 'FISHING', len: 18, w: 4, speed: [16, 26] },
+  cutter:  { label: 'WORKBOAT', len: 28, w: 5, speed: [38, 46] },
+  escort:  { label: 'PATROL',  len: 30, w: 4.5, speed: [46, 60] }
+};
+const VERDICT_TEXT = {
+  dark: 'HOSTILE  sanctions runner (dark tanker)',
+  cutter: 'HOSTILE  cable cutter',
+  escort: 'HOSTILE  armed escort',
+  civ: 'CLEAR  honest traffic'
+};
+
+function shiftCfg(n) {
+  const i = Math.min(n, 9);
+  return {
+    dur: Math.min(70 + 6 * n, 115),
+    civ: Math.min(8 + 2 * n, 22),
+    dark: [0, 2, 3, 3, 4, 4, 5, 5, 6, 6][i],
+    cut: [0, 1, 1, 2, 2, 3, 3, 3, 4, 4][i],
+    spoof: n < 2 ? 0 : n < 4 ? 0.4 : 0.7,
+    escortP: n < 3 ? 0 : Math.min(0.35 + 0.1 * n, 0.8),
+    fog: n < 3 ? 0 : Math.min(0.25 + 0.1 * n, 0.65),
+    storm: n >= 5 ? Math.min(0.5 + 0.1 * (n - 5), 1) : 0,
+    fault: n < 3 ? 0 : 0.1,
+    cutDur: Math.max(15, 30 - 2.2 * n),
+    hailStop: n < 2 ? 1 : n < 5 ? 0.75 : 0.6
+  };
+}
+
+/* ===================== state ===================== */
+let G = null, P = null, cam = { x: W / 2, y: H / 2 };
+let best = 0;
+try { best = parseInt(localStorage.getItem('darkfleet_best') || '0', 10) || 0; } catch (e) {}
+const keys = {};
+let mouse = { x: 0, y: 0 };
+let uid = 1;
+let mode = 'title';            // title | play | pause | shiftend | over
+let modeT = 0;
+const fx = { shake: 0, flash: 0, flashCol: '#fff' };
+
+function newGame() {
+  G = {
+    t: 0, shift: 0, shiftT: 0, cfg: shiftCfg(1), score: 0, incidents: 0, hull: 100,
+    cables: CABLES.map(c => ({ name: c.name, pts: c.pts, hp: CABLE_HP, alert: false, ax: 0, ay: 0 })),
+    ships: [], projs: [], parts: [], toasts: [], pops: [], sched: [], civTimer: 0,
+    sel: null, stats: { ided: 0, disabled: 0, seized: 0, wrongful: 0, escaped: 0, cuts: 0, shotCiv: 0 },
+    cutLost: 0, overReason: '', tut: { id: false, hail: false, board: false, fire: false, cable: false },
+    shiftStats: null, current: { x: 0, y: 0, a: rnd(0, TAU) }, newBest: false, lastClear: 0
+  };
+  P = {
+    x: W / 2, y: H / 2, hdg: -Math.PI / 2, throttle: 0.35, vx: 0, vy: 0, speed: 0,
+    sweep: 0, focus: 0, cannonCD: 0, hailCD: 0, idT: 0, boardP: 0, lastSweepKick: 0,
+    emit: 0, hurt: 0
+  };
+  startShift(1);
+}
+
+/* ===================== ships ===================== */
+function mkShip(cls, role, x, y, hdg) {
+  const c = CLS[cls];
+  const s = {
+    id: uid++, cls, role, x, y, hdg: hdg || 0, speed: 0, want: rnd(c.speed[0], c.speed[1]),
+    len: c.len, vx: 0, vy: 0, turn: 0.7,
+    aisState: 'on', aisCls: cls, aisName: pick(NAMES), aisFlag: pick(FLAGS), trueFlag: pick(FLAGS),
+    ox: 0, oy: 0, oa: rnd(0, TAU), blink: 0, blinkT: rnd(8, 18), dropT: 0,
+    seen: -99, lx: x, ly: y, idProg: 0, idStage: 0, idDone: false, idGrace: 0,
+    eng: 3, disabled: false, heave: 0, bolt: 0, flee: 0, boardP: 0, shotByPlayer: false,
+    state: 'route', gx: x, gy: y, goalExit: true, cableI: -1, cx: 0, cy: 0, cutP: 0, retries: 0,
+    leader: null, offx: 0, offy: 0, alerted: false, fireCD: rnd(0.5, 1.5), wakeT: 0, removed: false,
+    scuttle: 0, hostile: role !== 'civ'
+  };
+  if (s.trueFlag === s.aisFlag) s.trueFlag = FLAGS[(FLAGS.indexOf(s.aisFlag) + 3) % FLAGS.length];
+  return s;
+}
+
+function laneRoute(s, spread) {
+  const fromLeft = Math.random() < 0.5;
+  const y0 = rnd(COAST + 90, H - COAST - 90), y1 = clamp(y0 + rnd(-260, 260), COAST + 60, H - COAST - 60);
+  const x0 = fromLeft ? -50 : W + 50, x1 = fromLeft ? W + 50 : -50;
+  const f = spread ? rnd(0.05, 0.95) : 0;
+  s.x = x0 + (x1 - x0) * f; s.y = y0 + (y1 - y0) * f;
+  s.gx = x1; s.gy = y1; s.hdg = Math.atan2(s.gy - s.y, s.gx - s.x);
+  s.speed = s.want;
+}
+
+function spawnCiv(spread) {
+  const r = Math.random();
+  const cls = r < 0.38 ? 'cargo' : r < 0.58 ? 'tanker' : r < 0.74 ? 'ferry' : 'fishing';
+  const s = mkShip(cls, 'civ', 0, 0, 0);
+  s.hostile = false;
+  s.trueFlag = s.aisFlag;
+  if (cls === 'ferry') {
+    const x = rnd(250, W - 250), down = Math.random() < 0.5;
+    s.x = x + (spread ? 0 : 0); s.y = spread ? rnd(COAST + 40, H - COAST - 40) : (down ? COAST - 30 : H - COAST + 30);
+    s.gx = x + rnd(-80, 80); s.gy = down ? H + 60 : -60; if (spread) { s.gy = Math.random() < 0.5 ? H + 60 : -60; }
+    s.hdg = Math.atan2(s.gy - s.y, s.gx - s.x); s.speed = s.want;
+  } else if (cls === 'fishing') {
+    const g = pick(FISH_GROUNDS);
+    s.state = 'wander'; s.gx = g.x; s.gy = g.y; s.goalExit = false; s.ground = g;
+    if (spread) { s.x = g.x + rnd(-140, 140); s.y = g.y + rnd(-140, 140); }
+    else { s.x = Math.random() < 0.5 ? -40 : W + 40; s.y = g.y + rnd(-200, 200); }
+    s.hdg = Math.atan2(s.gy - s.y, s.gx - s.x); s.speed = s.want;
+    if (Math.random() < 0.3) s.aisState = 'off';   // small craft often carry no transponder
+  } else {
+    laneRoute(s, spread);
+    if (Math.random() < G.cfg.fault) { s.aisState = 'on'; s.dropT = rnd(6, 14); s.dropper = true; }
+  }
+  return s;
+}
+
+function spoofClaim(s, as) {
+  s.aisCls = as; s.aisName = pick(NAMES);
+}
+
+function spawnDark(spread, nearPlayer) {
+  const s = mkShip('tanker', 'dark', 0, 0, 0);
+  laneRoute(s, spread);
+  s.want = rnd(28, 38);
+  if (nearPlayer) {
+    // teach: first dark ship crosses just ahead of the player at a readable distance
+    const a = P.hdg + rnd(-0.5, 0.5), d = 430;
+    s.x = clamp(P.x + Math.cos(a) * d, 100, W - 100); s.y = clamp(P.y + Math.sin(a) * d, COAST + 80, H - COAST - 80);
+    const dirR = s.x < W / 2; s.gx = dirR ? W + 60 : -60; s.gy = clamp(s.y + rnd(-120, 120), COAST + 60, H - COAST - 60);
+    s.hdg = Math.atan2(s.gy - s.y, s.gx - s.x);
+  }
+  s.speed = s.want;
+  if (Math.random() < G.cfg.spoof) { s.aisState = 'spoof'; spoofClaim(s, pick(['cargo', 'ferry'])); }
+  else { s.aisState = 'off'; s.aisCls = 'tanker'; }
+  return s;
+}
+
+function cablePoint(c, t) {
+  const n = c.pts.length - 1, f = t * n, i = Math.min(n - 1, Math.floor(f)), u = f - i;
+  const a = c.pts[i], b = c.pts[i + 1];
+  return { x: a[0] + (b[0] - a[0]) * u, y: a[1] + (b[1] - a[1]) * u };
+}
+
+function spawnCutter() {
+  const live = G.cables.map((c, i) => ({ c, i })).filter(o => o.c.hp > 0);
+  if (!live.length) return null;
+  const targeted = G.ships.filter(s => s.role === 'cutter').map(s => s.cableI);
+  let opts = live.filter(o => targeted.indexOf(o.i) < 0);
+  if (!opts.length) opts = live;
+  const o = pick(opts), p = cablePoint(o.c, rnd(0.25, 0.8));
+  const s = mkShip('cutter', 'cutter', 0, 0, 0);
+  const top = p.y < H / 2;
+  s.x = clamp(p.x + rnd(-250, 250), 40, W - 40); s.y = top ? -30 : H + 30;
+  s.cableI = o.i; s.cx = p.x; s.cy = p.y; s.state = 'approach'; s.gx = p.x; s.gy = p.y;
+  s.want = rnd(40, 48); s.speed = s.want; s.hdg = Math.atan2(p.y - s.y, p.x - s.x); s.goalExit = false;
+  if (G.shift >= 2 && Math.random() < G.cfg.spoof) { s.aisState = 'spoof'; spoofClaim(s, 'fishing'); }
+  else { s.aisState = 'off'; s.aisCls = 'fishing'; }
+  return s;
+}
+
+function addEscort(leader) {
+  const e = mkShip('escort', 'escort', leader.x + rnd(-60, 60), leader.y + rnd(-60, 60), leader.hdg);
+  e.leader = leader; e.state = 'follow'; e.want = leader.want + 8; e.speed = leader.speed;
+  e.offx = rnd(-70, -35); e.offy = rnd(-1, 1) > 0 ? rnd(35, 60) : -rnd(35, 60);
+  e.aisState = Math.random() < 0.5 ? 'off' : 'spoof';
+  spoofClaim(e, 'ferry');
+  G.ships.push(e);
+  return e;
+}
+
+function startShift(n) {
+  G.shift = n; G.shiftT = 0; G.cfg = shiftCfg(n);
+  G.ships.length = 0; G.projs.length = 0; G.sel = null; P.idT = 0; P.boardP = 0;
+  G.shiftStats = { ided: 0, interd: 0, inc0: G.incidents, cuts: 0, pts0: G.score };
+  const c = G.cfg;
+  for (let i = 0; i < Math.round(c.civ * 0.75); i++) {
+    const s = spawnCiv(true);
+    if (dist(s, P) > 160) G.ships.push(s);
+  }
+  // schedule hostiles
+  G.sched = [];
+  const usable = c.dur - 22;
+  for (let i = 0; i < c.dark; i++) G.sched.push({ t: i === 0 ? 3 : rnd(6, usable), kind: 'dark', first: i === 0 });
+  for (let i = 0; i < c.cut; i++) G.sched.push({ t: rnd(8, usable - 6), kind: 'cutter' });
+  G.sched.sort((a, b) => a.t - b.t);
+  G.civTimer = 0;
+  P.hailCD = 0; P.cannonCD = 0;
+  G.hullRepair = false;
+  toast('SHIFT ' + n + ' BEGINS', COL.cyan);
+  if (n >= 3 && c.fog > 0) toast(c.storm > 0 ? 'STORM FRONT: radar range reduced, heavy current' : 'FOG BANK: radar range reduced', COL.amber);
+  if (n === 2) toast('NEW: some dark ships now spoof AIS as civilian traffic', COL.amber);
+  if (n === 3) toast('NEW: armed escorts shadow some dark tankers. They shoot back.', COL.red);
+}
+
+function spawnSched(item) {
+  let s;
+  if (item.kind === 'dark') {
+    s = spawnDark(false, item.first && G.shift === 1);
+    G.ships.push(s);
+    if (Math.random() < G.cfg.escortP) {
+      addEscort(s);
+      if (G.shift >= 6 && Math.random() < 0.5) addEscort(s);
+    }
+  } else {
+    s = spawnCutter();
+    if (s) G.ships.push(s);
+  }
+}
+
+/* ===================== helpers ===================== */
+function toast(msg, col) {
+  G.toasts.push({ msg, col: col || COL.white, t: 4 });
+  if (G.toasts.length > 5) G.toasts.shift();
+}
+function popup(x, y, msg, col) { G.pops.push({ x, y, msg, col, t: 1.8 }); }
+function addScore(n, msg, x, y, col) {
+  G.score += n;
+  if (msg) popup(x, y, (n >= 0 ? '+' : '') + n + ' ' + msg, col || (n >= 0 ? COL.green : COL.red));
+}
+function age(s) { return G.t - s.seen; }
+function radarRange() {
+  const fog = G.cfg.fog;
+  return (560 + 330 * P.focus) * (1 - 0.42 * fog);
+}
+function visualRange() { return 150 * (1 - 0.45 * G.cfg.fog); }
+function idRange() { return 235 * (1 - 0.3 * G.cfg.fog); }
+function known(s) {
+  if (s.removed) return false;
+  if (age(s) < 6) return true;
+  return s.aisState === 'on' && dist(s, P) < 1100;
+}
+function aisShown(s) {
+  return s.aisState === 'on' || s.aisState === 'spoof' || s.blink > 0;
+}
+function shipPos(s) { return { x: s.x, y: s.y }; }
+function particle(x, y, vx, vy, life, size, col, grow, drag) {
+  if (G.parts.length > 700) return;
+  G.parts.push({ x, y, vx, vy, life, max: life, size, col, grow: grow || 0, drag: drag === undefined ? 0.9 : drag });
+}
+function burst(x, y, n, col, spd, life, size) {
+  for (let i = 0; i < n; i++) {
+    const a = rnd(0, TAU), v = rnd(spd * 0.3, spd);
+    particle(x, y, Math.cos(a) * v, Math.sin(a) * v, rnd(life * 0.5, life), rnd(size * 0.6, size), col, 0, 0.92);
+  }
+}
+function leaveShip(s) { s.removed = true; if (G.sel === s) G.sel = null; }
+
+/* ===================== actions ===================== */
+function currentTarget() {
+  if (G.sel && !G.sel.removed && known(G.sel)) return G.sel;
+  // auto-target nearest known contact in front-ish cone
+  let best = null, bd = 480;
+  for (const s of G.ships) {
+    if (s.removed || !known(s)) continue;
+    const d = dist(s, P);
+    if (d > bd) continue;
+    const a = Math.abs(wrapA(Math.atan2(s.y - P.y, s.x - P.x) - P.hdg));
+    const score = d * (1 + a * 0.5);
+    if (score < bd) { bd = score; best = s; }
+  }
+  return best;
+}
+
+function cycleTarget() {
+  const list = G.ships.filter(s => !s.removed && known(s) && dist(s, P) < 900).sort((a, b) => dist(a, P) - dist(b, P));
+  if (!list.length) { G.sel = null; return; }
+  const i = list.indexOf(G.sel);
+  G.sel = list[(i + 1) % list.length];
+}
+
+function alertGroup(s) {
+  const lead = s.leader || s;
+  for (const e of G.ships) if (e.role === 'escort' && (e.leader === lead || e === s)) e.alerted = true;
+}
+
+function doHail() {
+  const t = currentTarget();
+  if (P.hailCD > 0 || !t) return;
+  if (dist(t, P) > 480) { toast('Target out of hail range', COL.amber); return; }
+  P.hailCD = 3.5; G.tut.hail = true;
+  Snd.hail();
+  // tracer ahead of the bow
+  const bx = t.x + Math.cos(t.hdg) * 55, by = t.y + Math.sin(t.hdg) * 55;
+  G.projs.push({ x: P.x, y: P.y, vx: (bx - P.x) * 3.2, vy: (by - P.y) * 3.2, life: 0.32, kind: 'tracer', owner: 'p' });
+  burst(bx, by, 10, '#bfe9ff', 80, 0.7, 2.5);
+  popup(bx, by - 14, 'WARNING SHOT', COL.cyan);
+  if (t.disabled) return;
+  if (t.role === 'civ') {
+    addScore(-15, 'HARASSMENT', t.x, t.y - 20, COL.amber);
+    t.flee = 4; t.heave = 0;
+    toast('Warning shot at a civilian vessel. Hold fire until identified.', COL.amber);
+  } else if (t.role === 'cutter') {
+    if (t.state === 'cutting' || t.state === 'approach') {
+      t.state = 'flee'; t.flee = 10; t.cutP *= 0.5; t.retries++;
+      toast('Cutter breaks off and runs', COL.green);
+    }
+  } else {
+    alertGroup(t);
+    if (Math.random() < G.cfg.hailStop) { t.heave = 8; t.bolt = 0; popup(t.x, t.y - 28, 'HEAVE-TO', COL.green); }
+    else { t.bolt = 8; t.heave = 0; popup(t.x, t.y - 28, 'BOLTING', COL.amber); }
+  }
+}
+
+function aimLine(t) {
+  // lead the target a little and return blocker (first other ship on the line of fire)
+  const d = dist(t, P), tof = d / 620;
+  const ax = t.x + Math.cos(t.hdg) * t.speed * tof, ay = t.y + Math.sin(t.hdg) * t.speed * tof;
+  const dx = ax - P.x, dy = ay - P.y, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L;
+  let blocker = null, bd = L;
+  for (const s of G.ships) {
+    if (s === t || s.removed) continue;
+    const rx = s.x - P.x, ry = s.y - P.y, along = rx * ux + ry * uy;
+    if (along < 20 || along > bd) continue;
+    const perp = Math.abs(rx * uy - ry * ux);
+    if (perp < s.len * 0.5 + 6) { blocker = s; bd = along; }
+  }
+  return { ux, uy, ax, ay, blocker };
+}
+
+function doFire() {
+  const t = currentTarget();
+  if (P.cannonCD > 0 || !t) return;
+  if (dist(t, P) > 580) { toast('Target out of cannon range', COL.amber); return; }
+  P.cannonCD = 1.0; G.tut.fire = true;
+  const a = aimLine(t);
+  const sp = rnd(-0.02, 0.02);
+  const c = Math.cos(sp), sn = Math.sin(sp);
+  const ux = a.ux * c - a.uy * sn, uy = a.ux * sn + a.uy * c;
+  G.projs.push({ x: P.x + ux * 14, y: P.y + uy * 14, vx: ux * 620, vy: uy * 620, life: 1.0, kind: 'shell', owner: 'p' });
+  Snd.cannon(); fx.shake = Math.max(fx.shake, 3);
+  burst(P.x + ux * 16, P.y + uy * 16, 8, '#ffd27a', 120, 0.3, 2);
+}
+
+function hitShip(s) {
+  // player's shell struck ship s
+  s.shotByPlayer = true;
+  burst(s.x, s.y, 14, '#ffb35a', 150, 0.6, 2.8);
+  Snd.hit(); fx.shake = Math.max(fx.shake, 5);
+  if (s.role === 'civ') {
+    if (!s.incidentLogged) {
+      s.incidentLogged = true;
+      G.incidents++; G.stats.shotCiv++;
+      addScore(-300, 'CIVILIAN HIT', s.x, s.y - 20, COL.red);
+      toast('INCIDENT ' + G.incidents + '/3: civilian vessel fired upon', COL.red);
+      Snd.incident(); fx.flash = 0.5; fx.flashCol = '#ff2a2a';
+      s.disabled = true; s.heave = 0;
+      if (G.incidents >= 3) endGame('Three incidents. Command has relieved you of the watch.');
+    }
+    s.eng--;
+    if (s.eng <= 0) s.disabled = true;
+    return;
+  }
+  s.eng--;
+  s.alerted = true; alertGroup(s);
+  if (s.eng <= 0 && !s.disabled) {
+    s.disabled = true; s.speed = Math.max(0, s.speed); s.scuttle = 35;
+    Snd.disable();
+    burst(s.x, s.y, 26, '#888', 70, 1.2, 4);
+    if (s.role === 'cutter') s.cutP = 0;
+    const pts = s.idDone ? 100 : 40;
+    addScore(pts, s.idDone ? 'DISABLED (CONFIRMED HOSTILE)' : 'DISABLED (UNVERIFIED)', s.x, s.y - 20, s.idDone ? COL.green : COL.amber);
+    G.stats.disabled++; G.shiftStats.interd++;
+    if (!s.idDone) toast('Hostile disabled, but you fired without a confirmed ID. Reduced credit.', COL.amber);
+    else toast('Hostile dead in water. Close in and BOARD for the evidence bonus.', COL.green);
+  } else if (!s.disabled) {
+    popup(s.x, s.y - 20, 'HIT', COL.amber);
+  }
+}
+
+function completeID(s) {
+  s.idDone = true; s.idProg = 1; s.idStage = 2;
+  G.stats.ided++; G.shiftStats.ided++; G.tut.id = true;
+  if (s.hostile) {
+    Snd.idHostile(); addScore(25, 'HOSTILE CONFIRMED', s.x, s.y - 24, COL.red);
+    toast(s.role === 'dark' ? 'CONFIRMED: sanctions runner. Weapons free.' :
+      s.role === 'cutter' ? 'CONFIRMED: cable cutter. Weapons free.' : 'CONFIRMED: armed escort. It will fight.', COL.red);
+    if (s.role === 'escort') alertGroup(s);
+  } else {
+    Snd.idClear(); addScore(5, 'CLEAR', s.x, s.y - 24, COL.green);
+  }
+}
+
+function doBoardComplete(s) {
+  const risky = s.hostile;
+  if (risky && Math.random() < (s.disabled ? 0.06 : 0.12)) {
+    P.boardP = 0; s.boardP = 0;
+    G.hull = Math.max(0, G.hull - 12);
+    addScore(-20, 'BOARDING REPELLED', s.x, s.y - 20, COL.red);
+    toast('Boarding party repelled. Hull damaged. Try again.', COL.red);
+    Snd.bad(); fx.shake = 6;
+    if (G.hull <= 0) endGame('Cutter lost under fire.');
+    return;
+  }
+  if (s.hostile) {
+    if (s.idDone) addScore(150, 'SEIZED WITH EVIDENCE', s.x, s.y - 20, COL.green);
+    else addScore(60, 'SEIZED (THIN EVIDENCE)', s.x, s.y - 20, COL.amber);
+    if (!s.disabled) G.shiftStats.interd++;
+    G.stats.seized++;
+    Snd.seized();
+    toast(s.idDone ? 'Evidence package logged. Vessel seized.' : 'Vessel seized, but no prior ID: thin evidence.', COL.green);
+    if (s.role === 'cutter' && s.cableI >= 0) G.cables[s.cableI].alert = false;
+  } else {
+    addScore(-40, 'WRONGFUL BOARDING', s.x, s.y - 20, COL.red);
+    G.stats.wrongful++;
+    toast('Wrongful boarding: honest vessel delayed. Identify first.', COL.red);
+    Snd.bad();
+  }
+  burst(s.x, s.y, 20, '#9fe7ff', 90, 0.8, 3);
+  if (s.hostile) leaveShip(s); else { s.flee = 0; s.heave = 0; s.boardCooldown = 20; s.boardP = 0; s.speed = 0; }
+  P.boardP = 0;
+}
+
+function endGame(reason) {
+  if (mode === 'over') return;
+  G.overReason = reason; mode = 'over'; modeT = 0;
+  if (G.score > best) {
+    best = G.score; G.newBest = true;
+    try { localStorage.setItem('darkfleet_best', String(best)); } catch (e) {}
+  }
+  Snd.over();
+}
+
+/* ===================== update ===================== */
+function update(dt) {
+  modeT += dt;
+  if (mode !== 'play') {
+    // keep the sea alive on non-play screens
+    G.t += dt;
+    updateParticles(dt);
+    return;
+  }
+  G.t += dt; G.shiftT += dt;
+  updatePlayer(dt);
+  updateRadar(dt);
+  updateInteractions(dt);
+  updateShips(dt);
+  updateProjectiles(dt);
+  updateParticles(dt);
+  updateSpawns(dt);
+  for (const o of G.toasts) o.t -= dt;
+  G.toasts = G.toasts.filter(o => o.t > 0);
+  for (const o of G.pops) { o.t -= dt; o.y -= 14 * dt; }
+  G.pops = G.pops.filter(o => o.t > 0);
+  fx.shake = Math.max(0, fx.shake - dt * 14); fx.flash = Math.max(0, fx.flash - dt * 1.6);
+  P.cannonCD = Math.max(0, P.cannonCD - dt); P.hailCD = Math.max(0, P.hailCD - dt);
+  Snd.update(P.throttle, G.cfg.storm);
+
+  // cable endgame
+  if (G.cables.every(c => c.hp <= 0)) endGame('Every cable has been cut. The strait is dark.');
+  // shift end
+  if (G.shiftT >= G.cfg.dur && mode === 'play') endShift();
+}
+
+function endShift() {
+  mode = 'shiftend'; modeT = 0;
+  const ss = G.shiftStats;
+  const cablePts = G.cables.reduce((a, c) => a + c.hp, 0) * 20;
+  const clean = G.incidents === ss.inc0;
+  ss.cableBonus = cablePts; ss.clean = clean; ss.cleanBonus = clean ? 100 : 0;
+  G.score += cablePts + ss.cleanBonus;
+  ss.total = G.score - ss.pts0;
+  // repair crew
+  G.hull = Math.min(100, G.hull + 40);
+  const dmg = G.cables.filter(c => c.hp > 0 && c.hp < CABLE_HP);
+  ss.repaired = null;
+  if (dmg.length) { dmg[0].hp++; ss.repaired = dmg[0].name; }
+  if (G.score > best) { best = G.score; try { localStorage.setItem('darkfleet_best', String(best)); } catch (e) {} }
+  Snd.shiftEnd();
+}
+
+function updatePlayer(dt) {
+  const turnIn = (keys.KeyD || keys.ArrowRight ? 1 : 0) - (keys.KeyA || keys.ArrowLeft ? 1 : 0);
+  const thIn = (keys.KeyW || keys.ArrowUp ? 1 : 0) - (keys.KeyS || keys.ArrowDown ? 1 : 0);
+  P.throttle = clamp(P.throttle + thIn * 0.7 * dt, 0, 1);
+  if (keys.KeyX) P.throttle = Math.max(0, P.throttle - 1.6 * dt);
+  const maxV = 175;
+  const sp = Math.hypot(P.vx, P.vy);
+  const rate = 1.9 * (0.45 + 0.55 * Math.min(1, sp / 70 + 0.2));
+  P.hdg = wrapA(P.hdg + turnIn * rate * dt);
+  // current & wind
+  const cur = G.current;
+  cur.a += rnd(-0.4, 0.4) * dt;
+  const cm = 6 + 14 * G.cfg.storm;
+  const cx = Math.cos(cur.a) * cm, cy = Math.sin(cur.a) * cm;
+  const gust = G.cfg.storm * Math.sin(G.t * 0.7) * 10;
+  const dvx = Math.cos(P.hdg) * P.throttle * maxV + cx + gust * Math.cos(cur.a + 1.2);
+  const dvy = Math.sin(P.hdg) * P.throttle * maxV + cy + gust * Math.sin(cur.a + 1.2);
+  const k = Math.min(1, dt * 0.95);
+  P.vx += (dvx - P.vx) * k; P.vy += (dvy - P.vy) * k;
+  P.x += P.vx * dt; P.y += P.vy * dt;
+  const mx = 20, myT = COAST + 18, myB = H - COAST - 18;
+  if (P.x < mx) { P.x = mx; P.vx = Math.abs(P.vx) * 0.3; }
+  if (P.x > W - mx) { P.x = W - mx; P.vx = -Math.abs(P.vx) * 0.3; }
+  if (P.y < myT) { P.y = myT; P.vy = Math.abs(P.vy) * 0.3; }
+  if (P.y > myB) { P.y = myB; P.vy = -Math.abs(P.vy) * 0.3; }
+  P.speed = Math.hypot(P.vx, P.vy);
+  // wake
+  P.emit -= dt;
+  if (P.emit <= 0 && P.speed > 15) {
+    P.emit = 0.05;
+    const bx = P.x - Math.cos(P.hdg) * 12, by = P.y - Math.sin(P.hdg) * 12;
+    particle(bx + rnd(-2, 2), by + rnd(-2, 2), rnd(-6, 6), rnd(-6, 6), 1.2, 2.4, 'rgba(210,240,255,', 4, 0.96);
+  }
+  // camera
+  cam.x += (P.x + P.vx * 0.5 - cam.x) * Math.min(1, dt * 3);
+  cam.y += (P.y + P.vy * 0.5 - cam.y) * Math.min(1, dt * 3);
+}
+
+function updateRadar(dt) {
+  const focus = !!keys.KeyQ;
+  P.focus += ((focus ? 1 : 0) - P.focus) * Math.min(1, dt * 6);
+  const prev = P.sweep;
+  if (focus) {
+    // sector scan ahead of the bow: shorter blind arc, faster repaint, longer range
+    P.sweep = P.hdg + Math.sin(G.t * 2.7) * 0.7;
+    P.bw = 0.17;
+  } else {
+    P.sweep = wrapA(P.sweep + 2.1 * dt);
+    P.bw = 0.28;
+    if (prev < 0 && P.sweep >= 0) Snd.ping();
+  }
+  const R = radarRange(), vis = visualRange();
+  const bw = P.bw + 0.045;   // slight tolerance for frame stepping
+  for (const s of G.ships) {
+    if (s.removed) continue;
+    const d = dist(s, P);
+    let seen = false;
+    if (d < vis) seen = true;
+    else if (d < R) {
+      const b = Math.atan2(s.y - P.y, s.x - P.x);
+      if (Math.abs(wrapA(b - P.sweep)) < bw) seen = true;
+    }
+    if (seen) { s.seen = G.t; s.lx = s.x; s.ly = s.y; }
+  }
+  // sea clutter in storms (harmless false echoes)
+  if (G.cfg.storm > 0 && Math.random() < dt * 3 * G.cfg.storm) {
+    const a = rnd(0, TAU), r = rnd(80, R);
+    G.parts.push({ x: P.x + Math.cos(a) * r, y: P.y + Math.sin(a) * r, vx: 0, vy: 0, life: 1.4, max: 1.4, size: 3, col: 'clutter', grow: 0, drag: 1 });
+  }
+}
+
+function updateInteractions(dt) {
+  const t = currentTarget();
+  // IDENTIFY
+  let idActive = false;
+  if (keys.KeyE && t && !t.idDone) {
+    const d = dist(t, P);
+    if (d <= idRange()) {
+      idActive = true;
+      const rate = (1 / 3.0) * (d < 120 ? 1.5 : 1);
+      const before = t.idProg;
+      t.idProg = Math.min(1, t.idProg + rate * dt);
+      t.idGrace = 0.5;
+      if (Math.floor(before * 8) !== Math.floor(t.idProg * 8)) Snd.idTick(t.idProg);
+      if (t.idProg >= 0.42 && t.idStage < 1) { t.idStage = 1; Snd.idStage(); }
+      if (t.idProg >= 0.5 && t.hostile) alertGroup(t);
+      if (t.idProg >= 1) completeID(t);
+    } else if (t.idProg > 0 && !G.rangeWarn) { G.rangeWarn = 1.5; toast('ID interrupted: close to within ' + Math.round(idRange()) + ' m', COL.amber); }
+  }
+  G.rangeWarn = Math.max(0, (G.rangeWarn || 0) - dt);
+  P.idActive = idActive;
+  // progress decay on everything not actively being identified
+  for (const s of G.ships) {
+    if (s.idDone || s.removed) continue;
+    if (s === t && idActive) continue;
+    if (s.idProg > 0) {
+      s.idGrace -= dt;
+      if (s.idGrace <= 0) s.idProg = Math.max(0, s.idProg - 0.14 * dt);
+      if (s.idProg < 0.42 && s.idStage < 1) s.idStage = 0;
+    }
+  }
+  // BOARD
+  let boarding = false;
+  if (keys.KeyB && t) {
+    const d = dist(t, P);
+    const rel = Math.hypot(t.vx - P.vx, t.vy - P.vy);
+    const stopped = t.disabled || t.heave > 0 || t.speed < 10;
+    P.boardMsg = '';
+    if (d > 75) P.boardMsg = 'CLOSE TO WITHIN 75 m';
+    else if (!stopped && t.hostile) P.boardMsg = 'TARGET UNDERWAY: WARNING SHOT OR DISABLE FIRST';
+    else if (rel > 55) P.boardMsg = 'MATCH SPEED (' + Math.round(rel) + ')';
+    else if (t.boardCooldown > 0) P.boardMsg = 'ALREADY INSPECTED';
+    else {
+      boarding = true;
+      P.boardP += dt / 4.2; t.boardP = P.boardP;
+      G.tut.board = true;
+      if (Math.floor(P.boardP * 12) !== Math.floor((P.boardP - dt / 4.2) * 12)) Snd.boardTick();
+      if (P.boardP >= 1) doBoardComplete(t);
+    }
+  } else P.boardMsg = '';
+  if (!boarding) P.boardP = Math.max(0, P.boardP - dt * 0.8);
+  P.boarding = boarding;
+  // CANNON hold-to-fire
+  if (keys.Space) doFire();
+}
+
+function moveToward(s, tx, ty, want, dt, turnMul) {
+  const desired = Math.atan2(ty - s.y, tx - s.x);
+  const da = wrapA(desired - s.hdg), tr = s.turn * (turnMul || 1) * dt;
+  s.hdg = wrapA(s.hdg + clamp(da, -tr, tr));
+  const acc = 22 * dt;
+  s.speed += clamp(want - s.speed, -acc * 1.6, acc);
+}
+
+function updateShips(dt) {
+  const cur = G.current, cm = (6 + 14 * G.cfg.storm) * 0.5;
+  for (const s of G.ships) {
+    if (s.removed) continue;
+    if (s.boardCooldown > 0) s.boardCooldown -= dt;
+    // AIS behaviours
+    if (s.aisState === 'spoof') {
+      s.oa += rnd(-1.2, 1.2) * dt;
+      const mag = 70 + 30 * Math.sin(G.t * 0.4 + s.id);
+      s.ox += (Math.cos(s.oa) * mag - s.ox) * dt * 0.8; s.oy += (Math.sin(s.oa) * mag - s.oy) * dt * 0.8;
+    }
+    if (s.dropper) {
+      s.dropT -= dt;
+      if (s.dropT <= 0) { s.aisState = s.aisState === 'on' ? 'off' : 'on'; s.dropT = s.aisState === 'off' ? rnd(7, 12) : rnd(10, 20); }
+    }
+    if (s.hostile && s.aisState === 'off') {
+      s.blinkT -= dt;
+      if (s.blinkT <= 0) { s.blink = 1.6; s.blinkT = rnd(13, 22); if (dist(s, P) < 1100) Snd.blink(); }
+    }
+    if (s.blink > 0) s.blink -= dt;
+
+    let want = s.want;
+    // behaviour by state
+    if (s.disabled) {
+      want = 0;
+      moveToward(s, s.x + Math.cos(s.hdg), s.y + Math.sin(s.hdg), 0, dt, 0);
+      s.speed = Math.max(0, s.speed - 30 * dt);
+      if (s.role !== 'civ' && !s.removed) {
+        s.scuttle -= dt;
+        if (s.scuttle <= 0) { burst(s.x, s.y, 20, '#555', 50, 1.5, 4); popup(s.x, s.y, 'SCUTTLED', COL.amber); leaveShip(s); continue; }
+      }
+      if (Math.random() < dt * 4) particle(s.x + rnd(-6, 6), s.y + rnd(-6, 6), rnd(-6, 6), rnd(-14, -4), 1.5, 3, 'rgba(120,120,120,', 5, 0.98);
+    } else if (s.heave > 0) {
+      s.heave -= dt;
+      moveToward(s, s.x + Math.cos(s.hdg), s.y + Math.sin(s.hdg), 0, dt, 0);
+      s.speed = Math.max(0, s.speed - 28 * dt);
+      if (s.heave <= 0 && P.boardP > 0 && s === currentTarget()) P.boardP = 0;
+    } else if (s.role === 'escort') {
+      updateEscort(s, dt);
+    } else if (s.role === 'cutter') {
+      updateCutter(s, dt);
+    } else if (s.flee > 0) {
+      s.flee -= dt;
+      const a = Math.atan2(s.y - P.y, s.x - P.x);
+      moveToward(s, s.x + Math.cos(a) * 200, s.y + Math.sin(a) * 200, s.want * 0.8, dt, 1.5);
+    } else if (s.bolt > 0) {
+      s.bolt -= dt;
+      const a = Math.atan2(s.y - P.y, s.x - P.x);
+      moveToward(s, s.x + Math.cos(a) * 200, s.y + Math.sin(a) * 200, s.want * 1.6, dt, 1.2);
+    } else if (s.state === 'wander') {
+      const g = s.ground;
+      if (Math.hypot(s.gx - s.x, s.gy - s.y) < 25) { s.gx = g.x + rnd(-170, 170); s.gy = g.y + rnd(-170, 170); }
+      moveToward(s, s.gx, s.gy, s.want, dt);
+    } else {
+      moveToward(s, s.gx, s.gy, s.want, dt);
+    }
+    s.vx = Math.cos(s.hdg) * s.speed + cur.x * 0 + Math.cos(cur.a) * cm * 0;
+    s.vy = Math.sin(s.hdg) * s.speed;
+    s.x += s.vx * dt; s.y += s.vy * dt;
+    // keep inside the sea band unless leaving
+    if (!s.exitLeg && s.role !== 'cutter') {
+      if (s.y < COAST + 15 && s.cls !== 'ferry') { s.y = COAST + 15; }
+      if (s.y > H - COAST - 15 && s.cls !== 'ferry') { s.y = H - COAST - 15; }
+    }
+    // wake
+    s.wakeT -= dt;
+    if (s.wakeT <= 0 && s.speed > 8) {
+      s.wakeT = 0.12;
+      if (dist(s, P) < 800) particle(s.x - Math.cos(s.hdg) * s.len * 0.5, s.y - Math.sin(s.hdg) * s.len * 0.5, rnd(-4, 4), rnd(-4, 4), 1.4, 2, 'rgba(200,235,250,', 3.5, 0.96);
+    }
+    // arrival / exit
+    if (s.goalExit && (s.x < -40 || s.x > W + 40 || s.y < -40 || s.y > H + 40)) {
+      if (s.hostile) {
+        G.stats.escaped++;
+        addScore(-30, 'ESCAPED', clamp(s.x, 30, W - 30), clamp(s.y, 30, H - 30), COL.amber);
+        toast('A dark vessel slipped out of the strait', COL.amber);
+      }
+      leaveShip(s);
+    } else if (s.exitLeg && (s.x < -60 || s.x > W + 60 || s.y < -60 || s.y > H + 60)) {
+      leaveShip(s);
+    }
+    // collision with player (bump)
+    const d = dist(s, P);
+    if (d < 18 + s.len * 0.3 && !s.removed) {
+      const nx = (P.x - s.x) / (d || 1), ny = (P.y - s.y) / (d || 1);
+      const rel = Math.hypot(P.vx - s.vx, P.vy - s.vy);
+      P.x += nx * 2; P.y += ny * 2;
+      P.vx += nx * 20 * dt * 6; P.vy += ny * 20 * dt * 6;
+      if (rel > 70 && !P.bumpCD) {
+        P.bumpCD = 1; G.hull = Math.max(0, G.hull - 4); fx.shake = 5; Snd.hit();
+        if (G.hull <= 0) endGame('Cutter lost in a collision.');
+      }
+    }
+  }
+  if (P.bumpCD) { P.bumpCD -= dt; if (P.bumpCD <= 0) P.bumpCD = 0; }
+  G.ships = G.ships.filter(s => !s.removed);
+  if (G.sel && G.sel.removed) G.sel = null;
+}
+
+function updateCutter(s, dt) {
+  const c = G.cables[s.cableI];
+  if (s.state === 'approach') {
+    moveToward(s, s.cx, s.cy, s.want, dt);
+    if (Math.hypot(s.cx - s.x, s.cy - s.y) < 14) { s.state = 'cutting'; }
+    if (c.hp <= 0) { s.state = 'flee'; s.flee = 99; }
+  } else if (s.state === 'cutting') {
+    // loiter over the cable
+    moveToward(s, s.cx, s.cy, 2, dt, 0.4);
+    s.speed = Math.min(s.speed, 6);
+    s.cutP += dt / G.cfg.cutDur;
+    if (s.cutP >= 0.35 && !c.alert) {
+      c.alert = true;
+      const p = cablePoint(c, 0.5); c.ax = s.cx; c.ay = s.cy;
+      G.tut.cable = true;
+      toast('CABLE ' + c.name + ': tamper sensor alarm. Find the vessel near the marker.', COL.red);
+      Snd.alert();
+    }
+    if (s.cutP >= 1) {
+      c.hp = Math.max(0, c.hp - 1); c.alert = false; s.state = 'done';
+      G.stats.cuts++; G.shiftStats.cuts++;
+      addScore(-150, 'CABLE ' + c.name + ' CUT', s.cx, s.cy - 30, COL.red);
+      toast('CABLE ' + c.name + ' DAMAGED (' + c.hp + '/' + CABLE_HP + ')' + (c.hp <= 0 ? ' - SEVERED' : ''), COL.red);
+      Snd.cutDone(); fx.flash = 0.35; fx.flashCol = '#ffb938'; fx.shake = 7;
+      burst(s.cx, s.cy, 30, '#ffb938', 110, 1.0, 3);
+      s.exitLeg = true; s.goalExit = false; s.gx = s.x < W / 2 ? -100 : W + 100; s.gy = s.y < H / 2 ? -100 : H + 100;
+      s.want = 52; s.hostile = true;
+    }
+  } else if (s.state === 'flee') {
+    s.flee -= dt;
+    const a = Math.atan2(s.y - P.y, s.x - P.x);
+    moveToward(s, s.x + Math.cos(a) * 200, s.y + Math.sin(a) * 200, s.want * 1.15, dt, 1.4);
+    if (c.alert) c.alert = false;
+    if (s.flee <= 0 && G.cables[s.cableI].hp > 0 && s.retries < 3) { s.state = 'approach'; }
+    else if (s.flee <= 0) { s.exitLeg = true; s.gx = s.x < W / 2 ? -100 : W + 100; s.gy = s.y < H / 2 ? -100 : H + 100; s.state = 'done'; }
+  } else {
+    moveToward(s, s.gx, s.gy, s.want, dt);
+  }
+}
+
+function updateEscort(s, dt) {
+  const L = s.leader;
+  const leaderAlive = L && !L.removed;
+  if (s.alerted && !s.disabled) {
+    const d = dist(s, P);
+    // circle at ~230 m and fire
+    const a = Math.atan2(s.y - P.y, s.x - P.x) + 0.9;
+    const tx = P.x + Math.cos(a) * 230, ty = P.y + Math.sin(a) * 230;
+    moveToward(s, tx, ty, s.want, dt, 1.4);
+    s.fireCD -= dt;
+    if (s.fireCD <= 0 && d < 420) {
+      s.fireCD = rnd(2.0, 2.8) / (1 + 0.06 * G.shift);
+      const ang = Math.atan2(P.y - s.y, P.x - s.x) + rnd(-0.14, 0.14);
+      G.projs.push({ x: s.x, y: s.y, vx: Math.cos(ang) * 400, vy: Math.sin(ang) * 400, life: 1.1, kind: 'bullet', owner: 'e' });
+      particle(s.x, s.y, 0, 0, 0.2, 5, 'rgba(255,200,120,', 2, 1);
+      if (d < 600) Snd.tone(300, 0.08, 'square', 0.07, 150);
+    }
+    return;
+  }
+  if (leaderAlive) {
+    const c = Math.cos(L.hdg), sn = Math.sin(L.hdg);
+    const tx = L.x + c * s.offx - sn * s.offy, ty = L.y + sn * s.offx + c * s.offy;
+    moveToward(s, tx, ty, L.speed > 5 ? L.speed + 6 : 0, dt, 1.4);
+    if (L.speed < 5) s.speed = Math.max(0, s.speed - 20 * dt);
+    // proximity trigger
+    if (dist(s, P) < 150 || (L.disabled || L.heave > 0)) s.alerted = true;
+  } else {
+    s.alerted = true;
+  }
+}
+
+function updateProjectiles(dt) {
+  for (const p of G.projs) {
+    p.life -= dt;
+    const nx = p.x + p.vx * dt, ny = p.y + p.vy * dt;
+    if (p.kind === 'shell') {
+      // segment vs ship circles
+      for (const s of G.ships) {
+        if (s.removed) continue;
+        const r = s.len * 0.5 + 4;
+        if (segCircle(p.x, p.y, nx, ny, s.x, s.y, r)) { p.life = 0; hitShip(s); break; }
+      }
+      if (p.life <= 0.0001 && dist(p, { x: nx, y: ny }) > 0) { /* spent */ }
+      if (p.life > 0 && Math.random() < 0.5) particle(p.x, p.y, 0, 0, 0.25, 1.5, 'rgba(255,230,160,', 0, 1);
+    } else if (p.kind === 'bullet') {
+      if (segCircle(p.x, p.y, nx, ny, P.x, P.y, 12)) {
+        p.life = 0; G.hull = Math.max(0, G.hull - 5); fx.shake = 6; fx.flash = 0.25; fx.flashCol = '#ff2a2a';
+        Snd.hit(); burst(P.x, P.y, 10, '#ffb35a', 100, 0.5, 2.5);
+        if (G.hull <= 0) endGame('Cutter lost under fire.');
+      }
+      if (Math.random() < 0.6) particle(p.x, p.y, 0, 0, 0.2, 1.5, 'rgba(255,120,90,', 0, 1);
+    } else if (p.kind === 'tracer') {
+      particle(p.x, p.y, 0, 0, 0.4, 2, 'rgba(180,230,255,', 0, 1);
+    }
+    p.x = nx; p.y = ny;
+    if (p.kind === 'shell' && p.life <= 0) burst(p.x, p.y, 4, '#bfe9ff', 60, 0.4, 2);
+  }
+  G.projs = G.projs.filter(p => p.life > 0);
+}
+
+function segCircle(x0, y0, x1, y1, cx, cy, r) {
+  const dx = x1 - x0, dy = y1 - y0, l2 = dx * dx + dy * dy || 1;
+  const t = clamp(((cx - x0) * dx + (cy - y0) * dy) / l2, 0, 1);
+  const px = x0 + dx * t, py = y0 + dy * t;
+  return (px - cx) * (px - cx) + (py - cy) * (py - cy) <= r * r;
+}
+
+function updateParticles(dt) {
+  for (const p of G.parts) {
+    p.life -= dt;
+    p.x += p.vx * dt; p.y += p.vy * dt;
+    const k = Math.pow(p.drag, dt * 60); p.vx *= k; p.vy *= k;
+    p.size += p.grow * dt;
+  }
+  G.parts = G.parts.filter(p => p.life > 0);
+}
+
+function updateSpawns(dt) {
+  while (G.sched.length && G.sched[0].t <= G.shiftT) spawnSched(G.sched.shift());
+  // keep civilian density
+  G.civTimer -= dt;
+  if (G.civTimer <= 0) {
+    G.civTimer = rnd(1.5, 3);
+    const n = G.ships.filter(s => s.role === 'civ' && !s.removed).length;
+    if (n < G.cfg.civ) G.ships.push(spawnCiv(false));
+  }
+}
+
+/* ===================== input ===================== */
+const GAME_KEYS = new Set(['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'Tab',
+  'KeyQ', 'KeyE', 'KeyF', 'KeyB', 'KeyX', 'KeyP', 'KeyM', 'KeyR', 'Enter', 'Escape']);
+
+function startRun() { newGame(); mode = 'play'; modeT = 0; }
+function nextShift() { startShift(G.shift + 1); mode = 'play'; modeT = 0; }
+
+window.addEventListener('keydown', e => {
+  if (GAME_KEYS.has(e.code)) e.preventDefault();
+  Snd.init();
+  if (e.repeat && e.code !== 'Space') return;
+  keys[e.code] = true;
+  const c = e.code;
+  if (c === 'KeyM') { Snd.setMute(!Snd.muted); return; }
+  if (mode === 'title') { if (c === 'Enter' || c === 'Space') startRun(); return; }
+  if (mode === 'over') { if (c === 'KeyR' || c === 'Enter') { if (modeT > 0.6) startRun(); } return; }
+  if (mode === 'shiftend') { if ((c === 'Enter' || c === 'Space') && modeT > 0.8) nextShift(); return; }
+  if (c === 'KeyP' || c === 'Escape') { if (mode === 'play') mode = 'pause'; else if (mode === 'pause') mode = 'play'; return; }
+  if (mode === 'pause') { if (c === 'Enter') mode = 'play'; return; }
+  if (c === 'Tab') cycleTarget();
+  if (c === 'KeyF') doHail();
+});
+window.addEventListener('keyup', e => { keys[e.code] = false; });
+window.addEventListener('blur', () => { for (const k in keys) keys[k] = false; if (mode === 'play') mode = 'pause'; });
+document.addEventListener('visibilitychange', () => { if (document.hidden && mode === 'play') mode = 'pause'; lastT = 0; });
+
+function toWorld(sx, sy) {
+  const S = viewScale();
+  return { x: (sx - VW / 2) / S + cam.x, y: (sy - VH / 2) / S + cam.y };
+}
+cvs.addEventListener('pointermove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+cvs.addEventListener('pointerdown', e => {
+  Snd.init();
+  mouse.x = e.clientX; mouse.y = e.clientY;
+  if (mode === 'title') { startRun(); return; }
+  if (mode === 'over') { if (modeT > 0.6) startRun(); return; }
+  if (mode === 'shiftend') { if (modeT > 0.8) nextShift(); return; }
+  if (mode === 'pause') { mode = 'play'; return; }
+  const w = toWorld(e.clientX, e.clientY);
+  let bestS = null, bd = 40 / viewScale();
+  for (const s of G.ships) {
+    if (s.removed || !known(s)) continue;
+    let d = Math.hypot(s.x - w.x, s.y - w.y);
+    if (aisShown(s)) d = Math.min(d, Math.hypot(s.x + s.ox - w.x, s.y + s.oy - w.y));
+    if (d < bd) { bd = d; bestS = s; }
+  }
+  G.sel = bestS;
+});
+
+/* ===================== rendering ===================== */
+function viewScale() { return clamp(Math.min(VW, VH) / 820, 0.6, 1.35); }
+
+function text(str, x, y, o) {
+  o = o || {};
+  ctx.font = (o.weight || '') + ' ' + (o.size || 12) + 'px ' + (o.font || MONO);
+  ctx.fillStyle = o.color || COL.white; ctx.textAlign = o.align || 'left'; ctx.textBaseline = o.base || 'alphabetic';
+  if (o.alpha !== undefined) ctx.globalAlpha = o.alpha;
+  ctx.fillText(str, x, y);
+  if (o.alpha !== undefined) ctx.globalAlpha = 1;
+}
+
+function draw() {
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  ctx.fillStyle = COL.navy; ctx.fillRect(0, 0, VW, VH);
+  if (!G) newGame();
+  const S = viewScale();
+  const sh = fx.shake;
+  const ox = sh ? rnd(-sh, sh) : 0, oy = sh ? rnd(-sh, sh) : 0;
+  ctx.save();
+  ctx.translate(VW / 2 + ox, VH / 2 + oy); ctx.scale(S, S); ctx.translate(-cam.x, -cam.y);
+  drawSea(S);
+  drawCables();
+  drawRadar();
+  drawParticles(true);
+  drawShips();
+  drawProjectiles();
+  drawPlayer();
+  drawParticles(false);
+  drawPops();
+  ctx.restore();
+  drawOverlayFX();
+  drawHUD();
+  if (mode === 'title') drawTitle();
+  else if (mode === 'pause') drawPause();
+  else if (mode === 'shiftend') drawShiftEnd();
+  else if (mode === 'over') drawOver();
+}
+
+function drawSea(S) {
+  const x0 = cam.x - VW / 2 / S - 50, x1 = cam.x + VW / 2 / S + 50, y0 = cam.y - VH / 2 / S - 50, y1 = cam.y + VH / 2 / S + 50;
+  // sea base inside world
+  ctx.fillStyle = '#05182a'; ctx.fillRect(0, 0, W, H);
+  const g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, 'rgba(10,50,70,0.35)'); g.addColorStop(0.5, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(10,50,70,0.35)');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  // thin grid
+  ctx.strokeStyle = COL.grid; ctx.lineWidth = 1 / S; ctx.beginPath();
+  for (let x = Math.max(0, Math.floor(x0 / 100) * 100); x <= Math.min(W, x1); x += 100) { ctx.moveTo(x, Math.max(0, y0)); ctx.lineTo(x, Math.min(H, y1)); }
+  for (let y = Math.max(0, Math.floor(y0 / 100) * 100); y <= Math.min(H, y1); y += 100) { ctx.moveTo(Math.max(0, x0), y); ctx.lineTo(Math.min(W, x1), y); }
+  ctx.stroke();
+  // swell lines
+  ctx.strokeStyle = 'rgba(120,190,210,0.05)'; ctx.lineWidth = 2; ctx.beginPath();
+  const tt = G.t * 8;
+  for (let y = Math.max(0, Math.floor(y0 / 60) * 60); y < Math.min(H, y1); y += 60) {
+    for (let x = Math.max(0, Math.floor(x0 / 140) * 140 + ((y / 60) % 2) * 70); x < Math.min(W, x1); x += 140) {
+      const xx = x + (tt % 140);
+      ctx.moveTo(xx, y); ctx.lineTo(xx + 22, y + 2);
+    }
+  }
+  ctx.stroke();
+  // coasts
+  ctx.fillStyle = '#0b1a14';
+  ctx.fillRect(-400, -400, W + 800, COAST + 400); ctx.fillRect(-400, H - COAST, W + 800, COAST + 400);
+  ctx.fillRect(-400, -400, 400, H + 800); ctx.fillRect(W, -400, 400, H + 800);
+  ctx.strokeStyle = COL.greenDim; ctx.lineWidth = 1.5 / S; ctx.setLineDash([6, 5]);
+  ctx.beginPath(); ctx.moveTo(0, COAST); ctx.lineTo(W, COAST); ctx.moveTo(0, H - COAST); ctx.lineTo(W, H - COAST); ctx.stroke();
+  ctx.setLineDash([]);
+  // fishing grounds
+  ctx.strokeStyle = 'rgba(109,255,154,0.12)'; ctx.setLineDash([3, 6]); ctx.lineWidth = 1 / S;
+  for (const f of FISH_GROUNDS) { ctx.beginPath(); ctx.arc(f.x, f.y, 190, 0, TAU); ctx.stroke(); }
+  ctx.setLineDash([]);
+  ctx.font = '10px ' + MONO; ctx.fillStyle = 'rgba(109,255,154,0.22)'; ctx.textAlign = 'center';
+  for (const f of FISH_GROUNDS) ctx.fillText('FISHING AREA', f.x, f.y - 196);
+  ctx.fillStyle = 'rgba(109,255,154,0.28)';
+  ctx.fillText('NORTH COAST', W / 2, COAST - 10); ctx.fillText('SOUTH COAST', W / 2, H - COAST + 18);
+}
+
+function drawCables() {
+  ctx.lineWidth = 2; ctx.lineJoin = 'round';
+  for (let i = 0; i < G.cables.length; i++) {
+    const c = G.cables[i];
+    ctx.strokeStyle = c.hp <= 0 ? 'rgba(255,77,77,0.45)' : c.hp < CABLE_HP ? 'rgba(255,185,56,0.7)' : 'rgba(255,185,56,0.45)';
+    ctx.setLineDash(c.hp <= 0 ? [2, 10] : [10, 6]);
+    ctx.beginPath();
+    c.pts.forEach((p, k) => k ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]));
+    ctx.stroke();
+    ctx.setLineDash([]);
+    const lp = c.pts[1];
+    ctx.font = '11px ' + MONO; ctx.fillStyle = 'rgba(255,185,56,0.8)'; ctx.textAlign = 'left';
+    ctx.fillText('CABLE ' + c.name + (c.hp <= 0 ? ' SEVERED' : ' ' + '|'.repeat(c.hp)), lp[0] + 10, lp[1]);
+    if (c.alert) {
+      const pulse = 0.5 + 0.5 * Math.sin(G.t * 8);
+      ctx.strokeStyle = 'rgba(255,77,77,' + (0.4 + 0.5 * pulse) + ')'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(c.ax, c.ay, 30 + pulse * 14, 0, TAU); ctx.stroke();
+      ctx.beginPath(); ctx.arc(c.ax, c.ay, 8, 0, TAU); ctx.stroke();
+      ctx.font = 'bold 11px ' + MONO; ctx.fillStyle = COL.red; ctx.textAlign = 'center';
+      ctx.fillText('TAMPER ' + c.name, c.ax, c.ay - 48);
+    }
+  }
+}
+
+function drawRadar() {
+  const R = radarRange();
+  // range rings
+  ctx.strokeStyle = 'rgba(109,255,154,0.16)'; ctx.lineWidth = 1;
+  for (let r = 1; r <= 4; r++) {
+    ctx.beginPath(); ctx.arc(P.x, P.y, R * r / 4, 0, TAU); ctx.stroke();
+  }
+  ctx.strokeStyle = 'rgba(109,255,154,0.35)';
+  ctx.beginPath(); ctx.arc(P.x, P.y, R, 0, TAU); ctx.stroke();
+  // ID range ring (only when a target is around)
+  ctx.strokeStyle = 'rgba(111,215,255,0.18)'; ctx.setLineDash([4, 6]);
+  ctx.beginPath(); ctx.arc(P.x, P.y, idRange(), 0, TAU); ctx.stroke(); ctx.setLineDash([]);
+  // sweep wedge with trailing afterglow
+  const slices = 16, trail = P.focus > 0.5 ? 0.5 : 1.1;
+  for (let i = 0; i < slices; i++) {
+    const a1 = P.sweep - (i / slices) * trail, a0 = P.sweep - ((i + 1) / slices) * trail;
+    const alpha = 0.16 * Math.pow(1 - i / slices, 1.6);
+    ctx.fillStyle = 'rgba(109,255,154,' + alpha.toFixed(3) + ')';
+    ctx.beginPath(); ctx.moveTo(P.x, P.y); ctx.arc(P.x, P.y, R, a0, a1); ctx.closePath(); ctx.fill();
+  }
+  // leading beam
+  const bw = P.bw || 0.28;
+  ctx.fillStyle = 'rgba(190,255,210,0.10)';
+  ctx.beginPath(); ctx.moveTo(P.x, P.y); ctx.arc(P.x, P.y, R, P.sweep - bw, P.sweep + bw); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = 'rgba(160,255,190,0.7)'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(P.x, P.y); ctx.lineTo(P.x + Math.cos(P.sweep) * R, P.y + Math.sin(P.sweep) * R); ctx.stroke();
+}
+
+function hullPath(s, w) {
+  const l = s.len / 2;
+  ctx.beginPath();
+  ctx.moveTo(l, 0); ctx.lineTo(l * 0.45, w); ctx.lineTo(-l, w); ctx.lineTo(-l, -w); ctx.lineTo(l * 0.45, -w); ctx.closePath();
+}
+
+function drawHull(s, col, alpha) {
+  const c = CLS[s.cls];
+  ctx.save(); ctx.translate(s.x, s.y); ctx.rotate(s.hdg); ctx.globalAlpha = alpha;
+  hullPath(s, c.w);
+  ctx.fillStyle = '#1b2a33'; ctx.fill(); ctx.strokeStyle = col; ctx.lineWidth = 1.5; ctx.stroke();
+  ctx.fillStyle = col; ctx.globalAlpha = alpha * 0.55;
+  const l = s.len / 2;
+  switch (s.cls) {
+    case 'cargo': for (let i = 0; i < 3; i++) ctx.fillRect(-l * 0.6 + i * l * 0.35, -c.w * 0.55, l * 0.25, c.w * 1.1); break;
+    case 'tanker': ctx.beginPath(); ctx.arc(-l * 0.3, 0, c.w * 0.5, 0, TAU); ctx.arc(l * 0.15, 0, c.w * 0.5, 0, TAU); ctx.fill(); break;
+    case 'ferry': ctx.fillRect(-l * 0.5, -c.w * 0.6, l * 0.9, c.w * 1.2); break;
+    case 'fishing': ctx.fillRect(-l * 0.2, -1, l * 0.5, 2); break;
+    case 'cutter': ctx.fillRect(-l * 0.7, -1, l * 0.9, 2); ctx.fillRect(l * 0.1, -c.w * 0.7, 3, c.w * 1.4); break;
+    case 'escort': ctx.beginPath(); ctx.arc(l * 0.2, 0, 2.5, 0, TAU); ctx.fill(); ctx.fillRect(l * 0.2, -0.8, 9, 1.6); break;
+  }
+  ctx.restore();
+}
+
+function drawBracket(x, y, r, col, w) {
+  ctx.strokeStyle = col; ctx.lineWidth = w || 1.5;
+  const k = r * 0.45;
+  ctx.beginPath();
+  ctx.moveTo(x - r, y - r + k); ctx.lineTo(x - r, y - r); ctx.lineTo(x - r + k, y - r);
+  ctx.moveTo(x + r - k, y - r); ctx.lineTo(x + r, y - r); ctx.lineTo(x + r, y - r + k);
+  ctx.moveTo(x + r, y + r - k); ctx.lineTo(x + r, y + r); ctx.lineTo(x + r - k, y + r);
+  ctx.moveTo(x - r + k, y + r); ctx.lineTo(x - r, y + r); ctx.lineTo(x - r, y + r - k);
+  ctx.stroke();
+}
+
+function drawShips() {
+  const t = currentTarget();
+  const vis = visualRange();
+  const S = viewScale();
+  // sea clutter
+  for (const p of G.parts) if (p.col === 'clutter') {
+    ctx.fillStyle = 'rgba(109,255,154,' + (0.5 * p.life / p.max) + ')';
+    ctx.beginPath(); ctx.arc(p.x, p.y, 2.2, 0, TAU); ctx.fill();
+  }
+  // AIS symbols first (under echoes)
+  for (const s of G.ships) {
+    if (!aisShown(s)) continue;
+    const ax = s.x + s.ox, ay = s.y + s.oy, d = dist({ x: ax, y: ay }, P);
+    if (d > 1100) continue;
+    const blink = s.blink > 0;
+    const col = blink ? COL.amber : COL.green;
+    ctx.strokeStyle = col; ctx.lineWidth = 1.2; ctx.globalAlpha = blink ? 0.6 + 0.4 * Math.sin(G.t * 20) : 0.85;
+    ctx.beginPath(); ctx.moveTo(ax, ay - 6); ctx.lineTo(ax + 6, ay); ctx.lineTo(ax, ay + 6); ctx.lineTo(ax - 6, ay); ctx.closePath(); ctx.stroke();
+    // heading tick
+    ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(ax + Math.cos(s.hdg) * 14, ay + Math.sin(s.hdg) * 14); ctx.stroke();
+    ctx.globalAlpha = 1;
+    if (d < 520 || s === t) {
+      ctx.font = '9px ' + MONO; ctx.fillStyle = col; ctx.textAlign = 'left'; ctx.globalAlpha = 0.9;
+      ctx.fillText(s.aisName.toUpperCase().slice(0, 14) + ' ' + CLS[s.aisCls].label.slice(0, 4) + ' ' + s.aisFlag, ax + 9, ay - 6);
+      ctx.globalAlpha = 1;
+    }
+    if (blink) {
+      const r = 10 + (1.6 - s.blink) * 30;
+      ctx.strokeStyle = 'rgba(255,185,56,' + (s.blink / 1.6) + ')'; ctx.beginPath(); ctx.arc(ax, ay, r, 0, TAU); ctx.stroke();
+    }
+  }
+  // radar echoes / hulls
+  for (const s of G.ships) {
+    if (s.removed) continue;
+    const a = age(s);
+    const d = dist(s, P);
+    const showHull = d < vis || s.idStage >= 1 || s.idDone;
+    let col = COL.green;
+    if (s.idDone) col = s.hostile ? COL.red : '#9cf5c0';
+    else if (s.aisState === 'off' || s.aisState === 'spoof') col = COL.amber;
+    if (a < 6.5) {
+      const alpha = clamp(1 - a / 6.5, 0, 1);
+      const px = a < 0.06 ? s.x : s.lx, py = a < 0.06 ? s.y : s.ly;
+      if (showHull && a < 0.6) {
+        drawHull(s, col, 1);
+      } else {
+        const r = 2.5 + s.len / 10;
+        ctx.globalAlpha = Math.pow(alpha, 1.3);
+        ctx.fillStyle = col; ctx.beginPath(); ctx.arc(px, py, r, 0, TAU); ctx.fill();
+        ctx.strokeStyle = col; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(px, py, r + 3 + (1 - alpha) * 3, 0, TAU); ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+      if (s.idDone) {
+        ctx.font = 'bold 10px ' + MONO; ctx.textAlign = 'center'; ctx.fillStyle = s.hostile ? COL.red : '#9cf5c0'; ctx.globalAlpha = Math.max(alpha, 0.5);
+        ctx.fillText(s.hostile ? 'HOSTILE' : 'CLEAR', px, py + s.len * 0.5 + 16);
+        ctx.globalAlpha = 1;
+      }
+      if (s.disabled) {
+        ctx.strokeStyle = COL.amber; ctx.lineWidth = 1; ctx.beginPath();
+        ctx.moveTo(px - 8, py - 8); ctx.lineTo(px + 8, py + 8); ctx.moveTo(px + 8, py - 8); ctx.lineTo(px - 8, py + 8); ctx.stroke();
+      }
+      if (s.heave > 0) {
+        ctx.font = '9px ' + MONO; ctx.fillStyle = COL.green; ctx.textAlign = 'center'; ctx.fillText('HEAVE-TO', px, py - s.len * 0.5 - 10);
+      }
+    }
+  }
+  // selection
+  if (t) {
+    const a = age(t);
+    const px = a < 0.06 ? t.x : t.lx, py = a < 0.06 ? t.y : t.ly;
+    const pulse = 1 + 0.12 * Math.sin(G.t * 6);
+    drawBracket(px, py, (t.len * 0.5 + 12) * pulse, '#ffffff', 1.5);
+    // line of fire / blocker
+    if (keys.Space || (t.idDone && t.hostile) || true) {
+      const d = dist(t, P);
+      if (d < 600) {
+        const al = aimLine(t);
+        ctx.strokeStyle = al.blocker ? 'rgba(255,77,77,0.6)' : t.hostile && t.idDone ? 'rgba(109,255,154,0.25)' : 'rgba(255,255,255,0.12)';
+        ctx.lineWidth = 1; ctx.setLineDash([4, 6]);
+        ctx.beginPath(); ctx.moveTo(P.x, P.y); ctx.lineTo(px, py); ctx.stroke(); ctx.setLineDash([]);
+        if (al.blocker) {
+          const b = al.blocker;
+          drawBracket(b.x, b.y, b.len * 0.5 + 8, COL.red, 1.5);
+          ctx.font = 'bold 10px ' + MONO; ctx.fillStyle = COL.red; ctx.textAlign = 'center';
+          ctx.fillText('IN LINE OF FIRE', b.x, b.y - b.len * 0.5 - 12);
+        }
+      }
+    }
+    // ID ring
+    if (t.idProg > 0 && !t.idDone) {
+      ctx.strokeStyle = COL.cyan; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(px, py, t.len * 0.5 + 22, -Math.PI / 2, -Math.PI / 2 + TAU * t.idProg); ctx.stroke();
+    }
+    if (P.boardP > 0.01) {
+      ctx.strokeStyle = COL.amber; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(px, py, t.len * 0.5 + 30, -Math.PI / 2, -Math.PI / 2 + TAU * clamp(P.boardP, 0, 1)); ctx.stroke();
+    }
+    // ID beam
+    if (P.idActive) {
+      ctx.strokeStyle = 'rgba(111,215,255,0.55)'; ctx.lineWidth = 1.5; ctx.setLineDash([2, 4]);
+      ctx.beginPath(); ctx.moveTo(P.x, P.y); ctx.lineTo(t.x, t.y); ctx.stroke(); ctx.setLineDash([]);
+    }
+  }
+  // edge arrows for cable alerts
+  for (const c of G.cables) if (c.alert) edgeArrow(c.ax, c.ay, COL.red, 'CABLE ' + c.name);
+}
+
+function edgeArrow(wx, wy, col, label) {
+  const S = viewScale();
+  const sx = (wx - cam.x) * S + VW / 2, sy = (wy - cam.y) * S + VH / 2;
+  if (sx > 20 && sx < VW - 20 && sy > 60 && sy < VH - 20) return;
+  // drawn in world space, so convert to a world-space point on the view border
+  const hw = VW / 2 / S - 26, hh = VH / 2 / S - 40;
+  const dx = wx - cam.x, dy = wy - cam.y;
+  const k = Math.min(hw / Math.abs(dx || 1e-6), hh / Math.abs(dy || 1e-6));
+  const ex = cam.x + dx * Math.min(1, k), ey = cam.y + dy * Math.min(1, k);
+  const a = Math.atan2(dy, dx);
+  ctx.save(); ctx.translate(ex, ey); ctx.rotate(a);
+  ctx.fillStyle = col; ctx.globalAlpha = 0.6 + 0.4 * Math.sin(G.t * 8);
+  ctx.beginPath(); ctx.moveTo(12, 0); ctx.lineTo(-8, 8); ctx.lineTo(-8, -8); ctx.closePath(); ctx.fill();
+  ctx.restore(); ctx.globalAlpha = 1;
+  ctx.font = 'bold 10px ' + MONO; ctx.fillStyle = col; ctx.textAlign = 'center';
+  ctx.fillText(label, ex - Math.cos(a) * 40, ey - Math.sin(a) * 40 + 4);
+}
+
+function drawProjectiles() {
+  for (const p of G.projs) {
+    if (p.kind === 'tracer') continue;
+    ctx.strokeStyle = p.kind === 'shell' ? '#ffe9a0' : '#ff7a5a'; ctx.lineWidth = 2.2;
+    ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p.x - p.vx * 0.035, p.y - p.vy * 0.035); ctx.stroke();
+  }
+}
+
+function drawPlayer() {
+  ctx.save(); ctx.translate(P.x, P.y); ctx.rotate(P.hdg);
+  ctx.beginPath();
+  ctx.moveTo(18, 0); ctx.lineTo(6, 7); ctx.lineTo(-14, 7); ctx.lineTo(-14, -7); ctx.lineTo(6, -7); ctx.closePath();
+  ctx.fillStyle = '#d9f1ff'; ctx.fill(); ctx.strokeStyle = '#6fd7ff'; ctx.lineWidth = 1.5; ctx.stroke();
+  ctx.fillStyle = '#244a60'; ctx.fillRect(-8, -4, 10, 8);
+  ctx.fillStyle = COL.amber; ctx.fillRect(5, -1, 7, 2);      // gun
+  ctx.restore();
+  // heading/velocity indicator
+  ctx.strokeStyle = 'rgba(111,215,255,0.5)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(P.x, P.y); ctx.lineTo(P.x + P.vx * 0.8, P.y + P.vy * 0.8); ctx.stroke();
+  if (G.hull < 40 && Math.random() < 0.2) particle(P.x, P.y, rnd(-8, 8), rnd(-8, 8), 0.8, 3, 'rgba(90,90,90,', 4, 0.96);
+}
+
+function drawParticles(under) {
+  for (const p of G.parts) {
+    if (p.col === 'clutter') continue;
+    const isWake = typeof p.col === 'string' && p.col.charAt(0) === 'r';
+    if (under !== isWake) continue;
+    const f = p.life / p.max;
+    if (isWake) ctx.fillStyle = p.col + (0.35 * f).toFixed(3) + ')';
+    else { ctx.fillStyle = p.col; ctx.globalAlpha = clamp(f * 1.5, 0, 1); }
+    ctx.beginPath(); ctx.arc(p.x, p.y, Math.max(0.3, p.size), 0, TAU); ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+}
+
+function drawPops() {
+  for (const o of G.pops) {
+    ctx.font = 'bold 12px ' + MONO; ctx.fillStyle = o.col; ctx.textAlign = 'center';
+    ctx.globalAlpha = clamp(o.t / 0.6, 0, 1); ctx.fillText(o.msg, o.x, o.y); ctx.globalAlpha = 1;
+  }
+}
+
+function drawOverlayFX() {
+  const fog = G.cfg.fog, storm = G.cfg.storm;
+  if (fog > 0) {
+    const g = ctx.createRadialGradient(VW / 2, VH / 2, Math.min(VW, VH) * (0.55 - 0.3 * fog), VW / 2, VH / 2, Math.max(VW, VH) * 0.75);
+    g.addColorStop(0, 'rgba(120,150,160,0)'); g.addColorStop(1, 'rgba(120,150,160,' + (0.35 * fog + 0.1) + ')');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, VW, VH);
+  }
+  if (storm > 0) {
+    ctx.strokeStyle = 'rgba(170,200,220,0.18)'; ctx.lineWidth = 1; ctx.beginPath();
+    const n = Math.floor(70 * storm);
+    for (let i = 0; i < n; i++) {
+      const x = (i * 97.3 + G.t * 380) % (VW + 100) - 50, y = (i * 53.7 + G.t * 900) % (VH + 60) - 30;
+      ctx.moveTo(x, y); ctx.lineTo(x - 5, y + 14);
+    }
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(0,10,20,' + (0.12 * storm) + ')'; ctx.fillRect(0, 0, VW, VH);
+  }
+  if (fx.flash > 0) { ctx.globalAlpha = fx.flash * 0.5; ctx.fillStyle = fx.flashCol; ctx.fillRect(0, 0, VW, VH); ctx.globalAlpha = 1; }
+  // vignette
+  const v = ctx.createRadialGradient(VW / 2, VH / 2, Math.min(VW, VH) * 0.4, VW / 2, VH / 2, Math.max(VW, VH) * 0.7);
+  v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,0.55)');
+  ctx.fillStyle = v; ctx.fillRect(0, 0, VW, VH);
+}
+
+/* ---- HUD ---- */
+function panel(x, y, w, h, border) {
+  ctx.fillStyle = 'rgba(3,12,20,0.82)'; ctx.fillRect(x, y, w, h);
+  ctx.strokeStyle = border || 'rgba(109,255,154,0.35)'; ctx.lineWidth = 1; ctx.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1);
+}
+
+function drawHUD() {
+  const compact = VW < 760;
+  // top bar
+  ctx.fillStyle = 'rgba(2,9,15,0.85)'; ctx.fillRect(0, 0, VW, 38);
+  ctx.strokeStyle = 'rgba(109,255,154,0.3)'; ctx.beginPath(); ctx.moveTo(0, 38.5); ctx.lineTo(VW, 38.5); ctx.stroke();
+  let x = 12;
+  const cell = (label, val, col, w) => {
+    text(label, x, 14, { size: 9, color: COL.greenDim });
+    text(val, x, 31, { size: 15, color: col || COL.green, weight: 'bold' });
+    x += w;
+  };
+  cell('SCORE', String(G.score), COL.green, compact ? 70 : 100);
+  cell('BEST', String(Math.max(best, G.score)), COL.greenDim, compact ? 60 : 90);
+  // incidents
+  text('INCIDENTS', x, 14, { size: 9, color: COL.greenDim });
+  for (let i = 0; i < 3; i++) {
+    ctx.fillStyle = i < G.incidents ? COL.red : 'rgba(255,77,77,0.18)';
+    ctx.fillRect(x + i * 16, 20, 12, 12);
+  }
+  text(G.incidents + '/3', x + 52, 31, { size: 12, color: G.incidents ? COL.red : COL.greenDim });
+  x += compact ? 100 : 120;
+  // cables
+  text('CABLES', x, 14, { size: 9, color: COL.greenDim });
+  G.cables.forEach((c, i) => {
+    for (let k = 0; k < CABLE_HP; k++) {
+      ctx.fillStyle = k < c.hp ? (c.alert ? COL.red : COL.amber) : 'rgba(255,185,56,0.15)';
+      ctx.fillRect(x + i * 30 + k * 12, 20, 10, 12);
+    }
+  });
+  x += compact ? 100 : 108;
+  const intact = G.cables.reduce((a, c) => a + c.hp, 0);
+  text(intact + '/' + CABLE_HP * G.cables.length, x - 8, 31, { size: 12, color: COL.amber });
+  x += 40;
+  // hull
+  text('HULL', x, 14, { size: 9, color: COL.greenDim });
+  ctx.fillStyle = 'rgba(111,215,255,0.18)'; ctx.fillRect(x, 20, 70, 12);
+  ctx.fillStyle = G.hull < 35 ? COL.red : COL.cyan; ctx.fillRect(x, 20, 70 * G.hull / 100, 12);
+  x += 86;
+  // shift
+  const rem = Math.max(0, G.cfg.dur - G.shiftT);
+  text('SHIFT ' + G.shift, VW - 12, 14, { size: 11, color: COL.cyan, align: 'right', weight: 'bold' });
+  text(Math.ceil(rem) + 's', VW - 12, 31, { size: 13, color: rem < 10 ? COL.amber : COL.green, align: 'right' });
+  ctx.fillStyle = 'rgba(111,215,255,0.2)'; ctx.fillRect(VW - 110, 35, 98, 2);
+  ctx.fillStyle = COL.cyan; ctx.fillRect(VW - 110, 35, 98 * clamp(G.shiftT / G.cfg.dur, 0, 1), 2);
+  if (Snd.muted) text('MUTED', VW - 80, 14, { size: 9, color: COL.amber, align: 'right' });
+
+  if (mode === 'title') return;
+
+  // toasts
+  let ty = 52;
+  for (const o of G.toasts) {
+    ctx.font = '12px ' + SANS;
+    const w = Math.min(VW - 24, ctx.measureText(o.msg).width + 20);
+    ctx.globalAlpha = clamp(o.t / 0.6, 0, 1);
+    panel(VW / 2 - w / 2, ty, w, 24, o.col);
+    text(o.msg, VW / 2, ty + 16, { size: 12, color: o.col, align: 'center', font: SANS });
+    ctx.globalAlpha = 1; ty += 28;
+  }
+  // tutorial hint
+  const hint = tutorialHint();
+  if (hint && mode === 'play') {
+    ctx.font = '13px ' + SANS;
+    const w = Math.min(VW - 24, ctx.measureText(hint).width + 28);
+    const hy = VH - (compact ? 190 : 100);
+    panel(VW / 2 - w / 2, hy, w, 28, COL.cyan);
+    text(hint, VW / 2, hy + 19, { size: 13, color: COL.white, align: 'center', font: SANS });
+  }
+
+  drawTargetPanel(compact);
+  drawMinimap(compact);
+  drawStatus(compact);
+}
+
+function tutorialHint() {
+  const T = G.tut, t = currentTarget();
+  if (G.shift > 3 && G.shiftT > 12) return '';
+  if (G.shift === 1 && G.shiftT < 7) return 'A / D steer   W / S throttle   Green diamonds = ships broadcasting AIS. Amber blips = no AIS.';
+  if (G.cables.some(c => c.alert) && !T.board) return 'CABLE ALERT: sail to the red marker and find the vessel loitering over the cable.';
+  if (t && !t.idDone) {
+    const d = dist(t, P);
+    if (!T.id || G.shift === 1) return d > idRange() ? 'Close to within the dashed ring, then HOLD E to IDENTIFY. Never fire on an unidentified contact.' : 'HOLD E to identify (' + Math.round(t.idProg * 100) + '%)';
+  }
+  if (t && t.idDone && t.hostile && !t.disabled && (!T.hail || !T.board) && G.shift <= 2) {
+    return t.heave > 0 ? 'Heave-to. Come alongside (within 75) at matched speed and HOLD B to BOARD.' : 'Hostile confirmed. F = warning shot to make it stop, SPACE = disable engine, then HOLD B to board.';
+  }
+  if (t && t.disabled && t.hostile && !T.board) return 'Dead in the water. Come alongside and HOLD B to BOARD for the evidence bonus.';
+  if (!T.id && G.shift === 1 && G.shiftT > 7) return 'Press TAB or click a contact to select it. Unlabelled blips could be dark vessels.';
+  return '';
+}
+
+function wrapText(str, maxW, font) {
+  ctx.font = font;
+  const words = str.split(' '), lines = []; let cur = '';
+  for (const w of words) {
+    const t2 = cur ? cur + ' ' + w : w;
+    if (ctx.measureText(t2).width > maxW && cur) { lines.push(cur); cur = w; } else cur = t2;
+  }
+  if (cur) lines.push(cur);
+  return lines;
+}
+
+function drawTargetPanel(compact) {
+  const w = compact ? 220 : 290, h = 196, x = 10, y = VH - h - 10;
+  const t = currentTarget();
+  panel(x, y, w, h, t && t.idDone ? (t.hostile ? COL.red : COL.green) : 'rgba(109,255,154,0.35)');
+  text('TARGET', x + 10, y + 16, { size: 9, color: COL.greenDim });
+  if (!t) {
+    text('NO CONTACT SELECTED', x + 10, y + 40, { size: 12, color: COL.greenDim });
+    text('TAB / click cycles contacts.', x + 10, y + 60, { size: 11, color: COL.greenDim, font: SANS });
+    text('Radar sweep reveals unlabelled', x + 10, y + 80, { size: 11, color: COL.greenDim, font: SANS });
+    text('vessels. Echoes fade after ~6 s.', x + 10, y + 96, { size: 11, color: COL.greenDim, font: SANS });
+    return;
+  }
+  const d = dist(t, P), b = (Math.round(Math.atan2(t.y - P.y, t.x - P.x) * 180 / Math.PI) + 90 + 360) % 360;
+  text('#' + String(t.id).padStart(3, '0') + '  ' + Math.round(d) + ' m  brg ' + String(b).padStart(3, '0'), x + 62, y + 16, { size: 10, color: COL.white });
+  let ais;
+  if (t.aisState === 'on' || t.aisState === 'spoof') ais = t.aisName.toUpperCase() + ' / ' + CLS[t.aisCls].label + ' / ' + t.aisFlag;
+  else if (t.blink > 0) ais = 'BLINK: ' + t.aisName.toUpperCase() + ' / ' + CLS[t.aisCls].label + ' / ' + t.aisFlag;
+  else ais = 'NO AIS SIGNAL';
+  text('AIS', x + 10, y + 38, { size: 9, color: COL.greenDim });
+  text(ais, x + 36, y + 38, { size: 11, color: t.aisState === 'off' && t.blink <= 0 ? COL.amber : COL.green });
+  text('SPD', x + 10, y + 56, { size: 9, color: COL.greenDim });
+  text(Math.round(t.speed) + ' kn-ish' + (t.disabled ? '  DEAD IN WATER' : t.heave > 0 ? '  HEAVE-TO' : ''), x + 36, y + 56, { size: 11, color: COL.white });
+  // visual stage
+  text('VIS', x + 10, y + 74, { size: 9, color: COL.greenDim });
+  if (t.idStage >= 1 || t.idDone) {
+    const mism = t.aisState !== 'off' && t.aisCls !== t.cls && !(t.aisState === 'off');
+    const noAis = t.aisState === 'off' && t.blink <= 0;
+    const trueLabel = CLS[t.cls].label;
+    text(trueLabel + (noAis ? '  (no AIS to compare)' : mism ? '  MISMATCH vs AIS' : '  matches AIS'), x + 36, y + 74,
+      { size: 11, color: mism ? COL.red : COL.green });
+  } else text('unresolved: hold E', x + 36, y + 74, { size: 11, color: COL.greenDim });
+  // ID bar
+  text('ID', x + 10, y + 96, { size: 9, color: COL.greenDim });
+  ctx.fillStyle = 'rgba(111,215,255,0.18)'; ctx.fillRect(x + 36, y + 87, w - 50, 10);
+  ctx.fillStyle = t.idDone ? (t.hostile ? COL.red : COL.green) : COL.cyan;
+  ctx.fillRect(x + 36, y + 87, (w - 50) * t.idProg, 10);
+  ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.fillRect(x + 36 + (w - 50) * 0.42, y + 85, 1, 14);
+  // verdict
+  if (t.idDone) {
+    text(VERDICT_TEXT[t.role === 'civ' ? 'civ' : t.role], x + 10, y + 118, { size: 11, color: t.hostile ? COL.red : COL.green, weight: 'bold' });
+    text(t.hostile ? 'FLAG: ' + t.trueFlag + (t.trueFlag !== t.aisFlag && t.aisState !== 'off' ? ' (AIS claimed ' + t.aisFlag + ')' : '') : 'FLAG: ' + t.trueFlag, x + 10, y + 134, { size: 10, color: COL.white });
+    text(t.hostile ? 'ROE: WEAPONS FREE' : 'ROE: HOLD FIRE', x + 10, y + 154, { size: 12, color: t.hostile ? COL.red : COL.green, weight: 'bold' });
+  } else {
+    text('NOT IDENTIFIED', x + 10, y + 118, { size: 11, color: COL.amber, weight: 'bold' });
+    text('ROE: HOLD FIRE  (identify first)', x + 10, y + 154, { size: 12, color: COL.amber, weight: 'bold' });
+  }
+  const states = [];
+  if (d > idRange() && !t.idDone) states.push('out of ID range');
+  if (age(t) > 1.5 && d >= visualRange()) states.push('echo stale');
+  text(states.join(' / '), x + 10, y + 172, { size: 10, color: COL.greenDim });
+  if (P.boardMsg) text('BOARD: ' + P.boardMsg, x + 10, y + 188, { size: 10, color: COL.amber });
+  else if (t.role === 'escort' && t.alerted && !t.disabled) text('ALERTED: FIRING', x + 10, y + 188, { size: 10, color: COL.red });
+}
+
+function drawStatus(compact) {
+  // throttle + heading + cooldowns, bottom center
+  const w = 250, h = 54, x = VW / 2 - w / 2, y = VH - h - 10;
+  if (compact) return;
+  panel(x, y, w, h);
+  text('THROTTLE', x + 10, y + 16, { size: 9, color: COL.greenDim });
+  ctx.fillStyle = 'rgba(109,255,154,0.15)'; ctx.fillRect(x + 10, y + 22, 100, 10);
+  ctx.fillStyle = COL.green; ctx.fillRect(x + 10, y + 22, 100 * P.throttle, 10);
+  text('SPEED ' + Math.round(P.speed), x + 10, y + 46, { size: 10, color: COL.white });
+  const flag = (lbl, ok, px) => text(lbl, px, y + 16, { size: 9, color: ok ? COL.green : COL.greenDim });
+  flag(P.focus > 0.5 ? 'RADAR FOCUS' : 'RADAR SWEEP', P.focus > 0.5, x + 130);
+  text('HAIL ' + (P.hailCD > 0 ? P.hailCD.toFixed(1) : 'RDY'), x + 130, y + 32, { size: 10, color: P.hailCD > 0 ? COL.greenDim : COL.cyan });
+  text('GUN  ' + (P.cannonCD > 0 ? P.cannonCD.toFixed(1) : 'RDY'), x + 130, y + 46, { size: 10, color: P.cannonCD > 0 ? COL.greenDim : COL.amber });
+  text(String(Math.round(((P.hdg * 180 / Math.PI) + 90 + 360) % 360)).padStart(3, '0') + '°', x + 205, y + 40, { size: 14, color: COL.white });
+}
+
+function drawMinimap(compact) {
+  const mw = compact ? 130 : 190, mh = mw * H / W, x = VW - mw - 10, y = VH - mh - 10;
+  panel(x, y, mw, mh);
+  const sx = mw / W, sy = mh / H;
+  ctx.strokeStyle = 'rgba(255,185,56,0.6)'; ctx.lineWidth = 1;
+  for (const c of G.cables) {
+    ctx.strokeStyle = c.alert ? COL.red : c.hp <= 0 ? 'rgba(255,77,77,0.4)' : 'rgba(255,185,56,0.6)';
+    ctx.beginPath(); c.pts.forEach((p, k) => k ? ctx.lineTo(x + p[0] * sx, y + p[1] * sy) : ctx.moveTo(x + p[0] * sx, y + p[1] * sy)); ctx.stroke();
+  }
+  for (const s of G.ships) {
+    if (s.removed) continue;
+    const a = age(s);
+    if (!(a < 4 || (s.aisState === 'on' && dist(s, P) < 1100))) continue;
+    ctx.fillStyle = s.idDone ? (s.hostile ? COL.red : '#9cf5c0') : (s.aisState === 'on' ? COL.green : COL.amber);
+    ctx.globalAlpha = a < 4 ? 1 : 0.6;
+    ctx.fillRect(x + s.x * sx - 1, y + s.y * sy - 1, 2.5, 2.5);
+    ctx.globalAlpha = 1;
+  }
+  ctx.strokeStyle = COL.cyan; ctx.beginPath(); ctx.arc(x + P.x * sx, y + P.y * sy, 3, 0, TAU); ctx.stroke();
+  const S = viewScale(), vw = VW / S * sx, vh = VH / S * sy;
+  ctx.strokeStyle = 'rgba(255,255,255,0.25)'; ctx.strokeRect(x + cam.x * sx - vw / 2, y + cam.y * sy - vh / 2, vw, vh);
+}
+
+/* ---- screens ---- */
+function veil(a) { ctx.fillStyle = 'rgba(1,6,12,' + a + ')'; ctx.fillRect(0, 0, VW, VH); }
+
+function drawTitle() {
+  veil(0.78);
+  const cx = VW / 2, big = VW < 700;
+  let y = Math.max(96, VH * 0.11);
+  text('DARK FLEET', cx, y, { size: big ? 40 : 58, color: COL.green, align: 'center', weight: 'bold' });
+  y += big ? 26 : 34;
+  text('COAST GUARD STRAIT PATROL // IDENTIFY BEFORE YOU FIRE', cx, y, { size: big ? 11 : 14, color: COL.amber, align: 'center' });
+  y += 30;
+  const lines = [
+    'You command a cutter on a busy sea lane. Most ships are honest traffic. Some are dark: sanctions-running tankers,',
+    'and workboats cutting undersea cables (amber lines). Shoot an honest ship and you cause an incident. Three ends your career.',
+    'Let every cable be cut and the strait goes dark.'
+  ];
+  const f = big ? 12 : 14;
+  if (!big) lines.forEach(l => { text(l, cx, y, { size: f, color: COL.white, align: 'center', font: SANS }); y += 20; });
+  else wrapText(lines.join(' '), VW - 40, '12px ' + SANS).forEach(l => { text(l, cx, y, { size: 12, color: COL.white, align: 'center', font: SANS }); y += 17; });
+  y += 12;
+  const col1 = [
+    ['A D / ← →', 'steer'], ['W S / ↑ ↓', 'throttle'], ['X', 'all stop'], ['Q (hold)', 'radar focus: long forward sector scan'],
+    ['TAB / click', 'select contact'], ['E (hold)', 'IDENTIFY'], ['F', 'warning shot: make a suspect stop'],
+    ['SPACE', 'disable cannon'], ['B (hold)', 'BOARD alongside a stopped vessel'], ['P / Esc  M', 'pause / mute']
+  ];
+  const bx = cx - Math.min(300, VW / 2 - 12), bw = Math.min(600, VW - 24), bh = col1.length * 20 + 16;
+  panel(bx, y, bw, bh);
+  col1.forEach((r, i) => {
+    text(r[0], bx + 14, y + 26 + i * 20, { size: 12, color: COL.cyan, weight: 'bold' });
+    text(r[1], bx + Math.min(170, bw * 0.34), y + 26 + i * 20, { size: 12, color: COL.white, font: SANS });
+  });
+  y += bh + 24;
+  const tips = ['Green diamond = AIS broadcasting. Amber blip = no AIS: could be a dark vessel, or just a small fishing boat.',
+    'Identify (half-way = visual class vs AIS) before warning shots, disabling or boarding. Verdict is a full ID.'];
+  tips.forEach(l => { wrapText(l, Math.min(760, VW - 30), '12px ' + SANS).forEach(w => { text(w, cx, y, { size: 12, color: COL.greenDim, align: 'center', font: SANS }); y += 16; }); });
+  y += 12;
+  const pulse = 0.6 + 0.4 * Math.sin(modeT * 4);
+  text('PRESS ENTER OR CLICK TO BEGIN SHIFT 1', cx, y, { size: 16, color: COL.green, align: 'center', weight: 'bold', alpha: pulse });
+  text('Best: ' + best + '    Fictional scenario: all vessels, names and flags are invented.', cx, y + 26, { size: 11, color: COL.greenDim, align: 'center' });
+}
+
+function drawPause() {
+  veil(0.6);
+  text('PAUSED', VW / 2, VH / 2 - 10, { size: 40, color: COL.amber, align: 'center', weight: 'bold' });
+  text('P / Esc / Enter / click to resume   M mute', VW / 2, VH / 2 + 24, { size: 13, color: COL.white, align: 'center' });
+}
+
+function drawShiftEnd() {
+  veil(0.72);
+  const ss = G.shiftStats, cx = VW / 2;
+  let y = VH * 0.2;
+  text('SHIFT ' + G.shift + ' COMPLETE', cx, y, { size: 36, color: COL.green, align: 'center', weight: 'bold' });
+  y += 40;
+  const rows = [
+    ['Contacts identified', ss.ided], ['Interdictions this shift', ss.interd], ['Cable cuts suffered', ss.cuts],
+    ['Cable integrity bonus', '+' + ss.cableBonus], ['Clean shift bonus (no incidents)', ss.clean ? '+' + ss.cleanBonus : '0'],
+    ['Shift points', (ss.total >= 0 ? '+' : '') + ss.total], ['Total score', G.score]
+  ];
+  const w = Math.min(420, VW - 30), x = cx - w / 2;
+  panel(x, y, w, rows.length * 24 + 16);
+  rows.forEach((r, i) => {
+    text(r[0], x + 14, y + 28 + i * 24, { size: 13, color: COL.white, font: SANS });
+    text(String(r[1]), x + w - 14, y + 28 + i * 24, { size: 13, color: i >= 5 ? COL.green : COL.cyan, align: 'right', weight: 'bold' });
+  });
+  y += rows.length * 24 + 40;
+  text('Hull +40 repaired' + (ss.repaired ? '   Cable ' + ss.repaired + ' patched (+1 HP)' : ''), cx, y, { size: 12, color: COL.greenDim, align: 'center' });
+  y += 24;
+  const n = G.shift + 1, c = shiftCfg(n);
+  const nx = [];
+  if (n === 2) nx.push('dark ships begin spoofing AIS');
+  if (n === 3) nx.push('armed escorts and fog');
+  if (n === 5) nx.push('storms and heavy currents');
+  text('Next: shift ' + n + ' - more traffic, ' + c.dark + ' dark vessels, ' + c.cut + ' cutters' + (nx.length ? ', ' + nx.join(', ') : ''), cx, y, { size: 12, color: COL.amber, align: 'center' });
+  y += 34;
+  text('ENTER / SPACE / click to continue', cx, y, { size: 15, color: COL.green, align: 'center', weight: 'bold', alpha: 0.6 + 0.4 * Math.sin(modeT * 4) });
+}
+
+function drawOver() {
+  veil(0.78);
+  const cx = VW / 2; let y = VH * 0.2;
+  text('WATCH ENDED', cx, y, { size: 44, color: COL.red, align: 'center', weight: 'bold' });
+  y += 34;
+  text(G.overReason, cx, y, { size: 14, color: COL.white, align: 'center', font: SANS });
+  y += 40;
+  const rows = [
+    ['Final score', G.score], ['Best', best + (G.newBest ? '  NEW BEST' : '')], ['Shift reached', G.shift],
+    ['Contacts identified', G.stats.ided], ['Hostiles disabled', G.stats.disabled], ['Vessels seized', G.stats.seized],
+    ['Cable cuts suffered', G.stats.cuts], ['Civilians fired on', G.stats.shotCiv], ['Wrongful boardings', G.stats.wrongful], ['Hostiles escaped', G.stats.escaped]
+  ];
+  const w = Math.min(380, VW - 30), x = cx - w / 2;
+  panel(x, y, w, rows.length * 22 + 14);
+  rows.forEach((r, i) => {
+    text(r[0], x + 14, y + 26 + i * 22, { size: 13, color: COL.white, font: SANS });
+    text(String(r[1]), x + w - 14, y + 26 + i * 22, { size: 13, color: i < 3 ? COL.green : COL.cyan, align: 'right', weight: 'bold' });
+  });
+  y += rows.length * 22 + 50;
+  text('PRESS R OR ENTER TO RESTART', cx, y, { size: 16, color: COL.green, align: 'center', weight: 'bold', alpha: 0.6 + 0.4 * Math.sin(modeT * 4) });
+}
+
+/* ===================== main loop ===================== */
+let lastT = 0;
+function frame(ts) {
+  if (!lastT) lastT = ts;
+  let dt = (ts - lastT) / 1000; lastT = ts;
+  dt = clamp(dt, 0, 0.05);
+  if (!document.hidden) { update(dt); draw(); }
+  requestAnimationFrame(frame);
+}
+newGame();
+mode = 'title';
+requestAnimationFrame(frame);
+
+// debug / test hook (read-mostly)
+window.__DF = {
+  get G() { return G; }, get P() { return P; }, keys, update, draw,
+  get mode() { return mode; }, set mode(m) { mode = m; },
+  startRun, nextShift, doHail, doFire, cycleTarget, currentTarget, known, idRange,
+  setSel(s) { G.sel = s; }, key(code, down) { keys[code] = down; },
+  CLS, shiftCfg, COAST, W, H
+};
+})();
+</script>
+</body>
+</html>

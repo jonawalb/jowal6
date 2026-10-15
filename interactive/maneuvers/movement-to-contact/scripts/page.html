@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Movement to Contact | Jonathan Walberg</title>
+<meta name="description" content="A movement to contact seeks to make contact with the smallest force feasible and keeps the main body far enough back to deploy. A carriage on a spring behind a feeler, and a company moving to contact with a lead squad and a main body. Built from FM 3-90, ATP 3-21.10 and ATP 3-21.8.">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Movement to Contact | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/movement-to-contact/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/movement-to-contact/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.fl-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.fl-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.fl-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.fl-text h2{font-family:var(--font-serif);color:var(--green-900);margin-top:28px}
+.fl-text p,.fl-text li{line-height:1.65}
+.fl-text li{margin:6px 0}
+.fl-text ol,.fl-text ul{padding-left:1.2em}
+.fl-text .fine{font-size:.88rem;color:var(--text-muted)}
+.fl-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.mc-figure{background:transparent}
+.mc-figure .iso-figure{margin:0}
+.mc-figure .iso-plate{background:var(--anatomy-card)}
+.mc-stage{outline:none;cursor:pointer;touch-action:manipulation}
+.mc-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.mc-svg{display:block;width:100%;height:auto}
+.mc-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.mc-figure .iso-plate-corners{z-index:2}
+.mc-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.mc-figure[data-view="field"] .mc-svg{visibility:hidden}
+.mc-figure[data-view="field"] .mc-legend-machine{display:none}
+.mc-figure:not([data-view="field"]) .mc-field,.mc-figure:not([data-view="field"]) .mc-legend-field{display:none}
+.mc-legend{display:grid;gap:8px}
+/* casualties: greyed and still (side fc = friendly, hc = enemy) */
+.mc-figure .tr-s[data-side="fc"] path,.mc-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.mc-figure .tr-s[data-side="fc"] .tr-t,.mc-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.mc-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.mc-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.mc-figure .tr-s[data-side="fc"] .tr-d,.mc-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.mc-figure .tr-s[data-side="fc"] .tr-g,.mc-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.mc-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.mc-controls .btn{cursor:pointer}
+.mc-set{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;margin:10px 0 0;font-size:14px;color:var(--anatomy-text)}
+.mc-set label{display:flex;align-items:center;gap:8px}
+.mc-set input[type=range]{flex:1;min-width:140px}
+.mc-set output{font-family:var(--font-mono);min-width:3.4em}
+.mc-gapset{flex:1 1 320px}
+@media (max-width:520px){.mc-figure .iso-plate-corner[data-corner="hint"]{display:none}.mc-stage{overflow:hidden}}
+</style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="fl-main">
+  <a class="fl-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Movement to Contact</h1>
+  <p class="lede">A unit conducts a movement to contact when it does not know where the enemy is well enough to attack. The manuals&rsquo; answer is to make the first contact with the smallest force feasible and to hold the rest back far enough to choose how to fight. This figure sets the gap between the two against the time the main body needs to shake out.</p>
+
+  <div class="iso mc-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="mc-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="mc-go">Start the run</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
+    </div>
+    <div class="mc-set">
+      <label class="mc-gapset"><span>Gap, lead element to main body</span> <input type="range" id="mc-gap" min="0" max="480" step="20" value="280" aria-label="Gap between the lead element and the head of the main body, in notional distance units"> <output id="mc-gap-out" for="mc-gap">280 u</output></label>
+      <label><input type="checkbox" id="mc-lead" checked> <span>A lead element goes ahead</span></label>
+    </div>
+  </div>
+
+  <section class="fl-text">
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same gap, the same lead-element setting and the same run drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
+    <ol>
+      <li><b>The feeler</b>, the lit part, is the lead element. It runs on the rail ahead of the carriage, joined to it by a <b>long coil spring</b>, and stops where it meets the enemy&rsquo;s fire.</li>
+      <li><b>The heavy carriage</b> is the main body. Its two <b>wings</b> lie folded along its sides while it is in column and swing out across the rail as it shakes out into line. The six pegs of the <b>shake-out meter</b> rise as the wings open.</li>
+      <li><b>The fire band</b>, the low plate across the rail at the right, is the enemy&rsquo;s direct-fire reach. <b>The six posts</b> on the block at the end are the defenders; each lies down as a defender goes out of action.</li>
+      <li><b>The dial</b> times the run from contact. Its hand sweeps from the moment the feeler is engaged. One pin is fixed at the 4.0 s the main body needs to shake out; the other sits at the time the gap buys, the time before the carriage&rsquo;s head reaches the band. <b>The rule at the front</b> has a collar at the gap you set and an index at the gap now, which closes after contact because the feeler stops and the carriage keeps coming. <b>The rack</b> has six pegs for the friendly force and six for the defenders, laid flat as they go down.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Set the gap</b> with the slider or the arrow keys, and the lead element with the box or the L key. <b>Start the run</b> with the button, a click on the card or the space bar.</li>
+      <li><b>The feeler goes ahead and stops</b> at the enemy. The carriage keeps moving, so the spring compresses and the carriage opens its wings as it closes up. The hand on the dial is the time since contact.</li>
+      <li><b>If the wings are open before the carriage reaches the band,</b> in this model the main body is in line when it comes into the enemy&rsquo;s reach and fires at once. <b>If the gap is too short,</b> in this model the carriage reaches the band before it has opened and men go down in column. <b>If the gap is too long,</b> in this model the feeler is alone for longer and more of it goes down before the carriage can fire. <b>With no lead element,</b> the carriage itself makes contact and is hit in column. All distances, times and counts are notional.</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the scale is a company moving to contact along a road, seen from above: blue is friendly, red is the enemy, and the company moves from left to right. The dashed chalk line across the road is the edge of the enemy&rsquo;s reach, a notional 200 distance units from its position.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The lead element</b>, the lit figures, is a squad of nine: two fire teams in wedge and the squad leader. It is drawn alone, ahead. The rest of its platoon is not drawn.</li>
+      <li><b>The main body</b> follows at the gap you set: two platoon groups, each drawn as a leader and two fire teams, in two files, and a company headquarters of three.</li>
+      <li><b>The enemy position</b> is on the rise at the right: four fighting positions and two machine-gun nests, six defenders in all, facing the road.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Set the gap</b> with the slider or the arrow keys and the lead element with the box or the L key, then <b>start the run.</b> The squad advances to the enemy&rsquo;s fire, is engaged and goes to ground, returning fire.</li>
+      <li><b>The main body shakes out</b> from two files into a line while it keeps moving, and opens fire when it is both in line and inside the enemy&rsquo;s reach. With the gap in the working range, in this model it is already in line when it comes into reach. Shorter or longer, it pays as described under the machine view.</li>
+      <li><b>Greyed figures lying still</b> are men down. The run that goes well still costs men on both sides. Counts are notional.</li>
+    </ol>
+    <p class="fine">Soldiers are drawn larger than scale (about one and a half times) so they read. The main body is drawn as twenty-one soldiers and the lead element as nine; the rest of a company is not drawn. Distances, timings, force sizes and counts are notional, and time is compressed. This figure shows only an attack after contact; the manuals give five options.</p>
+    </div>
+
+    <h2>What doctrine says</h2>
+    <p>FM 3-90, <i>Tactics</i> (1 May 2023), para. 3-4, p. 3-2: &ldquo;Movement to contact is a type of offensive operation designed to establish or regain contact to develop the situation.&rdquo; Units conduct it &ldquo;when the enemy situation is vague or not specific enough to conduct an attack,&rdquo; and &ldquo;[f]orces conducting a movement to contact seek to make contact using the smallest friendly force feasible.&rdquo; It names the options once contact is made: &ldquo;attack, defend, bypass, delay, or withdraw.&rdquo; It names two variations, search and attack, and cordon and search; this figure shows neither, only the general case.</p>
+    <ul>
+      <li><b>The smallest force.</b> &ldquo;Units seek to gain contact by using the smallest elements possible,&rdquo; and &ldquo;[t]he movement formation of the main body should also make initial contact with the smallest force possible&rdquo; (FM 3-90 para. 4-17, p. 4-4). The forward security force commander &ldquo;makes contact with the smallest possible force while providing flexibility for maneuver&rdquo; (para. 4-27, p. 4-6). The initial contact force &ldquo;should be small, mobile, self-contained, and avoid becoming decisively engaged by the enemy&rsquo;s main body&rdquo; (para. 4-2, p. 4-1).</li>
+      <li><b>The distance.</b> &ldquo;The main body keeps enough distance between itself and its forward security force to maintain flexibility for maneuver. This distance varies with the echelon of command, the terrain, and the availability of information about enemy forces&rdquo; (para. 4-29, p. 4-6). In a high-risk environment, &ldquo;it is usually better to increase the distance between forward elements and the main body than to slow the speed of advance&rdquo; (para. 4-23, p. 4-5). The manual gives no distance.</li>
+      <li><b>Deploying the main body.</b> &ldquo;[W]hen the security force cannot overrun enemy forces by conducting a hasty frontal attack, units deploy a portion of their main body. When this occurs, the unit transitions to an attack and is no longer conducting a movement to contact&rdquo; (para. 4-43, p. 4-8). FM 3-90 sets out its account of executing a movement to contact under four headings: Find the Enemy (para. 4-36, p. 4-7), Fix the Enemy (4-39, p. 4-7), Finish the Enemy (4-44, p. 4-8) and Follow Through (4-48, p. 4-8). The readout borrows the first three; the timings and the order of the run are this figure&rsquo;s own.</li>
+    </ul>
+    <p>ATP 3-21.10, <i>Infantry Rifle Company</i> (1 June 2026, which supersedes the 14 May 2018 edition), para. 2-60, p. 39, lists among the fundamentals &ldquo;[m]aking initial contact with the smallest force possible, consistent with protecting the force&rdquo; and &ldquo;[a]voiding decisive engagement of the main body on ground chosen by the enemy.&rdquo; Para. 2-62, p. 39: &ldquo;Within a company, a single platoon normally serves as the forward security force&rdquo;; the forward security force &ldquo;moves as quickly and aggressively as possible but remains within supporting range of the main body&rsquo;s weapon systems.&rdquo; The company commander moves the company so that it &ldquo;[m]akes enemy contact (ideally visual contact) with sensors, unmanned systems, or the smallest element possible&rdquo; (para. 2-75, p. 41). &ldquo;The optimal condition is to make and maintain contact with sensors, unmanned systems, or the smallest element possible&rdquo; (para. 2-78, p. 43). And, in its own words on the deployment of the main body: &ldquo;[W]hen the lead platoon cannot overrun the enemy by conducting a hasty frontal attack, the commander must deploy a portion of the main body. When this occurs, the unit is no longer conducting an MTC but an attack&rdquo; (para. 2-81, p. 43).</p>
+    <p>ATP 3-21.8, <i>Infantry Rifle Platoon and Squad</i> (11 January 2024, incorporating Change 1, June 2025), para. 4-8, p. 4-4: &ldquo;The goal of a movement to contact is to make initial contact with the smallest friendly force possible, consistent with protecting the force while retaining enough combat power to develop the situation and mitigate the associated risk.&rdquo; At platoon level, &ldquo;[t]he lead element, (usually a fire team or rifle squad) will make the initial contact with the enemy&rdquo; and &ldquo;determines the size and activity of the enemy force and avoids being fixed or destroyed&rdquo; (para. 4-67, p. 4-25). &ldquo;Commitment against a larger force or an enemy strong point normally requires the deployment of the movement to contact&rsquo;s main body&rdquo; (para. 4-68, p. 4-26). The same manual says of its own example sequence of events that it &ldquo;is used for discussion purposes and is not the only way to sequence a movement to contact&rdquo; (para. 4-60, p. 4-23).</p>
+    <p>None of the manuals gives a distance for the gap, a time to deploy or a time for the enemy to engage. Those are this figure&rsquo;s own numbers.</p>
+
+    <h2>What is notional</h2>
+    <p>The run is a teaching model, not data. Every element moves at 60 distance units per second. The lead element is engaged at 5.5 s, 330 units along the axis, 30 units inside the edge of the enemy&rsquo;s reach (which is 200 units from its position). The main body needs 4.0 s from contact to shake out from column to line, and the head of the main body reaches the edge of the enemy&rsquo;s reach (gap + 300) / 60 seconds into the run. In this model, then, the main body is in line before it comes into reach if the gap is at least 270 units (280 on the slider), and the lead element is not left alone for long enough to lose four men if the gap is at most 360. A shorter gap puts the main body in reach before it has shaken out, with the shake-out taking 1.5 s longer; no lead element at all makes it 2.5 s longer. At a gap of 280, three of the lead element and all six defenders go down; at 260, four of the friendly force; at 0, six; with no lead element, six. Those numbers are the model&rsquo;s, not doctrine&rsquo;s. The plain point they carry is the one in the manuals: make contact with the smallest element and keep the main body where it can still choose.</p>
+    <p class="fine">Sources: Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">FM 3-90, Tactics</a>, 1 May 2023, paras. 3-4 and 4-1 to 4-48; <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN46667-ATP_3-21.10-000-WEB-1.pdf">ATP 3-21.10, Infantry Rifle Company</a>, 1 June 2026, paras. 2-58 to 2-85; <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a>, 11 January 2024 incorporating Change 1, June 2025, paras. 4-8 and 4-55 to 4-69. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

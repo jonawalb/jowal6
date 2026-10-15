@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Raid | Jonathan Walberg</title>
+<meta name="description" content="A raid seizes an objective only temporarily and ends in a planned withdrawal. A shuttle, a gate and a timer, and a platoon raid on a mortar position with assault, support and security elements. Built from FM 3-90, ATP 3-21.8 and ATP 3-21.10.">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Raid | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/raid/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/raid/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.fl-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.fl-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.fl-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.fl-text h2{font-family:var(--font-serif);color:var(--green-900);margin-top:28px}
+.fl-text p,.fl-text li{line-height:1.65}
+.fl-text li{margin:6px 0}
+.fl-text ol,.fl-text ul{padding-left:1.2em}
+.fl-text .fine{font-size:.88rem;color:var(--text-muted)}
+.fl-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.rd-figure{background:transparent}
+.rd-figure .iso-figure{margin:0}
+.rd-figure .iso-plate{background:var(--anatomy-card)}
+.rd-stage{outline:none;cursor:pointer;touch-action:manipulation}
+.rd-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.rd-svg{display:block;width:100%;height:auto}
+.rd-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.rd-figure .iso-plate-corners{z-index:2}
+.rd-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.rd-figure[data-view="field"] .rd-svg{visibility:hidden}
+.rd-figure[data-view="field"] .rd-legend-machine{display:none}
+.rd-figure:not([data-view="field"]) .rd-field,.rd-figure:not([data-view="field"]) .rd-legend-field{display:none}
+.rd-legend{display:grid;gap:8px}
+/* the gate line on the withdrawal route turns to the enemy's colour once the response force has reached it */
+.rd-field[data-gate="1"] .rd-line{stroke:var(--tr-h-ink)!important}
+/* casualties: greyed and still (side fc = friendly, hc = enemy) */
+.rd-figure .tr-s[data-side="fc"] path,.rd-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.rd-figure .tr-s[data-side="fc"] .tr-t,.rd-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.rd-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.rd-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.rd-figure .tr-s[data-side="fc"] .tr-d,.rd-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.rd-figure .tr-s[data-side="fc"] .tr-g,.rd-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.rd-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.rd-controls .btn{cursor:pointer}
+.rd-set{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;margin:10px 0 0;font-size:14px;color:var(--anatomy-text)}
+.rd-set label{display:flex;align-items:center;gap:8px}
+.rd-set input[type=range]{flex:1;min-width:140px}
+.rd-set output{font-family:var(--font-mono);min-width:3.4em}
+.rd-hold{flex:1 1 320px}
+@media (max-width:520px){.rd-figure .iso-plate-corner[data-corner="hint"]{display:none}.rd-stage{overflow:hidden}}
+</style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="fl-main">
+  <a class="fl-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Raid</h1>
+  <p class="lede">A raid takes an objective only for a while. The force goes in, does one job and comes out again, and the enemy&rsquo;s reaction is already on its way. This figure sets the time the force spends on the objective against the time the response force needs, and shows what the security element buys.</p>
+
+  <div class="iso rd-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="rd-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="rd-go">Start the raid</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
+    </div>
+    <div class="rd-set">
+      <label class="rd-hold"><span>Time held on the objective</span> <input type="range" id="rd-hold" min="0" max="12" step="0.5" value="4" aria-label="Time held on the objective, in notional figure seconds"> <output id="rd-hold-out" for="rd-hold">4.0 s</output></label>
+      <label><input type="checkbox" id="rd-sec" checked> <span>Security element holds the response force</span></label>
+    </div>
+  </div>
+
+  <section class="fl-text">
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same hold time, the same security setting and the same run drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
+    <ol>
+      <li><b>The shuttle</b>, the lit part, is the raiding force. It runs on the rail from the home stop at the left (the release point) to the <b>target block</b> at the right, which stands for the objective, and back.</li>
+      <li><b>The target plate</b> on the block drops when the task is done. Six pegs in the <b>task meter</b> rise while the shuttle holds on the objective; when all six are up the plate drops.</li>
+      <li><b>The gate</b> over the rail has a drop bar. <b>The timer dial</b> at the back starts when the fires open and its hand runs to the end of the dial; there the bar falls. That is the response force reaching the withdrawal route. <b>The brake lever</b> beside the dial is the security element holding that force: with it on, the hand runs slower.</li>
+      <li><b>The rule at the front</b> has a collar at the time you set the shuttle to hold and an index that follows the clock. <b>The rack</b> has six pegs for the raiding force and six for the defenders, laid flat as they go down.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Set the hold</b> with the slider or the arrow keys, and the security element with the box or the S key. <b>Start the raid</b> with the button, a click on the card or the space bar.</li>
+      <li><b>The shuttle runs in,</b> holds on the objective for the time set, trips the plate if it held long enough, and runs back. The bar must not fall before it has cleared the gate.</li>
+      <li><b>Hold too briefly</b> and the plate stays up: in this model the raid ends with the task not done. <b>Hold too long</b> and the bar falls on the shuttle: in this model it is caught by the response force and men go down at the gate. Between the two the raid is complete. The window is wider with the security element on. All times and counts are notional.</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the scale is a platoon raid on an enemy mortar position, seen from above: blue is friendly, red is the enemy, and the raiding force starts at the lower left. The dashed chalk line across the road is the gate line on the withdrawal route.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The objective</b> is on the rise at the upper right: three mortar pits, three guard positions and a command post, six defenders in all.</li>
+      <li><b>The assault element</b>, the lit figures, is eleven soldiers: the platoon leader, the RTO and a squad. <b>The support element</b> is two machine guns with assistants and two riflemen in the dashed chalk box. <b>The security element</b> is two fire teams: one on the road at the top of the picture, one on the far side of the objective.</li>
+      <li><b>The response force</b> is two vehicles and four men in an assembly area up the road. It is alerted when the fires open.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Set the hold</b> with the slider or the arrow keys and the security element with the box or the S key, then <b>start the raid.</b> The support element opens fire and shifts it forward as the assault crosses the objective; the assault element goes in by the near side of the picture, holds on the objective for the time set, and withdraws by a different route.</li>
+      <li><b>The response force comes down the road.</b> With the security element on, the team on the road halts it at a block for a while. In this model it reaches the gate line at a set time, and if the assault element has not cleared the line it is caught there.</li>
+      <li><b>Greyed figures lying still</b> are men down. A successful raid still costs men on both sides. Counts are notional.</li>
+    </ol>
+    <p class="fine">Soldiers are drawn larger than scale (about one and a half times) so they read. A platoon is drawn as eleven, six and eight soldiers in its elements. Distances, timings, force sizes and counts are notional, and time is compressed.</p>
+    </div>
+
+    <h2>What doctrine says</h2>
+    <p>FM 3-90, <i>Tactics</i> (1 May 2023), para. 5-142, p. 5-27: &ldquo;A raid is a variation of attack to temporarily seize an objective with a planned withdrawal.&rdquo; Its purposes are to &ldquo;secure information, capture personnel or equipment, destroy a capability, rescue and recover individuals and equipment, or confuse an adversary.&rdquo; The same paragraph, with its figure 5-10, gives five phases: the raiding force inserts or infiltrates; isolates the objective area from outside support or reinforcement; overcomes the enemy at or near the objective in a violently executed surprise attack; seizes the objective and accomplishes its task &ldquo;quickly before any surviving enemy forces in the objective area can recover or receive outside reinforcements&rdquo;; and withdraws, &ldquo;usually using a different route than that used for movement to the objective.&rdquo;</p>
+    <p>ATP 3-21.8, <i>Infantry Rifle Platoon and Squad</i> (11 January 2024, incorporating Change 1, June 2025), para. 7-106, p. 7-32, repeats the FM 3-90 definition and adds: &ldquo;A raid patrol retains terrain just long enough to accomplish the intent of the raid. The raid ends with a planned withdrawal off the objective and a return to the main body.&rdquo; The fundamentals are &ldquo;surprise and speed, coordinated fires, violence of action, and a planned exfiltration&rdquo; (para. 7-107, p. 7-32). The raid is &ldquo;normally organized as three elements&rdquo;: security, support and assault (para. 7-108, p. 7-32).</p>
+    <ul>
+      <li><b>Assault element.</b> &ldquo;The assault element is the combat patrol&rsquo;s main effort&rdquo; (para. 7-98, p. 7-29). In phase four it &ldquo;accomplishes its assigned task quickly before any surviving enemy in the objective area can recover or be reinforced. It is imperative that assault element spend as little time as possible on the objective area while accomplishing its mission&rdquo; (para. 7-114, p. 7-36).</li>
+      <li><b>Support element.</b> It &ldquo;suppresses the enemy on the objective using direct and indirect fires&rdquo; (para. 7-100, p. 7-30) and shifts or lifts fires as directed, &ldquo;shifting fire forward of the assault element as it moves across the objective or to the flanks of targets or areas as directed in the order&rdquo; (para. 7-113, p. 7-36).</li>
+      <li><b>Security element.</b> Its first role is &ldquo;to isolate the objective from enemy personnel and vehicles attempting to enter the objective area&rdquo;; the patrol leader &ldquo;is careful to consider enemy reserves or response forces that will be alerted once the engagement begins&rdquo; (para. 7-102, p. 7-31). It &ldquo;must fix, or block (or at a minimum screen) all enemy security or response forces located on parts of the battlefield away from the raid objective&rdquo; (para. 7-104, p. 7-31).</li>
+      <li><b>Withdrawal.</b> The raiding force withdraws to the objective rally point or an extraction location, and &ldquo;usually use a different route than what was used for movement to the ORP&rdquo; (para. 7-118, p. 7-38). Elements withdraw &ldquo;in the order designated in the order (generally assault element first, support element second, and security element third)&rdquo; (para. 7-120, p. 7-39).</li>
+    </ul>
+    <p>ATP 3-21.10, <i>Infantry Rifle Company</i> (1 June 2026, which supersedes the 14 May 2018 edition), para. 2-199, p. 68, says the same at company level, in its own wording: &ldquo;The raid ends with a planned exfiltration off the objective and a return to the main body.&rdquo; FM 3-90 uses &ldquo;withdrawal&rdquo;; ATP 3-21.8 and ATP 3-21.10 use both &ldquo;withdrawal&rdquo; and &ldquo;exfiltration.&rdquo; ATP 3-21.8 defines exfiltrate as &ldquo;a tactical mission task in which a unit removes Soldiers or units from areas under enemy control by stealth, deception, surprise, or clandestine means&rdquo; (para. 7-107, p. 7-32). ATP 3-21.10 adds that &ldquo;At the company level, a raid is a surprise attack against a position or installation for a specific purpose other than seizing and holding the terrain&rdquo; (para. 2-199, p. 68).</p>
+    <p>None of the manuals gives a time for the task, for the response force or for the withdrawal. Those are this figure&rsquo;s own numbers.</p>
+
+    <h2>What is notional</h2>
+    <p>The run is a teaching model, not data. The raiding force takes 6.0 figure seconds to reach the objective and the same to run back. The fires open at 4.5 s and the response force reaches the withdrawal route 9.0 s later, or 15.0 s later with the security element holding it. The task needs 3.0 s on the objective and the shuttle needs 3.0 s to clear the gate after it leaves. In this model, then, the raid completes if the hold is at least 3.0 s and at most 4.5 s with the security element off, or at most 10.5 s with it on. The defenders are six and the raiding force is drawn as eleven in the assault element; with the hold at 4.0 s and security on, two of the raiding force and all six defenders go down. Those numbers are the model&rsquo;s, not doctrine&rsquo;s. The plain point they carry is the one in the manuals: the force does its job quickly and leaves before the enemy can react.</p>
+    <p class="fine">Sources: Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">FM 3-90, Tactics</a>, 1 May 2023, paras. 5-142 to 5-146 and figure 5-10; <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a>, 11 January 2024 incorporating Change 1, June 2025, paras. 7-96 to 7-122; <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN46667-ATP_3-21.10-000-WEB-1.pdf">ATP 3-21.10, Infantry Rifle Company</a>, 1 June 2026, paras. 2-199 and 2-200. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

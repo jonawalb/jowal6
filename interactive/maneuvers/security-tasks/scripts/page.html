@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Screen, Guard and Cover | Jonathan Walberg</title>
+<meta name="description" content="A screen, a guard and a cover are three levels of security operation that give the protected force time and maneuver space to react. Three buffers of increasing stiffness in front of a block, and a main body with a security force and an enemy on the ground. Built from FM 3-90, ATP 3-21.10 and ATP 3-21.8.">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Screen, Guard and Cover | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/security-tasks/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/security-tasks/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.fl-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.fl-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.fl-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.fl-text h2{font-family:var(--font-serif);color:var(--green-900);margin-top:28px}
+.fl-text p,.fl-text li{line-height:1.65}
+.fl-text li{margin:6px 0}
+.fl-text ol,.fl-text ul{padding-left:1.2em}
+.fl-text .fine{font-size:.88rem;color:var(--text-muted)}
+.fl-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.sc-figure{background:transparent}
+.sc-figure .iso-figure{margin:0}
+.sc-figure .iso-plate{background:var(--anatomy-card)}
+.sc-stage{outline:none;cursor:pointer;touch-action:manipulation}
+.sc-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.sc-svg{display:block;width:100%;height:auto}
+.sc-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.sc-figure .iso-plate-corners{z-index:2}
+.sc-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.sc-figure[data-view="field"] .sc-svg{visibility:hidden}
+.sc-figure[data-view="field"] .sc-legend-machine{display:none}
+.sc-figure:not([data-view="field"]) .sc-field,.sc-figure:not([data-view="field"]) .sc-legend-field{display:none}
+.sc-legend{display:grid;gap:8px}
+/* casualties: greyed and still (side fc = friendly, hc = enemy) */
+.sc-figure .tr-s[data-side="fc"] path,.sc-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.sc-figure .tr-s[data-side="fc"] .tr-t,.sc-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.sc-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.sc-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.sc-figure .tr-s[data-side="fc"] .tr-d,.sc-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.sc-figure .tr-s[data-side="fc"] .tr-g,.sc-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.sc-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.sc-controls .btn{cursor:pointer}
+@media (max-width:520px){.sc-figure .iso-plate-corner[data-corner="hint"]{display:none}.sc-stage{overflow:hidden}}
+.sc-set{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;margin:10px 0 0;font-size:14px;color:var(--anatomy-text)}
+.sc-set .sc-lab{font-family:var(--font-mono);font-size:12px;letter-spacing:.04em}
+.sc-set .fd-views button{padding:11px 14px}
+.sc-figure[data-task="0"] .tk1,.sc-figure[data-task="0"] .tk2,.sc-figure[data-task="1"] .tk2,.sc-figure[data-task="2"] .tk1{display:none}
+.sc-figure .tr-report{stroke-width:1.1}
+</style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="fl-main">
+  <a class="fl-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Screen, Guard and Cover</h1>
+  <p class="lede">A security force goes out in front of a main body to give it time and maneuver space within which to react to the enemy. FM 3-90 lists four types of security operations (para. 13-51); this figure shows three of them, each with more combat power than the one before and each costing the main body more. This figure sets the task against the size of the enemy and counts what each buys. The numbers are the figure&rsquo;s own, not the manual&rsquo;s.</p>
+
+  <div class="iso sc-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="sc-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="sc-go">Start the run</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
+    </div>
+    <div class="sc-set">
+      <span class="sc-lab">Security task</span>
+      <div class="fd-views" id="sc-task" role="group" aria-label="Security task: screen, guard or cover">
+        <button type="button" data-v="0" aria-pressed="false">Screen</button>
+        <button type="button" data-v="1" aria-pressed="true">Guard</button>
+        <button type="button" data-v="2" aria-pressed="false">Cover</button>
+      </div>
+      <span class="sc-lab">Enemy</span>
+      <div class="fd-views" id="sc-enemy" role="group" aria-label="Enemy: reconnaissance elements, lead elements or main body">
+        <button type="button" data-v="0" aria-pressed="false">Recon</button>
+        <button type="button" data-v="1" aria-pressed="true">Lead elements</button>
+        <button type="button" data-v="2" aria-pressed="false">Main body</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="fl-text">
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same security task, the same enemy and the same run drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
+    <ol>
+      <li><b>The heavy block</b> at the left is the main body. Its <b>lamp</b> lights when the security force has reported; the second lamp lights if the enemy gets inside the observation band. The <b>band</b> on the rail in front of it is where, in this model, the enemy can observe and engage the main body.</li>
+      <li><b>The three buffers</b> are the figure&rsquo;s picture of screen, guard and cover: a light single spring, a stiffer one, and a heavy twin-spring one that stands furthest out. Only the one you choose is raised, and its head plate is the lit part; the other two lie flush with the rail.</li>
+      <li><b>The ram carriage</b> is the enemy, coming down the rail from the right. One weight on it is reconnaissance elements, two are lead elements and three are the main body.</li>
+      <li><b>The dial</b> times the run from the moment the security force reports; its pin marks the time bought, in notional minutes. <b>The meter</b> of ten pegs shows the share of the force&rsquo;s power in the security force (the low pegs) and the share kept with the main body (the tall ones). <b>The rule</b> at the front has a collar at the security line and an index at the enemy now. <b>The rack</b> has six pegs for the friendly force and ten for the enemy, laid flat as they go down.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Choose the task and the enemy</b> with the buttons or the arrow keys (left and right for the task, up and down for the enemy), then <b>start the run</b> with the button, a click on the card or the space bar.</li>
+      <li><b>The ram closes on the raised buffer.</b> At contact the security force reports and the dial starts. The buffer takes the weight of the ram for a time that depends on how stiff it is and how heavy the ram is.</li>
+      <li><b>If the buffer is a match for the ram,</b> in this model the ram is pushed back and stopped, and the time bought is counted to that point (shown with a plus). <b>If it is not,</b> in this model the buffer bottoms out and folds flat, the ram rolls on over it and the time bought is the space behind the line plus what the buffer held it for. A stiffer buffer set further out buys more, and takes more power from the block. All distances, times and counts are notional.</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the scale is soldiers on the ground, seen from above. Blue is friendly and red is the enemy. The main body sits at the left; the enemy comes down the road from the right. The dashed chalk line across the road is the line inside which, in this model, the enemy can observe the main body.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The main body</b> is drawn as four positions of two soldiers and a command post of two. When the security force reports, its soldiers go from beside their positions into them.</li>
+      <li><b>A screen</b> is drawn as three observation posts of two soldiers, each with a field of observation. <b>A guard</b> is three defensive positions (one a machine-gun nest), a forward element of two and a reserve of two. <b>A cover</b> is a forward line of four positions (one a machine-gun nest), a second line of two positions further back, and a reserve of four. Only the task you chose is drawn.</li>
+      <li><b>The enemy</b> is drawn as four soldiers for reconnaissance elements, nine for lead elements and eighteen for the main body. Greyed figures lying still are men down.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Choose the task and the enemy</b> with the buttons or the arrow keys, then <b>start the run.</b> The enemy comes down the road and deploys when engaged. Bursts on the enemy are indirect fire from the main body&rsquo;s side.</li>
+      <li><b>When the enemy reaches the security force, it reports</b> (the dashed line to the command post) and the main body stands to. A screen fires little except at reconnaissance elements; a guard and a cover fight.</li>
+      <li><b>When the task is not a match for the enemy,</b> in this model the security force gives ground rearward and the enemy comes on to the chalk line. <b>When it is,</b> in this model the enemy is stopped at the security force. Either way the run costs men on both sides. Counts are notional.</li>
+    </ol>
+    <p class="fine">Soldiers are drawn larger than scale (about one and a half times) so they read. The figure shows a main body that is stationary, which is the case where all three tasks can be set in front of it. Distances, timings, force sizes, shares and counts are notional, and time is compressed.</p>
+    </div>
+
+    <h2>What doctrine says</h2>
+    <p>FM 3-90, <i>Tactics</i> (1 May 2023), para. 13-1, p. 13-1, defines security operations as those performed &ldquo;to provide early and accurate warning of enemy operations, to provide the forces being protected with time and maneuver space within which to react to the enemy, and to develop the situation to allow commanders to effectively use their protected forces.&rdquo; Para. 13-14, p. 13-3: &ldquo;Security forces operating at a distance from their main bodies offer more time and space to their main bodies to react to enemy forces.&rdquo; Para. 13-17, p. 13-4, of maintaining contact: &ldquo;These considerations require security forces to have depth in space and time to maneuver.&rdquo;</p>
+    <ul>
+      <li><b>Screen.</b> &ldquo;Screen is a type of security operation that primarily provides early warning to the protected force (ADP 3-90). Screens provide less protection than guards or covers&rdquo; (FM 3-90 para. 13-56, p. 13-13). It is &ldquo;accomplished by establishing a series of observation posts and patrols&rdquo;; &ldquo;[g]enerally, a screening force engages and destroys enemy reconnaissance elements within its capabilities&mdash;augmented by indirect fires&mdash;but otherwise fights only in self-defense&rdquo;; and &ldquo;[a] screen provides the least amount of protection of any security mission; it does not have the combat power to develop the situation&rdquo; (same para.). Units assign &ldquo;a guard or cover mission instead of a screen if they expect significant enemy forces or they require a significant amount of time and space to provide the required degree of protection&rdquo; (para. 13-57, p. 13-13). A screen is not placed in front of a moving formation (para. 13-67, p. 13-15).</li>
+      <li><b>Guard.</b> &ldquo;Guard is a type of security operation conducted to protect the main body by fighting to gain time while preventing enemy ground observation of and direct fire against the main body (ADP 3-90). A guard differs from a screen in that a guard force contains sufficient combat power to defeat, cause the withdrawal of, or fix the lead elements of an enemy ground force before it can engage the main body with direct fire&rdquo; (para. 13-72, p. 13-18). It &ldquo;operates within the range of the main body&rsquo;s fire support weapons, deploying over a narrower front than a comparable-sized screening force to permit concentrating combat power&rdquo; (13-72, pp. 13-18 to 13-19). Guard forces &ldquo;can delay rearward one or more positions to avoid decisive engagement if the depth of the security area permits, and they do not have enough combat power to defeat an approaching enemy force&rdquo; (para. 13-86, p. 13-21).</li>
+      <li><b>Cover.</b> &ldquo;Cover is a type of security operation done independent of the main body to protect them by fighting to gain time while preventing enemy ground observation of and direct fire against the main body (ADP 3-90)&rdquo; (para. 13-99, p. 13-24). &ldquo;The biggest difference between a guard force and a covering force is that a covering force is able to operate independently of the main body, while a guard force relies on indirect support from the main body&rdquo; (same para.). A covering force &ldquo;develops the situation earlier than a screen or a guard force. It engages longer and more often and defeats larger enemy forces&rdquo; and, &ldquo;[w]hile a covering force provides more security than a screen or guard force, it also requires more resources&rdquo; (paras. 13-100 and 13-101, p. 13-24). &ldquo;BCTs and battalions typically organize a guard force instead of a covering force because their resources are limited&rdquo; (para. 13-106, p. 13-25).</li>
+      <li><b>The three together.</b> &ldquo;The four types of security operations provide increasing levels of security for the main body. However, more combat power in the security force means less for the main body&rdquo; (para. 13-51, p. 13-12). Area security, the fourth type, &ldquo;is a type of security operation conducted to protect friendly forces, lines of communications, and activities within a specific area&rdquo; (para. 13-125, p. 13-29); this figure does not show it. Main body commanders &ldquo;may be willing to risk their security force becoming decisively engaged to create time for the main body&rdquo; (para. 13-30, p. 13-6).</li>
+    </ul>
+    <p>ATP 3-21.10, <i>Infantry Rifle Company</i> (1 June 2026, which supersedes the 14 May 2018 edition), para. 5-20, p. 141: &ldquo;The security force operates as far from the protected force as possible within supporting range, consistent with the factors of METT-TC (I). More distance usually yields greater reaction time and maneuver space for the protected force commander if communications are maintained.&rdquo; Para. 5-25, p. 142: &ldquo;Screen, guard, and cover, respectively, contain increasing levels of combat power and provide increasing levels of security for the main body.&rdquo; Para. 5-26, p. 142: &ldquo;The company can conduct screen operations without external augmentation. Companies performing a guard cannot operate independently. &hellip; The company can only participate in covering force operations as part of a larger element.&rdquo;</p>
+    <p>ATP 3-21.8, <i>Infantry Rifle Platoon and Squad</i> (11 January 2024, incorporating Change 1, June 2025), repeats the definitions at paras. 6-91 to 6-93, pp. 6-31 to 6-32. Para. 6-91, p. 6-32: &ldquo;If a significant enemy force is expected or a significant amount of time and space is needed to provide the required degree of protection, the commander assigns and resources a guard mission instead of a screen.&rdquo; Para. 6-92, p. 6-32, adds that the guard commander &ldquo;normally conducts the guard mission as an area defense, a delay, a zone reconnaissance, or a movement to contact mission.&rdquo;</p>
+    <h3>What the figure takes from this, and what it adds</h3>
+    <ul>
+      <li>The ladder of enemy levels the figure uses (a screen is a match for reconnaissance elements, a guard for lead elements, a cover for larger forces) is the figure&rsquo;s reading of three sentences: a screen destroys reconnaissance elements within its capabilities, a guard can defeat, cause the withdrawal of or fix lead elements, and a cover defeats larger enemy forces. The manual does not set the three against one another as a table of enemy sizes.</li>
+      <li>The soldiers are drawn in the way the manual describes each task: observation posts of two (&ldquo;[i]t takes a minimum of two Soldiers to establish an observation post,&rdquo; para. 13-6, p. 13-2) with &ldquo;overlapping fields of observation&rdquo; (para. 13-63, p. 13-14) for the screen; positions plus a screening element forward for the guard (&ldquo;[g]uard force commanders may task subordinate elements to conduct screen missions to the front and flanks of the guard force,&rdquo; para. 13-79, p. 13-19); and an area defense with a reserve for the cover (&ldquo;normally plans to conduct the cover mission as an area defense,&rdquo; para. 13-103, p. 13-25; a &ldquo;sizable reserve,&rdquo; para. 13-105, p. 13-25). The drawn forces are far smaller than the echelons the manual names in its Table 13-1, p. 13-5. A covering force is built around a reinforced brigade combat team or a division (FM 3-90 para. 13-105); “a division covering force is normally a reinforced BCT” (para. 13-106, p. 13-25), and ATP 3-21.10 (1 June 2026) para. 5-26 says a company “can only participate in covering force operations as part of a larger element”.</li>
+      <li>FM 3-90 puts no distance, rate or time on any of the three tasks. The only time it gives is an example of an end criterion: &ldquo;not allowing an enemy force to penetrate a PL for two hours&rdquo; (para. 13-27, p. 13-6).</li>
+    </ul>
+
+    <h2>What is notional</h2>
+    <p>The run is a teaching model, not data. In notional distance units the enemy starts 32 km from the main body and advances at 0.5 km per minute; inside 6 km of the main body it can observe and engage it. The screen and the guard are set at 12 km and the cover at 22 km (the manual puts screen and guard within the main body&rsquo;s supporting range, paras. 13-25 and 13-72, and a corps covering force beyond it, para. 13-105); the enemy is engaged 2 km beyond the line, and the security force gives up 1.5 km of ground taking its weight. Each task can hold a force it is a match for for 8, 24 and 48 minutes respectively; against an enemy one level above its match it holds half that, against one two levels above a quarter. The time bought is the 13 minutes (33 for the cover) the enemy then needs to get from the line to 6 km, plus the time held. Against the main body, in this model a screen buys 15 minutes, a guard 25 and a cover 81 or more; against lead elements a guard buys 37 or more. A plus means the enemy was stopped, so the time is a floor, not a count. The security force takes 10, 20 and 40 per cent of the force&rsquo;s power. Men down are set by hand (for example, a guard against the main body costs 3 friendly and 5 enemy). Those numbers are the model&rsquo;s, not doctrine&rsquo;s. The plain point they carry is the one in the manuals: more combat power in the security force buys more time and more maneuver space, and leaves less for the main body.</p>
+    <p class="fine">Sources: Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">FM 3-90, Tactics</a>, 1 May 2023, chapter 13, paras. 13-1 to 13-125; <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN46667-ATP_3-21.10-000-WEB-1.pdf">ATP 3-21.10, Infantry Rifle Company</a>, 1 June 2026, paras. 5-17 to 5-28; <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a>, 11 January 2024 incorporating Change 1, June 2025, paras. 6-90 to 6-95. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

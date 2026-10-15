@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ambush | Jonathan Walberg</title>
+<meta name="description" content="How a platoon ambush works, as a working bench model: assault, support and security elements round a kill zone, linear against L-shaped. Built from U.S. Army doctrine (ATP 3-21.8, 2024; FM 3-90, 2023).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Ambush | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/ambush/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/ambush/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.fl-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.fl-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.fl-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.fl-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.fl-text p,.fl-text li{line-height:1.65}
+.fl-text .fine{font-size:.88rem;color:var(--text-muted)}
+.fl-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.am-figure{background:transparent}
+.am-figure .iso-figure{margin:0}
+.am-figure .iso-plate{background:var(--anatomy-card)}
+.fl-stage{outline:none;cursor:crosshair;touch-action:manipulation}
+.fl-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.fl-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.fl-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.am-figure .iso-plate-corners{z-index:2}
+.am-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.am-figure[data-view="field"] .fl-svg{visibility:hidden}
+.am-figure[data-view="field"] .fl-legend-machine{display:none}
+.am-figure:not([data-view="field"]) .fl-field,.am-figure:not([data-view="field"]) .fl-legend-field{display:none}
+.fl-legend{display:grid;gap:8px}
+/* casualties: greyed and still (side fc = friendly, hc = enemy), no colour beyond a faint tint */
+.am-figure .tr-s[data-side="fc"] path,.am-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.am-figure .tr-s[data-side="fc"] .tr-t,.am-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.am-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.am-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.am-figure .tr-s[data-side="fc"] .tr-d,.am-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.am-figure .tr-s[data-side="fc"] .tr-g,.am-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.fl-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.fl-controls .btn{cursor:pointer}
+.fl-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 260px;font-size:14px}
+.fl-controls input[type=range]{flex:1;min-width:120px}
+.fl-text h2{margin-top:28px}
+.fl-text ol{padding-left:1.2em}
+.fl-text li{margin:6px 0}
+@media (max-width:520px){.am-figure .iso-plate-corner[data-corner="hint"]{display:none}.fl-stage{overflow:hidden}}
+</style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="fl-main">
+  <a class="fl-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Ambush</h1>
+  <p class="lede">An ambush is an attack from concealed positions against an enemy that is moving or has halted. Three elements do three different jobs round one patch of ground, and the leader has two decisions that matter most: where the support element lies, and when to spring it. This bench model lets you make both.</p>
+
+  <div class="iso am-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="fl-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
+      </div>
+      <div class="fd-views fd-forms" role="group" aria-label="Formation">
+        <button type="button" data-form="linear" aria-pressed="true">Linear</button>
+        <button type="button" data-form="L" aria-pressed="false">L-shaped</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="am-init" aria-pressed="false">Initiate the ambush</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
+      <label><span id="am-head-text">Enemy column position</span> <input type="range" id="am-head" min="-60" max="100" step="1" value="-60" aria-label="Position of the enemy column's lead along the route"></label>
+    </div>
+  </div>
+
+  <section class="fl-text">
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same column, formation and readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
+    <ol>
+      <li><b>The column</b> is ten coupled cars on the rail. The engraved window on the rail is the kill zone; the cars inside it show bright. The dial counts them, and its halfway mark is “most”.</li>
+      <li><b>The assault bar</b> is the lit bar on its slide, with four spring plungers aimed at the window and a reach arm that swings over the rail.</li>
+      <li><b>The support bar</b> is on a hinge at the end of the window, with four plungers. In the linear formation it lies end to end with the assault bar, parallel to the rail; in the L-shaped formation it swings a quarter turn to stand at a right angle to the window.</li>
+      <li><b>The two boom gates</b> at either end of the route are the security elements.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>The column.</b> Move it along the rail with the pointer, the slider or the arrow keys. Wait until the dial is past its halfway mark.</li>
+      <li><b>Initiate</b> and the plungers stroke, cars in the window are knocked flat, and the gates swing across the rail. The plungers then stop on the signal to cease fire and the assault bar’s arm sweeps across the window.</li>
+      <li><b>Formation.</b> Switch between Linear and L-shaped. In this model more of the cars in the window fall in the L-shaped formation.</li>
+      <li><b>Set the ambush again</b> and the cars stand up and the gates lift.</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the scale is a platoon ambush on a road, blue is friendly and red is the enemy.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The enemy column</b> is ten soldiers walking down the road. The chalk outline on the road is the kill zone; the dashed line beyond it is a limit of advance, one of the control measures the manual lists for conducting an ambush (para. 7-145).</li>
+      <li><b>The assault element</b> is the lit one: a rifle squad on the line, with the platoon leader and his radio operator. “The patrol leader (or platoon leader) is the leader of the assault element” (para. 7-156).</li>
+      <li><b>The support element</b> is a rifle squad and two machine-gun teams. Linear: it lies in the line beside the assault element. L-shaped: it forms the short leg at the end of the kill zone, at a right angle to it, with the machine guns at the road end of the leg.</li>
+      <li><b>The security element</b> is a fire team at each end of the kill zone, blocking the road. The blue fans on the ground are the fire lanes: flanking fire across the road from the line, and in the L-shaped formation the enfilade lane down the road from the short leg.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Waiting.</b> The elements lie prone and still while the column walks in. Move the column with the pointer, the slider or the arrow keys.</li>
+      <li><b>Initiate</b> when most of the column is in the kill zone. The machine guns open fire, and then the riflemen; soldiers in the kill zone fall. The security teams fire on those outside it.</li>
+      <li><b>Cease or shift fire.</b> The support element stops firing and stays where it lies. The assault element then crosses the kill zone to the limit of advance bounding by fire teams, which the manual gives as the way to cross unless there is return fire (para. 7-164); in this figure one team moves while the other overwatches.</li>
+      <li><b>Formation.</b> Switch between Linear and L-shaped and the support element moves between the line and the short leg; changing it after initiating sets the ambush again.</li>
+      <li><b>Losses</b> are notional: greyed figures lying still are men down on both sides, ours carried to a collection point behind the line where a medic kneels. The readout counts them, friendly vs enemy.</li>
+    </ol>
+    <p class="fine">Soldiers are drawn larger than scale (about one and a half times) so they read; unit sizes, spacing, ranges, timings and the number of men who fall are notional.</p>
+    </div>
+
+    <h2>What doctrine says</h2>
+    <p>U.S. Army <i>FM 3-90, Tactics</i> (1 May 2023) defines the ambush as “a variation of attack from concealed positions against a moving or temporarily halted enemy” and adds that “the ambush force does not normally seize and hold ground objectives” (para. 5-102). <i>ATP 3-21.8, Infantry Rifle Platoon and Squad</i> (11 January 2024, incorporating Change 1, June 2025) gives the platoon’s version: “A typical ambush is organized into three elements: assault, support, and security” (para. 7-127). The support element “provides the ambush’s primary killing power”; the security element “isolates the kill zone, provides early warning of arrival of all enemy relief forces, and provides security for the assault and support elements,” and it “blocks” the enemy avenues of approach “into and out of the ambush site.” The kill zone is “the part of an ambush site where fire is concentrated to isolate or destroy the enemy” (para. 7-133).</p>
+    <p>The two formations differ in where the support element lies. In a linear ambush “the assault and support elements parallel the target’s route,” which “subjects the target to flanking fire”; the disadvantage is that “a dispersed target might be too large for the kill zone,” and the advantage is “the relative ease by which it can be controlled under all visibility conditions” (paras. 7-137 and 7-139, pp. 7-43 and 7-44). In the L-shaped formation “the long leg of the L (assault element) is parallel to the kill zone” and gives flanking fire, and “the short leg (support element) is at the end of and at a right angle to the kill zone” and gives enfilade fire (para. 7-140, p. 7-44); FM 3-90 adds that the short leg “blocks the enemy’s forward movement” (para. 5-112). The manual also lists a V-shaped formation (para. 7-141), which this figure does not show.</p>
+    <p>On timing: “When most of the enemy force is in the kill zone, the leader initiates the ambush with the most casualty-producing weapon, medium machine gun fire, or the detonation of mines or explosives.” If the assault element must cross the kill zone, “the leader signals to cease or shift fire. This also signals the start of the assault” (para. 7-153, p. 7-49). This figure shows a point ambush, with a single kill zone; the area ambush is two or more related point ambushes (para. 7-128).</p>
+
+    <h2>What is notional</h2>
+    <p>The manual says “most” without a number, and gives no kill rates. In this model “most” is more than half of the ten; the kill zone is 96 units long and the men are 12 units apart, so at most nine can be in it; and 70% of the men in the zone fall in the linear formation and 85% in the L-shaped one. That difference is the model’s assumption, not a doctrinal claim; doctrine says only that the short leg adds enfilade fire and blocks forward movement. Friendly losses are 25% of the surviving men in the zone plus 10% of the men outside it, rounded, never fewer than one once the ambush is sprung with anyone in the zone. Spring it too early and few are in the zone: the rest are not destroyed but isolated, which is the security element’s job. All timings, the number of men and weapons in each element, and who fires at whom are for illustration.</p>
+    <p class="fine">Source: Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a>, 11 January 2024, incorporating Change 1, June 2025 (<a href="https://web.archive.org/web/20250807233618id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">archived copy</a>), paras. 7-127, 7-128, 7-133, 7-137, 7-139, 7-140, 7-145, 7-153, 7-156 and 7-164. Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">FM 3-90, Tactics</a>, 1 May 2023, paras. 5-102 and 5-112. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

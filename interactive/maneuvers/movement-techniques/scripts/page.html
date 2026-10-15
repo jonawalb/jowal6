@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Movement Techniques | Jonathan Walberg</title>
+<meta name="description" content="How an infantry squad picks traveling, traveling overwatch or bounding overwatch from the likelihood of enemy contact, as a working bench model and a battlefield. Built from U.S. Army doctrine (ATP 3-21.8, FM 3-90, ATP 3-21.10).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Movement Techniques | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/movement-techniques/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/movement-techniques/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.fl-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.fl-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.fl-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.fl-text h2{font-family:var(--font-serif);color:var(--green-900)}
+.fl-text p,.fl-text li{line-height:1.65}
+.fl-text .fine{font-size:.88rem;color:var(--text-muted)}
+.fl-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.mq-figure{background:transparent}
+.mq-figure .iso-figure{margin:0}
+.mq-figure .iso-plate{background:var(--anatomy-card)}
+.mq-stage{outline:none;cursor:pointer;touch-action:manipulation}
+.mq-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.mq-svg{display:block;width:100%;height:auto}
+/* Battlefield: full-bleed ground over the whole card, faded at its edges; the hidden machine keeps the card's height */
+.mq-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.mq-figure .iso-plate-corners{z-index:2}
+.mq-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.mq-figure[data-view="field"] .mq-svg{visibility:hidden}
+.mq-figure[data-view="field"] .mq-legend-machine{display:none}
+.mq-figure:not([data-view="field"]) .mq-field,.mq-figure:not([data-view="field"]) .mq-legend-field{display:none}
+.mq-legend{display:grid;gap:8px}
+/* mortar bursts: a short flash, a dust cloud and drifting smoke */
+.mq-bursts{pointer-events:none}
+
+
+
+/* casualties: greyed and still (side fc = friendly, hc = enemy), no colour beyond a faint tint */
+.mq-figure .tr-s[data-side="fc"] path,.mq-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.mq-figure .tr-s[data-side="fc"] .tr-t,.mq-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.mq-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.mq-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.mq-figure .tr-s[data-side="fc"] .tr-d,.mq-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.mq-figure .tr-s[data-side="fc"] .tr-g,.mq-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.mq-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.mq-controls .btn{cursor:pointer}
+.mq-toggle[aria-pressed="true"]{background:var(--text);color:var(--bg)}
+.mq-controls label{color:var(--anatomy-text);display:flex;align-items:center;gap:10px;flex:1 1 280px;font-size:14px}
+.mq-controls input[type=range]{flex:1;min-width:120px}
+.fl-text h2{margin-top:28px}
+.fl-text ol{padding-left:1.2em}
+.fl-text li{margin:6px 0}
+.mq-table{width:100%;border-collapse:collapse;font-size:.92rem;margin:10px 0}
+.mq-table th,.mq-table td{border-bottom:1px solid var(--border);padding:6px 8px;text-align:left;vertical-align:top}
+.mq-table th{font-family:var(--font-mono);font-weight:500;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--green-700)}
+.mq-wrap{overflow-x:auto}
+@media (max-width:520px){.mq-figure .iso-plate-corner[data-corner="hint"]{display:none}.mq-stage{overflow:hidden}}
+</style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="fl-main">
+  <a class="fl-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Movement Techniques</h1>
+  <p class="lede">A squad crossing ground it does not control has to trade speed against security. Army doctrine gives it three techniques, and picks between them on “the likelihood of enemy contact and need for speed.” This figure shows what each one buys: how fast the squad crosses, and how quickly a team can fire the moment the enemy opens up.</p>
+
+  <div class="iso mq-figure" data-theme="light" data-view="field">
+    <!--FIGURE-->
+    <div class="mq-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
+      </div>
+      <label><span id="mq-risk-text">Likelihood of contact</span> <input type="range" id="mq-risk" min="0" max="100" step="1" value="12" aria-label="Likelihood of enemy contact, from not likely to expected"></label>
+      <button type="button" class="btn btn-outline" id="mq-contact" aria-pressed="false">Make contact</button>
+      <button type="button" class="btn btn-outline mq-toggle" id="mq-method" aria-pressed="true">Alternating bounds</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
+    </div>
+  </div>
+
+  <section class="fl-text">
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same model, the same squad and the same readout drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
+    <ol>
+      <li><b>Two carriages</b> on twin rails are the squad’s two fire teams. The lit one, with the lit nose, is the lead team at the start. The pop-up target at the far end is the enemy.</li>
+      <li><b>The brake pin and mast.</b> A team that is halted and watching is pinned (its plunger knob is down) and its mast is raised with its sight head up. A team that is moving has its pin out and its mast low.</li>
+      <li><b>The dial</b> takes the leader’s likelihood of contact. Its two engraved cuts divide it into <i>not likely</i>, <i>possible</i> and <i>expected</i>, and the cut it is in picks the technique. The cuts’ positions are notional.</li>
+      <li><b>The three bar gauges</b> read, left to right, speed, security and the time to first supporting fire, all as shares of notional full scale. The tray of pegs counts men down: friendly in the front row, enemy behind. The line on the ruler marks the notional reach of the overwatching team’s weapons.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Likelihood of contact.</b> Slide it, use the arrow keys, or press 1, 2 or 3. Low: both carriages move together, close up. Middle: the lead carriage keeps moving and the trailing one drops back. High: one carriage is pinned and watching while the other bounds.</li>
+      <li><b>Alternating or successive bounds</b> (the button, or B) changes how the bounding pair leapfrogs: the rear team passes the halted one, or comes up level with it.</li>
+      <li><b>Make contact</b> (the button, a click on the figure or C). The target pops up and fires on the lead carriage. The gauges show how long it is before a carriage is set to fire back, and the pegs count the men down. <b>Resume the advance</b> clears it.</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the scale is a rifle squad, blue is friendly and red is the enemy. The squad walks a farm track from left to right across open ground; the chalk line across the track is the probable line of deployment.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The squad</b> is its two fire teams, each in a wedge, and the squad leader (ATP 3-21.8, paras. 1-9, 1-11 and 3-46). The lit team is the lead team at the start.</li>
+      <li><b>Two enemy outposts</b> sit on low rises on either side of the track: a machine-gun nest and two fighting positions each. The positions are empty and unseen until the enemy opens fire.</li>
+      <li><b>The shaded fan</b> on the ground is the sector a halted and watching team covers, out to the notional reach of its weapons.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Likelihood of contact</b> (the slider, the arrow keys or 1, 2, 3) sets the technique. Not likely: the teams walk together. Possible: the trailing team drops back, its distance varying, and the lead team keeps moving. Expected: one team halts and kneels with its fan on the ground while the other bounds; the squad leader stays with the halted team.</li>
+      <li><b>Alternating or successive bounds</b> (the button, or B): the rear team goes past the halted one, or stops level with it.</li>
+      <li><b>Make contact</b> (the button, a click on the field or C). The nearest outpost ahead opens fire on the lead team. The model’s times run at 2.5 times speed. Under traveling, nobody is set: the trailing team has to go to ground and bring its weapons to bear first, and the lead team takes the most men down. Under traveling overwatch the trailing team is set sooner. Under bounding overwatch the halted team is already watching and fires almost at once, so the lead takes the fewest men down and the enemy the most.</li>
+      <li><b>Losses</b> are notional: greyed figures lying still are men down on both sides. The readout counts them, friendly vs enemy.</li>
+    </ol>
+    <p class="fine">Soldiers are drawn larger than scale (about one and a half times) so they read; sizes, distances, timings, speeds and losses are notional.</p>
+    </div>
+
+    <h2>What doctrine says</h2>
+    <p>U.S. Army <i>ATP 3-21.8, Infantry Rifle Platoon and Squad</i> (11 January 2024, incorporating Change 1, June 2025) names three movement techniques, which “refer to the distances between Soldiers, teams, and squads” and “are not fixed formations” (para. 3-75, p. 3-26). It gives each its use in terms of contact, and the choice in terms of two factors: “The selection of a movement technique is based on the likelihood of enemy contact and need for speed” (para. 3-76, p. 3-27).</p>
+    <div class="mq-wrap"><table class="mq-table">
+      <thead><tr><th>Technique</th><th>ATP 3-21.8, para. 3-75 (pp. 3-26, 3-27)</th><th>Table 3-5 (p. 3-27)</th></tr></thead>
+      <tbody>
+        <tr><td>Traveling</td><td>“used when speed is necessary and contact with enemy forces is not likely”</td><td>More control, less dispersion; fastest, least security</td></tr>
+        <tr><td>Traveling overwatch</td><td>“used when contact with enemy forces is possible”</td><td>Less control, more dispersion; slower, more security</td></tr>
+        <tr><td>Bounding overwatch</td><td>“used when contact with enemy forces is expected”</td><td>Most control, most dispersion; slowest, most security</td></tr>
+      </tbody>
+    </table></div>
+    <p>For the squad, traveling overwatch has the lead team move “at least 50 meters in front of the rest of the element” (para. 3-79, p. 3-28). In bounding overwatch the lead fire team “overwatches first,” the squad leader “usually stays with the overwatch team,” and the trail team bounds (para. 3-80, p. 3-29). The overwatching elements “can immediately support the bounding elements with fires if the bounding elements make contact,” and the length of a bound is set by “the terrain and the range of overwatching weapons” (para. 3-82, p. 3-30).</p>
+    <p>The manual gives two ways to bound. With alternate bounds the rear element passes the halted one: “This method is usually more rapid than successive bounds” (para. 3-83, p. 3-31). With successive bounds the rear element comes up level with the lead one, and the method “is easier to control and more secure than the alternate bounding method, but it is slower” (para. 3-84, p. 3-31).</p>
+    <p>At platoon level the manual describes traveling overwatch as “used when enemy contact is possible but not expected. Caution is justified but speed is desirable,” with the trail units placed so that, if the lead comes into contact, “the trail units will be out of contact but have the ability to maneuver on the enemy” (paras. 3-88 and 3-89, pp. 3-32 to 3-33). Bounding overwatch “is used when the leader expects contact”; it is “like fire and movement” except that “there is no actual enemy contact” (para. 3-91, p. 3-34). The manual words the middle band several ways: para. 6-66 (p. 6-23) says traveling overwatch is used “when contact is likely but not imminent,” and that the leader sets a probable line of deployment “to indicate where the transition from traveling overwatch to bounding overwatch should occur.”</p>
+    <p>For crossing a large open area the manual combines the two: “The traveling overwatch technique is used to save time,” and the patrol “moves using the bounding overwatch technique at any point in the open area where enemy contact may be expected” (para. 7-71, p. 7-22).</p>
+    <p><i>FM 3-90, Tactics</i> (1 May 2023) gives the same three definitions (paras. 2-18 to 2-20, pp. 2-10 and 2-11) and says units “select the appropriate movement technique based on the chance of enemy contact” (para. 2-17, p. 2-9). <i>ATP 3-21.10, Infantry Rifle Company</i> (1 June 2026) has the company commander choose on “the likelihood of enemy contact” and four other factors (para. 2-17, p. 26), and calls bounding overwatch “the most secure, but slowest, movement technique,” whose purpose is “to deploy prior to contact, giving the unit the ability to protect a bounding element by immediately suppressing an enemy force” (para. 2-20, p. 28). It adds that contact “is made with the smallest force possible to allow the majority of the company freedom to maneuver against the enemy” (para. 2-16, p. 26).</p>
+
+    <h2>What is notional</h2>
+    <p>The manual gives only the order in Table 3-5, not numbers. Here, the dial’s cuts at one third and two thirds are a teaching choice. Speed is a share of traveling speed: 100% for traveling and 80% for traveling overwatch are set by hand; for bounding it comes out of one assumption, that each halt (occupy, scan, signal) costs half a bound’s move time, which gives 40% for alternating bounds and 33% for successive. The time from contact to first supporting fire is set at 8, 4 and 1 seconds for the three techniques, and security is one minus that time over 10 seconds (20%, 60%, 90%). Men down are round(1 + 0.3 × that time) for the lead team (3, 2, 1) and round(5.4 − 0.5 × that time) for the enemy outpost (1, 3, 5). The drawn squad (two fire teams in wedge and the squad leader), the outposts and the distances are not doctrine, and the battlefield plays the model’s seconds at 2.5 times speed.</p>
+    <p class="fine">Sources: Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a>, 11 January 2024, incorporating Change 1, June 2025 (<a href="https://web.archive.org/web/20250807233618id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">archived copy</a>), paras. 1-9, 1-11, 3-46, 3-75 to 3-84, 3-88, 3-89, 3-91, 6-66 and 7-71. Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">FM 3-90, Tactics</a>, 1 May 2023, paras. 2-17 to 2-20. Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN46667-ATP_3-21.10-000-WEB-1.pdf">ATP 3-21.10, Infantry Rifle Company</a>, 1 June 2026, paras. 2-16, 2-17 and 2-20. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

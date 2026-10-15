@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Passage and Relief | Jonathan Walberg</title>
+<meta name="description" content="A passage of lines moves one force through another&#39;s positions; a relief in place replaces it. Two combs on rails, and a company passing through a stationary company&#39;s lanes or relieving it in place, with contact points, passage points and the battle handover line. Built from FM 3-90, ATP 3-21.8 and ATP 3-21.10.">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Passage and Relief | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/passage-of-lines/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/passage-of-lines/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.fl-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.fl-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.fl-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.fl-text h2{font-family:var(--font-serif);color:var(--green-900);margin-top:28px}
+.fl-text p,.fl-text li{line-height:1.65}
+.fl-text li{margin:6px 0}
+.fl-text ol,.fl-text ul{padding-left:1.2em}
+.fl-text .fine{font-size:.88rem;color:var(--text-muted)}
+.fl-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.pl-figure{background:transparent}
+.pl-figure .iso-figure{margin:0}
+.pl-figure .iso-plate{background:var(--anatomy-card)}
+.pl-stage{outline:none;cursor:pointer;touch-action:manipulation}
+.pl-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.pl-svg{display:block;width:100%;height:auto}
+.pl-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.pl-figure .iso-plate-corners{z-index:2}
+.pl-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.pl-figure[data-view="field"] .pl-svg{visibility:hidden}
+.pl-figure[data-view="field"] .pl-legend-machine{display:none}
+.pl-figure:not([data-view="field"]) .pl-field,.pl-figure:not([data-view="field"]) .pl-legend-field{display:none}
+.pl-legend{display:grid;gap:8px}
+/* the battle handover line turns to the passing unit's colour once responsibility has passed */
+.pl-field[data-handed="1"] .pl-bhl{stroke:var(--tr-f-ink)!important}
+/* casualties: greyed and still (side fc = friendly, hc = enemy) */
+.pl-figure .tr-s[data-side="fc"] path,.pl-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.pl-figure .tr-s[data-side="fc"] .tr-t,.pl-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.pl-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.pl-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.pl-figure .tr-s[data-side="fc"] .tr-d,.pl-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.pl-figure .tr-s[data-side="fc"] .tr-g,.pl-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.pl-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.pl-controls .btn{cursor:pointer}
+.pl-set{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;margin:10px 0 0;font-size:14px;color:var(--anatomy-text)}
+.pl-set label{display:flex;align-items:center;gap:8px}
+.pl-set input[type=range]{flex:1;min-width:140px}
+.pl-set output{font-family:var(--font-mono);min-width:3.4em}
+.pl-hold{flex:1 1 320px}
+.pl-modes{margin-right:4px}
+@media (max-width:520px){.pl-figure .iso-plate-corner[data-corner="hint"]{display:none}.pl-stage{overflow:hidden}}
+</style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="fl-main">
+  <a class="fl-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Passage of Lines and Relief in Place</h1>
+  <p class="lede">Both operations put two units on the same ground at the same time. In a passage of lines one force moves through the other&rsquo;s positions; in a relief in place one replaces the other where it stands. This figure sets how many platoons move together, in this model against two lanes, and shows what that does to the time on the ground, who is halted, who holds the ground and when, and who gets hit.</p>
+
+  <div class="iso pl-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="pl-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
+      </div>
+      <div class="fd-views pl-modes" role="group" aria-label="Operation">
+        <button type="button" data-mode="pass" aria-pressed="true">Passage of lines</button>
+        <button type="button" data-mode="relief" aria-pressed="false">Relief in place</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="pl-go">Start the run</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
+    </div>
+    <div class="pl-set">
+      <label class="pl-hold"><span id="pl-k-label">Platoons moving together</span> <input type="range" id="pl-k" min="1" max="3" step="1" value="2" aria-label="Platoons moving together, one to three"> <output id="pl-k-out" for="pl-k">2 together</output></label>
+    </div>
+  </div>
+
+  <section class="fl-text">
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same operation, the same setting and the same run drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
+    <ol>
+      <li><b>The three blocks</b> in the middle are the stationary unit&rsquo;s platoon positions: in a passage the stationary unit, in a relief the outgoing unit. <b>The three numbered carriages,</b> the lit parts, are the passing company&rsquo;s platoons: in a relief the incoming unit. They start on the rack at the left, the assembly area.</li>
+      <li><b>The two rails</b> run through the gaps between the blocks. Each has a <b>gate bar</b> at the contact point and a pair of <b>posts with pennants</b> at the passage point. The <b>thin bar across the plate</b> forward of the blocks is the battle handover line (BHL). The <b>pad with six pegs</b> at the right is an enemy outpost.</li>
+      <li><b>The dial</b> at the back left runs to the moment the enemy&rsquo;s fires land, and a pin beside it pops up while they do. <b>The three-peg meter</b> counts platoons through their passage points (in a relief, platoons in place). <b>The slide</b> at the front right moves from the stationary unit&rsquo;s end to the passing unit&rsquo;s end when control passes. <b>The rack</b> has six pegs for the passing company and six for the outpost, laid flat as men go down. <b>The rule</b> at the front left shows how many platoons move together.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Choose the operation and the setting,</b> then <b>start the run.</b> In a passage the carriages go forward through the gaps. A lane takes one platoon at a time, and in this model there are two lanes for three platoons, so a third that starts with the others halts at the gate until a lane clears. Starting them one at a time avoids the halt and takes longer.</li>
+      <li><b>When two of the three carriages are through their passage points,</b> the slide moves: in this model control passes to the passing unit. The outpost pegs go down, later the more slowly that happens.</li>
+      <li><b>In a relief</b> each incoming carriage slides into its block&rsquo;s slot while the outgoing block backs out beside it, back to the rack. With all three at once the run is fastest and, in this model, the enemy notices: the dial&rsquo;s pin pops and more pegs go down. Every count and time here is notional.</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the scale is a company passing through, or relieving, another company, seen from above: blue is friendly, red is the enemy, and the lit figures are the passing or incoming company. The enemy is at the right, on the rise.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The stationary company</b> holds three platoon positions of two fighting holes each (a fire team in each), in a line across the middle. <b>The passing company</b> waits in an assembly area at the left as three squads, one per platoon. Platoons are drawn as squads and fire teams so they can be seen; the real units are larger.</li>
+      <li><b>Control measures.</b> Dashed chalk marks the edges of two lanes, which pass through the gaps between the positions, and the battle handover line (BHL) across the front. Flags on the left of each lane are the contact points; flags at the positions are the passage points. A soldier beside each flag is a guide from the stationary unit. The BHL line darkens when control has passed, in this model.</li>
+      <li><b>The outpost</b> is six defenders in holes on the rise at the right, with a flag for the objective.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Set the operation</b> with the buttons or the M key and <b>how many platoons move together</b> with the slider or the arrow keys, then <b>start the run.</b> The squads cross the contact points and the passage points, then the BHL, and form up forward of it. A squad that has to wait for a lane halts short of the contact point. The stationary company fires on the outpost until the passing company masks its fires; the enemy fires on the area.</li>
+      <li><b>In a relief</b> the incoming squads go into the holes, four soldiers to the holes and the rest behind them, and the outgoing teams leave by a different route to the rear. If all three platoons are exchanged at once, the enemy notices in this model and its fires fall on the intermingled units.</li>
+      <li><b>Greyed figures lying still</b> are men down. Both sides lose men in every run. Counts are notional.</li>
+    </ol>
+    <p class="fine">Soldiers are drawn larger than scale (about one and a half times) so they read. Platoons are drawn as a squad of nine or a fire team of four, so a company is drawn as three squads. Distances, timings, the number of lanes, force sizes and counts are notional, and time is compressed.</p>
+    </div>
+
+    <h2>What doctrine says</h2>
+    <p>FM 3-90, <i>Tactics</i> (1 May 2023), para. 16-1, p. 16-1: &ldquo;A passage of lines is an operation in which a force moves forward or rearward through another force&rsquo;s combat positions with the intention of moving into or out of contact with the enemy (JP 3-18).&rdquo; It &ldquo;potentially involves close combat,&rdquo; and the &ldquo;transfer of authority usually occurs when roughly two thirds of the passing force have moved through one or more passage points.&rdquo; A forward passage moves &ldquo;toward the enemy&rdquo; and a rearward passage &ldquo;away from the enemy&rdquo; (para. 16-3, p. 16-1); &ldquo;[i]deally, the passing unit&rsquo;s operations do not interfere with the stationary unit.&rdquo;</p>
+    <ul>
+      <li><b>Control measures.</b> They are &ldquo;generally restrictive to prevent fratricide&rdquo; and at a minimum include the assigned area, assembly areas, attack positions, the BHL, contact points, passage points, passage lanes, routes, gaps, phase lines and recognition signals (para. 16-9, pp. 16-2 and 16-3). &ldquo;The stationary unit establishes these measures because it controls the terrain&rdquo; (para. 16-10, p. 16-3).</li>
+      <li><b>Contact point, passage point, passage lane.</b> A contact point is &ldquo;a point on the terrain, easily identifiable, where two or more units are required to make contact (JP 3-50)&rdquo; (para. A-19, p. A-7). A passage point is &ldquo;a designated place where passing units pass through the stationary unit,&rdquo; and &ldquo;[b]etween the contact point and the release point, the stationary unit controls the passing force&rsquo;s movement&rdquo; (para. 16-11, p. 16-4). A passage lane is &ldquo;a lane through an enemy or friendly obstacle that provides safe passage for a passing force&rdquo; (para. 16-12, p. 16-4).</li>
+      <li><b>Battle handover line.</b> It is &ldquo;a designated phase line where responsibility transitions from the stationary force to the moving force and vice versa (ADP 3-90).&rdquo; &ldquo;The stationary commander determines the location of the line,&rdquo; and &ldquo;[t]he area between the BHL and the stationary force belongs to the stationary force commander&rdquo; (para. A-50, pp. A-15 and A-16).</li>
+      <li><b>Gaps, not concentration.</b> &ldquo;Passing unit commanders prefer to perform their passages through gaps in stationary unit positions rather than through lanes or routes that traverse those positions,&rdquo; which reduces the vulnerability that comes from concentrating (para. 16-20, p. 16-5). Forward passing forces ideally move through gaps &ldquo;without halting,&rdquo; which &ldquo;minimizes the time both forces are concentrated in forward areas&rdquo; (para. 16-31, p. 16-7). &ldquo;Passages of lines occur rapidly once initiated&rdquo; (para. 16-32, p. 16-8).</li>
+      <li><b>Fires and responsibility, forward passage.</b> &ldquo;Generally, stationary units support passing units with direct fires until those passing units mask those direct fires&rdquo; (para. 16-28, p. 16-6). &ldquo;Generally, passing units assume control of their respective assigned areas forward of the BHL after two-thirds of forward passing combat elements move through their passage points&rdquo; (para. 16-29, p. 16-7).</li>
+      <li><b>Risks.</b> &ldquo;[T]he complex nature of a passage of lines involves risk&rdquo; (para. 16-13, p. 16-4), and &ldquo;two parallel chains of command operate simultaneously in one area, and this may cause confusion&rdquo; (para. 16-16, p. 16-4). A rearward passage is likely to be more difficult because, among other things, &ldquo;[p]ossible intermixing of friendly and enemy forces increases the probability of fratricide&rdquo; (para. 16-40, p. 16-8).</li>
+      <li><b>Lanes.</b> FM 3-90 gives a minimum number of passage lanes only for a brigade combat team: two for a forward passage and one for a rearward passage, plus &ldquo;at least one additional lane for its tactical vehicles&rdquo; (para. 16-21, table 16-1, p. 16-5). The two lanes on this bench are the figure&rsquo;s own choice for a company.</li>
+    </ul>
+    <p>Relief in place, FM 3-90, para. 15-2, p. 15-1: &ldquo;A relief in place is an operation in which, by direction of higher authority, all or part of a unit is replaced in an area by the incoming unit and the responsibilities of the replaced elements for the mission and the assigned zone of operations are transferred to the incoming unit (JP 3-07.3).&rdquo; The three variations are sequential, simultaneous and staggered, each defined in ADP 3-90 as the manual quotes it (para. 15-2, p. 15-1). &ldquo;Simultaneous relief takes the least time to execute but is more easily detected by enemy forces&rdquo; (para. 15-3, p. 15-1). &ldquo;The relief is a vulnerable operation,&rdquo; and &ldquo;[t]he intent of the operation is to complete the relief without discovery by enemy forces&rdquo; (para. 15-10, p. 15-3). If the enemy detects it and attacks, &ldquo;the outgoing unit commander controls all units in the assigned area unless otherwise specified in the operation order&rdquo; (para. 15-10, p. 15-3). &ldquo;The relieved unit continues to defend&rdquo; (para. 15-27, p. 15-5), and &ldquo;[b]oth units are vulnerable to enemy attack because of the concentration, movement, and intermingling of forces in a simultaneous relief&rdquo; (para. 15-25, p. 15-5). Control measures are again &ldquo;generally restrictive to prevent fratricide&rdquo;; they include contact points, release points, routes and passage lanes (para. 15-7, p. 15-2).</p>
+    <p>ATP 3-21.10, <i>Infantry Rifle Company</i> (1 June 2026, which supersedes the 14 May 2018 edition), at company level: &ldquo;The primary purpose of a passage of lines is to transfer responsibility for an area from one unit to another&rdquo; (para. 5-63, p. 149). In a relief, &ldquo;Responsibility for the area transfers, as directed by the higher-level commander, normally when the incoming unit has a majority of the fighting force in place and all C2 systems are operating&rdquo; (para. 5-52, p. 146). The BHL is drawn where the stationary unit&rsquo;s direct fires can support the passing unit (para. 5-78, p. 152), and &ldquo;[u]ntil the handover is complete and acknowledged by the commanders, the company commander in contact is responsible for the fight&rdquo;; &ldquo;[o]ffensive handover is normally complete when the passing unit combat elements completely cross the BHL&rdquo; (para. 5-81, p. 153).</p>
+    <p>ATP 3-21.8, <i>Infantry Rifle Platoon and Squad</i> (11 January 2024, incorporating Change 1, June 2025), at platoon level: &ldquo;The passing unit holds its fire until it passes the BHL or the designated fire control measure unless the leader has coordinated fire control with the stationary unit&rdquo; (para. 6-41, p. 6-14), and &ldquo;[t]he passing unit is responsible for its security until it passes the BHL&rdquo; (para. 6-43, p. 6-16). For a relief it says &ldquo;[r]esponsibility passes to the incoming leader when all elements of the outgoing unit are relieved and adequate communications are established&rdquo; (para. 6-32, p. 6-12).</p>
+    <p>The sources therefore give three triggers for the transfer of responsibility: &ldquo;roughly two thirds&rdquo; (FM 3-90 paras. 16-1, 16-29; for a simultaneous relief FM 3-90 para. 15-25 also asks for sufficient communications), &ldquo;a majority of the fighting force&rdquo; (ATP 3-21.10 para. 5-52, which also requires all command-and-control systems to be operating) and all elements relieved (ATP 3-21.8 para. 6-32), with the BHL crossing as the end of an offensive handover (ATP 3-21.10 para. 5-81). Two of the three platoons through is this figure&rsquo;s own choice, used for both the passage and the relief: the slide on the bench and the blue line on the ground move at that point, in this model. None of the manuals gives a time for a passage or a relief, a number of lanes for a company, or a point at which an enemy would detect a relief.</p>
+
+    <h2>What is notional</h2>
+    <p>The runs are a teaching model, not data. In a passage a platoon takes 3.0 figure seconds to reach the contact point, holds a lane for 4.0 s, and takes 3.0 s more to reach the assault position; there are two lanes for three platoons; the enemy&rsquo;s fires land at 5.0 s; the outpost is six defenders. With one platoon at a time the passage takes 18 s of figure time and control passes at 9 s, and in this model 1 of the passing company and 3 of the outpost are down. With two together it takes 14 s, control passes at 5 s, and 2 vs 5 are down. With three together a third platoon halts at the contact point for 4 s, the time is the same 14 s, and 4 vs 5 are down: the extra men down come from three platoons being on the ground when the fires land. In a relief an incoming platoon takes 4.0 s to move in, 2.0 s to exchange and the outgoing platoon 4.0 s to leave. Sequential takes 22 s and two at once 16 s, and each costs 1 vs 1; simultaneous takes 10 s, the enemy notices because three platoons are moving at once (a threshold this model chose), and 5 vs 2 are down. Two at once is the model&rsquo;s own in-between; it is not one of the manual&rsquo;s variations. The rules that turn those into men down are this figure&rsquo;s, and no source gives them. Only a forward passage is modelled; a rearward passage is not. Of the three relief variations, sequential and simultaneous are modelled (two at once is the model&rsquo;s own in-between); staggered is not.</p>
+    <p class="fine">Sources: Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">FM 3-90, Tactics</a>, 1 May 2023, chapters 15 and 16 and appendix A; <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a>, 11 January 2024 incorporating Change 1, June 2025, chapter 6 sections II and III; <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN46667-ATP_3-21.10-000-WEB-1.pdf">ATP 3-21.10, Infantry Rifle Company</a>, 1 June 2026, chapter 5 sections IV and V. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

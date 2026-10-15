@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Clearing a Trench or Building | Jonathan Walberg</title>
+<meta name="description" content="Clearing a trench or a building one point at a time: a four-pin sequential lock and a squad clearing a trench line or a building, with the drill names from ATP 3-21.8. Times, rates and losses are notional.">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Clearing a Trench or Building | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/clearing/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/clearing/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.fl-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.fl-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.fl-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.fl-text h2{font-family:var(--font-serif);color:var(--green-900);margin-top:28px}
+.fl-text p,.fl-text li{line-height:1.65}
+.fl-text li{margin:6px 0}
+.fl-text ol{padding-left:1.2em}
+.fl-text .fine{font-size:.88rem;color:var(--text-muted)}
+.fl-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.cl-figure{background:transparent}
+.cl-figure .iso-figure{margin:0}
+.cl-figure .iso-plate{background:var(--anatomy-card)}
+.cl-stage{outline:none;cursor:pointer;touch-action:manipulation}
+.cl-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.cl-svg{display:block;width:100%;height:auto}
+.cl-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.cl-figure .iso-plate-corners{z-index:2}
+.cl-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.cl-figure[data-view="field"] .cl-svg{visibility:hidden}
+.cl-figure[data-view="field"] .cl-legend-machine{display:none}
+.cl-figure:not([data-view="field"]) .cl-field,.cl-figure:not([data-view="field"]) .cl-legend-field{display:none}
+.cl-legend{display:grid;gap:8px}
+/* one layout at a time: the trench or the building */
+.cl-field[data-mode="trench"] .cl-m-building,.cl-field[data-mode="building"] .cl-m-trench{display:none}
+/* markers a team leaves on a point it has secured and marked */
+.cl-field .cl-mk{opacity:0;transition:opacity .4s}
+.cl-field[data-m0="1"] .cl-mk-0,.cl-field[data-m1="1"] .cl-mk-1,.cl-field[data-m2="1"] .cl-mk-2,.cl-field[data-m3="1"] .cl-mk-3{opacity:1}
+/* casualties: greyed and still (side fc = friendly, hc = enemy) */
+.cl-figure .tr-s[data-side="fc"] path,.cl-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.cl-figure .tr-s[data-side="fc"] .tr-t,.cl-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.cl-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.cl-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.cl-figure .tr-s[data-side="fc"] .tr-d,.cl-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.cl-figure .tr-s[data-side="fc"] .tr-g,.cl-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.cl-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.cl-controls .btn{cursor:pointer}
+.cl-opts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px 14px;margin:10px 0 0;padding:0;border:0;list-style:none}
+.cl-opt{display:flex;align-items:flex-start;gap:8px;font-size:14px;line-height:1.4;color:var(--anatomy-text);cursor:pointer}
+.cl-opt input{margin-top:3px;flex:none}
+.cl-opt b{font-family:var(--font-mono);font-weight:500;min-width:1em}
+@media (max-width:620px){.cl-opts{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:520px){.cl-figure .iso-plate-corner[data-corner="hint"]{display:none}.cl-stage{overflow:hidden}}
+</style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="fl-main">
+  <a class="fl-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Clearing a Trench or Building</h1>
+  <p class="lede">A trench line or a building is not cleared in one rush: it is cleared point by point, and each point has to be settled before the next is entered. This figure sets four points in a row, in this model&rsquo;s own sequence, and shows what is lost when the support fires, the swap of the lead, or the holding of what was cleared is left out.</p>
+
+  <div class="iso cl-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="cl-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
+      </div>
+      <div class="fd-views cl-modes" role="group" aria-label="What is cleared">
+        <button type="button" data-mode="trench" aria-pressed="true">Trench</button>
+        <button type="button" data-mode="building" aria-pressed="false">Building</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="cl-go">Start clearing</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
+    </div>
+    <fieldset class="cl-opts" aria-label="Three options of this figure&rsquo;s model, all on at the start">
+      <label class="cl-opt"><input type="checkbox" checked><b>1</b><span>Support element fires, isolating the entry point</span></label>
+      <label class="cl-opt"><input type="checkbox" checked><b>2</b><span>The two fire teams alternate the lead</span></label>
+      <label class="cl-opt"><input type="checkbox" checked><b>3</b><span>The team behind secures and marks each cleared point</span></label>
+    </fieldset>
+  </div>
+
+  <section class="fl-text">
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same options, the same run and the same readout drive both, and trench or building (M key) is the same four points in a different place. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
+    <ol>
+      <li><b>Four pins</b> stand in a row at the back, marked with one to four dots, one for each point to clear. A <b>bar</b> below them grows along the row as pins set. The lit <b>key carriage</b> on the front rail is the lead team: it can move on to a pin only when the pin before it is set.</li>
+      <li><b>The second carriage</b> on the rear rail is the other team, holding the point just cleared. <b>The turntable</b> on the key carriage turns half a turn at each point when the teams alternate. <b>The shield</b> at the left end is the support element: up when it fires, flat when it does not.</li>
+      <li><b>The pegs</b> behind the pins are the enemy, one for each point; each goes flat when its point is set. <b>The dial</b> reads points set out of four, <b>the wear bar</b> how fresh the lead team is, and <b>the rack</b> the men down: nine pegs for the squad, five for the enemy.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Tick the options</b> in the list or press 1 to 3, then <b>Start clearing</b> (button, a click on the card or the space bar). The key creeps to pin 1, the pin drops, and only then can it go to pin 2.</li>
+      <li><b>Leave an option out.</b> In this model, without the support fires the entry costs a man and time; without alternation the same team keeps the lead, slows and loses a man later; without a team holding behind, an enemy re-enters a cleared point (its pin pops back up) and costs a man and time. These are the figure&rsquo;s own device, not doctrine.</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the scale is a rifle squad on the ground: blue is friendly, red is the enemy. The soldiers are drawn about one and a half times larger than scale so they read. Press M or use Trench and Building to change what is cleared; the four points, the options and the readout are the same.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The squad</b> is a squad leader and two fire teams of four, each team drawn in file. Their sizes are the figure&rsquo;s drawing; the manual says a squad is two fire teams and a squad leader (ATP 3-21.8 para. 1-9). <b>The support element</b> of two machine guns with assistants and riflemen stands in a chalk box outside; <b>a platoon medic</b> (the manual mentions the platoon combat medic, para. 1-22) waits to the rear.</li>
+      <li><b>The trench</b> is a zigzag cut with a low parapet: the squad enters at the left and clears four points, the corners and junctions. <b>The building</b> is drawn without a roof so the rooms show: a hall with two rooms off each side, the west door the entry, and the four rooms are the four points. The trench shape, the hall layout, the four points and one defender at each are this figure’s own layout, not taken from a manual.</li>
+      <li><b>One enemy soldier</b> holds each point. <b>Small posts</b> appear on a cleared point when the team holding behind has secured and marked it.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Tick the options</b> or press 1 to 3, then <b>Start clearing</b>. The support element fires, the lead team goes in and clears the first point, the other team holds it, and the lead passes to the other team for the next point (in this model, when the teams alternate).</li>
+      <li><b>Greyed figures lying still</b> are men down, friendly and enemy; the platoon medic goes to the latest friendly casualty. Clearing costs men even when it works.</li>
+      <li><b>Leave an option out</b> and it shows. In this model, without the support fires the enemy at the entry fires on the squad as it stacks; without alternation one team stays in front and tires; without a team behind, an enemy soldier appears in a point already cleared and fires into the squad&rsquo;s rear (notional counts).</li>
+    </ol>
+    <p class="fine">Soldiers are drawn larger than scale. Distances, timings, the number of enemy and the losses are notional, and time is compressed.</p>
+    </div>
+
+    <h2>What doctrine says</h2>
+    <p>The current infantry manual names the two drills and does not print their steps. ATP 3-21.8, <i>Infantry Rifle Platoon and Squad</i> (11 January 2024, incorporating Change 1, June 2025), says battle drills &ldquo;are tasks (individual and collective) designed to teach a Soldier or small unit to react and survive in common combat situations&rdquo; (para. E-1, p. E-1). Its list of selected battle drills includes &ldquo;Battle Drill 6: Enter and Clear a Room &ndash; Squad (07-SQD-D9509)&rdquo; and &ldquo;Battle Drill 7: Enter a Trench to Secure a Foothold &ndash; Platoon (07-PLT-D9510)&rdquo; (para. E-2, p. E-2). The steps are not in the manual: it sends the reader to &ldquo;the Army Training Network or the Central Army Registry websites to view selected battle drills&rdquo; (para. E-2, p. E-1). Its references list the two drills as dated 11 July 2022 and 30 August 2022 (p. References-4). Note that the trench drill is a platoon drill: the figure&rsquo;s squad is the element that clears.</p>
+    <ul>
+      <li><b>Fire and movement.</b> The squad can conduct &ldquo;fire and movement with one team providing a base of fire, while the other team moves to the next position of advantage or onto an objective&rdquo; (ATP 3-21.8 para. 1-9, p. 1-4). That is the general rule the figure&rsquo;s alternating teams are drawn from; the manual does not give a clearing sequence of that shape.</li>
+      <li><b>Clear.</b> &ldquo;Clear is a tactical mission task in which a unit eliminates all enemy forces within an assigned area.&rdquo; &ldquo;In all cases, this task requires a thorough reconnaissance to discover the enemy force&rsquo;s locations&rdquo; (FM 3-90, 1 May 2023, para. B-16, p. B-4).</li>
+      <li><b>Assault in buildings.</b> The assault force &ldquo;must be prepared to deal with unanticipated protective obstacles in/around the objective area, particularly in buildings or fortified areas,&rdquo; and the platoon&rsquo;s assault &ldquo;is short, violent, and well ordered&rdquo; (ATP 3-21.8 para. 4-113, p. 4-41).</li>
+      <li><b>Inside a building.</b> The fire team column or file &ldquo;most often is used in severely restrictive terrain, when inside a building, in dense vegetation, experiencing limited visibility, and so forth&rdquo; (ATP 3-21.8 para. 3-48, p. 3-13).</li>
+      <li><b>In a trench.</b> &ldquo;The assault force clears the enemy position as quickly as possible.&rdquo; &ldquo;The assault force normally moves within the enemy&rsquo;s trenches to avoid exposure to enemy fire&rdquo; (ATP 3-21.10, 1 June 2026, para. 2-179, p. 62).</li>
+      <li><b>Cleared routes.</b> ATP 3-06/MCTP 12-10B, <i>Urban Operations</i> (July 2022), says of routes for mounted movement that &ldquo;Failure to clear routes (and mark the cleared portions) exposes mounted movement to ambush at close range&rdquo; and that forces &ldquo;secure or observe cleared routes to prevent these enemy operations&rdquo; (para. 3-22, p. 3-7). It is about routes, not rooms; this figure borrows only the idea that what is cleared has to be held and marked.</li>
+    </ul>
+    <p>ATP 3-21.8 names the two drills, “Enter and Clear a Room” for the squad and “Enter a Trench to Secure a Foothold” for the platoon (appendix E, p. E-2), but does not print their steps: it points readers to the Army Training Network and the Central Army Registry (p. E-1). This figure therefore reproduces no drill steps. The order in which its teams enter, secure and mark is the figure’s own device, and the drill packets were not opened.</p>
+    <p>None of the manuals above describes two fire teams alternating the lead on a stopwatch, or a lock. That is the figure&rsquo;s own teaching device: it shows that one point has to be settled before the next is entered, and what the choices cost in this model.</p>
+
+    <h2>What is notional</h2>
+    <p>The run is a teaching model, not data. With all three options the four points are set at 4.5, 7.5, 10.5 and 13.5 figure seconds; the enemy is four soldiers, one at each point, and the squad nine. Friendly versus enemy down at the end, in this model: all options 1 vs 4; without support fires 2 vs 4; without alternation 2 vs 4 and 18.9 s (the same team takes 3.0, 3.9, 4.8 and 5.7 s per point); without holding behind 2 vs 5 (an enemy re-enters a cleared point); with none of the three, 4 vs 5 at 21.9 s. Those numbers are the model&rsquo;s, not doctrine&rsquo;s.</p>
+    <p class="fine">Sources: Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a>, 11 January 2024 incl. Change 1 (June 2025), paras. 1-9, 1-22, 3-48, 4-113, E-1, E-2 and p. References-4 (<a href="https://web.archive.org/web/20250807233618id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">archived copy</a>); <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">FM 3-90, Tactics</a>, 1 May 2023, para. B-16 (<a href="https://web.archive.org/web/2024id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN38160-FM_3-90-000-WEB-1.pdf">archived copy</a>); <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN46667-ATP_3-21.10-000-WEB-1.pdf">ATP 3-21.10, Infantry Rifle Company</a>, 1 June 2026 (supersedes the 14 May 2018 edition), para. 2-179; ATP 3-06/MCTP 12-10B, <i>Urban Operations</i>, July 2022 (<a href="https://web.archive.org/web/2023id_/https://irp.fas.org/doddir/army/atp3_06.pdf">archived copy</a>), para. 3-22. The 2022 drill packets (07-SQD-D9509, 07-PLT-D9510) are in the Central Army Registry and were not opened, so no drill steps are reproduced here. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

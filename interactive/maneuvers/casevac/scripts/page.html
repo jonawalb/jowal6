@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Casualty Evacuation | Jonathan Walberg</title>
+<meta name="description" content="How casualties leave an attack and how that traffic competes with ammunition: a conveyor bench model and a platoon on the ground, built from U.S. Army doctrine (ATP 3-21.8, ATP 4-02.13, ATP 4-02.2).">
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta property="og:title" content="Casualty Evacuation | Jonathan Walberg">
+<meta property="og:image" content="https://jwalberg.com/interactive/maneuvers/casevac/thumb.png">
+<meta property="og:url" content="https://jwalberg.com/interactive/maneuvers/casevac/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/style.css">
+<!-- Built by scripts/build.mjs from scripts/page.html. Edit those, not this file. -->
+<style>
+/*ISO_CSS*/
+.fl-main{width:min(820px,100% - 32px);margin:calc(var(--nav-h, 64px) + 32px) auto 64px}
+.fl-main h1{font-family:var(--font-serif);color:var(--green-900);margin:0 0 .4em}
+.fl-main .lede{font-size:1.08rem;color:var(--text-muted);line-height:1.65}
+.fl-text h2{font-family:var(--font-serif);color:var(--green-900);margin-top:28px}
+.fl-text p,.fl-text li{line-height:1.65}
+.fl-text li{margin:6px 0}
+.fl-text ol,.fl-text ul{padding-left:1.2em}
+.fl-text .fine{font-size:.88rem;color:var(--text-muted)}
+.fl-back{display:inline-block;margin-bottom:14px;color:var(--green-700);font-weight:600;font-size:.9rem;text-decoration:none}
+.cv-figure{background:transparent}
+.cv-figure .iso-figure{margin:0}
+.cv-figure .iso-plate{background:var(--anatomy-card)}
+.cv-stage{outline:none;cursor:pointer;touch-action:manipulation}
+.cv-stage:focus-visible{box-shadow:0 0 0 2px var(--anatomy-hi);border-radius:8px}
+.cv-svg{display:block;width:100%;height:auto}
+.cv-field{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(180deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+.cv-figure .iso-plate-corners{z-index:2}
+.cv-figure[data-view="field"] .iso-plate-corner{text-shadow:0 0 3px var(--anatomy-card),0 0 7px var(--anatomy-card)}
+.cv-figure[data-view="field"] .cv-svg{visibility:hidden}
+.cv-figure[data-view="field"] .cv-legend-machine{display:none}
+.cv-figure:not([data-view="field"]) .cv-field,.cv-figure:not([data-view="field"]) .cv-legend-field{display:none}
+.cv-legend{display:grid;gap:8px}
+/* casualties: greyed and still (side fc = friendly, hc = enemy) */
+.cv-figure .tr-s[data-side="fc"] path,.cv-figure .tr-s[data-side="hc"] path{stroke:#9a9a92}
+.cv-figure .tr-s[data-side="fc"] .tr-t,.cv-figure .tr-s[data-side="hc"] .tr-t{fill:#e4e3dd}
+.cv-figure .tr-s[data-side="fc"] .tr-l{fill:#d3d6dc}.cv-figure .tr-s[data-side="hc"] .tr-l{fill:#dcd3d2}
+.cv-figure .tr-s[data-side="fc"] .tr-d,.cv-figure .tr-s[data-side="hc"] .tr-d{fill:#c9c8c1}
+.cv-figure .tr-s[data-side="fc"] .tr-g,.cv-figure .tr-s[data-side="hc"] .tr-g{fill:#b7b6ae}
+.cv-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0 4px}
+.cv-controls .btn{cursor:pointer}
+.cv-set{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;margin:10px 0 0;font-size:14px;color:var(--anatomy-text)}
+.cv-set label{display:flex;align-items:center;gap:8px}
+.cv-set input[type=range]{flex:1;min-width:140px}
+.cv-set output{font-family:var(--font-mono);min-width:3.4em}
+.cv-hold{flex:1 1 320px}
+.cv-modes{margin-right:4px}
+@media (max-width:520px){.cv-figure .iso-plate-corner[data-corner="hint"]{display:none}.cv-stage{overflow:hidden}}
+</style>
+<link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
+</head>
+<body>
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="nav-logo">Jonathan Walberg</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/experience/">Things I Do</a></li>
+            <li><a href="/research/">Research</a></li>
+            <li><a href="/interactive/" class="active">Interactive Tools</a></li>
+            <li><a href="/narratives/">Narrative Tracking</a></li>
+            <li><a href="/teaching/">Teaching</a></li>
+            <li><a href="/service/">Volunteering</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="fl-main">
+  <a class="fl-back" href="/interactive/maneuvers/">&larr; Maneuvers</a>
+  <h1>Casualty Evacuation</h1>
+  <p class="lede">An attack makes casualties and spends ammunition, and in this model the same carrier has to deal with both. The Army&rsquo;s manuals tell the platoon where casualties go (to the platoon casualty collection point, then back to the company&rsquo;s) and say that sustainment supports the momentum of the attack. This figure shows that traffic as a conveyor and as a platoon on the ground. In this model, the more casualties there are and the slower the means of evacuation, the longer the line waits for its ammunition.</p>
+
+  <div class="iso cv-figure" data-theme="light">
+    <!--FIGURE-->
+    <div class="cv-controls">
+      <div class="fd-views" role="group" aria-label="View">
+        <button type="button" data-view="machine" aria-pressed="false">Machine</button>
+        <button type="button" data-view="field" aria-pressed="true">Battlefield</button>
+      </div>
+      <div class="fd-views cv-modes" role="group" aria-label="Means of evacuation">
+        <button type="button" data-means="vehicle" aria-pressed="true">Nonmedical vehicle</button>
+        <button type="button" data-means="litter" aria-pressed="false">Litter bearers</button>
+      </div>
+      <button type="button" class="btn btn-outline" id="cv-go">Start the run</button>
+      <button type="button" class="btn btn-outline fd-reset">Reset</button>
+    </div>
+    <div class="cv-set">
+      <label class="cv-hold"><span id="cv-n-label">Casualties in the attack (notional)</span> <input type="range" id="cv-n" min="0" max="8" step="1" value="3" aria-label="Casualties in the attack, zero to eight, a notional setting in this model"> <output id="cv-n-out" for="cv-n">3</output></label>
+    </div>
+  </div>
+
+  <section class="fl-text">
+    <p class="ex-switch">This section follows the view you are on. Switch views with the buttons under the card or the V key; the same casualty count, the same means of evacuation and the same run drive both. Reset puts the figure back where it started.</p>
+    <div class="ex-view ex-machine">
+    <h2>How to read it: the machine</h2>
+    <h3>What is on the bench</h3>
+    <ol>
+      <li><b>The carriage</b> on the rail at the back is the platoon&rsquo;s line, the lit part. Five posts with pennants are the line of departure and four phase lines; the six pegs on the carriage are men up (they drop as casualties occur), and the <b>tank</b> at the left end of the rail is the ammunition the line has left.</li>
+      <li><b>The belt</b> along the middle carries casualties back. The <b>eight-slot tray</b> on it is the platoon CCP and the <b>bin</b> at its end is the company CCP. A grey flat peg is a casualty.</li>
+      <li><b>The cart</b> on the lane beside the rail is the carrier: a stretcher for litter bearers, a small truck for a nonmedical vehicle. It takes casualties down the belt to the bin and then runs ammunition up the lane to the line.</li>
+      <li><b>The dial</b> at the back right is the run&rsquo;s progress, the <b>rack</b> at the back has eight pegs for the platoon and six for the enemy, laid flat as men go down, and the <b>time rule</b> at the front shows the light segments as the moves and the dark ones as the halts. The rule&rsquo;s index is the clock.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Set the casualties and the means,</b> then <b>start the run.</b> The line moves from one phase line to the next and halts. Casualties occur during the moves and are carried to the platoon CCP before the halt.</li>
+      <li><b>At each halt</b> the cart first takes each casualty at the platoon CCP back to the company CCP, one trip each, and then brings ammunition forward. The line does not step off until the ammunition has arrived. That rule is this figure&rsquo;s own; it is how the model makes sustainment limit the tempo.</li>
+      <li><b>Compare the two means.</b> A vehicle takes less time per casualty than litter bearers in this model, so the dark segments are shorter. With no casualties the line still halts for its ammunition. Every time and count here is notional.</li>
+    </ol>
+    </div>
+    <div class="ex-view ex-field">
+    <h2>How to read it: the battlefield</h2>
+    <p>Here the scale is a rifle platoon attacking an enemy position on the rise at the right. Blue is friendly and red is the enemy. The lit figure is the carrier: a nonmedical vehicle on the farm track, or a pair of litter bearers.</p>
+    <h3>What is on the ground</h3>
+    <ol>
+      <li><b>The platoon</b> is three squads in a line (as drawn, each a squad leader and two fire teams). <b>Five chalk lines</b> are the line of departure and four phase lines; the platoon moves from one to the next and halts.</li>
+      <li><b>The platoon CCP</b> is the chalk rectangle behind the line of departure, with the platoon sergeant standing and the combat medic kneeling. ATP 3-21.8 gives the platoon sergeant the job of establishing and operating it. <b>Two pairs of aid and litter bearers</b> kneel beside it.</li>
+      <li><b>The company CCP</b> is the chalk rectangle at the far left, with a combat medic. The <b>farm track</b> along the bottom is the carrier&rsquo;s route.</li>
+      <li><b>The enemy</b> holds three two-man positions on the rise, with a flag for the objective.</li>
+    </ol>
+    <h3>How it moves</h3>
+    <ol>
+      <li><b>Set the casualties and the means</b> with the slider and the buttons, or the arrow keys and the M key, then <b>start the run.</b> Squads move to the next phase line and halt; tracers show the platoon&rsquo;s fire, which thins as its ammunition runs down in this model.</li>
+      <li><b>When a man goes down</b> he lies still, grey. A pair of aid and litter bearers goes out to him and brings him back to the platoon CCP. At the halt the carrier takes each casualty from the platoon CCP down the track to the company CCP, then returns with ammunition to the line; the platoon steps off only when it arrives.</li>
+      <li><b>Greyed figures lying still</b> are men down. Both sides lose men in every run. Counts and times are notional.</li>
+    </ol>
+    <p class="fine">Soldiers are drawn larger than scale (about one and a half times) so they read. Distances, times, the number of phase lines, the ammunition, the carrier&rsquo;s speed and the counts are notional and time is compressed. The run ends at the fourth phase line, short of the position.</p>
+    </div>
+
+    <h2>What doctrine says</h2>
+    <p><i>ATP 4-02.13, Casualty Evacuation</i> (30 June 2021, which supersedes ATP 4-25.13 of 15 February 2013) defines the term: &ldquo;Casualty evacuation is the movement of casualties aboard nonmedical vehicles or aircraft without en route medical care&rdquo; (para. 1-2, p. 1-1). The platoon manual, <i>ATP 3-21.8</i> (11 January 2024, incorporating Change 1, June 2025) and <i>ATP 4-02.2, Medical Evacuation</i> (12 July 2019, p. 1-6) give the same definition, citing FM 4-02. ATP 4-02.13 adds that it &ldquo;may be preplanned in support of a specific operation or may be by opportunity, such as when a cargo vehicle delivers ammunition and backhauls casualties&rdquo; (para. 1-2, p. 1-1).</p>
+    <ul>
+      <li><b>Where casualties go.</b> ATP 3-21.8: &ldquo;As soon as the situation allows, casualties are moved to the platoon CCP (when established). Once the casualties are collected, evaluated, and treated, they are prioritized for evacuation back to the company CCP&rdquo; (para. 8-33, p. 8-14). In the platoon sergeant&rsquo;s duties it lists &ldquo;[e]stablishes and operates the unit&rsquo;s casualty collection point (CCP),&rdquo; including &ldquo;directing the platoon combat medic and aid/litter teams in moving casualties&rdquo; (para. 1-22, p. 1-10).</li>
+      <li><b>The logistics team.</b> &ldquo;An effective technique, particularly during an attack, is to task-organize a logistics team under the first sergeant. This team carries additional ammunition forward to the platoons and evacuates casualties to either the company or the battalion CCP. The commander determines the size of the team during mission analysis&rdquo; (ATP 3-21.8 para. 8-34, p. 8-14). Pairing the two jobs is what the cart does on the bench. ATP 3-21.8 does not say the two jobs wait on each other.</li>
+      <li><b>The means.</b> &ldquo;When the platoons are widely dispersed, casualties might be evacuated directly from the platoon CCP by nonmedical vehicles and personnel. However, casualties are usually moved to the company CCP before evacuation&rdquo; and &ldquo;the platoon sergeant may direct platoon aid and litter teams to carry the casualties to the rear&rdquo; (para. 8-35, p. 8-14). &ldquo;Leaders minimize the number of Soldiers required to evacuate casualties&rdquo; (para. 8-36, p. 8-15).</li>
+      <li><b>Competing requirements.</b> ATP 4-02.13 lists a limit of CASEVAC: &ldquo;A CASEVAC vehicle is not a dedicated evacuation platform and has competing requirements (for example, the movement of ammunition or water). As a result, a CASEVAC vehicle may not be readily available but committed elsewhere&rdquo; (para. 1-5, pp. 1-1 and 1-2).</li>
+      <li><b>Sustainment and tempo.</b> &ldquo;The objective of sustainment in the offense is to assist the platoon in maintaining the momentum,&rdquo; and anticipating &ldquo;the requirement for resupply, specifically regarding ammunition, fuel, and water&rdquo; &ldquo;helps maintain the momentum of attack by resupplying as far forward as possible&rdquo; (ATP 3-21.8 paras. 4-38 and 4-39, p. 4-15). &ldquo;Leaders adjust tempo as tactical situations, sustainment necessity, or operational opportunities allow&rdquo; (para. 4-6, p. 4-3).</li>
+      <li><b>CASEVAC is not MEDEVAC.</b> &ldquo;Casualties transported in a CASEVAC platform may not receive proper en route medical care or be transported to the appropriate MTF that can best address the casualty&rsquo;s medical needs&rdquo; (ATP 3-21.8 para. 8-45, caution, p. 8-19). ATP 4-02.2 says units &ldquo;should only use CASEVAC to move Soldiers with less severe injuries when MEDEVAC assets are overwhelmed or otherwise unavailable&rdquo; (p. 1-7); ATP 3-21.8 says &ldquo;[e]ffective CASEVAC complements MEDEVAC by providing additional evacuation capacity when [the] number of casualties (workload) or reaction time exceeds the capabilities of MEDEVAC assets&rdquo; (para. 8-45, p. 8-19). ATP 4-02.13 calls using the two together &ldquo;an economic approach to the problem of clearing the battlefield to ensure commanders have freedom of maneuver and can sustain the initiative&rdquo; (para. 1-12, p. 1-3).</li>
+    </ul>
+    <p>None of the passages quoted here gives a time or a distance for any step in this picture, and this page uses no medical timing figure.</p>
+
+    <h2>What is notional</h2>
+    <p>The runs are a teaching model, not data. In this model an attack is four moves of 3.0 figure seconds each, with a halt after each; every halt costs 1.6 s for the carrier&rsquo;s way forward with ammunition; each casualty costs the carrier 1.2 s at the halt by vehicle or 2.6 s by litter bearers; the aid and litter pair take 1.6 s to fetch a man to the platoon CCP; casualties are shared across the four moves, so a casualty count of 3 falls in the first three moves and a count of 8 is two a move. With no casualties the run takes 18.4 s and the line is halted for 6.4 s of that. With three casualties it takes 22.0 s by vehicle (10.0 s halted) and 26.2 s by litter bearers (14.2 s halted); with eight, 28.0 s by vehicle (16.0 s halted) and 39.2 s by litter bearers (27.2 s halted). The ammunition tank falls to 35 per cent in a move and is refilled at the halt, and the enemy&rsquo;s six men go out of action at set times. None of these numbers comes from a manual. The rule that the platoon does not step off until the ammunition arrives, and the single carrier doing both jobs, are this figure&rsquo;s own; they are how the model turns &ldquo;sustainment supports tempo&rdquo; into a clock. A real platoon would not wait on every resupply, and real casualty flow depends on terrain, enemy fire and the assets available, none of which the model includes.</p>
+    <p class="fine">Sources: Headquarters, Department of the Army, <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN32888-ATP_4-02.13-000-WEB-1.pdf">ATP 4-02.13, Casualty Evacuation</a>, 30 June 2021 (<a href="https://web.archive.org/web/2026id_/https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN32888-ATP_4-02.13-000-WEB-1.pdf">archived copy</a>), paras. 1-2, 1-5, 1-12; <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44065-ATP_3-21.8-001-WEB-3.pdf">ATP 3-21.8, Infantry Rifle Platoon and Squad</a>, 11 January 2024 incorporating Change 1, June 2025, paras. 1-22, 4-6, 4-38, 4-39, 8-33 to 8-36 and 8-45; <a href="https://armypubs.army.mil/epubs/DR_pubs/DR_a/pdf/web/ARN17834_ATP%204-02x2%20FINAL%20WEB.pdf">ATP 4-02.2, Medical Evacuation</a>, 12 July 2019, pp. 1-6 and 1-7. Figure drawn with the open-source Anatomy isometric kit (MIT).</p>
+  </section>
+</main>
+<footer class="footer">
+    <div class="container">
+        <p class="footer-name">Jonathan Walberg</p>
+        <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/research/">Research</a>
+            <a href="/interactive/">Interactive Tools</a>
+            <a href="/narratives/">Narrative Tracking</a>
+            <a href="/experience/">Things I Do</a>
+        </div>
+    </div>
+</footer>
+<script src="/script.js"></script>
+<script type="module">/*LIVE*/</script>
+</body>
+</html>

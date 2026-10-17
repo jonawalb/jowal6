@@ -1,7 +1,7 @@
 // Event timeline for Red Sea & Hormuz Pulse. Every event was checked on 29 and again on 30 September 2026 against the linked page,
 // which returned HTTP 200 and states the date and fact given here (events dated after 16 September 2026 were added and checked
 // on 2 October 2026; the blockade, Perim and 4-5 October events were added and checked on 6 October 2026; the Dawn of Yemen, peak-week
-// and Dhubab events on 7 October 2026). Sites that block scripted requests
+// and Dhubab events on 7 October 2026; the 9-16 October events were added and checked on 17 October 2026). Sites that block scripted requests
 // (defense.gov, apnews.com) are linked through archive.org copies. cp = chokepoints the event bears on.
 // Dates are the day of the event as the source gives it; when sources differ, `desc` says so.
 export const CATS = {
@@ -170,4 +170,16 @@ export const EVENTS = [
   { id: 'dhubab-fighting', date: '2026-10-07', cat: 'other', cp: ['bab'], title: 'Fighting centers on Dhubab; Houthis strike Aden airport',
     desc: 'Reuters reported on 7 October that fighting on the western front "remains concentrated in the Dhubab district overlooking Bab el-Mandeb," with government forces trying to advance into the hills to the east, and that it was unclear whether their advance would hold. A government claim on 5 October to have reached Mocha "had been premature," according to Yemeni military officials and analysts. The same day the Houthis attacked Aden\'s airport with ballistic missiles and drones; one missile landed near the runway.',
     src: { name: 'Reuters via gCaptain, 7 Oct 2026', url: 'https://gcaptain.com/houthis-attack-aden-airport-as-fighting-intensifies-in-yemen/' } },
+  { id: 'oct-near-daily', date: '2026-10-09', cat: 'hormuz', cp: ['hormuz'], title: 'A ship struck nearly every day in October',
+    desc: 'USNI News reported on 9 October that, by the IMO\'s count, nine ships, mostly crude oil tankers, were struck in the strait or off Oman between 1 October and Tuesday 6 October. UKMTO advisories added two more, on Wednesday off Madinat ash Shamal, Qatar, and on Friday off Al Jazeera, UAE. The same report says transits kept rising: 143 between 28 September and Wednesday, and 477 non-Iranian-linked transits in September, the most since the war began.',
+    src: { name: 'USNI News, 9 Oct 2026 (archived)', url: 'https://web.archive.org/web/2026/https://news.usni.org/2026/10/09/october-sees-near-daily-strikes-on-ships-in-hormuz' } },
+  { id: 'six-struck-sunday', date: '2026-10-11', cat: 'hormuz', cp: ['hormuz'], title: 'UKMTO reports six vessels struck in one day',
+    desc: 'The National reported on 13 October that UKMTO issued delayed reports covering six vessels struck on Sunday 11 October, five tankers and a container ship, five in the strait and one near Oman\'s Sohar anchorage. At least 12 tankers had been attacked in a week by its tally of UKMTO warnings. On Saturday the IRGC said a supertanker using an "unauthorised route" had hit a naval mine; the analyst Sal Mercogliano said the video circulating with the claim did not appear to show a mine strike. Secretary of State Rubio had said the week before: "The Strait of Hormuz is open."',
+    src: { name: 'The National, 13 Oct 2026', url: 'https://www.thenationalnews.com/news/gulf/2026/10/13/strait-of-hormuz-attacks-surge-as-iran-steps-up-campaign-against-us-backed-oil-shipping/' } },
+  { id: 'gfs-pride', date: '2026-10-14', cat: 'hormuz', cp: ['hormuz'], title: 'Container ship GFS Pride sinks after being struck',
+    desc: 'The Singapore-registered GFS Pride sank on 14 October after being struck by an unidentified projectile and catching fire; all 21 crew were evacuated and none was reported injured, according to the Maritime and Port Authority of Singapore. A second Singapore-flagged ship, the GFS Giselle, was hit and damaged. The IRGC claimed the Pride hit a naval mine; the security firm Marisks said there was no independent evidence of that. CNBC calls it the third commercial ship sunk in the war; The National, on 16 October, says at least two have been sunk. CNBC counts more than 20 vessels attacked in October by UKMTO reports, with two sailors missing and more than a dozen injured per the IMO.',
+    src: { name: 'CNBC, 14 Oct 2026', url: 'https://www.cnbc.com/2026/10/14/container-ship-sinks-strait-hormuz-as-iran-war-attacks.html' } },
+  { id: 'st3', date: '2026-10-16', cat: 'hormuz', cp: ['hormuz'], title: 'Indian-crewed tanker MT ST 3 struck',
+    desc: 'India\'s ports minister, Sarbananda Sonowal, said on Friday 16 October that a crude oil tanker carrying 15 Indian crew members, the MT ST 3, was struck by a projectile in the strait; all Indian citizens aboard were safe and uninjured. The National reports attacks on transiting vessels at a record high; the article does not name an attacker for this strike.',
+    src: { name: 'The National, 16 Oct 2026', url: 'https://www.thenationalnews.com/news/mena/2026/10/16/india-hormuz-strait-tanker-attack/' } },
 ];

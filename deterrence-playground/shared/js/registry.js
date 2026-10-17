@@ -68,6 +68,8 @@ export const ALL_TOOLS = [
     blurb: 'Every U.S. arms sale Taiwan is still waiting for, from notification to delivery, with the backlog total over time.' },
   { slug: 'japan-arms-backlog', sites: ['tsm'], cat: 'trackers', title: 'Japan Arms Sales Backlog', status: 'live',
     blurb: 'Every U.S. arms sale Japan is still waiting for, from notification to delivery, with the amendments that grew old cases and the cases left out.' },
+  { slug: 'philippines-arms-backlog', sites: ['tsm'], cat: 'trackers', title: 'Philippines Arms Sales Backlog', status: 'live',
+    blurb: 'U.S. arms sales to the Philippines in two tiers: the one case Manila signed and is still receiving, and the billions notified to Congress that it never accepted, with the cases that were delivered, lost or replaced.' },
   { slug: 'strait-4d', sites: ['tsm'], cat: 'trackers', title: 'Strait 4D', status: 'live',
     blurb: 'Every day since August 2022 on one tilted 3D map: PLA activity, exercise zones, coast guard and gray-zone ships, cable incidents and what Beijing said, with crisis replays and anomaly flags.' },
   { slug: 'forecast-board', sites: ['tsm'], cat: 'trackers', title: 'Crowd Forecast Board', status: 'live',

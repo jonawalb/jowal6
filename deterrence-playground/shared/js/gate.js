@@ -4,7 +4,7 @@
 // In local development (serving the source tree) this file is not loaded and data is plaintext.
 (function () {
   'use strict';
-  var CFG = {"id": "1a4156241b", "open": true, "iter": 600000, "remember": false, "t2": {"id": "24323fd3b3", "salt": "1h8efphNDcDulPgKOV6WkA==", "check": "4ufCwV4H5vsTzWw8SsppYG8CYEFPkH2wYaZh4xmBJCzThQ==", "slugs": ["crossing-windows", "joint-sword", "penghu-gambit", "strait-landing", "strait-layers", "transit-response", "wargame-explorer", "warning-board"], "name": "Indo-Pacific"}, "t3": {"id": "1561121461", "salt": "MVNotf4TEPtaytW5XYSB0A==", "check": "9pi+x9N+EpXYMdBBG8XYpFM4Aoxc+i2ZQWbUvA2rxnLp3w==", "slugs": ["dissertation-games", "my-projects", "will-to-fight"], "name": "My Projects", "session": true}, "t4": {"id": "9de41c846d", "salt": "oqIHHudpJmpc+aW0a7OJag==", "check": "7kATO5IQxdNDiRoSs6Fw3ra6oVcd73LR7qgc2bz5FHguHg==", "slugs": ["arms-race", "bayesian-attack", "berlin-airlift", "brinkmanship", "coercion-resilience", "conceal-reveal", "correction-lab", "cost-ratio", "cry-wolf", "enforcement-ops", "exercise-or-invasion", "extended-deterrence", "hub-and-spokes", "humiliation-motivation", "iran-israel-salvos", "magazine-depth", "markets-vs-analysts", "minerals-twin", "misinfo-cascade", "narrative-contagion", "nuclear-signals", "prebunking-game", "qre-explorer", "salami", "sanctions-architect", "say-do-global", "sea-control", "situation-room", "supply-shock", "uplift-line", "verification-game"], "name": "Coming Soon"}, "t5": {"id": "1239aebe04", "salt": "DyDPl80nJR4dOfQcwckpzg==", "check": "XgKzGokjX1q2HMqt52womJcQD9J5iLWRiTtsLJrry1HmXQ==", "slugs": [], "name": "Rhetoric Search"}, "t6": {"id": "a9bd6dc201", "salt": "tAstxd7vYxDeKL3iCw2u5g==", "check": "hmtjD1w++jgWu9CSbE5w/SpBtEwtttI76dUMNniZh5V6iQ==", "slugs": ["defense-in-depth"], "name": "Defense in Depth"}, "t7": {"id": "f2e67b120b", "salt": "JpelVBEdm8Y9uTHt3cAa+A==", "check": "wJWc0DYminUOJZKdeRp1bqWN4QHsO96LZpFxAPdP3GiBQQ==", "slugs": ["conflict-initiation"], "name": "Conflict Initiation"}, "master": {"salt": "vde/ATuxVfD/g0e6EHJAMQ==", "check": "TU+yFg3h69kpOPVjlXBcWXt7p1z0XnU5t6ltqTRR6sgbOw==", "wraps": {"2": "5Th/33JAPx8KWMqD43i6P91a2DKbZ3HDcZcvD43QqaD5rL/LM7NeBE4ov65JNIDXTPbtaEoJp0nEGPds", "3": "w8KJHOr9ZHgikRb1wtLTmEYuF+GKokTn1HNRZzG1+ut+vFxvili54txS31IeuXkjU2QX4+Ozl+xzzxSA", "4": "U2Yjlsoc2VbhfQEaI/RwxIZXaTIVjc/4laieK6d2Sj9DrJSR76g/Rj6vjU30Y945OFmFU7opod30k/bM", "5": "ICCnmjpr/3L6ZxX5H92owjaiQXo+8YKDK50FZkbWh1OYwpmUUUErkVL7PIt0yIfhMiruaZ7hcBqni1RO", "6": "RDV0SXu/go/DgtHkxb6W0H8RvFq+Nh5qZhKe1JEN7KtzR35G0WLZZhbf9Kw94sM4zI77axtZlWwZk6/U", "7": "ybxLV7tyVoDa9PRJlrk3a4jHuMpeIkgAS7Cct92D0Ix8OdLXdTLXx4xBl+UduDS++83E6KvoIJkrdxui"}}};
+  var CFG = {"id": "1a4156241b", "open": true, "iter": 600000, "remember": false, "t2": {"id": "24323fd3b3", "salt": "1h8efphNDcDulPgKOV6WkA==", "check": "4ufCwV4H5vsTzWw8SsppYG8CYEFPkH2wYaZh4xmBJCzThQ==", "slugs": ["crossing-windows", "joint-sword", "penghu-gambit", "strait-landing", "strait-layers", "transit-response", "wargame-explorer", "warning-board"], "name": "Indo-Pacific"}, "t3": {"id": "1561121461", "salt": "MVNotf4TEPtaytW5XYSB0A==", "check": "9pi+x9N+EpXYMdBBG8XYpFM4Aoxc+i2ZQWbUvA2rxnLp3w==", "slugs": ["dissertation-games", "my-projects", "will-to-fight"], "name": "My Projects", "session": true}, "t4": {"id": "9de41c846d", "salt": "oqIHHudpJmpc+aW0a7OJag==", "check": "7kATO5IQxdNDiRoSs6Fw3ra6oVcd73LR7qgc2bz5FHguHg==", "slugs": ["arms-race", "bayesian-attack", "berlin-airlift", "brinkmanship", "coercion-resilience", "conceal-reveal", "correction-lab", "cost-ratio", "cry-wolf", "enforcement-ops", "exercise-or-invasion", "extended-deterrence", "hub-and-spokes", "humiliation-motivation", "iran-israel-salvos", "magazine-depth", "markets-vs-analysts", "minerals-twin", "misinfo-cascade", "narrative-contagion", "nuclear-signals", "prebunking-game", "qre-explorer", "salami", "sanctions-architect", "say-do-global", "sea-control", "situation-room", "supply-shock", "uplift-line", "verification-game"], "name": "Coming Soon"}, "t5": {"id": "1239aebe04", "salt": "DyDPl80nJR4dOfQcwckpzg==", "check": "XgKzGokjX1q2HMqt52womJcQD9J5iLWRiTtsLJrry1HmXQ==", "slugs": [], "name": "Rhetoric Search"}, "t6": {"id": "a9bd6dc201", "salt": "tAstxd7vYxDeKL3iCw2u5g==", "check": "hmtjD1w++jgWu9CSbE5w/SpBtEwtttI76dUMNniZh5V6iQ==", "slugs": ["defense-in-depth"], "name": "Defense in Depth"}, "t7": {"id": "f2e67b120b", "salt": "JpelVBEdm8Y9uTHt3cAa+A==", "check": "wJWc0DYminUOJZKdeRp1bqWN4QHsO96LZpFxAPdP3GiBQQ==", "slugs": ["conflict-initiation"], "name": "Conflict Initiation", "alts": [{"salt": "y6e5u1A/RA42ncwmsuKgAw==", "wrap": "iTnzNENr2nrJc6JEAlViWOP6U00zXCH5AXW0gqnZzKYuAhs+qeD3UnKvLh5mIaQxxlypEB8/OY51rqMn"}]}, "master": {"salt": "vde/ATuxVfD/g0e6EHJAMQ==", "check": "TU+yFg3h69kpOPVjlXBcWXt7p1z0XnU5t6ltqTRR6sgbOw==", "wraps": {"2": "5Th/33JAPx8KWMqD43i6P91a2DKbZ3HDcZcvD43QqaD5rL/LM7NeBE4ov65JNIDXTPbtaEoJp0nEGPds", "3": "w8KJHOr9ZHgikRb1wtLTmEYuF+GKokTn1HNRZzG1+ut+vFxvili54txS31IeuXkjU2QX4+Ozl+xzzxSA", "4": "U2Yjlsoc2VbhfQEaI/RwxIZXaTIVjc/4laieK6d2Sj9DrJSR76g/Rj6vjU30Y945OFmFU7opod30k/bM", "5": "ICCnmjpr/3L6ZxX5H92owjaiQXo+8YKDK50FZkbWh1OYwpmUUUErkVL7PIt0yIfhMiruaZ7hcBqni1RO", "6": "RDV0SXu/go/DgtHkxb6W0H8RvFq+Nh5qZhKe1JEN7KtzR35G0WLZZhbf9Kw94sM4zI77axtZlWwZk6/U", "7": "ybxLV7tyVoDa9PRJlrk3a4jHuMpeIkgAS7Cct92D0Ix8OdLXdTLXx4xBl+UduDS++83E6KvoIJkrdxui"}}};
   var KEYNAME = 'tsm-vault-key-' + (CFG ? CFG.id : 'dev');
   var MAGIC = 'TSMVAULT2:';
   // Optional extra tiers: tools listed in CFG.t2.slugs (or CFG.t3.slugs) have their data sealed with a
@@ -109,6 +109,19 @@
           });
       });
     });
+  }
+  /** Try `pw` against a tier's alternate passwords: derive with each alt salt and unwrap the tier key. */
+  function tryAlts(pw, tier) {
+    var alts = (tier > 1 && TIERS[tier] && TIERS[tier].alts) || [];
+    return alts.reduce(function (p, alt) {
+      return p.catch(function () {
+        return crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveBits']).then(function (base) {
+          return crypto.subtle.deriveBits({ name: 'PBKDF2', salt: b64d(alt.salt), iterations: CFG.iter, hash: 'SHA-256' }, base, 256);
+        }).then(function (bits) { return importRaw(new Uint8Array(bits)); })
+          .then(function (ak) { return decrypt(ak, b64d(alt.wrap)); })
+          .then(function (raw) { return tryRaw(raw, tier).then(function (k) { return { key: k, raw: raw }; }); });
+      });
+    }, Promise.reject());
   }
   function storedMaster() {
     var v = null;
@@ -259,6 +272,12 @@
           if (tier === 1) { try { (REMEMBER && g.querySelector('#g-rem').checked ? localStorage : sessionStorage).setItem(KEYNAME, b64e(raw)); } catch (e2) { /* storage blocked */ } }
           if (sessionTier(tier)) { try { sessionStorage.setItem(KEYNAMES[tier], b64e(raw)); } catch (e2) { /* storage blocked: this page only */ } }
           (tier > 1 ? unlock2 : unlock)(k);
+        });
+      }).catch(function () {
+        // Not the tier's own password: maybe one of its alternate passwords (CFG.tN.alts), each wrapping the tier key.
+        return tryAlts(typed, tier).then(function (r) {
+          if (sessionTier(tier)) { try { sessionStorage.setItem(KEYNAMES[tier], b64e(r.raw)); } catch (e2) { /* storage blocked: this page only */ } }
+          unlock2(r.key);
         });
       }).catch(function () {
         // Not this prompt's password: maybe the master password, which opens every tier for this tab.

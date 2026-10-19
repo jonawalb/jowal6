@@ -1,0 +1,152 @@
+/* Conflict Initiation. Built on shared CSS tokens only. A = --c1 (blue), B = --c2 (orange). */
+.toolbar-top { max-width: 1400px; margin: 16px auto 0; }
+.tabs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+.tabs button { text-align: left; padding: 10px 12px; border: 1px solid var(--rule); border-bottom: 3px solid transparent; background: var(--panel); border-radius: 4px; cursor: pointer; display: flex; flex-direction: column; gap: 2px; }
+.tabs button b { font-family: var(--display); font-size: 16px; font-weight: 600; }
+.tabs button span { font-size: 12px; color: var(--muted); }
+@media (hover: hover) { .tabs button:hover { border-color: var(--muted); } }
+.tabs button[aria-selected="true"] { border-color: var(--brand-ink); border-bottom-color: var(--accent); background: var(--chip); }
+@media (max-width: 900px) { .tabs { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .tabs { grid-template-columns: minmax(0, 1fr); } .tabs button span { display: none; } }
+.learn-slot { max-width: 1400px; margin: 16px auto 0; }
+.learn-slot .learn-banner { margin: 0; }
+
+.ci-layout { max-width: 1400px; margin: 16px auto 40px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+.ci-layout.with-aside { grid-template-columns: minmax(0, 1fr) 340px; align-items: start; }
+.ci-aside:empty { display: none; }
+.ci-aside { position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow: auto; display: flex; flex-direction: column; gap: 10px; }
+@media (max-width: 980px) { .ci-layout.with-aside { grid-template-columns: minmax(0, 1fr); } .ci-aside { position: static; max-height: none; } }
+.ci-view { min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+body[data-tab="idea"] .ci-view, body[data-tab="theory"] .ci-view { max-width: 920px; }
+
+.ci-sec { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 16px 18px; }
+.ci-sec h2 { margin: 0 0 8px; font-size: 22px; }
+.ci-sec h3 { margin: 12px 0 6px; font-size: 17px; }
+.ci-sec p { margin: 6px 0; max-width: 75ch; }
+.ci-two { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.ci-two h3 { margin-top: 0; }
+@media (max-width: 700px) { .ci-two { grid-template-columns: 1fr; } }
+.ci-q { font-size: 16px; padding: 8px 12px; border-left: 3px solid var(--accent); background: var(--chip); }
+.ci-core li, .ci-steps li { margin: 6px 0; max-width: 75ch; }
+.ci-next { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.fine { font-size: 12px; color: var(--muted); }
+.pa { color: var(--c1); } .pb { color: var(--c2); }
+.ok { color: var(--good); font-weight: 600; } .no { color: var(--bad); font-weight: 600; }
+
+.btn { font: 600 13px var(--body); padding: 7px 12px; border-radius: 4px; border: 1px solid var(--brand); background: var(--brand); color: var(--on-brand, #f2f2ee); cursor: pointer; }
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--rule); }
+@media (hover: hover) { .btn.ghost:hover { border-color: var(--muted); } }
+.chip { font: 12px var(--body); padding: 4px 9px; border: 1px solid var(--rule); border-radius: 999px; background: var(--panel); cursor: pointer; }
+.chip.ghost { color: var(--muted); }
+@media (hover: hover) { .chip:hover { border-color: var(--muted); } }
+
+/* Calculator */
+.calc-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 10px 0; }
+.calc-grid fieldset { border: 1px solid var(--rule); border-radius: 4px; padding: 8px 10px; display: flex; flex-direction: column; gap: 6px; }
+.calc-grid legend { font-weight: 600; font-size: 13px; padding: 0 4px; }
+.calc-grid label { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+.calc-grid input[type=number] { width: 64px; font: 13px var(--mono); padding: 3px 5px; border: 1px solid var(--rule); border-radius: 3px; background: var(--bg); color: var(--ink); }
+.calc-grid input[type=range] { flex: 1; min-width: 0; }
+.calc-grid output { font: 13px var(--mono); }
+.calc-out { font-size: 15px; padding: 8px 12px; background: var(--chip); border-radius: 4px; }
+@media (max-width: 700px) { .calc-grid { grid-template-columns: 1fr; } }
+
+/* Prediction + parameters */
+.ci-pred { background: var(--panel); border: 1px solid var(--rule); border-top: 3px solid var(--accent); border-radius: 6px; padding: 12px 14px; }
+.ci-pred .eyebrow { margin: 0 0 4px; font-size: 11px; }
+.ci-pred-main { margin: 0 0 8px; font-size: 15px; line-height: 1.35; }
+.ci-pred .arrow { color: var(--muted); }
+.ci-nums { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; margin: 0; }
+.ci-nums div { display: flex; flex-direction: column; }
+.ci-nums dt { font-size: 11px; color: var(--muted); }
+.ci-nums dd { margin: 0; font: 500 15px var(--mono); }
+.ci-presets { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.ci-presets .lbl { font-size: 12px; color: var(--muted); margin-right: 2px; }
+.ci-params, .ci-params-full { display: flex; flex-direction: column; gap: 8px; }
+.ci-params-full { margin-top: 10px; }
+.ci-grp { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; }
+.ci-grp summary { cursor: pointer; padding: 8px 12px; display: flex; flex-wrap: wrap; gap: 2px 10px; align-items: baseline; }
+.ci-grp summary span { font-size: 12px; color: var(--muted); }
+.ci-grp-b { padding: 4px 12px 10px; display: flex; flex-direction: column; gap: 6px; }
+.ci-params-full .ci-grp-b { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px 18px; }
+.ci-sl { display: grid; grid-template-columns: minmax(0, 1fr) 46px; gap: 0 8px; align-items: center; }
+.ci-sl label { grid-column: 1 / -1; font-size: 12.5px; }
+.ci-sl .sym { color: var(--muted); }
+.ci-sl input { width: 100%; min-width: 0; }
+.ci-sl output { font: 12px var(--mono); text-align: right; }
+.ci-sl .help { grid-column: 1 / -1; margin: 0; font-size: 12px; color: var(--muted); }
+
+/* Theory */
+.ci-cond { border-top: 1px solid var(--rule); padding-top: 8px; margin-top: 10px; }
+.ci-cond:first-of-type { border-top: 0; }
+.ci-cond h3 { margin-top: 0; }
+.ci-fig { margin: 10px 0 0; }
+.ci-fig svg { width: 100%; max-width: 620px; height: auto; display: block; }
+.ci-fig .grid { stroke: var(--rule); stroke-width: .6; }
+.ci-fig .axis { stroke: var(--axis-line, var(--faint)); }
+.ci-fig .ax { font: 11px var(--mono); fill: var(--muted); }
+.ci-fig .ln { fill: none; stroke: var(--c2); stroke-width: 2; }
+.ci-fig .cut { stroke: var(--ink); stroke-dasharray: 2 3; }
+.ci-fig figcaption { font-size: 12px; color: var(--muted); }
+
+/* Play */
+.ci-play-bar { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-bottom: 10px; }
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; flex-wrap: wrap; }
+.seg button { border: 0; background: transparent; padding: 6px 11px; font-size: 13px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--rule); }
+.seg button[aria-pressed="true"] { background: var(--chip); font-weight: 600; box-shadow: inset 0 -2px 0 var(--accent); }
+.ci-tog { display: inline-flex; gap: 6px; align-items: center; font-size: 13px; }
+.ci-log { margin: 0 0 10px; padding-left: 22px; font-size: 13px; }
+.ci-log li { margin: 2px 0; }
+.ci-card { border: 1px solid var(--rule); border-radius: 6px; padding: 12px 14px; background: var(--bg); }
+.ci-card h3 { margin: 2px 0 10px; font-size: 18px; }
+.ci-card .eyebrow { margin: 0; font-size: 11px; }
+.ci-opts { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.ci-opts li { border: 1px solid var(--rule); border-radius: 5px; background: var(--panel); }
+.ci-opts li > span.o-wrap, .ci-opts li > button, .ci-opts li:not(:has(> button)):not(:has(> .o-wrap)) { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 4px 12px; align-items: center; padding: 8px 12px; width: 100%; text-align: left; }
+.ci-opts li > button { border: 0; background: transparent; cursor: pointer; border-radius: 5px; }
+@media (hover: hover) { .ci-opts.pick li:hover { border-color: var(--ink); } }
+.ci-opts li.best { border-color: var(--good); box-shadow: inset 3px 0 0 var(--good); }
+.ci-opts li.hit { border-color: var(--accent); box-shadow: inset 3px 0 0 var(--accent); }
+.ci-opts li.miss { opacity: .55; }
+.o-l { font-weight: 600; }
+.o-l small { display: block; font-weight: 400; color: var(--muted); font-size: 12px; }
+.o-v { font: 12.5px var(--mono); white-space: nowrap; }
+.o-p { font: 600 13px var(--mono); }
+.o-b { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--good); }
+.ci-why { font-size: 13px; color: var(--muted); }
+.ci-out { border-collapse: collapse; margin: 6px 0 10px; font-size: 14px; }
+.ci-out th, .ci-out td { padding: 4px 12px; border-bottom: 1px solid var(--rule); text-align: right; }
+.ci-out th:first-child { text-align: left; }
+.ci-out td { font-family: var(--mono); }
+
+/* Tree */
+.ci-legend { font-size: 12px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; margin: 0 0 6px; }
+.lg { display: inline-block; width: 22px; height: 0; border-top: 3px solid; vertical-align: middle; margin-right: 4px; }
+.lg.a { border-color: var(--c1); } .lg.b { border-color: var(--c2); }
+.lg.eq { border-top-width: 8px; border-color: rgba(214, 160, 20, .45); }
+.lg.off { border-top: 1.5px dashed var(--faint); }
+.ci-anim-note { min-height: 1.4em; font-size: 13px; font-weight: 600; margin: 4px 0; }
+.ci-treewrap { overflow: auto; max-height: 70vh; border: 1px solid var(--rule); border-radius: 6px; background: var(--bg); }
+.ci-tree { display: block; }
+.ci-tree .edge { fill: none; stroke: var(--faint); stroke-width: 1.2; }
+.ci-tree .edge.off { stroke-dasharray: 4 4; opacity: .7; }
+.ci-tree .edge.chance { stroke: var(--muted); }
+.ci-tree .edge.best { stroke-width: 3; }
+.ci-tree .edge.best.a { stroke: var(--c1); } .ci-tree .edge.best.b { stroke: var(--c2); }
+.ci-tree .eqband { fill: none; stroke: rgba(214, 160, 20, .38); stroke-width: 10; stroke-linecap: round; }
+.ci-tree .el { font: 11.5px var(--body); fill: var(--muted); }
+.ci-tree .el.on { fill: var(--ink); font-weight: 600; }
+.ci-tree .nd { stroke-width: 1.6; fill: var(--panel); }
+.ci-tree .nd.a { stroke: var(--c1); } .ci-tree .nd.b { stroke: var(--c2); } .ci-tree .nd.c { stroke: var(--muted); fill: var(--chip); }
+.ci-tree .nd.eq { stroke-width: 2.6; }
+.ci-tree .nd.leaf { fill: var(--ink); stroke: none; }
+.ci-tree .nl { font: 700 11px var(--body); fill: var(--ink); pointer-events: none; }
+.ci-tree .nv { font: 11px var(--mono); fill: var(--ink); }
+.ci-tree .nv.pend { fill: var(--faint); }
+.ci-tree .more { font: 700 13px var(--mono); fill: var(--accent); }
+.ci-tree .click { cursor: pointer; }
+.ci-tree .click:focus-visible circle { stroke: var(--focus); stroke-width: 3; }
+.ci-words { margin-top: 12px; }
+.ci-wordlist { list-style: none; padding: 0; margin: 6px 0 0; font-size: 13px; }
+.ci-wordlist li { margin: 3px 0; padding-left: calc(var(--d, 0) * 18px); }

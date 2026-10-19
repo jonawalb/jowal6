@@ -154,6 +154,9 @@ export const ALL_TOOLS = [
     blurb: "Explore eighty years of FAS nuclear warhead estimates for every nuclear-armed state, against the treaties from the NPT to New START's lapse in February 2026." },
   { slug: 'escalation-ladder-kahn', game: true, sub: { nuclear: 'playground' }, cat: 'nuclear', sites: ['deterrence'], title: "Kahn's Escalation Ladder", status: 'live',
     blurb: "Step through nuclear crises from Cuba 1962 to India–Pakistan 2025 on Herman Kahn's 44-rung ladder, compare them, and read why the ladder misleads." },
+  // Conflict Initiation: its own password (tier 7, vault 'ci'). Model from paper folder 23 – Escalation Management.
+  { slug: 'conflict-initiation', cat: 'gametheory', sites: ['deterrence'], vault: 'ci', title: 'Conflict Initiation', status: 'live',
+    blurb: 'Choose how to start a war, from a limited conventional grab to a strategic strike, see how the other side answers, and trace the backward-induction solution as you trade the pie against the losses.' },
   { slug: 'deterrence-lab-general', game: true, cat: 'gametheory', sites: ['deterrence'], title: 'Deterrence Lab', status: 'live',
     blurb: 'Move the costs and beliefs in three classic deterrence models (audience costs, costly signals and salami tactics) and test them against sourced crises from Fashoda in 1898 to NATO\'s eastern flank in 2016–17.' },
   { slug: 'ukraine-air-war', sub: { regions: 'ukraine' }, cat: 'regions', sites: ['deterrence'], title: "Ukraine's Air War", status: 'live',

@@ -26,6 +26,27 @@
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="stylesheet" href="/style.css"><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
+
+<style>
+/* Home: shorter bridge hero that hands off straight into About */
+.hero { min-height: 72vh; justify-content: flex-start; padding: calc(var(--nav-h) + 14px) 24px 24px;
+  background-size: cover, cover; background-position: center, center 62%;
+  background-image: linear-gradient(to bottom, rgba(250,248,244,.92) 0%, rgba(250,248,244,.75) 30%, rgba(250,248,244,0) 52%, rgba(250,248,244,0) 88%, rgba(250,248,244,1) 100%), url('/img/wakefield-hero.jpg'); }
+.hero::before { display: none; }
+.hero::after { height: 40px; }
+.hero-content { padding: 0; max-width: 780px; }
+.hero-name { font-size: clamp(42px, 5vw, 70px); }
+.hero-sub { color: #3a342e; text-shadow: none; font-size: 16px; margin: 8px auto 0; }
+.hero-links { margin-top: 14px; }
+#about.section { padding-top: 40px; } #about .section-title { margin-bottom: 30px; }
+#about .about-link { color: var(--green-900); text-decoration: underline; text-underline-offset: 3px; }
+.home-about { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 48px; align-items: start; }
+.home-side { position: sticky; top: calc(var(--nav-h) + 24px); border-left: 2px solid #a23838; padding-left: 20px; }
+.home-side .hero-featured { position: static; align-items: flex-start; text-align: left; padding: 0; gap: 14px; }
+.home-side .hero-featured a { font-size: 14px; }
+.home-side .hero-featured .hf-label { display: block; margin-bottom: 2px; }
+@media (max-width: 900px) { .home-about { grid-template-columns: 1fr; } .home-side { position: static; } }
+</style>
 </head>
 <body>
 
@@ -59,12 +80,52 @@
             <a href="/narratives/">Narrative Tracking</a>
         </nav>
     </div>
+</section>
+
+<section class="section" id="about">
+    <div class="container">
+        <h2 class="section-title">About</h2>
+        <div class="home-about"><div class="about-portrait-row">
+            <div class="about-intro">
+                <p>I am a Ph.D. student in Political Science at the University of Virginia, where I study the role of information and emotion in conflict, with a particular focus on political narratives, cognitive warfare, deterrence, and capability revelation. My research examines how states and non-state actors use information to shape perceptions, influence decision-making, and alter strategic outcomes across both conventional and irregular forms of conflict.</p>
+                <p>Additionally, I have extensive experience as an analyst covering China, Taiwan, emerging military capabilities, disinformation, critical minerals, and the role of artificial intelligence in national security. I'm currently the Associate Director of <a class="about-link" href="https://taiwanmonitor.com" target="_blank" rel="noopener">Taiwan Security Monitor</a>, where I lead research on cross-Strait and Indo-Pacific security, producing data-driven analysis, wargames, forecasting models, and policy insights for U.S. government stakeholders, private-sector partners, and the public. I am also Affiliate Faculty at George Mason University's Schar School of Policy and Government. Previously, I served as a wargame designer for the Center for Security Policy Studies and as an AI Technology and Policy Fellow with the Center for Human-AI Innovation for Society.</p>
+                <p>I'm passionate about making research accessible, digestible, and relevant to the real world. My <a class="about-link" href="/interactive/">Interactive Tools</a> project turns it into wargames, live data trackers, and game-theory models anyone can explore.</p>
+                <p><a class="about-link" href="https://scholar.google.com/citations?user=JEw_v40AAAAJ" target="_blank" rel="noopener">Google Scholar Page</a></p>
+            </div>
+        </div>
+        <aside class="home-side">
     <div class="hero-featured" id="hero-featured">
         <a id="hf-pub" href="https://thediplomat.com/2026/09/the-us-arms-bottleneck-is-impacting-its-east-asian-allies/" target="_blank" rel="noopener"><span class="hf-label">Latest</span> <span class="hf-text">&ldquo;The US Arms Bottleneck Is Impacting Its East Asian Allies,&rdquo; <em>The Diplomat</em></span></a>
         <a id="hf-tool" href="/deterrence-playground/tools/war-markets/"><span class="hf-label">Try</span> <span class="hf-text">War Markets &mdash; what prediction markets priced for war, and how each bet turned out &rarr;</span></a>
         <a class="hf-scholar" href="https://scholar.google.com/citations?user=JEw_v40AAAAJ" target="_blank" rel="noopener">Google Scholar Page</a>
     </div>
     <script>(function (b) { b.classList.add('hf-wait'); setTimeout(function () { b.classList.remove('hf-wait'); }, 3000); })(document.getElementById('hero-featured'));</script>
+</aside></div>
+        <div class="edu-split" style="margin-top: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;">
+            <div class="edu-image">
+                <img src="/img/sketch.jpg" alt="Artist sketching" style="width: 100%; border-radius: 10px; border: 1px solid var(--border);">
+            </div>
+            <div class="about-education">
+                <h3>Education</h3>
+                <div class="edu-item">
+                    <span class="edu-degree">Ph.D., Political Science</span>
+                    <span class="edu-meta">University of Virginia &middot; Expected 2028 &middot; Subfields: IR & Research Methods</span>
+                </div>
+                <div class="edu-item">
+                    <span class="edu-degree">M.A., Foreign Affairs</span>
+                    <span class="edu-meta">University of Virginia &middot; 2026</span>
+                </div>
+                <div class="edu-item">
+                    <span class="edu-degree">M.A., International Security</span>
+                    <span class="edu-meta">George Mason University &middot; Awarded as top ranked graduate</span>
+                </div>
+                <div class="edu-item">
+                    <span class="edu-degree">B.A., Government & International Relations</span>
+                    <span class="edu-meta">George Mason University</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
 
 <!-- Footer -->

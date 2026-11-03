@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luria Results Tracker</title>
+<meta name="description" content="Live results for Elaine Luria in Virginia's 2nd Congressional District, from the Virginia Department of Elections.">
+<meta property="og:title" content="Luria for Congress: Live Results">
+<meta property="og:description" content="VA-2 results, refreshed every minute after polls close, from the Virginia Department of Elections.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light;
+  --navy:#0E2954; --navy-2:#1B3A6B; --hero:#0E2954; --gold:#E3AE1C; --red:#B8434F;
+  --paper:#EEF0F4; --white:#FFFFFF; --ink:#111522; --muted:#545A68; --soft:#CDD2DC; --other:#9AA0AC;
+  --head:'Archivo',system-ui,sans-serif; --body:'DM Sans',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;border-radius:0!important}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);line-height:1.45;-webkit-font-smoothing:antialiased}
+.mono{font-family:'DM Mono',ui-monospace,monospace}
+.hide{display:none!important}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px}
+
+.topbar{position:sticky;top:0;z-index:50;background:#0A1730;color:var(--white)}
+.topbar .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px;height:42px}
+.tb-mid{display:flex;align-items:center;gap:18px;min-width:0}
+.brand{font-family:var(--head);font-weight:900;font-size:15px;letter-spacing:.02em;text-transform:uppercase;white-space:nowrap}
+.brand b{color:var(--gold)}
+.pill{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.pill .dot{width:9px;height:9px;background:#8992A6}
+.pill.live .dot{background:var(--gold);animation:blink 1.2s steps(2) infinite}
+.pill.win .dot{background:var(--gold)}
+.pill.err .dot{background:#ff5a5a}
+@keyframes blink{50%{opacity:0}}
+.tb-right{display:flex;align-items:center;gap:14px;font-size:13px}
+.tb-count{color:#AEB5C4}
+.tb-count b{color:var(--white);font-weight:500}
+.tb-btn{font:inherit;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;padding:5px 10px;background:transparent;color:var(--white);border:1px solid #6B7690;cursor:pointer}
+.tb-btn:hover{border-color:var(--white)}
+
+.hero{background:var(--hero);color:#F3F5F9;padding:24px 0 0}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--head);font-weight:900;font-size:clamp(30px,6vw,46px);line-height:1;letter-spacing:-.01em;margin:8px 0 8px;text-transform:uppercase}
+.hero h1 span{color:var(--gold)}
+.hero .sub{font-size:14px;max-width:660px;opacity:.9}
+.facts{display:flex;flex-wrap:wrap;margin-top:14px;border-top:1px solid rgba(243,245,249,.3)}
+.facts span{font-size:12px;font-weight:500;padding:7px 14px 7px 0;margin-right:14px}
+.facts span+span{border-left:1px solid rgba(243,245,249,.3);padding-left:14px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);margin-top:4px;border-top:1px solid rgba(243,245,249,.3)}
+.stat{padding:12px 14px 14px 0}
+.stat+.stat{border-left:1px solid rgba(243,245,249,.3);padding-left:14px}
+.stat .k{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;opacity:.85}
+.stat .v{font-family:var(--head);font-weight:800;font-size:26px;line-height:1.1;margin-top:4px;font-variant-numeric:tabular-nums}
+.stat .n{font-size:12px;margin-top:2px;opacity:.88}
+.stat.hl .v{text-decoration:underline;text-decoration-color:var(--gold);text-decoration-thickness:2px;text-underline-offset:4px}
+
+.jump{background:var(--white);border-bottom:1px solid #BCC3D0}
+.jump .wrap{display:flex;overflow-x:auto;scrollbar-width:none}
+.jump .wrap::-webkit-scrollbar{display:none}
+.jump a{flex:none;font-size:13px;font-weight:600;color:var(--ink);text-decoration:none;padding:9px 14px;border-right:1px solid #BCC3D0}
+.jump a:first-child{border-left:1px solid #BCC3D0}
+.jump a:hover{background:var(--paper)}
+
+main.wrap{padding-top:18px;padding-bottom:36px}
+.card{background:var(--white);border:1px solid #BCC3D0;padding:20px;margin-bottom:16px;scroll-margin-top:56px}
+.banner{background:#FBF5E4;border-left:5px solid var(--gold);font-family:var(--head);font-weight:800;font-size:17px;line-height:1.2}
+.banner small{display:block;font-family:var(--body);font-size:13px;font-weight:500;margin-top:4px}
+.banner.warn{background:#FBECEC;border-left-color:var(--red)}
+.sec-h{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;border-bottom:2px solid var(--ink);padding-bottom:8px;margin-bottom:12px}
+.sec-h h2{font-family:var(--head);font-weight:800;font-size:19px;line-height:1;color:var(--navy)}
+.sec-h .note{font-size:13px;color:var(--muted);font-weight:500}
+
+.cand{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:10px 0;border-bottom:1px solid var(--soft);align-items:end}
+.cand:last-child{border-bottom:0}
+.cand .name{font-family:var(--head);font-weight:800;font-size:17px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;line-height:1.1}
+.cand .party{font-family:var(--body);font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.cand .tag{font-family:var(--body);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;background:var(--navy);color:var(--white)}
+.cand .tag.lead{background:transparent;color:var(--navy);box-shadow:inset 0 0 0 2px var(--navy)}
+.cand .num{text-align:right;font-variant-numeric:tabular-nums}
+.cand .num b{font-family:var(--head);font-weight:800;font-size:20px}
+.cand .num .pct{display:block;font-size:12px;color:var(--muted);font-weight:500}
+.cand .delta{font-size:12px;color:var(--navy);font-weight:700;margin-left:8px}
+.bar{grid-column:1/-1;height:10px;background:var(--paper)}
+.bar i{display:block;height:100%;background:var(--other);transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.cand.hero-c .bar i{background:var(--navy)}
+.cand.hero-c .name{color:var(--navy)}
+.cand.rep .bar i{background:var(--red)}
+.extra{margin-top:12px;font-size:13px;color:var(--muted);display:flex;gap:20px;flex-wrap:wrap}
+.extra b{color:var(--ink)}
+a{color:var(--navy-2);font-weight:700}
+
+table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{padding:8px 8px;text-align:right;border-bottom:1px solid var(--soft);white-space:nowrap}
+th:first-child,td:first-child{text-align:left;padding-left:0}
+th{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;border-bottom:2px solid var(--ink)}
+td.hcol{color:var(--navy);font-weight:700}
+tr.total td{font-weight:700;border-bottom:0;border-top:2px solid var(--ink)}
+.badge{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px}
+.badge.done{background:var(--navy);color:var(--white)}
+.badge.part{background:#F6E7BB;color:#5C4500}
+.badge.none{color:var(--muted);box-shadow:inset 0 0 0 1px var(--soft)}
+.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.d{color:var(--navy);font-weight:700}
+.r{color:var(--red);font-weight:700}
+.minibar{display:inline-block;width:70px;height:7px;background:var(--paper);vertical-align:middle;margin-left:8px;position:relative}
+.minibar i{position:absolute;left:0;top:0;bottom:0;background:var(--navy)}
+
+.about ul{list-style:none}
+.about li{font-size:14px;padding:9px 0 9px 18px;position:relative;border-bottom:1px solid var(--soft)}
+.about li:last-child{border-bottom:0}
+.about li::before{content:"";position:absolute;left:0;top:16px;width:7px;height:7px;background:var(--gold)}
+
+.timer{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.timer .big{font-family:'DM Mono',monospace;font-size:28px;font-weight:500;line-height:1}
+.timer .meta{flex:1;min-width:220px;font-size:14px;color:var(--muted)}
+.timer .meta b{color:var(--ink)}
+.pbar{height:6px;background:var(--paper);margin-top:12px}
+.pbar i{display:block;height:100%;background:var(--navy);width:0}
+#refresh{font:inherit;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.06em;padding:9px 14px;border:1px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer}
+#refresh:hover{background:var(--ink);color:var(--white)}
+button:disabled{opacity:.5;cursor:default}
+footer{font-size:13px;color:var(--muted);line-height:1.6;padding-bottom:40px}
+
+@media (max-width:820px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .stat:nth-child(3){border-left:0;padding-left:0}
+  .stat:nth-child(n+3){border-top:1px solid rgba(243,245,249,.3)}
+}
+@media (max-width:640px){
+  .hero{padding-top:18px}
+  .stat .v{font-size:22px}
+  .card{padding:16px 14px}
+  .sec-h h2{font-size:18px}
+  .cand .name{font-size:16px}
+  .cand .num b{font-size:18px}
+  th,td{padding:8px 6px;font-size:13px}
+  .tb-count{display:none}
+  .facts{flex-direction:column}
+  .facts span{padding:7px 0;margin:0}
+  .facts span+span{border-left:0;padding-left:0;border-top:1px solid rgba(243,245,249,.3)}
+  .pill{font-size:11px;letter-spacing:.04em}
+}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="wrap">
+  <div class="tb-mid"><span class="brand">Team <b>Luria</b></span><div id="status" class="pill wait"><span class="dot"></span><span id="statusText">Loading…</span></div></div>
+  <div class="tb-right"><span class="tb-count">Next update <b class="mono" id="miniCount">–</b></span><button class="tb-btn" id="miniRefresh">Refresh</button></div>
+</div></div>
+
+<header class="hero"><div class="wrap">
+  <div class="eyebrow">Election night · Nov 3, 2026 · U.S. House, Virginia’s 2nd District</div>
+  <h1>Elaine Luria <span>Results.</span></h1>
+  <div class="sub">Live count for Congress in Coastal Virginia: Virginia Beach, Chesapeake, Suffolk, Franklin, Isle of Wight, Southampton and the Eastern Shore.</div>
+  <div class="facts"><span>Rematch with Rep. Jen Kiggans, who unseated Luria in 2022</span><span>One seat · most votes wins</span></div>
+  <div class="stats">
+    <div class="stat"><div class="k">Precincts in</div><div class="v" id="sPrec">–</div><div class="n" id="sPrecN">&nbsp;</div></div>
+    <div class="stat hl"><div class="k">Luria votes</div><div class="v" id="sHero">–</div><div class="n" id="sHeroN">&nbsp;</div></div>
+    <div class="stat"><div class="k" id="sMarK">Margin</div><div class="v" id="sMar">–</div><div class="n" id="sMarN">&nbsp;</div></div>
+    <div class="stat"><div class="k">Total votes</div><div class="v" id="sTot">–</div><div class="n" id="sTotN">&nbsp;</div></div>
+  </div>
+</div></header>
+
+<nav class="jump" aria-label="Sections"><div class="wrap">
+  <a href="#results">Results</a><a href="#types">How people voted</a><a href="#local">By locality</a><a href="#how">How it works</a>
+</div></nav>
+
+<main class="wrap">
+  <div id="banner" class="card banner hide"></div>
+
+  <section class="card" id="results">
+    <div class="sec-h"><h2>District-wide results</h2><span class="note">Vote for one</span></div>
+    <div id="cands"></div>
+    <div class="extra" id="extra"></div>
+  </section>
+
+  <section class="card" id="types">
+    <div class="sec-h"><h2>How people voted</h2><span class="note">Votes by ballot type</span></div>
+    <div class="tscroll"><table id="tTypes"></table></div>
+    <div class="extra"><span>Virginia reports early and mailed ballots separately from Election Day votes, so the lead can swing as each type comes in.</span></div>
+  </section>
+
+  <section class="card" id="local">
+    <div class="sec-h"><h2>By locality</h2><span class="note">8 cities and counties · precincts reporting in each</span></div>
+    <div class="tscroll"><table id="tLocal"></table></div>
+    <div class="extra"><span>Some localities are split between congressional districts; only their VA-2 precincts count here.</span></div>
+  </section>
+
+  <section class="card about" id="how">
+    <div class="sec-h"><h2>How results come in</h2></div>
+    <ul>
+      <li><b>Polls close at 7:00 PM ET.</b> Localities then report precinct by precinct, so “Precincts in” climbs through the night.</li>
+      <li><b>Early, mailed and Election Day ballots are counted separately.</b> Each type can arrive at a different time, so an early lead can shrink or grow. Watch “How people voted.”</li>
+      <li><b>Mailed ballots can keep arriving after tonight.</b> Totals can still change in the days after the election, and results are unofficial until certified.</li>
+      <li><b>Virginia Beach is the big one.</b> It has 108 of the district’s 222 precincts.</li>
+      <li><b>Where the numbers come from.</b> The Virginia Department of Elections results site. Its data can’t be read directly by other websites, so a relay copies the VA-2 numbers about once a minute for this page.</li>
+    </ul>
+    <div class="extra"><span>Source: <a href="https://enr.elections.virginia.gov/results/public/virginia/elections/2026-November-General" target="_blank" rel="noopener">Virginia Department of Elections, 2026 November General</a></span></div>
+  </section>
+
+  <section class="card">
+    <div class="timer">
+      <div class="big" id="countdown">–</div>
+      <div class="meta">
+        Next update in <b id="countdown2">–</b><br>
+        Relay last copied the state data: <b id="relayed">–</b><br>
+        State last updated: <b id="posted">–</b>
+      </div>
+      <button id="refresh">Refresh now</button>
+    </div>
+    <div class="pbar"><i id="pfill"></i></div>
+  </section>
+</main>
+<div class="wrap"><footer>
+  Data from the <a href="https://enr.elections.virginia.gov/results/public/virginia/elections/2026-November-General" target="_blank" rel="noopener">Virginia Department of Elections</a>, relayed about once a minute. This page refreshes every 5 minutes before polls close and every minute after 7:00 PM ET; keep the tab open. Results are unofficial until certified.
+</footer></div>
+
+<script>
+(() => {
+  const SOURCES = [
+    { url: 'https://api.github.com/repos/jonawalb/election-night-data/contents/luria.json', headers: { Accept: 'application/vnd.github.raw+json' } },
+    { url: 'https://raw.githubusercontent.com/jonawalb/election-night-data/main/luria.json', headers: {}, bust: true }
+  ];
+  const HERO = 'LURIA', RIVAL = 'KIGGANS';
+  const POLLS_CLOSE = new Date('2026-11-04T00:00:00Z'); // 7:00 PM EST
+  const STALE_MS = 6 * 60 * 1000;
+  const interval = () => (Date.now() >= POLLS_CLOSE.getTime() ? 60 : 5 * 60) * 1000;
+  let curInterval = interval(), nextAt = Date.now(), loading = false, prev = null;
+
+  const $ = id => document.getElementById(id);
+  const fmt = n => (n == null || isNaN(n)) ? '–' : Number(n).toLocaleString('en-US');
+  const pct = (a, b) => b > 0 ? (a / b * 100).toFixed(1) + '%' : '–';
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const last = n => String(n).replace(/"[^"]*"/g, '').trim().split(/\s+/).slice(-1)[0];
+  const PARTY = { D: 'Democratic', R: 'Republican', I: 'Independent', L: 'Libertarian' };
+  const tfmt = iso => iso ? new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' }) + ' ET' : '–';
+
+  function setStatus(cls, text) { $('status').className = 'pill ' + cls; $('statusText').textContent = text; }
+
+  async function load() {
+    let err;
+    for (const s of SOURCES) {
+      try {
+        const r = await fetch(s.url + (s.bust ? '?t=' + Date.now() : ''), { headers: s.headers, cache: 'no-cache' });
+        if (!r.ok) throw new Error(r.status + ' ' + s.url);
+        return await r.json();
+      } catch (e) { err = e; }
+    }
+    throw err;
+  }
+
+  function render(d) {
+    const cands = d.candidates.slice().sort((a, b) => b.votes - a.votes);
+    const total = cands.reduce((s, c) => s + c.votes, 0);
+    const hero = cands.find(c => c.name.toUpperCase().includes(HERO));
+    const rival = cands.find(c => c.name.toUpperCase().includes(RIVAL));
+    const locs = d.localities.filter(l => !l.error);
+    const precIn = locs.reduce((s, l) => s + l.reporting, 0), precAll = locs.reduce((s, l) => s + l.total, 0);
+    const locsDone = locs.filter(l => l.total && l.reporting >= l.total).length;
+    const any = total > 0;
+
+    // Stats
+    $('sPrec').textContent = precAll ? fmt(precIn) + ' / ' + fmt(precAll) : '–';
+    $('sPrecN').textContent = precAll ? pct(precIn, precAll) + ' · ' + locsDone + ' of 8 localities complete' : ' ';
+    $('sHero').textContent = fmt(hero && hero.votes);
+    $('sHeroN').textContent = any && hero ? pct(hero.votes, total) + ' of the vote' : 'waiting on first results';
+    if (any && hero && rival) {
+      const m = hero.votes - rival.votes;
+      $('sMarK').textContent = m >= 0 ? 'Luria leads by' : 'Luria trails by';
+      $('sMar').textContent = (m >= 0 ? '+' : '−') + fmt(Math.abs(m));
+      $('sMarN').textContent = (m >= 0 ? '+' : '−') + Math.abs((hero.votes - rival.votes) / total * 100).toFixed(1) + ' pts vs. Kiggans';
+    } else { $('sMarK').textContent = 'Margin'; $('sMar').textContent = '–'; $('sMarN').textContent = 'vs. Kiggans'; }
+    $('sTot').textContent = fmt(total);
+    $('sTotN').textContent = d.official ? 'official results' : 'unofficial';
+
+    // Candidates
+    const max = Math.max(1, ...cands.map(c => c.votes));
+    $('cands').innerHTML = cands.map((c, i) => {
+      const isH = c === hero, isR = c.party === 'R';
+      const dlt = prev && prev[c.name] != null ? c.votes - prev[c.name] : 0;
+      let tag = '';
+      if (c.winner) tag = '<span class="tag">' + (d.official ? 'Elected' : 'Winner') + '</span>';
+      else if (any && i === 0) tag = '<span class="tag lead">Leading</span>';
+      return '<div class="cand' + (isH ? ' hero-c' : '') + (isR ? ' rep' : '') + '">' +
+        '<div class="name">' + esc(c.name) + ' <span class="party">' + esc(PARTY[c.party] || (c.writeIn ? 'Write-in' : c.party || '')) + '</span>' + tag + '</div>' +
+        '<div class="num"><b>' + fmt(c.votes) + '</b>' + (dlt > 0 ? '<span class="delta">+' + fmt(dlt) + '</span>' : '') +
+        '<span class="pct">' + (any ? pct(c.votes, total) : '&nbsp;') + '</span></div>' +
+        '<div class="bar"><i style="width:' + (c.votes / max * 100).toFixed(2) + '%"></i></div></div>';
+    }).join('');
+    prev = Object.fromEntries(cands.map(c => [c.name, c.votes]));
+    $('extra').innerHTML = '<span>Precincts reporting: <b>' + fmt(precIn) + ' of ' + fmt(precAll) + '</b></span><span>State last updated: <b>' + tfmt(d.stateLastUpdated) + '</b></span>';
+
+    // Vote types
+    const main = [hero, rival].filter(Boolean);
+    const types = Object.keys((hero || cands[0]).groups || {});
+    let t = '<thead><tr><th>Ballot type</th>' + main.map(c => '<th>' + esc(last(c.name)) + '</th>').join('') + '<th>All candidates</th><th>Luria share</th></tr></thead><tbody>';
+    types.forEach(g => {
+      const all = cands.reduce((s, c) => s + (c.groups[g] || 0), 0);
+      const h = hero ? hero.groups[g] || 0 : 0;
+      t += '<tr><td>' + esc(g) + '</td>' + main.map(c => '<td class="' + (c === hero ? 'hcol' : '') + '">' + fmt(c.groups[g] || 0) + '</td>').join('') +
+        '<td>' + fmt(all) + '</td><td>' + (all ? pct(h, all) + '<span class="minibar"><i style="width:' + (h / all * 100).toFixed(1) + '%"></i></span>' : '–') + '</td></tr>';
+    });
+    t += '<tr class="total"><td>Total</td>' + main.map(c => '<td class="' + (c === hero ? 'hcol' : '') + '">' + fmt(c.votes) + '</td>').join('') + '<td>' + fmt(total) + '</td><td>' + (total && hero ? pct(hero.votes, total) : '–') + '</td></tr></tbody>';
+    $('tTypes').innerHTML = t;
+
+    // Localities
+    const order = d.localities.slice().sort((a, b) => (b.total || 0) - (a.total || 0));
+    let lt = '<thead><tr><th>Locality</th><th>Precincts</th><th>Luria</th><th>Kiggans</th><th>Others</th><th>Margin</th><th>Luria %</th></tr></thead><tbody>';
+    let sumH = 0, sumR = 0, sumO = 0;
+    order.forEach(l => {
+      if (l.error) { lt += '<tr><td>' + esc(l.name) + '</td><td colspan="6">temporarily unavailable</td></tr>'; return; }
+      const lh = (l.candidates.find(c => c.name.toUpperCase().includes(HERO)) || {}).votes || 0;
+      const lr = (l.candidates.find(c => c.name.toUpperCase().includes(RIVAL)) || {}).votes || 0;
+      const all = l.candidates.reduce((s, c) => s + c.votes, 0), lo = all - lh - lr;
+      sumH += lh; sumR += lr; sumO += lo;
+      const st = l.reporting >= l.total && l.total ? 'done">All in' : l.reporting > 0 ? 'part">' + l.reporting + ' / ' + l.total : 'none">0 / ' + l.total;
+      const m = lh - lr;
+      lt += '<tr><td>' + esc(l.name) + '</td><td><span class="badge ' + st + '</span></td><td class="hcol">' + fmt(lh) + '</td><td>' + fmt(lr) + '</td><td>' + fmt(lo) + '</td>' +
+        '<td>' + (all ? '<span class="' + (m >= 0 ? 'd' : 'r') + '">' + (m >= 0 ? 'Luria +' : 'Kiggans +') + fmt(Math.abs(m)) + '</span>' : '–') + '</td><td>' + (all ? pct(lh, all) : '–') + '</td></tr>';
+    });
+    const sm = sumH - sumR;
+    lt += '<tr class="total"><td>District</td><td>' + fmt(precIn) + ' / ' + fmt(precAll) + '</td><td class="hcol">' + fmt(sumH) + '</td><td>' + fmt(sumR) + '</td><td>' + fmt(sumO) + '</td><td>' +
+      (sumH + sumR ? '<span class="' + (sm >= 0 ? 'd' : 'r') + '">' + (sm >= 0 ? 'Luria +' : 'Kiggans +') + fmt(Math.abs(sm)) + '</span>' : '–') + '</td><td>' + (sumH + sumR + sumO ? pct(sumH, sumH + sumR + sumO) : '–') + '</td></tr></tbody>';
+    $('tLocal').innerHTML = lt;
+
+    // Status + banner
+    const age = Date.now() - new Date(d.relayedAt).getTime();
+    const banner = $('banner'); banner.className = 'card banner hide';
+    if (hero && hero.winner) {
+      setStatus('win', d.official ? 'Official: Luria elected' : 'Luria wins');
+      banner.innerHTML = 'Elaine Luria wins Virginia’s 2nd District. <small>' + (d.official ? 'Results are official.' : fmt(precIn) + ' of ' + fmt(precAll) + ' precincts reporting. Unofficial until certified.') + '</small>';
+      banner.className = 'card banner';
+    } else if (cands.some(c => c.winner)) {
+      setStatus('live', d.official ? 'Official results' : 'Race called');
+    } else if (!any) {
+      if (Date.now() < POLLS_CLOSE) {
+        setStatus('wait', 'Polls close 7:00 PM ET');
+        const mins = Math.max(0, Math.round((POLLS_CLOSE - Date.now()) / 60000));
+        banner.innerHTML = 'Polls are open until 7:00 PM ET. <small>Polls close in ' + (mins >= 60 ? Math.floor(mins / 60) + ' hr ' + (mins % 60) + ' min' : mins + ' min') + '. Results start once localities begin reporting.</small>';
+      } else {
+        setStatus('live', 'Polls closed · counting');
+        banner.innerHTML = 'Polls are closed and localities are counting. <small>No VA-2 results posted yet. This page checks every minute.</small>';
+      }
+      banner.className = 'card banner';
+    } else {
+      setStatus('live', 'Counting · ' + pct(precIn, precAll) + ' in');
+    }
+    if (age > STALE_MS && Date.now() > POLLS_CLOSE) {
+      banner.className = 'card banner warn';
+      banner.innerHTML = 'This page’s data feed is ' + Math.round(age / 60000) + ' minutes behind. <small>Check the <a href="https://enr.elections.virginia.gov/results/public/virginia/elections/2026-November-General" target="_blank" rel="noopener">official Virginia results</a> directly while it catches up.</small>';
+    }
+    $('relayed').textContent = tfmt(d.relayedAt);
+    $('posted').textContent = tfmt(d.stateLastUpdated);
+  }
+
+  async function update() {
+    if (loading) return;
+    loading = true; $('refresh').disabled = true;
+    try { render(await load()); }
+    catch (e) { console.error(e); setStatus('err', 'Feed unavailable, retrying'); }
+    finally { loading = false; $('refresh').disabled = false; curInterval = interval(); nextAt = Date.now() + curInterval; }
+  }
+
+  function tick() {
+    if (curInterval > interval()) { curInterval = interval(); nextAt = Math.min(nextAt, Date.now() + curInterval); }
+    const left = Math.max(0, nextAt - Date.now()), s = Math.ceil(left / 1000);
+    const txt = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+    $('countdown').textContent = txt; $('countdown2').textContent = txt; $('miniCount').textContent = loading ? '…' : txt;
+    $('pfill').style.width = (100 * (1 - left / curInterval)).toFixed(2) + '%';
+    if (left <= 0 && !loading) update();
+  }
+
+  $('refresh').addEventListener('click', update);
+  $('miniRefresh').addEventListener('click', update);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && Date.now() >= nextAt) update(); });
+  update();
+  setInterval(tick, 1000);
+})();
+</script>
+</body>
+</html>

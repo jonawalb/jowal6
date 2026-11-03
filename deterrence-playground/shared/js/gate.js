@@ -112,7 +112,7 @@
   }
   /** Try `pw` against a tier's alternate passwords: derive with each alt salt and unwrap the tier key. */
   function tryAlts(pw, tier) {
-    var alts = (tier > 1 && TIERS[tier] && TIERS[tier].alts) || [];
+    var alts = (tier > 1 ? TIERS[tier] && TIERS[tier].alts : CFG.alts) || [];
     return alts.reduce(function (p, alt) {
       return p.catch(function () {
         return crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveBits']).then(function (base) {
@@ -276,8 +276,9 @@
       }).catch(function () {
         // Not the tier's own password: maybe one of its alternate passwords (CFG.tN.alts), each wrapping the tier key.
         return tryAlts(typed, tier).then(function (r) {
+          if (tier === 1) { try { (REMEMBER && g.querySelector('#g-rem').checked ? localStorage : sessionStorage).setItem(KEYNAME, b64e(r.raw)); } catch (e2) { /* storage blocked */ } }
           if (sessionTier(tier)) { try { sessionStorage.setItem(KEYNAMES[tier], b64e(r.raw)); } catch (e2) { /* storage blocked: this page only */ } }
-          unlock2(r.key);
+          (tier > 1 ? unlock2 : unlock)(r.key);
         });
       }).catch(function () {
         // Not this prompt's password: maybe the master password, which opens every tier for this tab.

@@ -230,7 +230,7 @@ footer{font-size:13px;color:var(--muted);line-height:1.6;padding-bottom:40px}
   ];
   const HERO = 'LURIA', RIVAL = 'KIGGANS';
   const POLLS_CLOSE = new Date('2026-11-04T00:00:00Z'); // 7:00 PM EST
-  const STALE_MS = 6 * 60 * 1000;
+  const STALE_MS = 15 * 60 * 1000;
   const interval = () => (Date.now() >= POLLS_CLOSE.getTime() ? 60 : 5 * 60) * 1000;
   let curInterval = interval(), nextAt = Date.now(), loading = false, prev = null;
 

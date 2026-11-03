@@ -14,6 +14,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
 :root{
   --bg:#f6f4ef; --card:#ffffff; --ink:#14201b; --muted:#5d6b64; --line:#e3e0d7;
@@ -110,6 +112,20 @@ footer a{color:var(--green)}
 .share{height:6px;background:var(--bar-bg);border-radius:3px;overflow:hidden;margin-top:2px}
 .share i{display:block;height:100%;background:var(--green);opacity:.55}
 @media (max-width:760px){.pp{grid-template-columns:1fr}}
+#map{height:420px;border-radius:12px;border:1px solid var(--line);margin-bottom:10px;background:var(--bar-bg);z-index:0}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:16px;align-items:center}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:6px}
+.legend .grad{width:80px;background:linear-gradient(90deg,#cfe3d7,#1f5a3f)}
+.leaflet-tooltip.tt{font-family:'Libre Franklin',system-ui,sans-serif;font-size:13px;line-height:1.4;border-radius:10px;padding:10px 12px;box-shadow:0 6px 20px rgba(0,0,0,.18);border:0;min-width:200px;max-width:min(280px,80vw);white-space:normal}
+.tt h4{font-size:15px;font-weight:800;margin-bottom:2px}
+.tt .s{color:#5d6b64;font-size:12px}
+.tt table{margin-top:6px;font-size:13px}
+.tt td{padding:2px 0;border:0;text-align:right}
+.tt td:first-child{text-align:left;padding-right:14px}
+.tt .m{color:#1f5a3f;font-weight:800}
+.townlbl{background:transparent;border:0;box-shadow:none;font-family:'Libre Franklin',sans-serif;font-weight:800;font-size:13px;color:#14201b;text-shadow:0 0 3px #fff,0 0 3px #fff}
+.townlbl::before{display:none}
+@media (max-width:640px){#map{height:340px}}
 .about ul{list-style:none;display:grid;gap:12px}
 .about li{font-size:15px;padding-left:16px;position:relative}
 .about li::before{content:"";position:absolute;left:0;top:.6em;width:6px;height:6px;border-radius:50%;background:var(--green)}
@@ -150,6 +166,8 @@ footer a{color:var(--green)}
 
   <section class="card">
     <div class="sec-h"><h2>Polling places</h2><span class="note">3 polling places, one per town · all close 7:00 PM</span></div>
+    <div id="map" role="img" aria-label="Map of Windsor-1: Hartland, Windsor and West Windsor, with polling places"></div>
+    <div class="legend" id="legend"></div>
     <div class="pp" id="pp"></div>
     <div class="extra" id="ppNote"></div>
   </section>
@@ -210,9 +228,9 @@ footer a{color:var(--green)}
   // Polling places: Vermont SOS poll-location data (map.vermont.gov/voting-info-lookup, updated 2026-10-13).
   // 2024 figures: Vermont SOS 2024 general election turnout file (certified).
   const TOWN_INFO = {
-    'HARTLAND':     { place: 'Damon Hall', addr: '1 Quechee Rd, Hartland', opens: '7:00 AM', reg24: 3062, cast24: 2195, early24: 1313 },
-    'WEST WINDSOR': { place: 'Story Memorial Hall', addr: '22 Brownsville-Hartland Rd, West Windsor', opens: '10:00 AM', reg24: 1104, cast24: 888, early24: 562 },
-    'WINDSOR':      { place: 'Windsor Municipal Building, Rec Center Gym', addr: '29 Union St, Windsor', opens: '9:00 AM', reg24: 2817, cast24: 1852, early24: 1058 }
+    'HARTLAND':     { place: 'Damon Hall', addr: '1 Quechee Rd, Hartland', opens: '7:00 AM', reg24: 3062, cast24: 2195, early24: 1313, ll: [43.54144, -72.39959] },
+    'WEST WINDSOR': { place: 'Story Memorial Hall', addr: '22 Brownsville-Hartland Rd, West Windsor', opens: '10:00 AM', reg24: 1104, cast24: 888, early24: 562, ll: [43.46821, -72.47082] },
+    'WINDSOR':      { place: 'Windsor Municipal Building, Rec Center Gym', addr: '29 Union St, Windsor', opens: '9:00 AM', reg24: 2817, cast24: 1852, early24: 1058, ll: [43.47662, -72.39256] }
   };
   const CAST24 = Object.values(TOWN_INFO).reduce((s, t) => s + t.cast24, 0);
 
@@ -299,6 +317,7 @@ footer a{color:var(--green)}
         '<div class="share"><i style="width:' + share.toFixed(1) + '%"></i></div>' +
         '<dl>' + rows.map(x => '<dt>' + x[0] + '</dt><dd>' + x[1] + '</dd>').join('') + '</dl></div>';
     }).join('');
+    updateMap(towns, cands, tmap);
     $('ppNote').innerHTML = reported === towns.length
       ? '<span>All three polling places have reported.</span>'
       : '<span>Still out: about <b>' + fmt(outstanding) + '</b> ballots (' + Math.round(outstanding / CAST24 * 100) + '% of the district), going by 2024 turnout.</span>';
@@ -391,6 +410,79 @@ footer a{color:var(--green)}
     }
     $('posted').textContent = meta.lastUpdatedDate ? meta.lastUpdatedDate + ' ET' : '–';
   }
+
+  // ---- Map: town shapes shaded by Morse's share once a town reports; hover for details ----
+  const map = { ready: false, layers: {}, markers: {}, last: null };
+  const shade = s => { // s = Morse share of candidate votes, 0..1 → light to dark green
+    const t = Math.max(0, Math.min(1, (s - 0.2) / 0.3));
+    const a = [207, 227, 215], b = [31, 90, 63];
+    return 'rgb(' + a.map((v, i) => Math.round(v + (b[i] - v) * t)).join(',') + ')';
+  };
+  async function initMap() {
+    if (!window.L) return;
+    const m = L.map('map', { scrollWheelZoom: false, zoomSnap: 0.25, attributionControl: true });
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 16,
+      attribution: 'Tiles &copy; Esri, HERE, Garmin, &copy; OpenStreetMap contributors · Boundaries: VT SOS'
+    }).addTo(m);
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}', { maxZoom: 16, pane: 'shadowPane' }).addTo(m);
+    const gj = await (await fetch('windsor1.geojson')).json();
+    const all = L.geoJSON(gj, {
+      style: () => ({ color: '#1f5a3f', weight: 2, fillColor: '#d9d6cc', fillOpacity: .55 }),
+      onEachFeature: (f, layer) => {
+        const tn = f.properties.town;
+        map.layers[tn] = layer;
+        layer.on('mouseover', () => layer.setStyle({ weight: 4 }));
+        layer.on('mouseout', () => layer.setStyle({ weight: 2 }));
+        layer.bindTooltip('', { className: 'tt', sticky: true, direction: 'top', offset: [0, -8] });
+      }
+    });
+    m.fitBounds(all.getBounds(), { padding: [12, 12] });
+    all.addTo(m);
+    Object.entries(map.layers).forEach(([tn, layer]) => {
+      L.tooltip({ permanent: true, direction: 'center', className: 'townlbl', interactive: false })
+        .setContent(title(tn)).setLatLng(L.latLng(layer.getBounds().getCenter().lat + 0.012, layer.getBounds().getCenter().lng - 0.012)).addTo(m);
+    });
+    Object.entries(TOWN_INFO).forEach(([tn, info]) => {
+      const mk = L.circleMarker(info.ll, { radius: 8, color: '#fff', weight: 2, fillColor: '#c8102e', fillOpacity: 1 }).addTo(m);
+      mk.bindTooltip('', { className: 'tt', direction: 'top', offset: [0, -8] });
+      mk.on('click', () => window.open('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(info.place + ', ' + info.addr + ', VT'), '_blank', 'noopener'));
+      map.markers[tn] = mk;
+    });
+    map.guides = Object.fromEntries(gj.features.map(f => [f.properties.town, f.properties.guide]));
+    map.ready = true;
+    $('legend').innerHTML = '<span><i style="background:#d9d6cc"></i>Still counting</span>' +
+      '<span><i class="grad"></i>Reported: darker = bigger Morse share</span>' +
+      '<span><i style="background:#c8102e;border-radius:50%"></i>Polling place (click for directions)</span>';
+    if (map.last) updateMap(...map.last);
+  }
+  function updateMap(towns, cands, tmap) {
+    map.last = [towns, cands, tmap];
+    if (!map.ready) return;
+    towns.forEach(r => {
+      const info = TOWN_INFO[r.tn] || {};
+      const layer = map.layers[r.tn];
+      const done = isTownReported(r);
+      const v = Object.fromEntries((r.rc || []).map(c => [c.cn, c.vc || 0]));
+      const tot = Object.values(v).reduce((a, b) => a + b, 0) + (r.wc || []).reduce((s, w) => s + (w.vc || 0), 0);
+      const hero = cands.find(c => c.name.toUpperCase().includes(HERO));
+      const share = hero && tot ? (v[hero.name] || 0) / tot : 0;
+      const tt = tmap[r.tn] || {};
+      const rows = done
+        ? cands.map(c => '<tr><td' + (c.name.toUpperCase().includes(HERO) ? ' class="m"' : '') + '>' + esc(title(c.name)) + '</td><td' +
+            (c.name.toUpperCase().includes(HERO) ? ' class="m"' : '') + '>' + fmt(v[c.name]) + ' · ' + pct(v[c.name] || 0, tot) + '</td></tr>').join('') +
+          '<tr><td>Ballots cast</td><td>' + (tt.tvc ? fmt(tt.tvc) + (tt.tvr ? ' · ' + pct(tt.tvc, tt.tvr) + ' turnout' : '') : '–') + '</td></tr>'
+        : '<tr><td>Status</td><td><b>Still counting</b></td></tr><tr><td>2024 ballots</td><td>' + fmt(info.cast24) + '</td></tr>';
+      const html = '<h4>' + esc(title(r.tn)) + '</h4><div class="s">' + esc(info.place || '') + ' · open ' + esc(info.opens || '') + '–7:00 PM</div><table>' + rows + '</table>';
+      if (layer) {
+        layer.setStyle({ fillColor: done ? shade(share) : '#d9d6cc', fillOpacity: done ? .75 : .55 });
+        layer.setTooltipContent(html);
+      }
+      const mk = map.markers[r.tn];
+      if (mk) mk.setTooltipContent('<h4>' + esc(info.place || '') + '</h4><div class="s">' + esc(info.addr || '') + '<br>Open ' + esc(info.opens || '') + ' – 7:00 PM · ' + (done ? 'Reported' : 'Counting') + '</div>');
+    });
+  }
+  initMap().catch(e => { console.error(e); $('map').classList.add('hide'); });
 
   function isTownReported(r) {
     const s = (r.rc || []).reduce((a, c) => a + (c.vc || 0), 0) + (r.bv || 0) + (r.sv || 0);

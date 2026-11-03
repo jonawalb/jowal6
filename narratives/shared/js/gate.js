@@ -9,14 +9,15 @@
   var MAGIC = 'TSMVAULT2:';
   // Optional extra tiers: tools listed in CFG.t2.slugs (or CFG.t3.slugs) have their data sealed with a
   // second (or third) password. A page belongs to at most one extra tier.
-  var TIERS = { 2: CFG && CFG.t2, 3: CFG && CFG.t3, 4: CFG && CFG.t4, 5: CFG && CFG.t5, 6: CFG && CFG.t6 };
+  var TIERS = { 2: CFG && CFG.t2, 3: CFG && CFG.t3, 4: CFG && CFG.t4, 5: CFG && CFG.t5, 6: CFG && CFG.t6, 7: CFG && CFG.t7 };
   var T2 = TIERS[2];
   var KEYNAME2 = T2 ? 'tsm-vault-key-' + T2.id : '';
   var KEYNAME3 = TIERS[3] ? 'tsm-vault-key-' + TIERS[3].id : '';
   var KEYNAME4 = TIERS[4] ? 'tsm-vault-key-' + TIERS[4].id : '';
   var KEYNAME5 = TIERS[5] ? 'tsm-vault-key-' + TIERS[5].id : '';
   var KEYNAME6 = TIERS[6] ? 'tsm-vault-key-' + TIERS[6].id : '';
-  var KEYNAMES = { 2: KEYNAME2, 3: KEYNAME3, 4: KEYNAME4, 5: KEYNAME5, 6: KEYNAME6 };
+  var KEYNAME7 = TIERS[7] ? 'tsm-vault-key-' + TIERS[7].id : '';
+  var KEYNAMES = { 2: KEYNAME2, 3: KEYNAME3, 4: KEYNAME4, 5: KEYNAME5, 6: KEYNAME6, 7: KEYNAME7 };
   // A tier built with `session` (My Projects) keeps its key in sessionStorage once unlocked, so one password opens
   // every page of that tier for this tab; other extra tiers ask on every page.
   var sessionTier = function (t) { return !!(TIERS[t] && TIERS[t].session); };
@@ -25,10 +26,11 @@
   var MAGIC4 = 'TSMVAULT5:';
   var MAGIC5 = 'TSMVAULT6:';
   var MAGIC6 = 'TSMVAULT7:';
+  var MAGIC7 = 'TSMVAULT8:';
   var ROOT = new URL('../../', document.currentScript.src).href;
   var slugMatch = location.pathname.match(/\/tools\/([^/]+)\//);
   var inTier = function (t) { return !!(TIERS[t] && slugMatch && TIERS[t].slugs.indexOf(slugMatch[1]) >= 0); };
-  var PAGE_TIER = inTier(6) ? 6 : inTier(5) ? 5 : inTier(4) ? 4 : inTier(3) ? 3 : inTier(2) ? 2 : 0;
+  var PAGE_TIER = inTier(7) ? 7 : inTier(6) ? 6 : inTier(5) ? 5 : inTier(4) ? 4 : inTier(3) ? 3 : inTier(2) ? 2 : 0;
   var LOCKED_PAGE = PAGE_TIER > 0;
   // Master password (CFG.master): one password that unlocks every tier of the site for this tab. Each tier's key is
   // published wrapped (AES-GCM) under a key derived from it. The unwrapped keys live only in sessionStorage, so the
@@ -108,6 +110,19 @@
       });
     });
   }
+  /** Try `pw` against a tier's alternate passwords: derive with each alt salt and unwrap the tier key. */
+  function tryAlts(pw, tier) {
+    var alts = (tier > 1 ? TIERS[tier] && TIERS[tier].alts : CFG.alts) || [];
+    return alts.reduce(function (p, alt) {
+      return p.catch(function () {
+        return crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveBits']).then(function (base) {
+          return crypto.subtle.deriveBits({ name: 'PBKDF2', salt: b64d(alt.salt), iterations: CFG.iter, hash: 'SHA-256' }, base, 256);
+        }).then(function (bits) { return importRaw(new Uint8Array(bits)); })
+          .then(function (ak) { return decrypt(ak, b64d(alt.wrap)); })
+          .then(function (raw) { return tryRaw(raw, tier).then(function (k) { return { key: k, raw: raw }; }); });
+      });
+    }, Promise.reject());
+  }
   function storedMaster() {
     var v = null;
     try { v = MKEY && sessionStorage.getItem(MKEY); } catch (e) { /* storage blocked */ }
@@ -132,7 +147,7 @@
   }
   if (MKEY) { try { localStorage.removeItem(MKEY); } catch (e) { /* storage blocked */ } }
   // Drop any second-tier key saved by an earlier version of this gate (a session tier keeps its tab copy).
-  [2, 3, 4, 5, 6].forEach(function (t) { var n = KEYNAMES[t]; if (n) { try { localStorage.removeItem(n); if (!sessionTier(t)) sessionStorage.removeItem(n); } catch (e) { /* storage blocked */ } } });
+  [2, 3, 4, 5, 6, 7].forEach(function (t) { var n = KEYNAMES[t]; if (n) { try { localStorage.removeItem(n); if (!sessionTier(t)) sessionStorage.removeItem(n); } catch (e) { /* storage blocked */ } } });
 
   function startsWithMagic(buf, magic) {
     if (buf.length < magic.length) return false;
@@ -159,7 +174,7 @@
         .then(function (bytes) { return new TextDecoder().decode(bytes); });
     },
     /** True when `slug` is in a tier whose key is published (no password needed). */
-    isOpen: function (slug) { return [2, 3, 4, 5, 6].some(function (t) { return openTier(t) && TIERS[t].slugs.indexOf(slug) >= 0; }); },
+    isOpen: function (slug) { return [2, 3, 4, 5, 6, 7].some(function (t) { return openTier(t) && TIERS[t].slugs.indexOf(slug) >= 0; }); },
     /** Attributes for a password box that browsers will not offer to save (used by the hub's section form too). */
     inputAttrs: function () { return NOSAVE; },
     /** Decrypt a sealed blob with the key this page was unlocked with (only on pages of that tier). */
@@ -167,7 +182,7 @@
       return key2Now(tier).then(function (k) { return open(k, b64d(b64), true); }).then(function (bytes) { return new TextDecoder().decode(bytes); });
     },
     lock: function () {
-      try { [KEYNAME, KEYNAME2, KEYNAME3, KEYNAME4, KEYNAME5, KEYNAME6, MKEY].forEach(function (n) { if (n) { localStorage.removeItem(n); sessionStorage.removeItem(n); } }); } catch (e) { /* storage blocked */ }
+      try { [KEYNAME, KEYNAME2, KEYNAME3, KEYNAME4, KEYNAME5, KEYNAME6, KEYNAME7, MKEY].forEach(function (n) { if (n) { localStorage.removeItem(n); sessionStorage.removeItem(n); } }); } catch (e) { /* storage blocked */ }
       location.reload();
     },
   };
@@ -182,7 +197,7 @@
       if (!r.ok || !(DATA_URL.test(r.url || '') || DATA_URL.test(asked))) return r;
       return r.clone().arrayBuffer().then(function (ab) {
         var buf = new Uint8Array(ab);
-        var tier = startsWithMagic(buf, MAGIC) ? 1 : startsWithMagic(buf, MAGIC2) ? 2 : startsWithMagic(buf, MAGIC3) ? 3 : startsWithMagic(buf, MAGIC4) ? 4 : startsWithMagic(buf, MAGIC5) ? 5 : startsWithMagic(buf, MAGIC6) ? 6 : 0;
+        var tier = startsWithMagic(buf, MAGIC) ? 1 : startsWithMagic(buf, MAGIC2) ? 2 : startsWithMagic(buf, MAGIC3) ? 3 : startsWithMagic(buf, MAGIC4) ? 4 : startsWithMagic(buf, MAGIC5) ? 5 : startsWithMagic(buf, MAGIC6) ? 6 : startsWithMagic(buf, MAGIC7) ? 7 : 0;
         if (!tier) return r;
         return (tier > 1 ? key2Now(tier) : keyReady).then(function (k) { return open(k, b64d(new TextDecoder().decode(buf.subarray(MAGIC.length))), true); })
           .then(function (plain) { return new Response(plain, { status: 200, headers: r.headers }); },
@@ -257,6 +272,13 @@
           if (tier === 1) { try { (REMEMBER && g.querySelector('#g-rem').checked ? localStorage : sessionStorage).setItem(KEYNAME, b64e(raw)); } catch (e2) { /* storage blocked */ } }
           if (sessionTier(tier)) { try { sessionStorage.setItem(KEYNAMES[tier], b64e(raw)); } catch (e2) { /* storage blocked: this page only */ } }
           (tier > 1 ? unlock2 : unlock)(k);
+        });
+      }).catch(function () {
+        // Not the tier's own password: maybe one of its alternate passwords (CFG.tN.alts), each wrapping the tier key.
+        return tryAlts(typed, tier).then(function (r) {
+          if (tier === 1) { try { (REMEMBER && g.querySelector('#g-rem').checked ? localStorage : sessionStorage).setItem(KEYNAME, b64e(r.raw)); } catch (e2) { /* storage blocked */ } }
+          if (sessionTier(tier)) { try { sessionStorage.setItem(KEYNAMES[tier], b64e(r.raw)); } catch (e2) { /* storage blocked: this page only */ } }
+          (tier > 1 ? unlock2 : unlock)(r.key);
         });
       }).catch(function () {
         // Not this prompt's password: maybe the master password, which opens every tier for this tab.

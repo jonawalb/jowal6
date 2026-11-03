@@ -108,16 +108,18 @@ export function mountNav() {
 // Tools draw some text later, so links added after load are checked too.
 function unlinkMissingTools() {
   const toolsRoot = location.pathname.replace(/\/tools\/[^/]+\/.*$/, '/tools/');
-  const check = root => root.querySelectorAll?.('a[href]').forEach(a => {
+  const fix = a => {
     let u; try { u = new URL(a.getAttribute('href'), location.href); } catch { return; }
     if (u.origin !== location.origin || !u.pathname.startsWith(toolsRoot) || u.pathname === location.pathname) return;   // same-page anchors stay links
     const m = u.pathname.slice(toolsRoot.length).match(/^([a-z0-9-]+)\/(index\.html)?$/);
     // Unlisted tools are still published (My Projects links to two), so check every live tool on this site.
     if (!m || ALL_TOOLS.some(t => t.slug === m[1] && t.status === 'live' && onSite(t))) return;
     a.replaceWith(document.createTextNode(a.textContent));
-  });
+  };
+  // Check only the added node and its descendants: rescanning the parent made big SVG redraws quadratic.
+  const check = root => { if (root.matches?.('a[href]')) fix(root); root.querySelectorAll?.('a[href]').forEach(fix); };
   check(document);
-  new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => n.nodeType === 1 && check(n.parentNode || n))))
+  new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => n.nodeType === 1 && check(n))))
     .observe(document.body, { childList: true, subtree: true });
 }
 

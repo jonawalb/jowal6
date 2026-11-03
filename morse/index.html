@@ -96,6 +96,20 @@ button:disabled{opacity:.5;cursor:default}
 footer{font-size:13px;color:var(--muted);margin-top:24px;line-height:1.6}
 footer a{color:var(--green)}
 .hide{display:none!important}
+.pp{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.ppc{border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.ppc.in{border-color:var(--green);box-shadow:inset 0 0 0 1px var(--green)}
+.ppc .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ppc h3{font-size:16px;font-weight:800}
+.ppc .place{font-size:14px;font-weight:600}
+.ppc .place a{color:var(--ink);text-decoration:none;border-bottom:1px dotted var(--muted)}
+.ppc .addr,.ppc .hrs{font-size:13px;color:var(--muted)}
+.ppc dl{display:grid;grid-template-columns:auto auto;gap:3px 10px;font-size:13px;margin-top:6px;padding-top:8px;border-top:1px solid var(--line)}
+.ppc dt{color:var(--muted)}
+.ppc dd{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.share{height:6px;background:var(--bar-bg);border-radius:3px;overflow:hidden;margin-top:2px}
+.share i{display:block;height:100%;background:var(--green);opacity:.55}
+@media (max-width:760px){.pp{grid-template-columns:1fr}}
 @media (max-width:640px){
   .stats{grid-template-columns:repeat(2,1fr)}
   .stat .v{font-size:22px}
@@ -118,7 +132,7 @@ footer a{color:var(--green)}
   <div id="banner" class="card banner hide"></div>
 
   <div class="stats">
-    <div class="stat"><div class="k">Towns reporting</div><div class="v" id="sTowns">–</div><div class="n" id="sTownsN">of 3</div></div>
+    <div class="stat"><div class="k">Polling places in</div><div class="v" id="sTowns">–</div><div class="n" id="sTownsN">of 3</div></div>
     <div class="stat"><div class="k">Morse votes</div><div class="v" id="sMorse">–</div><div class="n" id="sMorseN">&nbsp;</div></div>
     <div class="stat"><div class="k" id="sCushK">Cushion</div><div class="v" id="sCush">–</div><div class="n" id="sCushN">&nbsp;</div></div>
     <div class="stat"><div class="k">Ballots cast</div><div class="v" id="sBallots">–</div><div class="n" id="sBallotsN">&nbsp;</div></div>
@@ -128,6 +142,12 @@ footer a{color:var(--green)}
     <div class="sec-h"><h2>District-wide results</h2><span class="note" id="candNote">Voters may pick two</span></div>
     <div id="cands"></div>
     <div class="extra" id="extra"></div>
+  </section>
+
+  <section class="card">
+    <div class="sec-h"><h2>Polling places</h2><span class="note">3 polling places, one per town · all close 7:00 PM</span></div>
+    <div class="pp" id="pp"></div>
+    <div class="extra" id="ppNote"></div>
   </section>
 
   <section class="card">
@@ -168,6 +188,14 @@ footer a{color:var(--green)}
   const INTERVAL = 5 * 60 * 1000;
   // Polls close 7:00 PM Eastern on Nov 3, 2026 (EST, UTC-5)
   const POLLS_CLOSE = new Date('2026-11-04T00:00:00Z');
+  // Polling places: Vermont SOS poll-location data (map.vermont.gov/voting-info-lookup, updated 2026-10-13).
+  // 2024 figures: Vermont SOS 2024 general election turnout file (certified).
+  const TOWN_INFO = {
+    'HARTLAND':     { place: 'Damon Hall', addr: '1 Quechee Rd, Hartland', opens: '7:00 AM', reg24: 3062, cast24: 2195, early24: 1313 },
+    'WEST WINDSOR': { place: 'Story Memorial Hall', addr: '22 Brownsville-Hartland Rd, West Windsor', opens: '10:00 AM', reg24: 1104, cast24: 888, early24: 562 },
+    'WINDSOR':      { place: 'Windsor Municipal Building, Rec Center Gym', addr: '29 Union St, Windsor', opens: '9:00 AM', reg24: 2817, cast24: 1852, early24: 1058 }
+  };
+  const CAST24 = Object.values(TOWN_INFO).reduce((s, t) => s + t.cast24, 0);
 
   const $ = id => document.getElementById(id);
   const fmt = n => (n == null || isNaN(n)) ? '–' : Number(n).toLocaleString('en-US');
@@ -225,7 +253,36 @@ footer a{color:var(--green)}
 
     // Stats
     $('sTowns').textContent = reported + ' / ' + towns.length;
-    $('sTownsN').textContent = reported === towns.length ? 'all towns in' : (towns.length - reported) + ' still counting';
+    $('sTownsN').textContent = reported === towns.length ? 'all 3 towns in' : (towns.length - reported) + ' still counting';
+
+    // Polling place cards
+    let outstanding = 0;
+    $('pp').innerHTML = towns.slice().sort((a, b) => (TOWN_INFO[b.tn] || {}).cast24 - (TOWN_INFO[a.tn] || {}).cast24).map(r => {
+      const info = TOWN_INFO[r.tn] || {};
+      const tt = tmap[r.tn] || {};
+      const done = isTownReported(r);
+      if (!done) outstanding += info.cast24 || 0;
+      const share = info.cast24 ? info.cast24 / CAST24 * 100 : 0;
+      const q = encodeURIComponent(info.place + ', ' + info.addr + ', VT');
+      const rows = [
+        ['Share of district vote (2024)', share.toFixed(0) + '%'],
+        ['Ballots cast 2024', fmt(info.cast24) + ' (' + pct(info.cast24, info.reg24) + ')'],
+        ['Early/absentee 2024', fmt(info.early24)],
+        ['Ballots cast 2026', tt.tvc ? fmt(tt.tvc) : '–'],
+        ['Early/absentee 2026', tt.tvc ? fmt(tt.tabs) : '–'],
+        ['Registered 2026', tt.tvr ? fmt(tt.tvr) : '–']
+      ];
+      return '<div class="ppc' + (done ? ' in' : '') + '"><div class="top"><h3>' + esc(title(r.tn)) + '</h3>' +
+        '<span class="badge ' + (done ? 'done">Reported' : 'none">Counting') + '</span></div>' +
+        '<div class="place"><a href="https://www.google.com/maps/search/?api=1&query=' + q + '" target="_blank" rel="noopener">' + esc(info.place || '') + '</a></div>' +
+        '<div class="addr">' + esc(info.addr || '') + '</div>' +
+        '<div class="hrs">Open ' + esc(info.opens || '') + ' – 7:00 PM</div>' +
+        '<div class="share"><i style="width:' + share.toFixed(1) + '%"></i></div>' +
+        '<dl>' + rows.map(x => '<dt>' + x[0] + '</dt><dd>' + x[1] + '</dd>').join('') + '</dl></div>';
+    }).join('');
+    $('ppNote').innerHTML = reported === towns.length
+      ? '<span>All three polling places have reported.</span>'
+      : '<span>Still out: about <b>' + fmt(outstanding) + '</b> ballots (' + Math.round(outstanding / CAST24 * 100) + '% of the district), going by 2024 turnout.</span>';
     $('sBallots').textContent = fmt(cast);
     $('sBallotsN').textContent = reg ? pct(cast, reg) + ' turnout in reporting towns' : ' ';
 

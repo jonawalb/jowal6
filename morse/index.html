@@ -9,7 +9,7 @@
 <title>Morse Results Tracker</title>
 <meta name="description" content="Live results for Dylan Morse in the Vermont House Windsor-1 race (Hartland, West Windsor, Windsor), straight from the Vermont Secretary of State.">
 <meta property="og:title" content="Morse for Vermont: Live Results">
-<meta property="og:description" content="Windsor-1 State House results, refreshed every 5 minutes from the Vermont Secretary of State.">
+<meta property="og:description" content="Windsor-1 State House results, refreshed every minute after polls close, straight from the Vermont Secretary of State.">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -188,7 +188,7 @@ footer a{color:var(--green)}
   </section>
 
   <footer>
-    Data comes directly from the <a href="https://electionresults.vermont.gov/" target="_blank" rel="noopener">Vermont Secretary of State election-night results</a>. It refreshes every 5 minutes; keep this tab open. Results are unofficial until certified. Vermont towns hand in results one at a time after they finish counting, so a town reads 0 until it reports.
+    Data comes directly from the <a href="https://electionresults.vermont.gov/" target="_blank" rel="noopener">Vermont Secretary of State election-night results</a>. It refreshes every 5 minutes while polls are open and every minute after they close at 7:00 PM; keep this tab open. Results are unofficial until certified. Vermont towns hand in results one at a time after they finish counting, so a town reads 0 until it reports.
     <span id="testNote" class="hide"><br><b>Test mode:</b> showing 2024 Windsor-1 results to check the page works.</span>
   </footer>
 </div>
@@ -202,7 +202,9 @@ footer a{color:var(--green)}
   const DISTRICT = 'WINDSOR-1';
   const HERO = 'MORSE';
   const SEATS = 2;
-  const INTERVAL = 5 * 60 * 1000;
+  // 5-minute refresh while polls are open, every minute after they close
+  const interval = () => (Date.now() >= POLLS_CLOSE.getTime() ? 60 : 5 * 60) * 1000;
+  let curInterval = 5 * 60 * 1000;
   // Polls close 7:00 PM Eastern on Nov 3, 2026 (EST, UTC-5)
   const POLLS_CLOSE = new Date('2026-11-04T00:00:00Z');
   // Polling places: Vermont SOS poll-location data (map.vermont.gov/voting-info-lookup, updated 2026-10-13).
@@ -380,7 +382,7 @@ footer a{color:var(--green)}
         banner.innerHTML = 'Polls are open until 7:00 PM. <small>Polls close in ' + untilText(POLLS_CLOSE - now) + '. Towns start reporting after they finish counting.</small>';
       } else {
         setStatus('live', 'Polls closed · counting');
-        banner.innerHTML = 'Polls are closed and towns are counting. <small>No Windsor-1 town has reported yet. This page checks every 5 minutes.</small>';
+        banner.innerHTML = 'Polls are closed and towns are counting. <small>No Windsor-1 town has reported yet. This page checks every minute.</small>';
       }
       banner.classList.remove('hide');
     } else {
@@ -420,16 +422,19 @@ footer a{color:var(--green)}
       $('checked').textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) + ' (failed)';
     } finally {
       loading = false; $('refresh').disabled = false;
-      nextAt = Date.now() + INTERVAL;
+      curInterval = interval();
+      nextAt = Date.now() + curInterval;
     }
   }
 
   function tick() {
+    // At 7:00 PM, pull the next check forward so the 1-minute cadence starts right away
+    if (curInterval > interval()) { curInterval = interval(); nextAt = Math.min(nextAt, Date.now() + curInterval); }
     const left = Math.max(0, nextAt - Date.now());
     const s = Math.ceil(left / 1000);
     const txt = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
     $('countdown').textContent = txt; $('countdown2').textContent = txt;
-    $('ringArc').setAttribute('stroke-dashoffset', (175.93 * (1 - left / INTERVAL)).toFixed(2));
+    $('ringArc').setAttribute('stroke-dashoffset', (175.93 * (1 - left / curInterval)).toFixed(2));
     if (left <= 0 && !loading) update();
   }
 

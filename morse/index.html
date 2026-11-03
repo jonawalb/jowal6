@@ -126,6 +126,32 @@ footer a{color:var(--green)}
 .townlbl{background:transparent;border:0;box-shadow:none;font-family:'Libre Franklin',sans-serif;font-weight:800;font-size:13px;color:#14201b;text-shadow:0 0 3px #fff,0 0 3px #fff}
 .townlbl::before{display:none}
 @media (max-width:640px){#map{height:340px}}
+.topbar{position:sticky;top:0;z-index:50;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 16px;margin:-28px -16px 18px;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.tb-right{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+.tb-count b{color:var(--ink);font-weight:500}
+.tb-btn{padding:4px 10px;font-size:16px;line-height:1;border-radius:8px}
+.hero{display:block;margin-bottom:14px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.chip{font-size:12px;font-weight:600;padding:5px 10px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--muted)}
+.jump{display:flex;gap:6px;overflow-x:auto;margin:0 0 16px;padding-bottom:2px;scrollbar-width:none}
+.jump::-webkit-scrollbar{display:none}
+.jump a{flex:none;font-size:13px;font-weight:600;color:var(--green);text-decoration:none;padding:6px 12px;border-radius:999px;background:var(--green-soft)}
+.jump a:hover{filter:brightness(.96)}
+section.card,details.card{scroll-margin-top:64px}
+.hist summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.hist summary::-webkit-details-marker{display:none}
+.hist summary b{font-size:17px;display:block}
+.hist summary .note{font-size:13px;color:var(--muted)}
+.hist .chev{font-size:18px;color:var(--green);transition:transform .2s}
+.hist[open] .chev{transform:rotate(180deg)}
+.hist-body{margin-top:8px}
+.hist h3{font-size:15px;font-weight:700;margin:22px 0 4px}
+.hist a{color:var(--green)}
+.hist th .note{font-size:10px;letter-spacing:0;text-transform:none}
+.hist p.note{font-size:13px;color:var(--muted);margin-bottom:8px}
+td.win{font-weight:700}
+.up{color:var(--green);font-weight:700}
+.dn{color:var(--accent);font-weight:700}
 .about ul{list-style:none;display:grid;gap:12px}
 .about li{font-size:15px;padding-left:16px;position:relative}
 .about li::before{content:"";position:absolute;left:0;top:.6em;width:6px;height:6px;border-radius:50%;background:var(--green)}
@@ -140,14 +166,21 @@ footer a{color:var(--green)}
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <div>
-      <div class="eyebrow">Vermont House · Windsor-1 · Nov 3, 2026</div>
-      <h1>Dylan <span>Morse</span> for State Rep</h1>
-      <div class="sub">Hartland · West Windsor · Windsor &nbsp;·&nbsp; 2 seats, top two win</div>
-    </div>
+  <div class="topbar" id="topbar">
     <div id="status" class="pill wait"><span class="dot"></span><span id="statusText">Loading…</span></div>
+    <div class="tb-right"><span class="tb-count">Next update <b class="mono" id="miniCount">–</b></span><button class="tb-btn" id="miniRefresh" aria-label="Refresh now">↻</button></div>
+  </div>
+
+  <header class="hero">
+    <div class="eyebrow">Vermont House · Windsor-1 · Nov 3, 2026</div>
+    <h1>Dylan <span>Morse</span> for State Rep</h1>
+    <div class="sub">Hartland · West Windsor · Windsor &nbsp;·&nbsp; 2 seats, top two win</div>
+    <div class="chips"><span class="chip">🏆 Won the August primary, beating a sitting incumbent</span><span class="chip">First contested Windsor-1 general since at least 2022</span></div>
   </header>
+
+  <nav class="jump" aria-label="Sections">
+    <a href="#results">Results</a><a href="#places">Map</a><a href="#bytown">By town</a><a href="#history">Past elections</a><a href="#how">How it works</a>
+  </nav>
 
   <div id="banner" class="card banner hide"></div>
 
@@ -158,13 +191,13 @@ footer a{color:var(--green)}
     <div class="stat"><div class="k">Ballots cast</div><div class="v" id="sBallots">–</div><div class="n" id="sBallotsN">&nbsp;</div></div>
   </div>
 
-  <section class="card">
+  <section class="card" id="results">
     <div class="sec-h"><h2>District-wide results</h2><span class="note" id="candNote">Voters may pick two</span></div>
     <div id="cands"></div>
     <div class="extra" id="extra"></div>
   </section>
 
-  <section class="card">
+  <section class="card" id="places">
     <div class="sec-h"><h2>Polling places</h2><span class="note">3 polling places, one per town · all close 7:00 PM</span></div>
     <div id="map" role="img" aria-label="Map of Windsor-1: Hartland, Windsor and West Windsor, with polling places"></div>
     <div class="legend" id="legend"></div>
@@ -172,12 +205,34 @@ footer a{color:var(--green)}
     <div class="extra" id="ppNote"></div>
   </section>
 
-  <section class="card">
+  <section class="card" id="bytown">
     <div class="sec-h"><h2>By town</h2><span class="note">Each town reports once, after it finishes counting</span></div>
     <div class="tscroll"><table id="towns"></table></div>
   </section>
 
-  <section class="card about">
+  <details class="card hist" id="history">
+    <summary><span><b>Compare to past elections</b><span class="note">Aug 2026 primary · 2024 · 2022 midterm</span></span><span class="chev" aria-hidden="true">▾</span></summary>
+    <div class="hist-body">
+      <h3>How Dylan got here: the August 11, 2026 Democratic primary</h3>
+      <p class="note">Three Democrats ran for two nominations. Dylan finished 2nd and knocked out incumbent Rep. John Bartholomew. He won Hartland outright.</p>
+      <div class="tscroll"><table id="hPrim"></table></div>
+
+      <h3>Dylan tonight vs. his primary</h3>
+      <p class="note">Primary voters were Democrats only, so expect much bigger numbers tonight. This shows how many times over Dylan beats his primary total in each town.</p>
+      <div class="tscroll"><table id="hVsPrim"></table></div>
+
+      <h3>Turnout: tonight vs. past elections</h3>
+      <p class="note">2026 is a midterm, so 2022 is the closest comparison. 2024 was a presidential year with higher turnout. Ballots cast per town; the district change compares only towns that have reported.</p>
+      <div class="tscroll"><table id="hTurn"></table></div>
+
+      <h3>Past Windsor-1 House results</h3>
+      <p class="note">In 2022 and 2024, only two candidates (both Democrats) ran for the two seats, so neither general election was contested.</p>
+      <div class="tscroll"><table id="hPast"></table></div>
+      <div class="extra"><span>Sources: VT Secretary of State results feed (2024 general, Aug 2026 primary, both certified) · <a href="https://electionarchive.vermont.gov/contest/158005" target="_blank" rel="noopener">VT election archive, 2022 Windsor-1</a> · 2022 ballots from the archive's 2022 governor race</span></div>
+    </div>
+  </details>
+
+  <section class="card about" id="how">
     <div class="sec-h"><h2>How results come in</h2></div>
     <ul>
       <li><b>Three polling places, one per town.</b> Windsor-1 is Hartland, Windsor and West Windsor. The state counts each town as a single reporting unit, so “Polling places in” only ever moves 0 → 1 → 2 → 3.</li>
@@ -185,7 +240,7 @@ footer a{color:var(--green)}
       <li><b>All polls close at 7:00 PM.</b> Opening times differ: Hartland 7:00 AM, Windsor 9:00 AM, West Windsor 10:00 AM. Towns post results after they finish counting, so expect the first numbers some time after 7.</li>
       <li><b>Hartland is the big one.</b> Dylan’s home town cast 44% of the district’s ballots in 2024, Windsor 38%, West Windsor 18%. When Hartland reports, we get a real read on the race.</li>
       <li><b>Two seats, top two win.</b> Each voter can pick up to two candidates, so the total vote count runs close to double the number of voters. The dashed seat line falls between 2nd and 3rd place.</li>
-      <li><b>“Ballots still out”</b> adds up the 2024 ballots for every town that hasn’t reported yet. It’s a rough guide, not a forecast.</li>
+      <li><b>“Ballots still out”</b> adds up the 2022 (midterm) and 2024 ballots for every town that hasn’t reported yet. It’s a rough guide, not a forecast.</li>
     </ul>
     <div class="extra"><span>Sources: <a href="https://electionresults.vermont.gov/" target="_blank" rel="noopener">VT election night results</a> · <a href="https://map.vermont.gov/voting-info-lookup/" target="_blank" rel="noopener">VT polling place lookup</a> (updated Oct 13, 2026) · <a href="https://sos.vermont.gov/elections/voters/polling-places" target="_blank" rel="noopener">VT SOS polling places</a> · 2024 figures from the state’s certified 2024 general election turnout file</span></div>
   </section>
@@ -233,6 +288,76 @@ footer a{color:var(--green)}
     'WINDSOR':      { place: 'Windsor Municipal Building, Rec Center Gym', addr: '29 Union St, Windsor', opens: '9:00 AM', reg24: 2817, cast24: 1852, early24: 1058, ll: [43.47662, -72.39256] }
   };
   const CAST24 = Object.values(TOWN_INFO).reduce((s, t) => s + t.cast24, 0);
+  // Past results. Aug 2026 primary + 2024 general: VT SOS results feed (certified).
+  // 2022: VT election archive contest 158005 (House) and 157860 (Governor, for ballots cast per town).
+  const HIST = {
+    prim26: { // Democratic primary, vote for 2
+      'HARTLAND':     { 'DYLAN MORSE': 474, 'JOHN G. TANSEY': 350, 'JOHN BARTHOLOMEW': 250, ballots: 627 },
+      'WEST WINDSOR': { 'DYLAN MORSE': 156, 'JOHN G. TANSEY': 199, 'JOHN BARTHOLOMEW': 112, ballots: 280 },
+      'WINDSOR':      { 'DYLAN MORSE': 255, 'JOHN G. TANSEY': 411, 'JOHN BARTHOLOMEW': 150, ballots: 483 }
+    },
+    g24: { // Bartholomew, Burrows (both elected, unopposed)
+      'HARTLAND':     { b: 1486, e: 1266, ballots: 2195 },
+      'WEST WINDSOR': { b: 548,  e: 589,  ballots: 888 },
+      'WINDSOR':      { b: 1140, e: 1138, ballots: 1852 }
+    },
+    g22: {
+      'HARTLAND':     { b: 1306, e: 1094, ballots: 1739 },
+      'WEST WINDSOR': { b: 506,  e: 503,  ballots: 770 },
+      'WINDSOR':      { b: 955,  e: 924,  ballots: 1461 }
+    }
+  };
+  const CAST22 = Object.values(HIST.g22).reduce((s, t) => s + t.ballots, 0);
+  const TOWNS = ['HARTLAND', 'WINDSOR', 'WEST WINDSOR'];
+
+  function renderHistory(towns, cands, tmap) {
+    const sum = (obj, k) => TOWNS.reduce((s, t) => s + (obj[t][k] || 0), 0);
+    const td = (v, cls) => '<td' + (cls ? ' class="' + cls + '"' : '') + '>' + v + '</td>';
+    // Primary table
+    const pc = ['DYLAN MORSE', 'JOHN G. TANSEY', 'JOHN BARTHOLOMEW'];
+    let h = '<thead><tr><th>Town</th><th>Morse</th><th>Tansey</th><th>Bartholomew<br><span class="note">incumbent</span></th><th>Dem ballots</th></tr></thead><tbody>';
+    TOWNS.forEach(t => {
+      const r = HIST.prim26[t]; const top = Math.max(...pc.map(c => r[c]));
+      h += '<tr>' + td(title(t)) + pc.map(c => td(fmt(r[c]), (c === 'DYLAN MORSE' ? 'mcol' : '') + (r[c] === top ? ' win' : ''))).join('') + td(fmt(r.ballots)) + '</tr>';
+    });
+    h += '<tr class="total">' + td('District') + pc.map(c => td(fmt(sum(HIST.prim26, c)), c === 'DYLAN MORSE' ? 'mcol' : '')).join('') + td(fmt(sum(HIST.prim26, 'ballots'))) + '</tr></tbody>';
+    $('hPrim').innerHTML = h;
+
+    // Morse tonight vs primary
+    const hero = cands.find(c => c.name.toUpperCase().includes(HERO));
+    const byTown = Object.fromEntries(towns.map(r => [r.tn, r]));
+    let v = '<thead><tr><th>Town</th><th>Aug</th><th>Tonight</th><th>Change</th></tr></thead><tbody>';
+    let pt = 0, nt = 0, pIn = 0;
+    TOWNS.forEach(t => {
+      const r = byTown[t]; const done = r && isTownReported(r);
+      const now = done ? ((r.rc || []).find(c => c.cn.toUpperCase().includes(HERO)) || {}).vc || 0 : null;
+      const p = HIST.prim26[t]['DYLAN MORSE']; pt += p; if (done) { nt += now; pIn += p; }
+      v += '<tr>' + td(title(t)) + td(fmt(p)) + td(done ? fmt(now) : '–', 'mcol') + td(done ? '<span class="up">' + (now / p).toFixed(1) + '×</span>' : 'not in yet') + '</tr>';
+    });
+    v += '<tr class="total">' + td('District') + td(fmt(pt)) + td(hero ? fmt(hero.votes) : '–', 'mcol') + td(nt ? '<span class="up">+' + fmt(nt - pIn) + '</span> in towns in' : '–') + '</tr></tbody>';
+    $('hVsPrim').innerHTML = v;
+
+    // Turnout
+    let tu = '<thead><tr><th>Town</th><th>2022</th><th>2024</th><th>2026</th><th>vs 2022</th></tr></thead><tbody>';
+    let c26 = 0, c22in = 0;
+    TOWNS.forEach(t => {
+      const tt = tmap[t] || {}; const n = tt.tvc || 0; const o = HIST.g22[t].ballots;
+      if (n) { c26 += n; c22in += o; }
+      const d = n ? (n - o) / o * 100 : null;
+      tu += '<tr>' + td(title(t)) + td(fmt(o)) + td(fmt(HIST.g24[t].ballots)) + td(n ? fmt(n) : '–') +
+        td(d == null ? '–' : '<span class="' + (d >= 0 ? 'up' : 'dn') + '">' + (d >= 0 ? '+' : '') + d.toFixed(0) + '%</span>') + '</tr>';
+    });
+    const dd = c22in ? (c26 - c22in) / c22in * 100 : null;
+    tu += '<tr class="total">' + td('District') + td(fmt(CAST22)) + td(fmt(CAST24)) + td(c26 ? fmt(c26) : '–') +
+      td(dd == null ? '–' : '<span class="' + (dd >= 0 ? 'up' : 'dn') + '">' + (dd >= 0 ? '+' : '') + dd.toFixed(0) + '%</span>') + '</tr></tbody>';
+    $('hTurn').innerHTML = tu;
+
+    // Past House results
+    let ps = '<thead><tr><th>Town</th><th>Bartholomew ’22</th><th>Burrows ’22</th><th>Bartholomew ’24</th><th>Burrows ’24</th></tr></thead><tbody>';
+    TOWNS.forEach(t => { ps += '<tr>' + td(title(t)) + td(fmt(HIST.g22[t].b)) + td(fmt(HIST.g22[t].e)) + td(fmt(HIST.g24[t].b)) + td(fmt(HIST.g24[t].e)) + '</tr>'; });
+    ps += '<tr class="total">' + td('District') + td(fmt(sum(HIST.g22, 'b'))) + td(fmt(sum(HIST.g22, 'e'))) + td(fmt(sum(HIST.g24, 'b'))) + td(fmt(sum(HIST.g24, 'e'))) + '</tr></tbody>';
+    $('hPast').innerHTML = ps;
+  }
 
   const $ = id => document.getElementById(id);
   const fmt = n => (n == null || isNaN(n)) ? '–' : Number(n).toLocaleString('en-US');
@@ -293,12 +418,12 @@ footer a{color:var(--green)}
     $('sTownsN').textContent = reported === towns.length ? 'all 3 towns in' : (towns.length - reported) + ' still counting';
 
     // Polling place cards
-    let outstanding = 0;
+    let outstanding = 0, outstanding22 = 0;
     $('pp').innerHTML = towns.slice().sort((a, b) => (TOWN_INFO[b.tn] || {}).cast24 - (TOWN_INFO[a.tn] || {}).cast24).map(r => {
       const info = TOWN_INFO[r.tn] || {};
       const tt = tmap[r.tn] || {};
       const done = isTownReported(r);
-      if (!done) outstanding += info.cast24 || 0;
+      if (!done) { outstanding += info.cast24 || 0; outstanding22 += (HIST.g22[r.tn] || {}).ballots || 0; }
       const share = info.cast24 ? info.cast24 / CAST24 * 100 : 0;
       const q = encodeURIComponent(info.place + ', ' + info.addr + ', VT');
       const rows = [
@@ -318,9 +443,10 @@ footer a{color:var(--green)}
         '<dl>' + rows.map(x => '<dt>' + x[0] + '</dt><dd>' + x[1] + '</dd>').join('') + '</dl></div>';
     }).join('');
     updateMap(towns, cands, tmap);
+    if (!TEST) renderHistory(towns, cands, tmap);
     $('ppNote').innerHTML = reported === towns.length
       ? '<span>All three polling places have reported.</span>'
-      : '<span>Still out: about <b>' + fmt(outstanding) + '</b> ballots (' + Math.round(outstanding / CAST24 * 100) + '% of the district), going by 2024 turnout.</span>';
+      : '<span>Still out: roughly <b>' + fmt(outstanding22) + '–' + fmt(outstanding) + '</b> ballots (' + Math.round(outstanding / CAST24 * 100) + '% of the district), going by 2022 midterm and 2024 turnout.</span>';
     $('sBallots').textContent = fmt(cast);
     $('sBallotsN').textContent = reg ? pct(cast, reg) + ' turnout in reporting towns' : ' ';
 
@@ -525,12 +651,14 @@ footer a{color:var(--green)}
     const left = Math.max(0, nextAt - Date.now());
     const s = Math.ceil(left / 1000);
     const txt = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
-    $('countdown').textContent = txt; $('countdown2').textContent = txt;
+    $('countdown').textContent = txt; $('countdown2').textContent = txt; $('miniCount').textContent = loading ? '…' : txt;
     $('ringArc').setAttribute('stroke-dashoffset', (175.93 * (1 - left / curInterval)).toFixed(2));
     if (left <= 0 && !loading) update();
   }
 
   $('refresh').addEventListener('click', update);
+  $('miniRefresh').addEventListener('click', update);
+  if (TEST) $('history').classList.add('hide');
   document.addEventListener('visibilitychange', () => { if (!document.hidden && Date.now() >= nextAt) update(); });
   update();
   setInterval(tick, 1000);

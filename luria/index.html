@@ -126,6 +126,8 @@ tr.total td{font-weight:700;border-bottom:0;border-top:2px solid var(--ink)}
 #refresh{font:inherit;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.06em;padding:9px 14px;border:1px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer}
 #refresh:hover{background:var(--ink);color:var(--white)}
 button:disabled{opacity:.5;cursor:default}
+.offlink{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:9px 14px;border:1px solid var(--soft);color:var(--navy);text-decoration:none}
+.offlink:hover{border-color:var(--navy)}
 footer{font-size:13px;color:var(--muted);line-height:1.6;padding-bottom:40px}
 
 @media (max-width:820px){
@@ -214,6 +216,7 @@ footer{font-size:13px;color:var(--muted);line-height:1.6;padding-bottom:40px}
         State last updated: <b id="posted">–</b>
       </div>
       <button id="refresh">Refresh now</button>
+      <a class="offlink" href="https://enr.elections.virginia.gov/results/public/virginia/elections/2026-November-General" target="_blank" rel="noopener">Official VA results ↗</a>
     </div>
     <div class="pbar"><i id="pfill"></i></div>
   </section>

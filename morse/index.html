@@ -110,6 +110,10 @@ footer a{color:var(--green)}
 .share{height:6px;background:var(--bar-bg);border-radius:3px;overflow:hidden;margin-top:2px}
 .share i{display:block;height:100%;background:var(--green);opacity:.55}
 @media (max-width:760px){.pp{grid-template-columns:1fr}}
+.about ul{list-style:none;display:grid;gap:12px}
+.about li{font-size:15px;padding-left:16px;position:relative}
+.about li::before{content:"";position:absolute;left:0;top:.6em;width:6px;height:6px;border-radius:50%;background:var(--green)}
+.about a{color:var(--green)}
 @media (max-width:640px){
   .stats{grid-template-columns:repeat(2,1fr)}
   .stat .v{font-size:22px}
@@ -153,6 +157,19 @@ footer a{color:var(--green)}
   <section class="card">
     <div class="sec-h"><h2>By town</h2><span class="note">Each town reports once, after it finishes counting</span></div>
     <div class="tscroll"><table id="towns"></table></div>
+  </section>
+
+  <section class="card about">
+    <div class="sec-h"><h2>How results come in</h2></div>
+    <ul>
+      <li><b>Three polling places, one per town.</b> Windsor-1 is Hartland, Windsor and West Windsor. The state counts each town as a single reporting unit, so “Polling places in” only ever moves 0 → 1 → 2 → 3.</li>
+      <li><b>Each town reports everything at once.</b> When a town posts, it includes both election-day votes and early/absentee ballots. Nothing trickles in after that, so a town’s numbers don’t change once it shows “Reported”.</li>
+      <li><b>All polls close at 7:00 PM.</b> Opening times differ: Hartland 7:00 AM, Windsor 9:00 AM, West Windsor 10:00 AM. Towns post results after they finish counting, so expect the first numbers some time after 7.</li>
+      <li><b>Hartland is the big one.</b> Dylan’s home town cast 44% of the district’s ballots in 2024, Windsor 38%, West Windsor 18%. When Hartland reports, we get a real read on the race.</li>
+      <li><b>Two seats, top two win.</b> Each voter can pick up to two candidates, so the total vote count runs close to double the number of voters. The dashed seat line falls between 2nd and 3rd place.</li>
+      <li><b>“Ballots still out”</b> adds up the 2024 ballots for every town that hasn’t reported yet. It’s a rough guide, not a forecast.</li>
+    </ul>
+    <div class="extra"><span>Sources: <a href="https://electionresults.vermont.gov/" target="_blank" rel="noopener">VT election night results</a> · <a href="https://map.vermont.gov/voting-info-lookup/" target="_blank" rel="noopener">VT polling place lookup</a> (updated Oct 13, 2026) · <a href="https://sos.vermont.gov/elections/voters/polling-places" target="_blank" rel="noopener">VT SOS polling places</a> · 2024 figures from the state’s certified 2024 general election turnout file</span></div>
   </section>
 
   <section class="card">
@@ -360,7 +377,7 @@ footer a{color:var(--green)}
     } else if (!anyVotes && reported === 0) {
       if (now < POLLS_CLOSE) {
         setStatus('wait', 'Polls close 7:00 PM ET');
-        banner.innerHTML = 'Polls are open until 7:00 PM. <small>Polls close in ' + untilText(POLLS_CLOSE - now) + '. Towns start reporting after they finish counting, usually in the hour or two after close.</small>';
+        banner.innerHTML = 'Polls are open until 7:00 PM. <small>Polls close in ' + untilText(POLLS_CLOSE - now) + '. Towns start reporting after they finish counting.</small>';
       } else {
         setStatus('live', 'Polls closed · counting');
         banner.innerHTML = 'Polls are closed and towns are counting. <small>No Windsor-1 town has reported yet. This page checks every 5 minutes.</small>';

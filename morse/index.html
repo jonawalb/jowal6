@@ -9,7 +9,7 @@
 <title>Morse Results Tracker</title>
 <meta name="description" content="Live results for Dylan Morse in the Vermont House Windsor-1 race (Hartland, West Windsor, Windsor), straight from the Vermont Secretary of State.">
 <meta property="og:title" content="Morse for Vermont: Live Results">
-<meta property="og:description" content="Windsor-1 State House results, refreshed every minute after polls close, straight from the Vermont Secretary of State.">
+<meta property="og:description" content="Windsor-1 State House results, refreshed every minute, straight from the Vermont Secretary of State.">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -315,7 +315,7 @@ footer{font-size:13px;color:var(--muted);line-height:1.6;padding-bottom:40px}
 
 </main>
 <div class="wrap"><footer>
-    Data comes directly from the <a href="https://electionresults.vermont.gov/" target="_blank" rel="noopener">Vermont Secretary of State election-night results</a>. It refreshes every 5 minutes while polls are open and every minute after they close at 7:00 PM; keep this tab open. Results are unofficial until certified. Vermont towns hand in results one at a time after they finish counting, so a town reads 0 until it reports.
+    Data comes directly from the <a href="https://electionresults.vermont.gov/" target="_blank" rel="noopener">Vermont Secretary of State election-night results</a>. It refreshes every minute; keep this tab open. Results are unofficial until certified. Vermont towns hand in results one at a time after they finish counting, so a town reads 0 until it reports.
     <span id="testNote" class="hide"><br><b>Test mode:</b> showing 2024 Windsor-1 results to check the page works.</span>
   </footer>
 </div>
@@ -329,9 +329,9 @@ footer{font-size:13px;color:var(--muted);line-height:1.6;padding-bottom:40px}
   const DISTRICT = 'WINDSOR-1';
   const HERO = 'MORSE';
   const SEATS = 2;
-  // 5-minute refresh while polls are open, every minute after they close
-  const interval = () => (Date.now() >= POLLS_CLOSE.getTime() ? 60 : 5 * 60) * 1000;
-  let curInterval = 5 * 60 * 1000;
+  // Refresh every minute for election night
+  const interval = () => 60 * 1000;
+  let curInterval = 60 * 1000;
   // Polls close 7:00 PM Eastern on Nov 3, 2026 (EST, UTC-5)
   const POLLS_CLOSE = new Date('2026-11-04T00:00:00Z');
   // Polling places: Vermont SOS poll-location data (map.vermont.gov/voting-info-lookup, updated 2026-10-13).

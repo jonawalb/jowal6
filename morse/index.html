@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Morse Results Tracker</title>
+<meta name="description" content="Live results for Dylan Morse in the Vermont House Windsor-1 race (Hartland, West Windsor, Windsor), straight from the Vermont Secretary of State.">
+<meta property="og:title" content="Morse for Vermont: Live Results">
+<meta property="og:description" content="Windsor-1 State House results, refreshed every 5 minutes from the Vermont Secretary of State.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f4ef; --card:#ffffff; --ink:#14201b; --muted:#5d6b64; --line:#e3e0d7;
+  --green:#1f5a3f; --green-soft:#e4efe8; --morse:#1f5a3f; --other:#8a9690; --ind:#b3a6c9;
+  --accent:#c8102e; --gold:#b8860b; --bar-bg:#eceae3;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0f1512; --card:#17201b; --ink:#e9efe9; --muted:#9aa8a0; --line:#26322b;
+    --green:#5fbf8c; --green-soft:#1c3328; --morse:#5fbf8c; --other:#76837c; --ind:#9d90b8;
+    --accent:#ff5a6e; --gold:#e0b44a; --bar-bg:#222c26;
+  }
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:'Libre Franklin',system-ui,sans-serif;line-height:1.45;-webkit-font-smoothing:antialiased}
+.wrap{max-width:880px;margin:0 auto;padding:28px 16px 64px}
+.mono{font-family:'DM Mono',ui-monospace,monospace}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{font-size:clamp(30px,6vw,46px);font-weight:800;letter-spacing:-.02em;line-height:1.05;margin:6px 0 6px}
+h1 span{color:var(--green)}
+.sub{color:var(--muted);font-size:15px}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;font-size:13px;font-weight:700;background:var(--green-soft);color:var(--green);white-space:nowrap}
+.pill .dot{width:8px;height:8px;border-radius:50%;background:currentColor}
+.pill.live .dot{animation:pulse 1.6s infinite}
+.pill.wait{background:var(--bar-bg);color:var(--muted)}
+.pill.win{background:var(--green);color:var(--card)}
+.pill.err{background:#fde8ea;color:var(--accent)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:16px}
+.banner{border-left:5px solid var(--green);font-size:18px;font-weight:600}
+.banner small{display:block;font-size:13px;font-weight:400;color:var(--muted);margin-top:4px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.stat .k{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.stat .v{font-size:26px;font-weight:800;margin-top:4px;font-variant-numeric:tabular-nums}
+.stat .n{font-size:12px;color:var(--muted);margin-top:2px}
+.sec-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;gap:10px;flex-wrap:wrap}
+.sec-h h2{font-size:17px;font-weight:700}
+.sec-h .note{font-size:13px;color:var(--muted)}
+.cand{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:12px 0;border-bottom:1px solid var(--line);align-items:center}
+.cand:last-child{border-bottom:0}
+.cand .name{font-weight:700;font-size:17px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cand .party{font-size:12px;font-weight:500;color:var(--muted)}
+.cand .tag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;background:var(--green);color:var(--card);letter-spacing:.04em}
+.cand .tag.lead{background:var(--green-soft);color:var(--green)}
+.cand .num{text-align:right;font-variant-numeric:tabular-nums}
+.cand .num b{font-size:20px}
+.cand .num .pct{display:block;font-size:13px;color:var(--muted)}
+.cand .delta{font-size:12px;color:var(--green);font-weight:600;margin-left:6px}
+.bar{grid-column:1/-1;height:12px;background:var(--bar-bg);border-radius:6px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:6px;background:var(--other);transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.cand.morse .bar i{background:var(--morse)}
+.cand.ind .bar i{background:var(--ind)}
+.cand.morse .name{color:var(--green)}
+.seatline{display:flex;align-items:center;gap:10px;margin:2px 0;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.seatline::before,.seatline::after{content:"";flex:1;border-top:2px dashed var(--accent);opacity:.6}
+.extra{margin-top:12px;font-size:13px;color:var(--muted);display:flex;gap:18px;flex-wrap:wrap}
+table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{padding:10px 8px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+td.mcol{color:var(--green);font-weight:700}
+tr.total td{font-weight:700;border-bottom:0}
+.badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 7px;border-radius:5px}
+.badge.done{background:var(--green-soft);color:var(--green)}
+.badge.part{background:#fff3d6;color:#8a6200}
+.badge.none{background:var(--bar-bg);color:var(--muted)}
+@media (prefers-color-scheme: dark){.badge.part{background:#3a3016;color:var(--gold)}.pill.err{background:#3a1a1f}}
+.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -8px;padding:0 8px}
+.timer{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.ring{width:64px;height:64px;flex:none;position:relative}
+.ring svg{transform:rotate(-90deg)}
+.ring .t{position:absolute;inset:0;display:grid;place-items:center;font-family:'DM Mono',monospace;font-size:14px;font-weight:500}
+.timer .meta{flex:1;min-width:200px;font-size:14px;color:var(--muted)}
+.timer .meta b{color:var(--ink);font-weight:600}
+button{font:inherit;font-weight:700;font-size:14px;padding:10px 16px;border-radius:10px;border:1px solid var(--green);background:transparent;color:var(--green);cursor:pointer}
+button:hover{background:var(--green-soft)}
+button:disabled{opacity:.5;cursor:default}
+footer{font-size:13px;color:var(--muted);margin-top:24px;line-height:1.6}
+footer a{color:var(--green)}
+.hide{display:none!important}
+@media (max-width:640px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .stat .v{font-size:22px}
+  .card{padding:18px 16px}
+  th,td{padding:9px 6px;font-size:13px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Vermont House · Windsor-1 · Nov 3, 2026</div>
+      <h1>Dylan <span>Morse</span> for State Rep</h1>
+      <div class="sub">Hartland · West Windsor · Windsor &nbsp;·&nbsp; 2 seats, top two win</div>
+    </div>
+    <div id="status" class="pill wait"><span class="dot"></span><span id="statusText">Loading…</span></div>
+  </header>
+
+  <div id="banner" class="card banner hide"></div>
+
+  <div class="stats">
+    <div class="stat"><div class="k">Towns reporting</div><div class="v" id="sTowns">–</div><div class="n" id="sTownsN">of 3</div></div>
+    <div class="stat"><div class="k">Morse votes</div><div class="v" id="sMorse">–</div><div class="n" id="sMorseN">&nbsp;</div></div>
+    <div class="stat"><div class="k" id="sCushK">Cushion</div><div class="v" id="sCush">–</div><div class="n" id="sCushN">&nbsp;</div></div>
+    <div class="stat"><div class="k">Ballots cast</div><div class="v" id="sBallots">–</div><div class="n" id="sBallotsN">&nbsp;</div></div>
+  </div>
+
+  <section class="card">
+    <div class="sec-h"><h2>District-wide results</h2><span class="note" id="candNote">Voters may pick two</span></div>
+    <div id="cands"></div>
+    <div class="extra" id="extra"></div>
+  </section>
+
+  <section class="card">
+    <div class="sec-h"><h2>By town</h2><span class="note">Each town reports once, after it finishes counting</span></div>
+    <div class="tscroll"><table id="towns"></table></div>
+  </section>
+
+  <section class="card">
+    <div class="timer">
+      <div class="ring">
+        <svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="28" fill="none" stroke="var(--bar-bg)" stroke-width="6"/><circle id="ringArc" cx="32" cy="32" r="28" fill="none" stroke="var(--green)" stroke-width="6" stroke-linecap="round" stroke-dasharray="175.93" stroke-dashoffset="0"/></svg>
+        <div class="t" id="countdown">5:00</div>
+      </div>
+      <div class="meta">
+        Next update in <b id="countdown2">5:00</b><br>
+        Page checked: <b id="checked">–</b><br>
+        State last posted: <b id="posted">–</b>
+      </div>
+      <button id="refresh">Refresh now</button>
+    </div>
+  </section>
+
+  <footer>
+    Data comes directly from the <a href="https://electionresults.vermont.gov/" target="_blank" rel="noopener">Vermont Secretary of State election-night results</a>. It refreshes every 5 minutes; keep this tab open. Results are unofficial until certified. Vermont towns hand in results one at a time after they finish counting, so a town reads 0 until it reports.
+    <span id="testNote" class="hide"><br><b>Test mode:</b> showing 2024 Windsor-1 results to check the page works.</span>
+  </footer>
+</div>
+
+<script>
+(() => {
+  const BASE = 'https://static.electionresults.vermont.gov/';
+  const params = new URLSearchParams(location.search);
+  const TEST = params.get('test') === '2024';
+  const GUID = TEST ? '67a35c79-05a2-4ae3-a77d-97812256188b' : '68d61e96-1d28-4210-8c1d-8e90512ae105';
+  const DISTRICT = 'WINDSOR-1';
+  const HERO = 'MORSE';
+  const SEATS = 2;
+  const INTERVAL = 5 * 60 * 1000;
+  // Polls close 7:00 PM Eastern on Nov 3, 2026 (EST, UTC-5)
+  const POLLS_CLOSE = new Date('2026-11-04T00:00:00Z');
+
+  const $ = id => document.getElementById(id);
+  const fmt = n => (n == null || isNaN(n)) ? '–' : Number(n).toLocaleString('en-US');
+  const pct = (a, b) => b > 0 ? (a / b * 100).toFixed(1) + '%' : '–';
+  const title = s => String(s || '').toLowerCase().replace(/(^|[\s.\-"'(])\S/g, m => m.toUpperCase());
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+  let prev = null;        // previous district totals by candidate name
+  let nextAt = Date.now();
+  let loading = false;
+  if (TEST) $('testNote').classList.remove('hide');
+
+  async function getJSON(path) {
+    const url = BASE + path.replace(/\\/g, '/') + (path.includes('?') ? '&' : '?') + '_=' + Date.now();
+    const r = await fetch(url, { cache: 'no-store' });
+    if (!r.ok) throw new Error(r.status + ' on ' + path);
+    return r.json();
+  }
+
+  function findContest(house) {
+    for (const blk of (house.d || [])) for (const o of (blk.o || [])) if (o.dn === DISTRICT) return o;
+    return null;
+  }
+
+  function setStatus(cls, text) {
+    const el = $('status');
+    el.className = 'pill ' + cls;
+    $('statusText').textContent = text;
+  }
+
+  function render(meta, contest, turnout) {
+    const rows = contest.cs || [];
+    const dw = rows.find(r => r.tid === 0 || r.tn === 'District Wide');
+    const towns = rows.filter(r => r !== dw);
+    const townNames = towns.map(t => t.tn);
+    const reported = towns.filter(isTownReported).length;
+    const official = !!(dw && dw.io) || !!(meta.electionDetails && meta.electionDetails.isOfficial);
+
+    // Candidates sorted by votes
+    const cands = (dw.rc || []).map(c => ({ name: c.cn, party: c.pn, votes: c.vc || 0, win: !!c.isWinner }))
+      .sort((a, b) => b.votes - a.votes || a.name.localeCompare(b.name));
+    const writeIns = (dw.wc || []).reduce((s, w) => s + (w.vc || 0), 0);
+    const candTotal = cands.reduce((s, c) => s + c.votes, 0) + writeIns;
+    const anyVotes = candTotal > 0;
+    const heroIdx = cands.findIndex(c => c.name.toUpperCase().includes(HERO));
+    const hero = cands[heroIdx];
+
+    // Turnout for the district's towns
+    const tmap = {};
+    (turnout.d || []).forEach(t => { if (townNames.includes(t.tn)) tmap[t.tn] = t; });
+    // Turnout counts only towns that have posted ballots, so partial nights aren't understated
+    const inT = Object.values(tmap).filter(t => (t.tvc || 0) > 0);
+    const reg = inT.reduce((s, t) => s + (t.tvr || 0), 0);
+    const cast = inT.reduce((s, t) => s + (t.tvc || 0), 0);
+
+    // Stats
+    $('sTowns').textContent = reported + ' / ' + towns.length;
+    $('sTownsN').textContent = reported === towns.length ? 'all towns in' : (towns.length - reported) + ' still counting';
+    $('sBallots').textContent = fmt(cast);
+    $('sBallotsN').textContent = reg ? pct(cast, reg) + ' turnout in reporting towns' : ' ';
+
+    if (hero) {
+      $('sMorse').textContent = fmt(hero.votes);
+      $('sMorseN').textContent = anyVotes ? (heroIdx + 1) + getOrd(heroIdx + 1) + ' place · ' + pct(hero.votes, cast) + ' of voters' : 'waiting on first town';
+      const inSeat = heroIdx < SEATS;
+      if (!anyVotes) { $('sCushK').textContent = 'Cushion'; $('sCush').textContent = '–'; $('sCushN').textContent = 'lead over 3rd place'; }
+      else if (inSeat && cands[SEATS]) {
+        const gap = hero.votes - cands[SEATS].votes;
+        $('sCushK').textContent = 'Cushion over 3rd';
+        $('sCush').textContent = (gap >= 0 ? '+' : '') + fmt(gap);
+        $('sCushN').textContent = 'ahead of ' + title(cands[SEATS].name);
+      } else if (!inSeat) {
+        const gap = cands[SEATS - 1].votes - hero.votes;
+        $('sCushK').textContent = 'Behind 2nd by';
+        $('sCush').textContent = fmt(gap);
+        $('sCushN').textContent = 'votes to catch ' + title(cands[SEATS - 1].name);
+      } else { $('sCushK').textContent = 'Cushion'; $('sCush').textContent = '–'; $('sCushN').textContent = ' '; }
+    }
+
+    // Candidate list
+    const max = Math.max(1, ...cands.map(c => c.votes));
+    let html = '';
+    cands.forEach((c, i) => {
+      if (i === SEATS && cands.length > SEATS) html += '<div class="seatline">Top two win · seat line</div>';
+      const isHero = c.name.toUpperCase().includes(HERO);
+      const cls = ['cand', isHero ? 'morse' : '', /INDEPENDENT/i.test(c.party || '') ? 'ind' : ''].join(' ');
+      const d = prev && prev[c.name] != null ? c.votes - prev[c.name] : 0;
+      let tag = '';
+      if (c.win) tag = '<span class="tag">' + (official ? 'Elected ✓' : 'Winner ✓') + '</span>';
+      else if (anyVotes && i < SEATS) tag = '<span class="tag lead">In a seat</span>';
+      html += '<div class="' + cls + '">' +
+        '<div class="name">' + esc(title(c.name)) + ' <span class="party">' + esc(title(c.party || '')) + '</span>' + tag + '</div>' +
+        '<div class="num"><b>' + fmt(c.votes) + '</b>' + (d > 0 ? '<span class="delta">+' + fmt(d) + '</span>' : '') +
+        '<span class="pct">' + (anyVotes ? pct(c.votes, candTotal) + ' of votes' : '&nbsp;') + '</span></div>' +
+        '<div class="bar"><i style="width:' + (c.votes / max * 100).toFixed(2) + '%"></i></div></div>';
+    });
+    $('cands').innerHTML = html;
+    $('extra').innerHTML = '<span>Write-ins: <b>' + fmt(writeIns) + '</b></span>' +
+      '<span>Blank: <b>' + fmt(dw.bv) + '</b></span>' +
+      '<span>Overvotes: <b>' + fmt(dw.sv) + '</b></span>' +
+      '<span>Total marks: <b>' + fmt(dw.sc) + '</b></span>';
+    prev = Object.fromEntries(cands.map(c => [c.name, c.votes]));
+
+    // Town table
+    const order = cands.map(c => c.name);
+    let t = '<thead><tr><th>Town</th><th>Status</th>' + order.map(n => '<th>' + esc(title(n.split(' ').slice(-1)[0])) + '</th>').join('') +
+      '<th>Write-in</th><th>Blank</th><th>Ballots</th><th>Turnout</th></tr></thead><tbody>';
+    towns.slice().sort((a, b) => a.tn.localeCompare(b.tn)).forEach(r => {
+      const v = Object.fromEntries((r.rc || []).map(c => [c.cn, c.vc || 0]));
+      const wi = (r.wc || []).reduce((s, w) => s + (w.vc || 0), 0);
+      const tt = tmap[r.tn] || {};
+      const done = isTownReported(r);
+      t += '<tr><td>' + esc(title(r.tn)) + '</td><td><span class="badge ' + (done ? 'done">Reported' : 'none">Counting') + '</span></td>' +
+        order.map(n => '<td' + (n.toUpperCase().includes(HERO) ? ' class="mcol"' : '') + '>' + (done ? fmt(v[n]) : '–') + '</td>').join('') +
+        '<td>' + (done ? fmt(wi) : '–') + '</td><td>' + (done ? fmt(r.bv) : '–') + '</td>' +
+        '<td>' + (tt.tvc ? fmt(tt.tvc) : '–') + '</td><td>' + (tt.tvr && tt.tvc ? pct(tt.tvc, tt.tvr) : '–') + '</td></tr>';
+    });
+    t += '<tr class="total"><td>District</td><td>' + reported + '/' + towns.length + '</td>' +
+      order.map(n => '<td' + (n.toUpperCase().includes(HERO) ? ' class="mcol"' : '') + '>' + fmt((cands.find(c => c.name === n) || {}).votes) + '</td>').join('') +
+      '<td>' + fmt(writeIns) + '</td><td>' + fmt(dw.bv) + '</td><td>' + (cast ? fmt(cast) : '–') + '</td><td>' + (reg && cast ? pct(cast, reg) : '–') + '</td></tr></tbody>';
+    $('towns').innerHTML = t;
+
+    // Status + banner
+    const banner = $('banner');
+    const now = new Date();
+    if (hero && hero.win) {
+      setStatus('win', official ? 'Official: Morse elected' : 'Morse wins');
+      banner.innerHTML = '🎉 Dylan Morse wins a seat in the Vermont House. <small>' + (official ? 'Results are official.' : 'Per the Secretary of State, ' + reported + ' of ' + towns.length + ' towns reporting. Unofficial until certified.') + '</small>';
+      banner.classList.remove('hide');
+    } else if (cands.some(c => c.win)) {
+      setStatus(official ? 'win' : 'live', official ? 'Official results' : 'Winners called');
+      banner.classList.add('hide');
+    } else if (!anyVotes && reported === 0) {
+      if (now < POLLS_CLOSE) {
+        setStatus('wait', 'Polls close 7:00 PM ET');
+        banner.innerHTML = 'Polls are open until 7:00 PM. <small>Polls close in ' + untilText(POLLS_CLOSE - now) + '. Towns start reporting after they finish counting, usually in the hour or two after close.</small>';
+      } else {
+        setStatus('live', 'Polls closed · counting');
+        banner.innerHTML = 'Polls are closed and towns are counting. <small>No Windsor-1 town has reported yet. This page checks every 5 minutes.</small>';
+      }
+      banner.classList.remove('hide');
+    } else {
+      setStatus('live', reported === towns.length ? 'All towns in' : 'Counting · ' + reported + '/' + towns.length + ' towns');
+      banner.classList.add('hide');
+    }
+    $('posted').textContent = meta.lastUpdatedDate ? meta.lastUpdatedDate + ' ET' : '–';
+  }
+
+  function isTownReported(r) {
+    const s = (r.rc || []).reduce((a, c) => a + (c.vc || 0), 0) + (r.bv || 0) + (r.sv || 0);
+    return s > 0;
+  }
+  function getOrd(n) { return ['th','st','nd','rd'][(n % 100 > 10 && n % 100 < 14) ? 0 : (n % 10 < 4 ? n % 10 : 0)]; }
+  function untilText(ms) {
+    const m = Math.max(0, Math.round(ms / 60000)), h = Math.floor(m / 60);
+    return h ? h + ' hr ' + (m % 60) + ' min' : m + ' min';
+  }
+
+  async function update() {
+    if (loading) return;
+    loading = true; $('refresh').disabled = true;
+    try {
+      const meta = await getJSON('elections/' + GUID + '.json');
+      if (!meta.house || !meta.house.path) throw new Error('House results not published');
+      const [house, turnout] = await Promise.all([
+        getJSON(meta.house.path),
+        meta.turnOut && meta.turnOut.path ? getJSON(meta.turnOut.path) : Promise.resolve({ d: [] })
+      ]);
+      const contest = findContest(house);
+      if (!contest) throw new Error('Windsor-1 not found in feed');
+      render(meta, contest, turnout);
+      $('checked').textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' });
+    } catch (e) {
+      console.error(e);
+      setStatus('err', 'Couldn’t reach the state feed, retrying');
+      $('checked').textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) + ' (failed)';
+    } finally {
+      loading = false; $('refresh').disabled = false;
+      nextAt = Date.now() + INTERVAL;
+    }
+  }
+
+  function tick() {
+    const left = Math.max(0, nextAt - Date.now());
+    const s = Math.ceil(left / 1000);
+    const txt = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+    $('countdown').textContent = txt; $('countdown2').textContent = txt;
+    $('ringArc').setAttribute('stroke-dashoffset', (175.93 * (1 - left / INTERVAL)).toFixed(2));
+    if (left <= 0 && !loading) update();
+  }
+
+  $('refresh').addEventListener('click', update);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && Date.now() >= nextAt) update(); });
+  update();
+  setInterval(tick, 1000);
+})();
+</script>
+</body>
+</html>

@@ -544,6 +544,9 @@ footer{font-size:13px;color:var(--muted);line-height:1.6;padding-bottom:40px}
       '<span>Blank: <b>' + fmt(dw.bv) + '</b></span>' +
       '<span>Overvotes: <b>' + fmt(dw.sv) + '</b></span>' +
       '<span>Total marks: <b>' + fmt(dw.sc) + '</b></span>';
+    // Named write-ins only appear once towns file detailed returns (usually after election night)
+    const named = (dw.wc || []).filter(w => w.isWriteIn && w.vc > 0 && !/^(BLANK|SPOIL|VOID|NONE)/i.test(w.cn)).sort((a, b) => b.vc - a.vc).slice(0, 5);
+    if (named.length) $('extra').innerHTML += '<span>Top write-ins: ' + named.map(w => esc(title(w.cn)) + ' <b>' + fmt(w.vc) + '</b>').join(', ') + '</span>';
     prev = Object.fromEntries(cands.map(c => [c.name, c.votes]));
 
     // Town table

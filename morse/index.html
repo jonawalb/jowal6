@@ -9,7 +9,7 @@
 <title>Morse Results Tracker</title>
 <meta name="description" content="Live results for Dylan Morse in the Vermont House Windsor-1 race (Hartland, West Windsor, Windsor), straight from the Vermont Secretary of State.">
 <meta property="og:title" content="Morse for Vermont: Live Results">
-<meta property="og:description" content="Windsor-1 State House results, refreshed every minute, straight from the Vermont Secretary of State.">
+<meta property="og:description" content="Windsor-1 State House results, refreshed every 10 seconds, straight from the Vermont Secretary of State.">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -315,7 +315,7 @@ footer{font-size:13px;color:var(--muted);line-height:1.6;padding-bottom:40px}
 
 </main>
 <div class="wrap"><footer>
-    Data comes directly from the <a href="https://electionresults.vermont.gov/" target="_blank" rel="noopener">Vermont Secretary of State election-night results</a>. It refreshes every minute; keep this tab open. Results are unofficial until certified. Vermont towns hand in results one at a time after they finish counting, so a town reads 0 until it reports.
+    Data comes directly from the <a href="https://electionresults.vermont.gov/" target="_blank" rel="noopener">Vermont Secretary of State election-night results</a>. It refreshes every 10 seconds; keep this tab open. Results are unofficial until certified. Vermont towns hand in results one at a time after they finish counting, so a town reads 0 until it reports.
     <span id="testNote" class="hide"><br><b>Test mode:</b> showing 2024 Windsor-1 results to check the page works.</span>
   </footer>
 </div>
@@ -329,9 +329,9 @@ footer{font-size:13px;color:var(--muted);line-height:1.6;padding-bottom:40px}
   const DISTRICT = 'WINDSOR-1';
   const HERO = 'MORSE';
   const SEATS = 2;
-  // Refresh every minute for election night
-  const interval = () => 60 * 1000;
-  let curInterval = 60 * 1000;
+  // Refresh every 10 seconds for election night
+  const interval = () => 10 * 1000;
+  let curInterval = 10 * 1000;
   // Polls close 7:00 PM Eastern on Nov 3, 2026 (EST, UTC-5)
   const POLLS_CLOSE = new Date('2026-11-04T00:00:00Z');
   // Polling places: Vermont SOS poll-location data (map.vermont.gov/voting-info-lookup, updated 2026-10-13).
@@ -446,6 +446,8 @@ footer{font-size:13px;color:var(--muted);line-height:1.6;padding-bottom:40px}
     const rows = contest.cs || [];
     const dw = rows.find(r => r.tid === 0 || r.tn === 'District Wide');
     const towns = rows.filter(r => r !== dw);
+    // The feed only lists towns that have reported; add the missing ones as still counting
+    TOWNS.forEach(t => { if (!towns.some(r => r.tn === t)) towns.push({ tn: t, rc: [], wc: [], bv: 0, sv: 0, sc: 0 }); });
     const townNames = towns.map(t => t.tn);
     const reported = towns.filter(isTownReported).length;
     const official = !!(dw && dw.io) || !!(meta.electionDetails && meta.electionDetails.isOfficial);
@@ -584,7 +586,7 @@ footer{font-size:13px;color:var(--muted);line-height:1.6;padding-bottom:40px}
         banner.innerHTML = 'Polls are open until 7:00 PM. <small>Polls close in ' + untilText(POLLS_CLOSE - now) + '. Towns start reporting after they finish counting.</small>';
       } else {
         setStatus('live', 'Polls closed · counting');
-        banner.innerHTML = 'Polls are closed and towns are counting. <small>No Windsor-1 town has reported yet. This page checks every minute.</small>';
+        banner.innerHTML = 'Polls are closed and towns are counting. <small>No Windsor-1 town has reported yet. This page checks every 10 seconds.</small>';
       }
       banner.classList.remove('hide');
     } else {

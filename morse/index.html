@@ -679,14 +679,21 @@ footer{font-size:13px;color:var(--muted);line-height:1.6;padding-bottom:40px}
     loading = true; $('refresh').disabled = true;
     try {
       const meta = await getJSON('elections/' + GUID + '.json');
-      if (!meta.house || !meta.house.path) throw new Error('House results not published');
+      // The index lists files as either "path" strings or { path } objects
+      const fp = x => typeof x === 'string' ? x : (x && x.path);
+      const housePath = fp(meta.house), turnPath = fp(meta.turnOut);
+      if (!housePath) throw new Error('House results not published');
       const [house, turnout] = await Promise.all([
-        getJSON(meta.house.path),
-        meta.turnOut && meta.turnOut.path ? getJSON(meta.turnOut.path) : Promise.resolve({ d: [] })
+        getJSON(housePath),
+        turnPath ? getJSON(turnPath) : Promise.resolve({ d: [] })
       ]);
       const contest = findContest(house);
-      if (!contest) throw new Error('Windsor-1 not found in feed');
-      render(meta, contest, turnout);
+      if (contest) render(meta, contest, turnout);
+      else {
+        // District appears in the feed only once its first town reports
+        setStatus(Date.now() < POLLS_CLOSE ? 'wait' : 'live', Date.now() < POLLS_CLOSE ? 'Polls close 7:00 PM ET' : 'Polls closed · waiting on first town');
+        $('sTowns').textContent = '0 / 3';
+      }
       $('checked').textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' });
     } catch (e) {
       console.error(e);

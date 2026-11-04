@@ -137,6 +137,34 @@ footer a{color:inherit}
   .lossbar{max-width:44px}
 }
 @media (max-width:440px){ .tb-count{display:none} .brand{font-size:13px} }
+
+.proj{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.proj h3{font-family:var(--head);font-weight:900;font-size:15px;text-transform:uppercase;margin-bottom:8px}
+.proj .row{margin-bottom:12px}
+.proj .lbl{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px}
+.proj .lbl b{font-variant-numeric:tabular-nums}
+.proj .bar{height:18px}
+.close{list-style:none;columns:2;column-gap:24px;margin-top:6px}
+.close li{break-inside:avoid;display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid #ECEDEF;font-size:13.5px}
+.close li span:last-child{font-variant-numeric:tabular-nums;white-space:nowrap}
+.tabs{display:flex;gap:0;margin-bottom:12px;flex-wrap:wrap}
+.tabs button{font:inherit;font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:8px 14px;border:1px solid var(--ink);background:#fff;color:var(--ink);cursor:pointer;margin-right:-1px}
+.tabs button.on{background:var(--ink);color:#fff}
+.filters{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:10px;font-size:13px}
+.filters input[type=search]{font:inherit;font-size:14px;padding:7px 10px;border:1px solid var(--soft);min-width:200px;flex:1;max-width:320px}
+.races{max-height:640px;overflow:auto;border-top:1px solid var(--soft)}
+.race{display:grid;grid-template-columns:74px 1fr auto;gap:4px 12px;padding:9px 4px;border-bottom:1px solid #ECEDEF;font-size:13.5px;align-items:center}
+.race .id{font-family:var(--head);font-weight:900;font-size:14px}
+.race .cs{line-height:1.35;min-width:0}
+.race .cs div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.race .cs .w{font-weight:700}
+.race .st{text-align:right;font-size:12px;line-height:1.35;white-space:nowrap}
+.badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;padding:2px 6px;color:#fff;background:#8A8F99}
+.badge.dem{background:var(--dem)} .badge.rep{background:var(--rep)} .badge.oth{background:var(--ind)}
+.badge.ldem{background:var(--dem-lt);color:#163E6E} .badge.lrep{background:var(--rep-lt);color:#7A1F1A} .badge.loth{background:#E2DDEC;color:#3D3159}
+.pd{color:var(--dem);font-weight:700} .pr{color:var(--rep);font-weight:700} .po{color:var(--ind);font-weight:700}
+.count{font-size:12.5px;color:var(--muted);margin-top:8px}
+@media (max-width:760px){ .proj{grid-template-columns:1fr} .close{columns:1} .race{grid-template-columns:58px 1fr auto} }
 </style>
 </head>
 <body>
@@ -202,6 +230,27 @@ footer a{color:inherit}
   <section class="card">
     <div class="sec-h"><h2>House by state</h2><span class="meta" id="hsMeta"></span></div>
     <div class="tiles" id="tHouse"></div>
+  </section>
+
+  <section class="card">
+    <div class="sec-h"><h2>Where it’s heading</h2><span class="meta">Called seats plus whoever leads each uncalled race right now</span></div>
+    <div class="proj" id="proj"></div>
+    <h3 class="small" style="font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-top:6px">Closest uncalled races</h3>
+    <ul class="close" id="closeList"></ul>
+    <p class="small" style="margin-top:10px">“If leaders hold” is a snapshot, not a forecast: early counts can swing as mail and late ballots come in. NBC’s House projection is NBC’s own model.</p>
+  </section>
+
+  <section class="card">
+    <div class="sec-h"><h2>All races</h2><span class="meta" id="allMeta"></span></div>
+    <div class="tabs" id="tabs"><button data-o="senate" class="on">Senate</button><button data-o="house">House</button><button data-o="governor">Governor</button></div>
+    <div class="filters">
+      <input type="search" id="q" placeholder="Search state, district or candidate" aria-label="Search races">
+      <label><input type="checkbox" id="fUnc"> Uncalled only</label>
+      <label><input type="checkbox" id="fClose"> Within 5 points</label>
+      <label><input type="checkbox" id="fFlip"> Flips only</label>
+    </div>
+    <div class="races" id="races"></div>
+    <div class="count" id="raceCount"></div>
   </section>
 
   <section class="card timer">
@@ -388,6 +437,107 @@ footer a{color:inherit}
     } else $('stale').classList.add('hide');
   }
 
+
+  // ---- Projections and the full race list ----
+  const PC = p => p === 'dem' ? 'dem' : p === 'rep' ? 'rep' : 'oth';
+  const PL = p => p === 'dem' ? 'D' : p === 'rep' ? 'R' : (p ? p.toUpperCase().slice(0, 3) : 'I');
+  const fmtK = n => n == null ? '–' : n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? Math.round(n / 1e3) + 'K' : String(n);
+  const ui = { o: 'senate', q: '', unc: false, close: false, flip: false };
+  let lastData = null;
+
+  // Normalize every race into one shape
+  function allRaces(d) {
+    const out = [];
+    d.senate.races.forEach(r => out.push({ o: 'senate', id: r.st.replace(' Special', '*'), name: r.name, pctIn: r.pctIn, rem: r.rem, win: r.win ? PC(r.win) : '', flip: !!r.flip,
+      cl: r.cl || Object.entries(r.c).map(([p, c]) => [c.n, p, c.pct, 0, r.win === p ? 1 : 0, 0]).sort((a, b) => b[2] - a[2]) }));
+    d.governor.races.forEach(r => out.push({ o: 'governor', id: r.st, name: r.name, pctIn: r.pctIn, rem: r.rem, win: r.win ? PC(r.win) : '', flip: !!r.flip,
+      cl: r.cl || Object.entries(r.c).map(([p, c]) => [c.n, p, c.pct, 0, r.win === p ? 1 : 0, 0]).sort((a, b) => b[2] - a[2]) }));
+    const kf = new Set((d.house.keyFlips || []).map(f => f.st + '-' + f.dist));
+    (d.house.races || []).forEach(r => {
+      const w = r.cl.find(c => c[4]);
+      const id = r.st + '-' + (r.d === 'AL' ? 'AL' : r.d);
+      out.push({ o: 'house', id, name: id, pctIn: r.pctIn, rem: r.rem, win: w ? PC(w[1]) : '', flip: kf.has(id), cl: r.cl });
+    });
+    out.forEach(r => {
+      const a = r.cl[0], b = r.cl[1];
+      r.lead = a && a[2] > 0 ? PC(a[1]) : '';
+      r.margin = a && b ? a[2] - b[2] : a ? a[2] : 0;
+      r.hasVotes = !!(a && a[2] > 0);
+      // Same-party top-two races (e.g. two Democrats in California) are safe for that party
+      r.sameParty = a && b && PC(a[1]) === PC(b[1]);
+    });
+    return out;
+  }
+
+  function projBar(label, d, r, o, total, maj) {
+    const w = n => (n / total * 100).toFixed(2) + '%';
+    return '<div class="row"><div class="lbl"><span>' + label + '</span><b><span class="pd">D ' + d + '</span> · <span class="pr">R ' + r + '</span>' + (o ? ' · <span class="po">I ' + o + '</span>' : '') + '</b></div>' +
+      '<div class="bar"><i class="bd" style="width:' + w(d) + '"></i>' + (o ? '<i class="bi" style="width:' + w(o) + '"></i>' : '') + '<i class="bu"></i><i class="br" style="width:' + w(r) + '"></i>' +
+      (maj ? '<span class="maj" style="left:' + w(maj) + '"></span>' : '') + '</div></div>';
+  }
+
+  function renderProj(d, races) {
+    const tally = (o, extra) => {
+      const t = { called: { dem: 0, rep: 0, oth: 0 }, lead: { dem: 0, rep: 0, oth: 0 }, none: 0 };
+      races.filter(r => r.o === o).forEach(r => { if (r.win) t.called[r.win]++; else if (r.lead) t.lead[r.lead]++; else t.none++; });
+      return t;
+    };
+    const sb = d.senate.bop, s = tally('senate'), h = tally('house'), g = tally('governor');
+    const sNotD = num(sb.dem.notUpForElection), sNotR = num(sb.rep.notUpForElection), sNotI = num(sb.ind.notUpForElection);
+    const S = (t, nd, nr, ni) => [nd + t.called.dem, nr + t.called.rep, ni + t.called.oth, nd + t.called.dem + t.lead.dem, nr + t.called.rep + t.lead.rep, ni + t.called.oth + t.lead.oth];
+    const sv = S(s, sNotD, sNotR, sNotI), hv = S(h, 0, 0, 0), gv = S(g, 0, 0, 0);
+    const gTot = d.governor.races.length;
+    $('proj').innerHTML =
+      '<div><h3>Senate</h3>' + projBar('Called + not up', sv[0], sv[1], sv[2], 100, 51) + projBar('If leaders hold', sv[3], sv[4], sv[5], 100, 51) +
+        '<p class="small">' + (s.lead.dem + s.lead.rep + s.lead.oth) + ' uncalled races with a leader' + (s.none ? ', ' + s.none + ' with no votes yet' : '') + '</p></div>' +
+      '<div><h3>House</h3>' + projBar('Called', hv[0], hv[1], hv[2], 435, 218) + projBar('If leaders hold', hv[3], hv[4], hv[5], 435, 218) +
+        (d.house.model ? projBar('NBC projection', d.house.model.dem, d.house.model.rep, 0, 435, 218) : '') +
+        '<p class="small">' + (h.lead.dem + h.lead.rep + h.lead.oth) + ' uncalled races with a leader' + (h.none ? ', ' + h.none + ' with no votes yet' : '') + '</p></div>' +
+      '<div><h3>Governors</h3>' + projBar('Called', gv[0], gv[1], gv[2], gTot, 0) + projBar('If leaders hold', gv[3], gv[4], gv[5], gTot, 0) +
+        '<p class="small">' + gTot + ' races this year</p></div>';
+
+    const close = races.filter(r => !r.win && r.hasVotes && !r.sameParty).sort((a, b) => a.margin - b.margin).slice(0, 12);
+    const OL = { senate: 'Senate', house: 'House', governor: 'Gov.' };
+    $('closeList').innerHTML = close.length ? close.map(r => '<li><span><b>' + esc(r.id) + '</b> ' + OL[r.o] + ' · ' + esc(lastName(r.cl[0][0])) + ' leads ' + esc(lastName(r.cl[1][0])) + '</span><span><span class="p' + r.lead[0] + '">' + PL(r.cl[0][1]) + ' +' + mg(r.margin) + '</span> · ' + Math.round(r.pctIn) + '% in</span></li>').join('')
+      : '<li><span class="small">No close uncalled races with votes counted.</span></li>';
+  }
+  const mg = m => m < 0.05 ? '<0.1' : m.toFixed(1);
+  const lastName = n => String(n || '').trim().split(/\s+/).slice(-1)[0];
+
+  function raceRow(r) {
+    const status = r.win ? '<span class="badge ' + r.win + '">' + (r.flip ? 'FLIP ' : '') + PL(r.win) + ' ✓</span>'
+      : r.hasVotes ? '<span class="badge l' + r.lead + '">' + PL(r.cl[0][1]) + ' +' + mg(r.margin) + '</span>' : '<span class="badge">No votes</span>';
+    const cs = r.cl.slice(0, 2).map(c => '<div class="' + (c[4] ? 'w' : '') + '"><span class="p' + PC(c[1])[0] + '">' + PL(c[1]) + '</span> ' + esc(c[0]) + (c[5] ? '*' : '') + ' · ' + c[2].toFixed(1) + '%' + (c[3] ? ' · ' + fmtK(c[3]) : '') + '</div>').join('');
+    return '<div class="race"><div class="id">' + esc(r.id) + '</div><div class="cs">' + cs + '</div><div class="st">' + status + '<br>' + Math.round(r.pctIn || 0) + '% in' + (r.rem && !r.win ? '<br>~' + fmtK(r.rem) + ' left' : '') + '</div></div>';
+  }
+
+  function renderRaces() {
+    if (!lastData) return;
+    const races = allRaces(lastData).filter(r => r.o === ui.o);
+    const q = ui.q.trim().toLowerCase();
+    const shown = races.filter(r => (!ui.unc || !r.win) && (!ui.close || (r.hasVotes && !r.sameParty && r.margin < 5)) && (!ui.flip || r.flip) &&
+      (!q || (r.id + ' ' + r.name + ' ' + r.cl.map(c => c[0]).join(' ')).toLowerCase().includes(q)));
+    $('races').innerHTML = shown.map(raceRow).join('') || '<p class="small" style="padding:12px 4px">No races match.</p>';
+    $('raceCount').textContent = 'Showing ' + shown.length + ' of ' + races.length + ' ' + (ui.o === 'governor' ? 'governor' : ui.o === 'senate' ? 'Senate' : 'House') + ' races · * incumbent · vote totals in thousands';
+    const called = races.filter(r => r.win).length;
+    $('allMeta').textContent = called + ' of ' + races.length + ' called';
+  }
+
+  $('tabs').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    ui.o = b.dataset.o; [...$('tabs').children].forEach(x => x.classList.toggle('on', x === b)); renderRaces();
+  });
+  $('q').addEventListener('input', e => { ui.q = e.target.value; renderRaces(); });
+  $('fUnc').addEventListener('change', e => { ui.unc = e.target.checked; renderRaces(); });
+  $('fClose').addEventListener('change', e => { ui.close = e.target.checked; renderRaces(); });
+  $('fFlip').addEventListener('change', e => { ui.flip = e.target.checked; renderRaces(); });
+
+  function renderExtra(d) {
+    lastData = d;
+    renderProj(d, allRaces(d));
+    renderRaces();
+  }
+
   async function update() {
     if (loading) return;
     loading = true; $('refresh').disabled = $('miniRefresh').disabled = true;
@@ -395,6 +545,7 @@ footer a{color:inherit}
       const d = await load();
       if (prev && d.relayedAt !== prev.relayedAt) pushFeed(diff(prev, d));
       render(d);
+      try { renderExtra(d); } catch (e) { console.error(e); }
       prev = d;
       $('checked').textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' });
     } catch (e) {

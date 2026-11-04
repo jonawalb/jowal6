@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Midterm Scoreboard 2026</title>
+<meta name="description" content="Live national scoreboard for the 2026 midterms: Senate, House and governor seats won, flips and net change, from NBC News and AP race calls.">
+<meta property="og:title" content="2026 Midterms: Live National Scoreboard">
+<meta property="og:description" content="Senate, House and governor seats, flips and net change, refreshed every minute.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light;
+  --hero:#13161D; --dem:#2D69B3; --dem-lt:#C9DAEF; --rep:#C2413A; --rep-lt:#F2D0CD; --ind:#7A6A9E;
+  --gold:#E3AE1C; --paper:#EFEFEC; --white:#FFFFFF; --ink:#14161B; --muted:#5A5F6A; --soft:#D3D5D9; --empty:#C9CBCF;
+  --head:'Archivo',system-ui,sans-serif; --body:'DM Sans',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;border-radius:0!important}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);line-height:1.45;-webkit-font-smoothing:antialiased}
+.mono{font-family:'DM Mono',ui-monospace,monospace}
+.hide{display:none!important}
+.wrap{max-width:960px;margin:0 auto;padding:0 16px}
+
+.topbar{position:sticky;top:0;z-index:50;background:#0B0D12;color:var(--white)}
+.topbar .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px;height:42px}
+.brand{font-family:var(--head);font-weight:900;font-size:15px;letter-spacing:.02em;text-transform:uppercase;white-space:nowrap}
+.brand b{color:var(--gold)}
+.pill{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.pill .dot{width:9px;height:9px;background:#8992A6}
+.pill.live .dot{background:var(--gold);animation:blink 1.2s steps(2) infinite}
+.pill.err .dot{background:#ff5a5a}
+@keyframes blink{50%{opacity:0}}
+.tb-left{display:flex;align-items:center;gap:18px;min-width:0}
+.tb-right{display:flex;align-items:center;gap:14px;font-size:13px}
+.tb-count{color:#AEB5C4}
+.tb-count b{color:var(--white);font-weight:500}
+.tb-btn{font:inherit;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;padding:5px 10px;background:transparent;color:var(--white);border:1px solid #6B7690;cursor:pointer}
+.tb-btn:hover{border-color:var(--white)}
+.tb-btn:disabled{opacity:.5;cursor:wait}
+
+.hero{background:var(--hero);color:#F3F4F6;padding:24px 0 0}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--head);font-weight:900;font-size:clamp(30px,6vw,46px);line-height:1;letter-spacing:-.01em;margin:8px 0 8px;text-transform:uppercase}
+.hero h1 span{color:var(--gold)}
+.hero .sub{font-size:14px;max-width:680px;opacity:.9}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);margin-top:16px;border-top:1px solid rgba(243,244,246,.25)}
+.stat{padding:12px 14px 14px 0}
+.stat+.stat{border-left:1px solid rgba(243,244,246,.25);padding-left:14px}
+.stat .k{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;opacity:.85}
+.stat .v{font-family:var(--head);font-weight:800;font-size:26px;line-height:1.1;margin-top:4px;font-variant-numeric:tabular-nums}
+.stat .n{font-size:12px;opacity:.8;margin-top:2px}
+.d{color:var(--dem)} .r{color:var(--rep)} .hero .d{color:#8FB6E8} .hero .r{color:#EE8E86}
+
+main{padding:20px 0 40px}
+.card{background:var(--white);border:1px solid var(--soft);padding:18px 20px;margin-bottom:16px}
+.sec-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-bottom:2px solid var(--ink);padding-bottom:8px;margin-bottom:14px;flex-wrap:wrap}
+.sec-h h2{font-family:var(--head);font-weight:900;font-size:19px;line-height:1;text-transform:uppercase;letter-spacing:.01em}
+.sec-h .meta{font-size:12.5px;color:var(--muted)}
+
+.feed{list-style:none;max-height:220px;overflow:auto}
+.feed li{display:flex;gap:12px;padding:7px 0;border-bottom:1px solid #ECEDEF;font-size:14px;animation:flash 2.5s ease-out}
+.feed li:last-child{border-bottom:0}
+.feed time{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);white-space:nowrap;padding-top:2px}
+.feed .empty{color:var(--muted)}
+@keyframes flash{from{background:#FFF3C9}to{background:transparent}}
+
+.board{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.office h3{font-family:var(--head);font-weight:900;font-size:16px;text-transform:uppercase;letter-spacing:.02em;margin-bottom:10px}
+.nums{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:8px}
+.nums b{font-family:var(--head);font-weight:900;font-size:34px;line-height:1;font-variant-numeric:tabular-nums}
+.nums small{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.nums .rt{text-align:right}
+.bar{position:relative;height:26px;display:flex;background:var(--empty)}
+.bar i{display:block;height:100%;transition:width .8s ease}
+.bar .bd{background:var(--dem)} .bar .bi{background:var(--ind)} .bar .bu{flex:1} .bar .br{background:var(--rep)}
+.bar .maj{position:absolute;top:-5px;bottom:-5px;width:2px;background:var(--ink);transform:translateX(-1px)}
+.barlbl{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-top:6px}
+.kv{margin-top:12px;border-top:1px solid #ECEDEF}
+.kv div{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #ECEDEF;font-size:13.5px}
+.kv b{font-variant-numeric:tabular-nums}
+.up{color:var(--dem);font-weight:700} .dn{color:var(--rep);font-weight:700}
+
+.loss{width:100%;border-collapse:collapse;font-size:14px}
+.loss th,.loss td{text-align:left;padding:9px 8px;border-bottom:1px solid #ECEDEF}
+.loss th{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.loss td:not(:first-child),.loss th:not(:first-child){text-align:right;font-variant-numeric:tabular-nums}
+.loss tr.total td{font-weight:700;border-top:2px solid var(--ink)}
+.lossbar{display:inline-block;height:10px;max-width:120px;background:var(--rep);vertical-align:middle;margin-right:8px;transition:width .8s ease}
+
+.flips{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.flips h3{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:13px;font-weight:700;padding:5px 9px;color:#fff;white-space:nowrap}
+.chip.dem{background:var(--dem)} .chip.rep{background:var(--rep)} .chip.ind{background:var(--ind)}
+.chip small{font-weight:500;opacity:.9;margin-left:4px}
+.none{font-size:13px;color:var(--muted)}
+
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:6px}
+.tile{border:1px solid var(--soft);padding:7px 8px;font-size:12px;line-height:1.25;background:#FAFAF9;position:relative}
+.tile b{display:block;font-family:var(--head);font-weight:900;font-size:15px}
+.tile.wdem{background:var(--dem);border-color:var(--dem);color:#fff}
+.tile.wrep{background:var(--rep);border-color:var(--rep);color:#fff}
+.tile.wind{background:var(--ind);border-color:var(--ind);color:#fff}
+.tile.ldem{background:var(--dem-lt);border-color:#A9C2E4}
+.tile.lrep{background:var(--rep-lt);border-color:#E5B1AC}
+.tile .fl{position:absolute;top:5px;right:6px;font-size:9.5px;font-weight:700;letter-spacing:.08em;background:var(--gold);color:var(--ink);padding:1px 4px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--muted);margin-top:10px}
+.legend i{display:inline-block;width:12px;height:12px;vertical-align:-2px;margin-right:5px}
+
+.timer{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.timer .cd{font-family:var(--head);font-weight:900;font-size:30px;font-variant-numeric:tabular-nums}
+.timer .lb{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.pbar{height:6px;background:#E4E5E8;margin-top:10px}
+.pbar i{display:block;height:100%;background:var(--ink);width:0}
+.btn{font:inherit;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.06em;padding:9px 14px;background:var(--ink);color:#fff;border:0;cursor:pointer}
+.btn:disabled{opacity:.5;cursor:wait}
+.small{font-size:12.5px;color:var(--muted)}
+footer{font-size:12.5px;color:var(--muted);padding:8px 0 40px}
+footer a{color:inherit}
+.warn{background:#FBEAEA;border:1px solid #E5B1AC;border-left:5px solid var(--rep);padding:12px 16px;margin-bottom:16px;font-size:14px}
+
+@media (max-width:760px){
+  .board,.flips{grid-template-columns:1fr}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .stat:nth-child(3){border-left:0;padding-left:0}
+  .stat:nth-child(n+3){border-top:1px solid rgba(243,244,246,.25)}
+  .tb-count .lbl{display:none}
+  .loss th,.loss td{padding:8px 4px}
+  .loss th{font-size:10px}
+  .lossbar{max-width:44px}
+}
+@media (max-width:440px){ .tb-count{display:none} .brand{font-size:13px} }
+</style>
+</head>
+<body>
+<div class="topbar"><div class="wrap">
+  <div class="tb-left"><span class="brand">Midterms <b>2026</b></span><span id="status" class="pill"><span class="dot"></span><span id="statusText">Loading…</span></span></div>
+  <div class="tb-right"><span class="tb-count"><span class="lbl">Next update </span><b id="miniCount" class="mono">–</b></span><button id="miniRefresh" class="tb-btn">Refresh</button></div>
+</div></div>
+
+<header class="hero"><div class="wrap">
+  <div class="eyebrow">Election night · Nov 3, 2026 · National scoreboard</div>
+  <h1>Who <span>flipped</span> what.</h1>
+  <p class="sub">Senate, House and governor seats won, flipped and gained, from AP race calls as published by NBC News. Refreshes every minute.</p>
+  <div class="stats">
+    <div class="stat"><div class="k">Senate</div><div class="v"><span class="d" id="hsD">–</span> · <span class="r" id="hsR">–</span></div><div class="n">D · R seats, 51 for control</div></div>
+    <div class="stat"><div class="k">House</div><div class="v"><span class="d" id="hhD">–</span> · <span class="r" id="hhR">–</span></div><div class="n" id="hhN">D · R called, 218 for control</div></div>
+    <div class="stat"><div class="k">Seats flipped</div><div class="v" id="hFlips">–</div><div class="n" id="hFlipsN">Senate + House + governor</div></div>
+    <div class="stat"><div class="k">GOP net in Congress</div><div class="v r" id="hCong">–</div><div class="n">Senate + House seats</div></div>
+  </div>
+</div></header>
+
+<main><div class="wrap">
+  <div id="stale" class="warn hide"></div>
+
+  <section class="card">
+    <div class="sec-h"><h2>Latest changes</h2><span class="meta" id="feedMeta">New calls and flips since you opened this page</span></div>
+    <ul class="feed" id="feed"><li class="empty">Watching for new race calls…</li></ul>
+  </section>
+
+  <section class="card">
+    <div class="sec-h"><h2>Balance of power</h2><span class="meta">Black line marks control</span></div>
+    <div class="board">
+      <div class="office" id="bSen"></div>
+      <div class="office" id="bHouse"></div>
+      <div class="office" id="bGov"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="sec-h"><h2>Republican seats lost</h2><span class="meta">Net change versus seats held going in</span></div>
+    <table class="loss" id="loss"></table>
+  </section>
+
+  <section class="card">
+    <div class="sec-h"><h2>Flipped seats</h2><span class="meta" id="flipMeta"></span></div>
+    <div class="flips">
+      <div><h3>Senate</h3><div class="chips" id="fSen"></div></div>
+      <div><h3>Governor</h3><div class="chips" id="fGov"></div></div>
+      <div><h3>House <span id="fHouseN"></span></h3><div class="chips" id="fHouse"></div><p class="small" style="margin-top:8px">Districts listed are NBC’s key races; the count includes every House flip AP has called.</p></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="sec-h"><h2>Senate races</h2><span class="meta" id="senMeta"></span></div>
+    <div class="tiles" id="tSen"></div>
+    <div class="legend"><span><i style="background:var(--dem)"></i>Called D</span><span><i style="background:var(--rep)"></i>Called R</span><span><i style="background:var(--dem-lt)"></i>D leads</span><span><i style="background:var(--rep-lt)"></i>R leads</span><span><i style="background:var(--gold)"></i>Flip</span></div>
+  </section>
+
+  <section class="card">
+    <div class="sec-h"><h2>Governor races</h2><span class="meta" id="govMeta"></span></div>
+    <div class="tiles" id="tGov"></div>
+  </section>
+
+  <section class="card">
+    <div class="sec-h"><h2>House by state</h2><span class="meta" id="hsMeta"></span></div>
+    <div class="tiles" id="tHouse"></div>
+  </section>
+
+  <section class="card timer">
+    <div><div class="lb">Next update in</div><div class="cd" id="countdown">–</div><div class="small">Last checked <span id="checked">–</span> · Data as of <span id="asof">–</span></div></div>
+    <button class="btn" id="refresh">Refresh now</button>
+    <div style="flex-basis:100%"><div class="pbar"><i id="pfill"></i></div></div>
+  </section>
+</div></main>
+
+<div class="wrap"><footer>
+  Race calls and counts from the <a href="https://www.nbcnews.com/politics/2026-elections/senate-results" target="_blank" rel="noopener">NBC News results pages</a>, which use Associated Press data, relayed about once a minute. A flip is a seat won by a different party than the one that held it going in. Senate control is 51 seats; House control is 218. Unofficial until certified. Also on this site: <a href="/morse/">Windsor-1 (Morse)</a> · <a href="/luria/">VA-2 (Luria)</a>.
+</footer></div>
+
+<script>
+(() => {
+  const SOURCES = [
+    { url: 'https://api.github.com/repos/jonawalb/election-night-data/contents/national.json', headers: { Accept: 'application/vnd.github.raw+json' } },
+    { url: 'https://raw.githubusercontent.com/jonawalb/election-night-data/main/national.json', headers: {}, bust: true }
+  ];
+  const INTERVAL = 60 * 1000, STALE_MS = 15 * 60 * 1000;
+  const P = { dem: 'D', rep: 'R', ind: 'I' };
+  let nextAt = Date.now(), loading = false, prev = null;
+
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const num = n => (n == null || isNaN(n)) ? 0 : Number(n);
+  const sgn = n => n > 0 ? '+' + n : n < 0 ? '−' + Math.abs(n) : '0';
+  const clock = d => d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' }) + ' ET';
+  function setStatus(cls, text) { $('status').className = 'pill ' + cls; $('statusText').textContent = text; }
+
+  async function load() {
+    let err;
+    for (const s of SOURCES) {
+      try {
+        const r = await fetch(s.url + (s.bust ? '?t=' + Date.now() : ''), { headers: s.headers, cache: 'no-cache' });
+        if (!r.ok) throw new Error(r.status + ' ' + s.url);
+        return await r.json();
+      } catch (e) { err = e; }
+    }
+    throw err;
+  }
+
+  // Governor counts come from race-level calls (the feed has no governor balance bar)
+  function govSummary(g) {
+    const s = { dem: { won: 0, flips: 0 }, rep: { won: 0, flips: 0 }, ind: { won: 0, flips: 0 } };
+    g.races.forEach(r => { if (r.win) { s[r.win].won++; if (r.flip) s[r.win].flips++; } });
+    s.total = g.races.length;
+    s.uncalled = s.total - s.dem.won - s.rep.won - s.ind.won;
+    // A flip to one party is a loss for the other; feed only flags the winner, so assume two-party flips
+    s.repNet = s.rep.flips - s.dem.flips - s.ind.flips;
+    return s;
+  }
+
+  function bar(d, i, r, total, maj) {
+    const w = n => (n / total * 100).toFixed(2) + '%';
+    return '<div class="bar"><i class="bd" style="width:' + w(d) + '"></i>' + (i ? '<i class="bi" style="width:' + w(i) + '"></i>' : '') +
+      '<i class="bu"></i><i class="br" style="width:' + w(r) + '"></i>' +
+      (maj ? '<span class="maj" style="left:' + w(maj) + '"></span>' : '') + '</div>';
+  }
+  function office(title, d, r, i, total, maj, rows, lbl) {
+    return '<h3>' + title + '</h3><div class="nums"><div><b class="d">' + d + '</b><small>Democrats</small></div>' +
+      '<div class="rt"><b class="r">' + r + '</b><small>Republicans</small></div></div>' +
+      bar(d, i, r, total, maj) + '<div class="barlbl"><span>' + lbl[0] + '</span><span>' + lbl[1] + '</span></div>' +
+      '<div class="kv">' + rows.map(x => '<div><span>' + x[0] + '</span><b>' + x[1] + '</b></div>').join('') + '</div>';
+  }
+  const net = n => '<span class="' + (n > 0 ? 'up' : n < 0 ? 'dn' : '') + '">' + sgn(n) + '</span>';
+  const netR = n => '<span class="' + (n < 0 ? 'dn' : n > 0 ? 'up' : '') + '">' + sgn(n) + '</span>';
+
+  function tile(r, cls) {
+    const lead = Object.entries(r.c || {}).sort((a, b) => b[1].pct - a[1].pct)[0];
+    const c = r.win ? 'w' + r.win : (lead && lead[1].pct > 0 ? 'l' + lead[0] : '');
+    const who = r.win ? r.c[r.win] : lead && lead[1].pct > 0 ? lead[1] : null;
+    const label = esc(r.st.replace(' Special', '*'));
+    return '<div class="tile ' + c + '" title="' + esc(r.name) + '">' + (r.flip ? '<span class="fl">FLIP</span>' : '') + '<b>' + label + '</b>' +
+      (who ? esc(who.n) + ' ' + (r.win ? '✓' : who.pct.toFixed(0) + '%') : 'No votes yet') +
+      '<br><span style="opacity:.8">' + Math.round(r.pctIn || 0) + '% in</span></div>';
+  }
+
+  // Changes between two snapshots, as feed items
+  function diff(a, b) {
+    const out = [];
+    const calls = (o, n, label) => {
+      const old = Object.fromEntries((o || []).map(r => [r.st, r]));
+      (n || []).forEach(r => {
+        if (r.win && !(old[r.st] && old[r.st].win)) {
+          const c = r.c[r.win] || {};
+          out.push(label + ' ' + r.name + ': <b class="' + (r.win === 'dem' ? 'd' : 'r') + '">' + esc(c.n) + ' (' + P[r.win] + ')</b> wins' + (r.flip ? ' <b>· FLIP</b>' : ''));
+        }
+      });
+    };
+    calls(a.senate.races, b.senate.races, 'Senate,');
+    calls(a.governor.races, b.governor.races, 'Governor,');
+    const ah = a.house.bop, bh = b.house.bop;
+    const dd = num(bh.dem.total) - num(ah.dem.total), dr = num(bh.rep.total) - num(ah.rep.total);
+    if (dd || dr) out.push('House calls: ' + (dd ? '<b class="d">D ' + sgn(dd) + '</b> ' : '') + (dr ? '<b class="r">R ' + sgn(dr) + '</b>' : '') + ' → ' + bh.dem.total + '–' + bh.rep.total);
+    const df = num(bh.dem.flips) - num(ah.dem.flips), rf = num(bh.rep.flips) - num(ah.rep.flips);
+    if (df > 0) out.push('<b class="d">' + df + ' new House flip' + (df > 1 ? 's' : '') + ' to Democrats</b>');
+    if (rf > 0) out.push('<b class="r">' + rf + ' new House flip' + (rf > 1 ? 's' : '') + ' to Republicans</b>');
+    const oldKF = new Set((a.house.keyFlips || []).map(f => f.st + f.dist));
+    (b.house.keyFlips || []).forEach(f => { if (!oldKF.has(f.st + f.dist)) out.push('House ' + esc(f.st + '-' + f.dist) + ': <b class="' + (f.p === 'dem' ? 'd' : 'r') + '">' + esc(f.n) + '</b> flips the seat'); });
+    return out;
+  }
+  function pushFeed(items) {
+    if (!items.length) return;
+    const ul = $('feed');
+    const empty = ul.querySelector('.empty'); if (empty) empty.remove();
+    const t = clock(new Date());
+    items.reverse().forEach(h => { const li = document.createElement('li'); li.innerHTML = '<time>' + t + '</time><span>' + h + '</span>'; ul.prepend(li); });
+  }
+
+  function render(d) {
+    const sb = d.senate.bop, hb = d.house.bop, g = govSummary(d.governor);
+    const sD = num(sb.dem.total), sR = num(sb.rep.total), sI = num(sb.ind.total);
+    const hD = num(hb.dem.total), hR = num(hb.rep.total), hI = num(hb.ind.total);
+    const sUnc = 100 - sD - sR - sI, hUnc = num(d.house.uncalled);
+    const repSen = num(sb.rep.netGain), repHouse = num(hb.rep.netGain);
+
+    // Hero
+    $('hsD').textContent = sD; $('hsR').textContent = sR;
+    $('hhD').textContent = hD; $('hhR').textContent = hR;
+    $('hhN').textContent = hUnc + ' still uncalled · 218 for control';
+    const toD = num(sb.dem.flips) + num(hb.dem.flips) + g.dem.flips, toR = num(sb.rep.flips) + num(hb.rep.flips) + g.rep.flips;
+    $('hFlips').innerHTML = '<span class="d">' + toD + '</span> · <span class="r">' + toR + '</span>';
+    $('hFlipsN').textContent = 'to D · to R, all offices';
+    $('hCong').textContent = sgn(repSen + repHouse);
+
+    // Balance of power
+    $('bSen').innerHTML = office('Senate', sD, sR, sI, 100, 51, [
+      ['Seats not up this year', 'D ' + num(sb.dem.notUpForElection) + ' · R ' + num(sb.rep.notUpForElection)],
+      ['Races called', (d.senate.called) + ' of ' + d.senate.races.length],
+      ['Flips', 'D ' + num(sb.dem.flips) + ' · R ' + num(sb.rep.flips)],
+      ['Net change', 'D ' + net(num(sb.dem.netGain)) + ' · R ' + netR(repSen)]
+    ], [sUnc + ' undecided', '51 for control']);
+    $('bHouse').innerHTML = office('House', hD, hR, hI, 435, 218, [
+      ['Races called', (hD + hR + hI) + ' of 435'],
+      ['Flips', 'D ' + num(hb.dem.flips) + ' · R ' + num(hb.rep.flips)],
+      ['Net change', 'D ' + net(num(hb.dem.netGain)) + ' · R ' + netR(repHouse)],
+      ['NBC projection', d.house.model ? 'D ' + d.house.model.dem + ' · R ' + d.house.model.rep : '–']
+    ], [hUnc + ' uncalled', '218 for control']);
+    $('bGov').innerHTML = office('Governors', g.dem.won, g.rep.won, g.ind.won, g.total, 0, [
+      ['Races called', (g.total - g.uncalled) + ' of ' + g.total],
+      ['Flips', 'D ' + g.dem.flips + ' · R ' + g.rep.flips],
+      ['Net change', 'D ' + net(g.dem.flips - g.rep.flips) + ' · R ' + netR(g.repNet)]
+    ], [g.uncalled + ' uncalled', g.total + ' races this year']);
+
+    // Republican losses
+    const rows = [['Senate', repSen, num(sb.rep.flips), num(sb.dem.flips) + num(sb.ind.flips || 0)],
+                  ['House', repHouse, num(hb.rep.flips), num(hb.dem.flips) + num(hb.ind.flips || 0)]];
+    const maxL = Math.max(1, ...rows.map(r => Math.abs(r[1])), Math.abs(g.repNet));
+    const lrow = (name, n, gained, lost, cls) => '<tr' + (cls ? ' class="' + cls + '"' : '') + '><td>' + name + '</td><td>' + gained + '</td><td>' + lost + '</td><td>' +
+      (n < 0 ? '<span class="lossbar" style="width:' + Math.round(Math.abs(n) / maxL * 80) + 'px"></span>' : '') + netR(n) + '</td></tr>';
+    $('loss').innerHTML = '<thead><tr><th>Office</th><th>GOP pickups</th><th>GOP seats lost</th><th>GOP net</th></tr></thead><tbody>' +
+      lrow('Senate', repSen, rows[0][2], rows[0][3]) + lrow('House', repHouse, rows[1][2], rows[1][3]) +
+      lrow('Congress overall', repSen + repHouse, rows[0][2] + rows[1][2], rows[0][3] + rows[1][3], 'total') +
+      lrow('Governors', g.repNet, g.rep.flips, g.dem.flips + g.ind.flips) + '</tbody>';
+
+    // Flip chips
+    const chips = (list) => list.length ? list.join('') : '<span class="none">None called yet</span>';
+    const raceChips = races => races.filter(r => r.flip).map(r => '<span class="chip ' + r.win + '">' + esc(r.st.replace(' Special', ' (special)')) + '<small>' + esc((r.c[r.win] || {}).n) + '</small></span>');
+    $('fSen').innerHTML = chips(raceChips(d.senate.races));
+    $('fGov').innerHTML = chips(raceChips(d.governor.races));
+    $('fHouseN').textContent = '· ' + (num(hb.dem.flips) + num(hb.rep.flips)) + ' total';
+    $('fHouse').innerHTML = chips((d.house.keyFlips || []).map(f => '<span class="chip ' + f.p + '">' + esc(f.st + '-' + f.dist) + '<small>' + esc(f.n) + '</small></span>'));
+    $('flipMeta').textContent = toD + ' to Democrats · ' + toR + ' to Republicans';
+
+    // Race tiles
+    $('tSen').innerHTML = d.senate.races.map(r => tile(r)).join('');
+    $('senMeta').textContent = d.senate.called + ' of ' + d.senate.races.length + ' called';
+    $('tGov').innerHTML = d.governor.races.map(r => tile(r)).join('');
+    $('govMeta').textContent = (g.total - g.uncalled) + ' of ' + g.total + ' called';
+    $('tHouse').innerHTML = d.house.states.filter(s => s.t).sort((a, b) => a.st.localeCompare(b.st)).map(s =>
+      '<div class="tile ' + (s.u === 0 ? (s.d > s.r ? 'wdem' : s.r > s.d ? 'wrep' : '') : '') + '"><b>' + esc(s.st) + '</b>' +
+      '<span class="' + (s.u === 0 && s.d !== s.r ? '' : 'd') + '">D ' + s.d + '</span> · <span class="' + (s.u === 0 && s.d !== s.r ? '' : 'r') + '">R ' + s.r + '</span><br><span style="opacity:.8">' + (s.u ? s.u + ' of ' + s.t + ' uncalled' : 'all ' + s.t + ' called') + '</span></div>').join('');
+    $('hsMeta').textContent = (hD + hR + hI) + ' of 435 called';
+
+    // Status
+    const allDone = sUnc <= 0 && hUnc === 0 && g.uncalled === 0;
+    setStatus('live', allDone ? 'All races called' : 'Live · ' + (hD + hR + hI + d.senate.called + g.total - g.uncalled) + ' calls');
+    $('asof').textContent = d.asOf ? clock(new Date(d.asOf)) : '–';
+    const age = Date.now() - new Date(d.relayedAt).getTime();
+    if (age > STALE_MS) {
+      $('stale').innerHTML = 'This page’s feed is ' + Math.round(age / 60000) + ' minutes behind. Check <a href="https://www.nbcnews.com/politics/2026-elections/senate-results" target="_blank" rel="noopener">NBC News</a> directly while it catches up.';
+      $('stale').classList.remove('hide');
+    } else $('stale').classList.add('hide');
+  }
+
+  async function update() {
+    if (loading) return;
+    loading = true; $('refresh').disabled = $('miniRefresh').disabled = true;
+    try {
+      const d = await load();
+      if (prev && d.relayedAt !== prev.relayedAt) pushFeed(diff(prev, d));
+      render(d);
+      prev = d;
+      $('checked').textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' });
+    } catch (e) {
+      console.error(e);
+      setStatus('err', 'Couldn’t reach the feed, retrying');
+    } finally {
+      loading = false; $('refresh').disabled = $('miniRefresh').disabled = false;
+      nextAt = Date.now() + INTERVAL;
+    }
+  }
+
+  function tick() {
+    const left = Math.max(0, nextAt - Date.now());
+    const s = Math.ceil(left / 1000), t = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+    $('countdown').textContent = t; $('miniCount').textContent = t;
+    $('pfill').style.width = (100 * (1 - left / INTERVAL)).toFixed(2) + '%';
+    if (left <= 0) update();
+  }
+  $('refresh').addEventListener('click', update);
+  $('miniRefresh').addEventListener('click', update);
+  update();
+  setInterval(tick, 1000);
+})();
+</script>
+</body>
+</html>

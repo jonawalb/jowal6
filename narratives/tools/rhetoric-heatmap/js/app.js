@@ -12,9 +12,9 @@ import { addExportBar } from '../../../shared/js/export.js';
 import { chart, wipe, fade, grow, count, onChange, ring } from './fx.js';
 
 const $ = id => document.getElementById(id);
-const S = { rangeKey: 'all', range: RANGES.all, metric: 'count', sources: [...SOURCES], phrase: '', matcher: null,
+const S = { rangeKey: 'y22', range: RANGES.y22, metric: 'count', sources: [...SOURCES], phrase: '', matcher: null,
   sel: { row: 9, w: weekOf('2022-08-01') } };
-let recs = [], agg = null;
+let recs = [], agg = null, zhReady = false;
 const JCRP = TSM.daily.filter(d => String(d[5] ?? '').includes('J')).map(d => d[0]);
 
 // ---- URL hash -------------------------------------------------------------
@@ -108,8 +108,8 @@ function render() {
   const inRange = recs.filter(r => r.d >= S.range.from && r.d <= S.range.to);
   SOURCES.forEach(s => { $('n-' + s).textContent = `${inRange.filter(r => r.s === s).length.toLocaleString()} statements in range`; });
   $('phrase-count').textContent = S.matcher
-    ? `${agg.nMatch.toLocaleString()} statement${agg.nMatch === 1 ? '' : 's'} contain “${S.matcher.phrase}” (${S.matcher.zh ? 'searched in Chinese text, which TSM holds only for 2026 items' : 'searched in the English answers'}).`
-    : `${recs.length.toLocaleString()} Taiwan-related statements, July 2022 to October 2026.`;
+    ? `${agg.nMatch.toLocaleString()} statement${agg.nMatch === 1 ? '' : 's'} contain “${S.matcher.phrase}” (${S.matcher.zh ? (zhReady ? 'searched in the Chinese answers' : 'Chinese text still loading') : 'searched in the English answers'}).`
+    : `${recs.length.toLocaleString()} Taiwan-related statements, January 2015 to November 2026.`;
   renderDetail($('detail'), S, agg, recs);
   renderProfile($('profile'), S, agg, recs);
   animate();
@@ -190,6 +190,12 @@ async function boot() {
   recs = parseRows(STATEMENTS, STREAMS);
   document.body.classList.remove('loading');
   render();
+  // Chinese answers come in a second file so the heatmap draws first.
+  import('../data/statements_zh.js').then(({ ZH }) => {
+    recs.forEach((r, i) => { if (ZH[i]) r.zh = ZH[i]; });
+    zhReady = true;
+    render();
+  }).catch(() => {});
   const G = grid.geometry();
   if (S.sel && G) $('hm-scroll').scrollLeft = Math.max(0, (S.sel.w - G.w0) * G.cw * ($('hm-svg').getBoundingClientRect().width / G.W) - 120);
   const tour = createTour($('stage'), patch => {

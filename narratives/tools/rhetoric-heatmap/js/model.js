@@ -4,13 +4,14 @@ import { THEMES } from '../data/themes.js';
 export const SOURCES = ['MFA', 'MND', 'TAO'];
 export const SOURCE_NAMES = { MFA: 'Foreign Ministry', MND: 'Defense Ministry', TAO: 'Taiwan Affairs Office' };
 export const TR_LABEL = ['Taiwan Security Monitor translation', 'Official English', 'Machine translation (Google)', 'Chinese only (no official English)',
-  'Machine translation (Claude)'];
-export const FIRST_WEEK = '2022-06-27';
-export const LAST_DAY = '2026-10-07';
+  'Machine translation (Claude)', 'Machine translation (search aid; check the Chinese)'];
+export const FIRST_WEEK = '2015-01-05';
+export const LAST_DAY = '2026-11-05';
 export const RANGES = {
-  all: { label: 'Jul 2022 – Oct 2026', from: '2022-06-27', to: LAST_DAY },
-  y25: { label: '2025 – Oct 2026', from: '2024-12-30', to: LAST_DAY },
-  y26: { label: 'Jan – Oct 2026', from: '2025-12-29', to: LAST_DAY },
+  all: { label: '2015 – Nov 2026', from: FIRST_WEEK, to: LAST_DAY },
+  y22: { label: 'Jul 2022 – Nov 2026', from: '2022-06-27', to: LAST_DAY },
+  y25: { label: '2025 – Nov 2026', from: '2024-12-30', to: LAST_DAY },
+  y26: { label: 'Jan – Nov 2026', from: '2025-12-29', to: LAST_DAY },
 };
 
 const DAY = 864e5;

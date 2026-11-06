@@ -133,7 +133,7 @@ export const ALL_TOOLS = [
   { slug: 'wargame-explorer', siteCat: { deterrence: 'tsm' }, also: ['regions'], sub: { regions: 'indopacific' }, cat: 'models', title: 'Wargame Results Explorer', status: 'live',
     blurb: 'Eight published Taiwan wargames side by side: what each assumed, how it came out, and which assumptions (above all Japan basing and U.S. entry) drive the result, with a page citation for every figure.' },
   { slug: 'rhetoric-heatmap', siteCat: { narratives: 'tracking' }, cat: 'narrative', sites: ['tsm', 'narratives'], title: 'PRC Rhetoric Heatmap', status: 'live',
-    blurb: 'Foreign Ministry, Defense Ministry and Taiwan Affairs Office language, week by week.' },
+    blurb: 'Foreign Ministry, Defense Ministry and Taiwan Affairs Office language, week by week since 2015.' },
   { slug: 'beijing-decoder', sites: ['tsm'], cat: 'narrative', title: 'Beijing Decoder', status: 'live',
     blurb: 'Paste a PRC statement and see what each formula has signalled before.' },
   { slug: 'narrative-diffusion', sites: ['tsm'], cat: 'narrative', title: 'Narrative Diffusion', status: 'live',

@@ -1,5 +1,5 @@
 // Large PLA exercises and surges around Taiwan, July 2022 to September 2026 (TSM's verified list
-// holds no large exercise after Justice Mission-2025).
+// holds no large exercise after Justice Mission-2025, and none is marked before July 2022).
 // Source: TSM "Exercises as Theater" verified event list (TSM local, exercise_events.json);
 // each linked source below was opened and checked on 2026-09-28; re-checked 2026-09-30 (see FACTCHECK.md).
 // Sep 2023: the carrier drills are in the Maritime Executive piece; the 17 Sep air surge is in Taiwan MND's
@@ -37,10 +37,10 @@ export const EVENTS = [
           ['PRC Ministry of National Defense (Chinese)', 'http://www.mod.gov.cn/gfbw/xwfyr/fyrthhdjzw/16429836.html']] },
 ];
 
-// Points where TSM's collection method changed. Counts on either side are not directly comparable.
+// Points where the collection changed. Counts or wording on either side are not directly comparable.
+// LECTERN v2 (2026-11-06): one collection for all three agencies, 2015-01 to 2026-11. MFA is official
+// English throughout and TAO machine translation throughout; MND's English source changes twice.
 export const SEAMS = [
-  { date: '2026-01-01', src: 'MFA', text: 'MFA: every Q&A captured from 2026 (before: TSM archive of U.S./Japan/Taiwan/Philippines questions)' },
-  { date: '2026-04-01', src: 'TAO', text: 'TAO: TSM collection begins April 2026' },
-  { date: '2026-05-01', src: 'MND', text: 'MND: all three spokesperson channels collected from May 2026 (before: one channel)' },
-  { date: '2026-07-01', src: 'TAO', text: 'TAO: from July 2026 most items are machine-translated by Claude (May and June: Google), so theme matches can shift with wording' },
+  { date: '2021-10-01', src: 'MND', text: 'MND: from October 2021 to March 2025 most items are machine translations of the Chinese transcript (official English not held), so theme matches can shift with wording' },
+  { date: '2025-04-01', src: 'MND', text: 'MND: from April 2025 most items carry the official English transcript again' },
 ];

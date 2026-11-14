@@ -58,6 +58,8 @@ export const ALL_CATEGORIES = CATEGORY_LIST.map(c => ({ ...c, name: (c.siteName 
 export const ALL_TOOLS = [
   { slug: 'strait-layers', siteCat: { deterrence: 'tsm' }, also: ['regions'], sub: { regions: 'indopacific' }, cat: 'models', title: 'Strait Layers', status: 'live',
     blurb: 'PLA A2/AD rings, the kill chain behind them, a PLA crossing, and salvo math.' },
+  { slug: 'damage-assessment', sites: ['tsm'], cat: 'public', title: 'Strike Damage Record', status: 'soon',
+    blurb: 'Open-source before and after satellite imagery of strike damage, graded the same way for every actor. No incidents published yet.' },
   { slug: 'ccg-grayzone', sites: ['tsm'], cat: 'trackers', title: 'CCG Gray-Zone Map', status: 'live',
     blurb: 'Every China Coast Guard incident the Taiwan Security Monitor has recorded since June 2024, on a map with a year selector and time slider.' },
   { slug: 'transit-response', siteCat: { deterrence: 'tsm' }, also: ['regions'], sub: { regions: 'indopacific' }, cat: 'trackers', title: 'Transit Response Explorer', status: 'live',

@@ -58,6 +58,8 @@ export const ALL_CATEGORIES = CATEGORY_LIST.map(c => ({ ...c, name: (c.siteName 
 export const ALL_TOOLS = [
   { slug: 'strait-layers', siteCat: { deterrence: 'tsm' }, also: ['regions'], sub: { regions: 'indopacific' }, cat: 'models', title: 'Strait Layers', status: 'live',
     blurb: 'PLA A2/AD rings, the kill chain behind them, a PLA crossing, and salvo math.' },
+  { slug: 'damage-assessment', sites: ['tsm'], cat: 'public', title: 'Strike Damage Record', status: 'soon',
+    blurb: 'Open-source before and after satellite imagery of strike damage, graded the same way for every actor. No incidents published yet.' },
   { slug: 'ccg-grayzone', sites: ['tsm'], cat: 'trackers', title: 'CCG Gray-Zone Map', status: 'live',
     blurb: 'Every China Coast Guard incident the Taiwan Security Monitor has recorded since June 2024, on a map with a year selector and time slider.' },
   { slug: 'transit-response', siteCat: { deterrence: 'tsm' }, also: ['regions'], sub: { regions: 'indopacific' }, cat: 'trackers', title: 'Transit Response Explorer', status: 'live',
@@ -133,7 +135,7 @@ export const ALL_TOOLS = [
   { slug: 'wargame-explorer', siteCat: { deterrence: 'tsm' }, also: ['regions'], sub: { regions: 'indopacific' }, cat: 'models', title: 'Wargame Results Explorer', status: 'live',
     blurb: 'Eight published Taiwan wargames side by side: what each assumed, how it came out, and which assumptions (above all Japan basing and U.S. entry) drive the result, with a page citation for every figure.' },
   { slug: 'rhetoric-heatmap', siteCat: { narratives: 'tracking' }, cat: 'narrative', sites: ['tsm', 'narratives'], title: 'PRC Rhetoric Heatmap', status: 'live',
-    blurb: 'Foreign Ministry, Defense Ministry and Taiwan Affairs Office language, week by week.' },
+    blurb: 'Foreign Ministry, Defense Ministry and Taiwan Affairs Office language, week by week since 2015.' },
   { slug: 'beijing-decoder', sites: ['tsm'], cat: 'narrative', title: 'Beijing Decoder', status: 'live',
     blurb: 'Paste a PRC statement and see what each formula has signalled before.' },
   { slug: 'narrative-diffusion', sites: ['tsm'], cat: 'narrative', title: 'Narrative Diffusion', status: 'live',

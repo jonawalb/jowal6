@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+  <rect width="640" height="400" fill="#f2f2ee"/>
+  <rect x="24" y="24" width="592" height="352" rx="6" fill="#fbfbf8" stroke="#d3d6cd"/>
+  <text x="48" y="74" font-family="Georgia, serif" font-size="32" font-weight="700" fill="#14201a">AI policy</text>
+  <text x="48" y="104" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#56625b">US · China · Russia</text>
+  <g font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="700">
+    <rect x="40" y="134" width="560" height="64" fill="#fbfbf8"/>
+    <rect x="40" y="198" width="560" height="64" fill="#f0f0ec"/>
+    <rect x="40" y="262" width="560" height="64" fill="#fbfbf8"/>
+    <rect x="40" y="142" width="5" height="48" rx="2" fill="#1b4fd4"/>
+    <rect x="40" y="206" width="5" height="48" rx="2" fill="#b3261e"/>
+    <rect x="40" y="270" width="5" height="48" rx="2" fill="#6a4fb5"/>
+    <text x="56" y="172" fill="#14201a">US</text>
+    <text x="56" y="236" fill="#14201a">CN</text>
+    <text x="56" y="300" fill="#14201a">RU</text>
+  </g>
+  <g stroke="#d3d6cd"><line x1="160" y1="130" x2="160" y2="330"/><line x1="300" y1="130" x2="300" y2="330"/><line x1="440" y1="130" x2="440" y2="330"/></g>
+  <path d="M482 158 Q440 118 398 160" fill="none" stroke="#b3261e" stroke-width="3"/>
+  <g stroke-width="3">
+    <rect x="198" y="157" width="14" height="14" rx="2" fill="#1b4fd4" stroke="#1b4fd4"/>
+    <circle cx="276" cy="164" r="7" fill="#1b4fd4" stroke="#1b4fd4"/>
+    <rect x="391" y="157" width="14" height="14" rx="2" fill="#fbfbf8" stroke="#1b4fd4"/>
+    <rect x="475" y="157" width="14" height="14" rx="2" fill="#1b4fd4" stroke="#1b4fd4"/>
+    <circle cx="540" cy="164" r="7" fill="#1b4fd4" stroke="#1b4fd4"/>
+    <circle cx="180" cy="228" r="7" fill="#b3261e" stroke="#b3261e"/>
+    <rect x="300" y="221" width="14" height="14" rx="2" fill="#b3261e" stroke="#b3261e"/>
+    <rect x="358" y="221" width="14" height="14" rx="2" fill="#b3261e" stroke="#b3261e"/>
+    <rect x="508" y="221" width="14" height="14" rx="2" fill="#b3261e" stroke="#b3261e"/>
+    <circle cx="560" cy="228" r="7" fill="#b3261e" stroke="#b3261e"/>
+    <rect x="246" y="285" width="14" height="14" rx="2" fill="#6a4fb5" stroke="#6a4fb5"/>
+    <rect x="452" y="285" width="14" height="14" rx="2" fill="#6a4fb5" stroke="#6a4fb5"/>
+    <circle cx="530" cy="292" r="7" fill="#6a4fb5" stroke="#6a4fb5"/>
+  </g>
+  <line x1="580" y1="130" x2="580" y2="330" stroke="#e8753a" stroke-width="2.5" stroke-dasharray="5 4"/>
+</svg>

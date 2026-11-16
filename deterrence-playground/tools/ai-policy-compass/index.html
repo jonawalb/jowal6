@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Understanding AI Policy | Jonathan Walberg</title>
+<meta name="description" content="How the United States, China and Russia govern artificial intelligence: a timeline of primary documents, side-by-side comparison by issue, the live debates, and a quiz that places you against each government's own texts.">
+<meta property="og:title" content="Understanding AI Policy | Jonathan Walberg">
+<meta property="og:description" content="US, Chinese and Russian AI policy from 2017 to now, from the primary texts: executive orders, laws, regulations, strategies, standards and UN records.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="../../shared/css/deterrence-site.css">
+<link rel="stylesheet" href="../../shared/css/motion.css">
+<link rel="stylesheet" href="ai-policy-compass.css">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jwalberg.com/deterrence-playground/tools/ai-policy-compass/">
+<meta name="twitter:card" content="summary">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<main class="wrap ap">
+  <div class="ap-top">
+    <p class="ap-asof">Current as of <b id="asof">16 November 2026</b>. <span id="n-docs"></span> primary documents, each linked to its official text.</p>
+    <div class="tabs" role="tablist" aria-label="Views">
+      <button role="tab" id="tab-timeline" aria-controls="view-timeline" aria-selected="true">Timeline</button>
+      <button role="tab" id="tab-compare" aria-controls="view-compare" aria-selected="false" tabindex="-1">Compare by issue</button>
+      <button role="tab" id="tab-debates" aria-controls="view-debates" aria-selected="false" tabindex="-1">Debates</button>
+      <button role="tab" id="tab-compass" aria-controls="view-compass" aria-selected="false" tabindex="-1">Where do you stand?</button>
+    </div>
+  </div>
+
+  <!-- 1. Timeline -->
+  <section id="view-timeline" role="tabpanel" aria-labelledby="tab-timeline" class="ap-view">
+    <p class="lede">Each mark is a primary document: an executive order, law, regulation, standard, strategy, plan, UN resolution or major official statement. Squares bind (orders, laws, rules, standards); circles state policy. Solid marks are still in effect; hollow ones were revoked, superseded, suspended or expired; dashed ones are not yet in force. Arcs run from a document to the one it revokes, supersedes or amends.</p>
+    <div class="ap-tlgrid">
+      <div class="card ap-tlcard">
+        <div class="ap-filters">
+          <div class="ap-fg" role="group" aria-label="Countries shown"><span class="fine">Lanes</span><div id="f-lanes" class="ap-chips"></div></div>
+          <div class="ap-fg" role="group" aria-label="Themes"><span class="fine">Themes</span><div id="f-themes" class="ap-chips"></div></div>
+          <div class="ap-fg ap-frow">
+            <label class="sr-only" for="q">Search documents</label>
+            <input type="search" id="q" class="ap-search" placeholder="Search titles and summaries" autocomplete="off">
+            <div class="ap-seg" role="group" aria-label="Display">
+              <button type="button" class="btn" id="m-chart" aria-pressed="true">Chart</button>
+              <button type="button" class="btn" id="m-list" aria-pressed="false">List</button>
+            </div>
+            <label class="tg ap-tg"><input type="checkbox" id="links" checked><span class="sw"></span><span class="t">Links</span></label>
+            <button type="button" class="btn" id="tl-reset">Reset</button>
+          </div>
+        </div>
+        <p class="fine" id="tl-count" aria-live="polite"></p>
+        <div class="ap-tlwrap" id="tl"></div>
+        <div class="ap-legend" id="tl-legend" aria-hidden="true">
+          <span><svg width="14" height="14"><rect x="1.5" y="1.5" width="11" height="11" rx="1.5" class="lg-live"/></svg>Binding, in effect</span>
+          <span><svg width="14" height="14"><circle cx="7" cy="7" r="5.5" class="lg-live"/></svg>Policy statement, in effect</span>
+          <span><svg width="14" height="14"><circle cx="7" cy="7" r="5.5" class="lg-dead"/></svg>Revoked, superseded, suspended or expired</span>
+          <span><svg width="14" height="14"><circle cx="7" cy="7" r="5.5" class="lg-prop"/></svg>Proposed, released or signed, not yet in force</span>
+          <span><svg width="14" height="14"><circle cx="7" cy="7" r="5.5" class="lg-unc"/></svg>Status unclear</span>
+          <span><svg width="22" height="10"><path d="M1 8 Q11 0 21 8" class="lg-arc" style="stroke:var(--bad)"/></svg>Revokes</span>
+          <span><svg width="22" height="10"><path d="M1 8 Q11 0 21 8" class="lg-arc" style="stroke:var(--warn)"/></svg>Supersedes, amends or suspends</span>
+          <span><svg width="22" height="10"><path d="M1 8 Q11 0 21 8" class="lg-arc" style="stroke:var(--muted)"/></svg>Implements</span>
+        </div>
+        <div id="tl-list" class="ap-listwrap" hidden></div>
+      </div>
+      <aside class="panel ap-detail" aria-label="Selected document"><div class="sec" id="detail" aria-live="polite"></div></aside>
+    </div>
+  </section>
+
+  <!-- 2. Compare -->
+  <section id="view-compare" role="tabpanel" aria-labelledby="tab-compare" class="ap-view" hidden>
+    <p class="lede">Pick an issue. Each column gives what that government's official texts say on it, with the passage and where to find it. Where no official text speaks to the issue, the column says so.</p>
+    <div class="choices ap-issues" id="issues" role="group" aria-label="Issue"></div>
+    <div id="compare" aria-live="polite"></div>
+  </section>
+
+  <!-- 3. Debates -->
+  <section id="view-debates" role="tabpanel" aria-labelledby="tab-debates" class="ap-view" hidden>
+    <p class="lede">The arguments still open inside each government and between them. Each camp lists who holds the view, by institution or office, with a link to where they said it.</p>
+    <div class="ap-chips" id="scopes" role="group" aria-label="Which debates"></div>
+    <div id="debates" class="ap-debates"></div>
+  </section>
+
+  <!-- 4. Compass -->
+  <section id="view-compass" role="tabpanel" aria-labelledby="tab-compass" class="ap-view" hidden>
+    <p class="lede">Set each slider to your own view. Once you move one, the three governments appear on the same scale. Click a government's mark to read the passage that puts it there. Your answers stay in the page address, so you can share them.</p>
+    <div class="ap-cmpgrid">
+      <div class="card ap-axes" id="axes"></div>
+      <a href="#cmp-sum" class="ap-mini" id="cmp-mini" hidden></a>
+      <aside class="panel ap-cmpaside" id="compass-aside" aria-label="Your result">
+        <div class="sec" aria-live="polite" id="cmp-sum"></div>
+        <div class="sec">
+          <label class="tg"><input type="checkbox" id="cmp-reveal"><span class="sw"></span><span class="t">Show all government positions<small>Off: each appears after you answer</small></span></label>
+          <div class="ap-actions"><button type="button" class="btn solid" id="cmp-share">Copy link to my answers</button><button type="button" class="btn" id="cmp-reset">Clear answers</button></div>
+          <p class="fine">Placements are judgments about official texts, not about what each government does in practice. Each one cites its passage. The scale is ordinal: read a gap of 20 as "noticeably apart", not as a measurement.</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<section class="below" id="method">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>The tool sets each government's own texts side by side. It covers national policy: executive orders, laws, regulations and the standards that carry them out, national strategies and plans, and the statements governments make at the UN. It leaves out what companies, provinces or US states do except where a debate turns on them, and it does not judge how well any rule is enforced.</p>
+    <p>"Status" means legal or policy status as of the date above. A US executive order revoked by a later one shows as hollow, with an arc from the order that revoked it. Chinese regulations that are still in force but have been extended by later measures show as solid, with an "implements" arc from the newer text. Non-binding strategies and UN resolutions count as current unless a later text replaced them.</p>
+    <div id="method-extra"></div>
+  </div>
+  <div class="col">
+    <h2>Method &amp; sources</h2>
+    <div id="sources"></div>
+  </div>
+</section>
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Understanding AI Policy', sub: 'How the United States, China and Russia govern AI, from their own texts: what each has issued, where they agree and split, and where you stand.', category: 'Emerging Technology' });
+  document.title = 'Understanding AI Policy | Jonathan Walberg';
+</script>
+<script type="module" src="js/app.js"></script>
+<script type="module" src="js/method.js"></script>
+</body>
+</html>

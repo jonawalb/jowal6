@@ -1,0 +1,288 @@
+// UI for "Does This Chip Need a License?"
+import { tppOf, pdOf, classify, decide, compareRules, groupsOf, OUTCOMES, AK50_FIVE, fmt } from './model.js';
+import { drawChart } from './chart.js';
+import { CHIPS } from '../data/chips.js';
+import { GROUPS } from '../data/groups.js';
+import { TIMELINE } from '../data/timeline.js';
+import { SOURCES } from '../data/sources.js';
+
+const $ = (id) => document.getElementById(id);
+const EXTRA_DEST = ['Brazil', 'Hong Kong', 'Indonesia', 'Malaysia', 'Philippines', 'Thailand'];
+const DESTS = [...new Set([...Object.keys(GROUPS), ...EXTRA_DEST])].sort((a, b) => a.localeCompare(b));
+const BITS = [4, 6, 8, 16, 32, 64];
+const SHORT = { h100: 'H100', h200: 'H200', a100: 'A100', b200: 'B200', mi325x: 'MI325X', rtx4090: 'RTX 4090', rtx4080: 'RTX 4080', ascend910: 'Ascend 910' };
+
+const S = {
+  preset: 'h200', rows: [], die: null, bw: null, dc: true, d5design: false, form: 'ic',
+  dest: 'China (PRC)', endUser: 'commercial', hq: false, origin: 'us', ship: 'us', certs: true,
+  rules: 'current', usHq: false, dcUse: 'no',
+};
+
+function h(tag, attrs = {}, ...kids) {
+  const n = document.createElement(tag);
+  for (const k in attrs) {
+    if (k === 'text') n.textContent = attrs[k];
+    else if (k === 'class') n.className = attrs[k];
+    else if (k.startsWith('on')) n.addEventListener(k.slice(2), attrs[k]);
+    else n.setAttribute(k, attrs[k]);
+  }
+  kids.flat().forEach(c => c != null && n.appendChild(typeof c === 'string' ? document.createTextNode(c) : c));
+  return n;
+}
+const link = (c) => h('a', { href: c.url, target: '_blank', rel: 'noopener', text: c.label });
+const num = (v) => { const x = parseFloat(v); return Number.isFinite(x) && x > 0 ? x : null; };
+
+// ---------- chip panel ----------
+function loadPreset(id) {
+  const c = CHIPS.find(x => x.id === id);
+  S.preset = id;
+  if (!c) return;
+  S.rows = c.rows.map(r => ({ ...r }));
+  S.die = c.dieMm2; S.bw = c.dramBw; S.dc = c.datacenter; S.d5design = !!c.designerD5;
+  if (c.designerD5) S.origin = 'fdp';
+}
+function presetObj() { return CHIPS.find(x => x.id === S.preset); }
+
+function renderPresetSelect() {
+  const sel = $('preset');
+  sel.textContent = '';
+  CHIPS.forEach(c => sel.appendChild(h('option', { value: c.id, text: c.name })));
+  sel.appendChild(h('option', { value: 'custom', text: 'Custom: enter your own figures' }));
+  sel.addEventListener('change', () => { if (sel.value !== 'custom') loadPreset(sel.value); else S.preset = 'custom'; syncInputs(); update(); });
+}
+
+function renderRows() {
+  const box = $('rows');
+  box.textContent = '';
+  const ov = presetObj()?.override;
+  if (ov) { box.appendChild(h('p', { class: 'fine', text: 'No published figures for this part. The walk uses the sources named above.' })); $('add-row').hidden = true; return; }
+  $('add-row').hidden = false;
+  S.rows.forEach((r, i) => {
+    const id = `r${i}`;
+    const tops = h('input', { id: `${id}-t`, type: 'number', min: '0', step: 'any', inputmode: 'decimal', value: r.tops ?? '', 'aria-label': `Row ${i + 1} dense TOPS or TFLOPS` });
+    const bits = h('select', { id: `${id}-b`, 'aria-label': `Row ${i + 1} input bit length` }, BITS.map(b => h('option', { value: b, text: `${b}-bit` })));
+    bits.value = String(r.bits || 8);
+    const lab = h('input', { type: 'text', value: r.label || '', placeholder: 'label', 'aria-label': `Row ${i + 1} label`, class: 'rl-in' });
+    const out = h('span', { class: 'num rowtpp' });
+    const del = h('button', { type: 'button', class: 'linkbtn', text: 'Remove', 'aria-label': `Remove row ${i + 1}` });
+    const set = () => { r.tops = num(tops.value); r.bits = +bits.value; r.label = lab.value; S.preset = S.preset === 'custom' ? 'custom' : markCustom(); update(); };
+    tops.addEventListener('input', set); bits.addEventListener('change', set); lab.addEventListener('input', () => { r.label = lab.value; });
+    del.addEventListener('click', () => { S.rows.splice(i, 1); markCustom(); renderRows(); update(); });
+    box.appendChild(h('div', { class: 'row' }, lab, tops, h('span', { class: 'x', text: '×' }), bits, out, S.rows.length > 1 ? del : null));
+  });
+}
+function markCustom() { S.preset = 'custom'; $('preset').value = 'custom'; $('preset-note').textContent = 'Custom figures.'; return 'custom'; }
+
+function syncInputs() {
+  $('preset').value = S.preset;
+  $('die').value = S.die ?? ''; $('bw').value = S.bw ?? '';
+  $('dc').checked = S.dc; $('d5design').checked = S.d5design;
+  setSeg('form', S.form); setSeg('origin', S.origin); setSeg('ship', S.ship);
+  $('dest').value = S.dest; $('enduser').value = S.endUser; $('hq').checked = S.hq; $('certs').checked = S.certs;
+  setSeg('rules', S.rules); $('ushq').checked = S.usHq; $('dcuse').value = S.dcUse;
+  const p = presetObj();
+  const note = $('preset-note'); note.textContent = '';
+  if (p) {
+    if (p.note) note.appendChild(document.createTextNode(p.note + ' '));
+    if (p.derived) note.appendChild(document.createTextNode(p.derived + ' '));
+    p.src.forEach((s, i) => { if (i) note.appendChild(document.createTextNode(' · ')); note.appendChild(link(s)); });
+  } else note.textContent = 'Custom figures.';
+  renderRows();
+}
+
+function setSeg(id, v) { $(id).querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === v ? 'true' : 'false')); }
+function bindSeg(id, key) {
+  $(id).querySelectorAll('button').forEach(b => b.addEventListener('click', () => { S[key] = b.dataset.v; setSeg(id, S[key]); update(); }));
+}
+
+// ---------- compute + render ----------
+function currentChip() {
+  const p = presetObj();
+  const best = tppOf(S.rows);
+  const tpp = best ? best.tpp : null;
+  return { name: p ? p.name : 'Custom chip', tpp, best, pd: pdOf(tpp, S.die), datacenter: S.dc, dramBw: S.bw, form: S.form, designerD5: S.d5design, override: p?.override };
+}
+
+function update() {
+  const chip = currentChip();
+  // row readouts
+  document.querySelectorAll('#rows .row').forEach((row, i) => {
+    const r = S.rows[i]; const v = r && r.tops > 0 ? r.tops * r.bits : null;
+    row.querySelector('.rowtpp').textContent = v ? `= ${fmt(v)}` : '';
+  });
+  $('ro-tpp').textContent = chip.override ? 'n/a' : fmt(chip.tpp);
+  $('ro-tpp-sub').textContent = chip.best ? `${fmt(chip.best.tops)} × ${chip.best.bits}-bit${chip.best.label ? ` (${chip.best.label})` : ''}` : '';
+  $('ro-pd').textContent = chip.override ? 'n/a' : chip.pd == null ? 'needs die area' : chip.pd.toFixed(2);
+  let clsTxt = '–', clsSub = '';
+  if (chip.override === 'h20') { clsTxt = 'Not computable'; clsSub = 'no published figures'; }
+  else if (chip.override === 'prc3a090') { clsTxt = '3A090 (per BIS)'; clsSub = 'paragraph not stated'; }
+  else if (chip.tpp > 0) {
+    const c = classify(chip);
+    const ec = S.form === 'computer' ? '4A090' : '3A090';
+    clsTxt = c.para === 'a' || c.para === 'b' ? `${ec}.${c.para}` : c.para === 'none' ? `Not ${ec}` : 'Undetermined';
+    clsSub = c.clause && c.para !== 'none' ? `3A090.${c.clause}` : c.clause;
+  }
+  $('ro-cls').textContent = clsTxt; $('ro-cls-sub').textContent = clsSub;
+
+  // destination groups line
+  const g = groupsOf(S.dest);
+  $('dest-groups').textContent = (S.dest === 'Hong Kong' ? 'Treated as China under the EAR. ' : '') +
+    (g.length ? `Country Groups: ${g.join(', ')}` : 'Not in A:5, A:6, D:1, D:4, D:5, E:1 or E:2.');
+  $('certs-wrap').hidden = !(['China (PRC)', 'Hong Kong', 'Macau'].includes(S.dest));
+  const ak = S.rules === 'ak50';
+  document.body.classList.toggle('mode-ak50', ak);
+  $('ushq-wrap').hidden = !(ak && AK50_FIVE.includes(S.dest));
+  $('dcuse-wrap').hidden = !ak;
+
+  // decision
+  const inp = { chip, origin: S.origin, shipFrom: S.ship, dest: S.dest, hqD5: S.hq, endUser: S.endUser, certs: S.certs, usHq: S.usHq, dc: S.dcUse };
+  const r = decide({ ...inp, rules: S.rules });
+  const cmp = compareRules(inp);
+  $('out-rules').textContent = ak ? 'Under the rule released 16 Nov 2026 (not yet in effect)' : 'Under current rules';
+  const ch = $('out-change');
+  ch.hidden = !ak;
+  ch.textContent = ak ? (cmp.changed ? `Changes under the new rule: ${cmp.summary}` : `No change under the new rule. ${cmp.summary}`) : '';
+  const o = OUTCOMES[r.outcome];
+  const box = $('outcome');
+  box.dataset.s = o.s === 'neutral' ? '' : o.s;
+  box.dataset.o = r.outcome;
+  $('out-title').textContent = r.title;
+  $('out-detail').textContent = r.detail;
+  $('out-intricate').hidden = !r.intricate;
+  const oc = $('out-cites'); oc.textContent = '';
+  (r.cites || []).forEach((c, i) => { if (i) oc.appendChild(document.createTextNode(' · ')); oc.appendChild(link(c)); });
+
+  const walk = $('walk'); walk.textContent = '';
+  r.steps.forEach(s => {
+    walk.appendChild(h('li', { class: `step v-${s.verdict}` },
+      h('div', { class: 'st-head' }, h('span', { class: 'st-n', text: String(s.n) }), h('h3', { text: s.title }), s.flag ? h('span', { class: 'st-flag', text: s.flag }) : null),
+      h('p', { text: s.text }),
+      h('p', { class: 'st-cites' }, s.cites.flatMap((c, i) => i ? [document.createTextNode(' · '), link(c)] : [link(c)]))));
+  });
+
+  drawChart($('chart'), {
+    presets: CHIPS.filter(c => !c.override).map(c => { const b = tppOf(c.rows); const t = b ? b.tpp : null; return { id: c.id, name: c.name, short: SHORT[c.id], left: c.id === 'rtx4080', tpp: t, pd: pdOf(t, c.dieMm2), datacenter: c.datacenter }; }),
+    current: chip.override ? null : chip,
+    onPick: (id) => { loadPreset(id); syncInputs(); update(); },
+  });
+  writeHash();
+}
+
+// ---------- hash state ----------
+function writeHash() {
+  const p = new URLSearchParams();
+  p.set('c', S.preset);
+  if (S.preset === 'custom') {
+    p.set('r', S.rows.filter(r => r.tops > 0).map(r => `${r.bits}:${r.tops}`).join(','));
+    if (S.die) p.set('die', S.die); if (S.bw) p.set('bw', S.bw);
+    p.set('dc', S.dc ? 1 : 0); if (S.d5design) p.set('p', 1);
+  }
+  p.set('f', S.form); p.set('d', S.dest); p.set('u', S.endUser); p.set('hq', S.hq ? 1 : 0);
+  p.set('o', S.origin); p.set('s', S.ship); p.set('k', S.certs ? 1 : 0);
+  if (S.rules === 'ak50') { p.set('rs', 'ak50'); p.set('dcu', S.dcUse); if (S.usHq) p.set('us', 1); }
+  const tab = document.querySelector('[role="tab"][aria-selected="true"]');
+  if (tab && tab.id !== 'tab-check') p.set('v', tab.id.replace('tab-', ''));
+  try { history.replaceState(null, '', '#' + p.toString()); } catch (e) { /* ignore */ }
+}
+function readHash() {
+  const p = new URLSearchParams(location.hash.slice(1));
+  if (!p.has('c')) { loadPreset(S.preset); return null; }
+  const c = p.get('c');
+  if (c === 'custom') {
+    S.preset = 'custom';
+    S.rows = (p.get('r') || '').split(',').filter(Boolean).map(x => { const [b, t] = x.split(':'); return { bits: +b, tops: num(t), label: '' }; });
+    if (!S.rows.length) S.rows = [{ bits: 8, tops: null, label: '' }];
+    S.dc = p.get('dc') !== '0'; S.d5design = p.get('p') === '1';
+  } else if (CHIPS.some(x => x.id === c)) loadPreset(c); else loadPreset(S.preset);
+  if (p.has('die')) S.die = num(p.get('die'));
+  if (p.has('bw')) S.bw = num(p.get('bw'));
+  if (['ic', 'computer'].includes(p.get('f'))) S.form = p.get('f');
+  if (DESTS.includes(p.get('d'))) S.dest = p.get('d');
+  if (['commercial', 'cloud', 'entity', 'meu', 'mieu', 'uaeok'].includes(p.get('u'))) S.endUser = p.get('u');
+  if (p.has('hq')) S.hq = p.get('hq') === '1';
+  if (['us', 'fdp', 'foreign'].includes(p.get('o'))) S.origin = p.get('o');
+  if (['us', 'abroad'].includes(p.get('s'))) S.ship = p.get('s');
+  if (p.has('k')) S.certs = p.get('k') === '1';
+  if (p.get('rs') === 'ak50') S.rules = 'ak50';
+  if (['no', 'yes', 'recommender'].includes(p.get('dcu'))) S.dcUse = p.get('dcu');
+  S.usHq = p.get('us') === '1';
+  return p.get('v');
+}
+
+// ---------- tabs ----------
+const tabs = [...document.querySelectorAll('[role="tab"]')];
+function selectTab(tab, focus) {
+  tabs.forEach(t => {
+    const on = t === tab;
+    t.setAttribute('aria-selected', on ? 'true' : 'false'); t.tabIndex = on ? 0 : -1;
+    $(t.getAttribute('aria-controls')).hidden = !on;
+  });
+  if (focus) tab.focus();
+  writeHash();
+}
+tabs.forEach((t, i) => {
+  t.addEventListener('click', () => selectTab(t));
+  t.addEventListener('keydown', e => {
+    let j = null;
+    if (e.key === 'ArrowRight') j = (i + 1) % tabs.length; else if (e.key === 'ArrowLeft') j = (i - 1 + tabs.length) % tabs.length;
+    else if (e.key === 'Home') j = 0; else if (e.key === 'End') j = tabs.length - 1;
+    if (j !== null) { e.preventDefault(); selectTab(tabs[j], true); }
+  });
+});
+
+// ---------- timeline + sources ----------
+const KIND = { issued: 'Rule issued', amended: 'Rule amended', suspended: 'Rule suspended', related: 'Related action', guidance: 'Guidance', licensing: 'Licensing decision' };
+const KGROUP = { issued: 'rule', amended: 'rule', suspended: 'rule', related: 'rule', guidance: 'guidance', licensing: 'licensing' };
+function fmtDate(d) {
+  const m = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const p = d.split('-');
+  return p.length === 2 ? `${m[+p[1] - 1]} ${p[0]}` : `${+p[2]} ${m[+p[1] - 1]} ${p[0]}`;
+}
+function renderTimeline(filter = 'all') {
+  const box = $('timeline'); box.textContent = '';
+  let year = null, list = null;
+  TIMELINE.filter(e => filter === 'all' || KGROUP[e.kind] === filter).forEach(e => {
+    const y = e.date.slice(0, 4);
+    if (y !== year) { year = y; box.appendChild(h('h3', { class: 'tl-year', text: y })); list = h('ol', { class: 'tl' }); box.appendChild(list); }
+    list.appendChild(h('li', { class: `k-${KGROUP[e.kind]}` },
+      h('time', { datetime: e.date, text: fmtDate(e.date) }),
+      h('div', {}, h('span', { class: 'kind', text: KIND[e.kind] }), h('strong', { text: e.title }), h('p', { text: e.text }), h('p', { class: 'st-cites' }, link(e.src)))));
+  });
+}
+$('tl-filter').querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+  $('tl-filter').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+  renderTimeline(b.dataset.k);
+}));
+function renderSources() {
+  const ul = $('srclist');
+  SOURCES.forEach(g => ul.appendChild(h('li', {}, h('strong', { text: g.group }), h('ul', {}, g.items.map(([l, u]) => h('li', {}, h('a', { href: u, target: '_blank', rel: 'noopener', text: l })))))));
+}
+
+// ---------- init ----------
+const dsel = $('dest');
+DESTS.forEach(d => dsel.appendChild(h('option', { value: d, text: d })));
+renderPresetSelect();
+const view = readHash();
+syncInputs();
+dsel.addEventListener('change', () => { S.dest = dsel.value; update(); });
+$('enduser').addEventListener('change', e => { S.endUser = e.target.value; update(); });
+$('hq').addEventListener('change', e => { S.hq = e.target.checked; update(); });
+$('certs').addEventListener('change', e => { S.certs = e.target.checked; update(); });
+$('ushq').addEventListener('change', e => { S.usHq = e.target.checked; update(); });
+$('dcuse').addEventListener('change', e => { S.dcUse = e.target.value; update(); });
+$('dc').addEventListener('change', e => { S.dc = e.target.checked; markCustomIfPreset(); update(); });
+$('d5design').addEventListener('change', e => { S.d5design = e.target.checked; markCustomIfPreset(); update(); });
+$('die').addEventListener('input', e => { S.die = num(e.target.value); markCustomIfPreset(); update(); });
+$('bw').addEventListener('input', e => { S.bw = num(e.target.value); markCustomIfPreset(); update(); });
+$('add-row').addEventListener('click', () => { S.rows.push({ bits: 8, tops: null, label: '' }); markCustom(); renderRows(); update(); $(`r${S.rows.length - 1}-t`).focus(); });
+function markCustomIfPreset() { if (S.preset !== 'custom') { markCustom(); renderRows(); } }
+bindSeg('rules', 'rules'); bindSeg('form', 'form'); bindSeg('origin', 'origin'); bindSeg('ship', 'ship');
+$('copy-link').addEventListener('click', async () => {
+  try { await navigator.clipboard.writeText(location.href); $('copy-msg').textContent = 'Link copied.'; }
+  catch (e) { $('copy-msg').textContent = 'Copy the address bar to share this case.'; }
+});
+renderTimeline(); renderSources();
+update();
+if (view) { const t = tabs.find(x => x.id === `tab-${view}`); if (t) selectTab(t); }
+let rz = null;
+window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(update, 150); });

@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Does This Chip Need a License? | Jonathan Walberg</title>
+<meta name="description" content="Walk a chip and a transaction through the U.S. export controls on advanced AI chips (ECCN 3A090/4A090), with each step cited to the CFR. Rules current as of 16 November 2026.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="../../shared/css/deterrence-site.css">
+<link rel="stylesheet" href="../../shared/css/motion.css">
+<link rel="stylesheet" href="css/style.css">
+<meta property="og:title" content="Does This Chip Need a License? | Interactive Deterrence">
+<meta property="og:description" content="Enter an AI chip and a transaction; see TPP, the 3A090 paragraph and the license outcome step by step, cited to the CFR, under current rules or the rule BIS released 16 Nov 2026.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jwalberg.com/deterrence-playground/tools/chip-license-check/">
+<meta name="twitter:card" content="summary">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<main class="wrap clc">
+  <div class="banner">
+    <p class="asof"><strong>Rules current as of 16 November 2026.</strong> eCFR text current through 12 Nov 2026; Federal Register and BIS guidance checked through 16 Nov 2026.</p>
+    <p class="notice"><strong>Educational model, not legal advice.</strong> Classification and licensing decisions rest with BIS. Where a branch of the rules is too intricate to model faithfully, the result says so and points to the CFR section.</p>
+  </div>
+
+  <div class="rules-bar card">
+    <span class="lbl" id="rules-lbl">Rule set</span>
+    <div class="seg" role="group" aria-labelledby="rules-lbl" id="rules">
+      <button type="button" data-v="current" aria-pressed="true">Current rules (eCFR, amended through 9 Nov 2026)</button>
+      <button type="button" data-v="ak50" aria-pressed="false">Rule released 16 Nov 2026 (RIN 0694-AK50)</button>
+    </div>
+    <p class="fine rules-note">BIS released an interim final rule, "Addressing Remote Access to Advanced Semiconductors", on 16 Nov 2026. It takes effect when published in the Federal Register, which had not happened when this page was checked. It formally rescinds the AI Diffusion framework, adds license requirements for Indonesia, Malaysia, Singapore, Brazil and Thailand, and adds a data center end-use control (§ 744.24). <a href="https://www.bis.gov/media/documents/rin-0694-ak50.pdf" target="_blank" rel="noopener">Rule text (bis.gov PDF)</a></p>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Views">
+    <button role="tab" id="tab-check" aria-controls="view-check" aria-selected="true">Check a chip</button>
+    <button role="tab" id="tab-changes" aria-controls="view-changes" aria-selected="false" tabindex="-1">Rule changes 2022–2026</button>
+    <button role="tab" id="tab-method" aria-controls="view-method" aria-selected="false" tabindex="-1">Method &amp; sources</button>
+  </div>
+
+  <!-- 1. Check -->
+  <section class="clc-view" id="view-check" role="tabpanel" aria-labelledby="tab-check">
+    <div class="grid">
+      <div class="col-in">
+        <div class="card sec">
+          <h2 class="eyebrow">1 &middot; The chip</h2>
+          <label class="fld" for="preset">Start from a datasheet
+            <select id="preset"></select>
+          </label>
+          <p class="fine" id="preset-note"></p>
+          <fieldset class="rows">
+            <legend>Dense peak rates (no sparsity)</legend>
+            <div id="rows"></div>
+            <button type="button" class="btn" id="add-row">Add a precision</button>
+          </fieldset>
+          <div class="two">
+            <label class="fld" for="die">Applicable die area, mm²
+              <input id="die" type="number" min="0" step="any" inputmode="decimal" placeholder="not published">
+            </label>
+            <label class="fld" for="bw">Total DRAM bandwidth, GB/s
+              <input id="bw" type="number" min="0" step="any" inputmode="decimal" placeholder="not published">
+            </label>
+          </div>
+          <label class="tg"><input type="checkbox" id="dc"><span class="sw"></span><span class="t">Designed or marketed for datacenters</span></label>
+          <label class="tg"><input type="checkbox" id="d5design"><span class="sw"></span><span class="t">Designed by a company headquartered in D:5 or Macau<small>e.g. Huawei; triggers the GP10 check</small></span></label>
+          <div class="seg-wrap"><span class="lbl" id="form-lbl">Item</span>
+            <div class="seg" role="group" aria-labelledby="form-lbl" id="form">
+              <button type="button" data-v="ic" aria-pressed="true">Chip (3A090)</button>
+              <button type="button" data-v="computer" aria-pressed="false">Server or board (4A090)</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card sec readouts" aria-live="polite">
+          <div class="ro"><span class="k">TPP</span><b class="num" id="ro-tpp">–</b><span class="sub" id="ro-tpp-sub"></span></div>
+          <div class="ro"><span class="k">Performance density</span><b class="num" id="ro-pd">–</b><span class="sub">TPP ÷ die area</span></div>
+          <div class="ro"><span class="k">Classification</span><b id="ro-cls">–</b><span class="sub" id="ro-cls-sub"></span></div>
+        </div>
+        <figure class="card sec chartbox">
+          <figcaption><span class="eyebrow">Where the chip sits</span> <span class="fine">TPP (log) against performance density (log). Shaded areas are 3A090.a and 3A090.b for datacenter chips. Select a dot to load that chip.</span></figcaption>
+          <div id="chart"></div>
+        </figure>
+      </div>
+
+      <div class="col-out">
+        <div class="card sec">
+          <h2 class="eyebrow">2 &middot; The transaction</h2>
+          <div class="two">
+            <label class="fld" for="dest">Destination country
+              <select id="dest"></select>
+            </label>
+            <label class="fld" for="enduser">End user
+              <select id="enduser">
+                <option value="commercial">Commercial company</option>
+                <option value="cloud">Cloud / IaaS provider</option>
+                <option value="entity">Party on the Entity List</option>
+                <option value="meu">Military end user</option>
+                <option value="mieu">Military-intelligence end user</option>
+                <option value="uaeok">UAE approved recipient (supp. 8 to part 740)</option>
+              </select>
+            </label>
+          </div>
+          <p class="fine grp" id="dest-groups"></p>
+          <label class="tg"><input type="checkbox" id="hq"><span class="sw"></span><span class="t">End user or its ultimate parent is headquartered in D:5 or Macau<small>e.g. a Chinese company's subsidiary abroad</small></span></label>
+          <div class="seg-wrap"><span class="lbl" id="origin-lbl">Made</span>
+            <div class="seg" role="group" aria-labelledby="origin-lbl" id="origin">
+              <button type="button" data-v="us" aria-pressed="true">In the U.S.</button>
+              <button type="button" data-v="fdp" aria-pressed="false">Abroad, with U.S. technology</button>
+              <button type="button" data-v="foreign" aria-pressed="false">Abroad, no known U.S. nexus</button>
+            </div>
+          </div>
+          <div class="seg-wrap"><span class="lbl" id="ship-lbl">Shipped</span>
+            <div class="seg" role="group" aria-labelledby="ship-lbl" id="ship">
+              <button type="button" data-v="us" aria-pressed="true">From the U.S.</button>
+              <button type="button" data-v="abroad" aria-pressed="false">Reexport / from abroad</button>
+            </div>
+          </div>
+          <label class="tg" id="ushq-wrap" hidden><input type="checkbox" id="ushq"><span class="sw"></span><span class="t">Ultimate consignee or end user is headquartered in the U.S.<small>new rule: excludes the five added countries if the exporter files § 743.10 reports</small></span></label>
+          <label class="fld" for="dcuse" id="dcuse-wrap" hidden>Going to a data center that gives D:5- or Macau-headquartered companies more than 12,000,000 aggregate TPP? (new § 744.24)
+            <select id="dcuse">
+              <option value="no">No, or no knowledge of it</option>
+              <option value="yes">Yes</option>
+              <option value="recommender">Yes, but only for a commercial recommender system</option>
+            </select>
+          </label>
+          <label class="tg" id="certs-wrap"><input type="checkbox" id="certs" checked><span class="sw"></span><span class="t">Applicant can make the Jan. 2026 certifications<small>supp. 2 to part 748, para. (dd); matters only for China and Macau</small></span></label>
+        </div>
+
+        <div class="outcome status" id="outcome" aria-live="polite">
+          <span class="eyebrow">Outcome <span class="out-rules" id="out-rules"></span></span>
+          <b id="out-title">–</b>
+          <span id="out-detail"></span>
+          <span class="change" id="out-change" hidden></span>
+          <span class="intricate" id="out-intricate" hidden>This branch turns on provisions this model simplifies. Read the cited sections before relying on it.</span>
+          <span class="out-cites" id="out-cites"></span>
+        </div>
+
+        <ol class="walk" id="walk" aria-label="Reasoning chain"></ol>
+        <p class="fine"><button type="button" class="linkbtn" id="copy-link">Copy a link to this case</button> <span id="copy-msg" aria-live="polite"></span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Rule changes -->
+  <section class="clc-view" id="view-changes" role="tabpanel" aria-labelledby="tab-changes" hidden>
+    <p class="lede">Major U.S. rules, guidance and licensing decisions on advanced AI chips since October 2022, oldest first. Dates are when an action was announced or took effect; the entry text gives publication and effective dates where they differ. Each entry links to the primary source.</p>
+    <div class="seg" role="group" aria-label="Filter by kind" id="tl-filter">
+      <button type="button" data-k="all" aria-pressed="true">All</button>
+      <button type="button" data-k="rule" aria-pressed="false">Rules</button>
+      <button type="button" data-k="guidance" aria-pressed="false">Guidance</button>
+      <button type="button" data-k="licensing" aria-pressed="false">Licensing decisions</button>
+    </div>
+    <div id="timeline"></div>
+    <p class="fine">Not shown: Entity List additions, semiconductor manufacturing equipment controls, and rules outside BIS except the January 2026 tariff proclamation. BIS released the formal rescission and replacement (RIN 0694-AK50) on bis.gov on 16 Nov 2026; as of that date it did not yet appear in the Federal Register or its public inspection list.</p>
+  </section>
+
+  <!-- 3. Method -->
+  <section class="clc-view method" id="view-method" role="tabpanel" aria-labelledby="tab-method" hidden>
+    <div class="card sec">
+      <h3>What this is</h3>
+      <p>A step-by-step model of how the Export Administration Regulations treat an advanced computing chip, or a computer built on one, in a given transaction. It computes Total Processing Performance and performance density as defined in ECCN 3A090, places the item in 3A090.a, 3A090.b or neither, then walks the license requirement, license exceptions and license review policy for the chosen destination and end user.</p>
+      <h3>How the numbers are computed</h3>
+      <ul>
+        <li><strong>TPP</strong> = 2 × MacTOPS × bit length (Technical Note 2 to 3A090.a and .b). Datasheets report 2 × MacTOPS as TOPS or TFLOPS, so TPP = dense TOPS × bit length of the inputs. Where a chip runs several precisions, the highest TPP counts. Rates are dense; sparsity figures do not count.</li>
+        <li><strong>Performance density</strong> = TPP ÷ applicable die area in mm², counting all logic dies made on a non-planar (FinFET or GAA) process.</li>
+        <li><strong>3A090.a</strong>: TPP ≥ 4800, or TPP ≥ 1600 and PD ≥ 5.92. <strong>3A090.b</strong>: TPP 2400 to under 4800 with PD 1.6 to under 5.92, or TPP ≥ 1600 with PD 3.2 to under 5.92. <strong>Note 2</strong>: chips not designed or marketed for datacenters with TPP under 4800 are outside both.</li>
+        <li>The arithmetic is unit-tested against the two worked examples in the Technical Note (600 TOPS at 8 bits and 300 TFLOPS at 16 bits both give TPP 4800) and against each threshold edge (<code>scripts/model.test.mjs</code>, 49 tests).</li>
+        <li>This tool treats a datasheet's whole-chip peak for a precision as the aggregate over processing units. If a chip has separate units whose peaks add, enter their sum.</li>
+      </ul>
+      <h3>Written rule versus enforced rule</h3>
+      <p>The regulation text still contains the January 2025 AI Diffusion framework: a worldwide license requirement for 3A090.a, country TPP allocations, and new license exceptions. BIS said on 13 May 2025 that it would not enforce that rule, and in the 14 July 2026 UAE rule stated that it enforces the 3A090.a requirement only for D:1, D:4 and D:5 destinations not also in A:5 or A:6, the UAE, and entities headquartered in D:5 or Macau. The tool shows both: where the text requires a license that BIS does not enforce, the outcome is "No license enforced". GAO held in May 2026 that the non-enforcement announcement is itself a rule under the Congressional Review Act. BIS released the formal rescission, with a replacement framework, on 16 Nov 2026 (RIN 0694-AK50). It takes effect on Federal Register publication; use the rule-set switch to see its effect.</p>
+      <h3>What it does not model</h3>
+      <ul>
+        <li>HBM (3A090.c), semiconductor manufacturing equipment, and the .z paragraphs of other ECCNs except as they mirror 3A090.</li>
+        <li>De minimis U.S. content, and whether a foreign-made chip meets the product scope of a foreign direct product rule. Choose the origin you have established.</li>
+        <li>Deemed exports, the foundry and OSAT presumption in Note 1 to 3A090.a, Validated End-User authorizations, and the AI Diffusion license exceptions (AIA, LPP) and model-weight control (4E091), all removed by the 16 Nov 2026 rule, and License Exception ACM (§ 740.28), which that rule keeps.</li>
+        <li>Remote access to chips through cloud services, beyond flagging BIS's May 2025 policy statement.</li>
+        <li>The review policy for D:1 and D:4 destinations outside D:5 under the current text while the Diffusion rule is unenforced; it is flagged as unsettled. (3A090.b items reaching review follow the same § 742.6(b)(10)(iii)(A)(1) policy as .a items, but in this model they always qualify for NAC or ACA first.)</li>
+        <li>Under the 16 Nov 2026 rule: the front-end fabricator and OSAT license requirement for chips from unapproved designers (§ 744.23(a)(3)(i)(C)), the "is informed" process in § 744.24(a)(2), and how to aggregate TPP across linked data centers.</li>
+        <li>Country embargo programs other than Russia and Belarus (Cuba, Iran, North Korea, Syria), and OFAC sanctions.</li>
+      </ul>
+      <h3>The rule released 16 November 2026</h3>
+      <p>The "Rule released 16 Nov 2026" setting applies the regulatory text of RIN 0694-AK50 as released on bis.gov. It takes effect on Federal Register publication. In that mode: the worldwide Diffusion requirement, country allocations, AIA, LPP and ECCN 4E091 are gone; one license list covers all 3A090 (except .c), 4A090 and .z items (Indonesia, Malaysia, Singapore, Brazil, Thailand; D:1, D:4, D:5 not in A:5/A:6; the UAE except supp. 8 recipients), with a U.S.-headquartered recipient exclusion for the five new countries when the exporter reports under § 743.10; review is case-by-case for the five, presumption of approval for D:1, D:4 and the UAE, presumption of denial for D:5, Macau and D:5-headquartered entities except the existing China/Macau case-by-case path; and § 744.24 requires a license for items going to a data center that gives D:5- or Macau-headquartered companies more than 12,000,000 aggregate TPP. The outcome box states whether the result differs from current rules.</p>
+      <h3>Presets</h3>
+      <p>Chip figures come from vendor product pages and whitepapers, linked under each preset. Where a vendor prints only a figure "with sparsity", the dense value is half, matching the dense/sparse pairs the same vendor prints elsewhere; each preset says so. NVIDIA publishes no H20 figures and Huawei none for the Ascend 910B/C/D, so those presets carry no numbers and rely on the sources that address them directly.</p>
+      <h3>How to cite</h3>
+      <p class="cite">Walberg, Jonathan. 2026. "Does This Chip Need a License?" Interactive tool, jwalberg.com. Rules current as of 16 November 2026. Cite the CFR sections and Federal Register documents linked in each step for any legal point.</p>
+    </div>
+    <div class="card sec">
+      <h3>Sources</h3>
+      <ul class="srclist" id="srclist"></ul>
+    </div>
+  </section>
+</main>
+
+<footer id="tsm-foot"></footer>
+<noscript><p class="wrap">This tool needs JavaScript.</p></noscript>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Does This Chip Need a License?', sub: 'Walk an AI chip and a transaction through U.S. export controls on advanced computing, step by step, with each step cited to the CFR.', category: 'Emerging Technology' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

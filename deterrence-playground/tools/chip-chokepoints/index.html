@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AI Chip Chokepoint Twin | Jonathan Walberg</title>
+<meta name="description" content="The AI accelerator supply chain traced stage by stage: who holds each stage, with sourced and dated market shares, China's position, a shock simulator with notional buffers and substitution times on sliders, and the U.S., allied and Chinese export controls aimed at each node.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="../../shared/css/deterrence-site.css">
+<link rel="stylesheet" href="../../shared/css/motion.css">
+<link rel="stylesheet" href="chip-chokepoints.css">
+<meta property="og:title" content="AI Chip Chokepoint Twin | Interactive Deterrence">
+<meta property="og:description" content="The AI accelerator supply chain stage by stage: who holds each node, what binds when one is cut, and the U.S., allied and Chinese controls aimed at it.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jwalberg.com/deterrence-playground/tools/chip-chokepoints/">
+<meta name="twitter:card" content="summary">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<main class="layout">
+  <div class="stage" id="stage">
+    <p class="caveat"><b>Current as of <span id="asof"></span>.</b> Market shares come from published industry and government sources, each with its data year. The shock model is a stylised throughput calculation: its buffers and substitution times are assumptions you can move, marked <span class="notional">notional</span>.</p>
+
+    <div class="card controls">
+      <div class="row">
+        <label class="tg mini"><input type="checkbox" id="overlay" checked><span class="sw"></span><span class="t">Controls overlay<small>Count the measures aimed at each stage</small></span></label>
+        <div class="acts">
+          <button type="button" class="btn" id="tour-btn">Walkthrough</button>
+          <button type="button" class="btn" id="copy">Copy link</button>
+          <button type="button" class="btn" id="reset">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card chartcard" id="flow-card">
+      <div class="chart-h"><p class="eyebrow" id="flow-h">The chain, stage by stage: share of world output</p></div>
+      <ul class="legend" id="flow-legend"></ul>
+      <div class="chartbox">
+        <ol class="flow" id="flow" aria-labelledby="flow-h"></ol>
+        <div class="tooltip" id="flow-tip" hidden></div>
+      </div>
+      <p class="fine">Each bar splits one stage's world output by country, from the source and year shown. Select a stage for firm shares, China's position and the controls aimed at it.</p>
+    </div>
+
+    <div class="card chartcard" id="card" aria-live="polite"></div>
+
+    <div class="card chartcard" id="sim-card">
+      <div class="chart-h"><p class="eyebrow" id="sim-h">Shock simulator: world AI accelerator output</p><ul class="legend" id="sim-legend"></ul></div>
+      <div class="chartbox">
+        <svg id="sim" class="chart" role="img" aria-labelledby="sim-h sim-desc"></svg>
+        <div class="tooltip" id="sim-tip" hidden></div>
+      </div>
+      <label class="slider scrub"><span class="sl-h"><span>Month after the shock</span><output id="scrub-o">12</output></span>
+        <input type="range" id="scrub" min="0" max="119" step="1" value="12" aria-describedby="sim-desc"></label>
+      <p class="fine" id="sim-desc"></p>
+    </div>
+  </div>
+
+  <aside class="panel" aria-label="Shock settings and results">
+    <div class="sec">
+      <div class="status" id="status" data-s="warn" aria-live="polite"><b id="st-b"></b><span id="st-s"></span></div>
+      <dl class="readout" id="readout"></dl>
+    </div>
+    <div class="sec">
+      <p class="eyebrow">Shock</p>
+      <div class="choices one" id="scenarios" role="group" aria-label="Shock scenario"></div>
+      <p class="fine" id="sc-basis"></p>
+      <div id="custom" hidden>
+        <label class="fl"><span>Whose output is lost</span><select id="cu-actor"></select></label>
+        <div id="cu-stages" class="cu-stages" role="group" aria-label="Stages hit"></div>
+      </div>
+      <div id="hits"></div>
+      <label class="tg"><input type="checkbox" id="open" checked><span class="sw"></span><span class="t">Open-ended<small>Off: the shock ends after the months set below</small></span></label>
+      <div class="slider" id="dur-wrap"><span class="sl-h"><label for="dur">Shock lasts</label><output id="dur-o"></output></span>
+        <input type="range" id="dur" min="1" max="120" step="1" value="12"></div>
+    </div>
+    <details class="sec" id="assume" open>
+      <summary class="eyebrow">Assumptions for the stages hit <span class="notional">notional</span></summary>
+      <div id="sliders"></div>
+    </details>
+  </aside>
+</main>
+
+<section class="wide" aria-label="Export controls and comparison">
+  <div class="card chartcard" id="ctl-card">
+    <div class="chart-h"><p class="eyebrow" id="ctl-h">Export controls and counter-measures by stage</p></div>
+    <div class="row">
+      <div class="seg" id="cf-bloc" role="group" aria-label="Who imposed it">
+        <button type="button" class="btn" data-b="all" aria-pressed="true">All</button>
+        <button type="button" class="btn" data-b="us" aria-pressed="false">United States</button>
+        <button type="button" class="btn" data-b="al" aria-pressed="false">Allies and partners</button>
+        <button type="button" class="btn" data-b="cn" aria-pressed="false">China</button>
+      </div>
+      <label class="fl inline"><span>Stage</span><select id="cf-node"></select></label>
+    </div>
+    <ol class="ctl" id="controls" aria-labelledby="ctl-h"></ol>
+    <p class="fine" id="ctl-note"></p>
+  </div>
+
+  <div class="card chartcard" id="heat-card">
+    <div class="chart-h"><p class="eyebrow" id="heat-h">Chokepoint table: share of world output by country and stage</p></div>
+    <p class="fine">Darker cells mean a larger share. HHI is the Herfindahl–Hirschman index of concentration across named countries (10,000 = one country). Select a row to open that stage.</p>
+    <div class="tablewrap"><table id="heat" aria-labelledby="heat-h"></table></div>
+  </div>
+</section>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>The chain runs top to bottom, from design software to the finished, tested accelerator. Each bar splits one stage's world output by country, with the data year and source beside it. Shares come from different sources and years, so compare them with care. The controls overlay counts the U.S., allied and Chinese measures aimed at each stage; the timeline below lists them with dates and links to the official text.</p>
+    <p>Pick a shock in the side panel. The output lost at each stage is hatched, and the simulator shows how much world AI accelerator output the chain can still support, month by month. The narrowest stage binds. Buffers delay the loss, and substitutes restore output after a time you set. The simulator runs a fast and a slow substitution case side by side; the amber band between them is the part that depends on how fast substitutes arrive.</p>
+    <h2 class="mt">Method</h2>
+    <div id="method"></div>
+  </div>
+  <div class="col">
+    <h2>Sources</h2>
+    <ul class="src" id="sources"></ul>
+    <h2 class="mt">How to cite</h2>
+    <p class="fine" id="cite"></p>
+    <p class="fine mt-s">Data provenance: <code>tools/chip-chokepoints/data/SOURCES.md</code>. Model tests: <code>scripts/model.test.mjs</code>.</p>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'AI Chip Chokepoint Twin', sub: 'The AI accelerator supply chain stage by stage: who controls each stage, what happens when one is cut, and the export controls aimed at each node.', category: 'Emerging Technology' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

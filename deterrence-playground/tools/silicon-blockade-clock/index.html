@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Silicon Blockade Clock | Jonathan Walberg</title>
+<meta name="description" content="Quarantine or blockade Taiwan and follow the chain from LNG and coal stocks to fab power, leading-edge chip and packaging output, buffers abroad and world AI accelerator deliveries.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="../../shared/css/deterrence-site.css">
+<link rel="stylesheet" href="../../shared/css/motion.css">
+<link rel="stylesheet" href="silicon-blockade-clock.css">
+<meta property="og:title" content="Silicon Blockade Clock | Interactive Deterrence">
+<meta property="og:description" content="Quarantine or blockade Taiwan and follow the chain from LNG and coal stocks to fab power, leading-edge output and world AI accelerator deliveries, including the backlog after it lifts.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jwalberg.com/deterrence-playground/tools/silicon-blockade-clock/">
+<meta name="twitter:card" content="summary">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<main class="layout">
+  <div class="stage" id="stage">
+    <div class="card clock">
+      <div class="clock-h">
+        <div>
+          <p class="eyebrow">Silicon blockade clock <span class="asof">Current as of 16 Nov 2026</span></p>
+          <p class="daylabel"><b id="day-n" class="num">Day 0</b> <span id="day-s"></span></p>
+        </div>
+        <div class="clock-btns">
+          <button type="button" class="btn solid play" id="play">Play</button>
+          <button type="button" class="btn" id="tour-btn">Guided briefing</button>
+          <button type="button" class="btn" id="copy">Copy link</button>
+        </div>
+      </div>
+      <input type="range" id="day" min="0" max="364" value="0" aria-label="Day of the crisis">
+      <ol class="chain" id="chain" aria-label="The supply chain on the selected day"></ol>
+    </div>
+
+    <div class="card chartcard">
+      <div class="chart-h">
+        <p class="eyebrow">World AI accelerator deliveries (designers tracked by Epoch AI), share of normal</p>
+        <ul class="legend" id="legend-world"></ul>
+      </div>
+      <svg id="world" class="chart" role="img" aria-label="World AI accelerator deliveries by source over one year. Click or drag to move the day."></svg>
+    </div>
+
+    <div class="twocol">
+      <div class="card chartcard">
+        <div class="chart-h">
+          <p class="eyebrow">Inside Taiwan</p>
+          <ul class="legend" id="legend-tw"></ul>
+        </div>
+        <svg id="taiwan" class="chart" role="img" aria-label="Grid supply, power to leading-edge fabs and fab output in Taiwan over one year. Click or drag to move the day."></svg>
+      </div>
+      <div class="card mapcard">
+        <p class="eyebrow">Where it is made <small>(city level, schematic)</small></p>
+        <svg id="map" class="map" role="img" aria-label="Schematic map of Taiwan's chip clusters by city, shaded by output on the selected day."></svg>
+        <p class="fine" id="map-note"></p>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="eyebrow">Which alternatives ramp, and how slowly</p>
+      <div class="tablewrap"><table class="alts" id="alts">
+        <thead><tr><th>Alternative</th><th>Status (sourced)</th><th>Starts <span class="notional">notional</span></th><th>Ramp</th><th>Ceiling</th><th>Today</th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <aside class="panel" aria-label="Scenario controls">
+    <div class="sec">
+      <div class="status" id="status"><b></b><span></span></div>
+    </div>
+    <div class="sec">
+      <p class="eyebrow">Run readouts</p>
+      <dl class="readout" id="summary"></dl>
+    </div>
+    <div class="sec">
+      <p class="eyebrow">1 · Scenario</p>
+      <div class="choices one" id="scen-choices"></div>
+      <div class="slider">
+        <div class="sl-h"><label for="dur">Lasts</label><output id="dur-out"></output></div>
+        <input type="range" id="dur" min="7" max="365" step="1">
+      </div>
+      <details class="more">
+        <summary>What the scenario stops <span class="notional">notional</span></summary>
+        <div id="lever-sliders"></div>
+      </details>
+    </div>
+    <div class="sec">
+      <p class="eyebrow">2 · Rationing <span class="notional">notional</span></p>
+      <div class="choices one" id="policy-choices"></div>
+      <label class="tg"><input type="checkbox" id="protect"><span class="sw"></span><span class="t">Leading-edge fabs and packaging first<small>Within the chip sector's share of power</small></span></label>
+    </div>
+    <div class="sec">
+      <p class="eyebrow">3 · Energy stocks</p>
+      <div class="choices" id="stock-choices"></div>
+      <p class="fine" id="stock-note"></p>
+    </div>
+    <div class="sec">
+      <p class="eyebrow">4 · Bridging assumptions <span class="notional">notional</span></p>
+      <div id="param-sliders"></div>
+      <details class="more">
+        <summary>Alternatives: start and ceiling</summary>
+        <div id="alt-sliders"></div>
+      </details>
+      <button type="button" class="btn" id="reset">Reset assumptions</button>
+    </div>
+  </aside>
+</main>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p>Taiwan held about 69 percent of the world's sub-10nm logic capacity in 2022. Nvidia, which sold almost half of the world's AI accelerators in 2025 by Epoch AI's estimate, has its data-center chips made by TSMC and packaged with TSMC's CoWoS. A quarantine or blockade reaches that output first through energy. Taiwan imports over 94 percent of its energy, holds about eleven days of natural gas and about six weeks of coal, and electronic-products and electrical-equipment manufacturing used 23 percent of its electricity in 2024. A full blockade also stops chips leaving and process materials arriving.</p>
+    <p>Pick a scenario and a duration, then press Play or drag the day slider. The chain at the top shows each link on the selected day: fuel stocks, grid supply, power reaching leading-edge fabs and packaging lines, their output, what gets out of Taiwan, the finished-chip buffer abroad, and world deliveries. The large chart shows where the world's accelerators come from each day, what falls short of normal, and the catch-up above normal once supply returns. The table shows which alternatives ramp up, and how slowly.</p>
+    <p>Three things decide the result: whether Taiwan's rationing protects the fabs, whether the blockade also stops chips leaving by air and sea, and how long the buffer of finished chips outside Taiwan lasts. Compare an energy-only blockade with a full blockade of the same length.</p>
+    <h2 class="mt">Method</h2>
+    <div id="method"></div>
+  </div>
+  <div class="col">
+    <h2>Sourced baseline</h2>
+    <div class="tablewrap"><table id="baseline">
+      <thead><tr><th>Item</th><th>Figure</th><th>Source</th></tr></thead>
+      <tbody id="basetable"></tbody>
+    </table></div>
+    <h2 class="mt">Sources</h2>
+    <ul class="src" id="sources"></ul>
+    <h2 class="mt">Changelog</h2>
+    <ul class="src" id="changelog"></ul>
+    <h2 class="mt">How to cite</h2>
+    <p class="fine">Jonathan Walberg, <i>Silicon Blockade Clock</i>, interactive model, jwalberg.com, November 2026. The model is notional: cite its structure and the sourced figures, not its dates or totals as forecasts.</p>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Silicon Blockade Clock', sub: 'Quarantine or blockade Taiwan and follow the chain from fuel stocks to world AI accelerator deliveries, day by day.', category: 'Emerging Technology' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

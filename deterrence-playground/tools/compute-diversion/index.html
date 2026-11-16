@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Diversion | Jonathan Walberg</title>
+<meta name="description" content="A strategy game: run US chip export enforcement for 8 to 12 quarters against a network that diverts advanced AI chips and cloud compute to restricted end users. Notional model, real case and policy cards.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="../../shared/css/deterrence-site.css">
+<link rel="stylesheet" href="../../shared/css/motion.css">
+<link rel="stylesheet" href="compute-diversion.css">
+<meta property="og:title" content="Diversion | Interactive Deterrence">
+<meta property="og:description" content="Run US chip export enforcement against a network that diverts AI chips and cloud compute to restricted users. Notional model, real DOJ and BIS case cards.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jwalberg.com/deterrence-playground/tools/compute-diversion/">
+<meta name="twitter:card" content="summary">
+</head>
+<body>
+<header id="tsm-head"></header>
+<div class="cd-actions">
+  <p class="cd-flag"><b>Notional model, real cards.</b> The network, hubs, budgets and effects are invented game design. Case cards and policy cards are real and sourced. <span id="asof"></span></p>
+  <div><button type="button" class="btn" id="new-game">New game</button>
+  <button type="button" class="btn" id="copy-link">Copy link</button></div>
+</div>
+
+<main class="cd-main">
+  <section class="card cd-start" id="start" aria-labelledby="start-t">
+    <h2 id="start-t" tabindex="-1">Stop the chips</h2>
+    <p class="cd-lede">You run US export enforcement for advanced AI chips. A diversion network moves chips through front companies at transshipment hubs and rents cloud compute for restricted end users. Each quarter you spend a <b>budget of 10</b> and your <b>political capital</b> on enforcement tools. The network adapts: it registers new shells, shifts volume to quieter hubs, splits shipments and rents more cloud. You are scored on two things: how much compute you keep from restricted users, and how little you cost legitimate trade, US industry and allies.</p>
+    <fieldset class="cd-pick"><legend>Term</legend><div class="cd-cards" id="lengths"></div></fieldset>
+    <button type="button" class="btn solid" id="begin">Begin</button>
+    <p class="fine" id="seed-note"></p>
+  </section>
+
+  <section class="cd-play" id="play" hidden>
+    <div class="card cd-bar">
+      <p class="cd-q"><b id="h-quarter" tabindex="-1"></b> <span class="muted" id="turnof"></span></p>
+      <p class="cd-res"><span>Budget <b class="num" id="h-budget"></b></span> <span>Capital <b class="num" id="h-capital"></b></span></p>
+      <button type="button" class="btn solid" id="end-turn">End quarter</button>
+    </div>
+    <div class="cd-grid">
+      <aside class="card cd-state" aria-label="Scoreboard">
+        <p class="eyebrow">Scoreboard</p>
+        <div id="tracks"></div>
+        <p class="eyebrow mt">In force</p>
+        <ul class="cd-inforce" id="inforce"></ul>
+      </aside>
+      <div class="cd-centre">
+        <section class="card cd-mapcard" aria-labelledby="map-t">
+          <div class="cd-lineh"><h2 id="map-t">The network</h2><span class="muted fine" id="map-mode"></span></div>
+          <svg id="map" role="group" aria-label="Diversion network map"></svg>
+          <p class="fine cd-key"><i class="k-in"></i>attempted <i class="k-out"></i>delivered to restricted users <i class="k-risk"></i>seizure risk <span class="cd-k-shell">◆</span> front company (? hidden, number identified, × listed). Numbers on lines: compute units delivered. Click a hub to add an end-use check, an identified shell to list it.</p>
+          <p class="cd-preview" id="preview" aria-live="polite"></p>
+        </section>
+        <section class="card cd-resolve" id="resolve" hidden aria-labelledby="res-t">
+          <h2 id="res-t" tabindex="-1"></h2>
+          <ul class="cd-log" id="log" aria-live="polite"></ul>
+          <div id="case-card"></div>
+          <button type="button" class="btn solid" id="next">Continue</button>
+        </section>
+      </div>
+      <section class="card cd-decide" id="decide" aria-labelledby="dec-t">
+        <div class="cd-lineh"><h2 id="dec-t">Your levers</h2><button type="button" class="btn" id="clear">Clear</button></div>
+        <div class="cd-levers" id="levers"></div>
+      </section>
+    </div>
+  </section>
+
+  <section class="card cd-end" id="end" hidden aria-labelledby="end-t" tabindex="-1">
+    <p class="eyebrow" id="end-k"></p>
+    <h2 id="end-t"></h2>
+    <div class="cd-score">
+      <div><p class="cd-big num" id="total"></p><p class="fine">score, 0 to 100 (65 for diversion cut, 35 for low collateral cost)</p></div>
+      <div><p class="cd-big num" id="cut"></p><p class="fine" id="cut-x"></p></div>
+      <div><p class="cd-big num" id="cost"></p><p class="fine" id="cost-x"></p></div>
+    </div>
+    <h3>Two axes: compute diverted against cost to legitimate trade</h3>
+    <svg id="scatter" viewBox="0 0 640 300" role="img" aria-label="Your result against computer strategies on the same network"></svg>
+    <p class="fine">Each dot is one game on this same seed. Down and left is better. Computer strategies are fixed rules, described under How the game works.</p>
+    <h3>Which levers mattered</h3>
+    <p class="fine">Each row replays your game on the same seed with every use of one lever removed.</p>
+    <div class="tablewrap"><table class="cd-attr" id="attr"></table></div>
+    <h3>Debrief</h3>
+    <ul class="cd-lessons" id="lessons"></ul>
+    <h3>Case files you drew</h3>
+    <div class="cd-casefiles" id="casefiles"></div>
+    <button type="button" class="btn solid" id="again">Play again</button>
+  </section>
+</main>
+
+<section class="below cd-below">
+  <h2>How to read it</h2>
+  <p>The map shows one quarter. Lines from the left carry what the network tries to move through each hub; lines to the right carry what reaches restricted end users. The orange ring around a hub is the share seized there. Small diamonds are front companies: a hub needs two live ones to run at full volume. While you choose, the map and the numbers show the expected result of your choices for this quarter, before the network adapts. After you end the quarter, the network moves and the map rewires.</p>
+
+  <details class="cd-det" open>
+    <summary><b>How the game works</b></summary>
+    <ul>
+      <li><b>Budget and capital.</b> 10 budget a quarter, which does not carry over. Political capital starts at 40 and grows by 6 a quarter. It falls by 3 a quarter while industry revenue sits below 92. Licensing relaxations and prosecutions add capital.</li>
+      <li><b>Routes and risk.</b> Restricted users want 100 compute units in quarter 1, rising by 4 each quarter. The network splits that demand across hubs and cloud by a logit on risk (steepness 4), capped by capacity. End-use checks, hub pressure and agents raise the share seized. Checks and pressure work only as well as the host cooperates, which tracks allied goodwill.</li>
+      <li><b>Adaptation.</b> After every quarter the network replaces listed shells (85% chance each, less with standing agents) and sometimes at a different hub. A hub where risk passes 18% loses a quarter of its volume to a cooler hub, which can wake dormant Hub D. Heavy end-use checks make it split shipments, which lowers seizures but slows it down. When physical routes get harder it rents more cloud compute. Once a cloud KYC rule bites, some rented compute moves offshore; once location verification bites, diverters learn to spoof it.</li>
+      <li><b>Lags.</b> A cloud KYC rule takes effect 2 quarters after you start it; location verification 3 quarters. Agents need 2 quarters before prosecutions can land.</li>
+      <li><b>Score.</b> 65 points times the share of diversion you prevented compared with no enforcement on the same seed, plus 35 points times (1 minus collateral cost / 120). Collateral cost adds friction on legitimate trade, 1.5 times the revenue lost below 100, and goodwill lost below 65.</li>
+      <li><b>Computer strategies</b> on the end chart: <i>Whack-a-mole</i> lists every identified shell and checks the two busiest hubs with 1 agent level. <i>Rules first</i> relaxes licensing to fund a cloud KYC rule and location verification, then lists shells. <i>Balanced</i> keeps 2 agent levels, presses the busiest hub, starts cloud KYC when it can, lists shells and checks the busiest hub. <i>Everything</i> does all of it every quarter. In 300 test games of 10 quarters: no enforcement scores 35; whack-a-mole about 48 (cuts 35%); rules first about 48 (40%); balanced about 48 (48%, but costly); everything about 35 (54%, very costly). Steady agents at level 3 and nothing else score about 51 (cut 24%, no collateral cost), better than all four named strategies: in this model standing enforcement capacity costs legitimate trade nothing. The best rule found, 2 agent levels plus an early cloud KYC rule plus targeted listings and checks, scores about 53 (cut 48%). Figures from <code>scripts/balance.mjs</code>.</li>
+    </ul>
+  </details>
+
+  <details class="cd-det" id="method">
+    <summary><b>Method and sources</b></summary>
+    <div id="method-body"></div>
+  </details>
+</section>
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Diversion', sub: 'Run US chip export enforcement against a network that diverts AI chips and cloud compute to restricted users. Notional model, real case and policy cards.', category: 'Emerging Technology' });
+  document.title = 'Diversion | Jonathan Walberg';
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

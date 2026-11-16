@@ -1,0 +1,48 @@
+// Primary sources read for this tool, with the date each was checked.
+export const SOURCES = [
+  { group: 'Regulations (eCFR, text current through 12 Nov 2026)', items: [
+    ['ECCN 3A090 and 4A090, 15 CFR part 774 supp. 1 (Commerce Control List)', 'https://www.ecfr.gov/current/title-15/part-774/appendix-Supplement%20No.%201%20to%20Part%20774'],
+    ['§ 742.6 Regional stability (a)(6) license requirements, (b)(10) review policy', 'https://www.ecfr.gov/current/title-15/section-742.6'],
+    ['§ 744.23 Supercomputer, advanced-node IC and advanced computing end-use controls', 'https://www.ecfr.gov/current/title-15/section-744.23'],
+    ['§ 740.8 License Exceptions NAC and ACA', 'https://www.ecfr.gov/current/title-15/section-740.8'],
+    ['§ 734.9(h) Advanced computing foreign direct product rule; § 734.9(e) Entity List FDP rules', 'https://www.ecfr.gov/current/title-15/section-734.9'],
+    ['§ 744.11 Entity List; § 744.21 military end users; § 744.22 military-intelligence end users; § 744.6 U.S. persons', 'https://www.ecfr.gov/current/title-15/part-744'],
+    ['§ 746.8 Russia and Belarus', 'https://www.ecfr.gov/current/title-15/section-746.8'],
+    ['Supp. 1 to part 740, Country Groups', 'https://www.ecfr.gov/current/title-15/part-740/appendix-Supplement%20No.%201%20to%20Part%20740'],
+    ['Supp. 8 to part 740, approved UAE recipients', 'https://www.ecfr.gov/current/title-15/part-740/appendix-Supplement%20No.%208%20to%20Part%20740'],
+  ]},
+  { group: 'Federal Register', items: [
+    ['87 FR 62186 (13 Oct 2022) First advanced computing rule', 'https://www.federalregister.gov/documents/2022/10/13/2022-21658/implementation-of-additional-export-controls-certain-advanced-computing-and-semiconductor'],
+    ['88 FR 73458 (25 Oct 2023) AC/S interim final rule', 'https://www.federalregister.gov/documents/2023/10/25/2023-23055/implementation-of-additional-export-controls-certain-advanced-computing-items-supercomputer-and'],
+    ['89 FR 23876 (4 Apr 2024) Corrections; NAC and ACA', 'https://www.federalregister.gov/documents/2024/04/04/2024-07004/implementation-of-additional-export-controls-certain-advanced-computing-items-supercomputer-and'],
+    ['89 FR 96790 (5 Dec 2024) FDP rules and HBM', 'https://www.federalregister.gov/documents/2024/12/05/2024-28270/foreign-produced-direct-product-rule-additions-and-refinements-to-controls-for-advanced-computing'],
+    ['90 FR 4544 (15 Jan 2025) Framework for AI Diffusion', 'https://www.federalregister.gov/documents/2025/01/15/2025-00636/framework-for-artificial-intelligence-diffusion'],
+    ['90 FR 5298 (16 Jan 2025) Foundry due diligence', 'https://www.federalregister.gov/documents/2025/01/16/2025-00711/implementation-of-additional-due-diligence-measures-for-advanced-computing-integrated-circuits'],
+    ['90 FR 47201 (30 Sep 2025) Affiliates rule; 90 FR 50857 suspension; 91 FR 70789 extension', 'https://www.federalregister.gov/documents/2026/11/09/2026-22793/extension-of-the-suspension-of-expansion-of-end-user-controls-for-affiliates-of-certain-listed'],
+    ['91 FR 1684 (15 Jan 2026) Revision to license review policy for advanced computing commodities', 'https://www.federalregister.gov/documents/2026/01/15/2026-00789/revision-to-license-review-policy-for-advanced-computing-commodities'],
+    ['91 FR 2443 (20 Jan 2026) Proclamation adjusting imports of semiconductors', 'https://www.federalregister.gov/documents/2026/01/20/2026-01052/adjusting-imports-of-semiconductors-semiconductor-manufacturing-equipment-and-their-derivative'],
+    ['91 FR 43034 (14 Jul 2026) Enhanced favorable treatment for the UAE', 'https://www.federalregister.gov/documents/2026/07/14/2026-14132/enhanced-favorable-treatment-for-the-united-arab-emirates-under-the-export-administration'],
+    ['91 FR 5091 (4 Feb 2026) Cambodia removed from Country Group D:5', 'https://www.federalregister.gov/documents/2026/02/04/2026-02262/conforming-change-to-the-export-administration-regulations-for-cambodia'],
+    ['85 FR 83765 (23 Dec 2020) Removal of Hong Kong as a separate destination', 'https://www.federalregister.gov/documents/2020/12/23/2020-28101/removal-of-hong-kong-as-a-separate-destination-under-the-export-administration-regulations'],
+  ]},
+  { group: 'Rule released 16 Nov 2026 (not yet in the Federal Register)', items: [
+    ['RIN 0694-AK50, Addressing Remote Access to Advanced Semiconductors (interim final rule, bis.gov PDF)', 'https://www.bis.gov/media/documents/rin-0694-ak50.pdf'],
+  ]},
+  { group: 'BIS guidance and GAO', items: [
+    ['BIS press release, 13 May 2025: rescission of the AI Diffusion rule announced', 'https://www.bis.gov/press-release/department-commerce-announces-rescission-biden-era-artificial-intelligence-diffusion-rule-strengthens'],
+    ['BIS guidance on GP10 and PRC advanced-computing ICs (Huawei Ascend), 13 May 2025', 'https://www.bis.gov/media/1575'],
+    ['BIS policy statement on chips used to train models for D:5 parties, 13 May 2025', 'https://www.bis.gov/media/1577'],
+    ['BIS guidance on enforcement for D:5- and Macau-headquartered entities, 31 May 2026', 'https://www.bis.gov/media/documents/bis-guidance-may-31-2026.pdf'],
+    ['GAO decision B-337935, 12 May 2026', 'https://www.gao.gov/products/b-337935'],
+  ]},
+  { group: 'Company filings and datasheets', items: [
+    ['NVIDIA Form 8-K, 15 Apr 2025 (H20 notice)', 'https://www.sec.gov/Archives/edgar/data/1045810/000104581025000082/nvda-20250409.htm'],
+    ['NVIDIA Form 10-K for fiscal 2026 (H20 and H200 licensing)', 'https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm'],
+    ['NVIDIA Form 10-Q for the quarter ended 26 Jul 2026', 'https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm'],
+    ['NVIDIA H100, H200, A100 and DGX B200 product pages', 'https://www.nvidia.com/en-us/data-center/h100/'],
+    ['NVIDIA Hopper and Ampere architecture posts (die areas)', 'https://developer.nvidia.com/blog/nvidia-hopper-architecture-in-depth/'],
+    ['NVIDIA Ada GPU architecture whitepaper (RTX 4090/4080)', 'https://images.nvidia.com/aem-dam/Solutions/geforce/ada/nvidia-ada-gpu-architecture.pdf'],
+    ['AMD Instinct MI325X product page', 'https://www.amd.com/en/products/accelerators/instinct/mi300/mi325x.html'],
+    ['Huawei Ascend 910 press release, 23 Aug 2019 (Wayback Machine)', 'https://web.archive.org/web/20190823175812/https://www.huawei.com/en/press-events/news/2019/8/huawei-ascend-910-most-powerful-ai-processor'],
+  ]},
+];

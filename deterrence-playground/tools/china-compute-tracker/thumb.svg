@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+  <rect width="640" height="400" fill="#f2f2ee"/>
+  <rect x="32" y="32" width="576" height="336" rx="8" fill="#fbfbf8" stroke="#d9d7cc"/>
+  <text x="60" y="84" font-family="Georgia, serif" font-size="30" font-weight="700" fill="#14201a">China Compute</text>
+  <rect x="240" y="120" width="250" height="196" fill="#1b4fd4" opacity="0.10"/>
+  <line x1="240" y1="120" x2="240" y2="316" stroke="#1b4fd4" stroke-width="2" stroke-dasharray="6 5"/>
+  <line x1="490" y1="120" x2="490" y2="316" stroke="#1b4fd4" stroke-width="2" stroke-dasharray="6 5"/>
+  <g font-family="Menlo, monospace" font-size="20" font-weight="700" fill="#fbfbf8">
+    <rect x="60" y="128" width="30" height="30" rx="4" fill="#033303"/><text x="75" y="150" text-anchor="middle">A</text>
+    <rect x="60" y="176" width="30" height="30" rx="4" fill="#0c8474"/><text x="75" y="198" text-anchor="middle">B</text>
+    <rect x="60" y="224" width="30" height="30" rx="4" fill="#b0306e"/><text x="75" y="246" text-anchor="middle">C</text>
+    <rect x="60" y="272" width="30" height="30" rx="4" fill="#e8753a" opacity="0.35"/><text x="75" y="294" text-anchor="middle">D</text>
+  </g>
+  <g stroke-linecap="round" stroke-width="14">
+    <line x1="250" y1="143" x2="300" y2="143" stroke="#033303"/>
+    <line x1="330" y1="191" x2="430" y2="191" stroke="#0c8474"/>
+    <line x1="280" y1="239" x2="480" y2="239" stroke="#b0306e"/>
+    <line x1="420" y1="287" x2="580" y2="287" stroke="#e8753a" opacity="0.3"/>
+  </g>
+  <line x1="350" y1="120" x2="350" y2="316" stroke="#14201a" stroke-width="3"/>
+</svg>

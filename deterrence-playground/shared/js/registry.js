@@ -37,6 +37,10 @@ const CATEGORY_LIST = [
     blurb: 'How false stories spread and stick, and what governments say, phrase by phrase.',
     subs: [{ id: 'disinfo', name: 'Disinformation & cognitive warfare', blurb: 'How false stories spread and stick, and how belief updating can be attacked.' },
       { id: 'rhetoric', name: 'State rhetoric', blurb: 'What governments say, week by week: China, Russia and others, phrase by phrase.' }] },
+  { id: 'emergingtech', name: 'Emerging Technology', sites: ['deterrence'],
+    blurb: 'AI policy, compute and chips: who controls the supply chain, how export controls work, and games to test them.',
+    subs: [{ id: 'infosheets', name: 'Info Sheets', blurb: 'Sourced references: AI policy in the US, China and Russia, chip chokepoints, export rules and China’s compute.' },
+      { id: 'gamesmodels', name: 'Games and Models', blurb: 'Models and games: chip location verification, a Taiwan blockade clock for AI compute, and chip diversion.' }] },
   // jwalberg.com/narratives/: public rhetoric trackers (Rhetoric Search keeps its own password). Landing page lives in jowal6.
   { id: 'tracking', name: 'Narrative Tracking', sites: ['narratives'],
     blurb: 'What governments say, week by week, and every mention searchable.' },
@@ -225,6 +229,21 @@ export const ALL_TOOLS = [
     blurb: 'Run a cyber incident response as CEO, CISO, IT, legal and comms against a hidden attacker, alone or as a facilitated tabletop, then get an after-action report mapped to NIST CSF 2.0.' },
   { slug: 'will-to-fight', unlisted: true, cat: 'gametheory', sites: ['deterrence'], vault: 'dissertation', title: 'Will to Fight', status: 'live',
     blurb: 'An attacker strikes, fighters decide whether to stand, and the government fights on or concedes: a simple game of resolve, with a calculator and what to measure.' },
+  // Emerging Technology (Nov 2026). Each entry was added after a fresh-context check of its claims ledger.
+  { slug: 'compute-diversion', cat: 'emergingtech', sub: { emergingtech: 'gamesmodels' }, sites: ['deterrence'], title: 'Diversion', status: 'live',
+    blurb: 'Run US chip export enforcement against a network that diverts AI chips and cloud compute to restricted users. Notional model, real DOJ and BIS case cards.' },
+  { slug: 'chip-geolocation', cat: 'emergingtech', sub: { emergingtech: 'gamesmodels' }, sites: ['deterrence'], title: 'Where Is the Chip?', status: 'live',
+    blurb: 'Place landmark servers, turn round-trip times into light-speed distance bounds, and try to smuggle an AI chip past a delay-based location check.' },
+  { slug: 'silicon-blockade-clock', cat: 'emergingtech', sub: { emergingtech: 'gamesmodels' }, sites: ['deterrence'], title: 'Silicon Blockade Clock', status: 'live',
+    blurb: 'Quarantine or blockade Taiwan and follow the chain from LNG and coal stocks to fab power, leading-edge output and world AI accelerator deliveries, including the backlog after it lifts.' },
+  { slug: 'chip-chokepoints', cat: 'emergingtech', sub: { emergingtech: 'infosheets' }, sites: ['deterrence'], title: 'AI Chip Chokepoint Twin', status: 'live',
+    blurb: 'The AI accelerator supply chain stage by stage: who holds each node, what binds when one is cut, and the U.S., allied and Chinese controls aimed at it.' },
+  { slug: 'china-compute-tracker', cat: 'emergingtech', sub: { emergingtech: 'infosheets' }, sites: ['deterrence'], title: 'China Compute Tracker', status: 'live',
+    blurb: "China's access to AI compute: Entity List rules counted from the Federal Register, chip-smuggling cases, and output estimates you filter by quality of evidence." },
+  { slug: 'chip-license-check', cat: 'emergingtech', sub: { emergingtech: 'infosheets' }, sites: ['deterrence'], title: 'Does This Chip Need a License?', status: 'live',
+    blurb: 'Enter an AI chip and a transaction; see TPP, the 3A090 paragraph and the license outcome step by step, cited to the CFR, under current rules or the rule BIS released 16 Nov 2026.' },
+  { slug: 'ai-policy-compass', cat: 'emergingtech', sub: { emergingtech: 'infosheets' }, sites: ['deterrence'], title: 'Understanding AI Policy', status: 'live',
+    blurb: 'How the US, China and Russia govern AI, from their own texts: a timeline of 95 primary documents, side-by-side positions, the live debates, and a quiz that places you against each government.' },
 ];
 
 // The narratives site carries only entries that name it; entries without `sites` are on tsm and deterrence.

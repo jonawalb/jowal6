@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" width="640" height="400">
+  <rect width="640" height="400" fill="#f2f2ee"/>
+  <!-- chip -->
+  <g transform="translate(70 110)">
+    <g stroke="#14201a" stroke-width="6" stroke-linecap="round">
+      <path d="M30 0v-22M60 0v-22M90 0v-22M120 0v-22M150 0v-22"/>
+      <path d="M30 180v22M60 180v22M90 180v22M120 180v22M150 180v22"/>
+      <path d="M0 30h-22M0 60h-22M0 90h-22M0 120h-22M0 150h-22"/>
+      <path d="M180 30h22M180 60h22M180 90h22M180 120h22M180 150h22"/>
+    </g>
+    <rect width="180" height="180" rx="14" fill="#033303"/>
+    <rect x="38" y="38" width="104" height="104" rx="6" fill="none" stroke="#e8753a" stroke-width="4"/>
+    <text x="90" y="100" font-family="Georgia, serif" font-weight="700" font-size="26" fill="#fbfbf8" text-anchor="middle">3A090</text>
+  </g>
+  <!-- decision path -->
+  <g fill="none" stroke="#14201a" stroke-width="4">
+    <path d="M300 200h40"/>
+    <path d="M340 200C370 200 370 110 400 110"/>
+    <path d="M340 200h60"/>
+    <path d="M340 200C370 200 370 290 400 290"/>
+  </g>
+  <circle cx="340" cy="200" r="9" fill="#14201a"/>
+  <rect x="400" y="86" width="190" height="48" rx="6" fill="#fbfbf8" stroke="#0c8474" stroke-width="4"/>
+  <text x="495" y="118" font-family="Helvetica, Arial, sans-serif" font-weight="700" font-size="22" fill="#0c8474" text-anchor="middle">No license</text>
+  <rect x="400" y="176" width="190" height="48" rx="6" fill="#fbfbf8" stroke="#e8753a" stroke-width="4"/>
+  <text x="495" y="208" font-family="Helvetica, Arial, sans-serif" font-weight="700" font-size="22" fill="#b5541c" text-anchor="middle">License</text>
+  <rect x="400" y="266" width="190" height="48" rx="6" fill="#fbfbf8" stroke="#b3261e" stroke-width="4"/>
+  <text x="495" y="298" font-family="Helvetica, Arial, sans-serif" font-weight="700" font-size="22" fill="#b3261e" text-anchor="middle">Denial</text>
+</svg>

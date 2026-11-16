@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>China Compute Tracker | Jonathan Walberg</title>
+<meta name="description" content="A sourced tracker of China's access to AI compute: Entity List rules, chip smuggling and diversion cases, and estimates of domestic chip output graded by quality of evidence.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="../../shared/css/deterrence-site.css">
+<link rel="stylesheet" href="../../shared/css/motion.css">
+<link rel="stylesheet" href="china-compute-tracker.css">
+<meta property="og:title" content="China Compute Tracker | Interactive Deterrence">
+<meta property="og:description" content="China's access to AI compute: Entity List rules counted from the Federal Register, chip-smuggling cases, and output estimates you filter by quality of evidence.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jwalberg.com/deterrence-playground/tools/china-compute-tracker/">
+<meta name="twitter:card" content="summary">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<main class="layout">
+  <div class="stage" id="stage">
+    <p class="caveat"><b>How good is the evidence?</b> Every rule, case and estimate links to its source. Charges are allegations unless a court has convicted. Each capacity estimate carries an evidence grade, and you choose which grades count. <span class="asof" id="asof"></span></p>
+
+    <div class="card controls">
+      <div class="row">
+        <div class="tabs" id="tabs" role="tablist" aria-label="Views"></div>
+        <div class="acts">
+          <button type="button" class="btn" id="tour-btn">Walkthrough</button>
+          <button type="button" class="btn" id="copy">Copy link</button>
+          <button type="button" class="btn" id="reset">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="view" role="tabpanel" aria-live="polite"></div>
+    <div class="tooltip" id="tip" hidden></div>
+  </div>
+
+  <aside class="panel" aria-label="Details">
+    <div class="sec detail" id="detail" aria-live="polite"></div>
+    <div class="sec" id="side"></div>
+  </aside>
+</main>
+
+<section class="below">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p><b>Capacity estimates.</b> How many AI chips can China make, and how many U.S. chips reach it? Each metric shows every published estimate as a bar on a log scale, with a letter grade for the kind of evidence behind it. Switch grades on and off: the shaded envelope and the readout show the range you get if you trust only those sources.</p>
+    <p><b>Entity List.</b> Each bar is one Federal Register rule that added PRC entities tied to AI chips, supercomputing, chipmaking or diversion to those end users, counted from the rule's own table. Filter by sector and click a bar for the entities and the rule's reasons.</p>
+    <p><b>Cases.</b> Public DOJ and BIS cases on smuggling or diverting advanced chips and chipmaking tools, with the route alleged and the status of each case on the date checked.</p>
+    <p><b>Timeline.</b> All three on one axis, with the rule changes that set the controls.</p>
+  </div>
+  <div class="col">
+    <h2>Limits in brief</h2>
+    <p>Nobody outside Huawei, SMIC and a few governments knows China's real output. Many figures circulate from paywalled reports and unnamed sources; this tool cites the public statement that carries each one and grades it on that basis. A grade describes the kind of source, not whether the number is right: official figures can rest on analyst inputs, and press reports can turn out correct. Entity List counts are entries in the rule's table under the China destination, which includes Hong Kong addresses. The full method is under <b>Method &amp; sources</b>.</p>
+  </div>
+</section>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'China Compute Tracker', sub: 'China’s access to AI compute: Entity List rules, smuggling cases and output estimates, graded by quality of evidence.', category: 'Emerging Technology' });
+  document.title = 'China Compute Tracker | Jonathan Walberg';
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+  <rect width="640" height="400" fill="#f2f2ee"/>
+  <rect x="24" y="24" width="592" height="352" rx="8" fill="#fbfbf8" stroke="#d9d9d0"/>
+  <g font-family="Georgia, serif" font-weight="700" fill="#14201a">
+    <text x="48" y="76" font-size="30">Silicon Blockade Clock</text>
+  </g>
+  <g>
+    <rect x="48" y="104" width="64" height="40" rx="4" fill="#e8753a" opacity=".85"/>
+    <rect x="124" y="104" width="64" height="40" rx="4" fill="#e8753a" opacity=".6"/>
+    <rect x="200" y="104" width="64" height="40" rx="4" fill="#b3261e" opacity=".7"/>
+    <rect x="276" y="104" width="64" height="40" rx="4" fill="#b3261e" opacity=".85"/>
+    <rect x="352" y="104" width="64" height="40" rx="4" fill="#0c8474" opacity=".7"/>
+    <rect x="428" y="104" width="64" height="40" rx="4" fill="#1b4fd4" opacity=".75"/>
+    <rect x="504" y="104" width="88" height="40" rx="4" fill="#033303" opacity=".85"/>
+    <path d="M112 124h12M188 124h12M264 124h12M340 124h12M416 124h12M492 124h12" stroke="#14201a" stroke-width="2"/>
+  </g>
+  <g transform="translate(48 170)">
+    <rect width="544" height="170" fill="#d6e1e1" opacity=".35"/>
+    <path d="M0 20H130V105H210V95H330V20H544V170H0Z" fill="#1b4fd4" opacity=".8"/>
+    <path d="M130 20H210V95H130Z" fill="#b0306e" opacity=".55"/>
+    <path d="M210 20H330V95H210Z" fill="#b3261e" opacity=".18"/>
+    <path d="M0 20H544" stroke="#14201a" stroke-width="2" stroke-dasharray="8 6"/>
+    <path d="M150 0V170" stroke="#e8753a" stroke-width="3"/>
+    <circle cx="150" cy="0" r="7" fill="#e8753a"/>
+  </g>
+</svg>

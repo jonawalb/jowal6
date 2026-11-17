@@ -116,11 +116,26 @@ body.detail-simple .v-text { color: var(--muted); }
 .tl p { margin: 2px 0 0; font-size: 13px; }
 
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+#lmhere { align-self: flex-start; margin-top: 8px; }
+.legend-s { margin: 0; }
+.v-more { display: none; align-self: flex-start; font-size: 13px; }
 @media (max-width: 640px) {
   .kpi b { font-size: 21px; }
   .v-tag { font-size: 21px; }
   .modes button { flex: 1 1 100%; }
-  body.detail-simple .modes button { flex: 1 1 auto; align-items: center; }
+  body.detail-simple .modes button { flex: 0 0 auto; align-items: center; }
   .legend { display: none; }
+  /* Mode and detail buttons on one row; scroll sideways if they do not fit. */
+  body.detail-simple .head-top { flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; gap: 6px; padding-bottom: 2px; }
+  body.detail-simple .head-top .seg, body.detail-simple .head-btns { flex-wrap: nowrap; flex: 0 0 auto; }
+  body.detail-simple .head-top { align-items: stretch; }
+  body.detail-simple .modes button { justify-content: center; font-size: 14px; padding: 6px 10px; }
+  /* Verdict: one line, with a More toggle. */
+  body.detail-simple .verdict:not(.open) .v-text { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+  body.detail-simple .v-more { display: inline-block; }
+  .mapcard .simple-note { margin-top: 2px; }
+  /* Tap targets of at least 44 px. */
+  .seg > button, .btn, .choices button, .field select, .v-more, .mt .x { min-height: 44px; }
+  .linkbtn { min-height: 44px; }
 }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }

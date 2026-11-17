@@ -37,9 +37,9 @@
           <button type="button" data-m="explain">Explainer<small>The physics and the policy, step by step</small></button>
         </div>
         <div class="head-btns">
-          <div class="seg detail" id="detail" role="group" aria-label="Level of detail">
-            <button type="button" data-d="simple">Simple</button>
-            <button type="button" data-d="full">Full detail</button>
+          <div class="seg detail" id="detail" role="group" aria-label="Level of detail" title="Simple shows the main result; Full detail shows every source, control and assumption.">
+            <button type="button" data-d="simple" title="Simple shows the main result; Full detail shows every source, control and assumption.">Simple</button>
+            <button type="button" data-d="full" title="Simple shows the main result; Full detail shows every source, control and assumption.">Full detail</button>
           </div>
           <button type="button" class="btn full-only" id="copy">Copy link</button>
           <button type="button" class="btn" id="reset">Reset</button>
@@ -48,15 +48,17 @@
 
       <div class="stepcard x-only" id="stepcard" aria-live="polite"></div>
       <p class="howto simple-only" id="howto"></p>
-      <p class="fine simple-only simple-note">Network values and landmark placement are <span class="notional">notional</span>. Current as of <span id="asof-s"></span>. <button type="button" class="linkbtn" id="tofull">Method and sources</button></p>
+      <p class="fine simple-only legend-s" id="legend-s"></p>
+      <p class="fine simple-only simple-note" id="simple-note">Network values and landmark placement are <span class="notional">notional</span>. Current as of <span id="asof-s"></span>. <button type="button" class="linkbtn" id="tofull">Method and sources</button></p>
 
       <div class="verdict" id="verdict" data-s="warn" aria-live="polite">
         <p class="v-tag" id="v-tag"></p>
         <p class="v-text" id="v-text"></p>
+        <button type="button" class="linkbtn v-more" id="v-more" aria-expanded="false" aria-controls="v-text">More</button>
       </div>
       <div class="kpis full-only">
         <div class="kpi"><b id="k-area" class="num">–</b><span>Feasible area, km²</span></div>
-        <div class="kpi kr"><b id="k-share" class="num">–</b><span id="k-share-l">Share of area in China</span></div>
+        <div class="kpi kr"><b id="k-share" class="num">–</b><span id="k-share-l">Share of area in China (incl. HK, Macau)</span></div>
         <div class="kpi"><b id="k-tight" class="num">–</b><span>Tightest bound, km</span></div>
       </div>
     </div>
@@ -101,6 +103,7 @@
     <div class="sec">
       <p class="eyebrow">The chip</p>
       <div class="field"><label for="chipcity">Put the chip in</label><select id="chipcity"></select></div>
+      <button type="button" class="btn" id="lmhere" hidden></button>
       <div class="field full-only"><label for="ruleout">Country to rule out</label><select id="ruleout"></select></div>
       <div class="field a-only full-only"><label for="claim">Country the chip claims to be in</label><select id="claim"></select></div>
     </div>
@@ -131,7 +134,7 @@
       <p class="fine full-only">Per-landmark delay is in the measurements table. A proxy cannot answer for the chip: it has no signing key, so it can only forward the challenge.</p>
     </div>
 
-    <div class="sec a-only full-only">
+    <div class="sec a-only">
       <p class="eyebrow">Verifier's policy</p>
       <div class="choices" id="policy" role="group" aria-label="Pass rule">
         <button type="button" data-p="strict">Strict<small>Pass only if the country is ruled out</small></button>

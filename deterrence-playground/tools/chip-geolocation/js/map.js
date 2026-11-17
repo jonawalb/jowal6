@@ -28,6 +28,8 @@ export function createMap(svgEl, { countries, borders, cities, onChip, onCity })
   const gLinks = svg.append('g').attr('class', 'links');
   const gMarks = svg.append('g').attr('class', 'marks');
   let last = null, viewName = 'asia';
+  // Map units per CSS pixel. On a phone the 1000-unit map is ~350 px wide, so tap targets and labels scale up.
+  const unit = () => Math.max(1, W / (svgEl.clientWidth || W));
 
   function fit(name, bbox) {
     viewName = name;
@@ -54,7 +56,7 @@ export function createMap(svgEl, { countries, borders, cities, onChip, onCity })
     const g = gCity.selectAll('g').data(vis).join('g').attr('class', 'city')
       .attr('transform', o => `translate(${o.p[0]},${o.p[1]})`)
       .on('click', (e, o) => onCity(o.i));
-    g.append('circle').attr('class', 'hit').attr('r', 7);
+    g.append('circle').attr('class', 'hit').attr('r', unit() > 1.5 ? 22 * unit() : 7);   // 22 CSS px radius (44 px tap target) on phones
     g.append('circle').attr('class', 'dot').attr('r', 2);
     g.append('title').text(o => `${o.c[0]}, ${o.c[1]}: click to add or remove a landmark`);
   }
@@ -105,14 +107,16 @@ export function createMap(svgEl, { countries, borders, cities, onChip, onCity })
     // Marks: landmarks, proxy, chip
     gMarks.selectAll('*').remove();
     // Simple label placement: try four offsets and keep the first that clears earlier labels and the chip.
+    // Labels stay at least ~10 CSS px tall on a phone: scale font, marks, boxes and offsets together.
+    const fs = Math.max(11.5, 10 * unit()), k = fs / 11.5;
     const boxes = [];
     const cpt = proj(S.chip);
-    if (cpt) boxes.push([cpt[0] - 16, cpt[1] - 16, cpt[0] + 16, cpt[1] + 16]);
+    if (cpt) boxes.push([cpt[0] - 16 * k, cpt[1] - 16 * k, cpt[0] + 16 * k, cpt[1] + 16 * k]);
     const place = (p, text) => {
-      const w = text.length * 6.6 + 4, h = 14;
-      const tries = [[10, -8, 'start'], [10, 16, 'start'], [-10, -8, 'end'], [-10, 16, 'end'], [20, -20, 'start'], [-20, -20, 'end'], [20, 30, 'start'], [-20, 30, 'end']];
+      const w = (text.length * 6.6 + 4) * k, h = 14 * k;
+      const tries = [[10, -8, 'start'], [10, 16, 'start'], [-10, -8, 'end'], [-10, 16, 'end'], [20, -20, 'start'], [-20, -20, 'end'], [20, 30, 'start'], [-20, 30, 'end']].map(([dx, dy, an]) => [dx * k, dy * k, an]);
       for (const [dx, dy, an] of tries) {
-        const x0 = an === 'start' ? p[0] + dx : p[0] + dx - w, y0 = p[1] + dy - 11;
+        const x0 = an === 'start' ? p[0] + dx : p[0] + dx - w, y0 = p[1] + dy - 11 * k;
         const b = [x0, y0, x0 + w, y0 + h];
         if (!boxes.some(o => b[0] < o[2] && b[2] > o[0] && b[1] < o[3] && b[3] > o[1])) { boxes.push(b); return { dx, dy, an }; }
       }
@@ -121,24 +125,24 @@ export function createMap(svgEl, { countries, borders, cities, onChip, onCity })
     S.lms.forEach((l, i) => {
       const p = proj(l.pos); if (!p) return;
       const g = gMarks.append('g').attr('class', 'lm').attr('transform', `translate(${p[0]},${p[1]})`);
-      g.append('rect').attr('x', -6).attr('y', -6).attr('width', 12).attr('height', 12).attr('transform', 'rotate(45)');
+      g.append('rect').attr('x', -6 * k).attr('y', -6 * k).attr('width', 12 * k).attr('height', 12 * k).attr('transform', 'rotate(45)');
       const full = `${i + 1} ${l.name}`;
       let txt = full, at = place(p, full);
       if (!at) { txt = String(i + 1); at = place(p, txt); }
-      if (at) g.append('text').attr('class', 'lbl').attr('x', at.dx).attr('y', at.dy).attr('text-anchor', at.an).text(txt);
+      if (at) g.append('text').attr('class', 'lbl').style('font-size', fs + 'px').attr('x', at.dx).attr('y', at.dy).attr('text-anchor', at.an).text(txt);
     });
     if (S.mode === 'attack' && fx.proxyPos) {
       const p = proj(fx.proxyPos);
       if (p) {
         const g = gMarks.append('g').attr('class', 'proxy').attr('transform', `translate(${p[0]},${p[1]})`);
-        g.append('rect').attr('x', -6).attr('y', -6).attr('width', 12).attr('height', 12);
+        g.append('rect').attr('x', -6 * k).attr('y', -6 * k).attr('width', 12 * k).attr('height', 12 * k);
         const at = place(p, 'Proxy');
-        if (at) g.append('text').attr('class', 'lbl').attr('x', at.dx).attr('y', at.dy).attr('text-anchor', at.an).text('Proxy');
+        if (at) g.append('text').attr('class', 'lbl').style('font-size', fs + 'px').attr('x', at.dx).attr('y', at.dy).attr('text-anchor', at.an).text('Proxy');
       }
     }
     const cp = proj(S.chip);
     if (cp) {
-      const g = gMarks.append('g').attr('class', 'chip').attr('transform', `translate(${cp[0]},${cp[1]})`)
+      const g = gMarks.append('g').attr('class', 'chip').attr('transform', `translate(${cp[0]},${cp[1]}) scale(${k})`)
         .attr('tabindex', 0).attr('role', 'button')
         .attr('aria-label', `Chip at ${S.chip[1].toFixed(1)}°, ${S.chip[0].toFixed(1)}°. Arrow keys move it; hold Shift for larger steps.`);
       g.append('circle').attr('class', 'halo').attr('r', 16);

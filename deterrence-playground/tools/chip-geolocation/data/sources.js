@@ -9,7 +9,7 @@ export const SOURCES = {
     url: 'https://www.iaps.ai/s/Location-Verification-for-AI-Chips.pdf' },
   iapsBrief: { short: 'IAPS brief 2025', cite: 'Asher Brass, "Location Verification for AI Chips" (issue brief), IAPS, May 2025.',
     url: 'https://www.iaps.ai/research/location-verification-for-ai-chips' },
-  cset: { short: 'CSET 2026', cite: 'Jacob Feldgoise, Kyle Miller and Hanna Dohmen, "Tracking AI Chips: Assessing Location Verification as an Export Control Enforcement Tool," CSET, September 2026, App. B.',
+  cset: { short: 'CSET 2026', cite: 'Jacob Feldgoise, Kyle Miller and Hanna Dohmen, "Tracking AI Chips: Assessing Location Verification as an Export Control Enforcement Tool," CSET Issue Brief, September 2026, App. B.',
     url: 'https://cset.georgetown.edu/publication/tracking-ai-chips/' },
   cbg: { short: 'Gueye et al. 2006', cite: 'Bamba Gueye, Artur Ziviani, Mark Crovella and Serge Fdida, "Constraint-Based Geolocation of Internet Hosts," IEEE/ACM Transactions on Networking 14, no. 6 (2006).',
     url: 'https://doi.org/10.1109/tnet.2006.886332' },
@@ -29,13 +29,19 @@ export const SOURCES = {
     url: 'https://developer.nvidia.com/blog/introducing-nvidia-fleet-intelligence-for-real-time-gpu-fleet-visibility-and-optimization/' },
   hk: { short: '85 FR 83765', cite: 'Bureau of Industry and Security, "Removal of Hong Kong as a Separate Destination Under the Export Administration Regulations," 85 FR 83765, December 23, 2020.',
     url: 'https://www.federalregister.gov/documents/2020/12/23/2020-28101/removal-of-hong-kong-as-a-separate-destination-under-the-export-administration-regulations' },
-  ak50: { short: 'BIS IFR 0694-AK50', cite: 'Bureau of Industry and Security, "Addressing Remote Access to Advanced Semiconductors," interim final rule, RIN 0694-AK50, released November 16, 2026 (effective on Federal Register publication).',
+  ak50: { short: 'BIS IFR 0694-AK50', cite: 'Bureau of Industry and Security, "Addressing Remote Access to Advanced Semiconductors," interim final rule, RIN 0694-AK50, released November 16, 2026; FR Doc. 2026-23529, public inspection Nov. 16, 2026; effective Nov. 19, 2026.',
     url: 'https://www.bis.gov/media/documents/rin-0694-ak50.pdf' },
+  cac: { short: 'CAC 2025', cite: 'Cyberspace Administration of China, "国家互联网信息办公室就H20算力芯片漏洞后门安全风险约谈英伟达公司" (CAC summons Nvidia over vulnerability and backdoor security risks in H20 chips), July 31, 2025.',
+    url: 'https://www.cac.gov.cn/2025-07/31/c_1755675743897163.htm' },
+  nvNoBackdoors: { short: 'NVIDIA blog Aug 2025', cite: 'David Reber Jr., "No Backdoors. No Kill Switches. No Spyware.," NVIDIA blog, August 5, 2025.',
+    url: 'https://blogs.nvidia.com/blog/no-backdoors-no-kill-switches-no-spyware/' },
+  frAk50: { short: 'FR Doc. 2026-23529', cite: 'Federal Register public inspection, FR Doc. 2026-23529, "Addressing Remote Access to Advanced Semiconductors," filed November 16, 2026; scheduled publication November 19, 2026.',
+    url: 'https://www.federalregister.gov/api/v1/public-inspection-documents/2026-23529.json' },
   ne: { short: 'Natural Earth', cite: 'Natural Earth 1:50m populated places (city points) and, via world-atlas 2.0.2, 1:50m admin-0 countries. Public domain.',
     url: 'https://www.naturalearthdata.com/' },
 };
 
-export const SOURCE_ORDER = ['cnas', 'iaps', 'iapsBrief', 'cset', 'cbg', 's1705', 'hr3447', 'hr3447text', 'aap', 'reuters', 'nvBlog', 'nvFleet', 'hk', 'ak50', 'ne'];
+export const SOURCE_ORDER = ['cnas', 'iaps', 'iapsBrief', 'cset', 'cbg', 's1705', 'hr3447', 'hr3447text', 'aap', 'reuters', 'cac', 'nvNoBackdoors', 'nvBlog', 'nvFleet', 'hk', 'ak50', 'frAk50', 'ne'];
 
 // Policy timeline. Each entry states only what the cited source says.
 export const TIMELINE = [
@@ -45,11 +51,13 @@ export const TIMELINE = [
   { d: '2025-05-15', t: 'House companion introduced (H.R. 3447, Rep. Huizenga). As introduced, Commerce must require location verification within 180 days of enactment for chips under ECCN 3A090 or 3A001.z and computers under 4A090 or 4A003.z.', s: 'hr3447text' },
   { d: '2025-05', t: 'IAPS issue brief reports a rudimentary prototype on NVIDIA H100 chips: a landmark in Singapore bounded a chip in Singapore to within 300 miles.', s: 'iapsBrief' },
   { d: '2025-07', t: 'America\'s AI Action Plan recommends that Commerce, OSTP and NSC, with industry, "explore leveraging new and existing location verification features on advanced AI compute."', s: 'aap' },
+  { d: '2025-07-31', t: 'China\'s Cyberspace Administration summons Nvidia over "vulnerability and backdoor" security risks in the H20 chips it sells to China. It cites US lawmakers\' calls for exported advanced chips to carry "tracking and positioning" (追踪定位) and US experts\' claims that Nvidia\'s "tracking and positioning" and "remote shutdown" (远程关闭) technology is mature.', s: 'cac' },
+  { d: '2025-08-05', t: 'Nvidia\'s blog post "No Backdoors. No Kill Switches. No Spyware." states that "NVIDIA GPUs do not and should not have kill switches and backdoors."', s: 'nvNoBackdoors' },
   { d: '2025-12-10', t: 'Reuters reports that Nvidia has built location verification technology. The same day, Nvidia\'s blog describes opt-in fleet management software with an open-source client agent and states that its GPUs "do not have hardware tracking technology, kill switches and backdoors."', s: 'nvBlog', s2: 'reuters' },
   { d: '2026-03-26', t: 'House Foreign Affairs orders H.R. 3447 reported in the nature of a substitute, 42-0. No floor vote is recorded as of the check date; S. 1705 remains in committee.', s: 'hr3447' },
   { d: '2026-05-11', t: 'Nvidia announces Fleet Intelligence, an agent-based monitoring service with an open-source agent. The announcement describes grouping by "compute zones"; it does not describe latency-based location verification.', s: 'nvFleet' },
-  { d: '2026-09', t: 'CSET assesses ping-based location verification: 39 to 500 landmark servers, region-level (worst case) to city-level (best case) accuracy with 500, and easy evasion by adding latency.', s: 'cset' },
-  { d: '2026-11-16', t: 'BIS releases an interim final rule on remote access to advanced semiconductors (RIN 0694-AK50), effective on Federal Register publication. It adds § 744.24 restrictions on exports to overseas data centers that supply significant compute to companies headquartered in Country Group D:5 or Macau, and a license requirement for Indonesia, Malaysia, Singapore, Thailand and Brazil. The released text does not mention location verification.', s: 'ak50' },
+  { d: '2026-09', t: 'CSET assesses ping-based location verification: 39 to 500 landmark servers, region-level (worst case) to city-level (best case) accuracy with 500, and that a smuggler can easily add latency to blur a chip\'s location.', s: 'cset' },
+  { d: '2026-11-16', t: 'BIS files an interim final rule on remote access to advanced semiconductors (RIN 0694-AK50, FR Doc 2026-23529), published and effective November 19, 2026. It adds § 744.24 restrictions on exports to overseas data centers that supply significant compute to companies headquartered in Country Group D:5 or Macau, and a license requirement for Indonesia, Malaysia, Singapore, Thailand and Brazil. The released text does not mention location verification.', s: 'ak50', s2: 'frAk50' },
 ];
 
 // Explainer steps. `set` is applied to the map state (see app.js applyPreset).
@@ -67,8 +75,8 @@ export const STEPS = [
     b: 'Several landmarks give several circles. The chip must lie where they all overlap, the feasible region. This is constraint-based geolocation, the method CSET models as trilateration. If no part of the region touches China, the verifier has ruled China out.',
     set: { mode: 'explain', chip: 'Singapore', lms: ['Singapore', 'Kuala Lumpur', 'Jakarta', 'Bangkok'], view: 'fit', verifier: 'vacuum', route: 0.2, equip: 0.5, jitter: 0 } },
   { h: 'Real networks are slow', s: ['cset', 'iaps'],
-    b: 'Packets do not travel in straight lines, and routers add delay. CSET\'s worst case adds 20 percent to the path and 2 ms of equipment latency each way; then a landmark 1 km away can only bound the chip to 624 km. So landmarks must sit close to the chips they check.',
-    set: { mode: 'explain', chip: 'Hanoi', lms: ['Hanoi', 'Bangkok', 'Vientiane'], view: 'fit', verifier: 'vacuum', route: 0.2, equip: 2, jitter: 1 } },
+    b: 'Packets do not travel in straight lines, and routers add delay. CSET\'s worst case adds 20 percent to the path, a 15 km local loop and 2 ms of equipment latency each way; then a landmark 1 km away can only bound the chip to 624 km. This map leaves out the local loop, so here a landmark in the chip\'s own city bounds it to about 600 km. So landmarks must sit close to the chips they check.',
+    set: { mode: 'explain', chip: 'Hanoi', lms: ['Hanoi', 'Bangkok', 'Vientiane'], view: 'fit', verifier: 'vacuum', route: 0.2, equip: 2, jitter: 0 } },
   { h: 'Borders are the hard case', s: ['cnas'],
     b: 'An honest chip in Hanoi sits less than 200 km from China. Unless a landmark is very close and the network very fast, its circles spill over the border and the verifier cannot rule China out. CNAS puts the needed landmark distance under 100 km near the borders of restricted areas.',
     set: { mode: 'explain', chip: 'Hanoi', lms: ['Hanoi', 'Bangkok', 'Vientiane'], view: 'fit', verifier: 'vacuum', route: 0.2, equip: 0.5, jitter: 0 } },

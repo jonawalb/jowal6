@@ -7,7 +7,7 @@ import { CITIES } from '../data/cities.js';
 import { SOURCES, SOURCE_ORDER, TIMELINE, STEPS, CHECKED } from '../data/sources.js';
 
 const d3 = window.d3, topojson = window.topojson;
-const EAR = 'China, Hong Kong and Macau';   // grouped as the EAR treats them; see Method
+const EAR = 'China, Hong Kong and Macau';   // HK merged per 85 FR 83765; Macau paired with D:5 in AC/S rules; see Method
 const ruleLong = n => n === EAR ? 'China (including Hong Kong and Macau)' : n;
 const ruleTag = n => n === EAR ? 'China' : n;
 const WORLD_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-50m.json';
@@ -46,11 +46,25 @@ function setDetail(d, save = true) {
   if (save) { try { localStorage.setItem('et-detail', d); } catch { /* storage blocked: keep the in-page choice */ } }
   // Method and sources: always open in Full detail, a collapsed <details> in Simple.
   document.getElementById('msrc').open = d === 'full';
+  if (map) update();   // the verdict advice differs between Simple and Full
 }
 { let d = 'simple'; try { d = localStorage.getItem('et-detail') || 'simple'; } catch { /* no storage */ } setDetail(d, false); }
 document.getElementById('detail').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setDetail(b.dataset.d); });
 document.getElementById('tofull').addEventListener('click', () => { document.getElementById('msrc').open = true; document.getElementById('timeline-sec').scrollIntoView({ block: 'start' }); });
 let rafId = 0;
+
+// ---- Phone layout: the notional note sits under the map so the verdict and map come first ----------
+const PHONE = matchMedia('(max-width: 640px)');
+function placeNote() {
+  const note = $('simple-note');
+  if (PHONE.matches) $('mapbox').after(note); else $('howto').parentElement.insertBefore(note, $('verdict'));
+}
+PHONE.addEventListener('change', () => { placeNote(); if (map) update(); });
+placeNote();
+$('v-more').addEventListener('click', () => {
+  const open = $('verdict').classList.toggle('open');
+  $('v-more').setAttribute('aria-expanded', open); $('v-more').textContent = open ? 'Less' : 'More';
+});
 
 // ---- Hash --------------------------------------------------------------------------------------
 function writeHash() {
@@ -115,6 +129,7 @@ function buildControls() {
   $('policy').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { S.policy = b.dataset.p; update(); } });
   $('chipcity').addEventListener('change', e => { const i = e.target.value; if (i === '') return; S.chip = cityPos(+i); S.chipName = CITIES[+i][0]; update(); });
   $('addbtn').addEventListener('click', () => toggleLm(+$('addlm').value, true));
+  $('lmhere').addEventListener('click', () => { const ci = chipCity(); if (ci >= 0) toggleLm(ci, true); });
   $('clearlm').addEventListener('click', () => { S.lms = []; update(); });
   $('ruleout').addEventListener('change', e => { S.ruleout = e.target.value; setFeatures(); update(); });
   $('claim').addEventListener('change', e => { S.claim = e.target.value; setFeatures(); update(); });
@@ -184,9 +199,9 @@ function renderStep() {
     if (n >= STEPS.length) { setMode('verify'); return; }
     applyStep(n); setFeatures(); setView(S.view);
     card.querySelector('.solid')?.focus({ preventScroll: true });
-    const sc = STEPS[n].scroll;
-    if (sc && document.body.classList.contains('detail-simple')) setDetail('full');   // the target lives in Full detail
-    if (sc) $(sc)?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+    const sc = STEPS[n].scroll, behavior = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+    if (sc) { $('msrc').open = true; $(sc)?.scrollIntoView({ behavior, block: 'start' }); }   // opens the section without changing Simple/Full
+    else if (PHONE.matches) $('mapbox').scrollIntoView({ behavior, block: 'end' });
   });
 }
 
@@ -217,16 +232,19 @@ function draw(fast) {
   map.render(S, cur.meas, cur.reg, { ruleFeat: feats[S.ruleout], claimFeat: feats[S.claim], proxyPos: cur.proxyPos, chipLabel });
 
   // Verdict
-  const SV = { ...S, ruleout: ruleLong(S.ruleout), ruleTag: ruleTag(S.ruleout) }, vx = { ...cur.v, gridKm: Math.round(cur.reg.step * 111) };
+  const SV = { ...S, ruleout: ruleLong(S.ruleout), ruleTag: ruleTag(S.ruleout), simple: document.body.classList.contains('detail-simple') }, vx = { ...cur.v, gridKm: Math.round(cur.reg.step * 111) };
   const vv = S.mode === 'attack' ? attackVerdict(vx, SV) : verifierVerdict(vx, SV);
   $('howto').textContent = S.mode === 'attack'
     ? `Your chip is smuggled into ${ruleTag(S.ruleout)}. Try to pass it off as being in ${S.claim}: drag the chip, or add delay or a proxy in the panel, and see if the check catches you.`
-    : `Your job: prove the chip is not in ${ruleTag(S.ruleout)}. Click city dots to add landmark servers. Each circle is the farthest the chip can be, given how fast it answered.`;
+    : PHONE.matches
+      ? `Your job: prove the chip is not in ${ruleTag(S.ruleout)}. Add landmark servers with "Add a landmark in" below, or tap a city dot. Each circle is the farthest the chip can be.`
+      : `Your job: prove the chip is not in ${ruleTag(S.ruleout)}. Click city dots to add landmark servers. Each circle is the farthest the chip can be, given how fast it answered.`;
+  $('legend-s').textContent = `Green = where the chip could be; red = the part inside ${ruleTag(S.ruleout)}; circles = each landmark's limit.`;
   $('verdict').dataset.s = vv.s; $('v-tag').textContent = vv.tag; $('v-text').textContent = vv.text;
   const fmtA = a => !S.lms.length ? '∞' : a >= 1e6 ? (a / 1e6).toFixed(2) + 'M' : a >= 1e4 ? Math.round(a / 1000) + 'k' : Math.round(a).toLocaleString('en-US');
   $('k-area').textContent = fmtA(cur.reg.area);
   $('k-share').textContent = !S.lms.length || !cur.reg.n ? '–' : cur.reg.areaR / cur.reg.area < 0.01 && cur.reg.anyR ? '<1%' : Math.round(cur.reg.areaR / cur.reg.area * 100) + '%';
-  $('k-share-l').textContent = `Share of area in ${ruleTag(S.ruleout)}`;
+  $('k-share-l').textContent = `Share of area in ${S.ruleout === EAR ? 'China (incl. HK, Macau)' : S.ruleout}`;
   $('k-tight').textContent = cur.meas.length ? Math.round(Math.min(...cur.meas.map(m => m.bound))).toLocaleString('en-US') : '∞';
   $('gridkm').textContent = cur.reg.step ? Math.round(cur.reg.step * 111) : '–';
 
@@ -262,14 +280,19 @@ function syncControls() {
   document.querySelectorAll('#verifier button').forEach(b => b.setAttribute('aria-pressed', b.dataset.k === S.verifier));
   document.querySelectorAll('#policy button').forEach(b => b.setAttribute('aria-pressed', b.dataset.p === S.policy));
   $('vnote').textContent = SPEEDS[S.verifier].note;
-  const ci = CITIES.findIndex(c => c[3] === S.chip[0] && c[2] === S.chip[1]);
+  const ci = chipCity();
   $('chipcity').value = ci >= 0 ? String(ci) : '';
+  const showHere = ci >= 0 && !S.lms.some(l => l.ci === ci) && S.lms.length < 12 && S.mode === 'verify';
+  $('lmhere').hidden = !showHere;
+  if (showHere) $('lmhere').textContent = `Also add a landmark in ${CITIES[ci][0]}`;
   $('ruleout').value = S.ruleout; $('claim').value = S.claim; $('link').value = S.link; $('proxy').value = S.proxy;
 }
 
+function chipCity() { return CITIES.findIndex(c => c[3] === S.chip[0] && c[2] === S.chip[1]); }
+
 function renderBelow() {
   $('asof').textContent = CHECKED; $('asof-s').textContent = CHECKED;
-  $('tl').innerHTML = TIMELINE.map(e => `<li><span class="tl-d num">${e.d}</span><p>${esc(e.t)} <a href="${SOURCES[e.s].url}" target="_blank" rel="noopener">Source</a>${e.s2 ? ` · <a href="${SOURCES[e.s2].url}" target="_blank" rel="noopener">Reuters</a>` : ''}</p></li>`).join('');
+  $('tl').innerHTML = TIMELINE.map(e => `<li><span class="tl-d num">${e.d}</span><p>${esc(e.t)} <a href="${SOURCES[e.s].url}" target="_blank" rel="noopener">Source</a>${e.s2 ? ` · <a href="${SOURCES[e.s2].url}" target="_blank" rel="noopener">${esc(SOURCES[e.s2].short)}</a>` : ''}</p></li>`).join('');
   $('srclist').innerHTML = SOURCE_ORDER.map(k => `<li>${esc(SOURCES[k].cite)} <a href="${SOURCES[k].url}" target="_blank" rel="noopener">Link</a></li>`).join('');
 }
 

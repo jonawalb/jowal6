@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Narrative Contagion Network | Narrative Tracking</title>
+<meta name="description" content="Near-identical wording in 12 countries' official statements and state media, matched within 14 days: who carries it first, whether it passes between officials and media, and the evidence for every cluster. Matches are almost all within one language, mostly among English-language state services.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="../../shared/css/deterrence-site.css">
+<link rel="stylesheet" href="../../shared/css/motion.css">
+<link rel="stylesheet" href="narrative-contagion.css">
+</head>
+<body class="loading">
+<header id="tsm-head"></header>
+<a class="nc-skip" href="#view-network">Skip to the network</a>
+
+<section class="purpose" aria-label="What this tool tests">
+  <p class="purpose-chip">Data, not a model</p>
+  <dl>
+    <dt>Question:</dt><dd id="nc-question">Across 12 countries' official statements and state media, who carries near-identical wording first, and does it pass from officials to media, media to officials, or between media?</dd>
+    <dt>What you do:</dt><dd>Filter by cluster type or country, then open a framing to read every item and replay its spread.</dd>
+    <dt>What you will see:</dt><dd>Countries linked by shared wording, arrows from the side usually first. 89% of dated matches run media to media.</dd>
+    <dt>Limits:</dt><dd>Matches almost never cross languages: this maps English-language state services (and Chinese with Chinese). Shared wording is not coordination; &ldquo;first&rdquo; means first in this corpus. Speakers are tagged by machine (hand-check error rates in Method).</dd>
+  </dl>
+</section>
+
+<details class="present">
+  <summary>Presenting this in 3 minutes</summary>
+  <ol>
+    <li><button type="button" class="btn" data-demo="0">Show</button> <b>Official vs media, all types.</b> Read the bottom-right tile: 89% of dated matches are media first, then media in another country. Each passage counts as the person speaking, so journalists' questions and foreign leaders' words are not counted as the publishing government.</li>
+    <li><button type="button" class="btn" data-demo="1">Show</button> <b>Network, Official in 2+ countries, Play.</b> Official-to-official repetition builds month by month; pink links are new that month.</li>
+    <li><button type="button" class="btn" data-demo="2">Show</button> <b>Top official framing, Play the spread.</b> The dossier lists every item with its date and link; the replay steps day by day from the first-seen item. Say that the top framing is India's, Belarus's and Pakistan's own speeches at the January 2024 Non-Aligned Movement summit in Kampala, matched on their openings: each is that government's speech, and the shared wording is summit protocol, not copying. Joint statements and other governments' words are tagged and left out, as the first step says.</li>
+    <li><button type="button" class="btn" data-demo="3">Show</button> <b>Who comes first, Net lead.</b> Point at the first pair named under the matrix, the largest net lead (with all types: Russia before Taiwan, +84). The button also switches on Full detail: scroll down to the coverage strip and check both countries.</li>
+  </ol>
+  <p><b>Takeaway:</b> most cross-country echoes in state rhetoric are shared news flow among English-language state services; officials repeating each other is rarer and has to be read item by item.</p>
+  <p><b>Say aloud:</b> matches are almost all within one language, and &ldquo;first&rdquo; means first in this corpus, so this shows overlap, not coordination or origin.</p>
+  <p class="fine">Or press <i>Walkthrough</i> above the network for the same four steps; it puts your own settings back when it ends.</p>
+</details>
+
+<section class="nc-caveats" aria-labelledby="nc-cav-h">
+  <h2 id="nc-cav-h" class="eyebrow">Read this first</h2>
+  <ul>
+    <li><b>A shared framing is not proof of coordination.</b><span class="full-only"> Most clusters are one news event reported by outlets in several countries, or one side quoting the other. Official-to-official matches are the likelier cases of a repeated line, and even those include joint statements and readouts of the same meeting.</span></li>
+    <li><b>Matches almost never cross languages.</b><span class="full-only"> Only 7 of 4,652 matches join two languages, and 85% of matched items are in English. Read the network as overlap among English-language services (and Chinese with Chinese), not domestic-language messaging.</span></li>
+    <li><b>&ldquo;First seen&rdquo; means first in this corpus.</b><span class="full-only"> It is not where the framing started. Outlets publish on different schedules and the corpus misses many sources.</span></li>
+    <li><b>Coverage differs by country and by month.</b><span class="full-only"> Chinese state-media article text covers only April to June 2026, Russian state media is dense only from July 2026, and Iranian media starts in November 2025, so 72% of clusters fall in 2026. Check the coverage strip before reading an absence as silence.</span></li>
+  </ul>
+</section>
+
+<main class="layout">
+  <div class="stage">
+    <div class="card nc-controls">
+      <div class="nc-row">
+        <div class="seg nc-detail" id="detail" role="group" aria-label="Level of detail" title="Simple shows the main result; Full detail shows every source, control and assumption.">
+          <button type="button" class="btn" data-m="simple" aria-pressed="true" title="Simple shows the main result; Full detail shows every source, control and assumption.">Simple</button>
+          <button type="button" class="btn" data-m="full" aria-pressed="false" title="Simple shows the main result; Full detail shows every source, control and assumption.">Full detail</button>
+        </div>
+        <div class="choices seg nc-tabs" id="nc-tabs" role="group" aria-label="View">
+          <button type="button" data-view="network">Network</button>
+          <button type="button" data-view="matrix">Who comes first</button>
+          <button type="button" data-view="paths">Official vs media</button>
+        </div>
+        <div class="nc-acts"><button type="button" class="btn" id="nc-tour">Walkthrough</button><button type="button" class="btn" id="nc-reset">Reset filters</button><button type="button" class="btn" id="nc-copy">Copy link</button></div>
+      </div>
+      <div class="nc-filters">
+        <div class="choices seg" id="nc-type" role="group" aria-label="Cluster type">
+          <button type="button" data-type="">All types</button>
+          <button type="button" data-type="official-official">Official in 2+ countries</button>
+          <button type="button" data-type="mixed">Official + media</button>
+          <button type="button" data-type="media-media">Media only</button>
+        </div>
+        <label class="pick wide full-only"><span>Topic (machine-grouped)</span><select id="nc-topic"></select></label>
+        <label class="pick"><span>Country</span><select id="nc-country"></select></label>
+        <label class="pick full-only"><span>Countries in cluster</span><select id="nc-min"><option value="2">2 or more</option><option value="3">3 or more</option><option value="4">4 or more</option></select></label>
+        <label class="pick full-only"><span>From</span><select id="nc-from"></select></label>
+        <label class="pick full-only"><span>To</span><select id="nc-to"></select></label>
+      </div>
+      <label class="nc-old full-only"><input type="checkbox" id="nc-qold"> Count reporters' questions as official (old method)</label>
+      <div class="nc-row"><p class="fine" id="nc-count"></p><div id="nc-active" class="nc-active"></div></div>
+      <p class="nc-result" id="nc-result" aria-live="polite"></p>
+    </div>
+
+    <section class="card nc-view" id="view-network" aria-label="Network of shared framings">
+      <div class="nc-row full-only">
+        <div class="choices seg" id="nc-level" role="group" aria-label="Node level">
+          <button type="button" data-level="country">Countries</button>
+          <button type="button" data-level="outlet">Outlets</button>
+        </div>
+        <label class="pick"><span>Hide links under</span><select id="nc-minlink"><option value="1">1 cluster</option><option value="2">2 clusters</option><option value="3">3 clusters</option><option value="5">5 clusters</option><option value="10">10 clusters</option></select></label>
+      </div>
+      <div class="nc-replay-bar" id="nc-replay-bar" hidden>
+        <p class="eyebrow">Replaying a cluster</p>
+        <p class="num" id="nc-rp-status" aria-live="polite"></p>
+        <div class="nc-acts"><button type="button" class="btn" id="nc-rp-back" aria-label="Previous day">&larr;</button><button type="button" class="btn solid" id="nc-rp-pause">Pause</button><button type="button" class="btn" id="nc-rp-fwd" aria-label="Next day">&rarr;</button><button type="button" class="btn" id="nc-rp-exit">Back to the network</button></div>
+      </div>
+      <div class="nc-svgwrap">
+        <svg id="nc-svg" role="group" aria-label="Network: nodes are countries or outlets, links join two that share near-identical passages, arrows point from the side that appeared first more often."></svg>
+        <div class="tooltip" id="nc-tip" hidden></div>
+        <p class="nc-loading fine" id="nc-loading">Loading clusters…</p>
+      </div>
+      <div class="nc-legend fine">
+        <span class="key"><i class="k-o"></i>Official</span><span class="key"><i class="k-s"></i>State media</span><span class="key"><i class="k-m"></i>Independent media</span>
+        <span class="key agg"><i class="k-size"></i>Node size = clusters the country is in</span><span class="key agg"><i class="k-disc"></i>Inner blue = share of the country's clusters that include its own official text</span><span class="key agg"><i class="k-line"></i>Link width = shared clusters</span><span class="key agg"><i class="k-hot"></i>Pink link = new this month (during Play)</span><span class="key agg"><i class="k-arrow"></i>Arrow from the side first in at least 60% of the clusters where the two were not on the same day (and at least 3 such clusters)</span>
+        <span class="key rp"><i class="k-on"></i>Solid = has appeared</span><span class="key rp"><i class="k-pending"></i>Dashed = still to come</span><span class="key rp"><i class="k-off"></i>Small grey = not in this cluster</span><span class="key rp"><i class="k-arrow"></i>Arrow = closest earlier match; +Nd = days after first seen</span>
+      </div>
+      <div class="nc-time">
+        <button type="button" class="btn solid" id="nc-play">Play</button>
+        <label class="slider"><span id="nc-when">All months</span><input type="range" id="nc-month" min="0" max="1" step="1" value="1" aria-label="Show clusters first seen up to this month"></label>
+        <button type="button" class="btn" id="nc-all">All months</button>
+      </div>
+    </section>
+
+    <section class="card nc-view" id="view-matrix" aria-label="Country-pair amplification matrix" hidden>
+      <div class="nc-row">
+        <p class="fine">Row country first, column country later, counted once per cluster both are in. Click a cell to list those clusters. Coming first in this corpus is not influence: check the coverage strip for both countries.</p>
+        <label class="pick"><span>Cell value</span><select id="nc-metric"><option value="before">Clusters where row came first</option><option value="net">Net lead (row first minus column first)</option><option value="lag">Median lag when row came first (days)</option></select></label>
+      </div>
+      <p class="nc-mkey fine" id="nc-mkey"></p>
+      <div id="nc-matrix"></div>
+      <p class="fine" id="nc-matrix-top"></p>
+    </section>
+
+    <section class="card nc-view" id="view-paths" aria-label="Official and media pathways" hidden>
+      <p class="fine">Every passage match joins two items from different countries. Ordered by date, each match runs from one kind of source to another. Official means a statement from a foreign or defense ministry, presidency, cabinet, cross-strait affairs office or Russia's State Duma; media means state or independent media, and a journalist's question at a press conference counts as the outlet that asked (or is left out when that outlet is not in the corpus).</p>
+      <div id="nc-paths"></div>
+    </section>
+
+    <section class="card" id="nc-list-card" aria-labelledby="nc-list-h">
+      <div class="nc-row">
+        <h2 id="nc-list-h" class="eyebrow">Most-amplified framings</h2>
+        <label class="pick"><span>Rank by</span><select id="nc-sort"><option value="countries">Most countries</option><option value="official">Most countries with official text</option><option value="members">Most items</option><option value="span">Longest spread</option><option value="recent">Most recent</option></select></label>
+      </div>
+      <p class="fine">Text in quotation marks is official wording (at most 300 characters). Text tagged <i>Translation</i> is an unofficial English rendering of a Chinese statement, not a quote. Press-conference passages can include a reporter's question; those are tagged <i>Reporter's question</i> with the outlet that asked, and are not official wording. Media items show their headline only. Select a framing to open its dossier.</p>
+      <ol class="nc-list" id="nc-list"></ol>
+      <button type="button" class="btn" id="nc-more" hidden>Show more</button>
+    </section>
+  </div>
+
+  <aside class="panel" aria-label="Summary and cluster dossier">
+    <div class="sec full-only">
+      <p class="eyebrow">Current selection</p>
+      <dl class="readout" id="nc-summary"></dl>
+    </div>
+    <div class="sec nc-dossier" id="nc-dossier" hidden aria-live="polite"></div>
+    <div class="sec">
+      <p class="eyebrow">What a cluster is</p>
+      <p class="fine">A framing is a passage of wording; a cluster is a group of passages from different countries whose meaning, measured by a multilingual sentence model, is nearly identical (cosine similarity at least <span data-meta="threshold">0.93</span>) and dated within <span data-meta="window">14</span> days of each other. Chains of such matches form one cluster, so its first and last items can be further apart.</p>
+    </div>
+  </aside>
+</main>
+
+<p class="nc-simple-note simple-only">Full detail adds more filters, the outlet-level network, the corpus coverage strip and the method and sources.</p>
+<section class="below full-only">
+  <div class="col">
+    <h2>How to read it</h2>
+    <p><b>Network.</b> Each node is a country, or with <i>Outlets</i> each ministry, presidency or media outlet. A link joins two nodes that appear in the same cluster; its width counts those clusters. An arrow points away from the side that appeared first in at least 60% of the clusters where the two were not on the same day (and in at least 3 such clusters). Press <i>Play</i> to build the network month by month; links new in a month turn pink. Click a node to filter to a country, or a link to list the clusters behind it.</p>
+    <p><b>Who comes first.</b> The matrix counts, for each pair of countries, how often the row country appeared before the column country. Switch to <i>Net lead</i> to see which side is more often first, or to <i>Median lag</i> to see how many days separate them.</p>
+    <p><b>Official vs media.</b> The four tiles split all dated passage matches by the kind of source on each side, with the lag between them.</p>
+    <p><b>Dossier.</b> Selecting a framing lists every item in date order with its link, the earlier item each one matched most closely, and the corpus coverage for that month. <i>Play the spread</i> replays the cluster on the network, day by day, from the first-seen source outward.</p>
+    <h2 class="mt">Coverage of the corpus</h2>
+    <p class="fine">Documents per country per month (official and media together; hover for the split). Darker means more documents (scale below). Cells with an underline hold no media for that country and month. Empty cells mean nothing was collected. The last month is partial: the data were built on <span data-meta="generated">2026-10-04</span>.</p>
+    <div id="nc-coverage"></div>
+  </div>
+  <div class="col">
+    <h2>Method &amp; sources</h2>
+    <ul class="src">
+      <li><b>Corpus.</b> Walberg's multilingual rhetoric corpus (the same collection behind Rhetoric Search): official statements, briefings and transcripts from foreign and defense ministries, presidencies and cabinets, cross-strait affairs offices (China's TAO, Taiwan's MAC) and Russia's State Duma, and state media, for China, Russia, Iran, Belarus, Türkiye, Syria, Pakistan, India, Taiwan, the United States, Venezuela and Cuba. Each source's collection method, dates and gaps are documented in the corpus's SOURCES.md. Built on <span data-meta="generated">2026-10-04</span>.</li>
+      <li><b>Matching.</b> Each document contributes up to four passages of about 200 tokens plus its title (titles are matched mainly for articles and headlines, and for 16 official items; official titles are formulaic, and per-source title templates are dropped). Passages under 60 characters (24 in Chinese, Japanese or Korean) are skipped. Passages are embedded with <i>intfloat/multilingual-e5-small</i> (Wang et al. 2024, <a href="https://arxiv.org/abs/2402.05672" target="_blank" rel="noopener noreferrer">arXiv:2402.05672</a>). The model can match across languages, but at this threshold it rarely does: <span data-lang="cross">8</span> of <span data-lang="total">4,861</span> matches (after the speaker correction) join two languages, and <span data-lang="enpct">85%</span> of matched items are in English. Read the network as overlap among English-language services (and Chinese with Chinese), not domestic-language messaging. <span data-meta="passages">712,176</span> passages were compared; pairs from different countries dated within <span data-meta="window">14</span> days with cosine similarity of at least <span data-meta="threshold">0.93</span> form <span data-meta="edges">5,162</span> matches, and connected groups of matches form <span data-meta="clusters">2,248</span> clusters (<span data-valid>2,093</span> once journalists' questions are taken out; see Text policy). The threshold was set by reading sampled pairs per similarity band: at 0.93 and above most pairs are the same event, statement or joint text. No sample size or precision figure has been recorded for that reading yet. The closest published method is Hanley, Kumar and Durumeric, &ldquo;Happenstance&rdquo; (ICWSM 2023, <a href="https://doi.org/10.1609/icwsm.v17i1.22149" target="_blank" rel="noopener noreferrer">doi:10.1609/icwsm.v17i1.22149</a>), which tracks Russian state-media narratives with semantic search.</li>
+      <li><b>First seen, lead and lag.</b> Dates are publication dates as collected (some are listing dates a day late). A country's position in a cluster is the date of its first item. Same-day pairs have no order and are counted separately. Lags are whole days.</li>
+      <li><b>Topics.</b> Each document has a topic from an unsupervised model fitted on the whole corpus (50 topics, version <span data-meta="topics">d87bc5e3fd</span>). A cluster takes its members' most common topic. Topic names are the model's top English terms, not hand labels.</li>
+      <li><b>Official vs media.</b> As classified in the corpus. Taiwan's CNA (and its English service Focus Taiwan) is a government-funded national news agency, set up under the 1996 Central News Agency Establishment Act, and is classed as state media; the Taipei Times is the only independent outlet. Guancha, a privately owned but state-aligned Chinese site, is grouped with state media here.</li>
+      <li><b>Text policy and translations.</b> Official passages are shown up to 300 characters with a link. Each passage was checked against its corpus record, and for China's MFA archive, the TAO and some MND items that record is a translation, not the official English. So every English passage from those three was checked against its linked official page on 16 Nov 2026: 53 of 186 match and are labelled <i>Official English</i>; the rest are labelled <i>Translation</i> (TSM or machine) and shown without quotation marks. Other English passages are labelled <i>English, as published</i> (the source's own English-language site, not checked word for word here). Sites publish other people's words: journalists' questions at press conferences, foreign leaders in joint appearances and interviews, and other ministries' statements reposted on Telegram. A speaker-attribution tagger (<code>scripts/tag_speakers.py</code>, 16 Nov 2026) reads all <span data-role="all">1,220</span> official passages and assigns each to the person speaking where it starts: a speaker label at the start of the passage (&ldquo;Reuters:&rdquo;, &ldquo;QUESTION:&rdquo;, &ldquo;Q&rdquo;, &ldquo;记者：&rdquo;, &ldquo;Вопрос:&rdquo;, &ldquo;MODI:&rdquo;, &ldquo;PRESIDENT ERDOĞAN:&rdquo;, &ldquo;А.Лукашенко:&rdquo;), else the last speaker label before it on the linked page (a passage without a label continues the previous speaker), else, for translations, the speaker turn on the page whose words overlap most, else, for briefing sources only, an opening question or request to the spokesperson. Telegram forwards are attributed to the channel they came from, and quoted statements (&ldquo;Заявление МИД Республики Беларусь: «&hellip;»&rdquo;) to the quoted ministry. Joint statements, declarations and communiqués signed by several governments (found by title, URL or opening, for example &ldquo;Joint Statement&rdquo;, &ldquo;G7 Leaders&rsquo; Statement&rdquo;, &ldquo;The Foreign Ministers of &hellip;&rdquo; listing three or more states) are tagged &ldquo;Joint statement (countries&hellip;)&rdquo; and <b>kept out of every single-country count</b>: they are left out of the network, matrix and tiles, because their wording is not one government's. Named people a site quotes (legislators, executives) are tagged &ldquo;Quoted&rdquo; and left out the same way. Result: <span data-role="q">266</span> journalists' questions (<span data-role="qmoved">77</span> moved to the asking outlet, which is in the corpus; the rest left out), <span data-role="f">39</span> passages spoken by another government (<span data-role="fmoved">34</span> moved to that government's official outlet; the rest left out), <span data-role="j">255</span> joint-statement passages and <span data-role="qt">7</span> quoted third parties (both left out). <span data-role="inc">14</span> passages run on from an official's words into someone else's; they stay official but are tagged and shown without quotation marks. Clusters left with fewer than two countries drop out, so <span data-valid>1,945</span> of the 2,248 clusters remain. Full detail has a switch to restore the old method (every passage counted as the publishing site), to show the difference. <b>Residual error, hand-checked against the source pages on 16 Nov 2026</b> after the last tagger changes (passages still shown as a government's own words; samples drawn fresh, never from passages used to tune the tagger): White House and State Department, every passage checked: 9 of 179 were found misattributed (joint statements, an Indian minister's remarks, and an Indian moderator's introduction on state.gov) and all 9 re-tagged, so 0 of 170 remain; Telegram, every passage: 0 of 4 after 2 OSCE joint statements were found and fixed; China briefings, every passage: 0 of 31 (27 of them had been used in earlier checks); Kremlin and MID, the 14 not used before: 0 of 11 verified, 3 unverifiable (mid.ru blocks automated access); other sources, a fresh 20, read in a browser where plain fetches failed (tccb.gov.tr, president.ir, mfa.ir): 1 of 20 (Xi Jinping quoted on Belarus's presidential site, since fixed), none unverifiable. Earlier rounds found Kremlin transcripts with Lukashenko speaking (3 of 20) and joint statements in other sources (3 of 20); those patterns were fixed before the fresh samples above. Document titles are as recorded in the corpus, which sometimes builds them (&ldquo;Ministry of Foreign Affairs: &hellip;&rdquo;). Media items show headline and link only; the build script refuses to write the data file if any media body sentence would ship.</li>
+      <li><b>Limits.</b> The model measures shared meaning, so two outlets summarising one event in similar words will match. Matches across a 14-day window miss slower echoes. Coverage is uneven: Chinese state-media article text covers April to June 2026 (headlines January 2025 to June 2026); Russian state media is sampled (RIA: 1,500 random articles a month; TASS and RT: news, politics and world sections in full) and dense only from July 2026; Iranian media starts in November 2025; several official sources come partly from the Wayback Machine, North Korea is missing, and Venezuela's foreign-ministry links no longer resolve. Clusters and the rankings that depend on them are descriptive leads, not findings.</li>
+      <li><b>How to cite.</b> Jonathan Walberg, <i>Narrative Contagion Network</i>, Narrative Tracking (jwalberg.com), data built <span data-meta="generated">2026-10-04</span>, cluster id as shown in the dossier.</li>
+    </ul>
+  </div>
+</section>
+<div class="nc-sticky" id="nc-sticky" hidden><p id="nc-sticky-t"></p><button type="button" class="btn" id="nc-sticky-go">See it</button></div>
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Narrative Contagion Network', sub: 'Near-identical wording in state statements and state media, matched across countries within 14 days, with the evidence for every link.', category: 'State rhetoric' });
+  document.title = 'Narrative Contagion Network | Narrative Tracking';
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

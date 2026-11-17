@@ -1,0 +1,3 @@
+// Encrypted TSM data. Unlocked in the browser with the site password.
+const __m = await window.TSMVault.module(import.meta.url, "SBnA+h8KXxF8Fjs/8RrKCBXJ5oHgS3cHJY9DL5v26lXp1N+fjiH5OlAnxt5qNe0q+LmsE6tNIL5x/THwKOL9aVrb1CU7wd2mi29lMG+l1XC9uqPT18YHYYOF7axeFWXSfmfb2RJyQqzEs7hhc8xqbMPhJeiy63ohRaRQvFDxCG12dMw9oTelxTUDn8UWBNvzXfWfmwV87R6a50ThH2vt5f9Ajf54FsIOg1C3aB4uTmKdBStboTfuVdcXeTqxhMtBSitI5s4ZyTPE+GH9czmhNVNFuwStVJTL9tPd3eQy3rLSxX/ujGWoMoXXydEv21NuenDcprJa3Jm0fjAOtVeAUp5Q8VDnq0tqq/A0/VOfUser/M/Dt8CgLefJckH1TzgATDUBe8iaWWAbQ1Yzjf7+CNDHrUDWp+V00/UF8UnL1rsGuloyl7GVVJzVldEyKoUI0D3PwwlZyHId+xrs85fJJ2A472pESkOFNtfI6YGDRBk326LU3INe0RWHRYhRXbmt8I8FHcRqwojgYsjuxu8y2hONzLJ9uUF5OfkmuWnnUWPPXh/0H3cmOQf/llxl", 1, 6);
+export const RES = __m.RES;

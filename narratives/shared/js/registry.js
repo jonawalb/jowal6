@@ -37,9 +37,16 @@ const CATEGORY_LIST = [
     blurb: 'How false stories spread and stick, and what governments say, phrase by phrase.',
     subs: [{ id: 'disinfo', name: 'Disinformation & cognitive warfare', blurb: 'How false stories spread and stick, and how belief updating can be attacked.' },
       { id: 'rhetoric', name: 'State rhetoric', blurb: 'What governments say, week by week: China, Russia and others, phrase by phrase.' }] },
+  { id: 'emergingtech', name: 'Emerging Technology', sites: ['deterrence'],
+    blurb: 'AI policy, compute and chips: who controls the supply chain, how export controls work, and games to test them.',
+    subs: [{ id: 'infosheets', name: 'Info Sheets', blurb: 'Sourced references: AI policy in the US, China and Russia, chip chokepoints, export rules and China’s compute.' },
+      { id: 'gamesmodels', name: 'Games and Models', blurb: 'Models and games: chip location verification, a Taiwan blockade clock for AI compute, and chip diversion.' }] },
   // jwalberg.com/narratives/: public rhetoric trackers (Rhetoric Search keeps its own password). Landing page lives in jowal6.
   { id: 'tracking', name: 'Narrative Tracking', sites: ['narratives'],
     blurb: 'What governments say, week by week, and every mention searchable.' },
+  // jwalberg.com/narratives/: the disinformation games and models, behind one password (build tier t6, `vault: 'narrgames'`).
+  { id: 'narrgames', name: 'Narrative Games and Models', sites: ['narratives'],
+    blurb: 'Games and models of how false stories spread and stick, how corrections and prebunking work, and how belief updating can be attacked.' },
   // Taiwan tools behind the second password. Hidden as a top-level section; shown as Regions › Indo-Pacific.
   { id: 'tsm', name: 'Indo-Pacific', sites: ['deterrence'], locked: true, hidden: true,
     blurb: 'Taiwan Strait trackers, exercise replays and wargames.' },
@@ -172,9 +179,9 @@ export const ALL_TOOLS = [
     blurb: 'Choose how to start a war, from a limited conventional grab to a strategic strike, see how the other side answers, and trace the backward-induction solution as you trade the pie against the losses.' },
   { slug: 'deterrence-lab-general', game: true, cat: 'gametheory', sites: ['deterrence'], title: 'Deterrence Lab', status: 'live',
     blurb: 'Move the costs and beliefs in three classic deterrence models (audience costs, costly signals and salami tactics) and test them against sourced crises from Fashoda in 1898 to NATO\'s eastern flank in 2016–17.' },
-  { slug: 'misinfo-cascade', sub: { narratives: 'disinfo' }, dev: true, also: ['gametheory'], cat: 'narratives', sites: ['deterrence'], locked: true, title: 'Misinformation Cascade', status: 'live',
+  { slug: 'misinfo-cascade', sub: { narratives: 'disinfo' }, dev: true, also: ['gametheory'], cat: 'narratives', sites: ['deterrence', 'narratives'], vault: 'narrgames', siteCat: { narratives: 'narrgames' }, locked: true, title: 'Misinformation Cascade', status: 'live',
     blurb: "Watch a report of 16 aircraft become 'the island is surrounded' as it spreads, and test when a correction can still stop it." },
-  { slug: 'bayesian-attack', sub: { narratives: 'disinfo' }, dev: true, also: ['gametheory'], cat: 'narratives', sites: ['deterrence'], title: 'Attacking the Update', status: 'live',
+  { slug: 'bayesian-attack', sub: { narratives: 'disinfo' }, dev: true, also: ['gametheory'], cat: 'narratives', sites: ['deterrence', 'narratives'], vault: 'narrgames', siteCat: { narratives: 'narrgames' }, title: 'Attacking the Update', status: 'live',
     blurb: "An adversary doesn't fake the evidence; it changes how much you weigh it. Watch true signals produce a false conclusion, and see which defenses still work." },
   { slug: 'ukraine-air-war', sub: { regions: 'ukraine' }, cat: 'regions', sites: ['deterrence'], title: "Ukraine's Air War", status: 'live',
     blurb: 'Russian missile and drone launches against Ukraine since 2022, by weapon type, with the share the Ukrainian Air Force reported shooting down.' },
@@ -204,7 +211,7 @@ export const ALL_TOOLS = [
     blurb: "Move the costs, beliefs and balance of power in eight classic game-theory models of war and cooperation, from Fearon's bargaining range to Schelling's brinkmanship as formalized by Powell, and watch the equilibrium change, with every result cited to its source." },
   { slug: 'ukraine-support', sub: { regions: 'ukraine' }, cat: 'regions', sites: ['deterrence'], title: 'Who Supports Ukraine', status: 'live',
     blurb: 'Who pledged aid to Ukraine and how much each donor has allocated: military, financial and humanitarian support by donor since 2022, in euros or as a share of GDP, from the Kiel Institute.' },
-  { slug: 'prebunking-game', game: true, sub: { narratives: 'disinfo' }, dev: true, cat: 'narratives', sites: ['deterrence'], title: 'Borrowed Feelings', status: 'live',
+  { slug: 'prebunking-game', game: true, sub: { narratives: 'disinfo' }, dev: true, cat: 'narratives', sites: ['deterrence', 'narratives'], vault: 'narrgames', siteCat: { narratives: 'narrgames' }, title: 'Borrowed Feelings', status: 'live',
     blurb: 'Judge invented reports while a soundtrack, a crowd or your own body pulls at you. See the weight you gave each report, then practice naming a feeling and tracing its source before you weigh the evidence.' },
   { slug: 'sanctions-explorer', cat: 'models', sub: { models: 'budget' }, sites: ['deterrence'], title: 'Sanctions Explorer', status: 'live',
     blurb: 'Sixty years of sanctions threats and impositions from the TIES dataset: filter by sender, target, objective and type, see how often the target gave in, and set that beside what the Global Sanctions Data Base authors report.' },
@@ -222,7 +229,7 @@ export const ALL_TOOLS = [
     blurb: "Richardson's arms-race equations as a phase plane you can click: set reaction, fatigue and grievance, and see which races settle, which run away, and what happens with a third rival." },
   { slug: 'qre-explorer', dev: true, cat: 'gametheory', sites: ['deterrence'], title: 'Quantal Response Explorer', status: 'live',
     blurb: 'See how logit quantal response equilibrium departs from Nash in crisis and deterrence games as precision runs from 0 to infinity, and why estimating these games needs care.' },
-  { slug: 'correction-lab', dev: true, sub: { narratives: 'disinfo' }, cat: 'narratives', sites: ['deterrence'], title: 'Correction Lab', status: 'live',
+  { slug: 'correction-lab', dev: true, sub: { narratives: 'disinfo' }, cat: 'narratives', sites: ['deterrence', 'narratives'], vault: 'narrgames', siteCat: { narratives: 'narrgames' }, title: 'Correction Lab', status: 'live',
     blurb: "Design a correction to a false story and see how much belief persists: meta-analytic effect sizes on timing, source, repetition and explanation, combined with Walberg's Sticky Affect condition in a notional model." },
   { slug: 'kharg-island', game: true, sub: { models: 'wargames', regions: 'mideast' }, cat: 'models', also: ['regions'], sites: ['deterrence'], title: 'Kharg Island', status: 'live',
     blurb: "A notional, dice-driven wargame of a U.S. move on Kharg Island, Iran's oil export hub: seize, raid or blockade it, watch every roll, then see how 1,000 games trade success against escalation and oil prices." },
@@ -234,8 +241,8 @@ export const ALL_TOOLS = [
     blurb: "What the Kremlin and Iran's Foreign Ministry keep saying, week by week since 2021: recurring formulas from 'special military operation' to 'Zionist regime' as a heatmap, with every quote one click from its source." },
   { slug: 'rhetoric-search', cat: 'tracking', sites: ['narratives'], vault: 'rhetoric', title: 'Rhetoric Search', status: 'live',
     blurb: 'Search official statements and state and other media from 13 countries, among them Russia, China, Iran, North Korea, India and the U.S.: official sentences quoted, media listed by headline. A Trends view tracks tone, stance, topics, alerts and cross-country echoes over time.' },
-  { slug: 'narrative-contagion', dev: true, sub: { narratives: 'rhetoric' }, cat: 'narratives', sites: ['deterrence'], title: 'Narrative Contagion Network', status: 'live',
-    blurb: 'How near-identical framings spread across countries’ official statements and state media: who echoes whom, with what lag, and the evidence for every link.' },
+  { slug: 'narrative-contagion', dev: true, sub: { narratives: 'rhetoric' }, cat: 'narratives', sites: ['deterrence', 'narratives'], vault: 'narrgames', siteCat: { narratives: 'narrgames' }, title: 'Narrative Contagion Network', status: 'live',
+    blurb: 'Near-identical wording across countries’ official statements and state media, mostly among English-language services: who carries it first, with what lag, and the evidence for every link.' },
   { slug: 'situation-room', dev: true, cat: 'dev', sites: ['deterrence'], title: 'Situation Room Replay', status: 'live',
     blurb: 'Replay 220 NSC and White House meetings, 1948–1983, turn by turn: who disagreed, which camps formed, and which way the President leaned.' },
   { slug: 'uplift-line', dev: true, sub: { dev: 'safeguards' }, cat: 'dev', sites: ['deterrence'], title: "Where's the Uplift Line?", status: 'live',
@@ -250,8 +257,10 @@ export const ALL_TOOLS = [
     blurb: "Nuclear rhetoric, tests, doctrine and arms control for all nine nuclear-armed states on one sourced timeline, with each rival pair placed on Kahn's escalation ladder by written rules and the evidence for every placement." },
   { slug: 'minerals-twin', dev: true, cat: 'dev', sites: ['deterrence'], title: 'Critical-Minerals Chokepoint Twin', status: 'live',
     blurb: 'Nine defense-critical minerals traced from mine to refinery to magnet, with country shares from USGS, IEA and DOE, a shock simulator that shows which stage binds and how long the shortfall lasts, and the official export controls behind each scenario.' },
-  { slug: 'say-do-global', dev: true, sub: { narratives: 'rhetoric' }, cat: 'narratives', sites: ['deterrence'], title: 'Say–Do Gap Monitor: Russia, Iran, Venezuela', status: 'live',
-    blurb: 'Do Russian, Iranian and Venezuelan statements predict strikes, nuclear moves, shipping disruption and state violence? Lead-lag, event-study and distributed-lag tests, honestly corrected.' },
+  { slug: 'narrative-games', cat: 'narrgames', sites: ['narratives'], vault: 'narrgames', title: 'Narrative Games and Models', status: 'live',
+    blurb: 'Six games and models on disinformation and cognitive warfare, each with the question it tests, how to use it and what it cannot show.' },
+  { slug: 'say-do-global', dev: true, sub: { narratives: 'rhetoric' }, cat: 'narratives', sites: ['deterrence', 'narratives'], vault: 'narrgames', siteCat: { narratives: 'narrgames' }, title: 'Say–Do Gap Monitor: Russia, Iran, Venezuela', status: 'live',
+    blurb: 'Does official rhetoric change before a state acts? Russian statements against strikes and nuclear moves, Iranian statements against Gulf shipping, with every test corrected for running many tests. Few survive.' },
   { slug: 'raid-night', game: true, sub: { models: 'wargames', regions: ['ukraine', 'mideast'] }, cat: 'models', also: ['regions'], sites: ['deterrence'], title: 'Raid Night', status: 'live',
     blurb: 'Defend four notional cities through three real-time waves of drones and missiles modelled on real raids, and watch the cost exchange as your interceptors run out.' },
   { slug: 'matrix-game', game: true, sub: { models: 'wargames', regions: 'ukraine' }, cat: 'models', also: ['regions'], sites: ['deterrence'], title: 'Baltic Matrix Game', status: 'live',
@@ -288,13 +297,28 @@ export const ALL_TOOLS = [
     blurb: 'Run a cyber incident response as CEO, CISO, IT, legal and comms against a hidden attacker, alone or as a facilitated tabletop, then get an after-action report mapped to NIST CSF 2.0.' },
   { slug: 'will-to-fight', unlisted: true, cat: 'gametheory', sites: ['deterrence'], vault: 'dissertation', title: 'Will to Fight', status: 'live',
     blurb: 'An attacker strikes, fighters decide whether to stand, and the government fights on or concedes: a simple game of resolve, with a calculator and what to measure.' },
+  // Emerging Technology (Nov 2026). Each entry was added after a fresh-context check of its claims ledger.
+  { slug: 'compute-diversion', cat: 'emergingtech', sub: { emergingtech: 'gamesmodels' }, sites: ['deterrence'], title: 'Diversion', status: 'live',
+    blurb: 'Run US chip export enforcement against a network that diverts AI chips and cloud compute to restricted users. Notional model, real DOJ and BIS case cards.' },
+  { slug: 'chip-geolocation', cat: 'emergingtech', sub: { emergingtech: 'gamesmodels' }, sites: ['deterrence'], title: 'Where Is the Chip?', status: 'live',
+    blurb: 'Place landmark servers, turn round-trip times into light-speed distance bounds, and try to smuggle an AI chip past a delay-based location check.' },
+  { slug: 'silicon-blockade-clock', cat: 'emergingtech', sub: { emergingtech: 'gamesmodels' }, sites: ['deterrence'], title: 'Silicon Blockade Clock', status: 'live',
+    blurb: 'Quarantine or blockade Taiwan and follow the chain from LNG and coal stocks to fab power, leading-edge output and world AI accelerator deliveries, including the backlog after it lifts.' },
+  { slug: 'chip-chokepoints', cat: 'emergingtech', sub: { emergingtech: 'infosheets' }, sites: ['deterrence'], title: 'AI Chip Chokepoint Twin', status: 'live',
+    blurb: 'The AI accelerator supply chain stage by stage: who holds each node, what binds when one is cut, and the U.S., allied and Chinese controls aimed at it.' },
+  { slug: 'china-compute-tracker', cat: 'emergingtech', sub: { emergingtech: 'infosheets' }, sites: ['deterrence'], title: 'China Compute Tracker', status: 'live',
+    blurb: "China's access to AI compute: Entity List rules counted from the Federal Register, chip-smuggling cases, and output estimates you filter by quality of evidence." },
+  { slug: 'chip-license-check', cat: 'emergingtech', sub: { emergingtech: 'infosheets' }, sites: ['deterrence'], title: 'Does This Chip Need a License?', status: 'live',
+    blurb: 'Enter an AI chip and a transaction; see TPP, the 3A090 paragraph and the license outcome step by step, cited to the CFR, under current rules or the rule BIS released 16 Nov 2026.' },
+  { slug: 'ai-policy-compass', cat: 'emergingtech', sub: { emergingtech: 'infosheets' }, sites: ['deterrence'], title: 'Understanding AI Policy', status: 'live',
+    blurb: 'How the US, China and Russia govern AI, from their own texts: a timeline of 95 primary documents, side-by-side positions, the live debates, and a quiz that places you against each government.' },
 ];
 
 // The narratives site carries only entries that name it; entries without `sites` are on tsm and deterrence.
 export const onSite = (x, site = SITE) => (x.sites ? x.sites.includes(site) : site !== 'narratives');
 /** A tool's category on a given site (siteCat overrides cat per site). */
 export const catOn = (t, site = SITE) => (t.dev && site === 'deterrence' ? 'dev' : (t.siteCat && t.siteCat[site]) || t.cat);
-const ORDER = { deterrence: ['gametheory', 'nuclear', 'regions', 'narratives', 'models', 'tsm', 'dev'], narratives: ['tracking'] };
+const ORDER = { deterrence: ['gametheory', 'nuclear', 'regions', 'narratives', 'models', 'tsm', 'dev'], narratives: ['tracking', 'narrgames'] };
 // `also` lists extra categories a tool appears in; `cats` is its primary category plus those.
 const forSite = t => ({ ...t, cat: catOn(t), cats: catOn(t) === 'dev' ? ['dev'] : [...new Set([catOn(t), ...(t.also || [])])],
   blurb: (t.siteBlurb && t.siteBlurb[SITE]) || t.blurb });

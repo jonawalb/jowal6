@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+  <rect width="640" height="400" fill="#f2f2ee"/>
+  <rect x="24" y="24" width="592" height="352" rx="8" fill="#fbfbf8" stroke="#d3d6cd"/>
+  <g fill="none" stroke-linecap="round">
+    <path d="M320 80 Q300 190 170 160" stroke="#97a197" stroke-width="6" opacity=".6"/>
+    <path d="M320 80 Q360 180 470 150" stroke="#e8753a" stroke-width="8"/>
+    <path d="M470 150 Q420 230 450 300" stroke="#e8753a" stroke-width="5"/>
+    <path d="M170 160 Q250 240 210 300" stroke="#97a197" stroke-width="4" opacity=".6"/>
+    <path d="M210 300 Q330 290 450 300" stroke="#97a197" stroke-width="3" opacity=".6"/>
+    <path d="M320 80 Q330 220 330 330" stroke="#e8753a" stroke-width="5"/>
+  </g>
+  <g stroke="#fbfbf8" stroke-width="3">
+    <circle cx="320" cy="80" r="26" fill="#1b4fd4"/>
+    <circle cx="470" cy="150" r="20" fill="#cf4d12"/>
+    <circle cx="170" cy="160" r="16" fill="#cf4d12"/>
+    <circle cx="450" cy="300" r="15" fill="#1b4fd4"/>
+    <circle cx="210" cy="300" r="13" fill="#6a4fb5"/>
+    <circle cx="330" cy="330" r="17" fill="#cf4d12"/>
+  </g>
+  <circle cx="320" cy="80" r="36" fill="none" stroke="#e8753a" stroke-width="3" stroke-dasharray="6 5"/>
+  <text x="44" y="356" font-family="Georgia, serif" font-size="26" font-weight="700" fill="#14201a">Who echoes whom</text>
+</svg>

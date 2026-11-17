@@ -1,0 +1,17 @@
+/* Narrative Games and Models hub. Built on shared/css/tsm.css tokens only. */
+.ng { max-width: 1200px; margin: 16px auto 40px; padding: 0 16px; }
+.ng-intro { max-width: 72ch; margin: 0 0 20px; font-size: 17px; line-height: 1.55; }
+.ng-group { margin: 0 0 28px; }
+.ng-group h2 { margin: 0 0 4px; font: 700 22px/1.2 var(--display); }
+.ng-group > p { margin: 0 0 12px; color: var(--muted); max-width: 72ch; }
+.ng-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 14px; }
+.ng-list a { display: flex; flex-direction: column; gap: 8px; height: 100%; box-sizing: border-box; min-height: 44px; padding: 16px 18px; border: 1px solid var(--rule); border-radius: 6px; background: var(--panel); color: var(--ink); text-decoration: none; }
+.ng-list a:focus-visible { outline: 3px solid var(--accent, currentColor); outline-offset: 2px; }
+@media (hover: hover) { .ng-list a:hover { border-color: var(--accent, currentColor); } }
+.ng-kind { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.ng-list h3 { margin: 0; font: 700 21px/1.15 var(--display); }
+.ng-q { margin: 0; font-weight: 600; }
+.ng-q span { font-weight: 400; color: var(--muted); }
+.ng-list p { margin: 0; line-height: 1.5; }
+.ng-open { margin-top: auto; font-weight: 600; font-size: 14px; }
+.ng-foot, .ng-note { color: var(--muted); font-size: 14px; max-width: 72ch; }

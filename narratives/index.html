@@ -82,7 +82,7 @@
         .tk-note { margin-top: 28px; font-size: .9rem; color: var(--text-muted); max-width: 70ch; }
 
         /* Narrative Games and Models: one box, password-protected section of games and models. */
-        #games.section { padding: 0 28px 88px; }
+        #games.section { padding: 56px 28px 0; }
         #games .container { max-width: 1480px; }
         .gm { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 20px 32px; align-items: center;
             background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--green-600); border-radius: 10px; padding: 26px 28px;
@@ -144,7 +144,7 @@
         <div class="ix-intro">
             <h2 class="section-title">Narrative Tracking</h2>
             <p>What governments say, week by week. These trackers follow the phrases that foreign ministries, defense ministries and leaders keep coming back to, and when the language shifts. Every count leads back to the statement it came from.</p>
-            <p>Every tracker is open to everyone, including Rhetoric Search, which covers official statements and state and other media from more countries. Below them, Narrative Games and Models needs a password.</p>
+            <p>Every tracker is open to everyone, including Rhetoric Search, which covers official statements and state and other media from more countries. Just below, Narrative Games and Models holds games and models built to test theories of how false stories spread and how corrections work.</p>
             <div class="ix-cta">
                 <a class="btn btn-primary" href="#trackers">See the trackers</a>
             </div>
@@ -168,6 +168,22 @@
     </div>
 </section>
 
+<section class="section" id="games" aria-label="Narrative Games and Models">
+    <div class="container">
+        <article class="gm">
+            <div>
+                <div class="tk-meta"><span class="tk-tag">Games and models</span></div>
+                <h2><a href="tools/narrative-games/">Narrative Games and Models</a></h2>
+                <p>Games and models of how false stories spread and stick, how corrections and prebunking work, and how an adversary can move belief without faking evidence, plus two data tools built from real state statements: who echoes whom, and whether rhetoric comes before action. Each one states the question it tests.</p>
+                <ul aria-label="Included">
+                    <li>Misinformation Cascade</li><li>Correction Lab</li><li>Attacking the Update</li><li>Borrowed Feelings</li><li>Narrative Contagion Network</li><li>Say–Do Gap Monitor</li>
+                </ul>
+            </div>
+            <span class="gm-open" aria-hidden="true">Enter password →</span>
+        </article>
+    </div>
+</section>
+
 <section class="section" id="trackers">
     <div class="container">
         <div class="tk-head">
@@ -179,21 +195,6 @@
     </div>
 </section>
 
-<section class="section" id="games" aria-label="Narrative Games and Models">
-    <div class="container">
-        <article class="gm">
-            <div>
-                <div class="tk-meta"><span class="tk-tag">Games and models</span><span class="tk-tag lock">Password</span></div>
-                <h2><a href="tools/narrative-games/">Narrative Games and Models</a></h2>
-                <p>Games and models of how false stories spread and stick, how corrections and prebunking work, and how an adversary can move belief without faking evidence, plus two data tools built from real state statements: who echoes whom, and whether rhetoric comes before action. Each one states the question it tests.</p>
-                <ul aria-label="Included">
-                    <li>Misinformation Cascade</li><li>Correction Lab</li><li>Attacking the Update</li><li>Borrowed Feelings</li><li>Narrative Contagion Network</li><li>Say–Do Gap Monitor</li>
-                </ul>
-            </div>
-            <span class="gm-open" aria-hidden="true">Enter password →</span>
-        </article>
-    </div>
-</section>
 </main>
 
 <script>

@@ -209,3 +209,38 @@ body.detail-full .simple-only { display: none !important; }
 @media (hover: hover) { .gl-stat:hover { border-top-color: var(--accent); } }
 @media (max-width: 600px) { .glance { grid-template-columns: 1fr; gap: 6px; } .gl-stat { flex-direction: row; align-items: baseline; gap: 10px; } .gl-stat .big { font-size: 24px; flex: none; } }
 .glance[hidden] { display: none; }
+
+/* ---- Audit UX fixes, 16 Nov 2026 ---- */
+.qrow { margin: 0 0 10px; }
+.qrow .search { min-height: 40px; }
+.stat-btn { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; background: transparent; color: var(--muted); font: 12px var(--body); cursor: pointer; }
+.stat-btn .big { font: 600 26px var(--display); color: var(--ink); line-height: 1.1; }
+.stat-btn[aria-pressed="true"] { border-color: var(--blue); background: var(--blue-soft); }
+@media (hover: hover) { .stat-btn:hover { border-color: var(--ink); } }
+.greyed-note { margin: 4px 0 0; }
+/* Source labels stay legible over the band and gridlines. */
+.est .lab { paint-order: stroke; stroke: var(--panel); stroke-width: 3px; stroke-linejoin: round; }
+@media (max-width: 640px) {
+  .tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex: none; min-height: 44px; white-space: nowrap; }
+  .pseg .btn, .gchip, .seg .btn, .acts .btn, .showall, .stat-btn { min-height: 44px; }
+  .gchip, .gchip.st { padding: 6px 12px; }
+  .pseg .btn { min-width: 44px; }
+  .qrow .search { min-height: 44px; font-size: 16px; }
+}
+@media (max-width: 640px) {
+  /* Phone: the answer (readout) sits right under the metric title; presets scroll in one row. */
+  .metric .m-head { display: contents; }
+  .metric > * { order: 5; }
+  .metric h3 { order: 1; }
+  .metric .m-read { order: 2; }
+  .metric .pseg { order: 3; }
+  .metric .unit { order: 4; }
+  .presets { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+  .presets::-webkit-scrollbar { display: none; }
+  .presets .btn { flex: none; white-space: nowrap; }
+  .glance { gap: 0; }
+  .gl-stat { padding-top: 5px; font-size: 12.5px; }
+  .gl-stat .big { font-size: 22px; }
+}

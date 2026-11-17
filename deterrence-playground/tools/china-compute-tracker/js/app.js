@@ -14,7 +14,7 @@ const VIEWS = [
 ];
 const SEC_KEYS = SECTORS.map(s => s.k);
 const fresh = () => ({ view: 'est', grades: [...GRADES], rep: false, per: {}, secs: [...SEC_KEYS], other: false,
-  ctypes: [...CASE_TYPES], cstat: STATUS_KEYS.map(s => s.k), q: '', sel: null });
+  ctypes: [...CASE_TYPES], cstat: STATUS_KEYS.map(s => s.k), q: '', tq: '', sel: null });
 const S = fresh();
 
 // ---- Lookup for the detail panel ----
@@ -38,6 +38,7 @@ function writeHash() {
   if (S.other) q.set('o', 1);
   if (S.rep) q.set('r', 1);
   if (S.q) q.set('q', S.q);
+  if (S.tq) q.set('t', S.tq);
   if (S.sel) q.set('sel', S.sel);
   history.replaceState(null, '', '#' + q.toString());
 }
@@ -50,12 +51,16 @@ function readHash() {
   S.other = q.get('o') === '1';
   S.rep = q.get('r') === '1';
   S.q = (q.get('q') || '').slice(0, 60);
+  S.tq = (q.get('t') || '').slice(0, 60);
   if (find(q.get('sel'))) S.sel = q.get('sel');
 }
 
 // ---- Render ----
 const tip = tooltip($('tip'));
 const set = patch => { Object.assign(S, patch); update(); };
+// Switching views drops a selection that belongs to another view, so the panel never shows a stale item.
+const SEL_VIEW = { e: 'est', r: 'el', c: 'cases' };
+const go = v => set({ view: v, sel: S.sel && (SEL_VIEW[S.sel[0]] === v || v === 'tl') ? S.sel : null });
 function pick(id, scroll) {
   S.sel = id; update();
   if (scroll && window.matchMedia('(max-width: 1020px)').matches) $('detail').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
@@ -69,7 +74,7 @@ function renderSide() {
 
 function update() {
   $('tabs').innerHTML = VIEWS.map(v => `<button type="button" role="tab" class="tab" data-v="${v.k}" aria-selected="${v.k === S.view}" aria-controls="view">${esc(v.n)}</button>`).join('');
-  $('tabs').querySelectorAll('[data-v]').forEach(b => { b.onclick = () => set({ view: b.dataset.v }); });
+  $('tabs').querySelectorAll('[data-v]').forEach(b => { b.onclick = () => go(b.dataset.v); });
   const V = $('view');
   const h = { onPick: pick, set, tip, rerender: update };
   if (S.view === 'est') renderEstimates(V, S, h);
@@ -106,7 +111,7 @@ $('glance').innerHTML = [
   ['cases', CASES.length, `public DOJ and BIS cases on smuggling or diverting chips and chipmaking tools; ${convicted} with a plea or conviction`],
   ['est', ESTIMATES.length, 'published estimates of China’s AI chip supply, each graded by the kind of source behind it'],
 ].map(([v, n, t]) => `<button type="button" class="gl-stat" data-go="${v}"><span class="big">${n}</span><span>${esc(t)}</span></button>`).join('');
-$('glance').querySelectorAll('[data-go]').forEach(b => { b.onclick = () => set({ view: b.dataset.go }); });
+$('glance').querySelectorAll('[data-go]').forEach(b => { b.onclick = () => go(b.dataset.go); });
 
 // ---- Wiring ----
 readHash();

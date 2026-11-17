@@ -149,7 +149,7 @@ export const CASES = [
 "hubs": "Front/alias CSCC on NUDT campus; transfers to Phytium.",
 "value_usd": 140000000,
 "penalty": "DOJ criminal penalties of nearly $118M plus BIS civil penalty of $95M (with cross-credits); aggregate net >$140M incl. $45M forfeiture",
-"status": "corporate plea / resolution",
+"status": "plea agreement (court acceptance not confirmed)",
 "status_date": "2025-07-28",
 "status_note": "Company agreed to plead guilty to conspiracy (criminal information) and settled with BIS the same day; value_usd is the aggregate net penalty. Latest status (court acceptance) not re-checked. No later release found as of 2026-11-16.",
 "sources": [
@@ -197,9 +197,9 @@ export const CASES = [
 "hubs": "Singapore and Malaysia freight forwarders alleged as transshipment points; payments from Hong Kong and China.",
 "value_usd": null,
 "penalty": null,
-"status": "charged (complaint)",
+"status": "charged",
 "status_date": "2025-08-04",
-"status_note": "Arrested on a criminal complaint; initial appearance Aug. 4, 2025, arraignment set for Sept. 11, 2025. Latest status not re-checked. No later release found as of 2026-11-16.",
+"status_note": "Complaint Aug. 4, 2025; later charging document not confirmed from DOJ. Arrested on a criminal complaint; initial appearance Aug. 4, 2025, arraignment set for Sept. 11, 2025. Latest status not re-checked. No later release found as of 2026-11-16.",
 "sources": [
 {
 "label": "DOJ USAO C.D. Cal. press release, Aug 5, 2025",
@@ -410,8 +410,7 @@ export const CASES = [
 "venue": "S.D.N.Y.",
 "parties": [
 "Yih-Shyan “Wally” Liaw",
-"Ruei-Tsang “Steven” Chang",
-"Ting-Wei “Willy” Sun"
+"Ruei-Tsang “Steven” Chang"
 ],
 "type": "AI chips",
 "items": "Servers with controlled AI GPUs from a U.S. server manufacturer (unnamed in release); ~$2.5B in servers bought by a Southeast Asian company 2024-2025, at least ~$510M diverted to China Apr-May 2025 (alleged); 'dummy' servers staged for audits and a Commerce inspection.",
@@ -426,7 +425,7 @@ export const CASES = [
 "penalty": null,
 "status": "indicted",
 "status_date": "2026-03-19",
-"status_note": "Indictment unsealed Mar. 19, 2026 (DOJ). Press headlines in October 2026 (GV Wire/Reuters; DatacenterDynamics) report that one defendant, Sun, pleaded guilty; the articles could not be opened and no DOJ release on a plea was found, so the tracker keeps the status at indicted. Chang is a fugitive per the indictment release. Value is the alleged order total.",
+"status_note": "Indictment unsealed Mar. 19, 2026 (DOJ). Liaw pleaded not guilty on Apr. 1, 2026 (Bloomberg News report of the Manhattan hearing); Chang is a fugitive per the indictment release. Co-defendant Ting-Wei Sun is listed as a separate row because he pleaded guilty. Value is the alleged order total.",
 "sources": [
 {
 "label": "DOJ USAO S.D.N.Y. press release, Mar 19, 2026",
@@ -441,14 +440,66 @@ export const CASES = [
 "supports": "Same announcement (OPA version)"
 },
 {
-"label": "GV Wire (Reuters report), Oct. 10, 2026 — headline only; article not accessible",
-"url": "https://gvwire.com/2026/10/10/super-micro-contractor-pleads-guilty-in-scheme-to-divert-ai-servers-with-nvidia-chips-to-china/",
+"label": "Bloomberg News (via Bloomberg Government), Apr. 1, 2026",
+"url": "https://news.bgov.com/litigation/super-micro-co-founder-pleads-not-guilty-in-china-smuggling-case",
 "fetched": true,
-"supports": "Sun guilty plea (media only, official_release false for this status)"
+"supports": "Liaw not-guilty plea at Apr. 1, 2026 hearing (press report; no DOJ release)"
 }
 ],
 "quote": "Diversion schemes like those disrupted today generate billions of dollars in ill-gotten gains and pose a direct threat to U.S. national security.",
 "official_release": true
+},
+{
+"id": "sdny-supermicro-sun",
+"date": "2026-03-19",
+"title": "Three Charged With Conspiring To Unlawfully Divert U.S. Artificial Intelligence Technology To China",
+"agency": "DOJ",
+"venue": "S.D.N.Y.",
+"parties": [
+"Ting-Wei “Willy” Sun"
+],
+"type": "AI chips",
+"items": "Servers with controlled AI GPUs from a U.S. server manufacturer (unnamed in release); ~$2.5B in servers bought by a Southeast Asian company 2024-2025, at least ~$510M diverted to China Apr-May 2025 (alleged); 'dummy' servers staged for audits and a Commerce inspection.",
+"route": [
+"US",
+"Taiwan",
+"Southeast Asia",
+"China"
+],
+"hubs": "Servers shipped via the manufacturer's Taiwan facilities to 'Company-1' in Southeast Asia, then repackaged into unmarked boxes for China.",
+"value_usd": 2500000000,
+"penalty": null,
+"status": "pleaded guilty",
+"status_date": "2026-10-08",
+"status_note": "Press reports (Reuters/CNA citing court filings); no DOJ release. Bloomberg News reports Sun pleaded guilty on Thursday, Oct. 8, 2026, at a hearing in federal court in New York under an agreement with prosecutors, citing court filings; CNA (relaying Reuters) cites the court record. Co-defendants Liaw and Chang are in a separate row. Value is the alleged order total for the whole scheme.",
+"sources": [
+{
+"label": "DOJ USAO S.D.N.Y. press release, Mar 19, 2026",
+"url": "https://www.justice.gov/usao-sdny/pr/three-charged-conspiring-unlawfully-divert-us-artificial-intelligence-technology-china",
+"fetched": true,
+"supports": "Indictment, conduct, values, arrests, Chang fugitive"
+},
+{
+"label": "DOJ OPA press release, Mar 19, 2026",
+"url": "https://www.justice.gov/opa/pr/three-charged-conspiring-unlawfully-divert-cutting-edge-us-artificial-intelligence",
+"fetched": true,
+"supports": "Same announcement (OPA version)"
+},
+{
+"label": "Bloomberg News (via Bloomberg Government), Oct. 9, 2026",
+"url": "https://news.bgov.com/artificial-intelligence/super-micro-case-fixer-pleads-guilty-to-diverting-ai-tech-1",
+"fetched": true,
+"supports": "Sun guilty plea, citing court filings (press report; no DOJ release)"
+},
+{
+"label": "CNA (Central News Agency, relaying Reuters), Oct. 10, 2026 (Chinese)",
+"url": "https://cna.com.tw/news/aopl/202610100023.aspx",
+"fetched": true,
+"supports": "Sun guilty plea per court record (press report)"
+}
+],
+"quote": "Diversion schemes like those disrupted today generate billions of dollars in ill-gotten gains and pose a direct threat to U.S. national security.",
+"official_release": false
 },
 {
 "id": "ndga-zheng-kelly-english",
@@ -471,9 +522,9 @@ export const CASES = [
 "hubs": "Thailand-based companies named as purported purchasers.",
 "value_usd": 170000000,
 "penalty": null,
-"status": "charged (complaint)",
+"status": "charged",
 "status_date": "2026-03-25",
-"status_note": "Complaints issued Mar. 20, 2026; Zheng arrested Mar. 22, Kelly and English surrendered Mar. 25. Value is the alleged Oct 2023 order size. Latest status not re-checked. No later release found as of 2026-11-16.",
+"status_note": "Complaints Mar. 20, 2026; later charging document not confirmed from DOJ. Complaints issued Mar. 20, 2026; Zheng arrested Mar. 22, Kelly and English surrendered Mar. 25. Value is the alleged Oct 2023 order size. Latest status not re-checked. No later release found as of 2026-11-16.",
 "sources": [
 {
 "label": "DOJ OPA press release, Mar 25, 2026",
@@ -569,7 +620,7 @@ export const CASES = [
 "supports": "Same announcement (USAO version)"
 }
 ],
-"quote": "SI is the defining technology of the era",
+"quote": "SI is the defining technology of the era [DOJ's wording; SI = 'Super Intelligence']",
 "official_release": true
 }
 ];

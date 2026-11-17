@@ -41,7 +41,10 @@ export function renderEstimates(root, S, { onPick, set, tip, rerender }) {
 
   const host = root.querySelector('#metrics');
   const sumRows = [];
-  for (const M of METRICS) {
+  // Smuggling (M4) comes second so Simple mode shows it without "Show all".
+  const ORDER = ['M1', 'M4', 'M2', 'M3', 'M5'];
+  const ordered = [...METRICS].sort((a, b) => (ORDER.indexOf(a.id) + 1 || 99) - (ORDER.indexOf(b.id) + 1 || 99));
+  for (const M of ordered) {
     const ps = natural(periods(ESTIMATES, M.id));
     if (!ps.length) continue;
     const per = periodOf(S, M.id);
@@ -55,15 +58,16 @@ export function renderEstimates(root, S, { onPick, set, tip, rerender }) {
     card.innerHTML = `<div class="m-head"><h3>${esc(M.name)}</h3>
         ${ps.length > 1 ? `<div class="pseg" role="group" aria-label="Period for ${esc(M.name)}">${ps.map(p => `<button type="button" class="btn" data-per="${esc(p)}" aria-pressed="${p === per}">${esc(p)}</button>`).join('')}</div>` : `<span class="fine">${esc(per)}</span>`}</div>
       <p class="unit">${esc(unit)}${M.period_note ? `<span class="full-only"> · ${esc(M.period_note)}</span>` : ''}</p>
-      <p class="m-read">${envSel ? `With grades ${esc(S.grades.join(', '))}: <b>${fmtNum(envSel.low)}${envSel.high !== envSel.low ? ' to ' + fmtNum(envSel.high) : ''}</b> from ${envSel.n} source${envSel.n === 1 ? '' : 's'}, median midpoint ${fmtNum(envSel.median)}.`
+      <p class="m-read">${envSel ? `With grades ${esc(S.grades.join(', '))}: <b>${fmtNum(envSel.low)}${envSel.high !== envSel.low ? ' to ' + fmtNum(envSel.high) : ''}</b> from ${envSel.n} source${envSel.n === 1 ? '' : 's'}, middle estimate ${fmtNum(envSel.median)}.`
         : `<b>No source</b> with grades ${esc(S.grades.join(', ') || 'none')}${S.rep ? '' : ' (restatements off)'} for ${esc(per)}.`}
         ${envAll && (!envSel || envSel.low !== envAll.low || envSel.high !== envAll.high) ? `<span class="delta">All grades: ${fmtNum(envAll.low)} to ${fmtNum(envAll.high)} (${envAll.n}).</span>` : ''}</p>
       <div class="chartbox"><svg class="est" role="group" aria-label="Estimates for ${esc(M.name)}, ${esc(per)}"></svg></div>
+      ${greyNote(main, S)}
       ${qual.length ? `<p class="fine full-only">Stated without a number: ${qual.map(e => `<button type="button" class="linkbtn" data-id="${esc(e.id)}">${esc(e.source)}</button> <span class="gtag g-${e.grade}">${e.grade}</span>${e.repeats ? ' ↺' : ''}: ${esc(e.qual)}`).join('; ')}.</p>` : ''}
       ${other.length ? `<p class="fine full-only">Not on this axis (different unit): ${other.map(e => `<button type="button" class="linkbtn" data-id="${esc(e.id)}">${esc(e.source)}</button> (${esc(e.unit)})`).join('; ')}.</p>` : ''}`;
     host.appendChild(card);
     card.querySelectorAll('[data-per]').forEach(b => { b.onclick = () => set({ per: { ...S.per, [M.id]: b.dataset.per } }); });
-    card.querySelectorAll('[data-id]').forEach(b => { b.onclick = () => onPick('e:' + b.dataset.id); });
+    card.querySelectorAll('[data-id]').forEach(b => { b.onclick = () => onPick('e:' + b.dataset.id, true); });
     drawRows(card.querySelector('svg'), main, S, envSel, { onPick, tip });
   }
   clip(host, 'metrics', 2, 'measures', rerender);
@@ -74,10 +78,18 @@ export function renderEstimates(root, S, { onPick, set, tip, rerender }) {
   T.querySelectorAll('[data-jump]').forEach(a => { a.onclick = e => { e.preventDefault(); root.querySelector('#m-' + a.dataset.jump).scrollIntoView({ block: 'start' }); }; });
 }
 
+/** One line explaining greyed rows in plain words. */
+function greyNote(main, S) {
+  const why = [];
+  if (!S.rep && main.some(e => e.repeats)) why.push('↺ rows restate another source');
+  if (main.some(e => !S.grades.includes(e.grade))) why.push(`${why.length ? 'other greyed rows' : 'they'} have grades you switched off`);
+  return why.length ? `<p class="fine greyed-note">Greyed rows are not counted: ${why.join('; ')}.</p>` : '';
+}
+
 function drawRows(svg, list, S, env, { onPick, tip }) {
   const W = Math.max(300, svg.parentElement.clientWidth || 700);
   const narrow = W < 560;
-  const L = narrow ? 30 : 230, R = narrow ? 30 : 30, T = 8, RH = narrow ? 40 : 26, B = 26;
+  const L = narrow ? 30 : 230, R = narrow ? 30 : 30, T = 8, RH = narrow ? 44 : 26, B = 26;
   const rows = [...list].sort((a, b) => a.grade.localeCompare(b.grade) || a.low - b.low);
   const H = T + rows.length * RH + B;
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
@@ -110,7 +122,7 @@ function drawRows(svg, list, S, env, { onPick, tip }) {
     const val = valText(e);
     if (e.bound === 'min') svgEl('path', { d: `M${x1 - 8} ${cy - 5}L${x1 - 2} ${cy}L${x1 - 8} ${cy + 5}`, class: `cap${on ? '' : ' off'}`, style: `stroke:${GRADE_COL[e.grade]}` }, g);
     if (e.bound === 'max') svgEl('path', { d: `M${x0 + 8} ${cy - 5}L${x0 + 2} ${cy}L${x0 + 8} ${cy + 5}`, class: `cap${on ? '' : ' off'}`, style: `stroke:${GRADE_COL[e.grade]}` }, g);
-    keyable(g, `Grade ${e.grade}, ${e.source}: ${val}${on ? '' : ', excluded by grade filter'}`, () => onPick('e:' + e.id));
+    keyable(g, `Grade ${e.grade}, ${e.source}: ${val}${on ? '' : ', excluded by grade filter'}`, () => onPick('e:' + e.id, true));
     g.addEventListener('mousemove', ev => tip(ev, `<b>${esc(e.source)}</b> · grade ${e.grade}<br>${esc(val)}<br><span class="fine">${esc(fmtDate(e.date))}${on ? '' : ' · excluded'}</span>`));
     g.addEventListener('mouseleave', () => tip(null));
   });

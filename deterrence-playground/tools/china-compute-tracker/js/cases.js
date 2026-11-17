@@ -9,9 +9,11 @@ const route = c => (c.route && c.route.length ? `<span class="route">${c.route.m
 
 export function filterCases(S) {
   const q = S.q.trim().toLowerCase();
+  // With a search, title matches rank first, then newest first.
+  const rank = c => (q && !c.title.toLowerCase().includes(q) ? 1 : 0);
   return CASES.filter(c => S.ctypes.includes(c.type) && S.cstat.includes(statusClass(c.status).k)
     && (!q || [c.title, c.items, c.hubs, (c.parties || []).join(' '), (c.route || []).join(' ')].some(v => v && v.toLowerCase().includes(q))))
-    .sort((a, b) => b.date.localeCompare(a.date));
+    .sort((a, b) => rank(a) - rank(b) || b.date.localeCompare(a.date));
 }
 
 export function renderCases(root, S, { onPick, set, rerender }) {
@@ -19,22 +21,27 @@ export function renderCases(root, S, { onPick, set, rerender }) {
   const list = filterCases(S);
   const hubs = new Map();
   for (const c of list) for (const p of (c.route || []).slice(1, -1)) hubs.set(p, (hubs.get(p) || 0) + 1);
-  const byStat = STATUS_KEYS.map(s => [s, list.filter(c => statusClass(c.status).k === s.k).length]);
+  const anyStat = filterCases({ ...S, cstat: STATUS_KEYS.map(s => s.k) });
+  const byStat = STATUS_KEYS.map(s => [s, anyStat.filter(c => statusClass(c.status).k === s.k).length]);
   root.innerHTML = `
-    <div class="card${filtered ? '' : ' full-only'}"><p class="eyebrow">Filter cases</p>
+    <div class="row qrow"><label class="vh" for="cq">Search cases</label><input id="cq" class="search" type="search" placeholder="Search: H100, Malaysia, Singapore, Applied Materials" value="${esc(S.q)}" autocomplete="off"></div>
+    <div class="card${S.ctypes.length !== CASE_TYPES.length || S.cstat.length !== STATUS_KEYS.length ? '' : ' full-only'}"><p class="eyebrow">Filter cases</p>
       <div class="gchips" role="group" aria-label="Case type">${CASE_TYPES.map(t => `<button type="button" class="gchip st" data-t="${esc(t)}" aria-pressed="${S.ctypes.includes(t)}">${esc(t)}</button>`).join('')}</div>
       <div class="gchips mt-s" role="group" aria-label="Case status">${STATUS_KEYS.map(s => `<button type="button" class="gchip st" data-s="${s.k}" aria-pressed="${S.cstat.includes(s.k)}"><span class="st-pill st-${s.k}">${esc(s.n)}</span></button>`).join('')}</div>
-      <div class="row mt-s"><label class="vh" for="cq">Search cases</label><input id="cq" class="search" type="search" placeholder="Search: H100, Malaysia, Singapore, Applied Materials" value="${esc(S.q)}" autocomplete="off"></div>
     </div>
-    <div class="stat-row">
-      ${byStat.map(([s, n]) => `<div class="stat"><p class="big">${n}</p><p><span class="st-pill st-${s.k}">${esc(s.n)}</span></p></div>`).join('')}
+    <div class="stat-row" role="group" aria-label="Show only cases with this status">
+      ${byStat.map(([s, n]) => { const only = S.cstat.length === 1 && S.cstat[0] === s.k; return `<button type="button" class="stat stat-btn" data-only="${s.k}" aria-pressed="${only}" title="${only ? 'Show all statuses' : 'Show only this status'}"><span class="big">${n}</span><span><span class="st-pill st-${s.k}">${esc(s.n)}</span></span></button>`; }).join('')}
     </div>
     ${hubs.size ? `<div class="card full-only"><p class="eyebrow">Transit points alleged in these cases</p><p class="route">${[...hubs.entries()].sort((a, b) => b[1] - a[1]).map(([h, n]) => `<span>${esc(h)} · ${n}</span>`).join(' ')}</p>
       <p class="fine">Places between origin and final destination as stated in the charging documents or releases. Counts are cases, not shipments.</p></div>` : ''}
-    <div class="card"><p class="eyebrow">Cases, newest first · status as of ${esc(fmtDate(CASES_CHECKED))}</p><ol class="list" id="cl"></ol></div>`;
+    <div class="card"><p class="eyebrow">${S.q.trim() ? `${list.length} match${list.length === 1 ? '' : 'es'}, title matches first` : 'Cases, newest first'} · status as of ${esc(fmtDate(CASES_CHECKED))}</p><ol class="list" id="cl"></ol></div>`;
   const tog = (arr, k) => (arr.includes(k) ? (arr.length > 1 ? arr.filter(x => x !== k) : arr) : [...arr, k]);
   root.querySelectorAll('[data-t]').forEach(b => { b.onclick = () => set({ ctypes: tog(S.ctypes, b.dataset.t) }); });
   root.querySelectorAll('[data-s]').forEach(b => { b.onclick = () => set({ cstat: tog(S.cstat, b.dataset.s) }); });
+  root.querySelectorAll('[data-only]').forEach(b => { b.onclick = () => {
+    const k = b.dataset.only;
+    set({ cstat: S.cstat.length === 1 && S.cstat[0] === k ? STATUS_KEYS.map(x => x.k) : [k] });
+  }; });
   let qt; root.querySelector('#cq').oninput = e => { clearTimeout(qt); qt = setTimeout(() => { set({ q: e.target.value }); const i = document.getElementById('cq'); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } }, 250); };
   const cl = root.querySelector('#cl');
   cl.innerHTML = list.length ? list.map(c => { const st = statusClass(c.status); return `<li class="it case-it${S.sel === 'c:' + c.id ? ' on' : ''}"><button type="button" data-id="c:${esc(c.id)}">
@@ -42,7 +49,7 @@ export function renderCases(root, S, { onPick, set, rerender }) {
     <span class="it-t">${esc(c.title)}<br><span class="fine">${esc(c.type)} · ${esc(c.agency)}</span> ${route(c)}</span>
     <span class="it-a"><span class="st-pill st-${st.k}">${esc(c.status)}</span></span></button></li>`; }).join('') : '<li class="none">No case matches these filters.</li>';
   cl.querySelectorAll('[data-id]').forEach(b => { b.onclick = () => onPick(b.dataset.id, true); });
-  clip(cl, 'cases', 6, 'cases', rerender);
+  if (!filtered) clip(cl, 'cases', 6, 'cases', rerender);
 }
 
 export function caseDetail(c) {

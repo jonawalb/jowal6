@@ -28,7 +28,7 @@ export const METRICS = [
 "name": "Restricted NVIDIA AI chips smuggled into China",
 "unit": "H100-equivalents (H100e), cumulative unless period says otherwise",
 "period_note": "Epoch AI and IFP count H100-equivalents (weighted by compute); press and official figures count chips. Each unit is shown apart. SemiAnalysis separately reports that more than 1.5 GW of restricted NVIDIA hardware reached China (reported by Tom's Hardware); it is not converted to chips here. CNAS's 2023 working paper (Fist and Grunewald, Oct. 24, 2023) projected that PRC-linked actors could smuggle 'on the order of thousands to tens of thousands of AI chips per year'; it predates the window and is not plotted.",
-"default": "cumulative through 2025"
+"default": "2024-2025 cumulative"
 },
 {
 "id": "M5",
@@ -49,10 +49,10 @@ export const ESTIMATES = [
 "source": "Jeffrey Kessler, Under Secretary of Commerce for Industry and Security",
 "publisher": "House Foreign Affairs Committee, South and Central Asia Subcommittee hearing (BIS FY26 budget)",
 "date": "2025-06-12",
-"url": "https://wccftech.com/chinas-huawei-can-make-200000-advanced-ai-chips-in-2025-at-most-says-us-official/",
-"via": "Testimony words as reported by Wccftech (June 13, 2025); the official hearing transcript was not located.",
+"url": "https://foreignaffairs.house.gov/committee-activity/hearings/bureau-of-industry-and-security-fy26-budget-export-controls-and-the-ai-arms-race",
+"via": "Said in the question-and-answer part of the June 12, 2025 hearing (committee hearing page linked); the figure is not in his written statement (https://docs.house.gov/meetings/FA/FA19/20250612/118369/HHRG-119-FA19-Wstate-KesslerJ-20250612-U1.pdf). Exact words as reported by Wccftech, June 13, 2025: https://wccftech.com/chinas-huawei-can-make-200000-advanced-ai-chips-in-2025-at-most-says-us-official/ ; the official hearing transcript was not located.",
 "grade": "A",
-"grade_note": "Congressional testimony by the BIS Under Secretary at a House Foreign Affairs subcommittee hearing (June 2025). He did not state the basis of the assessment. The figure is an upper bound.",
+"grade_note": "Spoken answer by the BIS Under Secretary at a House Foreign Affairs subcommittee hearing (June 2025). He did not state the basis of the assessment. The figure is an upper bound.",
 "quote": "Huawei's Ascend chip production capacity for 2025 will be at or below 200,000.",
 "quote_is_paraphrase": false,
 "fetched": true,
@@ -72,7 +72,7 @@ export const ESTIMATES = [
 "url": "https://chinaselectcommittee.house.gov/media/reports/buy-what-it-can-steal-what-it-must-china-s-campaign-to-acquire-frontier-ai-capabilities",
 "via": "Report text read from the committee-distributed PDF at https://files.constantcontact.com/f0eecb46901/372341fc-7c57-462d-bf91-d6519a6dc858.pdf (the committee web page has no direct PDF link)",
 "grade": "A",
-"grade_note": "Official congressional report, but it repeats the Commerce (Kessler) estimate rather than giving an independent figure; not an independent second observation.",
+"grade_note": "Official congressional report, but it attributes the figure to unnamed 'U.S. officials'; it matches the Commerce (Kessler) figure, so it is treated as a restatement, not an independent second observation.",
 "quote": "U.S. officials estimate Huawei can produce no more than about 200,000 advanced AI chips in 2025—a fraction of U.S. output.",
 "quote_is_paraphrase": false,
 "fetched": true,
@@ -430,7 +430,7 @@ export const ESTIMATES = [
 },
 {
 "metric": "M2",
-"period": "2025-2026",
+"period": "2025",
 "low": 5,
 "high": 20,
 "unit": "percent yield",
@@ -446,7 +446,7 @@ export const ESTIMATES = [
 "quote_is_paraphrase": false,
 "fetched": true,
 "repeats": true,
-"id": "M2-house-select-committ-2025-2026"
+"id": "M2-house-select-committ-2025"
 },
 {
 "metric": "M3",
@@ -643,11 +643,11 @@ export const ESTIMATES = [
 },
 {
 "metric": "M4",
-"period": "cumulative through 2025",
+"period": "2024-2025 cumulative",
 "low": 290000,
 "high": 1600000,
 "unit": "H100-equivalents",
-"what": "Restricted NVIDIA chips smuggled into China through 2025, in H100-equivalents: 90% confidence interval 290,000 to 1.6 million, median 660,000.",
+"what": "Restricted NVIDIA chips smuggled into China in 2024 and 2025 combined (the model covers those two years), in H100-equivalents: 90% confidence interval 290,000 to 1.6 million, median 660,000.",
 "source": "Epoch AI (Isabel Juniewicz)",
 "publisher": "Epoch AI, 'Diversion and resale: estimating compute smuggling to China'",
 "date": "2026-04-29",
@@ -658,11 +658,11 @@ export const ESTIMATES = [
 "via": "",
 "quote_is_paraphrase": false,
 "fetched": true,
-"id": "M4-epoch-ai-isabel-juni-cumulative-through-2025"
+"id": "M4-epoch-ai-isabel-juni-2024-2025-cumulative"
 },
 {
 "metric": "M4",
-"period": "cumulative through 2025",
+"period": "2024-2025 cumulative",
 "low": 300000,
 "high": 300000,
 "unit": "H100-equivalents",
@@ -677,7 +677,7 @@ export const ESTIMATES = [
 "via": "",
 "quote_is_paraphrase": false,
 "fetched": true,
-"id": "M4-epoch-ai-isabel-juni-cumulative-through-2025-2"
+"id": "M4-epoch-ai-isabel-juni-2024-2025-cumulative-2"
 },
 {
 "metric": "M4",
@@ -724,7 +724,7 @@ export const ESTIMATES = [
 "high": 2900000,
 "unit": "H100-equivalents",
 "what": "Projected cumulative stock of smuggled US AI chips in China by end-2026, central 1 million H100e",
-"source": "Institute for Progress",
+"source": "Institute for Progress (Tim Fist, Georgia Adamson, Konstantin Pilz)",
 "publisher": "IFP, 'How to Increase America's AI Lead Over China'",
 "date": "2026-10-19",
 "url": "https://ifp.org/how-to-increase-americas-ai-lead-over-china/",
@@ -780,7 +780,7 @@ export const ESTIMATES = [
 "low": 140000,
 "high": 140000,
 "unit": "AI chips (GPUs)",
-"what": "AI chips smuggled to the PRC during 2024: median estimate of around 140,000, within a stated range of 10,000 to several hundred thousand chips (the source gives no number for the upper end, so only the median is plotted). Output of a probabilistic model extrapolated from known reported cases, not a count of confirmed cases. Counts chips, not H100-equivalents.",
+"what": "AI chips smuggled to the PRC during 2024: median estimate of around 140,000, within a stated range of 10,000 to several hundred thousand chips (the source gives no number for the upper end, so only the median is plotted). Output of a probabilistic model extrapolated from known reported cases, not a count of confirmed cases. Counts chips, not H100-equivalents. Epoch AI, citing the authors' model code, reports a 90% confidence interval of 20,000 to 800,000 chips for this estimate; that interval does not appear in the CNAS paper itself.",
 "source": "CNAS (Erich Grunewald and Tim Fist)",
 "publisher": "CNAS working paper, 'Countering AI Chip Smuggling Has Become a National Security Priority: An Updated Playbook for Preventing AI Chip Smuggling to the PRC'",
 "date": "2025-06-11",
@@ -857,7 +857,7 @@ export const ESTIMATES = [
 "low": 9659,
 "high": 9659,
 "unit": "USD millions",
-"what": "NVIDIA revenue from customers headquartered in China (including Hong Kong), Q1 FY2026, all products. In this quarter H20 sales were $4.6B before the April 2025 license requirement, and NVIDIA took a $4.5B H20 charge. NVIDIA reports geographic revenue by the location of customers' headquarters; the end customer and shipping location may differ.",
+"what": "NVIDIA revenue from customers headquartered in China (including Hong Kong), Q1 FY2026, all products. NVIDIA's 10-Q for that quarter says sales of its H20 products (a figure the filing does not limit to China) were $4.6 billion in the quarter prior to the new export licensing requirements, and it took a $4.5 billion H20 charge. NVIDIA reports geographic revenue by the location of customers' headquarters; the end customer and shipping location may differ.",
 "source": "NVIDIA Corporation (10-Q for quarter ended Apr. 26, 2026, prior-year column)",
 "publisher": "SEC EDGAR (NVIDIA 10-Q, recast customer-HQ basis)",
 "date": "2026-05-20",
@@ -865,7 +865,7 @@ export const ESTIMATES = [
 "grade": "B",
 "grade_note": "Company SEC filing. All products, not only AI chips.",
 "quote": "China (including Hong Kong) 4,550 9,659",
-"via": "",
+"via": "H20 figures from NVIDIA 10-Q for quarter ended Apr. 27, 2025: https://www.sec.gov/Archives/edgar/data/1045810/000104581025000116/nvda-20250427.htm",
 "quote_is_paraphrase": false,
 "fetched": true,
 "id": "M5-nvidia-corporation-1-q1-fy2026-feb-apr-2025"
@@ -884,7 +884,7 @@ export const ESTIMATES = [
 "grade": "B",
 "grade_note": "Company SEC filing. All products, not only AI chips.",
 "quote": "China (including Hong Kong) 7,880 3,985 12,430 13,644",
-"via": "",
+"via": "The 'no H20 sales to China-based customers' statement is from NVIDIA 10-Q for quarter ended July 27, 2025: https://www.sec.gov/Archives/edgar/data/1045810/000104581025000209/nvda-20250727.htm",
 "quote_is_paraphrase": false,
 "fetched": true,
 "id": "M5-nvidia-corporation-1-q2-fy2026-may-jul-2025"
@@ -991,7 +991,7 @@ export const ESTIMATES = [
 "high": 200000,
 "unit": "chips (units)",
 "what": "Licensed NVIDIA H200 shipments to China in 2026, central 100,000; low end (20,000) = deliveries reported so far",
-"source": "Institute for Progress",
+"source": "Institute for Progress (Tim Fist, Georgia Adamson, Konstantin Pilz)",
 "publisher": "IFP, 'How to Increase America's AI Lead Over China'",
 "date": "2026-10-19",
 "url": "https://ifp.org/how-to-increase-americas-ai-lead-over-china/",

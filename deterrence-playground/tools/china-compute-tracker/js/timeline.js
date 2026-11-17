@@ -19,11 +19,25 @@ export function timelineItems(S) {
   return out.filter(i => i.d >= '2022-10-01').sort((a, b) => a.d.localeCompare(b.d));
 }
 
-export function renderTimeline(root, S, { onPick, tip, rerender }) {
-  const items = timelineItems(S);
+/** Items matching a search, title matches first, then newest first. Empty query returns null. */
+export function searchTimeline(items, q) {
+  q = (q || '').trim().toLowerCase();
+  if (!q) return null;
+  const lane = it => LANES.find(l => l.k === it.lane).n;
+  const hit = it => [it.t, fmtDate(it.d), lane(it)].some(v => v.toLowerCase().includes(q));
+  const rank = it => (it.t.toLowerCase().includes(q) ? 0 : 1);
+  return items.filter(hit).sort((a, b) => rank(a) - rank(b) || b.d.localeCompare(a.d));
+}
+
+export function renderTimeline(root, S, { onPick, tip, set, rerender }) {
+  const all = timelineItems(S);
+  const hits = searchTimeline(all, S.tq);
+  const items = hits ? [...hits].sort((a, b) => a.d.localeCompare(b.d)) : all;
   root.innerHTML = `<div class="card chartcard"><div class="chart-h"><p class="eyebrow">Controls, listings, cases and estimates, Oct. 2022 to Nov. 2026</p><p class="fine">${items.length} items · estimates follow your grade filter</p></div>
     <div class="chartbox"><svg id="tlc" class="chart tl" role="group" aria-label="Timeline. Use the list below to reach every item by keyboard."></svg></div></div>
-    <div class="card"><p class="eyebrow">All items, newest first</p><ol class="list" id="tll"></ol></div>`;
+    <div class="card"><div class="row qrow"><label class="vh" for="tq">Search the timeline</label><input id="tq" class="search" type="search" placeholder="Search: H20, Huawei, Malaysia, Entity List" value="${esc(S.tq || '')}" autocomplete="off"></div>
+      <p class="eyebrow">${hits ? `${hits.length} of ${all.length} items match, best matches first` : 'All items, newest first'}</p><ol class="list" id="tll"></ol></div>`;
+  let qt; root.querySelector('#tq').oninput = e => { clearTimeout(qt); qt = setTimeout(() => { set({ tq: e.target.value }); const i = document.getElementById('tq'); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } }, 250); };
   const svg = root.querySelector('#tlc');
   const W = Math.max(300, svg.parentElement.clientWidth || 700);
   const narrow = W < 560;
@@ -55,10 +69,11 @@ export function renderTimeline(root, S, { onPick, tip, rerender }) {
     shape.addEventListener('mouseleave', () => tip(null));
   }
   const ll = root.querySelector('#tll');
-  ll.innerHTML = [...items].reverse().map(it => `<li class="it${S.sel === it.id ? ' on' : ''}"><button type="button" data-id="${esc(it.id)}"><span class="it-d">${esc(fmtDate(it.d))}</span>
+  ll.innerHTML = (hits || [...items].reverse()).map(it => `<li class="it${S.sel === it.id ? ' on' : ''}"><button type="button" data-id="${esc(it.id)}"><span class="it-d">${esc(fmtDate(it.d))}</span>
     <span class="it-t">${esc(it.t)}</span><span class="it-a fine">${esc(LANES.find(l => l.k === it.lane).n)}</span></button></li>`).join('');
   ll.querySelectorAll('[data-id]').forEach(b => { b.onclick = () => onPick(b.dataset.id, true); });
-  clip(ll, 'timeline', 8, 'items', rerender);
+  if (!hits) clip(ll, 'timeline', 8, 'items', rerender);
+  else if (!hits.length) ll.innerHTML = '<li class="none">No item matches this search.</li>';
 }
 
 export function policyDetail(p) {

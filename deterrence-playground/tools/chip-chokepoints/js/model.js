@@ -88,3 +88,10 @@ export function summarise(thr, binding) {
 export function hhi(shares) {
   return Math.round(Object.entries(shares || {}).filter(([c]) => !/^Other/.test(c)).reduce((a, [, v]) => a + v * v, 0));
 }
+
+// Months shown on the simulator's time axis. Open-ended shocks use the full horizon; a shock with a set
+// duration is shown over about three times its length (whole years, at least 24 months) so short shocks stay visible.
+export function viewSpan(months) {
+  if (!Number.isFinite(months)) return HORIZON;
+  return Math.min(HORIZON, Math.max(24, Math.ceil((3 * months) / 12) * 12));
+}

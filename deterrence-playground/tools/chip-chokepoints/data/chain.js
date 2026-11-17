@@ -39,7 +39,7 @@ export const CHAIN = {
    "shares": {
     "United States": 65,
     "Taiwan": 11,
-    "Europe": 9,
+    "European Union": 9,
     "China": 5,
     "Japan": 4,
     "South Korea": 3,
@@ -82,7 +82,7 @@ export const CHAIN = {
    "shares": {
     "United States": 96,
     "Japan": 3,
-    "Other": 1
+    "Other (Korea and China, <1% each)": 1
    },
    "note": "Korea and China under 1% each. CSET: U.S. firms are the exclusive providers of full-spectrum EDA for leading-edge chips. SIA/BCG 2024 gives EDA and core IP together, 2022: U.S. 68%, EU 25%.",
    "china": {
@@ -822,7 +822,7 @@ export const CHAIN = {
     "South Korea": 9,
     "Japan": 6,
     "United States": 3,
-    "Europe": 3,
+    "European Union": 3,
     "Other": 20
    },
    "note": "SIA/BCG 2024 Exhibit 2, p. 10 (read from the chart). Includes IDM and OSAT plants. ASE (Taiwan) earned nearly 45% of top-10 OSAT revenue in 2024; JCET (China) ranked third at $5.0 billion (TrendForce).",

@@ -10,7 +10,8 @@ const FIXED = {
   Netherlands: 'var(--c2)', Europe: 'var(--c7)', 'European Union': 'var(--c7)', Germany: 'var(--c7)', 'United Kingdom': 'var(--c8)',
   Singapore: 'var(--c5)', Malaysia: 'var(--c5)', 'Southeast Asia': 'var(--c5)', 'Rest of Asia': 'var(--c8)',
 };
-export function colorOf(c) { return OTHER.test(c) ? 'var(--faint)' : FIXED[c] || 'var(--c8)'; }
+// Countries without a fixed colour (all small shares) share the neutral 'Other' tone so no colour means two things.
+export function colorOf(c) { return OTHER.test(c) ? 'var(--faint)' : FIXED[c] || 'var(--faint)'; }
 
 export function rowsOf(stage) {
   const ent = Object.entries(stage.shares || {});
@@ -19,10 +20,17 @@ export function rowsOf(stage) {
   return [...named.map(([c, v]) => ({ c, v })), ...other.map(([c, v]) => ({ c, v }))];
 }
 
+// One legend entry per colour; countries that share a colour (Europe, EU, Germany) share an entry.
 export function legendCountries(stages) {
-  const seen = new Map();
-  stages.forEach(s => rowsOf(s).forEach(r => { if (!OTHER.test(r.c) && !seen.has(r.c)) seen.set(r.c, colorOf(r.c)); }));
-  return [...seen.entries()].filter(([c]) => FIXED[c]);
+  const byCol = new Map();
+  stages.forEach(s => rowsOf(s).forEach(r => {
+    if (OTHER.test(r.c) || !FIXED[r.c]) return;
+    const col = colorOf(r.c);
+    if (!byCol.has(col)) byCol.set(col, []);
+    const names = byCol.get(col);
+    if (!names.includes(short(r.c))) names.push(short(r.c));
+  }));
+  return [...byCol.entries()].map(([col, names]) => [names.join(' / '), col]);
 }
 
 // Simple mode: groups with more than SIMPLE_KEEP + 1 stages show only their most concentrated stages

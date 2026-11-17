@@ -22,12 +22,14 @@ export function ctlCounts() {
   return out;
 }
 
+const ctlHead = c => (c.title ? `<span class="r">${esc(c.title)}</span><span class="k">${esc(c.status)}</span>${c.verified === false ? ' <span class="pill unv">unverified</span>' : ''}<span class="cite">${esc(c.who)}: ${esc(c.ref)}</span>`
+  : `<span class="r">${esc(c.who)}: ${esc(c.ref)}</span><span class="k">${esc(c.status)}</span>${c.verified === false ? ' <span class="pill unv">unverified</span>' : ''}<br>`);
 const ctlItem = (c, showNodes) => `<li data-b="${c.bloc}" data-st="${esc(c.status)}"><span class="d">${esc(c.date)}</span>
-  <span><span class="r">${esc(c.who)}: ${esc(c.ref)}</span><span class="k">${esc(c.status)}</span>${c.verified === false ? ' <span class="pill unv">unverified</span>' : ''}<br>${esc(c.text)}
+  <span>${ctlHead(c)}${esc(c.text)}
   ${showNodes ? `<br><span class="fine">Targets: ${c.nodes.map(n => esc((CHAIN.stages.find(s => s.id === n) || { short: n }).short)).join(', ')}</span>` : ''}
   ${c.url ? ` <a href="${c.url}" target="_blank" rel="noopener">${esc(c.urlLabel || 'Source')}</a>` : ''}</span></li>`;
 
-export function renderCard(el, id, loss) {
+export function renderCard(el, id, loss, shockLabel) {
   const s = CHAIN.stages.find(x => x.id === id);
   if (!s) { el.innerHTML = ''; return; }
   const rows = rowsOf(s);
@@ -35,7 +37,8 @@ export function renderCard(el, id, loss) {
   const firms = s.firms ? Object.entries(s.firms).sort((a, b) => b[1] - a[1]) : [];
   const ctl = ctlForStage(id).sort((a, b) => (a.date < b.date ? 1 : -1));
   const n = NOTIONAL[id];
-  el.innerHTML = `<div class="card-h"><h3>${esc(s.label)}</h3>${loss ? `<span class="left" data-s="${loss > 0.5 ? 'bad' : 'warn'}">${Math.round((1 - loss) * 100)}% left in this shock</span>` : ''}</div>
+  el.innerHTML = `<div class="card-h"><h3>${esc(s.label)}</h3>${loss ? `<span class="left" data-s="${loss > 0.5 ? 'bad' : 'warn'}" title="${esc(shockLabel || '')}">${Math.round((1 - loss) * 100)}% left in the selected shock</span>` : ''}</div>
+    ${loss && shockLabel ? `<p class="fine shock-n">Shock: ${esc(shockLabel)}</p>` : ''}
     <p class="fine full-only">${esc(s.metric)}, data year ${esc(String(s.year))}. Source: ${link(s.src)}.${h ? ` HHI ${h.toLocaleString('en-US')}.` : ''}</p>
     <div class="cgrid">
       <div><p class="eyebrow">Country shares</p>${rows.length ? `<table class="mini"><tbody>${rows.map(r => `<tr><td><span class="dot" style="background:${colorOf(r.c)}"></span>${esc(r.c)}</td><td class="num">${r.v}%</td></tr>`).join('')}</tbody></table>` : '<p class="fine">No public country split found.</p>'}
@@ -48,29 +51,67 @@ export function renderCard(el, id, loss) {
     </div>
     <div class="full-only"><p class="eyebrow mt-s">Controls aimed at this stage (${ctl.length})</p>
     ${ctl.length ? `<ol class="ctl">${ctl.map(c => ctlItem(c, false)).join('')}</ol>` : '<p class="fine">No export control in this tool targets this stage directly.</p>'}</div>
-    <p class="fine simple-only">Sources, notional model assumptions and the ${ctl.length} control${ctl.length === 1 ? '' : 's'} aimed at this stage are in Full detail.</p>`;
+    <div class="simple-only">${ctl.length ? `<p class="eyebrow mt-s">Latest controls aimed at this stage</p>
+      <ol class="ctl brief">${ctl.slice(0, 3).map(c => `<li data-b="${c.bloc}"><span class="d">${esc(c.date)}</span><span>${ctlHead(c)}</span></li>`).join('')}</ol>
+      <button type="button" class="linkbtn" data-act="all-ctl">All ${ctl.length} control${ctl.length === 1 ? '' : 's'} for this stage, with sources and notional assumptions (Full detail)</button>`
+      : '<p class="fine">No export control in this tool targets this stage directly. Sources and notional model assumptions are in Full detail.</p>'}</div>`;
+}
+
+// Text search over every measure: all words must match somewhere. Title or citation matches rank first,
+// then matches in the summary; ties go to the newest measure.
+export function searchControls(list, q) {
+  const words = String(q || '').toLowerCase().split(/\s+/).filter(Boolean);
+  if (!words.length) return null;
+  const out = [];
+  for (const c of list) {
+    const head = `${c.title || ''} ${c.who} ${c.ref}`.toLowerCase();
+    const body = `${c.text} ${c.date} ${c.eff || ''} ${c.status}`.toLowerCase();
+    let score = 0;
+    for (const w of words) {
+      if (head.includes(w)) score += 2; else if (body.includes(w)) score += 1; else { score = -1; break; }
+    }
+    if (score > 0) out.push([score, c]);
+  }
+  return out.sort((a, b) => b[0] - a[0] || (a[1].date < b[1].date ? 1 : -1)).map(x => x[1]);
 }
 
 export function renderControls(el, noteEl, f) {
-  const rows = CONTROLS.filter(c => (f.bloc === 'all' || c.bloc === f.bloc) && (f.node === 'all' || c.nodes.includes(f.node)))
-    .sort((a, b) => (a.date < b.date ? 1 : -1));
+  const hits = searchControls(CONTROLS, f.q);
+  const rows = hits ? hits.filter(c => (f.bloc === 'all' || c.bloc === f.bloc) && (f.node === 'all' || c.nodes.includes(f.node)))
+    : CONTROLS.filter(c => (f.bloc === 'all' || c.bloc === f.bloc) && (f.node === 'all' || c.nodes.includes(f.node))).sort((a, b) => (a.date < b.date ? 1 : -1));
   el.innerHTML = rows.length ? rows.map(c => ctlItem(c, true)).join('') : '<li>No measure matches these filters.</li>';
-  noteEl.textContent = `${rows.length} of ${CONTROLS.length} measures shown. Current as of ${CONTROLS_ASOF}. ${CONTROLS_NOTE}`;
+  noteEl.textContent = `${rows.length} of ${CONTROLS.length} measures shown${hits ? ', best matches first' : ''}. Current as of ${CONTROLS_ASOF}. ${CONTROLS_NOTE}`;
 }
 
-export function renderHeat(table, selected, onPick) {
+// Simple mode: search results across all measures, ignoring the Full-detail filters.
+export function renderSearchSimple(el, q) {
+  const hits = searchControls(CONTROLS, q);
+  el.hidden = !hits;
+  if (!hits) { el.innerHTML = ''; return; }
+  el.innerHTML = `<p class="fine" role="status">${hits.length} of ${CONTROLS.length} measures match, best matches first.</p>`
+    + (hits.length ? `<ol class="ctl">${hits.map(c => ctlItem(c, true)).join('')}</ol>` : '');
+}
+
+export function renderHeat(table, selected, onPick, sort = 0, onSort = () => {}) {
   const cols = ['United States', 'Taiwan', 'South Korea', 'Japan', 'Netherlands', 'Europe', 'China'];
-  let h = `<thead><tr><th>Stage</th><th class="c">Year</th>${cols.map(c => `<th class="c">${c === 'United States' ? 'U.S.' : c === 'South Korea' ? 'Korea' : c === 'Netherlands' ? 'NL' : c}</th>`).join('')}<th class="c">Rest</th><th class="c">HHI</th><th class="c">Controls</th></tr></thead><tbody>`;
-  for (const s of CHAIN.stages) {
-    const sh = s.shares || {};
+  const lab = c => ({ 'United States': 'U.S.', 'South Korea': 'Korea', Netherlands: 'NL', Europe: 'Europe/EU' }[c] || c);
+  const hh = s => (Object.keys(s.shares || {}).length ? hhi(s.shares) : -1);
+  const stages = sort ? [...CHAIN.stages].sort((a, b) => sort * (hh(b) - hh(a))) : CHAIN.stages;
+  const sortLab = sort === 1 ? 'highest first' : sort === -1 ? 'lowest first' : 'chain order';
+  let h = `<thead><tr><th>Stage</th><th class="c">Year</th>${cols.map(c => `<th class="c">${lab(c)}</th>`).join('')}<th class="c">Rest</th><th class="c" aria-sort="${sort === 1 ? 'descending' : sort === -1 ? 'ascending' : 'none'}"><button type="button" class="sortbtn" id="hhi-sort" title="Sort by HHI">HHI <span aria-hidden="true">${sort === 1 ? '▼' : sort === -1 ? '▲' : '↕'}</span><span class="vh">, sorted ${sortLab}; activate to change</span></button></th><th class="c">Controls</th></tr></thead><tbody>`;
+  for (const s of stages) {
+    // SIA/BCG label its European column "EU"; it shares the Europe column here.
+    const sh = { ...(s.shares || {}) };
+    if (sh['European Union'] != null) { sh.Europe = (sh.Europe || 0) + sh['European Union']; delete sh['European Union']; }
     const tot = Object.values(sh).reduce((a, b) => a + b, 0);
     const listed = cols.reduce((a, c) => a + (sh[c] || 0), 0);
     const cell = v => `<td class="c" style="background:color-mix(in srgb, var(--bad) ${Math.round(Math.min(100, v) * 0.75)}%, transparent)">${v ? (v < 10 ? v.toFixed(1) : v.toFixed(0)) : '·'}</td>`;
     h += `<tr tabindex="0" data-st="${s.id}" aria-selected="${s.id === selected}"><td class="mn">${esc(s.label)}</td><td class="c">${esc(String(s.year))}</td>
       ${tot ? cols.map(c => cell(sh[c] || 0)).join('') : cols.map(() => '<td class="c">–</td>').join('')}
-      <td class="c">${tot ? Math.max(0, tot - listed).toFixed(0) : '–'}</td><td class="c">${tot ? hhi(sh).toLocaleString('en-US') : '–'}</td><td class="c">${ctlForStage(s.id).length}</td></tr>`;
+      <td class="c">${tot ? Math.max(0, tot - listed).toFixed(0) : '–'}</td><td class="c">${tot ? hhi(s.shares).toLocaleString('en-US') : '–'}</td><td class="c">${ctlForStage(s.id).length}</td></tr>`;
   }
   table.innerHTML = h + '</tbody>';
+  table.querySelector('#hhi-sort').addEventListener('click', () => onSort(sort === 0 ? 1 : sort === 1 ? -1 : 0));
   table.querySelectorAll('tbody tr').forEach(tr => {
     tr.addEventListener('click', () => onPick(tr.dataset.st));
     tr.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPick(tr.dataset.st); } });

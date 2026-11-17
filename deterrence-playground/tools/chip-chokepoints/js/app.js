@@ -1,10 +1,10 @@
 // AI Chip Chokepoint Twin: state, URL hash, controls and rendering.
 import { CHAIN } from '../data/chain.js';
 import { SCENARIOS, NOTIONAL, LIMITS } from '../data/scenarios.js';
-import { simulate, shareOf, HORIZON } from './model.js';
+import { simulate, shareOf, viewSpan, HORIZON } from './model.js';
 import { drawFlow, wireFlowTip, legendCountries, esc } from './flow.js';
 import { drawSim, simLegend, pct } from './simchart.js';
-import { renderCard, renderControls, renderHeat, renderMethod, renderSources, ctlCounts } from './panels.js';
+import { renderCard, renderControls, renderSearchSimple, renderHeat, renderMethod, renderSources, ctlCounts } from './panels.js';
 import { createTour } from './tour.js';
 import { initDetail, setDetail } from './detail.js';
 import { CONTROLS } from '../data/controls.js';
@@ -29,11 +29,11 @@ const ACTORS = (() => {
 })();
 
 // Simple-mode view state (not in the URL): stage groups opened with "Show all", and the full shock list.
-const UI = { expanded: new Set(), moreSc: false };
-const TOP_SC = ['nl-euv', 'tw', 'kr-hbm', 'cn-min'];
+const UI = { expanded: new Set(), moreSc: false, heatSort: 0 };
+const TOP_SC = ['nl-euv', 'tw', 'tw-6', 'kr-hbm', 'cn-min'];
 
 const S = { sc: SCENARIOS[0].id, cov: {}, cu: { a: 'Taiwan', st: [], c: 100 }, p: defaults(), open: true, dur: 12, month: 12,
-  sel: 'euv', overlay: true, cf: { bloc: 'all', node: 'all' } };
+  sel: 'euv', overlay: true, cf: { bloc: 'all', node: 'all', q: '' } };
 
 function applyScenario(id) {
   S.sc = id; S.cov = {}; S.p = defaults();
@@ -42,6 +42,12 @@ function applyScenario(id) {
   if (sc && sc.months) { S.open = false; S.dur = sc.months; } else S.open = true;
   if (id === 'custom' && !S.cu.st.length) S.cu.st = SIM.filter(s => shareOf(s, S.cu.a) > 0).map(s => s.id);
   if (sc && sc.hits.length) S.sel = sc.hits[0].st;
+}
+
+function shockLabel() {
+  if (S.sc === 'none') return '';
+  if (S.sc === 'custom') return `Your shock: ${S.cu.a} output lost at ${S.cu.st.length} stage${S.cu.st.length === 1 ? '' : 's'}`;
+  return SC[S.sc].label;
 }
 
 function hits() {
@@ -87,12 +93,13 @@ function readHash() {
 // ---- Panel controls --------------------------------------------------------------------------
 function buildScenarioPanel() {
   const list = [...SCENARIOS, { id: 'custom', label: 'Build your own shock', status: 'custom' }, { id: 'none', label: 'No shock (baseline)', status: '' }];
-  const tag = { announced: 'mirrors an announced measure', stress: 'stress test', custom: 'choose actor and stages' };
+  // Every preset is a hypothetical stress test, so only tags that tell presets apart are shown.
+  const tag = { announced: 'mirrors an announced measure', custom: 'choose actor and stages' };
   const nMore = list.filter(s => !TOP_SC.includes(s.id)).length;
   $('scenarios').classList.toggle('expanded', UI.moreSc);
   $('sc-more').textContent = UI.moreSc ? 'Fewer shocks' : `More shocks (${nMore})`;
   $('sc-more').setAttribute('aria-expanded', UI.moreSc);
-  $('scenarios').innerHTML = list.map(s => `<button type="button" data-s="${s.id}" aria-pressed="${s.id === S.sc}"${TOP_SC.includes(s.id) || s.id === S.sc ? '' : ' class="xtra"'}>${esc(s.label)}${s.status ? `<span class="st">${tag[s.status]}</span>` : ''}</button>`).join('');
+  $('scenarios').innerHTML = list.map(s => `<button type="button" data-s="${s.id}" aria-pressed="${s.id === S.sc}"${TOP_SC.includes(s.id) || s.id === S.sc ? '' : ' class="xtra"'}>${esc(s.label)}${tag[s.status] ? `<span class="st">${tag[s.status]}</span>` : ''}</button>`).join('');
   $('scenarios').querySelectorAll('button').forEach(b => b.addEventListener('click', () => { applyScenario(b.dataset.s); render(); }));
   const sc = SC[S.sc];
   $('sc-basis').textContent = sc ? sc.basis : S.sc === 'custom' ? 'Pick a country or firm and the stages where its output is lost. A stress test, not a forecast.' : 'No shock: every stage delivers its pre-shock output.';
@@ -150,14 +157,18 @@ const fmtP = (f, v) => (f === 'dep' ? `${Math.round(v * 100)}%` : `${v} mo`);
 let run = null;
 function render() {
   buildScenarioPanel(); buildSliders();
-  renderHeat($('heat'), S.sel, pick);
+  heat();
   renderCtl();
   update();
+}
+function heat() {
+  renderHeat($('heat'), S.sel, pick, UI.heatSort, v => { UI.heatSort = v; heat(); $('hhi-sort').focus(); });
 }
 function renderCtl() {
   $('cf-bloc').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.b === S.cf.bloc));
   $('cf-node').value = S.cf.node;
   renderControls($('controls'), $('ctl-note'), S.cf);
+  renderSearchSimple($('ctl-simple'), S.cf.q);
 }
 function pick(id) { S.sel = id; update(); $('card').scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
 
@@ -168,8 +179,12 @@ function update() {
   $('flow-legend').innerHTML = legendCountries(CHAIN.stages).map(([c, col]) => `<li><span class="sw" style="background:${col}"></span>${esc(c)}</li>`).join('')
     + '<li><span class="sw" style="background:var(--faint)"></span>Other</li>'
     + (h.length ? '<li><span class="sw hatch"></span>Lost in this shock</li>' : '');
-  renderCard($('card'), S.sel, run.losses[S.sel]);
-  drawSim($('sim'), $('sim-tip'), CHAIN, run, S.month, t => { S.month = t; update(); });
+  renderCard($('card'), S.sel, run.losses[S.sel], shockLabel());
+  const span = viewSpan(S.open ? Infinity : S.dur);
+  if (S.month > span - 1) S.month = span - 1;
+  $('scrub').max = String(span - 1);
+  drawSim($('sim'), $('sim-tip'), CHAIN, run, S.month, t => { S.month = t; update(); }, span);
+  $('sim-sc').textContent = shockLabel() ? `${S.sc === 'custom' ? '' : 'Example: '}${shockLabel()}${S.open ? '' : ` (shown over ${span} months)`}` : '';
   simLegend($('sim-legend'), CHAIN, run);
   $('scrub').value = S.month; $('scrub-o').textContent = `${S.month} (year ${(S.month / 12).toFixed(1)})`;
   $('heat').querySelectorAll('tbody tr').forEach(tr => tr.setAttribute('aria-selected', tr.dataset.st === S.sel));
@@ -181,11 +196,14 @@ function readouts() {
   const r = run, F = r.fast, L = r.slow;
   const lab = id => (id ? ST[id].short : 'none');
   let s, b, sub;
+  const back = c => (c.open ? 'not within 10 years' : c.recover === 0 ? 'never short' : `month ${c.recover}`);
   if (!r.hitIds.length) { s = 'good'; b = 'No shock'; sub = S.sc === 'none' ? 'Baseline: every stage delivers its pre-shock output.' : 'This actor has no share at the chosen stages.'; }
   else if (L.peak < 0.005) { s = 'warn'; b = 'Buffers cover the shock'; sub = 'Output never falls under these assumptions.'; }
-  else { s = L.peak > 0.5 ? 'bad' : 'warn'; b = `Up to ${pct(L.peak)} of world AI accelerator output lost`; sub = `${lab(L.binder)} binds. Impact starts in month ${L.firstHit}.`; }
+  else { s = L.peak > 0.5 ? 'bad' : 'warn'; b = `Up to ${pct(L.peak)} of world AI accelerator output lost`; sub = `${lab(L.binder)} binds. Impact starts in month ${L.firstHit}. Back to full output: ${back(F) === back(L) ? back(L) : `${back(F)} (fast case), ${back(L)} (slow case)`}.`; }
+  const name = shockLabel();
+  $('st-n').textContent = name ? (S.sc === 'custom' ? name : `Example shock: ${name}`) : '';
+  $('st-n').hidden = !name;
   $('status').dataset.s = s; $('st-b').textContent = b; $('st-s').textContent = sub;
-  const back = c => (c.open ? 'not within 10 years' : c.recover === 0 ? 'never short' : `month ${c.recover}`);
   const t = S.month;
   const rows = r.hitIds.length ? [
     ['Binding stage', lab(L.binder)],
@@ -224,12 +242,32 @@ $('cu-stages').addEventListener('change', () => { S.cu.st = [...$('cu-stages').q
 $('cf-bloc').querySelectorAll('button').forEach(b => b.addEventListener('click', () => { S.cf.bloc = b.dataset.b; renderCtl(); }));
 $('cf-node').innerHTML = '<option value="all">All stages</option>' + CHAIN.stages.map(s => `<option value="${s.id}">${esc(s.label)}</option>`).join('');
 $('cf-node').addEventListener('change', e => { S.cf.node = e.target.value; renderCtl(); });
+$('ctl-q').addEventListener('input', e => { S.cf.q = e.target.value; renderCtl(); });
+$('card').addEventListener('click', e => {
+  if (!e.target.closest('[data-act="all-ctl"]')) return;
+  setDetail('full');
+  const list = $('card').querySelector('.ctl');
+  (list || $('card')).scrollIntoView({ block: 'start' });
+});
 $('reset').addEventListener('click', () => { S.month = 12; S.cu = { a: 'Taiwan', st: [], c: 100 }; applyScenario(SCENARIOS[0].id); render(); });
 $('copy').addEventListener('click', async () => {
   try { await navigator.clipboard.writeText(location.href); $('copy').textContent = 'Copied'; } catch { $('copy').textContent = 'Copy failed'; }
   setTimeout(() => { $('copy').textContent = 'Copy link'; }, 1500);
 });
 let rz; window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(update, 150); });
+
+// Phones and narrow screens: put the shock picker and its result right after the toolbar, then the
+// simulator, then the chain, so the main control and the answer are on the first screen. DOM order is
+// moved (not just CSS order) so keyboard order matches what is seen.
+const NARROW = matchMedia('(max-width: 1020px)');
+const PANEL = document.querySelector('.panel');
+function place() {
+  const stage = $('stage');
+  if (NARROW.matches) { stage.querySelector('.controls').after(PANEL); PANEL.after($('sim-card')); }
+  else { stage.after(PANEL); $('card').after($('sim-card')); }
+}
+place();
+NARROW.addEventListener('change', () => { place(); update(); });
 
 const tour = createTour($('stage'), set => {
   applyScenario(set.s || 'none');
@@ -241,7 +279,7 @@ const tour = createTour($('stage'), set => {
 $('tour-btn').addEventListener('click', () => tour.start());
 
 $('ctl-n').textContent = String(CONTROLS.length);
-$('to-full').addEventListener('click', () => { setDetail('full'); $('ctl-card').scrollIntoView({ block: 'start' }); $('ctl-card').querySelector('button').focus({ preventScroll: true }); });
+$('to-full').addEventListener('click', () => { setDetail('full'); $('ctl-card').scrollIntoView({ block: 'start' }); $('cf-bloc').querySelector('button').focus({ preventScroll: true }); });
 initDetail(m => { $('assume').open = m === 'full'; });
 
 $('asof').textContent = CHAIN.retrieved;

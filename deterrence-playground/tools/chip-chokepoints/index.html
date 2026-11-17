@@ -31,9 +31,9 @@
 
     <div class="card controls">
       <div class="row">
-        <div class="seg" id="detail" role="group" aria-label="Level of detail">
-          <button type="button" class="btn" data-m="simple" aria-pressed="true">Simple</button>
-          <button type="button" class="btn" data-m="full" aria-pressed="false">Full detail</button>
+        <div class="seg" id="detail" role="group" aria-label="Level of detail" title="Simple shows the main result; Full detail shows every source, control and assumption.">
+          <button type="button" class="btn" data-m="simple" aria-pressed="true" title="Simple shows the main result; Full detail shows every source, control and assumption.">Simple</button>
+          <button type="button" class="btn" data-m="full" aria-pressed="false" title="Simple shows the main result; Full detail shows every source, control and assumption.">Full detail</button>
         </div>
         <label class="tg mini full-only"><input type="checkbox" id="overlay" checked><span class="sw"></span><span class="t">Controls overlay<small>Count the measures aimed at each stage</small></span></label>
         <div class="acts">
@@ -58,7 +58,7 @@
     <div class="card chartcard" id="card" aria-live="polite"></div>
 
     <div class="card chartcard" id="sim-card">
-      <div class="chart-h"><p class="eyebrow" id="sim-h">Shock simulator: world AI accelerator output</p><ul class="legend" id="sim-legend"></ul></div>
+      <div class="chart-h"><p class="eyebrow" id="sim-h">Shock simulator: world AI accelerator output <span class="sim-sc" id="sim-sc"></span></p><ul class="legend" id="sim-legend"></ul></div>
       <div class="chartbox">
         <svg id="sim" class="chart" role="img" aria-labelledby="sim-h sim-desc"></svg>
         <div class="tooltip" id="sim-tip" hidden></div>
@@ -71,7 +71,7 @@
 
   <aside class="panel" aria-label="Shock settings and results">
     <div class="sec">
-      <div class="status" id="status" data-s="warn" aria-live="polite"><b id="st-b"></b><span id="st-s"></span></div>
+      <div class="status" id="status" data-s="warn" aria-live="polite"><span class="st-n" id="st-n" hidden></span><b id="st-b"></b><span id="st-s"></span></div>
       <dl class="readout full-only" id="readout"></dl>
     </div>
     <div class="sec">
@@ -95,17 +95,17 @@
   </aside>
 </main>
 
-<section class="wide simple-only" aria-label="More detail">
-  <div class="card more">
-    <p>The export-controls timeline (<span id="ctl-n"></span> measures, each linked to its official text) and the chokepoint table are in Full detail.</p>
-    <button type="button" class="btn" id="to-full">Show controls and table</button>
-  </div>
-</section>
-
-<section class="wide full-only" aria-label="Export controls and comparison">
+<section class="wide" aria-label="Export controls and comparison">
   <div class="card chartcard" id="ctl-card">
     <div class="chart-h"><p class="eyebrow" id="ctl-h">Export controls and counter-measures by stage</p></div>
-    <div class="row">
+    <label class="fl search"><span>Search all <span id="ctl-n"></span> measures</span>
+      <input type="search" id="ctl-q" autocomplete="off" placeholder="Rule, agency, country, stage or date" aria-describedby="ctl-h"></label>
+    <div id="ctl-simple" class="simple-only" aria-live="polite" hidden></div>
+    <div class="more simple-only">
+      <p>The full timeline, each measure linked to its official text, and the chokepoint table are in Full detail.</p>
+      <button type="button" class="btn" id="to-full">Show controls and table</button>
+    </div>
+    <div class="row full-only">
       <div class="seg" id="cf-bloc" role="group" aria-label="Who imposed it">
         <button type="button" class="btn" data-b="all" aria-pressed="true">All</button>
         <button type="button" class="btn" data-b="us" aria-pressed="false">United States</button>
@@ -114,13 +114,13 @@
       </div>
       <label class="fl inline"><span>Stage</span><select id="cf-node"></select></label>
     </div>
-    <ol class="ctl" id="controls" aria-labelledby="ctl-h"></ol>
-    <p class="fine" id="ctl-note"></p>
+    <ol class="ctl full-only" id="controls" aria-labelledby="ctl-h"></ol>
+    <p class="fine full-only" id="ctl-note"></p>
   </div>
 
-  <div class="card chartcard" id="heat-card">
+  <div class="card chartcard full-only" id="heat-card">
     <div class="chart-h"><p class="eyebrow" id="heat-h">Chokepoint table: share of world output by country and stage</p></div>
-    <p class="fine">Darker cells mean a larger share. HHI is the Herfindahl–Hirschman index of concentration across named countries (10,000 = one country). Select a row to open that stage.</p>
+    <p class="fine">Darker cells mean a larger share. The Europe column includes figures their source labels EU. HHI is the Herfindahl–Hirschman index of concentration across named countries (10,000 = one country). Select a row to open that stage.</p>
     <div class="tablewrap"><table id="heat" aria-labelledby="heat-h"></table></div>
   </div>
 </section>

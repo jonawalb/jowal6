@@ -7,28 +7,30 @@ import { esc } from './flow.js';
 const STAGE_COL = ['var(--c4)', 'var(--c3)', 'var(--c6)', 'var(--c5)', 'var(--c7)'];
 export const pct = v => `${Math.round(Math.max(0, v) * 1000) / 10}%`;
 
-export function drawSim(svg, tip, chain, run, month, onScrub) {
+export function drawSim(svg, tip, chain, run, month, onScrub, span = HORIZON) {
+  const N = Math.max(2, Math.min(HORIZON, span));
   const box = svg.parentElement.getBoundingClientRect();
   const W = Math.max(320, Math.round(box.width || 900));
   const narrow = W < 620;
   const H = narrow ? 230 : 280;
   const m = { l: 40, r: 12, t: 12, b: 28 };
   const iw = W - m.l - m.r, ih = H - m.t - m.b;
-  const X = t => m.l + (t / (HORIZON - 1)) * iw;
+  const X = t => m.l + (t / (N - 1)) * iw;
   const Y = v => m.t + (1 - Math.max(0, Math.min(1, v))) * ih;
   let g = '';
   for (const v of [0, 0.25, 0.5, 0.75, 1]) {
     g += `<line class="grid" x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}"></line><text class="ax-t" x="${m.l - 6}" y="${Y(v) + 4}" text-anchor="end">${v * 100}%</text>`;
   }
-  const step = narrow ? 24 : 12;
-  for (let t = 0; t < HORIZON; t += step) g += `<text class="ax-t" x="${X(t)}" y="${H - 8}" text-anchor="middle">${t === 0 ? '0' : 'yr ' + t / 12}</text>`;
+  const months = N <= 36;
+  const step = months ? (narrow && N > 24 ? 12 : 6) : N <= 72 ? 12 : narrow ? 24 : 12;
+  for (let t = 0; t < N; t += step) g += `<text class="ax-t" x="${X(t)}" y="${H - 8}" text-anchor="middle">${t === 0 ? '0' : months ? 'mo ' + t : 'yr ' + t / 12}</text>`;
   const area = (lo, hi) => {
     let d = `M${X(0)},${Y(hi(0))}`;
-    for (let t = 1; t < HORIZON; t++) d += ` L${X(t)},${Y(hi(t))}`;
-    for (let t = HORIZON - 1; t >= 0; t--) d += ` L${X(t)},${Y(lo(t))}`;
+    for (let t = 1; t < N; t++) d += ` L${X(t)},${Y(hi(t))}`;
+    for (let t = N - 1; t >= 0; t--) d += ` L${X(t)},${Y(lo(t))}`;
     return d + ' Z';
   };
-  const line = f => { let d = `M${X(0)},${Y(f(0))}`; for (let t = 1; t < HORIZON; t++) d += ` L${X(t)},${Y(f(t))}`; return d; };
+  const line = f => { let d = `M${X(0)},${Y(f(0))}`; for (let t = 1; t < N; t++) d += ` L${X(t)},${Y(f(t))}`; return d; };
   const F = run.fast.thr, S = run.slow.thr;
   g += `<path class="a-thr" d="${area(() => 0, t => S[t])}"></path>`;
   g += `<path class="a-draw" d="${area(t => S[t], t => F[t])}"></path>`;
@@ -36,7 +38,7 @@ export function drawSim(svg, tip, chain, run, month, onScrub) {
   run.hitIds.forEach((id, i) => { g += `<path class="l-st" style="stroke:${STAGE_COL[i % STAGE_COL.length]}" d="${line(t => run.slow.series[id][t])}"></path>`; });
   g += `<path class="l-fast" d="${line(t => F[t])}"></path>`;
   g += `<path class="l-thr" d="${line(t => S[t])}"></path>`;
-  g += `<line class="cursor" x1="${X(month)}" x2="${X(month)}" y1="${m.t}" y2="${m.t + ih}"></line>`;
+  if (month < N) g += `<line class="cursor" x1="${X(month)}" x2="${X(month)}" y1="${m.t}" y2="${m.t + ih}"></line>`;
   g += `<rect class="hit" x="${m.l}" y="${m.t}" width="${iw}" height="${ih}" fill="transparent"></rect>`;
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
   svg.innerHTML = g;
@@ -45,7 +47,7 @@ export function drawSim(svg, tip, chain, run, month, onScrub) {
   const toMonth = ev => {
     const r = svg.getBoundingClientRect();
     const x = (ev.clientX - r.left) * (W / r.width);
-    return Math.max(0, Math.min(HORIZON - 1, Math.round(((x - m.l) / iw) * (HORIZON - 1))));
+    return Math.max(0, Math.min(N - 1, Math.round(((x - m.l) / iw) * (N - 1))));
   };
   hit.addEventListener('pointermove', ev => {
     const t = toMonth(ev);

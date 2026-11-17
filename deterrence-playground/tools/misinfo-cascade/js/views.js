@@ -35,8 +35,9 @@ export function drawNetwork(svg, net, onHover) {
 }
 
 /** Share sharing over time: this run, the no-correction run, the correction round and the current round. */
-export function drawChart(svg, run, ghost, p, onScrub) {
-  const Wc = 640, Hc = 200, m = { l: 40, r: 12, t: 12, b: 30 };
+export function drawChart(svg, run, ghost, p, onScrub, kept = null, half = -1) {
+  const big = matchMedia('(max-width: 640px)').matches; // phone: larger axis text in viewBox units
+  const Wc = 640, Hc = big ? 300 : 200, m = { l: big ? 84 : 52, r: 12, t: 12, b: big ? 46 : 30 };
   svg.innerHTML = '';
   svg.setAttribute('viewBox', `0 0 ${Wc} ${Hc}`);
   const T = P.steps, n = P.nodes;
@@ -46,8 +47,15 @@ export function drawChart(svg, run, ghost, p, onScrub) {
     el('line', { x1: m.l, x2: Wc - m.r, y1: sy(v), y2: sy(v), class: 'grid' }, ax);
     el('text', { x: m.l - 6, y: sy(v) + 4, 'text-anchor': 'end' }, ax, `${v * 100}%`);
   });
-  for (let t = 0; t <= T; t += 5) el('text', { x: sx(t), y: Hc - m.b + 16, 'text-anchor': 'middle' }, ax, t);
+  for (let t = 0; t <= T; t += big ? 10 : 5) el('text', { x: sx(t), y: Hc - m.b + (big ? 22 : 16), 'text-anchor': 'middle' }, ax, t);
   el('text', { x: m.l + (Wc - m.l - m.r) / 2, y: Hc - 2, 'text-anchor': 'middle', class: 'ax-t' }, ax, 'Round');
+  el('text', { x: big ? 18 : 11, y: m.t + (Hc - m.t - m.b) / 2, 'text-anchor': 'middle', class: 'ax-t', transform: `rotate(-90 ${big ? 18 : 11} ${m.t + (Hc - m.t - m.b) / 2})` }, ax, '% of people sharing');
+  if (half >= 0) {
+    el('line', { x1: sx(half), x2: sx(half), y1: sy(0.5) - 7, y2: sy(0.5) + 7, class: 'tip-k' }, svg);
+    const right = sx(half) > Wc - 160;
+    el('text', { x: sx(half) + (right ? -5 : 5), y: sy(0.5) - 9, class: 'tip-l', 'text-anchor': right ? 'end' : 'start' }, svg, `half sharing, round ${half}`);
+  }
+  if (kept) el('path', { d: kept.series.map((v, t) => `${t ? 'L' : 'M'}${sx(t).toFixed(1)},${sy(v / n).toFixed(1)}`).join(''), class: 'ln kept' }, svg);
   const line = (fr, key, cls) => el('path', { d: fr.map((f, t) => `${t ? 'L' : 'M'}${sx(t).toFixed(1)},${sy(f[key] / n).toFixed(1)}`).join(''), class: cls }, svg);
   if (p.cor) {
     el('line', { x1: sx(p.tc), x2: sx(p.tc), y1: m.t, y2: Hc - m.b, class: 'tc' }, svg);
@@ -59,6 +67,7 @@ export function drawChart(svg, run, ghost, p, onScrub) {
   el('line', { x1: sx(p.t), x2: sx(p.t), y1: m.t, y2: Hc - m.b, class: 'now' }, svg);
   const f = run.frames[p.t];
   el('circle', { cx: sx(p.t), cy: sy(f.sharing / n), r: 4.5, class: 'mark' }, svg);
+  svg.querySelectorAll('.tcl, .tip-l').forEach(t => svg.appendChild(t)); // labels on top so their halo masks the lines
   const pick = e => {
     const r = svg.getBoundingClientRect();
     const x = (e.clientX - r.left) / r.width * Wc;
@@ -82,6 +91,12 @@ export function drawVersions(node, frame) {
   }).join('');
 }
 
+/** The most alarming version anyone is still passing on this round (-1 if none). */
+export function topAlarm(frame) {
+  for (let v = frame.vc.length - 1; v >= 0; v--) if (frame.vc[v] > 0) return v;
+  return -1;
+}
+
 /** The most-shared version this round, for the headline. */
 export function topVersion(frame) {
   let best = -1, k = 0;
@@ -92,12 +107,14 @@ export function topVersion(frame) {
 export function legendHtml() {
   return `<span class="lg"><i class="d sil"></i>Not sharing</span>
     ${CLAIMS.map((c, v) => `<span class="lg"><i style="background:var(${VCOL[v]})"></i>${esc(c.short)}</span>`).join('')}
-    <span class="lg"><i class="d ret"></i>Retracted</span><span class="lg"><i class="d pb"></i>Prebunked</span>`;
+    <span class="lg"><i class="d ret"></i>Retracted</span><span class="lg" title="Not sharing, already reached by the correction"><i class="d pb"></i>Reached before sharing</span>
+    <span class="lg"><i class="d reach"></i>Reached by the correction</span>`;
 }
 
-export function chartLegendHtml(cor) {
+export function chartLegendHtml(cor, kept = null) {
   return `<span class="lg"><i class="ln-k main"></i>Sharing</span><span class="lg"><i class="ln-k ret"></i>Retracted</span>
-    ${cor ? '<span class="lg"><i class="ln-k ghost"></i>Sharing with no correction</span>' : ''}`;
+    ${cor ? '<span class="lg"><i class="ln-k ghost"></i>Sharing with no correction</span>' : ''}
+    ${kept ? '<span class="lg"><i class="ln-k kept"></i>Kept run</span>' : ''}`;
 }
 
 export { pct, MAXV };

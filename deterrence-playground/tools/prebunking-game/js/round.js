@@ -2,7 +2,7 @@
 // the Part 2 check-in step (feel, name, source) and the belief slider.
 
 import { CHANNELS, CHECKIN, WORDS } from '../data/rounds.js';
-import { startDrone, stopDrone, audioAvailable } from './audio.js';
+import { startDrone, stopDrone, audioAvailable, droneOn } from './audio.js';
 
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -22,8 +22,8 @@ function lrText(lr) {
 function evidenceHtml(r) {
   const n = Math.round(r.prior * 100);
   return `<div class="evidence" id="ev">
-    <div class="ev"><span class="ev-k">Base rate</span><b class="num">${n} in 100</b><p>${esc(r.base)}</p></div>
-    <div class="ev"><span class="ev-k">The report</span><b class="num">${lrText(r.lr)}</b><p>${esc(r.report)}</p></div>
+    <div class="ev"><span class="ev-k">Base rate <span class="notional">invented</span></span><b class="num">${n} in 100</b><p>${esc(r.base)}</p></div>
+    <div class="ev"><span class="ev-k">The report <span class="notional">invented</span></span><b class="num">${lrText(r.lr)}</b><p>${esc(r.report)}</p></div>
   </div>`;
 }
 
@@ -32,7 +32,9 @@ function soundHtml(soundOn) {
   const btn = audioAvailable()
     ? `<button type="button" class="btn" id="snd-btn">${soundOn ? 'Stop sound' : 'Play sound'}</button>` : '';
   return `<div class="chan snd" data-ch="sound"><div class="snd-bars" aria-hidden="true">${bars}</div>
-    <div class="snd-t"><b>Soundtrack</b><span>Low drone under this report. ${audioAvailable() ? 'Headphones, low volume.' : 'Audio is not available in this browser.'}</span></div>${btn}</div>`;
+    <div class="snd-t"><b>Soundtrack</b><span id="snd-note">${!audioAvailable() ? 'Audio is not available in this browser, so this round has no pull and is not scored.'
+      : soundOn ? 'Low drone under this report. Headphones, low volume.'
+        : 'Sound is off: this round has no pull unless you press Play sound. With sound off it is not scored.'}</span></div>${btn}</div>`;
 }
 
 function crowdHtml(r) {
@@ -95,7 +97,7 @@ function checkHtml(r, st) {
     <div class="ck-step"><p class="eyebrow">3 · Place it</p><p class="fine">What on this screen, or in you, is producing that feeling? Pick any.</p>
       <div class="words src-opts" role="group" aria-label="Source of the feeling">
       ${opts.map(([k, t]) => `<button type="button" data-s="${k}" aria-pressed="false">${esc(t)}</button>`).join('')}</div>
-      <button type="button" class="btn" id="ck-done" disabled>Done</button></div>
+      <button type="button" class="btn" id="ck-done" disabled>Done</button><span class="fine" id="ck-hint" aria-live="polite">Still to do: feel it, name it, place it.</span></div>
     <p class="ck-fb" id="ck-fb" hidden></p>
   </div>`;
 }
@@ -118,7 +120,7 @@ export function renderRound(root, r, st, onSubmit) {
   cleanup();
   const ch = channelHtml(r, st);
   const needCheck = st.part === 2;
-  const label = st.practice ? 'Practice round' : `Part ${st.part} · Round ${st.idx + 1} of ${st.total}`;
+  const label = (st.preview ? '<span class="ex-chip">Example</span> ' : '') + (st.practice ? 'Practice round' : `Part ${st.part} · Round ${st.idx + 1} of ${st.total}`);
   root.innerHTML = `<article class="card rcard" id="rcard">
     <div class="rhead"><p class="eyebrow">${label}</p><span class="fine">${st.practice ? 'The answer is shown after you submit.' : 'Answers are shown after each part.'}</span></div>
     ${ch.top || ''}
@@ -131,7 +133,7 @@ export function renderRound(root, r, st, onSubmit) {
       <input type="range" id="belief" min="0" max="100" step="1" value="50" ${needCheck ? 'disabled' : ''}>
       <div class="ticks" aria-hidden="true"><span>0%</span><span>50%</span><span>100%</span></div>
       <div class="ans-row"><button type="button" class="btn solid" id="submit" disabled>Lock in</button>
-      ${needCheck ? '<span class="fine" id="ans-hint">Finish the three steps above first.</span>' : ''}</div>
+      ${needCheck ? '<span class="fine" id="ans-hint">Finish the three steps above first: feel it, name it, place it.</span>' : ''}</div>
     </div>
   </article>`;
 
@@ -139,15 +141,18 @@ export function renderRound(root, r, st, onSubmit) {
   let touched = false;
   slider.addEventListener('input', () => { touched = true; out.classList.remove('idle'); out.textContent = `${slider.value}%`; submit.disabled = slider.disabled; });
 
-  // Channel behaviour
+  // Channel behaviour. heard: did the drone actually play during this round (scored only if so).
+  let heard = false;
   if (r.channel === 'sound') {
     const b = root.querySelector('#snd-btn');
-    if (st.soundOn) startDrone();
+    if (st.soundOn) { startDrone(); heard = heard || droneOn(); }
     if (b) b.addEventListener('click', () => {
       st.soundOn = !st.soundOn;
       st.onSoundToggle?.(st.soundOn);
-      if (st.soundOn) startDrone(); else stopDrone();
+      if (st.soundOn) { startDrone(); heard = heard || droneOn(); } else stopDrone();
       b.textContent = st.soundOn ? 'Stop sound' : 'Play sound';
+      const n = root.querySelector('#snd-note');
+      if (n) n.textContent = st.soundOn ? 'Low drone under this report. Headphones, low volume.' : (heard ? 'Sound stopped. The drone played during this round, so it is scored.' : 'Sound is off: this round has no pull unless you press Play sound. With sound off it is not scored.');
     });
   }
   if (r.channel === 'crowd') {
@@ -170,7 +175,12 @@ export function renderRound(root, r, st, onSubmit) {
   const check = { grid: null, word: null, src: [] };
   if (needCheck) {
     const done = root.querySelector('#ck-done');
-    const ready = () => { done.disabled = !(check.grid && check.word && check.src.length); };
+    const hint = root.querySelector('#ck-hint');
+    const ready = () => {
+      const miss = [!check.grid && 'feel it (tap a square)', !check.word && 'name it (pick a word)', !check.src.length && 'place it (pick a source)'].filter(Boolean);
+      done.disabled = miss.length > 0;
+      if (hint) hint.textContent = miss.length ? `Still to do: ${miss.join(', ')}.` : 'Press Done to unlock the slider.';
+    };
     root.querySelectorAll('.gc').forEach(b => b.addEventListener('click', () => {
       root.querySelectorAll('.gc').forEach(x => x.setAttribute('aria-pressed', 'false'));
       b.setAttribute('aria-pressed', 'true');
@@ -197,9 +207,11 @@ export function renderRound(root, r, st, onSubmit) {
       root.querySelectorAll('.chan').forEach(c => c.classList.add('flagged'));
       slider.disabled = false;
       submit.disabled = !touched;
-      const h = root.querySelector('#ans-hint'); if (h) h.textContent = '';
+      if (hint) hint.textContent = '';
+      const ah = root.querySelector('#ans-hint'); if (ah) ah.textContent = '';
       startClock();
       slider.focus({ preventScroll: true });
+      root.querySelector('#answer').scrollIntoView({ block: 'center', behavior: reduced() ? 'auto' : 'smooth' });
     });
   } else {
     startClock();
@@ -207,7 +219,8 @@ export function renderRound(root, r, st, onSubmit) {
 
   submit.addEventListener('click', () => {
     if (!touched || slider.disabled) return;
+    heard = heard || droneOn();
     cleanup();
-    onSubmit(+slider.value, needCheck ? check : null);
+    onSubmit(+slider.value, needCheck ? check : null, { heard });
   });
 }

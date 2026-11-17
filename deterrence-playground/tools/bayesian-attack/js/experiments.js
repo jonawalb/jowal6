@@ -57,7 +57,7 @@ export function dominanceTable(rhoE, T, seed = 42) {
   return { L, aLam: [...aLam].map(v => v / n), muLam: [...muLam].map(v => v / n), aSig: aSig / n, aBase: aBase / n, muBase: muBase / n, sustain, rhoE, T };
 }
 
-/** Payoffs at cost ratio ρ and stake τ (paper's cost model: fabrication costs 1/ρ once; λ costs 0.15 × sustained energy). */
+/** Payoffs at cost ratio r and stake τ (paper's cost model: fabrication costs 1/r once; λ costs 0.15 × sustained energy). */
 export function cell(tab, rho, tau) {
   const sigPay = tau * Math.abs(tab.aSig - tab.aBase) - 1 / rho;
   let best = -Infinity, k = 0;
@@ -65,16 +65,20 @@ export function cell(tab, rho, tau) {
     const pay = tau * Math.abs(tab.aLam[i] - tab.aBase) - FH2.lambdaCostScale * tab.sustain[i];
     if (pay > best) { best = pay; k = i; }
   });
-  return { lamPay: best, sigPay, lam: tab.L[k], dom: best > sigPay, act: Math.abs(tab.aLam[k] - tab.aBase), mean: Math.abs(tab.muLam[k] - tab.muBase) };
+  // dom follows the paper's definition (best weighting payoff > fabrication payoff). When the best λ is 1 the sender's
+  // best weighting move is no attack (payoff 0): the cell counts as dominance only because fabrication does not pay either.
+  const dom = best > sigPay;
+  return { lamPay: best, sigPay, lam: tab.L[k], dom, quiet: dom && k === 0, act: Math.abs(tab.aLam[k] - tab.aBase), mean: Math.abs(tab.muLam[k] - tab.muBase) };
 }
 
 export const RHO_RANGE = [0.01, 100], TAU_RANGE = [0.1, 10];
-/** Share of the paper's 22 × 22 (ρ, τ) grid on which the λ-attack dominates. */
-export function regionShare(tab) {
+/** Share of the paper's 22 × 22 (r, τ) grid on which the λ-attack dominates. */
+export function regionShare(tab, activeOnly = false) {
   let k = 0;
   for (let i = 0; i < 22; i++) for (let j = 0; j < 22; j++) {
     const rho = 10 ** (-2 + 4 * i / 21), tau = 0.1 + 9.9 * j / 21;
-    if (cell(tab, rho, tau).dom) k++;
+    const c = cell(tab, rho, tau);
+    if (c.dom && !(activeOnly && c.quiet)) k++;
   }
   return k / 484;
 }
@@ -148,4 +152,26 @@ export function inoculation(protOwn = FH3.protOwn, protPhi = FH3.protPhi, seed =
   const hOwn = prot(bf, dist('fear', protOwn)), hCross = prot(ba, dist('anger', 0));
   const aOwn = prot(bf, dist('fear', protPhi)), aCross = prot(ba, dist('anger', protPhi));
   return { harden: { own: hOwn, cross: hCross, ratio: hCross / Math.abs(hOwn || 1e-9) }, aware: { own: aOwn, cross: aCross, ratio: aCross / Math.abs(aOwn || 1e-9) } };
+}
+
+// ---------- Spread across draws ----------
+// The paper reports P4 (ii) and (iii) from one seeded run. These rerun the same protocol over many seeds.
+const quant = (v, p) => v[Math.min(v.length - 1, Math.floor(p * v.length))];
+const summary = v => { const s = [...v].sort((a, b) => a - b); return { mean: s.reduce((a, b) => a + b, 0) / s.length, p10: quant(s, 0.1), median: quant(s, 0.5), p90: quant(s, 0.9), n: s.length }; };
+
+/** Recovery share over seeds 1..n: mean, 10th and 90th percentiles, and the share of draws at or above `bar`. */
+export function recoverySpread(channel, peak = 1, n = 200, bar = 0.6) {
+  const v = Array.from({ length: n }, (_, i) => hysteresis(channel, peak, i + 1).recovered);
+  return { ...summary(v), atBar: v.filter(x => x >= bar).length / n };
+}
+
+/** Inoculation over seeds 1..n: mean protection per cell and the spread of the affect-awareness cross/own ratio. */
+export function inoculationSpread(n = 100) {
+  const runs = Array.from({ length: n }, (_, i) => inoculation(FH3.protOwn, FH3.protPhi, i + 1));
+  const m = f => runs.reduce((a, r) => a + f(r), 0) / n;
+  return {
+    harden: { own: m(r => r.harden.own), cross: m(r => r.harden.cross) },
+    aware: { own: m(r => r.aware.own), cross: m(r => r.aware.cross) },
+    awareRatio: summary(runs.map(r => r.aware.ratio)),
+  };
 }

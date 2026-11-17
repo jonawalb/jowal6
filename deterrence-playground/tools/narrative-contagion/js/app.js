@@ -1,12 +1,14 @@
 // Narrative Contagion Network: state, filters, URL hash, playback and wiring between views.
-import { loadData, filterClusters, network, sortClusters, TYPE_LABEL } from './model.js';
+import { loadData, filterClusters, network, sortClusters, langStats, setMethod, TYPE_LABEL } from './model.js';
 import { createNetwork } from './network.js';
-import { renderMatrix, renderPathways, renderCoverage } from './matrix.js';
-import { renderList, renderDossier } from './views.js';
+import { renderMatrix, renderPathways, renderCoverage, matrixKey, TOP_HEAD } from './matrix.js';
+import { renderList, renderDossier, resultSentence, shortResult } from './views.js';
+import { initDetail, setDetail } from './detail.js';
+import { createTour } from './tour.js';
 
 const $ = id => document.getElementById(id);
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const DEF = { view: 'network', level: 'country', type: '', topic: '', country: '', pair: '', min: 2, from: '', to: '', sort: 'countries', metric: 'before', cl: '', minlink: 1 };
+const DEF = { view: 'network', level: 'country', type: '', topic: '', country: '', pair: '', min: 2, from: '', to: '', sort: 'countries', metric: 'before', cl: '', minlink: 1, qold: 0 };
 const S = { ...DEF, ...readHash() };
 let D, net, until = null, playTimer = null, replay = null, limit = 25;
 
@@ -28,10 +30,14 @@ function setPressed(groupId, attr, value) {
 }
 
 function render() {
+  if (D.oldMethod !== !!S.qold) setMethod(D, !!S.qold);
+  $('nc-qold').checked = !!S.qold;
   const list = filterClusters(D, filters());
   const shown = until ? filterClusters(D, filters({ until })) : list;
   // Filters summary
-  $('nc-count').textContent = `${list.length.toLocaleString()} of ${D.clusters.length.toLocaleString()} clusters`;
+  $('nc-count').textContent = `${list.length.toLocaleString()} of ${D.valid.toLocaleString()} clusters`;
+  $('nc-result').innerHTML = resultSentence(list);
+  $('nc-sticky-t').textContent = shortResult(list);
   const chips = [];
   if (S.pair) { const [a, b] = S.pair.split('-'); chips.push([`${D.countries[a]} + ${D.countries[b]}`, 'pair']); }
   if (S.country) chips.push([D.countries[S.country], 'country']);
@@ -43,7 +49,8 @@ function render() {
   if (S.view === 'network') drawNetwork(shown);
   if (S.view === 'matrix') {
     const top = renderMatrix($('nc-matrix'), D, list, S.metric, pickPair) || [];
-    $('nc-matrix-top').innerHTML = top.length ? `<b>Largest ordered pairs:</b> ${top.join('; ')}.` : '';
+    $('nc-mkey').innerHTML = matrixKey(S.metric);
+    $('nc-matrix-top').innerHTML = top.length ? `<b>${TOP_HEAD[S.metric]}:</b> ${top.join('; ')}. Coming first in this corpus is not influence: check the coverage strip for both countries.` : '';
   }
   if (S.view === 'paths') renderPathways($('nc-paths'), list);
   // Framings list
@@ -51,9 +58,9 @@ function render() {
   renderList($('nc-list'), D, sorted, { limit, selected: S.cl, onPick: pick });
   $('nc-more').hidden = sorted.length <= limit;
   // Panel summary
-  const items = list.reduce((s, c) => s + c.members.length, 0), edges = list.reduce((s, c) => s + c.e.length, 0);
+  const items = list.reduce((s, c) => s + c.members.length, 0), docs = list.reduce((s, c) => s + c.docs, 0), edges = list.reduce((s, c) => s + c.e.length, 0);
   const types = list.reduce((o, c) => ((o[c.type] = (o[c.type] || 0) + 1), o), {});
-  $('nc-summary').innerHTML = `<dt>Clusters</dt><dd>${list.length.toLocaleString()}</dd><dt>Items</dt><dd>${items.toLocaleString()}</dd>
+  $('nc-summary').innerHTML = `<dt>Clusters</dt><dd>${list.length.toLocaleString()}</dd><dt>Passages</dt><dd>${items.toLocaleString()}</dd><dt>Documents (per cluster, summed)</dt><dd>${docs.toLocaleString()}</dd>
     <dt>Passage matches</dt><dd>${edges.toLocaleString()}</dd>
     ${Object.entries(TYPE_LABEL).map(([k, v]) => `<dt>${v}</dt><dd>${(types[k] || 0).toLocaleString()}</dd>`).join('')}`;
   renderDossier($('nc-dossier'), D, S.cl ? D.byId.get(S.cl) : null, { onReplay: startReplay, onClose: () => { S.cl = ''; stopReplay(); update(); } });
@@ -69,11 +76,13 @@ function drawNetwork(shown) {
   }
   const focus = S.level === 'country' && S.country ? S.country : null;
   net.draw(D, S.level, network(D, shown, S.level), { fresh, minLink: S.minlink, focus });
-  $('nc-when').textContent = until ? `Clusters first seen up to ${until} (${shown.length.toLocaleString()}); orange = new that month` : 'All months';
+  $('nc-when').textContent = until ? `Clusters first seen up to ${until} (${shown.length.toLocaleString()}); pink = new that month` : 'All months';
 }
 
+const pct = (a, b) => (b ? Math.round((100 * a) / b) : 0);
+
 function update() { limit = 25; render(); }
-function pick(id) { S.cl = S.cl === id ? '' : id; stopReplay(); render(); if (S.cl && window.innerWidth < 980) $('nc-dossier').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' }); }
+function pick(id) { S.cl = S.cl === id ? '' : id; stopReplay(); render(); if (S.cl) $('nc-dossier').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' }); }
 function pickPair(a, b) { S.pair = `${a}-${b}`; S.cl = ''; limit = 25; render(); $('nc-list-card').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' }); }
 function pickCountry(c) { S.country = S.country === c ? '' : c; update(); }
 
@@ -102,7 +111,7 @@ function startReplay() {
   until = null; S.view = 'network';
   const days = [...new Set(c.members.map(m => m.day))];
   replay = { c, days, k: 0, day: days[0], timer: null };
-  $('nc-replay-bar').hidden = false; document.querySelector('.nc-time').hidden = true;
+  $('nc-replay-bar').hidden = false; document.querySelector('.nc-time').hidden = true; document.body.classList.add('nc-replaying');
   stepReplay(0);
   replay.timer = setInterval(() => { if (replay.k >= days.length - 1) { pauseReplay(); return; } stepReplay(replay.k + 1); }, reduced ? 1400 : 900);
   $('nc-rp-pause').textContent = 'Pause';
@@ -111,11 +120,11 @@ function startReplay() {
 function stepReplay(k) {
   replay.k = Math.max(0, Math.min(replay.days.length - 1, k)); replay.day = replay.days[replay.k];
   const n = replay.c.members.filter(m => m.day <= replay.day).length;
-  $('nc-rp-status').textContent = `Day +${replay.day - replay.days[0]} · ${n} of ${replay.c.members.length} items · ${new Set(replay.c.members.filter(m => m.day <= replay.day).map(m => m.country)).size} of ${replay.c.countries.length} countries`;
+  $('nc-rp-status').textContent = `Day +${replay.day - replay.days[0]} · ${n} of ${replay.c.members.length} passages · ${new Set(replay.c.members.filter(m => m.day <= replay.day).map(m => m.country)).size} of ${replay.c.countries.length} countries`;
   render();
 }
 function pauseReplay() { if (replay && replay.timer) { clearInterval(replay.timer); replay.timer = null; } $('nc-rp-pause').textContent = 'Resume'; }
-function stopReplay() { if (!replay) return; pauseReplay(); replay = null; $('nc-replay-bar').hidden = true; document.querySelector('.nc-time').hidden = false; }
+function stopReplay() { if (!replay) return; pauseReplay(); replay = null; $('nc-replay-bar').hidden = true; document.querySelector('.nc-time').hidden = false; document.body.classList.remove('nc-replaying'); }
 
 function bind() {
   $('nc-tabs').querySelectorAll('button').forEach(b => b.addEventListener('click', () => { if (b.dataset.view !== 'network') stopReplay(); S.view = b.dataset.view; render(); }));
@@ -128,6 +137,7 @@ function bind() {
   bindSel('nc-sort', 'sort'); bindSel('nc-metric', 'metric'); bindSel('nc-minlink', 'minlink', true);
   $('nc-month').addEventListener('input', e => { if (playTimer) togglePlay(); setUntil(Number(e.target.value)); });
   $('nc-play').addEventListener('click', togglePlay);
+  $('nc-qold').addEventListener('change', e => { S.qold = e.target.checked ? 1 : 0; update(); });
   $('nc-all').addEventListener('click', () => { if (playTimer) togglePlay(); setUntil(-1); });
   $('nc-more').addEventListener('click', () => { limit += 50; render(); });
   $('nc-reset').addEventListener('click', () => { Object.assign(S, DEF, { view: S.view, level: S.level }); until = null; stopReplay(); syncControls(); update(); });
@@ -158,8 +168,17 @@ function fillControls() {
       threshold: m.threshold, window: m.window_days, generated: m.generated.slice(0, 10), topics: m.topics_version }[e.dataset.meta];
     if (v != null) e.textContent = v;
   });
+  const L = langStats(filterClusters(D, { min: 2 }));
+  document.querySelectorAll('[data-valid]').forEach(e => { e.textContent = D.valid.toLocaleString(); });
+  document.querySelectorAll('[data-lang]').forEach(e => { e.textContent = e.dataset.lang === 'cross' ? L.cross.toLocaleString() : e.dataset.lang === 'total' ? L.total.toLocaleString() : `${pct(L.en, L.items)}%`; });
+  const all = D.clusters.flatMap(c => c.allMembers), off = all.filter(m => m.text && m.base.otype === 'o');
+  const R = { all: off.length, q: all.filter(m => m.role === 'q').length, qmoved: all.filter(m => m.role === 'q' && m.moved).length,
+    f: all.filter(m => m.role === 'f').length, fmoved: all.filter(m => m.role === 'f' && m.moved).length, inc: all.filter(m => m.role === 'inc').length,
+    j: all.filter(m => m.role === 'j').length, qt: all.filter(m => m.role === 'qt').length };
+  document.querySelectorAll('[data-role]').forEach(e => { e.textContent = R[e.dataset.role].toLocaleString(); });
 }
 
+initDetail();
 async function main() {
   net = createNetwork($('nc-svg'), $('nc-tip'), { onPair: pickPair, onCountry: pickCountry });
   try { D = await loadData(); } catch (e) {
@@ -170,5 +189,39 @@ async function main() {
   fillControls(); bind(); syncControls();
   setUntil(-1);
   renderCoverage($('nc-coverage'), D);
+  // Phone: keep the result in a bottom bar until the controls card is on screen.
+  const phone = matchMedia('(max-width: 640px)');
+  let seen = false;
+  new IntersectionObserver(([e]) => { seen = e.isIntersecting || e.boundingClientRect.top < 0; $('nc-sticky').hidden = !phone.matches || seen; })
+    .observe($('nc-result'));
+  phone.addEventListener('change', () => { $('nc-sticky').hidden = !phone.matches || seen; });
+  $('nc-sticky-go').addEventListener('click', () => document.querySelector('.nc-controls').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' }));
+  const tour = createTour(demo, () => ({ ...S, until }), restoreState);
+  $('nc-tour').addEventListener('click', () => tour.start());
+  document.querySelectorAll('[data-demo]').forEach(b => b.addEventListener('click', () => {
+    const i = Number(b.dataset.demo); demo(i);
+    const t = $(['view-paths', 'view-network', 'view-network', 'view-matrix'][i]);
+    t.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+  }));
+}
+
+// ---- Prepared demo states (the "Present this" panel and the walkthrough share them)
+function quiet() { if (playTimer) togglePlay(); stopReplay(); until = null; }
+function demo(i) {
+  quiet();
+  Object.assign(S, DEF, { level: 'country' });
+  if (i === 0) S.view = 'paths';
+  if (i === 1) { S.view = 'network'; S.type = 'official-official'; }
+  if (i === 2) { S.view = 'network'; S.sort = 'official'; }
+  if (i === 3) { S.view = 'matrix'; S.metric = 'net'; setDetail('full', false); } // shows the coverage strip; not saved
+  syncControls(); setUntil(-1);
+  if (i === 1) togglePlay();
+  if (i === 2) { S.cl = sortClusters(filterClusters(D, filters()), 'official')[0].id; render(); startReplay(); }
+}
+function restoreState(snap) {
+  quiet();
+  const { until: u, ...rest } = snap;
+  Object.assign(S, rest); until = u;
+  syncControls(); render();
 }
 main();

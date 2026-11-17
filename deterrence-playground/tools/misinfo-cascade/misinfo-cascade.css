@@ -18,11 +18,11 @@
 
 .netbox { position: relative; background: var(--bg); border: 1px solid var(--rule); border-radius: 4px; }
 .netbox svg { display: block; width: 100%; height: auto; }
-.edges line { stroke: var(--rule); stroke-width: 1; }
+.edges line { stroke: var(--coast); stroke-width: 1; opacity: .75; }
 .nd { stroke: var(--panel); stroke-width: 1.2; cursor: default; }
 .nd.si { fill: var(--chip); stroke: var(--faint); stroke-width: .9; }
-.nd.si.pb { stroke: var(--good); stroke-width: 2; }
-.nd.rt { fill: var(--panel); stroke: var(--good); stroke-width: 2.4; }
+.nd.si.pb { stroke: var(--good); stroke-width: 1.8; stroke-dasharray: 2 1.6; }
+.nd.rt { fill: var(--panel); stroke: var(--good); stroke-width: 2.6; }
 .reach { fill: none; stroke: var(--good); stroke-width: 1.1; stroke-dasharray: 2 2; opacity: .9; }
 .netbox .tooltip { max-width: 280px; }
 
@@ -36,10 +36,12 @@
 .lg i { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
 .lg i.d.sil { background: var(--chip); border: 1px solid var(--faint); }
 .lg i.d.ret { background: var(--panel); border: 2px solid var(--good); }
-.lg i.d.pb { background: var(--chip); border: 2px solid var(--good); }
+.lg i.d.pb { background: var(--chip); border: 2px dashed var(--good); }
+.lg i.d.reach { width: 15px; height: 15px; background: radial-gradient(circle, var(--chip) 0 3.5px, transparent 4px); border: 1.5px dashed var(--good); }
 .lg i.ln-k { width: 18px; height: 0; border-radius: 0; border-top: 2.5px solid var(--ink); }
 .lg i.ln-k.ret { border-top-color: var(--good); }
 .lg i.ln-k.ghost { border-top: 2px dashed var(--muted); }
+.lg i.ln-k.kept { border-top: 2.5px dotted var(--c6); }
 
 .chart { display: block; width: 100%; height: auto; touch-action: none; cursor: crosshair; }
 .axis text { font: var(--axis-font); fill: var(--axis-ink); }
@@ -49,6 +51,10 @@
 .ln.main { stroke: var(--ink); }
 .ln.ret { stroke: var(--good); stroke-width: 2; }
 .ln.ghost { stroke: var(--muted); stroke-dasharray: 5 4; stroke-width: 1.8; }
+.ln.kept { stroke: var(--c6); stroke-dasharray: 1.5 3.5; stroke-width: 2.4; stroke-linecap: round; }
+.tip-k { stroke: var(--bad); stroke-width: 2; }
+.tip-l { font: 11px var(--mono); fill: var(--bad); }
+.tcl, .tip-l { paint-order: stroke; stroke: var(--panel); stroke-width: 4px; stroke-linejoin: round; }
 .tc { stroke: var(--good); stroke-width: 1.2; stroke-dasharray: 3 3; }
 .tcl { font: 11px var(--mono); fill: var(--good); }
 .now { stroke: var(--accent); stroke-width: 1.4; }
@@ -108,3 +114,49 @@ table.mg th, table.mg td { padding: 5px 8px; }
 @media (max-width: 600px) { .tour { right: 8px; bottom: 8px; } .headline { font-size: 18px; } }
 .tablewrap table.eu { width: auto; min-width: 50%; }
 @media (max-width: 600px) { .nd { r: 8px; } .reach { r: 12px; } .edges line { stroke-width: 1.4; } }
+
+/* Purpose card, detail switch, present panel (audit 16 Nov 2026) */
+.purpose { max-width: 1400px; margin: 14px auto 0; background: var(--panel); border: 1px solid var(--rule); border-left: 4px solid var(--brand-ink); border-radius: 4px; padding: 10px 14px; font-size: 14px; line-height: 1.45; }
+.purpose p { margin: 2px 0; max-width: 95ch; }
+.purpose b { font-weight: 600; }
+.chip-type { float: right; margin: 0 0 4px 10px; font: 11px var(--mono); text-transform: uppercase; letter-spacing: .05em; color: var(--warn); border: 1px dashed var(--warn); border-radius: 3px; padding: 2px 6px; }
+.seg2 { display: inline-flex; }
+.seg2 .btn { border-radius: 0; }
+.seg2 .btn:first-child { border-radius: 3px 0 0 3px; }
+.seg2 .btn + .btn { border-left-width: 0; border-radius: 0 3px 3px 0; }
+body.detail-simple .full-only { display: none !important; }
+.present { max-width: 1400px; margin: 10px auto 0; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel); padding: 0 14px; }
+.present > summary { cursor: pointer; font-weight: 600; padding: 10px 0; color: var(--c1); }
+.present ol { list-style: none; margin: 0 0 8px; padding: 0; display: flex; flex-direction: column; gap: 8px; font-size: 13.5px; }
+.present li { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+.present li .btn { flex: 0 0 auto; }
+.present p { margin: 0 0 10px; font-size: 13.5px; max-width: 95ch; }
+.result { margin: 0; font-size: 14px; line-height: 1.45; }
+.hl-a { display: block; margin-top: 3px; font: 13px var(--body); color: var(--muted); }
+.divider { font-size: 13px; color: var(--muted); border-left: 3px solid var(--rule); padding-left: 8px; }
+.c9wrap { max-width: 1400px; margin: 16px auto 0; }
+.panel .notional { margin-left: 4px; text-transform: none; letter-spacing: 0; }
+.tour.left { right: auto; left: 20px; }
+.panel .readout dd { white-space: nowrap; }
+.tour-hi { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+.tour-now { font-size: 12.5px !important; color: var(--muted); border-top: 1px solid var(--rule); padding-top: 6px; }
+.mc-bar { display: none; }
+@media (min-width: 1021px) { .panel { position: sticky; top: 8px; max-height: calc(100vh - 16px); overflow: auto; } }
+
+/* Phone: 44px tap targets, sticky result bar with Play */
+@media (max-width: 640px) {
+  .btn, .seg button, .choices button, .tour .x, .present > summary { min-height: 44px; }
+  .tour .x { min-width: 44px; }
+  .play .btn { min-width: 44px; }
+  input[type=range] { min-height: 44px; }
+  .tg { min-height: 44px; }
+  .purpose { font-size: 13.5px; padding: 8px 12px; }
+  .mc-bar { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 15; gap: 10px; align-items: center; padding: 6px 12px calc(6px + env(safe-area-inset-bottom)); background: var(--panel); border-top: 1px solid var(--rule); font-size: 12.5px; line-height: 1.3; }
+  .mc-bar .btn { min-width: 72px; }
+  body { padding-bottom: 64px; }
+  .axis text { font-size: 21px; }
+  .axis .ax-t { font-size: 21px; }
+  .tcl, .tip-l { font-size: 20px; stroke-width: 8px; }
+  .chip-type { float: none; display: table; margin: 0 0 6px; }
+  .tour { bottom: 70px; max-height: 46vh; overflow: auto; }
+}

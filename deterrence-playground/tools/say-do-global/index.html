@@ -7,7 +7,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Say–Do Gap Monitor | Interactive Deterrence</title>
-<meta name="description" content="Do Russian, Iranian and Venezuelan statements predict what those states do? Lead-lag, event-study and distributed-lag tests on official and state-media rhetoric and real behaviour series, corrected for multiple testing.">
+<meta name="description" content="Does official Russian, Iranian or Venezuelan rhetoric change before those states act? Lead-lag, event-study and distributed-lag tests in four views (6,632 tests in all), each view corrected for multiple testing: 6 survive, 5 if all are corrected together. Russian actions are tested, Iran only against shipping outcomes, and Venezuela is shown but too sparse to test.">
 <link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,16 +17,44 @@
 <link rel="stylesheet" href="../../shared/css/motion.css">
 <link rel="stylesheet" href="say-do.css">
 </head>
-<body data-config="global">
+<body data-config="global" class="detail-simple">
 <header id="tsm-head"></header>
 
+<section class="purpose" aria-label="What this tool tests">
+  <span class="ptype">Data, not a model</span>
+  <dl>
+    <div><dt>Question:</dt><dd>Does official Russian, Iranian or Venezuelan rhetoric change before those states act, or only alongside or after?</dd></div>
+    <div><dt>What you do:</dt><dd>Pick a rhetoric stream and measure, a behaviour series, and a time window.</dd></div>
+    <div><dt>What you will see:</dt><dd>A verdict from three timing tests, both series with spike weeks marked, and how many tests survive correction.</dd></div>
+    <div><dt>Limits:</dt><dd>Associations in past data, not causes or forecasts. Tone scores are machine estimates. Iranian attacks and all Venezuelan pairs are too sparse to test.</dd></div>
+  </dl>
+</section>
+
+<section class="headline" aria-label="Headline finding">
+  <p class="eyebrow">Headline finding</p>
+  <p class="hl-big" id="headline-num">Across four views (6,632 tests in all, corrected within each view), 6 survive correction for multiple testing, and none since 2025. Corrected all together, 5 survive. 4 of the 6 come from one stream: Zakharova and Medvedev Telegram channels (archived copies), Russian.</p>
+  <p class="hl-scope"><b>Tested:</b> Russian rhetoric against Russian strikes on Ukraine and nuclear-related actions; Iranian rhetoric against Hormuz and Red Sea shipping, which are outcomes, not Iranian actions. <b>Not tested:</b> Iran's own attacks on Israel (three episodes, too few) and every Venezuelan pair (too few weeks with Foreign Ministry texts before the ACLED data end in September 2024). Those series are shown for context.</p>
+</section>
+
 <div class="bar">
-  <p class="lede">Pick a country, a stream of official statements or state media, a way of measuring it, and a record of what that state did: Russian strikes on Ukraine and nuclear moves, Iranian attacks and Gulf shipping, Venezuelan state violence. Three tests ask whether rises in the rhetoric come <i>before</i> rises in the behaviour, and the page says plainly when they do not.</p>
   <div class="acts">
+    <span class="seg2" role="group" aria-label="Detail level" title="Simple shows the main result; Full detail shows every source, control and assumption."><button type="button" class="btn" data-detail="simple" aria-pressed="true">Simple</button><button type="button" class="btn" data-detail="full" aria-pressed="false">Full detail</button></span>
     <button type="button" class="btn solid" id="start-tour">Start the walkthrough</button>
     <button type="button" class="btn" id="copy-link">Copy link</button>
   </div>
 </div>
+
+<details class="present">
+  <summary>Presenting this in 3 minutes</summary>
+  <ol>
+    <li><button type="button" class="btn" data-view="s=telegram_ru|ru|all&amp;k=stance:UKRAINE:threat&amp;b=ua_total&amp;r=week&amp;w=all">Show the default pair</button> Say: "Threat language about Ukraine on Zakharova's and Medvedev's Telegram channels, against Russian launches at Ukraine each week. None of the three tests reaches p &lt; 0.05."</li>
+    <li><button type="button" class="btn" data-view="s=telegram_ru|ru|all&amp;k=stance:US:conciliation&amp;b=ua_total&amp;r=week&amp;w=all&amp;focus=.tests">Show a pair that survives twice</button> Say: "Conciliatory sentences that mention the U.S. were followed a week later by more launches: r = +0.33, and two tests survive correction across 1,912. But the event study has only 4 spikes, and launches were already +17.75 a day above baseline before them, so any later rise may continue a climb already under way."</li>
+    <li><button type="button" class="btn" data-view="s=telegram_ru|ru|all&amp;k=stance:US:conciliation&amp;b=ua_total&amp;r=week&amp;w=2025&amp;focus=%23fam">Same pair, since 2025</button> Say: "Since 2025, nothing survives correction at either resolution. The lead-lag r here is +0.34, larger than before, but it does not count: with only 87 weeks the page judges it by a shuffle check (p 0.14), not the model p, because with so few periods the model cannot reliably tell a real link from each series' own slow drift."</li>
+    <li><button type="button" class="btn" data-view="s=telegram_ru|ru|all&amp;k=stance:US:conciliation&amp;b=ua_drones&amp;r=week&amp;w=all&amp;spike=1&amp;focus=%23spikes">Same rhetoric, drones only: open a spike week</button> Say: "This switches the behaviour to drones only, where one test survives. Every spike links to what was said, in the original language, untranslated. This one is about Washington–Caracas dialogue: the measure counts any conciliatory sentence that mentions the U.S. Posts that quote an opponent are left out of this list."</li>
+  </ol>
+  <p><b>Takeaway:</b> across four views (6,632 tests, each view corrected on its own), 6 survive and none since 2025 (5 if all are corrected together), so in this record shifts in public rhetoric rarely came before shifts in what Russia did (Iran is tested only against shipping; Venezuela is not tested).</p>
+  <p><b>Say aloud:</b> the weekly survivors all come from archived copies of two Telegram channels that also repost opponents' words, so treat them as leads to check, not findings.</p>
+</details>
 
 <main class="layout">
   <div class="stage">
@@ -36,6 +64,8 @@
       <p id="v-pair"></p>
       <p id="v-body"></p>
       <ul class="chips" id="chips" aria-label="Test results"></ul>
+      <p class="fine full-only">p: how likely a result this strong would be if rhetoric and behaviour were unrelated. q: p adjusted for every test in this view (Benjamini–Hochberg); below 0.05 counts as surviving correction.</p>
+      <p class="fam-line" id="v-fam"></p>
     </section>
 
     <section class="card pad">
@@ -44,7 +74,9 @@
         <p class="legend"><span><i class="lr"></i>Rhetoric</span><span><i class="lb"></i>Behaviour</span><span><i class="ls"></i>Spike week</span></p>
       </div>
       <div class="serieswrap"><svg id="series" class="chart" role="img"></svg></div>
+      <p class="plain" id="v-plain" aria-live="polite"></p>
       <p class="tip" id="tip" aria-live="polite"></p>
+      <p class="fine">Line: tone or attention scored by a machine model (checked against another model, not human coders). Bars: recorded counts from the sources below.</p>
     </section>
 
     <div class="tests">
@@ -65,7 +97,7 @@
       </section>
     </div>
 
-    <section class="card pad fam">
+    <section class="card pad fam" id="fam">
       <p class="eyebrow">Multiple testing in this view</p>
       <p id="fam-sum"></p>
       <ul class="famlist" id="fam-list" aria-label="Pairs that survive correction"></ul>
@@ -102,24 +134,25 @@
 <section class="below">
   <div>
     <h2>How to read this</h2>
-    <p><b>Say.</b> Each rhetoric series comes from one source in one language (a "stream"), such as Kremlin transcripts in Russian or the Iranian Foreign Ministry in English. A machine-learning model scores every sentence for six tones. <i>Overall tone</i> averages all sentences; <i>tone on a target</i> averages only sentences that mention Ukraine, the U.S., NATO, "the West" or Israel; <i>attention</i> is the share of documents that mention the target. Streams are never pooled, so a change in which outlets publish cannot look like a change in tone.</p>
-    <p><b>Do.</b> Russia: missiles and drones launched at Ukraine each day, as the Ukrainian Air Force reported them, and a curated list of Russian nuclear actions. Iran: daily ship transits through Hormuz and Bab el-Mandeb (outcomes, not Iranian actions) and the days of Iran's direct attacks on Israel. Venezuela: weekly ACLED counts of protests, riots and state violence against civilians.</p>
+    <p><b>Say.</b> Each rhetoric series comes from one source in one language (a "stream"), such as Kremlin transcripts in Russian or the Iranian Foreign Ministry in English. A machine-learning model scores every sentence for six tones. <i>Overall tone</i> averages all sentences; <i>tone on a target</i> averages only sentences that mention Ukraine, the U.S., NATO, "the West" or Israel; <i>attention</i> is the share of documents that mention the target. Streams are never pooled, so a change in which outlets publish cannot look like a change in tone. A stream can still mix several speakers from the same source: the Telegram stream is Maria Zakharova's and Dmitry Medvedev's channels together, taken from archived copies of their public pages, so it holds only the posts that were captured.</p>
+    <p><b>Do.</b> Russia: missiles and drones launched at Ukraine each day, as the Ukrainian Air Force reported them, and a curated list of Russian nuclear-related actions (its three "uses" are launches of the nuclear-capable Oreshnik with non-nuclear payloads). Iran: daily ship transits through Hormuz and Bab el-Mandeb (outcomes, not Iranian actions) and the days of Iran's direct attacks on Israel (too few to test). Venezuela: weekly ACLED counts of protests, riots and state violence against civilians (no pair has enough rhetoric to test).</p>
+    <p><b>What kind of evidence.</b> Empirical: the behaviour series and the quoted texts, sourced below. Model-derived: the tone and attention scores. Statistical: every r, p and q. Nothing on this page is a simulation.</p>
     <p><b>The three tests</b> all ask whether rhetoric moves <i>first</i>. (1) The lead-lag chart correlates the two series' deviations from their own recent baselines at each offset; blue bars on the right are rhetoric-first. (2) The event study lines up rhetoric spike weeks and measures how behaviour changed from before the spike to after it, against randomly placed pseudo-spikes. (3) The distributed-lag regression asks whether past rhetoric adds anything once behaviour's own recent past is known.</p>
-    <p><b>Verdicts.</b> "Survives correction" means q &lt; 0.05 after Benjamini–Hochberg across every test in the current resolution and window. "Suggestive at most" means p &lt; 0.05 for that test alone. Hundreds of tests run in each view, so dozens pass p &lt; 0.05 by chance.</p>
+    <p><b>Verdicts.</b> "Survives correction" means q &lt; 0.05 after Benjamini–Hochberg across every test in the current resolution and window. "Suggestive at most" means p &lt; 0.05 for that test alone. <span id="chance-all"></span> The four views overlap, so the page does not add their survivors as if one correction covered them all.</p>
     <h2 class="mt">What this can and cannot tell you</h2>
-    <p>Rhetoric and behaviour often rise in the same week because both respond to the same event: a battlefield turn, a summit, a strike by the other side. Same-period correlation is shown for context but is not a test of prediction. Even a surviving result is an association in the past record, not evidence that a statement caused an action or that it will predict the next one. Coverage is uneven (see below), the tone model has been checked only against another model, and a stream's tone can shift when its spokesperson or format changes.</p>
+    <p>Rhetoric and behaviour often rise in the same week, plausibly because both respond to the same event: a battlefield turn, a summit, a strike by the other side. Same-period correlation is shown for context but is not a test of which comes first. Even a surviving result is an association in the past record. It does not show that a statement caused an action, or that the pattern will hold next time. Coverage is uneven (see below), the tone model has been checked only against another model, and a stream's tone can shift when its spokesperson or format changes. Spokesperson channels often quote opponents in order to rebut them, and the tone model cannot tell a quoted claim from the speaker's own words: such quotes are removed from the evidence lists on this page but are still inside the tone scores. Quotes appear in the original language (Russian, Persian or Spanish) without translation. "Tone on the U.S." means sentences that mention the U.S., on any subject, so a spike in conciliation on the U.S. on a Russian channel can be about Venezuela.</p>
   </div>
-  <div>
+  <div class="full-only">
     <h2>Method &amp; sources</h2>
     <ul class="src">
       <li><b>Rhetoric.</b> Local multilingual corpus (~/Projects/rhetoric-corpus), semantic layer. Sentences are embedded with multilingual-e5-small and scored by logistic-regression students trained on labels from a zero-shot NLI teacher (bge-m3-zeroshot-v2.0). Document tone is the mean sentence probability; series are daily sums exported within each stream by <code>scripts/say_do_export.py</code> and aggregated to weeks (Monday start). Keyword-filtered collection regimes are excluded. <span id="asof"></span></li>
       <li><b>Anomalies.</b> Each period's value minus the document-weighted mean of the previous 12 weeks (28 days) for rhetoric and the plain mean for behaviour. Both are standardised and winsorised at ±3 SD; periods without rhetoric count as zero deviation.</li>
       <li><b>(a) Lead-lag.</b> Pearson r at each offset. 95% intervals: moving-block bootstrap (block ≈ n<sup>1/3</sup>). p: Fisher z with the Pyper–Peterman effective sample size for autocorrelated series, Bonferroni over the lead lags, so one p per direction. Check: circular-shift permutation of the rhetoric series.</li>
-      <li><b>(b) Event study.</b> Spikes from the export (rule below), declustered so none falls inside another's window. Abnormal behaviour = value minus the mean of an estimation window that ends before the pre-period. Tested statistic: the change in mean abnormal behaviour from the pre-window to the post-window. p from the mean and spread of the same statistic over 3,000–4,000 draws of pseudo-spikes placed away from real ones (normal approximation; the empirical placebo p is shown as a check). Fewer than 5 spikes: shown, not tested.</li>
-      <li><b>(c) Distributed lag.</b> OLS of behaviour on current and lagged rhetoric plus lagged behaviour; Newey–West (Bartlett) covariance with bandwidth ⌊4(n/100)<sup>2/9</sup>⌋; F test that all lagged rhetoric coefficients are zero. Check: the same F under circular shifts of rhetoric.</li>
+      <li><b>(b) Event study.</b> Spikes from the export (rule below), declustered so no spike falls within h periods of an earlier one (their windows can still overlap). Abnormal behaviour = value minus the mean of an estimation window that ends before the pre-period. Tested statistic: the change in mean abnormal behaviour from the pre-window to the post-window. p from the mean and spread of the same statistic over 3,000–4,000 draws of pseudo-spikes placed away from real ones (normal approximation; the empirical placebo p is shown as a check). Fewer than 5 spikes: shown, not tested.</li>
+      <li><b>(c) Distributed lag</b> (a Granger-causality test, which tests timing, not cause; Granger 1969, <i>Econometrica</i> 37(3): 424–438). OLS of behaviour on current and lagged rhetoric plus lagged behaviour; Newey–West (Bartlett) covariance with bandwidth ⌊4(n/100)<sup>2/9</sup>⌋; F test that all lagged rhetoric coefficients are zero. Check: the same F under circular shifts of rhetoric.</li>
       <li><b>Short series.</b> For pairs with fewer than 150 periods (and event studies with fewer than 10 spikes) the p entering the correction is the larger of the model p and the permutation or placebo p, because the model p is unreliable there.</li>
       <li><b>Multiple testing.</b> Benjamini–Hochberg over the three primary tests of every pair in a resolution and window. Behaviour-leads and same-period correlations are shown without correction, as context.</li>
-      <li><b>Calibration.</b> On simulated unrelated series (200–300 pairs each), nominal 5% tests rejected 3–5% of the time for the lead-lag test, 6–8% for the event study and 7–9% for the distributed-lag model (5.5% for its permutation check). The model-based tests are slightly liberal; the permutation checks are not.</li>
+      <li><b>Calibration.</b> On simulated unrelated series (independent AR(1) pairs, 150–400 per case; <code>scripts/calibrate_null.py</code>, output in <code>scripts/calibration_null.txt</code>), nominal 5% tests rejected about 3% of the time for the lead-lag test (5.5% for its permutation check) and 7.5–12% for the distributed-lag model (4.5% for its permutation check). The distributed-lag model p is liberal, so a distributed-lag result whose permutation check fails should be read as fragile. The event-study rate of 6–8% comes from the original build and has no shipped script.</li>
       <li><b>Text policy.</b> Official sentences are quoted up to 300 characters with a link. State media and other media show only the headline and a link.</li>
     </ul>
     <h3>Parameters</h3>
@@ -128,21 +161,31 @@
     <div class="tablewrap" id="bh-table"></div>
     <h3>Rhetoric coverage</h3>
     <div class="tablewrap" id="cov-rhet"></div>
-    <p class="fine">Gaps: the Russian "recent" collection regimes (RIA, RT, TASS) start in July 2026 and are too short to test; the TASS English "section" sample ends in July 2026, when its "recent" regime begins. The Russian Defence Ministry stream ends in March 2025. Iranian presidential texts start April 2025, Supreme Leader texts May 2024 to March 2026, and Press TV November 2025 to July 2026. ACLED Venezuela data end on 9 September 2024. Not used: North Korean nuclear tests (no North Korean texts in the corpus; last test 2017), the curated Houthi attack list (10 events, not a census).</p>
+    <p class="fine">Gaps: the Russian "recent" collection regimes (RIA, RT, TASS) start in July 2026 and are too short to test; the TASS English "section" sample ends in July 2026, when its "recent" regime begins. The Russian Defence Ministry stream ends in March 2025. The Press TV stream is a "cdx sample": articles found through the Internet Archive's capture index (CDX), not every article. Iranian presidential texts start April 2025, Supreme Leader texts May 2024 to March 2026, and Press TV November 2025 to July 2026. The Venezuelan Foreign Ministry stream is thin before 2024 (338 texts in 2021, 112 in 2022, 474 in 2023), and its old article links on mppre.gob.ve no longer resolve. ACLED Venezuela data end on 8 September 2024. The Telegram stream is archived copies of two channels, built before the live, forward-filtered collection began in October 2026. Not used: North Korean nuclear tests (no North Korean texts in the corpus; last test 2017), the curated Houthi attack list (10 events, not a census).</p>
     <h3>Behaviour coverage</h3>
     <div class="tablewrap" id="cov-beh"></div>
     <h3>Tone model agreement (teacher vs. student, not human coders)</h3>
     <div class="tablewrap" id="validation"></div>
+    <p class="fine">The table pools all languages (1,809 of the 3,207 held-out sentences are English). By language, Cohen's κ / Pearson r for the languages on this page:</p>
+    <div class="tablewrap"><table><thead><tr><th>Dimension</th><th>Russian (n = 654)</th><th>Persian (n = 37)</th><th>Spanish (n = 60)</th></tr></thead><tbody>
+      <tr><td>Hostility</td><td class="num">0.42 / 0.72</td><td class="num">0.38 / 0.82</td><td class="num">– / 0.49</td></tr>
+      <tr><td>Threat and coercive signalling</td><td class="num">0.32 / 0.68</td><td class="num">0.48 / 0.88</td><td class="num">– / 0.75</td></tr>
+      <tr><td>Conciliation</td><td class="num">0.68 / 0.82</td><td class="num">0.43 / 0.74</td><td class="num">0.68 / 0.87</td></tr>
+      <tr><td>Grievance and victimhood</td><td class="num">0.33 / 0.70</td><td class="num">– / 0.75</td><td class="num">– / 0.77</td></tr>
+      <tr><td>Escalation framing</td><td class="num">0.15 / 0.54</td><td class="num">– / 0.73</td><td class="num">– / 0.75</td></tr>
+      <tr><td>De-escalation framing</td><td class="num">0.24 / 0.60</td><td class="num">0.77 / 0.87</td><td class="num">0.00 / 0.80</td></tr>
+    </tbody></table></div>
+    <p class="fine">κ: agreement beyond chance on yes/no labels (0 = chance, 1 = perfect); "–" where too few positives to compute. Samples under 50 sentences are indicative only. Source: rhetoric-corpus reports/semantic/tone_validation.md.</p>
     <p class="fine">Nobody has yet checked the teacher against expert human coding. Grievance is under-detected. Read tone levels as rough; this tool relies on changes within one stream, which are less sensitive to a model's level bias.</p>
     <h3>How to cite</h3>
-    <p class="fine">Walberg, Jonathan. "Say–Do Gap Monitor: Russia, Iran and Venezuela." Interactive Deterrence, 2026. Data: Petro Ivaniuk, "Massive Missile Attacks on Ukraine" (Kaggle, CC BY-NC-SA 4.0); IMF PortWatch; Armed Conflict Location &amp; Event Data (ACLED), www.acleddata.com; official and state-media texts in the author's rhetoric corpus. Derived Ukraine series are shared under CC BY-NC-SA 4.0.</p>
+    <p class="fine">Walberg, Jonathan. "Say–Do Gap Monitor: Russia, Iran and Venezuela." Interactive Deterrence, 2026. Data: Petro Ivaniuk, "Massive Missile Attacks on Ukraine" (Kaggle, CC BY-NC-SA 4.0); IMF PortWatch; Armed Conflict Location &amp; Event Data (ACLED), www.acleddata.com; the curated Russian nuclear actions and Iran–Israel salvo dates from companion Interactive Deterrence tools; official and state-media texts in the author's rhetoric corpus. Derived Ukraine series are shared under CC BY-NC-SA 4.0.</p>
   </div>
 </section>
 
 <footer id="tsm-foot"></footer>
 <script type="module">
   import { mountChrome } from '../../shared/js/chrome.js';
-  mountChrome({ title: 'Say–Do Gap Monitor', sub: 'Do Russian, Iranian and Venezuelan statements predict what those states do? Three tests, corrected for multiple testing, with the evidence for every spike.', category: 'State rhetoric' });
+  mountChrome({ title: 'Say–Do Gap Monitor', sub: 'Does official rhetoric from Russia, Iran and Venezuela change before those states act? Three timing tests, corrected for multiple testing, with the evidence for every spike. Russian actions are tested; Iran only against shipping outcomes; Venezuela is shown but not tested.', category: 'State rhetoric' });
 </script>
 <script type="module" src="js/app.js"></script>
 <script type="module" src="js/method.js"></script>

@@ -13,11 +13,12 @@ export const pct = x => (x == null || !Number.isFinite(x)) ? '–' : `${Math.rou
 export const f2 = x => (x == null || !Number.isFinite(x)) ? '–' : x.toFixed(2).replace('-', '−');
 export const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-/** Labeled range slider. spec: { key, label, math, min, max, step, help, fmt, note } */
+/** Labeled range slider. spec: { key, label, math, min, max, step, help, fmt, note, cls } */
 export function slider(parent, spec, value, onInput) {
   const id = 'sl-' + spec.key;
   const wrap = document.createElement('div');
-  wrap.className = 'slider';
+  wrap.className = 'slider' + (spec.cls ? ' ' + spec.cls : '');
+  wrap.id = 'w-' + spec.key;
   wrap.innerHTML = `<div class="sl-h"><label for="${id}">${spec.label}${spec.math ? ` <span class="sym">${spec.math}</span>` : ''}${spec.note ? ` ${spec.note}` : ''}</label><output for="${id}"></output></div>
     <input type="range" id="${id}" min="${spec.min}" max="${spec.max}" step="${spec.step}">
     ${spec.help ? `<small>${spec.help}</small>` : ''}`;
@@ -50,9 +51,9 @@ export function choices(parent, opts, value, onPick, label) {
 }
 
 /** Panel section with an eyebrow title. */
-export function sec(parent, title) {
+export function sec(parent, title, cls = '') {
   const s = document.createElement('div');
-  s.className = 'sec';
+  s.className = 'sec' + (cls ? ' ' + cls : '');
   if (title) s.innerHTML = `<p class="eyebrow">${title}</p>`;
   parent.appendChild(s);
   return s;

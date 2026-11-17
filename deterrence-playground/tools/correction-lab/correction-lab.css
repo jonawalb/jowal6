@@ -94,3 +94,90 @@
   .big { font-size: 48px; }
   .axis text { font-size: 13px; } .ax-t { font-size: 12.5px; } .fp-l { font-size: 12.5px; } .fp-g { font-size: 12px; }
 }
+
+/* Audit fixes 16 Nov 2026: purpose card, presenter panel, Simple | Full detail, phone order, tour highlight. */
+.purpose { max-width: 1400px; margin: 14px auto 0; padding: 10px 14px; background: var(--panel); border: 1px solid var(--rule); border-left: 4px solid var(--accent); border-radius: 4px; }
+.purpose-h { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; margin-bottom: 6px; }
+.purpose .chip { font: 600 11px var(--mono); letter-spacing: .04em; color: var(--warn); border: 1px dashed var(--warn); border-radius: 3px; padding: 1px 6px; }
+.purpose dl { margin: 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 3px 12px; font-size: 13.5px; line-height: 1.45; }
+.purpose dt { font-weight: 600; }
+.purpose dd { margin: 0; max-width: 110ch; }
+@media (max-width: 640px) { .purpose dl { grid-template-columns: minmax(0, 1fr); gap: 0; } .purpose dd { margin-bottom: 5px; } }
+
+.sourced { font-family: var(--mono); font-size: 10.5px; color: var(--blue); border: 1px solid var(--blue); border-radius: 3px; padding: 0 4px; }
+.anchor-note { border-left: 2px solid var(--warn); padding-left: 8px; }
+
+.seg2 { display: inline-flex; }
+.seg2 .btn + .btn { margin-left: -1px; }
+.seg2 .btn[aria-pressed="true"] { font-weight: 700; }
+body.detail-simple .full-only { display: none !important; }
+body.detail-full .simple-only { display: none !important; }
+
+.present { max-width: 1400px; margin: 10px auto 0; padding: 0 14px; }
+.present > summary { cursor: pointer; padding: 10px 0; font: 600 15px var(--display); color: var(--ink); }
+.present ol { margin: 0 0 8px; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 13.5px; }
+.present li .btn { margin-right: 6px; }
+.present p { margin: 0 0 8px; font-size: 13.5px; max-width: 110ch; }
+
+.fig-h .tg-inline { padding: 2px 4px; grid-template-columns: 34px auto; align-items: center; }
+.fig-h .tg-inline .sw { margin-top: 0; }
+
+.tour { left: 20px; right: auto; }
+.tour-hl { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+/* Under 1020px the page is one column: put the controls straight after the result, not below every chart. */
+@media (max-width: 1020px) {
+  .layout { display: flex; flex-direction: column; }
+  .layout > .stage { display: contents; }
+  #hero-card { order: 1; }
+  #panel { order: 2; }
+  .stage > :not(#hero-card) { order: 3; }
+  #panel .sec:first-child { position: sticky; top: 0; z-index: 5; background: var(--panel); }
+}
+@media (max-width: 640px) {
+  .slider input[type="range"] { min-height: 44px; }
+  .actions .btn, .present .btn, .tour .btn, .tour .x, .choices button { min-height: 44px; }
+  .tour .x { min-width: 44px; }
+  .tour { left: 8px; right: 8px; width: auto; }
+  .tg { min-height: 44px; align-items: center; }
+}
+/* Phone: a sticky result bar keeps the number in view while the reader works the controls further down. */
+.resbar { display: none; }
+@media (max-width: 640px) {
+  .resbar { display: flex; position: sticky; top: 0; z-index: 15; justify-content: space-between; align-items: center; gap: 10px; margin: 8px -12px 0; padding: 6px 12px; background: var(--panel); border-bottom: 2px solid var(--accent); font-size: 13.5px; }
+  .resbar > span { white-space: nowrap; }
+  .resbar b { font: 700 22px var(--display); color: var(--bad); font-variant-numeric: tabular-nums; }
+  .resbar a { min-height: 44px; display: inline-flex; align-items: center; font-weight: 600; }
+  #panel .sec:first-child { position: static; }
+  .card, #panel, #thresh-card { scroll-margin-top: 64px; }
+}
+/* Judge fixes 16 Nov 2026: short Limits line on phones, tighter purpose card, controls first under 640px. */
+.lim-short, .lim-more { display: none; }
+@media (max-width: 640px) {
+  .lim-full { display: none; }
+  .lim-short { display: inline; }
+  .lim-more { display: inline; }
+  .lim-more > summary { display: inline; cursor: pointer; color: var(--blue); font-weight: 600; padding: 12px 6px; margin: -12px -6px; }
+  .purpose dt::after { content: "\00a0"; }
+  #panel .sec { padding: 10px 12px; gap: 8px; }
+  .resbar { margin-top: 4px; }
+  .present { margin-top: 8px; }
+  .lim-more[open] { display: block; }
+  .purpose { padding: 8px 10px; margin-top: 10px; }
+  .purpose-h { margin-bottom: 2px; }
+  .purpose dl { font-size: 13px; line-height: 1.35; }
+  .purpose dd { margin-bottom: 0; }
+  .present > summary { min-height: 44px; padding: 12px 0; box-sizing: border-box; }
+  .purpose dl { display: block; }
+  .purpose dt { display: inline; margin: 0; }
+  .purpose dd { display: inline; }
+  .purpose dd::after { content: ""; display: block; margin-bottom: 4px; }
+  .actions { gap: 6px; }
+  .actions .btn { padding-inline: 8px; font-size: 12.5px; }
+  .toolbar-top { margin-top: 10px; }
+  .actions .btn { padding-inline: 10px; }
+  /* The sticky result bar carries the number, so the controls come first and the panel's own status box is hidden. */
+  #panel { order: 1; }
+  #hero-card { order: 2; }
+  #panel .sec:first-child { display: none; }
+}

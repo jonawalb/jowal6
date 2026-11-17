@@ -22,18 +22,22 @@ export function drawPeople(svg, res) {
 
 /** Each person's bar (1 − α)·U_I + C against the single left-hand side α·evidence. */
 export function drawThreshold(svg, res) {
-  const narrow = narrowOf(svg), W = narrow ? 420 : 640, H = 190, m = { l: 12, r: 12, t: 28, b: 34 };
+  const narrow = narrowOf(svg), W = narrow ? 420 : 640, H = 212, m = { l: 12, r: 12, t: 44, b: 40 };
   svg.innerHTML = '';
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
   const sorted = [...res.bar].sort((a, b) => a - b);
   let x0 = Math.min(sorted[4], res.lhs) - 0.3, x1 = Math.max(sorted[N - 5], res.lhs) + 0.3;
   const X = v => m.l + ((W - m.l - m.r) * (v - x0)) / (x1 - x0);
+  // People beyond the plotted range are counted in labels, not piled into the end bins (which drew false spikes).
   const nb = narrow ? 24 : 36, bins = Array.from({ length: nb }, () => ({ rev: 0, hold: 0 }));
+  let below = 0, above = 0;
   for (let i = 0; i < N; i++) {
-    const b = Math.max(0, Math.min(nb - 1, Math.floor(((res.bar[i] - x0) / (x1 - x0)) * nb)));
-    bins[b][res.revise[i] ? 'rev' : 'hold']++;
+    const f = (res.bar[i] - x0) / (x1 - x0);
+    if (f < 0) { below++; continue; }
+    if (f >= 1) { above++; continue; }
+    bins[Math.floor(f * nb)][res.revise[i] ? 'rev' : 'hold']++;
   }
-  const mx = Math.max(...bins.map(b => b.rev + b.hold)), bw = (W - m.l - m.r) / nb;
+  const mx = Math.max(1, ...bins.map(b => b.rev + b.hold)), bw = (W - m.l - m.r) / nb;
   const Y = c => ((H - m.t - m.b) * c) / mx;
   bins.forEach((b, k) => {
     const x = m.l + k * bw;
@@ -41,16 +45,21 @@ export function drawThreshold(svg, res) {
     if (b.hold) el('rect', { x: x + 1, y: H - m.b - Y(b.rev + b.hold), width: bw - 2, height: Y(b.hold), class: 'hb hold' }, svg);
   });
   el('line', { x1: m.l, x2: W - m.r, y1: H - m.b, y2: H - m.b, class: 'base' }, svg);
+  el('text', { x: m.l, y: 12, class: 'ax-t' }, svg, `Bar height: number of people (tallest bar ${mx})`);
   const lx = X(res.lhs);
   el('line', { x1: lx, x2: lx, y1: m.t - 8, y2: H - m.b, class: 'lhs' }, svg);
   el('text', { x: lx, y: m.t - 12, class: 'lhs-t', 'text-anchor': lx > W * 0.7 ? 'end' : 'start' }, svg, `α(E)·evidence = ${res.lhs.toFixed(2)}`);
-  el('text', { x: m.l, y: H - 10, class: 'ax-t' }, svg, 'Each person’s bar: (1 − α)·U_I + C  →');
+  if (below) el('text', { x: m.l, y: H - m.b + 11, class: 'fp-n' }, svg, `← ${below} more`);
+  if (above) el('text', { x: W - m.r, y: H - m.b + 11, class: 'fp-n', 'text-anchor': 'end' }, svg, `${above} more →`);
+  const t = el('text', { x: m.l, y: H - 10, class: 'ax-t' }, svg, 'Each person’s bar: (1 − α)·U');
+  el('tspan', { 'baseline-shift': 'sub', 'font-size': '75%' }, t, 'I');
+  el('tspan', {}, t, ' + C  →');
   el('text', { x: W - m.r, y: H - 10, class: 'ax-t', 'text-anchor': 'end' }, svg, 'higher bar, harder to move');
 }
 
 /** Persistence as emotional activation rises, with and without the Sticky Affect weight. */
 export function drawSweep(svg, s, onE) {
-  const narrow = narrowOf(svg), W = narrow ? 420 : 980, H = narrow ? 230 : 240, m = { l: 42, r: 14, t: 12, b: 36 };
+  const narrow = narrowOf(svg), W = narrow ? 420 : 980, H = narrow ? 230 : 240, m = { l: 58, r: 14, t: 12, b: 36 };
   svg.innerHTML = '';
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
   const e0 = 0.25, e1 = 3;
@@ -62,6 +71,7 @@ export function drawSweep(svg, s, onE) {
   }
   for (const e of [0.25, 1, 2, 3]) el('text', { x: X(e), y: H - m.b + 15, 'text-anchor': 'middle' }, ax, String(e));
   el('text', { x: (m.l + W - m.r) / 2, y: H - 3, 'text-anchor': 'middle', class: 'ax-t' }, ax, 'Emotional activation E (calm → fear, anger)');
+  el('text', { x: 0, y: 0, 'text-anchor': 'middle', class: 'ax-t', transform: `translate(12 ${(m.t + H - m.b) / 2}) rotate(-90)` }, ax, 'Still believe the myth');
   const line = sa => Array.from({ length: 56 }, (_, i) => e0 + ((e1 - e0) * i) / 55)
     .map((e, i) => `${i ? 'L' : 'M'}${X(e).toFixed(1)},${Y(persistShare({ ...s, e, sa })).toFixed(1)}`).join('');
   el('path', { d: line(0), class: 'sw off' }, svg);
@@ -91,7 +101,7 @@ export function drawWaterfall(box, steps) {
 
 /** Forest plot of Walter & Tukachinsky subgroup estimates, current choices highlighted. */
 export function drawForest(svg, s) {
-  const narrow = narrowOf(svg), W = narrow ? 360 : 980, rowH = narrow ? 24 : 26, lab = narrow ? 170 : 300, m = { t: 20, b: narrow ? 44 : 34, r: narrow ? 10 : 70 };
+  const narrow = narrowOf(svg), W = narrow ? 360 : 980, rowH = narrow ? 24 : 26, lab = narrow ? 170 : 300, m = { t: 20, b: narrow ? 64 : 44, r: narrow ? 10 : 70 };
   const rows = [{ head: 'Overall, after any correction', r: WT_OVERALL.r, lo: WT_OVERALL.lo, hi: WT_OVERALL.hi, on: true, overall: true }];
   const chosen = { tm: s.tm, src: s.src, alt: String(s.alt), rs: String(s.rs), wv: null, e: null };
   for (const mo of WT_MODERATORS) {
@@ -107,8 +117,10 @@ export function drawForest(svg, s) {
     el('line', { x1: X(r), x2: X(r), y1: m.t - 6, y2: H - m.b, class: r === 0 ? 'zero' : 'grid' }, ax);
     el('text', { x: X(r), y: H - m.b + 14, 'text-anchor': 'middle' }, ax, r.toFixed(1).replace('-', '−'));
   }
+  // r = 0 is full erasure; r > 0 means the corrected group believes less than the never-misinformed control.
+  el('text', { x: X(0), y: H - m.b + (narrow ? 34 : 28), class: 'ax-t', 'text-anchor': 'middle' }, ax, '0 = erased');
   el('text', { x: narrow ? 4 : X(r0), y: H - 4, class: 'ax-t' }, ax, '← belief persists');
-  el('text', { x: W - 4, y: H - 4, class: 'ax-t', 'text-anchor': 'end' }, ax, 'erased →');
+  el('text', { x: W - 4, y: H - 4, class: 'ax-t', 'text-anchor': 'end' }, ax, 'below control →');
   rows.forEach((rw, i) => {
     const y = m.t + i * rowH + rowH / 2;
     if (rw.group) { el('text', { x: 4, y: y + 4, class: 'fp-g' }, svg, rw.head + (rw.ctx ? ' (context)' : '')); return; }

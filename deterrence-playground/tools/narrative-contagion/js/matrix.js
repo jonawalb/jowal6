@@ -23,8 +23,9 @@ export function renderMatrix(host, D, clusters, metric, onPair) {
     return `background:color-mix(in srgb, ${col} ${t}%, transparent)`;
   };
   if (!cs.length) { host.innerHTML = '<p class="fine">No clusters match the current filters.</p>'; return; }
+  const short = c => (c === 'US' ? 'U.S.' : D.countries[c]);
   const head = cs.map(c => `<th scope="col" title="${esc(D.countries[c])}">${c}</th>`).join('');
-  const rows = cs.map(a => `<tr><th scope="row" title="${esc(D.countries[a])}">${a}</th>${cs.map(b => {
+  const rows = cs.map(a => `<tr><th scope="row" title="${esc(D.countries[a])}"><span class="nm">${esc(short(a))}</span><span class="code">${a}</span></th>${cs.map(b => {
     if (a === b) return '<td class="self" aria-hidden="true"></td>';
     const x = M.get(`${a}>${b}`) || { before: 0, same: 0, medLag: null }, y = M.get(`${b}>${a}`) || { before: 0 };
     const v = val(a, b);
@@ -34,11 +35,30 @@ export function renderMatrix(host, D, clusters, metric, onPair) {
     const shown = v == null ? '' : metric === 'lag' ? `${v}d` : metric === 'net' && v > 0 ? `+${v}` : String(v);
     return n ? `<td><button type="button" style="${fill(v)}" data-a="${a}" data-b="${b}" aria-label="${esc(label)}. Show these clusters." title="${esc(label)}">${shown}</button></td>` : '<td class="none"></td>';
   }).join('')}</tr>`).join('');
-  host.innerHTML = `<div class="nc-matrix-wrap"><table class="nc-matrix"><thead><tr><th scope="col" class="corner"><span>first ↓ / then →</span></th>${head}</tr></thead><tbody>${rows}</tbody></table></div>`;
+  host.innerHTML = `<div class="nc-matrix-wrap" tabindex="0" aria-label="Country-pair table; scrolls sideways on small screens"><table class="nc-matrix"><thead><tr><th scope="col" class="corner"><span>first ↓ / then →</span></th>${head}</tr></thead><tbody>${rows}</tbody></table></div>`;
   host.querySelectorAll('button[data-a]').forEach(b => b.addEventListener('click', () => onPair(b.dataset.a, b.dataset.b)));
-  const top = [...M.entries()].filter(([, v]) => v.before).sort((a, b) => b[1].before - a[1].before).slice(0, 3)
-    .map(([k, v]) => { const [a, b] = k.split('>'); const rev = (M.get(`${b}>${a}`) || { before: 0 }).before; return `${D.countries[a]} before ${D.countries[b]}: ${v.before} clusters (the reverse: ${rev}; median lag ${v.medLag} day${v.medLag === 1 ? '' : 's'})`; });
+  const top = topPairs(M, metric).map(([a, b, v, rev]) => {
+    const lag = v.medLag == null ? '' : `; median lag ${v.medLag} day${v.medLag === 1 ? '' : 's'}`;
+    if (metric === 'net') return `${D.countries[a]} before ${D.countries[b]}: net +${v.before - rev} (${v.before} clusters against ${rev} the other way${lag})`;
+    if (metric === 'lag') return `${D.countries[a]} before ${D.countries[b]}: median lag ${v.medLag} day${v.medLag === 1 ? '' : 's'} (${v.before} clusters)`;
+    return `${D.countries[a]} before ${D.countries[b]}: ${v.before} clusters (the reverse: ${rev}${lag})`;
+  });
   return top;
+}
+
+export const TOP_HEAD = { before: 'Most clusters with the row country first', net: 'Largest net leads', lag: 'Longest median lags (pairs with at least 5 clusters)' };
+/** The three largest pairs under the metric shown: [rowCountry, colCountry, cell, reverseCount]. */
+export function topPairs(M, metric) {
+  const rows = [...M.entries()].filter(([, v]) => v.before).map(([k, v]) => { const [a, b] = k.split('>'); return [a, b, v, (M.get(`${b}>${a}`) || { before: 0 }).before]; });
+  const key = metric === 'net' ? r => r[2].before - r[3] : metric === 'lag' ? r => (r[2].before >= 5 ? r[2].medLag : -1) : r => r[2].before;
+  return rows.filter(r => key(r) > 0).sort((x, y) => key(y) - key(x) || y[2].before - x[2].before).slice(0, 3);
+}
+
+/** Plain words for the matrix colours under the current metric. */
+export function matrixKey(metric) {
+  if (metric === 'net') return '<span class="sw sw-b"></span>Blue: the row country is usually first. <span class="sw sw-r"></span>Red: the column country is usually first. The number is row-first minus column-first clusters; darker means a larger gap.';
+  if (metric === 'lag') return '<span class="sw sw-t"></span>Darker teal: more days, on the median, between the row country and the column country when the row came first.';
+  return '<span class="sw sw-b"></span>Darker blue: more clusters in which the row country appeared before the column country.';
 }
 
 export function renderPathways(host, clusters) {
@@ -78,11 +98,13 @@ export function renderCoverage(host, D) {
   cs.forEach(c => ms.forEach(m => { const v = D.coverage[c][m]; if (v) max = Math.max(max, v[0] + v[1]); }));
   const cell = (c, m) => {
     const v = D.coverage[c][m] || [0, 0], n = v[0] + v[1];
-    const t = n ? Math.round(15 + 85 * Math.sqrt(n / max)) : 0;
-    return `<i title="${esc(D.countries[c])} ${m}: ${v[0]} official, ${v[1]} media docs" style="${n ? `background:color-mix(in srgb, var(--brand-ink) ${t}%, transparent)` : ''}"${v[1] ? '' : ' class="nomedia"'}></i>`;
+    const t = n ? Math.round(30 + 70 * Math.sqrt(n / max)) : 0;
+    const part = m === last ? ` (partial: data built ${D.meta.generated.slice(0, 10)})` : '';
+    return `<i title="${esc(D.countries[c])} ${m}${part}: ${v[0]} official, ${v[1]} media docs" style="${n ? `background:color-mix(in srgb, var(--brand-ink) ${t}%, transparent)` : ''}"${v[1] ? '' : ' class="nomedia"'}></i>`;
   };
   host.innerHTML = `<div class="nc-cov" role="img" aria-label="Documents in the corpus per country per month, 2021 to ${last}. Darker means more documents.">
     ${cs.map(c => `<div class="row"><span class="cc">${c}</span><span class="cells">${ms.map(m => cell(c, m)).join('')}</span></div>`).join('')}
     <div class="row axis"><span class="cc"></span><span class="cells">${ms.map(m => `<i>${m.endsWith('-01') ? `<b>${m.slice(0, 4)}</b>` : ''}</i>`).join('')}</span></div>
-  </div>`;
+  </div>
+  <p class="nc-cov-key fine">Documents per month: ${[1, 0.25, 0.04, 0.005].map(f => Math.max(1, Math.round(f * max))).reverse().map(n => `<span class="sw" style="background:color-mix(in srgb, var(--brand-ink) ${Math.round(30 + 70 * Math.sqrt(n / max))}%, transparent)"></span>${n.toLocaleString()}`).join(' ')} <span class="sw nomedia"></span>no media that month. The last column (${last}) is partial.</p>`;
 }

@@ -26,7 +26,7 @@ export function slider(parent, spec, value, onInput) {
   const fmt = spec.fmt || (v => (+v).toFixed(2));
   input.value = value; out.textContent = fmt(+input.value);
   input.addEventListener('input', () => { out.textContent = fmt(+input.value); onInput(+input.value); });
-  return { input, set(v) { input.value = v; out.textContent = fmt(+input.value); }, disable(d) { input.disabled = d; wrap.classList.toggle('off', d); } };
+  return { input, wrap, set(v) { input.value = v; out.textContent = fmt(+input.value); }, disable(d) { input.disabled = d; wrap.classList.toggle('off', d); } };
 }
 
 /** Segmented choice group with aria-pressed buttons. */

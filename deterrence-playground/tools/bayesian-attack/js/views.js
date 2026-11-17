@@ -57,26 +57,31 @@ export function drawTrajectory(svg, tr, p) {
   }
 }
 
-const COL = { lam: '--c2', fab: '--c1' };
-/** Region map over cost ratio ρ (log x) and stake τ (y). Returns the frame so the caller can drag. */
+const COL = { lam: 'var(--c2)', fab: 'var(--c1)', quiet: 'url(#ba-hatch)' };
+const dark = () => matchMedia('(prefers-color-scheme: dark)').matches;
+/** Region map over cost ratio r (log x) and stake τ (y). Returns the frame so the caller can drag. */
 export function drawRegion(svg, tab, cur) {
   const F = frame(svg, { W: narrow(svg) ? 420 : 760, H: narrow(svg) ? 320 : 300, m: { l: 50, r: 12, t: 12, b: 40 }, x: RHO_RANGE, y: TAU_RANGE, xlog: true });
   const { g, sx, sy } = F, N = 44;
-  const lay = el('g', { 'shape-rendering': 'crispEdges', opacity: 0.4 }, g);
+  const defs = el('defs', {}, g);
+  const pat = el('pattern', { id: 'ba-hatch', patternUnits: 'userSpaceOnUse', width: 7, height: 7, patternTransform: 'rotate(45)' }, defs);
+  el('rect', { width: 7, height: 7, fill: 'var(--c2)', 'fill-opacity': 0.35 }, pat);
+  el('line', { x1: 0, y1: 0, x2: 0, y2: 7, stroke: 'var(--panel)', 'stroke-width': 3 }, pat);
+  const lay = el('g', { 'shape-rendering': 'crispEdges', opacity: dark() ? 0.55 : 0.45 }, g);
   for (let j = 0; j < N; j++) {
     const tau = TAU_RANGE[0] + (j + 0.5) / N * (TAU_RANGE[1] - TAU_RANGE[0]);
     let run = null;
     const flush = i => { if (!run) return; const xa = sx(10 ** (-2 + 4 * run.i0 / N)), xb = sx(10 ** (-2 + 4 * i / N));
       const ya = sy(TAU_RANGE[0] + (j + 1) / N * 9.9), yb = sy(TAU_RANGE[0] + j / N * 9.9);
-      el('rect', { x: xa, y: ya, width: xb - xa + 0.6, height: yb - ya + 0.6, fill: `var(${COL[run.k]})` }, lay); };
+      el('rect', { x: xa, y: ya, width: xb - xa + 0.6, height: yb - ya + 0.6, fill: COL[run.k] }, lay); };
     for (let i = 0; i < N; i++) {
-      const k = cell(tab, 10 ** (-2 + 4 * (i + 0.5) / N), tau).dom ? 'lam' : 'fab';
+      const c = cell(tab, 10 ** (-2 + 4 * (i + 0.5) / N), tau), k = c.quiet ? 'quiet' : c.dom ? 'lam' : 'fab';
       if (!run || run.k !== k) { flush(i); run = { k, i0: i }; }
     }
     flush(N);
   }
-  axes(F, { xt: [0.01, 0.1, 1, 10, 100], yt: [0.1, 2, 4, 6, 8, 10], xf: v => String(v), yf: v => String(v),
-    xl: 'Cost ratio ρ (high = fabrication is cheap)', yl: 'Stake τ' });
+  axes(F, { xt: [0.01, 0.1, 1, 10, 100], yt: [2, 4, 6, 8, 10], xf: v => String(v), yf: v => String(v),
+    xl: 'Cost ratio r (high = fabrication is cheap)', yl: 'Stake for the sender τ' });
   el('line', { x1: sx(cur.rho), x2: sx(cur.rho), y1: F.m.t, y2: F.box.H - F.m.b, class: 'now' }, g);
   el('line', { x1: F.m.l, x2: F.box.W - F.m.r, y1: sy(cur.tau), y2: sy(cur.tau), class: 'now' }, g);
   el('circle', { cx: sx(cur.rho), cy: sy(cur.tau), r: 6, class: 'mark' }, g);
@@ -89,8 +94,8 @@ export function drawDefenseMap(svg, grid, cur) {
   const { g, sx, sy } = F;
   const lay = el('g', { 'shape-rendering': 'crispEdges' }, g);
   grid.forEach(c => el('rect', { x: sx(c.lg - 0.025), y: sy(c.b + 0.5), width: sx(c.lg + 0.025) - sx(c.lg - 0.025) + 0.5, height: sy(c.b - 0.5) - sy(c.b + 0.5) + 0.5,
-    fill: `var(${c.reassure < c.disclose ? '--c3' : '--c1'})`, 'fill-opacity': 0.15 + 0.6 * Math.min(1, Math.abs(c.reassure - c.disclose)) }, lay));
-  axes(F, { xt: [0.1, 0.3, 0.5, 0.7, 0.9], yt: [1, 4, 7, 10], xf: f2, xl: 'Captured weight on evidence λg (1 = not captured)', yl: 'Budget' });
+    fill: `var(${c.reassure < c.disclose ? '--c3' : '--c1'})`, 'fill-opacity': (dark() ? 0.4 : 0.25) + 0.55 * Math.min(1, 3 * Math.abs(c.reassure - c.disclose)) }, lay));
+  axes(F, { xt: [0.1, 0.3, 0.5, 0.7, 0.9], yt: [1, 4, 7, 10], xf: f2, xl: 'Captured weight on evidence λg (1 = not captured)', yl: 'Budget (units)' });
   el('line', { x1: sx(0.3), x2: sx(0.3), y1: F.m.t, y2: F.box.H - F.m.b, class: 'bound' }, g);
   el('text', { x: sx(0.3) + 4, y: F.m.t + 12, class: 'lbl' }, g, 'λg < 0.3');
   el('circle', { cx: sx(cur.lg), cy: sy(cur.b), r: 6, class: 'mark' }, g);
@@ -105,8 +110,9 @@ export function drawRecovery(svg, fear, anger) {
   const F = frame(svg, { W: narrow(svg) ? 420 : 560, H: 250, m: { l: 50, r: 12, t: 12, b: 36 }, x: [0, n], y: [lo, hi] });
   const { g, sx, sy } = F;
   el('rect', { x: sx(0), y: F.m.t, width: sx(n1) - sx(0), height: F.ih, class: 'phase' }, g);
-  axes(F, { xt: [0, 20, 40, 60, 80, 100, 120], yt: [0, +(hi / 2).toFixed(1), +(hi * 0.9).toFixed(1)], yf: f2, xl: 'Signals (shaded: campaign; then truthful news)', yl: 'Belief μ' });
+  axes(F, { xt: [0, 20, 40, 60, 80, 100, 120], yt: [0, +(hi / 2).toFixed(1), +(hi * 0.9).toFixed(1)], yf: f2, xl: 'Signals (shaded: campaign; then truthful news)', yl: 'Belief about the threat' });
   el('line', { x1: sx(0), x2: sx(n), y1: sy(0), y2: sy(0), class: 'truth' }, g);
+  el('text', { x: sx(n) - 4, y: sy(0) - 5, 'text-anchor': 'end', class: 'lbl truth-l' }, g, 'truth (θ = 0)');
   const pts = r => [...r.campaign, ...r.recovery].map((v, i) => [i + 1, v]);
   el('path', { d: path(pts(fear), sx, sy), class: 'ln fear' }, g);
   el('path', { d: path(pts(anger), sx, sy), class: 'ln anger' }, g);

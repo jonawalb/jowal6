@@ -15,12 +15,12 @@ export const DEFAULTS = {
   amp: 0.05,  // amplified visibility a
   ex: 0.18,   // exaggeration chance per retelling at λ = 1
   s0: 4,      // people who see the event first
-  cor: 1,     // correction on/off
+  cor: 0,     // correction on/off (off by default: the first Play shows the cascade alone)
   tc: 8,      // correction round
   rc: 0.4,    // correction reach (share of people)
   src: 'o',   // 'o' out-group fact-check, 'i' in-group voice
   seed: 7,
-  t: 40,      // round shown
+  t: 0,       // round shown (0: press Play to watch the spread)
 };
 export const W = 800, H = 470;
 export const MAXV = 4;
@@ -156,5 +156,7 @@ export function summarize(run) {
   const ever = last.sharing + last.retracted;
   const half = f.findIndex(x => x.sharing >= n / 2);
   const alarm = last.vc.slice(2).reduce((a, b) => a + b, 0);
-  return { peak: peak / n, final: last.sharing / n, ever: ever / n, half, alarmShare: last.sharing ? alarm / last.sharing : 0 };
+  const retold = last.sharing - last.vc[0];
+  return { peak: peak / n, final: last.sharing / n, ever: ever / n, half, alarmShare: last.sharing ? alarm / last.sharing : 0,
+    retellShare: last.sharing ? retold / last.sharing : 0 };
 }

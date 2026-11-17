@@ -98,7 +98,7 @@ export function drawSeries(svg, o, onHover) {
 /** Cross-correlation r_k for k = -K..K with bootstrap CIs. */
 export function drawCCF(svg, c, res) {
   clear(svg);
-  const W = 440, H = 220, L = 54, R = 10, T = 16, B = 34;
+  const W = 440, H = 230, L = 54, R = 10, T = 26, B = 34;
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
   if (!c || !c.r || !c.r.length) {
     el('text', { x: W / 2, y: H / 2, class: 'ax msg', 'text-anchor': 'middle' }, svg, (c && c.why) || 'Not tested for this pair.');
@@ -113,6 +113,8 @@ export function drawCCF(svg, c, res) {
   const g = el('g', {}, svg);
   el('rect', { x: x(0.5), y: T, width: x(K + 0.5) - x(0.5), height: H - T - B, class: 'leadzone' }, g);
   yAxis(g, n, y, L, W - R, v => v.toFixed(1));
+  el('text', { x: 4, y: 12, class: 'ax ylab' }, g, 'Correlation r (bars), pointwise 95% CI per lag (lines)');
+  el('text', { x: x(K / 2), y: T + 12, class: 'ax zl', 'text-anchor': 'middle' }, g, 'shaded: rhetoric first');
   const bw = (W - L - R) / (2 * K + 1) * 0.62;
   c.r.forEach((v, i) => {
     const k = i - K;
@@ -129,7 +131,7 @@ export function drawCCF(svg, c, res) {
 /** Mean abnormal behaviour around spikes, t = -h..h, with bootstrap band. */
 export function drawES(svg, e, P, res, unit) {
   clear(svg);
-  const W = 440, H = 220, L = 56, R = 10, T = 16, B = 34;
+  const W = 440, H = 230, L = 56, R = 10, T = 26, B = 34;
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
   const g = el('g', {}, svg);
   if (!e || e.ab == null) {
@@ -144,6 +146,7 @@ export function drawES(svg, e, P, res, unit) {
   el('rect', { x: x(-Hh) , y: T, width: x(-1) - x(-Hh), height: H - T - B, class: 'prezone' }, g);
   el('rect', { x: x(1), y: T, width: x(Hh) - x(1), height: H - T - B, class: 'postzone' }, g);
   yAxis(g, n, y, L, W - R, v => String(Math.round(v * 100) / 100));
+  el('text', { x: 4, y: 12, class: 'ax ylab' }, g, `Change in ${unit || 'behaviour'} vs baseline`);
   let band = '';
   e.hi.forEach((v, i) => { band += `${i ? 'L' : 'M'}${x(i - h)},${y(v ?? 0)}`; });
   for (let i = e.lo.length - 1; i >= 0; i--) band += `L${x(i - h)},${y(e.lo[i] ?? 0)}`;
@@ -160,7 +163,7 @@ export function drawES(svg, e, P, res, unit) {
 /** Distributed-lag coefficients b_0..b_L with 95% HAC intervals. */
 export function drawDL(svg, d, res) {
   clear(svg);
-  const W = 440, H = 220, L = 54, R = 10, T = 16, B = 34;
+  const W = 440, H = 230, L = 54, R = 10, T = 26, B = 34;
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
   const g = el('g', {}, svg);
   if (!d || d.b == null) {
@@ -174,12 +177,13 @@ export function drawDL(svg, d, res) {
   const x = k => L + ((k + 0.5) / (Lg + 1)) * (W - L - R);
   const y = v => T + (1 - (v - n.lo) / (n.hi - n.lo)) * (H - T - B);
   yAxis(g, n, y, L, W - R, v => v.toFixed(2));
+  el('text', { x: 4, y: 12, class: 'ax ylab' }, g, 'SD of behaviour per SD of rhetoric (95% CI)');
   d.b.forEach((b, k) => {
     el('line', { x1: x(k), x2: x(k), y1: y(lo[k]), y2: y(hi[k]), class: 'whisk' + (k === 0 ? ' b0' : '') }, g);
     el('circle', { cx: x(k), cy: y(b), r: 4, class: 'coef' + (k === 0 ? ' b0' : '') }, g);
-    el('text', { x: x(k), y: H - B + 14, class: 'ax', 'text-anchor': 'middle' }, g, k === 0 ? 'same' : `−${k}`);
+    el('text', { x: x(k), y: H - B + 14, class: 'ax', 'text-anchor': 'middle' }, g, k === 0 ? '0' : `+${k}`);
   });
-  el('text', { x: L + (W - L - R) / 2, y: H - 4, class: 'ax', 'text-anchor': 'middle' }, g, `rhetoric lag (${per(res)}s)`);
+  el('text', { x: L + (W - L - R) / 2, y: H - 4, class: 'ax', 'text-anchor': 'middle' }, g, `${per(res)}s rhetoric leads (+ = rhetoric first)`);
 }
 
 export { fmt };

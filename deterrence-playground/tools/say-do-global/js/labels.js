@@ -59,7 +59,7 @@ export function testLine(code, r, res, beh) {
   const u = beh.unit;
   if (code === 'c') {
     const c = r.c, i = (c.r.length - 1) / 2 + c.k;
-    return `Strongest lead: r = ${fmt(c.rk)} with rhetoric ${pers(c.k, res)} ahead (95% CI ${fmt(c.lo[i])} to ${fmt(c.hi[i])}).`;
+    return `Strongest lead: r = ${fmt(c.rk)} with rhetoric ${pers(c.k, res)} ahead (pointwise 95% CI ${fmt(c.lo[i])} to ${fmt(c.hi[i])}, for this lag on its own; the p below is adjusted for picking the strongest of ${(c.r.length - 1) / 2} lags, so a CI that misses zero can still go with a large p).`;
   }
   if (code === 'e') {
     const e = r.e;
@@ -68,28 +68,39 @@ export function testLine(code, r, res, beh) {
   }
   const d = r.d;
   if (d.cum == null) return d.why || 'Model not estimable.';
-  return `Lagged rhetoric terms, summed: ${fmt(d.cum)} SD of behaviour per SD of rhetoric (SE ${d.cse.toFixed(2)}); F = ${d.F}.`;
+  return `Lagged rhetoric terms, summed: ${fmt(d.cum)} SD of behaviour per SD of rhetoric (SE ${d.cse.toFixed(2)}); F = ${d.F}. The F test asks whether any single lag matters, so it can pass while the sum is near zero or uncertain.`;
 }
 export let META_RES = {};
 export const setMetaRes = r => { META_RES = r; };
 
+/** Range of p < 0.05 counts expected with no real relation, from the calibrated null rates per test (or 5% flat). */
+export function chanceRange(fam, calib) {
+  if (!calib || !fam.by) { const n = Math.round(fam.m * 0.05); return { lo: n, hi: n, flat: n }; }
+  const lo = Math.round(['c', 'e', 'd'].reduce((a, t) => a + (fam.by[t] || 0) * calib[t][0], 0));
+  const hi = Math.round(['c', 'e', 'd'].reduce((a, t) => a + (fam.by[t] || 0) * calib[t][1], 0));
+  return { lo, hi, flat: Math.round(fam.m * 0.05) };
+}
+export function chanceText(fam, calib) {
+  const c = chanceRange(fam, calib);
+  return c.lo === c.hi ? `about ${fmtN(c.flat)}` : `roughly ${fmtN(c.lo)} to ${fmtN(c.hi)}`;
+}
+
 /** Plain-language verdict for a pair. */
-export function verdict(r, fam, res) {
+export function verdict(r, fam, res, calib) {
   if (!r) return { cls: 'na', head: 'No analysis for this combination', body: 'The rhetoric and behaviour series do not overlap in this window.' };
   if (r.s !== 'ok') return { cls: 'na', head: 'Not tested', body: `${r.why[0].toUpperCase() + r.why.slice(1)}. The page shows the series but runs no test.` };
   const st = ['c', 'e', 'd'].map(k => [k, testStatus(r[k])]);
   const sig = st.filter(s => s[1] === 'sig').map(s => s[0]);
   const nom = st.filter(s => s[1] === 'nom').map(s => s[0]);
-  const exp = Math.round(fam.m * 0.05);
   if (sig.length) {
     const fragile = sig.filter(k => r[k].ok === false);
     return { cls: 'sig', head: `${sig.length === 1 ? 'One test' : sig.length + ' tests'} survive${sig.length === 1 ? 's' : ''} correction`,
       body: `${sig.map(k => TEST[k]).join(' and ')} pass${sig.length === 1 ? 'es' : ''} Benjamini–Hochberg at q < 0.05 across all ${fmtN(fam.m)} tests in this view. ` +
         (fragile.length ? `The permutation or placebo check for ${fragile.map(k => TEST[k].toLowerCase()).join(' and ')} does not agree (p > 0.05): treat it as fragile. ` : '') +
-        'This is a predictive association in the past record, not proof that the statements caused the behaviour. Check the pre-trend and read the spike evidence.' };
+        'This is an association in timing in the past record; it does not show that the statements caused the behaviour. Check the pre-trend and read the spike evidence.' };
   }
   if (nom.length) return { cls: 'nom', head: 'Suggestive at most', body:
-    `${nom.map(k => TEST[k]).join(' and ')} reach${nom.length === 1 ? 'es' : ''} p < 0.05 on ${nom.length === 1 ? 'its' : 'their'} own, but nothing survives correction for the ${fmtN(fam.m)} tests in this view. By chance alone about ${fmtN(exp)} of them would pass p < 0.05.` };
-  return { cls: 'none', head: 'No evidence that this rhetoric leads this behaviour',
+    `${nom.map(k => TEST[k]).join(' and ')} reach${nom.length === 1 ? 'es' : ''} p < 0.05 on ${nom.length === 1 ? 'its' : 'their'} own, but nothing survives correction for the ${fmtN(fam.m)} tests in this view. Even if nothing were related, ${chanceText(fam, calib)} of them would pass p < 0.05.` };
+  return { cls: 'none', head: 'No sign in this record that this rhetoric leads this behaviour',
     body: 'None of the three tests reaches p < 0.05, even before correcting for multiple tests.' };
 }

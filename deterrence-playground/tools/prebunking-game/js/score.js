@@ -36,14 +36,19 @@ export function scoreAll(answers) {
 
 const mean = xs => xs.length ? xs.reduce((s, x) => s + x, 0) / xs.length : null;
 
-/** Twin-pair summaries by part: loaded minus neutral miscalibration and pull. */
-export function summary(scored) {
+/**
+ * Twin-pair summaries by part: loaded minus neutral miscalibration and pull.
+ * opts.skip: loaded-round ids whose pull never ran (the soundtrack round with sound off). Those pairs
+ * are still returned (flag skip) for display but left out of every average.
+ */
+export function summary(scored, opts = {}) {
+  const skip = new Set(opts.skip || []);
   const pairs = ROUNDS.filter(r => r.kind === 'loaded' && scored[r.id] && scored[r.twin])
     .map(r => {
       const L = scored[r.id], N = scored[r.twin];
-      return { r, L, N, gap: L.mis - N.mis, pullGap: L.pull - N.pull };
+      return { r, L, N, gap: L.mis - N.mis, pullGap: L.pull - N.pull, skip: skip.has(r.id) };
     });
-  const by = part => pairs.filter(p => p.r.part === part);
+  const by = part => pairs.filter(p => p.r.part === part && !p.skip);
   const s = part => {
     const ps = by(part);
     return ps.length ? {
@@ -61,4 +66,15 @@ export function summary(scored) {
 }
 
 export const fmtLam = l => (l <= LAM_MIN ? '≤ ' : l >= LAM_MAX ? '≥ ' : '') + l.toFixed(2).replace('-', '−');
-export const fmtSigned = (x, d = 2) => (x > 0 ? '+' : x < 0 ? '−' : '±') + Math.abs(x).toFixed(d);
+export const fmtSigned = (x, d = 2) => {
+  const r = Number(x.toFixed(d)); // round first so a tiny gap never prints as −0.00
+  return (r > 0 ? '+' : r < 0 ? '−' : '') + Math.abs(r).toFixed(d);
+};
+
+/** Plain-English reading of one weight: how far the answer moved relative to what the report justifies. */
+export function readLam(l) {
+  if (l < 0) return 'moved the wrong way';
+  if (l > 1.15) return 'moved further than the report justifies';
+  if (l < 0.85) return 'moved less far than the report justifies';
+  return 'moved about as far as the report justifies';
+}

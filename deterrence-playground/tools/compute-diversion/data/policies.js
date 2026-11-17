@@ -59,7 +59,7 @@ export const POLICIES = [
   "name": "AI Diffusion rule and its rescission",
   "what": "January 2025 interim final rule set worldwide licensing, country TPP allocations, and License Exception AIA. On 2025-05-13 BIS announced its rescission, told enforcement officials not to enforce it, and said a regulation formalizing the rescission would follow.",
   "legalBasis": "90 FR 4544 (Jan. 15, 2025); BIS press release May 13, 2025",
-  "url": "https://www.bis.gov/press-release/department-commerce-announces-rescission-biden-era-artificial-intelligence-diffusion-rule-strengthens",
+  "url": "https://web.archive.org/web/20250807104850/https://www.bis.gov/press-release/department-commerce-announces-rescission-biden-era-artificial-intelligence-diffusion-rule-strengthens",
   "date": "Effective 2025-01-13; compliance date 2025-05-15; rescission announced 2025-05-13",
   "status": "Not enforced per BIS (May 13, 2025). Formal rescission is in BIS interim final rule RIN 0694-AK50, released 2026-11-16 and on Federal Register public inspection 16 Nov 2026 as FR Doc 2026-23529, scheduled for publication 19 Nov 2026; effective on publication. Until it takes effect the rule text (e.g. 740.27 License Exception AIA, 742.6(b)(10) country allocations) still appears in eCFR (current through 2026-11-09).",
   "checked": "2026-11-16"
@@ -67,13 +67,13 @@ export const POLICIES = [
  {
   "id": "may-2025-guidance",
   "name": "May 2025 guidance: Huawei Ascend chips, diversion red flags, AI training",
-  "what": "Alongside the rescission, BIS issued guidance on the risks of using PRC advanced computing ICs, including specific Huawei Ascend chips; on using US chips to train Chinese AI models; and on protecting supply chains against diversion. The diversion guidance lists 11 new red flags, among them: a customer that never received advanced computing ICs before October 2022, or whose orders rose sharply after it; a residential address with no other place of use; little or no online presence; an unknown delivery or installation address, or no way to tell whether the customer's headquarters or ultimate parent is in Country Group D:5 or Macau; consignees (such as freight forwarders or logistics firms) whose business does not fit large chip orders; a data center that cannot affirm the power, cooling and space to run the chips; and an IaaS customer that cannot affirm its users are not headquartered in the PRC. It also lists due diligence steps, such as checking incorporation dates, ownership and data-center attestations, with extra scrutiny for data centers above 10 megawatts.",
+  "what": "Alongside the rescission, BIS issued guidance on the risks of using PRC advanced computing ICs, including specific Huawei Ascend chips; on using US chips to train Chinese AI models; and on protecting supply chains against diversion. The diversion guidance lists 11 new red flags, among them: a customer that never received advanced computing ICs before October 2022, or whose orders rose sharply after it; a residential address with no other place of use; little or no online presence; an unknown delivery or installation address, or no way to tell whether the customer's headquarters or ultimate parent is in Country Group D:5 or Macau; consignees (such as freight forwarders or logistics firms) whose business does not fit large chip orders; a data center that cannot affirm the power, cooling and space to run the chips; and an IaaS customer that cannot affirm its users are not headquartered in the PRC. It also lists due diligence steps, such as checking incorporation dates, ownership and data-center attestations, with extra scrutiny for data centers at or above 10 megawatts.",
   "legalBasis": "BIS guidance (not a regulation), May 13, 2025: \"Industry Guidance to Prevent Diversion of Advanced Computing Integrated Circuits\"",
   "url": "https://web.archive.org/web/20250513220425/https://www.bis.gov/media/documents/ai-counter-diversion-industry-guidance-may-13-2025.pdf",
   "date": "2025-05-13",
   "status": "Guidance in effect (not a regulation). Text read from the Wayback Machine copy of the original PDF captured 13 May 2025; the live bis.gov copy (now also served at a 'si-counter-diversion' address) prints 'SI' where the original says 'AI'.",
   "checked": "2026-11-16",
-  "url2": "https://www.bis.gov/press-release/department-commerce-announces-rescission-biden-era-artificial-intelligence-diffusion-rule-strengthens"
+  "url2": "https://web.archive.org/web/20250807104850/https://www.bis.gov/press-release/department-commerce-announces-rescission-biden-era-artificial-intelligence-diffusion-rule-strengthens"
  },
  {
   "id": "strike-force",
@@ -141,7 +141,7 @@ export const POLICIES = [
  {
   "id": "remote-access-ifr",
   "name": "Remote access rule: data centers serving D:5 companies, and five higher-risk destinations",
-  "what": "New 15 CFR 744.24 requires a license to export, reexport or transfer advanced computing items (3A090 except .c, 4A090 and related .z items) with knowledge they are destined to a data center anywhere that provides more than 12,000,000 aggregate TPP, at one site or through linked data centers, to companies headquartered (or with an ultimate parent headquartered) in Country Group D:5 or Macau; review is case-by-case, commercial recommender systems are excluded by the regulatory text (744.24(b)(2)), although the preamble says such operators must obtain a license after 90 days, and data centers already serving such companies must obtain a license within 90 days of the effective date. It also adds a license requirement for Indonesia, Malaysia, Singapore, Thailand and Brazil (case-by-case review), not applying to US-headquartered consignees or end users when 743.10 reporting is met, and formally rescinds the AI Diffusion rule's regulations.",
+  "what": "New 15 CFR 744.24 requires a license to export, reexport or transfer advanced computing items (3A090 except .c, 4A090 and related .z items) with knowledge they are destined to a data center anywhere that provides more than 12,000,000 aggregate TPP, at one site or through linked data centers, to companies headquartered (or with an ultimate parent headquartered) in Country Group D:5 or Macau; review is case-by-case, commercial recommender systems are excluded by the regulatory text only if the exporter submits the required information to BIS (744.24(b)(2)), although the preamble says such operators must obtain a license after 90 days, and data centers already serving such companies must obtain a license within 90 days of the effective date. It also adds a license requirement for Indonesia, Malaysia, Singapore, Thailand and Brazil (case-by-case review), not applying to US-headquartered consignees or end users when 743.10 reporting is met, and formally rescinds the AI Diffusion rule's regulations. It also removes the Data Center VEU authorization (748.15) and License Exceptions AIA and LPP, and adds 744.23(a)(3)(i)(C), a license requirement for advanced-node ICs (3A090.a) from designers that are neither approved nor authorized IC designers when a front-end fabricator or OSAT ships them.",
   "legalBasis": "BIS interim final rule, RIN 0694-AK50, \"Addressing Remote Access to Advanced Semiconductors\" (new 15 CFR 744.24; amended 742.6(a)(6)(iii)(A); new 743.10)",
   "url": "https://www.bis.gov/media/documents/rin-0694-ak50.pdf",
   "date": "Released 2026-11-16",
@@ -177,9 +177,9 @@ export const POLICIES = [
   "what": "Interim final rule adding due diligence procedures for foundries and OSATs handling advanced computing ICs (approved or authorized IC designer framework referenced in Note 1 to 3A090.a).",
   "legalBasis": "90 FR 5298 (Jan. 16, 2025)",
   "url": "https://www.federalregister.gov/documents/2025/01/16/2025-00711/implementation-of-additional-due-diligence-measures-for-advanced-computing-integrated-circuits",
-  "url2": "https://www.federalregister.gov/documents/2026/04/09/2026-06851",
+  "url2": "https://www.federalregister.gov/documents/2026/04/09/2026-06851/extension-of-authorized-integrated-circuit-ic-designer-status-and-application-deadline-to-become-an",
   "date": "2025-01-16",
-  "status": "In force (eCFR cross-references to 'approved or authorized integrated circuit designer' remain as of 2026-11-09); authorized IC designer trigger date and approved-designer application deadline extended to 2026-12-31 by 91 FR 17851 (Apr. 9, 2026)",
+  "status": "In force (eCFR cross-references to 'approved or authorized integrated circuit designer' remain as of 2026-11-09); authorized IC designer trigger date and approved-designer application deadline extended to 2026-12-31 by 91 FR 17851 (Apr. 9, 2026; effective 2026-04-07)",
   "checked": "2026-11-16"
  }
 ];
@@ -222,7 +222,7 @@ export const TIMELINE = [
  {
   "date": "2025-05-13",
   "event": "BIS announces AI Diffusion rescission and non-enforcement; Huawei Ascend and diversion guidance",
-  "url": "https://www.bis.gov/press-release/department-commerce-announces-rescission-biden-era-artificial-intelligence-diffusion-rule-strengthens"
+  "url": "https://web.archive.org/web/20250807104850/https://www.bis.gov/press-release/department-commerce-announces-rescission-biden-era-artificial-intelligence-diffusion-rule-strengthens"
  },
  {
   "date": "2025-09-30",
@@ -263,7 +263,7 @@ export const UNVERIFIED = [
  "Kamo Kirakosyan sentenced to 26 months (reported Sept. 2-3, 2026): media only; justice.gov sentencing release not found.",
  "Cadence: no official confirmation found that the court accepted the plea or imposed sentence after the 2025-07-28 filing.",
  "H200 China sales revenue share (e.g. '25% U.S. cut'): not found in 91 FR 1684 or Proclamation 11002 text; media and law-firm reports only.",
- "The live bis.gov release of 13 May 2025 now lists 'additional export licensing requirements for exports of SI chips to Malaysia and Thailand'; this bullet is absent from the earliest archived version (7 Aug 2025), and no corresponding Federal Register rule was found.",
+ "The live bis.gov release of 13 May 2025 now lists 'additional export licensing requirements for exports of SI chips to Malaysia and Thailand'. Confirmed 16 Nov 2026: this bullet is absent from the earliest archived version (7 Aug 2025), which the cards now link instead; no corresponding Federal Register rule was found.",
  "Formal rescission of the AI Diffusion rule: contained in the remote-access IFR (FR Doc 2026-23529, on public inspection 16 Nov 2026, publishing and effective 19 Nov 2026); eCFR still carried its text as of 2026-11-09.",
  "Any enacted chip location-verification requirement (e.g. FY2026 NDAA, GAIN AI Act): none confirmed; enacted NDAA text not checked.",
  "Remote access: the 2024 IaaS NPRM is still proposed; the remote-access IFR (FR Doc 2026-23529) adds 15 CFR 744.24 for data centers serving D:5- or Macau-headquartered companies, effective on publication 19 Nov 2026.",

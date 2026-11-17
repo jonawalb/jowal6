@@ -55,16 +55,22 @@ export function logHTML(rec, s) {
 }
 
 /** Pick a case card for a quarter, matched to what the network did. Deterministic per seed and quarter. */
+export const isDOJ = c => c.agency.includes('DOJ');
 const TAG_FOR = { shell: ['shell-company', 'front-company', 'false-end-user'], transship: ['transshipment'], split: ['split-shipments', 'mislabeling'], case: null, cloud: ['cloud-remote-access'] };
 export function pickCase(s, rec, seen) {
   const want = rec.tags.flatMap(t => TAG_FOR[t] || []);
-  let pool = CASES.filter(c => !seen.includes(c.id) && (!want.length || c.tactics.some(t => want.includes(t))));
+  // A prosecution quarter draws only DOJ (criminal) cases; BIS-only settlements are administrative.
+  const fits = rec.tags.includes('case') ? c => isDOJ(c) : c => !want.length || c.tactics.some(t => want.includes(t));
+  let pool = CASES.filter(c => !seen.includes(c.id) && fits(c));
   if (!pool.length) pool = CASES.filter(c => !seen.includes(c.id));
   if (!pool.length) return null;
   const h = (s.seed * 31 + rec.turn * 17) >>> 0;
   return pool[h % pool.length];
 }
 
+// A plea or settlement on the record means the route is admitted, not only alleged.
+const RESOLVED = /pleaded guilty|plea agreement|\bsettled\b/i;
+const TACTIC_LABEL = { 'payments-laundering': 'money laundering / foreign payments' };
 export function caseHTML(c, why) {
   if (!c) return '';
   return `<article class="cd-case" aria-label="Case card">
@@ -73,8 +79,8 @@ export function caseHTML(c, why) {
     ${why ? `<p class="fine muted">${why}</p>` : ''}
     <dl class="cd-dl">
       <dt>What</dt><dd>${escapeHtml(c.items)}${c.value ? ` (${escapeHtml(c.value)})` : ''}</dd>
-      <dt>Alleged route</dt><dd>${escapeHtml(c.route)}</dd>
-      <dt>Methods</dt><dd>${c.tactics.map(t => `<span class="pill">${escapeHtml(t.replace(/-/g, ' '))}</span>`).join(' ')}</dd>
+      <dt>${RESOLVED.test(c.status) ? 'Route' : 'Alleged route'}</dt><dd>${escapeHtml(c.route)}</dd>
+      <dt>Methods</dt><dd>${c.tactics.map(t => `<span class="pill">${escapeHtml(TACTIC_LABEL[t] || t.replace(/-/g, ' '))}</span>`).join(' ')}</dd>
       <dt>Status</dt><dd>${escapeHtml(c.status)}</dd>
     </dl>
     ${c.quote ? `<blockquote>“${escapeHtml(c.quote)}”</blockquote>` : ''}

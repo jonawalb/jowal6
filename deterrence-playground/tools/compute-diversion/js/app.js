@@ -7,7 +7,7 @@ import { newGame, resolveTurn, project, normalize, encode, decode, baseline, sco
 import { STRATEGIES, STRATEGY_LABEL } from './ai.js';
 import { drawMap, animateLog } from './map.js';
 import { emptyChoice, chosen, paintDecide, wireDecide, tryChange } from './decide.js';
-import { metrics, paintTracks, inforceHTML, logHTML, pickCase, caseHTML, WHY, paintScatter, attrHTML } from './view.js';
+import { metrics, paintTracks, inforceHTML, logHTML, pickCase, caseHTML, isDOJ, WHY, paintScatter, attrHTML } from './view.js';
 import { methodHTML } from './method.js';
 import { initDetail, syncFolds } from './detail.js';
 import { escapeHtml } from '../../../shared/js/mapkit.js';
@@ -15,7 +15,10 @@ import { countUp, pulse } from '../../../shared/js/motion.js';
 
 const $ = id => document.getElementById(id);
 const newSeed = () => 1 + Math.floor(Math.random() * 999998);
-const show = (...ids) => ['start', 'play', 'end'].forEach(id => { $(id).hidden = !ids.includes(id); });
+const show = (...ids) => {
+  ['start', 'play', 'end'].forEach(id => { $(id).hidden = !ids.includes(id); });
+  $('new-game').hidden = $('copy-link').hidden = ids.includes('start');   // nothing to restart or share yet
+};
 const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 let g = null;          // { s, c, base, cases: [ids] }
@@ -29,6 +32,7 @@ initDetail();
 const LEN_TEXT = { 8: 'Two years. Rules you start late may never bite.', 10: 'Two and a half years. The standard game.', 12: 'Three years. Time for the network to adapt to everything.' };
 function paintStart() {
   $('lengths').innerHTML = P.lengths.map(n => `<label class="cd-card${len === n ? ' on' : ''}"><input type="radio" name="len" value="${n}"${len === n ? ' checked' : ''}><b>${n} quarters</b><small>${LEN_TEXT[n]}</small></label>`).join('');
+  $('len-note').textContent = LEN_TEXT[len];
   $('seed-note').textContent = 'Each game gets a random seed. Copy link shares the seed and every move, so someone else can replay your game or play the same network.';
 }
 $('start').addEventListener('change', e => { if (e.target.name === 'len') { len = +e.target.value; paintStart(); document.querySelector(`input[name="len"][value="${len}"]`).focus(); } });
@@ -58,13 +62,14 @@ function paintChoice() {
   const acts = chosen(g.c);
   const n = normalize(g.s, acts);
   const rec = project(g.s, acts);
-  $('h-budget').textContent = `${n.budget} / ${P.budget}`;
+  $('h-budget').textContent = `${n.budget} of ${P.budget}`;
   $('h-capital').textContent = `${Math.round(n.capital)}`;
   drawMap($('map'), g.s, rec, n.acts, mapHandlers);
   $('map-mode').textContent = 'expected this quarter, before the network adapts';
+  $('h-exp').innerHTML = `Expected to reach restricted users: <b class="num">${Math.round(rec.delivered)}</b>`;
   paintTracks($('tracks'), metrics(g.s, g.base), rec);
   const base = g.base.history[g.s.turn];
-  $('preview').innerHTML = `Expected this quarter: <b class="num">${Math.round(rec.delivered)}</b> compute units reach restricted users (with no enforcement at all: about <b class="num">${Math.round(base.delivered)}</b>). Friction on legitimate trade <b class="num">${rec.friction.toFixed(1)}</b>.`;
+  $('preview').innerHTML = `Expected this quarter: <b class="num">${Math.round(rec.delivered)}</b> compute units reach restricted users (with no enforcement at all: about <b class="num">${Math.round(base.delivered)}</b>). <span class="cd-tip" title="Friction is one part of collateral cost, with lost industry revenue and lost allied goodwill.">Friction on legitimate trade</span> <b class="num">${rec.friction.toFixed(1)}</b>.`;
   const active = document.activeElement?.closest?.('#levers [data-act]');
   const key = active ? `[data-act="${active.dataset.act}"]${active.dataset.t ? `[data-t="${active.dataset.t}"]` : ''}${active.dataset.v ? `[data-v="${active.dataset.v}"]` : ''}` : null;
   const open = [...$('levers').querySelectorAll('details[open]')].map(d => `[data-lever="${d.closest('[data-lever]').dataset.lever}"] details.${d.classList[0]}`);
@@ -96,16 +101,18 @@ $('end-turn').addEventListener('click', () => {
   const tag = ['case', 'shell', 'transship', 'split', 'cloud'].find(t => rec.tags.includes(t));
   const card = pickCase(g.s, rec, g.cases);
   if (card) g.cases.push(card.id);
-  $('case-card').innerHTML = card ? `<details class="cd-fold"><summary>Real case: ${escapeHtml(card.title)}</summary>${caseHTML(card, tag ? WHY[tag] : 'A real case from the public record:')}</details>` : '';
+  $('case-card').innerHTML = card ? `<details class="cd-fold"><summary>Real case: ${escapeHtml(card.title)}</summary>${caseHTML(card, tag && !(tag === 'case' && !isDOJ(card)) ? WHY[tag] : 'A real case from the public record:')}</details>` : '';
   syncFolds($('case-card'));
   $('resolve').hidden = false; $('decide').hidden = true; $('end-turn').disabled = true;
   drawMap($('map'), g.s, rec, [], null);
   $('map-mode').textContent = 'what happened; the network has now adapted';
+  $('preview').innerHTML = `${q}: <b class="num">${Math.round(rec.delivered)}</b> compute units reached restricted users.`;
+  $('h-exp').innerHTML = `Reached restricted users: <b class="num">${Math.round(rec.delivered)}</b>`;
   paintTracks($('tracks'), metrics(g.s, g.base), null);
   $('inforce').innerHTML = inforceHTML(g.s);
   setTimeout(() => animateLog($('map'), g.s, rec), reducedMotion() ? 0 : 150);
   history.replaceState(null, '', '#g=' + encode(g.s));
-  $('resolve').scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth', block: 'nearest' });
+  $('resolve').scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth', block: 'start' });
   $('res-t').focus();
 });
 /* In Simple mode the quarter log shows its headline line; the rest sits behind this button. */

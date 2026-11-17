@@ -28,6 +28,8 @@
 .cd-q { margin: 0; } .cd-q b { font: 700 24px var(--display); margin-right: 4px; }
 .cd-res { margin: 0; flex: 1 1 220px; display: flex; gap: 16px; font-size: 14px; }
 .cd-res b { font: 600 16px var(--mono); }
+.cd-exp { margin: 0; font-size: 13.5px; }
+.cd-exp b { font: 600 16px var(--mono); color: var(--bad); }
 .cd-grid { display: grid; grid-template-columns: 240px minmax(0, 1fr) 380px; gap: 10px; align-items: start; }
 .cd-state, .cd-decide, .cd-mapcard { padding: 10px 12px; }
 .cd-centre { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
@@ -97,19 +99,19 @@
 .cd-cost.c { color: var(--c6); } .cd-cost.g { color: var(--good); }
 .cd-lt { margin: 3px 0 6px; font-size: 12.5px; color: var(--muted); line-height: 1.4; }
 .cd-chips, .cd-seg { display: flex; flex-wrap: wrap; gap: 5px; }
-.cd-chip { font: 500 13px var(--body); padding: 5px 10px; min-height: 32px; border: 1px solid var(--rule); border-radius: 4px; background: var(--bg); color: var(--ink); cursor: pointer; }
+.cd-chip { font: 500 13px var(--body); padding: 5px 10px; min-height: 44px; border: 1px solid var(--rule); border-radius: 4px; background: var(--bg); color: var(--ink); cursor: pointer; }
 .cd-chip small { color: var(--muted); font-size: 11.5px; margin-left: 3px; }
 .cd-chip[aria-pressed="true"], .cd-chip[aria-checked="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 18%, var(--bg)); font-weight: 600; }
 .cd-chip:disabled { opacity: .45; cursor: not-allowed; }
 .cd-chip.wide { width: 100%; text-align: left; }
 .cd-seg .cd-chip { min-width: 44px; }
 .cd-msg { margin: 0; font-size: 13px; color: var(--bad); font-weight: 600; }
-.cd-pol { margin-top: 6px; font-size: 12.5px; }
-.cd-pol summary { cursor: pointer; color: var(--c1); font-size: 12.5px; }
+.cd-pol { margin-top: 0; font-size: 12.5px; }
+.cd-pol summary { cursor: pointer; color: var(--c1); font-size: 12.5px; padding: 13px 0; }
 .cd-pol p { margin: 4px 0; }
 
 /* Resolve */
-.cd-resolve { border-left: 4px solid var(--accent); }
+.cd-resolve { border-left: 4px solid var(--accent); scroll-margin-top: 84px; }
 .cd-resolve h2 { margin: 0 0 8px; font-size: 18px; }
 .cd-log { list-style: none; margin: 0 0 12px; padding: 0; display: flex; flex-direction: column; gap: 4px; font-size: 13.5px; }
 .cd-log li { padding: 6px 8px; border-left: 4px solid var(--rule); background: var(--chip); border-radius: 0 3px 3px 0; }
@@ -160,13 +162,36 @@
 .cd-timeline li, .cd-caselist li { margin-bottom: 4px; }
 .cd-below a, .cd-end a, .cd-resolve a, .cd-lever a { overflow-wrap: anywhere; }
 
-@media (max-width: 1180px) { .cd-grid { grid-template-columns: 220px minmax(0, 1fr); } .cd-decide { grid-column: 1 / -1; } }
+@media (max-width: 1180px) { .cd-grid { grid-template-columns: 220px minmax(0, 1fr); } .cd-decide, .cd-resolve { grid-column: 1 / -1; } }
 @media (max-width: 760px) {
   .cd-grid { grid-template-columns: minmax(0, 1fr); }
   .cd-cards { grid-template-columns: minmax(0, 1fr); }
-  .cd-centre { order: 1; } .cd-decide { order: 2; } .cd-state { order: 3; }
-  .cd-bar { position: static; }
+  .cd-centre { order: 1; } .cd-decide, .cd-resolve { order: 2; } .cd-state { order: 3; }
+  /* The quarter bar docks to the bottom of the screen so End quarter is always in reach. */
+  .cd-bar { position: fixed; left: 0; right: 0; bottom: 0; top: auto; z-index: 30; border-radius: 0; border-top-width: 2px; gap: 4px 12px; padding: 6px 12px calc(6px + env(safe-area-inset-bottom)); box-shadow: 0 -2px 10px color-mix(in srgb, var(--ink) 14%, transparent); }
+  .cd-q b { font-size: 18px; }
+  .cd-exp { order: 2; flex: 1 1 140px; font-size: 12.5px; } .cd-bar #end-turn { order: 3; }
+  .cd-res { flex: 1 1 auto; gap: 10px; font-size: 13px; }
+  body:has(.cd-play:not([hidden])) { padding-bottom: 76px; }
+  .cd-resolve { scroll-margin-top: 12px; }
+  #map.narrow .cd-lbl { font-size: 15px; } #map.narrow .cd-sub { font-size: 13px; } #map.narrow .cd-hubl { font-size: 18px; }
+  #map.narrow .cd-flow { font-size: 14px; } #map.narrow .cd-sh { font-size: 11px; } #map.narrow .cd-badge { font-size: 14px; }
   .cd-big { font-size: 36px; }
+}
+.cd-lennote { display: none; margin: 6px 0 0; }
+@media (max-width: 640px) {
+  /* Phone start: term choices in one compact row; the chosen term's note sits below, so Begin stays on the first screen. */
+  .cd-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .cd-card { position: relative; grid-template-columns: minmax(0, 1fr); padding: 8px 4px; min-height: 44px; align-items: center; text-align: center; }
+  .cd-card input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+  .cd-card b { font-size: 14px; }
+  .cd-card small { display: none; }
+  .cd-lennote { display: block; }
+  .cd-actions > div { gap: 6px; } .cd-actions .btn { padding-left: 10px; padding-right: 10px; } .cd-seg2 { margin-right: 2px; }
+}
+@media (max-width: 760px) {
+  .cd-actions .btn, .cd-main .btn { min-height: 44px; }
+  .cd-det > summary, details.cd-fold > summary { padding: 11px 0; }
 }
 @media (prefers-reduced-motion: reduce) { .cd-track .bar span, .cd-in, .cd-out { transition: none; } }
 
@@ -177,7 +202,6 @@ body.detail-full details.cd-fold > summary { display: none; }
 .cd-seg2 { display: inline-flex; margin-right: 8px; }
 .cd-seg2 .btn + .btn { margin-left: -1px; }
 .cd-seg2 .btn[aria-pressed="true"] { font-weight: 600; }
-body.detail-simple .cd-pol { display: none; }
 body.detail-simple .cd-log:not(.open) li:nth-child(n+2) { display: none; }
 body.detail-simple .cd-log { margin-bottom: 8px; }
 .cd-more { margin: 0 0 12px; }
@@ -190,8 +214,14 @@ body.detail-simple details.cd-fold > h3 { display: none; }
 /* Simple: lever name + first sentence, with "More" inline after it for the rest */
 body.detail-simple .cd-lever > .cd-lt.simple-only { display: inline; margin: 0; }
 .cd-lmore { display: inline; font-size: 12.5px; }
-.cd-lmore > summary { display: inline; cursor: pointer; color: var(--c1); font-size: 12px; margin-left: 4px; list-style: none; text-decoration: underline; text-underline-offset: 2px; }
+.cd-lmore > summary { display: inline-block; padding: 15px 6px; margin: -15px 0; cursor: pointer; color: var(--c1); font-size: 12px; margin-left: 4px; list-style: none; text-decoration: underline; text-underline-offset: 2px; }
 .cd-lmore > summary::-webkit-details-marker { display: none; }
 .cd-lmore[open] > summary { display: none; }
 .cd-lmore .cd-lt { display: inline; margin: 0; }
 body.detail-simple .cd-lever > .cd-lmore + * { margin-top: 6px; }
+
+/* Map tap targets: invisible circles larger than the drawn hub or shell */
+.cd-hit { fill: transparent; stroke: none; }
+/* Agents level: a neutral pressed style, so a chosen 0 does not read as an error */
+.cd-seg .cd-chip[aria-checked="true"] { border-color: var(--ink); background: var(--chip); box-shadow: inset 0 0 0 1px var(--ink); }
+.cd-tip { text-decoration: underline dotted; text-underline-offset: 2px; cursor: help; }

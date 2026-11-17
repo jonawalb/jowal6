@@ -37,7 +37,7 @@ export const CASES = [
    "falsified-docs",
    "false-end-user",
    "transshipment",
-   "payments-structuring"
+   "payments-laundering"
   ],
   "status": "Charged (indictment unsealed 2025-11-19); allegations, presumed innocent. No later official release found as of 2026-11-16.",
   "url": "https://www.justice.gov/opa/pr/us-citizens-and-chinese-nationals-arrested-exporting-artificial-intelligence-technology",
@@ -116,7 +116,7 @@ export const CASES = [
    "transshipment",
    "false-end-user",
    "falsified-docs",
-   "payments-structuring"
+   "payments-laundering"
   ],
   "status": "Charged (three-count indictment returned 2026-09-29; arrested 2026-10-01); allegations, presumed innocent.",
   "url": "https://www.justice.gov/opa/pr/california-man-arrested-smuggling-more-300-million-export-controlled-computer-servers-china",
@@ -136,7 +136,7 @@ export const CASES = [
    "front-company",
    "false-end-user"
   ],
-  "status": "DOJ: criminal information and plea agreement filed 2025-07-28 (agreed to plead guilty; criminal penalties of nearly $118 million). BIS: settled 2025-07-28, $95 million civil penalty; admitted 56 EAR violations.",
+  "status": "DOJ: criminal information and plea agreement filed 2025-07-28 (agreed to plead guilty; criminal penalties of nearly $118 million). BIS: settled 2025-07-28, $95 million civil penalty; admitted 56 EAR violations (Sept. 2015 to Sept. 2020) and two further violations via transfers to Phytium (about Nov. 2020 to Feb. 2021).",
   "statusUrl": "https://www.bis.gov/press-release/cadence-design-systems-pay-95-million-penalty-bis-unauthorized-exports-chinese-entities-tied-development",
   "url": "https://www.justice.gov/usao-ndca/pr/cadence-design-systems-agrees-plead-guilty-and-pay-over-140-million-unlawfully",
   "quote": "With this plea, Cadence has admitted to unlawfully exporting its semiconductor design technology to a restricted PRC military university using a front company",

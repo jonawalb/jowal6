@@ -5,14 +5,23 @@ import { el } from '../../../shared/js/mapkit.js';
 import { ping, burst, tracer } from '../../../shared/js/motion.js';
 import { HUB_IDS, liveShells } from './network.js';
 
-const W = 720, H = 400;
-const pos = {
+// Two layouts: wide (left to right) and narrow phones (top to bottom), so labels and tap targets stay readable.
+const WIDE = { W: 720, H: 400, nodeW: 108, cloudW: 140, pos: {
   src: { x: 70, y: 220 }, dst: { x: 655, y: 220 }, cloud: { x: 360, y: 42 },
-  ...Object.fromEntries(P.hubs.map(h => [h.id, { x: h.x * W, y: h.y * H }])),
-};
+  ...Object.fromEntries(P.hubs.map(h => [h.id, { x: h.x * 720, y: h.y * 400 }])),
+} };
+const NARROW = { W: 400, H: 540, nodeW: 124, cloudW: 92, vertical: true, pos: {
+  src: { x: 200, y: 36 }, dst: { x: 200, y: 502 }, cloud: { x: 54, y: 260 },
+  A: { x: 150, y: 196 }, B: { x: 250, y: 262 }, C: { x: 342, y: 196 }, D: { x: 330, y: 386 },
+} };
+const narrowMQ = typeof matchMedia === 'function' ? matchMedia('(max-width: 760px)') : null;
+let G = WIDE, W = G.W, H = G.H, pos = G.pos;
+const setGeom = () => { G = narrowMQ?.matches ? NARROW : WIDE; ({ W, H, pos } = G); };
+let last = null;   // last drawMap arguments, to redraw when the layout switches
+narrowMQ?.addEventListener('change', () => { if (last) drawMap(...last); });
 const width = v => Math.max(0, Math.min(18, Math.sqrt(Math.max(0, v)) * 1.9));
 const curve = (a, b, bend = 0) => {
-  const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2 + bend;
+  const mx = (a.x + b.x) / 2 + (G.vertical ? bend : 0), my = (a.y + b.y) / 2 + (G.vertical ? 0 : bend);
   return `M${a.x},${a.y} Q${mx},${my} ${b.x},${b.y}`;
 };
 // Shells sit on the diagonals around their hub first, clear of the lines that enter and leave it.
@@ -29,7 +38,10 @@ export function shellPos(s, x) {
  * on: { shell(id), hub(id) } click handlers. Returns nothing; the SVG is rebuilt each call.
  */
 export function drawMap(svg, s, rec, choice, on) {
+  last = [svg, s, rec, choice, on];
+  setGeom();
   svg.textContent = '';
+  svg.classList.toggle('narrow', !!G.vertical);
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
   const defs = el('defs', {}, svg);
   const mk = el('marker', { id: 'cd-arr', viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 6, markerHeight: 6, orient: 'auto-start-reverse' }, defs);
@@ -43,27 +55,34 @@ export function drawMap(svg, s, rec, choice, on) {
     el('path', { d: curve(pos.src, pos[h], 0), class: 'cd-in', 'stroke-width': Math.max(1, width(r.a)) }, g);
     const out = el('path', { d: curve(pos[h], pos.dst, 0), class: 'cd-out', 'stroke-width': Math.max(1, width(r.d)) }, g);
     if (r.d < 0.5) out.classList.add('dead');
-    const mid = { x: (pos[h].x + pos.dst.x) / 2, y: (pos[h].y + pos.dst.y) / 2 - 6 };
+    const mid = { x: (pos[h].x + pos.dst.x) / 2 + (G.vertical ? 12 : 0), y: (pos[h].y + pos.dst.y) / 2 - (G.vertical ? 0 : 6) };
     el('text', { x: mid.x, y: mid.y, class: 'cd-flow' }, g, Math.round(r.d));
   }
   const rc = R.cloud || { a: 0, d: 0 };
   el('path', { d: curve(pos.src, pos.cloud, -20), class: 'cd-in cloud', 'stroke-width': Math.max(1, width(rc.a)) }, g);
   el('path', { d: curve(pos.cloud, pos.dst, -20), class: 'cd-out cloud', 'stroke-width': Math.max(1, width(rc.d)) }, g);
-  el('text', { x: (pos.cloud.x + pos.dst.x) / 2 + 18, y: (pos.cloud.y + pos.dst.y) / 2 - 18, class: 'cd-flow' }, g, Math.round(rc.d));
+  el('text', G.vertical ? { x: (pos.cloud.x + pos.dst.x) / 2 - 22, y: (pos.cloud.y + pos.dst.y) / 2 + 22, class: 'cd-flow' } : { x: (pos.cloud.x + pos.dst.x) / 2 + 18, y: (pos.cloud.y + pos.dst.y) / 2 - 18, class: 'cd-flow' }, g, Math.round(rc.d));
 
   // End nodes
   const node = (p, label, sub, cls) => {
     const n = el('g', { class: 'cd-end ' + cls }, svg);
-    el('rect', { x: p.x - 54, y: p.y - 30, width: 108, height: 60, rx: 6 }, n);
+    el('rect', { x: p.x - G.nodeW / 2, y: p.y - 30, width: G.nodeW, height: 60, rx: 6 }, n);
     el('text', { x: p.x, y: p.y - 6, class: 'cd-lbl' }, n, label);
     el('text', { x: p.x, y: p.y + 13, class: 'cd-sub' }, n, sub);
   };
   node(pos.src, 'US and allied', 'chip supply', 'src');
   node(pos.dst, 'Restricted', 'end users', 'dst');
   const cn = el('g', { class: 'cd-cloud' + (s.pol.kyc != null ? ' ruled' : '') }, svg);
-  el('rect', { x: pos.cloud.x - 70, y: pos.cloud.y - 20, width: 140, height: 40, rx: 20 }, cn);
-  el('text', { x: pos.cloud.x, y: pos.cloud.y - 1, class: 'cd-lbl' }, cn, 'Rented cloud');
-  el('text', { x: pos.cloud.x, y: pos.cloud.y + 13, class: 'cd-sub' }, cn, `capacity ${Math.round(s.cloud)}`);
+  if (G.vertical) {
+    el('rect', { x: pos.cloud.x - G.cloudW / 2, y: pos.cloud.y - 34, width: G.cloudW, height: 68, rx: 18 }, cn);
+    el('text', { x: pos.cloud.x, y: pos.cloud.y - 12, class: 'cd-lbl' }, cn, 'Rented');
+    el('text', { x: pos.cloud.x, y: pos.cloud.y + 5, class: 'cd-lbl' }, cn, 'cloud');
+    el('text', { x: pos.cloud.x, y: pos.cloud.y + 23, class: 'cd-sub' }, cn, `capacity ${Math.round(s.cloud)}`);
+  } else {
+    el('rect', { x: pos.cloud.x - 70, y: pos.cloud.y - 20, width: 140, height: 40, rx: 20 }, cn);
+    el('text', { x: pos.cloud.x, y: pos.cloud.y - 1, class: 'cd-lbl' }, cn, 'Rented cloud');
+    el('text', { x: pos.cloud.x, y: pos.cloud.y + 13, class: 'cd-sub' }, cn, `capacity ${Math.round(s.cloud)}`);
+  }
 
   // Hubs with risk rings and shells
   const euc = {}, press = {}, listing = new Set();
@@ -79,6 +98,7 @@ export function drawMap(svg, s, rec, choice, on) {
       'aria-label': live ? `${h === 'D' ? 'Hub D' : 'Hub ' + h}: capacity ${Math.round(hb.cap)}, risk ${Math.round(risk * 100)} percent, ${liveShells(s, h).length} live shells. Press to add an end-use check here.` : `Hub ${h}: dormant` }, svg);
     const r = 15 + Math.sqrt(Math.max(0, hb.cap)) * 1.6;
     el('circle', { cx: p.x, cy: p.y, r, class: 'cd-hubc' }, n);
+    if (live) el('circle', { cx: p.x, cy: p.y, r: Math.max(r, 30), class: 'cd-hit' }, n);
     if (live && risk > 0.005) {
       const C = 2 * Math.PI * (r + 4);
       el('circle', { cx: p.x, cy: p.y, r: r + 4, class: 'cd-risk', 'stroke-dasharray': `${C * Math.min(1, risk)} ${C}`, transform: `rotate(-90 ${p.x} ${p.y})` }, n);
@@ -97,6 +117,7 @@ export function drawMap(svg, s, rec, choice, on) {
     const st = x.listed ? 'listed' : x.seen ? (listing.has(x.id) ? 'seen picked' : 'seen') : 'hidden';
     const label = x.listed ? `Shell ${x.id.slice(1)} at Hub ${x.hub}, on the Entity List` : x.seen ? `Shell ${x.id.slice(1)} at Hub ${x.hub}, identified. Press to ${listing.has(x.id) ? 'cancel the listing' : 'add it to the Entity List'}.` : `Unidentified front company at Hub ${x.hub}`;
     const n = el('g', { class: 'cd-shell ' + st, 'data-shell': x.id, ...(x.seen && !x.listed ? { tabindex: 0, role: 'button', 'aria-pressed': String(listing.has(x.id)) } : {}), 'aria-label': label }, svg);
+    if (x.seen && !x.listed) el('circle', { cx: q.x, cy: q.y, r: 29, class: 'cd-hit' }, n);
     el('rect', { x: q.x - 9, y: q.y - 9, width: 18, height: 18, transform: `rotate(45 ${q.x} ${q.y})` }, n);
     el('text', { x: q.x, y: q.y + 4, class: 'cd-sh' }, n, x.listed ? '×' : x.seen ? x.id.slice(1) : '?');
     el('title', {}, n, label);

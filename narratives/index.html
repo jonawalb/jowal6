@@ -81,26 +81,6 @@
         .tk-open { margin-top: auto; padding-top: 6px; color: var(--green-700); font-weight: 600; font-size: .9rem; }
         .tk-note { margin-top: 28px; font-size: .9rem; color: var(--text-muted); max-width: 70ch; }
 
-        /* Narrative Games and Models: one box, password-protected section of games and models. */
-        #games.section { padding: 56px 28px 0; }
-        #games .container { max-width: 1480px; }
-        .gm { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 20px 32px; align-items: center;
-            background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--green-600); border-radius: 10px; padding: 26px 28px;
-            transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
-        .gm:hover, .gm:focus-within { transform: translateY(-3px); border-color: var(--green-300); box-shadow: 0 16px 34px -22px rgba(26, 58, 42, .5); }
-        .gm:focus-within { outline: 3px solid var(--accent-glow); outline-offset: 2px; }
-        .gm h2 { font-family: var(--font-serif); font-size: clamp(1.5rem, 2vw, 1.9rem); color: var(--green-900); margin: 6px 0 8px; }
-        .gm h2 a { color: inherit; text-decoration: none; }
-        .gm h2 a::after { content: ''; position: absolute; inset: 0; z-index: 2; } /* whole box is the link */
-        .gm h2 a:focus-visible { outline: none; }
-        .gm p { margin: 0; color: var(--text-muted); font-size: .98rem; line-height: 1.6; max-width: 78ch; }
-        .gm ul { margin: 12px 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
-        .gm li { font-size: .82rem; color: var(--green-900); background: var(--green-50); border: 1px solid var(--green-200); border-radius: 999px; padding: 4px 10px; }
-        .gm-open { color: var(--green-700); font-weight: 600; white-space: nowrap; }
-        @media (max-width: 720px) { .gm { grid-template-columns: minmax(0, 1fr); padding: 22px 20px; } }
-        @media (max-width: 520px) { #games.section { padding-left: 16px; padding-right: 16px; } }
-        @media (prefers-reduced-motion: reduce) { .gm, .gm:hover, .gm:focus-within { transition: none; transform: none; } }
-
         @media (max-width: 999px) {
             #narratives.section { min-height: 0; padding-top: calc(var(--nav-h) + 24px); }
             .ix { grid-template-columns: minmax(0, 1fr); gap: 28px; }
@@ -144,9 +124,10 @@
         <div class="ix-intro">
             <h2 class="section-title">Narrative Tracking</h2>
             <p>What governments say, week by week. These trackers follow the phrases that foreign ministries, defense ministries and leaders keep coming back to, and when the language shifts. Every count leads back to the statement it came from.</p>
-            <p>Every tracker is open to everyone, including Rhetoric Search, which covers official statements and state and other media from more countries. Just below, Narrative Games and Models holds games and models built to test theories of how false stories spread and how corrections work.</p>
+            <p>Every tracker is open to everyone, including Rhetoric Search, which covers official statements and state and other media from more countries. Models and Tests holds games and models built to test theories of how false stories spread and how corrections work.</p>
             <div class="ix-cta">
                 <a class="btn btn-primary" href="#trackers">See the trackers</a>
+                <a class="btn btn-outline" href="tools/narrative-games/">Models and Tests</a>
             </div>
             <p class="ix-count" id="ix-count"></p>
         </div>
@@ -165,22 +146,6 @@
             </figcaption>
             <div class="shows-dots" role="tablist" aria-label="Choose a tracker"></div>
         </figure>
-    </div>
-</section>
-
-<section class="section" id="games" aria-label="Narrative Games and Models">
-    <div class="container">
-        <article class="gm">
-            <div>
-                <div class="tk-meta"><span class="tk-tag">Games and models</span></div>
-                <h2><a href="tools/narrative-games/">Narrative Games and Models</a></h2>
-                <p>Games and models of how false stories spread and stick, how corrections and prebunking work, and how an adversary can move belief without faking evidence, plus two data tools built from real state statements: who echoes whom, and whether rhetoric comes before action. Each one states the question it tests.</p>
-                <ul aria-label="Included">
-                    <li>Misinformation Cascade</li><li>Correction Lab</li><li>Attacking the Update</li><li>Borrowed Feelings</li><li>Narrative Contagion Network</li><li>Say–Do Gap Monitor</li>
-                </ul>
-            </div>
-            <span class="gm-open" aria-hidden="true">Enter password →</span>
-        </article>
     </div>
 </section>
 

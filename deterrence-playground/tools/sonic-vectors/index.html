@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../shared/js/gate.js"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VF96JQ0P19"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VF96JQ0P19');</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sonic Vectors | Interactive Deterrence</title>
+<meta name="description" content="A notional model of music as a disinformation vector: a sender can fake evidence or buy a feeling with a song that raises the weight listeners give true evidence. See when the song replaces the fake, why text fact-checks miss it, and how one melody moves a crowd together.">
+<link rel="icon" type="image/svg+xml" href="../../shared/assets/site-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../../shared/css/tsm.css">
+<link rel="stylesheet" href="../../shared/css/deterrence-site.css">
+<link rel="stylesheet" href="../../shared/css/motion.css">
+<link rel="stylesheet" href="sonic-vectors.css">
+</head>
+<body>
+<header id="tsm-head"></header>
+
+<div class="toolbar-top">
+  <p class="lede full-only">In Walberg’s model a sender has two ways to move belief. It can fake the evidence, or it can leave the evidence true and use a song to change how much weight listeners give it. This tool asks when the second way wins.</p>
+  <div class="actions">
+    <span class="detail-sw" role="group" aria-label="Detail level" title="Simple shows the main result; Full detail shows every source, control and assumption."><button type="button" class="btn" data-detail="simple" aria-pressed="true">Simple</button><button type="button" class="btn" data-detail="full" aria-pressed="false">Full detail</button></span>
+    <button type="button" class="btn" id="reset">Reset</button>
+  </div>
+</div>
+
+<section class="purpose" aria-label="What this tool tests">
+  <span class="type-chip">Notional model</span>
+  <p><b>Question:</b> <span id="purpose-q">Can cheap emotional audio move belief more efficiently than faking evidence, and why do text fact-checks miss it?</span></p>
+  <p><b>What you do:</b> Make music cheaper, time a correction, or let one melody reach everyone.</p>
+  <p><b>What you will see:</b> The sender’s best mix of fake evidence and music, belief paths after a fact-check, and how many listeners act together.</p>
+  <p><b>Limits:</b> A theory model with <span class="notional">notional</span> parameters and no data. The experiment in the research design has not been run.</p>
+</section>
+
+<details class="present">
+  <summary>Presenting this in 3 minutes</summary>
+  <ol>
+    <li><button type="button" class="btn" data-demo="p1-hi">1a · Costly music</button><button type="button" class="btn" data-demo="p1-lo">1b · Cheap music</button> When music is costly the sender fakes evidence (f = 1.85) and buys no music. Make music cheap and it buys full arousal (A = 1) and cuts the fake to f = 0.80. That is P1, substitution.</li>
+    <li><button type="button" class="btn" data-demo="p2-text">2a · Text fact-check</button><button type="button" class="btn" data-demo="p2-affect">2b · Name the feeling</button> Both attacks start at the same belief. A text fact-check at hour 6 removes 72% of the fake’s excess belief and none of the song’s, because the song’s evidence is true. The song’s excess falls to the fake’s corrected level only at hour 21, as the feeling fades. A correction that names the feeling reverses the pattern. That is P2.</li>
+    <li><button type="button" class="btn" data-demo="p3">3 · One melody</button> On average 34% of listeners act either way. With one melody the share swings from episode to episode: in 29 of 300 episodes more than half act at once; with independent moods, in none. That is P3, coordination.</li>
+    <li><button type="button" class="btn" data-demo="mech">4 · Five mechanisms</button> Click through M1 to M5 and watch which term of the formula each one changes. M5 puts the claim in the lyric: ordinary propaganda with sound. M1 to M4 are the new part.</li>
+  </ol>
+  <p><b>Takeaway:</b> In this model a song changes the weight people give true evidence, so it can stand in for faking evidence, it slips past fact-checks that only test the evidence, and one melody moves many people at once.</p>
+  <p><b>Say aloud:</b> This is a theory model with notional numbers. Nothing here is measured, and the survey experiment the design proposes has not been run.</p>
+</details>
+
+<nav class="tabs" id="tabs" role="tablist" aria-label="Propositions">
+  <button type="button" role="tab" id="tab-p1" aria-controls="pan-p1" data-tab="p1">P1 · Substitution</button>
+  <button type="button" role="tab" id="tab-p2" aria-controls="pan-p2" data-tab="p2">P2 · Fact-checks</button>
+  <button type="button" role="tab" id="tab-p3" aria-controls="pan-p3" data-tab="p3">P3 · One melody</button>
+  <button type="button" role="tab" id="tab-m" aria-controls="pan-m" data-tab="m">M1–M5 · Mechanisms</button>
+</nav>
+
+<main class="panes">
+  <section class="pane" id="pan-p1" role="tabpanel" aria-labelledby="tab-p1">
+    <div class="card fig">
+      <div class="fig-h"><p class="eyebrow">P1 · Does cheap music replace faked evidence? <span class="notional">notional</span></p></div>
+      <p class="readline" id="p1-read" aria-live="polite"></p>
+      <div class="ctl-primary" id="p1-primary"></div>
+      <svg id="p1-svg" class="plot" role="img" aria-label="Two strips over the cost of music: the faked evidence the sender buys (top) and the arousal it buys with music (bottom), with shaded bands for the sender's choice"></svg>
+      <div class="legend" id="p1-leg"></div>
+      <p class="fine">f: how much stronger the fake makes the evidence look, on a log scale (f = 0.7 roughly doubles it). A: how much the song arouses listeners, 0 to 1. The sender picks both to maximise the belief it produces minus what it spends. Arousal raises the weight on evidence: λ = 1 + κ · A · congruence. Costs and the sender’s value of belief share one <span class="notional">notional</span> unit: moving belief from 0% to 100% is worth 1.</p>
+    </div>
+    <aside class="panel full-only" id="p1-panel" aria-label="P1 settings"></aside>
+  </section>
+
+  <section class="pane" id="pan-p2" role="tabpanel" aria-labelledby="tab-p2" hidden>
+    <div class="card fig">
+      <div class="fig-h"><p class="eyebrow">P2 · Why does a text fact-check miss the song? <span class="notional">notional</span></p></div>
+      <p class="readline" id="p2-read" aria-live="polite"></p>
+      <div class="ctl-primary" id="p2-primary">
+        <div class="seg" role="group" aria-label="Kind of correction"><button type="button" data-corr="text">Text fact-check</button><button type="button" data-corr="affect">Name the feeling</button></div>
+      </div>
+      <svg id="p2-svg" class="plot" role="img" aria-label="Belief over 72 hours for a faked-evidence attack and a music attack on true evidence, with the correction time marked"></svg>
+      <div class="legend"><span class="lg"><i class="k fake"></i>Faked evidence, no music</span><span class="lg"><i class="k music"></i>True evidence plus a song</span><span class="lg"><i class="k truth"></i>Belief the true evidence justifies</span></div>
+      <p class="fine">Both attacks are sized to produce the same belief at hour 0. A text fact-check removes a share of the faked evidence (it acts on s and L). Naming the feeling and its source removes a share of the arousal (it acts on a). By default the feeling halves every 12 hours; the fake does not fade. That the fact-check cannot touch the song is the proposition’s premise built into the model, not a test of it. The default 70% correction effect is <span class="notional">notional</span> and generous: Lewandowsky et al. (2012) review evidence that corrections often leave belief in place. The point is which term each correction targets, not that fact-checks work well.</p>
+    </div>
+    <aside class="panel full-only" id="p2-panel" aria-label="P2 settings"></aside>
+  </section>
+
+  <section class="pane" id="pan-p3" role="tabpanel" aria-labelledby="tab-p3" hidden>
+    <div class="card fig">
+      <div class="fig-h"><p class="eyebrow">P3 · Does one melody move a crowd together? <span class="notional">notional</span></p></div>
+      <p class="readline" id="p3-read" aria-live="polite"></p>
+      <div class="ctl-primary" id="p3-primary"></div>
+      <svg id="p3-svg" class="plot" role="img" aria-label="Histogram across 300 episodes of the share of 300 listeners who act, for independent moods and for one common melody"></svg>
+      <div class="legend"><span class="lg"><i class="sw indep"></i>Independent moods</span><span class="lg"><i class="sw melody"></i>One melody (current setting)</span></div>
+      <div class="dots full-only">
+        <figure><svg id="dots-i" role="img" aria-label="Listeners who act in one episode with independent moods"></svg><figcaption>Independent moods</figcaption></figure>
+        <figure><svg id="dots-m" role="img" aria-label="Listeners who act in the same episode with one melody"></svg><figcaption>One melody</figcaption></figure>
+        <p class="fine" id="dots-cap"></p>
+      </div>
+      <p class="fine">300 listeners with different priors hear the same true evidence in each of 300 episodes. Each episode brings a new song and new moods. Every listener’s arousal has the same spread in both settings; only how much of it is shared changes.</p>
+    </div>
+    <aside class="panel full-only" id="p3-panel" aria-label="P3 settings"></aside>
+  </section>
+
+  <section class="pane" id="pan-m" role="tabpanel" aria-labelledby="tab-m" hidden>
+    <div class="card fig mech">
+      <div class="fig-h"><p class="eyebrow">Five ways a song can act on belief</p></div>
+      <p class="formula" aria-label="posterior is proportional to pi times L of s given c, raised to the power lambda of a">posterior ∝ <span data-term="pi">π</span> · <span data-term="L">L(</span><span data-term="s">s</span><span data-term="L">|c)</span><sup><span data-term="lam">λ(<span data-term="a">a</span>)</span></sup></p>
+      <p class="fine gloss">π: prior belief that the claim is true. s: the evidence. L(s|c): how much more likely that evidence is if the claim is true. a: the listener’s feeling (arousal, valence). λ(a): the weight the feeling puts on the evidence; 1 is an ordinary Bayesian.</p>
+      <p class="readline" id="m-read" aria-live="polite"></p>
+      <p class="fine">The mechanism labels come from the research design, and the example songs are among the cases it names; matching each song to one mechanism is this tool’s own illustration, and the systematic coding of cases it proposes has not been done. An example shows the channel a song used. It does not say who, if anyone, is sending, and it is not a finding that the song carried a false claim or was part of a campaign. Sources are listed in Full detail.</p>
+      <div class="mgrid" id="mgrid" role="group" aria-label="Mechanisms"></div>
+    </div>
+  </section>
+</main>
+
+<section class="below full-only" id="method">
+  <div class="col">
+    <h2>Method · the model</h2>
+    <p>Walberg’s model gives a receiver a prior π that a claim is true and evidence s with likelihood ratio L(s|c). An ordinary Bayesian multiplies prior odds by L. The affect-modulated receiver raises L to a power set by its feeling a = (arousal, valence): posterior ∝ π · L(s|c)<sup>λ(a)</sup>. In log-odds, logit(posterior) = logit(π) + λ(a) · ℓ, with ℓ = log L. λ rises with arousal and with how well the feeling’s valence matches the claim. This tool uses the simplest such form, λ = 1 + κ · arousal · congruence. The <a href="../bayesian-attack/">Attacking the Update</a> tool works through the same weighting idea with bell-curve beliefs.</p>
+    <p><b>P1, substitution.</b> The sender holds true but weak evidence (ℓ<sub>0</sub>). It can add fabricated evidence f at cost c<sub>s</sub> per unit and buy arousal A in [0, 1] with music at cost c<sub>m</sub> per unit. It chooses both to maximise τ · posterior − c<sub>s</sub>f − c<sub>m</sub>A, by grid search. Because belief cannot pass 100%, a strong song leaves less for a fake to add, so the two are substitutes near the top: as c<sub>m</sub> falls, the sender buys more music and less fake. The larger κ (how much arousal raises the weight), the bigger the shift.</p>
+    <p><b>P2, asymmetric defense.</b> Two attacks start at the same belief: faked evidence f = (λ(a<sub>0</sub>) − 1)ℓ<sub>0</sub> with no music, and the true evidence with a song at arousal a<sub>0</sub>. Arousal halves every h hours, and the tool assumes the extra weight fades with it. A text fact-check removes a share e of the faked evidence. The song’s evidence is true, so a fact-check has nothing to remove there: this is the proposition’s premise built into the model, not a test of it. A correction that names the feeling removes a share e of the arousal and does nothing to the fake. The default e = 70%, applied at once and never wearing off, is notional and generous: Lewandowsky et al. (2012) review evidence that corrections often leave belief in place. The panel shows which term each correction targets, not how well fact-checks work.</p>
+    <p><b>P3, coordination.</b> Each listener’s arousal is Φ(√w · z<sub>common</sub> + √(1 − w) · z<sub>i</sub>), which is uniform on [0, 1] for every w. So w changes only how much of the feeling is shared, not its average or spread, and the average share who act stays the same. What changes is how often many listeners cross the line at once. The design links this to cascade models of mass mobilization; this tool shows only the correlated updates, not a cascade.</p>
+    <p><b>The five mechanisms.</b> The research design maps where a sonic attacker intervenes in the tuple (a, π, s, L, λ): M1 emotional priming acts on a; M2 mnemonic compression on a and the memory of s; M3 in-group signaling on π through identity; M4 narrative compression on L through framing; M5 a literal claim in the lyric on s. M5 is standard signal falsification with sonic delivery, ordinary propaganda with sound. M1 to M4 are the new part.</p>
+  </div>
+  <div class="col">
+    <h2>What is notional</h2>
+    <ul class="howto" id="notional-list"></ul>
+    <p>The design proposes a 2 × 2 × 2 survey experiment (song versus instrumental, two claim domains, true versus false claims) and a catalogue of song-event cases. Neither has been run or built. No number here comes from data.</p>
+    <h2 class="mt">Sources</h2>
+    <ul class="src">
+      <li>The model, propositions and mechanism typology: Walberg’s research design for this project.</li>
+      <li>Patrik N. Juslin and Daniel Västfjäll, “Emotional Responses to Music: The Need to Consider Underlying Mechanisms,” <i>Behavioral and Brain Sciences</i> 31, no. 5 (2008): 559–575. <a href="https://doi.org/10.1017/S0140525X08005293" target="_blank" rel="noopener">doi:10.1017/S0140525X08005293</a>. Proposes six mechanisms, beyond cognitive appraisal, through which listening to music can induce emotions; background for treating a song as an input to a.</li>
+      <li>Stephan Lewandowsky, Ullrich K. H. Ecker, Colleen M. Seifert, Norbert Schwarz and John Cook, “Misinformation and Its Correction: Continued Influence and Successful Debiasing,” <i>Psychological Science in the Public Interest</i> 13, no. 3 (2012): 106–131. <a href="https://doi.org/10.1177/1529100612451018" target="_blank" rel="noopener">doi:10.1177/1529100612451018</a>. Reviews why retractions of misinformation often fail to undo belief; background for P2.</li>
+    </ul>
+    <p class="fine mt">Example cases</p>
+    <ul class="src" id="case-src"></ul>
+  </div>
+</section>
+
+<button type="button" class="sticky-res" id="sticky-res" hidden></button>
+
+<footer id="tsm-foot"></footer>
+<script type="module">
+  import { mountChrome } from '../../shared/js/chrome.js';
+  mountChrome({ title: 'Sonic Vectors', sub: 'A song can stand in for fake evidence. A notional model of when cheap emotional audio beats fabrication, why text fact-checks miss it, and how one melody moves a crowd together.', category: 'Disinformation & cognitive warfare' });
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

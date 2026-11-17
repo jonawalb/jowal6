@@ -51,15 +51,15 @@
         <div class="ap-filters">
           <div class="ap-fg" role="group" aria-label="Countries shown"><span class="fine">Lanes</span><div id="f-lanes" class="ap-chips"></div></div>
           <div class="ap-fg full-only" role="group" aria-label="Themes"><span class="fine">Themes</span><div id="f-themes" class="ap-chips"></div></div>
-          <div class="ap-fg ap-frow full-only">
+          <div class="ap-fg ap-frow">
             <label class="sr-only" for="q">Search documents</label>
-            <input type="search" id="q" class="ap-search" placeholder="Search titles and summaries" autocomplete="off">
-            <div class="ap-seg" role="group" aria-label="Display">
+            <input type="search" id="q" class="ap-search" placeholder="Search all documents, e.g. CHIPS Act" autocomplete="off">
+            <div class="ap-seg full-only" role="group" aria-label="Display">
               <button type="button" class="btn" id="m-chart" aria-pressed="true">Chart</button>
               <button type="button" class="btn" id="m-list" aria-pressed="false">List</button>
             </div>
-            <label class="tg ap-tg"><input type="checkbox" id="links" checked><span class="sw"></span><span class="t">Links</span></label>
-            <button type="button" class="btn" id="tl-reset">Reset</button>
+            <label class="tg ap-tg full-only"><input type="checkbox" id="links" checked><span class="sw"></span><span class="t">Links</span></label>
+            <button type="button" class="btn full-only" id="tl-reset">Reset</button>
           </div>
         </div>
         <div class="ap-countrow"><p class="fine" id="tl-count" aria-live="polite"></p><button type="button" class="btn ap-allbtn" id="tl-all" aria-pressed="false" title="Key documents: a hand-picked set of the main statutes, rules, strategies and agreements" hidden></button></div>

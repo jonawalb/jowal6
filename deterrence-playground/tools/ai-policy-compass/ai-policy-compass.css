@@ -228,3 +228,6 @@
 .ap-countrow .fine { margin: 0; }
 .ap-allbtn { font-size: 12px; padding: 3px 9px; }
 .ap-hint { margin: 0 0 6px; }
+
+.ap-stnote { margin: 0 0 var(--s3, 12px); font-size: 0.9em; }
+.ap-stnote summary { cursor: pointer; color: var(--muted); }

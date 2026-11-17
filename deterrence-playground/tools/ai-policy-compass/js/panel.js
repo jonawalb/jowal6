@@ -16,7 +16,8 @@ export function docHTML(id) {
     <h2 class="ap-dh">${esc(d.title)}</h2>
     ${d.titleOrig ? `<p class="ap-orig" lang="${d.country === 'RU' ? 'ru' : 'zh'}">${esc(d.titleOrig)}</p>` : ''}
     <p class="ap-meta"><span class="num">${esc(dateText(d.date, d.datePrecision))}</span>${d.effective && d.effective !== d.date ? ` · effective <span class="num">${esc(dateText(d.effective))}</span>` : ''} · ${esc(d.issuer)}</p>
-    <p class="ap-statusline"><span class="ap-st" data-s="${s.s}">${esc(s.name)}</span> ${esc(d.statusNote || '')}</p>
+    <p class="ap-statusline"><span class="ap-st" data-s="${s.s}">${esc(s.name)}</span><span class="full-only"> ${esc(d.statusNote || '')}</span></p>
+    ${d.statusNote ? `<details class="ap-stnote simple-only"><summary>Status details</summary><p>${esc(d.statusNote)}</p></details>` : ''}
     <p class="ap-sum">${esc(d.summary)}</p>
     ${parties}
     ${quoteHTML(d.quote, d.quoteEn, `<cite>${ext(d.quoteUrl || d.url, d.quoteLabel || (d.quoteUrl && d.quoteUrl !== d.url ? 'Quoted from ' + host(d.quoteUrl) : 'Quoted from the official text'))}</cite>`)}

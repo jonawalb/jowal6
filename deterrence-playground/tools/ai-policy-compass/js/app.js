@@ -12,7 +12,7 @@ const $ = id => document.getElementById(id);
 const VIEWS = ['timeline', 'compare', 'debates', 'compass'];
 const AX = AXES.map(a => a.id);
 const narrow = () => matchMedia('(max-width: 700px)').matches;
-const DEF = () => ({ v: 'timeline', d: 'us-eo14179', th: new Set(), ln: new Set(COUNTRIES.map(c => c.id)), mode: narrow() ? 'list' : 'chart', q: '', i: ISSUES[0].id, s: 'all', a: {}, links: true });
+const DEF = () => ({ v: 'timeline', d: 'us-chips-act-2022', th: new Set(), ln: new Set(COUNTRIES.map(c => c.id)), mode: narrow() ? 'list' : 'chart', q: '', i: ISSUES[0].id, s: 'all', a: {}, links: true });
 let state = DEF();
 // Simple | Full detail. Per-viewer convenience only; the page works without storage.
 let full = false;
@@ -106,7 +106,7 @@ function render(scroll) {
     $('tl-legend').hidden = state.mode !== 'chart';
     $('tl-list').hidden = state.mode !== 'list';
     document.querySelector('.ap-filters').classList.toggle('ap-active', !!(state.th.size || state.q));
-    const keyOnly = !full && !tlAll;
+    const keyOnly = !full && !tlAll && !state.q; // a search always covers every document
     tl.update({ sel: state.d, themes: state.th, lanes: state.ln, links: state.links && full, q: state.q, only: keyOnly ? KEY : null });
     const shown = DOCS.filter(d => (!keyOnly || KEY.has(d.id) || d.id === state.d) && state.ln.has(d.country) && (!state.th.size || d.themes.some(t => state.th.has(t)))
       && (!state.q || `${d.title} ${d.titleOrig || ''} ${d.issuer} ${d.summary}`.toLowerCase().includes(state.q.toLowerCase())))

@@ -5,7 +5,7 @@ export const COUNTRIES = [
   { id: 'US', name: 'United States', short: 'US', color: 'var(--us)' },
   { id: 'CN', name: 'China', short: 'China', color: 'var(--prc)' },
   { id: 'RU', name: 'Russia', short: 'Russia', color: 'var(--c6)' },
-  { id: 'INTL', name: 'Between them', short: 'Joint', color: 'var(--c3)' },
+  { id: 'INTL', name: 'Between them', short: 'Between them', color: 'var(--c3)' },
 ];
 export const C = Object.fromEntries(COUNTRIES.map(c => [c.id, c]));
 
@@ -34,11 +34,23 @@ export const STATUS = {
   'notenforced': { name: 'Not enforced, rescission pending', live: false, s: 'bad' },
   'unclear': { name: 'Status unclear', live: 'unclear', s: 'warn' },
 };
+// Today's date in Washington (YYYY-MM-DD). Statuses below are judged against it, so they stay true without edits.
+export function todayET(now = new Date()) {
+  try { return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).format(now); }
+  catch { return now.toISOString().slice(0, 10); }
+}
+const TODAY = todayET();
+/** The status key in effect on `today`: a scheduled change (statusFrom) applies from its date on. */
+export const statusKey = (d, today = TODAY) => d.statusFrom && d.statusFrom.date <= today ? d.statusFrom.status : d.status;
+/** The status note in effect on `today`. */
+export const statusNoteOf = (d, today = TODAY) => d.statusFrom && d.statusFrom.date <= today ? d.statusFrom.note : d.statusNote;
 // A released or signed text whose effective date has passed is shown as in force, so the label stays true after that date.
-const TODAY = new Date().toISOString().slice(0, 10);
-export const statusOf = d => (d.status === 'released' || d.status === 'signed') && d.effective && d.effective <= TODAY
-  ? STATUS['in-force']
-  : STATUS[d.status] || { name: d.status, live: true, s: 'warn' };
+export const statusOf = (d, today = TODAY) => {
+  const k = statusKey(d, today);
+  return (k === 'released' || k === 'signed') && d.effective && d.effective <= today
+    ? STATUS['in-force']
+    : STATUS[k] || { name: k, live: true, s: 'warn' };
+};
 
 export const REL = {
   revokes: { verb: 'Revokes', back: 'Revoked by', color: 'var(--bad)' },

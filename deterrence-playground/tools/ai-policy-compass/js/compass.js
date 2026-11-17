@@ -15,6 +15,7 @@ export function createCompass(root, aside, { onChange }) {
         <div class="ap-poles"><span>${esc(a.lo)}</span><span>${esc(a.hi)}</span></div>
         <input type="range" min="0" max="100" step="5" value="50" class="ap-range unset" id="ax-${a.id}"
           aria-label="${esc(a.q)} 0 means: ${esc(a.lo)}. 100 means: ${esc(a.hi)}." aria-valuetext="Not answered">
+        <p class="ap-val" aria-hidden="true">Not answered yet</p>
         <div class="ap-govrows" aria-label="Where each government's texts place it"></div>
       </div>
       <div class="ap-why" aria-live="polite"></div>
@@ -55,6 +56,8 @@ export function createCompass(root, aside, { onChange }) {
       if (has) inp.value = answers[a.id];
       inp.classList.toggle('unset', !has);
       inp.setAttribute('aria-valuetext', has ? `${answers[a.id]} of 100` : 'Not answered');
+      row.querySelector('.ap-val').textContent = has ? `Your answer: ${answers[a.id]} of 100` : 'Not answered yet';
+      row.querySelector('.ap-val').classList.toggle('on', has);
       row.querySelector('.ap-govrows').innerHTML = rowsHTML(a);
       const [oa, og] = (open || '').split('.');
       row.querySelector('.ap-why').innerHTML = oa === a.id && (reveal || has) ? whyHTML(oa, og) : '';
@@ -66,11 +69,10 @@ export function createCompass(root, aside, { onChange }) {
     const n = Object.keys(answers).length;
     const rank = ranking(distances(answers, COMPASS, GOVS));
     const bars = rank.map(r => {
-      const sim = r.gap == null ? null : Math.round(100 - r.gap);
       const near = r.gap == null ? '' : nearest(r.id);
       return `<li><div class="ap-barlab"><span><span class="ap-cdot" style="background:${C[r.id].color}"></span>${esc(C[r.id].name)}</span>
-        <span class="num">${sim == null ? 'no shared questions' : `${Math.round(r.gap)} pts apart`}</span></div>
-        <div class="ap-bar"><span style="width:${sim ?? 0}%;background:${C[r.id].color}"></span></div>
+        <span class="num">${r.gap == null ? 'no shared questions' : `${Math.round(r.gap)} pts apart`}</span></div>
+        <div class="ap-bar"><span style="width:${r.gap == null ? 0 : Math.max(2, Math.round(r.gap))}%;background:${C[r.id].color}"></span></div>
         ${near}</li>`;
     }).join('');
     const mini = document.getElementById('cmp-mini');
@@ -79,7 +81,8 @@ export function createCompass(root, aside, { onChange }) {
     aside.querySelector('#cmp-sum').innerHTML = n === 0
       ? '<p class="fine">Answer any question to start. Your result updates as you go; skip any you like.</p>'
       : `<p class="ap-big">Closest to <b>${esc(C[rank[0].id].name)}</b></p>
-         <p class="fine full-only">Average gap on the ${n} question${n > 1 ? 's' : ''} you answered (0 = same place, 100 = opposite ends). A longer bar means a closer match. Questions where a government has no placement are left out of its average.</p>
+         <p class="fine simple-only">Points apart, averaged over your answers: a shorter bar is a closer match.</p>
+         <p class="fine full-only">Average gap on the ${n} question${n > 1 ? 's' : ''} you answered (0 = same place, 100 = opposite ends). A shorter bar means a closer match. Questions where a government has no placement are left out of its average.</p>
          <ol class="ap-bars">${bars}</ol>`;
   }
 

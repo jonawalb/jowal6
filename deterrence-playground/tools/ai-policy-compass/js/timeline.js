@@ -5,6 +5,7 @@ const BINDING = new Set(['standard', 'regulation', 'law', 'decree', 'executive-o
 // arcs for revocations, supersessions and amendments. Roving tabindex: arrows move between nodes.
 import { DOCS } from '../data/policy.js';
 import { COUNTRIES, C, D, REL, KIND, statusOf, esc, dateText } from './common.js';
+import { matchesQuery } from './search.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 const T0 = Date.UTC(2017, 0, 1), T1 = Date.UTC(2027, 0, 1);
@@ -24,11 +25,7 @@ export function createTimeline(host, { onSelect }) {
   function matches(d) {
     if (!st.lanes.has(d.country)) return false;
     if (st.themes.size && !d.themes.some(t => st.themes.has(t))) return false;
-    if (st.q) {
-      const hay = `${d.title} ${d.titleOrig || ''} ${d.issuer} ${d.summary}`.toLowerCase();
-      if (!hay.includes(st.q.toLowerCase())) return false;
-    }
-    return true;
+    return matchesQuery(d, st.q);
   }
 
   function compute(width) {
@@ -85,7 +82,10 @@ export function createTimeline(host, { onSelect }) {
     laneBoxes.forEach((b, i) => {
       el('rect', { x: 0, y: b.y, width: W, height: b.h, class: i % 2 ? 'ap-lane alt' : 'ap-lane' }, svg);
       el('rect', { x: 0, y: b.y + 6, width: 4, height: b.h - 12, rx: 2, style: `fill:${b.lane.color}` }, svg);
-      el('text', { x: 12, y: b.y + b.h / 2 + 4, class: 'ap-lanelab' }, svg, b.lane.short === 'Joint' ? 'Between' : b.lane.short);
+      if (b.lane.id === 'INTL') {
+        const t = el('text', { x: 12, y: b.y + b.h / 2 - 3, class: 'ap-lanelab' }, svg);
+        el('tspan', { x: 12 }, t, 'Between'); el('tspan', { x: 12, dy: 15 }, t, 'them');
+      } else el('text', { x: 12, y: b.y + b.h / 2 + 4, class: 'ap-lanelab' }, svg, b.lane.short);
     });
     // years
     for (let yr = 2017; yr <= 2026; yr++) {
@@ -187,18 +187,28 @@ export function createTimeline(host, { onSelect }) {
   };
 }
 
-/** Accessible list version of the same documents (default on narrow screens). */
+const itemHTML = (d, sel) => {
+  const s = statusOf(d);
+  return `<li><button type="button" class="ap-li" data-id="${esc(d.id)}" aria-pressed="${sel === d.id}">
+      <span class="ap-cdot" style="background:${C[d.country].color}"></span>
+      <span class="ap-li-t"><b>${esc(d.title)}</b><small>${esc(C[d.country].short)} · ${esc(dateText(d.date, d.datePrecision))} · ${esc(KIND[d.kind] || d.kind)} · <span class="ap-st" data-s="${s.s}">${esc(s.name)}</span></small></span>
+    </button></li>`;
+};
+
+/** Accessible list version of the same documents (default on narrow screens), grouped by year. */
 export function listHTML(docs, sel) {
   if (!docs.length) return '<p class="fine">No documents match these filters.</p>';
   let year = null, out = '';
   for (const d of docs) {
     const y = d.date.slice(0, 4);
     if (y !== year) { if (year) out += '</ol>'; out += `<h3 class="ap-ly">${y}</h3><ol class="ap-list">`; year = y; }
-    const s = statusOf(d);
-    out += `<li><button type="button" class="ap-li" data-id="${esc(d.id)}" aria-pressed="${sel === d.id}">
-      <span class="ap-cdot" style="background:${C[d.country].color}"></span>
-      <span class="ap-li-t"><b>${esc(d.title)}</b><small>${esc(C[d.country].short)} · ${esc(dateText(d.date, d.datePrecision))} · ${esc(KIND[d.kind] || d.kind)} · <span class="ap-st" data-s="${s.s}">${esc(s.name)}</span></small></span>
-    </button></li>`;
+    out += itemHTML(d, sel);
   }
   return out + '</ol>';
+}
+
+/** Search hits in relevance order (no year grouping): the best match is first. */
+export function hitsHTML(docs, sel) {
+  if (!docs.length) return '<p class="fine">No documents match this search. Try fewer words, or clear the search.</p>';
+  return `<ol class="ap-list ap-hits">${docs.map(d => itemHTML(d, sel)).join('')}</ol>`;
 }

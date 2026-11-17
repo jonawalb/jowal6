@@ -231,3 +231,53 @@
 
 .ap-stnote { margin: 0 0 var(--s3, 12px); font-size: 0.9em; }
 .ap-stnote summary { cursor: pointer; color: var(--muted); }
+
+/* Search hits: relevance-ranked, shown above the chart or in place of the list while a search is active. */
+.ap-hitswrap[hidden] { display: none; }
+.ap-hitswrap { margin: 4px 0 8px; }
+.ap-hits { gap: 2px; }
+.ap-hitsmore { margin-top: 6px; }
+.ap-back { margin: 0 0 4px; }
+.ap-back .btn { color: var(--ink); }
+.ap-narrow { display: none; }
+.ap-tofull { font-size: 12.5px; padding: 4px 10px; color: var(--ink); }
+.ap-cols p.simple-only { margin: 0; }
+
+/* Compass: an untouched slider must not read as an answer of 50. */
+.ap-range.unset { opacity: .45; }
+.ap-val { margin: 0 0 2px 52px; font-size: 11.5px; color: var(--faint); font-style: italic; }
+.ap-val.on { color: var(--muted); font-style: normal; }
+body.ap-sum-seen .ap-mini { display: none !important; }
+
+/* Phones: search, then the selected document, then the list; one row of tabs; 44px tap targets. */
+@media (max-width: 700px) {
+  .ap-narrow { display: block; }
+  .ap-wide { display: none; }
+  .ap-tlgrid { display: flex; flex-direction: column; gap: 0; }
+  .ap-tlcard { display: contents; }
+  .ap-filters { order: 1; }
+  .ap-countrow { order: 2; }
+  .ap-hitswrap { order: 3; }
+  .ap-detail { order: 4; margin: 6px 0 12px; }
+  .ap-tlwrap { order: 5; }
+  .ap-legend { order: 6; }
+  .ap-listwrap { order: 7; }
+  .ap-listwrap, .detail-simple .ap-listwrap { max-height: none; overflow: visible; }
+  .ap-ax .ap-val { margin-left: 52px; }
+}
+@media (max-width: 640px) {
+  .tabs { flex-wrap: nowrap; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tabs [role="tab"] { flex: none; white-space: nowrap; min-height: 44px; }
+  .ap .btn, .ap-chip, .ap-allbtn, .ap-detailsw .btn, .ap-tofull { min-height: 44px; }
+  .ap-search { min-height: 44px; font-size: 16px; }
+  .ap-li { min-height: 44px; }
+  .ap-stnote summary { min-height: 44px; display: flex; align-items: center; }
+  .ap-issues { display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 6px; padding-bottom: 4px; overscroll-behavior-x: contain; }
+  .ap-issues button { flex: none; min-height: 44px; max-width: 75vw; justify-content: center; }
+  #scopes .ap-chip, .ap-actions .btn { min-height: 44px; }
+  .ap-none { min-height: 44px; top: -11px; }
+  .ap-gov::before { content: ''; position: absolute; inset: -14px; }
+  .ap-range { min-height: 44px; }
+  .ap-mini:not([hidden]) { min-height: 44px; }
+}

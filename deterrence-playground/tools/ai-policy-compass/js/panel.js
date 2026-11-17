@@ -1,5 +1,5 @@
 // Detail card for one document: what it does, status, quote, primary source and relations.
-import { C, D, REL, KIND, statusOf, relationsOf, esc, dateText, ext, host, quoteHTML } from './common.js';
+import { C, D, REL, KIND, statusOf, statusNoteOf, relationsOf, esc, dateText, ext, host, quoteHTML } from './common.js';
 import { THEMES } from './common.js';
 
 const themeName = id => THEMES.find(t => t.id === id)?.name || id;
@@ -7,7 +7,7 @@ const themeName = id => THEMES.find(t => t.id === id)?.name || id;
 export function docHTML(id) {
   const d = D[id];
   if (!d) return '<p class="fine">Click a node on the timeline, or a document in the list, to read what it does.</p>';
-  const s = statusOf(d), c = C[d.country];
+  const s = statusOf(d), c = C[d.country], note = statusNoteOf(d);
   const rels = relationsOf(id);
   const parties = d.parties ? `<dl class="ap-parties">${['US', 'CN', 'RU'].filter(k => d.parties[k]).map(k =>
     `<dt><span class="ap-cdot" style="background:${C[k].color}"></span>${esc(C[k].short)}</dt><dd>${esc(d.parties[k])}</dd>`).join('')}</dl>` : '';
@@ -16,8 +16,8 @@ export function docHTML(id) {
     <h2 class="ap-dh">${esc(d.title)}</h2>
     ${d.titleOrig ? `<p class="ap-orig" lang="${d.country === 'RU' ? 'ru' : 'zh'}">${esc(d.titleOrig)}</p>` : ''}
     <p class="ap-meta"><span class="num">${esc(dateText(d.date, d.datePrecision))}</span>${d.effective && d.effective !== d.date ? ` · effective <span class="num">${esc(dateText(d.effective))}</span>` : ''} · ${esc(d.issuer)}</p>
-    <p class="ap-statusline"><span class="ap-st" data-s="${s.s}">${esc(s.name)}</span><span class="full-only"> ${esc(d.statusNote || '')}</span></p>
-    ${d.statusNote ? `<details class="ap-stnote simple-only"><summary>Status details</summary><p>${esc(d.statusNote)}</p></details>` : ''}
+    <p class="ap-statusline"><span class="ap-st" data-s="${s.s}">${esc(s.name)}</span><span class="full-only"> ${esc(note || '')}</span></p>
+    ${note ? `<details class="ap-stnote simple-only"><summary>Status details</summary><p>${esc(note)}</p></details>` : ''}
     <p class="ap-sum">${esc(d.summary)}</p>
     ${parties}
     ${quoteHTML(d.quote, d.quoteEn, `<cite>${ext(d.quoteUrl || d.url, d.quoteLabel || (d.quoteUrl && d.quoteUrl !== d.url ? 'Quoted from ' + host(d.quoteUrl) : 'Quoted from the official text'))}</cite>`)}

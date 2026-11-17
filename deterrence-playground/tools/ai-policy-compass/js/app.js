@@ -1,7 +1,8 @@
 // Understanding AI Policy: tabs, filters, URL hash and wiring between the four views.
 import { DOCS, ISSUES, AXES, META } from '../data/policy.js';
 import { THEMES, COUNTRIES, D, esc } from './common.js';
-import { createTimeline, listHTML } from './timeline.js';
+import { createTimeline, listHTML, hitsHTML } from './timeline.js';
+import { rankDocs } from './search.js';
 import { docHTML } from './panel.js';
 import { issueButtons, compareHTML } from './compare.js';
 import { SCOPES, debatesHTML } from './debates.js';
@@ -12,6 +13,7 @@ const $ = id => document.getElementById(id);
 const VIEWS = ['timeline', 'compare', 'debates', 'compass'];
 const AX = AXES.map(a => a.id);
 const narrow = () => matchMedia('(max-width: 700px)').matches;
+const smooth = () => matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
 const DEF = () => ({ v: 'timeline', d: 'us-chips-act-2022', th: new Set(), ln: new Set(COUNTRIES.map(c => c.id)), mode: narrow() ? 'list' : 'chart', q: '', i: ISSUES[0].id, s: 'all', a: {}, links: true });
 let state = DEF();
 // Simple | Full detail. Per-viewer convenience only; the page works without storage.
@@ -21,17 +23,22 @@ let debAll = false;
 // Simple mode starts from "Key documents": a hand-picked set of the statutes, rules, strategies and agreements
 // an AI and chip policy specialist would expect to see first. "Show all" lifts it; Full detail always shows all.
 const KEY_IDS = `us-ecra-2018 us-firrma-2018 us-bis-huawei-2019 us-bis-huawei-fdp-2020 us-chips-act-2022 us-bis-oct2022 us-bis-oct2023
-us-eo14105 us-eo14110 us-treasury-outbound-2024 us-bis-fdp-2024 us-bis-diffusion us-eo14179 us-ai-action-plan
+us-eo14105 us-eo14110 us-treasury-outbound-2024 us-bis-fdp-2024 us-bis-diffusion us-eo14179 us-ai-action-plan us-nspm11-2026
 us-ca-sb53-2025 us-coins-act-2025 us-eo14365 us-bis-h200-2026 us-eo14409 us-bis-remote-access-2026
 cn-mic2025-2015 cn-big-fund-2014 cn-aidp-2017 cn-export-control-law-2020 cn-uel-provisions-2020 cn-algorithm-provisions-2021
 cn-genai-measures-2023 cn-mofcom-gage-2023 cn-dual-use-regs-2024 cn-mofcom-46-2024 cn-ai-labeling-measures-2025
-cn-mofcom-18-2025 cn-mofcom-61-2025 cn-gaap-2025 cn-15th-fyp-outline-2026
+cn-mofcom-18-2025 cn-mofcom-61-2025 cn-gaap-2025 cn-15th-fyp-outline-2026 cn-mofcom-most-48-2026
 ru-decree490 ru-decree124 ru-decree166-cii ru-fz243-ai-law
 intl-wassenaar intl-oecd-ai-principles intl-us-russia-ear-7468 intl-nl-sme-controls intl-jp-sme-controls intl-bletchley
 unga-78-265 intl-eu-ai-act intl-coe-ai-convention intl-paris-statement us-cn-ai-dialogue-2026`.split(/\s+/);
 const KEY = new Set(KEY_IDS.filter(id => DOCS.some(d => d.id === id)));
 let tlAll = false;
 const DEB_N = 4;
+// Search hits: the best HIT_N show first; "Show all N matches" lifts the cap.
+const HIT_N = 8;
+let hitsAll = false;
+// After a tap on a phone scrolls to the selected document, "Back to list" returns to the item tapped.
+let backTo = null;
 function applyDetail() {
   document.body.classList.toggle('detail-full', full);
   document.body.classList.toggle('detail-simple', !full);
@@ -83,7 +90,7 @@ $('issues').innerHTML = issueButtons(state.i);
 $('scopes').innerHTML = SCOPES.map(s => `<button type="button" class="btn ap-chip" data-s="${s.id}" aria-pressed="false">${esc(s.name)}</button>`).join('');
 $('n-docs').textContent = DOCS.length;
 
-const tl = createTimeline($('tl'), { onSelect: id => set({ d: id }) });
+const tl = createTimeline($('tl'), { onSelect: id => { backTo = null; set({ d: id }); } });
 const compass = createCompass($('axes'), $('compass-aside'), { onChange: a => { state.a = { ...a }; writeHash(); } });
 
 // ---- render
@@ -104,19 +111,29 @@ function render(scroll) {
     $('links').checked = state.links;
     $('tl').hidden = state.mode !== 'chart';
     $('tl-legend').hidden = state.mode !== 'chart';
-    $('tl-list').hidden = state.mode !== 'list';
-    document.querySelector('.ap-filters').classList.toggle('ap-active', !!(state.th.size || state.q));
+    // Themes stay folded away in Simple unless a theme filter is on; a search alone does not open them.
+    document.querySelector('.ap-filters').classList.toggle('ap-active', !!state.th.size);
     const keyOnly = !full && !tlAll && !state.q; // a search always covers every document
     tl.update({ sel: state.d, themes: state.th, lanes: state.ln, links: state.links && full, q: state.q, only: keyOnly ? KEY : null });
-    const shown = DOCS.filter(d => (!keyOnly || KEY.has(d.id) || d.id === state.d) && state.ln.has(d.country) && (!state.th.size || d.themes.some(t => state.th.has(t)))
-      && (!state.q || `${d.title} ${d.titleOrig || ''} ${d.issuer} ${d.summary}`.toLowerCase().includes(state.q.toLowerCase())))
-      .sort((a, b) => a.date.localeCompare(b.date));
-    $('tl-count').textContent = keyOnly ? `${shown.length} key documents of ${DOCS.length}` : `${shown.length} of ${DOCS.length} documents`;
-    $('tl-all').hidden = full;
+    const inFilters = d => state.ln.has(d.country) && (!state.th.size || d.themes.some(t => state.th.has(t)));
+    const hits = state.q ? rankDocs(DOCS.filter(inFilters), state.q, id => KEY.has(id)) : null;
+    if (hits) {
+      $('tl-count').textContent = `${hits.length} match${hits.length === 1 ? '' : 'es'} for “${state.q}”, best first (all ${DOCS.length} documents searched)`;
+      const cap = !hitsAll && hits.length > HIT_N;
+      $('tl-hits').innerHTML = hitsHTML(cap ? hits.slice(0, HIT_N) : hits, state.d)
+        + (cap ? `<button type="button" class="btn ap-allbtn ap-hitsmore" id="tl-hitsall">Show all ${hits.length} matches</button>` : '');
+    } else {
+      const shown = DOCS.filter(d => (!keyOnly || KEY.has(d.id) || d.id === state.d) && inFilters(d)).sort((a, b) => a.date.localeCompare(b.date));
+      $('tl-count').textContent = keyOnly ? `${shown.length} key documents of ${DOCS.length}` : `${shown.length} of ${DOCS.length} documents`;
+      if (state.mode === 'list') $('tl-list').innerHTML = listHTML(shown, state.d);
+    }
+    $('tl-hits').hidden = !hits;
+    $('tl-list').hidden = state.mode !== 'list' || !!hits;
+    $('tl-all').hidden = full || !!hits;
     $('tl-all').textContent = tlAll ? 'Key documents only' : `Show all ${DOCS.length}`;
     $('tl-all').setAttribute('aria-pressed', tlAll);
-    if (state.mode === 'list') $('tl-list').innerHTML = listHTML(shown, state.d);
-    $('detail').innerHTML = docHTML(state.d);
+    const back = backTo && narrow() ? `<p class="ap-back"><button type="button" class="btn" id="tl-back">← Back to list</button></p>` : '';
+    $('detail').innerHTML = back + docHTML(state.d);
     if (scroll === 'doc') tl.scrollTo(state.d);
   }
   if (state.v === 'compare') {
@@ -137,11 +154,14 @@ function render(scroll) {
 function set(next, scroll) { Object.assign(state, next); render(scroll); }
 
 // ---- events
-document.querySelector('.ap-detailsw').addEventListener('click', e => {
-  const b = e.target.closest('[data-detail]'); if (!b) return;
-  full = b.dataset.detail === 'full';
+function setFull(on) {
+  full = on;
   try { localStorage.setItem('et-detail', full ? 'full' : 'simple'); } catch {}
   applyDetail(); render();
+}
+document.querySelector('.ap-detailsw').addEventListener('click', e => {
+  const b = e.target.closest('[data-detail]'); if (!b) return;
+  setFull(b.dataset.detail === 'full');
 });
 $('tl-all').addEventListener('click', () => { tlAll = !tlAll; render('doc'); });
 $('deb-more').addEventListener('click', () => {
@@ -173,27 +193,63 @@ $('f-lanes').addEventListener('click', e => {
 $('m-chart').addEventListener('click', () => set({ mode: 'chart' }, 'doc'));
 $('m-list').addEventListener('click', () => set({ mode: 'list' }));
 $('links').addEventListener('change', e => set({ links: e.target.checked }));
-$('q').addEventListener('input', e => set({ q: e.target.value.trim() }));
-$('tl-reset').addEventListener('click', () => { $('q').value = ''; set({ th: new Set(), ln: new Set(COUNTRIES.map(c => c.id)), q: '', links: true }); });
-$('tl-list').addEventListener('click', e => {
-  const b = e.target.closest('.ap-li'); if (!b) return;
-  set({ d: b.dataset.id });
-  if (narrow()) $('detail').scrollIntoView({ block: 'start', behavior: 'smooth' });
-  else $('tl-list').querySelector(`[data-id="${CSS.escape(b.dataset.id)}"]`)?.focus();
+$('q').addEventListener('input', e => {
+  const q = e.target.value.trim(), was = state.q;
+  hitsAll = false; backTo = null;
+  set({ q });
+  // On a phone, bring the search box and its first hits to the top of the screen when a search starts.
+  if (q && !was && narrow()) $('q').scrollIntoView({ block: 'start' });
 });
-$('issues').addEventListener('click', e => { const b = e.target.closest('[data-issue]'); if (b) set({ i: b.dataset.issue }); });
+// Enter in the search box opens the best match.
+$('q').addEventListener('keydown', e => {
+  if (e.key !== 'Enter' || !state.q) return;
+  e.preventDefault();
+  $('tl-hits').querySelector('.ap-li')?.click();
+});
+$('tl-reset').addEventListener('click', () => { $('q').value = ''; set({ th: new Set(), ln: new Set(COUNTRIES.map(c => c.id)), q: '', links: true }); });
+// Picking from the year list or the search hits. On a phone the document card sits above the list: scroll to it,
+// with "Back to list" to return. On a wide screen the card is beside the list, so keep focus where it was.
+for (const host of [$('tl-list'), $('tl-hits')]) host.addEventListener('click', e => {
+  if (e.target.closest('#tl-hitsall')) { hitsAll = true; render(); return; }
+  const b = e.target.closest('.ap-li'); if (!b) return;
+  backTo = narrow() ? b.dataset.id : null;
+  set({ d: b.dataset.id });
+  if (narrow()) { $('detail').scrollIntoView({ block: 'start', behavior: smooth() }); $('tl-back')?.focus({ preventScroll: true }); }
+  else host.querySelector(`[data-id="${CSS.escape(b.dataset.id)}"]`)?.focus();
+});
+$('detail').addEventListener('click', e => {
+  if (!e.target.closest('#tl-back')) return;
+  const id = backTo; backTo = null;
+  render();
+  const host = state.q ? $('tl-hits') : $('tl-list');
+  const item = host.querySelector(`[data-id="${CSS.escape(id)}"]`) || host;
+  item.scrollIntoView({ block: 'center', behavior: smooth() });
+  item.focus?.({ preventScroll: true });
+});
+$('issues').addEventListener('click', e => {
+  const b = e.target.closest('[data-issue]'); if (!b) return;
+  set({ i: b.dataset.issue });
+  if (narrow()) $('compare').scrollIntoView({ block: 'start', behavior: smooth() });
+});
+$('compare').addEventListener('click', e => {
+  if (!e.target.closest('.ap-tofull')) return;
+  setFull(true);
+});
 $('scopes').addEventListener('click', e => { const b = e.target.closest('[data-s]'); if (b) set({ s: b.dataset.s }); });
 // Any "open on the timeline" button anywhere on the page.
 document.addEventListener('click', e => {
   const b = e.target.closest('.ap-jump'); if (!b || !D[b.dataset.id]) return;
   e.preventDefault();
   const d = D[b.dataset.id];
+  backTo = null;
   const ln = new Set(state.ln); ln.add(d.country);
   const th = state.th.size && !d.themes.some(t => state.th.has(t)) ? new Set() : state.th;
   set({ v: 'timeline', d: d.id, ln, th }, 'doc');
   (state.mode === 'chart' && !narrow() ? $('tab-timeline') : $('detail')).scrollIntoView({ block: 'start', behavior: 'smooth' });
 });
-$('cmp-mini').addEventListener('click', e => { e.preventDefault(); $('cmp-sum').scrollIntoView({ block: 'start', behavior: 'smooth' }); });
+$('cmp-mini').addEventListener('click', e => { e.preventDefault(); $('cmp-sum').scrollIntoView({ block: 'start', behavior: smooth() }); });
+// The floating "Closest: ..." bar is only a shortcut to the result; hide it while the result is on screen.
+if ('IntersectionObserver' in window) new IntersectionObserver(([en]) => document.body.classList.toggle('ap-sum-seen', en.isIntersecting)).observe($('cmp-sum'));
 $('cmp-reveal').addEventListener('change', e => compass.reveal(e.target.checked));
 $('cmp-reset').addEventListener('click', () => compass.reset());
 $('cmp-share').addEventListener('click', async () => {

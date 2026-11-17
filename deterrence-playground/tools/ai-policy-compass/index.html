@@ -29,9 +29,9 @@
   <div class="ap-top">
     <div class="ap-toprow">
       <p class="ap-asof">Current as of <b id="asof">16 November 2026</b>. <span id="n-docs"></span> primary documents, each linked to its official text.</p>
-      <div class="ap-seg ap-detailsw" role="group" aria-label="Level of detail">
-        <button type="button" class="btn" data-detail="simple" aria-pressed="true">Simple</button>
-        <button type="button" class="btn" data-detail="full" aria-pressed="false">Full detail</button>
+      <div class="ap-seg ap-detailsw" role="group" aria-label="Level of detail" title="Simple shows the main result; Full detail shows every source, control and assumption.">
+        <button type="button" class="btn" data-detail="simple" aria-pressed="true" title="Simple shows the main result; Full detail shows every source, control and assumption.">Simple</button>
+        <button type="button" class="btn" data-detail="full" aria-pressed="false" title="Simple shows the main result; Full detail shows every source, control and assumption.">Full detail</button>
       </div>
     </div>
     <div class="tabs" role="tablist" aria-label="Views">
@@ -44,16 +44,15 @@
 
   <!-- 1. Timeline -->
   <section id="view-timeline" role="tabpanel" aria-labelledby="tab-timeline" class="ap-view">
-    <p class="lede simple-only">Each mark is one official document. Solid marks are still in effect; hollow or dashed ones are not. Click a mark to read what it does. Shown first: the key documents. Use Show all for every document.</p>
+    <p class="lede simple-only ap-wide">Each mark is one official document. Solid marks are still in effect; hollow or dashed ones are not. Click a mark to read what it does. Shown first: the key documents. Use Show all for every document.</p>
+    <p class="lede simple-only ap-narrow">Search, or tap a document to read what it does.</p>
     <p class="lede full-only">Each mark is a primary document: an executive order, law, regulation, standard, strategy, plan, UN resolution or major official statement. Squares bind (orders, laws, rules, standards); circles state policy. Solid marks are still in effect; hollow ones were revoked, superseded, suspended or expired; dashed ones are not yet in force. Arcs run from a document to the one it revokes, supersedes or amends.</p>
     <div class="ap-tlgrid">
       <div class="card ap-tlcard">
         <div class="ap-filters">
-          <div class="ap-fg" role="group" aria-label="Countries shown"><span class="fine">Lanes</span><div id="f-lanes" class="ap-chips"></div></div>
-          <div class="ap-fg full-only" role="group" aria-label="Themes"><span class="fine">Themes</span><div id="f-themes" class="ap-chips"></div></div>
           <div class="ap-fg ap-frow">
             <label class="sr-only" for="q">Search documents</label>
-            <input type="search" id="q" class="ap-search" placeholder="Search all documents, e.g. CHIPS Act" autocomplete="off">
+            <input type="search" id="q" class="ap-search" placeholder="Search all documents, e.g. CHIPS Act" autocomplete="off" enterkeyhint="search">
             <div class="ap-seg full-only" role="group" aria-label="Display">
               <button type="button" class="btn" id="m-chart" aria-pressed="true">Chart</button>
               <button type="button" class="btn" id="m-list" aria-pressed="false">List</button>
@@ -61,8 +60,11 @@
             <label class="tg ap-tg full-only"><input type="checkbox" id="links" checked><span class="sw"></span><span class="t">Links</span></label>
             <button type="button" class="btn full-only" id="tl-reset">Reset</button>
           </div>
+          <div class="ap-fg" role="group" aria-label="Countries shown"><span class="fine">Lanes</span><div id="f-lanes" class="ap-chips"></div></div>
+          <div class="ap-fg full-only" role="group" aria-label="Themes"><span class="fine">Themes</span><div id="f-themes" class="ap-chips"></div></div>
         </div>
         <div class="ap-countrow"><p class="fine" id="tl-count" aria-live="polite"></p><button type="button" class="btn ap-allbtn" id="tl-all" aria-pressed="false" title="Key documents: a hand-picked set of the main statutes, rules, strategies and agreements" hidden></button></div>
+        <div id="tl-hits" class="ap-hitswrap" hidden></div>
         <div class="ap-tlwrap" id="tl"></div>
         <div class="ap-legend" id="tl-legend" aria-hidden="true">
           <span class="simple-only"><svg width="14" height="14"><circle cx="7" cy="7" r="5.5" class="lg-live"/></svg>In effect</span>

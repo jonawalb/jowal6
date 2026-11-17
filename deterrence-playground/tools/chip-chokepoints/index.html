@@ -27,11 +27,15 @@
 
 <main class="layout">
   <div class="stage" id="stage">
-    <p class="caveat"><b>Current as of <span id="asof"></span>.</b> Market shares come from published industry and government sources, each with its data year. The shock model is a stylised throughput calculation: its buffers and substitution times are assumptions you can move, marked <span class="notional">notional</span>.</p>
+    <p class="caveat"><b>Current as of <span id="asof"></span>.</b> <span class="full-only">Market shares come from published industry and government sources, each with its data year. The shock model is a stylised throughput calculation: its buffers and substitution times are assumptions you can move, marked <span class="notional">notional</span>.</span><span class="simple-only">Shares are sourced and dated. The shock model's buffers and substitution times are <span class="notional">notional</span>.</span></p>
 
     <div class="card controls">
       <div class="row">
-        <label class="tg mini"><input type="checkbox" id="overlay" checked><span class="sw"></span><span class="t">Controls overlay<small>Count the measures aimed at each stage</small></span></label>
+        <div class="seg" id="detail" role="group" aria-label="Level of detail">
+          <button type="button" class="btn" data-m="simple" aria-pressed="true">Simple</button>
+          <button type="button" class="btn" data-m="full" aria-pressed="false">Full detail</button>
+        </div>
+        <label class="tg mini full-only"><input type="checkbox" id="overlay" checked><span class="sw"></span><span class="t">Controls overlay<small>Count the measures aimed at each stage</small></span></label>
         <div class="acts">
           <button type="button" class="btn" id="tour-btn">Walkthrough</button>
           <button type="button" class="btn" id="copy">Copy link</button>
@@ -47,7 +51,8 @@
         <ol class="flow" id="flow" aria-labelledby="flow-h"></ol>
         <div class="tooltip" id="flow-tip" hidden></div>
       </div>
-      <p class="fine">Each bar splits one stage's world output by country, from the source and year shown. Select a stage for firm shares, China's position and the controls aimed at it.</p>
+      <p class="fine full-only">Each bar splits one stage's world output by country, from the source and year shown. Select a stage for firm shares, China's position and the controls aimed at it.</p>
+      <p class="fine simple-only">Each bar splits one stage's world output by country. Each group shows its most concentrated stages first. Select a stage for details. Full detail adds each row's source and year.</p>
     </div>
 
     <div class="card chartcard" id="card" aria-live="polite"></div>
@@ -58,7 +63,7 @@
         <svg id="sim" class="chart" role="img" aria-labelledby="sim-h sim-desc"></svg>
         <div class="tooltip" id="sim-tip" hidden></div>
       </div>
-      <label class="slider scrub"><span class="sl-h"><span>Month after the shock</span><output id="scrub-o">12</output></span>
+      <label class="slider scrub full-only"><span class="sl-h"><span>Month after the shock</span><output id="scrub-o">12</output></span>
         <input type="range" id="scrub" min="0" max="119" step="1" value="12" aria-describedby="sim-desc"></label>
       <p class="fine" id="sim-desc"></p>
     </div>
@@ -67,19 +72,20 @@
   <aside class="panel" aria-label="Shock settings and results">
     <div class="sec">
       <div class="status" id="status" data-s="warn" aria-live="polite"><b id="st-b"></b><span id="st-s"></span></div>
-      <dl class="readout" id="readout"></dl>
+      <dl class="readout full-only" id="readout"></dl>
     </div>
     <div class="sec">
       <p class="eyebrow">Shock</p>
       <div class="choices one" id="scenarios" role="group" aria-label="Shock scenario"></div>
+      <button type="button" class="linkbtn simple-only" id="sc-more" aria-controls="scenarios" aria-expanded="false">More shocks</button>
       <p class="fine" id="sc-basis"></p>
       <div id="custom" hidden>
         <label class="fl"><span>Whose output is lost</span><select id="cu-actor"></select></label>
         <div id="cu-stages" class="cu-stages" role="group" aria-label="Stages hit"></div>
       </div>
       <div id="hits"></div>
-      <label class="tg"><input type="checkbox" id="open" checked><span class="sw"></span><span class="t">Open-ended<small>Off: the shock ends after the months set below</small></span></label>
-      <div class="slider" id="dur-wrap"><span class="sl-h"><label for="dur">Shock lasts</label><output id="dur-o"></output></span>
+      <label class="tg full-only"><input type="checkbox" id="open" checked><span class="sw"></span><span class="t">Open-ended<small>Off: the shock ends after the months set below</small></span></label>
+      <div class="slider full-only" id="dur-wrap"><span class="sl-h"><label for="dur">Shock lasts</label><output id="dur-o"></output></span>
         <input type="range" id="dur" min="1" max="120" step="1" value="12"></div>
     </div>
     <details class="sec" id="assume" open>
@@ -89,7 +95,14 @@
   </aside>
 </main>
 
-<section class="wide" aria-label="Export controls and comparison">
+<section class="wide simple-only" aria-label="More detail">
+  <div class="card more">
+    <p>The export-controls timeline (<span id="ctl-n"></span> measures, each linked to its official text) and the chokepoint table are in Full detail.</p>
+    <button type="button" class="btn" id="to-full">Show controls and table</button>
+  </div>
+</section>
+
+<section class="wide full-only" aria-label="Export controls and comparison">
   <div class="card chartcard" id="ctl-card">
     <div class="chart-h"><p class="eyebrow" id="ctl-h">Export controls and counter-measures by stage</p></div>
     <div class="row">

@@ -1,3 +1,5 @@
+import { setDetail } from './detail.js';
+
 // Guided walkthrough. Figures quoted here were computed with js/model.js under the default notional
 // assumptions (asserted in scripts/model.test.mjs) and the shares in data/chain.js.
 const STEPS = [
@@ -17,7 +19,7 @@ const STEPS = [
     body: 'China produces 99% of primary gallium (USGS) and refines 85% of rare earths (IEA). How much accelerator output depends on them is not public, so the pass-through is a slider. At the notional 10% the loss peaks near 10%; set it to 100% to see the upper bound.',
     set: { s: 'cn-min', sel: 'ga', month: 12 } },
   { title: 'The rules behind each node',
-    body: 'The timeline lists U.S., allied and Chinese measures from October 2022 to November 2026, each linked to the Federal Register or the official announcement, with its status today. Filter it by country or by stage; the overlay badges on the chain show the same counts.',
+    body: 'The timeline lists U.S., allied and Chinese measures from August 2022 to November 2026 (plus the 2020 Huawei rule as background), each linked to the Federal Register or the official announcement, with its status today. Filter it by country or by stage; the overlay badges on the chain show the same counts.',
     set: { s: 'none', sel: 'accel', focus: 'ctl-card' } },
 ];
 
@@ -33,7 +35,12 @@ export function createTour(root, apply) {
     const s = STEPS[i];
     const { focus, ...set } = s.set;
     apply(set);
-    if (focus) document.getElementById(focus)?.scrollIntoView({ block: 'nearest' });
+    if (focus) {
+      const el = document.getElementById(focus);
+      // Targets hidden in Simple mode switch the page to Full detail first.
+      if (el && el.closest('.full-only') && document.body.classList.contains('detail-simple')) setDetail('full');
+      el?.scrollIntoView({ block: 'nearest' });
+    }
     card.innerHTML = `<div class="tour-h"><span>Walkthrough ${i + 1} / ${STEPS.length}</span><button type="button" class="x" aria-label="Close walkthrough">×</button></div>
       <h3>${s.title}</h3><p>${s.body}</p>
       <div class="tour-nav"><button type="button" class="btn" ${i === 0 ? 'disabled' : ''} data-d="-1">Back</button>

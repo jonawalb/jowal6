@@ -10,6 +10,10 @@ export const SOURCES = [
     ['§ 746.8 Russia and Belarus', 'https://www.ecfr.gov/current/title-15/section-746.8'],
     ['Supp. 1 to part 740, Country Groups', 'https://www.ecfr.gov/current/title-15/part-740/appendix-Supplement%20No.%201%20to%20Part%20740'],
     ['Supp. 8 to part 740, approved UAE recipients', 'https://www.ecfr.gov/current/title-15/part-740/appendix-Supplement%20No.%208%20to%20Part%20740'],
+    ['§ 734.4 De minimis U.S. content', 'https://www.ecfr.gov/current/title-15/section-734.4'],
+    ['§ 740.25 License Exception HBM', 'https://www.ecfr.gov/current/title-15/section-740.25'],
+    ['§ 748.15 Validated End-User authorization, including the Data Center VEU', 'https://www.ecfr.gov/current/title-15/section-748.15'],
+    ['Supp. 3 to part 732, red flags 26-29', 'https://www.ecfr.gov/current/title-15/part-732/appendix-Supplement%20No.%203%20to%20Part%20732'],
   ]},
   { group: 'Federal Register', items: [
     ['87 FR 62186 (13 Oct 2022) First advanced computing rule', 'https://www.federalregister.gov/documents/2022/10/13/2022-21658/implementation-of-additional-export-controls-certain-advanced-computing-and-semiconductor'],
@@ -25,8 +29,10 @@ export const SOURCES = [
     ['91 FR 5091 (4 Feb 2026) Cambodia removed from Country Group D:5', 'https://www.federalregister.gov/documents/2026/02/04/2026-02262/conforming-change-to-the-export-administration-regulations-for-cambodia'],
     ['85 FR 83765 (23 Dec 2020) Removal of Hong Kong as a separate destination', 'https://www.federalregister.gov/documents/2020/12/23/2020-28101/removal-of-hong-kong-as-a-separate-destination-under-the-export-administration-regulations'],
   ]},
-  { group: 'Rule released 16 Nov 2026 (not yet in the Federal Register)', items: [
-    ['RIN 0694-AK50, Addressing Remote Access to Advanced Semiconductors (interim final rule, bis.gov PDF)', 'https://www.bis.gov/media/documents/rin-0694-ak50.pdf'],
+  { group: 'RIN 0694-AK50 (FR Doc 2026-23529), effective 19 Nov 2026', items: [
+    ['Addressing Remote Access to Advanced Semiconductors, interim final rule, Federal Register public inspection PDF (filed 16 Nov 2026)', 'https://public-inspection.federalregister.gov/2026-23529.pdf'],
+    ['Federal Register public inspection record (publication date 19 Nov 2026)', 'https://www.federalregister.gov/api/v1/public-inspection-documents/2026-23529.json'],
+    ['Earlier bis.gov release of the same rule (16 Nov 2026)', 'https://www.bis.gov/media/documents/rin-0694-ak50.pdf'],
   ]},
   { group: 'BIS guidance and GAO', items: [
     ['BIS press release, 13 May 2025: rescission of the AI Diffusion rule announced', 'https://www.bis.gov/press-release/department-commerce-announces-rescission-biden-era-artificial-intelligence-diffusion-rule-strengthens'],

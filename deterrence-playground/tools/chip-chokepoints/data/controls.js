@@ -1,10 +1,43 @@
-// U.S., allied and Chinese export controls and counter-measures aimed at the AI chip supply chain, Oct 2022 to Nov 2026.
+// U.S., allied and Chinese export controls, investment rules and counter-measures aimed at the AI chip supply chain,
+// Aug 2022 to Nov 2026, plus the 2020 Huawei foreign direct product rule as background.
 // Each entry was checked on 2026-11-16 against the linked primary source (Federal Register, bis.gov, whitehouse.gov,
 // government.nl / officielebekendmakingen.nl, METI texts hosted by CISTEC, eur-lex, legislation.gov.uk,
-// motir.go.kr, trade.gov.tw, mofcom.gov.cn, samr.gov.cn, SEC filings). Entries marked verified:false
+// motir.go.kr, trade.gov.tw, mofcom.gov.cn, samr.gov.cn, cac.gov.cn, govinfo.gov, SEC filings). Entries marked verified:false
 // rest on company statements or press reports and are flagged 'unverified' in the UI. Text is a plain summary, not a quotation.
 // `nodes` are stage ids in data/chain.js.
 export const CONTROLS = [
+ {
+  "date": "2020-05-15",
+  "eff": "2020-05-15; expanded 2020-08-17 (85 FR 51596)",
+  "who": "United States (BIS)",
+  "bloc": "us",
+  "ref": "85 FR 29849; FR Doc 2020-10856; and 85 FR 51596; FR Doc 2020-18213 (Huawei foreign direct product rule)",
+  "nodes": [
+   "design",
+   "foundry"
+  ],
+  "kind": "rule",
+  "text": "Extended the EAR to foreign-made items that are the direct product of specified U.S. software or technology, or are made by a plant that is, when Huawei or a listed affiliate is involved: from May 2020 for items made from Huawei designs, and from 17 Aug 2020 whenever such an entity is a party to the transaction. It cut HiSilicon off from foreign foundries using U.S. tools. Today it is the Entity List FDP rule for footnote 1 entities, 15 CFR 734.9(e)(1). Included as background: the other entries start in August 2022.",
+  "status": "in force",
+  "url": "https://www.federalregister.gov/documents/2020/05/19/2020-10856/export-administration-regulations-amendments-to-general-prohibition-three-foreign-produced-direct",
+  "verified": true
+ },
+ {
+  "date": "2022-08-09",
+  "eff": "2022-08-09",
+  "who": "United States (Congress)",
+  "bloc": "us",
+  "ref": "CHIPS Act of 2022, Pub. L. 117-167, div. A, sec. 103(b), adding the \"expansion clawback\" at 15 U.S.C. 4652(a)(6)",
+  "nodes": [
+   "foundry",
+   "hbm"
+  ],
+  "kind": "statute",
+  "text": "Companies receiving CHIPS manufacturing incentives must agree that, for 10 years from the award, they \"may not engage in any significant transaction, as defined in the agreement, involving the material expansion of semiconductor manufacturing capacity in the People's Republic of China or any other foreign country of concern\". Existing legacy-chip facilities are exempt, as is legacy-chip expansion that predominately serves that country's market (legacy logic is 28 nm and older). If a recipient fails to remedy a violation, the Secretary \"shall recover the full amount of the Federal financial assistance\", subject to a mitigation clause.",
+  "status": "in force",
+  "url": "https://www.govinfo.gov/content/pkg/PLAW-117publ167/html/PLAW-117publ167.htm",
+  "verified": true
+ },
  {
   "date": "2022-10-07",
   "eff": "2022-10-07 (some provisions 2022-10-12 and 2022-10-21)",
@@ -85,6 +118,21 @@ export const CONTROLS = [
   "verified": true
  },
  {
+  "date": "2023-05-21",
+  "eff": "2023-05-21",
+  "who": "China (CAC)",
+  "bloc": "cn",
+  "ref": "CAC Cybersecurity Review Office notice of 21 May 2023: Micron products sold in China fail cybersecurity review",
+  "nodes": [
+   "hbm"
+  ],
+  "kind": "ban",
+  "text": "After a cybersecurity review, Beijing found that Micron products sold in China pose serious security risks to critical information infrastructure supply chains and ordered: \"按照《网络安全法》等法律法规，我国内关键信息基础设施的运营者应停止采购美光公司产品。\" (Under the Cybersecurity Law, operators of critical information infrastructure should stop buying Micron products.)",
+  "status": "in force",
+  "url": "https://www.cac.gov.cn/2023-05/21/c_1686348043518073.htm",
+  "verified": true
+ },
+ {
   "date": "2023-05-23",
   "eff": "2023-07-23",
   "who": "Japan",
@@ -142,6 +190,22 @@ export const CONTROLS = [
   "text": "Requires a MOFCOM dual-use export licence for gallium and germanium items, including Ga metal, GaN, Ga2O3, GaP, GaAs, InGaAs, GaSe, GaSb, Ge metal, zone-refined Ge ingots and Ge epitaxial substrates.",
   "status": "in force",
   "url": "https://web.archive.org/web/20231116105301/http://www.mofcom.gov.cn/article/zwgk/gkzcfb/202307/20230703419666.shtml",
+  "verified": true
+ },
+ {
+  "date": "2023-09-25",
+  "eff": "2023-11-24",
+  "who": "United States (Commerce, CHIPS Program Office)",
+  "bloc": "us",
+  "ref": "88 FR 65600; FR Doc 2023-20471 (Preventing the Improper Use of CHIPS Act Funding); 'material expansion' revised by 88 FR 89572 (28 Dec 2023)",
+  "nodes": [
+   "foundry",
+   "hbm"
+  ],
+  "kind": "rule",
+  "text": "Final rule implementing the CHIPS Act guardrails: defines 'material expansion' and 'significant transaction', sets the legacy-chip exception, and sets the notification and clawback process for funding recipients that expand capacity in China or other foreign countries of concern. The 'material expansion' definition was revised on 28 Dec 2023.",
+  "status": "in force",
+  "url": "https://www.federalregister.gov/documents/2023/09/25/2023-20471/preventing-the-improper-use-of-chips-act-funding",
   "verified": true
  },
  {
@@ -311,8 +375,8 @@ export const CONTROLS = [
    "accel"
   ],
   "kind": "license",
-  "text": "Created a Data Center VEU authorization so pre-approved data centers in specified destinations can receive CCL items, including advanced computing items, without individual licenses.",
-  "status": "in force",
+  "text": "Created a Data Center VEU authorization so pre-approved data centers in specified destinations can receive CCL items, including advanced computing items, without individual licenses. RIN 0694-AK50 (FR Doc 2026-23529) removes the Data Center VEU from § 748.15 effective 19 Nov 2026.",
+  "status": "removed by RIN 0694-AK50 (FR Doc 2026-23529), effective 19 Nov 2026",
   "url": "https://www.federalregister.gov/documents/2024/10/02/2024-22587/expansion-of-validated-end-user-authorization-data-center-validated-end-user-authorization",
   "verified": true
  },
@@ -333,6 +397,35 @@ export const CONTROLS = [
   "text": "Separate national licence requirement under Art. 9 of Regulation 2021/821 for emerging-technology items outside Annex I, including cryogenic CMOS chips, certain semiconductor tools, SEM imaging equipment, materials, process design kit technology, quantum and additive-manufacturing items.",
   "status": "withdrawn w.e.f. 15 Nov 2025 (Stcrt. 2025, 38653)",
   "url": "https://zoek.officielebekendmakingen.nl/stcrt-2024-33838.html",
+  "verified": true
+ },
+ {
+  "date": "2024-11-15",
+  "eff": "2025-01-02",
+  "who": "United States (Treasury)",
+  "bloc": "us",
+  "ref": "89 FR 90398; FR Doc 2024-25422; 31 CFR part 850 (Outbound Investment Security Program)",
+  "nodes": [
+   "design",
+   "eda",
+   "euv",
+   "duv",
+   "track",
+   "dep",
+   "etch",
+   "clean",
+   "cmp",
+   "implant",
+   "metro",
+   "foundry",
+   "hbm",
+   "cowos",
+   "accel"
+  ],
+  "kind": "rule",
+  "text": "Implements E.O. 14105 for China (including Hong Kong and Macau): U.S. persons must notify Treasury of certain investments in entities working on semiconductors and AI, and the rule \"prohibits United States persons from engaging in certain other transactions involving persons of a country of concern that are engaged in activities involving certain other national security technologies and products\". Prohibited activities (31 CFR 850.224) include developing EDA software, front-end fabrication or advanced-packaging equipment and EUV-specific items; designing 3A090.a ICs; fabricating advanced logic, NAND of 128 layers or more and DRAM at 18 nm half-pitch or less; advanced packaging; and certain supercomputers.",
+  "status": "in force; replacement rules proposed (91 FR 67396)",
+  "url": "https://www.federalregister.gov/documents/2024/11/15/2024-25422/provisions-pertaining-to-us-investments-in-certain-national-security-technologies-and-products-in",
   "verified": true
  },
  {
@@ -409,7 +502,7 @@ export const CONTROLS = [
   ],
   "kind": "rule",
   "text": "IFR imposing a worldwide license requirement on 3A090.a/4A090.a and .z items with new exceptions (AIA, ACM, LPP), a new ECCN 4E091 control on closed AI model weights trained with 10^26 or more operations, and revised Data Center VEU rules.",
-  "status": "not enforced; rescission pending",
+  "status": "never enforced (rescission announced 13 May 2025); rescinded effective 19 Nov 2026 (FR Doc 2026-23529)",
   "url": "https://www.federalregister.gov/documents/2025/01/15/2025-00636/framework-for-artificial-intelligence-diffusion",
   "verified": true
  },
@@ -485,6 +578,21 @@ export const CONTROLS = [
   "verified": true
  },
  {
+  "date": "2025-02-04",
+  "eff": "2025-02-04",
+  "who": "China (MOFCOM/GACC)",
+  "bloc": "cn",
+  "ref": "MOFCOM/GACC Announcement 2025 No. 10: export controls on tungsten, tellurium, bismuth, molybdenum and indium items",
+  "nodes": [
+   "wafers"
+  ],
+  "kind": "licence",
+  "text": "Requires export licences for listed tungsten, tellurium, bismuth, molybdenum and indium items, effective on issue. The indium items are indium phosphide, trimethylindium and triethylindium (China list 3C004.a-.c); the tungsten items include ammonium paratungstate and tungsten oxide. Shown under the wafers and materials stage because the tool has no separate stage for these inputs. No later announcement suspends it: 2025 No. 70 suspends 2025 Nos. 55-58, 61 and 62 until 10 Nov 2026; 2025 No. 72 suspends paragraph 2 of 2024 No. 46 until 27 Nov 2026; 2026 No. 58 continues the No. 70 suspension from 11 Nov 2026 to 10 Jan 2027. None names 2025 No. 10.",
+  "status": "in force",
+  "url": "https://www.mofcom.gov.cn/zfxxgk/gkml/art/2025/art_084ded0609404b2d81c746b31c9a03a6.html",
+  "verified": true
+ },
+ {
   "date": "2025-03-25",
   "eff": "2025-03-25",
   "who": "United States (BIS)",
@@ -541,9 +649,24 @@ export const CONTROLS = [
    "design"
   ],
   "kind": "rescind",
-  "text": "BIS said it would not enforce the AI Diffusion Rule and would rescind it, and issued guidance that using PRC-designed 3A090 ICs (named: Huawei Ascend 910B, 910C, 910D) may violate General Prohibition 10, plus guidance on diversion and on Chinese model training. The release also said BIS was imposing licensing requirements for Malaysia and Thailand; no rule doing so was issued until the Nov 2026 IFR (not yet in the Federal Register).",
+  "text": "BIS said it would not enforce the AI Diffusion Rule and would rescind it, and issued guidance that using PRC-designed 3A090 ICs (named: Huawei Ascend 910B, 910C, 910D) may violate General Prohibition 10, plus guidance on diversion and on Chinese model training. The release also said BIS was imposing licensing requirements for Malaysia and Thailand; no rule doing so was issued until RIN 0694-AK50 (FR Doc 2026-23529, effective 19 Nov 2026).",
   "status": "in force",
   "url": "https://www.bis.gov/press-release/department-commerce-announces-rescission-biden-era-artificial-intelligence-diffusion-rule-strengthens",
+  "verified": true
+ },
+ {
+  "date": "2025-05-29",
+  "eff": "2025-05-29",
+  "who": "United States (BIS)",
+  "bloc": "us",
+  "ref": "BIS letter received by Synopsys on 29 May 2025 imposing China export restrictions (Synopsys Form 8-K filed 29 May 2025)",
+  "nodes": [
+   "eda"
+  ],
+  "kind": "license",
+  "text": "Synopsys disclosed that on 29 May 2025 it \"received a letter from the Bureau of Industry and Security of the U.S. Department of Commerce informing Synopsys of new export restrictions related to China\", and suspended its financial guidance. The letter was not published. On 2 Jul 2025 Synopsys received a BIS letter rescinding the restrictions, effective immediately (next entry).",
+  "status": "rescinded (rescission letter received 2 Jul 2025)",
+  "url": "https://www.sec.gov/Archives/edgar/data/883241/000119312525130725/d14316d8k.htm",
   "verified": true
  },
  {
@@ -568,6 +691,21 @@ export const CONTROLS = [
   "text": "Taiwan's SHTC entity list now includes Huawei and its affiliates and SMIC and its subsidiaries, so Taiwanese exporters need an ITA licence to ship strategic high-tech goods to them. The listing is confirmed in the official open-data CSV; the 2025-06-10 date and +601 count come from press reports quoting the ITA.",
   "status": "in force",
   "url": "https://www.trade.gov.tw/OpenData/getOpenData.aspx?oid=0F2CD336A579151B",
+  "verified": true
+ },
+ {
+  "date": "2025-07-02",
+  "eff": "2025-07-02",
+  "who": "United States (BIS)",
+  "bloc": "us",
+  "ref": "BIS letter received by Synopsys on 2 Jul 2025 rescinding the China restrictions of the letter received 29 May 2025 (Synopsys Form 8-K filed 3 Jul 2025)",
+  "nodes": [
+   "eda"
+  ],
+  "kind": "rescind",
+  "text": "Synopsys disclosed that on 2 Jul 2025 it \"received a letter from the Bureau of Industry and Security of the U.S. Department of Commerce informing Synopsys that the export restrictions related to China, pursuant to a letter received on May 29, 2025, have now been rescinded, effective immediately.\"",
+  "status": "in effect",
+  "url": "https://www.sec.gov/Archives/edgar/data/883241/000119312525155294/d80081d8k.htm",
   "verified": true
  },
  {
@@ -1088,6 +1226,51 @@ export const CONTROLS = [
   "verified": true
  },
  {
+  "date": "2025-12-18",
+  "eff": "2025-12-18",
+  "who": "United States (Congress)",
+  "bloc": "us",
+  "ref": "Comprehensive Outbound Investment National Security (COINS) Act of 2025, title LXXXV of the FY2026 NDAA, Pub. L. 119-60 (approved 18 Dec 2025)",
+  "nodes": [
+   "design",
+   "eda",
+   "euv",
+   "duv",
+   "track",
+   "dep",
+   "etch",
+   "clean",
+   "cmp",
+   "implant",
+   "metro",
+   "foundry",
+   "hbm",
+   "cowos",
+   "accel"
+  ],
+  "kind": "statute",
+  "text": "Puts the outbound investment program in statute (Title VIII of the Defense Production Act). The prohibited technologies are, as specified by regulation, \"(i) Advanced semiconductor technology and microelectronics. (ii) Artificial intelligence systems. (iii) Quantum information technologies. (iv) High-performance computing and supercomputing. (v) Hypersonic systems.\"",
+  "status": "in force; implementing rules proposed (91 FR 67396)",
+  "url": "https://www.govinfo.gov/content/pkg/PLAW-119publ60/html/PLAW-119publ60.htm",
+  "verified": true
+ },
+ {
+  "date": "2025-12-23",
+  "eff": "2025-12-23",
+  "who": "United States (USTR)",
+  "bloc": "us",
+  "ref": "90 FR 60848; FR Doc 2025-23912 (Section 301 action: China's targeting of the semiconductor industry); investigation initiated 23 Dec 2024, notice of initiation 89 FR 106725 (30 Dec 2024)",
+  "nodes": [
+   "design",
+   "foundry"
+  ],
+  "kind": "tariff",
+  "text": "USTR found China's targeting of the semiconductor industry actionable under Section 301 and is \"taking tariff action now on semiconductors from China, with an initial tariff level of 0 percent, increasing in 18 months on June 23, 2027, to a rate to be announced not fewer than 30 days prior to that date\". Effective 23 Dec 2025; published 29 Dec 2025.",
+  "status": "in force; 0% until 23 Jun 2027",
+  "url": "https://www.federalregister.gov/documents/2025/12/29/2025-23912/notice-of-action-chinas-acts-policies-and-practices-related-to-targeting-of-the-semiconductor",
+  "verified": true
+ },
+ {
   "date": "2026-01-07",
   "eff": "2026-09-08",
   "who": "China",
@@ -1221,7 +1404,8 @@ export const CONTROLS = [
    "duv",
    "wafers",
    "resist",
-   "accel"
+   "accel",
+   "maskinsp"
   ],
   "kind": "rule",
   "text": "The 2026 Annex I update adds Mo/Ru ALD tools, EUV mask and reticle development and inspection equipment, single-wafer cleaning tools, and further advanced-computing ICs and assemblies. It takes effect on Official Journal publication after the two-month scrutiny period.",
@@ -1245,6 +1429,35 @@ export const CONTROLS = [
   "verified": true
  },
  {
+  "date": "2026-10-26",
+  "eff": "",
+  "who": "United States (Treasury)",
+  "bloc": "us",
+  "ref": "91 FR 67396; FR Doc 2026-21786 (proposed rule, Outbound Investment Security Program Regulations)",
+  "nodes": [
+   "design",
+   "eda",
+   "euv",
+   "duv",
+   "track",
+   "dep",
+   "etch",
+   "clean",
+   "cmp",
+   "implant",
+   "metro",
+   "foundry",
+   "hbm",
+   "cowos",
+   "accel"
+  ],
+  "kind": "rule",
+  "text": "Proposed rule implementing Subtitle C of the COINS Act: U.S. persons would notify Treasury of certain transactions with foreign persons engaged in notifiable technologies and be prohibited from certain transactions with those engaged in prohibited technologies. It carries over definitions from 31 CFR part 850 where consistent with the Act. Comments due 7 Dec 2026.",
+  "status": "proposed; comments due 7 Dec 2026",
+  "url": "https://www.federalregister.gov/documents/2026/10/26/2026-21786/outbound-investment-security-program-regulations",
+  "verified": true
+ },
+ {
   "date": "2026-10-29",
   "eff": "2026-12-01",
   "who": "UK",
@@ -1258,7 +1471,8 @@ export const CONTROLS = [
    "metro",
    "track",
    "euv",
-   "duv"
+   "duv",
+   "maskinsp"
   ],
   "kind": "rule",
   "text": "Adds new 3B501 items: Mo/Ru deposition tools, EUV photoresist coat/develop equipment, EUV mask-blank defect inspection, single-wafer cleaning, EUV pattern-shaping, and EUV mask multilayer-reflector deposition tools. It also adds wide-bandgap power semiconductors (3A501.h) and extends software control 3D002 to the new tools.",
@@ -1309,10 +1523,10 @@ export const CONTROLS = [
  },
  {
   "date": "2026-11-16",
-  "eff": "on FR publication (date not yet set)",
+  "eff": "2026-11-19 (on FR publication)",
   "who": "United States (BIS)",
   "bloc": "us",
-  "ref": "RIN 0694-AK50 (FR citation not yet assigned; not on FR public inspection as of 2026-11-16)",
+  "ref": "RIN 0694-AK50; FR Doc 2026-23529 (filed for public inspection 2026-11-16 16:15 ET; publication 2026-11-19); docket BIS-2026-0628",
   "nodes": [
    "accel",
    "foundry",
@@ -1320,12 +1534,12 @@ export const CONTROLS = [
    "design"
   ],
   "kind": "rule",
-  "text": "Interim final rule released by BIS, effective on Federal Register publication. New § 744.24 requires a licence to supply data centers anywhere that give companies headquartered in D:5 countries or Macau access to more than 12,000,000 aggregate TPP. New licence requirement for advanced chips to Indonesia, Malaysia, Singapore, Thailand and Brazil, excluding consignees or end users with a U.S.-headquartered ultimate parent, if the exporter files reports under new § 743.10. New § 744.23(a)(3)(i)(C) requires a licence when a front-end fabricator or OSAT exports applicable advanced-node 3A090.a chips designed by a company that is neither an approved nor an authorized IC designer. Formally rescinds the AI Diffusion Rule, including ECCN 4E091.",
-  "status": "pending",
-  "url": "https://www.bis.gov/media/documents/rin-0694-ak50.pdf",
+  "text": "Interim final rule filed for Federal Register public inspection on 16 Nov 2026 as FR Doc 2026-23529, for publication on 19 Nov 2026, the date it takes effect (\"This rule is effective [INSERT DATE OF PUBLICATION IN THE FEDERAL REGISTER]\"). New § 744.24 requires a licence to supply data centers anywhere that give companies headquartered in D:5 countries or Macau access to more than 12,000,000 aggregate TPP. New licence requirement for advanced chips to Indonesia, Malaysia, Singapore, Thailand and Brazil, excluding consignees or end users with a U.S.-headquartered ultimate parent, if the exporter files reports under new § 743.10. New § 744.23(a)(3)(i)(C) requires a licence when a front-end fabricator or OSAT exports applicable advanced-node 3A090.a chips designed by a company that is neither an approved nor an authorized IC designer. Formally rescinds the AI Diffusion Rule, including ECCN 4E091, and removes the Data Center VEU authorization.",
+  "status": "effective 19 Nov 2026 (FR Doc 2026-23529)",
+  "url": "https://public-inspection.federalregister.gov/2026-23529.pdf",
   "verified": true
  }
 ];
 
 export const CONTROLS_ASOF = '16 November 2026';
-export const CONTROLS_NOTE = "Status reflects what the linked sources showed on 16 November 2026. Pending: a BIS interim final rule released on 16 November 2026 (RIN 0694-AK50) is not yet in the Federal Register; China's suspension of MOFCOM/GACC 2025 Nos. 55\u201358 and MOFCOM 2025 Nos. 61 and 62 runs to 10 January 2027 (2026 No. 58), and its suspension of the 2024 U.S.-specific gallium, germanium and antimony ban ends 27 November 2026 with no extension published yet; recheck after that date. Japanese entries link METI texts hosted by CISTEC because meti.go.jp refused automated access.";
+export const CONTROLS_NOTE = "Status reflects what the linked sources showed on 16 November 2026. The BIS interim final rule RIN 0694-AK50 was filed for Federal Register public inspection on 16 November 2026 as FR Doc 2026-23529 and takes effect on its publication date, 19 November 2026; entries it removes or rescinds (the Data Center VEU, the AI Diffusion Rule) are marked with that effective date. China's suspension of MOFCOM/GACC 2025 Nos. 55\u201358 and MOFCOM 2025 Nos. 61 and 62 runs to 10 January 2027 (2026 No. 58), and its suspension of the 2024 U.S.-specific gallium, germanium and antimony ban ends 27 November 2026 with no extension published yet; recheck after that date. Japanese entries link METI texts hosted by CISTEC because meti.go.jp refused automated access. The CHIPS Act guardrails and the outbound investment program are investment controls, listed with the export controls because they target the same stages.";

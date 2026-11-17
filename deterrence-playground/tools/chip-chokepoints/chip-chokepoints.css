@@ -172,3 +172,17 @@ table.mini td.num { text-align: right; }
 }
 
 #controls { max-height: 720px; overflow: auto; padding-right: 4px; }
+
+/* Simple | Full detail */
+.detail-simple .full-only { display: none !important; }
+.detail-full .simple-only, body:not(.detail-simple) .simple-only { display: none !important; }
+.detail-simple .flow .nm, .detail-simple .flow .bdg { display: none; }
+.detail-simple .node { padding: 4px 6px; }
+.detail-simple .flow { gap: 1px; }
+.more { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; }
+.more p { margin: 0; font-size: 13px; color: var(--muted); }
+.detail-simple .flow .xtra, .detail-simple #scenarios:not(.expanded) .xtra { display: none; }
+.flow .more-row { padding: 0 6px 2px; }
+.linkbtn { font: inherit; font-size: 12.5px; color: var(--blue); background: none; border: 0; padding: 2px 0; cursor: pointer; text-decoration: underline; }
+.linkbtn:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+#sc-more { margin-top: 6px; }

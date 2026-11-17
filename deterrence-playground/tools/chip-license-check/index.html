@@ -22,28 +22,35 @@
 <meta property="og:url" content="https://jwalberg.com/deterrence-playground/tools/chip-license-check/">
 <meta name="twitter:card" content="summary">
 </head>
-<body>
+<body class="detail-simple">
 <header id="tsm-head"></header>
 
 <main class="wrap clc">
   <div class="banner">
-    <p class="asof"><strong>Rules current as of 16 November 2026.</strong> eCFR text current through 12 Nov 2026; Federal Register and BIS guidance checked through 16 Nov 2026.</p>
-    <p class="notice"><strong>Educational model, not legal advice.</strong> Classification and licensing decisions rest with BIS. Where a branch of the rules is too intricate to model faithfully, the result says so and points to the CFR section.</p>
+    <p class="asof"><strong>Rules current as of 16 November 2026.</strong><span class="full-only"> eCFR text current through 12 Nov 2026; Federal Register and BIS guidance checked through 16 Nov 2026.</span></p>
+    <p class="rules-chip simple-only" id="rules-chip"><span id="rules-chip-txt"></span> <button type="button" class="linkbtn" id="rules-chip-btn">Switch rule set</button></p>
+    <p class="notice"><strong>Educational model, not legal advice.</strong><span class="full-only"> Classification and licensing decisions rest with BIS. Where a branch of the rules is too intricate to model faithfully, the result says so and points to the CFR section.</span></p>
   </div>
 
-  <div class="rules-bar card">
+  <div class="rules-bar card full-only">
     <span class="lbl" id="rules-lbl">Rule set</span>
     <div class="seg" role="group" aria-labelledby="rules-lbl" id="rules">
       <button type="button" data-v="current" aria-pressed="true">Current rules (eCFR, amended through 9 Nov 2026)</button>
-      <button type="button" data-v="ak50" aria-pressed="false">Rule released 16 Nov 2026 (RIN 0694-AK50)</button>
+      <button type="button" data-v="ak50" aria-pressed="false">Rule effective 19 Nov 2026 (RIN 0694-AK50)</button>
     </div>
-    <p class="fine rules-note">BIS released an interim final rule, "Addressing Remote Access to Advanced Semiconductors", on 16 Nov 2026. It takes effect when published in the Federal Register, which had not happened when this page was checked. It formally rescinds the AI Diffusion framework, adds license requirements for Indonesia, Malaysia, Singapore, Brazil and Thailand, and adds a data center end-use control (§ 744.24). <a href="https://www.bis.gov/media/documents/rin-0694-ak50.pdf" target="_blank" rel="noopener">Rule text (bis.gov PDF)</a></p>
+    <p class="fine rules-note">BIS's interim final rule "Addressing Remote Access to Advanced Semiconductors" (RIN 0694-AK50) was filed for Federal Register public inspection on 16 Nov 2026 as FR Doc 2026-23529, for publication on 19 Nov 2026; it is effective on publication. It formally rescinds the AI Diffusion framework, adds license requirements for Indonesia, Malaysia, Singapore, Brazil and Thailand, adds a data center end-use control (§ 744.24) and a foundry/OSAT license requirement (§ 744.23(a)(3)(i)(C)), and removes the Data Center VEU. Before 19 Nov 2026 this page opens on the earlier eCFR text; from that date it opens on the new rule, with the earlier text one click away. <a href="https://public-inspection.federalregister.gov/2026-23529.pdf" target="_blank" rel="noopener">Rule text (FR public inspection PDF)</a></p>
   </div>
 
+  <div class="tabbar">
   <div class="tabs" role="tablist" aria-label="Views">
     <button role="tab" id="tab-check" aria-controls="view-check" aria-selected="true">Check a chip</button>
     <button role="tab" id="tab-changes" aria-controls="view-changes" aria-selected="false" tabindex="-1">Rule changes 2022–2026</button>
     <button role="tab" id="tab-method" aria-controls="view-method" aria-selected="false" tabindex="-1">Method &amp; sources</button>
+  </div>
+  <div class="seg detail-seg" role="group" aria-label="Detail level" id="detail">
+    <button type="button" data-v="simple" aria-pressed="true">Simple</button>
+    <button type="button" data-v="full" aria-pressed="false">Full detail</button>
+  </div>
   </div>
 
   <!-- 1. Check -->
@@ -52,16 +59,16 @@
       <div class="col-in">
         <div class="card sec">
           <h2 class="eyebrow">1 &middot; The chip</h2>
-          <label class="fld" for="preset">Start from a datasheet
+          <label class="fld" for="preset">Chip
             <select id="preset"></select>
           </label>
-          <p class="fine" id="preset-note"></p>
-          <fieldset class="rows">
+          <p class="fine full-only" id="preset-note"></p>
+          <fieldset class="rows full-only">
             <legend>Dense peak rates (no sparsity)</legend>
             <div id="rows"></div>
             <button type="button" class="btn" id="add-row">Add a precision</button>
           </fieldset>
-          <div class="two">
+          <div class="two full-only">
             <label class="fld" for="die">Applicable die area, mm²
               <input id="die" type="number" min="0" step="any" inputmode="decimal" placeholder="not published">
             </label>
@@ -69,22 +76,35 @@
               <input id="bw" type="number" min="0" step="any" inputmode="decimal" placeholder="not published">
             </label>
           </div>
-          <label class="tg"><input type="checkbox" id="dc"><span class="sw"></span><span class="t">Designed or marketed for datacenters</span></label>
-          <label class="tg"><input type="checkbox" id="d5design"><span class="sw"></span><span class="t">Designed by a company headquartered in D:5 or Macau<small>e.g. Huawei; triggers the GP10 check</small></span></label>
-          <div class="seg-wrap"><span class="lbl" id="form-lbl">Item</span>
+          <label class="tg full-only"><input type="checkbox" id="dc"><span class="sw"></span><span class="t">Designed or marketed for datacenters</span></label>
+          <label class="tg full-only"><input type="checkbox" id="d5design"><span class="sw"></span><span class="t">Designed by a company headquartered in D:5 or Macau<small>e.g. Huawei; triggers the GP10 check</small></span></label>
+          <div class="seg-wrap full-only"><span class="lbl" id="form-lbl">Item</span>
             <div class="seg" role="group" aria-labelledby="form-lbl" id="form">
               <button type="button" data-v="ic" aria-pressed="true">Chip (3A090)</button>
               <button type="button" data-v="computer" aria-pressed="false">Server or board (4A090)</button>
+              <button type="button" data-v="hbm" aria-pressed="false">HBM stack (3A090.c)</button>
             </div>
           </div>
+          <label class="fld full-only" for="foundry" id="foundry-wrap">Who ships the chip
+            <select id="foundry">
+              <option value="no">Designer, distributor or other exporter</option>
+              <option value="unapproved">Front-end fab or OSAT; designer neither approved nor authorized (Note 1 to 3A090.a)</option>
+            </select>
+          </label>
+          <label class="fld full-only" for="node" id="node-wrap" hidden>Is it an "applicable advanced logic IC" (§ 772.1)?
+            <select id="node">
+              <option value="yes">Yes: logic IC made at the 16/14 nm node or below, or with non-planar (FinFET/GAA) transistors</option>
+              <option value="no">No: planar above 16/14 nm, or not a logic IC</option>
+            </select>
+          </label>
         </div>
 
-        <div class="card sec readouts" aria-live="polite">
+        <div class="card sec readouts full-only" aria-live="polite">
           <div class="ro"><span class="k">TPP</span><b class="num" id="ro-tpp">–</b><span class="sub" id="ro-tpp-sub"></span></div>
           <div class="ro"><span class="k">Performance density</span><b class="num" id="ro-pd">–</b><span class="sub">TPP ÷ die area</span></div>
           <div class="ro"><span class="k">Classification</span><b id="ro-cls">–</b><span class="sub" id="ro-cls-sub"></span></div>
         </div>
-        <figure class="card sec chartbox">
+        <figure class="card sec chartbox full-only">
           <figcaption><span class="eyebrow">Where the chip sits</span> <span class="fine">TPP (log) against performance density (log). Shaded areas are 3A090.a and 3A090.b for datacenter chips. Select a dot to load that chip.</span></figcaption>
           <div id="chart"></div>
         </figure>
@@ -105,46 +125,88 @@
                 <option value="meu">Military end user</option>
                 <option value="mieu">Military-intelligence end user</option>
                 <option value="uaeok">UAE approved recipient (supp. 8 to part 740)</option>
+                <option value="veu">Validated end user, Data Center VEU (§ 748.15)</option>
               </select>
             </label>
           </div>
-          <p class="fine grp" id="dest-groups"></p>
-          <label class="tg"><input type="checkbox" id="hq"><span class="sw"></span><span class="t">End user or its ultimate parent is headquartered in D:5 or Macau<small>e.g. a Chinese company's subsidiary abroad</small></span></label>
-          <div class="seg-wrap"><span class="lbl" id="origin-lbl">Made</span>
+          <label class="fld full-only" for="fn" id="fn-wrap" hidden>Entity List footnote on the listed party's entry
+            <select id="fn">
+              <option value="none">No footnote</option>
+              <option value="fn1">Footnote 1 (e.g. Huawei entities)</option>
+              <option value="fn4">Footnote 4</option>
+              <option value="fn5">Footnote 5</option>
+            </select>
+          </label>
+          <label class="fld full-only" for="enduse">End use the exporter knows of (§ 744.23(a)(1)-(2))
+            <select id="enduse">
+              <option value="none">None of these</option>
+              <option value="supercomputer">A supercomputer in D:5 or Macau</option>
+              <option value="fab">IC development or production at an advanced-node fab in D:5 or Macau</option>
+            </select>
+          </label>
+          <label class="fld full-only" for="oeccn" id="oeccn-wrap" hidden>If the item is outside 3A090/4A090, its ECCN
+            <select id="oeccn">
+              <option value="unknown">Not yet classified</option>
+              <option value="listed">3A991, 4A994 or 5A992</option>
+              <option value="listed741">3A001, 5A002 or 5A004 (computers: also 4A003, 4A004)</option>
+              <option value="ear99">EAR99 or another ECCN</option>
+            </select>
+          </label>
+          <p class="fine grp full-only" id="dest-groups"></p>
+          <label class="tg full-only"><input type="checkbox" id="hq"><span class="sw"></span><span class="t">End user or its ultimate parent is headquartered in D:5 or Macau<small>e.g. a Chinese company's subsidiary abroad</small></span></label>
+          <div class="seg-wrap full-only"><span class="lbl" id="origin-lbl">Made</span>
             <div class="seg" role="group" aria-labelledby="origin-lbl" id="origin">
               <button type="button" data-v="us" aria-pressed="true">In the U.S.</button>
               <button type="button" data-v="fdp" aria-pressed="false">Abroad, with U.S. technology</button>
+              <button type="button" data-v="dm" aria-pressed="false">Abroad, with U.S.-origin parts inside</button>
               <button type="button" data-v="foreign" aria-pressed="false">Abroad, no known U.S. nexus</button>
             </div>
           </div>
-          <div class="seg-wrap"><span class="lbl" id="ship-lbl">Shipped</span>
+          <label class="fld full-only" for="dm" id="dm-wrap" hidden>U.S.-origin controlled content, share of the foreign-made item's value (§ 734.4)
+            <select id="dm">
+              <option value="over">More than the de minimis level (25%; 10% for E:1/E:2)</option>
+              <option value="under">At or below the de minimis level</option>
+            </select>
+          </label>
+          <div class="seg-wrap full-only"><span class="lbl" id="ship-lbl">Shipped</span>
             <div class="seg" role="group" aria-labelledby="ship-lbl" id="ship">
               <button type="button" data-v="us" aria-pressed="true">From the U.S.</button>
               <button type="button" data-v="abroad" aria-pressed="false">Reexport / from abroad</button>
             </div>
           </div>
-          <label class="tg" id="ushq-wrap" hidden><input type="checkbox" id="ushq"><span class="sw"></span><span class="t">Ultimate consignee or end user is headquartered in the U.S.<small>new rule: excludes the five added countries if the exporter files § 743.10 reports</small></span></label>
-          <label class="fld" for="dcuse" id="dcuse-wrap" hidden>Going to a data center that gives D:5- or Macau-headquartered companies more than 12,000,000 aggregate TPP? (new § 744.24)
+          <label class="fld full-only" for="ushq" id="ushq-wrap" hidden>U.S.-, A:5- or A:6-headquartered end user (not majority-owned by a D:5- or Macau-headquartered entity)
+            <select id="ushq">
+              <option value="no">No, or not known</option>
+              <option value="us">Yes, headquartered in the U.S. (also qualifies for the AK50 five-country exclusion with § 743.10 reports)</option>
+              <option value="a56">Yes, headquartered in another A:5 or A:6 country</option>
+            </select>
+          </label>
+          <label class="fld full-only" for="dcuse" id="dcuse-wrap" hidden>Going to a data center that gives D:5- or Macau-headquartered companies more than 12,000,000 aggregate TPP? (new § 744.24)
             <select id="dcuse">
               <option value="no">No, or no knowledge of it</option>
               <option value="yes">Yes</option>
               <option value="recommender">Yes, but only for a commercial recommender system</option>
             </select>
           </label>
-          <label class="tg" id="certs-wrap"><input type="checkbox" id="certs" checked><span class="sw"></span><span class="t">Applicant can make the Jan. 2026 certifications<small>supp. 2 to part 748, para. (dd); matters only for China and Macau</small></span></label>
+          <label class="tg full-only" id="certs-wrap"><input type="checkbox" id="certs" checked><span class="sw"></span><span class="t">Applicant can make the Jan. 2026 certifications<small>supp. 2 to part 748, para. (dd); matters only for China and Macau</small></span></label>
+          <p class="fine simple-only" id="assume"></p>
         </div>
 
         <div class="outcome status" id="outcome" aria-live="polite">
           <span class="eyebrow">Outcome <span class="out-rules" id="out-rules"></span></span>
           <b id="out-title">–</b>
-          <span id="out-detail"></span>
+          <span class="simple-only" id="out-reason"></span>
+          <span class="full-only" id="out-detail"></span>
           <span class="change" id="out-change" hidden></span>
           <span class="intricate" id="out-intricate" hidden>This branch turns on provisions this model simplifies. Read the cited sections before relying on it.</span>
-          <span class="out-cites" id="out-cites"></span>
+          <span class="out-cites full-only" id="out-cites"></span>
         </div>
 
-        <ol class="walk" id="walk" aria-label="Reasoning chain"></ol>
-        <p class="fine"><button type="button" class="linkbtn" id="copy-link">Copy a link to this case</button> <span id="copy-msg" aria-live="polite"></span></p>
+        <details class="steps-disc" id="steps-disc">
+          <summary>Show the steps</summary>
+          <ol class="walk" id="walk" aria-label="Reasoning chain"></ol>
+        </details>
+        <p class="fine copy-row"><button type="button" class="linkbtn" id="copy-link">Copy a link to this case</button> <span id="copy-msg" aria-live="polite"></span></p>
       </div>
     </div>
   </section>
@@ -159,7 +221,7 @@
       <button type="button" data-k="licensing" aria-pressed="false">Licensing decisions</button>
     </div>
     <div id="timeline"></div>
-    <p class="fine">Not shown: Entity List additions, semiconductor manufacturing equipment controls, and rules outside BIS except the January 2026 tariff proclamation. BIS released the formal rescission and replacement (RIN 0694-AK50) on bis.gov on 16 Nov 2026; as of that date it did not yet appear in the Federal Register or its public inspection list.</p>
+    <p class="fine">Not shown: Entity List additions, semiconductor manufacturing equipment controls, and rules outside BIS except the January 2026 tariff proclamation. The formal rescission and replacement (RIN 0694-AK50) went on Federal Register public inspection on 16 Nov 2026 as FR Doc 2026-23529 and is effective on its publication date, 19 Nov 2026.</p>
   </section>
 
   <!-- 3. Method -->
@@ -172,23 +234,23 @@
         <li><strong>TPP</strong> = 2 × MacTOPS × bit length (Technical Note 2 to 3A090.a and .b). Datasheets report 2 × MacTOPS as TOPS or TFLOPS, so TPP = dense TOPS × bit length of the inputs. Where a chip runs several precisions, the highest TPP counts. Rates are dense; sparsity figures do not count.</li>
         <li><strong>Performance density</strong> = TPP ÷ applicable die area in mm², counting all logic dies made on a non-planar (FinFET or GAA) process.</li>
         <li><strong>3A090.a</strong>: TPP ≥ 4800, or TPP ≥ 1600 and PD ≥ 5.92. <strong>3A090.b</strong>: TPP 2400 to under 4800 with PD 1.6 to under 5.92, or TPP ≥ 1600 with PD 3.2 to under 5.92. <strong>Note 2</strong>: chips not designed or marketed for datacenters with TPP under 4800 are outside both.</li>
-        <li>The arithmetic is unit-tested against the two worked examples in the Technical Note (600 TOPS at 8 bits and 300 TFLOPS at 16 bits both give TPP 4800) and against each threshold edge (<code>scripts/model.test.mjs</code>, 49 tests).</li>
+        <li>The arithmetic is unit-tested against the two worked examples in the Technical Note (600 TOPS at 8 bits and 300 TFLOPS at 16 bits both give TPP 4800) and against each threshold edge; the decision walk is tested case by case (<code>scripts/model.test.mjs</code>, 143 tests).</li>
         <li>This tool treats a datasheet's whole-chip peak for a precision as the aggregate over processing units. If a chip has separate units whose peaks add, enter their sum.</li>
       </ul>
       <h3>Written rule versus enforced rule</h3>
-      <p>The regulation text still contains the January 2025 AI Diffusion framework: a worldwide license requirement for 3A090.a, country TPP allocations, and new license exceptions. BIS said on 13 May 2025 that it would not enforce that rule, and in the 14 July 2026 UAE rule stated that it enforces the 3A090.a requirement only for D:1, D:4 and D:5 destinations not also in A:5 or A:6, the UAE, and entities headquartered in D:5 or Macau. The tool shows both: where the text requires a license that BIS does not enforce, the outcome is "No license enforced". GAO held in May 2026 that the non-enforcement announcement is itself a rule under the Congressional Review Act. BIS released the formal rescission, with a replacement framework, on 16 Nov 2026 (RIN 0694-AK50). It takes effect on Federal Register publication; use the rule-set switch to see its effect.</p>
+      <p>The regulation text still contains the January 2025 AI Diffusion framework: a worldwide license requirement for 3A090.a, country TPP allocations, and new license exceptions. BIS said on 13 May 2025 that it would not enforce that rule, and in the 14 July 2026 UAE rule stated that it enforces the 3A090.a requirement only for D:1, D:4 and D:5 destinations not also in A:5 or A:6, the UAE, and entities headquartered in D:5 or Macau. The tool shows both: where the text requires a license that BIS does not enforce, the outcome is "No license enforced". GAO held in May 2026 that the non-enforcement announcement is itself a rule under the Congressional Review Act. The formal rescission, with a replacement framework (RIN 0694-AK50, FR Doc 2026-23529), is effective 19 Nov 2026; use the rule-set switch to compare the two texts.</p>
       <h3>What it does not model</h3>
       <ul>
-        <li>HBM (3A090.c), semiconductor manufacturing equipment, and the .z paragraphs of other ECCNs except as they mirror 3A090.</li>
-        <li>De minimis U.S. content, and whether a foreign-made chip meets the product scope of a foreign direct product rule. Choose the origin you have established.</li>
-        <li>Deemed exports, the foundry and OSAT presumption in Note 1 to 3A090.a, Validated End-User authorizations, and the AI Diffusion license exceptions (AIA, LPP) and model-weight control (4E091), all removed by the 16 Nov 2026 rule, and License Exception ACM (§ 740.28), which that rule keeps.</li>
-        <li>Remote access to chips through cloud services, beyond flagging BIS's May 2025 policy statement.</li>
-        <li>The review policy for D:1 and D:4 destinations outside D:5 under the current text while the Diffusion rule is unenforced; it is flagged as unsettled. (3A090.b items reaching review follow the same § 742.6(b)(10)(iii)(A)(1) policy as .a items, but in this model they always qualify for NAC or ACA first.)</li>
-        <li>Under the 16 Nov 2026 rule: the front-end fabricator and OSAT license requirement for chips from unapproved designers (§ 744.23(a)(3)(i)(C)), the "is informed" process in § 744.24(a)(2), and how to aggregate TPP across linked data centers.</li>
+        <li>Semiconductor manufacturing equipment, and the .z paragraphs of other ECCNs except as they mirror 3A090. For HBM (3A090.c) the tool walks the license requirement and review policy but does not test the conditions of License Exception HBM (§ 740.25).</li>
+        <li>The de minimis calculation itself (choose whether U.S. controlled content is over or under the level), and whether a foreign-made chip meets the product scope of a foreign direct product rule. Choose the origin you have established.</li>
+        <li>Deemed exports; general (non-data-center) VEU authorizations; the AI Diffusion license exceptions (AIA, § 740.27; LPP, § 740.29) and model-weight control (4E091), all removed by RIN 0694-AK50 effective 19 Nov 2026; and License Exception ACM (§ 740.28), which that rule keeps. Under the foundry presumption in Note 1 to 3A090.a, the tool assumes the transistor-count attestations that can overcome it were not made.</li>
+        <li>Under the eCFR text before 19 Nov 2026, remote access to chips through cloud services beyond flagging BIS's May 2025 policy statement.</li>
+        <li>The review policy for D:1 and D:4 destinations outside D:5 under the text before 19 Nov 2026 while the Diffusion rule is unenforced; it is flagged as unsettled. (3A090.b items reaching review follow the same § 742.6(b)(10)(iii)(A)(1) policy as .a items, but in this model they qualify for NAC or ACA first unless a part 744 end use applies.) Where a part 744 end-use license and a § 742.6(b)(10)(iii) license apply together, the tool shows the stricter review policy and flags that § 742.6 says its own policy applies.</li>
+        <li>Under RIN 0694-AK50: the "is informed" process in § 744.24(a)(2), and how to aggregate TPP across linked data centers.</li>
         <li>Country embargo programs other than Russia and Belarus (Cuba, Iran, North Korea, Syria), and OFAC sanctions.</li>
       </ul>
-      <h3>The rule released 16 November 2026</h3>
-      <p>The "Rule released 16 Nov 2026" setting applies the regulatory text of RIN 0694-AK50 as released on bis.gov. It takes effect on Federal Register publication. In that mode: the worldwide Diffusion requirement, country allocations, AIA, LPP and ECCN 4E091 are gone; one license list covers all 3A090 (except .c), 4A090 and .z items (Indonesia, Malaysia, Singapore, Brazil, Thailand; D:1, D:4, D:5 not in A:5/A:6; the UAE except supp. 8 recipients), with a U.S.-headquartered recipient exclusion for the five new countries when the exporter reports under § 743.10; review is case-by-case for the five, presumption of approval for D:1, D:4 and the UAE, presumption of denial for D:5, Macau and D:5-headquartered entities except the existing China/Macau case-by-case path; and § 744.24 requires a license for items going to a data center that gives D:5- or Macau-headquartered companies more than 12,000,000 aggregate TPP. The outcome box states whether the result differs from current rules.</p>
+      <h3>RIN 0694-AK50, effective 19 November 2026</h3>
+      <p>The RIN 0694-AK50 setting applies the regulatory text filed for public inspection as FR Doc 2026-23529 on 16 Nov 2026 and effective on its publication date, 19 Nov 2026 ("This rule is effective [INSERT DATE OF PUBLICATION IN THE FEDERAL REGISTER]"; the Federal Register lists publication for 19 Nov 2026). Before that date the page opens on the earlier eCFR text and this rule is the switch; from that date it opens on this rule and the earlier text is labelled "Rules before 19 Nov 2026". In this mode: the worldwide Diffusion requirement, country allocations, AIA, LPP and ECCN 4E091 are gone; one license list covers all 3A090 (except .c), 4A090 and .z items (Indonesia, Malaysia, Singapore, Brazil, Thailand; D:1, D:4, D:5 not in A:5/A:6; the UAE except supp. 8 recipients), with a U.S.-headquartered recipient exclusion for the five new countries when the exporter reports under § 743.10; review is case-by-case for the five, presumption of approval for D:1, D:4 and the UAE, presumption of denial for D:5, Macau and D:5-headquartered entities except the existing China/Macau case-by-case path; § 744.24 requires a license for items going to a data center that gives D:5- or Macau-headquartered companies more than 12,000,000 aggregate TPP, and de minimis cannot be relied on for that end use; § 744.23(a)(3)(i)(C) requires front-end fabricators and OSATs to obtain a license for 3A090.a chips from designers that are neither approved nor authorized; and the Data Center VEU is removed. The outcome box states whether the result differs from the earlier text.</p>
       <h3>Presets</h3>
       <p>Chip figures come from vendor product pages and whitepapers, linked under each preset. Where a vendor prints only a figure "with sparsity", the dense value is half, matching the dense/sparse pairs the same vendor prints elsewhere; each preset says so. NVIDIA publishes no H20 figures and Huawei none for the Ascend 910B/C/D, so those presets carry no numbers and rely on the sources that address them directly.</p>
       <h3>How to cite</h3>

@@ -36,18 +36,19 @@ export function renderCard(el, id, loss) {
   const ctl = ctlForStage(id).sort((a, b) => (a.date < b.date ? 1 : -1));
   const n = NOTIONAL[id];
   el.innerHTML = `<div class="card-h"><h3>${esc(s.label)}</h3>${loss ? `<span class="left" data-s="${loss > 0.5 ? 'bad' : 'warn'}">${Math.round((1 - loss) * 100)}% left in this shock</span>` : ''}</div>
-    <p class="fine">${esc(s.metric)}, data year ${esc(String(s.year))}. Source: ${link(s.src)}.${h ? ` HHI ${h.toLocaleString('en-US')}.` : ''}</p>
+    <p class="fine full-only">${esc(s.metric)}, data year ${esc(String(s.year))}. Source: ${link(s.src)}.${h ? ` HHI ${h.toLocaleString('en-US')}.` : ''}</p>
     <div class="cgrid">
       <div><p class="eyebrow">Country shares</p>${rows.length ? `<table class="mini"><tbody>${rows.map(r => `<tr><td><span class="dot" style="background:${colorOf(r.c)}"></span>${esc(r.c)}</td><td class="num">${r.v}%</td></tr>`).join('')}</tbody></table>` : '<p class="fine">No public country split found.</p>'}
-      ${firms.length ? `<p class="eyebrow mt-s">Firms</p><table class="mini"><tbody>${firms.map(([f, v]) => `<tr><td>${esc(f)}${s.firmCountry && s.firmCountry[f] ? ` <span class="fine">(${esc(s.firmCountry[f])})</span>` : ''}</td><td class="num">${v}%</td></tr>`).join('')}</tbody></table><p class="fine">${s.firmSrc ? `Firm shares: ${link(s.firmSrc)}, ${esc(String(s.firmYear || s.year))}.` : ''}</p>` : ''}
-      ${s.note ? `<p class="fine mt-s">${esc(s.note)}</p>` : ''}</div>
+      ${firms.length ? `<p class="eyebrow mt-s">Firms</p><table class="mini"><tbody>${firms.map(([f, v]) => `<tr><td>${esc(f)}${s.firmCountry && s.firmCountry[f] ? ` <span class="fine">(${esc(s.firmCountry[f])})</span>` : ''}</td><td class="num">${v}%</td></tr>`).join('')}</tbody></table><p class="fine full-only">${s.firmSrc ? `Firm shares: ${link(s.firmSrc)}, ${esc(String(s.firmYear || s.year))}.` : ''}</p>` : ''}
+      ${s.note ? `<p class="fine mt-s full-only">${esc(s.note)}</p>` : ''}</div>
       <div><p class="eyebrow">China's position</p><p class="cn">${esc(s.china.text)}</p>
       ${s.china.subs && s.china.subs.length ? `<ul class="subs">${s.china.subs.map(x => `<li><b>${esc(x.name)}</b> ${esc(x.note || '')}</li>`).join('')}</ul>` : ''}
-      ${s.china.src ? `<p class="fine">Source: ${s.china.src.map(i => link(i)).join('; ')}</p>` : ''}
-      ${n ? `<p class="eyebrow mt-s">Model assumptions <span class="notional">notional</span></p><p class="fine">Buffer ${n.buffer} months; time to substitute ${n.lo} to ${n.hi} months. ${esc(n.why)}</p>` : ''}</div>
+      ${s.china.src ? `<p class="fine full-only">Source: ${s.china.src.map(i => link(i)).join('; ')}</p>` : ''}
+      ${n ? `<div class="full-only"><p class="eyebrow mt-s">Model assumptions <span class="notional">notional</span></p><p class="fine">Buffer ${n.buffer} months; time to substitute ${n.lo} to ${n.hi} months. ${esc(n.why)}</p></div>` : ''}</div>
     </div>
-    <p class="eyebrow mt-s">Controls aimed at this stage (${ctl.length})</p>
-    ${ctl.length ? `<ol class="ctl">${ctl.map(c => ctlItem(c, false)).join('')}</ol>` : '<p class="fine">No export control in this tool targets this stage directly.</p>'}`;
+    <div class="full-only"><p class="eyebrow mt-s">Controls aimed at this stage (${ctl.length})</p>
+    ${ctl.length ? `<ol class="ctl">${ctl.map(c => ctlItem(c, false)).join('')}</ol>` : '<p class="fine">No export control in this tool targets this stage directly.</p>'}</div>
+    <p class="fine simple-only">Sources, notional model assumptions and the ${ctl.length} control${ctl.length === 1 ? '' : 's'} aimed at this stage are in Full detail.</p>`;
 }
 
 export function renderControls(el, noteEl, f) {

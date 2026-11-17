@@ -597,6 +597,50 @@ export const CHAIN = {
    }
   },
   {
+   "id": "implant",
+   "phase": "equipment",
+   "label": "Ion implantation",
+   "short": "Implant",
+   "metric": "Tool market share",
+   "year": 2025,
+   "src": "eto",
+   "shares": {
+    "United States": 84.7,
+    "Japan": 10.7,
+    "China": 3.8,
+    "Taiwan": 0.6
+   },
+   "firms": {
+    "Applied Materials": 62.6,
+    "Axcelis": 22.0,
+    "SMIT": 8.8,
+    "CETC": 3.1,
+    "Nissin Ion": 1.9
+   },
+   "firmCountry": {
+    "Applied Materials": "United States",
+    "Axcelis": "United States",
+    "SMIT": "Japan",
+    "CETC": "China",
+    "Nissin Ion": "Japan"
+   },
+   "firmSrc": "eto",
+   "firmYear": 2025,
+   "note": "Shares by supplier headquarters, CSET analysis of TechInsights 2025 data. ETO's firm split also has a \"Various companies\" row of 1.5%, which is left out of the firm table, so the listed firms sum to 98.4%. ETO's stage description says Japan and Taiwan round out most of the market, but its 2025 shares put China (3.8%) ahead of Taiwan (0.6%), so that description is not used. Not simulated: no notional buffer or substitution time is set for this stage.",
+   "china": {
+    "text": "3.8% of ion implanters in 2025 (ETO); CETC holds 3.1%.",
+    "subs": [
+     {
+      "name": "CETC",
+      "note": "3.1%"
+     }
+    ],
+    "src": [
+     "eto"
+    ]
+   }
+  },
+  {
    "id": "metro",
    "phase": "equipment",
    "label": "Metrology and inspection",
@@ -637,6 +681,41 @@ export const CHAIN = {
    "note": "Shares by supplier headquarters, CSET analysis of TechInsights 2025 data. KLA holds 85.9% of defect inspection tools.",
    "china": {
     "text": "0.7% of process control tools in 2025 (ETO).",
+    "subs": [],
+    "src": [
+     "eto"
+    ]
+   }
+  },
+  {
+   "id": "maskinsp",
+   "phase": "equipment",
+   "label": "Photomask inspection and repair",
+   "short": "Mask inspection",
+   "metric": "Tool market share",
+   "year": 2025,
+   "src": "eto",
+   "shares": {
+    "United States": 46.6,
+    "Japan": 42.8,
+    "Germany": 10.1,
+    "Belarus": 0.4
+   },
+   "firms": {
+    "KLA": 45.9,
+    "Lasertec": 42.0,
+    "Zeiss": 10.1
+   },
+   "firmCountry": {
+    "KLA": "United States",
+    "Lasertec": "Japan",
+    "Zeiss": "Germany"
+   },
+   "firmSrc": "eto",
+   "firmYear": 2025,
+   "note": "Shares by supplier headquarters, CSET analysis of TechInsights 2025 data. ETO's firm split also has a \"Various companies\" row of 2.0%, which is left out of the firm table, so the listed firms sum to 98.0%. A sub-segment of the process control tools in the metrology stage, shown separately because the EU and UK 2026 control updates name EUV mask inspection. Not simulated. Merchant photomasks and EUV mask blanks are not shown: no exact country split was found in CSET's text.",
+   "china": {
+    "text": "ETO lists no Chinese supplier of photomask inspection and repair tools in 2025.",
     "subs": [],
     "src": [
      "eto"
@@ -946,6 +1025,6 @@ export const CHAIN = {
  },
  "method": {
   "data": "Country shares of world output at each stage, from the source and year named on each bar. Equipment shares are CSET's analysis of TechInsights 2025 data (ETO Chip Explorer, published 3 July 2026), by supplier headquarters. Design, EDA, core IP and wafer shares are CSET's 2019 figures (2021 report) or SIA/BCG's 2022 figures (2024 report). Leading-edge fab and ATP shares are SIA/BCG 2022 capacity by location. HBM and photoresist shares are secondary (Counterpoint via Semiecosystem; Nikkei via TrendForce). Gallium, germanium and rare earths come from USGS and the IEA.",
-  "gaps": "No public country or firm split was found for ABF substrates, electronic gases (other than a 2022 neon estimate) or CoWoS-class packaging, so those stages are shown but not simulated. No 2025 or 2026 SIA/BCG update was found. Shares mix years from 2019 to 2025 and mix headquarters with location: a Taiwan disruption scenario uses location data (fabs, ATP); equipment and HBM shocks use headquarters data."
+  "gaps": "No public country or firm split was found for ABF substrates, electronic gases (other than a 2022 neon estimate) or CoWoS-class packaging, so those stages are shown but not simulated. Ion implantation and photomask inspection have 2025 shares but no notional buffer or substitution time, so they are shown but not simulated. Merchant photomasks and EUV mask blanks are not shown for lack of an exact country split. No 2025 or 2026 SIA/BCG update was found. Shares mix years from 2019 to 2025 and mix headquarters with location: a Taiwan disruption scenario uses location data (fabs, ATP); equipment and HBM shocks use headquarters data."
  }
 };

@@ -25,14 +25,29 @@ export function legendCountries(stages) {
   return [...seen.entries()].filter(([c]) => FIXED[c]);
 }
 
+// Simple mode: groups with more than SIMPLE_KEEP + 1 stages show only their most concentrated stages
+// (largest single-country share), plus the selected stage and any stage the shock hits.
+const SIMPLE_KEEP = 2;
+const topShare = s => Math.max(0, ...rowsOf(s).filter(r => !OTHER.test(r.c)).map(r => r.v));
+function keptIds(sts, hits, selected) {
+  if (sts.length <= SIMPLE_KEEP + 1) return new Set(sts.map(s => s.id));
+  const keep = new Set([...sts].sort((a, b) => topShare(b) - topShare(a)).slice(0, SIMPLE_KEEP).map(s => s.id));
+  sts.forEach(s => { if (s.id === selected || hits.some(h => h.st === s.id)) keep.add(s.id); });
+  return keep;
+}
+
 export function drawFlow(el, chain, ctx) {
-  const { losses, hits, ctlCount, overlay, selected } = ctx;
+  const { losses, hits, ctlCount, overlay, selected, expanded = new Set() } = ctx;
   let html = '';
   for (const ph of chain.phases) {
     const sts = chain.stages.filter(s => s.phase === ph.id);
     if (!sts.length) continue;
+    const keep = keptIds(sts, hits, selected);
+    const open = expanded.has(ph.id);
+    const nHidden = sts.length - keep.size;
     html += `<li class="phase"><span class="ph-t">${esc(ph.label)}</span></li>`;
     for (const s of sts) {
+      const xtra = !keep.has(s.id) && !open ? ' class="xtra"' : '';
       const loss = losses[s.id] || 0;
       const rows = rowsOf(s);
       const src = chain.sources[s.src];
@@ -49,11 +64,12 @@ export function drawFlow(el, chain, ctx) {
       const badges = overlay ? `<span class="bdg">${n.us ? `<b class="b-us" title="U.S. measures">US ${n.us}</b>` : ''}${n.al ? `<b class="b-al" title="Allied measures">Allied ${n.al}</b>` : ''}${n.cn ? `<b class="b-cn" title="Chinese measures">CN ${n.cn}</b>` : ''}${!n.us && !n.al && !n.cn ? '<b class="b-0">no control listed</b>' : ''}</span>` : '';
       const top = rows[0] ? `${rows[0].c} ${fmt(rows[0].v)}%` : 'no country split';
       const aria = `${s.label}. ${s.metric}, ${s.year}. Largest: ${top}.${loss > 0 ? ` ${Math.round((1 - loss) * 100)}% left in this shock.` : ''} Open details.`;
-      html += `<li><button type="button" class="node" data-st="${s.id}" aria-pressed="${s.id === selected}" aria-label="${esc(aria)}">
+      html += `<li${xtra}><button type="button" class="node" data-st="${s.id}" aria-pressed="${s.id === selected}" aria-label="${esc(aria)}">
         <span class="nl"><span class="nt">${esc(s.label)}</span><span class="nm">${esc(s.metric)} · ${esc(String(s.year))} · ${esc(src ? src.short : '')}</span></span>
         <span class="bar" aria-hidden="true">${segs}${empty}</span>
         <span class="nr">${left}${badges}</span></button></li>`;
     }
+    if (nHidden > 0) html += `<li class="more-row simple-only"><button type="button" class="linkbtn" data-ph="${ph.id}" aria-expanded="${open}">${open ? `Show fewer ${esc(ph.label.toLowerCase())} stages` : `Show all ${sts.length} stages`}</button></li>`;
   }
   el.innerHTML = html;
 }

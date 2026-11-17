@@ -6,6 +6,8 @@ import { drawFlow, wireFlowTip, legendCountries, esc } from './flow.js';
 import { drawSim, simLegend, pct } from './simchart.js';
 import { renderCard, renderControls, renderHeat, renderMethod, renderSources, ctlCounts } from './panels.js';
 import { createTour } from './tour.js';
+import { initDetail, setDetail } from './detail.js';
+import { CONTROLS } from '../data/controls.js';
 
 document.title = 'AI Chip Chokepoint Twin | Jonathan Walberg';
 const $ = id => document.getElementById(id);
@@ -25,6 +27,10 @@ const ACTORS = (() => {
   });
   return [...set.entries()].sort((a, b) => (a[1] === b[1] ? a[0].localeCompare(b[0]) : a[1] === 'country' ? -1 : 1));
 })();
+
+// Simple-mode view state (not in the URL): stage groups opened with "Show all", and the full shock list.
+const UI = { expanded: new Set(), moreSc: false };
+const TOP_SC = ['nl-euv', 'tw', 'kr-hbm', 'cn-min'];
 
 const S = { sc: SCENARIOS[0].id, cov: {}, cu: { a: 'Taiwan', st: [], c: 100 }, p: defaults(), open: true, dur: 12, month: 12,
   sel: 'euv', overlay: true, cf: { bloc: 'all', node: 'all' } };
@@ -82,7 +88,11 @@ function readHash() {
 function buildScenarioPanel() {
   const list = [...SCENARIOS, { id: 'custom', label: 'Build your own shock', status: 'custom' }, { id: 'none', label: 'No shock (baseline)', status: '' }];
   const tag = { announced: 'mirrors an announced measure', stress: 'stress test', custom: 'choose actor and stages' };
-  $('scenarios').innerHTML = list.map(s => `<button type="button" data-s="${s.id}" aria-pressed="${s.id === S.sc}">${esc(s.label)}${s.status ? `<span class="st">${tag[s.status]}</span>` : ''}</button>`).join('');
+  const nMore = list.filter(s => !TOP_SC.includes(s.id)).length;
+  $('scenarios').classList.toggle('expanded', UI.moreSc);
+  $('sc-more').textContent = UI.moreSc ? 'Fewer shocks' : `More shocks (${nMore})`;
+  $('sc-more').setAttribute('aria-expanded', UI.moreSc);
+  $('scenarios').innerHTML = list.map(s => `<button type="button" data-s="${s.id}" aria-pressed="${s.id === S.sc}"${TOP_SC.includes(s.id) || s.id === S.sc ? '' : ' class="xtra"'}>${esc(s.label)}${s.status ? `<span class="st">${tag[s.status]}</span>` : ''}</button>`).join('');
   $('scenarios').querySelectorAll('button').forEach(b => b.addEventListener('click', () => { applyScenario(b.dataset.s); render(); }));
   const sc = SC[S.sc];
   $('sc-basis').textContent = sc ? sc.basis : S.sc === 'custom' ? 'Pick a country or firm and the stages where its output is lost. A stress test, not a forecast.' : 'No shock: every stage delivers its pre-shock output.';
@@ -154,7 +164,7 @@ function pick(id) { S.sel = id; update(); $('card').scrollIntoView({ block: 'nea
 function update() {
   const h = hits();
   run = simulate(SIM, h, S.p, { months: S.open ? Infinity : S.dur });
-  drawFlow($('flow'), CHAIN, { losses: run.losses, hits: h, ctlCount: CTL_N, overlay: S.overlay, selected: S.sel });
+  drawFlow($('flow'), CHAIN, { losses: run.losses, hits: h, ctlCount: CTL_N, overlay: S.overlay, selected: S.sel, expanded: UI.expanded });
   $('flow-legend').innerHTML = legendCountries(CHAIN.stages).map(([c, col]) => `<li><span class="sw" style="background:${col}"></span>${esc(c)}</li>`).join('')
     + '<li><span class="sw" style="background:var(--faint)"></span>Other</li>'
     + (h.length ? '<li><span class="sw hatch"></span>Lost in this shock</li>' : '');
@@ -192,7 +202,18 @@ function readouts() {
 }
 
 // ---- Wiring ----------------------------------------------------------------------------------
-$('flow').addEventListener('click', e => { const n = e.target.closest('.node'); if (n) pick(n.dataset.st); });
+$('flow').addEventListener('click', e => {
+  const more = e.target.closest('[data-ph]');
+  if (more) {
+    const id = more.dataset.ph;
+    if (UI.expanded.has(id)) UI.expanded.delete(id); else UI.expanded.add(id);
+    update();
+    $('flow').querySelector(`[data-ph="${id}"]`)?.focus();
+    return;
+  }
+  const n = e.target.closest('.node'); if (n) pick(n.dataset.st);
+});
+$('sc-more').addEventListener('click', () => { UI.moreSc = !UI.moreSc; buildScenarioPanel(); });
 wireFlowTip($('flow'), $('flow-tip'), CHAIN);
 $('overlay').addEventListener('change', e => { S.overlay = e.target.checked; update(); });
 $('open').addEventListener('change', e => { S.open = e.target.checked; buildScenarioPanel(); update(); });
@@ -218,6 +239,10 @@ const tour = createTour($('stage'), set => {
   render();
 });
 $('tour-btn').addEventListener('click', () => tour.start());
+
+$('ctl-n').textContent = String(CONTROLS.length);
+$('to-full').addEventListener('click', () => { setDetail('full'); $('ctl-card').scrollIntoView({ block: 'start' }); $('ctl-card').querySelector('button').focus({ preventScroll: true }); });
+initDetail(m => { $('assume').open = m === 'full'; });
 
 $('asof').textContent = CHAIN.retrieved;
 readHash();

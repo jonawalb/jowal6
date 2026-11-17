@@ -102,6 +102,8 @@ const IAAS = 'https://www.bis.gov/media/1577';
 const HK = 'https://www.federalregister.gov/documents/2020/12/23/2020-28101/removal-of-hong-kong-as-a-separate-destination-under-the-export-administration-regulations';
 const NV8K = 'https://www.sec.gov/Archives/edgar/data/1045810/000104581025000082/nvda-20250409.htm';
 const NV10K = 'https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm';
+const AMD8K = 'https://www.sec.gov/Archives/edgar/data/2488/000000248825000039/amd-20250415.htm';
+const SUPP5 = 'https://www.ecfr.gov/current/title-15/part-740/appendix-Supplement%20No.%205%20to%20Part%20740';
 const AFFIL = 'https://www.federalregister.gov/documents/2026/11/09/2026-22793/extension-of-the-suspension-of-expansion-of-end-user-controls-for-affiliates-of-certain-listed';
 const PROC = 'https://www.federalregister.gov/documents/2026/01/20/2026-01052/adjusting-imports-of-semiconductors-semiconductor-manufacturing-equipment-and-their-derivative';
 const AK50 = 'https://public-inspection.federalregister.gov/2026-23529.pdf';
@@ -114,6 +116,9 @@ const NEW = (label) => C(`${label} (RIN 0694-AK50, FR Doc 2026-23529)`, AK50);
 // Destinations added by RIN 0694-AK50, § 742.6(a)(6)(iii)(A)(1) as revised.
 export const AK50_FIVE = ['Indonesia', 'Malaysia', 'Singapore', 'Brazil', 'Thailand'];
 export const AK50_DC_TPP = 12000000;
+// Supp. 5 to part 740, para. (a) (AIA destinations, eCFR text before RIN 0694-AK50), as named in data/groups.js.
+export const AIA_DESTS = ['Australia', 'Belgium', 'Canada', 'Denmark', 'Finland', 'France', 'Germany', 'Ireland', 'Italy', 'Japan', 'Netherlands',
+  'New Zealand', 'Norway', 'Korea, South', 'Spain', 'Sweden', 'Taiwan', 'United Kingdom', 'United States'];
 
 // RIN 0694-AK50 DATES: "This rule is effective [INSERT DATE OF PUBLICATION IN THE FEDERAL REGISTER]".
 // The Federal Register public inspection record for FR Doc 2026-23529 gives publication_date 2026-11-19.
@@ -284,10 +289,13 @@ export function decide(input) {
   // H20: direct notice, not codified
   if (chip.override === 'h20') {
     if (isD5orMacau(dest) || dest === 'Hong Kong' || dest === 'China (PRC)' || hqD5) {
-      add('Check for a direct notice', 'On 9 April 2025 the U.S. government told NVIDIA that a license is required to export the H20, and any chip matching its memory bandwidth, interconnect bandwidth or both, to China (including Hong Kong and Macau) and D:5 countries, or to companies headquartered there, citing the risk of use in a supercomputer in China. NVIDIA reports that licenses for certain China customers were granted from August 2025, that U.S. officials expected 15% or more of licensed revenue, and that no regulation codified that expectation.', [C('NVIDIA Form 8-K, 15 Apr 2025', NV8K), C('NVIDIA Form 10-K, FY2026', NV10K), C('§ 744.23(b) (notices)', ECFR('744.23'))], 'flag', 'notice');
+      add('Check for a direct notice', 'On 9 April 2025 the U.S. government told NVIDIA that a license is required to export the H20, and any chip matching its memory bandwidth, interconnect bandwidth or both, to China (including Hong Kong and Macau) and D:5 countries, or to companies headquartered there, citing the risk of use in a supercomputer in China. NVIDIA reports that licenses for certain China customers were granted from August 2025, that U.S. officials expected 15% or more of licensed revenue, and that no regulation codified that expectation. AMD reported on 16 April 2025 that a new U.S. license requirement for exports to the same destinations and companies applies to its MI308 products, with expected charges of up to about $800 million.', [C('NVIDIA Form 8-K, 15 Apr 2025', NV8K), C('NVIDIA Form 10-K, FY2026', NV10K), C('AMD Form 8-K, 16 Apr 2025 (MI308)', AMD8K), C('§ 744.23(b) (notices)', ECFR('744.23'))], 'flag', 'notice');
       return done('lic', 'License required by a notice to NVIDIA rather than by the published CCL thresholds. The notice text is not public, so its review policy is not modeled here.', { cls, intricate: true });
     }
-    add('Check for a direct notice', 'The April 2025 notice NVIDIA disclosed covers China, Hong Kong, Macau, D:5 countries and companies headquartered there. This destination is outside that scope.', [C('NVIDIA Form 8-K, 15 Apr 2025', NV8K)], 'pass');
+    // RIN 0694-AK50 § 742.6(a)(6)(iii)(A)(1): a license for every 3A090 (except .c), 4A090 and .z item to the five destinations.
+    const ak5 = ak && AK50_FIVE.includes(dest);
+    const ak5Txt = ak5 ? ` From 19 Nov 2026, RIN 0694-AK50 requires a license for every 3A090 (except .c) and 4A090 item to ${dest} (revised § 742.6(a)(6)(iii)(A)(1)), so the H20 would need one there if it is in 3A090; NVIDIA publishes no figures that settle that.` : '';
+    add('Check for a direct notice', `The April 2025 notice NVIDIA disclosed covers China, Hong Kong, Macau, D:5 countries and companies headquartered there. This destination is outside that scope.${ak5Txt}`, [C('NVIDIA Form 8-K, 15 Apr 2025', NV8K)].concat(ak5 ? [NEW('§ 742.6(a)(6)(iii)(A)(1)')] : []), 'pass');
     return done('out', 'No published 3A090 classification and no disclosed notice covers this case. Classification of the H20 for other destinations rests with NVIDIA and BIS.', { cls });
   }
 
@@ -374,12 +382,12 @@ export function decide(input) {
     add('Data center serving D:5 companies (§ 744.24)', '§ 744.24(a)(1) reaches only items in ECCNs 3A001.z, 3A090 (except 3A090.c), 4A090, 4A003.z, 4A004.z, 4A005.z, 5A002.z, 5A004.z, 5A992.z and their listed software and technology. This item is in none of them on these figures, so § 744.24 does not apply to it.', [NEW('§ 744.24(a)(1)')], 'pass');
   } else if (ak && !isHbm) {
     if (input.dc === 'yes') {
-      add('Data center serving D:5 companies (§ 744.24)', `A license is required for any ${ecPrefix} item (and the listed .z items) when you know it is destined to a data center anywhere that provides, or will provide, more than 12,000,000 aggregate TPP, at one site or through linked data centers, to companies headquartered in D:5 or Macau. No license exception overcomes it. Review is case-by-case. A data center that was already serving such companies must obtain a license within 90 days of the rule's effective date (19 Nov 2026) to keep doing so.${origin === 'dm' ? ' De minimis cannot be relied on for this end use (Note 2 to § 744.24(a)(1)).' : ''}`, [NEW('§ 744.24(a)(1), (b), (c)')], 'stop', '744.24');
+      add('Data center serving D:5 companies (§ 744.24)', `A license is required for any ${ecPrefix} item (and the listed .z items) when you know it is destined to a data center anywhere that provides, or will provide, directly or indirectly (e.g. through a non-D:5 customer training models for them), more than 12,000,000 aggregate TPP, at one site or through linked data centers, to or for companies headquartered in D:5 or Macau. No license exception overcomes it. Review is case-by-case. A data center that was already serving such companies must obtain a license within 90 days of the rule's effective date (19 Nov 2026) to keep doing so.${origin === 'dm' ? ' De minimis cannot be relied on for this end use (Note 2 to § 744.24(a)(1)).' : ''}`, [NEW('§ 744.24(a)(1), (b), (c)'), NEW('preamble, "for an entity" in § 744.24(a)(1)')], 'stop', '744.24');
       reqs.push({ o: 'cbc', label: '§ 744.24 (case-by-case; no license exceptions)' });
     } else if (input.dc === 'recommender') {
       add('Data center serving D:5 companies (§ 744.24)', 'The § 744.24 prohibition does not apply when the compute access is only for a commercial recommender system (ranking or suggesting products, services or content, and not generating content), provided the company, the aggregate TPP and the due diligence are reported to BIS. Caveat: the preamble says such operators "may continue providing these services for 90 days, but must obtain a license" after that, so the rule is internally inconsistent; this tool follows the regulatory text.', [NEW('§ 744.24(b)(2), (d)(1)'), NEW('preamble, p. 13')], 'flag', 'recommender');
     } else {
-      add('Data center serving D:5 companies (§ 744.24)', 'You have no knowledge that the item is going to a data center that gives D:5- or Macau-headquartered companies more than 12,000,000 aggregate TPP. Exporters are expected to obtain the data center\'s know-your-customer diligence; a refusal to provide it is a red flag that presumptively gives "knowledge". If the end use later changes, the recipient must be told a BIS authorization is required.', [NEW('§ 744.24(a)(1) Note 3, (e)')], 'pass');
+      add('Data center serving D:5 companies (§ 744.24)', 'You have no knowledge that the item is going to a data center that provides, directly or indirectly, more than 12,000,000 aggregate TPP to or for D:5- or Macau-headquartered companies. Exporters are expected to obtain the data center\'s know-your-customer diligence; a refusal to provide it is a red flag that presumptively gives "knowledge". If the end use later changes, the recipient must be told a BIS authorization is required.', [NEW('§ 744.24(a)(1) Note 3, (e)')], 'pass');
     }
   } else if (ak && isHbm && input.dc === 'yes') {
     add('Data center serving D:5 companies (§ 744.24)', '§ 744.24 lists "3A090 (except for 3A090.c)", so HBM stacks are outside it.', [NEW('§ 744.24(a)(1)')], 'pass');
@@ -487,7 +495,9 @@ export function decide(input) {
             : `${dest} is in Country Group ${groupsOf(dest).filter(g => g.startsWith('D')).join(', ')} and not in A:5 or A:6. BIS enforces the ${ec} license requirement there.${hkNote}`;
       } else {
         const aca = dcA ? '' : ' As written, License Exception ACA covers this item; BIS does not enforce the requirement in any case.';
-        add('License requirement on the CCL', `As written since January 2025, ${ec} needs a license to every destination worldwide. BIS announced on 13 May 2025 that it would not enforce the AI Diffusion rule, and in July 2026 stated that it enforces this requirement only for D:1, D:4 and D:5 destinations (excluding A:5/A:6), the UAE, and entities headquartered in D:5 or Macau. ${dest} is none of these.${aca}`, reqCites.concat([C('BIS press release, 13 May 2025', MAY25)]), 'flag', 'not enforced');
+        // § 740.27(a): AIA covers 3A090.a (from approved or authorized IC designers) and 4A090.a to entities located and headquartered in supp. 5 para. (a).
+        const aia = AIA_DESTS.includes(dest) ? ` As written, License Exception AIA (§ 740.27) also covers supp. 5 para. (a) destinations, ${dest} among them, for 3A090.a chips from approved or authorized IC designers and for 4A090.a items, to entities located and headquartered in those destinations, with a certification to BIS. RIN 0694-AK50 removes AIA effective 19 Nov 2026.` : '';
+        add('License requirement on the CCL', `As written since January 2025, ${ec} needs a license to every destination worldwide. BIS announced on 13 May 2025 that it would not enforce the AI Diffusion rule, and in July 2026 stated that it enforces this requirement only for D:1, D:4 and D:5 destinations (excluding A:5/A:6), the UAE, and entities headquartered in D:5 or Macau. ${dest} is none of these.${aca}${aia}`, reqCites.concat([C('BIS press release, 13 May 2025', MAY25)]).concat(aia ? [C('§ 740.27 (AIA)', ECFR('740.27')), C('Supp. 5 to part 740', SUPP5)] : []), 'flag', 'not enforced');
         return done('nle', `The regulation text requires a license, but BIS has said it is not enforcing that requirement for ${dest}. GAO found in May 2026 that the non-enforcement announcement is itself a rule under the Congressional Review Act. RIN 0694-AK50 (FR Doc 2026-23529), effective 19 Nov 2026, formally rescinds the Diffusion framework.`, { cls, intricate: true });
       }
     } else {
@@ -544,7 +554,7 @@ export function decide(input) {
     if (d5 || hqD5) return chinaReview(NEW('§ 742.6(b)(10)(iii)(A)(2)'), C('§ 744.23(d)(1)', ECFR('744.23')));
     if (five) {
       add('Review policy', 'Applications for the five added destinations are reviewed case-by-case, weighing the effectiveness of the destination\'s export control regime and its coordination with BIS on enforcement.', [NEW('§ 742.6(b)(10)(iii)(A)(1)')], 'flag', 'case-by-case');
-      return done('cbc', 'License required; case-by-case review.', { cls });
+      return done('cbc', 'License required; case-by-case review. No license is needed if the ultimate consignee or end user, or its ultimate parent, is headquartered in the United States and the exporter files § 743.10 reports (Note 1 to § 742.6(a)(6)(iii)(A)(1)); set this in Full detail.', { cls });
     }
     add('Review policy', 'Applications to D:1 and D:4 destinations outside D:5 (and not in A:5 or A:6), and to the UAE, are reviewed with a presumption of approval. The Diffusion country allocations are removed.', [NEW('§ 742.6(b)(10)(iii)(A)(2)')], 'flag', 'approval');
     return done('poa', 'License required; presumption of approval.', { cls, policy742: true });
@@ -562,13 +572,17 @@ export function decide(input) {
       return null;
     }
     const nac = isD5orMacau(dest) || dest === 'Hong Kong' || hqD5;
-    add('License exception', nac
+    // § 740.8(c)(2): BIS answers each NAC notification and may require a license; § 744.21(e)(3): any license for a military
+    // end use or end user in China (and the other listed countries) is reviewed with a presumption of denial.
+    const milNac = nac && meuNexus;
+    const milTxt = milNac ? ' BIS reviews the NAC notification and can require a license (§ 740.8(c)(2)); for this military end user any license would get a presumption of denial (§ 744.21(e)(3)).' : '';
+    add('License exception', (nac
       ? `${ec} items that are not datacenter 3A090.a chips can use License Exception NAC to Macau, D:5 and D:5-headquartered entities. NAC needs a written purchase order and a notification in SNAP-R at least 25 days before shipment; BIS can respond that a license is required.`
-      : `${ec} items that are not datacenter 3A090.a chips can use License Exception ACA to this destination, with a written purchase order.`,
-      [C('§ 740.8(a)', ECFR('740.8')), C('ECCN 3A090 (NAC/ACA)', CCL3)].concat(ak ? [NEW('§ 740.2(a)(9)(ii)')] : []), 'pass', nac ? 'NAC' : 'ACA');
-    return done('exc', nac
+      : `${ec} items that are not datacenter 3A090.a chips can use License Exception ACA to this destination, with a written purchase order.`) + milTxt,
+      [C('§ 740.8(a)', ECFR('740.8')), C('ECCN 3A090 (NAC/ACA)', CCL3)].concat(ak ? [NEW('§ 740.2(a)(9)(ii)')] : []).concat(milNac ? [C('§ 740.8(c)(2)', ECFR('740.8')), C('§ 744.21(e)(3)', ECFR('744.21'))] : []), milNac ? 'flag' : 'pass', nac ? 'NAC' : 'ACA');
+    return done('exc', (nac
       ? 'Shippable under License Exception NAC after a 25-day notification, unless BIS says a license is needed. NAC is unavailable when a part 744 license requirement applies (other than § 744.23(a)(3)).'
-      : 'Shippable under License Exception ACA. ACA is unavailable when a part 744 or 746 license requirement applies.', { cls });
+      : 'Shippable under License Exception ACA. ACA is unavailable when a part 744 or 746 license requirement applies.') + milTxt, { cls, intricate: milNac });
   }
 
   // ---------- shared: D:5 / Macau / D:5-HQ review ----------

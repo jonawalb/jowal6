@@ -185,3 +185,75 @@ fieldset.rows legend { font-size: 12.5px; color: var(--muted); padding: 0 4px; }
 .rules-chip #rules-chip-txt { padding: 2px 8px; border: 1px solid var(--rule); border-radius: 999px; color: var(--ink); }
 .rules-chip.alt #rules-chip-txt { border-color: var(--blue); color: var(--blue); font-weight: 600; }
 .detail-simple .out-rules { display: none; }
+
+/* Audit fixes 16 Nov 2026 */
+.outcome:focus { outline: none; }
+.outcome:focus-visible { outline: 2px solid var(--focus, var(--accent)); outline-offset: 2px; }
+.outcome .out-note, .outcome .out-gloss, .outcome .out-why { display: block; }
+.detail-simple #out-why { font-size: 14px; color: var(--ink); margin-top: 4px; }
+.outcome .out-note { margin-top: 4px; }
+.outcome .out-gloss { margin-top: 8px; padding-top: 8px; border-top: 1px dotted var(--clc-line); }
+.rules-bar .rules-more { flex-basis: 100%; }
+.rules-more > summary { cursor: pointer; font-size: 12.5px; color: var(--blue); padding: 2px 0; }
+.rules-more[open] > summary { margin-bottom: 4px; }
+.out-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; display: flex; align-items: center; gap: 4px 10px;
+  padding: 4px 16px calc(4px + env(safe-area-inset-bottom, 0px)); background: var(--panel); border-top: 2px solid var(--brand-ink);
+  box-shadow: 0 -2px 10px color-mix(in srgb, var(--ink) 18%, transparent); }
+.out-bar .eyebrow { margin: 0; }
+.out-bar b { flex: 1; min-width: 0; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; font: 600 14px/1.2 var(--display); color: var(--ink); }
+.out-bar .linkbtn { min-height: 44px; padding: 0 4px; }
+.clc .out-bar[hidden] { display: none !important; }
+
+.detail-simple .col-res { display: flex; flex-direction: column; gap: 12px; min-width: 0; grid-column: 1 / -1; }
+/* Desktop Simple: inputs on the left, the outcome beside them, so the whole check fits one screen. */
+@media (min-width: 961px) {
+  .detail-simple .grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); grid-template-rows: auto auto 1fr; max-width: 1240px; align-items: start; }
+  .detail-simple .grid .col-in > .card:first-child { grid-column: 1; grid-row: 1; }
+  .detail-simple .grid .col-out > .card:first-child { grid-column: 1; grid-row: 2; }
+  .detail-simple .grid .col-res { grid-column: 2; grid-row: 1 / span 3; }
+}
+
+/* Phone */
+@media (max-width: 640px) {
+  /* Shorter page header so the check and its answer come sooner. */
+  .tsm-head { padding-block: 10px 8px; gap: 6px 12px; }
+  .tsm-head .tsm-brand img { width: 36px; height: 36px; }
+  .tsm-head .tsm-org { font-size: 10.5px; letter-spacing: .08em; }
+  .tsm-head .tsm-title { font-size: 24px; }
+  .tsm-head .tsm-sub { font-size: 13.5px; line-height: 1.35; }
+  .clc { margin-top: 10px; }
+  /* Tabs on one row, scrolling sideways; the detail switch sits beside them when it fits. */
+  .tabbar { flex-wrap: nowrap; align-items: center; margin: 10px 0 12px; gap: 8px; }
+  .tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; flex: 1 1 auto; min-width: 0; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tabs [role="tab"] { white-space: nowrap; min-height: 44px; padding: 8px 10px; }
+  .detail-seg { flex: none; margin-bottom: 0; }
+  /* Tap targets of at least 44px. */
+  .seg button { min-height: 44px; }
+  .linkbtn { min-height: 44px; }
+  .copy-row .linkbtn { padding: 0; }
+  .clc .tg { min-height: 44px; align-items: center; }
+  .steps-disc > summary { min-height: 44px; display: flex; align-items: center; }
+  .rules-more > summary { min-height: 44px; display: flex; align-items: center; }
+  .st-cites a, .out-cites a, .out-note a, #preset-note a, .tl .st-cites a, .srclist a { display: inline-block; padding: 12px 0; line-height: 20px; }
+  .clc .btn { min-height: 44px; }
+  .tsm-bar-step a { min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; justify-content: center; }
+  /* Full detail: rule-set buttons stacked full width. */
+  #rules { display: flex; flex-direction: column; width: 100%; }
+  #rules button { border-right: 0; border-bottom: 1px solid var(--clc-line); text-align: left; }
+  #rules button:last-child { border-bottom: 0; }
+  /* Simple: compact banner and cards so the outcome is on the first screen. */
+  .detail-simple .banner { gap: 2px 10px; }
+  .detail-simple .banner .notice { flex-basis: 100%; }
+  .detail-simple .grid { gap: 10px; }
+  .detail-simple .grid .card.sec { padding: 10px 12px; }
+  .detail-simple .grid .card .eyebrow { margin-bottom: 4px; }
+  .detail-simple .col-out > .card:first-child .two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+  .detail-simple #assume { margin-top: 6px; font-size: 12px; }
+  .detail-simple .outcome { padding: 14px 14px; }
+  .ph-hide { display: none; }
+  .clc select { min-height: 44px; }
+  .detail-simple .banner { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .detail-simple .rules-chip { align-items: center; }
+  .clc { padding-bottom: 72px; }
+}

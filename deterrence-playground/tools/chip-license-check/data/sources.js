@@ -9,6 +9,7 @@ export const SOURCES = [
     ['§ 744.11 Entity List; § 744.21 military end users; § 744.22 military-intelligence end users; § 744.6 U.S. persons', 'https://www.ecfr.gov/current/title-15/part-744'],
     ['§ 746.8 Russia and Belarus', 'https://www.ecfr.gov/current/title-15/section-746.8'],
     ['Supp. 1 to part 740, Country Groups', 'https://www.ecfr.gov/current/title-15/part-740/appendix-Supplement%20No.%201%20to%20Part%20740'],
+    ['§ 740.27 License Exception AIA and supp. 5 to part 740 (AIA destinations), removed by RIN 0694-AK50', 'https://www.ecfr.gov/current/title-15/section-740.27'],
     ['Supp. 8 to part 740, approved UAE recipients', 'https://www.ecfr.gov/current/title-15/part-740/appendix-Supplement%20No.%208%20to%20Part%20740'],
     ['§ 734.4 De minimis U.S. content', 'https://www.ecfr.gov/current/title-15/section-734.4'],
     ['§ 740.25 License Exception HBM', 'https://www.ecfr.gov/current/title-15/section-740.25'],
@@ -43,12 +44,14 @@ export const SOURCES = [
   ]},
   { group: 'Company filings and datasheets', items: [
     ['NVIDIA Form 8-K, 15 Apr 2025 (H20 notice)', 'https://www.sec.gov/Archives/edgar/data/1045810/000104581025000082/nvda-20250409.htm'],
+    ['AMD Form 8-K, 16 Apr 2025 (MI308 license requirement)', 'https://www.sec.gov/Archives/edgar/data/2488/000000248825000039/amd-20250415.htm'],
     ['NVIDIA Form 10-K for fiscal 2026 (H20 and H200 licensing)', 'https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm'],
     ['NVIDIA Form 10-Q for the quarter ended 26 Jul 2026', 'https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm'],
     ['NVIDIA H100, H200, A100 and DGX B200 product pages', 'https://www.nvidia.com/en-us/data-center/h100/'],
     ['NVIDIA Hopper and Ampere architecture posts (die areas)', 'https://developer.nvidia.com/blog/nvidia-hopper-architecture-in-depth/'],
     ['NVIDIA Ada GPU architecture whitepaper (RTX 4090/4080)', 'https://images.nvidia.com/aem-dam/Solutions/geforce/ada/nvidia-ada-gpu-architecture.pdf'],
     ['AMD Instinct MI325X product page', 'https://www.amd.com/en/products/accelerators/instinct/mi300/mi325x.html'],
+    ['Huawei "DaVinci" Hot Chips 31 deck, 2019 (Ascend 910 die areas)', 'https://old.hotchips.org/hc31/HC31_1.11_Huawei.Davinci.HengLiao_v4.0.pdf'],
     ['Huawei Ascend 910 press release, 23 Aug 2019 (Wayback Machine)', 'https://web.archive.org/web/20190823175812/https://www.huawei.com/en/press-events/news/2019/8/huawei-ascend-910-most-powerful-ai-processor'],
   ]},
 ];

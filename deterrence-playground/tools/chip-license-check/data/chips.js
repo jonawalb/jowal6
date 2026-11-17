@@ -54,7 +54,7 @@ export const CHIPS = [
     id: 'b200', name: 'NVIDIA B200 (one GPU of DGX B200)', vendor: 'NVIDIA', datacenter: true,
     rows: [{ label: 'FP4 Tensor', bits: 4, tops: 9000 }],
     dieMm2: null, dramBw: 8000,
-    derived: 'DGX B200 (8 GPUs) lists FP4 144 PFLOPS sparse | 72 PFLOPS dense and 64 TB/s HBM3e; per GPU that is 9,000 TFLOPS dense FP4 and 8,000 GB/s. The FP8 line on that page is not marked dense or sparse, so it is not used.',
+    derived: 'DGX B200 (8 GPUs) lists FP4 144 PFLOPS sparse | 72 PFLOPS dense and 64 TB/s HBM3e; per GPU that is 9,000 TFLOPS dense FP4 and 8,000 GB/s. FP8 72 PFLOPS is sparse per the page\'s ** note ("Dense performance is ½ sparse spec shown"); dense is 4.5 PFLOPS per GPU, the same TPP of 36,000.',
     src: [{ label: 'NVIDIA DGX B200 product page (specs)', url: 'https://www.nvidia.com/en-us/data-center/dgx-b200/' }],
   },
   {
@@ -97,9 +97,12 @@ export const CHIPS = [
       { label: 'FP16', bits: 16, tops: 256 },
       { label: 'INT8', bits: 8, tops: 512 },
     ],
-    dieMm2: null, dramBw: null,
-    derived: 'Huawei press release: 256 TFLOPS FP16, 512 TOPS INT8, 310 W. Huawei publishes no die area, so performance density is unknown.',
-    src: [{ label: 'Huawei press release, 23 Aug 2019 (Wayback Machine copy)', url: 'https://web.archive.org/web/20190823175812/https://www.huawei.com/en/press-events/news/2019/8/huawei-ascend-910-most-powerful-ai-processor' }],
+    dieMm2: 624, dramBw: null,
+    derived: 'Huawei press release: 256 TFLOPS FP16, 512 TOPS INT8, 310 W. Huawei\'s Hot Chips 31 (2019) deck gives the die areas: Vitruvian compute die 456 mm², Nimbus I/O die 168 mm², four HBM dies and two dummy dies, and the chip\'s process as 7+ nm EUV. The 3A090 Technical Note counts "all die area of logic dies manufactured with a process node that uses a non-planar transistor architecture", so HBM and dummy dies are out. This preset counts both logic dies (624 mm², PD 6.56), the lower-density reading; the deck does not give the I/O die\'s process, and the compute die alone gives PD 8.98. Either way PD is 5.92 or more, so 3A090.a.2.',
+    src: [
+      { label: 'Huawei press release, 23 Aug 2019 (Wayback Machine copy)', url: 'https://web.archive.org/web/20190823175812/https://www.huawei.com/en/press-events/news/2019/8/huawei-ascend-910-most-powerful-ai-processor' },
+      { label: 'Huawei, "DaVinci" Hot Chips 31 deck, 2019 (Ascend 910 die shot, 456 + 168 mm²)', url: 'https://old.hotchips.org/hc31/HC31_1.11_Huawei.Davinci.HengLiao_v4.0.pdf' },
+    ],
   },
   {
     id: 'ascend910bcd', name: 'Huawei Ascend 910B / 910C / 910D', vendor: 'Huawei', datacenter: true, designerD5: true, override: 'prc3a090',

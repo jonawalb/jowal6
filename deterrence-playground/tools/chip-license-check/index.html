@@ -28,7 +28,7 @@
 <main class="wrap clc">
   <div class="banner">
     <p class="asof"><strong>Rules current as of 16 November 2026.</strong><span class="full-only"> eCFR text current through 12 Nov 2026; Federal Register and BIS guidance checked through 16 Nov 2026.</span></p>
-    <p class="rules-chip simple-only" id="rules-chip"><span id="rules-chip-txt"></span> <button type="button" class="linkbtn" id="rules-chip-btn">Switch rule set</button></p>
+    <p class="rules-chip simple-only" id="rules-chip"><span id="rules-chip-txt"></span> <button type="button" class="linkbtn" id="rules-chip-btn" title="Show the outcome under the other rule set. The outcome box compares the two.">Switch rule set</button></p>
     <p class="notice"><strong>Educational model, not legal advice.</strong><span class="full-only"> Classification and licensing decisions rest with BIS. Where a branch of the rules is too intricate to model faithfully, the result says so and points to the CFR section.</span></p>
   </div>
 
@@ -38,18 +38,21 @@
       <button type="button" data-v="current" aria-pressed="true">Current rules (eCFR, amended through 9 Nov 2026)</button>
       <button type="button" data-v="ak50" aria-pressed="false">Rule effective 19 Nov 2026 (RIN 0694-AK50)</button>
     </div>
+    <details class="rules-more" id="rules-more" open>
+    <summary>About the 19 Nov 2026 rule</summary>
     <p class="fine rules-note">BIS's interim final rule "Addressing Remote Access to Advanced Semiconductors" (RIN 0694-AK50) was filed for Federal Register public inspection on 16 Nov 2026 as FR Doc 2026-23529, for publication on 19 Nov 2026; it is effective on publication. It formally rescinds the AI Diffusion framework, adds license requirements for Indonesia, Malaysia, Singapore, Brazil and Thailand, adds a data center end-use control (§ 744.24) and a foundry/OSAT license requirement (§ 744.23(a)(3)(i)(C)), and removes the Data Center VEU. Before 19 Nov 2026 this page opens on the earlier eCFR text; from that date it opens on the new rule, with the earlier text one click away. <a href="https://public-inspection.federalregister.gov/2026-23529.pdf" target="_blank" rel="noopener">Rule text (FR public inspection PDF)</a></p>
+    </details>
   </div>
 
   <div class="tabbar">
   <div class="tabs" role="tablist" aria-label="Views">
     <button role="tab" id="tab-check" aria-controls="view-check" aria-selected="true">Check a chip</button>
-    <button role="tab" id="tab-changes" aria-controls="view-changes" aria-selected="false" tabindex="-1">Rule changes 2022–2026</button>
-    <button role="tab" id="tab-method" aria-controls="view-method" aria-selected="false" tabindex="-1">Method &amp; sources</button>
+    <button role="tab" id="tab-changes" aria-controls="view-changes" aria-selected="false" tabindex="-1">Rule changes<span class="ph-hide"> 2022–2026</span></button>
+    <button role="tab" id="tab-method" aria-controls="view-method" aria-selected="false" tabindex="-1">Method<span class="ph-hide"> &amp; sources</span></button>
   </div>
-  <div class="seg detail-seg" role="group" aria-label="Detail level" id="detail">
-    <button type="button" data-v="simple" aria-pressed="true">Simple</button>
-    <button type="button" data-v="full" aria-pressed="false">Full detail</button>
+  <div class="seg detail-seg" role="group" aria-label="Detail level" id="detail" title="Simple shows the main result; Full detail shows every source, control and assumption.">
+    <button type="button" data-v="simple" aria-pressed="true" title="Simple shows the main result; Full detail shows every source, control and assumption.">Simple</button>
+    <button type="button" data-v="full" aria-pressed="false" title="Simple shows the main result; Full detail shows every source, control and assumption.">Full detail</button>
   </div>
   </div>
 
@@ -181,7 +184,7 @@
               <option value="a56">Yes, headquartered in another A:5 or A:6 country</option>
             </select>
           </label>
-          <label class="fld full-only" for="dcuse" id="dcuse-wrap" hidden>Going to a data center that gives D:5- or Macau-headquartered companies more than 12,000,000 aggregate TPP? (new § 744.24)
+          <label class="fld full-only" for="dcuse" id="dcuse-wrap" hidden>Going to a data center that provides, directly or indirectly (e.g. through a non-D:5 customer training models for them), more than 12,000,000 aggregate TPP to or for D:5- or Macau-headquartered companies? (new § 744.24)
             <select id="dcuse">
               <option value="no">No, or no knowledge of it</option>
               <option value="yes">Yes</option>
@@ -192,14 +195,18 @@
           <p class="fine simple-only" id="assume"></p>
         </div>
 
-        <div class="outcome status" id="outcome" aria-live="polite">
+        <div class="col-res">
+        <div class="outcome status" id="outcome" aria-live="polite" tabindex="-1">
           <span class="eyebrow">Outcome <span class="out-rules" id="out-rules"></span></span>
           <b id="out-title">–</b>
           <span class="simple-only" id="out-reason"></span>
+          <span class="simple-only out-why" id="out-why" hidden></span>
+          <span class="simple-only fine out-note" id="out-note" hidden></span>
           <span class="full-only" id="out-detail"></span>
           <span class="change" id="out-change" hidden></span>
           <span class="intricate" id="out-intricate" hidden>This branch turns on provisions this model simplifies. Read the cited sections before relying on it.</span>
           <span class="out-cites full-only" id="out-cites"></span>
+          <span class="simple-only fine out-gloss" id="out-gloss" hidden></span>
         </div>
 
         <details class="steps-disc" id="steps-disc">
@@ -207,8 +214,10 @@
           <ol class="walk" id="walk" aria-label="Reasoning chain"></ol>
         </details>
         <p class="fine copy-row"><button type="button" class="linkbtn" id="copy-link">Copy a link to this case</button> <span id="copy-msg" aria-live="polite"></span></p>
+        </div>
       </div>
     </div>
+    <div class="out-bar" id="out-bar" hidden><span class="eyebrow">Outcome</span> <b id="out-bar-t"></b> <button type="button" class="linkbtn" id="out-bar-go">See why</button></div>
   </section>
 
   <!-- 2. Rule changes -->
@@ -234,7 +243,7 @@
         <li><strong>TPP</strong> = 2 × MacTOPS × bit length (Technical Note 2 to 3A090.a and .b). Datasheets report 2 × MacTOPS as TOPS or TFLOPS, so TPP = dense TOPS × bit length of the inputs. Where a chip runs several precisions, the highest TPP counts. Rates are dense; sparsity figures do not count.</li>
         <li><strong>Performance density</strong> = TPP ÷ applicable die area in mm², counting all logic dies made on a non-planar (FinFET or GAA) process.</li>
         <li><strong>3A090.a</strong>: TPP ≥ 4800, or TPP ≥ 1600 and PD ≥ 5.92. <strong>3A090.b</strong>: TPP 2400 to under 4800 with PD 1.6 to under 5.92, or TPP ≥ 1600 with PD 3.2 to under 5.92. <strong>Note 2</strong>: chips not designed or marketed for datacenters with TPP under 4800 are outside both.</li>
-        <li>The arithmetic is unit-tested against the two worked examples in the Technical Note (600 TOPS at 8 bits and 300 TFLOPS at 16 bits both give TPP 4800) and against each threshold edge; the decision walk is tested case by case (<code>scripts/model.test.mjs</code>, 143 tests).</li>
+        <li>The arithmetic is unit-tested against the two worked examples in the Technical Note (600 TOPS at 8 bits and 300 TFLOPS at 16 bits both give TPP 4800) and against each threshold edge; the decision walk is tested case by case (<code>scripts/model.test.mjs</code>, 196 tests).</li>
         <li>This tool treats a datasheet's whole-chip peak for a precision as the aggregate over processing units. If a chip has separate units whose peaks add, enter their sum.</li>
       </ul>
       <h3>Written rule versus enforced rule</h3>

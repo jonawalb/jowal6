@@ -1,6 +1,7 @@
 // UI for "Does This Chip Need a License?"
 import { tppOf, pdOf, classify, decide, compareRules, groupsOf, OUTCOMES, AK50_FIVE, fmt, defaultRules, rulesetLabels, ak50InForce } from './model.js';
 import { drawChart } from './chart.js';
+import { reasonLine, glossFor } from './simple.js';
 import { CHIPS } from '../data/chips.js';
 import { GROUPS } from '../data/groups.js';
 import { TIMELINE } from '../data/timeline.js';
@@ -158,20 +159,39 @@ function update() {
   $('out-rules').textContent = ak ? (IN_FORCE ? 'Under the rules in force from 19 Nov 2026 (RIN 0694-AK50)' : 'Under RIN 0694-AK50, effective 19 Nov 2026')
     : (IN_FORCE ? 'Under the rules before 19 Nov 2026' : 'Under current rules');
   const ch = $('out-change');
-  ch.hidden = !ak;
-  ch.textContent = ak ? (cmp.changed ? `Differs from the earlier text: ${cmp.summary}` : `Same as under the earlier text. ${cmp.summary}`) : '';
+  // Both rule sets are always compared, so Simple shows what 19 Nov 2026 changes without a trip to Full detail.
+  ch.hidden = false;
+  ch.textContent = ak ? (cmp.changed ? `Differs from the earlier text: ${cmp.summary}` : 'Same outcome as under the earlier text.')
+    : (cmp.changed ? `${IN_FORCE ? 'Under the rules in force from 19 Nov 2026' : 'From 19 Nov 2026 (RIN 0694-AK50)'}: ${OUTCOMES[cmp.nw.outcome].label.toLowerCase()}.`
+      : `Same result under ${IN_FORCE ? 'the rules in force from 19 Nov 2026' : 'the rule effective 19 Nov 2026 (RIN 0694-AK50)'}.`);
   const o = OUTCOMES[r.outcome];
   const box = $('outcome');
   box.dataset.s = o.s === 'neutral' ? '' : o.s;
   box.dataset.o = r.outcome;
   $('out-title').textContent = r.title;
   $('out-detail').textContent = r.detail;
-  const reason = firstSentence(r.detail);
-  $('out-reason').textContent = addsInfo(reason, r.title) ? reason : '';
+  const p = presetObj();
+  const ov = !!(p && p.override) && S.form !== 'hbm';
+  // Presets with no published figures (H20, Ascend 910B/C/D): Simple shows the whole outcome text and the preset's own note.
+  const reason = ov ? r.detail : reasonLine(r.detail, r.title);
+  $('out-reason').textContent = reason;
+  // For those presets, when the decisive step clears the case (e.g. the H20 notice does not cover this destination), say why.
+  const last = r.steps[r.steps.length - 1];
+  const why = ov && last && last.verdict === 'pass' ? last.text : '';
+  $('out-why').textContent = why; $('out-why').hidden = !why;
+  const on = $('out-note'); on.textContent = '';
+  if (ov && p.note) { on.appendChild(document.createTextNode(p.note + ' ')); p.src.forEach((c, i) => { if (i) on.appendChild(document.createTextNode(' · ')); on.appendChild(link(c)); }); }
+  on.hidden = !on.textContent;
+  if (ov && S.preset !== lastOv) $('steps-disc').open = true;
+  lastOv = ov ? S.preset : null;
+  const gl = glossFor([r.title, reason, why, ov ? p.note : ''].join(' '));
+  $('out-gloss').textContent = gl; $('out-gloss').hidden = !gl;
+  $('out-bar-t').textContent = r.title;
   const chipTxt = ak ? (IN_FORCE ? 'Rules: in force from 19 Nov 2026' : 'Rules: from 19 Nov 2026 (not yet in effect)')
     : (IN_FORCE ? 'Rules: before 19 Nov 2026 (earlier text)' : 'Rules: before 19 Nov 2026');
   $('rules-chip-txt').textContent = chipTxt;
   $('rules-chip').classList.toggle('alt', S.rules !== DEFAULT_RULES);
+  $('rules-chip-btn').textContent = ak ? 'Show the earlier rules' : `Show the ${IN_FORCE ? 'rules in force' : '19 Nov 2026 rule'}`;
   $('assume').textContent = assumeLine();
   $('out-intricate').hidden = !r.intricate;
   const oc = $('out-cites'); oc.textContent = '';
@@ -187,7 +207,7 @@ function update() {
   });
 
   drawChart($('chart'), {
-    presets: CHIPS.filter(c => !c.override).map(c => { const b = tppOf(c.rows); const t = b ? b.tpp : null; return { id: c.id, name: c.name, short: SHORT[c.id], left: c.id === 'rtx4080', tpp: t, pd: pdOf(t, c.dieMm2), datacenter: c.datacenter }; }),
+    presets: CHIPS.filter(c => !c.override).map(c => { const b = tppOf(c.rows); const t = b ? b.tpp : null; return { id: c.id, name: c.name, short: SHORT[c.id], left: c.id === 'rtx4080' || c.id === 'ascend910', below: c.id === 'ascend910', tpp: t, pd: pdOf(t, c.dieMm2), datacenter: c.datacenter }; }),
     current: chip.override ? null : chip,
     onPick: (id) => { loadPreset(id); syncInputs(); update(); },
   });
@@ -195,27 +215,12 @@ function update() {
 }
 
 // ---------- simple mode helpers ----------
-// First sentence of the outcome detail (two if the first is a bare label like "License required.").
-// A period inside an abbreviation such as "U.S." does not end a sentence.
-function firstSentence(t) {
-  const re = /^(.+?(?<!\b[A-Z]\.[A-Z])\.)\s+(?=[A-Z])/;
-  const m = re.exec(t || '');
-  if (!m) return t || '';
-  if (m[1].length > 25) return m[1];
-  const m2 = re.exec(t.slice(m[0].length));
-  return m2 ? `${m[1]} ${m2[1]}` : t;
-}
-// Hide the reason line when it only restates the outcome title.
-const norm = (t) => (t || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
-function addsInfo(reason, title) {
-  const a = norm(reason), b = norm(title);
-  return !!a && a !== b && !b.includes(a);
-}
+let lastOv = null;
 const ORIGIN_TXT = { us: 'made in the U.S.', fdp: 'made abroad with U.S. technology', dm: 'made abroad with U.S.-origin parts inside', foreign: 'made abroad with no known U.S. nexus' };
 const ENDUSE_TXT = { none: 'no known supercomputer or advanced-node fab end use', supercomputer: 'for a supercomputer in D:5 or Macau', fab: 'for an advanced-node fab in D:5 or Macau' };
 function assumeLine() {
   const parts = [ORIGIN_TXT[S.origin], S.origin === 'dm' || S.ship !== 'us' ? 'reexported from abroad' : 'shipped from the U.S.',
-    S.hq ? 'end user headquartered in D:5 or Macau' : 'end user not headquartered in D:5 or Macau', ENDUSE_TXT[S.endUse]];
+    S.hq ? 'end user headquartered in an arms-embargoed country (D:5, incl. China) or Macau' : 'end user not headquartered in an arms-embargoed country (D:5, incl. China) or Macau', ENDUSE_TXT[S.endUse]];
   // Name any other Full-only input that is off its default, so Simple never hides a choice that changes the result.
   if (S.form === 'computer') parts.push('a server or board (4A090)');
   if (S.form === 'hbm') parts.push('an HBM stack (3A090.c)');
@@ -305,6 +310,7 @@ function selectTab(tab, focus) {
   });
   if (focus) tab.focus();
   writeHash();
+  syncBar();
 }
 tabs.forEach((t, i) => {
   t.addEventListener('click', () => selectTab(t));
@@ -349,8 +355,8 @@ const dsel = $('dest');
 DESTS.forEach(d => dsel.appendChild(h('option', { value: d, text: d })));
 renderPresetSelect();
 const view = readHash();
-// A deep link to the non-default rule set, or to an input that lives only in Full detail, opens Full detail.
-const fullOnlyLink = S.rules !== DEFAULT_RULES || S.endUse !== 'none' || S.foundry !== 'no' || S.origin === 'dm' || S.form === 'hbm' || (S.endUser === 'entity' && S.fn !== 'none') || (S.endUser === 'meu' && S.oeccn !== 'unknown') || S.usHq !== 'no';
+// A deep link to an input that lives only in Full detail opens Full detail. The rule set can be switched in Simple.
+const fullOnlyLink = S.endUse !== 'none' || S.foundry !== 'no' || S.origin === 'dm' || S.form === 'hbm' || (S.endUser === 'entity' && S.fn !== 'none') || (S.endUser === 'meu' && S.oeccn !== 'unknown') || S.usHq !== 'no';
 setDetail(fullOnlyLink ? 'full' : storedDetail(), false);
 // Rule-set switch labels depend on the date: before 19 Nov 2026 AK50 is the toggle; from then on, the earlier text is.
 $('rules').querySelector('[data-v="current"]').textContent = LABELS.current;
@@ -375,16 +381,26 @@ $('bw').addEventListener('input', e => { S.bw = num(e.target.value); markCustomI
 $('add-row').addEventListener('click', () => { S.rows.push({ bits: 8, tops: null, label: '' }); markCustom(); renderRows(); update(); $(`r${S.rows.length - 1}-t`).focus(); });
 function markCustomIfPreset() { if (S.preset !== 'custom') { markCustom(); renderRows(); } }
 bindSeg('rules', 'rules'); bindSeg('form', 'form'); bindSeg('origin', 'origin'); bindSeg('ship', 'ship');
-$('rules-chip-btn').addEventListener('click', () => {
-  setDetail('full', true);
-  const b = $('rules').querySelector('[aria-pressed="true"]') || $('rules').querySelector('button');
-  $('rules').closest('.rules-bar').scrollIntoView({ block: 'nearest' });
-  b.focus();
-});
+// The rule-set switch works in place in Simple mode: no jump to Full detail, no scroll.
+$('rules-chip-btn').addEventListener('click', () => { S.rules = S.rules === 'ak50' ? 'current' : 'ak50'; setSeg('rules', S.rules); update(); });
 $('copy-link').addEventListener('click', async () => {
   try { await navigator.clipboard.writeText(location.href); $('copy-msg').textContent = 'Link copied.'; }
   catch (e) { $('copy-msg').textContent = 'Copy the address bar to share this case.'; }
 });
+// Phone: a small bar shows the outcome while the outcome box is still below the screen.
+const PHONE = matchMedia('(max-width: 640px)');
+let outBelow = false;
+function syncBar() { $('out-bar').hidden = !(PHONE.matches && outBelow && !$('view-check').hidden); }
+if ('IntersectionObserver' in window) {
+  new IntersectionObserver(([e]) => { outBelow = !e.isIntersecting && e.boundingClientRect.top > 0; syncBar(); }).observe($('outcome'));
+}
+PHONE.addEventListener('change', syncBar);
+$('out-bar-go').addEventListener('click', () => {
+  $('outcome').scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  $('outcome').focus({ preventScroll: true });
+});
+// Phone, Full detail: the long note on the 19 Nov 2026 rule starts collapsed.
+if (PHONE.matches) $('rules-more').open = false;
 renderTimeline(); renderSources();
 update();
 if (view) { const t = tabs.find(x => x.id === `tab-${view}`); if (t) selectTab(t); }

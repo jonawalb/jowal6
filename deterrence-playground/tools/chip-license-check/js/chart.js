@@ -46,7 +46,7 @@ export function drawChart(host, { presets, current, onPick }) {
     el('text', { x: M.l - 6, y: ly(v) + 4, class: 'tk', 'text-anchor': 'end' }, svg, String(v));
   });
   el('text', { x: lx(X1) - 6, y: ly(0.45), class: 'rl', 'text-anchor': 'end' }, svg, '3A090.a');
-  el('text', { x: lx(2650), y: ly(4.3), class: 'rl sm', 'text-anchor': 'middle' }, svg, '.b');
+  el('text', { x: lx(2650), y: ly(3.7), class: 'rl sm', 'text-anchor': 'middle' }, svg, '.b');
   el('text', { x: lx(21000) - 4, y: M.t + 12, class: 'tk cap', 'text-anchor': 'end' }, svg, 'China case-by-case line');
   el('text', { x: (M.l + W - M.r) / 2, y: H - 6, class: 'ax', 'text-anchor': 'middle' }, svg, 'Total processing performance (TPP)');
   el('text', { x: 12, y: (M.t + plotB) / 2, class: 'ax', 'text-anchor': 'middle', transform: `rotate(-90 12 ${(M.t + plotB) / 2})` }, svg, 'Perf. density');
@@ -67,7 +67,7 @@ export function drawChart(host, { presets, current, onPick }) {
     el('circle', { cx: x, cy: y, r: isCur ? 8 : 5, class: c.datacenter ? 'dc' : 'ndc' }, g);
     if (!isCur) {
       const onStrip = !(c.pd > 0);
-      const ly2 = onStrip ? (stripN++ % 2 ? y + 16 : y - 8) : y - 6;
+      const ly2 = onStrip ? (stripN++ % 2 ? y + 16 : y - 8) : c.below ? y + 16 : y - 6;
       const left = !onStrip && c.left;
       const lab = el('text', { x: onStrip ? x : left ? x - 7 : x + 7, y: ly2, class: 'dl', 'text-anchor': onStrip ? 'middle' : left ? 'end' : 'start' }, g, c.short || c.name);
       if (!onStrip && x > W - 90) { lab.setAttribute('x', x - 7); lab.setAttribute('text-anchor', 'end'); }

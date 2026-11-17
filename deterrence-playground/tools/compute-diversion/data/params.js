@@ -2,6 +2,10 @@
 // mechanisms the public record describes (shell companies, hub shifts, split shipments, rented cloud
 // compute, slow rulemaking, allied fatigue) show up in play. None is an estimate of real volumes,
 // budgets or effects. The rationale for each block is in the page's Method panel and data/SOURCES.md.
+// External reference for real volumes (NOT used to calibrate anything here): CNAS working paper by Erich Grunewald and
+// Tim Fist, "Countering AI Chip Smuggling Has Become a National Security Priority" (June 11, 2025), which estimates
+// 10,000 to several hundred thousand AI chips smuggled to the PRC in 2024 (median around 140,000) and sets out countermeasures.
+// https://www.cnas.org/publications/reports/countering-ai-chip-smuggling-has-become-a-national-security-priority
 export const P = {
   lengths: [8, 10, 12],          // quarters the player can choose
   budget: 10,                    // enforcement capacity per quarter (notional units, does not carry over)

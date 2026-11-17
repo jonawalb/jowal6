@@ -1,25 +1,25 @@
 // Entity List view: PRC entries added per Federal Register rule, stacked by sector.
-import { EL_RULES, SECTORS, SEC_COL, esc, fmtDate, yr, svgEl, keyable, AS_OF } from './common.js';
+import { EL_RULES, SECTORS, SEC_COL, esc, fmtDate, yr, svgEl, keyable, AS_OF, clip } from './common.js';
 
 const SEC_KEYS = SECTORS.map(s => s.k);
 export const ruleCount = (r, secs) => secs.reduce((a, k) => a + (r.bySector[k] || 0), 0);
 const isCN = c => c.startsWith('CHINA');
 
-export function renderEntity(root, S, { onPick, set, tip }) {
+export function renderEntity(root, S, { onPick, set, tip, rerender }) {
   const rules = EL_RULES.filter(r => ruleCount(r, S.secs) > 0 || (S.other && r.cn > r.cnRel));
   const tot = EL_RULES.reduce((a, r) => a + ruleCount(r, S.secs), 0);
   const hk = EL_RULES.reduce((a, r) => a + r.entities.filter(e => isCN(e.c) && e.s && S.secs.includes(e.s) && e.hk).length, 0);
   const third = EL_RULES.reduce((a, r) => a + r.entities.filter(e => !isCN(e.c) && e.s && S.secs.includes(e.s)).length, 0);
   const last = [...EL_RULES].filter(r => ruleCount(r, S.secs) > 0).sort((a, b) => b.date.localeCompare(a.date))[0];
   root.innerHTML = `
-    <div class="card"><p class="eyebrow">Sectors counted</p>
+    <div class="card${S.secs.length === SEC_KEYS.length && !S.other ? ' full-only' : ''}"><p class="eyebrow">Sectors counted</p>
       <div class="gchips" role="group" aria-label="Sectors">${SECTORS.map(s => `<button type="button" class="gchip" data-k="${s.k}" aria-pressed="${S.secs.includes(s.k)}" title="${esc(s.d)}"><i style="background:${SEC_COL[s.k]}"></i>${esc(s.n)}</button>`).join('')}</div>
       <label class="tg mt-s"><input type="checkbox" id="oth" ${S.other ? 'checked' : ''}><span class="sw"></span><span class="t">Show other PRC entries in the same rules<small>entries added for other reasons (Russia supply, hypersonics, quantum, Iran)</small></span></label>
     </div>
     <div class="stat-row">
       <div class="stat"><p class="big">${tot}</p><p>PRC entries added in these sectors, ${esc(fmtDate('2022-10-01'))} to ${esc(fmtDate(AS_OF))}</p></div>
-      <div class="stat"><p class="big">${hk}</p><p>of them list a Hong Kong address (BIS lists these under China; some also list mainland addresses)</p></div>
-      <div class="stat"><p class="big">${third}</p><p>related entries in other countries (Japan, Korea, Singapore, Taiwan)</p></div>
+      <div class="stat full-only"><p class="big">${hk}</p><p>of them list a Hong Kong address (BIS lists these under China; some also list mainland addresses)</p></div>
+      <div class="stat full-only"><p class="big">${third}</p><p>related entries in other countries (Japan, Korea, Singapore, Taiwan)</p></div>
       <div class="stat"><p class="big">${last ? esc(fmtDate(last.date)) : '–'}</p><p>last rule adding PRC entries in these sectors</p></div>
     </div>
     <div class="card chartcard"><div class="chart-h"><p class="eyebrow">PRC entries added per rule, counting only the sectors selected</p><p class="fine">${rules.length} rules shown · click a bar</p></div>
@@ -40,6 +40,7 @@ export function renderEntity(root, S, { onPick, set, tip }) {
     <span class="it-d">${esc(fmtDate(r.date))}</span><span class="it-t">${esc(r.title)} <span class="fine">${esc(r.cite)}</span></span>
     <span class="it-a"><b>${ruleCount(r, S.secs)}</b> <span class="fine">tracked · ${r.cn} PRC · ${r.total} total</span></span></button></li>`).join('');
   rl.querySelectorAll('[data-id]').forEach(b => { b.onclick = () => onPick(b.dataset.id, true); });
+  clip(rl, 'rules', 6, 'rules', rerender);
 }
 
 function drawBars(svg, rules, S, { onPick, tip }) {

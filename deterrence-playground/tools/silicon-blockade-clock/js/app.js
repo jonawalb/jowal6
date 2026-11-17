@@ -102,13 +102,13 @@ function chainLinks(d) {
   const st = d.stock, stock0 = STOCKS.find(s => s.k === S.stock).v;
   const fuel = Math.min(1, (st.lng + st.coal) / (stock0.lng + stock0.coal));
   return [
-    { n: 'Gas and coal stocks', v: `${Math.round(st.lng)} + ${Math.round(st.coal)} d`, f: fuel, s: st.coal < 0.5 ? 'bad' : st.lng < 0.5 ? 'warn' : 'good', sub: 'days of gas + coal' },
+    { n: 'Gas and coal stocks', core: 1, v: `${Math.round(st.lng)} + ${Math.round(st.coal)} d`, f: fuel, s: st.coal < 0.5 ? 'bad' : st.lng < 0.5 ? 'warn' : 'good', sub: 'days of gas + coal' },
     { n: 'Grid supply', v: pc(d.grid), f: d.grid, s: state(d.grid, 0.97), sub: 'of normal demand' },
     { n: 'Power to leading-edge fabs', v: pc(d.lePower), f: d.lePower, s: state(d.lePower, 0.999), sub: `chip sector gets ${pc(d.chipPower)}` },
-    { n: 'Fab and packaging output', v: pc(d.util), f: d.util, s: state(d.util), sub: `materials ${pc(d.mat)} of stock` },
-    { n: 'Chips leaving Taiwan', v: pc(Math.min(d.shipped, 9.99)), f: Math.min(1, d.shipped), s: state(Math.min(1, d.shipped)), sub: d.stranded > 0.5 ? `${Math.round(d.stranded)} days of output stranded` : 'of normal output' },
+    { n: 'Fab and packaging output', core: 1, v: pc(d.util), f: d.util, s: state(d.util), sub: `materials ${pc(d.mat)} of stock` },
+    { n: 'Chips leaving Taiwan', core: 1, v: pc(Math.min(d.shipped, 9.99)), f: Math.min(1, d.shipped), s: state(Math.min(1, d.shipped)), sub: d.stranded > 0.5 ? `${Math.round(d.stranded)} days of output stranded` : 'of normal output' },
     { n: 'Finished stock abroad', v: `${(d.invDays / 7).toFixed(1)} wk`, f: d.inv, s: d.inv > 0.5 ? 'good' : d.inv > 0.05 ? 'warn' : 'bad', sub: `of ${S.p.chanWeeks} weeks` },
-    { n: 'World deliveries', v: pc(d.delivered), f: Math.min(1, d.delivered), s: state(d.onTime, 0.995, 0.6),
+    { n: 'World deliveries', core: 1, v: pc(d.delivered), f: Math.min(1, d.delivered), s: state(d.onTime, 0.995, 0.6),
       sub: d.catchUp > 0.001 ? `incl. ${pc(d.catchUp)} catch-up` : `${fmt(d.delivered * FIXED.weeklyUnits)} a week` },
   ];
 }
@@ -123,7 +123,7 @@ function renderDay() {
   $('day').value = S.day;
   $('day-n').textContent = 'Day ' + S.day;
   $('day-s').textContent = dayText(d);
-  $('chain').innerHTML = chainLinks(d).map(l => `<li class="link" data-s="${l.s}"><span class="nm">${l.n}</span><b class="v num">${l.v}</b>
+  $('chain').innerHTML = chainLinks(d).map(l => `<li class="link${l.core ? '' : ' full-only'}" data-s="${l.s}"><span class="nm">${l.n}</span><b class="v num">${l.v}</b>
     <span class="bar" aria-hidden="true"><i style="width:${(Math.max(0, Math.min(1, l.f)) * 100).toFixed(1)}%"></i></span><span class="sub">${l.sub}</span></li>`).join('');
   const scrub = t => { stop(); S.day = t; renderDay(); writeHash(); };
   drawWorld($('world'), sim, S.dur, S.day, scrub);
@@ -145,17 +145,17 @@ function renderSummary() {
   const shortW = sim.cumShortDays / 7, owedW = sim.backlogEndUnits / FIXED.weeklyUnits;
   const days = v => (v == null ? 'never' : 'day ' + v);
   $('summary').innerHTML = `
-    <dt>Taiwan, sub-10nm logic<small>SIA/BCG, 2022 data</small></dt><dd>${HEADLINE.logic.v}<small>of world capacity</small></dd>
-    <dt>Taiwan, advanced packaging<small>TSMC fab list; TrendForce</small></dt><dd>${HEADLINE.pack.v}<small>TSMC packaging fabs (5 + AP7)</small></dd>
-    <dt>Gas / coal run out</dt><dd>${days(sim.energy.runout.lng)} / ${days(sim.energy.runout.coal)}</dd>
-    <dt>Fabs throttle</dt><dd>${days(sim.throttle)}</dd>
+    <dt class="full-only">Taiwan, sub-10nm logic<small>SIA/BCG, 2022 data</small></dt><dd class="full-only">${HEADLINE.logic.v}<small>of world capacity</small></dd>
+    <dt class="full-only">Taiwan, advanced packaging<small>TSMC fab list; TrendForce</small></dt><dd class="full-only">${HEADLINE.pack.v}<small>TSMC packaging fabs (5 + AP7)</small></dd>
+    <dt class="full-only">Gas / coal run out</dt><dd class="full-only">${days(sim.energy.runout.lng)} / ${days(sim.energy.runout.coal)}</dd>
+    <dt class="full-only">Fabs throttle</dt><dd class="full-only">${days(sim.throttle)}</dd>
     <dt>World shortfall starts</dt><dd>${days(sim.shortDay)}</dd>
     <dt>Lowest deliveries</dt><dd>${pc(sim.worst.onTime)}${sim.worst.onTime < 0.995 ? ', day ' + sim.worst.t : ''}</dd>
     <dt>Not delivered on time<small>late or never</small></dt><dd>${fmt(sim.cumShortUnits)}<small>${shortW.toFixed(1)} weeks of world output</small></dd>
-    <dt>Still owed on day 364<small>not yet delivered</small></dt><dd>${fmt(sim.backlogEndUnits)}<small>${owedW.toFixed(1)} weeks of world output</small></dd>
-    <dt>Never made<small>output lost for good</small></dt><dd>${fmt(sim.neverMadeUnits)}<small>${(sim.neverMadeUnits / FIXED.weeklyUnits).toFixed(1)} weeks of world output</small></dd>
-    <dt>Back to normal rate</dt><dd>${sim.shortDay == null ? 'no shortfall' : days(sim.recover)}</dd>
-    <dt>Backlog cleared</dt><dd>${sim.shortDay == null ? 'no shortfall' : sim.cleared == null ? 'not within the year' : 'day ' + sim.cleared}</dd>`;
+    <dt class="full-only">Still owed on day 364<small>not yet delivered</small></dt><dd class="full-only">${fmt(sim.backlogEndUnits)}<small>${owedW.toFixed(1)} weeks of world output</small></dd>
+    <dt class="full-only">Never made<small>output lost for good</small></dt><dd class="full-only">${fmt(sim.neverMadeUnits)}<small>${(sim.neverMadeUnits / FIXED.weeklyUnits).toFixed(1)} weeks of world output</small></dd>
+    <dt class="full-only">Back to normal rate</dt><dd class="full-only">${sim.shortDay == null ? 'no shortfall' : days(sim.recover)}</dd>
+    <dt class="full-only">Backlog cleared</dt><dd class="full-only">${sim.shortDay == null ? 'no shortfall' : sim.cleared == null ? 'not within the year' : 'day ' + sim.cleared}</dd>`;
   $('alts').querySelector('tbody').innerHTML = ALTS.map(A => {
     const a = S.alts[A.k], cur = { ...A, ...a };
     const start = sim.t0 == null ? 'no trigger' : cur.delay + sim.t0 >= H ? `day ${cur.delay + sim.t0} (after window)` : `day ${cur.delay + sim.t0}`;
@@ -196,8 +196,18 @@ mountMap($('map'));
 mountControls();
 renderBelow();
 $('map-note').textContent = 'Circles mark TSMC wafer fabs (all generations) and advanced packaging fabs by city, from TSMC\'s fab list; the Chiayi packaging site is from TrendForce. Shading shows modelled output, which is the same island-wide because the model has one grid.';
+// Simple / Full detail switch (class on <body>; choice kept in localStorage when available).
+function setDetail(m) {
+  document.body.classList.toggle('detail-simple', m !== 'full');
+  document.body.classList.toggle('detail-full', m === 'full');
+  document.querySelectorAll('.detail-sw [data-detail]').forEach(b => b.setAttribute('aria-pressed', b.dataset.detail === m));
+  try { localStorage.setItem('et-detail', m); } catch { /* storage unavailable */ }
+  renderDay();
+}
+document.querySelectorAll('[data-detail]').forEach(b => b.onclick = () => setDetail(b.dataset.detail));
 const tour = createTour($('stage'), set => {
   stop();
+  if (set.full) setDetail('full');
   const sc = SCENARIOS.find(s => s.k === set.scen);
   Object.assign(S, defaults(), { scen: sc.k, lev: { ...sc.v }, dur: set.dur, policy: set.policy, protect: set.protect, day: set.day });
   update();
@@ -212,6 +222,7 @@ document.addEventListener('keydown', e => {
   if (e.key === ' ' && e.target === document.body) { e.preventDefault(); playing ? stop() : play(); }
 });
 update();
+setDetail(document.body.classList.contains('detail-full') ? 'full' : 'simple');
 let rz = null;
 addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(renderDay, 120); });
 const NOTE = 'Notional model (Silicon Blockade Clock, jwalberg.com); sourced inputs from EIA, MOEA, TSMC, SIA/BCG, Epoch AI';

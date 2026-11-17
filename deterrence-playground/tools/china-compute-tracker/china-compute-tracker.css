@@ -196,3 +196,16 @@ details summary { cursor: pointer; font-size: 12.5px; color: var(--muted); paddi
   .case-it button, .it button { grid-template-columns: minmax(0, 1fr) auto; }
 }
 .est .cap { fill: none; stroke-width: 2; }
+
+/* ---- Simple / Full detail ---- */
+body.detail-simple .full-only, body.detail-simple .clip > .xtra { display: none !important; }
+body.detail-full .simple-only { display: none !important; }
+.detail-sw { flex-wrap: nowrap; }
+.detail-sw .btn { padding: 6px 11px; }
+.showall { align-self: flex-start; margin-top: 8px; }
+.glance { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.gl-stat { display: flex; flex-direction: column; gap: 2px; text-align: left; background: transparent; border: 0; border-top: 3px solid var(--rule); padding: 8px 2px 0; cursor: pointer; font: 13px var(--body); color: var(--muted); }
+.gl-stat .big { font: 600 30px var(--display); color: var(--ink); line-height: 1.05; }
+@media (hover: hover) { .gl-stat:hover { border-top-color: var(--accent); } }
+@media (max-width: 600px) { .glance { grid-template-columns: 1fr; gap: 6px; } .gl-stat { flex-direction: row; align-items: baseline; gap: 10px; } .gl-stat .big { font-size: 24px; flex: none; } }
+.glance[hidden] { display: none; }

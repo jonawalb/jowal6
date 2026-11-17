@@ -83,13 +83,21 @@ function control(L, s, c) {
   return '';
 }
 
+// Simple mode: the first sentence of each lever's text, the rest behind a small disclosure. Full shows it all.
+function leverText(t) {
+  const m = t.match(/^(.+?[.!?])\s+(.+)$/s);
+  if (!m) return `<p class="cd-lt">${t}</p>`;
+  return `<p class="cd-lt full-only">${t}</p><p class="cd-lt simple-only">${m[1]}</p>
+      <details class="cd-lmore simple-only"><summary>More</summary><p class="cd-lt">${m[2]}</p></details>`;
+}
+
 export function paintDecide(el, s, c, msg) {
   el.innerHTML = (msg ? `<p class="cd-msg" role="alert">${escapeHtml(msg)}</p>` : '') + LEVERS.map(L => {
     const on = (L.id === 'list' && c.list.length) || (L.id === 'euc' && Object.keys(c.euc).length) || (L.id === 'hub' && Object.values(c.hub).some(Boolean))
       || (L.id === 'agents' && c.agents !== s.pol.agents) || c[L.id] === true;
     return `<div class="cd-lever${on ? ' on' : ''}" data-lever="${L.id}">
       <div class="cd-lh"><b>${L.name}</b><span>${costs(L)}</span></div>
-      <p class="cd-lt">${L.text}</p>
+      ${leverText(L.text)}
       ${control(L, s, c)}
       ${policyHTML(L.policy, L.note)}
     </div>`;

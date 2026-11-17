@@ -14,6 +14,30 @@ const AX = AXES.map(a => a.id);
 const narrow = () => matchMedia('(max-width: 700px)').matches;
 const DEF = () => ({ v: 'timeline', d: 'us-eo14179', th: new Set(), ln: new Set(COUNTRIES.map(c => c.id)), mode: narrow() ? 'list' : 'chart', q: '', i: ISSUES[0].id, s: 'all', a: {}, links: true });
 let state = DEF();
+// Simple | Full detail. Per-viewer convenience only; the page works without storage.
+let full = false;
+try { full = localStorage.getItem('et-detail') === 'full'; } catch {}
+let debAll = false;
+// Simple mode starts from "Key documents": a hand-picked set of the statutes, rules, strategies and agreements
+// an AI and chip policy specialist would expect to see first. "Show all" lifts it; Full detail always shows all.
+const KEY_IDS = `us-ecra-2018 us-firrma-2018 us-bis-huawei-2019 us-bis-huawei-fdp-2020 us-chips-act-2022 us-bis-oct2022 us-bis-oct2023
+us-eo14105 us-eo14110 us-treasury-outbound-2024 us-bis-fdp-2024 us-bis-diffusion us-eo14179 us-ai-action-plan
+us-ca-sb53-2025 us-coins-act-2025 us-eo14365 us-bis-h200-2026 us-eo14409 us-bis-remote-access-2026
+cn-mic2025-2015 cn-big-fund-2014 cn-aidp-2017 cn-export-control-law-2020 cn-uel-provisions-2020 cn-algorithm-provisions-2021
+cn-genai-measures-2023 cn-mofcom-gage-2023 cn-dual-use-regs-2024 cn-mofcom-46-2024 cn-ai-labeling-measures-2025
+cn-mofcom-18-2025 cn-mofcom-61-2025 cn-gaap-2025 cn-15th-fyp-outline-2026
+ru-decree490 ru-decree124 ru-decree166-cii ru-fz243-ai-law
+intl-wassenaar intl-oecd-ai-principles intl-us-russia-ear-7468 intl-nl-sme-controls intl-jp-sme-controls intl-bletchley
+unga-78-265 intl-eu-ai-act intl-coe-ai-convention intl-paris-statement us-cn-ai-dialogue-2026`.split(/\s+/);
+const KEY = new Set(KEY_IDS.filter(id => DOCS.some(d => d.id === id)));
+let tlAll = false;
+const DEB_N = 4;
+function applyDetail() {
+  document.body.classList.toggle('detail-full', full);
+  document.body.classList.toggle('detail-simple', !full);
+  document.querySelectorAll('[data-detail]').forEach(b => b.setAttribute('aria-pressed', (b.dataset.detail === 'full') === full));
+}
+applyDetail();
 if (!D[state.d]) state.d = DOCS[DOCS.length - 1]?.id;
 
 // ---- hash
@@ -81,11 +105,16 @@ function render(scroll) {
     $('tl').hidden = state.mode !== 'chart';
     $('tl-legend').hidden = state.mode !== 'chart';
     $('tl-list').hidden = state.mode !== 'list';
-    tl.update({ sel: state.d, themes: state.th, lanes: state.ln, links: state.links, q: state.q });
-    const shown = DOCS.filter(d => state.ln.has(d.country) && (!state.th.size || d.themes.some(t => state.th.has(t)))
+    document.querySelector('.ap-filters').classList.toggle('ap-active', !!(state.th.size || state.q));
+    const keyOnly = !full && !tlAll;
+    tl.update({ sel: state.d, themes: state.th, lanes: state.ln, links: state.links && full, q: state.q, only: keyOnly ? KEY : null });
+    const shown = DOCS.filter(d => (!keyOnly || KEY.has(d.id) || d.id === state.d) && state.ln.has(d.country) && (!state.th.size || d.themes.some(t => state.th.has(t)))
       && (!state.q || `${d.title} ${d.titleOrig || ''} ${d.issuer} ${d.summary}`.toLowerCase().includes(state.q.toLowerCase())))
       .sort((a, b) => a.date.localeCompare(b.date));
-    $('tl-count').textContent = `${shown.length} of ${DOCS.length} documents`;
+    $('tl-count').textContent = keyOnly ? `${shown.length} key documents of ${DOCS.length}` : `${shown.length} of ${DOCS.length} documents`;
+    $('tl-all').hidden = full;
+    $('tl-all').textContent = tlAll ? 'Key documents only' : `Show all ${DOCS.length}`;
+    $('tl-all').setAttribute('aria-pressed', tlAll);
     if (state.mode === 'list') $('tl-list').innerHTML = listHTML(shown, state.d);
     $('detail').innerHTML = docHTML(state.d);
     if (scroll === 'doc') tl.scrollTo(state.d);
@@ -97,12 +126,29 @@ function render(scroll) {
   if (state.v === 'debates') {
     document.querySelectorAll('[data-s]').forEach(b => b.setAttribute('aria-pressed', b.dataset.s === state.s));
     $('debates').innerHTML = debatesHTML(state.s);
+    const n = $('debates').querySelectorAll('.ap-debate').length;
+    const clip = !full && !debAll && n > DEB_N;
+    $('debates').classList.toggle('ap-clip', clip);
+    $('deb-more').hidden = !clip;
+    $('deb-more').textContent = `Show all ${n} debates`;
   }
   writeHash();
 }
 function set(next, scroll) { Object.assign(state, next); render(scroll); }
 
 // ---- events
+document.querySelector('.ap-detailsw').addEventListener('click', e => {
+  const b = e.target.closest('[data-detail]'); if (!b) return;
+  full = b.dataset.detail === 'full';
+  try { localStorage.setItem('et-detail', full ? 'full' : 'simple'); } catch {}
+  applyDetail(); render();
+});
+$('tl-all').addEventListener('click', () => { tlAll = !tlAll; render('doc'); });
+$('deb-more').addEventListener('click', () => {
+  debAll = true; render();
+  $('debates').querySelectorAll('.ap-debate')[DEB_N]?.querySelector('h3')?.setAttribute('tabindex', '-1');
+  $('debates').querySelectorAll('.ap-debate')[DEB_N]?.querySelector('h3')?.focus();
+});
 const tabs = VIEWS.map(v => $('tab-' + v));
 tabs.forEach((t, i) => {
   t.addEventListener('click', () => set({ v: VIEWS[i] }));

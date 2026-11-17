@@ -8,7 +8,7 @@ const GOVS = ['US', 'CN', 'RU'];
 export function createCompass(root, aside, { onChange }) {
   let answers = {}, reveal = false, open = null; // open = 'axis.US'
 
-  root.innerHTML = AXES.map((a, i) => `
+  root.innerHTML = `<p class="fine ap-hint" id="ap-hint">Move any slider to see where the three governments sit on that question.</p>` + AXES.map((a, i) => `
     <div class="ap-ax" data-ax="${a.id}">
       <p class="ap-axq"><span class="ap-axn num">${i + 1}</span><span>${esc(a.q)}</span></p>
       <div class="ap-scale">
@@ -22,7 +22,7 @@ export function createCompass(root, aside, { onChange }) {
 
   const rowsHTML = a => {
     const shown = reveal || typeof answers[a.id] === 'number';
-    if (!shown) return `<p class="fine ap-hidden">Move the slider to see where the three governments sit.</p>`;
+    if (!shown) return '';
     return GOVS.map(g => {
       const p = COMPASS[a.id]?.[g];
       const has = p && typeof p.value === 'number';
@@ -47,6 +47,7 @@ export function createCompass(root, aside, { onChange }) {
   };
 
   function paint() {
+    root.querySelector('#ap-hint').hidden = reveal || Object.keys(answers).length === AXES.length;
     for (const a of AXES) {
       const row = root.querySelector(`[data-ax="${a.id}"]`);
       const inp = row.querySelector('input');
@@ -78,7 +79,7 @@ export function createCompass(root, aside, { onChange }) {
     aside.querySelector('#cmp-sum').innerHTML = n === 0
       ? '<p class="fine">Answer any question to start. Your result updates as you go; skip any you like.</p>'
       : `<p class="ap-big">Closest to <b>${esc(C[rank[0].id].name)}</b></p>
-         <p class="fine">Average gap on the ${n} question${n > 1 ? 's' : ''} you answered (0 = same place, 100 = opposite ends). A longer bar means a closer match. Questions where a government has no placement are left out of its average.</p>
+         <p class="fine full-only">Average gap on the ${n} question${n > 1 ? 's' : ''} you answered (0 = same place, 100 = opposite ends). A longer bar means a closer match. Questions where a government has no placement are left out of its average.</p>
          <ol class="ap-bars">${bars}</ol>`;
   }
 
@@ -88,7 +89,7 @@ export function createCompass(root, aside, { onChange }) {
     if (gaps.length < 2) return '';
     gaps.sort((a, b) => a.gap - b.gap);
     const name = k => AXES.find(a => a.id === k).short;
-    return `<p class="fine">Nearest on ${esc(name(gaps[0].k))}; furthest on ${esc(name(gaps[gaps.length - 1].k))}.</p>`;
+    return `<p class="fine full-only">Nearest on ${esc(name(gaps[0].k))}; furthest on ${esc(name(gaps[gaps.length - 1].k))}.</p>`;
   }
 
   root.addEventListener('input', e => {

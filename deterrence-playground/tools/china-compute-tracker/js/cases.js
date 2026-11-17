@@ -1,5 +1,5 @@
 // Enforcement and diversion cases: DOJ and BIS public cases on advanced chips and chipmaking tools.
-import { CASES, esc, fmtDate, statusClass, CASES_CHECKED } from './common.js';
+import { CASES, esc, fmtDate, statusClass, CASES_CHECKED, clip } from './common.js';
 
 export const CASE_TYPES = [...new Set(CASES.map(c => c.type))];
 export const STATUS_KEYS = [
@@ -14,13 +14,14 @@ export function filterCases(S) {
     .sort((a, b) => b.date.localeCompare(a.date));
 }
 
-export function renderCases(root, S, { onPick, set }) {
+export function renderCases(root, S, { onPick, set, rerender }) {
+  const filtered = S.ctypes.length !== CASE_TYPES.length || S.cstat.length !== STATUS_KEYS.length || S.q.trim();
   const list = filterCases(S);
   const hubs = new Map();
   for (const c of list) for (const p of (c.route || []).slice(1, -1)) hubs.set(p, (hubs.get(p) || 0) + 1);
   const byStat = STATUS_KEYS.map(s => [s, list.filter(c => statusClass(c.status).k === s.k).length]);
   root.innerHTML = `
-    <div class="card"><p class="eyebrow">Filter cases</p>
+    <div class="card${filtered ? '' : ' full-only'}"><p class="eyebrow">Filter cases</p>
       <div class="gchips" role="group" aria-label="Case type">${CASE_TYPES.map(t => `<button type="button" class="gchip st" data-t="${esc(t)}" aria-pressed="${S.ctypes.includes(t)}">${esc(t)}</button>`).join('')}</div>
       <div class="gchips mt-s" role="group" aria-label="Case status">${STATUS_KEYS.map(s => `<button type="button" class="gchip st" data-s="${s.k}" aria-pressed="${S.cstat.includes(s.k)}"><span class="st-pill st-${s.k}">${esc(s.n)}</span></button>`).join('')}</div>
       <div class="row mt-s"><label class="vh" for="cq">Search cases</label><input id="cq" class="search" type="search" placeholder="Search: H100, Malaysia, Singapore, Applied Materials" value="${esc(S.q)}" autocomplete="off"></div>
@@ -28,7 +29,7 @@ export function renderCases(root, S, { onPick, set }) {
     <div class="stat-row">
       ${byStat.map(([s, n]) => `<div class="stat"><p class="big">${n}</p><p><span class="st-pill st-${s.k}">${esc(s.n)}</span></p></div>`).join('')}
     </div>
-    ${hubs.size ? `<div class="card"><p class="eyebrow">Transit points alleged in these cases</p><p class="route">${[...hubs.entries()].sort((a, b) => b[1] - a[1]).map(([h, n]) => `<span>${esc(h)} · ${n}</span>`).join(' ')}</p>
+    ${hubs.size ? `<div class="card full-only"><p class="eyebrow">Transit points alleged in these cases</p><p class="route">${[...hubs.entries()].sort((a, b) => b[1] - a[1]).map(([h, n]) => `<span>${esc(h)} · ${n}</span>`).join(' ')}</p>
       <p class="fine">Places between origin and final destination as stated in the charging documents or releases. Counts are cases, not shipments.</p></div>` : ''}
     <div class="card"><p class="eyebrow">Cases, newest first · status as of ${esc(fmtDate(CASES_CHECKED))}</p><ol class="list" id="cl"></ol></div>`;
   const tog = (arr, k) => (arr.includes(k) ? (arr.length > 1 ? arr.filter(x => x !== k) : arr) : [...arr, k]);
@@ -41,6 +42,7 @@ export function renderCases(root, S, { onPick, set }) {
     <span class="it-t">${esc(c.title)}<br><span class="fine">${esc(c.type)} · ${esc(c.agency)}</span> ${route(c)}</span>
     <span class="it-a"><span class="st-pill st-${st.k}">${esc(c.status)}</span></span></button></li>`; }).join('') : '<li class="none">No case matches these filters.</li>';
   cl.querySelectorAll('[data-id]').forEach(b => { b.onclick = () => onPick(b.dataset.id, true); });
+  clip(cl, 'cases', 6, 'cases', rerender);
 }
 
 export function caseDetail(c) {

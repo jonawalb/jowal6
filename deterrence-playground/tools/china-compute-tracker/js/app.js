@@ -1,8 +1,8 @@
 // China Compute Tracker: state, URL hash, views and wiring.
-import { EL_RULES, POLICY, CASES, ESTIMATES, SECTORS, AS_OF, GRADE_INFO, esc, fmtDate, $, tooltip } from './common.js';
+import { EL_RULES, POLICY, CASES, ESTIMATES, SECTORS, AS_OF, GRADE_INFO, esc, fmtDate, $, tooltip, statusClass } from './common.js';
 import { GRADES } from './range.js';
 import { renderEstimates, estimateDetail } from './estimates.js';
-import { renderEntity, ruleDetail } from './entity.js';
+import { renderEntity, ruleDetail, ruleCount } from './entity.js';
 import { renderCases, caseDetail, CASE_TYPES, STATUS_KEYS } from './cases.js';
 import { renderTimeline, policyDetail } from './timeline.js';
 import { renderMethod } from './method.js';
@@ -57,14 +57,13 @@ function readHash() {
 const tip = tooltip($('tip'));
 const set = patch => { Object.assign(S, patch); update(); };
 function pick(id, scroll) {
-  S.sel = id; window.addEventListener('hashchange', () => { Object.assign(S, fresh()); readHash(); update(); });
-update();
+  S.sel = id; update();
   if (scroll && window.matchMedia('(max-width: 1020px)').matches) $('detail').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
 }
 
 function renderSide() {
   $('side').innerHTML = `<p class="eyebrow">Evidence grades</p>
-    <ul class="nowlist">${GRADES.map(g => `<li><span><span class="gtag g-${g}">${g}</span> ${esc(GRADE_INFO[g].n)}</span><span></span><span class="num">${ESTIMATES.filter(e => e.grade === g).length}</span><span class="fine nw">${esc(GRADE_INFO[g].d)}</span></li>`).join('')}</ul>
+    <ul class="nowlist">${GRADES.map(g => `<li><span><span class="gtag g-${g}">${g}</span> ${esc(GRADE_INFO[g].n)}</span><span></span><span class="num">${ESTIMATES.filter(e => e.grade === g).length}</span><span class="fine nw full-only">${esc(GRADE_INFO[g].d)}</span></li>`).join('')}</ul>
     <p class="fine">Number = estimates in the tool with that grade.</p>`;
 }
 
@@ -72,7 +71,7 @@ function update() {
   $('tabs').innerHTML = VIEWS.map(v => `<button type="button" role="tab" class="tab" data-v="${v.k}" aria-selected="${v.k === S.view}" aria-controls="view">${esc(v.n)}</button>`).join('');
   $('tabs').querySelectorAll('[data-v]').forEach(b => { b.onclick = () => set({ view: b.dataset.v }); });
   const V = $('view');
-  const h = { onPick: pick, set, tip };
+  const h = { onPick: pick, set, tip, rerender: update };
   if (S.view === 'est') renderEstimates(V, S, h);
   else if (S.view === 'el') renderEntity(V, S, h);
   else if (S.view === 'cases') renderCases(V, S, h);
@@ -81,8 +80,33 @@ function update() {
   const it = find(S.sel);
   $('detail').innerHTML = it ? it.html : `<p class="eyebrow">Details</p><p class="fine">Click an estimate, a rule, a case or a timeline mark to read it here with its source.</p>`;
   renderSide();
+  $('glance').hidden = S.view !== 'est';
   writeHash();
 }
+
+// ---- Simple / Full detail ----
+function setDetail(d, redraw) {
+  document.body.classList.toggle('detail-simple', d === 'simple');
+  document.body.classList.toggle('detail-full', d === 'full');
+  document.querySelectorAll('[data-detail]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.detail === d)));
+  try { localStorage.setItem('et-detail', d); } catch { /* storage unavailable */ }
+  if (redraw) update();
+}
+let stored = null;
+try { stored = localStorage.getItem('et-detail'); } catch { /* storage unavailable */ }
+setDetail(stored === 'full' ? 'full' : 'simple');
+document.querySelectorAll('[data-detail]').forEach(b => { b.onclick = () => setDetail(b.dataset.detail, true); });
+
+// Headline numbers for Simple mode, counted from the same data the views use.
+const allSecs = SECTORS.map(s => s.k);
+const elTotal = EL_RULES.reduce((a, r) => a + ruleCount(r, allSecs), 0);
+const convicted = CASES.filter(c => statusClass(c.status).k === 'convicted').length;
+$('glance').innerHTML = [
+  ['el', elTotal, `PRC entries added to the Entity List in the tracked chip sectors, ${fmtDate('2022-10-01')} to ${fmtDate(AS_OF)}`],
+  ['cases', CASES.length, `public DOJ and BIS cases on smuggling or diverting chips and chipmaking tools; ${convicted} with a plea or conviction`],
+  ['est', ESTIMATES.length, 'published estimates of China’s AI chip supply, each graded by the kind of source behind it'],
+].map(([v, n, t]) => `<button type="button" class="gl-stat" data-go="${v}"><span class="big">${n}</span><span>${esc(t)}</span></button>`).join('');
+$('glance').querySelectorAll('[data-go]').forEach(b => { b.onclick = () => set({ view: b.dataset.go }); });
 
 // ---- Wiring ----
 readHash();

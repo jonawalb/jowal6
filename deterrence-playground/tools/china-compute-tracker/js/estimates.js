@@ -1,6 +1,6 @@
 // Capacity estimates: each metric as a set of graded source ranges on a log axis, with the
 // envelope recomputed from whichever grades the reader switches on.
-import { METRICS, ESTIMATES, GRADE_INFO, GRADE_COL, esc, fmtDate, svgEl, keyable } from './common.js';
+import { METRICS, ESTIMATES, GRADE_INFO, GRADE_COL, esc, fmtDate, svgEl, keyable, clip } from './common.js';
 import { GRADES, pick, envelope, periods, fmtNum, logDomain } from './range.js';
 
 const PRESETS = [
@@ -21,17 +21,17 @@ export function periodOf(S, m) {
   return S.per[m] && ps.includes(S.per[m]) ? S.per[m] : (ps.includes(def) ? def : ps[0]);
 }
 
-export function renderEstimates(root, S, { onPick, set, tip }) {
+export function renderEstimates(root, S, { onPick, set, tip, rerender }) {
   const presetOn = PRESETS.find(p => p.k === S.grades.join(''));
   root.innerHTML = `
     <div class="card"><p class="eyebrow">Which evidence counts?</p>
-      <div class="grades" role="group" aria-label="Evidence grades included">${GRADES.map(g => `<button type="button" class="gbtn" data-g="${g}" aria-pressed="${S.grades.includes(g)}" title="${esc(GRADE_INFO[g].d)}"><b class="g-${g}">${g}</b>${esc(GRADE_INFO[g].n)}</button>`).join('')}</div>
-      <div class="pseg mt-s" role="group" aria-label="Presets">${PRESETS.map(p => `<button type="button" class="btn" data-p="${p.k}" aria-pressed="${presetOn === p}">${esc(p.n)}</button>`).join('')}</div>
-      <label class="tg mt-s"><input type="checkbox" id="rep" ${S.rep ? 'checked' : ''}><span class="sw"></span><span class="t">Count official restatements (↺)<small>official figures that repeat an analyst or press estimate; off = independent observations only</small></span></label>
-      <p class="fine mt-s">A grade says what kind of source carries a number, not whether the number is right. The shaded band runs from the lowest low to the highest high among the sources switched on; the dark tick is the median of their midpoints. ↺ marks an official figure that restates another source (off by default); ‹ marks an upper bound and › a lower bound.</p>
+      <div class="grades full-only" role="group" aria-label="Evidence grades included">${GRADES.map(g => `<button type="button" class="gbtn" data-g="${g}" aria-pressed="${S.grades.includes(g)}" title="${esc(GRADE_INFO[g].d)}"><b class="g-${g}">${g}</b>${esc(GRADE_INFO[g].n)}</button>`).join('')}</div>
+      <div class="pseg mt-s presets" role="group" aria-label="Presets">${PRESETS.map(p => `<button type="button" class="btn" data-p="${p.k}" aria-pressed="${presetOn === p}">${esc(p.n)}</button>`).join('')}</div>
+      <label class="tg mt-s full-only"><input type="checkbox" id="rep" ${S.rep ? 'checked' : ''}><span class="sw"></span><span class="t">Count official restatements (↺)<small>official figures that repeat an analyst or press estimate; off = independent observations only</small></span></label>
+      <p class="fine mt-s full-only">A grade says what kind of source carries a number, not whether the number is right. The shaded band runs from the lowest low to the highest high among the sources switched on; the dark tick is the median of their midpoints. ↺ marks an official figure that restates another source (off by default); ‹ marks an upper bound and › a lower bound.</p>
     </div>
     <div id="metrics"></div>
-    <div class="card"><p class="eyebrow">Summary: range with all grades vs. your selection</p><div class="tablewrap"><table class="sumtab" id="sum"></table></div></div>`;
+    <div class="card full-only"><p class="eyebrow">Summary: range with all grades vs. your selection</p><div class="tablewrap"><table class="sumtab" id="sum"></table></div></div>`;
   root.querySelectorAll('[data-g]').forEach(b => { b.onclick = () => {
     const g = b.dataset.g, on = S.grades.includes(g);
     set({ grades: on ? S.grades.filter(x => x !== g) : GRADES.filter(x => x === g || S.grades.includes(x)) });
@@ -54,18 +54,19 @@ export function renderEstimates(root, S, { onPick, set, tip }) {
     card.id = 'm-' + M.id;
     card.innerHTML = `<div class="m-head"><h3>${esc(M.name)}</h3>
         ${ps.length > 1 ? `<div class="pseg" role="group" aria-label="Period for ${esc(M.name)}">${ps.map(p => `<button type="button" class="btn" data-per="${esc(p)}" aria-pressed="${p === per}">${esc(p)}</button>`).join('')}</div>` : `<span class="fine">${esc(per)}</span>`}</div>
-      <p class="unit">${esc(unit)}${M.period_note ? ' · ' + esc(M.period_note) : ''}</p>
+      <p class="unit">${esc(unit)}${M.period_note ? `<span class="full-only"> · ${esc(M.period_note)}</span>` : ''}</p>
       <p class="m-read">${envSel ? `With grades ${esc(S.grades.join(', '))}: <b>${fmtNum(envSel.low)}${envSel.high !== envSel.low ? ' to ' + fmtNum(envSel.high) : ''}</b> from ${envSel.n} source${envSel.n === 1 ? '' : 's'}, median midpoint ${fmtNum(envSel.median)}.`
         : `<b>No source</b> with grades ${esc(S.grades.join(', ') || 'none')}${S.rep ? '' : ' (restatements off)'} for ${esc(per)}.`}
         ${envAll && (!envSel || envSel.low !== envAll.low || envSel.high !== envAll.high) ? `<span class="delta">All grades: ${fmtNum(envAll.low)} to ${fmtNum(envAll.high)} (${envAll.n}).</span>` : ''}</p>
       <div class="chartbox"><svg class="est" role="group" aria-label="Estimates for ${esc(M.name)}, ${esc(per)}"></svg></div>
-      ${qual.length ? `<p class="fine">Stated without a number: ${qual.map(e => `<button type="button" class="linkbtn" data-id="${esc(e.id)}">${esc(e.source)}</button> <span class="gtag g-${e.grade}">${e.grade}</span>${e.repeats ? ' ↺' : ''}: ${esc(e.qual)}`).join('; ')}.</p>` : ''}
-      ${other.length ? `<p class="fine">Not on this axis (different unit): ${other.map(e => `<button type="button" class="linkbtn" data-id="${esc(e.id)}">${esc(e.source)}</button> (${esc(e.unit)})`).join('; ')}.</p>` : ''}`;
+      ${qual.length ? `<p class="fine full-only">Stated without a number: ${qual.map(e => `<button type="button" class="linkbtn" data-id="${esc(e.id)}">${esc(e.source)}</button> <span class="gtag g-${e.grade}">${e.grade}</span>${e.repeats ? ' ↺' : ''}: ${esc(e.qual)}`).join('; ')}.</p>` : ''}
+      ${other.length ? `<p class="fine full-only">Not on this axis (different unit): ${other.map(e => `<button type="button" class="linkbtn" data-id="${esc(e.id)}">${esc(e.source)}</button> (${esc(e.unit)})`).join('; ')}.</p>` : ''}`;
     host.appendChild(card);
     card.querySelectorAll('[data-per]').forEach(b => { b.onclick = () => set({ per: { ...S.per, [M.id]: b.dataset.per } }); });
     card.querySelectorAll('[data-id]').forEach(b => { b.onclick = () => onPick('e:' + b.dataset.id); });
     drawRows(card.querySelector('svg'), main, S, envSel, { onPick, tip });
   }
+  clip(host, 'metrics', 2, 'measures', rerender);
   const T = root.querySelector('#sum');
   const rg = e => (e ? `${fmtNum(e.low)}${e.high !== e.low ? ' – ' + fmtNum(e.high) : ''}` : '–');
   T.innerHTML = `<thead><tr><th>Metric</th><th>Period</th><th class="num">All grades</th><th class="num">Your selection</th><th class="num">Sources</th></tr></thead><tbody>${sumRows.map(r =>

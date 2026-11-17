@@ -33,6 +33,7 @@ export const SOURCES = {
   samsung: { t: 'Electrek, "Samsung Taylor fab: Tesla AI5 chip on 2nm," 13 July 2026 (secondary report)', u: 'https://electrek.co/2026/07/13/samsung-taylor-fab-tesla-ai5-chip-2nm/' },
   epoch: { t: 'Epoch AI, "AI Chip Sales" dataset (updated 21 October 2026; estimates generated 27 August 2026)', u: 'https://epoch.ai/data/ai-chip-sales' },
   nv10q: { t: 'NVIDIA, Form 10-Q for the quarter ended 26 July 2026', u: 'https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm' },
+  rhg22: { t: 'Charlie Vest, Agatha Kratz and Reva Goujon, "The Global Economic Disruptions from a Taiwan Conflict," Rhodium Group, 14 December 2022', u: 'https://rhg.com/research/taiwan-economic-disruption/' },
   tfFab: { t: 'TrendForce, on the TSMC Fab 14 P7 power incident, 15 April 2021', u: 'https://www.trendforce.com/presscenter/news/20210415-10762.html' },
 };
 
@@ -51,6 +52,7 @@ export const FACTS = [
   { item: 'Electricity used by electronic products and electrical equipment manufacturing (MOEA category, wider than chips)', fig: '65,953 GWh of 283,846 GWh in 2024 (23.2%)', src: ['moeaElec'] },
   { item: 'TSMC electricity at Taiwan sites', fig: '23,329 GWh of purchased electricity ("indirect energy consumption") in 2024: 8.2% of Taiwan\'s use, 35% of the MOEA electronic products and electrical equipment category', src: ['tsmcSR', 'moeaElec'] },
   { item: 'Fab recovery after a short power loss', fig: '2 to 7 days to recalibrate tools (single fab, 2021)', src: ['tfFab'] },
+  { item: 'World economic activity at risk in a blockade (Rhodium Group estimate, 2022)', fig: '"well over two trillion dollars" before international responses or second-order effects; semiconductors are the largest channel. A dollar estimate, not modelled here', src: ['rhg22'] },
   { item: 'Energy imported', fig: 'over 94% (2024)', src: ['eia'] },
   { item: 'Electricity by fuel, 2025', fig: 'gas 47.8%, coal 35.4%, renewables 13.1%, nuclear 1.1% and zero since May 2025', src: ['eco', 'wnn', 'cna'] },
   { item: 'Fuel stocks', fig: 'natural gas 10 to 11 days (EIA, 2026), over 11 days (Taipei Times, Mar 2026); coal 40 to 42 days kept; oil 146 days (2024)', src: ['eia', 'ttRes', 'ttCoal'] },

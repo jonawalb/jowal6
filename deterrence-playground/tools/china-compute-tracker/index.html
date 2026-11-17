@@ -22,20 +22,23 @@
 <meta property="og:url" content="https://jwalberg.com/deterrence-playground/tools/china-compute-tracker/">
 <meta name="twitter:card" content="summary">
 </head>
-<body>
+<body class="detail-simple">
 <header id="tsm-head"></header>
 
 <main class="layout">
   <div class="stage" id="stage">
-    <p class="caveat"><b>How good is the evidence?</b> Every rule, case and estimate links to its source. Charges are allegations unless a court has convicted. Each capacity estimate carries an evidence grade, and you choose which grades count. <span class="asof" id="asof"></span></p>
+    <p class="caveat"><b>How good is the evidence?</b> Every rule, case and estimate links to its source. Charges are allegations unless a court has convicted.<span class="full-only"> Each capacity estimate carries an evidence grade, and you choose which grades count.</span> <span class="asof" id="asof"></span></p>
+
+    <div class="glance simple-only" id="glance"></div>
 
     <div class="card controls">
       <div class="row">
         <div class="tabs" id="tabs" role="tablist" aria-label="Views"></div>
         <div class="acts">
+          <div class="seg detail-sw" role="group" aria-label="Level of detail"><button type="button" class="btn" data-detail="simple" aria-pressed="true">Simple</button><button type="button" class="btn" data-detail="full" aria-pressed="false">Full detail</button></div>
           <button type="button" class="btn" id="tour-btn">Walkthrough</button>
-          <button type="button" class="btn" id="copy">Copy link</button>
-          <button type="button" class="btn" id="reset">Reset</button>
+          <button type="button" class="btn full-only" id="copy">Copy link</button>
+          <button type="button" class="btn full-only" id="reset">Reset</button>
         </div>
       </div>
     </div>

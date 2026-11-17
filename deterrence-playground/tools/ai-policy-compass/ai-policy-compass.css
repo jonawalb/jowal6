@@ -206,3 +206,25 @@
   .ap-whycard { margin-left: 0; }
   .ap-debate { padding: 12px; }
 }
+
+/* Simple | Full detail. Full detail is the complete page; Simple hides secondary material. */
+.detail-simple .full-only, .detail-full .simple-only { display: none !important; }
+.detail-simple .ap-filters.ap-active .ap-fg.full-only { display: flex !important; }
+.ap-toprow { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }
+.ap-detailsw .btn { padding: 5px 12px; font-size: 12.5px; }
+.ap-more[hidden] { display: none; }
+.ap-more { margin-top: 14px; color: var(--ink); }
+.detail-simple .ap-tlcard { border-color: transparent; box-shadow: none; padding-left: 0; padding-right: 0; background: none; }
+.detail-simple .ap-filters { margin-bottom: 2px; }
+.detail-simple .ap-listwrap { max-height: 440px; }
+.detail-simple .ap-issues button small { display: none; }
+.detail-simple .ap-cites > li:nth-child(n+2) { display: none; }
+.detail-simple .ap-holders { display: none; }
+.detail-simple .ap-camp { background: none; }
+.detail-simple .ap-debates.ap-clip .ap-debate:nth-child(n+5) { display: none; }
+
+/* Key-documents switch beside the count */
+.ap-countrow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 2px 0 4px; }
+.ap-countrow .fine { margin: 0; }
+.ap-allbtn { font-size: 12px; padding: 3px 9px; }
+.ap-hint { margin: 0 0 6px; }

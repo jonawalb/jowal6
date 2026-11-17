@@ -6,7 +6,7 @@ export const META = {
  "checked": "2026-11-16",
  "checkedText": "16 November 2026",
  "method": [
-  "Documents were chosen as the national-level texts that set or change AI policy: US executive orders, statutes, Commerce/BIS rules, NIST and OMB guidance; PRC State Council, CAC and ministry rules, national standards, MFA position papers and plans; Russian presidential decrees, federal laws, government orders and the President's AI speeches; and the UN resolutions, summit declarations and bilateral statements where the three meet. Each record links the official text. Every date, status and quote was checked against that text between 13 and 16 November 2026.",
+  "Documents were chosen as the national-level texts that set or change AI policy: US executive orders, statutes, Commerce/BIS and Treasury rules, NIST and OMB guidance, two bills that passed one chamber, and the main state frontier-AI laws (California, New York, Colorado); PRC State Council, CAC and ministry rules, national standards, MFA position papers and plans; Russian presidential decrees, federal laws, government orders and the President's AI speeches; and the UN resolutions, summit declarations and bilateral statements where the three meet. Each record links the official text. Every date, status and quote was checked against that text between 13 and 16 November 2026.",
   "Quotes are verbatim and at most 300 characters. Chinese and Russian passages are quoted in the original; the English shown above each one is this tool's own translation unless the record names an English source (DigiChina, CSET, the MFA, kremlin.ru English). Where an English translation from CSET or DigiChina is quoted, its wording is kept, including its errors.",
   "Status is legal or policy status, not effect in practice. 'Revoked' and 'rescinded' mean a later official act ended the text; 'superseded' that a newer text replaced it; 'expired' that its term ran out. Non-binding strategies and statements count as current unless replaced.",
   "UN votes come from the UN Digital Library voting records where they could be opened, and otherwise from the UN voting dataset at un-project.org, which is built from the same records. The vote on A/RES/80/23 was read from the UN Digital Library record directly.",
@@ -14,10 +14,10 @@ export const META = {
   "Placements on the 'Where do you stand?' scales are this tool's judgment of each government's official texts, on a 0 to 100 ordinal scale, each tied to a cited passage. They are not measurements and do not describe enforcement or behaviour. The reader's result is the mean absolute gap across the questions answered; questions where a government has no placement are left out of its average. The scoring code is tested in scripts/compass.test.mjs."
  ],
  "gaps": [
-  "US: the 2024 National Security Memorandum on AI has no public rescission, but its standing under the current administration is unclear, and it is marked \"status unclear\". The AI Diffusion rule was never enforced: Commerce announced its rescission on 13 May 2025, and BIS released the formal rescission on 16 Nov 2026 in the remote-access rule, which takes effect on Federal Register publication. The DoD AI Ethical Principles (2020), H20 licensing terms, the GAIN AI Act, FY2026 NDAA AI provisions, state laws such as California SB 53 and New York's RAISE Act, the OECD AI Principles and the G7 Hiroshima Code of Conduct could not be verified from primary text for this version and are left out.",
+  "US: the 2024 National Security Memorandum on AI has no public rescission, but its standing under the current administration is unclear, and it is marked \"status unclear\". The AI Diffusion rule was never enforced: Commerce announced its rescission on 13 May 2025, and the formal rescission is in the BIS remote-access rule, on Federal Register public inspection 16 Nov 2026 as FR Doc. 2026-23529 and effective on publication, scheduled for 19 Nov 2026. The DoD AI Ethical Principles (2020), H20 licensing terms, FY2026 NDAA AI provisions other than the COINS Act, state laws other than those of California, New York and Colorado, the OECD AI Principles and the G7 Hiroshima Code of Conduct could not be verified from primary text for this version and are left out. California SB 53 is described from the Governor's signing release because the legislature's site could not be fetched.",
   "China: the October 2025 Recommendations for the 15th Five-Year Plan were not fetched (the March 2026 Outline is included). China's CCW paper distinguishing 'unacceptable' and 'acceptable' autonomous weapons could not be opened. The Cybersecurity Law's new Article 20 is described from the CAC's official explainer, not the NPC statute text. No official guidance discouraging purchases of foreign AI chips was found; only the CAC's summons of Nvidia over the H20 is included. Whether the World AI Cooperation Organization has entered into force was not confirmed.",
   "Russia: no deepfake-liability law, Ministry of Industry chip-capacity plan, or successor to the 2020 regulation concept (Order 2129-r) could be confirmed from official text. The Moscow AI experiment law (123-FZ) is shown as expired at the end of its five-year term; an extension was not checked. English titles for 243-FZ, Decree 116 and Decree 124 are this tool's translations.",
-  "International: the REAIM Blueprint for Action endorsements, the Council of Europe AI Convention's status, any 2025-2026 US-China leader readout on AI or chips, the US explanation of position on resolution 79/325, and any 2026 General Assembly vote on autonomous weapons could not be verified. The CCW Seventh Review Conference opens 16 November 2026; its outcome is not reflected. The Political Declaration's launch day (16 February 2023, at REAIM in The Hague) is taken from the conference date; the State Department page says only February 2023."
+  "International: the REAIM Blueprint for Action endorsements, any 2025-2026 US-China leader readout on AI or chips, the US explanation of position on resolution 79/325, and any 2026 General Assembly vote on autonomous weapons could not be verified. The CCW Seventh Review Conference opens 16 November 2026; its outcome is not reflected. The Political Declaration's launch day (16 February 2023, at REAIM in The Hague) is taken from the conference date; the State Department page says only February 2023."
  ]
 };
 export const ISSUES = [
@@ -131,6 +131,99 @@ export const AXES = [
 ];
 export const DOCS = [
  {
+  "id": "intl-wassenaar",
+  "country": "INTL",
+  "date": "1996-07-12",
+  "title": "Wassenaar Arrangement on Export Controls for Conventional Arms and Dual-Use Goods and Technologies (Initial Elements)",
+  "issuer": "Wassenaar Arrangement Participating States",
+  "kind": "declaration",
+  "themes": [
+   "security",
+   "industry",
+   "international"
+  ],
+  "status": "non-binding",
+  "statusNote": "Founding document (the Initial Elements) agreed at the 11-12 July 1996 plenary. 42 Participating States including the Russian Federation and the United States; China is not a participant. Controls are implemented through each state's national law (wassenaar.org, 16 Nov 2026).",
+  "summary": "The multilateral regime behind most national dual-use lists for chips and computers. Decisions are taken by consensus, and Russia is a participant. Some newer controls were adopted as \"further commitments\" that EU states accepted \"also as members of the Wassenaar Arrangement\" (see Delegated Regulation 2025/2003).",
+  "quote": "All decisions are taken by consensus and the deliberations are kept in confidence.",
+  "quoteUrl": "https://www.wassenaar.org/about-us/",
+  "url": "https://www.wassenaar.org/about-us/",
+  "parties": {
+   "US": "participating state",
+   "CN": "not a participant",
+   "RU": "participating state"
+  },
+  "verified": true
+ },
+ {
+  "id": "intl-eu-russia-833",
+  "country": "INTL",
+  "date": "2014-07-31",
+  "title": "Council Regulation (EU) No 833/2014 concerning restrictive measures in view of Russia's actions destabilising the situation in Ukraine",
+  "issuer": "Council of the EU",
+  "kind": "regulation",
+  "themes": [
+   "security",
+   "industry"
+  ],
+  "status": "amended",
+  "statusNote": "Amended many times; latest consolidated version on EUR-Lex is dated 24.07.2026 (last amending act Reg 2026/1848, checked 16 Nov 2026). Art. 2a bans exports of Annex VII technology to Russia; Art. 12g requires exporters to contractually bar re-export to Russia of, among others, common high priority items (Annex XL) from 20 Mar 2024.",
+  "summary": "The EU counterpart to the US Russia export rules: it bans goods and technology that might contribute to Russia's military and technological enhancement, including electronics such as microprocessors, and requires \"no re-export to Russia\" clauses in contracts.",
+  "quote": "It shall be prohibited to sell, supply, transfer or export, directly or indirectly, goods and technology which might contribute to Russia’s military and technological enhancement, or the development of the defence and security sector, as listed in Annex VII",
+  "quoteUrl": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:02014R0833-20260724",
+  "quoteLabel": "Art. 2a(1), consolidated text of 24.07.2026",
+  "url": "https://eur-lex.europa.eu/eli/reg/2014/833/oj",
+  "parties": {
+   "US": "not a party",
+   "CN": "not a party",
+   "RU": "target"
+  },
+  "verified": true
+ },
+ {
+  "id": "cn-big-fund-2014",
+  "country": "CN",
+  "date": "2014-09-24",
+  "title": "National Integrated Circuit Industry Investment Fund ('Big Fund'), Phases I-III",
+  "titleOrig": "国家集成电路产业投资基金",
+  "issuer": "Founding shareholders under MIIT and MOF guidance (Phase I); MOF and 18 other investors (Phase III)",
+  "kind": "statement",
+  "themes": [
+   "industry",
+   "security"
+  ],
+  "status": "in-force",
+  "statusNote": "Phase I founders' agreement signed 24 Sep 2014 under MIIT and MOF guidance (Xinhua report reposted by MOF, 14 Oct 2014). Securities Daily (reposted on a Wuhan government site, 28 May 2024) gives founding dates of 26 Sep 2014 (Phase I) and 22 Oct 2019 (Phase II), and Phase III's registration on 24 May 2024 with RMB 344bn registered capital from MOF and 18 other investors, of which six state banks pledged RMB 114bn. Phase II size and later investment focus not checked against a primary source.",
+  "summary": "State-backed equity funds set up under the 2014 National IC Industry Development Promotion Outline. Phase I invested mainly in chip manufacturing, also covering design, packaging and testing, equipment and materials; Phase III targets the whole IC supply chain.",
+  "quote": "国家集成电路产业投资基金正式设立，基金将采取股权投资等多种形式，重点投资集成电路芯片制造业，推动企业提升产能水平和实行兼并重组、规范企业治理，形成良性自我发展能力。",
+  "quoteUrl": "https://www.mof.gov.cn/zhengwuxinxi/caizhengxinwen/201410/t20141014_1149902.htm",
+  "quoteLabel": "Quoted from a Xinhua report reposted by the Ministry of Finance",
+  "url": "https://www.mof.gov.cn/zhengwuxinxi/caizhengxinwen/201410/t20141014_1149902.htm",
+  "verified": true,
+  "quoteEn": "The National Integrated Circuit Industry Investment Fund has been formally established. The fund will use equity investment and other forms, investing mainly in IC chip manufacturing, to help firms raise capacity, carry out mergers and restructuring, and standardize corporate governance, so that they can sustain their own development."
+ },
+ {
+  "id": "cn-mic2025-2015",
+  "country": "CN",
+  "date": "2015-05-08",
+  "title": "Made in China 2025 (Guofa [2015] No. 28)",
+  "titleOrig": "中国制造2025",
+  "issuer": "State Council (Guofa [2015] No. 28)",
+  "kind": "plan",
+  "themes": [
+   "industry",
+   "security"
+  ],
+  "status": "non-binding",
+  "statusNote": "Dated 8 May 2015, published 19 May 2015 on gov.cn. No repeal found; its 2025 horizon has passed, and the 15th Five-Year Plan Outline (2026) carries the IC agenda forward.",
+  "summary": "Ten-year manufacturing strategy. Its first named priority area, new-generation information technology, starts with integrated circuits and dedicated equipment: better chip design tools, breakthroughs in core general-purpose chips tied to national information security, wider use of domestic chips, mastery of high-density packaging and 3D micro-assembly, and supply capacity for key manufacturing equipment.",
+  "quote": "集成电路及专用装备。着力提升集成电路设计水平，不断丰富知识产权（IP）核和设计工具，突破关系国家信息与网络安全及电子整机产业发展的核心通用芯片，提升国产芯片的应用适配能力。",
+  "quoteUrl": "https://www.gov.cn/zhengce/content/2015-05/19/content_9784.htm",
+  "url": "https://www.gov.cn/zhengce/content/2015-05/19/content_9784.htm",
+  "verified": true,
+  "quoteEn": "Integrated circuits and dedicated equipment. Raise IC design capability, steadily enrich intellectual property (IP) cores and design tools, achieve breakthroughs in core general-purpose chips that bear on national information and network security and on the electronics industry, and improve how well domestic chips can be adopted and adapted in applications."
+ },
+ {
   "id": "cn-aidp-2017",
   "country": "CN",
   "date": "2017-07-08",
@@ -175,6 +268,44 @@ export const DOCS = [
   "quoteEn": "Artificial intelligence is the future not only of Russia but of all humankind. There are colossal opportunities here, and threats that are hard to predict today. Whoever becomes the leader in this sphere will become the ruler of the world."
  },
  {
+  "id": "us-ecra-2018",
+  "country": "US",
+  "date": "2018-08-13",
+  "title": "Export Control Reform Act of 2018 (ECRA), Title XVII Subtitle B of the John S. McCain NDAA for FY2019",
+  "issuer": "Congress (Pub. L. 115-232)",
+  "kind": "law",
+  "themes": [
+   "security",
+   "industry"
+  ],
+  "status": "in-force",
+  "statusNote": "Enacted 13 Aug 2018; codified at 50 U.S.C. 4801-4852. The Oct 2022 BIS chip rule states that ECRA \"provides the legal basis for BIS's principal authorities and serves as the authority under which BIS issues this rule.\" Sec. 1758 (50 U.S.C. 4817) requires the identification and control of emerging and foundational technologies. H.R. 2683 and S. 3150 (both below) would amend it; neither is enacted (Congress.gov, 16 Nov 2026).",
+  "summary": "Gave Commerce permanent statutory authority for dual-use export controls, replacing the Export Administration Act of 1979, which had been kept in effect under IEEPA. BIS issues its chip export rules under it.",
+  "quote": "use export controls only after full consideration of the impact on the economy of the United States and only to the extent necessary-- (A) to restrict the export of items which would make a significant contribution to the military potential of any other country",
+  "quoteUrl": "https://www.govinfo.gov/content/pkg/PLAW-115publ232/html/PLAW-115publ232.htm",
+  "url": "https://www.govinfo.gov/content/pkg/PLAW-115publ232/html/PLAW-115publ232.htm",
+  "verified": true
+ },
+ {
+  "id": "us-firrma-2018",
+  "country": "US",
+  "date": "2018-08-13",
+  "title": "Foreign Investment Risk Review Modernization Act of 2018 (FIRRMA), Title XVII Subtitle A of the John S. McCain NDAA for FY2019",
+  "issuer": "Congress (Pub. L. 115-232)",
+  "kind": "law",
+  "themes": [
+   "security",
+   "industry"
+  ],
+  "status": "in-force",
+  "statusNote": "Enacted 13 Aug 2018. Treasury's implementing CFIUS rules (31 CFR parts 800 and 802, FR Docs. 2020-00188 and 2020-00187) took effect 13 Feb 2020.",
+  "summary": "Widened CFIUS review to include non-controlling foreign investments in US businesses tied to critical technologies, critical infrastructure or sensitive personal data. It was enacted in the same law as ECRA.",
+  "quote": "\"(II) produces, designs, tests, manufactures, fabricates, or develops one or more critical technologies; or \"(III) maintains or collects sensitive personal data of United States citizens that may be exploited in a manner that threatens national security.",
+  "quoteUrl": "https://www.govinfo.gov/content/pkg/PLAW-115publ232/html/PLAW-115publ232.htm",
+  "url": "https://www.govinfo.gov/content/pkg/PLAW-115publ232/html/PLAW-115publ232.htm",
+  "verified": true
+ },
+ {
   "id": "us-eo13859",
   "country": "US",
   "date": "2019-02-11",
@@ -191,6 +322,50 @@ export const DOCS = [
   "quote": "Continued American leadership in AI is of paramount importance to maintaining the economic and national security of the United States",
   "quoteUrl": "https://www.federalregister.gov/documents/2019/02/14/2019-02544/maintaining-american-leadership-in-artificial-intelligence",
   "url": "https://www.federalregister.gov/documents/2019/02/14/2019-02544/maintaining-american-leadership-in-artificial-intelligence",
+  "verified": true
+ },
+ {
+  "id": "us-bis-huawei-2019",
+  "country": "US",
+  "date": "2019-05-16",
+  "effective": "2019-05-16",
+  "title": "Addition of Entities to the Entity List (Huawei Technologies Co., Ltd. and non-U.S. affiliates)",
+  "issuer": "Commerce, Bureau of Industry and Security (final rule, FR Doc. 2019-10616)",
+  "kind": "regulation",
+  "themes": [
+   "security",
+   "industry"
+  ],
+  "status": "amended",
+  "statusNote": "Published 21 May 2019, effective 16 May 2019. More affiliates were added in Aug 2019 and Aug 2020, and the May and Aug 2020 rules added the foreign direct product control to the Huawei entries. Huawei entries remain in the Entity List (eCFR, 15 CFR part 744 supp. 4, checked 16 Nov 2026).",
+  "summary": "Added Huawei and 68 non-US affiliates to the Entity List, so exports of all items subject to the EAR to them need a license, reviewed under a presumption of denial.",
+  "quote": "The U.S. Government has determined that there is reasonable cause to believe that Huawei has been involved in activities contrary to the national security or foreign policy interests of the United States.",
+  "quoteUrl": "https://www.govinfo.gov/content/pkg/FR-2019-05-21/html/2019-10616.htm",
+  "url": "https://www.federalregister.gov/documents/2019/05/21/2019-10616/addition-of-entities-to-the-entity-list",
+  "verified": true
+ },
+ {
+  "id": "intl-oecd-ai-principles",
+  "country": "INTL",
+  "date": "2019-05-22",
+  "title": "Recommendation of the Council on Artificial Intelligence (OECD AI Principles), OECD/LEGAL/0449",
+  "issuer": "OECD Council",
+  "kind": "guidance",
+  "themes": [
+   "safety",
+   "international"
+  ],
+  "status": "non-binding",
+  "statusNote": "OECD Recommendation (not legally binding; adherents make a political commitment). Adopted 22 May 2019; AI system definition revised 8 Nov 2023; revised 3 May 2024. Adherents: the OECD members, the EU (3 May 2024) and 12 non-members, the latest Cambodia and Croatia (15 May 2026). China and Russia are not adherents. Checked legalinstruments.oecd.org (API and page) 16 Nov 2026.",
+  "summary": "The first intergovernmental AI standard: five values-based principles and five policy recommendations for trustworthy AI. G20 leaders drew on it for the G20 AI Principles in June 2019.",
+  "quote": "AI systems should be robust, secure and safe throughout their entire lifecycle so that, in conditions of normal use, foreseeable use or misuse, or other adverse conditions, they function appropriately and do not pose unreasonable safety and/or security risks.",
+  "quoteUrl": "https://legalinstruments.oecd.org/en/instruments/OECD-LEGAL-0449",
+  "url": "https://legalinstruments.oecd.org/en/instruments/OECD-LEGAL-0449",
+  "parties": {
+   "US": "adherent (OECD member)",
+   "CN": "not an adherent",
+   "RU": "not an adherent"
+  },
   "verified": true
  },
  {
@@ -253,13 +428,60 @@ export const DOCS = [
    "content"
   ],
   "status": "expired",
-  "statusNote": "Expired: the law set a five-year term from 1 Jul 2020; no extension was found.",
+  "statusNote": "Expired 1 Jul 2025: Art. 1(3) sets a five-year term from 1 Jul 2020, unchanged by the only amending law, 233-FZ of 8 Aug 2024. publication.pravo.gov.ru lists no later amending law, and the ConsultantPlus consolidated text (as amended 8 Aug 2024) notes the regime \"was established for five years\" (checked 16 Nov 2026).",
   "summary": "Creates a five-year experimental legal regime in Moscow for AI development and deployment, with special rules including use of anonymised personal data. A 2024 amendment (233-FZ) added rules on anonymised data sets.",
   "quote": "Экспериментальный правовой режим устанавливается на пять лет с 1 июля 2020 года (срок проведения эксперимента).",
   "quoteUrl": "http://kremlin.ru/acts/bank/45475",
   "url": "http://kremlin.ru/acts/bank/45475",
   "verified": true,
   "quoteEn": "The experimental legal regime is established for five years from 1 July 2020 (the term of the experiment)."
+ },
+ {
+  "id": "us-bis-huawei-fdp-2020",
+  "country": "US",
+  "date": "2020-05-15",
+  "effective": "2020-05-15",
+  "title": "Huawei foreign direct product rules: amendments to General Prohibition Three (May 2020) and follow-on final rule (Aug 2020)",
+  "issuer": "Commerce, Bureau of Industry and Security (FR Docs. 2020-10856 and 2020-18213)",
+  "kind": "regulation",
+  "themes": [
+   "security",
+   "industry"
+  ],
+  "status": "in-force",
+  "statusNote": "May interim final rule published 19 May 2020, effective 15 May 2020. The Aug rule (published 20 Aug 2020, effective 17 Aug 2020) broadened the control and added thirty-eight more Huawei affiliates to the Entity List; it states the revisions are consistent with the authority provided by ECRA.",
+  "summary": "Created an Entity List \"footnote 1\" control: foreign-made items that are the direct product of specified US-origin software or technology, or are made in plants that are themselves such a direct product, need a US license when destined for a footnoted entity. The rule applied it first to Huawei and its listed affiliates.",
+  "quote": "to impose a new control over certain foreign-produced items, when there is knowledge that such items are destined to a designated entity on the Entity List.",
+  "quoteUrl": "https://www.govinfo.gov/content/pkg/FR-2020-05-19/html/2020-10856.htm",
+  "url": "https://www.federalregister.gov/documents/2020/05/19/2020-10856/export-administration-regulations-amendments-to-general-prohibition-three-foreign-produced-direct",
+  "rel": [
+   {
+    "type": "amends",
+    "target": "us-bis-huawei-2019"
+   }
+  ],
+  "verified": true
+ },
+ {
+  "id": "cn-guofa-2020-8",
+  "country": "CN",
+  "date": "2020-07-27",
+  "effective": "2020-07-27",
+  "title": "Several Policies for Promoting High-Quality Development of the IC and Software Industries in the New Era (Guofa [2020] No. 8)",
+  "titleOrig": "新时期促进集成电路产业和软件产业高质量发展的若干政策",
+  "issuer": "State Council (Guofa [2020] No. 8)",
+  "kind": "plan",
+  "themes": [
+   "industry"
+  ],
+  "status": "in-force",
+  "statusNote": "Dated 27 Jul 2020, published 4 Aug 2020; effective on issue (item 40). No repeal found on gov.cn.",
+  "summary": "Tax, financing, R&D, import, talent and IP support for chip and software firms, scaled by process node: up to ten years without enterprise income tax for encouraged fabs at 28 nm or below operating for 15 years or more, and import-duty exemptions for qualifying fabs' production inputs and equipment parts.",
+  "quote": "国家鼓励的集成电路线宽小于28纳米（含），且经营期在15年以上的集成电路生产企业或项目，第一年至第十年免征企业所得税。",
+  "quoteUrl": "https://www.gov.cn/zhengce/content/2020-08/04/content_5532370.htm",
+  "url": "https://www.gov.cn/zhengce/content/2020-08/04/content_5532370.htm",
+  "verified": true,
+  "quoteEn": "IC production enterprises or projects encouraged by the state with line widths of 28 nanometres or less (inclusive) and an operating period of 15 years or more are exempt from enterprise income tax from the first to the tenth year."
  },
  {
   "id": "ru-fz258-erl",
@@ -303,6 +525,52 @@ export const DOCS = [
   "quoteEn": "The Concept sets out the principles on which regulation will be improved, so that favorable conditions emerge for the development of AI and robotics and existing barriers disappear in many fields, from medicine to space."
  },
  {
+  "id": "cn-uel-provisions-2020",
+  "country": "CN",
+  "date": "2020-09-19",
+  "effective": "2020-09-19",
+  "title": "Provisions on the Unreliable Entity List (MOFCOM Order 2020 No. 4)",
+  "titleOrig": "不可靠实体清单规定",
+  "issuer": "Ministry of Commerce (Order 2020 No. 4)",
+  "kind": "regulation",
+  "themes": [
+   "security",
+   "industry",
+   "international"
+  ],
+  "status": "in-force",
+  "statusNote": "In force on issue, 19 Sep 2020. MOFCOM used it repeatedly against US firms in 2025. On 9 Nov 2026 MOFCOM said that, to implement the 8th-round US-China consensus, measures on the 11 US entities listed on 4 Apr 2025 (UEL working mechanism Ann. [2025] No. 7) stay suspended for a further 2 months from 10 Nov 2026; firms may apply to trade with them. Checked 16 Nov 2026: https://www.mofcom.gov.cn/xwfb/xwfyrth/art/2026/art_137cb86f6deb442c963c906c2ca97e79.html",
+  "summary": "Lets China list foreign entities that endanger its security or cut off normal transactions with, or discriminate against, Chinese firms, and then restrict their trade and investment in China, their staff's entry, or impose fines. It is China's counterpart to the US Entity List and can reach firms that comply with US chip controls.",
+  "quote": "违反正常的市场交易原则，中断与中国企业、其他组织或者个人的正常交易，或者对中国企业、其他组织或者个人采取歧视性措施，严重损害中国企业、其他组织或者个人合法权益。",
+  "quoteUrl": "https://www.mofcom.gov.cn/zcfb/zhzc/art/2020/art_886ed76931cb4ff1911943018840c45d.html",
+  "url": "https://www.mofcom.gov.cn/zcfb/zhzc/art/2020/art_886ed76931cb4ff1911943018840c45d.html",
+  "verified": true,
+  "quoteEn": "Violating normal market transaction principles by interrupting normal transactions with Chinese enterprises, other organizations or individuals, or by taking discriminatory measures against them, seriously harming the lawful rights and interests of Chinese enterprises, other organizations or individuals."
+ },
+ {
+  "id": "cn-export-control-law-2020",
+  "country": "CN",
+  "date": "2020-10-17",
+  "effective": "2020-12-01",
+  "title": "Export Control Law of the People's Republic of China",
+  "titleOrig": "中华人民共和国出口管制法",
+  "issuer": "NPC Standing Committee (13th NPCSC, 22nd session)",
+  "kind": "law",
+  "themes": [
+   "security",
+   "industry",
+   "international"
+  ],
+  "status": "in-force",
+  "statusNote": "Adopted 17 Oct 2020, in force 1 Dec 2020 (Art. 49). No amendment found. It is cited as the legal basis of MOFCOM control announcements from Ann. 2023 No. 23 to Ann. 2025 Nos. 18 and 61. Checked npc.gov.cn text 16 Nov 2026.",
+  "summary": "China's first unified export-control statute. It sets up control lists and licensing, a control list of foreign importers and end users (Art. 18), coverage of transit and re-export (Art. 45), and a reciprocity clause allowing countermeasures against states that abuse export controls (Art. 48).",
+  "quote": "任何国家或者地区滥用出口管制措施危害中华人民共和国国家安全和利益的，中华人民共和国可以根据实际情况对该国家或者地区对等采取措施。",
+  "quoteUrl": "http://www.npc.gov.cn/c2/c30834/202010/t20201017_308277.html",
+  "url": "http://www.npc.gov.cn/c2/c30834/202010/t20201017_308277.html",
+  "verified": true,
+  "quoteEn": "Where any country or region abuses export control measures and endangers the national security and interests of the People's Republic of China, the People's Republic of China may take reciprocal measures against that country or region based on the actual situation."
+ },
+ {
   "id": "us-eo13960",
   "country": "US",
   "date": "2020-12-03",
@@ -338,6 +606,73 @@ export const DOCS = [
   "quoteUrl": "https://www.govinfo.gov/content/pkg/PLAW-116publ283/html/PLAW-116publ283.htm",
   "url": "https://www.congress.gov/bill/116th-congress/house-bill/6395",
   "verified": true
+ },
+ {
+  "id": "cn-afsl-2021",
+  "country": "CN",
+  "date": "2021-06-10",
+  "effective": "2021-06-10",
+  "title": "Anti-Foreign Sanctions Law (2021) and its implementing provisions (State Council Order No. 803, 2025)",
+  "titleOrig": "中华人民共和国反外国制裁法",
+  "issuer": "NPC Standing Committee; State Council (Order No. 803)",
+  "kind": "law",
+  "themes": [
+   "security",
+   "international"
+  ],
+  "status": "in-force",
+  "statusNote": "Law adopted and in force 10 Jun 2021 (Art. 16). Implementing provisions passed 21 Mar 2025, signed 23 Mar 2025, in force on publication (published 24 Mar 2025 on gov.cn). MOFCOM cites the law in its 9 Nov 2026 statement on Unreliable Entity List measures. Checked npc.gov.cn and gov.cn 16 Nov 2026.",
+  "summary": "Lets the state put people and entities involved in foreign discriminatory restrictive measures on a countermeasure list and bars anyone from implementing such measures (Art. 12). Order 803 (Art. 9) spells out further countermeasures, including bans on import and export activity, investment in China, exports of items to the target, and provision of data and personal information.",
+  "quote": "任何组织和个人均不得执行或者协助执行外国国家对我国公民、组织采取的歧视性限制措施。",
+  "quoteUrl": "http://www.npc.gov.cn/npc/c2/c30834/202106/t20210610_311892.html",
+  "url": "http://www.npc.gov.cn/npc/c2/c30834/202106/t20210610_311892.html",
+  "verified": true,
+  "quoteEn": "No organization or individual may implement or assist in implementing discriminatory restrictive measures taken by a foreign state against Chinese citizens or organizations."
+ },
+ {
+  "id": "cn-data-security-law-2021",
+  "country": "CN",
+  "date": "2021-06-10",
+  "effective": "2021-09-01",
+  "title": "Data Security Law of the People's Republic of China",
+  "titleOrig": "中华人民共和国数据安全法",
+  "issuer": "NPC Standing Committee (13th NPCSC, 29th session)",
+  "kind": "law",
+  "themes": [
+   "security",
+   "international"
+  ],
+  "status": "in-force",
+  "statusNote": "Adopted 10 Jun 2021, in force 1 Sep 2021 (Art. 55). No amendment found. Checked npc.gov.cn text 16 Nov 2026.",
+  "summary": "Sets data classification and duties for important data, national security review of data activities, export control of data that are controlled items (Art. 25), reciprocal measures against discriminatory foreign data and technology restrictions (Art. 26), and a ban on giving data stored in China to foreign judicial or law-enforcement bodies without approval (Art. 36).",
+  "quote": "国家对与维护国家安全和利益、履行国际义务相关的属于管制物项的数据依法实施出口管制。",
+  "quoteUrl": "http://www.npc.gov.cn/npc/c2/c30834/202106/t20210610_311888.html",
+  "url": "http://www.npc.gov.cn/npc/c2/c30834/202106/t20210610_311888.html",
+  "verified": true,
+  "quoteEn": "The state implements export controls in accordance with law on data that are controlled items related to safeguarding national security and interests and fulfilling international obligations."
+ },
+ {
+  "id": "cn-pipl-2021",
+  "country": "CN",
+  "date": "2021-08-20",
+  "effective": "2021-11-01",
+  "title": "Personal Information Protection Law of the People's Republic of China",
+  "titleOrig": "中华人民共和国个人信息保护法",
+  "issuer": "NPC Standing Committee (13th NPCSC, 30th session)",
+  "kind": "law",
+  "themes": [
+   "security",
+   "content",
+   "international"
+  ],
+  "status": "in-force",
+  "statusNote": "Adopted 20 Aug 2021, in force 1 Nov 2021 (Art. 74). No amendment found. Checked npc.gov.cn text 16 Nov 2026.",
+  "summary": "China's general privacy law. It sets lawful bases for processing, transparency and fairness duties for automated decision-making (Art. 24), cross-border transfer only after a CAC security assessment, certification or a standard contract (Art. 38), reach over processing abroad of data on people in China (Art. 3), a list of foreign entities barred from receiving data (Art. 42) and reciprocal measures (Art. 43).",
+  "quote": "个人信息处理者因业务等需要，确需向中华人民共和国境外提供个人信息的，应当具备下列条件之一：（一）依照本法第四十条的规定通过国家网信部门组织的安全评估",
+  "quoteUrl": "http://www.npc.gov.cn/npc/c2/c30834/202108/t20210820_313088.html",
+  "url": "http://www.npc.gov.cn/npc/c2/c30834/202108/t20210820_313088.html",
+  "verified": true,
+  "quoteEn": "Where a personal information handler truly needs to provide personal information outside the People's Republic of China for business or other needs, it shall meet one of the following conditions: (1) passing a security assessment organized by the national cyberspace department in accordance with Article 40 of this Law"
  },
  {
   "id": "cn-ethical-norms-2021",
@@ -429,6 +764,96 @@ export const DOCS = [
   "verified": true
  },
  {
+  "id": "intl-us-russia-ear-7468",
+  "country": "INTL",
+  "date": "2022-02-24",
+  "effective": "2022-02-24",
+  "title": "Implementation of Sanctions Against Russia Under the Export Administration Regulations (87 FR 12226), codified at 15 CFR 746.8",
+  "issuer": "US Department of Commerce, Bureau of Industry and Security",
+  "kind": "regulation",
+  "themes": [
+   "security",
+   "industry"
+  ],
+  "status": "amended",
+  "statusNote": "Final rule effective 24 Feb 2022, published 3 Mar 2022 (FR Doc. 2022-04300). Section 746.8 has been amended many times since, including to add Belarus, and is current in the eCFR on 16 Nov 2026.",
+  "summary": "Requires a licence to export any item on the Commerce Control List to Russia (later also Belarus), adds Russia foreign direct product rules that reach foreign-made items built with US technology, and reviews most applications under a policy of denial. It is the US legal basis of the chip and computer embargo on Russia.",
+  "quote": "A license is required to export, reexport, or transfer (in-country) to or within Russia or Belarus any item subject to the EAR and specified in any Export Control Classification Number (ECCN) on the CCL.",
+  "quoteUrl": "https://www.ecfr.gov/current/title-15/subtitle-B/chapter-VII/subchapter-C/part-746/section-746.8",
+  "quoteLabel": "15 CFR 746.8(a)(1), current eCFR text",
+  "url": "https://www.federalregister.gov/documents/2022/03/03/2022-04300/implementation-of-sanctions-against-russia-under-the-export-administration-regulations-ear",
+  "parties": {
+   "US": "issuer",
+   "CN": "not targeted (third-country diversion covered by FDP rules)",
+   "RU": "target"
+  },
+  "verified": true
+ },
+ {
+  "id": "ru-gov506-parallel-import",
+  "country": "RU",
+  "date": "2022-03-29",
+  "effective": "2022-03-30",
+  "title": "On Goods (Groups of Goods) to Which Certain Provisions of the Civil Code on the Protection of Exclusive Rights Cannot Be Applied (parallel imports)",
+  "titleOrig": "О товарах (группах товаров), в отношении которых не могут применяться отдельные положения Гражданского кодекса Российской Федерации о защите исключительных прав на результаты интеллектуальной деятельности, выраженные в таких товарах, и средства индивидуализации, которыми такие товары маркированы",
+  "issuer": "Government Resolution No. 506",
+  "kind": "decree",
+  "themes": [
+   "industry"
+  ],
+  "status": "amended",
+  "statusNote": "In force from official publication (30 Mar 2022). Point 1 restated by Government Resolution No. 1057 of 28 Jun 2023, which replaced the references to Civil Code Arts. 1359(6) and 1487 with Arts. 1252, 1254, 1286.1(5), 1301, 1311, 1406.1, 1446(1), 1472, 1515 and 1537. The goods list itself is set by Ministry of Industry and Trade order and was not checked.",
+  "summary": "Lets the Ministry of Industry and Trade list goods for which Civil Code rules protecting trademarks and other exclusive rights do not apply, if the rights holder or someone with its consent put the goods on the market abroad. This legalised parallel imports after Western firms left Russia in 2022.",
+  "quote": "Установить, что Министерство промышленности и торговли Российской Федерации по предложениям федеральных органов исполнительной власти утверждает перечень товаров (групп товаров)",
+  "quoteUrl": "http://publication.pravo.gov.ru/document/0001202203300003",
+  "quoteLabel": "Point 1, official publication (wording unchanged by Resolution No. 1057)",
+  "url": "http://publication.pravo.gov.ru/document/0001202203300003",
+  "verified": true,
+  "quoteEn": "To establish that the Ministry of Industry and Trade of the Russian Federation, on proposals from federal executive bodies, approves a list of goods (groups of goods)"
+ },
+ {
+  "id": "ru-decree166-cii",
+  "country": "RU",
+  "date": "2022-03-30",
+  "effective": "2022-03-30",
+  "title": "On Measures to Ensure the Technological Independence and Security of the Critical Information Infrastructure of the Russian Federation",
+  "titleOrig": "О мерах по обеспечению технологической независимости и безопасности критической информационной инфраструктуры Российской Федерации",
+  "issuer": "Presidential Decree No. 166",
+  "kind": "decree",
+  "themes": [
+   "security",
+   "industry"
+  ],
+  "status": "amended",
+  "statusNote": "Amended by Decree No. 887 of 22 Nov 2023 (adds coordination with the Central Bank to point 1(a)) and Decree No. 214 of 7 Apr 2025 (point 1(b) now applies \"unless otherwise established by federal law\"). Texts read on publication.pravo.gov.ru, 16 Nov 2026.",
+  "summary": "From 31 Mar 2022, customers buying under Federal Law 223-FZ may not buy foreign software, including software inside hardware-software systems, for their significant critical information infrastructure without approval from a federal body. From 1 Jan 2025 state bodies and those customers may not use foreign software on such objects. It is the legal core of import substitution in state and critical IT.",
+  "quote": "с 1 января 2025 г. органам государственной власти, заказчикам запрещается использовать иностранное программное обеспечение на принадлежащих им значимых объектах критической информационной инфраструктуры",
+  "quoteUrl": "http://publication.pravo.gov.ru/document/0001202203300001",
+  "quoteLabel": "Point 1(b), official publication (publication.pravo.gov.ru)",
+  "url": "http://publication.pravo.gov.ru/document/0001202203300001",
+  "verified": true,
+  "quoteEn": "from 1 January 2025, state bodies and [covered] customers are prohibited from using foreign software at the significant critical information infrastructure objects that belong to them"
+ },
+ {
+  "id": "us-chips-act-2022",
+  "country": "US",
+  "date": "2022-08-09",
+  "title": "CHIPS and Science Act (Division A: CHIPS Act of 2022)",
+  "issuer": "Congress (Pub. L. 117-167, H.R. 4346)",
+  "kind": "law",
+  "themes": [
+   "industry",
+   "security"
+  ],
+  "status": "amended",
+  "statusNote": "Checked 16 Nov 2026. Pub. L. 119-21 (4 Jul 2025) raised the 48D credit from 25 to 35 percent for property placed in service after 31 Dec 2025. Pub. L. 118-105 (Building Chips in America Act, 2 Oct 2024) amended 15 U.S.C. 4652 so that some CHIPS assistance is not a major federal action under NEPA (work begun by 31 Dec 2024, loans or loan guarantees, or grants of 10 percent or less of project cost) and added categorical exclusions. No change to the expansion clawback (15 U.S.C. 4652(a)(6)) was found in later public laws reviewed. EO 14255 (31 Mar 2025) put the CHIPS Program Office under the US Investment Accelerator. Intel's 8-K of 29 Aug 2025 reports that on 27 Aug 2025 Commerce took 274,583,000 Intel shares for $5.695bn in CHIPS grant funds, with another 158,740,000 escrowed shares tied to $3.17bn in Secure Enclave payments and a warrant for 240,516,150 shares exercisable only if Intel's stake in its foundry falls below 51 percent; the China expansion and joint-research restrictions still apply.",
+  "summary": "Appropriated $50 billion to a CHIPS for America Fund, $39 billion of it for manufacturing incentives (including $2 billion for mature-node chips and up to $6 billion in loan subsidy costs) and most of the rest for R&D (the National Semiconductor Technology Center, advanced packaging and metrology programs). It also created a 25 percent investment tax credit for chip and chipmaking-equipment plants whose construction begins by 31 Dec 2026. As a China guardrail, award recipients must agree not to materially expand chipmaking capacity in China or another foreign country of concern for 10 years, with exceptions for existing legacy-chip capacity and for new legacy-chip capacity that mainly serves that country's market; the Secretary must recover the full award if a violation is not remedied, unless a national-security mitigation is agreed. Division B's science programs (a new NSF technology directorate, regional tech hubs) are authorizations, not appropriations.",
+  "quote": "the covered entity may not engage in any significant transaction, as defined in the agreement, involving the material expansion of semiconductor manufacturing capacity in the People's Republic of China or any other foreign country of concern.",
+  "quoteUrl": "https://www.govinfo.gov/content/pkg/PLAW-117publ167/html/PLAW-117publ167.htm",
+  "url": "https://www.congress.gov/bill/117th-congress/house-bill/4346",
+  "verified": true
+ },
+ {
   "id": "us-bis-oct2022",
   "country": "US",
   "date": "2022-10-07",
@@ -441,7 +866,7 @@ export const DOCS = [
    "industry"
   ],
   "status": "amended",
-  "statusNote": "Revised by BIS rules of Oct 2023 (FR Doc. 2023-23055), Dec 2024, Jan 2025 and Jan 2026.",
+  "statusNote": "Revised by BIS rules of Oct 2023 (FR Doc. 2023-23055), Dec 2024, Jan 2025 and Jan 2026. Issued under ECRA (50 U.S.C. 4801-4852), which the rule names as its legal basis.",
   "summary": "Imposed license requirements on exports of advanced computing chips and certain chipmaking tools to China, added supercomputer and semiconductor end-use controls, and restricted US-person support for advanced chip production in China.",
   "quote": "the Bureau of Industry and Security (BIS) is amending the Export Administration Regulations (EAR) to implement necessary controls on advanced computing integrated circuits (ICs), computer commodities that contain such ICs, and certain semiconductor manufacturing items.",
   "quoteUrl": "https://www.federalregister.gov/documents/2022/10/13/2022-21658/implementation-of-additional-export-controls-certain-advanced-computing-and-semiconductor-manufacturing-items",
@@ -533,6 +958,128 @@ export const DOCS = [
   "verified": true
  },
  {
+  "id": "ru-concept-1315r",
+  "country": "RU",
+  "date": "2023-05-20",
+  "title": "Concept of Technological Development to 2030 (Government Order No. 1315-r of 20 May 2023)",
+  "titleOrig": "Распоряжение от 20 мая 2023 года №1315-р",
+  "issuer": "Government of the Russian Federation",
+  "kind": "strategy",
+  "themes": [
+   "industry"
+  ],
+  "status": "in-force",
+  "statusNote": "Approved by Government Order No. 1315-r; announced on government.ru on 25 May 2023. A later replacement was not searched for.",
+  "summary": "Russia's technology-sovereignty concept. By 2030 the economy is to produce chips and other microelectronics, high-precision machine tools and robotics, aerospace equipment, drones, medicines and medical equipment, telecoms equipment and software, with domestic goods at least 75% of consumption of these products.",
+  "quote": "к 2030 году национальная экономика должна обеспечивать производство высокотехнологичной продукции – чипов и другой микроэлектроники, высокоточных станков и робототехники",
+  "quoteUrl": "http://government.ru/docs/48570/",
+  "quoteLabel": "Quoted from the government.ru announcement of 25 May 2023",
+  "url": "http://government.ru/docs/48570/",
+  "verified": true,
+  "quoteEn": "by 2030 the national economy must ensure production of high-technology products: chips and other microelectronics, high-precision machine tools and robotics"
+ },
+ {
+  "id": "cn-cac-micron-2023",
+  "country": "CN",
+  "date": "2023-05-21",
+  "title": "CAC: Micron products sold in China fail cybersecurity review",
+  "titleOrig": "美光公司在华销售的产品未通过网络安全审查",
+  "issuer": "Cybersecurity Review Office, Cyberspace Administration of China",
+  "kind": "statement",
+  "themes": [
+   "security",
+   "industry"
+  ],
+  "status": "in-force",
+  "statusNote": "Decision announced 21 May 2023. No reversal found as of 16 Nov 2026.",
+  "summary": "The Cybersecurity Review Office found 'relatively serious' security risks in Micron products sold in China and told critical-information-infrastructure operators to stop buying them. It was China's first security-review action against a US chipmaker and a precedent for the 2025 H20 summons.",
+  "quote": "按照《网络安全法》等法律法规，我国内关键信息基础设施的运营者应停止采购美光公司产品。",
+  "quoteUrl": "https://www.cac.gov.cn/2023-05/21/c_1686348043518073.htm",
+  "url": "https://www.cac.gov.cn/2023-05/21/c_1686348043518073.htm",
+  "verified": true,
+  "quoteEn": "In accordance with the Cybersecurity Law and other laws and regulations, operators of critical information infrastructure in China should stop purchasing Micron's products."
+ },
+ {
+  "id": "intl-nl-sme-controls",
+  "country": "INTL",
+  "date": "2023-06-30",
+  "effective": "2023-09-01",
+  "title": "Netherlands national export control measure for advanced semiconductor manufacturing equipment",
+  "issuer": "Government of the Netherlands (Minister for Foreign Trade and Development Cooperation)",
+  "kind": "regulation",
+  "themes": [
+   "security",
+   "industry"
+  ],
+  "status": "amended",
+  "statusNote": "Published 30 Jun 2023 and in force 1 Sep 2023 (deep ultraviolet lithography equipment). Expanded from 7 Sep 2024 and again from 1 Apr 2025 (adds, for example, specific measuring and inspection equipment). Applies to exports outside the EU and requires a national authorisation. No later change found on government.nl (16 Nov 2026).",
+  "summary": "The Dutch licensing requirement on advanced chipmaking tools, starting with deep ultraviolet (DUV) lithography equipment. With the US and Japanese rules it forms the allied control on China's access to advanced semiconductor manufacturing equipment.",
+  "quote": "This new authorisation requirement is the second time the national export control measure has been amended since it was introduced on 1 September 2023.",
+  "quoteUrl": "https://www.government.nl/latest/news/2025/01/15/klever-export-controls-on-advanced-semiconductor-manufacturing-equipment-to-be-tightened",
+  "url": "https://www.government.nl/latest/news/2024/09/06/the-netherlands-expands-export-control-measure-advanced-semiconductor-manufacturing-equipment",
+  "parties": {
+   "US": "not a party (national measure, aligned with US controls)",
+   "CN": "principal destination affected",
+   "RU": "not involved"
+  },
+  "verified": true
+ },
+ {
+  "id": "intl-jp-sme-controls",
+  "country": "INTL",
+  "date": "2023-07-01",
+  "title": "Japan: export controls on 23 types of advanced semiconductor manufacturing equipment (Foreign Exchange and Foreign Trade Act)",
+  "issuer": "Ministry of Economy, Trade and Industry (METI), Japan",
+  "kind": "regulation",
+  "themes": [
+   "security",
+   "industry"
+  ],
+  "status": "in-force",
+  "statusNote": "In effect from July 2023 per METI White Paper on International Economy and Trade 2024 (ch. 2-1-2). Exact promulgation and effective dates, and later list changes, were not read from a METI primary page. Secondary sources (CSIS translation) give issue on 23 May 2023 and effect on 23 Jul 2023.",
+  "summary": "Japan added 23 types of semiconductor manufacturing equipment to its export controls under the Foreign Exchange and Foreign Trade Act, covering exports to all regions, in step with US and Dutch controls on China.",
+  "quote": "In July 2023, in order to maintain international peace and security, Japan strengthened export controls on advanced semiconductor-manufacturing equipment and added the export of 23 types of semiconductor-manufacturing equipment to all regions to the scope of control",
+  "quoteUrl": "https://www.meti.go.jp/english/report/data/wp2024/pdf/2-1-2.pdf",
+  "quoteLabel": "METI White Paper 2024, ch. 2-1-2",
+  "datePrecision": "month",
+  "url": "https://www.meti.go.jp/english/report/data/wp2024/pdf/2-1-2.pdf",
+  "parties": {
+   "US": "not a party (national measure, aligned with US controls)",
+   "CN": "principal destination affected",
+   "RU": "not involved"
+  },
+  "verified": true
+ },
+ {
+  "id": "cn-mofcom-gage-2023",
+  "country": "CN",
+  "date": "2023-07-03",
+  "effective": "2023-08-01",
+  "title": "MOFCOM/GACC Announcement 2023 No. 23: export controls on gallium- and germanium-related items",
+  "titleOrig": "商务部 海关总署公告2023年第23号 关于对镓、锗相关物项实施出口管制的公告",
+  "issuer": "Ministry of Commerce + General Administration of Customs",
+  "kind": "regulation",
+  "themes": [
+   "security",
+   "industry",
+   "international"
+  ],
+  "status": "in-force",
+  "statusNote": "Announced 3 Jul 2023, in force 1 Aug 2023 (para. 8). No repeal or suspension of this announcement found in MOFCOM's 2025 and 2026 announcement indexes (checked 16 Nov 2026); licensing still applies. Only the separate US-specific denial policy in Ann. 2024 No. 46, para. 2, is suspended (to 27 Nov 2026).",
+  "summary": "Requires export licenses for gallium and germanium metals and compounds, including gallium nitride, gallium oxide, gallium arsenide, germanium dioxide and germanium tetrachloride. These are inputs to compound semiconductors and chip production; it was China's first mineral control of the chip-control era.",
+  "quote": "根据《中华人民共和国出口管制法》《中华人民共和国对外贸易法》《中华人民共和国海关法》有关规定，为维护国家安全和利益，经国务院批准，决定对镓、锗相关物项实施出口管制。",
+  "quoteUrl": "https://www.mofcom.gov.cn/zcfb/dwmygl/art/2023/art_52b9a321087f402bb3d310d18b07967e.html",
+  "url": "https://www.mofcom.gov.cn/zcfb/dwmygl/art/2023/art_52b9a321087f402bb3d310d18b07967e.html",
+  "rel": [
+   {
+    "type": "implements",
+    "target": "cn-export-control-law-2020"
+   }
+  ],
+  "verified": true,
+  "quoteEn": "In accordance with the relevant provisions of the Export Control Law, the Foreign Trade Law and the Customs Law of the People's Republic of China, to safeguard national security and interests and with the approval of the State Council, it has been decided to impose export controls on gallium- and germanium-related items."
+ },
+ {
   "id": "cn-genai-measures-2023",
   "country": "CN",
   "date": "2023-07-10",
@@ -557,6 +1104,87 @@ export const DOCS = [
    {
     "type": "implements",
     "target": "cn-algorithm-provisions-2021"
+   }
+  ],
+  "verified": true
+ },
+ {
+  "id": "us-voluntary-commitments-2023",
+  "country": "US",
+  "date": "2023-07-21",
+  "title": "Voluntary Commitments from Leading Artificial Intelligence Companies to Manage the Risks Posed by AI",
+  "issuer": "White House (Biden administration)",
+  "kind": "statement",
+  "themes": [
+   "safety"
+  ],
+  "status": "unclear",
+  "statusNote": "Voluntary, not binding. Eight more companies (Adobe, Cohere, IBM, Nvidia, Palantir, Salesforce, Scale AI and Stability) joined on 12 Sep 2023 (White House fact sheet, bidenwhitehouse.archives.gov). No formal withdrawal was found as of 16 Nov 2026.",
+  "summary": "The first seven signers (Amazon, Anthropic, Google, Inflection, Meta, Microsoft and OpenAI) committed to security testing of their AI systems before release, sharing information on risks, investing in security for unreleased model weights, and building ways, such as watermarking, for users to know when content is AI-generated.",
+  "quote": "Amazon, Anthropic, Google, Inflection, Meta, Microsoft, and OpenAI - to announce that the Biden-Harris Administration has secured voluntary commitments from these companies to help move toward safe, secure, and transparent development of AI technology.",
+  "quoteUrl": "https://bidenwhitehouse.archives.gov/briefing-room/statements-releases/2023/07/21/fact-sheet-biden-harris-administration-secures-voluntary-commitments-from-leading-artificial-intelligence-companies-to-manage-the-risks-posed-by-ai/",
+  "url": "https://bidenwhitehouse.archives.gov/wp-content/uploads/2023/07/Ensuring-Safe-Secure-and-Trustworthy-AI.pdf",
+  "verified": true
+ },
+ {
+  "id": "us-eo14105",
+  "country": "US",
+  "date": "2023-08-09",
+  "title": "Addressing United States Investments in Certain National Security Technologies and Products in Countries of Concern",
+  "issuer": "President (EO 14105)",
+  "kind": "executive-order",
+  "themes": [
+   "security",
+   "industry"
+  ],
+  "status": "in-force",
+  "statusNote": "Published 11 Aug 2023. The national emergency it declared was continued by notice published 5 Aug 2026. Implemented by Treasury's 31 CFR part 850 rule (effective 2 Jan 2025). The COINS Act (Pub. L. 119-60) now puts an outbound investment program in statute.",
+  "summary": "Declared a national emergency and directed Treasury to write rules that prohibit some US investments in, and require notice of others in, firms from countries of concern working on semiconductors and microelectronics, quantum information technologies and AI.",
+  "quote": "Rapid advancement in semiconductors and microelectronics, quantum information technologies, and artificial intelligence capabilities by these countries significantly enhances their ability to conduct activities that threaten the national security of the United States.",
+  "quoteUrl": "https://www.govinfo.gov/content/pkg/FR-2023-08-11/html/2023-17449.htm",
+  "url": "https://www.federalregister.gov/documents/2023/08/11/2023-17449/addressing-united-states-investments-in-certain-national-security-technologies-and-products-in",
+  "verified": true
+ },
+ {
+  "id": "intl-eu-chips-act",
+  "country": "INTL",
+  "date": "2023-09-13",
+  "title": "Regulation (EU) 2023/1781 establishing a framework of measures for strengthening Europe's semiconductor ecosystem (Chips Act)",
+  "issuer": "European Parliament and Council of the EU",
+  "kind": "regulation",
+  "themes": [
+   "industry"
+  ],
+  "status": "in-force",
+  "statusNote": "In force; EUR-Lex lists no amending act (16 Nov 2026). The Commission adopted a proposal for a Chips Act 2.0 on 3 Jun 2026; it had not been adopted by 16 Nov 2026.",
+  "summary": "The EU's chip industrial-policy law: the Chips for Europe Initiative, support for first-of-a-kind production facilities, and monitoring and crisis response for semiconductor supply.",
+  "quote": "This Regulation establishes a framework for strengthening the semiconductor ecosystem at Union level, in particular through the following measures: (a) the establishment of the Chips for Europe Initiative",
+  "quoteUrl": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32023R1781",
+  "url": "https://eur-lex.europa.eu/eli/reg/2023/1781/oj",
+  "verified": true
+ },
+ {
+  "id": "us-chips-guardrails-2023",
+  "country": "US",
+  "date": "2023-09-25",
+  "effective": "2023-11-24",
+  "title": "Preventing the Improper Use of CHIPS Act Funding",
+  "issuer": "Commerce, NIST CHIPS Program Office (final rule, 88 FR 65600, FR Doc. 2023-20471)",
+  "kind": "regulation",
+  "themes": [
+   "security",
+   "industry"
+  ],
+  "status": "amended",
+  "statusNote": "Published 25 Sep 2023, effective 24 Nov 2023 (15 CFR part 231). Amended by FR Doc. 2023-28627 (88 FR 89572, effective 28 Dec 2023), which makes construction of any new chip facility a 'material expansion'. The eCFR shows no later change to part 231 (checked 16 Nov 2026).",
+  "summary": "Implements the CHIPS Act national security guardrails at 15 CFR part 231. For 10 years from the award, recipients and their affiliates may not materially expand chipmaking capacity in a foreign country of concern (legacy-chip exceptions apply). During the term of the award they may not knowingly do joint research or technology licensing with a foreign entity of concern on technology that raises national security concerns.",
+  "quote": "the covered entity and members of the affiliated group may not engage in any significant transaction involving the material expansion of semiconductor manufacturing capacity in a foreign country of concern",
+  "quoteUrl": "https://www.govinfo.gov/content/pkg/FR-2023-09-25/html/2023-20471.htm",
+  "url": "https://www.federalregister.gov/documents/2023/09/25/2023-20471/preventing-the-improper-use-of-chips-act-funding",
+  "rel": [
+   {
+    "type": "implements",
+    "target": "us-chips-act-2022"
    }
   ],
   "verified": true
@@ -604,6 +1232,59 @@ export const DOCS = [
   "quote": "We support discussions within the United Nations framework to establish an international institution to govern AI, and to coordinate efforts to address major issues concerning international AI development, security, and governance.",
   "quoteUrl": "https://www.cac.gov.cn/2023-10/18/c_1699291032884978.htm",
   "url": "https://www.cac.gov.cn/2023-10/18/c_1699291032884978.htm",
+  "verified": true
+ },
+ {
+  "id": "cn-mofcom-graphite-antimony-2023",
+  "country": "CN",
+  "date": "2023-10-20",
+  "effective": "2023-12-01",
+  "title": "MOFCOM/GACC export controls on graphite (Ann. 2023 No. 39) and on antimony and superhard materials (Ann. 2024 No. 33)",
+  "titleOrig": "商务部 海关总署公告2023年第39号 关于优化调整石墨物项临时出口管制措施的公告",
+  "issuer": "Ministry of Commerce + General Administration of Customs",
+  "kind": "regulation",
+  "themes": [
+   "security",
+   "industry",
+   "international"
+  ],
+  "status": "in-force",
+  "statusNote": "Graphite: announced 20 Oct 2023, in force 1 Dec 2023, replacing the 2006 temporary graphite controls. Antimony and superhard materials: Ann. 2024 No. 33, announced 15 Aug 2024, in force 15 Sep 2024. No repeal or suspension of either found in MOFCOM's 2025 and 2026 announcement indexes (checked 16 Nov 2026). Only the US-specific denial policy in Ann. 2024 No. 46, para. 2, is suspended (to 27 Nov 2026).",
+  "summary": "Licensing for high-purity, high-strength, high-density synthetic graphite and for natural flake graphite and its products (including spherical graphite), used in battery anodes; Ann. 2024 No. 33 adds antimony items and superhard-material equipment such as six-sided presses for synthetic diamond.",
+  "quote": "高纯度（纯度 >99.9%) 、高强度（抗折强度 >30Mpa ）、高密度（密度 >1.73 克 / 立方厘米）的人造石墨材料及其制品",
+  "quoteUrl": "https://www.mofcom.gov.cn/zcfb/blgg/art/2023/art_f6b1bc49e2c8482f8eb749012bc66dec.html",
+  "url": "https://www.mofcom.gov.cn/zcfb/blgg/art/2023/art_f6b1bc49e2c8482f8eb749012bc66dec.html",
+  "rel": [
+   {
+    "type": "implements",
+    "target": "cn-export-control-law-2020"
+   }
+  ],
+  "verified": true,
+  "quoteEn": "Synthetic graphite materials and products of high purity (purity >99.9%), high strength (flexural strength >30 MPa) and high density (density >1.73 g/cm3)"
+ },
+ {
+  "id": "intl-g7-hiroshima",
+  "country": "INTL",
+  "date": "2023-10-30",
+  "title": "G7 Leaders' Statement on the Hiroshima AI Process, with the International Guiding Principles and International Code of Conduct for Organizations Developing Advanced AI Systems",
+  "issuer": "G7 Leaders (Japanese Presidency)",
+  "kind": "statement",
+  "themes": [
+   "safety",
+   "international"
+  ],
+  "status": "non-binding",
+  "statusNote": "MOFA page dated 30 Oct 2023 lists the statement and the two attached texts. The attached PDFs return 403 to scripts, so the code of conduct wording is not quoted here; its later OECD reporting framework was not checked.",
+  "summary": "The G7's voluntary guiding principles and code of conduct for organisations developing advanced AI systems, endorsed by G7 leaders.",
+  "quote": "On 30 October (JST), the G7 Leaders issued the G7 Leaders' Statement on the Hiroshima AI Process.",
+  "quoteUrl": "https://www.mofa.go.jp/ecm/ec/page5e_000076.html",
+  "url": "https://www.mofa.go.jp/ecm/ec/page5e_000076.html",
+  "parties": {
+   "US": "G7 member, issued",
+   "CN": "not a G7 member",
+   "RU": "not a G7 member"
+  },
   "verified": true
  },
  {
@@ -722,6 +1403,31 @@ export const DOCS = [
   "quoteEn": "by 1 July 2024, ensure that the federal project 'Artificial Intelligence' is included in the national project on building a data economy for the period to 2030"
  },
  {
+  "id": "intl-chpl",
+  "country": "INTL",
+  "date": "2024-02-23",
+  "title": "Common High Priority Items List (CHPL)",
+  "issuer": "US Bureau of Industry and Security, with the European Union, Japan and the United Kingdom",
+  "kind": "guidance",
+  "themes": [
+   "security",
+   "industry",
+   "international"
+  ],
+  "status": "non-binding",
+  "statusNote": "bis.gov page dated 23 Feb 2024 (current version; the page says it may be updated). The EU makes the list binding for contracts through Annex XL and Article 12g of Reg (EU) 833/2014 (re-export to Russia must be contractually barred from 20 Mar 2024).",
+  "summary": "A shared list of 50 six-digit HS codes, in four tiers, for items Russia seeks for its weapons programmes. BIS gives priority to the nine HS codes in Tiers 1 and 2, which cover items such as integrated circuits and RF transceiver modules. Exporters and banks use it to screen for diversion through third countries.",
+  "quote": "Working with the European Union , Japan, and the United Kingdom , BIS has developed the Common High Priority List (CHPL), which includes 50 items identified by six-digit Harmonized System (HS) Codes that Russia seeks to procure for its weapons programs.",
+  "quoteUrl": "https://www.bis.gov/licensing/country-guidance/common-high-priority-items-list-chpl",
+  "url": "https://www.bis.gov/licensing/country-guidance/common-high-priority-items-list-chpl",
+  "parties": {
+   "US": "co-author",
+   "CN": "not a party",
+   "RU": "target"
+  },
+  "verified": true
+ },
+ {
   "id": "cn-tc260-003-2024",
   "country": "CN",
   "date": "2024-02-29",
@@ -798,7 +1504,7 @@ export const DOCS = [
    "international"
   ],
   "status": "non-binding",
-  "statusNote": "One-off intergovernmental meeting; no later round found in official US sources fetched",
+  "statusNote": "One-off meeting in this format; no second round found in official US sources fetched. A separate US-China AI dialogue was set up under the economic and trade consultation mechanism in Sep 2026 (see us-cn-ai-dialogue-2026).",
   "summary": "US and PRC interagency delegations met in Geneva on 14 May 2024 to discuss AI risk and safety, following the November 2023 Woodside summit. The US side raised concerns over misuse of AI, including by the PRC.",
   "quote": "The United States also raised concerns over the misuse of AI, including by the PRC.",
   "quoteUrl": "https://bidenwhitehouse.archives.gov/briefing-room/statements-releases/2024/05/15/statement-from-nsc-spokesperson-adrienne-watson-on-the-u-s-prc-talks-on-ai-risk-and-safety/",
@@ -808,6 +1514,24 @@ export const DOCS = [
    "CN": "participated (MFA, MOST, NDRC, CAC, MIIT, CCP Central Foreign Affairs Commission Office)",
    "RU": "not involved"
   },
+  "verified": true
+ },
+ {
+  "id": "us-co-sb24-205",
+  "country": "US",
+  "date": "2024-05-17",
+  "title": "SB 24-205, Consumer Protections for Artificial Intelligence (Colorado AI Act)",
+  "issuer": "State of Colorado (General Assembly; signed by Gov. Polis)",
+  "kind": "law",
+  "themes": [
+   "safety"
+  ],
+  "status": "superseded",
+  "statusNote": "Signed 17 May 2024 (ch. 198). Its duties were to start 1 Feb 2026; SB25B-004 (signed 28 Aug 2025) moved that to 30 Jun 2026. SB 26-189 (signed 14 May 2026) repealed and reenacted it before it took effect. State law, not federal.",
+  "summary": "Would have required developers and deployers of high-risk AI systems to use reasonable care to protect consumers from algorithmic discrimination. Its duties never took effect.",
+  "quote": "The act extends the effective date of the requirements of Senate Bill 24-205 to June 30, 2026.",
+  "quoteUrl": "https://leg.colorado.gov/bills/sb25b-004",
+  "url": "https://leg.colorado.gov/bills/sb24-205",
   "verified": true
  },
  {
@@ -835,6 +1559,33 @@ export const DOCS = [
   "verified": true
  },
  {
+  "id": "intl-eu-ai-act",
+  "country": "INTL",
+  "date": "2024-06-13",
+  "effective": "2024-08-01",
+  "title": "Regulation (EU) 2024/1689 laying down harmonised rules on artificial intelligence (Artificial Intelligence Act)",
+  "issuer": "European Parliament and Council of the EU",
+  "kind": "regulation",
+  "themes": [
+   "safety",
+   "content",
+   "industry"
+  ],
+  "status": "amended",
+  "statusNote": "Published OJ L 12.7.2024; in force 1 Aug 2024. Applies in stages: prohibitions and AI literacy from 2 Feb 2025; general-purpose AI model duties, governance and penalties from 2 Aug 2025; most other provisions from 2 Aug 2026. Reg (EU) 2026/1744 moved high-risk duties to 2 Dec 2027 (Annex III systems) and 2 Aug 2028 (Annex I products) and added two prohibitions applying from 2 Dec 2026. EUR-Lex lists no other amending act (checked 16 Nov 2026).",
+  "summary": "The EU's binding, risk-based AI law. It bans some practices, sets duties for high-risk systems, requires transparency for some AI output, and imposes documentation and systemic-risk duties on general-purpose AI model providers, overseen by an EU AI Office.",
+  "quote": "It shall apply from 2 August 2026. However: (a) Chapters I and II shall apply from 2 February 2025; (b) Chapter III Section 4, Chapter V, Chapter VII and Chapter XII and Article 78 shall apply from 2 August 2025, with the exception of Article 101;",
+  "quoteUrl": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=OJ:L_202401689",
+  "quoteLabel": "Art. 113 as adopted (point (a) since replaced by Reg 2026/1744)",
+  "url": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+  "parties": {
+   "US": "not applicable (EU law; applies to US providers placing AI on the EU market)",
+   "CN": "not applicable (EU law)",
+   "RU": "not applicable (EU law)"
+  },
+  "verified": true
+ },
+ {
   "id": "unga-78-311",
   "country": "INTL",
   "date": "2024-07-01",
@@ -854,6 +1605,31 @@ export const DOCS = [
    "US": "co-sponsor (White House readout, 16 Nov 2024); adopted without a vote",
    "CN": "lead sponsor; adopted without a vote",
    "RU": "adopted without a vote (sponsorship status not verified)"
+  },
+  "verified": true
+ },
+ {
+  "id": "intl-coe-ai-convention",
+  "country": "INTL",
+  "date": "2024-09-05",
+  "title": "Council of Europe Framework Convention on Artificial Intelligence and Human Rights, Democracy and the Rule of Law (CETS No. 225)",
+  "issuer": "Council of Europe (opened for signature in Vilnius)",
+  "kind": "agreement",
+  "themes": [
+   "international",
+   "safety"
+  ],
+  "status": "signed",
+  "statusNote": "Not in force. Treaty Office chart, status as of 16/11/2026: 2 ratifications (Bosnia and Herzegovina 28/10/2026; European Union 15/05/2026) and 19 signatures not followed by ratification, including the United States, United Kingdom and Israel (05/09/2024) and Canada and Japan (11/02/2025). Entry into force needs 5 ratifications including at least 3 Council of Europe member states.",
+  "summary": "The first binding international treaty on AI. Parties must ensure that activities across the AI lifecycle are consistent with human rights, democracy and the rule of law. The United States signed on the opening day but has not ratified; China and Russia are not on the signature chart.",
+  "quote": "Entry in force - 5 Ratifications including at least 3 member States of the Council of Europe",
+  "quoteUrl": "https://www.coe.int/en/web/conventions/full-list?module=signatures-by-treaty&treatynum=225",
+  "quoteLabel": "Treaty Office chart of signatures and ratifications (status as of 16/11/2026)",
+  "url": "https://www.coe.int/en/web/conventions/full-list?module=treaty-detail&treatynum=225",
+  "parties": {
+   "US": "signed 5 Sep 2024; not ratified",
+   "CN": "not a signatory",
+   "RU": "not a signatory (not on the chart)"
   },
   "verified": true
  },
@@ -924,6 +1700,35 @@ export const DOCS = [
   "verified": true
  },
  {
+  "id": "cn-dual-use-regs-2024",
+  "country": "CN",
+  "date": "2024-09-30",
+  "effective": "2024-12-01",
+  "title": "Regulations on the Export Control of Dual-Use Items (State Council Order No. 792) and the unified Dual-Use Items Export Control List",
+  "titleOrig": "中华人民共和国两用物项出口管制条例",
+  "issuer": "State Council (Order No. 792); list issued by MOFCOM with MIIT, GACC and the State Cryptography Administration (Ann. 2024 No. 51)",
+  "kind": "regulation",
+  "themes": [
+   "security",
+   "industry",
+   "international"
+  ],
+  "status": "in-force",
+  "statusNote": "Passed by the State Council executive meeting 18 Sep 2024, signed 30 Sep 2024, in force 1 Dec 2024; Art. 50 repealed the separate nuclear, missile, biological and chemical export-control regulations. The unified control list (Ann. 2024 No. 51, issued 15 Nov 2024) took effect the same day (MOFCOM spokesperson Q&A on gov.cn). Checked State Council Gazette text 16 Nov 2026.",
+  "summary": "Implements the Export Control Law for dual-use goods, technology and services. Article 49 lets MOFCOM require foreign parties to follow the regulations when they transfer abroad items made outside China that contain or are made with specified Chinese-origin dual-use items. MOFCOM Ann. 2025 No. 61 (foreign-made rare-earth items) cites these regulations.",
+  "quote": "境外组织和个人在中华人民共和国境外向特定目的国家和地区、特定组织和个人转移、提供下列货物、技术和服务，国务院商务主管部门可以要求相关经营者参照本条例有关规定执行：（一）含有、集成或者混有原产于中华人民共和国的特定两用物项在境外制造的两用物项",
+  "quoteUrl": "https://www.gov.cn/gongbao/2024/issue_11686/202411/content_6985161.html",
+  "url": "https://www.gov.cn/gongbao/2024/issue_11686/202411/content_6985161.html",
+  "rel": [
+   {
+    "type": "implements",
+    "target": "cn-export-control-law-2020"
+   }
+  ],
+  "verified": true,
+  "quoteEn": "Where organizations and individuals outside China transfer or provide the following goods, technologies and services, outside the territory of the People's Republic of China, to specific destination countries and regions or to specific organizations and individuals, the commerce department of the State Council may require the operators concerned to act with reference to the relevant provisions of these Regulations: (1) dual-use items manufactured abroad that contain, integrate or are mixed with specific dual-use items originating in the People's Republic of China"
+ },
+ {
   "id": "us-nsm-ai-2024",
   "country": "US",
   "date": "2024-10-24",
@@ -941,6 +1746,32 @@ export const DOCS = [
   "quote": "First, the United States must lead the world's development of safe, secure, and trustworthy AI.",
   "quoteUrl": "https://bidenwhitehouse.archives.gov/briefing-room/presidential-actions/2024/10/24/memorandum-on-advancing-the-united-states-leadership-in-artificial-intelligence-harnessing-artificial-intelligence-to-fulfill-national-security-objectives-and-fostering-the-safety-security/",
   "url": "https://bidenwhitehouse.archives.gov/briefing-room/presidential-actions/2024/10/24/memorandum-on-advancing-the-united-states-leadership-in-artificial-intelligence-harnessing-artificial-intelligence-to-fulfill-national-security-objectives-and-fostering-the-safety-security/",
+  "verified": true
+ },
+ {
+  "id": "us-treasury-outbound-2024",
+  "country": "US",
+  "date": "2024-11-15",
+  "effective": "2025-01-02",
+  "title": "Provisions Pertaining to U.S. Investments in Certain National Security Technologies and Products in Countries of Concern (31 CFR part 850)",
+  "issuer": "Treasury, Office of Investment Security (final rule, FR Doc. 2024-25422)",
+  "kind": "regulation",
+  "themes": [
+   "security",
+   "industry"
+  ],
+  "status": "in-force",
+  "statusNote": "Published 15 Nov 2024, effective 2 Jan 2025. The COINS Act directs Treasury to issue new rules within 450 days of 18 Dec 2025 that, as necessary, amend, terminate, supersede, revoke or streamline part 850. Treasury proposed those rules on 26 Oct 2026 (FR Doc. 2026-21786, comments close 7 Dec 2026); until final rules take effect, part 850 applies.",
+  "summary": "Prohibits US persons from some investments in, and requires them to notify Treasury of others in, firms of a country of concern working on semiconductors, quantum technologies or AI systems. Covered activities include advanced chip design and fabrication, chipmaking tools, supercomputers, and AI systems trained above set compute thresholds.",
+  "quote": "prohibits United States persons from engaging in certain other transactions involving persons of a country of concern that are engaged in activities involving certain other national security technologies and products",
+  "quoteUrl": "https://www.govinfo.gov/content/pkg/FR-2024-11-15/html/2024-25422.htm",
+  "url": "https://www.federalregister.gov/documents/2024/11/15/2024-25422/provisions-pertaining-to-us-investments-in-certain-national-security-technologies-and-products-in",
+  "rel": [
+   {
+    "type": "implements",
+    "target": "us-eo14105"
+   }
+  ],
   "verified": true
  },
  {
@@ -1018,6 +1849,35 @@ export const DOCS = [
   "verified": true
  },
  {
+  "id": "cn-mofcom-46-2024",
+  "country": "CN",
+  "date": "2024-12-03",
+  "effective": "2024-12-03",
+  "title": "MOFCOM Announcement 2024 No. 46: strengthening export controls on relevant dual-use items to the United States",
+  "titleOrig": "商务部公告2024年第46号 关于加强相关两用物项对美国出口管制的公告",
+  "issuer": "Ministry of Commerce",
+  "kind": "regulation",
+  "themes": [
+   "security",
+   "industry",
+   "international"
+  ],
+  "status": "in-force",
+  "statusNote": "In force on issue, 3 Dec 2024. Para. 1 (ban on dual-use exports to US military users or uses) remains in force. Para. 2 (no licenses in principle for gallium, germanium, antimony and superhard materials to the US; stricter graphite review) is suspended only until 27 Nov 2026 by MOFCOM Ann. 2025 No. 72. No extension of that suspension found as of 16 Nov 2026; Ann. 2026 No. 58 does not cover it. Recheck after 27 Nov 2026.",
+  "summary": "Issued the day after the US December 2024 chip-equipment and HBM controls. It bans dual-use exports to US military end users and uses, refuses in principle gallium, germanium, antimony and superhard-material licenses for the US, and makes third-country transfers of such Chinese-origin items to the US punishable.",
+  "quote": "一、禁止两用物项对美国军事用户或军事用途出口。 二、原则上不予许可镓、锗、锑、超硬材料相关两用物项对美国出口；对石墨两用物项对美国出口，实施更严格的最终用户和最终用途审查。",
+  "quoteUrl": "https://www.mofcom.gov.cn/zwgk/zcfb/art/2024/art_3d5e990b43424e60828030f58a547b60.html",
+  "url": "https://www.mofcom.gov.cn/zwgk/zcfb/art/2024/art_3d5e990b43424e60828030f58a547b60.html",
+  "rel": [
+   {
+    "type": "implements",
+    "target": "cn-export-control-law-2020"
+   }
+  ],
+  "verified": true,
+  "quoteEn": "1. Exports of dual-use items to US military users or for military uses are prohibited. 2. In principle, exports to the United States of dual-use items related to gallium, germanium, antimony and superhard materials will not be licensed; exports of graphite dual-use items to the United States will be subject to stricter end-user and end-use review."
+ },
+ {
   "id": "us-bis-diffusion",
   "country": "US",
   "date": "2025-01-13",
@@ -1030,7 +1890,7 @@ export const DOCS = [
    "industry"
   ],
   "status": "notenforced",
-  "statusNote": "Rescission announced 13 May 2025; formal rescission released 16 Nov 2026 in the remote-access rule (RIN 0694-AK50), effective on Federal Register publication; not enforced.",
+  "statusNote": "Rescission announced 13 May 2025. The formal rescission is in the remote-access rule (RIN 0694-AK50, FR Doc. 2026-23529), on public inspection 16 Nov 2026 and effective on publication, scheduled for 19 Nov 2026. Never enforced.",
   "summary": "Set worldwide license requirements for advanced chips with three country tiers and a new control on the weights of advanced closed-weight models. It exempted open-weight model weights.",
   "quote": "BIS is not imposing controls on the model weights of open-weight models.",
   "quoteUrl": "https://www.federalregister.gov/d/2025-00636",
@@ -1132,7 +1992,7 @@ export const DOCS = [
    "international"
   ],
   "status": "non-binding",
-  "statusNote": "The Elysee page lists 63 signatory countries plus the African Union Commission and the EU; the US and UK are absent.",
+  "statusNote": "The Elysee signatory list has 63 countries plus the African Union Commission and the EU (recounted 16 Nov 2026); the US, UK and Russia are absent.",
   "summary": "Signatories set priorities on closing digital divides, open and inclusive AI, and sustainability, and relate the text to civil uses of AI only. The United States did not sign; China did.",
   "quote": "Our actions are grounded in three main principles of science, solutions - focusing on open AI models in compliance with countries frameworks - and policy standards",
   "quoteUrl": "https://www.elysee.fr/en/emmanuel-macron/2025/02/11/statement-on-inclusive-and-sustainable-artificial-intelligence-for-people-and-the-planet",
@@ -1142,6 +2002,25 @@ export const DOCS = [
    "CN": "signed",
    "RU": "did not sign (absent from signatory list)"
   },
+  "verified": true
+ },
+ {
+  "id": "intl-uk-aisi-2025",
+  "country": "INTL",
+  "date": "2025-02-14",
+  "title": "UK AI Safety Institute renamed the UK AI Security Institute",
+  "issuer": "UK Department for Science, Innovation and Technology",
+  "kind": "statement",
+  "themes": [
+   "safety",
+   "security"
+  ],
+  "status": "non-binding",
+  "statusNote": "GOV.UK press release, 14 Feb 2025.",
+  "summary": "The UK renamed its AI Safety Institute and refocused it on serious AI risks with national-security and crime implications.",
+  "quote": "UK’s AI Safety Institute becomes ‘UK AI Security Institute’ - strengthening protections against the risks AI poses to national security and crime",
+  "quoteUrl": "https://www.gov.uk/government/news/tackling-ai-security-risks-to-unleash-growth-and-deliver-plan-for-change",
+  "url": "https://www.gov.uk/government/news/tackling-ai-security-risks-to-unleash-growth-and-deliver-plan-for-change",
   "verified": true
  },
  {
@@ -1206,6 +2085,24 @@ export const DOCS = [
   "verified": true
  },
  {
+  "id": "us-eo14255",
+  "country": "US",
+  "date": "2025-03-31",
+  "title": "Establishing the United States Investment Accelerator",
+  "issuer": "President (EO 14255)",
+  "kind": "executive-order",
+  "themes": [
+   "industry"
+  ],
+  "status": "in-force",
+  "statusNote": "Signed 31 Mar 2025; published 3 Apr 2025 (90 FR 14701, FR Doc. 2025-05908). No revocation found in the Federal Register (checked 16 Nov 2026).",
+  "summary": "Directs Commerce to set up a US Investment Accelerator to speed investments above $1 billion. It makes the Accelerator responsible for the CHIPS Program Office, which is told to negotiate better deals than the previous administration.",
+  "quote": "The Investment Accelerator shall be responsible for the CHIPS Program Office within the Department of Commerce, which shall focus on delivering the benefit of the bargain for taxpayers by negotiating much better deals than those of the previous administration.",
+  "quoteUrl": "https://www.govinfo.gov/content/pkg/FR-2025-04-03/html/2025-05908.htm",
+  "url": "https://www.federalregister.gov/documents/2025/04/03/2025-05908/establishing-the-united-states-investment-accelerator",
+  "verified": true
+ },
+ {
   "id": "us-omb-m2521",
   "country": "US",
   "date": "2025-04-03",
@@ -1253,6 +2150,39 @@ export const DOCS = [
    }
   ],
   "verified": true
+ },
+ {
+  "id": "cn-mofcom-18-2025",
+  "country": "CN",
+  "date": "2025-04-04",
+  "effective": "2025-04-04",
+  "title": "MOFCOM/GACC Announcement 2025 No. 18: export controls on certain medium and heavy rare-earth items",
+  "titleOrig": "商务部 海关总署公告2025年第18号 公布对部分中重稀土相关物项实施出口管制的决定",
+  "issuer": "Ministry of Commerce + General Administration of Customs",
+  "kind": "regulation",
+  "themes": [
+   "security",
+   "industry",
+   "international"
+  ],
+  "status": "in-force",
+  "statusNote": "In force on issue, 4 Apr 2025. Not among the announcements suspended by MOFCOM/GACC Ann. 2025 No. 70 or Ann. 2026 No. 58, which cover only 2025 Nos. 55-58, 61 and 62. No repeal found in MOFCOM's 2025 and 2026 announcement indexes (checked 16 Nov 2026).",
+  "summary": "Licensing for samarium, gadolinium, terbium, dysprosium, lutetium, scandium and yttrium metals, alloys, targets, oxides and compounds, including samarium-cobalt magnets and terbium- or dysprosium-bearing NdFeB magnets. It is the rare-earth licensing regime still in force while the October 2025 rules are suspended.",
+  "quote": "根据《中华人民共和国出口管制法》《中华人民共和国对外贸易法》《中华人民共和国海关法》 《中华人民共和国两用物项出口管制条例》 有关规定，为维护国家安全和利益、履行防扩散等国际义务，经国务院批准，决定对下列物项实施出口管制",
+  "quoteUrl": "https://www.mofcom.gov.cn/zcfb/blgg/gg/2025/art/2025/art_5e663d0bfec7452dabd950d0f0e42153.html",
+  "url": "https://www.mofcom.gov.cn/zcfb/blgg/gg/2025/art/2025/art_5e663d0bfec7452dabd950d0f0e42153.html",
+  "rel": [
+   {
+    "type": "implements",
+    "target": "cn-dual-use-regs-2024"
+   },
+   {
+    "type": "implements",
+    "target": "cn-export-control-law-2020"
+   }
+  ],
+  "verified": true,
+  "quoteEn": "In accordance with the relevant provisions of the Export Control Law, the Foreign Trade Law, the Customs Law and the Regulations on the Export Control of Dual-Use Items of the People's Republic of China, to safeguard national security and interests and fulfil international obligations such as non-proliferation, and with the approval of the State Council, it has been decided to impose export controls on the following items"
  },
  {
   "id": "cn-military-ai-unga-79-239-2025",
@@ -1608,6 +2538,48 @@ export const DOCS = [
   "verified": true
  },
  {
+  "id": "intl-eu-dualuse-2025-2003",
+  "country": "INTL",
+  "date": "2025-09-08",
+  "effective": "2025-11-15",
+  "title": "Commission Delegated Regulation (EU) 2025/2003 amending Regulation (EU) 2021/821 as regards the list of dual-use items",
+  "issuer": "European Commission",
+  "kind": "regulation",
+  "themes": [
+   "security",
+   "industry"
+  ],
+  "status": "in-force",
+  "statusNote": "Published OJ L 14.11.2025; in force the next day. Replaces Annex I (the EU dual-use list), which remains the current Annex I; Reg (EU) 2026/1405 only corrected some language versions (EUR-Lex, 16 Nov 2026).",
+  "summary": "Updates the EU common dual-use list (Annex I to Regulation 2021/821). Per recital 3, member states told the Commission on 23 May 2025 that they had all accepted, \"also as members of the Wassenaar Arrangement, further commitments in order to control additional items\", and this update adds those items.",
+  "quote": "Member States have informed the Commission on 23 May 2025 that they have all accepted, also as members of the Wassenaar Arrangement, further commitments in order to control additional items.",
+  "quoteUrl": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32025R2003",
+  "url": "https://eur-lex.europa.eu/eli/reg_del/2025/2003/oj",
+  "verified": true
+ },
+ {
+  "id": "cn-mofcom-analog-chips-2025",
+  "country": "CN",
+  "date": "2025-09-13",
+  "title": "MOFCOM anti-dumping investigation of US analog chips (Ann. 2025 No. 27) and anti-discrimination investigation of US IC measures (Ann. 2025 No. 50)",
+  "titleOrig": "商务部公告2025年第27号 公布对原产于美国的进口相关模拟芯片发起反倾销立案调查",
+  "issuer": "Ministry of Commerce (Trade Remedy and Investigation Bureau)",
+  "kind": "statement",
+  "themes": [
+   "industry",
+   "security",
+   "international"
+  ],
+  "status": "unclear",
+  "statusNote": "Both opened 13 Sep 2025. The anti-dumping notice says the case should normally end by 13 Sep 2026, extendable by 6 months in special cases. MOFCOM's 2025 and 2026 announcement indexes (checked 16 Nov 2026) list no ruling, extension or termination for either case. The White House fact sheet of 1 Nov 2025 says China will end its investigations of US chip firms; no Chinese text confirming that was found.",
+  "summary": "Opened an anti-dumping case on US-origin interface and gate-driver chips made at 40 nm and above, and an anti-discrimination probe of US measures such as Section 301 tariffs, chip and equipment export controls since 2022, CHIPS Act limits, and May 2025 guidance restricting Huawei Ascend chips and the use of US AI chips to train Chinese models.",
+  "quote": "商务部决定自2025年9月13日起对原产于美国的进口相关模拟芯片进行反倾销立案调查。",
+  "quoteUrl": "https://www.mofcom.gov.cn/zwgk/zcfb/art/2025/art_c7f379bfff21421596c6f1df5d925400.html",
+  "url": "https://www.mofcom.gov.cn/zwgk/zcfb/art/2025/art_c7f379bfff21421596c6f1df5d925400.html",
+  "verified": true,
+  "quoteEn": "MOFCOM has decided to open an anti-dumping investigation, from 13 September 2025, into imports of certain analog chips originating in the United States."
+ },
+ {
   "id": "cn-ai-safety-framework-2-2025",
   "country": "CN",
   "date": "2025-09-15",
@@ -1627,6 +2599,28 @@ export const DOCS = [
   "url": "https://www.cac.gov.cn/2025-09/15/c_1759653448369123.htm",
   "verified": true,
   "quoteEn": "Ensure that AI always remains under human control"
+ },
+ {
+  "id": "cn-samr-nvidia-2025",
+  "country": "CN",
+  "date": "2025-09-15",
+  "title": "SAMR preliminary finding that Nvidia violated the Anti-Monopoly Law and its Mellanox merger conditions",
+  "titleOrig": "英伟达违反反垄断法 市场监管总局依法决定实施进一步调查",
+  "issuer": "State Administration for Market Regulation",
+  "kind": "statement",
+  "themes": [
+   "industry",
+   "security",
+   "international"
+  ],
+  "status": "unclear",
+  "statusNote": "Investigation pending: SAMR's 15 Sep 2025 notice announced a further investigation, and no penalty, remedy or closure was found on samr.gov.cn or in news searches as of 16 Nov 2026. The White House fact sheet of 1 Nov 2025 says China will end its investigations of US chip firms; no Chinese text confirming that was found.",
+  "summary": "SAMR said a preliminary investigation found that Nvidia broke the Anti-Monopoly Law and the conditions China attached in 2020 to its acquisition of Mellanox, and opened a further investigation. It pairs with the CAC's July 2025 H20 summons as pressure on the main foreign AI-chip supplier.",
+  "quote": "近日，经初步调查，英伟达公司违反《中华人民共和国反垄断法》和《市场监管总局关于附加限制性条件批准英伟达公司收购迈络思科技有限公司股权案反垄断审查决定的公告》，市场监管总局依法决定对其实施进一步调查。",
+  "quoteUrl": "https://www.samr.gov.cn/xw/zj/art/2025/art_66b8363c3a194ba0a394a843d6cf3fd1.html",
+  "url": "https://www.samr.gov.cn/xw/zj/art/2025/art_66b8363c3a194ba0a394a843d6cf3fd1.html",
+  "verified": true,
+  "quoteEn": "Recently, a preliminary investigation found that Nvidia violated the Anti-Monopoly Law of the People's Republic of China and the SAMR Announcement on the Anti-Monopoly Review Decision Conditionally Approving Nvidia's Acquisition of Equity in Mellanox Technologies; SAMR has decided in accordance with law to conduct a further investigation."
  },
  {
   "id": "us-bis-affiliates-2025",
@@ -1649,9 +2643,28 @@ export const DOCS = [
   "verified": true
  },
  {
+  "id": "us-ca-sb53-2025",
+  "country": "US",
+  "date": "2025-09-29",
+  "title": "SB 53, Transparency in Frontier Artificial Intelligence Act",
+  "issuer": "State of California (Legislature; signed by Gov. Newsom)",
+  "kind": "law",
+  "themes": [
+   "safety"
+  ],
+  "status": "in-force",
+  "statusNote": "Signed 29 Sep 2025. As a regular-session statute without an urgency clause it took effect 1 Jan 2026 (Cal. Const. art. IV, sec. 8(c)). State law, not federal. Ch. 138, Stats. 2025, non-urgency (leginfo status page, Wayback capture); summary details are from the Governor's signing release.",
+  "summary": "Requires large frontier AI developers to publish a framework on how they apply national and international standards and best practices, creates a way for companies and the public to report critical safety incidents to the state Office of Emergency Services, and protects whistleblowers. It also sets up a consortium, CalCompute, to develop a framework for a public computing cluster.",
+  "quote": "Requires large frontier developers to publicly publish a framework on its website describing how the company has incorporated national standards, international standards, and industry-consensus best practices into its frontier AI framework.",
+  "quoteUrl": "https://www.gov.ca.gov/2025/09/29/governor-newsom-signs-sb-53-advancing-californias-world-leading-artificial-intelligence-industry/",
+  "url": "https://leginfo.legislature.ca.gov/faces/billNavClient.xhtml?bill_id=202520260SB53",
+  "verified": true
+ },
+ {
   "id": "cn-mofcom-61-2025",
   "country": "CN",
   "date": "2025-10-09",
+  "effective": "2025-10-09",
   "title": "MOFCOM Announcement 2025 No. 61: export controls on foreign-made rare-earth items",
   "titleOrig": "商务部公告2025年第61号",
   "issuer": "Ministry of Commerce",
@@ -1662,12 +2675,42 @@ export const DOCS = [
    "international"
   ],
   "status": "suspended",
-  "statusNote": "Suspended from 7 Nov 2025 to 10 Nov 2026 by MOFCOM/GACC Announcement 2025 No. 70 (text as reprinted by Hong Kong TID from mofcom.gov.cn). MOFCOM/GACC Announcement 2026 No. 58 (dated 9 Nov 2026) keeps 2025 Nos. 55-58 and MOFCOM 2025 Nos. 61 and 62 suspended from 11 Nov 2026 to 10 Jan 2027 (https://www.mofcom.gov.cn/zcfb/zc/art/2026/art_2120417f1e21472bbe3efafdfcbd3f43.html).",
-  "summary": "Extends Chinese export controls to foreign-made items containing Chinese-origin rare earths. Applications for items used in 14 nm or smaller logic chips, 256-layer memory, or AI R&D with potential military use are reviewed case by case.",
-  "quote": "Export applications for items for R&D or production of 14 nm or smaller logic chips or 256-or-more-layer memory chips, ... or for R&D of artificial intelligence (AI) with potential military uses, will be approved on a case-by-case basis.",
-  "quoteUrl": "https://cset.georgetown.edu/wp-content/uploads/t0656_china_rare_earth_controls_2025_61_EN.pdf",
+  "statusNote": "Issued 9 Oct 2025. Part 1(3) took effect on issue; parts 1(1) and 1(2) were to take effect 1 Dec 2025 (para. 8). Suspended from 7 Nov 2025 to 10 Nov 2026 by MOFCOM/GACC Announcement 2025 No. 70 (text as reprinted by Hong Kong TID from mofcom.gov.cn). MOFCOM/GACC Announcement 2026 No. 58 (dated 9 Nov 2026) keeps 2025 Nos. 55-58 and MOFCOM 2025 Nos. 61 and 62 suspended from 11 Nov 2026 to 10 Jan 2027 (https://www.mofcom.gov.cn/zcfb/zc/art/2026/art_2120417f1e21472bbe3efafdfcbd3f43.html).",
+  "summary": "Extends Chinese export controls to foreign-made items containing Chinese-origin rare earths. Applications for items used in 14 nm or smaller logic chips, memory chips of 256 layers or more, or AI R&D with potential military use are reviewed case by case.",
+  "quote": "最终用途为研发、生产14纳米及以下逻辑芯片或者256层及以上存储芯片，以及制造上述制程半导体的生产设备、测试设备和材料，或者研发具有潜在军事用途的人工智能的出口申请，逐案审批。",
+  "quoteUrl": "https://www.mofcom.gov.cn/zcfb/blgg/gg/2025/art/2025/art_e2587592fd774f23a62925ee51641071.html",
   "url": "https://cset.georgetown.edu/wp-content/uploads/t0656_china_rare_earth_controls_2025_61_EN.pdf",
   "translation": "https://cset.georgetown.edu/wp-content/uploads/t0656_china_rare_earth_controls_2025_61_EN.pdf",
+  "rel": [
+   {
+    "type": "implements",
+    "target": "cn-dual-use-regs-2024"
+   },
+   {
+    "type": "implements",
+    "target": "cn-export-control-law-2020"
+   }
+  ],
+  "verified": true,
+  "quoteEn": "Export applications whose end use is the R&D or production of logic chips of 14 nm and below or memory chips of 256 layers and above, or of production equipment, test equipment and materials for making semiconductors at these process nodes, or the R&D of artificial intelligence with potential military uses, are approved case by case."
+ },
+ {
+  "id": "us-gain-ai-bill",
+  "country": "US",
+  "date": "2025-10-09",
+  "title": "GAIN AI Act (Guaranteeing Access and Innovation for National Artificial Intelligence Act), bill not enacted",
+  "issuer": "US Senate (Subtitle H of S. 2296, Senate-passed FY2026 NDAA; standalone S. 3150, Sen. Banks)",
+  "kind": "bill",
+  "themes": [
+   "security",
+   "industry"
+  ],
+  "status": "proposed",
+  "statusNote": "A bill, not law. Included as Sec. 6081 ff. of S. 2296, which passed the Senate 77-20 on 9 Oct 2025 (Record Vote 570); not in the enacted FY2026 NDAA (Pub. L. 119-60). Standalone S. 3150 was introduced 6 Nov 2025 and referred to Senate Banking, with no further action (Congress.gov, 16 Nov 2026).",
+  "summary": "Would require exporters seeking licenses to ship advanced AI chips to countries of concern to certify that US buyers have priority access to those chips.",
+  "quote": "To require entities seeking a license to export advanced artificial intelligence chips to countries of concern to certify that United States persons have priority in acquiring those chips.",
+  "quoteUrl": "https://www.congress.gov/119/bills/s3150/BILLS-119s3150is.htm",
+  "url": "https://www.congress.gov/bill/119th-congress/senate-bill/3150",
   "verified": true
  },
  {
@@ -1693,6 +2736,35 @@ export const DOCS = [
   "url": "https://www.cac.gov.cn/2026-01/02/c_1769093523928606.htm",
   "verified": true,
   "quoteEn": "The new Article 20 added by this amendment makes specific provision for AI safety and development, stating that the state supports basic AI theory research and R&D on key technologies, promotes infrastructure such as training data resources and computing power, improves ethical norms, and strengthens risk monitoring, assessment and safety supervision"
+ },
+ {
+  "id": "cn-mofcom-72-2025",
+  "country": "CN",
+  "date": "2025-11-09",
+  "effective": "2025-11-09",
+  "title": "MOFCOM Announcement 2025 No. 72: suspension of para. 2 of Announcement 2024 No. 46 until 27 Nov 2026",
+  "titleOrig": "商务部公告2025年第72号 公布调整实施商务部公告2024年第46号的决定",
+  "issuer": "Ministry of Commerce",
+  "kind": "regulation",
+  "themes": [
+   "security",
+   "industry",
+   "international"
+  ],
+  "status": "in-force",
+  "statusNote": "Expires 27 Nov 2026. The suspension runs from 9 Nov 2025 only until 27 Nov 2026, eleven days after this tool's check date. No extension found in MOFCOM's announcements as of 16 Nov 2026 (Ann. 2026 No. 58 of 9 Nov 2026 extends other suspensions to 10 Jan 2027 but does not name Ann. 2024 No. 46). Unless MOFCOM extends it, the US-specific gallium, germanium, antimony and superhard-material denial policy resumes after 27 Nov 2026. Recheck after that date.",
+  "summary": "Issued after the October 2025 Kuala Lumpur US-China consultations, it suspends the US-specific licence-denial paragraph of Ann. 2024 No. 46. The ban on dual-use exports to US military users stays in force, as does ordinary licensing of the same minerals.",
+  "quote": "经批准，自即日起至2026年11月27日，商务部公告2024年第46号（《关于加强相关两用物项对美国出口管制的公告》）第二款暂停实施。",
+  "quoteUrl": "https://www.mofcom.gov.cn/zwgk/zcfb/art/2025/art_5c68985a6b1a46778e2e8dbff1bb1601.html",
+  "url": "https://www.mofcom.gov.cn/zwgk/zcfb/art/2025/art_5c68985a6b1a46778e2e8dbff1bb1601.html",
+  "rel": [
+   {
+    "type": "suspends",
+    "target": "cn-mofcom-46-2024"
+   }
+  ],
+  "verified": true,
+  "quoteEn": "With approval, from today until 27 November 2026, paragraph 2 of MOFCOM Announcement No. 46 of 2024 (Announcement on Strengthening Export Controls on Relevant Dual-Use Items to the United States) is suspended."
  },
  {
   "id": "us-bis-affiliates-susp-2025",
@@ -1806,6 +2878,30 @@ export const DOCS = [
   "verified": true
  },
  {
+  "id": "intl-ai-measurement-network",
+  "country": "INTL",
+  "date": "2025-12-09",
+  "title": "International Network of AI Safety Institutes renamed the International Network for Advanced AI Measurement, Evaluation and Science",
+  "issuer": "Network members; announced by UK DSIT",
+  "kind": "statement",
+  "themes": [
+   "safety",
+   "international"
+  ],
+  "status": "non-binding",
+  "statusNote": "GOV.UK press release, 9 Dec 2025, after the network's San Diego meeting. Network established Nov 2024; members Australia, Canada, the EU, France, Japan, Kenya, the Republic of Korea, Singapore, the UK and the US. The UK becomes Network Coordinator.",
+  "summary": "The government network for evaluating advanced AI, set up in November 2024, took a new name without \"safety\" and refocused on the science of AI measurement and evaluation.",
+  "quote": "The International Network of AI Safety Institutes becomes the International Network for Advanced AI Measurement, Evaluation and Science",
+  "quoteUrl": "https://www.gov.uk/government/news/efforts-to-share-best-practices-on-ai-measurement-and-evaluations-driven-forward-through-the-international-network-for-advanced-ai-measurement-evalua",
+  "url": "https://www.gov.uk/government/news/efforts-to-share-best-practices-on-ai-measurement-and-evaluations-driven-forward-through-the-international-network-for-advanced-ai-measurement-evalua",
+  "parties": {
+   "US": "member",
+   "CN": "not a member",
+   "RU": "not a member"
+  },
+  "verified": true
+ },
+ {
   "id": "us-eo14365",
   "country": "US",
   "date": "2025-12-11",
@@ -1822,6 +2918,44 @@ export const DOCS = [
   "quote": "the Attorney General shall establish an AI Litigation Task Force (Task Force) whose sole responsibility shall be to challenge State AI laws inconsistent with the policy set forth in section 2 of this order",
   "quoteUrl": "https://www.federalregister.gov/documents/2025/12/16/2025-23092/ensuring-a-national-policy-framework-for-artificial-intelligence",
   "url": "https://www.federalregister.gov/documents/2025/12/16/2025-23092/ensuring-a-national-policy-framework-for-artificial-intelligence",
+  "verified": true
+ },
+ {
+  "id": "us-coins-act-2025",
+  "country": "US",
+  "date": "2025-12-18",
+  "title": "Comprehensive Outbound Investment National Security Act of 2025, Title LXXXV of the NDAA for FY2026 (often called the COINS Act)",
+  "issuer": "Congress (Pub. L. 119-60, S. 1071)",
+  "kind": "law",
+  "themes": [
+   "security",
+   "industry"
+  ],
+  "status": "in-force",
+  "statusNote": "Enacted 18 Dec 2025. Treasury must issue implementing regulations within 450 days of enactment; they are to amend, terminate, supersede, revoke or streamline 31 CFR part 850 as necessary. Treasury published a proposed rule on 26 Oct 2026 (FR Doc. 2026-21786, comments close 7 Dec 2026); no final rule as of 16 Nov 2026 (federalregister.gov API). The enacted law does not include the GAIN AI Act.",
+  "summary": "Puts the outbound investment program in statute. Its prohibited and notifiable technology areas are semiconductors and microelectronics, AI systems, quantum information technologies, high-performance computing and supercomputing, and hypersonic systems.",
+  "quote": "the term `prohibited technology' means a technology within the following areas, as specified by the regulations: \"(i) Advanced semiconductor technology and microelectronics. \"(ii) Artificial intelligence systems.",
+  "quoteUrl": "https://www.govinfo.gov/content/pkg/PLAW-119publ60/html/PLAW-119publ60.htm",
+  "url": "https://www.congress.gov/bill/119th-congress/senate-bill/1071",
+  "verified": true
+ },
+ {
+  "id": "us-ny-raise-2025",
+  "country": "US",
+  "date": "2025-12-19",
+  "effective": "2027-01-01",
+  "title": "Responsible AI Safety and Education (RAISE) Act, ch. 699 of 2025, as amended by S8828 (ch. 96 of 2026)",
+  "issuer": "State of New York (Legislature; signed by Gov. Hochul)",
+  "kind": "law",
+  "themes": [
+   "safety"
+  ],
+  "status": "signed",
+  "statusNote": "S6953B signed 19 Dec 2025 as ch. 699. Chapter amendment S8828 signed 27 Mar 2026 as ch. 96; its sponsor memo calls it a chapter amendment \"to repeal the underlying chapter and establish a new regulatory regime.\" Takes effect 1 Jan 2027. State law, not federal.",
+  "summary": "Requires large frontier developers to publish a frontier AI framework and report critical safety incidents, and places oversight in an office within the Department of Financial Services. The sponsor memo says the 2026 amendment aligns the law more closely with California's SB 53.",
+  "quote": "to repeal the underlying chapter and establish a new regulatory regime",
+  "quoteUrl": "https://www.nysenate.gov/legislation/bills/2025/S8828",
+  "url": "https://www.nysenate.gov/legislation/bills/2025/S6953/amendment/B",
   "verified": true
  },
  {
@@ -1849,6 +2983,24 @@ export const DOCS = [
     "target": "ru-aij-2025"
    }
   ],
+  "verified": true
+ },
+ {
+  "id": "us-remote-access-security-bill",
+  "country": "US",
+  "date": "2026-01-12",
+  "title": "Remote Access Security Act (H.R. 2683), bill not enacted",
+  "issuer": "US House of Representatives (Rep. Lawler)",
+  "kind": "bill",
+  "themes": [
+   "security"
+  ],
+  "status": "proposed",
+  "statusNote": "A bill, not law. Passed the House 369-22 on 12 Jan 2026 (Roll no. 13); referred to Senate Banking 13 Jan 2026, with no further action (Congress.gov, 16 Nov 2026).",
+  "summary": "Would amend ECRA to define \"remote access\", including through cloud services, so that export controls can cover foreign persons' remote use of controlled items such as advanced chips.",
+  "quote": "The term `remote access' means access on a purposeful, knowing, reckless, or negligent basis to an item subject to the jurisdiction of the United States under this Act by a foreign person through a network connection, including the internet or a cloud computing service,",
+  "quoteUrl": "https://www.congress.gov/119/bills/hr2683/BILLS-119hr2683eh.htm",
+  "url": "https://www.congress.gov/bill/119th-congress/house-bill/2683",
   "verified": true
  },
  {
@@ -2052,6 +3204,29 @@ export const DOCS = [
   "verified": true
  },
  {
+  "id": "cn-decree-835-2026",
+  "country": "CN",
+  "date": "2026-04-07",
+  "effective": "2026-04-07",
+  "title": "Regulations on Countering Improper Foreign Extraterritorial Jurisdiction (State Council Order No. 835)",
+  "titleOrig": "中华人民共和国反外国不当域外管辖条例",
+  "issuer": "State Council (Order No. 835)",
+  "kind": "regulation",
+  "themes": [
+   "security",
+   "international"
+  ],
+  "status": "in-force",
+  "statusNote": "Signed 7 Apr 2026, in force on publication (Ministry of Justice Q&A on gov.cn, 14 Apr 2026). The State Council Gazette text was not opened; the summary and quote come from the Ministry of Justice Q&A. No implementing rules or enforcement case found.",
+  "summary": "Sets up identification of foreign extraterritorial measures as improper, blocking and countermeasures with stated conditions, procedures and legal consequences, and a 'malicious entity list' for foreign organizations and individuals that push or take part in such measures. Relevant to firms in China weighing compliance with US chip controls.",
+  "quote": "2026年4月7日，国务院总理李强签署第835号国务院令，公布 《中华人民共和国反外国不当域外管辖条例》 （以下简称《条例》），自公布之日起施行。",
+  "quoteUrl": "https://www.gov.cn/zhengce/202604/content_7065472.htm",
+  "quoteLabel": "Quoted from the Ministry of Justice Q&A on gov.cn, not the regulation text",
+  "url": "https://www.gov.cn/zhengce/202604/content_7065472.htm",
+  "verified": true,
+  "quoteEn": "On 7 April 2026, Premier Li Qiang signed State Council Order No. 835 promulgating the Regulations of the People's Republic of China on Countering Improper Foreign Extraterritorial Jurisdiction (the Regulations), in force from the date of promulgation."
+ },
+ {
   "id": "cn-anthropomorphic-2026",
   "country": "CN",
   "date": "2026-04-10",
@@ -2091,6 +3266,52 @@ export const DOCS = [
   "quote": "I would like to stress once again that regulation must be designed to encourage and accelerate the creation and adoption of advanced technologies rather than to constrain or slow down development.",
   "quoteUrl": "http://en.kremlin.ru/events/president/news/79525",
   "url": "http://en.kremlin.ru/events/president/news/79525",
+  "verified": true
+ },
+ {
+  "id": "cn-legislative-plan-2026",
+  "country": "CN",
+  "date": "2026-05-08",
+  "title": "State Council 2026 Legislative Work Plan: comprehensive AI legislation (Guobanfa [2026] No. 14)",
+  "titleOrig": "国务院2026年度立法工作计划",
+  "issuer": "General Office of the State Council (Guobanfa [2026] No. 14)",
+  "kind": "plan",
+  "themes": [
+   "industry",
+   "safety",
+   "security"
+  ],
+  "status": "non-binding",
+  "statusNote": "Notice dated 8 May 2026, published 11 May 2026 on gov.cn. It calls for accelerating comprehensive AI legislation but sets no date for a draft. China has no comprehensive AI law: as of 16 Nov 2026 no draft AI law was found published or submitted to the NPC Standing Committee, whose 2026 plan lists AI legislation only as a preparatory project.",
+  "summary": "Commits the State Council to accelerate comprehensive legislation on the healthy development of AI and to legislate on AI's common elements (data, compute, algorithms, property rights, cybersecurity and supply-chain security) and key application scenarios.",
+  "quote": "完善人工智能治理，加快推进人工智能健康发展综合性立法；加快完善保障数据、算力、算法、产权、网络安全、供应链安全等人工智能共性要素及规范重点应用场景方面的立法。",
+  "quoteUrl": "https://www.gov.cn/zhengce/content/202605/content_7068345.htm",
+  "url": "https://www.gov.cn/zhengce/content/202605/content_7068345.htm",
+  "verified": true,
+  "quoteEn": "Improve AI governance and accelerate comprehensive legislation on the healthy development of AI; accelerate improvement of legislation that safeguards AI's common elements such as data, computing power, algorithms, property rights, cybersecurity and supply-chain security, and that regulates key application scenarios."
+ },
+ {
+  "id": "us-co-sb26-189",
+  "country": "US",
+  "date": "2026-05-14",
+  "title": "SB 26-189, Automated Decision-Making Technology",
+  "issuer": "State of Colorado (General Assembly; signed by Gov. Polis)",
+  "kind": "law",
+  "themes": [
+   "safety"
+  ],
+  "status": "in-force",
+  "statusNote": "Signed 14 May 2026 (ch. 131); the session-laws table lists 14 May 2026 as the effective date. Developer duties to deployers start 1 Jan 2027, and the attorney general must adopt rules by 1 Jan 2027. State law, not federal.",
+  "summary": "Repeals and reenacts Colorado's 2024 AI Act as a law on the use of automated decision-making technology in consequential decisions.",
+  "quote": "The act repeals and reenacts those provisions with new requirements",
+  "quoteUrl": "https://leg.colorado.gov/bills/sb26-189",
+  "url": "https://leg.colorado.gov/bills/sb26-189",
+  "rel": [
+   {
+    "type": "supersedes",
+    "target": "us-co-sb24-205"
+   }
+  ],
   "verified": true
  },
  {
@@ -2139,6 +3360,33 @@ export const DOCS = [
    "CN": "participation not verified",
    "RU": "participation not verified"
   },
+  "verified": true
+ },
+ {
+  "id": "intl-eu-digital-omnibus-ai",
+  "country": "INTL",
+  "date": "2026-07-08",
+  "effective": "2026-07-27",
+  "title": "Regulation (EU) 2026/1744 amending the AI Act as regards the simplification of the implementation of harmonised rules on artificial intelligence (Digital Omnibus on AI)",
+  "issuer": "European Parliament and Council of the EU",
+  "kind": "regulation",
+  "themes": [
+   "safety",
+   "content",
+   "industry"
+  ],
+  "status": "in-force",
+  "statusNote": "Published OJ L 24.7.2026; in force on the third day after publication (27 Jul 2026). Also amends Regulations (EU) 2018/1139 and 2023/1230.",
+  "summary": "Delays the AI Act's high-risk obligations to 2 Dec 2027 for Annex III systems and 2 Aug 2028 for systems in products under Annex I. Adds prohibitions on AI systems that generate non-consensual intimate imagery of identifiable people or child sexual abuse material, from 2 Dec 2026, and gives generative systems already on the market until 2 Dec 2026 to meet the Article 50(2) marking duty.",
+  "quote": "(c) Chapter III, Sections 1, 2, and 3, with the exception of Article 6(5), shall apply from: (i) 2 December 2027 as regards AI systems classified as high-risk pursuant to Article 6(2) and Annex III; and (ii) 2 August 2028",
+  "quoteUrl": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=OJ:L_202601744",
+  "url": "https://eur-lex.europa.eu/eli/reg/2026/1744/oj/eng",
+  "rel": [
+   {
+    "type": "amends",
+    "target": "intl-eu-ai-act"
+   }
+  ],
   "verified": true
  },
  {
@@ -2213,6 +3461,33 @@ export const DOCS = [
   "quoteEn": "To ensure technological independence and preserve traditional Russian spiritual and moral values, support is given to developing, introducing and using sovereign and national large foundation AI models"
  },
  {
+  "id": "us-cn-ai-dialogue-2026",
+  "country": "INTL",
+  "date": "2026-09-28",
+  "title": "US-China AI dialogue and AI incident communication channel (8th round of economic and trade consultations)",
+  "titleOrig": "商务部美大司负责人解读第八轮中美经贸磋商成果",
+  "issuer": "MOFCOM Department of American and Oceanian Affairs (Xinhua report on gov.cn)",
+  "kind": "statement",
+  "themes": [
+   "safety",
+   "security",
+   "international"
+  ],
+  "status": "non-binding",
+  "statusNote": "Talks held 20-23 Sep 2026 in New York and Washington; MOFCOM explainer dated 28 Sep 2026 says the first dialogue has been held and the next is due before the end of November 2026. Whether the second round has happened was not checked. No US-side primary text was fetched. The same explainer extends the Kuala Lumpur joint arrangement to 10 Jan 2027.",
+  "summary": "Vice Premier He Lifeng and Treasury Secretary Bessent lead a bilateral AI dialogue, set up under the US-China economic and trade consultation mechanism, on AI risks and benefits; the first session was held during the talks, and the two sides agreed to set up a channel for communicating about AI incidents.",
+  "quote": "双方同意，在中美经贸磋商机制下，何立峰副总理与贝森特财长作为中美各自牵头人建立人工智能对话，并进行了首次对话，交流人工智能相关风险和惠益。双方约定在今年11月底前举行下一次对话。双方同意建立人工智能事件的沟通渠道。",
+  "quoteUrl": "https://www.gov.cn/lianbo/202609/content_7082235.htm",
+  "url": "https://www.gov.cn/lianbo/202609/content_7082235.htm",
+  "parties": {
+   "US": "participated (Treasury Secretary Bessent as lead), per Chinese readout",
+   "CN": "participated (Vice Premier He Lifeng as lead)",
+   "RU": "not involved"
+  },
+  "verified": true,
+  "quoteEn": "The two sides agreed that, under the China-US economic and trade consultation mechanism, Vice Premier He Lifeng and Treasury Secretary Bessent, as the respective leads for China and the United States, would establish an AI dialogue, and they held the first dialogue, exchanging views on the risks and benefits of AI. The two sides agreed to hold the next dialogue before the end of November this year. The two sides agreed to establish a channel for communication on AI incidents."
+ },
+ {
   "id": "us-eo14434",
   "country": "US",
   "date": "2026-09-29",
@@ -2229,6 +3504,35 @@ export const DOCS = [
   "quoteUrl": "https://www.federalregister.gov/documents/2026/10/02/2026-20321/inaugurating-the-era-of-super-intelligence",
   "url": "https://www.federalregister.gov/documents/2026/10/02/2026-20321/inaugurating-the-era-of-super-intelligence",
   "verified": true
+ },
+ {
+  "id": "cn-mofcom-58-2026",
+  "country": "CN",
+  "date": "2026-11-09",
+  "effective": "2026-11-11",
+  "title": "MOFCOM/GACC Announcement 2026 No. 58: October 2025 export-control package stays suspended to 10 Jan 2027",
+  "titleOrig": "商务部、海关总署公告2026年第58号 公布继续暂停实施商务部、海关总署公告2025年第55号、56号、57号、58号及商务部公告2025年第61号、62号的决定",
+  "issuer": "Ministry of Commerce + General Administration of Customs",
+  "kind": "regulation",
+  "themes": [
+   "security",
+   "industry",
+   "international"
+  ],
+  "status": "in-force",
+  "statusNote": "Suspension runs 11 Nov 2026 to 10 Jan 2027, continuing the suspension of 7 Nov 2025 to 10 Nov 2026 under MOFCOM/GACC Ann. 2025 No. 70. Checked mofcom.gov.cn 16 Nov 2026. It does not cover Ann. 2024 No. 46 (see Ann. 2025 No. 72, expiring 27 Nov 2026) or Ann. 2025 No. 18 (in force).",
+  "summary": "Keeps six October 2025 announcements suspended: Nos. 55 (superhard materials), 56 (rare-earth equipment and raw and auxiliary materials), 57 (further medium and heavy rare-earth items), 58 (lithium batteries and synthetic graphite anode materials), 61 (foreign-made items containing Chinese rare earths, with case-by-case review for advanced chips and military AI R&D) and 62 (rare-earth technologies).",
+  "quote": "经批准，自2026年11月11日起至2027年1月10日，商务部、海关总署公告2025年第55号、56号、57号、58号，及商务部公告2025年第61号、62号继续暂停实施。",
+  "quoteUrl": "https://www.mofcom.gov.cn/zcfb/zc/art/2026/art_2120417f1e21472bbe3efafdfcbd3f43.html",
+  "url": "https://www.mofcom.gov.cn/zcfb/zc/art/2026/art_2120417f1e21472bbe3efafdfcbd3f43.html",
+  "rel": [
+   {
+    "type": "suspends",
+    "target": "cn-mofcom-61-2025"
+   }
+  ],
+  "verified": true,
+  "quoteEn": "With approval, from 11 November 2026 to 10 January 2027, MOFCOM/GACC Announcements Nos. 55, 56, 57 and 58 of 2025 and MOFCOM Announcements Nos. 61 and 62 of 2025 remain suspended."
  },
  {
   "id": "us-bis-affiliates-ext-2026",
@@ -2265,8 +3569,9 @@ export const DOCS = [
   "id": "us-bis-remote-access-2026",
   "country": "US",
   "date": "2026-11-16",
+  "effective": "2026-11-19",
   "title": "Addressing Remote Access to Advanced Semiconductors (RIN 0694-AK50)",
-  "issuer": "Commerce, Bureau of Industry and Security (interim final rule)",
+  "issuer": "Commerce, Bureau of Industry and Security (interim final rule, FR Doc. 2026-23529)",
   "kind": "regulation",
   "themes": [
    "security",
@@ -2274,11 +3579,11 @@ export const DOCS = [
    "international"
   ],
   "status": "released",
-  "statusNote": "Released by BIS 16 Nov 2026; effective on publication in the Federal Register, which had not happened as of 16 Nov 2026.",
-  "summary": "Adds 15 CFR 744.24: a license requirement for advanced chips used in data centers anywhere that would give companies headquartered in Country Group D:5 or Macau access to more than 12,000,000 'aggregate TPP'. Requires licenses for advanced chips to Indonesia, Malaysia, Singapore, Thailand and Brazil, except where the consignee or end user is headquartered in the US (or has a US-headquartered ultimate parent) and the exporter files reports under new section 743.10. Formally rescinds the AI Diffusion rule.",
+  "statusNote": "Released by BIS 16 Nov 2026 and placed on Federal Register public inspection the same day as FR Doc. 2026-23529, scheduled for publication 19 Nov 2026. Its DATES section makes it effective on the date of publication; comments are due 60 days after publication. Publication date is as scheduled on public inspection; recheck on 19 Nov 2026.",
+  "summary": "Adds 15 CFR 744.24: a license requirement for advanced chips used in data centers anywhere that would give companies headquartered in Country Group D:5 or Macau (or whose ultimate parent is headquartered there) access to more than 12,000,000 'aggregate TPP'. Requires licenses for advanced chips to Indonesia, Malaysia, Singapore, Thailand and Brazil, except where the consignee or end user is headquartered in the US (or has a US-headquartered ultimate parent) and the exporter files reports under new section 743.10. Adds 15 CFR 744.23(a)(3)(i)(C): a license requirement when a front-end fabricator or OSAT exports advanced-node 3A090.a chips designed by a company that is not an approved or authorized IC designer. Formally rescinds the AI Diffusion rule.",
   "quote": "Finally, the IFR formally rescinds the regulations implementing the Biden-era AI Diffusion Rule. The AI Diffusion Rule has never been enforced.",
   "quoteUrl": "https://www.bis.gov/media/documents/rin-0694-ak50.pdf",
-  "url": "https://www.bis.gov/media/documents/rin-0694-ak50.pdf",
+  "url": "https://www.federalregister.gov/public-inspection/2026-23529/addressing-remote-access-to-advanced-semiconductors",
   "rel": [
    {
     "type": "rescinds",
@@ -2295,7 +3600,7 @@ export const DOCS = [
 export const POSITIONS = {
  "frontier": {
   "US": {
-   "stance": "US frontier-model policy is voluntary. EO 14110's mandatory reporting was revoked in Jan 2025, and the AI Safety Institute became CAISI, which runs voluntary national-security evaluations. EO 14409 (Jun 2026) has Commerce, through the NIST Director, design a voluntary pre-release access framework for 'covered frontier models', and rules out licensing.",
+   "stance": "Federal frontier-model policy is voluntary. EO 14110's mandatory reporting was revoked in Jan 2025, and the AI Safety Institute became CAISI, which runs voluntary national-security evaluations. EO 14409 (Jun 2026) has Commerce, through the NIST Director, design a voluntary pre-release access framework for 'covered frontier models', and rules out licensing. State law is binding: California SB 53 has required large frontier developers to publish safety frameworks and report critical safety incidents since 1 Jan 2026, and New York's RAISE Act sets similar duties from 1 Jan 2027.",
    "cites": [
     {
      "doc": "us-caisi",
@@ -2308,6 +3613,12 @@ export const POSITIONS = {
      "where": "Sec. 3(c)",
      "quote": "Nothing in this section shall be construed to authorize the creation of a mandatory governmental licensing, preclearance, or permitting requirement for the development, publication, release, or distribution of new AI models, including frontier models.",
      "url": "https://www.federalregister.gov/documents/2026/06/05/2026-11415/promoting-advanced-artificial-intelligence-innovation-and-security"
+    },
+    {
+     "doc": "us-ca-sb53-2025",
+     "where": "Governor's signing release",
+     "quote": "Requires large frontier developers to publicly publish a framework on its website describing how the company has incorporated national standards, international standards, and industry-consensus best practices into its frontier AI framework.",
+     "url": "https://www.gov.ca.gov/2025/09/29/governor-newsom-signs-sb-53-advancing-californias-world-leading-artificial-intelligence-industry/"
     }
    ]
   },
@@ -2766,7 +4077,7 @@ export const DEBATES = [
      {
       "name": "President (EO 14365)",
       "source": "https://www.federalregister.gov/documents/2025/12/16/2025-23092/ensuring-a-national-policy-framework-for-artificial-intelligence",
-      "note": "Directed the Attorney General to establish, within 30 days, an AI Litigation Task Force to challenge state AI laws; names Colorado's 'algorithmic discrimination' law."
+      "note": "Directed the Attorney General to establish, within 30 days, an AI Litigation Task Force to challenge state AI laws; names Colorado's 'algorithmic discrimination' law (SB 24-205), which Colorado repealed and reenacted as SB 26-189 on 14 May 2026."
      },
      {
       "name": "White House (National Policy Framework, Mar 2026)",
@@ -2787,11 +4098,14 @@ export const DEBATES = [
     ]
    }
   ],
-  "status": "As of Nov 2026 no federal preemption statute was found; EO 14365 litigation and funding tools and the Mar 2026 White House recommendations are the federal levers.",
+  "status": "As of Nov 2026 no federal preemption statute was found; EO 14365 litigation and funding tools and the Mar 2026 White House recommendations are the federal levers. The main state laws at stake are California SB 53 (in force since 1 Jan 2026), New York's RAISE Act (effective 1 Jan 2027) and Colorado SB 26-189.",
   "sources": [
    "https://www.federalregister.gov/documents/2025/12/16/2025-23092/ensuring-a-national-policy-framework-for-artificial-intelligence",
    "https://www.whitehouse.gov/wp-content/uploads/2026/03/03.20.26-National-Policy-Framework-for-Artificial-Intelligence-Legislative-Recommendations.pdf",
-   "https://www.senate.gov/legislative/LIS/roll_call_votes/vote1191/vote_119_1_00363.htm"
+   "https://www.senate.gov/legislative/LIS/roll_call_votes/vote1191/vote_119_1_00363.htm",
+   "https://www.gov.ca.gov/2025/09/29/governor-newsom-signs-sb-53-advancing-californias-world-leading-artificial-intelligence-industry/",
+   "https://www.nysenate.gov/legislation/bills/2025/S8828",
+   "https://leg.colorado.gov/bills/sb26-189"
   ],
   "scope": "US"
  },
@@ -2828,12 +4142,13 @@ export const DEBATES = [
     ]
    }
   ],
-  "status": "The Jan 2026 BIS rule is in force. S. 1705 remains in Senate committee; its House companion, H.R. 3447, was ordered reported by the Foreign Affairs Committee 42-0 on 26 Mar 2026 and has had no floor vote (Congress.gov). BIS released a remote-access rule on 16 Nov 2026.",
+  "status": "The Jan 2026 BIS rule is in force. S. 1705 remains in Senate committee; its House companion, H.R. 3447, was ordered reported by the Foreign Affairs Committee 42-0 on 26 Mar 2026 and has had no floor vote (Congress.gov). BIS released a remote-access rule on 16 Nov 2026 (FR Doc. 2026-23529, scheduled for publication 19 Nov 2026). The House passed the Remote Access Security Act (H.R. 2683) 369-22 on 12 Jan 2026; the Senate has not acted.",
   "sources": [
    "https://www.federalregister.gov/d/2026-00789",
    "https://www.congress.gov/bill/119th-congress/senate-bill/1705",
    "https://media.bis.gov/sites/default/files/documents/05.07%20Recission%20of%20AI%20Diffusion%20Press%20Release.pdf",
-   "https://www.congress.gov/bill/119th-congress/house-bill/3447"
+   "https://www.congress.gov/bill/119th-congress/house-bill/3447",
+   "https://www.congress.gov/bill/119th-congress/house-bill/2683"
   ],
   "scope": "US"
  },
@@ -3521,10 +4836,11 @@ export const COMPASS = {
   },
   "CN": {
    "value": 45,
-   "why": "China uses export controls in its own interest: MOFCOM Announcement 2025 No. 61 put rare-earth items for AI R&D with potential military use and for 14 nm or smaller chips under case-by-case review (suspended since Nov 2025). Its AI texts oppose other states' controls.",
-   "quote": "Export applications for items for R&D or production of 14 nm or smaller logic chips or 256-or-more-layer memory chips, ... or for R&D of artificial intelligence (AI) with potential military uses, will be approved on a case-by-case basis.",
-   "doc": "cn-mofcom-61-2025",
-   "url": "https://cset.georgetown.edu/wp-content/uploads/t0656_china_rare_earth_controls_2025_61_EN.pdf"
+   "why": "China uses export controls in its own interest, and some are in force today: MOFCOM/GACC Announcement 2025 No. 18 (April 2025) licenses exports of seven medium and heavy rare earths, and gallium, germanium, graphite and antimony licensing (2023-24) also still applies. The October 2025 rules, including Announcement 2025 No. 61, which put rare-earth items for 14 nm or smaller chips and for AI R&D with potential military use under case-by-case review, are suspended until 10 Jan 2027 (Ann. 2026 No. 58). Its AI texts oppose other states' controls.",
+   "quote": "为维护国家安全和利益、履行防扩散等国际义务，经国务院批准，决定对下列物项实施出口管制",
+   "doc": "cn-mofcom-18-2025",
+   "url": "https://www.mofcom.gov.cn/zcfb/blgg/gg/2025/art/2025/art_5e663d0bfec7452dabd950d0f0e42153.html",
+   "quoteEn": "To safeguard national security and interests and fulfil international obligations such as non-proliferation, and with the approval of the State Council, it has been decided to impose export controls on the following items"
   },
   "RU": {
    "value": null,

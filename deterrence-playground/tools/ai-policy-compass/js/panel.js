@@ -22,13 +22,13 @@ export function docHTML(id) {
     ${quoteHTML(d.quote, d.quoteEn, `<cite>${ext(d.quoteUrl || d.url, d.quoteLabel || (d.quoteUrl && d.quoteUrl !== d.url ? 'Quoted from ' + host(d.quoteUrl) : 'Quoted from the official text'))}</cite>`)}
     <ul class="ap-links-out">
       ${d.url ? `<li>${ext(d.url, 'Primary text')} <span class="fine">${esc(host(d.url))}</span></li>` : ''}
-      ${d.archive ? `<li>${ext(d.archive, 'Archived copy')} <span class="fine">web.archive.org</span></li>` : ''}
-      ${d.translation ? `<li>${ext(d.translation, 'English translation')} <span class="fine">${esc(host(d.translation))}</span></li>` : ''}
+      ${d.archive ? `<li class="full-only">${ext(d.archive, 'Archived copy')} <span class="fine">web.archive.org</span></li>` : ''}
+      ${d.translation ? `<li class="full-only">${ext(d.translation, 'English translation')} <span class="fine">${esc(host(d.translation))}</span></li>` : ''}
     </ul>
-    ${rels.length ? `<div class="ap-rels"><p class="eyebrow">Linked documents</p><ul>${rels.map(r => {
+    ${rels.length ? `<div class="ap-rels full-only"><p class="eyebrow">Linked documents</p><ul>${rels.map(r => {
       const o = D[r.id], lab = r.dir === 'out' ? REL[r.type].verb : REL[r.type].back;
       return `<li><span class="ap-relk" style="color:${REL[r.type].color}">${esc(lab)}</span> <a href="#" class="ap-jump" data-id="${esc(r.id)}">${esc(o.title)}</a> <span class="fine">${esc(dateText(o.date, o.datePrecision))}</span></li>`;
     }).join('')}</ul></div>` : ''}
-    <p class="fine ap-themes">${d.themes.map(t => `<span class="pill">${esc(themeName(t))}</span>`).join('')}</p>
+    <p class="fine ap-themes full-only">${d.themes.map(t => `<span class="pill">${esc(themeName(t))}</span>`).join('')}</p>
     ${d.verified === false ? '<p class="fine ap-unv">Unverified: see the note in Method &amp; sources.</p>' : ''}`;
 }

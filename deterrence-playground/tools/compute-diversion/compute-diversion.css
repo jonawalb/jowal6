@@ -169,3 +169,29 @@
   .cd-big { font-size: 36px; }
 }
 @media (prefers-reduced-motion: reduce) { .cd-track .bar span, .cd-in, .cd-out { transition: none; } }
+
+/* Simple | Full detail */
+body.detail-simple .full-only { display: none !important; }
+body.detail-full .simple-only { display: none !important; }
+body.detail-full details.cd-fold > summary { display: none; }
+.cd-seg2 { display: inline-flex; margin-right: 8px; }
+.cd-seg2 .btn + .btn { margin-left: -1px; }
+.cd-seg2 .btn[aria-pressed="true"] { font-weight: 600; }
+body.detail-simple .cd-pol { display: none; }
+body.detail-simple .cd-log:not(.open) li:nth-child(n+2) { display: none; }
+body.detail-simple .cd-log { margin-bottom: 8px; }
+.cd-more { margin: 0 0 12px; }
+details.cd-fold { margin: 0 0 12px; }
+details.cd-fold > summary { cursor: pointer; color: var(--c1); font-weight: 600; font-size: 14px; padding: 4px 0; }
+details.cd-fold[open] > summary { margin-bottom: 6px; }
+body.detail-simple .cd-flag { border-style: none; padding-left: 0; }
+body.detail-simple details.cd-fold > h3 { display: none; }
+
+/* Simple: lever name + first sentence, with "More" inline after it for the rest */
+body.detail-simple .cd-lever > .cd-lt.simple-only { display: inline; margin: 0; }
+.cd-lmore { display: inline; font-size: 12.5px; }
+.cd-lmore > summary { display: inline; cursor: pointer; color: var(--c1); font-size: 12px; margin-left: 4px; list-style: none; text-decoration: underline; text-underline-offset: 2px; }
+.cd-lmore > summary::-webkit-details-marker { display: none; }
+.cd-lmore[open] > summary { display: none; }
+.cd-lmore .cd-lt { display: inline; margin: 0; }
+body.detail-simple .cd-lever > .cd-lmore + * { margin-top: 6px; }

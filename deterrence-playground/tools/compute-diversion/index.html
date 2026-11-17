@@ -26,17 +26,19 @@
 <header id="tsm-head"></header>
 <div class="cd-actions">
   <p class="cd-flag"><b>Notional model, real cards.</b> The network, hubs, budgets and effects are invented game design. Case cards and policy cards are real and sourced. <span id="asof"></span></p>
-  <div><button type="button" class="btn" id="new-game">New game</button>
+  <div><span class="cd-seg2" role="group" aria-label="Detail level"><button type="button" class="btn" data-detail="simple" aria-pressed="true">Simple</button><button type="button" class="btn" data-detail="full" aria-pressed="false">Full detail</button></span>
+  <button type="button" class="btn" id="new-game">New game</button>
   <button type="button" class="btn" id="copy-link">Copy link</button></div>
 </div>
 
 <main class="cd-main">
   <section class="card cd-start" id="start" aria-labelledby="start-t">
     <h2 id="start-t" tabindex="-1">Stop the chips</h2>
-    <p class="cd-lede">You run US export enforcement for advanced AI chips. A diversion network moves chips through front companies at transshipment hubs and rents cloud compute for restricted end users. Each quarter you spend a <b>budget of 10</b> and your <b>political capital</b> on enforcement tools. The network adapts: it registers new shells, shifts volume to quieter hubs, splits shipments and rents more cloud. You are scored on two things: how much compute you keep from restricted users, and how little you cost legitimate trade, US industry and allies.</p>
+    <p class="cd-lede simple-only">You run US export enforcement for advanced AI chips. Each quarter, spend your budget and political capital on tools against a network that moves chips and rents cloud compute for restricted users. You score for compute you keep from them and for low cost to legitimate trade.</p>
+    <p class="cd-lede full-only">You run US export enforcement for advanced AI chips. A diversion network moves chips through front companies at transshipment hubs and rents cloud compute for restricted end users. Each quarter you spend a <b>budget of 10</b> and your <b>political capital</b> on enforcement tools. The network adapts: it registers new shells, shifts volume to quieter hubs, splits shipments and rents more cloud. You are scored on two things: how much compute you keep from restricted users, and how little you cost legitimate trade, US industry and allies.</p>
     <fieldset class="cd-pick"><legend>Term</legend><div class="cd-cards" id="lengths"></div></fieldset>
     <button type="button" class="btn solid" id="begin">Begin</button>
-    <p class="fine" id="seed-note"></p>
+    <p class="fine full-only" id="seed-note"></p>
   </section>
 
   <section class="cd-play" id="play" hidden>
@@ -62,6 +64,7 @@
         <section class="card cd-resolve" id="resolve" hidden aria-labelledby="res-t">
           <h2 id="res-t" tabindex="-1"></h2>
           <ul class="cd-log" id="log" aria-live="polite"></ul>
+          <button type="button" class="btn simple-only cd-more" id="log-more" aria-expanded="false" hidden></button>
           <div id="case-card"></div>
           <button type="button" class="btn solid" id="next">Continue</button>
         </section>
@@ -84,22 +87,26 @@
     <h3>Two axes: compute diverted against cost to legitimate trade</h3>
     <svg id="scatter" viewBox="0 0 640 300" role="img" aria-label="Your result against computer strategies on the same network"></svg>
     <p class="fine">Each dot is one game on this same seed. Down and left is better. Computer strategies are fixed rules, described under How the game works.</p>
+    <details class="cd-fold" open><summary>Show which levers mattered</summary>
     <h3>Which levers mattered</h3>
     <p class="fine">Each row replays your game on the same seed with every use of one lever removed.</p>
     <div class="tablewrap"><table class="cd-attr" id="attr"></table></div>
+    </details>
     <h3>Debrief</h3>
     <ul class="cd-lessons" id="lessons"></ul>
+    <details class="cd-fold" open><summary>Show the case files you drew</summary>
     <h3>Case files you drew</h3>
     <div class="cd-casefiles" id="casefiles"></div>
+    </details>
     <button type="button" class="btn solid" id="again">Play again</button>
   </section>
 </main>
 
 <section class="below cd-below">
-  <h2>How to read it</h2>
-  <p>The map shows one quarter. Lines from the left carry what the network tries to move through each hub; lines to the right carry what reaches restricted end users. The orange ring around a hub is the share seized there. Small diamonds are front companies: a hub needs two live ones to run at full volume. While you choose, the map and the numbers show the expected result of your choices for this quarter, before the network adapts. After you end the quarter, the network moves and the map rewires.</p>
+  <h2 class="full-only">How to read it</h2>
+  <p class="full-only">The map shows one quarter. Lines from the left carry what the network tries to move through each hub; lines to the right carry what reaches restricted end users. The orange ring around a hub is the share seized there. Small diamonds are front companies: a hub needs two live ones to run at full volume. While you choose, the map and the numbers show the expected result of your choices for this quarter, before the network adapts. After you end the quarter, the network moves and the map rewires.</p>
 
-  <details class="cd-det" open>
+  <details class="cd-det" id="how" open>
     <summary><b>How the game works</b></summary>
     <ul>
       <li><b>Budget and capital.</b> 10 budget a quarter, which does not carry over. Political capital starts at 40 and grows by 6 a quarter. It falls by 3 a quarter while industry revenue sits below 92. Licensing relaxations and prosecutions add capital.</li>

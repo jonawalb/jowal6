@@ -21,7 +21,7 @@ export function compareHTML(issueId) {
     return `<article class="ap-col" style="--col:${c.color}">
       <h3><span class="ap-cdot" style="background:${c.color}"></span>${esc(c.name)}</h3>
       <p class="ap-stance">${esc(p.stance)}</p>
-      ${cites ? `<ol class="ap-cites">${cites}</ol>` : '<p class="fine">No official text cited.</p>'}
+      ${cites ? `<ol class="ap-cites">${cites}</ol>${p.cites.length > 1 ? `<p class="fine simple-only">${p.cites.length - 1} more passage${p.cites.length > 2 ? 's' : ''} in Full detail.</p>` : ''}` : '<p class="fine">No official text cited.</p>'}
     </article>`;
   }).join('');
   return `<p class="ap-issue-lede">${esc(issue.lede || issue.help)}</p><div class="ap-cols">${cols}</div>`;

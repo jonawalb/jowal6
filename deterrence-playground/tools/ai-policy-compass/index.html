@@ -22,12 +22,18 @@
 <meta property="og:url" content="https://jwalberg.com/deterrence-playground/tools/ai-policy-compass/">
 <meta name="twitter:card" content="summary">
 </head>
-<body>
+<body class="detail-simple">
 <header id="tsm-head"></header>
 
 <main class="wrap ap">
   <div class="ap-top">
-    <p class="ap-asof">Current as of <b id="asof">16 November 2026</b>. <span id="n-docs"></span> primary documents, each linked to its official text.</p>
+    <div class="ap-toprow">
+      <p class="ap-asof">Current as of <b id="asof">16 November 2026</b>. <span id="n-docs"></span> primary documents, each linked to its official text.</p>
+      <div class="ap-seg ap-detailsw" role="group" aria-label="Level of detail">
+        <button type="button" class="btn" data-detail="simple" aria-pressed="true">Simple</button>
+        <button type="button" class="btn" data-detail="full" aria-pressed="false">Full detail</button>
+      </div>
+    </div>
     <div class="tabs" role="tablist" aria-label="Views">
       <button role="tab" id="tab-timeline" aria-controls="view-timeline" aria-selected="true">Timeline</button>
       <button role="tab" id="tab-compare" aria-controls="view-compare" aria-selected="false" tabindex="-1">Compare by issue</button>
@@ -38,13 +44,14 @@
 
   <!-- 1. Timeline -->
   <section id="view-timeline" role="tabpanel" aria-labelledby="tab-timeline" class="ap-view">
-    <p class="lede">Each mark is a primary document: an executive order, law, regulation, standard, strategy, plan, UN resolution or major official statement. Squares bind (orders, laws, rules, standards); circles state policy. Solid marks are still in effect; hollow ones were revoked, superseded, suspended or expired; dashed ones are not yet in force. Arcs run from a document to the one it revokes, supersedes or amends.</p>
+    <p class="lede simple-only">Each mark is one official document. Solid marks are still in effect; hollow or dashed ones are not. Click a mark to read what it does. Shown first: the key documents. Use Show all for every document.</p>
+    <p class="lede full-only">Each mark is a primary document: an executive order, law, regulation, standard, strategy, plan, UN resolution or major official statement. Squares bind (orders, laws, rules, standards); circles state policy. Solid marks are still in effect; hollow ones were revoked, superseded, suspended or expired; dashed ones are not yet in force. Arcs run from a document to the one it revokes, supersedes or amends.</p>
     <div class="ap-tlgrid">
       <div class="card ap-tlcard">
         <div class="ap-filters">
           <div class="ap-fg" role="group" aria-label="Countries shown"><span class="fine">Lanes</span><div id="f-lanes" class="ap-chips"></div></div>
-          <div class="ap-fg" role="group" aria-label="Themes"><span class="fine">Themes</span><div id="f-themes" class="ap-chips"></div></div>
-          <div class="ap-fg ap-frow">
+          <div class="ap-fg full-only" role="group" aria-label="Themes"><span class="fine">Themes</span><div id="f-themes" class="ap-chips"></div></div>
+          <div class="ap-fg ap-frow full-only">
             <label class="sr-only" for="q">Search documents</label>
             <input type="search" id="q" class="ap-search" placeholder="Search titles and summaries" autocomplete="off">
             <div class="ap-seg" role="group" aria-label="Display">
@@ -55,17 +62,21 @@
             <button type="button" class="btn" id="tl-reset">Reset</button>
           </div>
         </div>
-        <p class="fine" id="tl-count" aria-live="polite"></p>
+        <div class="ap-countrow"><p class="fine" id="tl-count" aria-live="polite"></p><button type="button" class="btn ap-allbtn" id="tl-all" aria-pressed="false" title="Key documents: a hand-picked set of the main statutes, rules, strategies and agreements" hidden></button></div>
         <div class="ap-tlwrap" id="tl"></div>
         <div class="ap-legend" id="tl-legend" aria-hidden="true">
-          <span><svg width="14" height="14"><rect x="1.5" y="1.5" width="11" height="11" rx="1.5" class="lg-live"/></svg>Binding, in effect</span>
-          <span><svg width="14" height="14"><circle cx="7" cy="7" r="5.5" class="lg-live"/></svg>Policy statement, in effect</span>
-          <span><svg width="14" height="14"><circle cx="7" cy="7" r="5.5" class="lg-dead"/></svg>Revoked, superseded, suspended or expired</span>
-          <span><svg width="14" height="14"><circle cx="7" cy="7" r="5.5" class="lg-prop"/></svg>Proposed, released or signed, not yet in force</span>
-          <span><svg width="14" height="14"><circle cx="7" cy="7" r="5.5" class="lg-unc"/></svg>Status unclear</span>
-          <span><svg width="22" height="10"><path d="M1 8 Q11 0 21 8" class="lg-arc" style="stroke:var(--bad)"/></svg>Revokes</span>
-          <span><svg width="22" height="10"><path d="M1 8 Q11 0 21 8" class="lg-arc" style="stroke:var(--warn)"/></svg>Supersedes, amends or suspends</span>
-          <span><svg width="22" height="10"><path d="M1 8 Q11 0 21 8" class="lg-arc" style="stroke:var(--muted)"/></svg>Implements</span>
+          <span class="simple-only"><svg width="14" height="14"><circle cx="7" cy="7" r="5.5" class="lg-live"/></svg>In effect</span>
+          <span class="simple-only"><svg width="14" height="14"><circle cx="7" cy="7" r="5.5" class="lg-dead"/></svg>No longer in effect</span>
+          <span class="simple-only"><svg width="14" height="14"><circle cx="7" cy="7" r="5.5" class="lg-prop"/></svg>Not yet in force</span>
+          <span class="simple-only"><svg width="14" height="14"><rect x="1.5" y="1.5" width="11" height="11" rx="1.5" class="lg-live"/></svg>Square: binding (law, order, rule)</span>
+          <span class="full-only"><svg width="14" height="14"><rect x="1.5" y="1.5" width="11" height="11" rx="1.5" class="lg-live"/></svg>Binding, in effect</span>
+          <span class="full-only"><svg width="14" height="14"><circle cx="7" cy="7" r="5.5" class="lg-live"/></svg>Policy statement, in effect</span>
+          <span class="full-only"><svg width="14" height="14"><circle cx="7" cy="7" r="5.5" class="lg-dead"/></svg>Revoked, superseded, suspended or expired</span>
+          <span class="full-only"><svg width="14" height="14"><circle cx="7" cy="7" r="5.5" class="lg-prop"/></svg>Proposed, released or signed, not yet in force</span>
+          <span class="full-only"><svg width="14" height="14"><circle cx="7" cy="7" r="5.5" class="lg-unc"/></svg>Status unclear</span>
+          <span class="full-only"><svg width="22" height="10"><path d="M1 8 Q11 0 21 8" class="lg-arc" style="stroke:var(--bad)"/></svg>Revokes</span>
+          <span class="full-only"><svg width="22" height="10"><path d="M1 8 Q11 0 21 8" class="lg-arc" style="stroke:var(--warn)"/></svg>Supersedes, amends or suspends</span>
+          <span class="full-only"><svg width="22" height="10"><path d="M1 8 Q11 0 21 8" class="lg-arc" style="stroke:var(--muted)"/></svg>Implements</span>
         </div>
         <div id="tl-list" class="ap-listwrap" hidden></div>
       </div>
@@ -75,21 +86,25 @@
 
   <!-- 2. Compare -->
   <section id="view-compare" role="tabpanel" aria-labelledby="tab-compare" class="ap-view" hidden>
-    <p class="lede">Pick an issue. Each column gives what that government's official texts say on it, with the passage and where to find it. Where no official text speaks to the issue, the column says so.</p>
+    <p class="lede simple-only">Pick an issue to see what each government's official texts say about it.</p>
+    <p class="lede full-only">Pick an issue. Each column gives what that government's official texts say on it, with the passage and where to find it. Where no official text speaks to the issue, the column says so.</p>
     <div class="choices ap-issues" id="issues" role="group" aria-label="Issue"></div>
     <div id="compare" aria-live="polite"></div>
   </section>
 
   <!-- 3. Debates -->
   <section id="view-debates" role="tabpanel" aria-labelledby="tab-debates" class="ap-view" hidden>
-    <p class="lede">The arguments still open inside each government and between them. Each camp lists who holds the view, by institution or office, with a link to where they said it.</p>
+    <p class="lede simple-only">The arguments still open inside each government and between them.</p>
+    <p class="lede full-only">The arguments still open inside each government and between them. Each camp lists who holds the view, by institution or office, with a link to where they said it.</p>
     <div class="ap-chips" id="scopes" role="group" aria-label="Which debates"></div>
     <div id="debates" class="ap-debates"></div>
+    <button type="button" class="btn simple-only ap-more" id="deb-more" hidden></button>
   </section>
 
   <!-- 4. Compass -->
   <section id="view-compass" role="tabpanel" aria-labelledby="tab-compass" class="ap-view" hidden>
-    <p class="lede">Set each slider to your own view. Once you move one, the three governments appear on the same scale. Click a government's mark to read the passage that puts it there. Your answers stay in the page address, so you can share them.</p>
+    <p class="lede simple-only">Set each slider to your own view, then see which government's texts sit closest to you.</p>
+    <p class="lede full-only">Set each slider to your own view. Once you move one, the three governments appear on the same scale. Click a government's mark to read the passage that puts it there. Your answers stay in the page address, so you can share them.</p>
     <div class="ap-cmpgrid">
       <div class="card ap-axes" id="axes"></div>
       <a href="#cmp-sum" class="ap-mini" id="cmp-mini" hidden></a>

@@ -34,7 +34,11 @@ export const STATUS = {
   'notenforced': { name: 'Not enforced, rescission pending', live: false, s: 'bad' },
   'unclear': { name: 'Status unclear', live: 'unclear', s: 'warn' },
 };
-export const statusOf = d => STATUS[d.status] || { name: d.status, live: true, s: 'warn' };
+// A released or signed text whose effective date has passed is shown as in force, so the label stays true after that date.
+const TODAY = new Date().toISOString().slice(0, 10);
+export const statusOf = d => (d.status === 'released' || d.status === 'signed') && d.effective && d.effective <= TODAY
+  ? STATUS['in-force']
+  : STATUS[d.status] || { name: d.status, live: true, s: 'warn' };
 
 export const REL = {
   revokes: { verb: 'Revokes', back: 'Revoked by', color: 'var(--bad)' },
@@ -49,7 +53,7 @@ export const KIND = {
   'executive-order': 'Executive order', law: 'Law', regulation: 'Regulation', standard: 'Standard',
   strategy: 'Strategy', plan: 'Plan', statement: 'Official statement', guidance: 'Guidance',
   resolution: 'UN resolution', declaration: 'Declaration', decree: 'Decree',
-  proclamation: 'Proclamation', agreement: 'Agreement (treaty)',
+  proclamation: 'Proclamation', agreement: 'Agreement (treaty)', bill: 'Bill (not enacted)',
 };
 
 export const D = Object.fromEntries(DOCS.map(d => [d.id, d]));

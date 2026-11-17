@@ -36,6 +36,20 @@ const PRESETS = {
 let S = PRESETS.verify();
 
 let map = null, cls = null, feats = {}, names = [];
+
+// ---- Detail switch (Simple | Full detail), shared key across the Emerging Technology tools --------
+function setDetail(d, save = true) {
+  d = d === 'full' ? 'full' : 'simple';
+  document.body.classList.toggle('detail-simple', d === 'simple');
+  document.body.classList.toggle('detail-full', d === 'full');
+  document.querySelectorAll('#detail button').forEach(b => b.setAttribute('aria-pressed', b.dataset.d === d));
+  if (save) { try { localStorage.setItem('et-detail', d); } catch { /* storage blocked: keep the in-page choice */ } }
+  // Method and sources: always open in Full detail, a collapsed <details> in Simple.
+  document.getElementById('msrc').open = d === 'full';
+}
+{ let d = 'simple'; try { d = localStorage.getItem('et-detail') || 'simple'; } catch { /* no storage */ } setDetail(d, false); }
+document.getElementById('detail').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setDetail(b.dataset.d); });
+document.getElementById('tofull').addEventListener('click', () => { document.getElementById('msrc').open = true; document.getElementById('timeline-sec').scrollIntoView({ block: 'start' }); });
 let rafId = 0;
 
 // ---- Hash --------------------------------------------------------------------------------------
@@ -171,6 +185,7 @@ function renderStep() {
     applyStep(n); setFeatures(); setView(S.view);
     card.querySelector('.solid')?.focus({ preventScroll: true });
     const sc = STEPS[n].scroll;
+    if (sc && document.body.classList.contains('detail-simple')) setDetail('full');   // the target lives in Full detail
     if (sc) $(sc)?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
   });
 }
@@ -204,6 +219,9 @@ function draw(fast) {
   // Verdict
   const SV = { ...S, ruleout: ruleLong(S.ruleout), ruleTag: ruleTag(S.ruleout) }, vx = { ...cur.v, gridKm: Math.round(cur.reg.step * 111) };
   const vv = S.mode === 'attack' ? attackVerdict(vx, SV) : verifierVerdict(vx, SV);
+  $('howto').textContent = S.mode === 'attack'
+    ? `Your chip is smuggled into ${ruleTag(S.ruleout)}. Try to pass it off as being in ${S.claim}: drag the chip, or add delay or a proxy in the panel, and see if the check catches you.`
+    : `Your job: prove the chip is not in ${ruleTag(S.ruleout)}. Click city dots to add landmark servers. Each circle is the farthest the chip can be, given how fast it answered.`;
   $('verdict').dataset.s = vv.s; $('v-tag').textContent = vv.tag; $('v-text').textContent = vv.text;
   const fmtA = a => !S.lms.length ? '∞' : a >= 1e6 ? (a / 1e6).toFixed(2) + 'M' : a >= 1e4 ? Math.round(a / 1000) + 'k' : Math.round(a).toLocaleString('en-US');
   $('k-area').textContent = fmtA(cur.reg.area);
@@ -250,7 +268,7 @@ function syncControls() {
 }
 
 function renderBelow() {
-  $('asof').textContent = CHECKED;
+  $('asof').textContent = CHECKED; $('asof-s').textContent = CHECKED;
   $('tl').innerHTML = TIMELINE.map(e => `<li><span class="tl-d num">${e.d}</span><p>${esc(e.t)} <a href="${SOURCES[e.s].url}" target="_blank" rel="noopener">Source</a>${e.s2 ? ` · <a href="${SOURCES[e.s2].url}" target="_blank" rel="noopener">Reuters</a>` : ''}</p></li>`).join('');
   $('srclist').innerHTML = SOURCE_ORDER.map(k => `<li>${esc(SOURCES[k].cite)} <a href="${SOURCES[k].url}" target="_blank" rel="noopener">Link</a></li>`).join('');
 }

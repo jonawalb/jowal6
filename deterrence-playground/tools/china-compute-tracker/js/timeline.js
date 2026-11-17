@@ -1,5 +1,5 @@
 // Joined timeline: rule changes, Entity List additions, cases and estimates on one axis.
-import { POLICY, EL_RULES, CASES, ESTIMATES, METRICS, GRADE_COL, esc, fmtDate, yr, svgEl, keyable, statusClass } from './common.js';
+import { POLICY, EL_RULES, CASES, ESTIMATES, METRICS, GRADE_COL, esc, fmtDate, yr, svgEl, keyable, statusClass, clip } from './common.js';
 import { ruleCount } from './entity.js';
 
 export const LANES = [
@@ -19,7 +19,7 @@ export function timelineItems(S) {
   return out.filter(i => i.d >= '2022-10-01').sort((a, b) => a.d.localeCompare(b.d));
 }
 
-export function renderTimeline(root, S, { onPick, tip }) {
+export function renderTimeline(root, S, { onPick, tip, rerender }) {
   const items = timelineItems(S);
   root.innerHTML = `<div class="card chartcard"><div class="chart-h"><p class="eyebrow">Controls, listings, cases and estimates, Oct. 2022 to Nov. 2026</p><p class="fine">${items.length} items · estimates follow your grade filter</p></div>
     <div class="chartbox"><svg id="tlc" class="chart tl" role="group" aria-label="Timeline. Use the list below to reach every item by keyboard."></svg></div></div>
@@ -58,9 +58,10 @@ export function renderTimeline(root, S, { onPick, tip }) {
   ll.innerHTML = [...items].reverse().map(it => `<li class="it${S.sel === it.id ? ' on' : ''}"><button type="button" data-id="${esc(it.id)}"><span class="it-d">${esc(fmtDate(it.d))}</span>
     <span class="it-t">${esc(it.t)}</span><span class="it-a fine">${esc(LANES.find(l => l.k === it.lane).n)}</span></button></li>`).join('');
   ll.querySelectorAll('[data-id]').forEach(b => { b.onclick = () => onPick(b.dataset.id, true); });
+  clip(ll, 'timeline', 8, 'items', rerender);
 }
 
 export function policyDetail(p) {
-  return `<p class="eyebrow">Rule change</p><h3 class="d-h">${esc(p.t)}</h3><p class="d-meta">${esc(fmtDate(p.date))}</p><p>${esc(p.x)}</p>
+  return `<p class="eyebrow">${esc(p.k || 'Rule change')}</p><h3 class="d-h">${esc(p.t)}</h3><p class="d-meta">${esc(fmtDate(p.date))}</p><p>${esc(p.x)}</p>
     <p class="eyebrow">Sources</p><ol class="d-src">${p.src.map(([n, u]) => `<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(n)}</a></li>`).join('')}</ol>`;
 }

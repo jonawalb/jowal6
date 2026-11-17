@@ -9,6 +9,8 @@ import { drawMap, animateLog } from './map.js';
 import { emptyChoice, chosen, paintDecide, wireDecide, tryChange } from './decide.js';
 import { metrics, paintTracks, inforceHTML, logHTML, pickCase, caseHTML, WHY, paintScatter, attrHTML } from './view.js';
 import { methodHTML } from './method.js';
+import { initDetail, syncFolds } from './detail.js';
+import { escapeHtml } from '../../../shared/js/mapkit.js';
 import { countUp, pulse } from '../../../shared/js/motion.js';
 
 const $ = id => document.getElementById(id);
@@ -21,6 +23,7 @@ let len = 10;
 
 $('asof').textContent = `Cards current as of ${ASOF}.`;
 $('method-body').innerHTML = methodHTML();
+initDetail();
 
 /* ---------- Start ---------- */
 const LEN_TEXT = { 8: 'Two years. Rules you start late may never bite.', 10: 'Two and a half years. The standard game.', 12: 'Three years. Time for the network to adapt to everything.' };
@@ -64,9 +67,9 @@ function paintChoice() {
   $('preview').innerHTML = `Expected this quarter: <b class="num">${Math.round(rec.delivered)}</b> compute units reach restricted users (with no enforcement at all: about <b class="num">${Math.round(base.delivered)}</b>). Friction on legitimate trade <b class="num">${rec.friction.toFixed(1)}</b>.`;
   const active = document.activeElement?.closest?.('#levers [data-act]');
   const key = active ? `[data-act="${active.dataset.act}"]${active.dataset.t ? `[data-t="${active.dataset.t}"]` : ''}${active.dataset.v ? `[data-v="${active.dataset.v}"]` : ''}` : null;
-  const open = [...$('levers').querySelectorAll('details[open]')].map(d => d.closest('[data-lever]').dataset.lever);
+  const open = [...$('levers').querySelectorAll('details[open]')].map(d => `[data-lever="${d.closest('[data-lever]').dataset.lever}"] details.${d.classList[0]}`);
   paintDecide($('levers'), g.s, g.c, g.msg);
-  for (const id of open) $('levers').querySelector(`[data-lever="${id}"] details`)?.setAttribute('open', '');
+  for (const sel of open) $('levers').querySelector(sel)?.setAttribute('open', '');
   if (key) $('levers').querySelector(key)?.focus();
   history.replaceState(null, '', '#g=' + encode(g.s));
 }
@@ -89,10 +92,12 @@ $('end-turn').addEventListener('click', () => {
   g.s = state;
   $('res-t').textContent = `${q}: what happened`;
   $('log').innerHTML = logHTML(rec, g.s);
+  paintLogMore(false);
   const tag = ['case', 'shell', 'transship', 'split', 'cloud'].find(t => rec.tags.includes(t));
   const card = pickCase(g.s, rec, g.cases);
   if (card) g.cases.push(card.id);
-  $('case-card').innerHTML = caseHTML(card, tag ? WHY[tag] : 'A real case from the public record:');
+  $('case-card').innerHTML = card ? `<details class="cd-fold"><summary>Real case: ${escapeHtml(card.title)}</summary>${caseHTML(card, tag ? WHY[tag] : 'A real case from the public record:')}</details>` : '';
+  syncFolds($('case-card'));
   $('resolve').hidden = false; $('decide').hidden = true; $('end-turn').disabled = true;
   drawMap($('map'), g.s, rec, [], null);
   $('map-mode').textContent = 'what happened; the network has now adapted';
@@ -103,6 +108,15 @@ $('end-turn').addEventListener('click', () => {
   $('resolve').scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth', block: 'nearest' });
   $('res-t').focus();
 });
+/* In Simple mode the quarter log shows its headline line; the rest sits behind this button. */
+function paintLogMore(open) {
+  const n = $('log').children.length, b = $('log-more');
+  $('log').classList.toggle('open', open);
+  b.hidden = n < 2;
+  b.setAttribute('aria-expanded', String(open));
+  b.textContent = open ? 'Show fewer' : `Show all ${n} events`;
+}
+$('log-more').addEventListener('click', () => paintLogMore(!$('log').classList.contains('open')));
 $('next').addEventListener('click', () => {
   $('resolve').hidden = true; $('decide').hidden = false; $('end-turn').disabled = false;
   if (g.s.over) return finish();

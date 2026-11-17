@@ -72,3 +72,23 @@ export function keyable(node, label, fn) {
   node.addEventListener('click', fn);
   node.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(); } });
 }
+
+// Simple mode: show the first n children of a long list, with a "Show all" button. Full detail shows everything.
+const OPEN = new Set();
+let focusKey = null;
+export function clip(list, key, n, noun, rerender) {
+  const items = [...list.children];
+  if (items.length <= n) return;
+  items.slice(n).forEach(li => li.classList.add('xtra'));
+  if (OPEN.has(key)) {
+    if (focusKey === key) { focusKey = null; items[n].querySelector('button, [tabindex]')?.focus(); }
+    return;
+  }
+  list.classList.add('clip');
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'btn showall simple-only';
+  b.textContent = `Show all ${items.length} ${noun}`;
+  b.onclick = () => { OPEN.add(key); focusKey = key; rerender(); };
+  list.after(b);
+}

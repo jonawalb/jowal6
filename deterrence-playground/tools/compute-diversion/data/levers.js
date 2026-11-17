@@ -11,7 +11,7 @@ export const LEVERS = [
     note: 'Pressing a hub is diplomacy with no single legal instrument. A related formal tool:',
     text: 'Press a transshipment hub’s government and coordinate with allies (up to level 2, lasts). Raises seizures at that hub. Costs allied goodwill each time.' },
   { id: 'kyc', name: 'Know-your-customer rule for cloud providers', short: 'Cloud KYC rule', budget: 0, capital: 12, target: 'once', policy: 'remote-access-ifr',
-    note: 'The 2024 cloud KYC proposal (89 FR 5698) was never finalized. The closest real rule, released 16 Nov 2026 and not yet published in the Federal Register:',
+    note: 'The 2024 cloud KYC proposal (89 FR 5698) was never finalized. The closest real rule, released 16 Nov 2026 and scheduled for Federal Register publication 19 Nov 2026 (FR Doc 2026-23529):',
     text: 'Start a rulemaking that makes US cloud providers verify foreign customers. Takes effect after 2 quarters. Cuts rented compute, but some moves to providers outside US reach. Industry pays compliance costs every quarter.' },
   { id: 'lv', name: 'Chip location verification requirement', short: 'Location verification', budget: 0, capital: 15, target: 'once', policy: 'location-verification',
     note: 'No location verification requirement is law. The main bill:',

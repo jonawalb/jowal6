@@ -17,11 +17,11 @@ export function paintTracks(el, m, pv) {
   const pct = m.baseSoFar ? m.diverted / m.baseSoFar : null;
   el.innerHTML =
     row('Compute diverted', r0(m.diverted), pct == null ? 0 : pct * 100, pct == null ? '' : ` <small class="muted">${Math.round(pct * 100)}% of no-enforcement</small>`, 'bad', 'CU, total') +
-    (pv ? `<p class="cd-pv">This quarter, expected: <b class="num">${r0(pv.delivered)}</b> delivered, <b class="num">${r0(pv.seized)}</b> seized${pv.blocked ? `, <b class="num">${r0(pv.blocked)}</b> blocked` : ''}.</p>` : '') +
-    row('Seized', r0(m.seized), m.seized / 4, '', 'good', 'total') +
-    row('Industry revenue', r0(m.revenue), m.revenue - 20, '', '', 'index, 100 = start') +
-    row('Allied goodwill', r0(m.goodwill), m.goodwill, '', '', '0 to 100') +
-    row('Political capital', r0(m.capital), m.capital, '', '', '') +
+    (pv ? `<p class="cd-pv full-only">This quarter, expected: <b class="num">${r0(pv.delivered)}</b> delivered, <b class="num">${r0(pv.seized)}</b> seized${pv.blocked ? `, <b class="num">${r0(pv.blocked)}</b> blocked` : ''}.</p>` : '') +
+    row('Seized', r0(m.seized), m.seized / 4, '', 'good full-only', 'total') +
+    row('Industry revenue', r0(m.revenue), m.revenue - 20, '', 'full-only', 'index, 100 = start') +
+    row('Allied goodwill', r0(m.goodwill), m.goodwill, '', 'full-only', '0 to 100') +
+    row('Political capital', r0(m.capital), m.capital, '', 'full-only', '') +
     row('Collateral cost', m.cost.toFixed(1), m.cost / 1.2, '', 'bad', 'lower is better');
 }
 

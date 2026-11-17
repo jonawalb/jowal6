@@ -22,7 +22,8 @@
 <meta property="og:url" content="https://jwalberg.com/deterrence-playground/tools/silicon-blockade-clock/">
 <meta name="twitter:card" content="summary">
 </head>
-<body>
+<body class="detail-simple">
+<script>try { if (localStorage.getItem('et-detail') === 'full') document.body.className = 'detail-full'; } catch (e) {}</script>
 <header id="tsm-head"></header>
 
 <main class="layout">
@@ -34,6 +35,9 @@
           <p class="daylabel"><b id="day-n" class="num">Day 0</b> <span id="day-s"></span></p>
         </div>
         <div class="clock-btns">
+          <div class="detail-sw" role="group" aria-label="Level of detail">
+            <button type="button" class="btn" data-detail="simple">Simple</button><button type="button" class="btn" data-detail="full">Full detail</button>
+          </div>
           <button type="button" class="btn solid play" id="play">Play</button>
           <button type="button" class="btn" id="tour-btn">Guided briefing</button>
           <button type="button" class="btn" id="copy">Copy link</button>
@@ -51,7 +55,7 @@
       <svg id="world" class="chart" role="img" aria-label="World AI accelerator deliveries by source over one year. Click or drag to move the day."></svg>
     </div>
 
-    <div class="twocol">
+    <div class="twocol full-only">
       <div class="card chartcard">
         <div class="chart-h">
           <p class="eyebrow">Inside Taiwan</p>
@@ -66,7 +70,7 @@
       </div>
     </div>
 
-    <div class="card">
+    <div class="card full-only">
       <p class="eyebrow">Which alternatives ramp, and how slowly</p>
       <div class="tablewrap"><table class="alts" id="alts">
         <thead><tr><th>Alternative</th><th>Status (sourced)</th><th>Starts <span class="notional">notional</span></th><th>Ramp</th><th>Ceiling</th><th>Today</th></tr></thead>
@@ -90,22 +94,23 @@
         <div class="sl-h"><label for="dur">Lasts</label><output id="dur-out"></output></div>
         <input type="range" id="dur" min="7" max="365" step="1">
       </div>
-      <details class="more">
+      <details class="more full-only">
         <summary>What the scenario stops <span class="notional">notional</span></summary>
         <div id="lever-sliders"></div>
       </details>
+      <p class="fine simple-only">Rationing, energy stocks, assumptions <span class="notional">notional</span> and the full readouts are in <button type="button" class="linkbtn" data-detail="full">Full detail</button>.</p>
     </div>
-    <div class="sec">
+    <div class="sec full-only">
       <p class="eyebrow">2 · Rationing <span class="notional">notional</span></p>
       <div class="choices one" id="policy-choices"></div>
       <label class="tg"><input type="checkbox" id="protect"><span class="sw"></span><span class="t">Leading-edge fabs and packaging first<small>Within the chip sector's share of power</small></span></label>
     </div>
-    <div class="sec">
+    <div class="sec full-only">
       <p class="eyebrow">3 · Energy stocks</p>
       <div class="choices" id="stock-choices"></div>
       <p class="fine" id="stock-note"></p>
     </div>
-    <div class="sec">
+    <div class="sec full-only">
       <p class="eyebrow">4 · Bridging assumptions <span class="notional">notional</span></p>
       <div id="param-sliders"></div>
       <details class="more">

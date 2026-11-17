@@ -6,7 +6,7 @@ export const METRICS = [
 "id": "M1",
 "name": "Huawei Ascend AI accelerator output",
 "unit": "Ascend chips (packaged units) per year",
-"period_note": "A 910C package holds two logic dies, so die counts are shown apart from chip counts. \"2023-2024 cumulative\" is the stock of TSMC-made dies Huawei obtained through a shell company.",
+"period_note": "A 910C package holds two logic dies, so die counts are shown apart from chip counts. \"2023-2024 cumulative\" is the stock of TSMC-made dies Huawei obtained through a shell company. Background, before this tracker's Oct. 2022 window: BIS added Huawei to the Entity List in May 2019 (84 FR 22961), applied a new foreign-produced direct product control to Huawei in May 2020 (85 FR 29849) and revised it in Aug. 2020 while listing more Huawei affiliates (85 FR 51596).",
 "default": "2025"
 },
 {
@@ -27,7 +27,7 @@ export const METRICS = [
 "id": "M4",
 "name": "Restricted NVIDIA AI chips smuggled into China",
 "unit": "H100-equivalents (H100e), cumulative unless period says otherwise",
-"period_note": "Epoch AI and IFP count H100-equivalents (weighted by compute); press and official figures count chips. Each unit is shown apart. SemiAnalysis separately reports that more than 1.5 GW of restricted NVIDIA hardware reached China (reported by Tom's Hardware); it is not converted to chips here.",
+"period_note": "Epoch AI and IFP count H100-equivalents (weighted by compute); press and official figures count chips. Each unit is shown apart. SemiAnalysis separately reports that more than 1.5 GW of restricted NVIDIA hardware reached China (reported by Tom's Hardware); it is not converted to chips here. CNAS's 2023 working paper (Fist and Grunewald, Oct. 24, 2023) projected that PRC-linked actors could smuggle 'on the order of thousands to tens of thousands of AI chips per year'; it predates the window and is not plotted.",
 "default": "cumulative through 2025"
 },
 {
@@ -773,6 +773,26 @@ export const ESTIMATES = [
 "quote_is_paraphrase": false,
 "fetched": true,
 "id": "M4-c4ads-mishel-kondi-jul-2025-jan-2026"
+},
+{
+"metric": "M4",
+"period": "2024",
+"low": 140000,
+"high": 140000,
+"unit": "AI chips (GPUs)",
+"what": "AI chips smuggled to the PRC during 2024: median estimate of around 140,000, within a stated range of 10,000 to several hundred thousand chips (the source gives no number for the upper end, so only the median is plotted). Output of a probabilistic model extrapolated from known reported cases, not a count of confirmed cases. Counts chips, not H100-equivalents.",
+"source": "CNAS (Erich Grunewald and Tim Fist)",
+"publisher": "CNAS working paper, 'Countering AI Chip Smuggling Has Become a National Security Priority: An Updated Playbook for Preventing AI Chip Smuggling to the PRC'",
+"date": "2025-06-11",
+"url": "https://www.cnas.org/publications/reports/countering-ai-chip-smuggling-has-become-a-national-security-priority",
+"via": "Read in the CNAS PDF (https://s3.us-east-1.amazonaws.com/files.cnas.org/documents/Countering-AI-Chip-Smuggling-Has-Become-a-National-Security-Priority-CNAS-Working-Paper-2020-format_061125_Final.pdf) and on the CNAS report page; the paper also says smuggling 'more likely than not exceeded 100,000 GPUs in 2024'.",
+"grade": "C",
+"grade_note": "Named think tank; states its method (probabilistic model built from journalistic case reports, with an online model whose parameters can be adjusted). The authors call the uncertainty large.",
+"quote": "the authors estimate the total scale of AI chip smuggling to the PRC in 2024 could have ranged anywhere from 10,000 to several hundred thousand chips, with a median estimate of around 140,000.",
+"quote_is_paraphrase": false,
+"fetched": true,
+"bound": "approx",
+"id": "M4-cnas-erich-grunewald-2024"
 },
 {
 "metric": "M5",

@@ -51,7 +51,7 @@ export const POLICIES = [
   "legalBasis": "15 CFR 742.6(a)(6), 742.6(b)(10); 15 CFR 744.23; ECCNs 3A090, 4A090 (Supp. No. 1 to Part 774); first imposed by 87 FR 62186 (Oct. 13, 2022)",
   "url": "https://www.ecfr.gov/current/title-15/subtitle-B/chapter-VII/subchapter-C/part-742/section-742.6",
   "date": "2022-10-07 (first effective)",
-  "status": "In force; China/Macau case-by-case carve-out added Jan. 2026 (see h200-case-by-case). Pending: RIN 0694-AK50 (released 2026-11-16, not yet published in the Federal Register as of 16 Nov 2026; effective on Federal Register publication) adds a license requirement for Indonesia, Malaysia, Singapore, Thailand and Brazil.",
+  "status": "In force; China/Macau case-by-case carve-out added Jan. 2026 (see h200-case-by-case). Pending: RIN 0694-AK50 (released 2026-11-16; on Federal Register public inspection 16 Nov 2026 as FR Doc 2026-23529, scheduled for publication 19 Nov 2026; effective on publication) adds a license requirement for Indonesia, Malaysia, Singapore, Thailand and Brazil.",
   "checked": "2026-11-16"
  },
  {
@@ -61,17 +61,49 @@ export const POLICIES = [
   "legalBasis": "90 FR 4544 (Jan. 15, 2025); BIS press release May 13, 2025",
   "url": "https://www.bis.gov/press-release/department-commerce-announces-rescission-biden-era-artificial-intelligence-diffusion-rule-strengthens",
   "date": "Effective 2025-01-13; compliance date 2025-05-15; rescission announced 2025-05-13",
-  "status": "Not enforced per BIS (May 13, 2025). Formal rescission is in BIS interim final rule RIN 0694-AK50, released 2026-11-16, not yet published in the Federal Register as of 16 Nov 2026; effective on Federal Register publication. Until then the rule text (e.g. 740.27 License Exception AIA, 742.6(b)(10) country allocations) still appears in eCFR (current through 2026-11-09).",
+  "status": "Not enforced per BIS (May 13, 2025). Formal rescission is in BIS interim final rule RIN 0694-AK50, released 2026-11-16 and on Federal Register public inspection 16 Nov 2026 as FR Doc 2026-23529, scheduled for publication 19 Nov 2026; effective on publication. Until it takes effect the rule text (e.g. 740.27 License Exception AIA, 742.6(b)(10) country allocations) still appears in eCFR (current through 2026-11-09).",
   "checked": "2026-11-16"
  },
  {
   "id": "may-2025-guidance",
   "name": "May 2025 guidance: Huawei Ascend chips, diversion red flags, AI training",
-  "what": "Alongside the rescission, BIS issued guidance on the risks of using PRC advanced computing ICs, including specific Huawei Ascend chips; on using US chips to train Chinese AI models; and on protecting supply chains against diversion.",
-  "legalBasis": "BIS guidance (not a regulation), May 13, 2025",
-  "url": "https://www.bis.gov/press-release/department-commerce-announces-rescission-biden-era-artificial-intelligence-diffusion-rule-strengthens",
+  "what": "Alongside the rescission, BIS issued guidance on the risks of using PRC advanced computing ICs, including specific Huawei Ascend chips; on using US chips to train Chinese AI models; and on protecting supply chains against diversion. The diversion guidance lists 11 new red flags, among them: a customer that never received advanced computing ICs before October 2022, or whose orders rose sharply after it; a residential address with no other place of use; little or no online presence; an unknown delivery or installation address, or no way to tell whether the customer's headquarters or ultimate parent is in Country Group D:5 or Macau; consignees (such as freight forwarders or logistics firms) whose business does not fit large chip orders; a data center that cannot affirm the power, cooling and space to run the chips; and an IaaS customer that cannot affirm its users are not headquartered in the PRC. It also lists due diligence steps, such as checking incorporation dates, ownership and data-center attestations, with extra scrutiny for data centers above 10 megawatts.",
+  "legalBasis": "BIS guidance (not a regulation), May 13, 2025: \"Industry Guidance to Prevent Diversion of Advanced Computing Integrated Circuits\"",
+  "url": "https://web.archive.org/web/20250513220425/https://www.bis.gov/media/documents/ai-counter-diversion-industry-guidance-may-13-2025.pdf",
   "date": "2025-05-13",
-  "status": "Guidance issued; the press release lists it but the guidance texts were not separately fetched",
+  "status": "Guidance in effect (not a regulation). Text read from the Wayback Machine copy of the original PDF captured 13 May 2025; the live bis.gov copy (now also served at a 'si-counter-diversion' address) prints 'SI' where the original says 'AI'.",
+  "checked": "2026-11-16",
+  "url2": "https://www.bis.gov/press-release/department-commerce-announces-rescission-biden-era-artificial-intelligence-diffusion-rule-strengthens"
+ },
+ {
+  "id": "strike-force",
+  "name": "Disruptive Technology Strike Force (DOJ and Commerce)",
+  "what": "Joint Justice Department and Commerce (BIS) strike force announced 16 Feb 2023. Per the release, its work focuses on \"investigating and prosecuting criminal violations of export laws\" and on administrative enforcement of export controls, against acquisition of advanced technology by nation-state adversaries such as the PRC, Iran, Russia and North Korea. Co-led by DOJ's National Security Division and BIS Export Enforcement, with the FBI, Homeland Security Investigations and 14 US Attorneys' Offices in 12 metropolitan regions. It is the real-world counterpart of the game's enforcement agents.",
+  "legalBasis": "Interagency enforcement initiative (no regulation); prosecutions brought under ECRA (50 U.S.C. 4819) and other statutes",
+  "url": "https://web.archive.org/web/20230303072002/https://www.justice.gov/opa/pr/justice-and-commerce-departments-announce-creation-disruptive-technology-strike-force",
+  "date": "2023-02-16",
+  "status": "Announced 2023-02-16 (DOJ release read via the Wayback Machine, capture of 3 Mar 2023; justice.gov now serves the release under /archives/). Current 2026 structure not separately checked.",
+  "checked": "2026-11-16"
+ },
+ {
+  "id": "malaysia-stp",
+  "name": "Malaysia: Strategic Trade Permit for US-origin AI chips",
+  "what": "Malaysia's trade ministry announced that, effective immediately, \"all exports, tranships and transits of high-performance AI chips of US origin are subject to a Strategic Trade Permit\", using the catch-all control in section 12 of its Strategic Trade Act 2010, while it reviews adding the chips to its Strategic Items List. The ministry said Malaysia \"stands firm against any attempt to circumvent export controls\". An example of a transit hub's own government acting, the real counterpart of the game's hub pressure.",
+  "legalBasis": "Strategic Trade Act 2010 (Malaysia), section 12 (catch-all control); MITI press statement, 14 July 2025",
+  "url": "https://www.miti.gov.my/miti/resources/Media%20Release/%5BFINAL%5D%5FMITI%5FPress%5FStmt%5FMalaysia%5FRegulates%5FTrade%5Fof%5FUS%5FAI%5FChips%5F2025-07-14.pdf",
+  "date": "2025-07-14",
+  "status": "In force from 2025-07-14 per the MITI statement. Whether the chips were later added to the Strategic Items List was not checked.",
+  "checked": "2026-11-16"
+ },
+ {
+  "id": "singapore-server-fraud",
+  "name": "Singapore: server-purchase fraud prosecutions (Aperia Group case)",
+  "what": "Singapore Police and Singapore Customs raided 22 locations on 26 Feb 2025; three men were charged on 27 Feb 2025 with fraud by false representation on suppliers of servers, and a fourth person on 2 Apr 2026. On 1 Jul 2026 police announced added fraud and money-laundering charges and that charges would be brought against companies (three Aperia Group companies and Luxuriate Your Life). The charges assert that between November 2023 and February 2025 three officers \"falsely represented, in communications to these suppliers, that one of the Aperia Group companies would be the end-user of the servers\" bought from Dell, Super Micro Computer and Asus. Police seized or prohibited the disposal of more than S$56 million in assets. The police releases do not say what the servers contained or where they went. A hub government prosecuting false end-user claims under its own law.",
+  "legalBasis": "Singapore Penal Code 1871 s. 424B (fraud by false representation), with s. 109; Corruption, Drug Trafficking and Other Serious Crimes (Confiscation of Benefits) Act 1992 s. 54; other charges per the 1 Jul 2026 release",
+  "url": "https://www.police.gov.sg/media-hub/news/2026/07/20260701_four_individuals_face_additional_charges_and_four_companies_face_charges",
+  "url2": "https://www.police.gov.sg/media-hub/news/2025/02/20250227_three_men_to_be_charged_for_fraud_by_false_representation",
+  "date": "Charged 2025-02-27; further charges 2026-04-02 and 2026-07-01",
+  "status": "Charges pending in Singapore courts; allegations, no conviction stated in the releases read. Status per the 1 Jul 2026 police release; later court outcomes not checked.",
   "checked": "2026-11-16"
  },
  {
@@ -102,7 +134,7 @@ export const POLICIES = [
   "legalBasis": "89 FR 5698 (Jan. 29, 2024) NPRM; EO 13984 (Jan. 19, 2021); EO 14110 (Oct. 30, 2023)",
   "url": "https://www.federalregister.gov/documents/2024/01/29/2024-01580/taking-additional-steps-to-address-the-national-emergency-with-respect-to-significant-malicious",
   "date": "2024-01-29 (comments closed 2024-04-29)",
-  "status": "Proposed only; no final rule found in the Federal Register as of 2026-11-16. Separately, BIS interim final rule RIN 0694-AK50 (released 2026-11-16, not yet published in the Federal Register as of 16 Nov 2026; effective on Federal Register publication) controls exports of advanced chips to data centers that supply significant compute to D:5- or Macau-headquartered companies; see the remote-access card.",
+  "status": "Proposed only; no final rule found in the Federal Register as of 2026-11-16. Separately, BIS interim final rule RIN 0694-AK50 (released 2026-11-16; on Federal Register public inspection 16 Nov 2026 as FR Doc 2026-23529, scheduled for publication 19 Nov 2026; effective on publication) controls exports of advanced chips to data centers that supply significant compute to D:5- or Macau-headquartered companies; see the remote-access card.",
   "checked": "2026-11-16",
   "lever": "kyc"
  },
@@ -113,7 +145,8 @@ export const POLICIES = [
   "legalBasis": "BIS interim final rule, RIN 0694-AK50, \"Addressing Remote Access to Advanced Semiconductors\" (new 15 CFR 744.24; amended 742.6(a)(6)(iii)(A); new 743.10)",
   "url": "https://www.bis.gov/media/documents/rin-0694-ak50.pdf",
   "date": "Released 2026-11-16",
-  "status": "Released 2026-11-16; not yet published in the Federal Register as of 16 Nov 2026. Effective on the date of Federal Register publication; comments due 60 days after publication.",
+  "status": "Released 2026-11-16; on Federal Register public inspection 16 Nov 2026 as FR Doc 2026-23529, scheduled for publication 19 Nov 2026. Effective on the date of Federal Register publication; comments due 60 days after publication.",
+  "url2": "https://public-inspection.federalregister.gov/2026-23529.pdf",
   "checked": "2026-11-16"
  },
  {
@@ -218,7 +251,7 @@ export const TIMELINE = [
  },
  {
   "date": "2026-11-16",
-  "event": "BIS releases interim final rule RIN 0694-AK50 on remote access: license for chips going to data centers serving D:5/Macau-headquartered companies, new license requirement for Indonesia, Malaysia, Singapore, Thailand and Brazil, formal AI Diffusion rescission. Released, not yet published in the Federal Register as of 16 Nov 2026",
+  "event": "BIS releases interim final rule RIN 0694-AK50 on remote access: license for chips going to data centers serving D:5/Macau-headquartered companies, new license requirement for Indonesia, Malaysia, Singapore, Thailand and Brazil, formal AI Diffusion rescission. On Federal Register public inspection 16 Nov 2026 as FR Doc 2026-23529; scheduled for publication and effect 19 Nov 2026",
   "url": "https://www.bis.gov/media/documents/rin-0694-ak50.pdf"
  }
 ];
@@ -230,10 +263,10 @@ export const UNVERIFIED = [
  "Kamo Kirakosyan sentenced to 26 months (reported Sept. 2-3, 2026): media only; justice.gov sentencing release not found.",
  "Cadence: no official confirmation found that the court accepted the plea or imposed sentence after the 2025-07-28 filing.",
  "H200 China sales revenue share (e.g. '25% U.S. cut'): not found in 91 FR 1684 or Proclamation 11002 text; media and law-firm reports only.",
- "May 2025 BIS-announced 'additional export licensing requirements for exports of SI chips to Malaysia and Thailand': no corresponding Federal Register rule found.",
- "Formal Federal Register rescission of the AI Diffusion rule: none found; eCFR still carries its text as of 2026-11-09.",
+ "The live bis.gov release of 13 May 2025 now lists 'additional export licensing requirements for exports of SI chips to Malaysia and Thailand'; this bullet is absent from the earliest archived version (7 Aug 2025), and no corresponding Federal Register rule was found.",
+ "Formal rescission of the AI Diffusion rule: contained in the remote-access IFR (FR Doc 2026-23529, on public inspection 16 Nov 2026, publishing and effective 19 Nov 2026); eCFR still carried its text as of 2026-11-09.",
  "Any enacted chip location-verification requirement (e.g. FY2026 NDAA, GAIN AI Act): none confirmed; enacted NDAA text not checked.",
- "No rule restricting remote/cloud access to controlled chips was found beyond the 2024 IaaS NPRM (still proposed).",
+ "Remote access: the 2024 IaaS NPRM is still proposed; the remote-access IFR (FR Doc 2026-23529) adds 15 CFR 744.24 for data centers serving D:5- or Macau-headquartered companies, effective on publication 19 Nov 2026.",
  "No 2026 BIS temporary denial order specific to AI-chip diversion was identified.",
  "Applied Materials: the BIS release does not name the Entity List customer; SMIC is named only in secondary sources."
 ];

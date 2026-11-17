@@ -2,6 +2,21 @@
 body[data-mode="verify"] .a-only, body[data-mode="explain"] .a-only,
 body[data-mode="verify"] .x-only, body[data-mode="attack"] .x-only { display: none !important; }
 .card { padding: 12px 14px; }
+
+/* Detail switch: Simple hides .full-only; Full hides .simple-only. */
+body.detail-simple .full-only, body.detail-full .simple-only { display: none !important; }
+body[data-mode="explain"] .howto { display: none !important; }
+body.detail-simple .modes button small { display: none; }
+body.detail-simple .modes button { padding: 6px 12px; }
+body.detail-simple .headcard { gap: 10px; }
+body.detail-simple .v-text { color: var(--muted); }
+.detail > button { padding: 6px 10px; font-size: 12.5px; }
+.howto { margin: 0; font-size: 14.5px; max-width: 80ch; }
+.simple-note { margin: 0; }
+.msrc { max-width: 1400px; margin: 30px auto 0; }
+.msrc > details > summary { cursor: pointer; font-family: var(--display); font-weight: 700; font-size: 20px; padding: 6px 0; }
+.msrc .below { margin-top: 12px; }
+.linkbtn { background: none; border: 0; padding: 0; font: inherit; color: var(--blue); text-decoration: underline; cursor: pointer; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 .headcard { display: flex; flex-direction: column; gap: 12px; }
@@ -76,6 +91,7 @@ body[data-mode="verify"] .x-only, body[data-mode="attack"] .x-only { display: no
 
 .tablecard { display: flex; flex-direction: column; gap: 8px; }
 .tablecard .eyebrow { margin: 0; }
+.tablewrap { position: relative; }   /* contains the .sr labels so they scroll with the table, not the page */
 .mt td.num, .mt th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .mt tr.beaten th, .mt tr.beaten td { background: var(--red-soft); }
 .mt .flag { color: var(--bad); font-size: 11px; font-weight: 600; margin-left: 4px; }
@@ -104,6 +120,7 @@ body[data-mode="verify"] .x-only, body[data-mode="attack"] .x-only { display: no
   .kpi b { font-size: 21px; }
   .v-tag { font-size: 21px; }
   .modes button { flex: 1 1 100%; }
+  body.detail-simple .modes button { flex: 1 1 auto; align-items: center; }
   .legend { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }

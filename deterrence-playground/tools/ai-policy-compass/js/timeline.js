@@ -1,3 +1,6 @@
+// Documents dated before 2017 sit in a compressed "Earlier" band at the left edge.
+// Binding texts (orders, laws, rules, standards, treaties) are squares; everything else, including bills not enacted, is a circle.
+const BINDING = new Set(['standard', 'regulation', 'law', 'decree', 'executive-order', 'proclamation', 'agreement']);
 // Timeline: four swim lanes (US, China, Russia, between them), one node per primary document,
 // arcs for revocations, supersessions and amendments. Roving tabindex: arrows move between nodes.
 import { DOCS } from '../data/policy.js';
@@ -5,7 +8,7 @@ import { COUNTRIES, C, D, REL, KIND, statusOf, esc, dateText } from './common.js
 
 const NS = 'http://www.w3.org/2000/svg';
 const T0 = Date.UTC(2017, 0, 1), T1 = Date.UTC(2027, 0, 1);
-const LABEL_W = 96, PAD_R = 18, ROW = 19, R = 6.5, LANE_PAD = 16, AXIS_H = 26;
+const LABEL_W = 96, PAD_R = 18, EARLY_W = 64, ROW = 19, R = 6.5, LANE_PAD = 16, AXIS_H = 26;
 const ts = s => { const [y, m, d] = s.split('-').map(Number); return Date.UTC(y, (m || 1) - 1, d || 1); };
 
 export function createTimeline(host, { onSelect }) {
@@ -14,7 +17,8 @@ export function createTimeline(host, { onSelect }) {
   svg.setAttribute('role', 'group');
   svg.setAttribute('aria-label', 'Timeline of AI policy documents by country, 2017 to 2026. Use arrow keys to move between documents.');
   host.appendChild(svg);
-  let st = { sel: null, themes: new Set(), lanes: new Set(), links: true, q: '' };
+  let st = { sel: null, themes: new Set(), lanes: new Set(), links: true, q: '', only: null };
+  const shown = d => !st.only || st.only.has(d.id) || d.id === st.sel;
   let layout = null;
 
   function matches(d) {
@@ -29,13 +33,17 @@ export function createTimeline(host, { onSelect }) {
 
   function compute(width) {
     const W = Math.max(860, width);
-    const x = t => LABEL_W + (t - T0) / (T1 - T0) * (W - LABEL_W - PAD_R);
+    const tmin = Math.min(...DOCS.filter(shown).map(d => ts(d.date)));
+    const ew = tmin < T0 ? EARLY_W : 0, x0 = LABEL_W + ew;
+    const x = t => t < T0
+      ? LABEL_W + 6 + (t - tmin) / Math.max(1, T0 - tmin) * (ew - 16)
+      : x0 + (t - T0) / (T1 - T0) * (W - x0 - PAD_R);
     const lanes = COUNTRIES.filter(c => st.lanes.has(c.id));
     const pos = {};
     let y = AXIS_H;
     const laneBoxes = [];
     for (const lane of lanes) {
-      const docs = DOCS.filter(d => d.country === lane.id).sort((a, b) => a.date.localeCompare(b.date));
+      const docs = DOCS.filter(d => d.country === lane.id && shown(d)).sort((a, b) => a.date.localeCompare(b.date));
       const rowEnds = [];
       for (const d of docs) {
         const px = x(ts(d.date));
@@ -50,7 +58,7 @@ export function createTimeline(host, { onSelect }) {
       laneBoxes.push({ lane, y, h });
       y += h;
     }
-    return { W, H: y + AXIS_H, x, pos, laneBoxes };
+    return { W, H: y + AXIS_H, x, pos, laneBoxes, ew };
   }
 
   function el(tag, attrs, parent, text) {
@@ -64,7 +72,7 @@ export function createTimeline(host, { onSelect }) {
   function render() {
     const width = host.clientWidth || 900;
     layout = compute(width);
-    const { W, H, x, pos, laneBoxes } = layout;
+    const { W, H, x, pos, laneBoxes, ew } = layout;
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
     svg.setAttribute('width', W); svg.setAttribute('height', H);
     svg.innerHTML = '';
@@ -85,6 +93,10 @@ export function createTimeline(host, { onSelect }) {
       el('line', { x1: gx, x2: gx, y1: AXIS_H - 4, y2: H - AXIS_H + 4, class: 'ap-grid' }, svg);
       el('text', { x: gx + 4, y: AXIS_H - 9, class: 'ap-year' }, svg, yr);
       el('text', { x: gx + 4, y: H - 8, class: 'ap-year' }, svg, yr);
+    }
+    if (ew) {
+      el('text', { x: LABEL_W + 2, y: AXIS_H - 9, class: 'ap-year' }, svg, 'Earlier');
+      el('text', { x: LABEL_W + 2, y: H - 8, class: 'ap-year' }, svg, 'Earlier');
     }
     const now = x(Date.UTC(2026, 10, 16));
     el('line', { x1: now, x2: now, y1: AXIS_H - 4, y2: H - AXIS_H + 4, class: 'ap-now' }, svg);
@@ -119,7 +131,7 @@ export function createTimeline(host, { onSelect }) {
       el('title', {}, g, `${dateText(d.date, d.datePrecision)} · ${d.title} (${s.name})`);
       el('circle', { r: R + 7, class: 'ap-hit' }, g);
       el('circle', { r: R + 3.5, class: 'ap-ring', style: `stroke:${col}` }, g);
-      const shape = d.kind === 'standard' || d.kind === 'regulation' || d.kind === 'law' || d.kind === 'decree' || d.kind === 'executive-order' || d.kind === 'proclamation' || d.kind === 'agreement'
+      const shape = BINDING.has(d.kind)
         ? el('rect', { x: -R, y: -R, width: R * 2, height: R * 2, rx: 1.5 }, g)
         : el('circle', { r: R }, g);
       shape.setAttribute('class', `ap-mark ${s.live === true ? 'live' : s.live === false ? 'dead' : s.live === 'unclear' ? 'unc' : 'prop'}`);

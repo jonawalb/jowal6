@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400">
+<rect width="640" height="400" fill="#f2f2ee"/>
+<rect x="16" y="16" width="608" height="368" rx="8" fill="#fbfbf8" stroke="#d3d6cd"/>
+<g fill="#cf4d12">
+<rect x="60" y="250" width="14" height="60" rx="3"/><rect x="84" y="210" width="14" height="100" rx="3"/><rect x="108" y="170" width="14" height="140" rx="3"/><rect x="132" y="225" width="14" height="85" rx="3"/><rect x="156" y="190" width="14" height="120" rx="3"/><rect x="180" y="240" width="14" height="70" rx="3"/><rect x="204" y="205" width="14" height="105" rx="3"/>
+</g>
+<path d="M250 300 C 330 300, 360 140, 420 140 S 540 150, 600 150" fill="none" stroke="#cf4d12" stroke-width="7" stroke-linecap="round"/>
+<path d="M250 300 C 330 300, 370 250, 440 250 S 540 250, 600 250" fill="none" stroke="#1b4fd4" stroke-width="7" stroke-linecap="round" stroke-dasharray="14 10"/>
+<line x1="250" y1="310" x2="600" y2="310" stroke="#14201a" stroke-width="2"/>
+<text x="60" y="88" font-family="Georgia, serif" font-size="40" font-weight="700" fill="#14201a">L(s|c)<tspan font-size="28" dy="-16" fill="#cf4d12">λ(a)</tspan></text>
+<text x="600" y="88" font-family="Georgia, serif" font-size="22" fill="#14201a" text-anchor="end">song vs. fake</text>
+</svg>

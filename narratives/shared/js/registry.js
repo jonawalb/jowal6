@@ -183,6 +183,8 @@ export const ALL_TOOLS = [
     blurb: "Watch a report of 16 aircraft become 'the island is surrounded' as it spreads, and test when a correction can still stop it." },
   { slug: 'bayesian-attack', sub: { narratives: 'disinfo' }, dev: true, also: ['gametheory'], cat: 'narratives', sites: ['deterrence', 'narratives'], vault: 'narrgames', siteCat: { narratives: 'narrgames' }, title: 'Attacking the Update', status: 'live',
     blurb: "An adversary doesn't fake the evidence; it changes how much you weigh it. Watch true signals produce a false conclusion, and see which defenses still work." },
+  { slug: 'sonic-vectors', sub: { narratives: 'disinfo' }, dev: true, also: ['gametheory'], cat: 'narratives', sites: ['deterrence', 'narratives'], vault: 'narrgames', siteCat: { narratives: 'narrgames' }, title: 'Sonic Vectors', status: 'live',
+    blurb: "A notional model of music as a disinformation vector: when a cheap song replaces faked evidence, why text fact-checks miss it, and how one melody moves a crowd together." },
   { slug: 'ukraine-air-war', sub: { regions: 'ukraine' }, cat: 'regions', sites: ['deterrence'], title: "Ukraine's Air War", status: 'live',
     blurb: 'Russian missile and drone launches against Ukraine since 2022, by weapon type, with the share the Ukrainian Air Force reported shooting down.' },
   { slug: 'russia-nuclear-signals', sub: { regions: 'ukraine' }, cat: 'regions', sites: ['deterrence'], title: "Russia's Nuclear Signals", status: 'live',

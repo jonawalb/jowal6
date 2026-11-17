@@ -34,12 +34,14 @@ export const SOURCES = {
   epoch: { t: 'Epoch AI, "AI Chip Sales" dataset (updated 21 October 2026; estimates generated 27 August 2026)', u: 'https://epoch.ai/data/ai-chip-sales' },
   nv10q: { t: 'NVIDIA, Form 10-Q for the quarter ended 26 July 2026', u: 'https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm' },
   rhg22: { t: 'Charlie Vest, Agatha Kratz and Reva Goujon, "The Global Economic Disruptions from a Taiwan Conflict," Rhodium Group, 14 December 2022', u: 'https://rhg.com/research/taiwan-economic-disruption/' },
+  ttHw: { t: 'Taipei Times, "TSMC notifies US about use of its chip by Huawei," 24 October 2024 (citing Reuters on a TechInsights teardown)', u: 'https://www.taipeitimes.com/News/front/archives/2024/10/24/2003825780' },
   tfFab: { t: 'TrendForce, on the TSMC Fab 14 P7 power incident, 15 April 2021', u: 'https://www.trendforce.com/presscenter/news/20210415-10762.html' },
 };
 
 // Sourced baseline table. src lists keys in SOURCES.
 export const FACTS = [
   { item: 'Leading-edge logic (<10nm) capacity in Taiwan', fig: '69% of world (2022); 47% projected for 2032. Korea held the other 31% in 2022', src: ['sia24'] },
+  { item: 'TSMC N2 (2nm) production', fig: 'high-volume manufacturing since 4Q25, ramping at TSMC\'s Hsinchu and Kaohsiung sites (3Q26 call)', src: ['tsmc3q26'] },
   { item: 'All assembly, test and packaging in Taiwan', fig: '27% of world capacity (2022). No public figure isolates advanced (2.5D) packaging', src: ['sia24'] },
   { item: 'TSMC advanced backend (packaging) fabs', fig: 'All in Taiwan: five in TSMC\'s list (Hsinchu, Tainan, Longtan in Taoyuan, Taichung, Zhunan in Miaoli), plus AP7 Chiayi (opening ceremony Dec 2025; output from 2026)', src: ['tsmcFabs', 'tfAP7'] },
   { item: 'TSMC CoWoS capacity', fig: 'about 70,000 wafers a month in 2025, 130,000 to 140,000 by end-2026 (TrendForce relaying ETNews and other reports; TSMC does not publish it)', src: ['tfCowos'] },
@@ -47,12 +49,12 @@ export const FACTS = [
   { item: 'TSMC 3Q26 wafer revenue by node', fig: '2nm 8%, 3nm 33%, 5nm 28%, 7nm 10%', src: ['tsmc3q26pr'] },
   { item: 'Nvidia data-center GPUs', fig: 'made by TSMC; Blackwell uses CoWoS-L packaging (Huang, Jan 2025)', src: ['star'] },
   { item: 'World AI accelerators shipped', fig: '9.58 million in 2025; 3.09 million in 2Q26, about 237,000 a week (median estimates)', src: ['epoch'] },
-  { item: 'Accelerators made in China (Huawei, Cambricon)', fig: '11.6% of 2Q26 units in the same dataset', src: ['epoch'] },
+  { item: 'Accelerators made in China (Huawei, Cambricon)', fig: '11.6% of 2Q26 units in the same dataset. TechInsights reportedly found a TSMC-made chip in a Huawei Ascend 910B accelerator (Oct 2024), so 11.6% is best read as an upper bound on output with no Taiwan step', src: ['epoch', 'ttHw'] },
   { item: 'Nvidia inventory, 26 Jul 2026', fig: '$31.6bn total, of which $6.9bn finished goods; quarterly cost of revenue $24.1bn', src: ['nv10q'] },
   { item: 'Electricity used by electronic products and electrical equipment manufacturing (MOEA category, wider than chips)', fig: '65,953 GWh of 283,846 GWh in 2024 (23.2%)', src: ['moeaElec'] },
   { item: 'TSMC electricity at Taiwan sites', fig: '23,329 GWh of purchased electricity ("indirect energy consumption") in 2024: 8.2% of Taiwan\'s use, 35% of the MOEA electronic products and electrical equipment category', src: ['tsmcSR', 'moeaElec'] },
   { item: 'Fab recovery after a short power loss', fig: '2 to 7 days to recalibrate tools (single fab, 2021)', src: ['tfFab'] },
-  { item: 'World economic activity at risk in a blockade (Rhodium Group estimate, 2022)', fig: '"well over two trillion dollars" before international responses or second-order effects; semiconductors are the largest channel. A dollar estimate, not modelled here', src: ['rhg22'] },
+  { item: 'World economic activity at risk in a blockade (Rhodium Group estimate, 2022)', fig: '"well over two trillion dollars" before international responses or second-order effects; semiconductors are the most serious channel. A dollar estimate, not modelled here', src: ['rhg22'] },
   { item: 'Energy imported', fig: 'over 94% (2024)', src: ['eia'] },
   { item: 'Electricity by fuel, 2025', fig: 'gas 47.8%, coal 35.4%, renewables 13.1%, nuclear 1.1% and zero since May 2025', src: ['eco', 'wnn', 'cna'] },
   { item: 'Fuel stocks', fig: 'natural gas 10 to 11 days (EIA, 2026), over 11 days (Taipei Times, Mar 2026); coal 40 to 42 days kept; oil 146 days (2024)', src: ['eia', 'ttRes', 'ttCoal'] },
@@ -79,7 +81,7 @@ export const CLUSTERS = [
 
 // Scenarios: what each one stops. All three shares are notional.
 export const SCENARIOS = [
-  { k: 'quarantine', n: 'Inspection quarantine', s: 'Coast guard boards ships; most cargo gets through; flights continue',
+  { k: 'quarantine', n: 'Inspection quarantine', s: 'Coast guard boards ships; most cargo gets through; flights mostly continue',
     v: { energyCut: 0.25, inputCut: 0.1, exportCut: 0.05 }, dur: 90 },
   { k: 'energy', n: 'Energy-only blockade', s: 'Fuel tankers and LNG carriers turned away; other cargo and flights keep moving only if shippers keep sailing, which CSIS doubts',
     v: { energyCut: 1, inputCut: 0, exportCut: 0 }, dur: 120 },
@@ -92,20 +94,21 @@ export const LEVERS = [
   { k: 'exportCut', t: 'Chip exports stopped', why: 'Finished chips mostly leave by air. Only a blockade that also closes the airspace stops them.' },
 ];
 
-// Bridging parameters. All notional except where src is given; every one has a slider.
+// Bridging parameters. All notional; anchor marks a default set from a sourced figure and then extrapolated.
+// Every one has a slider.
 export const PARAMS = [
-  { k: 'leShare', t: 'Leading-edge share of chip-sector power', v: 0.35, min: 0.1, max: 1, step: 0.01, pct: true,
+  { k: 'leShare', t: 'Leading-edge share of chip-sector power', anchor: true, v: 0.35, min: 0.1, max: 1, step: 0.01, pct: true,
     why: 'When fabs get priority, this block is powered first. Default: TSMC\'s Taiwan sites bought 23,329 GWh in 2024, 35% of the 65,953 GWh used by MOEA\'s electronic products and electrical equipment category (TSMC 2024 Sustainability Report, purchased electricity; MOEA). Not all of TSMC is leading edge, and other firms also make chips.' },
   { k: 'rationLoss', t: 'Output lost to rotating cuts', v: 0.15, min: 0, max: 0.6, step: 0.05, pct: true,
     why: 'Fabs run on stable full power. When the grid rations by shutting sites in turn, each restart costs output beyond the power lost. No public estimate.' },
-  { k: 'restartDays', t: 'Days to recover full output after a cut', v: 7, min: 1, max: 45, step: 1, u: 'days',
+  { k: 'restartDays', t: 'Days to recover full output after a cut', anchor: true, v: 7, min: 1, max: 45, step: 1, u: 'days',
     why: 'TrendForce estimated 2 to 7 days to recalibrate after a one-day power incident at a single fab in 2021. A long island-wide outage would take at least as long.', src: 'tfFab' },
   { k: 'matDays', t: 'Process materials on hand', v: 30, min: 0, max: 120, step: 5, u: 'days',
     why: 'Fabs hold stocks of wafers, chemicals, gases and parts, much of it imported from Japan, the U.S. and Europe. No public figure for Taiwan\'s fabs.' },
-  { k: 'chanWeeks', t: 'Finished accelerators held outside Taiwan', v: 3, min: 0, max: 16, step: 1, u: 'weeks',
+  { k: 'chanWeeks', t: 'Finished accelerators held outside Taiwan', anchor: true, v: 3, min: 0, max: 16, step: 1, u: 'weeks',
     why: 'Nvidia\'s finished goods were $6.9bn on 26 Jul 2026 against $24.1bn of quarterly cost of revenue, about 26 days (10-Q), so 3.7 weeks is an upper anchor. Location of Nvidia\'s finished goods is not disclosed; some sits at Taiwan server makers and would be trapped in a full blockade. Chips already installed do not count.' },
-  { k: 'nonTw', t: 'World output with no Taiwan step', v: 0.116, min: 0, max: 0.4, step: 0.005, pct: true, dp: 1,
-    why: 'Huawei and Cambricon chips were 11.6% of 2Q26 units in Epoch AI\'s data. The model assumes every other accelerator has a Taiwan step (TSMC wafers or packaging). Chinese chips do not reach most buyers outside China.' },
+  { k: 'nonTw', t: 'World output with no Taiwan step', anchor: true, v: 0.116, min: 0, max: 0.4, step: 0.005, pct: true, dp: 1,
+    why: 'Huawei and Cambricon chips were 11.6% of 2Q26 units in Epoch AI\'s data. The model assumes every other accelerator has a Taiwan step (TSMC wafers or packaging). Chinese chips do not reach most buyers outside China. TechInsights reportedly found a TSMC-made chip in a Huawei Ascend 910B (Taipei Times, citing Reuters, Oct 2024), so 11.6% is best read as an upper bound.', src: 'ttHw' },
   { k: 'release', t: 'Stranded chips shipped per day after it lifts', v: 0.25, min: 0.05, max: 1, step: 0.05, pct: true,
     why: 'Share of a normal day\'s output that can leave on top of current output once routes reopen. Air freight capacity limits it.' },
   { k: 'catchUp', t: 'Catch-up ceiling above normal deliveries', v: 0.25, min: 0.05, max: 1, step: 0.05, pct: true,
@@ -116,7 +119,8 @@ export const PARAMS = [
 export const FIXED = { protect: true, weeklyUnits: 237479 }; // weeklyUnits: Epoch AI 2Q26 median, 3,087,226 / 13 weeks
 
 // Alternatives outside Taiwan. Status lines are sourced; start delay, ramp and ceiling are notional.
-// cap = ceiling as a share of normal world accelerator output. delay and ramp in days, counted from the first day of shortfall.
+// cap = ceiling as a share of normal world accelerator output. delay and ramp in days, counted from the first day Taiwan's supply
+// falls below 95% of normal (day 0 in a full blockade).
 export const ALTS = [
   { k: 'az', n: 'Arizona wafers, packaged outside Taiwan', cap: 0.08, delay: 120, ramp: 270,
     status: 'TSMC Arizona fab 1 (N4) in volume production since 4Q24; Nvidia celebrated the first Arizona Blackwell wafer on 17 Oct 2025; such wafers return to Taiwan for packaging (Tom\'s Hardware). Fab 2 (N3) volume production 3Q27. Arizona packaging fab still in permitting (Jan 2026); Amkor Peoria opens 2028.',

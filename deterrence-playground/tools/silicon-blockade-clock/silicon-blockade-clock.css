@@ -118,3 +118,34 @@ details.more summary:focus-visible { outline: 2px solid var(--accent); outline-o
 .detail-simple .link .nm { min-height: 0; }
 .detail-simple .chartcard .tsm-export { display: none; }
 @media (max-width: 520px) { .detail-simple .chain { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* Simple mode: rationing as one compact row of three. */
+.detail-simple #policy-choices { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.detail-simple #policy-choices button { text-align: center; }
+/* Narrow screens: answer and controls sit under the clock (moved by app.js). */
+.up-box[hidden] { display: none; }
+.up-box .sec:last-child { border-bottom: 0; }
+@media (max-width: 1020px) {
+  .tour { position: fixed; left: 8px; right: 8px; bottom: 8px; z-index: 30; max-height: 46vh; overflow: auto; box-shadow: 0 4px 18px color-mix(in srgb, var(--ink) 25%, transparent); }
+}
+/* Phone: tap targets of at least 44px. */
+@media (max-width: 640px) {
+  .btn, .choices button, details.more summary { min-height: 44px; }
+  .linkbtn { min-height: 0; padding: 12px 0; }
+  input[type="range"] { height: 44px; }
+  .tour .x { min-width: 44px; min-height: 44px; }
+}
+/* Phone, Simple: one row of four tiles and a compact scenario row, so the picker and the answer sit near the top. */
+@media (max-width: 640px) {
+  .detail-simple .chain { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+  .detail-simple .link .sub { display: none; }
+  .detail-simple .link .nm { font-size: 11px; }
+  .detail-simple .link .v { font-size: 18px; }
+  .detail-simple #scen-choices { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .detail-simple #scen-choices button { text-align: center; }
+  .detail-simple #scen-choices small, .detail-simple #scen-choices br { display: none; }
+  .up-box .sec { padding: 10px 12px; gap: 8px; }
+}
+@media (max-width: 640px) {
+  .up-box #scen-sec > .fine.simple-only { display: none; } /* the Full detail switch is already at the top */
+  .linkbtn { padding: 13px 0; }
+}

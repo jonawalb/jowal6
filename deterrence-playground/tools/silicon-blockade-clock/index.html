@@ -35,8 +35,8 @@
           <p class="daylabel"><b id="day-n" class="num">Day 0</b> <span id="day-s"></span></p>
         </div>
         <div class="clock-btns">
-          <div class="detail-sw" role="group" aria-label="Level of detail">
-            <button type="button" class="btn" data-detail="simple">Simple</button><button type="button" class="btn" data-detail="full">Full detail</button>
+          <div class="detail-sw" role="group" aria-label="Level of detail" title="Simple shows the main result; Full detail shows every source, control and assumption.">
+            <button type="button" class="btn" data-detail="simple" title="Simple shows the main result; Full detail shows every source, control and assumption.">Simple</button><button type="button" class="btn" data-detail="full" title="Simple shows the main result; Full detail shows every source, control and assumption.">Full detail</button>
           </div>
           <button type="button" class="btn solid play" id="play">Play</button>
           <button type="button" class="btn" id="tour-btn">Guided briefing</button>
@@ -46,13 +46,15 @@
       <input type="range" id="day" min="0" max="364" value="0" aria-label="Day of the crisis">
       <ol class="chain" id="chain" aria-label="The supply chain on the selected day"></ol>
     </div>
+    <div class="panel up-box" id="up-box" hidden></div>
 
     <div class="card chartcard">
       <div class="chart-h">
-        <p class="eyebrow">World AI accelerator deliveries (designers tracked by Epoch AI), share of normal</p>
+        <p class="eyebrow">World AI accelerator deliveries, share of normal</p>
         <ul class="legend" id="legend-world"></ul>
       </div>
       <svg id="world" class="chart" role="img" aria-label="World AI accelerator deliveries by source over one year. Click or drag to move the day."></svg>
+      <p class="fine">Accelerators from the designers tracked by Epoch AI.</p>
     </div>
 
     <div class="twocol full-only">
@@ -87,7 +89,7 @@
       <p class="eyebrow">Run readouts</p>
       <dl class="readout" id="summary"></dl>
     </div>
-    <div class="sec">
+    <div class="sec" id="scen-sec">
       <p class="eyebrow">1 · Scenario</p>
       <div class="choices one" id="scen-choices"></div>
       <div class="slider">
@@ -98,12 +100,12 @@
         <summary>What the scenario stops <span class="notional">notional</span></summary>
         <div id="lever-sliders"></div>
       </details>
-      <p class="fine simple-only">Rationing, energy stocks, assumptions <span class="notional">notional</span> and the full readouts are in <button type="button" class="linkbtn" data-detail="full">Full detail</button>.</p>
+      <p class="fine simple-only">Energy stocks, assumptions <span class="notional">notional</span> and the full readouts are in <button type="button" class="linkbtn" data-detail="full">Full detail</button>.</p>
     </div>
-    <div class="sec full-only">
+    <div class="sec" id="policy-sec">
       <p class="eyebrow">2 · Rationing <span class="notional">notional</span></p>
       <div class="choices one" id="policy-choices"></div>
-      <label class="tg"><input type="checkbox" id="protect"><span class="sw"></span><span class="t">Leading-edge fabs and packaging first<small>Within the chip sector's share of power</small></span></label>
+      <label class="tg full-only"><input type="checkbox" id="protect"><span class="sw"></span><span class="t">Leading-edge fabs and packaging first<small>Within the chip sector's share of power</small></span></label>
     </div>
     <div class="sec full-only">
       <p class="eyebrow">3 · Energy stocks</p>

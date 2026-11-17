@@ -57,15 +57,15 @@ function mountControls() {
   $('lever-sliders').innerHTML = LEVERS.map(L => slider('lv-' + L.k, L.t, 0, 1, 0.05, L.why)).join('');
   LEVERS.forEach(L => { $('lv-' + L.k).oninput = e => { S.lev[L.k] = +e.target.value; update(); }; });
   $('dur').oninput = e => { S.dur = +e.target.value; update(); };
-  $('policy-choices').innerHTML = POLICIES.map(p => `<button type="button" data-k="${p.k}"><b>${p.n}</b><br><small>${p.s}</small></button>`).join('');
+  $('policy-choices').innerHTML = POLICIES.map(p => `<button type="button" data-k="${p.k}"><b>${p.n}</b><span class="full-only"><br><small>${p.s}</small></span></button>`).join('');
   $('policy-choices').querySelectorAll('button').forEach(b => b.onclick = () => { S.policy = b.dataset.k; update(); });
   $('protect').onchange = e => { S.protect = e.target.checked; update(); };
   $('stock-choices').innerHTML = STOCKS.map(s => `<button type="button" data-k="${s.k}"><b>${s.n}</b><br><small>${s.s}</small></button>`).join('');
   $('stock-choices').querySelectorAll('button').forEach(b => b.onclick = () => { S.stock = b.dataset.k; update(); });
-  $('param-sliders').innerHTML = PARAMS.map(P => slider('pa-' + P.k, P.t + (P.src ? ' <small>(sourced default)</small>' : ''), P.min, P.max, P.step, P.why)).join('');
+  $('param-sliders').innerHTML = PARAMS.map(P => slider('pa-' + P.k, P.t + (P.anchor ? ' <small>(sourced anchor, notional extrapolation)</small>' : ''), P.min, P.max, P.step, P.why)).join('');
   PARAMS.forEach(P => { $('pa-' + P.k).oninput = e => { S.p[P.k] = +e.target.value; update(); }; });
   $('alt-sliders').innerHTML = ALTS.map(A => `<p class="alt-h">${A.n}</p>` +
-    slider(`al-${A.k}-delay`, 'Starts after shortfall begins', 0, 720, 10) + slider(`al-${A.k}-cap`, 'Ceiling, share of world output', 0, 0.3, 0.01, A.why)).join('');
+    slider(`al-${A.k}-delay`, 'Starts after Taiwan supply first drops', 0, 720, 10) + slider(`al-${A.k}-cap`, 'Ceiling, share of world output', 0, 0.3, 0.01, A.why)).join('');
   ALTS.forEach(A => {
     $(`al-${A.k}-delay`).oninput = e => { S.alts[A.k].delay = +e.target.value; update(); };
     $(`al-${A.k}-cap`).oninput = e => { S.alts[A.k].cap = +e.target.value; update(); };
@@ -102,12 +102,12 @@ function chainLinks(d) {
   const st = d.stock, stock0 = STOCKS.find(s => s.k === S.stock).v;
   const fuel = Math.min(1, (st.lng + st.coal) / (stock0.lng + stock0.coal));
   return [
-    { n: 'Gas and coal stocks', core: 1, v: `${Math.round(st.lng)} + ${Math.round(st.coal)} d`, f: fuel, s: st.coal < 0.5 ? 'bad' : st.lng < 0.5 ? 'warn' : 'good', sub: 'days of gas + coal' },
+    { n: 'Gas and coal stocks', v: `Gas ${Math.round(st.lng)} · Coal ${Math.round(st.coal)}`, f: fuel, s: st.coal < 0.5 ? 'bad' : st.lng < 0.5 ? 'warn' : 'good', sub: 'days of stock left' },
     { n: 'Grid supply', v: pc(d.grid), f: d.grid, s: state(d.grid, 0.97), sub: 'of normal demand' },
     { n: 'Power to leading-edge fabs', v: pc(d.lePower), f: d.lePower, s: state(d.lePower, 0.999), sub: `chip sector gets ${pc(d.chipPower)}` },
     { n: 'Fab and packaging output', core: 1, v: pc(d.util), f: d.util, s: state(d.util), sub: `materials ${pc(d.mat)} of stock` },
     { n: 'Chips leaving Taiwan', core: 1, v: pc(Math.min(d.shipped, 9.99)), f: Math.min(1, d.shipped), s: state(Math.min(1, d.shipped)), sub: d.stranded > 0.5 ? `${Math.round(d.stranded)} days of output stranded` : 'of normal output' },
-    { n: 'Finished stock abroad', v: `${(d.invDays / 7).toFixed(1)} wk`, f: d.inv, s: d.inv > 0.5 ? 'good' : d.inv > 0.05 ? 'warn' : 'bad', sub: `of ${S.p.chanWeeks} weeks` },
+    { n: 'Finished stock abroad', core: 1, v: `${(d.invDays / 7).toFixed(1)} wk`, f: d.inv, s: d.inv > 0.5 ? 'good' : d.inv > 0.05 ? 'warn' : 'bad', sub: `of ${S.p.chanWeeks} weeks` },
     { n: 'World deliveries', core: 1, v: pc(d.delivered), f: Math.min(1, d.delivered), s: state(d.onTime, 0.995, 0.6),
       sub: d.catchUp > 0.001 ? `incl. ${pc(d.catchUp)} catch-up` : `${fmt(d.delivered * FIXED.weeklyUnits)} a week` },
   ];
@@ -132,7 +132,11 @@ function renderDay() {
   const st = $('status');
   st.dataset.s = d.onTime >= 0.995 ? (d.util < 0.95 || d.shipped < 0.95 || d.backlog > 0.01 ? 'warn' : 'good') : d.onTime >= 0.6 ? 'warn' : 'bad';
   const shortTo = sim.shortUnitsTo(S.day), owed = sim.backlogUnitsAt(S.day);
-  st.querySelector('b').textContent = d.onTime >= 0.995 ? (d.catchUp > 0.001 ? 'Deliveries normal, catching up' : 'World deliveries normal') : `World deliveries at ${pc(d.onTime)}`;
+  // Deliveries look normal only because the stock abroad is covering the gap: say until when.
+  const covering = d.onTime >= 0.995 && d.catchUp <= 0.001 && d.inv < 0.999 && (d.util < 0.95 || d.shipped < 0.95);
+  const cover = covering ? (sim.shortDay != null && sim.shortDay > S.day ? ` until day ${sim.shortDay}` : '') : null;
+  st.querySelector('b').textContent = d.onTime >= 0.995 ? (d.catchUp > 0.001 ? 'Deliveries normal, catching up'
+    : cover != null ? `Normal for now: stock abroad covers the gap${cover}` : 'World deliveries normal') : `World deliveries at ${pc(d.onTime)}`;
   st.querySelector('span').textContent = `Day ${S.day}. Taiwan's leading-edge output is at ${pc(d.util)} and ${pc(Math.min(1, d.shipped))} of normal is leaving the island. ` +
     (shortTo > 0 ? `About ${fmt(shortTo)} accelerators missed their date so far; ${fmt(owed)} are still owed.` : 'No deliveries missed so far.');
   $('alts').querySelectorAll('tbody tr').forEach((tr, i) => {
@@ -197,21 +201,35 @@ mountControls();
 renderBelow();
 $('map-note').textContent = 'Circles mark TSMC wafer fabs (all generations) and advanced packaging fabs by city, from TSMC\'s fab list; the Chiayi packaging site is from TrendForce. Shading shows modelled output, which is the same island-wide because the model has one grid.';
 // Simple / Full detail switch (class on <body>; choice kept in localStorage when available).
-function setDetail(m) {
+const mode = () => (document.body.classList.contains('detail-full') ? 'full' : 'simple');
+function setDetail(m, persist = true) {
   document.body.classList.toggle('detail-simple', m !== 'full');
   document.body.classList.toggle('detail-full', m === 'full');
   document.querySelectorAll('.detail-sw [data-detail]').forEach(b => b.setAttribute('aria-pressed', b.dataset.detail === m));
-  try { localStorage.setItem('et-detail', m); } catch { /* storage unavailable */ }
+  if (persist) { try { localStorage.setItem('et-detail', m); } catch { /* storage unavailable */ } }
   renderDay();
 }
+// Under 1020px the panel drops below the charts; move the answer and the scenario picker up under the clock.
+const narrow = matchMedia('(max-width: 1020px)');
+const upNodes = [$('scen-sec'), $('status').closest('.sec'), $('policy-sec')];
+const upHome = upNodes.map(n => [n.parentNode, n.nextSibling]);
+function placeControls() {
+  if (narrow.matches) { const box = $('up-box'); upNodes.forEach(n => box.appendChild(n)); box.hidden = false; }
+  else { upNodes.forEach((n, i) => upHome[i][0].insertBefore(n, upHome[i][1])); $('up-box').hidden = true; }
+}
+narrow.addEventListener('change', placeControls);
+placeControls();
 document.querySelectorAll('[data-detail]').forEach(b => b.onclick = () => setDetail(b.dataset.detail));
+let modeBeforeTour = null;
 const tour = createTour($('stage'), set => {
   stop();
-  if (set.full) setDetail('full');
+  if (modeBeforeTour == null) modeBeforeTour = mode();
+  if (set.full) setDetail('full', false);
   const sc = SCENARIOS.find(s => s.k === set.scen);
   Object.assign(S, defaults(), { scen: sc.k, lev: { ...sc.v }, dur: set.dur, policy: set.policy, protect: set.protect, day: set.day });
   update();
 });
+tour.onEnd(() => { if (modeBeforeTour != null) setDetail(modeBeforeTour, false); modeBeforeTour = null; });
 $('tour-btn').onclick = () => tour.start();
 $('copy').onclick = async () => {
   try { await navigator.clipboard.writeText(location.href); $('copy').textContent = 'Link copied'; }
@@ -222,7 +240,7 @@ document.addEventListener('keydown', e => {
   if (e.key === ' ' && e.target === document.body) { e.preventDefault(); playing ? stop() : play(); }
 });
 update();
-setDetail(document.body.classList.contains('detail-full') ? 'full' : 'simple');
+setDetail(mode(), false);
 let rz = null;
 addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(renderDay, 120); });
 const NOTE = 'Notional model (Silicon Blockade Clock, jwalberg.com); sourced inputs from EIA, MOEA, TSMC, SIA/BCG, Epoch AI';

@@ -25,7 +25,7 @@ function frame(g, H, dur, yOf, ticks) {
     el('rect', { x: PAD.l, y: PAD.t, width: Math.max(0, x1 - PAD.l), height: H - PAD.t - PAD.b, class: 'band' }, g);
     if (dur < HORIZON) {
       el('line', { x1, x2: x1, y1: PAD.t, y2: H - PAD.b, class: 'band-end' }, g);
-      el('text', { x: x1 + 4, y: PAD.t + 10, class: 'band-t' }, g, 'Lifts');
+      el('text', { x: x1 + 4, y: PAD.t + 10, class: 'band-t' }, g, 'Blockade lifts');
     }
   }
   ticks.forEach(v => {
@@ -48,7 +48,7 @@ function cursor(g, H, day) {
 const pts = (arr, yOf) => arr.map((v, i) => `${xOf(i).toFixed(1)} ${yOf(v).toFixed(1)}`);
 
 export const WORLD_LAYERS = [
-  { k: 'tw', n: 'Taiwan chain', c: 'var(--c1)' },
+  { k: 'tw', n: 'Made via Taiwan', c: 'var(--c1)' },
   { k: 'cn', n: 'Made in China', c: 'var(--c8)' },
   { k: 'alt', n: 'Alternatives', c: 'var(--c3)' },
   { k: 'inv', n: 'Drawn from stock', c: 'var(--c5)' },

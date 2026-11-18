@@ -517,7 +517,7 @@ export const DOCS = [
    "safety"
   ],
   "status": "expired",
-  "statusNote": "Time-limited \"to 2024\". A Ministry of Digital Development successor concept to 2030 was reported as a draft in 2025 (media only); this agent found no adopted successor. Federal Law No. 243-FZ (2026) now sets the statutory framework.",
+  "statusNote": "Time-limited \"to 2024\". A Ministry of Digital Development successor concept to 2030 was reported as a draft in 2025 (media only); no adopted successor was found as of 18 Nov 2026. Federal Law No. 243-FZ (2026) now sets the statutory framework.",
   "summary": "Sets principles for adjusting Russian regulation to AI and robotics, aimed at removing legal barriers while keeping the technology safe for people. Federal agencies were told to follow it in rule-making.",
   "quote": "Концепция определяет принципы, на базе которых в дальнейшем будет совершенствоваться регуляторика, чтобы появились благоприятные условия для развития искусственного интеллекта и робототехники и исчезли существующие барьеры в самых разных сферах – от медицины до космоса.",
   "quoteUrl": "http://government.ru/news/40264/",
@@ -4716,7 +4716,7 @@ export const DEBATES = [
     ]
    }
   ],
-  "status": "The data-centre plan and national AI implementation plan were in preparation as of the Commission's 15 May 2026 meeting; this agent found no published Ministry of Industry chip-capacity figures.",
+  "status": "The data-centre plan and national AI implementation plan were in preparation as of the Commission's 15 May 2026 meeting; this tool found no published Ministry of Industry chip-capacity figures.",
   "sources": [
    "http://kremlin.ru/acts/bank/44731",
    "http://en.kremlin.ru/events/president/news/75830",

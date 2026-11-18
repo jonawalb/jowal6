@@ -1,11 +1,26 @@
 // U.S., allied and Chinese export controls, investment rules and counter-measures aimed at the AI chip supply chain,
-// Aug 2022 to Nov 2026, plus the 2020 Huawei foreign direct product rule and SMIC Entity List listing as background.
+// Aug 2022 to Nov 2026, plus Japan's 2019 Korea licensing measure, the 2020 Huawei foreign direct product rule and the SMIC Entity List listing as background.
 // Each entry was checked on 2026-11-16 against the linked primary source (Federal Register, bis.gov, whitehouse.gov,
 // government.nl / officielebekendmakingen.nl, METI texts hosted by CISTEC, eur-lex, legislation.gov.uk,
 // motir.go.kr, trade.gov.tw, mofcom.gov.cn, samr.gov.cn, cac.gov.cn, govinfo.gov, SEC filings). Entries marked verified:false
 // rest on company statements or press reports and are flagged 'unverified' in the UI. Text is a plain summary, not a quotation.
 // `nodes` are stage ids in data/chain.js.
 export const CONTROLS = [
+ {
+  "date": "2019-07-01",
+  "eff": "2019-07-04",
+  "who": "Japan",
+  "bloc": "al",
+  "ref": "METI, Update of METI's licensing policies and procedures on exports of controlled items to the Republic of Korea (1 Jul 2019)",
+  "nodes": [
+   "resist"
+  ],
+  "kind": "licence",
+  "status": "lifted 23 Mar 2023 (bulk licences restored)",
+  "text": "Aimed at South Korea, not China; included as background, as a precedent for a supplier government using licensing on chip materials. From 4 July 2019 Japanese exporters needed an individual export licence for fluorinated polyimide, resist and hydrogen fluoride (and related technology) going to South Korea, as the bulk licences for those items no longer applied. METI also opened public comment on removing South Korea from its \"white countries\" list. On 16 Mar 2023, after a Japan–Korea export control dialogue, METI decided to revise the controls; from 23 Mar 2023 the three items again fell under the special general bulk export licence, \"as was the case prior to July 2019\".",
+  "url": "https://web.archive.org/web/2019/https://www.meti.go.jp/english/press/2019/0701_001.html",
+  "verified": true
+ },
  {
   "date": "2020-05-15",
   "eff": "2020-05-15; expanded 2020-08-17 (85 FR 51596)",
@@ -414,7 +429,13 @@ export const CONTROLS = [
   "text": "Created a Data Center VEU authorization so pre-approved data centers in specified destinations can receive CCL items, including advanced computing items, without individual licenses. RIN 0694-AK50 (FR Doc 2026-23529) removes the Data Center VEU from § 748.15 effective 19 Nov 2026.",
   "status": "in force until 19 Nov 2026; removed on publication of FR Doc 2026-23529",
   "url": "https://www.federalregister.gov/documents/2024/10/02/2024-22587/expansion-of-validated-end-user-authorization-data-center-validated-end-user-authorization",
-  "verified": true
+  "verified": true,
+  "later": [
+   [
+    "2026-11-19",
+    "removed effective 19 Nov 2026 by FR Doc 2026-23529"
+   ]
+  ]
  },
  {
   "date": "2024-10-18",
@@ -487,7 +508,7 @@ export const CONTROLS = [
   ],
   "kind": "rule",
   "title": "Foreign-Produced Direct Product Rule Additions, and Refinements to Controls for Advanced Computing and Semiconductor Manufacturing Items",
-  "text": "IFR adding new SME ECCNs (e.g., 3B993, 3B994 and related 3D/3E entries), revising 3B001/3B002, creating new FDP rules (SME and footnote 5) aimed at advanced-node IC production, creating ECCN 3A090.c and License Exception HBM for high-bandwidth memory, and clarifying controls on software keys.",
+  "text": "IFR adding new SME ECCNs (e.g., 3B993, 3B994 and related 3D/3E entries), revising 3B001/3B002, creating new FDP rules (SME and footnote 5) aimed at advanced-node IC production, creating ECCN 3A090.c and License Exception HBM for high-bandwidth memory, and clarifying controls on software keys. 3A090.c covers HBM with a memory bandwidth density above 2 GB/s per mm² (\"All HBM stacks currently in production exceed this threshold\"), with a licence requirement for D:5 and Macau; License Exception HBM (§ 740.25) is limited to stacks below 3.3 GB/s per mm².",
   "status": "in force",
   "url": "https://www.federalregister.gov/documents/2024/12/05/2024-28270/foreign-produced-direct-product-rule-additions-and-refinements-to-controls-for-advanced-computing",
   "verified": true
@@ -530,7 +551,13 @@ export const CONTROLS = [
   "text": "Para 1 bans all dual-use exports to US military users or end uses. Para 2 says licences for gallium, germanium, antimony and superhard-material dual-use items to the US will in principle be denied, and graphite exports to the US get stricter end-user review. Third-country transfers of Chinese-origin items to the US are also covered.",
   "status": "partly suspended",
   "url": "https://www.mofcom.gov.cn/zwgk/zcfb/art/2024/art_3d5e990b43424e60828030f58a547b60.html",
-  "verified": true
+  "verified": true,
+  "later": [
+   [
+    "2026-11-28",
+    "para. 2 suspension ran to 27 Nov 2026; check MOFCOM for an extension"
+   ]
+  ]
  },
  {
   "date": "2025-01-13",
@@ -546,7 +573,13 @@ export const CONTROLS = [
   "text": "IFR imposing a worldwide license requirement on 3A090.a/4A090.a and .z items with new exceptions (AIA, ACM, LPP), a new ECCN 4E091 control on closed AI model weights trained with 10^26 or more operations, and revised Data Center VEU rules.",
   "status": "never enforced (rescission announced 13 May 2025); rescinded effective 19 Nov 2026 (FR Doc 2026-23529)",
   "url": "https://www.federalregister.gov/documents/2025/01/15/2025-00636/framework-for-artificial-intelligence-diffusion",
-  "verified": true
+  "verified": true,
+  "later": [
+   [
+    "2026-11-19",
+    "rescinded effective 19 Nov 2026 (FR Doc 2026-23529); never enforced"
+   ]
+  ]
  },
  {
   "date": "2025-01-15",
@@ -703,6 +736,22 @@ export const CONTROLS = [
   "text": "BIS said it would not enforce the AI Diffusion Rule and would rescind it, and issued guidance that using PRC-designed 3A090 ICs (named: Huawei Ascend 910B, 910C, 910D) may violate General Prohibition 10, plus guidance on diversion and on Chinese model training. The release also said BIS was imposing licensing requirements for Malaysia and Thailand; no rule doing so was issued until RIN 0694-AK50 (FR Doc 2026-23529, effective 19 Nov 2026).",
   "status": "in force",
   "url": "https://www.bis.gov/press-release/department-commerce-announces-rescission-biden-era-artificial-intelligence-diffusion-rule-strengthens",
+  "verified": true
+ },
+ {
+  "date": "2025-05-15",
+  "eff": "",
+  "who": "United States (Congress)",
+  "bloc": "us",
+  "ref": "Chip Security Act, H.R. 3447 (introduced 15 May 2025) and S. 1705 (introduced 8 May 2025), 119th Congress",
+  "nodes": [
+   "accel"
+  ],
+  "kind": "statute",
+  "status": "bill: H.R. 3447 ordered reported 42–0 by House Foreign Affairs, 26 Mar 2026; not enacted",
+  "title": "Chip Security Act",
+  "text": "As introduced, would direct Commerce to require chip security mechanisms that implement location verification on covered integrated circuit products (e.g., advanced computing chips) before export, reexport or in-country transfer abroad, and require licensees to report credible information of diversion or tampering to BIS. S. 1705 is in the Senate Banking Committee.",
+  "url": "https://www.congress.gov/bill/119th-congress/house-bill/3447",
   "verified": true
  },
  {
@@ -960,7 +1009,13 @@ export const CONTROLS = [
   "text": "Affiliates Rule IFR: any entity at least 50% owned by one or more Entity List or MEU List parties (and certain sanctioned parties) is automatically subject to the same restrictions.",
   "status": "suspended until 10 Jan 2027",
   "url": "https://www.federalregister.gov/documents/2025/09/30/2025-19001/expansion-of-end-user-controls-to-cover-affiliates-of-certain-listed-entities",
-  "verified": true
+  "verified": true,
+  "later": [
+   [
+    "2027-01-11",
+    "suspension ran to 10 Jan 2027; check the Federal Register for an extension"
+   ]
+  ]
  },
  {
   "date": "2025-09-30",
@@ -992,7 +1047,13 @@ export const CONTROLS = [
   "text": "Requires export licences for synthetic diamond micropowder, single crystals, diamond wire saws and grinding wheels (all above stated thresholds), plus DC arc plasma-jet CVD equipment and its process technology. These are inputs to wafer slicing, grinding and diamond-substrate work.",
   "status": "suspended",
   "url": "https://www.mofcom.gov.cn/zwgk/zcfb/art/2025/art_949f47563b834dad95b0010f375a892c.html",
-  "verified": true
+  "verified": true,
+  "later": [
+   [
+    "2027-01-11",
+    "suspension ran to 10 Jan 2027; check MOFCOM for an extension"
+   ]
+  ]
  },
  {
   "date": "2025-10-09",
@@ -1008,7 +1069,13 @@ export const CONTROLS = [
   "text": "Adds licence requirements for rare-earth processing equipment (e.g. centrifugal extraction, extraction tanks, roasting kilns, electrolysis equipment) and related raw and auxiliary materials.",
   "status": "suspended",
   "url": "https://www.mofcom.gov.cn/zwgk/zcfb/art/2025/art_1315078cebe04210bc35c72a4e7f7967.html",
-  "verified": true
+  "verified": true,
+  "later": [
+   [
+    "2027-01-11",
+    "suspension ran to 10 Jan 2027; check MOFCOM for an extension"
+   ]
+  ]
  },
  {
   "date": "2025-10-09",
@@ -1024,7 +1091,13 @@ export const CONTROLS = [
   "text": "Adds licence requirements for five more medium/heavy rare earths (Ho, Er, Tm, Eu, Yb), including their metals, alloys, sputtering targets, crystal and optical-fibre materials, oxides and compounds.",
   "status": "suspended",
   "url": "https://www.mofcom.gov.cn/zwgk/zcfb/art/2025/art_59ec4f6bec0b459aa4a30c4bbd0a41c1.html",
-  "verified": true
+  "verified": true,
+  "later": [
+   [
+    "2027-01-11",
+    "suspension ran to 10 Jan 2027; check MOFCOM for an extension"
+   ]
+  ]
  },
  {
   "date": "2025-10-09",
@@ -1043,7 +1116,13 @@ export const CONTROLS = [
   "text": "An extraterritorial rule. Foreign exporters would need a MOFCOM licence for foreign-made items that contain at least 0.1% by value of listed Chinese-origin rare earth materials or were made with Chinese rare-earth technology. Applications for end uses in R&D or production of logic chips at 14nm and below or memory with 256+ layers, related production/test equipment and materials, or military-capable AI would be reviewed case by case. Part 1(3) took effect on 9 Oct 2025; parts 1(1) and 1(2) were due on 1 Dec 2025.",
   "status": "suspended",
   "url": "https://www.mofcom.gov.cn/zwgk/zcfb/art/2025/art_7fc9bff0fb4546ecb02f66ee77d0e5f6.html",
-  "verified": true
+  "verified": true,
+  "later": [
+   [
+    "2027-01-11",
+    "suspension ran to 10 Jan 2027; check MOFCOM for an extension"
+   ]
+  ]
  },
  {
   "date": "2025-10-09",
@@ -1059,7 +1138,13 @@ export const CONTROLS = [
   "text": "Requires licences to export rare earth mining, separation, metal smelting, magnet manufacturing and recycling technologies, including production-line assembly and maintenance know-how. It also catches non-controlled exports known to support those activities abroad.",
   "status": "suspended",
   "url": "https://www.mofcom.gov.cn/zwgk/zcfb/art/2025/art_6cb42957741440c6984de696b70df9ae.html",
-  "verified": true
+  "verified": true,
+  "later": [
+   [
+    "2027-01-11",
+    "suspension ran to 10 Jan 2027; check MOFCOM for an extension"
+   ]
+  ]
  },
  {
   "date": "2025-10-09",
@@ -1151,7 +1236,13 @@ export const CONTROLS = [
   "text": "Suspends para 2 of 2024 No. 46 (presumptive denial of Ga, Ge, Sb and superhard-material exports to the US, plus stricter graphite review) until 2026-11-27. The ban on US military end users in para 1 stays.",
   "status": "in force to 27 Nov 2026",
   "url": "https://www.mofcom.gov.cn/zwgk/zcfb/art/2025/art_5c68985a6b1a46778e2e8dbff1bb1601.html",
-  "verified": true
+  "verified": true,
+  "later": [
+   [
+    "2026-11-28",
+    "suspension ran to 27 Nov 2026; check MOFCOM for an extension"
+   ]
+  ]
  },
  {
   "date": "2025-11-10",
@@ -1433,7 +1524,13 @@ export const CONTROLS = [
   "text": "States that the license requirement under 15 CFR 742.6(a)(6)(iii)(A) for 3A090.a/4A090.a items going to entities headquartered in D:5 or Macau (or with such an ultimate parent), wherever located, is still enforced despite AI Diffusion non-enforcement; bona fide data-center operators need not stop current use until further notice.",
   "status": "in force; requirement moved to § 744.23(a)(3)(i)(A) by RIN 0694-AK50 effective 19 Nov 2026",
   "url": "https://www.bis.gov/media/documents/bis-guidance-may-31-2026.pdf",
-  "verified": true
+  "verified": true,
+  "later": [
+   [
+    "2026-11-19",
+    "requirement moved to § 744.23(a)(3)(i)(A) effective 19 Nov 2026 (FR Doc 2026-23529)"
+   ]
+  ]
  },
  {
   "date": "2026-07-10",
@@ -1450,6 +1547,28 @@ export const CONTROLS = [
   "status": "in force",
   "url": "https://www.federalregister.gov/documents/2026/07/14/2026-14132/enhanced-favorable-treatment-for-the-united-arab-emirates-under-the-export-administration",
   "verified": true
+ },
+ {
+  "date": "2026-08-06",
+  "eff": "2026-12-04 (12:01 a.m. ET)",
+  "who": "United States (White House)",
+  "bloc": "us",
+  "ref": "Proclamation 11052; 91 FR 51975; FR Doc 2026-16400. BIS anti-stockpiling rule 91 FR 60505 (FR Doc 2026-19537)",
+  "nodes": [
+   "wafers"
+  ],
+  "kind": "tariff",
+  "status": "pending: applies from 4 Dec 2026",
+  "title": "Adjusting Imports of Polysilicon and Its Derivatives Into the United States",
+  "text": "Section 232 action on polysilicon, which the proclamation calls \"the base material for semiconductors\" and solar products. From 4 Dec 2026, imports of the polysilicon products listed in its annexes face minimum import prices ($21/kg for polysilicon, $100/kg for polysilicon ingots and wafers) and an additional 15% duty on ingots and derivative products. A BIS temporary final rule (91 FR 60505) sets out how BIS will restrict companies found stockpiling before that date. The annex tariff lines were not checked for semiconductor-grade wafers.",
+  "url": "https://www.federalregister.gov/documents/2026/08/11/2026-16400/adjusting-imports-of-polysilicon-and-its-derivatives-into-the-united-states",
+  "verified": true,
+  "later": [
+   [
+    "2026-12-04",
+    "in force since 4 Dec 2026"
+   ]
+  ]
  },
  {
   "date": "2026-08-31",
@@ -1547,7 +1666,13 @@ export const CONTROLS = [
   "text": "Proposed rule implementing Subtitle C of the COINS Act: U.S. persons would notify Treasury of certain transactions with foreign persons engaged in notifiable technologies and be prohibited from certain transactions with those engaged in prohibited technologies. It carries over definitions from 31 CFR part 850 where consistent with the Act. Comments due 7 Dec 2026.",
   "status": "proposed; comments due 7 Dec 2026",
   "url": "https://www.federalregister.gov/documents/2026/10/26/2026-21786/outbound-investment-security-program-regulations",
-  "verified": true
+  "verified": true,
+  "later": [
+   [
+    "2026-12-08",
+    "proposed; comment period closed 7 Dec 2026"
+   ]
+  ]
  },
  {
   "date": "2026-10-29",
@@ -1571,7 +1696,13 @@ export const CONTROLS = [
   "text": "Adds new 3B501 items: Mo/Ru deposition tools, EUV photoresist coat/develop equipment, EUV mask-blank defect inspection, single-wafer cleaning, EUV pattern-shaping, and EUV mask multilayer-reflector deposition tools. It also adds wide-bandgap power semiconductors (3A501.h) and extends software control 3D002 to the new tools.",
   "status": "pending: in force 1 Dec 2026",
   "url": "https://www.legislation.gov.uk/uksi/2026/1150/made",
-  "verified": true
+  "verified": true,
+  "later": [
+   [
+    "2026-12-01",
+    "in force since 1 Dec 2026"
+   ]
+  ]
  },
  {
   "date": "2026-11-05",
@@ -1614,7 +1745,13 @@ export const CONTROLS = [
   "text": "Continues the suspension of MOFCOM/GACC 2025 Nos. 55, 56, 57 and 58 and MOFCOM 2025 Nos. 61 and 62 from 11 Nov 2026 to 10 Jan 2027. These include the No. 61 extraterritorial rare-earth rule with its 14 nm / 256-layer case-by-case review. The No. 70 suspension therefore did not lapse.",
   "status": "in force",
   "url": "https://www.mofcom.gov.cn/zcfb/zc/art/2026/art_2120417f1e21472bbe3efafdfcbd3f43.html",
-  "verified": true
+  "verified": true,
+  "later": [
+   [
+    "2027-01-11",
+    "suspension period ended 10 Jan 2027; check MOFCOM for an extension"
+   ]
+  ]
  },
  {
   "date": "2026-11-16",
@@ -1633,9 +1770,20 @@ export const CONTROLS = [
   "text": "Interim final rule filed for Federal Register public inspection on 16 Nov 2026 as FR Doc 2026-23529, for publication on 19 Nov 2026, the date it takes effect (\"This rule is effective [INSERT DATE OF PUBLICATION IN THE FEDERAL REGISTER]\"). New § 744.24 requires a licence to supply data centers anywhere that give companies headquartered in D:5 countries or Macau access to more than 12,000,000 aggregate TPP. New licence requirement for advanced chips to Indonesia, Malaysia, Singapore, Thailand and Brazil, excluding companies headquartered in, or with an ultimate parent headquartered in, the United States, if the exporter files reports under new § 743.10. New § 744.23(a)(3)(i)(C) requires a licence when a front-end fabricator or OSAT exports applicable advanced-node 3A090.a chips designed by a company that is neither an approved nor an authorized IC designer. Formally rescinds the AI Diffusion Rule, including ECCN 4E091, and removes the Data Center VEU authorization. Moves the licence requirement for advanced computing items going to entities headquartered in D:5 or Macau from § 742.6(a)(6)(iii)(A) to § 744.23(a)(3)(i)(A). Comments are due 60 days after publication.",
   "status": "filed 16 Nov 2026; effective on publication 19 Nov 2026",
   "url": "https://public-inspection.federalregister.gov/2026-23529.pdf",
-  "verified": true
+  "verified": true,
+  "later": [
+   [
+    "2026-11-19",
+    "in force since 19 Nov 2026 (FR Doc 2026-23529)"
+   ]
+  ]
  }
 ];
 
-export const CONTROLS_ASOF = '16 November 2026';
-export const CONTROLS_NOTE = "Status reflects what the linked sources showed on 16 November 2026. The BIS interim final rule RIN 0694-AK50 was filed for Federal Register public inspection on 16 November 2026 as FR Doc 2026-23529 and takes effect on its publication date, 19 November 2026; entries it removes or rescinds (the Data Center VEU, the AI Diffusion Rule) are marked with that effective date. China's suspension of MOFCOM/GACC 2025 Nos. 55\u201358 and MOFCOM 2025 Nos. 61 and 62 runs to 10 January 2027 (2026 No. 58), and its suspension of the 2024 presumptive denial of gallium, germanium and antimony exports to the U.S. ends 27 November 2026 with no extension published yet; recheck after that date. Japanese entries link METI texts hosted by CISTEC because meti.go.jp refused automated access. The CHIPS Act guardrails and the outbound investment program are investment controls, listed with the export controls because they target the same stages.";
+export const CONTROLS_ASOF = '18 November 2026';
+// Day in America/New_York; a control's `later` steps switch its status on the dates they name.
+export const todayET = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/New_York' });
+export function statusOn(c, day) { let s = c.status0 ?? c.status; for (const [d, t] of c.later || []) if (day >= d) s = t; return s; }
+const _day = todayET();
+for (const c of CONTROLS) { c.status0 = c.status; c.status = statusOn(c, _day); }
+export const CONTROLS_NOTE = "Status reflects what the linked sources showed on 16 November 2026 (entries added 18 November 2026). Statuses with a known start or end date switch on that date, U.S. Eastern time, and say so; after an end date the entry asks you to check for an extension rather than assume one. The BIS interim final rule RIN 0694-AK50 was filed for Federal Register public inspection on 16 November 2026 as FR Doc 2026-23529 and takes effect on its publication date, 19 November 2026; entries it removes or rescinds (the Data Center VEU, the AI Diffusion Rule) switch to their new status on that date. China's suspension of MOFCOM/GACC 2025 Nos. 55\u201358 and MOFCOM 2025 Nos. 61 and 62 runs to 10 January 2027 (2026 No. 58), and its suspension of the 2024 presumptive denial of gallium, germanium and antimony exports to the U.S. ends 27 November 2026 with no extension published yet; recheck after that date. Japanese entries link METI texts hosted by CISTEC because meti.go.jp refused automated access. The CHIPS Act guardrails and the outbound investment program are investment controls, listed with the export controls because they target the same stages.";

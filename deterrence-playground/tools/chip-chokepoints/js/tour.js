@@ -19,7 +19,7 @@ const STEPS = [
     body: 'China produces 99% of primary low-purity gallium (USGS) and refines 85% of magnet rare earths (IEA). How much accelerator output depends on them is not public, so the pass-through is a slider. At the notional 10% the loss peaks near 10%; set it to 100% to see the upper bound.',
     set: { s: 'cn-min', sel: 'ga', month: 12 }, target: 'sim-card' },
   { title: 'The rules behind each node',
-    body: 'The timeline lists U.S., allied and Chinese measures from August 2022 to November 2026 (plus the 2020 Huawei rule and SMIC listing as background), each linked to the Federal Register or the official announcement, with its status today. Filter it by country or by stage; the overlay badges on the chain show the same counts.',
+    body: 'The timeline lists U.S., allied and Chinese measures from August 2022 to November 2026 (plus, as background, Japan’s 2019 resist licensing for South Korea, the 2020 Huawei rule and the SMIC listing), each linked to the Federal Register or the official announcement, with its status today. Filter it by country or by stage; the overlay badges on the chain show the same counts.',
     set: { s: 'none', sel: 'accel', focus: 'controls' }, target: 'ctl-card' },
 ];
 

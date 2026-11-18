@@ -339,7 +339,7 @@ export const CHAIN = {
    },
    "firmSrc": "eto",
    "firmYear": 2025,
-   "note": "Older DUV: ASML 94.4% of ArF dry and 66% of KrF tools; Canon 31% and Nikon 3% of KrF (ETO, 2025).",
+   "note": "ETO records the remaining 0.7% of ArF immersion tools as Japanese without naming the firm. Older DUV: ASML 94.4% and Nikon 5.6% of ArF dry tools; ASML 66%, Canon 31% and Nikon 3% of KrF tools (ETO, 2025).",
    "china": {
     "text": "0% of ArF immersion tools (ETO, 2025).",
     "subs": [
@@ -734,7 +734,7 @@ export const CHAIN = {
     "Taiwan": 69,
     "South Korea": 31
    },
-   "note": "SIA/BCG 2024 Exhibit 6, read from the chart; it projects Taiwan 47% and the U.S. 28% by 2032. In 2019 the split was Taiwan 92%, Korea 8% (SIA/BCG 2021). TSMC took 70.2% of all foundry revenue in 2Q25 (TrendForce), and 7 nm and below was 74% of TSMC's 2025 wafer revenue (TSMC 20-F). No public source gives the share of AI accelerator wafers by fab; it is likely higher for Taiwan than this capacity split.",
+   "note": "SIA/BCG 2024 Exhibit 6, read from the chart; it projects Taiwan 47% and the U.S. 28% by 2032. In 2019 the split was Taiwan 92%, Korea 8% (SIA/BCG 2021). TSMC took 70.2% of all foundry revenue in 2Q25 (TrendForce), and 7 nm and below was 74% of TSMC's 2025 wafer revenue (TSMC 20-F). The 2022 split predates U.S. output at this level: TSMC says its first Arizona fab (Fab 21) entered high-volume production at the end of 2024, with 5 nm as its most advanced volume technology at end-2025, while its 2 nm technology entered volume production in Taiwan in 2025 (TSMC 20-F). No public source gives the share of AI accelerator wafers by fab; it is likely higher for Taiwan than this capacity split.",
    "china": {
     "text": "No capacity below 10 nm in SIA/BCG's 2022 count. TechInsights found SMIC 7 nm (N+2) in Huawei's Kirin 9000s in 2023.",
     "subs": [

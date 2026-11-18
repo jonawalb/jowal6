@@ -17,14 +17,20 @@ export function envelope(list) {
   if (!ok.length) return null;
   const low = Math.min(...ok.map(e => e.low));
   const high = Math.max(...ok.map(e => e.high));
-  // A source's own central estimate (e.mid) is used when it gives one; otherwise the midpoint of its range.
-  const mids = ok.map(e => (Number.isFinite(e.mid) ? e.mid : (e.low + e.high) / 2)).sort((a, b) => a - b);
+  // The middle estimate uses central estimates only: a source's own central figure (e.mid) where it gives one,
+  // otherwise the midpoint of its range. Upper or lower bounds and documented-case tallies (e.tally) bound the
+  // band but are not central estimates, so they are left out; median is null when no central estimate remains.
+  const mids = ok.filter(isCentral).map(e => (Number.isFinite(e.mid) ? e.mid : (e.low + e.high) / 2)).sort((a, b) => a - b);
   const m = mids.length;
-  const median = m % 2 ? mids[(m - 1) / 2] : (mids[m / 2 - 1] + mids[m / 2]) / 2;
+  const median = !m ? null : m % 2 ? mids[(m - 1) / 2] : (mids[m / 2 - 1] + mids[m / 2]) / 2;
   // n counts publications, not rows: two figures from one paper (an estimate and a case tally) are one source
   const n = new Set(ok.map((e, i) => e.url || e.source || i)).size;
-  return { low, high, median, n, figures: ok.length, spread: low > 0 ? high / low : null };
+  return { low, high, median, centrals: m, leans: ok.filter(e => e.lean).map(e => e.source), n, figures: ok.length, spread: low > 0 ? high / low : null };
 }
+
+/** A row that states a central estimate (not a one-sided bound, not a tally of documented cases or deliveries). */
+// Figures the source itself calls conservative (e.lean) are not central estimates either.
+export const isCentral = e => e.bound !== 'min' && e.bound !== 'max' && !e.tally && !e.lean;
 
 /** Periods present for a metric, most-covered first, ties broken by latest period. */
 export function periods(estimates, metric) {

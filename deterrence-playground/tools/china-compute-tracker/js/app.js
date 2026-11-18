@@ -3,7 +3,7 @@ import { EL_RULES, POLICY, CASES, ESTIMATES, SECTORS, AS_OF, GRADE_INFO, esc, fm
 import { GRADES } from './range.js';
 import { renderEstimates, estimateDetail } from './estimates.js';
 import { renderEntity, ruleDetail, ruleCount } from './entity.js';
-import { renderCases, caseDetail, CASE_TYPES, STATUS_KEYS } from './cases.js';
+import { renderCases, caseDetail, CASE_TYPES, STATUS_KEYS, MATTERS, matterOf } from './cases.js';
 import { renderTimeline, policyDetail } from './timeline.js';
 import { renderMethod } from './method.js';
 import { createTour } from './tour.js';
@@ -87,8 +87,14 @@ function update() {
   renderSide();
   $('glance').hidden = S.view !== 'est';
   $('lede').hidden = S.view !== 'est';
+  panelCue();
   writeHash();
 }
+
+// Sticky side panel: show "More below" while part of it is out of view.
+const panelEl = document.querySelector('.panel');
+function panelCue() { const p = panelEl; p.classList.toggle('more', p.scrollHeight - p.scrollTop - p.clientHeight > 8); }
+panelEl.addEventListener('scroll', panelCue, { passive: true });
 
 // ---- Simple / Full detail ----
 function setDetail(d, redraw) {
@@ -106,10 +112,10 @@ document.querySelectorAll('[data-detail]').forEach(b => { b.onclick = () => setD
 // Headline numbers for Simple mode, counted from the same data the views use.
 const allSecs = SECTORS.map(s => s.k);
 const elTotal = EL_RULES.reduce((a, r) => a + ruleCount(r, allSecs), 0);
-const convicted = CASES.filter(c => statusClass(c.status).k === 'convicted').length;
+const convicted = new Set(CASES.filter(c => statusClass(c.status).k === 'convicted').map(matterOf)).size;
 $('glance').innerHTML = [
   ['el', elTotal, `PRC entries added to the Entity List in the tracked chip sectors, ${fmtDate('2022-10-01')} to ${fmtDate(AS_OF)}`],
-  ['cases', CASES.length, `public DOJ and BIS cases on smuggling or diverting chips and chipmaking tools; ${convicted} with a plea or conviction`],
+  ['cases', MATTERS, `public DOJ and BIS matters on smuggling or diverting chips and chipmaking tools (${CASES.length} defendant groups); ${convicted} with at least one plea or conviction`],
   ['est', ESTIMATES.length, `published figures on China’s AI chip supply from ${new Set(ESTIMATES.map(e => e.url)).size} sources (estimates, company-reported sales and official statements), each graded by the kind of source behind it`],
 ].map(([v, n, t]) => `<button type="button" class="gl-stat" data-go="${v}"><span class="big">${n}</span><span>${esc(t)}</span></button>`).join('');
 $('glance').querySelectorAll('[data-go]').forEach(b => { b.onclick = () => go(b.dataset.go); });

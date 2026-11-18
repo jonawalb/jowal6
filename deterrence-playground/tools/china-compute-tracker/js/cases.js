@@ -7,6 +7,10 @@ export const STATUS_KEYS = [
 ];
 const route = c => (c.route && c.route.length ? `<span class="route">${c.route.map(p => `<span>${esc(p)}</span>`).join('<i aria-hidden="true">→</i>')}</span>` : '');
 
+/** Matter key: rows for different defendants in one prosecution share it. */
+export const matterOf = c => c.matter || c.id;
+export const MATTERS = new Set(CASES.map(matterOf)).size;
+
 export function filterCases(S) {
   const q = S.q.trim().toLowerCase();
   // With a search, title matches rank first, then newest first.
@@ -20,7 +24,8 @@ export function renderCases(root, S, { onPick, set, rerender }) {
   const filtered = S.ctypes.length !== CASE_TYPES.length || S.cstat.length !== STATUS_KEYS.length || S.q.trim();
   const list = filterCases(S);
   const hubs = new Map();
-  for (const c of list) for (const p of (c.route || []).slice(1, -1)) hubs.set(p, (hubs.get(p) || 0) + 1);
+  // Count each transit point once per matter: split rows of one prosecution share a route.
+  for (const c of list) for (const p of (c.route || []).slice(1, -1)) { if (!hubs.has(p)) hubs.set(p, new Set()); hubs.get(p).add(matterOf(c)); }
   const anyStat = filterCases({ ...S, cstat: STATUS_KEYS.map(s => s.k) });
   const byStat = STATUS_KEYS.map(s => [s, anyStat.filter(c => statusClass(c.status).k === s.k).length]);
   root.innerHTML = `
@@ -32,8 +37,9 @@ export function renderCases(root, S, { onPick, set, rerender }) {
     <div class="stat-row" role="group" aria-label="Show only cases with this status">
       ${byStat.map(([s, n]) => { const only = S.cstat.length === 1 && S.cstat[0] === s.k; return `<button type="button" class="stat stat-btn" data-only="${s.k}" aria-pressed="${only}" title="${only ? 'Show all statuses' : 'Show only this status'}"><span class="big">${n}</span><span><span class="st-pill st-${s.k}">${esc(s.n)}</span></span></button>`; }).join('')}
     </div>
-    ${hubs.size ? `<div class="card full-only"><p class="eyebrow">Transit points alleged in these cases</p><p class="route">${[...hubs.entries()].sort((a, b) => b[1] - a[1]).map(([h, n]) => `<span>${esc(h)} · ${n}</span>`).join(' ')}</p>
-      <p class="fine">Places between origin and final destination as stated in the charging documents or releases. Counts are cases, not shipments.</p></div>` : ''}
+    <p class="fine">${MATTERS} matters in ${CASES.length} rows: where defendants in one prosecution are at different stages (Operation Gatekeeper; the S.D.N.Y. Super Micro case), each group has its own row, and the status counts above count rows.</p>
+    ${hubs.size ? `<div class="card full-only"><p class="eyebrow">Transit points alleged in these cases</p><p class="route">${[...hubs.entries()].map(([h, m]) => [h, m.size]).sort((a, b) => b[1] - a[1]).map(([h, n]) => `<span>${esc(h)} · ${n}</span>`).join(' ')}</p>
+      <p class="fine">Places between origin and final destination as stated in the charging documents or releases. Counts are matters (prosecutions or settlements), not shipments or defendant groups.</p></div>` : ''}
     <div class="card"><p class="eyebrow">${S.q.trim() ? `${list.length} match${list.length === 1 ? '' : 'es'}, title matches first` : 'Cases, newest first'} · status as of ${esc(fmtDate(CASES_CHECKED))}</p><ol class="list" id="cl"></ol></div>`;
   const tog = (arr, k) => (arr.includes(k) ? (arr.length > 1 ? arr.filter(x => x !== k) : arr) : [...arr, k]);
   root.querySelectorAll('[data-t]').forEach(b => { b.onclick = () => set({ ctypes: tog(S.ctypes, b.dataset.t) }); });

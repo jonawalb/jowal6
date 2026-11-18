@@ -299,7 +299,8 @@ export const CASES = [
 }
 ],
 "quote": "These chips are the building blocks of AI superiority and are integral to modern military applications.",
-"official_release": true
+"official_release": true,
+"matter": "sdtx-gatekeeper"
 },
 {
 "id": "sdtx-gatekeeper-gong-yuan",
@@ -333,7 +334,8 @@ export const CASES = [
 }
 ],
 "quote": "Operation Gatekeeper has exposed a sophisticated smuggling network that threatens our Nation’s security by funneling cutting-edge AI technology to those who would use it against American interests",
-"official_release": true
+"official_release": true,
+"matter": "sdtx-gatekeeper"
 },
 {
 "id": "bis-exyte-smic",
@@ -453,7 +455,8 @@ export const CASES = [
 }
 ],
 "quote": "Diversion schemes like those disrupted today generate billions of dollars in ill-gotten gains and pose a direct threat to U.S. national security.",
-"official_release": true
+"official_release": true,
+"matter": "sdny-supermicro"
 },
 {
 "id": "sdny-supermicro-sun",
@@ -505,7 +508,8 @@ export const CASES = [
 }
 ],
 "quote": "Diversion schemes like those disrupted today generate billions of dollars in ill-gotten gains and pose a direct threat to U.S. national security.",
-"official_release": false
+"official_release": false,
+"matter": "sdny-supermicro"
 },
 {
 "id": "ndga-zheng-kelly-english",

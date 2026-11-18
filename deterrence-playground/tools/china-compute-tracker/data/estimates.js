@@ -94,8 +94,8 @@ export const ESTIMATES = [
 "date": "2025-12-12",
 "url": "https://chinaselectcommittee.house.gov/sites/evo-subsites/selectcommitteeontheccp.house.gov/files/evo-media-document/select-committee-h200-letter-to-lutnick-december-2025.pdf",
 "via": "Letter quotes a Bloomberg report (Ludlow & Eastland, Dec 9, 2025) citing an unnamed person",
-"grade": "A",
-"grade_note": "Official committee letter, but it only repeats a press report built on an anonymous source, and the letter itself doubts the figure ('far from clear that China could achieve this'). Effective evidence quality is D.",
+"grade": "D",
+"grade_note": "Graded D, not A: a House committee letter carries it, but the figure relays a Bloomberg report citing an unnamed person; the letter separately doubts that China can make the 910C domestically at scale ('far from clear that China could achieve this'). Not a U.S. government estimate.",
 "quote": "the decision factored in estimates that Huawei's production capacity for its Ascend 910C chip would rise sharply in 2026 to \"a few million.\"",
 "quote_is_paraphrase": false,
 "fetched": true,
@@ -115,8 +115,8 @@ export const ESTIMATES = [
 "date": "2025-12-12",
 "url": "https://chinaselectcommittee.house.gov/sites/evo-subsites/selectcommitteeontheccp.house.gov/files/evo-media-document/select-committee-h200-letter-to-lutnick-december-2025.pdf",
 "via": "Letter footnotes a Reuters report (Apr 8, 2025) citing sources",
-"grade": "A",
-"grade_note": "Official letter, but the figure comes from press reporting; consistent with SemiAnalysis's 2.9M die-bank estimate.",
+"grade": "D",
+"grade_note": "Graded D, not A: a House committee letter carries it, but the letter footnotes a Reuters report citing unnamed sources, so the figure is graded by that source. Consistent with SemiAnalysis's 2.9M die-bank estimate.",
 "quote": "holding TSMC accountable for at the nearly three million chips produced for a Huawei shell company.",
 "quote_is_paraphrase": false,
 "fetched": true,
@@ -351,6 +351,7 @@ export const ESTIMATES = [
 "quote_is_paraphrase": false,
 "fetched": true,
 "stated": "45k wspm by end of 2025",
+"lean": "low",
 "id": "M2-semianalysis-dylan-p-end-2025"
 },
 {
@@ -371,6 +372,7 @@ export const ESTIMATES = [
 "quote_is_paraphrase": false,
 "fetched": true,
 "stated": "60k wspm in 2026",
+"lean": "low",
 "id": "M2-semianalysis-dylan-p-2026"
 },
 {
@@ -391,6 +393,7 @@ export const ESTIMATES = [
 "quote_is_paraphrase": false,
 "fetched": true,
 "stated": "80k wspm in 2027",
+"lean": "low",
 "id": "M2-semianalysis-dylan-p-2027"
 },
 {
@@ -729,6 +732,7 @@ export const ESTIMATES = [
 "fetched": true,
 "stated": "almost 300,000",
 "bound": "approx",
+"tally": true,
 "id": "M4-epoch-ai-isabel-juni-2024-2025-cumulative-2"
 },
 {
@@ -835,6 +839,7 @@ export const ESTIMATES = [
 "fetched": true,
 "stated": "at least 56",
 "bound": "min",
+"tally": true,
 "id": "M4-c4ads-mishel-kondi-jul-2025-jan-2026"
 },
 {
@@ -1099,6 +1104,7 @@ export const ESTIMATES = [
 "stated": "10,000 each",
 "bound": "approx",
 "stated_src": "ByteDance and Tencent receiving 10,000 each",
+"tally": true,
 "id": "M5-financial-times-as-c-2026"
 },
 {
@@ -1113,8 +1119,8 @@ export const ESTIMATES = [
 "date": "2026-04-16",
 "url": "https://chinaselectcommittee.house.gov/media/reports/buy-what-it-can-steal-what-it-must-china-s-campaign-to-acquire-frontier-ai-capabilities",
 "via": "Report text read from the committee-distributed PDF at https://files.constantcontact.com/f0eecb46901/372341fc-7c57-462d-bf91-d6519a6dc858.pdf (the committee web page has no direct PDF link); cites Reuters (Jan 28, 2026, unnamed sources)",
-"grade": "A",
-"grade_note": "Official report repeating a Reuters anonymous-source figure; effective quality D. NVIDIA's later filings show far smaller actual shipments.",
+"grade": "D",
+"grade_note": "Graded D, not A: a House committee report carries it, but it repeats a Reuters anonymous-source figure ('reports indicating'). NVIDIA's later filings show far smaller actual shipments.",
 "quote": "Beijing subsequently approved H200 purchases by Alibaba, Tencent, and ByteDance, with reports indicating that more than 400,000 chips could reach China's leading AI firms.",
 "quote_is_paraphrase": false,
 "fetched": true,

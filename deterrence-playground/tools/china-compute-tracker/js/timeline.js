@@ -3,15 +3,20 @@ import { POLICY, EL_RULES, CASES, ESTIMATES, METRICS, GRADE_COL, esc, fmtDate, y
 import { ruleCount } from './entity.js';
 
 export const LANES = [
-  { k: 'policy', n: 'Rule changes', col: 'var(--ink)' },
+  { k: 'policy', n: 'Rules & licensing', col: 'var(--ink)' },
+  { k: 'ctx', n: 'Other events', col: 'var(--muted)' },
   { k: 'el', n: 'Entity List', col: 'var(--c2)' },
   { k: 'case', n: 'Cases', col: 'var(--bad)' },
   { k: 'est', n: 'Estimates', col: 'var(--c4)' },
 ];
 
+export const isRule = p => !p.k || /^License/.test(p.k);
+
 export function timelineItems(S) {
   const out = [];
-  for (const p of POLICY) out.push({ lane: 'policy', id: 'p:' + p.id, d: p.date, t: p.t });
+  // U.S. rules, BIS guidance and licensing decisions go in the rules lane; bills, PRC actions, company roadmaps,
+  // reports and announcements (entries with a `k` label other than a license step) go in "Other events".
+  for (const p of POLICY) out.push({ lane: isRule(p) ? 'policy' : 'ctx', id: 'p:' + p.id, d: p.date, t: p.t });
   for (const r of EL_RULES) { const n = ruleCount(r, S.secs); if (n) out.push({ lane: 'el', id: 'r:' + r.doc, d: r.date, t: `${n} PRC entries added (${r.cite})`, n }); }
   for (const c of CASES) out.push({ lane: 'case', id: 'c:' + c.id, d: c.date, t: c.title, st: statusClass(c.status).k });
   const seen = new Set();
@@ -61,7 +66,7 @@ export function renderTimeline(root, S, { onPick, tip, set, rerender }) {
     const cx = X(yr(it.d));
     const col = it.lane === 'est' ? GRADE_COL[it.g] : LANES[li].col;
     const r = it.lane === 'el' ? Math.min(13, 4 + Math.sqrt(it.n)) : 5.5;
-    const shape = it.lane === 'policy'
+    const shape = it.lane === 'policy' || it.lane === 'ctx'
       ? svgEl('rect', { x: cx - 2, y: cy - 10, width: 4, height: 20, style: `fill:${col}`, class: `mk${S.sel === it.id ? ' sel' : ''}` }, svg)
       : svgEl('circle', { cx, cy, r, style: `fill:${col}${it.lane === 'case' && it.st === 'alleged' ? ';fill-opacity:.45' : ''}`, class: `mk${S.sel === it.id ? ' sel' : ''}` }, svg);
     keyable(shape, `${fmtDate(it.d)}: ${it.t}`, () => onPick(it.id, true));

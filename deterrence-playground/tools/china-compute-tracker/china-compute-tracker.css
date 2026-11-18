@@ -218,11 +218,25 @@ body.detail-full .simple-only { display: none !important; }
 .stat-btn[aria-pressed="true"] { border-color: var(--blue); background: var(--blue-soft); }
 @media (hover: hover) { .stat-btn:hover { border-color: var(--ink); } }
 .greyed-note { margin: 4px 0 0; }
+/* Phone: a panel-colored strip under each source label keeps the band and bars below the label, not under it. */
+.est .labbg { fill: var(--panel); pointer-events: none; }
+.est .labbg.sel { fill: var(--blue-soft); }
+/* Side panel (sticky on desktop): a cue when more content sits below the fold. */
+.panel.more::after { content: 'More below ↓'; position: sticky; bottom: 0; display: block; text-align: center; padding: 14px 6px 6px; font: 12px var(--body); color: var(--muted); background: linear-gradient(transparent, var(--panel) 55%); pointer-events: none; }
+/* Phone: the summary table stacks into labelled cards instead of losing columns off the edge. */
+@media (max-width: 560px) {
+  .sumtab thead { display: none; }
+  .sumtab tr { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 10px; padding: 8px 0; border-bottom: 1px solid var(--rule); }
+  .sumtab td { border: 0; padding: 0; }
+  .sumtab td:first-child { grid-column: 1 / -1; }
+  .sumtab td.num { text-align: left; white-space: normal; }
+  .sumtab td[data-l]::before { content: attr(data-l); display: block; font: 600 10.5px var(--body); letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+}
 /* Source labels stay legible over the band and gridlines. */
 .est .lab { paint-order: stroke; stroke: var(--panel); stroke-width: 3px; stroke-linejoin: round; }
 @media (max-width: 640px) {
-  .tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-  .tabs::-webkit-scrollbar { display: none; }
+  /* Phone: tabs wrap onto two lines so every view, including Method & sources, stays visible. */
+  .tabs { flex-wrap: wrap; }
   .tab { flex: none; min-height: 44px; white-space: nowrap; }
   .pseg .btn, .gchip, .seg .btn, .acts .btn, .showall, .stat-btn { min-height: 44px; }
   .gchip, .gchip.st { padding: 6px 12px; }

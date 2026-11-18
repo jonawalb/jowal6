@@ -13,7 +13,7 @@ const STEPS = [
     body: 'DOJ and BIS cases on smuggling chips and tools. The status pill says where each case stands on the date checked. A charge is an allegation until a plea or verdict.',
     set: { view: 'cases' } },
   { title: 'One timeline',
-    body: 'Rule changes, listings, cases and estimates on one axis. The estimate lane follows the grade filter you set.',
+    body: 'U.S. rules and licensing, other events (bills, PRC actions, company roadmaps), listings, cases and estimates on one axis. The estimate lane follows the grade filter you set.',
     set: { view: 'tl' } },
 ];
 

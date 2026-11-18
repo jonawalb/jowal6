@@ -27,6 +27,7 @@
 
 <main class="layout">
   <div class="stage" id="stage">
+    <p class="howto"><b>Start here:</b> pick a shock to see how much world AI accelerator output the chain could still make, month by month. Select any stage bar for who holds it and the controls aimed at it.</p>
     <p class="caveat"><b>Current as of <span id="asof"></span>.</b> <span class="full-only">Market shares come from published industry and government sources, each with its data year. The shock model is a stylised throughput calculation: its buffers and substitution times are assumptions you can move, marked <span class="notional">notional</span>.</span><span class="simple-only">Shares are sourced and dated. The shock model's buffers and substitution times are <span class="notional">notional</span>.</span></p>
 
     <div class="card controls">
@@ -130,8 +131,10 @@
     <h2>How to read it</h2>
     <p>The chain runs top to bottom, from design software to the finished, tested accelerator. Each bar splits one stage's world output by country, with the data year and source beside it. Shares come from different sources and years, so compare them with care. The controls overlay counts the U.S., allied and Chinese measures aimed at each stage; the timeline below lists them with dates and links to the official text.</p>
     <p>Pick a shock in the side panel. The output lost at each stage is hatched, and the simulator shows how much world AI accelerator output the chain can still support, month by month. The narrowest stage binds. Buffers delay the loss, and substitutes restore output after a time you set. The simulator runs a fast and a slow substitution case side by side; the amber band between them is the part that depends on how fast substitutes arrive.</p>
-    <h2 class="mt">Method</h2>
-    <div id="method"></div>
+    <details class="method-d mt">
+      <summary><h2>Method and notional assumptions</h2></summary>
+      <div id="method"></div>
+    </details>
   </div>
   <div class="col">
     <h2>Sources</h2>

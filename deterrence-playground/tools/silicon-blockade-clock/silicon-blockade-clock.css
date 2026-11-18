@@ -149,3 +149,10 @@ details.more summary:focus-visible { outline: 2px solid var(--accent); outline-o
   .up-box #scen-sec > .fine.simple-only { display: none; } /* the Full detail switch is already at the top */
   .linkbtn { padding: 13px 0; }
 }
+
+/* Simplicity pass 2026-11-18: first-screen instruction, run bottom line, folded method in Simple */
+.clock .howto { margin: 2px 0 8px; font-size: 14px; max-width: 72ch; }
+.bottomline { margin: 0 0 8px; font-size: 13.5px; line-height: 1.45; }
+.msrc { max-width: 1400px; margin: 30px auto 0; }
+.msrc > details > summary { cursor: pointer; font-family: var(--display); font-weight: 700; font-size: 20px; padding: 6px 0; }
+.msrc .below { margin-top: 12px; }

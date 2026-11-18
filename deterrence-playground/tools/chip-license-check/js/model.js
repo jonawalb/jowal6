@@ -189,6 +189,9 @@ export function decide(input) {
   const add = (title, text, cites, verdict = 'pass', flag = '') => steps.push({ n: steps.length + 1, title, text, cites, verdict, flag });
   const done = (outcome, detail, extra = {}) => ({ outcome, title: OUTCOMES[outcome].label, detail, steps, rules, ...extra });
   const ecPrefix = isHbm ? '3A090' : chip.form === 'computer' ? '4A090' : '3A090';
+  // country names that take "the" in running text (the Netherlands, the United Arab Emirates, ...)
+  const Dn = /^(Netherlands|United |Czech Republic|Central African|Philippines|Bahamas|Gambia|Congo|Maldives|Marshall|Solomon|Comoros|Dominican Republic)/.test(dest) ? `the ${dest}` : dest;
+  const DN = Dn[0].toUpperCase() + Dn.slice(1);
   const hkNote = dest === 'Hong Kong' ? ' Hong Kong is treated as part of China under the EAR.' : '';
   const hkCite = dest === 'Hong Kong' ? [C('85 FR 83765 (Hong Kong)', HK)] : [];
   const gp10Risk = !isHbm && (chip.override === 'prc3a090' || chip.designerD5);
@@ -276,15 +279,15 @@ export function decide(input) {
   // Step 3: embargoes
   const emb = EMBARGO[dest];
   if (emb === 'russia') {
-    add('Embargoes and sanctions', `${dest} is subject to § 746.8: a license is required for any item on the CCL, and applications are reviewed under a policy of denial with narrow case-by-case exceptions.`, [C('§ 746.8(a)(1), (b)(3)', ECFR('746.8'))], 'stop');
-    return done('pro', `License required for ${dest}; policy of denial.`, { cls });
+    add('Embargoes and sanctions', `${DN} is subject to § 746.8: a license is required for any item on the CCL, and applications are reviewed under a policy of denial with narrow case-by-case exceptions.`, [C('§ 746.8(a)(1), (b)(3)', ECFR('746.8'))], 'stop');
+    return done('pro', `License required for ${Dn}; policy of denial.`, { cls });
   }
   if (emb === 'other') {
     const sec = { 'Cuba': '746.2', 'Iran': '746.7', 'Korea, North': '746.4', 'Syria': '746.9' }[dest];
-    add('Embargoes and sanctions', `${dest} is covered by a country program in part 746 of the EAR, and in some cases by Treasury (OFAC) sanctions. This tool does not model those programs.`, [C(`§ ${sec}`, ECFR(sec))], 'stop');
+    add('Embargoes and sanctions', `${DN} is covered by a country program in part 746 of the EAR, and in some cases by Treasury (OFAC) sanctions. This tool does not model those programs.`, [C(`§ ${sec}`, ECFR(sec))], 'stop');
     return done('out', `See § ${sec} and OFAC. Country embargo rules decide this case, not the advanced computing rules.`, { cls });
   }
-  add('Embargoes and sanctions', `${dest} is not under a part 746 country embargo.`, [C('Part 746', 'https://www.ecfr.gov/current/title-15/part-746')], 'pass');
+  add('Embargoes and sanctions', `${DN} is not under a part 746 country embargo.`, [C('Part 746', 'https://www.ecfr.gov/current/title-15/part-746')], 'pass');
 
   // H20: direct notice, not codified
   if (chip.override === 'h20') {
@@ -294,7 +297,7 @@ export function decide(input) {
     }
     // RIN 0694-AK50 § 742.6(a)(6)(iii)(A)(1): a license for every 3A090 (except .c), 4A090 and .z item to the five destinations.
     const ak5 = ak && AK50_FIVE.includes(dest);
-    const ak5Txt = ak5 ? ` From 19 Nov 2026, RIN 0694-AK50 requires a license for every 3A090 (except .c) and 4A090 item to ${dest} (revised § 742.6(a)(6)(iii)(A)(1)), so the H20 would need one there if it is in 3A090; NVIDIA publishes no figures that settle that.` : '';
+    const ak5Txt = ak5 ? ` From 19 Nov 2026, RIN 0694-AK50 requires a license for every 3A090 (except .c) and 4A090 item to ${Dn} (revised § 742.6(a)(6)(iii)(A)(1)), so the H20 would need one there if it is in 3A090; NVIDIA publishes no figures that settle that.` : '';
     add('Check for a direct notice', `The April 2025 notice NVIDIA disclosed covers China, Hong Kong, Macau, D:5 countries and companies headquartered there. This destination is outside that scope.${ak5Txt}`, [C('NVIDIA Form 8-K, 15 Apr 2025', NV8K)].concat(ak5 ? [NEW('§ 742.6(a)(6)(iii)(A)(1)')] : []), 'pass');
     return done('out', 'No published 3A090 classification and no disclosed notice covers this case. Classification of the H20 for other destinations rests with NVIDIA and BIS.', { cls });
   }
@@ -318,16 +321,16 @@ export function decide(input) {
   }
   if (endUser === 'mieu') {
     if (inMieuScope(dest)) {
-      add('End user: military-intelligence', `§ 744.22(a) requires a license for "any item subject to the EAR" when you know it is intended for a 'military-intelligence end use' in Belarus, Burma, Cambodia, China, Russia, Venezuela or a Country Group E:1 or E:2 country, or for a military-intelligence end user of one of those countries, wherever located. ${dest} is in that list.${hkNote} Review is a presumption of denial (§ 744.22(e)). U.S. persons also need a license to support such end users (§ 744.6(b)(5)).`, [C('§ 744.22(a), (e)', ECFR('744.22')), C('§ 744.6(b)(5)', ECFR('744.6'))].concat(hkCite), 'stop', 'MIEU');
+      add('End user: military-intelligence', `§ 744.22(a) requires a license for "any item subject to the EAR" when you know it is intended for a 'military-intelligence end use' in Belarus, Burma, Cambodia, China, Russia, Venezuela or a Country Group E:1 or E:2 country, or for a military-intelligence end user of one of those countries, wherever located. ${DN} is in that list.${hkNote} Review is a presumption of denial (§ 744.22(e)). U.S. persons also need a license to support such end users (§ 744.6(b)(5)).`, [C('§ 744.22(a), (e)', ECFR('744.22')), C('§ 744.6(b)(5)', ECFR('744.6'))].concat(hkCite), 'stop', 'MIEU');
       return done('pod', 'License required under § 744.22, reviewed with a presumption of denial.', { cls });
     }
-    add('End user: military-intelligence', `§ 744.22(a) covers a 'military-intelligence end use' in Belarus, Burma, Cambodia, China, Russia, Venezuela or a Country Group E:1 or E:2 country, or a military-intelligence end user of one of those countries "wherever located". Outside those countries, such end users "are limited to entities identified under paragraph (f)(2) of this section", and (f)(2) is "an exhaustive listing" for all other countries. ${dest} is not one of the listed countries, so a military-intelligence end user of ${dest} itself is outside § 744.22. This tool assumes the end user is not one of the (f)(2) organizations (for example China's Intelligence Bureau of the Joint Staff Department); if it is, a license is required with a presumption of denial (§ 744.22(e)). The walk continues as for a commercial end user.`, [C('§ 744.22(a), (e), (f)(2)', ECFR('744.22'))], 'info', 'MIEU');
+    add('End user: military-intelligence', `§ 744.22(a) covers a 'military-intelligence end use' in Belarus, Burma, Cambodia, China, Russia, Venezuela or a Country Group E:1 or E:2 country, or a military-intelligence end user of one of those countries "wherever located". Outside those countries, such end users "are limited to entities identified under paragraph (f)(2) of this section", and (f)(2) is "an exhaustive listing" for all other countries. ${DN} is not one of the listed countries, so a military-intelligence end user of ${Dn} itself is outside § 744.22. This tool assumes the end user is not one of the (f)(2) organizations (for example China's Intelligence Bureau of the Joint Staff Department); if it is, a license is required with a presumption of denial (§ 744.22(e)). The walk continues as for a commercial end user.`, [C('§ 744.22(a), (e), (f)(2)', ECFR('744.22'))], 'info', 'MIEU');
   }
   const meuNexus = endUser === 'meu' && MEU_COUNTRIES.includes(dest);
   if (endUser === 'meu') {
     const meuCites = [C('§ 744.21(a), (c), (e)', ECFR('744.21')), C('Supp. 2 to part 744', SUPP2_744)];
     if (!meuNexus) {
-      add('End user: military', `§ 744.21(a)(1) covers a 'military end use' in Burma, Cambodia, China, Nicaragua or Venezuela, or a military end user of those countries "wherever located", but "'Military end users' located outside of Burma, Cambodia, China, Nicaragua, or Venezuela are limited to entities identified on the 'Military End-User' (MEU) List under supplement no. 7". Russian and Belarusian military end users abroad are limited to Entity List footnote 3 entries ((a)(2)). A military end user of ${dest} that is on neither list is outside § 744.21, so the walk continues as for a commercial end user. If the end user is on the MEU List, choose its home country to see the § 744.21 result.`, meuCites.concat([C('MEU List, supp. 7 to part 744', 'https://www.ecfr.gov/current/title-15/part-744/appendix-Supplement%20No.%207%20to%20Part%20744')]), 'info', 'MEU');
+      add('End user: military', `§ 744.21(a)(1) covers a 'military end use' in Burma, Cambodia, China, Nicaragua or Venezuela, or a military end user of those countries "wherever located", but "'Military end users' located outside of Burma, Cambodia, China, Nicaragua, or Venezuela are limited to entities identified on the 'Military End-User' (MEU) List under supplement no. 7". Russian and Belarusian military end users abroad are limited to Entity List footnote 3 entries ((a)(2)). A military end user of ${Dn} that is on neither list is outside § 744.21, so the walk continues as for a commercial end user. If the end user is on the MEU List, choose its home country to see the § 744.21 result.`, meuCites.concat([C('MEU List, supp. 7 to part 744', 'https://www.ecfr.gov/current/title-15/part-744/appendix-Supplement%20No.%207%20to%20Part%20744')]), 'info', 'MEU');
     } else {
       const base744 = `§ 744.21(a)(1) requires a license for "Any item subject to the EAR listed in supplement no. 2" when you know it is for a 'military end use' in Burma, Cambodia, China, Nicaragua or Venezuela, or for a military end user of those countries.${hkNote} Supp. 2 lists 3A991, 4A994 (limited to computers with an APP over 0.5 WT) and 5A992, among others; it does not list 3A090 or 4A090. Applications are reviewed with a presumption of denial (§ 744.21(e)(1)), and § 744.21(e)(3) applies the same review to "items requiring a license for any reason" for these end uses and end users. Only License Exception GOV can overcome the requirement (§ 744.21(c)). The January 2026 case-by-case path for China is closed to military end uses.`;
       if (cls.para !== 'none') {
@@ -464,7 +467,7 @@ export function decide(input) {
     } else if (hqD5) {
       add('License requirement on the CCL', 'The end user or its parent is headquartered in D:5 or Macau. § 744.23(a)(3)(i)(B) requires a license for 3A090.c destined anywhere other than Macau or D:5 for such an entity.', [C('§ 744.23(a)(3)(i)(B)', ECFR('744.23'))], 'flag', 'license');
     } else {
-      add('License requirement on the CCL', `3A090.c needs a license only to Macau and D:5 and to D:5- or Macau-headquartered entities elsewhere. ${dest} is neither.${ak ? ' RIN 0694-AK50 says so expressly: an export of 3A090.c to D:1 or D:4 outside D:5 "may be made under the No License Required (NLR) designation, provided no part 744 or 746 license requirements are applicable" (Note 1 to § 740.2(a)(9)(ii)).' : ''}`, [C('§ 742.6(a)(6)(i)(B)', ECFR('742.6')), C('§ 744.23(a)(3)(i)(B)', ECFR('744.23'))].concat(ak ? [NEW('§ 740.2(a)(9)(ii), Note 1')] : []), 'pass');
+      add('License requirement on the CCL', `3A090.c needs a license only to Macau and D:5 and to D:5- or Macau-headquartered entities elsewhere. ${DN} is neither.${ak ? ' RIN 0694-AK50 says so expressly: an export of 3A090.c to D:1 or D:4 outside D:5 "may be made under the No License Required (NLR) designation, provided no part 744 or 746 license requirements are applicable" (Note 1 to § 740.2(a)(9)(ii)).' : ''}`, [C('§ 742.6(a)(6)(i)(B)', ECFR('742.6')), C('§ 744.23(a)(3)(i)(B)', ECFR('744.23'))].concat(ak ? [NEW('§ 740.2(a)(9)(ii), Note 1')] : []), 'pass');
       return done('nlr', 'No license required for HBM to this destination and end user. Check part 744 end-use controls and the Entity List.', { cls });
     }
     add('License exception', `NAC and ACA are not available for 3A090.c${ak ? ' (Note 1 to § 740.2(a)(9)(ii) as revised by RIN 0694-AK50)' : ''}. License Exception HBM (§ 740.25) can authorize the shipment if the exporter is headquartered in the U.S. or A:5 without a D:5 or Macau parent, the stack's memory bandwidth density is under 3.3 GB/s/mm², it is bought directly by the designer of the co-packaged chip and shipped directly to the packaging site, and the packaging is not at an advanced-node facility in Macau or D:5. This tool does not test those conditions.${reqs.length ? ' It cannot be used here: the part 744 end-use requirement above cannot be overcome by a license exception (§ 744.23(c)).' : ''}`, [C('§ 740.25', ECFR('740.25')), C('ECCN 3A090 (exceptions)', CCL3)].concat(ak ? [NEW('§ 740.2(a)(9)(ii), Note 1')] : []), 'flag', 'HBM exc.');
@@ -492,13 +495,13 @@ export function decide(input) {
         reqWhy = hqD5 && !destScope
           ? `The end user or its ultimate parent is headquartered in D:5 or Macau. BIS enforces the ${ec} license requirement for such entities wherever they are located (a requirement dating to November 2023).`
           : uae ? `BIS continues to enforce the ${ec} license requirement for the UAE except for approved recipients in supp. 8 to part 740.`
-            : `${dest} is in Country Group ${groupsOf(dest).filter(g => g.startsWith('D')).join(', ')} and not in A:5 or A:6. BIS enforces the ${ec} license requirement there.${hkNote}`;
+            : `${DN} is in Country Group ${groupsOf(dest).filter(g => g.startsWith('D')).join(', ')} and not in A:5 or A:6. BIS enforces the ${ec} license requirement there.${hkNote}`;
       } else {
         const aca = dcA ? '' : ' As written, License Exception ACA covers this item; BIS does not enforce the requirement in any case.';
         // § 740.27(a): AIA covers 3A090.a (from approved or authorized IC designers) and 4A090.a to entities located and headquartered in supp. 5 para. (a).
-        const aia = AIA_DESTS.includes(dest) ? ` As written, License Exception AIA (§ 740.27) also covers supp. 5 para. (a) destinations, ${dest} among them, for 3A090.a chips from approved or authorized IC designers and for 4A090.a items, to entities located and headquartered in those destinations, with a certification to BIS. RIN 0694-AK50 removes AIA effective 19 Nov 2026.` : '';
-        add('License requirement on the CCL', `As written since January 2025, ${ec} needs a license to every destination worldwide. BIS announced on 13 May 2025 that it would not enforce the AI Diffusion rule, and in July 2026 stated that it enforces this requirement only for D:1, D:4 and D:5 destinations (excluding A:5/A:6), the UAE, and entities headquartered in D:5 or Macau. ${dest} is none of these.${aca}${aia}`, reqCites.concat([C('BIS press release, 13 May 2025', MAY25)]).concat(aia ? [C('§ 740.27 (AIA)', ECFR('740.27')), C('Supp. 5 to part 740', SUPP5)] : []), 'flag', 'not enforced');
-        return done('nle', `The regulation text requires a license, but BIS has said it is not enforcing that requirement for ${dest}. GAO found in May 2026 that the non-enforcement announcement is itself a rule under the Congressional Review Act. RIN 0694-AK50 (FR Doc 2026-23529), effective 19 Nov 2026, formally rescinds the Diffusion framework.`, { cls, intricate: true });
+        const aia = AIA_DESTS.includes(dest) ? ` As written, License Exception AIA (§ 740.27) also covers supp. 5 para. (a) destinations, ${Dn} among them, for 3A090.a chips from approved or authorized IC designers and for 4A090.a items, to entities located and headquartered in those destinations, with a certification to BIS. RIN 0694-AK50 removes AIA effective 19 Nov 2026.` : '';
+        add('License requirement on the CCL', `As written since January 2025, ${ec} needs a license to every destination worldwide. BIS announced on 13 May 2025 that it would not enforce the AI Diffusion rule, and in July 2026 stated that it enforces this requirement only for D:1, D:4 and D:5 destinations (excluding A:5/A:6), the UAE, and entities headquartered in D:5 or Macau. ${DN} is none of these.${aca}${aia}`, reqCites.concat([C('BIS press release, 13 May 2025', MAY25)]).concat(aia ? [C('§ 740.27 (AIA)', ECFR('740.27')), C('Supp. 5 to part 740', SUPP5)] : []), 'flag', 'not enforced');
+        return done('nle', `The regulation text requires a license, but BIS has said it is not enforcing that requirement for ${Dn}. GAO found in May 2026 that the non-enforcement announcement is itself a rule under the Congressional Review Act. RIN 0694-AK50 (FR Doc 2026-23529), effective 19 Nov 2026, formally rescinds the Diffusion framework.`, { cls, intricate: true });
       }
     } else {
       reqCites = [C('§ 742.6(a)(6)(iii)(B)', ECFR('742.6')), C('§ 744.23(a)(3)(i)(A)', ECFR('744.23'))];
@@ -506,10 +509,10 @@ export function decide(input) {
         add('License requirement on the CCL', `${ec} needs a license for the UAE, except when the ultimate consignee and all end users are approved recipients in supp. 8 to part 740.`, [C('Supp. 8 to part 740', SUPP8)].concat(reqCites), 'pass');
         return done('nlr', 'No license required for an approved UAE recipient. Part 744 controls still apply.', { cls });
       }
-      if (destScope || uae) reqWhy = uae ? `${ec} needs a license for the UAE (the July 2026 rule kept this requirement after moving the UAE to A:5).` : `${ec} needs a license to D:1, D:4 and D:5 destinations not also in A:5 or A:6. ${dest} is in ${groupsOf(dest).filter(g => g.startsWith('D')).join(', ')}.${hkNote}`;
+      if (destScope || uae) reqWhy = uae ? `${ec} needs a license for the UAE (the July 2026 rule kept this requirement after moving the UAE to A:5).` : `${ec} needs a license to D:1, D:4 and D:5 destinations not also in A:5 or A:6. ${DN} is in ${groupsOf(dest).filter(g => g.startsWith('D')).join(', ')}.${hkNote}`;
       else if (hqD5) reqWhy = `The end user or its parent is headquartered in D:5 or Macau, so § 744.23(a)(3)(i)(A) requires a license for ${ec} items even outside D:1, D:4 and D:5.`;
       else {
-        add('License requirement on the CCL', `${ec} needs a license only to D:1, D:4 and D:5 destinations not also in A:5 or A:6, the UAE, and D:5- or Macau-headquartered entities. ${dest} is none of these.`, reqCites.concat([C('Country Groups', GRP)]), 'pass');
+        add('License requirement on the CCL', `${ec} needs a license only to D:1, D:4 and D:5 destinations not also in A:5 or A:6, the UAE, and D:5- or Macau-headquartered entities. ${DN} is none of these.`, reqCites.concat([C('Country Groups', GRP)]), 'pass');
         return done('nlr', 'No license required under the advanced computing rules. Check part 744 end-use controls and the Entity List for the actual parties.', { cls });
       }
     }
@@ -534,18 +537,18 @@ export function decide(input) {
       return done('nlr', 'No license required for an approved UAE recipient. Part 744 controls, including the new § 744.24, still apply.', { cls });
     }
     if (five && !hqD5 && hqUS) {
-      add('License requirement on the CCL', `${dest} is one of the five destinations RIN 0694-AK50 adds (Indonesia, Malaysia, Singapore, Brazil, Thailand). The requirement does not apply when the ultimate consignee or end user, or its ultimate parent, is headquartered in the United States and the exporter files the monthly reports in new § 743.10 (parties, ultimate parent, destination, ECCN, SKU, TPP, quantity, date).`, [NEW('§ 742.6(a)(6)(iii)(A)(1), Note 1'), NEW('§ 743.10')], 'pass', '743.10');
+      add('License requirement on the CCL', `${DN} is one of the five destinations RIN 0694-AK50 adds (Indonesia, Malaysia, Singapore, Brazil, Thailand). The requirement does not apply when the ultimate consignee or end user, or its ultimate parent, is headquartered in the United States and the exporter files the monthly reports in new § 743.10 (parties, ultimate parent, destination, ECCN, SKU, TPP, quantity, date).`, [NEW('§ 742.6(a)(6)(iii)(A)(1), Note 1'), NEW('§ 743.10')], 'pass', '743.10');
       return done('nlr', 'No license required for a U.S.-headquartered recipient, provided the § 743.10 reports are filed.', { cls });
     }
     if (five || destScope || uae) {
-      reqWhy = five ? `${dest} is one of the five destinations the rule adds for every 3A090 (except .c), 4A090 and .z item, citing diversion risk.`
+      reqWhy = five ? `${DN} is one of the five destinations the rule adds for every 3A090 (except .c), 4A090 and .z item, citing diversion risk.`
         : uae ? `The revised paragraph keeps a license requirement for the UAE except for approved supp. 8 recipients.`
-          : `${dest} is in Country Group ${groupsOf(dest).filter(g => g.startsWith('D')).join(', ')} and not in A:5 or A:6.${hkNote}`;
+          : `${DN} is in Country Group ${groupsOf(dest).filter(g => g.startsWith('D')).join(', ')} and not in A:5 or A:6.${hkNote}`;
       reqWhy += ` The rule rescinds the worldwide Diffusion requirement and applies one list to both .a and .b items (paragraph (iii)(B) is reserved).`;
     } else if (hqD5) {
       reqWhy = `The end user or its parent is headquartered in D:5 or Macau. The revised § 744.23(a)(3)(i)(A) requires a license for all 3A090 (except .c), 4A090 and .z items to such entities outside D:1, D:4 and D:5.`;
     } else {
-      add('License requirement on the CCL', `RIN 0694-AK50 rescinds the AI Diffusion framework's worldwide requirement. ${ec} now needs a license only to Indonesia, Malaysia, Singapore, Brazil and Thailand; D:1, D:4 and D:5 destinations not also in A:5 or A:6; the UAE; and D:5- or Macau-headquartered entities. ${dest} is none of these.`, cites.concat([C('Country Groups', GRP)]), 'pass');
+      add('License requirement on the CCL', `RIN 0694-AK50 rescinds the AI Diffusion framework's worldwide requirement. ${ec} now needs a license only to Indonesia, Malaysia, Singapore, Brazil and Thailand; D:1, D:4 and D:5 destinations not also in A:5 or A:6; the UAE; and D:5- or Macau-headquartered entities. ${DN} is none of these.`, cites.concat([C('Country Groups', GRP)]), 'pass');
       return done('nlr', 'No license required under the advanced computing rules. Check part 744 end-use controls, including § 744.24, and the Entity List.', { cls });
     }
     add('License requirement on the CCL', reqWhy, cites.concat(hkCite), 'flag', 'license');

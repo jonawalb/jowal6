@@ -270,6 +270,6 @@ export const UNVERIFIED = [
  "No 2026 BIS temporary denial order specific to AI-chip diversion was identified.",
  "Applied Materials: the BIS release does not name the Entity List customer; SMIC is named only in secondary sources."
 ];
-export const ASOF = '2026-11-16';
+export const ASOF = '2026-11-18';
 const ALIAS = {"penalties": "ecra-penalties", "allied-coordination": "unverified-list", "location-verification": "chip-security-act", "licensing": "h200-case-by-case"};
 export const BY_POLICY = Object.fromEntries([...POLICIES.map(p => [p.id, p]), ...Object.entries(ALIAS).map(([a, id]) => [a, POLICIES.find(p => p.id === id)])]);

@@ -199,7 +199,7 @@ function readouts() {
   const back = c => (c.open ? 'not within 10 years' : c.recover === 0 ? 'never short' : `month ${c.recover}`);
   if (!r.hitIds.length) { s = 'good'; b = 'No shock'; sub = S.sc === 'none' ? 'Baseline: every stage delivers its pre-shock output.' : 'This actor has no share at the chosen stages.'; }
   else if (L.peak < 0.005) { s = 'warn'; b = 'Buffers cover the shock'; sub = 'Output never falls under these assumptions.'; }
-  else { s = L.peak > 0.5 ? 'bad' : 'warn'; b = `Up to ${pct(L.peak)} of world AI accelerator output lost`; sub = `${lab(L.binder)} binds. Impact starts in month ${L.firstHit}. Back to full output: ${back(F) === back(L) ? back(L) : `${back(F)} (fast case), ${back(L)} (slow case)`}.`; }
+  else { s = L.peak > 0.5 ? 'bad' : 'warn'; b = `Up to ${pct(L.peak)} of world AI accelerator output lost`; sub = `Bottleneck: ${lab(L.binder)}. Impact starts in month ${L.firstHit}. Back to full output: ${back(F) === back(L) ? back(L) : `${back(F)} (fast case), ${back(L)} (slow case)`}.`; }
   const name = shockLabel();
   $('st-n').textContent = name ? (S.sc === 'custom' ? name : `Example shock: ${name}`) : '';
   $('st-n').hidden = !name;

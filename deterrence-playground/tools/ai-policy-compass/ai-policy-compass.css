@@ -281,3 +281,11 @@ body.ap-sum-seen .ap-mini { display: none !important; }
   .ap-range { min-height: 44px; }
   .ap-mini:not([hidden]) { min-height: 44px; }
 }
+
+/* ---- Simplicity pass, 18 Nov 2026 ---- */
+.ap-example { margin: 0 0 6px; padding: 4px 8px; border-left: 3px solid var(--accent); }
+/* Phones: four tabs as a 2 x 2 grid so none is cut off. */
+@media (max-width: 640px) {
+  .tabs { display: grid; grid-template-columns: 1fr 1fr; overflow: visible; }
+  .tabs [role="tab"] { white-space: normal; text-align: center; }
+}

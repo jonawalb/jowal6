@@ -4,7 +4,8 @@ import { METRICS, ESTIMATES, GRADE_INFO, GRADE_COL, esc, fmtDate, svgEl, keyable
 import { GRADES, pick, envelope, periods, fmtNum, logDomain } from './range.js';
 
 const PRESETS = [
-  { k: 'ABCD', n: 'All sources' }, { k: 'ABC', n: 'Drop unnamed sources' }, { k: 'AB', n: 'Official and company only' }, { k: 'A', n: 'U.S. government only' },
+  { k: 'ABCD', n: 'All sources', r: 'All sources' }, { k: 'ABC', n: 'Drop unnamed sources', r: 'Without unnamed sources' },
+  { k: 'AB', n: 'Official and company only', r: 'Official and company sources' }, { k: 'A', n: 'U.S. government only', r: 'U.S. government sources' },
 ];
 
 /** Estimates for a metric and period that share the period's main unit; others are listed apart. */
@@ -56,17 +57,19 @@ export function renderEstimates(root, S, { onPick, set, tip, rerender }) {
     card.className = 'card metric';
     card.id = 'm-' + M.id;
     card.innerHTML = `<div class="m-head"><h3>${esc(M.name)}</h3>
-        ${ps.length > 1 ? `<div class="pseg" role="group" aria-label="Period for ${esc(M.name)}">${ps.map(p => `<button type="button" class="btn" data-per="${esc(p)}" aria-pressed="${p === per}">${esc(p)}</button>`).join('')}</div>` : `<span class="fine">${esc(per)}</span>`}</div>
+        ${ps.length > 4 ? `<label class="persel"><span class="fine">Period</span> <select data-persel aria-label="Period for ${esc(M.name)}">${ps.map(p => `<option value="${esc(p)}"${p === per ? ' selected' : ''}>${esc(p)}</option>`).join('')}</select></label>`
+          : ps.length > 1 ? `<div class="pseg" role="group" aria-label="Period for ${esc(M.name)}">${ps.map(p => `<button type="button" class="btn" data-per="${esc(p)}" aria-pressed="${p === per}">${esc(p)}</button>`).join('')}</div>` : `<span class="fine">${esc(per)}</span>`}</div>
       <p class="unit">${esc(unit)}${M.period_note ? `<span class="full-only"> · ${esc(M.period_note)}</span>` : ''}</p>
-      <p class="m-read">${envSel ? `With grades ${esc(S.grades.join(', '))}: <b>${fmtNum(envSel.low)}${envSel.high !== envSel.low ? ' to ' + fmtNum(envSel.high) : ''}</b> from ${envSel.n} source${envSel.n === 1 ? '' : 's'}, middle estimate ${fmtNum(envSel.median)}.`
+      <p class="m-read">${envSel ? `${presetOn ? esc(presetOn.r) : `With grades ${esc(S.grades.join(', '))}`}: <b>${fmtNum(envSel.low)}${envSel.high !== envSel.low ? ' to ' + fmtNum(envSel.high) : ''}</b> from ${envSel.n} source${envSel.n === 1 ? '' : 's'}, middle estimate ${fmtNum(envSel.median)}.`
         : `<b>No source</b> with grades ${esc(S.grades.join(', ') || 'none')}${S.rep ? '' : ' (restatements off)'} for ${esc(per)}.`}
-        ${envAll && (!envSel || envSel.low !== envAll.low || envSel.high !== envAll.high) ? `<span class="delta">All grades: ${fmtNum(envAll.low)} to ${fmtNum(envAll.high)} (${envAll.n}).</span>` : ''}</p>
+        ${envAll && (!envSel || envSel.low !== envAll.low || envSel.high !== envAll.high) ? `<span class="delta">All sources: ${fmtNum(envAll.low)} to ${fmtNum(envAll.high)} (${envAll.n}).</span>` : ''}</p>
       <div class="chartbox"><svg class="est" role="group" aria-label="Estimates for ${esc(M.name)}, ${esc(per)}"></svg></div>
       ${greyNote(main, S)}
       ${qual.length ? `<p class="fine full-only">Stated without a number: ${qual.map(e => `<button type="button" class="linkbtn" data-id="${esc(e.id)}">${esc(e.source)}</button> <span class="gtag g-${e.grade}">${e.grade}</span>${e.repeats ? ' ↺' : ''}: ${esc(e.qual)}`).join('; ')}.</p>` : ''}
       ${other.length ? `<p class="fine full-only">Not on this axis (different unit): ${other.map(e => `<button type="button" class="linkbtn" data-id="${esc(e.id)}">${esc(e.source)}</button> (${esc(e.unit)})`).join('; ')}.</p>` : ''}`;
     host.appendChild(card);
     card.querySelectorAll('[data-per]').forEach(b => { b.onclick = () => set({ per: { ...S.per, [M.id]: b.dataset.per } }); });
+    card.querySelector('[data-persel]')?.addEventListener('change', e => set({ per: { ...S.per, [M.id]: e.target.value } }));
     card.querySelectorAll('[data-id]').forEach(b => { b.onclick = () => onPick('e:' + b.dataset.id, true); });
     drawRows(card.querySelector('svg'), main, S, envSel, { onPick, tip });
   }

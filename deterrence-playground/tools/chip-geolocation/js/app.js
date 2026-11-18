@@ -232,13 +232,13 @@ function draw(fast) {
   map.render(S, cur.meas, cur.reg, { ruleFeat: feats[S.ruleout], claimFeat: feats[S.claim], proxyPos: cur.proxyPos, chipLabel });
 
   // Verdict
-  const SV = { ...S, ruleout: ruleLong(S.ruleout), ruleTag: ruleTag(S.ruleout), simple: document.body.classList.contains('detail-simple') }, vx = { ...cur.v, gridKm: Math.round(cur.reg.step * 111) };
+  const SV = { ...S, ruleout: ruleLong(S.ruleout), ruleTag: ruleTag(S.ruleout), simple: document.body.classList.contains('detail-simple'), lmAtChip: S.lms.some(l => l.ci === chipCity()) }, vx = { ...cur.v, gridKm: Math.round(cur.reg.step * 111) };
   const vv = S.mode === 'attack' ? attackVerdict(vx, SV) : verifierVerdict(vx, SV);
   $('howto').textContent = S.mode === 'attack'
     ? `Your chip is smuggled into ${ruleTag(S.ruleout)}. Try to pass it off as being in ${S.claim}: drag the chip, or add delay or a proxy in the panel, and see if the check catches you.`
     : PHONE.matches
-      ? `Your job: prove the chip is not in ${ruleTag(S.ruleout)}. Add landmark servers with "Add a landmark in" below, or tap a city dot. Each circle is the farthest the chip can be.`
-      : `Your job: prove the chip is not in ${ruleTag(S.ruleout)}. Click city dots to add landmark servers. Each circle is the farthest the chip can be, given how fast it answered.`;
+      ? `Your job: prove the chip is not in ${ruleTag(S.ruleout)}. Each circle is the farthest the chip can be, given how fast it answered. Try it: move the chip with "Put the chip in" below, or tap a city dot to add a landmark server.`
+      : `Your job: prove the chip is not in ${ruleTag(S.ruleout)}. Each circle is the farthest the chip can be, given how fast it answered. Try it: move the chip with "Put the chip in" on the right, or click a city dot to add a landmark server.`;
   $('legend-s').textContent = `Green = where the chip could be; red = the part inside ${ruleTag(S.ruleout)}; circles = each landmark's limit.`;
   $('verdict').dataset.s = vv.s; $('v-tag').textContent = vv.tag; $('v-text').textContent = vv.text;
   const fmtA = a => !S.lms.length ? '∞' : a >= 1e6 ? (a / 1e6).toFixed(2) + 'M' : a >= 1e4 ? Math.round(a / 1000) + 'k' : Math.round(a).toLocaleString('en-US');

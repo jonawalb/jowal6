@@ -43,6 +43,7 @@
           <button type="button" class="btn" id="copy">Copy link</button>
         </div>
       </div>
+      <p class="howto">Follow a blockade of Taiwan from its fuel stocks to the world's supply of AI chips. Press <b>Play</b> to run it day by day, then pick <b>Full blockade</b> and play it again to compare.</p>
       <input type="range" id="day" min="0" max="364" value="0" aria-label="Day of the crisis">
       <ol class="chain" id="chain" aria-label="The supply chain on the selected day"></ol>
     </div>
@@ -87,6 +88,7 @@
     </div>
     <div class="sec">
       <p class="eyebrow">Run readouts</p>
+      <p class="bottomline" id="bottomline"></p>
       <dl class="readout" id="summary"></dl>
     </div>
     <div class="sec" id="scen-sec">
@@ -124,7 +126,10 @@
   </aside>
 </main>
 
-<section class="below">
+<section class="msrc" id="msrc-sec">
+ <details id="msrc">
+ <summary class="simple-only">How to read it, method and sources</summary>
+ <div class="below">
   <div class="col">
     <h2>How to read it</h2>
     <p>Taiwan held about 69 percent of the world's sub-10nm logic capacity in 2022. Nvidia, which sold almost half of the world's AI accelerators in 2025 by Epoch AI's estimate, has its data-center chips made by TSMC and packaged with TSMC's CoWoS. A quarantine or blockade reaches that output first through energy. Taiwan imports over 94 percent of its energy, holds about eleven days of natural gas and about six weeks of coal, and electronic-products and electrical-equipment manufacturing used 23 percent of its electricity in 2024. A full blockade also stops chips leaving and process materials arriving.</p>
@@ -146,6 +151,8 @@
     <h2 class="mt">How to cite</h2>
     <p class="fine">Jonathan Walberg, <i>Silicon Blockade Clock</i>, interactive model, jwalberg.com, November 2026. The model is notional: cite its structure and the sourced figures, not its dates or totals as forecasts.</p>
   </div>
+ </div>
+ </details>
 </section>
 
 <footer id="tsm-foot"></footer>

@@ -82,6 +82,7 @@ function paint() {
   const s = g.s;
   $('h-quarter').textContent = quarterLabel(s.turn);
   $('turnof').textContent = `of ${s.len}`;
+  $('h-hint').hidden = s.turn > 0;   // first-quarter instruction only
   $('inforce').innerHTML = inforceHTML(s);
   g.msg = null;
   paintChoice();

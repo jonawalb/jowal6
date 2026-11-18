@@ -86,6 +86,7 @@ function update() {
   $('detail').innerHTML = it ? it.html : `<p class="eyebrow">Details</p><p class="fine">Click an estimate, a rule, a case or a timeline mark to read it here with its source.</p>`;
   renderSide();
   $('glance').hidden = S.view !== 'est';
+  $('lede').hidden = S.view !== 'est';
   writeHash();
 }
 

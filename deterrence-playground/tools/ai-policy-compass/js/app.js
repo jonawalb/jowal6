@@ -33,6 +33,7 @@ intl-wassenaar intl-oecd-ai-principles intl-us-russia-ear-7468 intl-nl-sme-contr
 unga-78-265 intl-eu-ai-act intl-coe-ai-convention intl-paris-statement us-cn-ai-dialogue-2026`.split(/\s+/);
 const KEY = new Set(KEY_IDS.filter(id => DOCS.some(d => d.id === id)));
 let tlAll = false;
+let picked = false; // true once the reader opens a document other than the opening example
 const DEB_N = 4;
 // Search hits: the best HIT_N show first; "Show all N matches" lifts the cap.
 const HIT_N = 8;
@@ -133,7 +134,10 @@ function render(scroll) {
     $('tl-all').textContent = tlAll ? 'Key documents only' : `Show all ${DOCS.length}`;
     $('tl-all').setAttribute('aria-pressed', tlAll);
     const back = backTo && narrow() ? `<p class="ap-back"><button type="button" class="btn" id="tl-back">← Back to list</button></p>` : '';
-    $('detail').innerHTML = back + docHTML(state.d);
+    // The opening document is an example; say so until the reader picks one.
+    const example = !picked && state.d === DEF().d
+      ? `<p class="fine ap-example">Example document. ${narrow() ? 'Tap any document in the list' : 'Click any mark'} to read another.</p>` : '';
+    $('detail').innerHTML = back + example + docHTML(state.d);
     if (scroll === 'doc') tl.scrollTo(state.d);
   }
   if (state.v === 'compare') {
@@ -151,7 +155,7 @@ function render(scroll) {
   }
   writeHash();
 }
-function set(next, scroll) { Object.assign(state, next); render(scroll); }
+function set(next, scroll) { if (next.d && next.d !== state.d) picked = true; Object.assign(state, next); render(scroll); }
 
 // ---- events
 function setFull(on) {

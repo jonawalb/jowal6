@@ -225,3 +225,7 @@ body.detail-simple .cd-lever > .cd-lmore + * { margin-top: 6px; }
 /* Agents level: a neutral pressed style, so a chosen 0 does not read as an error */
 .cd-seg .cd-chip[aria-checked="true"] { border-color: var(--ink); background: var(--chip); box-shadow: inset 0 0 0 1px var(--ink); }
 .cd-tip { text-decoration: underline dotted; text-underline-offset: 2px; cursor: help; }
+
+/* Simplicity pass 2026-11-18: first-quarter instruction */
+.cd-hint { margin: 10px 2px 0; font-size: 14px; max-width: 80ch; }
+.cd-hint[hidden] { display: none; }

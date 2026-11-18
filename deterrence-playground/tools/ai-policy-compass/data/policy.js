@@ -3709,6 +3709,11 @@ export const DOCS = [
    "international"
   ],
   "status": "released",
+  "statusFrom": {
+   "date": "2026-11-19",
+   "status": "in-force",
+   "note": "Published in the Federal Register and effective 19 Nov 2026 (FR Doc. 2026-23529, filed for public inspection 16 Nov 2026). Interim final rule: comments due 60 days after publication."
+  },
   "statusNote": "Released by BIS 16 Nov 2026 and filed for Federal Register public inspection the same day as FR Doc. 2026-23529, with a publication date of 19 Nov 2026. Its DATES section makes it effective on the date of publication; comments are due 60 days after publication.",
   "summary": "Adds 15 CFR 744.24: a license requirement for advanced chips used in data centers anywhere that would give companies headquartered in Country Group D:5 or Macau (or whose ultimate parent is headquartered there) access to more than 12,000,000 'aggregate TPP'. Requires licenses for advanced chips to Indonesia, Malaysia, Singapore, Thailand and Brazil, except where the consignee or end user is headquartered in the US (or has a US-headquartered ultimate parent) and the exporter files reports under new section 743.10. Adds 15 CFR 744.23(a)(3)(i)(C): a license requirement when a front-end fabricator or OSAT exports advanced-node 3A090.a chips designed by a company that is not an approved or authorized IC designer. Formally rescinds the AI Diffusion rule.",
   "quote": "Finally, the IFR formally rescinds the regulations implementing the Biden-era AI Diffusion Rule. The AI Diffusion Rule has never been enforced.",

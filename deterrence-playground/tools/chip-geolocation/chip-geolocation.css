@@ -125,13 +125,13 @@ body.detail-simple .v-text { color: var(--muted); }
   .modes button { flex: 1 1 100%; }
   body.detail-simple .modes button { flex: 0 0 auto; align-items: center; }
   .legend { display: none; }
-  /* Mode and detail buttons on one row; scroll sideways if they do not fit. */
-  body.detail-simple .head-top { flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; gap: 6px; padding-bottom: 2px; }
+  /* Mode buttons on one row, detail and Reset on the next: nothing hidden off-screen. */
+  body.detail-simple .head-top { flex-wrap: wrap; justify-content: flex-start; gap: 6px; padding-bottom: 2px; }
   body.detail-simple .head-top .seg, body.detail-simple .head-btns { flex-wrap: nowrap; flex: 0 0 auto; }
   body.detail-simple .head-top { align-items: stretch; }
   body.detail-simple .modes button { justify-content: center; font-size: 14px; padding: 6px 10px; }
-  /* Verdict: one line, with a More toggle. */
-  body.detail-simple .verdict:not(.open) .v-text { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+  /* Verdict: three lines, with a More toggle. */
+  body.detail-simple .verdict:not(.open) .v-text { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
   body.detail-simple .v-more { display: inline-block; }
   .mapcard .simple-note { margin-top: 2px; }
   /* Tap targets of at least 44 px. */

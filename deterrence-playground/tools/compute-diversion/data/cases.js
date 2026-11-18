@@ -79,7 +79,7 @@ export const CASES = [
    "mislabeling",
    "transshipment"
   ],
-  "status": "Charged (indictment unsealed 2026-03-19): conspiracy to violate ECRA, to smuggle, and to defraud the US; Chang a fugitive; allegations, presumed innocent. A reported Oct. 2026 guilty plea by Sun is media-only (see unverified).",
+  "status": "Charged (indictment unsealed 2026-03-19): conspiracy to violate ECRA, to smuggle, and to defraud the US; Chang a fugitive; allegations, presumed innocent. Liaw pleaded not guilty; press reports (Fortune, 10 Nov. 2026) say his trial moved from Nov. 2026 to Mar. 2027. A reported Oct. 2026 guilty plea by Sun is media-only (see unverified).",
   "url": "https://www.justice.gov/usao-sdny/pr/three-charged-conspiring-unlawfully-divert-us-artificial-intelligence-technology-china",
   "quote": "the defendants staged thousands of “dummy” servers—non-working, physical replicas of the U.S. Manufacturer’s servers—for inspection",
   "checked": "2026-11-16"

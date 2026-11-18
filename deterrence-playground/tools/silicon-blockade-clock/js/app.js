@@ -148,6 +148,10 @@ function renderDay() {
 function renderSummary() {
   const shortW = sim.cumShortDays / 7, owedW = sim.backlogEndUnits / FIXED.weeklyUnits;
   const days = v => (v == null ? 'never' : 'day ' + v);
+  // One plain sentence on what the whole run means; the numbers are the same as the readouts below it.
+  $('bottomline').textContent = sim.shortDay == null
+    ? 'Over the year, stock abroad covers the gap: world deliveries never fall short.'
+    : `Over the year, world deliveries first fall short on day ${sim.shortDay} and bottom out at ${pc(sim.worst.onTime)} of normal on day ${sim.worst.t}. About ${fmt(sim.cumShortUnits)} accelerators, ${shortW.toFixed(1)} weeks of world output, arrive late or never.`;
   $('summary').innerHTML = `
     <dt class="full-only">Taiwan, sub-10nm logic<small>SIA/BCG, 2022 data</small></dt><dd class="full-only">${HEADLINE.logic.v}<small>of world capacity</small></dd>
     <dt class="full-only">Taiwan, advanced packaging<small>TSMC fab list; TrendForce</small></dt><dd class="full-only">${HEADLINE.pack.v}<small>TSMC packaging fabs (5 + AP7)</small></dd>
@@ -207,6 +211,7 @@ function setDetail(m, persist = true) {
   document.body.classList.toggle('detail-full', m === 'full');
   document.querySelectorAll('.detail-sw [data-detail]').forEach(b => b.setAttribute('aria-pressed', b.dataset.detail === m));
   if (persist) { try { localStorage.setItem('et-detail', m); } catch { /* storage unavailable */ } }
+  $('msrc').open = m === 'full';   // How to read it, method and sources: open in Full detail, folded in Simple
   renderDay();
 }
 // Under 1020px the panel drops below the charts; move the answer and the scenario picker up under the clock.

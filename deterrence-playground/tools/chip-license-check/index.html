@@ -52,12 +52,13 @@
   </div>
   <div class="seg detail-seg" role="group" aria-label="Detail level" id="detail" title="Simple shows the main result; Full detail shows every source, control and assumption.">
     <button type="button" data-v="simple" aria-pressed="true" title="Simple shows the main result; Full detail shows every source, control and assumption.">Simple</button>
-    <button type="button" data-v="full" aria-pressed="false" title="Simple shows the main result; Full detail shows every source, control and assumption.">Full detail</button>
+    <button type="button" data-v="full" aria-pressed="false" title="Simple shows the main result; Full detail shows every source, control and assumption.">Full<span class="ph-hide"> detail</span></button>
   </div>
   </div>
 
   <!-- 1. Check -->
   <section class="clc-view" id="view-check" role="tabpanel" aria-labelledby="tab-check">
+    <p class="howto"><b>Start here:</b> pick a chip, a destination and an end user. The outcome shows whether a U.S. export license is needed; open the steps to see the CFR section behind each one.</p>
     <div class="grid">
       <div class="col-in">
         <div class="card sec">
@@ -103,7 +104,7 @@
         </div>
 
         <div class="card sec readouts full-only" aria-live="polite">
-          <div class="ro"><span class="k">TPP</span><b class="num" id="ro-tpp">–</b><span class="sub" id="ro-tpp-sub"></span></div>
+          <div class="ro"><span class="k" title="Total Processing Performance, as defined in ECCN 3A090">TPP (total processing performance)</span><b class="num" id="ro-tpp">–</b><span class="sub" id="ro-tpp-sub"></span></div>
           <div class="ro"><span class="k">Performance density</span><b class="num" id="ro-pd">–</b><span class="sub">TPP ÷ die area</span></div>
           <div class="ro"><span class="k">Classification</span><b id="ro-cls">–</b><span class="sub" id="ro-cls-sub"></span></div>
         </div>

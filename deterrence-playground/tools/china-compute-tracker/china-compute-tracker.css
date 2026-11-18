@@ -244,3 +244,19 @@ body.detail-full .simple-only { display: none !important; }
   .gl-stat { padding-top: 5px; font-size: 12.5px; }
   .gl-stat .big { font-size: 22px; }
 }
+
+/* ---- Simplicity pass, 18 Nov 2026 ---- */
+.lede-1 { margin: 0; font-size: 15px; line-height: 1.45; color: var(--ink); max-width: 72ch; }
+.persel { display: inline-flex; align-items: center; gap: 6px; }
+.persel select { font: 12.5px var(--body); padding: 4px 6px; border: 1px solid var(--rule); border-radius: 3px; background: var(--panel); color: var(--ink); max-width: 100%; }
+/* Status pills need the wide column (the generic .it rule above was overriding it). */
+.it.case-it button { grid-template-columns: 96px minmax(0, 1fr) auto; }
+@media (max-width: 760px) { .it.case-it button { grid-template-columns: minmax(0, 1fr) auto; } }
+@media (max-width: 640px) {
+  .persel select { min-height: 44px; font-size: 16px; }
+  .metric .persel { order: 3; }
+  /* Four presets fit as a 2 x 2 grid instead of a clipped scrolling row. */
+  .presets { display: grid; grid-template-columns: 1fr 1fr; overflow: visible; }
+  .presets .btn { white-space: normal; }
+}
+.lede-1[hidden] { display: none; }

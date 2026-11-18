@@ -65,7 +65,7 @@ export const POLICY = [
   { id: 'p-2026-11', date: '2026-11-09', t: 'Affiliates rule suspension extended',
     x: 'Extends the suspension of the 50 percent affiliates rule through Jan. 10, 2027.',
     src: [['91 FR 70789 (Federal Register)', 'https://www.federalregister.gov/documents/2026/11/09/2026-22793/extension-of-the-suspension-of-expansion-of-end-user-controls-for-affiliates-of-certain-listed']] },
-  { id: 'p-2026-11cn', date: '2026-11-09', k: 'PRC countermeasure', t: 'China keeps its export-control countermeasures suspended',
+  { id: 'p-2026-11cn', date: '2026-11-09', k: 'PRC countermeasure', t: 'China extends its 2025 export-control suspensions to 10 Jan 2027; the gallium–germanium ban suspension ends 27 Nov 2026',
     x: 'MOFCOM Announcement 2025 No. 72 (Nov. 9, 2025) suspends paragraph 2 of MOFCOM Announcement 2024 No. 46, the presumptive denial of exports to the United States of gallium, germanium, antimony and superhard-material dual-use items, from Nov. 9, 2025 until Nov. 27, 2026. MOFCOM and GAC Announcement 2026 No. 58 (Nov. 9, 2026) keeps MOFCOM/GAC Announcements 2025 Nos. 55, 56, 57 and 58 and MOFCOM Announcements 2025 Nos. 61 and 62 suspended from Nov. 11, 2026 to Jan. 10, 2027.',
     src: [['MOFCOM Announcement 2025 No. 72 (Chinese)', 'https://www.mofcom.gov.cn/zwgk/zcfb/art/2025/art_5c68985a6b1a46778e2e8dbff1bb1601.html'],
           ['MOFCOM and GAC Announcement 2026 No. 58 (Chinese)', 'https://www.mofcom.gov.cn/zcfb/zc/art/2026/art_2120417f1e21472bbe3efafdfcbd3f43.html']] },

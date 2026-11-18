@@ -20,7 +20,9 @@ export function envelope(list) {
   const mids = ok.map(e => (e.low + e.high) / 2).sort((a, b) => a - b);
   const m = mids.length;
   const median = m % 2 ? mids[(m - 1) / 2] : (mids[m / 2 - 1] + mids[m / 2]) / 2;
-  return { low, high, median, n: ok.length, spread: low > 0 ? high / low : null };
+  // n counts publications, not rows: two figures from one paper (an estimate and a case tally) are one source
+  const n = new Set(ok.map((e, i) => e.url || e.source || i)).size;
+  return { low, high, median, n, figures: ok.length, spread: low > 0 ? high / low : null };
 }
 
 /** Periods present for a metric, most-covered first, ties broken by latest period. */

@@ -6221,7 +6221,7 @@ const clone = (o) => JSON.parse(JSON.stringify(o));
 const hashS = (s) => { let x = 7; for (let i = 0; i < s.length; i++) x = (x * 31 + s.charCodeAt(i)) >>> 0; return x; };
 
 // Battle seconds per real second at 1× (same rates as Hard): at 1:1 a company attack took half an hour to watch.
-const TEMPO = { fireteam: 3, platoon: 5, company: 8 };
+const tempoOf = (scen) => Math.max(4, scen.timeLimit / 240); // each scenario plays in about 4 real minutes at 1×
 let G = null; // the current game: { scen, map, phase, base, assign, custom, sel, seed, sim, ... }
 
 // ---------- phases ----------
@@ -6484,7 +6484,7 @@ function loop(now) {
   const dt = last ? Math.min(0.05, (now - last) / 1000) : 1 / 60;
   last = now;
   if (!G.paused) {
-    const gdt = dt * G.speed * TEMPO[G.scen.level]; // battle time runs faster than real time (see TEMPO)
+    const gdt = dt * G.speed * tempoOf(G.scen); // battle time runs faster than real time (see TEMPO)
     G.sim.step(gdt);
     G.vt += gdt;
   }

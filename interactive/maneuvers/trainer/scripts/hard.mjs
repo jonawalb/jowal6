@@ -1,5 +1,5 @@
 // Maneuver Trainer, Hard: real time with pause. Scenario picker → briefing → the battle clock runs
-// compressed (TEMPO per level, so a run takes minutes, not half an hour), with Pause (Space), 1×/2×/4×
+// compressed (tempoOf: each scenario takes about 4 real minutes), with Pause (Space), 1×/2×/4×
 // and an optional pause on contact; orders can be given while paused → score and after-action review. The player selects a
 // unit (map, roster or number key), picks an order from the core vocabulary (order bar or hotkey) and
 // taps the ground or the enemy. At company level an order reaches the platoon after the core's notional
@@ -24,7 +24,10 @@ const AUTOPAUSE_KEY = "maneuverTrainer.hardAutoPause";
 // Battle seconds per real second at 1×. Soldiers walk at 1–2.5 m/s over 150 m (fire team) to 800 m
 // (company) of ground, so 1:1 time meant minutes of watching troops walk. These rates put the approach
 // at roughly 30–60 real seconds; the sim itself is unchanged (same fixed 0.1 s steps, same results).
-const TEMPO = { fireteam: 3, platoon: 5, company: 8 };
+// Each scenario's full time limit plays in about REAL_MIN real minutes at 1× (never slower than 4×).
+const REAL_MIN = 4;
+const tempoOf = (scen) => Math.max(4, scen.timeLimit / (REAL_MIN * 60));
+const realLeft = (scen, t) => fmtClock(Math.max(0, (scen.timeLimit - t) / tempoOf(scen)));
 const SPEEDS = [1, 2, 4];
 // the main orders stay on the panel; the rest sit under "More orders"
 const PRIMARY = new Set(["move", "sbf", "assault", "hold", "smoke", "callfire", "withdraw", "lift", "shift"]);
@@ -150,7 +153,7 @@ function showBrief() {
   const s = G.scen;
   const radio = s.level === "company" ? ` Orders reach the platoons by radio after a notional ${NOTIONAL.hardDelay[0]} to ${NOTIONAL.hardDelay[1]} battle seconds: order early.` : "";
   ui.panel.innerHTML = `<button type="button" class="btn btn-primary mt-go mh-start-top" id="mh-start">Start</button><h3>Briefing</h3><div id="mt-brief"></div>` +
-    `<p class="mt-muted">Time runs ${TEMPO[s.level]}× faster than real life (${fmtClock(s.timeLimit)} of battle in about ${Math.round(s.timeLimit / TEMPO[s.level] / 60)} minutes). Pause any time with <kbd>Space</kbd> and give orders while paused.${radio}</p>` +
+    `<p class="mt-muted">Takes about ${Math.round(s.timeLimit / tempoOf(s) / 60)} minutes (battle time runs fast). The game starts paused so you can give your first orders.${radio}</p>` +
     `<p class="mt-muted">Concepts in play: ${s.concepts.map((c) => `<a href="${c.href}">Fig ${c.fig} ${esc(c.title)}</a>`).join(", ")}.</p>`;
   briefing($("#mt-brief"), s);
   ui.orders.innerHTML = "";
@@ -165,7 +168,7 @@ function helpHtml(button) {
     `<li><b>Select</b> a unit: tap it on the map or in the list, or press its number (1–9).</li>` +
     `<li><b>Pick an order</b> in the panel (or its letter: <kbd>M</kbd> move, <kbd>S</kbd> support by fire, <kbd>A</kbd> assault, <kbd>H</kbd> hold).</li>` +
     `<li><b>Tap the map</b>: the ground for a move, the enemy (red) for support by fire or an assault. Taps on open ground first are waypoints, so you can go round a flank.</li></ol>` +
-    `<ul><li><b>Time</b> runs ${TEMPO[G.scen.level]}× faster than real life. <kbd>Space</kbd> pauses; you can give orders while paused. 2× and 4× speed things up; “Pause on contact” stops the clock when you first see the enemy or come under fire.</li>` +
+    `<ul><li><b>Time</b> runs fast (about ${Math.round(G.scen.timeLimit / tempoOf(G.scen) / 60)} minutes for the whole scenario). <kbd>Space</kbd> pauses; you can give orders while paused. 2× and 4× speed things up; “Pause on contact” stops the clock when you first see the enemy or come under fire.</li>` +
     (co ? `<li><b>Radio delay</b>: orders reach a platoon after a notional ${NOTIONAL.hardDelay[0]}–${NOTIONAL.hardDelay[1]} battle seconds; a blue dotted route with a countdown shows the order on its way.</li>` : "") +
     `<li><kbd>Esc</kbd> cancels the order you are giving, then deselects.</li></ul>` +
     `<button type="button" class="btn btn-primary" id="mh-help-ok">${button}</button></div>`;
@@ -201,20 +204,20 @@ function startClock(skipHelp) {
   G.rec = recorder(G.state, G.scen.timeLimit > 1200 ? 2 : 1);
   G.rec.add(G.state, true);
   G.vt = 0;
-  ui.panel.innerHTML = `<div class="mt-clock" id="mh-clockbox"><span id="mt-clock">0:00</span><span class="mt-muted"> / ${fmtClock(G.scen.timeLimit)}</span><span id="mt-losses" class="mt-losses"></span></div>` +
+  ui.panel.innerHTML = `<div class="mt-clock" id="mh-clockbox"><span id="mt-clock">${realLeft(G.scen, 0)}</span><span class="mt-muted"> left</span><span id="mt-losses" class="mt-losses"></span></div>` +
     `<div class="mh-transport"><button type="button" class="mh-ord mh-pause" id="mh-pause" aria-pressed="false">Pause<kbd>Space</kbd></button>` +
     `<div class="mt-speed" role="group" aria-label="Speed">${SPEEDS.map((n) => `<button type="button" data-speed="${n}" aria-pressed="${n === G.speed}">${n}×</button>`).join("")}</div>` +
     `<label class="mh-auto"><input type="checkbox" id="mh-auto"${G.autoPause ? " checked" : ""}> Pause on contact</label></div>` +
-    `<div class="mh-paused" id="mh-paused" hidden></div><div id="mh-orders-slot"></div>` +
+    `<div class="mh-coach" id="mh-coach" role="status"></div><div class="mh-paused" id="mh-paused" hidden></div><div id="mh-orders-slot"></div>` +
     `<h3>Your units</h3><div class="mt-roster" id="mt-roster"></div><details class="mh-logbox"><summary>Radio log</summary><ol class="mt-log" id="mt-log"></ol></details>`;
   $("#mh-orders-slot").replaceWith(ui.orders);
-  ui.controls.innerHTML = `<button type="button" class="btn btn-outline mh-stop" id="mh-stop">End exercise</button><button type="button" class="mt-link" id="mh-help-btn">Controls</button><span class="mt-muted">Time runs ${TEMPO[G.scen.level]}× real life at 1×. All numbers notional.</span>`;
+  ui.controls.innerHTML = `<button type="button" class="btn btn-outline mh-stop" id="mh-stop">End exercise</button><button type="button" class="mt-link" id="mh-help-btn">Controls</button><span class="mt-muted">All numbers notional.</span>`;
   $("#mh-stop").addEventListener("click", onStop);
   $("#mh-help-btn").addEventListener("click", () => showHelp(false));
   $("#mh-pause").addEventListener("click", () => setPaused(!G.paused));
   ui.panel.querySelectorAll("[data-speed]").forEach((b) => b.addEventListener("click", () => setSpeed(Number(b.dataset.speed))));
   $("#mh-auto").addEventListener("change", (ev) => { G.autoPause = ev.target.checked; try { localStorage.setItem(AUTOPAUSE_KEY, G.autoPause ? "1" : "0"); } catch (e) {} ev.target.blur(); });
-  setPaused(false);
+  setPaused(true, "Paused: give your first orders");
   drawOrderBar();
   G.map.corners({ hint: "Select a unit" });
   { const r = ui.card.getBoundingClientRect(); if (r.top < 0 || r.top > innerHeight * 0.5) ui.card.scrollIntoView({ block: "start", behavior: "smooth" }); } // phones: the fight starts above the Start button
@@ -256,8 +259,9 @@ function setPaused(on, why = "") {
   const b = $("#mh-pause");
   if (b) { b.setAttribute("aria-pressed", String(G.paused)); b.innerHTML = `${G.paused ? "Resume" : "Pause"}<kbd>Space</kbd>`; }
   const p = $("#mh-paused");
-  if (p) { p.hidden = !G.paused; p.textContent = G.pauseWhy ? `${G.pauseWhy}. Give orders, then press Resume or Space.` : ""; }
+  if (p) { p.hidden = !G.paused; p.textContent = G.pauseWhy || ""; }
   ui.card.classList.toggle("is-paused", G.paused);
+  coach();
   if (!G.paused) last = 0;
   return true;
 }
@@ -265,6 +269,22 @@ function setSpeed(n) {
   G.speed = SPEEDS.includes(n) ? n : 1;
   ui.panel.querySelectorAll("[data-speed]").forEach((b) => b.setAttribute("aria-pressed", String(Number(b.dataset.speed) === G.speed)));
 }
+// the one-line coach: what to do next, in plain words
+const WHAT = { move: "go somewhere", sbf: "fire on the enemy to pin it down", assault: "charge the enemy position", hold: "stay and defend", smoke: "screen with smoke", callfire: "mortar fire on a spot", withdraw: "pull back" };
+function coach() {
+  const el = $("#mh-coach");
+  if (!el || !G) return;
+  const e = G.sel && elState(G.sel);
+  let step, text;
+  const contact = G.paused && /^Contact|pinned/.test(G.pauseWhy || "");
+  if (!e && contact) { step = 1; text = "The enemy is in red. Pick a unit to fire on it (Support by fire) and another to go round and Assault, then press Resume."; }
+  else if (!e) { step = 1; text = `${G.justSent ? `Order sent to ${G.justSent}. ` : ""}Click one of your blue units on the map, or a name in the list below.`; }
+  else if (!G.arm) { step = 2; text = `Pick an order for ${e.short || e.name}: Move, Support by fire (pin the enemy down) or Assault (charge it).`; }
+  else { step = 3; text = `${LABEL[G.arm]}: ${PROMPT[G.arm]}.`; }
+  const tail = G.paused && G.nOrders > 0 && step === 1 ? `<span class="mh-coach-go">Then press <b>Resume</b> (Space) to start the clock.</span>` : "";
+  el.innerHTML = `<span class="mh-coach-n">${step}</span><span>${esc(text)}${tail}</span>`;
+}
+
 // first sighting of each enemy element, or one of ours first pinned: stop the clock so the player can react
 function contactCheck(ev) {
   if (!G.autoPause || G.paused) return;
@@ -290,7 +310,7 @@ function loop(now) {
   const dt = last ? Math.min(0.1, (now - last) / 1000) : 1 / 60;
   last = now;
   if (!G.paused) {
-    const gdt = dt * TEMPO[G.scen.level] * G.speed;
+    const gdt = dt * tempoOf(G.scen) * G.speed;
     tickSim(gdt);
     G.vt += gdt;
     if (G.evN < G.sim.S.events.length) pullRadio(); // pause on contact reacts on the frame it happens
@@ -306,7 +326,7 @@ function loop(now) {
 
 function updateRunUi(st) {
   pullRadio();
-  const c = $("#mt-clock"); if (c) c.textContent = st.clock;
+  const c = $("#mt-clock"); if (c) c.textContent = realLeft(G.scen, st.t);
   const box = $("#mh-clockbox"); if (box) box.classList.toggle("is-late", st.timeLimit - st.t < Math.max(60, st.timeLimit * 0.1));
   const l = $("#mt-losses"); if (l) l.textContent = `${st.losses.friendly} vs ${st.losses.enemy} down`;
   const r = $("#mt-roster");
@@ -324,8 +344,7 @@ function updateRunUi(st) {
     roster(r, { ...st, elements: els }, { selected: G.sel, onSelect: (id) => { select(id); const r = ui.card.getBoundingClientRect(); if (r.top < 0 || r.top > innerHeight * 0.5) ui.card.scrollIntoView({ block: "start", behavior: "smooth" }); } });
   }
   const g = $("#mt-log"); if (g) eventLog(g, { events: G.radio });
-  const left = Math.max(0, st.timeLimit - st.t);
-  G.map.corners({ readout: `${st.clock} · ${fmtClock(left)} left · ${st.losses.friendly} vs ${st.losses.enemy} down` });
+  G.map.corners({ readout: `battle time ${st.clock} · ${st.losses.friendly} vs ${st.losses.enemy} down` });
   refreshOrderBar();
   updateMarks();
 }
@@ -369,9 +388,9 @@ function drawOrderBar() {
   if (o) opts += `<button type="button" class="mh-ord" data-cancel>Cancel<kbd>Esc</kbd></button>`;
   const kc = G.kb && G.kb.list[G.kb.i];
   const kbLine = o && KB_TYPES.has(o.k) ? (kc ? `Keyboard: ${G.kb.i + 1} of ${G.kb.list.length}, ${kc.label}. Enter to confirm, Tab or arrows for the next.` : "") : "";
-  const head = e ? `<span>Selected: <b>${esc(e.name)}</b>${e.task ? ` · ${esc(e.task)}` : ""}</span>${o ? `<span class="mh-prompt">${esc(LABEL[o.k])}: ${esc(kc ? "" : G.pts.length && o.need !== "target" ? "tap more points, then the last one again" : PROMPT[o.k])}</span>` : ""}${kbLine ? `<span class="mh-kb" role="status">${esc(kbLine)}</span>` : ""}` : `<span class="mh-prompt">Select a unit: tap it on the map or in the list below, or press 1–9.</span>`;
+  const head = e ? `<span>Selected: <b>${esc(e.name)}</b>${e.task ? ` · ${esc(e.task)}` : ""}</span>${o && G.pts.length && o.need !== "target" ? `<span class="mh-prompt">Click more points, then the last one again</span>` : ""}${kbLine ? `<span class="mh-kb" role="status">${esc(kbLine)}</span>` : ""}` : `<span class="mt-muted">No unit selected.</span>`;
   // only the orders this unit can carry out now; the main ones first, the rest under "More orders"
-  const btn = (x) => `<button type="button" class="mh-ord" data-ord="${x.k}" aria-pressed="${G.arm === x.k}">${LABEL[x.k]}<kbd>${x.key.toUpperCase()}</kbd></button>`;
+  const btn = (x) => `<button type="button" class="mh-ord" data-ord="${x.k}" aria-pressed="${G.arm === x.k}"${WHAT[x.k] ? ` title="${WHAT[x.k]}"` : ""}>${LABEL[x.k]}<kbd>${x.key.toUpperCase()}</kbd></button>`;
   const can = e ? ORD.filter((x) => canDo(x.k, e)) : [];
   const prim = can.filter((x) => PRIMARY.has(x.k) || (G.scen.stealth && x.k === "observe"));
   const rest = can.filter((x) => !prim.includes(x));
@@ -379,6 +398,7 @@ function drawOrderBar() {
   ui.orders.innerHTML = `<div class="mh-sel">${head}</div>` + prim.map(btn).join("") + more + (opts ? `<div class="mh-opts">${opts}</div>` : "");
   ui.orders.querySelector(".mh-more")?.addEventListener("toggle", (ev) => { G.more = ev.target.open; });
   ui.orders._sig = barSig();
+  coach();
   ui.orders.querySelectorAll("[data-ord]").forEach((b) => b.addEventListener("click", () => arm(b.dataset.ord)));
   ui.orders.querySelectorAll("select[data-opt]").forEach((s) => s.addEventListener("change", () => {
     const f = s.dataset.opt;
@@ -549,7 +569,7 @@ function finishDest() {
   return true;
 }
 function afterSend() {
-  G.kb = null; G.sentAt = performance.now(); G.wp = false; drawOrderBar(); hint(); updateMarks(true); }
+  G.kb = null; G.sentAt = performance.now(); G.wp = false; G.justSent = G.sel ? shortOf(G.sel) : ""; deselect(); }
 
 // ---------- keyboard targets: after picking Move / Bypass / Assault / Support by fire, Tab or the arrow keys
 // cycle through the element's named routes (from where it now stands) and the known enemy; Enter sends ----------
@@ -873,7 +893,7 @@ window.__trainerHard = {
     return G.state.clock;
   },
   finish: () => stopExercise(),
-  pause: (on = true) => setPaused(on), speed: (n) => setSpeed(n), paused: () => !!G?.paused, tempo: () => (G ? TEMPO[G.scen.level] : null),
+  pause: (on = true) => setPaused(on), speed: (n) => setSpeed(n), paused: () => !!G?.paused, tempo: () => (G ? tempoOf(G.scen) : null),
   recommended: () => showRecommended(),
   state: () => (G ? { phase: G.phase, scen: G.scen.id, seed: G.seed, t: G.sim.S.t, clock: fmtClock(G.sim.S.t), sel: G.sel, arm: G.arm, pts: G.pts.length, pend: G.pend.map((p) => ({ el: p.el, type: p.order.type, left: +(p.at - G.sim.S.t).toFixed(1) })), radio: G.radio.length, done: G.sim.done(), score: G.sim.done() ? G.sim.score() : null, stats: G.map.stats() } : null),
   radio: (n = 12) => (G ? G.radio.slice(-n).map((r) => `${r.clock} ${r.text}`) : []),

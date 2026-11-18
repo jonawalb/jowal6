@@ -172,6 +172,7 @@ function helpHtml(button) {
 }
 function showHelp(thenStart) {
   const running = G.phase === "run";
+  if (!ui.help.hidden && running) return;
   const wasPaused = running && G.paused;
   if (running) setPaused(true, "Paused for the controls");
   ui.help.innerHTML = helpHtml(running ? "Close and resume" : thenStart ? "Got it: start" : "Close");
@@ -212,8 +213,8 @@ function startClock(skipHelp) {
   $("#mh-help-btn").addEventListener("click", () => showHelp(false));
   $("#mh-pause").addEventListener("click", () => setPaused(!G.paused));
   ui.panel.querySelectorAll("[data-speed]").forEach((b) => b.addEventListener("click", () => setSpeed(Number(b.dataset.speed))));
-  $("#mh-auto").addEventListener("change", (ev) => { G.autoPause = ev.target.checked; try { localStorage.setItem(AUTOPAUSE_KEY, G.autoPause ? "1" : "0"); } catch (e) {} });
-  G.paused = false; G.pauseWhy = "";
+  $("#mh-auto").addEventListener("change", (ev) => { G.autoPause = ev.target.checked; try { localStorage.setItem(AUTOPAUSE_KEY, G.autoPause ? "1" : "0"); } catch (e) {} ev.target.blur(); });
+  setPaused(false);
   drawOrderBar();
   G.map.corners({ hint: "Select a unit" });
   { const r = ui.card.getBoundingClientRect(); if (r.top < 0 || r.top > innerHeight * 0.5) ui.card.scrollIntoView({ block: "start", behavior: "smooth" }); } // phones: the fight starts above the Start button
@@ -229,7 +230,7 @@ function onStop() {
   if (!b) return;
   if (!b.classList.contains("is-armed")) {
     b.classList.add("is-armed"); b.textContent = "Tap again to stop";
-    clearTimeout(stopTimer); stopTimer = setTimeout(() => { if (b.isConnected) { b.classList.remove("is-armed"); b.textContent = "Stop exercise"; } }, 3000);
+    clearTimeout(stopTimer); stopTimer = setTimeout(() => { if (b.isConnected) { b.classList.remove("is-armed"); b.textContent = "End exercise"; } }, 3000);
     return;
   }
   stopExercise();
@@ -757,6 +758,7 @@ function showAAR() {
   setPhase("aar");
   stopLoop();
   ui.help.hidden = true;
+  ui.card.classList.remove("is-paused");
   G.arm = null; G.pts = []; G.sel = null; G.view.lit = new Set();
   ui.orders.innerHTML = "";
   const st = (G.state = G.sim.state());
@@ -837,7 +839,7 @@ addEventListener("keydown", (ev) => {
   if (/INPUT|SELECT|TEXTAREA/.test(document.activeElement?.tagName || "")) return;
   const k = ev.key;
   if (k === " " || k === "Spacebar") { ev.preventDefault(); if (ui.help.hidden) setPaused(!G.paused); return; }
-  if (k === "Escape") { ev.preventDefault(); if (!ui.help.hidden) { ui.help.hidden = true; return; } if (G.arm || G.pts.length) cancel(); else deselect(); return; }
+  if (k === "Escape") { ev.preventDefault(); if (!ui.help.hidden) { ui.help.querySelector("#mh-help-ok")?.click(); return; } if (G.arm || G.pts.length) cancel(); else deselect(); return; }
   if (G.arm && KB_TYPES.has(G.arm) && (G.kb || !G.pts.length) && /^(Tab|Arrow(Right|Left|Up|Down))$/.test(k)) { if (kbStep(k === "ArrowLeft" || k === "ArrowUp" || (k === "Tab" && ev.shiftKey) ? -1 : 1)) ev.preventDefault(); return; }
   if (k === "Enter" && G.kb && G.arm) { ev.preventDefault(); kbConfirm(); return; }
   if (k === "Enter" && G.pts.length) { ev.preventDefault(); sendDraft(); return; }

@@ -111,7 +111,7 @@ function card(t) {
   const upd = soon || !d || note === 'First release' ? '' : `<span class="upd">Updated ${shortDate(d)} · ${esc(note)}</span>`;
   const inner = `<div class="thumb"><img data-thumb="${href}" alt="" width="640" height="400"></div>
     <div class="card-body"><p class="card-cat">${esc(catName[t.cat] || '')}${isLocked(t) ? LOCK : ''}</p><h3>${esc(t.title)}</h3><p>${esc(t.blurb)}</p>
-    ${upd}<span class="go">${soon ? 'Coming soon' : 'Open →'}</span></div>`;
+    ${upd}<span class="go">${soon ? esc(t.soonLabel || 'Coming soon') : 'Open →'}</span></div>`;
   return soon ? `<div class="tool soon" aria-disabled="true">${inner}</div>` : `<a class="tool" href="${href}">${inner}</a>`;
 }
 

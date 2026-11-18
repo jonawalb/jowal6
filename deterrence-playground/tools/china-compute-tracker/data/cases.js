@@ -151,7 +151,7 @@ export const CASES = [
 "penalty": "DOJ criminal penalties of nearly $118M plus BIS civil penalty of $95M (with cross-credits); aggregate net >$140M incl. $45M forfeiture",
 "status": "plea agreement (court acceptance not confirmed)",
 "status_date": "2025-07-28",
-"status_note": "Company agreed to plead guilty to one count of conspiracy (criminal information) and settled with BIS the same day; value_usd is the aggregate net penalty. Cadence's 10-Q for the quarter ended Sept. 30, 2026 says it 'entered into a plea agreement with the DOJ pursuant to which Cadence agreed to plead guilty to one count' and paid aggregate net penalties and forfeitures of $140.6 million in the quarter ended Sept. 30, 2025; it does not report court acceptance or sentencing. No later DOJ release found as of 2026-11-18.",
+"status_note": "Company agreed to plead guilty to one count of conspiracy (criminal information) and settled with BIS the same day; the dollar figure shown is the aggregate net penalty. Cadence's 10-Q for the quarter ended Sept. 30, 2026 says it 'entered into a plea agreement with the DOJ pursuant to which Cadence agreed to plead guilty to one count' and paid aggregate net penalties and forfeitures of $140.6 million in the quarter ended Sept. 30, 2025; it does not report court acceptance or sentencing. No later DOJ release found as of 2026-11-18.",
 "sources": [
 {
 "label": "DOJ OPA press release, Jul 28, 2025",
@@ -358,7 +358,7 @@ export const CASES = [
 "penalty": "$1,500,000 civil penalty",
 "status": "settled (BIS administrative)",
 "status_date": "2026-01-07",
-"status_note": "Order and settlement announced Jan. 7, 2026; value_usd is the penalty (items valued ~$2.85M).",
+"status_note": "Order and settlement announced Jan. 7, 2026; the dollar figure shown is the penalty (items valued ~$2.85M).",
 "sources": [
 {
 "label": "BIS press release, Jan 7, 2026",
@@ -398,7 +398,7 @@ export const CASES = [
 "penalty": "~$252M civil penalty (twice transaction value); compliance audits and annual certifications",
 "status": "settled (BIS administrative)",
 "status_date": "2026-02-12",
-"status_note": "Settlement announced Feb. 12, 2026; value_usd is the penalty.",
+"status_note": "Settlement announced Feb. 12, 2026; the dollar figure shown is the penalty.",
 "sources": [
 {
 "label": "BIS press release, Feb 12, 2026",

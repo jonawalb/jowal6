@@ -362,6 +362,9 @@ a.mt-game:hover{box-shadow:0 2px 12px var(--accent-glow);border-color:var(--gree
 .mt-scrub.mt-scrub-under{margin:8px 0 4px;padding:6px 10px;border-radius:8px;background:var(--green-50, #eef3ec)}
 #mt-game:not([data-phase="aar"]) .mt-scrub-under{display:none}
 
+/* objective secured: the flag cloth turns blue */
+.mt-won .fd-flag-cloth *{fill:#2f5fb3!important;stroke:#1f3f7a!important}
+
 </style>
 <link rel="stylesheet" href="/interactive/maneuvers/maneuvers.css">
 </head>
@@ -3424,7 +3427,7 @@ function fdObjective(K, P, x, y, z = 0.4, { h = 15, ang = 200 } = {}) {
   return K.solidSvg(K.cylinder(x, y, 2.6, z, 1, P, 20, 0.3), { tone: "lo" }) +
     K.solidSvg(K.cylinder(x, y, 0.6, z + 1, h, P, 12), { tone: "mid", crease: "none" }) +
     K.solidSvg(K.cylinder(x, y, 0.95, z + h + 1, 0.9, P, 12), { tone: "mid", crease: "none" }) +
-    K.solidSvg(fdBox(K, P, F, 0.5, 8.5, -0.2, 0.2, z + h - 4.4, 5), { tone: "hi", crease: "none" });
+    `<g class="fd-flag-cloth">${K.solidSvg(fdBox(K, P, F, 0.5, 8.5, -0.2, 0.2, z + h - 4.4, 5), { tone: "hi", crease: "none" })}</g>`; // the class lets a page recolour the cloth (trainer: blue once the objective is secured)
 }
 
 // A low earth bank (prepared position), an arc band about (cx, cy) from a0 to a1 degrees.
@@ -6232,6 +6235,7 @@ function setPhase(p) {
 }
 
 function openScenario(id, keep = {}) {
+  ui.card.classList.remove("mt-won");
   const scen = byId[id];
   if (!scen) return;
   stopLoop();
@@ -6520,6 +6524,7 @@ function finish() {
 
 // ---------- AAR ----------
 function showAAR() {
+  ui.card.classList.toggle("mt-won", G?.sim?.S?.done?.tier === 1); // the objective flag turns blue on success
   setPhase("aar");
   stopLoop();
   const st = G.sim.state();

@@ -153,3 +153,6 @@ a.mt-game:hover{box-shadow:0 2px 12px var(--accent-glow);border-color:var(--gree
 .mt-map-svg .mt-route-dot.mt-exec.mt-main,.mt-map-svg .mt-route-head.mt-exec.mt-main{opacity:.5}
 .mt-scrub.mt-scrub-under{margin:8px 0 4px;padding:6px 10px;border-radius:8px;background:var(--green-50, #eef3ec)}
 #mt-game:not([data-phase="aar"]) .mt-scrub-under{display:none}
+
+/* objective secured: the flag cloth turns blue */
+.mt-won .fd-flag-cloth *{fill:#2f5fb3!important;stroke:#1f3f7a!important}

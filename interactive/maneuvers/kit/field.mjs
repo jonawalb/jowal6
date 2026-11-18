@@ -644,7 +644,7 @@ export function fdObjective(K, P, x, y, z = 0.4, { h = 15, ang = 200 } = {}) {
   return K.solidSvg(K.cylinder(x, y, 2.6, z, 1, P, 20, 0.3), { tone: "lo" }) +
     K.solidSvg(K.cylinder(x, y, 0.6, z + 1, h, P, 12), { tone: "mid", crease: "none" }) +
     K.solidSvg(K.cylinder(x, y, 0.95, z + h + 1, 0.9, P, 12), { tone: "mid", crease: "none" }) +
-    K.solidSvg(fdBox(K, P, F, 0.5, 8.5, -0.2, 0.2, z + h - 4.4, 5), { tone: "hi", crease: "none" });
+    `<g class="fd-flag-cloth">${K.solidSvg(fdBox(K, P, F, 0.5, 8.5, -0.2, 0.2, z + h - 4.4, 5), { tone: "hi", crease: "none" })}</g>`; // the class lets a page recolour the cloth (trainer: blue once the objective is secured)
 }
 
 // A low earth bank (prepared position), an arc band about (cx, cy) from a0 to a1 degrees.

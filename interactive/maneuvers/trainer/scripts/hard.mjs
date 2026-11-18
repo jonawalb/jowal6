@@ -118,6 +118,7 @@ function setPhase(p) {
 }
 
 function openScenario(id, keep = {}) {
+  ui.card.classList.remove("mt-won");
   const scen = byId[id];
   if (!scen) return;
   stopLoop();
@@ -775,6 +776,7 @@ function updateMarks(force) {
 
 // ---------- AAR ----------
 function showAAR() {
+  ui.card.classList.toggle("mt-won", G?.sim?.S?.done?.tier === 1); // the objective flag turns blue on success
   setPhase("aar");
   stopLoop();
   ui.help.hidden = true;

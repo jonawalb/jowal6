@@ -1,4 +1,4 @@
-// Shareable state: #p=d&s=4172&b=5&h=14&n=9&l=0-o-b5-9.0-s-b7-g.1-f-b9-5
+// Shareable state: #p=d&s=4172&b=5&h=14&n=9&l=0-o-b5-9.0-s-b6-g.1-f-b7-5
 // p = side played (d defend as Blue, a attack as Red); s = scenario; b = offense-defense balance (0-10, OFFDEF;
 // missing = 5); h = the game's length in hours when the link was made (missing = an older 12-hour link);
 // n = hours played; l = your actions: hour-kind-unit-value, kind o order / e entry (value = sector index),

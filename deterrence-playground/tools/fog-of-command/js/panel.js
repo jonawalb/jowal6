@@ -20,7 +20,7 @@ const n1 = x => (Math.round(x * 10) / 10).toFixed(1);
 const list = a => (a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`);
 const word = t => TYPES[t]?.word || 'unit';
 
-/** When Red's units arrive, as a phrase: "Recon A at 06:00, the first echelon at 07:00 and the second echelon at 09:00". */
+/** When Red's units arrive, as a phrase: "Recon at 06:00, the first echelon at 07:00 and the second echelon at 09:00". */
 export function waveText() {
   const by = {};
   for (const d of FORCES.red) if (d.type !== 'arty') (by[d.arrive] ||= []).push(d);
@@ -176,8 +176,8 @@ export function status(g, me, pic) {
 export function renderBelow($) {
   const N = '<span class="notional">notional</span>';
   const rows = [
-    ['Blue force', `${FORCES.blue.length} units: 4 mech battalions (10 each), a tank battalion (12), a weapons company (6), 2 recon troops (4 each) and an artillery battalion. 66 points.`, N],
-    ['Red force', `${FORCES.red.length} units: 2 recon troops, 3 mech battalions, 5 tank battalions, a weapons company, a decoy group and an artillery battalion. 104 real points. Arrivals: ${waveText()}.`, N],
+    ['Blue force', `${FORCES.blue.length} units: 4 mech battalions (10 each), a tank battalion (12), a recon troop (4) and an artillery battalion. 56 points.`, N],
+    ['Red force', `${FORCES.red.length} units: a recon troop, 3 mech battalions, 4 tank battalions, a decoy group and an artillery battalion. 82 real points. Arrivals: ${waveText()}.`, N],
     ['Length', `${GAME.hours} one-hour turns, ${hhmm(0)} to ${endTime()}`, N],
     ['Defender multiplier k', `Prepared ${COMBAT.k.prepared}, hasty ${COMBAT.k.hasty}, meeting ${COMBAT.k.meeting}, flank ${COMBAT.k.flank}; √k matches FM 5-0 Table B-1 (3:1, 2.5:1, 1:1, 1:1). These are the standard game (balance ${OFFDEF.standard})`, 'calibrated'],
     ['Offense–defense balance', `Slider ${OFFDEF.min}–${OFFDEF.max}, standard ${OFFDEF.standard}: prepared and hasty k × ${OFFDEF.step}<sup>(${OFFDEF.standard} − setting)</sup>, from ×${tilt(OFFDEF.min).toFixed(2)} at ${OFFDEF.min} to ×${tilt(OFFDEF.max).toFixed(2)} at ${OFFDEF.max}; meeting and flank unchanged`, 'notional; step calibrated by simulation'],
@@ -186,7 +186,6 @@ export function renderBelow($) {
     ['Base kill rate c', `${COMBAT.c} per hour`, N],
     ['Break threshold', `${COMBAT.breakFrac * 100}% losses, both sides (as in Mearsheimer's reconstruction)`, N],
     ['Loss noise', `lognormal, σ = ${COMBAT.sigma} per hour; unit quality σ = ${COMBAT.quality}`, N],
-    ['Weapons company', `×${TYPES.weapons.prepared} in a prepared defense, ×${TYPES.weapons.attack} when attacking`, N],
     ['Breaking contact', `A unit leaving a sector the enemy holds takes ${DISENGAGE * 100}% of one hour of the enemy's fire (k = 1)`, N],
     ['Artillery', `One mission an hour; each enemy unit in the sector loses ${ARTILLERY.frac * 100}% (σ ${ARTILLERY.sigma}); report right ${ARTILLERY.reportRight * 100}% of the time; recon in the sector hit ${ARTILLERY.friendlyHit * 100}% of the time for ${ARTILLERY.friendlyFrac * 100}%; recon next door shows the sector exactly`, 'rules from the brief; values notional'],
     ['Seeing', `Your sector: exact. Next door: ${VISION.next * 100}% chance per unit, type and full strength, decoys look like tanks. Recon: movement up to ${VISION.farHops} sectors away, ${VISION.farDelay} hour late${VISION.decoyHeard ? `; a decoy group that far is heard as a tank battalion${VISION.heardDelay ? `, ${VISION.heardDelay} hour late` : ', at once'}` : ''}. Sightings kept ${VISION.memory} hours`, N],

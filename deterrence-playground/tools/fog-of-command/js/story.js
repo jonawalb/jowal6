@@ -2,18 +2,20 @@
 // what was true), bait taken, flank attacks, decoys exposed, and units broken. Plain sentences.
 import { COLS } from '../data/map.js';
 import { NAME, DEF, hhmm, foeOf } from './panel.js';
-import { AI } from '../data/params.js';
+import { AI, FORCES } from '../data/params.js';
 
+const DECOY_ID = FORCES.red.find(d => d.type === 'decoy').id;
+const HAS_PROBE = FORCES.red.some(d => d.group === 'probe');
 const shortList = ids => ids.map(id => DEF[id].short).join(', ');
 
 /** Sentence describing the hidden Red plan (defend mode) or Blue's reserve moves (attack mode). */
 export function planLine(g, me) {
   if (me === 'blue' && g.plan) {
     const p = g.plan;
-    return `Red's plan: main effort down the ${COLS[p.main]} road, a feint with the decoy on the ${COLS[p.feint]} road, recon on the ${COLS[p.probe]} road; the second echelon chose its road at ${hhmm(AI.red.secondDecide)}.`;
+    return `Red's plan: main effort down the ${COLS[p.main]} road, a feint with the decoy on the ${COLS[p.feint]} road${HAS_PROBE ? `, recon on the ${COLS[p.probe]} road` : ''}; the second echelon chose its road at ${hhmm(AI.red.secondDecide)}.`;
   }
   const res = g.events.filter(e => e.kind === 'decision' && e.side === 'blue' && (e.what === 'reserve' || e.what === 'recommit'));
-  return res.length ? `Blue's reserve (Tank Bn and Weapons Coy) went to the ${res.map(e => `${COLS[e.col]} road at ${hhmm(e.t)}`).join(', then the ')}.` : 'Blue never committed its reserve (Tank Bn and Weapons Coy).';
+  return res.length ? `Blue's reserve (Tank Bn) went to the ${res.map(e => `${COLS[e.col]} road at ${hhmm(e.t)}`).join(', then the ')}.` : 'Blue never committed its reserve (Tank Bn).';
 }
 
 /** Fights at a sector from hour t0 for up to 3 hours: total losses each side. */
@@ -36,7 +38,7 @@ export function moments(g, me) {
       out.push({ t: e.t, tone: x && x.lr > x.lb ? 'good' : '', text: `Red followed a unit that gave ground into <b>${NAME[e.node]}</b>${x ? `; in the fighting there ${lossWords(x, 'blue')}` : ''}.` });
     }
     if (e.side === 'blue' && (e.what === 'reserve' || e.what === 'recommit') && me === 'red') {
-      const d = firstSight(g, 'blue', 'r8');
+      const d = firstSight(g, 'blue', DECOY_ID);
       const decoy = d && d.obsT <= e.t ? `; your decoy had been ${d.heard ? 'heard' : 'in view'} since ${hhmm(d.obsT)}` : '';
       const fooled = e.believed - e.truth;
       // After your feint: your real strength was mostly on another road.
@@ -52,7 +54,7 @@ export function moments(g, me) {
     }
   }
   // Decoys exposed.
-  const dMine = firstExposed(g, 'blue', 'r8');   // the decoy is always Red's
+  const dMine = firstExposed(g, 'blue', DECOY_ID);   // the decoy is always Red's
   if (dMine) out.push({ t: dMine.t, tone: me === 'red' ? 'bad' : 'good', text: me === 'red' ? `Blue exposed your decoy at ${NAME[dMine.node]}${dMine.fire ? ' with spotted artillery fire' : ''}.` : `You exposed Red's decoy group at ${NAME[dMine.node]}${dMine.fire ? ' with spotted artillery fire' : ''}.` });
   // Flank attacks (first per sector).
   const seenFlank = new Set();

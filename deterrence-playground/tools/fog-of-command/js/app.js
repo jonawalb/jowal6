@@ -53,7 +53,7 @@ const keysHint = side => `Keys: <b>${keyList(side)}</b> pick a unit (the key is 
 
 // Shown at the start of every game: how Red's decoy works, or a warning that Red has one.
 const DECOY_TIP = {
-  red: '<b>You have a decoy (unit 8, Decoy Group).</b> <span class="fc-decoy-body">It has no combat strength, but Blue sees it as a full tank battalion from the next sector, and Blue\'s recon hear it as one from two sectors away. Send it down a road away from your main attack and keep it two sectors from Blue\'s recon: heard, never looked at. If a Blue unit enters its sector, or Blue fires on it while a Blue recon troop watches, it is exposed. Done right, Blue sends its reserve the wrong way.</span>',
+  red: '<b>You have a decoy (unit 6, Decoy Group).</b> <span class="fc-decoy-body">It has no combat strength, but Blue sees it as a full tank battalion from the next sector, and Blue\'s recon hear it as one from two sectors away. Send it down a road away from your main attack and keep it two sectors from Blue\'s recon: heard, never looked at. If a Blue unit enters its sector, or Blue fires on it while a Blue recon troop watches, it is exposed. Done right, Blue sends its reserve the wrong way.</span>',
   blue: '<b>Warning: Red has a decoy.</b> <span class="fc-decoy-body">One of the "tank battalions" you see or hear may be a Decoy Group with no strength at all, sent to pull your one reserve down the wrong road. Before you commit the reserve, check the road: fire artillery on it while a recon troop watches. A tank that takes no damage is the decoy.</span>',
 };
 
@@ -103,7 +103,7 @@ function start(side, seed, log = [], n = 0, od = odVal(), note = '') {
       ? `06:00. Hold Tarn Crossing until ${endTime()}. Red enters at the top. Tap a unit, then the sector where it should go.`
       : `06:00. Take Tarn Crossing by ${endTime()}. Your units wait in the tray at the bottom: tap one, then a sector on your entry edge, to choose where it enters.`)
       : me === 'blue'
-      ? `06:00. Hold Tarn Crossing until ${endTime()}. Red enters from the north, at the top. Your recon troops are forward in Alder Woods and Millfield, set to give ground so they fall back rather than die; your reserve waits behind the line.`
+      ? `06:00. Hold Tarn Crossing until ${endTime()}. Red enters from the north, at the top. Your recon troop is forward in Alder Woods, set to give ground so it falls back rather than dies; your reserve waits behind the line.`
       : `06:00. Take Tarn Crossing by ${endTime()}. Your entry edge is at the bottom of the map. Arrivals: ${waveText()}. Units not yet on the map wait in the staging tray below the entry edge; dashed markers show where each will enter. To change an entry, click a unit in the tray, then a sector on your entry edge.`);
     if (note) say(`${note} ${$('say').innerHTML}`);
   }

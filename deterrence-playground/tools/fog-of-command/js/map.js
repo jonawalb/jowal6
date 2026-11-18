@@ -310,6 +310,7 @@ function diamond(parent, [x, y], tr, mode, k, room) {
   const lab = s2w(full, 11) > room ? full.replace(/ \(\d+%\)$/, '') : full;
   const n = el('text', { y: 25, class: 'fc-trk-n' }, g, lab);
   n.setAttribute('text-anchor', 'middle');
+  if (room < 200) fitText(n, room, 11);   // never run into the next marker's label
   const what = TYPES[tr.type]?.word || 'unit';
   el('title', {}, g, truth ? `${what}, true strength ${Math.round(tr.str)}`
     : tr.type === 'decoy' ? 'Exposed decoy group' : `${what}${tr.heard ? ' (heard by recon two sectors away, not seen)' : ''}${tr.exact ? `, strength ${Math.round(tr.str)}${tr.hp !== undefined ? ` (${Math.round(100 * tr.hp)}%)` : ''}` : `, full strength ${tr.str} if not yet hit`}${tr.age > 0 ? `, seen ${tr.age} h ago` : ''}. Click to act on this sector.`);

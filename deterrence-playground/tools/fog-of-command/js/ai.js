@@ -165,7 +165,7 @@ export function redAI({ mode = 'fog', variant = 'feint', plan = 'mixed', arty = 
   function feint(g, grp, pic, out, st) {
     const [u] = alive(g, grp.ids);
     if (!u || u.node === 'off' || busy(g, u)) return;
-    // While Red can see Blue's reserve (its tank battalion or weapons company) on the feint's road, the
+    // While Red can see Blue's reserve (its tank battalion) on the feint's road, the
     // feint stays to hold it there, until AI.red.feintHold. Otherwise, from feintUntil, it attacks on its
     // own like the main effort (walking across to join the main group would hold the main effort up).
     const holding = g.t < R.feintHold && pic.tracks.some(tr => colOf(tr.node) === grp.col && (tr.type === 'armor' || tr.type === 'weapons'));
@@ -238,7 +238,7 @@ export function redAI({ mode = 'fog', variant = 'feint', plan = 'mixed', arty = 
 // ---------------------------------------------------------------- Blue
 
 const LINE = { b1: 'm0', b2: 'm1', b3: 'm2', b4: 'm3' };
-const RESERVE = ['b5', 'b6'];
+const RESERVE = ['b5'];
 
 /**
  * Blue commander. commit: send the reserve to the road that looks strongest (and back to the crossing
@@ -265,9 +265,9 @@ export function blueAI({ mode = 'fog', commit = true, counter = true, react = fa
     if (g.t === 0 && bait) {
       // Bait: empty Brook Hill so the Center-west road looks open, and wait one sector behind it at
       // Wren Cross with the 2nd Mech and the whole reserve, in a prepared position.
-      out.orders.push(['b2', 's1'], ['b6', 's1']);
+      out.orders.push(['b2', 's1']);
       st.commits = 99; st.col = 1; st.home.b2 = 's1';
-      decide(g, 'blue', 'bait', { node: 'm1', behind: 's1', units: ['b2', 'b5', 'b6'] });
+      decide(g, 'blue', 'bait', { node: 'm1', behind: 's1', units: ['b2', 'b5'] });
     }
     const pic = picture(g, side, mode);
     const res = alive(g, RESERVE);

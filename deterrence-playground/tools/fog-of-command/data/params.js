@@ -60,8 +60,9 @@ export const TYPES = {
   decoy:  { label: 'Decoy group',          word: 'decoy group',     letter: 'D', str: 0 },
 };
 
-// Forces. NOTIONAL. Blue: 9 units, 66 combat points plus artillery. Red: 13 units, 104 real points plus
-// artillery and one decoy group; Red needs the larger force because it must attack prepared positions
+// Forces. NOTIONAL. Blue: 7 units, 56 combat points plus artillery. Red: 10 units, 82 real points plus
+// artillery and one decoy group (cut by about a quarter on 2026-11-18, from 9 and 13 units, 66 and 104 points,
+// to declutter the map; METHOD.md section 16); Red needs the larger force because it must attack prepared positions
 // (sizing in METHOD.md). Blue starts deployed; Red arrives from the north edge: recon at 06:00, the first
 // echelon at 07:00, the second echelon at 09:00 (arrive: 3; it was 11:00, arrive: 5, in the 16-hour game,
 // moved up so the second echelon has time to fight inside a 12-hour day). The first echelon stays at
@@ -74,25 +75,20 @@ export const FORCES = {
     { id: 'b3', key: '3', type: 'mech',    name: '3rd Mech Bn',  short: '3 Mech', start: 'm2' },
     { id: 'b4', key: '4', type: 'mech',    name: '4th Mech Bn',  short: '4 Mech', start: 'm3' },
     { id: 'b5', key: '5', type: 'armor',   name: 'Tank Bn',      short: 'Tanks',  start: 's1' },
-    { id: 'b6', key: '6', type: 'weapons', name: 'Weapons Coy',  short: 'Weapons', start: 's2' },
-    { id: 'b7', key: '7', type: 'recon',   name: 'A Recon',      short: 'Recon A', start: 'f1', stance: 'give' },
-    { id: 'b8', key: '8', type: 'recon',   name: 'B Recon',      short: 'Recon B', start: 'f2', stance: 'give' },
-    { id: 'b9', key: 'a', type: 'arty',    name: 'Artillery',    short: 'Artillery', start: 'rear' },
+    { id: 'b6', key: '6', type: 'recon',   name: 'Recon Troop',  short: 'Recon', start: 'f1', stance: 'give' },
+    { id: 'b7', key: 'a', type: 'arty',    name: 'Artillery',    short: 'Artillery', start: 'rear' },
   ],
   red: [
-    { id: 'r1', key: '1', type: 'recon',   name: 'A Recon',      short: 'Recon A', start: 'n1', arrive: 0, stance: 'give', group: 'probe' },
-    { id: 'r2', key: '2', type: 'recon',   name: 'B Recon',      short: 'Recon B', start: 'n2', arrive: 1, stance: 'give', group: 'spot' },
-    { id: 'r3', key: '3', type: 'mech',    name: '1st Mech Bn',  short: '1 Mech', start: 'n1', arrive: 1, group: 'feint' },
-    { id: 'r4', key: '4', type: 'mech',    name: '2nd Mech Bn',  short: '2 Mech', start: 'n2', arrive: 1, group: 'main' },
-    { id: 'r5', key: '5', type: 'armor',   name: '1st Tank Bn',  short: '1 Tank', start: 'n1', arrive: 1, group: 'main' },
-    { id: 'r6', key: '6', type: 'armor',   name: '2nd Tank Bn',  short: '2 Tank', start: 'n2', arrive: 1, group: 'main' },
-    { id: 'r7', key: '7', type: 'armor',   name: '3rd Tank Bn',  short: '3 Tank', start: 'n2', arrive: 1, group: 'main' },
-    { id: 'r8', key: '8', type: 'decoy',   name: 'Decoy Group',  short: 'Decoy',  start: 'n3', arrive: 1, group: 'decoy' },
-    { id: 'r9', key: '9', type: 'mech',    name: '3rd Mech Bn',  short: '3 Mech', start: 'n1', arrive: 3, group: 'second' },
-    { id: 'r10', key: '0', type: 'armor',  name: '4th Tank Bn',  short: '4 Tank', start: 'n1', arrive: 3, group: 'second' },
-    { id: 'r11', key: 't', type: 'armor',   name: '5th Tank Bn',  short: '5 Tank', start: 'n2', arrive: 3, group: 'second' },
-    { id: 'r12', key: 'w', type: 'weapons', name: 'Weapons Coy',  short: 'Weapons', start: 'n2', arrive: 3, group: 'second' },
-    { id: 'r13', key: 'a', type: 'arty',   name: 'Artillery',    short: 'Artillery', start: 'rear', arrive: 0 },
+    { id: 'r1', key: '1', type: 'recon',   name: 'Recon Troop',  short: 'Recon', start: 'n1', arrive: 0, stance: 'give', group: 'spot' },
+    { id: 'r2', key: '2', type: 'mech',    name: '1st Mech Bn',  short: '1 Mech', start: 'n1', arrive: 1, group: 'feint' },
+    { id: 'r3', key: '3', type: 'mech',    name: '2nd Mech Bn',  short: '2 Mech', start: 'n2', arrive: 1, group: 'main' },
+    { id: 'r4', key: '4', type: 'armor',   name: '1st Tank Bn',  short: '1 Tank', start: 'n1', arrive: 1, group: 'main' },
+    { id: 'r5', key: '5', type: 'armor',   name: '2nd Tank Bn',  short: '2 Tank', start: 'n2', arrive: 1, group: 'main' },
+    { id: 'r6', key: '6', type: 'decoy',   name: 'Decoy Group',  short: 'Decoy',  start: 'n3', arrive: 1, group: 'decoy' },
+    { id: 'r7', key: '7', type: 'mech',    name: '3rd Mech Bn',  short: '3 Mech', start: 'n1', arrive: 3, group: 'second' },
+    { id: 'r8', key: '8', type: 'armor',   name: '3rd Tank Bn',  short: '3 Tank', start: 'n1', arrive: 3, group: 'second' },
+    { id: 'r9', key: '9', type: 'armor',   name: '4th Tank Bn',  short: '4 Tank', start: 'n2', arrive: 3, group: 'second' },
+    { id: 'r10', key: 'a', type: 'arty',   name: 'Artillery',    short: 'Artillery', start: 'rear', arrive: 0 },
   ],
 };
 
@@ -143,7 +139,7 @@ export const ORDER_DELAY_MAXRUN = 2;
 // Scripted commanders. All NOTIONAL decision rules; they read their own side's fogged picture.
 export const AI = {
   blue: {
-    // the reserve is the Tank Bn and the Weapons Coy; the 4 mech battalions hold the main line
+    // the reserve is the Tank Bn; the 4 mech battalions hold the main line
     commitMin: 20,      // commit the reserve when one road shows at least this much enemy strength ...
     commitMargin: 8,    // ... and leads the next road by this much
     // It counts the whole road, north approach included (a decoy heard there counts), and commits only once

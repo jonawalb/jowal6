@@ -131,7 +131,7 @@ function itemHtml(x) {
   const role = x.role && x.role !== 'all' ? ROLES.find(r => r.id === x.role)?.label : x.kind === 'result' ? 'Last turn' : 'Everyone';
   const kind = x.kind === 'signal' ? 'Alert' : x.kind === 'inject' ? 'News' : 'Result';
   return `<article class="dt-item ${x.kind}"><h4><span class="who">${kind} · ${esc(role || '')}</span>${esc(x.title)}</h4>
-    ${x.text ? `<p>${esc(x.text)}</p>` : ''}${x.art ? `<pre class="dt-art">${esc(x.art)}</pre>` : ''}</article>`;
+    ${x.text ? `<p>${esc(x.text)}</p>` : x.kind === 'result' ? '<p class="fine">No visible result from last turn\'s decisions.</p>' : ''}${x.art ? `<pre class="dt-art">${esc(x.art)}</pre>` : ''}</article>`;
 }
 function paintFeed() {
   const s = g.s;

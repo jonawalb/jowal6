@@ -112,7 +112,7 @@ export function windowTip({ ca = 1, coh = 1, outsideArty = false, consolidated =
     lines: [`Lodgment cohesion ${pc(coh)}: + ${n2(1 - coh)}`, `Beyond the attacker’s guns: ${outsideArty ? '+ 0.5' : 'no'}`, `Consolidated: ${consolidated ? '− 0.5' : 'not yet'}`, `Hours since taken: ${hcap} (consolidates after 2 static hours)`],
     notes: [
       'The multiplier divides the strength the lodgment needs to hold; kept between 0.6 and 2.5 (NOTIONAL).',
-      'Strike before the attacker consolidates and beyond his artillery (Hunzeker pp. 61–62, 79); counterattacks retake ground cheaply (Biddle pp. 47–48).',
+      'Strike before the attacker consolidates and beyond its artillery (Hunzeker pp. 61–62, 79); counterattacks retake ground cheaply (Biddle pp. 47–48).',
       SEEN,
     ],
   };
@@ -215,33 +215,33 @@ export const TIP_TOPICS = {
 const ORDERS = {
   def: {
     w: 'Orders reach units by runner and telephone: most start next hour. Local counterattacks (ripostes) go in the hour you order them (in a campaign, once your army has learned that authority). Gas shells mark a sector for 3 hours: men there are masked and slowed, on both sides. Until you order them, standing orders (see the panel when nothing is selected) launch your counterattack formation into a lodgment inside its window, move idle companies to block, and fire your guns; switch any of them off to do that job yourself.',
-    m: 'Orders go by radio and start at once, unless the enemy jams the area (an hour late, sometimes lost). His drones see dead ground and strike men caught moving in the open; mines hold attackers in your fire; precision rockets and counter-battery hunt located batteries and teams. Your EW team jams his drones and radios. Until you order them, standing orders (see the panel when nothing is selected) launch your counterattack formation into a lodgment inside its window, move idle companies to block, and fire your guns; switch any of them off to do that job yourself.',
+    m: 'Orders go by radio and start at once, unless the enemy jams the area (an hour late, sometimes lost). Enemy drones see dead ground and strike men caught moving in the open; mines hold attackers in your fire; precision rockets and counter-battery hunt located batteries and teams. Your EW team jams enemy drones and radios. Until you order them, standing orders (see the panel when nothing is selected) launch your counterattack formation into a lodgment inside its window, move idle companies to block, and fire your guns; switch any of them off to do that job yourself.',
   },
   att: {
-    w: 'Orders reach units by runner and telephone: most start next hour, and once the battle starts a change to the barrage plan is a runner message, two hours late and sometimes lost. Gas shells mark a sector for 3 hours: men there are masked and slowed, on both sides, so gas his batteries and flanks, not your own axis. Until you order them, standing orders (see the panel when nothing is selected) keep your leading companies rushing behind the barrage and leapfrogging against live fire, send follow-on waves in behind success, and let direct-support batteries answer calls; switch any of them off to do that job yourself.',
-    m: 'Orders go by radio and start at once, unless the enemy jams the area (an hour late, sometimes lost). Drones find his men and strike any caught moving in the open, so his static, dug-in men are hard to hit and yours on the move are easy; mines must be breached by engineers; precision rockets and counter-battery hunt located batteries; your EW team jams his drones and radios. Until you order them, standing orders (see the panel when nothing is selected) keep your leading companies rushing behind the barrage and leapfrogging against live fire, send follow-on waves in behind success, and let direct-support batteries answer calls; switch any of them off to do that job yourself.',
+    w: 'Orders reach units by runner and telephone: most start next hour, and once the battle starts a change to the barrage plan is a runner message, two hours late and sometimes lost. Gas shells mark a sector for 3 hours: men there are masked and slowed, on both sides, so gas the enemy’s batteries and flanks, not your own axis. Until you order them, standing orders (see the panel when nothing is selected) keep your leading companies rushing behind the barrage and leapfrogging against live fire, send follow-on waves in behind success, and let direct-support batteries answer calls; switch any of them off to do that job yourself.',
+    m: 'Orders go by radio and start at once, unless the enemy jams the area (an hour late, sometimes lost). Drones find the enemy’s men and strike any caught moving in the open, so its static, dug-in men are hard to hit and yours on the move are easy; mines must be breached by engineers; precision rockets and counter-battery hunt located batteries; your EW team jams enemy drones and radios. Until you order them, standing orders (see the panel when nothing is selected) keep your leading companies rushing behind the barrage and leapfrogging against live fire, send follow-on waves in behind success, and let direct-support batteries answer calls; switch any of them off to do that job yourself.',
   },
 };
 
 const T = {
   def: {
-    fog: ['Fog of war', 'You see attackers only next to your units or under an observer. Small groups and infiltrators are hard to spot. Your trench lines are already on his maps; your garrisons and concealed works are not.'],
-    enfilade: ['Enfilade', 'Your MG companies are your enfilade weapon: only they lay fire lanes. Lay each lane across his line of advance from a flank. Flanking fire ignores the cover he faces and hits waves × 3, small groups nearly as hard; fire from the front is stopped by cover. Move an MG and its lane is lost: lay it again.'],
-    deadGround: ['Dead ground', 'Every sector has folds where he can shelter. Covering a sector from two or more directions removes most of them (the Coverage layer shows how many).'],
+    fog: ['Fog of war', 'You see attackers only next to your units or under an observer. Small groups and infiltrators are hard to spot. Your trench lines are already on the enemy’s maps; your garrisons and concealed works are not.'],
+    enfilade: ['Enfilade', 'Your MG companies are your enfilade weapon: only they lay fire lanes. Lay each lane across the enemy’s line of advance from a flank. Flanking fire ignores the cover it faces and hits waves × 3, small groups nearly as hard; fire from the front is stopped by cover. Move an MG and its lane is lost: lay it again.'],
+    deadGround: ['Dead ground', 'Every sector has folds where the enemy can shelter. Covering a sector from two or more directions removes most of them (the Coverage layer shows how many).'],
     depth: ['Depth', 'A thin outpost zone warns and delays, the battle zone kills, and the rear zone holds your counterstroke. Dense front lines die to bombardment.'],
-    suppression: ['Suppression', 'His barrage keeps your men’s heads down while it falls. If it lifts before his infantry arrive, your men man the parapet and fire.'],
-    counterattack: ['Counterattack timing', 'Strike a lodgment before it consolidates (2 hours) and beyond his guns. Local counterattacks (ripostes) by units next to it go in at once; a deliberate counterattack by the counterstroke formation needs its planning time.'],
+    suppression: ['Suppression', 'The enemy’s barrage keeps your men’s heads down while it falls. If it lifts before the enemy infantry arrive, your men man the parapet and fire.'],
+    counterattack: ['Counterattack timing', 'Strike a lodgment before it consolidates (2 hours) and beyond the enemy’s guns. Local counterattacks (ripostes) by units next to it go in at once; a deliberate counterattack by the counterstroke formation needs its planning time.'],
     learning: ['Learning', 'Between battles you can learn only from what your units tried. What you study, test, codify and train decides what your army can do next time.'],
   },
   att: {
     objective: ['The objective', 'You win only if, at the end of the last hour, you hold enough side-by-side sectors of the objective line with no unbroken defender in them. Losses do not decide the game.'],
-    fog: ['Fog of war', 'You know his trench lines from the air, not his garrisons. Strongpoints and dummies look alike. Units out of sight of yours are guesses.'],
-    enfilade: ['Enfilade and dead ground', 'His MG companies lay fire lanes. Waves caught by a lane from the flank lose three times as many, small groups nearly as many; only storm infiltrators slip through without it. Leapfrog and infiltration use folds in the ground (dead ground) if you have scouted them.'],
+    fog: ['Fog of war', 'You know the enemy’s trench lines from the air, not its garrisons. Strongpoints and dummies look alike. Units out of sight of yours are guesses.'],
+    enfilade: ['Enfilade and dead ground', 'The defender’s MG companies lay fire lanes. Waves caught by a lane from the flank lose three times as many, small groups nearly as many; only storm infiltrators slip through without it. Leapfrog and infiltration use folds in the ground (dead ground) if you have scouted them.'],
     leapfrog: ['Leapfrog', 'Pair two units. Each hour one fires on the target while the other bounds, then they swap. Without an overwatch partner that can see the target, the bounding unit is badly exposed.'],
     barrage: ['Barrage timing', 'Your creeping barrage suppresses the defenders only while it falls on them. Lift too early and they man the parapet; too late and your infantry walk into their own shells. Match the lift rate to your infantry’s pace.'],
     infiltration: ['Infiltration', 'Storm companies can slip past posts unseen, but each hour near outposts or MG lanes risks detection. Bypassed posts keep firing at your next wave until mopped up.'],
     cohesion: ['Cohesion in depth', 'Every row you advance, and every hour beyond your guns’ range, wears your units down. A deep penetration is weakest when it arrives.'],
-    counterstroke: ['The counterstroke', 'His counterattack formation waits in the rear zone. A fresh lodgment that has not consolidated (2 hours) is easy to throw back; consolidate or keep moving under your guns.'],
+    counterstroke: ['The counterstroke', 'The defender’s counterattack formation waits in the rear zone. A fresh lodgment that has not consolidated (2 hours) is easy to throw back; consolidate or keep moving under your guns.'],
   },
 };
 

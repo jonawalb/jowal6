@@ -59,7 +59,7 @@ const CLAUSE = {
   objective: (g, e, me) => {
     const up = e.held > e.prevHeld, n = `${e.held} of the ${e.need} side-by-side objective sectors`;
     if (mine(e, me)) return up ? `you now hold ${n} you need` : `your hold on the objective line fell to ${n} you need`;
-    return up ? `the enemy now holds ${n} he needs to beat you` : `you pushed the enemy back to ${n} he needs`;
+    return up ? `the enemy now holds ${n} it needs to beat you` : `you pushed the enemy back to ${n} it needs`;
   },
   breakthrough: (g, e, me) => (mine(e, me) ? `you broke through at ${place(g, e.sec)}` : `the enemy broke through your line at ${place(g, e.sec)}`),
   lodgment: (g, e, me) => (mine(e, me) ? `you took ${place(g, e.sec)}` : e.empty ? `the enemy occupied empty ${place(g, e.sec)}` : `the enemy took ${place(g, e.sec)} from you`),
@@ -75,8 +75,8 @@ const CLAUSE = {
   },
   lift: (g, e, me) => {
     const p = place(g, e.sec);
-    if (e.case === 'late') return mine(e, me) ? `your infantry walked into its own barrage at ${p}` : `his infantry walked into their own barrage in front of your men at ${p}`;
-    return mine(e, me) ? `your barrage lifted early at ${p}, so the defenders were firing when your infantry arrived` : `his barrage lifted early at ${p} and your men manned the parapet`;
+    if (e.case === 'late') return mine(e, me) ? `your infantry walked into its own barrage at ${p}` : `the enemy infantry walked into their own barrage in front of your men at ${p}`;
+    return mine(e, me) ? `your barrage lifted early at ${p}, so the defenders were firing when your infantry arrived` : `the enemy barrage lifted early at ${p} and your men manned the parapet`;
   },
   enfilade: (g, e, me) => (mine(e, me) ? `your ${unitLabel(g, e.unit, me)} caught attackers along its lane at ${place(g, e.sec)}` : `an enemy MG lane caught your men from the flank at ${place(g, e.sec)}`),
   detect: (g, e, me) => (mine(e, me) ? `you spotted infiltrators at ${place(g, e.sec)}` : `your infiltrators were spotted at ${place(g, e.sec)}`),

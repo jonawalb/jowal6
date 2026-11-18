@@ -69,6 +69,8 @@ $('seats').addEventListener('click', e => {
   const b = e.target.closest('[data-seat]'); if (!b) return;
   pick = b.dataset.seat; paintSeats(); paintWeights(); paintScenarios(); $('setup').hidden = false;
   $('start').style.setProperty('--accent', COL[pick]);
+  $('begin').textContent = `Begin as ${COUNTRIES[pick].name}`;
+  $('setup').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
 });
 $('weights').addEventListener('input', e => { if (e.target.dataset.obj) e.target.nextElementSibling.textContent = e.target.value; });
 $('begin').addEventListener('click', () => {
@@ -166,6 +168,9 @@ $('end-turn').addEventListener('click', async () => {
   $('reveal').innerHTML = IDS.map(w => `<div class="k4-mv" style="--c:${COL[w]}"><b>${COUNTRIES[w].short}${w === g.player ? ' (you)' : ''}</b><span class="po">${POSTURES.find(p => p.id === moves[w].posture).label}</span><ul>${moves[w].actions.map(id => `<li>${BY_ID[id].label}${followText(id, moves[w].follow)}</li>`).join('') || '<li>No moves</li>'}</ul>${deployText(w, moves[w].orders)}${emphText(w, moves[w], log)}</div>`).join('');
   $('tldr').innerHTML = `<b>In short:</b> ${tldr(g.before, g.s, log, g.player).text}`;   // only this month's results and public tracks
   $('log').innerHTML = logHTML(log);
+  $('log-n').textContent = `(${$('log').children.length})`;
+  $('log-d').open = !document.body.classList.contains('k4-simple') || document.body.classList.contains('k4-learning');
+  $('next').textContent = g.s.over ? 'See how it ended' : `Go to ${P.months[g.s.turn]}`;
   paintTheatre(g.s); paintZones(g.s, seeFor(g.s, g.player)); paintFog($('fog'), g.s, g.player);
   $('play').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
   $('next').disabled = true;

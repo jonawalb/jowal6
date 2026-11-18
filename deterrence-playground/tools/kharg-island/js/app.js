@@ -152,7 +152,11 @@ function setView(v) {
   map.draw(cfg, st, { turn: view, landT: game.landT, outcome: game.outcome });
   $('scrub').value = view;
   $('prev').disabled = view === 0; $('next').disabled = view >= game.turns.length;
-  $('turn-t').textContent = view ? `Turn ${view} of ${game.turns.length} · ${T.label} · ${T.phase}` : `Setup · up to ${cfg.turns} turns to play`;
+  $('turn-t').textContent = view ? `Turn ${view} of ${game.turns.length} · ${T.label} · ${T.phase}` : `Before the fight · press Next turn to play turn 1 of ${cfg.turns}`;
+  // Last turn: say how this one game ended right in the bar (the full reason is at the foot of the turn log).
+  if (view && view === game.turns.length && game.outcome) {
+    $('turn-t').insertAdjacentHTML('beforeend', ` · <b class="pb-end ${game.outcome}">This game: ${outcomeText(cfg.us.obj, game.outcome)}${game.major ? ', major escalation' : ''}</b>`);
+  }
   const was = [...document.querySelectorAll('#readout dd')].map(d => d.textContent);
   $('readout').innerHTML = readoutHtml(st, cfg);
   $('log').innerHTML = turnLogHtml(game, view, cfg);

@@ -25,7 +25,7 @@ export const STANDING = {
   def: [
     { key: 'counterstroke', label: 'Counterstroke', text: 'The Counterstroke formation moves behind the threatened sector and attacks a lodgment while its window is open.' },
     { key: 'reserves', label: 'Reserves', text: 'Idle companies away from the fighting block the penetration and keep the objective line garrisoned.' },
-    { key: 'fires', label: 'Defensive fire', text: 'Batteries fire on the attackers you can see and answer his batteries once they are located.' },
+    { key: 'fires', label: 'Defensive fire', text: 'Batteries fire on the attackers you can see and answer the enemy’s batteries once they are located.' },
   ],
 };
 

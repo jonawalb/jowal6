@@ -7,7 +7,7 @@
 .rn-flag b { color: var(--ink); }
 .rn-actions > div { display: flex; flex-wrap: wrap; gap: 8px; }
 
-.game { display: flex; flex-direction: column; gap: 0; overflow: hidden; }
+.game { display: flex; flex-direction: column; gap: 0; overflow: hidden; scroll-margin-top: 8px; }
 .hud { display: flex; align-items: center; gap: 10px 14px; padding: 8px 12px; border-bottom: 1px solid var(--rule); flex-wrap: wrap; }
 .hud p { margin: 0; }
 .hud-wave { flex: 1 1 240px; font-size: 13px; }
@@ -115,6 +115,7 @@ body[data-game-mode="hard"] .hud .pill { color: var(--accent); }
 .modes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .mode { display: flex; flex-direction: column; gap: 4px; text-align: left; padding: 10px 12px; border: 1px solid var(--rule); border-radius: 4px; background: transparent; color: var(--ink); cursor: pointer; font: 12.5px/1.35 var(--body); }
 .mode b { font-family: var(--display); font-size: 18px; }
+.mode b small { display: block; font: 600 10.5px var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--accent); }
 .mode span { color: var(--muted); }
 @media (hover: hover) { .mode:hover { border-color: var(--muted); } }
 .mode.on { border-color: var(--brand-ink); box-shadow: inset 0 0 0 1px var(--brand-ink); background: var(--chip); }
@@ -177,8 +178,10 @@ body[data-game-mode="hard"] .hud .pill { color: var(--accent); }
 }
 .game [hidden] { display: none !important; }
 @media (max-width: 460px) {
-  .lock { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  /* One compact row of four instead of a 2 x 2 block, so the fire controls sit closer to the field. */
+  .lock { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
   .lock-l { grid-column: 1 / -1; }
+  .lock button { font-size: 11.5px; padding: 4px 2px; min-height: 32px; }
 }
 
 /* ---- motion (both looks; off under reduced motion) ---- */

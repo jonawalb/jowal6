@@ -33,7 +33,7 @@ export function renderBar() {
   const o = objectiveStatus(g);
   const cells = o.held.map((h, c) => `<i class="${h ? 'held' : ''}" title="Column ${c + 1}${h ? ': held by the attacker' : ''}"></i>`).join('');
   const tip = { title: `${o.name}: ${o.need} side-by-side sectors decide it`, lines: [
-    me === 'att' ? `You hold ${o.best} of the ${o.need} side-by-side sectors you need` : `The enemy holds ${o.best} of the ${o.need} side-by-side sectors he needs`,
+    me === 'att' ? `You hold ${o.best} of the ${o.need} side-by-side sectors you need` : `The enemy holds ${o.best} of the ${o.need} side-by-side sectors it needs`,
     `Checked at the end of the last hour (${hhmm(g.turns)}): each sector needs at least half an attacking company and no unbroken defender`],
     notes: ['A filled cell is a sector of the line the attacker holds now. Losses and ground gained do not decide the game.'] };
   $('objtrack').innerHTML = `<span class="dd-objcells" aria-hidden="true">${cells}</span><span class="dd-objt"><span class="dd-wide">${planning ? (me === 'att' ? 'Take' : 'Hold') : me === 'att' ? 'You hold' : 'Enemy holds'} </span><b class="num">${planning ? '' : `${o.best}/`}${o.need}</b>${planning ? ` of ${esc(o.name)}` : ''}</span>${infoBtn(tip, 'The objective')}`;

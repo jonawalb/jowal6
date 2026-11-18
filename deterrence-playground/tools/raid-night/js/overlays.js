@@ -12,11 +12,12 @@ export function readyHTML(seed, mode, mix, fromLink) {
   const opt = (m, title, body) => `<button type="button" class="mode${m === mode ? ' on' : ''}" data-act="start" data-mode="${m}"
       aria-describedby="mode-${m}"><b>${title}</b><span id="mode-${m}">${body}</span></button>`;
   return `<div class="ov-card wide"><p class="eyebrow">Notional model · seed ${seed}</p><h2>Raid Night</h2>
-    <p>Three waves, about a minute each. Stop what you can, spend as little as you can. Choose a mode to start.</p>
+    <p>You command the air defense of four coastal cities. Pick a weapon, then click or tap an incoming track to fire at it. Three waves, about a minute each: stop what you can, spend as little as you can.</p>
+    <p class="fine"><b>Choose a mode to start.</b></p>
     <div class="modes" role="group" aria-label="Choose a mode">
-      ${opt('easy', 'Easy', `Normal controls with a bigger resupply: ${RESUPPLY.budget.easy} points between waves.`)}
-      ${opt('normal', 'Normal', `One defense. Arrows pick a track, Space fires, Tab or 1 2 3 switch weapons. ${RESUPPLY.budget.normal} resupply points between waves; lock-order switch.`)}
-      ${opt('hard', 'Hard: two batteries', 'Left battery: W fires, A and D pick, Tab switches. Right battery: Space or ↑ fires, ← → pick, Return, \\ or Delete switches. Designed for a keyboard.')}
+      ${opt('easy', 'Easy', `Normal, with a bigger resupply (${RESUPPLY.budget.easy} points between waves).`)}
+      ${opt('normal', 'Normal <small>first game</small>', `One defense. Click a track to fire (or arrows + Space); 1 2 3 switch weapons. ${RESUPPLY.budget.normal} resupply points between waves.`)}
+      ${opt('hard', 'Hard', 'Two batteries, one per hand: W fires the left, Space the right. Designed for a keyboard; full keys under Night settings.')}
     </div>
     ${fromLink ? `<p class="fine">This link was shared in ${MODE_NAME[mode]} mode (highlighted).</p>` : ''}
     <p class="fine">Wave 1. ${mix}</p></div>`;

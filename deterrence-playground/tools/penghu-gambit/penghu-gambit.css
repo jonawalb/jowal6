@@ -241,3 +241,9 @@ details[open] summary { margin-bottom: 8px; }
 @media (max-width: 600px) {
   :root[data-skin="trailer"] .pg-note, :root[data-skin="trailer"] .pg-scale text { font-size: 12.5px; }
 }
+
+/* Present-polish pass: on wide screens too, keep the turn controls in view while the map and
+   the roll tables scroll past. */
+@media (min-width: 761px) {
+  .playbar { position: sticky; bottom: 8px; z-index: 20; box-shadow: 0 4px 18px rgba(0, 0, 0, .14); }
+}

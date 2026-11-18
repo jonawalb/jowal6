@@ -68,7 +68,7 @@ export function setupHTML(S, start) {
     <label class="tg"><input type="checkbox" id="demo" ${S.setup.roc.demo > 0.6 ? 'checked' : ''}><span class="sw"></span><span class="t">Prepare the ports for demolition<small>A port that falls is wrecked 85% of the time instead of 50%.</small></span></label>
     <label class="tg"><input type="checkbox" id="us" ${s.us ? 'checked' : ''}><span class="sw"></span><span class="t">U.S. and allied strikes on shipping from D+1<small>As in the CSIS base case.</small></span></label>
   </div>`}
-  <div class="sec">
+  <div class="sec sl-gosec">
     <button type="button" class="btn solid sl-go" id="launch">${isPla ? 'Launch the landing' : 'Take command'}</button>
     <p class="fine">Seed <span class="num">${S.seed}</span> · <button type="button" class="linkish" id="reseed">new week</button></p>
   </div>`;
@@ -84,9 +84,11 @@ export function ordersHTML(S, G, o) {
   if (S.role === 'pla') {
     const main = zones[0];
     const ports = zones.map(z => `<label class="tg"><input type="checkbox" data-port="${z}" ${o.port[z] ? 'checked' : ''} ${G.port[z] !== 'roc' ? 'disabled' : ''}><span class="sw"></span><span class="t">Assault ${esc(ZONES[main === z ? z : z].port.t)}<small>${G.port[z] === 'roc' ? `Needs ${G.P.portRatio}:1 over its defenders; troops ashore ${r1(G.ashore[z])}` : G.port[z] === 'pla' ? 'Held intact' : 'Taken, but wrecked'}</small></span></label>`).join('');
+    const rough = zones.filter(z => seaAt(G, t, z).b === 2);
+    const warn = rough.length ? `<p class="sl-warn">Rough seas at the ${rough.map(z => esc(ZONES[z].area)).join(' and ')}: nothing sails there this turn.</p>` : '';
     return head + `
     <div class="sec">
-      <p class="eyebrow">Send this wave</p>
+      <p class="eyebrow">Send this wave</p>${warn}
       <p class="fine">In port and loaded: <b class="num">${G.ready.amph}</b> amphibious and <b class="num">${G.ready.ferry}</b> ferry groups. ${G.back.length ? `${G.back.reduce((a, b) => a + b.amph + b.ferry, 0)} more are on the way back.` : ''}</p>
       <label class="slider"><span class="sl-h"><span>Amphibious ship groups</span><output class="num" id="o-amph-v">${o.amph}</output></span><input type="range" id="o-amph" min="0" max="${G.ready.amph}" value="${o.amph}"><small>${LIFT.amph.size} point each. Land on beaches in slight or moderate seas.</small></label>
       <label class="slider"><span class="sl-h"><span>Civilian RO-RO ferry groups</span><output class="num" id="o-ferry-v">${o.ferry}</output></span><input type="range" id="o-ferry" min="0" max="${G.ready.ferry}" value="${o.ferry}"><small>${LIFT.ferry.size} points each. Full rate only at a port you hold; on a beach, a third of the rate and only in slight seas.</small></label>
@@ -97,7 +99,7 @@ export function ordersHTML(S, G, o) {
       <div class="choices sl-strikes">${Object.entries(STRIKES).map(([k, v]) => btn(`data-strike="${k}"`, `<b>${v.t}</b>`, o.strike === k)).join('')}</div>
       ${ports}
     </div>
-    <div class="sec"><button type="button" class="btn solid sl-go" id="resolve" aria-keyshortcuts="N">Resolve turn ${t}</button></div>`;
+    <div class="sec sl-gosec"><button type="button" class="btn solid sl-go" id="resolve" aria-keyshortcuts="N">Resolve turn ${t}</button></div>`;
   }
   // Taiwan
   const fire = [['1', 'Fire everything', 'every battery with missiles'], ['0.5', 'Fire half', 'keep half hidden'], ['0', 'Hold fire', 'hide from the hunters']]
@@ -122,7 +124,7 @@ export function ordersHTML(S, G, o) {
     <label class="sl-res"><span>Mobilized reserves (from turn 3) join</span><select id="mobto">${ZONE_KEYS.map(z => `<option value="${z}" ${o.mobTo === z ? 'selected' : ''}>${ZONES[z].area}</option>`).join('')}</select></label>
   </div>
   <div class="sec"><p class="eyebrow">Counterattack</p>${ca}</div>
-  <div class="sec"><button type="button" class="btn solid sl-go" id="resolve" aria-keyshortcuts="N">Resolve turn ${t}</button></div>`;
+  <div class="sec sl-gosec"><button type="button" class="btn solid sl-go" id="resolve" aria-keyshortcuts="N">Resolve turn ${t}</button></div>`;
 }
 
 /** Default orders for the coming turn. */

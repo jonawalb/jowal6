@@ -114,6 +114,8 @@ function start(m) {
   modeFromLink = false;
   started = true; paused = false; setOverlay('');
   announce(`${MODE_NAME[mode]} mode. Wave 1 begins. ${RAIDS[0].short} mix.`);
+  // Bring the whole game card (field, weapons, fire button) into view so nothing playable starts below the fold.
+  document.querySelector('.game')?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
   canvas.focus({ preventScroll: true }); syncPause();
 }
 function goNext() {

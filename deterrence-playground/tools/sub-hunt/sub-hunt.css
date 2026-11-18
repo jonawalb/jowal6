@@ -251,3 +251,11 @@ body.sh-over :is(.sh-console, .learn-banner) { display: none; }
 :root[data-skin="trailer"] .sh-hour b, :root[data-skin="trailer"] .sh-stock b, :root[data-skin="trailer"] .sh-meter-h b { font-family: var(--mono); font-weight: 600; }
 .sh-rot kbd { font: 600 11px/1 var(--mono, ui-monospace, monospace); padding: 2px 5px; margin-left: 4px; border: 1px solid currentColor; border-radius: 3px; opacity: .8; }
 @media (max-width: 720px) { .sh-rot kbd { display: none; } }
+
+/* ---- UI polish: compact action cards. Each card shows key, name and cost; the selected action's full
+   description sits in the hint box right under the cards (the same text the cards used to repeat). ---- */
+.sh-tools small { display: none; }
+.sh-tools button { justify-content: center; min-height: 40px; }
+.sh-hint { margin: 0; padding: 7px 10px; border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 3px; background: var(--chip); color: var(--ink); font-size: 12.5px; }
+/* The learn banner already offers "Learn to play" and "Rules on one screen"; drop the duplicate header buttons while it shows. */
+body:has(.learn-banner) :is(#show-howto, #start-tour) { display: none; }

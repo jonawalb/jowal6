@@ -45,7 +45,7 @@ export function mount(el, lesson, opts = {}) {
     h('h4', {}, box, `Phase ${p.id}: ${p.name}`);
     h('p', {}, box, `${p.what} Controlled by: ${p.control}. (Hunzeker p. ${FIREPLAN_PAGE}.)`);
     f.readout.innerHTML = st.reg
-      ? '<b class="bad">Registration warns the defender.</b> Ranging shots before the attack show where it will fall, and his reserves move first (Hunzeker pp. 52–53; Biddle pp. 32–33).'
+      ? '<b class="bad">Registration warns the defender.</b> Ranging shots before the attack show where it will fall, and its reserves move first (Hunzeker pp. 52–53; Biddle pp. 32–33).'
       : '<b class="good">Predicted fire keeps the surprise.</b> Guns laid from survey, air photographs and sound ranging open without ranging shots; one short hurricane, then the creeping barrage (Hunzeker pp. 59, 76–77, 112). Each assault element can have its own battery in direct support.';
   }
   const sz = sized(f.stage, draw);

@@ -35,19 +35,26 @@
   <div class="stage">
     <section class="card fc-start" id="start" hidden aria-labelledby="start-t">
       <h2 id="start-t">Choose your side</h2>
-      <div class="fc-od">
-        <label class="slider" for="od"><span class="sl-h"><span>Offense–defense balance</span><output id="od-out" for="od" class="num">5 — standard</output></span>
-          <input type="range" id="od" min="0" max="10" step="1" value="5" aria-describedby="od-desc" aria-valuetext="5, standard">
-          <span class="fc-od-ends" aria-hidden="true"><span>Favors defense</span><span>Favors offense</span></span></label>
-        <p class="fine" id="od-desc"></p>
-      </div>
+      <p class="fc-rules"><b>Each hour:</b> pick a unit and click where it should go; fire your artillery (the battery in the map's bottom-right corner) at one sector; press <b>End hour</b>. <span data-fill="turns">14 one-hour turns</span>. You see the enemy only next to your own units.</p>
       <div class="fc-sides">
-        <button type="button" class="fc-side blue" data-side="blue"><b>Defend</b><span>Blue brigade: hold Tarn Crossing until <span data-fill="end">20:00</span>.</span><small>9 units, including artillery and 2 recon troops. Red is stronger and has a decoy.</small><em class="fc-odfx" data-odfx="blue"></em></button>
-        <button type="button" class="fc-side red" data-side="red"><b>Attack</b><span>Red force: take Tarn Crossing by <span data-fill="end">20:00</span>.</span><small>13 units, including artillery, 2 recon troops and a decoy. Blue's reserve can be fooled. The board turns so you attack up the screen.</small><em class="fc-odfx" data-odfx="red"></em></button>
+        <button type="button" class="fc-side blue" data-side="blue"><b>Defend</b><span>Blue brigade: hold Tarn Crossing until <span data-fill="end">20:00</span>.</span><small>9 units, including artillery and 2 recon troops. Red is stronger and has a decoy.</small><em class="fc-odfx" data-odfx="blue"></em><i class="fc-go-cue" aria-hidden="true">Start as defender →</i></button>
+        <button type="button" class="fc-side red" data-side="red"><b>Attack</b><span>Red force: take Tarn Crossing by <span data-fill="end">20:00</span>.</span><small>13 units, including artillery, 2 recon troops and a decoy. Blue's reserve can be fooled. The board turns so you attack up the screen.</small><em class="fc-odfx" data-odfx="red"></em><i class="fc-go-cue" aria-hidden="true">Start as attacker →</i></button>
       </div>
-      <p class="fc-rules"><b>Each hour:</b> pick a unit and click where it should go; fire your artillery (the fixed battery in the map's bottom-right corner) at one sector; press <b>End hour</b>. <span data-fill="turns">14 one-hour turns</span>. You see the enemy only next to your own units.</p>
-      <p class="fc-rules">Want to attack instead? <button type="button" class="btn" id="learn-red">Learn to attack</button></p>
-      <p class="fine">Keys: <b>number keys</b> (shown on each unit) pick a unit, <b>A</b> artillery, <b>G</b> give ground or hold, <b>Tab</b> to a sector and <b>Enter</b> to send, arrow keys between sectors, <b>N</b> ends the hour, <b>U</b> undoes, <b>Esc</b> clears the selection.</p>
+      <details class="fc-od-d">
+        <summary>Offense–defense balance: <span id="od-sum">5 — standard</span></summary>
+        <div class="fc-od">
+          <label class="slider" for="od"><span class="sl-h"><span>Offense–defense balance</span><output id="od-out" for="od" class="num">5 — standard</output></span>
+            <input type="range" id="od" min="0" max="10" step="1" value="5" aria-describedby="od-desc" aria-valuetext="5, standard">
+            <span class="fc-od-ends" aria-hidden="true"><span>Favors defense</span><span>Favors offense</span></span></label>
+          <p class="fine" id="od-desc"></p>
+        </div>
+      </details>
+      <div class="fc-start-foot">
+        <p class="fine">New to attacking? <button type="button" class="fc-link" id="learn-red">Learn to attack</button></p>
+        <details class="fc-keys-d"><summary>Keyboard shortcuts</summary>
+          <p class="fine"><b>Number keys</b> (shown on each unit) pick a unit, <b>A</b> artillery, <b>G</b> give ground or hold, <b>Tab</b> to a sector and <b>Enter</b> to send, arrow keys between sectors, <b>N</b> ends the hour, <b>U</b> undoes, <b>Esc</b> clears the selection.</p>
+        </details>
+      </div>
     </section>
 
     <div class="fc-play" id="play">
@@ -67,11 +74,11 @@
       </div>
       <div class="fc-board">
         <div class="fc-ucol" id="ucol" hidden>
-          <aside class="fc-decoy" id="decoytip" hidden><button type="button" class="fc-decoy-x" id="decoytip-x" aria-label="Hide the decoy note">×</button><div id="decoytip-text"></div></aside>
+          <aside class="fc-decoy" id="decoytip" hidden><button type="button" class="fc-decoy-x" id="decoytip-x" aria-label="Hide the decoy note">×</button><div id="decoytip-text"></div><button type="button" class="fc-link fc-decoy-more" id="decoytip-more" aria-controls="decoytip-text" hidden>How to spot it</button></aside>
           <p class="eyebrow fc-uh">Your units</p>
           <div class="fc-units" id="units" role="group" aria-label="Your units"></div>
           <div class="fc-sel" id="sel"></div>
-          <p class="fine fc-keys" id="keys"></p>
+          <details class="fc-keys-d"><summary>Keyboard shortcuts</summary><p class="fine fc-keys" id="keys"></p></details>
         </div>
         <div class="fc-mcol">
           <p class="fc-say" id="say" aria-live="polite"></p>
@@ -84,6 +91,7 @@
           <div class="mapbox fc-mapbox" id="box">
             <svg id="map" role="group" aria-label="Map of the fictional Varn valley: sixteen sectors in four rows and four columns, and Tarn Crossing behind them. When you attack, the board is turned so your side is at the bottom, and units not yet on the map wait in a staging tray below your entry edge. Your artillery sits fixed in the bottom-right corner. Tab to a sector and press Enter to send the selected unit or fire there; arrow keys move between sectors."></svg>
           </div>
+          <details class="fc-legend-d" id="legend" open><summary>Map key</summary>
           <div class="fc-legend" aria-hidden="true">
             <span><i class="lg-mine"></i>Your unit</span>
             <span><i class="lg-hp"></i>Strength bar: green = strength left, red = lost (both sides)</span>
@@ -97,6 +105,7 @@
             <span><i class="lg-fight"></i>Fighting</span>
             <span><i class="lg-bound"></i>Sector boundary (a planning line); roads join sector centres</span>
           </div>
+          </details>
         </div>
       </div>
     </div>

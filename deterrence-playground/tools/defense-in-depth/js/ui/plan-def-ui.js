@@ -46,7 +46,7 @@ export function cover2(g, plan) {
 }
 
 const tbtn = (k, t, extra = {}, tip = '') => { const tool = S.tool || {}; return `<button type="button" class="btn${tool.kind === k && (extra.w == null || tool.w === extra.w) ? ' armed' : ''}" data-ptool="${k}"${extra.w ? ` data-w="${extra.w}"` : ''}${tip ? ` title="${esc(tip)}"` : ''}>${t}</button>`; };
-const WORK_TIP = { trench: 'Frontal cover for the men in it', comm: 'Covered movement front to rear', obst: 'Holds attackers in your fire for an hour', obstC: 'Concealed: not on his air photographs',
+const WORK_TIP = { trench: 'Frontal cover for the men in it', comm: 'Covered movement front to rear', obst: 'Holds attackers in your fire for an hour', obstC: 'Concealed: not on the enemy’s air photographs',
   strong: 'All-round cover; keeps firing into the flanks of a break-in', concrete: 'Halves artillery losses in a strongpoint', dugout: 'Cuts artillery losses for men who stay put', dummy: 'Looks like a strongpoint to the enemy' };
 
 /** The numbers behind the step chips. */
@@ -84,7 +84,7 @@ export function defStep(g, plan, id) {
     return `<p class="fine">Each battery fires at once, with no delay, on the first of its two defensive-fire sectors that attackers enter (Hunzeker p. 75). <b>${bats.filter(b => plan.sos[b.id] && plan.sos[b.id].length).length} of ${bats.length}</b> batteries have sectors.</p>
     <div class="dd-tools dd-mglist">${bats.map(u => `<button type="button" class="btn" data-pselu="${u.id}" aria-pressed="${S.sel.length === 1 && S.sel[0] === u.id}">${esc(u.short)} <small>${(plan.sos[u.id] || []).length} of 2</small></button>`).join('')}</div>
     <div class="dd-tools">${tbtn('sos', 'Defensive fire sectors', {}, 'SOS: pick a battery, then tap up to two sectors')}</div>
-    <label class="dd-lab dd-det" title="Counter-battery (CB): your guns answer his located batteries">Counter-battery <select data-pcb><option value="located" ${plan.cbPriority !== 'none' ? 'selected' : ''}>Fire on located batteries</option><option value="none" ${plan.cbPriority === 'none' ? 'selected' : ''}>None</option></select></label>
+    <label class="dd-lab dd-det" title="Counter-battery (CB): your guns answer the enemy’s located batteries">Counter-battery <select data-pcb><option value="located" ${plan.cbPriority !== 'none' ? 'selected' : ''}>Fire on located batteries</option><option value="none" ${plan.cbPriority === 'none' ? 'selected' : ''}>None</option></select></label>
     ${g.era === 'm' ? `<p class="fine">Drones and EW: pick a drone team and tap its patrol area, or the EW team and tap where it jams.</p><div class="dd-tools">${tbtn('drone', 'Drone patrol')}${tbtn('ew', 'EW position')}</div>`
     : '<p class="fine dd-det">Air observation (one sortie an hour over a 3 × 3 block) and gas are ordered during the battle.</p>'}`;
   }

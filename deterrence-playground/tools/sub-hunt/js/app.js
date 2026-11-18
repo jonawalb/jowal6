@@ -25,7 +25,7 @@ let color = tokenColor('--c2', document.body);
 let g, tool = 'circle', cursor = null, ang = 90, coached = false, turned = false, lesson = null, follow = 0;
 
 $('tools').innerHTML = Object.entries(ACTIONS).map(([k, a]) =>
-  `<button type="button" data-tool="${k}" aria-pressed="false" aria-keyshortcuts="${a.key}" class="${k === 'attack' ? 'sh-prosbtn' : ''}">
+  `<button type="button" data-tool="${k}" aria-pressed="false" aria-keyshortcuts="${a.key}" title="${a.help}" class="${k === 'attack' ? 'sh-prosbtn' : ''}">
     <span class="sh-th"><span class="sh-k">${a.key}</span><b>${a.name}</b><span class="sh-cost">${a.cost ? `${a.cost} pt` : 'free'}</span></span>
     <small>${a.help}</small></button>`).join('');
 

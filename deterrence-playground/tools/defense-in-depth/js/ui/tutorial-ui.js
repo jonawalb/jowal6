@@ -21,7 +21,7 @@ export const HOWTO = {
   ideas: [
     '<b>Fire sideways.</b> A machine gun firing along the enemy’s line (enfilade) hits far more men than one firing straight at them.',
     '<b>Keep the front thin.</b> Shells fall on the front first; hold most of your men back, out of the barrage, ready to strike.',
-    '<b>Strike while the window is open.</b> For about two hours after he takes a box (a lodgment), his men are disorganized: green clock badge. Counterattack then.',
+    '<b>Strike while the window is open.</b> For about two hours after the enemy takes a box (a lodgment), its men are disorganized: green clock badge. Counterattack then.',
   ],
   terms: [
     ['Sector', 'One box of the map, 500 m across.'],
@@ -40,14 +40,14 @@ export function tutorialResult(g, opts) {
   const retook = g.events.some(e => e.kind === 'retaken' && e.side === 'def');
   el.hidden = false;
   el.innerHTML = `<div class="status" data-s="${won ? 'good' : 'bad'}"><b id="aar-t">${won ? 'You won the lesson battle' : 'The enemy won this time'}</b>
-      <span>${won ? `He did not hold ${Sc.obj.need} side-by-side boxes of ${esc(Sc.obj.name)} at the end.` : `He held ${g.over.best} side-by-side boxes of ${esc(Sc.obj.name)} at the end.`}
-      Losses: yours ${loss('def').toFixed(0)}, his ${loss('att').toFixed(0)} strength points (a full company is 10). They do not decide the game.</span></div>
+      <span>${won ? `The enemy did not hold ${Sc.obj.need} side-by-side boxes of ${esc(Sc.obj.name)} at the end.` : `The enemy held ${g.over.best} side-by-side boxes of ${esc(Sc.obj.name)} at the end.`}
+      Losses: yours ${loss('def').toFixed(0)}, the enemy’s ${loss('att').toFixed(0)} strength points (a full company is 10). They do not decide the game.</span></div>
     <p class="eyebrow">What happened</p><ol class="dd-moments">${ms.map(m => `<li class="${m.tone}"><span class="num">${m.when}</span>${esc(m.text)}</li>`).join('') || '<li>A quiet battle.</li>'}</ol>
     <p class="eyebrow">What you practised</p>
     <ul class="dd-learned">
-      <li><b>Fire sideways</b> (enfilade): your machine gun’s lane ran along his line.</li>
+      <li><b>Fire sideways</b> (enfilade): your machine gun’s lane ran along the enemy’s line.</li>
       <li><b>Keep the front thin</b>: shells fall on the front boxes first.</li>
-      <li><b>Strike while the window is open</b>: ${retook ? 'you took a lost box back while his men were still disorganized.' : 'a box he has just taken is easiest to retake in its first two hours.'}</li>
+      <li><b>Strike while the window is open</b>: ${retook ? 'you took a lost box back while the enemy’s men were still disorganized.' : 'a box the enemy has just taken is easiest to retake in its first two hours.'}</li>
     </ul>
     <p class="fine">The real battles use the same rules on a bigger front: about 26 units against 38, 14 or 15 hours, and you draw up your own plan first. <i>Simple</i> view (top of the page) hides the finer numbers.</p>
     <div class="dd-gobar dd-learn-go"><button type="button" class="btn solid" data-lr="def">Play a real battle: defend</button><button type="button" class="btn" data-lr="att">Attack instead</button>

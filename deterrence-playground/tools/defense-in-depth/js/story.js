@@ -35,7 +35,7 @@ const BUILD = {
   lift: (g, e, me) => {
     const p = place(g, e.sec), own = e.side === me;
     if (e.case === 'late') return { tone: own ? 'bad' : 'good', text: own ? `Late lift at ${p}: your infantry ran into its own barrage.` : `Late lift at ${p}: the enemy’s infantry ran into their own barrage in front of your men.` };
-    return { tone: own ? 'bad' : 'good', text: own ? `Early lift at ${p}: the barrage moved on before your infantry arrived, and the defenders were up and firing.` : `Early lift at ${p}: the enemy’s barrage moved on before his infantry arrived, and your men were up and firing.` };
+    return { tone: own ? 'bad' : 'good', text: own ? `Early lift at ${p}: the barrage moved on before your infantry arrived, and the defenders were up and firing.` : `Early lift at ${p}: the enemy’s barrage moved on before its infantry arrived, and your men were up and firing.` };
   },
   enfilade: (g, e, me) => {
     if (e.loss != null && e.loss < BIG_ENFILADE) return null;
@@ -53,7 +53,7 @@ const BUILD = {
   objective: (g, e, me) => {
     if (e.held === e.prevHeld) return null;
     const up = e.held > e.prevHeld, att = e.side === me;
-    return { tone: up === att ? 'good' : 'bad', text: att ? `You now hold ${e.held} of the ${e.need} side-by-side objective sectors you need.` : `The enemy now holds ${e.held} of the ${e.need} side-by-side objective sectors he needs to beat you.` };
+    return { tone: up === att ? 'good' : 'bad', text: att ? `You now hold ${e.held} of the ${e.need} side-by-side objective sectors you need.` : `The enemy now holds ${e.held} of the ${e.need} side-by-side objective sectors it needs to beat you.` };
   },
 };
 

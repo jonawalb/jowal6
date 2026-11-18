@@ -183,3 +183,10 @@ svg.sl-small .t-sea { font-size: 18px; }
 :root[data-skin="trailer"] .sl-aarcard tbody th { font-family: var(--body); letter-spacing: 0; }
 :root[data-skin="trailer"] .sl-turn .ph { font-size: 9.5px; letter-spacing: 0; }
 :root[data-skin="trailer"] svg.sl-small .sl-zarea, :root[data-skin="trailer"] svg.sl-small .sl-zsea, :root[data-skin="trailer"] svg.sl-small .sl-barT { font-size: 15px; }
+
+/* Present-polish pass: say plainly when the weather has closed a landing zone this turn. */
+.sl-warn { margin: 0; padding: 6px 9px; font-size: 13px; border-left: 3px solid var(--bad); background: color-mix(in srgb, var(--bad) 8%, transparent); border-radius: 0 3px 3px 0; }
+#aar-studies summary { cursor: pointer; margin: 0; }
+#aar-studies details[open] summary { margin-bottom: 8px; }
+/* The panel's primary button stays in reach while the setup choices scroll. */
+.sl-gosec { position: sticky; bottom: 0; z-index: 2; background: var(--panel); box-shadow: 0 -10px 14px -12px rgba(0, 0, 0, .35); }

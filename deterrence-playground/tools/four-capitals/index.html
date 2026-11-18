@@ -26,7 +26,6 @@
 <body>
 <header id="tsm-head"></header>
 <div class="k4-actions">
-  <p class="k4-flag"><b>Fictional and notional.</b> An invented 2029 crisis. Odds and effects are illustrative game design, not predictions.</p>
   <div><button type="button" class="btn" id="tour-btn">Learn to play</button>
   <button type="button" class="btn" id="new-game">New game</button>
   <button type="button" class="btn" id="copy-link">Copy link</button></div>
@@ -36,37 +35,43 @@
   <section class="card k4-start" id="start" aria-labelledby="start-t">
     <h2 id="start-t">Choose your capital</h2>
     <p class="k4-notice" id="old-link" role="status" hidden></p>
-    <div class="k4-starthead">
-      <p class="k4-lede">2029. Beijing is turning up the pressure on Taiwan. Lead one of four capitals for up to eight months. Each month you pick a <b>posture</b>, up to <b>four moves</b> and where your <b>forces</b> go, while the other three do the same at once. Every leader has a hidden <b>type</b> the others must read from what it does. <b>First game?</b> Press <b>Learn to play</b>, or keep <b>Staff advice</b> on.</p>
-      <div class="k4-opts">
-        <fieldset class="k4-diff" aria-label="Opponent difficulty">
-          <legend>Opponents difficulty</legend>
-          <label><input type="radio" name="difficulty" value="easy"><span>Easy</span></label>
-          <label><input type="radio" name="difficulty" value="normal" checked><span>Normal</span></label>
-          <label><input type="radio" name="difficulty" value="hard"><span>Hard</span></label>
-        </fieldset>
-        <fieldset class="k4-diff" id="staff-mode" aria-describedby="staff-x">
-          <legend>Staff advice</legend>
-          <label><input type="radio" name="staff" value="1" checked><span>On</span></label>
-          <label><input type="radio" name="staff" value="0"><span>Off</span></label>
-        </fieldset>
-        <p class="fine k4-staffx" id="staff-x">On adds an <b>Ask your staff</b> button each month that fills in a sensible plan for your goals, which you can change before you commit. Recommended if you are new to the game.</p>
-      </div>
-    </div>
+    <p class="k4-lede">2029. Beijing is turning up the pressure on Taiwan. Lead one capital for up to eight months; the computer plays the other three. Each month you pick a <b>posture</b>, up to <b>four moves</b> and where your <b>forces</b> go, and all four reveal at once. <b>Pick a capital to start.</b></p>
     <div class="k4-seats" id="seats" role="radiogroup" aria-label="Your capital"></div>
     <div class="k4-setup" id="setup" hidden>
-      <fieldset class="k4-ask" id="traits-ask">
-        <legend>Play a version where the leaders have hidden traits?</legend>
-        <label><input type="radio" name="traits" value="0" checked><b>No</b><span>The leaders differ only by their hidden type.</span></label>
-        <label><input type="radio" name="traits" value="1"><b>Yes</b><span>Each computer leader also gets a hidden trait: risk-taking, face-saving, impatient or prudent, drawn at random with odds that fit the capital (Beijing, which started this crisis, is never prudent; Taipei and Tokyo lean prudent). It shapes its choices and how it weighs a peace forum. You do not pick them, and you see them only in the after-action replay.</span></label>
-      </fieldset>
-      <h3>Starting situation</h3>
+      <h3><span class="k4-stepno">1</span> Starting situation</h3>
       <div class="k4-scens" id="scenarios" role="radiogroup" aria-label="Starting situation"></div>
-      <h3>What matters to you?</h3>
-      <p class="fine">Weight each goal from 0 (ignore) to 5 (vital). You are scored against these weights at the end, and compared with the computer playing your seat for the same goals.</p>
+      <h3><span class="k4-stepno">2</span> What matters to you?</h3>
+      <p class="fine">Weight each goal from 0 (ignore) to 5 (vital). Your final score uses these weights, and is compared with the computer playing your seat for the same goals.</p>
       <div class="k4-weights" id="weights"></div>
+      <h3><span class="k4-stepno">3</span> Options</h3>
+      <div class="k4-opts">
+        <div>
+          <fieldset class="k4-diff" aria-label="Opponent difficulty">
+            <legend>Opponents</legend>
+            <label><input type="radio" name="difficulty" value="easy"><span>Easy</span></label>
+            <label><input type="radio" name="difficulty" value="normal" checked><span>Normal</span></label>
+            <label><input type="radio" name="difficulty" value="hard"><span>Hard</span></label>
+          </fieldset>
+        </div>
+        <div>
+          <fieldset class="k4-diff" id="staff-mode" aria-describedby="staff-x">
+            <legend>Staff advice</legend>
+            <label><input type="radio" name="staff" value="1" checked><span>On</span></label>
+            <label><input type="radio" name="staff" value="0"><span>Off</span></label>
+          </fieldset>
+          <p class="fine k4-staffx" id="staff-x">On adds an <b>Ask your staff</b> button that fills in a sensible plan you can change. Recommended for a first game.</p>
+        </div>
+        <div>
+          <fieldset class="k4-diff" id="traits-ask" aria-describedby="traits-x">
+            <legend>Hidden leader traits</legend>
+            <label><input type="radio" name="traits" value="0" checked><span>Off</span></label>
+            <label><input type="radio" name="traits" value="1"><span>On</span></label>
+          </fieldset>
+          <p class="fine k4-staffx" id="traits-x">On gives each computer leader a hidden trait (risk-taking, face-saving, impatient or prudent), drawn at random with odds that fit the capital: Beijing, which started this crisis, is never prudent; Taipei and Tokyo lean prudent. It shapes its choices and how it weighs a peace forum. You see the traits only in the after-action replay.</p>
+        </div>
+      </div>
       <div class="k4-row">
-        <button type="button" class="btn solid" id="begin">Begin</button>
+        <button type="button" class="btn solid k4-begin" id="begin">Begin</button>
       </div>
     </div>
   </section>
@@ -77,6 +82,13 @@
     <p id="type-x"></p>
     <p class="fine">No one else knows this. They will judge you by what you do, and so will you judge them.</p>
     <p class="fine" id="type-s"></p>
+    <h3 class="k4-howh">Each month, in three steps</h3>
+    <ol class="k4-how3">
+      <li><b>Posture</b>: how hard you lean, from stand down to escalate.</li>
+      <li><b>Moves</b>: up to four, each with its odds and cost.</li>
+      <li><b>Forces</b>: where your formations go (leaving them is fine).</li>
+    </ol>
+    <p class="fine">Then press <b>End month</b>. All four capitals reveal at once and the dice roll.<span class="k4-staffon"> Stuck? <b>Ask your staff</b> fills in all three steps for you.</span></p>
     <button type="button" class="btn solid" id="type-go">Go to March</button>
   </section>
 
@@ -86,7 +98,7 @@
       <p class="k4-event" id="event"></p>
       <div class="k4-viewsw"><span class="k4-viewhint" id="view-hint" hidden>First game? Try</span><span class="k4-seg2" role="group" aria-label="View">
         <button type="button" data-view="simple" aria-pressed="true" title="Hides the belief bars, the fog detail and the logistics table. The game is the same.">Simple</button><button type="button" data-view="detailed" aria-pressed="false" title="Shows everything: belief bars, fog ranges and the logistics table.">Detailed</button></span></div>
-      <button type="button" class="btn solid" id="end-turn">End month</button>
+      <button type="button" class="btn" id="end-turn" title="Resolve the month with your choices so far">End month</button>
     </div>
     <div class="k4-ptabs" role="tablist" aria-label="Show">
       <button type="button" role="tab" id="pt-map" data-ptab="map" aria-selected="false" aria-controls="pane-map">Map</button>
@@ -110,13 +122,6 @@
         </section>
         <div class="card k4-intel" id="intel" data-pane="sit"></div>
         <div class="card k4-feed" id="feed" data-pane="sit" aria-live="polite"></div>
-    <section class="card k4-resolve" id="resolve" hidden aria-labelledby="res-t" tabindex="-1">
-      <h2 id="res-t"></h2>
-      <div class="k4-reveal" id="reveal"></div>
-      <p class="k4-tldr" id="tldr"></p>
-      <ol class="k4-log" id="log"></ol>
-      <button type="button" class="btn solid" id="next">Continue</button>
-    </section>
       </div>
       <section class="card k4-decide" id="decide" data-pane="move" aria-labelledby="dec-t">
         <div class="k4-dhead"><h2 class="k4-h" id="dec-t">Your move</h2>
@@ -143,6 +148,14 @@
         </div>
         <div class="k4-stepnav"><button type="button" class="btn" id="step-back">Back</button><button type="button" class="btn solid" id="step-next">Next</button></div>
       </section>
+      <section class="card k4-resolve" id="resolve" hidden aria-labelledby="res-t" tabindex="-1">
+        <h2 id="res-t"></h2>
+        <p class="k4-tldr" id="tldr"></p>
+        <div class="k4-reveal" id="reveal"></div>
+        <details class="k4-logd" id="log-d"><summary><b>Every move, its odds and the roll</b> <span class="muted" id="log-n"></span></summary>
+          <ol class="k4-log" id="log"></ol></details>
+        <div class="k4-resnav"><button type="button" class="btn solid" id="next">Continue</button></div>
+      </section>
     </div>
   </section>
 
@@ -155,18 +168,18 @@
       <div><p class="k4-big num" id="pct">…</p><p class="fine" id="pct-x">comparing with the computer in your seat…</p></div>
     </div>
     <table class="k4-parts" id="parts"></table>
+    <div class="k4-row k4-endnav"><button type="button" class="btn solid" id="again">Play again</button></div>
     <h3>Who they really were</h3>
     <div class="k4-types" id="types"></div>
     <h3>What they believed about you</h3>
     <p class="fine">Each line is a rival's probability that you were your true type, month by month. The marked month is the move that shifted it most.</p>
     <svg id="beliefs" viewBox="0 0 640 220" role="img" aria-label="Rivals' beliefs about your type"></svg>
-    <h3>After-action replay</h3>
-    <div id="replay"></div>
-    <h3>Nuclear review</h3>
-    <div id="nukerev"></div>
-    <h3>Your forces and logistics</h3>
-    <div id="end-logi"></div>
-    <button type="button" class="btn solid" id="again">Play again</button>
+    <details class="k4-endd"><summary>After-action replay <span class="muted">every month's moves and how each capital was read</span></summary>
+    <div id="replay"></div></details>
+    <details class="k4-endd"><summary>Nuclear review <span class="muted">what pushed the nuclear shadow, month by month</span></summary>
+    <div id="nukerev"></div></details>
+    <details class="k4-endd"><summary>Your forces and logistics <span class="muted">formations, stocks and landings at the end</span></summary>
+    <div id="end-logi"></div></details>
   </section>
 
   <section class="card k4-about">

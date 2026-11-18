@@ -4,7 +4,7 @@ import { newGame, step } from './model.js';
 import { ACTS, ACT_KEYS, valid } from './actions.js';
 import { legacy } from './plans.js';
 import { createOrbit, BG_NOTE } from './orbit.js';
-import { logItem, promptFor, outlookHtml, actText, pct } from './views.js';
+import { logItem, promptFor, recapHtml, outlookHtml, actText, pct } from './views.js';
 import { readHash, writeHash } from './hash.js';
 import { showAAR } from './aar.js';
 import { renderBelow } from './below.js';
@@ -94,6 +94,9 @@ function choose(m) {
 
 function renderPanel() {
   const pr = promptFor(g, pending);
+  const last = g.hist[g.hist.length - 1];
+  $('recap').hidden = !last || g.over;
+  $('recap').innerHTML = last && !g.over ? recapHtml(last) : '';
   $('prompt').dataset.s = pr.s; $('prompt-t').textContent = pr.t; $('prompt-s').textContent = pr.d;
   $('slots').innerHTML = [0, 1].map(i => {
     const x = pending[i];

@@ -23,10 +23,19 @@ export function logItem(hm) {
     ${hm.escalated ? '<li class="warnline"><b>The crisis crossed the nuclear threshold.</b></li>' : ''}</ul></li>`;
 }
 
+/** Short recap of the month just played, shown at the top of the orders panel so the result is in view. */
+export function recapHtml(hm) {
+  const line = (x, side) => `<li class="${side === 'B' ? 'you' : 'red'}"><span>${side === 'B' ? 'You' : 'Red'}:</span> ${esc(actText(x, side))}${x.res ? `: ${esc(x.res)}` : ''}</li>`;
+  return `<p class="eyebrow">Month ${hm.t} result</p>
+    <ul>${hm.acts.B.map(x => line(x, 'B')).join('')}${hm.acts.R.map(x => line(x, 'R')).join('')}
+    ${hm.ev.map(e => `<li class="warnline">${esc(e)}</li>`).join('')}</ul>
+    <p class="fine">Full log in What happened.</p>`;
+}
+
 export function promptFor(g, pending) {
   if (g.over) return { s: 'good', t: 'Game over', d: 'Read the after-action review below the orbits.' };
   const m = g.turn + 1, left = 2 - pending.length;
-  if (m === 1 && !pending.length) return { s: 'warn', t: 'Your first move', d: 'It is month 1 of a crisis. A good start: pick Backups, then your Reconnaissance, so jamming hurts you less. Then pick Jam and Red\'s Navigation, and press End month.' };
+  if (m === 1 && !pending.length) return { s: 'warn', t: 'Your first move', d: 'It is month 1 of a crisis. A good start: pick Backups, then your ISR (reconnaissance), so jamming hurts you less. Then pick Jam and Red\'s Navigation, and press End month.' };
   if (m === CRISIS_TURNS + 1 && !pending.length) return { s: 'bad', t: 'War begins', d: 'From now on each month counts fully toward the result. Red may reach for destructive weapons, and so can you.' };
   if (!left) return { s: 'good', t: 'Orders ready', d: 'Press End month. Red moves at the same time.' };
   return { s: 'warn', t: `Month ${m}: ${left} action${left > 1 ? 's' : ''} left`, d: m <= CRISIS_TURNS ? 'Crisis months count for a fifth as much as war months.' : `${TURNS - m + 1} war month${TURNS - m ? 's' : ''} to go.` };

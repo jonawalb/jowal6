@@ -42,10 +42,15 @@ const newSeed = () => 1 + Math.floor(Math.random() * 999998);
 
 /* ---------- panel ---------- */
 function actorSec() {
-  return `<div class="sec"><p class="eyebrow">Play as</p>
-    <div class="choices mg-actors">${ACTOR_ORDER.map(a => `<button type="button" data-actor="${a}" aria-pressed="${a === g.actor}" style="--ac:${ACTORS[a].color}">
-      <b>${esc(ACTORS[a].name)}</b><small>${esc(ACTORS[a].long)}</small></button>`).join('')}</div>
-    <p class="fine">${esc(ACTORS[g.actor].brief)} Switching actor starts a new game.</p></div>`;
+  // Before the first roll the seat picker is open; once play starts it folds into one line so the
+  // current decision stays at the top of the panel.
+  const started = g.turns.some(r => r.player?.res);
+  const grid = `<div class="choices mg-actors">${ACTOR_ORDER.map(a => `<button type="button" data-actor="${a}" aria-pressed="${a === g.actor}" style="--ac:${ACTORS[a].color}" title="${esc(ACTORS[a].long)}">
+      <b>${esc(ACTORS[a].name)}</b></button>`).join('')}</div>`;
+  const aims = `<p class="fine mg-aims"><b>Your aims:</b> ${esc(ACTORS[g.actor].brief)}</p>`;
+  if (started) return `<div class="sec mg-seat"><details><summary><span class="eyebrow">Playing as</span> ${actorChip(g.actor)} <span class="fine">change</span></summary>
+    ${grid}<p class="fine">Switching actor starts a new game.</p></details>${aims}</div>`;
+  return `<div class="sec mg-seat"><p class="eyebrow">Play as <span class="fine">(switching starts a new game)</span></p>${grid}${aims}</div>`;
 }
 
 function composeSec() {
@@ -61,8 +66,8 @@ function composeSec() {
     <div class="sec" id="mg-reasons"><p class="eyebrow">2 · Up to three reasons <span class="num">(${ui.reasons.length}/${MAX_REASONS})</span></p>
       <p class="fine">A reason counts as strong (+1) if it shares a tag with your action and the board supports it right now. Otherwise it adds nothing.</p>
       <div class="mg-list">${rs}</div></div>
-    <div class="sec"><button type="button" class="btn solid" id="mg-submit" ${ui.action == null ? 'disabled' : ''}>Put the argument to the adjudicator</button>
-      <p class="fine">AI actors will raise counter-arguments. Then you roll.</p></div>`;
+    <div class="sec mg-go"><p class="fine">${ui.action == null ? 'Pick an action to continue.' : `Action chosen · ${ui.reasons.length} of ${MAX_REASONS} reasons. AI actors will argue back, then you roll.`}</p>
+      <button type="button" class="btn solid" id="mg-submit" ${ui.action == null ? 'disabled' : ''}>Put the argument to the adjudicator</button></div>`;
 }
 
 function counterSec() {
@@ -76,7 +81,8 @@ function counterSec() {
     <div class="sec" id="mg-counters"><p class="eyebrow">3 · Your counter-argument (optional)</p>
       <p class="fine">A counter is strong (−1 to their roll) if it engages the action's tags and the board backs it.</p>
       <div class="mg-list">${cs}<button type="button" data-ctr="none" aria-pressed="${ui.counter === 'none'}"><span>No counter-argument</span></button></div></div>
-    <div class="sec"><button type="button" class="btn solid" id="mg-csubmit" ${ui.counter == null ? 'disabled' : ''}>Send to the adjudicator</button></div>`;
+    <div class="sec mg-go"><p class="fine">${ui.counter == null ? 'Pick a counter-argument, or none.' : 'Ready. The adjudicator scores it, then the AI rolls.'}</p>
+      <button type="button" class="btn solid" id="mg-csubmit" ${ui.counter == null ? 'disabled' : ''}>Send to the adjudicator</button></div>`;
 }
 
 function waitSec() {
@@ -111,9 +117,11 @@ function render() {
     const x = last.ai?.res ? last.ai : last.player;
     show(x, 'last argument', null);
   } else {
-    adj.innerHTML = `<p class="eyebrow">Adjudicator</p><h3>Waiting for an argument</h3>
-      <p>Pick an action and up to three reasons in the panel. The adjudicator will score each reason, hear the AI actors' counter-arguments, set the odds and roll two dice.</p>
-      <p class="fine">Method: an action, reasons for it and counter-arguments, after Chris Engle's matrix game. 2d6, 7 or more succeeds; each strong reason +1, each strong counter −1.</p>`;
+    adj.innerHTML = ui.phase === 'ai-counter'
+      ? `<p class="eyebrow">Adjudicator</p><h3>Waiting for your counter-argument</h3>
+      <p class="fine">${esc(ACTORS[rec.ai.actor].name)} has made its move. Pick a counter-argument in the panel, or none. A strong counter takes 1 off its roll.</p>`
+      : `<p class="eyebrow">Adjudicator</p><h3>Waiting for your argument</h3>
+      <p class="fine">Choose an action and up to three reasons in the panel. Each strong reason is +1, each strong counter −1; then two dice are rolled and 7 or more succeeds.</p>`;
   }
   const deb = $('#mg-debrief');
   deb.hidden = ui.phase !== 'debrief';

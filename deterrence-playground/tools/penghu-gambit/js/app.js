@@ -146,7 +146,7 @@ function setView(v) {
   map.draw(cfg, st, { turn: view, outcome: game.outcome, wonAt: game.wonAt });
   $('scrub').value = view;
   $('prev').disabled = view === 0; $('next').disabled = view >= game.turns.length;
-  $('turn-t').textContent = view ? `Turn ${view} of ${game.turns.length} · ${T.label} · ${T.phase}` : `Setup · up to ${cfg.turns} turns to play`;
+  $('turn-t').textContent = view ? `Turn ${view} of ${game.turns.length} · ${T.label} · ${T.phase}${view === game.turns.length ? ` · Result: ${outcomeText(game.outcome)}` : ''}` : `Setup · press Next turn to play up to ${cfg.turns} turns`;
   $('readout').innerHTML = readoutHtml(st, cfg, view, game);
   $('log').innerHTML = turnLogHtml(game, view, cfg);
   $('crt-wrap').hidden = cfg.pla.plan !== 'assault';

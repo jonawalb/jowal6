@@ -52,12 +52,12 @@ export function renderDebrief(el, g) {
   } else if (mine.length) {
     lessons.push(`You won ${pct(mine.filter(x => ok(x.res)).length, mine.length)} arguments at an average of ${Math.round(100 * mine.reduce((a, x) => a + x.arg.p, 0) / mine.length)}% odds.`);
   }
-  if (weakOnes.length) lessons.push(`${weakOnes.length} of your reasons were weak: ${offTopic} did not bear on the action you chose, and ${weakOnes.length - offTopic} were on point but the board did not back them up at the time. A reason is only as strong as the situation that supports it.`);
+  if (weakOnes.length) lessons.push(`${weakOnes.length} of your reasons ${weakOnes.length === 1 ? 'was' : 'were'} weak: ${offTopic} did not bear on the action you chose, and ${weakOnes.length - offTopic} were on point but the board did not back them up at the time. A reason is only as strong as the situation that supports it.`);
   if (hurt.length) {
     const by = ACTOR_ORDER.map(a => [a, hurt.filter(c => c.actor === a).length]).filter(x => x[1]).sort((a, b) => b[1] - a[1]);
     lessons.push(`Strong counter-arguments cost you ${hurt.length} point${hurt.length > 1 ? 's' : ''} of modifier, most from ${ACTORS[by[0][0]].name}. Choosing actions outside an opponent's strong ground avoids that.`);
   }
-  if (theirs.length) lessons.push(`You countered ${pct(myCounters.length, theirs.length)} AI arguments; ${pct(myStrongCounters.length, myCounters.length)} of your counters were strong. The AI won ${pct(theirs.filter(x => ok(x.res)).length, theirs.length)} of its arguments.`);
+  if (theirs.length) lessons.push(`You countered ${pct(myCounters.length, theirs.length)} AI arguments; ${pct(myStrongCounters.length, myCounters.length)} of your counters ${myStrongCounters.length === 1 ? 'was' : 'were'} strong. The AI won ${pct(theirs.filter(x => ok(x.res)).length, theirs.length)} of its arguments.`);
   if (moved[0].d) lessons.push(`${moved[0].t.name} moved most, from ${START[moved[0].t.k]} to ${g.board[moved[0].t.k]}.`);
 
   const rows = ACTOR_ORDER.map(a => `<tr${a === g.actor ? ' class="me"' : ''}><td>${actorChip(a)}${a === g.actor ? ' (you)' : ''}</td>

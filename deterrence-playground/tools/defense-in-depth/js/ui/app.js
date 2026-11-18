@@ -95,7 +95,7 @@ function startBattle() {
   S.tool = null; S.sel = []; S.selFmn = null; S.filter = 'idle'; closeUnitPop(false);
   layout('battle');
   const warn = g.events.find(e => e.kind === 'warning' && S.me === 'def');
-  say(`<b>H-hour, ${hhmm(0)}.</b> ${S.me === 'def' ? 'The attack has begun. Watch your outposts; strike lodgments while their windows are open.' : 'Your barrage is falling. Watch the strip, keep pairs leapfrogging, and keep the guns in range.'}${warn ? ` ${warn.level === 'full' ? 'His long bombardment shows you where he will come.' : 'Registration fire was observed.'}` : ''}`);
+  say(`<b>H-hour, ${hhmm(0)}.</b> ${S.me === 'def' ? 'The attack has begun. Watch your outposts; strike lodgments while their windows are open.' : 'Your barrage is falling. Watch the strip, keep pairs leapfrogging, and keep the guns in range.'}${warn ? ` ${warn.level === 'full' ? 'The enemy’s long bombardment shows you where it will come.' : 'Registration fire was observed.'}` : ''}`);
   $('tldr').textContent = '';
   redraw(); save();
   $('end').focus({ preventScroll: true });
@@ -297,6 +297,11 @@ $('howto-btn').onclick = () => showSheet(HOWTO, { onStart: startLearn });
 const openRef = target => { const d = $('reference'); d.open = true; requestAnimationFrame(() => (target ? $(target) : d).scrollIntoView({ block: 'start' })); };
 $('go-lessons').onclick = () => openRef('lessons');
 $('key-help').onclick = () => { const k = $('keyhelp'); k.innerHTML = keyHelpHTML(); k.hidden = false; k.querySelector('.x').onclick = () => { k.hidden = true; $('key-help').focus(); }; k.querySelector('.x').focus(); };
+// The More menu folds the secondary actions: close it once one is chosen, on Escape, or on a click elsewhere.
+const more = $('more-menu');
+more.addEventListener('click', e => { if (e.target.closest('.dd-moremenu-list button')) more.open = false; });
+document.addEventListener('click', e => { if (more.open && !more.contains(e.target)) more.open = false; });
+more.addEventListener('keydown', e => { if (e.key === 'Escape' && more.open) { more.open = false; more.querySelector('summary').focus(); } });
 $('copy-link').onclick = async () => { if (S.practice) { say('The Practice field has no share link.'); return; } if (S.g && S.g.tutorial) { say('The lesson battle has no share link.'); return; } if (S.choices) writeHash(linkState(S)); await new Promise(r => setTimeout(r, 200)); try { await navigator.clipboard.writeText(location.href); say('Link copied. It replays this game exactly.'); } catch { say('Copy the address bar to share this game.'); } };
 document.querySelectorAll('#viewbar [data-view]').forEach(b => b.addEventListener('click', () => {
   S.view = b.dataset.view;

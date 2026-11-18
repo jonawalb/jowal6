@@ -167,3 +167,20 @@
   .mg-log { display: block; }
   .mg-lt { break-inside: avoid; margin-bottom: 8px; }
 }
+
+/* Present-polish pass: compact seat picker, folded once play starts, and the panel's primary
+   button pinned to the bottom of the viewport while the long lists scroll. */
+.mg-seat .mg-actors { display: flex; flex-wrap: wrap; gap: 6px; }
+.mg-actors button { padding: 6px 10px; flex: 1 1 auto; }
+.mg-actors b { font-size: 14px; line-height: 1.15; }
+.mg-aims { margin: 0; }
+.mg-seat .eyebrow .fine { text-transform: none; letter-spacing: 0; font-family: var(--body); }
+.mg-seat details > summary { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 8px; }
+.mg-seat details > summary::-webkit-details-marker { display: none; }
+.mg-seat details > summary .eyebrow { margin: 0; }
+.mg-seat details > summary .fine { margin-left: auto; text-decoration: underline; }
+.mg-seat details[open] > summary { margin-bottom: 10px; }
+.mg-seat details[open] > summary .fine { visibility: hidden; }
+.mg-go { position: sticky; bottom: 0; z-index: 2; background: var(--panel); border-top: 1px solid var(--rule); box-shadow: 0 -8px 16px -12px rgba(0, 0, 0, .35); gap: 6px; }
+.mg-go p { margin: 0; }
+.mg-go .btn { width: 100%; }

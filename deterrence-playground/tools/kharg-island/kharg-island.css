@@ -71,7 +71,16 @@
 .pb-btns { display: flex; gap: 6px; flex-wrap: wrap; }
 .scrub input { width: 100%; accent-color: var(--brand-ink); }
 .pb-t { grid-column: 1 / -1; margin: 0; font-size: 12.5px; color: var(--ink); }
+.pb-end { font-family: var(--body); }
+.pb-end.win { color: var(--good); } .pb-end.mixed { color: var(--warn); } .pb-end.fail { color: var(--bad); }
 .playbar .tsm-export { grid-column: 1 / -1; }
+/* Desktop and tablet: the map is taller than most screens, so the turn bar pins to the bottom of the window
+   while the map is in view instead of starting below the fold. */
+@media (min-width: 761px) {
+  .playbar { position: sticky; bottom: 8px; z-index: 20; box-shadow: 0 4px 18px color-mix(in srgb, var(--ink) 18%, transparent);
+    grid-template-columns: auto minmax(0, 1fr) auto; }
+  .playbar .tsm-export { grid-column: 3; grid-row: 1; margin: 0; }
+}
 
 /* Turn log and state */
 .turncols { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 10px; align-items: start; }

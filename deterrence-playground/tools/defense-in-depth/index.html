@@ -28,20 +28,23 @@
   <p class="dd-flag"><b>Fictional and notional.</b> The front, armies and numbers are invented for teaching. Combat follows Biddle’s model of the modern system, rescaled.</p>
   <div><span class="dd-viewsw" role="group" aria-label="How much detail to show"><button type="button" class="btn" data-vm="simple" aria-pressed="false" title="Fewer numbers and controls: the game runs the same">Simple</button><button type="button" class="btn" data-vm="detailed" aria-pressed="true" title="Every number, chart and control">Detailed</button></span>
   <span class="dd-vhint fine" id="view-hint" hidden>First game? Try Simple.</span>
-  <button type="button" class="btn dd-learnb" id="learn-btn" title="A short guided battle for a first game">Learn to play</button>
   <button type="button" class="btn" id="howto-btn" title="The rules on one screen">How to play</button>
   <button type="button" class="btn" id="new-game">New game</button>
-  <button type="button" class="btn" id="start-tour" title="A tour of the full game's screens">Walkthrough</button>
-  <button type="button" class="btn" id="practice-btn" title="A small board with no enemy, to practise moving troops">Practice field</button>
-  <button type="button" class="btn" id="go-lessons">Lessons</button>
-  <button type="button" class="btn" id="copy-link">Copy link</button>
-  <button type="button" class="btn" id="key-help" aria-label="Keyboard shortcuts">Keys</button></div>
+  <details class="dd-moremenu" id="more-menu"><summary class="btn">More <span aria-hidden="true">▾</span></summary>
+    <div class="dd-moremenu-list">
+      <button type="button" class="btn dd-learnb" id="learn-btn" title="A short guided battle for a first game">Learn to play</button>
+      <button type="button" class="btn" id="start-tour" title="A tour of the full game's screens">Walkthrough</button>
+      <button type="button" class="btn" id="practice-btn" title="A small board with no enemy, to practise moving troops">Practice field</button>
+      <button type="button" class="btn" id="go-lessons">Lessons</button>
+      <button type="button" class="btn" id="copy-link">Copy link</button>
+      <button type="button" class="btn" id="key-help" aria-label="Keyboard shortcuts">Keys</button>
+    </div></details></div>
 </div>
 <main class="layout">
   <div class="stage">
     <p class="dd-oldlink" id="oldlink" hidden></p>
     <section class="card dd-start" id="start" hidden aria-labelledby="start-t">
-      <h2 id="start-t">Defense in Depth</h2>
+      <h2 id="start-t">Set up a battle</h2>
       <p class="dd-lede" id="start-lede">Hold or break a trench front on the Merrow front, hour by hour, against a computer commander that acts only on what it can see.</p>
       <p class="dd-sstep fine" id="start-step" aria-live="polite"></p>
       <div id="start-body"></div>
@@ -52,8 +55,10 @@
         <p class="fine" id="od-desc"></p>
       </div>
       <div class="dd-go"><button type="button" class="btn" id="start-back" hidden>Back</button><button type="button" class="btn solid dd-startb" id="start-next">Next: scale and difficulty</button><button type="button" class="btn solid dd-startb" id="start-go" hidden>Plan your defense</button></div>
+      <div class="dd-start-foot">
       <p class="dd-poffer" id="start-practice"><button type="button" class="btn" data-practice>New? Practice moving troops first <small>(about 2 min)</small></button></p>
-      <p class="dd-rules" id="start-tours">Know the basics? Tour the full game: <button type="button" class="btn" data-tour="def">Walk me through defending</button> <button type="button" class="btn" data-tour="att">Walk me through attacking</button></p>
+      <p class="dd-rules" id="start-tours">Tour the full game: <button type="button" class="btn" data-tour="def">Defending</button> <button type="button" class="btn" data-tour="att">Attacking</button></p>
+      </div>
     </section>
 
     <section class="card dd-camp" id="camp" hidden aria-live="polite"></section>

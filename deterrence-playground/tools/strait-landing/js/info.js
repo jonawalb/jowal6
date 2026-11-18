@@ -21,5 +21,5 @@ export function renderInfo(P) {
   document.getElementById('method-col').innerHTML = METHOD_HTML
     + `<h3 id="assumptions">Every parameter</h3><div class="tablewrap"><table><thead><tr><th scope="col">Parameter</th><th scope="col">Value</th><th scope="col">Basis</th></tr></thead><tbody>${rows.map(([a, b, c]) => `<tr><td>${esc(a)}</td><td class="num">${esc(b)}</td><td>${c === 'ne' ? '<a href="#src-ne">Natural Earth</a> (distance); rest <span class="notional">notional</span>' : srcCell(c)}</td></tr>`).join('')}</tbody></table></div>`;
   document.getElementById('sources-col').innerHTML = `<h2>What the published studies found</h2>${STUDIES_HTML}<h2 class="mt">Sources</h2><ul class="src">${Object.entries(SOURCES).map(([k, s]) => `<li id="src-${k}">${s.html}</li>`).join('')}</ul>`;
-  document.getElementById('aar-studies').innerHTML = `<p class="eyebrow">What the published studies found</p><div class="sl-studies">${STUDIES_HTML}</div>`;
+  document.getElementById('aar-studies').innerHTML = `<details><summary class="eyebrow">How this compares with the published studies</summary><div class="sl-studies">${STUDIES_HTML}</div></details>`;
 }

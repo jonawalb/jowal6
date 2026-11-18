@@ -198,3 +198,14 @@
   :root[data-skin="trailer"] .od-shell-t { font-size: 16px; }
   :root[data-skin="trailer"] .od-earth-t { font-size: 18px; }
 }
+
+/* ---- UI polish: last month's result at the top of the orders panel; empty-log hint ---- */
+.od-recap { border: 1px solid var(--rule); border-left: 3px solid var(--muted); border-radius: 3px; padding: 8px 10px; margin-bottom: 10px; font-size: 12.5px; }
+.od-recap[hidden] { display: none; }
+.od-recap p { margin: 0; }
+.od-recap .eyebrow { margin-bottom: 4px; }
+.od-recap ul { margin: 0 0 4px; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 2px; }
+.od-recap li span { font-weight: 600; }
+.od-recap .you { color: var(--blue); } .od-recap .red { color: var(--red); } .od-recap .warnline { color: var(--warn); }
+.od-log:not(:empty) + .od-log-empty { display: none; }
+.od-log-empty { margin: 0; }

@@ -3,21 +3,27 @@
 body { --k-us: var(--us, #2f6db3); --k-tw: var(--roc, #17917f); --k-cn: var(--prc, #c8352b); --k-jp: var(--jp, #a8457f); }
 [hidden] { display: none !important; }
 .mt { margin-top: 14px !important; }
-.k4-actions { max-width: 1400px; margin: 12px auto 0; padding: 0 16px; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; }
+.k4-actions { max-width: 1400px; margin: 12px auto 0; padding: 0 16px; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: flex-end; }
 .k4-actions > div { display: flex; gap: 8px; flex-wrap: wrap; }
-.k4-flag { margin: 0; font-size: 13px; padding: 5px 10px; border: 1px dashed var(--warn); border-radius: 4px; max-width: 80ch; }
-.k4-flag b { color: var(--warn); }
 .k4-main { max-width: 1400px; margin: 12px auto 0; padding: 0 16px 24px; display: flex; flex-direction: column; gap: 12px; }
 
 /* Start */
 .k4-start, .k4-type, .k4-resolve, .k4-end, .k4-about { padding: 14px 16px; }
 .k4-start { border-left: 4px solid var(--accent); }
 .k4-start h2, .k4-type h2 { margin: 0 0 6px; font-size: 22px; }
-.k4-lede { margin: 0 0 12px; max-width: 90ch; }
-.k4-starthead { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px 16px; align-items: start; margin-bottom: 12px; }
-.k4-starthead .k4-lede { grid-column: 1 / 4; margin: 0; max-width: none; }
-.k4-opts { grid-column: 4; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-.k4-staffx { margin: 0; }
+.k4-lede { margin: 0 0 14px; max-width: 80ch; }
+.k4-opts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 20px; align-items: start; margin: 8px 0 4px; }
+.k4-opts > div { min-width: 0; }
+.k4-staffx { margin: 6px 0 0; }
+.k4-stepno { display: inline-grid; place-items: center; width: 22px; height: 22px; margin-right: 6px; border-radius: 50%; background: var(--accent); color: #fff; font: 700 12px var(--mono); vertical-align: 2px; }
+.k4-setup { margin-top: 6px; padding-top: 4px; border-top: 1px solid var(--rule); }
+.k4-begin { min-width: 200px; min-height: 44px; font-size: 15px; }
+.k4-how3 { margin: 4px 0 8px; padding-left: 20px; font-size: 14px; }
+.k4-how3 li { margin: 2px 0; }
+.k4-howh { margin: 12px 0 2px; font-size: 15px; }
+body.k4-nostaff .k4-staffon { display: none; }
+/* The start screen has its own Learn to play banner: one entry point is enough there. */
+body:has(#start:not([hidden])) #tour-btn { display: none; }
 .k4-diff { margin: 0; padding: 0; border: 0; min-width: 0; display: flex; flex-wrap: wrap; }
 .k4-diff legend { width: 100%; padding: 0; margin-bottom: 4px; font-size: 12.5px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
 .k4-diff label { flex: 1 1 0; cursor: pointer; position: relative; }
@@ -35,8 +41,8 @@ body { --k-us: var(--us, #2f6db3); --k-tw: var(--roc, #17917f); --k-cn: var(--pr
 .k4-seat[aria-checked="true"] { border-color: var(--c); background: color-mix(in srgb, var(--c) 10%, var(--panel)); }
 .k4-seat:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .k4-setup h3 { margin: 16px 0 2px; }
-.k4-weights { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 24px; margin: 10px 0; }
-.k4-w { display: grid; grid-template-columns: minmax(0, 1fr) 120px 1.5em; gap: 8px; align-items: center; font-size: 14px; }
+.k4-weights { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 40px; margin: 10px 0; max-width: 960px; }
+.k4-w { display: grid; grid-template-columns: minmax(0, 1fr) 140px 1.5em; gap: 8px; align-items: center; font-size: 14px; }
 .k4-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-top: 8px; }
 .k4-row select { font: inherit; padding: 4px 6px; background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-radius: 3px; }
 .k4-type { border-left: 4px solid var(--c, var(--accent)); max-width: 680px; }
@@ -173,9 +179,15 @@ body { --k-us: var(--us, #2f6db3); --k-tw: var(--roc, #17917f); --k-cn: var(--pr
 
 /* Resolve */
 .k4-resolve { border-left: 4px solid var(--accent); }
-.k4-resolve h2 { margin: 0 0 8px; }
+.k4-resolve h2 { margin: 0 0 8px; font-size: 20px; }
+.k4-logd { margin: 0 0 10px; border: 1px solid var(--rule); border-radius: 4px; }
+.k4-logd > summary { cursor: pointer; padding: 8px 10px; font-size: 14px; }
+.k4-logd[open] > summary { border-bottom: 1px solid var(--rule); }
+.k4-logd .k4-log { margin: 8px; }
+.k4-resnav { display: flex; justify-content: flex-end; padding-top: 10px; border-top: 1px solid var(--rule); }
+.k4-resnav .btn { min-height: 44px; min-width: 160px; }
 .k4-reveal { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 10px; }
-.k4-mv { border: 1px solid var(--rule); border-top: 4px solid var(--c); border-radius: 4px; padding: 8px 10px; font-size: 13px; }
+.k4-mv { border: 1px solid var(--rule); border-top: 4px solid var(--c); border-radius: 4px; padding: 8px 10px; font-size: 13px; min-width: 0; }
 .k4-mv b { color: var(--c); display: block; font: 700 16px var(--display); }
 .k4-mv .po { font-weight: 600; }
 .k4-mv ul { margin: 4px 0 0; padding-left: 16px; }
@@ -198,8 +210,15 @@ body { --k-us: var(--us, #2f6db3); --k-tw: var(--roc, #17917f); --k-cn: var(--pr
 .k4-parts td.num { text-align: right; }
 .k4-types { display: flex; gap: 10px; flex-wrap: wrap; }
 .k4-types div { border: 1px solid var(--rule); border-top: 4px solid var(--c); padding: 6px 10px; border-radius: 4px; font-size: 13.5px; }
-#beliefs { width: 100%; max-width: 760px; height: auto; display: block; margin-bottom: 12px; }
+#beliefs { width: 100%; max-width: 760px; height: auto; display: block; margin-bottom: 12px; overflow: visible; }
 .k4-about summary { cursor: pointer; }
+.k4-endnav { justify-content: flex-start; margin: 8px 0 4px; }
+.k4-endd { border: 1px solid var(--rule); border-radius: 4px; margin: 10px 0; }
+.k4-endd > summary { cursor: pointer; padding: 10px 12px; font: 700 16px var(--display); }
+.k4-endd > summary .muted { font: 400 12.5px var(--body); margin-left: 6px; }
+.k4-endd[open] > summary { border-bottom: 1px solid var(--rule); }
+.k4-endd > div { padding: 8px 12px; }
+.k4-endf { max-width: 760px; }
 .k4-about ul { margin: 8px 0; padding-left: 18px; font-size: 14px; }
 
 /* Batch B: constraint chips, the shock line, the ceasefire banner, the "at home" line and the peace-forum dialog. */
@@ -222,11 +241,8 @@ body { --k-us: var(--us, #2f6db3); --k-tw: var(--roc, #17917f); --k-cn: var(--pr
 .k4-forumt .bad { color: var(--bad); } .k4-forumt .good { color: var(--good); }
 .k4-forump { font-size: 15px; }
 .k4-play:has(#resolve:not([hidden])) .k4-bar #end-turn { visibility: hidden; }
-.k4-play:has(#resolve:not([hidden])) .k4-theatre svg { max-height: 240px; }
 @media (max-width: 760px) {
   .k4-seats, .k4-reveal { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .k4-starthead { grid-template-columns: minmax(0, 1fr); }
-  .k4-starthead .k4-lede, .k4-opts { grid-column: 1; }
   .k4-weights { grid-template-columns: minmax(0, 1fr); }
   .k4-bar { position: static; }
 }
@@ -234,6 +250,7 @@ body { --k-us: var(--us, #2f6db3); --k-tw: var(--roc, #17917f); --k-cn: var(--pr
   .k4-logi { font-size: 12px; } .k4-long { display: none; } .k4-logi th, .k4-logi td { padding: 3px 3px; } .k4-logi thead th { white-space: normal; }
   .k4-units th[scope="row"] { min-width: 8em; }
   .k4-postures { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .k4-reveal { grid-template-columns: minmax(0, 1fr); }
   .k4-tabs button { padding: 4px 6px; }
   .k4-units select { max-width: 8.5em; }
   .k4-actions .btn { padding-left: 8px; padding-right: 8px; }
@@ -419,8 +436,8 @@ body { --k-us: var(--us, #2f6db3); --k-tw: var(--roc, #17917f); --k-cn: var(--pr
 /* Simple view: hides the belief bars, the fog detail and the logistics breakdown. The game runs the same. */
 body.k4-simple .k4-intel, body.k4-simple .k4-fogd, body.k4-simple #logi-wrap { display: none; }
 
-/* During the month's reveal: one column */
-.k4-play:has(#resolve:not([hidden])) .k4-grid { grid-template-columns: minmax(0, 1fr); }
+/* During the month's reveal: the map stays on the left, what happened takes the right column. */
+@media (min-width: 761px) { .k4-play:has(#resolve:not([hidden])) .k4-grid { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); } }
 
 /* Phone tabs (Map | Your move | Situation), hidden on wider screens */
 .k4-ptabs { display: none; }
@@ -436,6 +453,12 @@ body.k4-simple .k4-intel, body.k4-simple .k4-fogd, body.k4-simple #logi-wrap { d
   .k4-play[data-tab="sit"] [data-pane]:not([data-pane="sit"]) { display: none; }
   .k4-play:has(#resolve:not([hidden])) .k4-ptabs { display: none; }
   .k4-play:has(#resolve:not([hidden])) #pane-map, .k4-play:has(#resolve:not([hidden])) #crisis { display: block; }
+  .k4-play:has(#resolve:not([hidden])) .k4-centre { display: contents; }
+  .k4-play:has(#resolve:not([hidden])) #resolve { order: 1; }
+  .k4-play:has(#resolve:not([hidden])) #crisis { order: 2; }
+  .k4-opts { grid-template-columns: minmax(0, 1fr); }
+  .k4-begin { width: 100%; }
+  .k4-resnav .btn { width: 100%; }
   .k4-bar { gap: 6px 10px; }
   .k4-month b { font-size: 20px; }
   .k4-dhead > .k4-h { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }   /* the tab already says it */

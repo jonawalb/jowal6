@@ -114,7 +114,7 @@ function onePanel(g, u) {
   if (u.side === 'def') tools.push(toolBtn('riposte', 'Local counterattack', fx.tool.riposte));
   tools.push(toolBtn('breach', 'Breach', fx.tool.breach));
   if (u.type === 'drone') return `${head}<div class="dd-orow"><span class="dd-olab">Sortie</span>${seg2('dronem', [['recon', 'Recon', 'Recon: exact sightings over a 3 × 3 block'], ['strike', 'Strike', 'Strike: hits men caught moving in the open']], S.tool && S.tool.m)}</div>${toolRow(tools)}${row('Route', 'mode', MODES, u.mode, fx.mode, EFFECT.mode)}`;
-  if (u.type === 'ew') return `${head}<p class="fine">Jam the 5 × 5 area around a sector: enemy drones abort, his orders and calls for fire run an hour late.</p>${toolRow([toolBtn('jam', 'Jam', null, 'Tap the centre of the area to jam'), ...tools])}${row('Route', 'mode', MODES, u.mode, fx.mode, EFFECT.mode)}`;
+  if (u.type === 'ew') return `${head}<p class="fine">Jam the 5 × 5 area around a sector: enemy drones abort, its orders and calls for fire run an hour late.</p>${toolRow([toolBtn('jam', 'Jam', null, 'Tap the centre of the area to jam'), ...tools])}${row('Route', 'mode', MODES, u.mode, fx.mode, EFFECT.mode)}`;
   return `${head}${unitFacts(g, u)}${orderRows(g, u, fx)}${toolRow(tools)}
     ${u.type === 'mg' ? '<p class="fine dd-det">MG companies are the enfilade weapon: lay the lane across the enemy’s line of advance, from a flank.</p>' : ''}`;
 }

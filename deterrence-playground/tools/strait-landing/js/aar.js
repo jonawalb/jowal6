@@ -63,7 +63,7 @@ export function renderAAR(S, G, rec) {
   const alts = alternatives(S, rec);
   const pla = S.role === 'pla';
   const better = alts.filter(([, A]) => rank(A.result, pla) > rank(R, pla));
-  document.getElementById('aar-status').dataset.s = pla ? o.s : ({ bad: 'bad', warn: 'warn', good: 'good' })[o.s];
+  document.getElementById('aar-status').dataset.s = pla ? ({ bad: 'good', warn: 'warn', good: 'bad' })[o.s] : o.s; // colour from the player's side
   document.getElementById('aar-title').textContent = o.t;
   document.getElementById('aar-sub').textContent = summary(G, pla);
   document.getElementById('aar-table').innerHTML = `<thead><tr><th scope="col">Plan (same week, same dice)</th><th scope="col">Result</th><th scope="col">PLA ashore</th><th scope="col">Best ratio</th><th scope="col">Ship groups lost</th><th scope="col">Troops lost at sea</th><th scope="col">Port</th></tr></thead><tbody>`

@@ -9,7 +9,7 @@ const H = 280, L = 40, R = 30, T = 22, B = 58;
 export const turnLabel = t => {
   if (t <= 0) return 'H-hour';
   const day = Math.floor((t - 1) / 2), half = (t - 1) % 2;
-  return `${day ? `D+${day}` : 'D-day'} ${half ? 'night' : 'day'}`;
+  return `${day ? `D+${day}` : 'D-day'}, ${half ? 'night' : 'daytime'}`;
 };
 
 /**

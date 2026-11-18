@@ -21,7 +21,7 @@ const reduce = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 const narrowQ = matchMedia('(max-width: 640px)');
 const CLOCK = '<svg class="fc-bclk" viewBox="-8 -8 16 16" aria-hidden="true"><circle r="6.5"/><path d="M0 -3.8V0L2.8 1.8"/></svg>';
 
-let g = null, me = 'blue', sel = null, prevSel = null, view = 'belief', aarHour = null, tab = 'map';
+let g = null, me = 'blue', sel = null, prevSel = null, view = 'belief', aarHour = null, tab = 'map', decoyOpen = false;
 const openHours = new Set();
 const handlers = { onSector, onKey: onSectorKey, onUnit, onArty };
 let map = createMap($('map'), handlers, narrowQ.matches, false);
@@ -53,8 +53,8 @@ const keysHint = side => `Keys: <b>${keyList(side)}</b> pick a unit (the key is 
 
 // Shown at the start of every game: how Red's decoy works, or a warning that Red has one.
 const DECOY_TIP = {
-  red: '<b>You have a decoy (unit 8, Decoy Group).</b> It has no combat strength, but Blue sees it as a full tank battalion from the next sector, and Blue\'s recon hear it as one from two sectors away. Send it down a road away from your main attack and keep it two sectors from Blue\'s recon: heard, never looked at. If a Blue unit enters its sector, or Blue fires on it while a Blue recon troop watches, it is exposed. Done right, Blue sends its reserve the wrong way.',
-  blue: '<b>Warning: Red has a decoy.</b> One of the "tank battalions" you see or hear may be a Decoy Group with no strength at all, sent to pull your one reserve down the wrong road. Before you commit the reserve, check the road: fire artillery on it while a recon troop watches. A tank that takes no damage is the decoy.',
+  red: '<b>You have a decoy (unit 8, Decoy Group).</b> <span class="fc-decoy-body">It has no combat strength, but Blue sees it as a full tank battalion from the next sector, and Blue\'s recon hear it as one from two sectors away. Send it down a road away from your main attack and keep it two sectors from Blue\'s recon: heard, never looked at. If a Blue unit enters its sector, or Blue fires on it while a Blue recon troop watches, it is exposed. Done right, Blue sends its reserve the wrong way.</span>',
+  blue: '<b>Warning: Red has a decoy.</b> <span class="fc-decoy-body">One of the "tank battalions" you see or hear may be a Decoy Group with no strength at all, sent to pull your one reserve down the wrong road. Before you commit the reserve, check the road: fire artillery on it while a recon troop watches. A tank that takes no damage is the decoy.</span>',
 };
 
 /** The offense-defense slider (start screen): its value, and its words, which update as it moves. */
@@ -63,6 +63,7 @@ const odTag = v => `Balance: ${v} (${odWords(v).label})`;
 function odShow() {
   const v = odVal(), w = odWords(v);
   $('od-out').textContent = `${v} — ${w.label}`;
+  $('od-sum').textContent = `${v} — ${w.label}`;
   $('od').setAttribute('aria-valuetext', `${v}, ${w.label}`);
   $('od-desc').textContent = v === OFFDEF.standard ? `Standard: ${w.what}. Lower favors whoever defends a sector; higher favors whoever attacks.`
     : `${w.label[0].toUpperCase()}${w.label.slice(1)}: ${w.what}. Defending, this is ${odFor(v, 'blue')} for you; attacking, ${odFor(v, 'red')}.`;
@@ -82,6 +83,8 @@ function start(side, seed, log = [], n = 0, od = odVal(), note = '') {
   if (map.flip !== (me === 'red')) remap();
   sel = null; prevSel = null; view = 'belief'; aarHour = null; openHours.clear();
   $('start').hidden = true;
+  document.body.classList.remove('fc-setup');
+  decoyOpen = false;
   $('bar').hidden = false;
   $('ucol').hidden = false;
   document.body.dataset.side = me;
@@ -114,6 +117,7 @@ function showStart() {
   g = null; sel = null; prevSel = null;
   if (map.flip) remap();
   $('start').hidden = false;
+  document.body.classList.add('fc-setup');
   $('bar').hidden = true;
   $('ucol').hidden = true;
   $('viewbar').hidden = true;
@@ -220,7 +224,12 @@ function draw() {
   $('delay').classList.toggle('late', !!d);
   const since = d ? delaySince(g, me) : null;
   $('late').hidden = !d;
-  if (d) $('late').innerHTML = `${CLOCK}<span><b>Orders are running late.</b> Moves you order this hour start next hour, at ${hhmm(g.t + 1)}${since < g.t ? `; orders have been late since ${hhmm(since)}` : ''}. <span class="fc-wide">Artillery, entry sectors and hold or give ground still act at once.</span></span>`;
+  if (d) $('late').innerHTML = `${CLOCK}<span><b>Orders are running late.</b> Moves ordered now start at ${hhmm(g.t + 1)}${since < g.t ? ` (late since ${hhmm(since)})` : ''}. <span class="fc-wide">Artillery, entry sectors and hold or give ground still act at once.</span></span>`;
+  const mini = g.t > 0 && !decoyOpen;
+  $('decoytip').classList.toggle('mini', mini);
+  $('decoytip-more').textContent = mini ? (me === 'blue' ? 'How to spot it' : 'How to use it') : 'Less';
+  $('decoytip-more').setAttribute('aria-expanded', String(!mini));
+  $('decoytip-more').hidden = g.t === 0;
   $('undo').disabled = !!g.over || !g.log.some(a => a.t === g.t && a.kind !== 'f');
   $('end').disabled = !!g.over;
   $('bar').classList.toggle('done', !!g.over);
@@ -445,6 +454,7 @@ document.querySelectorAll('#viewbar [data-view]').forEach(b => b.addEventListene
 document.querySelectorAll('.fc-side').forEach(b => b.addEventListener('click', () => start(b.dataset.side, newSeed())));
 $('od').addEventListener('input', odShow);
 $('decoytip-x').addEventListener('click', () => { $('decoytip').hidden = true; });
+$('decoytip-more').addEventListener('click', () => { decoyOpen = $('decoytip').classList.contains('mini'); draw(); });
 $('again').addEventListener('click', () => $('aar-again').click());
 document.querySelectorAll('.fc-tabs [data-tab]').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
 $('units').addEventListener('click', e => { const b = e.target.closest('button'); if (b && !b.disabled) select(b.dataset.u); });
@@ -519,6 +529,7 @@ $('quotes').addEventListener('click', e => {
 
 fillText();
 renderBelow($);
+$('legend').open = !narrowQ.matches;
 odShow();
 // A link from the 12-hour game (before 2026-10-01) has no h= in it: replay its moves under today's rules, and say so.
 const OLD_LINK = h => `<b>This link was made in the earlier ${h}-hour version of the game.</b> Its moves are replayed under the current rules (${GAME.hours} hours, to ${endTime()}, with a retuned kill rate), so fights may come out differently, and a game that ended at ${hhmm(h)} carries on.`;

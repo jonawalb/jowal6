@@ -116,7 +116,7 @@ export function attStep(g, plan, id) {
   const G = gridFor(g.scale), Sc = SCALES[g.scale];
   if (id === 'front') {
     const colBtn = c => { const m = plan.mainCols.includes(c), f = !m && (plan.fix[c] || 'fix') === 'fix'; return `<button type="button" class="dd-colb ${m ? 'main' : f ? 'fix' : 'quiet'}" data-col="${c}" aria-label="Column ${c + 1}: ${m ? 'main effort' : f ? 'pin' : 'quiet'}" title="${m ? 'Main effort: your assault battalions' : f ? 'Pin (a fixing attack): one company holds the outposts in place' : 'Quiet: nothing attacks here'}">${c + 1}<small>${m ? 'Main' : f ? 'Pin' : '—'}</small></button>`; };
-    return `<p class="fine">Tap a column: Main effort → Pin → Quiet. Too narrow and his MGs sweep you from both shoulders (Biddle pp. 43–44).</p>
+    return `<p class="fine">Tap a column: Main effort → Pin → Quiet. Too narrow and the defender’s MGs sweep you from both shoulders (Biddle pp. 43–44).</p>
     <div class="dd-cols">${Array.from({ length: G.cols }, (_, c) => colBtn(c)).join('')}</div>
     ${plan.mainCols.length === 1 ? '<p class="dd-warnl">A one-column main effort is swept from both shoulders.</p>' : ''}`;
   }
@@ -149,8 +149,8 @@ export function attStep(g, plan, id) {
   const b = plan.barrage, tt = b ? timetable(b, [Sc.bands.outpost[0], Sc.obj.row], g.turns, bnRows(g, plan)) : null;
   const predicted = bats.every(u => knows(u, 'CA1'));
   const maxT = PREP.sectorsPerGroup * Math.ceil(bats.length / PREP.groupSize);
-  const PTIP = { none: 'No preparation: full surprise, nothing cut', hurricane: `Hurricane: one hour of fire on the front. ${predicted ? 'Predicted fire: no registration, no warning.' : 'Without predicted fire, registration warns him.'}`,
-    methodical: 'Methodical: six hours of Destroy fire. Cuts wire and kills exposed men, but churns the ground and shows him where you will attack.' };
+  const PTIP = { none: 'No preparation: full surprise, nothing cut', hurricane: `Hurricane: one hour of fire on the front. ${predicted ? 'Predicted fire: no registration, no warning.' : 'Without predicted fire, registration warns the defender.'}`,
+    methodical: 'Methodical: six hours of Destroy fire. Cuts wire and kills exposed men, but churns the ground and shows the defender where you will attack.' };
   const pcost = { none: 'free', hurricane: `${prepCost(g, { ...plan, prep: 'hurricane' })} ammo`, methodical: `${PREP.methodicalCost} ammo a target` };
   return `<p class="dd-plabel">Ammunition <b class="num">${g.ammo.att}</b></p>
     <div class="dd-orow dd-stack"><span class="dd-olab">Preparation</span><div class="dd-seg" role="group" aria-label="Preparation">${['none', 'hurricane', 'methodical'].map(k => `<button type="button" class="btn" data-prepset="${k}" aria-pressed="${plan.prep === k}" title="${esc(PTIP[k])}">${{ none: 'None', hurricane: 'Hurricane (1 h)', methodical: 'Methodical (6 h)' }[k]} <small>${pcost[k]}</small></button>`).join('')}</div></div>

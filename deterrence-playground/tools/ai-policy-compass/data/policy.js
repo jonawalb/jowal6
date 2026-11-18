@@ -3,10 +3,10 @@
 // cac.gov.cn, mfa.gov.cn, kremlin.ru, government.ru, un.org and others, with DigiChina/CSET translations;
 // every record carries its own URL. See data/SOURCES.md.
 export const META = {
- "checked": "2026-11-16",
- "checkedText": "16 November 2026",
+ "checked": "2026-11-17",
+ "checkedText": "17 November 2026",
  "method": [
-  "Documents were chosen as the national-level texts that set or change AI policy: US executive orders, statutes, Commerce/BIS and Treasury rules, NIST and OMB guidance, two bills that passed one chamber, and the main state frontier-AI laws (California, New York, Colorado); PRC State Council, CAC and ministry rules, national standards, MFA position papers and plans; Russian presidential decrees, federal laws, government orders and the President's AI speeches; and the UN resolutions, summit declarations and bilateral statements where the three meet. Each record links the official text. Every date, status and quote was checked against that text between 13 and 16 November 2026.",
+  "Documents were chosen as the national-level texts that set or change AI policy: US executive orders, statutes, Commerce/BIS and Treasury rules, NIST and OMB guidance, two bills that passed one chamber, and the main state frontier-AI laws (California, New York, Colorado); PRC State Council, CAC and ministry rules, national standards, MFA position papers and plans; Russian presidential decrees, federal laws, government orders and the President's AI speeches; and the UN resolutions, summit declarations and bilateral statements where the three meet. Each record links the official text. Every date, status and quote was checked against that text between 13 and 18 November 2026; the newest source cited is dated 17 November 2026.",
   "Quotes are verbatim and at most 300 characters. Chinese and Russian passages are quoted in the original; the English shown above each one is this tool's own translation unless the record names an English source (DigiChina, CSET, the MFA, kremlin.ru English). Where an English translation from CSET or DigiChina is quoted, its wording is kept, including its errors.",
   "Status is legal or policy status, not effect in practice. 'Revoked' and 'rescinded' mean a later official act ended the text; 'superseded' that a newer text replaced it; 'expired' that its term ran out. Non-binding strategies and statements count as current unless replaced.",
   "UN votes come from the UN Digital Library voting records where they could be opened, and otherwise from the UN voting dataset at un-project.org, which is built from the same records. The vote on A/RES/80/23 was read from the UN Digital Library record directly.",
@@ -14,7 +14,7 @@ export const META = {
   "Placements on the 'Where do you stand?' scales are this tool's judgment of each government's official texts, on a 0 to 100 ordinal scale, each tied to a cited passage. They are not measurements and do not describe enforcement or behaviour. The reader's result is the mean absolute gap across the questions answered; questions where a government has no placement are left out of its average. The scoring code is tested in scripts/compass.test.mjs."
  ],
  "gaps": [
-  "US: the 2024 National Security Memorandum on AI (NSM-25) was rescinded and replaced by NSPM-11 on 5 Jun 2026. The AI Diffusion rule was never enforced: Commerce announced its rescission on 13 May 2025, and the formal rescission is in the BIS remote-access rule, filed for Federal Register public inspection 16 Nov 2026 as FR Doc. 2026-23529 with a publication date of 19 Nov 2026, effective on publication. The DoD AI Ethical Principles (2020), FY2026 NDAA AI provisions other than the COINS Act, and state laws other than those of California, New York and Colorado could not be verified from primary text for this version and are left out. California SB 53 is described from the Governor's signing release because the legislature's site could not be fetched. The April 2025 H20 license requirement was not published in the Federal Register (the US government informed Nvidia directly), so it is shown from Nvidia's SEC filings; the 15% revenue share appears only as Nvidia's report of what officials expected.",
+  "US: the 2024 National Security Memorandum on AI (NSM-25) was rescinded and replaced by NSPM-11 on 5 Jun 2026. The AI Diffusion rule was never enforced: Commerce announced its rescission on 13 May 2025, and the formal rescission is in the BIS remote-access rule, filed for Federal Register public inspection 16 Nov 2026 as FR Doc. 2026-23529 with a publication date of 19 Nov 2026, effective on publication. The DoD AI Ethical Principles (2020), FY2026 NDAA AI provisions other than the COINS Act, and state laws other than those of California, New York and Colorado could not be verified from primary text for this version and are left out. The April 2025 H20 license requirement was not published in the Federal Register (the US government informed Nvidia directly), so it is shown from Nvidia's SEC filings; the 15% revenue share appears only as Nvidia's report of what officials expected.",
   "China: the October 2025 Recommendations for the 15th Five-Year Plan were not fetched (the March 2026 Outline is included). China's CCW paper distinguishing 'unacceptable' and 'acceptable' autonomous weapons could not be opened. The Cybersecurity Law's new Article 20 is described from an expert commentary by Ding Xiaodong published on cac.gov.cn, not the NPC statute text. No official guidance discouraging purchases of foreign AI chips was found; only the CAC's summons of Nvidia over the H20 is included. Whether the World AI Cooperation Organization has entered into force was not confirmed.",
   "Russia: no deepfake-liability law, Ministry of Industry chip-capacity plan, or successor to the 2020 regulation concept (Order 2129-r) could be confirmed from official text. The Moscow AI experiment law (123-FZ) is shown as amended: the experiment's five-year term ended 1 Jul 2025, and provisions added by 233-FZ remain in force. English titles for 243-FZ, Decree 116 and Decree 124 are this tool's translations.",
   "International: the endorsements of the 2024 REAIM Blueprint for Action (Seoul; the 2023 Hague Call to Action is included), any 2025-2026 US-China leader readout on AI or chips, the US explanation of position on resolution 79/325, and the General Assembly plenary vote on the 2026 First Committee autonomous-weapons draft (A/C.1/81/L.37) could not be verified; the Committee tally shown comes from the UN's automated transcript, not an official record. The CCW Seventh Review Conference opens 16 November 2026; its outcome is not reflected. The Political Declaration's launch day (16 February 2023, at REAIM in The Hague) is taken from the conference date; the State Department page says only February 2023."
@@ -526,6 +526,31 @@ export const DOCS = [
   "quoteEn": "The Concept sets out the principles on which regulation will be improved, so that favorable conditions emerge for the development of AI and robotics and existing barriers disappear in many fields, from medicine to space."
  },
  {
+  "id": "cn-mofcom-most-38-2020",
+  "country": "CN",
+  "date": "2020-08-28",
+  "effective": "2020-08-28",
+  "title": "MOFCOM/MOST Announcement 2020 No. 38: adjustments to the Catalogue of Technologies Prohibited or Restricted from Export (AI interface and recommendation-algorithm technologies added)",
+  "titleOrig": "商务部 科技部公告2020年第38号 关于调整发布《中国禁止出口限制出口技术目录》的公告",
+  "issuer": "Ministry of Commerce + Ministry of Science and Technology",
+  "kind": "regulation",
+  "themes": [
+   "security",
+   "industry",
+   "international"
+  ],
+  "status": "superseded",
+  "statusNote": "In force from 28 Aug 2020. Replaced by the full catalogue issued with MOFCOM/MOST Announcement 2023 No. 57 (21 Dec 2023), which abolished No. 38 (text read in the Hong Kong Trade and Industry Department's reproduction of the MOFCOM notice). The 2023 catalogue keeps 'personalised information push service technology based on data analysis' and adds detail on recommendation-algorithm computing; it limits the AI interactive interface item to technology made specifically for Chinese and minority languages.",
+  "summary": "Amended the 2008 catalogue under the Foreign Trade Law and the Regulations on Technology Import and Export Administration. In the restricted-export part, under information processing technology (No. 056101X), it added control points 17-21: speech synthesis, AI interactive interface technology (speech recognition, wake words, interactive understanding), speech evaluation, intelligent marking, and 'personalised information push service technology based on data analysis', the recommendation-algorithm item. It is the precedent for the 2026 draft additions of AI technologies (MOFCOM/MOST 2026 No. 48).",
+  "quote": "21. 基于数据分析的个性化信息推送服务技术",
+  "quoteUrl": "http://images.mofcom.gov.cn/fms/202008/20200828200911003.pdf",
+  "quoteLabel": "Quoted from the annex, restricted-export part, item 45 (mofcom.gov.cn PDF)",
+  "url": "http://images.mofcom.gov.cn/fms/202008/20200828200911003.pdf",
+  "archive": "https://web.archive.org/web/20200905011041/http://www.mofcom.gov.cn/article/b/xxfb/202008/20200802996641.shtml",
+  "verified": true,
+  "quoteEn": "21. Personalised information push service technology based on data analysis"
+ },
+ {
   "id": "cn-uel-provisions-2020",
   "country": "CN",
   "date": "2020-09-19",
@@ -880,7 +905,7 @@ export const DOCS = [
   "date": "2022-10-07",
   "effective": "2022-10-07",
   "title": "Implementation of Additional Export Controls: Certain Advanced Computing and Semiconductor Manufacturing Items; Supercomputer and Semiconductor End Use; Entity List Modification",
-  "issuer": "Commerce, Bureau of Industry and Security (interim final rule, 87 FR, FR Doc. 2022-21658)",
+  "issuer": "Commerce, Bureau of Industry and Security (interim final rule, 87 FR 62186, FR Doc. 2022-21658)",
   "kind": "regulation",
   "themes": [
    "security",
@@ -888,7 +913,7 @@ export const DOCS = [
   ],
   "status": "amended",
   "statusNote": "Revised by BIS rules of Oct 2023 (FR Doc. 2023-23055), Dec 2024, Jan 2025 and Jan 2026. Issued under ECRA (50 U.S.C. 4801-4852), which the rule names as its legal basis.",
-  "summary": "Imposed license requirements on exports of advanced computing chips and certain chipmaking tools to China, added supercomputer and semiconductor end-use controls, and restricted US-person support for advanced chip production in China. Its new ECCN 3A090 covered chips with an aggregate bidirectional transfer rate of 600 GB/s or more and processing performance (bit length times TOPS) of 4800 or more.",
+  "summary": "Created ECCN 3A090 (advanced computing chips) and ECCN 4A090 (computers and assemblies containing them), licensed for export to China under a new regional-stability control in 15 CFR 742.6(a)(6); added ECCN 3B090 for advanced chipmaking equipment; added the advanced computing and supercomputer foreign direct product rules (15 CFR 734.9(h) and (i)) and supercomputer and semiconductor end-use controls (15 CFR 744.23); and restricted US-person support for advanced chip production in China (15 CFR 744.6(c)(2)). ECCN 3A090 covered chips with an aggregate bidirectional transfer rate of 600 GB/s or more and processing performance (bit length times TOPS) of 4800 or more.",
   "quote": "the Bureau of Industry and Security (BIS) is amending the Export Administration Regulations (EAR) to implement necessary controls on advanced computing integrated circuits (ICs), computer commodities that contain such ICs, and certain semiconductor manufacturing items.",
   "quoteUrl": "https://www.federalregister.gov/documents/2022/10/13/2022-21658/implementation-of-additional-export-controls-certain-advanced-computing-and-semiconductor-manufacturing-items",
   "url": "https://www.federalregister.gov/documents/2022/10/13/2022-21658/implementation-of-additional-export-controls-certain-advanced-computing-and-semiconductor-manufacturing-items",
@@ -1236,7 +1261,7 @@ export const DOCS = [
   "date": "2023-10-17",
   "effective": "2023-11-17",
   "title": "Implementation of Additional Export Controls: Certain Advanced Computing Items; Supercomputer and Semiconductor End Use; Updates and Corrections",
-  "issuer": "Commerce, Bureau of Industry and Security (interim final rule, FR Doc. 2023-23055)",
+  "issuer": "Commerce, Bureau of Industry and Security (interim final rule, 88 FR 73458, FR Doc. 2023-23055)",
   "kind": "regulation",
   "themes": [
    "security",
@@ -1244,7 +1269,7 @@ export const DOCS = [
   ],
   "status": "amended",
   "statusNote": "Published 25 Oct 2023, effective 17 Nov 2023; later amended, including by the 15 Jan 2026 H200 rule.",
-  "summary": "Updated the October 2022 chip controls after public comment. It revised the performance thresholds for controlled advanced computing chips and widened the destinations covered. ECCN 3A090.a now covers chips with 'total processing performance' (TPP) of 4800 or more, or TPP of 1600 or more with 'performance density' of 5.92 or more.",
+  "summary": "Updated the October 2022 chip controls after public comment. ECCN 3A090.a now covers chips with 'total processing performance' (TPP) of 4800 or more, or TPP of 1600 or more with 'performance density' of 5.92 or more. It extended the 3A090/4A090 license requirements, the advanced computing foreign direct product rule (15 CFR 734.9(h)) and the 744.23 provisions to Country Groups D:1, D:4 and D:5 (except A:5 and A:6), and named the covered items in new '.z' paragraphs in nine ECCNs instead of referring to anything that meets the 3A090 or 4A090 parameters.",
   "url": "https://www.federalregister.gov/d/2023-23055",
   "rel": [
    {
@@ -1903,7 +1928,7 @@ export const DOCS = [
   "date": "2024-12-02",
   "effective": "2024-12-02",
   "title": "Foreign-Produced Direct Product Rule Additions, and Refinements to Controls for Advanced Computing and Semiconductor Manufacturing Items",
-  "issuer": "Commerce, Bureau of Industry and Security (interim final rule, FR Doc. 2024-28270)",
+  "issuer": "Commerce, Bureau of Industry and Security (interim final rule, 89 FR 96790, FR Doc. 2024-28270)",
   "kind": "regulation",
   "themes": [
    "security",
@@ -1911,7 +1936,7 @@ export const DOCS = [
   ],
   "status": "in-force",
   "statusNote": "Released 2 Dec 2024, published 5 Dec 2024; amended and clarified by FR Doc. 2025-00711.",
-  "summary": "Adds controls on chipmaking equipment, new foreign direct product rules aimed at advanced-node chip production by entities of concern, and controls on high-bandwidth memory.",
+  "summary": "Adds controls on chipmaking equipment and related software, new foreign direct product rules aimed at advanced-node chip production by entities of concern (with Entity List Footnote 5 designations under 15 CFR 734.9(e)(3)), and controls on high-bandwidth memory under ECCN 3A090.c. The rule took effect 2 Dec 2024; the equipment, HBM, foreign direct product (Footnote 5) and DRAM-definition changes had a compliance date of 31 Dec 2024.",
   "quote": "adding new controls for certain high bandwidth memory important for advanced computing",
   "quoteUrl": "https://www.federalregister.gov/documents/2024/12/05/2024-28270/foreign-produced-direct-product-rule-additions-and-refinements-to-controls-for-advanced-computing",
   "url": "https://www.federalregister.gov/documents/2024/12/05/2024-28270/foreign-produced-direct-product-rule-additions-and-refinements-to-controls-for-advanced-computing",
@@ -1958,12 +1983,33 @@ export const DOCS = [
   "quoteEn": "1. Exports of dual-use items to US military users or for military uses are prohibited. 2. In principle, exports to the United States of dual-use items related to gallium, germanium, antimony and superhard materials will not be licensed; exports of graphite dual-use items to the United States will be subject to stricter end-user and end-use review."
  },
  {
+  "id": "us-doj-bulk-data-2025",
+  "country": "US",
+  "date": "2025-01-08",
+  "effective": "2025-04-08",
+  "title": "Preventing Access to U.S. Sensitive Personal Data and Government-Related Data by Countries of Concern or Covered Persons (28 CFR part 202)",
+  "issuer": "Department of Justice, National Security Division (final rule, 90 FR 1636, FR Doc. 2024-31486)",
+  "kind": "regulation",
+  "themes": [
+   "security",
+   "industry"
+  ],
+  "status": "in-force",
+  "statusNote": "Effective 8 Apr 2025; compliance with the due diligence and audit requirements (subpart J) and certain reporting requirements (28 CFR 202.1103 and 202.1104) for restricted transactions was delayed to 6 Oct 2025. Amended 18 Apr 2025 (90 FR 16466); eCFR lists no later amendment to part 202.",
+  "summary": "Implements EO 14117 (28 Feb 2024). It bars or restricts data transactions that would give countries of concern, or persons linked to them, access to US government-related data or bulk US sensitive personal data in six categories: covered personal identifiers, precise geolocation, biometric identifiers, human 'omic data, personal health and personal financial data. China (with Hong Kong and Macau) and Russia are among the six countries of concern. Data brokerage to them is prohibited; vendor, employment and investment agreements are allowed only if they meet set security requirements. Relevant to AI because training data and model access can be the channel.",
+  "quote": "no U.S. person, on or after the effective date, may knowingly engage in a covered data transaction involving data brokerage with a country of concern or covered person.",
+  "quoteUrl": "https://www.govinfo.gov/content/pkg/FR-2025-01-08/html/2024-31486.htm",
+  "quoteLabel": "Quoted from 28 CFR 202.301(a) as published (govinfo)",
+  "url": "https://www.federalregister.gov/documents/2025/01/08/2024-31486/preventing-access-to-us-sensitive-personal-data-and-government-related-data-by-countries-of-concern-or-covered-persons",
+  "verified": true
+ },
+ {
   "id": "us-bis-diffusion",
   "country": "US",
   "date": "2025-01-13",
   "effective": "2025-01-13",
   "title": "Framework for Artificial Intelligence Diffusion",
-  "issuer": "Commerce, Bureau of Industry and Security (interim final rule, FR Doc. 2025-00636)",
+  "issuer": "Commerce, Bureau of Industry and Security (interim final rule, 90 FR 4544, FR Doc. 2025-00636)",
   "kind": "regulation",
   "themes": [
    "security",
@@ -1971,7 +2017,7 @@ export const DOCS = [
   ],
   "status": "notenforced",
   "statusNote": "Rescission announced 13 May 2025. The formal rescission is in the remote-access rule (RIN 0694-AK50, FR Doc. 2026-23529), filed for Federal Register public inspection 16 Nov 2026 with a publication date of 19 Nov 2026, effective on publication. Never enforced.",
-  "summary": "Set worldwide license requirements for advanced chips with three country tiers and a new control on the weights of advanced closed-weight models. It exempted open-weight model weights.",
+  "summary": "Set worldwide license requirements for advanced chips (3A090.a, 4A090.a and related .z items) with three country tiers, a license exception for low-risk destinations in new 15 CFR 740.27, a worldwide destination scope for the advanced computing foreign direct product rule (15 CFR 734.9(h)), and a new control on the weights of advanced closed-weight models (new ECCN 4E091). It exempted open-weight model weights.",
   "quote": "BIS is not imposing controls on the model weights of open-weight models.",
   "quoteUrl": "https://www.federalregister.gov/d/2025-00636",
   "url": "https://www.federalregister.gov/d/2025-00636",
@@ -2781,11 +2827,12 @@ export const DOCS = [
    "safety"
   ],
   "status": "in-force",
-  "statusNote": "Signed 29 Sep 2025. As a regular-session statute without an urgency clause it took effect 1 Jan 2026 (Cal. Const. art. IV, sec. 8(c)). State law, not federal. Ch. 138, Stats. 2025, non-urgency (leginfo status page, Wayback capture); summary details are from the Governor's signing release.",
-  "summary": "Requires large frontier AI developers to publish a framework on how they apply national and international standards and best practices, creates a way for companies and the public to report critical safety incidents to the state Office of Emergency Services, and protects whistleblowers. It also sets up a consortium, CalCompute, to develop a framework for a public computing cluster.",
-  "quote": "Requires large frontier developers to publicly publish a framework on its website describing how the company has incorporated national standards, international standards, and industry-consensus best practices into its frontier AI framework.",
-  "quoteUrl": "https://www.gov.ca.gov/2025/09/29/governor-newsom-signs-sb-53-advancing-californias-world-leading-artificial-intelligence-industry/",
-  "url": "https://leginfo.legislature.ca.gov/faces/billNavClient.xhtml?bill_id=202520260SB53",
+  "statusNote": "Chapter 138, Statutes of 2025: approved by the Governor and filed with the Secretary of State 29 Sep 2025. As a regular-session statute without an urgency clause it took effect 1 Jan 2026 (Cal. Const. art. IV, sec. 8(c)). State law, not federal.",
+  "summary": "Applies to 'frontier models' trained with more than 10^26 integer or floating-point operations. 'Large frontier developers' (with affiliates, over $500 million in annual gross revenue) must write, follow and publish a frontier AI framework, including how they use national and international standards and industry best practices. It creates a way for companies and the public to report critical safety incidents to the state Office of Emergency Services, protects whistleblowers, and sets up a consortium, CalCompute, to develop a framework for a public computing cluster.",
+  "quote": "A large frontier developer shall write, implement, comply with, and clearly and conspicuously publish on its internet website a frontier AI framework that applies to the large frontier developer’s frontier models",
+  "quoteUrl": "https://leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=202520260SB53",
+  "quoteLabel": "Quoted from Bus. & Prof. Code sec. 22757.12(a), as added by SB 53 (leginfo)",
+  "url": "https://leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=202520260SB53",
   "verified": true
  },
  {
@@ -2869,6 +2916,31 @@ export const DOCS = [
   "url": "https://www.cac.gov.cn/2026-01/02/c_1769093523928606.htm",
   "verified": true,
   "quoteEn": "The new Article 20 added by this amendment makes specific provision for AI safety and development, stating that the state supports basic AI theory research and R&D on key technologies, promotes infrastructure such as training data resources and computing power, improves ethical norms, and strengthens risk monitoring, assessment and safety supervision"
+ },
+ {
+  "id": "intl-us-cn-deal-2025",
+  "country": "INTL",
+  "date": "2025-11-01",
+  "title": "Fact Sheet: President Donald J. Trump Strikes Deal on Economic and Trade Relations with China",
+  "issuer": "The White House (fact sheet on the Trump-Xi deal reached in the Republic of Korea)",
+  "kind": "statement",
+  "themes": [
+   "security",
+   "industry",
+   "international"
+  ],
+  "status": "non-binding",
+  "statusNote": "A White House fact sheet, not an agreement text. The one-year US and Chinese suspensions it announced started 10 Nov 2025; the export-control suspensions on both sides were later extended to 10 Jan 2027 (see the BIS affiliates-rule extension and MOFCOM/GACC 2026 No. 58).",
+  "summary": "The US-side text of the November 2025 truce. The US would suspend for one year, from 10 Nov 2025, the BIS rule extending Entity List controls to affiliates, and the Section 301 shipbuilding actions, and cut fentanyl tariffs by 10 points. China would suspend the export controls on rare earths and related measures announced on 9 Oct 2025, issue general licences for rare earths, gallium, germanium, antimony and graphite, drop measures against US firms (including end-user and unreliable entity listings) and end its antitrust, anti-monopoly and anti-dumping investigations of US companies in the semiconductor supply chain.",
+  "quote": "The United States will suspend for one year, starting on November 10, 2025, the implementation of the interim final rule titled Expansion of End-User Controls to Cover Affiliates of Certain Listed Entities.",
+  "quoteUrl": "https://www.whitehouse.gov/fact-sheets/2025/11/fact-sheet-president-donald-j-trump-strikes-deal-on-economic-and-trade-relations-with-china/",
+  "url": "https://www.whitehouse.gov/fact-sheets/2025/11/fact-sheet-president-donald-j-trump-strikes-deal-on-economic-and-trade-relations-with-china/",
+  "parties": {
+   "US": "announced the deal (White House fact sheet)",
+   "CN": "counterpart; commitments as stated by the White House",
+   "RU": "not involved"
+  },
+  "verified": true
  },
  {
   "id": "cn-mofcom-72-2025",
@@ -3662,14 +3734,14 @@ export const DOCS = [
   "country": "US",
   "date": "2026-09-29",
   "title": "Inaugurating the Era of Super Intelligence",
-  "issuer": "President (EO 14434)",
+  "issuer": "President (EO 14434, 91 FR 63129)",
   "kind": "executive-order",
   "themes": [
    "industry"
   ],
   "status": "in-force",
   "statusNote": "In force; published 2 Oct 2026. Agency sites (e.g. the BIS May 2025 release) now show 'SI' in place of 'AI'.",
-  "summary": "Orders the executive branch to use 'Super Intelligence' and 'SI' in place of 'Artificial Intelligence' and 'AI' in non-statutory documents, keeping the statutory definition at 15 U.S.C. 9401(3). OSTP must propose a statutory definition within 60 days.",
+  "summary": "Orders the executive branch to use 'Super Intelligence' and 'SI' in place of 'Artificial Intelligence' and 'AI' in non-statutory documents, keeping the statutory definition at 15 U.S.C. 9401(3). The Assistant to the President for Science and Technology (APST) must propose a statutory definition within 60 days (sec. 3(b)).",
   "quote": "the executive branch shall use the terms ``Super Intelligence'' and ``SI'' in place of ``Artificial Intelligence'' and ``AI''",
   "quoteUrl": "https://www.federalregister.gov/documents/2026/10/02/2026-20321/inaugurating-the-era-of-super-intelligence",
   "url": "https://www.federalregister.gov/documents/2026/10/02/2026-20321/inaugurating-the-era-of-super-intelligence",
@@ -3875,7 +3947,7 @@ export const POSITIONS = {
    ]
   },
   "RU": {
-   "stance": "No Russian official text creates a safety institute or pre-deployment evaluation of frontier models. Federal Law 243-FZ (2026) obliges developers of \"sovereign\" and \"national\" foundation models to take security measures and keep technical documentation, and Decree 116 tasks the Presidential AI Commission with analysing AI risks and threats.",
+   "stance": "No Russian official text creates a safety institute or pre-deployment evaluation of frontier models. Federal Law 243-FZ (2026) will oblige, from 1 Mar 2027 (Art. 13(2)), developers of \"sovereign\" and \"national\" foundation models to take security measures and keep technical documentation, and Decree 116 tasks the Presidential AI Commission with analysing AI risks and threats.",
    "cites": [
     {
      "doc": "ru-fz243-ai-law",
@@ -3938,7 +4010,7 @@ export const POSITIONS = {
    ]
   },
   "RU": {
-   "stance": "No official text restricts releasing model weights. Putin called shared open-source libraries a resource to use, and the 2026 AI law's \"national model\" status requires the components used to build the model, Russian or foreign, including other developers' foundation models, to be distributed under an open licence. Sber released GigaChat and Kandinsky weights at AI Journey 2025, a company decision, not state policy.",
+   "stance": "No official text restricts releasing model weights. Putin called shared open-source libraries a resource to use, and the 2026 AI law's \"national model\" status (from 1 Mar 2027) requires the components used to build the model, Russian or foreign, including other developers' foundation models, to be distributed under an open licence. Sber released GigaChat and Kandinsky weights at AI Journey 2025, a company decision, not state policy.",
    "cites": [
     {
      "doc": "ru-ai-meeting-2026-04",
@@ -3987,7 +4059,7 @@ export const POSITIONS = {
    ]
   },
   "RU": {
-   "stance": "Federal Law 243-FZ (Art. 9, effective 1 Mar 2027) does not require labels. It gives people who use foundation models to make audio or visual content the option to add an AI warning, and requires large platforms (over 500,000 daily Russian users) to let users add one. The voluntary 2021 AI Ethics Code allows voluntary labeling schemes. This agent did not verify any separate deepfake liability law.",
+   "stance": "Federal Law 243-FZ (Art. 9, effective 1 Mar 2027) does not require labels. It gives people who use foundation models to make audio or visual content the option to add an AI warning, and requires large platforms (over 500,000 daily Russian users) to let users add one. The voluntary 2021 AI Ethics Code allows voluntary labeling schemes. No separate deepfake liability law was found in official sources as of 18 Nov 2026.",
    "cites": [
     {
      "doc": "ru-fz243-ai-law",
@@ -4305,7 +4377,7 @@ export const DEBATES = [
   "camps": [
    {
     "label": "Preempt state laws",
-    "view": "A single, minimally burdensome national standard should replace 'fifty discordant' state regimes, and DOJ should challenge state laws in the meantime.",
+    "view": "There should be \"a minimally burdensome national standard--not 50 discordant State ones\" (EO 14365, sec. 1), and DOJ should challenge state laws in the meantime.",
     "holders": [
      {
       "name": "President (EO 14365)",
@@ -4632,7 +4704,7 @@ export const DEBATES = [
      {
       "name": "Federal Law 243-FZ (State Duma, Federation Council)",
       "source": "http://kremlin.ru/acts/bank/53467",
-      "note": "Art. 6(2) \"sovereign\" model: Russian developer controls all stages and ensures full reproducibility of training."
+      "note": "Art. 6(2) \"sovereign\" model (from 1 Mar 2027): Russian developer controls all stages and ensures full reproducibility of training."
      },
      {
       "name": "President Putin, AI Journey 2025",
@@ -4648,7 +4720,7 @@ export const DEBATES = [
      {
       "name": "Federal Law 243-FZ",
       "source": "http://kremlin.ru/acts/bank/53467",
-      "note": "Art. 6(3)(3) \"national\" model: components used to build it, Russian or foreign, including other developers' foundation models, must be distributed under an open licence."
+      "note": "Art. 6(3)(3) \"national\" model (from 1 Mar 2027): components used to build it, Russian or foreign, including other developers' foundation models, must be distributed under an open licence."
      },
      {
       "name": "President Putin (to industry)",
@@ -5006,7 +5078,7 @@ export const COMPASS = {
   },
   "RU": {
    "value": 70,
-   "why": "Sovereign and national models must pass conformity with Russian law and \"traditional Russian spiritual and moral values\"; not every AI output is covered.",
+   "why": "From 1 Mar 2027, sovereign and national models must pass conformity with Russian law and \"traditional Russian spiritual and moral values\"; not every AI output is covered.",
    "quote": "большая фундаментальная модель искусственного интеллекта прошла подтверждение соответствия законодательству Российской Федерации и традиционным российским духовно-нравственным ценностям в порядке, установленном Правительством Российской Федерации",
    "doc": "ru-fz243-ai-law",
    "url": "http://kremlin.ru/acts/bank/53467",
@@ -5031,7 +5103,7 @@ export const COMPASS = {
   },
   "RU": {
    "value": 25,
-   "why": "The law gives users the option to add an AI warning and makes large platforms enable it; no mandatory label.",
+   "why": "From 1 Mar 2027 the law gives users the option to add an AI warning and makes large platforms enable it; no mandatory label.",
    "quote": "обеспечивается возможность размещения информационного предупреждения о применении технологий искусственного интеллекта",
    "doc": "ru-fz243-ai-law",
    "url": "http://kremlin.ru/acts/bank/53467/page/2",
@@ -5056,7 +5128,7 @@ export const COMPASS = {
   },
   "RU": {
    "value": 25,
-   "why": "No text restricts weight release; Putin calls open-source a resource, and components used to build \"national\" models, Russian or foreign, must be open-licensed.",
+   "why": "No text restricts weight release; Putin calls open-source a resource, and from 1 Mar 2027 components used to build \"national\" models, Russian or foreign, must be open-licensed.",
    "quote": "This cooperative resource should, of course, be used effectively.",
    "doc": "ru-ai-meeting-2026-04",
    "url": "http://en.kremlin.ru/events/president/news/79525"

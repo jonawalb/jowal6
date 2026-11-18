@@ -30,7 +30,7 @@ cn-genai-measures-2023 cn-mofcom-gage-2023 cn-dual-use-regs-2024 cn-mofcom-46-20
 cn-mofcom-18-2025 cn-mofcom-61-2025 cn-gaap-2025 cn-15th-fyp-outline-2026 cn-mofcom-most-48-2026
 ru-decree490 ru-decree124 ru-decree166-cii ru-fz243-ai-law
 intl-wassenaar intl-oecd-ai-principles intl-reaim-2023 intl-us-russia-ear-7468 intl-nl-sme-controls intl-jp-sme-controls intl-bletchley
-unga-78-265 intl-eu-ai-act intl-coe-ai-convention intl-paris-statement us-cn-ai-dialogue-2026`.split(/\s+/);
+unga-78-265 intl-eu-ai-act intl-coe-ai-convention intl-paris-statement us-cn-ai-dialogue-2026 intl-us-cn-deal-2025`.split(/\s+/);
 const KEY = new Set(KEY_IDS.filter(id => DOCS.some(d => d.id === id)));
 let tlAll = false;
 let picked = false; // true once the reader opens a document other than the opening example

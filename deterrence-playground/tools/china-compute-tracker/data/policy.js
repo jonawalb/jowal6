@@ -3,11 +3,14 @@
 // opened on 2026-11-16. Summaries are paraphrases of each rule's own abstract.
 export const POLICY = [
   { id: 'p-2022-10', date: '2022-10-13', t: 'October 2022 advanced computing and chipmaking controls',
-    x: 'Controls on advanced computing ICs, computers that contain them and certain chipmaking items; expanded supercomputer and semiconductor end-use controls; license requirement for some U.S.-person support to PRC chip production. Released Oct. 7, 2022; published Oct. 13.',
-    src: [['87 FR 62186 (Federal Register)', 'https://www.federalregister.gov/documents/2022/10/13/2022-21658/implementation-of-additional-export-controls-certain-advanced-computing-and-semiconductor']] },
+    x: 'Controls on advanced computing ICs, computers that contain them and certain chipmaking items; expanded supercomputer and semiconductor end-use controls; license requirement for some U.S.-person support to PRC chip production. Released Oct. 7, 2022; published Oct. 13. Before the rule, on Aug. 26, 2022, the U.S. government informed NVIDIA that any future export of its A100 and forthcoming H100 chips, or systems containing them, to China (including Hong Kong) and Russia needs a license (NVIDIA 8-K).',
+    src: [['87 FR 62186 (Federal Register)', 'https://www.federalregister.gov/documents/2022/10/13/2022-21658/implementation-of-additional-export-controls-certain-advanced-computing-and-semiconductor'],
+          ['NVIDIA 8-K, event date Aug. 26, 2022 (SEC)', 'https://www.sec.gov/Archives/edgar/data/1045810/000104581022000146/nvda-20220826.htm']] },
   { id: 'p-2023-10a', date: '2023-10-25', t: 'October 2023 update to advanced computing controls',
-    x: 'Responds to comments on the 2022 rule\'s advanced computing IC controls and revises them to make the controls more effective.',
-    src: [['88 FR 73458 (Federal Register)', 'https://www.federalregister.gov/documents/2023/10/25/2023-23055/implementation-of-additional-export-controls-certain-advanced-computing-items-supercomputer-and']] },
+    x: 'Responds to comments on the 2022 rule\'s advanced computing IC controls and revises them to make the controls more effective. ECCN 3A090.a, as it now reads in the eCFR, covers chips with a total processing performance (TPP) of 4800 or more, or a TPP of 1600 or more with a performance density of 5.92 or more. NVIDIA reported that the October 2023 rule requires licenses for exports to China and Country Groups D:1, D:4 and D:5 of products including the A100, A800, H100, H800, L40, L40S and RTX 4090.',
+    src: [['88 FR 73458 (Federal Register)', 'https://www.federalregister.gov/documents/2023/10/25/2023-23055/implementation-of-additional-export-controls-certain-advanced-computing-items-supercomputer-and'],
+          ['NVIDIA 8-K, Oct. 17, 2023 (SEC)', 'https://www.sec.gov/Archives/edgar/data/1045810/000104581023000217/nvda-20231017.htm'],
+          ['ECCN 3A090, 15 CFR part 774, supp. 1 (eCFR, current text)', 'https://www.ecfr.gov/current/title-15/subtitle-B/chapter-VII/subchapter-C/part-774/appendix-Supplement%20No.%201%20to%20Part%20774']] },
   { id: 'p-2023-10b', date: '2023-10-25', t: 'October 2023 chipmaking equipment controls',
     x: 'Responds to comments on the 2022 rule\'s semiconductor manufacturing equipment controls and amends them.',
     src: [['88 FR 73424 (Federal Register)', 'https://www.federalregister.gov/documents/2023/10/25/2023-23049/export-controls-on-semiconductor-manufacturing-items']] },
@@ -70,7 +73,26 @@ export const POLICY = [
     src: [['MOFCOM Announcement 2025 No. 72 (Chinese)', 'https://www.mofcom.gov.cn/zwgk/zcfb/art/2025/art_5c68985a6b1a46778e2e8dbff1bb1601.html'],
           ['MOFCOM and GAC Announcement 2026 No. 58 (Chinese)', 'https://www.mofcom.gov.cn/zcfb/zc/art/2026/art_2120417f1e21472bbe3efafdfcbd3f43.html']] },
   { id: 'p-2026-11b', date: '2026-11-16', t: 'Remote access rule released; on Federal Register public inspection',
-    x: 'BIS released interim final rule RIN 0694-AK50, "Addressing Remote Access to Advanced Semiconductors". It formally rescinds the AI Diffusion Rule, including its worldwide Regional Stability (RS) license requirement; adds a license requirement for advanced chips to Indonesia, Malaysia, Singapore, Thailand and Brazil, with an exclusion for consignees or end users headquartered in the U.S. (or with a U.S.-headquartered ultimate parent), if the exporter files reports under new section 743.10; adds section 744.24, a control on data centers that provide more than 12,000,000 aggregate TPP to companies headquartered in Country Group D:5 or Macau; revises section 744.23; and narrows how front-end fabricators and packagers can overcome presumptions when making advanced-node logic chips. Status: released by BIS and placed on Federal Register public inspection on Nov. 16, 2026 as FR Doc. 2026-23529, scheduled for publication Nov. 19, 2026; the rule is effective on its publication date, with comments due 60 days after publication.',
+    x: 'BIS released interim final rule RIN 0694-AK50, "Addressing Remote Access to Advanced Semiconductors". It formally rescinds the AI Diffusion Rule, including its worldwide Regional Stability (RS) license requirement; adds a license requirement for advanced chips to Indonesia, Malaysia, Singapore, Thailand and Brazil, with an exclusion for consignees or end users headquartered in the U.S. (or with a U.S.-headquartered ultimate parent), if the exporter files reports under new section 743.10; adds section 744.24, a control on data centers that provide more than 12,000,000 aggregate TPP to companies headquartered in Country Group D:5 or Macau; revises section 744.23; and narrows how front-end fabricators and packagers can overcome presumptions when making advanced-node logic chips.',
+    st: 'Status: released by BIS and placed on Federal Register public inspection on Nov. 16, 2026 as FR Doc. 2026-23529, scheduled for publication Nov. 19, 2026; the rule is effective on its publication date, with comments due 60 days after publication.',
+    then: { date: '2026-11-19', t: 'Remote access rule published and in effect',
+      st: 'Status: Federal Register publication was scheduled for Nov. 19, 2026 (FR Doc. 2026-23529), and the rule takes effect on its publication date; comments are due 60 days after publication. It was placed on public inspection Nov. 16, 2026.' },
     src: [['BIS, RIN 0694-AK50 interim final rule (PDF)', 'https://www.bis.gov/media/documents/rin-0694-ak50.pdf'],
           ['Federal Register public inspection, FR Doc. 2026-23529 (PDF)', 'https://public-inspection.federalregister.gov/2026-23529.pdf']] },
+  { id: 'p-2025-09hw', date: '2025-09-18', k: 'Company roadmap (Huawei)', t: 'Huawei publishes a three-year Ascend chip roadmap',
+    x: 'At Huawei Connect 2025, Eric Xu said the Ascend 950PR "will be available in the first quarter of 2026", the 950DT in the fourth quarter of 2026, the Ascend 960 in the fourth quarter of 2027 and the 970 in the fourth quarter of 2028, with two Huawei-designed HBMs (HiBL 1.0 and HiZQ 2.0) for the 950 series and "a 1-year release cycle" that doubles compute each release. A company plan, not a production figure.',
+    src: [['Huawei, keynote by Eric Xu, Huawei Connect 2025 (Sept. 18, 2025)', 'https://www.huawei.com/en/news/2025/9/hc-xu-keynote-speech']] },
+  { id: 'p-2026-03cs', date: '2026-03-26', k: 'Bill (not law)', t: 'House Foreign Affairs Committee orders the Chip Security Act reported, 42-0',
+    x: 'H.R. 3447, the Chip Security Act (introduced May 15, 2025), as introduced would have Commerce require location-verification "chip security mechanisms" on covered advanced chips before export and require license holders to report credible information of diversion or tampering to BIS. The committee ordered it reported in the nature of a substitute by 42-0 on Mar. 26, 2026; CBO scored it on May 1, 2026. No floor vote is recorded. The Senate bill, S. 1705, has been in the Banking Committee since May 8, 2025. Not law.',
+    src: [['H.R. 3447 actions and summary (Congress.gov)', 'https://www.congress.gov/bill/119th-congress/house-bill/3447/all-actions'],
+          ['CBO cost estimate, H.R. 3447', 'https://www.cbo.gov/publication/62310'],
+          ['S. 1705 (Congress.gov)', 'https://www.congress.gov/bill/119th-congress/senate-bill/1705/all-actions']] },
+  { id: 'p-2026-09hw', date: '2026-09-17', k: 'Company roadmap (Huawei)', t: 'Huawei pulls the Ascend 960 forward',
+    x: 'At Huawei Connect 2026, Huawei said the Ascend 960DT "will be available in Q1 2027, three quarters ahead of the company\'s original roadmap" and the 960PR "will be ready in Q3 2027"; rotating chairman David Wang said "In 2028 and 2029, we will roll out the Ascend 970 and 980 chips, respectively." Huawei gave no production or shipment volumes.',
+    src: [['Huawei press release on the Huawei Connect 2026 keynote by David Wang (Sept. 17, 2026)', 'https://www.huawei.com/en/news/2026/9/hc-wang-keynote']] },
 ];
+
+/** The timeline as of a given day (YYYY-MM-DD, America/New_York): entries with a `then` switch over on its date. */
+export function policyAsOf(day) {
+  return POLICY.map(p => (p.then && day >= p.then.date ? { ...p, t: p.then.t, st: p.then.st } : p));
+}

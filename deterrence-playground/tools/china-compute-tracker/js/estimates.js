@@ -29,7 +29,7 @@ export function renderEstimates(root, S, { onPick, set, tip, rerender }) {
       <div class="grades full-only" role="group" aria-label="Evidence grades included">${GRADES.map(g => `<button type="button" class="gbtn" data-g="${g}" aria-pressed="${S.grades.includes(g)}" title="${esc(GRADE_INFO[g].d)}"><b class="g-${g}">${g}</b>${esc(GRADE_INFO[g].n)}</button>`).join('')}</div>
       <div class="pseg mt-s presets" role="group" aria-label="Presets">${PRESETS.map(p => `<button type="button" class="btn" data-p="${p.k}" aria-pressed="${presetOn === p}">${esc(p.n)}</button>`).join('')}</div>
       <label class="tg mt-s full-only"><input type="checkbox" id="rep" ${S.rep ? 'checked' : ''}><span class="sw"></span><span class="t">Count official restatements (↺)<small>official figures that repeat an analyst or press estimate; off = independent observations only</small></span></label>
-      <p class="fine mt-s full-only">A grade says what kind of source carries a number, not whether the number is right. The shaded band runs from the lowest low to the highest high among the sources switched on; the dark tick is the median of their midpoints. ↺ marks an official figure that restates another source (off by default); ‹ marks an upper bound and › a lower bound.</p>
+      <p class="fine mt-s full-only">A grade says what kind of source carries a number, not whether the number is right. The shaded band runs from the lowest low to the highest high among the sources switched on; the dark tick is the median of their central values (a source's own median or central estimate where it gives one, otherwise the midpoint of its range). ↺ marks an official figure that restates another source (off by default); ‹ marks an upper bound and › a lower bound; a dot on a range is the source's own central estimate.</p>
     </div>
     <div id="metrics"></div>
     <div class="card full-only"><p class="eyebrow">Summary: range with all grades vs. your selection</p><div class="tablewrap"><table class="sumtab" id="sum"></table></div></div>`;
@@ -120,13 +120,16 @@ function drawRows(svg, list, S, env, { onPick, tip }) {
     svgEl('text', { x: (narrow ? 16 : 12), y: (narrow ? y + 16 : cy + 4), 'text-anchor': 'middle', class: 'gl-t' }, g, e.grade);
     svgEl('text', { x: narrow ? 30 : 26, y: narrow ? y + 16 : cy + 4, class: `lab${on ? '' : ' off'}` }, g, lab.length > (narrow ? 46 : 32) ? lab.slice(0, narrow ? 45 : 31) + '…' : lab);
     const x0 = X(e.low), x1 = X(e.high);
-    if (x1 - x0 > 2) svgEl('line', { x1: x0, x2: x1, y1: cy, y2: cy, class: `bar${on ? '' : ' off'}`, style: `stroke:${GRADE_COL[e.grade]}` }, g);
+    if (x1 - x0 > 2) {
+      svgEl('line', { x1: x0, x2: x1, y1: cy, y2: cy, class: `bar${on ? '' : ' off'}`, style: `stroke:${GRADE_COL[e.grade]}` }, g);
+      if (Number.isFinite(e.mid)) svgEl('circle', { cx: X(e.mid), cy, r: 4, class: `pt${on ? '' : ' off'}`, style: `fill:${GRADE_COL[e.grade]}` }, g);
+    }
     else svgEl('circle', { cx: x0, cy, r: 5.5, class: `pt${on ? '' : ' off'}`, style: `fill:${GRADE_COL[e.grade]}` }, g);
     const val = valText(e);
     if (e.bound === 'min') svgEl('path', { d: `M${x1 - 8} ${cy - 5}L${x1 - 2} ${cy}L${x1 - 8} ${cy + 5}`, class: `cap${on ? '' : ' off'}`, style: `stroke:${GRADE_COL[e.grade]}` }, g);
     if (e.bound === 'max') svgEl('path', { d: `M${x0 + 8} ${cy - 5}L${x0 + 2} ${cy}L${x0 + 8} ${cy + 5}`, class: `cap${on ? '' : ' off'}`, style: `stroke:${GRADE_COL[e.grade]}` }, g);
     keyable(g, `Grade ${e.grade}, ${e.source}: ${val}${on ? '' : ', excluded by grade filter'}`, () => onPick('e:' + e.id, true));
-    g.addEventListener('mousemove', ev => tip(ev, `<b>${esc(e.source)}</b> · grade ${e.grade}<br>${esc(val)}<br><span class="fine">${esc(fmtDate(e.date))}${on ? '' : ' · excluded'}</span>`));
+    g.addEventListener('mousemove', ev => tip(ev, `<b>${esc(e.source)}</b> · grade ${e.grade}<br>${esc(e.stated ? `“${e.stated}”` : val)}<br><span class="fine">${esc(fmtDate(e.date))}${on ? '' : ' · excluded'}</span>`));
     g.addEventListener('mouseleave', () => tip(null));
   });
 }
@@ -139,6 +142,7 @@ export function estimateDetail(e) {
   const M = METRICS.find(m => m.id === e.metric);
   return `<p class="eyebrow"><span class="gtag g-${e.grade}">${e.grade}</span> ${esc(GRADE_INFO[e.grade].n)} · ${esc(M ? M.name : e.metric)}</p>
     <h3 class="d-h">${esc(val)} <span class="fine">${esc(e.unit)}</span></h3>
+    ${e.stated ? `<p class="fine"><b>${e.quote_is_paraphrase ? 'Wording of the linked report that relays it:' : 'In the source\'s words:'}</b> “${esc(e.stated)}”${e.stated_lang ? ` (${esc(e.stated_lang)} in the source; ${esc(e.stated_en)})` : ''}${Number.isFinite(e.mid) ? ` · central estimate ${esc(fmtNum(e.mid))}` : ''}</p>` : ''}
     <p class="d-meta">${esc(e.period)} · ${esc(e.source)}${e.publisher && e.publisher !== e.source ? ', ' + esc(e.publisher) : ''} · ${esc(fmtDate(e.date))}${e.unverified ? ' <span class="unv">unverified</span>' : ''}</p>
     <p>${esc(e.what)}</p>
     ${e.quote ? (e.quote_is_paraphrase ? `<p class="fine"><b>Paraphrase of the report:</b> ${esc(e.quote)}</p>` : `<blockquote>${esc(e.quote)}</blockquote>`) : ''}

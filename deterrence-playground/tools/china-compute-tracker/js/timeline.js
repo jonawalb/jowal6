@@ -77,6 +77,6 @@ export function renderTimeline(root, S, { onPick, tip, set, rerender }) {
 }
 
 export function policyDetail(p) {
-  return `<p class="eyebrow">${esc(p.k || 'Rule change')}</p><h3 class="d-h">${esc(p.t)}</h3><p class="d-meta">${esc(fmtDate(p.date))}</p><p>${esc(p.x)}</p>
+  return `<p class="eyebrow">${esc(p.k || 'Rule change')}</p><h3 class="d-h">${esc(p.t)}</h3><p class="d-meta">${esc(fmtDate(p.date))}</p><p>${esc(p.x)}</p>${p.st ? `<p class="fine">${esc(p.st)}</p>` : ''}
     <p class="eyebrow">Sources</p><ol class="d-src">${p.src.map(([n, u]) => `<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(n)}</a></li>`).join('')}</ol>`;
 }

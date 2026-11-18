@@ -9,7 +9,7 @@ export function pick(estimates, metric, period, grades) {
 }
 
 /**
- * Envelope across sources: lowest low to highest high, plus the median of source midpoints
+ * Envelope across sources: lowest low to highest high, plus the median of source central values
  * and the high/low spread. Returns null when no source is included.
  */
 export function envelope(list) {
@@ -17,7 +17,8 @@ export function envelope(list) {
   if (!ok.length) return null;
   const low = Math.min(...ok.map(e => e.low));
   const high = Math.max(...ok.map(e => e.high));
-  const mids = ok.map(e => (e.low + e.high) / 2).sort((a, b) => a - b);
+  // A source's own central estimate (e.mid) is used when it gives one; otherwise the midpoint of its range.
+  const mids = ok.map(e => (Number.isFinite(e.mid) ? e.mid : (e.low + e.high) / 2)).sort((a, b) => a - b);
   const m = mids.length;
   const median = m % 2 ? mids[(m - 1) / 2] : (mids[m / 2 - 1] + mids[m / 2]) / 2;
   // n counts publications, not rows: two figures from one paper (an estimate and a case tally) are one source

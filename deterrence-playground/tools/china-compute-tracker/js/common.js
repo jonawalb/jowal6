@@ -1,11 +1,14 @@
 // Shared helpers and data indexes for the China Compute Tracker.
 import { EL_RULES, EL_BUILT } from '../data/entity_list.js';
-import { POLICY } from '../data/policy.js';
+import { policyAsOf } from '../data/policy.js';
 import { CASES, CASES_CHECKED } from '../data/cases.js';
 import { METRICS, ESTIMATES, EST_CHECKED } from '../data/estimates.js';
 
+// Today in America/New_York (YYYY-MM-DD): date-aware timeline entries switch on this.
+export const NY_TODAY = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+const POLICY = policyAsOf(NY_TODAY);
 export { EL_RULES, EL_BUILT, POLICY, CASES, CASES_CHECKED, METRICS, ESTIMATES, EST_CHECKED };
-export const AS_OF = '2026-11-16';
+export const AS_OF = '2026-11-18';
 
 export const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 export const $ = id => document.getElementById(id);
@@ -38,6 +41,7 @@ export const GRADE_COL = { A: 'var(--c1)', B: 'var(--c2)', C: 'var(--c4)', D: 'v
 export function statusClass(s) {
   const t = (s || '').toLowerCase();
   if (/dismiss|acquit/.test(t)) return { k: 'closed', n: 'Closed without conviction' };
+  if (/not guilty/.test(t)) return { k: 'alleged', n: 'Allegation (not convicted)' };
   if (/settled|administrative/.test(t)) return { k: 'settled', n: 'Settled (administrative)' };
   if (/guilty|convicted|sentenced|plea|resolution/.test(t)) return { k: 'convicted', n: 'Plea or conviction' };
   return { k: 'alleged', n: 'Allegation (not convicted)' };

@@ -110,7 +110,7 @@ const convicted = CASES.filter(c => statusClass(c.status).k === 'convicted').len
 $('glance').innerHTML = [
   ['el', elTotal, `PRC entries added to the Entity List in the tracked chip sectors, ${fmtDate('2022-10-01')} to ${fmtDate(AS_OF)}`],
   ['cases', CASES.length, `public DOJ and BIS cases on smuggling or diverting chips and chipmaking tools; ${convicted} with a plea or conviction`],
-  ['est', ESTIMATES.length, 'published estimates of China’s AI chip supply, each graded by the kind of source behind it'],
+  ['est', ESTIMATES.length, `published figures on China’s AI chip supply from ${new Set(ESTIMATES.map(e => e.url)).size} sources (estimates, company-reported sales and official statements), each graded by the kind of source behind it`],
 ].map(([v, n, t]) => `<button type="button" class="gl-stat" data-go="${v}"><span class="big">${n}</span><span>${esc(t)}</span></button>`).join('');
 $('glance').querySelectorAll('[data-go]').forEach(b => { b.onclick = () => go(b.dataset.go); });
 

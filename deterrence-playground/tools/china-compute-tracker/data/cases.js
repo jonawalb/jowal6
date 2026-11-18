@@ -1,6 +1,6 @@
 // China Compute Tracker: DOJ and BIS public cases on smuggling or diversion of advanced chips and chipmaking tools.
 // Sources: justice.gov and bis.gov releases listed per case. Built from scripts/curated/cases.json by build_curated.py.
-export const CASES_CHECKED = "2026-11-16";
+export const CASES_CHECKED = "2026-11-18";
 export const CASES = [
 {
 "id": "ndca-ding-google-tpu",
@@ -20,7 +20,7 @@ export const CASES = [
 "hubs": null,
 "value_usd": null,
 "penalty": null,
-"status": "convicted (trade secrets); espionage counts vacated; sentenced",
+"status": "sentenced (trade-secret counts; espionage counts vacated)",
 "status_date": "2026-09-01",
 "status_note": "A jury convicted Ding on 7 economic-espionage and 7 trade-secret counts on Jan. 29, 2026. In August 2026 Judge Chhabria vacated the economic-espionage convictions for insufficient evidence; the trade-secret convictions stand. Sentenced Sept. 1, 2026 to just under one year in prison and two years of supervised release (press report; no DOJ release on the sentence found). Scope note: AI chip and system design, not fab tooling.",
 "sources": [
@@ -69,7 +69,7 @@ export const CASES = [
 "penalty": null,
 "status": "pleaded guilty",
 "status_date": "2024-10-17",
-"status_note": "Lin Chen pleaded guilty to one IEEPA count Oct. 17, 2024 (indicted Dec. 1, 2020); sentencing was set for Jan. 28, 2025; Han Li believed in the PRC. No release or report of a sentence found as of 2026-11-16.",
+"status_note": "Lin Chen pleaded guilty to one IEEPA count Oct. 17, 2024 (indicted Dec. 1, 2020); sentencing was set for Jan. 28, 2025; Han Li believed in the PRC. No release or report of a sentence found as of 2026-11-18.",
 "sources": [
 {
 "label": "DOJ OPA press release, Apr 25, 2024",
@@ -151,7 +151,7 @@ export const CASES = [
 "penalty": "DOJ criminal penalties of nearly $118M plus BIS civil penalty of $95M (with cross-credits); aggregate net >$140M incl. $45M forfeiture",
 "status": "plea agreement (court acceptance not confirmed)",
 "status_date": "2025-07-28",
-"status_note": "Company agreed to plead guilty to conspiracy (criminal information) and settled with BIS the same day; value_usd is the aggregate net penalty. Latest status (court acceptance) not re-checked. No later release found as of 2026-11-16.",
+"status_note": "Company agreed to plead guilty to one count of conspiracy (criminal information) and settled with BIS the same day; value_usd is the aggregate net penalty. Cadence's 10-Q for the quarter ended Sept. 30, 2026 says it 'entered into a plea agreement with the DOJ pursuant to which Cadence agreed to plead guilty to one count' and paid aggregate net penalties and forfeitures of $140.6 million in the quarter ended Sept. 30, 2025; it does not report court acceptance or sentencing. No later DOJ release found as of 2026-11-18.",
 "sources": [
 {
 "label": "DOJ OPA press release, Jul 28, 2025",
@@ -170,6 +170,12 @@ export const CASES = [
 "url": "https://www.bis.gov/press-release/cadence-design-systems-pay-95-million-penalty-bis-unauthorized-exports-chinese-entities-tied-development",
 "fetched": true,
 "supports": "$95M BIS penalty, 56+2 violations, $45.3M export value"
+},
+{
+"label": "Cadence Design Systems 10-Q for quarter ended Sept. 30, 2026 (SEC), Note 15 Legal Proceedings",
+"url": "https://www.sec.gov/Archives/edgar/data/813672/000081367226000121/cdns-20260930.htm",
+"fetched": true,
+"supports": "Plea agreement terms and payment of $140.6M; no court acceptance reported"
 }
 ],
 "quote": "Companies that violate export laws and compromise national security should face strong penalties that deter future wrongdoing.",
@@ -199,7 +205,7 @@ export const CASES = [
 "penalty": null,
 "status": "charged",
 "status_date": "2025-08-04",
-"status_note": "Complaint Aug. 4, 2025; later charging document not confirmed from DOJ. Arrested on a criminal complaint; initial appearance Aug. 4, 2025, arraignment set for Sept. 11, 2025. Latest status not re-checked. No later release found as of 2026-11-16.",
+"status_note": "Complaint Aug. 4, 2025; later charging document not confirmed from DOJ. Arrested on a criminal complaint; initial appearance Aug. 4, 2025, arraignment set for Sept. 11, 2025. Latest status not re-checked. No later release found as of 2026-11-18.",
 "sources": [
 {
 "label": "DOJ USAO C.D. Cal. press release, Aug 5, 2025",
@@ -237,7 +243,7 @@ export const CASES = [
 "penalty": null,
 "status": "indicted",
 "status_date": "2025-11-19",
-"status_note": "Indictment unsealed and all four arrested Nov. 19, 2025; value is PRC wire transfers alleged; forfeiture of 50 H200 GPUs sought. Latest status not re-checked. No later release found as of 2026-11-16.",
+"status_note": "Indictment unsealed and all four arrested Nov. 19, 2025; value is PRC wire transfers alleged; forfeiture of 50 H200 GPUs sought. Latest status not re-checked. No later release found as of 2026-11-18.",
 "sources": [
 {
 "label": "DOJ OPA press release, Nov 20, 2025",
@@ -277,7 +283,7 @@ export const CASES = [
 "penalty": null,
 "status": "pleaded guilty",
 "status_date": "2025-10-10",
-"status_note": "Hsu and Hao Global pleaded guilty Oct. 10, 2025 (announced Dec. 8); sentencing was set for Feb. 18, 2026, but no release or report of a sentence was found as of 2026-11-16. Value is the alleged export value; the operation also seized more than $50M in GPUs.",
+"status_note": "Hsu and Hao Global pleaded guilty Oct. 10, 2025 (announced Dec. 8); sentencing was set for Feb. 18, 2026, but no release or report of a sentence was found as of 2026-11-18. Value is the alleged export value; the operation also seized more than $50M in GPUs.",
 "sources": [
 {
 "label": "DOJ USAO S.D. Tex. press release, Dec 8, 2025",
@@ -315,9 +321,9 @@ export const CASES = [
 "hubs": "Hong Kong-based logistics company; U.S. warehouses used for relabeling.",
 "value_usd": null,
 "penalty": null,
-"status": "arrested",
-"status_date": "2025-12-03",
-"status_note": "Yuan arrested Nov. 28 and Gong Dec. 3, 2025 on criminal complaints; both in custody per the release. Later status not confirmed from an official source. No later release found as of 2026-11-16.",
+"status": "charged",
+"status_date": "2025-12-08",
+"status_note": "Charged on criminal complaints, per the DOJ release (\"A criminal complaint is a formal accusation\"), announced Dec. 8, 2025; Yuan was arrested Nov. 28 and Gong Dec. 3, 2025, and both were in custody per the release. No later DOJ release found as of 18 Nov 2026.",
 "sources": [
 {
 "label": "DOJ USAO S.D. Tex. press release, Dec 8, 2025",
@@ -524,7 +530,7 @@ export const CASES = [
 "penalty": null,
 "status": "charged",
 "status_date": "2026-03-25",
-"status_note": "Complaints Mar. 20, 2026; later charging document not confirmed from DOJ. Complaints issued Mar. 20, 2026; Zheng arrested Mar. 22, Kelly and English surrendered Mar. 25. Value is the alleged Oct 2023 order size. Latest status not re-checked. No later release found as of 2026-11-16.",
+"status_note": "Complaints Mar. 20, 2026; later charging document not confirmed from DOJ. Complaints issued Mar. 20, 2026; Zheng arrested Mar. 22, Kelly and English surrendered Mar. 25. Value is the alleged Oct 2023 order size. Latest status not re-checked. No later release found as of 2026-11-18.",
 "sources": [
 {
 "label": "DOJ OPA press release, Mar 25, 2026",
@@ -603,9 +609,9 @@ export const CASES = [
 "hubs": "Malaysia and Singapore alleged as re-export points.",
 "value_usd": 300000000,
 "penalty": null,
-"status": "arrested",
-"status_date": "2026-10-01",
-"status_note": "Indicted Sept. 29, 2026 on three counts; arrested Oct. 1, 2026. Value alleged. No later release found as of 2026-11-16.",
+"status": "indicted",
+"status_date": "2026-09-29",
+"status_note": "Three-count indictment returned Sept. 29, 2026 (conspiracy to violate ECRA/EAR, outbound smuggling, conspiracy to commit money laundering); Lui arrested Oct. 1, 2026 and expected to be arraigned that afternoon, per the DOJ release. Earthmade is not named as a defendant. Value alleged. No later release found as of 2026-11-18.",
 "sources": [
 {
 "label": "DOJ OPA press release, Oct 1, 2026",

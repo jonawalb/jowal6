@@ -1,6 +1,6 @@
 // China Compute Tracker: published estimates of China's AI compute supply, each with an evidence grade.
 // Sources: URL per estimate. Built from scripts/curated/estimates.json by build_curated.py.
-export const EST_CHECKED = "2026-11-16";
+export const EST_CHECKED = "2026-11-18";
 export const METRICS = [
 {
 "id": "M1",
@@ -57,6 +57,7 @@ export const ESTIMATES = [
 "quote_is_paraphrase": false,
 "fetched": true,
 "bound": "max",
+"stated": "at or below 200,000",
 "id": "M1-jeffrey-kessler-unde-2025"
 },
 {
@@ -78,6 +79,7 @@ export const ESTIMATES = [
 "fetched": true,
 "bound": "max",
 "repeats": true,
+"stated": "no more than about 200,000",
 "id": "M1-house-select-committ-2025"
 },
 {
@@ -120,6 +122,7 @@ export const ESTIMATES = [
 "fetched": true,
 "repeats": true,
 "bound": "approx",
+"stated": "nearly three million",
 "id": "M1-rep-john-moolenaar-c-2023-2024-cumulative"
 },
 {
@@ -139,6 +142,7 @@ export const ESTIMATES = [
 "quote": "Our data shows Huawei's production is 507k Ascend units shipped in 2024 , the majority of which are 910Bs, and 805k this year, 653k of those being 910C.",
 "quote_is_paraphrase": false,
 "fetched": true,
+"stated": "507k",
 "id": "M1-semianalysis-dylan-p-2024"
 },
 {
@@ -158,6 +162,7 @@ export const ESTIMATES = [
 "quote": "Our data shows Huawei's production is 507k Ascend units shipped in 2024 , the majority of which are 910Bs, and 805k this year, 653k of those being 910C. The 910C is the more advanced version. This includes die made by TSMC and SMIC.",
 "quote_is_paraphrase": false,
 "fetched": true,
+"stated": "805k",
 "id": "M1-semianalysis-dylan-p-2025"
 },
 {
@@ -178,6 +183,7 @@ export const ESTIMATES = [
 "quote_is_paraphrase": false,
 "fetched": true,
 "bound": "min",
+"stated": "more than 2.9M",
 "id": "M1-semianalysis-dylan-p-2023-2024-cumulative"
 },
 {
@@ -197,6 +203,7 @@ export const ESTIMATES = [
 "quote": "We estimate Huawei produced 800,000 Ascend units in 2025, compared to the 4.5 million units Nvidia sold.",
 "quote_is_paraphrase": false,
 "fetched": true,
+"stated": "800,000",
 "id": "M1-epoch-ai-venkat-soma-2025"
 },
 {
@@ -216,6 +223,7 @@ export const ESTIMATES = [
 "quote": "For 2026, our median estimate is that Huawei will produce 1.5 million units vs. 5.9 million for Nvidia.",
 "quote_is_paraphrase": false,
 "fetched": true,
+"stated": "1.5 million",
 "id": "M1-epoch-ai-venkat-soma-2026"
 },
 {
@@ -235,6 +243,8 @@ export const ESTIMATES = [
 "quote": "Epoch notes a WSJ report that Huawei expects to ship 1.5 million Ascend units in 2026, close to Epoch's own median.",
 "quote_is_paraphrase": true,
 "fetched": true,
+"stated": "1.5 million",
+"stated_src": "Huawei expects to ship 1.5 million Ascend units in 2026",
 "id": "M1-wall-street-journal--2026"
 },
 {
@@ -254,6 +264,9 @@ export const ESTIMATES = [
 "quote": "Bloomberg reported, citing anonymous people familiar, that Huawei plans to make about 600,000 Ascend 910C chips in 2026, roughly double the 2025 level.",
 "quote_is_paraphrase": true,
 "fetched": true,
+"stated": "about 600,000",
+"bound": "approx",
+"stated_src": "plans to make about 600,000 of its marquee 910C Ascend chips",
 "id": "M1-bloomberg-news-unnam-2026"
 },
 {
@@ -273,6 +286,9 @@ export const ESTIMATES = [
 "quote": "The same Bloomberg report said Huawei will raise Ascend output in 2026 to as many as 1.6 million dies; the 2025-2026 projections include inventory dies and internal yield estimates.",
 "quote_is_paraphrase": true,
 "fetched": true,
+"stated": "as many as 1.6 million dies",
+"bound": "max",
+"stated_src": "to as many as 1.6 million dies",
 "id": "M1-bloomberg-news-unnam-2026-2"
 },
 {
@@ -292,6 +308,8 @@ export const ESTIMATES = [
 "quote": "J.P. Morgan estimates Huawei will get 600-650 thousand '700 mm2-equivalent' dies from local producers in 2025 and 800-850 thousand in 2026 (wafer-level estimates).",
 "quote_is_paraphrase": true,
 "fetched": true,
+"stated": "600 – 650 thousand",
+"stated_src": "Huawei will get 600 – 650 thousand",
 "id": "M1-j-p-morgan-analyst-n-2025"
 },
 {
@@ -311,6 +329,8 @@ export const ESTIMATES = [
 "quote": "J.P. Morgan projects 800-850 thousand '700 mm2-equivalent' Huawei dies from domestic fabs in 2026.",
 "quote_is_paraphrase": true,
 "fetched": true,
+"stated": "800 – 850 thousand",
+"stated_src": "800 – 850 thousand dies in 2026",
 "id": "M1-j-p-morgan-analyst-n-2026"
 },
 {
@@ -330,6 +350,7 @@ export const ESTIMATES = [
 "quote": "a conservative estimate of SMIC's total advanced node capacity (7nm and below) is 45k wspm by end of 2025, increasing to 60k wspm in 2026 and 80k wspm in 2027.",
 "quote_is_paraphrase": false,
 "fetched": true,
+"stated": "45k wspm by end of 2025",
 "id": "M2-semianalysis-dylan-p-end-2025"
 },
 {
@@ -349,6 +370,7 @@ export const ESTIMATES = [
 "quote": "a conservative estimate of SMIC's total advanced node capacity (7nm and below) is 45k wspm by end of 2025, increasing to 60k wspm in 2026 and 80k wspm in 2027.",
 "quote_is_paraphrase": false,
 "fetched": true,
+"stated": "60k wspm in 2026",
 "id": "M2-semianalysis-dylan-p-2026"
 },
 {
@@ -368,6 +390,7 @@ export const ESTIMATES = [
 "quote": "a conservative estimate of SMIC's total advanced node capacity (7nm and below) is 45k wspm by end of 2025, increasing to 60k wspm in 2026 and 80k wspm in 2027.",
 "quote_is_paraphrase": false,
 "fetched": true,
+"stated": "80k wspm in 2027",
 "id": "M2-semianalysis-dylan-p-2027"
 },
 {
@@ -388,6 +411,8 @@ export const ESTIMATES = [
 "quote_is_paraphrase": true,
 "fetched": true,
 "bound": "max",
+"stated": "below 20,000",
+"stated_src": "from below 20,000 wafer starts per month today",
 "id": "M2-nikkei-sources-famil-2026"
 },
 {
@@ -407,6 +432,9 @@ export const ESTIMATES = [
 "quote": "Nikkei reports Chinese chipmakers aim to raise 7nm/5nm-class output to roughly 100,000 wafer starts per month within one to two years.",
 "quote_is_paraphrase": true,
 "fetched": true,
+"stated": "roughly 100,000",
+"bound": "approx",
+"stated_src": "to roughly 100,000 within one to two years",
 "id": "M2-nikkei-sources-famil-2027-2028-target"
 },
 {
@@ -426,6 +454,7 @@ export const ESTIMATES = [
 "quote": "estimates put China's yields for Huawei Ascend AI chips between 5% and 20% , while NVIDIA Blackwell chips have achieved normal commercial yields of likely 60 to 80%.",
 "quote_is_paraphrase": false,
 "fetched": true,
+"stated": "between 5% and 20%",
 "id": "M2-institute-for-progre-2025"
 },
 {
@@ -446,6 +475,7 @@ export const ESTIMATES = [
 "quote_is_paraphrase": false,
 "fetched": true,
 "repeats": true,
+"stated": "only 5% to 20%",
 "id": "M2-house-select-committ-2025"
 },
 {
@@ -487,6 +517,7 @@ export const ESTIMATES = [
 "quote_is_paraphrase": false,
 "fetched": true,
 "repeats": true,
+"stated": "a mere 275,000",
 "id": "M3-house-select-committ-2026"
 },
 {
@@ -506,6 +537,7 @@ export const ESTIMATES = [
 "via": "",
 "quote_is_paraphrase": false,
 "fetched": true,
+"stated": "a mere 275,000",
 "id": "M3-institute-for-progre-2026"
 },
 {
@@ -525,6 +557,9 @@ export const ESTIMATES = [
 "quote": "Tom's Hardware says CXMT's projected ~2.2 million HBM stacks in 2026 would support only about 250,000-400,000 Ascend 910C packages.",
 "quote_is_paraphrase": true,
 "fetched": true,
+"stated": "around 250,000 to 400,000",
+"bound": "approx",
+"stated_src": "will only support around 250,000 to 400,000 Ascend 910C packages",
 "id": "M3-semianalysis-j-p-mor-2026"
 },
 {
@@ -544,6 +579,9 @@ export const ESTIMATES = [
 "quote": "Tom's Hardware gives CXMT's projected 2026 HBM output as about 2.2 million stacks.",
 "quote_is_paraphrase": true,
 "fetched": true,
+"stated": "~2.2 million HBM stacks",
+"bound": "approx",
+"stated_src": "projected output of ~2.2 million HBM stacks in 2026",
 "id": "M3-semianalysis-j-p-mor-2026-2"
 },
 {
@@ -563,6 +601,7 @@ export const ESTIMATES = [
 "quote": "SemiAnalysis estimates that CXMT's allocation of wafer starts per month to HBM will grow from 5,000 at the end of 2025 to 30,000 in 2026, 55,000 in 2027, and 100,000 in 2028.",
 "quote_is_paraphrase": false,
 "fetched": true,
+"stated": "5,000 at the end of 2025",
 "id": "M3-semianalysis-as-used-end-2025"
 },
 {
@@ -582,6 +621,7 @@ export const ESTIMATES = [
 "quote": "SemiAnalysis estimates that CXMT's allocation of wafer starts per month to HBM will grow from 5,000 at the end of 2025 to 30,000 in 2026",
 "quote_is_paraphrase": false,
 "fetched": true,
+"stated": "30,000 in 2026",
 "id": "M3-semianalysis-as-used-2026"
 },
 {
@@ -601,6 +641,10 @@ export const ESTIMATES = [
 "quote": "Citing an unnamed source via MK, the blog says CXMT targets 60,000 wafers/month for HBM3, about 20% of an estimated 300,000 wafers/month total in 2026.",
 "quote_is_paraphrase": true,
 "fetched": true,
+"stated": "60 00 wafers par mois",
+"stated_src": "CXMT viserait 60 00 wafers par mois dédiés à l’HBM3",
+"stated_lang": "French",
+"stated_en": "60,000 wafers per month",
 "id": "M3-maeil-business-mk-so-2026"
 },
 {
@@ -620,6 +664,8 @@ export const ESTIMATES = [
 "via": "",
 "quote_is_paraphrase": false,
 "fetched": true,
+"stated": "approximately 240,000",
+"bound": "approx",
 "id": "M3-epoch-ai-venkat-soma-2026"
 },
 {
@@ -639,6 +685,8 @@ export const ESTIMATES = [
 "via": "",
 "quote_is_paraphrase": false,
 "fetched": true,
+"stated": "239K ( 101K to 404K )",
+"mid": 239000,
 "id": "M3-institute-for-progre-2026-2"
 },
 {
@@ -658,6 +706,8 @@ export const ESTIMATES = [
 "via": "",
 "quote_is_paraphrase": false,
 "fetched": true,
+"stated": "between 290,000 and 1.6 million",
+"mid": 660000,
 "id": "M4-epoch-ai-isabel-juni-2024-2025-cumulative"
 },
 {
@@ -677,6 +727,8 @@ export const ESTIMATES = [
 "via": "",
 "quote_is_paraphrase": false,
 "fetched": true,
+"stated": "almost 300,000",
+"bound": "approx",
 "id": "M4-epoch-ai-isabel-juni-2024-2025-cumulative-2"
 },
 {
@@ -696,6 +748,8 @@ export const ESTIMATES = [
 "quote": "Epoch estimates that about 159,000 H100-eq were smuggled into China in 2024 (range: 64,000 to 419,000) and about 480,000 in 2025 (range: 189,000 to 1.29 million).",
 "quote_is_paraphrase": false,
 "fetched": true,
+"stated": "about 159,000 H100-eq were smuggled into China in 2024 (range: 64,000 to 419,000)",
+"mid": 159000,
 "id": "M4-epoch-ai-estimates-a-2024"
 },
 {
@@ -715,6 +769,8 @@ export const ESTIMATES = [
 "quote": "about 480,000 in 2025 (range: 189,000 to 1.29 million)",
 "quote_is_paraphrase": false,
 "fetched": true,
+"stated": "about 480,000 in 2025 (range: 189,000 to 1.29 million)",
+"mid": 480000,
 "id": "M4-epoch-ai-estimates-a-2025"
 },
 {
@@ -734,6 +790,8 @@ export const ESTIMATES = [
 "via": "",
 "quote_is_paraphrase": false,
 "fetched": true,
+"stated": "1 million H100-eq (range: 381,000 to 2.9 million)",
+"mid": 1000000,
 "id": "M4-institute-for-progre-cumulative-through-2026"
 },
 {
@@ -753,6 +811,9 @@ export const ESTIMATES = [
 "quote": "Relaying Bloomberg, RCR says unnamed US officials estimate only about 25,000 restricted Nvidia chips have reached China.",
 "quote_is_paraphrase": true,
 "fetched": true,
+"stated": "only around 25,000",
+"bound": "approx",
+"stated_src": "only around 25,000 restricted Nvidia chips have made it to China",
 "id": "M4-bloomberg-citing-unn-cumulative-to-jul-2025"
 },
 {
@@ -772,6 +833,8 @@ export const ESTIMATES = [
 "via": "",
 "quote_is_paraphrase": false,
 "fetched": true,
+"stated": "at least 56",
+"bound": "min",
 "id": "M4-c4ads-mishel-kondi-jul-2025-jan-2026"
 },
 {
@@ -792,6 +855,7 @@ export const ESTIMATES = [
 "quote_is_paraphrase": false,
 "fetched": true,
 "bound": "approx",
+"stated": "from 10,000 to several hundred thousand chips, with a median estimate of around 140,000",
 "id": "M4-cnas-erich-grunewald-2024"
 },
 {
@@ -811,6 +875,7 @@ export const ESTIMATES = [
 "quote": "China (including Hong Kong) 19,677 25,048 12,330 [FY2026, FY2025, FY2024; $ millions]",
 "quote_is_paraphrase": false,
 "fetched": true,
+"stated": "12,330",
 "id": "M5-nvidia-corporation-1-fy2024-feb-2023-jan-2024"
 },
 {
@@ -830,6 +895,7 @@ export const ESTIMATES = [
 "quote": "China (including Hong Kong) 19,677 25,048 12,330 [FY2026, FY2025, FY2024; $ millions]",
 "quote_is_paraphrase": false,
 "fetched": true,
+"stated": "25,048",
 "id": "M5-nvidia-corporation-1-fy2025-feb-2024-jan-2025"
 },
 {
@@ -849,6 +915,7 @@ export const ESTIMATES = [
 "quote": "China (including Hong Kong) 19,677 25,048 12,330 [FY2026, FY2025, FY2024; $ millions]",
 "quote_is_paraphrase": false,
 "fetched": true,
+"stated": "19,677",
 "id": "M5-nvidia-corporation-1-fy2026-feb-2025-jan-2026"
 },
 {
@@ -868,6 +935,7 @@ export const ESTIMATES = [
 "via": "H20 figures from NVIDIA 10-Q for quarter ended Apr. 27, 2025: https://www.sec.gov/Archives/edgar/data/1045810/000104581025000116/nvda-20250427.htm",
 "quote_is_paraphrase": false,
 "fetched": true,
+"stated": "9,659",
 "id": "M5-nvidia-corporation-1-q1-fy2026-feb-apr-2025"
 },
 {
@@ -887,6 +955,7 @@ export const ESTIMATES = [
 "via": "The 'no H20 sales to China-based customers' statement is from NVIDIA 10-Q for quarter ended July 27, 2025: https://www.sec.gov/Archives/edgar/data/1045810/000104581025000209/nvda-20250727.htm",
 "quote_is_paraphrase": false,
 "fetched": true,
+"stated": "3,985",
 "id": "M5-nvidia-corporation-1-q2-fy2026-may-jul-2025"
 },
 {
@@ -906,6 +975,7 @@ export const ESTIMATES = [
 "via": "",
 "quote_is_paraphrase": false,
 "fetched": true,
+"stated": "4,550",
 "id": "M5-nvidia-corporation-1-q1-fy2027-feb-apr-2026"
 },
 {
@@ -925,6 +995,7 @@ export const ESTIMATES = [
 "via": "",
 "quote_is_paraphrase": false,
 "fetched": true,
+"stated": "7,880",
 "id": "M5-nvidia-corporation-1-q2-fy2027-may-jul-2026"
 },
 {
@@ -944,6 +1015,7 @@ export const ESTIMATES = [
 "quote": "2023 NVIDIA A800 (93,286) + H800 (115,429) 144,842 115,616 181,800",
 "quote_is_paraphrase": false,
 "fetched": true,
+"stated": "A800 (93,286) + H800 (115,429)",
 "id": "M5-institute-for-progre-2023"
 },
 {
@@ -963,6 +1035,7 @@ export const ESTIMATES = [
 "quote": "2024 NVIDIA H20 (958,410) 143,348 110,290 186,483",
 "quote_is_paraphrase": false,
 "fetched": true,
+"stated": "H20 (958,410)",
 "id": "M5-institute-for-progre-2024"
 },
 {
@@ -982,6 +1055,7 @@ export const ESTIMATES = [
 "quote": "2025 NVIDIA H20 (474,712) + AMD MI308X (31,859) 81,525 61,276 107,760",
 "quote_is_paraphrase": false,
 "fetched": true,
+"stated": "H20 (474,712) + AMD MI308X (31,859)",
 "id": "M5-institute-for-progre-2025"
 },
 {
@@ -1001,6 +1075,8 @@ export const ESTIMATES = [
 "via": "",
 "quote_is_paraphrase": false,
 "fetched": true,
+"stated": "around 100,000 (range: 20,000 to 200,000)",
+"mid": 100000,
 "id": "M5-institute-for-progre-2026"
 },
 {
@@ -1020,6 +1096,9 @@ export const ESTIMATES = [
 "quote": "IFP cites the FT as reporting that ByteDance and Tencent had each received about 10,000 H200s by mid-August 2026.",
 "quote_is_paraphrase": true,
 "fetched": true,
+"stated": "10,000 each",
+"bound": "approx",
+"stated_src": "ByteDance and Tencent receiving 10,000 each",
 "id": "M5-financial-times-as-c-2026"
 },
 {
@@ -1040,6 +1119,8 @@ export const ESTIMATES = [
 "quote_is_paraphrase": false,
 "fetched": true,
 "repeats": true,
+"stated": "more than 400,000",
+"bound": "min",
 "id": "M5-house-select-committ-2026-potential"
 },
 {
@@ -1059,6 +1140,30 @@ export const ESTIMATES = [
 "quote": "IFP notes more than 2 million GPUs' worth of reported H200 orders, held back by US and Chinese restrictions.",
 "quote_is_paraphrase": true,
 "fetched": true,
+"stated": "more than 2 million",
+"bound": "min",
+"stated_src": "more than 2 million GPUs’ worth of reported orders",
 "id": "M5-press-reports-as-sum-2026-orders"
+},
+{
+"metric": "M1",
+"period": "2023-2024 cumulative",
+"low": 2000000,
+"high": 2000000,
+"unit": "Ascend dies (TSMC-fabricated)",
+"what": "Ascend 910B logic dies TSMC manufactured that are now with Huawei ('more than 2 million'); CSIS adds that this is enough for about 1 million Ascend 910C units (two dies per 910C). A stockpile, not annual output.",
+"source": "CSIS (Gregory C. Allen), citing unnamed government officials",
+"publisher": "Center for Strategic and International Studies",
+"date": "2025-03-07",
+"url": "https://www.csis.org/analysis/deepseek-huawei-export-controls-and-future-us-china-ai-race",
+"via": "CSIS analysis 'DeepSeek, Huawei, Export Controls, and the Future of the U.S.-China AI Race' (Mar. 7, 2025). The same piece reports, from industry sources, that roughly 75 percent of Ascend 910Cs survive advanced packaging.",
+"grade": "D",
+"grade_note": "Named think tank, but the figure is attributed to unnamed government officials and no method is given, so it is graded by its underlying source (unnamed). Earliest public figure for the TSMC die bank; later SemiAnalysis (more than 2.9M) and House Select Committee (nearly three million) figures are higher.",
+"quote": "Government officials told CSIS that TSMC manufactured more than 2 million Ascend 910B logic dies",
+"quote_is_paraphrase": false,
+"fetched": true,
+"bound": "min",
+"stated": "more than 2 million",
+"id": "M1-csis-gregory-c-allen-2023-2024-cumulative"
 }
 ];

@@ -14,10 +14,10 @@ export const META = {
   "Placements on the 'Where do you stand?' scales are this tool's judgment of each government's official texts, on a 0 to 100 ordinal scale, each tied to a cited passage. They are not measurements and do not describe enforcement or behaviour. The reader's result is the mean absolute gap across the questions answered; questions where a government has no placement are left out of its average. The scoring code is tested in scripts/compass.test.mjs."
  ],
  "gaps": [
-  "US: the 2024 National Security Memorandum on AI (NSM-25) was rescinded and replaced by NSPM-11 on 5 Jun 2026. The AI Diffusion rule was never enforced: Commerce announced its rescission on 13 May 2025, and the formal rescission is in the BIS remote-access rule, filed for Federal Register public inspection 16 Nov 2026 as FR Doc. 2026-23529 with a publication date of 19 Nov 2026, effective on publication. The DoD AI Ethical Principles (2020), H20 licensing terms, FY2026 NDAA AI provisions other than the COINS Act, and state laws other than those of California, New York and Colorado could not be verified from primary text for this version and are left out. California SB 53 is described from the Governor's signing release because the legislature's site could not be fetched.",
+  "US: the 2024 National Security Memorandum on AI (NSM-25) was rescinded and replaced by NSPM-11 on 5 Jun 2026. The AI Diffusion rule was never enforced: Commerce announced its rescission on 13 May 2025, and the formal rescission is in the BIS remote-access rule, filed for Federal Register public inspection 16 Nov 2026 as FR Doc. 2026-23529 with a publication date of 19 Nov 2026, effective on publication. The DoD AI Ethical Principles (2020), FY2026 NDAA AI provisions other than the COINS Act, and state laws other than those of California, New York and Colorado could not be verified from primary text for this version and are left out. California SB 53 is described from the Governor's signing release because the legislature's site could not be fetched. The April 2025 H20 license requirement was not published in the Federal Register (the US government informed Nvidia directly), so it is shown from Nvidia's SEC filings; the 15% revenue share appears only as Nvidia's report of what officials expected.",
   "China: the October 2025 Recommendations for the 15th Five-Year Plan were not fetched (the March 2026 Outline is included). China's CCW paper distinguishing 'unacceptable' and 'acceptable' autonomous weapons could not be opened. The Cybersecurity Law's new Article 20 is described from an expert commentary by Ding Xiaodong published on cac.gov.cn, not the NPC statute text. No official guidance discouraging purchases of foreign AI chips was found; only the CAC's summons of Nvidia over the H20 is included. Whether the World AI Cooperation Organization has entered into force was not confirmed.",
   "Russia: no deepfake-liability law, Ministry of Industry chip-capacity plan, or successor to the 2020 regulation concept (Order 2129-r) could be confirmed from official text. The Moscow AI experiment law (123-FZ) is shown as amended: the experiment's five-year term ended 1 Jul 2025, and provisions added by 233-FZ remain in force. English titles for 243-FZ, Decree 116 and Decree 124 are this tool's translations.",
-  "International: the REAIM Blueprint for Action endorsements, any 2025-2026 US-China leader readout on AI or chips, the US explanation of position on resolution 79/325, and the General Assembly plenary vote on the 2026 First Committee autonomous-weapons draft (A/C.1/81/L.37) could not be verified; the Committee tally shown comes from the UN's automated transcript, not an official record. The CCW Seventh Review Conference opens 16 November 2026; its outcome is not reflected. The Political Declaration's launch day (16 February 2023, at REAIM in The Hague) is taken from the conference date; the State Department page says only February 2023."
+  "International: the endorsements of the 2024 REAIM Blueprint for Action (Seoul; the 2023 Hague Call to Action is included), any 2025-2026 US-China leader readout on AI or chips, the US explanation of position on resolution 79/325, and the General Assembly plenary vote on the 2026 First Committee autonomous-weapons draft (A/C.1/81/L.37) could not be verified; the Committee tally shown comes from the UN's automated transcript, not an official record. The CCW Seventh Review Conference opens 16 November 2026; its outcome is not reflected. The Political Declaration's launch day (16 February 2023, at REAIM in The Hague) is taken from the conference date; the State Department page says only February 2023."
  ]
 };
 export const ISSUES = [
@@ -723,6 +723,26 @@ export const DOCS = [
   "quoteEn": "The recommendations of this Code are intended for AI systems (AIS) used exclusively for civil (non-military) purposes."
  },
  {
+  "id": "intl-unesco-ethics-2021",
+  "country": "INTL",
+  "date": "2021-11-23",
+  "title": "UNESCO Recommendation on the Ethics of Artificial Intelligence",
+  "issuer": "UNESCO General Conference, 41st session (Paris)",
+  "kind": "guidance",
+  "themes": [
+   "safety",
+   "international"
+  ],
+  "status": "non-binding",
+  "statusNote": "Adopted 23 Nov 2021. A recommendation: member states are asked to apply it \"on a voluntary basis\".",
+  "summary": "UNESCO's standard-setting text on AI ethics. It sets values and principles, among them proportionality and do no harm, safety and security, human oversight and determination, and transparency and explainability, and eleven policy areas, starting with ethical impact assessment. It says AI should not be used for social scoring or mass surveillance.",
+  "quote": "In particular, AI systems should not be used for social scoring or mass surveillance purposes.",
+  "quoteUrl": "https://www.unesco.org/en/legal-affairs/recommendation-ethics-artificial-intelligence",
+  "quoteLabel": "Quoted from the Recommendation, para. 26 (unesco.org)",
+  "url": "https://www.unesco.org/en/legal-affairs/recommendation-ethics-artificial-intelligence",
+  "verified": true
+ },
+ {
   "id": "cn-military-ai-position-2021",
   "country": "CN",
   "date": "2021-12-14",
@@ -932,6 +952,31 @@ export const DOCS = [
   "quote": "The Framework is intended to be voluntary, rights-preserving, non-sector-specific, and use-case agnostic",
   "quoteUrl": "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf",
   "url": "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf",
+  "verified": true
+ },
+ {
+  "id": "intl-reaim-2023",
+  "country": "INTL",
+  "date": "2023-02-16",
+  "title": "REAIM 2023 Call to Action (summit on responsible AI in the military domain, hosted by the Netherlands)",
+  "issuer": "Netherlands (host) and South Korea (co-host); endorsing states",
+  "kind": "declaration",
+  "themes": [
+   "security",
+   "international"
+  ],
+  "status": "non-binding",
+  "statusNote": "Non-binding. The Dutch government's list of endorsing countries and territories (published 4 Apr 2025) has 58 entries, including China, the US and the UK; Russia is not on it. The Seoul 2024 follow-up (Blueprint for Action) is not covered: its endorsement list could not be verified.",
+  "summary": "A short, non-binding call on governments and others to use military AI responsibly and in line with international law. It commits endorsers to keep humans responsible and accountable for decisions made with AI, to assess risks, and to share lessons. Both the US and China endorsed it; China is not on the State Department's endorsement list (as of 27 Nov 2024) of the US-led Political Declaration launched at the same summit.",
+  "quote": "we will work to ensure that humans remain responsible and accountable for decisions when using AI in the military domain.",
+  "quoteUrl": "https://www.government.nl/site/binaries/site-content/collections/documents/2023/02/16/reaim-2023-call-to-action/REAIM+2023+Call+to+Action.pdf",
+  "quoteLabel": "Quoted from the Call to Action, para. 6 (government.nl)",
+  "url": "https://www.government.nl/site/binaries/site-content/collections/documents/2023/02/16/reaim-2023-call-to-action/REAIM+2023+Call+to+Action.pdf",
+  "parties": {
+   "US": "endorsed (on the 2025 list)",
+   "CN": "endorsed (on the 2025 list)",
+   "RU": "not on the list"
+  },
   "verified": true
  },
  {
@@ -1513,6 +1558,32 @@ export const DOCS = [
   "verified": true
  },
  {
+  "id": "intl-ru-cn-joint-2024",
+  "country": "INTL",
+  "date": "2024-05-16",
+  "title": "Russia-China Joint Statement on deepening their comprehensive partnership in a new era (AI section)",
+  "titleOrig": "Совместное заявление Российской Федерации и Китайской Народной Республики об углублении отношений всеобъемлющего партнерства и стратегического взаимодействия, вступающих в новую эпоху, в контексте 75-летия установления дипломатических отношений между двумя странами",
+  "issuer": "Presidents Putin and Xi (Beijing state visit)",
+  "kind": "statement",
+  "themes": [
+   "international",
+   "security"
+  ],
+  "status": "non-binding",
+  "statusNote": "Issued 16 May 2024 during Putin's state visit to China (16-17 May 2024); text on kremlin.ru.",
+  "summary": "The two governments agree to deepen dialogue on AI development, safety and regulation and to launch regular consultations on AI and open-source technology, including coordinating their positions in international forums. Russia welcomes China's Global AI Governance Initiative; China welcomes the ethics principles in Russia's AI Ethics Code. Both oppose technology monopolies, unilateral coercive measures that hold back AI in particular states, and the breaking of AI supply chains.",
+  "quote": "Стороны выступают против монополизации технологий, использования односторонних принудительных мер для злонамеренного сдерживания развития искусственного интеллекта в отдельных государствах, разрыва глобальных цепочек поставок в сфере ИИ.",
+  "quoteUrl": "http://www.kremlin.ru/supplement/6132",
+  "url": "http://www.kremlin.ru/supplement/6132",
+  "parties": {
+   "US": "not a party",
+   "CN": "party",
+   "RU": "party"
+  },
+  "verified": true,
+  "quoteEn": "The Sides oppose the monopolization of technology, the use of unilateral coercive measures to maliciously hold back the development of artificial intelligence in particular states, and the breaking of global AI supply chains."
+ },
+ {
   "id": "us-co-sb24-205",
   "country": "US",
   "date": "2024-05-17",
@@ -1523,8 +1594,8 @@ export const DOCS = [
    "safety"
   ],
   "status": "superseded",
-  "statusNote": "Signed 17 May 2024 (ch. 198). Its duties were to start 1 Feb 2026; SB25B-004 (signed 28 Aug 2025) moved that to 30 Jun 2026. SB 26-189 (signed 14 May 2026) repealed and reenacted it before it took effect. State law, not federal.",
-  "summary": "Would have required developers and deployers of high-risk AI systems to use reasonable care to protect consumers from algorithmic discrimination. Its duties never took effect.",
+  "statusNote": "Signed 17 May 2024 (ch. 198). Its duties were to start 1 Feb 2026; SB25B-004 (signed 28 Aug 2025) moved that to 30 Jun 2026. On 27 Apr 2026 a US district court ordered the Colorado attorney general not to enforce it, or any law amending it, until the attorney general completes AI rulemaking and the court rules in X. AI LLC v. Weiser (Legislative Council final fiscal note on SB 26-189). SB 26-189 (signed 14 May 2026) repeals and reenacts it, mostly from 1 Jan 2027. State law, not federal.",
+  "summary": "Would have required developers and deployers of high-risk AI systems to use reasonable care to protect consumers from algorithmic discrimination. It has never been enforced: a federal court order blocks enforcement, and SB 26-189 replaces it.",
   "quote": "The act extends the effective date of the requirements of Senate Bill 24-205 to June 30, 2026.",
   "quoteUrl": "https://leg.colorado.gov/bills/sb25b-004",
   "url": "https://leg.colorado.gov/bills/sb24-205",
@@ -2197,6 +2268,27 @@ export const DOCS = [
   ],
   "verified": true,
   "quoteEn": "In accordance with the relevant provisions of the Export Control Law, the Foreign Trade Law, the Customs Law and the Regulations on the Export Control of Dual-Use Items of the People's Republic of China, to safeguard national security and interests and fulfil international obligations such as non-proliferation, and with the approval of the State Council, it has been decided to impose export controls on the following items"
+ },
+ {
+  "id": "us-h20-license-2025",
+  "country": "US",
+  "date": "2025-04-09",
+  "effective": "2025-04-09",
+  "title": "H20 license requirement: US government notice to Nvidia (disclosed in Nvidia's Form 8-K of 15 Apr 2025)",
+  "issuer": "US government, informing Nvidia directly (not a published rule); disclosed in Nvidia Form 8-K, Item 8.01",
+  "kind": "regulation",
+  "themes": [
+   "security",
+   "industry"
+  ],
+  "status": "in-force",
+  "statusNote": "The US government informed Nvidia on 9 Apr 2025; on 14 Apr 2025 the government told Nvidia it would apply \"for the indefinite future\" (8-K). Nvidia's 10-Q of 26 Aug 2026 still describes the requirement. Licences to ship some H20s to China-based customers were granted from Aug 2025, but the PRC government restricted the sales and, as of that Aug 2026 10-Q, Nvidia had been unable to sell its H20 inventory. Nvidia's Q3 FY2027 CFO commentary (17 Nov 2026) then reported: \"Shipments of Data Center Hopper products to China during the quarter were $2.4 billion\" (quarter to 25 Oct 2026; not split by chip), while its outlook for the next quarter assumes no Data Center compute revenue from China. In Aug 2025 Nvidia reported that US officials expected 15% of licensed H20 revenue but that no regulation codifying this had been published (10-Q of 27 Aug 2025).",
+  "summary": "Required a license to export Nvidia's H20 (a modified H100 that Nvidia announced for China in Nov 2023, after the Oct 2023 rule) and any chip matching its memory bandwidth, interconnect bandwidth or both, to China (including Hong Kong and Macau) and Country Group D:5, or to companies headquartered there or with an ultimate parent there. The stated reason was the risk of use in, or diversion to, a supercomputer in China. Nvidia expected up to about $5.5 billion in charges and later recorded $4.5 billion. Not published in the Federal Register: the US government informed Nvidia directly, and the public record is Nvidia's SEC filings (CRS R48642 cites the 8-K, fn. 23).",
+  "quote": "the USG requires a license for export to China (including Hong Kong and Macau) and D:5 countries, or to companies headquartered or with an ultimate parent therein, of the Company’s H20 integrated circuits",
+  "quoteUrl": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000082/nvda-20250409.htm",
+  "quoteLabel": "Quoted from Nvidia's Form 8-K (sec.gov)",
+  "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000082/nvda-20250409.htm",
+  "verified": true
  },
  {
   "id": "cn-military-ai-unga-79-239-2025",
@@ -3084,7 +3176,7 @@ export const DOCS = [
    "industry"
   ],
   "status": "in-force",
-  "statusNote": "Effective 15 Jan 2026.",
+  "statusNote": "Effective 15 Jan 2026. Nvidia's 10-Q of 26 Aug 2026: licences to ship small amounts of H200s to specific China-based customers were granted from Feb 2026, but the PRC government restricted the sales and Nvidia had made only a fraction of the allowed shipments; licensed H200s must pass an inspection in the United States first, so they bear the 25 percent import duty set by Proclamation 11002 (14 Jan 2026, 91 FR 2443). Nvidia's Q3 FY2027 CFO commentary (17 Nov 2026) then reported: \"Shipments of Data Center Hopper products to China during the quarter were $2.4 billion\" (quarter to 25 Oct 2026; not split by chip), while its outlook for the next quarter assumes no Data Center compute revenue from China.",
   "summary": "Moves license review for exports from the United States to China and Macau of chips below set thresholds (TPP under 21,000; DRAM bandwidth under 6,500 GB/s, e.g. Nvidia H200, AMD MI325X) from presumption of denial to case-by-case; reexports and in-country transfers keep a presumption of denial. Exporters must certify US supply, cap China shipments at 50% of US shipments, and use third-party testing in the US.",
   "quote": "The Bureau of Industry and Security (BIS) is revising its license review policy for exports of certain semiconductors to China and Macau--changing it from a presumption of denial to a case-by-case review.",
   "quoteUrl": "https://www.federalregister.gov/d/2026-00789",
@@ -3709,11 +3801,6 @@ export const DOCS = [
    "international"
   ],
   "status": "released",
-  "statusFrom": {
-   "date": "2026-11-19",
-   "status": "in-force",
-   "note": "Published in the Federal Register and effective 19 Nov 2026 (FR Doc. 2026-23529, filed for public inspection 16 Nov 2026). Interim final rule: comments due 60 days after publication."
-  },
   "statusNote": "Released by BIS 16 Nov 2026 and filed for Federal Register public inspection the same day as FR Doc. 2026-23529, with a publication date of 19 Nov 2026. Its DATES section makes it effective on the date of publication; comments are due 60 days after publication.",
   "summary": "Adds 15 CFR 744.24: a license requirement for advanced chips used in data centers anywhere that would give companies headquartered in Country Group D:5 or Macau (or whose ultimate parent is headquartered there) access to more than 12,000,000 'aggregate TPP'. Requires licenses for advanced chips to Indonesia, Malaysia, Singapore, Thailand and Brazil, except where the consignee or end user is headquartered in the US (or has a US-headquartered ultimate parent) and the exporter files reports under new section 743.10. Adds 15 CFR 744.23(a)(3)(i)(C): a license requirement when a front-end fabricator or OSAT exports advanced-node 3A090.a chips designed by a company that is not an approved or authorized IC designer. Formally rescinds the AI Diffusion rule.",
   "quote": "Finally, the IFR formally rescinds the regulations implementing the Biden-era AI Diffusion Rule. The AI Diffusion Rule has never been enforced.",
@@ -3729,7 +3816,12 @@ export const DOCS = [
     "target": "us-bis-diffusion-rescission"
    }
   ],
-  "verified": true
+  "verified": true,
+  "statusFrom": {
+   "date": "2026-11-19",
+   "status": "in-force",
+   "note": "Published in the Federal Register and effective 19 Nov 2026 (FR Doc. 2026-23529, filed for public inspection 16 Nov 2026). Interim final rule: comments due 60 days after publication."
+  }
  }
 ];
 export const POSITIONS = {

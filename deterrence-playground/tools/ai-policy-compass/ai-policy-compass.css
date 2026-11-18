@@ -273,6 +273,8 @@ body.ap-sum-seen .ap-mini { display: none !important; }
   .ap-search { min-height: 44px; font-size: 16px; }
   .ap-li { min-height: 44px; }
   .ap-stnote summary { min-height: 44px; display: flex; align-items: center; }
+  .ap-stnote summary::before { content: '\25B8'; margin-right: 6px; }
+  .ap-stnote[open] summary::before { content: '\25BE'; }
   .ap-issues { display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 6px; padding-bottom: 4px; overscroll-behavior-x: contain; }
   .ap-issues button { flex: none; min-height: 44px; max-width: 75vw; justify-content: center; }
   #scopes .ap-chip, .ap-actions .btn { min-height: 44px; }

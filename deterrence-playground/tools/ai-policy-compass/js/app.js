@@ -24,12 +24,12 @@ let debAll = false;
 // an AI and chip policy specialist would expect to see first. "Show all" lifts it; Full detail always shows all.
 const KEY_IDS = `us-ecra-2018 us-firrma-2018 us-bis-huawei-2019 us-bis-huawei-fdp-2020 us-chips-act-2022 us-bis-oct2022 us-bis-oct2023
 us-eo14105 us-eo14110 us-treasury-outbound-2024 us-bis-fdp-2024 us-bis-diffusion us-eo14179 us-ai-action-plan us-nspm11-2026
-us-ca-sb53-2025 us-coins-act-2025 us-eo14365 us-bis-h200-2026 us-eo14409 us-bis-remote-access-2026
+us-h20-license-2025 us-ca-sb53-2025 us-coins-act-2025 us-eo14365 us-bis-h200-2026 us-eo14409 us-bis-remote-access-2026
 cn-mic2025-2015 cn-big-fund-2014 cn-aidp-2017 cn-export-control-law-2020 cn-uel-provisions-2020 cn-algorithm-provisions-2021
 cn-genai-measures-2023 cn-mofcom-gage-2023 cn-dual-use-regs-2024 cn-mofcom-46-2024 cn-ai-labeling-measures-2025
 cn-mofcom-18-2025 cn-mofcom-61-2025 cn-gaap-2025 cn-15th-fyp-outline-2026 cn-mofcom-most-48-2026
 ru-decree490 ru-decree124 ru-decree166-cii ru-fz243-ai-law
-intl-wassenaar intl-oecd-ai-principles intl-us-russia-ear-7468 intl-nl-sme-controls intl-jp-sme-controls intl-bletchley
+intl-wassenaar intl-oecd-ai-principles intl-reaim-2023 intl-us-russia-ear-7468 intl-nl-sme-controls intl-jp-sme-controls intl-bletchley
 unga-78-265 intl-eu-ai-act intl-coe-ai-convention intl-paris-statement us-cn-ai-dialogue-2026`.split(/\s+/);
 const KEY = new Set(KEY_IDS.filter(id => DOCS.some(d => d.id === id)));
 let tlAll = false;

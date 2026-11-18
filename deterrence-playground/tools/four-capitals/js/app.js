@@ -176,10 +176,13 @@ $('end-turn').addEventListener('click', async () => {
   paintTheatre(g.s); paintZones(g.s, seeFor(g.s, g.player)); paintFog($('fog'), g.s, g.player);
   $('play').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
   $('next').disabled = true;
+  const nextLabel = $('next').textContent;
+  $('next').textContent = 'Moves playing out on the map…';   // says why the button waits, instead of a greyed label
   // The moves on the map are the hero of the month; the ladder, tracks and capitals table follow them.
   for (const w of ['cn', 'us', 'jp', 'tw']) await animateMoves(w, moves[w].actions, log);
   paintTheatre(g.s);
   paintLadder($('ladder'), g.s, g.before); paintTracks($('tracks'), g.s, g.before, true); paintCaps($('caps'), g.s, g.player, g.before);
+  $('next').textContent = nextLabel;
   $('next').disabled = false; $('next').focus();
 });
 

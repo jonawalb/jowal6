@@ -184,3 +184,6 @@
 .mg-go { position: sticky; bottom: 0; z-index: 2; background: var(--panel); border-top: 1px solid var(--rule); box-shadow: 0 -8px 16px -12px rgba(0, 0, 0, .35); gap: 6px; }
 .mg-go p { margin: 0; }
 .mg-go .btn { width: 100%; }
+/* Presentation pass 2: the next step repeated under the dice result (app.js), right-aligned like a footer. */
+.mg-adjnext { display: block; margin: 12px 0 0 auto; min-height: 44px; }
+@media (max-width: 800px) { .mg-adjnext { width: 100%; } }

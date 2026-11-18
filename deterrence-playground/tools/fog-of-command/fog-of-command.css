@@ -366,3 +366,7 @@ body.fc-setup #start-tour { display: none; }   /* the lesson banner on the setup
 @media (max-width: 640px) { body.fc-live[data-tab="units"] .fc-legend-d { display: none !important; } }
 body.fc-setup #play { display: none; }   /* no empty board under the side choice */
 .fc-delay.late { display: none; }   /* the late-orders banner under the bar says it */
+/* Presentation pass 2: on a laptop or projector the wide map is drawn at about 0.7 scale, so its labels came out
+   at 7–9 px. Larger type for the wide layout only (the phone sizes above stay); unit labels still shrink to fit. */
+@media (min-width: 641px) { .fc-name { font-size: 15px; } .fc-obj .fc-name { font-size: 17px; } .fc-zone { font-size: 14px; } .fc-ulab { font-size: 12.5px; } .fc-trk-n { font-size: 12.5px; } .fc-trk-l { font-size: 13.5px; } }
+#aar-arty dd { white-space: nowrap; }   /* "0 of 0" no longer breaks across two lines */

@@ -140,6 +140,9 @@ function doRoll(who) {
     ui.phase = who === 'p' ? 'p-res' : 'ai-res';
     if (who === 'ai' || g.over) writeHash();
     render();
+    // The next step also sits under the result, so the presenter need not scroll back up to the panel.
+    const nx = $('#mg-panel [data-next]');
+    if (nx) { const c = nx.cloneNode(true); c.classList.add('mg-adjnext'); $('#mg-adj').append(c); }
     landFx($('#mg-adj'), $('#mg-board'), ui.delta, res);
     $('#mg-adj .mg-res')?.setAttribute('tabindex', '-1');
     $('#mg-adj .mg-res')?.focus({ preventScroll: true });

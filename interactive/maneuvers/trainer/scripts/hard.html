@@ -36,6 +36,20 @@
 .mh-opts label{display:inline-flex;align-items:center;gap:5px}
 .mh-opts select{font:inherit;font-size:.8rem;padding:5px 6px;border:1px solid var(--border);border-radius:6px;background:#fff;color:var(--text);max-width:190px}
 .mh-wp[aria-pressed="true"]{background:var(--green-100);border-color:var(--green-600)}
+.mh-transport{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:10px 0 6px}
+.mh-transport .mt-speed{margin:0}
+.mh-pause[aria-pressed="true"]{background:#b5533f;border-color:#b5533f;color:#fff}
+.mh-pause[aria-pressed="true"] kbd{background:transparent;color:#fff;border-color:rgba(255,255,255,.5)}
+.mh-auto{display:inline-flex;align-items:center;gap:5px;font-size:.8rem;color:var(--text-muted);cursor:pointer}
+.mh-paused{margin:4px 0 2px;padding:7px 10px;border-radius:8px;background:#fbeee9;border:1px solid #e6b9ab;color:#7a2e1f;font-size:.84rem;font-weight:600}
+.mh-paused[hidden]{display:none}
+.mt-card.is-paused .iso-plate,#mt-card.is-paused .iso-plate{outline:3px solid #e6b9ab;outline-offset:-3px}
+.mt-panel .mh-orders{margin:10px 0 4px;padding:10px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.mh-more{flex:1 0 100%;font-size:.84rem}
+.mh-more summary{cursor:pointer;color:var(--green-800);font-weight:600;padding:4px 0}
+.mh-more-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.mh-logbox summary{cursor:pointer;font-family:var(--font-serif);color:var(--green-900);font-weight:600;margin:1em 0 .4em}
+.mh-start-top{width:100%;margin:0 0 6px}
 .mh-stop.is-armed{background:#b5533f;border-color:#b5533f;color:#fff}
 .mt-clock.is-late #mt-clock{color:#a6402f}
 .mh-prompt{font-size:.86rem;color:var(--green-800);font-weight:600}
@@ -81,7 +95,7 @@
 <main class="mt-main">
   <a class="mt-back" href="/interactive/maneuvers/trainer/">&larr; Maneuver Trainer</a>
   <h1>Maneuver Trainer: Hard</h1>
-  <p class="lede">Real time. Read the briefing, start the clock, and command: select a unit, give it an order and tap the ground or the enemy. The clock does not stop. At company level your orders go by radio and take a little while to reach the platoons, so order early.</p>
+  <p class="lede">Command in real time. Select a unit, pick an order, tap the map. Time runs several times faster than real life; pause with Space whenever you need to think, and give orders while paused.</p>
 
   <section id="mt-pick">
     <h2>Pick a scenario</h2>
@@ -115,11 +129,11 @@
     <h2>How to play</h2>
     <ol>
       <li><b>Briefing.</b> Mission, enemy, terrain, troops and time. Your troops are blue; the enemy appears in red only once one of your soldiers has seen it, and a faint red chalk ring marks where it was last seen.</li>
-      <li><b>Start the clock.</b> It runs at real time and cannot be paused. “Stop exercise” ends the run and goes to the review.</li>
+      <li><b>Start.</b> Battle time runs faster than real life (3× for a fire team, 5× for a platoon, 8× for a company), so a scenario takes a few minutes. Pause with <kbd>Space</kbd> or the Pause button and give orders while paused; 2× and 4× speed it up. With “Pause on contact” on, the clock stops the first time you see an enemy element or one of your units is pinned. “End exercise” goes to the review.</li>
       <li><b>Select a unit.</b> Tap it on the map or in the roster, or press its number key.</li>
       <li><b>Give an order.</b> Pick it from the order bar or with its key: <kbd>M</kbd> move, <kbd>S</kbd> support by fire, <kbd>A</kbd> assault, <kbd>H</kbd> hold / defend, <kbd>Y</kbd> bypass, <kbd>K</kbd> smoke, <kbd>F</kbd> call for fire, <kbd>X</kbd> breach, <kbd>B</kbd> break contact, <kbd>R</kbd> reserve, <kbd>O</kbd> observe / reconnoiter, <kbd>C</kbd> counterattack, <kbd>L</kbd> lift fire, <kbd>T</kbd> shift fire. Then tap the place or the enemy. Tapping open ground with a unit selected and no order picked is a move.</li>
       <li><b>Routes.</b> Turn on Waypoints (or hold Shift) to lay a route of several points; tap the last point again, press Enter or Send to give it. For an assault or support by fire, taps on open ground are waypoints and the tap on the enemy sends the order; tap the same spot twice to fire on an area.</li>
-      <li><b>Radio delay.</b> At company level an order reaches a platoon after a notional 10 to 20 seconds (radio, then the platoon leader issuing it). A chalk route and a countdown show the order on its way.</li>
+      <li><b>Radio delay.</b> At company level an order reaches a platoon after a notional 10 to 20 battle seconds (radio, then the platoon leader issuing it). A chalk route and a countdown show the order on its way.</li>
       <li><b>Review.</b> The score ranks the objective first, then your losses, then time. The after-action review says what happened, why, and what to sustain or improve, with links to the figures. “Show the recommended plan” draws one good answer on the map.</li>
     </ol>
     <h2>What is notional</h2>

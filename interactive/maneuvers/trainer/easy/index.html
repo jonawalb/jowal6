@@ -419,7 +419,7 @@ a.mt-game:hover{box-shadow:0 2px 12px var(--accent-glow);border-color:var(--gree
     <ol>
       <li><b>Briefing.</b> Mission, enemy, terrain, troops and time, as an order would give them. The map shows your troops in blue; the enemy appears in red only once one of your soldiers has seen it, and a faint red chalk ring marks where it was last seen.</li>
       <li><b>Plan.</b> Pick one of the offered schemes of maneuver. Each element then shows its task, its route (chalk arrows on the ground; the main effort in black, a support-by-fire position as a dashed box) and the trigger that starts or lifts it. Change any of them from the lists or by tapping a route on the map.</li>
-      <li><b>Execute.</b> Watch at 1×, 2× or 4×; you can pause but not give new orders. The roster shows each element’s strength, how suppressed it is and what it is doing; the log keeps the events.</li>
+      <li><b>Execute.</b> Battle time already runs several times faster than real life (3× fire team, 5× platoon, 8× company); 2× and 4× speed it up further. You can pause but not give new orders. The roster shows each element’s strength, how suppressed it is and what it is doing; the log keeps the events.</li>
       <li><b>Review.</b> The score ranks the objective first, then your losses, then time (“Objective secured · 2 vs 6 down · 4:35”). The after-action review says what was planned, what happened (drag the replay), why, and what to sustain or improve, with links to the figures that explain each concept. Retry replays the same run; Run again rolls new chances, so you can see that a plan gives a spread of outcomes, not a script.</li>
     </ol>
     <h2>What is notional</h2>
@@ -6137,7 +6137,7 @@ function roster(el, st, { selected = null, onSelect = null } = {}) {
     const s = Math.round(e.suppression * 100);
     return `<div class="mt-unit${e.id === selected ? " is-sel" : ""}${e.strength === 0 ? " is-out" : ""}" data-el="${e.id}"${onSelect ? ' role="button" tabindex="0"' : ""}>` +
       `<span class="mt-unit-name">${esc(e.short || e.name)}${e.ally ? " <i>(neighbour)</i>" : ""}</span><span class="mt-unit-str" title="Able to fight / strength">${e.strength}/${e.size}</span>` +
-      `<span class="mt-supp" title="Suppression ${s}%"><span style="width:${s}%"></span></span><span class="mt-unit-task">${esc(e.task || "")}${e.pinned ? " · pinned" : ""}</span></div>`;
+      `<span class="mt-supp" title="Suppression ${s}%"><span style="width:${s}%"></span></span><span class="mt-unit-task">${esc(e.task || "")}${e.pinned && !/pinned/i.test(e.task || "") ? " · pinned" : ""}</span></div>`;
   }).join("");
   if (onSelect) el.querySelectorAll("[data-el]").forEach((r) => { r.addEventListener("click", () => onSelect(r.dataset.el)); r.addEventListener("keydown", (ev) => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); onSelect(r.dataset.el); } }); });
 }
@@ -6220,6 +6220,8 @@ const BOX = { fireteam: [16, 7], platoon: [44, 16], company: [110, 34] };
 const clone = (o) => JSON.parse(JSON.stringify(o));
 const hashS = (s) => { let x = 7; for (let i = 0; i < s.length; i++) x = (x * 31 + s.charCodeAt(i)) >>> 0; return x; };
 
+// Battle seconds per real second at 1× (same rates as Hard): at 1:1 a company attack took half an hour to watch.
+const TEMPO = { fireteam: 3, platoon: 5, company: 8 };
 let G = null; // the current game: { scen, map, phase, base, assign, custom, sel, seed, sim, ... }
 
 // ---------- phases ----------
@@ -6482,8 +6484,9 @@ function loop(now) {
   const dt = last ? Math.min(0.05, (now - last) / 1000) : 1 / 60;
   last = now;
   if (!G.paused) {
-    G.sim.step(dt * G.speed);
-    G.vt += dt * G.speed;
+    const gdt = dt * G.speed * TEMPO[G.scen.level]; // battle time runs faster than real time (see TEMPO)
+    G.sim.step(gdt);
+    G.vt += gdt;
   }
   const st = (G.state = G.sim.state());
   G.vt = Math.max(st.t - 0.1, Math.min(st.t + 0.1, G.vt));

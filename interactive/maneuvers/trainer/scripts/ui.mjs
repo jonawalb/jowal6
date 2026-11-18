@@ -98,7 +98,7 @@ export function roster(el, st, { selected = null, onSelect = null } = {}) {
     const s = Math.round(e.suppression * 100);
     return `<div class="mt-unit${e.id === selected ? " is-sel" : ""}${e.strength === 0 ? " is-out" : ""}" data-el="${e.id}"${onSelect ? ' role="button" tabindex="0"' : ""}>` +
       `<span class="mt-unit-name">${esc(e.short || e.name)}${e.ally ? " <i>(neighbour)</i>" : ""}</span><span class="mt-unit-str" title="Able to fight / strength">${e.strength}/${e.size}</span>` +
-      `<span class="mt-supp" title="Suppression ${s}%"><span style="width:${s}%"></span></span><span class="mt-unit-task">${esc(e.task || "")}${e.pinned ? " · pinned" : ""}</span></div>`;
+      `<span class="mt-supp" title="Suppression ${s}%"><span style="width:${s}%"></span></span><span class="mt-unit-task">${esc(e.task || "")}${e.pinned && !/pinned/i.test(e.task || "") ? " · pinned" : ""}</span></div>`;
   }).join("");
   if (onSelect) el.querySelectorAll("[data-el]").forEach((r) => { r.addEventListener("click", () => onSelect(r.dataset.el)); r.addEventListener("keydown", (ev) => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); onSelect(r.dataset.el); } }); });
 }

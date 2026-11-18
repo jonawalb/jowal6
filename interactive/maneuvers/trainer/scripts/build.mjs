@@ -24,7 +24,7 @@ const MODES = ["easy", "medium", "hard"];
 const MODE_INFO = {
   easy: { title: "Easy", line: "Plan, then watch: pick a scheme of maneuver, set each element's task, route and trigger, and see it play out." },
   medium: { title: "Medium", line: "Turn-based orders: give every element its orders, run one turn, see what changed, order again." },
-  hard: { title: "Hard", line: "Real time: the clock runs while you give orders, and at company level the radio delays them." },
+  hard: { title: "Hard", line: "Real time with pause: battle time runs fast, you pause to think and give orders, and at company level the radio delays them." },
 };
 
 function bundle(entries) {

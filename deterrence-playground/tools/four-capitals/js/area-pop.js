@@ -2,8 +2,11 @@
 // Defend / Contest / Attack (each with its fuel a month and what it means) and your formations there. The Forces
 // step shows a compact summary whose buttons open the same popover. Same choice object as before
 // (choice.orders.stance), so the rules and costs are unchanged.
-import { SEA, AREA_LABEL, AREA_TEXT, STANCES, STANCE_LABEL, STANCE_TEXT } from '../data/theater.js';
+import { SEA, AREA_LABEL, AREA_TEXT, STANCES, STANCE_LABEL, STANCE_TEXT, SIDE } from '../data/theater.js';
 import { FBY, TYPES, UPKEEP } from '../data/formations.js';
+import { COUNTRIES, IDS } from '../data/countries.js';
+import { seen, SIGHT_LABEL } from './fog.js';
+import { COL } from './view.js';
 import { ZONE } from './view.js';
 import { isPhone, setPhoneTab } from './steps.js';
 
@@ -35,7 +38,35 @@ export function stanceSummary(G) {
   }).join('')}</div></div>`;
 }
 
+// Every capital's formations in sea area `a`, as the player sees them: own side exactly (your planned moves
+// while you decide), rivals through the fog (js/fog.js seen(): names only on an exact read, else types).
+function forcesHTML(G, a) {
+  const S = G.mapState || G.s, me = G.player;
+  const order = [me, ...IDS.filter(w => w !== me && SIDE[w] === SIDE[me]), ...IDS.filter(w => SIDE[w] !== SIDE[me])];
+  const blocks = order.map(w => {
+    const nm = `${COUNTRIES[w].short}${w === me ? ' (you)' : ''}`;
+    if (SIDE[w] === SIDE[me]) {
+      const list = S.units[w].filter(u => u.at === a && u.str > 0);
+      if (!list.length) return '';
+      const tot = list.reduce((t, u) => t + u.str, 0);
+      return `<div class="k4-pf" style="--c:${COL[w]}"><p class="k4-pfh"><b>${esc(nm)}</b><span>strength ${n1(tot)}</span></p><ul>${list.map(u => { const f = FBY[u.id]; return `<li><span title="${esc(TYPES[f.type].text)}">${esc(f.name)}</span><small>${TYPES[f.type].label} · ${n1(u.str)}${u.ready < 100 ? ` · ready ${u.ready}%` : ''}</small></li>`; }).join('')}</ul></div>`;
+    }
+    const r = seen(G.s, me, w, a);
+    if (!r) return '';
+    const how = r.exact ? `strength ${n1(r.lo)}` : `about ${r.lo}–${r.hi} · ${SIGHT_LABEL[r.lvl].toLowerCase()}`;
+    return `<div class="k4-pf" style="--c:${COL[w]}"><p class="k4-pfh"><b>${esc(nm)}</b><span>${how}</span></p><ul>${r.types.map(t => `<li><span>${t.name ? esc(FBY[t.id].name) : `${esc(t.type)} formation`}</span><small>${esc(t.type)}</small></li>`).join('')}</ul></div>`;
+  }).filter(Boolean);
+  return `<p class="k4-sub">Forces here</p>${blocks.length ? blocks.join('') : '<p class="fine">No forces here.</p>'}`;
+}
+
 function popHTML(G, a) {
+  if (!(G.mapMode === 'plan' && stanceAreas(G).includes(a))) {
+    const c = (G.mapState || G.s).ctrl?.[a];
+    const hold = c === 'red' ? 'China holds' : c === 'blue' ? 'Coalition holds' : c === 'contested' ? 'Contested' : 'Nobody holds it';
+    return `<div class="k4-poph"><b id="pop-t">${AREA_LABEL[a]}</b><button type="button" class="x" data-popclose aria-label="Close">×</button></div>
+    <p class="fine k4-popx">${esc(hold)}. ${esc(AREA_TEXT[a])}</p>${forcesHTML(G, a)}
+    <p class="fine muted">Rival forces are what your intelligence sees: names only on an exact read.</p>`;
+  }
   const cur = stanceOf(G, a), us = here(G, a), k = us.length, left = Math.max(0, G.L.rows.fuel.left), sd = selfDef(G);
   const opts = STANCES.map(x => {
     const d = k * (UPKEEP.fuel[x] - UPKEEP.fuel[cur]), short = x !== cur && d > left + 1e-9, off = sd && x !== 'defend';
@@ -43,13 +74,14 @@ function popHTML(G, a) {
       <b>${STANCE_LABEL[x]}</b><small>${k ? `${n1(k * UPKEEP.fuel[x])} fuel/mo` : 'no upkeep'}${short ? ' · <span class="bad">can’t afford</span>' : ''}</small></button>`;
   }).join('');
   const units = us.map(u => { const f = FBY[u.id]; return `<li><span title="${esc(TYPES[f.type].text)}">${esc(f.name)}</span> <span class="muted">${TYPES[f.type].label} · str ${n1(u.str)} · ready ${u.ready}</span></li>`; }).join('');
-  return `<div class="k4-poph"><b id="pop-t">${AREA_LABEL[a]}: your stance</b><button type="button" class="x" data-popclose aria-label="Close">×</button></div>
+  return `<div class="k4-poph"><b id="pop-t">${AREA_LABEL[a]}</b><button type="button" class="x" data-popclose aria-label="Close">×</button></div>
     <p class="fine k4-popx">${esc(AREA_TEXT[a])}</p>
+    ${forcesHTML(G, a)}
+    <p class="k4-sub">Your stance here</p>
     <div class="k4-popseg" role="group" aria-labelledby="pop-t">${opts}</div>
     <p class="fine"><b>${STANCE_LABEL[cur]}:</b> ${esc(STANCE_TEXT[cur])}</p>
     ${sd ? '<p class="fine bad">No survival-threatening situation declared: your forces hold to Defend.</p>' : ''}
-    <p class="k4-sub">Your formations here <span class="muted">(after this month’s orders)</span></p>
-    ${units ? `<ul class="k4-popu">${units}</ul>` : '<p class="fine">None. A stance only costs fuel where you have formations.</p>'}`;
+    ${units ? '' : '<p class="fine">You have no formations here: a stance only costs fuel where you do.</p>'}`;
 }
 
 function place(a) {
@@ -66,13 +98,13 @@ function place(a) {
 
 /** Open the popover for area `a`; `focus` puts keyboard focus on its selected stance. */
 export function openPop(a, focus = true) {
-  const G = getG(); if (!G || !stanceAreas(G).includes(a)) return;
+  const G = getG(); if (!G || !SEA.includes(a)) return;
   open = a;
   const pop = $('area-pop');
   pop.innerHTML = popHTML(G, a); pop.hidden = false; pop.setAttribute('aria-labelledby', 'pop-t');
   document.querySelectorAll('#theatre [data-area]').forEach(z => z.setAttribute('aria-expanded', String(z.dataset.area === a)));
   place(a);
-  if (focus) pop.querySelector('[aria-pressed="true"]')?.focus({ preventScroll: true });
+  if (focus) (pop.querySelector('[aria-pressed="true"]') || pop.querySelector('[data-popclose]'))?.focus({ preventScroll: true });
 }
 export function closePop(refocus = false) {
   if (!open) return;

@@ -105,6 +105,7 @@ function begin(start) {
 function paintPlan() {
   const t = (g.L || ledger(g.s, g.player, g.choice)).trial;
   updateControl(t);
+  g.mapState = t; g.mapMode = 'plan';
   paintZones(t, seeFor(g.s, g.player, t), zoneStances(g));
   refreshPop();
 }
@@ -171,6 +172,7 @@ $('end-turn').addEventListener('click', async () => {
   $('log-n').textContent = `(${$('log').children.length})`;
   $('log-d').open = !document.body.classList.contains('k4-simple') || document.body.classList.contains('k4-learning');
   $('next').textContent = g.s.over ? 'See how it ended' : `Go to ${P.months[g.s.turn]}`;
+  g.mapState = g.s; g.mapMode = 'result';
   paintTheatre(g.s); paintZones(g.s, seeFor(g.s, g.player)); paintFog($('fog'), g.s, g.player);
   $('play').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
   $('next').disabled = true;

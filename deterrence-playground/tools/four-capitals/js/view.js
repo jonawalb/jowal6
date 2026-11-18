@@ -50,13 +50,14 @@ export function paintZones(s, see, stances = null) {
     const c = s.ctrl[a], st = stances?.[a];
     const hold = c === 'red' ? 'China holds' : c === 'blue' ? 'Coalition holds' : c === 'contested' ? 'Contested' : '';
     const seen = [['cn', 'China'], ['us', 'U.S.'], ['jp', 'Japan'], ['tw', 'Taiwan']].map(([w, n]) => { const r = see(w, a); return r ? `${n} ${r.exact ? label(r) : 'about ' + label(r)}` : ''; }).filter(Boolean).join(', ');
-    const g = st ? el('g', { class: 'k4-zone', 'data-area': a, tabindex: 0, role: 'button', 'aria-expanded': 'false',
-      'aria-label': `${AREA_LABEL[a]} sea area. ${hold ? hold + '. ' : ''}${seen ? seen + '. ' : ''}Your stance: ${st}. Change stance` }, zones) : zones;
-    if (st) el('rect', { x: x - 66, y: y - 40, width: 132, height: 84, rx: 18, fill: 'transparent', class: 'k4-zhit' }, g);
+    // every sea area is a button: it opens the forces list (and, while you plan, your stance) in js/area-pop.js
+    const g = el('g', { class: 'k4-zone', 'data-area': a, tabindex: 0, role: 'button', 'aria-expanded': 'false',
+      'aria-label': `${AREA_LABEL[a]} sea area. ${hold ? hold + '. ' : ''}${seen ? seen + '. ' : ''}${st ? `Your stance: ${st}. ` : ''}Show forces here` }, zones);
+    el('rect', { x: x - 66, y: y - 40, width: 132, height: 84, rx: 18, fill: 'transparent', class: 'k4-zhit' }, g);
     el('ellipse', { cx: x, cy: y, rx: 58, ry: 34, fill: fill[c], 'fill-opacity': c === 'empty' ? 0 : 0.1, stroke: c === 'contested' ? 'var(--warn)' : fill[c] === 'transparent' ? 'var(--muted)' : fill[c], 'stroke-dasharray': '5 4', 'stroke-opacity': 0.8, class: 'k4-zring' }, g);
     const nm = el('text', { x, y: y - 12, 'font-size': 11, 'font-weight': 700, 'text-anchor': 'middle', fill: 'var(--ink)', 'letter-spacing': '.08em' }, g);
     nm.textContent = NAME[a];
-    if (st) el('tspan', { fill: 'var(--mine, var(--ink))', 'letter-spacing': '0', 'font-weight': 600 }, nm).textContent = ` · ${st} ▾`;
+    el('tspan', { fill: 'var(--mine, var(--ink))', 'letter-spacing': '0', 'font-weight': 600 }, nm).textContent = st ? ` · ${st} ▾` : ' ▾';
     // Exact strengths as discs; ranges (fog of war) as dashed pills.
     const parts = [['cn', 'var(--k-cn)'], ['us', 'var(--k-us)'], ['jp', 'var(--k-jp)'], ['tw', 'var(--k-tw)']].map(([w, col]) => [w, col, see(w, a)]).filter(([, , r]) => r);
     const wd = parts.map(([, , r]) => (r.exact ? 26 : 8 + 6.4 * label(r).length));

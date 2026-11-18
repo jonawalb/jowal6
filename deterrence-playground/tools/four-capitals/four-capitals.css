@@ -368,6 +368,14 @@ body:has(#start:not([hidden])) #tour-btn { display: none; }
 .k4-poph { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
 .k4-poph .x { background: none; border: 0; font-size: 22px; line-height: 1; cursor: pointer; color: var(--muted); min-width: 40px; min-height: 40px; margin-right: -8px; }
 .k4-pop .fine { margin: 0 0 6px; }
+.k4-pop { max-height: min(70vh, 460px); overflow: auto; }
+.k4-pf { border-left: 3px solid var(--c); padding: 2px 0 2px 8px; margin: 0 0 8px; }
+.k4-pfh { display: flex; justify-content: space-between; gap: 8px; margin: 0 0 2px; }
+.k4-pfh b { color: var(--c); }
+.k4-pfh span { font: 400 11px var(--mono); color: var(--muted); }
+.k4-pf ul { list-style: none; margin: 0; padding: 0; }
+.k4-pf li { display: flex; justify-content: space-between; gap: 8px; padding: 2px 0; border-top: 1px dotted var(--rule); }
+.k4-pf li small { font: 400 11px var(--mono); color: var(--muted); white-space: nowrap; }
 .k4-popx { color: var(--muted); }
 .k4-popseg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; margin: 2px 0 6px; }
 .k4-popseg button { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 5px 3px; min-height: 44px; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel); color: var(--ink); cursor: pointer; font: 600 13px var(--body); }

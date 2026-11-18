@@ -16,7 +16,7 @@ export const SCENARIOS = [
     basis: 'The same loss, ending after six months. The model returns output to normal at once when the shock ends, which flatters recovery after real damage.' },
   { id: 'kr-hbm', label: 'Korea HBM disruption (SK hynix and Samsung)', status: 'stress',
     hits: [{ st: 'hbm', a: 'South Korea', c: 100 }],
-    basis: 'SK hynix and Samsung held 79% of HBM revenue in 3Q 2025 (Counterpoint). Shares are by company headquarters; the tool treats their output as Korean. Hypothetical.' },
+    basis: 'SK hynix and Samsung held 83% of HBM revenue in 2Q 2026 (Counterpoint). Shares are by company headquarters; the tool treats their output as Korean. Hypothetical.' },
   { id: 'jp-resist', label: 'Japanese photoresist halt', status: 'stress',
     hits: [{ st: 'resist', a: 'Japan', c: 100 }],
     basis: 'Japanese producers hold about 91% of the photoresist market (Nikkei via TrendForce). No such halt has been announced.' },

@@ -16,8 +16,8 @@ export const CONTROLS = [
    "resist"
   ],
   "kind": "licence",
-  "status": "lifted 23 Mar 2023 (bulk licences restored)",
-  "text": "Aimed at South Korea, not China; included as background, as a precedent for a supplier government using licensing on chip materials. From 4 July 2019 Japanese exporters needed an individual export licence for fluorinated polyimide, resist and hydrogen fluoride (and related technology) going to South Korea, as the bulk licences for those items no longer applied. METI also opened public comment on removing South Korea from its \"white countries\" list. On 16 Mar 2023, after a Japan–Korea export control dialogue, METI decided to revise the controls; from 23 Mar 2023 the three items again fell under the special general bulk export licence, \"as was the case prior to July 2019\".",
+  "status": "lifted 16 Mar 2023 (bulk licences restored)",
+  "text": "Aimed at South Korea, not China; included as background, as a precedent for a supplier government using licensing on chip materials. From 4 July 2019 Japanese exporters needed an individual export licence for fluorinated polyimide, resist and hydrogen fluoride (and related technology) going to South Korea, as the bulk licences for those items no longer applied. METI also opened public comment on removing South Korea from its \"white countries\" list. On 16 Mar 2023, after a Japan–Korea export control dialogue, METI restored the special general bulk licence for the three items \"as was the case prior to July 2019\".",
   "url": "https://web.archive.org/web/2019/https://www.meti.go.jp/english/press/2019/0701_001.html",
   "verified": true
  },
@@ -750,7 +750,7 @@ export const CONTROLS = [
   "kind": "statute",
   "status": "bill: H.R. 3447 ordered reported 42–0 by House Foreign Affairs, 26 Mar 2026; not enacted",
   "title": "Chip Security Act",
-  "text": "As introduced, would direct Commerce to require chip security mechanisms that implement location verification on covered integrated circuit products (e.g., advanced computing chips) before export, reexport or in-country transfer abroad, and require licensees to report credible information of diversion or tampering to BIS. S. 1705 is in the Senate Banking Committee.",
+  "text": "Would direct Commerce to require chip security mechanisms that implement location verification on covered integrated circuit products (e.g., advanced computing chips) before export, reexport or in-country transfer abroad, and require licensees to report credible information of diversion or tampering to BIS. S. 1705 is in the Senate Banking Committee.",
   "url": "https://www.congress.gov/bill/119th-congress/house-bill/3447",
   "verified": true
  },
@@ -1163,6 +1163,22 @@ export const CONTROLS = [
   "verified": true
  },
  {
+  "date": "2025-10-09",
+  "eff": "",
+  "who": "United States (Congress)",
+  "bloc": "us",
+  "ref": "GAIN AI Act of 2025: subtitle H (secs. 6081–6083) of the Senate-passed FY2026 NDAA, S. 2296 (passed the Senate 9 Oct 2025); not in the enacted NDAA, Pub. L. 119-60 (S. 1071, 18 Dec 2025)",
+  "nodes": [
+   "accel"
+  ],
+  "kind": "statute",
+  "status": "not enacted: in the Senate NDAA, not in Pub. L. 119-60",
+  "title": "Guaranteeing Access and Innovation for National Artificial Intelligence Act of 2025 (GAIN AI Act)",
+  "text": "Would have added ECRA section 1758A: a licence requirement for advanced integrated circuits, except to Country Groups A:4, A:5 and A:6, and, for exports to arms-embargoed countries or countries of concern, a certification that U.S. persons first had a right of first refusal (notice of the sale terms and at least 15 business days to buy). Its sense of Congress called for denying licences for chips with total processing power of 4,800 or more. The enacted NDAA text contains no GAIN AI provision.",
+  "url": "https://www.govinfo.gov/content/pkg/BILLS-119s2296es/html/BILLS-119s2296es.htm",
+  "verified": true
+ },
+ {
   "date": "2025-11-01",
   "eff": "",
   "who": "United States (White House)",
@@ -1439,9 +1455,15 @@ export const CONTROLS = [
   "kind": "tariff",
   "title": "Notice of Action: China's Acts, Policies, and Practices Related to Targeting of the Semiconductor Industry for Dominance",
   "text": "USTR found China's targeting of the semiconductor industry actionable under Section 301 and is \"taking tariff action now on semiconductors from China, with an initial tariff level of 0 percent, increasing in 18 months on June 23, 2027, to a rate to be announced not fewer than 30 days prior to that date\". Effective 23 Dec 2025; published 29 Dec 2025.",
-  "status": "in force; 0% until 23 Jun 2027",
+  "status": "in force; additional duty 0% until 23 Jun 2027, on top of the existing 50% Section 301 tariff",
   "url": "https://www.federalregister.gov/documents/2025/12/29/2025-23912/notice-of-action-chinas-acts-policies-and-practices-related-to-targeting-of-the-semiconductor",
-  "verified": true
+  "verified": true,
+  "later": [
+   [
+    "2027-06-23",
+    "in force; rate increase due 23 Jun 2027 (USTR to announce the rate at least 30 days before)"
+   ]
+  ]
  },
  {
   "date": "2026-01-07",
@@ -1705,7 +1727,7 @@ export const CONTROLS = [
   ]
  },
  {
-  "date": "2026-11-05",
+  "date": "2026-11-09",
   "eff": "2026-11-09",
   "who": "United States (BIS)",
   "bloc": "us",
@@ -1742,7 +1764,7 @@ export const CONTROLS = [
   ],
   "kind": "suspend",
   "title": "",
-  "text": "Continues the suspension of MOFCOM/GACC 2025 Nos. 55, 56, 57 and 58 and MOFCOM 2025 Nos. 61 and 62 from 11 Nov 2026 to 10 Jan 2027. These include the No. 61 extraterritorial rare-earth rule with its 14 nm / 256-layer case-by-case review. The No. 70 suspension therefore did not lapse.",
+  "text": "Continues the suspension of MOFCOM/GACC 2025 Nos. 55, 56, 57 and 58 and MOFCOM 2025 Nos. 61 and 62 from 11 Nov 2026 to 10 Jan 2027. These include the No. 61 extraterritorial rare-earth rule with its 14 nm / 256-layer case-by-case review. So the October 2025 rare-earth and related controls (Nos. 55–57, 61 and 62 in this tool) stay suspended to 10 Jan 2027.",
   "status": "in force",
   "url": "https://www.mofcom.gov.cn/zcfb/zc/art/2026/art_2120417f1e21472bbe3efafdfcbd3f43.html",
   "verified": true,

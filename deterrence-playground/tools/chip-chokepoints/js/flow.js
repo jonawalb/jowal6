@@ -62,7 +62,7 @@ export function drawFlow(el, chain, ctx) {
       const segs = rows.map(r => {
         const h = hits.filter(x => x.st === s.id && (x.a === r.c || (s.firmCountry && s.firmCountry[x.a] === r.c)));
         const cut = h.reduce((a, x) => a + (x.a === r.c ? x.c : (s.firms[x.a] / r.v) * x.c), 0);
-        const lab = r.v >= 11 ? `<span class="sg-t">${esc(short(r.c))} ${fmt(r.v)}%</span>` : '';
+        const lab = r.v >= 11 ? `<span class="sg-t" data-full="${esc(short(r.c))} ${fmt(r.v)}%" data-v="${fmt(r.v)}%">${esc(short(r.c))} ${fmt(r.v)}%</span>` : '';
         const hatch = cut > 0 ? `<i class="cut" style="width:${Math.min(100, cut)}%"></i>` : '';
         return `<span class="sg" style="flex-basis:${r.v}%;background:${colorOf(r.c)}" data-c="${esc(r.c)}" data-v="${r.v}">${hatch}${lab}</span>`;
       }).join('');
@@ -80,6 +80,19 @@ export function drawFlow(el, chain, ctx) {
     if (nHidden > 0) html += `<li class="more-row simple-only"><button type="button" class="linkbtn" data-ph="${ph.id}" aria-expanded="${open}">${open ? `Show fewer ${esc(ph.label.toLowerCase())} stages` : `Show all ${sts.length} stages`}</button></li>`;
   }
   el.innerHTML = html;
+  fitLabels(el);
+  if (!fitted.has(el) && typeof ResizeObserver !== 'undefined') { fitted.add(el); new ResizeObserver(() => fitLabels(el)).observe(el); }
+}
+
+// Segment labels that do not fit fall back to the value alone, then hide (the tooltip and stage card still give them).
+const fitted = new WeakSet();
+function fitLabels(el) {
+  el.querySelectorAll('.sg-t').forEach(t => {
+    t.textContent = t.dataset.full; t.hidden = false;
+    const w = t.parentElement.clientWidth;
+    if (!w) return;
+    if (t.scrollWidth + 2 > w) { t.textContent = t.dataset.v; if (t.scrollWidth + 2 > w) t.hidden = true; }
+  });
 }
 
 const fmt = v => (v < 10 ? (Math.round(v * 10) / 10).toString() : Math.round(v).toString());

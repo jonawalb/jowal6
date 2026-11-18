@@ -29,6 +29,18 @@ const ctlItem = (c, showNodes) => `<li data-b="${c.bloc}" data-st="${esc(c.statu
   ${showNodes ? `<br><span class="fine">Targets: ${c.nodes.map(n => esc((CHAIN.stages.find(s => s.id === n) || { short: n }).short)).join(', ')}</span>` : ''}
   ${c.url ? ` <a href="${c.url}" target="_blank" rel="noopener">${esc(c.urlLabel || 'Source')}</a>` : ''}</span></li>`;
 
+const OFF = /pending|proposed|bill|not enacted|superseded|withdrawn|moot|rescind|removed|unverified|reported|unknown|expired|lapsed|ran to|ended|lifted|background/i;
+
+// Landmark measures per stage (citation prefixes), shown first in the Simple stage card.
+const NL23 = 'Regeling geavanceerde productieapparatuur voor halfgeleiders (Regeling van 23 juni 2023';
+const KEY = {
+  euv: [NL23, '88 FR 73424', '89 FR 96790'], duv: [NL23, 'Regeling van 2 september 2024', '89 FR 96790'],
+  hbm: ['89 FR 96790', '91 FR 1684', 'CAC Cybersecurity Review Office'],
+  foundry: ['87 FR 62186', '85 FR 83416', '90 FR 5298'], accel: ['87 FR 62186', '88 FR 73458', '91 FR 1684'],
+  ga: ['MOFCOM/GACC Announcement 2023 No. 23', 'MOFCOM Announcement 2024 No. 46', 'MOFCOM Announcement 2025 No. 72'],
+  ge: ['MOFCOM/GACC Announcement 2023 No. 23', 'MOFCOM Announcement 2024 No. 46', 'MOFCOM Announcement 2025 No. 72'],
+};
+
 export function renderCard(el, id, loss, shockLabel) {
   const s = CHAIN.stages.find(x => x.id === id);
   if (!s) { el.innerHTML = ''; return; }
@@ -37,6 +49,12 @@ export function renderCard(el, id, loss, shockLabel) {
   const firms = s.firms ? Object.entries(s.firms).sort((a, b) => b[1] - a[1]) : [];
   const ctl = ctlForStage(id).sort((a, b) => (a.date < b.date ? 1 : -1));
   const n = NOTIONAL[id];
+  // Simple view: the landmark measures for this stage where named in KEY, then measures in force that target the
+  // fewest stages; three shown, newest first.
+  const off = c => (OFF.test(c.status) || c.kind === 'suspend' ? 1 : 0);
+  const pin = c => ((KEY[id] || []).some(p => c.ref.startsWith(p)) ? 0 : 1);
+  const key = [...ctl].sort((a, b) => pin(a) - pin(b) || off(a) - off(b) || a.nodes.length - b.nodes.length || (a.date < b.date ? 1 : -1))
+    .slice(0, 3).sort((a, b) => (a.date < b.date ? 1 : -1));
   el.innerHTML = `<div class="card-h"><h3>${esc(s.label)}</h3>${loss ? `<span class="left" data-s="${loss > 0.5 ? 'bad' : 'warn'}" title="${esc(shockLabel || '')}">${Math.round((1 - loss) * 100)}% left in the selected shock</span>` : ''}</div>
     ${loss && shockLabel ? `<p class="fine shock-n">Shock: ${esc(shockLabel)}</p>` : ''}
     <p class="fine full-only">${esc(s.metric)}, data year ${esc(String(s.year))}. Source: ${link(s.src)}.${h ? ` HHI ${h.toLocaleString('en-US')}.` : ''}</p>
@@ -51,8 +69,8 @@ export function renderCard(el, id, loss, shockLabel) {
     </div>
     <div class="full-only"><p class="eyebrow mt-s">Controls aimed at this stage (${ctl.length})</p>
     ${ctl.length ? `<ol class="ctl">${ctl.map(c => ctlItem(c, false)).join('')}</ol>` : '<p class="fine">No export control in this tool targets this stage directly.</p>'}</div>
-    <div class="simple-only">${ctl.length ? `<p class="eyebrow mt-s">Latest controls aimed at this stage</p>
-      <ol class="ctl brief">${ctl.slice(0, 3).map(c => `<li data-b="${c.bloc}"><span class="d">${esc(c.date)}</span><span>${ctlHead(c)}</span></li>`).join('')}</ol>
+    <div class="simple-only">${ctl.length ? `<p class="eyebrow mt-s">Main controls aimed at this stage</p><p class="fine">In force and most targeted at this stage first.</p>
+      <ol class="ctl brief">${key.map(c => `<li data-b="${c.bloc}"><span class="d">${esc(c.date)}</span><span>${ctlHead(c)}</span></li>`).join('')}</ol>
       <button type="button" class="linkbtn" data-act="all-ctl">All ${ctl.length} control${ctl.length === 1 ? '' : 's'} for this stage, with sources and notional assumptions (Full detail)</button>`
       : '<p class="fine">No export control in this tool targets this stage directly. Sources and notional model assumptions are in Full detail.</p>'}</div>`;
 }
@@ -94,15 +112,15 @@ export function renderSearchSimple(el, q) {
 
 export function renderHeat(table, selected, onPick, sort = 0, onSort = () => {}) {
   const cols = ['United States', 'Taiwan', 'South Korea', 'Japan', 'Netherlands', 'Europe', 'China'];
-  const lab = c => ({ 'United States': 'U.S.', 'South Korea': 'Korea', Netherlands: 'NL', Europe: 'Europe/EU' }[c] || c);
+  const lab = c => ({ 'United States': 'U.S.', 'South Korea': 'Korea', Netherlands: 'NL', Europe: 'Europe' }[c] || c);
   const hh = s => (Object.keys(s.shares || {}).length ? hhi(s.shares) : -1);
   const stages = sort ? [...CHAIN.stages].sort((a, b) => sort * (hh(b) - hh(a))) : CHAIN.stages;
   const sortLab = sort === 1 ? 'highest first' : sort === -1 ? 'lowest first' : 'chain order';
   let h = `<thead><tr><th>Stage</th><th class="c">Year</th>${cols.map(c => `<th class="c">${lab(c)}</th>`).join('')}<th class="c">Rest</th><th class="c" aria-sort="${sort === 1 ? 'descending' : sort === -1 ? 'ascending' : 'none'}"><button type="button" class="sortbtn" id="hhi-sort" title="Sort by HHI">HHI <span aria-hidden="true">${sort === 1 ? '▼' : sort === -1 ? '▲' : '↕'}</span><span class="vh">, sorted ${sortLab}; activate to change</span></button></th><th class="c">Controls</th></tr></thead><tbody>`;
   for (const s of stages) {
-    // SIA/BCG label its European column "EU"; it shares the Europe column here.
+    // SIA/BCG label its European column "EU"; it shares the Europe column here, with the UK and Germany.
     const sh = { ...(s.shares || {}) };
-    if (sh['European Union'] != null) { sh.Europe = (sh.Europe || 0) + sh['European Union']; delete sh['European Union']; }
+    for (const k of ['European Union', 'United Kingdom', 'Germany']) if (sh[k] != null) { sh.Europe = (sh.Europe || 0) + sh[k]; delete sh[k]; }
     const tot = Object.values(sh).reduce((a, b) => a + b, 0);
     const listed = cols.reduce((a, c) => a + (sh[c] || 0), 0);
     const cell = v => `<td class="c" style="background:color-mix(in srgb, var(--bad) ${Math.round(Math.min(100, v) * 0.75)}%, transparent)">${v ? (v < 10 ? v.toFixed(1) : v.toFixed(0)) : '·'}</td>`;
@@ -135,7 +153,7 @@ export function renderMethod(el) {
 export function renderSources(el, citeEl) {
   const main = Object.values(CHAIN.sources).map(s => [s.title, s.url]);
   el.innerHTML = main.map(([t, u]) => `<li><a href="${u}" target="_blank" rel="noopener">${esc(t)}</a></li>`).join('')
-    + `<li>Control measures: see the timeline above; every entry links to the official text, or to press where flagged unverified. All sources accessed ${esc(CHAIN.retrieved)}.</li>`;
+    + `<li>Control measures: see the timeline above; every entry links to the official text, or to press where flagged unverified. Sources accessed 16–18 November 2026.</li>`;
   citeEl.textContent = `Walberg, Jonathan. "AI Chip Chokepoint Twin." Interactive Deterrence, jwalberg.com, ${CHAIN.retrieved}.`;
 }
 export { BLOC };

@@ -79,7 +79,9 @@ function writeHash() {
     if (state.v === 'debates' && state.s !== 'all') h.set('s', state.s);
     const a = encodeAnswers(state.a, AX);
     if (a) h.set('a', a);
-    history.replaceState(null, '', '#' + h.toString().replace(/%2C/g, ',').replace(/%3A/g, ':'));
+    // The opening view (timeline on the default document, nothing filtered) keeps a clean address.
+    const plain = h.toString() === `v=timeline&d=${DEF().d}`;
+    history.replaceState(null, '', plain ? location.pathname + location.search : '#' + h.toString().replace(/%2C/g, ',').replace(/%3A/g, ':'));
   }, 120);
 }
 

@@ -68,7 +68,7 @@ export const POLICY = [
   { id: 'p-2026-11', date: '2026-11-09', t: 'Affiliates rule suspension extended',
     x: 'Extends the suspension of the 50 percent affiliates rule through Jan. 10, 2027.',
     src: [['91 FR 70789 (Federal Register)', 'https://www.federalregister.gov/documents/2026/11/09/2026-22793/extension-of-the-suspension-of-expansion-of-end-user-controls-for-affiliates-of-certain-listed']] },
-  { id: 'p-2026-11cn', date: '2026-11-09', k: 'PRC countermeasure', t: 'China extends its 2025 export-control suspensions to 10 Jan 2027; the gallium–germanium ban suspension ends 27 Nov 2026',
+  { id: 'p-2026-11cn', date: '2026-11-09', k: 'PRC countermeasure', t: 'China extends its 2025 export-control suspensions to Jan. 10, 2027; the gallium–germanium ban suspension ends Nov. 27, 2026',
     x: 'MOFCOM Announcement 2025 No. 72 (Nov. 9, 2025) suspends paragraph 2 of MOFCOM Announcement 2024 No. 46, the presumptive denial of exports to the United States of gallium, germanium, antimony and superhard-material dual-use items, from Nov. 9, 2025 until Nov. 27, 2026. MOFCOM and GAC Announcement 2026 No. 58 (Nov. 9, 2026) keeps MOFCOM/GAC Announcements 2025 Nos. 55, 56, 57 and 58 and MOFCOM Announcements 2025 Nos. 61 and 62 suspended from Nov. 11, 2026 to Jan. 10, 2027.',
     src: [['MOFCOM Announcement 2025 No. 72 (Chinese)', 'https://www.mofcom.gov.cn/zwgk/zcfb/art/2025/art_5c68985a6b1a46778e2e8dbff1bb1601.html'],
           ['MOFCOM and GAC Announcement 2026 No. 58 (Chinese)', 'https://www.mofcom.gov.cn/zcfb/zc/art/2026/art_2120417f1e21472bbe3efafdfcbd3f43.html']] },
@@ -108,6 +108,15 @@ export const POLICY = [
     src: [['NVIDIA 10-Q for quarter ended Apr. 26, 2026 (SEC)', 'https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm'],
           ['NVIDIA 10-Q for quarter ended July 26, 2026 (SEC)', 'https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm'],
           ['NVIDIA CFO commentary, Q3 FY2027 (8-K exhibit filed Nov. 17, 2026, SEC)', 'https://www.sec.gov/Archives/edgar/data/1045810/000104581026000088/q3fy27cfocommentary.htm']] },
+
+  { id: 'p-2025-04amd', date: '2025-04-15', k: 'License requirement (no Federal Register rule)', t: 'License required for AMD MI308 exports to China',
+    x: 'AMD reported on Apr. 15, 2025 that it had "completed its initial assessment of a new license requirement implemented by the United States government" for exports to China (including Hong Kong and Macau) and D:5 countries, that "The Export Control applies to the Company\'s MI308 products", and that it could incur "charges of up to approximately $800 million in inventory, purchase commitments and related reserves" (8-K). Its 2025 annual report says it recorded about $800 million of MI308 charges in the second quarter of 2025, was "granted some licenses by the U.S. government that allow us to ship MI308 products to certain China-based customers", began shipping in the fourth quarter and reversed about $360 million of the charges, and that U.S. officials expect the government to receive 15 percent of licensed MI308 revenue from China, with no regulation published.',
+    src: [['AMD 8-K, Apr. 15, 2025 (SEC)', 'https://www.sec.gov/Archives/edgar/data/2488/000000248825000039/amd-20250415.htm'],
+          ['AMD 10-K/A for fiscal 2025 (SEC)', 'https://www.sec.gov/Archives/edgar/data/2488/000000248826000021/amd-20251227.htm']] },
+  { id: 'p-2025-07my', date: '2025-07-14', k: 'Transit-country control (Malaysia)', t: 'Malaysia requires a permit to export or tranship U.S.-origin AI chips',
+    x: 'Malaysia\'s trade ministry announced that "effective immediately, all exports, tranships and transits of high-performance AI chips of US origin are subject to a Strategic Trade Permit", using the catch-all control in Section 12 of the Strategic Trade Act 2010, while it reviews adding the chips to its Strategic Items List. On Nov. 13, 2026 MITI added that "Bringing AI chips into Malaysia does not currently require a permit or a licence" and said it was checking with customs whether chips brought in by Speedmatrix, a Malaysian affiliate of Singapore-based Megaspeed International, had been re-exported. Malaysia is a transit point in three of this tool\'s DOJ matters.',
+    src: [['MITI press statement, July 14, 2025 (PDF)', 'https://www.miti.gov.my/miti/resources/Media%20Release/%5BFINAL%5D_MITI_Press_Stmt_Malaysia_Regulates_Trade_of_US_AI_Chips_2025-07-14.pdf'],
+          ['MITI statement on Megaspeed International and Speedmatrix, Nov. 13, 2026 (PDF)', 'https://www.miti.gov.my/miti/resources/Speech/MEDIA_STATEMENT_13112026.pdf']] },
 
 ];
 

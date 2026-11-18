@@ -149,9 +149,9 @@ export const CASES = [
 "hubs": "Front/alias CSCC on NUDT campus; transfers to Phytium.",
 "value_usd": 140000000,
 "penalty": "DOJ criminal penalties of nearly $118M plus BIS civil penalty of $95M (with cross-credits); aggregate net >$140M incl. $45M forfeiture",
-"status": "plea agreement (court acceptance not confirmed)",
+"status": "plea agreement; court acceptance not confirmed",
 "status_date": "2025-07-28",
-"status_note": "Company agreed to plead guilty to one count of conspiracy (criminal information) and settled with BIS the same day; the dollar figure shown is the aggregate net penalty. Cadence's 10-Q for the quarter ended Sept. 30, 2026 says it 'entered into a plea agreement with the DOJ pursuant to which Cadence agreed to plead guilty to one count' and paid aggregate net penalties and forfeitures of $140.6 million in the quarter ended Sept. 30, 2025; it does not report court acceptance or sentencing. No later DOJ release found as of 2026-11-18.",
+"status_note": "Company agreed to plead guilty to one count of conspiracy (criminal information) and settled with BIS the same day; the dollar figure shown is the aggregate net penalty. Cadence's 10-Q for the quarter ended Sept. 30, 2026 says it 'entered into a plea agreement with the DOJ pursuant to which Cadence agreed to plead guilty to one count' and paid aggregate net penalties and forfeitures of $140.6 million in the quarter ended Sept. 30, 2025; it does not report court acceptance or sentencing. No later DOJ release found as of 2026-11-18. The plea agreement asks the court to accept the plea and impose sentence the same day, and Cadence's filings report paying $140.6M in penalties and forfeitures in the quarter ended Sept. 30, 2025 and refer to \"our probation\", which suggests the plea was accepted; no court record of acceptance was found as of Nov. 18, 2026.",
 "sources": [
 {
 "label": "DOJ OPA press release, Jul 28, 2025",
@@ -324,7 +324,7 @@ export const CASES = [
 "penalty": null,
 "status": "charged",
 "status_date": "2025-12-08",
-"status_note": "Charged on criminal complaints, per the DOJ release (\"A criminal complaint is a formal accusation\"), announced Dec. 8, 2025; Yuan was arrested Nov. 28 and Gong Dec. 3, 2025, and both were in custody per the release. No later DOJ release found as of 18 Nov 2026.",
+"status_note": "Charged on criminal complaints, per the DOJ release (\"A criminal complaint is a formal accusation\"), announced Dec. 8, 2025; Yuan was arrested Nov. 28 and Gong Dec. 3, 2025, and both were in custody per the release. No later DOJ release found as of Nov. 18, 2026.",
 "sources": [
 {
 "label": "DOJ USAO S.D. Tex. press release, Dec 8, 2025",

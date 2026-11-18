@@ -34,7 +34,7 @@ export const METRICS = [
 "id": "M5",
 "name": "NVIDIA/AMD AI chips legally sold to China, and NVIDIA China revenue",
 "unit": "varies: USD millions (NVIDIA-reported revenue) or chip units",
-"period_note": "NVIDIA fiscal years end in late January (FY2026 = Feb. 2025 to Jan. 2026). NVIDIA's China (including Hong Kong) revenue covers all products sold to customers headquartered there, not only data-center AI chips.",
+"period_note": "NVIDIA fiscal years end in late January (FY2026 = Feb. 2025 to Jan. 2026). NVIDIA's China (including Hong Kong) revenue covers all products sold to customers headquartered there, not only data-center AI chips. For Q3 FY2027 (Aug.-Oct. 2026) NVIDIA reported only the dollar value of Data Center Hopper shipments to China ($2.4 billion, all Hopper products), which is shown in its own unit and not converted to chips.",
 "default": "2026"
 }
 ];
@@ -699,7 +699,7 @@ export const ESTIMATES = [
 "high": 1600000,
 "unit": "H100-equivalents",
 "what": "Restricted NVIDIA chips smuggled into China in 2024 and 2025 combined (the model covers those two years), in H100-equivalents: 90% confidence interval 290,000 to 1.6 million, median 660,000.",
-"source": "Epoch AI (Isabel Juniewicz)",
+"source": "Epoch AI model, 90% CI (Isabel Juniewicz)",
 "publisher": "Epoch AI, 'Diversion and resale: estimating compute smuggling to China'",
 "date": "2026-04-29",
 "url": "https://epoch.ai/publications/chip-smuggling",
@@ -711,7 +711,7 @@ export const ESTIMATES = [
 "fetched": true,
 "stated": "between 290,000 and 1.6 million",
 "mid": 660000,
-"id": "M4-epoch-ai-isabel-juni-2024-2025-cumulative"
+"id": "M4-epoch-ai-model-90-ci-2024-2025-cumulative"
 },
 {
 "metric": "M4",
@@ -720,7 +720,7 @@ export const ESTIMATES = [
 "high": 300000,
 "unit": "H100-equivalents",
 "what": "Sum of publicly ALLEGED/documented diversion cases ('almost 300,000 H100e'); neither floor nor ceiling per Epoch",
-"source": "Epoch AI (Isabel Juniewicz)",
+"source": "Epoch AI tally of alleged cases (Isabel Juniewicz)",
 "publisher": "Epoch AI",
 "date": "2026-04-29",
 "url": "https://epoch.ai/publications/chip-smuggling",
@@ -733,7 +733,7 @@ export const ESTIMATES = [
 "stated": "almost 300,000",
 "bound": "approx",
 "tally": true,
-"id": "M4-epoch-ai-isabel-juni-2024-2025-cumulative-2"
+"id": "M4-epoch-ai-tally-of-al-2024-2025-cumulative"
 },
 {
 "metric": "M4",
@@ -1171,5 +1171,25 @@ export const ESTIMATES = [
 "bound": "min",
 "stated": "more than 2 million",
 "id": "M1-csis-gregory-c-allen-2023-2024-cumulative"
+},
+{
+"metric": "M5",
+"period": "Q3 FY2027 (Aug-Oct 2026)",
+"low": 2400,
+"high": 2400,
+"unit": "USD millions: Data Center Hopper shipments to China (all Hopper, $ not units)",
+"what": "Dollar value of NVIDIA Data Center Hopper products shipped to China in the quarter ended Oct. 25, 2026. All Hopper products, not H200 alone, and dollars, not chip units; NVIDIA gives no unit count. NVIDIA's outlook for the next quarter assumes no Data Center compute revenue from China.",
+"source": "NVIDIA Corporation (CFO commentary, Q3 FY2027)",
+"publisher": "NVIDIA Corporation (8-K exhibit, SEC)",
+"date": "2026-11-17",
+"url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000088/q3fy27cfocommentary.htm",
+"grade": "B",
+"grade_note": "Company filing. A shipment value for one product family, not total China revenue and not a unit count, so it is kept in its own unit and not converted.",
+"quote": "Shipments of Data Center Hopper products to China during the quarter were $2.4 billion.",
+"via": "CFO commentary filed with NVIDIA's Form 8-K on Nov. 17, 2026 (quarter ended Oct. 25, 2026). The same document says: \"We are not assuming any Data Center compute revenue from China in our outlook.\"",
+"quote_is_paraphrase": false,
+"fetched": true,
+"stated": "$2.4 billion",
+"id": "M5-nvidia-corporation-c-q3-fy2027-aug-oct-2026"
 }
 ];

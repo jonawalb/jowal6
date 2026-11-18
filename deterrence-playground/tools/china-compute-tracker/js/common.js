@@ -42,6 +42,8 @@ export function statusClass(s) {
   const t = (s || '').toLowerCase();
   if (/dismiss|acquit/.test(t)) return { k: 'closed', n: 'Closed without conviction' };
   if (/not guilty/.test(t)) return { k: 'alleged', n: 'Allegation (not convicted)' };
+  // A plea agreement whose acceptance by the court is not confirmed is not counted as a plea or conviction.
+  if (/not confirmed/.test(t)) return { k: 'alleged', n: 'Plea agreement; court acceptance not confirmed' };
   if (/settled|administrative/.test(t)) return { k: 'settled', n: 'Settled (administrative)' };
   if (/guilty|convicted|sentenced|plea|resolution/.test(t)) return { k: 'convicted', n: 'Plea or conviction' };
   return { k: 'alleged', n: 'Allegation (not convicted)' };

@@ -62,6 +62,7 @@ export function renderEstimates(root, S, { onPick, set, tip, rerender }) {
       <p class="unit">${esc(unit)}${M.period_note ? `<span class="full-only"> · ${esc(M.period_note)}</span>` : ''}</p>
       <p class="m-read">${envSel ? `${presetOn ? esc(presetOn.r) : `With grades ${esc(S.grades.join(', '))}`}: <b>${fmtNum(envSel.low)}${envSel.high !== envSel.low ? ' to ' + fmtNum(envSel.high) : ''}</b> from ${envSel.n} source${envSel.n === 1 ? '' : 's'}, ${envSel.median === null ? (envSel.leans.length ? `no central estimate: ${esc(envSel.leans[0])} calls its figure “a conservative estimate”${envSel.figures - envSel.leans.length === 1 ? ', and the other figure is a bound or tally' : envSel.figures > envSel.leans.length ? ', and the other figures are bounds or tallies' : ''}` : 'no central estimate (only bounds or tallies)') : envSel.centrals === 1 ? `central estimate ${fmtNum(envSel.median)}` : `middle of ${envSel.centrals} central estimates ${fmtNum(envSel.median)}`}.`
         : `<b>No source</b> with grades ${esc(S.grades.join(', ') || 'none')}${S.rep ? '' : ' (restatements off)'} for ${esc(per)}.`}
+        ${conflictNote(incl)}
         ${envAll && (!envSel || envSel.low !== envAll.low || envSel.high !== envAll.high) ? `<span class="delta">All sources: ${fmtNum(envAll.low)} to ${fmtNum(envAll.high)} (${envAll.n}).</span>` : ''}</p>
       <div class="chartbox"><svg class="est" role="group" aria-label="Estimates for ${esc(M.name)}, ${esc(per)}"></svg></div>
       ${greyNote(main, S)}
@@ -79,6 +80,18 @@ export function renderEstimates(root, S, { onPick, set, tip, rerender }) {
   T.innerHTML = `<thead><tr><th>Metric</th><th>Period</th><th class="num">All grades</th><th class="num">Your selection</th><th class="num">Sources</th></tr></thead><tbody>${sumRows.map(r =>
     `<tr><td><a href="#m-${r.M.id}" data-jump="${r.M.id}">${esc(r.M.name)}</a><br><span class="fine">${esc(r.unit)}</span></td><td data-l="Period">${esc(r.per)}</td><td class="num" data-l="All grades">${rg(r.envAll)}</td><td class="num" data-l="Your selection">${rg(r.envSel)}</td><td class="num" data-l="Sources">${r.envSel ? r.envSel.n : 0} of ${r.envAll ? r.envAll.n : 0}</td></tr>`).join('')}</tbody>`;
   T.querySelectorAll('[data-jump]').forEach(a => { a.onclick = e => { e.preventDefault(); root.querySelector('#m-' + a.dataset.jump).scrollIntoView({ block: 'start' }); }; });
+}
+
+/** Plain-words warning when an upper bound sits below other sources' central estimates (e.g. a U.S. official's
+ *  ceiling under analyst estimates): the band's low end is then a ceiling, not a low estimate. */
+function conflictNote(list) {
+  const caps = list.filter(e => e.bound === 'max');
+  const cen = list.filter(e => e.bound !== 'max' && e.bound !== 'min' && !e.tally);
+  if (!caps.length || !cen.length) return '';
+  const cap = caps.reduce((a, b) => (a.high <= b.high ? a : b));
+  const lo = Math.min(...cen.map(e => e.low)), hi = Math.max(...cen.map(e => e.high));
+  if (cap.high >= lo) return '';
+  return `<span class="delta">The low end is a ceiling, not a low estimate: ${esc(cap.source)} puts it at most ${fmtNum(cap.high)}, while other sources put it at ${fmtNum(lo)}${hi !== lo ? ' to ' + fmtNum(hi) : ''}. These figures conflict (they may count different things).</span>`;
 }
 
 /** One line explaining greyed rows in plain words. */

@@ -1,6 +1,6 @@
 // Primary sources read for this tool, with the date each was checked.
 export const SOURCES = [
-  { group: 'Regulations (eCFR, text current through 12 Nov 2026)', items: [
+  { group: 'Regulations (eCFR, text current through 16 Nov 2026)', items: [
     ['ECCN 3A090 and 4A090, 15 CFR part 774 supp. 1 (Commerce Control List)', 'https://www.ecfr.gov/current/title-15/part-774/appendix-Supplement%20No.%201%20to%20Part%20774'],
     ['§ 742.6 Regional stability (a)(6) license requirements, (b)(10) review policy', 'https://www.ecfr.gov/current/title-15/section-742.6'],
     ['§ 744.23 Supercomputer, advanced-node IC and advanced computing end-use controls', 'https://www.ecfr.gov/current/title-15/section-744.23'],

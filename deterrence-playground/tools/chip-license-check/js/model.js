@@ -2,7 +2,7 @@
 // Pure functions, no DOM. Imported by app.js and by scripts/model.test.mjs.
 //
 // Formula and thresholds: ECCN 3A090, Technical Note 2 to 3A090.a and 3A090.b, and Note 2,
-// 15 CFR part 774 supp. 1 (eCFR text current through 12 Nov 2026).
+// 15 CFR part 774 supp. 1 (eCFR text current through 16 Nov 2026, rechecked 18 Nov 2026).
 // License requirements: 15 CFR 742.6(a)(6)(i)(B) and (iii), 744.23(a)(1)-(3), 740.8, 744.11, 744.21, 744.22, 746.8,
 // 748.15 (VEU), 734.4 (de minimis), 734.9(e) and (h) (foreign direct product rules).
 // Review policy: 742.6(b)(10)(ii)-(iii), 744.23(d). Enforcement: BIS guidance of 13 May 2025 and 31 May 2026,
@@ -237,7 +237,7 @@ export function decide(input) {
       add('Classify the chip', `${head} ${cls.why} The item is not in ${ecPrefix}.`, [C('ECCN 3A090, Notes 2 and 4', CCL3)], 'pass');
     } else {
       const ec = `${ecPrefix}.${cls.para}`;
-      add('Classify the chip', `${head} ${cls.why} That places the chip in 3A090.${cls.clause}${chip.form === 'computer' ? `, and a computer, board or server containing it in ${ec}` : ''}.${ak ? ' RIN 0694-AK50 leaves the thresholds unchanged.' : ''}`, [C(`ECCN 3A090.${cls.para}`, CCL3)].concat(chip.form === 'computer' ? [C('ECCN 4A090', CCL3)] : []), 'flag', ec);
+      add('Classify the chip', `${head} ${cls.why} That places the chip in 3A090.${cls.clause}${chip.form === 'computer' ? `, and a computer, board or server containing it in ${ec}` : ''}.${chip.form === 'computer' ? ` A server that is also a mass market encryption commodity (5A992.c) is classified 5A992.z instead: z.1 "that also meet or exceed the performance parameters in 3A090.a or 4A090.a", z.2 for .b. § 742.6(a)(6)(iii) applies the same license requirements to 5A992.z, but the 5A992 entry allows NAC/ACA "for 5A992.z.2; N/A for all other 5A992 commodities".` : ''}${ak ? ' RIN 0694-AK50 leaves the thresholds unchanged.' : ''}`, [C(`ECCN 3A090.${cls.para}`, CCL3)].concat(chip.form === 'computer' ? [C('ECCN 4A090', CCL3), C('ECCN 5A992.z', 'https://www.ecfr.gov/current/title-15/part-774/appendix-Supplement%20No.%201%20to%20Part%20774')] : []), 'flag', ec);
     }
   }
 
@@ -456,7 +456,7 @@ export function decide(input) {
   // ---------- VEU authorization (text before RIN 0694-AK50) ----------
   function veu(reqWhy, reqCites) {
     add('License requirement on the CCL', reqWhy, reqCites.concat(hkCite), 'flag', 'license');
-    add('Validated end user', `A Data Center VEU authorizes exports and reexports of "all those items on the Commerce Control List, that require a license to the destination ... and are necessary for a data center" to a validated end user listed in supp. 7 to part 748, for use at its authorized data centers outside Macau and D:5 (§ 748.15(b)(2), (c)(2)). The items may not be used for any part 744 activity, and the exporter must obtain the end user's certifications first (§ 748.15(d)(2), (e)). Supp. 7 to part 748 (eCFR at 12 Nov 2026) lists no Data Center VEU: every entry is a General VEU. So this path cannot currently yield an authorization; it would apply only to a Data Center VEU listed there. RIN 0694-AK50 removes the Data Center VEU effective 19 Nov 2026.`, [C('§ 748.15', ECFR('748.15')), C('Supp. 7 to part 748', 'https://www.ecfr.gov/current/title-15/part-748/appendix-Supplement%20No.%207%20to%20Part%20748'), NEW('§ 748.15 as revised')], 'pass', 'VEU');
+    add('Validated end user', `A Data Center VEU authorizes exports and reexports of "all those items on the Commerce Control List, that require a license to the destination ... and are necessary for a data center" to a validated end user listed in supp. 7 to part 748, for use at its authorized data centers outside Macau and D:5 (§ 748.15(b)(2), (c)(2)). The items may not be used for any part 744 activity, and the exporter must obtain the end user's certifications first (§ 748.15(d)(2), (e)). Supp. 7 to part 748 (eCFR at 16 Nov 2026) lists no Data Center VEU: every entry is a General VEU. So this path cannot currently yield an authorization; it would apply only to a Data Center VEU listed there. RIN 0694-AK50 removes the Data Center VEU effective 19 Nov 2026.`, [C('§ 748.15', ECFR('748.15')), C('Supp. 7 to part 748', 'https://www.ecfr.gov/current/title-15/part-748/appendix-Supplement%20No.%207%20to%20Part%20748'), NEW('§ 748.15 as revised')], 'pass', 'VEU');
     return done('veu', 'Authorized under a Data Center VEU only if supp. 7 to part 748 lists the end user and data center, and it lists no Data Center VEU today, so in practice a license is needed. The Data Center VEU is removed effective 19 Nov 2026 (RIN 0694-AK50).', { cls, intricate: true });
   }
 
@@ -475,7 +475,14 @@ export function decide(input) {
       add('Review policy', 'Presumption of approval for 3A090.c to Macau or D:5 for entities neither headquartered in nor with an ultimate parent headquartered in Macau or D:5 (§ 742.6(b)(10)(ii)).', [C('§ 742.6(b)(10)(ii)', ECFR('742.6'))], 'flag', 'approval');
       return done('poa', 'License required; presumption of approval. License Exception HBM may apply instead.', { cls, intricate: true });
     }
-    add('Review policy', d5dest ? 'Presumption of denial for 3A090.c to D:5- or Macau-headquartered entities (§ 742.6(b)(10)(ii): "a presumption of denial policy for all other license applications").' : 'Presumption of denial for D:5- or Macau-headquartered entities (§ 744.23(d)(1)).', [d5dest ? C('§ 742.6(b)(10)(ii)', ECFR('742.6')) : C('§ 744.23(d)(1)', ECFR('744.23'))], 'stop', 'denial');
+    if (!d5dest) {
+      // Outside Macau and D:5 the requirement is § 744.23(a)(3)(i)(B), so § 744.23(d) sets the review. (d)(1) denial applies
+      // "unless either paragraph (d)(2) or (3) applies", and (d)(3)(i) covers "items specified in ECCN 3A090" other than
+      // datacenter 3A090.a, which includes 3A090.c.
+      add('Review policy', 'The license requirement here is § 744.23(a)(3)(i)(B), so § 744.23(d) sets the review. Its presumption of denial for D:5- or Macau-headquartered entities ((d)(1)) applies "unless either paragraph (d)(2) or (3) applies", and (d)(3)(i) sets case-by-case review "For items specified in ECCN 3A090 ... except for items designed or marketed for use in a datacenter and meeting the parameters of 3A090.a". An HBM stack is specified in 3A090 (paragraph .c), so review is case-by-case.', [C('§ 744.23(d)(1), (d)(3)(i)', ECFR('744.23'))], 'flag', 'case-by-case');
+      return done('cbc', 'License required under § 744.23(a)(3)(i)(B); case-by-case review under § 744.23(d)(3)(i). License Exception HBM may apply instead.', { cls, intricate: true });
+    }
+    add('Review policy', 'Presumption of denial for 3A090.c to D:5- or Macau-headquartered entities (§ 742.6(b)(10)(ii): "a presumption of denial policy for all other license applications").', [C('§ 742.6(b)(10)(ii)', ECFR('742.6'))], 'stop', 'denial');
     return done('pod', 'License required; presumption of denial. License Exception HBM may apply instead.', { cls, intricate: true });
   }
 
@@ -598,7 +605,7 @@ export function decide(input) {
     const sysNote = chip.form === 'computer';
     if (inCn && shipFrom === 'us' && fits && certs && !milBlocked) {
       add('Review policy', `Since 15 January 2026, exports from the United States to end users located in China or Macau of commodities with TPP under 21,000 and total DRAM bandwidth under 6,500 GB/s (for example the H200 or MI325X) are reviewed case-by-case, if the applicant makes the certifications in supp. 2 to part 748, para. (dd): U.S. supply is not short, China volume stays at or under 50% of U.S. shipments of the product, KYC and remote-access screening, physical security, and independent third-party testing in the United States before export.${ak ? ' RIN 0694-AK50 keeps this path.' : ''}${sysNote ? ' The rule speaks of "commodities"; how the thresholds apply to a multi-GPU server is not settled here.' : ''}`, [polCite, C('91 FR 1684', JAN26), C('Supp. 2 to part 748', SUPP2_748)], 'flag', 'case-by-case');
-      return done('cbc', 'License required; case-by-case review under the January 2026 policy. Chips routed through U.S. testing labs are imported, and a 25% Section 232 tariff applies to covered chips not used in the U.S. supply chain buildout. NVIDIA reports that PRC government restrictions have limited H200 sales under the licenses it received.', { cls, intricate: sysNote, policy742: true, cites: [C('Proclamation, 91 FR 2443', PROC), C('NVIDIA Form 10-K, FY2026', NV10K)] });
+      return done('cbc', 'License required; case-by-case review under the January 2026 policy for exports to end users in China or Macau (TPP under 21,000, DRAM bandwidth under 6,500 GB/s, with the (dd) certifications). Chips routed through U.S. testing labs are imported, and a 25% Section 232 tariff applies to covered chips not used in the U.S. supply chain buildout. NVIDIA reports that PRC government restrictions have limited H200 sales under the licenses it received.', { cls, intricate: sysNote, policy742: true, cites: [C('Proclamation, 91 FR 2443', PROC), C('NVIDIA Form 10-K, FY2026', NV10K)] });
     }
     const why = [];
     if (!inCn) why.push(hqD5 && !d5 ? 'the end user is a D:5- or Macau-headquartered entity outside China and Macau' : 'the destination is not China or Macau');

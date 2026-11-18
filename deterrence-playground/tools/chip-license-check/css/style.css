@@ -186,6 +186,8 @@ fieldset.rows legend { font-size: 12.5px; color: var(--muted); padding: 0 4px; }
 .rules-chip #rules-chip-txt { padding: 2px 8px; border: 1px solid var(--rule); border-radius: 999px; color: var(--ink); }
 .rules-chip.alt #rules-chip-txt { border-color: var(--blue); color: var(--blue); font-weight: 600; }
 .detail-simple .out-rules { display: none; }
+.out-pill { display: inline-block; margin-left: 8px; padding: 1px 8px; border: 1px solid var(--rule); border-radius: 999px; font: 500 11.5px var(--body); text-transform: none; letter-spacing: 0; color: var(--ink); vertical-align: 1px; }
+.out-pill.alt { border-color: var(--blue); color: var(--blue); font-weight: 600; }
 
 /* Audit fixes 16 Nov 2026 */
 .outcome:focus { outline: none; }

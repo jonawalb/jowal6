@@ -1,4 +1,5 @@
 // Simple-mode text helpers for "Does This Chip Need a License?". Pure functions, no DOM; tested in scripts/model.test.mjs.
+import { ak50InForce } from './model.js';
 
 // Split the outcome detail into sentences. A period inside an abbreviation such as "U.S." does not end a sentence.
 export function sentences(t) {
@@ -16,10 +17,15 @@ export function addsInfo(reason, title) {
 }
 // Simple-mode reason line: drop a leading "License required;" that repeats the title, skip sentences that only restate
 // the title, and show the first sentence that adds something (two when the first is short).
+// Also drop a leading restatement of the title's own words: "License required under § 744.24 ..." becomes "Under § 744.24 ...",
+// and "Case-by-case review under ..." under the title "License required: case-by-case review" becomes "Under ...".
 export function reasonLine(detail, title) {
+  const lic = /^License required/.test(title || '');
+  const tail = ((title || '').split(': ')[1] || '').toLowerCase();
   const ss = sentences(detail).map((x, i) => {
-    if (i || !/^License required/.test(title)) return x;
-    const y = x.replace(/^License required[;:.]\s*/, '');
+    if (i || !lic) return x;
+    let y = x.replace(/^License required[;:.]\s*/, '').replace(/^License required\s+(?=under\b)/, '');
+    if (tail && y.toLowerCase().startsWith(tail + ' ')) y = y.slice(tail.length + 1);
     return y ? y.charAt(0).toUpperCase() + y.slice(1) : '';
   }).filter(x => addsInfo(x, title));
   if (!ss.length) return '';
@@ -36,3 +42,9 @@ const GLOSS = [
   [/\bD:5\b/, 'D:5: Country Group D:5, the U.S. arms-embargoed countries, which include China.'],
 ];
 export function glossFor(text) { return GLOSS.filter(([re]) => re.test(text || '')).map(([, g]) => g).join(' '); }
+// Short rule-set label for the Simple-mode chip. `today` is the Eastern date (YYYY-MM-DD) the page computed.
+export function rulesChip(rules, today) {
+  const inForce = ak50InForce(today);
+  if (rules === 'ak50') return inForce ? 'Rules: Nov 2026 IFR (in force)' : 'Rules: Nov 2026 IFR (from 19 Nov)';
+  return inForce ? 'Rules: pre-IFR text (before 19 Nov)' : 'Rules: current (eCFR)';
+}

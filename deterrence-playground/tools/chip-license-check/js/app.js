@@ -1,7 +1,7 @@
 // UI for "Does This Chip Need a License?"
 import { tppOf, pdOf, classify, decide, compareRules, groupsOf, OUTCOMES, AK50_FIVE, fmt, defaultRules, rulesetLabels, ak50InForce } from './model.js';
 import { drawChart } from './chart.js';
-import { reasonLine, glossFor } from './simple.js';
+import { reasonLine, glossFor, rulesChip } from './simple.js';
 import { CHIPS } from '../data/chips.js';
 import { GROUPS } from '../data/groups.js';
 import { TIMELINE } from '../data/timeline.js';
@@ -187,11 +187,13 @@ function update() {
   const gl = glossFor([r.title, reason, why, ov ? p.note : ''].join(' '));
   $('out-gloss').textContent = gl; $('out-gloss').hidden = !gl;
   $('out-bar-t').textContent = r.title;
-  const chipTxt = ak ? (IN_FORCE ? 'Rules: in force from 19 Nov 2026' : 'Rules: from 19 Nov 2026 (not yet in effect)')
-    : (IN_FORCE ? 'Rules: before 19 Nov 2026 (earlier text)' : 'Rules: before 19 Nov 2026');
+  const chipTxt = rulesChip(S.rules, TODAY);
   $('rules-chip-txt').textContent = chipTxt;
+  // Simple mode also names the rule set inside the outcome box, next to the result it governs.
+  $('out-rules-chip').textContent = chipTxt;
+  $('out-rules-chip').classList.toggle('alt', S.rules !== DEFAULT_RULES);
   $('rules-chip').classList.toggle('alt', S.rules !== DEFAULT_RULES);
-  $('rules-chip-btn').textContent = ak ? 'Show the earlier rules' : `Show the ${IN_FORCE ? 'rules in force' : '19 Nov 2026 rule'}`;
+  $('rules-chip-btn').textContent = ak ? `Show the ${IN_FORCE ? 'pre-IFR text' : 'current rules'}` : `Show the ${IN_FORCE ? 'rules in force' : 'Nov 2026 IFR'}`;
   $('assume').textContent = assumeLine();
   $('out-intricate').hidden = !r.intricate;
   const oc = $('out-cites'); oc.textContent = '';

@@ -80,6 +80,7 @@
   .playbar { position: sticky; bottom: 8px; z-index: 20; box-shadow: 0 4px 18px color-mix(in srgb, var(--ink) 18%, transparent);
     grid-template-columns: auto minmax(0, 1fr) auto; }
   .playbar .tsm-export { grid-column: 3; grid-row: 1; margin: 0; }
+  .pb-t { font-size: 14px; }
 }
 
 /* Turn log and state */
@@ -141,6 +142,8 @@ table.oilparts td.num { text-align: right; white-space: nowrap; }
 .mc-leg { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 13px; }
 .mc-leg li { display: inline-flex; align-items: center; gap: 6px; }
 .sw:not(.orig):not(.trl) { width: 12px; height: 12px; border-radius: 2px; display: inline-block; }
+/* The legend-swatch rule above also matched the setup toggles (.tg .sw) and shrank them to 12px squares; restore the shared switch size. */
+.tg .sw:not(.orig):not(.trl) { width: 30px; height: 17px; border-radius: 9px; display: block; }
 .mc-cols { display: grid; grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.25fr); gap: 16px; margin-top: 4px; }
 .eb { display: grid; grid-template-columns: minmax(0, 1fr) 70px 38px; gap: 6px; align-items: center; font-size: 12px; padding: 3px 0; border-bottom: 1px dotted var(--rule); }
 .eb-bar { height: 8px; background: var(--chip); border-radius: 4px; overflow: hidden; }

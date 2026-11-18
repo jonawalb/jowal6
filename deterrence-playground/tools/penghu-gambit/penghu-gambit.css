@@ -245,5 +245,11 @@ details[open] summary { margin-bottom: 8px; }
 /* Present-polish pass: on wide screens too, keep the turn controls in view while the map and
    the roll tables scroll past. */
 @media (min-width: 761px) {
-  .playbar { position: sticky; bottom: 8px; z-index: 20; box-shadow: 0 4px 18px rgba(0, 0, 0, .14); }
+  .playbar { position: sticky; bottom: 8px; z-index: 20; box-shadow: 0 4px 18px rgba(0, 0, 0, .14);
+    grid-template-columns: auto minmax(0, 1fr) auto; }
+  /* Download sits on the button row, so the pinned bar covers less of the map. */
+  .playbar .tsm-export { grid-column: 3; grid-row: 1; margin: 0; }
+  .pb-t { font-size: 14px; }
 }
+.pb-end { font-family: var(--body); }
+.pb-end.pla { color: var(--prc); } .pb-end.stale { color: var(--warn); } .pb-end.roc { color: var(--roc); }

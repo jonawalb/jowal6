@@ -207,3 +207,15 @@ details.sources ol { padding-left: 18px; margin: 6px 0; } details.sources li { f
   .top h1 { font-size: 1rem; }
   .seg button { font-size: .74rem; padding: 5px 7px; }
 }
+
+/* ---------- 2D fallback (Leaflet, no WebGL) ---------- */
+.leaflet-container { background: #ebe2ca; font-family: var(--sans); }
+.lf { background: none; border: 0; }
+.lf-sp .sp, .lf-wp .wp { position: absolute; left: -7px; top: 0; transform: translateY(-50%); }
+.lf-wp .wp { left: -4px; }
+.lf-grp .grp { position: absolute; left: 0; top: 0; transform: translate(-50%, -50%); white-space: nowrap; }
+.leaflet-popup-content { font-size: .82rem; line-height: 1.45; color: #1f1b16; }
+.leaflet-popup-content h4 { margin: 0 0 4px; font-family: var(--serif); font-size: .98rem; }
+.leaflet-popup-content .muted { color: #6b6257; font-size: .76rem; }
+.no-webgl [data-dim="3d"] { opacity: .45; }
+.no-webgl .maplegend, .no-webgl .mapnote { z-index: 1000; }

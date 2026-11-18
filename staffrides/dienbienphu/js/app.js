@@ -19,7 +19,41 @@ const ctx = {
   cfChanged: () => tl.setWindows(D.cf.filter((c) => state.cf.has(c.id) && c.window).map((c) => c.window)),
 };
 
-const bm = new BattleMap($('#map'), D, { onReady: () => { $('#loading').classList.add('done'); bm.setDate(state.date); route(); } });
+// WebGL check: MapLibre needs it. Without it (hardware acceleration off, old GPU), fall back to a 2D Leaflet map.
+function hasWebGL() {
+  try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')); } catch { return false; }
+}
+function loadLeaflet() {
+  return new Promise((res, rej) => {
+    const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'; document.head.append(l);
+    const s = document.createElement('script'); s.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'; s.onload = res; s.onerror = rej; document.head.append(s);
+  });
+}
+const hideLoading = () => $('#loading').classList.add('done');
+const handlers = {
+  onReady: () => { hideLoading(); bm.setDate(state.date); if (state.mode === 'ride' && D.stands[state.stand]?.cam) bm.fly(D.stands[state.stand].cam); },
+  noWebGL: () => noteNoWebGL(),
+};
+let bm;
+if (hasWebGL()) {
+  try { bm = new BattleMap($('#map'), D, handlers); } catch (e) { console.warn('MapLibre failed, using 2D fallback', e); bm = null; }
+}
+if (!bm) {
+  await loadLeaflet();
+  const { FlatMap } = await import('./map2d.js');
+  bm = new FlatMap($('#map'), D, handlers);
+  document.body.classList.add('no-webgl');
+  document.querySelectorAll('[data-dim]').forEach((b) => { b.title = '3D needs WebGL (graphics acceleration)'; });
+}
+setTimeout(hideLoading, 5000); // never keep the panels hidden behind a slow map
+
+function noteNoWebGL() {
+  const note = $('#mapnote');
+  note.hidden = false;
+  note.innerHTML = 'The 3D view needs WebGL, which this browser has turned off (in Chrome: Settings → System → "Use graphics acceleration when available"). The 2D map, stands and line-of-sight overlays all work without it. <a href="#" data-close>Hide</a>';
+  note.querySelector('[data-close]').addEventListener('click', (e) => { e.preventDefault(); note.hidden = true; });
+  document.querySelectorAll('[data-dim]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.dim === '2d'));
+}
 const tl = new Timeline($('#tl-track'), D, { onDate: (d) => setDate(d), onStand: (i) => { setMode('ride'); goStand(i); } });
 
 // ------------------------------------------------------------------ state changes
@@ -48,7 +82,7 @@ function goStand(i) {
 }
 
 function showViewshed(id, stand) {
-  bm.showViewshed(id);
+  bm.ready.then(() => bm.showViewshed(id));
   const o = id && D.viewsheds.observers.find((x) => x.id === id);
   const note = $('#mapnote');
   if (o) {
@@ -64,12 +98,12 @@ function setMode(m) {
   const prev = state.mode;
   state.mode = m;
   document.querySelectorAll('.modes button').forEach((b) => b.setAttribute('aria-selected', b.dataset.mode === m));
-  if (prev === 'logistics' && m !== 'logistics') bm.setLogistics(false);
+  if (prev === 'logistics' && m !== 'logistics') bm.ready.then(() => bm.setLogistics(false));
   if (m !== 'ride') bm.setActive(null);
   if (m !== 'ride' && m !== 'analysis') showViewshed(null);
   if (m === 'ride') goStand(state.stand);
   else if (m === 'explore') renderExplore($('#panel'), D, state.date, ctx);
-  else if (m === 'logistics') { bm.setLogistics(true); renderLogistics($('#panel'), D, state.date, ctx); }
+  else if (m === 'logistics') { bm.ready.then(() => bm.setLogistics(true)); renderLogistics($('#panel'), D, state.date, ctx); }
   else if (m === 'whatif') renderWhatIf($('#panel'), D, state, ctx);
   else if (m === 'analysis') renderAnalysis($('#panel'), D, ctx);
   legend();
@@ -79,12 +113,13 @@ function setMode(m) {
 function setStyle(s) {
   state.style = s;
   document.querySelectorAll('[data-style]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.style === s));
-  bm.setStyle(s);
+  bm.ready.then(() => bm.setStyle(s));
 }
 function setDim(dm) {
   state.dim = dm;
   document.querySelectorAll('[data-dim]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.dim === dm));
-  bm.setDim(dm, state.mode === 'ride' ? D.stands[state.stand]?.cam : null);
+  if (bm.flat) { if (dm === '3d') noteNoWebGL(); state.dim = '2d'; return; }
+  bm.ready.then(() => bm.setDim(dm, state.mode === 'ride' ? D.stands[state.stand]?.cam : null));
 }
 
 function legend() {
@@ -133,3 +168,4 @@ function route() {
   writeHash();
 }
 legend();
+route();

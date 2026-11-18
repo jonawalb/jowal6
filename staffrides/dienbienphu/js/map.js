@@ -262,7 +262,7 @@ export class BattleMap {
 }
 
 // Arrow geometry: a shortened line plus a triangular head, in lon/lat (fine at valley scale).
-function arrow(a, b, side, id) {
+export function arrow(a, b, side, id) {
   const k = Math.cos((a[1] * Math.PI) / 180);
   const dx = (b[0] - a[0]) * k, dy = b[1] - a[1];
   const len = Math.hypot(dx, dy);

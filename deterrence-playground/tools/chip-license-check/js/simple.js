@@ -1,5 +1,5 @@
 // Simple-mode text helpers for "Does This Chip Need a License?". Pure functions, no DOM; tested in scripts/model.test.mjs.
-import { ak50InForce } from './model.js';
+import { ak50InForce, isD5orMacau } from './model.js';
 
 // Split the outcome detail into sentences. A period inside an abbreviation such as "U.S." does not end a sentence.
 export function sentences(t) {
@@ -48,3 +48,6 @@ export function rulesChip(rules, today) {
   if (rules === 'ak50') return inForce ? 'Rules: Nov 2026 IFR (in force)' : 'Rules: Nov 2026 IFR (from 19 Nov)';
   return inForce ? 'Rules: pre-IFR text (before 19 Nov)' : 'Rules: current (eCFR)';
 }
+// Default for "end user or its ultimate parent is headquartered in D:5 or Macau": on when the destination itself is D:5 or
+// Macau (Hong Kong counts as China), where most companies are headquartered locally; off elsewhere. The user can change it.
+export const hqDefault = (dest) => dest === 'Hong Kong' || isD5orMacau(dest);

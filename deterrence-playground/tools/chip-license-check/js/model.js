@@ -143,6 +143,7 @@ export const RULESETS = {
 // Outcome codes, least to most restrictive.
 export const OUTCOMES = {
   nlr: { label: 'No license required', s: 'good', rank: 0 },
+  na: { label: 'No advanced-computing license (3A090/4A090)', s: 'good', rank: 0 },
   nle: { label: 'No license enforced', s: 'good', rank: 1 },
   exc: { label: 'License exception available', s: 'good', rank: 2 },
   lic: { label: 'License required', s: 'warn', rank: 3 },
@@ -226,7 +227,7 @@ export function decide(input) {
     const head = `TPP ${fmt(chip.tpp)}, performance density ${pdTxt}, ${chip.datacenter ? 'designed or marketed for datacenters' : 'not designed or marketed for datacenters'}.`;
     if (foundry) {
       // Note 1 to 3A090.a: the presumption binds the front-end fabricator or OSAT whatever the datasheet says.
-      add('Classify the chip', `${head} ${cls.why}`, [C('ECCN 3A090.a-.b', CCL3)], 'info');
+      add('Classify the chip', `${head} On its own figures: ${cls.why} For this shipper the Note 1 presumption below makes it 3A090.a, designed or marketed for datacenters.`, [C('ECCN 3A090.a, Note 1', CCL3)], 'info', '3A090.a (presumed, Note 1)');
       add('Foundry presumption (Note 1 to 3A090.a)', 'The shipper is a front-end fabricator or OSAT, and the designer is neither an approved IC designer (supp. 6 to part 740) nor an authorized IC designer. Note 1 to 3A090.a: "there is a presumption that the item is 3A090.a and designed or marketed for datacenters. If the "front-end fabricator" or "OSAT" company cannot overcome this presumption, then it must comply with all license requirements applicable to items specified in 3A090.a." Without an approved or authorized designer, the presumption can be overcome only by the transistor-count attestations in paragraphs b and c of the Note, which this tool assumes were not made. The presumption binds only the fabricator or OSAT.', [C('ECCN 3A090.a, Note 1', CCL3)], 'flag', 'Note 1');
       cls = { para: 'a', clause: 'Note 1', why: 'Presumed 3A090.a and designed or marketed for datacenters (Note 1 to 3A090.a).' };
       chipDc = true;
@@ -305,7 +306,7 @@ export function decide(input) {
   const none = cls.para === 'none';
   if (none && origin === 'fdp' && !fnFdp) {
     add('Other controls', 'Outside 3A090 and 4A090, the item may fall under another ECCN (for example 3A991, 4A994 or 5A992) or be EAR99. BIS can also impose a license requirement by direct notice, as it did for the NVIDIA H20 in April 2025.', [C('CCL Category 3', CCL3), C('§ 744.23(b)', ECFR('744.23'))], 'info');
-    return done('out', 'Not an advanced computing item on these figures. Its other classification and any end-use controls decide the answer.', { cls });
+    return done('na', 'Not in 3A090 or 4A090 on these figures, so neither the advanced computing foreign direct product rule nor the advanced-computing license requirements reach it. Whether this foreign-made item is subject to the EAR at all turns on de minimis U.S. content and the other foreign direct product rules; if it is, its other classification and any end-use or Entity List controls decide the answer.', { cls });
   }
   const para = cls.para === 'a?' ? 'a' : cls.para;
   const ec = `${ecPrefix}.${para}`;
@@ -418,14 +419,21 @@ export function decide(input) {
   let base;
   if (none) {
     add('Other controls', 'Outside 3A090 and 4A090, the item may fall under another ECCN (for example 3A991, 4A994 or 5A992) or be EAR99. BIS can also impose a license requirement by direct notice, as it did for the NVIDIA H20 in April 2025.', [C('CCL Category 3', CCL3), C('§ 744.23(b)', ECFR('744.23'))], 'info');
-    base = done('out', 'Not an advanced computing item on these figures. Its other classification and any end-use controls decide the answer.', { cls });
+    // Note 2 to 3A090.a and .b, or below every threshold pair: the advanced-computing license requirements do not reach the item.
+    base = done('na', `Not in 3A090 or 4A090 on these figures, so the advanced-computing license requirements (§ 742.6(a)(6), § 744.23(a)(3)${ak ? ', § 744.24' : ''}) do not apply; a license can still apply for an Entity List party, a military or military-intelligence end user, or a § 744.23(a)(1) or (a)(2) end use. The item may fall in another ECCN (e.g. 3A991, 4A994, 5A992), which can carry its own license requirements, or be EAR99.`, { cls });
   } else base = isHbm ? cclHbm() : ak ? cclNew() : cclCurrent();
   // § 744.21(e)(3): "Applications for items requiring a license for any reason that are destined for a 'military end use' in
   // ... China ... or for a ... Chinese ... 'military end user,' wherever located, also will be subject to the review policy
   // stated in paragraph (e)(1)" (presumption of denial).
   if (meuNexus && ['lic', 'cbc', 'poa'].includes(base.outcome)) {
-    add('Military end use review (§ 744.21(e)(3))', `The item needs a license on the CCL, and § 744.21(e)(3) says "Applications for items requiring a license for any reason that are destined for a 'military end use' in Belarus, Burma, Cambodia, China, Nicaragua, the Russian Federation, or Venezuela or for a ... 'military end user,' wherever located, also will be subject to the review policy stated in paragraph (e)(1)", a presumption of denial. That replaces the ${OUTCOMES[base.outcome].label.toLowerCase()} result above.`, [C('§ 744.21(e)(1), (e)(3)', ECFR('744.21'))], 'stop', 'denial');
-    base = { ...base, outcome: 'pod', title: OUTCOMES.pod.label, detail: `License required; presumption of denial for a military end use or end user (§ 744.21(e)(3)). Without it the result would be: ${OUTCOMES[base.outcome].label.toLowerCase()}.`, policy742: false };
+    add('Military end use review (§ 744.21(e)(3))', `The item needs a license on the CCL, and § 744.21(e)(3) says "Applications for items requiring a license for any reason that are destined for a 'military end use' in Belarus, Burma, Cambodia, China, Nicaragua, the Russian Federation, or Venezuela or for a ... 'military end user,' wherever located, also will be subject to the review policy stated in paragraph (e)(1)", a presumption of denial. That replaces the ${lc(OUTCOMES[base.outcome].label)} result above.`, [C('§ 744.21(e)(1), (e)(3)', ECFR('744.21'))], 'stop', 'denial');
+    base = { ...base, outcome: 'pod', title: OUTCOMES.pod.label, detail: `License required; presumption of denial for a military end use or end user (§ 744.21(e)(3)). Without it the result would be: ${lc(OUTCOMES[base.outcome].label)}.`, policy742: false };
+  }
+  // § 744.24(b)(2): the recommender carve-out holds only if the report is submitted to BIS.
+  if (ak && !isHbm && !none && input.dc === 'recommender') {
+    const rpt = 'the § 744.24(b)(2) report is submitted to BIS (the D:5- or Macau-headquartered company\'s name, the total TPP of the covered items provided to or for it, and the due diligence showing the access is exclusively for a commercial recommender system)';
+    if (base.outcome === 'nlr') base = { ...base, title: 'No license required, if the § 744.24(b)(2) report is filed', detail: 'The report goes to BIS and names the D:5- or Macau-headquartered company, the total TPP of the covered items provided to or for it, and the due diligence showing the access is exclusively for a commercial recommender system. Without it § 744.24 requires a license (case-by-case). Check the Entity List and other part 744 controls.' };
+    else base = { ...base, detail: `${base.detail} § 744.24 adds no requirement only if ${rpt}.` };
   }
   if (!reqs.length) return base;
   // Combine the part 744 license requirements with the CCL result: the most restrictive review governs,
@@ -446,11 +454,11 @@ export function decide(input) {
       has24 ? '§ 744.24(a)(1) applies "In addition to the license requirements set forth elsewhere in the EAR", with case-by-case review under § 744.24(c)' : '',
       has21 ? '§ 744.21(a) applies "In addition to the license requirements for items specified on the Commerce Control List (CCL)", with review under § 744.21(e)' : ''].filter(Boolean).join('; ');
     const stale = ak ? ' RIN 0694-AK50 moves the China case-by-case text from § 742.6(b)(10)(iii)(A)(1) to (A)(2) but does not amend § 744.23(d)(3)(iii), which still points to (A)(1).' : '';
-    add('Which review policy applies', `One application would meet two policies: "${OUTCOMES[base.outcome].label.toLowerCase()}" under § 742.6(b)(10)(iii) and the stricter policy of ${label}. The stricter one is the effective outcome. The § 742.6 paragraph ends: "If the license application meets the criteria of more than one licensing policy, then this licensing policy and its requirements will be applied." That sentence governs review of the CCL requirement in § 742.6. The part 744 requirement is a separate prohibition: ${addl}. When BIS wanted the § 742.6 case-by-case policy to carry into § 744.23, it said so. The January 2026 rule (91 FR 1684) added § 744.23(d)(3)(iii), "For items specified in paragraph (a)(3)(i)(A) of this section that meet the criteria for case-by-case license review under § 742.6(b)(10)(iii)(A)(1)", as a conforming change for (a)(3)(i)(A) only.${stale} One license must clear both requirements, so the stricter policy governs. Read literally, the § 742.6 sentence could instead displace the part 744 policy; BIS has not addressed that reading.`, [ak ? NEW('§ 742.6(b)(10)(iii)(A)(2)') : C('§ 742.6(b)(10)(iii)(A)(1)', ECFR('742.6')), C('§ 744.23(a), (d)(3)(iii)', ECFR('744.23')), C('91 FR 1684, sec. III', JAN26)].concat(has24 ? [NEW('§ 744.24(a)(1), (c)')] : []), 'flag', 'precedence');
+    add('Which review policy applies', `One application would meet two policies: "${lc(OUTCOMES[base.outcome].label)}" under § 742.6(b)(10)(iii) and the stricter policy of ${label}. The stricter one is the effective outcome. The § 742.6 paragraph ends: "If the license application meets the criteria of more than one licensing policy, then this licensing policy and its requirements will be applied." That sentence governs review of the CCL requirement in § 742.6. The part 744 requirement is a separate prohibition: ${addl}. When BIS wanted the § 742.6 case-by-case policy to carry into § 744.23, it said so. The January 2026 rule (91 FR 1684) added § 744.23(d)(3)(iii), "For items specified in paragraph (a)(3)(i)(A) of this section that meet the criteria for case-by-case license review under § 742.6(b)(10)(iii)(A)(1)", as a conforming change for (a)(3)(i)(A) only.${stale} One license must clear both requirements, so the stricter policy governs. Read literally, the § 742.6 sentence could instead displace the part 744 policy; BIS has not addressed that reading.`, [ak ? NEW('§ 742.6(b)(10)(iii)(A)(2)') : C('§ 742.6(b)(10)(iii)(A)(1)', ECFR('742.6')), C('§ 744.23(a), (d)(3)(iii)', ECFR('744.23')), C('91 FR 1684, sec. III', JAN26)].concat(has24 ? [NEW('§ 744.24(a)(1), (c)')] : []), 'flag', 'precedence');
   }
-  const detail = base.outcome === 'out'
+  const detail = base.outcome === 'out' || base.outcome === 'na'
     ? `License required under ${label}.`
-    : `License required under ${label}. Without ${reqs.length > 1 ? 'these part 744 requirements' : 'this part 744 requirement'} the result would be: ${OUTCOMES[base.outcome].label.toLowerCase()}.`;
+    : `License required under ${label}. Without ${reqs.length > 1 ? 'these part 744 requirements' : 'this part 744 requirement'} the result would be: ${lc(OUTCOMES[base.outcome].label)}.`;
   return { ...base, outcome: top.o, title: OUTCOMES[top.o].label, detail, intricate: !!(base.intricate || base.policy742) };
 
   // ---------- VEU authorization (text before RIN 0694-AK50) ----------
@@ -472,8 +480,8 @@ export function decide(input) {
     }
     add('License exception', `NAC and ACA are not available for 3A090.c${ak ? ' (Note 1 to § 740.2(a)(9)(ii) as revised by RIN 0694-AK50)' : ''}. License Exception HBM (§ 740.25) can authorize the shipment if the exporter is headquartered in the U.S. or A:5 without a D:5 or Macau parent, the stack's memory bandwidth density is under 3.3 GB/s/mm², it is bought directly by the designer of the co-packaged chip and shipped directly to the packaging site, and the packaging is not at an advanced-node facility in Macau or D:5. This tool does not test those conditions.${reqs.length ? ' It cannot be used here: the part 744 end-use requirement above cannot be overcome by a license exception (§ 744.23(c)).' : ''}`, [C('§ 740.25', ECFR('740.25')), C('ECCN 3A090 (exceptions)', CCL3)].concat(ak ? [NEW('§ 740.2(a)(9)(ii), Note 1')] : []), 'flag', 'HBM exc.');
     if (d5dest && !hqD5) {
-      add('Review policy', 'Presumption of approval for 3A090.c to Macau or D:5 for entities neither headquartered in nor with an ultimate parent headquartered in Macau or D:5 (§ 742.6(b)(10)(ii)).', [C('§ 742.6(b)(10)(ii)', ECFR('742.6'))], 'flag', 'approval');
-      return done('poa', 'License required; presumption of approval. License Exception HBM may apply instead.', { cls, intricate: true });
+      add('Review policy', 'Presumption of approval for 3A090.c to Macau or D:5 for entities neither headquartered in nor with an ultimate parent headquartered in Macau or D:5 (§ 742.6(b)(10)(ii)). This walk assumes the end user is such an entity (e.g. a Korean- or U.S.-owned plant); most companies located in China or Macau are headquartered there, which makes the policy a presumption of denial. Set this in Full detail.', [C('§ 742.6(b)(10)(ii)', ECFR('742.6'))], 'flag', 'approval');
+      return done('poa', 'License required; presumption of approval, assuming the end user and its ultimate parent are not headquartered in D:5 or Macau (§ 742.6(b)(10)(ii)). License Exception HBM may apply instead.', { cls, intricate: true });
     }
     if (!d5dest) {
       // Outside Macau and D:5 the requirement is § 744.23(a)(3)(i)(B), so § 744.23(d) sets the review. (d)(1) denial applies
@@ -482,8 +490,8 @@ export function decide(input) {
       add('Review policy', 'The license requirement here is § 744.23(a)(3)(i)(B), so § 744.23(d) sets the review. Its presumption of denial for D:5- or Macau-headquartered entities ((d)(1)) applies "unless either paragraph (d)(2) or (3) applies", and (d)(3)(i) sets case-by-case review "For items specified in ECCN 3A090 ... except for items designed or marketed for use in a datacenter and meeting the parameters of 3A090.a". An HBM stack is specified in 3A090 (paragraph .c), so review is case-by-case.', [C('§ 744.23(d)(1), (d)(3)(i)', ECFR('744.23'))], 'flag', 'case-by-case');
       return done('cbc', 'License required under § 744.23(a)(3)(i)(B); case-by-case review under § 744.23(d)(3)(i). License Exception HBM may apply instead.', { cls, intricate: true });
     }
-    add('Review policy', 'Presumption of denial for 3A090.c to D:5- or Macau-headquartered entities (§ 742.6(b)(10)(ii): "a presumption of denial policy for all other license applications").', [C('§ 742.6(b)(10)(ii)', ECFR('742.6'))], 'stop', 'denial');
-    return done('pod', 'License required; presumption of denial. License Exception HBM may apply instead.', { cls, intricate: true });
+    add('Review policy', 'Presumption of denial for 3A090.c to D:5- or Macau-headquartered entities (§ 742.6(b)(10)(ii): "a presumption of denial policy for all other license applications"). This walk assumes the end user or its ultimate parent is headquartered in Macau or D:5; for a foreign-owned end user there, turn that off in Full detail (presumption of approval).', [C('§ 742.6(b)(10)(ii)', ECFR('742.6'))], 'stop', 'denial');
+    return done('pod', 'License required; presumption of denial, assuming the end user or its ultimate parent is headquartered in D:5 or Macau (§ 742.6(b)(10)(ii)). License Exception HBM may apply instead.', { cls, intricate: true });
   }
 
   // ---------- CCL requirement, current text ----------
@@ -505,9 +513,12 @@ export function decide(input) {
             : `${DN} is in Country Group ${groupsOf(dest).filter(g => g.startsWith('D')).join(', ')} and not in A:5 or A:6. BIS enforces the ${ec} license requirement there.${hkNote}`;
       } else {
         const aca = dcA ? '' : ' As written, License Exception ACA covers this item; BIS does not enforce the requirement in any case.';
+        // § 740.28(a)-(b): ACM covers exports to 'private sector end users' for development, production or storage of eligible items
+        // (3A090.a only if designed by an approved or authorized IC designer; 4A090) ultimately destined outside Macau and D:5.
+        const acm = ' License Exception ACM (§ 740.28) also remains in the text: it authorizes exports of eligible items (3A090.a only if designed by an approved or authorized IC designer; 4A090) to \'private sector end users\' for "development," "production," or storage before shipment to customers outside Macau and D:5.';
         // § 740.27(a): AIA covers 3A090.a (from approved or authorized IC designers) and 4A090.a to entities located and headquartered in supp. 5 para. (a).
         const aia = AIA_DESTS.includes(dest) ? ` As written, License Exception AIA (§ 740.27) also covers supp. 5 para. (a) destinations, ${Dn} among them, for 3A090.a chips from approved or authorized IC designers and for 4A090.a items, to entities located and headquartered in those destinations, with a certification to BIS. RIN 0694-AK50 removes AIA effective 19 Nov 2026.` : '';
-        add('License requirement on the CCL', `As written since January 2025, ${ec} needs a license to every destination worldwide. BIS announced on 13 May 2025 that it would not enforce the AI Diffusion rule, and in July 2026 stated that it enforces this requirement only for D:1, D:4 and D:5 destinations (excluding A:5/A:6), the UAE, and entities headquartered in D:5 or Macau. ${DN} is none of these.${aca}${aia}`, reqCites.concat([C('BIS press release, 13 May 2025', MAY25)]).concat(aia ? [C('§ 740.27 (AIA)', ECFR('740.27')), C('Supp. 5 to part 740', SUPP5)] : []), 'flag', 'not enforced');
+        add('License requirement on the CCL', `As written since January 2025, ${ec} needs a license to every destination worldwide. BIS announced on 13 May 2025 that it would not enforce the AI Diffusion rule, and in July 2026 stated that it enforces this requirement only for D:1, D:4 and D:5 destinations (excluding A:5/A:6), the UAE, and entities headquartered in D:5 or Macau. ${DN} is none of these.${aca}${aia}${acm}`, reqCites.concat([C('BIS press release, 13 May 2025', MAY25), C('§ 740.28 (ACM)', ECFR('740.28'))]).concat(aia ? [C('§ 740.27 (AIA)', ECFR('740.27')), C('Supp. 5 to part 740', SUPP5)] : []), 'flag', 'not enforced');
         return done('nle', `The regulation text requires a license, but BIS has said it is not enforcing that requirement for ${Dn}. GAO found in May 2026 that the non-enforcement announcement is itself a rule under the Congressional Review Act. RIN 0694-AK50 (FR Doc 2026-23529), effective 19 Nov 2026, formally rescinds the Diffusion framework.`, { cls, intricate: true });
       }
     } else {
@@ -528,8 +539,14 @@ export function decide(input) {
     const ex = exceptions(); if (ex) return ex;
     const d5 = isD5orMacau(dest) || dest === 'Hong Kong';
     if (d5 || hqD5) return chinaReview(C('§ 742.6(b)(10)(iii)(A)(1)', ECFR('742.6')), C('§ 744.23(d)(1)', ECFR('744.23')));
-    add('Review policy', `The eCFR text before 19 Nov 2026 reviews ${ec} applications for most destinations with a presumption of approval up to a per-country allocation (790,000,000 TPP for 2025-2027), a provision of the AI Diffusion rule. BIS has not said how it reviews these applications while that rule is unenforced. Before 2025 the policy for destinations outside D:5 and Macau was a presumption of approval. RIN 0694-AK50 rescinds the allocations effective 19 Nov 2026 and sets a presumption of approval for D:1, D:4 and the UAE.`, [C('§ 742.6(b)(10)(iii)(B)', ECFR('742.6')), C('90 FR 4544 (AI Diffusion)', 'https://www.federalregister.gov/documents/2025/01/15/2025-00636/framework-for-artificial-intelligence-diffusion')], 'flag', 'unsettled');
-    return done('lic', 'License required. The review policy in force is unsettled; the pre-2025 policy for these destinations was favorable.', { cls, intricate: true });
+    if (para === 'a') {
+      // § 742.6(b)(10)(iii)(B)(1): presumption of approval up to a per-country allocation, for destinations not in supp. 5 to
+      // part 740 para. (a) or (b) (para. (b) lists none). (B)(2): policy of denial once the allocation is met.
+      add('Review policy', `As written, § 742.6(b)(10)(iii)(B)(1) reviews ${ec} applications to destinations outside D:5 and Macau that are not in supp. 5 to part 740 "under a presumption of approval, up to a per-country allocation of 790,000,000 TPP for the period from 2025 to 2027"; once a country's allocation is met, (B)(2) sets "a policy of denial". Supp. 5 para. (b), the higher-allocation list, names no country. This is a provision of the AI Diffusion rule, which BIS has said it is not enforcing; BIS has not said how it applies the allocation in the meantime. RIN 0694-AK50 removes the allocations effective 19 Nov 2026 and sets a presumption of approval for D:1, D:4 and the UAE.`, [C('§ 742.6(b)(10)(iii)(B)', ECFR('742.6')), C('Supp. 5 to part 740', SUPP5), C('90 FR 4544 (AI Diffusion)', 'https://www.federalregister.gov/documents/2025/01/15/2025-00636/framework-for-artificial-intelligence-diffusion')], 'flag', 'approval (as written)');
+      return done('poa', 'License required; as written, presumption of approval up to the 790,000,000 TPP country allocation (§ 742.6(b)(10)(iii)(B)(1)), denial once it is met. BIS has not said how it applies the allocation while the Diffusion rule is unenforced.', { cls, intricate: true });
+    }
+    add('Review policy', `§ 742.6(b)(10)(iii) states no review policy for ${ec} items to D:1 or D:4 destinations outside D:5, or to the UAE: paragraph (A)(1) covers D:5, Macau and D:5-headquartered entities, and (B) covers only items in (a)(6)(iii)(A). Before 2025 the policy for these destinations was a presumption of approval.`, [C('§ 742.6(b)(10)(iii)', ECFR('742.6'))], 'flag', 'unsettled');
+    return done('lic', 'License required. The text states no review policy for this item and destination.', { cls, intricate: true });
   }
 
   // ---------- CCL requirement, RIN 0694-AK50 ----------
@@ -561,6 +578,9 @@ export function decide(input) {
     add('License requirement on the CCL', reqWhy, cites.concat(hkCite), 'flag', 'license');
     const ex = exceptions(); if (ex) return ex;
     const d5 = isD5orMacau(dest) || dest === 'Hong Kong';
+    if (five && hqD5) {
+      add('Drafting note: § 744.23(d)(3)(iii) cross-reference', `RIN 0694-AK50 revises § 742.6(b)(10)(iii)(A)(1) and (A)(2): new (A)(1) reads "License review policy for paragraph (a)(6)(iii)(A)(1). Applications ... will be reviewed on a case-by-case basis", and (A)(2) is now headed "Policy for Country Groups D:1, D:4, D:5 and the United Arab Emirates". It does not amend § 744.23(d)(3)(iii), which still reads "For items specified in paragraph (a)(3)(i)(A) of this section that meet the criteria for case-by-case license review under § 742.6(b)(10)(iii)(A)(1)". For a D:5- or Macau-headquartered entity in ${Dn}, read literally, that cross-reference now points to the five-country case-by-case policy. New (A)(2) also says applications "for an entity headquartered or with an ultimate parent headquartered in Country Group D:5 or Macau will be reviewed under a presumption of denial" and ends "If the license application meets the criteria of more than one licensing policy, then this licensing policy and its requirements will be applied." This tool applies (A)(2); the rule text does not reconcile the two.`, [NEW('§ 742.6(b)(10)(iii)(A)(1)-(2)'), C('§ 744.23(d)(3)(iii)', ECFR('744.23'))], 'info', 'drafting note');
+    }
     if (d5 || hqD5) return chinaReview(NEW('§ 742.6(b)(10)(iii)(A)(2)'), C('§ 744.23(d)(1)', ECFR('744.23')));
     if (five) {
       add('Review policy', 'Applications for the five added destinations are reviewed case-by-case, weighing the effectiveness of the destination\'s export control regime and its coordination with BIS on enforcement.', [NEW('§ 742.6(b)(10)(iii)(A)(1)')], 'flag', 'case-by-case');
@@ -625,8 +645,11 @@ export function compareRules(input) {
   const cur = decide({ ...input, rules: 'current', dc: 'no' });
   const nw = decide({ ...input, rules: 'ak50' });
   const changed = cur.outcome !== nw.outcome;
-  return { cur, nw, changed, summary: changed ? `${OUTCOMES[cur.outcome].label} under the rules before 19 Nov 2026; ${OUTCOMES[nw.outcome].label.toLowerCase()} under RIN 0694-AK50.` : `Same outcome under both: ${OUTCOMES[cur.outcome].label.toLowerCase()}.` };
+  return { cur, nw, changed, summary: changed ? `${OUTCOMES[cur.outcome].label} under the rules before 19 Nov 2026; ${lc(OUTCOMES[nw.outcome].label)} under RIN 0694-AK50.` : `Same outcome under both: ${lc(OUTCOMES[cur.outcome].label)}.` };
 }
+
+// Lower-case only the first letter of an outcome label, so ECCNs such as "3A090" keep their case.
+export const lc = (t) => (t ? t.charAt(0).toLowerCase() + t.slice(1) : t);
 
 export function fmt(n) {
   if (n == null || !Number.isFinite(n)) return '–';

@@ -1,7 +1,7 @@
 // UI for "Does This Chip Need a License?"
-import { tppOf, pdOf, classify, decide, compareRules, groupsOf, OUTCOMES, AK50_FIVE, fmt, defaultRules, rulesetLabels, ak50InForce } from './model.js';
+import { tppOf, pdOf, classify, decide, compareRules, groupsOf, OUTCOMES, AK50_FIVE, fmt, lc, defaultRules, rulesetLabels, ak50InForce } from './model.js';
 import { drawChart } from './chart.js';
-import { reasonLine, glossFor, rulesChip } from './simple.js';
+import { reasonLine, glossFor, rulesChip, hqDefault } from './simple.js';
 import { CHIPS } from '../data/chips.js';
 import { GROUPS } from '../data/groups.js';
 import { TIMELINE } from '../data/timeline.js';
@@ -22,7 +22,7 @@ const IN_FORCE = ak50InForce(TODAY);
 
 const S = {
   preset: 'h200', rows: [], die: null, bw: null, dc: true, d5design: false, form: 'ic',
-  dest: 'China (PRC)', endUser: 'commercial', hq: false, origin: 'us', ship: 'us', certs: true,
+  dest: 'China (PRC)', endUser: 'commercial', hq: hqDefault('China (PRC)'), origin: 'us', ship: 'us', certs: true,
   rules: DEFAULT_RULES, usHq: 'no', dcUse: 'no',
   endUse: 'none', fn: 'none', oeccn: 'unknown', foundry: 'no', node: 'yes', dm: 'over',
 };
@@ -162,7 +162,7 @@ function update() {
   // Both rule sets are always compared, so Simple shows what 19 Nov 2026 changes without a trip to Full detail.
   ch.hidden = false;
   ch.textContent = ak ? (cmp.changed ? `Differs from the earlier text: ${cmp.summary}` : 'Same outcome as under the earlier text.')
-    : (cmp.changed ? `${IN_FORCE ? 'Under the rules in force from 19 Nov 2026' : 'From 19 Nov 2026 (RIN 0694-AK50)'}: ${OUTCOMES[cmp.nw.outcome].label.toLowerCase()}.`
+    : (cmp.changed ? `${IN_FORCE ? 'Under the rules in force from 19 Nov 2026' : 'From 19 Nov 2026 (RIN 0694-AK50)'}: ${lc(OUTCOMES[cmp.nw.outcome].label)}.`
       : `Same result under ${IN_FORCE ? 'the rules in force from 19 Nov 2026' : 'the rule effective 19 Nov 2026 (RIN 0694-AK50)'}.`);
   const o = OUTCOMES[r.outcome];
   const box = $('outcome');
@@ -286,7 +286,7 @@ function readHash() {
   if (['ic', 'computer', 'hbm'].includes(p.get('f'))) S.form = p.get('f');
   if (DESTS.includes(p.get('d'))) S.dest = p.get('d');
   if (['commercial', 'cloud', 'entity', 'meu', 'mieu', 'uaeok', 'veu'].includes(p.get('u'))) S.endUser = p.get('u');
-  if (p.has('hq')) S.hq = p.get('hq') === '1';
+  S.hq = p.has('hq') ? p.get('hq') === '1' : hqDefault(S.dest);
   if (['us', 'fdp', 'dm', 'foreign'].includes(p.get('o'))) S.origin = p.get('o');
   if (['us', 'abroad'].includes(p.get('s'))) S.ship = p.get('s');
   if (p.has('k')) S.certs = p.get('k') === '1';
@@ -364,11 +364,16 @@ setDetail(fullOnlyLink ? 'full' : storedDetail(), false);
 $('rules').querySelector('[data-v="current"]').textContent = LABELS.current;
 $('rules').querySelector('[data-v="ak50"]').textContent = LABELS.ak50;
 syncInputs();
-dsel.addEventListener('change', () => { S.dest = dsel.value; update(); });
+// Crossing into or out of D:5/Macau resets the HQ toggle to that destination's default; it stays user-changeable.
+dsel.addEventListener('change', () => {
+  const was = hqDefault(S.dest); S.dest = dsel.value;
+  if (hqDefault(S.dest) !== was) { S.hq = hqDefault(S.dest); if (S.hq) S.usHq = 'no'; syncInputs(); }
+  update();
+});
 $('enduser').addEventListener('change', e => { S.endUser = e.target.value; update(); });
-$('hq').addEventListener('change', e => { S.hq = e.target.checked; update(); });
+$('hq').addEventListener('change', e => { S.hq = e.target.checked; if (S.hq && S.usHq !== 'no') { S.usHq = 'no'; $('ushq').value = 'no'; } update(); });
 $('certs').addEventListener('change', e => { S.certs = e.target.checked; update(); });
-$('ushq').addEventListener('change', e => { S.usHq = e.target.value; update(); });
+$('ushq').addEventListener('change', e => { S.usHq = e.target.value; if (S.usHq !== 'no' && S.hq) { S.hq = false; $('hq').checked = false; } update(); });
 $('dcuse').addEventListener('change', e => { S.dcUse = e.target.value; update(); });
 $('enduse').addEventListener('change', e => { S.endUse = e.target.value; update(); });
 $('fn').addEventListener('change', e => { S.fn = e.target.value; update(); });

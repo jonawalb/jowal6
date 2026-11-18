@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Dien Bien Phu, 1953–54 | Virtual Staff Ride</title>
+<meta name="description" content="A virtual staff ride of the Battle of Dien Bien Phu: terrain, decisions, logistics and diplomacy, day by day.">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Serif:ital,wght@0,400;0,500;1,400&family=Special+Elite&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="top">
+  <a class="crumb" href="../">Staff Rides</a>
+  <h1>Dien Bien Phu <span>20 Nov 1953 – 7 May 1954</span></h1>
+  <nav class="modes" role="tablist" aria-label="View">
+    <button role="tab" data-mode="ride" aria-selected="true">Staff ride</button>
+    <button role="tab" data-mode="explore">Explore</button>
+    <button role="tab" data-mode="logistics">Logistics</button>
+    <button role="tab" data-mode="whatif">What if</button>
+    <button role="tab" data-mode="analysis">Analysis</button>
+  </nav>
+  <div class="toggles">
+    <div class="seg" aria-label="Map style">
+      <button data-style="period" aria-pressed="true" title="Period staff-map style drawn from elevation data">Period map</button>
+      <button data-style="ams" aria-pressed="false" title="US Army Map Service 1:50,000 sheet 5651 IV">AMS sheet</button>
+      <button data-style="modern" aria-pressed="false" title="Sentinel-2 cloudless imagery, 2016">Imagery</button>
+    </div>
+    <div class="seg" aria-label="Dimension">
+      <button data-dim="2d" aria-pressed="true">2D</button>
+      <button data-dim="3d" aria-pressed="false">3D</button>
+    </div>
+  </div>
+</header>
+
+<main class="stage">
+  <div id="map" aria-label="Map of the Dien Bien Phu valley"></div>
+  <div class="maplegend" id="legend"></div>
+  <div class="mapnote" id="mapnote" hidden></div>
+  <aside class="panel" id="panel" aria-live="polite"></aside>
+</main>
+
+<footer class="timeline" id="timeline">
+  <div class="tl-head">
+    <button class="play" id="play" aria-label="Play">▶</button>
+    <div class="tl-date" id="tl-date"></div>
+    <div class="tl-sub" id="tl-sub"></div>
+  </div>
+  <div class="tl-track" id="tl-track"></div>
+</footer>
+
+<div class="loading" id="loading">Loading the valley…</div>
+
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

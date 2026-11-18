@@ -89,8 +89,12 @@ function start(history = []) {
   g = { base: s, s, fx: null, history: [...history], picks: [], tab: 'ciso', timer: null, left: 600, revealed: false, edits: {} };
   g.edits = loadEdits(s);
   if (s.over) { endScreen(); return; }
-  show('play'); paint(); scrollTo({ top: 0 });
+  show('play'); paint(); toPlay('auto');
 }
+// Scroll so the turn bar sits at the top of the screen (on a 720 px projector the site header and the notice
+// otherwise take a third of it). The bar is sticky, so scrolling to the feed heading would tuck the new turn's
+// first report under it; scrolling to the play section shows the bar, the facilitator card and the feed in order.
+function toPlay(behavior) { scrollTo({ top: Math.max(0, $('play').getBoundingClientRect().top + scrollY - 8), behavior }); }
 
 /* ======================= Play ======================= */
 function nowH() { const sc = scenarioById(g.s.scen); return sc.turns[g.s.t].h; }
@@ -289,7 +293,7 @@ $('end-turn').addEventListener('click', () => {
   if (g.timer) stopTimer();
   if (g.s.over) { saveHash(); g.edits = loadEdits(g.s); endScreen(); return; }
   paint(); paintBar(prev);
-  $('feed-t').scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  toPlay(matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth');
   pulse($('clock'));
 });
 
@@ -326,7 +330,7 @@ function endScreen() {
     <td class="when">${esc(clockText(sc, k.dueH))}, day ${Math.floor(k.dueH / 24) + 1}</td><td class="when">${k.filedH != null ? `${esc(clockText(sc, k.filedH))}, day ${Math.floor(k.filedH / 24) + 1}` : '—'}</td>
     <td>${k.status === 'open' ? 'still open (due after the exercise)' : esc(k.status)}</td></tr>`).join('')}</tbody>` : '<tbody><tr><td>No reporting obligation was triggered.</td></tr></tbody>';
   $('csf').innerHTML = csfCoverage(s).map(fn => `<div class="fn"><h4>${fn.name} (${fn.fn})</h4>${fn.cats.map(c => `<div class="cat ${c.n >= 1 ? 'on' : c.n > 0 ? 'part' : ''}"><code>${c.id}</code>${esc(c.name)}</div>`).join('')}</div>`).join('');
-  $('end').focus({ preventScroll: true }); scrollTo({ top: 0 });
+  $('end').focus({ preventScroll: true }); scrollTo({ top: Math.max(0, $('end').getBoundingClientRect().top + scrollY - 8) });
 }
 /* Exercise overview, objective ratings and the improvement plan. The facilitator's edits are kept in this
    browser for this exercise (they also go into every download) and survive a reload. */

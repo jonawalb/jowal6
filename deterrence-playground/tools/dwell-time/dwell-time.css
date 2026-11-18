@@ -200,3 +200,15 @@
   .dt-tabs::-webkit-scrollbar { display: none; }
   .dt-tabs button { flex: 0 0 auto; padding: 7px 8px; }
 }
+
+/* Presentation pass 2: on a desktop or projector the room reads the feed, the seat question and the options
+   from across a table. Lift the play text one step there; phones keep the compact sizes. */
+@media (min-width: 1100px) {
+  .dt-item h4 { font-size: 15.5px; }
+  .dt-item p { font-size: 15px; }
+  .dt-q { font-size: 14.5px; }
+  .dt-act b { font-size: 15px; }
+  .dt-act .x { font-size: 13px; }
+  .dt-tabs button { font-size: 14.5px; }
+  .dt-m { font-size: 13.5px; } .dt-m b { font-size: 17px; }
+}

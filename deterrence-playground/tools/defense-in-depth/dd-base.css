@@ -191,3 +191,10 @@ body.dd-home #new-game, body.dd-home #howto-btn, body.dd-home #learn-btn, body.d
 .dd-start-foot:not(:has(> p:not([hidden]))) { display: none; }
 .dd-start-foot .dd-rules { font-size: 13px; color: var(--muted); }
 .dd-start-foot .dd-rules .btn { min-height: 36px; font-size: 13px; }
+
+/* Presentation pass 2: on a short desktop screen (a 720 px projector) "Start the battle" sat below the fold of the
+   scrolling plan panel. Keep the checklist and the button pinned to the panel's bottom edge while the steps scroll. */
+@media (min-width: 1021px) {
+  body.dd-planning #plan-check { position: sticky; bottom: 0; z-index: 2; background: var(--panel); margin: 0 -16px -14px; padding: 8px 16px 14px; box-shadow: 0 -10px 14px -12px rgba(0, 0, 0, .35); }
+  body.dd-planning #plan-check .dd-check { max-height: 24vh; overflow-y: auto; }
+}

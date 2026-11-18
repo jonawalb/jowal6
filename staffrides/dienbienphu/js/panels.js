@@ -28,6 +28,7 @@ export function renderStand(el, D, i, ctx) {
     <h2>${esc(s.title)}</h2>
     <p class="eyebrow" style="text-transform:none;letter-spacing:0">Decision-maker: <b style="color:var(--ink)">${esc(s.maker)}</b>${s.placeName ? ` · ${esc(s.placeName)}` : ''}</p>
     <div class="situation"><p style="margin:0">${esc(s.situation)}</p></div>
+    <div class="btn-row"><button class="btn" data-pano>Stand here: eye-level 360° view</button></div>
     ${obs.length ? `<div class="btn-row">${obs.map((o) => `<button class="btn ghost" data-vs="${o.id}">Line of sight from ${esc(o.label)}</button>`).join('')}<button class="btn ghost" data-3d>View in 3D</button></div>` : `<div class="btn-row"><button class="btn ghost" data-3d>View in 3D</button></div>`}
     <h3>Your call: what would you do?</h3>
     <div class="options">${s.options.map((o, k) => `<button class="option" data-opt="${k}" aria-pressed="false">${esc(o.text)}${o.src?.length ? srcInline(o.src) : ''}</button>`).join('')}</div>
@@ -50,6 +51,7 @@ export function renderStand(el, D, i, ctx) {
   });
   el.querySelectorAll('[data-vs]').forEach((b) => b.addEventListener('click', () => ctx.viewshed(b.dataset.vs, s)));
   el.querySelector('[data-3d]')?.addEventListener('click', () => ctx.to3d(s));
+  el.querySelector('[data-pano]')?.addEventListener('click', () => ctx.pano(i));
   el.scrollTop = 0;
 }
 

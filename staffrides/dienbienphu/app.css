@@ -219,3 +219,16 @@ details.sources ol { padding-left: 18px; margin: 6px 0; } details.sources li { f
 .leaflet-popup-content .muted { color: #6b6257; font-size: .76rem; }
 .no-webgl [data-dim="3d"] { opacity: .45; }
 .no-webgl .maplegend, .no-webgl .mapnote { z-index: 1000; }
+
+/* ---------- eye-level panorama ---------- */
+.pano { grid-area: 1 / 1; position: relative; z-index: 1100; background: #cdd6dc; min-height: 0; overflow: hidden; }
+.pano[hidden] { display: none; }
+.pano canvas { display: block; width: 100%; height: 100%; cursor: grab; touch-action: none; outline: none; }
+.pano canvas:active { cursor: grabbing; }
+.pano-bar { position: absolute; left: 0; right: 0; bottom: 0; display: flex; align-items: center; gap: 12px; padding: 8px 12px; background: rgba(20,18,15,.62); color: #f3eee2; font-size: .8rem; }
+.pano-title { font-weight: 600; }
+.pano-hint { opacity: .8; margin-right: auto; }
+.pano-bar .btn.ghost { color: #f3eee2; border-color: rgba(255,255,255,.4); background: transparent; padding: 5px 10px; }
+.pano-note { position: absolute; left: 12px; top: 36px; max-width: 420px; font-size: .74rem; line-height: 1.4; color: #1f1b16; background: rgba(251,248,241,.85); border-radius: 6px; padding: 6px 9px; }
+#map { grid-area: 1 / 1; }
+@media (max-width: 900px) { .pano-hint, .pano-note { display: none; } }

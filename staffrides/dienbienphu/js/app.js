@@ -3,6 +3,7 @@ import { BattleMap } from './map.js';
 import { Timeline, clamp, RANGE } from './timeline.js';
 import { renderStand, renderExplore, renderLogistics, renderWhatIf, renderAnalysis } from './panels.js';
 import { fmtDate, addDays, esc } from './util.js';
+import { PanoViewer } from './pano.js';
 
 const $ = (s) => document.querySelector(s);
 const state = { mode: 'ride', date: '1954-03-13', stand: 0, style: 'period', dim: '2d', cf: new Set(), playing: null };
@@ -15,7 +16,8 @@ const ctx = {
   setDate: (d) => setDate(d),
   goStand: (i) => goStand(i),
   viewshed: (id, stand) => showViewshed(id, stand),
-  to3d: (s) => { setDim('3d'); if (s?.cam) bm.fly(s.cam); },
+  to3d: (s) => { setDim('3d'); if (s?.cam) bm.fly({ ...s.cam, pitch: 80, zoom: s.cam.zoom + 0.9 }); },
+  pano: (i) => openPano(i),
   cfChanged: () => tl.setWindows(D.cf.filter((c) => state.cf.has(c.id) && c.window).map((c) => c.window)),
 };
 
@@ -54,6 +56,13 @@ function noteNoWebGL() {
   note.querySelector('[data-close]').addEventListener('click', (e) => { e.preventDefault(); note.hidden = true; });
   document.querySelectorAll('[data-dim]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.dim === '2d'));
 }
+const pv = new PanoViewer($('.stage'), D);
+function openPano(i) {
+  const s = D.stands[i];
+  pv.open(s.id, { date: state.date, title: `Stand ${i + 1}: ${s.placeName || ''}`, onClose: () => { state.pano = false; writeHash(); } })
+    .then(() => { state.pano = true; writeHash(); })
+    .catch((e) => console.warn('panorama failed', e));
+}
 const tl = new Timeline($('#tl-track'), D, { onDate: (d) => setDate(d), onStand: (i) => { setMode('ride'); goStand(i); } });
 
 // ------------------------------------------------------------------ state changes
@@ -61,6 +70,7 @@ function setDate(d, opts = {}) {
   state.date = clamp(d);
   tl.setDate(state.date);
   bm.setDate(state.date);
+  pv.setDate(state.date);
   const ph = D.meta.phases.find((p) => p.start <= state.date && state.date <= p.end);
   $('#tl-date').textContent = fmtDate(state.date);
   $('#tl-sub').textContent = ph ? ph.long || ph.name : '';
@@ -76,6 +86,7 @@ function goStand(i) {
   showViewshed(null);
   setDate(s.date, { noPanel: true });
   renderStand($('#panel'), D, i, ctx);
+  if (state.pano) openPano(i);
   bm.setActive(s.place);
   if (s.cam) bm.fly(s.cam);
   writeHash();
@@ -99,7 +110,7 @@ function setMode(m) {
   state.mode = m;
   document.querySelectorAll('.modes button').forEach((b) => b.setAttribute('aria-selected', b.dataset.mode === m));
   if (prev === 'logistics' && m !== 'logistics') bm.ready.then(() => bm.setLogistics(false));
-  if (m !== 'ride') bm.setActive(null);
+  if (m !== 'ride') { bm.setActive(null); if (state.pano) pv.close(); }
   if (m !== 'ride' && m !== 'analysis') showViewshed(null);
   if (m === 'ride') goStand(state.stand);
   else if (m === 'explore') renderExplore($('#panel'), D, state.date, ctx);
@@ -151,7 +162,7 @@ document.querySelectorAll('[data-dim]').forEach((b) => b.addEventListener('click
 let hashLock = false;
 function writeHash() {
   if (hashLock) return;
-  const h = state.mode === 'ride' ? `#stand=${state.stand + 1}` : `#${state.mode}&d=${state.date}`;
+  const h = state.mode === 'ride' ? `#stand=${state.stand + 1}${state.pano ? '&view=eye' : ''}` : `#${state.mode}&d=${state.date}`;
   history.replaceState(null, '', h);
 }
 function route() {
@@ -161,7 +172,7 @@ function route() {
   const stand = /stand=(\d+)/.exec(h);
   if (p.get('d')) state.date = clamp(p.get('d'));
   setDate(state.date, { noPanel: true });
-  if (stand) { state.stand = Number(stand[1]) - 1; setMode('ride'); }
+  if (stand) { state.stand = Number(stand[1]) - 1; setMode('ride'); if (/view=eye/.test(h)) openPano(state.stand); }
   else if (['explore', 'logistics', 'whatif', 'analysis'].includes(p.get('m'))) setMode(p.get('m'));
   else setMode('ride');
   hashLock = false;

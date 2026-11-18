@@ -27,7 +27,7 @@ export class BattleMap {
       ...HOME,
       minZoom: 5.5,
       maxZoom: 16.5,
-      maxPitch: 78,
+      maxPitch: 85,
       attributionControl: false,
       dragRotate: true,
     });

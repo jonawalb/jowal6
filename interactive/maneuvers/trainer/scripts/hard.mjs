@@ -132,7 +132,7 @@ function openScenario(id, keep = {}) {
   G.view = { fog: true, lit: new Set() };
   G.map.frame(G.state, 0, G.view);
   G.map.setPlan("");
-  G.map.corners({ hint: "Briefing", readout: `0:00 / ${fmtClock(scen.timeLimit)}` });
+  G.map.corners({ hint: "Briefing", readout: `about ${Math.round(scen.timeLimit / tempoOf(scen) / 60)} min` });
   try { history.replaceState(null, "", `#${id}`); } catch (e) {}
   showBrief();
   ui.game.scrollIntoView({ block: "start", behavior: keep.instant ? "auto" : "smooth" });

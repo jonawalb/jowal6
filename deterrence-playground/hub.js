@@ -158,6 +158,11 @@ function subOrder(s, ts) {
 }
 /** Tile for one subsection, opened like a section tile. */
 function subTile(c, s, ts) {
+  // A subsection still being built shows grayed out with a tag and does not open.
+  if (s.soon) return `<div class="sec-tile soon" aria-disabled="true">
+    <span class="sec-tile-n">${ts.length} tool${ts.length === 1 ? '' : 's'}</span>
+    <b>${esc(s.name)} <span class="soon-badge">${esc(s.soon)}</span></b><span class="sec-tile-b">${esc(s.blurb)}</span>
+    <span class="sec-tile-l">${ts.slice(0, 4).map(t => esc(t.title)).join(' · ')}${ts.length > 4 ? ' · …' : ''}</span></div>`;
   return `<button type="button" class="sec-tile${s.locked ? ' locked' : ''}" data-open-cat="${c.id}/${s.id}">
     <span class="sec-tile-n">${ts.length} tool${ts.length === 1 ? '' : 's'}</span>
     <b>${esc(s.name)}${s.locked ? LOCK : ''}</b><span class="sec-tile-b">${esc(s.blurb)}</span>

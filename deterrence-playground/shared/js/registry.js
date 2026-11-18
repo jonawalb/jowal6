@@ -40,7 +40,7 @@ const CATEGORY_LIST = [
   { id: 'emergingtech', name: 'Emerging Technology', sites: ['deterrence'],
     blurb: 'AI policy, compute and chips: who controls the supply chain, how export controls work, and games to test them.',
     subs: [{ id: 'infosheets', name: 'Info Sheets', blurb: 'Sourced references: AI policy in the US, China and Russia, chip chokepoints, export rules and China’s compute.' },
-      { id: 'gamesmodels', name: 'Games and Models', blurb: 'Models and games: chip location verification, a Taiwan blockade clock for AI compute, and chip diversion.' }] },
+      { id: 'gamesmodels', name: 'Games and Models', soon: 'Under development', blurb: 'Models and games: chip location verification, a Taiwan blockade clock for AI compute, and chip diversion.' }] },
   // jwalberg.com/narratives/: public rhetoric trackers (Rhetoric Search keeps its own password). Landing page lives in jowal6.
   { id: 'tracking', name: 'Narrative Tracking', sites: ['narratives'],
     blurb: 'What governments say, week by week, and every mention searchable.' },

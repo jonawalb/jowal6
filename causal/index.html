@@ -1,0 +1,971 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<title>Causal Inference, Plainly</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Plain-language companion to the Counterfactual Seminar.
+   One question per page, a short answer first, one control per lab, results read out as sentences.
+   Motif kept from the seminar: solid = what happened, dashed amber = the world you never see. */
+:root{
+  --bg:#F5F6F4; --surface:#FFFFFF; --ink:#18212A; --muted:#56616D; --line:#D8DDE2; --soft:#E9EFEE;
+  --accent:#0E6B75; --ctrl:#5A6A8E; --cf:#A86A0C; --bad:#B0352E; --good:#2E7A48; --shortbg:#FFF6E6;
+  --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-body:"Atkinson Hyperlegible","Helvetica Neue",Arial,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0F151B; --surface:#161E26; --ink:#E6EBF0; --muted:#9DA8B4; --line:#2B3642; --soft:#1C2931;
+  --accent:#4FBCC6; --ctrl:#98A9CE; --cf:#E9A947; --bad:#E5706A; --good:#64C285; --shortbg:#2A2416; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0F151B; --surface:#161E26; --ink:#E6EBF0; --muted:#9DA8B4; --line:#2B3642; --soft:#1C2931;
+  --accent:#4FBCC6; --ctrl:#98A9CE; --cf:#E9A947; --bad:#E5706A; --good:#64C285; --shortbg:#2A2416; color-scheme:dark }
+
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:18px;line-height:1.6;margin:0}
+.top{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+.top-in{max-width:860px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:10px 16px}
+.brand{font-family:var(--f-display);font-weight:800;font-stretch:82%;font-size:19px;margin:0;white-space:nowrap}
+.brand span{color:var(--cf)}
+.top select{margin-left:auto;min-width:0;max-width:60%;font-family:var(--f-body);font-size:15px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+.progress{height:4px;background:var(--soft)}
+.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .25s}
+main{max-width:860px;margin:0 auto;padding:28px 16px 120px}
+.slide[hidden]{display:none}
+.step{font-family:var(--f-display);font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin:0 0 8px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0}
+h1{font-size:clamp(32px,5.4vw,52px);font-stretch:82%;font-weight:800;line-height:1.04}
+h1 em{font-style:normal;color:var(--cf)}
+h2{font-size:clamp(27px,4vw,38px);font-stretch:86%;font-weight:750;line-height:1.1}
+h3{font-size:17px;font-weight:700;margin-bottom:6px}
+p{margin:0 0 14px}
+.short{background:var(--shortbg);border-left:4px solid var(--cf);border-radius:4px 10px 10px 4px;padding:14px 18px;margin:18px 0 22px;font-size:20px;line-height:1.5}
+.short b{font-family:var(--f-display);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--cf);display:block;margin-bottom:2px}
+.eg{border-left:3px solid var(--line);padding-left:14px;color:var(--ink)}
+.eg b{font-family:var(--f-display)}
+.lab{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;margin:22px 0}
+.lab h3{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.lab h3 small{font-family:var(--f-display);font-weight:600;font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.try{color:var(--muted);font-size:16px;margin:0 0 12px}
+.ctl{display:grid;gap:4px;margin:12px 0;font-family:var(--f-display);font-size:15px}
+.ctl label{display:flex;justify-content:space-between;gap:10px;font-weight:600}
+.ctl .ends{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);font-weight:500}
+.ctl output{font-family:var(--f-mono);font-size:14px;color:var(--accent)}
+input[type=range]{width:100%;accent-color:var(--accent);height:28px}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.btn{font-family:var(--f-display);font-size:15px;font-weight:600;border:1.5px solid var(--accent);background:transparent;color:var(--accent);border-radius:8px;padding:8px 14px;cursor:pointer;min-height:40px}
+.btn:hover{background:var(--soft)}
+.btn[aria-pressed="true"],.btn.primary{background:var(--accent);color:var(--surface)}
+.btn:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,.chk:focus-within{outline:3px solid var(--cf);outline-offset:2px}
+.chks{display:grid;gap:8px;margin:12px 0}
+.chk{display:flex;gap:10px;align-items:flex-start;font-size:16px;border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer}
+.chk input{margin-top:5px;width:18px;height:18px;accent-color:var(--accent)}
+.chk small{display:block;color:var(--muted);font-size:14px}
+.readout{font-size:19px;line-height:1.5;margin:14px 0 0;padding:12px 14px;border-radius:8px;background:var(--soft)}
+.readout b{font-family:var(--f-mono);font-weight:500;font-size:.95em}
+.readout .ok{color:var(--good);font-weight:700} .readout .no{color:var(--bad);font-weight:700}
+.yours{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:18px 0;background:var(--surface)}
+.yours h3{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.yours p{margin:0}
+details.deeper{border-top:1px solid var(--line);margin-top:20px;padding-top:10px}
+details.deeper summary{cursor:pointer;font-family:var(--f-display);font-weight:600;font-size:16px;color:var(--muted);padding:6px 0}
+details.deeper[open] summary{color:var(--ink)}
+details.deeper dl{margin:8px 0 0}
+details.deeper dt{font-family:var(--f-display);font-weight:700;margin-top:10px}
+details.deeper dd{margin:2px 0 0}
+details.deeper p{margin-top:10px}
+.mono{font-family:var(--f-mono);font-size:.88em}
+svg.chart{width:100%;height:auto;display:block;overflow:visible}
+svg text{font-family:var(--f-display);font-size:12px;fill:var(--muted)}
+svg .ax{stroke:var(--line);stroke-width:1;fill:none}
+svg .grid{stroke:var(--line);stroke-width:1;stroke-dasharray:2 3;fill:none;opacity:.7}
+svg .l-treat{stroke:var(--accent);stroke-width:2.6;fill:none}
+svg .l-ctrl{stroke:var(--ctrl);stroke-width:2.6;fill:none}
+svg .l-cf{stroke:var(--cf);stroke-width:2.6;fill:none;stroke-dasharray:7 5}
+svg .l-faint{stroke:var(--muted);stroke-width:1.3;fill:none;opacity:.45}
+svg .l-ink{stroke:var(--ink);stroke-width:1.6;fill:none}
+svg .d-treat{fill:var(--accent);opacity:.6} svg .d-ctrl{fill:var(--ctrl);opacity:.5} svg .d-ink{fill:var(--ink)} svg .d-bad{fill:var(--bad);opacity:.75}
+svg .b-treat{fill:var(--accent)} svg .b-ctrl{fill:var(--ctrl)} svg .b-cf{fill:var(--cf)} svg .b-bad{fill:var(--bad)} svg .b-ink{fill:var(--ink)} svg .b-good{fill:var(--good)}
+svg .lbl{fill:var(--ink);font-size:13px} svg .lbl-strong{fill:var(--ink);font-size:14px;font-weight:700}
+svg .zone{fill:var(--cf);opacity:.09}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-family:var(--f-display);font-size:14px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:22px;border-top:3px solid var(--accent);vertical-align:middle;margin-right:6px}
+.legend i.cf{border-top:3px dashed var(--cf)} .legend i.ctrl{border-top-color:var(--ctrl)} .legend i.faint{border-top:2px solid var(--muted);opacity:.5}
+table.days{width:100%;border-collapse:collapse;font-size:16px;font-variant-numeric:tabular-nums}
+table.days th{text-align:left;font-family:var(--f-display);font-size:13px;color:var(--muted);font-weight:600;border-bottom:1px solid var(--line);padding:6px}
+table.days td{border-bottom:1px solid var(--line);padding:6px}
+table.days td.n{font-family:var(--f-mono);font-size:15px}
+table.days .q{color:var(--muted)}
+table.days .ghost{color:var(--cf);font-style:italic}
+table.days tr.on td:first-child{box-shadow:inset 3px 0 var(--accent)}
+.tablewrap{overflow-x:auto}
+.dagwrap{max-width:560px;margin:0 auto}
+.dagwrap .ctrl-on rect{stroke:var(--cf);stroke-width:3}
+.chain{display:grid;grid-template-columns:1fr;gap:6px;font-family:var(--f-display);font-size:15px;margin:10px 0}
+.chain div{display:flex;align-items:center;gap:10px}
+.chain span.box{border:1.5px solid var(--line);border-radius:8px;padding:4px 10px;background:var(--bg)}
+.chain span.box.hid{border-style:dashed;border-color:var(--cf)}
+.chain span.lag{font-family:var(--f-mono);font-size:14px;color:var(--accent)}
+.tree{display:grid;gap:12px}
+.tree .qq{font-size:20px;font-family:var(--f-display);font-weight:600}
+.tree .path{font-size:15px;color:var(--muted)}
+.result{border:2px solid var(--accent);border-radius:12px;padding:16px;background:var(--surface)}
+.result h3{font-size:22px;color:var(--accent)}
+.projects{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-top:10px}
+.projects div{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface);font-size:16px}
+.projects b{font-family:var(--f-display);display:block}
+.projects span{font-family:var(--f-display);font-size:13px;color:var(--accent);font-weight:600}
+.quiz{display:grid;gap:14px}
+.qz{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+.qz p.stem{margin:0 0 10px;font-size:19px}
+.qz .opts{display:grid;gap:8px}
+.qz .opt{all:unset;cursor:pointer;font-size:17px;border:1.5px solid var(--line);border-radius:8px;padding:9px 12px}
+.qz .opt:hover{background:var(--soft)}
+.qz .opt:focus-visible{outline:3px solid var(--cf)}
+.qz .opt.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,transparent)}
+.qz .opt.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,transparent)}
+.qz .why{margin:10px 0 0;border-top:1px dashed var(--line);padding-top:10px}
+.score{font-family:var(--f-display);color:var(--muted)}
+dl.gloss{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+dl.gloss dt{font-family:var(--f-display);font-weight:700;margin-top:12px}
+dl.gloss dd{margin:2px 0 0}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px}
+ul.clean{padding-left:20px;margin:0 0 14px} ul.clean li{margin-bottom:8px}
+.pager{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.pager-in{max-width:860px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:10px 16px}
+.pager .btn{white-space:nowrap}
+.pager .next{margin-left:auto;max-width:70%;overflow:hidden;text-overflow:ellipsis}
+.pager .count{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+@media (max-width:600px){ .dagwrap svg text{font-size:16px} body{font-size:17px} .short{font-size:18px} .readout{font-size:17px} .pager .next .lab-next{display:none} }
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+
+<header class="top">
+  <div class="top-in">
+    <p class="brand">Causal Inference, <span>Plainly</span></p>
+    <select id="jump" aria-label="Jump to a page"></select>
+  </div>
+  <div class="progress"><i id="prog"></i></div>
+</header>
+
+<main id="stage">
+
+<!-- 0 -->
+<section class="slide" id="p-start" data-title="The one idea">
+  <p class="step">Start here</p>
+  <h1>Every "X caused Y" claim compares what happened with <em>a world you never see.</em></h1>
+  <div class="short"><b>The short version</b>To say a US transit <i>caused</i> more PLA flights, you need to know how many flights there would have been without the transit, on the same days. That second number never happens, so you can't observe it. Causal inference is the toolkit for making a believable guess about it.</div>
+  <div class="lab">
+    <h3>The picture to keep in your head <small>made-up data</small></h3>
+    <div id="heroChart"></div>
+    <div class="legend"><span><i></i>What happened (the transit took place)</span><span><i class="cf"></i>What would have happened without it</span></div>
+  </div>
+  <p>The solid line is in your data. The dashed line never is. The effect is the gap between them. Every method in this course is a different way of drawing the dashed line, and each one works only under its own condition. Your job in a paper is to say which method you used and why its condition is believable in your case.</p>
+  <div class="yours"><h3>How each page works</h3>
+    <p>Each page asks one question and answers it in two sentences. Then you get one thing to play with. The data in the tools are simulated, so the true effect is always known, and you can watch a method hit it or miss it. Jargon is folded away under <b>"The technical terms"</b> at the bottom of each page. Use the Next button or your arrow keys.</p></div>
+</section>
+
+<!-- 1 -->
+<section class="slide" id="p-two" data-title="What 'cause' means" hidden>
+  <p class="step">Part 1 · The basic problem</p>
+  <h2>What does "X caused Y" actually mean?</h2>
+  <div class="short"><b>The short answer</b>Every case has two possible results: one with X and one without. The effect is the difference between them. You only ever get to see one of the two.</div>
+  <p class="eg"><b>Everyday version.</b> You take an aspirin and your headache goes away. Did the aspirin do it? You'd have to know whether the headache would have gone away anyway. That's the same afternoon, without the aspirin, and you can't rerun it.</p>
+  <div class="lab">
+    <h3>Eight days, two possible results each <small>made-up numbers</small></h3>
+    <p class="try">On each day the US either sent a ship through the Strait or didn't. The table shows PLA aircraft counts. "?" is the result that didn't happen. Press the button to see it.</p>
+    <div class="tablewrap"><table class="days" id="dayTable"></table></div>
+    <div class="btns"><button class="btn" id="dayReveal" aria-pressed="false">Show what we can't normally see</button></div>
+    <p class="readout" id="dayRead"></p>
+  </div>
+  <div class="yours"><h3>In your work</h3><p>In <b>Calibrated Coercion</b>, the claim "transits raise PLA activity" means activity on transit days was higher than it <i>would have been</i> on those same days without a transit. Every design choice in the paper is about how you fill in that missing column.</p></div>
+  <details class="deeper"><summary>The technical terms</summary><dl>
+    <dt>Potential outcomes</dt><dd>The two results, written Y(1) with treatment and Y(0) without. The effect for one case is Y(1) − Y(0).</dd>
+    <dt>The fundamental problem of causal inference</dt><dd>Holland's (1986) name for the fact that you only ever see one of the two.</dd>
+    <dt>ATE, ATT</dt><dd>The average effect across all cases (ATE), or across only the cases that got X (ATT). Saying which one you want before you estimate anything is called "choosing your estimand."</dd>
+  </dl></details>
+</section>
+
+<!-- 2 -->
+<section class="slide" id="p-selection" data-title="Why simple comparisons lie" hidden>
+  <p class="step">Part 1 · The basic problem</p>
+  <h2>Why can't I just compare days with and without a transit?</h2>
+  <div class="short"><b>The short answer</b>Because those days were different to begin with. If the Navy sails when things are already tense, transit days would have had more PLA flights anyway. The simple comparison mixes that head start in with the real effect.</div>
+  <p class="eg"><b>Everyday version.</b> People in hospitals are sicker than people at home. That doesn't mean hospitals make you sick. The people who went in were sicker before they arrived.</p>
+  <div class="lab">
+    <h3>Transits and PLA flights over 2,000 simulated days <small>true effect is about 9–10 aircraft</small></h3>
+    <p class="try">Slide to the right to make the Navy more likely to sail on tense days. Watch the simple comparison pull away from the truth.</p>
+    <div class="ctl"><label for="selS">How much the Navy prefers tense days <output id="selSo"></output></label>
+      <input type="range" id="selS" min="0" max="2" step="0.1" value="1.2">
+      <div class="ends"><span>Not at all (like a coin flip)</span><span>Strongly</span></div></div>
+    <div id="selChart"></div>
+    <p class="readout" id="selRead"></p>
+  </div>
+  <div class="yours"><h3>In your work</h3><p>This is the first thing a referee will raise about <b>Calibrated Coercion</b>: "Doesn't the US schedule transits after provocations?" If it does, part of what looks like a PLA response was already on its way.</p></div>
+  <details class="deeper"><summary>The technical terms</summary><dl>
+    <dt>Selection bias</dt><dd>The "head start" bar: how different the treated cases would have been even without treatment. The simple comparison = true effect on the treated + selection bias.</dd>
+    <dt>Confounder</dt><dd>The thing that causes both (here, tension). It drives the Navy's choice and PLA activity.</dd>
+    <dt>Identification</dt><dd>An argument for why your comparison has no head start, or for how you removed it. Every method from here on is an identification strategy.</dd>
+  </dl></details>
+</section>
+
+<!-- 3 -->
+<section class="slide" id="p-random" data-title="Why coin flips fix it" hidden>
+  <p class="step">Part 1 · The basic problem</p>
+  <h2>Why do experiments work?</h2>
+  <div class="short"><b>The short answer</b>A coin flip doesn't know which days are tense, so tense and calm days end up spread evenly across both groups. With no head start, the simple comparison is now an honest estimate.</div>
+  <div class="lab">
+    <h3>40 days, placed by how tense they were <small>true effect = 9</small></h3>
+    <p class="try">Each dot is a day, placed by how tense it was. Compare "Navy picks" with "Coin flip," then flip a few more times.</p>
+    <div class="btns"><button class="btn" id="rnPick">Navy picks the tense days</button><button class="btn" id="rnCoin">Coin flip</button><button class="btn" id="rnAgain">Flip again</button></div>
+    <div id="rnChart"></div>
+    <p class="readout" id="rnRead"></p>
+  </div>
+  <p>Notice that a single coin flip is never perfect. The estimate bounces around 9. The size of that bounce is what a <b>standard error</b> measures. More cases make it smaller.</p>
+  <div class="yours"><h3>In your work</h3><p><b>Sonic Vectors</b> is the one project where you control the coin. Its main risk is subjects talking to each other: if a treated subject tells a control subject about the audio, the control group is no longer clean.</p></div>
+  <details class="deeper"><summary>The technical terms</summary><dl>
+    <dt>Randomization</dt><dd>Assigning treatment by chance. It removes selection bias on average, for things you measured and things you didn't.</dd>
+    <dt>Balance</dt><dd>The two groups look alike before treatment. The dots above show balance on tension.</dd>
+    <dt>Power</dt><dd>The chance your study detects an effect of a given size if it's real. Small samples have low power.</dd>
+    <dt>SUTVA / interference</dt><dd>The assumption that one case's treatment doesn't affect another case's outcome. Spillovers between subjects, or between countries, break it.</dd>
+  </dl></details>
+</section>
+
+<!-- 4 -->
+<section class="slide" id="p-controls" data-title="What to control for" hidden>
+  <p class="step">Part 2 · When you can't run an experiment</p>
+  <h2>What should I control for, and what shouldn't I?</h2>
+  <div class="short"><b>The short answer</b>Control for things that cause both X and Y. Don't control for things that X itself causes. That either erases part of the effect or creates a fake one.</div>
+  <p class="eg"><b>Rule of thumb.</b> Ask of every control: "Was this already set <i>before</i> X happened?" If yes, it's usually safe. If X could have changed it, leave it out.</p>
+  <div class="lab">
+    <h3>Pick your controls <small>true total effect = 9</small></h3>
+    <div class="dagwrap" id="dagChart"></div>
+    <div class="chks">
+      <label class="chk"><input type="checkbox" id="cC"><span>Tension before the transit<small>Causes both the transit and PLA flights. It existed before the transit.</small></span></label>
+      <label class="chk"><input type="checkbox" id="cM"><span>PLA alert level after the transit<small>The transit raises it, and it raises flights. It's one of the ways the effect travels.</small></span></label>
+      <label class="chk"><input type="checkbox" id="cK"><span>News coverage that day<small>Both the transit and the flights generate it.</small></span></label>
+    </div>
+    <p class="readout" id="dagRead"></p>
+  </div>
+  <div class="yours"><h3>In your work</h3><p>In <b>Calibrated Coercion</b>, control for pre-transit tension. Don't control for anything measured after the ship shows up, like alert levels or the volume of PRC statements that day. Those are part of the response you're trying to measure.</p></div>
+  <details class="deeper"><summary>The technical terms</summary><dl>
+    <dt>DAG</dt><dd>Directed acyclic graph: the arrow diagram above. You draw your assumptions, and the graph tells you which controls are needed.</dd>
+    <dt>Confounder, mediator, collider</dt><dd>Tension is a confounder (control for it). Alert level is a mediator (controlling for it gives only the "direct" effect). News coverage is a collider (controlling for it creates bias). Mediators and colliders together are called "bad controls."</dd>
+    <dt>Backdoor criterion</dt><dd>The formal rule: control for enough to block every non-causal path from X to Y, and nothing that X causes.</dd>
+  </dl></details>
+</section>
+
+<!-- 5 -->
+<section class="slide" id="p-hidden" data-title="What you can't measure" hidden>
+  <p class="step">Part 2 · When you can't run an experiment</p>
+  <h2>What about the things I can't measure?</h2>
+  <div class="short"><b>The short answer</b>If something you didn't measure pushes both X and Y, your estimate is off, and no number of other controls will fix it. What you can do is say how strong that hidden factor would have to be to overturn your result.</div>
+  <div class="lab">
+    <h3>NFL spending and wins, with a hidden factor <small>true effect = 3</small></h3>
+    <p class="try">The hidden factor is front-office skill. Good front offices spend differently <i>and</i> win more. Make it matter more and watch the estimate drift.</p>
+    <div class="ctl"><label for="ovG">How much front-office skill affects winning <output id="ovGo"></output></label>
+      <input type="range" id="ovG" min="0" max="5" step="0.5" value="3">
+      <div class="ends"><span>Not at all</span><span>A lot</span></div></div>
+    <div id="ovChart"></div>
+    <p class="readout" id="ovRead"></p>
+  </div>
+  <div class="lab">
+    <h3>How fragile is your result? <small>works on any regression</small></h3>
+    <p class="try">Enter the t-statistic on your main variable and your sample size.</p>
+    <div class="ctl"><label for="rvT">t-statistic <output id="rvTo"></output></label><input type="range" id="rvT" min="1" max="10" step="0.1" value="3"></div>
+    <div class="ctl"><label for="rvN">Number of observations <output id="rvNo"></output></label><input type="range" id="rvN" min="2" max="4" step="0.05" value="3"></div>
+    <p class="readout" id="rvRead"></p>
+  </div>
+  <div class="yours"><h3>In your work</h3><p>For the <b>NFL roster paper</b>, the obvious objection is "good GMs build rosters well <i>and</i> win." Report the fragility number and compare it with a factor you did measure, like payroll. Then a reader can judge whether a hidden factor that strong is plausible.</p></div>
+  <details class="deeper"><summary>The technical terms</summary><dl>
+    <dt>Omitted variable bias (OVB)</dt><dd>The error from leaving out a confounder. Its size = (how much the hidden factor affects Y) × (how strongly it moves with X).</dd>
+    <dt>Robustness value</dt><dd>Cinelli &amp; Hazlett (2020). The share of leftover variation in both X and Y that a hidden factor would need to explain to wipe the estimate out. Computed from t and degrees of freedom. The R package is <span class="mono">sensemakr</span>.</dd>
+    <dt>Benchmarking</dt><dd>Comparing that number with the strength of a control you do have, so the threshold means something.</dd>
+  </dl></details>
+</section>
+
+<!-- 6 -->
+<section class="slide" id="p-match" data-title="Comparing like with like" hidden>
+  <p class="step">Part 2 · When you can't run an experiment</p>
+  <h2>How do I compare like with like?</h2>
+  <div class="short"><b>The short answer</b>For each case that got X, find a case without X that looks the same on what matters. Then compare the pairs. This fixes differences you measured. It can't fix ones you didn't.</div>
+  <p class="eg"><b>Everyday version.</b> To test whether tutoring helps, don't compare tutored students with everyone. Compare each tutored student with an untutored one who had the same grades last year.</p>
+  <div class="lab">
+    <h3>NHL no-trade clauses and trades, 1,200 simulated players <small>clauses do nothing here: true effect = 0</small></h3>
+    <p class="try">Better players are more likely to get clauses, and better players are traded less anyway. Make that link stronger.</p>
+    <div class="ctl"><label for="mtS">How much better players are to get clauses <output id="mtSo"></output></label>
+      <input type="range" id="mtS" min="0" max="2.4" step="0.2" value="1.6">
+      <div class="ends"><span>No difference</span><span>Much more likely</span></div></div>
+    <div id="mtChart"></div>
+    <p class="readout" id="mtRead"></p>
+  </div>
+  <div class="yours"><h3>In your work</h3><p>The <b>NHL trade protection paper</b> matches on player quality. A referee will ask "who gets clauses?" If agents or teams know something about the player that isn't in your data, matching can't remove it. That's why the cutoff design two pages ahead is stronger.</p></div>
+  <details class="deeper"><summary>The technical terms</summary><dl>
+    <dt>Selection on observables</dt><dd>The assumption that once you account for measured traits, who got X is as good as random. Also called "no unmeasured confounding" or "conditional ignorability."</dd>
+    <dt>Overlap</dt><dd>Every treated case needs comparable untreated cases. If the best players all have clauses, there's no one to match them to.</dd>
+    <dt>Propensity score</dt><dd>The predicted chance of getting X, given measured traits. You can match on that one number instead of every trait.</dd>
+  </dl></details>
+</section>
+
+<!-- 7 -->
+<section class="slide" id="p-iv" data-title="A random nudge (IV)" hidden>
+  <p class="step">Part 3 · Natural experiments</p>
+  <h2>What if something random nudges X?</h2>
+  <div class="short"><b>The short answer</b>Find something that pushes X around for reasons unrelated to Y and that affects Y <i>only</i> through X. Then use only the part of X it moves. That part is as good as randomly assigned.</div>
+  <p class="eg"><b>Two rules.</b> (1) The nudge has to really move X. A weak nudge gives wild answers. (2) The nudge can't affect Y any other way. This second rule can't be tested with data. You have to argue it.</p>
+  <div class="lab">
+    <h3>Weather, PLA sorties and a risk index, 100 simulated studies <small>true effect = 0.5</small></h3>
+    <p class="try">Bad weather grounds PLA aircraft for reasons that have nothing to do with politics. Try the three cases.</p>
+    <div class="btns" role="group" aria-label="Instrument case"><button class="btn" data-iv="clean">Clean nudge</button><button class="btn" data-iv="weak">Weak nudge</button><button class="btn" data-iv="leak">Weather affects risk directly too</button></div>
+    <div id="ivChart"></div>
+    <p class="readout" id="ivRead"></p>
+  </div>
+  <div class="yours"><h3>In your work</h3><p>The <b>Weather &amp; PLA paper</b> lives or dies on rule 2. Mellon (<i>AJPS</i> 2025) lists dozens of ways weather affects outcomes directly. Expect a referee to ask whether planners schedule around forecasts. Using the <i>surprise</i> part of the weather (realized minus forecast) is the cleaner nudge.</p></div>
+  <details class="deeper"><summary>The technical terms</summary><dl>
+    <dt>Instrumental variable (IV)</dt><dd>The nudge (here, weather). X is the "endogenous" variable, and the IV estimate is the nudge's effect on Y divided by its effect on X.</dd>
+    <dt>Relevance, exclusion</dt><dd>Rule 1 and rule 2. Relevance is checked with the first-stage F-statistic (weak if roughly under 10). Exclusion is argued, not tested.</dd>
+    <dt>LATE</dt><dd>IV estimates the effect for cases the nudge actually moves, which may not be everyone.</dd>
+  </dl></details>
+</section>
+
+<!-- 8 -->
+<section class="slide" id="p-rd" data-title="Cutoffs (RD)" hidden>
+  <p class="step">Part 3 · Natural experiments</p>
+  <h2>What if a rule draws a line?</h2>
+  <div class="short"><b>The short answer</b>When a rule treats cases just above a cutoff differently from cases just below, those near the line are almost identical. So the jump in Y right at the line is the effect.</div>
+  <p class="eg"><b>Everyday version.</b> Students who score 80 get a scholarship and students who score 79 don't. A 79 and an 80 are basically the same student, so comparing them isolates the scholarship.</p>
+  <div class="lab">
+    <h3>Trade probability by seasons from the cutoff <small>true jump = −8 points</small></h3>
+    <p class="try">Narrow the window to compare only players near the line. Then let players game the cutoff.</p>
+    <div class="ctl"><label for="rdH">How far from the line you look <output id="rdHo"></output></label>
+      <input type="range" id="rdH" min="0.75" max="5" step="0.25" value="1.5">
+      <div class="ends"><span>Very close (fewer players, noisier)</span><span>Everyone</span></div></div>
+    <label class="chk"><input type="checkbox" id="rdM"><span>Players and teams can game the line<small>Some players just below the cutoff get pushed over it.</small></span></label>
+    <div id="rdChart"></div>
+    <p class="readout" id="rdRead"></p>
+  </div>
+  <div class="yours"><h3>In your work</h3><p>For the <b>NHL paper</b>, the cutoff is Group 3 free agency (7 accrued seasons or age 27). A no-trade clause can be <i>signed</i> earlier, but it can only <i>take effect</i> once the player reaches that status. Because not everyone at the line gets a clause, you'd scale the jump by how much clause rates jump.</p></div>
+  <details class="deeper"><summary>The technical terms</summary><dl>
+    <dt>Regression discontinuity (RD)</dt><dd>The design above. The variable that determines the cutoff (seasons) is the "running variable."</dd>
+    <dt>Bandwidth</dt><dd>The window around the line. Narrower means less bias and more noise. Software (<span class="mono">rdrobust</span>) picks it for you.</dd>
+    <dt>Fuzzy RD</dt><dd>When crossing the line raises the chance of treatment rather than guaranteeing it. Divide the jump in Y by the jump in treatment.</dd>
+    <dt>Manipulation test</dt><dd>Check for a pile-up of cases just past the cutoff. A pile-up suggests gaming.</dd>
+  </dl></details>
+</section>
+
+<!-- 9 -->
+<section class="slide" id="p-did" data-title="Before and after (DiD)" hidden>
+  <p class="step">Part 3 · Natural experiments</p>
+  <h2>Can I compare before and after?</h2>
+  <div class="short"><b>The short answer</b>Not on its own, because lots of things change over time. Compare how much the treated group changed with how much a similar untreated group changed over the same period. That works if the two groups would have moved in parallel without the event.</div>
+  <div class="lab">
+    <h3>A treated group and a comparison group, 24 months <small>true effect = 6</small></h3>
+    <p class="try">The dashed line is where the treated group would have gone without the event. Make the treated group already be on a steeper path and see what happens.</p>
+    <div class="ctl"><label for="ddT">Treated group was already rising faster <output id="ddTo"></output></label>
+      <input type="range" id="ddT" min="0" max="1" step="0.05" value="0">
+      <div class="ends"><span>Parallel paths</span><span>Much steeper</span></div></div>
+    <div id="ddChart"></div>
+    <div class="legend"><span><i></i>Treated group</span><span><i class="ctrl"></i>Comparison group</span><span><i class="cf"></i>Treated, without the event</span></div>
+    <p class="readout" id="ddRead"></p>
+  </div>
+  <p>The check is to look left of the event line. If the two groups weren't moving together before the event, there's no reason to think they would have afterwards.</p>
+  <div class="yours"><h3>In your work</h3><p><b>Calibrated Coercion</b> and <b>Simple Simon</b> both use this logic over short windows. In Simple Simon, the comparison is small trades in the same market and hour, which stand in for how the price would have moved anyway.</p></div>
+  <details class="deeper"><summary>The technical terms</summary><dl>
+    <dt>Difference-in-differences (DiD)</dt><dd>(Treated after − treated before) − (comparison after − comparison before).</dd>
+    <dt>Parallel trends</dt><dd>The assumption that the dashed line runs parallel to the comparison group.</dd>
+    <dt>Event study</dt><dd>The same idea, plotted month by month. The months before the event ("leads") should sit near zero.</dd>
+    <dt>Staggered adoption</dt><dd>When cases get treated at different times, the standard regression can give wrong, even wrong-signed, answers. Use Callaway &amp; Sant'Anna (2021) or similar estimators.</dd>
+  </dl></details>
+</section>
+
+<!-- 10 -->
+<section class="slide" id="p-synth" data-title="Build a look-alike" hidden>
+  <p class="step">Part 3 · Natural experiments</p>
+  <h2>What if no single comparison case fits?</h2>
+  <div class="short"><b>The short answer</b>Build a blend of untreated cases that tracks the treated case closely <i>before</i> the event. After the event, the blend is your best guess at the dashed line.</div>
+  <div class="lab">
+    <h3>One treated case, three possible comparison cases <small>true effect = +5</small></h3>
+    <p class="try">Mix cases A and B (C gets whatever is left). A good blend hugs the treated line before month 13. Or let the computer find it.</p>
+    <div class="ctl"><label for="syA">Weight on case A <output id="syAo"></output></label><input type="range" id="syA" min="0" max="1" step="0.05" value="0.3"></div>
+    <div class="ctl"><label for="syB">Weight on case B <output id="syBo"></output></label><input type="range" id="syB" min="0" max="1" step="0.05" value="0.3"></div>
+    <div class="btns"><button class="btn primary" id="syFit">Find the best blend for me</button></div>
+    <div id="syChart"></div>
+    <div class="legend"><span><i></i>Treated case</span><span><i class="cf"></i>The blend</span><span><i class="faint"></i>Comparison cases</span></div>
+    <p class="readout" id="syRead"></p>
+  </div>
+  <div class="yours"><h3>In your work</h3><p>Useful when there's one treated unit, like Taiwan after a specific policy change, and you need a stand-in built from other countries or theaters.</p></div>
+  <details class="deeper"><summary>The technical terms</summary><dl>
+    <dt>Synthetic control</dt><dd>Abadie and co-authors. Weights are non-negative and sum to one, so the blend stays within the range of real cases.</dd>
+    <dt>Pre-period fit</dt><dd>How closely the blend tracks the treated case before the event. A poor fit means a poor stand-in.</dd>
+    <dt>Placebo test</dt><dd>Pretend each comparison case was treated and see whether the real gap stands out from those fake ones.</dd>
+  </dl></details>
+</section>
+
+<!-- 11 -->
+<section class="slide" id="p-timing" data-title="Timing isn't cause" hidden>
+  <p class="step">Part 4 · Traps common in IR</p>
+  <h2>If X comes first and predicts Y, doesn't that prove X causes Y?</h2>
+  <div class="short"><b>The short answer</b>No. If one decision drives both X and Y and shows up in X a little earlier, X will predict Y every time, even if X does nothing.</div>
+  <p class="eg"><b>Everyday version.</b> Christmas ads appear before Christmas shopping peaks. The ads help a bit, but mostly both are driven by the same calendar.</p>
+  <div class="lab">
+    <h3>PRC rhetoric and PLA action, 600 simulated weeks <small>rhetoric does nothing here: true effect = 0</small></h3>
+    <p class="try">A hidden decision in Beijing drives both. Change how much later it shows up in action than in rhetoric.</p>
+    <div class="btns" role="group" aria-label="Lag"><button class="btn" data-k="0">Same week</button><button class="btn" data-k="1">1 week later</button><button class="btn" data-k="2">2 weeks later</button></div>
+    <div class="chain" id="grChain"></div>
+    <p class="readout" id="grRead"></p>
+  </div>
+  <div class="yours"><h3>In your work</h3><p>This is the core worry in <b>Talk and Tempo</b>. Rhetoric may be an early sign of a decision already made, not a cause of what follows. Calling it a "leading indicator" is a claim the data can support. Calling it a "cause" needs a design that breaks the common driver.</p></div>
+  <details class="deeper"><summary>The technical terms</summary><dl>
+    <dt>Granger causality</dt><dd>X "Granger-causes" Y if past X helps predict Y beyond Y's own past. It measures predictive order, not causation.</dd>
+    <dt>Common shock</dt><dd>The hidden decision in the tool. Whether a test catches it depends on how many lags you include.</dd>
+  </dl></details>
+</section>
+
+<!-- 12 -->
+<section class="slide" id="p-strategic" data-title="Strategic choice" hidden>
+  <p class="step">Part 4 · Traps common in IR</p>
+  <h2>What if the actor chooses X because of what it knows and you don't?</h2>
+  <div class="short"><b>The short answer</b>States reveal weapons, send ships and issue threats when they expect it to work. So the cases you see were picked using private knowledge. Comparing "revealed" with "concealed" mixes the effect of revealing with the reasons for revealing.</div>
+  <div class="lab">
+    <h3>Revealing a weapon and winning a dispute, 3,000 simulated disputes <small>revealing does nothing here: true effect = 0</small></h3>
+    <p class="try">Strong states reveal and also win more often. You can only control for an outside guess at strength. Improve that guess.</p>
+    <div class="ctl"><label for="sgR">How good your measure of true strength is <output id="sgRo"></output></label>
+      <input type="range" id="sgR" min="0.3" max="1" step="0.05" value="0.6">
+      <div class="ends"><span>Rough guess</span><span>Perfect</span></div></div>
+    <div id="sgChart"></div>
+    <p class="readout" id="sgRead"></p>
+  </div>
+  <p>You'll never measure a state's private information perfectly. That's why work like <b>Secret Weapons</b> writes down a game model of the choice and estimates it, instead of only adding controls.</p>
+  <div class="yours"><h3>In your work</h3><p>In <b>Secret Weapons / SitG</b>, the game model is the identification strategy. The referee's question shifts from "what did you control for?" to "is the game right, and does it fit data it wasn't built on?"</p></div>
+  <details class="deeper"><summary>The technical terms</summary><dl>
+    <dt>Strategic selection</dt><dd>Signorino's term: who gets treated is an equilibrium choice. Regression on the observed cases is biased, often badly.</dd>
+    <dt>Structural estimation</dt><dd>Estimating the parameters of the game itself. For QRE models, use NPL or constrained MLE (Crisman-Cox &amp; Gibilisco).</dd>
+  </dl></details>
+</section>
+
+<!-- 13 -->
+<section class="slide" id="p-measure" data-title="When the ruler changes" hidden>
+  <p class="step">Part 4 · Traps common in IR</p>
+  <h2>What if the way the data are counted changes?</h2>
+  <div class="short"><b>The short answer</b>A change in how something is counted looks exactly like a change in the thing itself. Before reading any jump as an effect, check whether the source changed what it reports.</div>
+  <div class="lab">
+    <h3>PLA aircraft reported vs. real, 24 months <small>real activity doesn't change</small></h3>
+    <p class="try">Before month 15 the source misses some activity. Then it starts counting everything. Make the earlier undercount bigger.</p>
+    <div class="ctl"><label for="msU">How much the old reports missed <output id="msUo"></output></label>
+      <input type="range" id="msU" min="0" max="0.6" step="0.05" value="0.4">
+      <div class="ends"><span>Nothing</span><span>Most</span></div></div>
+    <div id="msChart"></div>
+    <div class="legend"><span><i></i>Reported</span><span><i class="faint"></i>Real</span></div>
+    <p class="readout" id="msRead"></p>
+  </div>
+  <div class="yours"><h3>In your work</h3><p>Taiwan's MND reports activity across three channels, and every month before July 2026 is undercounted. MASTER_ADIZ also has about 52 weeks of false zeros from February 2024 to January 2025. Any before/after comparison that crosses those dates will pick this up as a fake effect.</p></div>
+  <details class="deeper"><summary>The technical terms</summary><dl>
+    <dt>Differential measurement error</dt><dd>Error that differs between periods or groups. It creates fake effects.</dd>
+    <dt>Attenuation</dt><dd>Random noise in X shrinks the estimate toward zero. That's a bias too, in the opposite direction.</dd>
+    <dt>Construct validity</dt><dd>Whether your measure tracks the concept at all. Talk and Tempo's construct check is this question.</dd>
+  </dl></details>
+</section>
+
+<!-- 14 -->
+<section class="slide" id="p-null" data-title="Reading a null" hidden>
+  <p class="step">Part 4 · Traps common in IR</p>
+  <h2>What does a null result actually tell me?</h2>
+  <div class="short"><b>The short answer</b>"Not significant" doesn't mean "no effect." It means you can't rule out zero. The useful question is the reverse one: how big an effect <i>can</i> you rule out?</div>
+  <div class="lab">
+    <h3>Your estimate and its uncertainty</h3>
+    <p class="try">Set an estimate and its standard error. The bar is the 95% range of effects your data are consistent with.</p>
+    <div class="ctl"><label for="nuE">Estimate <output id="nuEo"></output></label><input type="range" id="nuE" min="-4" max="6" step="0.1" value="0.8"></div>
+    <div class="ctl"><label for="nuS">Standard error <output id="nuSo"></output></label><input type="range" id="nuS" min="0.2" max="3" step="0.1" value="1.2"></div>
+    <div id="nuChart"></div>
+    <p class="readout" id="nuRead"></p>
+  </div>
+  <div class="lab">
+    <h3>Testing many things at once</h3>
+    <div class="ctl"><label for="mkK">Number of separate tests <output id="mkKo"></output></label><input type="range" id="mkK" min="1" max="40" step="1" value="28"></div>
+    <p class="readout" id="mkRead"></p>
+  </div>
+  <div class="yours"><h3>In your work</h3><p><b>Election Cycle</b> runs 28 series, so a few "hits" are expected by luck. A placebo answers that only if it's applied to one overall number, such as the count of significant series. <b>Exercises as Theater</b> and <b>Talk and Tempo</b> report nulls. Say which effect sizes the data rule out, not only that the estimate wasn't significant.</p></div>
+  <details class="deeper"><summary>The technical terms</summary><dl>
+    <dt>Minimum detectable effect (MDE)</dt><dd>About 2.8 × the standard error for 80% power at the 5% level.</dd>
+    <dt>Equivalence test (TOST)</dt><dd>Tests whether the effect is smaller than a bound you name in advance. That's how a "bounded null" is shown formally.</dd>
+    <dt>Multiple testing</dt><dd>With many tests, false positives pile up. Fixes include pre-registration, adjusted p-values and joint tests.</dd>
+  </dl></details>
+</section>
+
+<!-- 15 -->
+<section class="slide" id="p-choose" data-title="Which method fits?" hidden>
+  <p class="step">Part 5 · Putting it together</p>
+  <h2>Which method fits my question?</h2>
+  <div class="short"><b>The short answer</b>Work down a short list of questions about how X got assigned. The first "yes" points to your design.</div>
+  <div class="lab">
+    <div class="tree" id="tree"></div>
+  </div>
+  <h3 style="margin-top:22px">Your projects, sorted</h3>
+  <div class="projects">
+    <div><span>Experiment</span><b>Sonic Vectors</b>Worry: subjects talking to each other.</div>
+    <div><span>Before/after with comparison</span><b>Calibrated Coercion</b>Worry: transits scheduled after provocations.</div>
+    <div><span>Before/after, matched</span><b>Simple Simon</b>Worry: big trades clustering on news.</div>
+    <div><span>Random nudge</span><b>Weather &amp; PLA</b>Worry: weather affecting things other than flights.</div>
+    <div><span>Cutoff</span><b>NHL Trade Protection</b>Worry: who gets clauses near the line.</div>
+    <div><span>Controls + fragility check</span><b>NFL Roster Construction</b>Worry: front-office skill.</div>
+    <div><span>Timing</span><b>Talk and Tempo</b>Worry: a common driver.</div>
+    <div><span>Timing near a cutoff</span><b>Election Cycle &amp; Force</b>Worry: 28 tests at once.</div>
+    <div><span>Before/after</span><b>Exercises as Theater</b>Worry: imagery coverage tied to exercise timing.</div>
+    <div><span>Game model</span><b>Secret Weapons / SitG</b>Worry: is the game right?</div>
+  </div>
+</section>
+
+<!-- 16 -->
+<section class="slide" id="p-check" data-title="Check yourself" hidden>
+  <p class="step">Part 5 · Putting it together</p>
+  <h2>Check yourself</h2>
+  <p>Eight questions. Pick an answer to see why it's right or wrong. <span class="score" id="quizScore"></span></p>
+  <div class="quiz" id="quiz"></div>
+  <div class="btns"><button class="btn" id="quizReset">Clear my answers</button></div>
+</section>
+
+<!-- 17 -->
+<section class="slide" id="p-next" data-title="Words and next steps" hidden>
+  <p class="step">Part 5 · Putting it together</p>
+  <h2>The words, in one place, and where to go next</h2>
+  <div class="cols">
+    <div>
+      <h3>Glossary</h3>
+      <dl class="gloss">
+        <dt>Counterfactual</dt><dd>What would have happened without X. The dashed line.</dd>
+        <dt>Estimand</dt><dd>The exact effect you're after (for example, the average effect on transit days).</dd>
+        <dt>Selection bias</dt><dd>The head start treated cases had before treatment.</dd>
+        <dt>Confounder</dt><dd>Something that causes both X and Y.</dd>
+        <dt>Identification</dt><dd>Your argument for why the comparison has no head start.</dd>
+        <dt>Bad control</dt><dd>A control that X itself affects.</dd>
+        <dt>Robustness value</dt><dd>How strong a hidden factor would need to be to erase your result.</dd>
+        <dt>Instrument</dt><dd>A nudge that moves X and touches Y only through X.</dd>
+        <dt>Regression discontinuity</dt><dd>Comparing cases just either side of a cutoff.</dd>
+        <dt>Parallel trends</dt><dd>Treated and comparison groups would have moved together without the event.</dd>
+        <dt>Standard error</dt><dd>How much the estimate would bounce around if you reran the study.</dd>
+        <dt>Power</dt><dd>The chance of detecting a real effect of a given size.</dd>
+      </dl>
+    </div>
+    <div>
+      <h3>Read next, in this order</h3>
+      <ul class="clean">
+        <li>Angrist &amp; Pischke, <i>Mastering 'Metrics</i> (2015). The friendliest start: five methods, one chapter each.</li>
+        <li>Huntington-Klein, <i>The Effect</i> (2021). Free online. Best on drawing causal diagrams.</li>
+        <li>Cunningham, <i>Causal Inference: The Mixtape</i> (2021). Free online, with code.</li>
+        <li>Hernán &amp; Robins, <i>Causal Inference: What If</i> (2020). Free online. Go here when you want the formal version.</li>
+      </ul>
+      <h3>Then</h3>
+      <p>The full <a href="https://claude.ai/artifact/GMJ5Kff69MwehVsUQVteAA">Counterfactual Seminar</a> covers the same ground at grad-course depth, with a 12-question referee drill and the complete reading list.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<nav class="pager" aria-label="Page navigation">
+  <div class="pager-in">
+    <button class="btn" id="prev">← Back</button>
+    <span class="count" id="count"></span>
+    <button class="btn primary next" id="next">Next<span class="lab-next" id="nextLab"></span> →</button>
+  </div>
+</nav>
+<script>
+/*CORE-START*/
+function rng(seed){let a=seed>>>0;return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function normal(r){let u=0;while(u===0)u=r();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*r());}
+const mean=a=>a.reduce((s,v)=>s+v,0)/a.length;
+function cov(a,b){const ma=mean(a),mb=mean(b);let s=0;for(let i=0;i<a.length;i++)s+=(a[i]-ma)*(b[i]-mb);return s/(a.length-1);}
+const logistic=x=>1/(1+Math.exp(-x));
+function ols(cols,y){
+  const n=y.length,k=cols.length+1;
+  const X=(i,j)=>j===0?1:cols[j-1][i];
+  const A=[];for(let r=0;r<k;r++){A.push(new Array(2*k).fill(0));A[r][k+r]=1;}
+  const xty=new Array(k).fill(0);
+  for(let i=0;i<n;i++){for(let r=0;r<k;r++){const xr=X(i,r);xty[r]+=xr*y[i];for(let c=r;c<k;c++)A[r][c]+=xr*X(i,c);}}
+  for(let r=0;r<k;r++)for(let c=0;c<r;c++)A[r][c]=A[c][r];
+  for(let c=0;c<k;c++){let p=c;for(let r=c+1;r<k;r++)if(Math.abs(A[r][c])>Math.abs(A[p][c]))p=r;[A[c],A[p]]=[A[p],A[c]];const d=A[c][c];if(Math.abs(d)<1e-12)return null;for(let j=0;j<2*k;j++)A[c][j]/=d;for(let r=0;r<k;r++){if(r===c)continue;const f=A[r][c];if(f)for(let j=0;j<2*k;j++)A[r][j]-=f*A[c][j];}}
+  const inv=A.map(row=>row.slice(k));
+  const b=inv.map(row=>row.reduce((s,v,j)=>s+v*xty[j],0));
+  let rss=0;for(let i=0;i<n;i++){let f=0;for(let j=0;j<k;j++)f+=b[j]*X(i,j);rss+=(y[i]-f)**2;}
+  const s2=rss/(n-k);
+  return {b,se:inv.map((row,j)=>Math.sqrt(s2*row[j])),rss,n,k};
+}
+// Selection: s = how strongly transit probability rises with tension
+function simSelection(s,seed=11){
+  const r=rng(seed),N=2000,U=[],D=[],Y=[],Y0=[],tau=[];
+  for(let i=0;i<N;i++){const u=normal(r);const d=r()<logistic(-0.8+s*u)?1:0;const y0=15+6*u+3*normal(r);const t=9+2*u;U.push(u);D.push(d);Y0.push(y0);tau.push(t);Y.push(d?y0+t:y0);}
+  const idx1=[],idx0=[];D.forEach((d,i)=>(d?idx1:idx0).push(i));
+  const m=(arr,idx)=>mean(idx.map(i=>arr[i]));
+  const naive=m(Y,idx1)-m(Y,idx0),att=m(tau,idx1),ate=mean(tau),sel=m(Y0,idx1)-m(Y0,idx0);
+  const adj=ols([D,U],Y).b[1];
+  return {naive,att,ate,sel,adj,share:idx1.length/N};
+}
+// DAG: C confounder, M mediator, K collider. True total effect of D on Y = 4 + 1*5 = 9.
+function simDAG(ctrl,seed=21){
+  const r=rng(seed),N=3000,C=[],D=[],M=[],Y=[],K=[];
+  for(let i=0;i<N;i++){const c=normal(r);const d=(0.9*c+normal(r))>0.3?1:0;const m=1.0*d+normal(r);const y=10+4*d+5*m+6*c+3*normal(r);const k=0.8*d+0.3*y+normal(r);C.push(c);D.push(d);M.push(m);Y.push(y);K.push(k);}
+  const cols=[D];if(ctrl.C)cols.push(C);if(ctrl.M)cols.push(M);if(ctrl.K)cols.push(K);
+  const f=ols(cols,Y);return {est:f.b[1],se:f.se[1]};
+}
+// OVB: Y = 3D + gU + e, D = dU + e
+function simOVB(g,d,seed=31){
+  const r=rng(seed),N=3000,U=[],D=[],Y=[];
+  for(let i=0;i<N;i++){const u=normal(r);const x=d*u+normal(r);U.push(u);D.push(x);Y.push(3*x+g*u+normal(r));}
+  const short=ols([D],Y).b[1],long=ols([D,U],Y).b[1],delta=cov(D,U)/cov(D,D);
+  return {short,long,delta,formula:3+g*delta};
+}
+function robustnessValue(t,df){const f=Math.abs(t)/Math.sqrt(df);const f2=f*f;return 0.5*(Math.sqrt(f2*f2+4*f2)-f2);}
+// Matching: Q quality, clause prob rises with Q, trade prob falls with Q; tau on logit scale
+function simMatch(tau,sel,seed=42){
+  const r=rng(seed),N=1200,Q=[],D=[],Y=[];let attTrue=0,nT=0;
+  for(let i=0;i<N;i++){const q=normal(r);const d=r()<logistic(-0.6+sel*q)?1:0;const p1=logistic(-0.6-1.1*q+tau),p0=logistic(-0.6-1.1*q);const y=r()<(d?p1:p0)?1:0;Q.push(q);D.push(d);Y.push(y);if(d){attTrue+=p1-p0;nT++;}}
+  attTrue/=nT;
+  const T=[],Cn=[];D.forEach((d,i)=>(d?T:Cn).push(i));
+  const naive=mean(T.map(i=>Y[i]))-mean(Cn.map(i=>Y[i]));
+  const reg=ols([D,Q],Y).b[1];
+  const cs=Cn.slice().sort((a,b)=>Q[a]-Q[b]),cq=cs.map(i=>Q[i]);
+  const matched=new Set();let diff=0;
+  for(const i of T){let lo=0,hi=cq.length-1;while(lo<hi){const mid=(lo+hi)>>1;if(cq[mid]<Q[i])lo=mid+1;else hi=mid;}let j=lo;if(j>0&&Math.abs(cq[j-1]-Q[i])<Math.abs(cq[j]-Q[i]))j=j-1;matched.add(cs[j]);diff+=Y[i]-Y[cs[j]];}
+  return {Q,D,naive,reg,match:diff/T.length,attTrue,nT,matched};
+}
+// IV: Z weather severity, D sorties, U tension, Y risk index; true beta 0.5
+function simIV(pi,phi,reps=100,seed=51){
+  const r=rng(seed),n=600,ols_=[],iv=[],F=[];
+  for(let k=0;k<reps;k++){const Z=[],D=[],Y=[];for(let i=0;i<n;i++){const u=normal(r),z=normal(r);const d=20-pi*z+3*u+3*normal(r);Z.push(z);D.push(d);Y.push(0.5*d+2*u+phi*z+2*normal(r));}
+    ols_.push(cov(D,Y)/cov(D,D));iv.push(cov(Z,Y)/cov(Z,D));const fs=ols([Z],D);F.push((fs.b[1]/fs.se[1])**2);}
+  const med=a=>{const s=a.slice().sort((x,y)=>x-y);return s[Math.floor(s.length/2)];};
+  return {ols:ols_,iv,olsMean:mean(ols_),ivMed:med(iv),F:med(F)};
+}
+// RD: x in seasons relative to cutoff, Y = trade prob (pp)
+function simRD(jump,curv,h,manip,seed=61){
+  const r=rng(seed),n=800,X=[],Y=[];
+  const f=x=>35-2.5*x+curv*x*x-0.12*curv*x*x*x;
+  for(let i=0;i<n;i++){let x=-5+10*r();let bonus=0;if(manip&&x<0&&x>-0.8&&r()<0.6){x=-x*0.5;bonus=-6;}const d=x>=0?1:0;X.push(x);Y.push(f(x)+jump*d+bonus+6*normal(r));}
+  const side=(cond)=>{const xs=[],ys=[];for(let i=0;i<n;i++)if(cond(X[i])){xs.push(X[i]);ys.push(Y[i]);}return {xs,ys};};
+  const L=side(x=>x<0&&x>=-h),R=side(x=>x>=0&&x<=h);
+  let ll=null,fitL=null,fitR=null;
+  if(L.xs.length>5&&R.xs.length>5){fitL=ols([L.xs],L.ys).b;fitR=ols([R.xs],R.ys).b;ll=fitR[0]-fitL[0];}
+  const D=X.map(x=>x>=0?1:0);const g=ols([D,X],Y).b;
+  return {X,Y,ll,fitL,fitR,global:g[1],gfit:g,nWin:L.xs.length+R.xs.length,f};
+}
+// DiD: 24 months, event at month 13 (index 12). Group means of 12 units each.
+function simDiD(eff,trend,brk,seed=71){
+  const r=rng(seed),T=24,t0=12,yt=[],yc=[],cf=[];
+  for(let t=0;t<T;t++){const base=0.4*t+2*Math.sin(t/2.5);const nc=normal(r)*0.8,nt=normal(r)*0.8;yc.push(30+base+nc);const ct=45+base+trend*(t-t0)+nt;cf.push(ct-nt);yt.push(ct+(t>=t0?eff+brk:0));}
+  const m=(a,s,e)=>mean(a.slice(s,e));
+  const did=(m(yt,t0,T)-m(yt,0,t0))-(m(yc,t0,T)-m(yc,0,t0));
+  let ref=0;for(let t=0;t<t0;t++)ref+=(yt[t]-yc[t]);ref/=t0;const es=yt.map((v,t)=>({k:t-t0,b:(v-yc[t])-ref}));
+  return {yt,yc,cf,did,es,T,t0};
+}
+// Staggered adoption: 3 cohorts x 5 units, T=16; effect = 2 + growth*(t-g) for t>=g
+function simStag(growth,never,seed=81){
+  const r=rng(seed),T=16,cohorts=[{g:4},{g:10}];if(never)cohorts.push({g:Infinity});
+  const Y=[],D=[],tauCells=[];
+  cohorts.forEach((c,ci)=>{for(let u=0;u<5;u++){const a=normal(r)*3+ci*2;const yr=[],dr=[];for(let t=0;t<T;t++){const lam=0.5*t;const d=t>=c.g?1:0;const tau=d?2+growth*(t-c.g):0;if(d)tauCells.push(tau);yr.push(a+lam+tau+normal(r)*0.5);dr.push(d);}Y.push(yr);D.push(dr);}});
+  const dm=M=>{const n=M.length,Tn=M[0].length;const ri=M.map(row=>mean(row));const cj=[];for(let t=0;t<Tn;t++)cj.push(mean(M.map(row=>row[t])));const g=mean(ri);return M.map((row,i)=>row.map((v,t)=>v-ri[i]-cj[t]+g));};
+  const Dt=dm(D),Yt=dm(Y);let num=0,den=0;Dt.forEach((row,i)=>row.forEach((v,t)=>{num+=v*Yt[i][t];den+=v*v;}));
+  const coh=cohorts.map((c,ci)=>{const rows=Y.slice(ci*5,ci*5+5);const avg=[];for(let t=0;t<T;t++)avg.push(mean(rows.map(rw=>rw[t])));return {g:c.g,avg};});
+  return {twfe:num/den,att:mean(tauCells),coh,T};
+}
+// Synthetic control
+function synthData(){const T=20,t0=12,A=[],B=[],C=[],tr=[];const r=rng(91);
+  for(let t=0;t<T;t++){const a=50+1.2*t+3*Math.sin(t/2),b=40+0.5*t+2.5*Math.cos(t/3),c=62-0.4*t+4*Math.sin(t/4);A.push(a);B.push(b);C.push(c);tr.push(0.6*a+0.4*b+0.4*normal(r)+(t>=t0?5:0));}
+  return {T,t0,A,B,C,tr};}
+function synthEval(S,wa,wb){const wc=Math.max(0,1-wa-wb);const syn=S.A.map((a,t)=>wa*a+wb*S.B[t]+wc*S.C[t]);let pre=0;for(let t=0;t<S.t0;t++)pre+=(S.tr[t]-syn[t])**2;const rmspe=Math.sqrt(pre/S.t0);const gap=mean(S.tr.slice(S.t0).map((v,i)=>v-syn[S.t0+i]));return {syn,rmspe,gap,wc};}
+function synthFit(S){let best={r:1e9};for(let a=0;a<=1.0001;a+=0.01)for(let b=0;a+b<=1.0001;b+=0.01){const e=synthEval(S,a,b);if(e.rmspe<best.r)best={r:e.rmspe,a,b};}return best;}
+// Granger: driver S hits rhetoric at t+1 and action at t+1+k; beta = true R->A effect
+function simGranger(k,beta,seed=101){
+  const r=rng(seed),T=600+10,S=[],R=[],A=[];
+  for(let t=0;t<T;t++){S.push(normal(r));const rt=(t>=1?0.9*S[t-1]:0)+normal(r);R.push(rt);const lag=1+k;const at=(t>=1?0.4*A[t-1]:0)+(t>=lag?0.9*S[t-lag]:0)+(t>=1?beta*R[t-1]:0)+normal(r);A.push(at);}
+  const y=[],a1=[],r1=[],r2=[];for(let t=8;t<T;t++){y.push(A[t]);a1.push(A[t-1]);r1.push(R[t-1]);r2.push(R[t-2]);}
+  const U=ols([a1,r1,r2],y),Rr=ols([a1],y);const q=2;const F=((Rr.rss-U.rss)/q)/(U.rss/(U.n-U.k));
+  return {F,b1:U.b[2],se1:U.se[2],R:R.slice(100,180),A:A.slice(100,180)};
+}
+// Market paths: hours 0..24
+function marketPaths(pi,news){const ts=[];for(let t=0;t<=24;t+=0.5)ts.push(t);const D=2.0,h=2.0;const drift=t=>news?1.5*(1-Math.exp(-t/3)):0;
+  const big=ts.map(t=>drift(t)+pi*D+(1-pi)*D*Math.exp(-t/h)),small=ts.map(t=>drift(t)+0.3*Math.exp(-t/h)),diff=big.map((v,i)=>v-small[i]);
+  const at=(arr,t)=>arr[ts.indexOf(t)];return {ts,big,small,diff,raw1:at(big,1),raw24:at(big,24),d1:at(diff,1),d24:at(diff,24)};}
+// Strategic selection
+function simStrategic(tau,kth,rel,seed=111){
+  const r=rng(seed),N=3000,q=[],R=[],Y=[],P=[];const sdq=Math.sqrt(1/12);const sdn=sdq*Math.sqrt((1-rel)/rel);let strongConceal=0,strong=0;
+  for(let i=0;i<N;i++){const qi=r();const ri=(qi+0.04*normal(r))>kth?1:0;const p=Math.min(1,Math.max(0,0.1+0.6*qi+tau/100*ri));q.push(qi);R.push(ri);Y.push(r()<p?1:0);P.push(qi+sdn*normal(r));if(qi>kth+0.1){strong++;if(!ri)strongConceal++;}}
+  const i1=[],i0=[];R.forEach((v,i)=>(v?i1:i0).push(i));const naive=mean(i1.map(i=>Y[i]))-mean(i0.map(i=>Y[i]));
+  const adj=ols([R,P],Y).b[1];return {naive:naive*100,adj:adj*100,overlap:strong?strongConceal/strong:0,share:i1.length/N};
+}
+function simAtten(lam,seed=121){const r=rng(seed),N=3000,Ds=[],Y=[];const sdn=Math.sqrt((1-lam)/lam);for(let i=0;i<N;i++){const d=normal(r);Ds.push(d+sdn*normal(r));Y.push(d+normal(r));}return ols([Ds],Y).b[1];}
+function simUndercount(u,seed=131){const r=rng(seed),T=24,t0=14,tru=[],rep=[];for(let t=0;t<T;t++){const v=20+3*normal(r);tru.push(v);rep.push(t<t0?v*(1-u):v);}const fake=mean(rep.slice(t0))-mean(rep.slice(0,t0));const real=mean(tru.slice(t0))-mean(tru.slice(0,t0));return {tru,rep,fake,real,t0,T};}
+/*CORE-END*/
+
+/* ---------- tiny SVG chart kit ---------- */
+const NS="http://www.w3.org/2000/svg";
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+function niceTicks(a,b,n=5){const span=b-a;if(span<=0)return [a];const step0=span/n,mag=Math.pow(10,Math.floor(Math.log10(step0)));const err=step0/mag;const step=(err>=7.5?10:err>=3.5?5:err>=1.5?2:1)*mag;const out=[];for(let v=Math.ceil(a/step)*step;v<=b+1e-9;v+=step)out.push(+v.toFixed(10));return out;}
+function chart(host,o){
+  host.innerHTML="";const NARROW=window.innerWidth<520;const w=NARROW?380:(o.w||560),h=NARROW?Math.round((o.h||260)*0.95):(o.h||260),m=Object.assign({l:46,r:14,t:12,b:34},o.m||{});
+  const svg=el("svg",{viewBox:`0 0 ${w} ${h}`,class:"chart",role:"img","aria-label":o.aria||"chart"},host);
+  const sx=v=>m.l+(v-o.xd[0])/(o.xd[1]-o.xd[0])*(w-m.l-m.r),sy=v=>h-m.b-(v-o.yd[0])/(o.yd[1]-o.yd[0])*(h-m.t-m.b);
+  if(!o.noY){for(const t of (o.yticks||niceTicks(o.yd[0],o.yd[1],4))){el("line",{x1:m.l,x2:w-m.r,y1:sy(t),y2:sy(t),class:"grid"},svg);const tx=el("text",{x:m.l-6,y:sy(t)+4,"text-anchor":"end"},svg);tx.textContent=(o.fy||(v=>v))(t);}}
+  if(!o.noX){for(const t of (o.xticks||niceTicks(o.xd[0],o.xd[1],6))){const tx=el("text",{x:sx(t),y:h-m.b+16,"text-anchor":"middle"},svg);tx.textContent=(o.fx||(v=>v))(t);}}
+  el("line",{x1:m.l,x2:w-m.r,y1:h-m.b,y2:h-m.b,class:"ax"},svg);
+  if(o.xl){const t=el("text",{x:(m.l+w-m.r)/2,y:h-4,"text-anchor":"middle"},svg);t.textContent=o.xl;}
+  if(o.yl){const t=el("text",{x:12,y:(m.t+h-m.b)/2,"text-anchor":"middle",transform:`rotate(-90 12 ${(m.t+h-m.b)/2})`},svg);t.textContent=o.yl;}
+  const api={svg,sx,sy,w,h,m,
+    line(xs,ys,cls){const d=xs.map((x,i)=>(i?"L":"M")+sx(x).toFixed(1)+","+sy(ys[i]).toFixed(1)).join("");return el("path",{d,class:cls},svg);},
+    dots(xs,ys,cls,r=2.4){const g=el("g",{},svg);xs.forEach((x,i)=>el("circle",{cx:sx(x).toFixed(1),cy:sy(ys[i]).toFixed(1),r,class:cls},g));return g;},
+    vline(x,cls="l-ink"){return el("line",{x1:sx(x),x2:sx(x),y1:m.t,y2:h-m.b,class:cls},svg);},
+    hline(y,cls="l-ink"){return el("line",{x1:m.l,x2:w-m.r,y1:sy(y),y2:sy(y),class:cls},svg);},
+    text(x,y,s,attrs={}){const t=el("text",Object.assign({x:sx(x),y:sy(y)},attrs),svg);t.textContent=s;return t;}};
+  return api;
+}
+function hbars(host,rows,o={}){ // rows: {label,value,cls}
+  host.innerHTML="";const NARROW=window.innerWidth<520;const w=NARROW?380:560,rowH=34,h=rows.length*rowH+30,l=NARROW?138:178,r=NARROW?46:60;
+  const vals=rows.map(d=>d.value).concat(o.extra||[]);let lo=Math.min(0,...vals),hi=Math.max(0,...vals);if(o.dom){lo=Math.min(lo,o.dom[0]);hi=Math.max(hi,o.dom[1]);}
+  const pad=(hi-lo)*0.05||1;lo-=lo<0?pad:0;hi+=pad;
+  const svg=el("svg",{viewBox:`0 0 ${w} ${h}`,class:"chart",role:"img","aria-label":o.aria||"bar chart"},host);
+  const sx=v=>l+(v-lo)/(hi-lo)*(w-l-r);
+  for(const t of niceTicks(lo,hi,5)){el("line",{x1:sx(t),x2:sx(t),y1:4,y2:h-24,class:"grid"},svg);const tx=el("text",{x:sx(t),y:h-8,"text-anchor":"middle"},svg);tx.textContent=t;}
+  rows.forEach((d,i)=>{const y=8+i*rowH;const lab=el("text",{x:l-10,y:y+17,"text-anchor":"end",class:"lbl"},svg);lab.textContent=d.label;
+    const x0=sx(Math.min(0,d.value)),x1=sx(Math.max(0,d.value));el("rect",{x:x0,y:y+4,width:Math.max(1.5,x1-x0),height:20,rx:3,class:d.cls},svg);
+    const v=el("text",{x:(d.value>=0?x1+6:x0-6),y:y+18,"text-anchor":d.value>=0?"start":"end",class:"lbl-strong"},svg);v.textContent=fmt(d.value,o.d??1)+(o.unit||"");});
+  el("line",{x1:sx(0),x2:sx(0),y1:4,y2:h-24,class:"l-ink"},svg);
+  if(o.truth!=null){const x=sx(o.truth);el("line",{x1:x,x2:x,y1:2,y2:h-24,class:"l-cf"},svg);const t=el("text",{x:x,y:h-24+0,"text-anchor":"middle",dy:"-2"},svg);}
+}
+function fmt(v,d=1){if(v==null||!isFinite(v))return "—";const s=(Math.abs(v)<0.5*Math.pow(10,-d)?0:v).toFixed(d);return s.replace("-","−");}
+function stats(host,items){host.innerHTML=items.map(it=>`<div class="stat ${it.c||""}"><div class="k">${it.k}</div><div class="v">${it.v}</div></div>`).join("");}
+function bind(id,f,cb){const inp=document.getElementById(id),out=document.getElementById(id+"o");const go=()=>{if(out)out.textContent=f?f(+inp.value):inp.value;cb();};inp.addEventListener("input",go);return go;}
+const $=id=>document.getElementById(id);
+const val=id=>+$(id).value;
+
+/* ---------- helpers ---------- */
+const B=(v,d=1)=>`<b>${fmt(v,d)}</b>`;
+function slider(id,show,cb){const inp=$(id),out=$(id+"o");const go=()=>{if(out)out.textContent=show(+inp.value);cb();};inp.addEventListener("input",go);return go;}
+function press(btns,active){btns.forEach(b=>b.setAttribute("aria-pressed",b===active?"true":"false"));}
+
+/* ---------- 0 hero ---------- */
+(function(){const xs=[],obs=[],cf=[];for(let d=-7;d<=7;d++){xs.push(d);const b=14+3*Math.sin(d/1.7)+(d%3===0?1.5:0);cf.push(b);obs.push(b+(d===0?9:d===1?3:0));}
+  const c=chart($("heroChart"),{w:560,h:250,xd:[-7,7],yd:[0,30],xl:"Days before and after the transit",yl:"PLA aircraft"});
+  c.svg.appendChild(el("rect",{x:c.sx(-0.5),y:c.m.t,width:c.sx(0.5)-c.sx(-0.5),height:c.h-c.m.b-c.m.t,class:"zone"}));
+  c.line(xs,cf,"l-cf");c.line(xs,obs,"l-treat");
+  el("line",{x1:c.sx(0)+8,x2:c.sx(0)+8,y1:c.sy(obs[7]),y2:c.sy(cf[7]),class:"l-ink"},c.svg);
+  c.text(0.4,(obs[7]+cf[7])/2+1,"← the effect",{class:"lbl-strong"});})();
+
+/* ---------- 1 two worlds ---------- */
+const DAYS=[{d:"Mon",t:"Calm",y0:8,y1:14,on:0},{d:"Tue",t:"Calm",y0:10,y1:15,on:0},{d:"Wed",t:"Medium",y0:15,y1:24,on:0},{d:"Thu",t:"Medium",y0:18,y1:26,on:1},{d:"Fri",t:"Tense",y0:28,y1:38,on:1},{d:"Sat",t:"Tense",y0:30,y1:41,on:1},{d:"Sun",t:"Calm",y0:9,y1:13,on:0},{d:"Mon",t:"Tense",y0:32,y1:43,on:1}];
+let dayShow=false;
+function dayRender(){
+  const row=r=>{const seen1=r.on,c1=seen1||dayShow?`<td class="n${seen1?"":" ghost"}">${r.y1}</td>`:`<td class="n q">?</td>`,c0=!seen1||dayShow?`<td class="n${!seen1?"":" ghost"}">${r.y0}</td>`:`<td class="n q">?</td>`;
+    return `<tr class="${r.on?"on":""}"><td>${r.d}</td><td>${r.t}</td><td>${r.on?"Yes":"No"}</td>${c1}${c0}${dayShow?`<td class="n">+${r.y1-r.y0}</td>`:""}</tr>`;};
+  $("dayTable").innerHTML=`<tr><th>Day</th><th>Mood</th><th>Ship sent?</th><th>Aircraft with ship</th><th>Aircraft without</th>${dayShow?"<th>Effect</th>":""}</tr>`+DAYS.map(row).join("");
+  const on=DAYS.filter(r=>r.on),off=DAYS.filter(r=>!r.on);
+  const naive=mean(on.map(r=>r.y1))-mean(off.map(r=>r.y0)),truth=mean(on.map(r=>r.y1-r.y0));
+  $("dayRead").innerHTML=dayShow
+    ?`The real effect on the ship days averages ${B(truth)} aircraft. The simple comparison said ${B(naive)}. It's too big because the ships went out on tense days, which were busy anyway.`
+    :`Using only what we can see, ship days averaged ${B(mean(on.map(r=>r.y1)))} aircraft and other days ${B(mean(off.map(r=>r.y0)))}. The simple comparison says the ship added ${B(naive)}. Is that right?`;
+  $("dayReveal").textContent=dayShow?"Hide it again":"Show what we can't normally see";$("dayReveal").setAttribute("aria-pressed",dayShow);
+}
+$("dayReveal").onclick=()=>{dayShow=!dayShow;dayRender();};dayRender();
+
+/* ---------- 2 selection ---------- */
+slider("selS",v=>v===0?"none":fmt(v,1),()=>{const s=simSelection(val("selS"));
+  hbars($("selChart"),[{label:"Simple comparison",value:s.naive,cls:"b-bad"},{label:"True effect",value:s.att,cls:"b-treat"},{label:"Head start",value:s.sel,cls:"b-cf"}],{dom:[0,20],aria:"Simple comparison, true effect and head start"});
+  $("selRead").innerHTML=Math.abs(s.sel)<1
+    ?`<span class="ok">No head start.</span> Transit days and other days were alike to begin with, so the simple comparison (${B(s.naive)}) matches the true effect (${B(s.att)}).`
+    :`The simple comparison says ${B(s.naive)} more aircraft. The true effect is ${B(s.att)}. <span class="no">The other ${B(s.sel)} is head start:</span> those days would have been busier anyway.`;})();
+
+/* ---------- 3 randomization ---------- */
+let rnMode="pick",rnSeed=3;
+function rnRun(){const r=rng(rnSeed),N=40,U=[],Y0=[];for(let i=0;i<N;i++){U.push(normal(r));Y0.push(15+6*U[i]+3*normal(r));}
+  let D;if(rnMode==="pick"){const med=U.slice().sort((a,b)=>a-b)[N/2];D=U.map(u=>u>=med?1:0);}else{const rr=rng(rnSeed*7+1);D=U.map(()=>rr()<0.5?1:0);if(D.every(d=>d)||D.every(d=>!d))D[0]=1-D[0];}
+  const T=[],C=[];D.forEach((d,i)=>(d?T:C).push(i));
+  const est=mean(T.map(i=>Y0[i]+9))-mean(C.map(i=>Y0[i])),tT=mean(T.map(i=>U[i])),tC=mean(C.map(i=>U[i]));
+  const c=chart($("rnChart"),{w:560,h:170,xd:[-3,3],yd:[0,2],noY:true,xl:"How tense the day was (calm → tense)",fx:v=>v===-3?"calm":v===3?"tense":"",xticks:[-3,0,3],m:{l:110,r:14,t:8,b:34},aria:"Days by tension in each group"});
+  [[T,1.45,"Ship sent","d-treat",tT],[C,0.55,"No ship","d-ctrl",tC]].forEach(([idx,y,lab,cls,avg])=>{
+    c.dots(idx.map(i=>Math.max(-2.9,Math.min(2.9,U[i]))),idx.map(()=>y),cls,6);
+    el("line",{x1:c.sx(avg),x2:c.sx(avg),y1:c.sy(y)-16,y2:c.sy(y)+16,class:"l-ink","stroke-width":3},c.svg);
+    const t=el("text",{x:c.m.l-12,y:c.sy(y)+5,"text-anchor":"end",class:"lbl-strong"},c.svg);t.textContent=lab;});
+  const gap=tT-tC;
+  $("rnRead").innerHTML=(rnMode==="pick"
+    ?`<span class="no">The ship days are all the tense ones.</span> The black ticks (each group's average tension) sit far apart. Estimate: ${B(est)} against a truth of <b>9</b>.`
+    :`The black ticks sit ${Math.abs(gap)<0.35?"close together":"a little apart this time"}, so tension is roughly even across groups. Estimate: ${B(est)} against a truth of <b>9</b>. ${Math.abs(est-9)<2.5?'<span class="ok">Close.</span>':"Off a bit by luck. Flip again."}`);
+  press([$("rnPick"),$("rnCoin")],rnMode==="pick"?$("rnPick"):$("rnCoin"));$("rnAgain").disabled=rnMode==="pick";}
+$("rnPick").onclick=()=>{rnMode="pick";rnRun();};$("rnCoin").onclick=()=>{rnMode="coin";rnRun();};$("rnAgain").onclick=()=>{rnSeed++;rnRun();};rnRun();
+
+/* ---------- 4 controls (DAG) ---------- */
+function dagRender(){const ctl={C:$("cC").checked,M:$("cM").checked,K:$("cK").checked};const s=simDAG(ctl);
+  const host=$("dagChart");host.innerHTML="";const svg=el("svg",{viewBox:"0 0 560 250",class:"chart",role:"img","aria-label":"Arrow diagram of tension, transit, alert level, news and aircraft"},host);
+  const defs=el("defs",{},svg);const mk=el("marker",{id:"ah",viewBox:"0 0 10 10",refX:9,refY:5,markerWidth:7,markerHeight:7,orient:"auto-start-reverse"},defs);el("path",{d:"M0,0L10,5L0,10z",style:"fill:var(--muted)"},mk);
+  const N={C:[280,32,"Tension"],D:[80,128,"Transit (X)"],Y:[480,128,"Aircraft (Y)"],M:[280,128,"Alert level"],K:[280,222,"News coverage"]};
+  const arrow=(a,b)=>{const [x1,y1]=N[a],[x2,y2]=N[b];const dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy);const ox=dx/L,oy=dy/L;const pa=Math.abs(ox)>0.6?62:20,pb=Math.abs(ox)>0.6?64:20;
+    el("line",{x1:x1+ox*pa,y1:y1+oy*pa,x2:x2-ox*pb,y2:y2-oy*pb,style:"stroke:var(--muted);stroke-width:1.8","marker-end":"url(#ah)"},svg);};
+  [["C","D"],["C","Y"],["D","M"],["M","Y"],["D","K"],["Y","K"]].forEach(([a,b])=>arrow(a,b));
+  for(const k in N){const [x,y,lab]=N[k];const on=ctl[k];const g=el("g",{class:on?"ctrl-on":""},svg);
+    el("rect",{x:x-60,y:y-17,width:120,height:34,rx:8,style:`fill:var(--surface);stroke:${k==="D"||k==="Y"?"var(--accent)":"var(--line)"};stroke-width:2`},g);
+    const t=el("text",{x,y:y+5,"text-anchor":"middle",class:"lbl-strong"},g);t.textContent=lab;
+    if(on){const tt=el("text",{x,y:y-22,"text-anchor":"middle",style:"fill:var(--cf);font-weight:700"},g);tt.textContent="controlled";}}
+  let msg;
+  if(ctl.C&&!ctl.M&&!ctl.K)msg=`<span class="ok">Right.</span> The estimate is ${B(s.est)}, close to the true <b>9</b>. You blocked the fake path through tension and left the real effect alone.`;
+  else{const parts=[];if(!ctl.C)parts.push("tension still links transits and aircraft, so the estimate is too big");if(ctl.M)parts.push("controlling for alert level removes the part of the effect that travels through it");if(ctl.K)parts.push("controlling for news coverage creates a fake link between transits and aircraft");
+    msg=`<span class="no">Off.</span> The estimate is ${B(s.est)} against a true <b>9</b>. Why: ${parts.join("; ")}.`;}
+  $("dagRead").innerHTML=msg;}
+["cC","cM","cK"].forEach(id=>$(id).addEventListener("change",dagRender));dagRender();
+
+/* ---------- 5 hidden factor + robustness ---------- */
+slider("ovG",v=>v===0?"none":fmt(v,1),()=>{const s=simOVB(val("ovG"),0.8);
+  hbars($("ovChart"),[{label:"Your estimate",value:s.short,cls:s.short-3>0.3?"b-bad":"b-treat"},{label:"True effect",value:3,cls:"b-ink"}],{dom:[0,6],d:2,aria:"Estimate and true effect"});
+  $("ovRead").innerHTML=s.short-3<0.3?`<span class="ok">No problem.</span> If the hidden factor doesn't affect winning, leaving it out costs nothing: ${B(s.short,2)}.`
+    :`The estimate is ${B(s.short,2)} instead of <b>3</b>. <span class="no">${fmt((s.short-3)/s.short*100,0)}% of that estimate is front-office skill</span>, not spending.`;})();
+const rvGo=()=>{const t=val("rvT"),n=Math.round(Math.pow(10,val("rvN")));$("rvTo").textContent=fmt(t,1);$("rvNo").textContent=n.toLocaleString();const rv=robustnessValue(t,n-10);
+  $("rvRead").innerHTML=`A hidden factor would have to explain at least ${B(rv*100,1)}% of the leftover variation in <i>both</i> your main variable and your outcome to erase the result. ${rv<0.05?"That's a low bar. A modest unmeasured factor could do it.":rv<0.15?"Moderate. Compare it with your strongest measured control.":"That's a high bar. A hidden factor would need to be very strong."}`;};
+["rvT","rvN"].forEach(id=>$(id).addEventListener("input",rvGo));rvGo();
+
+/* ---------- 6 matching ---------- */
+slider("mtS",v=>v===0?"none":fmt(v,1),()=>{const s=simMatch(0,val("mtS"));
+  hbars($("mtChart"),[{label:"Simple comparison",value:s.naive*100,cls:Math.abs(s.naive)>0.06?"b-bad":"b-treat"},{label:"Matched pairs",value:s.match*100,cls:"b-treat"},{label:"True effect",value:0,cls:"b-ink"}],{dom:[-30,5],d:0,unit:" pts",aria:"Trade probability differences"});
+  $("mtRead").innerHTML=`The simple comparison says clauses cut the chance of being traded by ${B(-s.naive*100,0)} points. <span class="${Math.abs(s.match)<0.06?"ok":"no"}">Matched pairs say ${B(s.match*100,0)}.</span> The truth is <b>0</b>: clause holders were just better players. Matching works here only because quality is in the data.`;})();
+
+/* ---------- 7 IV ---------- */
+const IVC={clean:[2,0],weak:[0.15,0],leak:[2,0.5]};
+function ivGo(key){const [pi,phi]=IVC[key];const s=simIV(pi,phi,100);const sorted=s.iv.slice().sort((a,b)=>a-b),lo=sorted[10],hi=sorted[89];
+  press([...document.querySelectorAll("[data-iv]")],document.querySelector(`[data-iv="${key}"]`));
+  hbars($("ivChart"),[{label:"Ordinary regression",value:s.olsMean,cls:"b-bad"},{label:"Using the nudge",value:s.ivMed,cls:key==="clean"?"b-treat":"b-cf"},{label:"True effect",value:0.5,cls:"b-ink"}],{dom:[0,1],d:2,aria:"IV and OLS estimates"});
+  const txt={clean:`<span class="ok">Works.</span> Ordinary regression is fooled by tension (${B(s.olsMean,2)}). Using only the weather-driven part of sorties gives ${B(s.ivMed,2)}, and 80% of the 100 studies land between ${B(lo,2)} and ${B(hi,2)}.`,
+    weak:`<span class="no">Too weak.</span> The weather barely moves sorties here. The typical answer is ${B(s.ivMed,2)}, but 80% of studies land anywhere from ${B(lo,2)} to ${B(hi,2)}. One study could tell you almost anything. (Strength check: F ≈ ${fmt(s.F,1)}, well under 10.)`,
+    leak:`<span class="no">Broken rule 2.</span> The nudge is strong, but weather also changes the risk index directly, so the estimate lands at ${B(s.ivMed,2)}, not <b>0.50</b>. Nothing in the data warns you. Only the argument can.`};
+  $("ivRead").innerHTML=txt[key];}
+document.querySelectorAll("[data-iv]").forEach(b=>b.onclick=()=>ivGo(b.dataset.iv));ivGo("clean");
+
+/* ---------- 8 RD ---------- */
+const rdGo=()=>{const H=val("rdH"),M=$("rdM").checked;$("rdHo").textContent=H>=5?"everyone":`±${fmt(H,2)} seasons`;const s=simRD(-8,0.4,H,M);
+  const c=chart($("rdChart"),{w:560,h:270,xd:[-5,5],yd:[0,80],xl:"Seasons from the Group 3 cutoff",yl:"Trade chance (%)",aria:"Scatter of trade chance against seasons from the cutoff"});
+  c.svg.appendChild(el("rect",{x:c.sx(-H),y:c.m.t,width:c.sx(H)-c.sx(-H),height:c.h-c.m.b-c.m.t,class:"zone"}));
+  const ins=[],out=[];s.X.forEach((x,i)=>(Math.abs(x)<=H?ins:out).push(i));
+  c.dots(out.map(i=>s.X[i]),out.map(i=>Math.max(0,Math.min(80,s.Y[i]))),"d-ctrl",1.6);c.dots(ins.map(i=>s.X[i]),ins.map(i=>Math.max(0,Math.min(80,s.Y[i]))),"d-treat",2.2);
+  c.vline(0,"l-ink");
+  if(s.fitL){c.line([-H,0],[s.fitL[0]-s.fitL[1]*H,s.fitL[0]],"l-ink");c.line([0,H],[s.fitR[0],s.fitR[0]+s.fitR[1]*H],"l-ink");}
+  const d=s.ll;let msg=`The jump at the line is ${B(d)} points (truth <b>−8</b>), using ${s.nWin} players. `;
+  if(M)msg+=`<span class="no">Gaming moved some players across the line.</span> The ones just past it aren't comparable any more, so the jump is wrong. A pile-up of players just past the cutoff is the warning sign.`;
+  else if(H>=3)msg+=`<span class="no">Wide window.</span> Players far from the line differ in other ways, and the straight lines no longer fit the curve.`;
+  else if(H<1)msg+=`Very close to the line, few players remain, so the estimate is noisy.`;
+  else msg+=`<span class="ok">A reasonable window.</span> Close enough to compare like with like, with enough players to be stable.`;
+  $("rdRead").innerHTML=msg;};
+["rdH","rdM"].forEach(id=>$(id).addEventListener("input",rdGo));rdGo();
+
+/* ---------- 9 DiD ---------- */
+slider("ddT",v=>v===0?"no":"+"+fmt(v,2)+"/month",()=>{const tr=val("ddT");const s=simDiD(6,tr,0);const xs=s.yt.map((_,t)=>t+1);
+  const all=s.yt.concat(s.yc,s.cf);const c=chart($("ddChart"),{w:560,h:260,xd:[1,24],yd:[Math.floor(Math.min(...all)/5)*5,Math.ceil(Math.max(...all)/5)*5],xl:"Month (event at month 13)",yl:"Outcome",aria:"Treated, comparison and counterfactual lines"});
+  c.svg.appendChild(el("rect",{x:c.sx(12.5),y:c.m.t,width:c.sx(24)-c.sx(12.5),height:c.h-c.m.b-c.m.t,class:"zone"}));
+  c.line(xs,s.yc,"l-ctrl");c.line(xs.slice(11),s.cf.slice(11),"l-cf");c.line(xs,s.yt,"l-treat");c.vline(12.5,"l-faint");
+  $("ddRead").innerHTML=tr===0?`<span class="ok">Parallel before the event.</span> The estimate is ${B(s.did)}, close to the true <b>6</b>.`
+    :`The estimate is ${B(s.did)} against a true <b>6</b>. <span class="no">The method credits the event with growth that was already happening.</span> You can see it before month 13: the lines are already pulling apart.`;})();
+
+/* ---------- 10 synthetic control ---------- */
+const SY=synthData();
+const syGo=()=>{let a=val("syA"),b=val("syB");if(a+b>1){b=+(1-a).toFixed(2);$("syB").value=b;}$("syAo").textContent=fmt(a*100,0)+"%";$("syBo").textContent=fmt(b*100,0)+"%";const e=synthEval(SY,a,b);const xs=SY.tr.map((_,t)=>t+1);
+  const c=chart($("syChart"),{w:560,h:260,xd:[1,20],yd:[30,90],xl:"Month (event at month 13)",yl:"Outcome",aria:"Treated line and synthetic blend"});
+  c.svg.appendChild(el("rect",{x:c.sx(12.5),y:c.m.t,width:c.sx(20)-c.sx(12.5),height:c.h-c.m.b-c.m.t,class:"zone"}));
+  [["A",SY.A],["B",SY.B],["C",SY.C]].forEach(([n,arr])=>{c.line(xs,arr,"l-faint");c.text(20.2,arr[19],n,{"dominant-baseline":"middle"});});
+  c.line(xs,e.syn,"l-cf");c.line(xs,SY.tr,"l-treat");c.vline(12.5,"l-faint");
+  const good=e.rmspe<1;
+  $("syRead").innerHTML=`Blend: ${fmt(a*100,0)}% A, ${fmt(b*100,0)}% B, ${fmt(e.wc*100,0)}% C. Before the event it misses the treated line by ${B(e.rmspe,1)} on average. ${good?`<span class="ok">A tight fit.</span> The gap after the event, ${B(e.gap,1)}, is a believable effect (truth <b>+5</b>).`:`<span class="no">A loose fit</span>, so the after-event gap (${B(e.gap,1)}) isn't trustworthy. Get the pre-event miss under 1.`}`;};
+["syA","syB"].forEach(id=>$(id).addEventListener("input",syGo));
+$("syFit").onclick=()=>{const f=synthFit(SY);$("syA").value=f.a.toFixed(2);$("syB").value=f.b.toFixed(2);syGo();};syGo();
+
+/* ---------- 11 timing ---------- */
+function grGo(k){const s=simGranger(k,0);press([...document.querySelectorAll("[data-k]")],document.querySelector(`[data-k="${k}"]`));
+  const w=n=>n===0?"same week":n===1?"1 week later":n+" weeks later";
+  $("grChain").innerHTML=`<div><span class="box hid">Hidden decision</span>→<span class="box">Rhetoric</span><span class="lag">1 week later</span></div><div><span class="box hid">Hidden decision</span>→<span class="box">PLA action</span><span class="lag">${w(1+k)}</span></div><div><span class="box">Rhetoric</span>→<span class="box">PLA action</span><span class="lag">no effect at all</span></div>`;
+  const sig=s.F>3;
+  $("grRead").innerHTML=sig?`<span class="no">The test says rhetoric predicts action</span> (F = ${B(s.F,0)}, far past the usual cutoff of about 3). But rhetoric does nothing. It's just the earlier sign of the same decision.`
+    :`<span class="ok">The test finds nothing</span> (F = ${B(s.F,1)}), which is correct here. When the decision shows up in both at the same time, past rhetoric has nothing extra to say about action.`;}
+document.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>grGo(+b.dataset.k));grGo(1);
+
+/* ---------- 12 strategic ---------- */
+slider("sgR",v=>v>=1?"perfect":fmt(v*100,0)+"%",()=>{const s=simStrategic(0,0.55,val("sgR"));
+  hbars($("sgChart"),[{label:"Simple comparison",value:s.naive,cls:"b-bad"},{label:"With your measure",value:s.adj,cls:Math.abs(s.adj)<5?"b-treat":"b-cf"},{label:"True effect",value:0,cls:"b-ink"}],{dom:[0,30],d:0,unit:" pts",aria:"Revealing and winning"});
+  $("sgRead").innerHTML=`States that revealed won ${B(s.naive,0)} points more often, though revealing did nothing. Controlling for your measure of strength leaves ${B(s.adj,0)} points. ${val("sgR")>=0.99?'<span class="ok">Only a perfect measure gets close</span>, and no one has one.':'<span class="no">Better measurement helps but never finishes the job.</span>'}`;})();
+
+/* ---------- 13 measurement ---------- */
+slider("msU",v=>fmt(v*100,0)+"%",()=>{const s=simUndercount(val("msU"));const xs=s.tru.map((_,t)=>t+1);
+  const c=chart($("msChart"),{w:560,h:240,xd:[1,24],yd:[0,32],xl:"Month (counting rule changes at month 15)",yl:"Aircraft",aria:"Reported and real aircraft counts"});
+  c.vline(14.5,"l-faint");c.line(xs,s.tru,"l-faint");c.line(xs,s.rep,"l-treat");
+  $("msRead").innerHTML=val("msU")===0?`<span class="ok">No undercount, no fake jump</span> (${B(s.fake,1)}).`
+    :`Reported activity jumps by ${B(s.fake,1)} aircraft at month 15. <span class="no">Real activity barely moved</span> (${B(s.real,1)}). The whole "effect" is the new counting rule.`;})();
+
+/* ---------- 14 nulls ---------- */
+const nuGo=()=>{const e=val("nuE"),s=val("nuS");$("nuEo").textContent=fmt(e,1);$("nuSo").textContent=fmt(s,1);const lo=e-1.96*s,hi=e+1.96*s,mde=2.8*s;
+  const c=chart($("nuChart"),{w:560,h:110,xd:[-10,12],yd:[0,1],noY:true,xl:"Effect size",m:{l:20,r:20,t:10,b:34},aria:"Confidence interval"});
+  c.vline(0,"l-ink");el("line",{x1:c.sx(Math.max(-10,lo)),x2:c.sx(Math.min(12,hi)),y1:c.sy(0.5),y2:c.sy(0.5),style:"stroke:var(--accent);stroke-width:10;stroke-linecap:round;opacity:.5"},c.svg);
+  c.dots([e],[0.5],"d-ink",6);
+  const sig=lo>0||hi<0;
+  $("nuRead").innerHTML=(sig?`<span class="ok">Significant.</span> Zero is outside the range. `:`<span class="no">Not significant</span>: zero is inside the range. `)+
+    `Your data are consistent with effects from ${B(lo,1)} to ${B(hi,1)}. ${!sig?`So you <i>can</i> rule out effects above ${B(hi,1)} or below ${B(lo,1)}. That's the useful sentence for a paper. `:""}With this much noise, the smallest effect you could reliably detect is about ${B(mde,1)}.`;};
+["nuE","nuS"].forEach(id=>$(id).addEventListener("input",nuGo));nuGo();
+slider("mkK",v=>v,()=>{const k=val("mkK");const p=1-Math.pow(0.95,k);
+  $("mkRead").innerHTML=`If nothing is going on at all, the chance that at least one of ${B(k,0)} tests comes up "significant" by luck is ${B(p*100,0)}%. You'd expect about ${B(k*0.05,1)} false hits.`;})();
+
+/* ---------- 15 decision tree ---------- */
+const TREE={
+  q1:{q:"Did you, or a coin, decide who got X?",yes:"r_exp",no:"q2"},
+  q2:{q:"Does a rule give X to cases just past some cutoff (a score, an age, a date)?",yes:"r_rd",no:"q3"},
+  q3:{q:"Is there something that pushes X around and could affect Y only through X?",yes:"r_iv",no:"q4"},
+  q4:{q:"Do you have data from before and after X, and cases that never got X?",yes:"q5",no:"q6"},
+  q5:{q:"Is there a comparison group that moved in parallel before X?",yes:"r_did",no:"r_synth"},
+  q6:{q:"Does the actor choose X using information you can't observe (resolve, capability, intent)?",yes:"r_game",no:"r_ctrl"},
+  r_exp:{r:"Experiment",d:"Compare the groups directly. Check balance, power, and whether subjects could affect each other.",p:"Sonic Vectors"},
+  r_rd:{r:"Cutoff design (RD)",d:"Compare cases just either side of the line. Check for gaming at the cutoff, and scale by the jump in treatment if the line isn't strict.",p:"NHL Trade Protection"},
+  r_iv:{r:"Random nudge (IV)",d:"Use only the part of X the nudge moves. Show the nudge is strong, and argue hard that it touches Y no other way.",p:"Weather & PLA"},
+  r_did:{r:"Before/after with comparison (DiD)",d:"Compare changes, not levels. Plot the months before X to show the groups moved together.",p:"Calibrated Coercion, Simple Simon"},
+  r_synth:{r:"Build a look-alike (synthetic control)",d:"Blend untreated cases to match the treated one before X. Report the pre-event fit and placebo tests.",p:"Single-country policy changes"},
+  r_game:{r:"Game model",d:"Write down the choice as a game and estimate it. Controls alone won't fix private information.",p:"Secret Weapons / SitG"},
+  r_ctrl:{r:"Controls + fragility check",d:"Control for causes of both X and Y that were set before X. Then report how strong a hidden factor would need to be to erase the result.",p:"NFL Roster Construction"}};
+let treePath=["q1"];
+function treeRender(){const cur=treePath[treePath.length-1],node=TREE[cur];const host=$("tree");
+  const crumbs=treePath.slice(0,-1).map((id,i)=>`${TREE[id].q} <b>${treePath[i+1]===TREE[id].yes?"Yes":"No"}</b>`).join("<br>");
+  host.innerHTML=(crumbs?`<p class="path">${crumbs}</p>`:"")+(node.q
+    ?`<p class="qq">${node.q}</p><div class="btns"><button class="btn primary" data-a="yes">Yes</button><button class="btn" data-a="no">No</button>${treePath.length>1?'<button class="btn" data-a="back">Back</button>':""}</div>`
+    :`<div class="result"><h3>${node.r}</h3><p>${node.d}</p><p style="margin:0"><b>Your example:</b> ${node.p}</p></div><div class="btns"><button class="btn" data-a="back">Back</button><button class="btn" data-a="restart">Start over</button></div>`);
+  host.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{const a=b.dataset.a;if(a==="yes"||a==="no")treePath.push(node[a]);else if(a==="back")treePath.pop();else treePath=["q1"];treeRender();host.querySelector("button")?.focus();});}
+treeRender();
+
+/* ---------- 16 quiz ---------- */
+const QUIZ=[
+ {s:"Transit days had 7 more PLA aircraft than other days. What's the main reason that might not be the effect of transits?",o:["The sample is too small","The Navy may sail on days that were already tense","Aircraft counts are hard to measure","The PLA doesn't respond to transits"],a:1,w:"The days with a transit may have been different to begin with: the head start, or selection bias. Sample size affects noise, not this kind of error."},
+ {s:"Why does random assignment remove selection bias?",o:["It makes the sample bigger","It makes the effect bigger","A coin can't know which cases would have done well anyway","It removes measurement error"],a:2,w:"Chance assignment can't be related to anything about the cases, measured or not, so the groups match on average."},
+ {s:"You're estimating the effect of transits on PLA flights. Which should you NOT control for?",o:["Tension the week before","PLA alert level after the transit","Month of the year","Whether a Taiwan election was coming"],a:1,w:"The transit itself changes alert level, so controlling for it removes part of the effect. The others were set before the transit."},
+ {s:"A robustness value of 2% means…",o:["The result is very robust","A fairly weak hidden factor could erase the result","2% of the data are outliers","The effect is 2%"],a:1,w:"A hidden factor explaining just 2% of leftover variation in both X and Y would be enough to erase it. That's a low bar."},
+ {s:"Using weather as an instrument for PLA flights, which can't be checked with data?",o:["Whether weather changes the number of flights","Whether weather affects the outcome only through flights","Whether the sample is large","Whether the F-statistic is above 10"],a:1,w:"The exclusion rule (no other path from weather to the outcome) has to be argued. The first one is checked with the first-stage F."},
+ {s:"In a cutoff design, players pile up just past the cutoff. What does that suggest?",o:["The effect is large","People are gaming the line, so those just past it aren't comparable","The window is too narrow","Nothing. Pile-ups are normal"],a:1,w:"If cases can push themselves over the line, the ones just past it are self-selected. That breaks the 'almost identical near the line' logic."},
+ {s:"Rhetoric rises a week before PLA action, every time. The best conclusion is…",o:["Rhetoric causes action","Rhetoric predicts action. It might be an early sign of the same decision.","Action causes rhetoric","There's no relationship"],a:1,w:"Prediction in time is consistent with a common driver that shows up in rhetoric first. Calling it a leading indicator is fair. Calling it a cause needs more."},
+ {s:"Your estimate is 0.8 with a 95% range from −1.6 to 3.2. The best sentence for the paper is…",o:["There is no effect","The effect is 0.8","We can't rule out zero, but we can rule out effects larger than about 3.2","The study failed"],a:2,w:"A null result is informative when you say what it rules out. 'No effect' overclaims. The data allow effects up to 3.2."}];
+let quizAns={};try{quizAns=JSON.parse(localStorage.getItem("cip-quiz")||"{}");}catch(e){}
+function quizRender(){const host=$("quiz");host.innerHTML=QUIZ.map((q,i)=>{const ans=quizAns[i];return `<div class="qz"><p class="stem"><b>${i+1}.</b> ${q.s}</p><div class="opts">${q.o.map((o,j)=>{const cl=ans==null?"":j===q.a?"right":j===ans?"wrong":"";return `<button class="opt ${cl}" data-q="${i}" data-o="${j}">${o}</button>`;}).join("")}</div>${ans!=null?`<p class="why"><b>${ans===q.a?"Right.":"Not quite."}</b> ${q.w}</p>`:""}</div>`;}).join("");
+  host.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{quizAns[b.dataset.q]=+b.dataset.o;try{localStorage.setItem("cip-quiz",JSON.stringify(quizAns));}catch(e){}quizRender();});
+  const n=Object.keys(quizAns).length,r=Object.entries(quizAns).filter(([i,a])=>QUIZ[i].a===a).length;$("quizScore").textContent=n?`${r} of ${n} right so far.`:"";}
+$("quizReset").onclick=()=>{quizAns={};try{localStorage.removeItem("cip-quiz");}catch(e){}quizRender();};quizRender();
+
+/* ---------- navigation ---------- */
+const slides=[...document.querySelectorAll(".slide")];let cur=0;
+$("jump").innerHTML=slides.map((s,i)=>`<option value="${i}">${i+1}. ${s.dataset.title}</option>`).join("");
+function go(i,push=true){cur=Math.max(0,Math.min(slides.length-1,i));slides.forEach((s,j)=>s.hidden=j!==cur);
+  $("jump").value=cur;$("count").textContent=`${cur+1} / ${slides.length}`;$("prog").style.width=((cur+1)/slides.length*100)+"%";
+  $("prev").disabled=cur===0;const nx=slides[cur+1];$("next").disabled=!nx;$("nextLab").textContent=nx?": "+nx.dataset.title:"";
+  if(push)history.replaceState(null,"","#"+slides[cur].id);window.scrollTo(0,0);
+  try{localStorage.setItem("cip-page",String(cur));}catch(e){}}
+$("prev").onclick=()=>go(cur-1);$("next").onclick=()=>go(cur+1);$("jump").onchange=e=>go(+e.target.value);
+document.addEventListener("keydown",e=>{if(e.target.matches("input,select,textarea"))return;if(e.key==="ArrowRight")go(cur+1);if(e.key==="ArrowLeft")go(cur-1);});
+(function(){const i=slides.findIndex(s=>"#"+s.id===location.hash);let start=i;if(start<0){try{start=+(localStorage.getItem("cip-page")||0);}catch(e){start=0;}}go(start>=0&&start<slides.length?start:0,false);})();
+</script>
+
+</body>
+</html>
